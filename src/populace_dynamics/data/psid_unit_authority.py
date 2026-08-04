@@ -14,15 +14,18 @@ already-derived codebook field description together with the field's ratified
 no evidence artifact, and imports nothing from the source compiler, so the
 law it encodes can be exercised and reviewed without the derivation stack.
 
-Three closed stages, in order:
+Four closed stages, in order:
 
 ``normalize_description``
     Fold the pinned page-text description to one space-separated line.
 ``extract_statements`` / ``statement_predicate``
     Select the value-denotation statements under the closed anchor set.
+``title_header_candidates`` / ``title_header_disposition``
+    Independently scan the raw field title/header under exact contextual
+    title clauses and their explicit input, reference, and subfield defeats.
 ``statement_disposition`` / ``field_unit``
-    Apply the closed clause table under maximal munch and fail closed on an
-    absent, defeated, or conflicting reading.
+    Apply both closed clause tables under maximal munch and fail closed on an
+    absent, unadjudicated, or conflicting reading.
 
 ``successor_terminal`` then applies §20.3.5's ratified failure precedence —
 conflict, then unsupported, then incomplete — so a field whose ratified
@@ -42,6 +45,10 @@ from .psid_unit_predicate_authority import (
     PREDICATE_AUTHORITY,
     SEGMENT_START_AUTHORITY,
 )
+from .psid_unit_title_authority import (
+    TITLE_LITERAL_FAMILIES,
+    TITLE_START_AUTHORITY,
+)
 
 __all__ = [
     "ANCHORS",
@@ -56,6 +63,8 @@ __all__ = [
     "FAILURE_TERMINALS",
     "NO_UNIT",
     "TERMINAL_ORDER",
+    "TITLE_LITERAL_FAMILIES",
+    "TITLE_START_AUTHORITY",
     "UNIT_ABSENT_RESOLUTION_REASON",
     "UNIT_VOCABULARY",
     "VALUE_SUBJECT_ANCHORS",
@@ -90,6 +99,9 @@ __all__ = [
     "statement_table",
     "successor_census",
     "successor_terminal",
+    "title_header_candidate_table",
+    "title_header_candidates",
+    "title_header_disposition",
 ]
 
 
@@ -147,6 +159,256 @@ def normalize_description(description: str | None) -> str:
     if description is None:
         return ""
     return _SPACE_RUN.sub(" ", description.replace("\n", " ")).strip(" ")
+
+
+# --------------------------------------------------------------------------
+# Field-title/header candidates — raw first-physical-line law
+# --------------------------------------------------------------------------
+
+_SIMPLE_QUESTION_TITLE = re.compile(r"^[A-Z]+\d+[a-z]?\.")
+_TITLE_HOUR_TOKEN = re.compile(r"(?<![A-Za-z])hours?(?![A-Za-z])", re.I)
+_TITLE_DOLLAR_TOKEN = re.compile(r"(?<![A-Za-z])dollars?(?![A-Za-z])", re.I)
+_STATEMENT_PROSE_TITLE_HEADS = (
+    "The values for this variable ",
+    "Values for this variable ",
+    "values for this variable ",
+    "The value for this variable ",
+    "the value for this variable ",
+    "the values for this variable ",
+)
+
+
+def _raw_title(description: str | None) -> str:
+    """Return the exact first raw physical line, without normalization."""
+
+    if description is None:
+        return ""
+    return description.split("\n", 1)[0]
+
+
+def _reference_hour_title(title: str) -> bool:
+    return title.startswith(("Accuracy", "Bkt.", "(Bkt."))
+
+
+def _literal_title_spans(
+    title: str, family: str, spellings: Sequence[str]
+) -> list[tuple[str, int, int, str]]:
+    """Return maximal ASCII-word-bounded literal matches for one family."""
+
+    possible: list[tuple[str, int, int, str]] = []
+    for spelling in sorted(spellings, key=len, reverse=True):
+        cursor = 0
+        while True:
+            start = title.find(spelling, cursor)
+            if start < 0:
+                break
+            end = start + len(spelling)
+            left_ok = start == 0 or not title[start - 1].isalpha()
+            right_ok = end == len(title) or not title[end].isalpha()
+            if left_ok and right_ok:
+                possible.append((family, start, end, spelling))
+            cursor = start + 1
+    found: list[tuple[str, int, int, str]] = []
+    for candidate in sorted(
+        possible, key=lambda row: (row[1], -(row[2] - row[1]), row[3])
+    ):
+        _family, start, end, _spelling = candidate
+        if any(
+            start >= selected[1] and end <= selected[2] for selected in found
+        ):
+            continue
+        found.append(candidate)
+    return found
+
+
+def title_header_candidates(
+    description: str | None,
+) -> tuple[tuple[str, int, int, str], ...]:
+    """Return every candidate in the closed raw-title/header grammar.
+
+    The four members are ``(family, start_byte, end_byte, spelling)``.  The
+    corpus is ASCII at every selected span, so character and UTF-8 byte
+    offsets coincide; the authority construction and tests assert that fact.
+    Candidate discovery is independent of the frozen contextual authority.
+    """
+
+    title = _raw_title(description)
+    if title.startswith(_STATEMENT_PROSE_TITLE_HEADS):
+        return ()
+    found: list[tuple[str, int, int, str]] = []
+    is_reference = _reference_hour_title(title)
+    is_simple_question = _SIMPLE_QUESTION_TITLE.match(title) is not None
+    if not is_reference and not is_simple_question:
+        found.extend(
+            ("nominal_hour_token", match.start(), match.end(), match.group())
+            for match in _TITLE_HOUR_TOKEN.finditer(title)
+        )
+    if is_reference:
+        found.extend(
+            (
+                "reference_hour_token",
+                match.start(),
+                match.end(),
+                match.group(),
+            )
+            for match in _TITLE_HOUR_TOKEN.finditer(title)
+        )
+    if not is_simple_question:
+        found.extend(
+            (
+                "nominal_dollar_token",
+                match.start(),
+                match.end(),
+                match.group(),
+            )
+            for match in _TITLE_DOLLAR_TOKEN.finditer(title)
+        )
+    for family, spellings in TITLE_LITERAL_FAMILIES:
+        found.extend(_literal_title_spans(title, family, spellings))
+    distinct = set(found)
+    maximal = [
+        candidate
+        for candidate in distinct
+        if not any(
+            candidate[1] >= other[1]
+            and candidate[2] <= other[2]
+            and (candidate[1], candidate[2]) != (other[1], other[2])
+            for other in distinct
+        )
+    ]
+    return tuple(sorted(maximal, key=lambda row: (row[1], row[2], row[0])))
+
+
+_TITLE_START_AUTHORITY = {
+    (description_sha256, family, start, end, spelling): (
+        unit,
+        disposition,
+        reason,
+    )
+    for (
+        description_sha256,
+        _title,
+        family,
+        start,
+        end,
+        spelling,
+        unit,
+        disposition,
+        reason,
+        _wave,
+        _field,
+    ) in TITLE_START_AUTHORITY
+}
+
+
+def _title_candidate_rows(
+    description: str | None,
+) -> tuple[tuple[str, int, int, str, str | None, str, str], ...]:
+    """Attach contextual authority to every independently found candidate."""
+
+    raw = "" if description is None else description
+    description_sha256 = hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    found: list[tuple[str, int, int, str, str | None, str, str]] = []
+    for family, start, end, spelling in title_header_candidates(description):
+        authority = _TITLE_START_AUTHORITY.get(
+            (description_sha256, family, start, end, spelling)
+        )
+        if authority is None:
+            authority = (
+                None,
+                "unadjudicated_title_start",
+                "unadjudicated_title_start",
+            )
+        unit, disposition, reason = authority
+        found.append((family, start, end, spelling, unit, disposition, reason))
+    return tuple(found)
+
+
+def title_header_disposition(
+    description: str | None,
+) -> tuple[str | None, str]:
+    """Return one field's unit and reason under the title/header clause law."""
+
+    rows = _title_candidate_rows(description)
+    if not rows:
+        return None, "no_title_denotation_clause"
+    if any(row[5] == "unadjudicated_title_start" for row in rows):
+        return None, "unadjudicated_title_candidate"
+    units = {
+        unit
+        for _family, _start, _end, _spelling, unit, disposition, _reason in rows
+        if disposition == "whole_domain_denotation" and unit is not None
+    }
+    if len(units) > 1:
+        return None, "conflicting_title_units"
+    if units:
+        return next(iter(units)), "derived_from_title_denotation"
+    return None, "title_clause_explicitly_non_whole_domain"
+
+
+def _normalized_title_start(title: str, raw_start: int) -> int:
+    """Map one raw-title start to its §24.3.1 normalized offset."""
+
+    prefix = title[:raw_start]
+    collapsed = normalize_description(prefix)
+    return len(collapsed) + (1 if prefix.endswith(" ") and collapsed else 0)
+
+
+def _production_title_start_offsets(description: str | None) -> set[int]:
+    """Return normalized offsets selected as positive title denotations."""
+
+    title = _raw_title(description)
+    normalized = normalize_description(description)
+
+    def contextual_word_start(raw_start: int) -> int:
+        offset = _normalized_title_start(title, raw_start)
+        while offset > 0 and normalized[offset - 1] != " ":
+            offset -= 1
+        return offset
+
+    return {
+        contextual_word_start(start)
+        for (
+            _family,
+            start,
+            _end,
+            _spelling,
+            unit,
+            disposition,
+            _reason,
+        ) in _title_candidate_rows(description)
+        if disposition == "whole_domain_denotation" and unit is not None
+    }
+
+
+def _title_start_tags(description: str | None) -> dict[int, str]:
+    """Return contextual W/N overlays keyed by normalized absolute start."""
+
+    title = _raw_title(description)
+    normalized = normalize_description(description)
+    found: dict[int, str] = {}
+    for (
+        _family,
+        start,
+        _end,
+        _spelling,
+        unit,
+        disposition,
+        _reason,
+    ) in _title_candidate_rows(description):
+        offset = _normalized_title_start(title, start)
+        while offset > 0 and normalized[offset - 1] != " ":
+            offset -= 1
+        tag = (
+            "W"
+            if disposition == "whole_domain_denotation" and unit is not None
+            else "N"
+        )
+        previous = found.get(offset)
+        if previous is not None and previous != tag:
+            raise ValueError("conflicting contextual title-start authority")
+        found[offset] = tag
+    return found
 
 
 # --------------------------------------------------------------------------
@@ -630,8 +892,9 @@ def _segment_start_rows(
     """Materialize every normalized start with its contextual authority."""
 
     text = normalize_description(description)
+    title_tags = _title_start_tags(description)
     found: list[tuple[int, str, int, int, str, str]] = []
-    for ordinal, _absolute, segment in _normalized_segments(text):
+    for ordinal, absolute, segment in _normalized_segments(text):
         starts = _word_start_offsets(segment)
         vector = _SEGMENT_START_AUTHORITY.get(segment)
         if vector is None:
@@ -643,6 +906,7 @@ def _segment_start_rows(
         for word_ordinal, (offset, tag) in enumerate(
             zip(starts, vector, strict=True)
         ):
+            tag = title_tags.get(absolute + offset, tag)
             disposition = _START_TAG_DISPOSITIONS.get(
                 tag, "unadjudicated_start"
             )
@@ -683,11 +947,14 @@ def _production_whole_start_offsets(description: str | None) -> set[int]:
     """Return normalized offsets selected as whole-domain by production."""
 
     text = normalize_description(description)
-    selected = {
-        offset
-        for offset, statement in _extract_statement_spans(text)
-        if statement_predicate(statement) is not None
-    }
+    selected = _production_title_start_offsets(description)
+    selected.update(
+        {
+            offset
+            for offset, statement in _extract_statement_spans(text)
+            if statement_predicate(statement) is not None
+        }
+    )
     for candidate in actual_candidates(description):
         if (
             actual_candidate_disposition(candidate)
@@ -721,6 +988,7 @@ def _contextual_start_assignments(
 ) -> tuple[tuple[int, str, int, int, str, str, bool], ...]:
     text = normalize_description(description)
     selected = _production_whole_start_offsets(description)
+    title_tags = _title_start_tags(description)
     found: list[tuple[int, str, int, int, str, str, bool]] = []
     for ordinal, absolute, segment in _normalized_segments(text):
         starts = _word_start_offsets(segment)
@@ -732,6 +1000,7 @@ def _contextual_start_assignments(
         for word_ordinal, (offset, tag) in enumerate(
             zip(starts, vector, strict=True)
         ):
+            tag = title_tags.get(absolute + offset, tag)
             disposition = _START_TAG_DISPOSITIONS.get(
                 tag, "unadjudicated_start"
             )
@@ -1279,6 +1548,19 @@ def field_unit(description: str | None) -> tuple[str | None, str]:
     closed, because §19.3.2 needs one unit common to every member of ``R``.
     """
 
+    title_unit, title_reason = title_header_disposition(description)
+    if title_reason in {
+        "unadjudicated_title_candidate",
+        "conflicting_title_units",
+    }:
+        return None, "defeated_title_denotation"
+    if title_unit is not None:
+        # A contextual whole-field header controls subordinate construction,
+        # formula, or subrange prose in the body.  Conflicting title units
+        # have already failed closed above; body prose remains controlling
+        # when no positive title exists.
+        return title_unit, "derived_from_title_denotation"
+
     found = description_statements(description)
     if not found:
         return None, "no_denotation_statement"
@@ -1605,6 +1887,64 @@ def statement_table(
                 "disposition_reason": reason,
                 "field_count": counts[statement],
                 "witness_field_key": list(witness[statement]),
+            }
+        )
+    return table
+
+
+def title_header_candidate_table(
+    field_rows: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Return the complete first-line audit over all denominator fields.
+
+    Unlike the statement spelling table, this relation has one row for every
+    field, including titles with zero grammar matches.  Thus zero title
+    unknowns means every independently discovered match was adjudicated; it
+    never means unmatched titles were omitted or that the frozen authority
+    was used as its own candidate selector.
+    """
+
+    table: list[dict[str, Any]] = []
+    for row in field_rows:
+        wave, field, _status, _reason, description = _row_view(row)
+        raw = "" if description is None else description
+        title = _raw_title(description)
+        candidates = _title_candidate_rows(description)
+        unit, disposition_reason = title_header_disposition(description)
+        table.append(
+            {
+                "interview_wave": wave,
+                "raw_field_id": field,
+                "raw_title": title,
+                "raw_title_sha256": hashlib.sha256(
+                    title.encode("utf-8")
+                ).hexdigest(),
+                "source_description_sha256": hashlib.sha256(
+                    raw.encode("utf-8")
+                ).hexdigest(),
+                "candidate_adjudications": [
+                    {
+                        "family": family,
+                        "start_utf8_byte": start,
+                        "end_utf8_byte": end,
+                        "spelling": spelling,
+                        "typed_value_unit": candidate_unit,
+                        "adjudication": candidate_disposition,
+                        "reason": reason,
+                    }
+                    for (
+                        family,
+                        start,
+                        end,
+                        spelling,
+                        candidate_unit,
+                        candidate_disposition,
+                        reason,
+                    ) in candidates
+                ],
+                "candidate_count": len(candidates),
+                "typed_value_unit": unit,
+                "disposition_reason": disposition_reason,
             }
         )
     return table

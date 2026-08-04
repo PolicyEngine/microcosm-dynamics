@@ -4,10 +4,13 @@ Generated from the lawful raw-description relation for all 89,599 fields.
 Every cleartext normalized period segment carries one literal disposition tag
 per U+0020 word start: ``W`` is a whole-domain denotation, ``N`` is an
 explicitly non-whole-domain candidate, and ``D`` is an explicit
-no-denotation start.  There is no default tag.  Coding-start rows separately
-adjudicate every observed Code/Coded/ENTER/RECORD start and provide an exact
-source span for each admitted statement.  Unknown segments, starts,
-predicates, and coding candidates fail closed.
+no-denotation start. The vector was regenerated with the title audit's
+context-invariant W/N starts. The separate title authority supplies the one
+field-context-dependent overlay whose segment also occurs outside a title.
+There is no default tag. Coding-start rows separately adjudicate every
+observed Code/Coded/ENTER/RECORD start and provide an exact source span for
+each admitted statement. Unknown segments, starts, predicates, coding
+candidates, and title candidates fail closed.
 """
 
 from __future__ import annotations
@@ -16724,27 +16727,27 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "(Altogether,) what was the total dollar value of all donations (you/you and your "
         "family) made in 2002 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "(Altogether,) what was the total dollar value of all donations you (and your "
         "family) made in 2004 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "(Altogether,) what was the total dollar value of all donations you (and your "
         "family) made in 2006 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "(Altogether,) what was the total dollar value of all donations you (and your "
         "family) made in 2008 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "(Altogether,) what was the total dollar value of all donations you (and your "
         "family) made in 2010 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "(And for your [first/second/third vehicle/[DESCRIPTION OF CAR]), how much was your "
@@ -17087,7 +17090,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "(Annual hours spent on home production in 1969 Work for housing, own additions and "
         "repairs, car repairs by Head and Wife) (1970 question)",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "(Are you / Is [SPOUSE/PARTNER]) a citizen of the United States? (Please remember "
@@ -17604,7 +17607,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "(Aside from [that day/those (NUMBER OF DAYS) days], how many of the remaining "
         "days/How many days) out of the past 30 were you able to work, but had to cut down "
         "on what you did because of these feelings?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "(Aside from any hospital stay) did an illness or injury keep you in bed for all or "
@@ -42730,7 +42733,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "WORKING: Exclude hours providing care if this is [your/his/her] job.) The values "
         "for this variable represent the actual number of hours per week Spouse/Partner "
         "spends caring for or looking after an adult.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "(In a typical week, how many hours [do you/does [he/she]] spend) Caring for or "
@@ -42738,7 +42741,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "WORKING: Exclude hours providing care if this is [your/his/her] job.) The values "
         "for this variable represent the actual number of hours per week the Reference "
         "Person spends caring for or looking after an adult.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "(In a typical week, how many hours [do you/does [he/she]] spend) Caring for or "
@@ -45932,12 +45935,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "(What percent did that amount to altogether?)--PERCENT The values for this variable "
         "represent the percentage of heating/cooling costs covered by government subsidies.",
-        "DDDDDDDWDDDDDDDDDDDDDD",
+        "DWDDDDWWDDDDDDDDDDDDDD",
     ),
     (
         "(What percent did that amount to altogether?)--PERCENT The values for this variable "
         "represent the percentange of heating/cooling costs covered by government subsidies.",
-        "DDDDDDDWDDDDDDDDDDDDDD",
+        "DWDDDDWWDDDDDDDDDDDDDD",
     ),
     (
         "(What type of plan was this second pension or retirement plan?/I would like to know "
@@ -46592,33 +46595,33 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1967-68 Change in hours of home production (other than housework) 1968 Hours of "
         "home production (V464) - 1967 Hours of home production (V61)",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Change in hours of housework HEAD AND WIFE 1968 Hours of housework, Head "
         "and Wife (V895) - 1967 Hours of housework, Head and Wife (V59).",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Change in hours of nonleisure - FAMILY Total 1968 nonleisure revised - HEAD "
         "AND WIFE (V491) minus Hours of 1968 travel to work - HEAD (V473) minus Hours of "
         "1968 travel to work - WIFE (V479) minus Total 1967 nonleisure - HEAD AND WIFE (V65)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Change in hours of work for money - HEAD 1968 Hours of work for money "
         "(V465) minus 1967 Hours of work for money (V47)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Change in hours of work for money - OTHERS 1968 Hours of work for money "
         "(V520) minus 1967 Hours of work for money (V72)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Change in hours of work for money - WIFE 1968 Hours of work for money - "
         "WIFE (V475) - 1967 Hours of work for money - WIFE (V53)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Change in labor income - WIFE 1968 Labor income of Wife (V516) - 1967 Labor "
@@ -46676,7 +46679,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1967-68 Change in total hours of work by family - Paid plus unpaid This error does "
         "not affect the variable for those families in which there were no earners other "
         "than Head and Wife.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Change in transfer income - FAMILY 1968 Family transfer income (V523 + V525 "
@@ -46685,77 +46688,77 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "1967-68 PERCENT change in hours of work for money - HEAD (V942 / V47) x 100",
-        "DDDDDDDDDDDDDDDD",
+        "DWDDNDDDDDDDDDDD",
     ),
     (
         "1967-68 PERCENT change in money income- FAMILY (V919 / V81) x 100",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         '1967-68 Percent change in "Well-Offness" (Money income basis) (V927 / V435) x 100 '
         "Note that the computation of V435 uses V31, Annual Food Needs Standard, which is in "
         "1967 dollars.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         '1967-68 Percent change in "Well-Offness" (Net real income basis) (V936 / V436) x '
         "100",
-        "DDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDD",
     ),
     (
         '1967-68 Percent change in "Well-Offness" (Net real income net of housing basis) '
         "(V940 / V437) x 100",
-        "DDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in family food consumption (V960 / V334) x 100",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in family food standard (V957 / V31) x 100 Note that the "
         "computation of V957 uses V494, Annual Food Needs Standard, which is in 1967 "
         "dollars, as is V31.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in food consumption/ Food needs (V962 / V336) x 100 Note "
         "that the computation of V336 makes use of V31, which is in 1967 dollars.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in hourly earnings - HEAD (V953 / V337) x 100",
-        "DDDDDDDDDDDDD",
+        "DWDDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in labor income HEAD (V910 / V74) x 100",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in leisure per major adult (V951 / V73) x 100",
-        "DDDDDDDDDDDDD",
+        "DWDDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in money income/ Needs ratio (V923 / V325) x 100 Note that "
         "the computation of V325 uses V31, Annual Food Needs Standard, which is in 1967 "
         "dollars.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in net real income FAMILY (V932 / V324) x 100",
-        "DDDDDDDDDDDDD",
+        "DWDDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in net real income/Needs (V934 / V326) x 100 Note that the "
         "computation of V326 uses V31, Annual Food Needs Standard, which is in 1967 dollars.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in real income net of housing costs (V938 / V324) x 100",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
     (
         "1967-68 Percent change in taxable income of HEAD AND WIFE (V915 / V76) x 100",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
     (
         "1968 Cost of housing for family V848 does not include the amount spent for "
@@ -46861,19 +46864,19 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1968 Hours of home production excluding hours spent raising and growing food (1969 "
         "variable) (unrevised V464) Excludes 1 hour for every dollar saved growing food for "
         "those where neither their first nor second occupations was farmer.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1968 Hours of nonleisure (Unrevised V491) (1969 Variable) This variable not "
         "comparable to the corresponding 1968 variable since journey to work included in "
         "nonleisure in the 1969 variable",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1968 Hours of work by family - Paid and unpaid (Excluding hours of travel to work) "
         "[Due to the omission of V520 (Hours of work for pay by others in FU), V867 is not "
         "comparable to the similar variable from the first wave (V335).",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1968 ID Number of Householder Values for this variable in the range 0001-2930 "
@@ -47016,7 +47019,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "work by Head and Wife) Sum of the following variables: V867 Hours of work by family "
         "- paid and unpaid (excluding hours of travel to work by Head and Wife) V473 Hours "
         "of travel to work - HEAD V479 Hours of travel to work - WIFE",
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDWDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1968 Total work hours - Family (V867) - 1967 Total work hours - Family (V335) Due "
@@ -47062,7 +47065,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1968 hours of free help from outside family unit Calculation assumes help from "
         "outside family was worth $1.00 per hour.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDD",
     ),
     ("1968-1969 Change in Marital Status", "DDDDD"),
     ("1968-69 Change in ambition-aspiration (V900-V423) +4", "DDDDDD"),
@@ -47276,12 +47279,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1969 hours of free help from outside family unit Calculation assumes help from "
         "outside family was worth $1.00 per hour.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1969 hours of nonleisure comparable to 1967 hours of nonleisure This variable is "
         "comparable to 1967 variable since it doesn't include travel to work time.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "1969 hours of work by family - paid and unpaid (EXCLUDING HOURS OF TRAVEL TO WORK "
@@ -47291,7 +47294,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "V1158 Hours of unpaid housework - OTHERS (other than Head or Wife of Head) V1507 "
         "Revised home production hours V1221 Hours of work for money - OTHERS All the above "
         "component variables refer to the entire family and are for the year 1969.",
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDWDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     ("1969 interview number", "DDD"),
     (
@@ -47299,7 +47302,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "TO WORK BY HEAD AND WIFE) Sum of the following variables: V1563 Hours of work by "
         "family - paid and unpaid (excluding hours of travel to work by Head and Wife) V1146 "
         "Hours of travel to work - HEAD V1152 Hours of travel to work - WIFE",
-        "DDDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDWDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     ("1969-1970 Change in Marital Status", "DDDDD"),
     (
@@ -47443,12 +47446,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1970 hours of free help from outside family unit Calculation assumes help from "
         "outside family was worth $1.00 per hour.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1970 hours of nonleisure comparable to 1967 hours of nonleisure This variable is "
         "comparable to 1967 variable since it doesn't include travel to work time.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "1970 hours of work by family - paid and unpaid (Excluding hours of travel to work "
@@ -47458,7 +47461,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "V1859 Hours of unpaid housework - OTHERS (other than Head or Wife of Head) V2219 "
         "Revised home production hours V1923 Hours of work for money - OTHERS All the above "
         "component variables refer to the entire family and are for the year 1970.",
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDWDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1970 housing and neighborhood quality Variables V1593-V1603 are indexes created by "
@@ -47487,7 +47490,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "work by Head and Wife) Sum of the following variables: V2275 Hours of work by "
         "family - paid and unpaid (excluding hours of travel to work by Head and Wife) V1847 "
         "Hours of travel to work - HEAD V1853 Hours of travel to work - WIFE",
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDWDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1970 trust or hostility: respondent Does not get angry easily (V1446 = 5) Matters "
@@ -47543,7 +47546,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1971 Hours of free help from outside family unit Calculation assumes help from "
         "outside family was worth $1.00 per hour.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDD",
     ),
     ("1971 Interview Number", "DDD"),
     (
@@ -47683,7 +47686,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "comparable to 1967 variable since it doesn't include travel to work time V2937 - "
         "V2447 - V2453 Where V2937 = Total nonleisure in 1971 and V2447 = Head's travel to "
         "work time and V2453 = Wife's travel to work time",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1971 hours of work by family - paid and unpaid (Excluding hours of travel to work "
@@ -47695,7 +47698,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "component variables refer to the entire family and are for the year 1971 The hours "
         "of travel to work of Head and Wife are not included, making this variable "
         "comparable to the corresponding variable for 1967.",
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDWDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1971 housing and neighborhood quality Variables 2305-2315 are indices created by "
@@ -47714,7 +47717,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "to work by Head and Wife) Sum of the following variables: V2902 Hours of work by "
         "family - paid and unpaid (Excluding hours of travel to work by Head and Wife) V2447 "
         "Hours of travel to work - HEAD V2453 Hours of travel to work - WIFE",
-        "DDDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDWDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1971 trust or hostility: respondent Does not get angry easily (V2157 = 5) Matters "
@@ -48722,35 +48725,35 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1983 Head's Annual Hours Working for Money in 1982 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all jobs; all missing data "
         "were assigned.",
-        "DDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Head's Annual Hours of Housework (Question J6) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent at the time of the "
         "interview on housework by the Head; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Head's Annual Hours of Illness in 1982 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Head's Annual Hours of Unemployment in 1982 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1982 The "
         "values for this variable in the range 0001-2080 represent the actual annual hours; "
         "all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Head's Annual Hours on Strike in 1982 The values for this variable represent "
         "the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1983 Head's Completed Education Level This variable is comparable to those of early "
@@ -48891,37 +48894,37 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1983 Wife's/\"Wife's\" Annual Hours Working for Money in 1982 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Wife's/\"Wife's\" Annual Hours of Housework (Question J5) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent on "
         'housework at the time of the interview by the Wife/"Wife"; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Wife's/\"Wife's\" Annual Hours of Illness in 1982 The values for this variable "
         "in the range 0001-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Wife's/\"Wife's\" Annual Hours of Unemployment in 1982 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1982 The values for this variable in the range 0001-2080 represent the actual "
         "annual hours; all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1983 Wife's/\"Wife's\" Annual Hours on Strike in 1982 The values for this variable "
         "represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1983 Wife's/\"Wife's\" Completed Education Level This variable is comparable to "
@@ -48987,47 +48990,47 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1984 Head's Annual Hours Out of the Labor Force in 1983 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Head's Annual Hours Worked on Extra Jobs in 1983 The values for this variable "
         "in the range 0001-5840 represent the annualized work hours on all extra jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Head's Annual Hours Worked on Main Job in 1983 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Head's Annual Hours of Housework (Question J3) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent at the time of the "
         "interview on housework by the Head; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Head's Annual Hours of Illness in 1983 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Head's Annual Hours of Unemployment in 1983 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1983 The "
         "values for this variable in the range 0001-2080 represent the actual annual hours; "
         "all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Head's Annual Hours on Strike in 1983 The values for this variable represent "
         "the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1984 Head's Completed Education Level This variable is comparable to those of early "
@@ -49095,7 +49098,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1984 Head's Total Annual Work Hours in 1983 The values for this variable in the "
         "range 0001-5840 represent the total annual work hours on all jobs; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 ID Number (V10002) of the Main Family Interview from which this Splitoff "
@@ -49179,49 +49182,49 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1984 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1983 The values for "
         "this variable in the range 0001-2080 represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1983 The values for "
         "this variable in the range 0001-5840 represent the annualized work hours on all "
         "extra jobs; all missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1983 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Wife's/\"Wife's\" Annual Hours of Housework (Question J2) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent on "
         'housework at the time of the interview by the Wife/"Wife"; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Wife's/\"Wife's\" Annual Hours of Illness in 1983 The values for this variable "
         "in the range 0001-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Wife's/\"Wife's\" Annual Hours of Unemployment in 1983 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1983 The values for this variable in the range 0001-2080 represent the actual "
         "annual hours; all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Wife's/\"Wife's\" Annual Hours on Strike in 1983 The values for this variable "
         "represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1984 Wife's/\"Wife's\" Completed Education Level This variable is comparable to "
@@ -49240,7 +49243,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1984 Wife's/\"Wife's\" Total Annual Work Hours in 1983 The values for this variable "
         "in the range 0001-5840 represent the actual total annual hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1984 Wife's/\"Wife's\" Wages and Other Labor Income in 1983 (Question K50) The "
@@ -49289,47 +49292,47 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1985 Head's Annual Hours Out of the Labor Force in 1984 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Head's Annual Hours Worked on Extra Jobs in 1984 The values for this variable "
         "in the range 0001-5840 represent the annual work hours on all extra jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Head's Annual Hours Worked on Main Job in 1984 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Head's Annual Hours of Housework (Question H1) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent at the time of the "
         "interview on housework by the Head; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Head's Annual Hours of Illness in 1984 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Head's Annual Hours of Unemployment in 1984 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1984 The "
         "values for this variable in the range 0001-2080 represent the actual annual hours; "
         "all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Head's Annual Hours on Strike in 1984 The values for this variable represent "
         "the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1985 Head's Completed Education Level This variable is not strictly comparable to "
@@ -49398,7 +49401,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1985 Head's Total Annual Work Hours in 1984 The values for this variable in the "
         "range 0001-5840 represent the total annual work hours on all jobs including "
         "overtime; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 ID Number (V11102) of the Main Family Interview from which this Splitoff "
@@ -49503,49 +49506,49 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1985 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1984 The values for "
         "this variable in the range 0001-2080 represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1984 The values for "
         "this variable in the range 0001-5840 represent the annualized work hours on all "
         "extra jobs; all missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1984 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Wife's/\"Wife's\" Annual Hours of Housework (Question P1) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent on "
         'housework at the time of the interview by the Wife/"Wife"; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Wife's/\"Wife's\" Annual Hours of Illness in 1984 The values for this variable "
         "in the range 0001-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Wife's/\"Wife's\" Annual Hours of Unemployment in 1984 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1984 The values for this variable in the range 0001-2080 represent the actual "
         "annual hours; all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Wife's/\"Wife's\" Annual Hours on Strike in 1984 The values for this variable "
         "represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1985 Wife's/\"Wife's\" Completed Education Level This variable is not strictly "
@@ -49564,7 +49567,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1985 Wife's/\"Wife's\" Total Annual Work Hours in 1984 The values for this variable "
         "in the range 0001-5840 represent the actual total annual hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1985 Wife's/\"Wife's\" Wages and Other Labor Income in 1984 (Question F52) The "
@@ -49589,58 +49592,58 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1986 Head's Annual Hours Out of the Labor Force in 1985 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Annual Hours Worked on Extra Jobs in 1985 The values for this variable "
         "in the range 0001-5840 represent the annual work hours on all extra jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Annual Hours Worked on Main Job in 1985 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Annual Hours of Housework (Question F3) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent by the Head on "
         "housework at the time of the interview; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Annual Hours of Illness in 1985 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Annual Hours of Overtime in 1985 The values for this variable in the "
         "range 0001-5840 represent the annual overtime hours worked on all main jobs if "
         "reported separately from regular work hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Annual Hours of Travel to Work in 1985 The values for this variable in "
         "the range 001-998 represent annualized hours spent traveling to and from work.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Annual Hours of Unemployment in 1985 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1985 The "
         "values for this variable in the range 0001-2080 represent the actual annual hours; "
         "all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Annual Hours on Strike in 1985 The values for this variable represent "
         "the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's Completed Education Level This variable is not strictly comparable to "
@@ -49709,7 +49712,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1986 Head's Total Annual Work Hours in 1985 The values for this variable in the "
         "range 0001-5840 represent the total annual work hours on all jobs including "
         "overtime; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Head's and Wife's/\"Wife's\" Alimony Paid in 1985 The values for this "
@@ -49839,62 +49842,62 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1986 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1985 The values for "
         "this variable in the range 0001-2080 represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1985 The values for "
         "this variable in the range 0001-5840 represent the annualized work hours on all "
         "extra jobs; all missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1985 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Annual Hours of Housework (Question F2) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent by the "
         'Wife/"Wife" on housework at the time of the interview; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Annual Hours of Illness in 1985 The values for this variable "
         "in the range 0001-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Annual Hours of Overtime in 1985 The values for this "
         "variable in the range 0001-5840 represent the annual overtime hours worked on all "
         "main jobs if reported separately from regular work hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Annual Hours of Travel to Work in 1985 The values for this "
         "variable in the range 001-998 represent annualized hours spent traveling to and "
         "from work.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Annual Hours of Unemployment in 1985 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1985 The values for this variable in the range 0001-2080 represent the actual "
         "annual hours; all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Annual Hours on Strike in 1985 The values for this variable "
         "represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Completed Education Level This variable is not strictly "
@@ -49913,7 +49916,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1986 Wife's/\"Wife's\" Total Annual Work Hours in 1985 The values for this variable "
         "in the range 0001-5840 represent the actual total annual hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1986 Wife's/\"Wife's\" Wages and Other Labor Income in 1985 (Question G52) The "
@@ -49942,53 +49945,53 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1987 Head's Annual Hours Out of the Labor Force in 1986 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's Annual Hours Worked on Extra Jobs in 1986 The values for this variable "
         "in the range 0001-5840 represent the annual work hours on all extra jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's Annual Hours Worked on Main Job in 1986 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's Annual Hours of Housework (Question F3) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent by the Head on "
         "housework at the time of the interview; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's Annual Hours of Illness in 1986 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's Annual Hours of Overtime in 1986 The values for this variable in the "
         "range 0001-5840 represent the annual overtime hours worked on all main jobs if "
         "reported separately from regular work hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's Annual Hours of Unemployment in 1986 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1986 The "
         "values for this variable in the range 0001-2080 represent the actual annual hours; "
         "all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's Annual Hours on Strike in 1986 The values for this variable represent "
         "the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's Completed Education Level This variable is not strictly comparable to "
@@ -50057,7 +50060,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1987 Head's Total Annual Work Hours in 1986 The values for this variable in the "
         "range 0001-5840 represent the total annual work hours on all jobs including "
         "overtime; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Head's and Wife's/\"Wife's\" Alimony Paid in 1986 The values for this "
@@ -50188,55 +50191,55 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1987 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1986 The values for "
         "this variable in the range 0001-2080 represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1986 The values for "
         "this variable in the range 0001-5840 represent the annualized work hours on all "
         "extra jobs; all missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1986 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Annual Hours of Housework (Question F2) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent by the "
         'Wife/"Wife" on housework at the time of the interview; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Annual Hours of Illness in 1986 The values for this variable "
         "in the range 1-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Annual Hours of Overtime in 1986 The values for this "
         "variable represent the annual overtime hours worked on all main jobs if reported "
         "separately from regular work hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Annual Hours of Unemployment in 1986 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1986 The values for this variable represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Annual Hours on Strike in 1986 The values for this variable "
         "represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Completed Education Level This variable is not strictly "
@@ -50255,7 +50258,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1987 Wife's/\"Wife's\" Total Annual Work Hours in 1986 The values for this variable "
         "in the range 0001-5840 represent the actual total annual hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1987 Wife's/\"Wife's\" Wages and Other Labor Income in 1986 (Question G52) The "
@@ -50284,53 +50287,53 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1988 Head's Annual Hours Out of the Labor Force in 1987 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's Annual Hours Worked on Extra Jobs in 1987 The values for this variable "
         "in the range 0001-5840 represent the annual work hours on all extra jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's Annual Hours Worked on Main Job in 1987 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's Annual Hours of Housework (Question F3) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent by the Head on "
         "housework at the time of the interview; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's Annual Hours of Illness in 1987 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's Annual Hours of Overtime in 1987 The values for this variable in the "
         "range 0001-5840 represent the annual overtime hours worked on all main jobs if "
         "reported separately from regular work hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's Annual Hours of Unemployment in 1987 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1987 The "
         "values for this variable represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's Annual Hours on Strike in 1987 The values for this variable represent "
         "the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's Completed Education Level This variable is not strictly comparable to "
@@ -50399,7 +50402,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1988 Head's Total Annual Work Hours in 1987 The values for this variable in the "
         "range 0001-5840 represent the total annual work hours on all jobs including "
         "overtime; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Head's and Wife's/\"Wife's\" Alimony Paid in 1987 (G116 and G122) The values "
@@ -50546,56 +50549,56 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1988 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1987 The values for "
         "this variable in the range 0001-2080 represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1987 The values for "
         "this variable in the range 0001-5840 represent the annualized work hours on all "
         "extra jobs; all missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1987 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Annual Hours of Housework (Question F2) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent by the "
         'Wife/"Wife" on housework at the time of the interview; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Annual Hours of Illness in 1987 The values for this variable "
         "in the range 0001-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Annual Hours of Overtime in 1987 The values for this "
         "variable in the range 0001-5840 represent the annual overtime hours worked on all "
         "main jobs if reported separately from regular work hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Annual Hours of Unemployment in 1987 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1987 The values for this variable represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Annual Hours on Strike in 1987 The values for this variable "
         "represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Completed Education Level This variable is not strictly "
@@ -50614,7 +50617,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1988 Wife's/\"Wife's\" Total Annual Work Hours in 1987 The values for this variable "
         "in the range 0001-5840 represent the actual total annual hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1988 Wife's/\"Wife's\" Wages and Other Labor Income in 1987 (Question G52) The "
@@ -50664,53 +50667,53 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1989 Head's Annual Hours Out of the Labor Force in 1988 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's Annual Hours Worked on Extra Jobs in 1988 The values for this variable "
         "in the range 0001-5840 represent the annual work hours on all extra jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's Annual Hours Worked on Main Job in 1988 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's Annual Hours of Housework (Question F3) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent by the Head on "
         "housework at the time of the interview; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's Annual Hours of Illness in 1988 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's Annual Hours of Overtime in 1988 The values for this variable in the "
         "range 0001-5840 represent the annual overtime hours worked on all main jobs if "
         "reported separately from regular work hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's Annual Hours of Unemployment in 1988 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1988 The "
         "values for this variable in the range 0001-2080 represent the actual annual hours; "
         "all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's Annual Hours on Strike in 1988 The values for this variable in the "
         "range 0001-2080 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's Completed Education Level This variable is not strictly comparable to "
@@ -50779,7 +50782,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1989 Head's Total Annual Work Hours in 1988 The values for this variable in the "
         "range 0001-5840 represent the total annual work hours on all jobs including "
         "overtime; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Head's and Wife's/\"Wife's\" Alimony Paid in 1988 (G116 and G122) The values "
@@ -50906,57 +50909,57 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1989 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1988 The values for "
         "this variable in the range 0001-2080 represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1988 The values for "
         "this variable in the range 0001-5840 represent the annualized work hours on all "
         "extra jobs; all missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1988 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Annual Hours of Housework (Question F2) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent by the "
         'Wife/"Wife" on housework at the time of the interview; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Annual Hours of Illness in 1988 The values for this variable "
         "in the range 0001-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Annual Hours of Overtime in 1988 The values for this "
         "variable in the range 0001-5840 represent the annual overtime hours worked on all "
         "main jobs if reported separately from regular work hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Annual Hours of Unemployment in 1988 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1988 The values for this variable in the range 0001-2080 represent the actual "
         "annual hours; all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Annual Hours on Strike in 1988 The values for this variable "
         "in the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Completed Education Level This variable is not strictly "
@@ -50975,7 +50978,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1989 Wife's/\"Wife's\" Total Annual Work Hours in 1988 The values for this variable "
         "in the range 0001-5840 represent the actual total annual hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1989 Wife's/\"Wife's\" Wages and Other Labor Income in 1988 (Question G52) The "
@@ -51010,53 +51013,53 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1990 Head's Annual Hours Out of the Labor Force in 1989 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's Annual Hours Worked on Extra Jobs in 1989 The values for this variable "
         "in the range 0001-5840 represent the annual work hours on all extra jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's Annual Hours Worked on Main Job in 1989 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's Annual Hours of Housework (Question F3) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent by the Head on "
         "housework at the time of the interview; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's Annual Hours of Illness in 1989 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's Annual Hours of Overtime in 1989 The values for this variable in the "
         "range 0001-5840 represent the annual overtime hours worked on all main jobs if "
         "reported separately from regular work hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's Annual Hours of Unemployment in 1989 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1989 The "
         "values for this variable in the range 0001-2080 represent the actual annual hours; "
         "all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's Annual Hours on Strike in 1989 The values for this variable represent "
         "the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's Completed Education Level This variable is not strictly comparable to "
@@ -51125,7 +51128,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1990 Head's Total Annual Work Hours in 1989 The values for this variable in the "
         "range 0001-5840 represent the total annual work hours on all jobs including "
         "overtime; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Head's and Wife's/\"Wife's\" Alimony Paid in 1989 (G116 and G122) The values "
@@ -51251,57 +51254,57 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1990 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1989 The values for "
         "this variable in the range 0001-2080 represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1989 The values for "
         "this variable in the range 0001-5840 represent the annualized work hours on all "
         "extra jobs; all missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1989 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Annual Hours of Housework (Question F2) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent by the "
         'Wife/"Wife" on housework at the time of the interview; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Annual Hours of Illness in 1989 The values for this variable "
         "in the range 0001-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Annual Hours of Overtime in 1989 The values for this "
         "variable in the range 0001-5840 represent the annual overtime hours worked on all "
         "main jobs if reported separately from regular work hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Annual Hours of Unemployment in 1989 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1989 The values for this variable in the range 0001-2080 represent the actual "
         "annual hours; all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Annual Hours on Strike in 1989 The values for this variable "
         "in the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Completed Education Level This variable is not strictly "
@@ -51320,7 +51323,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1990 Wife's/\"Wife's\" Total Annual Work Hours in 1989 The values for this variable "
         "in the range 0001-5840 represent the actual total annual hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1990 Wife's/\"Wife's\" Wages and Other Labor Income in 1989 (Question G52) The "
@@ -51355,53 +51358,53 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1991 Head's Annual Hours Out of the Labor Force in 1990 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's Annual Hours Worked on Extra Jobs in 1990 The values for this variable "
         "in the range 0001-5840 represent the annual work hours on all extra jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's Annual Hours Worked on Main Job in 1990 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's Annual Hours of Housework (Question F3) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent by the Head on "
         "housework at the time of the interview; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's Annual Hours of Illness in 1990 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's Annual Hours of Overtime in 1990 The values for this variable in the "
         "range 0001-5840 represent the annual overtime hours worked on all main jobs if "
         "reported separately from regular work hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's Annual Hours of Unemployment in 1990 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1990 The "
         "values for this variable in the range 0001-2080 represent the actual annual hours; "
         "all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's Annual Hours on Strike in 1990 The values for this variable represent "
         "the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's Completed Education Level This variable is identical to the "
@@ -51469,7 +51472,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1991 Head's Total Annual Work Hours in 1990 The values for this variable in the "
         "range 0001-5840 represent the total annual work hours on all jobs including "
         "overtime; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Head's and Wife's/\"Wife's\" Alimony Paid in 1990 (G116 and G122) The values "
@@ -51587,57 +51590,57 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1991 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1990 The values for "
         "this variable in the range 0001-2080 represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1990 The values for "
         "this variable in the range 0001-5840 represent the annualized work hours on all "
         "extra jobs; all missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1990 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Annual Hours of Housework (Question F2) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent by the "
         'Wife/"Wife" on housework at the time of the interview; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Annual Hours of Illness in 1990 The values for this variable "
         "in the range 0001-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Annual Hours of Overtime in 1990 The values for this "
         "variable in the range 0001-5840 represent the annual overtime hours worked on all "
         "main jobs if reported separately from regular work hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Annual Hours of Unemployment in 1990 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1990 The values for this variable in the range 0001-2080 represent the actual "
         "annual hours; all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Annual Hours on Strike in 1990 The values for this variable "
         "in the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Completed Education Level This variable is identical to the "
@@ -51655,7 +51658,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1991 Wife's/\"Wife's\" Total Annual Work Hours in 1990 The values for this variable "
         "in the range 0001-5840 represent the actual total annual hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1991 Wife's/\"Wife's\" Wages and Other Labor Income in 1990 (Question G52) The "
@@ -51690,53 +51693,53 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1992 Head's Annual Hours Out of the Labor Force in 1991 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's Annual Hours Worked on Extra Jobs in 1991 The values for this variable "
         "in the range 0001-5840 represent the annual work hours on all extra jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's Annual Hours Worked on Main Job in 1991 The values for this variable in "
         "the range 0001-5840 represent the annual work hours on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's Annual Hours of Housework (Question F3) The values for this variable in "
         "the range 0001-4368 represent the actual annualized hours spent by the Head on "
         "housework at the time of the interview; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's Annual Hours of Illness in 1991 The values for this variable in the "
         "range 0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's Annual Hours of Overtime in 1991 The values for this variable in the "
         "range 0001-5840 represent the annual overtime hours worked on all main jobs if "
         "reported separately from regular work hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's Annual Hours of Unemployment in 1991 The values for this variable in "
         "the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1991 The "
         "values for this variable in the range 0001-2080 represent the actual annual hours; "
         "all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's Annual Hours on Strike in 1991 The values for this variable in the "
         "range 0001-2080 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's Completed Education Level Values in the range 01-16 represent the "
@@ -51805,7 +51808,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1992 Head's Total Annual Work Hours in 1991 The values for this variable in the "
         "range 0001-5840 represent the total annual work hours on all jobs including "
         "overtime; all missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Head's and Wife's/\"Wife's\" Alimony Paid in 1991 (G116 and G122) The values "
@@ -51920,57 +51923,57 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1992 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1991 The values for "
         "this variable in the range 0001-2080 represent the actual annual hours; all missing "
         "data were assigned.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1991 The values for "
         "this variable in the range 0001-5840 represent the annualized work hours on all "
         "extra jobs; all missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1991 The values for this "
         "variable in the range 0001-5840 represent the annual work hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Annual Hours of Housework (Question F2) The values for this "
         "variable in the range 0001-4368 represent the actual annualized hours spent by the "
         'Wife/"Wife" on housework at the time of the interview; all missing data were '
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Annual Hours of Illness in 1991 The values for this variable "
         "in the range 0001-3280 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Annual Hours of Overtime in 1991 The values for this "
         "variable in the range 0001-5840 represent the annual overtime hours worked on all "
         "main jobs if reported separately from regular work hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Annual Hours of Unemployment in 1991 The values for this "
         "variable in the range 0001-2080 represent the actual annual hours; all missing data "
         "were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1991 The values for this variable in the range 0001-2080 represent the actual "
         "annual hours; all missing data were assigned.",
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Annual Hours on Strike in 1991 The values for this variable "
         "in the range 0001-2080 represent the actual annual hours; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Completed Education Level Values in the range 01-16 "
@@ -51989,7 +51992,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1992 Wife's/\"Wife's\" Total Annual Work Hours in 1991 The values for this variable "
         "in the range 0001-5840 represent the actual total annual hours on all jobs; all "
         "missing data were assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDNNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1992 Wife's/\"Wife's\" Wages and Other Labor Income in 1991 (Question G52) The "
@@ -52020,43 +52023,43 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1993 Head's Annual Hours Out of the Labor Force in 1992 The values for this "
         "variable represent the actual annual hours.",
-        "DDDDDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDDDDWDDDDDDDDD",
     ),
     (
         "1993 Head's Annual Hours Worked on Extra Jobs in 1992 The values for this variable "
         "represent the annual work hours on all extra jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "1993 Head's Annual Hours Worked on Main Job in 1992 The values for this variable "
         "represent the annual work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "1993 Head's Annual Hours of Housework (Question F3) The values for this variable "
         "represent the actual annualized hours spent by the Head on housework at the time of "
         "the interview.",
-        "DDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1993 Head's Annual Hours of Illness in 1992 The values for this variable represent "
         "the actual annual hours.",
-        "DDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDD",
     ),
     (
         "1993 Head's Annual Hours of Unemployment in 1992 The values for this variable "
         "represent the actual annual hours.",
-        "DDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDD",
     ),
     (
         "1993 Head's Annual Hours of Work Missed Because Someone Else was Ill in 1992 The "
         "values for this variable represent the actual annual hours.",
-        "DDDDDDDDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDDDDDDDWDDDDDDDDD",
     ),
     (
         "1993 Head's Annual Hours on Strike in 1992 The values for this variable represent "
         "the actual annual hours.",
-        "DDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDD",
     ),
     (
         "1993 Head's Asset Portion of Farm Income in 1992 (Question G4) The data coded here "
@@ -52149,7 +52152,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1993 Head's Total Annual Work Hours in 1992 The values for this variable represent "
         "the total annual work hours on all jobs including overtime.",
-        "DDDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1993 Interview Number The values for this variable represent the 1993 interview "
@@ -52194,43 +52197,43 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1993 Wife's/\"Wife's\" Annual Hours Out of the Labor Force in 1992 The values for "
         "this variable represent the actual annual hours.",
-        "DDDDDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDDDDWDDDDDDDDD",
     ),
     (
         "1993 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1992 The values for "
         "this variable represent the annualized work hours on all extra jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "1993 Wife's/\"Wife's\" Annual Hours Worked on Main Job in 1992 The values for this "
         "variable represent the annual work hours on all jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "1993 Wife's/\"Wife's\" Annual Hours of Housework (Question F2) The values for this "
         'variable represent the actual annualized hours spent by the wife/"wife" on '
         "housework at the time of the interview.",
-        "DDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1993 Wife's/\"Wife's\" Annual Hours of Illness in 1992 The values for this variable "
         "represent the actual annual hours.",
-        "DDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDD",
     ),
     (
         "1993 Wife's/\"Wife's\" Annual Hours of Unemployment in 1992 The values for this "
         "variable represent the actual annual hours.",
-        "DDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDD",
     ),
     (
         "1993 Wife's/\"Wife's\" Annual Hours of Work Missed Because Someone Else was Ill in "
         "1992 The values for this variable represent the actual annual hours.",
-        "DDDDDDDDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDDDDDDDWDDDDDDDDD",
     ),
     (
         "1993 Wife's/\"Wife's\" Annual Hours on Strike in 1992 The values for this variable "
         "represent the actual annual hours.",
-        "DDDDDDDDWDDDDDDDDD",
+        "DDDWDDDDWDDDDDDDDD",
     ),
     (
         "1993 Wife's/\"Wife's\" Completed Education Level This variable is almost identical "
@@ -52240,7 +52243,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1993 Wife's/\"Wife's\" Total Annual Work Hours in 1992 The values for this variable "
         "represent the actual total annual hours on all jobs.",
-        "DDDDDDDDWDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         '1993 Wife/"Wife"\'s 1992 Other Asset Income (Question G59d)',
@@ -52336,23 +52339,23 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1994 Head's Total Annual Work Hours in 1993 The values for this variable represent "
         "Head's total annual work hours on all jobs, including overtime.",
-        "DDDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1994 Head's Total Extra Job Hours in 1993 The values for this variable represent "
         "the annual hours worked on all extra jobs.",
-        "DDDDDDDDWDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "1994 Head's Total Overtime Hours in 1993 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1994 Head's Total Weekly Main Job Work Hours in 1993 The values for this variable "
         "represent Head's total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1994 Head's Total Weeks Out of the Labor Force in 1993 The values for this variable "
@@ -52472,7 +52475,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1994 Wife's/\"Wife's\" Annual Hours Worked in 1993 The values for this variable "
         "represent Wife's/\"Wife's\" total annual hours on all jobs, including overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDD",
     ),
     (
         "1994 Wife's/\"Wife's\" Asset Part of Business Income from Unincorporated Businesses "
@@ -52489,18 +52492,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1994 Wife's/\"Wife's\" Total Extra Job Hours in 1993 The values for this variable "
         "represent the annual extra job hours worked on all jobs.",
-        "DDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1994 Wife's/\"Wife's\" Total Overtime Hours in 1993 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1994 Wife's/\"Wife's\" Total Weekly Main Job Work Hours in 1993 The values for this "
         "variable represent Wife/\"Wife's: total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1994 Wife's/\"Wife's\" Total Weeks Out of the Labor Force in 1993 The values for "
@@ -52573,7 +52576,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1995 Head's Annual Hours Worked in 1994 The values for this variable represent "
         "Head's total annual work hours on all jobs, including overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1995 Head's Asset Part of Business Income from Unincorporated Businesses in 1994 "
@@ -52629,18 +52632,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1995 Head's Total Extra Job Hours in 1994 The values for this variable represent "
         "the annual extra job hours.",
-        "DDDDDDDDWDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDD",
     ),
     (
         "1995 Head's Total Overtime Hours in 1994 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1995 Head's Total Weekly Main Job Work Hours in 1994 The values for this variable "
         "represent Head's total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1995 Head's Total Weeks Out of the Labor Force in 1994 The values for this variable "
@@ -52756,12 +52759,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1995 Wife's/\"Wife's\" Annual Hours Worked in 1994 The values for this variable "
         "represent Wife's/\"Wife's\" actual total annual hours on all jobs, including "
         "overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1995 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1994 The values for "
         "this variable represent the annualized work hours on all extra jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "1995 Wife's/\"Wife's\" Asset Part of Business Income from Unincorporated Businesses "
@@ -52779,12 +52782,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1995 Wife's/\"Wife's\" Total Overtime Hours in 1994 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1995 Wife's/\"Wife's\" Total Weekly Main Job Work Hours in 1994 The values for this "
         "variable represent Wife's/\"Wife's\" total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1995 Wife's/\"Wife's\" Total Weeks Out of the Labor Force in 1994 The values for "
@@ -52852,7 +52855,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1996 Head's Annual Hours Worked in 1995 The values for this variable represent "
         "Head's total annual work hours on all jobs, including overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1996 Head's Asset Part of Business Income from Unincorporated Businesses in 1995 "
@@ -52908,18 +52911,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1996 Head's Total Extra Job Hours in 1995 The values for this variable represent "
         "the annual hours worked on all extra jobs.",
-        "DDDDDDDDWDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "1996 Head's Total Overtime Hours in 1995 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1996 Head's Total Weekly Main Job Work Hours in 1995 The values for this variable "
         "represent Head's total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1996 Head's Total Weeks Out of the Labor Force in 1995 The values for this variable "
@@ -53030,12 +53033,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1996 Wife's/\"Wife's\" Annual Hours Worked in 1995 The values for this variable "
         "represent Wife's/\"Wife's\" actual total annual hours on all jobs, including "
         "overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1996 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1995 The values for "
         "this variable represent the annualized work hours on all extra jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "1996 Wife's/\"Wife's\" Asset Part of Business Income from Unincorporated Businesses "
@@ -53053,12 +53056,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1996 Wife's/\"Wife's\" Total Overtime Hours in 1995 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1996 Wife's/\"Wife's\" Total Weekly Main Job Work Hours in 1995 The values for this "
         "variable represent Wife's/\"Wife's\" total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1996 Wife's/\"Wife's\" Total Weeks Out of the Labor Force in 1995 The values for "
@@ -53122,7 +53125,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1997 Head's Annual Hours Worked in 1996 The values for this variable represent "
         "Head's total annual work hours on all jobs, including overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1997 Head's Asset Part of Business Income from Unincorporated Businesses in 1996 "
@@ -53177,18 +53180,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1997 Head's Total Extra Job Work Hours in 1996 The values for this variable "
         "represent the annual work hours on all extra jobs in 1996.",
-        "DDDDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1997 Head's Total Overtime Hours in 1996 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1997 Head's Total Weekly Main Job Work Hours in 1996 The values for this variable "
         "represent Head's total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1997 Head's Total Weeks Out of the Labor Force in 1996 The values for this variable "
@@ -53273,12 +53276,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1997 Wife's/\"Wife's\" Annual Hours Worked in 1996 The values for this variable "
         "represent Wife's/\"Wife's\" actual total annual hours on all jobs, including "
         "overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1997 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1996 The values for "
         "this variable represent the annualized work hours on all extra jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "1997 Wife's/\"Wife's\" Asset Part of Business Income from Unincorporated Businesses "
@@ -53296,12 +53299,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1997 Wife's/\"Wife's\" Total Overtime Hours in 1996 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1997 Wife's/\"Wife's\" Total Weekly Main Job Work Hours in 1996 The values for this "
         "variable represent Wife's/\"Wife's\" total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1997 Wife's/\"Wife's\" Total Weeks Out of the Labor Force in 1996 The values for "
@@ -53370,7 +53373,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1999 Head's Annual Hours Worked in 1998 The values for this variable represent "
         "Head's total annual work hours on all jobs, including overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1999 Head's Asset Part of Business Income from Unincorporated Businesses in 1998 "
@@ -53426,18 +53429,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1999 Head's Total Extra Job Work Hours in 1998 The values for this variable "
         "represent the annual hours worked on all extra jobs in 1998.",
-        "DDDDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1999 Head's Total Overtime Hours in 1998 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1999 Head's Total Weekly Main Job Work Hours in 1998 The values for this variable "
         "represent Head's total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1999 Head's Total Weeks Out of the Labor Force in 1998 The values for this variable "
@@ -53537,12 +53540,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "1999 Wife's/\"Wife's\" Annual Hours Worked in 1998 The values for this variable "
         "represent Wife's/\"Wife's\" actual total annual hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDD",
     ),
     (
         "1999 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 1998 The values for "
         "this variable represent the annual hours worked on all extra jobs in 1998.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "1999 Wife's/\"Wife's\" Labor Part of Business Income from Unincorporated Businesses "
@@ -53554,12 +53557,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1999 Wife's/\"Wife's\" Total Overtime Hours in 1998 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "1999 Wife's/\"Wife's\" Total Weekly Main Job Work Hours in 1998 The values for this "
         "variable represent Head's total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "1999 Wife's/\"Wife's\" Total Weeks Out of the Labor Force in 1998 The values for "
@@ -53668,7 +53671,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "2001 Head's Annual Hours Worked in 2000 The values for this variable represent "
         "Head's total annual work hours on all jobs, including overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "2001 Head's Asset Part of Business Income from Unincorporated Businesses in 2000 "
@@ -53724,18 +53727,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "2001 Head's Total Extra Job Hours in 2000 The values for this variable represent "
         "the annual hours worked on all extra jobs.",
-        "DDDDDDDDWDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "2001 Head's Total Overtime Hours in 2000 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "2001 Head's Total Weekly Main Job Work Hours in 2000 The values for this variable "
         "represent Head's total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "2001 Head's Total Weeks Out of the Labor Force in 2000 The values for this variable "
@@ -53842,12 +53845,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "2001 Wife's/\"Wife's\" Annual Hours Worked in 2000 The values for this variable "
         "represent Wife's/\"Wife's\" actual total annual hours on all jobs, including "
         "overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "2001 Wife's/\"Wife's\" Annual Hours Worked on Extra Jobs in 2000 The values for "
         "this variable represent the annualized work hours on all extra jobs worked in 2000.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "2001 Wife's/\"Wife's\" Asset Part of Business Income from Unincorporated Businesses "
@@ -53865,12 +53868,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "2001 Wife's/\"Wife's\" Total Overtime Hours in 2000 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "2001 Wife's/\"Wife's\" Total Weekly Main Job Work Hours in 2000 The values for this "
         "variable represent Wife's/\"Wife's\" total weekly work hours on all main jobs.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDDDWDDWDDDDDDDDDDDDDD",
     ),
     (
         "2001 Wife's/\"Wife's\" Total Weeks Out of the Labor Force in 2000 The values for "
@@ -53929,7 +53932,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "2003 Head's Annual hours Worked in 2002 The values for this variable represent the "
         "total annual work hours on all jobs, including overtime.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "2003 Head's Completed Education Level Values in the range 1-16 represent the actual "
@@ -53946,12 +53949,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "2003 Head's Total Overtime Hours in 2002 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "2003 Head's Total Weekly Work Hours in 2002 The values for this variable represent "
         "Head's total weekly work hours on all jobs.",
-        "DDDDDDDDWDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "2003 Head's Total Weeks Out of the Labor Force in 2002 The values for this variable "
@@ -54042,12 +54045,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "2003 Wife's/\"Wife's\" Total Overtime Hours in 2002 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "2003 Wife's/\"Wife's\" Total Weekly Work Hours in 2002 The values for this variable "
         "represent Wife's/\"Wife's\" total weekly work hours on all jobs.",
-        "DDDDDDDDWDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "2003 Wife's/\"Wife's\" Total Weeks Out of the Labor Force in 2002 The values for "
@@ -54096,7 +54099,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "2003 Wife's/\"Wife's\" Total Work Hours in 2002 The values for this variable "
         "represent the actual total annual hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "2003-2005 Change in Marital Status This change variable uses the definition of "
@@ -54846,8 +54849,8 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     ("91-100, for a complete description of the tax variables.", "DDDDDDDDD"),
     ("91-100.", "D"),
-    ("942) 1967-68 Change in hours of work for money - HEAD", "DDDDDDDDDDD"),
-    ("945) 1967-68 Change in hours of Work - WIFE", "DDDDDDDDD"),
+    ("942) 1967-68 Change in hours of work for money - HEAD", "DDDDNDDDDDD"),
+    ("945) 1967-68 Change in hours of Work - WIFE", "DDDDNDDDD"),
     ("953) 1967-68 Change in Hourly Earnings HEAD", "DDDDDDD"),
     ("956) 1967-68 Change in hourly earnings WIFE", "DDDDDDD"),
     (
@@ -55285,7 +55288,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "About how many hours a week did she work? The values for this variable represent "
         'the actual number of hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "About how many hours a week did you work (when you worked)?",
@@ -55298,16 +55301,16 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "About how many hours a week did you work (when you worked)? (Retired, ...) (1970 "
         "question)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDD",
     ),
     (
         "About how many hours a week did you work (when you worked)? Actual hours per week",
-        "DDDDDDDDDDDDWDDD",
+        "DDDWDDDDDDDDWDDD",
     ),
     (
         "About how many hours a week did you work (when you worked)? Actual number of hours "
         "per week",
-        "DDDDDDDDDDDDWDDDDD",
+        "DDDWDDDDDDDDWDDDDD",
     ),
     (
         "About how many hours a week did you work (when you worked)? H4.",
@@ -55315,12 +55318,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "About how many hours a week did you work when you worked?",
-        "DDDDDDDDDDDD",
+        "DDDWDDDDDDDD",
     ),
     (
         "About how many hours a week did you work when you worked? (Unemployed) (1970 "
         "question)",
-        "DDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDD",
     ),
     (
         "About how many hours a week did you work when you worked? F4.",
@@ -55328,32 +55331,32 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "About how many hours a week did you work? (when you worked) Actual number of hours",
-        "DDDDDDDDDDDDWDDD",
+        "DDDWDDDDDDDDWDDD",
     ),
     (
         "About how many hours a week did you work? Actual hours per week",
-        "DDDDDDDDDWDDD",
+        "DDDWDDDDDWDDD",
     ),
     (
         "About how many hours a week did you work? The values for this variable represent "
         "the actual number of hours per week Head worked.",
-        "DDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDWDDDDDDDDDDDDDD",
     ),
-    ("About how many hours a week did your (Wife/friend) work?", "DDDDDDDDDD"),
+    ("About how many hours a week did your (Wife/friend) work?", "DDDWDDDDDD"),
     (
         "About how many hours a week did your (Wife/friend) work? Actual number of hours "
         "worked",
-        "DDDDDDDDDDWDDDD",
+        "DDDWDDDDDDWDDDD",
     ),
     (
         "About how many hours a week did your (Wife/friend) work? The values for this "
         "variable represent the actual number of hours per week Wife worked.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "About how many hours a week would that amount to on the average? Actual number of "
         "hours per week",
-        "DDDDDDDDDDDDDWDDDDD",
+        "DDDWDDDDDDDDDWDDDDD",
     ),
     (
         "About how many hours do you (HEAD) usually watch television on an average week-day?",
@@ -58287,7 +58290,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of 17738 (Number of weeks worked in 2000--THIRD EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of 1968 Hours of Nonleisure of Family paid and unpaid Sum of the following "
@@ -58297,7 +58300,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Hours of journey to Work - Wife V482 Accuracy: Hours of unpaid housework, Wife or "
         "single Head V484 Accuracy: Hours of unpaid housework, husband Sums greater than 9 "
         "were truncated to equal 9",
-        "DDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of 1968 Real Income Sum of the following variables: V446 Accuracy: Amount "
@@ -58325,7 +58328,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Wife V1153 Accuracy: hours of journey to work - Wife V1155 Accuracy: hours of "
         "housework, Wife or single Head V1157 Accuracy: hours of housework, husband Sums "
         "greater than 9 were truncated at 9",
-        "DDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of 1969 money income components Sum of the following variables: V1197 "
@@ -58353,7 +58356,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "WIFE V1854 Accuracy: hours of journey to work - WIFE V1856 Accuracy: hours of "
         "housework, Wife or single Head V1858 Accuracy: hours of housework, husband Sums "
         "greater than 9 were truncated at 9.",
-        "DDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of 1970 money income components Sum of the following variables: V1898 "
@@ -58381,7 +58384,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "hours of work for money - WIFE V2454 Accuracy: hours of journey to work - WIFE "
         "V2456 Accuracy: hours of housework, Wife or single Head V2458 Accuracy: hours of "
         "housework, husband Sums greater than 9 were truncated at 9",
-        "DDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of 1971 money income components Sum of the following variables: "
@@ -58827,367 +58830,367 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     ("Accuracy of ER17074 (Annual rent)", "DDDDD"),
     ("Accuracy of ER17081 (Value if rented)", "DDDDDD"),
-    ("Accuracy of ER17326 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER17328 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER17330 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER17333 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER17335 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER17337 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER17326 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER17328 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER17330 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER17333 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER17335 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER17337 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER17340 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17342 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17344 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER17347 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER17349 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER17351 (Number of months missed--strike)", "DDDDDDD"),
+    ("Accuracy of ER17347 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER17349 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER17351 (Number of months missed--strike)", "DDDNDDD"),
     (
         "Accuracy of ER17354 (Number of days missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER17356 (Number of weeks missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER17358 (Number of months missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER17373 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17375 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17377 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17391 (Number of weeks worked on main jobs in 2000)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER17393 (Average hours per week worked on main jobs in 2000)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER17396 (Head's annual hours of overtime in 2000)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of ER17404 (Number of weeks worked in 2000--FIRST EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17406 (Average hours per week worked in 2000--FIRST EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17431 (Number of weeks worked in 2000--SECOND EXTRA JOB",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17433 (Average hours per week worked in 2000--SECOND EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17457 (Number of weeks worked in 2000--THIRD EXTRA JOB",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17459 (Average hours per week worked in 2000--THIRD EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17482 (Number of weeks worked in 2000--FOURTH EXTRA JOB",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17484 (Average hours per week worked in 2000--FOURTH EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
-    ("Accuracy of ER17519 (Number of weeks looking for work)", "DDDDDDDDD"),
-    ("Accuracy of ER17608 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER17610 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER17612 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER17615 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER17617 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER17619 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER17519 (Number of weeks looking for work)", "DDDNDDDDD"),
+    ("Accuracy of ER17608 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER17610 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER17612 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER17615 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER17617 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER17619 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER17622 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17624 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17626 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER17629 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER17631 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER17633 (Number of months missed--strike)", "DDDDDDD"),
+    ("Accuracy of ER17629 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER17631 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER17633 (Number of months missed--strike)", "DDDNDDD"),
     (
         "Accuracy of ER17636 (Number of days missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER17638 (Number of weeks missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER17640 (Number of months missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER17655 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17657 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17659 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17673 (Number of weeks worked on main jobs in 2000)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER17675 (Average hours per week worked on main jobs in 2000)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER17678 (Head's annual hours of overtime in 2000)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of ER17686 (Number of weeks worked in 2000--FIRST EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17688 (Average hours per week worked in 2000--FIRST EXTRA JOB",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17712 (Number of weeks worked in 2000--SECOND EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17714 (Average hours per week worked in 2000--SECOND EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17740 (Average hours per week worked in 2000--THIRD EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17764 (Number of weeks worked in 2000--FOURTH EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17766 (Average hours per week worked in 2000--FOURTH EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
-    ("Accuracy of ER17896 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER17898 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER17900 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER17903 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER17905 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER17907 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER17896 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER17898 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER17900 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER17903 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER17905 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER17907 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER17910 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17912 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17914 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER17917 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER17919 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER17921 (Number of months missed--strike)", "DDDDDDD"),
+    ("Accuracy of ER17917 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER17919 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER17921 (Number of months missed--strike)", "DDDNDDD"),
     (
         "Accuracy of ER17924 (Number of days missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER17926 (Number of weeks missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER17928 (Number of months missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER17943 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17945 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17947 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER17961 (Number of weeks worked on main jobs in 2000)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER17963 (Average hours per week worked on main jobs in 2000)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER17966 (Wife's/\"wife's\" annual hours of overtime in 2000)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of ER17974 (Number of weeks worked in 2000--FIRST EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER17976 (Average hours per week worked in 2000--FIRST EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18001 (Number of weeks worked in 2000--SECOND EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18003 (Number of hours per week worked in 2000--SECOND EXTRA JOB)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18027 (Number of weeks worked in 2000--THIRD EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18029 (Number of hours per week worked in 2000--THIRD EXTRA JOB)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18053 (Number of weeks worked in 2000--FOURTH EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18055 (Number of hours per week worked in 2000--FOURTH EXTRA JOB)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
-    ("Accuracy of ER18090 (Number of weeks looking for work)", "DDDDDDDDD"),
-    ("Accuracy of ER18179 (Number of days missed--Ill Other)", "DDDDDDDD"),
-    ("Accuracy of ER18181 (Number of weeks missed--Ill Other)", "DDDDDDDD"),
-    ("Accuracy of ER18183 (Number of months missed--Ill Other)", "DDDDDDDD"),
-    ("Accuracy of ER18186 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER18188 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER18190 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER18090 (Number of weeks looking for work)", "DDDNDDDDD"),
+    ("Accuracy of ER18179 (Number of days missed--Ill Other)", "DDDNDDDD"),
+    ("Accuracy of ER18181 (Number of weeks missed--Ill Other)", "DDDNDDDD"),
+    ("Accuracy of ER18183 (Number of months missed--Ill Other)", "DDDNDDDD"),
+    ("Accuracy of ER18186 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER18188 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER18190 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER18193 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER18195 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER18197 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER18200 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER18202 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER18204 (Number of months missed--strike)", "DDDDDDD"),
+    ("Accuracy of ER18200 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER18202 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER18204 (Number of months missed--strike)", "DDDNDDD"),
     (
         "Accuracy of ER18207 (Number of days missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER18209 (Number of weeks missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER18211 (Number of months missed--unemployment or layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER18226 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER18228 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER18230 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER18244 (Number of weeks worked on main jobs in 2000)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER18246 (Average hours per week worked on main jobs in 2000)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER18249 (Wife's/\"wife's\" annual hours of overtime in 2000)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of ER18257 (Number of weeks worked in 2000--FIRST EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18259 (Average hours per week worked in 2000--FIRST EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18283 (Number of weeks worked in 2000--SECOND EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18285 (Average hours per week worked in 2000--SECOND EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18309 (Number of weeks worked in 2000--THIRD EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18311 (Average hours per week worked in 2000--THIRD EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18335 (Number of weeks worked in 2000--FOURTH EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER18337 (Average hours per week worked in 2000--FOURTH EXTRA JOB)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         'Accuracy of ER18357 (Wife/"wife"\'s average weekly housework hours)',
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER18359 (Head's average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER18371 (Value of food stamps received in 1999)",
@@ -59400,12 +59403,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER21176 (Average hours per week Head worked on this job in "
         "2002)--CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER21179 (Head's hours of overtime in 2002)--CURRENT OR MOST RECENT MAIN "
         "JOB",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER21206 (Elapsed weeks worked on this job in 2002)--JOB 2",
@@ -59413,11 +59416,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER21208 (Average hours per week Head worked on this job in 2002)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER21211(Head's hours of overtime in 2002)--JOB 2",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER21238 (Elapsed weeks worked on this job in 2002)--JOB 3",
@@ -59425,11 +59428,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER21240 (Average hours per week Head worked on this job in 2002)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER21243 (Head's hours of overtime in 2002)--JOB 3",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER21270 (Elapsed weeks Head worked on this job in 2002)--JOB 4",
@@ -59437,50 +59440,50 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER21272 (Average hours per week Head worked on this job in 2002)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER21275 (Head's hours of overtime in 2002)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER21283 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER21285 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER21287 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER21290 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER21292 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER21294 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER21283 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER21285 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER21287 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER21290 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER21292 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER21294 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER21297 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER21299 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER21301 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER21304 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER21306 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER21308 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER21311 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER21313 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER21315 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER21318 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER21320 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER21322 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER21304 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER21306 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER21308 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER21311 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER21313 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER21315 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER21318 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER21320 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER21322 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER21337 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER21339 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER21341 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         'Accuracy of ER21424 (Elapsed weeks Wife/"Wife" employed on this job in 2002)',
@@ -59489,98 +59492,98 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         'Accuracy of ER21426 (Average hours per week Wife/"Wife" worked on this job in '
         "2002)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER21429 (Wife's/\"Wife's\" hours of overtime in 2002)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER21456 (Elapsed number of weeks worked on this job in 2002)--JOB 2",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         'Accuracy of ER21458 (Average hours per week Wife/"Wife" worked on this job in '
         "2002)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER21461 (Wife's/\"Wife's\" hours of overtime in 2002)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER21488 (Number of weeks worked on this job in 2002)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         'Accuracy of ER21490 (Average hours per week Wife/"Wife" worked on this job in '
         "2002)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER21493 (Wife's/\"Wife's\" hours of overtime in 2002)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER21520 (Elapsed number of weeks Wife/"Wife" worked on this job in '
         "2002)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         'Accuracy of ER21522 (Average hours per week Wife/"Wife" worked on this job in '
         "2002)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER21525 (Wife's/\"wife's\" hours of overtime in 2002)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER21533 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER21535 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER21537 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER21541 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER21542 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER21544 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER21533 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER21535 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER21537 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER21541 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER21542 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER21544 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER21547 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER21549 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER21551 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER21554 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER21556 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER21558 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER21561 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER21563 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER21565 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER21568 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER21570 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER21572 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER21554 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER21556 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER21558 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER21561 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER21563 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER21565 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER21568 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER21570 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER21572 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER21587 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER21589 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER21591 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         'Accuracy of ER21623 (Wife/"Wife"\'s average weekly housework hours)',
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER21625 (Head's average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER21637 (Value of food stamps received in 2001)",
@@ -59796,12 +59799,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER25165 (Average hours per week Head worked on this job in "
         "2004)--CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER25168 (Head's hours of overtime in 2004)--CURRENT OR MOST RECENT MAIN "
         "JOB",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER25195 (Elapsed weeks worked on this job in 2004)--JOB 2",
@@ -59809,11 +59812,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER25197 (Average hours per week Head worked on this job in 2004)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER25200(Head's hours of overtime in 2004)--JOB 2",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER25227 (Elapsed weeks worked on this job in 2004)--JOB 3",
@@ -59821,11 +59824,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER25229 (Average hours per week Head worked on this job in 2004)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER25232 (Head's hours of overtime in 2004)--JOB 3",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER25259 (Elapsed weeks Head worked on this job in 2004)--JOB 4",
@@ -59833,50 +59836,50 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER25261 (Average hours per week Head worked on this job in 2004)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER25264 (Head's hours of overtime in 2004)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER25272 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER25274 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER25276 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER25279 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER25281 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER25283 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER25272 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER25274 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER25276 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER25279 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER25281 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER25283 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER25286 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER25288 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER25290 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER25293 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER25295 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER25297 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER25300 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER25302 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER25304 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER25307 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER25309 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER25311 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER25293 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER25295 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER25297 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER25300 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER25302 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER25304 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER25307 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER25309 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER25311 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER25326 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER25328 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER25330 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         'Accuracy of ER25421 (Elapsed weeks Wife/"Wife" employed on this job in 2004)',
@@ -59885,98 +59888,98 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         'Accuracy of ER25423 (Average hours per week Wife/"Wife" worked on this job in '
         "2004)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER25426 (Wife's/\"Wife's\" hours of overtime in 2004)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER25453 (Elapsed number of weeks worked on this job in 2004)--JOB 2",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         'Accuracy of ER25455 (Average hours per week Wife/"Wife" worked on this job in '
         "2004)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER25458 (Wife's/\"Wife's\" hours of overtime in 2004)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER25485 (Number of weeks worked on this job in 2004)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         'Accuracy of ER25487 (Average hours per week Wife/"Wife" worked on this job in '
         "2004)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER25490 (Wife's/\"Wife's\" hours of overtime in 2004)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER25517 (Elapsed number of weeks Wife/"Wife" worked on this job in '
         "2004)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         'Accuracy of ER25519 (Average hours per week Wife/"Wife" worked on this job in '
         "2004)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER25522 (Wife's/\"Wife's\" hours of overtime in 2004)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER25530 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER25532 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER25534 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER25537 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER25539 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER25541 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER25530 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER25532 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER25534 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER25537 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER25539 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER25541 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER25544 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER25546 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER25548 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER25551 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER25553 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER25555 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER25558 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER25560 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER25562 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER25565 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER25567 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER25569 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER25551 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER25553 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER25555 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER25558 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER25560 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER25562 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER25565 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER25567 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER25569 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER25584 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER25586 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER25588 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER25620 (Wife's/\"Wife's\" average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER25622 (Head's average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER25639 (Value of food stamps received in 2003)",
@@ -60495,198 +60498,198 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER36168 (number of weeks HD worked job 1 in 2006)--CURRENT OR MOST "
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36170 (Average hours per week Head worked on this job in "
         "2006)--CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36173 (Head's hours of overtime in 2006)--CURRENT OR MOST RECENT MAIN "
         "JOB",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER36200 (number of weeks HD worked job 2 in 2006)--CURRENT OR MOST "
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36202 (Average hours per week Head worked on this job in 2006)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36205(Head's hours of overtime in 2006)--JOB 2",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER36232 (number of weeks HD worked job 3 in 2006)--CURRENT OR MOST "
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36234 (Average hours per week Head worked on this job in 2006)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36237 (Head's hours of overtime in 2006)--JOB 3",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER36264 (number of weeks HD worked job 4 in 2006)--CURRENT OR MOST "
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36266 (Average hours per week Head worked on this job in 2006)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36269 (Head's hours of overtime in 2006)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER36277 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER36279 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER36281 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER36284 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER36286 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER36288 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER36277 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER36279 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER36281 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER36284 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER36286 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER36288 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER36291 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER36293 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER36295 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER36298 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER36300 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER36302 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER36305 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER36307 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER36309 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER36312 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER36314 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER36316 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER36298 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER36300 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER36302 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER36305 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER36307 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER36309 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER36312 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER36314 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER36316 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER36331 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER36333 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER36335 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         'Accuracy of ER36426 (number of weeks WF/"WF" worked job 1 in 2006)--CURRENT OR MOST '
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDD",
     ),
     (
         'Accuracy of ER36428 (Average hours per week Wife/"Wife" worked on this job in '
         "2006)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36431 (Wife's/\"Wife's\" hours of overtime in 2006)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER36458 (number of weeks WF/"WF" worked job 2 in 2006)--CURRENT OR MOST '
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDD",
     ),
     (
         'Accuracy of ER36460 (Average hours per week Wife/"Wife" worked on this job in '
         "2006)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36463 (Wife's/\"Wife's\" hours of overtime in 2006)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         'Accuracy of ER36490 (number of weeks WF/"WF" worked job 3 in 2006)--CURRENT OR MOST '
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDD",
     ),
     (
         'Accuracy of ER36492 (Average hours per week Wife/"Wife" worked on this job in '
         "2006)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36495 (Wife's/\"Wife's\" hours of overtime in 2006)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER36522 (number of weeks WF/"WF" worked job 4 in 2006)--CURRENT OR MOST '
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDD",
     ),
     (
         'Accuracy of ER36524 (Average hours per week Wife/"Wife" worked on this job in '
         "2006)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER36527 (Wife's/\"Wife's\" hours of overtime in 2006)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER36535 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER36537 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER36539 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER36542 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER36544 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER36546 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER36535 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER36537 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER36539 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER36542 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER36544 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER36546 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER36549 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER36551 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER36553 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER36556 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER36558 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER36560 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER36563 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER36565 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER36567 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER36570 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER36572 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER36574 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER36556 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER36558 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER36560 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER36563 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER36565 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER36567 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER36570 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER36572 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER36574 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER36589 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER36591 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER36593 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER36625 (Wife's/\"Wife's\" average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER36627 (Head's average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER36657 (Value of food stamps received in 2005)",
@@ -61276,158 +61279,158 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER42203 (Average hours per week Head worked on this job in "
         "2008)--CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER42206 (Head's hours of overtime in 2008)--CURRENT OR MOST RECENT MAIN "
         "JOB",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER42233 (Average hours per week Head worked on this job in 2008)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER42236(Head's hours of overtime in 2008)--JOB 2",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER42263 (Average hours per week Head worked on this job in 2008)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER42266 (Head's hours of overtime in 2008)--JOB 3",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER42293 (Average hours per week Head worked on this job in 2008)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER42296 (Head's hours of overtime in 2008)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER42304 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER42306 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER42308 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER42311 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER42313 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER42315 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER42304 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER42306 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER42308 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER42311 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER42313 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER42315 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER42318 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER42320 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER42322 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER42325 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER42327 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER42329 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER42332 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER42334 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER42336 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER42339 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER42341 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER42343 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER42325 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER42327 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER42329 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER42332 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER42334 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER42336 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER42339 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER42341 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER42343 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER42358 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER42360 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER42362 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         'Accuracy of ER42455 (Average hours per week Wife/"Wife" worked on this job in '
         "2008)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER42458 (Wife's/\"Wife's\" hours of overtime in 2008)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER42485 (Average hours per week Wife/"Wife" worked on this job in '
         "2008)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER42488 (Wife's/\"Wife's\" hours of overtime in 2008)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         'Accuracy of ER42515 (Average hours per week Wife/"Wife" worked on this job in '
         "2008)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER42518 (Wife's/\"Wife's\" hours of overtime in 2008)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER42545 (Average hours per week Wife/"Wife" worked on this job in '
         "2008)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER42548 (Wife's/\"Wife's\" hours of overtime in 2008)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER42556 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER42558 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER42560 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER42563 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER42565 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER42567 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER42556 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER42558 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER42560 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER42563 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER42565 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER42567 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER42570 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER42572 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER42574 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER42577 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER42579 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER42581 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER42584 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER42586 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER42588 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER42591 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER42593 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER42595 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER42577 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER42579 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER42581 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER42584 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER42586 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER42588 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER42591 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER42593 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER42595 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER42610 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER42612 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER42614 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER42644 (Wife's/\"Wife's\" average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER42646 (Head's average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER42676 (Value of food stamps received in 2007)",
@@ -61618,9 +61621,9 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of ER46761 (Head's Total Weeks Worked in 2008)", "DDDDDDDDD"),
     (
         "Accuracy of ER46763 (Head's Total Weekly Work Hours in 2008)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
-    ("Accuracy of ER46765 (Head's Total Overtime Hours in 2008)", "DDDDDDDDD"),
+    ("Accuracy of ER46765 (Head's Total Overtime Hours in 2008)", "DDDDDDNDD"),
     (
         "Accuracy of ER46768 (Head's Total Weeks of Work Missed Because Someone Else Was Ill "
         "in 2008)",
@@ -61656,11 +61659,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER46784 (Wife's/\"Wife's\" Total Weekly Work Hours in 2008)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER46786 (Wife's/\"Wife's\" Total Overtime Hours in 2008)",
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     (
         "Accuracy of ER46789 (Wife's/\"Wife's\" Total Weeks of Work Missed Because Someone "
@@ -62134,158 +62137,158 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER47516 (Average hours per week Head worked on this job in "
         "2010)--CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER47519 (Head's hours of overtime in 2010)--CURRENT OR MOST RECENT MAIN "
         "JOB",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER47546 (Average hours per week Head worked on this job in 2010)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER47549(Head's hours of overtime in 2010)--JOB 2",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER47576 (Average hours per week Head worked on this job in 2010)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER47579 (Head's hours of overtime in 2010)--JOB 3",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER47606 (Average hours per week Head worked on this job in 2010)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER47609 (Head's hours of overtime in 2010)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER47617 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER47619 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER47621 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER47624 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER47626 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER47628 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER47617 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER47619 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER47621 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER47624 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER47626 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER47628 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER47631 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER47633 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER47635 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER47638 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER47640 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER47642 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER47645 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER47647 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER47649 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER47652 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER47654 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER47656 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER47638 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER47640 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER47642 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER47645 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER47647 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER47649 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER47652 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER47654 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER47656 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER47671 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER47673 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER47675 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         'Accuracy of ER47773 (Average hours per week WIFE/"WIFE" worked on this job in '
         "2010)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER47776 (Wife's/\"Wife's\" hours of overtime in 2010)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER47803 (Average hours per week WIFE/"WIFE" worked on this job in '
         "2010)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER47806 (Wife's/\"Wife's\" hours of overtime in 2010)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         'Accuracy of ER47833 (Average hours per week WIFE/"WIFE" worked on this job in '
         "2010)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER47836 (Wife's/\"Wife's\" hours of overtime in 2010)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER47863 (Average hours per week WIFE/"WIFE" worked on this job in '
         "2010)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER47866 (Wife's/\"Wife's\" hours of overtime in 2010)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER47874 (Number of days missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER47876 (Number of weeks missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER47878 (Number of months missed--others ill)", "DDDDDDDD"),
-    ("Accuracy of ER47881 (Number of days missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER47883 (Number of weeks missed--own illness)", "DDDDDDDD"),
-    ("Accuracy of ER47885 (Number of months missed--own illness)", "DDDDDDDD"),
+    ("Accuracy of ER47874 (Number of days missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER47876 (Number of weeks missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER47878 (Number of months missed--others ill)", "DDDNDDDD"),
+    ("Accuracy of ER47881 (Number of days missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER47883 (Number of weeks missed--own illness)", "DDDNDDDD"),
+    ("Accuracy of ER47885 (Number of months missed--own illness)", "DDDNDDDD"),
     (
         "Accuracy of ER47888 (Number of days missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER47890 (Number of weeks missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER47892 (Number of months missed--vacation or time off)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of ER47895 (Number of days missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER47897 (Number of weeks missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER47899 (Number of months missed--strike)", "DDDDDDD"),
-    ("Accuracy of ER47902 (Number of days missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER47904 (Number of weeks missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER47906 (Number of months missed--layoff)", "DDDDDDD"),
-    ("Accuracy of ER47909 (Number of days missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER47911 (Number of weeks missed--unemployment)", "DDDDDDD"),
-    ("Accuracy of ER47913 (Number of months missed--unemployment)", "DDDDDDD"),
+    ("Accuracy of ER47895 (Number of days missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER47897 (Number of weeks missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER47899 (Number of months missed--strike)", "DDDNDDD"),
+    ("Accuracy of ER47902 (Number of days missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER47904 (Number of weeks missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER47906 (Number of months missed--layoff)", "DDDNDDD"),
+    ("Accuracy of ER47909 (Number of days missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER47911 (Number of weeks missed--unemployment)", "DDDNDDD"),
+    ("Accuracy of ER47913 (Number of months missed--unemployment)", "DDDNDDD"),
     (
         "Accuracy of ER47928 (Number of days missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER47930 (Number of weeks missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER47932 (Number of months missed--out of labor force)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER47962 (Wife's/\"Wife's\" average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER47964 (Head's average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER47992 (Value of food stamps received in 2009)",
@@ -62476,9 +62479,9 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of ER52169 (Head's Total Weeks Worked in 2010)", "DDDDDDDDD"),
     (
         "Accuracy of ER52171 (Head's Total Weekly Work Hours in 2010)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
-    ("Accuracy of ER52173 (Head's Total Overtime Hours in 2010)", "DDDDDDDDD"),
+    ("Accuracy of ER52173 (Head's Total Overtime Hours in 2010)", "DDDDDDNDD"),
     (
         "Accuracy of ER52176 (Head's Total Weeks of Work Missed Because Someone Else Was Ill "
         "in 2010)",
@@ -62514,11 +62517,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER52192 (Wife's/\"Wife's\" Total Weekly Work Hours in 2010)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER52194 (Wife's/\"Wife's\" Total Overtime Hours in 2010)",
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     (
         "Accuracy of ER52197 (Wife's/\"Wife's\" Total Weeks of Work Missed Because Someone "
@@ -63032,218 +63035,218 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER53216 (Average hours per week Head worked on this job in "
         "2012)--CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER53219 (Head's hours of overtime in 2012)--CURRENT OR MOST RECENT MAIN "
         "JOB",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER53246 (Average hours per week Head worked on this job in 2012)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER53249(Head's hours of overtime in 2012)--JOB 2",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER53276 (Average hours per week Head worked on this job in 2012)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER53279 (Head's hours of overtime in 2012)--JOB 3",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER53306 (Average hours per week Head worked on this job in 2012)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER53309 (Head's hours of overtime in 2012)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER53317 (Number of days Head missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER53319 (Number of weeks Head missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER53321 (Number of months Head missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER53324 (Number of days Head missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER53326 (Number of weeks Head missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER53328 (Number of months Head missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER53331 (Number of days Head missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER53333 (Number of weeks Head missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER53335 (Number of months Head missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
-    ("Accuracy of ER53338 (Number of days Head missed--Strike)", "DDDDDDDD"),
-    ("Accuracy of ER53340 (Number of weeks Head missed--Strike)", "DDDDDDDD"),
-    ("Accuracy of ER53342 (Number of months Head missed--Strike)", "DDDDDDDD"),
-    ("Accuracy of ER53345 (Number of days Head missed--Layoff)", "DDDDDDDD"),
-    ("Accuracy of ER53347 (Number of weeks Head missed--Layoff)", "DDDDDDDD"),
-    ("Accuracy of ER53349 (Number of months Head missed--Layoff)", "DDDDDDDD"),
-    ("Accuracy of ER53352 (Number of days Head unemployed)", "DDDDDDDD"),
-    ("Accuracy of ER53354 (Number of weeks Head unemployed)", "DDDDDDDD"),
-    ("Accuracy of ER53356 (Number of months Head unemployed)", "DDDDDDDD"),
+    ("Accuracy of ER53338 (Number of days Head missed--Strike)", "DDDNDDDD"),
+    ("Accuracy of ER53340 (Number of weeks Head missed--Strike)", "DDDNDDDD"),
+    ("Accuracy of ER53342 (Number of months Head missed--Strike)", "DDDNDDDD"),
+    ("Accuracy of ER53345 (Number of days Head missed--Layoff)", "DDDNDDDD"),
+    ("Accuracy of ER53347 (Number of weeks Head missed--Layoff)", "DDDNDDDD"),
+    ("Accuracy of ER53349 (Number of months Head missed--Layoff)", "DDDNDDDD"),
+    ("Accuracy of ER53352 (Number of days Head unemployed)", "DDDNDDDD"),
+    ("Accuracy of ER53354 (Number of weeks Head unemployed)", "DDDNDDDD"),
+    ("Accuracy of ER53356 (Number of months Head unemployed)", "DDDNDDDD"),
     (
         "Accuracy of ER53371 (Number of days Head was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER53373 (Number of weeks Head was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER53375 (Number of months Head was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         'Accuracy of ER53479 (Average hours per week WIFE/"WIFE" worked on this job in '
         "2012)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER53482 (Wife's/\"Wife's\" hours of overtime in 2012)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER53509 (Average hours per week WIFE/"WIFE" worked on this job in '
         "2012)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER53512 (Wife's/\"Wife's\" hours of overtime in 2012)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         'Accuracy of ER53539 (Average hours per week WIFE/"WIFE" worked on this job in '
         "2012)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER53542 (Wife's/\"Wife's\" hours of overtime in 2012)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         'Accuracy of ER53569 (Average hours per week WIFE/"WIFE" worked on this job in '
         "2012)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER53572 (Wife's/\"Wife's\" hours of overtime in 2012)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER53580 (Number of days missed--others ill)", "DDDDDDDD"),
+    ("Accuracy of ER53580 (Number of days missed--others ill)", "DDDNDDDD"),
     (
         'Accuracy of ER53582 (Number of weeks Wife/"Wife" missed--Others Ill)',
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         'Accuracy of ER53584 (Number of months Wife/"Wife" missed--Others Ill)',
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         'Accuracy of ER53587 (Number of days Wife/"Wife" missed--Own Illness)',
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         'Accuracy of ER53589 (Number of weeks Wife/"Wife" missed--Own Illness)',
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         'Accuracy of ER53591 (Number of months Wife/"Wife" missed--Own Illness)',
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         'Accuracy of ER53594 (Number of days Wife/"Wife" missed--Vacation or Time Off)',
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         'Accuracy of ER53596 (Number of weeks Wife/"Wife" missed--Vacation or Time Off)',
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         'Accuracy of ER53598 (Number of months Wife/"Wife" missed--Vacation or Time Off)',
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         'Accuracy of ER53601 (Number of days Wife/"Wife" missed--Strike)',
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         'Accuracy of ER53603 (Number of weeks Wife/"Wife" missed--Strike)',
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         'Accuracy of ER53605 (Number of months Wife/"Wife" missed--Strike)',
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         'Accuracy of ER53608 (Number of days Wife/"Wife" missed--Layoff)',
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         'Accuracy of ER53610 (Number of weeks Wife/"Wife" missed--Layoff)',
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         'Accuracy of ER53612 (Number of months Wife/"Wife" missed--Layoff)',
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         'Accuracy of ER53615 (Number of days Wife/"Wife" unemployed)',
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         'Accuracy of ER53617 (Number of weeks Wife/"Wife" unemployed)',
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         'Accuracy of ER53619 (Number of months Wife/"Wife" unemployed)',
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         'Accuracy of ER53634 (Number of days Wife/"Wife" was out of the labor force)',
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         'Accuracy of ER53636 (Number of weeks Wife/"Wife" out of the labor force)',
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         'Accuracy of ER53638 (Number of months Wife/"Wife" was out of the labor force)',
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER53674 (Wife's/\"Wife's\" average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER53676 (Head's average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER53705 (Value of food stamps received in 2012)",
@@ -63433,9 +63436,9 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of ER57970 (Head's Total Weeks Worked in 2012)", "DDDDDDDDD"),
     (
         "Accuracy of ER57972 (Head's Total Weekly Work Hours in 2012)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
-    ("Accuracy of ER57974 (Head's Total Overtime Hours in 2012)", "DDDDDDDDD"),
+    ("Accuracy of ER57974 (Head's Total Overtime Hours in 2012)", "DDDDDDNDD"),
     (
         "Accuracy of ER57977 (Head's Total Weeks of Work Missed Because Someone Else Was Ill "
         "in 2012)",
@@ -63471,11 +63474,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER57993 (Wife's/\"Wife's\" Total Weekly Work Hours in 2012)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER57995 (Wife's/\"Wife's\" Total Overtime Hours in 2012)",
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     (
         "Accuracy of ER57998 (Wife's/\"Wife's\" Total Weeks of Work Missed Because Someone "
@@ -64022,218 +64025,218 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER60231 (Average hours per week Head worked on this job in "
         "2014)--CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER60234 (Head's hours of overtime in 2014)--CURRENT OR MOST RECENT MAIN "
         "JOB",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER60261 (Average hours per week Head worked on this job in 2014)--JOB 2",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER60264(Head's hours of overtime in 2014)--JOB 2",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60291 (Average hours per week Head worked on this job in 2014)--JOB 3",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER60294 (Head's hours of overtime in 2014)--JOB 3",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER60321 (Average hours per week Head worked on this job in 2014)--JOB 4",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER60324 (Head's hours of overtime in 2014)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER60332 (Number of days Head missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60334 (Number of weeks Head missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60336 (Number of months Head missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60339 (Number of days Head missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60341 (Number of weeks Head missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60343 (Number of months Head missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60346 (Number of days Head missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER60348 (Number of weeks Head missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER60350 (Number of months Head missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
-    ("Accuracy of ER60353 (Number of days Head missed--Strike)", "DDDDDDDD"),
-    ("Accuracy of ER60355 (Number of weeks Head missed--Strike)", "DDDDDDDD"),
-    ("Accuracy of ER60357 (Number of months Head missed--Strike)", "DDDDDDDD"),
-    ("Accuracy of ER60360 (Number of days Head missed--Layoff)", "DDDDDDDD"),
-    ("Accuracy of ER60362 (Number of weeks Head missed--Layoff)", "DDDDDDDD"),
-    ("Accuracy of ER60364 (Number of months Head missed--Layoff)", "DDDDDDDD"),
-    ("Accuracy of ER60367 (Number of days Head unemployed)", "DDDDDDDD"),
-    ("Accuracy of ER60369 (Number of weeks Head unemployed)", "DDDDDDDD"),
-    ("Accuracy of ER60371 (Number of months Head unemployed)", "DDDDDDDD"),
+    ("Accuracy of ER60353 (Number of days Head missed--Strike)", "DDDNDDDD"),
+    ("Accuracy of ER60355 (Number of weeks Head missed--Strike)", "DDDNDDDD"),
+    ("Accuracy of ER60357 (Number of months Head missed--Strike)", "DDDNDDDD"),
+    ("Accuracy of ER60360 (Number of days Head missed--Layoff)", "DDDNDDDD"),
+    ("Accuracy of ER60362 (Number of weeks Head missed--Layoff)", "DDDNDDDD"),
+    ("Accuracy of ER60364 (Number of months Head missed--Layoff)", "DDDNDDDD"),
+    ("Accuracy of ER60367 (Number of days Head unemployed)", "DDDNDDDD"),
+    ("Accuracy of ER60369 (Number of weeks Head unemployed)", "DDDNDDDD"),
+    ("Accuracy of ER60371 (Number of months Head unemployed)", "DDDNDDDD"),
     (
         "Accuracy of ER60386 (Number of days Head was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER60388 (Number of weeks Head was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER60390 (Number of months Head was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER60494 (Average hours per week Spouse/Partner worked on this job in "
         "2014)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER60497 (Spouse's/Partner's hours of overtime in 2014)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER60524 (Average hours per week Spouse/Partner worked on this job in "
         "2014)-- JOB 2",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER60527 (Spouse's/Partner's hours of overtime in 2014)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER60554 (Average hours per week Spouse/Partner worked on this job in "
         "2014)-- JOB 3",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER60557 (Spouse's/Partner's hours of overtime in 2014)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER60584 (Average hours per week Spouse/Partner worked on this job in "
         "2014)-- JOB 4",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER60587 (Spouse's/Partner's hours of overtime in 2014)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER60595 (Number of days missed--others ill)", "DDDDDDDD"),
+    ("Accuracy of ER60595 (Number of days missed--others ill)", "DDDNDDDD"),
     (
         "Accuracy of ER60597 (Number of weeks Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60599 (Number of months Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60602 (Number of days Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60604 (Number of weeks Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60606 (Number of months Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER60609 (Number of days Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER60611 (Number of weeks Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER60613 (Number of months Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER60616 (Number of days Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER60618 (Number of weeks Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER60620 (Number of months Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER60623 (Number of days Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER60625 (Number of weeks Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER60627 (Number of months Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER60630 (Number of days Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER60632 (Number of weeks Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER60634 (Number of months Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER60649 (Number of days Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER60651 (Number of weeks Spouse/Partner out of the labor force)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER60653 (Number of months Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER60689 (Spouse's/Partner's average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER60691 (Head's average weekly housework hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER60720 (Value of food stamps received in 2014)",
@@ -64459,9 +64462,9 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of ER65150 (Head's Total Weeks Worked in 2014)", "DDDDDDDDD"),
     (
         "Accuracy of ER65152 (Head's Total Weekly Work Hours in 2014)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
-    ("Accuracy of ER65154 (Head's Total Overtime Hours in 2014)", "DDDDDDDDD"),
+    ("Accuracy of ER65154 (Head's Total Overtime Hours in 2014)", "DDDDDDNDD"),
     (
         "Accuracy of ER65157 (Head's Total Weeks of Work Missed Because Someone Else Was Ill "
         "in 2014)",
@@ -64498,11 +64501,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER65173 (Spouse's/Partner's Total Weekly Work Hours in 2014)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER65175 (Spouse's/Partner's Total Overtime Hours in 2014)",
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     (
         "Accuracy of ER65178 (Spouse's/Partner's Total Weeks of Work Missed Because Someone "
@@ -65100,249 +65103,249 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER66234 (Average hours per week Reference Person worked on this job in "
         "2016)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66237 (Reference Person's hours of overtime in 2016)--CURRENT OR MOST "
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER66264 (Average hours per week Reference Person worked on this job in "
         "2016)-- JOB 2",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66267(Reference Person's hours of overtime in 2016)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER66294 (Average hours per week Reference Person worked on this job in "
         "2016)-- JOB 3",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66297 (Reference Person's hours of overtime in 2016)--JOB 3",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of ER66324 (Average hours per week Reference Person worked on this job in "
         "2016)-- JOB 4",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66327 (Reference Person's hours of overtime in 2016)--JOB 4",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of ER66335 (Number of days Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER66337 (Number of weeks Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER66339 (Number of months Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER66342 (Number of days Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER66344 (Number of weeks Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER66346 (Number of months Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER66349 (Number of days Reference Person missed--Vacation or Time Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER66351 (Number of weeks Reference Person missed--Vacation or Time Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER66353 (Number of months Reference Person missed--Vacation or Time "
         "Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER66356 (Number of days Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66358 (Number of weeks Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66360 (Number of months Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66363 (Number of days Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66365 (Number of weeks Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66367 (Number of months Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66370 (Number of days Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66372 (Number of weeks Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66374 (Number of months Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66389 (Number of days Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66391 (Number of weeks Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66393 (Number of months Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66509 (Average hours per week Spouse/Partner worked on this job in "
         "2016)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66512 (Spouse's/Partner's hours of overtime in 2016)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER66539 (Average hours per week Spouse/Partner worked on this job in "
         "2016)-- JOB 2",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66542 (Spouse's/Partner's hours of overtime in 2016)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER66569 (Average hours per week Spouse/Partner worked on this job in "
         "2016)-- JOB 3",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66572 (Spouse's/Partner's hours of overtime in 2016)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER66599 (Average hours per week Spouse/Partner worked on this job in "
         "2016)-- JOB 4",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER66602 (Spouse's/Partner's hours of overtime in 2016)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER66610 (Number of days missed--others ill)", "DDDDDDDD"),
+    ("Accuracy of ER66610 (Number of days missed--others ill)", "DDDNDDDD"),
     (
         "Accuracy of ER66612 (Number of weeks Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66614 (Number of months Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66617 (Number of days Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66619 (Number of weeks Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66621 (Number of months Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER66624 (Number of days Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER66626 (Number of weeks Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER66628 (Number of months Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER66631 (Number of days Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER66633 (Number of weeks Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER66635 (Number of months Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER66638 (Number of days Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER66640 (Number of weeks Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER66642 (Number of months Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER66645 (Number of days Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER66647 (Number of weeks Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER66649 (Number of months Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER66664 (Number of days Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER66666 (Number of weeks Spouse/Partner out of the labor force)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER66668 (Number of months Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER66714 (Reference Person's average weekly housework hours)",
-        "DDDDDDDDD",
+        "DDDDDDDDN",
     ),
     (
         "Accuracy of ER66727 (Spouse's/Partner's Average Weekly Housework Hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER66767 (Value of food stamps received in 2016)",
@@ -65693,11 +65696,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER71229 (Reference Person's Total Weekly Work Hours in 2016)",
-        "DDDDDDDDDDD",
+        "DDDDDDDDNDD",
     ),
     (
         "Accuracy of ER71231 (Reference Person's Total Overtime Hours in 2016)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER71234 (Reference Person's Total Weeks of Work Missed Because Someone "
@@ -65736,11 +65739,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER71250 (Spouse's/Partner's Total Weekly Work Hours in 2016)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER71252 (Spouse's/Partner's Total Overtime Hours in 2016)",
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     (
         "Accuracy of ER71255 (Spouse's/Partner's Total Weeks of Work Missed Because Someone "
@@ -66384,249 +66387,249 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER72234 (Average hours per week Reference Person worked on this job in "
         "2018)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72237 (Reference Person's hours of overtime in 2018)--CURRENT OR MOST "
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER72264 (Average hours per week Reference Person worked on this job in "
         "2018)-- JOB 2",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72267(Reference Person's hours of overtime in 2018)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER72294 (Average hours per week Reference Person worked on this job in "
         "2018)-- JOB 3",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72297 (Reference Person's hours of overtime in 2018)--JOB 3",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of ER72324 (Average hours per week Reference Person worked on this job in "
         "2018)-- JOB 4",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72327 (Reference Person's hours of overtime in 2018)--JOB 4",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of ER72335 (Number of days Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER72337 (Number of weeks Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER72339 (Number of months Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER72342 (Number of days Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER72344 (Number of weeks Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER72346 (Number of months Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER72349 (Number of days Reference Person missed--Vacation or Tiime Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER72351 (Number of weeks Reference Person missed--Vacation or Time Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER72353 (Number of months Reference Person missed--Vacation or Time "
         "Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER72356 (Number of days Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72358 (Number of weeks Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72360 (Number of months Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72363 (Number of days Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72365 (Number of weeks Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72367 (Number of months Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72370 (Number of days Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72372 (Number of weeks Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72374 (Number of months Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72389 (Number of days Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72391 (Number of weeks Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72393 (Number of months Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72511 (Average hours per week Spouse/Partner worked on this job in "
         "2018)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72514 (Spouse's/Partner's hours of overtime in 2018)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER72541 (Average hours per week Spouse/Partner worked on this job in "
         "2018)-- JOB 2",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72544 (Spouse's/Partner's hours of overtime in 2018)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER72571 (Average hours per week Spouse/Partner worked on this job in "
         "2018)-- JOB 3",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72574 (Spouse's/Partner's hours of overtime in 2018)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER72601 (Average hours per week Spouse/Partner worked on this job in "
         "2018)-- JOB 4",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER72604 (Spouse's/Partner's hours of overtime in 2018)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER72612 (Number of days missed--others ill)", "DDDDDDDD"),
+    ("Accuracy of ER72612 (Number of days missed--others ill)", "DDDNDDDD"),
     (
         "Accuracy of ER72614 (Number of weeks Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72616 (Number of months Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72619 (Number of days Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72621 (Number of weeks Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72623 (Number of months Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER72626 (Number of days Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER72628 (Number of weeks Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER72630 (Number of months Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER72633 (Number of days Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER72635 (Number of weeks Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER72637 (Number of months Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER72640 (Number of days Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER72642 (Number of weeks Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER72644 (Number of months Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER72647 (Number of days Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER72649 (Number of weeks Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER72651 (Number of months Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER72666 (Number of days Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER72668 (Number of weeks Spouse/Partner out of the labor force)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER72670 (Number of months Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER72718 (Reference Person's average weekly housework hours)",
-        "DDDDDDDDD",
+        "DDDDDDDDN",
     ),
     (
         "Accuracy of ER72731 (Spouse's/Partner's Average Weekly Housework Hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER72771 (Value of food stamps received in 2018)",
@@ -66928,11 +66931,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER77251 (Reference Person's Total Weekly Work Hours in 2018)",
-        "DDDDDDDDDDD",
+        "DDDDDDDDNDD",
     ),
     (
         "Accuracy of ER77253 (Reference Person's Total Overtime Hours in 2018)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER77256 (Reference Person's Total Weeks of Work Missed Because Someone "
@@ -66971,11 +66974,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER77272 (Spouse's/Partner's Total Weekly Work Hours in 2018)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER77274 (Spouse's/Partner's Total Overtime Hours in 2018)",
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     (
         "Accuracy of ER77277 (Spouse's/Partner's Total Weeks of Work Missed Because Someone "
@@ -67628,249 +67631,249 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER78239 (Average hours per week Reference Person worked on this job in "
         "2020)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78242 (Reference Person's hours of overtime in 2020)--CURRENT OR MOST "
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER78269 (Average hours per week Reference Person worked on this job in "
         "2020)-- JOB 2",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78272(Reference Person's hours of overtime in 2020)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER78299 (Average hours per week Reference Person worked on this job in "
         "2020)-- JOB 3",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78302 (Reference Person's hours of overtime in 2020)--JOB 3",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of ER78329 (Average hours per week Reference Person worked on this job in "
         "2020)-- JOB 4",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78332 (Reference Person's hours of overtime in 2020)--JOB 4",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of ER78371 (Number of days Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER78373 (Number of weeks Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER78375 (Number of months Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER78379 (Number of days Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER78381 (Number of weeks Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER78383 (Number of months Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER78387 (Number of days Reference Person missed--Vacation or Time Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER78389 (Number of weeks Reference Person missed--Vacation or Time Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER78391 (Number of months Reference Person missed--Vacation or Time "
         "Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER78395 (Number of days Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78397 (Number of weeks Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78399 (Number of months Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78402 (Number of days Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78404 (Number of weeks Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78406 (Number of months Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78409 (Number of days Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78411 (Number of weeks Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78413 (Number of months Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78428 (Number of days Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78430 (Number of weeks Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78432 (Number of months Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78553 (Average hours per week Spouse/Partner worked on this job in "
         "2020)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78556 (Spouse's/Partner's hours of overtime in 2020)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER78583 (Average hours per week Spouse/Partner worked on this job in "
         "2020)-- JOB 2",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78586 (Spouse's/Partner's hours of overtime in 2020)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER78613 (Average hours per week Spouse/Partner worked on this job in "
         "2020)-- JOB 3",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78616 (Spouse's/Partner's hours of overtime in 2020)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER78643 (Average hours per week Spouse/Partner worked on this job in "
         "2020)-- JOB 4",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER78646 (Spouse's/Partner's hours of overtime in 2020)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER78685 (Number of days missed--others ill)", "DDDDDDDD"),
+    ("Accuracy of ER78685 (Number of days missed--others ill)", "DDDNDDDD"),
     (
         "Accuracy of ER78687 (Number of weeks Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78689 (Number of months Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78693 (Number of days Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78695 (Number of weeks Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78697 (Number of months Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER78701 (Number of days Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER78703 (Number of weeks Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER78705 (Number of months Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER78709 (Number of days Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER78711 (Number of weeks Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER78713 (Number of months Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER78716 (Number of days Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER78718 (Number of weeks Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER78720 (Number of months Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER78723 (Number of days Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER78725 (Number of weeks Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER78727 (Number of months Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER78742 (Number of days Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER78744 (Number of weeks Spouse/Partner out of the labor force)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER78746 (Number of months Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER78795 (Reference Person's average weekly housework hours)",
-        "DDDDDDDDD",
+        "DDDDDDDDN",
     ),
     (
         "Accuracy of ER78808 (Spouse's/Partner's Average Weekly Housework Hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER78848 (Value of food stamps received in 2020)",
@@ -68181,11 +68184,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER81578 (Reference Person's Total Weekly Work Hours in 2020)",
-        "DDDDDDDDDDD",
+        "DDDDDDDDNDD",
     ),
     (
         "Accuracy of ER81580 (Reference Person's Total Overtime Hours in 2020)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER81583 (Reference Person's Total Weeks of Work Missed Because Someone "
@@ -68224,11 +68227,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER81599 (Spouse's/Partner's Total Weekly Work Hours in 2020)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER81601 (Spouse's/Partner's Total Overtime Hours in 2020)",
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     (
         "Accuracy of ER81604 (Spouse's/Partner's Total Weeks of Work Missed Because Someone "
@@ -68880,249 +68883,249 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of ER82226 (Average hours per week Reference Person worked on this job in "
         "2022)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82229 (Reference Person's hours of overtime in 2022)--CURRENT OR MOST "
         "RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER82256 (Average hours per week Reference Person worked on this job in "
         "2022)-- JOB 2",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82259(Reference Person's hours of overtime in 2022)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER82286 (Average hours per week Reference Person worked on this job in "
         "2022)-- JOB 3",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82289 (Reference Person's hours of overtime in 2022)--JOB 3",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of ER82316 (Average hours per week Reference Person worked on this job in "
         "2022)-- JOB 4",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82319 (Reference Person's hours of overtime in 2022)--JOB 4",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of ER82358 (Number of days Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER82360 (Number of weeks Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER82362 (Number of months Reference Person missed--Others Ill)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER82366 (Number of days Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER82368 (Number of weeks Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER82370 (Number of months Reference Person missed--Own Illness)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of ER82374 (Number of days Reference Person missed--Vacation or Time Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER82376 (Number of weeks Reference Person missed--Vacation or Time Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER82378 (Number of months Reference Person missed--Vacation or Time "
         "Off)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER82382 (Number of days Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82384 (Number of weeks Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82386 (Number of months Reference Person missed--Strike)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82389 (Number of days Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82391 (Number of weeks Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82393 (Number of months Reference Person missed--Layoff)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82396 (Number of days Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82398 (Number of weeks Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82400 (Number of months Reference Person unemployed)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82415 (Number of days Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82417 (Number of weeks Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82419 (Number of months Reference Person was out of the labor force)",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82545 (Average hours per week Spouse/Partner worked on this job in "
         "2022)-- CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82548 (Spouse's/Partner's hours of overtime in 2022)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER82575 (Average hours per week Spouse/Partner worked on this job in "
         "2022)-- JOB 2",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82578 (Spouse's/Partner's hours of overtime in 2022)--JOB 2",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of ER82605 (Average hours per week Spouse/Partner worked on this job in "
         "2022)-- JOB 3",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82608 (Spouse's/Partner's hours of overtime in 2022)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of ER82635 (Average hours per week Spouse/Partner worked on this job in "
         "2022)-- JOB 4",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Accuracy of ER82638 (Spouse's/Partner's hours of overtime in 2022)--JOB 4",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
-    ("Accuracy of ER82677 (Number of days missed--others ill)", "DDDDDDDD"),
+    ("Accuracy of ER82677 (Number of days missed--others ill)", "DDDNDDDD"),
     (
         "Accuracy of ER82679 (Number of weeks Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82681 (Number of months Spouse/Partner missed--Others Ill)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82685 (Number of days Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82687 (Number of weeks Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82689 (Number of months Spouse/Partner missed--Own Illness)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of ER82693 (Number of days Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER82695 (Number of weeks Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER82697 (Number of months Spouse/Partner missed--Vacation or Time Off)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of ER82701 (Number of days Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER82703 (Number of weeks Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER82705 (Number of months Spouse/Partner missed--Strike)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER82708 (Number of days Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER82710 (Number of weeks Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER82712 (Number of months Spouse/Partner missed--Layoff)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER82715 (Number of days Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER82717 (Number of weeks Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER82719 (Number of months Spouse/Partner unemployed)",
-        "DDDDDDDD",
+        "DDDNDDDD",
     ),
     (
         "Accuracy of ER82734 (Number of days Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER82736 (Number of weeks Spouse/Partner out of the labor force)",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of ER82738 (Number of months Spouse/Partner was out of the labor force)",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of ER82788 (Reference Person's average weekly housework hours)",
-        "DDDDDDDDD",
+        "DDDDDDDDN",
     ),
     (
         "Accuracy of ER82801 (Spouse's/Partner's Average Weekly Housework Hours)",
-        "DDDDDDDD",
+        "DDDDDDDN",
     ),
     (
         "Accuracy of ER82841 (Value of food stamps received in 2022)",
@@ -69431,11 +69434,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER85432 (Reference Person's Total Weekly Work Hours in 2022)",
-        "DDDDDDDDDDD",
+        "DDDDDDDDNDD",
     ),
     (
         "Accuracy of ER85434 (Reference Person's Total Overtime Hours in 2022)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER85437 (Reference Person's Total Weeks of Work Missed Because Someone "
@@ -69474,11 +69477,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of ER85453 (Spouse's/Partner's Total Weekly Work Hours in 2022)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of ER85455 (Spouse's/Partner's Total Overtime Hours in 2022)",
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     (
         "Accuracy of ER85458 (Spouse's/Partner's Total Weeks of Work Missed Because Someone "
@@ -70136,17 +70139,17 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Accuracy of Family Social Security Income in 1996 (ER12077)",
         "DDDDDDDDD",
     ),
-    ("Accuracy of Head Hours Worked in 2001 (ER23702E8)", "DDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2003 (ER27711E8)", "DDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2005 (ER40686E8)", "DDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2007 (ER46671)", "DDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2008 (ER42148)", "DDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2009 (ER52072)", "DDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2010 ( ER47456)", "DDDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2011 (ER57839)", "DDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2012 (ER53156)", "DDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2013 (ER65019)", "DDDDDDDD"),
-    ("Accuracy of Head Hours Worked in 2014 (ER60171)", "DDDDDDDD"),
+    ("Accuracy of Head Hours Worked in 2001 (ER23702E8)", "DDDNDDDD"),
+    ("Accuracy of Head Hours Worked in 2003 (ER27711E8)", "DDDNDDDD"),
+    ("Accuracy of Head Hours Worked in 2005 (ER40686E8)", "DDDNDDDD"),
+    ("Accuracy of Head Hours Worked in 2007 (ER46671)", "DDDNDDDD"),
+    ("Accuracy of Head Hours Worked in 2008 (ER42148)", "DDDNDDDD"),
+    ("Accuracy of Head Hours Worked in 2009 (ER52072)", "DDDNDDDD"),
+    ("Accuracy of Head Hours Worked in 2010 ( ER47456)", "DDDNDDDDD"),
+    ("Accuracy of Head Hours Worked in 2011 (ER57839)", "DDDNDDDD"),
+    ("Accuracy of Head Hours Worked in 2012 (ER53156)", "DDDNDDDD"),
+    ("Accuracy of Head Hours Worked in 2013 (ER65019)", "DDDNDDDD"),
+    ("Accuracy of Head Hours Worked in 2014 (ER60171)", "DDDNDDDD"),
     ("Accuracy of Head Weeks Employed (ER42146)", "DDDDDD"),
     ("Accuracy of Head Weeks Employed (ER47454)", "DDDDDD"),
     ("Accuracy of Head Weeks Employed (ER53154)", "DDDDDD"),
@@ -70155,7 +70158,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of Head and Wife asset income in 1974", "DDDDDDDDD"),
     (
         "Accuracy of Head's Annual Hours of Travel to Work in 1984",
-        "DDDDDDDDDDD",
+        "DDDDNDDDDDD",
     ),
     ("Accuracy of Head's Farm Income (ER12065)", "DDDDDD"),
     ("Accuracy of Head's Labor Income (ER12080)", "DDDDDD"),
@@ -70187,63 +70190,63 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "(ER12075)",
         "DDDDDDDDDDDD",
     ),
-    ("Accuracy of Overtime Hours Head Worked in 2012 (ER53159)", "DDDDDDDDD"),
-    ("Accuracy of Overtime Hours Head Worked in 2014 (ER60174)", "DDDDDDDDD"),
+    ("Accuracy of Overtime Hours Head Worked in 2012 (ER53159)", "DDDNDDDDD"),
+    ("Accuracy of Overtime Hours Head Worked in 2014 (ER60174)", "DDDNDDDDD"),
     (
         "Accuracy of Overtime Hours Reference Person Worked in 2016 (ER66175)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of Overtime Hours Reference Person Worked in 2018 (ER72175)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of Overtime Hours Reference Person Worked in 2020 (ER78178)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "Accuracy of Overtime Hours Reference Person Worked in 2022 (ER82161)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
-    ("Accuracy of Overtime Hours Worked in 2010 ( ER47459)", "DDDDDDDDD"),
-    ("Accuracy of Overtime Hours Worked in 2010 ( ER47716)", "DDDDDDDDD"),
-    ("Accuracy of Overtime Hours Worked in 2012 (ER53422)", "DDDDDDDD"),
-    ("Accuracy of Overtime Hours Worked in 2014 (ER60437)", "DDDDDDDD"),
-    ("Accuracy of Overtime Hours Worked in 2016 (ER66450)", "DDDDDDDD"),
-    ("Accuracy of Overtime Hours Worked in 2018 (ER72452)", "DDDDDDDD"),
-    ("Accuracy of Overtime Hours Worked in 2020 (ER78492)", "DDDDDDDD"),
-    ("Accuracy of Overtime Hours Worked in 2022 (ER82480)", "DDDDDDDD"),
+    ("Accuracy of Overtime Hours Worked in 2010 ( ER47459)", "DDDNDDDDD"),
+    ("Accuracy of Overtime Hours Worked in 2010 ( ER47716)", "DDDNDDDDD"),
+    ("Accuracy of Overtime Hours Worked in 2012 (ER53422)", "DDDNDDDD"),
+    ("Accuracy of Overtime Hours Worked in 2014 (ER60437)", "DDDNDDDD"),
+    ("Accuracy of Overtime Hours Worked in 2016 (ER66450)", "DDDNDDDD"),
+    ("Accuracy of Overtime Hours Worked in 2018 (ER72452)", "DDDNDDDD"),
+    ("Accuracy of Overtime Hours Worked in 2020 (ER78492)", "DDDNDDDD"),
+    ("Accuracy of Overtime Hours Worked in 2022 (ER82480)", "DDDNDDDD"),
     (
         "Accuracy of Reference Person Hours Worked in 2015 (ER71111)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of Reference Person Hours Worked in 2016 (ER66172)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of Reference Person Hours Worked in 2017 (ER77133)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of Reference Person Hours Worked in 2018 (ER72172)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of Reference Person Hours Worked in 2019 (ER81469)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of Reference Person Hours Worked in 2020 (ER78175)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of Reference Person Hours Worked in 2021 (ER85326)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of Reference Person Hours Worked in 2022 (ER82158)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     ("Accuracy of Reference Person Weeks Employed (ER66170)", "DDDDDDD"),
     ("Accuracy of Reference Person Weeks Employed (ER72170)", "DDDDDDD"),
@@ -70285,16 +70288,16 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Accuracy of Spouse's/Partner's Labor Income in 2021 (ER85376)",
         "DDDDDDDD",
     ),
-    ("Accuracy of Spouse/Partner Hours Worked in 2013 (ER65067)", "DDDDDDDD"),
-    ("Accuracy of Spouse/Partner Hours Worked in 2014 (ER60434)", "DDDDDDDD"),
-    ("Accuracy of Spouse/Partner Hours Worked in 2015 (ER71159)", "DDDDDDDD"),
-    ("Accuracy of Spouse/Partner Hours Worked in 2016 (ER66447)", "DDDDDDDD"),
-    ("Accuracy of Spouse/Partner Hours Worked in 2017 (ER77181)", "DDDDDDDD"),
-    ("Accuracy of Spouse/Partner Hours Worked in 2018 (ER72449)", "DDDDDDDD"),
-    ("Accuracy of Spouse/Partner Hours Worked in 2019 (ER81517)", "DDDDDDDD"),
-    ("Accuracy of Spouse/Partner Hours Worked in 2020 (ER78489)", "DDDDDDDD"),
-    ("Accuracy of Spouse/Partner Hours Worked in 2021 (ER85374)", "DDDDDDDD"),
-    ("Accuracy of Spouse/Partner Hours Worked in 2022 (ER82477)", "DDDDDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2013 (ER65067)", "DDDNDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2014 (ER60434)", "DDDNDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2015 (ER71159)", "DDDNDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2016 (ER66447)", "DDDNDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2017 (ER77181)", "DDDNDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2018 (ER72449)", "DDDNDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2019 (ER81517)", "DDDNDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2020 (ER78489)", "DDDNDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2021 (ER85374)", "DDDNDDDD"),
+    ("Accuracy of Spouse/Partner Hours Worked in 2022 (ER82477)", "DDDNDDDD"),
     ("Accuracy of Spouse/Partner Weeks Employed (ER60432)", "DDDDDD"),
     ("Accuracy of Spouse/Partner Weeks Employed (ER66445)", "DDDDDD"),
     ("Accuracy of Spouse/Partner Weeks Employed (ER72447)", "DDDDDD"),
@@ -70338,76 +70341,76 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V10030 (Annual utilities)", "DDDDD"),
     (
         "Accuracy of V10033 (Head's annual hours worked on main job in 1983)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V10035 (Head's annual hours worked on extra jobs in 1983)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V10037 (Head's total annual work hours in 1983)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of V10039 (Head's annual hours of work missed because someone else was ill "
         "in 1983)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V10041 (Head's annual hours of illness in 1983)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V10043 (Head's annual hours on strike in 1983)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V10045 (Head's annual hours of unemployment in 1983)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V10047 (Head's annual hours out of the labor force in 1983)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V10127 (Wife's/\"Wife's\" annual hours worked on main job in 1983)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V10129 (Wife's/\"Wife's\" annual hours worked on extra jobs in 1983)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V10131 (Wife's/\"Wife's\" total annual work hours in 1983)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     (
         "Accuracy of V10133 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1983)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V10135 (Wife's/\"Wife's\" annual hours of illness in 1983)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V10137 (Wife's/\"Wife's\" annual hours on strike in 1983)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V10139 (Wife's/\"Wife's\" annual hours of unemployment in 1983)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V10141 (Wife's/\"Wife's\" annual hours out of the labor force in 1983)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V10226 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V10228 (Head's annual housework hours)", "DDDDDDD"),
-    ("Accuracy of V10230 (Others' annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V10228 (Head's annual housework hours)", "DDDDDDN"),
+    ("Accuracy of V10230 (Others' annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V10233 (Value of food stamps received last month)",
         "DDDDDDDDDD",
@@ -70467,12 +70470,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V10843 (Annual travel-to-work time)", "DDDDDD"),
     (
         "Accuracy of V10964 (Percent of time worked) See notes at V10955 and V10962.",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "Accuracy of V10994 (Percent of time worked) V10967-V11005 are asked only when the "
         "FU acquires a new Head.",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDDD",
     ),
     ("Accuracy of V11125 (House value)", "DDDDD"),
     ("Accuracy of V11127 (Remaining mortgage principal)", "DDDDDD"),
@@ -70483,36 +70486,36 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V11137 (Annual utilities)", "DDDDD"),
     (
         "Accuracy of V11140 (Head's annual hours worked on main job in 1984)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V11142 (Head's annual hours of overtime in 1984)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V11144 (Head's annual hours worked on extra jobs in 1984)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V11147 (Head's annual hours of work missed because someone else was ill "
         "in 1984)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V11149 (Head's annual hours of illness in 1984)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V11151 (Head's annual hours on strike in 1984)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V11153 (Head's annual hours of unemployment in 1984)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V11155 (Head's annual hours out of the labor force in 1984)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     ("Accuracy of V1118", "DDD"),
     ("Accuracy of V1120", "DDD"),
@@ -70520,28 +70523,28 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V1124", "DDD"),
     (
         "Accuracy of V11252 (Wife's/\"Wife's\" annual hours worked on main job in 1984)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V11256 (Wife's/\"Wife's\" annual hours worked on extra jobs in 1984)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     ("Accuracy of V1126", "DDD"),
     (
         "Accuracy of V11261 (Wife's/\"Wife's\" annual hours of illness in 1984)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V11263 (Wife's/\"Wife's\" annual hours on strike in 1984)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V11265 (Wife's/\"Wife's\" annual hours of unemployment in 1984)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V11267 (Wife's/\"Wife's\" annual hours out of the labor force in 1984)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     ("Accuracy of V1128", "DDD"),
     ("Accuracy of V1130", "DDD"),
@@ -70549,10 +70552,10 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V1135", "DDD"),
     (
         "Accuracy of V11366 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V11368 (Head's annual housework hours)", "DDDDDDD"),
-    ("Accuracy of V11370 (Others' annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V11368 (Head's annual housework hours)", "DDDDDDN"),
+    ("Accuracy of V11370 (Others' annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V11373 (Value of food stamps received last month)",
         "DDDDDDDDDD",
@@ -70620,12 +70623,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V1160", "DDD"),
     ("Accuracy of V1162", "DDD"),
     ("Accuracy of V1164", "DDD"),
-    ("Accuracy of V11741 (Percent of the time worked)", "DDDDDDDD"),
+    ("Accuracy of V11741 (Percent of the time worked)", "DDDNDDDD"),
     ("Accuracy of V1179", "DDD"),
     ("Accuracy of V1183", "DDD"),
     (
         "Accuracy of V11830 (Percent of the time working part time)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     ("Accuracy of V1185", "DDD"),
     ("Accuracy of V1187", "DDD"),
@@ -70635,11 +70638,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V1209", "DDD"),
     (
         "Accuracy of V12104 (Percent of the time working part-time)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of V12193 (Percent of the time working part time)",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     ("Accuracy of V12212 (Head's Wages from Extra Job in 1996)", "DDDDDDDDDD"),
     ("Accuracy of V1222", "DDD"),
@@ -70647,15 +70650,15 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of V12259 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1984)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V12260 (Wife's/\"Wife's\" annual hours of illness in 1985)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V12260 (Wife's/\"Wife's\" annual hours of illness in 1986)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V12524 (House value)", "DDDDD"),
     ("Accuracy of V12526 (Remaining mortgage principal)", "DDDDDD"),
@@ -70666,80 +70669,80 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V12536 (Annual utilities)", "DDDDD"),
     (
         "Accuracy of V12539 (Head's annual hours worked on main job in 1985)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V12541 (Head's annual hours of overtime in 1985)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V12543 (Head's annual hours worked on extra jobs in 1985)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V12546 (Head's annual hours of work missed because someone else was ill "
         "in 1985)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V12548 (Head's annual hours of illness in 1985)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V12550 (Head's annual hours on strike in 1985)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V12552 (Head's annual hours of unemployment in 1985)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V12554 (Head's annual hours out of the labor force in 1985)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V12556 (Head's annual hours of travel to work in 1985)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V12651 (Wife's/\"Wife's\" annual hours worked on main job in 1985)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V12653 (Wife's/\"Wife's\" annual hours of overtime in 1985)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V12655 (Wife's/\"Wife's\" annual hours worked on extra jobs in 1985)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V12658 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1985)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V12662 (Wife's/\"Wife's\" annual hours on strike in 1985)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V12664 (Wife's/\"Wife's\" annual hours of unemployment in 1985)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V12666 (Wife's/\"Wife's\" annual hours out of the labor force in 1985)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V12668 (Wife's/\"Wife's\" annual hours of travel to work in 1985)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V12765 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V12767 (Head's annual housework hours)", "DDDDDDD"),
-    ("Accuracy of V12769 (Others' annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V12767 (Head's annual housework hours)", "DDDDDDN"),
+    ("Accuracy of V12769 (Others' annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V12772 (Value of food stamps received last month)",
         "DDDDDDDDDD",
@@ -70804,71 +70807,71 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V13736 (Annual utilities)", "DDDDD"),
     (
         "Accuracy of V13739 (Head's annual hours worked on main job in 1986)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V13741 (Head's annual hours of overtime in 1986)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V13743 (Head's annual hours worked on extra jobs in 1986)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V13746 (Head's annual hours of work missed because someone else was ill "
         "in 1986)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V13748 (Head's annual hours of illness in 1986)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V13750 (Head's annual hours on strike in 1986)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V13752 (Head's annual hours of unemployment in 1986)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V13754 (Head's annual hours out of the labor force in 1986)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V13803 (Wife's/\"Wife's\" annual hours worked on main job in 1986)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V13805 (Wife's/\"Wife's\" annual hours of overtime in 1986)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V13807 (Wife's/\"Wife's\" annual hours worked on extra jobs in 1986)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V13810 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1986)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V13814 (Wife's/\"Wife's\" annual hours on strike in 1986)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V13816 (Wife's/\"Wife's\" annual hours of unemployment in 1986)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V13818 (Wife's/\"Wife's\" annual hours out of the labor force in 1986)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V13869 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V13871 (Head's annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V13871 (Head's annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V13874 (Value of food stamps received last month)",
         "DDDDDDDDDD",
@@ -70928,75 +70931,75 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V14826 (Remaining mortgage principal)", "DDDDDD"),
     (
         "Accuracy of V14829 (Head's annual hours worked on main job in 1987)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V14831 (Head's annual hours of overtime in 1987)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V14833 (Head's annual hours worked on extra jobs in 1987)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V14836 (Head's annual hours of work missed because someone else was ill "
         "in 1987)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V14838 (Head's annual hours of illness in 1987)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V14840 (Head's annual hours on strike in 1987)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V14842 (Head's annual hours of unemployment in 1987)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V14844 (Head's annual hours out of the labor force in 1987)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V14859 (Wife's/\"Wife's\" annual hours worked on main job in 1987)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V14861 (Wife's/\"Wife's\" annual hours of overtime in 1987)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V14863 (Wife's/\"Wife's\" annual hours worked on extra jobs in 1987)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V14866 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1987)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V14868 (Wife's/\"Wife's\" annual hours of illness in 1987)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V14870 (Wife's/\"Wife's\" annual hours on strike in 1987)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V14872 (Wife's/\"Wife's\" annual hours of unemployment in 1987)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V14874 (Wife's/\"Wife's\" annual hours out of the labor force in 1987)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V14891 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V14893 (Head's annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V14893 (Head's annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V14895 (Value of food stamps received in 1987)",
         "DDDDDDDDDD",
@@ -71041,87 +71044,87 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of V15781 (Total known dollars given to persons outside FU)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V15784 (Total known dollars given to Head's/Wife's/ \"Wife's\" parents "
         "outside FU)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V15787 (Total known dollars given to Head's/Wife's/ \"Wife's\" "
         "children outside FU)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V15790 (Total known dollars given to Head's/Wife's/ \"Wife's\" "
         "siblings outside FU)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V15793 (Total known dollars given to Head's/Wife's/ \"Wife's\" other "
         "relatives outside FU)",
-        "DDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V15796 (Total known dollars given to Head's/Wife's/ \"Wife's\" "
         "separated or ex- spouses outside FU)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V15799 (Total known dollars given to Head's/Wife's/ \"Wife's\" "
         "nonrelatives outside FU)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V15802 (Total known dollars given to persons outside FU whose "
         'relationship to Head/Wife/"Wife" was not ascertained)',
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V15920 (Total known dollars received from persons outside FU) See the "
         "note at V15918.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V15923 (Total known dollars received from Head's/Wife's/ \"Wife's\" "
         "parents outside FU) See the note at V15918.",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V15926 (Total known dollars received from Head's/Wife's/ \"Wife's\" "
         "children outside FU) See the note at V15918.",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V15929 (Total known dollars received from Head's/Wife's/ \"Wife's\" "
         "siblings outside FU) See the note at V15918.",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V15932 (Total known dollars received from Head's/Wife's/ \"Wife's\" "
         "other relatives outside FU) See the note at V15918.",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V15935 (Total known dollars given to Head's/Wife's/ \"Wife's\" "
         "separated or ex- spouses outside FU) See the note at V15918.",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V15938 (Total known dollars received from Head's/Wife's/ \"Wife's\" "
         "nonrelatives outside FU) See the note at V15918.",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V15941 (Total known dollars received from persons outside FU whose "
         'relationship to Head/Wife/"Wife" was not ascertained) See the note at V15918.',
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V15945 (Total known hours spent helping persons outside FU) See the "
         "note at V15943.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V15948 (Total known time spent helping Head's/Wife's/ \"Wife's\" "
@@ -71203,75 +71206,75 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V16326 (Remaining mortgage principal)", "DDDDDD"),
     (
         "Accuracy of V16329 (Head's annual hours worked on main job in 1988)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V16331 (Head's annual hours of overtime in 1988)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V16333 (Head's annual hours worked on extra jobs in 1988)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V16336 (Head's annual hours of work missed because someone else was ill "
         "in 1988)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V16338 (Head's annual hours of illness in 1988)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V16340 (Head's annual hours on strike in 1988)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V16342 (Head's annual hours of unemployment in 1988)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V16344 (Head's annual hours out of the labor force in 1988)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V16359 (Wife's/\"Wife's\" annual hours worked on main job in 1988)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V16361 (Wife's/\"Wife's\" annual hours of overtime in 1988)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V16363 (Wife's/\"Wife's\" annual hours worked on extra jobs in 1988)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V16366 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1988)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V16368 (Wife's/\"Wife's\" annual hours of illness in 1988)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V16370 (Wife's/\"Wife's\" annual hours on strike in 1988)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V16372 (Wife's/\"Wife's\" annual hours of unemployment in 1988)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V16374 (Wife's/\"Wife's\" annual hours out of the labor force in 1988)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V16391 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V16393 (Head's annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V16393 (Head's annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V16395 (Value of food stamps received in 1988)",
         "DDDDDDDDDD",
@@ -71323,75 +71326,75 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V17735 (Annual rent value of free housing)", "DDDDDDDDD"),
     (
         "Accuracy of V17738 (Head's annual hours worked on main job in 1989)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V17740 (Head's annual hours of overtime in 1989)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V17742 (Head's annual hours worked on extra jobs in 1989)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V17745 (Head's annual hours of work missed because someone else was ill "
         "in 1989)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V17747 (Head's annual hours of illness in 1989)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V17749 (Head's annual hours on strike in 1989)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V17751 (Head's annual hours of unemployment in 1989)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V17753 (Head's annual hours out of the labor force in 1989)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V17768 (Wife's/\"Wife's\" annual hours worked on main job in 1989)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V17770 (Wife's/\"Wife's\" annual hours of overtime in 1989)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V17772 (Wife's/\"Wife's\" annual hours worked on extra jobs in 1989)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V17775 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1989)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V17777 (Wife's/\"Wife's\" annual hours of illness in 1989)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V17779 (Wife's/\"Wife's\" annual hours on strike in 1989)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V17781 (Wife's/\"Wife's\" annual hours of unemployment in 1989)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V17783 (Wife's/\"Wife's\" annual hours out of the labor force in 1989)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V17800 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V17802 (Head's annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V17802 (Head's annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V17805 (Value of food stamps received last month)",
         "DDDDDDDDDD",
@@ -71452,7 +71455,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Accuracy of V1819 (Amount saved doing own car repairs - 1971)",
         "DDDDDDDDDDD",
     ),
-    ("Accuracy of V1821 (Hours spent repairing car - 1971", "DDDDDDDDD"),
+    ("Accuracy of V1821 (Hours spent repairing car - 1971", "DDDNDDDDD"),
     ("Accuracy of V1823 (House value)", "DDDDD"),
     ("Accuracy of V1825 (Remaining mortgage principal - 1971)", "DDDDDDDD"),
     ("Accuracy of V1827 (Annual mortgage payments in 1970)", "DDDDDDDD"),
@@ -71469,21 +71472,21 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of V1839 (Head's annual hours working for money in 1970)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V1841 (Head's annual hours of illness in 1970)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V1843 (Head's annual hours of unemployment in 1970)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V1845 (Head's travel to work cost in 1970)", "DDDDDDDDDD"),
     ("Accuracy of V1847 (Head's travel to work time in 1970)", "DDDDDDDDDD"),
     (
         "Accuracy of V1849 (Wife's annual hours worked for money in 1970)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V1851 (Wife's annual travel to work cost in 1970)",
@@ -71493,11 +71496,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of V1855 (Annual hours spent in 1970 on housework by Wife or unmarried "
         "Head)",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V1857 (Annual hours spent on housework in 1970 by husband)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of V1859 (Housework done by others--other than Head or Wife--in FU in "
@@ -71507,7 +71510,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of V1861 (Annual hours of housework help from others outside the FU in "
         "1970)",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V1863 (Annual cost of help with housework from outside the FU in 1970)",
@@ -71566,75 +71569,75 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V19035 (Annual rent value of free housing)", "DDDDDDDDD"),
     (
         "Accuracy of V19038 (Head's annual hours worked on main job in 1990)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V19040 (Head's annual hours of overtime in 1990)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V19042 (Head's annual hours worked on extra jobs in 1990)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V19045 (Head's annual hours of work missed because someone else was ill "
         "in 1990)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V19047 (Head's annual hours of illness in 1990)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V19049 (Head's annual hours on strike in 1990)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V19051 (Head's annual hours of unemployment in 1990)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V19053 (Head's annual hours out of the labor force in 1990)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V19068 (Wife's/\"Wife's\" annual hours worked on main job in 1990)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V19070 (Wife's/\"Wife's\" annual hours of overtime in 1990)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V19072 (Wife's/\"Wife's\" annual hours worked on extra jobs in 1990)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V19075 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1990)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V19077 (Wife's/\"Wife's\" annual hours of illness in 1990)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V19079 (Wife's/\"Wife's\" annual hours on strike in 1990)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V19081 (Wife's/\"Wife's\" annual hours of unemployment in 1990)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V19083 (Wife's/\"Wife's\" annual hours out of the labor force in 1990)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V19100 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V19102 (Head's annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V19102 (Head's annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V19105 (Value of food stamps received last month)",
         "DDDDDDDDDD",
@@ -71711,75 +71714,75 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V20335 (Annual rent value of free housing)", "DDDDDDDDD"),
     (
         "Accuracy of V20338 (Head's annual hours worked on main job in 1991)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V20340 (Head's annual hours of overtime in 1991)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V20342 (Head's annual hours worked on extra jobs in 1991)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V20345 (Head's annual hours of work missed because someone else was ill "
         "in 1991)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V20347 (Head's annual hours of illness in 1991)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V20349 (Head's annual hours on strike in 1991)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V20351 (Head's annual hours of unemployment in 1991)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V20353 (Head's annual hours out of the labor force in 1991)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V20368 (Wife's/\"Wife's\" annual hours worked on main job in 1991)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V20370 (Wife's/\"Wife's\" annual hours of overtime in 1991)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V20372 (Wife's/\"Wife's\" annual hours worked on extra jobs in 1991)",
-        "DDDDDDDDDDDD",
+        "DDDDDNDDDDDD",
     ),
     (
         "Accuracy of V20375 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1991)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V20377 (Wife's/\"Wife's\" annual hours of illness in 1991)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V20379 (Wife's/\"Wife's\" annual hours on strike in 1991)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V20381 (Wife's/\"Wife's\" annual hours of unemployment in 1991)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V20383 (Wife's/\"Wife's\" annual hours out of the labor force in 1991)",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Accuracy of V20400 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V20402 (Head's annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V20402 (Head's annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V20405 (Value of food stamps received last month)",
         "DDDDDDDDDD",
@@ -71843,14 +71846,14 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V21626 (Annual rent value of free housing)", "DDDDDDDDD"),
     (
         "Accuracy of V21630 (Head's annual hours of overtime in 1992)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V21632 (Head's total 1992 extra job work hours)",
-        "DDDDDDDDDD",
+        "DDDDDDDDDN",
     ),
-    ("Accuracy of V21666 (Wife overtime work hours)", "DDDDDDD"),
-    ("Accuracy of V21668 (Wife total extra job work hours)", "DDDDDDDDD"),
+    ("Accuracy of V21666 (Wife overtime work hours)", "DDDDDDN"),
+    ("Accuracy of V21668 (Wife total extra job work hours)", "DDDDDDDDN"),
     (
         "Accuracy of V21703 (Value of food stamps received last month)",
         "DDDDDDDDDD",
@@ -71988,7 +71991,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V22367 (1993 OFUM's Income in 1992)", "DDDDDDDD"),
     (
         "Accuracy of V22369 (1993 OFUM's Annual Work Hours in 1992)",
-        "DDDDDDDDDD",
+        "DDDDDDDNDD",
     ),
     ("Accuracy of V22371 (1993 OFUM's Asset Income in 1992)", "DDDDDDDDD"),
     ("Accuracy of V22374 (1993 OFUM's ADC/AFDC Income in 1992)", "DDDDDDDDD"),
@@ -72020,135 +72023,135 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Accuracy of V22394 (1993 OFUM's Miscellaneous Transfer Income in 1992)",
         "DDDDDDDDDD",
     ),
-    ("Accuracy of V22558 (Number of Weeks Missed-Others Ill)", "DDDDDDDD"),
-    ("Accuracy of V22561 (Number of Weeks Missed-Ill Self)", "DDDDDDDD"),
-    ("Accuracy of V22564 (Number of Weeks Missed-Vacation)", "DDDDDDD"),
-    ("Accuracy of V22567 (Number of Weeks Missed-Strike)", "DDDDDDD"),
-    ("Accuracy of V22570 (Number of Weeks Missed-Unemployed)", "DDDDDDD"),
+    ("Accuracy of V22558 (Number of Weeks Missed-Others Ill)", "DDDNDDDD"),
+    ("Accuracy of V22561 (Number of Weeks Missed-Ill Self)", "DDDNDDDD"),
+    ("Accuracy of V22564 (Number of Weeks Missed-Vacation)", "DDDNDDD"),
+    ("Accuracy of V22567 (Number of Weeks Missed-Strike)", "DDDNDDD"),
+    ("Accuracy of V22570 (Number of Weeks Missed-Unemployed)", "DDDNDDD"),
     (
         "Accuracy of V22573 (Number of Weeks Missed-Out of the Labor Force)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
-    ("Accuracy of V22575 (Number of Weeks Worked in 1992)", "DDDDDDDDD"),
+    ("Accuracy of V22575 (Number of Weeks Worked in 1992)", "DDDNDDDDD"),
     (
         "Accuracy of V22577 (Average Hours Per Week Worked on Main Job in 1992)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V22587 (Number of Weeks Worked-FIRST EXTRA JOB)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of V22589 (Average Hours per Week Worked-FIRST EXTRA JOB)",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of V22613 (Number of Weeks Worked in 1992-SECOND EXTRA JOB",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of V22615 (Average Hours per Week Worked in 1992 -SECOND EXTRA JOB)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
-    ("Accuracy of V22648 (Number of Weeks Unemployed in 1992)", "DDDDDDDDD"),
-    ("Accuracy of V22724 (Number of Weeks Missed-Others Ill)", "DDDDDDDD"),
-    ("Accuracy of V22727 (Number of Weeks Missed-Ill Self)", "DDDDDDDD"),
-    ("Accuracy of V22730 (Number of Weeks Missed-Vacation)", "DDDDDDD"),
-    ("Accuracy of V22733 (Number of Weeks Missed-Strike)", "DDDDDDD"),
-    ("Accuracy of V22736 (Number of Weeks Missed-Unemployed)", "DDDDDDD"),
+    ("Accuracy of V22648 (Number of Weeks Unemployed in 1992)", "DDDNDDDDD"),
+    ("Accuracy of V22724 (Number of Weeks Missed-Others Ill)", "DDDNDDDD"),
+    ("Accuracy of V22727 (Number of Weeks Missed-Ill Self)", "DDDNDDDD"),
+    ("Accuracy of V22730 (Number of Weeks Missed-Vacation)", "DDDNDDD"),
+    ("Accuracy of V22733 (Number of Weeks Missed-Strike)", "DDDNDDD"),
+    ("Accuracy of V22736 (Number of Weeks Missed-Unemployed)", "DDDNDDD"),
     (
         "Accuracy of V22739 (Number of Weeks Missed-Out of the Labor Force)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
-    ("Accuracy of V22741 (Number of Weeks Worked in 1992)", "DDDDDDDDD"),
+    ("Accuracy of V22741 (Number of Weeks Worked in 1992)", "DDDNDDDDD"),
     (
         "Accuracy of V22743 (Average Hours per Week Worked on Main Jobs in 1992)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V22753 (Number of Weeks Worked in 1992--FIRST EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of V22755 (Average Hours per Week in 1992--FIRST EXTRA JOB",
-        "DDDDDDDDDDD",
+        "DDDDNDDDDDD",
     ),
     (
         "Accuracy of V22779 (Number of Weeks Worked--SECOND EXTRA JOB)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of V22781 (Average Hours per Week--SECOND EXTRA JOB)",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
-    ("Accuracy of V22911 (Number of Weeks Missed-Others Ill)", "DDDDDDDD"),
-    ("Accuracy of V22914 (Number of Weeks Missed-Ill Self)", "DDDDDDDD"),
-    ("Accuracy of V22917 (Number of Weeks Missed-Vacation)", "DDDDDDD"),
-    ("Accuracy of V22920 (Number of Weeks Missed-Strike)", "DDDDDDD"),
-    ("Accuracy of V22923 (Number of Weeks Missed-Unemployed)", "DDDDDDD"),
+    ("Accuracy of V22911 (Number of Weeks Missed-Others Ill)", "DDDNDDDD"),
+    ("Accuracy of V22914 (Number of Weeks Missed-Ill Self)", "DDDNDDDD"),
+    ("Accuracy of V22917 (Number of Weeks Missed-Vacation)", "DDDNDDD"),
+    ("Accuracy of V22920 (Number of Weeks Missed-Strike)", "DDDNDDD"),
+    ("Accuracy of V22923 (Number of Weeks Missed-Unemployed)", "DDDNDDD"),
     (
         "Accuracy of V22926 (Number of Weeks Missed-Out of the Labor Force)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
-    ("Accuracy of V22928 (Number of Weeks Worked in 1992)", "DDDDDDDDD"),
+    ("Accuracy of V22928 (Number of Weeks Worked in 1992)", "DDDNDDDDD"),
     (
         "Accuracy of V22930 (Average Hours Per Week Worked on Main Job in 1992)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V22940 (Number of Weeks Worked in 1992-FIRST EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of V22942 (Average Hours per Week Worked in 1992 -FIRST EXTRA JOB)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V22966 (Number of Weeks Worked in 1992-SECOND EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of V22968 (Number of Hours per Week Worked in 1992 --SECOND EXTRA JOB)",
-        "DDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDD",
     ),
-    ("Accuracy of V23001 (Number of Weeks Unemployed in 1992)", "DDDDDDDDD"),
-    ("Accuracy of V23077 (Number of Weeks Missed-Ill Other)", "DDDDDDDD"),
-    ("Accuracy of V23080 (Number of Weeks Missed-Ill Self)", "DDDDDDDD"),
-    ("Accuracy of V23083 (Number of Weeks Missed-Vacation)", "DDDDDDD"),
-    ("Accuracy of V23086 (Number of Weeks Missed-Strike)", "DDDDDDD"),
-    ("Accuracy of V23089 (Number of Weeks Missed-Unemployed)", "DDDDDDD"),
+    ("Accuracy of V23001 (Number of Weeks Unemployed in 1992)", "DDDNDDDDD"),
+    ("Accuracy of V23077 (Number of Weeks Missed-Ill Other)", "DDDNDDDD"),
+    ("Accuracy of V23080 (Number of Weeks Missed-Ill Self)", "DDDNDDDD"),
+    ("Accuracy of V23083 (Number of Weeks Missed-Vacation)", "DDDNDDD"),
+    ("Accuracy of V23086 (Number of Weeks Missed-Strike)", "DDDNDDD"),
+    ("Accuracy of V23089 (Number of Weeks Missed-Unemployed)", "DDDNDDD"),
     (
         "Accuracy of V23092 (Number of Weeks Missed-Out of the Labor Force)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
-    ("Accuracy of V23094 (Number of Weeks Worked in 1992)", "DDDDDDDDD"),
+    ("Accuracy of V23094 (Number of Weeks Worked in 1992)", "DDDNDDDDD"),
     (
         "Accuracy of V23096 (Average Hours per Week Worked on Main Jobs in 1992)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V23106 (Number of Weeks Worked--FIRST EXTRA JOB)",
-        "DDDDDDDDD",
+        "DDDNDDDDD",
     ),
     (
         "Accuracy of V23108 (Average Hours per Week Worked--FIRST EXTRA JOB)",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         "Accuracy of V23132 (Number of Weeks Worked in 1992-SECOND EXTRA JOB)",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "Accuracy of V23134 (Average Hours per Week Worked-SECOND EXTRA JOB)",
-        "DDDDDDDDDD",
+        "DDDDNDDDDD",
     ),
     (
         'Accuracy of V23154 (Wife/"Wife"\'s Average Housework Hours per Week)',
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     (
         "Accuracy of V23156 (Head's Average Housework Hours per Week)",
-        "DDDDDDDDD",
+        "DDDDDDNDD",
     ),
     ("Accuracy of V24", "DDD"),
     ("Accuracy of V2417 (Car Value: 1972)", "DDDDDD"),
@@ -72156,7 +72159,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Accuracy of V2419 (Amount saved doing own car repairs: 1972)",
         "DDDDDDDDDD",
     ),
-    ("Accuracy of V2421 (Hours spent repairing car: 1972)", "DDDDDDDD"),
+    ("Accuracy of V2421 (Hours spent repairing car: 1972)", "DDDNDDDD"),
     ("Accuracy of V2423 (House Value)", "DDDDD"),
     ("Accuracy of V2425 (Remaining mortgage principal: 1972)", "DDDDDDD"),
     ("Accuracy of V2427 (Annual mortgage payments in 1971)", "DDDDDDDD"),
@@ -72173,21 +72176,21 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of V2439 (Head's annual hours working for money in 1971)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V2441 (Head's annual hours of illness in 1971)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V2443 (Head's annual hours of unemployment in 1971)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V2445 (Head's travel to work cost in 1971)", "DDDDDDDDDD"),
     ("Accuracy of V2447 (Head's travel to work time in 1971)", "DDDDDDDDDD"),
     (
         "Accuracy of V2449 (Wife's annual hours worked for money in 1971)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V2451 (Wife's annual travel to work cost in 1971)",
@@ -72197,11 +72200,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of V2455 (Annual hours spent in 1971 on housework by Wife or unmarried "
         "Head)",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V2457 (Annual hours spent an housework in 1971 by husband)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of V2459 (Housework done by others - other than Head or Wife - in FU in "
@@ -72211,7 +72214,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of V2461 (Annual hours of housework help from others outside the FU in "
         "1971)",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V2463 (Annual cost of help with housework from outside the FU in 1971)",
@@ -72283,37 +72286,37 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of V3027 (Head's annual hours working for money in 1972)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V3029 (Head's annual hours of illness in 1972)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V3031 (Head's annual hours of unemployment in 1972)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V3033 (Head's travel to work time, annual hours in 1972)",
-        "DDDDDDDDDDDD",
+        "DDDDDDDDDNDD",
     ),
     (
         "Accuracy of V3035 (Wife's annual hours working for money in 1972)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V3037 (Annual hours spent on housework in 1972 by Wife or unmarried "
         "Head)",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V3039 (Annual hours spent on housework in 1972 by Husband)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of V3041 (Annual hours spent on housework in 1972 by others - other than "
         "Head or Wife)",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDD",
     ),
     ("Accuracy of V3046 (Amount of Head's wages in 1972)", "DDDDDDDDD"),
     ("Accuracy of V3051 (Head's total labor income in 1972)", "DDDDDDDDD"),
@@ -72344,33 +72347,33 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of V3423 (Head's annual hours working for money in 1973)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V3425 (Head's annual hours of illness in 1973)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V3427 (Head's annual hours of unemployment in 1973)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V3429 (Head's travel to work time, annual hours in 1973)",
-        "DDDDDDDDDDDD",
+        "DDDDDDDDDNDD",
     ),
     (
         "Accuracy of V3431 (Wife's annual hours working for money in 1973)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V3433 (Percentage of full time worked by Wife in years she did not work "
         "full time)",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V3435 (Percentage of full time worked by Head in years Head did not "
         "work full time)",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V3441 (Annual food expenditures on food used at home in 1973)",
@@ -72388,16 +72391,16 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of V3449 (Annual hours spent in 1973 on housework by Wife or unmarried "
         "Head)",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V3451 (Annual hours spent in 1973 on housework by husband)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of V3453 (Annual hours spent in 1973 on housework by others - other than "
         "Head or Wife)",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDD",
     ),
     ("Accuracy of V3458 (Amount of Head's wages in 1973)", "DDDDDDDDD"),
     ("Accuracy of V3463 (Head's total labor income in 1973)", "DDDDDDDDD"),
@@ -72428,31 +72431,31 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of V3823 (Head's annual hours working for money in 1974)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V3825 (Head's annual hours of illness in 1974)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V3827 (Head's annual hours of unemployment in 1974)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V3829 (Head's travel to work time, annual hours in 1974)",
-        "DDDDDDDDDDDD",
+        "DDDDDDDDDNDD",
     ),
     (
         "Accuracy of V3831 (Wife's annual hours working for money in 1974)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V3833 (Wife's annual hours of unemployment in 1974)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V3835 (Wife's travel to work time, annual hours in 1974)",
-        "DDDDDDDDDDDD",
+        "DDDDDDDDDNDD",
     ),
     (
         "Accuracy of V3841 (Annual food expenditures on food used at home in 1974)",
@@ -72514,37 +72517,37 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of V4332 (Head's annual hours working for money in 1975)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V4334 (Head's annual hours of work missed because someone else was ill "
         "in 1975)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V4336 (Head's annual hours of illness in 1975)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V4338 (Head's annual hours of unemployment in 1975)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V4340 (Head's annual hours on strike in 1975)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V4342 (Head's travel to work time, annual hours in 1975)",
-        "DDDDDDDDDDDD",
+        "DDDDDDDDDNDD",
     ),
     (
         "Accuracy of V4344 (Wife's annual hours working for money in 1975)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
-    ("Accuracy of V4350 (Head's annual hours of housework)", "DDDDDDDD"),
+    ("Accuracy of V4350 (Head's annual hours of housework)", "DDDDDNDD"),
     (
         "Accuracy of V4352 (Annual hours of housework done by others in FU)",
-        "DDDDDDDDDDDD",
+        "DDDDNDDDDDDD",
     ),
     (
         "Accuracy of V4354 (Annual food expenditures on food used at home in 1975)",
@@ -72607,28 +72610,28 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V469", "DDD"),
     ("Accuracy of V47", "DDD"),
     ("Accuracy of V471", "DDD"),
-    ("Accuracy of V4711 (Wife's annual hours of housework)", "DDDDDDDD"),
+    ("Accuracy of V4711 (Wife's annual hours of housework)", "DDDDDNDD"),
     (
         "Accuracy of V4719 (Wife's annual hours working for money in 1975)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V4721 (Wife's annual hours of work missed because someone else was ill "
         "in 1975)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V4723 (Wife's annual hours of illness in 1975)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
-    ("Accuracy of V4725 (Wife's annual strike hours in 1975)", "DDDDDDDDD"),
+    ("Accuracy of V4725 (Wife's annual strike hours in 1975)", "DDDDDDNDD"),
     (
         "Accuracy of V4727 (Wife's annual hours of unemployment in 1975)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V4729 (Wife's travel to work time, annual hours in 1975)",
-        "DDDDDDDDDDDD",
+        "DDDDDDDDDNDD",
     ),
     ("Accuracy of V473", "DDD"),
     ("Accuracy of V475", "DDD"),
@@ -72658,53 +72661,53 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V523", "DDD"),
     (
         "Accuracy of V5232 (Head's annual hours working for money in 1976)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V5234 (Head's annual hours of work missed because someone else was ill "
         "in 1976)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V5236 (Head's annual hours of illness in 1976)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V5238 (Head's annual hours on strike in 1976)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V5240 (Head's annual hours of un- employment in 1976)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     ("Accuracy of V5242 (Head's travel to work time in 1976)", "DDDDDDDDDD"),
     (
         "Accuracy of V5244 (Wife's annual hours working for money in 1976)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V5246 (Wife's annual hours of work missed because someone else was ill "
         "in 1976)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V5248 (Wife's annual hours of illness in 1976",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V525", "DDD"),
     (
         "Accuracy of V5250 (Wife's annual hours on strike in 1976)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V5252 (Wife's annual hours of unemployment in 1976)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
-    ("Accuracy of V5260 (Wife's annual hours of housework)", "DDDDDDDD"),
-    ("Accuracy of V5262 (Head's annual hours of housework)", "DDDDDDDD"),
+    ("Accuracy of V5260 (Wife's annual hours of housework)", "DDDDDNDD"),
+    ("Accuracy of V5262 (Head's annual hours of housework)", "DDDDDNDD"),
     (
         "Accuracy of V5264 (Annual hours of housework done by all others in FU)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V5267 (Amount paid for Food Stamps last month)",
@@ -72769,53 +72772,53 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V5729 (Annual Expenditure on Utilities)", "DDDDDDD"),
     (
         "Accuracy of V5731 (Head's annual hours working for money in 1977)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V5733 (Head's annual hours of work missed because someone else was ill "
         "in 1977)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V5735 (Head's annual hours of illness in 1977)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V5737 (Head's annual hours on strike in 1977)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V5739 (Head's annual hours of unemployment in 1977)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V5741 (Head's travel to work time in 1977)", "DDDDDDDDDD"),
     (
         "Accuracy of V5743 (Wife's annual hours working for money in 1977)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V5745 (Wife's annual hours of work missed because someone else was ill "
         "in 1977)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V5747 (Wife's annual hours of illness in 1977)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V5749 (Wife's annual hours on strike in 1977)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V5751 (Wife's annual hours of unemployment in 1977)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V5753 (Wife's travel to work time in 1977)", "DDDDDDDDDD"),
-    ("Accuracy of V5759 (Wife's annual hours of housework)", "DDDDDDDD"),
-    ("Accuracy of V5761 (Head's annual hours of house- work)", "DDDDDDDDD"),
+    ("Accuracy of V5759 (Wife's annual hours of housework)", "DDDDDNDD"),
+    ("Accuracy of V5761 (Head's annual hours of house- work)", "DDDDDNDDD"),
     (
         "Accuracy of V5763 (Annual hours of housework done by all others in FU)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V5766 (Amount paid for Food Stamps last month)",
@@ -72877,57 +72880,57 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V6332 (Annual Expenditure on Utilities)", "DDDDDDD"),
     (
         "Accuracy of V6336 (Head's annual hours working for money in 1978)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V6336 (Head's annual hours working for money in 1979)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V6338 (Head's annual hours of work missed because someone else was ill "
         "in 1978)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V6340 (Head's annual hours of illness in 1978)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V6342 (Head's annual hours on strike in 1978)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V6344 (Head's annual hours of unemployment in 1978)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V6346 (Head's travel to work time in 1978)", "DDDDDDDDDD"),
     (
         "Accuracy of V6348 (Wife's annual hours working for money in 1978)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V6350 (Wife's annual hours of work missed because someone else was ill "
         "in 1978)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V6352 (Wife's annual hours of illness in 1978)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V6354 (Wife's annual hours on strike in 1978)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V6356 (Wife's annual hours of unemployment in 1978)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V6358 (Wife's travel to work time in 1978)", "DDDDDDDDDD"),
-    ("Accuracy of V6365 (Wife's annual hours of housework)", "DDDDDDDD"),
-    ("Accuracy of V6367 (Head's annual hours of housework", "DDDDDDDD"),
+    ("Accuracy of V6365 (Wife's annual hours of housework)", "DDDDDNDD"),
+    ("Accuracy of V6367 (Head's annual hours of housework", "DDDDDNDD"),
     (
         "Accuracy of V6369 (Annual hours of housework done by all others in FU)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V6372 (Amount paid for Food Stamps last month)",
@@ -72998,48 +73001,48 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Accuracy of V6936 (Head's annual hours of work missed because someone else was ill "
         "in 1979)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V6938 (Head's annual hours of illness in 1979)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V6940 (Head's annual hours on strike in 1979)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V6942 (Head's annual hours of unemployment in 1979)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V6944 (Head's travel to work time in 1979)", "DDDDDDDDDD"),
     (
         "Accuracy of V6946 (Wife's annual hours working for money in 1979)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V6948 (Wife's annual hours of work missed because someone else was ill "
         "in 1979)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V6950 (Wife's annual hours of illness in 1979)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V6952 (Wife's annual hours on strike in 1979)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V6954 (Wife's annual hours of unemployment in 1979)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     ("Accuracy of V6956 (Wife's travel to work time in 1979)", "DDDDDDDDDD"),
-    ("Accuracy of V6963 (Wife's annual hours of housework)", "DDDDDDDD"),
-    ("Accuracy of V6965 (Head's annual hours of housework)", "DDDDDDDD"),
+    ("Accuracy of V6963 (Wife's annual hours of housework)", "DDDDDNDD"),
+    ("Accuracy of V6965 (Head's annual hours of housework)", "DDDDDNDD"),
     (
         "Accuracy of V6967 (Annual hours of housework done by all others in FU)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V6970 (Value of Food Stamps Received last month)",
@@ -73096,51 +73099,51 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V7527 (Annual rent value of free housing)", "DDDDDDDDD"),
     (
         "Accuracy of V7530 (Head's annual hours working for money in 1980)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V7532 (Head's annual hours of work missed because someone else was ill "
         "in 1980)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V7534 (Head's annual hours of illness in 1980)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V7536 (Head's annual hours on strike in 1980)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V7538 (Head's annual hours of unemployment in 1980)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V7540 (Wife's annual hours working for money in 1980)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V7542 (Wife's annual hours of work missed because someone else was ill "
         "in 1980)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V7544 (Wife's annual hours of illness in 1980)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V7546 (Wife's annual hours on strike in 1980)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V7548 (Wife's annual hours of unemployment in 1980)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
-    ("Accuracy of V7555 (Wife's annual hours of housework)", "DDDDDDDD"),
-    ("Accuracy of V7557 (Head's annual hours of housework)", "DDDDDDDD"),
+    ("Accuracy of V7555 (Wife's annual hours of housework)", "DDDDDNDD"),
+    ("Accuracy of V7557 (Head's annual hours of housework)", "DDDDDNDD"),
     (
         "Accuracy of V7559 (Annual hours of housework done by all others in FU)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Accuracy of V7562 (Value of food stamps received last month)",
@@ -73199,45 +73202,45 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V8225 (Total annual utilities)", "DDDDDD"),
     (
         "Accuracy of V8228 (Head's annual hours working for money in 1981)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V8230 (Head's annual hours of work missed because someone else was ill "
         "in 1981)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V8232 (Head's annual hours of illness in 1981)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8234 (Head's annual hours on strike in 1981)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8236 (Head's annual hours of unemployment in 1981)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8238 (Wife's annual hours working for money in 1981)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V8240 (Wife's annual hours of work missed because someone else was ill "
         "in 1981)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V8242 (Wife's annual hours of illness in 1981)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8244 (Wife's annual hours on strike in 1981)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8246 (Wife's annual hours of unemployment in 1981)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8254 (Value of food stamps received last month)",
@@ -73285,12 +73288,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Accuracy of V8631 (Percent of time worked) See the note at V8621.",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "Accuracy of V8661 (Percent of time worked) V8659-V8662 do not take account of "
         "changes in the Head's employment history since these questions were actually asked.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     ("Accuracy of V8817 (House value)", "DDDDD"),
     ("Accuracy of V8819 (Remaining mortgage principal)", "DDDDDD"),
@@ -73300,52 +73303,52 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Accuracy of V8827 (Annual rent value of free housing)", "DDDDDDDDD"),
     (
         "Accuracy of V8830 (Head's annual hours working for money in 1982)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V8832 (Head's annual hours of work missed because someone else was ill "
         "in 1982)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V8834 (Head's annual hours of illness in 1982)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8836 (Head's annual hours on strike in 1982)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8838 (Head's annual hours of unemployment in 1982)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8840 (Wife's/\"Wife's\" annual hours working for money in 1982)",
-        "DDDDDDDDDDD",
+        "DDDDDNDDDDD",
     ),
     (
         "Accuracy of V8842 (Wife's/\"Wife's\" annual hours of work missed because someone "
         "else was ill in 1982)",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDNDDDDDDDDDD",
     ),
     (
         "Accuracy of V8844 (Wife's/\"Wife's\" annual hours of illness in 1982)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8846 (Wife's/\"Wife's\" annual hours on strike in 1982)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8848 (Wife's/\"Wife's\" annual hours of unemployment in 1982)",
-        "DDDDDDDDDD",
+        "DDDDDNDDDD",
     ),
     (
         "Accuracy of V8855 (Wife's/\"Wife's\" annual housework hours)",
-        "DDDDDDD",
+        "DDDDDDN",
     ),
-    ("Accuracy of V8857 (Head's annual housework hours)", "DDDDDDD"),
-    ("Accuracy of V8859 (Others' annual housework hours)", "DDDDDDD"),
+    ("Accuracy of V8857 (Head's annual housework hours)", "DDDDDDN"),
+    ("Accuracy of V8859 (Others' annual housework hours)", "DDDDDDN"),
     (
         "Accuracy of V8862 (Value of food stamps received last month)",
         "DDDDDDDDDD",
@@ -73413,28 +73416,28 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Accuracy of V9317 (Percent of time worked) V9315-V9318 do not take account of "
         "changes in Wife's/\"Wife's\" employment history since these questions were actually "
         "asked.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Accuracy of V9347 (Percent of time worked) V9345-V9348 do not take account of "
         "changes in the Head's employment history since these questions were actually asked.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
-    ('Accuracy of WIFE/"WIFE" Hours Worked in 2001 (ER23702L2)', "DDDDDDDD"),
-    ('Accuracy of WIFE/"WIFE" Hours Worked in 2005 (ER40686L2)', "DDDDDDDD"),
-    ('Accuracy of WIFE/"WIFE" Hours Worked in 2009 (ER52083)', "DDDDDDDD"),
-    ('Accuracy of WIFE/"WIFE" Hours Worked in 2010 ( ER47713)', "DDDDDDDDD"),
-    ('Accuracy of WIFE/"WIFE" Hours Worked in 2011 (ER57887)', "DDDDDDDD"),
-    ('Accuracy of WIFE/"WIFE" Hours Worked in 2012 (ER53419)', "DDDDDDDD"),
+    ('Accuracy of WIFE/"WIFE" Hours Worked in 2001 (ER23702L2)', "DDDNDDDD"),
+    ('Accuracy of WIFE/"WIFE" Hours Worked in 2005 (ER40686L2)', "DDDNDDDD"),
+    ('Accuracy of WIFE/"WIFE" Hours Worked in 2009 (ER52083)', "DDDNDDDD"),
+    ('Accuracy of WIFE/"WIFE" Hours Worked in 2010 ( ER47713)', "DDDNDDDDD"),
+    ('Accuracy of WIFE/"WIFE" Hours Worked in 2011 (ER57887)', "DDDNDDDD"),
+    ('Accuracy of WIFE/"WIFE" Hours Worked in 2012 (ER53419)', "DDDNDDDD"),
     ('Accuracy of WIFE/"WIFE" Weeks Employed ( ER47711)', "DDDDDDD"),
     ('Accuracy of WIFE/"WIFE" Weeks Employed (ER53417)', "DDDDDD"),
     (
         "Accuracy of Wife's/\"Wife's Annual Hours of Travel to Work in 1984",
-        "DDDDDDDDDDD",
+        "DDDDNDDDDDD",
     ),
     (
         "Accuracy of Wife's/\"Wife's\" Annual Hours of Overtime in 1984",
-        "DDDDDDDDD",
+        "DDDDNDDDD",
     ),
     (
         "Accuracy of Wife's/\"Wife's\" Labor Income in 2001 (ER23702L4)",
@@ -73465,9 +73468,9 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1996 (ER12082)",
         "DDDDDDDDDDDDD",
     ),
-    ('Accuracy of Wife/"Wife" Hours Worked in 2003 (ER27711L6)', "DDDDDDDD"),
-    ('Accuracy of Wife/"Wife" Hours Worked in 2007 (ER46682)', "DDDDDDDD"),
-    ('Accuracy of Wife/"Wife" Hours Worked in 2008 (ER42148)', "DDDDDDDD"),
+    ('Accuracy of Wife/"Wife" Hours Worked in 2003 (ER27711L6)', "DDDNDDDD"),
+    ('Accuracy of Wife/"Wife" Hours Worked in 2007 (ER46682)', "DDDNDDDD"),
+    ('Accuracy of Wife/"Wife" Hours Worked in 2008 (ER42148)', "DDDNDDDD"),
     ('Accuracy of Wife/"Wife" Weeks Employed (ER42398)', "DDDDDD"),
     ("Accuracy of alcohol expenditures", "DDDD"),
     ("Accuracy of amount saved", "DDDD"),
@@ -74828,44 +74831,44 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Altogether, what is the total dollar value of assets that were brought into the "
         "family that way?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDD",
     ),
     (
         "Altogether, what is the total dollar value of assets that were brought into the "
         "family that way?-ASSETS ADDED BY MOVERS IN Values for this variable in the range "
         "0000001 through 9999999 represent the dollar amount of assets brought into the FU "
         "by movers in.",
-        "DDDDDDDDDDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what is the total dollar value of assets that were removed that way?",
-        "DDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDD",
     ),
     (
         "Altogether, what is the total dollar value of assets that were removed that way?- "
         "ASSETS REMOVED BY MOVERS OUT Values for this variable in the range 0000001 through "
         "9999999 represent the dollar amount of assets removed by movers out of the family.",
-        "DDDDDDDDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what is the total dollar value of debts that were brought into the "
         "family that way?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDD",
     ),
     (
         "Altogether, what is the total dollar value of debts that were brought into the "
         "family this way?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDD",
     ),
     (
         "Altogether, what is the total dollar value of debts that were removed that way?",
-        "DDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDD",
     ),
     (
         "Altogether, what is the total dollar value of debts that were removed that way?- "
         "DEBTS REMOVED BY MOVERS OUT Values for this variable in the range 0000001 through "
         "9999999 represent the dollar amount of debts removed by movers out.",
-        "DDDDDDDDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what is the total value of debts that were brought into the family that "
@@ -74876,47 +74879,47 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Altogether, what was the total dollar value of all donations (you/you and your "
         "family) made in 2002 towards religious purposes?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what was the total dollar value of all donations you (and your family) "
         "made in 2004 towards religious purposes?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what was the total dollar value of all donations you (and your family) "
         "made in 2006 towards religious purposes?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what was the total dollar value of all donations you (and your family) "
         "made in 2008 towards religious purposes?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what was the total dollar value of all donations you (and your family) "
         "made in 2010 towards religious purposes?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what was the total dollar value of all donations you and your family "
         "made IN 2020 to help people affected by the COVID-19 pandemic?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what was the total dollar value of all donations you and your family "
         "made in 2000 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what was the total dollar value of all donations you and your family "
         "made in 2000 towards religious purposes?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "Altogether, what was the total dollar value of donations (you/you and your family) "
         "made to help the victims of the tsunami?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Ambition (Verbal Aspiration Expressed) See V423 for a revised version of this "
@@ -77024,18 +77027,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "above the top 99 percentile point.",
         "DDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("And about how many hours a week did she work?", "DDDDDDDDDD"),
+    ("And about how many hours a week did she work?", "DDDDWDDDDD"),
     (
         "And about how many hours a week did she work? (1969 question)",
-        "DDDDDDDDDDDD",
+        "DDDDWDDDDDDD",
     ),
     (
         "And about how many hours a week did she work? (1970 question)",
-        "DDDDDDDDDDDD",
+        "DDDDWDDDDDDD",
     ),
     (
         "And about how many hours a week did she work? Actual number of hours per week",
-        "DDDDDDDDDDWDDDDD",
+        "DDDDWDDDDDWDDDDD",
     ),
     ("And do (you/they) have other utility expenses?", "DDDDDDD"),
     ("And do you have other utility expenses?", "DDDDDDD"),
@@ -77168,119 +77171,119 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "And how many hours a week did she work just before she left? The values for this "
         'variable represent the actual number of hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work just before she left? The values for this "
         'variable represent the actual number of hours per week wife/"wife" worked.',
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work when she first started? The values for this "
         "variable represent the actual number of hours per week Head worked.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work when she first started? The values for this "
         "variable represent the actual number of hours per week Wife worked.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work when she first started? The values for this "
         'variable represent the actual number of hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work when she first started? The values for this "
         'variable represent the actual number of hours per week wife/"wife" worked.',
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work when she started? The values for this "
         'variable represent the actual number of hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work when she started? The values for this "
         'variable represent the actual number of hours per week wife/"wife" worked.',
-        "DDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work? The values for this variable represent the "
         'actual number of hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work?-LAST POSITION The values for this variable "
         'represent the actual number of hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did she work?-NEXT-TO-LAST POSITION The values for this "
         'variable represent the actual number of hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work just before you left? The values for this "
         "variable represent the actual number of hours per week Head worked.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work when you first started? The values for this "
         "variable represent the actual number of hours per week Head worked.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work when you first started? he values for this "
         "variable represent the actual number of hours per week Head worked.",
-        "DDDDDDDDDDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work when you started? The values for this "
         "variable represent the actual number of hours per week Head worked.",
-        "DDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work when you started? The values for this "
         "variable represent the actual number of hours per week head worked.",
-        "DDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work? The values for this variable represent the "
         "actual number of hours per week Head worked.",
-        "DDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work? The values for this variable represent the "
         'actual number of hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work?-LAST POSITION The values for this variable "
         "represent the actual number of hours per week Head worked.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work?-NEXT-TO-LAST POSITION The values for this "
         "variable represent the actual number of hours per week Head worked.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week did you work?-PRESENT POSITION The values for this "
         "variable represent the actual number of hours per week Head worked.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week would that have been? The values for this variable "
         "represent the actual number of hours per week Head would have worked if the other "
         "job had been chosen.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And how many hours a week would that have been? The values for this variable "
         'represent the actual number of hours per week Wife/"Wife" would have worked if the '
         "other job had been chosen.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And how many weeks did you work on this extra job in 1968? (1969 question)",
@@ -77670,7 +77673,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "And, an average, how many hours a week did you work when you worked?",
-        "DDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDD",
     ),
     (
         "And, are you white, black, American Indian, Aleut, Eskimo, Asian, Pacific Islander, "
@@ -78953,537 +78956,537 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "And, on average, how many hours a week did she work when she worked?",
-        "DDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDD",
     ),
     (
         "And, on average, how many hours a week did she work when she worked? Actual hours "
         "worked per week",
-        "DDDDDDDDDDDDDDWDDDD",
+        "DDDDDWDDDDDDDDWDDDD",
     ),
     (
         "And, on average, how many hours a week did you work when you worked?",
-        "DDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDD",
     ),
     (
         "And, on average, how many hours a week did you work when you worked? Actual hours "
         "per week",
-        "DDDDDDDDDDDDDDWDDD",
+        "DDDDDWDDDDDDDDWDDD",
     ),
     (
         "And, on average, how many hours a week did you work when you worked? Actual number "
         "of hours",
-        "DDDDDDDDDDDDDDWDDD",
+        "DDDDDWDDDDDDDDWDDD",
     ),
     (
         "And, on average, how many hours a week did you work when you worked? Actual number "
         "of hours per week",
-        "DDDDDDDDDDDDDDWDDDDD",
+        "DDDDDWDDDDDDDDWDDDDD",
     ),
     (
         "And, on average, how many hours per week did she work just before she left (that "
         'job/those jobs)?--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDD",
     ),
     (
         "And, on average, how many hours per week did you work just before you left (that "
         "job/those jobs)?--HEAD",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDD",
     ),
     (
         "And, on the average how many hours a week did you work on your main job last year?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, HOW MANY hours a week did you work on your main job last year?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many HOURS A WEEK did you work on your main job last year? "
         "(1970 question)",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job in 1976?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job in 1977?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job in 1978?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job in 1979? "
         "Actual number of hours per week",
-        "DDDDDDDDDDDDDDDDDDWDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job in 1980? "
         "Actual number of hours per week",
-        "DDDDDDDDDDDDDDDDDDWDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job in 1983? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1985? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1986? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1986? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1987? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1987? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1988? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1988? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1989? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1989? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1990? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1990? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1991? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1991? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1992? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1992? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1993? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1993? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1994? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1994? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1995? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1995? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job(s).',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1996?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 1998?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work on her main job(s) in 2000?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did she work when she worked? The values "
         "for this variable represent the actual number of hours per week Wife worked on her "
         "job.",
-        "DDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1977?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1978?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1979? "
         "Actual number of hours per week",
-        "DDDDDDDDDDDDDDDDDDWDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1980? "
         "Actual number of hours per week",
-        "DDDDDDDDDDDDDDDDDDWDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1981? "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1981? "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on his/her main job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1982? "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on his/her main job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1983? "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on his/her main job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1984? "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on his/her main job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1984? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job in 1984? "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job last year?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job last year? "
         "Actual number of hours per week",
-        "DDDDDDDDDDDDDDDDDDWDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job last year? "
         "E8.",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1983? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1984? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1985? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1985? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1985? The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1986? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1986? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1987? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1987? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1988? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1988? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1989? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1989? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1990? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1990? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1991? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1991? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1992? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1992? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1993? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1993? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1994? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1994? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1995? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1995? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1996?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "1998?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work on your main job(s) in "
         "2000?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did you work when you worked in 1982? "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on his/her job.",
-        "DDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did your (Wife/ friend) work on her main "
         "job in 1981? The values for this variable represent the actual number of hours per "
         "week Wife worked on her main job.",
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did your (Wife/ friend) work on her main "
         "job in 1982? The values for this variable represent the actual number of hours per "
         'week Wife/"Wife" worked on her main job.',
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did your (Wife/ friend) work on her main "
         "job(s) in 1983? The values for this variable represent the actual number of hours "
         'per week Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week did your (Wife/ friend) work when she "
         "worked in 1982? The values for this variable represent the actual number of hours "
         'per week Wife/"Wife" worked on her job.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week has she worked on her main job(s) in "
         "1986? The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week has she worked on her main job(s) in "
         "1987? The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week have you worked on your main job in "
         "1985? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week have you worked on your main job in "
         "1985? The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her main job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week have you worked on your main job(s) in "
         "1986? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "And, on the average, how many hours a week have you worked on your main job(s) in "
         "1987? The values for this variable represent the actual number of hours per week "
         "Head worked on his/her main job(s).",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1982 Work Hours of All Other FU Members in FU during 1982 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1983 Food Standard This variable is generated by multiplying the weekly food "
@@ -79498,7 +79501,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Annual 1983 Work Hours of All Other FU Members in FU during 1983 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1984 Food Standard This variable is generated by multiplying the weekly food "
@@ -79513,7 +79516,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Annual 1984 Work Hours of All Other FU Members in FU during 1984 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1985 Food Standard This variable is generated by multiplying the weekly food "
@@ -79527,7 +79530,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Annual 1985 Work Hours of All Other FU Members in FU during 1985 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1986 Food Standard This variable is generated by multiplying the weekly food "
@@ -79541,7 +79544,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Annual 1986 Work Hours of All Other FU Members in FU during 1986 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1987 Food Standard This variable is generated by multiplying the weekly food "
@@ -79556,7 +79559,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Annual 1987 Work Hours of All Other FU Members in FU during 1987 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1988 Food Standard This variable is generated by multiplying the weekly food "
@@ -79571,40 +79574,40 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Annual 1988 Work Hours of All Other FU Members in FU during 1988 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1989 Work Hours of All Other FU Members in FU during 1989 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1990 Work Hours of All Other FU Members in FU during 1990 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1991 Work Hours of All Other FU Members in FU during 1991 The values for "
         "this variable in the range 0001-9998 represent the actual annual hours worked; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual 1992 Work Hours of All Other FU Members in FU during 1992 The values for "
         "this variable represent the actual annual hours worked.",
-        "DDDDDDDDDDDDDWDDDDDDDDDD",
+        "DDDWDDDDDDDDDWDDDDDDDDDD",
     ),
     (
         "Annual Amount spent eating at restaurants for the family in 1975",
         "DDDDDDDDDDD",
     ),
-    ("Annual Child Care Hours for (Youngest) Child in FU (J40)", "DDDDDDDDDD"),
+    ("Annual Child Care Hours for (Youngest) Child in FU (J40)", "DDDWDDDDDD"),
     ("Annual Cost of Child Care (J42)", "DDDDDD"),
-    ("Annual Dollars Saved Growing/Preserving Own Food in 1978", "DDDDDDDD"),
-    ("Annual Dollars Saved Repairing House/Apartment", "DDDDD"),
-    ("Annual Dollars Saved Repairing Vehicles", "DDDDD"),
+    ("Annual Dollars Saved Growing/Preserving Own Food in 1978", "DWDDDDDD"),
+    ("Annual Dollars Saved Repairing House/Apartment", "DWDDD"),
+    ("Annual Dollars Saved Repairing Vehicles", "DWDDD"),
     ("Annual Expenditure on Utilities in 1976", "DDDDDD"),
     ("Annual Expenditure on Utilities in 1977", "DDDDDD"),
     ("Annual Expenditure on Utilities in 1978", "DDDDDD"),
@@ -79825,7 +79828,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "the interview.",
         "DDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("Annual Head Might Earn Per Hour an Another Job (V210)", "DDDDDDDDDD"),
+    ("Annual Head Might Earn Per Hour an Another Job (V210)", "DDDDDNDDDD"),
     (
         "Annual Homeowner's Insurance (Question A18) The values for this variable in the "
         "range 0001-9997 represent the annual dollar amount of homeowner's insurance "
@@ -79843,41 +79846,41 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "the annual dollar amount of homeowner's insurance premiums.",
         "DDDDDWDDDDDDDDDDDDD",
     ),
-    ("Annual Hours Spent Repairing House/Apartment", "DDDDD"),
-    ("Annual Hours Spent Repairing Vehicles", "DDDDD"),
+    ("Annual Hours Spent Repairing House/Apartment", "DWDDD"),
+    ("Annual Hours Spent Repairing Vehicles", "DWDDD"),
     (
         "Annual Hours of Housework Done by All Others in FU All missing data were assigned",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
     (
         "Annual Hours of Housework Done by All Others in FU at the Time of the Interview "
         "(Question F7) The values for this variable in the range 0001-9998 represent the sum "
         "of the actual annualized hours spent on housework by all others in the FU; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual Hours of Housework Done by All Others in FU at the Time of the Interview "
         "(Question H5) The values for this variable in the range 0001-9998 represent the sum "
         "of the actual annualized hours spent on housework by all others in the FU; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual Hours of Housework Done by All Others in FU at the Time of the Interview "
         "(Question J10) The values for this variable in the range 0001-9998 represent the "
         "sum of the actual annualized hours spent on housework by all others in the FU; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual Hours of Housework Done by All Others in FU at the Time of the Interview "
         "(Question J7) The values for this variable in the range 0001-9998 represent the sum "
         "of the actual annualized hours spent on housework by all others in the FU; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("Annual Hours of Work in Exchange for Child Care (J44)", "DDDDDDDDDD"),
+    ("Annual Hours of Work in Exchange for Child Care (J44)", "DWDDDDDDDD"),
     (
         "Annual Mortgage Payment (1977) All missing data were assigned",
         "DDDDDDDDD",
@@ -80784,13 +80787,13 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Annual Utilities paid in 1971", "DDDDD"),
     (
         "Annual Work Hours of All Others in FU in 1980 All missing data were assigned",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "Annual Work Hours of All Others in FU in 1981 The values for this variable in the "
         "range 0001-9998 represent the actual annual hours worked; all missing data were "
         "assigned.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDNNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual amount paid for Food Stamps in 1976 All missing data were assigned",
@@ -80989,99 +80992,99 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "percent for families with six or more.",
         "DDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("Annual hours of child care if Wife works", "DDDDDDDD"),
+    ("Annual hours of child care if Wife works", "DWDDDDDD"),
     (
         "Annual hours of childcare needed for children under 12 years of age (Weekly hours "
         "times 52)",
-        "DDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDD",
     ),
-    ("Annual hours of exchange if Wife works", "DDDDDDD"),
+    ("Annual hours of exchange if Wife works", "DWDDDDD"),
     (
         "Annual hours of housework done by all others in FU All missing data are assigned.",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
     (
         "Annual hours of housework done by all others in FU All missing data were assigned",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
     (
         "Annual hours of housework done by all others in FU All missing data were assigned.",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
-    ("Annual hours of housework done by others in FU", "DDDDDDDDD"),
-    ("Annual hours of housework help from other outside the FU", "DDDDDDDDDD"),
+    ("Annual hours of housework done by others in FU", "DWDDDDDDD"),
+    ("Annual hours of housework help from other outside the FU", "DWDDDDDDDD"),
     (
         "Annual hours of housework help from other outside the FU in 1971",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Annual hours of housework help from others outside the FU in 1969 (1970 question)",
-        "DDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDD",
     ),
     (
         "Annual hours of housework help from others outside the FU in 1970",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Annual hours spent in 1969 on housework by Wife or unmarried Head (1970 question)",
-        "DDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDD",
     ),
     (
         "Annual hours spent in 1970 on housework by Wife or unmarried Head",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Annual hours spent in 1971 on housework by Wife or unmarried Head",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Annual hours spent in 1973 on housework by Wife or unmarried Head",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
-    ("Annual hours spent in 1973 on housework by husband", "DDDDDDDDD"),
+    ("Annual hours spent in 1973 on housework by husband", "DWDDDDDDD"),
     (
         "Annual hours spent in 1973 on housework by others (other than Head or Wife)",
-        "DDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDD",
     ),
     (
         "Annual hours spent on home production (Work for housing, own additions and repairs, "
         "car repairs, growing food, making and mending clothes.)",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual hours spent on home production (Work for housing, own additions and repairs, "
         "car repairs.)",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
     (
         "Annual hours spent on home production in 1970 (Work for housing, own additions and "
         "repairs, car repairs by Head and Wife)",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Annual hours spent on home production in 1971 (Work for housing, own additions and "
         "repairs, car repairs for Head and Wife)",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDDDDD",
     ),
-    ("Annual hours spent on housework by Husband", "DDDDDDD"),
+    ("Annual hours spent on housework by Husband", "DWDDDDD"),
     (
         "Annual hours spent on housework by Wife or unmarried Head",
-        "DDDDDDDDDD",
+        "DWDDDDDDDD",
     ),
     (
         "Annual hours spent on housework in 1969 by Husband (1970 question)",
-        "DDDDDDDDDDD",
+        "DWDDDDDDDDD",
     ),
-    ("Annual hours spent on housework in 1970 by husband", "DDDDDDDDD"),
-    ("Annual hours spent on housework in 1971 by husband", "DDDDDDDDD"),
-    ("Annual hours spent on housework in 1972 by Husband", "DDDDDDDDD"),
+    ("Annual hours spent on housework in 1970 by husband", "DWDDDDDDD"),
+    ("Annual hours spent on housework in 1971 by husband", "DWDDDDDDD"),
+    ("Annual hours spent on housework in 1972 by Husband", "DWDDDDDDD"),
     (
         "Annual hours spent on housework in 1972 by Wife or unmarried Head",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Annual hours spent on housework in 1972 by others (other than Head or Wife)",
-        "DDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDD",
     ),
     ("Annual mortgage payments", "DDD"),
     ("Annual mortgage payments in 1969 (1970 question)", "DDDDDDD"),
@@ -81422,19 +81425,19 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Annual utilities paid", "DDD"),
     (
         "Annual work hours of all others in FU in 1976 All missing data were assigned",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "Annual work hours of all others in FU in 1977 All missing data are assigned.",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "Annual work hours of all others in FU in 1978 All missing data were assigned.",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "Annual work hours of all others in FU in 1979 All missing data were assigned",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "Any other charitable purpose or organization we did not mention?",
@@ -86189,7 +86192,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "race?--SECOND MENTION See the note at ER23388.",
         "DDDDDDDDDDDDDDDDDD",
     ),
-    ("Are you working more than 10 hours per week?", "DDDDDDDDD"),
+    ("Are you working more than 10 hours per week?", "DDDDDDNDD"),
     (
         "Are you working now, unemployed, retired, or what? F questions were asked only of "
         "the employed, G questions only of the unemployed, and H questions only of the "
@@ -86332,7 +86335,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Aside from (that day/those [NUMBER OF DAYS] days), how many of the remaining days "
         "out of the past 30 were you able to work, but had to cut down on what you did "
         "because of these feelings?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     ("Aside from I.R.A.", "DDD"),
     (
@@ -87234,12 +87237,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "assignment, i.e., probable error of greater than $300 or 10 percent of amount "
         "assigned (whichever is greater) 4=work done by someone other than head or wife "
         "5=estimate not an accurate reflection of income or payments in 1967",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDNDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Average Age of Head and Wife (In Years) This Variable is the simple average of V117 "
         "(age of Head), V118 (age of Wife).",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "Average Hourly Earnings in 1982 of 1983 Head The values for this variable represent "
@@ -92181,68 +92184,68 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Calculated Annual Hours Volunteering Through Organizations for Children or "
         "Youth--HEAD",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Organizations for Children or "
         'Youth--WIFE/"WIFE"',
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Organizations for People in Poor "
         "Health--HEAD",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Organizations for People in Poor "
         'Health--WIFE/"WIFE"',
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Organizations for Senior Citizens- "
         "-HEAD",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Organizations for Senior Citizens- "
         '-WIFE/"WIFE"',
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Organizations to Bring About Social "
         "Change--HEAD",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Organizations to Bring About Social "
         'Change--WIFE/"WIFE"',
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Organizations to Help People in "
         "Need--HEAD",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Organizations to Help People in "
         'Need--WIFE/"WIFE"',
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         'Calculated Annual Hours Volunteering Through Religious Organizations-- WIFE/"WIFE"',
-        "DDDDDDDD",
+        "DDWDDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering Through Religious Organizations--HEAD",
-        "DDDDDDD",
+        "DDWDDDD",
     ),
     (
         "Calculated Annual Hours Volunteering for Other Purposes--HEAD",
-        "DDDDDDD",
+        "DDWDDDD",
     ),
     (
         'Calculated Annual Hours Volunteering for Other Purposes--WIFE/"WIFE"',
-        "DDDDDDD",
+        "DDWDDDD",
     ),
     (
         "Can (you/he/she) designate a survivor or other person who would receive "
@@ -92268,48 +92271,48 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Can she estimate what she expects these benefits to be? Either in dollars per month "
         "or year, or as a percent of her pay when she left that job?--FIRST PENSION--AMOUNT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can she estimate what she expects these benefits to be? Either in dollars per month "
         "or year, or as a percent of her pay when she left that job?--FIRST PENSION--LUMP "
         "SUM PAYMENT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can she estimate what she expects these benefits to be? Either in dollars per month "
         "or year, or as a percent of her pay when she left that job?--FIRST PENSION--PERCENT "
         "OF PAY",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can she estimate what she expects these benefits to be? Either in dollars per month "
         "or year, or as a percent of her pay when she left that job?--FIRST PENSION--TIME "
         "UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can she estimate what she expects these benefits to be? Either in dollars per month "
         "or year, or as a percent of her pay when she left that job?--SECOND PENSION--AMOUNT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can she estimate what she expects these benefits to be? Either in dollars per month "
         "or year, or as a percent of her pay when she left that job?--SECOND PENSION--LUMP "
         "SUM PAYMENT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can she estimate what she expects these benefits to be? Either in dollars per month "
         "or year, or as a percent of her pay when she left that job?--SECOND "
         "PENSION--PERCENT OF PAY",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can she estimate what she expects these benefits to be? Either in dollars per month "
         "or year, or as a percent of her pay when she left that job?--SECOND PENSION--TIME "
         "UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can you (HEAD) estimate what your pension from this plan will be?",
@@ -92324,49 +92327,49 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Can you estimate what you expect these benefits to be? Either in dollars per month "
         "or year, or as a percent of your pay when you left that job?--AMOUNT FOR FIRST "
         "PENSION",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can you estimate what you expect these benefits to be? Either in dollars per month "
         "or year, or as a percent of your pay when you left that job?--AMOUNT FOR SECOND "
         "PENSION",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can you estimate what you expect these benefits to be? Either in dollars per month "
         "or year, or as a percent of your pay when you left that job?--LUMP SUM PAYMENT FOR "
         "FIRST PENSION",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can you estimate what you expect these benefits to be? Either in dollars per month "
         "or year, or as a percent of your pay when you left that job?--LUMP SUM PAYMENT FOR "
         "SECOND PENSION",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can you estimate what you expect these benefits to be? Either in dollars per month "
         "or year, or as a percent of your pay when you left that job?--PERCENT OF PAY FOR "
         "FIRST PENSION",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can you estimate what you expect these benefits to be? Either in dollars per month "
         "or year, or as a percent of your pay when you left that job?--PERCENT OF PAY FOR "
         "SECOND PENSION",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can you estimate what you expect these benefits to be? Either in dollars per month "
         "or year, or as a percent of your pay when you left that job?--TIME UNIT FOR FIRST "
         "PENSION",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can you estimate what you expect these benefits to be? Either in dollars per month "
         "or year, or as a percent of your pay when you left that job?--TIME UNIT FOR SECOND "
         "PENSION",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Can you estimate what your pension from this plan will be, either way?",
@@ -93010,242 +93013,242 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was employed in 2001.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was employed in 2005.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was employed in 2011.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was employed in 2013.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was out of the labor force in 2001.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was out of the labor force in 2005.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was out of the labor force in 2011.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was out of the labor force in 2013.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was unemployed in 2001.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was unemployed in 2005.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was unemployed in 2011.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Head was unemployed in 2013.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was employed in 2015.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was employed in 2017.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was employed in 2019.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was employed in 2021.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was out of the labor force in 2015.",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was out of the labor force in 2017.",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was out of the labor force in 2019.",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was out of the labor force in 2021.",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was unemployed in 2015.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was unemployed in 2019.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was unemployed in 2021.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Reference Person was unnemployed in 2017.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was employed in 2013.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was employed in 2015.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was employed in 2017.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was employed in 2019.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was employed in 2021.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was out of the labor force in 2013.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was out of the labor force in 2015.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was out of the labor force in 2017.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was out of the labor force in 2019.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was out of the labor force in 2021.",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was unemployed in 2013.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was unemployed in 2015.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was unemployed in 2019.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was unemployed in 2021.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         "Spouse/Partner was unnemployed in 2017.",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         'WIFE/"WIFE" was employed in 2001.',
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         'WIFE/"WIFE" was employed in 2005.',
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         'WIFE/"WIFE" was employed in 2011.',
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         'WIFE/"WIFE" was out of the labor force in 2001.',
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         'WIFE/"WIFE" was out of the labor force in 2005.',
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         'WIFE/"WIFE" was out of the labor force in 2011.',
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         'WIFE/"WIFE" was unemployed in 2001.',
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         'WIFE/"WIFE" was unemployed in 2005.',
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Number of weeks "
         'WIFE/"WIFE" was unemployed in 2011.',
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDWDDDDDDD",
     ),
     (
         "Constructed variable from the Employment History Calendar (EHC): Whether Head was "
@@ -102474,7 +102477,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Did you have any overtime or extra work on your main job? How many hours did that "
         "amount to last year?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDDWDDDDDD",
     ),
     ("Did you have any sisters?", "DDDDD"),
     (
@@ -145826,70 +145829,70 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     ("El.", "D"),
-    ("Elapsed Interview Length in Minutes", "DDDDD"),
+    ("Elapsed Interview Length in Minutes", "DDDWD"),
     (
         'Elapsed Number of Weeks (Wife/"Wife") Employed in 2002--CURRENT OR MOST RECENT MAIN '
         'JOB This variable represents the number of weeks during 2002 that the wife/"wife" '
         "was employed at her current or most recent main job.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         'Elapsed Number of Weeks (Wife/"Wife") Employed in 2002--JOB 2',
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         'Elapsed Number of Weeks (Wife/"Wife") Employed in 2004--CURRENT OR MOST RECENT MAIN '
         'JOB This variable represents the number of weeks during 2004 that the wife/"wife" '
         "was employed at her current or most recent main job.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         'Elapsed Number of Weeks (Wife/"Wife") Employed in 2004--JOB 2',
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         "Elapsed Number of Weeks HEAD Employed in 2002--CURRENT OR MOST RECENT MAIN JOB This "
         "variable represents the number of weeks during 2002 that Head was employed at "
         "his/her current or most recent main job.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("Elapsed Number of Weeks HEAD Employed in 2002--JOB 2", "DDDDDDDDD"),
-    ("Elapsed Number of Weeks HEAD Employed in 2002--JOB 3", "DDDDDDDDD"),
-    ("Elapsed Number of Weeks HEAD Employed in 2002--JOB 4", "DDDDDDDDD"),
+    ("Elapsed Number of Weeks HEAD Employed in 2002--JOB 2", "DWDDDDDDD"),
+    ("Elapsed Number of Weeks HEAD Employed in 2002--JOB 3", "DWDDDDDDD"),
+    ("Elapsed Number of Weeks HEAD Employed in 2002--JOB 4", "DWDDDDDDD"),
     (
         "Elapsed Number of Weeks HEAD Employed in 2004--CURRENT OR MOST RECENT MAIN JOB This "
         "variable represents the number of weeks during 2004 that Head was employed at "
         "his/her current or most recent main job.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("Elapsed Number of Weeks HEAD Employed in 2004--JOB 2", "DDDDDDDDD"),
-    ("Elapsed Number of Weeks HEAD Employed in 2004--JOB 3", "DDDDDDDDD"),
-    ("Elapsed Number of Weeks HEAD Employed in 2004--JOB 4", "DDDDDDDDD"),
+    ("Elapsed Number of Weeks HEAD Employed in 2004--JOB 2", "DWDDDDDDD"),
+    ("Elapsed Number of Weeks HEAD Employed in 2004--JOB 3", "DWDDDDDDD"),
+    ("Elapsed Number of Weeks HEAD Employed in 2004--JOB 4", "DWDDDDDDD"),
     (
         'Elapsed Number of Weeks Wife/"WIFE" Employed in 2002--JOB 3',
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         'Elapsed Number of Weeks Wife/"WIFE" Employed in 2004--JOB 3',
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         'Elapsed Number of Weeks Wife/"Wife" Employed in 2002--JOB 4',
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         'Elapsed Number of Weeks Wife/"Wife" Employed in 2004--JOB 4',
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         "Elapsed interview length in minutes excluding the coverscreen, payment and address "
         "collection sections.",
-        "DDDDDDDDDDDDD",
+        "DDDWDDDDDDDDD",
     ),
     (
         "Elapsed interview length in minutes excluding the coverscreen, payment, and address "
         "collection sections.",
-        "DDDDDDDDDDDDD",
+        "DDDWDDDDDDDDD",
     ),
     (
         "Eleven-Year Changes in FU Composition The highest number coded in any of the "
@@ -152836,69 +152839,69 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Head's Annual Hours Working for Money in 1980 All missing data were assigned",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours Working for Money in 1981 The values for this variable in the "
         "range 0001-5840 represent the annual work hours on all jobs; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours of Housework All missing data were assigned",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Head's Annual Hours of Illness in 1980 (Weeks ill times 80 for first eight weeks "
         "and times 60 for any time thereafter) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours of Illness in 1981 The values for this variable in the range "
         "0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours of Overtime in 1984 The values for this variable in the range "
         "0001-5840 represent the annual overtime hours worked on all main jobs; all missing "
         "data were assigned.",
-        "DDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours of Travel to Work in 1984 The values for this variable in the "
         "range 001-998 represent annualized hours spent traveling to work.",
-        "DDDDDDDDDNNDDDDDDDDDDDDDD",
+        "DDWDDDDDDNNDDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours of Unemployment in 1980 (Weeks unemployed times 40) All missing "
         "data were assigned",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours of Unemployment in 1981 The values for this variable in the "
         "range 0001-2080 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours of Work Missed Because Someone Else was Ill in 1980 All missing "
         "data were assigned (Weeks someone else ill times 40)",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours of Work Missed Because Someone Else was Ill in 1981 The values "
         "for this variable in the range 0001-2080 represent the actual annual hours; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours on Strike in 1980 (Weeks on strike times 40) All missing data "
         "were assigned",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
     (
         "Head's Annual Hours on Strike in 1981 The values for this variable represent the "
         "actual annual hours; all missing data were assigned.",
-        "DDDDDDDWDDDDDDDDDDDDDD",
+        "DDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "Head's Asset Part of 2002 Business Income from Unincorporated Businesses The income "
@@ -156997,67 +157000,67 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Head's Total Overtime Hours in 2004 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Overtime Hours in 2006 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Overtime Hours in 2008 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Overtime Hours in 2010 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Overtime Hours in 2012 The values for this variable represent the "
         "annual overtime hours worked on all jobs if reported separately from regular work "
         "hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Overtime Hours in 2014 The values for this variable represent Head's "
         "annual overtime hours worked on all jobs, in 2014, if reported separately from "
         "regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Weekly Work Hours in 2004 The values for this variable represent the "
         "total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Weekly Work Hours in 2006 The values for this variable represent the "
         "total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Weekly Work Hours in 2008 The values for this variable represent the "
         "total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Weekly Work Hours in 2010 The values for this variable represent the "
         "total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Weekly Work Hours in 2012 The values for this variable represent the "
         "total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Weekly Work Hours in 2014 The values for this variable represent "
         "Head's total weekly work hours on all jobs in 2014.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Weeks Out of the Labor Force in 2004 The values for this variable "
@@ -157315,32 +157318,32 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Head's Total Work Hours in 2004 The values for this variable represent the total "
         "annual work hours on all jobs including overtime.",
-        "DDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Work Hours in 2006 The values for this variable represent the total "
         "annual work hours on all jobs including overtime.",
-        "DDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Work Hours in 2008 The values for this variable represent the total "
         "annual work hours on all jobs including overtime.",
-        "DDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Work Hours in 2010 The values for this variable represent the total "
         "annual work hours on all jobs including overtime.",
-        "DDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Work Hours in 2012 The values for this variable represent the total "
         "annual work hours on all jobs including overtime.",
-        "DDDDDDWDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Total Work Hours in 2014 The values for this variable represent Head's total "
         "annual work hours on all jobs including overtime in 2014.",
-        "DDDDDDWDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's Unemployment Compensation, including Strike Benefits, in 2014 The values for "
@@ -157574,207 +157577,207 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "1996 Beware of outliers.",
         "DDDDDDDDDDDDDD",
     ),
-    ("Head's annual hours of housework", "DDDDD"),
+    ("Head's annual hours of housework", "DDWDD"),
     (
         "Head's annual hours of housework All missing data are assigned.",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Head's annual hours of housework All missing data were assigned",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Head's annual hours of housework All missing data were assigned.",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Head's annual hours of illness (Days ill times 16 for the first 8 weeks and times "
         "12 for time thereafter.)",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1969 (1970 question) (Days ill times 16 for the "
         "first 8 weeks and times 12 for time thereafter)",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1970 (Days ill times 16 for the first 8 weeks and "
         "times 12 for time thereafter)",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1971 (Days ill times 16 for the first 8 weeks and "
         "times 12 for time thereafter)",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1972 (Days ill times 16 for the first 8 weeks and "
         "times 12 for the time thereafter)",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1973 (Days ill times 16 for the first 8 weeks and "
         "times 12 for the time thereafter)",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1974 (Days ill times 16 for the first 8 weeks and "
         "times 12 for the time thereafter)",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1975 (Days ill times 16 for the first 8 weeks and "
         "times 12 for the time thereafter)",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1976 (Days ill times 16 for first eight weeks and "
         "times 12 for the time thereafter) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1977 (Weeks ill times 80 for first eight weeks "
         "and times 60 for the time thereafter) All missing data are assigned.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1978 (Weeks ill times 80 for first eight weeks "
         "and times 60 for the time thereafter) All missing data were assigned.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of illness in 1979 (Weeks ill times 80 for first eight weeks "
         "and times 60 for any time thereafter) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment (Days unemployed times 8.)",
-        "DDDDDDDDD",
+        "DDWDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1969 (1970 question) (Days unemployed times "
         "8)",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1970 (Days unemployed times 8)",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1971 (Days unemployed times 8)",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1972 (Days unemployed times 8)",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1973 (Days unemployed times 8)",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1974 (Days unemployed times 8)",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1975 (Days unemployed times 8)",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1976 (Days unemployed times 8) All missing "
         "data were assigned",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1977 (Weeks unemployed times 40) All missing "
         "data are assigned.",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1978 (Weeks unemployed times 40) All missing "
         "data were assigned.",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of unemployment in 1979 (Weeks unemployed times 40) All missing "
         "data were assigned",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of work missed because someone else was ill in 1975 (Days "
         "someone else ill times 8)",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of work missed because someone else was ill in 1976 (Days "
         "someone else ill times 8) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of work missed because someone else was ill in 1977 (Weeks "
         "someone else ill times 40) All missing data are assigned.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of work missed because someone else was ill in 1978 (Weeks "
         "someone else ill times 40) All missing data were assigned.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours of work missed because someone else was ill in 1979 (Weeks "
         "someone else ill times 40) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours on strike in 1975 (Days on strike times 8)",
-        "DDDDDDDDDDDD",
+        "DDWDDDDDDDDD",
     ),
     (
         "Head's annual hours on strike in 1976 (Days on strike times 8) All missing data "
         "were assigned",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours on strike in 1977 (Weeks on strike times 40) All missing data "
         "are assigned.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours on strike in 1978 (Weeks on strike times 40) All missing data "
         "were assigned.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
     (
         "Head's annual hours on strike in 1979 (Weeks on strike times 40) All missing data "
         "were assigned",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
-    ("Head's annual hours working for money", "DDDDDD"),
+    ("Head's annual hours working for money", "DDWDDD"),
     (
         "Head's annual hours working for money in 1969 (1970 question)",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
-    ("Head's annual hours working for money in 1970", "DDDDDDDD"),
-    ("Head's annual hours working for money in 1971", "DDDDDDDD"),
-    ("Head's annual hours working for money in 1972", "DDDDDDDD"),
-    ("Head's annual hours working for money in 1973", "DDDDDDDD"),
-    ("Head's annual hours working for money in 1974", "DDDDDDDD"),
-    ("Head's annual hours working for money in 1975", "DDDDDDDD"),
+    ("Head's annual hours working for money in 1970", "DDWDDDDD"),
+    ("Head's annual hours working for money in 1971", "DDWDDDDD"),
+    ("Head's annual hours working for money in 1972", "DDWDDDDD"),
+    ("Head's annual hours working for money in 1973", "DDWDDDDD"),
+    ("Head's annual hours working for money in 1974", "DDWDDDDD"),
+    ("Head's annual hours working for money in 1975", "DDWDDDDD"),
     (
         "Head's annual hours working for money in 1976 All missing data were assigned",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Head's annual hours working for money in 1977 All missing data are assigned.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Head's annual hours working for money in 1978 All missing data were assigned.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Head's annual hours working for money in 1979 All missing data were assigned",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     ("Head's asset part of farm income in 1975", "DDDDDDDD"),
     (
@@ -158008,11 +158011,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Head's non-leisure from illness (Annual hours) (Days ill times 16 for the first 8 "
         "weeks and times 8 for time thereafter.)",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Head's non-leisure from unemployment (Annual hours) (Days unemployed times 8)",
-        "DDDDDDDDDD",
+        "DDDDDWDDDD",
     ),
     (
         "Head's total labor income for 1972 This is the sum of the actual amounts of labor "
@@ -158048,34 +158051,34 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "drivers)",
         "DDDDDDDDDDDDDDDD",
     ),
-    ("Head's travel to work time (Annual hours)", "DDDDDDD"),
+    ("Head's travel to work time (Annual hours)", "DDDDDDW"),
     (
         "Head's travel to work time (Annual hours) in 1969 (1970 question)",
-        "DDDDDDDDDDD",
+        "DDDDDDWDDDD",
     ),
-    ("Head's travel to work time (annual hours) in 1970", "DDDDDDDDD"),
-    ("Head's travel to work time (annual hours) in 1971", "DDDDDDDDD"),
-    ("Head's travel to work time (annual hours) in 1972", "DDDDDDDDD"),
-    ("Head's travel to work time (annual hours) in 1973", "DDDDDDDDD"),
-    ("Head's travel to work time (annual hours) in 1974", "DDDDDDDDD"),
-    ("Head's travel to work time (annual hours) in 1975", "DDDDDDDDD"),
+    ("Head's travel to work time (annual hours) in 1970", "DDDDDDWDD"),
+    ("Head's travel to work time (annual hours) in 1971", "DDDDDDWDD"),
+    ("Head's travel to work time (annual hours) in 1972", "DDDDDDWDD"),
+    ("Head's travel to work time (annual hours) in 1973", "DDDDDDWDD"),
+    ("Head's travel to work time (annual hours) in 1974", "DDDDDDWDD"),
+    ("Head's travel to work time (annual hours) in 1975", "DDDDDDWDD"),
     (
         "Head's travel to work time (annual hours) in 1976 All missing data were assigned",
-        "DDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDD",
     ),
     (
         "Head's travel to work time (annual hours) in 1977 All missing data are assigned.",
-        "DDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDD",
     ),
     (
         "Head's travel to work time (annual hours) in 1978 The values for this variable in "
         "the range 001-998 represent annualized hours spent traveling to and from work.",
-        "DDDDDDDDDNNDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDNNDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's travel to work time (annual hours) in 1979 The values for this variable in "
         "the range 001-998 represent annualized hours spent traveling to and from work.",
-        "DDDDDDDDDNNDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDNNDDDDDDDDDDDDDDDD",
     ),
     (
         "Head's travel-to-work cost (annual) (10 cts per mile is assumed for drivers.)",
@@ -158232,43 +158235,43 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Hours of Unpaid Housework - Head and Wife Hours of housework of Wife or single Head "
         "(V481) + Hours of housework of husband (V483)",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Hours of purchased child care (if children under 12 and adults all work) (Based on "
         "reported cost of child care, assuming $1 per hour)",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Hours of unpaid housework - Head and Wife Hours of housework of Wife or single Head "
         "(V1154) + hours of housework of husband (V1156)",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Hours of unpaid housework - Head and Wife Hours of housework of Wife or single Head "
         "(V1855) + hours of housework of husband (V1857).",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Hours of unpaid housework - Head and Wife Hours of housework of Wife or single Head "
         "(V3037) + hours of housework of husband (V3039)",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Hours of unpaid housework - Head and Wife Hours of housework of Wife or single Head "
         "(V3449) + hours of housework of husband (V3451)",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Hours of unpaid housework Head and Wife Hours of housework of Wife or single Head "
         "(V2455) + hours of housework of husband (V2457)",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("Hours spent on housework by Head and Wife.", "DDDDDDDD"),
-    ("Hours spent repairing car", "DDDD"),
-    ("Hours spent repairing car (1970 question)", "DDDDDD"),
-    ("Hours spent repairing car (1971 question)", "DDDDDD"),
-    ("Hours spent repairing car (1972 question)", "DDDDDD"),
+    ("Hours spent on housework by Head and Wife.", "WDDDDDDD"),
+    ("Hours spent repairing car", "WDDD"),
+    ("Hours spent repairing car (1970 question)", "WDDDDD"),
+    ("Hours spent repairing car (1971 question)", "WDDDDD"),
+    ("Hours spent repairing car (1972 question)", "WDDDDD"),
     ("House Value (1972) All missing data was assigned", "DDDDDDDD"),
     ("House Value (1973) All missing data were assigned", "DDDDDDDD"),
     ("House Value (1974) All missing data was assigned.", "DDDDDDDD"),
@@ -159175,22 +159178,22 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How long did she stay in the United States that time?-- NUMBER OF DAYS FOR "
         'WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDD",
     ),
     (
         "How long did she stay in the United States that time?--NUMBER OF MONTHS FOR "
         'WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDD",
     ),
     (
         "How long did she stay in the United States that time?--NUMBER OF WEEKS FOR "
         'WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDD",
     ),
     (
         "How long did she stay in the United States that time?--NUMBER OF YEARS FOR "
         'WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDD",
     ),
     (
         "How long did the court take this money from your earnings?--MONTHS FOR MOST RECENT "
@@ -159224,19 +159227,19 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How long did you stay in the United States that time?--NUMBER OF DAYS FOR HEAD",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDD",
     ),
     (
         "How long did you stay in the United States that time?--NUMBER OF MONTHS FOR HEAD",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDD",
     ),
     (
         "How long did you stay in the United States that time?--NUMBER OF WEEKS FOR HEAD",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDD",
     ),
     (
         "How long did you stay in the United States that time?--NUMBER OF YEARS FOR HEAD",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDD",
     ),
     ("How long has she been looking for work?", "DDDDDDDD"),
     (
@@ -160195,35 +160198,35 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("How many grades of school did your wife finish? I17.", "DDDDDDDDDD"),
     (
         "How many hours a week did she work on this job in 1993?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did she work on this job in 1994?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did she work on this job in 1995?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did she work on this job in 1996?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did she work on this job in 1998?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did she work on this job in 2000?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1992? C73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1992? E73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1992? The values for this "
@@ -160233,11 +160236,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How many hours a week did that overtime amount to in 1993? C73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1993? E73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1993? The values for this "
@@ -160247,11 +160250,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How many hours a week did that overtime amount to in 1994? C73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1994? E73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1994? The values for this "
@@ -160261,11 +160264,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How many hours a week did that overtime amount to in 1995? C73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1995? E73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1995? The values for this "
@@ -160275,11 +160278,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How many hours a week did that overtime amount to in 1996? C73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1996? E73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1996? The values for this "
@@ -160289,11 +160292,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How many hours a week did that overtime amount to in 1998? C73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1998? E73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 1998? The values for this "
@@ -160303,11 +160306,11 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How many hours a week did that overtime amount to in 2000? C73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 2000? E73.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did that overtime amount to in 2000? The values for this "
@@ -160317,127 +160320,127 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "How many hours a week did you work on this job in 1993?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did you work on this job in 1994?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did you work on this job in 1995?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did you work on this job in 1996?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did you work on this job in 1998?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week did you work on this job in 2000?",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "How many hours a week is that? On the average, how many hours a week did you work "
         "on your main job last year? G4.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "How many hours a week is your (youngest) child taken care of (not counting time in "
         "regular school)?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/her) (job/jobs) in "
         "2010)?--AMOUNT",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/her) (job/jobs) in "
         "2010)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/her) (job/jobs) in "
         "2012)?--AMOUNT",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/her) (job/jobs) in "
         "2012)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2010)?--AMOUNT",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2010)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2012)?--AMOUNT",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2012)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2014)?--AMOUNT",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2014)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2016)?--AMOUNT",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2016)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2018)?--AMOUNT",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2018)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2020)?--AMOUNT",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2020)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2022)?--AMOUNT",
-        "DDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to (on (all of) (your/his/her) (job/jobs) "
         "in 2022)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours did that overtime amount to in (that period during ) 2002?--HOURS "
@@ -160997,41 +161000,41 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How many hours of that volunteer time, or what percent, did she spend helping "
         "people in need of food, shelter, or other basic necessities?--HOURS",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDNDDDDDDDDDDDDDD",
     ),
     (
         "How many hours of that volunteer time, or what percent, did she spend helping "
         "people in need of food, shelter, or other basic necessities?--PERCENT",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How many hours of that volunteer time, or what percent, was spent helping people in "
         "need of food, shelter, or other basic necessities?--HOURS",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDNDDDDDDDDDDDDD",
     ),
     (
         "How many hours of that volunteer time, or what percent, was spent helping people in "
         "need of food, shelter, or other basic necessities?--PERCENT",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDWDDDDDDDDDDDDD",
     ),
     (
         "How many hours per week (are they/is he/is she) taken care of?",
-        "DDDDDDDDDDDD",
+        "DDWDDDDDDDDD",
     ),
     (
         "How many hours per week did she usually work at (that job/those jobs) during that "
         'time?--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "How many hours per week did you usually work at (that job/those jobs) during that "
         "time?--HEAD",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
-    ("How many hours per week were they taken care of?", "DDDDDDDDDD"),
+    ("How many hours per week were they taken care of?", "DDWDDDDDDD"),
     (
         "How many hours per week were they taken care of? Actual number of hours per week",
-        "DDDDDDDDDDWDDDDD",
+        "DDWDDDDDDDWDDDDD",
     ),
     (
         "How many living biological and adoptive siblings [do you / does (SPOUSE/PARTNER)] "
@@ -163648,242 +163651,242 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "How much (do /does) (you/he/she) expect to receive (, either as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)?-- TIME UNIT FOR SECOND PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, as a percent of [your/his/her] "
         "pay when [you/he/she] left that job or as an amount per month or year)?--AMOUNT FOR "
         "FIRST PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, as a percent of [your/his/her] "
         "pay when [you/he/she] left that job or as an amount per month or year)?--TIME UNIT "
         "FOR FIRST PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, as a percent of [your/his/her] "
         "pay when [you/he/she] left that job)--FIRST PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, as a percent of [your/his/her] "
         "pay when [you/he/she] left that job)?--FIRST PENSION FROM FORMER EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, as a percent of [your/his/her] "
         "pay when [you/he/she] left that job)?--SECOND PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, either as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)? -- AMOUNT FOR SECOND PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, either as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)?-- FIRST PENSION FROM PREVIOUS EMPLOYER--AMOUNT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, either as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)?-- FIRST PENSION FROM PREVIOUS EMPLOYER--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, either as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)?-- SECOND PENSION FROM PREVIOUS EMPLOYER--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, either as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)?-- SECOND PENSION--AMOUNT FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (, either as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)?-- TIME UNIT FOR SECOND PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does [he/she]) expect to receive (as a percent of [your/his/her] "
         "pay when [you/he/she] left that job)? --PERCENT OF PAY FOR SECOND PENSION FROM "
         "PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does he/does she) expect to receive (, as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)?-- AMOUNT FOR FIRST PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does he/does she) expect to receive (, as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)?-- TIME UNIT FOR FIRST PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does he/does she) expect to receive (, as a percent of "
         "[your/his/her] pay when [you/he/she] left that job)? --PERCENT OF PAY FOR SECOND "
         "PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does he/does she) expect to receive (, as a percent of "
         "[your/his/her] pay when [you/he/she] left that job)?--FIRST PENSION FROM FORMER "
         "EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does he/does she) expect to receive (, either as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)?-- TIME UNIT FOR SECOND PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does he/does she) expect to receive (, either as a percent of "
         "[your/his/her] pay when ]you/he/she] left that job or as an amount per month or "
         "year)? -- AMOUNT FOR SECOND PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does he/does she) expect to receive (as a percent of "
         "[your/his/her] pay at retirement)?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDD",
     ),
     (
         "How much (do you/does he/does she) expect to receive (either as a percent of "
         "[your/his/her] pay at retirement or as an amount per month or year)?--AMOUNT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does he/does she) expect to receive (either as a percent of "
         "[your/his/her] pay at retirement or as an amount per month or year)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does she) expect to receive (, either as a percent of [your/her] "
         "pay when [you/she] left that job or as an amount per month or year)?--FIRST PENSION "
         "FROM PREVIOUS EMPLOYER--AMOUNT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does she) expect to receive (, either as a percent of [your/her] "
         "pay when [you/she] left that job or as an amount per month or year)?--FIRST PENSION "
         "FROM PREVIOUS EMPLOYER--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does she) expect to receive (, either as a percent of [your/her] "
         "pay when [you/she] left that job or as an amount per month or year)?--SECOND "
         "PENSION FROM PREVIOUS EMPLOYER--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does she) expect to receive (, either as a percent of [your/her] "
         "pay when [you/she] left that job or as an amount per month or year)?--SECOND "
         "PENSION-- AMOUNT FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does she) expect to receive (as a percent of [your/her] pay at "
         "retirement)?--PERCENT OF PAY",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDD",
     ),
     (
         "How much (do you/does she) expect to receive (either as a percent of [your/her] pay "
         "at retirement or as an amount per month or year)?--AMOUNT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDD",
     ),
     (
         "How much (do you/does she) expect to receive (either as a percent of [your/her] pay "
         "at retirement or as an amount per month or year)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/he/she) expect to receive (, either as a percent of "
         "[your/his/her] pay when [you/he/she] left that job or as an amount per month or "
         "year)? -- AMOUNT FOR SECOND PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/he/she) expect to receive (as a percent of [your/his/her] "
         "pay at retirement)?",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDDDDDWDDDDD",
     ),
     (
         "How much (do/does) (you/he/she) expect to receive (as a percent of [your/his/her] "
         "pay when [you/he/she] left that job)? --PERCENT OF PAY FOR SECOND PENSION FROM "
         "PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/he/she) expect to receive (either as a percent of "
         "[your/his/her] pay at retirement or as an amount per month or year)?--AMOUNT",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDNDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/he/she) expect to receive (either as a percent of "
         "[your/his/her] pay at retirement or as an amount per month or year)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDNDDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/she) expect to receive (, as a percent of [your/her] pay "
         "when [you/she] left that job)?--SECOND PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/she) expect to receive (, either as a percent of [your/her] "
         "pay when [you/she] left that job or as an amount per month or year)?--FIRST PENSION "
         "FROM PREVIOUS EMPLOYER--AMOUNT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/she) expect to receive (, either as a percent of [your/her] "
         "pay when [you/she] left that job or as an amount per month or year)?--FIRST PENSION "
         "FROM PREVIOUS EMPLOYER--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/she) expect to receive (, either as a percent of [your/her] "
         "pay when [you/she] left that job or as an amount per month or year)?--SECOND "
         "PENSION FROM PREVIOUS EMPLOYER--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/she) expect to receive (, either as a percent of [your/her] "
         "pay when [you/she] left that job or as an amount per month or year)?--SECOND "
         "PENSION-- AMOUNT FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDNDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/she) expect to receive (as a percent of [your/her] pay at "
         "retirement)?--PERCENT OF PAY",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDWDDDDDDD",
     ),
     (
         "How much (do/does) (you/she) expect to receive (either as a percent of [your/her] "
         "pay at retirement or as an amount per month or year)?--AMOUNT",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDNDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/she) expect to receive (either as a percent of [your/her] "
         "pay at retirement or as an amount per month or year)?--TIME UNIT",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDNDDDDDDDDDDDDDD",
     ),
     (
         "How much (do/does) (you/she] expect to receive (, as a percent of [your/her] pay "
         "when [you/she] left that job)--FIRST PENSION FROM PREVIOUS EMPLOYER",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "How much (was it /were they) altogether? If both stimulus payments were received, "
@@ -168911,340 +168914,340 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much was that in 2012? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2012 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2012 towards religious purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (What was the total dollar value of all donations you "
         "(and your family) made in 2012 to organizations that help people in need of basic "
         "necessities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (What was the total dollar value of all donations you "
         "(and your family) made in 2012 towards (this/these) last purpose(s))?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (What was the total dollar value of all donations you "
         "(and your family) made in 2012 towards educational purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (What was the total dollar value of all donations you "
         "(and your family) made in 2012 towards health care or medical research "
         "organizations?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (What was the total dollar value of all donations you "
         "(and your family) made in 2012 towards improving neighborhoods and communities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (What was the total dollar value of all donations you "
         "(and your family) made in 2012 towards preserving the environment?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (What was the total dollar value of all donations you "
         "(and your family) made in 2012 towards providing international aid or promoting "
         "world peace?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (What was the total dollar value of all donations you "
         "(and your family) made in 2012 towards the arts, culture, or ethnic awareness?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2012? (What was the total dollar value of all donations you "
         "(and your family) made in 2012 towards youth and family services purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2014 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2014 towards religious purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (What was the total dollar value of all donations you "
         "(and your family) made in 2014 to organizations that help people in need of basic "
         "necessities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (What was the total dollar value of all donations you "
         "(and your family) made in 2014 towards (this/these) last purpose(s))?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (What was the total dollar value of all donations you "
         "(and your family) made in 2014 towards educational purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (What was the total dollar value of all donations you "
         "(and your family) made in 2014 towards health care or medical research "
         "organizations?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (What was the total dollar value of all donations you "
         "(and your family) made in 2014 towards improving neighborhoods and communities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (What was the total dollar value of all donations you "
         "(and your family) made in 2014 towards preserving the environment?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (What was the total dollar value of all donations you "
         "(and your family) made in 2014 towards providing international aid or promoting "
         "world peace?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (What was the total dollar value of all donations you "
         "(and your family) made in 2014 towards the arts, culture, or ethnic awareness?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2014? (What was the total dollar value of all donations you "
         "(and your family) made in 2014 towards youth and family services purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2016 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2016 towards religious purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (What was the total dollar value of all donations you "
         "(and your family) made in 2016 to organizations that help people in need of basic "
         "necessities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (What was the total dollar value of all donations you "
         "(and your family) made in 2016 towards (this/these) last purpose(s))?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (What was the total dollar value of all donations you "
         "(and your family) made in 2016 towards educational purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (What was the total dollar value of all donations you "
         "(and your family) made in 2016 towards health care or medical research "
         "organizations?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (What was the total dollar value of all donations you "
         "(and your family) made in 2016 towards improving neighborhoods and communities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (What was the total dollar value of all donations you "
         "(and your family) made in 2016 towards preserving the environment?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (What was the total dollar value of all donations you "
         "(and your family) made in 2016 towards providing international aid or promoting "
         "world peace?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (What was the total dollar value of all donations you "
         "(and your family) made in 2016 towards the arts, culture, or ethnic awareness?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2016? (What was the total dollar value of all donations you "
         "(and your family) made in 2016 towards youth and family services purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2018 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2018 towards religious purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (What was the total dollar value of all donations you "
         "(and your family) made in 2018 to organizations that help people in need of basic "
         "necessities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (What was the total dollar value of all donations you "
         "(and your family) made in 2018 towards (this/these) last purpose(s))?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (What was the total dollar value of all donations you "
         "(and your family) made in 2018 towards educational purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (What was the total dollar value of all donations you "
         "(and your family) made in 2018 towards health care or medical research "
         "organizations?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (What was the total dollar value of all donations you "
         "(and your family) made in 2018 towards improving neighborhoods and communities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (What was the total dollar value of all donations you "
         "(and your family) made in 2018 towards preserving the environment?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (What was the total dollar value of all donations you "
         "(and your family) made in 2018 towards providing international aid or promoting "
         "world peace?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (What was the total dollar value of all donations you "
         "(and your family) made in 2018 towards the arts, culture, or ethnic awareness?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2018? (What was the total dollar value of all donations you "
         "(and your family) made in 2018 towards youth and family services purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2020 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2020 towards religious purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (What was the total dollar value of all donations you "
         "(and your family) made in 2020 to organizations that help people in need of basic "
         "necessities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (What was the total dollar value of all donations you "
         "(and your family) made in 2020 towards (this/these) last purpose(s))?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (What was the total dollar value of all donations you "
         "(and your family) made in 2020 towards educational purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (What was the total dollar value of all donations you "
         "(and your family) made in 2020 towards health care or medical research "
         "organizations?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (What was the total dollar value of all donations you "
         "(and your family) made in 2020 towards preserving the environment?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (What was the total dollar value of all donations you "
         "(and your family) made in 2020 towards providing international aid or promoting "
         "world peace?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (What was the total dollar value of all donations you "
         "(and your family) made in 2020 towards the arts, culture, or ethnic awareness?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2020? (What was the total dollar value of all donations you "
         "(and your family) made in 2020 towards youth and family services purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2022 towards combined purpose funds?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (Altogether, what was the total dollar value of all "
         "donations you (and your family) made in 2022 towards religious purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (What was the total dollar value of all donations you "
         "(and your family) made in 2022 to organizations that help people in need of basic "
         "necessities?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (What was the total dollar value of all donations you "
         "(and your family) made in 2022 towards (this/these) last purpose(s))?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (What was the total dollar value of all donations you "
         "(and your family) made in 2022 towards educational purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (What was the total dollar value of all donations you "
         "(and your family) made in 2022 towards health care or medical research "
         "organizations?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (What was the total dollar value of all donations you "
         "(and your family) made in 2022 towards preserving the environment?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (What was the total dollar value of all donations you "
         "(and your family) made in 2022 towards providing international aid or promoting "
         "world peace?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (What was the total dollar value of all donations you "
         "(and your family) made in 2022 towards the arts, culture, or ethnic awareness?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much was that in 2022? (What was the total dollar value of all donations you "
         "(and your family) made in 2022 towards youth and family services purposes?)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDDDDDDDDDD",
     ),
     ("How much was that? - AMOUNT", "DDDDDD"),
     ("How much was that? - TIME UNIT", "DDDDDDD"),
@@ -169397,7 +169400,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("How much were you making at that time?-TIME UNIT", "DDDDDDDDD"),
     ("How much will that be?--AMOUNT", "DDDDD"),
     ("How much will that be?--LUMP SUM BENEFIT", "DDDDDDD"),
-    ("How much will that be?--PERCENT OF PAY", "DDDDDDD"),
+    ("How much will that be?--PERCENT OF PAY", "DDDDWDD"),
     ("How much will that be?--TIME UNIT", "DDDDDD"),
     (
         "How much will that be?-ANNUAL AMOUNT The values for this variable in the range "
@@ -169425,12 +169428,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "How much will that be?-PERCENT The values for this variable represent the actual "
         "percent of final pay (01-96) Head will receive as pension payments.",
-        "DDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDWWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "How much will that be?-PERCENT The values for this variable represent the actual "
         'percent of final pay (01-96) Wife/"Wife" will receive as pension payments.',
-        "DDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDWWDDDDDDDDDDDDDDDDDD",
     ),
     ("How much work did she miss?", "DDDDDD"),
     (
@@ -171597,7 +171600,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "DDDDDDDDDDDDDDDDDDDD",
     ),
     ("Hundreds digit=9, Units digit=7,8: Northeast, not SMSA.", "DDDDDDD"),
-    ("Husband's annual hours of child care", "DDDDDD"),
+    ("Husband's annual hours of child care", "DDWDDD"),
     ("I know you may have given me some of this information", "DDDDDDDDDDD"),
     (
         "I know you may have given me some of this information already, but my instructions "
@@ -172118,7 +172121,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "INTERVIEWER CHECKPOINT: WHETHER WORK HOURS REPORTED FOR HEAD'S PROFESSIONAL "
         "PRACTICE OR TRADE INCOME Did you tell me earlier about all the jobs that go with "
         "this income?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "INTERVIEWER CHECKPOINT: Whether Children under 18 in the FU",
@@ -172628,7 +172631,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "If (you/he/she) were to work more hours per week than usual, would (you/he/she) get "
         "paid for those extra hours of work?--CURRENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDNDDDDDDDDDDDDDDDD",
     ),
     (
         "If (you/he/she) were to work more hours than usual during some week, would "
@@ -194266,7 +194269,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "THIRD MENTION See the note at ER23303.",
         "DDDDDDDDDDDDDDDDDDD",
     ),
-    ("Is she working more than 10 hours per week?", "DDDDDDDDD"),
+    ("Is she working more than 10 hours per week?", "DDDDDDNDD"),
     (
         "Is that (alcoholic beverages) included in the food bill? (1969)",
         "DDDDDDDDDD",
@@ -196389,7 +196392,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Leisure hours per major adult 5840 available hours minus non-leisure (V65) Divided "
         "by number of major adults (V71).",
-        "DDDDDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDDDDD",
     ),
     (
         "Leisure measure above is comparable to 1967 leisure measure, i.e., includes hours "
@@ -196473,7 +196476,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "minutes taken by the interviewer to administer the questionnaire.",
         "DDDWDDDDDDDDDDDDDDDDDD",
     ),
-    ("Length of interview in minutes (1970 question)", "DDDDDDD"),
+    ("Length of interview in minutes (1970 question)", "DDDWDDD"),
     ("Let's ...", "DD"),
     ("Let's look ahead to the time when you have reached 65.", "DDDDDDDDDDD"),
     ("Let's start by talking about time.", "DDDDDD"),
@@ -203489,666 +203492,666 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Number of Months 1984 Head Received Alimony in 1983 (Question K44:c)",
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         "Number of Months 1984 Head Received Child Support in 1983 (Question K44:d)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1984 Head Received Help from Relatives in 1983 (Question K44:e)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1984 Head Received Income from Dividends, Interest, Trust Funds, "
         "and Royalties in 1983 (Question K25:b)",
-        "DDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1984 Head Received Income from Rent in 1983 (Question K25:a)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1984 Head Received Other Retirement Pensions and Annuities in 1983 "
         "(Question K40)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1984 Head Received Other Transfer Income in 1983 (Question K44:f)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1984 Head Received Pension(s) from the Veterans Administration in "
         "1983 (Question K37)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1984 Head and Wife/"Wife" Received Social Security in 1983 '
         "(Question K28:c)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1984 Head and Wife/"Wife" Received Supplemental Security Income '
         "(SSI) in 1983 (Question K28:b)",
-        "DDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1985 Head Received Alimony in 1984 (Question F46:c)",
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         "Number of Months 1985 Head Received Child Support in 1984 (Question F46:d)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1985 Head Received Help from Relatives in 1984 (Question F46:e)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1985 Head Received Income from Dividends, Interest, Trust Funds, "
         "and Royalties in 1984 (Question F27:b)",
-        "DDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1985 Head Received Income from Rent in 1984 (Question F27:a)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1985 Head Received Other Retirement Pensions and Annuities in 1984 "
         "(Question F42)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1985 Head Received Other Transfer Income in 1984 (Question F46:f)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1985 Head Received Pension(s) from the Veterans Administration in "
         "1984 (Question F39)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1985 Head and Wife/"Wife" Received Social Security in 1984 '
         "(Question F35)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1985 Head and Wife/"Wife" Received Supplemental Security Income '
         "(SSI) in 1984 (Question F29:b)",
-        "DDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Alimony in 1985 (Question G46:c)",
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Child Support in 1985 (Question G46:d)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Help from Relatives in 1985 (Question G46:e)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Income from Dividends, Interest, Trust Funds, "
         "and Royalties in 1985 (Question G27:b)",
-        "DDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Income from Rent in 1985 (Question G27:a)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Other Retirement Pensions and Annuities in 1985 "
         "(Question G42)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Other Transfer Income in 1985 (Question G46:f)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Pension(s) from the Veterans Administration in "
         "1985 (Question G39)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Social Security in 1985 (Question G35)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1986 Head Received Supplemental Security Income (SSI) in 1985 "
         "(Question G29:b)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1986 Wife/"Wife" Received Child Support in 1985 (Question G62)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1986 Wife/"Wife" Received Help from Relatives in 1985 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1986 Wife/"Wife" Received Other Retirement Pensions and Annuities '
         "in 1985 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1986 Wife/"Wife" Received Other Transfer Income in 1985 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1986 Wife/"Wife" Received Pension(s) from the Veterans '
         "Administration in 1985 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1986 Wife/"Wife" Received Social Security in 1985 (Question G35)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1986 Wife/"Wife" Received Supplemental Security Income (SSI) in '
         "1985 (Question G62)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Alimony in 1986 (Question G46:c)",
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Child Support in 1986 (Question G46:d)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Help from Relatives in 1986 (Question G46:e)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Income from Dividends, Interest, Trust Funds, "
         "and Royalties in 1986 (Question G27:b)",
-        "DDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Income from Rent in 1986 (Question G27:a)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Other Retirement Pensions and Annuities in 1986 "
         "(Question G42)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Other Transfer Income in 1986 (Question G46:f)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Pension(s) from the Veterans Administration in "
         "1986 (Question G39)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Social Security in 1986 (Question G35)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1987 Head Received Supplemental Security Income (SSI) in 1986 "
         "(Question G29:b)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1987 Wife/"Wife" Received Child Support in 1986 (Question G62)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1987 Wife/"Wife" Received Help from Relatives in 1986 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1987 Wife/"Wife" Received Other Retirement Pensions and Annuities '
         "in 1986 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1987 Wife/"Wife" Received Other Transfer Income in 1986 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1987 Wife/"Wife" Received Pension(s) from the Veterans '
         "Administration in 1986 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1987 Wife/"Wife" Received Social Security in 1986 (Question G35)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1987 Wife/"Wife" Received Supplemental Security Income (SSI) in '
         "1986 (Question G62)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Alimony in 1987 (Question G46:c)",
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Child Support in 1987 (Question G46:d)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Help from Relatives in 1987 (Question G46:e)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Income from Dividends, Interest, Trust Funds, "
         "and Royalties in 1987 (Question G27:b)",
-        "DDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Income from Rent in 1987 (Question G27:a)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Other Retirement Pensions and Annuities in 1987 "
         "(Question G42)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Other Transfer Income in 1987 (Question G46:f)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Pension(s) from the Veterans Administration in "
         "1987 (Question G39)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Social Security in 1987 (Question G35)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1988 Head Received Supplemental Security Income (SSI) in 1987 "
         "(Question G29:b)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1988 Wife/"Wife" Received Child Support in 1987 (Question G62)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1988 Wife/"Wife" Received Help from Relatives in 1987 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1988 Wife/"Wife" Received Other Retirement Pensions and Annuities '
         "in 1987 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1988 Wife/"Wife" Received Other Transfer Income in 1987 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1988 Wife/"Wife" Received Pension(s) from the Veterans '
         "Administration in 1987 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1988 Wife/"Wife" Received Social Security in 1987 (Question G35)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1988 Wife/"Wife" Received Supplemental Security Income (SSI) in '
         "1987 (Question G62)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Alimony in 1988 (Question G46:c)",
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Child Support in 1988 (Question G46:d)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Help from Relatives in 1988 (Question G46:e)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Income from Dividends, Interest, Trust Funds, "
         "and Royalties in 1988 (Question G27:b)",
-        "DDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Income from Rent in 1988 (Question G27:a)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Other Retirement Pensions and Annuities in 1988 "
         "(Question G42)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Other Transfer Income in 1988 (Question G46:f)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Pension(s) from the Veterans Administration in "
         "1988 (Question G39)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Social Security in 1988 (Question G35)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1989 Head Received Supplemental Security Income (SSI) in 1988 "
         "(Question G29:b)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1989 Wife/"Wife" Received Child Support in 1988 (Question G62)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1989 Wife/"Wife" Received Help from Relatives in 1988 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1989 Wife/"Wife" Received Other Retirement Pensions and Annuities '
         "in 1988 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1989 Wife/"Wife" Received Other Transfer Income in 1988 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1989 Wife/"Wife" Received Pension(s) from the Veterans '
         "Administration in 1988 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1989 Wife/"Wife" Received Social Security in 1988 (Question G35)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1989 Wife/"Wife" Received Supplemental Security Income (SSI) in '
         "1988 (Question G62)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Alimony in 1989 (Question G46:c)",
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Child Support in 1989 (Question G46:d)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Help from Relatives in 1989 (Question G46:e)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Income from Dividends, Interest, Trust Funds, "
         "and Royalties in 1989 (Question G27:b)",
-        "DDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Income from Rent in 1989 (Question G27:a)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Other Retirement Pensions and Annuities in 1989 "
         "(Question G42)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Other Transfer Income in 1989 (Question G46:f)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Pension(s) from the Veterans Administration in "
         "1989 (Question G39)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Social Security in 1989 (Question G35)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1990 Head Received Supplemental Security Income (SSI) in 1989 "
         "(Question G29:b)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1990 Wife/"Wife" Received Child Support in 1989 (Question G62)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1990 Wife/"Wife" Received Help from Relatives in 1989 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1990 Wife/"Wife" Received Other Retirement Pensions and Annuities '
         "in 1989 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1990 Wife/"Wife" Received Other Transfer Income in 1989 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1990 Wife/"Wife" Received Pension(s) from the Veterans '
         "Administration in 1989 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1990 Wife/"Wife" Received Social Security in 1989 (Question G35)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1990 Wife/"Wife" Received Supplemental Security Income (SSI) in '
         "1989 (Question G62)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Alimony in 1990 (Question G46:c)",
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Child Support in 1990 (Question G46:d)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Help from Relatives in 1990 (Question G46:e)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Income from Dividends, Interest, Trust Funds, "
         "and Royalties in 1990 (Question G27:b)",
-        "DDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Income from Rent in 1990 (Question G27:a)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Other Retirement Pensions and Annuities in 1990 "
         "(Question G42)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Other Transfer Income in 1990 (Question G46:f)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Pension(s) from the Veterans Administration in "
         "1990 (Question G39)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Social Security in 1990 (Question G35)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1991 Head Received Supplemental Security Income (SSI) in 1990 "
         "(Question G29:b)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1991 Wife/"Wife" Received Child Support in 1990 (Question G62)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1991 Wife/"Wife" Received Help from Relatives in 1990 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1991 Wife/"Wife" Received Other Retirement Pensions and Annuities '
         "in 1990 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1991 Wife/"Wife" Received Other Transfer Income in 1990 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1991 Wife/"Wife" Received Pension(s) from the Veterans '
         "Administration in 1990 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1991 Wife/"Wife" Received Social Security in 1990 (Question G35)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1991 Wife/"Wife" Received Supplemental Security Income (SSI) in '
         "1990 (Question G62)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Alimony in 1991 (Question G46:c)",
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Child Support in 1991 (Question G46:d)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Help from Relatives in 1991 (Question G46:e)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Income from Dividends, Interest, Trust Funds, "
         "and Royalties in 1991 (Question G27:b)",
-        "DDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Income from Rent in 1991 (Question G27:a)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Other Retirement Pensions and Annuities in 1991 "
         "(Question G42)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Other Transfer Income in 1991 (Question G46:f)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Pension(s) from the Veterans Administration in "
         "1991 (Question G39)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Social Security in 1991 (Question G35)",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of Months 1992 Head Received Supplemental Security Income (SSI) in 1991 "
         "(Question G29:b)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1992 Wife/"Wife" Received Child Support in 1991 (Question G62)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1992 Wife/"Wife" Received Help from Relatives in 1991 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1992 Wife/"Wife" Received Other Retirement Pensions and Annuities '
         "in 1991 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1992 Wife/"Wife" Received Other Transfer Income in 1991 (Question '
         "G62)",
-        "DDDDDDDDDDDDD",
+        "WDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1992 Wife/"Wife" Received Pension(s) from the Veterans '
         "Administration in 1991 (Question G62)",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         'Number of Months 1992 Wife/"Wife" Received Social Security in 1991 (Question G35)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months 1992 Wife/"Wife" Received Supplemental Security Income (SSI) in '
         "1991 (Question G62)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
-    ("Number of Months Food Stamps Used in 1980", "DDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1981", "DDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1982", "DDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1983 (Question J22)", "DDDDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1984 (Question H21)", "DDDDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1985 (Question F23)", "DDDDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1986 (Question F18)", "DDDDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1987 (Question F10)", "DDDDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1988 (Question F10)", "DDDDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1989 (Question F22)", "DDDDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1990 (Question F22)", "DDDDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1991 (Question F22)", "DDDDDDDDDD"),
-    ("Number of Months Food Stamps Used in 1992 (Question F10)", "DDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1980", "WDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1981", "WDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1982", "WDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1983 (Question J22)", "WDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1984 (Question H21)", "WDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1985 (Question F23)", "WDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1986 (Question F18)", "WDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1987 (Question F10)", "WDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1988 (Question F10)", "WDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1989 (Question F22)", "WDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1990 (Question F22)", "WDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1991 (Question F22)", "WDDDDDDDDD"),
+    ("Number of Months Food Stamps Used in 1992 (Question F10)", "WDDDDDDDDD"),
     (
         'Number of Months Wife/"Wife" Received Child Support in 1984 (Question F62)',
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         'Number of Months Wife/"Wife" Received Help from Relatives in 1984 (Question F62)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months Wife/"Wife" Received Other Retirement in 1984 (Question F62)',
-        "DDDDDDDDDDD",
+        "WDDDDDDDDDD",
     ),
     (
         'Number of Months Wife/"Wife" Received Other Transfer Income in 1984 (Question F62)',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of Months Wife/"Wife" Received Pension(s) from the Veterans Administration '
         "in 1984 (Question F62)",
-        "DDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDD",
     ),
     (
         "Number of Non-FU Members Sharing Housing Unit with This FU This variable represents "
@@ -204614,72 +204617,72 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Number of Reports of Dollar Help Given to Head's/Wife's/\"Wife's\" Children "
         "Outside the FU",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Given to Head's/Wife's/\"Wife's\" Nonrelatives "
         "Outside the FU",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Given to Head's/Wife's/\"Wife's\" Other Relatives "
         "Outside the FU",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Given to Head's/Wife's/\"Wife's\" Parents Outside "
         "the FU",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Given to Head's/Wife's/\"Wife's\" Separated or "
         "Ex-Spouses Outside the FU",
-        "DDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Given to Head's/Wife's/\"Wife's\" Siblings "
         "Outside the FU",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Given to Persons Outside the FU Whose Relationship "
         'to Head/Wife/"Wife" is Not Ascertained',
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Received from Head's/Wife's/\"Wife's\" Children "
         "Outside the FU",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Received from Head's/Wife's/\"Wife's\" "
         "Nonrelatives Outside the FU",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Received from Head's/Wife's/\"Wife's\" Other "
         "Relatives Outside the FU",
-        "DDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Received from Head's/Wife's/\"Wife's\" Parents "
         "Outside the FU",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Received from Head's/Wife's/\"Wife's\" Separated "
         "or Ex- Spouses Outside the FU",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Received from Head's/Wife's/\"Wife's\" Siblings "
         "Outside the FU",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "Number of Reports of Dollar Help Received from to Persons Outside the FU whose "
         'Relationship to Head/Wife/"Wife" is Not Ascertained',
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDDDDDD",
     ),
     (
         "Number of Reports of Time Help Given to Head's/Wife's/\"Wife's\" Children Outside "
@@ -205251,18 +205254,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Number of months Food Stamps used in 1976 Actual number of months",
-        "DDDDDDDDWDDD",
+        "WDDDDDDDWDDD",
     ),
-    ("Number of months Food Stamps used in 1977", "DDDDDDDD"),
-    ("Number of months Food Stamps used in 1978", "DDDDDDDD"),
+    ("Number of months Food Stamps used in 1977", "WDDDDDDD"),
+    ("Number of months Food Stamps used in 1978", "WDDDDDDD"),
     (
         "Number of months Food Stamps used in 1979 Actual number of months",
-        "DDDDDDDDWDDD",
+        "WDDDDDDDWDDD",
     ),
     (
         "Number of months used food stamps in 1975 Code 1-11 for actual number of months "
         "used food stamps in 1975",
-        "DDDDDDDDWDDDDDDDDDDD",
+        "WDDDDDDDWDDDDDDDDDDD",
     ),
     ("Number of other states or countries:", "DDDDDD"),
     (
@@ -205350,42 +205353,42 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     ("Number of things done in spare time (1969)", "DDDDDDDD"),
     ("Number of things mentioned in J1.", "DDDDDD"),
-    ("Number of weeks Head was employed in 2003.", "DDDDDDDD"),
-    ("Number of weeks Head was employed in 2007.", "DDDDDDDD"),
-    ("Number of weeks Head was employed in 2009.", "DDDDDDDD"),
+    ("Number of weeks Head was employed in 2003.", "WDDDDDDD"),
+    ("Number of weeks Head was employed in 2007.", "WDDDDDDD"),
+    ("Number of weeks Head was employed in 2009.", "WDDDDDDD"),
     (
         "Number of weeks Head was out of the labor force in 2003.",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of weeks Head was out of the labor force in 2007.",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         "Number of weeks Head was out of the labor force in 2009.",
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
-    ("Number of weeks Head was unemployed in 2003.", "DDDDDDDD"),
-    ("Number of weeks Head was unemployed in 2007.", "DDDDDDDD"),
-    ("Number of weeks Head was unemployed in 2009.", "DDDDDDDD"),
-    ('Number of weeks WIFE/"WIFE" was employed in 2009.', "DDDDDDDD"),
+    ("Number of weeks Head was unemployed in 2003.", "WDDDDDDD"),
+    ("Number of weeks Head was unemployed in 2007.", "WDDDDDDD"),
+    ("Number of weeks Head was unemployed in 2009.", "WDDDDDDD"),
+    ('Number of weeks WIFE/"WIFE" was employed in 2009.', "WDDDDDDD"),
     (
         'Number of weeks WIFE/"WIFE" was out of the labor force in 2009.',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
-    ('Number of weeks WIFE/"WIFE" was unemployed in 2009.', "DDDDDDDD"),
-    ('Number of weeks Wife/"Wife" was employed in 2003.', "DDDDDDDD"),
-    ('Number of weeks Wife/"Wife" was employed in 2007.', "DDDDDDDD"),
+    ('Number of weeks WIFE/"WIFE" was unemployed in 2009.', "WDDDDDDD"),
+    ('Number of weeks Wife/"Wife" was employed in 2003.', "WDDDDDDD"),
+    ('Number of weeks Wife/"Wife" was employed in 2007.', "WDDDDDDD"),
     (
         'Number of weeks Wife/"Wife" was out of the labor force in 2003.',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
     (
         'Number of weeks Wife/"Wife" was out of the labor force in 2007.',
-        "DDDDDDDDDDDD",
+        "WDDDDDDDDDDD",
     ),
-    ('Number of weeks Wife/"Wife" was unemployed in 2003.', "DDDDDDDD"),
-    ('Number of weeks Wife/"Wife" was unemployed in 2007.', "DDDDDDDD"),
+    ('Number of weeks Wife/"Wife" was unemployed in 2003.', "WDDDDDDD"),
+    ('Number of weeks Wife/"Wife" was unemployed in 2007.', "WDDDDDDD"),
     ("Number of year-to-year changes in county", "DDDDDD"),
     ("Number of year-to-year changes in region", "DDDDDD"),
     ("Number of year-to-year changes in state", "DDDDDD"),
@@ -205574,325 +205577,325 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "On average, how many hours a week (do you/does Reference Person) currently work on "
         "this job?--CURRENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week (do you/does [Spouse/Partner]) currently work on "
         "this job?--CURRENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/HEAD) work on (all of) your (job/jobs) "
         "during 2013?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Head) work on (all of) your (job/jobs) "
         "during 2001?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Head) work on (all of) your (job/jobs) "
         "during 2003?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Head) work on (all of) your (job/jobs) "
         "during 2005?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Head) work on (all of) your (job/jobs) "
         "during 2007?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Head) work on (all of) your (job/jobs) "
         "during 2009?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Head) work on (all of) your (job/jobs) "
         "during 2011?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Reference Person) work on (all of) your "
         "(job/jobs) during 2015?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Reference Person) work on (all of) your "
         "(job/jobs) during 2017?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Reference Person) work on (all of) your "
         "(job/jobs) during 2019?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/Reference Person) work on (all of) your "
         "(job/jobs) during 2021?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2008?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2010?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2012?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2013?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2014?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2015?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2016?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2017?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2018?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2019?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2020?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2021?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/he/she) work on (all of) (your/his/her) "
         "(job/jobs) during 2022?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/she) work on (all of) (you/her) "
         "(job/jobs) during 2001?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/she) work on (all of) (you/her) "
         "(job/jobs) during 2003?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/she) work on (all of) (you/her) "
         "(job/jobs) during 2005?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/she) work on (all of) (you/her) "
         "(job/jobs) during 2009?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/she) work on (all of) (your/her) "
         "(job/jobs) during 2007?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/she) work on (all of) (your/her) "
         "(job/jobs) during 2010??",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/she) work on (all of) (your/her) "
         "(job/jobs) during 2011?",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did (you/she) work on (all of) (your/her) "
         "(job/jobs) during 2012??",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDD",
     ),
     (
         'On average, how many hours a week did [she /(wife/"WIFE")] work on (all of) her '
         "(job/jobs) during 2008?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work during 2002?",
-        "DDDDDDDDDDDD",
+        "DDDDWDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work during 2004?",
-        "DDDDDDDDDDDD",
+        "DDDDWDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work during 2006?",
-        "DDDDDDDDDDDD",
+        "DDDDWDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in 2002?-- "
         "CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in 2002?-- "
         "JOB 2",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in "
         "2002?--JOB 3",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in "
         "2002?--JOB 4",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in 2004?-- "
         "CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in 2004?-- "
         "JOB 2",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in "
         "2004?--JOB 3",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in "
         "2004?--JOB 4",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in 2006?-- "
         "CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in 2006?-- "
         "JOB 2",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in "
         "2006?--JOB 3",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job (this time) in "
         "2006?--JOB 4",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did she work on this job?",
-        "DDDDDDDDDDDDD",
+        "DDDDWDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work during 2002?",
-        "DDDDDDDDDDDD",
+        "DDDDWDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work during 2004?",
-        "DDDDDDDDDDDD",
+        "DDDDWDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work during 2006?",
-        "DDDDDDDDDDDD",
+        "DDDDWDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in 2002?-- "
         "CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in "
         "2002?--JOB 2",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in "
         "2002?--JOB 3",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in "
         "2002?--JOB 4",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in 2004?-- "
         "CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in "
         "2004?--JOB 2",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in "
         "2004?--JOB 3",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in "
         "2004?--JOB 4",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in 2006?-- "
         "CURRENT OR MOST RECENT MAIN JOB",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in "
         "2006?--JOB 2",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in "
         "2006?--JOB 3",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how many hours a week did you work on this job (this time) in "
         "2006?--JOB 4",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDD",
     ),
     (
         "On average, how much are these other utility expenses per month? Not imputed, "
@@ -206033,511 +206036,511 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "On the average, how many hours a week did she work on her extra job(s)?",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on her extra job(s)? Actual "
         "number of hours per week",
-        "DDDDDDDDDDDDDDDWDDDDD",
+        "DDDDDWDDDDDDDDDWDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on her extra job(s)? The values "
         "for this variable represent the actual number of hours per week Wife worked on her "
         "extra job or jobs.",
-        "DDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on her extra job(s)? The values "
         'for this variable represent the actual number of hours per week Wife/"Wife" worked '
         "on her extra job.",
-        "DDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1985 The values for this variable represent the actual number of "
         'hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1986 The values for this variable represent the actual number of "
         'hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1987 The values for this variable represent the actual number of "
         'hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST The values for this variable represent the actual number of hours per "
         'week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- FIRST EXTRA JOB IN "
         "1985 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- FIRST EXTRA JOB IN "
         "1986 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- FIRST EXTRA JOB IN "
         "1987 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- FIRST EXTRA JOB IN "
         "1988 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- FIRST EXTRA JOB IN "
         "1989 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- FIRST EXTRA JOB IN "
         "1990 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- FIRST EXTRA JOB IN "
         "1991 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her extra job.',
-        "DDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?- FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the first extra job.',
-        "DDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?--FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her first extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?--FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'wife/"wife" worked on her first extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?--FOURTH EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her fourth extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?--FOURTH EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'wife/"wife" worked on her fourth extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?--SECOND EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her second extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?--SECOND EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'wife/"wife" worked on her second extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?--THIRD EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her third extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?--THIRD EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'wife/"wife" worked on her third extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST The values for this variable represent the actual number of hours per "
         'week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST The values for this variable represent the actual number of hours per "
         "week.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?-FIRST EXTRA JOB IN "
         "1992 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on this extra job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?-FIRST EXTRA JOB The "
         'values for this variable represent the actual number of hours per week Wife/"Wife" '
         "worked on her extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?-FIRST EXTRA JOB The "
         'values for this variable represent the actual number of hours per week Wife/"Wife" '
         "worked on her first extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did she work on this job?-SECOND EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on her second extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work at your extra job(s)?",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work at your extra job(s)? Actual "
         "number of hours",
-        "DDDDDDDDDDDDDDDWDDD",
+        "DDDDDWDDDDDDDDDWDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1985 The values for this variable represent the actual number of "
         "hours per week Head worked.",
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1985 The values for this variable represent the actual number of "
         "hours per week.",
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1986 The values for this variable represent the actual number of "
         "hours per week Head worked.",
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1986 The values for this variable represent the actual number of "
         "hours per week.",
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1987 The values for this variable represent the actual number of "
         "hours per week Head worked.",
-        "DDDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST The values for this variable represent the actual number of hours per "
         "week Head worked.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- ALL EXTRA JOBS "
         "EXCEPT FIRST The values for this variable represent the actual number of hours per "
         'week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB IN "
         "1985 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB IN "
         "1985 The values for this variable represent the actual number of hours per week "
         "Head worked on the first extra job.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB IN "
         "1986 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB IN "
         "1986 The values for this variable represent the actual number of hours per week "
         "Head worked on the first extra job.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB IN "
         "1987 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB IN "
         "1988 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB IN "
         "1989 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB IN "
         "1990 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB IN "
         "1991 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on the first extra job.",
-        "DDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?- FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?--FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on the extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?--FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on the first extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?--FOURTH EXTRA JOB "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on the fourth extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?--SECOND EXTRA JOB "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on the second extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?--THIRD EXTRA JOB "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on the third extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST The values for this variable represent the actual number of hours per "
         "week Head worked.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST The values for this variable represent the actual number of hours per "
         "week.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?-FIRST EXTRA JOB IN "
         "1992 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?-FIRST EXTRA JOB The "
         "values for this variable represent the actual number of hours per week Head worked "
         "on the extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?-FIRST EXTRA JOB The "
         "values for this variable represent the actual number of hours per week Head worked "
         "on the first extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on this job?-SECOND EXTRA JOB "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on the second extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on your extra job(s) (1970 "
         "question)",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on your extra job(s)?",
-        "DDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on your extra job(s)? (1969 "
         "question)",
-        "DDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on your extra job(s)? Actual "
         "number of hours per week",
-        "DDDDDDDDDDDDDDDWDDDDD",
+        "DDDDDWDDDDDDDDDWDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on your extra job(s)? The values "
         "for this variable represent the actual number of hours per week Head worked on "
         "his/her extra job or jobs.",
-        "DDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week did you work on your extra job(s)? The values "
         "for this variable represent the actual number of hours per week Head worked on "
         "his/her extra job.",
-        "DDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week has she worked on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1986 The values for this variable represent the actual number of "
         'hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week has she worked on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1987 The values for this variable represent the actual number of "
         'hours per week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week has she worked on this job?-FIRST EXTRA JOB "
         "IN 1986 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week has she worked on this job?-FIRST EXTRA JOB "
         "IN 1987 The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week have you worked on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1986 The values for this variable represent the actual number of "
         "hours per week Head worked.",
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week have you worked on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST IN 1987 The values for this variable represent the actual number of "
         "hours per week Head worked.",
-        "DDDDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week have you worked on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST The values for this variable represent the actual number of hours per "
         "week Head worked.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week have you worked on this job?-ALL EXTRA JOBS "
         "EXCEPT FIRST The values for this variable represent the actual number of hours per "
         'week Wife/"Wife" worked.',
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week have you worked on this job?-FIRST EXTRA JOB "
         "IN 1986 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week have you worked on this job?-FIRST EXTRA JOB "
         "IN 1987 The values for this variable represent the actual number of hours per week "
         "Head worked on the extra job.",
-        "DDDDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week have you worked on this job?-FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week Head "
         "worked on the extra job.",
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, how many hours a week have you worked on this job?-FIRST EXTRA JOB "
         "The values for this variable represent the actual number of hours per week "
         'Wife/"Wife" worked on the extra job.',
-        "DDDDDDDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay did she contribute to this plan over "
         "the last five years?-PERCENT The values for this variable in the range 01-96 "
         'represent a five-year average annual percent of pay contributed by Wife/"Wife" to '
         "any employment related tax-deferred compensation or savings plan from 1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay did she contribute to this plan over "
         'the last five years?-TYPE If marginal notes indicate that Wife/"Wife" contributed '
         "for fewer years than she had worked, then code 5 below was used.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay did you contribute to this plan over "
         "the last five years?-PERCENT The values for this variable in the range 01-96 "
         "represent a five-year average annual percent of pay contributed by Head to any "
         "employment related tax-deferred compensation or savings plan from 1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay did you contribute to this plan over "
         "the last five years?-TYPE If marginal notes indicate that Head contributed for "
         "fewer years than he/she had worked, then code 5 below was used.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay has she contributed over the last "
         "five years since 1984?-PERCENT The values for this variable in the range 01-96 "
         'represent a five-year average annual percent of pay contributed by Wife/"Wife" to '
         "any employee pension or retirement plan from 1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay has she contributed over the last "
@@ -206545,7 +206548,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         'represent a five-year average annual percent of pay contributed by Wife/"Wife" to '
         "any employment related tax-deferred compensation or savings plan with the current "
         "main job employer from 1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay has she contributed over the last "
@@ -206553,20 +206556,20 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         'represent a five-year average annual percent of pay contributed by Wife/"Wife" to '
         "her employee pension or retirement plan with the current main job employer from "
         "1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay has she contributed over the last "
         'five years since 1984?-TYPE If marginal notes indicate that Wife/"Wife" contributed '
         "for fewer years than she had worked, then code 5 below was used.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay have you contributed over the last "
         "five years since 1984?-PERCENT The values for this variable in the range 01-96 "
         "represent a five-year average annual percent of pay contributed by Head to any "
         "employee pension or retirement plan from 1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay have you contributed over the last "
@@ -206574,7 +206577,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "represent a five-year average annual percent of pay contributed by Head to any "
         "employment related tax-deferred compensation or savings plan with the current main "
         "job employer from 1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay have you contributed over the last "
@@ -206582,13 +206585,13 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "represent a five-year average annual percent of pay contributed by Head to his or "
         "her employee pension or retirement plan with the current main job employer from "
         "1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the average, what amount or percent of pay have you contributed over the last "
         "five years since 1984?-TYPE If marginal notes indicate that Head contributed for "
         "fewer years than he/she had worked, then code 5 below was used.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "On the whole, would you (HEAD) say your present job is better or worse than the one "
@@ -207240,144 +207243,144 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M15E) hours of "
         "volunteering at or through your (church/synagogue/mosque/temple/place of worship).",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M18E) hours of "
         "volunteering at or through her (church/synagogue/mosque/temple/place of worship).",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M21D) hours of "
         "volunteering at or through organizations for children and youth.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M23D) hours of "
         "volunteering at or through organizations for children or youth.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M25D) hours of "
         "volunteering for senior citizens.",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M27D) hours of "
         "volunteering for senior citizens Does that sound about right, or did she volunteer "
         'more hours or fewer hours?--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M29D) hours of "
         "volunteering at or through organizations for people in poor health.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M31D) hours of "
         "volunteering at or through organizations for people in poor health.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M33D) hours of "
         "volunteering at or through organizations to help people in need.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M35D) hours of "
         "volunteering at or through organizations to help people in need.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M37D) hours of "
         "volunteering at or through organizations to bring about social change.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M39D) hours of "
         "volunteering at or through organizations to bring about social change.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M41D) hours of "
         "volunteering for (this/these) other purpose(s).",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDD",
     ),
     (
         "Over all of 2002, that would have been (about) (ANNUAL TOTAL FROM M43D) hours of "
         "volunteering for (this/these) other purpose(s).",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M15E] hours of "
         "volunteering at or through your [NAME OF PLACE OF WORSHIP].",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M18E] hours of "
         "volunteering at or through her [NAME OF PLACE OF WORSHIP].",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M21D] hours of "
         "volunteering at or through organizations for children and youth.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M23D] hours of "
         "volunteering at or through organizations for children or youth.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M25D] hours of "
         "volunteering for senior citizens.",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M27D] hours of "
         "volunteering for senior citizens Does that sound about right, or did she volunteer "
         'more hours or fewer hours?--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M29D] hours of "
         "volunteering at or through organizations for people in poor health.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M31D] hours of "
         "volunteering at or through organizations for people in poor health.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M33D] hours of "
         "volunteering at or through organizations to help people in need.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M35D] hours of "
         "volunteering at or through organizations to help people in need.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M37D] hours of "
         "volunteering at or through organizations to bring about social change.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M39D] hours of "
         "volunteering at or through organizations to bring about social change.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M41D] hours of "
         "volunteering for (this/these) other purpose(s).",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDD",
     ),
     (
         "Over all of 2004, that would have been (about) [ANNUAL TOTAL FROM M43D] hours of "
         "volunteering for (this/these) other purpose(s).",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDNDDDDDD",
     ),
     (
         "Over the five year period since 1984, what amount or percent of pay did she "
@@ -207385,12 +207388,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         'represent a five-year average annual percent of pay contributed by Wife/"Wife" to '
         "employee pension plans or other employment related tax-deferred compensation or "
         "savings plans from 1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Over the five year period since 1984, what amount or percent of pay did she "
         "contribute on the average?-TYPE",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDNDDDDDDDD",
     ),
     (
         "Over the five year period since 1984, what amount or percent of pay did you "
@@ -207398,12 +207401,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "represent a five-year average annual percent of pay contributed by Head to employee "
         "pension plans or other employment related tax-deferred compensation or savings "
         "plans from 1984 to 1989.",
-        "DDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Over the five year period since 1984, what amount or percent of pay did you "
         "contribute on the average?-TYPE",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDNDDDDDDDD",
     ),
     (
         "Owns home (V1264 = 1) Lives 5 - 30 miles from center of city of 50,000 or more "
@@ -207796,7 +207799,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Per Student Public 1962 Public School Expenditures in County (dollars per year).",
-        "DDDDDDDDDDDD",
+        "DDDDDDDDDNDD",
     ),
     (
         "Per capita money income in 1969, item 67 This variable is suppressed (filled with "
@@ -207807,431 +207810,431 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Percent Employment Change in County, 1962-1967, County Business Patterns, Summary "
         "Tables This variable is suppressed (filled with zeroes) in the public release file "
         "to protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent Net Migration, 1960-1970, item 6 This variable is suppressed (filled with "
         "zeroes) in the public release file to protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent change in number of year-round housing units, 1960-1970, item 78 This "
         "variable is suppressed (filled with zeroes) in the public release file to protect "
         "the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent change in population, 1960-1970, item 5 This variable is suppressed (filled "
         "with zeroes) in the public release file to protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent direct general expenditure of local governments in education, item 110 This "
         "variable is suppressed (filled with zeroes) in the public release file to protect "
         "the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent direct general expenditure of local governments on education, item 110 This "
         "variable is suppressed (filled with zeroes) in the public release file to protect "
         "the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent in structure built in 1960 or later, item 81 This variable is suppressed "
         "(filled with zeroes) in the public release file to protect the anonymity of "
         "respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent in structures built in 1960 or later, item 81 This variable is suppressed "
         "(filled with zeroes) in the public release file to protect the anonymity of "
         "respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent moved into dwelling unit during 1965-1970, item 93 This variable is "
         "suppressed (filled with zeroes) in the public release file to protect the anonymity "
         "of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent net migration, 1960-1970, item 6 This variable is suppressed (filled with "
         "zeroes) in the public release file to protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Head's Total 1989 Labor Income That Was Assigned The values for this "
         "variable in the range 001-100 represent the amount of Head's labor income that "
         "required an assignment, expressed as a percent.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Head's Total 1989 Labor Income That Was a Major Assignment The values "
         "for this variable in the range 001-100 represent the amount of Head's labor income "
         "that required an assignment, expressed as a percent.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Head's Total 1990 Labor Income That Was Assigned The values for this "
         "variable in the range 001-100 represent the amount of Head's labor income that "
         "required an assignment, expressed as a percent.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Head's Total 1990 Labor Income That Was a Major Assignment The values "
         "for this variable in the range 001-100 represent the amount of Head's labor income "
         "that required an assignment, expressed as a percent.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Head's Total 1991 Labor Income That Was Assigned The values for this "
         "variable in the range 001-100 represent the amount of Head's labor income that "
         "required an assignment, expressed as a percent.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Head's Total 1991 Labor Income That Was a Major Assignment The values "
         "for this variable in the range 001-100 represent the amount of Head's labor income "
         "that required an assignment, expressed as a percent.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Total 1989 Family Money Income That Was Assigned The values for this "
         "variable in the range 001-100 represent the amount of family money income that "
         "required an assignment, expressed as a percent.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Total 1989 Family Money Income That Was a Major Assignment The values "
         "for this variable in the range 001-100 represent the amount of family money income "
         "that required a major assignment, expressed as a percent.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Total 1990 Family Money Income That Was Assigned The values for this "
         "variable in the range 001-100 represent the amount of family money income that "
         "required an assignment, expressed as a percent.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Total 1990 Family Money Income That Was a Major Assignment The values "
         "for this variable in the range 001-100 represent the amount of family money income "
         "that required a major assignment, expressed as a percent.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Total 1991 Family Money Income That Was Assigned The values for this "
         "variable in the range 001-100 represent the amount of family money income that "
         "required an assignment, expressed as a percent.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of Total 1991 Family Money Income That Was a Major Assignment The values "
         "for this variable in the range 001-100 represent the amount of family money income "
         "that required a major assignment, expressed as a percent.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of families below the Social Security Administration's low income levels, "
         "with adjustments for farmers, in 1969, item 62 This variable is suppressed (filled "
         "with zeroes) in the public release file to protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of families with 1969 annual income $25,000 or more, item 57 This variable "
         "is suppressed (filled with zeroes) in the public release file to protect the "
         "anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of families with 1969 annual income less than $3000, item 52 This variable "
         "is suppressed (filled with zeroes) in the public release file to protect the "
         "anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of married females in civilian labor force with husband in household, item "
         "36 This variable is suppressed (filled with zeroes) in the public release file to "
         "protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of persons 25 or more years old who have completed four or more years of "
         "college, item 27 This variable is suppressed (filled with zeroes) in the public "
         "release file to protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of persons 25 years old or older who have completed four or more years of "
         "college, item 27 This variable is suppressed (filled with zeroes) in the public "
         "release file to protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent of those working during Census week who used public transportation to work, "
         "item 48 This variable is suppressed (filled with zeroes) in the public release file "
         "to protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent owner-occupied dwelling units, item 87 This variable is suppressed (filled "
         "with zeroes) in the public release file to protect the anonymity of respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percent unemployed in civilian labor force, item 37 This variable is suppressed "
         "(filled with zeroes) in the public release file to protect the anonymity of "
         "respondents.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fifth Other FU Member Incomes for part-year "
         "family unit members are coded based on annual income and the amount of time these "
         "persons were living in the family during 1984.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fifth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1985.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fifth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1986.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fifth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1987.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fifth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1988.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fifth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1989.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fifth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1990.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fifth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1991.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of First Other FU Member Incomes for part-year "
         "family unit members are coded based on annual income and the amount of time these "
         "persons were living in the family during 1984.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of First Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1985.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of First Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1986.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of First Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1987.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of First Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1988.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of First Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1989.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of First Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1990.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of First Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1991.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fourth Other FU Member Incomes for part-year "
         "family unit members are coded based on annual income and the amount of time these "
         "persons were living in the family during 1984.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fourth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1985.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fourth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1986.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fourth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1987.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fourth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1988.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fourth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1989.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fourth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1990.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Fourth Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1991.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Second Other FU Member Incomes for part-year "
         "family unit members are coded based on annual income and the amount of time these "
         "persons were living in the family during 1984.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Second Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1985.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Second Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1986.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Second Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1987.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Second Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1988.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Second Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1989.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Second Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1990.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Second Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1991.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Third Other FU Member Incomes for part-year "
         "family unit members are coded based on annual income and the amount of time these "
         "persons were living in the family during 1984.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Third Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1985.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Third Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1986.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Third Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1987.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Third Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1988.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Third Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1989.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Third Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1990.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage Prorated Taxable Income of Third Other FU Member Incomes for part-year "
         "family unit members are coded based on the portion of annual income earned and the "
         "amount of time these persons were living in the family during 1991.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Percentage of full time worked by Head in years Head did not work full time",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Percentage of full time worked by Wife in years she did not work full time",
-        "DDDDDDDDDDDDDDD",
+        "WDDDDDDDDDDDDDD",
     ),
     (
         "Person Number of Householder Values for this variable in the range 001-227 indicate "
@@ -208722,7 +208725,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Public Welfare, 1962 Per Capita Expenditure in County - (In Dollars).",
-        "DDDDDDDDDDD",
+        "DDDDDDDDDWD",
     ),
     ("Q1.", "D"),
     ("Q2.", "D"),
@@ -209154,7 +209157,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     ("Reason why other person limited (1969)", "DDDDDD"),
     ("Reason why other person needs care (1969)", "DDDDDDD"),
-    ("Received more than 100 hours of free help V57 > 100", "DDDDDDDDDDD"),
+    ("Received more than 100 hours of free help V57 > 100", "DDDDNDDDDDD"),
     (
         "Recently there has been a lot of interest in arrangements for child care which "
         "would allow mothers to take jobs.",
@@ -209855,45 +209858,45 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Reference Person's Total Overtime Hours in 2016 The values for this variable "
         "represent Reference Person's annual overtime hours worked on all jobs, in 2016, if "
         "reported separately from regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Overtime Hours in 2018 The values for this variable "
         "represent Reference Person's annual overtime hours worked on all jobs, in 2018, if "
         "reported separately from regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Overtime Hours in 2020 The values for this variable "
         "represent Reference Person's annual overtime hours worked on all jobs, in 2020, if "
         "reported separately from regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Overtime Hours in 2022 The values for this variable "
         "represent Reference Person's annual overtime hours worked on all jobs, in 2022, if "
         "reported separately from regular work hours.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Weekly Work Hours in 2016 The values for this variable "
         "represent Reference Person's total weekly work hours on all jobs in 2016.",
-        "DDDDDDDDWDDDDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Weekly Work Hours in 2018 The values for this variable "
         "represent Reference Person's total weekly work hours on all jobs in 2018.",
-        "DDDDDDDDWDDDDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Weekly Work Hours in 2020 The values for this variable "
         "represent Reference Person's total weekly work hours on all jobs in 2020.",
-        "DDDDDDDDWDDDDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Weekly Work Hours in 2022 The values for this variable "
         "represent Reference Person's total weekly work hours on all jobs in 2022.",
-        "DDDDDDDDWDDDDDDDDDDDDDDDD",
+        "DDDDDWDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Weeks Out of the Labor Force in 2016 The values for this "
@@ -210086,22 +210089,22 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Reference Person's Total Work Hours in 2016 The values for this variable represent "
         "Reference Person's total annual work hours on all jobs including overtime in 2016.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Work Hours in 2018 The values for this variable represent "
         "Reference Person's total annual work hours on all jobs including overtime in 2018.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Work Hours in 2020 The values for this variable represent "
         "Reference Person's total annual work hours on all jobs including overtime in 2020.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Total Work Hours in 2022 The values for this variable represent "
         "Reference Person's total annual work hours on all jobs including overtime in 2022.",
-        "DDDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Reference Person's Unemployment Compensation, including Strike Benefits, in 2016 "
@@ -211438,18 +211441,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Revised home production hours This variable is the sum of home production hours "
         "(V1838) and an imputation of a dollar an hour for each dollar saved by growing or "
         "canning food (V1880).",
-        "DDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWWDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Revised home production hours This variable is the sum of home production hours "
         "(V2438) and an imputation of a dollar an hour for each dollar saved by growing or "
         "canning food (V2485).",
-        "DDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWWDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Revised home production hours This variable is the sum of home production hours and "
         "an imputation of a dollar an hour for growing or canning food.",
-        "DDDDWDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWWDDDDDDDDDDDDDDDDDDDDD",
     ),
     ("Richard P.", "DD"),
     (
@@ -213445,7 +213448,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Some people can estimate what their pension will be in dollars per month or year, "
         "but others find it easier to estimate it as a fraction of their final pay.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Some people can save on income taxes if they have expenses they can itemize and "
@@ -214373,56 +214376,56 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Spouse's/Partner's Total Overtime Hours in 2014 The values for this variable "
         "represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2014, if "
         "reported separately from regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Overtime Hours in 2016 The values for this variable "
         "represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2016, if "
         "reported separately from regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Overtime Hours in 2018 The values for this variable "
         "represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2018, if "
         "reported separately from regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Overtime Hours in 2020 The values for this variable "
         "represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2020, if "
         "reported separately from regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Overtime Hours in 2022 The values for this variable "
         "represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2022, if "
         "reported separately from regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Weekly Work Hours in 2014 The values for this variable "
         "represent Spouse's/Partner's total weekly work hours on all jobs in 2014.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Weekly Work Hours in 2016 The values for this variable "
         "represent Spouse's/Partner's total weekly work hours on all jobs in 2016.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Weekly Work Hours in 2018 The values for this variable "
         "represent Spouse's/Partner's total weekly work hours on all jobs in 2018.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Weekly Work Hours in 2020 The values for this variable "
         "represent Spouse's/Partner's total weekly work hours on all jobs in 2020.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Weekly Work Hours in 2022 The values for this variable "
         "represent Spouse's/Partner's total weekly work hours on all jobs in 2022.",
-        "DDDDDDDWDDDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Weeks Out of the Labor Force in 2014 The values for this "
@@ -214638,31 +214641,31 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Spouse's/Partner's Total Work Hours in 2014 The values for this variable represent "
         "Spouse's/Partner's actual total annual work hours on all jobs including overtime in "
         "2014.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Work Hours in 2016 The values for this variable represent "
         "Spouse's/Partner's actual total annual work hours on all jobs including overtime in "
         "2016.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Work Hours in 2018 The values for this variable represent "
         "Spouse's/Partner's actual total annual work hours on all jobs including overtime in "
         "2018.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Work Hours in 2020 The values for this variable represent "
         "Spouse's/Partner's actual total annual work hours on all jobs including overtime in "
         "2020.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Work Hours in 2022 The values for this variable represent "
         "Spouse's/Partner's actual total annual work hours on all jobs including overtime in "
         "2022.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Spouse's/Partner's Total Work Weeks in 2014 The values for this variable represent "
@@ -220365,167 +220368,167 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Then (during 2002) how many hours altogether would you say she volunteered at or "
         "through her (church/synagogue/mosque/temple/place of worship)? [IF DK or RF: What "
         'is your best estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say she volunteered at or "
         "through organizations for children or youth? [IF DK or RF: What is your best "
         'estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say she volunteered at or "
         "through organizations for senior citizens? [IF DK or RF: What is your best "
         'estimate?]- -WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say she volunteered at or "
         "through organizations that help people in poor health? [IF DK or RF: What is your "
         'best estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say she volunteered at or "
         "through organizations to bring about social change? [IF DK or RF: What is your best "
         'estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say she volunteered at or "
         "through organizations to help people in need? [IF DK or RF: What is your best "
         'estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say she volunteered for "
         "(this/these) other purpose(s)? [IF DK or RF: What is your best "
         'estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say you volunteered at or "
         "through organizations for children and youth? [IF DK or RF: What is your best "
         "estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say you volunteered at or "
         "through organizations for people in poor health? [IF DK or RF: What is your best "
         "estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say you volunteered at or "
         "through organizations for senior citizens? [IF DK or RF: What is your best "
         "estimate?]- -HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say you volunteered at or "
         "through organizations to bring about social change? [IF DK or RF: What is your best "
         "estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say you volunteered at or "
         "through organizations to help people in need? [IF DK or RF: What is your best "
         "estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say you volunteered at or "
         "through your (church/synagogue/mosque/temple/place of worship)? [IF DK or RF: What "
         "is your best estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2002) how many hours altogether would you say you volunteered for "
         "(this/these) other purpose(s)? [IF DK or RF: What is your best estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say she volunteered at or "
         "through her [NAME OF PLACE OF WORSHIP]? [IF DK or RF: What is your best "
         'estimate?]-- WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say she volunteered at or "
         "through organizations for children or youth? [IF DK or RF: What is your best "
         'estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say she volunteered at or "
         "through organizations for senior citizens? [IF DK or RF: What is your best "
         'estimate?]- -WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say she volunteered at or "
         "through organizations that help people in poor health? [IF DK or RF: What is your "
         'best estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say she volunteered at or "
         "through organizations to bring about social change? [IF DK or RF: What is your best "
         'estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say she volunteered at or "
         "through organizations to help people in need? [IF DK or RF: What is your best "
         'estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say she volunteered for "
         "(this/these) other purpose(s)? [IF DK or RF: What is your best "
         'estimate?]--WIFE/"WIFE"',
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say you volunteered at or "
         "through organizations for children and youth? [IF DK or RF: What is your best "
         "estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say you volunteered at or "
         "through organizations for people in poor health? [IF DK or RF: What is your best "
         "estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say you volunteered at or "
         "through organizations for senior citizens? [IF DK or RF: What is your best "
         "estimate?]- -HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say you volunteered at or "
         "through organizations to bring about social change? [IF DK or RF: What is your best "
         "estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say you volunteered at or "
         "through organizations to help people in need? [IF DK or RF: What is your best "
         "estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say you volunteered at or "
         "through your [NAME OF PLACE OF WORSHIP]? [IF DK or RF: What is your best "
         "estimate?]-- HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then (during 2004) how many hours altogether would you say you volunteered for "
         "(this/these) other purpose(s)? [IF DK or RF: What is your best estimate?]--HEAD",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Then how many weeks did you actually work on your main job in 1967? G3.",
@@ -225259,7 +225262,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Total 1967 FAMILY Real Income Net of Cost of Earning Income - In Dollars V322 Total "
         "1967 Family Real Income - V84 Child care costs, Federal Income Tax, and 1967 Union "
         "dues for Head of family - V57 if added originally (free child care)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total 1967 FAMILY Real Income Net of Costs of Earning Income and Net of Housing "
@@ -225280,7 +225283,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Payments + V18 1967 payments for additions and repairs + V20 1967 Car insurance "
         "payments + V22 1967 Car debt payments + V28 Other 1967 debt payments + V6 Estimated "
         "annual property taxes paid in 1967 (for home owners)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total 1967 Family Fixed Expenditures - In Dollars V331 Total 1967 Family "
@@ -225289,7 +225292,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "single Head of family works for money) and 1967 Union dues for HEAD of family + V82 "
         "Total 1967 payments to dependents outside DU (only for cases where amount was "
         "ascertained)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total 1967 Family Food Consumption V37 Total 1967 Family food expenditures + V39 "
@@ -225312,18 +225315,18 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "others in FU - adjustment factor if someone other than Head or Wife included as a "
         "major adult) (Added in when hours of work by others, V72 = 0000, to avoid double "
         "counting)",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total 1967 Family Uncommitted Money Income - in Dollars V81 Total 1967 Family money "
         "income - V332 Total 1967 Family fixed expenditures",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "Total 1967 Family real Income in Dollars Total value was added in if all of the "
         "time help received was from someone living outside DU; half of the total value was "
         "added if only part of the help was from someone outside DU (valued at $1 = 1 hour).",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total 1968 family food consumption/Total 1968 food need standard [V864 / V494] "
@@ -227618,48 +227621,48 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "FU The values for this variable in the range 00001-99998 represent the actual "
         "dollar amount given in 1987 by the FU to Head's/Wife's/\"Wife's\" children not in "
         "the FU at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Given to Head's/Wife's/\"Wife's\" Nonrelatives Outside "
         "the FU The values for this variable in the range 00001-99998 represent the actual "
         "dollar amount given in 1987 by the FU to Head's/Wife's/\"Wife's\" nonrelatives not "
         "in the FU at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Given to Head's/Wife's/\"Wife's\" Other Relatives "
         "Outside the FU The values for this variable in the range 00001-99998 represent the "
         "actual dollar amount given in 1987 by the FU to Head's/Wife's/\"Wife's\" other "
         "relatives not in the FU at the time.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Given to Head's/Wife's/\"Wife's\" Parents Outside the FU "
         "The values for this variable in the range 00001-99998 represent the actual dollar "
         "amount given in 1987 by the FU to Head's/Wife's/\"Wife's\" parents not in the FU "
         "at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Given to Head's/Wife's/\"Wife's\" Separated or "
         "Ex-Spouses Outside the FU The values for this variable in the range 00001-99998 "
         "represent the actual dollar amount given in 1987 by the FU to "
         "Head's/Wife's/\"Wife's\" separated or ex-spouses not in the FU at the time.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Given to Head's/Wife's/\"Wife's\" Siblings Outside the "
         "FU The values for this variable in the range 00001-99998 represent the actual "
         "dollar amount given in 1987 by the FU to Head's/Wife's/\"Wife's\" siblings not in "
         "the FU at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Given to Persons Outside the FU The values for this "
         "variable in the range 000001-999998 represent the actual dollar amount given in "
         "1987 by the FU to persons not in the FU at the time.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Given to Persons Outside the FU whose Relationship to "
@@ -227667,55 +227670,55 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "00001-99998 represent the actual dollar amount given in 1987 by the FU to those "
         'whose relation- ship to Head/Wife/"Wife" was not ascertained and who were not in '
         "the FU at the time.",
-        "DDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Received from Head's/Wife's/\"Wife's\" Children Outside "
         "the FU The values for this variable in the range 00001-99998 represent the actual "
         "dollar amount received in 1987 by the FU from Head's/Wife's/ \"Wife's\" children "
         "not in the FU at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Received from Head's/Wife's/\"Wife's\" Nonrelatives "
         "Outside the FU The values for this variable in the range 00001-99998 represent the "
         "actual dollar amount received in 1987 by the FU from Head's/Wife's/ \"Wife's\" "
         "nonrelatives not in the FU at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Received from Head's/Wife's/\"Wife's\" Other Relatives "
         "Outside the FU The values for this variable in the range 00001-99998 represent the "
         "actual dollar amount received in 1987 by the FU from Head's/Wife's/ \"Wife's\" "
         "other relatives not in the FU at the time.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Received from Head's/Wife's/\"Wife's\" Parents Outside "
         "the FU The values for this variable in the range 00001-99998 represent the actual "
         "dollar amount received in 1987 by the FU from Head's/Wife's/ \"Wife's\" parents "
         "not in the FU at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Received from Head's/Wife's/\"Wife's\" Separated or "
         "Ex-Spouses Outside the FU The values for this variable in the range 00001-99998 "
         "represent the actual dollar amount given in 1987 by the FU to "
         "Head's/Wife's/\"Wife's\" separated or ex-spouses not in the FU at the time.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Received from Head's/Wife's/\"Wife's\" Siblings Outside "
         "the FU The values for this variable in the range 00001-99998 represent the actual "
         "dollar amount received in 1987 by the FU from Head's/Wife's/ \"Wife's\" siblings "
         "not in the FU at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Received from Persons Outside the FU The values for this "
         "variable in the range 000001-999998 represent the actual dollar amount received in "
         "1987 by the FU from persons not in the FU at the time.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Dollar Amount Received from Persons Outside the FU whose Relationship "
@@ -227723,55 +227726,55 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "00001-99998 represent the actual dollar amount received in 1987 by the FU from "
         'those whose relationship to Head/Wife/"Wife" was not ascertained and who were not '
         "in the FU at the time.",
-        "DDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours Spent Helping Head's/Wife's/\"Wife's\" Children Outside the FU "
         "The values for this variable in the range 00001-99998 represent the actual hours "
         "spent in 1987 by the FU helping Head's/Wife's/\"Wife's\" children not in the FU at "
         "the time.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours Spent Helping Head's/Wife's/\"Wife's\" Nonrelatives Outside the "
         "FU The values for this variable in the range 00001-99998 represent the actual hours "
         "spent in 1987 by the FU helping Head's/Wife's/\"Wife's\" nonrelatives not in the "
         "FU at the time.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours Spent Helping Head's/Wife's/\"Wife's\" Other Relatives Outside "
         "the FU The values for this variable in the range 00001-99998 represent the actual "
         "hours spent in 1987 by the FU helping Head's/Wife's/\"Wife's\" other relatives not "
         "in the FU at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours Spent Helping Head's/Wife's/\"Wife's\" Parents Outside the FU "
         "The values for this variable in the range 00001-99998 represent the actual hours "
         "spent in 1987 by the FU helping Head's/Wife's/\"Wife's\" parents not in the FU at "
         "the time.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours Spent Helping Head's/Wife's/\"Wife's\" Separated or Ex-Spouses "
         "Outside the FU The values for this variable in the range 00001-99998 represent the "
         "actual hours spent in 1987 by the FU helping Head's/Wife's/\"Wife's\" separated or "
         "ex-spouses not in the FU at the time.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours Spent Helping Head's/Wife's/\"Wife's\" Siblings Outside the FU "
         "The values for this variable in the range 00001-99998 represent the actual hours "
         "spent in 1987 by the FU helping Head's/Wife's/\"Wife's\" siblings not in the FU at "
         "the time.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours Spent Helping Persons Outside the FU The values for this variable "
         "in the range 00001-99998 represent the actual hours spent in 1987 by the FU helping "
         "persons not in the FU at the time.",
-        "DDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours Spent Helping Persons Outside the FU whose Relationship to "
@@ -227779,55 +227782,55 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "the range 00001-99998 represent the actual hours spent in 1987 by the FU helping "
         'persons whose relation- ship to Head/Wife/"Wife" was not ascertained and who were '
         "not in the FU at the time.",
-        "DDDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours of Help Received from Head's/Wife's/\"Wife's\" Children Outside "
         "the FU The values for this variable in the range 00001-99998 represent the actual "
         "hours of help received in 1987 by the FU from Head's/Wife's/ reported help received "
         "from each such person.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours of Help Received from Head's/Wife's/\"Wife's\" Nonrelatives "
         "Outside the FU The values for this variable in the range 00001-99998 represent the "
         "actual hours of help received in 1987 by the FU from Head's/Wife's/ \"Wife's\" "
         "nonrelatives not in the FU at the time.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours of Help Received from Head's/Wife's/\"Wife's\" Other Relatives "
         "Outside the FU The values for this variable in the range 00001-99998 represent the "
         "actual hours of help received in 1987 by the FU from Head's/Wife's/ \"Wife's\" "
         "other relatives not in the FU at the time.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours of Help Received from Head's/Wife's/\"Wife's\" Parents Outside "
         "the FU The values for this variable in the range 00001-99998 represent the actual "
         "hours of help received in 1987 by the FU from Head's/Wife's/ \"Wife's\" parents "
         "not in the FU at the time.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours of Help Received from Head's/Wife's/\"Wife's\" Separated or "
         "Ex-Spouses Outside the FU The values for this variable in the range 00001-99998 "
         "represent the actual hours of help received in 1987 by the FU from Head's/Wife's/ "
         '"Wife\'s" ex-spouses not in the FU at the time.',
-        "DDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours of Help Received from Head's/Wife's/\"Wife's\" Siblings Outside "
         "the FU The values for this variable in the range 00001-99998 represent the actual "
         "hours of help received in 1987 by the FU from Head's/Wife's/ \"Wife's\" siblings "
         "not in the FU at the time.",
-        "DDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours of Help Received from Persons Outside the FU The values for this "
         "variable in the range 00001-99998 represent the actual hours of help received in "
         "1987 by the FU from persons not in the FU at the time.",
-        "DDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Known Hours of Help Received from Persons Outside the FU whose Relationship "
@@ -227835,7 +227838,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "00001-99998 represent the actual hours of help received in 1987 by the FU from "
         'persons whose relationship to Head/Wife/"Wife" was not ascertained and who were not '
         "in the FU at the time.",
-        "DDDDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total Labor Income of All Other FU Members in FU during 2004--NOT PRORATED The "
@@ -228209,7 +228212,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Total Number of Inheritances Received", "DDDDD"),
     (
         "Total Number of Reports of Dollar Help Given to Persons Outside the FU",
-        "DDDDDDDDDDDDD",
+        "DDDDDNDDDDDDD",
     ),
     (
         "Total Number of States and/or Countries mean, excluding missing data = 2.1 The "
@@ -229109,16 +229112,16 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "Total hours worked for money by anyone other than Head and Wife",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Total non-leisure hours (working, ill, or unemployed) for Head and Wife",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Total non-leisure hours (working, ill, or unemployed) for Head and Wife (or second "
         "adult, Sum of Variables 47, 49, 51, 61, 63).",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total nonleisure hours of the Head and Wife in 1969 Summation of the following: "
@@ -229128,7 +229131,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "done by Wife or unmarried Head V1156 Hours of housework done by husband This "
         "variable is not comparable to the corresponding variable for 1967 since it includes "
         "travel to work time of the Head and Wife.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total nonleisure hours of the Head and Wife in 1970 Summation of the following: "
@@ -229138,7 +229141,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "done by Wife or unmarried Head V1857 Hours of housework done by husband This "
         "variable is not comparable to the corresponding variable for 1967 since it includes "
         "travel to work time of the Head and Wife.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Total nonleisure hours of the Head and Wife in 1971 Summation of the following: "
@@ -229148,7 +229151,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "done by Wife or unmarried Head V2457 Hours of housework done by husband This "
         "variable is not comparable to the corresponding variable for 1967 since it includes "
         "travel to work time of the Head and Wife.",
-        "DDDDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDWDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     ("Total number 0 - 17 with physical or nervous condition", "DDDDDDDDDD"),
     (
@@ -229913,12 +229916,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "V1563) 1969 hours of work by family - paid and unpaid (EXCLUDING HOURS OF TRAVEL TO "
         "WORK BY HEAD AND WIFE)",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDNDDDDDDDD",
     ),
     (
         "V1565) Total hours of work by family - paid and unpaid - (INCLUDING HOURS OF TRAVEL "
         "TO WORK BY HEAD AND WIFE)",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDNDDDDDDDD",
     ),
     ("V1569) 1969 hourly earnings WIFE OF HEAD", "DDDDDDD"),
     (
@@ -230225,12 +230228,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "V2275) 1970 hours of work by family - paid and unpaid (Excluding hours of travel to "
         "work by Head and Wife)",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDNDDDDDDDD",
     ),
     (
         "V2277) Total hours of work by family - paid and unpaid - (Including hours of travel "
         "to work by Head and Wife)",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDNDDDDDDDD",
     ),
     ("V2279) 1970 hourly earnings - HEAD", "DDDDDD"),
     ("V2281) 1970 hourly earnings - WIFE OF HEAD", "DDDDDDDD"),
@@ -230357,12 +230360,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "V2902) 1971 hours of work by family - paid and unpaid (Excluding hours of travel to "
         "work by Head and Wife)",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDNDDDDDDDD",
     ),
     (
         "V2904) Total hours of work by family - paid and unpaid - (Including hours of travel "
         "to work by Head and Wife)",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDNDDDDDDDD",
     ),
     ("V2906) 1971 hourly earnings - HEAD", "DDDDDD"),
     ("V2908) 1971 hourly earnings - WIFE OF HEAD", "DDDDDDDD"),
@@ -230436,7 +230439,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "DDDDDDDDDDDDDDDDDDDD",
     ),
     ("V3275) 1972 Hourly earnings - Head", "DDDDDD"),
-    ("V3277) 1972 Hours earnings - Wife of Head", "DDDDDDDD"),
+    ("V3277) 1972 Hours earnings - Wife of Head", "DDNDDDDD"),
     (
         "V328 Family Well-offness Index Uses Orshansky Ratio Note that the computation of "
         "V328 uses V31, Annual Food Std (Needs), which is in 1967 dollars.",
@@ -230463,7 +230466,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("V334 Total 1967 Family Food Consumption", "DDDDDD"),
     (
         "V335 Total 1967 Family Hours of Work (Work for money plus unpaid work)",
-        "DDDDDDDDDDDDD",
+        "DDDDNDDDDDDDD",
     ),
     (
         "V336 Ratio of Total 1967 Family Food Consumption to 1967 Family Food Standard Note "
@@ -230814,12 +230817,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "V867) 1968 Hours of work by family - Paid and unpaid (Excluding hours of work by "
         "Head and Wife)",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDNDDDDDD",
     ),
     (
         "V869) Total hours of work by family - Paid and unpaid - (Including to work by Head "
         "and Wife)",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDDDDD",
     ),
     ("V871) 1968 Hourly earnings - HEAD", "DDDDDD"),
     ("V873) 1968 Hourly earnings - WIFE OF HEAD", "DDDDDDDD"),
@@ -230834,9 +230837,9 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ('V8963) Age of 1983 Wife/"Wife"', "DDDDD"),
     ("V9.", "D"),
     ("V910) 1967-68 Change in labor income - HEAD", "DDDDDDDD"),
-    ("V911) 1967-68 Percent change in labor income - HEAD", "DDDDDDDDD"),
+    ("V911) 1967-68 Percent change in labor income - HEAD", "DDNDDDDDD"),
     ("V920) 1967-68 Change in money income - FAMILY", "DDDDDDDD"),
-    ("V920) 1967-68 Percent change in family money income", "DDDDDDDD"),
+    ("V920) 1967-68 Percent change in family money income", "DDNDDDDD"),
     (
         "V923) 1967-68 Change in money income/Needs ratio Note that the computation of V923 "
         "uses V31, Annual Food Needs Standard, which is in 1967 dollars.",
@@ -230845,7 +230848,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "V924) 1967-68 percent change in money income/Needs Ratio Note that the computation "
         "of V924 uses V31, Annual Food Needs Standard, which is in 1967 dollars.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         'V927) 1967-68 Change in "Well-Offness" (Money income basis) Note that the '
@@ -230855,7 +230858,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         'V928) 1967-68 Percent change in "Well-Offness" (Money income basis) Note that the '
         "computation of V938 uses V31, Annual Food Needs Standard, which is in 1967 dollars.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDNDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "V9315-V9318 do not take account of changes in Wife's/\"Wife's\" employment history "
@@ -230911,9 +230914,9 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "V943) 1967-68 PERCENT change in hours of work for money - HEAD",
-        "DDDDDDDDDDDD",
+        "DDNDDNDDDDDD",
     ),
-    ("V954) 1967-68 Percent change in hourly earnings - HEAD", "DDDDDDDDD"),
+    ("V954) 1967-68 Percent change in hourly earnings - HEAD", "DDNDDDDDD"),
     (
         "Vacancy rate = [# of homes for sale/(# of owner- occupied units + # of homes for "
         "sale)] x 100",
@@ -232155,7 +232158,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Wanted more work and/or worked > 2500 hours V231= 1 and/or V47 > 2500 2 points "
         "Neutralize Inaps.",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDDDDDNDDDDDDDDDD",
     ),
     ("Was $10,000 or more?", "DDDD"),
     ("Was $25 or more?", "DDDD"),
@@ -243160,279 +243163,279 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "What amount or percent of pay (are you/is [he/she]) required to contribute?-- "
         "AMOUNT",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay (are you/is [he/she]) required to contribute?--AMOUNT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay (are you/is [he/she]) required to contribute?--TIME "
         "UNIT",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay (are/is) (you/he/she) required to contribute?-- "
         "AMOUNT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay (are/is) (you/he/she) required to contribute?--TIME "
         "UNIT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay (are/is) (you/she) required to contribute?--AMOUNT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay (are/is) (you/she) required to contribute?--TIME UNIT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay (do you/does [he/she]) voluntarily contribute "
         "currently?--AMOUNT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay (do you/does [he/she]) voluntarily contribute "
         "currently?--TIME UNIT",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay (do/does) (you/he/she) voluntarily contribute "
         "currently?--AMOUNT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay (do/does) (you/he/she) voluntarily contribute "
         "currently?--TIME UNIT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay (do/does) (you/she) voluntarily contribute "
         "currently?- -AMOUNT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay (do/does) (you/she) voluntarily contribute "
         "currently?- -TIME UNIT",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay are you required to contribute?- PERCENT The values "
         "for this variable represent the actual percent (01-96) of pay required.",
-        "DDDDDDDDDDDDWDDDDDDDDDDDD",
+        "DDDWDDDDDDDWWDDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay are you required to contribute?- TYPE OF RESPONSE",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay are you required to contribute?--AMOUNT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay are you required to contribute?--PERCENT OF PAY",
-        "DDDDDDDDDDDDD",
+        "DDDWDDDDDDWDD",
     ),
     (
         "What amount or percent of pay are you required to contribute?--TIME UNIT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay do you voluntarily contribute currently?--AMOUNT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay do you voluntarily contribute currently?--PERCENT OF "
         "PAY",
-        "DDDDDDDDDDDDD",
+        "DDDWDDDDDDWDD",
     ),
     (
         "What amount or percent of pay do you voluntarily contribute currently?--TIME UNIT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay do you voluntary contribute currently?-PERCENT The "
         "values for this variable represent the actual percent (01-96) Head voluntarily "
         "contributes.",
-        "DDDDDDDDDDDWDDDDDDDDDDDD",
+        "DDDWDDDDDDWWDDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay do you voluntary contribute currently?-TYPE OF "
         "RESPONSE",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does (your/her) employer contribute to (your/her) "
         "account?--AMOUNT",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does (your/her) employer contribute to (your/her) "
         "account?--TIME UNIT",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does (your/her) employer contribute?--AMOUNT",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "What amount or percent of pay does (your/her) employer contribute?--TIME UNIT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay does (your/his/her) employer contribute to "
         "(your/his/her) account?--AMOUNT",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does (your/his/her) employer contribute to "
         "(your/his/her) account?--TIME UNIT",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does (your/his/her) employer contribute?--AMOUNT",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "What amount or percent of pay does (your/his/her) employer contribute?--TIME UNIT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay does her employer contribute to her account?--AMOUNT",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does her employer contribute to her account?--PERCENT "
         "OF PAY",
-        "DDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDWDD",
     ),
     (
         "What amount or percent of pay does her employer contribute to her account?--TIME "
         "UNIT",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does her employer contribute to her account?-PERCENT "
         "The values for this variable represent the actual percent (01-96) of "
         "Wife's/\"Wife's\" pay that the employer contributes.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDWWDDDDDDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does her employer contribute?- PERCENT The values for "
         "this variable represent the actual percent (01-96) of Wife's/\"Wife's\" pay that "
         "the employer contributes.",
-        "DDDDDDDDDDDWDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWWDDDDDDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does her employer contribute?--AMOUNT",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "What amount or percent of pay does her employer contribute?--PERCENT OF PAY",
-        "DDDDDDDDDDDD",
+        "DDDWDDDDDWDD",
     ),
     (
         "What amount or percent of pay does her employer contribute?--TIME UNIT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay does her employer contribute?-TYPE OF RESPONSE",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay does she voluntarily contribute currently?--AMOUNT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay does she voluntarily contribute currently?--PERCENT "
         "OF PAY",
-        "DDDDDDDDDDDDD",
+        "DDDWDDDDDDWDD",
     ),
     (
         "What amount or percent of pay does she voluntarily contribute currently?--TIME UNIT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What amount or percent of pay does she voluntarily contribute currently?-PERCENT "
         'The values for this variable represent the actual percent (01-96) Wife/"Wife" '
         "voluntarily contributes.",
-        "DDDDDDDDDDDWDDDDDDDDDDDD",
+        "DDDWDDDDDDWWDDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does she voluntarily contribute?- TYPE OF RESPONSE",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does your employer contribute to your account?-- "
         "PERCENT OF PAY",
-        "DDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does your employer contribute to your "
         "account?--AMOUNT",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does your employer contribute to your account?--TIME "
         "UNIT",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does your employer contribute to your "
         "account?-PERCENT The values for this variable represent the actual percent (01-96) "
         "of Head's pay that the employer contributes.",
-        "DDDDDDDDDDDDDWDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDWWDDDDDDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does your employer contribute to your account?-TYPE "
         "OF RESPONSE",
-        "DDDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does your employer contribute?- PERCENT The values "
         "for this variable represent the actual percent (01-96) of Head's pay that the "
         "employer contributes.",
-        "DDDDDDDDDDDWDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDWWDDDDDDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does your employer contribute?- TYPE OF RESPONSE",
-        "DDDDDDDDDDDDD",
+        "DDDNDDDDDDDDD",
     ),
     (
         "What amount or percent of pay does your employer contribute?--AMOUNT",
-        "DDDDDDDDDD",
+        "DDDNDDDDDD",
     ),
     (
         "What amount or percent of pay does your employer contribute?--PERCENT OF PAY",
-        "DDDDDDDDDDDD",
+        "DDDWDDDDDWDD",
     ),
     (
         "What amount or percent of pay does your employer contribute?--TIME UNIT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay is she required to contribute?- PERCENT The values "
         "for this variable represent the actual percent (01-96) of pay required.",
-        "DDDDDDDDDDDDWDDDDDDDDDDDD",
+        "DDDWDDDDDDDWWDDDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay is she required to contribute?- TYPE OF RESPONSE",
-        "DDDDDDDDDDDDDD",
+        "DDDNDDDDDDDDDD",
     ),
     (
         "What amount or percent of pay is she required to contribute?--AMOUNT",
-        "DDDDDDDDDDD",
+        "DDDNDDDDDDD",
     ),
     (
         "What amount or percent of pay is she required to contribute?--PERCENT OF PAY",
-        "DDDDDDDDDDDDD",
+        "DDDWDDDDDDWDD",
     ),
     (
         "What amount or percent of pay is she required to contribute?--TIME UNIT",
-        "DDDDDDDDDDDD",
+        "DDDNDDDDDDDD",
     ),
     (
         "What are her most important activities or duties? The 3-digit occupation code from "
@@ -245581,31 +245584,31 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ),
     (
         "What is the approximate dollar amount in (your/her) account now?",
-        "DDDDDDDDDD",
+        "DDDDWDDDDD",
     ),
     (
         "What is the approximate dollar amount in (your/his/her) account now?",
-        "DDDDDDDDDD",
+        "DDDDWDDDDD",
     ),
     (
         "What is the approximate dollar amount in her account now?",
-        "DDDDDDDDDD",
+        "DDDDWDDDDD",
     ),
     (
         "What is the approximate dollar amount in her account now? The values for this "
         "variable in the range 000001-999996 represent the amount in Wife's/\"Wife's\" "
         "account in whole dollars.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDNNDDDDDDDDDDDDDDDD",
     ),
     (
         "What is the approximate dollar amount in your account now?",
-        "DDDDDDDDDD",
+        "DDDDWDDDDD",
     ),
     (
         "What is the approximate dollar amount in your account now? The values for this "
         "variable in the range 000001-999996 represent the amount in Head's account in whole "
         "dollars.",
-        "DDDDDDDDDDNNDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDNNDDDDDDDDDDDDDDDD",
     ),
     (
         "What is the current interest rate on that loan? (FRACTION)--FIRST MORTGAGE",
@@ -246237,28 +246240,28 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "What is the percent chance that you will be laid off from your job in the next "
         "twelve months?",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDDDD",
     ),
     (
         "What is the percent chance that you will live to be 75 or more?",
-        "DDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDD",
     ),
     (
         "What is the percent chance that you will live to be 85 or more?",
-        "DDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDD",
     ),
     (
         "What is the percent chance that you will live to be 95 or more?",
-        "DDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDD",
     ),
     (
         "What is the percent chance that you will move in the next two years?",
-        "DDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDD",
     ),
     (
         "What is the percent chance that you will move to a nursing home in the next 5 "
         "years?",
-        "DDDDDDDDDDDDDDDDDD",
+        "DDDWDDDDDDDDDDDDDD",
     ),
     (
         "What is the primary subject or field of study for this certification or license?-- "
@@ -248316,119 +248319,119 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "What percent of (your/her) contribution does (your/her) employer contribute to "
         "(your/her) account?--PERCENTAGE OF EMPLOYEE CONTRIBUTION",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
     (
         "What percent of (your/her) contribution does (your/her) employer contribute?-- "
         "EMPLOYEE CONTRIBUTION (Spouse/Partner)",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "What percent of (your/her) contribution does (your/her) employer contribute?-- "
         "EMPLOYEE CONTRIBUTION (Wife)",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "What percent of (your/his/her) contribution does (your/his/her) employer contribute "
         "to (your/his/her) account?--PERCENTAGE OF EMPLOYEE CONTRIBUTION",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
     (
         "What percent of (your/his/her) contribution does (your/his/her) employer "
         "contribute?--EMPLOYEE CONTRIBUTION (Head)",
-        "DDDDDDDDDDD",
+        "DWDDDDDDDDD",
     ),
     (
         "What percent of (your/his/her) contribution does (your/his/her) employer "
         "contribute?--EMPLOYEE CONTRIBUTION (Reference Person)",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "What percent of (your/his/her) contribution does (your/his/her) employer "
         "contribute?--EMPLOYEE CONTRIBUTION (Spouse/Partner)",
-        "DDDDDDDDDDD",
+        "DWDDDDDDDDD",
     ),
     (
         "What percent of pay (are you/is [he/she]) required to contribute?",
-        "DDDDDDDDDD",
+        "DWDDDDDDDD",
     ),
     (
         "What percent of pay (are/is) (you/he/she) required to contribute?",
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         "What percent of pay (are/is) (you/she) required to contribute?",
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         "What percent of pay (do you/does [he/she]) voluntarily contribute currently?",
-        "DDDDDDDDDD",
+        "DWDDDDDDDD",
     ),
     (
         "What percent of pay (do/does) (you/he/she) voluntarily contribute currently?",
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         "What percent of pay (do/does) (you/she) voluntarily contribute currently?",
-        "DDDDDDDDD",
+        "DWDDDDDDD",
     ),
     (
         "What percent of pay does (your/ his/ her) employer contribute?",
-        "DDDDDDDDDD",
+        "DWDDDDDDDD",
     ),
     (
         "What percent of pay does (your/ his/ her) employer contribute?--EMPLOYER "
         "CONTRIBUTION (Head)",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "What percent of pay does (your/her) employer contribute to (your/her) account?",
-        "DDDDDDDDDDD",
+        "DWDDDDDDDDD",
     ),
     (
         "What percent of pay does (your/her) employer contribute to (your/her) account?-- "
         "PERCENT OF EMPLOYER CONTRIBUTION",
-        "DDDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDDD",
     ),
-    ("What percent of pay does (your/her) employer contribute?", "DDDDDDDD"),
+    ("What percent of pay does (your/her) employer contribute?", "DWDDDDDD"),
     (
         "What percent of pay does (your/her) employer contribute?--EMPLOYER CONTRIBUTION "
         "(Spouse/Partner)",
-        "DDDDDDDDDD",
+        "DWDDDDDDDD",
     ),
     (
         "What percent of pay does (your/her) employer contribute?--EMPLOYER CONTRIBUTION "
         "(Wife)",
-        "DDDDDDDDDD",
+        "DWDDDDDDDD",
     ),
     (
         "What percent of pay does (your/his/her) employer contribute to (your/his/her) "
         "account?",
-        "DDDDDDDDDDD",
+        "DWDDDDDDDDD",
     ),
     (
         "What percent of pay does (your/his/her) employer contribute to (your/his/her) "
         "account?--PERCENT OF EMPLOYER CONTRIBUTION",
-        "DDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDD",
     ),
     (
         "What percent of pay does (your/his/her) employer contribute?--EMPLOYER CONTRIBUTION "
         "(Head)",
-        "DDDDDDDDDD",
+        "DWDDDDDDDD",
     ),
     (
         "What percent of pay does (your/his/her) employer contribute?--EMPLOYER CONTRIBUTION "
         "(Reference Person)",
-        "DDDDDDDDDDD",
+        "DWDDDDDDDDD",
     ),
     (
         "What percent of pay does (your/his/her) employer contribute?--EMPLOYER CONTRIBUTION "
         "(Spouse/Partner)",
-        "DDDDDDDDDD",
+        "DWDDDDDDDD",
     ),
     (
         "What percent of pay does (your/his/her) employer contribute?--TIME UNIT",
-        "DDDDDDDDD",
+        "DNDDDDDDD",
     ),
     (
         "What reason was given for your application being turned down?--FIRST MENTION",
@@ -253318,247 +253321,247 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "What was the total dollar value of all donations (you/you and your family) made in "
         "2002 towards (this last/these last purposes)?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations (you/you and your family) made in "
         "2002 towards educational purposes?",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations (you/you and your family) made in "
         "2002 towards health care or medical research organizations?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations (you/you and your family) made in "
         "2002 towards improving neighborhoods and communities?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations (you/you and your family) made in "
         "2002 towards preserving the environment?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations (you/you and your family) made in "
         "2002 towards providing international aid or promoting world peace?",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations (you/you and your family) made in "
         "2002 towards the arts, culture, or ethnic awareness?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations (you/you and your family) made in "
         "2002 towards youth and family services purposes?",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2000 "
         "towards (this last purpose/these last purposes)?",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2002 "
         "to organizations that help people in need of basic necessities?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2004 "
         "to organizations that help people in need of basic necessities?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2004 "
         "towards (this last/these last purposes)?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2004 "
         "towards educational purposes?",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2004 "
         "towards health care or medical research organizations?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2004 "
         "towards improving neighborhoods and communities?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2004 "
         "towards preserving the environment?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2004 "
         "towards providing international aid or promoting world peace?",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2004 "
         "towards the arts, culture, or ethnic awareness?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2004 "
         "towards youth and family services purposes?",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2006 "
         "to organizations that help people in need of basic necessities?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2006 "
         "towards (this last/these last purposes)?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2006 "
         "towards educational purposes?",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2006 "
         "towards health care or medical research organizations?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2006 "
         "towards improving neighborhoods and communities?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2006 "
         "towards preserving the environment?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2006 "
         "towards providing international aid or promoting world peace?",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2006 "
         "towards the arts, culture, or ethnic awareness?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2006 "
         "towards youth and family services purposes?",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2008 "
         "to organizations that help people in need of basic necessities?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2008 "
         "towards (this last/these last purposes)?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2008 "
         "towards educational purposes?",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2008 "
         "towards health care or medical research organizations?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2008 "
         "towards improving neighborhoods and communities?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2008 "
         "towards preserving the environment?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2008 "
         "towards providing international aid or promoting world peace?",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2008 "
         "towards the arts, culture, or ethnic awareness?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2008 "
         "towards youth and family services purposes?",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2010 "
         "to organizations that help people in need of basic necessities?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2010 "
         "towards (this/these) last purpose(s)?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2010 "
         "towards educational purposes?",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2010 "
         "towards health care or medical research organizations?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2010 "
         "towards improving neighborhoods and communities?",
-        "DDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2010 "
         "towards preserving the environment?",
-        "DDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2010 "
         "towards providing international aid or promoting world peace?",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2010 "
         "towards the arts, culture, or ethnic awareness?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you (and your family) made in 2010 "
         "towards youth and family services purposes?",
-        "DDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you and your family made in 2000 "
         "to organizations that help people in need of basic necessities?",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you and your family made in 2000 "
         "towards educational purposes?",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDD",
     ),
     (
         "What was the total dollar value of all donations you and your family made in 2000 "
         "towards health care or medical research organizations?",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDWDDDDDDDDDDDDDDDDDD",
     ),
     ("What was the total price of the vehicle?--FIRST VEHICLE", "DDDDDDDDD"),
     ("What was the total price of the vehicle?--SECOND VEHICLE", "DDDDDDDDD"),
@@ -271172,7 +271175,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Whether Head Worked Long Hours in 1968 and/or Wanted More Work at Time of 1969 "
         "Interview",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Whether Head and Spouse Are Sample Members For this variable, Spouse includes Wife "
@@ -271256,17 +271259,17 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Whether Head worked long hours in 1969 and/or wanted more work at time of 1970 "
         "interview",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Whether Head worked long hours in 1970 and/or wanted more work at time of 1971 "
         "interview",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Whether Head worked long hours in 1971 and/or wanted more work at time of 1972 "
         "interview",
-        "DDDDDDDDDDDDDDDD",
+        "DDDDNDDDDDDDDDDD",
     ),
     (
         "Whether Health Care Cost Data Contain Information about Head--CORE SAMPLE ONLY The "
@@ -274020,52 +274023,52 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Wife's Annual Hours Working for Money in 1981 The values for this variable in the "
         "range 0001-5840 represent the annual work hours on all jobs; all missing data were "
         "assigned.",
-        "DDDDDDDDNNDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDNNDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's Annual Hours of Housework All missing data were assigned",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Wife's Annual Hours of Illness in 1980 (Weeks ill times 80 for the first eight "
         "weeks and times 60 for the time thereafter) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's Annual Hours of Illness in 1981 The values for this variable in the range "
         "0001-3280 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's Annual Hours of Unemployment in 1980 (Weeks unemployed times 40) All missing "
         "data were assigned",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's Annual Hours of Unemployment in 1981 The values for this variable in the "
         "range 0001-2080 represent the actual annual hours; all missing data were assigned.",
-        "DDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDWDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's Annual Hours of Work Missed Because Someone Else was Ill in 1980 (Weeks "
         "someone else ill times 40) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's Annual Hours of Work Missed Because Someone Else was Ill in 1981 The values "
         "for this variable in the range 0001-2080 represent the actual annual hours; all "
         "missing data were assigned.",
-        "DDDDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDNNDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's Annual Hours on Strike in 1980 (Weeks on strike times 40) All missing data "
         "were assigned",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
     (
         "Wife's Annual Hours on Strike in 1981 The values for this variable represent the "
         "actual annual hours; all missing data were assigned.",
-        "DDDDDDDWDDDDDDDDDDDDDD",
+        "DDWDDDDWDDDDDDDDDDDDDD",
     ),
     (
         "Wife's Education This variable is comparable to those of earlier waves of data "
@@ -274131,152 +274134,152 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "assigned.",
         "DDDDDNNDDDDDDDDDDDDDDDDDDD",
     ),
-    ("Wife's annual hours of child care", "DDDDDD"),
-    ("Wife's annual hours of housework", "DDDDD"),
+    ("Wife's annual hours of child care", "DDWDDD"),
+    ("Wife's annual hours of housework", "DDWDD"),
     (
         "Wife's annual hours of housework All missing data are assigned.",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Wife's annual hours of housework All missing data were assigned",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Wife's annual hours of housework All missing data were assigned.",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
     (
         "Wife's annual hours of illness in 1975 (Days ill times 16 for the first 8 weeks and "
         "times 12 for the time thereafter.)",
-        "DDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of illness in 1976 (Days ill times 16 for the first eight weeks "
         "and times 12 for the time thereafter) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of illness in 1977 (Weeks ill times 80 for the first eight "
         "weeks and times 60 for the time thereafter) All missing data are assigned.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of illness in 1978 (Weeks ill times 80 for the first eight "
         "weeks and times 60 for the time thereafter) All missing data were assigned.",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of illness in 1979 (Weeks ill times 80 for the first eight "
         "weeks and times 60 for the time thereafter) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of unemployment in 1974 (Days unemployed times 8)",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Wife's annual hours of unemployment in 1975 (Days unemployed times 8)",
-        "DDDDDDDDDDD",
+        "DDWDDDDDDDD",
     ),
     (
         "Wife's annual hours of unemployment in 1976 (Days unemployed times 8) All missing "
         "data were assigned",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of unemployment in 1977 (Weeks unemployed times 40) All missing "
         "data are assigned.",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of unemployment in 1978 (Weeks unemployed times 40) All missing "
         "data were assigned.",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of unemployment in 1979 (Weeks unemployed times 40) All missing "
         "data were assigned",
-        "DDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of work missed because someone else was ill in 1975 (Days "
         "someone else ill times 8)",
-        "DDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of work missed because someone else was ill in 1976 (Days "
         "someone else ill times 8) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of work missed because someone else was ill in 1977 (Weeks "
         "someone else ill times 40) All missing data are assigned.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of work missed because someone else was ill in 1978 (Weeks "
         "someone else ill times 40) All missing data were assigned.",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours of work missed because someone else was ill in 1979 (Weeks "
         "someone else ill times 40) All missing data were assigned",
-        "DDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours on strike in 1976 (Days on strike times 8) All missing data "
         "were assigned",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours on strike in 1977 (Weeks on strike times 40) All missing data "
         "are assigned.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours on strike in 1978 (Weeks on strike times 40) All missing data "
         "were assigned.",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
     (
         "Wife's annual hours on strike in 1979 (Weeks on strike times 40) All missing data "
         "were assigned",
-        "DDDDDDDDDDDDDDDDD",
+        "DDWDDDDDDDDDDDDDD",
     ),
-    ("Wife's annual hours working for money", "DDDDDD"),
+    ("Wife's annual hours working for money", "DDWDDD"),
     (
         "Wife's annual hours working for money in 1969 (1970 question)",
-        "DDDDDDDDDD",
+        "DDWDDDDDDD",
     ),
-    ("Wife's annual hours working for money in 1970", "DDDDDDDD"),
-    ("Wife's annual hours working for money in 1971", "DDDDDDDD"),
-    ("Wife's annual hours working for money in 1972", "DDDDDDDD"),
-    ("Wife's annual hours working for money in 1973", "DDDDDDDD"),
-    ("Wife's annual hours working for money in 1974", "DDDDDDDD"),
-    ("Wife's annual hours working for money in 1975", "DDDDDDDD"),
+    ("Wife's annual hours working for money in 1970", "DDWDDDDD"),
+    ("Wife's annual hours working for money in 1971", "DDWDDDDD"),
+    ("Wife's annual hours working for money in 1972", "DDWDDDDD"),
+    ("Wife's annual hours working for money in 1973", "DDWDDDDD"),
+    ("Wife's annual hours working for money in 1974", "DDWDDDDD"),
+    ("Wife's annual hours working for money in 1975", "DDWDDDDD"),
     (
         "Wife's annual hours working for money in 1976 All missing data were assigned",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Wife's annual hours working for money in 1977 All missing data are assigned.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Wife's annual hours working for money in 1978 All missing data were assigned.",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Wife's annual hours working for money in 1979 All missing data were assigned",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Wife's annual hours working for money in 1980 All missing data were assigned",
-        "DDDDDDDDDDDDD",
+        "DDWDDDDDDDDDD",
     ),
     (
         "Wife's annual strike hours in 1975 (Days on strike times 8)",
-        "DDDDDDDDDDD",
+        "DDDWDDDDDDD",
     ),
     ("Wife's annual travel to work cost", "DDDDDD"),
     (
@@ -274345,22 +274348,22 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Wife's travel to work time (annual hours in 1978) The values for this variable in "
         "the range 001-998 represent annualized hours spent traveling to and from work.",
-        "DDDDDDDDDNNDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDNNDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's travel to work time (annual hours in 1979) The values for this variable in "
         "the range 001-998 represent annualized hours spent traveling to and from work.",
-        "DDDDDDDDDNNDDDDDDDDDDDDDDDD",
+        "DDDDDDWDDNNDDDDDDDDDDDDDDDD",
     ),
-    ("Wife's travel to work time (annual hours) in 1974", "DDDDDDDDD"),
-    ("Wife's travel to work time (annual hours) in 1975", "DDDDDDDDD"),
+    ("Wife's travel to work time (annual hours) in 1974", "DDDDDDWDD"),
+    ("Wife's travel to work time (annual hours) in 1975", "DDDDDDWDD"),
     (
         "Wife's travel to work time (annual hours) in 1977 All missing data are assigned.",
-        "DDDDDDDDDDDDDD",
+        "DDDDDDWDDDDDDD",
     ),
     ("Wife's travel to work time in 1970", "DDDDDDD"),
     ("Wife's travel to work time in 1971", "DDDDDDD"),
-    ("Wife's travel-to-work time (annual hours)", "DDDDD"),
+    ("Wife's travel-to-work time (annual hours)", "DDDDW"),
     ("Wife's travel-to-work time in 1969 (1970 question)", "DDDDDDD"),
     (
         "Wife's wages/labor income in 1979 All missing data were assigned",
@@ -274435,12 +274438,12 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Wife's/\"Wife's\" Annual Hours of Overtime in 1984 The values for this variable in "
         "the range 0001-5840 represent the annual overtime hours worked on all main jobs; "
         "all missing data were assigned.",
-        "DDDDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
+        "DDWDDDDNNDDDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Annual Hours of Travel to Work in 1984 The values for this "
         "variable in the range 001-998 represent annualized hours spent traveling to work.",
-        "DDDDDDDDDNNDDDDDDDDDDDDDD",
+        "DDWDDDDDDNNDDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Asset Part of 2002 Business Income from Unincorporated Businesses "
@@ -277045,56 +277048,56 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "Wife's/\"Wife's\" Total Overtime Hours in 2004 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Overtime Hours in 2006 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Overtime Hours in 2008 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Overtime Hours in 2010 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Overtime Hours in 2012 The values for this variable "
         "represent the annual overtime hours worked on all jobs if reported separately from "
         "regular work hours.",
-        "DDDDDDWDDDDDDDDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Weekly Work Hours in 2004 The values for this variable "
         "represent the total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Weekly Work Hours in 2006 The values for this variable "
         "represent the total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Weekly Work Hours in 2008 The values for this variable "
         "represent the total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Weekly Work Hours in 2010 The values for this variable "
         "represent the total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Weekly Work Hours in 2012 The values for this variable "
         "represent the total weekly work hours on all jobs.",
-        "DDDDDDDWDDDDDDDDDDDDD",
+        "DDDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Weeks Out of the Labor Force in 2004 The values for this "
@@ -277289,27 +277292,27 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     (
         "Wife's/\"Wife's\" Total Work Hours in 2004 The values for this variable represent "
         "the actual total annual hours on all jobs.",
-        "DDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Work Hours in 2006 The values for this variable represent "
         "the actual total annual hours on all jobs.",
-        "DDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Work Hours in 2008 The values for this variable represent "
         "the actual total annual hours on all jobs.",
-        "DDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Work Hours in 2010 The values for this variable represent "
         "the actual total annual hours on all jobs.",
-        "DDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Work Hours in 2012 The values for this variable represent "
         "the actual total annual hours on all jobs.",
-        "DDDDDDWDDDDDDDDDDDDD",
+        "DDDWDDWDDDDDDDDDDDDD",
     ),
     (
         "Wife's/\"Wife's\" Total Work Weeks in 2004 The values for this variable represent "
@@ -278222,37 +278225,37 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
     ("Work for housing in 1969 (1970 question)", "DDDDDDD"),
     ("Work for housing in 1970", "DDDDD"),
     ("Work for housing in 1971", "DDDDD"),
-    ("Work hours of first extra adult (for money)", "DDDDDDDD"),
-    ("Work hours of others in FU who had taxable income", "DDDDDDDDDD"),
+    ("Work hours of first extra adult (for money)", "DWDDDDDD"),
+    ("Work hours of others in FU who had taxable income", "DWDDDDDDDD"),
     (
         "Work hours of others in FU who had taxable income in 1969 (1970 question)",
-        "DDDDDDDDDDDDDD",
+        "DWDDDDDDDDDDDD",
     ),
     (
         "Work hours of others in FU who had taxable income in 1970",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Work hours of others in FU who had taxable income in 1971",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Work hours of others in FU who had taxable income in 1972",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Work hours of others in FU who had taxable income in 1973",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Work hours of others in FU who had taxable income in 1974",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
     (
         "Work hours of others in FU who had taxable income in 1975",
-        "DDDDDDDDDDDD",
+        "DWDDDDDDDDDD",
     ),
-    ("Work hours of second extra adult", "DDDDDD"),
+    ("Work hours of second extra adult", "DWDDDD"),
     (
         "Would (he/they) have something left over, break even, or be in debt? V15804-V15860 "
         "pertain to Head's natural or adoptive parents.",
@@ -279276,7 +279279,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "decision.",
         "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     ),
-    ("You said you spend ______ hours a week on housework.", "DDDDDDDDDD"),
+    ("You said you spend ______ hours a week on housework.", "DDDDDNDDDD"),
     (
         "You spend the money on things and in the amounts you choose.",
         "DDDDDDDDDDDD",

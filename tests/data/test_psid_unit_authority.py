@@ -48,11 +48,18 @@ from populace_dynamics.data.psid_unit_authority import (
     statement_table,
     successor_census,
     successor_terminal,
+    title_header_candidate_table,
+    title_header_candidates,
+    title_header_disposition,
 )
 from populace_dynamics.data.psid_unit_predicate_authority import (
     CODING_START_AUTHORITY,
     PREDICATE_AUTHORITY,
     SEGMENT_START_AUTHORITY,
+)
+from populace_dynamics.data.psid_unit_title_authority import (
+    TITLE_LITERAL_FAMILIES,
+    TITLE_START_AUTHORITY,
 )
 
 COMPILED = "compiled_source_numeric_grammar"
@@ -102,6 +109,52 @@ Under 3:Female=3.90
 55+:Female=5.40
 (NOTE that the values in this table are in 1967 dollars. This same standard will be used
 in subsequent years, leaving adjustments for inflation, etc. to users.)"""
+
+TITLE_WITNESSES = (
+    ("Head's annual hours working for money", "hour"),
+    (
+        "Total 1967 FAMILY Real Income Net of Cost of Earning Income - In Dollars\n"
+        "V322 Total 1967 Family Real Income -\n"
+        "V84 Child care costs, Federal Income Tax, and 1967 Union dues for Head of family -\n"
+        "V57 if added originally (free child care)",
+        "united_states_dollar",
+    ),
+    (
+        "Total 1967 Family Contractual Payments - In Dollars\n"
+        "V8 Annual Mortgage payments made in 1967 (for Home owners) +\n"
+        "V10 1967 Rent payments +\n"
+        "V14 1967 Utilities Payments +\n"
+        "V18 1967 payments for additions and repairs +\n"
+        "V20 1967 Car insurance payments +\n"
+        "V22 1967 Car debt payments +\n"
+        "V28 Other 1967 debt payments +\n"
+        "V6 Estimated annual property taxes paid in 1967 (for home owners)",
+        "united_states_dollar",
+    ),
+    (
+        "Total 1967 Family Fixed Expenditures - In Dollars\n"
+        "V331 Total 1967 Family Contractual Payments +\n"
+        "V37 Total 1967 Family food expenditures +\n"
+        "V84 Child care costs (for families where there are children under 12 and Wife of Head\n"
+        "works, or single Head of family works for money) and 1967 Union dues for HEAD of family +\n"
+        "V82 Total 1967 payments to dependents outside DU (only for cases where amount was\n"
+        "ascertained)",
+        "united_states_dollar",
+    ),
+    (
+        "Total 1967 Family Uncommitted Money Income - in Dollars\n"
+        "V81 Total 1967 Family money income - V332 Total 1967 Family fixed expenditures",
+        "united_states_dollar",
+    ),
+    (
+        "Average Age of Head and Wife (In Years)\n"
+        "This Variable is the simple average of V117 (age of Head), V118 (age of Wife). If V118 =\n"
+        "00 (no wife), age of Head is recorded again.\n"
+        "Average age of head and wife=36; or no wife present, and head is 36 years old.",
+        "year",
+    ),
+    ("Elapsed Interview Length in Minutes", "minute"),
+)
 
 RAW_V100 = (
     "5. Length of Interview\n"
@@ -562,10 +615,7 @@ def test_complete_raw_coding_descriptions_name_the_grounded_unit(
     )
     assert statement in description_statements(description)
     assert statement_disposition(statement) == (unit, "unit_naming_clause")
-    assert field_unit(description) == (
-        unit,
-        "derived_from_denotation_statement",
-    )
+    assert field_unit(description)[0] == unit
 
 
 @pytest.mark.parametrize(
@@ -654,13 +704,90 @@ def test_complete_raw_v494_copular_statement_names_1967_dollars() -> None:
 
 
 def test_v31_input_table_does_not_denote_the_annual_family_total() -> None:
+    assert title_header_candidates(RAW_V31) == ()
     assert description_statements(RAW_V31) == ()
     assert field_unit(RAW_V31) == (None, "no_denotation_statement")
 
 
+@pytest.mark.parametrize(("description", "unit"), TITLE_WITNESSES)
+def test_exact_title_header_witnesses_denote_the_whole_field(
+    description: str, unit: str
+) -> None:
+    assert title_header_candidates(description)
+    assert title_header_disposition(description) == (
+        unit,
+        "derived_from_title_denotation",
+    )
+    assert field_unit(description) == (unit, "derived_from_title_denotation")
+    assert denotation_candidate_unselected_count(description) == 0
+    assert denotation_candidate_overselected_count(description) == 0
+
+
+def test_title_clause_maximal_munch_drops_nested_shorter_unit_tokens() -> None:
+    candidates = title_header_candidates(
+        "Annual hours a week and Dollar Amount in Dollars"
+    )
+    assert ("hours_a_week", 7, 19, "hours a week") in candidates
+    assert not any(row[0] == "nominal_hour_token" for row in candidates)
+    assert ("dollar_amount", 24, 37, "Dollar Amount") in candidates
+    assert not any(row[0] == "nominal_dollar_token" for row in candidates)
+
+
+def test_title_table_keeps_zero_match_fields_and_exact_groundings() -> None:
+    rows = [
+        _row(1968, "V31", COMPILED, RAW_V31),
+        _row(1968, "V47", COMPILED, TITLE_WITNESSES[0][0]),
+    ]
+    table = title_header_candidate_table(rows)
+    assert len(table) == 2
+    assert table[0]["candidate_count"] == 0
+    assert table[0]["typed_value_unit"] is None
+    assert table[1]["candidate_count"] == 1
+    assert table[1]["typed_value_unit"] == "hour"
+    assert table[1]["candidate_adjudications"][0]["adjudication"] == (
+        "whole_domain_denotation"
+    )
+
+
+def test_unfrozen_title_mutation_fails_closed() -> None:
+    description = "Head's annual hours working for MONEY"
+    assert title_header_candidates(description)
+    assert title_header_disposition(description) == (
+        None,
+        "unadjudicated_title_candidate",
+    )
+    assert field_unit(description) == (None, "defeated_title_denotation")
+
+
 @pytest.mark.parametrize(
-    "description", [RAW_V2470, RAW_V3694, RAW_V9378]
+    "description",
+    [
+        "Bkt. V335 Total 1967 Family Hours of Work (Work for money plus unpaid work)",
+        "P13. What amount or percent of pay are you required to contribute?--AMOUNT",
+    ],
 )
+def test_reference_and_alternative_title_phrases_are_explicit_defeats(
+    description: str,
+) -> None:
+    assert title_header_candidates(description)
+    assert title_header_disposition(description) == (
+        None,
+        "title_clause_explicitly_non_whole_domain",
+    )
+
+
+def test_weekly_title_refines_a_subordinate_bare_hour_statement() -> None:
+    description = (
+        "D69. On the average, how many hours a week did you work at your extra job(s)?\n"
+        "Actual number of hours"
+    )
+    assert field_unit(description) == (
+        "hour_per_week",
+        "derived_from_title_denotation",
+    )
+
+
+@pytest.mark.parametrize("description", [RAW_V2470, RAW_V3694, RAW_V9378])
 def test_complete_raw_food_family_keeps_context_and_derives_dollars(
     description: str,
 ) -> None:
@@ -1152,7 +1279,7 @@ def test_field_with_no_statement_has_no_unit() -> None:
 
 
 def test_field_takes_the_single_unit_its_statements_name() -> None:
-    assert field_unit(f"AMOUNT {DOLLARS}") == (
+    assert field_unit(f"AMOUNT\n{DOLLARS}") == (
         "united_states_dollar",
         "derived_from_denotation_statement",
     )
@@ -1288,7 +1415,7 @@ def _row(wave: int, field: str, status: str, description: str | None) -> dict:
 
 def test_successor_census_moves_only_unitless_compiled_fields() -> None:
     rows = [
-        _row(1968, "A", COMPILED, f"pay {DOLLARS}"),
+        _row(1968, "A", COMPILED, f"pay\n{DOLLARS}"),
         _row(1968, "B", COMPILED, "House value"),
         _row(1968, "C", UNSUPPORTED, "House value"),
         _row(1968, "D", VALUE_CODE_ONLY, "House value"),
@@ -1513,6 +1640,20 @@ def test_occurrence_identity_binds_every_start_and_exact_cover() -> None:
 
 
 def test_frozen_semantic_authorities_have_exact_identity() -> None:
+    assert len(TITLE_START_AUTHORITY) == 3_222
+    assert len(
+        {
+            (row[0], row[2], row[3], row[4], row[5])
+            for row in TITLE_START_AUTHORITY
+        }
+    ) == len(TITLE_START_AUTHORITY)
+    assert canonical_sha256(TITLE_START_AUTHORITY) == (
+        "cc3ef5ac6f519f38f3798449361d5db5d68100aefe7839caf294eb41ec4cce58"
+    )
+    assert canonical_sha256(TITLE_LITERAL_FAMILIES) == (
+        "3462e76c819851460e9c0fe8ab6b3cc1f82435d83f8b92d491ec9b81795d530d"
+    )
+
     assert len(PREDICATE_AUTHORITY) == 2_590
     assert len({row[0] for row in PREDICATE_AUTHORITY}) == len(
         PREDICATE_AUTHORITY
@@ -1541,7 +1682,7 @@ def test_frozen_semantic_authorities_have_exact_identity() -> None:
         len(vector) for _segment, vector in SEGMENT_START_AUTHORITY
     ) == (1_114_747)
     assert canonical_sha256(SEGMENT_START_AUTHORITY) == (
-        "ddd4a48d3508247e4be04bd2959ca1b59bbf5f4b448ca843fc2d044804f795e1"
+        "df29bb0aa328732f4f7ebccf8ee479a771c12c9536e4a95dfbeba32f7fa8dd39"
     )
     assert all(
         vector and len(vector) == segment.count(" ") + 1

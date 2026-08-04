@@ -19,15 +19,26 @@ any amendment edit.
   back together on replacement failure. Added second-replacement failure
   injection and changed CLI stdout from truncated to complete JSON. The
   focused runner suite passes (78 tests).
+- Completed the pre-regeneration source-wide title/header audit over all
+  89,599 fields. The independent closed scanner finds 4,055 maximal candidate
+  starts in 3,978 fields: 2,261 positive starts, 1,794 explicit defeats, and
+  zero unknowns. At field level this is 2,193 positive title denotations,
+  1,785 defeat-only titles, and 85,621 no-match titles; 2,185 positives are
+  beyond the eight referee witnesses.
+- Added the contextual `TITLE_START_AUTHORITY`, title-priority field law,
+  all-title audit relation, fail-closed mutation and defeat regressions, and
+  rebuilt `SEGMENT_START_AUTHORITY` from the clean pre-title vector plus the
+  extended adjudication. The one shared segment/start is retained as a
+  contextual overlay. Exact selection cover is zero unselected/overselected;
+  195 focused authority tests pass.
 
 ## Next
 
-1. Audit the implementation, fixtures, tests, and all §24 generated/pinned data.
-2. Define and execute the source-wide title/header denotation census, including
-   explicit defeat adjudications and V31 as a negative control.
-3. Regenerate the authority/vector/pins/floors/fixtures and A10-R01..R05.
-4. Repair the cumulative food count and three-act pin history.
-5. Synchronize A10-R04's document contract and regenerated pins with the
+1. Extend A10-R04 with the complete all-title relation and regenerate every
+   census/authority/payload pin.
+2. Regenerate downstream floors, fixtures, and A10-R01..R05.
+3. Repair the cumulative food count and three-act pin history.
+4. Synchronize A10-R04's document contract and regenerated pins with the
    committed transactional implementation.
-6. Run focused and full verification, recheck the protected prefix, write the
+5. Run focused and full verification, recheck the protected prefix, write the
    final report output, then remove `PROGRESS.md` in the final commit.
