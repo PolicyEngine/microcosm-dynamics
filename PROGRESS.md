@@ -7,6 +7,7 @@
 - Both round-4 verdicts read; coordinator adjudication controls the currency question.
 - Upstream fetch attempted but blocked by DNS; the assigned checkout is clean and matches the requested start.
 - Corrected title grammar and frozen authorities are regenerated from all 89,599 source rows.
+- Transaction rollback now retries and verifies before-effect failures, accepts verified after-effect failures, and preserves every unresolved stable backup.
 
 ## Done
 
@@ -17,9 +18,10 @@
 - Confirmed that all 14 newly exposed defects fail before implementation while the four retained formula defeats pass.
 - Removed 209 unlawful currency starts across 206 fields and admitted only V5076's final output-label start: 80,306 = 8,202 W + 72,104 N + 0 U; 8,183 positive fields.
 - Regenerated title authority `ebccedca...` and segment authority `e9fe5274...`; all 294 title-authority tests pass.
+- Added stable-backup restoration through disposable hard links, exact `lstat` identity verification, commit-effect classification, and preserved-backup paths in `GateError`.
+- All seven focused rollback injections and all 120 successor-gate unit tests pass.
 
 ## Next
 
-- Harden transactional rollback under before- and after-effect failures.
 - Regenerate the successor census, fixtures, pins, and documentation.
 - Run the prescribed verification, write the final report, then remove this ledger before completion.

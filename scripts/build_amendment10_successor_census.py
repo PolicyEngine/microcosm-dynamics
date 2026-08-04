@@ -843,8 +843,7 @@ def _validate_title_start_authority(
             )
         description_bytes = description.encode("utf-8")
         if (
-            hashlib.sha256(description_bytes).hexdigest()
-            != description_sha256
+            hashlib.sha256(description_bytes).hexdigest() != description_sha256
             or not description.startswith(bounded_context_header)
             or description_bytes[start:end] != spelling_bytes
         ):
@@ -963,9 +962,7 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         "title_header_positive_field_count": title_summary[
             "positive_field_count"
         ],
-        "title_header_defeat_field_count": title_summary[
-            "defeat_field_count"
-        ],
+        "title_header_defeat_field_count": title_summary["defeat_field_count"],
         "title_header_no_match_field_count": title_summary[
             "no_match_field_count"
         ],
@@ -2113,11 +2110,32 @@ def _stage_output(label: str, destination: Path, content: bytes) -> Path:
                 pass
 
 
-def _backup_destination(label: str, destination: Path) -> Path | None:
+@dataclass(frozen=True)
+class _DestinationBackup:
+    """Stable rollback state for one destination."""
+
+    label: str
+    destination: Path
+    path: Path | None
+    original_identity: tuple[int, int] | None
+
+
+def _lstat_identity(path: Path) -> tuple[int, int]:
+    status = os.lstat(path)
+    return status.st_dev, status.st_ino
+
+
+def _backup_destination(label: str, destination: Path) -> _DestinationBackup:
     """Hard-link an existing destination so rollback preserves its bytes."""
 
-    if not os.path.lexists(destination):
-        return None
+    try:
+        original_identity = _lstat_identity(destination)
+    except FileNotFoundError:
+        return _DestinationBackup(label, destination, None, None)
+    except OSError as error:
+        raise GateError(
+            f"cannot inspect {label} at {destination}: {error}"
+        ) from error
     descriptor = -1
     backup: Path | None = None
     backup_is_valid = False
@@ -2131,8 +2149,15 @@ def _backup_destination(label: str, destination: Path) -> Path | None:
         backup = Path(raw_path)
         backup.unlink()
         os.link(destination, backup, follow_symlinks=False)
+        if _lstat_identity(backup) != original_identity:
+            raise OSError("backup identity changed while linking")
         backup_is_valid = True
-        return backup
+        return _DestinationBackup(
+            label,
+            destination,
+            backup,
+            original_identity,
+        )
     except OSError as error:
         raise GateError(
             f"cannot back up {label} at {destination}: {error}"
@@ -2150,13 +2175,6 @@ def _backup_destination(label: str, destination: Path) -> Path | None:
                 pass
 
 
-def _unlink_if_present(path: Path) -> None:
-    try:
-        path.unlink()
-    except FileNotFoundError:
-        pass
-
-
 def _discard_temporary(path: Path) -> None:
     """Best-effort cleanup that cannot turn a completed commit into failure."""
 
@@ -2166,64 +2184,175 @@ def _discard_temporary(path: Path) -> None:
         pass
 
 
+def _destination_is_restored(backup: _DestinationBackup) -> bool:
+    """Verify restoration by the original lstat identity or nonexistence."""
+
+    try:
+        identity = _lstat_identity(backup.destination)
+    except FileNotFoundError:
+        identity = None
+    return identity == backup.original_identity
+
+
+def _fresh_restore_source(backup: _DestinationBackup) -> Path:
+    """Link a disposable restore source without consuming the stable backup."""
+
+    assert backup.path is not None
+    descriptor = -1
+    restore: Path | None = None
+    restore_is_valid = False
+    try:
+        descriptor, raw_path = tempfile.mkstemp(
+            dir=backup.destination.parent,
+            prefix=f".{backup.destination.name}.a10-r04-restore-",
+        )
+        os.close(descriptor)
+        descriptor = -1
+        restore = Path(raw_path)
+        restore.unlink()
+        os.link(backup.path, restore, follow_symlinks=False)
+        if _lstat_identity(restore) != backup.original_identity:
+            raise OSError("restore-source identity differs from backup")
+        restore_is_valid = True
+        return restore
+    finally:
+        if descriptor >= 0:
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+        if restore is not None and not restore_is_valid:
+            _discard_temporary(restore)
+
+
+def _restore_destination(backup: _DestinationBackup) -> str | None:
+    """Retry once and verify after both before- and after-effect errors."""
+
+    last_error: Exception | None = None
+    for _attempt in range(2):
+        try:
+            if _destination_is_restored(backup):
+                return None
+        except OSError as error:
+            last_error = error
+        restore_source: Path | None = None
+        try:
+            if backup.path is None:
+                backup.destination.unlink()
+            else:
+                restore_source = _fresh_restore_source(backup)
+                os.replace(restore_source, backup.destination)
+        except Exception as error:
+            last_error = error
+        finally:
+            if restore_source is not None:
+                _discard_temporary(restore_source)
+        try:
+            if _destination_is_restored(backup):
+                # A raised operation that nevertheless reached this state was
+                # an after-effect error. No retry is necessary.
+                return None
+        except OSError as error:
+            last_error = error
+    detail = (
+        str(last_error)
+        if last_error is not None
+        else "destination identity did not return to its original state"
+    )
+    if backup.path is not None:
+        return f"{backup.label}: {detail}; backup preserved at {backup.path}"
+    return f"{backup.label}: {detail}; originally absent destination remains"
+
+
+def _replacement_effect(
+    staged_identity: tuple[int, int],
+    backup: _DestinationBackup,
+) -> str:
+    """Classify a raised replacement as before-, after-, or unknown-effect."""
+
+    try:
+        destination_identity = _lstat_identity(backup.destination)
+    except FileNotFoundError:
+        destination_identity = None
+    except OSError:
+        return "indeterminate-effect"
+    if destination_identity == staged_identity:
+        return "after-effect"
+    if destination_identity == backup.original_identity:
+        return "before-effect"
+    return "indeterminate-effect"
+
+
 def _emit_outputs_transactionally(
     outputs: Sequence[tuple[str, Path, bytes]],
 ) -> None:
     """Commit all requested files or restore every prior destination.
 
     Every new file is staged and byte-validated in its destination directory
-    before any destination changes.  Existing destinations are retained by
-    hard link.  If any atomic replacement raises, all destinations are
-    restored, including the destination whose replacement may have completed
-    immediately before the exception was raised.
+    before any destination changes. Existing destinations are retained by
+    hard link. If any atomic replacement raises, restoration uses disposable
+    links so the stable backup survives every failed attempt. Verification
+    distinguishes before-effect errors, which are retried once, from
+    after-effect errors, whose completed restoration is accepted. Any
+    unresolved backup is preserved and named in the raised ``GateError``.
     """
 
     if not outputs:
         return
-    staged: list[tuple[str, Path, Path]] = []
-    backups: list[tuple[str, Path, Path | None]] = []
+    staged: list[tuple[str, Path, Path, tuple[int, int]]] = []
+    backups: list[_DestinationBackup] = []
+    preserved_backups: set[Path] = set()
     try:
         for label, destination, content in outputs:
+            staged_path = _stage_output(label, destination, content)
             staged.append(
                 (
                     label,
                     destination,
-                    _stage_output(label, destination, content),
+                    staged_path,
+                    _lstat_identity(staged_path),
                 )
             )
-        for label, destination, _staged_path in staged:
-            backups.append(
-                (label, destination, _backup_destination(label, destination))
-            )
-        try:
-            for _label, destination, staged_path in staged:
+        for label, destination, _staged_path, _staged_identity in staged:
+            backups.append(_backup_destination(label, destination))
+        for (
+            label,
+            destination,
+            staged_path,
+            staged_identity,
+        ), backup in zip(staged, backups, strict=True):
+            try:
                 os.replace(staged_path, destination)
-        except Exception as commit_error:
-            rollback_errors: list[str] = []
-            for label, destination, backup in backups:
-                try:
-                    if backup is None:
-                        _unlink_if_present(destination)
-                    else:
-                        os.replace(backup, destination)
-                except Exception as rollback_error:
-                    rollback_errors.append(f"{label}: {rollback_error}")
-            if rollback_errors:
-                joined = "; ".join(rollback_errors)
+            except Exception as commit_error:
+                commit_effect = _replacement_effect(staged_identity, backup)
+                rollback_errors: list[str] = []
+                for prior in backups:
+                    rollback_error = _restore_destination(prior)
+                    if rollback_error is None:
+                        continue
+                    rollback_errors.append(rollback_error)
+                    if prior.path is not None:
+                        preserved_backups.add(prior.path)
+                commit_context = f"{commit_effect} replacement for {label}"
+                if rollback_errors:
+                    joined = "; ".join(rollback_errors)
+                    raise GateError(
+                        "output transaction failed and rollback remains "
+                        f"incomplete after {commit_context}: {joined}"
+                    ) from commit_error
                 raise GateError(
-                    "output transaction failed and rollback failed for "
-                    f"{joined}"
+                    "output transaction failed; prior destinations restored "
+                    f"after {commit_context}: {commit_error}"
                 ) from commit_error
-            raise GateError(
-                f"output transaction failed; prior destinations restored: "
-                f"{commit_error}"
-            ) from commit_error
     finally:
-        for _label, _destination, staged_path in staged:
+        for _label, _destination, staged_path, _staged_identity in staged:
             _discard_temporary(staged_path)
-        for _label, _destination, backup in backups:
-            if backup is not None:
-                _discard_temporary(backup)
+        for backup in backups:
+            if (
+                backup.path is not None
+                and backup.path not in preserved_backups
+            ):
+                _discard_temporary(backup.path)
 
 
 def execute_gate(
