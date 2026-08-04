@@ -739,9 +739,8 @@ def test_flow_branch_rows_obey_ancestry_identity_and_cycle_laws(
         )
         if row["parent_flow_branch_id"] != annotation.FLOW_ROOT:
             parent = branch_by_id[row["parent_flow_branch_id"]]
-            assert (
-                occurrence_order[parent["source_occurrence_id"]]
-                < (occurrence_order[row["source_occurrence_id"]])
+            assert occurrence_order[parent["source_occurrence_id"]] < (
+                occurrence_order[row["source_occurrence_id"]]
             )
         assert len(row["branch_path"]) == len(set(row["branch_path"]))
         branch_by_id[row["flow_branch_id"]] = row

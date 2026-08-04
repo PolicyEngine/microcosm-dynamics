@@ -19,9 +19,12 @@ verification remain before sealing.
   including the fully rehashed omitted-key mutation.
 - Added 24 focused regression tests and updated the committed tier counts.
 - Passed all 24 focused tests.
+- Passed source-review reproduction, the full builder validator, and all 77
+  mutation cases.
+- Passed Ruff and Black on both builders and the focused test module.
 
 ## Next
 
 - Complete the independent protocol review and address any actionable findings.
-- Run final author, builder/mutation, Ruff, Black, and reproducibility checks.
+- Reconfirm the final checks after any review-driven changes.
 - Remove this progress ledger and create the final sealed commit.
