@@ -238,6 +238,37 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         "6f164c6772def69a29a57e1de04b3927ab8f56141bc2a8c6f0dee0964c8da6bf",
         "ac2bddbed10bb445215bb19354259685efe24c82b2f59b258dec5d23fcf8497b",
     )
+    assert (
+        pins.title_header_candidate_table_row_count,
+        pins.title_header_matched_field_count,
+        pins.title_header_candidate_occurrence_count,
+        pins.title_header_positive_start_count,
+        pins.title_header_defeated_start_count,
+        pins.title_header_unadjudicated_start_count,
+        pins.title_header_positive_field_count,
+        pins.title_header_defeat_field_count,
+        pins.title_header_no_match_field_count,
+    ) == (89_599, 3_978, 4_055, 2_261, 1_794, 0, 2_193, 1_785, 85_621)
+    assert (
+        pins.title_header_candidate_table_relation_byte_count,
+        pins.title_header_candidate_table_relation_sha256,
+        pins.title_header_candidate_table_array_sha256,
+    ) == (
+        40_381_707,
+        "06bae45c62cc4dd4cbc8107feed32ff3f189ae2c13042d88e4547fe478baac32",
+        "6416d91409435b33613841fcd2a6cf651176e78177c3ab6ccf82d7b589940232",
+    )
+    assert (
+        pins.title_start_authority_row_count,
+        pins.title_start_authority_relation_byte_count,
+        pins.title_start_authority_relation_sha256,
+        pins.title_start_authority_array_sha256,
+    ) == (
+        3_222,
+        877_681,
+        "08a5933c1e9821994d9f96dbc8ec4ef193410490a5df1a7c1b819dee695cf879",
+        "cc3ef5ac6f519f38f3798449361d5db5d68100aefe7839caf294eb41ec4cce58",
+    )
 
 
 def test_valid_gate_emits_only_after_every_pin_passes(tmp_path: Path) -> None:
@@ -245,12 +276,14 @@ def test_valid_gate_emits_only_after_every_pin_passes(tmp_path: Path) -> None:
     field_rows = tmp_path / "rows.jsonl"
     output = tmp_path / "payload.json"
     statements = tmp_path / "statements.jsonl"
+    titles = tmp_path / "titles.jsonl"
     _write_rows(field_rows, rows)
 
     build = runner.execute_gate(
         field_rows,
         output=output,
         statements=statements,
+        titles=titles,
         pins=_pins(rows),
     )
 
@@ -260,6 +293,11 @@ def test_valid_gate_emits_only_after_every_pin_passes(tmp_path: Path) -> None:
         for line in statements.read_text(encoding="utf-8").splitlines()
     ]
     assert emitted_table == list(build.statement_rows)
+    emitted_titles = [
+        json.loads(line)
+        for line in titles.read_text(encoding="utf-8").splitlines()
+    ]
+    assert emitted_titles == list(build.title_header_candidate_rows)
 
 
 @pytest.mark.parametrize(
@@ -272,6 +310,10 @@ def test_valid_gate_emits_only_after_every_pin_passes(tmp_path: Path) -> None:
         (
             "Code actual number of fortnights",
             "unadjudicated raw coding starts remain",
+        ),
+        (
+            "Annual work hours in 2099",
+            "unadjudicated title/header starts remain",
         ),
     ],
 )
@@ -351,6 +393,22 @@ def test_unadjudicated_start_aborts_even_when_observed_pins_match(
             lambda pins: replace(
                 pins,
                 coding_candidate_table_sha256="0" * 64,
+            ),
+        ),
+        (
+            "title/header candidate",
+            "title/header candidate table relation digest",
+            lambda pins: replace(
+                pins,
+                title_header_candidate_table_relation_sha256="0" * 64,
+            ),
+        ),
+        (
+            "title/header candidate array",
+            "title/header candidate table canonical-array digest",
+            lambda pins: replace(
+                pins,
+                title_header_candidate_table_array_sha256="0" * 64,
             ),
         ),
         (
@@ -455,6 +513,94 @@ def test_each_gate_family_aborts_without_emission(
             lambda pins: replace(
                 pins,
                 coding_candidate_unadjudicated_count=1,
+            ),
+        ),
+        (
+            "title/header candidate table row count",
+            lambda pins: replace(
+                pins,
+                title_header_candidate_table_row_count=(
+                    pins.title_header_candidate_table_row_count + 1
+                ),
+            ),
+        ),
+        (
+            "title/header matched field count",
+            lambda pins: replace(
+                pins,
+                title_header_matched_field_count=(
+                    pins.title_header_matched_field_count + 1
+                ),
+            ),
+        ),
+        (
+            "title/header candidate occurrence count",
+            lambda pins: replace(
+                pins,
+                title_header_candidate_occurrence_count=(
+                    pins.title_header_candidate_occurrence_count + 1
+                ),
+            ),
+        ),
+        (
+            "positive title/header start count",
+            lambda pins: replace(
+                pins,
+                title_header_positive_start_count=(
+                    pins.title_header_positive_start_count + 1
+                ),
+            ),
+        ),
+        (
+            "defeated title/header start count",
+            lambda pins: replace(
+                pins,
+                title_header_defeated_start_count=(
+                    pins.title_header_defeated_start_count + 1
+                ),
+            ),
+        ),
+        (
+            "unadjudicated title/header start count",
+            lambda pins: replace(
+                pins,
+                title_header_unadjudicated_start_count=1,
+            ),
+        ),
+        (
+            "positive title/header field count",
+            lambda pins: replace(
+                pins,
+                title_header_positive_field_count=(
+                    pins.title_header_positive_field_count + 1
+                ),
+            ),
+        ),
+        (
+            "defeat-only title/header field count",
+            lambda pins: replace(
+                pins,
+                title_header_defeat_field_count=(
+                    pins.title_header_defeat_field_count + 1
+                ),
+            ),
+        ),
+        (
+            "no-match title/header field count",
+            lambda pins: replace(
+                pins,
+                title_header_no_match_field_count=(
+                    pins.title_header_no_match_field_count + 1
+                ),
+            ),
+        ),
+        (
+            "title/header candidate table relation byte count",
+            lambda pins: replace(
+                pins,
+                title_header_candidate_table_relation_byte_count=(
+                    pins.title_header_candidate_table_relation_byte_count + 1
+                ),
             ),
         ),
         (
@@ -588,6 +734,38 @@ def test_each_total_adjudication_pin_aborts_without_emission(
 @pytest.mark.parametrize(
     ("message", "mutate"),
     [
+        (
+            "title-start authority row count",
+            lambda pins: replace(
+                pins,
+                title_start_authority_row_count=(
+                    pins.title_start_authority_row_count - 1
+                ),
+            ),
+        ),
+        (
+            "title-start authority relation byte count",
+            lambda pins: replace(
+                pins,
+                title_start_authority_relation_byte_count=(
+                    pins.title_start_authority_relation_byte_count - 1
+                ),
+            ),
+        ),
+        (
+            "title-start authority relation digest",
+            lambda pins: replace(
+                pins,
+                title_start_authority_relation_sha256="0" * 64,
+            ),
+        ),
+        (
+            "title-start authority canonical-array digest",
+            lambda pins: replace(
+                pins,
+                title_start_authority_array_sha256="0" * 64,
+            ),
+        ),
         (
             "segment/start authority row count",
             lambda pins: replace(
@@ -783,7 +961,14 @@ def test_each_semantic_registry_pin_aborts_without_emission(
 
 @pytest.mark.parametrize(
     "relation",
-    ["segment/start", "coding-start", "anchor", "clause", "predicate"],
+    [
+        "title-start",
+        "segment/start",
+        "coding-start",
+        "anchor",
+        "clause",
+        "predicate",
+    ],
 )
 def test_semantic_registry_reordering_aborts_without_emission(
     tmp_path: Path,
@@ -793,6 +978,7 @@ def test_semantic_registry_reordering_aborts_without_emission(
     rows = _rows()
     pins = _pins(rows)
     source_name = {
+        "title-start": "TITLE_START_AUTHORITY",
         "segment/start": "SEGMENT_START_AUTHORITY",
         "coding-start": "CODING_START_AUTHORITY",
         "anchor": "ANCHORS",
@@ -922,7 +1108,15 @@ def test_nonfinite_json_number_is_rejected(tmp_path: Path) -> None:
 
 @pytest.mark.parametrize(
     "collision",
-    ["input-output", "output-statements", "input-output-hard-link"],
+    [
+        "input-output",
+        "output-statements",
+        "input-output-hard-link",
+        "input-titles",
+        "output-titles",
+        "statements-titles",
+        "input-titles-hard-link",
+    ],
 )
 def test_path_aliases_fail_before_read_or_write(
     tmp_path: Path,
@@ -931,13 +1125,26 @@ def test_path_aliases_fail_before_read_or_write(
     rows = _rows()
     field_rows = tmp_path / "rows.jsonl"
     _write_rows(field_rows, rows)
-    output = field_rows if collision == "input-output" else tmp_path / "same"
+    output = tmp_path / "output"
     statements = tmp_path / "statements"
-    if collision == "output-statements":
+    titles = tmp_path / "titles"
+    if collision == "input-output":
+        output = field_rows
+    elif collision == "output-statements":
         statements = output
         output.write_bytes(b"sentinel\n")
     elif collision == "input-output-hard-link":
         output.hardlink_to(field_rows)
+    elif collision == "input-titles":
+        titles = field_rows
+    elif collision == "output-titles":
+        titles = output
+        output.write_bytes(b"sentinel\n")
+    elif collision == "statements-titles":
+        titles = statements
+        statements.write_bytes(b"sentinel\n")
+    elif collision == "input-titles-hard-link":
+        titles.hardlink_to(field_rows)
     original = field_rows.read_bytes()
 
     with pytest.raises(runner.GateError, match="path collision"):
@@ -945,12 +1152,15 @@ def test_path_aliases_fail_before_read_or_write(
             field_rows,
             output=output,
             statements=statements,
+            titles=titles,
             pins=_pins(rows),
         )
 
     assert field_rows.read_bytes() == original
-    if collision == "output-statements":
+    if collision in {"output-statements", "output-titles"}:
         assert output.read_bytes() == b"sentinel\n"
+    if collision == "statements-titles":
+        assert statements.read_bytes() == b"sentinel\n"
 
 
 def test_gate_opens_input_relation_once(tmp_path: Path, monkeypatch) -> None:
@@ -979,8 +1189,11 @@ def test_second_destination_replace_failure_restores_every_output(
     field_rows = tmp_path / "rows.jsonl"
     _write_rows(field_rows, rows)
     output, statements = _sentinel_outputs(tmp_path)
+    titles = tmp_path / "titles.jsonl"
+    titles.write_bytes(b"titles sentinel\n")
     original_output = output.read_bytes()
     original_statements = statements.read_bytes()
+    original_titles = titles.read_bytes()
     original_replace = runner.os.replace
     replacement_count = 0
 
@@ -1001,12 +1214,14 @@ def test_second_destination_replace_failure_restores_every_output(
             field_rows,
             output=output,
             statements=statements,
+            titles=titles,
             pins=_pins(rows),
         )
 
-    assert replacement_count == 4
+    assert replacement_count == 5
     assert output.read_bytes() == original_output
     assert statements.read_bytes() == original_statements
+    assert titles.read_bytes() == original_titles
     assert not tuple(tmp_path.glob(".*.a10-r04-*"))
 
 
@@ -1018,6 +1233,7 @@ def test_cli_success_emits_complete_json(
     rows = _rows()
     field_rows = tmp_path / "rows.jsonl"
     _write_rows(field_rows, rows)
+    titles = tmp_path / "titles.jsonl"
     expected_build = runner.build_payload(rows)
     monkeypatch.setattr(
         runner,
@@ -1025,13 +1241,18 @@ def test_cli_success_emits_complete_json(
         runner.pins_from_build(expected_build),
     )
 
-    result = runner.main(["--field-rows", str(field_rows)])
+    result = runner.main(
+        ["--field-rows", str(field_rows), "--titles", str(titles)]
+    )
     captured = capsys.readouterr()
 
     assert result == 0
     assert len(captured.out) > 4_000
     assert json.loads(captured.out) == expected_build.payload
     assert captured.err == ""
+    assert titles.read_bytes() == (
+        expected_build.title_header_candidate_relation_bytes
+    )
 
 
 def test_cli_failure_has_empty_stdout_and_preserves_output(

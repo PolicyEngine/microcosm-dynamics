@@ -14,7 +14,8 @@ own expected value.
 Usage::
 
     python scripts/build_amendment10_successor_census.py \\
-        --field-rows <path.jsonl> [--output <path.json>] [--statements <path>]
+        --field-rows <path.jsonl> [--output <path.json>] \\
+        [--statements <path>] [--titles <path>]
 """
 
 from __future__ import annotations
@@ -48,11 +49,15 @@ from populace_dynamics.data.psid_unit_authority import (  # noqa: E402
     denotation_candidate_table,
     statement_table,
     successor_census,
+    title_header_candidate_table,
 )
 from populace_dynamics.data.psid_unit_predicate_authority import (  # noqa: E402
     CODING_START_AUTHORITY,
     PREDICATE_AUTHORITY,
     SEGMENT_START_AUTHORITY,
+)
+from populace_dynamics.data.psid_unit_title_authority import (  # noqa: E402
+    TITLE_START_AUTHORITY,
 )
 
 INPUT_KEYS = (
@@ -133,6 +138,18 @@ class GatePins:
     coding_candidate_occurrence_count: int
     coding_candidate_unadjudicated_count: int
     coding_candidate_table_sha256: str
+    title_header_candidate_table_row_count: int
+    title_header_matched_field_count: int
+    title_header_candidate_occurrence_count: int
+    title_header_positive_start_count: int
+    title_header_defeated_start_count: int
+    title_header_unadjudicated_start_count: int
+    title_header_positive_field_count: int
+    title_header_defeat_field_count: int
+    title_header_no_match_field_count: int
+    title_header_candidate_table_relation_byte_count: int
+    title_header_candidate_table_relation_sha256: str
+    title_header_candidate_table_array_sha256: str
     denotation_candidate_table_row_count: int
     denotation_candidate_occurrence_count: int
     denotation_candidate_start_count: int
@@ -156,6 +173,10 @@ class GatePins:
     coding_start_authority_relation_byte_count: int
     coding_start_authority_relation_sha256: str
     coding_start_authority_array_sha256: str
+    title_start_authority_row_count: int
+    title_start_authority_relation_byte_count: int
+    title_start_authority_relation_sha256: str
+    title_start_authority_array_sha256: str
     anchor_relation_row_count: int
     anchor_relation_byte_count: int
     anchor_relation_sha256: str
@@ -185,11 +206,15 @@ class CensusBuild:
     field_rows: tuple[dict[str, Any], ...]
     actual_candidate_rows: tuple[dict[str, Any], ...]
     coding_candidate_rows: tuple[dict[str, Any], ...]
+    title_header_candidate_rows: tuple[dict[str, Any], ...]
+    title_header_candidate_relation_bytes: bytes
     denotation_candidate_rows: tuple[dict[str, Any], ...]
     segment_start_authority_rows: tuple[tuple[str, str], ...]
     segment_start_authority_relation_bytes: bytes
     coding_start_authority_rows: tuple[tuple[str, str, str | None], ...]
     coding_start_authority_relation_bytes: bytes
+    title_start_authority_rows: tuple[tuple[Any, ...], ...]
+    title_start_authority_relation_bytes: bytes
     anchor_rows: tuple[str, ...]
     anchor_relation_bytes: bytes
     clause_rows: tuple[tuple[str, str], ...]
@@ -364,6 +389,24 @@ EXPECTED_A10_R04_PINS = GatePins(
     coding_candidate_occurrence_count=1154,
     coding_candidate_unadjudicated_count=0,
     coding_candidate_table_sha256="9f6cd23d36ad6825a17d3ece2d2612ef89c066d5c587bd72d1933f19e4c0c195",
+    # Provisional round-3 title pins.  The complete object remains closed
+    # until the lawful raw relation regenerates all successor pins together.
+    title_header_candidate_table_row_count=89599,
+    title_header_matched_field_count=3978,
+    title_header_candidate_occurrence_count=4055,
+    title_header_positive_start_count=2261,
+    title_header_defeated_start_count=1794,
+    title_header_unadjudicated_start_count=0,
+    title_header_positive_field_count=2193,
+    title_header_defeat_field_count=1785,
+    title_header_no_match_field_count=85621,
+    title_header_candidate_table_relation_byte_count=40381707,
+    title_header_candidate_table_relation_sha256=(
+        "06bae45c62cc4dd4cbc8107feed32ff3f189ae2c13042d88e4547fe478baac32"
+    ),
+    title_header_candidate_table_array_sha256=(
+        "6416d91409435b33613841fcd2a6cf651176e78177c3ab6ccf82d7b589940232"
+    ),
     denotation_candidate_table_row_count=1114747,
     denotation_candidate_occurrence_count=2240669,
     denotation_candidate_start_count=2240669,
@@ -392,6 +435,14 @@ EXPECTED_A10_R04_PINS = GatePins(
     coding_start_authority_relation_byte_count=31396,
     coding_start_authority_relation_sha256="6f164c6772def69a29a57e1de04b3927ab8f56141bc2a8c6f0dee0964c8da6bf",
     coding_start_authority_array_sha256="ac2bddbed10bb445215bb19354259685efe24c82b2f59b258dec5d23fcf8497b",
+    title_start_authority_row_count=3222,
+    title_start_authority_relation_byte_count=877681,
+    title_start_authority_relation_sha256=(
+        "08a5933c1e9821994d9f96dbc8ec4ef193410490a5df1a7c1b819dee695cf879"
+    ),
+    title_start_authority_array_sha256=(
+        "cc3ef5ac6f519f38f3798449361d5db5d68100aefe7839caf294eb41ec4cce58"
+    ),
     anchor_relation_row_count=105,
     anchor_relation_byte_count=4421,
     anchor_relation_sha256="9f4a835c8f6cf140b1f084c3323d887cf19f4e729341d6790216d70b8a02ca4b",
@@ -617,17 +668,151 @@ def _predicate_authority_partition(
     return tuple((reason, counts[reason]) for reason in counts)
 
 
+def _title_header_summary(
+    rows: Sequence[Mapping[str, Any]],
+) -> dict[str, int]:
+    """Project the complete per-field title audit into its closed census."""
+
+    summary = {
+        "matched_field_count": 0,
+        "candidate_occurrence_count": 0,
+        "positive_start_count": 0,
+        "defeated_start_count": 0,
+        "unadjudicated_start_count": 0,
+        "positive_field_count": 0,
+        "defeat_field_count": 0,
+        "no_match_field_count": 0,
+    }
+    field_reasons = {
+        "derived_from_title_denotation": "positive_field_count",
+        "title_clause_explicitly_non_whole_domain": "defeat_field_count",
+        "no_title_denotation_clause": "no_match_field_count",
+    }
+    for position, row in enumerate(rows):
+        candidates = row.get("candidate_adjudications")
+        candidate_count = row.get("candidate_count")
+        if type(candidates) is not list or type(candidate_count) is not int:
+            raise GateError(
+                f"title/header row {position}: noncanonical candidates"
+            )
+        if candidate_count != len(candidates):
+            raise GateError(
+                f"title/header row {position}: candidate count mismatch"
+            )
+        summary["candidate_occurrence_count"] += candidate_count
+        if candidate_count:
+            summary["matched_field_count"] += 1
+        for candidate in candidates:
+            if type(candidate) is not dict:
+                raise GateError(
+                    f"title/header row {position}: non-object candidate"
+                )
+            disposition = candidate.get("adjudication")
+            unit = candidate.get("typed_value_unit")
+            if disposition == "whole_domain_denotation" and type(unit) is str:
+                summary["positive_start_count"] += 1
+            elif (
+                disposition == "explicit_no_whole_domain_denotation"
+                and unit is None
+            ):
+                summary["defeated_start_count"] += 1
+            elif disposition == "unadjudicated_title_start" and unit is None:
+                summary["unadjudicated_start_count"] += 1
+            else:
+                raise GateError(
+                    f"title/header row {position}: invalid adjudication"
+                )
+        reason = row.get("disposition_reason")
+        field_bucket = field_reasons.get(reason)
+        if field_bucket is not None:
+            summary[field_bucket] += 1
+    return summary
+
+
+def _validate_title_start_authority(rows: Sequence[Sequence[Any]]) -> None:
+    """Validate the contextual title fence independently of its digests."""
+
+    seen: set[tuple[Any, ...]] = set()
+    for position, row in enumerate(rows):
+        if len(row) != 11:
+            raise GateError(
+                f"title-start authority row {position}: noncanonical shape"
+            )
+        (
+            description_sha256,
+            title,
+            family,
+            start,
+            end,
+            spelling,
+            unit,
+            disposition,
+            reason,
+            wave,
+            field,
+        ) = row
+        key = (description_sha256, family, start, end, spelling)
+        if key in seen:
+            raise GateError(
+                f"title-start authority row {position}: duplicate context"
+            )
+        seen.add(key)
+        if (
+            type(description_sha256) is not str
+            or len(description_sha256) != 64
+            or type(title) is not str
+            or type(family) is not str
+            or type(start) is not int
+            or type(end) is not int
+            or type(spelling) is not str
+            or type(reason) is not str
+            or type(wave) is not int
+            or type(field) is not str
+        ):
+            raise GateError(
+                f"title-start authority row {position}: invalid member"
+            )
+        title_bytes = title.encode("utf-8")
+        try:
+            selected = title_bytes[start:end].decode("ascii")
+        except UnicodeDecodeError as error:
+            raise GateError(
+                f"title-start authority row {position}: non-ASCII span"
+            ) from error
+        if start < 0 or end <= start or selected != spelling:
+            raise GateError(
+                f"title-start authority row {position}: invalid raw span"
+            )
+        if disposition == "whole_domain_denotation":
+            if type(unit) is not str or not unit:
+                raise GateError(
+                    f"title-start authority row {position}: missing unit"
+                )
+        elif disposition == "explicit_no_whole_domain_denotation":
+            if unit is not None:
+                raise GateError(
+                    f"title-start authority row {position}: defeated unit"
+                )
+        else:
+            raise GateError(
+                f"title-start authority row {position}: open disposition"
+            )
+
+
 def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
     """Construct all census relations without validating or emitting them."""
 
     frozen_rows = tuple(field_rows)
     try:
-        census = successor_census(frozen_rows)
+        # The independently selected all-field title audit is constructed
+        # before the successor; validation below must close it before emit.
+        title_rows = tuple(title_header_candidate_table(frozen_rows))
         actual_rows = tuple(actual_candidate_table(frozen_rows))
         coding_rows = tuple(coding_candidate_table(frozen_rows))
         candidate_rows = tuple(denotation_candidate_table(frozen_rows))
         start_identity = denotation_candidate_occurrence_identity(frozen_rows)
         table = tuple(statement_table(frozen_rows))
+        census = successor_census(frozen_rows)
     except (KeyError, TypeError, ValueError) as error:
         raise GateError(f"census construction failed: {error}") from error
     unit_rows = _unit_bearing_relation(table)
@@ -638,10 +823,14 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
     clause_bytes = _jsonl_relation_bytes(clause_rows)
     predicate_rows = tuple(PREDICATE_AUTHORITY)
     predicate_bytes = _jsonl_relation_bytes(predicate_rows)
+    title_authority_rows = tuple(TITLE_START_AUTHORITY)
+    title_authority_bytes = _jsonl_relation_bytes(title_authority_rows)
     segment_authority_rows = tuple(SEGMENT_START_AUTHORITY)
     segment_authority_bytes = _jsonl_relation_bytes(segment_authority_rows)
     coding_authority_rows = tuple(CODING_START_AUTHORITY)
     coding_authority_bytes = _jsonl_relation_bytes(coding_authority_rows)
+    title_bytes = b"".join(canonical_json_bytes(row) for row in title_rows)
+    title_summary = _title_header_summary(title_rows)
     actual_occurrences = sum(row["occurrence_count"] for row in actual_rows)
     actual_unadjudicated = sum(
         row["occurrence_count"]
@@ -671,7 +860,7 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         row["candidate"] for row in actual_rows
     }
     payload: dict[str, Any] = {
-        "schema_version": "amendment_10_successor_census.v2",
+        "schema_version": "amendment_10_successor_census.v3",
         "input_relation_row_count": len(frozen_rows),
         "input_relation_sha256": input_relation_sha256(frozen_rows),
         "actual_candidate_table_row_count": len(actual_rows),
@@ -682,6 +871,38 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         "coding_candidate_occurrence_count": coding_occurrences,
         "coding_candidate_unadjudicated_count": coding_unadjudicated,
         "coding_candidate_table_sha256": canonical_sha256(coding_rows),
+        "title_header_candidate_table_row_count": len(title_rows),
+        "title_header_matched_field_count": title_summary[
+            "matched_field_count"
+        ],
+        "title_header_candidate_occurrence_count": title_summary[
+            "candidate_occurrence_count"
+        ],
+        "title_header_positive_start_count": title_summary[
+            "positive_start_count"
+        ],
+        "title_header_defeated_start_count": title_summary[
+            "defeated_start_count"
+        ],
+        "title_header_unadjudicated_start_count": title_summary[
+            "unadjudicated_start_count"
+        ],
+        "title_header_positive_field_count": title_summary[
+            "positive_field_count"
+        ],
+        "title_header_defeat_field_count": title_summary[
+            "defeat_field_count"
+        ],
+        "title_header_no_match_field_count": title_summary[
+            "no_match_field_count"
+        ],
+        "title_header_candidate_table_relation_byte_count": len(title_bytes),
+        "title_header_candidate_table_relation_sha256": hashlib.sha256(
+            title_bytes
+        ).hexdigest(),
+        "title_header_candidate_table_array_sha256": (
+            _canonical_array_sha256_stream(title_rows)
+        ),
         "denotation_candidate_table_row_count": len(candidate_rows),
         "denotation_candidate_occurrence_count": candidate_occurrences,
         "denotation_candidate_start_count": candidate_starts,
@@ -735,6 +956,16 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         "coding_start_authority_array_sha256": canonical_sha256(
             coding_authority_rows
         ),
+        "title_start_authority_row_count": len(title_authority_rows),
+        "title_start_authority_relation_byte_count": len(
+            title_authority_bytes
+        ),
+        "title_start_authority_relation_sha256": hashlib.sha256(
+            title_authority_bytes
+        ).hexdigest(),
+        "title_start_authority_array_sha256": canonical_sha256(
+            title_authority_rows
+        ),
         "predicate_authority_row_count": len(predicate_rows),
         "predicate_authority_sha256": canonical_sha256(predicate_rows),
         "statement_table_row_count": len(table),
@@ -747,11 +978,15 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         field_rows=frozen_rows,
         actual_candidate_rows=actual_rows,
         coding_candidate_rows=coding_rows,
+        title_header_candidate_rows=title_rows,
+        title_header_candidate_relation_bytes=title_bytes,
         denotation_candidate_rows=candidate_rows,
         segment_start_authority_rows=segment_authority_rows,
         segment_start_authority_relation_bytes=segment_authority_bytes,
         coding_start_authority_rows=coding_authority_rows,
         coding_start_authority_relation_bytes=coding_authority_bytes,
+        title_start_authority_rows=title_authority_rows,
+        title_start_authority_relation_bytes=title_authority_bytes,
         anchor_rows=anchor_rows,
         anchor_relation_bytes=anchor_bytes,
         clause_rows=clause_rows,
@@ -851,6 +1086,42 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         coding_candidate_table_sha256=(
             payload["coding_candidate_table_sha256"]
         ),
+        title_header_candidate_table_row_count=(
+            payload["title_header_candidate_table_row_count"]
+        ),
+        title_header_matched_field_count=(
+            payload["title_header_matched_field_count"]
+        ),
+        title_header_candidate_occurrence_count=(
+            payload["title_header_candidate_occurrence_count"]
+        ),
+        title_header_positive_start_count=(
+            payload["title_header_positive_start_count"]
+        ),
+        title_header_defeated_start_count=(
+            payload["title_header_defeated_start_count"]
+        ),
+        title_header_unadjudicated_start_count=(
+            payload["title_header_unadjudicated_start_count"]
+        ),
+        title_header_positive_field_count=(
+            payload["title_header_positive_field_count"]
+        ),
+        title_header_defeat_field_count=(
+            payload["title_header_defeat_field_count"]
+        ),
+        title_header_no_match_field_count=(
+            payload["title_header_no_match_field_count"]
+        ),
+        title_header_candidate_table_relation_byte_count=len(
+            build.title_header_candidate_relation_bytes
+        ),
+        title_header_candidate_table_relation_sha256=hashlib.sha256(
+            build.title_header_candidate_relation_bytes
+        ).hexdigest(),
+        title_header_candidate_table_array_sha256=(
+            payload["title_header_candidate_table_array_sha256"]
+        ),
         denotation_candidate_table_row_count=(
             payload["denotation_candidate_table_row_count"]
         ),
@@ -920,6 +1191,18 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         ).hexdigest(),
         coding_start_authority_array_sha256=(
             payload["coding_start_authority_array_sha256"]
+        ),
+        title_start_authority_row_count=(
+            payload["title_start_authority_row_count"]
+        ),
+        title_start_authority_relation_byte_count=len(
+            build.title_start_authority_relation_bytes
+        ),
+        title_start_authority_relation_sha256=hashlib.sha256(
+            build.title_start_authority_relation_bytes
+        ).hexdigest(),
+        title_start_authority_array_sha256=(
+            payload["title_start_authority_array_sha256"]
         ),
         anchor_relation_row_count=len(build.anchor_rows),
         anchor_relation_byte_count=len(build.anchor_relation_bytes),
@@ -1152,6 +1435,94 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         payload["coding_candidate_table_sha256"],
         pins.coding_candidate_table_sha256,
     )
+    title_bytes = build.title_header_candidate_relation_bytes
+    _require_equal(
+        "title/header candidate table row count",
+        payload["title_header_candidate_table_row_count"],
+        pins.title_header_candidate_table_row_count,
+    )
+    _require_equal(
+        "title/header table versus denominator rows",
+        payload["title_header_candidate_table_row_count"],
+        payload["input_relation_row_count"],
+    )
+    _require_equal(
+        "title/header matched field count",
+        payload["title_header_matched_field_count"],
+        pins.title_header_matched_field_count,
+    )
+    _require_equal(
+        "title/header candidate occurrence count",
+        payload["title_header_candidate_occurrence_count"],
+        pins.title_header_candidate_occurrence_count,
+    )
+    _require_equal(
+        "positive title/header start count",
+        payload["title_header_positive_start_count"],
+        pins.title_header_positive_start_count,
+    )
+    _require_equal(
+        "defeated title/header start count",
+        payload["title_header_defeated_start_count"],
+        pins.title_header_defeated_start_count,
+    )
+    _require_equal(
+        "unadjudicated title/header start count",
+        payload["title_header_unadjudicated_start_count"],
+        pins.title_header_unadjudicated_start_count,
+    )
+    _require_equal(
+        "title/header start exact cover",
+        payload["title_header_positive_start_count"]
+        + payload["title_header_defeated_start_count"]
+        + payload["title_header_unadjudicated_start_count"],
+        payload["title_header_candidate_occurrence_count"],
+    )
+    if payload["title_header_unadjudicated_start_count"] != 0:
+        raise GateError("unadjudicated title/header starts remain")
+    _require_equal(
+        "positive title/header field count",
+        payload["title_header_positive_field_count"],
+        pins.title_header_positive_field_count,
+    )
+    _require_equal(
+        "defeat-only title/header field count",
+        payload["title_header_defeat_field_count"],
+        pins.title_header_defeat_field_count,
+    )
+    _require_equal(
+        "no-match title/header field count",
+        payload["title_header_no_match_field_count"],
+        pins.title_header_no_match_field_count,
+    )
+    _require_equal(
+        "title/header field disposition exact cover",
+        payload["title_header_positive_field_count"]
+        + payload["title_header_defeat_field_count"]
+        + payload["title_header_no_match_field_count"],
+        payload["title_header_candidate_table_row_count"],
+    )
+    _require_equal(
+        "title/header matched-field arithmetic",
+        payload["title_header_positive_field_count"]
+        + payload["title_header_defeat_field_count"],
+        payload["title_header_matched_field_count"],
+    )
+    _require_equal(
+        "title/header candidate table relation byte count",
+        len(title_bytes),
+        pins.title_header_candidate_table_relation_byte_count,
+    )
+    _require_equal(
+        "title/header candidate table relation digest",
+        hashlib.sha256(title_bytes).hexdigest(),
+        pins.title_header_candidate_table_relation_sha256,
+    )
+    _require_equal(
+        "title/header candidate table canonical-array digest",
+        payload["title_header_candidate_table_array_sha256"],
+        pins.title_header_candidate_table_array_sha256,
+    )
     _require_equal(
         "denotation candidate table row count",
         payload["denotation_candidate_table_row_count"],
@@ -1260,6 +1631,28 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
     # and both forms of the positive fence.  The raw JSONL pins bind the
     # displayed fences byte for byte; canonical-array pins independently bind
     # row order and membership.
+    title_authority_bytes = build.title_start_authority_relation_bytes
+    _validate_title_start_authority(build.title_start_authority_rows)
+    _require_equal(
+        "title-start authority row count",
+        payload["title_start_authority_row_count"],
+        pins.title_start_authority_row_count,
+    )
+    _require_equal(
+        "title-start authority relation byte count",
+        len(title_authority_bytes),
+        pins.title_start_authority_relation_byte_count,
+    )
+    _require_equal(
+        "title-start authority relation digest",
+        hashlib.sha256(title_authority_bytes).hexdigest(),
+        pins.title_start_authority_relation_sha256,
+    )
+    _require_equal(
+        "title-start authority canonical-array digest",
+        payload["title_start_authority_array_sha256"],
+        pins.title_start_authority_array_sha256,
+    )
     segment_bytes = build.segment_start_authority_relation_bytes
     _require_equal(
         "segment/start authority row count",
@@ -1436,12 +1829,15 @@ def _validate_output_paths(
     field_rows: Path,
     output: Path | None,
     statements: Path | None,
+    titles: Path | None,
 ) -> None:
     named = [("field rows", field_rows)]
     if output is not None:
         named.append(("output", output))
     if statements is not None:
         named.append(("statements", statements))
+    if titles is not None:
+        named.append(("titles", titles))
     resolved: dict[Path, str] = {}
     inodes: dict[tuple[int, int], str] = {}
     for label, path in named:
@@ -1633,11 +2029,12 @@ def execute_gate(
     *,
     output: Path | None = None,
     statements: Path | None = None,
+    titles: Path | None = None,
     pins: GatePins | None = None,
 ) -> CensusBuild:
     """Read once, build, validate fully, and only then emit requested files."""
 
-    _validate_output_paths(field_rows, output, statements)
+    _validate_output_paths(field_rows, output, statements, titles)
     expected = EXPECTED_A10_R04_PINS if pins is None else pins
     if expected is None:
         raise GateError("A10-R04 production pins have not been finalized")
@@ -1667,6 +2064,14 @@ def execute_gate(
     requested_outputs: list[tuple[str, Path, bytes]] = []
     if statements is not None:
         requested_outputs.append(("statements", statements, statement_bytes))
+    if titles is not None:
+        requested_outputs.append(
+            (
+                "titles",
+                titles,
+                build.title_header_candidate_relation_bytes,
+            )
+        )
     if output is not None:
         requested_outputs.append(("output", output, payload_bytes))
     _emit_outputs_transactionally(requested_outputs)
@@ -1682,6 +2087,11 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         help="write the complete statement table as canonical JSON lines",
     )
+    parser.add_argument(
+        "--titles",
+        type=Path,
+        help="write the complete per-field title audit as canonical JSON lines",
+    )
     return parser
 
 
@@ -1693,6 +2103,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             arguments.field_rows,
             output=arguments.output,
             statements=arguments.statements,
+            titles=arguments.titles,
         )
     except GateError as error:
         print(f"A10-R04 abort: {error}", file=sys.stderr)

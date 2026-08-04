@@ -35,6 +35,11 @@ any amendment edit.
   veto a direct whole-field title, the 19 exact `hours a/per week` headers
   refine subordinate bare-hour statements, and every other positive
   title/statement unit conflict fails closed.
+- Integrated the complete title audit into A10-R04: the payload and gate bind
+  every title count plus raw/canonical identities for both the 89,599-row
+  audit and `TITLE_START_AUTHORITY`; optional `--titles` output participates
+  in collision preflight, staging, validation, atomic replacement, and
+  rollback. The expanded focused runner suite passes (100 tests).
 - Corrected §24.2.3 to the complete two-wave food reclassification: 10/29
   followed by 108/124, cumulatively 118 predicates, 153 occurrences, and 139
   independently positive fields.
@@ -44,8 +49,7 @@ any amendment edit.
 
 ## Next
 
-1. Extend A10-R04 with the complete all-title relation and regenerate every
-   census/authority/payload pin.
+1. Regenerate every census/authority/payload pin from the lawful raw relation.
 2. Regenerate downstream floors, fixtures, and A10-R01..R05.
 3. Synchronize A10-R04's document contract and regenerated pins with the
    committed transactional implementation.
