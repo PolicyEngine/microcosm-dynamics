@@ -16,7 +16,7 @@ earlier leftmost regex, so the final law iterates every marker with both
 hyphen lookarounds. A second independent pass then found verb-free output
 labels still later in legacy descriptions. Candidate discovery has therefore
 moved to a deliberately conservative full-description superdomain: exactly
-80,305 maximal generic/literal starts, including 19,971 starts beyond the
+80,306 maximal generic/literal starts, including 19,970 starts beyond the
 bounded structural header. Every body or statement occurrence remains visible
 and must receive an explicit title defeat; only independently audited unmarked
 output-label layouts may become title denotations. This removes prefix-boundary
@@ -86,12 +86,26 @@ clean pre-title authority rather than treated as final.
   starts while remaining operationally small. It also found the wrapped V324
   `In`/`Dollars` title, an independently positive field beyond the eight
   referee witnesses.
+- Closed the conservative full-description semantic audit over 80,306 starts
+  in 51,957 fields. Its monotone stages are 58,298 baseline, 978 first-
+  question, 509 singleton-selector, 414 later-question, 53 question-line
+  suffix, 84 exact continuation, and 19,970 full-body starts. The full-body
+  delta is exactly 30 denotations and 19,940 defeats; every defeat is assigned
+  to a pinned statement delegation or contextual negative-reason class.
+- Exhaustively searched every line-feed spelling admitted by a corresponding
+  horizontal-space grammar compound. The 256 cross-line compounds in 227
+  fields contain exactly two denotations (`V324` and `ER81270`) and 254
+  contextual defeats. The V31 food table contributes eight explicit
+  input-table/subrange defeats and remains the title negative control.
+- Independently rejected eight apparent suffix positives: each was the word
+  `hours` in an instruction to exclude caregiving hours, while the earlier
+  governing `how many hours` phrase is the actual whole-field denotation.
 
 ## Next
 
-1. Finish the exact unmarked-output registry and independently adjudicate the
-   19,971-start full-description delta as denotation or explicit title defeat.
-2. Run the audit-only 89,599-row build, prove all 80,305 starts known, and only
+1. Finish the exact-cover assertions and focused tests for the independently
+   closed title adjudication.
+2. Run the audit-only 89,599-row build, prove all 80,306 starts known, and only
    then rebuild `TITLE_START_AUTHORITY` and `SEGMENT_START_AUTHORITY` from the
    clean pre-title baseline.
 3. Regenerate the successor vector, all pins, storage floors, fixtures, and
