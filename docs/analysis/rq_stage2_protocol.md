@@ -1171,3 +1171,23 @@ disposition, every complete blocking union, and section 19 remain unchanged.
    change. Only q72 and q79 use the affected legacy transformation above; the
    future modern law applies only to a future artifact already versioned with
    the clean modern shape.
+
+## Amendment 1, correction 3: Count-independent invariance
+
+This correction is append-only and supersedes only the numeric census
+sentence of correction 2's invariance clause.
+
+The invariance guarantee is count-independent: **every sealed stage-2
+artifact that lacks the `raster_only_incompleteness_census` sidecar (that is,
+every artifact with `N == 0`) retains its existing outer schema, seal shape,
+seal members, status, bytes, IDs, hashes, digests, and claim unchanged,
+whatever its seal member count and whenever it was sealed.** New clean seals
+created after this amendment inherit the same guarantee at creation; no
+protocol-level census of seal shapes is normative.
+
+The seal-shape distribution previously quoted (and its successor at any
+later ref) is a dated non-normative observation only. As of commit
+`8dd57ee` (document 4 sealed), the observed distribution was
+75 artifacts = 64×30-member / 1×26-member / 1×33-member / 9×4-member seals,
+all with `N == 0`. This observation carries no ratification force, imposes
+no cutoff, and never constrains a future artifact.
