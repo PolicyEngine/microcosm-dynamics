@@ -2301,7 +2301,11 @@ def _emit_outputs_transactionally(
         return
     staged: list[tuple[str, Path, Path, tuple[int, int]]] = []
     backups: list[_DestinationBackup] = []
-    preserved_backups: set[Path] = set()
+    # Stable backups are protected by default. A path becomes disposable only
+    # after the whole commit succeeds or its destination is verified restored.
+    # An exception outside the declared ``Exception`` failure model therefore
+    # cannot make the cleanup path erase unresolved recovery material.
+    discardable_backups: set[Path] = set()
     try:
         for label, destination, content in outputs:
             staged_path = _stage_output(label, destination, content)
@@ -2329,10 +2333,10 @@ def _emit_outputs_transactionally(
                 for prior in backups:
                     rollback_error = _restore_destination(prior)
                     if rollback_error is None:
+                        if prior.path is not None:
+                            discardable_backups.add(prior.path)
                         continue
                     rollback_errors.append(rollback_error)
-                    if prior.path is not None:
-                        preserved_backups.add(prior.path)
                 commit_context = f"{commit_effect} replacement for {label}"
                 if rollback_errors:
                     joined = "; ".join(rollback_errors)
@@ -2344,14 +2348,15 @@ def _emit_outputs_transactionally(
                     "output transaction failed; prior destinations restored "
                     f"after {commit_context}: {commit_error}"
                 ) from commit_error
+        discardable_backups.update(
+            backup.path for backup in backups if backup.path is not None
+        )
     finally:
         for _label, _destination, staged_path, _staged_identity in staged:
             _discard_temporary(staged_path)
         for backup in backups:
-            if (
-                backup.path is not None
-                and backup.path not in preserved_backups
-            ):
+            if backup.path in discardable_backups:
+                assert backup.path is not None
                 _discard_temporary(backup.path)
 
 

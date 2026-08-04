@@ -1774,6 +1774,54 @@ def test_unresolved_rollback_backup_survives_and_is_reported(
     ]
 
 
+def test_escaping_replacement_interrupt_preserves_all_stable_backups(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    destinations = (
+        (tmp_path / "first", b"OLD-A", b"NEW-A"),
+        (tmp_path / "second", b"OLD-B", b"NEW-B"),
+        (tmp_path / "third", b"OLD-C", b"NEW-C"),
+    )
+    for destination, old_content, _new_content in destinations:
+        destination.write_bytes(old_content)
+    original_replace = runner.os.replace
+    commit_count = 0
+
+    def interrupt_after_second_commit(source, destination) -> None:
+        nonlocal commit_count
+        original_replace(source, destination)
+        if ".a10-r04-stage-" in Path(source).name:
+            commit_count += 1
+            if commit_count == 2:
+                raise KeyboardInterrupt(
+                    "injected escaping commit interruption"
+                )
+
+    monkeypatch.setattr(runner.os, "replace", interrupt_after_second_commit)
+
+    with pytest.raises(
+        KeyboardInterrupt, match="escaping commit interruption"
+    ):
+        runner._emit_outputs_transactionally(
+            tuple(
+                (destination.name, destination, new_content)
+                for destination, _old_content, new_content in destinations
+            )
+        )
+
+    assert [path.read_bytes() for path, _old, _new in destinations] == [
+        b"NEW-A",
+        b"NEW-B",
+        b"OLD-C",
+    ]
+    for destination, old_content, _new_content in destinations:
+        backups = tuple(tmp_path.glob(f".{destination.name}.a10-r04-backup-*"))
+        assert len(backups) == 1
+        assert backups[0].read_bytes() == old_content
+    assert not tuple(tmp_path.glob(".*.a10-r04-stage-*"))
+
+
 def test_cli_success_emits_complete_json(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
