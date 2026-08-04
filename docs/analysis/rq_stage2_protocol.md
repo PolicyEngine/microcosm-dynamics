@@ -676,17 +676,30 @@ pre-Amendment-1 protocol byte and section 19 unchanged.
    path set is ambiguous, the original abort applies.
 
    Before blocked paths are filtered, the lane freezes each ordinary atom's
-   `semantic_ordinal_at_span` from the original complete parent-path order and
-   its `occurrence_index_on_page` from the complete attributable extracted-
-   atom source order. Every emitted survivor retains those original values;
-   neither value is densely recomputed after path removal or atom withholding.
-   A withheld attributable atom reserves its pre-filter occurrence-index
-   position, so indices in an affected emitted domain may be sparse. These
-   positions and ordinals are fixed before the sidecar is constructed and are
-   never computed from an exception or census field, key, count, byte, order,
-   or digest. Consequently the occurrence, locator, and branch IDs of every
-   surviving row are stable under blocked-path removal. A dense-renumbering
-   mutation MUST be rejected.
+   `semantic_ordinal_at_span` from the original complete raster-applicable
+   parent-path order. It freezes `occurrence_index_on_page` from the complete
+   pre-filter occurrence-row numbering domain ordered by the existing
+   `(utf8_byte_start, utf8_byte_end, displayed occurrence-kind order,
+   semantic_ordinal_at_span)` tuple: one position for each non-multi-parent
+   atom and one position for each complete-parent-path ordinal of a
+   multi-parent `flow_branch_label`, including positions later withheld.
+   Every emitted survivor retains those original values; neither value is
+   densely recomputed after path removal or atom withholding. Thus indices in
+   an affected emitted domain may be sparse.
+
+   These positions and ordinals are fixed before the sidecar is constructed
+   and are never computed from an exception or census field, key, count, byte,
+   order, or digest. Blocked-path filtering therefore MUST NOT change any
+   surviving row's `semantic_ordinal_at_span`, `occurrence_index_on_page`, or
+   any ID-preimage component derived from those values. A surviving
+   `flow_branch_label` row retains its original one parent path, ordinal, and
+   index, so its `source_locator_sha256`, questionnaire occurrence ID, and
+   flow-branch ID remain stable when other complete parent paths are removed.
+   A non-flow occurrence continues to derive its questionnaire occurrence ID
+   from its exact emitted `flow_branch_paths` under the existing 13-value
+   preimage law; no counterfactual ID equality is claimed for a path set
+   containing an un-emitted exception. A dense-renumbering mutation MUST be
+   rejected.
 
    If at least one complete path resolves, the
    `emitted_questionnaire_occurrence_ids` array is the complete source-order
