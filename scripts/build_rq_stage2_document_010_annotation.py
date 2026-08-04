@@ -758,6 +758,12 @@ def _canonical_digest(value: Any) -> str:
     return _sha256(_canonical_bytes(value))
 
 
+def _json_exact_equal(left: Any, right: Any) -> bool:
+    """Compare JSON values without Python's bool/int/float coercion."""
+
+    return _canonical_bytes(left) == _canonical_bytes(right)
+
+
 def _content_sha256(value: Mapping[str, Any]) -> str:
     copied = copy.deepcopy(value)
     copied["integrity"]["content_sha256"] = "0" * 64
@@ -785,6 +791,99 @@ def _strict_json(path: Path, label: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"{label} is not an object")
     return value
+
+
+def _require_nonbool_int(value: Any, label: str, minimum: int = 0) -> None:
+    if type(value) is not int or value < minimum:
+        raise ValueError(f"{label} is not a lawful non-boolean integer")
+
+
+def _validate_numeric_types(value: Mapping[str, Any]) -> None:
+    """Enforce exact JSON integer types for every affected numeric field."""
+
+    _require_nonbool_int(
+        value["document_source_position"], "document source position", 1
+    )
+    locator = value["whole_document_locator"]
+    for key, minimum in (
+        ("interview_wave", 0),
+        ("byte_start", 0),
+        ("byte_end", 1),
+        ("size_bytes", 1),
+    ):
+        _require_nonbool_int(locator[key], f"locator {key}", minimum)
+    for page in value["questionnaire_page_rows"]:
+        _require_nonbool_int(page["interview_wave"], "page interview wave")
+        _require_nonbool_int(page["page_number"], "page number", 1)
+    for occurrence in value["questionnaire_occurrence_rows"]:
+        for key, minimum in (
+            ("interview_wave", 0),
+            ("page_number", 1),
+            ("utf8_byte_start", 0),
+            ("utf8_byte_end", 1),
+            ("occurrence_index_on_page", 0),
+            ("semantic_ordinal_at_span", 0),
+        ):
+            _require_nonbool_int(occurrence[key], f"occurrence {key}", minimum)
+    for branch in value["flow_branch_rows"]:
+        for key, minimum in (
+            ("interview_wave", 0),
+            ("page_number", 1),
+            ("occurrence_index_on_page", 0),
+        ):
+            _require_nonbool_int(branch[key], f"flow branch {key}", minimum)
+
+    sidecar = value["raster_only_incompleteness_census"]
+    _require_nonbool_int(
+        sidecar["branch_exception_count"],
+        "raster branch exception count",
+        1,
+    )
+    _require_nonbool_int(
+        sidecar["dependent_atom_count"], "raster dependent atom count"
+    )
+    for record in sidecar["branch_exception_records"]:
+        for key, minimum in (
+            ("interview_wave", 0),
+            ("page_number", 1),
+            ("exception_index_on_page", 0),
+        ):
+            _require_nonbool_int(
+                record[key], f"branch exception {key}", minimum
+            )
+    for record in sidecar["dependent_atom_consequence_records"]:
+        for key, minimum in (
+            ("interview_wave", 0),
+            ("page_number", 1),
+            ("utf8_byte_start", 0),
+            ("utf8_byte_end", 1),
+        ):
+            _require_nonbool_int(record[key], f"dependent atom {key}", minimum)
+        for blocker in record["blocking_exception_keys"]:
+            if len(blocker) != 2:
+                raise ValueError("blocking exception key shape drift")
+            _require_nonbool_int(blocker[1], "blocking exception key index")
+    for row in sidecar["page_census_rows"]:
+        for key, minimum in (
+            ("interview_wave", 0),
+            ("page_number", 1),
+            ("branch_exception_count", 0),
+            ("dependent_atom_count", 0),
+        ):
+            _require_nonbool_int(row[key], f"page census {key}", minimum)
+        for exception_key in row["branch_exception_keys"]:
+            if len(exception_key) != 2:
+                raise ValueError("page exception key shape drift")
+            _require_nonbool_int(exception_key[1], "page exception key index")
+        for dependent_key in row["dependent_atom_keys"]:
+            if len(dependent_key) != 4:
+                raise ValueError("page dependent key shape drift")
+            _require_nonbool_int(
+                dependent_key[1], "page dependent key byte start"
+            )
+            _require_nonbool_int(
+                dependent_key[2], "page dependent key byte end", 1
+            )
 
 
 def _source_replay_and_index() -> tuple[dict[str, Any], dict[str, Any]]:
@@ -3460,32 +3559,39 @@ def validate_annotation(
     candidates: Mapping[str, Any],
 ) -> None:
     _expect_keys(value, LEGACY_AFFECTED_TOP_LEVEL_KEYS, "document annotation")
+    _validate_numeric_types(value)
     if (
         value["schema_version"] != SCHEMA_VERSION
         or value["authority_kind"] != AUTHORITY_KIND
         or value["document_source_position"] != DOCUMENT_SOURCE_POSITION
-        or value["document_source_row"] != document
-        or value["source_replay_identity"]
-        != stage1_candidates.source_replay_identity()
+        or not _json_exact_equal(value["document_source_row"], document)
+        or not _json_exact_equal(
+            value["source_replay_identity"],
+            stage1_candidates.source_replay_identity(),
+        )
         or value["status"] != STATUS
-        or value["integrity"]
-        != {
-            "canonicalization": CANONICALIZATION,
-            "content_sha256": _content_sha256(value),
-        }
-        or value["nonauthority_statement"]
-        != {
-            "status": "nonauthority",
-            "one_document_only": True,
-            "q5_emitted": False,
-            "era_seal_emitted": False,
-            "global_catalog_emitted": False,
-            "global_alias_resolution_emitted": False,
-            "r_q_emitted": False,
-            "hierarchy_emitted": False,
-            "slot_or_inventory_emitted": False,
-            "legal_registry_read": False,
-        }
+        or not _json_exact_equal(
+            value["integrity"],
+            {
+                "canonicalization": CANONICALIZATION,
+                "content_sha256": _content_sha256(value),
+            },
+        )
+        or not _json_exact_equal(
+            value["nonauthority_statement"],
+            {
+                "status": "nonauthority",
+                "one_document_only": True,
+                "q5_emitted": False,
+                "era_seal_emitted": False,
+                "global_catalog_emitted": False,
+                "global_alias_resolution_emitted": False,
+                "r_q_emitted": False,
+                "hierarchy_emitted": False,
+                "slot_or_inventory_emitted": False,
+                "legal_registry_read": False,
+            },
+        )
     ):
         raise ValueError("document annotation identity or nonauthority drift")
 
@@ -3534,7 +3640,7 @@ def validate_annotation(
         ("output_adjudication_rows", output_adjudications),
     )
     for key, expected in expected_arrays:
-        if value[key] != expected:
+        if not _json_exact_equal(value[key], expected):
             raise ValueError(f"document annotation {key} drift")
     expected_artifact_id = (
         "rq-stage2-document-annotation:"
@@ -3578,12 +3684,18 @@ def validate_annotation(
     )
     if (
         value["artifact_id"] != expected_artifact_id
-        or value["candidate_index_identity"]
-        != expected_candidate_index_identity
-        or value["candidate_artifact_identity"]
-        != expected_candidate_artifact_identity
-        or value["source_review_identity"] != expected_review_identity
-        or value["seal"] != expected_seal
+        or not _json_exact_equal(
+            value["candidate_index_identity"],
+            expected_candidate_index_identity,
+        )
+        or not _json_exact_equal(
+            value["candidate_artifact_identity"],
+            expected_candidate_artifact_identity,
+        )
+        or not _json_exact_equal(
+            value["source_review_identity"], expected_review_identity
+        )
+        or not _json_exact_equal(value["seal"], expected_seal)
     ):
         raise ValueError("document annotation artifact ID or seal drift")
     _expect_keys(
@@ -3591,6 +3703,14 @@ def validate_annotation(
         (*LEGACY_FLAT_SEAL_KEYS, *RASTER_SEAL_KEYS),
         "legacy affected flat seal",
     )
+    submitted_raster_seal = {
+        key: value["seal"][key] for key in RASTER_SEAL_KEYS
+    }
+    if not _json_exact_equal(
+        submitted_raster_seal,
+        _raster_seal_fields(value["raster_only_incompleteness_census"]),
+    ):
+        raise ValueError("submitted raster sidecar seal drift")
 
     for row in value["questionnaire_page_rows"]:
         _expect_keys(row, PAGE_KEYS, "questionnaire page")
@@ -3761,6 +3881,49 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
         )
         target["occurrence_index_on_page"] = 26
 
+    def mutate_d8_numeric_type(
+        row: dict[str, Any], key: str, replacement: Any
+    ) -> None:
+        target = next(
+            occurrence
+            for occurrence in row["questionnaire_occurrence_rows"]
+            if occurrence["page_number"] == 7
+            and occurrence["utf8_byte_start"] == 1962
+            and occurrence["utf8_byte_end"] == 2010
+            and occurrence["occurrence_kind"] == "flow_branch_label"
+        )
+        target[key] = replacement
+
+    def add_extra_branch_exception(row: dict[str, Any]) -> None:
+        records = row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ]
+        extra = copy.deepcopy(records[-1])
+        extra["exception_index_on_page"] += 1
+        records.append(extra)
+
+    def add_extra_dependent_atom(row: dict[str, Any]) -> None:
+        records = row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ]
+        extra = copy.deepcopy(records[-1])
+        extra["utf8_byte_end"] += 1
+        records.append(extra)
+
+    def add_extra_census_page(row: dict[str, Any]) -> None:
+        records = row["raster_only_incompleteness_census"]["page_census_rows"]
+        extra = copy.deepcopy(records[-1])
+        extra["questionnaire_page_id"] = "psid-questionnaire-page:extra"
+        extra["page_number"] += 1
+        records.append(extra)
+
+    def add_root_as_branch_row(row: dict[str, Any]) -> None:
+        root_row = copy.deepcopy(row["flow_branch_rows"][0])
+        root_row["flow_branch_id"] = FLOW_ROOT
+        root_row["parent_flow_branch_id"] = FLOW_ROOT
+        root_row["branch_path"] = [FLOW_ROOT]
+        row["flow_branch_rows"].insert(0, root_row)
+
     add("missing_page", lambda row: row["questionnaire_page_rows"].pop())
     add(
         "reordered_page",
@@ -3840,6 +4003,7 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
             "selected_path_subset",
             select_path_subset,
         )
+        add("root_sentinel_as_branch_row", add_root_as_branch_row)
     if value["local_repeat_alias_evidence_rows"]:
         add(
             "inferred_alias",
@@ -3889,6 +4053,7 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
             )
         ),
     )
+    add("extra_branch_exception", add_extra_branch_exception)
     add(
         "reordered_branch_exceptions",
         lambda row: row["raster_only_incompleteness_census"][
@@ -3928,6 +4093,7 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
             )
         ),
     )
+    add("extra_dependent_atom", add_extra_dependent_atom)
     add(
         "reordered_dependent_atoms",
         lambda row: row["raster_only_incompleteness_census"][
@@ -3965,6 +4131,7 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
             )
         ),
     )
+    add("extra_census_page", add_extra_census_page)
     add(
         "reordered_census_pages",
         lambda row: row["raster_only_incompleteness_census"][
@@ -4031,6 +4198,54 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
     add("reordered_blocking_exception_keys", mutate_first_blocking_order)
     add("dense_d8_semantic_ordinal", mutate_dense_d8_ordinal)
     add("dense_d8_occurrence_index", mutate_dense_d8_index)
+    add(
+        "boolean_d8_semantic_ordinal",
+        lambda row: mutate_d8_numeric_type(
+            row, "semantic_ordinal_at_span", True
+        ),
+    )
+    add(
+        "float_d8_occurrence_index",
+        lambda row: mutate_d8_numeric_type(
+            row, "occurrence_index_on_page", 27.0
+        ),
+    )
+    add(
+        "float_branch_exception_count",
+        lambda row: row["raster_only_incompleteness_census"].__setitem__(
+            "branch_exception_count", 10.0
+        ),
+    )
+    add(
+        "boolean_exception_index",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ][1].__setitem__("exception_index_on_page", True),
+    )
+    add(
+        "boolean_page_census_count",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ][15].__setitem__("branch_exception_count", True),
+    )
+    add(
+        "bad_raster_keyset_digest",
+        lambda row: row["seal"].__setitem__(
+            "raster_only_branch_exception_keyset_sha256", "0" * 64
+        ),
+    )
+    add(
+        "bad_raster_domain_digest",
+        lambda row: row["seal"].__setitem__(
+            "raster_only_dependent_atom_consequence_domain_sha256", "0" * 64
+        ),
+    )
+    add(
+        "bad_raster_sidecar_digest",
+        lambda row: row["seal"].__setitem__(
+            "raster_only_incompleteness_census_sha256", "0" * 64
+        ),
+    )
     add(
         "missing_raster_seal_member",
         lambda row: row["seal"].pop(RASTER_SEAL_KEYS[-1]),
@@ -4144,51 +4359,186 @@ def run_mutation_tests(
     else:
         raise ValueError("mutation was not rejected: nested_review_atom")
 
-    # Correction 1's mandatory deep mutation: leave H7 with one apparently
-    # valid blocking key and faithfully recompute every enclosing raster count
-    # and digest. Rejection must therefore come from independent reconstruction
-    # of H7's all-and-only two-key union, not from a stale seal checksum.
-    omitted_key_mutation = copy.deepcopy(value)
-    sidecar = omitted_key_mutation["raster_only_incompleteness_census"]
-    h7_record = next(
-        record
-        for record in sidecar["dependent_atom_consequence_records"]
-        if record["page_number"] == 21
-        and record["utf8_byte_start"] == 1877
-        and record["utf8_byte_end"] == 2073
-        and len(record["blocking_exception_keys"]) == 2
-    )
-    h7_record["blocking_exception_keys"].pop()
-    if len(h7_record["blocking_exception_keys"]) != 1:
-        raise ValueError("omitted-key mutation fixture drift")
-    sidecar["branch_exception_count"] = len(
-        sidecar["branch_exception_records"]
-    )
-    sidecar["dependent_atom_count"] = len(
-        sidecar["dependent_atom_consequence_records"]
-    )
-    omitted_key_mutation["seal"].update(_raster_seal_fields(sidecar))
-    omitted_key_mutation["integrity"]["content_sha256"] = _content_sha256(
-        omitted_key_mutation
-    )
-    try:
-        validate_annotation(omitted_key_mutation, *inputs)
-    except ValueError:
-        pass
-    else:
-        raise ValueError(
-            "mutation was not rejected: omitted_h7_blocking_key_resealed"
+    def assert_rejected(
+        name: str,
+        mutation: dict[str, Any],
+        *,
+        recompute_artifact_digest: bool = True,
+    ) -> None:
+        if recompute_artifact_digest:
+            mutation["integrity"]["content_sha256"] = _content_sha256(mutation)
+        try:
+            validate_annotation(mutation, *inputs)
+        except ValueError:
+            return
+        raise ValueError(f"mutation was not rejected: {name}")
+
+    def run_resealed_sidecar_mutation(name: str, mutate: Any) -> None:
+        """Mutate metadata, then faithfully reseal every enclosing domain."""
+
+        mutation = copy.deepcopy(value)
+        sidecar = mutation["raster_only_incompleteness_census"]
+        mutate(sidecar)
+        sidecar["branch_exception_count"] = len(
+            sidecar["branch_exception_records"]
         )
+        sidecar["dependent_atom_count"] = len(
+            sidecar["dependent_atom_consequence_records"]
+        )
+        for page_row in sidecar["page_census_rows"]:
+            page_row["branch_exception_count"] = len(
+                page_row["branch_exception_keys"]
+            )
+            page_row["dependent_atom_count"] = len(
+                page_row["dependent_atom_keys"]
+            )
+        mutation["seal"].update(_raster_seal_fields(sidecar))
+        assert_rejected(name, mutation)
+
+    def h7_record(sidecar: Mapping[str, Any]) -> dict[str, Any]:
+        return next(
+            record
+            for record in sidecar["dependent_atom_consequence_records"]
+            if record["page_number"] == 21
+            and record["utf8_byte_start"] == 1877
+            and record["utf8_byte_end"] == 2073
+            and len(record["blocking_exception_keys"]) >= 2
+        )
+
+    def omit_h7_blocker(sidecar: dict[str, Any]) -> None:
+        h7_record(sidecar)["blocking_exception_keys"].pop()
+
+    def add_h7_blocker(sidecar: dict[str, Any]) -> None:
+        exception = sidecar["branch_exception_records"][0]
+        h7_record(sidecar)["blocking_exception_keys"].append(
+            [
+                exception["questionnaire_page_id"],
+                exception["exception_index_on_page"],
+            ]
+        )
+
+    def duplicate_h7_blocker(sidecar: dict[str, Any]) -> None:
+        keys = h7_record(sidecar)["blocking_exception_keys"]
+        keys.append(copy.deepcopy(keys[0]))
+
+    def reorder_h7_blockers(sidecar: dict[str, Any]) -> None:
+        keys = h7_record(sidecar)["blocking_exception_keys"]
+        keys.reverse()
+
+    for name, mutate in (
+        ("omitted_h7_blocking_key_fully_resealed", omit_h7_blocker),
+        ("extra_h7_blocking_key_fully_resealed", add_h7_blocker),
+        (
+            "duplicate_h7_blocking_key_fully_resealed",
+            duplicate_h7_blocker,
+        ),
+        (
+            "reordered_h7_blocking_keys_fully_resealed",
+            reorder_h7_blockers,
+        ),
+    ):
+        run_resealed_sidecar_mutation(name, mutate)
+
+    def page_census_row(
+        sidecar: Mapping[str, Any], page_number: int
+    ) -> dict[str, Any]:
+        return next(
+            row
+            for row in sidecar["page_census_rows"]
+            if row["page_number"] == page_number
+        )
+
+    def page_key_mutator(domain: str, action: str) -> Any:
+        def mutate(sidecar: dict[str, Any]) -> None:
+            page7 = page_census_row(sidecar, 7)
+            page8 = page_census_row(sidecar, 8)
+            keys = page7[domain]
+            if action == "missing":
+                keys.pop()
+            elif action == "extra":
+                keys.append(copy.deepcopy(page8[domain][0]))
+            elif action == "duplicate":
+                keys.append(copy.deepcopy(keys[0]))
+            elif action == "reordered":
+                keys.reverse()
+            else:
+                raise ValueError("page-key mutation action drift")
+
+        return mutate
+
+    for domain in ("branch_exception_keys", "dependent_atom_keys"):
+        domain_label = (
+            "branch" if domain == "branch_exception_keys" else "dependent"
+        )
+        for action in ("missing", "extra", "duplicate", "reordered"):
+            run_resealed_sidecar_mutation(
+                f"{action}_{domain_label}_page_key_fully_resealed",
+                page_key_mutator(domain, action),
+            )
+
+    dependent_coordinates = set(DEPENDENCY_BY_COORDINATE)
+    donor_spec = next(
+        spec
+        for spec in inputs[5]["occurrence_specs"]
+        if spec["page_number"] == 7
+        and spec["occurrence_kind"] == "field_purpose_prompt"
+        and (
+            spec["page_number"],
+            spec["utf8_byte_start"],
+            spec["utf8_byte_end"],
+            spec["occurrence_kind"],
+        )
+        not in dependent_coordinates
+    )
+    donor_bytes, donor_text = _utf8_slice(
+        page_texts[6],
+        donor_spec["utf8_byte_start"],
+        donor_spec["utf8_byte_end"],
+    )
+
+    def reuse_another_instance_bytes(sidecar: dict[str, Any]) -> None:
+        target = next(
+            record
+            for record in sidecar["dependent_atom_consequence_records"]
+            if record["page_number"] == 7
+            and record["occurrence_kind"] == "field_purpose_prompt"
+        )
+        old_key = [
+            target["questionnaire_page_id"],
+            target["utf8_byte_start"],
+            target["utf8_byte_end"],
+            target["occurrence_kind"],
+        ]
+        target["utf8_byte_start"] = donor_spec["utf8_byte_start"]
+        target["utf8_byte_end"] = donor_spec["utf8_byte_end"]
+        target["matched_text"] = donor_text
+        target["matched_utf8_sha256"] = _sha256(donor_bytes)
+        new_key = [
+            target["questionnaire_page_id"],
+            target["utf8_byte_start"],
+            target["utf8_byte_end"],
+            target["occurrence_kind"],
+        ]
+        page_keys = page_census_row(sidecar, 7)["dependent_atom_keys"]
+        page_keys[page_keys.index(old_key)] = new_key
+
+    run_resealed_sidecar_mutation(
+        "another_printed_instance_bytes_fully_resealed",
+        reuse_another_instance_bytes,
+    )
+
+    bad_artifact_digest = copy.deepcopy(value)
+    bad_artifact_digest["integrity"]["content_sha256"] = "0" * 64
+    assert_rejected(
+        "bad_artifact_digest",
+        bad_artifact_digest,
+        recompute_artifact_digest=False,
+    )
 
     for name, mutate in _mutation_specs(value):
         mutation = copy.deepcopy(value)
         mutate(mutation)
-        mutation["integrity"]["content_sha256"] = _content_sha256(mutation)
-        try:
-            validate_annotation(mutation, *inputs)
-        except ValueError:
-            continue
-        raise ValueError(f"mutation was not rejected: {name}")
+        assert_rejected(name, mutation)
 
 
 def _write_or_check(path: Path, raw: bytes, check: bool) -> None:

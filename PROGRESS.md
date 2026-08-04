@@ -31,15 +31,20 @@ seal review remains before the final progress-file removal and seal commit.
   `SAME` witness survives at ordinal 1 and page index 27.
 - Added the complete 42-page legacy sidecar, 23-member affected outer shape,
   and 40-member flat seal with all ten raster-domain additions.
-- Added deep mutation coverage, including the H7 omitted-key mutation after
-  recomputing every raster seal field and the artifact integrity digest.
+- Added deep mutation coverage, including all omitted/extra/duplicate/reorder
+  H7 blocker and page-key variants after recomputing every raster seal field
+  and the artifact integrity digest.
 - Regenerated both committed JSON artifacts. Source-review reproduction,
   annotation validation plus mutations, focused tests (`17 passed`), Ruff,
   Black, and `git diff --check` are green.
+- Completed three independent read-only reviews. The case-table audit was
+  clean. The protocol/code audits identified numeric-type equality and missing
+  deep-mutation variants; exact JSON equality, explicit non-boolean integer
+  checks, submitted-sidecar seal verification, and the complete mutation
+  matrix now close both findings.
 
 ## Next
 
-- Commit the coherent protocol implementation and updated progress state.
-- Request an independent read-only protocol and regression review; address any
-  actionable findings and rerun the complete gate.
+- Commit the coherent independent-review fixes and updated progress state.
+- Rerun independent protocol/code review against the fixes.
 - Remove this progress file in the final seal commit and write the lane report.
