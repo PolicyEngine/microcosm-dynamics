@@ -2,29 +2,13 @@
 
 ## State
 
-Active on `claude/ce-design-amendment10` from audited base
+Complete on `claude/ce-design-amendment10` from audited base
 `4a71b8f2cf37c8b336334aec577d5f590ae035ae`. Both round-3 verdicts are
-binding. The worktree began clean, and the revision-11 2,653,817-byte prefix
-was verified against blob `bb11f807e7683086b55703ea28346dacec9d192e` before
-any amendment edit. A final independent audit invalidated the first expanded
-title census before release: generic unit tokens in question-style titles
-were still suppressed. The reopened structural audit is now closed. It found
-54,236 selector spans in 51,397 fields, including 3,471 newly admitted
-singleton-hyphen spans. Those contain 907 unit-label events and 114 response-
-selector events. Five genuine `?-YEAR` selectors had been hidden by an
-earlier leftmost regex, so the final law iterates every marker with both
-hyphen lookarounds. A second independent pass then found verb-free output
-labels still later in legacy descriptions. Candidate discovery has therefore
-moved to a deliberately conservative full-description superdomain: exactly
-80,306 maximal generic/literal starts, including 19,970 starts beyond the
-bounded structural header. Every body or statement occurrence remains visible
-and must receive an explicit title defeat; only independently audited unmarked
-output-label layouts may become title denotations. This removes prefix-boundary
-omission as a possible completeness failure. The title and segment authorities
-have now been rebuilt from the clean pre-title authority after the frozen
-audit. The successor vector, production pins, and storage floors have also
-been independently regenerated from the lawful raw relation; the final §24
-rewrite and repository-wide verification remain in progress.
+satisfied. The source-wide title audit, regenerated authorities, successor
+census, storage floors, §24 rewrite, transaction tests, and final independent
+review are closed. The revision-11 prefix remains byte-identical through byte
+2,653,817. The final report remains to be written outside the repository, and
+this progress ledger will then be removed in the required closing commit.
 
 ## Done
 
@@ -141,9 +125,26 @@ rewrite and repository-wide verification remain in progress.
   the final four-shape floor is 123,153,972,844,092 bytes. A separate minimal
   reducer reproduced the key aggregates, and no evidence input or
   `field_unit` call was used.
+- Finalized the document at 3,460,272 bytes and SHA-256
+  `f42371433c3b73ce5b628f6be6839d2df6f257fc215e246b3b6a9309f8aa202a`.
+  Its first 2,653,817 bytes exactly match blob `bb11f807...`, with prefix
+  SHA-256 `4f6219ba7162bcc53d390a107e8db2ebe289565c6776fbda2c4acdffd0ba4609`.
+  Independent review reproduced every §24 fence, pin, arithmetic identity,
+  witness, negative control, and v4 schema member.
+- Re-ran all 397 Amendment 10 tests successfully, plus bytecode compilation,
+  Ruff lint, `git diff --check`, the 4,983-test tier census gate, and the
+  protected-prefix comparison. The complete repository run executed all
+  4,983 tests: 4,889 passed, 90 skipped, and four failed before the tier-census
+  repair. The repaired tier gate then passed. The remaining three failures
+  reproduce identically at base `4a71b8f2`: one reviewed-implementation seal
+  and two revision-7 design-binding seals. Their tests, reducers/builders, and
+  artifacts are unchanged by this lane.
+- Kept production memory below 8 GB. The final three-output runner review
+  peaked at 1,396,621,312 bytes RSS, emitted complete JSON byte-identical to
+  its payload, and passed 16 transaction failure injections. The final title
+  audit peaked at 942,948,352 bytes RSS.
 
 ## Next
 
-1. Finish the §24 claims from the frozen runner and storage reports; run
-   focused and full verification and recheck the prefix.
-2. Write the final report output and remove `PROGRESS.md` in the final commit.
+1. Write the final report output.
+2. Remove `PROGRESS.md` in the closing commit and verify a clean worktree.
