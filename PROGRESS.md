@@ -10,10 +10,10 @@ In progress on `claude/ce-rq-doc24`, rebuilt from baseline commit `8088484` unde
 - Preserved the prior mechanically passing draft at `rq-doc24-blocked-draft` (`c9fb2df`).
 - Restored the target branch to its required baseline, `8088484`.
 - Started independent protocol, adjudication-table, and comparator/draft audits.
+- Imported the preserved document-24 builder for amendment-aware revision.
 
 ## Next
 
-- Port reusable annotation logic from the preserved draft.
 - Implement the exact adjudicated raster-only census and dependent consequences.
 - Add the LEGACY-shape sidecar and flat-seal mutation coverage.
 - Run focused tests, validator, Ruff, and Black.
