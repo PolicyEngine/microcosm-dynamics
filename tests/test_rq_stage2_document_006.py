@@ -274,6 +274,49 @@ EXPECTED_FIDELITY_BINDINGS = (
         "rq-candidate-flow-path:5e86c73d1f51e60f75c585d81c4540f4d708022cf5a68f0a518073b79a4f6c52",
     ),
 )
+EXPECTED_INDIRECT_FIDELITY_RATIONALES = {
+    (7, 225, 253, "flow_branch_label"): "same Section D opening D1 screen",
+    (
+        7,
+        527,
+        610,
+        "flow_branch_label",
+    ): "same D1 status prompt and response screen",
+    (
+        7,
+        626,
+        640,
+        "flow_branch_label",
+    ): "same D1 response stack candidate path",
+    (7, 1101, 1116, "flow_branch_label"): "same D1 OTHER route candidate path",
+    (7, 1525, 1535, "flow_branch_label"): "same D3-D4 printed screen",
+    (7, 1544, 1568, "flow_branch_label"): (
+        "same D3-D4 printed screen candidate path"
+    ),
+    (7, 1597, 1606, "flow_branch_label"): (
+        "same D3-D4 printed screen candidate path"
+    ),
+    (
+        8,
+        2073,
+        2077,
+        "flow_branch_label",
+    ): "same D20 question and response screen",
+    (
+        9,
+        318,
+        334,
+        "flow_branch_label",
+    ): "same D24 question and response screen",
+    (16, 633, 725, "flow_branch_label"): "same Section G opening G1 screen",
+    (21, 233, 254, "flow_branch_label"): "same Section H opening H1 screen",
+    (21, 1821, 1825, "flow_branch_label"): (
+        "same H6 response stack candidate path"
+    ),
+    (21, 1969, 1979, "flow_branch_label"): (
+        "same H6 response stack candidate path"
+    ),
+}
 
 
 def _coords(page: int, start: int, end: int, *kinds: str) -> set[tuple]:
@@ -578,7 +621,10 @@ def test_fidelity_diagnostic_is_exactly_the_thirty_atom_domain(
         )
         == EXPECTED_FIDELITY_BINDINGS
     )
-    assert len(annotation.VISUAL_FIDELITY_INDIRECT_RATIONALES) == 13
+    assert (
+        annotation.VISUAL_FIDELITY_INDIRECT_RATIONALES
+        == EXPECTED_INDIRECT_FIDELITY_RATIONALES
+    )
     assert all(
         row["note_code"] == annotation.VISUAL_FIDELITY_NOTE_CODE
         and row["note"] == annotation.VISUAL_FIDELITY_NOTE

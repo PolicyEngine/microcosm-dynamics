@@ -2313,6 +2313,49 @@ def _apply_visual_fidelity_notes(notes: list[dict[str, Any]]) -> None:
         raise ValueError("visual-fidelity diagnostic domain drift")
 
 
+def _validate_visual_fidelity_note_targets(
+    candidates: Mapping[str, Any],
+) -> None:
+    occurrence_by_id = {
+        row["candidate_occurrence_id"]: row
+        for row in candidates["candidate_occurrence_rows"]
+    }
+    flow_by_id = {
+        row["candidate_flow_path_id"]: row
+        for row in candidates["candidate_flow_path_rows"]
+    }
+    indirect: set[tuple[int, int, int, str]] = set()
+    for target, (
+        row_kind,
+        candidate_id,
+    ) in VISUAL_FIDELITY_NOTE_TARGETS.items():
+        if row_kind == "occurrence":
+            carrier = occurrence_by_id.get(candidate_id)
+        elif row_kind == "flow_path":
+            flow = flow_by_id.get(candidate_id)
+            carrier = (
+                None
+                if flow is None
+                else occurrence_by_id.get(
+                    flow["source_candidate_occurrence_id"]
+                )
+            )
+        else:
+            raise ValueError("visual-fidelity carrier kind drift")
+        if carrier is None or carrier["page_number"] != target[0]:
+            raise ValueError("visual-fidelity carrier page mapping drift")
+        overlaps = (
+            carrier["utf8_byte_start"] < target[2]
+            and target[1] < carrier["utf8_byte_end"]
+        )
+        if not overlaps:
+            indirect.add(target)
+    if indirect != set(VISUAL_FIDELITY_INDIRECT_RATIONALES) or any(
+        not reason for reason in VISUAL_FIDELITY_INDIRECT_RATIONALES.values()
+    ):
+        raise ValueError("visual-fidelity indirect carrier domain drift")
+
+
 def _match_candidate_occurrences(
     candidate_rows: Sequence[Mapping[str, Any]],
     occurrences: Sequence[Mapping[str, Any]],
@@ -2466,6 +2509,8 @@ def _adjudicate(
     dispositions: list[dict[str, Any]] = []
     output_adjudications: list[dict[str, Any]] = []
     notes: list[dict[str, Any]] = []
+
+    _validate_visual_fidelity_note_targets(candidates)
 
     locator_candidate = candidates["whole_document_locator_candidate"]
     locator_candidate_id = locator_candidate["candidate_locator_id"]

@@ -10,6 +10,8 @@
 - The legacy-shape sidecar, 30-page census, flat 40-member seal, sparse pre-filter indices, and 30 required fidelity diagnostics now reproduce and validate.
 - Focused document-6 tests and the hardened mutation runner are green.
 - Post-commit stage-1 source-replay/candidate drift plus document-6 regression run is green: 41 tests passed.
+- Independent seal and validator audits found no protocol defect or mutation bypass.
+- Fidelity review confirmed the hard-pinned same-item/screen diagnostic map is not forbidden by correction 2; its direct/indirect geometry partition and all 13 indirect rationales are now independently validated.
 
 ## Done
 
@@ -31,10 +33,10 @@
 - Generated the sealed annotation and added independent focused tests.
 - Committed the coherent seal implementation at `5c661f9` and reverified its generator, mutation runner, and focused suite after commit.
 - Re-ran the stage-1 source-replay/candidate reproduction suites together with document 6: 41 passed.
+- Added an independent candidate-coordinate check for the 17 direct and 13 indirect fidelity-note carriers and pinned the complete indirect rationale domain in tests.
 
 ## Next
 
-- Resolve the independent final protocol/validator/fidelity audits, if they find any defect.
 - Run final repository hygiene checks.
 - Write the required final report to the output file.
 - Remove this progress ledger in the final coherent step.
