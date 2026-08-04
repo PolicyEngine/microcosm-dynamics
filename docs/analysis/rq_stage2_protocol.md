@@ -353,3 +353,186 @@ commit is ready only when every item below passes.
 
 Any unresolved source interpretation or adjudication blocks the document
 seal; it is recorded for review rather than replaced by a candidate choice.
+
+## Amendment 1: Raster-visible branch labels absent from extraction
+
+1. **Closed raster-only disposition.** This rule narrowly refines only the
+   `unlocatable label` rejection under **Flow paths and branches** and the
+   corresponding unresolved-source seal abort. A required printed branch-label
+   instance MAY be dispositioned `raster_visible_text_absent` only when a
+   whole-page review confirms both that the label is unambiguously visible in
+   the pinned source page raster and that no exact label bytes are locatable in
+   the exact pinned Poppler UTF-8 page text. Candidate or search-result absence
+   alone is insufficient. A label represented by partial or garbled authority
+   text is not absent and remains under the original abort. An ambiguous raster
+   reading, any other unresolved source interpretation or adjudication, or any
+   other checklist failure also continues to abort the seal.
+
+   `raster_visible_text_absent` is a separate exception disposition. It does
+   not extend the candidate `disposition` enum and is not a `manual_add`. Each
+   exception record has exactly these members, in this displayed order:
+
+   ```text
+   disposition
+   source_document_id
+   questionnaire_page_id
+   interview_wave
+   page_number
+   page_text_utf8_sha256
+   exception_index_on_page
+   visible_label_description
+   approximate_raster_location
+   authority_text_statement
+   ```
+
+   `disposition` is `raster_visible_text_absent` and
+   `authority_text_statement` is
+   `no_label_level_span_or_hash_emitted`. Document, wave, page, page identity,
+   and page-text hash deep-equal the sealed page row. The nonnegative
+   `exception_index_on_page` is the zero-based position in the reviewer's
+   complete raster-source-order enumeration for that page. Exception records
+   follow page-number and then exception-index order; the pair
+   `(questionnaire_page_id, exception_index_on_page)` is unique. The visible
+   label description is human-readable, and the approximate raster location
+   distinguishes the printed instance. The page-text hash binds the
+   complete-review absence finding to the pinned authority bytes.
+
+   Each record must state that **no label-level UTF-8 span or label-level hash
+   is emitted for this branch**. The exception emits no `matched_text`,
+   `matched_utf8_sha256`, `utf8_byte_start`, `utf8_byte_end`, questionnaire
+   occurrence ID, `source_locator_sha256`, `branch_label_sha256`, flow-branch
+   ID, parent, or path, and it creates no occurrence row or branch row. The
+   description, location, and exception index are diagnostic nonauthority
+   metadata only. They must not become branch-label text, a source slice,
+   semantic evidence, or input to an occurrence, branch, relationship, or
+   other authority ID. Covering their bytes with the metadata integrity digest
+   does not promote them to text authority. The pinned Poppler extraction
+   remains the sole text authority: no OCR output, manual transcription,
+   normalization, or neighboring text enters the authority chain as a
+   substitute label.
+
+2. **Fail-closed path consequence.** This is not a second exception or
+   disposition. It is the necessary fail-closed consequence of rule 1 for an
+   otherwise locatable source atom whose complete raster applicability crosses
+   one or more rule-1 exceptions, and it narrowly refines the complete path-set
+   and selected-path-subset checks. The lane must never re-root such an atom,
+   treat it as unconditional, invent a parent or path, or serialize a path
+   containing an exception key. It records the atom in the raster-only census
+   with exactly these members, in this displayed order:
+
+   ```text
+   reason
+   source_document_id
+   questionnaire_page_id
+   interview_wave
+   page_number
+   page_text_utf8_sha256
+   utf8_byte_start
+   utf8_byte_end
+   occurrence_kind
+   matched_text
+   matched_utf8_sha256
+   blocking_exception_keys
+   emitted_questionnaire_occurrence_ids
+   path_consequence
+   ```
+
+   `reason` is `raster_visible_text_absent`. The page fields deep-equal
+   the sealed page row; the offsets, text, and text hash are the exact strict
+   slice from the pinned page text; and `occurrence_kind` is one of the ten
+   existing kinds. `blocking_exception_keys` is the nonempty unique array of
+   `[questionnaire_page_id, exception_index_on_page]` pairs that block
+   raster-complete paths. Every key resolves exactly one rule-1 exception in
+   the same census, and keys follow that exception domain's page-number and
+   exception-index order. The key
+   `(questionnaire_page_id, utf8_byte_start, utf8_byte_end, occurrence_kind)`
+   is unique. Records follow page number and the existing within-page source
+   order, without creating a semantic ordinal or occurrence ID of their own.
+
+   If at least one complete path resolves entirely through emitted extraction-
+   authority branch rows, `emitted_questionnaire_occurrence_ids` is the
+   complete source-order projection of the ordinary occurrence rows emitted at
+   that source atom for the recorded kind and `path_consequence` is
+   `emitted_with_all_resolving_extraction_authority_paths`. Those occurrence
+   rows contain every such resolving path and no other path. If no complete
+   extraction-authority path resolves, the ID array is empty,
+   `path_consequence` is
+   `withheld_no_resolving_extraction_authority_path`, and the atom emits no
+   ordinary occurrence, branch, local anchor or field-purpose classification,
+   or local repeat/alias evidence row. An exact-censused empty-ID record with
+   this withheld consequence is the sole exemption from ordinary occurrence,
+   branch, and local-evidence exact-cover and `omitted label` rejection for that
+   source atom. Omitting the metadata record reactivates those aborts.
+   Candidate rows remain exact-dispositioned under the existing enum; a
+   candidate whose only possible output is withheld has `disposition` set to
+   `rejected` and `stage2_row_ids` set to `[]`, while the sealed rule-2 record
+   supplies the reason. A dependency link may only remove or qualify output. It
+   never supplies positive branch, path, parent, compatibility, or semantic
+   evidence. If the dependency or the complete extraction-authority path set
+   is ambiguous, the original abort still applies.
+
+3. **Raster-only incompleteness census.** A document that uses the rule-1
+   disposition must carry a seal-local census that exact-covers every
+   `raster_visible_text_absent` branch instance once and every rule-2 dependent
+   extracted atom once. The census states total branch-exception count `N`,
+   total dependent-atom count `M`, and per-page enumerations and counts for
+   both domains. Branch per-page counts sum to `N`; dependent-atom per-page
+   counts sum to `M`. `N` counts branch instances, not pages or distinct
+   descriptions, and `M` does not change the branch-exception seal claim. A
+   missing, duplicate, or inconsistent entry reactivates the applicable
+   unlocatable-label or path-completeness abort.
+
+   The exception records and census are sealed handoff metadata, not stage-2
+   output rows, and remain outside both candidate and output adjudication
+   relations. Rule-2 consequence records are also outside those relations, but
+   any ordinary occurrence IDs they name remain subject to normal output
+   adjudication. Both canonical ordered metadata domains, their page counts,
+   `N`, `M`, the affected seal claim, reasons, and consequence statement must
+   be covered by the artifact integrity and seal digests. Mutation checks must
+   reject omission, duplication, reordering, page-identity or page-hash
+   mismatch, bad exact slices or dependency keys, incomplete emitted-ID
+   projection, count or claim mismatch, re-rooting, and reason or consequence
+   drift.
+
+   The census must include this consequence: every enumerated branch is handed
+   off to later global assembly and enters the global catalog as a **CLOSED
+   GAP** with reason `raster_visible_text_absent`; it is never silently omitted.
+   Every dependent atom is handed off with the same reason and its recorded
+   emitted-or-withheld consequence; it never silently enters a missing branch
+   or disappears from the incompleteness account.
+   `CLOSED GAP` closes the audit disposition, not the missing branch's
+   semantics. The census is document-local handoff evidence and does not itself
+   emit a global catalog row or final global ID.
+
+4. **Affected-document seal claim.** Only a document with `N > 0` uses the exact
+   claim template below, replacing `N` with the census total:
+
+   ```text
+   complete-under-extraction-authority with N raster-only exceptions
+   ```
+
+   This is a document-level claim; it does not relabel page rows or convert
+   missing labels into complete occurrence or branch rows. It claims
+   completeness under the pinned text authority subject to the enumerated
+   exceptions, not complete raster-flow recovery.
+
+5. **Fail-closed global consumption.** Q5 and every downstream global-catalog
+   consumer must treat each such CLOSED GAP as absent-with-reason, never as a
+   present or resolved branch, and must preserve the
+   `raster_visible_text_absent` reason. A consumer must not infer or synthesize
+   a label, span, hash, occurrence, branch ID, parent, path, compatibility,
+   root or unconditional status, or semantics from the raster description,
+   OCR, nearby extracted text, or another branch. If an output requires the
+   branch to be present or flow coverage to be exhaustive, the consumer must
+   fail or withhold that output rather than defaulting the branch, narrowing
+   the denominator, or treating the gap as compatible evidence. An emitted
+   rule-2 occurrence applies only on its serialized extraction-authority paths;
+   a consumer must not extend it across a blocking exception. A withheld atom
+   remains absent-with-reason and cannot create a global node or relationship.
+
+6. **Invariance.** This amendment is purely additive. The 74 clean seals remain
+   valid unchanged. A seal with zero raster-only exceptions retains its
+   existing structure, status, bytes, IDs, hashes, and digests; it requires no
+   empty census, reseal, or claim change. Existing page, occurrence, branch,
+   candidate-adjudication, and manual-add schemas remain unchanged, as do every
+   rule and abort not narrowly refined by rules 1 and 2.
