@@ -536,3 +536,368 @@ seal; it is recorded for review rather than replaced by a candidate choice.
    empty census, reseal, or claim change. Existing page, occurrence, branch,
    candidate-adjudication, and manual-add schemas remain unchanged, as do every
    rule and abort not narrowly refined by rules 1 and 2.
+
+## Amendment 1, correction 1: Per-instance attribution and sealed sidecar
+
+This correction is append-only. The six rules below are the complete
+controlling replacement for Amendment 1's six rules above. They supersede the
+earlier Amendment 1 text wherever the two conflict, while leaving every
+pre-Amendment-1 protocol byte and section 19 unchanged.
+
+1. **Closed per-instance raster-only disposition.** This rule narrowly refines
+   only the `unlocatable label` rejection under **Flow paths and branches** and
+   the corresponding unresolved-source seal abort. A required printed
+   branch-label instance MUST be dispositioned
+   `raster_visible_text_absent` if and only if a whole-page review proves both
+   that the specific instance is unambiguously visible in the pinned source
+   page raster and that no nonempty exact span of the pinned Poppler UTF-8 page
+   text is attributable to that same printed instance.
+
+   A span is **attributable** only when whole-page raster and pinned-text
+   review uniquely associates that exact byte interval with the specific
+   printed occurrence. Page-wide byte equality is not attribution. Identical
+   or similar bytes attributable to a different printed occurrence MUST NOT
+   be reused. For example, q79 page 12 prints `1. YES` and `5. NO` at both C32
+   and C38. The pinned spans for C32 are attributable only to C32. They neither
+   supply authority for nor defeat the two C38 exceptions, because no exact
+   pinned span is attributable to either C38 label instance.
+
+   If a nonempty exact pinned span is attributable but is partial or garbled,
+   the source atom MUST instead be treated as an ordinary occurrence. Its
+   `matched_text`, offsets, and hash are the exact pinned bytes as they are;
+   they are never a transcription or visual repair. A visual-fidelity
+   observation MAY appear only in a nonauthority diagnostic correction note
+   and MUST NOT alter the ordinary occurrence or become semantic evidence.
+   Rule 2 may subsequently restrict or withhold that ordinary atom solely
+   because of its complete path consequence. Candidate absence, search-result
+   absence, or the existence of cleaner bytes elsewhere on the page is
+   insufficient for either outcome.
+
+   There is no discretionary arm. When the exception predicate is proved, the
+   exception disposition is mandatory. When same-instance attribution is
+   proved, ordinary exact-byte treatment is mandatory. If the raster reading,
+   same-instance attribution, or either proof is ambiguous, or if any other
+   source interpretation, adjudication, or checklist item remains unresolved,
+   the original abort is the only alternative.
+
+   `raster_visible_text_absent` is a separate exception disposition. It does
+   not extend the candidate `disposition` enum and is not a `manual_add`. Each
+   exception record has exactly these members, in this displayed order:
+
+   ```text
+   disposition
+   source_document_id
+   questionnaire_page_id
+   interview_wave
+   page_number
+   page_text_utf8_sha256
+   exception_index_on_page
+   visible_label_description
+   approximate_raster_location
+   authority_text_statement
+   ```
+
+   `disposition` is `raster_visible_text_absent` and
+   `authority_text_statement` is
+   `no_label_level_span_or_hash_emitted`. Document, wave, page, page identity,
+   and page-text hash deep-equal the sealed page row. The nonnegative
+   `exception_index_on_page` is the zero-based position among the complete
+   rule-1 exception domain for that page in raster source order. Exception
+   records follow page number and then exception index; the pair
+   `(questionnaire_page_id, exception_index_on_page)` is unique. The visible
+   description is human-readable, and the approximate location distinguishes
+   the specific printed instance. Both are diagnostic nonauthority metadata.
+
+   Each record states that no label-level UTF-8 span or label-level hash is
+   emitted for that branch. It emits no `matched_text`,
+   `matched_utf8_sha256`, offsets, questionnaire occurrence ID,
+   `source_locator_sha256`, `branch_label_sha256`, flow-branch ID, parent, or
+   path, and it creates no occurrence or branch row. No exception record
+   member, value, byte, key, index, count, order, or digest may become label
+   text, a source slice, semantic evidence, or an input to an occurrence,
+   branch, relationship, alias, authority ID, or other authority preimage.
+   Sealing the exception metadata does not promote it to text authority. The
+   pinned Poppler extraction remains the sole text authority: OCR, manual
+   transcription, normalization, neighboring text, and another printed
+   occurrence never substitute for the missing label.
+
+2. **Deterministic fail-closed path consequence.** This is not a second
+   exception or disposition. It is the necessary consequence of rule 1 for an
+   otherwise attributable extracted atom whose complete raster applicability
+   crosses one or more rule-1 exceptions. It narrowly refines the complete
+   path-set, selected-path-subset, occurrence-index, and semantic-ordinal
+   checks. The lane MUST NOT re-root the atom, treat it as unconditional,
+   invent a parent or path, or serialize a path containing an exception key.
+   It records the atom in the sidecar with exactly these members, in this
+   displayed order:
+
+   ```text
+   reason
+   source_document_id
+   questionnaire_page_id
+   interview_wave
+   page_number
+   page_text_utf8_sha256
+   utf8_byte_start
+   utf8_byte_end
+   occurrence_kind
+   matched_text
+   matched_utf8_sha256
+   blocking_exception_keys
+   emitted_questionnaire_occurrence_ids
+   path_consequence
+   ```
+
+   `reason` is `raster_visible_text_absent`. The page fields deep-equal the
+   sealed page row. Offsets, text, and text hash are the exact strict slice
+   from pinned page text, and `occurrence_kind` is one of the ten existing
+   kinds. The key
+   `(questionnaire_page_id, utf8_byte_start, utf8_byte_end, occurrence_kind)`
+   is unique. Records follow page number and existing within-page source
+   order; they mint no semantic ordinal, occurrence ID, or authority row.
+
+   A complete path resolves if and only if its first member is exactly the
+   `questionnaire-flow:root` sentinel and every following member, if any,
+   resolves in order to an emitted extraction-authority branch row whose
+   parent is the preceding member. The root sentinel is not an emitted row.
+   Thus a root-only path resolves, and any longer resolving path is the root
+   sentinel followed only by emitted branch rows.
+
+   Let `B(a)` be every raster-applicable complete path of atom `a` that does
+   not resolve solely because it traverses one or more enumerated rule-1
+   exceptions. `blocking_exception_keys` MUST deep-equal the complete
+   duplicate-free all-and-only union of every exception traversed by every
+   path in `B(a)`, ordered by the global exception-record domain's page number
+   and exception index. Each key is exactly
+   `[questionnaire_page_id, exception_index_on_page]` and resolves exactly one
+   rule-1 record in the same sidecar. No blocking key may be omitted, added,
+   duplicated, or reordered. If any nonresolving applicable path has a cause
+   other than an enumerated rule-1 exception, or if the dependency or complete
+   path set is ambiguous, the original abort applies.
+
+   Before blocked paths are filtered, the lane freezes each ordinary atom's
+   `semantic_ordinal_at_span` from the original complete parent-path order and
+   its `occurrence_index_on_page` from the complete attributable extracted-
+   atom source order. Every emitted survivor retains those original values;
+   neither value is densely recomputed after path removal or atom withholding.
+   A withheld attributable atom reserves its pre-filter occurrence-index
+   position, so indices in an affected emitted domain may be sparse. These
+   positions and ordinals are fixed before the sidecar is constructed and are
+   never computed from an exception or census field, key, count, byte, order,
+   or digest. Consequently the occurrence, locator, and branch IDs of every
+   surviving row are stable under blocked-path removal. A dense-renumbering
+   mutation MUST be rejected.
+
+   If at least one complete path resolves, the
+   `emitted_questionnaire_occurrence_ids` array is the complete source-order
+   projection of ordinary occurrence rows emitted at that atom for the
+   recorded kind, and `path_consequence` is
+   `emitted_with_all_resolving_extraction_authority_paths`. Those rows contain
+   every resolving path and no blocked or other path. If no complete path
+   resolves, the ID array is empty, `path_consequence` is
+   `withheld_no_resolving_extraction_authority_path`, and the atom emits no
+   ordinary occurrence, branch, local anchor or field-purpose classification,
+   or local repeat/alias evidence row.
+
+   An exact-censused empty-ID consequence record is the sole exemption from
+   ordinary occurrence, branch, and local-evidence exact cover and the
+   `omitted label` rejection for that source atom. Omitting the consequence
+   record reactivates those aborts. Candidate rows remain exact-dispositioned
+   under the existing enum; a candidate whose only possible output is withheld
+   is `rejected` with `stage2_row_ids: []`. A dependency link only removes or
+   qualifies output. It supplies no positive branch, path, parent,
+   compatibility, or semantic evidence.
+
+   Mutation coverage MUST include an omitted-key mutation that leaves a
+   nonempty `blocking_exception_keys` array and recomputes every count, domain
+   digest, sidecar digest, seal digest, and artifact digest. The validator MUST
+   still reject it. In particular, removing either of q72 H7's two blocking
+   H6 keys while retaining the other is an omitted-key failure, not a lawful
+   nonempty union.
+
+3. **Exact sealed nonauthority sidecar.** An affected artifact has exactly one
+   outer member named `raster_only_incompleteness_census`. In the artifact's
+   displayed outer schema it appears immediately after `correction_note_rows`
+   and immediately before `seal`. It is present if and only if the document's
+   branch-exception count `N` is greater than zero. It is absent, rather than
+   present as an empty object, if and only if `N` is zero.
+
+   The sidecar has exactly these members, in this displayed order:
+
+   ```text
+   schema_version
+   authority_kind
+   document_completeness_claim
+   closed_gap_disposition
+   closed_gap_reason
+   branch_exception_count
+   dependent_atom_count
+   branch_exception_records
+   dependent_atom_consequence_records
+   page_census_rows
+   later_assembly_consequence
+   status
+   ```
+
+   Their fixed scalar values are:
+
+   ```text
+   schema_version = rq_stage2_raster_only_incompleteness_census_nonauthority.v1
+   authority_kind = sealed_nonauthority_sidecar
+   closed_gap_disposition = CLOSED GAP
+   closed_gap_reason = raster_visible_text_absent
+   later_assembly_consequence = fail_or_withhold_exhaustive_flow_outputs_without_global_gap_rows_nodes_or_ids
+   status = complete
+   ```
+
+   `branch_exception_count` is `N`, a positive integer excluding booleans.
+   `dependent_atom_count` is `M`, a nonnegative integer excluding booleans.
+   `branch_exception_records` is the complete canonical ordered array of the
+   exact rule-1 records. `dependent_atom_consequence_records` is the complete
+   canonical ordered array of the exact rule-2 records. No other array name or
+   record shape is lawful.
+
+   `page_census_rows` exact-covers every sealed questionnaire page, including
+   pages with two zero counts and two empty key arrays, in page-number order.
+   Each page row has exactly these members, in this displayed order:
+
+   ```text
+   questionnaire_page_id
+   source_document_id
+   interview_wave
+   page_number
+   page_text_utf8_sha256
+   branch_exception_count
+   branch_exception_keys
+   dependent_atom_count
+   dependent_atom_keys
+   ```
+
+   The first five fields deep-equal the sealed page row. The branch count is
+   the length of `branch_exception_keys`; that array is the complete same-page
+   projection of `[questionnaire_page_id, exception_index_on_page]` keys in
+   the global branch-exception order. The dependent count is the length of
+   `dependent_atom_keys`; that array is the complete same-page projection of
+   `[questionnaire_page_id, utf8_byte_start, utf8_byte_end, occurrence_kind]`
+   keys in the global dependent-record order. Concatenating page key arrays in
+   page order exactly reproduces the corresponding global key domain. Page
+   branch counts sum to `N`, and page dependent counts sum to `M`. `N` counts
+   specific printed branch-label instances, not pages, descriptions, or
+   distinct byte strings.
+
+   An affected seal appends exactly three entries to
+   `row_domain_seal_rows`, immediately after the existing
+   `correction_note_rows` entry, in this order:
+
+   ```text
+   row_domain = raster_only_branch_exception_records
+   row_key_fields = [questionnaire_page_id, exception_index_on_page]
+
+   row_domain = raster_only_dependent_atom_consequence_records
+   row_key_fields = [questionnaire_page_id, utf8_byte_start, utf8_byte_end, occurrence_kind]
+
+   row_domain = raster_only_page_census_rows
+   row_key_fields = [questionnaire_page_id]
+   ```
+
+   Each entry retains the existing exact five-member row-domain-seal schema:
+
+   ```text
+   row_domain
+   row_count
+   row_key_fields
+   row_keyset_sha256
+   row_domain_sha256
+   ```
+
+   Its row count, ordered keyset digest, and ordered row-domain digest are
+   computed from the corresponding nested sidecar array. The seal's
+   `row_domain_seal_count` increases by exactly three, and
+   `row_domain_seal_domain_sha256` is recomputed over the complete ordered
+   seal-row array.
+
+   An affected seal has exactly these members, in this displayed order:
+
+   ```text
+   row_domain_seal_rows
+   row_domain_seal_count
+   row_domain_seal_domain_sha256
+   raster_only_incompleteness_census_sha256
+   seal_status
+   ```
+
+   `raster_only_incompleteness_census_sha256` hashes the terminal-LF canonical
+   JSON bytes of the complete sidecar object. `seal_status` retains its
+   existing lawful value. The existing whole-artifact
+   `integrity.content_sha256` is recomputed under its existing zeroed-self
+   preimage law and covers the outer sidecar, all three nested domains, all
+   sidecar scalar fields, the augmented seal, and the sidecar digest.
+
+   Mutation checks MUST reject a missing, extra, duplicated, or reordered
+   sidecar member, branch record, dependent record, page row, page key, or
+   seal-domain row; a bad page identity or page-text hash; an inexact slice;
+   incomplete emitted-ID projection; count, keyset, domain, sidecar, seal, or
+   artifact-digest drift; a false claim; reason or consequence drift; reuse of
+   another printed occurrence's bytes; transcription repair of a partial
+   slice; root-as-row resolution; dense ordinal or occurrence-index
+   recomputation; and any omitted, extra, duplicated, or reordered blocking
+   exception key even after all enclosing digests are recomputed.
+
+4. **Affected-document claim and sidecar-only CLOSED GAP.** The exact claim is
+   stored only in the sidecar member `document_completeness_claim`. For
+   positive `N`, its value is the following template with `{N}` replaced by
+   the ordinary base-10 representation of `N` without a sign or leading
+   zeroes:
+
+   ```text
+   complete-under-extraction-authority with {N} raster-only exceptions
+   ```
+
+   The claim does not relabel page rows, change page `annotation_status`, or
+   convert a missing label into an occurrence or branch. It claims completeness
+   only under pinned extraction authority subject to the exact sidecar; it does
+   not claim complete raster-flow recovery.
+
+   `CLOSED GAP` is solely the audit disposition inside the sealed
+   `raster_only_incompleteness_census` nonauthority sidecar. No CLOSED GAP row,
+   node, member, or ID is ever added to a section-19 schema or any global
+   catalog. This expressly supersedes the earlier Amendment 1 instruction that
+   a gap enters the global catalog. Section 19 is not amended and has no gap
+   domain.
+
+   The prohibition applies to all later assembly. No exception or census
+   field name, value, record, array, description, location, statement, reason,
+   consequence, status, claim, count, key, index, byte, order, hash, or digest
+   may be copied into, normalized into, or used as an input or preimage for a
+   global row, global node, global ID, authority ID, semantic-evidence row,
+   relationship, alias, hierarchy annotation, era row, flow branch, slot,
+   inventory member, or other authority-bearing output. The sidecar's sole
+   lawful later-assembly effect is to force the applicable fail-or-withhold
+   gate. Even that Boolean gate is never serialized into an authority preimage.
+
+5. **Fail-closed global consumption.** Exact-schema Q5 MUST fail or remain
+   withheld when any input document carries the sidecar. Every other output
+   whose contract requires exhaustive flow coverage MUST likewise fail or be
+   withheld. A consumer MUST NOT create a gap row, default a missing branch,
+   narrow a denominator, treat the gap as compatible evidence, or infer or
+   synthesize a label, span, hash, occurrence, branch ID, parent, path,
+   compatibility, root status, unconditional status, or semantics from the
+   raster, diagnostic metadata, OCR, nearby extraction text, another printed
+   occurrence, or any sidecar value.
+
+   A rule-2 occurrence emitted on independently resolving extraction-authority
+   paths applies only on its serialized resolving paths. A consumer MUST NOT
+   extend it across a blocking exception. A withheld atom remains absent from
+   authority outputs, and neither it nor its sidecar record may create a
+   global node, row, alias, relationship, or ID. The reason remains sealed in
+   the nonauthority sidecar and is never promoted into a section-19 output.
+
+6. **Invariance.** This correction is purely additive. The 74 clean seals
+   remain valid unchanged. A document with `N == 0` retains its existing outer
+   schema, four-member seal, status, bytes, IDs, hashes, digests, and claim; it
+   has no empty sidecar, added seal-domain row, sidecar digest, reseal, or claim
+   change. Existing page, occurrence, branch, candidate-adjudication,
+   output-adjudication, correction-note, and manual-add schemas remain
+   unchanged except for the narrow affected-artifact index and ordinal
+   refinements stated in rule 2. Every other original rule and abort remains
+   in force. Section 19 remains byte-for-byte unamended.
