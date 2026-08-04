@@ -2,10 +2,10 @@
 
 ## State
 
-The ratified Amendment 1 corrections are implemented on
-`claude/ce-rq-doc10`. The regenerated legacy artifact and source review pass
-their independent validator, mutation suite, and focused tests. Independent
-seal review remains before the final progress-file removal and seal commit.
+The ratified Amendment 1 corrections are implemented and independently
+reviewed on `claude/ce-rq-doc10`. The regenerated legacy artifact and source
+review pass every validator, mutation, focused-test, formatting, and review
+gate. Only final progress-file removal and the seal commit remain.
 
 ## Done
 
@@ -42,9 +42,9 @@ seal review remains before the final progress-file removal and seal commit.
   deep-mutation variants; exact JSON equality, explicit non-boolean integer
   checks, submitted-sidecar seal verification, and the complete mutation
   matrix now close both findings.
+- Completed two independent re-reviews plus a fresh final regression review;
+  all returned clean with no remaining actionable findings.
 
 ## Next
 
-- Commit the coherent independent-review fixes and updated progress state.
-- Rerun independent protocol/code review against the fixes.
 - Remove this progress file in the final seal commit and write the lane report.
