@@ -100,14 +100,23 @@ clean pre-title authority rather than treated as final.
 - Independently rejected eight apparent suffix positives: each was the word
   `hours` in an instruction to exclude caregiving hours, while the earlier
   governing `how many hours` phrase is the actual whole-field denotation.
+- Completed the frozen source-wide audit-only replay before regeneration. All
+  89,599 rows produce 80,306 starts in 51,957 matched fields: 8,410 W,
+  71,896 N, and zero U. They partition into 8,388 positive fields, 43,569
+  defeat-only fields, and 37,642 no-match fields, so 8,380 positive fields lie
+  beyond the eight referee witnesses. The 87,771,407-byte row-complete ledger
+  has SHA-256 `633a9039aac2621b320a5b941c1e7c3c9f964a866a6731efd2d97ced8215f76a`;
+  an independent replay is byte-identical. Peak RSS was 942,948,352 bytes.
+- Proved the extended overlay rather than trusting the old vector: raw
+  transitions are D,N→N 71,818, D,W→W 8,410, and W,N→W 19, with zero
+  demotions. Six raw candidates sharing normalized starts are separately
+  pinned and lawfully merge to W. Independent review issued explicit
+  non-audit-regeneration GO.
 
 ## Next
 
-1. Finish the exact-cover assertions and focused tests for the independently
-   closed title adjudication.
-2. Run the audit-only 89,599-row build, prove all 80,306 starts known, and only
-   then rebuild `TITLE_START_AUTHORITY` and `SEGMENT_START_AUTHORITY` from the
-   clean pre-title baseline.
-3. Regenerate the successor vector, all pins, storage floors, fixtures, and
+1. Rebuild `TITLE_START_AUTHORITY` and `SEGMENT_START_AUTHORITY` from the
+   frozen, independently approved raw-only adjudication.
+2. Regenerate the successor vector, all pins, storage floors, fixtures, and
    §24 claims; run focused and full verification and recheck the prefix.
-4. Write the final report output and remove `PROGRESS.md` in the final commit.
+3. Write the final report output and remove `PROGRESS.md` in the final commit.
