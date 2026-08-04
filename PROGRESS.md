@@ -31,14 +31,19 @@ any amendment edit.
   extended adjudication. The one shared segment/start is retained as a
   contextual overlay. Exact selection cover is zero unselected/overselected;
   195 focused authority tests pass.
+- Corrected §24.2.3 to the complete two-wave food reclassification: 10/29
+  followed by 108/124, cumulatively 118 predicates, 153 occurrences, and 139
+  independently positive fields.
+- Replaced §24.4.2's euphemistic pin-history wording with the explicit
+  `148c58a` correct claim, `49ae3cb` false correction/manual-transfer story,
+  and `bd5a071` evidence-route reversal.
 
 ## Next
 
 1. Extend A10-R04 with the complete all-title relation and regenerate every
    census/authority/payload pin.
 2. Regenerate downstream floors, fixtures, and A10-R01..R05.
-3. Repair the cumulative food count and three-act pin history.
-4. Synchronize A10-R04's document contract and regenerated pins with the
+3. Synchronize A10-R04's document contract and regenerated pins with the
    committed transactional implementation.
-5. Run focused and full verification, recheck the protected prefix, write the
+4. Run focused and full verification, recheck the protected prefix, write the
    final report output, then remove `PROGRESS.md` in the final commit.

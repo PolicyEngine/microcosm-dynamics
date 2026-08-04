@@ -41082,10 +41082,15 @@ least one pinned relation and cannot enter a successful build.
 
 The food-family adjudication follows the complete prose. A construction or
 provenance sentence does not deny the independent whole-domain unit sentence
-in the same description. Across the complete corpus, 108 exact construction
-predicates occur in 110 fields with an independent explicit unit sentence;
-all 108 are `no_unit_naming_clause`, not a competing denotation. The
-aggregation veto remains unchanged and is not triggered by context.
+in the same description. The construction-context repair is cumulative and
+occurred in two nonoverlapping waves. Commit `cc6ec71` reclassified 10 exact
+predicate spellings with 29 occurrences, all in independently positive
+fields. Commit `73eea8f` then reclassified 108 additional spellings with 124
+occurrences, 110 in independently positive fields. Thus the complete corpus
+contains 118 reclassified predicates, 153 occurrences, and 139 independently
+positive fields. All 118 are `no_unit_naming_clause`, not competing
+denotations. The aggregation veto remains unchanged and is not triggered by
+context.
 
 In V2470 the broad sentence beginning `This variable's values are based on
 USDA Low-Cost Plan estimates of weekly food costs` is context; the independent
@@ -46002,14 +46007,20 @@ retained preimage exists: 89,599 rows, 21,548,823 canonical bytes, and SHA-256
 The denominator projection remains
 `7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`.
 
-The different 21,504,191-byte relation with SHA-256
+Git records the pin's three-act history. Commit `148c58a` first claimed
+`563b1eae...`; that claim was correct. Commit `49ae3cb` then adopted
+`11189cf4...` as a "correction" and falsely attributed `563b1eae...` to a
+manual transfer with no retained preimage. Commit `bd5a071` reversed that
+correction after reconstructing both relations and proving that §24 forbids
+the evidence-artifact route.
+
+The 21,504,191-byte evidence relation with SHA-256
 `11189cf48eae995d999f12a2155a03dc9c9f9f11804c1a732fc451a71a195f19`
 uses evidence-artifact descriptions. Exactly 11,324 descriptions differ
-bytewise and agree only after U+0020 folding. The two historical identities
-are not interchangeable source alternatives: §24 forbids the evidence route.
-The lawful pin is the independently rebuilt RAW route, whose recomputed
-identity is `563b1eae...`. Raw V418's three spaces make the distinction
-observable and are individually adjudicated.
+bytewise from the raw relation and agree only after U+0020 folding. It is not
+an interchangeable source alternative. The lawful pin is the independently
+rebuilt RAW route, whose full identity is `563b1eae...`. Raw V418's three
+spaces make the distinction observable and are individually adjudicated.
 
 #### 24.4.3 Counts, matrix, and assignments
 
