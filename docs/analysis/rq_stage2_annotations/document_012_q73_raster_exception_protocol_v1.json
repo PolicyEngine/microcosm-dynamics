@@ -1,0 +1,55 @@
+{
+  "affected_local_edge_shape": {
+    "annotation_schema_version": "rq_stage2_document_annotation_local_edges_nonauthority.v1",
+    "appended_raster_seal_members": [
+      "raster_only_branch_exception_count",
+      "raster_only_branch_exception_keyset_sha256",
+      "raster_only_branch_exception_domain_sha256",
+      "raster_only_dependent_atom_consequence_count",
+      "raster_only_dependent_atom_consequence_keyset_sha256",
+      "raster_only_dependent_atom_consequence_domain_sha256",
+      "raster_only_page_census_count",
+      "raster_only_page_census_keyset_sha256",
+      "raster_only_page_census_domain_sha256",
+      "raster_only_incompleteness_census_sha256"
+    ],
+    "affected_outer_member_count": 23,
+    "affected_seal_member_count": 43,
+    "dependent_atom_count": 0,
+    "flow_parent_representation": "direct_parent_occurrence_ids_no_path_products",
+    "outer_sidecar_after": "adjudication_note_rows",
+    "outer_sidecar_before": "output_adjudication_rows",
+    "pre_raster_flat_seal_member_count": 33
+  },
+  "authority_kind": "document_specific_raster_protocol_nonauthority",
+  "controlling_addendum_identity": {
+    "byte_size": 5932,
+    "path": "docs/analysis/rq_stage2_annotations/document_012_q73_local_edge_raster_addendum_v1.md",
+    "raw_sha256": "9048f91963986fa8d967ff6332c9002605310c9861a3129d6c7bd11415600010"
+  },
+  "document_source_position": 12,
+  "exception_rows": [
+    {
+      "canonical_visual_label": "3. RETIRED",
+      "exception_index_on_page": 0,
+      "item_identifier": "D1",
+      "location_clause": "response box 3",
+      "page_number": 4
+    }
+  ],
+  "schema_version": "rq_stage2_document_raster_exception_protocol_local_edges.v1",
+  "source_document_id": "psid-source-document:4613fcb08f2512ce41444c74d3d60ae04b6068fb188131b11229cd791eea7bc5",
+  "status": "document_specific_protocol_table_complete",
+  "visual_fidelity_diagnostic_carrier": {
+    "candidate_mapped_carrier": "adjudication_note_rows.stage2_occurrence_output_binding",
+    "candidate_note_law_override": "diagnostic output rows are extra and excluded from the one-note-per-nonaccepted-candidate law",
+    "exact_cover": "one row per if-and-only-if diagnostic occurrence",
+    "manual_add_carrier": "adjudication_note_rows.stage2_occurrence_output_binding",
+    "note": "The visible printed atom has an attributable partial or garbled pinned UTF-8 slice; the exact slice, offsets, and hash are retained without visual repair.",
+    "note_code": "attributable_garbled_exact_bytes_retained",
+    "output_binding_discriminator": "stage2_occurrence",
+    "output_binding_id_field": "candidate_id equals questionnaire_occurrence_id",
+    "output_binding_order": "after candidate notes in questionnaire-occurrence order",
+    "semantic_evidence": false
+  }
+}
