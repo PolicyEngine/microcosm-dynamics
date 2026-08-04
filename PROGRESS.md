@@ -2,7 +2,7 @@
 
 ## State
 
-The append-only superseding correction is committed and all ten clean-shard regressions pass. Independent protocol and per-case audits are in progress.
+The append-only superseding correction is committed, its actionable independent-review finding is fixed, and the ten clean-shard regressions pass after that fix. The final per-case audit and report assembly remain.
 
 ## Done
 
@@ -16,10 +16,11 @@ The append-only superseding correction is committed and all ten clean-shard regr
 - Defined root-sentinel path resolution, complete-path ordinal and pre-filter occurrence-index retention, all-and-only blocking-key unions, and an omitted-key mutation check.
 - Confined CLOSED GAP data to one exact-schema sealed nonauthority sidecar, defined its nested domains and seal additions, prohibited later global rows/nodes/IDs, and required exact-schema Q5 and exhaustive-flow outputs to fail or remain withheld.
 - Ran the exact ten clean-shard regressions under the required interpreter: `10 passed in 31.07s`.
+- Independent protocol review confirmed F1, F2, F4, and F5 and found one F3 overstatement: mixed non-flow IDs change with their emitted path array. Commit `881fb7a56d81b52ff17941ae247f6b71ccf304cd` now defines the exact pre-filter occurrence-row numbering domain, guarantees stable surviving flow-label IDs, and preserves the existing non-flow ID preimage law.
+- Reran all ten clean-shard regressions after the review fix: `10 passed in 30.25s`.
 
 ## Next
 
 - Run an independent blocker-by-blocker review and correct any actionable findings.
-- Resolve any actionable independent-review findings and rerun affected checks.
 - Run final formatting, append-only, and repository-state checks.
 - Write the final report, remove this progress file to satisfy the final-tree `NO PROGRESS.md` requirement, and commit every coherent step.
