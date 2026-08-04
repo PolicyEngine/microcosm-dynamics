@@ -266,7 +266,7 @@ EXPECTED_A10_R04_PINS = GatePins(
         ("incomplete_source_numeric_authority", 813),
     ),
     count_rows=(
-        ("compiled_source_numeric_grammar", 8024),
+        ("compiled_source_numeric_grammar", 8025),
         (
             "compiled_source_numeric_grammar_padding_underdetermined_exact_replay",
             273,
@@ -281,16 +281,16 @@ EXPECTED_A10_R04_PINS = GatePins(
         ("nonnumeric_source_field_outside_numeric_grammar", 0),
         ("conflicting_source_numeric_format", 1),
         ("unsupported_source_numeric_format", 421),
-        ("incomplete_source_numeric_authority", 12341),
+        ("incomplete_source_numeric_authority", 12340),
     ),
-    count_array_sha256="017baffe4d9e2ee6ce373a93f4f82df1e1b2a42b1a18acd8c3477826df1ec32c",
-    ordered_assignment_sha256="0bc16e56c3c9284070dbf68d3f6cdda9da183629b8dc9e75e32dc124ed6f19f4",
+    count_array_sha256="2347179a44340f53dff3770a2dc23a6bfebffac755ed94efe11dd94543131071",
+    ordered_assignment_sha256="463ab96ca73185dd5e269fb3c8c0891dc358e90f3cb4088590b5c442240d652b",
     status_matrix_rows=(
         (
             "compiled_source_numeric_grammar",
-            (303, 200, 2185, 1789, 2268, 1279),
-            8024,
-            "d9a3ebfcdf376a065f78745c0adeddfa3ed7ace44dbe74319cabdc22402c5669",
+            (303, 201, 2185, 1789, 2268, 1279),
+            8025,
+            "afd57212dc648460deb6992c662aa18c147191a4fef146e2025c72903b6acc6f",
         ),
         (
             "compiled_source_numeric_grammar_padding_underdetermined_exact_replay",
@@ -342,14 +342,14 @@ EXPECTED_A10_R04_PINS = GatePins(
         ),
         (
             "incomplete_source_numeric_authority",
-            (798, 451, 3081, 2058, 3712, 2241),
-            12341,
-            "966a4e99d37cde2c4836bc2ab73f9a41ae3da30d3b5229020f88d22dd73d14f5",
+            (798, 450, 3081, 2058, 3712, 2241),
+            12340,
+            "320e9b6acd02a30294f7abfdb8fd47c18949caaff00c49c0bc40d2bcdb345e4a",
         ),
     ),
-    movement_row_count=11528,
-    movement_rows_sha256="03f1a9cea18b340ee7068075ca1e9bea1e1337b10f2f7e5d89092ac866cfb4fe",
-    movement_key_sha256="fe844ca115d9c5314ce76608043d46393d4b129e7334cffcf761bb6e7604007c",
+    movement_row_count=11527,
+    movement_rows_sha256="44033f304977ed301dd27ea58ee46139ffe1afb400be7bf836765c8f4e78e97b",
+    movement_key_sha256="4da651663dfc235dac50ca250ab95ac11a7fe34f6df2e918836fe283888be70e",
     failure_reason_rows=(
         (
             "conflicting_source_numeric_format",
@@ -389,12 +389,12 @@ EXPECTED_A10_R04_PINS = GatePins(
         (
             "incomplete_source_numeric_authority",
             "unresolved_typed_value_unit_no_source_authority",
-            11528,
+            11527,
         ),
     ),
     failure_reason_row_count=8,
-    failure_reason_rows_byte_count=211210,
-    failure_reason_rows_sha256="aeba54648c4cf53eef5c0e755582f81735b4c6fd5d2e7b01089163d11afded62",
+    failure_reason_rows_byte_count=211195,
+    failure_reason_rows_sha256="024ea03ad9c4f4cac6c490e3899bba74a9c78f7de1737cd5c4a7187b69b5bfda",
     actual_candidate_table_row_count=82,
     actual_candidate_occurrence_count=322,
     actual_candidate_unadjudicated_count=0,
@@ -408,18 +408,18 @@ EXPECTED_A10_R04_PINS = GatePins(
     title_header_candidate_table_row_count=89599,
     title_header_matched_field_count=51957,
     title_header_candidate_occurrence_count=80306,
-    title_header_positive_start_count=8202,
-    title_header_defeated_start_count=72104,
+    title_header_positive_start_count=8203,
+    title_header_defeated_start_count=72103,
     title_header_unadjudicated_start_count=0,
-    title_header_positive_field_count=8183,
-    title_header_defeat_field_count=43774,
+    title_header_positive_field_count=8184,
+    title_header_defeat_field_count=43773,
     title_header_no_match_field_count=37642,
-    title_header_candidate_table_relation_byte_count=89412166,
+    title_header_candidate_table_relation_byte_count=89412192,
     title_header_candidate_table_relation_sha256=(
-        "407d9aec93f7c9f42e28cf84c57f336a794be9938cfb78cbea5b8958d63adb0a"
+        "d2d2b032f15650ab76a3ad78e09b125c066ad5a09d0f508fbd54927ac1cd9a6c"
     ),
     title_header_candidate_table_array_sha256=(
-        "203a5903bbbac2f9cfeeaffad184a7fd4dd25fe98e2f942bc150695cdbfe1051"
+        "da916ff99bb0b25883494509516929ab38a83491323626305b3cb188735c11fe"
     ),
     denotation_candidate_table_row_count=1114747,
     denotation_candidate_occurrence_count=2240669,
@@ -430,32 +430,32 @@ EXPECTED_A10_R04_PINS = GatePins(
     denotation_candidate_unselected_count=0,
     denotation_candidate_overselected_count=0,
     denotation_candidate_unadjudicated_count=0,
-    denotation_candidate_table_sha256="aa7d466df0460808cb17e4f692e40760d5b4b2ea90c15cce322df00f5b8baff9",
+    denotation_candidate_table_sha256="6b8908d0e239ab79d71a34e13c946f4b4adc5da8a62ad69dd98be6c6f39ab808",
     denotation_start_occurrence_row_count=2240669,
-    denotation_start_occurrence_byte_count=269160095,
-    denotation_start_occurrence_sha256="f1f56750744b3cb11531fcab1e6fee9d97655d32eb6241d1c6a92d443e66b27f",
+    denotation_start_occurrence_byte_count=269160082,
+    denotation_start_occurrence_sha256="7513022d6f79af192c935cda2e1c47728a5d326a28618b8fe041c8ffb0a5c981",
     denotation_start_partition_rows=(
-        ("whole_domain_denotation", 16460),
-        ("explicit_no_whole_domain_denotation", 76558),
+        ("whole_domain_denotation", 16461),
+        ("explicit_no_whole_domain_denotation", 76557),
         ("explicit_no_denotation", 2147651),
         ("unadjudicated_start", 0),
     ),
     segment_start_authority_row_count=59445,
     segment_start_authority_start_count=1114747,
     segment_start_authority_relation_byte_count=8466288,
-    segment_start_authority_relation_sha256="15010ecdc6985e2a69f60ab627ad58b28981d536500087e9c2702277a5974281",
-    segment_start_authority_array_sha256="e9fe527412664f86654f3b423d4422a23bb5966b128b98e3136e391e45f7a04c",
+    segment_start_authority_relation_sha256="1b0b81c08b601fae0c212dbae8a3671f3dd498a202c7fc5ee754f775c0b62bac",
+    segment_start_authority_array_sha256="17ee53b725abca483a24c65c351d0d25b1e7af996a49f267fbe9048e88319af7",
     coding_start_authority_row_count=203,
     coding_start_authority_relation_byte_count=31396,
     coding_start_authority_relation_sha256="6f164c6772def69a29a57e1de04b3927ab8f56141bc2a8c6f0dee0964c8da6bf",
     coding_start_authority_array_sha256="ac2bddbed10bb445215bb19354259685efe24c82b2f59b258dec5d23fcf8497b",
     title_start_authority_row_count=54185,
-    title_start_authority_relation_byte_count=16636024,
+    title_start_authority_relation_byte_count=16636043,
     title_start_authority_relation_sha256=(
-        "d25d9312c6e88ed80896aee07c2133d1745214214104bedad73ae661294c7117"
+        "6e52b2586515ca676e0a58c5c4ba88888f14cf654c06cebbaf2b07dc2cb2dba2"
     ),
     title_start_authority_array_sha256=(
-        "ebccedca54e914da8a1f9f20a39657e220f80346df84c8bc45834169c4b971df"
+        "197db7e97c2224805e11978b28e83219c99fad4dc209b933c9c20d87ba321ce6"
     ),
     anchor_relation_row_count=105,
     anchor_relation_byte_count=4421,
@@ -497,7 +497,7 @@ EXPECTED_A10_R04_PINS = GatePins(
     unit_bearing_relation_byte_count=238735,
     unit_bearing_relation_sha256="354de946fbb0c15f05eb1c5b202bbbd8cdc5913922cf8c402e6e253699daa153",
     unit_bearing_relation_array_sha256="0e7a96f1146063da99dfa576eb254e38cf577762522911e6332863ef9992d6b8",
-    census_payload_sha256="4cd1c37140127a3cc0c48910648f091e817d34d4631966dd66bec75165d39159",
+    census_payload_sha256="94ce6cb655cc7f0b86984a008a3c59934e42be4e86d6ce5ce16bb38dc48cb741",
 )
 
 

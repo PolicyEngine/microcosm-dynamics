@@ -64,6 +64,9 @@ from populace_dynamics.data.psid_unit_predicate_authority import (
     SEGMENT_START_AUTHORITY,
 )
 from populace_dynamics.data.psid_unit_title_authority import (
+    CURRENCY_DEFAULT_REMOVAL_EVENTS,
+    CURRENCY_DEFAULT_REMOVED_FIELD_PROJECTION,
+    OUTPUT_LABEL_ENDING_ADJUDICATION,
     TITLE_GENERIC_UNIT_FAMILIES,
     TITLE_LITERAL_FAMILIES,
     TITLE_START_AUTHORITY,
@@ -235,6 +238,50 @@ RAW_V5076 = (
     "Tax credit dollars"
 )
 
+RAW_V6196 = (
+    "1977 Federal Income Tax Low Income Credit - Head and Wife\n"
+    'The Federal government still allows the "negative income tax" begun in '
+    "1975; this tax\n"
+    "credit is available to low income wage earners with independent children "
+    "and who maintain\n"
+    "a dwelling. (See V5800 and Part I, Section 5 of this volume.)\n"
+    "This tax credit = the lesser of:\n"
+    "a) 10% (V5796 - (V5794 + V5795) or\n"
+    "b) $400 - 10% (V5796-$4,000), whichever is smaller, but not\n"
+    "a negative number\n"
+    "Tax credit dollars"
+)
+
+STANDALONE_OUTPUT_LABEL_WITNESSES = (
+    (
+        1976,
+        "V5076",
+        RAW_V5076,
+        288,
+        295,
+        (
+            ("nominal_year_token", 64, 68, "year"),
+            ("percent_symbol", 183, 184, "%"),
+            ("dollar_symbol", 220, 221, "$"),
+            ("percent_symbol", 234, 235, "%"),
+            ("dollar_symbol", 249, 250, "$"),
+        ),
+    ),
+    (
+        1978,
+        "V6196",
+        RAW_V6196,
+        453,
+        460,
+        (
+            ("percent_symbol", 334, 335, "%"),
+            ("dollar_symbol", 367, 368, "$"),
+            ("percent_symbol", 376, 377, "%"),
+            ("dollar_symbol", 385, 386, "$"),
+        ),
+    ),
+)
+
 FORMULA_DEFEAT_WITNESSES = (
     (
         1975,
@@ -242,6 +289,7 @@ FORMULA_DEFEAT_WITNESSES = (
         "Amount saved by using food stamps in 1974\n"
         "(Dollar value of food bought with food stamps minus dollars spent to "
         "buy food stamps)",
+        "explanatory_body_prose_defeat",
     ),
     (
         1976,
@@ -249,6 +297,7 @@ FORMULA_DEFEAT_WITNESSES = (
         "Amount saved by using food stamps in 1975\n"
         "(Dollar value of food bought with food stamps minus dollars spent to "
         "buy food stamps)",
+        "explanatory_body_prose_defeat",
     ),
     (
         1969,
@@ -260,6 +309,7 @@ FORMULA_DEFEAT_WITNESSES = (
         "This variable not comparable to 1968 variable since nonleisure in 1968 "
         "includes travel to\n"
         "work time of Head and Wife while in 1967 it did not",
+        "formula_or_operand_defeat",
     ),
     (
         1969,
@@ -271,6 +321,7 @@ FORMULA_DEFEAT_WITNESSES = (
         "This variable IS comparable to 1968 variable, since travel to work time "
         "has been added\n"
         "back into leisure to make it comparable",
+        "formula_or_operand_defeat",
     ),
 )
 
@@ -1124,11 +1175,34 @@ def test_monetary_context_without_explicit_currency_does_not_name_a_unit(
     assert field_unit(description)[0] is None
 
 
-def test_v5076_standalone_output_label_outranks_neighboring_formula() -> None:
+@pytest.mark.parametrize(
+    ("wave", "field", "description", "start", "end", "negative_vector"),
+    STANDALONE_OUTPUT_LABEL_WITNESSES,
+)
+def test_standalone_output_label_outranks_neighboring_formula(
+    wave: int,
+    field: str,
+    description: str,
+    start: int,
+    end: int,
+    negative_vector: tuple[tuple[str, int, int, str], ...],
+) -> None:
     table = title_header_candidate_table(
-        [_row(1976, "V5076", COMPILED, RAW_V5076)]
+        [_row(wave, field, COMPILED, description)]
     )[0]
     rows = table["candidate_adjudications"]
+    assert (
+        tuple(
+            (
+                row["family"],
+                row["start_utf8_byte"],
+                row["end_utf8_byte"],
+                row["spelling"],
+            )
+            for row in rows[:-1]
+        )
+        == negative_vector
+    )
     assert all(
         row["adjudication"] == "explicit_no_whole_domain_denotation"
         and row["reason"] == "formula_or_operand_defeat"
@@ -1136,28 +1210,137 @@ def test_v5076_standalone_output_label_outranks_neighboring_formula() -> None:
     )
     assert rows[-1] == {
         "family": "nominal_dollar_token",
-        "start_utf8_byte": 288,
-        "end_utf8_byte": 295,
+        "start_utf8_byte": start,
+        "end_utf8_byte": end,
         "spelling": "dollars",
         "typed_value_unit": "united_states_dollar",
         "adjudication": "whole_domain_denotation",
         "reason": "standalone_output_label_names_currency",
     }
-    assert title_header_disposition(RAW_V5076) == (
+    assert title_header_disposition(description) == (
         "united_states_dollar",
         "derived_from_title_denotation",
     )
-    assert field_unit(RAW_V5076) == (
+    assert field_unit(description) == (
         "united_states_dollar",
         "derived_from_title_denotation",
     )
 
 
 @pytest.mark.parametrize(
-    ("wave", "field", "description"), FORMULA_DEFEAT_WITNESSES
+    ("description", "family", "expected"),
+    (
+        (
+            "Tax credit dollars",
+            "nominal_dollar_token",
+            (
+                "Tax credit dollars",
+                True,
+                "exact_standalone_output_label_line",
+            ),
+        ),
+        (
+            "dollars",
+            "nominal_dollar_token",
+            (
+                "dollars",
+                False,
+                "bare_unit_token_has_no_label_prefix",
+            ),
+        ),
+        (
+            "Amount per hour",
+            "per_hour_rate_phrase",
+            (
+                "Amount per hour",
+                False,
+                "compound_or_rate_family_not_direct_unit",
+            ),
+        ),
+        (
+            "Last two digits of year",
+            "nominal_year_token",
+            (
+                "Last two digits of year",
+                False,
+                "encoded_coordinate_not_quantity_output",
+            ),
+        ),
+        ("Actual tax credit dollars", "nominal_dollar_token", None),
+        ("Code tax credit dollars", "nominal_dollar_token", None),
+        ("tax credit dollars", "nominal_dollar_token", None),
+        (
+            "One two three four five six seven eight dollars",
+            "nominal_dollar_token",
+            None,
+        ),
+        ("Tax credit dollars formula", "nominal_dollar_token", None),
+    ),
+)
+def test_exact_standalone_output_label_line_predicate(
+    description: str,
+    family: str,
+    expected: tuple[str, bool, str] | None,
+) -> None:
+    script = (
+        Path(__file__).parents[2]
+        / "scripts"
+        / "rebuild_amendment10_title_authority.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "amendment10_output_label", script
+    )
+    assert spec is not None and spec.loader is not None
+    rebuild = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rebuild)
+
+    candidate = next(
+        candidate
+        for candidate in rebuild.title_header_candidates(description)
+        if candidate[0] == family
+    )
+    assert (
+        rebuild._standalone_output_label_ending(description, candidate)
+        == expected
+    )
+
+
+def test_removed_field_projection_filters_in_denominator_order() -> None:
+    script = (
+        Path(__file__).parents[2]
+        / "scripts"
+        / "rebuild_amendment10_title_authority.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "amendment10_removed_field_projection", script
+    )
+    assert spec is not None and spec.loader is not None
+    rebuild = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rebuild)
+
+    denominator = (
+        (2001, "V2"),
+        (2000, "V0"),
+        (2002, "V9"),
+        (2003, "V7"),
+    )
+    events = (
+        (2003, "V7", "yearly-money"),
+        (2001, "V2", "hourly-money"),
+        (2003, "V7", "monthly-money"),
+    )
+    assert rebuild._removed_field_projection(denominator, events) == (
+        (2001, "V2"),
+        (2003, "V7"),
+    )
+
+
+@pytest.mark.parametrize(
+    ("wave", "field", "description", "expected_reason"),
+    FORMULA_DEFEAT_WITNESSES,
 )
 def test_neighboring_formula_defeats_remain_closed(
-    wave: int, field: str, description: str
+    wave: int, field: str, description: str, expected_reason: str
 ) -> None:
     table = title_header_candidate_table(
         [_row(wave, field, COMPILED, description)]
@@ -1165,6 +1348,7 @@ def test_neighboring_formula_defeats_remain_closed(
     assert table["candidate_adjudications"]
     assert all(
         row["adjudication"] == "explicit_no_whole_domain_denotation"
+        and row["reason"] == expected_reason
         for row in table["candidate_adjudications"]
     )
     assert field_unit(description)[0] is None
@@ -2996,9 +3180,8 @@ def test_ordered_assignment_binds_a_retained_resolution_reason() -> None:
     assert first["ordered_assignment_sha256"] == canonical_sha256(
         [(1968, "A", COMPILED, "first_retained_reason")]
     )
-    assert (
-        first["ordered_assignment_sha256"]
-        != (changed["ordered_assignment_sha256"])
+    assert first["ordered_assignment_sha256"] != (
+        changed["ordered_assignment_sha256"]
     )
 
 
@@ -3183,6 +3366,75 @@ def test_occurrence_identity_binds_every_start_and_exact_cover() -> None:
 
 
 def test_frozen_semantic_authorities_have_exact_identity() -> None:
+    assert len(OUTPUT_LABEL_ENDING_ADJUDICATION) == 21
+    assert len(canonical_json_bytes(OUTPUT_LABEL_ENDING_ADJUDICATION)) == 2_425
+    assert canonical_sha256(OUTPUT_LABEL_ENDING_ADJUDICATION) == (
+        "7a3865642ec7e2795a56dfdeaacc69b4a7b2afdabe2e2457ce1b0f1badaaf6d5"
+    )
+    assert Counter(
+        (row[5], row[6]) for row in OUTPUT_LABEL_ENDING_ADJUDICATION
+    ) == {
+        (False, "bare_unit_token_has_no_label_prefix"): 2,
+        (False, "compound_or_rate_family_not_direct_unit"): 4,
+        (False, "encoded_coordinate_not_quantity_output"): 13,
+        (True, "exact_standalone_output_label_line"): 2,
+    }
+    assert {
+        (row[0], row[1]) for row in OUTPUT_LABEL_ENDING_ADJUDICATION if row[5]
+    } == {(1976, "V5076"), (1978, "V6196")}
+
+    assert len(CURRENCY_DEFAULT_REMOVAL_EVENTS) == 209
+    assert Counter(row[2] for row in CURRENCY_DEFAULT_REMOVAL_EVENTS) == {
+        "hourly-money": 80,
+        "monthly-money": 57,
+        "money-question/per-hour": 37,
+        "per-week-money": 3,
+        "unmarked-amount/hour": 6,
+        "yearly-money": 26,
+    }
+    event_key_counts = Counter(
+        (wave, field)
+        for wave, field, _false_class in CURRENCY_DEFAULT_REMOVAL_EVENTS
+    )
+    assert {
+        key: count for key, count in event_key_counts.items() if count > 1
+    } == {
+        (1969, "V647"): 2,
+        (1969, "V663"): 2,
+        (1969, "V667"): 2,
+    }
+    recomputed_projection = tuple(
+        dict.fromkeys(
+            (wave, field)
+            for wave, field, _false_class in CURRENCY_DEFAULT_REMOVAL_EVENTS
+        )
+    )
+    assert recomputed_projection == CURRENCY_DEFAULT_REMOVED_FIELD_PROJECTION
+    assert len(recomputed_projection) == 206
+    assert len(set(recomputed_projection)) == 206
+    assert all(
+        isinstance(wave, int) and isinstance(field, str)
+        for wave, field in recomputed_projection
+    )
+    assert len(canonical_json_bytes(recomputed_projection)) == 3_339
+    assert canonical_sha256(recomputed_projection) == (
+        "52652010ae3956fc7e419f5163ecd6d00762e8a888e46ca117fc8bea51f39777"
+    )
+    assert CURRENCY_DEFAULT_REMOVED_FIELD_PROJECTION[:6] == (
+        (1968, "V337"),
+        (1968, "V338"),
+        (1968, "V413"),
+        (1969, "V647"),
+        (1969, "V663"),
+        (1969, "V667"),
+    )
+    assert CURRENCY_DEFAULT_REMOVED_FIELD_PROJECTION[-4:] == (
+        (2023, "ER82521"),
+        (2023, "ER85702"),
+        (2023, "ER85708"),
+        (2023, "ER85710"),
+    )
+
     assert len(TITLE_START_AUTHORITY) == 54_185
     assert len(
         {
@@ -3191,7 +3443,7 @@ def test_frozen_semantic_authorities_have_exact_identity() -> None:
         }
     ) == len(TITLE_START_AUTHORITY)
     assert canonical_sha256(TITLE_START_AUTHORITY) == (
-        "ebccedca54e914da8a1f9f20a39657e220f80346df84c8bc45834169c4b971df"
+        "197db7e97c2224805e11978b28e83219c99fad4dc209b933c9c20d87ba321ce6"
     )
     assert canonical_sha256(TITLE_LITERAL_FAMILIES) == (
         "c5f6b75b64ebd86134e1b655c5d522fcd18dc2179fd28fa2c66a0943465e2913"
@@ -3229,7 +3481,7 @@ def test_frozen_semantic_authorities_have_exact_identity() -> None:
         len(vector) for _segment, vector in SEGMENT_START_AUTHORITY
     ) == (1_114_747)
     assert canonical_sha256(SEGMENT_START_AUTHORITY) == (
-        "e9fe527412664f86654f3b423d4422a23bb5966b128b98e3136e391e45f7a04c"
+        "17ee53b725abca483a24c65c351d0d25b1e7af996a49f267fbe9048e88319af7"
     )
     assert all(
         vector and len(vector) == segment.count(" ") + 1

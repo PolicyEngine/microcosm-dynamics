@@ -43,6 +43,7 @@ from populace_dynamics.data.psid_unit_authority import (
     _title_editorial_note_row,
     _title_selector_spans,
     _word_start_offsets,
+    canonical_json_bytes,
     canonical_sha256,
     normalize_description,
     title_header_candidates,
@@ -259,6 +260,12 @@ CALENDAR_COHORT_SHA256 = (
 )
 RAW_INPUT_RELATION_SHA256 = (
     "563b1eaede9dcb5a085d8014dd3a4aacb2d3419ce7d0a0eb65063753b375ca6e"
+)
+OUTPUT_LABEL_ENDING_ADJUDICATION_SHA256 = (
+    "7a3865642ec7e2795a56dfdeaacc69b4a7b2afdabe2e2457ce1b0f1badaaf6d5"
+)
+CURRENCY_DEFAULT_REMOVED_FIELD_PROJECTION_SHA256 = (
+    "52652010ae3956fc7e419f5163ecd6d00762e8a888e46ca117fc8bea51f39777"
 )
 SEMANTIC_COMPONENT_DEDUP_REGRESSIONS = {
     "ER49467": "AMOUNT FROM PREVIOUS EMPLOYER",
@@ -708,14 +715,68 @@ def _question_line_suffix_positive(
     return None
 
 
+def _standalone_output_label_ending(
+    description: str,
+    candidate: tuple[str, int, int, str],
+) -> tuple[str, bool, str] | None:
+    """Adjudicate one mechanically label-shaped, line-final body ending.
+
+    The caller supplies a maximal full-body candidate.  This superdomain is
+    otherwise field-blind: an exact physical line of one to eight ASCII words
+    must end at the candidate, must not be an Actual/Code statement head, and
+    must either begin with ASCII uppercase or consist only of the candidate.
+    A qualifying output label additionally needs a nonempty label prefix, a
+    directly mapped candidate family, and no encoded ``digit(s) of``
+    coordinate marker.
+    """
+
+    family = candidate[0]
+    start, end = _candidate_char_span(description, candidate)
+    line_start = description.rfind("\n", 0, start) + 1
+    line_end = description.find("\n", start)
+    if line_end < 0:
+        line_end = len(description)
+    line = description[line_start:line_end]
+    if (
+        end != line_end
+        or re.fullmatch(r"[A-Za-z]+(?: [A-Za-z]+){0,7}", line) is None
+        or line.startswith(("Actual ", "Code "))
+        or not ("A" <= line[0] <= "Z" or line == candidate[3])
+    ):
+        return None
+    prefix = description[line_start:start]
+    if not prefix.strip():
+        return line, False, "bare_unit_token_has_no_label_prefix"
+    if FAMILY_UNIT.get(family) is None:
+        return line, False, "compound_or_rate_family_not_direct_unit"
+    if re.search(r"\bdigits?\b", prefix, re.ASCII):
+        return line, False, "encoded_coordinate_not_quantity_output"
+    return line, True, "exact_standalone_output_label_line"
+
+
+def _removed_field_projection(
+    denominator_field_keys: tuple[tuple[int, str], ...],
+    removal_events: tuple[tuple[int, str, str], ...],
+) -> tuple[tuple[int, str], ...]:
+    """Filter denominator order to fields named by at least one event."""
+
+    removed_keys = {
+        (wave, field_id) for wave, field_id, _false_class in removal_events
+    }
+    return tuple(key for key in denominator_field_keys if key in removed_keys)
+
+
 def _unmarked_output_positive(
-    field_id: str,
     description: str,
     candidate: tuple[str, int, int, str],
 ) -> tuple[str, str] | None:
-    """Admit only exact source-audited unmarked output subtitle starts."""
+    """Admit exact unmarked output subtitle starts under the general law."""
 
     family = candidate[0]
+    standalone = _standalone_output_label_ending(description, candidate)
+    if standalone is not None and standalone[1]:
+        unit = FAMILY_UNIT[family]
+        return unit, "standalone_output_label_names_currency"
     start, _end = _candidate_char_span(description, candidate)
     line_start = description.rfind("\n", 0, start) + 1
     line_end = description.find("\n", start)
@@ -730,13 +791,6 @@ def _unmarked_output_positive(
         if line_end < len(description)
         else ""
     )
-    if field_id == "V5076" and line == "Tax credit dollars":
-        if family == "nominal_dollar_token":
-            return (
-                "united_states_dollar",
-                "standalone_output_label_names_currency",
-            )
-        return None
     if line == "Number of years from now":
         if family == "number_of_years":
             return "year", "unmarked_year_output_title_denotation"
@@ -877,9 +931,9 @@ def _header_selector_occurrences(
 ) -> tuple[tuple[str, int, int, str, str, bool], ...]:
     """Enumerate every exact nested selector component and byte span."""
 
-    found: dict[
-        tuple[int, int, str], tuple[str, int, int, str, str, bool]
-    ] = {}
+    found: dict[tuple[int, int, str], tuple[str, int, int, str, str, bool]] = (
+        {}
+    )
     kind_rank = {
         "double_hyphen": 0,
         "split_hyphen": 1,
@@ -1234,6 +1288,7 @@ def _adjudicate_context(
     row: dict[str, Any],
     candidates: tuple[tuple[str, int, int, str], ...],
     old_rows_by_sha: dict[str, list[tuple[Any, ...]]],
+    currency_default_removals: list[tuple[int, str, str]] | None = None,
 ) -> list[tuple[str | None, str, str]]:
     """Return one explicit W/N decision for each title candidate."""
 
@@ -1250,6 +1305,16 @@ def _adjudicate_context(
         for old in old_rows_by_sha.get(sha, [])
         if old[7] == "whole_domain_denotation" and old[6] is not None
     ]
+
+    def record_currency_default_removal(false_class: str) -> None:
+        if currency_default_removals is not None:
+            currency_default_removals.append(
+                (
+                    row["interview_wave"],
+                    row["raw_field_id"],
+                    false_class,
+                )
+            )
 
     selected: dict[int, tuple[str, str]] = {}
     forced_negative: dict[int, str] = {}
@@ -1544,12 +1609,15 @@ def _adjudicate_context(
         for index, candidate in enumerate(candidates):
             family = candidate[0]
             if family == "per_hour_rate_phrase":
-                if (
+                would_select = bool(
                     MONEY_WORDS.search(header)
-                    and EXPLICIT_US_CURRENCY.search(description)
                     and "SALAR" not in description.upper()
                     and not _is_threshold(header, candidate)
-                ):
+                )
+                has_currency = bool(EXPLICIT_US_CURRENCY.search(description))
+                if would_select and not has_currency:
+                    record_currency_default_removal("money-question/per-hour")
+                if would_select and has_currency:
                     select(
                         index,
                         "united_states_dollar_per_hour",
@@ -1574,6 +1642,7 @@ def _adjudicate_context(
                             "money_question_denotes_dollars_per_week",
                         )
                     else:
+                        record_currency_default_removal("per-week-money")
                         forced_negative[index] = (
                             "currency_unmarked_money_per_week_phrase"
                         )
@@ -1650,11 +1719,14 @@ def _adjudicate_context(
                     )
                     or re.search(r"--\s*(?:AMOUNT|TIME UNIT)", description)
                 )
-                if (
+                would_select = bool(
                     re.search(r"\bhourly (?:earnings?|wage|rate)\b", lower)
-                    and EXPLICIT_US_CURRENCY.search(description)
                     and not defeated
-                ):
+                )
+                has_currency = bool(EXPLICIT_US_CURRENCY.search(description))
+                if would_select and not has_currency:
+                    record_currency_default_removal("hourly-money")
+                if would_select and has_currency:
                     select(
                         index,
                         "united_states_dollar_per_hour",
@@ -1663,9 +1735,11 @@ def _adjudicate_context(
                 else:
                     forced_negative[index] = "hourly_status_or_input_phrase"
             elif family == "yearly_morphology":
-                if YEARLY_MONEY_WORDS.search(
-                    header
-                ) and EXPLICIT_US_CURRENCY.search(description):
+                would_select = bool(YEARLY_MONEY_WORDS.search(header))
+                has_currency = bool(EXPLICIT_US_CURRENCY.search(description))
+                if would_select and not has_currency:
+                    record_currency_default_removal("yearly-money")
+                if would_select and has_currency:
                     select(
                         index,
                         "united_states_dollar",
@@ -1694,12 +1768,18 @@ def _adjudicate_context(
                         "weekly_reference_or_unsupported_rate"
                     )
             elif family == "monthly_morphology":
-                if re.search(
-                    r"\bmonthly (?:mortgage|loan) payments?\b|"
-                    r"--MONTHLY\s+AMOUNT\b|\bAFDC Maximum Monthly Allowance\b",
-                    description,
-                    re.IGNORECASE,
-                ) and EXPLICIT_US_CURRENCY.search(description):
+                would_select = bool(
+                    re.search(
+                        r"\bmonthly (?:mortgage|loan) payments?\b|"
+                        r"--MONTHLY\s+AMOUNT\b|\bAFDC Maximum Monthly Allowance\b",
+                        description,
+                        re.IGNORECASE,
+                    )
+                )
+                has_currency = bool(EXPLICIT_US_CURRENCY.search(description))
+                if would_select and not has_currency:
+                    record_currency_default_removal("monthly-money")
+                if would_select and has_currency:
                     select(
                         index,
                         "united_states_dollar",
@@ -2151,9 +2231,19 @@ def _adjudicate_context(
     for index, candidate in enumerate(all_candidates):
         if candidate not in full_body_delta:
             continue
-        positive = _unmarked_output_positive(
-            row["raw_field_id"], description, candidate
-        )
+        start, _end = _candidate_char_span(description, candidate)
+        line_start = description.rfind("\n", 0, start) + 1
+        line_end = description.find("\n", start)
+        if line_end < 0:
+            line_end = len(description)
+        line = description[line_start:line_end]
+        if (
+            candidate[0] == "per_hour_rate_phrase"
+            and line in {"Amount per hour", "Amount per hour."}
+            and EXPLICIT_US_CURRENCY.search(description) is None
+        ):
+            record_currency_default_removal("unmarked-amount/hour")
+        positive = _unmarked_output_positive(description, candidate)
         if positive is None:
             continue
         forced_negative.pop(index, None)
@@ -2213,7 +2303,12 @@ def _adjudicate_context(
     return result
 
 
-def _render_title_module(authority: tuple[tuple[Any, ...], ...]) -> str:
+def _render_title_module(
+    authority: tuple[tuple[Any, ...], ...],
+    output_label_endings: tuple[tuple[Any, ...], ...],
+    currency_default_removal_events: tuple[tuple[int, str, str], ...],
+    currency_default_removed_fields: tuple[tuple[int, str], ...],
+) -> str:
     literal = pprint.pformat(
         TITLE_LITERAL_FAMILIES, width=88, sort_dicts=False
     )
@@ -2221,6 +2316,15 @@ def _render_title_module(authority: tuple[tuple[Any, ...], ...]) -> str:
         TITLE_GENERIC_UNIT_FAMILIES, width=88, sort_dicts=False
     )
     rows = pprint.pformat(authority, width=100, sort_dicts=False)
+    ending_rows = pprint.pformat(
+        output_label_endings, width=100, sort_dicts=False
+    )
+    removal_event_rows = pprint.pformat(
+        currency_default_removal_events, width=100, sort_dicts=False
+    )
+    removed_rows = pprint.pformat(
+        currency_default_removed_fields, width=100, sort_dicts=False
+    )
     return f'''"""Frozen Amendment-10 field-title/header semantic authority.
 
 Generated only after enumerating the conservative complete-description
@@ -2233,11 +2337,29 @@ matches fail closed.
 
 from __future__ import annotations
 
+# The generated authority relations are compact data literals.  Black's
+# expanded form adds more than a million source lines without changing data.
+# fmt: off
 TITLE_LITERAL_FAMILIES: tuple[tuple[str, tuple[str, ...]], ...] = {literal}
 
 # Closed case-insensitive ASCII-boundary token/compound grammar.  Candidate
 # spans are nevertheless true UTF-8 byte offsets in the raw description.
 TITLE_GENERIC_UNIT_FAMILIES: tuple[tuple[str, tuple[str, ...]], ...] = {generic}
+
+# Complete mechanically label-shaped full-body ending adjudication.
+# (interview_wave, raw_field_id, exact_physical_line, family, spelling,
+#  qualifies_as_output_label, reason)
+OUTPUT_LABEL_ENDING_ADJUDICATION: tuple[
+    tuple[int, str, str, str, str, bool, str], ...
+] = {ending_rows}
+
+# Complete 209-event relation in denominator-then-candidate order.
+# (interview_wave, raw_field_id, rejected_currency_default_branch)
+CURRENCY_DEFAULT_REMOVAL_EVENTS: tuple[tuple[int, str, str], ...] = {removal_event_rows}
+
+# Denominator-ordered unique-field projection of the 209 title starts removed
+# by the six no-currency default-rejection branches.
+CURRENCY_DEFAULT_REMOVED_FIELD_PROJECTION: tuple[tuple[int, str], ...] = {removed_rows}
 
 # (description_sha256, bounded_context_header, family, description_start_byte,
 #  description_end_byte, spelling,
@@ -2245,6 +2367,7 @@ TITLE_GENERIC_UNIT_FAMILIES: tuple[tuple[str, tuple[str, ...]], ...] = {generic}
 TITLE_START_AUTHORITY: tuple[
     tuple[str, str, str, int, int, str, str | None, str, str, int, str], ...
 ] = {rows}
+# fmt: on
 '''
 
 
@@ -2443,8 +2566,8 @@ def _rebuild_segment_authority(
     if (
         dict(raw_overlay_counts)
         != {
-            ("D", "N", "N"): 72_026,
-            ("D", "W", "W"): 8_202,
+            ("D", "N", "N"): 72_025,
+            ("D", "W", "W"): 8_203,
             ("W", "N", "W"): 19,
         }
         or demotion_count != 0
@@ -2615,6 +2738,8 @@ def main() -> None:
         old_by_sha[old[0]].append(old)
 
     authority: list[tuple[Any, ...]] = []
+    output_label_endings: list[tuple[Any, ...]] = []
+    currency_default_removals: list[tuple[int, str, str]] = []
     decisions: dict[
         tuple[str, str, int, int, str], tuple[str | None, str, str]
     ] = {}
@@ -2801,9 +2926,13 @@ def main() -> None:
     input_relation_hasher = hashlib.sha256()
     input_relation_hasher.update(b"[")
     field_count = 0
+    denominator_field_keys: list[tuple[int, str]] = []
 
     for row in _iter_rows(args.raw_input):
         field_count += 1
+        denominator_field_keys.append(
+            (row["interview_wave"], row["raw_field_id"])
+        )
         if field_count > 1:
             input_relation_hasher.update(b",")
         input_relation_hasher.update(
@@ -3043,7 +3172,12 @@ def main() -> None:
         if candidates:
             matched_fields += 1
         candidate_occurrences += len(candidates)
-        adjudications = _adjudicate_context(row, candidates, old_by_sha)
+        adjudications = _adjudicate_context(
+            row,
+            candidates,
+            old_by_sha,
+            currency_default_removals,
+        )
         (
             baseline_candidates,
             first_question_delta,
@@ -3053,6 +3187,24 @@ def main() -> None:
             question_continuation_delta,
             full_body_delta,
         ) = _round3_candidate_transition(description)
+        for candidate in candidates:
+            if candidate not in full_body_delta:
+                continue
+            ending = _standalone_output_label_ending(description, candidate)
+            if ending is None:
+                continue
+            line, qualifies, reason = ending
+            output_label_endings.append(
+                (
+                    row["interview_wave"],
+                    row["raw_field_id"],
+                    line,
+                    candidate[0],
+                    candidate[3],
+                    qualifies,
+                    reason,
+                )
+            )
         if len(candidates) != (
             len(baseline_candidates)
             + len(first_question_delta)
@@ -4488,7 +4640,7 @@ def main() -> None:
         "delegated_to_coding_statement_grammar": 648,
         "delegated_to_primary_statement_grammar": 11_004,
         "explanatory_body_prose_defeat": 839,
-        "formula_or_operand_defeat": 3_619,
+        "formula_or_operand_defeat": 3_618,
         "input_table_or_subrange_not_field_denotation": 8,
         "instruction_threshold_table_or_subrange_defeat": 2_005,
         "unmarked_output_dollar_phrase_is_conversion_input": 1,
@@ -4561,6 +4713,7 @@ def main() -> None:
             (1973, "V3235"),
             (1974, "V3657"),
             (1976, "V5076"),
+            (1978, "V6196"),
             (1976, "V4832"),
             (1976, "V4903"),
             (1978, "V6145"),
@@ -4635,12 +4788,12 @@ def main() -> None:
         or full_body_candidate_occurrences != 19_970
         or len(full_body_candidate_fields) != 11_085
         or dict(full_body_candidate_families) != expected_full_body_families
-        or dict(full_body_dispositions) != {"N": 19_945, "W": 25}
+        or dict(full_body_dispositions) != {"N": 19_944, "W": 26}
         or dict(full_body_negative_reasons)
         != expected_full_body_negative_reasons
         or full_body_positive_reasons
         != {
-            "standalone_output_label_names_currency": 1,
+            "standalone_output_label_names_currency": 2,
             "unmarked_count_output_title_denotation": 19,
             "unmarked_percent_output_title_denotation": 2,
             "unmarked_percentage_output_title_denotation": 1,
@@ -5531,12 +5684,81 @@ def main() -> None:
             f"{cross_lf_hours_per_week_component_reasons!r}"
         )
 
+    frozen_output_label_endings = tuple(output_label_endings)
+    if (
+        len(frozen_output_label_endings) != 21
+        or len(canonical_json_bytes(frozen_output_label_endings)) != 2_425
+        or canonical_sha256(frozen_output_label_endings)
+        != OUTPUT_LABEL_ENDING_ADJUDICATION_SHA256
+        or sum(row[5] for row in frozen_output_label_endings) != 2
+    ):
+        raise ValueError(
+            "standalone output-label ending adjudication changed: "
+            f"{len(frozen_output_label_endings)} rows, "
+            f"{len(canonical_json_bytes(frozen_output_label_endings))} bytes, "
+            f"{canonical_sha256(frozen_output_label_endings)}, "
+            f"qualifying={sum(row[5] for row in frozen_output_label_endings)}"
+        )
+
+    frozen_currency_default_removals = tuple(currency_default_removals)
+    currency_default_removed_fields = _removed_field_projection(
+        tuple(denominator_field_keys), frozen_currency_default_removals
+    )
+    currency_default_removal_counts = Counter(
+        false_class
+        for _wave, _field_id, false_class in currency_default_removals
+    )
+    if (
+        len(currency_default_removals) != 209
+        or len(currency_default_removed_fields) != 206
+        or {
+            key: count
+            for key, count in Counter(
+                (wave, field_id)
+                for wave, field_id, _false_class in currency_default_removals
+            ).items()
+            if count > 1
+        }
+        != {
+            (1969, "V647"): 2,
+            (1969, "V663"): 2,
+            (1969, "V667"): 2,
+        }
+        or dict(currency_default_removal_counts)
+        != {
+            "hourly-money": 80,
+            "monthly-money": 57,
+            "money-question/per-hour": 37,
+            "per-week-money": 3,
+            "unmarked-amount/hour": 6,
+            "yearly-money": 26,
+        }
+        or len(canonical_json_bytes(currency_default_removed_fields)) != 3_339
+        or canonical_sha256(currency_default_removed_fields)
+        != CURRENCY_DEFAULT_REMOVED_FIELD_PROJECTION_SHA256
+    ):
+        raise ValueError(
+            "currency-default removal projection changed: "
+            f"{len(currency_default_removals)} starts, "
+            f"{len(currency_default_removed_fields)} fields, "
+            f"{currency_default_removal_counts!r}, "
+            f"{len(canonical_json_bytes(currency_default_removed_fields))} "
+            f"bytes, {canonical_sha256(currency_default_removed_fields)}"
+        )
+
     frozen = tuple(authority)
     rebuilt, overlay_stats = _rebuild_segment_authority(
         _iter_rows(args.raw_input), decisions
     )
     if not args.audit_only:
-        TITLE_MODULE.write_text(_render_title_module(frozen))
+        TITLE_MODULE.write_text(
+            _render_title_module(
+                frozen,
+                frozen_output_label_endings,
+                frozen_currency_default_removals,
+                currency_default_removed_fields,
+            )
+        )
         _replace_segment_authority(
             rebuilt, overlay_stats["context_varying_segment_start_count"]
         )
@@ -5643,6 +5865,28 @@ def main() -> None:
         "audit_only": args.audit_only,
         "field_count": field_count,
         "raw_input_relation_sha256": input_relation_sha256,
+        "output_label_ending_adjudication_row_count": len(
+            frozen_output_label_endings
+        ),
+        "output_label_ending_adjudication_byte_count": len(
+            canonical_json_bytes(frozen_output_label_endings)
+        ),
+        "output_label_ending_adjudication_sha256": canonical_sha256(
+            frozen_output_label_endings
+        ),
+        "currency_default_removed_start_count": len(currency_default_removals),
+        "currency_default_removed_field_count": len(
+            currency_default_removed_fields
+        ),
+        "currency_default_removed_class_counts": dict(
+            sorted(currency_default_removal_counts.items())
+        ),
+        "currency_default_removed_field_projection_byte_count": len(
+            canonical_json_bytes(currency_default_removed_fields)
+        ),
+        "currency_default_removed_field_projection_sha256": canonical_sha256(
+            currency_default_removed_fields
+        ),
         "structural_selector_occurrence_count": (
             structural_selector_occurrences
         ),

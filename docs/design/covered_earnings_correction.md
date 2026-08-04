@@ -41032,9 +41032,9 @@ non-whole-domain start, and `D` an explicit no-denotation start. There is no
 default. An unknown segment, missing position, malformed vector, or unknown
 tag is `unadjudicated_start` and aborts. The relation covers 1,114,747
 distinct contextual starts, is 8,466,288 compact-JSONL bytes, has raw SHA-256
-`15010ecdc6985e2a69f60ab627ad58b28981d536500087e9c2702277a5974281`,
+`1b0b81c08b601fae0c212dbae8a3671f3dd498a202c7fc5ee754f775c0b62bac`,
 and canonical-array SHA-256
-`e9fe527412664f86654f3b423d4422a23bb5966b128b98e3136e391e45f7a04c`.
+`17ee53b725abca483a24c65c351d0d25b1e7af996a49f267fbe9048e88319af7`.
 One segment/start appears in eight title contexts and also in V225 body prose;
 its meanings differ. The base vector retains its body disposition and an
 exact source-description-keyed title overlay supplies the title disposition.
@@ -41045,20 +41045,20 @@ with exact members `segment`, `word_ordinal`, `start_utf8_byte`, `candidate`,
 `context_key_sha256`, `adjudication`, `occurrence_count`, `field_count`, and
 `witness_field_key`. It has 1,114,747 rows, 2,240,669 occurrences, 717,810
 distinct candidate texts, and canonical-array SHA-256
-`aa7d466df0460808cb17e4f692e40760d5b4b2ea90c15cce322df00f5b8baff9`.
+`6b8908d0e239ab79d71a34e13c946f4b4adc5da8a62ad69dd98be6c6f39ab808`.
 The 13 additional raw-Actual-only spellings make the separately named
 candidate-plus-Actual union 717,823 distinct texts; that union is not the
 contextual table.
 
 The ordered occurrence relation independently serializes every
 `[interview_wave,raw_field_id,segment_ordinal,start_utf8_byte,context_key_sha256,adjudication,selected]`
-row. Its 2,240,669 rows occupy 269,160,095 bytes and hash to
-`f1f56750744b3cb11531fcab1e6fee9d97655d32eb6241d1c6a92d443e66b27f`.
+row. Its 2,240,669 rows occupy 269,160,082 bytes and hash to
+`7513022d6f79af192c935cda2e1c47728a5d326a28618b8fe041c8ffb0a5c981`.
 
 | Start disposition | Occurrences |
 |---|---:|
-| `whole_domain_denotation` (`W`) | 16,460 |
-| `explicit_no_whole_domain_denotation` (`N`) | 76,558 |
+| `whole_domain_denotation` (`W`) | 16,461 |
+| `explicit_no_whole_domain_denotation` (`N`) | 76,557 |
 | `explicit_no_denotation` (`D`) | 2,147,651 |
 | `unadjudicated_start` | 0 |
 | **complete normalized relation** | **2,240,669** |
@@ -41070,9 +41070,9 @@ the complete `raw_candidate_domain`, its byte count and SHA-256; the separate
 description-relative UTF-8 spans, adjudications, reasons, and the exact raw
 context that grounds them. Its candidate array deterministically derives the
 aggregate title-field result. Across all 89,599 fields it finds 80,306 maximal
-candidate occurrences in 51,957 fields: 8,202 `W` starts, 72,104 `N` starts,
-and zero unadjudicated starts. Those positives occupy 8,183 fields. Beyond
-the eight referee witnesses, 8,194 `W` starts occupy 8,175 fields. The
+candidate occurrences in 51,957 fields: 8,203 `W` starts, 72,103 `N` starts,
+and zero unadjudicated starts. Those positives occupy 8,184 fields. Beyond
+the eight referee witnesses, 8,195 `W` starts occupy 8,176 fields. The
 exhaustive discovery stages are:
 
 | Conservative superdomain stage | Candidate occurrences | Fields containing a candidate |
@@ -41087,11 +41087,11 @@ exhaustive discovery stages are:
 | **complete raw-description superdomain** | **80,306** | **51,957 distinct fields** |
 
 The per-stage field figures overlap and therefore are not summed. The
-complete 89,599-row compact-JSONL audit relation is 87,768,606 bytes with raw
+complete 89,599-row compact-JSONL audit relation is 87,768,625 bytes with raw
 SHA-256
-`16bd23a202f756c1bdde7e03b3de24c52517fe1f8a06a3d9c929ec235e5b925b`;
+`9cecfe201bc2adf1280bc1e1c8a111bbaaa002e53bafd51e3d97444c01b4c380`;
 its canonical-array SHA-256 is
-`7418bdec8a65f5bb98a563a639bad68eb14472b7cf16ef71157279f04e44c9b2`.
+`debab6c570fa0ca16b6f2ac87d820370bfa2f09002d39687cfca0b33f5568384`.
 Zero unknowns means every candidate found by this source-wide scanner received
 an exact `W` or `N` adjudication. It does not mean an unmatched row was
 omitted, an `N` was frozen in place, or a prior authority vector was trusted.
@@ -41099,22 +41099,22 @@ This audit-only ledger was staged, closed, and independently reviewed before
 any generated title authority, segment vector, successor census, or storage
 floor was regenerated; regeneration then consumed the identical adjudication.
 
-`TITLE_START_AUTHORITY` contains 54,185 exact contextual groundings: 5,765
-positive contexts and 48,420 negative contexts. Candidate discovery is
+`TITLE_START_AUTHORITY` contains 54,185 exact contextual groundings: 5,766
+positive contexts and 48,419 negative contexts. Candidate discovery is
 independent of this authority: the authority attaches only after the complete
 raw description, family, spelling, and byte interval have been found, and an
 absent contextual key becomes `unadjudicated_title_start` and aborts. The
 effective segment authority is regenerated from the clean pre-title vector
 and this full adjudication. After candidates that share one normalized start
-are coalesced, its overlay transitions are exactly 72,026 `D→N`, 8,202
+are coalesced, its overlay transitions are exactly 72,025 `D→N`, 8,203
 `D→W`, and 19 preserved `W→W` cases in which a title-role defeat cannot
 demote an independently positive statement start; there are no `W→N`
 demotions. Thus zero `U` records completed adjudication, not a frozen semantic
 outcome.
 
 The remaining-body stage is itself completely dispositioned. Its 19,970
-starts are 25 `W` and 19,945 `N`. The negative reasons partition exactly as
-11,004 delegated to primary statement grammar, 3,619 formula or operand
+starts are 26 `W` and 19,944 `N`. The negative reasons partition exactly as
+11,004 delegated to primary statement grammar, 3,618 formula or operand
 defeats, 2,005 instruction/threshold/table/subrange defeats, 1,456 calendar
 or reference body prose, 839 explanatory body prose, 648 delegated to coding
 grammar, 365 delegated to raw-Actual grammar, eight input-table or subrange
@@ -41383,8 +41383,8 @@ is `7c3642475294dc0ecf809138ff2202ee137e441c7cc76e96b8a2642983163a57`.
 | Field result | Fields |
 |---|---:|
 | `derived_from_denotation_statement` | 2,212 |
-| `derived_from_title_denotation` | 8,183 |
-| `no_denotation_statement` | 75,418 |
+| `derived_from_title_denotation` | 8,184 |
+| `no_denotation_statement` | 75,417 |
 | `no_statement_names_a_unit` | 2,609 |
 | `defeated_denotation_statement` | 1,176 |
 | `conflicting_statement_units` | 1 |
@@ -41405,12 +41405,12 @@ The independently regenerated field-unit projection is:
 | `minute` | 86 |
 | `month` | 700 |
 | `percent` | 376 |
-| `united_states_dollar` | 1,543 |
+| `united_states_dollar` | 1,544 |
 | `united_states_dollar_per_hour` | 428 |
 | `united_states_dollar_per_week` | 3 |
 | `week` | 1,756 |
 | `year` | 896 |
-| `no_unit_derivable` | 79,204 |
+| `no_unit_derivable` | 79,203 |
 | **complete denominator** | **89,599** |
 
 ### 24.3 The prose-to-unit authority
@@ -41885,11 +41885,11 @@ exact spelling. Each cleartext row also records the bounded context header,
 unit or null,
 `whole_domain_denotation` or
 `explicit_no_whole_domain_denotation`, a semantic reason, and grounding wave
-and field. The relation has 54,185 rows and 16,636,024 compact-JSONL bytes,
+and field. The relation has 54,185 rows and 16,636,043 compact-JSONL bytes,
 raw SHA-256
-`d25d9312c6e88ed80896aee07c2133d1745214214104bedad73ae661294c7117`,
+`6e52b2586515ca676e0a58c5c4ba88888f14cf654c06cebbaf2b07dc2cb2dba2`,
 and canonical-array SHA-256
-`ebccedca54e914da8a1f9f20a39657e220f80346df84c8bc45834169c4b971df`.
+`197db7e97c2224805e11978b28e83219c99fad4dc209b933c9c20d87ba321ce6`.
 An independently found match without that exact key is
 `unadjudicated_title_start` and aborts. A title containing two distinct
 positive units conflicts and fails.
@@ -41919,8 +41919,46 @@ no currency; its `monthly` start is `N`, and the field derives no unit.
 Applied source-wide, this prohibition demotes exactly 209 false `W` starts
 across 206 fields: 80 hourly-money, 57 monthly-money, 37
 money-question/per-hour, 26 yearly-money, six unmarked-amount/hour, and three
-per-week-money starts. The removed field projection has SHA-256
-`fc99654f6b2df8e6d79c89affba7f6b61eecbb6c066bca898f68749afc438037`.
+per-week-money starts. An event is recorded for each candidate start at which
+one of the six pre-correction currency-default branches would select but the
+complete description has no explicit United States currency marker. After
+the common reference and output/response-selector defeats, the six
+`would_select` predicates are mechanically:
+
+1. `hourly_morphology`: the bounded header matches
+   `\bhourly (?:earnings?|wage|rate)\b` and none of the existing hourly
+   status, response-selector, or `MENTION` defeats applies;
+2. `monthly_morphology`: the complete description matches
+   `\bmonthly (?:mortgage|loan) payments?\b`, `--MONTHLY\s+AMOUNT\b`, or
+   `\bAFDC Maximum Monthly Allowance\b`;
+3. `per_hour_rate_phrase`: the bounded header contains a `MONEY_WORDS` match,
+   the complete description contains no `SALAR`, and the candidate is not a
+   threshold;
+4. `yearly_morphology`: the bounded header contains a `YEARLY_MONEY_WORDS`
+   match;
+5. a maximal full-body `per_hour_rate_phrase` occupies the exact physical
+   line `Amount per hour` or `Amount per hour.`; or
+6. `per_week_rate_phrase`: the bounded header contains a `MONEY_WORDS` match
+   and does not match `\bhow much time\b`.
+
+The complete event relation emits positional rows
+`[interview_wave,raw_field_id,false_class]` in denominator-then-candidate
+order. Its 209-event domain retains repeated fields and therefore is not the
+removed field projection. Exactly `(1969,V647)`, `(1969,V663)`, and
+`(1969,V667)` produce two events each; every other event field occurs once.
+The projection
+filters the lawful §24.4.2 input denominator to fields with at least one such
+event, emits exactly one positional row `[interview_wave,raw_field_id]` for
+each unique field, and preserves denominator order. The complete 206-row
+value is serialized as one strict, compact, ASCII JSON array with no
+insignificant whitespace and one terminal LF. It is 3,339 bytes and has
+SHA-256
+`52652010ae3956fc7e419f5163ecd6d00762e8a888e46ca117fc8bea51f39777`.
+The earlier pin
+`fc99654f6b2df8e6d79c89affba7f6b61eecbb6c066bca898f68749afc438037`
+is replaced: it named no row domain, shape, ordering, or serialization and
+cannot be reproduced. The natural denominator-ordered projection defined
+here yields the replacement pin above.
 
 Supported title compounds retain their whole unit: an explicitly
 currency-marked grounded wage or amount `per hour` is
@@ -41948,21 +41986,68 @@ candidate aggregation; absent one of those rules, distinct positive units
 conflict and abort. This is grammatical scope, not iteration-order or
 first-positive rescue.
 
-An exact source-audited standalone raw-body output-label line is never
-defeated merely because neighboring lines contain a formula. That precedence
-is per start: it does not promote the formula's operands or other nearby unit
-tokens. Thus V5076's terminal line `Tax credit dollars` makes only its final
-`dollars` start `[288,295)` `W` with `united_states_dollar`; the earlier
-`year`, two `%` starts, and two `$` starts remain `N` formula operands.
+An exact standalone raw-body output-label line is never defeated merely
+because neighboring lines contain a formula. This is a corpus-wide predicate,
+not a field or text allowlist. Its superdomain contains every maximal
+full-body candidate that ends its exact physical raw line where the line
+matches `[A-Za-z]+(?: [A-Za-z]+){0,7}`, does not begin exact `Actual ` or
+`Code `, and either begins with ASCII uppercase or equals the candidate's
+exact spelling. Such an ending qualifies exactly when text before the
+candidate on that line is nonempty, the candidate family maps directly to a
+unit, and that prefix contains no ASCII word `digit` or `digits`. Precedence is
+per start: it does not promote formula operands or nearby unit tokens.
+
+The complete label-shaped ending adjudication follows. `true` means the
+general predicate qualifies; every `false` row gives the mechanically
+exclusive reason. Family and spelling are included because both participate
+in the frozen seven-position row.
+
+| Wave | Field | Exact ending | Family | Spelling | Qualifies | Reason |
+|---:|---|---|---|---|---|---|
+| 1968 | V345 | `dollars` | `nominal_dollar_token` | `dollars` | false | `bare_unit_token_has_no_label_prefix` |
+| 1968 | V354 | `dollars` | `nominal_dollar_token` | `dollars` | false | `bare_unit_token_has_no_label_prefix` |
+| 1969 | V647 | `Amount per hour` | `per_hour_rate_phrase` | `per hour` | false | `compound_or_rate_family_not_direct_unit` |
+| 1969 | V682 | `Amount per hour` | `per_hour_rate_phrase` | `per hour` | false | `compound_or_rate_family_not_direct_unit` |
+| 1969 | V687 | `Amount per hour` | `per_hour_rate_phrase` | `per hour` | false | `compound_or_rate_family_not_direct_unit` |
+| 1969 | V689 | `Amount per hour` | `per_hour_rate_phrase` | `per hour` | false | `compound_or_rate_family_not_direct_unit` |
+| 1976 | V4557 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4637 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4639 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4641 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4643 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4763 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4998 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V5000 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V5002 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V5004 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V5076 | `Tax credit dollars` | `nominal_dollar_token` | `dollars` | true | `exact_standalone_output_label_line` |
+| 1977 | V5459 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1978 | V5987 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1978 | V6196 | `Tax credit dollars` | `nominal_dollar_token` | `dollars` | true | `exact_standalone_output_label_line` |
+| 1980 | V7162 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+
+The frozen row shape is
+`[interview_wave,raw_field_id,ending,family,spelling,qualifies,reason]` in
+denominator order. Serialized as one strict compact ASCII JSON array plus one
+terminal LF, the 21 rows occupy 2,425 bytes and have SHA-256
+`7a3865642ec7e2795a56dfdeaacc69b4a7b2afdabe2e2457ce1b0f1badaaf6d5`.
+Thus V5076 makes only `dollars [288,295)` `W`; its `year`, two `%`, and two
+`$` formula starts remain `N`. Authenticated 1978 V6196 has the same
+construction: only terminal `dollars [453,460)` is `W`; its two `%` and two
+`$` formula operands remain `N`. Its source is printed page 145 of the 1978
+family codebook, PDF SHA-256
+`883d83daa855759ad573ec60982453fcae62e9d86ddaaaa9a298df1ee376f7b9`.
+V3851 and V4364 remain explanatory-body defeats, while V825 and V826 remain
+formula defeats.
 
 The complete all-field audit relation defined in §24.2.2 is the executable
-closure of this grammar: 89,599 rows, 80,306 candidates, 8,202 positives,
-72,104 defeats, and zero unknowns. The production materialization adds the
+closure of this grammar: 89,599 rows, 80,306 candidates, 8,203 positives,
+72,103 defeats, and zero unknowns. The production materialization adds the
 field unit and title disposition to the pre-regeneration
-ledger; its 89,412,166 bytes have raw SHA-256
-`407d9aec93f7c9f42e28cf84c57f336a794be9938cfb78cbea5b8958d63adb0a`
+ledger; its 89,412,192 bytes have raw SHA-256
+`d2d2b032f15650ab76a3ad78e09b125c066ad5a09d0f508fbd54927ac1cd9a6c`
 and canonical-array SHA-256
-`203a5903bbbac2f9cfeeaffad184a7fd4dd25fe98e2f942bc150695cdbfe1051`.
+`da916ff99bb0b25883494509516929ab38a83491323626305b3cb188735c11fe`.
 
 #### 24.3.4 Closed clauses and unit vocabulary
 
@@ -46374,18 +46459,18 @@ spaces make the distinction observable and are individually adjudicated.
 The final successor vector in §20.3.7 terminal order is:
 
 ~~~text
-8,024 / 273 / 77 / 1 / 67,316 / 1,145 / 0 / 1 / 421 / 12,341
+8,025 / 273 / 77 / 1 / 67,316 / 1,145 / 0 / 1 / 421 / 12,340
 ~~~
 
 It sums to 89,599. The count-array SHA-256 is
-`017baffe4d9e2ee6ce373a93f4f82df1e1b2a42b1a18acd8c3477826df1ec32c`
+`2347179a44340f53dff3770a2dc23a6bfebffac755ed94efe11dd94543131071`
 and the complete ordered assignment SHA-256 is
-`0bc16e56c3c9284070dbf68d3f6cdda9da183629b8dc9e75e32dc124ed6f19f4`.
+`463ab96ca73185dd5e269fb3c8c0891dc358e90f3cb4088590b5c442240d652b`.
 Artifact columns A–F retain §24's previous definitions.
 
 | Successor terminal | A / B / C / D / E / F | Total | Ordered field-key SHA-256 |
 |---|---:|---:|---|
-| `compiled_source_numeric_grammar` | 303 / 200 / 2,185 / 1,789 / 2,268 / 1,279 | 8,024 | `d9a3ebfcdf376a065f78745c0adeddfa3ed7ace44dbe74319cabdc22402c5669` |
+| `compiled_source_numeric_grammar` | 303 / 201 / 2,185 / 1,789 / 2,268 / 1,279 | 8,025 | `afd57212dc648460deb6992c662aa18c147191a4fef146e2025c72903b6acc6f` |
 | `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 2 / 14 / 124 / 36 / 57 / 40 | 273 | `b8db6417119abb5f086d61ce8f6bbeada4396e08d47060bf9857283cc2d6323f` |
 | `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 1 / 7 / 42 / 15 / 7 / 5 | 77 | `14637a7f88c43e00f431845a0ad6d78b3ea07b88fab7765ca34ad6e852b7b46f` |
 | `compiled_source_numeric_grammar_partial_range_exact_replay` | 1 / 0 / 0 / 0 / 0 / 0 | 1 | `179e226fe0291c83938c8a7709968d54312f1edd21758aca8df6b261e6abe2d8` |
@@ -46394,7 +46479,7 @@ Artifact columns A–F retain §24's previous definitions.
 | `nonnumeric_source_field_outside_numeric_grammar` | 0 / 0 / 0 / 0 / 0 / 0 | 0 | `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` |
 | `conflicting_source_numeric_format` | 1 / 0 / 0 / 0 / 0 / 0 | 1 | `a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1` |
 | `unsupported_source_numeric_format` | 67 / 20 / 122 / 46 / 90 / 76 | 421 | `fe1aa0725ea533452ff05acd0b8fb1b907aaa5716ac9c7a287b6290e4b330010` |
-| `incomplete_source_numeric_authority` | 798 / 451 / 3,081 / 2,058 / 3,712 / 2,241 | 12,341 | `966a4e99d37cde2c4836bc2ab73f9a41ae3da30d3b5229020f88d22dd73d14f5` |
+| `incomplete_source_numeric_authority` | 798 / 450 / 3,081 / 2,058 / 3,712 / 2,241 | 12,340 | `320e9b6acd02a30294f7abfdb8fd47c18949caaff00c49c0bc40d2bcdb345e4a` |
 
 Only `(1969,V945)` lawfully remains in the partial-range successor. The 11
 previous false retentions `ER16515A9`, `ER41027A9`, `ER58212A9`, `ER65417`,
@@ -46405,24 +46490,24 @@ partial-range fields move and exactly one remains.
 
 #### 24.4.4 Movement, failure artifact, and payload
 
-Exactly 11,528 fields move from a compiled terminal to incomplete. The
+Exactly 11,527 fields move from a compiled terminal to incomplete. The
 movement relation SHA-256 is
-`03f1a9cea18b340ee7068075ca1e9bea1e1337b10f2f7e5d89092ac866cfb4fe`
+`44033f304977ed301dd27ea58ee46139ffe1afb400be7bf836765c8f4e78e97b`
 and its ordered key projection is
-`fe844ca115d9c5314ce76608043d46393d4b129e7334cffcf761bb6e7604007c`.
+`4da651663dfc235dac50ca250ab95ac11a7fe34f6df2e918836fe283888be70e`.
 
 | Projection | Counts |
 |---|---:|
-| origins: compiled / padding / finite / partial | 9,305 / 1,580 / 597 / 46 |
-| reasons: no denotation / no unit / defeat / conflict | 8,565 / 2,156 / 806 / 1 |
-| artifacts A / B / C / D / E / F | 777 / 410 / 2,791 / 1,853 / 3,558 / 2,139 |
+| origins: compiled / padding / finite / partial | 9,304 / 1,580 / 597 / 46 |
+| reasons: no denotation / no unit / defeat / conflict | 8,564 / 2,156 / 806 / 1 |
+| artifacts A / B / C / D / E / F | 777 / 409 / 2,791 / 1,853 / 3,558 / 2,139 |
 
-The eight-row failure relation is 211,210 bytes with SHA-256
-`aeba54648c4cf53eef5c0e755582f81735b4c6fd5d2e7b01089163d11afded62`.
+The eight-row failure relation is 211,195 bytes with SHA-256
+`024ea03ad9c4f4cac6c490e3899bba74a9c78f7de1737cd5c4a7187b69b5bfda`.
 The inherited first seven counts remain 1, 16, 144, 78, 183, 46, and 767;
-the eighth `unresolved_typed_value_unit_no_source_authority` row has 11,528
+the eighth `unresolved_typed_value_unit_no_source_authority` row has 11,527
 keys. The complete payload SHA-256 is
-`4cd1c37140127a3cc0c48910648f091e817d34d4631966dd66bec75165d39159`.
+`94ce6cb655cc7f0b86984a008a3c59934e42be4e86d6ce5ce16bb38dc48cb741`.
 
 ### 24.5 Downstream supersession and exact storage floors
 
@@ -46430,11 +46515,11 @@ keys. The complete payload SHA-256 is
 
 | Terminal | Ratified fields / entries / members | Successor fields / entries / members |
 |---|---:|---:|
-| compiled | 17,329 / 30,452 / 820,025,893,984 | 8,024 / 8,166 / 376,170,540,905 |
+| compiled | 17,329 / 30,452 / 820,025,893,984 | 8,025 / 8,167 / 376,170,541,305 |
 | padding-underdetermined | 1,853 / 1,853 / 865,268 | 273 / 273 / 18,270 |
 | finite-arm-ambiguous | 674 / 1,433 / 384,135 | 77 / 77 / 122,604 |
 | partial-range | 47 / 48 / 682,035,700 | 1 / 2 / 692,700 |
-| **complete compiled relation** | **19,903 / 33,786 / 820,709,179,087** | **8,375 / 8,518 / 376,171,374,479** |
+| **complete compiled relation** | **19,903 / 33,786 / 820,709,179,087** | **8,376 / 8,519 / 376,171,374,879** |
 
 The storage recount uses a description-free 19,903-row cache whose 15,414,031
 bytes have raw SHA-256
@@ -46442,38 +46527,41 @@ bytes have raw SHA-256
 and canonical-array SHA-256
 `8db832755df0430b566deeb07f403e8b66a950e92e73fb2399c1e3917dca3bb2`.
 Its key/status set exactly equals the four compiled terminals in the lawful
-raw relation. The successor is that cache minus the exact final 11,528-key
-movement projection; the standalone ordered-key artifact is 558,927 bytes
+raw relation. The successor is that cache minus the exact final 11,527-key
+movement projection; the standalone ordered-key artifact is 558,880 bytes
 with raw SHA-256
-`810cd38bc50947c4a003dd19c693cfd9efaf815aef532e3d2b2f735d9a5127cc`
+`176e479fff891a19c4fcc20d1c17fa926ec26a72d3b0d5e12321c48bf86d855f`
 and its canonical pair array has the §24.4.4 key SHA-256. This join reads no
 evidence input, calls no `field_unit`, and preserves every retained row's
-ratified terminal. The 10,060-byte final storage report has SHA-256
-`8ac6032d2a680f89983ef85fef4f585060a25fa99257d306959a635bd511dad8`
-and records 128,466,944 bytes peak RSS, below the 8-GiB ceiling.
+ratified terminal. The 10,026-byte final storage report has SHA-256
+`a7b035b542f6cabea35731a206c15682ab10b963b157880b32777b3a7542bc37`
+and records 125,337,600 bytes peak RSS, below the 8-GiB ceiling.
 
 #### 24.5.2 Physical populations and corrected per-shape arithmetic
 
 | Fact | Ratified relation | Completed successor |
 |---|---:|---:|
-| mandatory logical members | 820,709,179,087 | 376,171,374,479 |
-| explicit-arm members / containers | 4,736,892 / 58,517 | 2,050,779 / 14,599 |
+| mandatory logical members | 820,709,179,087 | 376,171,374,879 |
+| explicit-arm members / containers | 4,736,892 / 58,517 | 2,051,179 / 14,601 |
 | analytic-arm members | 820,704,442,195 | 376,169,323,700 |
 | analytic renderable members / containers / intervals | 820,701,994,620 / 9,019 / 38,289 | 376,169,060,270 / 2,436 / 31,706 |
 | analytic unrenderable members / containers / intervals | 2,447,575 / 36 / 29,305 | 263,430 / 1 / 29,270 |
-| threshold identity | 4,736,892 + 820,704,442,195 | 2,050,779 + 376,169,323,700 |
-| all-member empty-object floor `3N+2` | 2,462,127,537,263 bytes | 1,128,514,123,439 bytes |
-| exact binary TiB | — | 1.0263776161436908296309411525726318359375 |
+| threshold identity | 4,736,892 + 820,704,442,195 | 2,051,179 + 376,169,323,700 |
+| all-member empty-object floor `3N+2` | 2,462,127,537,263 bytes | 1,128,514,124,639 bytes |
+| exact binary TiB | — | 1.0263776172350844717584550380706787109375 |
 | arm-invariant / arm-ambiguous members | 327,655 / 56,480 | 108,988 / 13,616 |
-| rejected counterfactual explicit / analytic | 4,753,875 / 820,704,425,212 | 2,051,778 / 376,169,322,701 |
+| rejected counterfactual explicit / analytic | 4,753,875 / 820,704,425,212 | 2,052,178 / 376,169,322,701 |
 
 The pre-successor ratified relation retains its 266,728,784,621,000-byte
 historical two-shape and 266,728,786,687,940-byte post-A9 four-shape floors
 (the latter is 242.58841830300298170186579227447509765625 TiB). For the
 completed successor, the historical two-shape floor is
-122,255,013,079,550 bytes. Its current four-shape census is 376,169,049,272
-seven-key members, 999 six-key rational members, 9,999 six-key integer
-members, and 263,430 four-key unrenderable members:
+122,255,013,079,550 bytes. Relative to the prior defective successor, the
+only restored cache row is V6196: one range entry, 400 explicit members in
+two containers, and zero analytic members. The analytic populations and both
+analytic-member floors are therefore unchanged. Its current four-shape census
+is 376,169,049,272 seven-key members, 999 six-key rational members, 9,999
+six-key integer members, and 263,430 four-key unrenderable members:
 
 ~~~text
 376,169,049,272 × 325 = 122,254,941,013,400
@@ -46492,10 +46580,10 @@ This lawful minimum is about 85.27 times the measured approximately
 
 The surviving finite-arm branch is 77 fields, 77 entries, and 122,604
 members, including 108,988 arm-invariant and 13,616 arm-ambiguous members.
-The first seven successor terminals contain 76,836 T-plus fields and the
-three failure terminals contain 12,763 T-minus fields. The expected
-`pass_with_closed_failures` populations are therefore 8,375 completed fields,
-8,518 range entries, and 376,171,374,479 logical members. The artifact remains
+The first seven successor terminals contain 76,837 T-plus fields and the
+three failure terminals contain 12,762 T-minus fields. The expected
+`pass_with_closed_failures` populations are therefore 8,376 completed fields,
+8,519 range entries, and 376,171,374,879 logical members. The artifact remains
 unconstructible and cannot be truncated, sampled, or replaced by a surrogate.
 
 #### 24.5.4 Revision-12 full-relation identity
@@ -46521,12 +46609,16 @@ keys, and the earlier V3694 annual key.
 
 It additionally reconstructs the complete raw V47, V323, V331, V332, V333,
 V370, ER21015, and ER25015 title witnesses with every §24.2.2 page or range
-hash. V5076's complete raw description is also mandatory: only the terminal
-`Tax credit dollars` start is `W`; every earlier formula start is `N`. The gate
-then rebuilds the entire 89,599-row all-title relation rather than stopping at
-those examples: all 80,306 maximal matches, all 8,202 positive and 72,104
-defeated starts, zero unknowns, and all 8,194 other positive starts across
-8,175 other positive fields must reappear. Every locator, page hash,
+hash. V5076's and V6196's complete raw descriptions are also mandatory, as is
+a fresh source-wide rebuild of the general predicate and its complete 21-row
+adjudication. For V5076 only `dollars [288,295)` is `W`; its earlier `year`,
+two `%`, and two `$` formula starts are `N`. For V6196 only
+`dollars [453,460)` is `W`; its two `%` and two `$` formula starts are `N`.
+The gate then rebuilds the entire 89,599-row all-title relation rather than
+stopping at those examples: all 80,306 maximal matches, all 8,203 positive
+and 72,103 defeated starts, zero unknowns, and all 8,195 positive starts beyond
+the original eight referee witnesses across 8,176 fields must reappear. Every
+locator, page hash,
 description hash, verbatim raw span, selector path, title/statement
 disposition, unit, successor terminal, and member-row consequence must match.
 
@@ -46537,7 +46629,7 @@ states no unit; its range cannot infer years and moves from finite-arm
 ambiguous to incomplete. The contrast `in years` derives `year`; plausibility
 does not. The partial-range arm must retain only `(1969,V945)` and move the 46
 other ratified partial-range fields. The complete movement must reproduce all
-11,528 rows and pins in §24.4.4.
+11,527 rows and pins in §24.4.4.
 
 #### 24.6.3 A10-R03 — negative and fail-closed cases
 
@@ -46623,30 +46715,33 @@ The final independent pins are:
 | Relation | Exact identity |
 |---|---|
 | lawful input / denominator | 89,599; `563b1eaede9dcb5a085d8014dd3a4aacb2d3419ce7d0a0eb65063753b375ca6e` / `7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764` |
-| counts / assignment | `017baffe4d9e2ee6ce373a93f4f82df1e1b2a42b1a18acd8c3477826df1ec32c` / `0bc16e56c3c9284070dbf68d3f6cdda9da183629b8dc9e75e32dc124ed6f19f4` |
-| movement / movement keys | 11,528; `03f1a9cea18b340ee7068075ca1e9bea1e1337b10f2f7e5d89092ac866cfb4fe` / `fe844ca115d9c5314ce76608043d46393d4b129e7334cffcf761bb6e7604007c` |
-| failures | 8 rows; 211,210 bytes; `aeba54648c4cf53eef5c0e755582f81735b4c6fd5d2e7b01089163d11afded62` |
+| counts / assignment | `2347179a44340f53dff3770a2dc23a6bfebffac755ed94efe11dd94543131071` / `463ab96ca73185dd5e269fb3c8c0891dc358e90f3cb4088590b5c442240d652b` |
+| movement / movement keys | 11,527; `44033f304977ed301dd27ea58ee46139ffe1afb400be7bf836765c8f4e78e97b` / `4da651663dfc235dac50ca250ab95ac11a7fe34f6df2e918836fe283888be70e` |
+| failures | 8 rows; 211,195 bytes; `024ea03ad9c4f4cac6c490e3899bba74a9c78f7de1737cd5c4a7187b69b5bfda` |
 | Actual candidates | 82 rows; 322 occurrences; 0 unknown; `bf77cd7294752ac9e6ac01d4d68efac86c47b7327094d5eec479d9db1f27176b` |
 | coding candidates | 203 rows; 1,154 occurrences; 0 unknown; `9f6cd23d36ad6825a17d3ece2d2612ef89c066d5c587bd72d1933f19e4c0c195` |
-| title/header all-field audit | 89,599 rows; 51,957 matched fields; 80,306 starts = 8,202 positive + 72,104 defeated + 0 unknown; 8,183 positive / 43,774 defeat-only / 37,642 no-match fields; 89,412,166 bytes; `407d9aec93f7c9f42e28cf84c57f336a794be9938cfb78cbea5b8958d63adb0a` / `203a5903bbbac2f9cfeeaffad184a7fd4dd25fe98e2f942bc150695cdbfe1051` |
-| contextual candidate table | 1,114,747 rows; 2,240,669 occurrences; 717,810 distinct texts; `aa7d466df0460808cb17e4f692e40760d5b4b2ea90c15cce322df00f5b8baff9` |
+| audit-only title ledger | 89,599 rows; 87,768,625 bytes; `9cecfe201bc2adf1280bc1e1c8a111bbaaa002e53bafd51e3d97444c01b4c380` / `debab6c570fa0ca16b6f2ac87d820370bfa2f09002d39687cfca0b33f5568384` |
+| output-label ending adjudication | 21 rows; 2,425 bytes; `7a3865642ec7e2795a56dfdeaacc69b4a7b2afdabe2e2457ce1b0f1badaaf6d5` |
+| removed-field projection | 206 rows; 3,339 bytes; `52652010ae3956fc7e419f5163ecd6d00762e8a888e46ca117fc8bea51f39777` |
+| title/header all-field audit | 89,599 rows; 51,957 matched fields; 80,306 starts = 8,203 positive + 72,103 defeated + 0 unknown; 8,184 positive / 43,773 defeat-only / 37,642 no-match fields; 89,412,192 bytes; `d2d2b032f15650ab76a3ad78e09b125c066ad5a09d0f508fbd54927ac1cd9a6c` / `da916ff99bb0b25883494509516929ab38a83491323626305b3cb188735c11fe` |
+| contextual candidate table | 1,114,747 rows; 2,240,669 occurrences; 717,810 distinct texts; `6b8908d0e239ab79d71a34e13c946f4b4adc5da8a62ad69dd98be6c6f39ab808` |
 | contextual-plus-Actual text union | 717,823 distinct texts |
-| ordered start occurrences | 2,240,669 rows; 269,160,095 bytes; `f1f56750744b3cb11531fcab1e6fee9d97655d32eb6241d1c6a92d443e66b27f` |
-| segment/start authority | 59,445 rows; 1,114,747 starts; 8,466,288 bytes; `15010ecdc6985e2a69f60ab627ad58b28981d536500087e9c2702277a5974281` / `e9fe527412664f86654f3b423d4422a23bb5966b128b98e3136e391e45f7a04c` |
+| ordered start occurrences | 2,240,669 rows; 269,160,082 bytes; `7513022d6f79af192c935cda2e1c47728a5d326a28618b8fe041c8ffb0a5c981` |
+| segment/start authority | 59,445 rows; 1,114,747 starts; 8,466,288 bytes; `1b0b81c08b601fae0c212dbae8a3671f3dd498a202c7fc5ee754f775c0b62bac` / `17ee53b725abca483a24c65c351d0d25b1e7af996a49f267fbe9048e88319af7` |
 | coding-start authority | 203 rows; 31,396 bytes; `6f164c6772def69a29a57e1de04b3927ab8f56141bc2a8c6f0dee0964c8da6bf` / `ac2bddbed10bb445215bb19354259685efe24c82b2f59b258dec5d23fcf8497b` |
 | title literal families | 13 rows; 733 bytes; `e1159929e711f73757b7e51a648f2c096965881a2342d9f26ce4e95d7c8af46e` / `c5f6b75b64ebd86134e1b655c5d522fcd18dc2179fd28fa2c66a0943465e2913` |
 | title generic families | 38 rows; 1,733 bytes; `b56ffd655abb00c8aca6e382092d08cd94325cfbf8ef4ce25651a59fc6cf8133` / `f709526fe7802085ed691167a595f3d24504523dfa9a5fd4f61eb9269debd9de` |
-| title-start authority | 54,185 rows; 16,636,024 bytes; `d25d9312c6e88ed80896aee07c2133d1745214214104bedad73ae661294c7117` / `ebccedca54e914da8a1f9f20a39657e220f80346df84c8bc45834169c4b971df` |
+| title-start authority | 54,185 rows; 16,636,043 bytes; `6e52b2586515ca676e0a58c5c4ba88888f14cf654c06cebbaf2b07dc2cb2dba2` / `197db7e97c2224805e11978b28e83219c99fad4dc209b933c9c20d87ba321ce6` |
 | anchors | 105 rows; 4,421 bytes; `9f4a835c8f6cf140b1f084c3323d887cf19f4e729341d6790216d70b8a02ca4b` / `db4247efe4f93c66ec3d46c27154c4dbef3954a4b9b5865d4fbe364cc62d657f` |
 | clauses | 165 rows; 7,578 bytes; `8ddc26217bd530fae469643458648b159548e0c344d6b967dffb87abfa16ed43` / `1bd2a989c7fe7a1471bbb8b289d64e1fc66e399a0c9b2701419b6d5b636116d3` |
 | predicates | 2,590 rows; 400,372 bytes; `a783a0a3824096688374e0f9802546e847a00c4cb3905ce6a7ee6f64a51e050e` / `dc4df039cd1c0ae9d31bd8827d07e1bb737c8ee383e6cbe0308789257ba5ff89` |
 | statements | 3,589 rows; `7c3642475294dc0ecf809138ff2202ee137e441c7cc76e96b8a2642983163a57` |
 | positive relation | 1,545 rows; 238,735 bytes; `354de946fbb0c15f05eb1c5b202bbbd8cdc5913922cf8c402e6e253699daa153` / `0e7a96f1146063da99dfa576eb254e38cf577762522911e6332863ef9992d6b8` |
-| payload | `4cd1c37140127a3cc0c48910648f091e817d34d4631966dd66bec75165d39159` |
+| payload | `94ce6cb655cc7f0b86984a008a3c59934e42be4e86d6ce5ce16bb38dc48cb741` |
 
 The complete production payload file and complete stdout serialization are
-byte-identical: 5,342,297 bytes with SHA-256
-`20551041bc5a07adce01497ef9ef9941b18eaa03dac6075fc44b901498bbdd58`.
+byte-identical: 5,341,847 bytes with SHA-256
+`b6636fe15cc81dfd5f6208c4ed4ad6719217e3cc3390049ffde5a67e5ff131c8`.
 
 The optional payload schema is exactly
 `amendment_10_successor_census.v4`. It has these 81 members in ascending ASCII
@@ -46743,7 +46838,7 @@ Failure leaves every pre-existing destination byte-identical.
 
 A10-R05 independently reproduces the historical A8 two-shape number, the
 unchanged exact post-A9 current-law floor, every successor population, the
-1,128,514,123,439-byte empty-object floor, the completed successor's
+1,128,514,124,639-byte empty-object floor, the completed successor's
 122,255,013,079,550-byte historical two-shape floor, and its exact
 122,255,013,691,442-byte current four-shape floor. Construction still fails
 because the lawful minimum exceeds capacity. It verifies the description-free
@@ -46761,7 +46856,7 @@ The exact design-family dispositions are:
 | §19.3.2 common-unit requirement and codebook-only source | composed with §24.3; unchanged and unnarrowed |
 | §19.3.2 nonunitized-`R` failure and §20.3.5 precedence | composed with §24.4; unit absence is incomplete-class only |
 | §20.3.7 census, matrix, assignment, and seven-row failure artifact | superseded by construction by §24.4; historical values remain untouched |
-| §21 T-plus/T-minus and `pass_with_closed_failures` laws | composed with the eight-row artifact and 76,836/12,763 exact cover |
+| §21 T-plus/T-minus and `pass_with_closed_failures` laws | composed with the eight-row artifact and 76,837/12,762 exact cover |
 | §22 storage populations and A8-era floor | superseded by construction by §24.5; A8 history remains true for its shapes |
 | §23 six-key member shape and arm-invariance | lawfully unchanged; §24 recounts its population and current-law floor |
 | §23 `typed_value_unit` under-determination | resolved by §24.3 from source prose |
@@ -47387,7 +47482,7 @@ successor is required, and no default may be invented.
    title-generic authority, 54,185-row contextual title-start authority, and
    2,590-row predicate authority; all
    2,240,669 start-occurrence and candidate pins; the complete 89,599-row
-   title audit with 80,306 matches = 8,202 positive + 72,104 defeated + zero
+   title audit with 80,306 matches = 8,203 positive + 72,103 defeated + zero
    unknown; zero unknown, unselected, or overselected starts; the exact
    1,545-row positive statement fence; A10-R04's complete pins,
    abort-without-emission behavior, rollback replacement/unlink injections,
@@ -47408,7 +47503,7 @@ successor is required, and no default may be invented.
    post-D10 single-parent commit.
 5. Only after Q5 may guarded slot authority, official slot registry, and the
    complete actual inventory be built in official order, with the negative
-   census over 12,763 T-minus keys and fresh derived-unit reads. Rerun R10b
+   census over 12,762 T-minus keys and fresh derived-unit reads. Rerun R10b
    immediately after inventory acceptance.
 6. Freshly evaluate V-B6 and all 22 domain rows, rerunning R10a, both R11 arms,
    and R10b. On present evidence V-B6 is nonpassing and the domain aborts. No

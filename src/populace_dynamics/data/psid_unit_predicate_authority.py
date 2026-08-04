@@ -45024,7 +45024,7 @@ SEGMENT_START_AUTHORITY: tuple[tuple[str, str], ...] = (
         "(See V5800 and Part I, Section 5 of this volume.) This tax credit = the lesser of: "
         "a) 10% (V5796 - (V5794 + V5795) or b) $400 - 10% (V5796-$4,000), whichever is "
         "smaller, but not a negative number Tax credit dollars",
-        "DDDDDDDDDDDDDDDDDDNDDDDDDDNDNNDDDDDDDDDDN",
+        "DDDDDDDDDDDDDDDDDDNDDDDDDDNDNNDDDDDDDDDDW",
     ),
     ("(See V6411 and Part I, Section 5 of this volume).", "DDDDDDDDDD"),
     (
