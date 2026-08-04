@@ -914,3 +914,260 @@ pre-Amendment-1 protocol byte and section 19 unchanged.
    unchanged except for the narrow affected-artifact index and ordinal
    refinements stated in rule 2. Every other original rule and abort remains
    in force. Section 19 remains byte-for-byte unamended.
+
+## Amendment 1, correction 2: Total serialization and versioned seals
+
+This correction is append-only. It is the controlling replacement for
+correction 1 only where the two conflict. Every earlier protocol byte, every
+q72 and q79 exception disposition, every attributable ordinary-atom
+disposition, every complete blocking union, and section 19 remain unchanged.
+
+1. **Total pre-filter path comparator.** For an affected document, assign a
+   member key to every member of every complete raster-applicable path before
+   any path is filtered. The keys are integer tuples with exactly these forms:
+
+   ```text
+   questionnaire-flow:root                         -> (0)
+   attributable ordinary branch-label instance b  ->
+     (1, b.page_number, 1, b.utf8_byte_start, b.utf8_byte_end)
+   rule-1 exception instance e                     ->
+     (1, e.page_number, 0, e.exception_index_on_page)
+   ```
+
+   The ordinary-member key applies whether that path-specific ordinary row
+   ultimately emits or is withheld. Its page and offsets are the exact pinned
+   occurrence coordinates, so it uses the existing source-order basis and no
+   sidecar value. The exception-member key uses only the already frozen page
+   number and rule-1 exception index. Consequently exceptions sort before all
+   attributable ordinary branch-label instances on the same page. A path
+   member that is neither the root, an attributable ordinary branch-label
+   instance, nor an enumerated rule-1 exception invokes the original abort.
+
+   Compare two member keys lexicographically as integer tuples. Compare two
+   complete paths lexicographically as arrays of member keys; at the first
+   unequal member key the smaller key sorts first, and when one complete key
+   array is a proper prefix of the other the shorter array sorts first.
+   Duplicate complete key arrays are forbidden. This is an exact total order:
+   page and exact span distinguish ordinary printed instances, exception keys
+   are unique on a page, and two multi-parent instances at one ordinary span
+   are distinguished by the earlier member at which their parent paths
+   diverge.
+
+   This comparator is used only to freeze the complete pre-filter parent-path
+   ordinal and the complete pre-filter occurrence-row position in an affected
+   document. After filtering, an emitted `flow_branch_paths` value contains
+   only branch IDs and retains the original unsigned-UTF-8 branch-ID ordering
+   law. A clean artifact never invokes this comparator. No member key, blocked
+   path, or comparison result is serialized or used as authority text.
+
+   The q72 D8 `SAME` atom is the worked sparse witness. Its attributable exact
+   pinned span is page 7 bytes `1962:2010`. Omitting common root and ordinary
+   path suffixes from the notation, its complete parent-path order is:
+
+   | Frozen ordinal | D1 parent member | Outcome | Frozen occurrence index |
+   |---:|---|---|---:|
+   | 0 | `E7.0` (`D1: 1. WORKING NOW, OR ONLY TEMPORARILY LAID OFF`) | blocked and withheld | 26 |
+   | 1 | emitted attributable D1 `OTHER` branch | emitted | 27 |
+
+   `E7.0` has an exception key beginning `(1, 7, 0, ...)`; D1 `OTHER`
+   has an ordinary key beginning `(1, 7, 1, ...)`, so ordinal 0 precedes
+   ordinal 1 without consulting either authority ID. The complete page-7
+   pre-filter tuple order assigns the two same-span `flow_branch_label`
+   positions indices 26 and 27. Filtering reserves ordinal 0 and index 26;
+   the survivor retains sparse ordinal `1` and sparse index `27`. Recomputing
+   either as zero or 26 is forbidden. The same comparator and complete-domain
+   counting law make every ordinal and index implied by the frozen correction-1
+   cases unique and independently re-derivable.
+
+2. **Schema law by artifact version.** The two presently affected documents,
+   q72/document 10 and q79/document 24, have
+   `schema_version == rq_stage2_document_annotation_nonauthority.v1`. They use
+   the legacy artifact shape. Their affected outer schema has exactly these 23
+   members, in this displayed order:
+
+   ```text
+   schema_version
+   artifact_id
+   authority_kind
+   source_replay_identity
+   candidate_index_identity
+   candidate_artifact_identity
+   source_review_identity
+   document_source_position
+   document_source_row
+   whole_document_locator
+   questionnaire_page_rows
+   questionnaire_occurrence_rows
+   flow_branch_rows
+   local_anchor_classification_rows
+   local_repeat_alias_evidence_rows
+   candidate_disposition_rows
+   adjudication_note_rows
+   raster_only_incompleteness_census
+   output_adjudication_rows
+   seal
+   nonauthority_statement
+   integrity
+   status
+   ```
+
+   Thus the one sidecar is immediately after `adjudication_note_rows` and
+   immediately before `output_adjudication_rows`. A legacy affected artifact
+   does not acquire `correction_note_rows`, `row_domain_seal_rows`,
+   `row_domain_seal_count`, `row_domain_seal_domain_sha256`, or `seal_status`.
+
+   Its flat seal retains its existing 30 member names and order and the
+   existing law for recomputing each of their values, then appends exactly
+   these ten members in this order:
+
+   ```text
+   raster_only_branch_exception_count
+   raster_only_branch_exception_keyset_sha256
+   raster_only_branch_exception_domain_sha256
+   raster_only_dependent_atom_consequence_count
+   raster_only_dependent_atom_consequence_keyset_sha256
+   raster_only_dependent_atom_consequence_domain_sha256
+   raster_only_page_census_count
+   raster_only_page_census_keyset_sha256
+   raster_only_page_census_domain_sha256
+   raster_only_incompleteness_census_sha256
+   ```
+
+   The first, fourth, and seventh additions equal the lengths of, respectively,
+   `branch_exception_records`, `dependent_atom_consequence_records`, and
+   `page_census_rows`. Each `*_keyset_sha256` hashes terminal-LF canonical JSON
+   bytes of the complete ordered key projection specified in correction 1:
+   `[questionnaire_page_id, exception_index_on_page]`,
+   `[questionnaire_page_id, utf8_byte_start, utf8_byte_end, occurrence_kind]`,
+   and `[questionnaire_page_id]`, respectively. Each `*_domain_sha256` hashes
+   terminal-LF canonical JSON bytes of the corresponding complete ordered
+   sidecar array. `raster_only_incompleteness_census_sha256` hashes terminal-LF
+   canonical JSON bytes of the complete sidecar object. The existing
+   zeroed-self `integrity.content_sha256` law is then rerun over the complete
+   23-member outer object and 40-member flat seal. A count, projection, order,
+   domain, sidecar, or artifact digest mismatch is rejection.
+
+   A future affected artifact with
+   `schema_version == rq_stage2_document_annotation.v1` uses the modern law
+   only if its clean pre-sidecar artifact already has `correction_note_rows`
+   and the four-member modern seal containing `row_domain_seal_rows`. Its
+   affected outer schema inserts the sidecar immediately after
+   `correction_note_rows` and immediately before `seal`; its affected seal is
+   the five-member correction-1 seal, with the three exact correction-1
+   row-domain entries and sidecar digest under the correction-1 modern digest
+   law. A legacy artifact MUST NOT be migrated to that shape. A clean legacy
+   or modern artifact receives no sidecar, no seal addition, no migration, and
+   no reseal.
+
+3. **Pinned exception strings and future raster grammar.** For q72 and q79,
+   the following table is the complete exception domain and its two displayed
+   strings are the sole lawful UTF-8 values. The key shorthand is
+   `E{page_number}.{exception_index_on_page}`; table order is page number and
+   then exception index.
+
+   | Key | `visible_label_description` | `approximate_raster_location` |
+   |---|---|---|
+   | E7.0 | `D1: 1. WORKING NOW, OR ONLY TEMPORARILY LAID OFF` | `page 7; item D1; leftmost response box` |
+   | E7.1 | `D8: 1. BETTER` | `page 7; item D8; left response box` |
+   | E7.2 | `D8: 5. WORSE` | `page 7; item D8; center response box` |
+   | E8.0 | `D14: 1. YES` | `page 8; item D14; upper response box` |
+   | E8.1 | `D14: 5. NO (GO TO D16)` | `page 8; item D14; lower response box` |
+   | E8.2 | `D20: 1. YES` | `page 8; item D20; left response box` |
+   | E8.3 | `D20: 5. NO` | `page 8; item D20; right response box` |
+   | E16.0 | `G1: 1. MARRIED` | `page 16; item G1; leftmost response box` |
+   | E21.0 | `H6: 2. UNINCORPORATED` | `page 21; item H6; second response box in vertical stack` |
+   | E21.1 | `H6: 3. BOTH` | `page 21; item H6; third response box in vertical stack` |
+   | E8.0 | `C1: TURN TO P. 20, SECTION E` | `page 8; item C1; right-side direct route from response boxes 4 through 7` |
+   | E12.0 | `C30: 1. SALARIED` | `page 12; item C30; left response box` |
+   | E12.1 | `C30: 3. PAID BY HOUR` | `page 12; item C30; center response box` |
+   | E12.2 | `C30: 7. OTHER` | `page 12; item C30; right response box` |
+   | E12.3 | `C38: 1. YES` | `page 12; item C38; left response box` |
+   | E12.4 | `C38: 5. NO` | `page 12; item C38; right response box` |
+   | E22.0 | `F2: TURN TO P. 27, SECTION G` | `page 22; item F2; direct route below response box 3` |
+   | E22.1 | `F2: TURN TO P. 30, SECTION H` | `page 22; item F2; right-side direct route from response boxes 4 through 7` |
+   | E39.0 | `K1: 1. HEAD IS FARMER, OR RANCHER` | `page 39; item K1; upper response row` |
+   | E39.1 | `K1: 5. HEAD IS NOT A FARMER OR RANCHER → GO TO K5` | `page 39; item K1; lower response row` |
+
+   The first ten rows apply only to q72 and the final ten only to q79; identical
+   shorthand on different documents is not a shared key. A differing case,
+   space, punctuation mark, arrow, word, or location phrase is rejection.
+
+   Before any future affected document is sealed, a document-specific protocol
+   table MUST pin one `item_identifier`, one `canonical_visual_label`, and one
+   `location_clause` for every exception. The only future string grammar is:
+
+   ```text
+   visible_label_description = "{item_identifier}: {canonical_visual_label}"
+   approximate_raster_location =
+     "page {page_number}; item {item_identifier}; {location_clause}"
+   location_clause = "response box {ordinal}"
+                   | "response row {ordinal}"
+                   | "direct route {ordinal}"
+   ```
+
+   Fixed template punctuation and spaces are literal ASCII. `page_number` and
+   the one-based `ordinal` use unsigned base-10 without leading zeroes. The
+   pinned item and visual-label tokens are NFC UTF-8, contain no control
+   character or leading or trailing whitespace, and replace every internal
+   raster whitespace run with one U+0020 while preserving visible case and
+   punctuation. Template expansion performs no further normalization. A
+   builder may only copy the document-specific pinned tokens; it may not
+   choose, OCR, paraphrase, or infer them. An absent or ambiguous token aborts.
+
+   Future same-page exception indices use the complete printed branch bounding
+   box, including the originating response box or group and its directive.
+   Sort first by printed top edge from top to bottom, then by printed left edge
+   from left to right. A geometric tie is broken by printed reading order:
+   earlier question block first, then earlier response or route in that block's
+   printed order. Any remaining tie is broken by unsigned UTF-8 bytes of the
+   pinned `visible_label_description`; duplicate descriptions at an exact tie
+   abort. This is the sole raster-order rule. For q79 page 22 it places the
+   direct Section-G route before the direct Section-H route.
+
+4. **Required visual-fidelity diagnostic.** An ordinary atom has a
+   visual-fidelity diagnostic if and only if a nonempty exact pinned span is
+   attributable to its printed instance and that span is partial or garbled
+   relative to the raster. The diagnostic is REQUIRED in that case and
+   FORBIDDEN otherwise. It never repairs the exact bytes or supplies semantic
+   evidence.
+
+   The complete current required domain is q72 D8 `SAME`; D9; D10 `YES` and
+   `NO`; D12 `YES` and `NO`; D18 `YES` and `NO`; D22 `YES` and `NO`; M4
+   prompt; M4 `NEVER WORKED`; and M5 prompt. No q79 ordinary atom is in this
+   domain. In the legacy shape, exactly one existing `adjudication_note_rows`
+   row mapped to each such atom MUST use these exact values:
+
+   ```text
+   note_code = attributable_garbled_exact_bytes_retained
+   note = The visible printed atom has an attributable partial or garbled pinned UTF-8 slice; the exact slice, offsets, and hash are retained without visual repair.
+   ```
+
+   The row's existing candidate kind and candidate ID remain unchanged, and
+   no extra note row is created. Failure to resolve exactly one such mapped
+   row aborts. The same code and note are forbidden for every atom outside the
+   iff domain. In a future modern artifact, the unique existing
+   `correction_note_rows` row bound to the atom carries the same exact code and
+   note; an absent or multiple binding aborts.
+
+5. **Single fail-closed outcome per context.** In a production exact-schema Q5
+   context, Q5 is withheld un-emitted if and only if at least one input
+   document carries `raster_only_incompleteness_census`. While that predicate
+   is true, no Q5 artifact, row, node, member, ID, or partial substitute is
+   emitted. In a validator context for exact-schema Q5 or any other contract
+   requiring exhaustive flow coverage, validation fails if and only if at
+   least one input document carries the sidecar. The validator returns failure;
+   it does not return a withheld output. Every non-validator production output
+   whose contract requires exhaustive flow coverage is likewise withheld
+   un-emitted under that same iff predicate. These context predicates replace
+   every correction-1 `fail or remain withheld` and `fail or be withheld`
+   alternative. All correction-1 prohibitions on inference, synthesis, gap
+   rows, and authority promotion remain controlling.
+
+6. **Exact invariance.** Correction 2 changes no disposition. The observed
+   74-artifact seal-size domain is exactly `63×30 / 1×26 / 1×33 / 9×4`.
+   Every artifact with `N == 0` retains its existing seal unchanged. It also
+   retains its existing outer schema, status, bytes, IDs, hashes, digests, and
+   claim and has no empty sidecar, seal addition, migration, reseal, or claim
+   change. Only q72 and q79 use the affected legacy transformation above; the
+   future modern law applies only to a future artifact already versioned with
+   the clean modern shape.
