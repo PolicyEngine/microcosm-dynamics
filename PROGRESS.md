@@ -23,8 +23,12 @@
 - All eight focused rollback scenarios and all 121 successor-gate unit tests pass, including an escaping after-effect interruption that leaves every stable backup intact.
 - Froze all changed successor pins: `[8024, 273, 77, 1, 67316, 1145, 0, 1, 421, 12341]`, movement 11,528, T+/T- 76,836/12,763, payload `4cd1c371...`.
 - Production stdout equals the committed-pin output byte for byte (5,342,297 bytes, SHA `20551041...`); the streaming storage audit passed at 128,466,944 bytes peak RSS.
+- Updated §24, A10-R01..R05, every changed successor/title/storage pin, the six currency rejection classes, V5076 precedence, the 12-to-1 partial-range correction, and the strengthened transaction guarantee.
+- Independent final reviews found no remaining title, rollback, pin, arithmetic, or documentation defect; the combined authority/successor suite passes 415 tests.
+- Refreshed the complete tier census to 1,401 unit / 2,104 artifact / 817 integration / 520 reproduction / 159 oracle = 5,001 tests.
+- The amended document is 3,464,975 bytes with SHA-256 `4a69be160b102b96d1b39ab28b4c3dbffcb6b5ba2a90dd7fac0fb8bca1e6f6ce`; its revision-11 prefix remains byte-identical.
 
 ## Next
 
-- Update A10-R01..R05 fixtures, all §24 pins/censuses/floors, and transaction prose.
-- Run the prescribed verification, write the final report, then remove this ledger before completion.
+- Run the final formatting, reproducibility, prefix, and repository checks.
+- Write the final report, then remove this ledger before completion.
