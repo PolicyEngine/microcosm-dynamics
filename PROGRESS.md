@@ -22,8 +22,9 @@ and must receive an explicit title defeat; only independently audited unmarked
 output-label layouts may become title denotations. This removes prefix-boundary
 omission as a possible completeness failure. The title and segment authorities
 have now been rebuilt from the clean pre-title authority after the frozen
-audit; the successor vector, storage floors, and derived production pins are
-still being rebuilt rather than treated as final.
+audit. The successor vector, production pins, and storage floors have also
+been independently regenerated from the lawful raw relation; the final §24
+rewrite and repository-wide verification remain in progress.
 
 ## Done
 
@@ -120,9 +121,29 @@ still being rebuilt rather than treated as final.
   The complete authority test file passes all 283 tests; the only initial
   failures were independently confirmed stale pre-regeneration expectations
   and repaired without changing source semantics or regenerated modules.
+- Derived and froze the final successor vector
+  `[8140,309,77,12,67316,1145,0,1,421,12178]` from the lawful raw relation.
+  It has 11,365 movement rows, T+ 76,999, and T− 12,600. The count-array,
+  ordered-assignment, movement-row, movement-key, and census-payload SHA-256
+  pins are respectively `de75d6601129d8e1f940b43d9aedb9ed9c57c8e1aaaed9b8ac0a80cad027c1c8`,
+  `cadec36379fe7e46701a16b5f7fd03b587a3ebb7f18f0f193261e9c69c8bfd99`,
+  `23d44c23310508857fd879534afb8daf3dd59aa181582d63fb64a46734b647dc`,
+  `9cffc90dc9e7173d734b629d5ac857aa02865005433e1b8de38c123708bc4d97`,
+  and `7b66e4bed27c272e5b99bcd1cdd69fb4ad1f61c56b9fc0a787fc7d3301b46834`.
+- Fixed A10-R04 validation to ground description-relative title offsets in the
+  complete raw description, not the bounded context header. All 110 runner
+  tests pass, including second-of-three rollback and complete stdout. A real
+  three-output production run completed in 83.16 seconds at 1,393,868,800
+  bytes peak RSS; stdout was byte-identical to the 81-member v4 payload.
+- Recomputed successor storage using only the lawful raw relation, the
+  description-free compiled cache, and the standalone 11,365-key movement
+  artifact. The retained 8,538 fields carry 378,937,660,137 logical members;
+  the final four-shape floor is 123,153,972,844,092 bytes. A separate minimal
+  reducer reproduced the key aggregates, and no evidence input or
+  `field_unit` call was used.
 
 ## Next
 
-1. Regenerate the successor vector, all pins, storage floors, fixtures, and
-   §24 claims; run focused and full verification and recheck the prefix.
+1. Finish the §24 claims from the frozen runner and storage reports; run
+   focused and full verification and recheck the prefix.
 2. Write the final report output and remove `PROGRESS.md` in the final commit.

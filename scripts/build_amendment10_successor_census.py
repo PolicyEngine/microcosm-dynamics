@@ -57,6 +57,7 @@ from populace_dynamics.data.psid_unit_predicate_authority import (  # noqa: E402
     SEGMENT_START_AUTHORITY,
 )
 from populace_dynamics.data.psid_unit_title_authority import (  # noqa: E402
+    TITLE_GENERIC_UNIT_FAMILIES,
     TITLE_LITERAL_FAMILIES,
     TITLE_START_AUTHORITY,
 )
@@ -190,6 +191,10 @@ class GatePins:
     title_literal_relation_byte_count: int
     title_literal_relation_sha256: str
     title_literal_relation_array_sha256: str
+    title_generic_relation_array_sha256: str
+    title_generic_relation_byte_count: int
+    title_generic_relation_row_count: int
+    title_generic_relation_sha256: str
     predicate_authority_row_count: int
     predicate_authority_relation_byte_count: int
     predicate_authority_relation_sha256: str
@@ -226,6 +231,8 @@ class CensusBuild:
     clause_relation_bytes: bytes
     title_literal_rows: tuple[tuple[str, tuple[str, ...]], ...]
     title_literal_relation_bytes: bytes
+    title_generic_rows: tuple[tuple[str, tuple[str, ...]], ...]
+    title_generic_relation_bytes: bytes
     predicate_authority_rows: tuple[tuple[str, str | None, str], ...]
     predicate_authority_relation_bytes: bytes
     statement_rows: tuple[dict[str, Any], ...]
@@ -259,49 +266,49 @@ EXPECTED_A10_R04_PINS = GatePins(
         ("incomplete_source_numeric_authority", 813),
     ),
     count_rows=(
-        ("compiled_source_numeric_grammar", 6109),
+        ("compiled_source_numeric_grammar", 8140),
         (
             "compiled_source_numeric_grammar_padding_underdetermined_exact_replay",
-            173,
+            309,
         ),
         (
             "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay",
-            63,
+            77,
         ),
-        ("compiled_source_numeric_grammar_partial_range_exact_replay", 1),
+        ("compiled_source_numeric_grammar_partial_range_exact_replay", 12),
         ("value_code_domain_no_numeric_grammar", 67316),
         ("value_code_range_physical_rendering_unestablished", 1145),
         ("nonnumeric_source_field_outside_numeric_grammar", 0),
         ("conflicting_source_numeric_format", 1),
         ("unsupported_source_numeric_format", 421),
-        ("incomplete_source_numeric_authority", 14370),
+        ("incomplete_source_numeric_authority", 12178),
     ),
-    count_array_sha256="d7862ee98f4c2ce1cba85fc2fca1db21d02cf30258548a919b712c99d85543fe",
-    ordered_assignment_sha256="bdd738a41593680ff5d89fbadd5e6bcfcf56c27df5ba7a72dcdecff34b3b3242",
+    count_array_sha256="de75d6601129d8e1f940b43d9aedb9ed9c57c8e1aaaed9b8ac0a80cad027c1c8",
+    ordered_assignment_sha256="cadec36379fe7e46701a16b5f7fd03b587a3ebb7f18f0f193261e9c69c8bfd99",
     status_matrix_rows=(
         (
             "compiled_source_numeric_grammar",
-            (216, 162, 2053, 1331, 1443, 904),
-            6109,
-            "555dd663b4f201cc6d3feeb49faa08eb9c8c7afa3db1beb096c5567444d96000",
+            (323, 211, 2200, 1814, 2299, 1293),
+            8140,
+            "4c34cf1831a80db4bda1112f23a2559fdbb65b73757bd96025dc7accc24b73b5",
         ),
         (
             "compiled_source_numeric_grammar_padding_underdetermined_exact_replay",
-            (2, 14, 123, 12, 14, 8),
-            173,
-            "c4822fcf47a804843f5687d7269f66e874791f77cfdd0d5e1c691ce8be857a2d",
+            (27, 24, 125, 36, 57, 40),
+            309,
+            "7aeab7c70d0d586d1b534cd8b35cd23e8686f3a919530412d85332abebe7fddc",
         ),
         (
             "compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay",
-            (1, 7, 42, 11, 0, 2),
-            63,
-            "1a64fa9b57f676f3180d97ba70ac64f9a7f6db59f85ab4a56649300d8b8071f0",
+            (1, 7, 42, 15, 7, 5),
+            77,
+            "14637a7f88c43e00f431845a0ad6d78b3ea07b88fab7765ca34ad6e852b7b46f",
         ),
         (
             "compiled_source_numeric_grammar_partial_range_exact_replay",
-            (1, 0, 0, 0, 0, 0),
-            1,
-            "179e226fe0291c83938c8a7709968d54312f1edd21758aca8df6b261e6abe2d8",
+            (1, 0, 0, 1, 4, 6),
+            12,
+            "24769567577b93d187a9c44334f2c476e2b40e2106244490654e53d8504e1d94",
         ),
         (
             "value_code_domain_no_numeric_grammar",
@@ -335,14 +342,14 @@ EXPECTED_A10_R04_PINS = GatePins(
         ),
         (
             "incomplete_source_numeric_authority",
-            (885, 489, 3214, 2544, 4587, 2651),
-            14370,
-            "afe46a71dfc7e101b62d4bb159d4dd492e736aae51802bf4d9a9a271879413b1",
+            (753, 430, 3065, 2032, 3677, 2221),
+            12178,
+            "693dda9632f5d915a276c7e99b5d3b3c73d734e6012cec7a2f4dad8b43536d08",
         ),
     ),
-    movement_row_count=13557,
-    movement_rows_sha256="b8fb7ca061adcbc641dde3683266c5ee4c0045772515250f63cfb2ab60ca48c5",
-    movement_key_sha256="3968dc84c359193f128371bd8e2f0bb73095d6c5ba09b571a13e515c0fba6aa5",
+    movement_row_count=11365,
+    movement_rows_sha256="23d44c23310508857fd879534afb8daf3dd59aa181582d63fb64a46734b647dc",
+    movement_key_sha256="9cffc90dc9e7173d734b629d5ac857aa02865005433e1b8de38c123708bc4d97",
     failure_reason_rows=(
         (
             "conflicting_source_numeric_format",
@@ -382,12 +389,12 @@ EXPECTED_A10_R04_PINS = GatePins(
         (
             "incomplete_source_numeric_authority",
             "unresolved_typed_value_unit_no_source_authority",
-            13557,
+            11365,
         ),
     ),
     failure_reason_row_count=8,
-    failure_reason_rows_byte_count=245152,
-    failure_reason_rows_sha256="a44581b0d7233a3d178e5bc9927e43d29d0ead26c9912fda8ab20601af5299c6",
+    failure_reason_rows_byte_count=208572,
+    failure_reason_rows_sha256="3bfa27be2cf83d37982bb6347a2601f13fd32825e0578e12d93dabfba58f3e75",
     actual_candidate_table_row_count=82,
     actual_candidate_occurrence_count=322,
     actual_candidate_unadjudicated_count=0,
@@ -399,20 +406,20 @@ EXPECTED_A10_R04_PINS = GatePins(
     # Round-3 title pins regenerated with the full successor object from the
     # lawful raw relation, never copied from a partial or evidence build.
     title_header_candidate_table_row_count=89599,
-    title_header_matched_field_count=3978,
-    title_header_candidate_occurrence_count=4055,
-    title_header_positive_start_count=2261,
-    title_header_defeated_start_count=1794,
+    title_header_matched_field_count=51957,
+    title_header_candidate_occurrence_count=80306,
+    title_header_positive_start_count=8410,
+    title_header_defeated_start_count=71896,
     title_header_unadjudicated_start_count=0,
-    title_header_positive_field_count=2193,
-    title_header_defeat_field_count=1785,
-    title_header_no_match_field_count=85621,
-    title_header_candidate_table_relation_byte_count=40381707,
+    title_header_positive_field_count=8388,
+    title_header_defeat_field_count=43569,
+    title_header_no_match_field_count=37642,
+    title_header_candidate_table_relation_byte_count=89417509,
     title_header_candidate_table_relation_sha256=(
-        "06bae45c62cc4dd4cbc8107feed32ff3f189ae2c13042d88e4547fe478baac32"
+        "a6f44097bfdaf82e1dcb4fdb09d7027b4c619177e7f2695385cb0b24d40f654b"
     ),
     title_header_candidate_table_array_sha256=(
-        "6416d91409435b33613841fcd2a6cf651176e78177c3ab6ccf82d7b589940232"
+        "87d0872cb45f8319f0a9ed25bf705096f5a6c62453319e650ba1081bb56589c6"
     ),
     denotation_candidate_table_row_count=1114747,
     denotation_candidate_occurrence_count=2240669,
@@ -423,32 +430,32 @@ EXPECTED_A10_R04_PINS = GatePins(
     denotation_candidate_unselected_count=0,
     denotation_candidate_overselected_count=0,
     denotation_candidate_unadjudicated_count=0,
-    denotation_candidate_table_sha256="20a2a0330fee310fdc1e149bcd9b7effae75c592526f88f78d9d0eb7a6669933",
+    denotation_candidate_table_sha256="58675b1998587ce2bd7b6dc005f4e2d2983cff1ec338139d081aa4e1348bb847",
     denotation_start_occurrence_row_count=2240669,
-    denotation_start_occurrence_byte_count=268247079,
-    denotation_start_occurrence_sha256="130eec19a443b415b8552b11f9035e76d645dc61244321c10f3b1b19d7708ad7",
+    denotation_start_occurrence_byte_count=269157391,
+    denotation_start_occurrence_sha256="e7b83dc2cccc9b42af157543d77efa8861315825b3cbb0599bb7db95fc9f8c43",
     denotation_start_partition_rows=(
-        ("whole_domain_denotation", 10519),
-        ("explicit_no_whole_domain_denotation", 6326),
-        ("explicit_no_denotation", 2223824),
+        ("whole_domain_denotation", 16668),
+        ("explicit_no_whole_domain_denotation", 76350),
+        ("explicit_no_denotation", 2147651),
         ("unadjudicated_start", 0),
     ),
     segment_start_authority_row_count=59445,
     segment_start_authority_start_count=1114747,
     segment_start_authority_relation_byte_count=8466288,
-    segment_start_authority_relation_sha256="6c589f0ed6085c31d52e37a372ae1e5e0cebe1a6f62409aa5a04d8c384ebe7e2",
-    segment_start_authority_array_sha256="df29bb0aa328732f4f7ebccf8ee479a771c12c9536e4a95dfbeba32f7fa8dd39",
+    segment_start_authority_relation_sha256="b2185fd7d44c83292ad2af25b1186369cfef119e4dcc16a4f960d3e225a7cb36",
+    segment_start_authority_array_sha256="c0eb8d26bf903137f73afc5fc37e79f8bfd0b2983d9ac79d33f14abd35c84883",
     coding_start_authority_row_count=203,
     coding_start_authority_relation_byte_count=31396,
     coding_start_authority_relation_sha256="6f164c6772def69a29a57e1de04b3927ab8f56141bc2a8c6f0dee0964c8da6bf",
     coding_start_authority_array_sha256="ac2bddbed10bb445215bb19354259685efe24c82b2f59b258dec5d23fcf8497b",
-    title_start_authority_row_count=3222,
-    title_start_authority_relation_byte_count=877681,
+    title_start_authority_row_count=54185,
+    title_start_authority_relation_byte_count=16637872,
     title_start_authority_relation_sha256=(
-        "08a5933c1e9821994d9f96dbc8ec4ef193410490a5df1a7c1b819dee695cf879"
+        "ab0db98fc0b763553ef0373c57baa51e13551d9831f55c72f19321da4c830a01"
     ),
     title_start_authority_array_sha256=(
-        "cc3ef5ac6f519f38f3798449361d5db5d68100aefe7839caf294eb41ec4cce58"
+        "8be723069f257659cc2c36dd55758c76d084eded24d987629d1950c172032933"
     ),
     anchor_relation_row_count=105,
     anchor_relation_byte_count=4421,
@@ -458,13 +465,21 @@ EXPECTED_A10_R04_PINS = GatePins(
     clause_relation_byte_count=7578,
     clause_relation_sha256="8ddc26217bd530fae469643458648b159548e0c344d6b967dffb87abfa16ed43",
     clause_relation_array_sha256="1bd2a989c7fe7a1471bbb8b289d64e1fc66e399a0c9b2701419b6d5b636116d3",
-    title_literal_relation_row_count=12,
-    title_literal_relation_byte_count=679,
+    title_literal_relation_row_count=13,
+    title_literal_relation_byte_count=733,
     title_literal_relation_sha256=(
-        "6de05d5b6e506cdd692daee045ec126c31736885eb86889476abfa814f8af9b6"
+        "e1159929e711f73757b7e51a648f2c096965881a2342d9f26ce4e95d7c8af46e"
     ),
     title_literal_relation_array_sha256=(
-        "3462e76c819851460e9c0fe8ab6b3cc1f82435d83f8b92d491ec9b81795d530d"
+        "c5f6b75b64ebd86134e1b655c5d522fcd18dc2179fd28fa2c66a0943465e2913"
+    ),
+    title_generic_relation_array_sha256=(
+        "f709526fe7802085ed691167a595f3d24504523dfa9a5fd4f61eb9269debd9de"
+    ),
+    title_generic_relation_byte_count=1733,
+    title_generic_relation_row_count=38,
+    title_generic_relation_sha256=(
+        "b56ffd655abb00c8aca6e382092d08cd94325cfbf8ef4ce25651a59fc6cf8133"
     ),
     predicate_authority_row_count=2590,
     predicate_authority_relation_byte_count=400372,
@@ -482,7 +497,7 @@ EXPECTED_A10_R04_PINS = GatePins(
     unit_bearing_relation_byte_count=238735,
     unit_bearing_relation_sha256="354de946fbb0c15f05eb1c5b202bbbd8cdc5913922cf8c402e6e253699daa153",
     unit_bearing_relation_array_sha256="0e7a96f1146063da99dfa576eb254e38cf577762522911e6332863ef9992d6b8",
-    census_payload_sha256="417bf1886c97fee7b1b249f92cf868096002c6cf1c6eaae9daf52c8984012da2",
+    census_payload_sha256="7b66e4bed27c272e5b99bcd1cdd69fb4ad1f61c56b9fc0a787fc7d3301b46834",
 )
 
 
@@ -744,8 +759,25 @@ def _title_header_summary(
     return summary
 
 
-def _validate_title_start_authority(rows: Sequence[Sequence[Any]]) -> None:
-    """Validate the contextual title fence independently of its digests."""
+def _validate_title_start_authority(
+    rows: Sequence[Sequence[Any]],
+    field_rows: Sequence[Mapping[str, Any]],
+) -> None:
+    """Validate description-relative title spans independently of digests."""
+
+    descriptions: dict[tuple[Any, Any], Any] = {}
+    for position, field_row in enumerate(field_rows):
+        witness_key = (
+            field_row.get("interview_wave"),
+            field_row.get("raw_field_id"),
+        )
+        if witness_key in descriptions:
+            raise GateError(
+                "title-start authority input row "
+                f"{position}: duplicate raw-field witness key "
+                f"{witness_key!r}"
+            )
+        descriptions[witness_key] = field_row.get("source_description")
 
     seen: set[tuple[Any, ...]] = set()
     for position, row in enumerate(rows):
@@ -755,7 +787,7 @@ def _validate_title_start_authority(rows: Sequence[Sequence[Any]]) -> None:
             )
         (
             description_sha256,
-            title,
+            bounded_context_header,
             family,
             start,
             end,
@@ -775,7 +807,7 @@ def _validate_title_start_authority(rows: Sequence[Sequence[Any]]) -> None:
         if (
             type(description_sha256) is not str
             or len(description_sha256) != 64
-            or type(title) is not str
+            or type(bounded_context_header) is not str
             or type(family) is not str
             or type(start) is not int
             or type(end) is not int
@@ -787,16 +819,38 @@ def _validate_title_start_authority(rows: Sequence[Sequence[Any]]) -> None:
             raise GateError(
                 f"title-start authority row {position}: invalid member"
             )
-        title_bytes = title.encode("utf-8")
         try:
-            selected = title_bytes[start:end].decode("ascii")
-        except UnicodeDecodeError as error:
+            spelling_bytes = spelling.encode("ascii")
+        except UnicodeEncodeError as error:
             raise GateError(
                 f"title-start authority row {position}: non-ASCII span"
             ) from error
-        if start < 0 or end <= start or selected != spelling:
+        if start < 0 or end <= start or end - start != len(spelling_bytes):
             raise GateError(
                 f"title-start authority row {position}: invalid raw span"
+            )
+        witness_key = (wave, field)
+        if witness_key not in descriptions:
+            raise GateError(
+                f"title-start authority row {position}: "
+                f"missing raw-field witness key {witness_key!r}"
+            )
+        description = descriptions[witness_key]
+        if type(description) is not str:
+            raise GateError(
+                f"title-start authority row {position}: "
+                f"non-string raw-description witness {witness_key!r}"
+            )
+        description_bytes = description.encode("utf-8")
+        if (
+            hashlib.sha256(description_bytes).hexdigest()
+            != description_sha256
+            or not description.startswith(bounded_context_header)
+            or description_bytes[start:end] != spelling_bytes
+        ):
+            raise GateError(
+                f"title-start authority row {position}: "
+                "raw-description grounding mismatch"
             )
         if disposition == "whole_domain_denotation":
             if type(unit) is not str or not unit:
@@ -838,6 +892,8 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
     clause_bytes = _jsonl_relation_bytes(clause_rows)
     title_literal_rows = tuple(TITLE_LITERAL_FAMILIES)
     title_literal_bytes = _jsonl_relation_bytes(title_literal_rows)
+    title_generic_rows = tuple(TITLE_GENERIC_UNIT_FAMILIES)
+    title_generic_bytes = _jsonl_relation_bytes(title_generic_rows)
     predicate_rows = tuple(PREDICATE_AUTHORITY)
     predicate_bytes = _jsonl_relation_bytes(predicate_rows)
     title_authority_rows = tuple(TITLE_START_AUTHORITY)
@@ -877,7 +933,7 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         row["candidate"] for row in actual_rows
     }
     payload: dict[str, Any] = {
-        "schema_version": "amendment_10_successor_census.v3",
+        "schema_version": "amendment_10_successor_census.v4",
         "input_relation_row_count": len(frozen_rows),
         "input_relation_sha256": input_relation_sha256(frozen_rows),
         "actual_candidate_table_row_count": len(actual_rows),
@@ -991,6 +1047,14 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         "title_literal_relation_array_sha256": canonical_sha256(
             title_literal_rows
         ),
+        "title_generic_relation_array_sha256": canonical_sha256(
+            title_generic_rows
+        ),
+        "title_generic_relation_byte_count": len(title_generic_bytes),
+        "title_generic_relation_row_count": len(title_generic_rows),
+        "title_generic_relation_sha256": hashlib.sha256(
+            title_generic_bytes
+        ).hexdigest(),
         "predicate_authority_row_count": len(predicate_rows),
         "predicate_authority_sha256": canonical_sha256(predicate_rows),
         "statement_table_row_count": len(table),
@@ -1018,6 +1082,8 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         clause_relation_bytes=clause_bytes,
         title_literal_rows=title_literal_rows,
         title_literal_relation_bytes=title_literal_bytes,
+        title_generic_rows=title_generic_rows,
+        title_generic_relation_bytes=title_generic_bytes,
         predicate_authority_rows=predicate_rows,
         predicate_authority_relation_bytes=predicate_bytes,
         statement_rows=table,
@@ -1255,6 +1321,18 @@ def pins_from_build(build: CensusBuild) -> GatePins:
         title_literal_relation_array_sha256=(
             payload["title_literal_relation_array_sha256"]
         ),
+        title_generic_relation_array_sha256=(
+            payload["title_generic_relation_array_sha256"]
+        ),
+        title_generic_relation_byte_count=len(
+            build.title_generic_relation_bytes
+        ),
+        title_generic_relation_row_count=(
+            payload["title_generic_relation_row_count"]
+        ),
+        title_generic_relation_sha256=hashlib.sha256(
+            build.title_generic_relation_bytes
+        ).hexdigest(),
         predicate_authority_row_count=payload["predicate_authority_row_count"],
         predicate_authority_relation_byte_count=len(
             build.predicate_authority_relation_bytes
@@ -1671,7 +1749,10 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
     # displayed fences byte for byte; canonical-array pins independently bind
     # row order and membership.
     title_authority_bytes = build.title_start_authority_relation_bytes
-    _validate_title_start_authority(build.title_start_authority_rows)
+    _validate_title_start_authority(
+        build.title_start_authority_rows,
+        build.field_rows,
+    )
     _require_equal(
         "title-start authority row count",
         payload["title_start_authority_row_count"],
@@ -1831,6 +1912,47 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         "title-literal materialized canonical-array digest",
         canonical_sha256(build.title_literal_rows),
         payload["title_literal_relation_array_sha256"],
+    )
+    title_generic_bytes = build.title_generic_relation_bytes
+    _require_equal(
+        "title-generic relation row count",
+        payload["title_generic_relation_row_count"],
+        pins.title_generic_relation_row_count,
+    )
+    _require_equal(
+        "title-generic materialized row count",
+        len(build.title_generic_rows),
+        payload["title_generic_relation_row_count"],
+    )
+    _require_equal(
+        "title-generic relation byte count",
+        payload["title_generic_relation_byte_count"],
+        pins.title_generic_relation_byte_count,
+    )
+    _require_equal(
+        "title-generic materialized byte count",
+        len(title_generic_bytes),
+        payload["title_generic_relation_byte_count"],
+    )
+    _require_equal(
+        "title-generic relation digest",
+        payload["title_generic_relation_sha256"],
+        pins.title_generic_relation_sha256,
+    )
+    _require_equal(
+        "title-generic materialized relation digest",
+        hashlib.sha256(title_generic_bytes).hexdigest(),
+        payload["title_generic_relation_sha256"],
+    )
+    _require_equal(
+        "title-generic relation canonical-array digest",
+        payload["title_generic_relation_array_sha256"],
+        pins.title_generic_relation_array_sha256,
+    )
+    _require_equal(
+        "title-generic materialized canonical-array digest",
+        canonical_sha256(build.title_generic_rows),
+        payload["title_generic_relation_array_sha256"],
     )
     predicate_bytes = build.predicate_authority_relation_bytes
     _require_equal(
