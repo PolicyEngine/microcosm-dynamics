@@ -13,10 +13,16 @@ were still suppressed. The reopened structural audit is now closed. It found
 singleton-hyphen spans. Those contain 907 unit-label events and 114 response-
 selector events. Five genuine `?-YEAR` selectors had been hidden by an
 earlier leftmost regex, so the final law iterates every marker with both
-hyphen lookarounds. The raw title domain also extends through the first
-question mark when that is later than the first physical line. The title
-census, successor vector, storage floors, and all derived pins are therefore
-being rebuilt from the clean pre-title authority rather than treated as final.
+hyphen lookarounds. A second independent pass then found verb-free output
+labels still later in legacy descriptions. Candidate discovery has therefore
+moved to a deliberately conservative full-description superdomain: exactly
+80,305 maximal generic/literal starts, including 19,971 starts beyond the
+bounded structural header. Every body or statement occurrence remains visible
+and must receive an explicit title defeat; only independently audited unmarked
+output-label layouts may become title denotations. This removes prefix-boundary
+omission as a possible completeness failure. The title census, successor
+vector, storage floors, and all derived pins are still being rebuilt from the
+clean pre-title authority rather than treated as final.
 
 ## Done
 
@@ -72,14 +78,22 @@ being rebuilt from the clean pre-title authority rather than treated as final.
   62 highest-college-year fields, two school-years-outside-the-U.S. fields,
   68 typical-week hour fields (including 12 wrapped prompts), two immigration-
   years fields, and four wrapped alternate day questions. None is frozen yet.
+- Rejected the bounded-header census before regeneration after an independent
+  audit found legacy continuation outputs such as `Amount per hour`, `Number
+  of years from now`, and region/state counts several physical lines below
+  their questionnaire prompts. A complete-source scan proves that exposing
+  every generic/literal match increases the domain from 60,334 to 80,305
+  starts while remaining operationally small. It also found the wrapped V324
+  `In`/`Dollars` title, an independently positive field beyond the eight
+  referee witnesses.
 
 ## Next
 
-1. Implement and regression-test the completed singleton/first-question
-   structural law and reproduce every independent structural partition.
-2. Adjudicate every discovered start over all 89,599 fields, prove zero
-   unknowns, and rebuild `SEGMENT_START_AUTHORITY` from the clean pre-title
-   baseline.
+1. Finish the exact unmarked-output registry and independently adjudicate the
+   19,971-start full-description delta as denotation or explicit title defeat.
+2. Run the audit-only 89,599-row build, prove all 80,305 starts known, and only
+   then rebuild `TITLE_START_AUTHORITY` and `SEGMENT_START_AUTHORITY` from the
+   clean pre-title baseline.
 3. Regenerate the successor vector, all pins, storage floors, fixtures, and
    §24 claims; run focused and full verification and recheck the prefix.
 4. Write the final report output and remove `PROGRESS.md` in the final commit.
