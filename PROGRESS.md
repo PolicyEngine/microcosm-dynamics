@@ -2,7 +2,7 @@
 
 ## State
 
-Raster plus pinned-text adjudication is complete for both blocked reports. The append-only superseding correction is being drafted from a closed 10-exception q72 domain and 10-exception q79 domain, with attributable partial/garbled q72 spans retained as ordinary exact-byte evidence.
+The append-only superseding correction is committed. It closes the attribution, path serialization, sidecar isolation, consumption, and exact-schema blockers while retaining the closed 10-exception q72 and q79 domains established from raster plus pinned-text review.
 
 ## Done
 
@@ -12,9 +12,12 @@ Raster plus pinned-text adjudication is complete for both blocked reports. The a
 - Rendered and inspected q72 pages 7, 8, 16, 21, and 38 and q79 pages 8, 12, 22, and 39; cross-checked every decision against Poppler 26.04.0 pinned page bytes.
 - Closed q72 at 10 rule-1 instances: D1 WORKING; D8 BETTER/WORSE; D14 YES/NO; D20 YES/NO; G1 MARRIED; H6 UNINCORPORATED/BOTH. D10, D12, D18, D22, M4, and M5 retain their exact attributable bytes, without transcription repair.
 - Closed q79 at 10 rule-1 instances: C1 direct-E route; C30's three pay-method labels; C38 YES/NO; F2 direct-G/direct-H routes; and K1 farmer/nonfarmer labels. C32 bytes are attributable only to C32 and cannot proxy for C38.
+- Appended correction 1 without changing any of the 24,153 prior protocol bytes, and committed it as `277bc4efa80d9434ecfc54ed6b32a24392d6008e`.
+- Defined root-sentinel path resolution, complete-path ordinal and pre-filter occurrence-index retention, all-and-only blocking-key unions, and an omitted-key mutation check.
+- Confined CLOSED GAP data to one exact-schema sealed nonauthority sidecar, defined its nested domains and seal additions, prohibited later global rows/nodes/IDs, and required exact-schema Q5 and exhaustive-flow outputs to fail or remain withheld.
 
 ## Next
 
-- Append a superseding correction to Amendment 1 without changing existing protocol bytes.
-- Run the ten clean-shard regressions, mutation-oriented review, formatting checks, and independent verification.
-- Write the final report, remove this progress file if the lane-specific `NO PROGRESS.md` requirement is interpreted as a final-tree condition, and commit every coherent step.
+- Run an independent blocker-by-blocker review and correct any actionable findings.
+- Run the ten clean-shard regressions and formatting/append-only checks.
+- Write the final report, remove this progress file to satisfy the final-tree `NO PROGRESS.md` requirement, and commit every coherent step.
