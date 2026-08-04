@@ -57,6 +57,7 @@ from populace_dynamics.data.psid_unit_predicate_authority import (  # noqa: E402
     SEGMENT_START_AUTHORITY,
 )
 from populace_dynamics.data.psid_unit_title_authority import (  # noqa: E402
+    TITLE_LITERAL_FAMILIES,
     TITLE_START_AUTHORITY,
 )
 
@@ -185,6 +186,10 @@ class GatePins:
     clause_relation_byte_count: int
     clause_relation_sha256: str
     clause_relation_array_sha256: str
+    title_literal_relation_row_count: int
+    title_literal_relation_byte_count: int
+    title_literal_relation_sha256: str
+    title_literal_relation_array_sha256: str
     predicate_authority_row_count: int
     predicate_authority_relation_byte_count: int
     predicate_authority_relation_sha256: str
@@ -219,6 +224,8 @@ class CensusBuild:
     anchor_relation_bytes: bytes
     clause_rows: tuple[tuple[str, str], ...]
     clause_relation_bytes: bytes
+    title_literal_rows: tuple[tuple[str, tuple[str, ...]], ...]
+    title_literal_relation_bytes: bytes
     predicate_authority_rows: tuple[tuple[str, str | None, str], ...]
     predicate_authority_relation_bytes: bytes
     statement_rows: tuple[dict[str, Any], ...]
@@ -451,6 +458,14 @@ EXPECTED_A10_R04_PINS = GatePins(
     clause_relation_byte_count=7578,
     clause_relation_sha256="8ddc26217bd530fae469643458648b159548e0c344d6b967dffb87abfa16ed43",
     clause_relation_array_sha256="1bd2a989c7fe7a1471bbb8b289d64e1fc66e399a0c9b2701419b6d5b636116d3",
+    title_literal_relation_row_count=12,
+    title_literal_relation_byte_count=679,
+    title_literal_relation_sha256=(
+        "6de05d5b6e506cdd692daee045ec126c31736885eb86889476abfa814f8af9b6"
+    ),
+    title_literal_relation_array_sha256=(
+        "3462e76c819851460e9c0fe8ab6b3cc1f82435d83f8b92d491ec9b81795d530d"
+    ),
     predicate_authority_row_count=2590,
     predicate_authority_relation_byte_count=400372,
     predicate_authority_relation_sha256="a783a0a3824096688374e0f9802546e847a00c4cb3905ce6a7ee6f64a51e050e",
@@ -821,6 +836,8 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
     anchor_bytes = _jsonl_relation_bytes(anchor_rows)
     clause_rows = tuple(CLAUSE_TABLE)
     clause_bytes = _jsonl_relation_bytes(clause_rows)
+    title_literal_rows = tuple(TITLE_LITERAL_FAMILIES)
+    title_literal_bytes = _jsonl_relation_bytes(title_literal_rows)
     predicate_rows = tuple(PREDICATE_AUTHORITY)
     predicate_bytes = _jsonl_relation_bytes(predicate_rows)
     title_authority_rows = tuple(TITLE_START_AUTHORITY)
@@ -966,6 +983,14 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         "title_start_authority_array_sha256": canonical_sha256(
             title_authority_rows
         ),
+        "title_literal_relation_row_count": len(title_literal_rows),
+        "title_literal_relation_byte_count": len(title_literal_bytes),
+        "title_literal_relation_sha256": hashlib.sha256(
+            title_literal_bytes
+        ).hexdigest(),
+        "title_literal_relation_array_sha256": canonical_sha256(
+            title_literal_rows
+        ),
         "predicate_authority_row_count": len(predicate_rows),
         "predicate_authority_sha256": canonical_sha256(predicate_rows),
         "statement_table_row_count": len(table),
@@ -991,6 +1016,8 @@ def build_payload(field_rows: Sequence[dict[str, Any]]) -> CensusBuild:
         anchor_relation_bytes=anchor_bytes,
         clause_rows=clause_rows,
         clause_relation_bytes=clause_bytes,
+        title_literal_rows=title_literal_rows,
+        title_literal_relation_bytes=title_literal_bytes,
         predicate_authority_rows=predicate_rows,
         predicate_authority_relation_bytes=predicate_bytes,
         statement_rows=table,
@@ -1216,6 +1243,18 @@ def pins_from_build(build: CensusBuild) -> GatePins:
             build.clause_relation_bytes
         ).hexdigest(),
         clause_relation_array_sha256=canonical_sha256(build.clause_rows),
+        title_literal_relation_row_count=(
+            payload["title_literal_relation_row_count"]
+        ),
+        title_literal_relation_byte_count=len(
+            build.title_literal_relation_bytes
+        ),
+        title_literal_relation_sha256=hashlib.sha256(
+            build.title_literal_relation_bytes
+        ).hexdigest(),
+        title_literal_relation_array_sha256=(
+            payload["title_literal_relation_array_sha256"]
+        ),
         predicate_authority_row_count=payload["predicate_authority_row_count"],
         predicate_authority_relation_byte_count=len(
             build.predicate_authority_relation_bytes
@@ -1751,6 +1790,47 @@ def validate_a10_r04(build: CensusBuild, pins: GatePins) -> None:
         "clause relation canonical-array digest",
         canonical_sha256(build.clause_rows),
         pins.clause_relation_array_sha256,
+    )
+    title_literal_bytes = build.title_literal_relation_bytes
+    _require_equal(
+        "title-literal relation row count",
+        payload["title_literal_relation_row_count"],
+        pins.title_literal_relation_row_count,
+    )
+    _require_equal(
+        "title-literal materialized row count",
+        len(build.title_literal_rows),
+        payload["title_literal_relation_row_count"],
+    )
+    _require_equal(
+        "title-literal relation byte count",
+        payload["title_literal_relation_byte_count"],
+        pins.title_literal_relation_byte_count,
+    )
+    _require_equal(
+        "title-literal materialized byte count",
+        len(title_literal_bytes),
+        payload["title_literal_relation_byte_count"],
+    )
+    _require_equal(
+        "title-literal relation digest",
+        payload["title_literal_relation_sha256"],
+        pins.title_literal_relation_sha256,
+    )
+    _require_equal(
+        "title-literal materialized relation digest",
+        hashlib.sha256(title_literal_bytes).hexdigest(),
+        payload["title_literal_relation_sha256"],
+    )
+    _require_equal(
+        "title-literal relation canonical-array digest",
+        payload["title_literal_relation_array_sha256"],
+        pins.title_literal_relation_array_sha256,
+    )
+    _require_equal(
+        "title-literal materialized canonical-array digest",
+        canonical_sha256(build.title_literal_rows),
+        payload["title_literal_relation_array_sha256"],
     )
     predicate_bytes = build.predicate_authority_relation_bytes
     _require_equal(

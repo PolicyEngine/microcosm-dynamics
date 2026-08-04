@@ -269,6 +269,17 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         "08a5933c1e9821994d9f96dbc8ec4ef193410490a5df1a7c1b819dee695cf879",
         "cc3ef5ac6f519f38f3798449361d5db5d68100aefe7839caf294eb41ec4cce58",
     )
+    assert (
+        pins.title_literal_relation_row_count,
+        pins.title_literal_relation_byte_count,
+        pins.title_literal_relation_sha256,
+        pins.title_literal_relation_array_sha256,
+    ) == (
+        12,
+        679,
+        "6de05d5b6e506cdd692daee045ec126c31736885eb86889476abfa814f8af9b6",
+        "3462e76c819851460e9c0fe8ab6b3cc1f82435d83f8b92d491ec9b81795d530d",
+    )
 
 
 def test_valid_gate_emits_only_after_every_pin_passes(tmp_path: Path) -> None:
@@ -288,6 +299,18 @@ def test_valid_gate_emits_only_after_every_pin_passes(tmp_path: Path) -> None:
     )
 
     assert json.loads(output.read_text(encoding="utf-8")) == build.payload
+    assert build.payload["schema_version"] == "amendment_10_successor_census.v3"
+    assert (
+        build.payload["title_literal_relation_row_count"],
+        build.payload["title_literal_relation_byte_count"],
+        build.payload["title_literal_relation_sha256"],
+        build.payload["title_literal_relation_array_sha256"],
+    ) == (
+        12,
+        679,
+        "6de05d5b6e506cdd692daee045ec126c31736885eb86889476abfa814f8af9b6",
+        "3462e76c819851460e9c0fe8ab6b3cc1f82435d83f8b92d491ec9b81795d530d",
+    )
     emitted_table = [
         json.loads(line)
         for line in statements.read_text(encoding="utf-8").splitlines()
@@ -894,6 +917,38 @@ def test_each_total_adjudication_pin_aborts_without_emission(
             ),
         ),
         (
+            "title-literal relation row count",
+            lambda pins: replace(
+                pins,
+                title_literal_relation_row_count=(
+                    pins.title_literal_relation_row_count - 1
+                ),
+            ),
+        ),
+        (
+            "title-literal relation byte count",
+            lambda pins: replace(
+                pins,
+                title_literal_relation_byte_count=(
+                    pins.title_literal_relation_byte_count - 1
+                ),
+            ),
+        ),
+        (
+            "title-literal relation digest",
+            lambda pins: replace(
+                pins,
+                title_literal_relation_sha256="0" * 64,
+            ),
+        ),
+        (
+            "title-literal relation canonical-array digest",
+            lambda pins: replace(
+                pins,
+                title_literal_relation_array_sha256="0" * 64,
+            ),
+        ),
+        (
             "predicate-authority row count",
             lambda pins: replace(
                 pins,
@@ -967,6 +1022,7 @@ def test_each_semantic_registry_pin_aborts_without_emission(
         "coding-start",
         "anchor",
         "clause",
+        "title-literal",
         "predicate",
     ],
 )
@@ -983,6 +1039,7 @@ def test_semantic_registry_reordering_aborts_without_emission(
         "coding-start": "CODING_START_AUTHORITY",
         "anchor": "ANCHORS",
         "clause": "CLAUSE_TABLE",
+        "title-literal": "TITLE_LITERAL_FAMILIES",
         "predicate": "PREDICATE_AUTHORITY",
     }[relation]
     source_rows = getattr(runner, source_name)
