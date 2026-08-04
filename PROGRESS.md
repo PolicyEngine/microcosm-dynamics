@@ -8,6 +8,7 @@
 - Upstream fetch attempted but blocked by DNS; the assigned checkout is clean and matches the requested start.
 - Corrected title grammar and frozen authorities are regenerated from all 89,599 source rows.
 - Transaction rollback now retries and verifies before-effect failures, accepts verified after-effect failures, and preserves every unresolved stable backup.
+- The corrected production successor and storage reports have been independently rederived and emitted.
 
 ## Done
 
@@ -20,8 +21,10 @@
 - Regenerated title authority `ebccedca...` and segment authority `e9fe5274...`; all 294 title-authority tests pass.
 - Added stable-backup restoration through disposable hard links, exact `lstat` identity verification, commit-effect classification, and preserved-backup paths in `GateError`.
 - All seven focused rollback injections and all 120 successor-gate unit tests pass.
+- Froze all changed successor pins: `[8024, 273, 77, 1, 67316, 1145, 0, 1, 421, 12341]`, movement 11,528, T+/T- 76,836/12,763, payload `4cd1c371...`.
+- Production stdout equals the committed-pin output byte for byte (5,342,297 bytes, SHA `20551041...`); the streaming storage audit passed at 128,466,944 bytes peak RSS.
 
 ## Next
 
-- Regenerate the successor census, fixtures, pins, and documentation.
+- Update A10-R01..R05 fixtures, all §24 pins/censuses/floors, and transaction prose.
 - Run the prescribed verification, write the final report, then remove this ledger before completion.

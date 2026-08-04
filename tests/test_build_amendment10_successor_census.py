@@ -287,17 +287,22 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
     assert pins.input_relation_sha256 == (
         "563b1eaede9dcb5a085d8014dd3a4aacb2d3419ce7d0a0eb65063753b375ca6e"
     )
-    assert tuple(count for _status, count in pins.count_rows) == (
-        8_140,
-        309,
+    successor_counts = tuple(count for _status, count in pins.count_rows)
+    assert successor_counts == (
+        8_024,
+        273,
         77,
-        12,
+        1,
         67_316,
         1_145,
         0,
         1,
         421,
-        12_178,
+        12_341,
+    )
+    assert (sum(successor_counts[:7]), sum(successor_counts[7:])) == (
+        76_836,
+        12_763,
     )
     assert (
         pins.count_array_sha256,
@@ -307,12 +312,12 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         pins.movement_key_sha256,
         pins.census_payload_sha256,
     ) == (
-        "de75d6601129d8e1f940b43d9aedb9ed9c57c8e1aaaed9b8ac0a80cad027c1c8",
-        "cadec36379fe7e46701a16b5f7fd03b587a3ebb7f18f0f193261e9c69c8bfd99",
-        11_365,
-        "23d44c23310508857fd879534afb8daf3dd59aa181582d63fb64a46734b647dc",
-        "9cffc90dc9e7173d734b629d5ac857aa02865005433e1b8de38c123708bc4d97",
-        "7b66e4bed27c272e5b99bcd1cdd69fb4ad1f61c56b9fc0a787fc7d3301b46834",
+        "017baffe4d9e2ee6ce373a93f4f82df1e1b2a42b1a18acd8c3477826df1ec32c",
+        "0bc16e56c3c9284070dbf68d3f6cdda9da183629b8dc9e75e32dc124ed6f19f4",
+        11_528,
+        "03f1a9cea18b340ee7068075ca1e9bea1e1337b10f2f7e5d89092ac866cfb4fe",
+        "fe844ca115d9c5314ce76608043d46393d4b129e7334cffcf761bb6e7604007c",
+        "4cd1c37140127a3cc0c48910648f091e817d34d4631966dd66bec75165d39159",
     )
     assert (
         pins.actual_candidate_table_row_count,
@@ -357,7 +362,7 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         0,
         0,
         0,
-        "58675b1998587ce2bd7b6dc005f4e2d2983cff1ec338139d081aa4e1348bb847",
+        "aa7d466df0460808cb17e4f692e40760d5b4b2ea90c15cce322df00f5b8baff9",
     )
     assert (
         pins.denotation_start_occurrence_row_count,
@@ -366,11 +371,11 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         pins.denotation_start_partition_rows,
     ) == (
         2_240_669,
-        269_157_391,
-        "e7b83dc2cccc9b42af157543d77efa8861315825b3cbb0599bb7db95fc9f8c43",
+        269_160_095,
+        "f1f56750744b3cb11531fcab1e6fee9d97655d32eb6241d1c6a92d443e66b27f",
         (
-            ("whole_domain_denotation", 16_668),
-            ("explicit_no_whole_domain_denotation", 76_350),
+            ("whole_domain_denotation", 16_460),
+            ("explicit_no_whole_domain_denotation", 76_558),
             ("explicit_no_denotation", 2_147_651),
             ("unadjudicated_start", 0),
         ),
@@ -385,8 +390,8 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         59_445,
         1_114_747,
         8_466_288,
-        "b2185fd7d44c83292ad2af25b1186369cfef119e4dcc16a4f960d3e225a7cb36",
-        "c0eb8d26bf903137f73afc5fc37e79f8bfd0b2983d9ac79d33f14abd35c84883",
+        "15010ecdc6985e2a69f60ab627ad58b28981d536500087e9c2702277a5974281",
+        "e9fe527412664f86654f3b423d4422a23bb5966b128b98e3136e391e45f7a04c",
     )
     assert (
         pins.coding_start_authority_row_count,
@@ -413,21 +418,25 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         89_599,
         51_957,
         80_306,
-        8_410,
-        71_896,
+        8_202,
+        72_104,
         0,
-        8_388,
-        43_569,
+        8_183,
+        43_774,
         37_642,
     )
+    assert (
+        pins.title_header_positive_start_count - 8,
+        pins.title_header_positive_field_count - 8,
+    ) == (8_194, 8_175)
     assert (
         pins.title_header_candidate_table_relation_byte_count,
         pins.title_header_candidate_table_relation_sha256,
         pins.title_header_candidate_table_array_sha256,
     ) == (
-        89_417_509,
-        "a6f44097bfdaf82e1dcb4fdb09d7027b4c619177e7f2695385cb0b24d40f654b",
-        "87d0872cb45f8319f0a9ed25bf705096f5a6c62453319e650ba1081bb56589c6",
+        89_412_166,
+        "407d9aec93f7c9f42e28cf84c57f336a794be9938cfb78cbea5b8958d63adb0a",
+        "203a5903bbbac2f9cfeeaffad184a7fd4dd25fe98e2f942bc150695cdbfe1051",
     )
     assert (
         pins.title_start_authority_row_count,
@@ -436,9 +445,9 @@ def test_frozen_raw_route_and_total_adjudication_pins() -> None:
         pins.title_start_authority_array_sha256,
     ) == (
         54_185,
-        16_637_872,
-        "ab0db98fc0b763553ef0373c57baa51e13551d9831f55c72f19321da4c830a01",
-        "8be723069f257659cc2c36dd55758c76d084eded24d987629d1950c172032933",
+        16_636_024,
+        "d25d9312c6e88ed80896aee07c2133d1745214214104bedad73ae661294c7117",
+        "ebccedca54e914da8a1f9f20a39657e220f80346df84c8bc45834169c4b971df",
     )
     assert (
         pins.title_literal_relation_row_count,
