@@ -46,6 +46,7 @@ from .psid_unit_predicate_authority import (
     SEGMENT_START_AUTHORITY,
 )
 from .psid_unit_title_authority import (
+    TITLE_GENERIC_UNIT_FAMILIES,
     TITLE_LITERAL_FAMILIES,
     TITLE_START_AUTHORITY,
 )
@@ -63,6 +64,7 @@ __all__ = [
     "FAILURE_TERMINALS",
     "NO_UNIT",
     "TERMINAL_ORDER",
+    "TITLE_GENERIC_UNIT_FAMILIES",
     "TITLE_LITERAL_FAMILIES",
     "TITLE_START_AUTHORITY",
     "UNIT_ABSENT_RESOLUTION_REASON",
@@ -162,12 +164,9 @@ def normalize_description(description: str | None) -> str:
 
 
 # --------------------------------------------------------------------------
-# Field-title/header candidates — raw first-physical-line law
+# Field-title/header candidates — closed raw-header law
 # --------------------------------------------------------------------------
 
-_SIMPLE_QUESTION_TITLE = re.compile(r"^[A-Z]+\d+[a-z]?\.")
-_TITLE_HOUR_TOKEN = re.compile(r"(?<![A-Za-z])hours?(?![A-Za-z])", re.I)
-_TITLE_DOLLAR_TOKEN = re.compile(r"(?<![A-Za-z])dollars?(?![A-Za-z])", re.I)
 _STATEMENT_PROSE_TITLE_HEADS = (
     "The values for this variable ",
     "Values for this variable ",
@@ -177,17 +176,451 @@ _STATEMENT_PROSE_TITLE_HEADS = (
     "the values for this variable ",
 )
 
+_TITLE_TERMINAL_SELECTOR = re.compile(
+    r"--\s*(?P<label>[^\n]+?)\s*$"
+)
+_TITLE_SINGLE_HYPHEN = re.compile(r"(?<!-)-(?!-)")
+_TITLE_SINGLE_PERIOD_EXCEPTION = (
+    "BC6. When did you (HEAD) start and when did you stop working for this "
+    "employer?   Please\n"
+    "give me all of the start and stop dates if you have gone to work for "
+    "(this\n"
+    "employer/yourself) more than once.- BEGINNING MONTH FOR JOB 3"
+)
+_TITLE_SINGLE_MIXED_CASE_EXCEPTION = (
+    "G33. Was that disability, retirement, survivor's benefits, or what?- "
+    'Wife/"WIFE"'
+)
+_TITLE_QUESTION_CONTINUATION_PAIRS = frozenset(
+    {
+        (
+            "    (Remember to",
+            "count her as an employer if she was self-employed then on a main job)",
+        ),
+        (
+            "    Again, if you",
+            "were self-employed on a main job, count yourself as an employer.",
+        ),
+        (
+            "   Again, if she",
+            "was self-employed on a main job, count her as an employer.",
+        ),
+        (
+            "   Again, if you",
+            "were self-employed on a main job, count yourself as an employer.",
+        ),
+        ("   Do not", "count general maintenance or upkeep."),
+        (" (Final", "month)"),
+        (
+            " (Include trucks, leased cars,",
+            "in the count if they are used as family transportation, i.e., left in by Editor)",
+        ),
+        (" (Initial", "month)"),
+        (" (Initial", "year)"),
+        (
+            " (Remember to",
+            "count her as an employer if she was self-employed then on a main job.)",
+        ),
+        (
+            " (Remember to",
+            "count yourself as an employer if you were self-employed then on a main job)",
+        ),
+        (
+            " (Remember to",
+            "count yourself as an employer if you were self-employed then on a main job.)",
+        ),
+        (" (final", "month)"),
+        (" (initial", "month)"),
+        (" (initial", "year)"),
+        (
+            " Again, if she",
+            "was self-employed on a main job, count her as an employer.",
+        ),
+        (
+            " Again, if you",
+            "were self-employed on a main job, count yourself as an employer.",
+        ),
+        (
+            " Do not count new debt that will be paid",
+            "off this month.",
+        ),
+        (
+            " Please do not count any new debt",
+            "that will be paid off this month.",
+        ),
+        (
+            " If multiple gifts or inheritances worth",
+            "$10,000 or more were received, we can talk about each one "
+            "separately.",
+        ),
+    }
+)
+_TITLE_UNMARKED_OUTPUT_LINES = frozenset(
+    {
+        "(Largest number of payments.)",
+        "(Number of others with income.)",
+        "Amount per hour",
+        "Amount per hour.",
+        "Number of children who completed less than 12 grades:",
+        "Number of other states or countries:",
+        "Number of regions (including present one) Head has lived in.",
+        "Number of regions (including present region) Head has lived in",
+        "Number of Regions (Including Present Region) Head has Lived In.",
+        "Number of States or Countries in which Respondent has lived, "
+        "including present location",
+        "Number of years from now",
+        "Total number of extra jobs",
+        "Total consumption as a percent of Food Need Standard",
+        "Total consumption as a percent of food need standard (V2898 / V2892)",
+        "Total Number of Regions Lived in",
+        "Total Number of States and/or Countries",
+        "Total Number of States and/or Countries mean, excluding missing "
+        "data = 2.1",
+    }
+)
+_TITLE_UNMARKED_OUTPUT_BLOCKS = frozenset(
+    {
+        (
+            "IF R REPLIES IN TERMS OF SPECIFIC DOLLAR AMOUNT DIFFERENCES, "
+            "TRANSLATE INTO PERCENTAGE",
+            "DIFFERENCE OF CURRENT WAGE RATE.",
+        ),
+        (
+            "Total 1967 FAMILY Real Income Net of Costs of Earning Income "
+            "and Net of Housing Costs - In",
+            "Dollars",
+        ),
+    }
+)
+_TITLE_NESTED_SINGLE_RESPONSE = re.compile(
+    r"(?:(?:SELF EMPLOYED )|(?:OTHERS))-(?P<label>TIME UNIT)(?=$|\n)"
+)
+_TITLE_BODY_CODE_ROWS = {
+    "Household Food Security Category": re.compile(
+        r"Raw score (?:0|1-2|3-7|8-18|3-5|6-10) -- "
+        r"(?:High|Marginal|Low|Very Low) Food Security"
+    ),
+    "Child Food Security Category": re.compile(
+        r"Raw score (?:0-1|2-4|5-8) -- "
+        r"(?:High or Marginal|Low|Very Low) Food Security among Children"
+    ),
+}
+_TITLE_BODY_INSTRUCTION_ROW = re.compile(
+    r"(?:All three vars--(?P<old>B23|D23) YRS; (?P=old) MOS and "
+    r"(?P=old) WKS must be added together to calculate total|"
+    r"All three vars--(?P<modern>BC41|DE41) YRS, (?P=modern) MOS, and "
+    r"(?P=modern) WKS--must be added together to calculate)"
+)
+_TITLE_EDITORIAL_NOTE_ROWS = frozenset(
+    {
+        "automatic reinvestments--not including any IRAs? "
+        "(NOTE EXCLUSION OF IRAS--DIFFERENT FROM",
+        "based pensions or IRAs? [CHANGE FROM 1994--EXCLUDES IRAs]",
+        "employer-based pensions or IRAs? [CHANGE FROM 1994--EXCLUDES IRAs]",
+        "in employer-based pensions or IRAs? "
+        "[CHANGE FROM 1994--EXCLUDES IRAs]",
+        "(CHANGE FROM 1994--EXCLUDES IRAs)",
+        "(CHANGE FROM 1994--EXCLUDES I.R.A.s)",
+        "FROM 1994--EXCLUDES IRAS)",
+    }
+)
+
+
+def _title_body_code_row(title_head: str, line: str) -> bool:
+    """Identify the two closed code-table layouts that follow field titles."""
+
+    pattern = _TITLE_BODY_CODE_ROWS.get(title_head)
+    return pattern is not None and pattern.fullmatch(line) is not None
+
+
+def _title_body_instruction_row(line: str) -> bool:
+    """Identify the two closed experience calculation body spellings."""
+
+    return _TITLE_BODY_INSTRUCTION_ROW.fullmatch(line) is not None
+
+
+def _title_editorial_note_row(line: str) -> bool:
+    """Identify the closed IRA editorial notes containing ``--``."""
+
+    return line in _TITLE_EDITORIAL_NOTE_ROWS
+
+
+def _title_selector_spans(
+    description: str,
+) -> tuple[tuple[str, int, int, str], ...]:
+    """Return the closed source-attested terminal-selector labels.
+
+    Each row is ``(marker_kind, label_start, label_end, raw_label)`` in Python
+    character offsets.  The source has five exact marker layouts: an inline
+    terminal ``--LABEL``; the split ``-\n-LABEL`` spelling; a terminal ``--``
+    whose label occupies the immediately following line; an inline terminal
+    singleton ``-LABEL``; and a terminal singleton ``-`` whose label occupies
+    the immediately following line.
+    Labels begin with an uppercase letter, a digit, ``[``, or ``(``.  This
+    excludes prose dashes and body ranges without appealing to field status.
+
+    Some source labels themselves wrap.  A following nonempty all-uppercase
+    physical line is part of the same label.  The latest questionnaire label
+    is on physical line eight.  The two exact Food Security category tables
+    are body code/range mappings rather than title selectors; their closed
+    rows are excluded only under their verbatim field heads.  The two exact
+    ``All three vars--`` experience-calculation instructions and the exact
+    IRA comparison note are body prose, not selectors.  An all-hyphen
+    separator likewise cannot introduce a next-line label.  Singleton labels
+    occur only in the leading eight physical lines and only after a question,
+    bracketed prompt, or the one exact period-terminated source exception.
+    Their physical label is uppercase, apart from one verbatim mixed-case
+    categorical label.  Where a physical line has nested markers, the terminal
+    component must independently satisfy the label admission rule.  Eight
+    exact ``-TIME UNIT`` components nested inside older ``--`` labels are
+    separately visible.
+    The deliberately conservative structural class exposes input phrases as
+    candidates; the frozen contextual authority must adjudicate each of them
+    explicitly rather than silently treating them as outside the title.
+    """
+
+    lines = description.split("\n")
+    if not lines:
+        return ()
+    starts: list[int] = []
+    cursor = 0
+    for line in lines:
+        starts.append(cursor)
+        cursor += len(line) + 1
+
+    def admitted_label(label: str) -> bool:
+        stripped = label.strip()
+        return (
+            bool(stripped)
+            and (
+                stripped[0].isupper()
+                or stripped[0].isdigit()
+                or stripped[0] in "[("
+            )
+        )
+
+    def admitted_singleton_label(label: str) -> bool:
+        stripped = label.strip()
+        return admitted_label(stripped) and not re.search(r"[a-z]", stripped)
+
+    def admitted_singleton_prefix(prefix: str) -> bool:
+        stripped = prefix.rstrip()
+        return bool(
+            stripped.endswith(("?", "]"))
+            or (stripped.endswith(")") and "?" in prefix)
+        )
+
+    def label_end(line_index: int) -> int:
+        end_index = line_index
+        while end_index + 1 < len(lines):
+            following = lines[end_index + 1].strip()
+            if (
+                not following
+                or re.search(r"[a-z]", following)
+                or _TITLE_TERMINAL_SELECTOR.search(lines[end_index + 1])
+            ):
+                break
+            end_index += 1
+        return starts[end_index] + len(lines[end_index])
+
+    found: list[tuple[str, int, int, str]] = []
+    for line_index, line in enumerate(lines):
+        for match in _TITLE_TERMINAL_SELECTOR.finditer(line):
+            if re.fullmatch(r"-+", line):
+                continue
+            label = match.group("label")
+            if not label.strip():
+                continue
+            if (
+                _title_body_code_row(lines[0], line)
+                or _title_body_instruction_row(line)
+                or _title_editorial_note_row(line)
+            ):
+                continue
+            start = starts[line_index] + match.start("label")
+            end = label_end(line_index)
+            full_label = description[start:end]
+            terminal_component = full_label.rsplit("--", 1)[-1]
+            if not admitted_label(terminal_component):
+                continue
+            found.append(("double_hyphen", start, end, full_label))
+
+        if (
+            line_index
+            and lines[line_index - 1].endswith("-")
+            and not re.fullmatch(r"-+", lines[line_index - 1])
+            and line.startswith("-")
+            and admitted_label(line[1:])
+        ):
+            start = starts[line_index] + 1
+            end = label_end(line_index)
+            found.append(("split_hyphen", start, end, description[start:end]))
+        if (
+            line_index
+            and lines[line_index - 1].endswith("--")
+            and not re.fullmatch(r"-+", lines[line_index - 1])
+            and admitted_label(line)
+            and not _TITLE_TERMINAL_SELECTOR.search(line)
+        ):
+            start = starts[line_index]
+            end = label_end(line_index)
+            found.append(("next_line", start, end, description[start:end]))
+
+    legacy_spans = tuple(found)
+    for line_index, line in enumerate(lines[:8]):
+        for marker in _TITLE_SINGLE_HYPHEN.finditer(line):
+            raw_label = line[marker.end() :]
+            leading = len(raw_label) - len(raw_label.lstrip())
+            physical_label = raw_label.strip()
+            if not physical_label:
+                continue
+            prefix = line[: marker.start()]
+            exact_period_exception = bool(
+                description == _TITLE_SINGLE_PERIOD_EXCEPTION
+                and line_index == 2
+                and physical_label == "BEGINNING MONTH FOR JOB 3"
+            )
+            exact_mixed_case_exception = bool(
+                description == _TITLE_SINGLE_MIXED_CASE_EXCEPTION
+                and physical_label == 'Wife/"WIFE"'
+            )
+            if not (
+                admitted_singleton_prefix(prefix)
+                or exact_period_exception
+            ):
+                continue
+            if not (
+                admitted_singleton_label(physical_label)
+                or exact_mixed_case_exception
+            ):
+                continue
+            start = starts[line_index] + marker.end() + leading
+            end = label_end(line_index)
+            full_label = description[start:end]
+            if any(
+                old_start <= start and end <= old_end
+                for _old_kind, old_start, old_end, _old_label in legacy_spans
+            ):
+                continue
+            found.append(("single_hyphen", start, end, full_label))
+
+        if line_index == 0 or line.lstrip().startswith("-"):
+            continue
+        previous = lines[line_index - 1]
+        terminal_markers = [
+            marker
+            for marker in _TITLE_SINGLE_HYPHEN.finditer(previous)
+            if not previous[marker.end() :].strip()
+        ]
+        if not terminal_markers or not admitted_singleton_label(line):
+            continue
+        marker = terminal_markers[-1]
+        if not admitted_singleton_prefix(previous[: marker.start()]):
+            continue
+        leading = len(line) - len(line.lstrip())
+        start = starts[line_index] + leading
+        end = label_end(line_index)
+        if any(
+            old_start <= start and end <= old_end
+            for _old_kind, old_start, old_end, _old_label in legacy_spans
+        ):
+            continue
+        found.append(
+            (
+                "single_hyphen_next_line",
+                start,
+                end,
+                description[start:end],
+            )
+        )
+
+    for _kind, label_start, _label_end, label in legacy_spans:
+        for match in _TITLE_NESTED_SINGLE_RESPONSE.finditer(label):
+            start = label_start + match.start("label")
+            end = label_start + match.end("label")
+            found.append(
+                (
+                    "single_hyphen",
+                    start,
+                    end,
+                    description[start:end],
+                )
+            )
+
+    return tuple(sorted(set(found), key=lambda row: (row[1], row[2], row[0])))
+
 
 def _raw_title(description: str | None) -> str:
-    """Return the exact first raw physical line, without normalization."""
+    """Return the exact closed raw title/header, without normalization.
+
+    A question header extends monotonically from the complete first physical
+    line through the complete physical line containing its last ``?``.  A
+    description without a question mark retains exactly its first physical
+    line.  Twenty exact source-attested suffix/next-line pairs extend the
+    header by one further physical line when the sentence following the final
+    question mark is syntactically split across that LF.  Independently, the
+    closed terminal-selector structure extends the header through its last
+    selector,
+    as late as physical line eight in the source.  This includes
+    source-attested split and singleton markers and all-uppercase wrapped label
+    continuations, while the exact Food Security body-code labels remain
+    outside the header.  Text after the last question and last admitted
+    selector remains outside the header.
+    """
 
     if description is None:
         return ""
-    return description.split("\n", 1)[0]
+    first_lf = description.find("\n")
+    last_question = description.rfind("?")
+    if first_lf < 0:
+        header_end = len(description)
+    elif last_question >= 0:
+        last_question_lf = description.find("\n", last_question)
+        question_end = (
+            len(description) if last_question_lf < 0 else last_question_lf
+        )
+        if last_question_lf >= 0:
+            continuation_lf = description.find("\n", last_question_lf + 1)
+            continuation_end = (
+                len(description) if continuation_lf < 0 else continuation_lf
+            )
+            pair = (
+                description[last_question + 1 : last_question_lf],
+                description[last_question_lf + 1 : continuation_end],
+            )
+            if pair in _TITLE_QUESTION_CONTINUATION_PAIRS:
+                question_end = continuation_end
+        header_end = max(
+            first_lf,
+            question_end,
+        )
+    else:
+        header_end = first_lf
+    if first_lf >= 0 and description[:first_lf].endswith("--"):
+        second_lf = description.find("\n", first_lf + 1)
+        header_end = max(
+            header_end, len(description) if second_lf < 0 else second_lf
+        )
+    for _kind, _start, end, _label in _title_selector_spans(description):
+        header_end = max(header_end, end)
+    return description[:header_end]
 
 
 def _reference_hour_title(title: str) -> bool:
     return title.startswith(("Accuracy", "Bkt.", "(Bkt."))
+
+
+def _ascii_letter(character: str) -> bool:
+    return ("A" <= character <= "Z") or ("a" <= character <= "z")
+
+
+def _utf8_span(title: str, start: int, end: int) -> tuple[int, int]:
+    """Translate a Python character span to exact UTF-8 byte offsets."""
+
+    return (
+        len(title[:start].encode("utf-8")),
+        len(title[:end].encode("utf-8")),
+    )
 
 
 def _literal_title_spans(
@@ -203,10 +636,11 @@ def _literal_title_spans(
             if start < 0:
                 break
             end = start + len(spelling)
-            left_ok = start == 0 or not title[start - 1].isalpha()
-            right_ok = end == len(title) or not title[end].isalpha()
+            left_ok = start == 0 or not _ascii_letter(title[start - 1])
+            right_ok = end == len(title) or not _ascii_letter(title[end])
             if left_ok and right_ok:
-                possible.append((family, start, end, spelling))
+                start_byte, end_byte = _utf8_span(title, start, end)
+                possible.append((family, start_byte, end_byte, spelling))
             cursor = start + 1
     found: list[tuple[str, int, int, str]] = []
     for candidate in sorted(
@@ -221,48 +655,59 @@ def _literal_title_spans(
     return found
 
 
+def _generic_title_spans(
+    title: str,
+) -> list[tuple[str, int, int, str]]:
+    """Return all generic case-insensitive ASCII-word-bounded matches."""
+
+    found: list[tuple[str, int, int, str]] = []
+    for family, spellings in TITLE_GENERIC_UNIT_FAMILIES:
+        alternatives = "|".join(
+            re.escape(spelling)
+            for spelling in sorted(spellings, key=len, reverse=True)
+        )
+        pattern = re.compile(
+            rf"(?<![A-Za-z])(?:{alternatives})(?![A-Za-z])",
+            re.IGNORECASE | re.ASCII,
+        )
+        for match in pattern.finditer(title):
+            start_byte, end_byte = _utf8_span(
+                title, match.start(), match.end()
+            )
+            matched_family = family
+            if family == "nominal_hour_token" and _reference_hour_title(
+                title
+            ):
+                matched_family = "reference_hour_token"
+            found.append(
+                (
+                    matched_family,
+                    start_byte,
+                    end_byte,
+                    match.group(),
+                )
+            )
+    return found
+
+
 def title_header_candidates(
     description: str | None,
 ) -> tuple[tuple[str, int, int, str], ...]:
-    """Return every candidate in the closed raw-title/header grammar.
+    """Return every candidate in the closed title/header superdomain.
 
     The four members are ``(family, start_byte, end_byte, spelling)``.  The
-    corpus is ASCII at every selected span, so character and UTF-8 byte
-    offsets coincide; the authority construction and tests assert that fact.
-    Candidate discovery is independent of the frozen contextual authority.
+    spelling is matched with ASCII word boundaries over the complete raw
+    description, including body and statement text conservatively exposed as
+    explicit title defeats.  Offsets therefore always count the exact UTF-8
+    bytes of the raw description.  Candidate discovery is independent of the
+    frozen contextual authority; ``_raw_title`` separately supplies the
+    bounded structural header used by the contextual adjudication.
     """
 
-    title = _raw_title(description)
+    title = "" if description is None else description
     if title.startswith(_STATEMENT_PROSE_TITLE_HEADS):
         return ()
-    found: list[tuple[str, int, int, str]] = []
-    is_reference = _reference_hour_title(title)
-    is_simple_question = _SIMPLE_QUESTION_TITLE.match(title) is not None
-    if not is_reference and not is_simple_question:
-        found.extend(
-            ("nominal_hour_token", match.start(), match.end(), match.group())
-            for match in _TITLE_HOUR_TOKEN.finditer(title)
-        )
-    if is_reference:
-        found.extend(
-            (
-                "reference_hour_token",
-                match.start(),
-                match.end(),
-                match.group(),
-            )
-            for match in _TITLE_HOUR_TOKEN.finditer(title)
-        )
-    if not is_simple_question:
-        found.extend(
-            (
-                "nominal_dollar_token",
-                match.start(),
-                match.end(),
-                match.group(),
-            )
-            for match in _TITLE_DOLLAR_TOKEN.finditer(title)
-        )
+    found = _generic_title_spans(title)
     for family, spellings in TITLE_LITERAL_FAMILIES:
         found.extend(_literal_title_spans(title, family, spellings))
     distinct = set(found)
@@ -349,19 +794,20 @@ def title_header_disposition(
 def _normalized_title_start(title: str, raw_start: int) -> int:
     """Map one raw-title start to its §24.3.1 normalized offset."""
 
-    prefix = title[:raw_start]
+    prefix = title.encode("utf-8")[:raw_start].decode("utf-8")
     collapsed = normalize_description(prefix)
-    return len(collapsed) + (1 if prefix.endswith(" ") and collapsed else 0)
+    trailing_separator = bool(prefix) and prefix[-1] in {" ", "\n"}
+    return len(collapsed) + (1 if trailing_separator and collapsed else 0)
 
 
 def _production_title_start_offsets(description: str | None) -> set[int]:
     """Return normalized offsets selected as positive title denotations."""
 
-    title = _raw_title(description)
+    raw = "" if description is None else description
     normalized = normalize_description(description)
 
     def contextual_word_start(raw_start: int) -> int:
-        offset = _normalized_title_start(title, raw_start)
+        offset = _normalized_title_start(raw, raw_start)
         while offset > 0 and normalized[offset - 1] != " ":
             offset -= 1
         return offset
@@ -384,7 +830,7 @@ def _production_title_start_offsets(description: str | None) -> set[int]:
 def _title_start_tags(description: str | None) -> dict[int, str]:
     """Return contextual W/N overlays keyed by normalized absolute start."""
 
-    title = _raw_title(description)
+    raw = "" if description is None else description
     normalized = normalize_description(description)
     found: dict[int, str] = {}
     for (
@@ -396,7 +842,7 @@ def _title_start_tags(description: str | None) -> dict[int, str]:
         disposition,
         _reason,
     ) in _title_candidate_rows(description):
-        offset = _normalized_title_start(title, start)
+        offset = _normalized_title_start(raw, start)
         while offset > 0 and normalized[offset - 1] != " ":
             offset -= 1
         tag = (
@@ -405,9 +851,11 @@ def _title_start_tags(description: str | None) -> dict[int, str]:
             else "N"
         )
         previous = found.get(offset)
-        if previous is not None and previous != tag:
-            raise ValueError("conflicting contextual title-start authority")
-        found[offset] = tag
+        found[offset] = (
+            tag
+            if previous is None
+            else _merge_title_start_tag(previous, tag)
+        )
     return found
 
 
@@ -886,6 +1334,16 @@ _START_TAG_DISPOSITIONS = {
 }
 
 
+def _merge_title_start_tag(base_tag: str, title_tag: str | None) -> str:
+    """Union statement and title roles without letting a title N demote W."""
+
+    if title_tag == "W":
+        return "W"
+    if title_tag == "N" and base_tag != "W":
+        return "N"
+    return base_tag
+
+
 def _segment_start_rows(
     description: str | None,
 ) -> tuple[tuple[int, str, int, int, str, str], ...]:
@@ -906,7 +1364,9 @@ def _segment_start_rows(
         for word_ordinal, (offset, tag) in enumerate(
             zip(starts, vector, strict=True)
         ):
-            tag = title_tags.get(absolute + offset, tag)
+            tag = _merge_title_start_tag(
+                tag, title_tags.get(absolute + offset)
+            )
             disposition = _START_TAG_DISPOSITIONS.get(
                 tag, "unadjudicated_start"
             )
@@ -1000,7 +1460,9 @@ def _contextual_start_assignments(
         for word_ordinal, (offset, tag) in enumerate(
             zip(starts, vector, strict=True)
         ):
-            tag = title_tags.get(absolute + offset, tag)
+            tag = _merge_title_start_tag(
+                tag, title_tags.get(absolute + offset)
+            )
             disposition = _START_TAG_DISPOSITIONS.get(
                 tag, "unadjudicated_start"
             )
@@ -1562,18 +2024,44 @@ def field_unit(description: str | None) -> tuple[str | None, str]:
             if unit is not None
         }
         conflicting = statement_units - {title_unit}
+        refinement_families = {
+            "hour_per_week": {
+                "hours_a_week",
+                "hours_per_week",
+                "per_week_rate_phrase",
+            },
+            "hour_per_year": {"hours_per_year"},
+            "mile_per_year": {"miles_per_year"},
+            "united_states_dollar_per_hour": {
+                "dollars_per_hour",
+                "hourly_morphology",
+                "per_hour_rate_phrase",
+            },
+            "united_states_dollar_per_week": {
+                "dollars_per_week",
+                "per_week_rate_phrase",
+            },
+        }
+        refinement_bases = {
+            "hour_per_week": "hour",
+            "hour_per_year": "hour",
+            "mile_per_year": "mile",
+            "united_states_dollar_per_hour": "united_states_dollar",
+            "united_states_dollar_per_week": "united_states_dollar",
+        }
         rate_refinement = (
-            title_unit == "hour_per_week"
-            and conflicting == {"hour"}
+            title_unit in refinement_families
+            and conflicting == {refinement_bases[title_unit]}
             and any(
-                family in {"hours_a_week", "hours_per_week"}
+                family in refinement_families[title_unit]
+                and candidate_unit == title_unit
                 and disposition == "whole_domain_denotation"
                 for (
                     family,
                     _start,
                     _end,
                     _spelling,
-                    _unit,
+                    candidate_unit,
                     disposition,
                     _reason,
                 ) in _title_candidate_rows(description)
@@ -1582,9 +2070,10 @@ def field_unit(description: str | None) -> tuple[str | None, str]:
         if conflicting and not rate_refinement:
             return None, "conflicting_title_and_statement_units"
         # A contextual whole-field header controls subordinate construction,
-        # formula, or subrange prose in the body.  The sole cross-unit
-        # refinement is the exact longer ``hours a/per week`` title over a
-        # subordinate bare-hour statement.  Other positive conflicts fail.
+        # formula, or subrange prose in the body.  Cross-unit refinement is
+        # limited to exact title phrases for hours/week, hours/year,
+        # miles/year, dollars/hour, and dollars/week over their corresponding
+        # bare-unit statements.  Other positive conflicts fail closed.
         return title_unit, "derived_from_title_denotation"
 
     found = description_statements(description)
@@ -1921,7 +2410,7 @@ def statement_table(
 def title_header_candidate_table(
     field_rows: Iterable[Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Return the complete first-line audit over all denominator fields.
+    """Return the complete title-superdomain audit over all denominator fields.
 
     Unlike the statement spelling table, this relation has one row for every
     field, including titles with zero grammar matches.  Thus zero title
@@ -1941,11 +2430,16 @@ def title_header_candidate_table(
             {
                 "interview_wave": wave,
                 "raw_field_id": field,
-                "raw_title": title,
-                "raw_title_sha256": hashlib.sha256(
+                "raw_candidate_domain": raw,
+                "raw_candidate_domain_byte_count": len(raw.encode("utf-8")),
+                "candidate_offsets": (
+                    "zero-based UTF-8 byte offsets in raw_candidate_domain"
+                ),
+                "bounded_context_header": title,
+                "bounded_context_header_sha256": hashlib.sha256(
                     title.encode("utf-8")
                 ).hexdigest(),
-                "source_description_sha256": hashlib.sha256(
+                "raw_candidate_domain_sha256": hashlib.sha256(
                     raw.encode("utf-8")
                 ).hexdigest(),
                 "candidate_adjudications": [

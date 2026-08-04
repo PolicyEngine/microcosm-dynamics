@@ -20,9 +20,10 @@ moved to a deliberately conservative full-description superdomain: exactly
 bounded structural header. Every body or statement occurrence remains visible
 and must receive an explicit title defeat; only independently audited unmarked
 output-label layouts may become title denotations. This removes prefix-boundary
-omission as a possible completeness failure. The title census, successor
-vector, storage floors, and all derived pins are still being rebuilt from the
-clean pre-title authority rather than treated as final.
+omission as a possible completeness failure. The title and segment authorities
+have now been rebuilt from the clean pre-title authority after the frozen
+audit; the successor vector, storage floors, and derived production pins are
+still being rebuilt rather than treated as final.
 
 ## Done
 
@@ -112,11 +113,16 @@ clean pre-title authority rather than treated as final.
   demotions. Six raw candidates sharing normalized starts are separately
   pinned and lawfully merge to W. Independent review issued explicit
   non-audit-regeneration GO.
+- Regenerated `TITLE_START_AUTHORITY` and `SEGMENT_START_AUTHORITY` only after
+  that GO. Their canonical SHA-256 identities are respectively
+  `8be723069f257659cc2c36dd55758c76d084eded24d987629d1950c172032933`
+  and `c0eb8d26bf903137f73afc5fc37e79f8bfd0b2983d9ac79d33f14abd35c84883`.
+  The complete authority test file passes all 283 tests; the only initial
+  failures were independently confirmed stale pre-regeneration expectations
+  and repaired without changing source semantics or regenerated modules.
 
 ## Next
 
-1. Rebuild `TITLE_START_AUTHORITY` and `SEGMENT_START_AUTHORITY` from the
-   frozen, independently approved raw-only adjudication.
-2. Regenerate the successor vector, all pins, storage floors, fixtures, and
+1. Regenerate the successor vector, all pins, storage floors, fixtures, and
    §24 claims; run focused and full verification and recheck the prefix.
-3. Write the final report output and remove `PROGRESS.md` in the final commit.
+2. Write the final report output and remove `PROGRESS.md` in the final commit.

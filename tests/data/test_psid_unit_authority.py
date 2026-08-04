@@ -2,6 +2,12 @@
 
 from __future__ import annotations
 
+import hashlib
+import importlib.util
+import re
+from collections import Counter
+from pathlib import Path
+
 import pytest
 
 import populace_dynamics.data.psid_unit_authority as unit_authority
@@ -58,6 +64,7 @@ from populace_dynamics.data.psid_unit_predicate_authority import (
     SEGMENT_START_AUTHORITY,
 )
 from populace_dynamics.data.psid_unit_title_authority import (
+    TITLE_GENERIC_UNIT_FAMILIES,
     TITLE_LITERAL_FAMILIES,
     TITLE_START_AUTHORITY,
 )
@@ -154,6 +161,25 @@ TITLE_WITNESSES = (
         "year",
     ),
     ("Elapsed Interview Length in Minutes", "minute"),
+)
+
+CURRENT_MAIN_JOB_HOUR_INPUT_CONTEXTS = (
+    "BC31. If (you/he/she) were to work more hours than usual during some "
+    "week, would\n(you/he/she) get paid for those extra hours of "
+    "work?--CURRENT MAIN JOB",
+    "DE31. If (you/she) were to work more hours than usual during some week, "
+    "would (you/she)\nget paid for those extra hours of work?--CURRENT MAIN JOB",
+    "DE31. If (you/he/she) were to work more hours than usual during some "
+    "week, would\n(you/he/she) get paid for those extra hours of "
+    "work?--CURRENT MAIN JOB",
+)
+CURRENT_MAIN_JOB_HOUR_INPUT_FIELDS = (
+    "ER53197",
+    "ER53460",
+    "ER60212",
+    "ER60475",
+    "ER66213",
+    "ER66488",
 )
 
 RAW_V100 = (
@@ -347,6 +373,206 @@ RAW_ER55305 = (
     "or has it been cured?\n"
     "IF R says can't afford insurance to get treatment, are doing nothing, "
     "etc, ENTER: 4"
+)
+RAW_V22842 = (
+    "D23. How many years' experience does she have altogether with her "
+    "present employer?\n"
+    "The values for this variable in the range 001-997 represent the actual "
+    "number of\n"
+    'monthsWife/"Wife" has worked for the present employer.'
+)
+RAW_V3520 = (
+    "B6. During the last year how many miles did you and your family drive in "
+    "(your car/all of\n"
+    "your cars)?\n"
+    "The code values for this variable represent the actual number of miles "
+    "per year."
+)
+RAW_V11959 = (
+    "G45. What is the highest year of college you have completed?\n"
+    "The values for this variable represent the actual number of years of "
+    "college completed (1-\n"
+    "4)."
+)
+RAW_ER70826 = (
+    "K78d. Altogether, what is the highest year of college "
+    "(you have/[he/she] has) completed?"
+)
+RAW_ER64765 = (
+    "K83a. (Between [PY IW DATE] and now, how/How) many years of school did "
+    "(you/she) complete\n"
+    "outside of the U.S.?"
+)
+RAW_ER64904 = (
+    "L83a. (Between [PY IW DATE] and now, how/How) many years of school did "
+    "(you/he/she)\n"
+    "complete outside of the U.S.?"
+)
+RAW_ER64764 = (
+    "K83. In what month and year did (you/she) receive(your/her) highest "
+    "degree?--YEAR"
+)
+RAW_ER64907 = (
+    "L84a. (Earlier you said [you are/[HEAD] is] still in school.)   What "
+    "grade or year (are/is)\n"
+    "(you/he/she) attending?"
+)
+RAW_V10475 = (
+    "C25. How much paid vacation or personal time do you get each year?- HOURS\n"
+    "The values for this variable represent the actual number of hours "
+    "(0001-2080) per year."
+)
+RAW_V10492 = (
+    "C40. What amount or percent of pay do you voluntary contribute "
+    "currently?-TYPE OF\n"
+    "RESPONSE"
+)
+RAW_V10734 = (
+    "F63. When did your (Wife/friend) start working in her present "
+    "(position/work situation)?-\n"
+    "TOTAL MONTHS\n"
+    "The values for this variable represent the actual number of months "
+    '(001-997) Wife/"Wife"\n'
+    "has worked in her present position or work situation."
+)
+RAW_V17887 = (
+    "G33. Was that disability, retirement, survivor's benefits, or what?- "
+    'Wife/"WIFE"'
+)
+RAW_V22543 = (
+    "B48. In what month and year did you start working for that (other) "
+    "main-job employer?-YEAR\n"
+    "The values for this variable represent the year Head started working "
+    "for his/her other\n"
+    "main-job employer."
+)
+RAW_V22553 = (
+    "B56. How much were you making at that time?--SELF EMPLOYED -TIME UNIT\n"
+    "B57. What was your (HEAD's) final wage or salary when you left that "
+    "employer?--WORK FOR\n"
+    "OTHERS-TIME UNIT"
+)
+RAW_ER47555 = (
+    "BC6. When did you (HEAD) start and when did you stop working for this "
+    "employer?   Please\n"
+    "give me all of the start and stop dates if you have gone to work for "
+    "(this\n"
+    "employer/yourself) more than once.- BEGINNING MONTH FOR JOB 3"
+)
+RAW_ER27094 = (
+    "H12b. How often do you do light or moderate activities for at least 10 "
+    "minutes that cause\n"
+    "only light sweating or slight to moderate increases in breathing or "
+    "heart rate?--NUMBER OF\n"
+    "TIMES"
+)
+RAW_ER27217 = (
+    "H36b. How often does she do light or moderate activities for at least "
+    "10 minutes that\n"
+    "cause only light sweating or slight to moderate increases in breathing "
+    "or heart rate?--\n"
+    "NUMBER OF TIMES"
+)
+RAW_ER49614 = (
+    "H12a. (I know you already told me about (your/HEAD's) condition, but I "
+    "need to ask these\n"
+    "next questions anyway.)\n"
+    "The next questions are about physical activities (exercise, sports, "
+    "physically active\n"
+    "hobbies...) that (you/HEAD) may do in (your/his/her) leisure time.\n"
+    "(In (your/HEAD's) leisure time,) how often (do/does) (you/HEAD) do "
+    "VIGOROUS physical\n"
+    "activities for at least 10 minutes that cause heavy sweating or large "
+    "increases in\n"
+    "breathing or heart rate?--NUMBER OF TIMES"
+)
+RAW_ER52049 = (
+    "M18. [WIFE ONLY: During 2010, did (you/WIFE) do volunteer activity at or "
+    "through\n"
+    "(your/her) church, synagogue, or mosque, such as serving on a committee, "
+    "assisting in\n"
+    "worship, teaching, or helping others through programs organized by your "
+    "place of worship?\n"
+    "Please do not include volunteering through schools, hospitals, and other "
+    "charities run by\n"
+    "religious organizations.]\n"
+    "[BOTH: And during 2010, did (you/WIFE) do volunteer activity at or "
+    "through (your/her)\n"
+    "church, synagogue, or mosque, not including any volunteering through "
+    "schools, hospitals,\n"
+    "and other charities run by religious organizations?]--WIFE\n"
+    "See note at ER52026."
+)
+RAW_ER47459 = (
+    "BC14B4. How many hours did that overtime amount to (on (all of) "
+    "(your/his/her) (job/jobs)\n"
+    "in 2010)?--AMOUNT"
+)
+RAW_ER47460 = (
+    "BC14B4. How many hours did that overtime amount to (on (all of) "
+    "(your/his/her) (job/jobs)\n"
+    "in 2010)?--TIME UNIT"
+)
+RAW_ER66175 = (
+    "BC14b4. How many hours did that overtime amount to (on (all of) "
+    "(your/his/her) (job/jobs)\n"
+    "in 2016)?--AMOUNT"
+)
+RAW_ER66176 = (
+    "BC14b4. How many hours did that overtime amount to (on (all of) "
+    "(your/his/her) (job/jobs)\n"
+    "in 2016)?--TIME UNIT"
+)
+RAW_ER3060 = (
+    "F9. How many dollars' worth of stamps did you get in 1993?--AMOUNT"
+)
+RAW_ER3061 = (
+    "F9. How many dollars' worth of stamps did you get in 1993?--TIME UNIT"
+)
+RAW_ER15249 = (
+    "P62. Can you estimate what you expect these benefits to be? Either in "
+    "dollars per month\n"
+    "or year, or as a percent of your pay when you left that job?--AMOUNT FOR "
+    "FIRST PENSION"
+)
+RAW_ER15250 = (
+    "P62. Can you estimate what you expect these benefits to be? Either in "
+    "dollars per month\n"
+    "or year, or as a percent of your pay when you left that job?--TIME UNIT "
+    "FOR FIRST PENSION"
+)
+RAW_ER15251 = (
+    "P62. Can you estimate what you expect these benefits to be? Either in "
+    "dollars per month\n"
+    "or year, or as a percent of your pay when you left that job?--PERCENT OF "
+    "PAY FOR FIRST\n"
+    "PENSION"
+)
+RAW_ER15252 = (
+    "P62. Can you estimate what you expect these benefits to be? Either in "
+    "dollars per month\n"
+    "or year, or as a percent of your pay when you left that job?--LUMP SUM "
+    "PAYMENT FOR FIRST\n"
+    "PENSION"
+)
+RAW_ER60084 = (
+    "A27d. In what month and year did the foreclosure start?--MONTH--SECOND "
+    "MORTGAGE"
+)
+RAW_ER62267 = (
+    "P62k. And what was (your/her) pay when (you/she) left that job? "
+    "--SPOUSE/PARTNER JOB #1--\n"
+    "TIME UNIT"
+)
+RAW_ER66716 = (
+    "F1b. (In a typical week, how many hours [do you/does [he/she]] spend) "
+    "Doing personal care\n"
+    "activities, for example, grooming, getting ready for the day, or taking "
+    "care of\n"
+    "(your/his/her) health needs?\n"
+    "The values for this variable represent the actual number of hours per "
+    "week the Reference\n"
+    "Person spends on personal care activities."
 )
 
 ROUND2_RAW_DESCRIPTIONS = (
@@ -676,10 +902,12 @@ def test_truncated_or_fabricated_abbreviation_span_cannot_inherit_authority(
         None,
         "unadjudicated_denotation_candidate",
     )
-    assert field_unit(description) == (
-        None,
-        "defeated_denotation_statement",
+    expected_reason = (
+        "defeated_title_denotation"
+        if "MINUTES" in description
+        else "defeated_denotation_statement"
     )
+    assert field_unit(description) == (None, expected_reason)
 
 
 def test_full_abbreviation_spans_retain_only_their_exact_adjudication() -> (
@@ -704,8 +932,31 @@ def test_complete_raw_v494_copular_statement_names_1967_dollars() -> None:
 
 
 def test_v31_input_table_does_not_denote_the_annual_family_total() -> None:
-    assert title_header_candidates(RAW_V31) == ()
+    candidates = title_header_candidates(RAW_V31)
+    assert Counter(candidate[0] for candidate in candidates) == {
+        "weekly_morphology": 1,
+        "percent_symbol": 5,
+        "nominal_dollar_token": 1,
+        "nominal_year_token": 1,
+    }
+    table = title_header_candidate_table(
+        [_row(1968, "V31", COMPILED, RAW_V31)]
+    )[0]
+    assert table["candidate_count"] == 8
+    assert {
+        (row["adjudication"], row["reason"])
+        for row in table["candidate_adjudications"]
+    } == {
+        (
+            "explicit_no_whole_domain_denotation",
+            "input_table_or_subrange_not_field_denotation",
+        )
+    }
     assert description_statements(RAW_V31) == ()
+    assert title_header_disposition(RAW_V31) == (
+        None,
+        "title_clause_explicitly_non_whole_domain",
+    )
     assert field_unit(RAW_V31) == (None, "no_denotation_statement")
 
 
@@ -733,15 +984,1109 @@ def test_title_clause_maximal_munch_drops_nested_shorter_unit_tokens() -> None:
     assert not any(row[0] == "nominal_dollar_token" for row in candidates)
 
 
-def test_title_table_keeps_zero_match_fields_and_exact_groundings() -> None:
+def test_title_header_continuation_includes_uppercase_wrapped_label_lines() -> (
+    None
+):
+    wrapped = "Prompt--\nDAYS\nYEARS"
+    assert unit_authority._raw_title(wrapped) == wrapped
+    assert title_header_candidates(wrapped) == (
+        ("nominal_day_token", 9, 13, "DAYS"),
+        ("nominal_year_token", 14, 19, "YEARS"),
+    )
+    assert unit_authority._raw_title("Prompt--\nDAYS\nlower prose") == (
+        "Prompt--\nDAYS"
+    )
+    assert title_header_candidates("Prompt--\nTEXT\nDAYS") == (
+        ("nominal_day_token", 14, 18, "DAYS"),
+    )
+    assert title_header_candidates("Prompt--\nlower prose\nDAYS") == (
+        ("nominal_day_token", 21, 25, "DAYS"),
+    )
+    assert title_header_candidates("Prompt-- \nDAYS") == (
+        ("nominal_day_token", 10, 14, "DAYS"),
+    )
+    assert title_header_candidates("Prompt-\nDAYS") == (
+        ("nominal_day_token", 8, 12, "DAYS"),
+    )
+
+
+def test_singleton_title_selectors_cover_inline_next_line_and_wrapped_labels() -> (
+    None
+):
+    assert unit_authority._title_selector_spans(RAW_V10475) == (
+        ("single_hyphen", 68, 73, "HOURS"),
+    )
+    assert unit_authority._title_selector_spans(RAW_V10734)[0][0] == (
+        "single_hyphen_next_line"
+    )
+    assert unit_authority._title_selector_spans(RAW_V10734)[0][3] == (
+        "TOTAL MONTHS"
+    )
+    assert unit_authority._title_selector_spans(RAW_V10492)[0][3] == (
+        "TYPE OF\nRESPONSE"
+    )
+
+
+def test_singleton_parser_checks_every_hyphen_and_exact_source_exceptions() -> (
+    None
+):
+    assert unit_authority._title_selector_spans(RAW_V22543) == (
+        ("single_hyphen", 86, 90, "YEAR"),
+    )
+    assert unit_authority._title_selector_spans(RAW_ER47555) == (
+        ("single_hyphen", 200, 225, "BEGINNING MONTH FOR JOB 3"),
+    )
+    assert unit_authority._title_selector_spans(RAW_V17887) == (
+        ("single_hyphen", 69, 80, 'Wife/"WIFE"'),
+    )
+
+
+def test_singleton_parser_deduplicates_contained_and_rejects_lookalikes() -> (
+    None
+):
+    contained = (
+        "Question? [MOST OF THE YEARS--ACCEPT FATHER SUBSTITUTE]-\n"
+        "FATHER'S STATE"
+    )
+    spans = unit_authority._title_selector_spans(contained)
+    assert len(spans) == 1
+    assert spans[0][0] == "double_hyphen"
+    assert spans[0][3] == "ACCEPT FATHER SUBSTITUTE]-\nFATHER'S STATE"
+
+    for description in (
+        "Prompt (BEGYR)-(ENDYR)?-",
+        "Prompt COVID-19?",
+        "Prompt?-Mixed Case",
+        "Prompt?--DAYS",
+        "Question\n-----\n-HOURS",
+    ):
+        assert not any(
+            kind.startswith("single_hyphen")
+            for kind, _start, _end, _label in (
+                unit_authority._title_selector_spans(description)
+            )
+        )
+
+
+def test_first_question_extends_header_monotonically_without_prefix_gate() -> (
+    None
+):
+    wrapped = "Uncoded title first line\nHow many hours?\nBody prose"
+    assert unit_authority._raw_title(wrapped) == (
+        "Uncoded title first line\nHow many hours?"
+    )
+    assert title_header_candidates(wrapped) == (
+        ("how_many_count_marker", 25, 33, "How many"),
+        ("nominal_hour_token", 34, 39, "hours"),
+    )
+    assert unit_authority._raw_title("No question\nHours in body") == (
+        "No question"
+    )
+
+
+def test_last_question_header_keeps_its_complete_physical_line() -> None:
+    description = "Question? (Number of regions)\nBody prose"
+    assert unit_authority._raw_title(description) == (
+        "Question? (Number of regions)"
+    )
+    assert ("number_of_count_marker", 11, 20, "Number of") in (
+        title_header_candidates(description)
+    )
+
+
+def test_only_exact_question_continuation_pairs_extend_one_more_line() -> None:
+    admitted = (
+        "C6. How many cars do you own? (Include trucks, leased cars,\n"
+        "in the count if they are used as family transportation, i.e., left in by Editor)\n"
+        "Body year"
+    )
+    assert unit_authority._raw_title(admitted) == admitted.rsplit("\n", 1)[0]
+
+    rejected = "Question? (Include boats,\nin the count)\nBody year"
+    assert unit_authority._raw_title(rejected) == "Question? (Include boats,"
+
+
+def test_candidate_superdomain_exposes_body_starts_beyond_bounded_header() -> (
+    None
+):
+    description = "Question?\nBody month\nBody year"
+    assert unit_authority._raw_title(description) == "Question?"
+    assert title_header_candidates(description) == (
+        ("nominal_month_token", 15, 20, "month"),
+        ("nominal_year_token", 26, 30, "year"),
+    )
+
+
+def test_full_description_offsets_keep_two_body_candidates_distinct(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    description = "Question?\nBody month\nBody year"
+    digest = hashlib.sha256(description.encode("utf-8")).hexdigest()
+    month, year = title_header_candidates(description)
+    monkeypatch.setattr(
+        unit_authority,
+        "_TITLE_START_AUTHORITY",
+        {
+            (digest, *month): (
+                "month",
+                "whole_domain_denotation",
+                "test_month",
+            ),
+            (digest, *year): (
+                None,
+                "explicit_no_whole_domain_denotation",
+                "test_year_defeat",
+            ),
+        },
+    )
+    normalized = normalize_description(description)
+    month_offset = normalized.index("month")
+    year_offset = normalized.index("year")
+    assert unit_authority._production_title_start_offsets(description) == {
+        month_offset
+    }
+    assert unit_authority._title_start_tags(description) == {
+        month_offset: "W",
+        year_offset: "N",
+    }
+
+
+def test_title_defeat_does_not_demote_statement_whole_start(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    description = "Token dollars."
+    segment = normalize_description(description)
+    starts = unit_authority._word_start_offsets(segment)
+    dollar_offset = segment.index("dollars")
+    vector = ["N"] * len(starts)
+    vector[starts.index(dollar_offset)] = "W"
+    monkeypatch.setattr(
+        unit_authority,
+        "_SEGMENT_START_AUTHORITY",
+        {segment: "".join(vector)},
+    )
+    monkeypatch.setattr(
+        unit_authority,
+        "_title_start_tags",
+        lambda _description: {dollar_offset: "N"},
+    )
+    rows = unit_authority._segment_start_rows(description)
+    dollar_row = next(row for row in rows if row[3] == dollar_offset)
+    assert dollar_row[-1] == "whole_domain_denotation"
+
+
+def test_title_positive_wins_a_shared_normalized_start(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    description = "years?-PERCENT"
+    digest = hashlib.sha256(description.encode("utf-8")).hexdigest()
+    year, percent = title_header_candidates(description)
+    monkeypatch.setattr(
+        unit_authority,
+        "_TITLE_START_AUTHORITY",
+        {
+            (digest, *year): (
+                None,
+                "explicit_no_whole_domain_denotation",
+                "test_year_defeat",
+            ),
+            (digest, *percent): (
+                "percent",
+                "whole_domain_denotation",
+                "test_percent_output",
+            ),
+        },
+    )
+    assert unit_authority._title_start_tags(description) == {0: "W"}
+
+
+def test_title_positive_survives_later_defeat_at_shared_normalized_start(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    description = "days/How many"
+    digest = hashlib.sha256(description.encode("utf-8")).hexdigest()
+    day, how_many = title_header_candidates(description)
+    monkeypatch.setattr(
+        unit_authority,
+        "_TITLE_START_AUTHORITY",
+        {
+            (digest, *day): (
+                "day",
+                "whole_domain_denotation",
+                "test_day_output",
+            ),
+            (digest, *how_many): (
+                None,
+                "explicit_no_whole_domain_denotation",
+                "test_count_defeat",
+            ),
+        },
+    )
+    assert unit_authority._title_start_tags(description) == {0: "W"}
+
+
+def test_cross_lf_separator_closure_applies_global_maximal_munch() -> None:
+    script = (
+        Path(__file__).parents[2]
+        / "scripts"
+        / "rebuild_amendment10_title_authority.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "amendment10_cross_lf", script
+    )
+    assert spec is not None and spec.loader is not None
+    rebuild = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rebuild)
+
+    raw, maximal = rebuild._cross_lf_compound_transition(
+        "dollars per\nmonth or year"
+    )
+    assert Counter(candidate[0] for candidate in raw) == {
+        "dollars_per_month_or_year": 1,
+        "per_month_rate_phrase": 1,
+    }
+    assert tuple(candidate[0] for candidate in maximal) == (
+        "dollars_per_month_or_year",
+    )
+
+
+def test_f1_suffix_input_hours_cannot_override_its_forced_defeat() -> None:
+    script = (
+        Path(__file__).parents[2]
+        / "scripts"
+        / "rebuild_amendment10_title_authority.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "amendment10_f1_suffix", script
+    )
+    assert spec is not None and spec.loader is not None
+    rebuild = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rebuild)
+
+    description = (
+        "F1d. (In a typical week, how many hours [do you/does [he/she]] "
+        "spend) Caring for or\nlooking after children? (CURRENTLY WORKING: "
+        "Exclude hours providing care if this is\n[your/his/her] job.)\n"
+        "The values for this variable represent the actual number of hours "
+        "per week the Reference\nPerson spends caring for or looking after "
+        "children."
+    )
+    candidates = rebuild.title_header_candidates(description)
+    decisions = rebuild._adjudicate_context(
+        {
+            "interview_wave": 2017,
+            "raw_field_id": "SYNTHETIC-F1D",
+            "source_description": description,
+        },
+        candidates,
+        {},
+    )
+    hour_rows = [
+        (candidate, decision)
+        for candidate, decision in zip(candidates, decisions, strict=True)
+        if candidate[0] == "nominal_hour_token"
+        and candidate[1] < len(rebuild._raw_title(description).encode("utf-8"))
+    ]
+    assert [decision for _candidate, decision in hour_rows] == [
+        (
+            "hour_per_week",
+            "whole_domain_denotation",
+            "typical_week_hours_title_denotation",
+        ),
+        (
+            None,
+            "explicit_no_whole_domain_denotation",
+            "question_line_suffix_phrase_not_value_denotation",
+        ),
+    ]
+
+
+@pytest.mark.parametrize("label_line", range(3, 9))
+def test_structural_title_selector_can_start_on_physical_lines_three_through_eight(
+    label_line: int,
+) -> None:
+    description = "\n".join(["Question"] * (label_line - 1) + ["Output--DAYS"])
+    spans = unit_authority._title_selector_spans(description)
+    assert len(spans) == 1
+    assert description.count("\n", 0, spans[0][1]) + 1 == label_line
+    assert unit_authority._raw_title(description) == description
+
+
+@pytest.mark.parametrize(
+    ("description", "label_line"),
+    [
+        (RAW_ER27217, 3),
+        (RAW_ER49614, 7),
+        (RAW_ER52049, 8),
+    ],
+)
+def test_source_attested_late_selector_layouts_extend_the_exact_raw_header(
+    description: str, label_line: int
+) -> None:
+    spans = unit_authority._title_selector_spans(description)
+    assert spans
+    assert description.count("\n", 0, spans[-1][1]) + 1 == label_line
+    expected_header = description.rsplit("\nSee note", 1)[0]
+    assert unit_authority._raw_title(description) == expected_header
+
+
+@pytest.mark.parametrize(
+    "description",
+    [
+        (
+            "Household Food Security Category\n"
+            "Raw score 0 -- High Food Security"
+        ),
+        (
+            "Child Food Security Category\n"
+            "Raw score 0-1 -- High or Marginal Food Security among Children"
+        ),
+        (
+            "Question\n"
+            "All three vars--BC41 YRS, BC41 MOS, and BC41 WKS--must be "
+            "added together to calculate"
+        ),
+        (
+            "Question\n"
+            "automatic reinvestments--not including any IRAs? "
+            "(NOTE EXCLUSION OF IRAS--DIFFERENT FROM\n"
+            "1994)"
+        ),
+        "Question\nbased pensions or IRAs? [CHANGE FROM 1994--EXCLUDES IRAs]",
+        (
+            "Question\nemployer-based pensions or IRAs? "
+            "[CHANGE FROM 1994--EXCLUDES IRAs]"
+        ),
+        (
+            "Question\nin employer-based pensions or IRAs? "
+            "[CHANGE FROM 1994--EXCLUDES IRAs]"
+        ),
+        "Question\n(CHANGE FROM 1994--EXCLUDES IRAs)",
+        "Question\n(CHANGE FROM 1994--EXCLUDES I.R.A.s)",
+        "Question\nFROM 1994--EXCLUDES IRAS)",
+        "Question\n-----\nUPPERCASE BODY ROW",
+        "Question\n-----\n-LABEL",
+    ],
+)
+def test_closed_body_and_separator_lookalikes_are_not_title_selectors(
+    description: str,
+) -> None:
+    assert unit_authority._title_selector_spans(description) == ()
+    first_line_end = description.find("\n")
+    question = description.rfind("?")
+    question_line_end = (
+        description.find("\n", question) if question >= 0 else -1
+    )
+    if question >= 0 and question_line_end < 0:
+        question_line_end = len(description)
+    expected_end = max(
+        first_line_end,
+        question_line_end if question >= 0 else first_line_end,
+    )
+    assert unit_authority._raw_title(description) == description[:expected_end]
+
+
+def test_wrapped_number_of_times_is_count_valued_and_minutes_is_a_threshold() -> (
+    None
+):
+    rows = title_header_candidate_table(
+        [_row(2005, "ER27094", COMPILED, RAW_ER27094)]
+    )[0]["candidate_adjudications"]
+    assert any(
+        row["typed_value_unit"] == "count"
+        and row["adjudication"] == "whole_domain_denotation"
+        for row in rows
+    )
+    assert any(
+        row["family"] == "nominal_minute_token"
+        and row["adjudication"] == "explicit_no_whole_domain_denotation"
+        for row in rows
+    )
+    assert title_header_disposition(RAW_ER27094) == (
+        "count",
+        "derived_from_title_denotation",
+    )
+
+
+def test_nested_selector_components_are_deduplicated_and_response_visible() -> (
+    None
+):
+    script = (
+        Path(__file__).parents[2]
+        / "scripts"
+        / "rebuild_amendment10_title_authority.py"
+    )
+    spec = importlib.util.spec_from_file_location("amendment10_nested", script)
+    assert spec is not None and spec.loader is not None
+    rebuild = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rebuild)
+
+    header = rebuild._raw_title(RAW_ER62267)
+    components = rebuild._header_selector_occurrences(header)
+    time_components = [
+        row
+        for row in components
+        if normalize_description(row[3]).upper() == "TIME UNIT"
+    ]
+    assert len(time_components) == 1
+    assert rebuild._header_response_selectors(header) == ("TIME UNIT",)
+
+    nested_header = rebuild._raw_title(RAW_V22553)
+    assert rebuild._header_response_selectors(nested_header) == (
+        "TIME UNIT",
+        "TIME UNIT",
+    )
+    assert (
+        sum(
+            normalize_description(component).upper() == "TIME UNIT"
+            for _kind, _start, _end, component, _label, _terminal in (
+                rebuild._header_selector_occurrences(nested_header)
+            )
+        )
+        == 2
+    )
+
+    coordinate_header = rebuild._raw_title(RAW_ER60084)
+    assert rebuild._header_output_labels(coordinate_header) == (
+        (
+            "month",
+            coordinate_header.index("MONTH"),
+            coordinate_header.index("MONTH") + len("MONTH"),
+            "MONTH",
+            "MONTH--SECOND MORTGAGE",
+        ),
+    )
+
+
+def test_nested_singular_month_selector_is_an_explicit_calendar_defeat() -> (
+    None
+):
+    rows = title_header_candidate_table(
+        [_row(2015, "ER60084", INCOMPLETE, RAW_ER60084)]
+    )[0]["candidate_adjudications"]
+    assert rows
+    assert all(
+        row["adjudication"] == "explicit_no_whole_domain_denotation"
+        for row in rows
+    )
+    assert any(
+        row["reason"] == "singular_month_selector_is_calendar_coordinate"
+        for row in rows
+    )
+
+
+@pytest.mark.parametrize(
+    ("amount_description", "time_unit_description"),
+    [
+        (RAW_ER47459, RAW_ER47460),
+        (RAW_ER66175, RAW_ER66176),
+    ],
+)
+def test_overtime_amount_is_hours_but_paired_time_unit_is_not(
+    amount_description: str, time_unit_description: str
+) -> None:
+    assert title_header_disposition(amount_description) == (
+        "hour",
+        "derived_from_title_denotation",
+    )
+    assert title_header_disposition(time_unit_description) == (
+        None,
+        "title_clause_explicitly_non_whole_domain",
+    )
+
+
+def test_dollars_worth_amount_is_dollars_but_paired_time_unit_is_not() -> None:
+    assert title_header_disposition(RAW_ER3060) == (
+        "united_states_dollar",
+        "derived_from_title_denotation",
+    )
+    assert title_header_disposition(RAW_ER3061) == (
+        None,
+        "title_clause_explicitly_non_whole_domain",
+    )
+
+
+@pytest.mark.parametrize(
+    ("description", "expected_unit", "in_dollars_is_positive"),
+    [
+        (RAW_ER15249, "united_states_dollar", True),
+        (RAW_ER15250, None, False),
+        (RAW_ER15251, "percent", False),
+        (RAW_ER15252, None, False),
+    ],
+)
+def test_pension_selector_siblings_select_only_their_response_arm(
+    description: str,
+    expected_unit: str | None,
+    in_dollars_is_positive: bool,
+) -> None:
+    table = title_header_candidate_table(
+        [_row(1999, "PENSION-SIBLING", COMPILED, description)]
+    )[0]
+    assert table["typed_value_unit"] == expected_unit
+    in_dollars_rows = [
+        row
+        for row in table["candidate_adjudications"]
+        if row["family"] == "in_dollars"
+    ]
+    assert len(in_dollars_rows) == 1
+    assert (
+        in_dollars_rows[0]["adjudication"] == "whole_domain_denotation"
+    ) is in_dollars_is_positive
+
+
+@pytest.mark.parametrize(
+    "description",
+    [
+        "Number of year-to-year changes in county",
+        "Number of year-to-year changes in state",
+        "Number of year-to-year changes in region",
+    ],
+)
+def test_year_to_year_change_titles_denote_counts_not_years(
+    description: str,
+) -> None:
+    rows = title_header_candidate_table(
+        [_row(1972, "YEAR-CHANGE", VALUE_CODE_ONLY, description)]
+    )[0]["candidate_adjudications"]
+    assert [
+        (
+            row["family"],
+            row["typed_value_unit"],
+            row["adjudication"],
+            row["reason"],
+        )
+        for row in rows
+    ] == [
+        (
+            "number_of_years",
+            "count",
+            "whole_domain_denotation",
+            "count_of_changes_title_denotation",
+        ),
+        (
+            "nominal_year_token",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "year_phrase_modifies_change_count",
+        ),
+    ]
+
+
+def test_wrapped_month_body_defeats_preselector_experience_year() -> None:
+    assert title_header_disposition(RAW_V22842) == (
+        None,
+        "title_clause_explicitly_non_whole_domain",
+    )
+    statement = description_statements(RAW_V22842)[0]
+    assert statement.startswith(
+        "The values for this variable in the range 001-997 represent "
+    )
+    assert statement_predicate(statement) is None
+    assert field_unit(RAW_V22842) == (None, "no_statement_names_a_unit")
+
+
+def test_typical_week_time_use_title_denotes_hours_per_week() -> None:
+    rows = title_header_candidate_table(
+        [_row(2017, "ER66716", COMPILED, RAW_ER66716)]
+    )[0]["candidate_adjudications"]
+    assert [
+        (
+            row["family"],
+            row["typed_value_unit"],
+            row["adjudication"],
+            row["reason"],
+        )
+        for row in rows
+    ] == [
+        (
+            "nominal_week_token",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "typical_week_rate_denominator",
+        ),
+        (
+            "how_many_count_marker",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "count_marker_subordinate_to_unit_noun",
+        ),
+        (
+            "nominal_hour_token",
+            "hour_per_week",
+            "whole_domain_denotation",
+            "typical_week_hours_title_denotation",
+        ),
+        (
+            "nominal_day_token",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "first_question_coordinate_frequency_or_comparison_input",
+        ),
+        (
+            "number_of_count_marker",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "delegated_to_primary_statement_grammar",
+        ),
+        (
+            "hours_per_week",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "delegated_to_primary_statement_grammar",
+        ),
+    ]
+    assert field_unit(RAW_ER66716) == (
+        "hour_per_week",
+        "derived_from_title_denotation",
+    )
+
+
+def test_last_year_miles_title_denotes_miles_per_year() -> None:
+    rows = title_header_candidate_table(
+        [_row(1974, "V3520", COMPILED, RAW_V3520)]
+    )[0]["candidate_adjudications"]
+    assert [
+        (
+            row["family"],
+            row["typed_value_unit"],
+            row["adjudication"],
+            row["reason"],
+        )
+        for row in rows
+    ] == [
+        (
+            "nominal_year_token",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "last_year_rate_denominator",
+        ),
+        (
+            "how_many_count_marker",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "count_marker_subordinate_to_unit_noun",
+        ),
+        (
+            "nominal_mile_token",
+            "mile_per_year",
+            "whole_domain_denotation",
+            "last_year_miles_title_denotation",
+        ),
+        (
+            "number_of_count_marker",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "delegated_to_primary_statement_grammar",
+        ),
+        (
+            "miles_per_year",
+            None,
+            "explicit_no_whole_domain_denotation",
+            "delegated_to_primary_statement_grammar",
+        ),
+    ]
+    assert field_unit(RAW_V3520) == (
+        "mile_per_year",
+        "derived_from_title_denotation",
+    )
+
+
+@pytest.mark.parametrize("description", [RAW_V11959, RAW_ER70826])
+def test_highest_college_year_title_denotes_year(description: str) -> None:
+    rows = title_header_candidate_table(
+        [_row(2015, "COLLEGE-YEAR", COMPILED, description)]
+    )[0]["candidate_adjudications"]
+    actual = [
+        (
+            row["family"],
+            row["typed_value_unit"],
+            row["adjudication"],
+            row["reason"],
+        )
+        for row in rows
+    ]
+    expected = [
+        (
+            "nominal_year_token",
+            "year",
+            "whole_domain_denotation",
+            "highest_college_year_title_denotation",
+        )
+    ]
+    if description == RAW_V11959:
+        expected.append(
+            (
+                "number_of_years",
+                None,
+                "explicit_no_whole_domain_denotation",
+                "delegated_to_primary_statement_grammar",
+            )
+        )
+    assert actual == expected
+
+
+@pytest.mark.parametrize("description", [RAW_ER64765, RAW_ER64904])
+def test_school_years_outside_us_title_denotes_year(description: str) -> None:
+    rows = title_header_candidate_table(
+        [_row(2015, "SCHOOL-YEARS", COMPILED, description)]
+    )[0]["candidate_adjudications"]
+    assert [
+        (
+            row["family"],
+            row["typed_value_unit"],
+            row["adjudication"],
+            row["reason"],
+        )
+        for row in rows
+    ] == [
+        (
+            "nominal_year_token",
+            "year",
+            "whole_domain_denotation",
+            "school_years_outside_us_title_denotation",
+        )
+    ]
+
+
+@pytest.mark.parametrize("description", [RAW_ER64764, RAW_ER64907])
+def test_adjacent_education_year_titles_remain_negative_controls(
+    description: str,
+) -> None:
+    rows = title_header_candidate_table(
+        [_row(2015, "EDUCATION-CONTROL", VALUE_CODE_ONLY, description)]
+    )[0]["candidate_adjudications"]
+    assert rows
+    assert all(
+        row["adjudication"] != "whole_domain_denotation" for row in rows
+    )
+
+
+def test_title_scanner_uses_utf8_offsets_and_ascii_case_and_boundaries() -> (
+    None
+):
+    assert title_header_candidates("éHours") == (
+        ("nominal_hour_token", 2, 7, "Hours"),
+    )
+    assert title_header_candidates("AHours") == ()
+    assert title_header_disposition("éHours") == (
+        None,
+        "unadjudicated_title_candidate",
+    )
+
+    kelvin = title_header_candidates("How many weeKs")
+    long_s = title_header_candidates("hourſ per week")
+    assert not any(row[0] == "nominal_week_token" for row in kelvin)
+    assert not any(row[0] == "hours_per_week" for row in long_s)
+
+
+@pytest.mark.parametrize(
+    ("description", "unit"),
+    [
+        (
+            "D33, E14. About how many miles was it to where you work(ed)? "
+            "(One way) (1969 questions)",
+            "mile",
+        ),
+        (
+            "C73. How many hours of overtime did you work on that job in 1993?",
+            "hour",
+        ),
+        ("D61. How much work did she miss?--DAYS", "day"),
+        ("C3. How long have you been looking for work?--MONTHS", "month"),
+    ],
+)
+def test_generic_question_titles_participate_in_unit_derivation(
+    description: str, unit: str
+) -> None:
+    assert title_header_disposition(description) == (
+        unit,
+        "derived_from_title_denotation",
+    )
+    assert field_unit(description) == (unit, "derived_from_title_denotation")
+
+
+@pytest.mark.parametrize(
+    "description",
+    [
+        (
+            "G10. Are you and your Wife now doing anything to limit the number "
+            "of children you will\nhave? (1970 question)"
+        ),
+        (
+            "M5. Have you had a number of different kinds of jobs, or have you "
+            "mostly worked in the\nsame occupation you started in, or what?"
+        ),
+        (
+            "1995 Interview Number of the First Other Family Unit Sharing the "
+            "Household with This\nFamily\nValues for this variable represent the "
+            "actual 1995 ID number of the first other family\nliving with this one."
+        ),
+        (
+            "2019 Interview Number of the Second Other Family Unit Sharing the "
+            "Household with This\nFamily\nValues for this variable represent the "
+            "actual 2019 ID number of the second other family\nliving with this one."
+        ),
+    ],
+)
+def test_number_phrases_in_yes_no_and_identifier_titles_are_defeated(
+    description: str,
+) -> None:
+    table = title_header_candidate_table(
+        [_row(2000, "NUMBER-DEFEAT", COMPILED, description)]
+    )[0]
+    assert table["candidate_adjudications"]
+    assert all(
+        row["adjudication"] == "explicit_no_whole_domain_denotation"
+        for row in table["candidate_adjudications"]
+    )
+    assert title_header_disposition(description) == (
+        None,
+        "title_clause_explicitly_non_whole_domain",
+    )
+
+
+@pytest.mark.parametrize(
+    ("description", "expected_unit"),
+    [
+        (
+            "DE45. How many hours did that overtime amount to in (that period "
+            "during) 2008?--TIME UNIT\nFOR JOB 3",
+            None,
+        ),
+        (
+            "D40. (In addition to the weeks and hours worked you have just told "
+            "us about,) did you\n(HEAD) have an extra job or other way of making "
+            "money in 1983?\nD46. Did you have any other extra jobs in 1983?\n"
+            "The values for this variable represent the total number of extra "
+            "jobs (1-7) that Head had.",
+            "count",
+        ),
+        *(
+            (description, None)
+            for description in CURRENT_MAIN_JOB_HOUR_INPUT_CONTEXTS
+        ),
+    ],
+)
+def test_time_unit_and_prior_hours_title_inputs_are_not_output_units(
+    description: str, expected_unit: str | None
+) -> None:
+    table = title_header_candidate_table(
+        [_row(2009, "HOUR-DEFEAT", COMPILED, description)]
+    )[0]
+    assert all(
+        row["adjudication"] == "explicit_no_whole_domain_denotation"
+        for row in table["candidate_adjudications"]
+    )
+    assert field_unit(description)[0] == expected_unit
+
+
+def test_current_main_job_false_hour_cohort_covers_all_six_fields() -> None:
+    assert len(CURRENT_MAIN_JOB_HOUR_INPUT_FIELDS) == 6
+    assert len(set(CURRENT_MAIN_JOB_HOUR_INPUT_FIELDS)) == 6
+    assert len(CURRENT_MAIN_JOB_HOUR_INPUT_CONTEXTS) == 3
+    for description in CURRENT_MAIN_JOB_HOUR_INPUT_CONTEXTS:
+        rows = title_header_candidate_table(
+            [_row(2015, "CURRENT-MAIN-JOB", COMPILED, description)]
+        )[0]["candidate_adjudications"]
+        hour_rows = [
+            row for row in rows if row["family"] == "nominal_hour_token"
+        ]
+        assert hour_rows
+        assert all(
+            row["adjudication"] == "explicit_no_whole_domain_denotation"
+            for row in hour_rows
+        )
+
+
+@pytest.mark.parametrize(
+    ("description", "unit", "negative_reason"),
+    [
+        (
+            "G14. How many of these years did she work full time for most of "
+            "the year?",
+            "year",
+            "period_phrase_is_reference_coverage",
+        ),
+        (
+            "1969 hours of nonleisure comparable to 1967 hours of nonleisure\n"
+            "This variable is comparable to 1967 variable since it doesn't "
+            "include travel to work time.\nV1508 (Total nonleisure in 1969) -\n"
+            "V1146 (Head's travel to work time) -\n"
+            "V1152 (Wife's travel to work time)",
+            "hour",
+            "hour_phrase_modifies_included_or_reference_input",
+        ),
+    ],
+)
+def test_repeated_period_inputs_do_not_become_second_title_denotations(
+    description: str, unit: str, negative_reason: str
+) -> None:
+    rows = title_header_candidate_table(
+        [_row(1974, "REPEATED-PERIOD", COMPILED, description)]
+    )[0]["candidate_adjudications"]
+    assert (
+        sum(row["adjudication"] == "whole_domain_denotation" for row in rows)
+        == 1
+    )
+    assert any(row["reason"] == negative_reason for row in rows)
+    assert field_unit(description) == (unit, "derived_from_title_denotation")
+
+
+@pytest.mark.parametrize(
+    ("title_unit", "statement_unit", "family"),
+    [
+        ("hour_per_week", "hour", "hours_per_week"),
+        ("hour_per_year", "hour", "hours_per_year"),
+        ("mile_per_year", "mile", "miles_per_year"),
+        (
+            "united_states_dollar_per_hour",
+            "united_states_dollar",
+            "dollars_per_hour",
+        ),
+        (
+            "united_states_dollar_per_week",
+            "united_states_dollar",
+            "dollars_per_week",
+        ),
+    ],
+)
+def test_only_supported_exact_title_rates_refine_bare_statement_units(
+    monkeypatch: pytest.MonkeyPatch,
+    title_unit: str,
+    statement_unit: str,
+    family: str,
+) -> None:
+    monkeypatch.setattr(
+        unit_authority,
+        "title_header_disposition",
+        lambda _description: (title_unit, "derived_from_title_denotation"),
+    )
+    monkeypatch.setattr(
+        unit_authority,
+        "_title_candidate_rows",
+        lambda _description: (
+            (
+                family,
+                0,
+                1,
+                "x",
+                title_unit,
+                "whole_domain_denotation",
+                "test_exact_refinement",
+            ),
+        ),
+    )
+    monkeypatch.setattr(
+        unit_authority,
+        "description_statements",
+        lambda _description: ("statement",),
+    )
+    monkeypatch.setattr(
+        unit_authority,
+        "statement_disposition",
+        lambda _statement: (statement_unit, "unit_naming_clause"),
+    )
+    assert field_unit("synthetic exact refinement") == (
+        title_unit,
+        "derived_from_title_denotation",
+    )
+
+
+def test_exact_month_body_defeats_a_conflicting_experience_year() -> None:
+    description = (
+        "B23. How many years' experience do you (HEAD) have altogether "
+        "with your present employer?\nThe values for this variable "
+        "represent the actual number of monthsHead has worked for the\n"
+        "present employer."
+    )
+    assert title_header_disposition(description) == (
+        None,
+        "title_clause_explicitly_non_whole_domain",
+    )
+    assert field_unit(description) == (
+        "month",
+        "derived_from_denotation_statement",
+    )
+
+
+def test_title_rebuilder_rejects_distinct_positive_units_in_either_order() -> (
+    None
+):
+    script = (
+        Path(__file__).parents[2]
+        / "scripts"
+        / "rebuild_amendment10_title_authority.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "amendment10_rebuild", script
+    )
+    assert spec is not None and spec.loader is not None
+    rebuild = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rebuild)
+
+    description = "Hours and days"
+    sha = hashlib.sha256(description.encode("utf-8")).hexdigest()
+    candidates = (
+        ("nominal_hour_token", 0, 5, "Hours"),
+        ("nominal_day_token", 10, 14, "days"),
+    )
+    old_rows = {
+        sha: [
+            (
+                sha,
+                description,
+                family,
+                start,
+                end,
+                spelling,
+                unit,
+                "whole_domain_denotation",
+                "synthetic_independent_positive",
+                1968,
+                "SYNTHETIC",
+            )
+            for (family, start, end, spelling), unit in zip(
+                candidates, ("hour", "day"), strict=True
+            )
+        ]
+    }
+    row = {
+        "interview_wave": 1968,
+        "raw_field_id": "SYNTHETIC",
+        "source_description": description,
+    }
+    for ordered in (candidates, tuple(reversed(candidates))):
+        with pytest.raises(ValueError, match="inherited title conflict"):
+            rebuild._adjudicate_context(row, ordered, old_rows)
+
+
+def test_title_table_keeps_every_field_and_exact_raw_domain_groundings() -> (
+    None
+):
     rows = [
         _row(1968, "V31", COMPILED, RAW_V31),
         _row(1968, "V47", COMPILED, TITLE_WITNESSES[0][0]),
     ]
     table = title_header_candidate_table(rows)
     assert len(table) == 2
-    assert table[0]["candidate_count"] == 0
+    assert table[0]["candidate_count"] == 8
     assert table[0]["typed_value_unit"] is None
+    assert table[0]["raw_candidate_domain"] == RAW_V31
+    assert table[0]["raw_candidate_domain_byte_count"] == len(
+        RAW_V31.encode("utf-8")
+    )
+    assert table[0]["candidate_offsets"] == (
+        "zero-based UTF-8 byte offsets in raw_candidate_domain"
+    )
+    assert table[0]["bounded_context_header"] == "Annual food standard (Needs)"
+    assert (
+        table[0]["raw_candidate_domain_sha256"]
+        == hashlib.sha256(RAW_V31.encode("utf-8")).hexdigest()
+    )
+    assert {row["reason"] for row in table[0]["candidate_adjudications"]} == {
+        "input_table_or_subrange_not_field_denotation"
+    }
     assert table[1]["candidate_count"] == 1
     assert table[1]["typed_value_unit"] == "hour"
     assert table[1]["candidate_adjudications"][0]["adjudication"] == (
@@ -802,10 +2147,12 @@ def test_complete_raw_food_family_keeps_context_and_derives_dollars(
         == ("united_states_dollar", "unit_naming_clause")
         for statement in statements[1:]
     )
-    assert field_unit(description) == (
-        "united_states_dollar",
-        "derived_from_denotation_statement",
+    expected_reason = (
+        "derived_from_title_denotation"
+        if description.startswith("Weekly Food Needs\n")
+        else "derived_from_denotation_statement"
     )
+    assert field_unit(description) == ("united_states_dollar", expected_reason)
 
 
 def test_complete_raw_needs_note_denotes_1967_dollars() -> None:
@@ -1279,7 +2626,7 @@ def test_field_with_no_statement_has_no_unit() -> None:
 
 
 def test_field_takes_the_single_unit_its_statements_name() -> None:
-    assert field_unit(f"AMOUNT\n{DOLLARS}") == (
+    assert field_unit(DOLLARS) == (
         "united_states_dollar",
         "derived_from_denotation_statement",
     )
@@ -1415,7 +2762,7 @@ def _row(wave: int, field: str, status: str, description: str | None) -> dict:
 
 def test_successor_census_moves_only_unitless_compiled_fields() -> None:
     rows = [
-        _row(1968, "A", COMPILED, f"pay\n{DOLLARS}"),
+        _row(1968, "A", COMPILED, DOLLARS),
         _row(1968, "B", COMPILED, "House value"),
         _row(1968, "C", UNSUPPORTED, "House value"),
         _row(1968, "D", VALUE_CODE_ONLY, "House value"),
@@ -1640,7 +2987,7 @@ def test_occurrence_identity_binds_every_start_and_exact_cover() -> None:
 
 
 def test_frozen_semantic_authorities_have_exact_identity() -> None:
-    assert len(TITLE_START_AUTHORITY) == 3_222
+    assert len(TITLE_START_AUTHORITY) == 54_185
     assert len(
         {
             (row[0], row[2], row[3], row[4], row[5])
@@ -1648,10 +2995,14 @@ def test_frozen_semantic_authorities_have_exact_identity() -> None:
         }
     ) == len(TITLE_START_AUTHORITY)
     assert canonical_sha256(TITLE_START_AUTHORITY) == (
-        "cc3ef5ac6f519f38f3798449361d5db5d68100aefe7839caf294eb41ec4cce58"
+        "8be723069f257659cc2c36dd55758c76d084eded24d987629d1950c172032933"
     )
     assert canonical_sha256(TITLE_LITERAL_FAMILIES) == (
-        "3462e76c819851460e9c0fe8ab6b3cc1f82435d83f8b92d491ec9b81795d530d"
+        "c5f6b75b64ebd86134e1b655c5d522fcd18dc2179fd28fa2c66a0943465e2913"
+    )
+    assert len(TITLE_GENERIC_UNIT_FAMILIES) == 38
+    assert canonical_sha256(TITLE_GENERIC_UNIT_FAMILIES) == (
+        "f709526fe7802085ed691167a595f3d24504523dfa9a5fd4f61eb9269debd9de"
     )
 
     assert len(PREDICATE_AUTHORITY) == 2_590
@@ -1682,7 +3033,7 @@ def test_frozen_semantic_authorities_have_exact_identity() -> None:
         len(vector) for _segment, vector in SEGMENT_START_AUTHORITY
     ) == (1_114_747)
     assert canonical_sha256(SEGMENT_START_AUTHORITY) == (
-        "df29bb0aa328732f4f7ebccf8ee479a771c12c9536e4a95dfbeba32f7fa8dd39"
+        "c0eb8d26bf903137f73afc5fc37e79f8bfd0b2983d9ac79d33f14abd35c84883"
     )
     assert all(
         vector and len(vector) == segment.count(" ") + 1
@@ -1697,6 +3048,230 @@ def test_frozen_semantic_authorities_have_exact_identity() -> None:
         "start_dispositions": SEGMENT_START_AUTHORITY[0][1],
         "start_count": len(SEGMENT_START_AUTHORITY[0][1]),
     }
+
+
+def test_frozen_experience_title_contexts_are_32_selectors_plus_4_body_defeats() -> (
+    None
+):
+    experience_rows = [
+        row
+        for row in TITLE_START_AUTHORITY
+        if re.search(
+            r"\bHow many years(?:'| of) experience\b",
+            row[1],
+            re.IGNORECASE,
+        )
+    ]
+    headers = {row[0]: row[1] for row in experience_rows}
+    selector_contexts = {
+        context
+        for context, header in headers.items()
+        if unit_authority._title_selector_spans(header)
+    }
+    body_defeat_contexts = set(headers) - selector_contexts
+    assert len(experience_rows) == 111
+    assert len(headers) == 36
+    assert len(selector_contexts) == 32
+    assert len(body_defeat_contexts) == 4
+
+    selector_rows = [
+        row for row in experience_rows if row[0] in selector_contexts
+    ]
+    positive_by_context = {
+        row[0]: row[6]
+        for row in selector_rows
+        if row[7] == "whole_domain_denotation"
+    }
+    assert len(positive_by_context) == 32
+    assert Counter(positive_by_context.values()) == {
+        "year": 11,
+        "month": 11,
+        "week": 10,
+    }
+    assert not any(
+        row[7] == "whole_domain_denotation"
+        for row in experience_rows
+        if row[0] in body_defeat_contexts
+    )
+
+
+def test_frozen_typical_week_time_use_has_14_deduplicated_contexts() -> None:
+    rows = [
+        row
+        for row in TITLE_START_AUTHORITY
+        if re.match(
+            r"^F1(?:[b-h]|d2)\. \(In a typical week, how many hours ",
+            row[1],
+        )
+    ]
+    contexts = {row[0] for row in rows}
+    positive_contexts = {
+        row[0]
+        for row in rows
+        if row[6] == "hour_per_week"
+        and row[7] == "whole_domain_denotation"
+        and row[8] == "typical_week_hours_title_denotation"
+    }
+    assert len(rows) == 78
+    assert len(contexts) == 14
+    assert positive_contexts == contexts
+    assert Counter(
+        sum(
+            row[7] == "whole_domain_denotation"
+            for row in rows
+            if row[0] == context
+        )
+        for context in contexts
+    ) == {1: 14}
+
+
+def test_frozen_highest_college_year_has_46_deduplicated_contexts() -> None:
+    rows = [
+        row
+        for row in TITLE_START_AUTHORITY
+        if row[8] == "highest_college_year_title_denotation"
+    ]
+    assert len(rows) == 46
+    assert len({row[0] for row in rows}) == 46
+    assert all(
+        row[2] == "nominal_year_token"
+        and row[6] == "year"
+        and row[7] == "whole_domain_denotation"
+        for row in rows
+    )
+
+
+def test_frozen_school_years_outside_us_cohort_has_two_year_fields() -> None:
+    rows = [
+        row
+        for row in TITLE_START_AUTHORITY
+        if row[8] == "school_years_outside_us_title_denotation"
+    ]
+    assert {(row[9], row[10]) for row in rows} == {
+        (2015, "ER64765"),
+        (2015, "ER64904"),
+    }
+    assert all(
+        row[2] == "nominal_year_token"
+        and row[6] == "year"
+        and row[7] == "whole_domain_denotation"
+        for row in rows
+    )
+
+
+def test_frozen_dollars_worth_has_22_deduplicated_contexts() -> None:
+    rows = [
+        row
+        for row in TITLE_START_AUTHORITY
+        if "dollars' worth" in row[1].lower()
+    ]
+    headers = {row[0]: row[1] for row in rows}
+    amount_contexts = {
+        context
+        for context, header in headers.items()
+        if "AMOUNT" in header.upper()
+        and unit_authority._title_selector_spans(header)
+    }
+    time_unit_contexts = {
+        context
+        for context, header in headers.items()
+        if "TIME UNIT" in header.upper()
+        and unit_authority._title_selector_spans(header)
+    }
+    nonselector_contexts = set(headers) - amount_contexts - time_unit_contexts
+    assert len(rows) == 51
+    assert len(headers) == 22
+    assert len(amount_contexts) == 10
+    assert len(time_unit_contexts) == 10
+    assert len(nonselector_contexts) == 2
+    assert {
+        row[0]
+        for row in rows
+        if row[6] == "united_states_dollar"
+        and row[7] == "whole_domain_denotation"
+        and row[8] == "dollars_worth_amount_title_denotation"
+    } == amount_contexts
+    assert not any(
+        row[7] == "whole_domain_denotation"
+        for row in rows
+        if row[0] in time_unit_contexts
+    )
+    assert {
+        row[0]
+        for row in rows
+        if row[7] == "whole_domain_denotation"
+        and row[0] in nonselector_contexts
+    } == nonselector_contexts
+    assert Counter(
+        (row[2], row[8])
+        for row in rows
+        if row[8]
+        in {
+            "delegated_to_primary_statement_grammar",
+            "formula_or_operand_defeat",
+        }
+    ) == {
+        (
+            "nominal_dollar_token",
+            "delegated_to_primary_statement_grammar",
+        ): 3,
+        (
+            "nominal_month_token",
+            "formula_or_operand_defeat",
+        ): 2,
+    }
+
+
+def test_frozen_number_of_times_has_39_deduplicated_contexts() -> None:
+    rows = [
+        row
+        for row in TITLE_START_AUTHORITY
+        if "NUMBER OF TIMES" in normalize_description(row[1]).upper()
+    ]
+    contexts = {row[0] for row in rows}
+    assert len(rows) == 230
+    assert len(contexts) == 39
+    for context in contexts:
+        positive_units = {
+            row[6]
+            for row in rows
+            if row[0] == context and row[7] == "whole_domain_denotation"
+        }
+        assert positive_units == {"count"}
+    assert all(
+        row[7] != "whole_domain_denotation"
+        for row in rows
+        if row[2] == "nominal_minute_token"
+    )
+
+
+def test_frozen_overtime_exception_has_14_amount_and_14_time_unit_fields() -> (
+    None
+):
+    rows = [
+        row
+        for row in TITLE_START_AUTHORITY
+        if re.match(
+            r"^(?:BC|DE)14[Bb]4\. How many hours did that overtime amount to\b",
+            row[1],
+        )
+    ]
+    amount_fields = {(row[9], row[10]) for row in rows if "--AMOUNT" in row[1]}
+    time_unit_fields = {
+        (row[9], row[10]) for row in rows if "--TIME UNIT" in row[1]
+    }
+    assert len(amount_fields) == 14
+    assert len(time_unit_fields) == 14
+    assert {
+        (row[9], row[10])
+        for row in rows
+        if row[7] == "whole_domain_denotation" and row[6] == "hour"
+    } == amount_fields
+    assert not any(
+        row[7] == "whole_domain_denotation"
+        for row in rows
+        if (row[9], row[10]) in time_unit_fields
+    )
 
 
 def test_cleartext_start_authorities_replace_the_opaque_hash_registry() -> (
