@@ -2,9 +2,9 @@
 
 ## State
 
-Preparing a fresh document 10 seal on `claude/ce-rq-doc10` from pinned base
-`8088484`, under ratified protocol Amendment 1 plus corrections 1–3 at
-`64aec67`.
+The preserved mechanically validated draft is imported on
+`claude/ce-rq-doc10`. The ratified raster-only evidence has been reconciled and
+the legacy-shape implementation is beginning.
 
 ## Done
 
@@ -14,11 +14,20 @@ Preparing a fresh document 10 seal on `claude/ce-rq-doc10` from pinned base
   available locally.
 - Attempted to refresh `origin`; network name resolution is unavailable, so the
   pinned local authorities will be used.
+- Read all 1,193 lines of the ratified protocol at `64aec67` and reconciled its
+  correction precedence, comparator, sidecar, flat-seal, diagnostic-note, and
+  mutation laws.
+- Imported the seven-file blocked-draft baseline without unrelated changes.
+- Re-ran the baseline source-review check/census, annotation check plus mutation
+  suite, and the focused validator (`17 passed`).
+- Independently derived the adjudicated census: `N=10`, `M=75`; dependent atoms
+  by page are 18 (page 7), 39 (page 8), 16 (page 16), and 2 (page 21).
 
 ## Next
 
-- Read the ratified protocol, adjudicated document 10 tables, comparator law,
-  and preserved blocked draft.
-- Rebuild the annotation and raster-only incompleteness census exactly.
+- Add the seven missing attributable ordinary exact-byte labels and filter all
+  dependent atoms under the exact adjudicated blocking unions.
+- Implement the total pre-filter comparator, sparse ordinals/indices, 42-page
+  sidecar census, required diagnostic notes, and 40-member legacy flat seal.
 - Run mutation, validator, focused, formatting, and full relevant checks.
 - Remove this progress file in the final seal commit and write the lane report.
