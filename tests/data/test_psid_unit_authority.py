@@ -163,6 +163,117 @@ TITLE_WITNESSES = (
     ("Elapsed Interview Length in Minutes", "minute"),
 )
 
+CURRENCY_DEFAULT_REJECTION_WITNESSES = (
+    (
+        "hourly-money",
+        1968,
+        "V337",
+        "hourly_morphology",
+        "1967 Hourly Earnings - HEAD\n"
+        "V74 1967 Income from Labor - HEAD /\n"
+        "V47 1967 Hours of Work for Money - HEAD\n"
+        "* Coded 99.99 when V47 = 0000 (Did not work for money in 1967)",
+    ),
+    (
+        "monthly-money",
+        2021,
+        "ER81848",
+        "monthly_morphology",
+        "A25. How much are your monthly mortgage payments?\n"
+        "Missing values are imputed. Imputation may result in negative values "
+        "due to linear\n"
+        "regression model. These negative values are kept in order to preserve "
+        "population mean\n"
+        "consistent with the estimation.",
+    ),
+    (
+        "money-question/per-hour",
+        1970,
+        "V1301",
+        "per_hour_rate_phrase",
+        "D27. About how much did you make per hour at this? (1970 question)",
+    ),
+    (
+        "yearly-money",
+        2015,
+        "ER65417",
+        "yearly_morphology",
+        "A21. About how much are your total yearly property taxes, including "
+        "city, county, and\n"
+        "school taxes?\n"
+        "Missing values are imputed. Imputation may result in negative values "
+        "due to linear\n"
+        "regression model. These negative values are kept in order to preserve "
+        "population mean\n"
+        "consistent with the estimation.",
+    ),
+    (
+        "unmarked-amount/hour",
+        1969,
+        "V682",
+        "per_hour_rate_phrase",
+        "D45, F7. How much might you earn? (1969 questions)\n"
+        "Amount per hour\n"
+        "See V647 for code for the unemployed on this variable.",
+    ),
+    (
+        "per-week-money",
+        1973,
+        "V3196",
+        "per_week_rate_phrase",
+        "G15. How much did that cost you per week?",
+    ),
+)
+
+RAW_V5076 = (
+    "1975 Federal Income Tax Low Income Credit - Head and Wife\n"
+    'A one year "negative income tax" available to low income wage earners '
+    "with dependent\n"
+    "children and who maintain a dwelling.\n"
+    "10% (V4386 minus V4384), not to exceed $400, minus\n"
+    "10% (V4386 minus $4000) = tax credit (V5076)\n"
+    "Tax credit dollars"
+)
+
+FORMULA_DEFEAT_WITNESSES = (
+    (
+        1975,
+        "V3851",
+        "Amount saved by using food stamps in 1974\n"
+        "(Dollar value of food bought with food stamps minus dollars spent to "
+        "buy food stamps)",
+    ),
+    (
+        1976,
+        "V4364",
+        "Amount saved by using food stamps in 1975\n"
+        "(Dollar value of food bought with food stamps minus dollars spent to "
+        "buy food stamps)",
+    ),
+    (
+        1969,
+        "V825",
+        "Average amount of leisure per major adult (head and Wife) in 1968\n"
+        "Total working hours available during a year (5840: 16 hrs/day x 365 "
+        "days) minus average\n"
+        "nonleisure of Head and Wife (total nonleisure if unmarried Head)\n"
+        "This variable not comparable to 1968 variable since nonleisure in 1968 "
+        "includes travel to\n"
+        "work time of Head and Wife while in 1967 it did not",
+    ),
+    (
+        1969,
+        "V826",
+        "Average amount of leisure per major adult in 1968 (head and Wife)\n"
+        "Total working hours available during a year (5840: 16 hrs/ x 365 days) "
+        "minus average\n"
+        "nonleisure of Head and Wife (total nonleisure if unmarried Head)\n"
+        "This variable IS comparable to 1968 variable, since travel to work time "
+        "has been added\n"
+        "back into leisure to make it comparable",
+    ),
+)
+
 CURRENT_MAIN_JOB_HOUR_INPUT_CONTEXTS = (
     "BC31. If (you/he/she) were to work more hours than usual during some "
     "week, would\n(you/he/she) get paid for those extra hours of "
@@ -972,6 +1083,91 @@ def test_exact_title_header_witnesses_denote_the_whole_field(
     assert field_unit(description) == (unit, "derived_from_title_denotation")
     assert denotation_candidate_unselected_count(description) == 0
     assert denotation_candidate_overselected_count(description) == 0
+
+
+@pytest.mark.parametrize(
+    ("false_class", "wave", "field", "family", "description"),
+    CURRENCY_DEFAULT_REJECTION_WITNESSES,
+)
+def test_monetary_context_without_explicit_currency_does_not_name_a_unit(
+    false_class: str,
+    wave: int,
+    field: str,
+    family: str,
+    description: str,
+) -> None:
+    del false_class
+    assert (
+        re.search(
+            r"\$|\b(?:dollars?|cents?|USD)\b", description, re.IGNORECASE
+        )
+        is None
+    )
+    table = title_header_candidate_table(
+        [_row(wave, field, COMPILED, description)]
+    )[0]
+    candidates = [
+        row
+        for row in table["candidate_adjudications"]
+        if row["family"] == family
+    ]
+    assert candidates
+    assert all(
+        row["adjudication"] == "explicit_no_whole_domain_denotation"
+        and row["typed_value_unit"] is None
+        for row in candidates
+    )
+    assert title_header_disposition(description) == (
+        None,
+        "title_clause_explicitly_non_whole_domain",
+    )
+    assert field_unit(description)[0] is None
+
+
+def test_v5076_standalone_output_label_outranks_neighboring_formula() -> None:
+    table = title_header_candidate_table(
+        [_row(1976, "V5076", COMPILED, RAW_V5076)]
+    )[0]
+    rows = table["candidate_adjudications"]
+    assert all(
+        row["adjudication"] == "explicit_no_whole_domain_denotation"
+        and row["reason"] == "formula_or_operand_defeat"
+        for row in rows[:-1]
+    )
+    assert rows[-1] == {
+        "family": "nominal_dollar_token",
+        "start_utf8_byte": 288,
+        "end_utf8_byte": 295,
+        "spelling": "dollars",
+        "typed_value_unit": "united_states_dollar",
+        "adjudication": "whole_domain_denotation",
+        "reason": "standalone_output_label_names_currency",
+    }
+    assert title_header_disposition(RAW_V5076) == (
+        "united_states_dollar",
+        "derived_from_title_denotation",
+    )
+    assert field_unit(RAW_V5076) == (
+        "united_states_dollar",
+        "derived_from_title_denotation",
+    )
+
+
+@pytest.mark.parametrize(
+    ("wave", "field", "description"), FORMULA_DEFEAT_WITNESSES
+)
+def test_neighboring_formula_defeats_remain_closed(
+    wave: int, field: str, description: str
+) -> None:
+    table = title_header_candidate_table(
+        [_row(wave, field, COMPILED, description)]
+    )[0]
+    assert table["candidate_adjudications"]
+    assert all(
+        row["adjudication"] == "explicit_no_whole_domain_denotation"
+        for row in table["candidate_adjudications"]
+    )
+    assert field_unit(description)[0] is None
 
 
 def test_title_clause_maximal_munch_drops_nested_shorter_unit_tokens() -> None:

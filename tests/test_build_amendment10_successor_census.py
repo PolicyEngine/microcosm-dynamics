@@ -487,7 +487,9 @@ def test_title_authority_offsets_are_relative_to_raw_description() -> None:
 def test_title_authority_missing_witness_key_is_rejected() -> None:
     field_rows = tuple(row for row in _rows() if row["raw_field_id"] != "A")
 
-    with pytest.raises(runner.GateError, match="missing raw-field witness key"):
+    with pytest.raises(
+        runner.GateError, match="missing raw-field witness key"
+    ):
         runner._validate_title_start_authority(
             (_SYNTHETIC_TITLE_AUTHORITY[0],),
             field_rows,
@@ -544,7 +546,9 @@ def test_valid_gate_emits_only_after_every_pin_passes(tmp_path: Path) -> None:
     assert json.loads(output.read_text(encoding="utf-8")) == build.payload
     assert tuple(sorted(build.payload)) == _EXPECTED_PAYLOAD_KEYS
     assert len(build.payload) == 81
-    assert build.payload["schema_version"] == "amendment_10_successor_census.v4"
+    assert (
+        build.payload["schema_version"] == "amendment_10_successor_census.v4"
+    )
     assert (
         build.payload["title_literal_relation_row_count"],
         build.payload["title_literal_relation_byte_count"],
@@ -1528,9 +1532,11 @@ def test_gate_opens_input_relation_once(tmp_path: Path, monkeypatch) -> None:
     assert count == 1
 
 
+@pytest.mark.parametrize("failure_effect", ["before", "after"])
 def test_second_destination_replace_failure_restores_every_output(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    failure_effect: str,
 ) -> None:
     rows = _rows()
     field_rows = tmp_path / "rows.jsonl"
@@ -1544,14 +1550,18 @@ def test_second_destination_replace_failure_restores_every_output(
     original_replace = runner.os.replace
     replacement_count = 0
 
-    def fail_after_second_replace(source, destination) -> None:
+    def fail_on_second_replace(source, destination) -> None:
         nonlocal replacement_count
-        original_replace(source, destination)
         replacement_count += 1
         if replacement_count == 2:
-            raise OSError("injected failure after second replacement")
+            if failure_effect == "after":
+                original_replace(source, destination)
+            raise OSError(
+                f"injected {failure_effect}-effect failure on second replacement"
+            )
+        original_replace(source, destination)
 
-    monkeypatch.setattr(runner.os, "replace", fail_after_second_replace)
+    monkeypatch.setattr(runner.os, "replace", fail_on_second_replace)
 
     with pytest.raises(
         runner.GateError,
@@ -1565,11 +1575,194 @@ def test_second_destination_replace_failure_restores_every_output(
             pins=_pins(rows),
         )
 
-    assert replacement_count == 5
+    assert replacement_count == {"before": 3, "after": 4}[failure_effect]
     assert output.read_bytes() == original_output
     assert statements.read_bytes() == original_statements
     assert titles.read_bytes() == original_titles
     assert not tuple(tmp_path.glob(".*.a10-r04-*"))
+
+
+@pytest.mark.parametrize(
+    ("failure_effect", "expected_restore_attempts"),
+    [("before", 2), ("after", 1)],
+)
+def test_rollback_replacement_error_is_retried_or_verified(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    failure_effect: str,
+    expected_restore_attempts: int,
+) -> None:
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    third = tmp_path / "third"
+    for path, content in (
+        (first, b"OLD-A"),
+        (second, b"OLD-B"),
+        (third, b"OLD-C"),
+    ):
+        path.write_bytes(content)
+    original_replace = runner.os.replace
+    commit_count = 0
+    first_restore_attempts = 0
+
+    def injected_replace(source, destination) -> None:
+        nonlocal commit_count, first_restore_attempts
+        source_path = Path(source)
+        destination_path = Path(destination)
+        if ".a10-r04-stage-" in source_path.name:
+            original_replace(source, destination)
+            commit_count += 1
+            if commit_count == 2:
+                raise OSError("injected after-effect commit failure")
+            return
+        if destination_path == first and (
+            ".a10-r04-backup-" in source_path.name
+            or ".a10-r04-restore-" in source_path.name
+        ):
+            first_restore_attempts += 1
+            if first_restore_attempts == 1:
+                if failure_effect == "after":
+                    original_replace(source, destination)
+                raise OSError(
+                    f"injected {failure_effect}-effect rollback replacement failure"
+                )
+        original_replace(source, destination)
+
+    monkeypatch.setattr(runner.os, "replace", injected_replace)
+
+    with pytest.raises(
+        runner.GateError,
+        match="output transaction failed; prior destinations restored",
+    ):
+        runner._emit_outputs_transactionally(
+            (
+                ("first", first, b"NEW-A"),
+                ("second", second, b"NEW-B"),
+                ("third", third, b"NEW-C"),
+            )
+        )
+
+    assert first_restore_attempts == expected_restore_attempts
+    assert [path.read_bytes() for path in (first, second, third)] == [
+        b"OLD-A",
+        b"OLD-B",
+        b"OLD-C",
+    ]
+    assert not tuple(tmp_path.glob(".*.a10-r04-*"))
+
+
+@pytest.mark.parametrize(
+    ("failure_effect", "expected_unlink_attempts"),
+    [("before", 2), ("after", 1)],
+)
+def test_rollback_unlink_error_is_retried_or_verified(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    failure_effect: str,
+    expected_unlink_attempts: int,
+) -> None:
+    created = tmp_path / "created"
+    existing = tmp_path / "existing"
+    existing.write_bytes(b"OLD-B")
+    original_replace = runner.os.replace
+    original_unlink = Path.unlink
+    commit_count = 0
+    unlink_attempts = 0
+
+    def fail_after_second_commit(source, destination) -> None:
+        nonlocal commit_count
+        original_replace(source, destination)
+        if ".a10-r04-stage-" in Path(source).name:
+            commit_count += 1
+            if commit_count == 2:
+                raise OSError("injected after-effect commit failure")
+
+    def injected_unlink(path: Path, *args, **kwargs) -> None:
+        nonlocal unlink_attempts
+        if path == created:
+            unlink_attempts += 1
+            if unlink_attempts == 1:
+                if failure_effect == "after":
+                    original_unlink(path, *args, **kwargs)
+                raise OSError(
+                    f"injected {failure_effect}-effect rollback unlink failure"
+                )
+        original_unlink(path, *args, **kwargs)
+
+    monkeypatch.setattr(runner.os, "replace", fail_after_second_commit)
+    monkeypatch.setattr(Path, "unlink", injected_unlink)
+
+    with pytest.raises(
+        runner.GateError,
+        match="output transaction failed; prior destinations restored",
+    ):
+        runner._emit_outputs_transactionally(
+            (
+                ("created", created, b"NEW-A"),
+                ("existing", existing, b"NEW-B"),
+            )
+        )
+
+    assert unlink_attempts == expected_unlink_attempts
+    assert not created.exists()
+    assert existing.read_bytes() == b"OLD-B"
+    assert not tuple(tmp_path.glob(".*.a10-r04-*"))
+
+
+def test_unresolved_rollback_backup_survives_and_is_reported(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    third = tmp_path / "third"
+    for path, content in (
+        (first, b"OLD-A"),
+        (second, b"OLD-B"),
+        (third, b"OLD-C"),
+    ):
+        path.write_bytes(content)
+    original_replace = runner.os.replace
+    commit_count = 0
+
+    def injected_replace(source, destination) -> None:
+        nonlocal commit_count
+        source_path = Path(source)
+        destination_path = Path(destination)
+        if ".a10-r04-stage-" in source_path.name:
+            original_replace(source, destination)
+            commit_count += 1
+            if commit_count == 2:
+                raise OSError("injected after-effect commit failure")
+            return
+        if destination_path == first and (
+            ".a10-r04-backup-" in source_path.name
+            or ".a10-r04-restore-" in source_path.name
+        ):
+            raise OSError("injected persistent before-effect restore failure")
+        original_replace(source, destination)
+
+    monkeypatch.setattr(runner.os, "replace", injected_replace)
+
+    with pytest.raises(runner.GateError) as error:
+        runner._emit_outputs_transactionally(
+            (
+                ("first", first, b"NEW-A"),
+                ("second", second, b"NEW-B"),
+                ("third", third, b"NEW-C"),
+            )
+        )
+
+    backups = tuple(tmp_path.glob(".first.a10-r04-backup-*"))
+    assert len(backups) == 1
+    assert backups[0].read_bytes() == b"OLD-A"
+    assert str(backups[0]) in str(error.value)
+    assert "backup preserved at" in str(error.value)
+    assert [path.read_bytes() for path in (first, second, third)] == [
+        b"NEW-A",
+        b"OLD-B",
+        b"OLD-C",
+    ]
 
 
 def test_cli_success_emits_complete_json(
