@@ -113,6 +113,26 @@ def resolve_tail(
     return start, resolve_line(page_text, line_number)[1]
 
 
+def resolve_exact_text(
+    page_text: str, needle: str, occurrence: int = 0
+) -> tuple[int, int]:
+    raw = page_text.encode("utf-8")
+    target = needle.encode("utf-8")
+    found: list[int] = []
+    cursor = 0
+    while True:
+        position = raw.find(target, cursor)
+        if position < 0:
+            break
+        found.append(position)
+        cursor = position + 1
+    if occurrence >= len(found):
+        raise SpecError(
+            f"exact text {needle!r} occurrence {occurrence} missing"
+        )
+    return found[occurrence], found[occurrence] + len(target)
+
+
 def resolve(page_text: str, selector: Sequence[Any]) -> tuple[int, int]:
     mode = selector[0]
     if mode == "line":
@@ -123,6 +143,8 @@ def resolve(page_text: str, selector: Sequence[Any]) -> tuple[int, int]:
         return resolve_needle(page_text, selector[1], selector[2], selector[3])
     if mode == "tail":
         return resolve_tail(page_text, selector[1], selector[2], selector[3])
+    if mode == "exact":
+        return resolve_exact_text(page_text, selector[1], selector[2])
     raise SpecError(f"unknown selector mode {mode!r}")
 
 
@@ -140,6 +162,10 @@ def sel_word(number: int, needle: str, occurrence: int = 0) -> tuple[Any, ...]:
 
 def sel_tail(number: int, needle: str, occurrence: int = 0) -> tuple[Any, ...]:
     return ("tail", number, needle, occurrence)
+
+
+def sel_exact(needle: str, occurrence: int = 0) -> tuple[Any, ...]:
+    return ("exact", needle, occurrence)
 
 
 def spec(
@@ -248,7 +274,10 @@ PAGE_NOTES: dict[int, str] = {
     5: "Housing and work-for-housing prose reviewed and excluded.",
     6: "Housing and self-performed home-repair prose reviewed and excluded.",
     7: "Head assignment, occupation, industry, tenure, and prior-job screen retained.",
-    8: "Head exposure/pay retained; raster-only or garbled answer labels were not minted.",
+    8: (
+        "Head exposure/pay retained; attributable garbled answer labels use "
+        "their exact pinned bytes, while raster-only labels are not minted."
+    ),
     9: "Head extra-job actual fields retained; hypothetical supply excluded.",
     10: "Commuting screen reviewed; no ratified R_Q field retained.",
     11: "Lateness, future-job, mobility, and satisfaction screen excluded.",
@@ -294,15 +323,17 @@ SEC_D = ("p7_sec_d",)
 D_HAS_JOB = SEC_D + ("p7_d_has_job",)
 D_SHORT = D_HAS_JOB + ("p7_less_than_year",)
 D_LONG = D_HAS_JOB + ("p7_one_year_or_more",)
-D_POST_TENURE = (D_LONG, D_SHORT)
-D_OVERTIME_YES = (
-    D_LONG + ("p8_d18_yes",),
-    D_SHORT + ("p8_d18_yes",),
-)
-D_OVERTIME_NO = (
-    D_LONG + ("p8_d18_no",),
-    D_SHORT + ("p8_d18_no",),
-)
+D_SHORT_SAME = D_SHORT + ("p7_d8_same",)
+D_TO_D10 = (D_LONG, D_SHORT_SAME)
+D10_YES = tuple(path + ("p8_d10_yes",) for path in D_TO_D10)
+D10_NO = tuple(path + ("p8_d10_no",) for path in D_TO_D10)
+D_AFTER_D10 = D10_YES + D10_NO
+D12_YES = tuple(path + ("p8_d12_yes",) for path in D_AFTER_D10)
+D12_NO = tuple(path + ("p8_d12_no",) for path in D_AFTER_D10)
+D_AFTER_D12 = D12_YES + D12_NO
+D_POST_TENURE = D_TO_D10
+D_OVERTIME_YES = tuple(path + ("p8_d18_yes",) for path in D_TO_D10)
+D_OVERTIME_NO = tuple(path + ("p8_d18_no",) for path in D_TO_D10)
 D_AFTER_OVERTIME = D_OVERTIME_YES + D_OVERTIME_NO
 D_EXTRA = tuple(path + ("p9_d24_yes",) for path in D_AFTER_OVERTIME)
 SEC_E = ("p12_sec_e",)
@@ -457,6 +488,15 @@ def _review_rows() -> tuple[dict[str, Any], ...]:
         )
     )
     add(
+        spec(
+            7,
+            sel_exact("13.1                       (TURN TO DlO, PAGE 8)"),
+            F,
+            "p7_d8_same",
+            routes=(D_SHORT,),
+        )
+    )
+    add(
         *question(
             7,
             sel_line(50),
@@ -466,23 +506,83 @@ def _review_rows() -> tuple[dict[str, Any], ...]:
         )
     )
 
-    for first, last, key in (
-        (4, 4, "d10_vacation"),
-        (6, 6, "d11_vacation_time"),
-        (10, 11, "d12_sick"),
-        (13, 13, "d13_sick_time"),
-        (18, 18, "d14_unemployed_strike"),
-        (19, 20, "d15_unemployed_strike_time"),
-    ):
-        add(
-            *question(
-                8,
-                sel_block(first, last),
-                f"p8_{key}",
-                parents=("p7_present_job",),
-                routes=D_POST_TENURE,
-            )
+    add(
+        *question(
+            8,
+            sel_line(4),
+            "p8_d10_vacation",
+            parents=("p7_present_job",),
+            routes=D_TO_D10,
         )
+    )
+    add(spec(8, sel_exact("[ml-"), F, "p8_d10_yes", routes=D_TO_D10))
+    add(
+        *question(
+            8,
+            sel_line(6),
+            "p8_d11_vacation_time",
+            parents=("p7_present_job",),
+            routes=D10_YES,
+        )
+    )
+    add(
+        spec(
+            8,
+            sel_exact("15.1          (GO TO D 2)"),
+            F,
+            "p8_d10_no",
+            routes=D_TO_D10,
+        )
+    )
+    add(
+        *question(
+            8,
+            sel_block(10, 11),
+            "p8_d12_sick",
+            parents=("p7_present_job",),
+            routes=D_AFTER_D10,
+        )
+    )
+    add(spec(8, sel_exact("p?q"), F, "p8_d12_yes", routes=D_AFTER_D10))
+    add(
+        *question(
+            8,
+            sel_line(13),
+            "p8_d13_sick_time",
+            parents=("p7_present_job",),
+            routes=D12_YES,
+        )
+    )
+    add(
+        spec(
+            8,
+            sel_exact(
+                "-1                  D\n"
+                "                                (GO TO 4)"
+            ),
+            F,
+            "p8_d12_no",
+            routes=D_AFTER_D10,
+        )
+    )
+    add(
+        *question(
+            8,
+            sel_line(18),
+            "p8_d14_unemployed_strike",
+            parents=("p7_present_job",),
+            routes=D_AFTER_D12,
+        )
+    )
+    add(
+        *question(
+            8,
+            sel_block(19, 20),
+            "p8_d15_unemployed_strike_time",
+            parents=("p7_present_job",),
+            routes=D_POST_TENURE,
+        )
+    )
     add(
         *question(
             8,
@@ -594,6 +694,24 @@ def _review_rows() -> tuple[dict[str, Any], ...]:
             sel_word(44, "for your regular work?"),
             "p8_d22_hourly_status_continuation",
             anchor_kind=None,
+            routes=D_AFTER_OVERTIME,
+        )
+    )
+    add(
+        spec(
+            8,
+            sel_exact("(cow"),
+            F,
+            "p8_d22_yes",
+            routes=D_AFTER_OVERTIME,
+        )
+    )
+    add(
+        spec(
+            8,
+            sel_exact("1        'GOp;;FD;;v"),
+            F,
+            "p8_d22_no",
             routes=D_AFTER_OVERTIME,
         )
     )
