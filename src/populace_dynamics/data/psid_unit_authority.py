@@ -1555,10 +1555,36 @@ def field_unit(description: str | None) -> tuple[str | None, str]:
     }:
         return None, "defeated_title_denotation"
     if title_unit is not None:
+        found = description_statements(description)
+        statement_units = {
+            unit
+            for unit, _reason in map(statement_disposition, found)
+            if unit is not None
+        }
+        conflicting = statement_units - {title_unit}
+        rate_refinement = (
+            title_unit == "hour_per_week"
+            and conflicting == {"hour"}
+            and any(
+                family in {"hours_a_week", "hours_per_week"}
+                and disposition == "whole_domain_denotation"
+                for (
+                    family,
+                    _start,
+                    _end,
+                    _spelling,
+                    _unit,
+                    disposition,
+                    _reason,
+                ) in _title_candidate_rows(description)
+            )
+        )
+        if conflicting and not rate_refinement:
+            return None, "conflicting_title_and_statement_units"
         # A contextual whole-field header controls subordinate construction,
-        # formula, or subrange prose in the body.  Conflicting title units
-        # have already failed closed above; body prose remains controlling
-        # when no positive title exists.
+        # formula, or subrange prose in the body.  The sole cross-unit
+        # refinement is the exact longer ``hours a/per week`` title over a
+        # subordinate bare-hour statement.  Other positive conflicts fail.
         return title_unit, "derived_from_title_denotation"
 
     found = description_statements(description)

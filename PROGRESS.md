@@ -31,6 +31,10 @@ any amendment edit.
   extended adjudication. The one shared segment/start is retained as a
   contextual overlay. Exact selection cover is zero unselected/overselected;
   195 focused authority tests pass.
+- Made title priority precise: subordinate construction/subrange prose cannot
+  veto a direct whole-field title, the 19 exact `hours a/per week` headers
+  refine subordinate bare-hour statements, and every other positive
+  title/statement unit conflict fails closed.
 - Corrected §24.2.3 to the complete two-wave food reclassification: 10/29
   followed by 108/124, cumulatively 118 predicates, 153 occurrences, and 139
   independently positive fields.
