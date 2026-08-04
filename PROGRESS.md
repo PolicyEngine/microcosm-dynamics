@@ -6,8 +6,9 @@
 - Ratified stage-2 Amendment 1 plus corrections 1-3 have been read from commit `64aec67`.
 - Document 6 is a future affected legacy artifact: the sidecar belongs between `adjudication_note_rows` and `output_adjudication_rows`, and its flat 30-member seal receives the ten correction-2 additions.
 - The candidate-free 30-page source review now reproduces 168 exact ordinary atom specs on 9 nonempty pages and exact-covers 21 empty-occurrence pages.
-- Raster review has expanded the rule-1 domain beyond the prior blocked summary to include four page-7 D1 inactive-label instances; the complete adjudication is still being finalized.
-- No seal mutation has yet been made in this lane.
+- The complete 30-page raster adjudication is frozen at 16 rule-1 exceptions and 38 rule-2 dependent atoms (4 emitted, 34 withheld).
+- The legacy-shape sidecar, 30-page census, flat 40-member seal, sparse pre-filter indices, and 30 required fidelity diagnostics now reproduce and validate.
+- Focused document-6 tests and the hardened mutation runner are green.
 
 ## Done
 
@@ -19,11 +20,18 @@
 - Corrected the side-by-side D22 exact-span selector and Section-F route tuple shape.
 - Stopped reusing the D1 OTHER-to-F1 bytes for the distinct printed inactive route and bound Section F to the independently resolving OTHER-without-job path.
 - Regenerated and checked the candidate-free source-review artifact.
+- Proved the four additional page-7 D1 inactive response labels have no attributable pinned spans and cannot reuse prompt or lower-route bytes.
+- Pinned the exact canonical exception descriptions/locations and the complete all-and-only blocker unions.
+- Froze Section F at semantic ordinal/index 4/4 and preserved all dependent holes before filtering.
+- Withheld every and only rule-2 atom lacking a resolving extraction-authority path, including its local anchor/repeat consequences.
+- Added the exact 23-member legacy outer shape, 12-member sidecar, 30-page census, and ten raster seal additions.
+- Bound the exact 30-atom visual-fidelity iff domain to 30 existing diagnostic-note carriers without changing candidate keys.
+- Added strict JSON numeric-type checks and fully resealed blocker/page-key/another-instance mutation coverage.
+- Generated the sealed annotation and added independent focused tests.
 
 ## Next
 
-- Complete independent raster/source and dependency audits.
-- Perform the complete 30-page visual/text adjudication and freeze raster ordinals before filtering.
-- Author rule-1 exceptions and rule-2 dependent consequences, then build and validate the legacy-shape seal.
-- Run focused tests, formatting, mutation checks, and final repository hygiene checks.
+- Commit the coherent seal implementation and artifact.
+- Run broader stage-1 drift/focused regression checks and final repository hygiene checks.
+- Write the required final report to the output file.
 - Remove this progress ledger in the final coherent step.
