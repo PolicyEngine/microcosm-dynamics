@@ -190,6 +190,1905 @@ NOTE_KEYS = (
     "note",
 )
 
+ANNOTATION_KEYS = (
+    "schema_version",
+    "artifact_id",
+    "authority_kind",
+    "source_replay_identity",
+    "candidate_index_identity",
+    "candidate_artifact_identity",
+    "source_review_identity",
+    "document_source_position",
+    "document_source_row",
+    "whole_document_locator",
+    "questionnaire_page_rows",
+    "questionnaire_occurrence_rows",
+    "flow_branch_rows",
+    "local_anchor_classification_rows",
+    "local_repeat_alias_evidence_rows",
+    "candidate_disposition_rows",
+    "adjudication_note_rows",
+    "raster_only_incompleteness_census",
+    "output_adjudication_rows",
+    "seal",
+    "nonauthority_statement",
+    "integrity",
+    "status",
+)
+RASTER_SIDECAR_KEYS = (
+    "schema_version",
+    "authority_kind",
+    "document_completeness_claim",
+    "closed_gap_disposition",
+    "closed_gap_reason",
+    "branch_exception_count",
+    "dependent_atom_count",
+    "branch_exception_records",
+    "dependent_atom_consequence_records",
+    "page_census_rows",
+    "later_assembly_consequence",
+    "status",
+)
+RASTER_EXCEPTION_KEYS = (
+    "disposition",
+    "source_document_id",
+    "questionnaire_page_id",
+    "interview_wave",
+    "page_number",
+    "page_text_utf8_sha256",
+    "exception_index_on_page",
+    "visible_label_description",
+    "approximate_raster_location",
+    "authority_text_statement",
+)
+RASTER_DEPENDENT_KEYS = (
+    "reason",
+    "source_document_id",
+    "questionnaire_page_id",
+    "interview_wave",
+    "page_number",
+    "page_text_utf8_sha256",
+    "utf8_byte_start",
+    "utf8_byte_end",
+    "occurrence_kind",
+    "matched_text",
+    "matched_utf8_sha256",
+    "blocking_exception_keys",
+    "emitted_questionnaire_occurrence_ids",
+    "path_consequence",
+)
+RASTER_PAGE_CENSUS_KEYS = (
+    "questionnaire_page_id",
+    "source_document_id",
+    "interview_wave",
+    "page_number",
+    "page_text_utf8_sha256",
+    "branch_exception_count",
+    "branch_exception_keys",
+    "dependent_atom_count",
+    "dependent_atom_keys",
+)
+BASE_SEAL_KEYS = (
+    "whole_document_locator_count",
+    "whole_document_locator_domain_sha256",
+    "questionnaire_page_count",
+    "questionnaire_page_keyset_sha256",
+    "questionnaire_page_domain_sha256",
+    "empty_occurrence_page_count",
+    "questionnaire_occurrence_count",
+    "questionnaire_occurrence_counts_by_kind",
+    "questionnaire_occurrence_keyset_sha256",
+    "questionnaire_occurrence_domain_sha256",
+    "flow_branch_count",
+    "flow_branch_domain_sha256",
+    "local_anchor_classification_count",
+    "local_anchor_classification_domain_sha256",
+    "local_repeat_alias_evidence_count",
+    "local_repeat_alias_evidence_domain_sha256",
+    "candidate_disposition_count",
+    "candidate_disposition_domain_sha256",
+    "candidate_adjudication_census_by_kind",
+    "output_adjudication_count",
+    "output_adjudication_domain_sha256",
+    "output_adjudication_census_by_kind",
+    "adjudication_note_count",
+    "adjudication_note_domain_sha256",
+    "page_review_count",
+    "whole_document_review_complete",
+    "candidate_domain_exact_cover",
+    "output_domain_exact_cover",
+    "global_ids_assigned",
+    "authority_status",
+)
+RASTER_SEAL_KEYS = (
+    "raster_only_branch_exception_count",
+    "raster_only_branch_exception_keyset_sha256",
+    "raster_only_branch_exception_domain_sha256",
+    "raster_only_dependent_atom_consequence_count",
+    "raster_only_dependent_atom_consequence_keyset_sha256",
+    "raster_only_dependent_atom_consequence_domain_sha256",
+    "raster_only_page_census_count",
+    "raster_only_page_census_keyset_sha256",
+    "raster_only_page_census_domain_sha256",
+    "raster_only_incompleteness_census_sha256",
+)
+SEAL_KEYS = (*BASE_SEAL_KEYS, *RASTER_SEAL_KEYS)
+
+# Correction 2 pins these diagnostic strings byte-for-byte.  These records are
+# sealed nonauthority metadata only: no value below is used in an authority ID
+# or emitted as an occurrence or branch.
+RASTER_EXCEPTION_SPECS = (
+    (
+        8,
+        0,
+        "C1: TURN TO P. 20, SECTION E",
+        "page 8; item C1; right-side direct route from response boxes 4 through 7",
+    ),
+    (
+        12,
+        0,
+        "C30: 1. SALARIED",
+        "page 12; item C30; left response box",
+    ),
+    (
+        12,
+        1,
+        "C30: 3. PAID BY HOUR",
+        "page 12; item C30; center response box",
+    ),
+    (
+        12,
+        2,
+        "C30: 7. OTHER",
+        "page 12; item C30; right response box",
+    ),
+    (
+        12,
+        3,
+        "C38: 1. YES",
+        "page 12; item C38; left response box",
+    ),
+    (
+        12,
+        4,
+        "C38: 5. NO",
+        "page 12; item C38; right response box",
+    ),
+    (
+        22,
+        0,
+        "F2: TURN TO P. 27, SECTION G",
+        "page 22; item F2; direct route below response box 3",
+    ),
+    (
+        22,
+        1,
+        "F2: TURN TO P. 30, SECTION H",
+        "page 22; item F2; right-side direct route from response boxes 4 through 7",
+    ),
+    (
+        39,
+        0,
+        "K1: 1. HEAD IS FARMER, OR RANCHER",
+        "page 39; item K1; upper response row",
+    ),
+    (
+        39,
+        1,
+        "K1: 5. HEAD IS NOT A FARMER OR RANCHER → GO TO K5",
+        "page 39; item K1; lower response row",
+    ),
+)
+
+# Fill from the adjudicated source ledger.  Each mapping has exactly:
+#
+#   atom = (page_number, utf8_byte_start, utf8_byte_end, occurrence_kind)
+#   blocking_exception_keys = ((page_number, exception_index_on_page), ...)
+#   blocked_parent_paths = (path, ...)
+#   withheld = bool
+#
+# A path is a tuple of internal member descriptors.  An exception member is
+# ("exception", page_number, exception_index_on_page); an attributable
+# ordinary branch member is ("ordinary", page_number, start, end).  The root
+# is implicit.  These paths and comparator keys are never serialized.  Their
+# all-only exception union is checked against ``blocking_exception_keys``.
+# These final adjudicated pins deliberately remain separate from the sidecar so
+# its self-reported count can never validate itself.
+EXPECTED_DEPENDENT_ATOM_COUNT: int | None = 177
+EXPECTED_DEPENDENT_PAGE_COUNTS: dict[int, int] | None = {
+    12: 34,
+    13: 7,
+    20: 20,
+    27: 13,
+    28: 26,
+    29: 8,
+    30: 21,
+    39: 21,
+    40: 16,
+    42: 11,
+}
+DEPENDENT_ATOM_SPECS: tuple[dict[str, Any], ...] = (
+    {
+        "atom": (12, 258, 279, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 291, 315, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 324, 340, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 2),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 401, 419, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((12, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 401, 419, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 492, 510, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 713, 732, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 741, 745, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 746, 760, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((12, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 746, 760, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 787, 998, "context_anchor"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 819, 825, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 851, 998, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 939, 998, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1031, 1037, "flow_branch_label"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1043, 1048, "flow_branch_label"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1092, 1108, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 2),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1200, 1215, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 2),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1307, 1321, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 2),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1530, 1543, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((12, 2),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1530, 1543, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 2),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1564, 1583, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("ordinary", 12, 1031, 1037),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1635, 1640, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 2),),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1672, 1714, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("ordinary", 12, 1031, 1037),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1676, 1714, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("ordinary", 12, 1031, 1037),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1715, 1724, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("ordinary", 12, 1031, 1037),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 1750, 1762, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("ordinary", 12, 1031, 1037),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 2028, 2160, "context_anchor"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2)),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 2028, 2160, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2)),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 2054, 2064, "job_anchor"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2)),
+        "blocked_parent_paths": (
+            (("ordinary", 8, 982, 1010), ("exception", 12, 0)),
+            (("ordinary", 8, 982, 1010), ("exception", 12, 1)),
+            (("ordinary", 8, 982, 1010), ("exception", 12, 2)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 2426, 2442, "flow_branch_label"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 4)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 4),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 4),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 4),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 2470, 2486, "context_anchor"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 3)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 2470, 2486, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 3)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (12, 2509, 2534, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 3)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (13, 146, 202, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 3)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (13, 146, 202, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 3)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (13, 340, 434, "context_anchor"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 3)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (13, 340, 434, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 3)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (13, 577, 698, "context_anchor"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 3)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (13, 577, 698, "field_purpose_prompt"),
+        "blocking_exception_keys": ((12, 0), (12, 1), (12, 2), (12, 3)),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (13, 1052, 1086, "flow_branch_label"),
+        "blocking_exception_keys": (
+            (12, 0),
+            (12, 1),
+            (12, 2),
+            (12, 3),
+            (12, 4),
+        ),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 0),
+                ("exception", 12, 4),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 1),
+                ("exception", 12, 4),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 3),
+            ),
+            (
+                ("ordinary", 8, 982, 1010),
+                ("exception", 12, 2),
+                ("exception", 12, 4),
+            ),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (20, 71, 259, "context_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": ((("exception", 8, 0),),),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 113, 128, "role_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": ((("exception", 8, 0),),),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 622, 669, "context_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": ((("exception", 8, 0),),),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 622, 669, "field_purpose_prompt"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": ((("exception", 8, 0),),),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 654, 668, "job_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": ((("exception", 8, 0),),),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 728, 731, "flow_branch_label"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": ((("exception", 8, 0),),),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 842, 859, "flow_branch_label"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": ((("exception", 8, 0),),),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 912, 968, "context_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 912, 968, "field_purpose_prompt"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1002, 1074, "context_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1002, 1074, "field_purpose_prompt"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1119, 1170, "context_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1119, 1170, "field_purpose_prompt"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1197, 1238, "context_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1197, 1238, "field_purpose_prompt"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1363, 1392, "context_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1363, 1392, "field_purpose_prompt"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1455, 1473, "flow_branch_label"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1497, 1640, "context_anchor"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (20, 1497, 1640, "field_purpose_prompt"),
+        "blocking_exception_keys": ((8, 0),),
+        "blocked_parent_paths": (
+            (("exception", 8, 0), ("ordinary", 20, 728, 731)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (27, 202, 333, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 593, 606, "role_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1099, 1150, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1099, 1150, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1172, 1298, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1172, 1298, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1249, 1259, "job_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1308, 1379, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1308, 1379, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1385, 1532, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1385, 1532, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1542, 1602, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (27, 1542, 1602, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 140, 172, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 145, 149, "role_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 203, 286, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 322, 416, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 322, 416, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 481, 484, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 518, 524, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 586, 647, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 586, 647, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 793, 919, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 793, 919, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 969, 1006, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1019, 1028, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1067, 1126, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1067, 1126, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1281, 1359, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1281, 1359, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1425, 1428, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1464, 1471, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1533, 1571, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1533, 1571, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1716, 1809, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1716, 1809, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1921, 1939, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1960, 1993, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (28, 1960, 1993, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (29, 107, 234, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (29, 107, 234, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (29, 321, 356, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (29, 321, 356, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (29, 404, 548, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (29, 404, 548, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (29, 636, 718, "context_anchor"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (29, 636, 718, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 0),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 0)),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (30, 102, 241, "context_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 1)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 119, 130, "role_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 1)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 143, 153, "role_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 1)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 689, 760, "context_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 1)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 689, 760, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 1)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 745, 759, "job_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 1)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 926, 929, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 1)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1114, 1130, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (("ordinary", 22, 225, 365), ("exception", 22, 1)),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1188, 1242, "context_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1188, 1242, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1283, 1341, "context_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1283, 1341, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1366, 1447, "context_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1366, 1447, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1572, 1645, "context_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1572, 1645, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1770, 1807, "context_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1770, 1807, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1857, 1874, "flow_branch_label"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1890, 2011, "context_anchor"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (30, 1890, 2011, "field_purpose_prompt"),
+        "blocking_exception_keys": ((22, 1),),
+        "blocked_parent_paths": (
+            (
+                ("ordinary", 22, 225, 365),
+                ("exception", 22, 1),
+                ("ordinary", 30, 926, 929),
+            ),
+        ),
+        "withheld": False,
+    },
+    {
+        "atom": (39, 497, 707, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0),),
+        "blocked_parent_paths": ((("exception", 39, 0),),),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 523, 537, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((39, 0),),
+        "blocked_parent_paths": ((("exception", 39, 0),),),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 538, 549, "farm_aggregate_anchor"),
+        "blocking_exception_keys": ((39, 0),),
+        "blocked_parent_paths": ((("exception", 39, 0),),),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 721, 919, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0),),
+        "blocked_parent_paths": ((("exception", 39, 0),),),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 756, 779, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((39, 0),),
+        "blocked_parent_paths": ((("exception", 39, 0),),),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 933, 1048, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0),),
+        "blocked_parent_paths": ((("exception", 39, 0),),),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 961, 972, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((39, 0),),
+        "blocked_parent_paths": ((("exception", 39, 0),),),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 973, 990, "farm_aggregate_anchor"),
+        "blocking_exception_keys": ((39, 0),),
+        "blocked_parent_paths": ((("exception", 39, 0),),),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1066, 1254, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1115, 1129, "business_aggregate_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1233, 1253, "business_aggregate_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1332, 1406, "flow_branch_label"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1425, 1574, "context_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1425, 1574, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1602, 1780, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1651, 1663, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1657, 1713, "business_aggregate_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1888, 2078, "role_total_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1888, 2078, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1918, 1924, "role_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (39, 1938, 1956, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 65, 175, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 65, 175, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 216, 219, "flow_branch_label"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 250, 259, "flow_branch_label"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 308, 334, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 412, 735, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 516, 522, "role_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 608, 735, "repeat_or_alias_instruction"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 1018, 1134, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 1201, 1216, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 1250, 1342, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 1256, 1268, "business_aggregate_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 1355, 1422, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 1367, 1374, "farm_aggregate_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 1466, 1532, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (40, 1473, 1480, "business_aggregate_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 308, 346, "flow_branch_label"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 334, 339, "role_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 363, 458, "flow_branch_label"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 534, 590, "flow_branch_label"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 598, 677, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 770, 786, "flow_branch_label"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 876, 932, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 907, 915, "remuneration_component_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 976, 978, "flow_branch_label"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 991, 1062, "role_total_anchor"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+    {
+        "atom": (42, 991, 1062, "field_purpose_prompt"),
+        "blocking_exception_keys": ((39, 0), (39, 1)),
+        "blocked_parent_paths": (
+            (("exception", 39, 0),),
+            (("exception", 39, 1),),
+        ),
+        "withheld": True,
+    },
+)
+
 REVIEW_TOP_LEVEL_KEYS = {
     "schema_version",
     "review_id",
@@ -222,6 +2121,166 @@ def _content_sha256(value: Mapping[str, Any]) -> str:
     copied = copy.deepcopy(value)
     copied["integrity"]["content_sha256"] = "0" * 64
     return _canonical_digest(copied)
+
+
+def _atom_key(spec: Mapping[str, Any]) -> tuple[int, int, int, str]:
+    return (
+        spec["page_number"],
+        spec["utf8_byte_start"],
+        spec["utf8_byte_end"],
+        spec["occurrence_kind"],
+    )
+
+
+def _exception_specs_by_key() -> dict[tuple[int, int], tuple[Any, ...]]:
+    result: dict[tuple[int, int], tuple[Any, ...]] = {}
+    last_key: tuple[int, int] | None = None
+    for exception in RASTER_EXCEPTION_SPECS:
+        page_number, exception_index, description, location = exception
+        key = (page_number, exception_index)
+        if (
+            len(exception) != 4
+            or not isinstance(page_number, int)
+            or isinstance(page_number, bool)
+            or not isinstance(exception_index, int)
+            or isinstance(exception_index, bool)
+            or page_number < 1
+            or exception_index < 0
+            or not isinstance(description, str)
+            or not description
+            or not isinstance(location, str)
+            or not location
+            or key in result
+            or last_key is not None
+            and key <= last_key
+        ):
+            raise ValueError("pinned raster exception domain drift")
+        result[key] = exception
+        last_key = key
+    if len(result) != 10:
+        raise ValueError("document 24 raster exception count drift")
+    return result
+
+
+def _raw_dependent_specs_by_atom() -> (
+    dict[tuple[int, int, int, str], Mapping[str, Any]]
+):
+    result: dict[tuple[int, int, int, str], Mapping[str, Any]] = {}
+    for spec in DEPENDENT_ATOM_SPECS:
+        if set(spec) != {
+            "atom",
+            "blocking_exception_keys",
+            "blocked_parent_paths",
+            "withheld",
+        }:
+            raise ValueError("pinned dependent atom spec keyset drift")
+        atom = spec["atom"]
+        if (
+            not isinstance(atom, tuple)
+            or len(atom) != 4
+            or atom in result
+            or not isinstance(atom[0], int)
+            or isinstance(atom[0], bool)
+            or not isinstance(atom[1], int)
+            or isinstance(atom[1], bool)
+            or not isinstance(atom[2], int)
+            or isinstance(atom[2], bool)
+            or atom[3] not in KIND_ORDER
+        ):
+            raise ValueError("pinned dependent atom key drift")
+        result[atom] = spec
+    return result
+
+
+def _validate_dependent_specs(
+    review: Mapping[str, Any],
+) -> dict[tuple[int, int, int, str], Mapping[str, Any]]:
+    if (
+        EXPECTED_DEPENDENT_ATOM_COUNT is None
+        or EXPECTED_DEPENDENT_PAGE_COUNTS is None
+    ):
+        raise ValueError("dependent atom adjudication pins are unset")
+    exception_by_key = _exception_specs_by_key()
+    dependent_by_atom = _raw_dependent_specs_by_atom()
+    review_by_atom = {
+        _atom_key(spec): spec for spec in review["occurrence_specs"]
+    }
+    branch_coordinates = {
+        (spec["page_number"], spec["utf8_byte_start"], spec["utf8_byte_end"])
+        for spec in review["occurrence_specs"]
+        if spec["occurrence_kind"] == "flow_branch_label"
+    }
+    exception_order = {
+        key: position for position, key in enumerate(exception_by_key)
+    }
+    last_order: tuple[int, int, int, int] | None = None
+    for atom, spec in dependent_by_atom.items():
+        source_spec = review_by_atom.get(atom)
+        blocking_keys = spec["blocking_exception_keys"]
+        blocked_paths = spec["blocked_parent_paths"]
+        withheld = spec["withheld"]
+        if (
+            source_spec is None
+            or not isinstance(blocking_keys, tuple)
+            or not blocking_keys
+            or any(key not in exception_by_key for key in blocking_keys)
+            or len(blocking_keys) != len(set(blocking_keys))
+            or list(blocking_keys)
+            != sorted(blocking_keys, key=exception_order.__getitem__)
+            or not isinstance(blocked_paths, tuple)
+            or not blocked_paths
+            or any(
+                not isinstance(path, tuple) or not path
+                for path in blocked_paths
+            )
+            or not isinstance(withheld, bool)
+            or withheld
+            and source_spec["parent_review_branch_paths"] != []
+            or not withheld
+            and not source_spec["parent_review_branch_paths"]
+        ):
+            raise ValueError("pinned dependent atom disposition drift")
+
+        derived_blocking: set[tuple[int, int]] = set()
+        complete_path_keys: list[tuple[tuple[int, ...], ...]] = []
+        for path in blocked_paths:
+            path_keys: list[tuple[int, ...]] = [(0,)]
+            for member in path:
+                if (
+                    not isinstance(member, tuple)
+                    or not member
+                    or member[0] not in {"exception", "ordinary"}
+                ):
+                    raise ValueError("blocked prefilter path member drift")
+                if member[0] == "exception":
+                    if len(member) != 3 or member[1:] not in exception_by_key:
+                        raise ValueError("blocked exception path member drift")
+                    key = (member[1], member[2])
+                    derived_blocking.add(key)
+                    path_keys.append((1, member[1], 0, member[2]))
+                else:
+                    if (
+                        len(member) != 4
+                        or member[1:] not in branch_coordinates
+                    ):
+                        raise ValueError("blocked ordinary path member drift")
+                    path_keys.append((1, member[1], 1, member[2], member[3]))
+            complete_path_keys.append(tuple(path_keys))
+        if tuple(
+            sorted(derived_blocking, key=exception_order.__getitem__)
+        ) != blocking_keys or len(complete_path_keys) != len(
+            set(complete_path_keys)
+        ):
+            raise ValueError("blocked path all-only exception union drift")
+        order = (atom[0], atom[1], atom[2], KIND_ORDER[atom[3]])
+        if last_order is not None and order <= last_order:
+            raise ValueError("pinned dependent atom source order drift")
+        last_order = order
+    if len(dependent_by_atom) != EXPECTED_DEPENDENT_ATOM_COUNT or Counter(
+        atom[0] for atom in dependent_by_atom
+    ) != Counter(EXPECTED_DEPENDENT_PAGE_COUNTS):
+        raise ValueError("pinned dependent atom page census drift")
+    return dependent_by_atom
 
 
 def _expect_keys(
@@ -473,6 +2532,7 @@ def validate_review(
     review_specs_by_page_kind: dict[
         tuple[int, str], list[Mapping[str, Any]]
     ] = defaultdict(list)
+    dependent_by_atom = _raw_dependent_specs_by_atom()
     last_order: tuple[Any, ...] | None = None
     for spec in occurrence_specs:
         _expect_keys(
@@ -520,10 +2580,20 @@ def validate_review(
             ]
         )
         paths = spec["parent_review_branch_paths"]
+        dependent_spec = dependent_by_atom.get(
+            (page_number, start, end, spec["occurrence_kind"])
+        )
+        withheld = (
+            dependent_spec is not None
+            and dependent_spec.get("withheld") is True
+        )
         if (
             not isinstance(paths, list)
-            or not paths
             or any(not isinstance(path, list) for path in paths)
+            or withheld
+            and paths != []
+            or not withheld
+            and not paths
         ):
             raise ValueError("source review path domain drift")
         if len(paths) != len({tuple(path) for path in paths}):
@@ -554,6 +2624,7 @@ def validate_review(
             (page_number, spec["occurrence_kind"])
         ].append(spec)
         last_order = order
+    _validate_dependent_specs(review)
     # The independent document-24 source ledger selects one semantic atom at
     # each same-kind interval.  Preserve that reviewed granularity so a later
     # edit cannot reintroduce a narrower detector hit inside its retained
@@ -914,6 +2985,7 @@ def _build_occurrences_and_branches(
     dict[str, list[str]],
     dict[str, list[str]],
 ]:
+    dependent_by_atom = _validate_dependent_specs(review)
     branches: list[dict[str, Any]] = []
     final_branch_path_by_review_ref: dict[str, list[str]] = {}
     output_occurrence_ids_by_review_id: dict[str, list[str]] = defaultdict(
@@ -921,14 +2993,55 @@ def _build_occurrences_and_branches(
     )
     output_branch_ids_by_review_id: dict[str, list[str]] = defaultdict(list)
     next_occurrence_index_by_page: dict[int, int] = defaultdict(int)
-    prepared_specs: list[tuple[Mapping[str, Any], bytes, str, int]] = []
+    prepared_specs: list[dict[str, Any]] = []
     occurrence_by_coordinate: dict[tuple[int, int], dict[str, Any]] = {}
 
+    branch_member_key_by_review_ref: dict[str, tuple[int, ...]] = {}
+    for spec in review["occurrence_specs"]:
+        if spec["occurrence_kind"] != "flow_branch_label":
+            continue
+        source_paths = spec["parent_review_branch_paths"]
+        for source_path in source_paths:
+            branch_ref = _review_branch_ref(
+                spec["review_occurrence_id"], source_path, len(source_paths)
+            )
+            branch_member_key_by_review_ref[branch_ref] = (
+                1,
+                spec["page_number"],
+                1,
+                spec["utf8_byte_start"],
+                spec["utf8_byte_end"],
+            )
+
+    def review_path_key(
+        source_path: Sequence[str],
+    ) -> tuple[tuple[int, ...], ...]:
+        try:
+            return (
+                (0,),
+                *(
+                    branch_member_key_by_review_ref[item]
+                    for item in source_path
+                ),
+            )
+        except KeyError as error:
+            raise ValueError("prefilter ordinary path member drift") from error
+
+    def blocked_path_key(
+        path: Sequence[tuple[Any, ...]],
+    ) -> tuple[tuple[int, ...], ...]:
+        keys: list[tuple[int, ...]] = [(0,)]
+        for member in path:
+            if member[0] == "exception":
+                keys.append((1, member[1], 0, member[2]))
+            else:
+                keys.append((1, member[1], 1, member[2], member[3]))
+        return tuple(keys)
+
     # Reserve every same-page index in source order before resolving paths.
-    # A non-flow occurrence may lawfully reuse a screen reached by a routing
-    # instruction printed later, while every branch label's own parent remains
-    # earlier.  Reserving first breaks that source-layout dependency without
-    # changing any occurrence index or ID preimage.
+    # This is the complete pre-filter ordinary-row domain.  Fully blocked atoms
+    # and blocked parent-path ordinals reserve positions, so emitted survivors
+    # may retain sparse indices and semantic ordinals.
     for spec in review["occurrence_specs"]:
         page_number = spec["page_number"]
         matched_bytes, matched_text = _utf8_slice(
@@ -936,20 +3049,59 @@ def _build_occurrences_and_branches(
             spec["utf8_byte_start"],
             spec["utf8_byte_end"],
         )
+        dependency = dependent_by_atom.get(_atom_key(spec))
+        withheld = dependency is not None and dependency["withheld"]
+        source_paths = [] if withheld else spec["parent_review_branch_paths"]
+        ordinal_by_source_path: dict[tuple[str, ...], int] = {}
+        if spec["occurrence_kind"] == "flow_branch_label":
+            complete_paths: list[
+                tuple[
+                    tuple[tuple[int, ...], ...],
+                    tuple[str, ...] | None,
+                ]
+            ] = []
+            if dependency is not None:
+                complete_paths.extend(
+                    (blocked_path_key(path), None)
+                    for path in dependency["blocked_parent_paths"]
+                )
+            complete_paths.extend(
+                (review_path_key(path), tuple(path)) for path in source_paths
+            )
+            complete_paths.sort(key=lambda item: item[0])
+            if not complete_paths or len(complete_paths) != len(
+                {path_key for path_key, _source_path in complete_paths}
+            ):
+                raise ValueError("complete prefilter flow path domain drift")
+            ordinal_by_source_path = {
+                source_path: semantic_ordinal
+                for semantic_ordinal, (_path_key, source_path) in enumerate(
+                    complete_paths
+                )
+                if source_path is not None
+            }
+            prefilter_count = len(complete_paths)
+        else:
+            prefilter_count = 1
         base_index = next_occurrence_index_by_page[page_number]
-        emitted_count = (
-            len(spec["parent_review_branch_paths"])
-            if spec["occurrence_kind"] == "flow_branch_label"
-            else 1
+        next_occurrence_index_by_page[page_number] += prefilter_count
+        prepared_specs.append(
+            {
+                "spec": spec,
+                "matched_bytes": matched_bytes,
+                "matched_text": matched_text,
+                "base_index": base_index,
+                "withheld": withheld,
+                "source_paths": source_paths,
+                "ordinal_by_source_path": ordinal_by_source_path,
+            }
         )
-        next_occurrence_index_by_page[page_number] += emitted_count
-        prepared_specs.append((spec, matched_bytes, matched_text, base_index))
 
     def resolve_path_rows(
-        spec: Mapping[str, Any],
+        source_paths: Sequence[Sequence[str]],
     ) -> list[tuple[list[str], list[str]]]:
         resolved_path_rows: list[tuple[list[str], list[str]]] = []
-        for review_path in spec["parent_review_branch_paths"]:
+        for review_path in source_paths:
             path = [FLOW_ROOT]
             for review_branch_ref in review_path:
                 resolved = final_branch_path_by_review_ref.get(
@@ -961,7 +3113,6 @@ def _build_occurrences_and_branches(
                     )
                 path = list(resolved)
             resolved_path_rows.append((path, review_path))
-        resolved_path_rows.sort(key=lambda row: _path_sort_key(row[0]))
         translated_paths = [row[0] for row in resolved_path_rows]
         if len(translated_paths) != len(
             {tuple(path) for path in translated_paths}
@@ -972,15 +3123,24 @@ def _build_occurrences_and_branches(
     # First resolve and emit only branch-label occurrences.  Their parent
     # branches are source-earlier, so this pass constructs the complete branch
     # reference map used by reused non-flow screens in the second pass.
-    for spec, matched_bytes, matched_text, base_index in prepared_specs:
+    for prepared in prepared_specs:
+        spec = prepared["spec"]
         if spec["occurrence_kind"] != "flow_branch_label":
             continue
+        if prepared["withheld"]:
+            continue
+        matched_bytes = prepared["matched_bytes"]
+        matched_text = prepared["matched_text"]
+        base_index = prepared["base_index"]
         page_number = spec["page_number"]
-        resolved_path_rows = resolve_path_rows(spec)
-        for semantic_ordinal, (
-            parent_path,
-            source_review_path,
-        ) in enumerate(resolved_path_rows):
+        resolved_path_rows = resolve_path_rows(prepared["source_paths"])
+        resolved_path_rows.sort(
+            key=lambda item: prepared["ordinal_by_source_path"][tuple(item[1])]
+        )
+        for parent_path, source_review_path in resolved_path_rows:
+            semantic_ordinal = prepared["ordinal_by_source_path"][
+                tuple(source_review_path)
+            ]
             skeleton = {
                 "page_number": page_number,
                 "utf8_byte_start": spec["utf8_byte_start"],
@@ -1033,18 +3193,25 @@ def _build_occurrences_and_branches(
             branch_ref = _review_branch_ref(
                 review_id,
                 source_review_path,
-                len(spec["parent_review_branch_paths"]),
+                len(prepared["source_paths"]),
             )
             final_branch_path_by_review_ref[branch_ref] = branch_path
 
     # Now every branch reference exists, including later printed routes to a
     # reused screen.  Emit each non-flow atom once with its complete path set.
-    for spec, matched_bytes, matched_text, base_index in prepared_specs:
+    for prepared in prepared_specs:
+        spec = prepared["spec"]
         if spec["occurrence_kind"] == "flow_branch_label":
             continue
+        if prepared["withheld"]:
+            continue
+        matched_bytes = prepared["matched_bytes"]
+        matched_text = prepared["matched_text"]
+        base_index = prepared["base_index"]
         page_number = spec["page_number"]
-        resolved_path_rows = resolve_path_rows(spec)
+        resolved_path_rows = resolve_path_rows(prepared["source_paths"])
         translated_paths = [row[0] for row in resolved_path_rows]
+        translated_paths.sort(key=_path_sort_key)
         skeleton = {
             "page_number": page_number,
             "utf8_byte_start": spec["utf8_byte_start"],
@@ -1122,6 +3289,437 @@ def _page_rows(
     return rows
 
 
+def _raster_exception_records(
+    document: Mapping[str, Any],
+    pages: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    _exception_specs_by_key()
+    page_by_number = {row["page_number"]: row for row in pages}
+    wave = document["interview_waves"][0]
+    result: list[dict[str, Any]] = []
+    for (
+        page_number,
+        exception_index,
+        description,
+        location,
+    ) in RASTER_EXCEPTION_SPECS:
+        page = page_by_number[page_number]
+        result.append(
+            dict(
+                zip(
+                    RASTER_EXCEPTION_KEYS,
+                    (
+                        "raster_visible_text_absent",
+                        document["source_document_id"],
+                        page["questionnaire_page_id"],
+                        wave,
+                        page_number,
+                        page["page_text_utf8_sha256"],
+                        exception_index,
+                        description,
+                        location,
+                        "no_label_level_span_or_hash_emitted",
+                    ),
+                    strict=True,
+                )
+            )
+        )
+    return result
+
+
+def _raster_dependent_records(
+    document: Mapping[str, Any],
+    pages: Sequence[Mapping[str, Any]],
+    page_texts: Sequence[str],
+    review: Mapping[str, Any],
+    occurrence_ids_by_review_id: Mapping[str, Sequence[str]],
+) -> list[dict[str, Any]]:
+    dependent_by_atom = _validate_dependent_specs(review)
+    if len(dependent_by_atom) != EXPECTED_DEPENDENT_ATOM_COUNT:
+        raise ValueError("document 24 dependent atom count drift")
+    page_by_number = {row["page_number"]: row for row in pages}
+    wave = document["interview_waves"][0]
+    result: list[dict[str, Any]] = []
+    for source_spec in review["occurrence_specs"]:
+        atom = _atom_key(source_spec)
+        dependency = dependent_by_atom.get(atom)
+        if dependency is None:
+            continue
+        page_number, start, end, occurrence_kind = atom
+        matched_bytes, matched_text = _utf8_slice(
+            page_texts[page_number - 1], start, end
+        )
+        page = page_by_number[page_number]
+        blocking_keys = [
+            [
+                page_by_number[exception_page]["questionnaire_page_id"],
+                exception_index,
+            ]
+            for exception_page, exception_index in dependency[
+                "blocking_exception_keys"
+            ]
+        ]
+        emitted_ids = list(
+            occurrence_ids_by_review_id.get(
+                source_spec["review_occurrence_id"], []
+            )
+        )
+        if dependency["withheld"] == bool(emitted_ids):
+            raise ValueError("dependent atom emitted-ID consequence drift")
+        consequence = (
+            "emitted_with_all_resolving_extraction_authority_paths"
+            if emitted_ids
+            else "withheld_no_resolving_extraction_authority_path"
+        )
+        result.append(
+            dict(
+                zip(
+                    RASTER_DEPENDENT_KEYS,
+                    (
+                        "raster_visible_text_absent",
+                        document["source_document_id"],
+                        page["questionnaire_page_id"],
+                        wave,
+                        page_number,
+                        page["page_text_utf8_sha256"],
+                        start,
+                        end,
+                        occurrence_kind,
+                        matched_text,
+                        _sha256(matched_bytes),
+                        blocking_keys,
+                        emitted_ids,
+                        consequence,
+                    ),
+                    strict=True,
+                )
+            )
+        )
+    if len(result) != len(dependent_by_atom):
+        raise ValueError("dependent atom source-ledger exact cover drift")
+    return result
+
+
+def _raster_only_census(
+    document: Mapping[str, Any],
+    pages: Sequence[Mapping[str, Any]],
+    page_texts: Sequence[str],
+    review: Mapping[str, Any],
+    occurrence_ids_by_review_id: Mapping[str, Sequence[str]],
+) -> dict[str, Any]:
+    branch_records = _raster_exception_records(document, pages)
+    dependent_records = _raster_dependent_records(
+        document,
+        pages,
+        page_texts,
+        review,
+        occurrence_ids_by_review_id,
+    )
+    branches_by_page = _group_rows(branch_records, "page_number")
+    dependents_by_page = _group_rows(dependent_records, "page_number")
+    page_census_rows: list[dict[str, Any]] = []
+    for page in pages:
+        page_branch_records = branches_by_page.get(page["page_number"], [])
+        page_dependent_records = dependents_by_page.get(
+            page["page_number"], []
+        )
+        branch_keys = [
+            [
+                row["questionnaire_page_id"],
+                row["exception_index_on_page"],
+            ]
+            for row in page_branch_records
+        ]
+        dependent_keys = [
+            [
+                row["questionnaire_page_id"],
+                row["utf8_byte_start"],
+                row["utf8_byte_end"],
+                row["occurrence_kind"],
+            ]
+            for row in page_dependent_records
+        ]
+        page_census_rows.append(
+            dict(
+                zip(
+                    RASTER_PAGE_CENSUS_KEYS,
+                    (
+                        page["questionnaire_page_id"],
+                        page["source_document_id"],
+                        page["interview_wave"],
+                        page["page_number"],
+                        page["page_text_utf8_sha256"],
+                        len(branch_keys),
+                        branch_keys,
+                        len(dependent_keys),
+                        dependent_keys,
+                    ),
+                    strict=True,
+                )
+            )
+        )
+    exception_count = len(branch_records)
+    return dict(
+        zip(
+            RASTER_SIDECAR_KEYS,
+            (
+                "rq_stage2_raster_only_incompleteness_census_nonauthority.v1",
+                "sealed_nonauthority_sidecar",
+                f"complete-under-extraction-authority with {exception_count} raster-only exceptions",
+                "CLOSED GAP",
+                "raster_visible_text_absent",
+                exception_count,
+                len(dependent_records),
+                branch_records,
+                dependent_records,
+                page_census_rows,
+                "fail_or_withhold_exhaustive_flow_outputs_without_global_gap_rows_nodes_or_ids",
+                "complete",
+            ),
+            strict=True,
+        )
+    )
+
+
+def _raster_seal_values(sidecar: Mapping[str, Any]) -> dict[str, Any]:
+    branch_records = sidecar["branch_exception_records"]
+    dependent_records = sidecar["dependent_atom_consequence_records"]
+    page_rows = sidecar["page_census_rows"]
+    return {
+        "raster_only_branch_exception_count": len(branch_records),
+        "raster_only_branch_exception_keyset_sha256": _canonical_digest(
+            [
+                [
+                    row["questionnaire_page_id"],
+                    row["exception_index_on_page"],
+                ]
+                for row in branch_records
+            ]
+        ),
+        "raster_only_branch_exception_domain_sha256": _canonical_digest(
+            list(branch_records)
+        ),
+        "raster_only_dependent_atom_consequence_count": len(dependent_records),
+        "raster_only_dependent_atom_consequence_keyset_sha256": _canonical_digest(
+            [
+                [
+                    row["questionnaire_page_id"],
+                    row["utf8_byte_start"],
+                    row["utf8_byte_end"],
+                    row["occurrence_kind"],
+                ]
+                for row in dependent_records
+            ]
+        ),
+        "raster_only_dependent_atom_consequence_domain_sha256": _canonical_digest(
+            list(dependent_records)
+        ),
+        "raster_only_page_census_count": len(page_rows),
+        "raster_only_page_census_keyset_sha256": _canonical_digest(
+            [[row["questionnaire_page_id"]] for row in page_rows]
+        ),
+        "raster_only_page_census_domain_sha256": _canonical_digest(
+            list(page_rows)
+        ),
+        "raster_only_incompleteness_census_sha256": _canonical_digest(sidecar),
+    }
+
+
+def _validate_raster_only_census(
+    sidecar: Mapping[str, Any],
+    pages: Sequence[Mapping[str, Any]],
+    page_texts: Sequence[str],
+    occurrences: Sequence[Mapping[str, Any]],
+) -> None:
+    _expect_keys(sidecar, RASTER_SIDECAR_KEYS, "raster-only sidecar")
+    branch_records = sidecar["branch_exception_records"]
+    dependent_records = sidecar["dependent_atom_consequence_records"]
+    page_census_rows = sidecar["page_census_rows"]
+    if (
+        sidecar["schema_version"]
+        != "rq_stage2_raster_only_incompleteness_census_nonauthority.v1"
+        or sidecar["authority_kind"] != "sealed_nonauthority_sidecar"
+        or sidecar["document_completeness_claim"]
+        != "complete-under-extraction-authority with 10 raster-only exceptions"
+        or sidecar["closed_gap_disposition"] != "CLOSED GAP"
+        or sidecar["closed_gap_reason"] != "raster_visible_text_absent"
+        or not isinstance(sidecar["branch_exception_count"], int)
+        or isinstance(sidecar["branch_exception_count"], bool)
+        or sidecar["branch_exception_count"] != 10
+        or sidecar["branch_exception_count"] != len(branch_records)
+        or not isinstance(sidecar["dependent_atom_count"], int)
+        or isinstance(sidecar["dependent_atom_count"], bool)
+        or sidecar["dependent_atom_count"] != EXPECTED_DEPENDENT_ATOM_COUNT
+        or sidecar["dependent_atom_count"] != len(dependent_records)
+        or sidecar["later_assembly_consequence"]
+        != "fail_or_withhold_exhaustive_flow_outputs_without_global_gap_rows_nodes_or_ids"
+        or sidecar["status"] != "complete"
+    ):
+        raise ValueError("raster-only sidecar scalar drift")
+
+    page_by_number = {row["page_number"]: row for row in pages}
+    page_by_id = {row["questionnaire_page_id"]: row for row in pages}
+    if len(page_by_number) != len(pages) or len(page_by_id) != len(pages):
+        raise ValueError("raster-only sealed page identity drift")
+    if len(branch_records) != len(RASTER_EXCEPTION_SPECS):
+        raise ValueError("raster-only exception domain drift")
+    for row, pinned in zip(
+        branch_records, RASTER_EXCEPTION_SPECS, strict=True
+    ):
+        _expect_keys(row, RASTER_EXCEPTION_KEYS, "raster-only exception")
+        page_number, exception_index, description, location = pinned
+        page = page_by_number[page_number]
+        if row != dict(
+            zip(
+                RASTER_EXCEPTION_KEYS,
+                (
+                    "raster_visible_text_absent",
+                    page["source_document_id"],
+                    page["questionnaire_page_id"],
+                    page["interview_wave"],
+                    page_number,
+                    page["page_text_utf8_sha256"],
+                    exception_index,
+                    description,
+                    location,
+                    "no_label_level_span_or_hash_emitted",
+                ),
+                strict=True,
+            )
+        ):
+            raise ValueError("raster-only exception record drift")
+
+    dependent_by_atom = _raw_dependent_specs_by_atom()
+    occurrence_projection: dict[
+        tuple[int, int, int, str], list[Mapping[str, Any]]
+    ] = defaultdict(list)
+    for occurrence in occurrences:
+        occurrence_projection[
+            (
+                occurrence["page_number"],
+                occurrence["utf8_byte_start"],
+                occurrence["utf8_byte_end"],
+                occurrence["occurrence_kind"],
+            )
+        ].append(occurrence)
+    last_order: tuple[int, int, int, int] | None = None
+    seen_atoms: set[tuple[int, int, int, str]] = set()
+    for row in dependent_records:
+        _expect_keys(row, RASTER_DEPENDENT_KEYS, "raster-only dependent atom")
+        atom = (
+            row["page_number"],
+            row["utf8_byte_start"],
+            row["utf8_byte_end"],
+            row["occurrence_kind"],
+        )
+        pinned = dependent_by_atom.get(atom)
+        page = page_by_number.get(row["page_number"])
+        if pinned is None or page is None or atom in seen_atoms:
+            raise ValueError("raster-only dependent atom key drift")
+        matched_bytes, matched_text = _utf8_slice(
+            page_texts[row["page_number"] - 1],
+            row["utf8_byte_start"],
+            row["utf8_byte_end"],
+        )
+        blocking_keys = [
+            [
+                page_by_number[exception_page]["questionnaire_page_id"],
+                exception_index,
+            ]
+            for exception_page, exception_index in pinned[
+                "blocking_exception_keys"
+            ]
+        ]
+        emitted_rows = sorted(
+            occurrence_projection.get(atom, []),
+            key=lambda occurrence: occurrence["occurrence_index_on_page"],
+        )
+        emitted_ids = [
+            occurrence["questionnaire_occurrence_id"]
+            for occurrence in emitted_rows
+        ]
+        expected_consequence = (
+            "emitted_with_all_resolving_extraction_authority_paths"
+            if emitted_ids
+            else "withheld_no_resolving_extraction_authority_path"
+        )
+        if (
+            row["reason"] != "raster_visible_text_absent"
+            or row["source_document_id"] != page["source_document_id"]
+            or row["questionnaire_page_id"] != page["questionnaire_page_id"]
+            or row["interview_wave"] != page["interview_wave"]
+            or row["page_text_utf8_sha256"] != page["page_text_utf8_sha256"]
+            or row["occurrence_kind"] not in KIND_ORDER
+            or row["matched_text"] != matched_text
+            or row["matched_utf8_sha256"] != _sha256(matched_bytes)
+            or row["blocking_exception_keys"] != blocking_keys
+            or row["emitted_questionnaire_occurrence_ids"] != emitted_ids
+            or row["path_consequence"] != expected_consequence
+            or pinned["withheld"] == bool(emitted_ids)
+        ):
+            raise ValueError("raster-only dependent consequence drift")
+        order = (atom[0], atom[1], atom[2], KIND_ORDER[atom[3]])
+        if last_order is not None and order <= last_order:
+            raise ValueError("raster-only dependent source order drift")
+        seen_atoms.add(atom)
+        last_order = order
+    if seen_atoms != set(dependent_by_atom):
+        raise ValueError("raster-only dependent exact cover drift")
+
+    if len(page_census_rows) != len(pages):
+        raise ValueError("raster-only page census count drift")
+    branch_by_page = _group_rows(branch_records, "page_number")
+    dependent_by_page = _group_rows(dependent_records, "page_number")
+    for page, row in zip(pages, page_census_rows, strict=True):
+        _expect_keys(row, RASTER_PAGE_CENSUS_KEYS, "raster-only page census")
+        branch_keys = [
+            [
+                item["questionnaire_page_id"],
+                item["exception_index_on_page"],
+            ]
+            for item in branch_by_page.get(page["page_number"], [])
+        ]
+        dependent_keys = [
+            [
+                item["questionnaire_page_id"],
+                item["utf8_byte_start"],
+                item["utf8_byte_end"],
+                item["occurrence_kind"],
+            ]
+            for item in dependent_by_page.get(page["page_number"], [])
+        ]
+        expected = dict(
+            zip(
+                RASTER_PAGE_CENSUS_KEYS,
+                (
+                    page["questionnaire_page_id"],
+                    page["source_document_id"],
+                    page["interview_wave"],
+                    page["page_number"],
+                    page["page_text_utf8_sha256"],
+                    len(branch_keys),
+                    branch_keys,
+                    len(dependent_keys),
+                    dependent_keys,
+                ),
+                strict=True,
+            )
+        )
+        if row != expected:
+            raise ValueError("raster-only page census row drift")
+
+    exception_keys = {
+        (row["questionnaire_page_id"], row["exception_index_on_page"])
+        for row in branch_records
+    }
+    if any(
+        tuple(blocking_key) not in exception_keys
+        for row in dependent_records
+        for blocking_key in row["blocking_exception_keys"]
+    ):
+        raise ValueError("raster-only blocking key resolution drift")
+
+
 def _local_anchor_rows(
     review: Mapping[str, Any],
     occurrences: Sequence[Mapping[str, Any]],
@@ -1132,7 +3730,11 @@ def _local_anchor_rows(
     }
     result: list[dict[str, Any]] = []
     for spec in review["local_anchor_specs"]:
-        output_ids = occurrence_ids_by_review_id[spec["review_occurrence_id"]]
+        output_ids = occurrence_ids_by_review_id.get(
+            spec["review_occurrence_id"], []
+        )
+        if not output_ids:
+            continue
         if len(output_ids) != 1:
             raise ValueError(
                 "local anchor cannot resolve a multi-parent label"
@@ -1140,7 +3742,9 @@ def _local_anchor_rows(
         occurrence = occurrence_by_id[output_ids[0]]
         parents: list[str] = []
         for parent_review_id in spec["parent_review_occurrence_ids"]:
-            parents.extend(occurrence_ids_by_review_id[parent_review_id])
+            parents.extend(
+                occurrence_ids_by_review_id.get(parent_review_id, [])
+            )
         values = (
             occurrence["questionnaire_occurrence_id"],
             occurrence["occurrence_kind"],
@@ -1176,11 +3780,13 @@ def _local_repeat_rows(
     def resolve(review_ids: Sequence[str]) -> list[str]:
         values: list[str] = []
         for review_id in review_ids:
-            values.extend(occurrence_ids_by_review_id[review_id])
+            values.extend(occurrence_ids_by_review_id.get(review_id, []))
         return values
 
     for spec in review["repeat_alias_specs"]:
         source_ids = resolve([spec["review_occurrence_id"]])
+        if not source_ids:
+            continue
         if len(source_ids) != 1:
             raise ValueError("repeat evidence source does not resolve once")
         values = (
@@ -1862,6 +4468,7 @@ def _seal(
     dispositions: Sequence[Mapping[str, Any]],
     output_adjudications: Sequence[Mapping[str, Any]],
     notes: Sequence[Mapping[str, Any]],
+    raster_only_census: Mapping[str, Any],
 ) -> dict[str, Any]:
     kind_counts = Counter(row["occurrence_kind"] for row in occurrences)
     candidate_census: dict[str, dict[str, int]] = {}
@@ -1891,7 +4498,7 @@ def _seal(
                 "manual_add",
             )
         }
-    return {
+    seal = {
         "whole_document_locator_count": 1,
         "whole_document_locator_domain_sha256": _canonical_digest([locator]),
         "questionnaire_page_count": len(pages),
@@ -1941,6 +4548,8 @@ def _seal(
         "global_ids_assigned": False,
         "authority_status": "nonauthority",
     }
+    seal.update(_raster_seal_values(raster_only_census))
+    return seal
 
 
 def build_annotation(
@@ -1981,6 +4590,13 @@ def build_annotation(
             for row in review["page_review_rows"]
         },
     )
+    raster_only_census = _raster_only_census(
+        document,
+        pages,
+        page_texts,
+        review,
+        occurrence_ids_by_review_id,
+    )
     seal = _seal(
         locator,
         pages,
@@ -1991,6 +4607,7 @@ def build_annotation(
         dispositions,
         output_adjudications,
         notes,
+        raster_only_census,
     )
     candidate_artifact_identity = {
         "path": candidate_identity["path"],
@@ -2034,6 +4651,7 @@ def build_annotation(
         "local_repeat_alias_evidence_rows": local_repeats,
         "candidate_disposition_rows": dispositions,
         "adjudication_note_rows": notes,
+        "raster_only_incompleteness_census": raster_only_census,
         "output_adjudication_rows": output_adjudications,
         "seal": seal,
         "nonauthority_statement": {
@@ -2361,22 +4979,21 @@ def _validate_flow_laws(value: Mapping[str, Any]) -> None:
         ].append(occurrence)
     for same_span in same_span_rows.values():
         ordinals = [row["semantic_ordinal_at_span"] for row in same_span]
-        if len(same_span) == 1:
-            if ordinals != [0]:
-                raise ValueError("singleton occurrence semantic ordinal drift")
+        if all(
+            row["occurrence_kind"] != "flow_branch_label" for row in same_span
+        ):
+            if len(same_span) != 1 or ordinals != [0]:
+                raise ValueError("non-flow occurrence semantic ordinal drift")
             continue
         if any(len(row["flow_branch_paths"]) != 1 for row in same_span):
             raise ValueError("multi-parent label semantic path-count drift")
-        parent_paths = [row["flow_branch_paths"][0] for row in same_span]
-        if (
-            any(
-                row["occurrence_kind"] != "flow_branch_label"
-                for row in same_span
-            )
-            or ordinals != list(range(len(same_span)))
-            or parent_paths != sorted(parent_paths, key=_path_sort_key)
-        ):
-            raise ValueError("multi-parent label semantic ordinal drift")
+        if any(
+            not isinstance(ordinal, int)
+            or isinstance(ordinal, bool)
+            or ordinal < 0
+            for ordinal in ordinals
+        ) or ordinals != sorted(set(ordinals)):
+            raise ValueError("flow-label semantic ordinal drift")
     resolved_paths: set[tuple[str, ...]] = {(FLOW_ROOT,)}
     last_branch_occurrence_position = -1
     for branch in branches:
@@ -2568,31 +5185,7 @@ def validate_annotation(
     review: Mapping[str, Any],
     candidates: Mapping[str, Any],
 ) -> None:
-    expected_top_level = {
-        "schema_version",
-        "artifact_id",
-        "authority_kind",
-        "source_replay_identity",
-        "candidate_index_identity",
-        "candidate_artifact_identity",
-        "source_review_identity",
-        "document_source_position",
-        "document_source_row",
-        "whole_document_locator",
-        "questionnaire_page_rows",
-        "questionnaire_occurrence_rows",
-        "flow_branch_rows",
-        "local_anchor_classification_rows",
-        "local_repeat_alias_evidence_rows",
-        "candidate_disposition_rows",
-        "adjudication_note_rows",
-        "output_adjudication_rows",
-        "seal",
-        "nonauthority_statement",
-        "integrity",
-        "status",
-    }
-    _expect_keys(value, expected_top_level, "document annotation")
+    _expect_keys(value, ANNOTATION_KEYS, "document annotation")
     if (
         value["schema_version"] != SCHEMA_VERSION
         or value["authority_kind"] != AUTHORITY_KIND
@@ -2651,6 +5244,13 @@ def validate_annotation(
             for row in review["page_review_rows"]
         },
     )
+    raster_only_census = _raster_only_census(
+        document,
+        pages,
+        page_texts,
+        review,
+        occurrence_ids_by_review_id,
+    )
     expected_arrays = (
         ("whole_document_locator", locator),
         ("questionnaire_page_rows", pages),
@@ -2660,6 +5260,7 @@ def validate_annotation(
         ("local_repeat_alias_evidence_rows", local_repeats),
         ("candidate_disposition_rows", dispositions),
         ("adjudication_note_rows", notes),
+        ("raster_only_incompleteness_census", raster_only_census),
         ("output_adjudication_rows", output_adjudications),
     )
     for key, expected in expected_arrays:
@@ -2703,6 +5304,7 @@ def validate_annotation(
         dispositions,
         output_adjudications,
         notes,
+        raster_only_census,
     )
     if (
         value["artifact_id"] != expected_artifact_id
@@ -2711,9 +5313,18 @@ def validate_annotation(
         or value["candidate_artifact_identity"]
         != expected_candidate_artifact_identity
         or value["source_review_identity"] != expected_review_identity
+        or value["raster_only_incompleteness_census"] != raster_only_census
         or value["seal"] != expected_seal
     ):
         raise ValueError("document annotation artifact ID or seal drift")
+
+    _validate_raster_only_census(
+        value["raster_only_incompleteness_census"],
+        pages,
+        page_texts,
+        occurrences,
+    )
+    _expect_keys(value["seal"], SEAL_KEYS, "document annotation seal")
 
     for row in value["questionnaire_page_rows"]:
         _expect_keys(row, PAGE_KEYS, "questionnaire page")
@@ -2945,6 +5556,561 @@ def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
             "authority_kind", "document_local_source_annotation_authority"
         ),
     )
+
+    def reseal_raster_only(row: dict[str, Any]) -> None:
+        additions = _raster_seal_values(
+            row["raster_only_incompleteness_census"]
+        )
+        for key in RASTER_SEAL_KEYS:
+            row["seal"][key] = additions[key]
+
+    def reorder(values: list[Any]) -> None:
+        values[0], values[1] = values[1], values[0]
+
+    def mutate_omitted_blocking_key(row: dict[str, Any]) -> None:
+        records = row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ]
+        target = next(
+            record
+            for record in records
+            if len(record["blocking_exception_keys"]) > 1
+        )
+        target["blocking_exception_keys"].pop()
+        # This is the correction-1 required strong mutation: every affected
+        # legacy seal field is recomputed from the internally consistent but
+        # incomplete union.  Rejection must therefore come from the independent
+        # pinned all-only dependency table, not from stale enclosing digests.
+        reseal_raster_only(row)
+
+    def mutate_extra_blocking_key(row: dict[str, Any]) -> None:
+        records = row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ]
+        target = records[0]
+        present = {tuple(key) for key in target["blocking_exception_keys"]}
+        extra = next(
+            [
+                exception["questionnaire_page_id"],
+                exception["exception_index_on_page"],
+            ]
+            for exception in row["raster_only_incompleteness_census"][
+                "branch_exception_records"
+            ]
+            if (
+                exception["questionnaire_page_id"],
+                exception["exception_index_on_page"],
+            )
+            not in present
+        )
+        target["blocking_exception_keys"].append(extra)
+
+    def mutate_duplicate_blocking_key(row: dict[str, Any]) -> None:
+        target = row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ][0]
+        target["blocking_exception_keys"].append(
+            copy.deepcopy(target["blocking_exception_keys"][0])
+        )
+
+    def mutate_reordered_blocking_keys(row: dict[str, Any]) -> None:
+        target = next(
+            record
+            for record in row["raster_only_incompleteness_census"][
+                "dependent_atom_consequence_records"
+            ]
+            if len(record["blocking_exception_keys"]) > 1
+        )
+        reorder(target["blocking_exception_keys"])
+
+    def mutate_incomplete_emitted_projection(row: dict[str, Any]) -> None:
+        target = next(
+            record
+            for record in row["raster_only_incompleteness_census"][
+                "dependent_atom_consequence_records"
+            ]
+            if record["emitted_questionnaire_occurrence_ids"]
+        )
+        target["emitted_questionnaire_occurrence_ids"].pop()
+
+    def mutate_root_as_emitted_row(row: dict[str, Any]) -> None:
+        target = next(
+            record
+            for record in row["raster_only_incompleteness_census"][
+                "dependent_atom_consequence_records"
+            ]
+            if record["emitted_questionnaire_occurrence_ids"]
+        )
+        target["emitted_questionnaire_occurrence_ids"] = [FLOW_ROOT]
+
+    def mutate_reused_occurrence_bytes(row: dict[str, Any]) -> None:
+        records = row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ]
+        for target in records:
+            donor = next(
+                (
+                    candidate
+                    for candidate in records
+                    if candidate is not target
+                    and candidate["questionnaire_page_id"]
+                    == target["questionnaire_page_id"]
+                    and candidate["occurrence_kind"]
+                    == target["occurrence_kind"]
+                ),
+                None,
+            )
+            if donor is None:
+                continue
+            for key in (
+                "utf8_byte_start",
+                "utf8_byte_end",
+                "matched_text",
+                "matched_utf8_sha256",
+            ):
+                target[key] = donor[key]
+            return
+        raise ValueError("mutation fixture has no reusable dependent bytes")
+
+    def mutate_dense_ordinal(row: dict[str, Any]) -> None:
+        target = next(
+            occurrence
+            for occurrence in row["questionnaire_occurrence_rows"]
+            if occurrence["semantic_ordinal_at_span"] > 0
+        )
+        target["semantic_ordinal_at_span"] = 0
+
+    def mutate_dense_occurrence_index(row: dict[str, Any]) -> None:
+        by_page: dict[int, list[dict[str, Any]]] = defaultdict(list)
+        for occurrence in row["questionnaire_occurrence_rows"]:
+            by_page[occurrence["page_number"]].append(occurrence)
+        for page_rows in by_page.values():
+            for dense_index, occurrence in enumerate(page_rows):
+                if occurrence["occurrence_index_on_page"] != dense_index:
+                    occurrence["occurrence_index_on_page"] = dense_index
+                    return
+        raise ValueError("mutation fixture has no sparse occurrence index")
+
+    def mutate_duplicate_page_branch_key(row: dict[str, Any]) -> None:
+        page = next(
+            item
+            for item in row["raster_only_incompleteness_census"][
+                "page_census_rows"
+            ]
+            if item["branch_exception_keys"]
+        )
+        page["branch_exception_keys"].append(
+            copy.deepcopy(page["branch_exception_keys"][0])
+        )
+
+    def mutate_extra_page_branch_key(row: dict[str, Any]) -> None:
+        page = next(
+            item
+            for item in row["raster_only_incompleteness_census"][
+                "page_census_rows"
+            ]
+            if item["branch_exception_keys"]
+        )
+        page["branch_exception_keys"].append(
+            [page["questionnaire_page_id"], 999]
+        )
+
+    def mutate_reordered_page_branch_keys(row: dict[str, Any]) -> None:
+        page = next(
+            item
+            for item in row["raster_only_incompleteness_census"][
+                "page_census_rows"
+            ]
+            if len(item["branch_exception_keys"]) > 1
+        )
+        reorder(page["branch_exception_keys"])
+
+    def mutate_duplicate_page_dependent_key(row: dict[str, Any]) -> None:
+        page = next(
+            item
+            for item in row["raster_only_incompleteness_census"][
+                "page_census_rows"
+            ]
+            if item["dependent_atom_keys"]
+        )
+        page["dependent_atom_keys"].append(
+            copy.deepcopy(page["dependent_atom_keys"][0])
+        )
+
+    def mutate_extra_page_dependent_key(row: dict[str, Any]) -> None:
+        page = next(
+            item
+            for item in row["raster_only_incompleteness_census"][
+                "page_census_rows"
+            ]
+            if item["dependent_atom_keys"]
+        )
+        page["dependent_atom_keys"].append(
+            [page["questionnaire_page_id"], 0, 1, "question_prompt"]
+        )
+
+    def mutate_reordered_page_dependent_keys(row: dict[str, Any]) -> None:
+        page = next(
+            item
+            for item in row["raster_only_incompleteness_census"][
+                "page_census_rows"
+            ]
+            if len(item["dependent_atom_keys"]) > 1
+        )
+        reorder(page["dependent_atom_keys"])
+
+    sidecar = value["raster_only_incompleteness_census"]
+    add(
+        "missing_raster_sidecar",
+        lambda row: row.pop("raster_only_incompleteness_census"),
+    )
+    add(
+        "extra_raster_sidecar_member",
+        lambda row: row["raster_only_incompleteness_census"].__setitem__(
+            "extra", None
+        ),
+    )
+    add(
+        "missing_raster_sidecar_member",
+        lambda row: row["raster_only_incompleteness_census"].pop("status"),
+    )
+    add(
+        "reordered_raster_sidecar_members",
+        lambda row: row.__setitem__(
+            "raster_only_incompleteness_census",
+            dict(
+                reversed(
+                    list(row["raster_only_incompleteness_census"].items())
+                )
+            ),
+        ),
+    )
+    add(
+        "missing_raster_exception_record",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ].pop(),
+    )
+    add(
+        "duplicate_raster_exception_record",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ].append(
+            copy.deepcopy(
+                row["raster_only_incompleteness_census"][
+                    "branch_exception_records"
+                ][0]
+            )
+        ),
+    )
+    add(
+        "extra_raster_exception_record",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ].append(
+            {
+                **copy.deepcopy(
+                    row["raster_only_incompleteness_census"][
+                        "branch_exception_records"
+                    ][-1]
+                ),
+                "exception_index_on_page": 999,
+            }
+        ),
+    )
+    add(
+        "reordered_raster_exception_records",
+        lambda row: reorder(
+            row["raster_only_incompleteness_census"][
+                "branch_exception_records"
+            ]
+        ),
+    )
+    add(
+        "missing_raster_exception_member",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ][0].pop("authority_text_statement"),
+    )
+    add(
+        "extra_raster_exception_member",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ][0].__setitem__("extra", None),
+    )
+    add(
+        "reordered_raster_exception_members",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ].__setitem__(
+            0,
+            dict(
+                reversed(
+                    list(
+                        row["raster_only_incompleteness_census"][
+                            "branch_exception_records"
+                        ][0].items()
+                    )
+                )
+            ),
+        ),
+    )
+    add(
+        "bad_raster_exception_page_hash",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ][0].__setitem__("page_text_utf8_sha256", "0" * 64),
+    )
+    add(
+        "bad_raster_exception_page_identity",
+        lambda row: row["raster_only_incompleteness_census"][
+            "branch_exception_records"
+        ][0].__setitem__(
+            "questionnaire_page_id", "psid-questionnaire-page:" + "0" * 64
+        ),
+    )
+    add(
+        "missing_raster_dependent_record",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ].pop(),
+    )
+    add(
+        "duplicate_raster_dependent_record",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ].append(
+            copy.deepcopy(
+                row["raster_only_incompleteness_census"][
+                    "dependent_atom_consequence_records"
+                ][0]
+            )
+        ),
+    )
+    add(
+        "extra_raster_dependent_record",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ].append(
+            {
+                **copy.deepcopy(
+                    row["raster_only_incompleteness_census"][
+                        "dependent_atom_consequence_records"
+                    ][-1]
+                ),
+                "utf8_byte_end": row["raster_only_incompleteness_census"][
+                    "dependent_atom_consequence_records"
+                ][-1]["utf8_byte_end"]
+                + 1,
+            }
+        ),
+    )
+    add(
+        "reordered_raster_dependent_records",
+        lambda row: reorder(
+            row["raster_only_incompleteness_census"][
+                "dependent_atom_consequence_records"
+            ]
+        ),
+    )
+    add(
+        "missing_raster_dependent_member",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ][0].pop("path_consequence"),
+    )
+    add(
+        "extra_raster_dependent_member",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ][0].__setitem__("extra", None),
+    )
+    add(
+        "reordered_raster_dependent_members",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ].__setitem__(
+            0,
+            dict(
+                reversed(
+                    list(
+                        row["raster_only_incompleteness_census"][
+                            "dependent_atom_consequence_records"
+                        ][0].items()
+                    )
+                )
+            ),
+        ),
+    )
+    add(
+        "inexact_raster_dependent_slice",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ][0].__setitem__("matched_text", "transcription repair forbidden"),
+    )
+    add("reused_other_occurrence_bytes", mutate_reused_occurrence_bytes)
+    add(
+        "incomplete_emitted_id_projection",
+        mutate_incomplete_emitted_projection,
+    )
+    add("root_as_emitted_row", mutate_root_as_emitted_row)
+    add(
+        "false_raster_completeness_claim",
+        lambda row: row["raster_only_incompleteness_census"].__setitem__(
+            "document_completeness_claim", "complete"
+        ),
+    )
+    add(
+        "raster_reason_drift",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ][0].__setitem__("reason", "other"),
+    )
+    add(
+        "raster_consequence_drift",
+        lambda row: row["raster_only_incompleteness_census"][
+            "dependent_atom_consequence_records"
+        ][0].__setitem__("path_consequence", "other"),
+    )
+    add("omitted_blocking_key_fully_rehashed", mutate_omitted_blocking_key)
+    add("extra_blocking_key", mutate_extra_blocking_key)
+    add("duplicate_blocking_key", mutate_duplicate_blocking_key)
+    add("reordered_blocking_keys", mutate_reordered_blocking_keys)
+    add(
+        "missing_raster_page_census_row",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ].pop(),
+    )
+    add(
+        "duplicate_raster_page_census_row",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ].append(
+            copy.deepcopy(
+                row["raster_only_incompleteness_census"]["page_census_rows"][0]
+            )
+        ),
+    )
+    add(
+        "reordered_raster_page_census_rows",
+        lambda row: reorder(
+            row["raster_only_incompleteness_census"]["page_census_rows"]
+        ),
+    )
+    add(
+        "missing_raster_page_census_member",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ][0].pop("dependent_atom_keys"),
+    )
+    add(
+        "extra_raster_page_census_member",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ][0].__setitem__("extra", None),
+    )
+    add(
+        "reordered_raster_page_census_members",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ].__setitem__(
+            0,
+            dict(
+                reversed(
+                    list(
+                        row["raster_only_incompleteness_census"][
+                            "page_census_rows"
+                        ][0].items()
+                    )
+                )
+            ),
+        ),
+    )
+    add(
+        "bad_raster_page_census_identity",
+        lambda row: row["raster_only_incompleteness_census"][
+            "page_census_rows"
+        ][0].__setitem__(
+            "questionnaire_page_id", "psid-questionnaire-page:" + "0" * 64
+        ),
+    )
+    add("duplicate_page_branch_key", mutate_duplicate_page_branch_key)
+    add("extra_page_branch_key", mutate_extra_page_branch_key)
+    add("reordered_page_branch_keys", mutate_reordered_page_branch_keys)
+    add(
+        "missing_page_branch_key",
+        lambda row: next(
+            item
+            for item in row["raster_only_incompleteness_census"][
+                "page_census_rows"
+            ]
+            if item["branch_exception_keys"]
+        )["branch_exception_keys"].pop(),
+    )
+    add(
+        "reordered_page_dependent_keys",
+        mutate_reordered_page_dependent_keys,
+    )
+    add("duplicate_page_dependent_key", mutate_duplicate_page_dependent_key)
+    add("extra_page_dependent_key", mutate_extra_page_dependent_key)
+    add(
+        "missing_page_dependent_key",
+        lambda row: next(
+            item
+            for item in row["raster_only_incompleteness_census"][
+                "page_census_rows"
+            ]
+            if item["dependent_atom_keys"]
+        )["dependent_atom_keys"].pop(),
+    )
+    add(
+        "stale_raster_branch_count",
+        lambda row: row["raster_only_incompleteness_census"].__setitem__(
+            "branch_exception_count",
+            row["raster_only_incompleteness_census"]["branch_exception_count"]
+            + 1,
+        ),
+    )
+    add(
+        "stale_raster_keyset_digest",
+        lambda row: row["seal"].__setitem__(
+            "raster_only_branch_exception_keyset_sha256", "0" * 64
+        ),
+    )
+    add(
+        "stale_raster_domain_digest",
+        lambda row: row["seal"].__setitem__(
+            "raster_only_dependent_atom_consequence_domain_sha256", "0" * 64
+        ),
+    )
+    add(
+        "stale_raster_sidecar_digest",
+        lambda row: row["seal"].__setitem__(
+            "raster_only_incompleteness_census_sha256", "0" * 64
+        ),
+    )
+    add("stale_artifact_digest", lambda _row: None)
+    add(
+        "missing_raster_seal_member",
+        lambda row: row["seal"].pop(
+            "raster_only_incompleteness_census_sha256"
+        ),
+    )
+    add(
+        "extra_raster_seal_member",
+        lambda row: row["seal"].__setitem__("extra", None),
+    )
+    add(
+        "reordered_raster_seal_members",
+        lambda row: row.__setitem__(
+            "seal", dict(reversed(list(row["seal"].items())))
+        ),
+    )
+    add("dense_semantic_ordinal", mutate_dense_ordinal)
+    add("dense_occurrence_index", mutate_dense_occurrence_index)
+    if not sidecar["branch_exception_records"]:
+        raise ValueError("mutation fixture has no raster exception records")
     return mutations
 
 
@@ -3034,6 +6200,8 @@ def run_mutation_tests(
         mutation = copy.deepcopy(value)
         mutate(mutation)
         mutation["integrity"]["content_sha256"] = _content_sha256(mutation)
+        if name == "stale_artifact_digest":
+            mutation["integrity"]["content_sha256"] = "0" * 64
         try:
             validate_annotation(mutation, *inputs)
         except ValueError:

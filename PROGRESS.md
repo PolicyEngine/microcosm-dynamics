@@ -2,7 +2,8 @@
 
 ## State
 
-In progress on `claude/ce-rq-doc24`, rebuilt from baseline commit `8088484` under ratified R_Q stage-2 protocol Amendment 1 corrections 1–3.
+Implementation complete on `claude/ce-rq-doc24`; independent review and final
+verification remain before sealing.
 
 ## Done
 
@@ -11,10 +12,16 @@ In progress on `claude/ce-rq-doc24`, rebuilt from baseline commit `8088484` unde
 - Restored the target branch to its required baseline, `8088484`.
 - Started independent protocol, adjudication-table, and comparator/draft audits.
 - Imported the preserved document-24 builder for amendment-aware revision.
+- Authored the 59-page, 417-occurrence source-review ledger.
+- Built the LEGACY-shape annotation with the 10 exact raster-only exceptions and
+  177 dependent-atom consequence records.
+- Added the 40-member flat seal, exact sidecar validation, and 77 mutation cases,
+  including the fully rehashed omitted-key mutation.
+- Added 24 focused regression tests and updated the committed tier counts.
+- Passed all 24 focused tests.
 
 ## Next
 
-- Implement the exact adjudicated raster-only census and dependent consequences.
-- Add the LEGACY-shape sidecar and flat-seal mutation coverage.
-- Run focused tests, validator, Ruff, and Black.
+- Complete the independent protocol review and address any actionable findings.
+- Run final author, builder/mutation, Ruff, Black, and reproducibility checks.
 - Remove this progress ledger and create the final sealed commit.
