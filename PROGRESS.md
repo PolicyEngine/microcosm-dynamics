@@ -2,7 +2,7 @@
 
 ## State
 
-The append-only superseding correction is committed, its actionable independent-review finding is fixed, and the ten clean-shard regressions pass after that fix. The final per-case audit and report assembly remain.
+Implementation, raster/pinned-text adjudication, independent protocol review, clean-shard regressions, and release checks are complete. The final report is being assembled; this file will then be removed so the delivered tree satisfies `NO PROGRESS.md` while its committed history preserves the standing-order ledger.
 
 ## Done
 
@@ -18,9 +18,10 @@ The append-only superseding correction is committed, its actionable independent-
 - Ran the exact ten clean-shard regressions under the required interpreter: `10 passed in 31.07s`.
 - Independent protocol review confirmed F1, F2, F4, and F5 and found one F3 overstatement: mixed non-flow IDs change with their emitted path array. Commit `881fb7a56d81b52ff17941ae247f6b71ccf304cd` now defines the exact pre-filter occurrence-row numbering domain, guarantees stable surviving flow-label IDs, and preserves the existing non-flow ID preimage law.
 - Reran all ten clean-shard regressions after the review fix: `10 passed in 30.25s`.
+- Verified all 24,153 bytes through the original Amendment 1 remain unchanged, correction 1 is a pure append, section 19 has no diff, and `git diff --check` is clean.
+- Reconciled every q72 and q79 blocked case to exactly one Rule-1 exception or attributable ordinary exact-byte outcome, with the required Rule-2 mixed/withheld consequence.
 
 ## Next
 
 - Run an independent blocker-by-blocker review and correct any actionable findings.
-- Run final formatting, append-only, and repository-state checks.
-- Write the final report, remove this progress file to satisfy the final-tree `NO PROGRESS.md` requirement, and commit every coherent step.
+- Write the final report and remove this progress file in the final cleanup commit.
