@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
 from pathlib import Path
@@ -129,6 +130,20 @@ def _run_with_output(output):
         check=False,
         text=True,
     )
+
+
+def test_successful_write_normalizes_output_mode(tmp_path):
+    output = tmp_path / "authority.json"
+    output.write_bytes(b"predecessor")
+    output.chmod(0o600)
+
+    completed = _run_with_output(output)
+
+    assert completed.returncode == 0
+    assert completed.stderr == ""
+    assert json.loads(completed.stdout)["status"] == "pass"
+    assert output.read_bytes() == ARTIFACT.read_bytes()
+    assert stat.S_IMODE(output.stat().st_mode) == 0o644
 
 
 def test_output_cannot_alias_a_registered_source():
