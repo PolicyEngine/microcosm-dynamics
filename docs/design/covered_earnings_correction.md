@@ -47584,9 +47584,11 @@ The codebook lane report
 `245cedcd3f5d3ecd2245e8acec14e56511e973707cc5022cb8b75e94a387a605`.
 Its exact originating record is bytes `[13605,14213)`, 608 bytes, SHA-256
 `beada0568d204372f7d26b15f19602aa5ff11c6b8590c8a5d6830d37575d8fb5`.
-It reports 231,263 lexically derived “missing” candidates and no registered
-reason vocabulary. Its statement that the disposition is derivable is a lane
-interpretation, not source authority, and is directly disproven by §25.2.4.
+It reports a lexically derived missing disposition over the complete
+89,599-field PDF domain and no registered reason vocabulary. A11's fresh
+reconstruction counts 231,263 such candidate occurrences. Its statement that
+the disposition is derivable is a lane interpretation, not source authority,
+and is directly disproven by §25.2.4.
 
 The Amendment-10 report `claude-ce-amend10-report.md` is 17,745 bytes,
 SHA-256
@@ -47824,9 +47826,9 @@ The derived audit artifact is
 `data/external/psid_missing_reason_code_authority_v1.json`, with schema and
 artifact ID `psid_missing_reason_code_fail_closed_authority.v1`. It is exactly
 495,337 bytes, raw file SHA-256
-`17fd0584dd05bae2faf7b72a60f8962e8537ae97dcae1e67326354e5da44a00b`,
+`908aa2e09080fbde6a21cddecbdec89254bba0252443169ff27f71ed7d24bece`,
 and self-zeroed content SHA-256
-`fdb87d5378385b051f03a06927b27888dba9d4ce676011d903b3b612db2856f2`.
+`0881c21c4ee66e2a19f1b6145c8a5dc7cd1d5927cc40ecd5d6f4fd9c646b8ce0`.
 Serialization is UTF-8 sorted-key compact JSON with exactly one terminal LF,
 no duplicate key at any depth, no nonfinite number, and `content_sha256`
 computed with that member set to 64 ASCII zeroes.
@@ -47883,14 +47885,14 @@ semantic-taxonomy request. Each row states its required fail-closed action.
 | Position | Repository path | Bytes | Raw SHA-256 |
 |---:|---|---:|---|
 | 0 | `src/populace_dynamics/data/psid_codebook_extraction.py` | 56,370 | `f096db6ad4185eb57782595411196a00dd000bbea9a7d24daac252781c018181` |
-| 1 | `src/populace_dynamics/data/psid_missing_reason_authority.py` | 53,131 | `41fd7b8915b3c91a0c8a09ca285ab0618aea66ef2ab8a225c2babb198207f547` |
+| 1 | `src/populace_dynamics/data/psid_missing_reason_authority.py` | 54,347 | `1cf37158d4dfcc1aa26fff0698d3d6e751a0735f69ebd179a47e98fd065279bc` |
 | 2 | `scripts/rebuild_amendment11_missing_reason_authority.py` | 75,181 | `a6fa6d61e750c8b7a8b7db21a8b37e5e6d59f51ea36a56e528d5f82cc82a20d9` |
 
 The three-row implementation-domain SHA-256 is
-`ff81d3fee746fafee39d0e1a17d248d1e856b1975f5b297933f782eb80af0b7a`.
+`04b32ad0d6d416c20ee46067cd87c721ef7f81423be07db893e6b97264d9e932`.
 The expected-negative R05 executable
-`scripts/replay_amendment11_no_movement.py` is 28,820 bytes, raw SHA-256
-`ff0ea77cd8330db5f50eb9a1aba34bf316a07d72ee93ad05dd11e27d20dbcfb9`.
+`scripts/replay_amendment11_no_movement.py` is 31,675 bytes, raw SHA-256
+`7ea659935c776008176542b7b036d57ee4857687765b2169bf9e7d37818c78e7`.
 
 The builder authenticates the registry and all sources before semantic work,
 runs per-document derivations in confined workers, binds exact implementation
