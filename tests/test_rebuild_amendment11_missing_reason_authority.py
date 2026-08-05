@@ -18,6 +18,7 @@ PSID_ROOT = Path("~/PolicyEngine/psid-data").expanduser()
 SCRIPT = (
     REPOSITORY_ROOT / "scripts/rebuild_amendment11_missing_reason_authority.py"
 )
+REPLAY_SCRIPT = REPOSITORY_ROOT / "scripts/replay_amendment11_no_movement.py"
 ARTIFACT = (
     REPOSITORY_ROOT
     / "data/external/psid_missing_reason_code_authority_v1.json"
@@ -53,6 +54,25 @@ def test_fresh_47_source_build_is_byte_equal_to_committed_authority():
     assert summary["lexical_missing_candidate_count"] == 231_263
     assert summary["authorized_reason_assignment_count"] == 0
     assert summary["byte_size"] == ARTIFACT.stat().st_size
+
+
+def test_r05_direct_cli_streams_sources_to_exact_terminal_blocker(tmp_path):
+    environment = os.environ.copy()
+    environment.pop("PYTHONPATH", None)
+    completed = subprocess.run(
+        [sys.executable, str(REPLAY_SCRIPT)],
+        cwd=tmp_path,
+        env=environment,
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    assert completed.returncode == 2
+    assert completed.stdout == ""
+    assert "blocked_source_missing_disposition_underdetermined" in (
+        completed.stderr
+    )
+    assert "pass" not in completed.stderr
 
 
 @pytest.mark.parametrize("mutation", ["one_byte", "truncate"])

@@ -29,7 +29,7 @@ import hashlib
 import json
 import sys
 from collections import Counter
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from decimal import Decimal, localcontext
 from pathlib import Path
@@ -37,10 +37,15 @@ from typing import Any
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPOSITORY_ROOT))
+sys.path.insert(0, str(REPOSITORY_ROOT / "src"))
 
 from populace_dynamics.data.psid_missing_reason_authority import (  # noqa: E402
     MissingReasonAuthorityError,
+    settle_missing_reason_codes,
     validate_authority_artifact,
+)
+from scripts import (  # noqa: E402
+    rebuild_amendment11_missing_reason_authority as authority_builder,
 )
 from scripts.build_amendment10_successor_census import (  # noqa: E402
     EXPECTED_A10_R04_PINS,
@@ -55,6 +60,8 @@ AUTHORITY_ARTIFACT = (
     / "external"
     / "psid_missing_reason_code_authority_v1.json"
 )
+REGISTERED_SOURCE_ROOT = Path("~/PolicyEngine/psid-data").expanduser()
+SOURCE_REGISTRY = REPOSITORY_ROOT / authority_builder.EXPECTED_REGISTRY_PATH
 PRODUCTION_FIELD_COUNT = 89_599
 SOURCE_MEMBER_COUNT = 561_873
 SOURCE_LITERAL_ENTRY_COUNT = 524_590
@@ -76,6 +83,9 @@ EXPECTED_ORDERED_ASSIGNMENT_SHA256 = (
 EXPECTED_FAILURE_REASON_ROWS_BYTE_COUNT = 211_195
 EXPECTED_FAILURE_REASON_ROWS_SHA256 = (
     "024ea03ad9c4f4cac6c490e3899bba74a9c78f7de1737cd5c4a7187b69b5bfda"
+)
+EXPECTED_SOURCE_SETTLEMENT_BLOCKER = (
+    "source missing disposition is unadjudicated for 524590 literals"
 )
 
 TERMINALS = (
@@ -394,12 +404,11 @@ def historical_predecessor_capacity_evidence() -> dict[str, Any]:
     }
 
 
-def production_blocker_evidence(
-    authority_path: Path = AUTHORITY_ARTIFACT,
+def _production_blocker_evidence(
+    authority: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Return the ordered production blockers without claiming replay."""
+    """Cross-bind one validated authority to the production blocker."""
 
-    authority = validate_committed_authority(authority_path)
     if SOURCE_LITERAL_ENTRY_COUNT + SOURCE_NUMERIC_RANGE_ENTRY_COUNT != (
         SOURCE_MEMBER_COUNT
     ):
@@ -487,11 +496,80 @@ def production_blocker_evidence(
     }
 
 
-def run_production_gate() -> None:
-    """Validate the boundary, then stop without an accepted replay output."""
+def production_blocker_evidence(
+    authority_path: Path = AUTHORITY_ARTIFACT,
+) -> dict[str, Any]:
+    """Return the ordered production blockers without claiming replay."""
 
-    raise SourceMissingDispositionUnderdetermined(
-        production_blocker_evidence()
+    return _production_blocker_evidence(
+        validate_committed_authority(authority_path)
+    )
+
+
+def authenticated_source_derivations(
+    psid_root: Path = REGISTERED_SOURCE_ROOT,
+) -> Iterator[Mapping[str, Any]]:
+    """Authenticate all sources, then lazily derive one document at a time."""
+
+    _registered, projected = authority_builder.load_and_authenticate_sources(
+        SOURCE_REGISTRY, psid_root
+    )
+    if authority_builder.extraction.pdftotext_version() != "26.04.0":
+        raise authority_builder.BuildError(
+            "Poppler version drift before semantic parsing"
+        )
+    if list(authority_builder.extraction.PDFTOTEXT_ARGUMENTS) != [
+        "-layout",
+        "-enc",
+        "UTF-8",
+    ]:
+        raise authority_builder.BuildError(
+            "Poppler argument drift before semantic parsing"
+        )
+
+    def derive() -> Iterator[Mapping[str, Any]]:
+        for source_document in projected:
+            yield authority_builder.extraction.extract_codebook_rows(
+                source_document, psid_root
+            )
+
+    return derive()
+
+
+def run_production_gate(
+    authority_path: Path = AUTHORITY_ARTIFACT,
+    psid_root: Path = REGISTERED_SOURCE_ROOT,
+) -> None:
+    """Invoke the sole production settlement entry point and require abort."""
+
+    authority = validate_committed_authority(authority_path)
+    evidence = _production_blocker_evidence(authority)
+    try:
+        derivations = authenticated_source_derivations(psid_root)
+        settled = settle_missing_reason_codes(derivations, authority)
+    except MissingReasonAuthorityError as error:
+        if str(error) != EXPECTED_SOURCE_SETTLEMENT_BLOCKER:
+            raise ReplayError(
+                "production settlement failed before the expected terminal "
+                "blocker"
+            ) from error
+        try:
+            validate_authority_artifact(authority)
+        except MissingReasonAuthorityError as drift:
+            raise ReplayError(
+                "authority implementation drifted during settlement"
+            ) from drift
+        raise SourceMissingDispositionUnderdetermined(evidence) from error
+    except (
+        authority_builder.BuildError,
+        authority_builder.extraction.CodebookExtractionError,
+        OSError,
+    ) as error:
+        raise ReplayError("production source authentication failed") from error
+
+    raise ReplayError(
+        "production settlement returned instead of failing closed: "
+        f"{type(settled).__name__}"
     )
 
 

@@ -15,6 +15,7 @@ from populace_dynamics.data.psid_missing_reason_authority import (
     fixture_conditional_missing_reason_relation,
     fixture_conditional_missing_reason_value,
     fixture_conditional_missing_reason_value_from_claims,
+    fixture_request_missing_reason_taxonomy,
     missing_reason_code,
     pack_disposition_bits,
     source_member_identity,
@@ -245,6 +246,21 @@ def test_source_meaning_is_retained_whole_without_semantic_split(meaning):
     assert meaning not in missing_reason_code(member)
 
 
+@pytest.mark.parametrize("requested_category", ["DK", "NA", "refused"])
+def test_composite_reason_taxonomy_requests_are_undetermined(
+    requested_category,
+):
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match="^semantic_reason_taxonomy_undetermined$",
+    ):
+        fixture_request_missing_reason_taxonomy(
+            _member(source_meaning="DK; NA; refused"),
+            (True,),
+            requested_category,
+        )
+
+
 def test_lexical_candidate_does_not_authorize_literal_settlement():
     member = _member(source_meaning="Never refused")
     assert candidate_is_missing(member) is True
@@ -274,6 +290,14 @@ def test_conflicting_future_disposition_claims_abort():
     with pytest.raises(MissingReasonAuthorityError, match="conflicting"):
         fixture_conditional_missing_reason_value_from_claims(
             _member(), (True, False)
+        )
+
+
+@pytest.mark.parametrize("claim", [False, True])
+def test_duplicated_future_disposition_claims_abort(claim):
+    with pytest.raises(MissingReasonAuthorityError, match="duplicated"):
+        fixture_conditional_missing_reason_value_from_claims(
+            _member(), (claim, claim)
         )
 
 
@@ -309,6 +333,12 @@ def test_numeric_range_is_structurally_null_without_a_default():
         fixture_conditional_missing_reason_value(member, True)
     with pytest.raises(MissingReasonAuthorityError, match="numeric range"):
         missing_reason_code(member)
+
+
+@pytest.mark.parametrize("malformed", [0, 0.0, "false"])
+def test_numeric_range_rejects_nonboolean_disposition_authority(malformed):
+    with pytest.raises(MissingReasonAuthorityError, match="malformed"):
+        fixture_conditional_missing_reason_value(_range_member(), malformed)
 
 
 def test_empty_meaning_is_known_undetermined_and_aborts():

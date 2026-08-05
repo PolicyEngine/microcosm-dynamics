@@ -22,7 +22,7 @@ import json
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, NoReturn
 
 SCHEMA_VERSION = "psid_missing_reason_code_fail_closed_authority.v1"
 ARTIFACT_ID = SCHEMA_VERSION
@@ -520,13 +520,16 @@ def fixture_conditional_missing_reason_value(
 
     source_member_identity(member)
     if member.entry["entry_kind"] == "numeric_range":
+        if (
+            authenticated_missing is not None
+            and type(authenticated_missing) is not bool
+        ):
+            raise MissingReasonAuthorityError(
+                "malformed disposition authority"
+            )
         if authenticated_missing is True:
             raise MissingReasonAuthorityError(
                 "numeric range conflicts with missing disposition"
-            )
-        if authenticated_missing not in (None, False):
-            raise MissingReasonAuthorityError(
-                "malformed disposition authority"
             )
         return None
     if authenticated_missing is None:
@@ -562,9 +565,34 @@ def fixture_conditional_missing_reason_value_from_claims(
         raise MissingReasonAuthorityError(
             "conflicting future disposition authority"
         )
+    if len(authenticated_claims) != 1:
+        raise MissingReasonAuthorityError(
+            "duplicated future disposition claim"
+        )
     return fixture_conditional_missing_reason_value(
         member, authenticated_claims[0]
     )
+
+
+def fixture_request_missing_reason_taxonomy(
+    member: SourceMember,
+    authenticated_claims: Sequence[bool],
+    requested_category: str,
+) -> NoReturn:
+    """Reject semantic interpretation of an opaque fixture code."""
+
+    value = fixture_conditional_missing_reason_value_from_claims(
+        member, authenticated_claims
+    )
+    if value is None:
+        raise MissingReasonAuthorityError(
+            "missing-reason taxonomy is not applicable to a nonmissing member"
+        )
+    if not isinstance(requested_category, str) or not requested_category:
+        raise MissingReasonAuthorityError(
+            "malformed semantic taxonomy request"
+        )
+    raise MissingReasonAuthorityError("semantic_reason_taxonomy_undetermined")
 
 
 def fixture_conditional_missing_reason_relation(
@@ -1210,14 +1238,12 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
 
 
 def preflight_source_derivations(
-    derivations: Sequence[Mapping[str, Any]],
+    derivations: Iterable[Mapping[str, Any]],
     authority: Mapping[str, Any],
 ) -> None:
     """Authenticate the complete candidate relation before naming its blocker."""
 
     validate_authority_artifact(authority)
-    if len(derivations) != EXPECTED_DOCUMENT_COUNT:
-        raise MissingReasonAuthorityError("source document count drift")
     try:
         from populace_dynamics.data.psid_codebook_extraction import (
             CodebookExtractionError,
@@ -1238,9 +1264,14 @@ def preflight_source_derivations(
         lexical_vector["packed_hex"], lexical_vector["source_member_count"]
     )
     member_position = 0
-    for document_position, (derivation, source_row) in enumerate(
-        zip(derivations, source_rows, strict=True)
-    ):
+    derivation_iterator = iter(derivations)
+    for document_position, source_row in enumerate(source_rows):
+        try:
+            derivation = next(derivation_iterator)
+        except StopIteration as error:
+            raise MissingReasonAuthorityError(
+                "source document count drift"
+            ) from error
         try:
             validate_document_derivation(derivation)
         except (
@@ -1343,12 +1374,18 @@ def preflight_source_derivations(
                 raise MissingReasonAuthorityError(
                     f"complete source relation drift: {key}"
                 )
+    try:
+        next(derivation_iterator)
+    except StopIteration:
+        pass
+    else:
+        raise MissingReasonAuthorityError("source document count drift")
     if member_position != EXPECTED_MEMBER_COUNT:
         raise MissingReasonAuthorityError("source member exact-cover drift")
 
 
 def settle_missing_reason_codes(
-    derivations: Sequence[Mapping[str, Any]],
+    derivations: Iterable[Mapping[str, Any]],
     authority: Mapping[str, Any],
 ) -> tuple[dict[str, Any], ...]:
     """Refuse production settlement after complete source preflight."""

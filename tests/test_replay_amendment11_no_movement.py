@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import copy
+import os
+import subprocess
+import sys
 from dataclasses import replace
 
 import pytest
@@ -134,13 +137,6 @@ def test_production_preflight_stops_at_source_disposition_boundary():
     assert historical["four_shape_floor_bytes"] == 122_255_013_691_442
     assert "expected_a11_delta_movement_row_count" not in historical
     assert "revision_13_full_relation_identity_prefix" not in historical
-    with pytest.raises(
-        replay.SourceMissingDispositionUnderdetermined
-    ) as caught:
-        replay.run_production_gate()
-    assert caught.value.code == (
-        "blocked_source_missing_disposition_underdetermined"
-    )
 
 
 def test_revision_12_capacity_audit_mints_no_amendment_11_inference():
@@ -165,12 +161,111 @@ def test_production_preflight_rejects_absent_or_mutated_authority(tmp_path):
         replay.production_blocker_evidence(mutated)
 
 
-def test_production_cli_emits_no_stdout_or_pass(capsys):
+def test_production_cli_emits_no_stdout_or_pass(monkeypatch, capsys):
+    evidence = {"source_literal_entry_count": 524_590}
+
+    def expected_blocker():
+        raise replay.SourceMissingDispositionUnderdetermined(evidence)
+
+    monkeypatch.setattr(replay, "run_production_gate", expected_blocker)
     assert replay.main() == 2
     captured = capsys.readouterr()
     assert captured.out == ""
     assert "blocked_source_missing_disposition_underdetermined" in captured.err
     assert "pass" not in captured.err
+
+
+def test_production_gate_delegates_to_settlement_and_rejects_return(
+    monkeypatch,
+):
+    authority = {"fixture": "validated authority"}
+    evidence = {"source_literal_entry_count": 524_590}
+    calls = []
+    monkeypatch.setattr(
+        replay, "validate_committed_authority", lambda _path: authority
+    )
+    monkeypatch.setattr(
+        replay, "validate_authority_artifact", lambda _authority: None
+    )
+    monkeypatch.setattr(
+        replay, "_production_blocker_evidence", lambda _authority: evidence
+    )
+    monkeypatch.setattr(
+        replay,
+        "authenticated_source_derivations",
+        lambda _root: iter(("authenticated derivation",)),
+    )
+
+    def expected_terminal(derivations, observed_authority):
+        calls.append((list(derivations), observed_authority))
+        raise replay.MissingReasonAuthorityError(
+            replay.EXPECTED_SOURCE_SETTLEMENT_BLOCKER
+        )
+
+    monkeypatch.setattr(
+        replay, "settle_missing_reason_codes", expected_terminal
+    )
+    with pytest.raises(replay.SourceMissingDispositionUnderdetermined):
+        replay.run_production_gate()
+    assert calls == [(["authenticated derivation"], authority)]
+
+    monkeypatch.setattr(
+        replay, "settle_missing_reason_codes", lambda _rows, _authority: ()
+    )
+    with pytest.raises(replay.ReplayError, match="returned"):
+        replay.run_production_gate()
+
+
+def test_production_gate_translates_only_exact_terminal_blocker(monkeypatch):
+    monkeypatch.setattr(
+        replay, "validate_committed_authority", lambda _path: {}
+    )
+    monkeypatch.setattr(
+        replay,
+        "_production_blocker_evidence",
+        lambda _authority: {"source_literal_entry_count": 524_590},
+    )
+    monkeypatch.setattr(
+        replay,
+        "authenticated_source_derivations",
+        lambda _root: iter(("authenticated derivation",)),
+    )
+
+    def wrong_blocker(_derivations, _authority):
+        raise replay.MissingReasonAuthorityError("wrong terminal blocker")
+
+    monkeypatch.setattr(replay, "settle_missing_reason_codes", wrong_blocker)
+    with pytest.raises(replay.ReplayError, match="before the expected"):
+        replay.run_production_gate()
+
+
+def test_production_script_resolves_worktree_without_pythonpath(tmp_path):
+    script = (
+        replay.REPOSITORY_ROOT
+        / "scripts"
+        / "replay_amendment11_no_movement.py"
+    )
+    environment = os.environ.copy()
+    environment.pop("PYTHONPATH", None)
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "import runpy; "
+                f"runpy.run_path({str(script)!r}, "
+                "run_name='amendment11_import_probe')"
+            ),
+        ],
+        cwd=tmp_path,
+        env=environment,
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    assert completed.returncode == 0
+    assert completed.stdout == ""
+    assert completed.stderr == ""
 
 
 @pytest.mark.parametrize(

@@ -151,9 +151,11 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
     module_paths = _repository_module_paths()
     root_module = "scripts.first_estimates_birth_evidence"
     psid_exclusions = {
+        "populace_dynamics.data.psid_codebook_extraction",
         "populace_dynamics.data.psid_covered_earnings_registry",
         "populace_dynamics.data.psid_job_context",
         "populace_dynamics.data.psid_job_context_registry",
+        "populace_dynamics.data.psid_missing_reason_authority",
         "populace_dynamics.data.psid_questionnaire_inventory",
     }
     assert root_module in module_paths
