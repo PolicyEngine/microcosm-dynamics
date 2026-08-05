@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """Build and validate the stage-2 nonauthority annotation for document 80.
 
-The reviewer-authored source specification is deliberately candidate-free.  The
+The reviewer-authored source specification is deliberately candidate-free. The
 builder authenticates and slices the complete PDF-derived page domain first and
 only then opens the stage-1 candidate artifact to construct the two provenance
 relations required by ``docs/analysis/rq_stage2_protocol.md``.
+
+The task-level artifact-scale law supersedes the protocol's legacy serialized
+root-to-leaf path products. This shard stores only direct parent occurrence
+edges and reconstructs ancestry transiently while validating the flow DAG.
 """
 
 from __future__ import annotations
@@ -31,12 +35,17 @@ from populace_dynamics.data import (  # noqa: E402
 )
 
 DOCUMENT_SOURCE_POSITION = 80
-SCHEMA_VERSION = "rq_stage2_document_annotation_nonauthority.v1"
-REVIEW_SCHEMA_VERSION = "rq_stage2_document_source_review.v1"
+SCHEMA_VERSION = "rq_stage2_document_annotation_local_edges_nonauthority.v1"
+REVIEW_SCHEMA_VERSION = "rq_stage2_document_source_review_local_edges.v1"
 STATUS = "sealed_complete_nonauthority_document_annotation"
 AUTHORITY_KIND = "document_local_source_annotation_nonauthority"
 CANONICALIZATION = source_tools.CANONICALIZATION
 FLOW_ROOT = "questionnaire-flow:root"
+FORBIDDEN_PARENT_PATH_MARKER = "#parent" "-path-"
+MAX_COMMITTED_FILE_BYTES = 50_000_000
+SEMANTIC_IDENTITY_BASIS_SHA256 = (
+    "e5a0768b67f62374f18ff6855c2e5aa7a53f480e8647654748c57ced517a06c7"
+)
 
 ANNOTATION_ROOT = ROOT / "docs" / "analysis" / "rq_stage2_annotations"
 REVIEW_PATH = ANNOTATION_ROOT / "document_080_q2021_source_review_v1.json"
@@ -131,13 +140,13 @@ OCCURRENCE_KEYS = (
     "occurrence_kind",
     "matched_text",
     "matched_utf8_sha256",
-    "flow_branch_paths",
+    "parent_flow_occurrence_ids",
 )
 FLOW_BRANCH_KEYS = (
     "flow_branch_id",
-    "parent_flow_branch_id",
+    "parent_flow_branch_ids",
+    "parent_source_occurrence_ids",
     "source_occurrence_id",
-    "branch_path",
     "interview_wave",
     "source_locator_id",
     "page_number",
@@ -222,6 +231,23 @@ def _content_sha256(value: Mapping[str, Any]) -> str:
     copied = copy.deepcopy(value)
     copied["integrity"]["content_sha256"] = "0" * 64
     return _canonical_digest(copied)
+
+
+def _semantic_identity_basis_sha256(review: Mapping[str, Any]) -> str:
+    """Hash representation-independent reviewed rows and local flow edges."""
+
+    return _canonical_digest(
+        {
+            "authority_kind": review["authority_kind"],
+            "document_source_position": review["document_source_position"],
+            "source_document_id": review["source_document_id"],
+            "page_review_rows": review["page_review_rows"],
+            "occurrence_specs_local_edges": review["occurrence_specs"],
+            "local_anchor_specs": review["local_anchor_specs"],
+            "repeat_alias_specs": review["repeat_alias_specs"],
+            "status": review["status"],
+        }
+    )
 
 
 def _expect_keys(
@@ -319,6 +345,8 @@ def _extract_page_texts(
 def _load_review(
     document: Mapping[str, Any], page_texts: Sequence[str]
 ) -> dict[str, Any]:
+    if REVIEW_PATH.stat().st_size >= MAX_COMMITTED_FILE_BYTES:
+        raise ValueError("document 80 source review exceeds artifact-size law")
     review = _strict_json(REVIEW_PATH, "document 80 source review")
     validate_review(review, document, page_texts)
     return review
@@ -368,21 +396,6 @@ def _utf8_slice(page_text: str, start: int, end: int) -> tuple[bytes, str]:
     return page_bytes[start:end], matched
 
 
-def _review_branch_ref(
-    review_occurrence_id: str,
-    parent_review_path: Sequence[str],
-    path_count: int,
-) -> str:
-    """Address one semantic branch when one printed label has many parents."""
-
-    if path_count == 1:
-        return review_occurrence_id
-    return (
-        f"{review_occurrence_id}#parent-path-"
-        f"{_canonical_digest(list(parent_review_path))}"
-    )
-
-
 def _source_printed_identifier(page_text: str, byte_start: int) -> str | None:
     for line in stage1_candidates._physical_lines(page_text):
         line_byte_start = len(page_text[: line["start"]].encode("utf-8"))
@@ -399,6 +412,8 @@ def validate_review(
     document: Mapping[str, Any],
     page_texts: Sequence[str],
 ) -> None:
+    if _contains_forbidden_path_product(review):
+        raise ValueError("source review serialized a full path product")
     _expect_keys(review, REVIEW_TOP_LEVEL_KEYS, "source review")
     expected_review_id = "rq-stage2-source-review:" + _canonical_digest(
         [document["source_document_id"], DOCUMENT_SOURCE_POSITION]
@@ -418,6 +433,11 @@ def validate_review(
         }
     ):
         raise ValueError("source review identity drift")
+    if (
+        _semantic_identity_basis_sha256(review)
+        != SEMANTIC_IDENTITY_BASIS_SHA256
+    ):
+        raise ValueError("source review semantic identity basis drift")
     method = review["review_method"]
     _expect_keys(
         method,
@@ -426,6 +446,8 @@ def validate_review(
             "whole_page_review",
             "span_granularity",
             "candidate_nonselection",
+            "flow_parent_representation",
+            "flow_edge_order",
             "global_ids_assigned",
         ),
         "source review method",
@@ -435,6 +457,8 @@ def validate_review(
         "whole_page_review": "all_531_pages_including_empty_occurrence_pages",
         "span_granularity": "exact_utf8_lexeme_physical_line_or_source_block",
         "candidate_nonselection": "candidates_joined_only_after_source_rows_complete",
+        "flow_parent_representation": "direct_parent_occurrence_ids_no_path_products",
+        "flow_edge_order": "logical_dag_may_reference_later_extracted_labels",
         "global_ids_assigned": False,
     }:
         raise ValueError("source review method drift")
@@ -480,7 +504,7 @@ def validate_review(
                 "utf8_byte_start",
                 "utf8_byte_end",
                 "occurrence_kind",
-                "parent_review_branch_paths",
+                "parent_review_occurrence_ids",
                 "review_note",
             ),
             "source review occurrence spec",
@@ -516,21 +540,17 @@ def validate_review(
                 _sha256(matched_bytes),
             ]
         )
-        paths = spec["parent_review_branch_paths"]
+        parents = spec["parent_review_occurrence_ids"]
         if (
-            not isinstance(paths, list)
-            or not paths
-            or any(not isinstance(path, list) for path in paths)
+            not isinstance(parents, list)
+            or any(not isinstance(parent, str) for parent in parents)
+            or len(parents) != len(set(parents))
+            or spec["review_occurrence_id"] in parents
+            or any(
+                FORBIDDEN_PARENT_PATH_MARKER in parent for parent in parents
+            )
         ):
-            raise ValueError("source review path domain drift")
-        if len(paths) != len({tuple(path) for path in paths}):
-            raise ValueError("source review duplicate applicable path")
-        if spec["occurrence_kind"] == "flow_branch_label":
-            if any(
-                path and path[-1] == spec["review_occurrence_id"]
-                for path in paths
-            ):
-                raise ValueError("source review branch cycle")
+            raise ValueError("source review local parent-edge domain drift")
         order = (
             page_number,
             spec["utf8_byte_start"],
@@ -548,50 +568,39 @@ def validate_review(
         review_ids.add(expected_id)
         spec_by_id[expected_id] = spec
         last_order = order
-    branch_specs = [
-        spec
-        for spec in occurrence_specs
-        if spec["occurrence_kind"] == "flow_branch_label"
-    ]
-    branch_ref_to_spec: dict[str, tuple[Mapping[str, Any], int]] = {}
-    for spec in branch_specs:
-        review_id = spec["review_occurrence_id"]
-        path_count = len(spec["parent_review_branch_paths"])
-        for parent_review_path in spec["parent_review_branch_paths"]:
-            branch_ref = _review_branch_ref(
-                review_id, parent_review_path, path_count
-            )
-            branch_ref_to_spec[branch_ref] = (
-                spec,
-                spec["parent_review_branch_paths"].index(parent_review_path),
-            )
     occurrence_order = {
         spec["review_occurrence_id"]: position
         for position, spec in enumerate(occurrence_specs)
     }
     for spec in occurrence_specs:
-        for path in spec["parent_review_branch_paths"]:
-            if any(
-                branch_ref not in branch_ref_to_spec for branch_ref in path
-            ):
-                raise ValueError("source review path has unresolved branch")
-            if any(
-                occurrence_order[
-                    branch_ref_to_spec[branch_ref][0]["review_occurrence_id"]
-                ]
-                >= occurrence_order[spec["review_occurrence_id"]]
-                for branch_ref in path
-            ):
-                raise ValueError("source review path has later branch")
-            expected_prefix: list[str] = []
-            for branch_ref in path:
-                branch_spec, semantic_ordinal = branch_ref_to_spec[branch_ref]
-                if (
-                    branch_spec["parent_review_branch_paths"][semantic_ordinal]
-                    != expected_prefix
-                ):
-                    raise ValueError("source review branch ancestry drift")
-                expected_prefix = [*expected_prefix, branch_ref]
+        parents = spec["parent_review_occurrence_ids"]
+        if any(
+            parent not in spec_by_id
+            or spec_by_id[parent]["occurrence_kind"] != "flow_branch_label"
+            for parent in parents
+        ):
+            raise ValueError("source review has unresolved nonbranch parent")
+        if parents != sorted(parents, key=occurrence_order.__getitem__):
+            raise ValueError(
+                "source review local parents are out of source order"
+            )
+    unresolved_flow_ids = {
+        spec["review_occurrence_id"]
+        for spec in occurrence_specs
+        if spec["occurrence_kind"] == "flow_branch_label"
+    }
+    resolved_flow_ids: set[str] = set()
+    while unresolved_flow_ids:
+        newly_resolved = {
+            review_id
+            for review_id in unresolved_flow_ids
+            if set(spec_by_id[review_id]["parent_review_occurrence_ids"])
+            <= resolved_flow_ids
+        }
+        if not newly_resolved:
+            raise ValueError("source review flow graph has a cycle")
+        resolved_flow_ids.update(newly_resolved)
+        unresolved_flow_ids.difference_update(newly_resolved)
 
     anchor_specs = review["local_anchor_specs"]
     anchor_covered: set[str] = set()
@@ -850,7 +859,7 @@ def _occurrence_row(
     document: Mapping[str, Any],
     locator_id: str,
     skeleton: Mapping[str, Any],
-    flow_paths: Sequence[Sequence[str]],
+    parent_occurrence_ids: Sequence[str],
 ) -> dict[str, Any]:
     remaining = (
         document["source_document_id"],
@@ -865,7 +874,7 @@ def _occurrence_row(
         skeleton["occurrence_kind"],
         skeleton["matched_text"],
         skeleton["matched_utf8_sha256"],
-        [list(path) for path in flow_paths],
+        list(parent_occurrence_ids),
     )
     occurrence_id = "psid-questionnaire-occurrence:" + _canonical_digest(
         list(remaining)
@@ -879,10 +888,6 @@ def _occurrence_row(
     )
 
 
-def _path_sort_key(path: Sequence[str]) -> tuple[bytes, ...]:
-    return tuple(item.encode("utf-8") for item in path)
-
-
 def _build_occurrences_and_branches(
     document: Mapping[str, Any],
     page_texts: Sequence[str],
@@ -894,15 +899,16 @@ def _build_occurrences_and_branches(
     dict[str, list[str]],
     dict[str, list[str]],
 ]:
-    occurrences: list[dict[str, Any]] = []
     branches: list[dict[str, Any]] = []
-    final_branch_path_by_review_ref: dict[str, list[str]] = {}
-    output_occurrence_ids_by_review_id: dict[str, list[str]] = defaultdict(
-        list
-    )
-    output_branch_ids_by_review_id: dict[str, list[str]] = defaultdict(list)
+    occurrence_by_review_id: dict[str, dict[str, Any]] = {}
+    branch_by_source_occurrence_id: dict[str, dict[str, Any]] = {}
     next_occurrence_index_by_page: dict[int, int] = defaultdict(int)
+    prepared_specs: list[tuple[Mapping[str, Any], bytes, str, int]] = []
+    occurrence_by_coordinate: dict[tuple[int, int], dict[str, Any]] = {}
 
+    # Reserve every same-page index in source order before resolving edges.
+    # Questionnaire diagrams can print a child response before all of its
+    # logical parents, so source ordering and DAG ordering are independent.
     for spec in review["occurrence_specs"]:
         page_number = spec["page_number"]
         matched_bytes, matched_text = _utf8_slice(
@@ -910,81 +916,100 @@ def _build_occurrences_and_branches(
             spec["utf8_byte_start"],
             spec["utf8_byte_end"],
         )
-        resolved_path_rows: list[tuple[list[str], list[str]]] = []
-        for review_path in spec["parent_review_branch_paths"]:
-            path = [FLOW_ROOT]
-            for review_branch_ref in review_path:
-                resolved = final_branch_path_by_review_ref.get(
-                    review_branch_ref
-                )
-                if resolved is None or resolved[:-1] != path:
-                    raise ValueError(
-                        "source review branch path does not resolve"
-                    )
-                path = list(resolved)
-            resolved_path_rows.append((path, review_path))
-        resolved_path_rows.sort(key=lambda row: _path_sort_key(row[0]))
-        translated_paths = [row[0] for row in resolved_path_rows]
-        if len(translated_paths) != len(
-            {tuple(path) for path in translated_paths}
-        ):
-            raise ValueError("translated occurrence paths are duplicated")
-        emitted_rows = (
-            [
-                ([path], review_path, semantic_ordinal)
-                for semantic_ordinal, (path, review_path) in enumerate(
-                    resolved_path_rows
-                )
-            ]
-            if spec["occurrence_kind"] == "flow_branch_label"
-            else [(translated_paths, [], 0)]
+        occurrence_index = next_occurrence_index_by_page[page_number]
+        next_occurrence_index_by_page[page_number] += 1
+        prepared_specs.append(
+            (spec, matched_bytes, matched_text, occurrence_index)
         )
+
+    def skeleton(
+        spec: Mapping[str, Any],
+        matched_bytes: bytes,
+        matched_text: str,
+        occurrence_index: int,
+    ) -> dict[str, Any]:
+        return {
+            "page_number": spec["page_number"],
+            "utf8_byte_start": spec["utf8_byte_start"],
+            "utf8_byte_end": spec["utf8_byte_end"],
+            "occurrence_index_on_page": occurrence_index,
+            "semantic_ordinal_at_span": 0,
+            "occurrence_kind": spec["occurrence_kind"],
+            "matched_text": matched_text,
+            "matched_utf8_sha256": _sha256(matched_bytes),
+        }
+
+    def resolve_parent_occurrence_ids(
+        spec: Mapping[str, Any],
+    ) -> list[str]:
+        result: list[str] = []
+        for parent_review_id in spec["parent_review_occurrence_ids"]:
+            parent = occurrence_by_review_id.get(parent_review_id)
+            if parent is None:
+                raise ValueError("source review parent occurrence unresolved")
+            result.append(parent["questionnaire_occurrence_id"])
+        return result
+
+    # Resolve branch labels in logical topological order. One printed label
+    # remains one occurrence and one branch even when it has several direct
+    # incoming edges; no route products are materialized.
+    pending_flow_specs = [
+        prepared
+        for prepared in prepared_specs
+        if prepared[0]["occurrence_kind"] == "flow_branch_label"
+    ]
+    while pending_flow_specs:
+        ready_flow_specs = [
+            prepared
+            for prepared in pending_flow_specs
+            if all(
+                parent in occurrence_by_review_id
+                for parent in prepared[0]["parent_review_occurrence_ids"]
+            )
+        ]
+        if not ready_flow_specs:
+            raise ValueError("source review flow graph has a cycle")
         for (
-            selected_paths,
-            source_review_path,
-            semantic_ordinal,
-        ) in emitted_rows:
-            skeleton = {
-                "page_number": page_number,
-                "utf8_byte_start": spec["utf8_byte_start"],
-                "utf8_byte_end": spec["utf8_byte_end"],
-                "occurrence_index_on_page": next_occurrence_index_by_page[
-                    page_number
-                ],
-                "semantic_ordinal_at_span": semantic_ordinal,
-                "occurrence_kind": spec["occurrence_kind"],
-                "matched_text": matched_text,
-                "matched_utf8_sha256": _sha256(matched_bytes),
-            }
-            next_occurrence_index_by_page[page_number] += 1
+            spec,
+            matched_bytes,
+            matched_text,
+            occurrence_index,
+        ) in ready_flow_specs:
+            parent_occurrence_ids = resolve_parent_occurrence_ids(spec)
             occurrence = _occurrence_row(
-                document, locator_id, skeleton, selected_paths
+                document,
+                locator_id,
+                skeleton(spec, matched_bytes, matched_text, occurrence_index),
+                parent_occurrence_ids,
             )
-            occurrences.append(occurrence)
             review_id = spec["review_occurrence_id"]
-            output_occurrence_ids_by_review_id[review_id].append(
-                occurrence["questionnaire_occurrence_id"]
+            occurrence_by_review_id[review_id] = occurrence
+            occurrence_by_coordinate[
+                (spec["page_number"], occurrence_index)
+            ] = occurrence
+            parent_branch_ids = (
+                [FLOW_ROOT]
+                if not parent_occurrence_ids
+                else [
+                    branch_by_source_occurrence_id[parent_id]["flow_branch_id"]
+                    for parent_id in parent_occurrence_ids
+                ]
             )
-            if spec["occurrence_kind"] != "flow_branch_label":
-                continue
-            parent_path = selected_paths[0]
-            parent_branch_id = parent_path[-1]
             branch_id = "questionnaire-flow:" + _canonical_digest(
                 [
-                    parent_branch_id,
+                    parent_branch_ids,
                     document["interview_waves"][0],
                     occurrence["questionnaire_occurrence_id"],
                 ]
             )
-            branch_path = [*parent_path, branch_id]
             branch = dict(
                 zip(
                     FLOW_BRANCH_KEYS,
                     (
                         branch_id,
-                        parent_branch_id,
+                        parent_branch_ids,
+                        parent_occurrence_ids,
                         occurrence["questionnaire_occurrence_id"],
-                        branch_path,
                         document["interview_waves"][0],
                         locator_id,
                         occurrence["page_number"],
@@ -996,18 +1021,63 @@ def _build_occurrences_and_branches(
                 )
             )
             branches.append(branch)
-            output_branch_ids_by_review_id[review_id].append(branch_id)
-            branch_ref = _review_branch_ref(
-                review_id,
-                source_review_path,
-                len(spec["parent_review_branch_paths"]),
-            )
-            final_branch_path_by_review_ref[branch_ref] = branch_path
+            branch_by_source_occurrence_id[
+                occurrence["questionnaire_occurrence_id"]
+            ] = branch
+        ready_ids = {
+            prepared[0]["review_occurrence_id"]
+            for prepared in ready_flow_specs
+        }
+        pending_flow_specs = [
+            prepared
+            for prepared in pending_flow_specs
+            if prepared[0]["review_occurrence_id"] not in ready_ids
+        ]
+
+    # Now all route labels exist, including later printed routes to a reused
+    # screen. Emit every non-flow atom once with direct parents only.
+    for spec, matched_bytes, matched_text, occurrence_index in prepared_specs:
+        if spec["occurrence_kind"] == "flow_branch_label":
+            continue
+        parent_occurrence_ids = resolve_parent_occurrence_ids(spec)
+        occurrence = _occurrence_row(
+            document,
+            locator_id,
+            skeleton(spec, matched_bytes, matched_text, occurrence_index),
+            parent_occurrence_ids,
+        )
+        occurrence_by_review_id[spec["review_occurrence_id"]] = occurrence
+        occurrence_by_coordinate[(spec["page_number"], occurrence_index)] = (
+            occurrence
+        )
+
+    occurrences = [
+        occurrence_by_coordinate[coordinate]
+        for coordinate in sorted(occurrence_by_coordinate)
+    ]
+    occurrence_position = {
+        occurrence["questionnaire_occurrence_id"]: position
+        for position, occurrence in enumerate(occurrences)
+    }
+    branches.sort(
+        key=lambda branch: occurrence_position[branch["source_occurrence_id"]]
+    )
     return (
         occurrences,
         branches,
-        dict(output_occurrence_ids_by_review_id),
-        dict(output_branch_ids_by_review_id),
+        {
+            review_id: [row["questionnaire_occurrence_id"]]
+            for review_id, row in occurrence_by_review_id.items()
+        },
+        {
+            review_id: [
+                branch_by_source_occurrence_id[
+                    occurrence["questionnaire_occurrence_id"]
+                ]["flow_branch_id"]
+            ]
+            for review_id, occurrence in occurrence_by_review_id.items()
+            if occurrence["occurrence_kind"] == "flow_branch_label"
+        },
     )
 
 
@@ -1301,15 +1371,13 @@ def _match_candidate_occurrences(
     )
 
 
-def _translated_candidate_parent_paths(
+def _translated_candidate_parent_occurrence_ids(
     candidate_flow: Mapping[str, Any],
     candidate_branch_source: Mapping[str, str],
     candidate_occurrence_outputs: Mapping[str, Sequence[str]],
-    branches_by_source_occurrence_id: Mapping[
-        str, Sequence[Mapping[str, Any]]
-    ],
-) -> list[list[str]]:
-    translated_paths = [[FLOW_ROOT]]
+    branches_by_source_occurrence_id: Mapping[str, Mapping[str, Any]],
+) -> list[str]:
+    translated: list[str] = []
     for candidate_branch_id in candidate_flow["candidate_parent_path"][1:]:
         source_candidate_id = candidate_branch_source.get(candidate_branch_id)
         if source_candidate_id is None:
@@ -1317,22 +1385,15 @@ def _translated_candidate_parent_paths(
         output_occurrence_ids = candidate_occurrence_outputs.get(
             source_candidate_id, []
         )
-        candidate_branches = [
-            branch
+        candidate_parent_ids = [
+            output_id
             for output_id in output_occurrence_ids
-            for branch in branches_by_source_occurrence_id.get(output_id, [])
+            if output_id in branches_by_source_occurrence_id
         ]
-        next_paths: list[list[str]] = []
-        for translated in translated_paths:
-            next_paths.extend(
-                list(branch["branch_path"])
-                for branch in candidate_branches
-                if branch["branch_path"][:-1] == translated
-            )
-        translated_paths = next_paths
-        if not translated_paths:
+        if not candidate_parent_ids:
             return []
-    return translated_paths
+        translated.extend(candidate_parent_ids)
+    return list(dict.fromkeys(translated))
 
 
 def _adjudicate(
@@ -1455,13 +1516,9 @@ def _adjudicate(
             )
         )
 
-    branches_by_source_occurrence_id: dict[str, list[Mapping[str, Any]]] = (
-        defaultdict(list)
-    )
-    for row in branches:
-        branches_by_source_occurrence_id[row["source_occurrence_id"]].append(
-            row
-        )
+    branches_by_source_occurrence_id = {
+        row["source_occurrence_id"]: row for row in branches
+    }
     candidate_branch_source = {
         row["candidate_branch_id"]: row["source_candidate_occurrence_id"]
         for row in candidates["candidate_flow_path_rows"]
@@ -1473,9 +1530,15 @@ def _adjudicate(
         flow_candidates_by_source[
             row["source_candidate_occurrence_id"]
         ].append(row)
+    flow_candidate_order = {
+        row["candidate_flow_path_id"]: position
+        for position, row in enumerate(candidates["candidate_flow_path_rows"])
+    }
     flow_candidate_to_branches: dict[str, list[str]] = defaultdict(list)
-    flow_branch_to_candidate: dict[str, str] = {}
-    flow_assignment_is_exact: dict[str, bool] = {}
+    # Overlapping occurrence candidates can project distinct flow candidates
+    # onto the same retained branch, so provenance is many-to-many here.
+    flow_branch_to_candidates: dict[str, list[str]] = defaultdict(list)
+    flow_assignment_is_exact: dict[tuple[str, str], bool] = {}
     for (
         candidate_occurrence_id,
         flow_candidates,
@@ -1484,60 +1547,84 @@ def _adjudicate(
             candidate_occurrence_id, []
         )
         output_branches = [
-            branch
+            branches_by_source_occurrence_id[output_id]
             for output_id in output_occurrence_ids
-            for branch in branches_by_source_occurrence_id.get(output_id, [])
+            if output_id in branches_by_source_occurrence_id
         ]
-        unclaimed_branch_ids = {
-            branch["flow_branch_id"] for branch in output_branches
-        }
-        # Prefer a candidate whose complete source ancestry translates exactly.
-        # A single candidate path may legitimately split into several semantic
-        # branch rows when one printed label applies on several complete paths.
         for candidate in flow_candidates:
-            translated_parent_paths = _translated_candidate_parent_paths(
-                candidate,
-                candidate_branch_source,
-                candidate_occurrence_outputs,
-                branches_by_source_occurrence_id,
+            translated_parent_ids = (
+                _translated_candidate_parent_occurrence_ids(
+                    candidate,
+                    candidate_branch_source,
+                    candidate_occurrence_outputs,
+                    branches_by_source_occurrence_id,
+                )
             )
+            candidate_is_root = candidate["candidate_parent_path"] == [
+                stage1_candidates.FLOW_ROOT_ID
+            ]
             matching = [
                 branch["flow_branch_id"]
                 for branch in output_branches
-                if branch["flow_branch_id"] in unclaimed_branch_ids
-                and branch["branch_path"][:-1] in translated_parent_paths
+                if (
+                    candidate_is_root
+                    and not branch["parent_source_occurrence_ids"]
+                    or not candidate_is_root
+                    and any(
+                        parent_id in branch["parent_source_occurrence_ids"]
+                        for parent_id in translated_parent_ids
+                    )
+                )
             ]
             candidate_id = candidate["candidate_flow_path_id"]
             for branch_id in matching:
                 flow_candidate_to_branches[candidate_id].append(branch_id)
-                flow_branch_to_candidate[branch_id] = candidate_id
-                flow_assignment_is_exact[branch_id] = True
-                unclaimed_branch_ids.remove(branch_id)
+                flow_branch_to_candidates[branch_id].append(candidate_id)
+                branch = next(
+                    row
+                    for row in output_branches
+                    if row["flow_branch_id"] == branch_id
+                )
+                flow_assignment_is_exact[(candidate_id, branch_id)] = (
+                    candidate_is_root
+                    and not branch["parent_source_occurrence_ids"]
+                    or not candidate_is_root
+                    and translated_parent_ids
+                    == branch["parent_source_occurrence_ids"]
+                )
 
-        # A root-fallback candidate is source evidence for any retained labels
-        # left after exact ancestry matching, but its path must be corrected.
+        # If none of the machine parent alternatives reproduces a retained
+        # label's complete local edge set, attach that label to its one
+        # root-fallback candidate as a modified candidate. This preserves the
+        # candidate source edge without pretending its proposed ancestry was
+        # accepted.
+        claimed_branch_ids = {
+            branch_id
+            for candidate in flow_candidates
+            for branch_id in flow_candidate_to_branches[
+                candidate["candidate_flow_path_id"]
+            ]
+        }
         fallback = next(
             (
-                row
-                for row in flow_candidates
-                if row["basis_rule_id"] == "root_fallback_v1"
+                candidate
+                for candidate in flow_candidates
+                if candidate["basis_rule_id"] == "root_fallback_v1"
                 and not flow_candidate_to_branches[
-                    row["candidate_flow_path_id"]
+                    candidate["candidate_flow_path_id"]
                 ]
             ),
             None,
         )
         if fallback is not None:
             candidate_id = fallback["candidate_flow_path_id"]
-            for branch_id in [
-                branch["flow_branch_id"]
-                for branch in output_branches
-                if branch["flow_branch_id"] in unclaimed_branch_ids
-            ]:
+            for branch in output_branches:
+                branch_id = branch["flow_branch_id"]
+                if branch_id in claimed_branch_ids:
+                    continue
                 flow_candidate_to_branches[candidate_id].append(branch_id)
-                flow_branch_to_candidate[branch_id] = candidate_id
-                flow_assignment_is_exact[branch_id] = False
-            unclaimed_branch_ids.clear()
+                flow_branch_to_candidates[branch_id].append(candidate_id)
+                flow_assignment_is_exact[(candidate_id, branch_id)] = False
 
     flow_candidate_disposition: dict[str, str] = {}
     for candidate in candidates["candidate_flow_path_rows"]:
@@ -1551,7 +1638,7 @@ def _adjudicate(
             )
             disposition = (
                 "accepted"
-                if flow_assignment_is_exact[output_ids[0]]
+                if flow_assignment_is_exact[(candidate_id, output_ids[0])]
                 and source_disposition == "accepted"
                 else "modified"
             )
@@ -1568,8 +1655,8 @@ def _adjudicate(
                 _note_row(
                     "flow_path",
                     candidate_id,
-                    "candidate_path_not_selected_by_source_ancestry",
-                    "The complete source review rejected this alternative path or its source label.",
+                    "candidate_edge_not_selected_by_source_ancestry",
+                    "The complete source review rejected this candidate parent edge or its source label.",
                 )
             )
         elif disposition in {"modified", "split"}:
@@ -1577,24 +1664,27 @@ def _adjudicate(
                 _note_row(
                     "flow_path",
                     candidate_id,
-                    "candidate_path_corrected_to_resolved_stage2_ancestry",
-                    "The source label was retained with independently resolved stage-2 branch ancestry and semantic path multiplicity.",
+                    "candidate_edge_corrected_to_resolved_stage2_ancestry",
+                    "The source label was retained with independently resolved direct-parent stage-2 ancestry.",
                 )
             )
     for branch in branches:
         branch_id = branch["flow_branch_id"]
-        candidate_id = flow_branch_to_candidate.get(branch_id)
-        if candidate_id is None:
-            candidate_ids: list[str] = []
+        candidate_ids = flow_branch_to_candidates.get(branch_id, [])
+        candidate_ids.sort(key=flow_candidate_order.__getitem__)
+        if not candidate_ids:
             action = "manual_add"
         else:
-            candidate_ids = [candidate_id]
-            disposition = flow_candidate_disposition[candidate_id]
-            action = {
-                "accepted": "candidate_accepted",
-                "modified": "candidate_modified",
-                "split": "candidate_split",
-            }[disposition]
+            dispositions_for_output = {
+                flow_candidate_disposition[candidate_id]
+                for candidate_id in candidate_ids
+            }
+            if dispositions_for_output == {"accepted"}:
+                action = "candidate_accepted"
+            elif "split" in dispositions_for_output:
+                action = "candidate_split"
+            else:
+                action = "candidate_modified"
         output_adjudications.append(
             _output_adjudication_row(
                 "flow_branch", branch_id, candidate_ids, action
@@ -1787,6 +1877,11 @@ def _seal(
         ),
         "flow_branch_count": len(branches),
         "flow_branch_domain_sha256": _canonical_digest(list(branches)),
+        "flow_parent_representation": (
+            "direct_parent_occurrence_ids_no_path_products"
+        ),
+        "flow_edge_order": "logical_dag_may_reference_later_extracted_labels",
+        "serialized_path_product_count": 0,
         "local_anchor_classification_count": len(local_anchors),
         "local_anchor_classification_domain_sha256": _canonical_digest(
             list(local_anchors)
@@ -2203,6 +2298,59 @@ def _validate_adjudication_relations(
             raise ValueError("adjudication note domain drift")
 
 
+def _topologically_order_branches(
+    branches: Sequence[Mapping[str, Any]],
+) -> list[Mapping[str, Any]]:
+    branch_by_id: dict[str, Mapping[str, Any]] = {}
+    source_position: dict[str, int] = {}
+    for position, branch in enumerate(branches):
+        branch_id = branch["flow_branch_id"]
+        if branch_id in branch_by_id:
+            raise ValueError("duplicate flow branch ID")
+        branch_by_id[branch_id] = branch
+        source_position[branch_id] = position
+
+    children: dict[str, list[str]] = defaultdict(list)
+    indegree: dict[str, int] = {}
+    for branch_id, branch in branch_by_id.items():
+        parent_ids = branch["parent_flow_branch_ids"]
+        if (
+            not isinstance(parent_ids, list)
+            or not parent_ids
+            or len(parent_ids) != len(set(parent_ids))
+            or FLOW_ROOT in parent_ids
+            and parent_ids != [FLOW_ROOT]
+            or any(
+                parent_id != FLOW_ROOT and parent_id not in branch_by_id
+                for parent_id in parent_ids
+            )
+        ):
+            raise ValueError("flow branch parent domain drift")
+        nonroot_parents = [
+            parent_id for parent_id in parent_ids if parent_id != FLOW_ROOT
+        ]
+        indegree[branch_id] = len(nonroot_parents)
+        for parent_id in nonroot_parents:
+            children[parent_id].append(branch_id)
+
+    ready = sorted(
+        (branch_id for branch_id, degree in indegree.items() if degree == 0),
+        key=source_position.__getitem__,
+    )
+    ordered_ids: list[str] = []
+    while ready:
+        branch_id = ready.pop(0)
+        ordered_ids.append(branch_id)
+        for child_id in children[branch_id]:
+            indegree[child_id] -= 1
+            if indegree[child_id] == 0:
+                ready.append(child_id)
+        ready.sort(key=source_position.__getitem__)
+    if len(ordered_ids) != len(branches):
+        raise ValueError("flow branch graph has a cycle")
+    return [branch_by_id[branch_id] for branch_id in ordered_ids]
+
+
 def _validate_flow_laws(value: Mapping[str, Any]) -> None:
     occurrences = value["questionnaire_occurrence_rows"]
     branches = value["flow_branch_rows"]
@@ -2229,51 +2377,21 @@ def _validate_flow_laws(value: Mapping[str, Any]) -> None:
             )
         ].append(occurrence)
     for same_span in same_span_rows.values():
-        ordinals = [row["semantic_ordinal_at_span"] for row in same_span]
-        if len(same_span) == 1:
-            if ordinals != [0]:
-                raise ValueError("singleton occurrence semantic ordinal drift")
-            continue
-        if any(len(row["flow_branch_paths"]) != 1 for row in same_span):
-            raise ValueError("multi-parent label semantic path-count drift")
-        parent_paths = [row["flow_branch_paths"][0] for row in same_span]
         if (
-            any(
-                row["occurrence_kind"] != "flow_branch_label"
-                for row in same_span
-            )
-            or ordinals != list(range(len(same_span)))
-            or parent_paths != sorted(parent_paths, key=_path_sort_key)
+            len(same_span) != 1
+            or same_span[0]["semantic_ordinal_at_span"] != 0
         ):
-            raise ValueError("multi-parent label semantic ordinal drift")
-    resolved_paths: set[tuple[str, ...]] = {(FLOW_ROOT,)}
+            raise ValueError("local-edge occurrence atom or ordinal drift")
+
     last_branch_occurrence_position = -1
     for branch in branches:
         _expect_keys(branch, FLOW_BRANCH_KEYS, "flow branch")
         occurrence = occurrence_by_id.get(branch["source_occurrence_id"])
-        parent_path = branch["branch_path"][:-1]
-        expected_id = (
-            None
-            if occurrence is None
-            else "questionnaire-flow:"
-            + _canonical_digest(
-                [
-                    branch["parent_flow_branch_id"],
-                    branch["interview_wave"],
-                    branch["source_occurrence_id"],
-                ]
-            )
-        )
         if (
             occurrence is None
             or occurrence["occurrence_kind"] != "flow_branch_label"
-            or branch["flow_branch_id"] != expected_id
             or branch["flow_branch_id"] in branch_by_id
             or branch["source_occurrence_id"] in branch_by_occurrence
-            or tuple(parent_path) not in resolved_paths
-            or parent_path[-1] != branch["parent_flow_branch_id"]
-            or branch["branch_path"]
-            != [*occurrence["flow_branch_paths"][0], branch["flow_branch_id"]]
             or branch["interview_wave"] != occurrence["interview_wave"]
             or branch["source_locator_id"] != occurrence["source_locator_id"]
             or branch["page_number"] != occurrence["page_number"]
@@ -2282,17 +2400,15 @@ def _validate_flow_laws(value: Mapping[str, Any]) -> None:
             or branch["branch_label"] != occurrence["matched_text"]
             or branch["branch_label_sha256"]
             != occurrence["matched_utf8_sha256"]
-            or branch["flow_branch_id"] in parent_path
             or occurrence_position[branch["source_occurrence_id"]]
             <= last_branch_occurrence_position
         ):
-            raise ValueError("flow branch ancestry or identity drift")
+            raise ValueError("flow branch local ancestry or identity drift")
         last_branch_occurrence_position = occurrence_position[
             branch["source_occurrence_id"]
         ]
         branch_by_id[branch["flow_branch_id"]] = branch
         branch_by_occurrence[branch["source_occurrence_id"]] = branch
-        resolved_paths.add(tuple(branch["branch_path"]))
     flow_label_ids = {
         row["questionnaire_occurrence_id"]
         for row in occurrences
@@ -2300,77 +2416,178 @@ def _validate_flow_laws(value: Mapping[str, Any]) -> None:
     }
     if set(branch_by_occurrence) != flow_label_ids:
         raise ValueError("flow label/branch one-to-one cover drift")
-    for occurrence in occurrences:
-        paths = occurrence["flow_branch_paths"]
+    for branch in branches:
+        occurrence = occurrence_by_id[branch["source_occurrence_id"]]
+        parent_occurrence_ids = branch["parent_source_occurrence_ids"]
+        expected_parent_branch_ids = (
+            [FLOW_ROOT]
+            if not parent_occurrence_ids
+            else [
+                branch_by_occurrence[parent_id]["flow_branch_id"]
+                for parent_id in parent_occurrence_ids
+                if parent_id in branch_by_occurrence
+            ]
+        )
+        expected_id = "questionnaire-flow:" + _canonical_digest(
+            [
+                branch["parent_flow_branch_ids"],
+                branch["interview_wave"],
+                branch["source_occurrence_id"],
+            ]
+        )
         if (
-            not paths
-            or paths != sorted(paths, key=_path_sort_key)
-            or len(paths) != len({tuple(path) for path in paths})
-            or any(tuple(path) not in resolved_paths for path in paths)
-            or occurrence["occurrence_kind"] == "flow_branch_label"
-            and len(paths) != 1
+            branch["flow_branch_id"] != expected_id
+            or parent_occurrence_ids
+            != occurrence["parent_flow_occurrence_ids"]
+            or len(parent_occurrence_ids) != len(set(parent_occurrence_ids))
+            or branch["parent_flow_branch_ids"] != expected_parent_branch_ids
+            or any(
+                parent_id not in branch_by_occurrence
+                for parent_id in parent_occurrence_ids
+            )
         ):
-            raise ValueError("occurrence flow path drift")
-        for path in paths:
-            previous_position = -1
-            for branch_id in path[1:]:
-                branch = branch_by_id.get(branch_id)
-                if branch is None:
-                    raise ValueError("occurrence flow path unresolved")
-                position = occurrence_position[branch["source_occurrence_id"]]
-                if position <= previous_position:
-                    raise ValueError("occurrence flow path cycle")
-                previous_position = position
-
-
-def _path_is_prefix(prefix: Sequence[str], path: Sequence[str]) -> bool:
-    return len(prefix) <= len(path) and list(prefix) == list(
-        path[: len(prefix)]
-    )
+            raise ValueError("flow branch local ancestry or identity drift")
+    _topologically_order_branches(branches)
+    for occurrence in occurrences:
+        parents = occurrence["parent_flow_occurrence_ids"]
+        if (
+            not isinstance(parents, list)
+            or len(parents) != len(set(parents))
+            or any(
+                FORBIDDEN_PARENT_PATH_MARKER in parent for parent in parents
+            )
+            or any(parent not in branch_by_occurrence for parent in parents)
+            or parents != sorted(parents, key=occurrence_position.__getitem__)
+        ):
+            raise ValueError("occurrence local parent-edge drift")
 
 
 def _branch_compatible(
     occurrences: Sequence[Mapping[str, Any]],
-    resolved_paths: Sequence[Sequence[str]],
+    branches: Sequence[Mapping[str, Any]],
 ) -> bool:
-    """Return only the section-19 existential compatibility Boolean."""
+    """Return existential single-path compatibility from the local flow DAG."""
 
     if (
         not occurrences
         or len({row["interview_wave"] for row in occurrences}) != 1
     ):
         return False
-    return any(
-        all(
-            any(
-                _path_is_prefix(occurrence_path, possible_path)
-                for occurrence_path in occurrence["flow_branch_paths"]
-            )
-            for occurrence in occurrences
+    branch_id_by_occurrence = {
+        branch["source_occurrence_id"]: branch["flow_branch_id"]
+        for branch in branches
+    }
+    bits_at_branch: dict[str, int] = defaultdict(int)
+    for bit_index, occurrence in enumerate(occurrences):
+        parent_occurrence_ids = occurrence["parent_flow_occurrence_ids"]
+        allowed_branch_ids = (
+            [FLOW_ROOT]
+            if not parent_occurrence_ids
+            else [
+                branch_id_by_occurrence[parent_id]
+                for parent_id in parent_occurrence_ids
+            ]
         )
-        for possible_path in resolved_paths
-    )
+        for branch_id in allowed_branch_ids:
+            bits_at_branch[branch_id] |= 1 << bit_index
+
+    # Each mask represents one realizable route prefix. Incoming alternatives
+    # contribute separate masks: never union masks from mutually exclusive
+    # parents at a merge. Inclusion-maximal masks are sufficient because any
+    # future suffix available to a subset is also available to its superset.
+    full_mask = (1 << len(occurrences)) - 1
+    masks_by_branch: dict[str, frozenset[int]] = {
+        FLOW_ROOT: frozenset({bits_at_branch[FLOW_ROOT]})
+    }
+    if full_mask in masks_by_branch[FLOW_ROOT]:
+        return True
+    for branch in _topologically_order_branches(branches):
+        branch_id = branch["flow_branch_id"]
+        parent_ids = branch["parent_flow_branch_ids"]
+        if branch_id in masks_by_branch or any(
+            parent_id not in masks_by_branch for parent_id in parent_ids
+        ):
+            raise ValueError("flow branch is duplicate, unresolved, or later")
+        candidate_masks = {
+            parent_mask | bits_at_branch[branch_id]
+            for parent_id in parent_ids
+            for parent_mask in masks_by_branch[parent_id]
+        }
+        maximal_masks = frozenset(
+            candidate
+            for candidate in candidate_masks
+            if not any(
+                candidate != other and candidate | other == other
+                for other in candidate_masks
+            )
+        )
+        masks_by_branch[branch_id] = maximal_masks
+        if full_mask in maximal_masks:
+            return True
+    return False
 
 
 def _validate_compatibility_predicate() -> None:
-    root = [FLOW_ROOT]
-    left = [FLOW_ROOT, "questionnaire-flow:left"]
-    right = [FLOW_ROOT, "questionnaire-flow:right"]
-    left_child = [*left, "questionnaire-flow:left-child"]
-    domain = [root, left, left_child, right]
-    root_row = {"interview_wave": 2021, "flow_branch_paths": [root]}
+    left_occurrence = "occurrence:left"
+    right_occurrence = "occurrence:right"
+    left_child_occurrence = "occurrence:left-child"
+    merge_occurrence = "occurrence:merge"
+    branches = [
+        {
+            # Deliberately source-earlier than its logical parents to test lawful
+            # forward references independently of source order.
+            "flow_branch_id": "questionnaire-flow:merge",
+            "parent_flow_branch_ids": [
+                "questionnaire-flow:left",
+                "questionnaire-flow:right",
+            ],
+            "source_occurrence_id": merge_occurrence,
+        },
+        {
+            "flow_branch_id": "questionnaire-flow:left",
+            "parent_flow_branch_ids": [FLOW_ROOT],
+            "source_occurrence_id": left_occurrence,
+        },
+        {
+            "flow_branch_id": "questionnaire-flow:right",
+            "parent_flow_branch_ids": [FLOW_ROOT],
+            "source_occurrence_id": right_occurrence,
+        },
+        {
+            "flow_branch_id": "questionnaire-flow:left-child",
+            "parent_flow_branch_ids": ["questionnaire-flow:left"],
+            "source_occurrence_id": left_child_occurrence,
+        },
+    ]
+    root_row = {"interview_wave": 2021, "parent_flow_occurrence_ids": []}
     left_or_right = {
         "interview_wave": 2021,
-        "flow_branch_paths": [left, right],
+        "parent_flow_occurrence_ids": [left_occurrence, right_occurrence],
     }
-    left_row = {"interview_wave": 2021, "flow_branch_paths": [left]}
-    right_row = {"interview_wave": 2021, "flow_branch_paths": [right]}
-    other_wave = {"interview_wave": 2005, "flow_branch_paths": [left]}
+    left_row = {
+        "interview_wave": 2021,
+        "parent_flow_occurrence_ids": [left_occurrence],
+    }
+    right_row = {
+        "interview_wave": 2021,
+        "parent_flow_occurrence_ids": [right_occurrence],
+    }
+    merge_row = {
+        "interview_wave": 2021,
+        "parent_flow_occurrence_ids": [merge_occurrence],
+    }
+    other_wave = {
+        "interview_wave": 2020,
+        "parent_flow_occurrence_ids": [left_occurrence],
+    }
     if (
-        not _branch_compatible([root_row, left_row], domain)
-        or not _branch_compatible([left_or_right, left_row], domain)
-        or _branch_compatible([left_row, right_row], domain)
-        or _branch_compatible([left_row, other_wave], domain)
+        not _branch_compatible([root_row, left_row], branches)
+        or not _branch_compatible([left_or_right, left_row], branches)
+        or not _branch_compatible([left_row, merge_row], branches)
+        or not _branch_compatible([right_row, merge_row], branches)
+        or _branch_compatible([left_row, right_row], branches)
+        or _branch_compatible([left_row, right_row, merge_row], branches)
+        or _branch_compatible([left_row, other_wave], branches)
     ):
         raise ValueError("branch compatibility predicate drift")
 
@@ -2380,10 +2597,6 @@ def _validate_local_anchor_laws(value: Mapping[str, Any]) -> None:
         row["questionnaire_occurrence_id"]: row
         for row in value["questionnaire_occurrence_rows"]
     }
-    resolved_paths = [
-        [FLOW_ROOT],
-        *[row["branch_path"] for row in value["flow_branch_rows"]],
-    ]
     component_kinds = {
         "remuneration_component_anchor",
         "context_anchor",
@@ -2411,7 +2624,10 @@ def _validate_local_anchor_laws(value: Mapping[str, Any]) -> None:
                 for parent in parents
             )
             or parents
-            and not _branch_compatible([source, *parents], resolved_paths)
+            and not _branch_compatible(
+                [source, *parents],
+                value["flow_branch_rows"],
+            )
         ):
             raise ValueError("local anchor parent or path compatibility drift")
 
@@ -2425,6 +2641,22 @@ def _contains_witness_key(value: Any) -> bool:
     if isinstance(value, list):
         return any(_contains_witness_key(child) for child in value)
     return False
+
+
+def _contains_forbidden_path_product(value: Any) -> bool:
+    if isinstance(value, Mapping):
+        forbidden_keys = {
+            "branch_" + "path",
+            "flow_branch_" + "paths",
+            "parent_review_branch_" + "paths",
+        }
+        return any(
+            key in forbidden_keys or _contains_forbidden_path_product(child)
+            for key, child in value.items()
+        )
+    if isinstance(value, list):
+        return any(_contains_forbidden_path_product(child) for child in value)
+    return isinstance(value, str) and FORBIDDEN_PARENT_PATH_MARKER in value
 
 
 def validate_annotation(
@@ -2601,6 +2833,10 @@ def validate_annotation(
     _validate_local_anchor_laws(value)
     if _contains_witness_key(value):
         raise ValueError("compatibility witness was serialized")
+    if _contains_forbidden_path_product(value):
+        raise ValueError(
+            "full path product or composite path ID was serialized"
+        )
     _validate_adjudication_relations(value, candidates)
 
 
@@ -2617,8 +2853,29 @@ def _inputs() -> tuple[
     document, candidate_identity = _document_identity(replay, index)
     page_texts = _extract_page_texts(document, replay)
     review = _load_review(document, page_texts)
-    # Candidate bytes are intentionally not opened until the complete source review
-    # has validated against every page above.
+    locator = _locator(document)
+    (
+        occurrences,
+        branches,
+        occurrence_ids_by_review_id,
+        _branch_ids_by_review_id,
+    ) = _build_occurrences_and_branches(
+        document, page_texts, review, locator["locator_id"]
+    )
+    _page_rows(document, page_texts, locator["locator_id"], occurrences)
+    local_anchors = _local_anchor_rows(
+        review, occurrences, occurrence_ids_by_review_id
+    )
+    _local_repeat_rows(review, occurrence_ids_by_review_id)
+    candidate_free_projection = {
+        "questionnaire_occurrence_rows": occurrences,
+        "flow_branch_rows": branches,
+        "local_anchor_classification_rows": local_anchors,
+    }
+    _validate_flow_laws(candidate_free_projection)
+    _validate_local_anchor_laws(candidate_free_projection)
+    # Candidate bytes are intentionally not opened until the complete source
+    # projection has validated against every page and every local relationship.
     candidates = _load_candidates(replay, candidate_identity, page_texts)
     return (
         replay,
@@ -2631,23 +2888,42 @@ def _inputs() -> tuple[
     )
 
 
-def _mutations(value: Mapping[str, Any]) -> list[tuple[str, dict[str, Any]]]:
-    mutations: list[tuple[str, dict[str, Any]]] = []
+def _mutation_specs(value: Mapping[str, Any]) -> list[tuple[str, Any]]:
+    mutations: list[tuple[str, Any]] = []
 
     def add(name: str, mutate: Any) -> None:
-        copied = copy.deepcopy(value)
-        mutate(copied)
-        copied["integrity"]["content_sha256"] = _content_sha256(copied)
-        mutations.append((name, copied))
+        mutations.append((name, mutate))
 
-    def select_path_subset(row: dict[str, Any]) -> None:
+    def select_parent_edge_subset(row: dict[str, Any]) -> None:
         for occurrence in row["questionnaire_occurrence_rows"]:
-            if len(occurrence["flow_branch_paths"]) > 1:
-                occurrence["flow_branch_paths"] = occurrence[
-                    "flow_branch_paths"
+            if len(occurrence["parent_flow_occurrence_ids"]) > 1:
+                occurrence["parent_flow_occurrence_ids"] = occurrence[
+                    "parent_flow_occurrence_ids"
                 ][:-1]
                 return
-        raise ValueError("mutation fixture has no multipath occurrence")
+        raise ValueError("mutation fixture has no multi-parent occurrence")
+
+    def add_composite_parent_id(row: dict[str, Any]) -> None:
+        for occurrence in row["questionnaire_occurrence_rows"]:
+            if occurrence["parent_flow_occurrence_ids"]:
+                occurrence["parent_flow_occurrence_ids"].append(
+                    occurrence["parent_flow_occurrence_ids"][0]
+                    + FORBIDDEN_PARENT_PATH_MARKER
+                    + "0" * 64
+                )
+                return
+        raise ValueError("mutation fixture has no parented occurrence")
+
+    def set_mismatched_branch_parent(row: dict[str, Any]) -> None:
+        first = row["flow_branch_rows"][0]
+        later = row["flow_branch_rows"][-1]
+        first["parent_source_occurrence_ids"] = [later["source_occurrence_id"]]
+        first["parent_flow_branch_ids"] = [later["flow_branch_id"]]
+
+    def set_cyclic_parent(row: dict[str, Any]) -> None:
+        first = row["flow_branch_rows"][0]
+        first["parent_source_occurrence_ids"] = [first["source_occurrence_id"]]
+        first["parent_flow_branch_ids"] = [first["flow_branch_id"]]
 
     add("missing_page", lambda row: row["questionnaire_page_rows"].pop())
     add(
@@ -2697,26 +2973,28 @@ def _mutations(value: Mapping[str, Any]) -> list[tuple[str, dict[str, Any]]]:
             ),
         ),
     )
+    add(
+        "omitted_local_parent_key",
+        lambda row: row["questionnaire_occurrence_rows"][0].pop(
+            "parent_flow_occurrence_ids"
+        ),
+    )
+    add(
+        "serialized_path_product_key",
+        lambda row: row["questionnaire_occurrence_rows"][0].__setitem__(
+            "flow_branch_paths", [[FLOW_ROOT]]
+        ),
+    )
+    add("composite_parent_path_id", add_composite_parent_id)
     if value["flow_branch_rows"]:
         add(
             "unresolved_branch",
             lambda row: row["flow_branch_rows"][0].__setitem__(
-                "parent_flow_branch_id", "questionnaire-flow:" + "f" * 64
+                "parent_flow_branch_ids", ["questionnaire-flow:" + "f" * 64]
             ),
         )
-        add(
-            "later_parent",
-            lambda row: row["flow_branch_rows"][0].__setitem__(
-                "parent_flow_branch_id",
-                row["flow_branch_rows"][-1]["flow_branch_id"],
-            ),
-        )
-        add(
-            "cyclic_branch",
-            lambda row: row["flow_branch_rows"][0]["branch_path"].append(
-                row["flow_branch_rows"][0]["flow_branch_id"]
-            ),
-        )
+        add("mismatched_branch_parent", set_mismatched_branch_parent)
+        add("cyclic_branch", set_cyclic_parent)
         add("omitted_label", lambda row: row["flow_branch_rows"].pop())
         add(
             "duplicate_label",
@@ -2725,8 +3003,8 @@ def _mutations(value: Mapping[str, Any]) -> list[tuple[str, dict[str, Any]]]:
             ),
         )
         add(
-            "selected_path_subset",
-            select_path_subset,
+            "selected_parent_edge_subset",
+            select_parent_edge_subset,
         )
     if value["local_repeat_alias_evidence_rows"]:
         add(
@@ -2760,7 +3038,27 @@ def run_mutation_tests(
         dict[str, Any],
     ],
 ) -> None:
-    for name, mutation in _mutations(value):
+    review_mutation = copy.deepcopy(inputs[5])
+    review_mutation["occurrence_specs"][0]["review_note"] += " mutation"
+    review_mutation["integrity"]["content_sha256"] = _content_sha256(
+        review_mutation
+    )
+    try:
+        validate_review(review_mutation, inputs[2], inputs[4])
+    except ValueError as error:
+        if "semantic identity basis drift" not in str(error):
+            raise ValueError(
+                "review semantic-identity mutation failed for the wrong reason"
+            ) from error
+    else:
+        raise ValueError(
+            "mutation was not rejected: review_semantic_identity_drift"
+        )
+
+    for name, mutate in _mutation_specs(value):
+        mutation = copy.deepcopy(value)
+        mutate(mutation)
+        mutation["integrity"]["content_sha256"] = _content_sha256(mutation)
         try:
             validate_annotation(mutation, *inputs)
         except ValueError:
@@ -2769,6 +3067,8 @@ def run_mutation_tests(
 
 
 def _write_or_check(path: Path, raw: bytes, check: bool) -> None:
+    if len(raw) >= MAX_COMMITTED_FILE_BYTES:
+        raise ValueError(f"stage-2 artifact exceeds size law: {path.name}")
     if check:
         if not path.is_file() or path.read_bytes() != raw:
             raise ValueError(
