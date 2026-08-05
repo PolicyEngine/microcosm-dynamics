@@ -21,6 +21,8 @@ ERA_ID = "wave1968_ry1968_1974_early_totals"
 ERA_PATH = builder.era_output_path(ERA_ID)
 ERA_2_ID = "ry1975_1977_spouse_concept_seam"
 ERA_2_PATH = builder.era_output_path(ERA_2_ID)
+ERA_3_ID = "ry1978_1992_pre_er_totals"
+ERA_3_PATH = builder.era_output_path(ERA_3_ID)
 EXPECTED_RAW_SHA256 = (
     "bcc3c542bc7e8410e025e4a3aa23ea0bb42da5b579d0c4d346746a9632911a44"
 )
@@ -51,6 +53,21 @@ EXPECTED_ERA_2_INPUT_DOMAIN_SHA256 = (
 EXPECTED_ERA_2_ROW_SEAL_DOMAIN_SHA256 = (
     "f32423b910a57720dcd8ca15664bcb6fe070fa2350d3698e5442585b33756561"
 )
+EXPECTED_ERA_3_RAW_SHA256 = (
+    "59ae2e095e079b16b91c1cf5138803939f7b65f951e3fff6b4f789d428c1dde2"
+)
+EXPECTED_ERA_3_CONTENT_SHA256 = (
+    "f1a80b78800acb7ce8e53f3db8422a9ccaad88673c924ae03420045201be0ee7"
+)
+EXPECTED_ERA_3_INPUT_KEYSET_SHA256 = (
+    "12e6037fa8b1b781b04373471f32d32cbf3e43f20d609d39b255f95c4f34d066"
+)
+EXPECTED_ERA_3_INPUT_DOMAIN_SHA256 = (
+    "09e6c2e65180e70237a90eac6e67a9e010cf6d79e0a53bb35994cc3b90a5b477"
+)
+EXPECTED_ERA_3_ROW_SEAL_DOMAIN_SHA256 = (
+    "4c692ec6ff0554e639ed5ba61f6ac947a799e2e15fe3f85ba09de8279cee8fb0"
+)
 
 
 @pytest.fixture(scope="module")
@@ -74,8 +91,13 @@ def era_2_rebuilt(era_2_inputs: builder.EraInputs) -> dict:
 
 
 @pytest.fixture(scope="module")
-def future_era_3_inputs() -> builder.EraInputs:
-    return builder.load_era_inputs("ry1978_1992_pre_er_totals")
+def era_3_inputs() -> builder.EraInputs:
+    return builder.load_era_inputs(ERA_3_ID)
+
+
+@pytest.fixture(scope="module")
+def era_3_rebuilt(era_3_inputs: builder.EraInputs) -> dict:
+    return builder.build_era_seal(ERA_3_ID, era_3_inputs)
 
 
 def _annotation_replay_pages(
@@ -214,6 +236,51 @@ def test_era_2_pins_exact_counts_identities_and_row_domains(
         builder.NONAUTHORITY_STATEMENT
     )
     assert builder.FORBIDDEN_EMISSION_KEYS.isdisjoint(era_2_rebuilt)
+
+
+def test_era_3_pins_exact_counts_identities_and_row_domains(
+    era_3_rebuilt: dict,
+) -> None:
+    assert era_3_rebuilt["interview_waves"] == list(range(1979, 1994))
+    assert era_3_rebuilt["document_source_positions"] == list(range(23, 52))
+    assert era_3_rebuilt["document_annotation_input_count"] == 29
+    assert era_3_rebuilt["document_annotation_input_keyset_sha256"] == (
+        EXPECTED_ERA_3_INPUT_KEYSET_SHA256
+    )
+    assert era_3_rebuilt["document_annotation_input_domain_sha256"] == (
+        EXPECTED_ERA_3_INPUT_DOMAIN_SHA256
+    )
+    assert {
+        key: era_3_rebuilt[key]
+        for key in builder.PINNED_ANNOTATION_INPUT_SEALS[ERA_3_ID]
+    } == builder.PINNED_ANNOTATION_INPUT_SEALS[ERA_3_ID]
+    assert era_3_rebuilt["row_domain_seal_count"] == 5
+    assert era_3_rebuilt["row_domain_seal_domain_sha256"] == (
+        EXPECTED_ERA_3_ROW_SEAL_DOMAIN_SHA256
+    )
+    assert era_3_rebuilt["row_domain_seal_rows"] == list(
+        builder.PINNED_ROW_DOMAIN_SEALS[ERA_3_ID]
+    )
+    seals = {
+        row["row_domain"]: row for row in era_3_rebuilt["row_domain_seal_rows"]
+    }
+    assert seals["document_source_rows"]["row_count"] == 29
+    assert seals["questionnaire_page_rows"]["row_count"] == 3_349
+    assert seals["questionnaire_occurrence_rows"]["row_count"] == 43_818
+    assert seals["flow_branch_rows"]["row_count"] == 16_063
+
+    raw = ERA_3_PATH.read_bytes()
+    assert len(raw) == 23_106
+    assert len(raw) < builder.MAX_COMMITTED_FILE_BYTES
+    assert hashlib.sha256(raw).hexdigest() == EXPECTED_ERA_3_RAW_SHA256
+    assert era_3_rebuilt["integrity"]["content_sha256"] == (
+        EXPECTED_ERA_3_CONTENT_SHA256
+    )
+    assert era_3_rebuilt["nonauthority_statement"] == (
+        builder.NONAUTHORITY_STATEMENT
+    )
+    assert builder.FORBIDDEN_EMISSION_KEYS.isdisjoint(era_3_rebuilt)
+    assert b"raster_only_incompleteness_census" not in raw
 
 
 def test_era_1_artifact_is_small_canonical_and_nonauthority(
@@ -368,12 +435,12 @@ def test_legacy_full_coordinate_order_is_independent_of_sparse_indices(
         builder._verify_occurrence_source_order(rows)
 
 
-def test_future_era_3_mixed_family_preflight_and_fail_closed_scope(
-    future_era_3_inputs: builder.EraInputs,
+def test_era_3_mixed_family_and_fail_closed_scope(
+    era_3_inputs: builder.EraInputs,
 ) -> None:
     by_position = {
         annotation.value["document_source_position"]: annotation
-        for annotation in future_era_3_inputs.annotations
+        for annotation in era_3_inputs.annotations
     }
     declared = by_position[34]
     shard = by_position[36]
@@ -389,7 +456,7 @@ def test_future_era_3_mixed_family_preflight_and_fail_closed_scope(
         for row in declared.value["questionnaire_page_rows"]
     ].count("declared_domain_deferred") == 46
 
-    replay_pages = _annotation_replay_pages(future_era_3_inputs, declared)
+    replay_pages = _annotation_replay_pages(era_3_inputs, declared)
     for mutation_kind in ("omitted_statement", "boolean_page", "widened"):
         mutation = copy.deepcopy(declared.value)
         mutated_scope = mutation["document_local_annotation_scope"]
@@ -406,11 +473,11 @@ def test_future_era_3_mixed_family_preflight_and_fail_closed_scope(
 
 
 def test_local_parent_order_and_flow_edge_literal_fail_closed(
-    future_era_3_inputs: builder.EraInputs,
+    era_3_inputs: builder.EraInputs,
 ) -> None:
     local = next(
         annotation
-        for annotation in future_era_3_inputs.annotations
+        for annotation in era_3_inputs.annotations
         if annotation.value["document_source_position"] == 31
     )
     value = local.value
