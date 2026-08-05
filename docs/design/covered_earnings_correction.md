@@ -40940,3 +40940,6588 @@ only the separately reviewed source implementation, codebook derivations,
 canonical relation build, `--check`, Q5, and expected-negative guarded steps
 stated above; it authorizes no correction production evaluation, path switch,
 context run, label change, output, or publication.
+
+## 24. AMENDMENT SECTION — Amendment 10: derived unit authority and the completed successor census
+
+### 24.1 Status, immutable revision-11 base, scope, and precedence
+
+- **Status law: PROSPECTIVE AMENDMENT.** This section proposes revision 12.
+  Drafting, audit, review, and response commits are not ratification and
+  authorize no source compiler, derivation row, Q5, slot, inventory, value
+  map, crosswalk, capture, correction evaluation, context run, output, or
+  publication. Only the exact bytes accepted under §24.10.2 may become D10,
+  and they become operative only through the fresh registration successor in
+  §24.9.
+- **Immediate immutable base.** D9 is the complete ratified revision-11 design
+  at commit `3941e2eec27ca9c8c986c74742eb43dd62a3f830`, path
+  `docs/design/covered_earnings_correction.md`, mode `100644`, Git blob
+  `bb11f807e7683086b55703ea28346dacec9d192e`, exactly 2,653,817 raw bytes,
+  and SHA-256
+  `4f6219ba7162bcc53d390a107e8db2ebe289565c6776fbda2c4acdffd0ba4609`.
+  Those complete bytes must byte-equal D10's half-open range `[0,2653817)`.
+  A digest, ancestry edge, transitive consumer, working-tree file, or
+  candidate-prefix assertion cannot substitute for comparing all bytes.
+- **Illustrative-fence exception.** D9 lines 3,834-3,837 remain the sole
+  inherited strict-JSON-fence exception, exactly as §23.1 fixes. Every `json`
+  fence authored here strict-parses as one value after recursive duplicate-key
+  rejection. Bulk relations below use `text` fences of canonical JSON lines
+  and obey the separately stated line laws.
+- **Two under-determined members; one resolved.** The codebook derivation lane
+  identified exactly two source-required members that registered sources did
+  not determine: `typed_value_unit` and `missing_reason_code`. Amendment 10
+  resolves only `typed_value_unit`, from verbatim field-description prose
+  under §24.3. It neither invents nor defaults `missing_reason_code`; §24.10
+  records and escalates that unresolved authority.
+- **Exact scope.** Amendment 10 creates no registered source, evidence
+  relation, canonical source relation, member-row representation arm, or
+  production consumer. It defines derived audit relations, a successor census
+  payload, and lifecycle schemas. None is selectable as source authority or
+  as a new production relation. It changes no authenticated byte, page-text
+  digest, entry, lexeme, scalar, bound, step, padding arm, renderer, DFA,
+  replay, range partition, or member-row shape.
+- **Supersession by construction.** §§1-23 remain byte-identical and visible.
+  The §20, §22, and §23 figures remain the true history of a classifier that
+  did not evaluate the unit precondition. §24 recomputes the same ordered
+  denominator after evaluating that precondition and gives the descendants
+  new identities. Its supersession rests on the completed source census and
+  pinned relations, not merely on use of a different selector.
+- **Precedence.** Earlier law controls except where §24 expressly composes,
+  supersedes, or replaces it. §23.3.2's prohibitions survive: no scope is
+  narrowed to fit the corpus, no predecessor aggregate is repinned to tolerate
+  movement, no default unit is invented, and no member-row value is sourced
+  from an evidence artifact.
+
+The section is indivisible: §24.2 completes the semantic census; §24.3 fixes
+the extraction law; §24.4 fixes the successor census and pins; §24.5
+recomputes every downstream population; §24.6 supplies five mandatory gates;
+§§24.7-24.9 close replacement, comparator, and lifecycle identifiers; and
+§24.10 fixes the post-amendment order.
+
+### 24.2 The applied contradiction and the completed semantic census
+
+#### 24.2.1 Governing law and empirical absence
+
+The immutable prefix requires every value-code range member to carry one
+common nonempty unit obtained from the complete codebook domain, forbids a
+default or evidence-artifact repair, and sends a nonunitized range to
+`incomplete_source_numeric_authority`. The 89,599-field codebook domain has
+no unit column. Its only registered bytes capable of naming a unit are each
+field's own raw codebook-description prose. Amendment 10 therefore derives a
+unit only from that prose and leaves every absence, defeat, and conflict
+visible.
+
+#### 24.2.2 Total per-start adjudication and the impossibility theorem
+
+Normalization for statement candidates is §24.3.1's exact U+0020
+transformation. A normalized start is byte zero or the byte after any U+0020;
+a statement ends at the first period followed by U+0020 or end, inclusive, or
+at description end. Title/header candidate discovery instead scans the
+complete raw description under §24.3.3's closed 38-family generic and
+13-family literal grammar. Every title span is a zero-based UTF-8 byte
+interval relative to that complete raw description. A separately derived,
+bounded raw context header supplies the title-role grounding; it never limits
+candidate discovery. Neither census infers totality from a start count, a
+frozen semantic vector, production selection, or the bounded header.
+
+`SEGMENT_START_AUTHORITY` was regenerated from the clean pre-title vector and
+the complete extended adjudication. It contains one cleartext row for each of
+59,445 distinct normalized period segments. Its vector has exactly one
+position for every U+0020 word start in that segment: `W` means an
+independently adjudicated whole-domain denotation, `N` an explicit
+non-whole-domain start, and `D` an explicit no-denotation start. There is no
+default. An unknown segment, missing position, malformed vector, or unknown
+tag is `unadjudicated_start` and aborts. The relation covers 1,114,747
+distinct contextual starts, is 8,466,288 compact-JSONL bytes, has raw SHA-256
+`1b0b81c08b601fae0c212dbae8a3671f3dd498a202c7fc5ee754f775c0b62bac`,
+and canonical-array SHA-256
+`17ee53b725abca483a24c65c351d0d25b1e7af996a49f267fbe9048e88319af7`.
+One segment/start appears in eight title contexts and also in V225 body prose;
+its meanings differ. The base vector retains its body disposition and an
+exact source-description-keyed title overlay supplies the title disposition.
+No global vector is widened to cure that contextual collision.
+
+The materialized normalized candidate table has one row per contextual start
+with exact members `segment`, `word_ordinal`, `start_utf8_byte`, `candidate`,
+`context_key_sha256`, `adjudication`, `occurrence_count`, `field_count`, and
+`witness_field_key`. It has 1,114,747 rows, 2,240,669 occurrences, 717,810
+distinct candidate texts, and canonical-array SHA-256
+`6b8908d0e239ab79d71a34e13c946f4b4adc5da8a62ad69dd98be6c6f39ab808`.
+The 13 additional raw-Actual-only spellings make the separately named
+candidate-plus-Actual union 717,823 distinct texts; that union is not the
+contextual table.
+
+The ordered occurrence relation independently serializes every
+`[interview_wave,raw_field_id,segment_ordinal,start_utf8_byte,context_key_sha256,adjudication,selected]`
+row. Its 2,240,669 rows occupy 269,160,082 bytes and hash to
+`7513022d6f79af192c935cda2e1c47728a5d326a28618b8fe041c8ffb0a5c981`.
+
+| Start disposition | Occurrences |
+|---|---:|
+| `whole_domain_denotation` (`W`) | 16,461 |
+| `explicit_no_whole_domain_denotation` (`N`) | 76,557 |
+| `explicit_no_denotation` (`D`) | 2,147,651 |
+| `unadjudicated_start` | 0 |
+| **complete normalized relation** | **2,240,669** |
+
+The independent title/header audit retains one row for every denominator
+field, including descriptions with no match. Each row binds the field key;
+the complete `raw_candidate_domain`, its byte count and SHA-256; the separate
+`bounded_context_header` and its SHA-256; all maximal families, spellings,
+description-relative UTF-8 spans, adjudications, reasons, and the exact raw
+context that grounds them. Its candidate array deterministically derives the
+aggregate title-field result. Across all 89,599 fields it finds 80,306 maximal
+candidate occurrences in 51,957 fields: 8,203 `W` starts, 72,103 `N` starts,
+and zero unadjudicated starts. Those positives occupy 8,184 fields. Beyond
+the eight referee witnesses, 8,195 `W` starts occupy 8,176 fields. The
+exhaustive discovery stages are:
+
+| Conservative superdomain stage | Candidate occurrences | Fields containing a candidate |
+|---|---:|---:|
+| pre-round-3 bounded domain | 58,298 | 46,453 |
+| complete first-question lines | 978 | 788 |
+| singleton terminal-selector delta | 509 | 463 |
+| later question lines | 414 | 145 |
+| suffix on a question's physical line | 53 | 48 |
+| exact question continuation | 84 | 84 |
+| remaining complete-description body | 19,970 | 11,085 |
+| **complete raw-description superdomain** | **80,306** | **51,957 distinct fields** |
+
+The per-stage field figures overlap and therefore are not summed. The
+complete 89,599-row compact-JSONL audit relation is 87,768,625 bytes with raw
+SHA-256
+`9cecfe201bc2adf1280bc1e1c8a111bbaaa002e53bafd51e3d97444c01b4c380`;
+its canonical-array SHA-256 is
+`debab6c570fa0ca16b6f2ac87d820370bfa2f09002d39687cfca0b33f5568384`.
+Zero unknowns means every candidate found by this source-wide scanner received
+an exact `W` or `N` adjudication. It does not mean an unmatched row was
+omitted, an `N` was frozen in place, or a prior authority vector was trusted.
+This audit-only ledger was staged, closed, and independently reviewed before
+any generated title authority, segment vector, successor census, or storage
+floor was regenerated; regeneration then consumed the identical adjudication.
+
+`TITLE_START_AUTHORITY` contains 54,185 exact contextual groundings: 5,766
+positive contexts and 48,419 negative contexts. Candidate discovery is
+independent of this authority: the authority attaches only after the complete
+raw description, family, spelling, and byte interval have been found, and an
+absent contextual key becomes `unadjudicated_title_start` and aborts. The
+effective segment authority is regenerated from the clean pre-title vector
+and this full adjudication. After candidates that share one normalized start
+are coalesced, its overlay transitions are exactly 72,025 `D→N`, 8,203
+`D→W`, and 19 preserved `W→W` cases in which a title-role defeat cannot
+demote an independently positive statement start; there are no `W→N`
+demotions. Thus zero `U` records completed adjudication, not a frozen semantic
+outcome.
+
+The remaining-body stage is itself completely dispositioned. Its 19,970
+starts are 26 `W` and 19,944 `N`. The negative reasons partition exactly as
+11,004 delegated to primary statement grammar, 3,618 formula or operand
+defeats, 2,005 instruction/threshold/table/subrange defeats, 1,456 calendar
+or reference body prose, 839 explanatory body prose, 648 delegated to coding
+grammar, 365 delegated to raw-Actual grammar, eight input-table or subrange
+phrases, and one unmarked dollar conversion input. Delegation makes the
+statement grammars authoritative at those starts; it does not silently remove
+the starts from the title audit.
+
+As a boundary audit, allowing each admitted compound's spaces to be one or
+more SP/LF characters produces 368 raw compound occurrences. Maximal munch
+reduces them to 256 occurrences in 227 fields: 2 `W` and 254 `N`, split 118
+inside the bounded header and 138 in the remaining body. Only V324's exact
+`In\nDollars` and ER81270's exact `how\nmany` are production title candidates
+across an LF; all other generalized matches are grounded defeats or statement
+delegations. Production therefore has exactly those two cross-LF positives,
+not a general whitespace-normalization permission.
+
+Production is compared bidirectionally with the combined authority. A `W`
+start not selected by production increments `unselected`; a production
+selection at a non-`W` start increments `overselected`. Both final counts are
+zero. Thus a controlled symmetry such as accepted `Actual number of minutes`
+but invisible `Code actual number of minutes` cannot pass, and neither can a
+title match omitted because production did not already recognize it.
+
+Two further raw relations cover distinctions that normalization would erase.
+The `Actual ` relation has 82 distinct rows and 322 occurrences (80 whole,
+two explicit no-denotations), zero unknowns, and array SHA-256
+`bf77cd7294752ac9e6ac01d4d68efac86c47b7327094d5eec479d9db1f27176b`.
+The coding-start relation scans the exact heads `Code `, `Coded `, `CODE `,
+`ENTER `, `ENTER:`, `RECORD `, and `Record `; its 203 distinct rows cover
+1,154 occurrences with zero unknowns and array SHA-256
+`9f6cd23d36ad6825a17d3ece2d2612ef89c066d5c587bd72d1933f19e4c0c195`.
+Together the normalized and raw-Actual audits contain 2,240,991 occurrences.
+
+The referee witnesses are direct whole-field title denotations, grounded as
+follows:
+
+| Field | Exact raw title | Grounding | Result |
+|---|---|---|---|
+| `[1968,"V47"]` | `Head's annual hours working for money` | family 1968 p13; page-text SHA-256 `d512c97144aaed3f82e425b9c06e77f84e657dd3bc0d50be4d2821d2889dab40` | `hour` |
+| `[1968,"V323"]` | `Total 1967 FAMILY Real Income Net of Cost of Earning Income - In Dollars` | family 1968 p102; page-text SHA-256 `730b4413c63909af1005a500db1689e9d6dac958a6e32bd7a5d191cae8c632e6` | `united_states_dollar` |
+| `[1968,"V331"]` | `Total 1967 Family Contractual Payments - In Dollars` | family 1968 pp104–105; page-text SHA-256 `00c6df7ac4e7c10ab30fe74ce3b70ba1fd3b2ac09e6f62432b0e8c9f1a55f63e`, `49116854686125e5c9781ee3d3ab6fe18012e336f5932c3582a85434dedb4fd3` | `united_states_dollar` |
+| `[1968,"V332"]` | `Total 1967 Family Fixed Expenditures - In Dollars` | same authenticated pp104–105 grounding | `united_states_dollar` |
+| `[1968,"V333"]` | `Total 1967 Family Uncommitted Money Income - in Dollars` | same authenticated pp104–105 grounding | `united_states_dollar` |
+| `[1968,"V370"]` | `Average Age of Head and Wife (In Years)` | family 1968 p118; page-text SHA-256 `b3c755a5aa80f7af1d1435f59ecef462e8953a8ca221a13a44ee7e11ef4c569e` | `year` |
+| `[2003,"ER21015"]` | `Elapsed Interview Length in Minutes` | authenticated raw page-range SHA-256 `4ac987fcf14d900d89dc490800cfd7a1c963da6171812666fe20148e10e3d9c2` | `minute` |
+| `[2005,"ER25015"]` | `Elapsed Interview Length in Minutes` | authenticated raw page-range SHA-256 `0ce5ad6d0524e1c42da5eef105370daf4dd14156b9142179956cd9439d18c7e7` | `minute` |
+
+V31 is the mandatory negative control. Complete-description discovery exposes
+all eight of its title-grammar candidates, including the later dollar, year,
+weekly, and percent phrases. Every one is exactly `N` with reason
+`input_table_or_subrange_not_field_denotation`: the phrases modify a displayed
+weekly per-person input table, not the adjusted annual family field. The
+field therefore remains without a title denotation under §24.2.3. This is a
+grounded defeat, not an absence created by a first-line scan.
+
+**Why a missed denotation under the closed grammar is impossible.** Every
+normalized statement start and every maximal title candidate anywhere in the
+complete raw description is materialized before production selection. Every
+counted start is context-keyed and adjudicated; every occurrence carries its
+selected bit; the all-field title relation retains zero-match rows and the
+complete raw bytes; every raw Actual and coding start is separately
+exact-adjudicated; unknowns abort; and both selection mismatch counts must be
+zero. The effective vector was regenerated from statements plus titles rather
+than trusted from its pre-title form. Totality therefore follows from the
+closed grammars' complete per-start adjudication and exact cover, not from
+counting, freezing, bounding discovery to a header, or treating production
+output as its own semantic authority. A new spelling or context changes at
+least one pinned relation and cannot enter a successful build.
+
+#### 24.2.3 Food context, copular denotation, coding instructions, and raw spacing
+
+The food-family adjudication follows the complete prose. A construction or
+provenance sentence does not deny the independent whole-domain unit sentence
+in the same description. The construction-context repair is cumulative and
+occurred in two nonoverlapping waves. Commit `cc6ec71` reclassified 10 exact
+predicate spellings with 29 occurrences in 29 independently positive fields.
+Commit `73eea8f` then reclassified 108 additional spellings with 124
+occurrences in 110 independently positive fields. Thus the complete corpus
+contains 118 reclassified predicates, 153 occurrences, and 139 independently
+positive fields. All 118 are `no_unit_naming_clause`, not competing
+denotations. The aggregation veto remains unchanged and is not triggered by
+context.
+
+In V2470 the broad sentence beginning `This variable's values are based on
+USDA Low-Cost Plan estimates of weekly food costs` is context; the independent
+sentence `The actual weekly food needs in dollars and cents are coded here.`
+denotes the field. In V3694 and V9378 the outer multiplication recipes are
+context; their independent code-value or value sentence denotes the complete
+annual field in whole dollars. The raw V31 prose is materially different:
+`the values in this table are in 1967 dollars` denotes the displayed weekly,
+per-person input table, while V31 is an adjusted annual family total. Assigning
+V31 dollars would require dimensional propagation through sum, ×52, and
+scale adjustments, which this verbatim-clause law forbids.
+
+| Complete raw witness | Verbatim deciding prose | Grounding | Result |
+|---|---|---|---|
+| `[1968,"V31"]` | `the values in this table are in 1967 dollars.` | family 1968 p9; page-text SHA-256 `e526d0f3119f93381707e41eed77078f0b8acdd37e2732fe0b36e716fcc19238` | no field denotation |
+| `[1972,"V2470"]` | `The actual weekly food needs in dollars and cents are coded here.` | family 1972 p17; page-text SHA-256 `e843a4e428cf1614883ceef6664a583c05e4bebfcbf8f15aaea7624902356ac7` | `united_states_dollar` |
+| `[1974,"V3694"]` | `The code values for this variable represent the food standard for the 1974 family in whole dollars.` | family 1974 p92; page-text SHA-256 `6bc2dcb8541adad78bdb02dd69006b119c080d0bc58b4d935569492ab1df2bf3` | `united_states_dollar` |
+| `[1983,"V9378"]` | `The values represent the actual annual food standard in whole dollars for the 1983 family.` | family 1983 p193; page-text SHA-256 `1bf93be9c4d07cfa0db4c357aad7afca6f5a68243cb849999b683a01ab4a8b1c` | `united_states_dollar` |
+
+The complete 22-field weekly title family is V1169, V1870, V2470, V3019,
+V3439, V3839, V4348, V5256, V5757, V6363, V6961, V7553, V8251, V8853,
+V10224, V12373, V13625, V14672, V16146, V18881, V20181, and V21487. The
+complete nine-field later annual family is V9378, V11025, V12376, V13628,
+V14675, V16149, V18886, V20186, and V21492; V3694 is the additional earlier
+annual witness. Every complete raw description in those positive families
+derives `united_states_dollar`; no test substitutes an isolated nested sentence
+for the complete family description.
+
+The extended grammar admits copular `are `, exact coding instructions, and
+the additional direct families surfaced by total adjudication:
+
+| Field | Verbatim prose | Grounding | Result |
+|---|---|---|---|
+| `[1969,"V494"]` | `values for this variable are in 1967 dollars.` | family 1969 p12; page-text SHA-256 `17fe08ccc34569721e9c9c84da5e5e8d48164510a3e224fa6a615b7bfc98d8c4` | `united_states_dollar` |
+| `[1992,"V21488"]`, `[1993,"V23325"]` | `this variable is not adjusted for inflation (it is in 1967 dollars), nor is it exactly comparable to the official poverty standard; such changes are left to users.` | family 1992 p382, SHA-256 `82c643d9418d11eda02d349562c8574cfef1be188ac11038624a73d070be2606`; family 1993 p455, SHA-256 `f1f7f66ae2ef2169406749c89f31e6242ab382878c3750872f40cd3f0bfd4516` | `united_states_dollar` |
+| `[1997,"ER12067"]`, ER12069, ER12073, ER12075, ER12077, ER12079, ER12082 | `dollar amounts reported in 1997 for the prior year are in 1996 dollars.` | family 1997 pp580–584; page-text SHA-256 `5802be09cd4e65def534cc5ba8b9862022109382301c2777445a144de94ae9dc`, `b6fbbc63a1172bcb2691a3fe0fbd05718382302ac8927b0f607ace2a08d0f976`, `a6275c0c5b27aa686502b950fd59a88a9274cf33e0ccd851f239a10e4726bb25`, `3d37f43cabf50768d5f1c7cc068f56e95679dd1bf8d6466ed4a3a641d977e057`, `afaede2f5012ec05202c47fb15ffdc58a710bf58a3956ae637f0798a8294c48f` | `united_states_dollar` |
+| `[1994,"ER3062"]`–ER3073 | `Months are coded below with January=1, February=2, etc.` | family 1994 pp324–325; page-text SHA-256 `a90cd99ff5ba76dc353d69f1e75b8d67b4479b5fec0f4159489d61d13146cc82`, `6e6e5957f39ac9158b47541dcae027ae412347f84ce760fa26c35abfe5fd5503` | `month` |
+| `[1994,"ER2005"]`, `[1995,"ER5004"]`, `[1996,"ER7004"]` | `The first 2 digits represent the month, the last 2 digits represent the day.` | each family p3; page-text SHA-256 `6714c508b4535eeaa68dc386d104712d196f8b38afc343e6cc7914760961a29b`, `438ff6a3dc00aaa987bd6992844dc918dc904a2f467437b478f1198b3530dfea`, `e6823960aef173cd5e18bbb3ad3b7101cf46846aad62e36781bbe7207dd2a826` | compound MMDD; `defeating_clause` |
+| `[1968,"V100"]` | `Code actual number of MINUTES (e.g. 1 hour and 10 minutes - 70 minutes).` | family 1968 p25; page-text SHA-256 `0cf92aae1713afe9af2c2b3d3319d2addfb18cda731c9f887224709e56ae2ead` | `minute` |
+| `[1968,"V121"]` | `Code number of children in FU in school and living at home) (exclude in-laws)` | family 1968 p32; page-text SHA-256 `30b847324f8cfbf093acc6117cce974d99e23b62d3f9ea28505bc7a292d0e501` | `count` |
+| `[1968,"V229"]` | `Code dollars and cents per hour.` | family 1968 p70; page-text SHA-256 `e551ada8f551d46e6a17dd2e05d661f68c3d5f8ae52c494605f26bf4ef921e65` | `united_states_dollar_per_hour` |
+| `[1968,"V373"]` | `Coded in Dollars` | family 1968 p119; page-text SHA-256 `d450adf58a8499edc903e7b08a39594413394c7e0e1ee1a3bb0f20d6b6fece5f` | `united_states_dollar` |
+| `[1971,"V2137"]` | `Code number of things mentioned to J1` | family 1971 p99; page-text SHA-256 `bd58022a9cbc62495a0fcfd2acc89df95993134a52eadaf6eca47c8576e5fc81` | `count` |
+| `[1971,"V2192"]` | `Code Number of States or Countries in which R has lived including present location` | family 1971 pp116–117; page-text SHA-256 `cf3cc0f391b286e1afb1be6677cbd2671e90b584bb2e09195d0b42a31a50dfc2`, `157f402a016656c10f62018f634ed079a8188c9d468d6a432633c74d50ff4a95` | `count` |
+| `[1976,"V4367"]` | `Code 1-11 for actual number of months used food stamps in 1975` | family 1976 p18; page-text SHA-256 `ca30a22e29ad1b05380a94fcf3b8a3df373753e50a38abb48b36e2a86b143076` | `month` |
+| `[1976,"V4742"]` | `Code actual number of minutes` | family 1976 p129; page-text SHA-256 `98c1eb87fa101c720876373b9157211f2ab8850d38d356cd3000d9dccb26ff89` | `minute` |
+| `[1977,"V5453"]` | `Code actual number of weeks (01 - 98)` | family 1977 p69; page-text SHA-256 `fd1759c51ba51eb25aeffaadee0fccf32fe3207a6b2f1b7272658f5ea492e05a` | `week` |
+
+The sweep additionally dispositions uppercase priority-code instructions,
+conditional `ENTER:` sentinels, `ENTER`/`RECORD` prose, punctuation after an
+opening parenthesis, and abbreviation boundaries such as `e.g.` and `Col.`.
+A frozen longer coding span is admitted only when its exact bytes occur at
+that start; a truncated or altered continuation is unadjudicated and fails
+closed.
+
+Raw V418 contains the exact three-space spelling
+`Actual - Required rooms   V381 = 5 - 9`. It is an explicit
+no-denotation recipe predicate. The evidence-artifact one-space sibling is
+not an authority row and fails closed.
+
+The following fence is the complete raw-Actual relation. Each line is one
+canonical JSON object plus LF; it is 13,317 bytes with raw SHA-256
+`35ec66c5eaa3295e6c4ba6f258e24fec4abfa271d3932fb11db796d0cf262621`
+and canonical-array SHA-256
+`bf77cd7294752ac9e6ac01d4d68efac86c47b7327094d5eec479d9db1f27176b`.
+
+~~~text
+{"adjudication":"explicit_no_denotation","candidate":"Actual - Required rooms   V381 = 5 - 9","field_count":1,"occurrence_count":1,"witness_field_key":[1968,"V418"]}
+{"adjudication":"explicit_no_denotation","candidate":"Actual - Required rooms = 2 or more (V891 EQ 5 - 8)","field_count":1,"occurrence_count":1,"witness_field_key":[1969,"V896"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for Family","field_count":4,"occurrence_count":4,"witness_field_key":[1977,"V5642"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for Family (1969)","field_count":1,"occurrence_count":1,"witness_field_key":[1969,"V891"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for Family (1981)","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V8080"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for Family of This Size, Age and Sex Composition (V102, V124)","field_count":1,"occurrence_count":1,"witness_field_key":[1968,"V381"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for the 1983 Family","field_count":1,"occurrence_count":1,"witness_field_key":[1983,"V9390"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for the 1984 Family","field_count":1,"occurrence_count":1,"witness_field_key":[1984,"V11037"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for the 1985 Family","field_count":1,"occurrence_count":1,"witness_field_key":[1985,"V12395"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual Minus Required Rooms for the FU (1982)","field_count":1,"occurrence_count":1,"witness_field_key":[1982,"V8704"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age","field_count":6,"occurrence_count":6,"witness_field_key":[1976,"V4629"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age in years","field_count":1,"occurrence_count":1,"witness_field_key":[1969,"V1011"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head","field_count":6,"occurrence_count":6,"witness_field_key":[1972,"V2542"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head 98","field_count":1,"occurrence_count":1,"witness_field_key":[1976,"V4436"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head's oldest child","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7365"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head's second oldest child","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7366"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Head's third oldest child","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7367"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Wife","field_count":6,"occurrence_count":6,"witness_field_key":[1972,"V2544"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of Wife or Permanent Friend","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V7660"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual age of youngest child","field_count":2,"occurrence_count":2,"witness_field_key":[1980,"V7071"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual average income","field_count":1,"occurrence_count":1,"witness_field_key":[1972,"V2970"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollar amount","field_count":1,"occurrence_count":1,"witness_field_key":[1976,"V4617"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollar amount of Head's labor income","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7413"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollar amount of transfers","field_count":5,"occurrence_count":5,"witness_field_key":[1975,"V4168"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollar and cents per hour","field_count":1,"occurrence_count":1,"witness_field_key":[1976,"V4790"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollars and cents per hour","field_count":32,"occurrence_count":32,"witness_field_key":[1976,"V4591"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollars and cents per hour.","field_count":5,"occurrence_count":5,"witness_field_key":[1979,"V6519"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual dollars per week","field_count":2,"occurrence_count":2,"witness_field_key":[1976,"V4782"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual expenditure in hundreds of dollars","field_count":2,"occurrence_count":2,"witness_field_key":[1976,"V5089"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual expenditure in hundreds of dollars.","field_count":2,"occurrence_count":2,"witness_field_key":[1975,"V4217"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hourly amount","field_count":2,"occurrence_count":2,"witness_field_key":[1976,"V4510"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hourly rate","field_count":1,"occurrence_count":1,"witness_field_key":[1977,"V5442"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hourly wage","field_count":6,"occurrence_count":6,"witness_field_key":[1976,"V4513"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hours per week","field_count":4,"occurrence_count":4,"witness_field_key":[1976,"V4571"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual hours worked per week","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7246"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual income/needs ratio","field_count":4,"occurrence_count":4,"witness_field_key":[1975,"V4171"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual interview number was coded: 0001-6620)","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V8109"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual marginal tax rate","field_count":2,"occurrence_count":2,"witness_field_key":[1977,"V5302"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual minus required rooms for family","field_count":7,"occurrence_count":7,"witness_field_key":[1970,"V1588"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number","field_count":4,"occurrence_count":4,"witness_field_key":[1978,"V5845"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number in FU","field_count":7,"occurrence_count":7,"witness_field_key":[1972,"V2468"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number in Family Unit","field_count":1,"occurrence_count":1,"witness_field_key":[1975,"V3920"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number in family unit","field_count":1,"occurrence_count":1,"witness_field_key":[1976,"V4435"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of children","field_count":15,"occurrence_count":15,"witness_field_key":[1972,"V2545"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of days","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V7980"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of dollars","field_count":1,"occurrence_count":1,"witness_field_key":[1976,"V4770"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of exemptions","field_count":2,"occurrence_count":2,"witness_field_key":[1980,"V7001"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of hours","field_count":4,"occurrence_count":4,"witness_field_key":[1976,"V4523"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of hours per week","field_count":24,"occurrence_count":24,"witness_field_key":[1976,"V4581"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of hours per year","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V7789"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of hours worked","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7255"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of miles","field_count":8,"occurrence_count":8,"witness_field_key":[1976,"V4447"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of miles to work","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7247"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of minutes","field_count":8,"occurrence_count":8,"witness_field_key":[1972,"V2540"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of months","field_count":10,"occurrence_count":10,"witness_field_key":[1976,"V4488"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of people","field_count":1,"occurrence_count":1,"witness_field_key":[1977,"V5380"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of persons","field_count":9,"occurrence_count":9,"witness_field_key":[1976,"V4464"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of persons in FU","field_count":4,"occurrence_count":4,"witness_field_key":[1977,"V5349"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of states and/ or countries)","field_count":1,"occurrence_count":1,"witness_field_key":[1982,"V8652"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks","field_count":54,"occurrence_count":54,"witness_field_key":[1976,"V4505"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks in 1979","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7182"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed because Wife ill in 1979","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7206"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed because someone else was ill in 1979","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7204"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed because someone else was ill in 1980","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V7895"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed in 1979","field_count":4,"occurrence_count":4,"witness_field_key":[1980,"V7238"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks missed in 1980","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V7927"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks of vacation in 1979","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7208"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks of vacation in 1980","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V7899"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks on strike in 1979","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7210"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks on strike in 1980","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V7901"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks unemployed in 1979","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7212"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks unemployed in 1980","field_count":1,"occurrence_count":1,"witness_field_key":[1981,"V7903"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks worked","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7245"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks worked in 1979","field_count":4,"occurrence_count":4,"witness_field_key":[1980,"V7213"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of weeks worked in 1980","field_count":3,"occurrence_count":3,"witness_field_key":[1981,"V7868"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of years","field_count":7,"occurrence_count":7,"witness_field_key":[1976,"V4630"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of years from now","field_count":3,"occurrence_count":3,"witness_field_key":[1976,"V4577"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual number of years later","field_count":1,"occurrence_count":1,"witness_field_key":[1976,"V4536"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual percent","field_count":2,"occurrence_count":2,"witness_field_key":[1976,"V4632"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual percent of time Wife/friend worked","field_count":1,"occurrence_count":1,"witness_field_key":[1980,"V7355"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual score:","field_count":1,"occurrence_count":1,"witness_field_key":[1968,"V434"]}
+{"adjudication":"whole_domain_denotation","candidate":"Actual year","field_count":7,"occurrence_count":7,"witness_field_key":[1976,"V4803"]}
+~~~
+
+#### 24.2.4 Completed statement and field censuses
+
+Production reaches 10,109 fields and contains 3,589 distinct verbatim
+statements in 11,054 statement-field occurrences. Its canonical-array SHA-256
+is `7c3642475294dc0ecf809138ff2202ee137e441c7cc76e96b8a2642983163a57`.
+
+| Disposition | Distinct | Occurrences |
+|---|---:|---:|
+| `count` | 365 | 904 |
+| `day` | 63 | 287 |
+| `hour` | 47 | 138 |
+| `hour_per_week` | 80 | 630 |
+| `hour_per_year` | 3 | 5 |
+| `hundreds_of_united_states_dollars` | 2 | 4 |
+| `mile` | 4 | 27 |
+| `mile_per_year` | 1 | 1 |
+| `minute` | 6 | 27 |
+| `month` | 97 | 366 |
+| `percent` | 22 | 37 |
+| `united_states_dollar` | 402 | 1,268 |
+| `united_states_dollar_per_hour` | 14 | 428 |
+| `united_states_dollar_per_week` | 1 | 2 |
+| `week` | 350 | 1,372 |
+| `year` | 88 | 262 |
+| **unit-bearing subtotal** | **1,545** | **5,758** |
+| `not_a_whole_domain_denotation` | 984 | 2,789 |
+| `no_unit_naming_clause` | 354 | 1,041 |
+| `defeating_clause` | 705 | 1,444 |
+| `conflicting_unit_clauses` | 1 | 22 |
+| **no-unit subtotal** | **2,044** | **5,296** |
+| **complete relation** | **3,589** | **11,054** |
+
+| Field result | Fields |
+|---|---:|
+| `derived_from_denotation_statement` | 2,212 |
+| `derived_from_title_denotation` | 8,184 |
+| `no_denotation_statement` | 75,417 |
+| `no_statement_names_a_unit` | 2,609 |
+| `defeated_denotation_statement` | 1,176 |
+| `conflicting_statement_units` | 1 |
+| **complete denominator** | **89,599** |
+
+The independently regenerated field-unit projection is:
+
+| Field unit result | Fields |
+|---|---:|
+| `count` | 2,372 |
+| `day` | 438 |
+| `hour` | 818 |
+| `hour_per_week` | 902 |
+| `hour_per_year` | 5 |
+| `hundreds_of_united_states_dollars` | 4 |
+| `mile` | 67 |
+| `mile_per_year` | 1 |
+| `minute` | 86 |
+| `month` | 700 |
+| `percent` | 376 |
+| `united_states_dollar` | 1,544 |
+| `united_states_dollar_per_hour` | 428 |
+| `united_states_dollar_per_week` | 3 |
+| `week` | 1,756 |
+| `year` | 896 |
+| `no_unit_derivable` | 79,203 |
+| **complete denominator** | **89,599** |
+
+### 24.3 The prose-to-unit authority
+
+#### 24.3.1 Exact normalization
+
+For JSON null, return the empty string. Otherwise replace each LF with U+0020,
+collapse each maximal U+0020 run to one U+0020, and remove leading and
+trailing U+0020 only. No tab, other whitespace, case, punctuation, quote,
+Unicode form, or digit is changed.
+
+#### 24.3.2 Anchors, verbs, and coding starts
+
+The 105 anchors consist of eight value-subject, 15 direct-denotation, 15
+full-predicate, 55 construction-denotation, and 12 subrange anchors. They
+include exact copular subjects for the 1997-dollar and month-code families,
+the numeral-`2` MMDD spelling, and the annual-needs inflation note. The closed
+denotation-verb relation includes exact `are `. The complete anchor fence is
+4,421 bytes, raw SHA-256
+`9f4a835c8f6cf140b1f084c3323d887cf19f4e729341d6790216d70b8a02ca4b`,
+and canonical-array SHA-256
+`db4247efe4f93c66ec3d46c27154c4dbef3954a4b9b5865d4fbe364cc62d657f`.
+
+~~~text
+"dollar amounts reported in 1997 for the prior year "
+"Months "
+"The values for this variable "
+"Values for this variable "
+"values for this variable "
+"The value for this variable "
+"the value for this variable "
+"the values for this variable "
+"This variable represents "
+"this variable represents "
+"Coded value represents "
+"The data coded here represent "
+"The code value represents "
+"The code values for this variable represent "
+"These values represent "
+"The code values represent "
+"The range of values for this variable represents "
+"The values here represent "
+"The values in this variable represent "
+"The values represent "
+"This four digit variable represents "
+"Values represent "
+"The actual weekly food needs "
+"The actual number of minutes taken by the interviewer to administer the questionnaire is coded here."
+"The condition of the car in best shape is coded here"
+"The month coded here "
+"The values in this variable refer "
+"This variable contains "
+"This variable indicates "
+"This variable refers to "
+"The actual 1985 sequence number (V30490) of the individual who produced the income is coded here."
+"The actual 1986 sequence number (V30517) of the individual who produced the income is coded here."
+"The actual 1987 sequence number (V30555) of the individual who produced the income is coded here."
+"The actual 1988 sequence number (V30591) of the individual who produced the income is coded here."
+"The actual 1989 sequence number (V30607) of the individual who produced the income is coded here."
+"The actual 1990 sequence number (V30643) of the individual who produced the income is coded here."
+"The actual 1991 sequence number (V30643) of the individual who produced the income is coded here."
+"The actual 1992 sequence number (V30734) of the individual who produced the income is coded here."
+"This is the number of businesses owned by "
+"The values are in 1967 dollars"
+"Values are in 1967 dollars"
+"values are in 1967 dollars"
+"The income reported here is "
+"The amount represented by this variable is "
+"The amount here is annualized from "
+"This is the sum of "
+"This is the simple mean of "
+"This variable is composed of the sum of "
+"This variable is the sum of "
+"This variable is equal to "
+"This variable is the result of "
+"This variable is generated by multiplying "
+"This variable was calculated from "
+"This variable was calculated by "
+"This variable was computed by "
+"This variable was generated by combining "
+"This variable was generated by summing"
+"This variable consists of "
+"These values are the sum of "
+"Values were computed as follows"
+"Values are determined by raw score "
+"The formula used for creation of this variable is as follows:"
+"The formula for this variable is as follows:"
+"The formula for calculating this variable is as follows:"
+"The formula used in generating this variable is as follows:"
+"The formula used for this variable's generation is as follows:"
+"Sum of the following variables:"
+"Summation of the following"
+"The Head's asset business income is equal to "
+"The Wife/\"Wife's\" asset business income is equal to "
+"The Reference Person's asset business income is equal to "
+"The Spouse's/Partner's asset business income is equal to "
+"This variable is the county as per "
+"This variable is the l968 family ID number."
+"This variable is the 1968 family ID number."
+"This variable is a bracket code of "
+"This variable is identical to "
+"This is the 4-digit identification number "
+"The first 2 digits represent "
+"The first two digits represent "
+"the first two digits represent "
+"The first two digits of this variable represent "
+"the first two digits of this variable represent "
+"The last two digits represent "
+"the last two digits represent "
+"This variable's values are "
+"The amount coded here excludes "
+"The housing status coded here is "
+"The information coded here is "
+"The value of the variable is "
+"The threshold values are based on "
+"the values are as follows:"
+"this variable is not adjusted for inflation (it is in 1967 dollars)"
+"Each family involved in such a living arrangement has nonzero values here that represent "
+"The negative values indicate "
+"The values for this variable are in the range "
+"Values in the range "
+"the value here represents "
+"values in the range "
+"A data value of "
+"A code value of "
+"A value of "
+"Negative values indicate "
+"Specific code values are "
+"Negative values are allowed"
+~~~
+
+Coding-start authority is independent of the anchor list. Its complete 203
+rows are 31,396 bytes, raw SHA-256
+`6f164c6772def69a29a57e1de04b3927ab8f56141bc2a8c6f0dee0964c8da6bf`, and canonical-array SHA-256
+`ac2bddbed10bb445215bb19354259685efe24c82b2f59b258dec5d23fcf8497b`. Each row is
+`[candidate,disposition,selected_statement]`; a selected statement is nonnull
+only for a whole-domain row.
+
+~~~text
+["CODE - highest number.","whole_domain_denotation","CODE - highest number."]
+["CODE 2 MENTIONS WITH LARGEST CODE NUMBERS E12.","whole_domain_denotation","CODE 2 MENTIONS WITH LARGEST CODE NUMBERS"]
+["CODE NUMBERS E12.","explicit_no_denotation",null]
+["CODE the lowest number applicable.","whole_domain_denotation","CODE the lowest number applicable."]
+["Code (ER12221F), Number of Individual records (ER10005I), DE1 Checkpoint (ER10562A) and F1 Checkpoint (ER11044A).","explicit_no_denotation",null]
+["Code (ER16431) although this variable will now be suppressed on the public release file.","explicit_no_denotation",null]
+["Code (ER24144), and Size of Largest City the county (ER24145).","explicit_no_denotation",null]
+["Code (ER28043), and Size of Largest City the county (ER28044).","explicit_no_denotation",null]
+["Code (ER41033) and Size of Largest City in County (ER41034).","explicit_no_denotation",null]
+["Code (ER4157F), Number of Individual records (ER2005H), DE1 Checkpoint (ER2561A) and F1 Checkpoint (ER3054A).","explicit_no_denotation",null]
+["Code (ER46975) and Size of Largest City in County (ER46976).","explicit_no_denotation",null]
+["Code (ER52399) and Size of Largest City in County (ER52400).","explicit_no_denotation",null]
+["Code (ER6997F), Number of Individual records (ER5005H), DE1 Checkpoint (ER5560A) and F1 Checkpoint (ER6053A), A45 (ER5066A) and A46 (ER5066B).","explicit_no_denotation",null]
+["Code (ER9248F), Number of Individual records (ER7005H), DE1 Checkpoint (ER7656A) and F1 Checkpoint (ER8150A).","explicit_no_denotation",null]
+["Code (V32020-V32058), Part 2 of this section, for the actual family history data.","explicit_no_denotation",null]
+["Code - J28","explicit_no_denotation",null]
+["Code 03 means Jeep if the Manufacturer code is 10, but Mercury if the manufacturer code is 12.) In a few cases, particular rare makes were recoded to 99, DK/NA/RF, for confidentiality purposes.","explicit_no_whole_domain_denotation",null]
+["Code 03 means Jeep if the Manufacturer code is 10, but Mercury if the manufacturer code is 12.) In a few cases, particular rare makes were recoded to 99, NA/DK, for confidentiality purposes.","explicit_no_whole_domain_denotation",null]
+["Code 1-11 for actual number of months used food stamps in 1975","whole_domain_denotation","Code 1-11 for actual number of months used food stamps in 1975"]
+["Code 1980 This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code 4 represents cases assigned to the Web mode.","explicit_no_whole_domain_denotation",null]
+["Code List","explicit_no_denotation",null]
+["Code Number of States or Countries in which R has lived including present location","whole_domain_denotation","Code Number of States or Countries in which R has lived including present location"]
+["Code This variable identifies clusters necessary for computing sampling errors for means and totals.","explicit_no_denotation",null]
+["Code This variable is provided to identify strata necessary in computing proper variances of means and totals using such algorithms as PSALMS in OSIRIS.IV, SESUDAAN in SAS, or CLUSTERS in the World Fertility Surveys.","explicit_no_denotation",null]
+["Code This variable, which for most cases is identical to the first two digits of 1980 V7449, 1981 V8101, and 1982 V8725, (and identical in all cases to 1983 V9410 and 1984 V11057), was constructed to allow users to calculate proper standard errors for regression coefficients.","explicit_no_denotation",null]
+["Code This variable, which for most cases is identical to the first two digits of 1980 V7449, 1981 V8101, and 1982 V8725, (and identical in all cases to 1983 V9410, 1984 V11057, 1985 V12418, and 1986 V13658), was constructed to allow users to calculate proper standard errors for regression coefficients.","explicit_no_denotation",null]
+["Code This variable, which for most cases is identical to the first two digits of 1980 V7449, 1981 V8101, and 1982 V8725, (and identical in all cases to 1983 V9410, 1984 V11057, and 1985 V12418), was constructed to allow users to calculate proper standard errors for regression coefficients.","explicit_no_denotation",null]
+["Code This variable, which for most cases is identical to the first two digits of 1980 V7449, 1981 V8101, and 1982 V8725, (and identical in all cases to 1983 V9411, 1984 V11057, 1985 V12418, 1986 V13658, and 1987 V14705), was constructed to allow users to calculate proper standard errors for regression coefficients.","explicit_no_denotation",null]
+["Code This variable, which for most cases is identical to the first two digits of 1980 V7449, 1981 V8101, and 1982 V9725, was constructed to allow users to calculate proper standard errors for regression coefficients.","explicit_no_denotation",null]
+["Code This variable, which is identical to the third digit of earlier SECU codes, identifies paired clusters necessary for computing sampling errors of regression coefficients by the method of Balanced Half-sample Replications.","explicit_no_denotation",null]
+["Code actual number of MINUTES (e.g.","whole_domain_denotation","Code actual number of MINUTES (e.g. 1 hour and 10 minutes - 70 minutes)."]
+["Code actual number of minutes","whole_domain_denotation","Code actual number of minutes"]
+["Code actual number of weeks (01 - 98)","whole_domain_denotation","Code actual number of weeks (01 - 98)"]
+["Code condition of car in BEST condition.)","whole_domain_denotation","Code condition of car in BEST condition.)"]
+["Code condition of car in WORST condition.","whole_domain_denotation","Code condition of car in WORST condition."]
+["Code condition of car in best condition","whole_domain_denotation","Code condition of car in best condition"]
+["Code dollars and cents per hour.)","whole_domain_denotation","Code dollars and cents per hour.)"]
+["Code for 1986 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1987 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1988 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1989 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1990 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1991 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1992 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1993 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1994 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 1994 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1995 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 1995 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1996 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 1996 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1997 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 1997 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 1999 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 1999 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2001 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 2001 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2003 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 2003 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2005 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 2005 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2007 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 2007 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2009 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 2009 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2011 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 2011 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2013 Residence - Collapsed Version These codes are based on matches to the FIPS state and county codes.","explicit_no_denotation",null]
+["Code for 2013 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2015 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2017 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2019 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2021 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for 2023 Residence This variable is suppressed (filled with zeroes) in the public release file to protect the anonymity of respondents.","explicit_no_denotation",null]
+["Code for ER20417 (Head's and Wife's/\"Wife's\" Income from Unincorporated Businesses in 2000)","explicit_no_denotation",null]
+["Code for ER21870 (Profit or loss for first business)--FIRST BUSINESS","explicit_no_denotation",null]
+["Code for ER21884 (Profit or loss for second business)--SECOND BUSINESS","explicit_no_denotation",null]
+["Code for ER21898 (Profit or loss for third business)--THIRD BUSINESS","explicit_no_denotation",null]
+["Code for ER21912 (Profit or loss for fourth business)--FOURTH BUSINESS","explicit_no_denotation",null]
+["Code for ER21926 (Profit or loss for fifth business)--FIFTH BUSINESS","explicit_no_denotation",null]
+["Code for ER24107 (Head's and wife's/\"wife's\" income from unincorporated businesses in 2002)","explicit_no_denotation",null]
+["Code for ER25851 (Profit or loss for first business)--FIRST BUSINESS","explicit_no_denotation",null]
+["Code for ER25865 (Profit or loss for second business)--SECOND BUSINESS","explicit_no_denotation",null]
+["Code for ER25879 (Profit or loss for third business)--THIRD BUSINESS","explicit_no_denotation",null]
+["Code for ER25893 (Profit or loss for fourth business)--FOURTH BUSINESS","explicit_no_denotation",null]
+["Code for ER25907 (Profit or loss for fifth business)--FIFTH BUSINESS","explicit_no_denotation",null]
+["Code for ER27905 (Head's and Wife's/\"Wife's\" Income from Unincorporated Businesses in 2004)","explicit_no_denotation",null]
+["Code for ER36869 (Profit or loss for first business)--FIRST BUSINESS","explicit_no_denotation",null]
+["Code for ER36883 (Profit or loss for second business)--SECOND BUSINESS","explicit_no_denotation",null]
+["Code for ER36897 (Profit or loss for third business)--THIRD BUSINESS","explicit_no_denotation",null]
+["Code for ER36911 (Profit or loss for fourth business)--FOURTH BUSINESS","explicit_no_denotation",null]
+["Code for ER36925 (Profit or loss for fifth business)--FIFTH BUSINESS","explicit_no_denotation",null]
+["Code for ER40895 (Head's and Wife's/\"Wife's\" Income from Unincorporated Businesses in 2006)","explicit_no_denotation",null]
+["Code for ER4114 (Head's and Wife's/\"Wife's\" Income from Unincorporated Businesses in 1993) Values were not calculated for the Latino sample; see the codeframe below.","explicit_no_denotation",null]
+["Code for ER6954 (Head's and Wife's/\"Wife's\" Income from Unincorporated Businesses in 1994) Values were not calculated for the Latino sample; see the codeframe below.","explicit_no_denotation",null]
+["Code for ER9205 (Head's and Wife's/\"Wife's\" Income from Unincorporated Businesses in 1995)","explicit_no_denotation",null]
+["Code issued by the U.S.","explicit_no_denotation",null]
+["Code last 2 digits of year for newest car.","whole_domain_denotation","Code last 2 digits of year for newest car."]
+["Code last two digits of year of newest car or truck","whole_domain_denotation","Code last two digits of year of newest car or truck"]
+["Code number of children in FU in school and living at home) (exclude in-laws)","whole_domain_denotation","Code number of children in FU in school and living at home) (exclude in-laws)"]
+["Code number of things mentioned to J1","whole_domain_denotation","Code number of things mentioned to J1"]
+["Code of 4 is an error.","explicit_no_whole_domain_denotation",null]
+["Code restricted file.","explicit_no_denotation",null]
+["Code same as other occupation code (Col.","whole_domain_denotation","Code same as other occupation code (Col. 12). If two or more jobs, code the one with the lowest code number (highest status)"]
+["Code the highest number of any box checked.","whole_domain_denotation","Code the highest number of any box checked."]
+["Code the lowest number of any box checked.","whole_domain_denotation","Code the lowest number of any box checked."]
+["Code values issued by the U.S.","explicit_no_denotation",null]
+["Code whether owes on any car.)","whole_domain_denotation","Code whether owes on any car.)"]
+["Coded 99.99 when V47 = 0000 (Did not work for money in 1967)","explicit_no_whole_domain_denotation",null]
+["Coded 99.99 when V53 = 0000 (Did not work for money in 1967)","explicit_no_whole_domain_denotation",null]
+["Coded in Dollars *(Calculated value assumes that value of DU is approximately 10 times its annual rental value)","whole_domain_denotation","Coded in Dollars"]
+["Coded value represents the last two digits of the year the respondent last worked.","whole_domain_denotation","Coded value represents the last two digits of the year the respondent last worked."]
+["ENTER \"97.0\"]","explicit_no_whole_domain_denotation",null]
+["ENTER '00']","explicit_no_whole_domain_denotation",null]
+["ENTER 1 If LEASE agreement, ENTER 5","explicit_no_whole_domain_denotation",null]
+["ENTER 5","explicit_no_whole_domain_denotation",null]
+["ENTER 5 if R says \"No rent or mortgage\"","explicit_no_whole_domain_denotation",null]
+["ENTER ALL THAT APPLY]","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]-- FIRST MENTION FOR FIRST PENSION FROM FORMER EMPLOYER","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]-- FIRST MENTION FOR SECOND PENSION FROM PREVIOUS EMPLOYER","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--FIRST MENTION","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--FIRST MENTION FOR FIRST PENSION","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--FIRST MENTION FOR FIRST PENSION FROM FORMER EMPLOYER","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--FIRST MENTION FOR FIRST PENSION FROM PREVIOUS EMPLOYER","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--FIRST MENTION FOR SECOND PENSION","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--FIRST MENTION FOR SECOND PENSION FROM PREVIOUS EMPLOYER","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--FIRST MENTION The codes below are in priority order.","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--FOURTH MENTION","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--SECOND MENTION","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--SECOND MENTION The codes below are in priority order.","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--THIRD MENTION","explicit_no_denotation",null]
+["ENTER ALL THAT APPLY]--THIRD MENTION The codes below are in priority order.","explicit_no_denotation",null]
+["ENTER [0] AGE 19 OR OLDER: FOR 1 year or less, ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [0] AGE 19 OR OLDER: FOR 1 year or less, ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Reference Person had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [0] AGE 19 OR OLDER: FOR 1 year or less, ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Spouse/Partner had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [0] AGE 19 OR OLDER: FOR 1 year or less, ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Head had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [0] AGE 19 OR OLDER: FOR 1 year or less, ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Reference Person had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [0] AGE 19 OR OLDER: FOR 1 year or less, ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Spouse/Partner had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [0] IF R says every day, ENTER [7] here and ENTER [WEEK] on the next screen IF R reports hours or minutes per week/month/year, PROBE: We are looking for the number of times per week, month, or year","explicit_no_whole_domain_denotation",null]
+["ENTER [13]","explicit_no_whole_domain_denotation",null]
+["ENTER [14] IF R says Protestant, PROBE for specific denomination; if R cannot provide specific denomination, ENTER [13]","explicit_no_whole_domain_denotation",null]
+["ENTER [1]","explicit_no_whole_domain_denotation",null]
+["ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Reference Person had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Spouse/Partner had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Head had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Reference Person had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [1] AGE 18: For less than 1 year, ENTER [95] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Spouse/Partner had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [1] for less than 1 year","explicit_no_whole_domain_denotation",null]
+["ENTER [1] if Respondent says the internet was required for some but not others.)","explicit_no_whole_domain_denotation",null]
+["ENTER [1] to continue.","explicit_no_whole_domain_denotation",null]
+["ENTER [3] if R says still in school (attending grade 1-12) or working on a GED","explicit_no_whole_domain_denotation",null]
+["ENTER [7] here and ENTER [WEEK] on the next screen IF R reports hours or minutes per week/month/year, PROBE: We are looking for the number of times per week, month, or year","explicit_no_whole_domain_denotation",null]
+["ENTER [95] FOR all years since 18, ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [95] FOR all years since 18, ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Reference Person had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [95] FOR all years since 18, ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Spouse/Partner had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [95] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Head had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [95] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Reference Person had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [95] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Spouse/Partner had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Reference Person had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [96] FOR all years since 18, ENTER [96] The values for this variable represent in years the actual amount of time the Spouse/Partner had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [96] The values for this variable represent in years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [96] The values for this variable represent in years the actual amount of time the Head had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [96] The values for this variable represent in years the actual amount of time the Reference Person had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [96] The values for this variable represent in years the actual amount of time the Reference Person had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [96] The values for this variable represent in years the actual amount of time the Spouse/Partner had worked full time since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [96] The values for this variable represent in years the actual amount of time the Spouse/Partner had worked since the age of 18 until the time of the interview.","explicit_no_whole_domain_denotation",null]
+["ENTER [WEEK] on the next screen IF R reports hours or minutes per week/month/year, PROBE: We are looking for the number of times per week, month, or year","explicit_no_whole_domain_denotation",null]
+["ENTER all that apply.] G59a.","explicit_no_denotation",null]
+["ENTER all that apply.] G60a.","explicit_no_denotation",null]
+["ENTER all that apply.]-- FIRST MENTION","explicit_no_denotation",null]
+["ENTER all that apply.]-- SECOND MENTION","explicit_no_denotation",null]
+["ENTER all that apply]--1.","explicit_no_denotation",null]
+["ENTER all that apply]--2.","explicit_no_denotation",null]
+["ENTER all that apply]--3.","explicit_no_denotation",null]
+["ENTER all that apply]--4.","explicit_no_denotation",null]
+["ENTER all that apply]--5.","explicit_no_denotation",null]
+["ENTER all that apply]--6.","explicit_no_denotation",null]
+["ENTER all that apply]--7.","explicit_no_denotation",null]
+["ENTER all that apply]--8.","explicit_no_denotation",null]
+["ENTER amount here, then SELECT unit of time on next screen (Week, Month, Year) IF R says never, ENTER [0] IF R says every day, ENTER [7] here and ENTER [WEEK] on the next screen IF R reports hours or minutes per week/month/year, PROBE: We are looking for the number of times per week, month, or year","whole_domain_denotation","ENTER amount here, then SELECT unit of time on next screen (Week, Month, Year) IF R says never, ENTER [0] IF R says every day, ENTER [7] here and ENTER [WEEK] on the next screen IF R reports hours or minutes per week/month/year, PROBE: We are looking for the number of times per week, month, or year"]
+["ENTER the total amount of both payments together","whole_domain_denotation","ENTER the total amount of both payments together"]
+["ENTER \u201cYes\u201d if (you/he/she) received the first shot, whether or not (you have / he has / she has) received the second shot","explicit_no_whole_domain_denotation",null]
+["ENTER: 4","explicit_no_whole_domain_denotation",null]
+["RECORD OR STATEMENT","explicit_no_denotation",null]
+["RECORD WHAT BENEFITS WILL BE]--AMOUNT","explicit_no_whole_domain_denotation",null]
+["RECORD WHAT BENEFITS WILL BE]--AMOUNT FOR FIRST PENSION","explicit_no_whole_domain_denotation",null]
+["RECORD WHAT BENEFITS WILL BE]--AMOUNT FOR SECOND PENSION","explicit_no_whole_domain_denotation",null]
+["RECORD WHAT BENEFITS WILL BE]--FIRST PENSION--AMOUNT","explicit_no_whole_domain_denotation",null]
+["RECORD WHAT BENEFITS WILL BE]--TIME UNIT","explicit_no_whole_domain_denotation",null]
+["RECORD WHAT BENEFITS WILL BE]--TIME UNIT FOR FIRST PENSION","explicit_no_whole_domain_denotation",null]
+["RECORD WHAT BENEFITS WILL BE]--TIME UNIT FOR SECOND PENSION","explicit_no_whole_domain_denotation",null]
+["RECORD last grade finished IF NEEDED: Regular school includes high school and schooling that leads to a college or professional school degree.","whole_domain_denotation","RECORD last grade finished IF NEEDED: Regular school includes high school and schooling that leads to a college or professional school degree."]
+["RECORD last grade finished prior to receiving GED IF NEEDED: Regular school includes high school and schooling that leads to a college or professional school degree.","whole_domain_denotation","RECORD last grade finished prior to receiving GED IF NEEDED: Regular school includes high school and schooling that leads to a college or professional school degree."]
+["Record The values in this variable represent the 7-digit identification number assigned to each interviewer by the Survey Research Center's Survey Operations Office as his or her personal identifier.","explicit_no_denotation",null]
+["Record The values in this variable represent the 8-digit identification number assigned to each interviewer by the Survey Research Center's Survey Operations Office as his or her personal identifier.","explicit_no_denotation",null]
+["Record in the 2013 Disability and Use of Time (DUST) Supplement","explicit_no_denotation",null]
+["Record in the 2014 Childhood Experiences Supplement","explicit_no_denotation",null]
+["Record in the 2016 Well-Being Supplement","explicit_no_denotation",null]
+["Record in the Disability and Use of Time (DUST) Supplement","explicit_no_denotation",null]
+["Record in the Katrina Supplement","explicit_no_denotation",null]
+~~~
+
+#### 24.3.3 Closed title/header clauses
+
+The candidate superdomain is the complete raw field description. It is not a
+first-line approximation: body, statement, formula, table, threshold, and
+reference prose are deliberately exposed so that each apparent title unit is
+either selected or explicitly defeated. Candidate spans are ASCII-word-
+bounded, zero-based UTF-8 byte intervals relative to that complete raw
+description; a non-ASCII prefix therefore makes character and byte offsets
+differ without weakening the boundary rule. There is no punctuation folding,
+Unicode normalization, general LF-as-space rule, or semantic synonym
+expansion.
+
+The separate `bounded_context_header` determines whether a discovered phrase
+has title scope. It contains at least the complete first physical line. If the
+description contains a question mark, it extends through the complete line
+containing the last `?`. Twenty exact source-attested suffix/next-line pairs,
+covering eight source layouts, extend a syntactically split final question by
+exactly one further line. A first line ending in exact `--` also admits its
+immediate next-line label. Independently, the last admitted terminal selector
+extends the header as far as source physical line eight.
+
+The terminal-selector grammar has exactly five marker layouts: inline
+`--LABEL`, split `-\n-LABEL`, terminal `--` plus a next-line label, inline
+singleton `-LABEL`, and terminal singleton `-` plus a next-line label. Labels
+begin with an uppercase letter, digit, `[` or `(`; admitted all-uppercase
+wraps remain in the label. Singleton labels occur only within the first eight
+lines, after an exact question/bracket prompt or the one frozen period
+exception, with one frozen mixed-case categorical exception. Nested markers
+must independently qualify, including the eight nested `-TIME UNIT`
+components. The two Food Security code-table layouts, two exact experience
+calculation instructions, exact IRA editorial notes, all-hyphen separators,
+and prose dashes are defeats rather than selectors. This structural grammar
+enumerates 54,236 selector spans in 51,397 fields: 48,038 inline double
+hyphens, 2,317 next-line labels, 410 split hyphens, 3,118 inline singletons,
+and 353 next-line singletons. The bounded header is grounding context only;
+it cannot hide a candidate from the complete-description scan.
+
+The independent scanner uses global maximal munch across both relations
+below: any strictly contained shorter span is discarded. Generic spellings
+are matched case-insensitively only for candidate discovery. The exact
+verbatim source spelling, complete-description SHA-256, description-relative
+byte span, and separate bounded header are then required by the contextual
+authority, so an unattested case mutation is an unknown and aborts. The
+closed 38-row generic family relation is:
+
+| Family | ASCII-bounded base spellings |
+|---|---|
+| `dollars_per_month_or_year` | `dollars per month or year` |
+| `dollars_per_hour` | `dollar per hour`; `dollars per hour` |
+| `dollars_per_week` | `dollar per week`; `dollars per week` |
+| `dollars_per_year` | `dollar per year`; `dollars per year` |
+| `hours_per_year` | `hour per year`; `hours per year` |
+| `hours_per_week` | `hour per week`; `hours per week` |
+| `hours_a_week` | `hour a week`; `hours a week` |
+| `miles_per_year` | `mile per year`; `miles per year` |
+| `hundreds_of_dollars` | `hundred dollars`; `hundreds of dollars` |
+| `hourly_morphology` | `hourly` |
+| `daily_morphology` | `daily` |
+| `weekly_morphology` | `weekly` |
+| `monthly_morphology` | `monthly` |
+| `yearly_morphology` | `yearly` |
+| `per_day_rate_phrase` | `per day` |
+| `per_hour_rate_phrase` | `per hour` |
+| `per_week_rate_phrase` | `per week` |
+| `per_month_rate_phrase` | `per month` |
+| `per_year_rate_phrase` | `per year` |
+| `number_of_days` | `number of day`; `number of days` |
+| `number_of_months` | `number of month`; `number of months` |
+| `number_of_weeks` | `number of week`; `number of weeks` |
+| `number_of_years` | `number of year`; `number of years` |
+| `how_many_count_marker` | `how many` |
+| `number_of_count_marker` | `number of` |
+| `number_in_family_unit_marker` | `number in fu`; `number in family unit` |
+| `nominal_count_token` | `count`; `counts` |
+| `nominal_day_token` | `day`; `days` |
+| `nominal_hour_token` | `hour`; `hours` |
+| `nominal_mile_token` | `mile`; `miles` |
+| `nominal_minute_token` | `minute`; `minutes` |
+| `nominal_month_token` | `month`; `months` |
+| `nominal_week_token` | `week`; `weeks` |
+| `nominal_year_token` | `year`; `years` |
+| `nominal_dollar_token` | `dollar`; `dollars` |
+| `percent_word` | `percent`; `percentage`; `percentages` |
+| `percent_symbol` | `%` |
+| `dollar_symbol` | `$` |
+
+That generic relation is 1,733 compact-JSONL bytes with raw SHA-256
+`b56ffd655abb00c8aca6e382092d08cd94325cfbf8ef4ce25651a59fc6cf8133`
+and canonical-array SHA-256
+`f709526fe7802085ed691167a595f3d24504523dfa9a5fd4f61eb9269debd9de`.
+The additional exact literal families are:
+
+| Family | Admitted verbatim spellings |
+|---|---|
+| `dollar_amount` | `dollar amount`; `Dollar Amount` |
+| `dollar_value` | `dollar value` |
+| `hours_a_week` | `hours a week`; `HOURS A WEEK` |
+| `how_many_count_marker` | exact cross-LF `how\nmany` |
+| `hours_per_week` | `hours per week`; `Hours per Week`; `Hours Per Week` |
+| `in_minutes` | `in minutes`; `in Minutes` |
+| `number_of_days` | `Number of days`; `NUMBER OF DAYS` |
+| `number_of_months` | `Number of months`; `Number of Months`; `NUMBER OF MONTHS` |
+| `number_of_weeks` | `Number of weeks`; `Number of Weeks`; `number of weeks`; `NUMBER OF WEEKS` |
+| `number_of_years` | `NUMBER OF YEARS` |
+| `parenthetical_in_years` | `(In Years)` |
+| `percent_word` | `percent`; `PERCENT`; `Percent`; `Percentage` |
+| `in_dollars` | exact cross-LF `In\nDollars`; `In Dollars`; `in Dollars`; `in dollars` |
+
+That 13-row literal-family relation is 733 compact-JSONL bytes with raw
+SHA-256
+`e1159929e711f73757b7e51a648f2c096965881a2342d9f26ce4e95d7c8af46e`
+and canonical-array SHA-256
+`c5f6b75b64ebd86134e1b655c5d522fcd18dc2179fd28fa2c66a0943465e2913`.
+
+The exact statement-like heads `The values for this variable `, `Values for
+this variable `, `values for this variable `, `The value for this variable `,
+`the value for this variable `, and `the values for this variable ` are the
+disjoint statement-clause domain and remain governed by statement law. There
+is no questionnaire-head suppression: question titles participate in generic
+discovery exactly like every other header. The exact reference heads
+`Accuracy`, `Bkt.`, and `(Bkt.` relabel a discovered nominal-hour candidate as
+`reference_hour_token`; they do not hide it.
+
+Discovery does not confer a unit. For each maximal match,
+`TITLE_START_AUTHORITY` is keyed by the SHA-256 of the complete raw
+description plus family, exact description-relative start and end byte, and
+exact spelling. Each cleartext row also records the bounded context header,
+unit or null,
+`whole_domain_denotation` or
+`explicit_no_whole_domain_denotation`, a semantic reason, and grounding wave
+and field. The relation has 54,185 rows and 16,636,043 compact-JSONL bytes,
+raw SHA-256
+`6e52b2586515ca676e0a58c5c4ba88888f14cf654c06cebbaf2b07dc2cb2dba2`,
+and canonical-array SHA-256
+`197db7e97c2224805e11978b28e83219c99fad4dc209b933c9c20d87ba321ce6`.
+An independently found match without that exact key is
+`unadjudicated_title_start` and aborts. A title containing two distinct
+positive units conflicts and fails.
+
+The explicit defeats cover `Accuracy` and bracket references; displayed
+input-table and input-placeholder units; response formats; amount, percent,
+type, hours, and time-unit subfields; thresholds, checkpoints, booleans, point
+scores, report counts, and phrases naming another field. A count marker in a
+question whose answer is a physical quantity is defeated while the physical
+unit is positive: `How many hours` denotes `hour`, not `count`. Conversely,
+an independently count-valued question can ground the marker as `count`.
+Morphology and `per ...` phrases are only candidates; the raw title must show
+whether they denote a whole-field amount/rate, a frequency, an input, or a
+reference. The `%` and `$` symbols are likewise discovered even in thresholds
+and response alternatives, where the contextual authority defeats them.
+
+Monetary context names money-ness, not a currency. A title mapping to
+`united_states_dollar`, `united_states_dollar_per_hour`, or
+`united_states_dollar_per_week` requires an explicit United States currency
+marker in the complete raw description: `$`, `dollar` or `dollars`, `cent` or
+`cents`, `USD`, or an exact name for that currency. A named different
+currency cannot authorize a United States dollar unit. There is no sibling,
+locale, questionnaire, or currency default. For example, ER81848's `How much
+are your monthly mortgage payments?` establishes a monetary context but names
+no currency; its `monthly` start is `N`, and the field derives no unit.
+
+Applied source-wide, this prohibition demotes exactly 209 false `W` starts
+across 206 fields: 80 hourly-money, 57 monthly-money, 37
+money-question/per-hour, 26 yearly-money, six unmarked-amount/hour, and three
+per-week-money starts. An event is recorded for each candidate start at which
+one of the six pre-correction currency-default branches would select but the
+complete description has no explicit United States currency marker. After
+the common reference and output/response-selector defeats, the six
+`would_select` predicates are mechanically:
+
+1. `hourly_morphology`: the bounded header matches
+   `\bhourly (?:earnings?|wage|rate)\b` and none of the existing hourly
+   status, response-selector, or `MENTION` defeats applies;
+2. `monthly_morphology`: the complete description matches
+   `\bmonthly (?:mortgage|loan) payments?\b`, `--MONTHLY\s+AMOUNT\b`, or
+   `\bAFDC Maximum Monthly Allowance\b`;
+3. `per_hour_rate_phrase`: the bounded header contains a `MONEY_WORDS` match,
+   the complete description contains no `SALAR`, and the candidate is not a
+   threshold;
+4. `yearly_morphology`: the bounded header contains a `YEARLY_MONEY_WORDS`
+   match;
+5. a maximal full-body `per_hour_rate_phrase` occupies the exact physical
+   line `Amount per hour` or `Amount per hour.`; or
+6. `per_week_rate_phrase`: the bounded header contains a `MONEY_WORDS` match
+   and does not match `\bhow much time\b`.
+
+The complete event relation emits positional rows
+`[interview_wave,raw_field_id,false_class]` in denominator-then-candidate
+order. Its 209-event domain retains repeated fields and therefore is not the
+removed field projection. Exactly `(1969,V647)`, `(1969,V663)`, and
+`(1969,V667)` produce two events each; every other event field occurs once.
+The projection
+filters the lawful §24.4.2 input denominator to fields with at least one such
+event, emits exactly one positional row `[interview_wave,raw_field_id]` for
+each unique field, and preserves denominator order. The complete 206-row
+value is serialized as one strict, compact, ASCII JSON array with no
+insignificant whitespace and one terminal LF. It is 3,339 bytes and has
+SHA-256
+`52652010ae3956fc7e419f5163ecd6d00762e8a888e46ca117fc8bea51f39777`.
+The earlier pin
+`fc99654f6b2df8e6d79c89affba7f6b61eecbb6c066bca898f68749afc438037`
+is replaced: it named no row domain, shape, ordering, or serialization and
+cannot be reproduced. The natural denominator-ordered projection defined
+here yields the replacement pin above.
+
+Supported title compounds retain their whole unit: an explicitly
+currency-marked grounded wage or amount `per hour` is
+`united_states_dollar_per_hour`, an explicitly currency-marked weekly amount
+is `united_states_dollar_per_week`, and physical hour/year, hour/week, and
+mile/year titles retain those units. An unsupported compound is defeated as a
+compound and is never weakened to one component. Thus V416's `(dollars per
+year)` and the observed dollar-per-month titles remain explicit defeats
+because those units are outside the closed vocabulary. These scope judgments
+also preserve V31: complete-description discovery finds eight candidates,
+and all eight are explicit input-table or subrange defeats.
+
+A positive whole-field title controls subordinate construction, formula,
+reference-table, and subrange prose in the body. A cross-unit refinement is
+allowed only when an exact positive title family supplies a supported rate
+and the body supplies exactly its bare numerator: `hour_per_week` or
+`hour_per_year` over `hour`, `mile_per_year` over `mile`, and
+`united_states_dollar_per_hour` or `united_states_dollar_per_week` over
+`united_states_dollar`. The title candidate must itself carry the compound
+unit; sharing a token is not enough. Every other positive title/positive
+statement unit difference is `conflicting_title_and_statement_units` and
+fails. Explicit output labels, raw-body unit lines, supported maximal
+compounds, and the closed question constructions establish scope before
+candidate aggregation; absent one of those rules, distinct positive units
+conflict and abort. This is grammatical scope, not iteration-order or
+first-positive rescue.
+
+An exact standalone raw-body output-label line is never defeated merely
+because neighboring lines contain a formula. This is a corpus-wide predicate,
+not a field or text allowlist. Its superdomain contains every maximal
+full-body candidate that ends its exact physical raw line where the line
+matches `[A-Za-z]+(?: [A-Za-z]+){0,7}`, does not begin exact `Actual ` or
+`Code `, and either begins with ASCII uppercase or equals the candidate's
+exact spelling. Such an ending qualifies exactly when text before the
+candidate on that line is nonempty, the candidate family maps directly to a
+unit, and that prefix contains no ASCII word `digit` or `digits`. Precedence is
+per start: it does not promote formula operands or nearby unit tokens.
+
+The complete label-shaped ending adjudication follows. `true` means the
+general predicate qualifies; every `false` row gives the mechanically
+exclusive reason. Family and spelling are included because both participate
+in the frozen seven-position row.
+
+| Wave | Field | Exact ending | Family | Spelling | Qualifies | Reason |
+|---:|---|---|---|---|---|---|
+| 1968 | V345 | `dollars` | `nominal_dollar_token` | `dollars` | false | `bare_unit_token_has_no_label_prefix` |
+| 1968 | V354 | `dollars` | `nominal_dollar_token` | `dollars` | false | `bare_unit_token_has_no_label_prefix` |
+| 1969 | V647 | `Amount per hour` | `per_hour_rate_phrase` | `per hour` | false | `compound_or_rate_family_not_direct_unit` |
+| 1969 | V682 | `Amount per hour` | `per_hour_rate_phrase` | `per hour` | false | `compound_or_rate_family_not_direct_unit` |
+| 1969 | V687 | `Amount per hour` | `per_hour_rate_phrase` | `per hour` | false | `compound_or_rate_family_not_direct_unit` |
+| 1969 | V689 | `Amount per hour` | `per_hour_rate_phrase` | `per hour` | false | `compound_or_rate_family_not_direct_unit` |
+| 1976 | V4557 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4637 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4639 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4641 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4643 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4763 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V4998 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V5000 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V5002 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V5004 | `Last two digits of year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1976 | V5076 | `Tax credit dollars` | `nominal_dollar_token` | `dollars` | true | `exact_standalone_output_label_line` |
+| 1977 | V5459 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1978 | V5987 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+| 1978 | V6196 | `Tax credit dollars` | `nominal_dollar_token` | `dollars` | true | `exact_standalone_output_label_line` |
+| 1980 | V7162 | `Last two digits of actual year` | `nominal_year_token` | `year` | false | `encoded_coordinate_not_quantity_output` |
+
+The frozen row shape is
+`[interview_wave,raw_field_id,ending,family,spelling,qualifies,reason]` in
+denominator order. Serialized as one strict compact ASCII JSON array plus one
+terminal LF, the 21 rows occupy 2,425 bytes and have SHA-256
+`7a3865642ec7e2795a56dfdeaacc69b4a7b2afdabe2e2457ce1b0f1badaaf6d5`.
+Thus V5076 makes only `dollars [288,295)` `W`; its `year`, two `%`, and two
+`$` formula starts remain `N`. Authenticated 1978 V6196 has the same
+construction: only terminal `dollars [453,460)` is `W`; its two `%` and two
+`$` formula operands remain `N`. Its source is printed page 145 of the 1978
+family codebook, PDF SHA-256
+`883d83daa855759ad573ec60982453fcae62e9d86ddaaaa9a298df1ee376f7b9`.
+V3851 and V4364 remain explanatory-body defeats, while V825 and V826 remain
+formula defeats.
+
+The complete all-field audit relation defined in §24.2.2 is the executable
+closure of this grammar: 89,599 rows, 80,306 candidates, 8,203 positives,
+72,103 defeats, and zero unknowns. The production materialization adds the
+field unit and title disposition to the pre-regeneration
+ledger; its 89,412,192 bytes have raw SHA-256
+`d2d2b032f15650ab76a3ad78e09b125c066ad5a09d0f508fbd54927ac1cd9a6c`
+and canonical-array SHA-256
+`da916ff99bb0b25883494509516929ab38a83491323626305b3cb188735c11fe`.
+
+#### 24.3.4 Closed clauses and unit vocabulary
+
+The unit vocabulary remains the closed 16-member relation: `count`, `day`,
+`hundreds_of_united_states_dollars`, `hour`, `hour_per_week`,
+`hour_per_year`, `mile`, `mile_per_year`, `minute`, `month`, `percent`,
+`united_states_dollar`, `united_states_dollar_per_hour`,
+`united_states_dollar_per_week`, `week`, and `year`. The 165-clause
+fence includes exact `1996 dollars` and the month-code predicate. It is 7,578
+bytes with raw SHA-256
+`8ddc26217bd530fae469643458648b159548e0c344d6b967dffb87abfa16ed43`
+and canonical-array SHA-256
+`1bd2a989c7fe7a1471bbb8b289d64e1fc66e399a0c9b2701419b6d5b636116d3`.
+
+~~~text
+["dollars and cents per hour","united_states_dollar_per_hour"]
+["dollars and cents","united_states_dollar"]
+["dollar and cents per hour","united_states_dollar_per_hour"]
+["dollar and cents","united_states_dollar"]
+["dollar and cents amount per hour","united_states_dollar_per_hour"]
+["whole dollars","united_states_dollar"]
+["dollar amount","united_states_dollar"]
+["dollar income amount","united_states_dollar"]
+["dollar value","united_states_dollar"]
+["dollar lump sum amount","united_states_dollar"]
+["value in dollars","united_states_dollar"]
+["tax credit dollars","united_states_dollar"]
+["number of dollars","united_states_dollar"]
+["hundreds of dollars","hundreds_of_united_states_dollars"]
+["dollars per week","united_states_dollar_per_week"]
+["1967 dollars","united_states_dollar"]
+["1996 dollars","united_states_dollar"]
+["number of hours per week","hour_per_week"]
+["number of hours per year","hour_per_year"]
+["hours per week","hour_per_week"]
+["weekly work hours","hour_per_week"]
+["hours worked per week","hour_per_week"]
+["hours per year","hour_per_year"]
+["number of hours (0001-2080) per year","hour_per_year"]
+["number of hours","hour"]
+["annual hours","hour"]
+["annual work hours","hour"]
+["annual overtime hours","hour"]
+["annualized hours","hour"]
+["annualized work hours","hour"]
+["annual extra job hours","hour"]
+["annual hours worked","hour"]
+["extra job hours","hour"]
+["number of weeks","week"]
+["number of reported weeks","week"]
+["expressed as weeks","week"]
+["duration in weeks","week"]
+["total weeks","week"]
+["weeks worked","week"]
+["number of days","day"]
+["number of reported days","day"]
+["number of months","month"]
+["number of reported months","month"]
+["coded below with January=1, February=2, etc.","month"]
+["number of years","year"]
+["number of additional years","year"]
+["This variable contains the year of data collection","year"]
+["in whole years","year"]
+["in years","year"]
+["number of minutes","minute"]
+["number of miles","mile"]
+["number of miles per year","mile_per_year"]
+["number of","count"]
+["number in FU","count"]
+["number in Family Unit","count"]
+["number in family unit","count"]
+["percent","percent"]
+["percentage","percent"]
+["percentange","percent"]
+["the last two digits","no_unit_derivable"]
+["ID number of","no_unit_derivable"]
+["interview number of","no_unit_derivable"]
+["marginal tax rate","no_unit_derivable"]
+["value per room","no_unit_derivable"]
+["income/needs ratio","no_unit_derivable"]
+["the ratio of","no_unit_derivable"]
+["persons per room","no_unit_derivable"]
+["number of Wife/\"Wife\" missed","no_unit_derivable"]
+["dollars and cents amount per hour","no_unit_derivable"]
+["Actual interview number","no_unit_derivable"]
+["Actual - Required rooms","no_unit_derivable"]
+["Actual Minus Required Rooms","no_unit_derivable"]
+["Actual minus required rooms","no_unit_derivable"]
+["Actual score","no_unit_derivable"]
+["This variable contains the last two digits of the year","no_unit_derivable"]
+["This variable contains","no_unit_derivable"]
+["This variable indicates","no_unit_derivable"]
+["This variable refers to","no_unit_derivable"]
+["The values in this variable refer","no_unit_derivable"]
+["The actual number of minutes","minute"]
+["The month coded here","month"]
+["The condition of the car in best shape is coded here","no_unit_derivable"]
+["sequence number","no_unit_derivable"]
+["month and day","no_unit_derivable"]
+["case ID","no_unit_derivable"]
+["Actual Minus Required Rooms for Family","no_unit_derivable"]
+["Actual Minus Required Rooms for Family (1969)","no_unit_derivable"]
+["Actual Minus Required Rooms for Family (1981)","no_unit_derivable"]
+["Actual Minus Required Rooms for Family of This Size, Age and Sex Composition (V102, V124)","no_unit_derivable"]
+["Actual Minus Required Rooms for the 1983 Family","no_unit_derivable"]
+["Actual Minus Required Rooms for the 1984 Family","no_unit_derivable"]
+["Actual Minus Required Rooms for the 1985 Family","no_unit_derivable"]
+["Actual Minus Required Rooms for the FU (1982)","no_unit_derivable"]
+["Actual age","no_unit_derivable"]
+["Actual age in years","year"]
+["Actual age of Head","no_unit_derivable"]
+["Actual age of Head 98","no_unit_derivable"]
+["Actual age of Head's oldest child","no_unit_derivable"]
+["Actual age of Head's second oldest child","no_unit_derivable"]
+["Actual age of Head's third oldest child","no_unit_derivable"]
+["Actual age of Wife","no_unit_derivable"]
+["Actual age of Wife or Permanent Friend","no_unit_derivable"]
+["Actual age of youngest child","no_unit_derivable"]
+["Actual average income","no_unit_derivable"]
+["Actual dollar amount","united_states_dollar"]
+["Actual dollar amount of Head's labor income","united_states_dollar"]
+["Actual dollar amount of transfers","united_states_dollar"]
+["Actual dollar and cents per hour","united_states_dollar_per_hour"]
+["Actual dollars and cents per hour","united_states_dollar_per_hour"]
+["Actual dollars and cents per hour.","united_states_dollar_per_hour"]
+["Actual dollars per week","united_states_dollar_per_week"]
+["Actual expenditure in hundreds of dollars","hundreds_of_united_states_dollars"]
+["Actual expenditure in hundreds of dollars.","hundreds_of_united_states_dollars"]
+["Actual hourly amount","no_unit_derivable"]
+["Actual hourly rate","no_unit_derivable"]
+["Actual hourly wage","no_unit_derivable"]
+["Actual hours per week","hour_per_week"]
+["Actual hours worked per week","hour_per_week"]
+["Actual income/needs ratio","no_unit_derivable"]
+["Actual interview number was coded: 0001-6620)","no_unit_derivable"]
+["Actual marginal tax rate","no_unit_derivable"]
+["Actual minus required rooms for family","no_unit_derivable"]
+["Actual number","no_unit_derivable"]
+["Actual number in FU","count"]
+["Actual number in Family Unit","count"]
+["Actual number in family unit","count"]
+["Actual number of children","count"]
+["Actual number of days","day"]
+["Actual number of dollars","united_states_dollar"]
+["Actual number of exemptions","count"]
+["Actual number of hours","hour"]
+["Actual number of hours per week","hour_per_week"]
+["Actual number of hours per year","hour_per_year"]
+["Actual number of hours worked","hour"]
+["Actual number of miles","mile"]
+["Actual number of miles to work","mile"]
+["Actual number of minutes","minute"]
+["Actual number of months","month"]
+["Actual number of people","count"]
+["Actual number of persons","count"]
+["Actual number of persons in FU","count"]
+["Actual number of states and/ or countries)","count"]
+["Actual number of weeks","week"]
+["Actual number of weeks in 1979","week"]
+["Actual number of weeks missed because Wife ill in 1979","week"]
+["Actual number of weeks missed because someone else was ill in 1979","week"]
+["Actual number of weeks missed because someone else was ill in 1980","week"]
+["Actual number of weeks missed in 1979","week"]
+["Actual number of weeks missed in 1980","week"]
+["Actual number of weeks of vacation in 1979","week"]
+["Actual number of weeks of vacation in 1980","week"]
+["Actual number of weeks on strike in 1979","week"]
+["Actual number of weeks on strike in 1980","week"]
+["Actual number of weeks unemployed in 1979","week"]
+["Actual number of weeks unemployed in 1980","week"]
+["Actual number of weeks worked","week"]
+["Actual number of weeks worked in 1979","week"]
+["Actual number of weeks worked in 1980","week"]
+["Actual number of years","year"]
+["Actual number of years from now","year"]
+["Actual number of years later","year"]
+["Actual percent","percent"]
+["Actual percent of time Wife/friend worked","percent"]
+["Actual score:","no_unit_derivable"]
+["Actual year","year"]
+~~~
+
+#### 24.3.5 Exact predicate authority and fail-closed extension
+
+Every whole-domain predicate must match the exact frozen authority or resolve
+through the closed clause law; unknown predicates fail as
+`unadjudicated_denotation_candidate`. A strict unenumerated extension cannot
+inherit a shorter positive clause. Longest unnested exact hits decide within
+a disposition; a surviving defeat vetoes, and distinct surviving units
+conflict.
+
+The complete predicate relation has 2,590 rows: 1,534
+`unit_naming_clause`, 702 `defeating_clause`, 353
+`no_unit_naming_clause`, and one `conflicting_unit_clauses`. Its compact JSONL
+is 400,372 bytes with raw SHA-256
+`a783a0a3824096688374e0f9802546e847a00c4cb3905ce6a7ee6f64a51e050e`
+and canonical-array SHA-256
+`dc4df039cd1c0ae9d31bd8827d07e1bb737c8ee383e6cbe0308789257ba5ff89`.
+
+~~~text
+["Actual Minus Required Rooms for Family",null,"defeating_clause"]
+["Actual Minus Required Rooms for Family (1969)",null,"defeating_clause"]
+["Actual Minus Required Rooms for Family (1981)",null,"defeating_clause"]
+["Actual Minus Required Rooms for Family of This Size, Age and Sex Composition (V102, V124)",null,"defeating_clause"]
+["Actual Minus Required Rooms for the 1983 Family",null,"defeating_clause"]
+["Actual Minus Required Rooms for the 1984 Family",null,"defeating_clause"]
+["Actual Minus Required Rooms for the 1985 Family",null,"defeating_clause"]
+["Actual Minus Required Rooms for the FU (1982)",null,"defeating_clause"]
+["Actual age",null,"defeating_clause"]
+["Actual age in years","year","unit_naming_clause"]
+["Actual age of Head",null,"defeating_clause"]
+["Actual age of Head 98",null,"defeating_clause"]
+["Actual age of Head's oldest child",null,"defeating_clause"]
+["Actual age of Head's second oldest child",null,"defeating_clause"]
+["Actual age of Head's third oldest child",null,"defeating_clause"]
+["Actual age of Wife",null,"defeating_clause"]
+["Actual age of Wife or Permanent Friend",null,"defeating_clause"]
+["Actual age of youngest child",null,"defeating_clause"]
+["Actual average income",null,"defeating_clause"]
+["Actual dollar amount","united_states_dollar","unit_naming_clause"]
+["Actual dollar amount of Head's labor income","united_states_dollar","unit_naming_clause"]
+["Actual dollar amount of transfers","united_states_dollar","unit_naming_clause"]
+["Actual dollar and cents per hour","united_states_dollar_per_hour","unit_naming_clause"]
+["Actual dollars and cents per hour","united_states_dollar_per_hour","unit_naming_clause"]
+["Actual dollars and cents per hour.","united_states_dollar_per_hour","unit_naming_clause"]
+["Actual dollars per week","united_states_dollar_per_week","unit_naming_clause"]
+["Actual expenditure in hundreds of dollars","hundreds_of_united_states_dollars","unit_naming_clause"]
+["Actual expenditure in hundreds of dollars.","hundreds_of_united_states_dollars","unit_naming_clause"]
+["Actual hourly amount",null,"defeating_clause"]
+["Actual hourly rate",null,"defeating_clause"]
+["Actual hourly wage",null,"defeating_clause"]
+["Actual hours per week","hour_per_week","unit_naming_clause"]
+["Actual hours worked per week","hour_per_week","unit_naming_clause"]
+["Actual income/needs ratio",null,"defeating_clause"]
+["Actual interview number was coded: 0001-6620)",null,"defeating_clause"]
+["Actual marginal tax rate",null,"defeating_clause"]
+["Actual minus required rooms for family",null,"defeating_clause"]
+["Actual number",null,"defeating_clause"]
+["Actual number in FU","count","unit_naming_clause"]
+["Actual number in Family Unit","count","unit_naming_clause"]
+["Actual number in family unit","count","unit_naming_clause"]
+["Actual number of children","count","unit_naming_clause"]
+["Actual number of days","day","unit_naming_clause"]
+["Actual number of dollars","united_states_dollar","unit_naming_clause"]
+["Actual number of exemptions","count","unit_naming_clause"]
+["Actual number of hours","hour","unit_naming_clause"]
+["Actual number of hours per week","hour_per_week","unit_naming_clause"]
+["Actual number of hours per year","hour_per_year","unit_naming_clause"]
+["Actual number of hours worked","hour","unit_naming_clause"]
+["Actual number of miles","mile","unit_naming_clause"]
+["Actual number of miles to work","mile","unit_naming_clause"]
+["Actual number of minutes","minute","unit_naming_clause"]
+["Actual number of months","month","unit_naming_clause"]
+["Actual number of people","count","unit_naming_clause"]
+["Actual number of persons","count","unit_naming_clause"]
+["Actual number of persons in FU","count","unit_naming_clause"]
+["Actual number of states and/ or countries)","count","unit_naming_clause"]
+["Actual number of weeks","week","unit_naming_clause"]
+["Actual number of weeks in 1979","week","unit_naming_clause"]
+["Actual number of weeks missed because Wife ill in 1979","week","unit_naming_clause"]
+["Actual number of weeks missed because someone else was ill in 1979","week","unit_naming_clause"]
+["Actual number of weeks missed because someone else was ill in 1980","week","unit_naming_clause"]
+["Actual number of weeks missed in 1979","week","unit_naming_clause"]
+["Actual number of weeks missed in 1980","week","unit_naming_clause"]
+["Actual number of weeks of vacation in 1979","week","unit_naming_clause"]
+["Actual number of weeks of vacation in 1980","week","unit_naming_clause"]
+["Actual number of weeks on strike in 1979","week","unit_naming_clause"]
+["Actual number of weeks on strike in 1980","week","unit_naming_clause"]
+["Actual number of weeks unemployed in 1979","week","unit_naming_clause"]
+["Actual number of weeks unemployed in 1980","week","unit_naming_clause"]
+["Actual number of weeks worked","week","unit_naming_clause"]
+["Actual number of weeks worked in 1979","week","unit_naming_clause"]
+["Actual number of weeks worked in 1980","week","unit_naming_clause"]
+["Actual number of years","year","unit_naming_clause"]
+["Actual number of years from now","year","unit_naming_clause"]
+["Actual number of years later","year","unit_naming_clause"]
+["Actual percent","percent","unit_naming_clause"]
+["Actual percent of time Wife/friend worked","percent","unit_naming_clause"]
+["Actual score:",null,"defeating_clause"]
+["Actual year","year","unit_naming_clause"]
+["CODE - highest number.",null,"defeating_clause"]
+["CODE 2 MENTIONS WITH LARGEST CODE NUMBERS",null,"no_unit_naming_clause"]
+["CODE the lowest number applicable.",null,"defeating_clause"]
+["Code 1-11 for actual number of months used food stamps in 1975","month","unit_naming_clause"]
+["Code Number of States or Countries in which R has lived including present location","count","unit_naming_clause"]
+["Code actual number of MINUTES (e.g. 1 hour and 10 minutes - 70 minutes).","minute","unit_naming_clause"]
+["Code actual number of minutes","minute","unit_naming_clause"]
+["Code actual number of weeks (01 - 98)","week","unit_naming_clause"]
+["Code condition of car in BEST condition.)",null,"no_unit_naming_clause"]
+["Code condition of car in WORST condition.",null,"no_unit_naming_clause"]
+["Code condition of car in best condition",null,"no_unit_naming_clause"]
+["Code dollars and cents per hour.)","united_states_dollar_per_hour","unit_naming_clause"]
+["Code last 2 digits of year for newest car.",null,"defeating_clause"]
+["Code last two digits of year of newest car or truck",null,"defeating_clause"]
+["Code number of children in FU in school and living at home) (exclude in-laws)","count","unit_naming_clause"]
+["Code number of things mentioned to J1","count","unit_naming_clause"]
+["Code same as other occupation code (Col. 12). If two or more jobs, code the one with the lowest code number (highest status)",null,"no_unit_naming_clause"]
+["Code the highest number of any box checked.",null,"defeating_clause"]
+["Code the lowest number of any box checked.",null,"defeating_clause"]
+["Code whether owes on any car.)",null,"no_unit_naming_clause"]
+["Coded in Dollars","united_states_dollar","unit_naming_clause"]
+["ENTER amount here, then SELECT unit of time on next screen (Week, Month, Year) IF R says never, ENTER [0] IF R says every day, ENTER [7] here and ENTER [WEEK] on the next screen IF R reports hours or minutes per week/month/year, PROBE: We are looking for the number of times per week, month, or year",null,"defeating_clause"]
+["ENTER the total amount of both payments together",null,"no_unit_naming_clause"]
+["Head's SSI income, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's Veterans Administration pension income, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's actual number of weeks of vacation or time off in 2014.","week","unit_naming_clause"]
+["Head's annual overtime hours worked on all jobs, in 2014, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Head's asset portion of the income reported at G11a and b in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's county if United States, the country if foreign.",null,"no_unit_naming_clause"]
+["Head's father's county if United States, the country if foreign.",null,"no_unit_naming_clause"]
+["Head's income from IRAs, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's income from Social Security, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's income from alimony, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's income from annuities, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's income from child support, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's income from miscellaneous transfers, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's income from other retirement pay and pensions, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's income from other sources for retirement, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's income from unemployment compensation, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's income from workers' compensation, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's labor portion of the farming and market gardening income reported at G19b in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's mother's county if United States, the country if foreign.",null,"no_unit_naming_clause"]
+["Head's other welfare income, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Head's total annual work hours on all jobs including overtime in 2014.","hour","unit_naming_clause"]
+["Head's total annual work hours on all jobs, including overtime.","hour","unit_naming_clause"]
+["Head's total weekly work hours on all jobs in 2014.","hour_per_week","unit_naming_clause"]
+["Head's total weekly work hours on all jobs.","hour_per_week","unit_naming_clause"]
+["Head's total weekly work hours on all main jobs.","hour_per_week","unit_naming_clause"]
+["Head's total weeks worked on all jobs in 2014.","week","unit_naming_clause"]
+["coded below with January=1, February=2, etc.","month","unit_naming_clause"]
+["RECORD last grade finished IF NEEDED: Regular school includes high school and schooling that leads to a college or professional school degree.",null,"no_unit_naming_clause"]
+["RECORD last grade finished prior to receiving GED IF NEEDED: Regular school includes high school and schooling that leads to a college or professional school degree.",null,"no_unit_naming_clause"]
+["Reference Person's SSI income, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's SSI income, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's SSI income, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's SSI income, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's Veterans Administration pension income, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's Veterans Administration pension income, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's Veterans Administration pension income, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's Veterans Administration pension income, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's actual number of weeks of vacation or time off in 2016.","week","unit_naming_clause"]
+["Reference Person's actual number of weeks of vacation or time off in 2018.","week","unit_naming_clause"]
+["Reference Person's actual number of weeks of vacation or time off in 2020.","week","unit_naming_clause"]
+["Reference Person's actual number of weeks of vacation or time off in 2022.","week","unit_naming_clause"]
+["Reference Person's annual overtime hours worked on all jobs, in 2016, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Reference Person's annual overtime hours worked on all jobs, in 2018, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Reference Person's annual overtime hours worked on all jobs, in 2020, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Reference Person's annual overtime hours worked on all jobs, in 2022, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Reference Person's income from IRAs, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from IRAs, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from IRAs, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from IRAs, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from Social Security, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from Social Security, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from Social Security, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from Social Security, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from alimony, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from alimony, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from alimony, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from alimony, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from annuities, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from annuities, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from annuities, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from annuities, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from child support, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from child support, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from child support, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from child support, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from miscellaneous transfers, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from miscellaneous transfers, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from miscellaneous transfers, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from miscellaneous transfers, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from other retirement pay and pensions, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from other retirement pay and pensions, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from other retirement pay and pensions, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from other retirement pay and pensions, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from other sources for retirement, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from other sources for retirement, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from other sources for retirement, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from other sources for retirement, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from unemployment compensation, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from unemployment compensation, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from unemployment compensation, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from unemployment compensation, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from workers' compensation, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from workers' compensation, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from workers' compensation, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's income from workers' compensation, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's other welfare income, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's other welfare income, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's other welfare income, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's other welfare income, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Reference Person's total annual work hours on all jobs including overtime in 2016.","hour","unit_naming_clause"]
+["Reference Person's total annual work hours on all jobs including overtime in 2018.","hour","unit_naming_clause"]
+["Reference Person's total annual work hours on all jobs including overtime in 2020.","hour","unit_naming_clause"]
+["Reference Person's total annual work hours on all jobs including overtime in 2022.","hour","unit_naming_clause"]
+["Reference Person's total weekly work hours on all jobs in 2016.","hour_per_week","unit_naming_clause"]
+["Reference Person's total weekly work hours on all jobs in 2018.","hour_per_week","unit_naming_clause"]
+["Reference Person's total weekly work hours on all jobs in 2020.","hour_per_week","unit_naming_clause"]
+["Reference Person's total weekly work hours on all jobs in 2022.","hour_per_week","unit_naming_clause"]
+["Reference Person's total weeks worked on all jobs in 2016.","week","unit_naming_clause"]
+["Reference Person's total weeks worked on all jobs in 2018.","week","unit_naming_clause"]
+["Reference Person's total weeks worked on all jobs in 2020.","week","unit_naming_clause"]
+["Reference Person's total weeks worked on all jobs in 2022.","week","unit_naming_clause"]
+["Social Security income for all family unit members in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Social Security income of all family unit members in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's SSI income, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's SSI income, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's SSI income, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's SSI income, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's SSI income, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's actual number of weeks of vacation or time off in 2014.","week","unit_naming_clause"]
+["Spouse's/Partner's actual number of weeks of vacation or time off in 2016.","week","unit_naming_clause"]
+["Spouse's/Partner's actual number of weeks of vacation or time off in 2018.","week","unit_naming_clause"]
+["Spouse's/Partner's actual number of weeks of vacation or time off in 2020.","week","unit_naming_clause"]
+["Spouse's/Partner's actual number of weeks of vacation or time off in 2022.","week","unit_naming_clause"]
+["Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2014.","hour","unit_naming_clause"]
+["Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2016.","hour","unit_naming_clause"]
+["Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2018.","hour","unit_naming_clause"]
+["Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2020.","hour","unit_naming_clause"]
+["Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2022.","hour","unit_naming_clause"]
+["Spouse's/Partner's annual overtime hours worked on all jobs, in 2014, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Spouse's/Partner's annual overtime hours worked on all jobs, in 2016, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Spouse's/Partner's annual overtime hours worked on all jobs, in 2018, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Spouse's/Partner's annual overtime hours worked on all jobs, in 2020, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Spouse's/Partner's annual overtime hours worked on all jobs, in 2022, if reported separately from regular work hours.","hour","unit_naming_clause"]
+["Spouse's/Partner's income from IRAs, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from IRAs, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from IRAs, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from IRAs, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from IRAs, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Social Security, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Social Security, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Social Security, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Social Security, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Social Security, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from TANF/state program, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from TANF/state program, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from TANF/state program, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from TANF/state program, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Veterans Administration pension, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Veterans Administration pension, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Veterans Administration pension, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Veterans Administration pension, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from Veterans Administration pension, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from alimony, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from alimony, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from alimony, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from alimony, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from alimony, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from annuities, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from annuities, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from annuities, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from annuities, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from annuities, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from child support, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from child support, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from child support, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from child support, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from child support, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from non-relatives or friends, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from non-relatives or friends, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from non-relatives or friends, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from non-relatives or friends, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from non-relatives or friends, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from relatives, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from relatives, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from relatives, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from relatives, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from financial help from relatives, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from miscellaneous transfers, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from miscellaneous transfers, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from miscellaneous transfers, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from miscellaneous transfers, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from miscellaneous transfers, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from other retirement, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from other retirement, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from other retirement, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from other retirement, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from other retirement, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from retirement pay or pensions, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from retirement pay or pensions, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from retirement pay or pensions, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from retirement pay or pensions, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from retirement pay or pensions, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from unemployment compensation, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from unemployment compensation, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from unemployment compensation, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from unemployment compensation, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from unemployment compensation, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from workers' compensation, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from workers' compensation, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from workers' compensation, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from workers' compensation, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's income from workers' compensation, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's other welfare income, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's other welfare income, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's other welfare income, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's other welfare income, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's other welfare income, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Spouse's/Partner's total weekly work hours on all jobs in 2014.","hour_per_week","unit_naming_clause"]
+["Spouse's/Partner's total weekly work hours on all jobs in 2016.","hour_per_week","unit_naming_clause"]
+["Spouse's/Partner's total weekly work hours on all jobs in 2018.","hour_per_week","unit_naming_clause"]
+["Spouse's/Partner's total weekly work hours on all jobs in 2020.","hour_per_week","unit_naming_clause"]
+["Spouse's/Partner's total weekly work hours on all jobs in 2022.","hour_per_week","unit_naming_clause"]
+["Spouses's/Partner's income from TANF/state program, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["Sum of the following variables: ------------------------------- V2420 Accuracy: amount saved on car repairs (If V2420 = 3 or 4, 0 added) V2432 Accuracy: rental value free housing V2437 Accuracy: amount saved on A & R (If V2437 = 3 or 4, 0 added) V2488 Accuracy: amount saved on meals at work and school V2486 Accuracy: amount saved on home produced food V2479 Accuracy: amount saved on food stamps V2490 Accuracy: amount saved on other free food V2424 Accuracy of house value and hence of imputed rent (If V2424 = 3, 2 added)",null,"defeating_clause"]
+["Sum of the following variables: ------------------------------- V2440 Accuracy: hours of work for money - HEAD V2442 Accuracy: hours of illness - HEAD V2444 Accuracy: hours of unemployment - HEAD V2448 Accuracy: hours of journey to work - HEAD V2450 Accuracy: hours of work for money - WIFE V2454 Accuracy: hours of journey to work - WIFE V2456 Accuracy: hours of housework, Wife or single Head V2458 Accuracy: hours of housework, husband Sums greater than 9 were truncated at 9",null,"defeating_clause"]
+["Sum of the following variables: ------------------------------- V2499 Accuracy: Head's labor income V2501 Accuracy: Wife's labor income V2508 Accuracy: capital income V2526 Accuracy: other's taxable income V2513 Accuracy: ADC of Head V2522 Accuracy: other transfers of Head and Wife V2529 Accuracy: transfer income of others Sums greater than 9 were truncated at 9",null,"defeating_clause"]
+["Sum of the following variables: ------------------------------- V3052 Accuracy: Head's labor income V3054 Accuracy: Wife's labor income V3061 Accuracy: capital income V3066 Accuracy: others' taxable income V3075 Accuracy: ADC of Head V3079 Accuracy: other transfers of Head and Wife V3082 Accuracy: transfer income of others Sums greater than 9 were truncated at 9",null,"defeating_clause"]
+["Sum of the following variables: V1119 Accuracy: amount saved on car repairs (If V1119 = 3 or 4, 0 added) V1131 Accuracy: rental value free housing V1136 Accuracy: amount saved on A & R (If V1136 = 3 or 4, 0 added) V1182 Accuracy: amount saved on meals at work and school V1180 Accuracy: amount saved on home produced food V1184 Accuracy: amount saved on food stamps V1188 Accuracy: amount saved on other free food V1123 Accuracy of house value and hence of imputed rent (If V1123 = 3, 2 added)",null,"defeating_clause"]
+["Sum of the following variables: V1138 Hours of work for money - HEAD V1148 Hours of work for money - WIFE OF HEAD V1154 Hours of unpaid housework - WIFE OF HEAD OR SINGLE HEAD V1156 Hours of unpaid housework - HUSBAND (if any) V1158 Hours of unpaid housework - OTHERS (other than Head or Wife of Head) V1507 Revised home production hours V1221 Hours of work for money - OTHERS All the above component variables refer to the entire family and are for the year 1969.",null,"defeating_clause"]
+["Sum of the following variables: V1139 Accuracy: hours of work for money - Head V1141 Accuracy: hours of illness - Head V1143 Accuracy: hours of unemployment - Head V1147 Accuracy: hours of Journey to work - Head V1149 Accuracy: hours of work for money - Wife V1153 Accuracy: hours of journey to work - Wife V1155 Accuracy: hours of housework, Wife or single Head V1157 Accuracy: hours of housework, husband Sums greater than 9 were truncated at 9",null,"defeating_clause"]
+["Sum of the following variables: V1175 Amount spent on food consumed at home V1177 Cost of meals at work or school V1181 Amount saved on meals at work or school V1185 Amount spent eating in restaurants V1179 Amount saved raising own food or by canning or freezing V1183 Amount saved by use of food stamps to purchase food V1187 Amount saved by receipt of free food other than above All the above component variables refer to entire family and are for the year 1969.",null,"defeating_clause"]
+["Sum of the following variables: V1197 Accuracy: Head's labor income V1199 Accuracy: Wife's labor income V1206 Accuracy: capital income V1223 Accuracy: other's taxable income V1210 Accuracy: ADC of Head V1219 Accuracy: other transfers of Head and Wife V1226 Accuracy: transfer income of others Sums greater than 9 were truncated at 9",null,"defeating_clause"]
+["Sum of the following variables: V1563 Hours of work by family - paid and unpaid (excluding hours of travel to work by Head and Wife) V1146 Hours of travel to work - HEAD V1152 Hours of travel to work - WIFE",null,"defeating_clause"]
+["Sum of the following variables: V1820 Accuracy: amount saved on car repairs (If V1820 = 3 or 4, 0 added) V1832 Accuracy: rental value free housing V1837 Accuracy: amount saved on A & R (If V1837 = 3 or 4, 0 added) V1883 Accuracy: amount saved on meals at work and school V1881 Accuracy: amount saved on home produced food V1885 Accuracy: amount saved on food stamps V1889 Accuracy: amount saved on other free food V1824 Accuracy of house value and hence of imputed rent (If V1824 = 3, 2 added)",null,"defeating_clause"]
+["Sum of the following variables: V1839 Hours of work for money - HEAD V1849 Hours of work for money - WIFE OF HEAD V1855 Hours of unpaid housework - WIFE OF HEAD OR SINGLE HEAD V1857 Hours of unpaid housework - HUSBAND (if any) V1859 Hours of unpaid housework - OTHERS (other than Head or Wife of Head) V2219 Revised home production hours V1923 Hours of work for money - OTHERS All the above component variables refer to the entire family and are for the year 1970.",null,"defeating_clause"]
+["Sum of the following variables: V1840 Accuracy: hours of work for money - HEAD V1842 Accuracy: hours of illness - HEAD V1844 Accuracy: hours of unemployment - HEAD V1848 Accuracy: hours of journey to work - HEAD V1850 Accuracy: hours of work for money - WIFE V1854 Accuracy: hours of journey to work - WIFE V1856 Accuracy: hours of housework, Wife or single Head V1858 Accuracy: hours of housework, husband Sums greater than 9 were truncated at 9.",null,"defeating_clause"]
+["Sum of the following variables: V1876 Amount spent on food consumed at home V1878 Cost of meals at work or school V1882 Amount saved on meals at work or school V1886 Amount spent eating in restaurants V1880 Amount saved raising own food or by canning or freezing V1884 Amount saved by use of food stamps to purchase food V1888 Amount saved by receipt of free food other than above All the above component variables refer to entire family and are for the year 1970.",null,"defeating_clause"]
+["Sum of the following variables: V1898 Accuracy: Head's labor income V1900 Accuracy: Wife's labor income V1907 Accuracy: capital income V1925 Accuracy: other's taxable income V1912 Accuracy: ADC of Head V1921 Accuracy: other transfers of Head and Wife V1928 Accuracy: Transfer income of others Sums greater than 9 were truncated at 9.",null,"defeating_clause"]
+["Sum of the following variables: V2275 Hours of work by family - paid and unpaid (excluding hours of travel to work by Head and Wife) V1847 Hours of travel to work - HEAD V1853 Hours of travel to work - WIFE",null,"defeating_clause"]
+["Sum of the following variables: V2439 Hours of work for money - HEAD V2449 Hours of work for money - WIFE OF HEAD V2455 Hours of unpaid housework - WIFE OF HEAD OR SINGLE HEAD V2457 Hours of unpaid housework - HUSBAND (if any) V2459 Hours of unpaid housework - OTHERS (other than Head or Wife of Head) V2936 Revised home production hours V2524 Hours of work for money - OTHERS All the above component variables refer to the entire family and are for the year 1971 The hours of travel to work of Head and Wife are not included, making this variable comparable to the corresponding variable for 1967.",null,"defeating_clause"]
+["Sum of the following variables: V2476 Amount spent on food consumed at home V2483 Cost of meals at work or school V2487 Amount saved on meals at work or school V2480 Amount spent eating in restaurants V2485 Amount saved raising own food or by canning or freezing V2478 Amount saved by use of food stamps to purchase food V2489 Amount saved by receipt of free food other than above All the above component variables refer to entire family and are for the year 1971.",null,"defeating_clause"]
+["Sum of the following variables: V2902 Hours of work by family - paid and unpaid (Excluding hours of travel to work by Head and Wife) V2447 Hours of travel to work - HEAD V2453 Hours of travel to work - WIFE",null,"defeating_clause"]
+["Sum of the following variables: V3464 Accuracy: Head's labor income V3466 Accuracy: Wife's labor income V3473 Accuracy: capital income V3491 Accuracy: other's taxable income V3478 Accuracy: ADC of Head V3487 Accuracy: other transfers of Head and Wife V3494 Accuracy: transfer income of others Sums greater than 9 were truncated at 9.",null,"defeating_clause"]
+["Sum of the following variables: V3864 Accuracy: Head's labor income V3866 Accuracy: Wife's labor income V3873 Accuracy: capital income V3892 Accuracy: other's taxable income V3878 Accuracy: ADC of Head V3888 Accuracy: other transfers of Head and Wife V3906 Accuracy: transfer income of others Sums greater than 9 were truncated at 9",null,"defeating_clause"]
+["Sum of the following variables: V446 Accuracy: Amount saved on car repairs (If V446 = 4, 0 added) V458 Accuracy: Rental value free housing V463 Accuracy: Amount saved on A & R (If V463 = 4, 0 added) V505 Accuracy: Amount saved on meals at work and school V509 Accuracy: Amount saved on home produced food V511 Accuracy: Amount saved on food stamps V513 Accuracy: Amount saved on other free food V450 Accuracy of house value and hence of imputed rent (If V450 = 3, 0 added)",null,"defeating_clause"]
+["Sum of the following variables: V465 Hours of work for money - HEAD V475 Hours of work for money - WIFE OF HEAD V481 Hours of unpaid housework - WIFE OF HEAD OR SINGLE HEAD V483 Hours of unpaid housework - HUSBAND (if any) V485 Hours of unpaid housework - OTHERS (other than Head or Wife of Head) V464 Hours of unpaid hours of home production (other than housework) - FAMILY All the above component variables refer to the entire family and are for the year 1968.",null,"defeating_clause"]
+["Sum of the following variables: V466 Accuracy: Hours of Work for Money - Head V468 Accuracy: Hours of illness - Head V470 Accuracy: Hours of Unemployment: Head V474 Accuracy: Hours of Journey to Work - Head V476 Accuracy: Hours of Work for Money - Wife V480 Accuracy: Hours of journey to Work - Wife V482 Accuracy: Hours of unpaid housework, Wife or single Head V484 Accuracy: Hours of unpaid housework, husband Sums greater than 9 were truncated to equal 9",null,"defeating_clause"]
+["Sum of the following variables: V500 Amount spent on food consumed at home V502 Cost of meals at work or school V504 Amount saved on meals at work or school V506 Amount spent eating in restaurants V508 Amount saved raising own food or by canning or freezing V510 Amount saved by use of food stamps to purchase food V512 Amount saved by receipt of free food other than above.",null,"defeating_clause"]
+["Sum of the following variables: V515 Accuracy: Head's labor income V517 Accuracy: Wife's labor income V519 Accuracy: capital income V522 Accuracy: other's taxable income V524 Accuracy: ADC of Head V526 Accuracy: other transfers of Head and Wife V528 Accuracy: transfer income of others If the sum greater than 9, truncated at 9.",null,"defeating_clause"]
+["Sum of the following variables: V867 Hours of work by family - paid and unpaid (excluding hours of travel to work by Head and Wife) V473 Hours of travel to work - HEAD V479 Hours of travel to work - WIFE",null,"defeating_clause"]
+["Summation of the following variables: V1205 Taxable Income of Head and Wife V1220 Total Transfers of Head and Wife V1222 Taxable Income of Others V1225 Transfer Income of Others",null,"defeating_clause"]
+["Summation of the following variables: V1208 Total taxes of Head and Wife V1224 Total taxes of others V1164 Cost of child care (if Wife works) V1229 Union dues",null,"defeating_clause"]
+["Summation of the following variables: V1514 Total family money income V1118 Amount saved on car repairs V1135 Amount saved on additions and repairs to home V1181 Amount saved on meals at work or school V1179 Amount saved on home produced food V1183 Amount saved on government food stamps V1187 Amount saved on other free food V1130 Rental value of housing received free of charge V1510 Imputed rental value of owner-occupied home V1534 Value of free help received",null,"defeating_clause"]
+["Summation of the following variables: V1823 x 0.06 If trailer or home owner: 6% of 1971 house value, the sum of imputed return on equity (which enter the account as both income and an expense) and an assumed 6% interest charge on the remaining mortgage principal.",null,"defeating_clause"]
+["Summation of the following variables: V1906 Taxable Income of Head and Wife V1922 Total Transfers of Head and Wife V1924 Taxable Income of Others V1927 Transfer Income of Others",null,"defeating_clause"]
+["Summation of the following variables: V1910 Total taxes of Head and Wife V1926 Total taxes of others V1865 Cost of child care (if Wife works) V1931 Union dues",null,"defeating_clause"]
+["Summation of the following variables: V2226 Total family money income V1819 Amount saved on car repairs V1836 Amount saved on additions and repairs to home V1882 Amount saved on meals at work or school V1880 Amount saved on home produced food V1884 Amount saved on government food stamps V1888 Amount saved on other free food V1831 Rental value of housing received free of charge V2222 Imputed rental value of owner-occupied home V2246 Value of free help received",null,"defeating_clause"]
+["Summation of the following variables: V2507 Taxable Income of Head and Wife V2523 Total Transfers of Head and Wife V2525 Taxable Income of Others V2528 Transfer Income of Others",null,"defeating_clause"]
+["Summation of the following variables: V2511 Total taxes of Head and Wife V2527 Total taxes of others V2465 Cost of child care (if Wife works) V2532 Union dues",null,"defeating_clause"]
+["Summation of the following variables: V2852 Total family money income V2419 Amount saved on car repairs V2436 Amount saved on additions and repairs to home V2487 Amount saved on meals at work or school V2485 Amount saved on home produced food V2478 Amount saved on government food stamps V2489 Amount saved on other free food V2431 Rental value of housing received free of charge V2848 Imputed rental value of owner-occupied home V2872 Value of free help received",null,"defeating_clause"]
+["Summation of the following variables: V3472 Taxable Income of Head and Wife V3488 Total Transfers of Head and Wife V3490 Taxable Income of Others V3493 Transfer Income of Others",null,"defeating_clause"]
+["Summation of the following variables: V3872 Taxable Income of Head and Wife V3889 Total Transfers of Head and Wife V3891 Taxable Income of Others V3905 Total Transfers of Others",null,"defeating_clause"]
+["Summation of the following variables: V4371 Labor Part of Farm Income V4372 Labor Part of Business Income V4373 Head's Wages Income V4375 Head's bonuses, Overtime, Commissions V4376 Head's Income from Professional Practice or Trade V4377 Labor Part of Roomer Income",null,"defeating_clause"]
+["Summation of the following variables: V4386 Taxable Income of Head and Wife V4404 Total Transfers of Head and Wife V4406 Taxable Income of Others V4419 Total Transfers of Others",null,"defeating_clause"]
+["Summation of the following variables: V5281 Labor Part of Farm Income V5282 Labor Part of Business Income V5283 Head's Wages Income V5285 Head's Bonuses, Overtime, Commissions V5286 Head's Income from Professional Practice or Trade V5287 Labor Part of Roomer/Market Gardening Income",null,"defeating_clause"]
+["Summation of the following variables: V529 total family money income V445 amount saved on car repairs V462 amount saved on additions and repairs to home V504 amount saved on meals at work or school V508 amount saved on home produced food V510 amount saved on government food stamps V512 amount saved on other free food V457 rental value of housing received free of charge V823 imputed rental value of owner- occupied home V839 value of free help received",null,"defeating_clause"]
+["Summation of the following variables: V5297 Taxable Income of Head and Wife V5316 Total Transfers of Head and Wife V5318 Taxable Income of Others V5332 Total Transfers of Others",null,"defeating_clause"]
+["Summation of the following variables: V5780 Labor part of farm income V5781 Labor part of business income V5782 Head's Wages Income V5784 Head's Bonuses, Overtime, Commissions V5785 Head's Income from Professional Practice or Trade V5786 Labor Part of Roomer/Market Gardening Income",null,"defeating_clause"]
+["Summation of the following variables: V5796 Taxable income of Head and Wife V5815 Total transfers of Head and Wife V5817 Taxable Income of Others V5831 Total Transfers of Others",null,"defeating_clause"]
+["Summation of the following variables: V6389 Labor Part of Farm Income V6390 Labor Part of Business Income V6391 Head's Wages Income V6393 Head's Bonuses, Overtime, Commissions V6394 Head's Income from Professional Practice or Trade V6395 Labor Part of Market Gardening Income V6396 Roomer",null,"defeating_clause"]
+["Summation of the following variables: V6408 Taxable Income of Head and Wife V6426 Total Transfers of Head and Wife V6428 Taxable Income of Others V6442 Total Transfers of Others",null,"defeating_clause"]
+["Summation of the following variables: V6979 Labor Part of Farm Income V6980 Labor Part of Business Income V6981 Head's Wages Income V6983 Head's Bonuses, Overtime, Commissions V6984 Head's Income from Professional Practice or Trade V6985 Labor Part of Market Gardening Income V6986 Labor Part of Roomers and Boarders Income Actual dollar amount of Head's labor income",null,"no_unit_naming_clause"]
+["Summation of the following variables: V6998 Taxable Income of Head and Wife V7016 Total Transfers of Head and Wife V7033 Taxable Income of Others V7046 Total Transfers of Others",null,"defeating_clause"]
+["Summation of the following variables: V7401 Estimated Federal Income Taxes of First Extra Earner V7403 Estimated Federal Income Taxes of Second Extra Earner V7405 Estimated Federal Income Taxes of Third Extra Earner V7407 Estimated Federal Income Taxes of Fourth Extra Earner V7409 Estimated Federal Income Taxes of Fifth Extra Earner",null,"defeating_clause"]
+["Summation of the following variables: V7571 Labor Part of Farm Income V7572 Labor Part of Business Income V7573 Head's Wages Income V7575 Head's Bonuses, Overtime, Commissions V7576 Head's Income from Professional Practice or Trade V7577 Labor Part of Market Gardening Income V7578 Labor Part of Roomers and Boarders Income",null,"defeating_clause"]
+["Summation of the following variables: V7590 Taxable Income of Head and Wife V7608 Total Transfers of Head and Wife V7625 Taxable Income of Others V7638 Total Transfers of Others",null,"defeating_clause"]
+["Summation of the following variables: V8054 Estimated Federal Income Taxes of First Extra Earner V8056 Estimated Federal Income Taxes of Second Extra Earner V8058 Estimated Federal Income Taxes of Third Extra Earner V8060 Estimated Federal Income Taxes of Fourth Extra Earner V8062 Estimated Federal Income Taxes of Fifth Extra Earner",null,"defeating_clause"]
+["Summation of the following: V1507 Revised home production hours V1138 Head's total work hours V1140 Head's illness hours V1142 Head's unemployment hours V1146 Head's travel to work time V1148 Wife's work hours V1152 Wife's travel to work time V1154 Hours of housework done by Wife or unmarried Head V1156 Hours of housework done by husband This variable is not comparable to the corresponding variable for 1967 since it includes travel to work time of the Head and Wife.",null,"defeating_clause"]
+["Summation of the following: V2219 Revised home production hours V1839 Head's total work hours V1841 Head's illness hours V1843 Head's unemployment hours V1847 Head's travel to work time V1849 Wife's work hours V1853 Wife's travel to work time V1855 Hours of housework done by Wife or unmarried Head V1857 Hours of housework done by husband This variable is not comparable to the corresponding variable for 1967 since it includes travel to work time of the Head and Wife.",null,"defeating_clause"]
+["Summation of the following: V2936 Revised home production hours V2439 Head's total work hours V2441 Head's illness hours V2443 Head's unemployment hours V2447 Head's travel to work time V2449 Wife's work hours V2453 Wife's travel to work time V2455 Hours of housework done by Wife or unmarried Head V2457 Hours of housework done by husband This variable is not comparable to the corresponding variable for 1967 since it includes travel to work time of the Head and Wife.",null,"defeating_clause"]
+["The Head's asset business income is equal to the Head's total business income if the Head did not put in any work hours at all in any unincorporated businesses.",null,"defeating_clause"]
+["The Reference Person's asset business income is equal to the Reference Person's total business income if the Reference Person did not put in any work hours at all in any unincorporated businesses.",null,"defeating_clause"]
+["The Spouse's/Partner's asset business income is equal to total business income if Spouse/Partner did not put in any work hours at all for unincorporated businesses.",null,"defeating_clause"]
+["The Wife/\"Wife's\" asset business income is equal to her total business income if she did not put in any work hours at all for unincorporated businesses.",null,"defeating_clause"]
+["The actual 1985 sequence number (V30490) of the individual who produced the income is coded here.",null,"defeating_clause"]
+["The actual 1986 sequence number (V30517) of the individual who produced the income is coded here.",null,"defeating_clause"]
+["The actual 1987 sequence number (V30555) of the individual who produced the income is coded here.",null,"defeating_clause"]
+["The actual 1988 sequence number (V30591) of the individual who produced the income is coded here.",null,"defeating_clause"]
+["The actual 1989 sequence number (V30607) of the individual who produced the income is coded here.",null,"defeating_clause"]
+["The actual 1990 sequence number (V30643) of the individual who produced the income is coded here.",null,"defeating_clause"]
+["The actual 1991 sequence number (V30643) of the individual who produced the income is coded here.",null,"defeating_clause"]
+["The actual 1992 sequence number (V30734) of the individual who produced the income is coded here.",null,"defeating_clause"]
+["The actual number of minutes taken by the interviewer to administer the questionnaire is coded here.","minute","unit_naming_clause"]
+["The amount coded here excludes asset portions of income from any unincorporated business that the Wife/\"Wife\" might own.",null,"defeating_clause"]
+["The amount coded here excludes asset portions of income from any unincorporated business, farming, market gardening, or roomers and boarders that the Wife/ \"Wife\" might have had.",null,"defeating_clause"]
+["The amount coded here excludes asset portions of income from any unincorporated business, farming, market gardening, or roomers and boarders that the Wife/\"Wife\" might have had.",null,"defeating_clause"]
+["The amount here is annualized from questions G25a-G27a.",null,"defeating_clause"]
+["The amount here is annualized from questions G25b-G27b.",null,"defeating_clause"]
+["The amount here is annualized from questions G25c-G27c.",null,"defeating_clause"]
+["The amount here is annualized from questions in the G59a series.",null,"defeating_clause"]
+["The amount here is annualized from questions in the G59b series.",null,"defeating_clause"]
+["The amount here is annualized from questions in the G59c series.",null,"defeating_clause"]
+["The amount represented by this variable is included in V8926, Taxable Income of Others.",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER28009).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER40999).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER46907).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER52315).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER58124).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER65321).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER71398).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER77420).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER81747).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (ER85601).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V10382).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V11561).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V12968).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V14070).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V15085).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V16585).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V18001).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V19301).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V20601).",null,"defeating_clause"]
+["The amount represented by this variable is included in the total taxable income of others (V22373).",null,"defeating_clause"]
+["The condition of the car in best shape is coded here",null,"defeating_clause"]
+["The first 2 digits represent the month, the last 2 digits represent the day.",null,"defeating_clause"]
+["The first two digits of this variable represent the month and the last two digits represent the year (78-80) in which Head's unemployment or temporary layoff began.",null,"defeating_clause"]
+["The first two digits of this variable represent the month and the last two digits represent the year in which Head's unemployment or temporary layoff began.",null,"defeating_clause"]
+["The first two digits represent the month and the possible range is 03-10 (March-October) and the last two digits represent the day of the month which has a possible range of 01-31.",null,"defeating_clause"]
+["The first two digits represent the month that the interview was taken (03=March, 04=April, etc).",null,"defeating_clause"]
+["The first two digits represent the month that the interview was taken (03=March, 04=April, etc.).",null,"defeating_clause"]
+["The first two digits represent the month that the interview was taken; 03=March, 04=April, etc.",null,"defeating_clause"]
+["The first two digits represent the state code and the last three, the county.",null,"defeating_clause"]
+["The formula for calculating this variable is as follows: House value(V6917) + Rent paid(V6925) + Value of rent received(V6929) x 10) /Number of rooms(V7080) Homeowners: House value (V6917/number of rooms (V7080)) Renters: Dwelling value (assumed to be 10 times annual rent (V6925/ number of rooms (V7080)) Neither owns nor rents: Dwelling value (sum of rent paid (V6925) + value of rent received free in return for services (V6929) x 10)/number of rooms (V7080))",null,"defeating_clause"]
+["The formula for this variable is as follows: (House value(V6319) + Rent paid(V6426) + Value of rent received(V6330) x 10) /number of rooms(V6477) Homeowners: House value (V6319)/number of rooms (V6477) Renters: Dwelling value (assumed to be 10 times annual rent) (V6326)/number of rooms (V6477) Neither owns nor rents: Dwelling value (sum of rent paid (V6326) + value of rent received free in return for services (V6330) x 10) /number of rooms (V6477)",null,"defeating_clause"]
+["The formula used for creation of this variable is as follows: Number in Family (V10222) - Number of Persons under 18 Years of Age, excluding Head and Wife/\"Wife\", in the Family (V10422)",null,"no_unit_naming_clause"]
+["The formula used for creation of this variable is as follows: Number in Family (V11364) - Number of Persons under 18 Years of Age, excluding Head and Wife/\"Wife\" in the Family (V11609)",null,"no_unit_naming_clause"]
+["The formula used for creation of this variable is as follows: Number of Persons in Family (V10222)/Number of Rooms in Dwelling (V10432) Note that the maximum value for V10432, excluding missing data, is 8, so data values in this variable are inflated for a few cases.",null,"defeating_clause"]
+["The formula used for creation of this variable is as follows: Number of Persons in Family (V11364)/Number of Rooms in Dwelling (V11614)",null,"defeating_clause"]
+["The formula used for creation of this variable is as follows: Number of Persons in Family (V30)/Number of Rooms in Dwelling (V102)",null,"defeating_clause"]
+["The formula used for creation of this variable is as follows: Number of Rooms in Dwelling Unit (V10432) - Number of Rooms Required for a Family of Given Composition (V10223) + 3.",null,"defeating_clause"]
+["The formula used for creation of this variable is as follows: Number of Rooms in Dwelling Unit (V11614) - Number of Rooms Required for a Family of Given Composition (V11365) + 3.",null,"defeating_clause"]
+["The formula used for this variable's generation is as follows: 1982 Labor Income of Head (V9376)/1982 Hours of Work of Head (V8830)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1982 Labor Income of Wife/\"Wife\" (V8881)/1982 Hours of Work of Wife/\"Wife\" (V8840)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1983 Labor Income of Head (V11023)/1983 Hours of Work of Head (V11037)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1983 Labor Income of Wife/\"Wife\" (V10263)/1983 Hours of Work of Wife/\"Wife\" (V10131) Note that this variable is defined as having two decimal places.",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1984 Labor Income of Head (V12372)/1984 Hours of Work of Head (V11146)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1984 Labor Income of Wife/\"Wife\" (V11404)/1984 Hours of Work of Wife/\"Wife\" (V11258)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1985 Labor Income of Head (V13624)/1985 Hours of Work of Head (V12545)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1985 Labor Income of Wife/\"Wife\" (V12803)/1985 Hours of Work of Wife/\"Wife\" (V12657)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1986 Labor Income of Head (V14671)/1986 Hours of Work of Head (V13745)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1986 Labor Income of Wife/\"Wife\" (V13905)/1986 hours of work of Wife/\"Wife\" (V13809)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1987 Labor Income of Head (V16145)/1987 Hours of Work of Head (V14835) Note that this variable is defined as having two decimal places.",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1987 Labor Income of Wife/\"Wife\" (V14920)/1987 Hours of Work of Wife/\"Wife\" (V14865) Note that this variable is defined as having two decimal places.",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1988 Labor Income of Head (V17534)/1988 Hours of Work of Head (V16335) OSIRIS USERS: Note that this variable is defined in the dictionary as having two decimal places.",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1988 Labor Income of Wife/\"Wife\" (V16420)/1988 Hours of Work of Wife/\"Wife\" (V16365) OSIRIS USERS: Note that this variable is defined in the dictionary as having two decimal places.",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1989 Labor Income of Head (V18878)/1989 Hours of Work of Head (V17744)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1989 Labor Income of Wife/\"Wife\" (V17836)/1989 Hours of Work of Wife/\"Wife\" (V17774)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1990 Labor Income of Head (V20178)/1990 Hours of Work of Head (V19044)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1990 Labor Income of Wife/\"Wife\" (V19136)/1990 Hours of Work of Wife/\"Wife\" (V19074)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1991 Labor Income of Head (V21484)/1991 Hours of Work of Head (V20344)",null,"no_unit_naming_clause"]
+["The formula used for this variable's generation is as follows: 1991 Labor Income of Wife/\"Wife\" (V20436)/1991 hours of Work of Wife/\"Wife\" (V20374)",null,"no_unit_naming_clause"]
+["The formula used in generating this variable is as follows: Total 1982 Family Money Income (V9375)/1982 Family Needs (V8854).",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1983 Family Money Income (V11022)/1983 Family Needs(V10225).",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1984 Family Money Income (V12371)/1984 Family Needs (V12374).",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1985 Family Money Income (V13623)/1985 Family Needs (V13626).",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1986 Family Money Income (V14670)/1986 Family Needs (V14673).",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1987 Family Money Income (V16144)/1987 Family Needs (V16147) This ratio is multiplied by 1.25 for farmers (those coded 801 in V15162, V15263 or V15286) to adjust for lower food costs.",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1989 Family Money Income (V18875)/1989 Family Needs (V18882).",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1989 Family Money Income (V18875)/1989 Family Needs-Census Version (V18884) For a full description of the Census poverty threshold, please refer to Section I, Part 5 of this volume.",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1990 Family Money Income (V20175)/1990 Family Needs (V20182).",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1990 Family Money Income (V20175)/1990 Family Needs-Census Version (V20184).",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1991 Family Money Income (V21481)/1991 Family Needs (V21488).",null,"defeating_clause"]
+["The formula used in generating this variable is as follows: Total 1991 Family Money Income (V21481)/1991 Family Needs-Census Version (V21490).",null,"defeating_clause"]
+["The housing status coded here is that of Head's father (and step- mother, if father has remarried).",null,"defeating_clause"]
+["The housing status coded here is that of Head's mother (and step-father, if mother has remarried).",null,"defeating_clause"]
+["The housing status coded here is that of Wife's/\"Wife's\" father (and stepmother, if father has remarried).",null,"defeating_clause"]
+["The housing status coded here is that of Wife's/\"Wife's\" mother (and stepfather, if mother has remarried).",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Spouse/Partner in 2014.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Spouse/Partner in 2016.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Spouse/Partner in 2018.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Spouse/Partner in 2020.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Spouse/Partner in 2022.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 1993.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 1994.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 1995.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 1996.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 1998.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 2000.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 2002.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 2004.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 2006.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 2008.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 2010.",null,"defeating_clause"]
+["The income reported here is asset part of the business income for the Wife/\"Wife\" in 2012.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 1993.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 1994.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 1995.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 1996.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 1998.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 2000.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 2002.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 2004.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 2006.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 2008.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 2010.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 2012.",null,"defeating_clause"]
+["The income reported here is the asset part of Head's business income in 2014.",null,"defeating_clause"]
+["The income reported here is the asset part of Reference Person's business income in 2016.",null,"defeating_clause"]
+["The income reported here is the asset part of Reference Person's business income in 2018.",null,"defeating_clause"]
+["The income reported here is the asset part of Reference Person's business income in 2020.",null,"defeating_clause"]
+["The income reported here is the asset part of Reference Person's business income in 2022.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 1993.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 1994.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 1995.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 1996.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 1998.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 2000.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 2002.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 2004.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 2006.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 2008.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 2010.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 2012.",null,"defeating_clause"]
+["The income reported here is the labor part of Head's business income in 2014.",null,"defeating_clause"]
+["The income reported here is the labor part of Reference Person's business income in 2016.",null,"defeating_clause"]
+["The income reported here is the labor part of Reference Person's business income in 2018.",null,"defeating_clause"]
+["The income reported here is the labor part of Reference Person's business income in 2020.",null,"defeating_clause"]
+["The income reported here is the labor part of Reference Person's business income in 2022.",null,"defeating_clause"]
+["The income reported here is the labor part of the Spouse's/Partner's business income in 2014.",null,"defeating_clause"]
+["The income reported here is the labor part of the Spouse's/Partner's business income in 2016.",null,"defeating_clause"]
+["The income reported here is the labor part of the Spouse's/Partner's business income in 2018.",null,"defeating_clause"]
+["The income reported here is the labor part of the Spouse's/Partner's business income in 2020.",null,"defeating_clause"]
+["The income reported here is the labor part of the Spouse's/Partner's business income in 2022.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 1993.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 1994.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 1995.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 1996.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 1998.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 2000.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 2002.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 2004.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 2006.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 2008.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 2010.",null,"defeating_clause"]
+["The income reported here is the labor part of the Wife/\"Wife's\" business income in 2012.",null,"defeating_clause"]
+["The income reported here is the sum of several labor income components from the raw data, including, in addition to wages and salaries (ER16493), any separate reports of bonuses (ER16495), overtime (ER16497), tips (ER16499), commissions (ER16501), professional practice or trade (ER16503), market gardening (ER16505), miscellaneous labor income (ER16507), and extra job income (ER16509).",null,"defeating_clause"]
+["The income reported here is the sum of several labor income components from the raw data, including, in addition to wages and salaries (ER4122), any separate reports of bonuses (ER4124), overtime (ER4126), tips (ER4128), commissions (ER4130), professional practice or trade (ER4132), market gardening (ER4134), miscellaneous job income (ER4136), and extra job income (ER4138).",null,"defeating_clause"]
+["The income reported here is the sum of several labor income components from the raw data, including, in addition to wages and salaries (ER6962), any separate reports of bonuses (ER6964), overtime (ER6966), tips (ER6968), commissions (ER6970), professional practice or trade (ER6972), market gardening (ER6974), miscellaneous labor income (ER6976), and extra job income (ER6978).",null,"defeating_clause"]
+["The income reported here is the sum of several labor income components from the raw data, including, in addition to wages and salaries (ER9213), any separate reports of bonuses (ER9215), overtime (ER9217), tips (ER9219), commissions (ER9221), professional practice or trade (ER9223), market gardening (ER9225), additional job income (ER9227), and extra job income (ER9229).",null,"defeating_clause"]
+["The information coded here is that of Head's father (and stepmother, if father has remarried).",null,"defeating_clause"]
+["The information coded here is that of Head's mother (and stepfather, if mother has remarried).",null,"defeating_clause"]
+["The information coded here is that of Wife's/\"Wife's\" father (and stepmother, if father has remarried).",null,"defeating_clause"]
+["The information coded here is that of Wife's/\"Wife's\" mother (and stepfather, if mother has remarried).",null,"defeating_clause"]
+["The last two digits represent the day of the month that the interview was taken.",null,"defeating_clause"]
+["The month coded here is that of the most recent move since the 1985 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1986 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1987 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1988 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1989 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1990 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1991 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1992 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1993 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1994 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1995 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1996 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1997 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 1999 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2001 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2003 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2005 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2007 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2009 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2011 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2015 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2017 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2019 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2021 interview.","month","unit_naming_clause"]
+["The month coded here is that of the most recent move since the 2023 interview.","month","unit_naming_clause"]
+["The threshold values are based on family size, the number of persons in the family under age 18, and the age of the householder.",null,"defeating_clause"]
+["The threshold values are based on sex of Head, family size, the number of persons in the family under age 18, and the age of the householder.",null,"defeating_clause"]
+["The value of the variable is given by (ACTUAL # ROOMS (V592)) - (REQUIRED # ROOMS (591)) + 3 The addition of the constant, 3, avoids the use of negative numbers.",null,"defeating_clause"]
+["The values are in 1967 dollars.","united_states_dollar","unit_naming_clause"]
+["The values in this variable refer to the state and county (of the 45 states in our sample) in which the family lived in 1970.",null,"defeating_clause"]
+["The values in this variable refer to the state and county in which the family lived in 1970.",null,"defeating_clause"]
+["These values are the sum of V10285, V10286, V10288, V10291, V10293, V10295, V10296, V10298, V10300, V10302 and V10303.",null,"defeating_clause"]
+["These values are the sum of V11427, V11430, V11431, V11433, V11436, V11438, V11440, V11441, V11443, V11445, V11447, V11449, V11451, V11452, V11453, V11455, V11457 and V11459.",null,"defeating_clause"]
+["These values are the sum of V12826, V12829, V12830, V12832, V12835, V12837, V12839, V12840, V12842, V12844, V12846, V12847, V12850, V12851, V12853, V12856, V12858-V12860, V12862, V12864, and V12866.",null,"defeating_clause"]
+["These values are the sum of V13928, V13931, V13932, V13934, V13937, V13939, V13941, V13942, V13944, V13946, V13948, V13949, V13952, V13953, V13955, V13958, V13960-V13962, V13964, V13966, and V13968.",null,"defeating_clause"]
+["These values are the sum of V14943, V14946, V14947, V14949, V14952, V14954, V14956, V14957, V14959, V14961, V14963, V14964, V14967, V14968, V14970, V14973, V14975-V14977, V14979, V14981, and V14983.",null,"defeating_clause"]
+["These values are the sum of V16443, V16446, V16447, V16449, V16452, V16454, V16456, V16457, V16459, V16461, V16463, V16464, V16467, V16468, V16470, V16473, V16475-V16477, V16479, V16481, and V16483.",null,"defeating_clause"]
+["These values are the sum of V17859, V17862, V17863, V17865, V17868, V17870, V17872, V17873, V17875, V17877, V17879, V17880, V17883, V17884, V17886, V17889, V17891-V17893, V17895, V17897, and V17899.",null,"defeating_clause"]
+["These values are the sum of V19159, V19162, V19163, V19165, V19168, V19170, V19172, V19173, V19175, V19177, V19179, V19180, V19183, V19184, V19186, V19189, V19191-V19193, V19195, V19197, and V19199.",null,"defeating_clause"]
+["These values are the sum of V20459, V20462, V20463, V20465, V20468, V20470, V20472, V20473, V20475, V20477, V20479, V20480, V20483, V20484, V20486, V20489, V20491-V20493, V20495, V20497, and V20499.",null,"defeating_clause"]
+["These values are the sum of V21978, V21994, V22010, V22027, V22043, V22059, V22075, V22091, V22108, V22124, V22140, V22156, V22172, V22188, V22204, V22220, V22236, V22252, V22268, V22284, V22301, V22317, V22333, V22349, and V22364.",null,"no_unit_naming_clause"]
+["These values are the sum of V8896 and V8898 through V8907.",null,"defeating_clause"]
+["This is the 4-digit identification number assigned to each interviewer as his or her personal identifier.",null,"defeating_clause"]
+["This is the 4-digit identification number assigned to each interviewer by the Survey Research Center's Field Office as his or her personal identifier.",null,"defeating_clause"]
+["This is the number of businesses owned by either the Head, the Spouse/Partner, or both.","count","unit_naming_clause"]
+["This is the number of businesses owned by either the Head, the Wife/\"Wife\", or both.","count","unit_naming_clause"]
+["This is the number of businesses owned by either the Reference Person, the Spouse/Partner, or both.","count","unit_naming_clause"]
+["This is the simple mean of the following variables: V81, V529, V1514, V2226 , and V2852 xxxxx.",null,"defeating_clause"]
+["This is the sum of V3477, V3479 - V3483 and the amounts bracketed in V3484 - V3486.",null,"defeating_clause"]
+["This is the sum of V76, 79, 80 plus transfer income other than ADC, ADCU.",null,"defeating_clause"]
+["This is the sum of Variables 3065, 3067 - 3071 and the amounts bracketed in Variables 3072 - 3074",null,"defeating_clause"]
+["This is the sum of income taxes, cost of child care if all adults work, and union dues.",null,"defeating_clause"]
+["This is the sum of the Affirmative responses to imputed Food Security items 1-18 (ER14331A-ER14331R).",null,"defeating_clause"]
+["This is the sum of the Affirmative responses to imputed Food Security items 1-18 (ER18470A-ER18470R).",null,"defeating_clause"]
+["This is the sum of the Affirmative responses to imputed Food Security items 1-18 (ER21735A-ER21735R).",null,"defeating_clause"]
+["This is the sum of the Affirmative responses to imputed Food Security items 1-18 (ER60779- ER60796).",null,"defeating_clause"]
+["This is the sum of the Affirmative responses to imputed Food Security items 1-18 (ER66827- ER66844).",null,"defeating_clause"]
+["This is the sum of the Affirmative responses to imputed Food Security items 1-18 (ER72831- ER72848).",null,"defeating_clause"]
+["This is the sum of the Affirmative responses to imputed Food Security items 1-18 (ER78908- ER78925).",null,"defeating_clause"]
+["This is the sum of the Affirmative responses to imputed Food Security items 1-18 (ER82901- ER82918).",null,"defeating_clause"]
+["This is the sum of the actual amounts of labor part of farm income and business income, bonuses, overtime, commissions, professional practice, labor part of income from roomers and boarders or business income, which were bracketed in V1890, V1891, V1894, V1895 and V1896 plus wages, V1892.",null,"defeating_clause"]
+["This is the sum of the actual amounts of labor part of farm income and business income, bonuses, overtime, commissions, professional practice, labor part of income from roomers and boarders or business income, which were bracketed in Variables 1189,1190, 1193, 1194 and 1195 plus wages, V1191",null,"defeating_clause"]
+["This is the sum of the actual amounts of labor part of farm income and business income, bonuses, overtime, commissions, professional practice, labor part of income from roomers and boarders or business income, which were bracketed in Variables 2491, 2492, 2493, 2495, 2496 and 2497",null,"defeating_clause"]
+["This is the sum of the actual amounts of labor part of farm income and business income, bonuses, overtime, commissions, professional practice, labor part of income from roomers and boarders or business income, which were bracketed in Variables 3044, 3045, 3046, 3048, 3049, and 3050",null,"defeating_clause"]
+["This is the sum of the actual amounts of labor part of farm income and business income, bonuses, overtime, commissions, professional practice, trade, labor part of income from roomers and boarders or market gardening which were bracketed in V3456, V3457, V3460, V3461 and V3462.",null,"defeating_clause"]
+["This is the sum of the actual amounts of labor part of farm income and business income, bonuses, overtime, commissions, professional practice, trade, labor part of income from roomers and boarders or market gardening which were bracketed in Variables 3856, 3857, 3860, 3861 and 3862, and V3858, Head's wages in 1974",null,"defeating_clause"]
+["This is the sum of the affirmative responses to imputed Child Food Security items 11-18 (ER14331K-ER14331R).",null,"defeating_clause"]
+["This is the sum of the affirmative responses to imputed Child Food Security items 11-18 (ER18470K-ER18470R).",null,"defeating_clause"]
+["This is the sum of the affirmative responses to imputed Child Food Security items 11-18 (ER21735K-ER21735R).",null,"defeating_clause"]
+["This is the sum of the affirmative responses to imputed Child Food Security items 11-18 (ER60789-ER60796).",null,"defeating_clause"]
+["This is the sum of the affirmative responses to imputed Child Food Security items 11-18 (ER66837-ER66844).",null,"defeating_clause"]
+["This is the sum of the affirmative responses to imputed Child Food Security items 11-18 (ER72841-ER72848).",null,"defeating_clause"]
+["This is the sum of the affirmative responses to imputed Child Food Security items 11-18 (ER78918-ER78925).",null,"defeating_clause"]
+["This is the sum of the affirmative responses to imputed Child Food Security items 11-18 (ER82911-ER82918).",null,"defeating_clause"]
+["This variable consists of Scholastic Aptitude Test composite scores (i.e., verbal plus mathematical), American College Test composite scores, or estimates of these scores.",null,"defeating_clause"]
+["This variable contains information for the 1968 county based on the 1967 Census of Governments, Compendium of Government Finances.",null,"defeating_clause"]
+["This variable contains the first 2 digits of the more detailed course description which is formatted XX.XXXX in the detailed frame.",null,"defeating_clause"]
+["This variable contains the full code for the detailed course description which is formatted XX.XXXX.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V10955-V10965 was most recently gathered for the 1984 Wife/\"Wife.\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V10967-V11005 was most recently gathered for the 1984 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V11907-V11923 was most recently gathered for the 1985 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V13534-V13550 was most recently gathered for the 1986 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V14581-V14597 was most recently gathered for the 1987 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V16005-V16071 was most recently gathered for the 1988 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V17452-V17468 was most recently gathered for the 1989 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V18783-V18799 was most recently gathered for the 1990 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V20083-V20099 was most recently gathered for the 1991 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V21389-V21405 was most recently gathered for the 1992 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V9308-V9318 was most recently gathered for the 1983 Wife/\"Wife.\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information in V9320-V9358 was most recently gathered for the 1983 Head.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information was most recently gathered for the 1985 Wife/\"Wife\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information was most recently gathered for the 1986 Wife/\"Wife.\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information was most recently gathered for the 1987 Wife/\"Wife\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information was most recently gathered for the 1988 Wife/\"Wife\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information was most recently gathered for the 1989 Wife/\"Wife\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information was most recently gathered for the 1990 Wife/\"Wife\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information was most recently gathered for the 1991 Wife/\"Wife\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the last two digits of the year of data collection in which background information was most recently gathered for the 1992 Wife/\"Wife\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is re-asked.",null,"defeating_clause"]
+["This variable contains the year of data collection in which background information in ER23303-ER23387 was most recently gathered for the 2003 Wife/\"Wife.\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is reasked.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER23388-ER23480 was most recently gathered for the 2003 Head.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER27263-ER27351 was most recently gathered for the 2005 Wife/\"Wife\".","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER27352-ER27448 was most recently gathered for the 2005 Head.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER40438-ER40526 was most recently gathered for the 2007 Wife/\"Wife\".","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER40527-ER40619 was most recently gathered for the 2007 Head.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER46410-ER46503 was most recently gathered for the 2009 Wife/\"Wife\".","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER46504-ER46597 was most recently gathered for the 2009 Head.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER51771- ER51864 was most recently gathered for the 2011 Wife/\"Wife\".","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER51865- ER51958 was most recently gathered for the 2011 Head.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER57508-ER57604 was most recently gathered for the 2013 Wife/\"Wife\".","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER57618-ER57714 was most recently gathered for the 2013 Head.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER64630-ER64735 was most recently gathered for the 2015 Spouse/Partner.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER64769-ER64874 was most recently gathered for the 2015 Head.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER70703-ER70808 was most recently gathered for the 2017 Spouse/Partner.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER70841-ER70946 was most recently gathered for the 2017 Reference Person.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER76711-ER76819 was most recently gathered for the 2019 Spouse/Partner.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER76856-ER76964 was most recently gathered for the 2019 Reference Person.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER80976-ER81065 was most recently gathered for the 2021 Spouse/Partner.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER81103-ER81192 was most recently gathered for the 2021 Reference Person.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER84953-ER85042 was most recently gathered for the 2023 Spouse/Partner.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in ER85080-ER85169 was most recently gathered for the 2023 Reference Person.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information in V23246-V23261 was most recently gathered for the 1993 Head.","year","unit_naming_clause"]
+["This variable contains the year of data collection in which background information was most recently gathered for the 1993 Wife/\"Wife.\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is reasked.","year","unit_naming_clause"]
+["This variable contains values from 1991 family-level data, although information about completed education is not asked annually.",null,"defeating_clause"]
+["This variable contains values from 1992 family-level data, although information about completed education is not asked annually.",null,"defeating_clause"]
+["This variable contains values from 1993 family-level data, although information about completed education is not asked annually.",null,"defeating_clause"]
+["This variable indicates a national or continental affiliation, if mentioned.",null,"defeating_clause"]
+["This variable indicates the type of response we received to this question.",null,"defeating_clause"]
+["This variable indicates whether a data record can be found for the 1991 Head on the supplemental data file.",null,"defeating_clause"]
+["This variable indicates whether a data record can be found for the 1991 Wife/\"Wife\" on the supplemental data file.",null,"defeating_clause"]
+["This variable is a bracket code of the simple average of V17, V25, V40, V42, V44, and V46 whose code values are as follows: 0=no assignment 1=minor assignment 2=major assignment, i.e., probable error of greater than $300 or 10 percent of amount assigned (whichever is greater) 4=work done by someone other than head or wife 5=estimate not an accurate reflection of income or payments in 1967",null,"defeating_clause"]
+["This variable is a bracket code of the simple average of V27, V48, V50, V52, V54, V56, V58, V60, V62, V64, V66, V68, and V70, whose code values are as follows: 0=no assignment 1=minor assignment 2=major assignment, i.e., probable error of greater than $300 or 10 percent of amount assigned (whichever is greater) 4=work done by someone other than head or wife 5=estimate not an accurate reflection of income or payments in 1967",null,"defeating_clause"]
+["This variable is a bracket code of the simple average of V7, V9, V11, V13, V15, V19, V21, V23, V29, V34, V36, V38, V319, and V321, whose code values are as follows: 0=no assignment 1=minor assignment 2=major assignment, i.e., probable error of greater than $300 or 10 percent of amount assigned (whichever is greater) 3=complex property - the reported house value included farm or business property, but imputed rent and housing payments were computed on the basis of the estimated portion of property used for housing 5=estimate not accurate reflection of income or payments in 1967",null,"defeating_clause"]
+["This variable is a bracket code of the simple average of V85-V91, whose code values are as follows: 0=no assignment 1=minor assignment 2=major assignment, i.e., probable error of greater than $300 or 10 percent of amount assigned (whichever is greater) 5=estimate not accurate reflection of income or payments in 1967, i.e., mortgage incurred in 1968; married in 1968, etc.",null,"defeating_clause"]
+["This variable is composed of the sum of the following variables: V81 Total 1967 Family Money Income + V16 Imputed income from doing ADDITIONS AND REPAIRS in 1967 + V24 Imputed income from doing own CAR REPAIRS in 1967 + V39 Imputed income from GROWING OWN FOOD in 1967 + V41 Imputed income from SEWING & MENDING in 1967 + V43 Earned income in form of food or clothing (only if worth more than $50) in 1967 + V320 Imputed 1967 rental value of owner- occupied house (.06 x net equity in house) + V12 Estimated annual 1967 rental value of DU (for those who neither own nor rent) + V45 Value of free food, clothing, or food stamps received in 1967 (only if $50 or more during year) + V57 Value of services received free from others (NOTE: Total value added in if all the time received was from someone living outside DU; 1/2 total value added if only part of help was from someone outside DU [valued at $1 = 1 hour]).",null,"defeating_clause"]
+["This variable is equal to total 1969 transfers of Head and Wife (V1220) minus ADC payments (V1209).",null,"defeating_clause"]
+["This variable is equal to total 1970 transfers of Head and Wife (V1922) minus ADC payments (V1911).",null,"defeating_clause"]
+["This variable is equal to total 1971 transfers of Head and Wife (V2523) minus ADC payments (V2512).",null,"defeating_clause"]
+["This variable is equal to total 1972 transfers of Head and Wife (V3076) minus ADC payments (V3065).",null,"defeating_clause"]
+["This variable is equal to total 1973 transfers of Head and Wife (V3488) minus ADC payments (V3477).",null,"no_unit_naming_clause"]
+["This variable is equal to total 1974 transfers of Head and Wife (V3889) minus ADC payments (V3877).",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying the week food needs (V1169) by 52 and then making the following adjustments for economies of scale: add 20 percent for one person families, 10 percent for 2 person families, 5 percent for 3 person families, and subtract 5 percent for five person families and 10 percent for families with six or more Note that the computation of this variable makes use of the table in V1169, which is in 1967 dollars.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V10224) by 52 and then making the following adjustments for economies of scale: +20% for one-person families +10% for two-person families + 5% for three-person families no adjustment for four-person families - 5% for five-person families -10% for families with six or more persons The values represent the actual annual food standard in whole dollars for the 1984 family.",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying the weekly food needs (V12373) by 52 and then making the following adjustments for economies of scale: +20% for one-person families, +10% for two-person families, +5% for three-person families, no adjustment for four-person families, -5% for five-person families, -10% for families with six or more persons.",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying the weekly food needs (V13625) by 52 and then making the following adjustments for economies of scale: +20% for one-person families, +10% for two-person families, +5% for three-person families, no adjustment for four-person families, -5% for five-person families, -10% for families with six or more persons.",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying the weekly food needs (V14672) by 52 and then making the following adjustments for economies of scale: +20% for one-person families +10% for two-person families + 5% for three-person families no adjustment for four-person families - 5% for five-person families -10% for families with six or more persons The values represent the actual annual food standard in whole dollars for the 1987 (current) family.",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying the weekly food needs (V16146) by 52 and then making the following adjustments for economies of scale: +20% for one-person families +10% for two-person families + 5% for three-person families no adjustment for four-person families - 5% for five-person families -10% for families with six or more persons The values represent the actual annual food standard in whole dollars for the 1988 (current) family.",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying the weekly food needs (V1870) by 52 and then making the following adjustments for economies of scale: add 20 percent for one person families, 10 percent for 2 person families, 5 percent for 3 person families, subtract 5 percent for 5 person families 10 percent for families with six or more.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V2470) by 52 and then making the following adjustments for economies of scale: add 20 percent for one person families, 10 percent for 2 person families, 5 percent for 3 person families and subtract 5 percent for 5 person families and 10 percent for families with six or more.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V3019) by 52 and then making the following adjustments for economies of scale: add 20 percent for one person families, 10 percent for 2 person families, 5 percent for 3 person families and subtract 5 percent for 5 person families and 10 percent for families with six or more See note at V3019 (weekly food needs) regarding use of 1967 dollar values in that variable.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V3439) by 52 and then making the following adjustments for economies of scale: add 20 percent for one-person families 10 percent for 2-person families 5 percent for 3-person families; subtract 5 percent for 5-person families 10 percent for families with six or more.",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying the weekly food needs (V3839) by 52 and then making the following adjustments for economies of scale: add 20 percent for one-person families, 10 percent for two-person families, 5 percent for three-person families, and subtract 5 percent for five-person families and 10 percent for families with six or more See note at V3839 (weekly food needs, used in computing this variable) regarding use of 1967 dollar values.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V4348) by 52 and then making the following adjustments for economies of scale: add 20 percent for one-person families, 10 percent for two-person families, 5 percent for three-person families, and subtract 5 percent for five-person families and 10 percent for families with six or more persons See note at V4348 (weekly food needs, used in computing this variable) regarding use of 1967 dollar values.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V5256) by 52 and then making the following adjustments for economies of scale: add 20 percent for one-person families, 10 percent for two-person families, 5 percent for three-person families and subtract 5 percent for five-person families and 10 percent for families with six or more persons See note at V5256 (weekly food needs, used in computing this variable) regarding use of 1967 dollar values.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V5757) by 52 and then making the following adjustments for economies of scale: Add 20 percent for one-person families, 10 percent for two-person families, 5 percent for three-person families, and subtract 5 percent for five-person families and 10 percent for families with six or more persons See note at V5757 (weekly food needs, used in computing this variable) regarding use of 1967 dollar values.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V6363) by 52 and then making the following adjustments for economies of scale: Add 20 percent for one-person families, 10 percent for two-person families, 5 percent for three-person families, and subtract 5 percent for five-person families and 10 percent for families with six or more persons.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V6961) by 52 and then making the following adjustments for economies of scale: Add 20 percent for one-person families, 10 percent for two-person families, 5 percent for three-person families, and subtract 5 percent for five-person families and 10 percent for families with six or more persons.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V7553) by 52 and then making the following adjustments for economies of scale: Add 20 percent for one-person families, 10 percent for two-person families, 5 percent for three-person families, and subtract 5 percent for five-person families and 10 percent for families with six or more persons.",null,"defeating_clause"]
+["This variable is generated by multiplying the weekly food needs (V8853) by 52 and then making the following adjustments for economies of scale: +20% for one-person families +10% for two-person families + 5% for three-person families no adjustment for four-person families - 5% for five-person families -10% for families with six or more persons The values represent the actual annual food standard in whole dollars for the 1983 family.",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying weekly food needs (V18881) by 52 and then making the following adjustments for economies of scale: +20% for one-person families +10% for two-person families + 5% for three-person families no adjustment for four-person families - 5% for five-person families -10% for families with six or more persons The values for weekly food needs are based on USDA Low-Cost Plan estimates of weekly food costs, according to the table in V18881 (reproduced from Family Economics Review, June 1967), summed for the family as it was at the time of the interview.",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying weekly food needs (V20181) by 52 and then making the following adjustments for economies of scale: +20% for one-person families +10% for two-person families + 5% for three-person families no adjustment for four-person families - 5% for five-person families -10% for families with six or more persons The values for weekly food needs are based on USDA Low-Cost Plan estimates of weekly food costs, according to the table in V20181 (reproduced from Family Economics Review, June 1967), summed for the family as it was at the time of the interview.",null,"no_unit_naming_clause"]
+["This variable is generated by multiplying weekly food needs (V21487) by 52 and then making the following adjustments for economies of scale: +20% for one-person families +10% for two-person families + 5% for three-person families no adjustment for four-person families - 5% for five-person families -10% for families with six or more persons The values for weekly food needs are based on USDA Low-Cost Plan estimates of weekly food costs, according to the table in V21487 (reproduced from Family Economics Review, June 1967), summed for the family as it was at the time of the interview.",null,"no_unit_naming_clause"]
+["This variable is identical to V10222.",null,"no_unit_naming_clause"]
+["This variable is identical to V11364.",null,"no_unit_naming_clause"]
+["This variable is identical to V12763.",null,"no_unit_naming_clause"]
+["This variable is identical to V13867.",null,"no_unit_naming_clause"]
+["This variable is identical to V14889.",null,"no_unit_naming_clause"]
+["This variable is identical to V1539 on the 1968 tape.",null,"defeating_clause"]
+["This variable is identical to V16389.",null,"no_unit_naming_clause"]
+["This variable is identical to V17798.",null,"no_unit_naming_clause"]
+["This variable is identical to V19098.",null,"no_unit_naming_clause"]
+["This variable is identical to V20398.",null,"no_unit_naming_clause"]
+["This variable is identical to V399 except that the cutoff for farm families is .8 x non- farm values.",null,"defeating_clause"]
+["This variable is identical to V439 in the 1968 data.",null,"defeating_clause"]
+["This variable is identical to V6959",null,"no_unit_naming_clause"]
+["This variable is identical to V7551",null,"no_unit_naming_clause"]
+["This variable is identical to V8249.",null,"no_unit_naming_clause"]
+["This variable is identical to V8851.",null,"no_unit_naming_clause"]
+["This variable is identical to the individual-level variable V30703.",null,"defeating_clause"]
+["This variable is the 1968 family ID number.",null,"defeating_clause"]
+["This variable is the county as per the address at the time of interview coded to the most recent version of the Census data (using FIPS county codes).",null,"defeating_clause"]
+["This variable is the l968 family ID number.",null,"defeating_clause"]
+["This variable is the result of (ER12170 * ER12171) + ER12172 + ER12173.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER12181 * ER12182) + ER12183 + ER12184.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER16467 * ER16468) + ER16469 + ER16470.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER16478 * ER16479) + ER16480 + ER16481.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER20395 * ER20396) + ER20397 + ER20398.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER20406 * ER20407) + ER20408 +ER20409.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER24077 * ER24078) + ER24079.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER4092 * ER4093) + ER4094 + ER4095.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER4103 * ER4104) + ER4105.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER6932 * ER6933) + ER6934 + ER6935.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER6943 * ER6944) + ER6945 + ER6946.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER9183 * ER9184) + ER9185 + ER9186.",null,"no_unit_naming_clause"]
+["This variable is the result of (ER9194 * ER9195) + ER9196 + ER9197.",null,"no_unit_naming_clause"]
+["This variable is the result of ER24088 * ER24089 + ER24090.",null,"no_unit_naming_clause"]
+["This variable is the result of ER27883 * ER27884 + ER27885.",null,"no_unit_naming_clause"]
+["This variable is the result of ER27894 * ER27895 + ER27896.",null,"no_unit_naming_clause"]
+["This variable is the result of ER40873 * ER40874 + ER40875.",null,"no_unit_naming_clause"]
+["This variable is the result of ER40884 * ER40885 + ER40886.",null,"no_unit_naming_clause"]
+["This variable is the result of ER46761 * ER46763 + ER46765.",null,"no_unit_naming_clause"]
+["This variable is the result of ER46782 * ER46784 + ER46786.",null,"no_unit_naming_clause"]
+["This variable is the result of ER52169 * ER52171 + ER52173.",null,"no_unit_naming_clause"]
+["This variable is the result of ER52190 * ER52192 + ER52194.",null,"no_unit_naming_clause"]
+["This variable is the result of ER57970 * ER57972 + ER57974.",null,"no_unit_naming_clause"]
+["This variable is the result of ER57991 * ER57993 + ER57995.",null,"no_unit_naming_clause"]
+["This variable is the result of ER65150 * ER65152 + ER65154.",null,"no_unit_naming_clause"]
+["This variable is the result of ER65171 * ER65173 + ER65175.",null,"no_unit_naming_clause"]
+["This variable is the result of ER71227 * ER71229 + ER71231.",null,"no_unit_naming_clause"]
+["This variable is the result of ER71248 * ER71250 + ER71252.",null,"no_unit_naming_clause"]
+["This variable is the result of ER77249 * ER77251 + ER77253.",null,"no_unit_naming_clause"]
+["This variable is the result of ER77270 * ER77272 + ER77274.",null,"no_unit_naming_clause"]
+["This variable is the result of ER81576 * ER81578 + ER81580.",null,"no_unit_naming_clause"]
+["This variable is the result of ER81597 * ER81599 + ER81601.",null,"no_unit_naming_clause"]
+["This variable is the result of ER85430 * ER85432 + ER85434.",null,"no_unit_naming_clause"]
+["This variable is the result of ER85451 * ER85453 + ER85455.",null,"no_unit_naming_clause"]
+["This variable is the sum of Head's labor income, Wife's labor income, asset part of income from farm, business, roomers, etc., rental, interest and dividend income, and Wife's income from assets.",null,"defeating_clause"]
+["This variable is the sum of V10033, V10035, and any hours mentioned at C115.",null,"defeating_clause"]
+["This variable is the sum of V10127, V10129 and any hours mentioned at F112.",null,"defeating_clause"]
+["This variable is the sum of V11140, V11142, and V11144.",null,"defeating_clause"]
+["This variable is the sum of V11252, V11254, V11256 and any hours mentioned at J78.",null,"defeating_clause"]
+["This variable is the sum of V12539, V12541, and V12543.",null,"defeating_clause"]
+["This variable is the sum of V12651, V12653 and V12655.",null,"defeating_clause"]
+["This variable is the sum of V13739, V13741, and V13743.",null,"defeating_clause"]
+["This variable is the sum of V13803, V13805 and V13807.",null,"defeating_clause"]
+["This variable is the sum of V14829, V14831, and V14833.",null,"defeating_clause"]
+["This variable is the sum of V14859, V14861 and V14863.",null,"defeating_clause"]
+["This variable is the sum of V16329, V16331, and V16333.",null,"defeating_clause"]
+["This variable is the sum of V16359, V16361 and V16363.",null,"defeating_clause"]
+["This variable is the sum of V17738, V17740, and V17742.",null,"defeating_clause"]
+["This variable is the sum of V17768, V17770 and V17772.",null,"defeating_clause"]
+["This variable is the sum of V19038, V19040, and V19042.",null,"defeating_clause"]
+["This variable is the sum of V19068, V19070 and V19072.",null,"defeating_clause"]
+["This variable is the sum of V20338, V20340, and V20342.",null,"defeating_clause"]
+["This variable is the sum of V20368, V20370 and V20372.",null,"defeating_clause"]
+["This variable is the sum of V21629, V21630, and V21632.",null,"no_unit_naming_clause"]
+["This variable is the sum of V21665, V21666 and V21668.",null,"no_unit_naming_clause"]
+["This variable is the sum of V7682, V7687, V7690, V7693 and V7696",null,"defeating_clause"]
+["This variable is the sum of V8981+V8986+V8989+V8992+V8995.",null,"defeating_clause"]
+["This variable is the sum of home production hours (V1838) and an imputation of a dollar an hour for each dollar saved by growing or canning food (V1880).",null,"defeating_clause"]
+["This variable is the sum of home production hours (V2438) and an imputation of a dollar an hour for each dollar saved by growing or canning food (V2485).",null,"defeating_clause"]
+["This variable is the sum of home production hours and an imputation of a dollar an hour for growing or canning food.",null,"defeating_clause"]
+["This variable is the sum of several labor income components from the raw data, including, in addition to wages and salaries (ER20425), any separate reports of bonuses (ER20427), overtime (ER20429), tips (ER20431), commissions (ER20433), professional practice or trade (ER20435), market gardening (ER20437), miscellaneous labor income (ER20439), and extra job income (ER20441).",null,"defeating_clause"]
+["This variable is the sum of the 1996 variables below: taxable income of head and wife (ER12069), transfer income of head and wife (ER12071), taxable income of other family unit members (OFUMs) (ER12073), transfer income of OFUMs (ER12075), and Social Security income (ER12077).",null,"no_unit_naming_clause"]
+["This variable is the sum of these five 2002 variables: ER24100 Head and Wife/\"Wife\" Taxable Income ER24101 Head and Wife/\"Wife\" Transfer Income ER24102 Taxable Income of Other FU Members ER24103 Transfer Income of Other FU Members ER24104 Social Security Income of All FU Members",null,"defeating_clause"]
+["This variable is the sum of these five variables: ER16452 Taxable Income of Head and Wife/\"Wife\", ER16454 Transfer Income of Head and Wife/\"Wife\", ER16456 Taxable Income of Other Family Unit Members (OFUMs), ER16458 Transfer Income of OFUMs, and ER16460 Social Security Income.",null,"defeating_clause"]
+["This variable is the sum of these five variables: ER4146 Head and Wife/\"Wife\" Taxable Income-1993 ER4147 Head and Wife/\"Wife\" Transfer Income-1993 ER4150 Taxable Income of Other FU Members-1993 ER4151 Transfer Income of OFUMS-1993 ER4152 Total Family Social Security Income-1993 Values were not calculated for the Latino sample; see the codeframe below.",null,"defeating_clause"]
+["This variable is the sum of these five variables: ER6986 Head and Wife/\"Wife\" Taxable Income-1994 ER6987 Head and Wife/\"Wife\" Transfer Income-1994 ER6990 Taxable Income of Other FU Members-1994 ER6991 Transfer Income of OFUMS-1994 ER6992 Family Total Social Security Income-1994 Values were not calculated for the Latino sample; see the codeframe below.",null,"defeating_clause"]
+["This variable is the sum of these five variables: ER9237 Head and Wife/\"Wife\" Taxable Income-1995 ER9238 Head and Wife/\"Wife\" Transfer Income-1995 ER9241 Taxable Income of Other FU Members-1995 ER9242 Transfer Income of OFUMS-1995 ER9243 Total Family Social Security Income-1995",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER20449 Head and Wife/\"Wife\" Taxable Income-2000 ER20450 Head and Wife/\"Wife\" Transfer Income-2000 ER20453 Taxable Income of Other FU Members-2000 ER20454 Transfer Income of OFUMS-2000 ER20455 Total Family Social Security Income-2000",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER27953 Head and Wife/\"Wife\" Taxable Income-2004 ER28002 Head and Wife/\"Wife\" Transfer Income-2004 ER28009 Taxable Income of Other FU Members-2004 ER28030 Transfer Income of OFUMS-2004 ER28031 Head Social Security Income-2004 ER28033 Wife/\"Wife\" Social Security Income-2004 ER28035 OFUM Social Security Income-2004",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER40943 Head and Wife/\"Wife\" Taxable Income-2006 ER40992 Head and Wife/\"Wife\" Transfer Income-2006 ER40999 Taxable Income of Other FU Members-2006 ER41020 Transfer Income of OFUMS-2006 ER41021 Head Social Security Income-2006 ER41023 Wife/\"Wife\" Social Security Income-2006 ER41025 OFUM Social Security Income-2006",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER46851 Head and Wife/\"Wife\" Taxable Income-2008 ER46900 Head and Wife/\"Wife\" Transfer Income-2008 ER46907 Taxable Income of Other FU Members-2008 ER46928 Transfer Income of OFUMS-2008 ER46929 Head Social Security Income-2008 ER46931 Wife/\"Wife\" Social Security Income-2008 ER46933 OFUM Social Security Income-2008",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER52259 Head and Wife/\"Wife\" Taxable Income-2010 ER52308 Head and Wife/\"Wife\" Transfer Income-2010 ER52315 Taxable Income of Other FU Members-2010 ER52336 Transfer Income of OFUMS-2010 ER52337 Head Social Security Income-2010 ER52339 Wife/\"Wife\" Social Security Income-2010 ER52341 OFUM Social Security Income-2010",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER58060 Head and Wife/\"Wife\" Taxable Income-2012 ER58117 Head and Wife/\"Wife\" Transfer Income-2012 ER58124 Taxable Income of Other FU Members-2012 ER58145 Transfer Income of OFUMS-2012 ER58146 Head Social Security Income-2012 ER58148 Wife/\"Wife\" Social Security Income-2012 ER58150 OFUM Social Security Income-2012",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER65253 Head and Spouse/Partner Taxable Income-2014 ER65314 Head and Spouse/Partner Transfer Income-2014 ER65321 Taxable Income of Other FU Members-2014 ER65342 Transfer Income of OFUMS-2014 ER65343 Head Social Security Income-2014 ER65345 Spouse/Partner Social Security Income-2014 ER65347 OFUM Social Security Income-2014",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER71330 Reference Person and Spouse/Partner Taxable Income-2016 ER71391 Reference Person and Spouse/Partner Transfer Income-2016 ER71398 Taxable Income of Other FU Members-2016 ER71419 Transfer Income of OFUMS-2016 ER71420 Reference Person Social Security Income-2016 ER71422 Spouse/Partner Social Security Income-2016 ER71424 OFUM Social Security Income-2016",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER77352 Reference Person and Spouse/Partner Taxable Income-2018 ER77413 Reference Person and Spouse/Partner Transfer Income-2018 ER77420 Taxable Income of Other FU Members-2018 ER77441 Transfer Income of OFUMS-2018 ER77442 Reference Person Social Security Income-2018 ER77444 Spouse/Partner Social Security Income-2018 ER77446 OFUM Social Security Income-2018",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER81679 Reference Person and Spouse/Partner Taxable Income-2020 ER81740 Reference Person and Spouse/Partner Transfer Income-2020 ER81747 Taxable Income of Other FU Members-2020 ER81768 Transfer Income of OFUMS-2020 ER81769 Reference Person Social Security Income-2020 ER81771 Spouse/Partner Social Security Income-2020 ER81773 OFUM Social Security Income-2020",null,"defeating_clause"]
+["This variable is the sum of these seven variables: ER85533 Reference Person and Spouse/Partner Taxable Income-2022 ER85594 Reference Person and Spouse/Partner Transfer Income-2022 ER85601 Taxable Income of Other FU Members-2022 ER85622 Transfer Income of OFUMS-2022 ER85623 Reference Person Social Security Income-2022 ER85625 Spouse/Partner Social Security Income-2022 ER85627 OFUM Social Security Income-2022",null,"defeating_clause"]
+["This variable refers to the first mention of ownership of the fifth business.",null,"defeating_clause"]
+["This variable refers to the first mention of ownership of the first business.",null,"defeating_clause"]
+["This variable refers to the first mention of ownership of the fourth business.",null,"defeating_clause"]
+["This variable refers to the first mention of ownership of the second business.",null,"defeating_clause"]
+["This variable refers to the first mention of ownership of the third business.",null,"defeating_clause"]
+["This variable refers to the fourth mention of ownership of the fifth business.",null,"defeating_clause"]
+["This variable refers to the fourth mention of ownership of the first business.",null,"defeating_clause"]
+["This variable refers to the fourth mention of ownership of the fourth business.",null,"defeating_clause"]
+["This variable refers to the fourth mention of ownership of the second business.",null,"defeating_clause"]
+["This variable refers to the fourth mention of ownership of the third business.",null,"defeating_clause"]
+["This variable refers to the second mention of ownership of the fifth business.",null,"defeating_clause"]
+["This variable refers to the second mention of ownership of the first business.",null,"defeating_clause"]
+["This variable refers to the second mention of ownership of the fourth business.",null,"defeating_clause"]
+["This variable refers to the second mention of ownership of the second business.",null,"defeating_clause"]
+["This variable refers to the second mention of ownership of the third business.",null,"defeating_clause"]
+["This variable refers to the third mention of ownership of the fifth business.",null,"defeating_clause"]
+["This variable refers to the third mention of ownership of the first business.",null,"defeating_clause"]
+["This variable refers to the third mention of ownership of the fourth business.",null,"defeating_clause"]
+["This variable refers to the third mention of ownership of the second business.",null,"defeating_clause"]
+["This variable refers to the third mention of ownership of the third business.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V17829 (Head's wages) if 17830 (accuracy of Head's wages) equaled 1 or 2; V17827 (Head's labor income from farming), V17828 (Head's labor income from business), V17831 (Head's bonuses, overtime and commissions), V17832 (Head's income from professional practice or trade), V17833 (Head's labor income from market gardening), and V17834 (Head's labor income from roomers and boarders) if V17835 (accuracy of Head's non-wage labor income) equaled 1 or 2; V17836 (Wife's/\"Wife's\" labor income) if V17837 (accuracy of Wife's/ \"Wife's\" labor income) equaled 1 or 2; V17846 (Head's interest and dividends) and the absolute values of V17838 (Head's and Wife's/\"Wife's\" asset income from farming), V17839 (Head's and Wife's/\"Wife's\" asset income from business), V17840 (Head's and Wife's/\"Wife's\" asset income from market gardening), V17841 (Head's and Wife's/\"Wife's\" asset income from roomers and boarders), V17844 (Head's rent income), and V17849 (Wife's/\"Wife's\" other asset income) if V17850 (accuracy of Head's and Wife's/\"Wife's\" asset income) equaled 1 or 2; V17859 (Head's ADC/AFDC) if V17860 (accuracy of Head's ADC/AFDC) equaled 1 or 2; V17880 (Wife's/\"Wife's\" ADC/AFDC) if V17881 (accuracy of Wife's/\"Wife's\" ADC/AFDC) equaled 1 or 2; V17901 (Head's and Wife's/\"Wife's\" total transfers) minus V17859 (Head's ADC/AFDC) and V17880 (Wife's/\"Wife's\" ADC/AFDC) if V17900 (accuracy of Head's and Wife's/\"wife's\" total transfers except ADC/ AFDC) equaled 1 or 2; the absolute value of V18001 (total taxable income of other FU members) if V18002 (accuracy of other FU members' total taxable income) equaled 1 or 2; and V18017 (total transfers of other FU members) if V18018 (accuracy of other FU members' total transfers) equaled 1 or 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V17829 (Head's wages) if 17830 (accuracy of Head's wages) equaled 1 or 2; and V17827 (Head's labor income from farming), V17828 (Head's labor income from business), V17831 (Head's bonuses, overtime and commissions), V17832 (Head's income from professional practice or trade), V17833 (Head's labor income from market gardening), and V17834 (Head's labor income from roomers and boarders) if V17835 (accuracy of Head's non-wage labor income) equaled 1 or 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V17829 (Head's wages) if 17830 (accuracy of Head's wages) equaled 2; V17827 (Head's labor income from farming), V17828 (Head's labor income from business), V17831 (Head's bonuses, overtime and commissions), V17832 (Head's income from professional practice or trade), V17833 (Head's labor income from market gardening), and V17834 (Head's labor income from roomers and boarders) if V17835 (accuracy of Head's non-wage labor income) equaled 2; V17836 (Wife's/\"Wife's\" labor income) if V17837 (accuracy of Wife's/\"Wife's\" labor income) equaled 2; V17846 (Head's interest and dividends) and the absolute values of V17838 (Head's and Wife's/\"Wife's\" asset income from farming), V17839 (Head's and Wife's/\"Wife's\" asset income from business), V17840 (Head's and Wife's/\"Wife's\" asset income from market gardening), V17841 (Head's and Wife's/\"Wife's\" asset income from roomers and boarders), V17844 (Head's rent income), and V17849 (Wife's/\"Wife's\" other asset income) if V17850 (accuracy of Head's and Wife's/\"Wife's\" asset income) equaled 2; V17859 (Head's ADC/AFDC) if V17860 (accuracy of Head's ADC/AFDC) equaled 2; V17880 (Wife's/\"Wife's\" ADC/AFDC) if V17881 (accuracy of Wife's/\"Wife's\" ADC/AFDC) equaled 2; V17901 (Head's and Wife's/\"Wife's\" total transfers) minus V17859 (Head's ADC/AFDC) and V17880 (Wife's/\"Wife's\" ADC/AFDC) if V17900 (accuracy of Head's and Wife's/\"Wife's\" total transfers except ADC/ AFDC) equaled 2; the absolute value of V18001 (total taxable income of other FU members) if V18002 (accuracy of other FU members' total taxable income) equaled 2; and V18017 (total transfers of other FU members) if V18018 (accuracy of other FU members' total transfers) equaled 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V17829 (Head's wages) if 17830 (accuracy of Head's wages) equaled 2; and V17827 (Head's labor income from farming), V17828 (Head's labor income from business), V17831 (Head's bonuses, overtime and commissions), V17832 (Head's income from professional practice or trade), V17833 (Head's labor income from market gardening), and V17834 (Head's labor income from roomers and boarders) if V17835 (accuracy of Head's non-wage labor income) equaled 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V19129 (Head's wages) if 17830 (accuracy of Head's wages) equaled 1 or 2; V19127 (Head's labor income from farming), V19128 (Head's labor income from business), V19131 (Head's bonuses, overtime and commissions), V19132 (Head's income from professional practice or trade), V19133 (Head's labor income from market gardening), and V19134 (Head's labor income from roomers and boarders) if V19135 (accuracy of Head's non-wage labor income) equaled 1 or 2; V19136 (Wife's/ \"Wife's\" labor income) if V19137 (accuracy of Wife's/ \"Wife's\" labor income) equaled 1 or 2; V19146 (Head's interest and dividends) and the absolute values of V19138 (Head's and Wife's/ \"Wife's\" asset income from farming), V19139 (Head's and Wife's/ \"Wife's\" asset income from business), V19140 (Head's and Wife's/ \"Wife's\" asset income from market gardening), V19141 (Head's and Wife's/ \"Wife's\" asset income from roomers and boarders), V19144 (Head's rent income), and V19149 (Wife's/ \"Wife's\" other asset income) if V19150 (accuracy of Head's and Wife's/ \"Wife's\" asset income) equaled 1 or 2; V19159 (Head's ADC/AFDC) if V19160 (accuracy of Head's ADC/AFDC) equaled 1 or 2; V19180 (Wife's/ \"Wife's\" ADC/AFDC) if V19181 (accuracy of Wife's/ \"Wife's\" ADC/AFDC) equaled 1 or 2; V19201 (Head's and Wife's/ \"Wife's\" total transfers) minus V19159 (Head's ADC/AFDC) and V19180 (Wife's/ \"Wife's\" ADC/AFDC) if V19200 (accuracy of Head's and Wife's/ \"Wife's\" total transfers except ADC/AFDC) equaled 1 or 2; the absolute value of V19301 (total taxable income of other FU members) if V19302 (accuracy of other FU members' total taxable income) equaled 1 or 2; and V19317 (total transfers of other FU members) if V19318 (accuracy of other FU members' total transfers) equaled 1 or 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V19129 (Head's wages) if 17830 (accuracy of Head's wages) equaled 1 or 2; and V19127 (Head's labor income from farming), V19128 (Head's labor income from business), V19131 (Head's bonuses, overtime and commissions), V19132 (Head's income from professional practice or trade), V19133 (Head's labor income from market gardening), and V19134 (Head's labor income from roomers and boarders) if V19135 (accuracy of Head's non-wage labor income) equaled 1 or 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V19129 (Head's wages) if 17830 (accuracy of Head's wages) equaled 2; V19127 (Head's labor income from farming), V19128 (Head's labor income from business), V19131 (Head's bonuses, overtime and commissions), V19132 (Head's income from professional practice or trade), V19133 (Head's labor income from market gardening), and V19134 (Head's labor income from roomers and boarders) if V19135 (accuracy of Head's non-wage labor income) equaled 2; V19136 (Wife's/ \"Wife's\" labor income) if V19137 (accuracy of Wife's/ \"Wife's\" labor income) equaled 2; V19146 (Head's interest and dividends) and the absolute values of V19138 (Head's and Wife's/ \"Wife's\" asset income from farming), V19139 (Head's and Wife's/ \"Wife's\" asset income from business), V19140 (Head's and Wife's/ \"Wife's\" asset income from market gardening), V19141 (Head's and Wife's/ \"Wife's\" asset income from roomers and boarders), V19144 (Head's rent income), and V19149 (Wife's/ \"Wife's\" other asset income) if V19150 (accuracy of Head's and Wife's/ \"Wife's\" asset income) equaled 2; V19159 (Head's ADC/AFDC) if V19160 (accuracy of Head's ADC/AFDC) equaled 2; V19180 (Wife's/ \"Wife's\" ADC/AFDC) if V19181 (accuracy of Wife's/ \"Wife's\" ADC/AFDC) equaled 2; V19201 (Head's and Wife's/ \"Wife's\" total transfers) minus V19159 (Head's ADC/AFDC) and V19180 (Wife's/ \"Wife's\" ADC/AFDC) if V19200 (accuracy of Head's and Wife's/ \"Wife's\" total transfers except ADC/AFDC) equaled 2; the absolute value of V19301 (total taxable income of other FU members) if V19302 (accuracy of other FU members' total taxable income) equaled 2; and V19317 (total transfers of other FU members) if V19318 (accuracy of other FU members' total transfers) equaled 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V19129 (Head's wages) if 17830 (accuracy of Head's wages) equaled 2; and V19127 (Head's labor income from farming), V19128 (Head's labor income from business), V19131 (Head's bonuses, overtime and commissions), V19132 (Head's income from professional practice or trade), V19133 (Head's labor income from market gardening), and V19134 (Head's labor income from roomers and boarders) if V19135 (accuracy of Head's non-wage labor income) equaled 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V20429 (Head's wages) if 17830 (accuracy of Head's wages) equaled 1 or 2; V20427 (Head's labor income from farming), V20428 (Head's labor income from business), V20431 (Head's bonuses, overtime and commissions), V20432 (Head's income from professional practice or trade), V20433 (Head's labor income from market gardening), and V20434 (Head's labor income from roomers and boarders) if V20435 (accuracy of Head's non-wage labor income) equaled 1 or 2; V20436 (Wife's/\"Wife's\" labor income) if V20437 (accuracy of Wife's/ \"Wife's\" labor income) equaled 1 or 2; V20446 (Head's interest and dividends) and the absolute values of V20438 (Head's and Wife's/\"Wife's\" asset income from farming), V20439 (Head's and Wife's/\"Wife's\" asset income from business), V20440 (Head's and Wife's/\"Wife's\" asset income from market gardening), V20441 (Head's and Wife's/\"Wife's\" asset income from roomers and boarders), V20444 (Head's rent income), and V20449 (Wife's/\"Wife's\" other asset income) if V20450 (accuracy of Head's and Wife's/\"Wife's\" asset income) equaled 1 or 2; V20459 (Head's ADC/AFDC) if V20460 (accuracy of Head's ADC/AFDC) equaled 1 or 2; V20480 (Wife's/\"Wife's\" ADC/AFDC) if V20481 (accuracy of Wife's/ \"Wife's\" ADC/AFDC) equaled 1 or 2; V20501 (Head's and Wife's/\"Wife's\" total transfers) minus V20459 (Head's ADC/AFDC) and V20480 (Wife's/\"Wife's\" ADC/AFDC) if V20500 (accuracy of Head's and Wife's/\"Wife's\" total transfers except ADC/AFDC) equaled 1 or 2; the absolute value of V20601 (total taxable income of other FU members) if V20602 (accuracy of other FU members' total taxable income) equaled 1 or 2; and V20617 (total transfers of other FU members) if V20618 (accuracy of other FU members' total transfers) equaled 1 or 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V20429 (Head's wages) if 17830 (accuracy of Head's wages) equaled 1 or 2; and V20427 (Head's labor income from farming), V20428 (Head's labor income from business), V20431 (Head's bonuses, overtime and commissions), V20432 (Head's income from professional practice or trade), V20433 (Head's labor income from market gardening), and V20434 (Head's labor income from roomers and boarders) if V20435 (accuracy of Head's non-wage labor income) equaled 1 or 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V20429 (Head's wages) if 17830 (accuracy of Head's wages) equaled 2; V20427 (Head's labor income from farming), V20428 (Head's labor income from business), V20431 (Head's bonuses, overtime and commissions), V20432 (Head's income from professional practice or trade), V20433 (Head's labor income from market gardening), and V20434 (Head's labor income from roomers and boarders) if V20435 (accuracy of Head's non-wage labor income) equaled 2; V20436 (Wife's/\"Wife's\" labor income) if V20437 (accuracy of Wife's/ \"Wife's\" labor income) equaled 2; V20446 (Head's interest and dividends) and the absolute values of V20438 (Head's and Wife's/\"Wife's\" asset income from farming), V20439 (Head's and Wife's/\"Wife's\" asset income from business), V20440 (Head's and Wife's/\"Wife's\" asset income from market gardening), V20441 (Head's and Wife's/\"Wife's\" asset income from roomers and boarders), V20444 (Head's rent income), and V20449 (Wife's/\"Wife's\" other asset income) if V20450 (accuracy of Head's and Wife's/\"Wife's\" asset income) equaled 2; V20459 (Head's ADC/AFDC) if V20460 (accuracy of Head's ADC/AFDC) equaled 2; V20480 (Wife's/\"Wife's\" ADC/AFDC) if V20481 (accuracy of Wife's/ \"Wife's\" ADC/AFDC) equaled 2; V20501 (Head's and Wife's/\"Wife's\" total transfers) minus V20459 (Head's ADC/AFDC) and V20480 (Wife's/\"Wife's\" ADC/AFDC) if V20500 (accuracy of Head's and Wife's/\"Wife's\" total transfers except ADC/ AFDC) equaled 2; the absolute value of V20601 (total taxable income of other FU members) if V20602 (accuracy of other FU members' total taxable income) equaled 2; and V20617 (total transfers of other FU members) if V20618 (accuracy of other FU members' total transfers) equaled 2.",null,"defeating_clause"]
+["This variable was calculated by summing the following: V20429 (Head's wages) if 17830 (accuracy of Head's wages) equaled 2; and V20427 (Head's labor income from farming), V20428 (Head's labor income from business), V20431 (Head's bonuses, overtime and commissions), V20432 (Head's income from professional practice or trade), V20433 (Head's labor income from market gardening), and V20434 (Head's labor income from roomers and boarders) if V20435 (accuracy of Head's non-wage labor income) equaled 2.",null,"defeating_clause"]
+["This variable was calculated from the product of B63 x B64 or C63 x C64.",null,"defeating_clause"]
+["This variable was calculated from the product of B66 x B67 or C66 x C67.",null,"defeating_clause"]
+["This variable was calculated from the product of B71 x B73 or C69 x C71.",null,"defeating_clause"]
+["This variable was calculated from the product of B74 x B76 or C72 x C74.",null,"defeating_clause"]
+["This variable was calculated from the product of B75 x B76 or C66 x C67.",null,"defeating_clause"]
+["This variable was calculated from the product of B78 x B79 or C70 x C71.",null,"defeating_clause"]
+["This variable was calculated from the product of B78 x B79 orC70 x C71.",null,"no_unit_naming_clause"]
+["This variable was calculated from the product of B83 x B85 or C72 x C74.",null,"defeating_clause"]
+["This variable was calculated from the product of B88 x B89 + B100 x B101 or C80 x C81 + C92 x C93.",null,"defeating_clause"]
+["This variable was calculated from the product of B88 x B89 + B100 x B101 orC80 x C81 + C92 x C93.",null,"no_unit_naming_clause"]
+["This variable was calculated from the product of C112 x C113 or D38 x D39 or E7 x E9.",null,"defeating_clause"]
+["This variable was calculated from the product of C119 x C121 or D43 x D45.",null,"defeating_clause"]
+["This variable was calculated from the product of D61 x D62 or E61 x E62.",null,"defeating_clause"]
+["This variable was calculated from the product of D64 x D65 or E64 x E65.",null,"defeating_clause"]
+["This variable was calculated from the product of D69 x D71 or E67 x E69.",null,"defeating_clause"]
+["This variable was calculated from the product of D72 x D74 or E70 x E72.",null,"defeating_clause"]
+["This variable was calculated from the product of D78 x D79 or E70 x E71.",null,"defeating_clause"]
+["This variable was calculated from the product of D78 x D79 orE70 x E71.",null,"no_unit_naming_clause"]
+["This variable was calculated from the product of D88 x D89 + D100 x D101 or E80 x E81 + E92 x E93.",null,"defeating_clause"]
+["This variable was calculated from the product of D88 x D89 + D100 x D101 orE80 x E81 + E92 x E93.",null,"no_unit_naming_clause"]
+["This variable was calculated from the product of F109 x F110 or G36 x G37 or H7 x H9.",null,"defeating_clause"]
+["This variable was calculated from the product of F115 x F117 or G40 x G42.",null,"defeating_clause"]
+["This variable was calculated from the product of J75 x J76 or K66 x K67.",null,"defeating_clause"]
+["This variable was calculated from the product of J83 x J85 or K72 x K74.",null,"defeating_clause"]
+["This variable was computed by multiplying B46 or C49 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B49 or C52 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B49 or C52 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying B52 or C55 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying B55 or C55 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying B58 or C12 or C58 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B58 or C52 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B58 or C58 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying B61 or C12 or C61 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B61 or C55 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying B61 or C56 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying B61 or C61 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B61 orC56 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying B64 or C59 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying B64 or C64 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B64 orC59 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying B67 or C58 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying B70 or C61 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B70 or C62 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying B70 orC62 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying B73 or C64 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B73 or C7 or C65 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B73 orC7 orC65 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying B76 or C68 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying B76 orC68 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying C104 or D30 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying C107 or D33 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying C110 or D36 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying C23 or D15 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying C23 or D16 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying C25 or D17 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying C25 or D18 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying C29 or D19 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying C29 or D20 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying C31 or D21 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying C31 or D22 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying C95 or D24 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying C98 or D27 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying D44 or E47 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying D47 or E50 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying D47 or E50 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying D50 or E53 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying D53 or E53 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying D56 or E10 or E56 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying D56 or E56 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying D59 or E10 or E59 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying D59 or E59 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying D61 or E56 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying D61 orE53 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying D62 or E62 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying D64 or E59 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying D64 orE56 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying D70 or E62 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying D70 orE62 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying D73 or E7 or E65 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying D73 orE7 orE65 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying D76 or E68 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying D76 orE68 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying F101 or G28 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying F104 or G31 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying F107 or G34 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying F19 or G13 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying F19 or G14 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying F21 or G15 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying F21 or G16 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying F25 or G17 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying F25 or G18 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying F27 or G19 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying F27 or G20 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying F92 or G22 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying F95 or G25 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying J58 or K52 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying J61 or K55 by 80 for the first eight weeks and by 60 for any weeks thereafter.",null,"defeating_clause"]
+["This variable was computed by multiplying J67 or K58 by 40.",null,"no_unit_naming_clause"]
+["This variable was computed by multiplying J70 or K61 by 40.",null,"defeating_clause"]
+["This variable was computed by multiplying J73 or K64 by 40.",null,"defeating_clause"]
+["This variable was computed by summing the products of C32 x C33 and C40 x C41 with C35, or D23 x D24 and D29 x D30, or E7 x E8.",null,"defeating_clause"]
+["This variable was computed by summing the products of C32 x C33, C40 x C41, and C35 or D23 x D24 and D29 x D30 or E7 x E8.",null,"defeating_clause"]
+["This variable was computed by summing the products of F28 x F29, F34 x F35 and F31 or G21 x G22 and G25 x G26 or H7 x H8.",null,"defeating_clause"]
+["This variable was computed by summing the products of F28 x F29, F34 x F35 and F31, or G21 x G22 and G25 x G26, or H7 x H8.",null,"defeating_clause"]
+["This variable was generated by combining responses to the seven questions listed above.",null,"defeating_clause"]
+["This variable was generated by summing: V10018 1984 House Value (Main home) V17590 1984 Net Value of Other Real Estate V17592 1984 Net Value of Vehicles V17595 1984 Net Value of Farm or Business V17598 1984 Net Value of Stocks V17601 1984 Value of Cash Accounts V17604 1984 Net Value of Other Assets and by subtracting: V10020 1984 Remaining Mortgage Principal (Main home) V17607 1984 Other Debts",null,"defeating_clause"]
+["This variable was generated by summing: V10018 1984 House Value, unless moved between 1984 and 1989 V17340 Value of Private Annuities in 1989 V17346 Value of Real Estate Purchased Since 1984 V17352 Cost of Additions/Repairs to Real Estate Since 1984 V17355 Amount Invested in Business/Farm Since 1984 V17365 Amount of Stock Purchased Since 1984 V17371 Assets Removed by Movers Out Since 1984 V17379 Debts Added by Movers In Since 1984 V17389 Total Wealth in 1989 V17590 Equity in Real Estate in 1984 V17595 Equity in Farm/Business in 1984 V17598 Value of Stocks Held in 1984 and by subtracting: V16324 1989 House Value V17318 Equity in Real Estate in 1989 V17323 Equity in Farm/Business in 1989 V17326 Value of Stocks Held in 1989 V17343 Value of Pensions/Annuities Cashed In Since 1984 V17349 Value of Real Estate Sold Since 1984 V17358 Value of Farm/Business Sold Since 1984 V17368 Value of Stock Sold Since 1984 V17373 Debts Removed by Movers Out Since 1984 V17377 Assets Added by Movers In Since 1984 V17384 Value of Inheritance Received Since 1984 V17387 Value of All Other Inheritances Received Since 1984 V17609 1984 Total Wealth in 1984 If the family moved between 1984 and 1989, separate increases for capital gains in housing were calculated for each home.",null,"defeating_clause"]
+["This variable was generated by summing: V16324 1989 House Value (Main home) V17318 1989 Net Value of Other Real Estate V17320 1989 Net Value of Vehicles V17323 1989 Net Value of Farm or Business V17326 1989 Net Value of Stocks V17329 1989 Value of Cash Accounts V17332 1989 Net Value of Other Assets and by subtracting: V16326 1989 Remaining Mortgage Principal (Main home) V17335 1989 Other Debts",null,"defeating_clause"]
+["This variable's values are based on USDA Low-Cost Plan estimates of weekly food costs, according to the table below (reproduced from Family Economics Review, June 1967), summed for the family as it was at the time of the interview.",null,"no_unit_naming_clause"]
+["Values are determined by raw score (ER14331S) and whether household has children or not (ER14331Y).",null,"defeating_clause"]
+["Values are determined by raw score (ER18470S) and whether household has children or not (ER18470Y).",null,"defeating_clause"]
+["Values are determined by raw score (ER21735S) and whether household has children or not (ER21735Y).",null,"defeating_clause"]
+["Values are determined by raw score (ER60797) and whether household has children or not (ER60803).",null,"defeating_clause"]
+["Values are determined by raw score (ER66845) and whether household has children or not (ER66851).",null,"defeating_clause"]
+["Values are determined by raw score (ER72849) and whether household has children or not (ER72855).",null,"defeating_clause"]
+["Values are determined by raw score (ER78926) and whether household has children or not (ER78932).",null,"defeating_clause"]
+["Values are determined by raw score (ER82919) and whether household has children or not (ER82925).",null,"defeating_clause"]
+["Values are determined by raw score of child food security items (ER14331V).",null,"defeating_clause"]
+["Values are determined by raw score of child food security items (ER18470V).",null,"defeating_clause"]
+["Values are determined by raw score of child food security items (ER21735V).",null,"defeating_clause"]
+["Values are determined by raw score of child food security items (ER60800).",null,"defeating_clause"]
+["Values are determined by raw score of child food security items (ER66848).",null,"defeating_clause"]
+["Values are determined by raw score of child food security items (ER72852).",null,"defeating_clause"]
+["Values are determined by raw score of child food security items (ER78929).",null,"defeating_clause"]
+["Values are determined by raw score of child food security items (ER82922).",null,"defeating_clause"]
+["Values are in 1967 dollars.","united_states_dollar","unit_naming_clause"]
+["Values were computed as follows: If it is not known whether Head attended college (ER23446=8 or 9) or the number of years of college is unknown (ER23449=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Head attended college (ER27413=8 or 9) or the number of years of college is unknown (ER27416=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Head attended college (ER40585=8 or 9) or the number of years of college is unknown (ER40588=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Head attended college (ER46563=8 or 9) or the number of years of college is unknown (ER46566=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Head attended college (ER51924=8 or 9) or the number of years of college is unknown (ER51927=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Head attended college (ER57680=8 or 9) or the number of years of college is unknown (ER57683=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Head attended college (ER64832=8 or 9) or the number of years of college is unknown (ER64835=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Head attended college (V23290=9) or the number of years of college is unknown (V23293=9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Reference Person attended college (ER70904=8 or 9) or the number of years of college is unknown (ER70907=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Reference Person attended college (ER76919=8 or 9) or the number of years of college is unknown (ER76922=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Reference Person attended college (ER81166=8 or 9) or the number of years of college is unknown (ER81169=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Reference Person attended college (ER85143=8 or 9) or the number of years of college is unknown (ER85146=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Spouse/Partner attended college (ER64693=8 or 9) or the number of years of college is unknown (ER64696=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Spouse/Partner attended college (ER70766=8 or 9) or the number of years of college is unknown (ER70769=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Spouse/Partner attended college (ER76774=8 or 9) or the number of years of college is unknown (ER76777=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Spouse/Partner attended college (ER81039=8 or 9) or the number of years of college is unknown (ER81042=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Spouse/Partner attended college (ER85016=8 or 9) or the number of years of college is unknown (ER85019=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Wife/\"Wife\" attended college (ER23354=8 or 9) or the number of years of college is unknown (ER23357=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Wife/\"Wife\" attended college (ER27317=8 or 9) or the number of years of college is unknown (ER27320=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Wife/\"Wife\" attended college (ER40492=8 or 9) or the number of years of college is unknown (ER40495=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Wife/\"Wife\" attended college (ER46469=8 or 9) or the number of years of college is unknown (ER46472=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Wife/\"Wife\" attended college (ER51830=8 or 9) or the number of years of college is unknown (ER51833=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether Wife/\"Wife\" attended college (ER57570=8 or 9) or the number of years of college is unknown (ER57573=8 or 9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: If it is not known whether the Wife/\"Wife\" attended college (V23222=9) or the number of years of college is unknown (V23224=9), then the value is 99.",null,"defeating_clause"]
+["Values were computed as follows: if V20061 is greater than zero, then completed education equals 12 plus the value for V20061.",null,"defeating_clause"]
+["Values were computed as follows: if V20131 is greater than zero, then completed education equals 12 plus the value for V20131.",null,"defeating_clause"]
+["Values were computed as follows: if V21367 is greater than zero, then completed education equals 12 plus the value for V21367.",null,"defeating_clause"]
+["Values were computed as follows: if V21437 is greater than zero, then completed education equals 12 plus the value for V21437.",null,"defeating_clause"]
+["Wife's/\"Wife's\" actual total annual hours on all jobs, including overtime.","hour","unit_naming_clause"]
+["Wife's/\"Wife's\" actual total annual hours on all jobs.","hour","unit_naming_clause"]
+["Wife's/\"Wife's\" total annual hours on all jobs, including overtime.","hour","unit_naming_clause"]
+["Wife's/\"Wife's\" total weekly work hours on all jobs.","hour_per_week","unit_naming_clause"]
+["Wife's/\"Wife's\" total weekly work hours on all main jobs.","hour_per_week","unit_naming_clause"]
+["Wife's/\"Wife's\" total weeks worked on all main jobs in 1994.","week","unit_naming_clause"]
+["Wife/\"Wife's: total weekly work hours on all main jobs.","hour_per_week","unit_naming_clause"]
+["actual age in years (1 through 17) and excludes Heads and Wives; note that a child's age is not coded 02 (two years old) until he reaches his second birthday.","year","unit_naming_clause"]
+["actual dollars and cents per hour for Head's reservation wage.","united_states_dollar_per_hour","unit_naming_clause"]
+["actual dollars and cents per hour for Wife's/\"Wife's\" reservation wage.","united_states_dollar_per_hour","unit_naming_clause"]
+["actual dollars and cents per hour.","united_states_dollar_per_hour","unit_naming_clause"]
+["alimony income in whole dollars.","united_states_dollar","unit_naming_clause"]
+["based on USDA Low-Cost Plan estimates of weekly food costs, according to the table below (reproduced from Family Economics Review, June 1967), summed for the family as it was at the time of the interview.",null,"no_unit_naming_clause"]
+["both Head's and Wife's/\"Wife's\" asset portion of the income reported at F11 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["both Head's and Wife's/\"Wife's\" asset portion of the income reported at G11 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["both Head's and Wife's/\"Wife's\" asset portion of the income reported at K7 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["dollar and cents amount per hour.","united_states_dollar_per_hour","unit_naming_clause"]
+["dollars and cents per hour.","united_states_dollar_per_hour","unit_naming_clause"]
+["dollars and cents per hour; if salary is given as an annual figure, it is divided by 2000 hours per year; if weekly, by 40 hours per week.",null,"conflicting_unit_clauses"]
+["dollars and cents.","united_states_dollar","unit_naming_clause"]
+["hours per year.","hour_per_year","unit_naming_clause"]
+["in 1967 dollars.","united_states_dollar","unit_naming_clause"]
+["in 1996 dollars.","united_states_dollar","unit_naming_clause"]
+["in dollars and cents are coded here.","united_states_dollar","unit_naming_clause"]
+["in whole years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in whole years the actual amount of time the Head had worked full time since the age of 18 until the time when this question was actually asked for him/her.","year","unit_naming_clause"]
+["in whole years the actual amount of time the Head had worked since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in whole years the actual amount of time the Head had worked since the age of 18 until the time when this question was actually asked of him/her.","year","unit_naming_clause"]
+["in whole years the actual amount of time the Wife had worked full time since the age of 18 until the time when this question was actually asked for her.","year","unit_naming_clause"]
+["in whole years the actual amount of time the Wife had worked since the age of 18 until the time when this question was actually asked for her.","year","unit_naming_clause"]
+["in whole years the actual amount of time the Wife/\"Wife\" had worked full time since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in whole years the actual amount of time the Wife/\"Wife\" had worked full time since the age of 18 until the time when this question was actually asked for her.","year","unit_naming_clause"]
+["in whole years the actual amount of time the Wife/\"Wife\" had worked since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in whole years the actual amount of time the Wife/\"Wife\" had worked since the age of 18 until the time when this question was actually asked for her.","year","unit_naming_clause"]
+["in years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in years the actual amount of time the Head had worked since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in years the actual amount of time the Reference Person had worked full time since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in years the actual amount of time the Reference Person had worked since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in years the actual amount of time the Spouse/Partner had worked full time since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in years the actual amount of time the Spouse/Partner had worked since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in years the actual amount of time the Wife/\"Wife\" had worked full time since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in years the actual amount of time the Wife/\"Wife\" had worked since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in years the actual amount of time the wife/\"wife\" had worked full time since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["in years the actual amount of time the wife/\"wife\" had worked since the age of 18 until the time of the interview.","year","unit_naming_clause"]
+["last two digits of the actual year (01-85) military service began.",null,"no_unit_naming_clause"]
+["last two digits of the year when problems began (01-85).",null,"no_unit_naming_clause"]
+["length of interview in minutes.",null,"no_unit_naming_clause"]
+["not contiguous.",null,"no_unit_naming_clause"]
+["overall income profits or losses.",null,"no_unit_naming_clause"]
+["responses other than bonus, overtime, tips, or commission income to question G17.",null,"no_unit_naming_clause"]
+["responses other than bonus, overtime, tips, or commission income to question G52c/d.",null,"no_unit_naming_clause"]
+["responses other than bonuses, overtime, tips, or commission income to question G14/G16.",null,"no_unit_naming_clause"]
+["sum of all 1992 OFUM income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2004 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2006 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2008 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2010 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2012 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2014 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2016 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2018 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2020 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["sum of all 2022 OFUM labor income data after individual imputations were made.",null,"no_unit_naming_clause"]
+["the 1971 interview number.",null,"no_unit_naming_clause"]
+["the 1993 interview number.",null,"no_unit_naming_clause"]
+["the 1994 family number.",null,"no_unit_naming_clause"]
+["the 1994 interview number.",null,"no_unit_naming_clause"]
+["the 1995 interview number.",null,"no_unit_naming_clause"]
+["the 1996 interview number.",null,"no_unit_naming_clause"]
+["the 1997 interview number.",null,"no_unit_naming_clause"]
+["the 1999 interview number.",null,"no_unit_naming_clause"]
+["the 2001 interview number.",null,"no_unit_naming_clause"]
+["the 2003 interview number.",null,"no_unit_naming_clause"]
+["the 2005 interview number.",null,"no_unit_naming_clause"]
+["the 2007 interview number.",null,"no_unit_naming_clause"]
+["the 2009 interview number.",null,"no_unit_naming_clause"]
+["the 2011 interview number.",null,"no_unit_naming_clause"]
+["the 2013 interview number.",null,"no_unit_naming_clause"]
+["the 2015 interview number.",null,"no_unit_naming_clause"]
+["the 2017 interview number.",null,"no_unit_naming_clause"]
+["the 2019 interview number.",null,"no_unit_naming_clause"]
+["the 2021 interview number.",null,"no_unit_naming_clause"]
+["the 2023 interview number.",null,"no_unit_naming_clause"]
+["the 7-digit identification number assigned to each interviewer by the Survey Research Center's Survey Operations Office as his or her personal identifier.",null,"no_unit_naming_clause"]
+["the 8-digit identification number assigned to each interviewer by the Survey Research Center's Survey Operations Office as his or her personal identifier.",null,"no_unit_naming_clause"]
+["the ADC/AFDC income of all other FU members in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Head's asset portion of the income reported at G19b in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Head's asset portion of the income reported at G4 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Head's average hourly earnings in dollars and cents per hour.","united_states_dollar_per_hour","unit_naming_clause"]
+["the SECU into which a sample unit is classified and take the form xxy.",null,"no_unit_naming_clause"]
+["the SSI income in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the SSI income of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security income in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Social Security of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the TANF income of all other FU members in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration Pension income of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Veterans Administration pension income in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion from V11406-V11409 (questions F5, F11, F19b, and F19c) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion from V12806-V12807 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion from V13908-V13909 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion from V14923-V14924 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion from V16423-V16424 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion from V17839-V17840 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion from V19139-V19140 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion from V20439-V20440 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion of the income reported at G11a in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" asset portion of the income reported at G4 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the Wife's/\"Wife's\" average hourly earnings in dollars and cents per hour.","united_states_dollar_per_hour","unit_naming_clause"]
+["the actual 1982 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 1993 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 1993 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 1993 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 1993 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 1994 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 1994 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 1994 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 1994 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 1995 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 1995 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 1995 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 1995 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 1996 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 1996 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 1996 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 1996 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 1997 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 1997 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 1997 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 1997 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 1999 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 1999 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 1999 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 1999 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2001 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2001 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2001 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2001 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2003 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2003 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2003 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2003 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2005 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2005 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2005 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2005 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2007 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2007 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2007 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2007 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2009 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2009 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2009 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2009 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2011 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2011 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2011 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2011 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2013 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2013 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2013 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2013 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2015 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2015 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2015 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2015 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2017 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2017 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2017 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2017 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2019 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2019 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2019 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2019 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2021 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2021 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2021 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2021 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual 2023 ID number of the first other family living with this one.",null,"defeating_clause"]
+["the actual 2023 ID number of the fourth other family living with this one.",null,"defeating_clause"]
+["the actual 2023 ID number of the second other family living with this one.",null,"defeating_clause"]
+["the actual 2023 ID number of the third other family living with this one.",null,"defeating_clause"]
+["the actual age (01-97) of the householder.",null,"no_unit_naming_clause"]
+["the actual age (45-94) at which Head expects to start receiving retirement benefits.",null,"no_unit_naming_clause"]
+["the actual age (45-94) at which Wife/\"Wife\" expects to start receiving retirement benefits.",null,"no_unit_naming_clause"]
+["the actual age in years (01 through 17) of the youngest FU Member in this age range and excludes Heads and Wives/\"Wives\"; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year","unit_naming_clause"]
+["the actual age in years (45-95) at which Head plans to retire.","year","unit_naming_clause"]
+["the actual age in years (45-95) at which Wife/\"Wife\" plans to retire.","year","unit_naming_clause"]
+["the actual age in years (45-96) at which Head can receive at least partial benefits.","year","unit_naming_clause"]
+["the actual age in years (45-96) at which Head may retire with full benefits.","year","unit_naming_clause"]
+["the actual age in years (45-96) at which Wife/\"Wife\" can receive at least partial benefits.","year","unit_naming_clause"]
+["the actual age in years (45-96) at which Wife/\"Wife\" may retire with full benefits.","year","unit_naming_clause"]
+["the actual age in years (45-96) at which employer contributions could first be received.","year","unit_naming_clause"]
+["the actual age in years (65-95) at which Head plans to retire.","year","unit_naming_clause"]
+["the actual age in years (65-95) at which Wife/\"Wife\" plans to retire.","year","unit_naming_clause"]
+["the actual age in years of the youngest FU Member in this age range and excludes Heads and Spouses/Partners; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year","unit_naming_clause"]
+["the actual age in years of the youngest FU Member in this age range and excludes Heads and Wives/\"Wives\"; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year","unit_naming_clause"]
+["the actual age in years of the youngest FU Member in this age range and excludes Reference Persons and Spouses/Partners; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year","unit_naming_clause"]
+["the actual age of the 1971 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1983 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1984 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1985 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1986 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1987 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1988 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1989 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1990 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1991 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1992 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1993 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1994 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1995 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1996 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1997 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 1999 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2001 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2003 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2005 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2007 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2009 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2011 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2013 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2015 Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2017 Reference Person of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2019 Reference Person of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2021 Reference Person of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the 2023 Reference Person of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the Head of the FU.",null,"no_unit_naming_clause"]
+["the actual age of the Head.",null,"no_unit_naming_clause"]
+["the actual age of the Wife.",null,"no_unit_naming_clause"]
+["the actual age of the current Spouse or Partner (cohabiting friend).",null,"no_unit_naming_clause"]
+["the actual age of the current Wife or \"Wife\" (cohabiting female friend).",null,"no_unit_naming_clause"]
+["the actual age of the current Wife or cohabiting female friend.",null,"no_unit_naming_clause"]
+["the actual age of the current wife or \"wife\" (cohabiting female friend).",null,"no_unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V10254 Labor Part of Farm Income V10255 Labor Part of Business Income V10256 Head's Wages Income V10258 Head's Bonuses, Overtime, Commissions V10259 Head's Income from Professional Practice or Trade V10260 Labor Part of Market Gardening Income V10261 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V11395 Labor Part of Farm Income V11396 Labor Part of Business Income V11397 Head's Wages Income V11399 Head's Bonuses, Overtime, Commissions V11400 Head's Income from Professional Practice or Trade V11401 Labor Part of Market Gardening Income V11402 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V12794 Labor Part of Farm Income V12795 Labor Part of Business Income V12796 Head's Wages Income V12798 Head's Bonuses, Overtime, Commissions V12799 Head's Income from Professional Practice or Trade V12800 Labor Part of Market Gardening Income V12801 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V13896 Labor Part of Farm Income V13897 Labor Part of Business Income V13898 Head's Wages Income V13900 Head's Bonuses, Overtime, Commissions V13901 Head's Income from Professional Practice or Trade V13902 Labor Part of Market Gardening Income V13903 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V14911 Labor Part of Farm Income V14912 Labor Part of Business Income V14913 Head's Wages Income V14915 Head's Bonuses, Overtime, Commissions V14916 Head's Income from Professional Practice or Trade V14917 Labor Part of Market Gardening Income V14918 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V16411 Labor Part of Farm Income V16412 Labor Part of Business Income V16413 Head's Wages Income V16415 Head's Bonuses, Overtime, Commissions V16416 Head's Income from Professional Practice or Trade V16417 Labor Part of Market Gardening Income V16418 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V17827 Labor Part of Farm Income V17828 Labor Part of Business Income V17829 Head's Wages Income V17831 Head's Bonuses, Overtime, Commissions V17832 Head's Income from Professional Practice or Trade V17833 Labor Part of Market Gardening Income V17834 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V19127 Labor Part of Farm Income V19128 Labor Part of Business Income V19129 Head's Wages Income V19131 Head's Bonuses, Overtime, Commissions V19132 Head's Income from Professional Practice or Trade V19133 Labor Part of Market Gardening Income V19134 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V20427 Labor Part of Farm Income V20428 Labor Part of Business Income V20429 Head's Wages Income V20431 Head's Bonuses, Overtime, Commissions V20432 Head's Income from Professional Practice or Trade V20433 Labor Part of Market Gardening Income V20434 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V21733 Head's Labor Part of Farm Income V21738 Head's Labor Part of Business Income V21739 Head's Wages from Main Jobs V21741 Head's Bonuses V21743 Head's Overtime V21745 Head's Tips V21747 Head's Commissions V21749 Head's Other Job Related Income V21765 Head's Income from Professional Practice or Trade V21783 Head's Labor Part of Market Gardening Income V21800 Head's Labor Part of Roomers and Boarders Income V21801 Head's Wages from Extra Jobs","united_states_dollar","unit_naming_clause"]
+["the actual amount of Head's labor income in whole dollars and sum the following variables: V8871 Labor Part of Farm Income V8872 Labor Part of Business Income V8873 Head's Wages Income V8875 Head's Bonuses, Overtime, Commissions V8876 Head's Income from Professional Practice or Trade V8877 Labor Part of Market Gardening Income V8878 Labor Part of Roomers and Boarders Income","united_states_dollar","unit_naming_clause"]
+["the actual amount of Wife's/\"Wife\"'s labor income in whole dollars and sum the following variables: V21807 G52 WF 1992 LABOR INCOME EXCL BUS/FARM V21803 WF 1992 LABOR PART FARM INCOME V21806 WF LABOR PART OF 1992 BUSINESS INCOME","united_states_dollar","unit_naming_clause"]
+["the actual amount of governmental subsidies of heating costs in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the actual amount of governmental subsidies of heating/cooling costs in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the actual amount of transfers received by all Other FU Members during 1992, regardless of time spent in the FU.",null,"no_unit_naming_clause"]
+["the actual annual dollar income amount (00001- 99996) expected.","united_states_dollar","unit_naming_clause"]
+["the actual annual food standard in whole dollars for the 1983 family.","united_states_dollar","unit_naming_clause"]
+["the actual annual food standard in whole dollars for the 1984 family.","united_states_dollar","unit_naming_clause"]
+["the actual annual food standard in whole dollars for the 1985 family.","united_states_dollar","unit_naming_clause"]
+["the actual annual food standard in whole dollars for the 1986 (current) family.","united_states_dollar","unit_naming_clause"]
+["the actual annual food standard in whole dollars for the 1987 (current) family.","united_states_dollar","unit_naming_clause"]
+["the actual annual food standard in whole dollars for the 1988 (current) family.","united_states_dollar","unit_naming_clause"]
+["the actual annual food standard in whole dollars for the 1990 (current) family.","united_states_dollar","unit_naming_clause"]
+["the actual annual food standard in whole dollars for the 1991 (current) family.","united_states_dollar","unit_naming_clause"]
+["the actual annual food standard in whole dollars for the 1992 (current) family.","united_states_dollar","unit_naming_clause"]
+["the actual annual hours worked.","hour","unit_naming_clause"]
+["the actual annual hours.","hour","unit_naming_clause"]
+["the actual annual hours; all missing data were assigned.","hour","unit_naming_clause"]
+["the actual annual value of the stamps in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the actual annualized hours spent by the Head on housework at the time of the interview.","hour","unit_naming_clause"]
+["the actual annualized hours spent by the wife/\"wife\" on housework at the time of the interview.","hour","unit_naming_clause"]
+["the actual dollar amount of transfers.","united_states_dollar","unit_naming_clause"]
+["the actual dollar value (0000001-9999995) of all other inheritances received.","united_states_dollar","unit_naming_clause"]
+["the actual dollar value (0000001-9999995) of expected inheritances.","united_states_dollar","unit_naming_clause"]
+["the actual dollar value (0000001-9999995) of the first inheritance.","united_states_dollar","unit_naming_clause"]
+["the actual dollar value (000001-999997) of the settlement/inheritance.","united_states_dollar","unit_naming_clause"]
+["the actual dollar value of inheritances.","united_states_dollar","unit_naming_clause"]
+["the actual dollar value of the settlement/inheritance.","united_states_dollar","unit_naming_clause"]
+["the actual duration in weeks of the most recent spell of unemployment.","week","unit_naming_clause"]
+["the actual duration in weeks of the next most recent spell of unemployment.","week","unit_naming_clause"]
+["the actual duration in weeks of the third most recent spell of unemployment.","week","unit_naming_clause"]
+["the actual hourly rate for overtime.",null,"no_unit_naming_clause"]
+["the actual hours per week.","hour_per_week","unit_naming_clause"]
+["the actual income/needs ratio in dollars and cents.",null,"defeating_clause"]
+["the actual interview number of the main family associated with each splito",null,"defeating_clause"]
+["the actual interview number of the main family associated with each splitoff.",null,"defeating_clause"]
+["the actual marginal tax rate based on Head and Wife's/\"Wife's\" taxable income, number of exemptions, and the tax table used.",null,"defeating_clause"]
+["the actual marginal tax rate based on this person's percent proration, taxable income, number of exemptions, and tax table used.",null,"defeating_clause"]
+["the actual marginal tax rate based on this person's percent proration, taxable income, number of exemptions, and the tax table used.",null,"defeating_clause"]
+["the actual marginal tax rate based on this person's taxable income, number of exemptions, and tax table used.",null,"defeating_clause"]
+["the actual marginal tax rate based on this person's taxable income, number of exemptions, and the tax table used.",null,"defeating_clause"]
+["the actual minimum wage rate in dollars and cents per hour reported for the county of residence","united_states_dollar_per_hour","unit_naming_clause"]
+["the actual minimum wage rate in dollars and cents per hour reported for the county of residence.","united_states_dollar_per_hour","unit_naming_clause"]
+["the actual net value in dollars (0000001-9999995) of farms or businesses owned.","united_states_dollar","unit_naming_clause"]
+["the actual net value in dollars (0000001-9999995) of real estate owned, other than the main home.","united_states_dollar","unit_naming_clause"]
+["the actual net value in dollars (0000001-9999995) of stocks.","united_states_dollar","unit_naming_clause"]
+["the actual net value in dollars (000001-999995) of vehicles.","united_states_dollar","unit_naming_clause"]
+["the actual number (01-05) of work history spells needed to complete the work history back to January 1, 1983.",null,"no_unit_naming_clause"]
+["the actual number of 1982 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1983 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1984 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1985 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1986 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1987 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1988 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1989 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1990 Splitoff interviews taken as a result of recontacting and reinterviewing the core sample main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1991 Splitoff interviews taken as a result of recontacting and reinterviewing the core sample main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1992 Splitoff interviews taken as a result of recontacting and reinterviewing the core sample main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1993 Splitoff interviews taken as a result of recontacting and reinterviewing the core sample main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1994 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1995 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1996 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 1997 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2003 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2005 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2007 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2009 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2011 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2013 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2015 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2017 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2019 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2021 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of 2023 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count","unit_naming_clause"]
+["the actual number of Head's brothers.","count","unit_naming_clause"]
+["the actual number of Head's children born during his or her last marriage.","count","unit_naming_clause"]
+["the actual number of Head's sisters.","count","unit_naming_clause"]
+["the actual number of Reference Person's brothers.","count","unit_naming_clause"]
+["the actual number of Reference Person's sisters.","count","unit_naming_clause"]
+["the actual number of Spouse's/Partner's brothers.","count","unit_naming_clause"]
+["the actual number of Spouse's/Partner's sisters.","count","unit_naming_clause"]
+["the actual number of Wife's/ \"Wife's brothers.","count","unit_naming_clause"]
+["the actual number of Wife's/ \"Wife's\" brothers.","count","unit_naming_clause"]
+["the actual number of Wife's/ \"Wife's\" children born during her last marriage.","count","unit_naming_clause"]
+["the actual number of Wife's/ \"Wife's\" sisters.","count","unit_naming_clause"]
+["the actual number of Wife's/\"Wife's\" brothers.","count","unit_naming_clause"]
+["the actual number of Wife's/\"Wife's\" sisters.","count","unit_naming_clause"]
+["the actual number of Wife/\"Wife\" missed due to temporary layoff.",null,"defeating_clause"]
+["the actual number of additional work history spells needed to complete the work history for 1992.","count","unit_naming_clause"]
+["the actual number of additional years (01-96) Head must be in this plan in order to become vested.","year","unit_naming_clause"]
+["the actual number of additional years (01-96) Wife/\"Wife\" must be in this plan in order to become vested.","year","unit_naming_clause"]
+["the actual number of children 17 years of age or less.","count","unit_naming_clause"]
+["the actual number of children born to Head and a woman other than present Wife in the FU.","count","unit_naming_clause"]
+["the actual number of children born to female Head/Wife and a man other than present male Head/ husband in FU.","count","unit_naming_clause"]
+["the actual number of children ever born to female Head or Wife/\"Wife\".","count","unit_naming_clause"]
+["the actual number of children of the Head.","count","unit_naming_clause"]
+["the actual number of children that male Head has ever fathered.","count","unit_naming_clause"]
+["the actual number of days Head reported being unemployed, in 2012.","day","unit_naming_clause"]
+["the actual number of days Head reported being unemployed, in 2014.","day","unit_naming_clause"]
+["the actual number of days Reference Person reported being unemployed, in 2016.","day","unit_naming_clause"]
+["the actual number of days Reference Person reported being unemployed, in 2018.","day","unit_naming_clause"]
+["the actual number of days Reference Person reported being unemployed, in 2020.","day","unit_naming_clause"]
+["the actual number of days Reference Person reported being unemployed, in 2022.","day","unit_naming_clause"]
+["the actual number of employees Head supervises.","count","unit_naming_clause"]
+["the actual number of employees Wife/\"Wife\" supervises.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Fifth Other FU Member.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1982 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1983 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1984 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1985 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1986 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1987 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1988 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1989 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1990 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member for 1991 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the First Other FU Member.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Fourth Other FU Member","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Fourth Other FU Member.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1982 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1983 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1984 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1985 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1986 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1987 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1988 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1989 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1990 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member for 1991 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Second Other FU Member.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1982 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1983 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1984 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1985 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1986 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1987 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1988 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1989 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1990 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member for 1991 taxes.","count","unit_naming_clause"]
+["the actual number of exemptions allowed the Third Other FU Member.","count","unit_naming_clause"]
+["the actual number of exemptions assumed by the staff for tax calculations and always equal 01 or greater, i.e.","count","unit_naming_clause"]
+["the actual number of exemptions assumed by the staff for tax calculations and always equal 01 or greater, i.e., no zero values are permitted, nor are missing data allowed.","count","unit_naming_clause"]
+["the actual number of female Head's/Wife's/\"Wife's\" own children currently living in the family unit.","count","unit_naming_clause"]
+["the actual number of hours (0001-2080) per year.","hour_per_year","unit_naming_clause"]
+["the actual number of hours per week Head spends on housework.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head spent cooking, cleaning, and doing other work around the house.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on his/her extra job or jobs.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on his/her extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on his/her job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on his/her main job(s).","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on his/her main job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on the extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on the first extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on the fourth extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on the second extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked on the third extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head worked.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Head would have worked if the other job had been chosen.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Reference Person spends on housework.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Spouse/Partner spends caring for or looking after an adult.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Spouse/Partner spends looking after children.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Spouse/Partner spends on educational activities.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Spouse/Partner spends on housework.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Spouse/Partner spends on leisure activities.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Spouse/Partner spends on personal care activities.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Spouse/Partner spends shopping.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Spouse/Partner spends volunteering.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife worked on her extra job or jobs.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife worked on her job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife worked on her main job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife worked.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" spends on housework.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" spent on housework.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on her extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on her first extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on her fourth extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on her job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on her main job(s).","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on her main job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on her second extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on her third extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on the extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on the first extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked on this extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" worked.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week Wife/\"Wife\" would have worked if the other job had been chosen.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week head worked.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week the Reference Person spends caring for or looking after an adult.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week the Reference Person spends caring for or looking after children.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week the Reference Person spends on educational activities.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week the Reference Person spends on leisure activities.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week the Reference Person spends on personal care activities.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week the Reference Person spends on shopping.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week the Reference Person spends volunteering.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week wife/\"wife\" spent on housework.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week wife/\"wife\" worked on her first extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week wife/\"wife\" worked on her fourth extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week wife/\"wife\" worked on her second extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week wife/\"wife\" worked on her third extra job.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week wife/\"wife\" worked.","hour_per_week","unit_naming_clause"]
+["the actual number of hours per week.","hour_per_week","unit_naming_clause"]
+["the actual number of individuals (1-9) that were in the armed forces.","count","unit_naming_clause"]
+["the actual number of individuals (1-9) who were in educational facilities, usually colleges or universities, and who lived in dormitories, or if off-campus, were supported by someone other than themselves.","count","unit_naming_clause"]
+["the actual number of individuals (1-9) who were in health care facilities, such as mental institutions, convalescent, nursing and rest homes.","count","unit_naming_clause"]
+["the actual number of individuals (1-9) who were incarcerated in penal institutions.","count","unit_naming_clause"]
+["the actual number of legally adopted children living in the FU at the time of the interview.","count","unit_naming_clause"]
+["the actual number of legally adopted children.","count","unit_naming_clause"]
+["the actual number of male Head's own children by the present Wife.","count","unit_naming_clause"]
+["the actual number of male Head's own children currently living in the family unit whose mother is the present Wife.","count","unit_naming_clause"]
+["the actual number of male Head's own children currently living in the family unit.","count","unit_naming_clause"]
+["the actual number of miles per year.","mile_per_year","unit_naming_clause"]
+["the actual number of miles to work one way.","mile","unit_naming_clause"]
+["the actual number of miles traveled on a one-way journey to work.","mile","unit_naming_clause"]
+["the actual number of minutes taken by the interviewer to administer the questionnaire.","minute","unit_naming_clause"]
+["the actual number of months (001-997) Head has worked in his/her present position or work situation.","month","unit_naming_clause"]
+["the actual number of months (001-997) Wife/\"Wife\" has worked in her present position or work situation.","month","unit_naming_clause"]
+["the actual number of months (01-97) of training necessary.","month","unit_naming_clause"]
+["the actual number of months Head has worked for the present employer.","month","unit_naming_clause"]
+["the actual number of months Head reported being unemployed, in 2012.","month","unit_naming_clause"]
+["the actual number of months Head reported being unemployed, in 2014.","month","unit_naming_clause"]
+["the actual number of months Reference Person reported being unemployed, in 2016.","month","unit_naming_clause"]
+["the actual number of months Reference Person reported being unemployed, in 2018.","month","unit_naming_clause"]
+["the actual number of months Reference Person reported being unemployed, in 2020.","month","unit_naming_clause"]
+["the actual number of months Reference Person reported being unemployed, in 2022.","month","unit_naming_clause"]
+["the actual number of months the position has been held.","month","unit_naming_clause"]
+["the actual number of months worked.","month","unit_naming_clause"]
+["the actual number of months.","month","unit_naming_clause"]
+["the actual number of monthsHead has worked for the present employer.","month","unit_naming_clause"]
+["the actual number of non-FU members (01-20) sharing the housing unit with this FU, whether or not the non-FU members were included in another responding FU.","count","unit_naming_clause"]
+["the actual number of non-FU members sharing the housing unit with this FU (01-20) but who were included in other responding FUs.","count","unit_naming_clause"]
+["the actual number of non-FU members sharing the housing unit with this FU, whether or not the non-FU members were included in another responding FU.","count","unit_naming_clause"]
+["the actual number of other raised children, such as foster and stepchildren, living in the FU.","count","unit_naming_clause"]
+["the actual number of other raised children, such as foster and stepchildren.","count","unit_naming_clause"]
+["the actual number of other raised children, such as foster or stepchildren.","count","unit_naming_clause"]
+["the actual number of people Head employs.","count","unit_naming_clause"]
+["the actual number of people Wife/\"Wife\" employs.","count","unit_naming_clause"]
+["the actual number of people for whom family history information was collected.","count","unit_naming_clause"]
+["the actual number of persons 18 years of age and older in the family.","count","unit_naming_clause"]
+["the actual number of persons currently in the FU who are neither Head nor Spouse/Partner, from newborns through those 17 years of age, whether or not they are actually children of the Head or Spouse/Partner.","count","unit_naming_clause"]
+["the actual number of persons currently in the FU who are neither Head nor Wife from birth through 17 years of age, whether or not they are children of the Head.","count","unit_naming_clause"]
+["the actual number of persons currently in the FU who are neither Head nor Wife/\"Wife\" from newborns through those 17 years of age, whether or not they are actually children of the Head or Wife/\"Wife\"","count","unit_naming_clause"]
+["the actual number of persons currently in the FU who are neither Head nor Wife/\"Wife\" from newborns through those 17 years of age, whether or not they are actually children of the Head or Wife/\"Wife.\"","count","unit_naming_clause"]
+["the actual number of persons currently in the FU who are neither Head nor Wife/\"Wife\", from newborns through those 17 years of age, whether or not they are actually children of the Head or Wife/\"Wife.\"","count","unit_naming_clause"]
+["the actual number of persons currently in the FU who are neither Head nor wife/\"wife\" from newborns through those 17 years of age, whether or not they are actually children of the Head or Wife/\"Wife.\"","count","unit_naming_clause"]
+["the actual number of persons currently in the FU who are neither Reference Person nor Spouse/Partner, from newborns through those 17 years of age, whether or not they are actually children of the Reference Person or Spouse/Partner.","count","unit_naming_clause"]
+["the actual number of persons currently in the FU.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V10418.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V11605.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V13010.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V14113.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V15129.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V16630.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V18048.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V19348.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V20650.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V8351.","count","unit_naming_clause"]
+["the actual number of persons in the FU, and has the same value as V8960.","count","unit_naming_clause"]
+["the actual number of persons in the FU.","count","unit_naming_clause"]
+["the actual number of persons in the first other FU.","count","unit_naming_clause"]
+["the actual number of persons in the fourth other FU.","count","unit_naming_clause"]
+["the actual number of persons in the second other FU.","count","unit_naming_clause"]
+["the actual number of persons in the third other FU.","count","unit_naming_clause"]
+["the actual number of presumed exemptions for tax calculations and always equal 01 or greater, i.e., no zero values are permitted, nor are missing data allowed.","count","unit_naming_clause"]
+["the actual number of raised children, such as foster or stepchildren, living in the FU.","count","unit_naming_clause"]
+["the actual number of reported days Head did not have a job and was not looking for one.","day","unit_naming_clause"]
+["the actual number of reported days Head missed due to illness of others.","day","unit_naming_clause"]
+["the actual number of reported days Head missed due to temporary layoff.","day","unit_naming_clause"]
+["the actual number of reported days Head missed due to the illness of others.","day","unit_naming_clause"]
+["the actual number of reported days Head missed due to unemployment or temporary layoff.","day","unit_naming_clause"]
+["the actual number of reported days Head missed due to unemployment.","day","unit_naming_clause"]
+["the actual number of reported days Reference Person missed due to temporary layoff.","day","unit_naming_clause"]
+["the actual number of reported days Reference Person missed due to the illness of others.","day","unit_naming_clause"]
+["the actual number of reported days Spouse/Partner missed due to temporary layoff.","day","unit_naming_clause"]
+["the actual number of reported days Spouse/Partner missed due to the illness of others.","day","unit_naming_clause"]
+["the actual number of reported days Spouse/Partner was unemployed, in 2014.","day","unit_naming_clause"]
+["the actual number of reported days Spouse/Partner was unemployed, in 2016.","day","unit_naming_clause"]
+["the actual number of reported days Spouse/Partner was unemployed, in 2018.","day","unit_naming_clause"]
+["the actual number of reported days Spouse/Partner was unemployed, in 2020.","day","unit_naming_clause"]
+["the actual number of reported days Spouse/Partner was unemployed, in 2022.","day","unit_naming_clause"]
+["the actual number of reported days Wife/\"Wife missed due to unemployment or temporarily layoff.","day","unit_naming_clause"]
+["the actual number of reported days Wife/\"Wife\" did not have a job and was not looking for one.","day","unit_naming_clause"]
+["the actual number of reported days Wife/\"Wife\" missed due to temporary layoff.","day","unit_naming_clause"]
+["the actual number of reported days Wife/\"Wife\" missed due to the illness of others.","day","unit_naming_clause"]
+["the actual number of reported days Wife/\"Wife\" missed due to unemployment or temporary layoff.","day","unit_naming_clause"]
+["the actual number of reported days Wife/\"Wife\" missed due to unemployment.","day","unit_naming_clause"]
+["the actual number of reported days Wife/\"Wife\" was unemployed, in 2012.","day","unit_naming_clause"]
+["the actual number of reported days missed because Head was on strike.","day","unit_naming_clause"]
+["the actual number of reported days missed because Reference Person was on strike.","day","unit_naming_clause"]
+["the actual number of reported days missed because Spouse/Partner was on strike.","day","unit_naming_clause"]
+["the actual number of reported days missed because Wife/\"Wife\" was on strike.","day","unit_naming_clause"]
+["the actual number of reported days missed because wife/\"wife\" was on strike.","day","unit_naming_clause"]
+["the actual number of reported days missed due to Head's own illness.","day","unit_naming_clause"]
+["the actual number of reported days missed due to Reference Person's own illness.","day","unit_naming_clause"]
+["the actual number of reported days missed due to Spouse's/Partner's own illness.","day","unit_naming_clause"]
+["the actual number of reported days missed due to Wife's/\"Wife's\" own illness.","day","unit_naming_clause"]
+["the actual number of reported days of vacation or time off taken by Spouse/Partner.","day","unit_naming_clause"]
+["the actual number of reported days of vacation or time off taken by Wife/\"Wife\".","day","unit_naming_clause"]
+["the actual number of reported days of vacation or time off taken by the Head.","day","unit_naming_clause"]
+["the actual number of reported days of vacation or time off taken by the Reference Person.","day","unit_naming_clause"]
+["the actual number of reported days of vacation or time off taken by the Wife/\"Wife\".","day","unit_naming_clause"]
+["the actual number of reported days of vacation or time off taken by the wife/\"wife\".","day","unit_naming_clause"]
+["the actual number of reported days of vacation or time off taken by wife/\"wife\".","day","unit_naming_clause"]
+["the actual number of reported days that Head did not have a job and was not looking for one, in 2012.","day","unit_naming_clause"]
+["the actual number of reported days that Head did not have a job and was not looking for one, in 2014.","day","unit_naming_clause"]
+["the actual number of reported days that Head did not have a job and was not looking for one.","day","unit_naming_clause"]
+["the actual number of reported days that Reference Person did not have a job and was not looking for one, in 2016.","day","unit_naming_clause"]
+["the actual number of reported days that Reference Person did not have a job and was not looking for one, in 2018.","day","unit_naming_clause"]
+["the actual number of reported days that Reference Person did not have a job and was not looking for one, in 2020.","day","unit_naming_clause"]
+["the actual number of reported days that Reference Person did not have a job and was not looking for one, in 2022.","day","unit_naming_clause"]
+["the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2014.","day","unit_naming_clause"]
+["the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2016.","day","unit_naming_clause"]
+["the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2018.","day","unit_naming_clause"]
+["the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2020.","day","unit_naming_clause"]
+["the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2022.","day","unit_naming_clause"]
+["the actual number of reported days that Wife/\"Wife\" did not have a job and was not looking for one, in 2012.","day","unit_naming_clause"]
+["the actual number of reported days that Wife/\"Wife\" did not have a job and was not looking for one.","day","unit_naming_clause"]
+["the actual number of reported days that wife/\"wife\" did not have a job and was not looking for one.","day","unit_naming_clause"]
+["the actual number of reported days wife/\"wife\" did not have a job and was not looking for one.","day","unit_naming_clause"]
+["the actual number of reported days wife/\"wife\" missed due to the illness of others.","day","unit_naming_clause"]
+["the actual number of reported days wife/\"wife\" missed due to unemployment or temporary layoff.","day","unit_naming_clause"]
+["the actual number of reported months Head did not have a job and was not looking for one.","month","unit_naming_clause"]
+["the actual number of reported months Head missed due to illness of others.","month","unit_naming_clause"]
+["the actual number of reported months Head missed due to temporary layoff.","month","unit_naming_clause"]
+["the actual number of reported months Head missed due to the illness of others.","month","unit_naming_clause"]
+["the actual number of reported months Head missed due to unemployment or temporary layoff","month","unit_naming_clause"]
+["the actual number of reported months Head missed due to unemployment or temporary layoff.","month","unit_naming_clause"]
+["the actual number of reported months Head missed due to unemployment.","month","unit_naming_clause"]
+["the actual number of reported months Reference Person missed due to temporary layoff.","month","unit_naming_clause"]
+["the actual number of reported months Reference Person missed due to the illness of others.","month","unit_naming_clause"]
+["the actual number of reported months Spouse/Partner missed due to temporary layoff.","month","unit_naming_clause"]
+["the actual number of reported months Spouse/Partner missed due to the illness of others.","month","unit_naming_clause"]
+["the actual number of reported months Spouse/Partner was unemployed, in 2014.","month","unit_naming_clause"]
+["the actual number of reported months Spouse/Partner was unemployed, in 2016.","month","unit_naming_clause"]
+["the actual number of reported months Spouse/Partner was unemployed, in 2018.","month","unit_naming_clause"]
+["the actual number of reported months Spouse/Partner was unemployed, in 2020.","month","unit_naming_clause"]
+["the actual number of reported months Spouse/Partner was unemployed, in 2022.","month","unit_naming_clause"]
+["the actual number of reported months Wife/\"Wife missed due to the illness of others.","month","unit_naming_clause"]
+["the actual number of reported months Wife/\"Wife missed due to unemployment or temporarily layoff.","month","unit_naming_clause"]
+["the actual number of reported months Wife/\"Wife\" did not have a job and was not looking for one.","month","unit_naming_clause"]
+["the actual number of reported months Wife/\"Wife\" missed due to temporary layoff.","month","unit_naming_clause"]
+["the actual number of reported months Wife/\"Wife\" missed due to the illness of others.","month","unit_naming_clause"]
+["the actual number of reported months Wife/\"Wife\" missed due to unemployment or temporary layoff.","month","unit_naming_clause"]
+["the actual number of reported months Wife/\"Wife\" missed due to unemployment.","month","unit_naming_clause"]
+["the actual number of reported months Wife/\"Wife\" was unemployed, in 2012.","month","unit_naming_clause"]
+["the actual number of reported months missed because Head was on strike.","month","unit_naming_clause"]
+["the actual number of reported months missed because Reference Person was on strike.","month","unit_naming_clause"]
+["the actual number of reported months missed because Spouse/Partner was on strike.","month","unit_naming_clause"]
+["the actual number of reported months missed because Wife/\"Wife\" was on strike.","month","unit_naming_clause"]
+["the actual number of reported months missed because wife/\"wife\" was on strike.","month","unit_naming_clause"]
+["the actual number of reported months missed due to Head's own illness.","month","unit_naming_clause"]
+["the actual number of reported months missed due to Reference Person's own illness.","month","unit_naming_clause"]
+["the actual number of reported months missed due to Spouse's/Partner's own illness.","month","unit_naming_clause"]
+["the actual number of reported months missed due to Wife's/\"Wife's\" own illness.","month","unit_naming_clause"]
+["the actual number of reported months of vacation or time off taken by Spouse/Partner.","month","unit_naming_clause"]
+["the actual number of reported months of vacation or time off taken by Wife/\"Wife\".","month","unit_naming_clause"]
+["the actual number of reported months of vacation or time off taken by the Head","month","unit_naming_clause"]
+["the actual number of reported months of vacation or time off taken by the Head.","month","unit_naming_clause"]
+["the actual number of reported months of vacation or time off taken by the Reference Person","month","unit_naming_clause"]
+["the actual number of reported months of vacation or time off taken by the Wife/\"Wife\".","month","unit_naming_clause"]
+["the actual number of reported months of vacation or time off taken by the wife/\"wife\".","month","unit_naming_clause"]
+["the actual number of reported months of vacation or time off taken by wife/\"wife\".","month","unit_naming_clause"]
+["the actual number of reported months that Head did not have a job and was not looking for one.","month","unit_naming_clause"]
+["the actual number of reported months that Reference Person did not have a job and was not looking for one.","month","unit_naming_clause"]
+["the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2014.","month","unit_naming_clause"]
+["the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2016.","month","unit_naming_clause"]
+["the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2018.","month","unit_naming_clause"]
+["the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2020.","month","unit_naming_clause"]
+["the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2022.","month","unit_naming_clause"]
+["the actual number of reported months that Wife/\"Wife\" did not have a job and was not looking for one, in 2012.","month","unit_naming_clause"]
+["the actual number of reported months that Wife/\"Wife\" did not have a job and was not looking for one.","month","unit_naming_clause"]
+["the actual number of reported months that wife/\"wife\" did not have a job and was not looking for one.","month","unit_naming_clause"]
+["the actual number of reported months wife/\"wife\" did not have a job and was not looking for one.","month","unit_naming_clause"]
+["the actual number of reported months wife/\"wife\" missed due to the illness of others.","month","unit_naming_clause"]
+["the actual number of reported months wife/\"wife\" missed due to unemployment or temporary layoff.","month","unit_naming_clause"]
+["the actual number of reported monthss missed due to Head's own illness.","month","unit_naming_clause"]
+["the actual number of reported weeks Head did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of reported weeks Head missed due to illness of others.","week","unit_naming_clause"]
+["the actual number of reported weeks Head missed due to temporary layoff.","week","unit_naming_clause"]
+["the actual number of reported weeks Head missed due to the illness of others.","week","unit_naming_clause"]
+["the actual number of reported weeks Head missed due to unemployment or temporary layoff.","week","unit_naming_clause"]
+["the actual number of reported weeks Head missed due to unemployment.","week","unit_naming_clause"]
+["the actual number of reported weeks Reference Person missed due to temporary layoff.","week","unit_naming_clause"]
+["the actual number of reported weeks Reference Person missed due to the illness of others.","week","unit_naming_clause"]
+["the actual number of reported weeks Spouse/Partner missed due to illness of others.","week","unit_naming_clause"]
+["the actual number of reported weeks Spouse/Partner missed due to temporary layoff.","week","unit_naming_clause"]
+["the actual number of reported weeks Spouse/Partner was unemployed, in 2014.","week","unit_naming_clause"]
+["the actual number of reported weeks Spouse/Partner was unemployed, in 2016.","week","unit_naming_clause"]
+["the actual number of reported weeks Spouse/Partner was unemployed, in 2018.","week","unit_naming_clause"]
+["the actual number of reported weeks Spouse/Partner was unemployed, in 2020.","week","unit_naming_clause"]
+["the actual number of reported weeks Spouse/Partner was unemployed, in 2022.","week","unit_naming_clause"]
+["the actual number of reported weeks Wife/\"Wife missed due to unemployment or temporarily layoff.","week","unit_naming_clause"]
+["the actual number of reported weeks Wife/\"Wife\" did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of reported weeks Wife/\"Wife\" missed due to illness of others.","week","unit_naming_clause"]
+["the actual number of reported weeks Wife/\"Wife\" missed due to temporary layoff.","week","unit_naming_clause"]
+["the actual number of reported weeks Wife/\"Wife\" missed due to the illness of others.","week","unit_naming_clause"]
+["the actual number of reported weeks Wife/\"Wife\" missed due to unemployment or temporary layoff.","week","unit_naming_clause"]
+["the actual number of reported weeks Wife/\"Wife\" missed due to unemployment.","week","unit_naming_clause"]
+["the actual number of reported weeks Wife/\"Wife\" was unemployed, in 2012.","week","unit_naming_clause"]
+["the actual number of reported weeks missed because Head was on strike.","week","unit_naming_clause"]
+["the actual number of reported weeks missed because Reference Person was on strike.","week","unit_naming_clause"]
+["the actual number of reported weeks missed because Spouse/Partner was on strike.","week","unit_naming_clause"]
+["the actual number of reported weeks missed because Wife/\"Wife\" was on strike.","week","unit_naming_clause"]
+["the actual number of reported weeks missed because wife/\"wife\" was on strike.","week","unit_naming_clause"]
+["the actual number of reported weeks missed due to Head's own illness.","week","unit_naming_clause"]
+["the actual number of reported weeks missed due to Reference Person's own illness.","week","unit_naming_clause"]
+["the actual number of reported weeks missed due to Spouse's/Partner's own illness.","week","unit_naming_clause"]
+["the actual number of reported weeks missed due to Wife's/\"Wife's\" own illness.","week","unit_naming_clause"]
+["the actual number of reported weeks of vacation or time off taken by Spouse/Partner.","week","unit_naming_clause"]
+["the actual number of reported weeks of vacation or time off taken by Wife/\"Wife\".","week","unit_naming_clause"]
+["the actual number of reported weeks of vacation or time off taken by the Head.","week","unit_naming_clause"]
+["the actual number of reported weeks of vacation or time off taken by the Reference Person.","week","unit_naming_clause"]
+["the actual number of reported weeks of vacation or time off taken by the Wife/\"Wife\".","week","unit_naming_clause"]
+["the actual number of reported weeks of vacation or time off taken by the wife/\"wife\".","week","unit_naming_clause"]
+["the actual number of reported weeks of vacation or time off taken by wife/\"wife\".","week","unit_naming_clause"]
+["the actual number of reported weeks that Head did not have a job and was not looking for one, in 2012.","week","unit_naming_clause"]
+["the actual number of reported weeks that Head did not have a job and was not looking for one, in 2014.","week","unit_naming_clause"]
+["the actual number of reported weeks that Head did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of reported weeks that Reference Person did not have a job and was not looking for one, in 2016.","week","unit_naming_clause"]
+["the actual number of reported weeks that Reference Person did not have a job and was not looking for one, in 2018.","week","unit_naming_clause"]
+["the actual number of reported weeks that Reference Person did not have a job and was not looking for one, in 2020.","week","unit_naming_clause"]
+["the actual number of reported weeks that Reference Person did not have a job and was not looking for one, in 2022.","week","unit_naming_clause"]
+["the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2014.","week","unit_naming_clause"]
+["the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2016.","week","unit_naming_clause"]
+["the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2018.","week","unit_naming_clause"]
+["the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2020.","week","unit_naming_clause"]
+["the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2022.","week","unit_naming_clause"]
+["the actual number of reported weeks that Wife/\"Wife\" did not have a job and was not looking for one, in 2012.","week","unit_naming_clause"]
+["the actual number of reported weeks that Wife/\"Wife\" did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of reported weeks that wife/\"wife\" did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of reported weeks wife/\"wife\" did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of reported weeks wife/\"wife\" missed due to illness of others.","week","unit_naming_clause"]
+["the actual number of reported weeks wife/\"wife\" missed due to the illness of others.","week","unit_naming_clause"]
+["the actual number of reported weeks wife/\"wife\" missed due to unemployment or temporary layoff.","week","unit_naming_clause"]
+["the actual number of rooms the family unit has, excluding bathrooms.","count","unit_naming_clause"]
+["the actual number of weeks (01-52) Head did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head missed through illness of other persons.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head was unemployed and looking for work or temporarily laid off.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head worked on all of his/her extra jobs except the first one.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head worked on all of his/her extra jobs.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head worked on his/her job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head worked on his/her main job(s).","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head worked on his/her main job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head worked on his/her main job/jobs.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head worked on the extra job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head worked on the first extra job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Head worked.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife worked on all of her extra jobs except the first one.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife worked on all of her extra jobs.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife worked on her job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife worked on her main job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife worked on the extra job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife worked.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" missed through illness of other persons.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" was unemployed and looking for work or temporarily laid off.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" worked on all of her extra jobs except the first one.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" worked on all of her extra jobs.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" worked on her job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" worked on her main job(s).","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" worked on her main job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" worked on her main job/jobs.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" worked on the extra job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" worked on the first extra job.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) Wife/\"Wife\" worked.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed because of time Head spent on strike.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed because of time Wife spent on strike.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed because of time Wife/\"Wife\" spent on strike.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Head.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Wife.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Wife/\"Wife\"","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Wife/\"Wife\".","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Wife/\"Wife.\"","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed through Head's own illness.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed through Wife's own illness.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed through Wife's/\"Wife's\" own illness.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed through illness of persons other than the Head.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed through illness of persons other than the Wife.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed through illness of persons other than the Wife/\"Wife\".","week","unit_naming_clause"]
+["the actual number of weeks (01-52) missed through illness of persons other than the Wife/\"Wife.\"","week","unit_naming_clause"]
+["the actual number of weeks (01-52) of vacation or time off taken by the Head.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) of vacation or time off taken by the Wife.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) of vacation or time off taken by the Wife/\"Wife\"","week","unit_naming_clause"]
+["the actual number of weeks (01-52) of vacation or time off taken by the Wife/\"Wife\".","week","unit_naming_clause"]
+["the actual number of weeks (01-52) of vacation or time off taken by the Wife/\"Wife.\"","week","unit_naming_clause"]
+["the actual number of weeks (01-52) that Head did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) that Head was unemployed and looking for work or temporarily laid off.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) that Wife/\"Wife\" did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of weeks (01-52) that Wife/\"Wife\" was unemployed and looking for work or temporarily laid off.","week","unit_naming_clause"]
+["the actual number of weeks (1-52) Head missed through illness of self or other persons.","week","unit_naming_clause"]
+["the actual number of weeks (1-52) missed through Head's own illness.","week","unit_naming_clause"]
+["the actual number of weeks (1-52) missed through unemployment and/or strike.","week","unit_naming_clause"]
+["the actual number of weeks (1-52) missed through unemployment or layoff.","week","unit_naming_clause"]
+["the actual number of weeks (1-52) of vacation or time off.","week","unit_naming_clause"]
+["the actual number of weeks (1-52) worked in 1970.","week","unit_naming_clause"]
+["the actual number of weeks (1-52) worked on Head's main job.","week","unit_naming_clause"]
+["the actual number of weeks (1-52) worked.","week","unit_naming_clause"]
+["the actual number of weeks Head did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of weeks Head did not have a job but was looking for one.","week","unit_naming_clause"]
+["the actual number of weeks Head missed because Head was on strike in 2014.","week","unit_naming_clause"]
+["the actual number of weeks Head missed due to his/her own illness.","week","unit_naming_clause"]
+["the actual number of weeks Head missed due to illness of others in 2014.","week","unit_naming_clause"]
+["the actual number of weeks Head missed due to illness of others.","week","unit_naming_clause"]
+["the actual number of weeks Head missed due to temporary layoff in 2014.","week","unit_naming_clause"]
+["the actual number of weeks Head missed due to temporary layoff.","week","unit_naming_clause"]
+["the actual number of weeks Head missed due to the illness of others.","week","unit_naming_clause"]
+["the actual number of weeks Head missed due to unemployment in 2014.","week","unit_naming_clause"]
+["the actual number of weeks Head missed due to unemployment or temporary layoff.","week","unit_naming_clause"]
+["the actual number of weeks Head missed due to unemployment.","week","unit_naming_clause"]
+["the actual number of weeks Head reported being unemployed, in 2012.","week","unit_naming_clause"]
+["the actual number of weeks Head reported being unemployed, in 2014.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for a job in 1985.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1984.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1985.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1986.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1987.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1992.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1993.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1994.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1995.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1996.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 1998.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work in 2000.","week","unit_naming_clause"]
+["the actual number of weeks Head spent looking for work.","week","unit_naming_clause"]
+["the actual number of weeks Head worked on his/her fourth extra job.","week","unit_naming_clause"]
+["the actual number of weeks Head worked on his/her main job(s).","week","unit_naming_clause"]
+["the actual number of weeks Head worked on his/her main job/jobs.","week","unit_naming_clause"]
+["the actual number of weeks Head worked on his/her second extra job.","week","unit_naming_clause"]
+["the actual number of weeks Head worked on his/her third extra job.","week","unit_naming_clause"]
+["the actual number of weeks Head worked on the extra job.","week","unit_naming_clause"]
+["the actual number of weeks Head worked on the first extra job.","week","unit_naming_clause"]
+["the actual number of weeks Head worked on the fourth extra job.","week","unit_naming_clause"]
+["the actual number of weeks Head worked on the second extra job.","week","unit_naming_clause"]
+["the actual number of weeks Head worked on the third extra job.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed because Reference Person was on strike in 2016.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed because Reference Person was on strike in 2018.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed because Reference Person was on strike in 2020.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed because Reference Person was on strike in 2022.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to illness of others in 2016.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to illness of others in 2018.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to illness of others in 2020.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to illness of others in 2022.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to temporary layoff in 2016.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to temporary layoff in 2018.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to temporary layoff in 2020.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to temporary layoff in 2022.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to unemployment in 2016.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to unemployment in 2018.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to unemployment in 2020.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person missed due to unemployment in 2022.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person reported being unemployed, in 2016.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person reported being unemployed, in 2018.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person reported being unemployed, in 2020.","week","unit_naming_clause"]
+["the actual number of weeks Reference Person reported being unemployed, in 2022.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2014.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2016.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2018.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2020.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2022.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to illness of others in 2014.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to illness of others in 2016.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to illness of others in 2018.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to illness of others in 2020.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to illness of others in 2022.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to temporary layoff in 2014.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to temporary layoff in 2016.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to temporary layoff in 2018.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to temporary layoff in 2020.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to temporary layoff in 2022.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to unemployment in 2014.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to unemployment in 2016.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to unemployment in 2018.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to unemployment in 2020.","week","unit_naming_clause"]
+["the actual number of weeks Spouse/Partner missed due to unemployment in 2022.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" missed due to illness of others in 1998.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" missed due to illness of others.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" missed due to temporary layoff.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" missed due to the illness of others.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" missed due to unemployment in 1998.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" missed due to unemployment or temporary layoff.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" missed due to unemployment.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for a job in 1985.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work in 1984.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work in 1985.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work in 1986.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work in 1987.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work in 1992.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work in 1993.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work in 1994.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work in 1995.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work in 1996.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" spent looking for work.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" worked on her first extra job.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" worked on her fourth extra job.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" worked on her main job.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" worked on her main job/jobs.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" worked on her second extra job.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" worked on her third extra job.","week","unit_naming_clause"]
+["the actual number of weeks Wife/\"Wife\" worked on this extra job.","week","unit_naming_clause"]
+["the actual number of weeks in the interval between the time benefits were exhausted and the time Head returned to work.","week","unit_naming_clause"]
+["the actual number of weeks missed because Head was on strike.","week","unit_naming_clause"]
+["the actual number of weeks missed because Wife/\"Wife\" was on strike in 1998.","week","unit_naming_clause"]
+["the actual number of weeks missed because Wife/\"Wife\" was on strike.","week","unit_naming_clause"]
+["the actual number of weeks missed because of time Wife/\"Wife\" spent on strike.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Head's own illness in 2014.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Head's own illness.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Reference Person's own illness in 2016.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Reference Person's own illness in 2018.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Reference Person's own illness in 2020.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Reference Person's own illness in 2022.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Spouse's/Partner's own illness in 2014.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Spouse's/Partner's own illness in 2016.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Spouse's/Partner's own illness in 2018.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Spouse's/Partner's own illness in 2020.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Spouse's/Partner's own illness in 2022.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Wife's/\"Wife's\" own illness in 1998.","week","unit_naming_clause"]
+["the actual number of weeks missed due to Wife's/\"Wife's\" own illness.","week","unit_naming_clause"]
+["the actual number of weeks missed due to unemployment or temporary layoff of Wife/\"Wife\".","week","unit_naming_clause"]
+["the actual number of weeks of vacation or time off taken by Wife/\"Wife\" in 1998.","week","unit_naming_clause"]
+["the actual number of weeks of vacation or time off taken by Wife/\"Wife\".","week","unit_naming_clause"]
+["the actual number of weeks of vacation or time off taken by the Head.","week","unit_naming_clause"]
+["the actual number of weeks of vacation or time off taken by the Wife/\"Wife\".","week","unit_naming_clause"]
+["the actual number of weeks spent looking for work by the Wife.","week","unit_naming_clause"]
+["the actual number of weeks that Head did not have a job and was not looking for one in 2014.","week","unit_naming_clause"]
+["the actual number of weeks that Head did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of weeks that Reference Person did not have a job and was not looking for one in 2016.","week","unit_naming_clause"]
+["the actual number of weeks that Reference Person did not have a job and was not looking for one in 2018.","week","unit_naming_clause"]
+["the actual number of weeks that Reference Person did not have a job and was not looking for one in 2020.","week","unit_naming_clause"]
+["the actual number of weeks that Reference Person did not have a job and was not looking for one in 2022.","week","unit_naming_clause"]
+["the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2014.","week","unit_naming_clause"]
+["the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2016.","week","unit_naming_clause"]
+["the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2018.","week","unit_naming_clause"]
+["the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2020.","week","unit_naming_clause"]
+["the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2022.","week","unit_naming_clause"]
+["the actual number of weeks that Wife/\"Wife\" did not have a job and was not looking for one in 1998.","week","unit_naming_clause"]
+["the actual number of weeks that Wife/\"Wife\" did not have a job and was not looking for one.","week","unit_naming_clause"]
+["the actual number of weeks wife/\"wife\" spent looking for work in 1998.","week","unit_naming_clause"]
+["the actual number of weeks wife/\"wife\" spent looking for work in 2000.","week","unit_naming_clause"]
+["the actual number of weeks wife/\"wife\" worked on her first extra job.","week","unit_naming_clause"]
+["the actual number of weeks wife/\"wife\" worked on her fourth extra job.","week","unit_naming_clause"]
+["the actual number of weeks wife/\"wife\" worked on her second extra job.","week","unit_naming_clause"]
+["the actual number of weeks wife/\"wife\" worked on her third extra job.","week","unit_naming_clause"]
+["the actual number of weeks wife/\"wife\" worked on this extra job.","week","unit_naming_clause"]
+["the actual number of work history spells needed to complete the work history back to January 1, 1984.","count","unit_naming_clause"]
+["the actual number of work history spells needed to complete the work history back to January 1, 1985.","count","unit_naming_clause"]
+["the actual number of work history spells needed to complete the work history for 1987.","count","unit_naming_clause"]
+["the actual number of work history spells needed to complete the work history for 1988.","count","unit_naming_clause"]
+["the actual number of work history spells needed to complete the work history for 1989.","count","unit_naming_clause"]
+["the actual number of work history spells needed to complete the work history for 1990.","count","unit_naming_clause"]
+["the actual number of work history spells needed to complete the work history for 1991.","count","unit_naming_clause"]
+["the actual number of years (01-96) Head has been covered by a pension or retirement plan.","year","unit_naming_clause"]
+["the actual number of years (01-96) Head must be employed to be included in a pension or retirement plan.","year","unit_naming_clause"]
+["the actual number of years (01-96) Wife/\"Wife\" has been covered by a pension or retirement plan.","year","unit_naming_clause"]
+["the actual number of years (01-96) Wife/\"Wife\" must be employed to be included in a pension or retirement plan.","year","unit_naming_clause"]
+["the actual number of years (01-96) until Head can receive at least partial benefits.","year","unit_naming_clause"]
+["the actual number of years (01-96) until Head can retire with full benefits.","year","unit_naming_clause"]
+["the actual number of years (01-96) until Wife/\"Wife\" can receive at least partial benefits.","year","unit_naming_clause"]
+["the actual number of years (01-96) until Wife/\"Wife\" can retire with full benefits.","year","unit_naming_clause"]
+["the actual number of years Wife/\"Wife\" worked full time since the age of 18.","year","unit_naming_clause"]
+["the actual number of years Wife/\"Wife\" worked since the age of 18.","year","unit_naming_clause"]
+["the actual number of years of college completed (1- 4).","year","unit_naming_clause"]
+["the actual number of years that Head expects to elapse until he/she begins working.","year","unit_naming_clause"]
+["the actual number of years until (01-95) Head expects to get a job in the future.","year","unit_naming_clause"]
+["the actual number of years until Head expects to get a job in the future.","year","unit_naming_clause"]
+["the actual number of years until Wife/\"Wife\" expects to get a job in the future.","year","unit_naming_clause"]
+["the actual number of years.","year","unit_naming_clause"]
+["the actual percent (01-96) Head voluntarily contributes.","percent","unit_naming_clause"]
+["the actual percent (01-96) Wife/\"Wife\" voluntarily contributes.","percent","unit_naming_clause"]
+["the actual percent (01-96) of Head's pay that the employer contributes.","percent","unit_naming_clause"]
+["the actual percent (01-96) of Wife's/\"Wife's\" pay that the employer contributes.","percent","unit_naming_clause"]
+["the actual percent (01-96) of pay required.","percent","unit_naming_clause"]
+["the actual percent of final pay (01-96) Head will receive as pension payments.","percent","unit_naming_clause"]
+["the actual percent of final pay (01-96) Wife/\"Wife\" will receive as pension payments.","percent","unit_naming_clause"]
+["the actual percent of time the Wife had worked since the age of 18 until the time when this question was actually asked for her.","percent","unit_naming_clause"]
+["the actual percent of time the Wife/\"Wife\" had worked since the age of 18 until the time when this question was actually asked for her.","percent","unit_naming_clause"]
+["the actual percent of time worked.","percent","unit_naming_clause"]
+["the actual percentage of time the Head had worked since the age of 18 until the time of the interview.","percent","unit_naming_clause"]
+["the actual percentage of time the Head had worked since the age of 18 until the time when this question was actually asked for him/her.","percent","unit_naming_clause"]
+["the actual percentage of time the Wife/\"Wife\" had worked since the age of 18 until the time of the interview.","percent","unit_naming_clause"]
+["the actual possible wage rate.",null,"no_unit_naming_clause"]
+["the actual salary amount in dollars and cents.","united_states_dollar","unit_naming_clause"]
+["the actual tax credit dollars.","united_states_dollar","unit_naming_clause"]
+["the actual total annual hours on all jobs.","hour","unit_naming_clause"]
+["the actual typical wage in dollars and cents per hour reported for the county of residence.","united_states_dollar_per_hour","unit_naming_clause"]
+["the actual unemployment rate in whole numbers reported for the county of residence.",null,"no_unit_naming_clause"]
+["the actual value of the stamps in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the actual value per room, calculated according to the following formula: V11018 + [(V10026 + V10028) x 10] / V10432 (1984 (1984 (1984 Value (Number of House Rent of Rent Rooms in Value) Paid) Received) 1984) The following rules were used for each case, depending on the value of V10437: Homeowners (V10437=1): House value (V11018) divided by the number of rooms (V10432) Renters (V10437=5): Dwelling value, assumed to be 10 times the annual rent (V10026), divided by the number of rooms (V10432) Those neither owning nor renting (V10437=8): Dwelling value, assumed to be 10 times the value of rent received free in return for services (V10028), divided by the number of rooms (V10432) Note that the maximum value for V10432, excluding missing data, is 8, so data values in this variable are inflated for a few cases.",null,"defeating_clause"]
+["the actual value per room, calculated according to the following formula: V11125 + [(V11133 + V11135) x 10] / V11614 (1985 (1985 (1985 Value (Number of House Rent of Rent Rooms in Value) Paid) Received) 1985) The following rules were used for each case, depending on the value of V11618: Homeowners (V11618=1): House value (V11125) divided by the number of rooms (V11614) Renters (V11618=5): Dwelling value, assumed to be 10 times the annual rent (V11133), divided by the number of rooms (V11618) Those neither owning nor renting (V11618=8): Dwelling value, assumed to be 10 times the value of rent received free in return for services (V11135), divided by the number of rooms (V11614) Note that V11614 is a two-digit variable, so data values in this variable are actual.",null,"defeating_clause"]
+["the actual wage rate for extra jobs.",null,"no_unit_naming_clause"]
+["the actual wage rate for regular work.",null,"no_unit_naming_clause"]
+["the actual wage rate.",null,"no_unit_naming_clause"]
+["the actual year Head last worked.",null,"no_unit_naming_clause"]
+["the actual year Reference Person last worked.",null,"no_unit_naming_clause"]
+["the actual year Spouse/Partner last worked.",null,"no_unit_naming_clause"]
+["the actual year Wife/\"Wife\" last worked.",null,"no_unit_naming_clause"]
+["the actual year in which Head retired.",null,"no_unit_naming_clause"]
+["the actual year in which Reference Person retired.",null,"no_unit_naming_clause"]
+["the actual year wife/\"wife\" last worked.",null,"no_unit_naming_clause"]
+["the age in years of the Head's oldest child; these values have not been incremented since the time when the questions were actually asked of the Head.","year","unit_naming_clause"]
+["the age in years of the Head's second oldest child; these values have not been incremented since the time when the questions were actually asked of the Head.","year","unit_naming_clause"]
+["the age in years of the Head's third oldest child; these values have not been incremented since the time when the questions were actually asked of the Head.","year","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received by all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of child support received in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Head received from non-relatives or friends, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Head received from relatives, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Reference Person received from non-relatives or friends, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Reference Person received from non-relatives or friends, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Reference Person received from non-relatives or friends, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Reference Person received from non-relatives or friends, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Reference Person received from relatives, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Reference Person received from relatives, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Reference Person received from relatives, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help Reference Person received from relatives, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help from relatives received by all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help from relatives received by all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help from relatives received by all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help from relatives received by all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help from relatives received by all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of financial help received from relatives in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of help from relatives received by all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of help from relatives received by all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of help from relatives received by all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of help from relatives received by all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of help from relatives received by all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of help from relatives received by all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of other transfer income received by all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of worker's compensation in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount of workers' compensation in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the amount paid in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the annual amount contributed.",null,"no_unit_naming_clause"]
+["the annual amount of alimony paid.",null,"no_unit_naming_clause"]
+["the annual amount of child support paid.",null,"no_unit_naming_clause"]
+["the annual amount paid for child care.",null,"no_unit_naming_clause"]
+["the annual average unemployment rate, to the nearest whole percent, reported by the U.S.","percent","unit_naming_clause"]
+["the annual dollar amount of homeowner's insurance premiums.","united_states_dollar","unit_naming_clause"]
+["the annual expenditure in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the annual extra job hours worked on all jobs.","hour","unit_naming_clause"]
+["the annual extra job hours.","hour","unit_naming_clause"]
+["the annual food expenditure in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the annual hours worked on all extra jobs in 1998.","hour","unit_naming_clause"]
+["the annual hours worked on all extra jobs.","hour","unit_naming_clause"]
+["the annual overtime hours worked on all jobs if reported separately from regular work hours.","hour","unit_naming_clause"]
+["the annual overtime hours worked on all main jobs if reported separately from regular work hours.","hour","unit_naming_clause"]
+["the annual overtime hours worked on all main jobs if reported separately from regular work hours; all missing data were assigned.","hour","unit_naming_clause"]
+["the annual work hours on all extra jobs in 1996.","hour","unit_naming_clause"]
+["the annual work hours on all extra jobs.","hour","unit_naming_clause"]
+["the annual work hours on all jobs.","hour","unit_naming_clause"]
+["the annual work hours on all main jobs.","hour","unit_naming_clause"]
+["the annualized amount of all current payments on mortgages or land contracts in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the annualized amount of current rent paid in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the annualized current rental value of free housing in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the annualized work hours on all extra jobs worked in 2000.","hour","unit_naming_clause"]
+["the annualized work hours on all extra jobs.","hour","unit_naming_clause"]
+["the asset income of all other FU members in the FU in 1992.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2004.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2006.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2008.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2010.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2012.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2014.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2016.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2018.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2020.",null,"no_unit_naming_clause"]
+["the asset income of all other FU members in the FU in 2022.",null,"no_unit_naming_clause"]
+["the asset portion of the income reported at F19:b in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at F19:c in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at F5 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at G19:b in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at G19:c in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at G5 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at K12-13:b in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at K12-13:c in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at K16-17:b in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at K16-17:c in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at K4 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the asset portion of the income reported at K7 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the case ID assigned by Temple University to each respondent in the Latino National Political Survey.",null,"defeating_clause"]
+["the county if in the United States, the country if foreign.",null,"no_unit_naming_clause"]
+["the current annual property tax liability in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the estimated 1968 property taxes, based on the table below.",null,"no_unit_naming_clause"]
+["the first two digits represent the state code and the last three, the county.",null,"defeating_clause"]
+["the food standard for the 1974 family in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the hours per week.","hour_per_week","unit_naming_clause"]
+["the income from ADC/AFDC in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from IRAs in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from TANF in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from TANF/state program, in 2014, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from TANF/state program, in 2016, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from TANF/state program, in 2018, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from TANF/state program, in 2020, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from TANF/state program, in 2022, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from annuities in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from other (retirement) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from professional practice or trade in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the income from retirement pay or pensions in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the labor portion of Head's business income reported at G11a in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the labor portion of Head's farm income reported at G4 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the labor portion of the Wife's/\"Wife's\" farm income reported at G4 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the laborportion of the Wife's/\"Wife's\" business income reported at G11 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the last two digits of the actual year (01-84) that the first inheritance was received.",null,"defeating_clause"]
+["the last two digits of the actual year (01-84) that the second inheritance was received.",null,"defeating_clause"]
+["the last two digits of the actual year (01-85) military service ended.",null,"defeating_clause"]
+["the last two digits of the actual year Head last worked.",null,"defeating_clause"]
+["the last two digits of the actual year Head retired.",null,"defeating_clause"]
+["the last two digits of the actual year Wife/\"Wife\" last worked.",null,"defeating_clause"]
+["the last two digits of the actual year Wife/Friend retired.",null,"defeating_clause"]
+["the last two digits of the actual year in which Head last worked.",null,"defeating_clause"]
+["the last two digits of the actual year in which Head retired.",null,"defeating_clause"]
+["the last two digits of the actual year in which the Wife last worked.",null,"defeating_clause"]
+["the last two digits of the actual year in which the Wife/\"Wife\" last worked.",null,"defeating_clause"]
+["the last two digits of the actual year male Head's youngest/only child was born.",null,"defeating_clause"]
+["the last two digits of the actual year.",null,"defeating_clause"]
+["the last two digits of the year Head and spouse stopped living together.",null,"defeating_clause"]
+["the last two digits of the year Head became widowed.",null,"defeating_clause"]
+["the last two digits of the year Head last worked.",null,"defeating_clause"]
+["the last two digits of the year Head married for the first time.",null,"defeating_clause"]
+["the last two digits of the year Head retired.",null,"defeating_clause"]
+["the last two digits of the year Head started working in his/her present position or work situation.",null,"defeating_clause"]
+["the last two digits of the year Head was married.",null,"defeating_clause"]
+["the last two digits of the year Head's divorce/annulment became final.",null,"defeating_clause"]
+["the last two digits of the year Head's last position ended.",null,"defeating_clause"]
+["the last two digits of the year Head's last position started.",null,"defeating_clause"]
+["the last two digits of the year Head's next-to-last position ended.",null,"defeating_clause"]
+["the last two digits of the year Head's previous position ended.",null,"defeating_clause"]
+["the last two digits of the year Head's previous position started.",null,"defeating_clause"]
+["the last two digits of the year Wife's/\"Wife's\" divorce/annulment became final.",null,"defeating_clause"]
+["the last two digits of the year Wife's/\"Wife's\" last position ended.",null,"defeating_clause"]
+["the last two digits of the year Wife's/\"Wife's\" last position started.",null,"defeating_clause"]
+["the last two digits of the year Wife's/\"Wife's\" next-to-last position ended.",null,"defeating_clause"]
+["the last two digits of the year Wife's/\"Wife's\" previous position ended.",null,"defeating_clause"]
+["the last two digits of the year Wife's/\"Wife's\" previous position started.",null,"defeating_clause"]
+["the last two digits of the year Wife/\"Wife\" and spouse stopped living together.",null,"defeating_clause"]
+["the last two digits of the year Wife/\"Wife\" became widowed.",null,"defeating_clause"]
+["the last two digits of the year Wife/\"Wife\" married for the first time.",null,"defeating_clause"]
+["the last two digits of the year Wife/\"Wife\" started working in her present position or work situation.",null,"defeating_clause"]
+["the last two digits of the year Wife/\"Wife\" was married.",null,"defeating_clause"]
+["the last two digits of the year Wife/Friend last worked.",null,"defeating_clause"]
+["the last two digits of the year Wife/Friend retired.",null,"defeating_clause"]
+["the last two digits of the year in which Head retired.",null,"defeating_clause"]
+["the last two digits of the year in which Wife retired.",null,"defeating_clause"]
+["the last two digits of the year in which Wife/\"Wife\" retired.",null,"defeating_clause"]
+["the last two digits of the year last worked.",null,"defeating_clause"]
+["the last two digits of the year problems began (01- 85).",null,"defeating_clause"]
+["the last two digits of the year that the next most recent period of unemployment began.",null,"defeating_clause"]
+["the last two digits of the year that the third most recent period of unemployment began.",null,"defeating_clause"]
+["the last two digits of the year the most recent period of unemployment began.",null,"defeating_clause"]
+["the last two digits of the year the respondent last worked.",null,"defeating_clause"]
+["the last two digits represent the day of the month which has a possible range of 01-31.",null,"defeating_clause"]
+["the last two digits represent the year (78-80) in which Head's unemployment or temporary layoff began.",null,"defeating_clause"]
+["the last two digits represent the year in which Head's unemployment or temporary layoff began.",null,"defeating_clause"]
+["the length of the interview in number of minutes.","minute","unit_naming_clause"]
+["the month and day the interview was taken.",null,"defeating_clause"]
+["the number",null,"no_unit_naming_clause"]
+["the number of Head's brothers still living if Head had more than one brother.","count","unit_naming_clause"]
+["the number of Head's brothers still living.","count","unit_naming_clause"]
+["the number of Head's sisters still living if Head had more than one sister.","count","unit_naming_clause"]
+["the number of Head's sisters still living.","count","unit_naming_clause"]
+["the number of Reference Person's brothers still living if Reference Person had more than one brother.","count","unit_naming_clause"]
+["the number of Reference Person's sisters still living if Reference Person had more than one sister.","count","unit_naming_clause"]
+["the number of Spouse's/Partner's brothers still living if he/she had more than one brother.","count","unit_naming_clause"]
+["the number of Spouse's/Partner's sisters still living if he/she had more than one sister.","count","unit_naming_clause"]
+["the number of Wife's/\"Wife's\" brothers still living if she had more than one brother.","count","unit_naming_clause"]
+["the number of Wife's/\"Wife's\" brothers still living.","count","unit_naming_clause"]
+["the number of Wife's/\"Wife's\" sisters still living if she had more than one sister.","count","unit_naming_clause"]
+["the number of Wife's/\"Wife's\" sisters still living.","count","unit_naming_clause"]
+["the number of calls, telephone and personal, made by all interviewers who were assigned to this case.","count","unit_naming_clause"]
+["the number of children born between January 1, 1985 and December 31, 1985 whose parents are Head and Wife/\"Wife\".","count","unit_naming_clause"]
+["the number of children born between January 1, 1986 and December 31, 1986 whose parents are Head and Wife/\"Wife\", as reported from 1987 data.","count","unit_naming_clause"]
+["the number of children born between January 1, 1988 and December 31, 1988 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30608=90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1988 and December 31, 1988 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30608=20, 22, 90 or 88 respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 1988 and December 31, 1988 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30608=20, 22, 90 or 88 respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1988 and December 31, 1988 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30608=20, 22, 90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1989 and December 31, 1989 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30644=90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1989 and December 31, 1989 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30644=20, 22, 90 or 88 respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 1989 and December 31, 1989 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30644=20, 22, 90 or 88 respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1989 and December 31, 1989 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30644=20, 22, 90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1990 and December 31, 1990 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30691=90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1990 and December 31, 1990 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30691=20, 22, 90 or 88 respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 1990 and December 31, 1990 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30691=20, 22, 90 or 88 respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1990 and December 31, 1990 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30691=20, 22, 90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1991 and December 31, 1991 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30735=90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1991 and December 31, 1991 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30735=20, 22, 90 or 88 respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 1991 and December 31, 1991 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30735=20, 22, 90 or 88 respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1991 and December 31, 1991 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30735=20, 22, 90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1992 and December 31, 1992 to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (V30808=90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1992 and December 31, 1992 to the Head but notjointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (V30808=20, V22, 90 or 88 respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 1992 and December 31, 1992 to the Wife, \"Wife\", husband of Head, or first-year cohabitor (V30808=20, V22, 90 or 88 respectively) but notjointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1992 and December 31, 1992 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (V30808=20, V22, 90 or 88 respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1993, and December 31, 1993, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count","unit_naming_clause"]
+["the number of children born between January 1, 1993, and December 31, 1993, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1993, and December 31, 1993, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count","unit_naming_clause"]
+["the number of children born between January 1, 1994, and December 31, 1994, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count","unit_naming_clause"]
+["the number of children born between January 1, 1994, and December 31, 1994, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1994, and December 31, 1994, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count","unit_naming_clause"]
+["the number of children born between January 1, 1995, and December 31, 1995, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count","unit_naming_clause"]
+["the number of children born between January 1, 1995, and December 31, 1995, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1995, and December 31, 1995, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count","unit_naming_clause"]
+["the number of children born between January 1, 1996, and December 31, 1996, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count","unit_naming_clause"]
+["the number of children born between January 1, 1996, and December 31, 1996, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1996, and December 31, 1996, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count","unit_naming_clause"]
+["the number of children born between January 1, 1997, and December 31, 1997, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33503=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1997, and December 31, 1997, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 1997, and December 31, 1997, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1997, and December 31, 1997, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33503=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1998, and December 31, 1998, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33503=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1998, and December 31, 1998, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 1998, and December 31, 1998, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1998, and December 31, 1998, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33503=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1999, and December 31, 1999, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33603=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 1999, and December 31, 1999, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 1999, and December 31, 1999, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 1999, and December 31, 1999, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33603=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2000, and December 31, 2000, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33603=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2000, and December 31, 2000, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2000, and December 31, 2000, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2000, and December 31, 2000, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33603=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2001, and December 31, 2001, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33703=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2001, and December 31, 2001, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2001, and December 31, 2001, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2001, and December 31, 2001, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33703=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2002, and December 31, 2002, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33703=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2002, and December 31, 2002, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2002, and December 31, 2002, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2002, and December 31, 2002, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33703=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2003, and December 31, 2003, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33803=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2003, and December 31, 2003, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2003, and December 31, 2003, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2003, and December 31, 2003, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33803=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2004, and December 31, 2004, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33803=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2004, and December 31, 2004, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2004, and December 31, 2004, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2004, and December 31, 2004, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33803=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2005, and December 31, 2005, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33903=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2005, and December 31, 2005, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2005, and December 31, 2005, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2005, and December 31, 2005, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33903=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2006, and December 31, 2006, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33903=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2006, and December 31, 2006, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2006, and December 31, 2006, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2006, and December 31, 2006, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33903=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2007, and December 31, 2007, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34003=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2007, and December 31, 2007, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER34003=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2007, and December 31, 2007, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34003=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2007, and December 31, 2007, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34003=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2008, and December 31, 2008, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34003=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2008, and December 31, 2008, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34003=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2008, and December 31, 2008, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34003=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2009, and December 31, 2009, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34103=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2009, and December 31, 2009, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER34103=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2009, and December 31, 2009, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34103=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2009, and December 31, 2009, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34103=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2010, and December 31, 2010, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34103=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2010, and December 31, 2010, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34103=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2010, and December 31, 2010, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34103=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2011, and December 31, 2011, to other FU membersage 15-44 who were neither husband of Head nor first-year cohabitor (ER34203=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2011, and December 31, 2011, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER34203=20, 22, 90, or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2011, and December 31, 2011, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34203=20, 22, 90, or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2011, and December 31, 2011, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34203=20, 22, 90, or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2012, and December 31, 2012, to other FU membersage 15-44 who were neither husband of Head nor first-year cohabitor (ER34203=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2012, and December 31, 2012, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34203=20, 22, 90, or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2012, and December 31, 2012, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34203=20, 22, 90, or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2013, and December 31, 2013, to other FU members age 15-44 who were neither husband of Head nor first-year cohabitor (ER34303=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2013, and December 31, 2013, to the Head but not jointly with the Spouse/Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2013, and December 31, 2013, to the Spouse, Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2013, and December 31, 2013, whose parents are Head and Spouse/Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2014, and December 31, 2014, to other FU members age 15-44 who were neither husband of Head nor first-year cohabitor (ER34303=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2014, and December 31, 2014, to the Spouse, Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively) but not jointly with the Head.","count","unit_naming_clause"]
+["the number of children born between January 1, 2014, and December 31, 2014, whose parents are Head and Spouse/Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2015, and December 31, 2015, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34503=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2015, and December 31, 2015, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2015, and December 31, 2015, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count","unit_naming_clause"]
+["the number of children born between January 1, 2015, and December 31, 2015, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2016, and December 31, 2016, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34503=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2016, and December 31, 2016, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count","unit_naming_clause"]
+["the number of children born between January 1, 2016, and December 31, 2016, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2017, and December 31, 2017, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34703=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2017, and December 31, 2017, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2017, and December 31, 2017, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count","unit_naming_clause"]
+["the number of children born between January 1, 2017, and December 31, 2017, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2018, and December 31, 2018, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34703=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2018, and December 31, 2018, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count","unit_naming_clause"]
+["the number of children born between January 1, 2018, and December 31, 2018, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2019, and December 31, 2019, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34903=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2019, and December 31, 2019, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER35103=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2019, and December 31, 2019, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2019, and December 31, 2019, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively), if one is present in the FU.","count","unit_naming_clause"]
+["the number of children born between January 1, 2019, and December 31, 2019, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count","unit_naming_clause"]
+["the number of children born between January 1, 2019, and December 31, 2019, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count","unit_naming_clause"]
+["the number of children born between January 1, 2019, and December 31, 2019, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2019, and December 31, 2019, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2020, and December 31, 2020, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34903=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2020, and December 31, 2020, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count","unit_naming_clause"]
+["the number of children born between January 1, 2020, and December 31, 2020, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2022, and December 31, 2022, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER35103=90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born between January 1, 2022, and December 31, 2022, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count","unit_naming_clause"]
+["the number of children born between January 1, 2022, and December 31, 2022, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively).","count","unit_naming_clause"]
+["the number of children born to other FU members age 12-44 between January 1, 1986 and December 31, 1986, as reported from 1987 data.","count","unit_naming_clause"]
+["the number of children born to other FU members between January 1, 1985 and December 31, 1985.","count","unit_naming_clause"]
+["the number of children born to the Head (but not the Wife/\"Wife\" if there is one) between January 1, 1985 and December 31, 1985.","count","unit_naming_clause"]
+["the number of children born to the Head (but not the Wife/\"Wife\" if there is one) between January 1, 1986 and December 31, 1986, as reported from 1987 data.","count","unit_naming_clause"]
+["the number of children born to the Wife/\"Wife\" (but not the Head) between January 1, 1985 and December 31, 1985.","count","unit_naming_clause"]
+["the number of children born to the Wife/\"Wife\" (but not the Head) between January 1, 1986 and December 31, 1986, as reported from 1987 data.","count","unit_naming_clause"]
+["the number of hours per week.","hour_per_week","unit_naming_clause"]
+["the number of individual- level data records on the merged family-individual tape having the same family-level data in 1984, that is, all persons in the family in 1984 and any institutionalized individuals associated with the family, as well as any movers-out between 1983 and 1984 who did not move into another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2015, that is, all persons in the family in 2015 and any institutionalized individuals associated with the family, as well as any movers-out between 2013 and 2015 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2017, that is, all persons in the family in 2017 and any institutionalized individuals associated with the family, as well as any movers-out between 2015 and 2017 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2019, that is, all persons in the family in 2019 and any institutionalized individuals associated with the family, as well as any movers-out between 2017 and 2019 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2021, that is, all persons in the family in 2021 and any institutionalized individuals associated with the family, as well as any movers-out between 2019 and 2021 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2023, that is, all persons in the family in 2023 and any institutionalized individuals associated with the family, as well as any movers-out between 2019 and 2023 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the cross year individual file having the same family-level data in 1999, that is, all persons in the family in 1999 and any institutionalized individuals associated with the family, as well as any movers-out between 1997 and 1999 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the cross year individual file having the same family-level data in 2001, that is, all persons in the family in 2001 and any institutionalized individuals associated with the family, as well as any movers-out between 1999 and 2001 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the cross year individual file having the same family-level data in 2003, that is, all persons in the family in 2003 and any institutionalized individuals associated with the family, as well as any movers-out between 2001 and 2003 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the cross year individual file having the same family-level data in 2005, that is, all persons in the family in 2005 and any institutionalized individuals associated with the family, as well as any movers-out between 2003 and 2005 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the cross year individual file having the same family-level data in 2007, that is, all persons in the family in 2007 and any institutionalized individuals associated with the family, as well as any movers-out between 2005 and 2007 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the cross year individual file having the same family-level data in 2009, that is, all persons in the family in 2009 and any institutionalized individuals associated with the family, as well as any movers-out between 2007 and 2009 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the cross year individual file having the same family-level data in 2011, that is, all persons in the family in 2011 and any institutionalized individuals associated with the family, as well as any movers-out between 2009 and 2011 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the cross year individual file having the same family-level data in 2013, that is, all persons in the family in 2013 and any institutionalized individuals associated with the family, as well as any movers-out between 2011 and 2013 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual file having the same family-level data in 1992, that is, all persons in the family in 1992 and any institutionalized individuals associated with the family, as well as any movers-out between 1991 and 1992 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual file having the same family-level data in 1993, that is, all persons in the family in 1993 and any institutionalized individuals associated with the family, as well as any movers-out between 1992 and 1993 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual tape having the same family-level data in 1983.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual tape having the same family-level data in 1985, that is, all persons in the family in 1985 and any institutionalized individuals associated with the family, as well as any movers-out between 1984 and 1985 who did not move into another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual tape having the same family-level data in 1986, that is, all persons in the family in 1986 and any institutionalized individuals associated with the family, as well as any movers-out between 1985 and 1986 who did not move into another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual tape having the same family-level data in 1987, that is, all persons in the family in 1987 and any institutionalized individuals associated with the family, as well as any movers-out between 1986 and 1987 who did not move into another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual tape having the same family-level data in 1988, that is, all persons in the family in 1988 and any institutionalized individuals associated with the family, as well as any movers-out between 1987 and 1988 who did not move into another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual tape having the same family-level data in 1989, that is, all persons in the family in 1989 and any institutionalized individuals associated with the family, as well as any movers-out between 1988 and 1989 who did not move into another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual tape having the same family-level data in 1990, that is, all persons in the family in 1990 and any institutionalized individuals associated with the family, as well as any movers-out between 1989 and 1990 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of individual-level data records on the merged family-individual tape having the same family-level data in 1991, that is, all persons in the family in 1991 and any institutionalized individuals associated with the family, as well as any movers-out between 1990 and 1991 who are not included in another responding family.","count","unit_naming_clause"]
+["the number of persons per room with one implied decimal place; e.g., a value of 20 here represents 2.0 persons per room.",null,"defeating_clause"]
+["the number of persons per room.",null,"defeating_clause"]
+["the number of weeks during 2002 that Head was employed at his/her current or most recent main job.","week","unit_naming_clause"]
+["the number of weeks during 2002 that the wife/\"wife\" was employed at her current or most recent main job.","week","unit_naming_clause"]
+["the number of weeks during 2004 that Head was employed at his/her current or most recent main job.","week","unit_naming_clause"]
+["the number of weeks during 2004 that the wife/\"wife\" was employed at her current or most recent main job.","week","unit_naming_clause"]
+["the number of years left on the longest-term mortgage that the FU has.","year","unit_naming_clause"]
+["the number of years.","year","unit_naming_clause"]
+["the number.",null,"no_unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other retirement, pension, and annuities income of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare income in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the other welfare of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the percent (01-96) of pay that Head's pension(s) will provide.","percent","unit_naming_clause"]
+["the percent of time Wife/\"Wife\" worked part-time since the age of 18.","percent","unit_naming_clause"]
+["the percent of time worked.","percent","unit_naming_clause"]
+["the percentage of heating/cooling costs covered by government subsidies.","percent","unit_naming_clause"]
+["the percentange of heating/cooling costs covered by government subsidies.","percent","unit_naming_clause"]
+["the pre-assigned mode treatment prior to the production effort, it may vary from the actual completed mode of interview.",null,"no_unit_naming_clause"]
+["the pre-assigned randomized or non-randomized treatment prior to the production effort.",null,"no_unit_naming_clause"]
+["the presumed number of extra exemptions for which the Head (and Wife/\"Wife\") qualify.","count","unit_naming_clause"]
+["the principal currently owed from all mortgages or land contracts on the home in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the principal currently owed on the first mortgage, land contract, or loan, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the principal currently owed on the second mortgage or land contract on the home in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the principal currently owed on the second mortgage, land contract, or loan, in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the ratio of 1970 family net real income net of cost of housing to 1970 family food need standard.",null,"defeating_clause"]
+["the rental value of the (apartment/mobile home/home) in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the sum of V10254 through V10256, V10258 through V10261, V10263, V10265 through V10268, V10270, V10272, V10274, and V10275.",null,"no_unit_naming_clause"]
+["the sum of V10366, V10369, V10372, V10375, and V10378, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of V11395 through V11397, V11399 through V11402, V11404, V11406 through V11409, V11412, V11414, V11416, and V11417.",null,"no_unit_naming_clause"]
+["the sum of V11537, V11542, V11547, V11552, and V11557, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of V12794 through V12796, V12798 through V12801, V12803, V12805 through V12808, V12811, V12813, V12815, and V12816.",null,"no_unit_naming_clause"]
+["the sum of V12944, V12949, V12954, V12959, and V12964, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of V13896 through V13898, V13900 through V13903, V13905, V13907 through V13910, V13913, V13915, V13917, and V13918.",null,"no_unit_naming_clause"]
+["the sum of V14046, V14051, V14056, V14061, and V14066, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of V14911 through V14913, V14915 through V14918, V14920, V14922 through V14925, V14928, V14930, V14932, and V14933.",null,"no_unit_naming_clause"]
+["the sum of V15061, V15066, V15071, V15076, and V15081, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of V16411 through V16413, V16415 through V16418, V16420, V16422 through V16425, V16428, V16430, V16432, and V16433.",null,"no_unit_naming_clause"]
+["the sum of V16561, V16566, V16571, V16576, and V16581, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of V17827 through V17829, V17831 through V17834, V17836, V17838 through V17841, V17844, V17846, V17848, and V17849.",null,"no_unit_naming_clause"]
+["the sum of V17977, V17982, V17987, V17992, and V17997, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of V19127 through V19129, V19131 through V19134, V19136, V19138 through V19141, V19144, V19146, V19148, and V19149.",null,"no_unit_naming_clause"]
+["the sum of V19277, V19282, V19287, V19292, and V19297, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of V20427 through V20429, V20431 through V20434, V20436, V20438 through V20441, V20444, V20446, V20448, and V20449.",null,"no_unit_naming_clause"]
+["the sum of V20577, V20582, V20587, V20592, and V20597, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of V21733, V21738, V21739, V21741, V21743, V21745, V21747, V21749, V21765, V21783, V21800, V21801, V21803, V21806, V21807, V21809, V21810, V21811, V21812, V21813, V21814, V21829, V21845, V21861, V21877, V21893, V21909, V21925, V21941, V21957.",null,"no_unit_naming_clause"]
+["the sum of V22371 and V22367.",null,"no_unit_naming_clause"]
+["the sum of V22374 through V22394 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the sum of V8871 through V8873, V8875 through V8878, V8881, and V8873 through V8889.",null,"no_unit_naming_clause"]
+["the sum of V8910, V8913, V8916, V8919, and V8922, as well as any additional taxable income if there were more than five persons with such income.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V10257 Accuracy: Head's wages income V10262 Accuracy; Head's other labor income V10264 Accuracy: Wife's/\"Wife's\" labor income V10276 Accuracy: Asset income of Head and Wife/\"Wife\" V10283 Accuracy: ADC/AFDC of Head and Wife/\"Wife\" V10304 Accuracy: Other transfers of Head and Wife/\"Wife\" V10383 Accuracy: Taxable income of Others V10397 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V11398 Accuracy: Head's wages income V11403 Accuracy; Head's other labor income V11405 Accuracy: Wife's/\"Wife's\" labor income V11418 Accuracy: Asset income of Head and Wife/\"Wife\" V11428 Accuracy: ADC/AFDC of Head and Wife/\"Wife\" V11460 Accuracy: Other transfers of Head and Wife/\"Wife\" V11562 Accuracy: Taxable income of Others V11578 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V12797 Accuracy: Head's wages income V12802 Accuracy; Head's other labor income V12804 Accuracy: Wife's/\"Wife's\" labor income V12817 Accuracy: Asset income of Head and Wife/\"Wife\" V12827 Accuracy: ADC/AFDC of Head V12848 Accuracy: ADC/AFDC of Wife/\"Wife\" V12867 Accuracy: Other transfers of Head and Wife/\"Wife\" V12969 Accuracy: Taxable income of Others V12985 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V13899 Accuracy: Head's wages income V13904 Accuracy; Head's other labor income V13906 Accuracy: Wife's/\"Wife's\" labor income V13919 Accuracy: Asset income of Head and Wife/\"Wife\" V13929 Accuracy: ADC/AFDC of Head V13950 Accuracy: ADC/AFDC of Wife/\"Wife\" V13969 Accuracy: Other transfers of Head and Wife/\"Wife\" V14071 Accuracy: Taxable income of Others V14087 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V14914 Accuracy: Head's wages income V14919 Accuracy; Head's other labor income V14921 Accuracy: Wife's/\"Wife's\" labor income V14934 Accuracy: Asset income of Head and Wife/\"Wife\" V14944 Accuracy: ADC/AFDC of Head V14965 Accuracy: ADC/AFDC of Wife/\"Wife\" V14984 Accuracy: Other transfers of Head and Wife/\"Wife\" V15086 Accuracy: Taxable income of Others V15102 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V16414 Accuracy: Head's wages income V16419 Accuracy: Head's other labor income V16421 Accuracy: Wife's/\"Wife's\" labor income V16434 Accuracy: Asset income of Head and Wife/\"Wife\" V16444 Accuracy: ADC/AFDC of Head V16465 Accuracy: ADC/AFDC of Wife/\"Wife\" V16484 Accuracy: Other transfers of Head and Wife/\"Wife\" V16586 Accuracy: Taxable income of Others V16602 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V17830 Accuracy: Head's wages income V17835 Accuracy: Head's other labor income V17837 Accuracy: Wife's/\"Wife's\" labor income V17850 Accuracy: Asset income of Head and Wife/\"Wife\" V17860 Accuracy: ADC/AFDC of Head V17881 Accuracy: ADC/AFDC of Wife/\"Wife\" V17900 Accuracy: Other transfers of Head and Wife/\"Wife\" V18002 Accuracy: Taxable income of Others V18018 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V19130 Accuracy: Head's wages income V19135 Accuracy; Head's other labor income V19137 Accuracy: Wife's/\"Wife's\" labor income V19150 Accuracy: Asset income of Head and Wife/\"Wife\" V19160 Accuracy: ADC/AFDC of Head V19181 Accuracy: ADC/AFDC of Wife/\"Wife\" V19200 Accuracy: Other transfers of Head and Wife/\"Wife\" V19302 Accuracy: Taxable income of Others V19318 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V20430 Accuracy: Head's wages income V20435 Accuracy; Head's other labor income V20437 Accuracy: Wife's/\"Wife's\" labor income V20450 Accuracy: Asset income of Head and Wife/\"Wife\" V20460 Accuracy: ADC/AFDC of Head V20481 Accuracy: ADC/AFDC of Wife/\"Wife\" V20500 Accuracy: Other transfers of Head and Wife/\"Wife\" V20602 Accuracy: Taxable income of Others V20618 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V8266 Accuracy: Head's wages income V8271 Accuracy; Head's other labor income V8274 Accuracy: Wife's labor income V8282 Accuracy: Capital income of Head and Wife V8289 Accuracy: ADC/AFDC of Head and Wife V8300 Accuracy: Other transfers of Head and Wife V8319 Accuracy: Taxable income of others V8332 Accuracy: Transfer income of others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the sum of the values for the following variables: V8874 Accuracy: Head's wages income V8879 Accuracy; Head's other labor income V8882 Accuracy: Wife's/\"Wife's\" labor income V8890 Accuracy: Asset income of Head and Wife/\"Wife\" V8897 Accuracy: ADC/AFDC of Head and Wife/\"Wife\" V8908 Accuracy: Other transfers of Head and Wife/\"Wife\" V8927 Accuracy: Taxable income of Others V8940 Accuracy: Transfer income of Others Sums greater than 9 were truncated at 9.",null,"no_unit_naming_clause"]
+["the summation of the following variables: V10277 Taxable Income of Head and Wife/\"Wife\" V10305 Total Transfers of Head and Wife/\"Wife\" V10382 Taxable Income of Others V10396 Total Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V11011 Estimated Federal Income Taxes of First Extra Earner V11013 Estimated Federal Income Taxes of Second Extra Earner V11015 Estimated Federal Income Taxes of Third Extra Earner V11017 Estimated Federal Income Taxes of Fourth Extra Earner V11019 Estimated Federal Income Taxes of Fifth Extra Earner See the 1980 (wave XIII) documentation volume, pp.",null,"no_unit_naming_clause"]
+["the summation of the following variables: V11419 Taxable Income of Head and Wife/\"Wife\" V11461 Total Transfers of Head and Wife/\"Wife\" V11561 Taxable Prorated Income of Others V11577 Total Prorated Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V12360 Estimated Federal Income Taxes of First Extra Earner V12362 Estimated Federal Income Taxes of Second Extra Earner V12364 Estimated Federal Income Taxes of Third Extra Earner V12366 Estimated Federal Income Taxes of Fourth Extra Earner V12368 Estimated Federal Income Taxes of Fifth Extra Earner See the 1980 (wave XIII) documentation volume, pp.",null,"no_unit_naming_clause"]
+["the summation of the following variables: V12818 Taxable Income of Head and Wife/\"Wife\" V12868 Total Transfers of Head and Wife/\"Wife\" V12968 Taxable Prorated Income of Others V12984 Total Prorated Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V13612 Estimated Federal Income Taxes of First Extra Earner V13614 Estimated Federal Income Taxes of Second Extra Earner V13616 Estimated Federal Income Taxes of Third Extra Earner V13618 Estimated Federal Income Taxes of Fourth Extra Earner V13620 Estimated Federal Income Taxes of Fifth Extra Earner See the 1985 (wave XVIII) documentation volume, pp.",null,"no_unit_naming_clause"]
+["the summation of the following variables: V13920 Taxable Income of Head and Wife/\"Wife\" V13970 Total Transfers of Head and Wife/\"Wife\" V14070 Taxable Prorated Income of Others V14086 Total Prorated Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V14659 Estimated Federal Income Taxes of First Extra Earner V14661 Estimated Federal Income Taxes of Second Extra Earner V14663 Estimated Federal Income Taxes of Third Extra Earner V14665 Estimated Federal Income Taxes of Fourth Extra Earner V14667 Estimated Federal Income Taxes of Fifth Extra Earner See the 1985 (wave XVIII) documentation volume, pp.",null,"no_unit_naming_clause"]
+["the summation of the following variables: V14935 Taxable Income of Head and Wife/\"Wife\" V14985 Total Transfers of Head and Wife/\"Wife\" V15085 Taxable Prorated Income of Others V15101 Total Prorated Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V16133 Estimated Federal Income Taxes of First Extra Earner V16135 Estimated Federal Income Taxes of Second Extra Earner V16137 Estimated Federal Income Taxes of Third Extra Earner V16139 Estimated Federal Income Taxes of Fourth Extra Earner V16141 Estimated Federal Income Taxes of Fifth Extra Earner See the 1985 (wave XVIII) documentation volume, pp.",null,"no_unit_naming_clause"]
+["the summation of the following variables: V16435 Taxable Income of Head and Wife/\"Wife\" V16485 Total Transfers of Head and Wife/\"Wife\" V16585 Taxable Prorated Income of Others V16601 Total Prorated Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V17851 Taxable Income of Head and Wife/\"Wife\" V17901 Total Transfers of Head and Wife/\"Wife\" V18001 Taxable Prorated Income of Others V18017 Total Prorated Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V19151 Taxable Income of Head and Wife/\"Wife\" V19201 Total Transfers of Head and Wife/\"Wife\" V19301 Taxable Prorated Income of Others V19317 Total Prorated Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V20451 Taxable Income of Head and Wife/\"Wife\" V20501 Total Transfers of Head and Wife/\"Wife\" V20601 Taxable Prorated Income of Others V20617 Total Prorated Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V21959 Taxable Income of Head and Wife/\"Wife\" V22366 Total Transfers of Head and Wife/\"Wife\" V22373 Taxable Prorated Income of Others V22397 Total Prorated Transfers of Others Some or all of the component parts of this variable may have been imputed.",null,"no_unit_naming_clause"]
+["the summation of the following variables: V8891 Taxable Income of Head and Wife/\"Wife\" V8909 Total Transfers of Head and Wife/\"Wife\" V8926 Taxable Income of Others V8939 Total Transfers of Others",null,"no_unit_naming_clause"]
+["the summation of the following variables: V9364 Estimated Federal Income Taxes of First Extra Earner V9366 Estimated Federal Income Taxes of Second Extra Earner V9368 Estimated Federal Income Taxes of Third Extra Earner V9370 Estimated Federal Income Taxes of Fourth Extra Earner V9372 Estimated Federal Income Taxes of Fifth Extra Earner See the 1980 (wave XIII) documentation volume, pp.",null,"no_unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V10019 through V10397 and V10586, V10646, V10791, V10844, V10965 and V10995; the maximum value is 44.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V11126-V11158, V11253-V11270, V11367-V11428, and V11460, V11562, V11578, V11742, V11831, V12105 and V12194; the maximum value is 44.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V12524-V12557, V12651-V12669, V12765-V12779, V12794-V12867, and V12942-V12985; the maximum value is 41.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V13724-V13755, V13803-V13819, V13869-V13881, V13896-V13969, and V14044-V14087; the maximum value is 41.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V14824-V14845, V14859-V14875, V14891-V14896, V14911-V14984, and V15059-V15102; the maximum value is 41.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V17724-V17754, V17768-V17784, V17800-V17812, V17827-V17900, and V17975-V18018; the maximum value is 37.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V19024-V19054, V19068-V19084, V19100-V19112, V19127-V19200, and V19275-V19318; the maximum value is 37.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V20324-V20354, V20368-V20384, V20400-V20412, V20427-V20500, and V20575-V20618; the maximum value is 37.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V8818 through V8940 and V8982, V8987, V8990, V8993, V8996, V9086, V9163, V9220, V9255, V9318 and V9348; the maximum value is 42.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 1 (minor assignment) in the accuracy variables in the variable sequence V8218 through V8332; the maximum value is 27.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V10019 through V10397 and V10586, V10646, V10791, V10844, V10965 and V10995; the maximum value is 44.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V11126-V11158, V11253-V11270, V11367-V11428, and V11460, V11562, V11578, V11742, V11831, V12105 and V12194; the maximum value is 44.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V12524-V12557, V12651-V12669, V12765-V12779, V12794-V12867, and V12942-V12985; the maximum value is 41.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V13724-V13755, V13803-V13819, V13869-V13881, V13896-V13969, and V14044-V14087; the maximum value is 41.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V14824-V14845, V14859-V14875, V14891-V14896, V14911-V14984, and V15059-V15102; the maximum value is 41.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V17724-V17754, V17768-V17784, V17800-V17812, V17827-V17900, and V17975-V18018; the maximum value is 37.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V19024-V19054, V19068-V19084, V19100-V19112, V19127-V19200, and V19275-V19318; the maximum value is 37.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V20324-V20354, V20368-V20384, V20400-V20412, V20427-V20500, and V20575-V20618; the maximum value is 37.","count","unit_naming_clause"]
+["the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V8818 through V8940 and V8982, V8987, V8990, V8993, V8996, V9086, V9163, V9220, V9255, V9318 and V9348; the maximum value is 42.","count","unit_naming_clause"]
+["the total amount of time Head did not have a job and was not looking for one, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Head missed due to illness of others, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Head missed due to own illness, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Head missed due to strikes, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Head missed due to the illness of others, expressed as weeks","week","unit_naming_clause"]
+["the total amount of time Head missed due to the illness of others, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Head missed due to unemployment or temporary layoff, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Wife/\"Wife\" did not have a job and was not looking for one, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Wife/\"Wife\" missed due to illness of others, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Wife/\"Wife\" missed due to own illness, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Wife/\"Wife\" missed due to strikes, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time Wife/\"Wife\" missed due to unemployment or temporary layoff, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time missed due to Head's own illness, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time missed due to Wife's/\"Wife's\" own illness, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time that Head did not have a job and was not looking for one, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of time that Wife/\"Wife\" did not have a job and was not looking for one, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of transfer income in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the total amount of vacation or time off taken by Head, expressed as weeks.","week","unit_naming_clause"]
+["the total amount of vacation or time off taken by Wife/\"Wife\" expressed as weeks.","week","unit_naming_clause"]
+["the total amount of vacation or time off taken by Wife/\"Wife\", expressed as weeks.","week","unit_naming_clause"]
+["the total amount of vacation or time off taken by the Head, expressed as weeks.","week","unit_naming_clause"]
+["the total annual work hours on all jobs including overtime.","hour","unit_naming_clause"]
+["the total annual work hours on all jobs, including overtime.","hour","unit_naming_clause"]
+["the total dollar amount (000001-999995) of debts for this FU.","united_states_dollar","unit_naming_clause"]
+["the total dollar amount (000001-999995) of ready cash assets.","united_states_dollar","unit_naming_clause"]
+["the total dollar lump sum amount (000001-999996).","united_states_dollar","unit_naming_clause"]
+["the total number of extra jobs (1-7) that Head had.","count","unit_naming_clause"]
+["the total number of extra jobs (1-7) that Wife/\"Wife\" had.","count","unit_naming_clause"]
+["the total number of extra jobs held by Head during 1982.","count","unit_naming_clause"]
+["the total number of extra jobs held.","count","unit_naming_clause"]
+["the total number of reports of help; each \"yes\" to question G159, G185, G212, G258, G284 or G311 counted as one instance.","count","unit_naming_clause"]
+["the total number of reports of help; each \"yes\" to questions G161, G187, G214, G260, G286 and G313 counted as one instance.","count","unit_naming_clause"]
+["the total number of reports of help; each \"yes\" to questions G163, G189, G216, G262, G288 and G315 counted as one instance.","count","unit_naming_clause"]
+["the total number of years (01-96) that Head has accumulated benefits from previous employers.","year","unit_naming_clause"]
+["the total value in dollars (0000001-9999995) of all other savings and assets.","united_states_dollar","unit_naming_clause"]
+["the total weekly work hours on all jobs.","hour_per_week","unit_naming_clause"]
+["the total weeks Head worked on all jobs in 2002.","week","unit_naming_clause"]
+["the total weeks Head worked on all main jobs in 1993.","week","unit_naming_clause"]
+["the total weeks Head worked on all main jobs in 1994.","week","unit_naming_clause"]
+["the total weeks Head worked on all main jobs in 1995.","week","unit_naming_clause"]
+["the total weeks Head worked on all main jobs in 1996.","week","unit_naming_clause"]
+["the total weeks Head worked on all main jobs in 1998.","week","unit_naming_clause"]
+["the total weeks Head worked on all main jobs in 2000.","week","unit_naming_clause"]
+["the total weeks Wife/\"Wife\" worked on all jobs in 1998.","week","unit_naming_clause"]
+["the total weeks Wife/\"Wife\" worked on all jobs in 2002.","week","unit_naming_clause"]
+["the total weeks Wife/\"Wife\" worked on all main jobs in 1993.","week","unit_naming_clause"]
+["the total weeks Wife/\"Wife\" worked on all main jobs in 1995.","week","unit_naming_clause"]
+["the total weeks Wife/\"Wife\" worked on all main jobs in 1996.","week","unit_naming_clause"]
+["the total weeks Wife/\"Wife\" worked on all main jobs in 2000.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2004.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2006.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2008.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2010.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2012.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2014.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2016.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2018.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2020.","week","unit_naming_clause"]
+["the total weeks worked on all jobs in 2022.","week","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment compensation of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the unemployment pay in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the value of the home in whole dollars, and include the value of the lot if mobile home and lot is owned.","united_states_dollar","unit_naming_clause"]
+["the value of the home in whole dollars, and include the value of the lot if mobile home and lot is owned..","united_states_dollar","unit_naming_clause"]
+["the value of the home in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the values are as follows: (a) if Head is a high school graduate (ER23435=1), the value is 12; (b) if Head received a GED (ER23435=2), the value is the last grade finished (ER23438); (c) if Head neither graduated from high school nor got a GED (ER23435=3), the value is the last grade finished (ER23443); (d) if it is not known whether Head graduated from high school, got a GED, or neither (ER23435=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Head is a high school graduate (ER27402=1), the value is 12; (b) if Head received a GED (ER27402=2), the value is the last grade finished (ER27405); (c) if Head neither graduated from high school nor got a GED (ER27402=3), the value is the last grade finished (ER27410); (d) if it is not known whether Head graduated from high school, got a GED, or neither (ER27402=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Head is a high school graduate (ER40574=1), the value is 12; (b) if Head received a GED (ER40574=2), the value is the last grade finished (ER40577); (c) if Head neither graduated from high school nor got a GED (ER40574=3), the value is the last grade finished (ER40582); (d) if it is not known whether Head graduated from high school, got a GED, or neither (ER40574=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Head is a high school graduate (ER46552=1), the value is 12; (b) if Head received a GED (ER46552=2), the value is the last grade finished (ER46555); (c) if Head neither graduated from high school nor got a GED (ER46552=3), the value is the last grade finished (ER46560); (d) if it is not known whether Head graduated from high school, got a GED, or neither (ER46552=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Head is a high school graduate (ER51913=1), the value is 12; (b) if Head received a GED (ER51913=2), the value is the last grade finished (ER51916); (c) if Head neither graduated from high school nor got a GED (ER51913=3), the value is the last grade finished (ER51921); (d) if it is not known whether Head graduated from high school, got a GED, or neither (ER51913=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Head is a high school graduate (ER57669=1), the value is 12; (b) if Head received a GED (ER57669=2), the value is the last grade finished (ER57672); (c) if Head neither graduated from high school nor got a GED (ER57669=3), the value is the last grade finished (ER57677); (d) if it is not known whether Head graduated from high school, got a GED, or neither (ER57669=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Head is a high school graduate (ER64821=1), the value is 12; (b) if Head received a GED (ER64821=2), the value is the last grade finished (ER64824); (c) if Head neither graduated from high school nor got a GED (ER64821=3), the value is the last grade finished (ER64829); (d) if it is not known whether Head graduated from high school, got a GED, or neither (ER64821=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Head is a high school graduate (V23279=1), the value is 12; (b) if Head recevied a GED (V23279=2), the value is the last grade finished (V23282); (c) if Head neither graduated from high school, nor got a GED (V23279=3), the value is the last grade finished (V23287); (d) if it is not known whether Head graduated from high school, got a GED, or neither (V23279=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Reference Person is a high school graduate (ER70893=1), the value is 12; (b) if Reference Person received a GED (ER70893=2), the value is the last grade finished (ER70896); (c) if Reference Person neither graduated from high school nor got a GED (ER70893=3), the value is the last grade finished (ER70901); (d) if it is not known whether Reference Person graduated from high school, got a GED, or neither (ER70893=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Reference Person is a high school graduate (ER76908=1), the value is 12; (b) if Reference Person received a GED (ER76908=2), the value is the last grade finished (ER76911); (c) if Reference Person neither graduated from high school nor got a GED (ER76908=3), the value is the last grade finished (ER76916); (d) if it is not known whether Reference Person graduated from high school, got a GED, or neither (ER76908=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Reference Person is a high school graduate (ER81155=1), the value is 12; (b) if Reference Person received a GED (ER81155=2), the value is the last grade finished (ER81158); (c) if Reference Person neither graduated from high school nor got a GED (ER81155=3), the value is the last grade finished (ER81163); (d) if it is not known whether Reference Person graduated from high school, got a GED, or neither (ER81155=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Reference Person is a high school graduate (ER85132=1), the value is 12; (b) if Reference Person received a GED (ER85132=2), the value is the last grade finished (ER85135); (c) if Reference Person neither graduated from high school nor got a GED (ER85132=3), the value is the last grade finished (ER85140); (d) if it is not known whether Reference Person graduated from high school, got a GED, or neither (ER85132=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Spouse/Partner is a high school graduate (ER64682=1), the value is 12; (b) if Spouse/Partner received a GED (ER64682=2), the value is the last grade finished (ER64685); (c) if Spouse/Partner neither graduated from high school nor got a GED (ER64682=3), the value is the last grade finished (ER64690); (d) if it is not known whether Spouse/Partner graduated from high school, got a GED, or neither (ER64682=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Spouse/Partner is a high school graduate (ER70755=1), the value is 12; (b) if Spouse/Partner received a GED (ER70755=2), the value is the last grade finished (ER70758); (c) if Spouse/Partner neither graduated from high school nor got a GED (ER70755=3), the value is the last grade finished (ER70763); (d) if it is not known whether Spouse/Partner graduated from high school, got a GED, or neither (ER70755=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Spouse/Partner is a high school graduate (ER76763=1), the value is 12; (b) if Spouse/Partner received a GED (ER76763=2), the value is the last grade finished (ER76766); (c) if Spouse/Partner neither graduated from high school nor got a GED (ER76763=3), the value is the last grade finished (ER76771); (d) if it is not known whether Spouse/Partner graduated from high school, got a GED, or neither (ER76763=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Spouse/Partner is a high school graduate (ER81028=1), the value is 12; (b) if Spouse/Partner received a GED (ER81028=2), the value is the last grade finished (ER81031); (c) if Spouse/Partner neither graduated from high school nor got a GED (ER81028=3), the value is the last grade finished (ER81036); (d) if it is not known whether Spouse/Partner graduated from high school, got a GED, or neither (ER81028=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Spouse/Partner is a high school graduate (ER85005=1), the value is 12; (b) if Spouse/Partner received a GED (ER85005=2), the value is the last grade finished (ER85008); (c) if Spouse/Partner neither graduated from high school nor got a GED (ER85005=3), the value is the last grade finished (ER85013); (d) if it is not known whether Spouse/Partner graduated from high school, got a GED, or neither (ER85005=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Wife/\"Wife\" is a high school graduate (ER23343=1), the value is 12; (b) if Wife/\"Wife\" received a GED (ER23343=2), the value is the last grade finished (ER23346); (c) if Wife/\"Wife\" neither graduated from high school nor got a GED (ER23343=3), the value is the last grade finished (ER23351); (d) if it is not known whether Wife/\"Wife\" graduated from high school, got a GED, or neither (ER23343=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Wife/\"Wife\" is a high school graduate (ER27306=1), the value is 12; (b) if Wife/\"Wife\" received a GED (ER27306=2), the value is the last grade finished (ER27309); (c) if Wife/\"Wife\" neither graduated from high school nor got a GED (ER27306=3), the value is the last grade finished (ER27314); (d) if it is not known whether Wife/\"Wife\" graduated from high school, got a GED, or neither (ER27306=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Wife/\"Wife\" is a high school graduate (ER40481=1), the value is 12; (b) if Wife/\"Wife\" received a GED (ER40481=2), the value is the last grade finished (ER40484); (c) if Wife/\"Wife\" neither graduated from high school nor got a GED (ER40481=3), the value is the last grade finished (ER40489); (d) if it is not known whether Wife/\"Wife\" graduated from high school, got a GED, or neither (ER40481=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Wife/\"Wife\" is a high school graduate (ER46458=1), the value is 12; (b) if Wife/\"Wife\" received a GED (ER46458=2), the value is the last grade finished (ER46461); (c) if Wife/\"Wife\" neither graduated from high school nor got a GED (ER46458=3), the value is the last grade finished (ER46466); (d) if it is not known whether Wife/\"Wife\" graduated from high school, got a GED, or neither (ER46458=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Wife/\"Wife\" is a high school graduate (ER51819=1), the value is 12; (b) if Wife/\"Wife\" received a GED (ER51819=2), the value is the last grade finished (ER51822); (c) if Wife/\"Wife\" neither graduated from high school nor got a GED (ER51819=3), the value is the last grade finished (ER51827); (d) if it is not known whether Wife/\"Wife\" graduated from high school, got a GED, or neither (ER51819=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if Wife/\"Wife\" is a high school graduate (ER57559=1), the value is 12; (b) if Wife/\"Wife\" received a GED (ER57559=2), the value is the last grade finished (ER57562); (c) if Wife/\"Wife\" neither graduated from high school nor got a GED (ER57559=3), the value is the last grade finished (ER57567); (d) if it is not known whether Wife/\"Wife\" graduated from high school, got a GED, or neither (ER57559=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the values are as follows: (a) if she is a high school graduate (V23215=1), the value is 12; (b) if she recevied a GED (V23215=2), the value is the last grade finished (V23217); (c) if she neither graduated from high school, nor got a GED (V23215=3), the value is the last grade finished (V23220); (d) if it is not known whether she graduated from high school, got a GED, or neither (V23215=8 or 9), then the value is 99.",null,"defeating_clause"]
+["the worker's compensation of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the worker's compensation of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar","unit_naming_clause"]
+["the year Head graduated.",null,"no_unit_naming_clause"]
+["the year Head last attended college.",null,"no_unit_naming_clause"]
+["the year Head last attended school.",null,"no_unit_naming_clause"]
+["the year Head received the degree.",null,"no_unit_naming_clause"]
+["the year Head started working for his/her extra job employer.",null,"no_unit_naming_clause"]
+["the year Head started working for his/her first extra job employer.",null,"no_unit_naming_clause"]
+["the year Head started working for his/her fourth extra job employer.",null,"no_unit_naming_clause"]
+["the year Head started working for his/her last employer.",null,"no_unit_naming_clause"]
+["the year Head started working for his/her other main-job employer.",null,"no_unit_naming_clause"]
+["the year Head started working for his/her present employer.",null,"no_unit_naming_clause"]
+["the year Head started working for his/her second extra job employer.",null,"no_unit_naming_clause"]
+["the year Head started working for his/her third extra job employer.",null,"no_unit_naming_clause"]
+["the year Head started working in his/her last position or work situation.",null,"no_unit_naming_clause"]
+["the year Head started working in his/her present position or work situation.",null,"no_unit_naming_clause"]
+["the year Reference Person graduated.",null,"no_unit_naming_clause"]
+["the year Reference Person last attended college.",null,"no_unit_naming_clause"]
+["the year Reference Person last attended school.",null,"no_unit_naming_clause"]
+["the year Reference Person received the degree.",null,"no_unit_naming_clause"]
+["the year Spouse/Partner graduated.",null,"no_unit_naming_clause"]
+["the year Spouse/Partner last attended college.",null,"no_unit_naming_clause"]
+["the year Spouse/Partner last attended school.",null,"no_unit_naming_clause"]
+["the year Spouse/Partner started working for this employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" graduated.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" last attended college.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" last attended school.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" received the degree.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working for her extra job employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working for her first extra job employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working for her fourth extra job employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working for her last employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working for her other main-job employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working for her present employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working for her second extra job employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working for her third extra job employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working for this employer.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working in her last position or work situation.",null,"no_unit_naming_clause"]
+["the year Wife/\"Wife\" started working in her present position or work situation.",null,"no_unit_naming_clause"]
+["the year in which Spouse/Partner retired.",null,"no_unit_naming_clause"]
+["the year in which Wife/\"Wife\" retired.",null,"no_unit_naming_clause"]
+["the year in which wife/\"wife\" retired.",null,"no_unit_naming_clause"]
+["the year the GED was received.",null,"no_unit_naming_clause"]
+["the year this degree or certificate was received.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" graduated.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" last attended college.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" last attended school.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" started working for her extra job employer.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" started working for her first extra job employer.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" started working for her fourth extra job employer.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" started working for her other main-job employer.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" started working for her second extra job employer.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" started working for her third extra job employer.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" started working in her last position or work situation.",null,"no_unit_naming_clause"]
+["the year wife/\"wife\" started working in her present position or work situation.",null,"no_unit_naming_clause"]
+["their values for V17702 (10001-12043).",null,"no_unit_naming_clause"]
+["this variable is not adjusted for inflation (it is in 1967 dollars), nor is it exactly comparable to the official poverty standard; such changes are left to users.","united_states_dollar","unit_naming_clause"]
+["total Social Security income received by all family unit members.",null,"no_unit_naming_clause"]
+["total consumption as a percent of food need standard (V2271/V2317).","percent","unit_naming_clause"]
+["total receipts from farming in whole dollars.","united_states_dollar","unit_naming_clause"]
+["total receipts from the business in whole dollars.","united_states_dollar","unit_naming_clause"]
+["values are in 1967 dollars.","united_states_dollar","unit_naming_clause"]
+["values are in 1967 dollars.) Adjustments for inflation, etc., are left to users.","united_states_dollar","unit_naming_clause"]
+~~~
+
+#### 24.3.6 Field aggregation and complete positive relation
+
+Title adjudication occurs before statement aggregation. An unknown or
+internally conflicting title fails. One positive title establishes the field
+subject to §24.3.3's exact supported compound-over-bare-numerator refinements
+and all-other-unit-conflict rule; subordinate body defeats do not erase its
+whole-field scope. If the title has no positive, an internally conflicting,
+defeated, or unadjudicated
+whole-domain statement vetoes unit establishment even beside a positive
+statement. Without a veto, exactly one distinct positive statement unit
+establishes the field; zero positives fail with
+`no_statement_names_a_unit`, and two distinct positives fail with
+`conflicting_statement_units`.
+
+The complete positive **statement** relation has 1,545 rows; title positives
+are carried only by the separately pinned all-field title relation. Each
+compact JSONL statement row is
+`[statement,typed_value_unit,field_count]`; the 238,735 bytes have raw
+SHA-256
+`354de946fbb0c15f05eb1c5b202bbbd8cdc5913922cf8c402e6e253699daa153`
+and canonical-array SHA-256
+`0e7a96f1146063da99dfa576eb254e38cf577762522911e6332863ef9992d6b8`.
+
+~~~text
+["Actual age in years","year",1]
+["Actual dollar amount","united_states_dollar",1]
+["Actual dollar amount of Head's labor income","united_states_dollar",1]
+["Actual dollar amount of transfers","united_states_dollar",5]
+["Actual dollar and cents per hour","united_states_dollar_per_hour",1]
+["Actual dollars and cents per hour","united_states_dollar_per_hour",32]
+["Actual dollars and cents per hour.","united_states_dollar_per_hour",5]
+["Actual dollars per week","united_states_dollar_per_week",2]
+["Actual expenditure in hundreds of dollars","hundreds_of_united_states_dollars",2]
+["Actual expenditure in hundreds of dollars.","hundreds_of_united_states_dollars",2]
+["Actual hours per week","hour_per_week",4]
+["Actual hours worked per week","hour_per_week",1]
+["Actual number in FU","count",7]
+["Actual number in Family Unit","count",1]
+["Actual number in family unit","count",1]
+["Actual number of children","count",15]
+["Actual number of days","day",1]
+["Actual number of dollars","united_states_dollar",1]
+["Actual number of exemptions","count",2]
+["Actual number of hours","hour",4]
+["Actual number of hours per week","hour_per_week",24]
+["Actual number of hours per year","hour_per_year",1]
+["Actual number of hours worked","hour",1]
+["Actual number of miles","mile",8]
+["Actual number of miles to work","mile",1]
+["Actual number of minutes","minute",8]
+["Actual number of months","month",10]
+["Actual number of people","count",1]
+["Actual number of persons","count",9]
+["Actual number of persons in FU","count",4]
+["Actual number of states and/ or countries)","count",1]
+["Actual number of weeks","week",54]
+["Actual number of weeks in 1979","week",1]
+["Actual number of weeks missed because Wife ill in 1979","week",1]
+["Actual number of weeks missed because someone else was ill in 1979","week",1]
+["Actual number of weeks missed because someone else was ill in 1980","week",1]
+["Actual number of weeks missed in 1979","week",4]
+["Actual number of weeks missed in 1980","week",1]
+["Actual number of weeks of vacation in 1979","week",1]
+["Actual number of weeks of vacation in 1980","week",1]
+["Actual number of weeks on strike in 1979","week",1]
+["Actual number of weeks on strike in 1980","week",1]
+["Actual number of weeks unemployed in 1979","week",1]
+["Actual number of weeks unemployed in 1980","week",1]
+["Actual number of weeks worked","week",1]
+["Actual number of weeks worked in 1979","week",4]
+["Actual number of weeks worked in 1980","week",3]
+["Actual number of years","year",7]
+["Actual number of years from now","year",3]
+["Actual number of years later","year",1]
+["Actual percent","percent",2]
+["Actual percent of time Wife/friend worked","percent",1]
+["Actual year","year",7]
+["Code 1-11 for actual number of months used food stamps in 1975","month",1]
+["Code Number of States or Countries in which R has lived including present location","count",1]
+["Code actual number of MINUTES (e.g. 1 hour and 10 minutes - 70 minutes).","minute",1]
+["Code actual number of minutes","minute",1]
+["Code actual number of weeks (01 - 98)","week",1]
+["Code dollars and cents per hour.)","united_states_dollar_per_hour",1]
+["Code number of children in FU in school and living at home) (exclude in-laws)","count",1]
+["Code number of things mentioned to J1","count",1]
+["Coded in Dollars","united_states_dollar",1]
+["Months are coded below with January=1, February=2, etc.","month",12]
+["The actual number of minutes taken by the interviewer to administer the questionnaire is coded here.","minute",15]
+["The actual weekly food needs in dollars and cents are coded here.","united_states_dollar",20]
+["The code value represents the actual number of persons in the FU, and has the same value as V10418.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V11605.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V13010.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V14113.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V15129.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V16630.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V18048.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V19348.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V20650.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V8351.","count",1]
+["The code value represents the actual number of persons in the FU, and has the same value as V8960.","count",1]
+["The code value represents the actual number of persons in the first other FU.","count",8]
+["The code value represents the actual number of persons in the fourth other FU.","count",6]
+["The code value represents the actual number of persons in the second other FU.","count",8]
+["The code value represents the actual number of persons in the third other FU.","count",8]
+["The code values for this variable represent the actual dollar amount of transfers.","united_states_dollar",1]
+["The code values for this variable represent the actual number of children 17 years of age or less.","count",1]
+["The code values for this variable represent the actual number of miles per year.","mile_per_year",1]
+["The code values for this variable represent the actual number of persons currently in the FU.","count",1]
+["The code values for this variable represent the food standard for the 1974 family in whole dollars.","united_states_dollar",1]
+["The code values represent the actual number of persons currently in the FU.","count",11]
+["The data coded here represent Head's asset portion of the income reported at G11a and b in whole dollars.","united_states_dollar",1]
+["The data coded here represent both Head's and Wife's/\"Wife's\" asset portion of the income reported at F11 in whole dollars.","united_states_dollar",1]
+["The data coded here represent both Head's and Wife's/\"Wife's\" asset portion of the income reported at G11 in whole dollars.","united_states_dollar",7]
+["The data coded here represent both Head's and Wife's/\"Wife's\" asset portion of the income reported at K7 in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Head's asset portion of the income reported at G19b in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Head's asset portion of the income reported at G4 in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V11406-V11409 (questions F5, F11, F19b, and F19c) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V12806-V12807 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V13908-V13909 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V14923-V14924 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V16423-V16424 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V17839-V17840 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V19139-V19140 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion from V20439-V20440 (questions G5, G11, G19b, G19c and G52) in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion of the income reported at G11a in whole dollars.","united_states_dollar",1]
+["The data coded here represent the Wife's/\"Wife's\" asset portion of the income reported at G4 in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at F19:b in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at F19:c in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at F5 in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at G19:b in whole dollars.","united_states_dollar",7]
+["The data coded here represent the asset portion of the income reported at G19:c in whole dollars.","united_states_dollar",7]
+["The data coded here represent the asset portion of the income reported at G5 in whole dollars.","united_states_dollar",7]
+["The data coded here represent the asset portion of the income reported at K12-13:b in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at K12-13:c in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at K16-17:b in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at K16-17:c in whole dollars.","united_states_dollar",1]
+["The data coded here represent the asset portion of the income reported at K4 in whole dollars.","united_states_dollar",2]
+["The data coded here represent the asset portion of the income reported at K7 in whole dollars.","united_states_dollar",1]
+["The month coded here is that of the most recent move since the 1985 interview.","month",1]
+["The month coded here is that of the most recent move since the 1986 interview.","month",1]
+["The month coded here is that of the most recent move since the 1987 interview.","month",1]
+["The month coded here is that of the most recent move since the 1988 interview.","month",1]
+["The month coded here is that of the most recent move since the 1989 interview.","month",1]
+["The month coded here is that of the most recent move since the 1990 interview.","month",1]
+["The month coded here is that of the most recent move since the 1991 interview.","month",1]
+["The month coded here is that of the most recent move since the 1992 interview.","month",1]
+["The month coded here is that of the most recent move since the 1993 interview.","month",1]
+["The month coded here is that of the most recent move since the 1994 interview.","month",1]
+["The month coded here is that of the most recent move since the 1995 interview.","month",1]
+["The month coded here is that of the most recent move since the 1996 interview.","month",1]
+["The month coded here is that of the most recent move since the 1997 interview.","month",1]
+["The month coded here is that of the most recent move since the 1999 interview.","month",1]
+["The month coded here is that of the most recent move since the 2001 interview.","month",1]
+["The month coded here is that of the most recent move since the 2003 interview.","month",1]
+["The month coded here is that of the most recent move since the 2005 interview.","month",1]
+["The month coded here is that of the most recent move since the 2007 interview.","month",1]
+["The month coded here is that of the most recent move since the 2009 interview.","month",1]
+["The month coded here is that of the most recent move since the 2011 interview.","month",1]
+["The month coded here is that of the most recent move since the 2015 interview.","month",1]
+["The month coded here is that of the most recent move since the 2017 interview.","month",1]
+["The month coded here is that of the most recent move since the 2019 interview.","month",1]
+["The month coded here is that of the most recent move since the 2021 interview.","month",1]
+["The month coded here is that of the most recent move since the 2023 interview.","month",1]
+["The range of values for this variable represents actual age in years (1 through 17) and excludes Heads and Wives; note that a child's age is not coded 02 (two years old) until he reaches his second birthday.","year",1]
+["The range of values for this variable represents the actual age in years (01 through 17) of the youngest FU Member in this age range and excludes Heads and Wives/\"Wives\"; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",10]
+["The range of values for this variable represents the actual age in years of the youngest FU Member in this age range and excludes Heads and Spouses/Partners; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",1]
+["The range of values for this variable represents the actual age in years of the youngest FU Member in this age range and excludes Heads and Wives/\"Wives\"; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",13]
+["The range of values for this variable represents the actual age in years of the youngest FU Member in this age range and excludes Reference Persons and Spouses/Partners; note that a child's age is not coded 02 (two years old) until he/she reaches his/her second birthday.","year",4]
+["The value for this variable represents the actual number of persons in the first other FU.","count",18]
+["The value for this variable represents the actual number of persons in the fourth other FU.","count",17]
+["The value for this variable represents the actual number of persons in the second other FU.","count",17]
+["The value for this variable represents the actual number of persons in the third other FU.","count",17]
+["The values are in 1967 dollars.","united_states_dollar",1]
+["The values for this variable indicate the number of children born between January 1, 1985 and December 31, 1985 whose parents are Head and Wife/\"Wife\".","count",1]
+["The values for this variable indicate the number of children born between January 1, 1986 and December 31, 1986 whose parents are Head and Wife/\"Wife\", as reported from 1987 data.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1988 and December 31, 1988 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30608=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1988 and December 31, 1988 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30608=20, 22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1988 and December 31, 1988 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30608=20, 22, 90 or 88 respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1988 and December 31, 1988 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30608=20, 22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1989 and December 31, 1989 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30644=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1989 and December 31, 1989 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30644=20, 22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1989 and December 31, 1989 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30644=20, 22, 90 or 88 respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1989 and December 31, 1989 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30644=20, 22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1990 and December 31, 1990 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30691=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1990 and December 31, 1990 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30691=20, 22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1990 and December 31, 1990 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30691=20, 22, 90 or 88 respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1990 and December 31, 1990 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30691=20, 22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1991 and December 31, 1991 to other FU members age 12-44 who were neither husband of Head nor first-year cohabiter (V30735=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1991 and December 31, 1991 to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabiter (V30735=20, 22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1991 and December 31, 1991 to the Wife, \"Wife\", husband of Head, or first-year cohabiter (V30735=20, 22, 90 or 88 respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1991 and December 31, 1991 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabiter (V30735=20, 22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1992 and December 31, 1992 to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (V30808=90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1992 and December 31, 1992 to the Head but notjointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (V30808=20, V22, 90 or 88 respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1992 and December 31, 1992 to the Wife, \"Wife\", husband of Head, or first-year cohabitor (V30808=20, V22, 90 or 88 respectively) but notjointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1992 and December 31, 1992 whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (V30808=20, V22, 90 or 88 respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1993, and December 31, 1993, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1993, and December 31, 1993, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1993, and December 31, 1993, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1994, and December 31, 1994, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1994, and December 31, 1994, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1994, and December 31, 1994, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1995, and December 31, 1995, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1995, and December 31, 1995, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1995, and December 31, 1995, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1996, and December 31, 1996, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1996, and December 31, 1996, to the Wife, \"Wife\", husband of Head, or first-year cohabitor, but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1996, and December 31, 1996, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1997, and December 31, 1997, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33503=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1997, and December 31, 1997, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1997, and December 31, 1997, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1997, and December 31, 1997, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33503=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1998, and December 31, 1998, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33503=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1998, and December 31, 1998, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1998, and December 31, 1998, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33503=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1998, and December 31, 1998, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33503=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1999, and December 31, 1999, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33603=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 1999, and December 31, 1999, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1999, and December 31, 1999, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 1999, and December 31, 1999, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33603=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2000, and December 31, 2000, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33603=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2000, and December 31, 2000, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2000, and December 31, 2000, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33603=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2000, and December 31, 2000, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33603=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2001, and December 31, 2001, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33703=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2001, and December 31, 2001, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2001, and December 31, 2001, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2001, and December 31, 2001, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33703=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2002, and December 31, 2002, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33703=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2002, and December 31, 2002, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2002, and December 31, 2002, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33703=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2002, and December 31, 2002, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33703=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2003, and December 31, 2003, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33803=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2003, and December 31, 2003, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2003, and December 31, 2003, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2003, and December 31, 2003, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33803=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2004, and December 31, 2004, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33803=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2004, and December 31, 2004, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2004, and December 31, 2004, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33803=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2004, and December 31, 2004, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33803=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2005, and December 31, 2005, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33903=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2005, and December 31, 2005, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2005, and December 31, 2005, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2005, and December 31, 2005, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33903=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2006, and December 31, 2006, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER33903=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2006, and December 31, 2006, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2006, and December 31, 2006, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER33903=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2006, and December 31, 2006, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER33903=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2007, and December 31, 2007, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34003=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2007, and December 31, 2007, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER34003=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2007, and December 31, 2007, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34003=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2007, and December 31, 2007, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34003=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2008, and December 31, 2008, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34003=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2008, and December 31, 2008, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34003=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2008, and December 31, 2008, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34003=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2009, and December 31, 2009, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34103=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2009, and December 31, 2009, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER34103=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2009, and December 31, 2009, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34103=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2009, and December 31, 2009, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34103=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2010, and December 31, 2010, to other FU members age 12-44 who were neither husband of Head nor first-year cohabitor (ER34103=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2010, and December 31, 2010, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34103=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2010, and December 31, 2010, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34103=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2011, and December 31, 2011, to other FU membersage 15-44 who were neither husband of Head nor first-year cohabitor (ER34203=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2011, and December 31, 2011, to the Head but not jointly with the Wife/\"Wife\", husband of Head, or first-year cohabitor (ER34203=20, 22, 90, or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2011, and December 31, 2011, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34203=20, 22, 90, or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2011, and December 31, 2011, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34203=20, 22, 90, or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2012, and December 31, 2012, to other FU membersage 15-44 who were neither husband of Head nor first-year cohabitor (ER34203=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2012, and December 31, 2012, to the Wife, \"Wife\", husband of Head, or first-year cohabitor (ER34203=20, 22, 90, or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2012, and December 31, 2012, whose parents are Head and Wife/\"Wife\", husband of Head, or first- year cohabitor (ER34203=20, 22, 90, or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2013, and December 31, 2013, to other FU members age 15-44 who were neither husband of Head nor first-year cohabitor (ER34303=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2013, and December 31, 2013, to the Head but not jointly with the Spouse/Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2013, and December 31, 2013, to the Spouse, Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2013, and December 31, 2013, whose parents are Head and Spouse/Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2014, and December 31, 2014, to other FU members age 15-44 who were neither husband of Head nor first-year cohabitor (ER34303=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2014, and December 31, 2014, to the Spouse, Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively) but not jointly with the Head.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2014, and December 31, 2014, whose parents are Head and Spouse/Partner, husband of Head, or first-year cohabitor (ER34303=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2015, and December 31, 2015, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34503=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2015, and December 31, 2015, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2015, and December 31, 2015, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2015, and December 31, 2015, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2016, and December 31, 2016, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34503=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2016, and December 31, 2016, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2016, and December 31, 2016, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34503=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2017, and December 31, 2017, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34703=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2017, and December 31, 2017, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2017, and December 31, 2017, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2017, and December 31, 2017, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2018, and December 31, 2018, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34703=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2018, and December 31, 2018, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2018, and December 31, 2018, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34703=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34903=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER35103=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to the Reference Person but not jointly with the Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively), if one is present in the FU.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2019, and December 31, 2019, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2020, and December 31, 2020, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER34903=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2020, and December 31, 2020, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2020, and December 31, 2020, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER34903=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2022, and December 31, 2022, to other FU members age 15-44 who were neither husband of Reference Person nor first-year cohabitor (ER35103=90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born between January 1, 2022, and December 31, 2022, to the Spouse, Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively) but not jointly with the Reference Person.","count",1]
+["The values for this variable indicate the number of children born between January 1, 2022, and December 31, 2022, whose parents are Reference Person and Spouse/Partner, husband of Reference Person, or first-year cohabitor (ER35103=20, 22, 90 or 88, respectively).","count",1]
+["The values for this variable indicate the number of children born to other FU members age 12-44 between January 1, 1986 and December 31, 1986, as reported from 1987 data.","count",1]
+["The values for this variable indicate the number of children born to other FU members between January 1, 1985 and December 31, 1985.","count",1]
+["The values for this variable indicate the number of children born to the Head (but not the Wife/\"Wife\" if there is one) between January 1, 1985 and December 31, 1985.","count",1]
+["The values for this variable indicate the number of children born to the Head (but not the Wife/\"Wife\" if there is one) between January 1, 1986 and December 31, 1986, as reported from 1987 data.","count",1]
+["The values for this variable indicate the number of children born to the Wife/\"Wife\" (but not the Head) between January 1, 1985 and December 31, 1985.","count",1]
+["The values for this variable indicate the number of children born to the Wife/\"Wife\" (but not the Head) between January 1, 1986 and December 31, 1986, as reported from 1987 data.","count",1]
+["The values for this variable represent Head's SSI income, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's Veterans Administration pension income, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's actual number of weeks of vacation or time off in 2014.","week",1]
+["The values for this variable represent Head's annual overtime hours worked on all jobs, in 2014, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Head's income from IRAs, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's income from Social Security, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's income from alimony, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's income from annuities, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's income from child support, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's income from miscellaneous transfers, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's income from other retirement pay and pensions, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's income from other sources for retirement, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's income from unemployment compensation, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's income from workers' compensation, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's labor portion of the farming and market gardening income reported at G19b in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's other welfare income, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Head's total annual work hours on all jobs including overtime in 2014.","hour",1]
+["The values for this variable represent Head's total annual work hours on all jobs, including overtime.","hour",6]
+["The values for this variable represent Head's total weekly work hours on all jobs in 2014.","hour_per_week",1]
+["The values for this variable represent Head's total weekly work hours on all jobs.","hour_per_week",1]
+["The values for this variable represent Head's total weekly work hours on all main jobs.","hour_per_week",7]
+["The values for this variable represent Head's total weeks worked on all jobs in 2014.","week",1]
+["The values for this variable represent Reference Person's SSI income, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's SSI income, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's SSI income, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's SSI income, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's Veterans Administration pension income, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's Veterans Administration pension income, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's Veterans Administration pension income, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's Veterans Administration pension income, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's actual number of weeks of vacation or time off in 2016.","week",1]
+["The values for this variable represent Reference Person's actual number of weeks of vacation or time off in 2018.","week",1]
+["The values for this variable represent Reference Person's actual number of weeks of vacation or time off in 2020.","week",1]
+["The values for this variable represent Reference Person's actual number of weeks of vacation or time off in 2022.","week",1]
+["The values for this variable represent Reference Person's annual overtime hours worked on all jobs, in 2016, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Reference Person's annual overtime hours worked on all jobs, in 2018, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Reference Person's annual overtime hours worked on all jobs, in 2020, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Reference Person's annual overtime hours worked on all jobs, in 2022, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Reference Person's income from IRAs, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from IRAs, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from IRAs, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from IRAs, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from Social Security, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from Social Security, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from Social Security, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from Social Security, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from alimony, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from alimony, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from alimony, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from alimony, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from annuities, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from annuities, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from annuities, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from annuities, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from child support, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from child support, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from child support, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from child support, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from miscellaneous transfers, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from miscellaneous transfers, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from miscellaneous transfers, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from miscellaneous transfers, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from other retirement pay and pensions, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from other retirement pay and pensions, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from other retirement pay and pensions, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from other retirement pay and pensions, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from other sources for retirement, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from other sources for retirement, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from other sources for retirement, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from other sources for retirement, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from unemployment compensation, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from unemployment compensation, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from unemployment compensation, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from unemployment compensation, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from workers' compensation, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from workers' compensation, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from workers' compensation, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's income from workers' compensation, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's other welfare income, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's other welfare income, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's other welfare income, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's other welfare income, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Reference Person's total annual work hours on all jobs including overtime in 2016.","hour",1]
+["The values for this variable represent Reference Person's total annual work hours on all jobs including overtime in 2018.","hour",1]
+["The values for this variable represent Reference Person's total annual work hours on all jobs including overtime in 2020.","hour",1]
+["The values for this variable represent Reference Person's total annual work hours on all jobs including overtime in 2022.","hour",1]
+["The values for this variable represent Reference Person's total weekly work hours on all jobs in 2016.","hour_per_week",1]
+["The values for this variable represent Reference Person's total weekly work hours on all jobs in 2018.","hour_per_week",1]
+["The values for this variable represent Reference Person's total weekly work hours on all jobs in 2020.","hour_per_week",1]
+["The values for this variable represent Reference Person's total weekly work hours on all jobs in 2022.","hour_per_week",1]
+["The values for this variable represent Reference Person's total weeks worked on all jobs in 2016.","week",1]
+["The values for this variable represent Reference Person's total weeks worked on all jobs in 2018.","week",1]
+["The values for this variable represent Reference Person's total weeks worked on all jobs in 2020.","week",1]
+["The values for this variable represent Reference Person's total weeks worked on all jobs in 2022.","week",1]
+["The values for this variable represent Social Security income for all family unit members in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Social Security income of all family unit members in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's SSI income, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's SSI income, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's SSI income, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's SSI income, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's SSI income, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's actual number of weeks of vacation or time off in 2014.","week",1]
+["The values for this variable represent Spouse's/Partner's actual number of weeks of vacation or time off in 2016.","week",1]
+["The values for this variable represent Spouse's/Partner's actual number of weeks of vacation or time off in 2018.","week",1]
+["The values for this variable represent Spouse's/Partner's actual number of weeks of vacation or time off in 2020.","week",1]
+["The values for this variable represent Spouse's/Partner's actual number of weeks of vacation or time off in 2022.","week",1]
+["The values for this variable represent Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2014.","hour",1]
+["The values for this variable represent Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2016.","hour",1]
+["The values for this variable represent Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2018.","hour",1]
+["The values for this variable represent Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2020.","hour",1]
+["The values for this variable represent Spouse's/Partner's actual total annual work hours on all jobs including overtime in 2022.","hour",1]
+["The values for this variable represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2014, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2016, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2018, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2020, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Spouse's/Partner's annual overtime hours worked on all jobs, in 2022, if reported separately from regular work hours.","hour",1]
+["The values for this variable represent Spouse's/Partner's income from IRAs, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from IRAs, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from IRAs, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from IRAs, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from IRAs, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Social Security, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Social Security, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Social Security, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Social Security, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Social Security, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from TANF/state program, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from TANF/state program, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from TANF/state program, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from TANF/state program, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Veterans Administration pension, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Veterans Administration pension, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Veterans Administration pension, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Veterans Administration pension, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from Veterans Administration pension, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from alimony, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from alimony, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from alimony, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from alimony, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from alimony, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from annuities, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from annuities, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from annuities, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from annuities, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from annuities, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from child support, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from child support, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from child support, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from child support, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from child support, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from non-relatives or friends, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from non-relatives or friends, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from non-relatives or friends, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from non-relatives or friends, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from non-relatives or friends, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from relatives, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from relatives, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from relatives, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from relatives, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from financial help from relatives, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from miscellaneous transfers, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from miscellaneous transfers, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from miscellaneous transfers, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from miscellaneous transfers, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from miscellaneous transfers, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from other retirement, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from other retirement, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from other retirement, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from other retirement, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from other retirement, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from retirement pay or pensions, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from retirement pay or pensions, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from retirement pay or pensions, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from retirement pay or pensions, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from retirement pay or pensions, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from unemployment compensation, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from unemployment compensation, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from unemployment compensation, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from unemployment compensation, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from unemployment compensation, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from workers' compensation, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from workers' compensation, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from workers' compensation, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from workers' compensation, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's income from workers' compensation, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's other welfare income, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's other welfare income, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's other welfare income, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's other welfare income, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's other welfare income, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Spouse's/Partner's total weekly work hours on all jobs in 2014.","hour_per_week",1]
+["The values for this variable represent Spouse's/Partner's total weekly work hours on all jobs in 2016.","hour_per_week",1]
+["The values for this variable represent Spouse's/Partner's total weekly work hours on all jobs in 2018.","hour_per_week",1]
+["The values for this variable represent Spouse's/Partner's total weekly work hours on all jobs in 2020.","hour_per_week",1]
+["The values for this variable represent Spouse's/Partner's total weekly work hours on all jobs in 2022.","hour_per_week",1]
+["The values for this variable represent Spouses's/Partner's income from TANF/state program, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent Wife's/\"Wife's\" actual total annual hours on all jobs, including overtime.","hour",4]
+["The values for this variable represent Wife's/\"Wife's\" actual total annual hours on all jobs.","hour",1]
+["The values for this variable represent Wife's/\"Wife's\" total annual hours on all jobs, including overtime.","hour",1]
+["The values for this variable represent Wife's/\"Wife's\" total weekly work hours on all jobs.","hour_per_week",1]
+["The values for this variable represent Wife's/\"Wife's\" total weekly work hours on all main jobs.","hour_per_week",4]
+["The values for this variable represent Wife's/\"Wife's\" total weeks worked on all main jobs in 1994.","week",1]
+["The values for this variable represent Wife/\"Wife's: total weekly work hours on all main jobs.","hour_per_week",1]
+["The values for this variable represent actual dollars and cents per hour for Head's reservation wage.","united_states_dollar_per_hour",5]
+["The values for this variable represent actual dollars and cents per hour for Wife's/\"Wife's\" reservation wage.","united_states_dollar_per_hour",1]
+["The values for this variable represent actual dollars and cents per hour.","united_states_dollar_per_hour",5]
+["The values for this variable represent alimony income in whole dollars.","united_states_dollar",6]
+["The values for this variable represent dollars and cents per hour.","united_states_dollar_per_hour",347]
+["The values for this variable represent dollars and cents.","united_states_dollar",481]
+["The values for this variable represent hours per year.","hour_per_year",2]
+["The values for this variable represent in whole years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.","year",10]
+["The values for this variable represent in whole years the actual amount of time the Head had worked full time since the age of 18 until the time when this question was actually asked for him/her.","year",3]
+["The values for this variable represent in whole years the actual amount of time the Head had worked since the age of 18 until the time of the interview.","year",9]
+["The values for this variable represent in whole years the actual amount of time the Head had worked since the age of 18 until the time when this question was actually asked of him/her.","year",3]
+["The values for this variable represent in whole years the actual amount of time the Wife had worked full time since the age of 18 until the time when this question was actually asked for her.","year",1]
+["The values for this variable represent in whole years the actual amount of time the Wife had worked since the age of 18 until the time when this question was actually asked for her.","year",1]
+["The values for this variable represent in whole years the actual amount of time the Wife/\"Wife\" had worked full time since the age of 18 until the time of the interview.","year",9]
+["The values for this variable represent in whole years the actual amount of time the Wife/\"Wife\" had worked full time since the age of 18 until the time when this question was actually asked for her.","year",2]
+["The values for this variable represent in whole years the actual amount of time the Wife/\"Wife\" had worked since the age of 18 until the time of the interview.","year",9]
+["The values for this variable represent in whole years the actual amount of time the Wife/\"Wife\" had worked since the age of 18 until the time when this question was actually asked for her.","year",2]
+["The values for this variable represent in years the actual amount of time the Head had worked full time since the age of 18 until the time of the interview.","year",13]
+["The values for this variable represent in years the actual amount of time the Head had worked since the age of 18 until the time of the interview.","year",13]
+["The values for this variable represent in years the actual amount of time the Reference Person had worked full time since the age of 18 until the time of the interview.","year",4]
+["The values for this variable represent in years the actual amount of time the Reference Person had worked since the age of 18 until the time of the interview.","year",4]
+["The values for this variable represent in years the actual amount of time the Spouse/Partner had worked full time since the age of 18 until the time of the interview.","year",5]
+["The values for this variable represent in years the actual amount of time the Spouse/Partner had worked since the age of 18 until the time of the interview.","year",5]
+["The values for this variable represent in years the actual amount of time the Wife/\"Wife\" had worked full time since the age of 18 until the time of the interview.","year",10]
+["The values for this variable represent in years the actual amount of time the Wife/\"Wife\" had worked since the age of 18 until the time of the interview.","year",10]
+["The values for this variable represent in years the actual amount of time the wife/\"wife\" had worked full time since the age of 18 until the time of the interview.","year",2]
+["The values for this variable represent in years the actual amount of time the wife/\"wife\" had worked since the age of 18 until the time of the interview.","year",2]
+["The values for this variable represent the ADC/AFDC income of all other FU members in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Head's average hourly earnings in dollars and cents per hour.","united_states_dollar_per_hour",10]
+["The values for this variable represent the SSI income in whole dollars.","united_states_dollar",12]
+["The values for this variable represent the SSI income of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the SSI income of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security income in whole dollars.","united_states_dollar",13]
+["The values for this variable represent the Social Security of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Social Security of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the TANF income of all other FU members in whole dollars.","united_states_dollar",10]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration Pension income of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the Veterans Administration pension income in whole dollars.","united_states_dollar",6]
+["The values for this variable represent the Wife's/\"Wife's\" average hourly earnings in dollars and cents per hour.","united_states_dollar_per_hour",10]
+["The values for this variable represent the actual age in years (45-95) at which Head plans to retire.","year",6]
+["The values for this variable represent the actual age in years (45-95) at which Wife/\"Wife\" plans to retire.","year",4]
+["The values for this variable represent the actual age in years (45-96) at which Head can receive at least partial benefits.","year",1]
+["The values for this variable represent the actual age in years (45-96) at which Head may retire with full benefits.","year",1]
+["The values for this variable represent the actual age in years (45-96) at which Wife/\"Wife\" can receive at least partial benefits.","year",1]
+["The values for this variable represent the actual age in years (45-96) at which Wife/\"Wife\" may retire with full benefits.","year",1]
+["The values for this variable represent the actual age in years (45-96) at which employer contributions could first be received.","year",2]
+["The values for this variable represent the actual age in years (65-95) at which Head plans to retire.","year",6]
+["The values for this variable represent the actual age in years (65-95) at which Wife/\"Wife\" plans to retire.","year",4]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V10254 Labor Part of Farm Income V10255 Labor Part of Business Income V10256 Head's Wages Income V10258 Head's Bonuses, Overtime, Commissions V10259 Head's Income from Professional Practice or Trade V10260 Labor Part of Market Gardening Income V10261 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V11395 Labor Part of Farm Income V11396 Labor Part of Business Income V11397 Head's Wages Income V11399 Head's Bonuses, Overtime, Commissions V11400 Head's Income from Professional Practice or Trade V11401 Labor Part of Market Gardening Income V11402 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V12794 Labor Part of Farm Income V12795 Labor Part of Business Income V12796 Head's Wages Income V12798 Head's Bonuses, Overtime, Commissions V12799 Head's Income from Professional Practice or Trade V12800 Labor Part of Market Gardening Income V12801 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V13896 Labor Part of Farm Income V13897 Labor Part of Business Income V13898 Head's Wages Income V13900 Head's Bonuses, Overtime, Commissions V13901 Head's Income from Professional Practice or Trade V13902 Labor Part of Market Gardening Income V13903 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V14911 Labor Part of Farm Income V14912 Labor Part of Business Income V14913 Head's Wages Income V14915 Head's Bonuses, Overtime, Commissions V14916 Head's Income from Professional Practice or Trade V14917 Labor Part of Market Gardening Income V14918 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V16411 Labor Part of Farm Income V16412 Labor Part of Business Income V16413 Head's Wages Income V16415 Head's Bonuses, Overtime, Commissions V16416 Head's Income from Professional Practice or Trade V16417 Labor Part of Market Gardening Income V16418 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V17827 Labor Part of Farm Income V17828 Labor Part of Business Income V17829 Head's Wages Income V17831 Head's Bonuses, Overtime, Commissions V17832 Head's Income from Professional Practice or Trade V17833 Labor Part of Market Gardening Income V17834 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V19127 Labor Part of Farm Income V19128 Labor Part of Business Income V19129 Head's Wages Income V19131 Head's Bonuses, Overtime, Commissions V19132 Head's Income from Professional Practice or Trade V19133 Labor Part of Market Gardening Income V19134 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V20427 Labor Part of Farm Income V20428 Labor Part of Business Income V20429 Head's Wages Income V20431 Head's Bonuses, Overtime, Commissions V20432 Head's Income from Professional Practice or Trade V20433 Labor Part of Market Gardening Income V20434 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V21733 Head's Labor Part of Farm Income V21738 Head's Labor Part of Business Income V21739 Head's Wages from Main Jobs V21741 Head's Bonuses V21743 Head's Overtime V21745 Head's Tips V21747 Head's Commissions V21749 Head's Other Job Related Income V21765 Head's Income from Professional Practice or Trade V21783 Head's Labor Part of Market Gardening Income V21800 Head's Labor Part of Roomers and Boarders Income V21801 Head's Wages from Extra Jobs","united_states_dollar",1]
+["The values for this variable represent the actual amount of Head's labor income in whole dollars and sum the following variables: V8871 Labor Part of Farm Income V8872 Labor Part of Business Income V8873 Head's Wages Income V8875 Head's Bonuses, Overtime, Commissions V8876 Head's Income from Professional Practice or Trade V8877 Labor Part of Market Gardening Income V8878 Labor Part of Roomers and Boarders Income","united_states_dollar",1]
+["The values for this variable represent the actual amount of Wife's/\"Wife\"'s labor income in whole dollars and sum the following variables: V21807 G52 WF 1992 LABOR INCOME EXCL BUS/FARM V21803 WF 1992 LABOR PART FARM INCOME V21806 WF LABOR PART OF 1992 BUSINESS INCOME","united_states_dollar",1]
+["The values for this variable represent the actual amount of governmental subsidies of heating costs in whole dollars.","united_states_dollar",13]
+["The values for this variable represent the actual amount of governmental subsidies of heating/cooling costs in whole dollars.","united_states_dollar",5]
+["The values for this variable represent the actual annual dollar income amount (00001- 99996) expected.","united_states_dollar",1]
+["The values for this variable represent the actual annual hours worked.","hour",1]
+["The values for this variable represent the actual annual hours.","hour",10]
+["The values for this variable represent the actual annual hours; all missing data were assigned.","hour",19]
+["The values for this variable represent the actual annual value of the stamps in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the actual annualized hours spent by the Head on housework at the time of the interview.","hour",1]
+["The values for this variable represent the actual annualized hours spent by the wife/\"wife\" on housework at the time of the interview.","hour",1]
+["The values for this variable represent the actual dollar value (0000001-9999995) of all other inheritances received.","united_states_dollar",1]
+["The values for this variable represent the actual dollar value (0000001-9999995) of expected inheritances.","united_states_dollar",1]
+["The values for this variable represent the actual dollar value (0000001-9999995) of the first inheritance.","united_states_dollar",1]
+["The values for this variable represent the actual dollar value (000001-999997) of the settlement/inheritance.","united_states_dollar",3]
+["The values for this variable represent the actual dollar value of inheritances.","united_states_dollar",1]
+["The values for this variable represent the actual dollar value of the settlement/inheritance.","united_states_dollar",1]
+["The values for this variable represent the actual duration in weeks of the most recent spell of unemployment.","week",4]
+["The values for this variable represent the actual duration in weeks of the next most recent spell of unemployment.","week",4]
+["The values for this variable represent the actual duration in weeks of the third most recent spell of unemployment.","week",4]
+["The values for this variable represent the actual minimum wage rate in dollars and cents per hour reported for the county of residence","united_states_dollar_per_hour",1]
+["The values for this variable represent the actual minimum wage rate in dollars and cents per hour reported for the county of residence.","united_states_dollar_per_hour",1]
+["The values for this variable represent the actual net value in dollars (0000001-9999995) of farms or businesses owned.","united_states_dollar",1]
+["The values for this variable represent the actual net value in dollars (0000001-9999995) of real estate owned, other than the main home.","united_states_dollar",1]
+["The values for this variable represent the actual net value in dollars (0000001-9999995) of stocks.","united_states_dollar",1]
+["The values for this variable represent the actual net value in dollars (000001-999995) of vehicles.","united_states_dollar",1]
+["The values for this variable represent the actual number of 1982 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1983 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1984 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1985 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1986 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1987 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1988 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1989 Splitoff interviews taken as a result of recontacting and reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1990 Splitoff interviews taken as a result of recontacting and reinterviewing the core sample main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1991 Splitoff interviews taken as a result of recontacting and reinterviewing the core sample main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1992 Splitoff interviews taken as a result of recontacting and reinterviewing the core sample main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1993 Splitoff interviews taken as a result of recontacting and reinterviewing the core sample main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1994 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1995 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1996 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 1997 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2003 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2005 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2007 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2009 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2011 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2013 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2015 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2017 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2019 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2021 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of 2023 Splitoff interviews taken as a result of reinterviewing the main family; it is intended primarily for use as a linking variable.","count",1]
+["The values for this variable represent the actual number of Head's brothers.","count",22]
+["The values for this variable represent the actual number of Head's children born during his or her last marriage.","count",1]
+["The values for this variable represent the actual number of Head's sisters.","count",22]
+["The values for this variable represent the actual number of Reference Person's brothers.","count",4]
+["The values for this variable represent the actual number of Reference Person's sisters.","count",4]
+["The values for this variable represent the actual number of Spouse's/Partner's brothers.","count",5]
+["The values for this variable represent the actual number of Spouse's/Partner's sisters.","count",5]
+["The values for this variable represent the actual number of Wife's/ \"Wife's brothers.","count",1]
+["The values for this variable represent the actual number of Wife's/ \"Wife's\" brothers.","count",7]
+["The values for this variable represent the actual number of Wife's/ \"Wife's\" children born during her last marriage.","count",1]
+["The values for this variable represent the actual number of Wife's/ \"Wife's\" sisters.","count",8]
+["The values for this variable represent the actual number of Wife's/\"Wife's\" brothers.","count",13]
+["The values for this variable represent the actual number of Wife's/\"Wife's\" sisters.","count",13]
+["The values for this variable represent the actual number of additional work history spells needed to complete the work history for 1992.","count",4]
+["The values for this variable represent the actual number of additional years (01-96) Head must be in this plan in order to become vested.","year",1]
+["The values for this variable represent the actual number of additional years (01-96) Wife/\"Wife\" must be in this plan in order to become vested.","year",1]
+["The values for this variable represent the actual number of children born to Head and a woman other than present Wife in the FU.","count",1]
+["The values for this variable represent the actual number of children born to female Head/Wife and a man other than present male Head/ husband in FU.","count",1]
+["The values for this variable represent the actual number of children ever born to female Head or Wife/\"Wife\".","count",1]
+["The values for this variable represent the actual number of children of the Head.","count",3]
+["The values for this variable represent the actual number of children that male Head has ever fathered.","count",1]
+["The values for this variable represent the actual number of days Head reported being unemployed, in 2012.","day",1]
+["The values for this variable represent the actual number of days Head reported being unemployed, in 2014.","day",1]
+["The values for this variable represent the actual number of days Reference Person reported being unemployed, in 2016.","day",1]
+["The values for this variable represent the actual number of days Reference Person reported being unemployed, in 2018.","day",1]
+["The values for this variable represent the actual number of days Reference Person reported being unemployed, in 2020.","day",1]
+["The values for this variable represent the actual number of days Reference Person reported being unemployed, in 2022.","day",1]
+["The values for this variable represent the actual number of employees Head supervises.","count",1]
+["The values for this variable represent the actual number of employees Wife/\"Wife\" supervises.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Fifth Other FU Member.","count",11]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1982 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1983 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1984 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1985 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1986 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1987 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1988 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1989 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1990 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member for 1991 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the First Other FU Member.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Fourth Other FU Member","count",10]
+["The values for this variable represent the actual number of exemptions allowed the Fourth Other FU Member.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1982 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1983 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1984 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1985 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1986 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1987 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1988 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1989 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1990 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member for 1991 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Second Other FU Member.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1982 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1983 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1984 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1985 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1986 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1987 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1988 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1989 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1990 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member for 1991 taxes.","count",1]
+["The values for this variable represent the actual number of exemptions allowed the Third Other FU Member.","count",1]
+["The values for this variable represent the actual number of exemptions assumed by the staff for tax calculations and always equal 01 or greater, i.e.","count",1]
+["The values for this variable represent the actual number of exemptions assumed by the staff for tax calculations and always equal 01 or greater, i.e., no zero values are permitted, nor are missing data allowed.","count",1]
+["The values for this variable represent the actual number of female Head's/Wife's/\"Wife's\" own children currently living in the family unit.","count",2]
+["The values for this variable represent the actual number of hours (0001-2080) per year.","hour_per_year",2]
+["The values for this variable represent the actual number of hours per week Head spends on housework.","hour_per_week",2]
+["The values for this variable represent the actual number of hours per week Head spent cooking, cleaning, and doing other work around the house.","hour_per_week",11]
+["The values for this variable represent the actual number of hours per week Head worked on his/her extra job or jobs.","hour_per_week",2]
+["The values for this variable represent the actual number of hours per week Head worked on his/her extra job.","hour_per_week",1]
+["The values for this variable represent the actual number of hours per week Head worked on his/her job.","hour_per_week",18]
+["The values for this variable represent the actual number of hours per week Head worked on his/her main job(s).","hour_per_week",13]
+["The values for this variable represent the actual number of hours per week Head worked on his/her main job.","hour_per_week",5]
+["The values for this variable represent the actual number of hours per week Head worked on the extra job.","hour_per_week",24]
+["The values for this variable represent the actual number of hours per week Head worked on the first extra job.","hour_per_week",14]
+["The values for this variable represent the actual number of hours per week Head worked on the fourth extra job.","hour_per_week",12]
+["The values for this variable represent the actual number of hours per week Head worked on the second extra job.","hour_per_week",14]
+["The values for this variable represent the actual number of hours per week Head worked on the third extra job.","hour_per_week",12]
+["The values for this variable represent the actual number of hours per week Head worked.","hour_per_week",110]
+["The values for this variable represent the actual number of hours per week Head would have worked if the other job had been chosen.","hour_per_week",1]
+["The values for this variable represent the actual number of hours per week Reference Person spends on housework.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week Spouse/Partner spends caring for or looking after an adult.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week Spouse/Partner spends looking after children.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week Spouse/Partner spends on educational activities.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week Spouse/Partner spends on housework.","hour_per_week",5]
+["The values for this variable represent the actual number of hours per week Spouse/Partner spends on leisure activities.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week Spouse/Partner spends on personal care activities.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week Spouse/Partner spends shopping.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week Spouse/Partner spends volunteering.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week Wife worked on her extra job or jobs.","hour_per_week",2]
+["The values for this variable represent the actual number of hours per week Wife worked on her job.","hour_per_week",1]
+["The values for this variable represent the actual number of hours per week Wife worked on her main job.","hour_per_week",1]
+["The values for this variable represent the actual number of hours per week Wife worked.","hour_per_week",7]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" spends on housework.","hour_per_week",1]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" spent on housework.","hour_per_week",10]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on her extra job.","hour_per_week",3]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on her first extra job.","hour_per_week",5]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on her fourth extra job.","hour_per_week",8]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on her job.","hour_per_week",15]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on her main job(s).","hour_per_week",13]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on her main job.","hour_per_week",6]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on her second extra job.","hour_per_week",10]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on her third extra job.","hour_per_week",8]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on the extra job.","hour_per_week",17]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on the first extra job.","hour_per_week",5]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked on this extra job.","hour_per_week",1]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" worked.","hour_per_week",100]
+["The values for this variable represent the actual number of hours per week Wife/\"Wife\" would have worked if the other job had been chosen.","hour_per_week",1]
+["The values for this variable represent the actual number of hours per week head worked.","hour_per_week",6]
+["The values for this variable represent the actual number of hours per week the Reference Person spends caring for or looking after an adult.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week the Reference Person spends caring for or looking after children.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week the Reference Person spends on educational activities.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week the Reference Person spends on leisure activities.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week the Reference Person spends on personal care activities.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week the Reference Person spends on shopping.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week the Reference Person spends volunteering.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week wife/\"wife\" spent on housework.","hour_per_week",2]
+["The values for this variable represent the actual number of hours per week wife/\"wife\" worked on her first extra job.","hour_per_week",2]
+["The values for this variable represent the actual number of hours per week wife/\"wife\" worked on her fourth extra job.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week wife/\"wife\" worked on her second extra job.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week wife/\"wife\" worked on her third extra job.","hour_per_week",4]
+["The values for this variable represent the actual number of hours per week wife/\"wife\" worked.","hour_per_week",10]
+["The values for this variable represent the actual number of hours per week.","hour_per_week",12]
+["The values for this variable represent the actual number of individuals (1-9) that were in the armed forces.","count",8]
+["The values for this variable represent the actual number of individuals (1-9) who were in educational facilities, usually colleges or universities, and who lived in dormitories, or if off-campus, were supported by someone other than themselves.","count",8]
+["The values for this variable represent the actual number of individuals (1-9) who were in health care facilities, such as mental institutions, convalescent, nursing and rest homes.","count",8]
+["The values for this variable represent the actual number of individuals (1-9) who were incarcerated in penal institutions.","count",8]
+["The values for this variable represent the actual number of legally adopted children living in the FU at the time of the interview.","count",2]
+["The values for this variable represent the actual number of legally adopted children.","count",2]
+["The values for this variable represent the actual number of male Head's own children by the present Wife.","count",1]
+["The values for this variable represent the actual number of male Head's own children currently living in the family unit whose mother is the present Wife.","count",1]
+["The values for this variable represent the actual number of male Head's own children currently living in the family unit.","count",1]
+["The values for this variable represent the actual number of miles to work one way.","mile",16]
+["The values for this variable represent the actual number of miles traveled on a one-way journey to work.","mile",2]
+["The values for this variable represent the actual number of minutes taken by the interviewer to administer the questionnaire.","minute",1]
+["The values for this variable represent the actual number of months (001-997) Head has worked in his/her present position or work situation.","month",4]
+["The values for this variable represent the actual number of months (001-997) Wife/\"Wife\" has worked in her present position or work situation.","month",4]
+["The values for this variable represent the actual number of months (01-97) of training necessary.","month",2]
+["The values for this variable represent the actual number of months Head has worked for the present employer.","month",6]
+["The values for this variable represent the actual number of months Head reported being unemployed, in 2012.","month",1]
+["The values for this variable represent the actual number of months Head reported being unemployed, in 2014.","month",1]
+["The values for this variable represent the actual number of months Reference Person reported being unemployed, in 2016.","month",1]
+["The values for this variable represent the actual number of months Reference Person reported being unemployed, in 2018.","month",1]
+["The values for this variable represent the actual number of months Reference Person reported being unemployed, in 2020.","month",1]
+["The values for this variable represent the actual number of months Reference Person reported being unemployed, in 2022.","month",1]
+["The values for this variable represent the actual number of months the position has been held.","month",1]
+["The values for this variable represent the actual number of months worked.","month",1]
+["The values for this variable represent the actual number of monthsHead has worked for the present employer.","month",1]
+["The values for this variable represent the actual number of other raised children, such as foster and stepchildren, living in the FU.","count",1]
+["The values for this variable represent the actual number of other raised children, such as foster and stepchildren.","count",1]
+["The values for this variable represent the actual number of other raised children, such as foster or stepchildren.","count",1]
+["The values for this variable represent the actual number of people Head employs.","count",1]
+["The values for this variable represent the actual number of people Wife/\"Wife\" employs.","count",1]
+["The values for this variable represent the actual number of people for whom family history information was collected.","count",1]
+["The values for this variable represent the actual number of persons 18 years of age and older in the family.","count",2]
+["The values for this variable represent the actual number of persons in the FU.","count",1]
+["The values for this variable represent the actual number of persons in the fourth other FU.","count",1]
+["The values for this variable represent the actual number of persons in the second other FU.","count",1]
+["The values for this variable represent the actual number of persons in the third other FU.","count",1]
+["The values for this variable represent the actual number of presumed exemptions for tax calculations and always equal 01 or greater, i.e., no zero values are permitted, nor are missing data allowed.","count",8]
+["The values for this variable represent the actual number of raised children, such as foster or stepchildren, living in the FU.","count",1]
+["The values for this variable represent the actual number of reported days Head did not have a job and was not looking for one.","day",6]
+["The values for this variable represent the actual number of reported days Head missed due to illness of others.","day",6]
+["The values for this variable represent the actual number of reported days Head missed due to temporary layoff.","day",7]
+["The values for this variable represent the actual number of reported days Head missed due to the illness of others.","day",13]
+["The values for this variable represent the actual number of reported days Head missed due to unemployment or temporary layoff.","day",12]
+["The values for this variable represent the actual number of reported days Head missed due to unemployment.","day",5]
+["The values for this variable represent the actual number of reported days Reference Person missed due to temporary layoff.","day",4]
+["The values for this variable represent the actual number of reported days Reference Person missed due to the illness of others.","day",4]
+["The values for this variable represent the actual number of reported days Spouse/Partner missed due to temporary layoff.","day",5]
+["The values for this variable represent the actual number of reported days Spouse/Partner missed due to the illness of others.","day",5]
+["The values for this variable represent the actual number of reported days Spouse/Partner was unemployed, in 2014.","day",1]
+["The values for this variable represent the actual number of reported days Spouse/Partner was unemployed, in 2016.","day",1]
+["The values for this variable represent the actual number of reported days Spouse/Partner was unemployed, in 2018.","day",1]
+["The values for this variable represent the actual number of reported days Spouse/Partner was unemployed, in 2020.","day",1]
+["The values for this variable represent the actual number of reported days Spouse/Partner was unemployed, in 2022.","day",1]
+["The values for this variable represent the actual number of reported days Wife/\"Wife missed due to unemployment or temporarily layoff.","day",6]
+["The values for this variable represent the actual number of reported days Wife/\"Wife\" did not have a job and was not looking for one.","day",4]
+["The values for this variable represent the actual number of reported days Wife/\"Wife\" missed due to temporary layoff.","day",6]
+["The values for this variable represent the actual number of reported days Wife/\"Wife\" missed due to the illness of others.","day",10]
+["The values for this variable represent the actual number of reported days Wife/\"Wife\" missed due to unemployment or temporary layoff.","day",4]
+["The values for this variable represent the actual number of reported days Wife/\"Wife\" missed due to unemployment.","day",5]
+["The values for this variable represent the actual number of reported days Wife/\"Wife\" was unemployed, in 2012.","day",1]
+["The values for this variable represent the actual number of reported days missed because Head was on strike.","day",19]
+["The values for this variable represent the actual number of reported days missed because Reference Person was on strike.","day",4]
+["The values for this variable represent the actual number of reported days missed because Spouse/Partner was on strike.","day",5]
+["The values for this variable represent the actual number of reported days missed because Wife/\"Wife\" was on strike.","day",14]
+["The values for this variable represent the actual number of reported days missed because wife/\"wife\" was on strike.","day",4]
+["The values for this variable represent the actual number of reported days missed due to Head's own illness.","day",19]
+["The values for this variable represent the actual number of reported days missed due to Reference Person's own illness.","day",4]
+["The values for this variable represent the actual number of reported days missed due to Spouse's/Partner's own illness.","day",5]
+["The values for this variable represent the actual number of reported days missed due to Wife's/\"Wife's\" own illness.","day",12]
+["The values for this variable represent the actual number of reported days of vacation or time off taken by Spouse/Partner.","day",5]
+["The values for this variable represent the actual number of reported days of vacation or time off taken by Wife/\"Wife\".","day",10]
+["The values for this variable represent the actual number of reported days of vacation or time off taken by the Head.","day",19]
+["The values for this variable represent the actual number of reported days of vacation or time off taken by the Reference Person.","day",4]
+["The values for this variable represent the actual number of reported days of vacation or time off taken by the Wife/\"Wife\".","day",4]
+["The values for this variable represent the actual number of reported days of vacation or time off taken by the wife/\"wife\".","day",2]
+["The values for this variable represent the actual number of reported days of vacation or time off taken by wife/\"wife\".","day",2]
+["The values for this variable represent the actual number of reported days that Head did not have a job and was not looking for one, in 2012.","day",1]
+["The values for this variable represent the actual number of reported days that Head did not have a job and was not looking for one, in 2014.","day",1]
+["The values for this variable represent the actual number of reported days that Head did not have a job and was not looking for one.","day",11]
+["The values for this variable represent the actual number of reported days that Reference Person did not have a job and was not looking for one, in 2016.","day",1]
+["The values for this variable represent the actual number of reported days that Reference Person did not have a job and was not looking for one, in 2018.","day",1]
+["The values for this variable represent the actual number of reported days that Reference Person did not have a job and was not looking for one, in 2020.","day",1]
+["The values for this variable represent the actual number of reported days that Reference Person did not have a job and was not looking for one, in 2022.","day",1]
+["The values for this variable represent the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2014.","day",1]
+["The values for this variable represent the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2016.","day",1]
+["The values for this variable represent the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2018.","day",1]
+["The values for this variable represent the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2020.","day",1]
+["The values for this variable represent the actual number of reported days that Spouse/Partner did not have a job and was not looking for one, in 2022.","day",1]
+["The values for this variable represent the actual number of reported days that Wife/\"Wife\" did not have a job and was not looking for one, in 2012.","day",1]
+["The values for this variable represent the actual number of reported days that Wife/\"Wife\" did not have a job and was not looking for one.","day",9]
+["The values for this variable represent the actual number of reported days that wife/\"wife\" did not have a job and was not looking for one.","day",2]
+["The values for this variable represent the actual number of reported days wife/\"wife\" did not have a job and was not looking for one.","day",2]
+["The values for this variable represent the actual number of reported days wife/\"wife\" missed due to the illness of others.","day",2]
+["The values for this variable represent the actual number of reported days wife/\"wife\" missed due to unemployment or temporary layoff.","day",2]
+["The values for this variable represent the actual number of reported months Head did not have a job and was not looking for one.","month",6]
+["The values for this variable represent the actual number of reported months Head missed due to illness of others.","month",6]
+["The values for this variable represent the actual number of reported months Head missed due to temporary layoff.","month",7]
+["The values for this variable represent the actual number of reported months Head missed due to the illness of others.","month",13]
+["The values for this variable represent the actual number of reported months Head missed due to unemployment or temporary layoff","month",6]
+["The values for this variable represent the actual number of reported months Head missed due to unemployment or temporary layoff.","month",6]
+["The values for this variable represent the actual number of reported months Head missed due to unemployment.","month",5]
+["The values for this variable represent the actual number of reported months Reference Person missed due to temporary layoff.","month",4]
+["The values for this variable represent the actual number of reported months Reference Person missed due to the illness of others.","month",4]
+["The values for this variable represent the actual number of reported months Spouse/Partner missed due to temporary layoff.","month",5]
+["The values for this variable represent the actual number of reported months Spouse/Partner missed due to the illness of others.","month",5]
+["The values for this variable represent the actual number of reported months Spouse/Partner was unemployed, in 2014.","month",1]
+["The values for this variable represent the actual number of reported months Spouse/Partner was unemployed, in 2016.","month",1]
+["The values for this variable represent the actual number of reported months Spouse/Partner was unemployed, in 2018.","month",1]
+["The values for this variable represent the actual number of reported months Spouse/Partner was unemployed, in 2020.","month",1]
+["The values for this variable represent the actual number of reported months Spouse/Partner was unemployed, in 2022.","month",1]
+["The values for this variable represent the actual number of reported months Wife/\"Wife missed due to the illness of others.","month",12]
+["The values for this variable represent the actual number of reported months Wife/\"Wife missed due to unemployment or temporarily layoff.","month",6]
+["The values for this variable represent the actual number of reported months Wife/\"Wife\" did not have a job and was not looking for one.","month",4]
+["The values for this variable represent the actual number of reported months Wife/\"Wife\" missed due to temporary layoff.","month",6]
+["The values for this variable represent the actual number of reported months Wife/\"Wife\" missed due to the illness of others.","month",4]
+["The values for this variable represent the actual number of reported months Wife/\"Wife\" missed due to unemployment or temporary layoff.","month",4]
+["The values for this variable represent the actual number of reported months Wife/\"Wife\" missed due to unemployment.","month",5]
+["The values for this variable represent the actual number of reported months Wife/\"Wife\" was unemployed, in 2012.","month",1]
+["The values for this variable represent the actual number of reported months missed because Head was on strike.","month",19]
+["The values for this variable represent the actual number of reported months missed because Reference Person was on strike.","month",4]
+["The values for this variable represent the actual number of reported months missed because Spouse/Partner was on strike.","month",5]
+["The values for this variable represent the actual number of reported months missed because Wife/\"Wife\" was on strike.","month",14]
+["The values for this variable represent the actual number of reported months missed because wife/\"wife\" was on strike.","month",4]
+["The values for this variable represent the actual number of reported months missed due to Head's own illness.","month",15]
+["The values for this variable represent the actual number of reported months missed due to Reference Person's own illness.","month",4]
+["The values for this variable represent the actual number of reported months missed due to Spouse's/Partner's own illness.","month",5]
+["The values for this variable represent the actual number of reported months missed due to Wife's/\"Wife's\" own illness.","month",18]
+["The values for this variable represent the actual number of reported months of vacation or time off taken by Spouse/Partner.","month",5]
+["The values for this variable represent the actual number of reported months of vacation or time off taken by Wife/\"Wife\".","month",10]
+["The values for this variable represent the actual number of reported months of vacation or time off taken by the Head","month",13]
+["The values for this variable represent the actual number of reported months of vacation or time off taken by the Head.","month",6]
+["The values for this variable represent the actual number of reported months of vacation or time off taken by the Reference Person","month",4]
+["The values for this variable represent the actual number of reported months of vacation or time off taken by the Wife/\"Wife\".","month",4]
+["The values for this variable represent the actual number of reported months of vacation or time off taken by the wife/\"wife\".","month",2]
+["The values for this variable represent the actual number of reported months of vacation or time off taken by wife/\"wife\".","month",2]
+["The values for this variable represent the actual number of reported months that Head did not have a job and was not looking for one.","month",13]
+["The values for this variable represent the actual number of reported months that Reference Person did not have a job and was not looking for one.","month",4]
+["The values for this variable represent the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2014.","month",1]
+["The values for this variable represent the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2016.","month",1]
+["The values for this variable represent the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2018.","month",1]
+["The values for this variable represent the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2020.","month",1]
+["The values for this variable represent the actual number of reported months that Spouse/Partner did not have a job and was not looking for one, in 2022.","month",1]
+["The values for this variable represent the actual number of reported months that Wife/\"Wife\" did not have a job and was not looking for one, in 2012.","month",1]
+["The values for this variable represent the actual number of reported months that Wife/\"Wife\" did not have a job and was not looking for one.","month",9]
+["The values for this variable represent the actual number of reported months that wife/\"wife\" did not have a job and was not looking for one.","month",2]
+["The values for this variable represent the actual number of reported months wife/\"wife\" did not have a job and was not looking for one.","month",2]
+["The values for this variable represent the actual number of reported months wife/\"wife\" missed due to the illness of others.","month",2]
+["The values for this variable represent the actual number of reported months wife/\"wife\" missed due to unemployment or temporary layoff.","month",2]
+["The values for this variable represent the actual number of reported monthss missed due to Head's own illness.","month",4]
+["The values for this variable represent the actual number of reported weeks Head did not have a job and was not looking for one.","week",6]
+["The values for this variable represent the actual number of reported weeks Head missed due to illness of others.","week",6]
+["The values for this variable represent the actual number of reported weeks Head missed due to temporary layoff.","week",7]
+["The values for this variable represent the actual number of reported weeks Head missed due to the illness of others.","week",13]
+["The values for this variable represent the actual number of reported weeks Head missed due to unemployment or temporary layoff.","week",12]
+["The values for this variable represent the actual number of reported weeks Head missed due to unemployment.","week",5]
+["The values for this variable represent the actual number of reported weeks Reference Person missed due to temporary layoff.","week",4]
+["The values for this variable represent the actual number of reported weeks Reference Person missed due to the illness of others.","week",4]
+["The values for this variable represent the actual number of reported weeks Spouse/Partner missed due to illness of others.","week",5]
+["The values for this variable represent the actual number of reported weeks Spouse/Partner missed due to temporary layoff.","week",5]
+["The values for this variable represent the actual number of reported weeks Spouse/Partner was unemployed, in 2014.","week",1]
+["The values for this variable represent the actual number of reported weeks Spouse/Partner was unemployed, in 2016.","week",1]
+["The values for this variable represent the actual number of reported weeks Spouse/Partner was unemployed, in 2018.","week",1]
+["The values for this variable represent the actual number of reported weeks Spouse/Partner was unemployed, in 2020.","week",1]
+["The values for this variable represent the actual number of reported weeks Spouse/Partner was unemployed, in 2022.","week",1]
+["The values for this variable represent the actual number of reported weeks Wife/\"Wife missed due to unemployment or temporarily layoff.","week",6]
+["The values for this variable represent the actual number of reported weeks Wife/\"Wife\" did not have a job and was not looking for one.","week",4]
+["The values for this variable represent the actual number of reported weeks Wife/\"Wife\" missed due to illness of others.","week",10]
+["The values for this variable represent the actual number of reported weeks Wife/\"Wife\" missed due to temporary layoff.","week",6]
+["The values for this variable represent the actual number of reported weeks Wife/\"Wife\" missed due to the illness of others.","week",4]
+["The values for this variable represent the actual number of reported weeks Wife/\"Wife\" missed due to unemployment or temporary layoff.","week",4]
+["The values for this variable represent the actual number of reported weeks Wife/\"Wife\" missed due to unemployment.","week",5]
+["The values for this variable represent the actual number of reported weeks Wife/\"Wife\" was unemployed, in 2012.","week",1]
+["The values for this variable represent the actual number of reported weeks missed because Head was on strike.","week",19]
+["The values for this variable represent the actual number of reported weeks missed because Reference Person was on strike.","week",4]
+["The values for this variable represent the actual number of reported weeks missed because Spouse/Partner was on strike.","week",5]
+["The values for this variable represent the actual number of reported weeks missed because Wife/\"Wife\" was on strike.","week",14]
+["The values for this variable represent the actual number of reported weeks missed because wife/\"wife\" was on strike.","week",4]
+["The values for this variable represent the actual number of reported weeks missed due to Head's own illness.","week",19]
+["The values for this variable represent the actual number of reported weeks missed due to Reference Person's own illness.","week",4]
+["The values for this variable represent the actual number of reported weeks missed due to Spouse's/Partner's own illness.","week",5]
+["The values for this variable represent the actual number of reported weeks missed due to Wife's/\"Wife's\" own illness.","week",18]
+["The values for this variable represent the actual number of reported weeks of vacation or time off taken by Spouse/Partner.","week",5]
+["The values for this variable represent the actual number of reported weeks of vacation or time off taken by Wife/\"Wife\".","week",10]
+["The values for this variable represent the actual number of reported weeks of vacation or time off taken by the Head.","week",19]
+["The values for this variable represent the actual number of reported weeks of vacation or time off taken by the Reference Person.","week",4]
+["The values for this variable represent the actual number of reported weeks of vacation or time off taken by the Wife/\"Wife\".","week",4]
+["The values for this variable represent the actual number of reported weeks of vacation or time off taken by the wife/\"wife\".","week",2]
+["The values for this variable represent the actual number of reported weeks of vacation or time off taken by wife/\"wife\".","week",2]
+["The values for this variable represent the actual number of reported weeks that Head did not have a job and was not looking for one, in 2012.","week",1]
+["The values for this variable represent the actual number of reported weeks that Head did not have a job and was not looking for one, in 2014.","week",1]
+["The values for this variable represent the actual number of reported weeks that Head did not have a job and was not looking for one.","week",11]
+["The values for this variable represent the actual number of reported weeks that Reference Person did not have a job and was not looking for one, in 2016.","week",1]
+["The values for this variable represent the actual number of reported weeks that Reference Person did not have a job and was not looking for one, in 2018.","week",1]
+["The values for this variable represent the actual number of reported weeks that Reference Person did not have a job and was not looking for one, in 2020.","week",1]
+["The values for this variable represent the actual number of reported weeks that Reference Person did not have a job and was not looking for one, in 2022.","week",1]
+["The values for this variable represent the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2014.","week",1]
+["The values for this variable represent the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2016.","week",1]
+["The values for this variable represent the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2018.","week",1]
+["The values for this variable represent the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2020.","week",1]
+["The values for this variable represent the actual number of reported weeks that Spouse/Partner did not have a job and was not looking for one, in 2022.","week",1]
+["The values for this variable represent the actual number of reported weeks that Wife/\"Wife\" did not have a job and was not looking for one, in 2012.","week",1]
+["The values for this variable represent the actual number of reported weeks that Wife/\"Wife\" did not have a job and was not looking for one.","week",9]
+["The values for this variable represent the actual number of reported weeks that wife/\"wife\" did not have a job and was not looking for one.","week",2]
+["The values for this variable represent the actual number of reported weeks wife/\"wife\" did not have a job and was not looking for one.","week",2]
+["The values for this variable represent the actual number of reported weeks wife/\"wife\" missed due to illness of others.","week",2]
+["The values for this variable represent the actual number of reported weeks wife/\"wife\" missed due to the illness of others.","week",2]
+["The values for this variable represent the actual number of reported weeks wife/\"wife\" missed due to unemployment or temporary layoff.","week",2]
+["The values for this variable represent the actual number of rooms the family unit has, excluding bathrooms.","count",18]
+["The values for this variable represent the actual number of weeks (01-52) Head did not have a job and was not looking for one.","week",13]
+["The values for this variable represent the actual number of weeks (01-52) Head missed through illness of other persons.","week",10]
+["The values for this variable represent the actual number of weeks (01-52) Head was unemployed and looking for work or temporarily laid off.","week",4]
+["The values for this variable represent the actual number of weeks (01-52) Head worked on all of his/her extra jobs except the first one.","week",24]
+["The values for this variable represent the actual number of weeks (01-52) Head worked on all of his/her extra jobs.","week",3]
+["The values for this variable represent the actual number of weeks (01-52) Head worked on his/her job.","week",2]
+["The values for this variable represent the actual number of weeks (01-52) Head worked on his/her main job(s).","week",9]
+["The values for this variable represent the actual number of weeks (01-52) Head worked on his/her main job.","week",5]
+["The values for this variable represent the actual number of weeks (01-52) Head worked on his/her main job/jobs.","week",12]
+["The values for this variable represent the actual number of weeks (01-52) Head worked on the extra job.","week",17]
+["The values for this variable represent the actual number of weeks (01-52) Head worked on the first extra job.","week",7]
+["The values for this variable represent the actual number of weeks (01-52) Head worked.","week",3]
+["The values for this variable represent the actual number of weeks (01-52) Wife worked on all of her extra jobs except the first one.","week",1]
+["The values for this variable represent the actual number of weeks (01-52) Wife worked on all of her extra jobs.","week",2]
+["The values for this variable represent the actual number of weeks (01-52) Wife worked on her job.","week",1]
+["The values for this variable represent the actual number of weeks (01-52) Wife worked on her main job.","week",1]
+["The values for this variable represent the actual number of weeks (01-52) Wife worked on the extra job.","week",1]
+["The values for this variable represent the actual number of weeks (01-52) Wife worked.","week",1]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" did not have a job and was not looking for one.","week",14]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" missed through illness of other persons.","week",9]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" was unemployed and looking for work or temporarily laid off.","week",4]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" worked on all of her extra jobs except the first one.","week",23]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" worked on all of her extra jobs.","week",1]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" worked on her job.","week",1]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" worked on her main job(s).","week",2]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" worked on her main job.","week",13]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" worked on her main job/jobs.","week",10]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" worked on the extra job.","week",18]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" worked on the first extra job.","week",5]
+["The values for this variable represent the actual number of weeks (01-52) Wife/\"Wife\" worked.","week",2]
+["The values for this variable represent the actual number of weeks (01-52) missed because of time Head spent on strike.","week",22]
+["The values for this variable represent the actual number of weeks (01-52) missed because of time Wife spent on strike.","week",2]
+["The values for this variable represent the actual number of weeks (01-52) missed because of time Wife/\"Wife\" spent on strike.","week",20]
+["The values for this variable represent the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Head.","week",22]
+["The values for this variable represent the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Wife.","week",2]
+["The values for this variable represent the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Wife/\"Wife\"","week",7]
+["The values for this variable represent the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Wife/\"Wife\".","week",8]
+["The values for this variable represent the actual number of weeks (01-52) missed due to unemployment or temporary layoff of Wife/\"Wife.\"","week",5]
+["The values for this variable represent the actual number of weeks (01-52) missed through Head's own illness.","week",22]
+["The values for this variable represent the actual number of weeks (01-52) missed through Wife's own illness.","week",4]
+["The values for this variable represent the actual number of weeks (01-52) missed through Wife's/\"Wife's\" own illness.","week",18]
+["The values for this variable represent the actual number of weeks (01-52) missed through illness of persons other than the Head.","week",12]
+["The values for this variable represent the actual number of weeks (01-52) missed through illness of persons other than the Wife.","week",2]
+["The values for this variable represent the actual number of weeks (01-52) missed through illness of persons other than the Wife/\"Wife\".","week",8]
+["The values for this variable represent the actual number of weeks (01-52) missed through illness of persons other than the Wife/\"Wife.\"","week",3]
+["The values for this variable represent the actual number of weeks (01-52) of vacation or time off taken by the Head.","week",22]
+["The values for this variable represent the actual number of weeks (01-52) of vacation or time off taken by the Wife.","week",2]
+["The values for this variable represent the actual number of weeks (01-52) of vacation or time off taken by the Wife/\"Wife\"","week",7]
+["The values for this variable represent the actual number of weeks (01-52) of vacation or time off taken by the Wife/\"Wife\".","week",8]
+["The values for this variable represent the actual number of weeks (01-52) of vacation or time off taken by the Wife/\"Wife.\"","week",5]
+["The values for this variable represent the actual number of weeks (01-52) that Head did not have a job and was not looking for one.","week",13]
+["The values for this variable represent the actual number of weeks (01-52) that Head was unemployed and looking for work or temporarily laid off.","week",4]
+["The values for this variable represent the actual number of weeks (01-52) that Wife/\"Wife\" did not have a job and was not looking for one.","week",12]
+["The values for this variable represent the actual number of weeks (01-52) that Wife/\"Wife\" was unemployed and looking for work or temporarily laid off.","week",4]
+["The values for this variable represent the actual number of weeks (1-52) Head missed through illness of self or other persons.","week",1]
+["The values for this variable represent the actual number of weeks (1-52) missed through Head's own illness.","week",1]
+["The values for this variable represent the actual number of weeks (1-52) missed through unemployment and/or strike.","week",1]
+["The values for this variable represent the actual number of weeks (1-52) missed through unemployment or layoff.","week",1]
+["The values for this variable represent the actual number of weeks (1-52) of vacation or time off.","week",1]
+["The values for this variable represent the actual number of weeks (1-52) worked in 1970.","week",2]
+["The values for this variable represent the actual number of weeks (1-52) worked on Head's main job.","week",1]
+["The values for this variable represent the actual number of weeks (1-52) worked.","week",1]
+["The values for this variable represent the actual number of weeks Head did not have a job and was not looking for one.","week",1]
+["The values for this variable represent the actual number of weeks Head did not have a job but was looking for one.","week",1]
+["The values for this variable represent the actual number of weeks Head missed because Head was on strike in 2014.","week",1]
+["The values for this variable represent the actual number of weeks Head missed due to his/her own illness.","week",1]
+["The values for this variable represent the actual number of weeks Head missed due to illness of others in 2014.","week",1]
+["The values for this variable represent the actual number of weeks Head missed due to illness of others.","week",13]
+["The values for this variable represent the actual number of weeks Head missed due to temporary layoff in 2014.","week",1]
+["The values for this variable represent the actual number of weeks Head missed due to temporary layoff.","week",6]
+["The values for this variable represent the actual number of weeks Head missed due to the illness of others.","week",1]
+["The values for this variable represent the actual number of weeks Head missed due to unemployment in 2014.","week",1]
+["The values for this variable represent the actual number of weeks Head missed due to unemployment or temporary layoff.","week",2]
+["The values for this variable represent the actual number of weeks Head missed due to unemployment.","week",11]
+["The values for this variable represent the actual number of weeks Head reported being unemployed, in 2012.","week",1]
+["The values for this variable represent the actual number of weeks Head reported being unemployed, in 2014.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for a job in 1985.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1984.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1985.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1986.","week",2]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1987.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1992.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1993.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1994.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1995.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1996.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 1998.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work in 2000.","week",1]
+["The values for this variable represent the actual number of weeks Head spent looking for work.","week",7]
+["The values for this variable represent the actual number of weeks Head worked on his/her fourth extra job.","week",6]
+["The values for this variable represent the actual number of weeks Head worked on his/her main job(s).","week",4]
+["The values for this variable represent the actual number of weeks Head worked on his/her main job/jobs.","week",4]
+["The values for this variable represent the actual number of weeks Head worked on his/her second extra job.","week",7]
+["The values for this variable represent the actual number of weeks Head worked on his/her third extra job.","week",6]
+["The values for this variable represent the actual number of weeks Head worked on the extra job.","week",7]
+["The values for this variable represent the actual number of weeks Head worked on the first extra job.","week",7]
+["The values for this variable represent the actual number of weeks Head worked on the fourth extra job.","week",6]
+["The values for this variable represent the actual number of weeks Head worked on the second extra job.","week",7]
+["The values for this variable represent the actual number of weeks Head worked on the third extra job.","week",6]
+["The values for this variable represent the actual number of weeks Reference Person missed because Reference Person was on strike in 2016.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed because Reference Person was on strike in 2018.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed because Reference Person was on strike in 2020.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed because Reference Person was on strike in 2022.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to illness of others in 2016.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to illness of others in 2018.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to illness of others in 2020.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to illness of others in 2022.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to temporary layoff in 2016.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to temporary layoff in 2018.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to temporary layoff in 2020.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to temporary layoff in 2022.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to unemployment in 2016.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to unemployment in 2018.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to unemployment in 2020.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person missed due to unemployment in 2022.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person reported being unemployed, in 2016.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person reported being unemployed, in 2018.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person reported being unemployed, in 2020.","week",1]
+["The values for this variable represent the actual number of weeks Reference Person reported being unemployed, in 2022.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2014.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2016.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2018.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2020.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed because Spouse/Partner was on strike in 2022.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to illness of others in 2014.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to illness of others in 2016.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to illness of others in 2018.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to illness of others in 2020.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to illness of others in 2022.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to temporary layoff in 2014.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to temporary layoff in 2016.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to temporary layoff in 2018.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to temporary layoff in 2020.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to temporary layoff in 2022.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to unemployment in 2014.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to unemployment in 2016.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to unemployment in 2018.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to unemployment in 2020.","week",1]
+["The values for this variable represent the actual number of weeks Spouse/Partner missed due to unemployment in 2022.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" did not have a job and was not looking for one.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" missed due to illness of others in 1998.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" missed due to illness of others.","week",12]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" missed due to temporary layoff.","week",5]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" missed due to the illness of others.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" missed due to unemployment in 1998.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" missed due to unemployment or temporary layoff.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" missed due to unemployment.","week",11]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for a job in 1985.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work in 1984.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work in 1985.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work in 1986.","week",2]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work in 1987.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work in 1992.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work in 1993.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work in 1994.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work in 1995.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work in 1996.","week",1]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" spent looking for work.","week",5]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" worked on her first extra job.","week",5]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" worked on her fourth extra job.","week",8]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" worked on her main job.","week",4]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" worked on her main job/jobs.","week",4]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" worked on her second extra job.","week",10]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" worked on her third extra job.","week",8]
+["The values for this variable represent the actual number of weeks Wife/\"Wife\" worked on this extra job.","week",5]
+["The values for this variable represent the actual number of weeks in the interval between the time benefits were exhausted and the time Head returned to work.","week",4]
+["The values for this variable represent the actual number of weeks missed because Head was on strike.","week",14]
+["The values for this variable represent the actual number of weeks missed because Wife/\"Wife\" was on strike in 1998.","week",1]
+["The values for this variable represent the actual number of weeks missed because Wife/\"Wife\" was on strike.","week",12]
+["The values for this variable represent the actual number of weeks missed because of time Wife/\"Wife\" spent on strike.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Head's own illness in 2014.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Head's own illness.","week",13]
+["The values for this variable represent the actual number of weeks missed due to Reference Person's own illness in 2016.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Reference Person's own illness in 2018.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Reference Person's own illness in 2020.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Reference Person's own illness in 2022.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Spouse's/Partner's own illness in 2014.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Spouse's/Partner's own illness in 2016.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Spouse's/Partner's own illness in 2018.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Spouse's/Partner's own illness in 2020.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Spouse's/Partner's own illness in 2022.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Wife's/\"Wife's\" own illness in 1998.","week",1]
+["The values for this variable represent the actual number of weeks missed due to Wife's/\"Wife's\" own illness.","week",13]
+["The values for this variable represent the actual number of weeks missed due to unemployment or temporary layoff of Wife/\"Wife\".","week",1]
+["The values for this variable represent the actual number of weeks of vacation or time off taken by Wife/\"Wife\" in 1998.","week",1]
+["The values for this variable represent the actual number of weeks of vacation or time off taken by Wife/\"Wife\".","week",12]
+["The values for this variable represent the actual number of weeks of vacation or time off taken by the Head.","week",14]
+["The values for this variable represent the actual number of weeks of vacation or time off taken by the Wife/\"Wife\".","week",1]
+["The values for this variable represent the actual number of weeks spent looking for work by the Wife.","week",2]
+["The values for this variable represent the actual number of weeks that Head did not have a job and was not looking for one in 2014.","week",1]
+["The values for this variable represent the actual number of weeks that Head did not have a job and was not looking for one.","week",13]
+["The values for this variable represent the actual number of weeks that Reference Person did not have a job and was not looking for one in 2016.","week",1]
+["The values for this variable represent the actual number of weeks that Reference Person did not have a job and was not looking for one in 2018.","week",1]
+["The values for this variable represent the actual number of weeks that Reference Person did not have a job and was not looking for one in 2020.","week",1]
+["The values for this variable represent the actual number of weeks that Reference Person did not have a job and was not looking for one in 2022.","week",1]
+["The values for this variable represent the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2014.","week",1]
+["The values for this variable represent the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2016.","week",1]
+["The values for this variable represent the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2018.","week",1]
+["The values for this variable represent the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2020.","week",1]
+["The values for this variable represent the actual number of weeks that Spouse/Partner did not have a job and was not looking for one in 2022.","week",1]
+["The values for this variable represent the actual number of weeks that Wife/\"Wife\" did not have a job and was not looking for one in 1998.","week",1]
+["The values for this variable represent the actual number of weeks that Wife/\"Wife\" did not have a job and was not looking for one.","week",12]
+["The values for this variable represent the actual number of weeks wife/\"wife\" spent looking for work in 1998.","week",1]
+["The values for this variable represent the actual number of weeks wife/\"wife\" spent looking for work in 2000.","week",1]
+["The values for this variable represent the actual number of weeks wife/\"wife\" worked on her first extra job.","week",2]
+["The values for this variable represent the actual number of weeks wife/\"wife\" worked on her fourth extra job.","week",4]
+["The values for this variable represent the actual number of weeks wife/\"wife\" worked on her second extra job.","week",4]
+["The values for this variable represent the actual number of weeks wife/\"wife\" worked on her third extra job.","week",4]
+["The values for this variable represent the actual number of weeks wife/\"wife\" worked on this extra job.","week",2]
+["The values for this variable represent the actual number of work history spells needed to complete the work history back to January 1, 1984.","count",5]
+["The values for this variable represent the actual number of work history spells needed to complete the work history back to January 1, 1985.","count",3]
+["The values for this variable represent the actual number of work history spells needed to complete the work history for 1987.","count",4]
+["The values for this variable represent the actual number of work history spells needed to complete the work history for 1988.","count",4]
+["The values for this variable represent the actual number of work history spells needed to complete the work history for 1989.","count",4]
+["The values for this variable represent the actual number of work history spells needed to complete the work history for 1990.","count",4]
+["The values for this variable represent the actual number of work history spells needed to complete the work history for 1991.","count",4]
+["The values for this variable represent the actual number of years (01-96) Head has been covered by a pension or retirement plan.","year",1]
+["The values for this variable represent the actual number of years (01-96) Head must be employed to be included in a pension or retirement plan.","year",1]
+["The values for this variable represent the actual number of years (01-96) Wife/\"Wife\" has been covered by a pension or retirement plan.","year",1]
+["The values for this variable represent the actual number of years (01-96) Wife/\"Wife\" must be employed to be included in a pension or retirement plan.","year",1]
+["The values for this variable represent the actual number of years (01-96) until Head can receive at least partial benefits.","year",1]
+["The values for this variable represent the actual number of years (01-96) until Head can retire with full benefits.","year",1]
+["The values for this variable represent the actual number of years (01-96) until Wife/\"Wife\" can receive at least partial benefits.","year",1]
+["The values for this variable represent the actual number of years (01-96) until Wife/\"Wife\" can retire with full benefits.","year",1]
+["The values for this variable represent the actual number of years Wife/\"Wife\" worked full time since the age of 18.","year",1]
+["The values for this variable represent the actual number of years Wife/\"Wife\" worked since the age of 18.","year",1]
+["The values for this variable represent the actual number of years of college completed (1- 4).","year",2]
+["The values for this variable represent the actual number of years that Head expects to elapse until he/she begins working.","year",3]
+["The values for this variable represent the actual number of years until (01-95) Head expects to get a job in the future.","year",2]
+["The values for this variable represent the actual number of years until Head expects to get a job in the future.","year",1]
+["The values for this variable represent the actual number of years until Wife/\"Wife\" expects to get a job in the future.","year",1]
+["The values for this variable represent the actual number of years.","year",1]
+["The values for this variable represent the actual percent (01-96) Head voluntarily contributes.","percent",1]
+["The values for this variable represent the actual percent (01-96) Wife/\"Wife\" voluntarily contributes.","percent",1]
+["The values for this variable represent the actual percent (01-96) of Head's pay that the employer contributes.","percent",2]
+["The values for this variable represent the actual percent (01-96) of Wife's/\"Wife's\" pay that the employer contributes.","percent",2]
+["The values for this variable represent the actual percent (01-96) of pay required.","percent",2]
+["The values for this variable represent the actual percent of final pay (01-96) Head will receive as pension payments.","percent",1]
+["The values for this variable represent the actual percent of final pay (01-96) Wife/\"Wife\" will receive as pension payments.","percent",1]
+["The values for this variable represent the actual percent of time the Wife had worked since the age of 18 until the time when this question was actually asked for her.","percent",1]
+["The values for this variable represent the actual percent of time the Wife/\"Wife\" had worked since the age of 18 until the time when this question was actually asked for her.","percent",2]
+["The values for this variable represent the actual percentage of time the Head had worked since the age of 18 until the time of the interview.","percent",2]
+["The values for this variable represent the actual percentage of time the Head had worked since the age of 18 until the time when this question was actually asked for him/her.","percent",3]
+["The values for this variable represent the actual percentage of time the Wife/\"Wife\" had worked since the age of 18 until the time of the interview.","percent",1]
+["The values for this variable represent the actual salary amount in dollars and cents.","united_states_dollar",7]
+["The values for this variable represent the actual tax credit dollars.","united_states_dollar",1]
+["The values for this variable represent the actual total annual hours on all jobs.","hour",7]
+["The values for this variable represent the actual typical wage in dollars and cents per hour reported for the county of residence.","united_states_dollar_per_hour",8]
+["The values for this variable represent the actual value of the stamps in whole dollars.","united_states_dollar",26]
+["The values for this variable represent the age in years of the Head's oldest child; these values have not been incremented since the time when the questions were actually asked of the Head.","year",3]
+["The values for this variable represent the age in years of the Head's second oldest child; these values have not been incremented since the time when the questions were actually asked of the Head.","year",3]
+["The values for this variable represent the age in years of the Head's third oldest child; these values have not been incremented since the time when the questions were actually asked of the Head.","year",3]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received by all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of child support received in whole dollars.","united_states_dollar",12]
+["The values for this variable represent the amount of financial help Head received from non-relatives or friends, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help Head received from relatives, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help Reference Person received from non-relatives or friends, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help Reference Person received from non-relatives or friends, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help Reference Person received from non-relatives or friends, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help Reference Person received from non-relatives or friends, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help Reference Person received from relatives, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help Reference Person received from relatives, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help Reference Person received from relatives, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help Reference Person received from relatives, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help from relatives received by all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help from relatives received by all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help from relatives received by all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help from relatives received by all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help from relatives received by all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of financial help received from relatives in whole dollars.","united_states_dollar",12]
+["The values for this variable represent the amount of help from relatives received by all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of help from relatives received by all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of help from relatives received by all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of help from relatives received by all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of help from relatives received by all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of help from relatives received by all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of other transfer income received by all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the amount of worker's compensation in whole dollars.","united_states_dollar",2]
+["The values for this variable represent the amount of workers' compensation in whole dollars.","united_states_dollar",10]
+["The values for this variable represent the annual average unemployment rate, to the nearest whole percent, reported by the U.S.","percent",4]
+["The values for this variable represent the annual dollar amount of homeowner's insurance premiums.","united_states_dollar",18]
+["The values for this variable represent the annual extra job hours worked on all jobs.","hour",1]
+["The values for this variable represent the annual extra job hours.","hour",1]
+["The values for this variable represent the annual hours worked on all extra jobs in 1998.","hour",2]
+["The values for this variable represent the annual hours worked on all extra jobs.","hour",3]
+["The values for this variable represent the annual overtime hours worked on all jobs if reported separately from regular work hours.","hour",24]
+["The values for this variable represent the annual overtime hours worked on all main jobs if reported separately from regular work hours.","hour",14]
+["The values for this variable represent the annual overtime hours worked on all main jobs if reported separately from regular work hours; all missing data were assigned.","hour",1]
+["The values for this variable represent the annual work hours on all extra jobs in 1996.","hour",1]
+["The values for this variable represent the annual work hours on all extra jobs.","hour",1]
+["The values for this variable represent the annual work hours on all jobs.","hour",1]
+["The values for this variable represent the annual work hours on all main jobs.","hour",1]
+["The values for this variable represent the annualized amount of all current payments on mortgages or land contracts in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the annualized amount of current rent paid in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the annualized current rental value of free housing in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the annualized work hours on all extra jobs worked in 2000.","hour",1]
+["The values for this variable represent the annualized work hours on all extra jobs.","hour",4]
+["The values for this variable represent the current annual property tax liability in whole dollars.","united_states_dollar",18]
+["The values for this variable represent the hours per week.","hour_per_week",1]
+["The values for this variable represent the income from ADC/AFDC in whole dollars.","united_states_dollar",2]
+["The values for this variable represent the income from IRAs in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the income from TANF in whole dollars.","united_states_dollar",10]
+["The values for this variable represent the income from TANF/state program, in 2014, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the income from TANF/state program, in 2016, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the income from TANF/state program, in 2018, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the income from TANF/state program, in 2020, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the income from TANF/state program, in 2022, in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the income from annuities in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the income from other (retirement) in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the income from professional practice or trade in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the income from retirement pay or pensions in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the labor portion of Head's business income reported at G11a in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the labor portion of Head's farm income reported at G4 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the labor portion of the Wife's/\"Wife's\" farm income reported at G4 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the laborportion of the Wife's/\"Wife's\" business income reported at G11 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the length of the interview in number of minutes.","minute",1]
+["The values for this variable represent the number of Head's brothers still living if Head had more than one brother.","count",21]
+["The values for this variable represent the number of Head's brothers still living.","count",1]
+["The values for this variable represent the number of Head's sisters still living if Head had more than one sister.","count",21]
+["The values for this variable represent the number of Head's sisters still living.","count",1]
+["The values for this variable represent the number of Reference Person's brothers still living if Reference Person had more than one brother.","count",4]
+["The values for this variable represent the number of Reference Person's sisters still living if Reference Person had more than one sister.","count",4]
+["The values for this variable represent the number of Spouse's/Partner's brothers still living if he/she had more than one brother.","count",5]
+["The values for this variable represent the number of Spouse's/Partner's sisters still living if he/she had more than one sister.","count",5]
+["The values for this variable represent the number of Wife's/\"Wife's\" brothers still living if she had more than one brother.","count",20]
+["The values for this variable represent the number of Wife's/\"Wife's\" brothers still living.","count",1]
+["The values for this variable represent the number of Wife's/\"Wife's\" sisters still living if she had more than one sister.","count",20]
+["The values for this variable represent the number of Wife's/\"Wife's\" sisters still living.","count",1]
+["The values for this variable represent the number of hours per week.","hour_per_week",1]
+["The values for this variable represent the number of individual- level data records on the merged family-individual tape having the same family-level data in 1984, that is, all persons in the family in 1984 and any institutionalized individuals associated with the family, as well as any movers-out between 1983 and 1984 who did not move into another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2015, that is, all persons in the family in 2015 and any institutionalized individuals associated with the family, as well as any movers-out between 2013 and 2015 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2017, that is, all persons in the family in 2017 and any institutionalized individuals associated with the family, as well as any movers-out between 2015 and 2017 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2019, that is, all persons in the family in 2019 and any institutionalized individuals associated with the family, as well as any movers-out between 2017 and 2019 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2021, that is, all persons in the family in 2021 and any institutionalized individuals associated with the family, as well as any movers-out between 2019 and 2021 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the Cross-Year Individual File having the same family-level data in 2023, that is, all persons in the family in 2023 and any institutionalized individuals associated with the family, as well as any movers-out between 2019 and 2023 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the cross year individual file having the same family-level data in 1999, that is, all persons in the family in 1999 and any institutionalized individuals associated with the family, as well as any movers-out between 1997 and 1999 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the cross year individual file having the same family-level data in 2001, that is, all persons in the family in 2001 and any institutionalized individuals associated with the family, as well as any movers-out between 1999 and 2001 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the cross year individual file having the same family-level data in 2003, that is, all persons in the family in 2003 and any institutionalized individuals associated with the family, as well as any movers-out between 2001 and 2003 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the cross year individual file having the same family-level data in 2005, that is, all persons in the family in 2005 and any institutionalized individuals associated with the family, as well as any movers-out between 2003 and 2005 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the cross year individual file having the same family-level data in 2007, that is, all persons in the family in 2007 and any institutionalized individuals associated with the family, as well as any movers-out between 2005 and 2007 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the cross year individual file having the same family-level data in 2009, that is, all persons in the family in 2009 and any institutionalized individuals associated with the family, as well as any movers-out between 2007 and 2009 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the cross year individual file having the same family-level data in 2011, that is, all persons in the family in 2011 and any institutionalized individuals associated with the family, as well as any movers-out between 2009 and 2011 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the cross year individual file having the same family-level data in 2013, that is, all persons in the family in 2013 and any institutionalized individuals associated with the family, as well as any movers-out between 2011 and 2013 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual file having the same family-level data in 1992, that is, all persons in the family in 1992 and any institutionalized individuals associated with the family, as well as any movers-out between 1991 and 1992 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual file having the same family-level data in 1993, that is, all persons in the family in 1993 and any institutionalized individuals associated with the family, as well as any movers-out between 1992 and 1993 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1983.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1985, that is, all persons in the family in 1985 and any institutionalized individuals associated with the family, as well as any movers-out between 1984 and 1985 who did not move into another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1986, that is, all persons in the family in 1986 and any institutionalized individuals associated with the family, as well as any movers-out between 1985 and 1986 who did not move into another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1987, that is, all persons in the family in 1987 and any institutionalized individuals associated with the family, as well as any movers-out between 1986 and 1987 who did not move into another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1988, that is, all persons in the family in 1988 and any institutionalized individuals associated with the family, as well as any movers-out between 1987 and 1988 who did not move into another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1989, that is, all persons in the family in 1989 and any institutionalized individuals associated with the family, as well as any movers-out between 1988 and 1989 who did not move into another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1990, that is, all persons in the family in 1990 and any institutionalized individuals associated with the family, as well as any movers-out between 1989 and 1990 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of individual-level data records on the merged family-individual tape having the same family-level data in 1991, that is, all persons in the family in 1991 and any institutionalized individuals associated with the family, as well as any movers-out between 1990 and 1991 who are not included in another responding family.","count",1]
+["The values for this variable represent the number of years left on the longest-term mortgage that the FU has.","year",13]
+["The values for this variable represent the number of years.","year",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other retirement, pension, and annuities income of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare income in whole dollars.","united_states_dollar",12]
+["The values for this variable represent the other welfare of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the other welfare of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the percent (01-96) of pay that Head's pension(s) will provide.","percent",1]
+["The values for this variable represent the percent of time Wife/\"Wife\" worked part-time since the age of 18.","percent",1]
+["The values for this variable represent the percent of time worked.","percent",1]
+["The values for this variable represent the percentage of heating/cooling costs covered by government subsidies.","percent",4]
+["The values for this variable represent the percentange of heating/cooling costs covered by government subsidies.","percent",1]
+["The values for this variable represent the presumed number of extra exemptions for which the Head (and Wife/\"Wife\") qualify.","count",3]
+["The values for this variable represent the principal currently owed from all mortgages or land contracts on the home in whole dollars.","united_states_dollar",13]
+["The values for this variable represent the principal currently owed on the first mortgage, land contract, or loan, in whole dollars.","united_states_dollar",5]
+["The values for this variable represent the principal currently owed on the second mortgage or land contract on the home in whole dollars.","united_states_dollar",12]
+["The values for this variable represent the principal currently owed on the second mortgage, land contract, or loan, in whole dollars.","united_states_dollar",5]
+["The values for this variable represent the rental value of the (apartment/mobile home/home) in whole dollars.","united_states_dollar",4]
+["The values for this variable represent the sum of V22374 through V22394 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V10019 through V10397 and V10586, V10646, V10791, V10844, V10965 and V10995; the maximum value is 44.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V11126-V11158, V11253-V11270, V11367-V11428, and V11460, V11562, V11578, V11742, V11831, V12105 and V12194; the maximum value is 44.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V12524-V12557, V12651-V12669, V12765-V12779, V12794-V12867, and V12942-V12985; the maximum value is 41.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V13724-V13755, V13803-V13819, V13869-V13881, V13896-V13969, and V14044-V14087; the maximum value is 41.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V14824-V14845, V14859-V14875, V14891-V14896, V14911-V14984, and V15059-V15102; the maximum value is 41.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V17724-V17754, V17768-V17784, V17800-V17812, V17827-V17900, and V17975-V18018; the maximum value is 37.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V19024-V19054, V19068-V19084, V19100-V19112, V19127-V19200, and V19275-V19318; the maximum value is 37.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V20324-V20354, V20368-V20384, V20400-V20412, V20427-V20500, and V20575-V20618; the maximum value is 37.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) among the accuracy variables in the variable sequence V8818 through V8940 and V8982, V8987, V8990, V8993, V8996, V9086, V9163, V9220, V9255, V9318 and V9348; the maximum value is 42.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 1 (minor assignment) in the accuracy variables in the variable sequence V8218 through V8332; the maximum value is 27.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V10019 through V10397 and V10586, V10646, V10791, V10844, V10965 and V10995; the maximum value is 44.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V11126-V11158, V11253-V11270, V11367-V11428, and V11460, V11562, V11578, V11742, V11831, V12105 and V12194; the maximum value is 44.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V12524-V12557, V12651-V12669, V12765-V12779, V12794-V12867, and V12942-V12985; the maximum value is 41.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V13724-V13755, V13803-V13819, V13869-V13881, V13896-V13969, and V14044-V14087; the maximum value is 41.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V14824-V14845, V14859-V14875, V14891-V14896, V14911-V14984, and V15059-V15102; the maximum value is 41.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V17724-V17754, V17768-V17784, V17800-V17812, V17827-V17900, and V17975-V18018; the maximum value is 37.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V19024-V19054, V19068-V19084, V19100-V19112, V19127-V19200, and V19275-V19318; the maximum value is 37.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V20324-V20354, V20368-V20384, V20400-V20412, V20427-V20500, and V20575-V20618; the maximum value is 37.","count",1]
+["The values for this variable represent the summation of the number of codes equaling 2 or 3 (major assignment) among the accuracy variables in the variable sequence V8818 through V8940 and V8982, V8987, V8990, V8993, V8996, V9086, V9163, V9220, V9255, V9318 and V9348; the maximum value is 42.","count",1]
+["The values for this variable represent the total amount of time Head did not have a job and was not looking for one, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of time Head missed due to illness of others, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of time Head missed due to own illness, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of time Head missed due to strikes, expressed as weeks.","week",6]
+["The values for this variable represent the total amount of time Head missed due to the illness of others, expressed as weeks","week",1]
+["The values for this variable represent the total amount of time Head missed due to the illness of others, expressed as weeks.","week",2]
+["The values for this variable represent the total amount of time Head missed due to unemployment or temporary layoff, expressed as weeks.","week",6]
+["The values for this variable represent the total amount of time Wife/\"Wife\" did not have a job and was not looking for one, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of time Wife/\"Wife\" missed due to illness of others, expressed as weeks.","week",6]
+["The values for this variable represent the total amount of time Wife/\"Wife\" missed due to own illness, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of time Wife/\"Wife\" missed due to strikes, expressed as weeks.","week",6]
+["The values for this variable represent the total amount of time Wife/\"Wife\" missed due to unemployment or temporary layoff, expressed as weeks.","week",6]
+["The values for this variable represent the total amount of time missed due to Head's own illness, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of time missed due to Wife's/\"Wife's\" own illness, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of time that Head did not have a job and was not looking for one, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of time that Wife/\"Wife\" did not have a job and was not looking for one, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of transfer income in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the total amount of vacation or time off taken by Head, expressed as weeks.","week",3]
+["The values for this variable represent the total amount of vacation or time off taken by Wife/\"Wife\" expressed as weeks.","week",3]
+["The values for this variable represent the total amount of vacation or time off taken by Wife/\"Wife\", expressed as weeks.","week",3]
+["The values for this variable represent the total amount of vacation or time off taken by the Head, expressed as weeks.","week",3]
+["The values for this variable represent the total annual work hours on all jobs including overtime.","hour",6]
+["The values for this variable represent the total annual work hours on all jobs, including overtime.","hour",1]
+["The values for this variable represent the total dollar amount (000001-999995) of debts for this FU.","united_states_dollar",1]
+["The values for this variable represent the total dollar amount (000001-999995) of ready cash assets.","united_states_dollar",1]
+["The values for this variable represent the total dollar lump sum amount (000001-999996).","united_states_dollar",1]
+["The values for this variable represent the total number of extra jobs (1-7) that Head had.","count",13]
+["The values for this variable represent the total number of extra jobs (1-7) that Wife/\"Wife\" had.","count",13]
+["The values for this variable represent the total number of extra jobs held.","count",1]
+["The values for this variable represent the total number of years (01-96) that Head has accumulated benefits from previous employers.","year",1]
+["The values for this variable represent the total value in dollars (0000001-9999995) of all other savings and assets.","united_states_dollar",1]
+["The values for this variable represent the total weekly work hours on all jobs.","hour_per_week",10]
+["The values for this variable represent the total weeks Head worked on all jobs in 2002.","week",1]
+["The values for this variable represent the total weeks Head worked on all main jobs in 1993.","week",1]
+["The values for this variable represent the total weeks Head worked on all main jobs in 1994.","week",1]
+["The values for this variable represent the total weeks Head worked on all main jobs in 1995.","week",1]
+["The values for this variable represent the total weeks Head worked on all main jobs in 1996.","week",1]
+["The values for this variable represent the total weeks Head worked on all main jobs in 1998.","week",1]
+["The values for this variable represent the total weeks Head worked on all main jobs in 2000.","week",1]
+["The values for this variable represent the total weeks Wife/\"Wife\" worked on all jobs in 1998.","week",1]
+["The values for this variable represent the total weeks Wife/\"Wife\" worked on all jobs in 2002.","week",1]
+["The values for this variable represent the total weeks Wife/\"Wife\" worked on all main jobs in 1993.","week",1]
+["The values for this variable represent the total weeks Wife/\"Wife\" worked on all main jobs in 1995.","week",1]
+["The values for this variable represent the total weeks Wife/\"Wife\" worked on all main jobs in 1996.","week",1]
+["The values for this variable represent the total weeks Wife/\"Wife\" worked on all main jobs in 2000.","week",1]
+["The values for this variable represent the total weeks worked on all jobs in 2004.","week",2]
+["The values for this variable represent the total weeks worked on all jobs in 2006.","week",2]
+["The values for this variable represent the total weeks worked on all jobs in 2008.","week",2]
+["The values for this variable represent the total weeks worked on all jobs in 2010.","week",2]
+["The values for this variable represent the total weeks worked on all jobs in 2012.","week",2]
+["The values for this variable represent the total weeks worked on all jobs in 2014.","week",1]
+["The values for this variable represent the total weeks worked on all jobs in 2016.","week",1]
+["The values for this variable represent the total weeks worked on all jobs in 2018.","week",1]
+["The values for this variable represent the total weeks worked on all jobs in 2020.","week",1]
+["The values for this variable represent the total weeks worked on all jobs in 2022.","week",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment compensation of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the unemployment pay in whole dollars.","united_states_dollar",12]
+["The values for this variable represent the value of the home in whole dollars, and include the value of the lot if mobile home and lot is owned.","united_states_dollar",4]
+["The values for this variable represent the value of the home in whole dollars, and include the value of the lot if mobile home and lot is owned..","united_states_dollar",3]
+["The values for this variable represent the value of the home in whole dollars.","united_states_dollar",11]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 1992 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2004 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2006 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2008 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2010 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2012 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2014 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2016 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2018 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2020 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent the worker's compensation of all other FU members in the FU in 2022 in whole dollars.","united_states_dollar",1]
+["The values for this variable represent total consumption as a percent of food need standard (V2271/V2317).","percent",1]
+["The values for this variable represent total receipts from farming in whole dollars.","united_states_dollar",18]
+["The values for this variable represent total receipts from the business in whole dollars.","united_states_dollar",55]
+["The values for this variable sum the total number of reports of help; each \"yes\" to question G159, G185, G212, G258, G284 or G311 counted as one instance.","count",1]
+["The values for this variable sum the total number of reports of help; each \"yes\" to questions G161, G187, G214, G260, G286 and G313 counted as one instance.","count",1]
+["The values for this variable sum the total number of reports of help; each \"yes\" to questions G163, G189, G216, G262, G288 and G315 counted as one instance.","count",1]
+["The values here represent the total number of extra jobs held by Head during 1982.","count",1]
+["The values represent the actual annual food standard in whole dollars for the 1983 family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1984 family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1985 family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1986 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1987 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1988 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1990 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1991 (current) family.","united_states_dollar",1]
+["The values represent the actual annual food standard in whole dollars for the 1992 (current) family.","united_states_dollar",1]
+["This is the number of businesses owned by either the Head, the Spouse/Partner, or both.","count",1]
+["This is the number of businesses owned by either the Head, the Wife/\"Wife\", or both.","count",12]
+["This is the number of businesses owned by either the Reference Person, the Spouse/Partner, or both.","count",4]
+["This variable contains the year of data collection in which background information in ER23303-ER23387 was most recently gathered for the 2003 Wife/\"Wife.\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is reasked.","year",1]
+["This variable contains the year of data collection in which background information in ER23388-ER23480 was most recently gathered for the 2003 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER27263-ER27351 was most recently gathered for the 2005 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER27352-ER27448 was most recently gathered for the 2005 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER40438-ER40526 was most recently gathered for the 2007 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER40527-ER40619 was most recently gathered for the 2007 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER46410-ER46503 was most recently gathered for the 2009 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER46504-ER46597 was most recently gathered for the 2009 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER51771- ER51864 was most recently gathered for the 2011 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER51865- ER51958 was most recently gathered for the 2011 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER57508-ER57604 was most recently gathered for the 2013 Wife/\"Wife\".","year",1]
+["This variable contains the year of data collection in which background information in ER57618-ER57714 was most recently gathered for the 2013 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER64630-ER64735 was most recently gathered for the 2015 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER64769-ER64874 was most recently gathered for the 2015 Head.","year",1]
+["This variable contains the year of data collection in which background information in ER70703-ER70808 was most recently gathered for the 2017 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER70841-ER70946 was most recently gathered for the 2017 Reference Person.","year",1]
+["This variable contains the year of data collection in which background information in ER76711-ER76819 was most recently gathered for the 2019 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER76856-ER76964 was most recently gathered for the 2019 Reference Person.","year",1]
+["This variable contains the year of data collection in which background information in ER80976-ER81065 was most recently gathered for the 2021 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER81103-ER81192 was most recently gathered for the 2021 Reference Person.","year",1]
+["This variable contains the year of data collection in which background information in ER84953-ER85042 was most recently gathered for the 2023 Spouse/Partner.","year",1]
+["This variable contains the year of data collection in which background information in ER85080-ER85169 was most recently gathered for the 2023 Reference Person.","year",1]
+["This variable contains the year of data collection in which background information in V23246-V23261 was most recently gathered for the 1993 Head.","year",1]
+["This variable contains the year of data collection in which background information was most recently gathered for the 1993 Wife/\"Wife.\" If a Wife/\"Wife\" splits off from the main family, e.g., through divorce, background information is reasked.","year",1]
+["This variable represents dollar and cents amount per hour.","united_states_dollar_per_hour",1]
+["This variable represents the actual number of non-FU members (01-20) sharing the housing unit with this FU, whether or not the non-FU members were included in another responding FU.","count",9]
+["This variable represents the actual number of non-FU members sharing the housing unit with this FU (01-20) but who were included in other responding FUs.","count",1]
+["This variable represents the actual number of non-FU members sharing the housing unit with this FU, whether or not the non-FU members were included in another responding FU.","count",18]
+["This variable represents the actual number of persons currently in the FU who are neither Head nor Spouse/Partner, from newborns through those 17 years of age, whether or not they are actually children of the Head or Spouse/Partner.","count",1]
+["This variable represents the actual number of persons currently in the FU who are neither Head nor Wife from birth through 17 years of age, whether or not they are children of the Head.","count",1]
+["This variable represents the actual number of persons currently in the FU who are neither Head nor Wife/\"Wife\" from newborns through those 17 years of age, whether or not they are actually children of the Head or Wife/\"Wife\"","count",7]
+["This variable represents the actual number of persons currently in the FU who are neither Head nor Wife/\"Wife\" from newborns through those 17 years of age, whether or not they are actually children of the Head or Wife/\"Wife.\"","count",9]
+["This variable represents the actual number of persons currently in the FU who are neither Head nor Wife/\"Wife\", from newborns through those 17 years of age, whether or not they are actually children of the Head or Wife/\"Wife.\"","count",5]
+["This variable represents the actual number of persons currently in the FU who are neither Head nor wife/\"wife\" from newborns through those 17 years of age, whether or not they are actually children of the Head or Wife/\"Wife.\"","count",2]
+["This variable represents the actual number of persons currently in the FU who are neither Reference Person nor Spouse/Partner, from newborns through those 17 years of age, whether or not they are actually children of the Reference Person or Spouse/Partner.","count",4]
+["This variable represents the actual number of persons currently in the FU.","count",18]
+["This variable represents the number of calls, telephone and personal, made by all interviewers who were assigned to this case.","count",17]
+["This variable represents the number of weeks during 2002 that Head was employed at his/her current or most recent main job.","week",1]
+["This variable represents the number of weeks during 2002 that the wife/\"wife\" was employed at her current or most recent main job.","week",1]
+["This variable represents the number of weeks during 2004 that Head was employed at his/her current or most recent main job.","week",1]
+["This variable represents the number of weeks during 2004 that the wife/\"wife\" was employed at her current or most recent main job.","week",1]
+["Values are in 1967 dollars.","united_states_dollar",1]
+["Values for this variable represent the actual hours per week.","hour_per_week",2]
+["Values for this variable represent the actual number of months.","month",1]
+["Values for this variable represent the actual number of years.","year",1]
+["Values for this variable represent the actual percent of time worked.","percent",2]
+["Values for this variable represent the amount paid in whole dollars.","united_states_dollar",5]
+["Values for this variable represent the annual expenditure in whole dollars.","united_states_dollar",1]
+["Values represent the annual food expenditure in whole dollars.","united_states_dollar",1]
+["dollar amounts reported in 1997 for the prior year are in 1996 dollars.","united_states_dollar",7]
+["the values for this variable are in 1967 dollars.","united_states_dollar",1]
+["this variable is not adjusted for inflation (it is in 1967 dollars), nor is it exactly comparable to the official poverty standard; such changes are left to users.","united_states_dollar",2]
+["values are in 1967 dollars.","united_states_dollar",17]
+["values are in 1967 dollars.) Adjustments for inflation, etc., are left to users.","united_states_dollar",3]
+["values for this variable represent the actual number of hours per week Head worked.","hour_per_week",1]
+~~~
+
+This authority licenses no sibling inference, plausibility default, currency
+default, evidence lookup, or repair after failure.
+
+### 24.4 Unit absence, lawful input, and completed successor census
+
+#### 24.4.1 Failure precedence and terminal law
+
+Conflict, unsupported, and incomplete remain mutually exclusive in that
+precedence. A compiled field with a nonnull §24.3 unit keeps its ratified
+terminal. A compiled field with a null unit moves to
+`incomplete_source_numeric_authority` with reason
+`unresolved_typed_value_unit_no_source_authority`. Noncompiled fields retain
+their terminal. The field-level absence reason remains an audit member.
+
+#### 24.4.2 The lawful raw-source relation and the true divergence
+
+The input has one row per §20.3.7 field in denominator order and exactly
+`interview_wave`, `raw_field_id`, `derivation_status`, `resolution_reason`,
+and `source_description`. Its pin is the terminal-LF §10.1 array of those
+five-position rows.
+
+The §19 canonical rows freshly reconstructed from all 47 authenticated
+codebook documents preserve each source LF and internal U+0020 spacing. Their
+retained preimage exists: 89,599 rows, 21,548,823 canonical bytes, and SHA-256
+`563b1eaede9dcb5a085d8014dd3a4aacb2d3419ce7d0a0eb65063753b375ca6e`.
+The denominator projection remains
+`7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764`.
+
+Git records the pin's three-act history. Commit `148c58a` first claimed
+`563b1eae...`; that claim was correct. Commit `49ae3cb` then adopted
+`11189cf4...` as a "correction" and falsely attributed `563b1eae...` to a
+manual transfer with no retained preimage. Commit `bd5a071` reversed that
+correction after reconstructing both relations and proving that §24 forbids
+the evidence-artifact route.
+
+The 21,504,191-byte evidence relation with SHA-256
+`11189cf48eae995d999f12a2155a03dc9c9f9f11804c1a732fc451a71a195f19`
+uses evidence-artifact descriptions. Exactly 11,324 descriptions differ
+bytewise from the raw relation and agree only after U+0020 folding. It is not
+an interchangeable source alternative. The lawful pin is the independently
+rebuilt RAW route, whose full identity is `563b1eae...`. Raw V418's three
+spaces make the distinction observable and are individually adjudicated.
+
+#### 24.4.3 Counts, matrix, and assignments
+
+The final successor vector in §20.3.7 terminal order is:
+
+~~~text
+8,025 / 273 / 77 / 1 / 67,316 / 1,145 / 0 / 1 / 421 / 12,340
+~~~
+
+It sums to 89,599. The count-array SHA-256 is
+`2347179a44340f53dff3770a2dc23a6bfebffac755ed94efe11dd94543131071`
+and the complete ordered assignment SHA-256 is
+`463ab96ca73185dd5e269fb3c8c0891dc358e90f3cb4088590b5c442240d652b`.
+Artifact columns A–F retain §24's previous definitions.
+
+| Successor terminal | A / B / C / D / E / F | Total | Ordered field-key SHA-256 |
+|---|---:|---:|---|
+| `compiled_source_numeric_grammar` | 303 / 201 / 2,185 / 1,789 / 2,268 / 1,279 | 8,025 | `afd57212dc648460deb6992c662aa18c147191a4fef146e2025c72903b6acc6f` |
+| `compiled_source_numeric_grammar_padding_underdetermined_exact_replay` | 2 / 14 / 124 / 36 / 57 / 40 | 273 | `b8db6417119abb5f086d61ce8f6bbeada4396e08d47060bf9857283cc2d6323f` |
+| `compiled_source_numeric_grammar_finite_domain_arm_ambiguous_exact_replay` | 1 / 7 / 42 / 15 / 7 / 5 | 77 | `14637a7f88c43e00f431845a0ad6d78b3ea07b88fab7765ca34ad6e852b7b46f` |
+| `compiled_source_numeric_grammar_partial_range_exact_replay` | 1 / 0 / 0 / 0 / 0 / 0 | 1 | `179e226fe0291c83938c8a7709968d54312f1edd21758aca8df6b261e6abe2d8` |
+| `value_code_domain_no_numeric_grammar` | 2,606 / 1,130 / 10,064 / 11,668 / 26,700 / 15,148 | 67,316 | `6ee97ba9db16520c734a21094623376714a468c3148977666f8e107dbd35e05f` |
+| `value_code_range_physical_rendering_unestablished` | 89 / 16 / 127 / 371 / 320 / 222 | 1,145 | `75296e361be3c9b0afb99cd74afb29849305010a93c2c1a9de3da6b54fd5054e` |
+| `nonnumeric_source_field_outside_numeric_grammar` | 0 / 0 / 0 / 0 / 0 / 0 | 0 | `37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570` |
+| `conflicting_source_numeric_format` | 1 / 0 / 0 / 0 / 0 / 0 | 1 | `a95936320c1eb3a2b288790ac5550fd5a1d5f3e860b53fe86d0ff4da74993cb1` |
+| `unsupported_source_numeric_format` | 67 / 20 / 122 / 46 / 90 / 76 | 421 | `fe1aa0725ea533452ff05acd0b8fb1b907aaa5716ac9c7a287b6290e4b330010` |
+| `incomplete_source_numeric_authority` | 798 / 450 / 3,081 / 2,058 / 3,712 / 2,241 | 12,340 | `320e9b6acd02a30294f7abfdb8fd47c18949caaff00c49c0bc40d2bcdb345e4a` |
+
+Only `(1969,V945)` lawfully remains in the partial-range successor. The 11
+previous false retentions `ER16515A9`, `ER41027A9`, `ER58212A9`, `ER65417`,
+`ER65418`, `ER71495`, `ER71496`, `ER81848`, `ER81856`, `ER85708`, and
+`ER85710` depended on an invented currency and now move to incomplete. All
+other ratified partial-range movement is unchanged, so 46 of the 47 ratified
+partial-range fields move and exactly one remains.
+
+#### 24.4.4 Movement, failure artifact, and payload
+
+Exactly 11,527 fields move from a compiled terminal to incomplete. The
+movement relation SHA-256 is
+`44033f304977ed301dd27ea58ee46139ffe1afb400be7bf836765c8f4e78e97b`
+and its ordered key projection is
+`4da651663dfc235dac50ca250ab95ac11a7fe34f6df2e918836fe283888be70e`.
+
+| Projection | Counts |
+|---|---:|
+| origins: compiled / padding / finite / partial | 9,304 / 1,580 / 597 / 46 |
+| reasons: no denotation / no unit / defeat / conflict | 8,564 / 2,156 / 806 / 1 |
+| artifacts A / B / C / D / E / F | 777 / 409 / 2,791 / 1,853 / 3,558 / 2,139 |
+
+The eight-row failure relation is 211,195 bytes with SHA-256
+`024ea03ad9c4f4cac6c490e3899bba74a9c78f7de1737cd5c4a7187b69b5bfda`.
+The inherited first seven counts remain 1, 16, 144, 78, 183, 46, and 767;
+the eighth `unresolved_typed_value_unit_no_source_authority` row has 11,527
+keys. The complete payload SHA-256 is
+`94ce6cb655cc7f0b86984a008a3c59934e42be4e86d6ce5ce16bb38dc48cb741`.
+
+### 24.5 Downstream supersession and exact storage floors
+
+#### 24.5.1 Compiled range-member decomposition
+
+| Terminal | Ratified fields / entries / members | Successor fields / entries / members |
+|---|---:|---:|
+| compiled | 17,329 / 30,452 / 820,025,893,984 | 8,025 / 8,167 / 376,170,541,305 |
+| padding-underdetermined | 1,853 / 1,853 / 865,268 | 273 / 273 / 18,270 |
+| finite-arm-ambiguous | 674 / 1,433 / 384,135 | 77 / 77 / 122,604 |
+| partial-range | 47 / 48 / 682,035,700 | 1 / 2 / 692,700 |
+| **complete compiled relation** | **19,903 / 33,786 / 820,709,179,087** | **8,376 / 8,519 / 376,171,374,879** |
+
+The storage recount uses a description-free 19,903-row cache whose 15,414,031
+bytes have raw SHA-256
+`4bb3be5c48e1b23590d540a9fd8b664a993d989df576f0e79334a6e1d01488fe`
+and canonical-array SHA-256
+`8db832755df0430b566deeb07f403e8b66a950e92e73fb2399c1e3917dca3bb2`.
+Its key/status set exactly equals the four compiled terminals in the lawful
+raw relation. The successor is that cache minus the exact final 11,527-key
+movement projection; the standalone ordered-key artifact is 558,880 bytes
+with raw SHA-256
+`176e479fff891a19c4fcc20d1c17fa926ec26a72d3b0d5e12321c48bf86d855f`
+and its canonical pair array has the §24.4.4 key SHA-256. This join reads no
+evidence input, calls no `field_unit`, and preserves every retained row's
+ratified terminal. The 10,026-byte final storage report has SHA-256
+`a7b035b542f6cabea35731a206c15682ab10b963b157880b32777b3a7542bc37`
+and records 125,337,600 bytes peak RSS, below the 8-GiB ceiling.
+
+#### 24.5.2 Physical populations and corrected per-shape arithmetic
+
+| Fact | Ratified relation | Completed successor |
+|---|---:|---:|
+| mandatory logical members | 820,709,179,087 | 376,171,374,879 |
+| explicit-arm members / containers | 4,736,892 / 58,517 | 2,051,179 / 14,601 |
+| analytic-arm members | 820,704,442,195 | 376,169,323,700 |
+| analytic renderable members / containers / intervals | 820,701,994,620 / 9,019 / 38,289 | 376,169,060,270 / 2,436 / 31,706 |
+| analytic unrenderable members / containers / intervals | 2,447,575 / 36 / 29,305 | 263,430 / 1 / 29,270 |
+| threshold identity | 4,736,892 + 820,704,442,195 | 2,051,179 + 376,169,323,700 |
+| all-member empty-object floor `3N+2` | 2,462,127,537,263 bytes | 1,128,514,124,639 bytes |
+| exact binary TiB | — | 1.0263776172350844717584550380706787109375 |
+| arm-invariant / arm-ambiguous members | 327,655 / 56,480 | 108,988 / 13,616 |
+| rejected counterfactual explicit / analytic | 4,753,875 / 820,704,425,212 | 2,052,178 / 376,169,322,701 |
+
+The pre-successor ratified relation retains its 266,728,784,621,000-byte
+historical two-shape and 266,728,786,687,940-byte post-A9 four-shape floors
+(the latter is 242.58841830300298170186579227447509765625 TiB). For the
+completed successor, the historical two-shape floor is
+122,255,013,079,550 bytes. Relative to the prior defective successor, the
+only restored cache row is V6196: one range entry, 400 explicit members in
+two containers, and zero analytic members. The analytic populations and both
+analytic-member floors are therefore unchanged. Its current four-shape census
+is 376,169,049,272 seven-key members, 999 six-key rational members, 9,999
+six-key integer members, and 263,430 four-key unrenderable members:
+
+~~~text
+376,169,049,272 × 325 = 122,254,941,013,400
+              999 × 377 =             376,623
+            9,999 × 381 =           3,809,619
+          263,430 × 260 =          68,491,800
+                             -------------------
+                              122,255,013,691,442 bytes
+= 111.190287217543300357647240161895751953125 TiB
+~~~
+
+This lawful minimum is about 85.27 times the measured approximately
+1.304-TiB capacity. It is a storage lower bound, not an estimate.
+
+#### 24.5.3 Exact cover and A9 consequences
+
+The surviving finite-arm branch is 77 fields, 77 entries, and 122,604
+members, including 108,988 arm-invariant and 13,616 arm-ambiguous members.
+The first seven successor terminals contain 76,837 T-plus fields and the
+three failure terminals contain 12,762 T-minus fields. The expected
+`pass_with_closed_failures` populations are therefore 8,376 completed fields,
+8,519 range entries, and 376,171,374,879 logical members. The artifact remains
+unconstructible and cannot be truncated, sampled, or replaced by a surrogate.
+
+#### 24.5.4 Revision-12 full-relation identity
+
+`revision_12_full_relation_identity` remains the six-position construction
+`[literal,row_count,keyset_sha256,domain_sha256,field_source_bytes,
+field_source_sha256]` defined by this amendment. D10 fixes the construction,
+not guessed future values; after D10 a normal build and an independent fresh
+`--check` must exact-match all positions before Q5.
+
+### 24.6 Mandatory Amendment-10 vectors
+
+#### 24.6.1 A10-R01 — positive source-to-unit coverage
+
+A10-R01 reconstructs the original V6789, V4904, V6546, V1169, and V8249
+witnesses; every copular, coding, and direct-family row in §24.2.3; and the
+complete raw V31, V2470, V3694, V9378, V21488, ER2005, ER3062, ER12067, and
+ER12079 descriptions. It must preserve V31's no-denotation result, observe
+construction context plus an independent dollar sentence for the positive
+food witnesses, and never pass an isolated nested sentence in place of a
+complete description. It also checks all 22 weekly keys, all nine later annual
+keys, and the earlier V3694 annual key.
+
+It additionally reconstructs the complete raw V47, V323, V331, V332, V333,
+V370, ER21015, and ER25015 title witnesses with every §24.2.2 page or range
+hash. V5076's and V6196's complete raw descriptions are also mandatory, as is
+a fresh source-wide rebuild of the general predicate and its complete 21-row
+adjudication. For V5076 only `dollars [288,295)` is `W`; its earlier `year`,
+two `%`, and two `$` formula starts are `N`. For V6196 only
+`dollars [453,460)` is `W`; its two `%` and two `$` formula starts are `N`.
+The gate then rebuilds the entire 89,599-row all-title relation rather than
+stopping at those examples: all 80,306 maximal matches, all 8,203 positive
+and 72,103 defeated starts, zero unknowns, and all 8,195 positive starts beyond
+the original eight referee witnesses across 8,176 fields must reappear. Every
+locator, page hash,
+description hash, verbatim raw span, selector path, title/statement
+disposition, unit, successor terminal, and member-row consequence must match.
+
+#### 24.6.2 A10-R02 — honest movement
+
+The V117 source witness remains mandatory. `B2. Age of Head of Family Unit`
+states no unit; its range cannot infer years and moves from finite-arm
+ambiguous to incomplete. The contrast `in years` derives `year`; plausibility
+does not. The partial-range arm must retain only `(1969,V945)` and move the 46
+other ratified partial-range fields. The complete movement must reproduce all
+11,527 rows and pins in §24.4.4.
+
+#### 24.6.3 A10-R03 — negative and fail-closed cases
+
+Validation rejects evidence-, sibling-, or default-sourced units; an uncited
+year for V117; empty or out-of-vocabulary units; first-positive rescue beside
+a defeat, conflict, or unknown; all unenumerated boundary/Unicode/plural
+extensions; tab stripping; the one-space V418 evidence spelling; truncated or
+altered `e.g.`/`Col.` coding continuations; and unknown normalized, Actual,
+coding, or title starts. It rejects an unfrozen title mutation or description
+hash, a contained nonmaximal unit token, promotion of a reference/input/
+subfield title phrase to the whole field, and any title/statement refinement
+other than §24.3.3's exact supported compound-over-bare-numerator rules. V31's
+eight title candidates and V416 remain mandatory negative controls. Every
+unknown remains explicit and aborts; it never silently becomes no-unit or
+disappears beside a positive.
+
+The currency-default rejection fixture contains at least these six complete
+raw-description witnesses, each of which must produce no unit: hourly-money
+`(1968,V337)`; monthly-money `(2021,ER81848)`; money-question/per-hour
+`(1970,V1301)`; yearly-money `(2015,ER65417)`; unmarked-amount/hour
+`(1969,V682)`; and per-week money `(1973,V3196)`. Each description lacks `$`,
+`dollar`, `cent`, `USD`, or a named currency. V3851 and V4364 remain explicit
+explanatory-body defeats; V825 and V826 remain formula/operand defeats. None
+is an output-label exception.
+
+#### 24.6.4 A10-R04 — executable abort-without-emission gate
+
+The production runner performs one fully validated file transaction:
+
+1. strict path preflight and one strict UTF-8/JSON read;
+2. exact input and denominator pins;
+3. ratified counts, successor counts, ordered assignment, and every matrix
+   cell/key digest;
+4. movement invariants and full/key pins;
+5. all failure rows, byte count, and digest;
+6. exhaustive Actual, coding, title/header, contextual-start,
+   ordered-occurrence, and bidirectional selection exact covers, requiring
+   every unknown and mismatch count to be zero; title-authority spellings are
+   re-sliced from the complete raw description at the stored description-
+   relative UTF-8 offsets, never from the bounded context header;
+7. cleartext segment, coding-start, title-generic, title-literal, and
+   title-start authorities
+   plus the complete all-field title, anchor, clause, predicate, statement,
+   and positive-statement relations in raw and canonical forms;
+8. the complete payload digest; and
+9. only after every equality passes, preparation of all requested output
+   bytes, same-directory staging, flush and `fsync`, staged byte-count/SHA-256
+   validation, hard-link backup of every pre-existing destination, and atomic
+   replacement.
+
+No destination changes during validation, preparation, staging, or backup.
+If any staging or backup operation fails, every destination is untouched. If
+any replacement fails, the runner distinguishes before-effect from
+after-effect by comparing the destination's `lstat` identity with the staged
+and original identities. Every already replaced destination is restored and
+every newly created destination is removed. Restoration never consumes the
+stable hard-link backup: each attempt uses a fresh disposable hard link,
+verifies the original `lstat` identity or original nonexistence after the
+operation even when that operation raised, accepts a verified after-effect,
+and retries a before-effect once. Under the declared failure model of a
+forward replacement error plus at most one before- or after-effect error in a
+rollback operation, every prior destination is restored byte-identically.
+
+Rollback continues across all destinations after an error. If a repeated
+out-of-model failure still prevents one restoration, the runner never deletes
+that destination's unresolved stable backup and records its exact path in the
+`GateError`; successfully restorable destinations still return to their prior
+identities. Every stable backup begins non-discardable and becomes eligible
+for cleanup only after the whole commit succeeds or its destination's
+restoration is verified. An escaping interruption never discards a backup
+whose restoration has not been verified; an interruption during forward
+commit preserves all stable backups. Mandatory injections cover rollback
+replacement, rollback unlink, an escaping after-effect commit interruption,
+and second-of-three commit failure followed by a one-shot first-destination
+restore failure. In the latter case the OLD-A backup survives the failed
+attempt and supplies the successful retry. Temporary cleanup cannot convert a
+completed commit into a reported failure. Only after a successful file
+transaction does the CLI emit the complete valid JSON payload on stdout. It
+never emits a 4,000-character prefix or any other truncated JSON.
+
+The final independent pins are:
+
+| Relation | Exact identity |
+|---|---|
+| lawful input / denominator | 89,599; `563b1eaede9dcb5a085d8014dd3a4aacb2d3419ce7d0a0eb65063753b375ca6e` / `7e497f20e05cbdad384daece86d4aa08b16587b83cb6290193b6fdc28705b764` |
+| counts / assignment | `2347179a44340f53dff3770a2dc23a6bfebffac755ed94efe11dd94543131071` / `463ab96ca73185dd5e269fb3c8c0891dc358e90f3cb4088590b5c442240d652b` |
+| movement / movement keys | 11,527; `44033f304977ed301dd27ea58ee46139ffe1afb400be7bf836765c8f4e78e97b` / `4da651663dfc235dac50ca250ab95ac11a7fe34f6df2e918836fe283888be70e` |
+| failures | 8 rows; 211,195 bytes; `024ea03ad9c4f4cac6c490e3899bba74a9c78f7de1737cd5c4a7187b69b5bfda` |
+| Actual candidates | 82 rows; 322 occurrences; 0 unknown; `bf77cd7294752ac9e6ac01d4d68efac86c47b7327094d5eec479d9db1f27176b` |
+| coding candidates | 203 rows; 1,154 occurrences; 0 unknown; `9f6cd23d36ad6825a17d3ece2d2612ef89c066d5c587bd72d1933f19e4c0c195` |
+| audit-only title ledger | 89,599 rows; 87,768,625 bytes; `9cecfe201bc2adf1280bc1e1c8a111bbaaa002e53bafd51e3d97444c01b4c380` / `debab6c570fa0ca16b6f2ac87d820370bfa2f09002d39687cfca0b33f5568384` |
+| output-label ending adjudication | 21 rows; 2,425 bytes; `7a3865642ec7e2795a56dfdeaacc69b4a7b2afdabe2e2457ce1b0f1badaaf6d5` |
+| removed-field projection | 206 rows; 3,339 bytes; `52652010ae3956fc7e419f5163ecd6d00762e8a888e46ca117fc8bea51f39777` |
+| title/header all-field audit | 89,599 rows; 51,957 matched fields; 80,306 starts = 8,203 positive + 72,103 defeated + 0 unknown; 8,184 positive / 43,773 defeat-only / 37,642 no-match fields; 89,412,192 bytes; `d2d2b032f15650ab76a3ad78e09b125c066ad5a09d0f508fbd54927ac1cd9a6c` / `da916ff99bb0b25883494509516929ab38a83491323626305b3cb188735c11fe` |
+| contextual candidate table | 1,114,747 rows; 2,240,669 occurrences; 717,810 distinct texts; `6b8908d0e239ab79d71a34e13c946f4b4adc5da8a62ad69dd98be6c6f39ab808` |
+| contextual-plus-Actual text union | 717,823 distinct texts |
+| ordered start occurrences | 2,240,669 rows; 269,160,082 bytes; `7513022d6f79af192c935cda2e1c47728a5d326a28618b8fe041c8ffb0a5c981` |
+| segment/start authority | 59,445 rows; 1,114,747 starts; 8,466,288 bytes; `1b0b81c08b601fae0c212dbae8a3671f3dd498a202c7fc5ee754f775c0b62bac` / `17ee53b725abca483a24c65c351d0d25b1e7af996a49f267fbe9048e88319af7` |
+| coding-start authority | 203 rows; 31,396 bytes; `6f164c6772def69a29a57e1de04b3927ab8f56141bc2a8c6f0dee0964c8da6bf` / `ac2bddbed10bb445215bb19354259685efe24c82b2f59b258dec5d23fcf8497b` |
+| title literal families | 13 rows; 733 bytes; `e1159929e711f73757b7e51a648f2c096965881a2342d9f26ce4e95d7c8af46e` / `c5f6b75b64ebd86134e1b655c5d522fcd18dc2179fd28fa2c66a0943465e2913` |
+| title generic families | 38 rows; 1,733 bytes; `b56ffd655abb00c8aca6e382092d08cd94325cfbf8ef4ce25651a59fc6cf8133` / `f709526fe7802085ed691167a595f3d24504523dfa9a5fd4f61eb9269debd9de` |
+| title-start authority | 54,185 rows; 16,636,043 bytes; `6e52b2586515ca676e0a58c5c4ba88888f14cf654c06cebbaf2b07dc2cb2dba2` / `197db7e97c2224805e11978b28e83219c99fad4dc209b933c9c20d87ba321ce6` |
+| anchors | 105 rows; 4,421 bytes; `9f4a835c8f6cf140b1f084c3323d887cf19f4e729341d6790216d70b8a02ca4b` / `db4247efe4f93c66ec3d46c27154c4dbef3954a4b9b5865d4fbe364cc62d657f` |
+| clauses | 165 rows; 7,578 bytes; `8ddc26217bd530fae469643458648b159548e0c344d6b967dffb87abfa16ed43` / `1bd2a989c7fe7a1471bbb8b289d64e1fc66e399a0c9b2701419b6d5b636116d3` |
+| predicates | 2,590 rows; 400,372 bytes; `a783a0a3824096688374e0f9802546e847a00c4cb3905ce6a7ee6f64a51e050e` / `dc4df039cd1c0ae9d31bd8827d07e1bb737c8ee383e6cbe0308789257ba5ff89` |
+| statements | 3,589 rows; `7c3642475294dc0ecf809138ff2202ee137e441c7cc76e96b8a2642983163a57` |
+| positive relation | 1,545 rows; 238,735 bytes; `354de946fbb0c15f05eb1c5b202bbbd8cdc5913922cf8c402e6e253699daa153` / `0e7a96f1146063da99dfa576eb254e38cf577762522911e6332863ef9992d6b8` |
+| payload | `94ce6cb655cc7f0b86984a008a3c59934e42be4e86d6ce5ce16bb38dc48cb741` |
+
+The complete production payload file and complete stdout serialization are
+byte-identical: 5,341,847 bytes with SHA-256
+`b6636fe15cc81dfd5f6208c4ed4ad6719217e3cc3390049ffde5a67e5ff131c8`.
+
+The optional payload schema is exactly
+`amendment_10_successor_census.v4`. It has these 81 members in ascending ASCII
+order; `census_sha256` hashes the other 80 before insertion:
+
+~~~text
+actual_candidate_occurrence_count
+actual_candidate_table_row_count
+actual_candidate_table_sha256
+actual_candidate_unadjudicated_count
+census_sha256
+coding_candidate_occurrence_count
+coding_candidate_table_row_count
+coding_candidate_table_sha256
+coding_candidate_unadjudicated_count
+coding_start_authority_array_sha256
+coding_start_authority_relation_byte_count
+coding_start_authority_relation_sha256
+coding_start_authority_row_count
+count_array_sha256
+count_rows
+denominator_sha256
+denotation_candidate_distinct_text_count
+denotation_candidate_occurrence_count
+denotation_candidate_overselected_count
+denotation_candidate_plus_actual_distinct_text_count
+denotation_candidate_start_count
+denotation_candidate_table_row_count
+denotation_candidate_table_sha256
+denotation_candidate_total_occurrence_count
+denotation_candidate_unadjudicated_count
+denotation_candidate_unselected_count
+denotation_start_occurrence_byte_count
+denotation_start_occurrence_row_count
+denotation_start_occurrence_sha256
+denotation_start_partition_rows
+failure_reason_row_count
+failure_reason_rows
+failure_reason_rows_byte_count
+failure_reason_rows_sha256
+field_count
+input_relation_row_count
+input_relation_sha256
+movement_key_sha256
+movement_row_count
+movement_rows
+movement_rows_sha256
+ordered_assignment_sha256
+predicate_authority_row_count
+predicate_authority_sha256
+ratified_count_rows
+schema_version
+segment_start_authority_array_sha256
+segment_start_authority_relation_byte_count
+segment_start_authority_relation_sha256
+segment_start_authority_row_count
+segment_start_authority_start_count
+statement_table_row_count
+statement_table_sha256
+status_matrix_rows
+title_generic_relation_array_sha256
+title_generic_relation_byte_count
+title_generic_relation_row_count
+title_generic_relation_sha256
+title_header_candidate_occurrence_count
+title_header_candidate_table_array_sha256
+title_header_candidate_table_relation_byte_count
+title_header_candidate_table_relation_sha256
+title_header_candidate_table_row_count
+title_header_defeat_field_count
+title_header_defeated_start_count
+title_header_matched_field_count
+title_header_no_match_field_count
+title_header_positive_field_count
+title_header_positive_start_count
+title_header_unadjudicated_start_count
+title_literal_relation_array_sha256
+title_literal_relation_byte_count
+title_literal_relation_row_count
+title_literal_relation_sha256
+title_start_authority_array_sha256
+title_start_authority_relation_byte_count
+title_start_authority_relation_sha256
+title_start_authority_row_count
+unit_bearing_statement_count
+unit_field_counts
+unit_reason_field_counts
+~~~
+
+No inequality may be cured by copying current output into the expected pins.
+Failure leaves every pre-existing destination byte-identical.
+
+#### 24.6.5 A10-R05 — constructibility and exactness
+
+A10-R05 independently reproduces the historical A8 two-shape number, the
+unchanged exact post-A9 current-law floor, every successor population, the
+1,128,514,124,639-byte empty-object floor, the completed successor's
+122,255,013,079,550-byte historical two-shape floor, and its exact
+122,255,013,691,442-byte current four-shape floor. Construction still fails
+because the lawful minimum exceeds capacity. It verifies the description-free
+cache and ordered final movement-key pins, exact lawful-source join,
+ratified-plus-excluded identities, threshold identity, all four shape
+populations, and the prohibitions on reading evidence descriptions or calling
+`field_unit` during the storage recount.
+
+### 24.7 Replacement inventory and closure-sweep schema
+
+The exact design-family dispositions are:
+
+| Earlier law | Amendment-10 disposition |
+|---|---|
+| §19.3.2 common-unit requirement and codebook-only source | composed with §24.3; unchanged and unnarrowed |
+| §19.3.2 nonunitized-`R` failure and §20.3.5 precedence | composed with §24.4; unit absence is incomplete-class only |
+| §20.3.7 census, matrix, assignment, and seven-row failure artifact | superseded by construction by §24.4; historical values remain untouched |
+| §21 T-plus/T-minus and `pass_with_closed_failures` laws | composed with the eight-row artifact and 76,837/12,762 exact cover |
+| §22 storage populations and A8-era floor | superseded by construction by §24.5; A8 history remains true for its shapes |
+| §23 six-key member shape and arm-invariance | lawfully unchanged; §24 recounts its population and current-law floor |
+| §23 `typed_value_unit` under-determination | resolved by §24.3 from source prose |
+| §23 `missing_reason_code` under-determination | escalated unresolved by §24.10 |
+| earlier comparator and lifecycle successors | historical dispatch unchanged; replaced only for post-D10 registration by §§24.8-24.9 |
+
+Before §24.10.2 step 2 accepts candidate bytes, construct
+`amendment_10_derived_unit_authority_closure_sweep.v1`. It retains §19.4.3's
+exact 11-key schema and order: `schema_version`, `design_corpus_ranges`,
+`search_terms`, `consumer_edges`, `consumer_edge_count`,
+`consumer_edge_domain_sha256`, `matched_passages`, `matched_passage_count`,
+`matched_passage_domain_sha256`, `unresolved_passage_ids`, and `status`.
+Corpus-range rows retain exact keys `start_byte`, `end_byte`, and
+`range_sha256`; edge rows retain `source_passage_id`, `consumer_passage_id`,
+and `consumer_relation`; matched rows retain `passage_id`, `start_byte`,
+`end_byte`, `matched_terms`, `consumer_reachable_passage_ids`, `disposition`,
+`successor_anchors`, and `disposition_reason_code`, all in inherited order.
+All §19.4.3 exact types, terminal-LF §10.1 canonicalization, count/domain-hash
+equations, and lowercase-hex laws remain.
+
+The normative corpus is every candidate byte in §§1-24 except exactly the
+eight comparator-table intervals named by §24.8. Its ascending, nonempty,
+disjoint half-open ranges concatenate to precisely those bytes. Passage
+segmentation is §19.4.3's first-matching physical-line law for fenced blocks,
+ATX headings, table rows, lists with continuations, display equations,
+paragraph runs, and excluded blank lines; it exact-partitions every nonblank
+corpus byte.
+
+For this sweep `search_terms` is exactly the following case-sensitive literal
+array in displayed order, without case folding, separator substitution,
+stemming, pluralization, or fuzzy matching:
+
+~~~text
+typed_value_unit
+missing_reason_code
+source_description
+declared_typed_value_unit
+value-denotation
+Actual
+no_unit_derivable
+unadjudicated_start
+unadjudicated_denotation_candidate
+defeated_denotation_statement
+conflicting_statement_units
+UNIT_VOCABULARY
+CLAUSE_TABLE
+ANCHORS
+CONSTRUCTION_DENOTATION_ANCHORS
+PREDICATE_AUTHORITY
+SEGMENT_START_AUTHORITY
+CODING_START_AUTHORITY
+TITLE_GENERIC_UNIT_FAMILIES
+TITLE_LITERAL_FAMILIES
+TITLE_START_AUTHORITY
+normalize_description
+title_header_candidates
+title_header_disposition
+statement_disposition
+field_unit
+successor_status
+derivation_status
+unresolved_typed_value_unit_no_source_authority
+incomplete_source_numeric_authority
+numeric_grammar_derivation_rows
+field_source_derivation
+pass_with_closed_failures
+renderable_member_rows
+unrenderable_member_rows
+arm_ambiguous_member_rows
+revision_11_full_relation_identity
+revision_12_full_relation_identity
+amendment_10_successor_census.v4
+Q5
+D9
+D10
+--check
+fitting_free_requirement_verification_specs
+fitting_free_model_input_authority_capture_registration
+covered_earnings_path_applicability_registry_bundle
+covered_earnings_path_applicability_receipt
+~~~
+
+Literal matches are seeds, not a ceiling. `consumer_edges` exact-covers every
+direct normative dependency where a passage names, inherits, copies,
+exact-compares, foreign-keys, hashes, version-dispatches, validates, or takes a
+consequence from another. Relations and ordering are exactly §19.4.3's seven
+member vocabulary and source-start/consumer-start/relation order. Every seed
+passage and every transitively reachable consumer appears once in
+`matched_passages`; its reachable array is the complete unique transitive
+closure in target-start then passage-ID order.
+
+Each passage ID is literal `amendment-10-passage:` plus SHA-256 of terminal-LF
+§10.1 canonical bytes of `[start_byte,end_byte,matched_terms]`. Rows follow
+start byte. This sweep replaces only §19.4.3's three-value disposition and
+reason domains with these five exact pairs:
+
+| `disposition` | `disposition_reason_code` |
+|---|---|
+| `replaced-by-named-successor` | `named_schema_or_law_replacement` |
+| `composed-with-named-successor` | `named_law_composition` |
+| `superseded-by-construction-by-named-successor` | `named_successor_census_supersession` |
+| `escalated-unresolved-by-named-successor` | `named_unresolved_successor_escalation` |
+| `lawfully-unchanged-with-reason` | `exact_law_preserved_outside_replacement_scope` |
+
+`successor_anchors` remains a nonempty unique array in corpus-anchor then
+unsigned-UTF-8 order and every member resolves to §§24.3-24.10 or exact
+preserved law. Repeated physical passages remain separate rows.
+
+Status passes exactly when ranges reconstruct the candidate corpus,
+segmentation covers every nonblank byte, two independently constructed edge
+arrays exact-match, every seed and graph-reachable passage occurs once, every
+reachable array equals graph closure, both counts and domain hashes reproduce,
+all dispositions resolve, and `unresolved_passage_ids` is exact empty. Step 2
+uses the exact candidate bytes it proposes to accept; after step 3, validation
+requires the D10 blob to byte-equal that candidate and reproduces the same
+sweep. Missing, overlapping, merged, extra, undefined, silently retained, or
+differently dispositioned passages abort ratification.
+
+### 24.8 Complete revision-12 design-comparator disposition
+
+The comparator definition, mixed-preimage rule, complete-paragraph inspection,
+direct/transitive consumer walk, and failure discipline remain exactly §17.3.
+The revision-12 census corpus is every normative byte accepted at §24.10.2
+step 2 and committed at step 3, including §§1-24, except exactly the eight
+historical/self-referential comparator-table intervals in §§17.3, 18.5, 19.5,
+20.6, 21.7, 22.7, 23.7, and this subsection. Each interval starts at its table
+header and ends at the first byte of the next heading named by its own corpus
+law. For this subsection, the interval begins at the first byte of the table
+header below and ends immediately before the ASCII heading prefix `### 24.9 `.
+Mechanical searches include revision 12, Amendment 10, D9, D10, Q5, prefix,
+`pass_with_closed_failures`, `typed_value_unit`, every §24.3 clause literal,
+the complete anchor, predicate-authority, cleartext segment/start-authority,
+raw coding-start-authority, title-generic, title-literal, and contextual
+title-start registries,
+`revision_12_full_relation_identity`, and every exact identifier
+in §24.9.4.
+
+D9 is the exact ratified revision-11 identity at commit
+`3941e2eec27ca9c8c986c74742eb43dd62a3f830`, Git blob
+`bb11f807e7683086b55703ea28346dacec9d192e`, mode `100644`, 2,653,817 raw
+bytes, and SHA-256
+`4f6219ba7162bcc53d390a107e8db2ebe289565c6776fbda2c4acdffd0ba4609`.
+
+| ID | Exact comparator or consumer anchor | Normative revision-12 disposition |
+|---|---|---|
+| DC-01 | §10.1 four-key configuration design shape and exact-byte digest law | lawfully-unchanged-with-reason: the generic shape remains; the ceremony-specific rows below govern post-D10 designs. |
+| DC-02 | §10.1 pre-claim repository proof comparing configured design, ratification blob, digest, ancestry, and HEAD | lawfully-unchanged-with-reason: the ordinary current-design proof remains; DC-06, DC-10, DC-15, DC-18, and terminal DC-58 close retained-design cases. |
+| DC-03 | §10.4 prelaunch check 1 consumption of the active §10.1 design/repository proof | lawfully-unchanged-with-reason: it dispatches to the applicable Amendment-10 proof and cannot restore a displaced predecessor-to-HEAD equality. |
+| DC-04 | §12 context configuration import of §10.1 committed-design proof | lawfully-unchanged-with-reason: a post-D10 context registration carries D10 directly and satisfies the ordinary current-design case. |
+| DC-05 | §§15.6.3 and 15.8 calibrated configuration exact four-key Amendment-1 design child D1 | lawfully-unchanged-with-reason: configuration preservation retains D1; live revision-12 authority is supplied by DC-56-DC-58. |
+| DC-06 | §15.8 calibrated D1 configured-blob equals HEAD proof | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1`. |
+| DC-07 | §16.2 `then_operative_calibrated_design_identity` and its adjudication, manifest, cutoff, and `design_identity_sha256` consumers, as closed by §16.11.2 | lawfully-unchanged-with-reason: these authenticate calibrated D1 methodology/configuration while D10 is separately bound by DC-56-DC-58. |
+| DC-08 | §16.2 position-1 D2/configuration/cutoff-byte comparator and receipt cross-binding | replaced-by-named-successor: `verify_amendment_10_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v9`, `fitting_free_registration_domain_identity.v9`, and `covered_earnings_path_applicability_registry_bundle.v10`. |
+| DC-09 | §§16.2 and 16.13.7 receipt-core D2 and selected-configuration design children | replaced-by-named-successor: `covered_earnings_path_applicability_receipt_core.v9` plus `verify_amendment_10_selected_registration_design_lineage_v1`. |
+| DC-10 | §16.2 calibrated D1/D2 dual-design proof against HEAD | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1`. |
+| DC-11 | §§16.5 and 16.5.2 fitting-free configuration exact D2 design child | lawfully-unchanged-with-reason: the configuration remains D2; position-1, capture, and receipt proofs separately bind D3 through D10. |
+| DC-12 | §16.5.3 `full_fitting_free_evaluation_provenance.design_identity` equality to configuration design | lawfully-unchanged-with-reason: provenance continues to record D2 while the receipt records D2 through D10. |
+| DC-13 | §16.5.5 step 1 revision-4 design check and capture-quartet validation | replaced-by-named-successor: retain K_f^d = D2, joined to `verify_amendment_10_fitting_free_design_identity_v1` and `verify_amendment_10_capture_registration_repository_identity_v1`. |
+| DC-14 | §16.10 capture authorization exact D2 design child | lawfully-unchanged-with-reason: the child remains D2; sibling D3-D10 children and DC-57 supply live authority. |
+| DC-15 | §16.10 capture authorization imported/restated pre-descriptor D2-to-HEAD repository equality | replaced-by-named-successor: `verify_amendment_10_capture_registration_repository_identity_v1`. |
+| DC-16 | §16.10 capture primary design equality to capture registration | lawfully-unchanged-with-reason: both remain D2 while the complete registration/claim chain binds D3 through D10 and DC-57. |
+| DC-17 | §16.10 capture sidecar design equality to primary | lawfully-unchanged-with-reason: both remain D2 and the same hash chain binds D3 through D10 and DC-57. |
+| DC-18 | §16.10 selected fitting-free correction configuration D2-to-HEAD proof | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1`, with position 1 evaluated earlier. |
+| DC-19 | §§16.12.4 and 16.13.7 receipt/configuration design and selected-configuration cross-binding | replaced-by-named-successor: Amendment-10 dispatch to `covered_earnings_path_applicability_receipt_core.v9` and `covered_earnings_path_applicability_receipt.v9`. |
+| DC-20 | §§16.13.9 and 16.14.2 registration-history validity through a receipt's complete design bindings | replaced-by-named-successor: exact historical-v1, Amendment-3-v2, Amendment-4-v3, Amendment-5-v4, Amendment-6-v5, Amendment-7-v6, Amendment-8-v7, Amendment-9-v8, or Amendment-10-v9 receipt dispatch and validation. |
+| DC-21 | §17.4 position-1 D2/D3/configuration/cutoff-byte and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_fitting_free_design_identity_v1`. |
+| DC-22 | §17.4 post-D3 capture-registration D2/D3/live-HEAD predicate and complete transitive capture consumers | replaced-by-named-successor: `verify_amendment_10_capture_registration_repository_identity_v1` and its complete D2-D10 consumer chain. |
+| DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/HEAD byte and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1`. |
+| DC-24 | §18.1 D3 identity, exact 1,310,838-byte design, and immutable revision-6 prefix comparison | lawfully-unchanged-with-reason: D3 remains the exact prefix of D4 and the D4/D5/D6/D7/D8/D9/D10 chain independently extends it. |
+| DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v9`, `fitting_free_registration_domain_identity.v9`, and `covered_earnings_path_applicability_registry_bundle.v10`. |
+| DC-26 | §18.6 terminal post-D4 capture-registration predicate and all registration-hash, claim, primary/sidecar, history, capture-input, A1/A3, and receipt consumers | replaced-by-named-successor: `verify_amendment_10_capture_registration_repository_identity_v1` and its complete D2-D10 consumer chain. |
+| DC-27 | §§18.7-18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1` and Amendment-10 v9 receipt/history dispatch. |
+| DC-28 | §19.1 D4 identity, exact 1,376,610-byte design, and immutable revision-7 prefix comparison | lawfully-unchanged-with-reason: D4 remains the exact prefix of D5 and the retained D4/D5 through D9/D10 comparisons extend the raw-byte chain. |
+| DC-29 | §19.2.5 D5 ratification ordering against the single-parent L5 legal-registry first-add and authority cutoff | lawfully-unchanged-with-reason: the legal comparator remains in `verify_historical_coverage_rules_identity_v2`; its consumers enter the freshly rebuilt v10 bundle and v9 receipt. |
+| DC-30 | §19.3.3 D5 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D5/Q5 remains independently required; DC-35, DC-40, DC-45, DC-50, and DC-55 prove the stronger D6/Q5 through D10/Q5 edges. |
+| DC-31 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff predicate | replaced-by-named-successor: `verify_amendment_10_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v9`, `fitting_free_registration_domain_identity.v9`, and `covered_earnings_path_applicability_registry_bundle.v10`. |
+| DC-32 | §19.6 terminal post-D5 capture-registration predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_10_capture_registration_repository_identity_v1` and its complete D2-D10 consumer chain. |
+| DC-33 | §§19.7-19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-HEAD predicate | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1` and Amendment-10 v9 receipt/history dispatch. |
+| DC-34 | §20.1 D5 identity, exact 1,781,491-byte design, and immutable revision-8 prefix comparison | lawfully-unchanged-with-reason: D5 remains the exact prefix of D6; DC-39, DC-44, DC-49, and DC-54 independently extend the chain through D7, D8, D9, and D10. |
+| DC-35 | §§20.4.2 and 20.6 D6 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D6/Q5 remains independently required; DC-40, DC-45, DC-50, and DC-55 additionally prove the D7/Q5 through live D10/Q5 edges and guarded consumer chain. |
+| DC-36 | §20.7 terminal position-1 D2/D3/D4/D5/D6/configuration/final-cutoff predicate | replaced-by-named-successor: `verify_amendment_10_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v9`, `fitting_free_registration_domain_identity.v9`, and `covered_earnings_path_applicability_registry_bundle.v10`. |
+| DC-37 | §20.7 terminal post-D6 capture-registration D2-D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_10_capture_registration_repository_identity_v1` and its complete D2-D10 chain. |
+| DC-38 | §§20.7-20.8 terminal selected-registration D1-or-D2/D2-D6/registration-HEAD predicate | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1` and Amendment-10 v9 receipt/history dispatch. |
+| DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2-3, exact D6 identity, accepted-candidate-to-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: this remains the exact historical D7 raw-byte identity family; DC-44, DC-49, and DC-54 independently extend the raw-prefix chain to D8, D9, and D10. |
+| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: D7/Q5 and the complete eight-key artifact binding remain independently required; DC-45, DC-50, and DC-55 add the D8/Q5, D9/Q5, and live D10/Q5 edges without replacing this history. |
+| DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v9`, `fitting_free_registration_domain_identity.v9`, and `covered_earnings_path_applicability_registry_bundle.v10`. |
+| DC-42 | §21.8 terminal post-D7 capture-registration D2-D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_10_capture_registration_repository_identity_v1` and its complete D2-D10 consumer chain. |
+| DC-43 | §§21.8-21.9 terminal selected-registration D1-or-D2/D2-D7/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1` and Amendment-10 v9 receipt/history dispatch. |
+| DC-44 | §§22.1, 22.7, and 22.8.1, plus §22.9.2 steps 2-3, exact D7 identity, accepted-candidate-to-D8-raw-blob equality, and D7-as-2,423,590-byte-prefix-of-D8 comparison | lawfully-unchanged-with-reason: this remains the exact historical D8 raw-byte identity family; D7's complete bytes remain the byte-identical prefix of D8, and DC-49 and DC-54 extend the raw-prefix chain to D9 and D10. |
+| DC-45 | §§22.3, 22.7, and 22.9 D8 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: the D8/Q5 source-artifact ancestry predicate and complete eight-key `slot_closure_evidence_identity` binding remain independently required; DC-50 and DC-55 prove the D9/Q5 and live D10/Q5 edges and none substitutes for another. |
+| DC-46 | §22.8 terminal position-1 D2/D3/D4/D5/D6/D7/D8/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v9`, `fitting_free_registration_domain_identity.v9`, and `covered_earnings_path_applicability_registry_bundle.v10`. |
+| DC-47 | §22.8 terminal post-D8 capture-registration D2-D8/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_10_capture_registration_repository_identity_v1` and its complete D2-D10 consumer chain. |
+| DC-48 | §§22.8-22.9 terminal selected-registration D1-or-D2/D2-D8/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1` and Amendment-10 v9 receipt/history dispatch. |
+| DC-49 | §§23.1, 23.7, and 23.8.1, plus §23.9.2 steps 2-3, exact D8 identity, accepted-candidate-to-D9-raw-blob equality, and D8-as-2,521,700-byte-prefix-of-D9 comparison | lawfully-unchanged-with-reason: this is now the exact historical D9 raw-byte identity family. D8's complete bytes remain the byte-identical prefix of D9, and DC-54 independently extends the raw-prefix chain to D10. |
+| DC-50 | §§23.2, 23.7, and 23.9 D9 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: the D9/Q5 source-artifact ancestry predicate, frozen six-position revision-11 relation pin, and complete eight-key `slot_closure_evidence_identity` binding remain independently required; DC-55 proves the live D10/Q5 edge and neither substitutes for the other. |
+| DC-51 | §23.8 terminal position-1 D2/D3/D4/D5/D6/D7/D8/D9/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v9`, `fitting_free_registration_domain_identity.v9`, and `covered_earnings_path_applicability_registry_bundle.v10`. |
+| DC-52 | §23.8 terminal post-D9 capture-registration D2-D9/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_10_capture_registration_repository_identity_v1` and its complete D2-D10 consumer chain. |
+| DC-53 | §§23.8-23.9 terminal selected-registration D1-or-D2/D2-D9/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_10_selected_registration_design_lineage_v1` and Amendment-10 v9 receipt/history dispatch. |
+| DC-54 | §§24.1, 24.8, and 24.9.1, plus §24.10.2 steps 2-3, exact D9 identity, accepted-candidate-to-future-D10-raw-blob equality, and D9-as-2,653,817-byte-prefix-of-D10 comparison | lawfully-unchanged-with-reason: these are one live D10 raw-byte identity family. Step 2 fixes the accepted candidate byte sequence and step 3 permits only that sequence to become D10; validation exact-compares the future same-path raw Git blob, verifies its complete hash and independent D9-prefix equality, and carries the proof into every Amendment-10 position, capture, and selected proof. Digest-, ancestry-, or transitive-only substitution aborts. |
+| DC-55 | §§24.4, 24.8, and 24.10 D10 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: this is the live source-artifact ancestry predicate, frozen six-position revision-12 full-relation aggregate pin, and complete eight-key `slot_closure_evidence_identity` binding under the derived-unit reader and the §24.4.3 successor census. D10/Q5, relation-pin, or staging failure aborts; D5/Q5 through D9/Q5 remain separately required. |
+| DC-56 | §24.9 terminal position-1 D2/D3/D4/D5/D6/D7/D8/D9/D10/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor `verify_amendment_10_fitting_free_design_identity_v1` closes all v9 registry/domain and v10 bundle consumers. |
+| DC-57 | §24.9 terminal post-D10 capture-registration D2-D10/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free successor `verify_amendment_10_capture_registration_repository_identity_v1` closes every consumer. |
+| DC-58 | §§24.9-24.10 terminal selected-registration D1-or-D2/D2-D10/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal successor `verify_amendment_10_selected_registration_design_lineage_v1` closes the v9 receipt and history dispatch. |
+
+This is the complete revision-12 comparator census: exactly 58
+consecutive, unique IDs, exactly 30 `replaced-by-named-successor`
+rows, and exactly 28 `lawfully-unchanged-with-reason` rows. The
+replacement IDs are
+DC-06, DC-08, DC-09, DC-10, DC-13, DC-15, DC-18, DC-19, DC-20, DC-21,
+DC-22, DC-23, DC-25, DC-26, DC-27, DC-31, DC-32, DC-33, DC-36, DC-37,
+DC-38, DC-41, DC-42, DC-43, DC-46, DC-47, DC-48, DC-51, DC-52, and DC-53.
+Every other displayed ID is unchanged. Every anchor, disposition, reason, and named
+successor is nonempty and resolves. The validator reconstructs the complete
+corpus, repeats every search, compares the ordered table, walks every
+consumer, and reproduces the category counts. An omitted, extra, duplicate,
+misanchored, third-disposition, undefined-successor, or incompletely closed
+comparator blocks ratification. This table becomes an immutable revision-12
+invariant only at D10.
+
+### 24.9 D10 lifecycle successors and exact identifier inventory
+
+This subsection introduces only schemas and predicates required by a future
+D10-bound registration. It creates no source, evidence, representation, or
+production relation. The derived audit relations in §§24.2-24.5 have their row
+shapes and canonicalizations there; they are not separately selectable
+lifecycle schemas.
+
+#### 24.9.1 D10, position 1, and the requirement registry
+
+D10 has exactly `path`, `ratification_commit`, `blob_sha256`, and `revision`,
+in that order. Path is `docs/design/covered_earnings_correction.md`; commit is
+the future 40-lowercase-hex document-only commit fixed only by §24.10.2 step 3;
+the digest covers that complete same-path raw blob; revision is JSON integer 12
+excluding booleans. D9's complete 2,653,817 bytes byte-equal D10 range
+`[0,2653817)` independently of complete digest and ancestry.
+
+`amendment_10_fitting_free_design_identity_expected_preimage.v1` and
+`amendment_10_fitting_free_design_identity_actual_preimage.v1` each have
+exactly these seven keys in order:
+
+~~~text
+schema_version
+requirement_id
+verification_predicate_id
+ordered_source_projections
+source_projection_rows
+source_projection_count
+source_projection_domain_sha256
+~~~
+
+Each projection row has exactly `projection_id`, `value_type`, and
+`value_identity_sha256`, in that order. Count is JSON integer 11 excluding
+booleans and the domain digest hashes the complete canonical 11-row array. The
+ordered projections are D2 through D10, then `configuration:design`, then
+`git_cutoff:docs/design/covered_earnings_correction.md`. The first ten values
+have type `canonical_json`; the last has `raw_git_bytes`. Let G10 be D10's raw
+blob, K_f^d the staged fitting-free configuration design, C_A the final
+calibrated authority cutoff, and G_C_A its same-path raw bytes. Expected values
+are `[D2,D3,D4,D5,D6,D7,D8,D9,D10,D2,G10]`; actual values are
+`[D2,D3,D4,D5,D6,D7,D8,D9,D10,K_f^d,G_C_A]`.
+
+`fitting_free_requirement_verification_specs.v9` has exactly
+`schema_version`, `ordered_requirement_ids`, `rows`, `row_count`, and
+`failure_disposition`, in that order. It retains §16.2's 22 requirement IDs,
+has integer count 22 and `abort_registration`, freshly evaluates all rows, and
+replaces exactly positions 1, 3, and 5. Each spec row has exactly
+`requirement_id`, `requirement_class`, `verification_predicate_id`,
+`expected_preimage_schema_version`, `actual_preimage_schema_version`,
+`ordered_source_projections`, `verification_result_schema_version`, and
+`cross_binding`, in that order. Position 1 is exactly:
+
+~~~json
+{"requirement_id":"amendment_2_design_identity","requirement_class":"design","verification_predicate_id":"verify_amendment_10_fitting_free_design_identity_v1","expected_preimage_schema_version":"amendment_10_fitting_free_design_identity_expected_preimage.v1","actual_preimage_schema_version":"amendment_10_fitting_free_design_identity_actual_preimage.v1","ordered_source_projections":["ratified_design:amendment_2_design_identity","ratified_design:amendment_3_design_identity","ratified_design:amendment_4_design_identity","ratified_design:amendment_5_design_identity","ratified_design:amendment_6_design_identity","ratified_design:amendment_7_design_identity","ratified_design:amendment_8_design_identity","ratified_design:amendment_9_design_identity","ratified_design:amendment_10_design_identity","configuration:design","git_cutoff:docs/design/covered_earnings_correction.md"],"verification_result_schema_version":"exact_identity_verification_result.v1","cross_binding":"receipt_core:amendment_2_amendment_3_amendment_4_amendment_5_amendment_6_amendment_7_amendment_8_amendment_9_and_amendment_10_design_identities"}
+~~~
+
+`verify_amendment_10_fitting_free_design_identity_v1` is true exactly when all
+inherited shape, order, count, digest, and evidence equations pass; both
+reconstructions of D2-D10 deep-equal and all ratification blobs hash; K_f^d
+equals D2 without equating revision-4 configuration bytes to G10; all seven
+raw-prefix comparisons through D10 pass; G_C_A byte-equals G10 and hashes to
+D10; and
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 <= C_A`, using strict Git
+ancestry for `<` and ancestor-or-equal for the last edge. False uses the
+inherited `predicate_mismatch` result and cannot select a predecessor.
+
+#### 24.9.2 Capture, A1/A3, domain, and bundle
+
+`fitting_free_model_input_authority_capture_registration.v9` has exactly these
+21 keys in order:
+
+~~~text
+schema_version
+registration_reference
+design
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+amendment_10_design_identity
+implementation_commit
+invocation
+environment_lock_input
+environment_spec
+calibrated_registrability_adjudication_input
+selector_implementation_identity
+input_access_specs
+capability_specs
+output_paths
+failure_disposition
+~~~
+
+`design` remains D2 and amendment children are D3-D10. Every retained
+adjudication, invocation, capability, descriptor, input, output-path, and
+failure law is unchanged.
+
+Let A be the unique single-parent commit strictly after D10 first adding only
+that v9 authorization, and freeze capture HEAD H_cap before any environment,
+claim, broker, source, or model-input descriptor opens.
+`amendment_10_capture_registration_repository_proof.v1` has exactly these 19
+keys in order:
+
+~~~text
+schema_version
+capture_registration_sha256
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+amendment_10_design_identity
+authorization_commit
+capture_head
+ordered_design_blob_rows
+design_blob_row_count
+design_blob_domain_sha256
+canonicalization
+status
+failure_disposition
+~~~
+
+Its identity children are D2-D10 and commits are `[A,H_cap]`. Each of its ten
+ordered blob rows—roles `amendment_2_ratification` through
+`amendment_10_ratification`, then `capture_head`—has exactly `role`, `commit`,
+`path`, `tree_mode`, `blob_oid`, and `raw_sha256`, in that order. Count is
+integer ten excluding booleans; `design_blob_domain_sha256` is lowercase
+64-hex SHA-256 of the terminal-LF §10.1 canonical complete ten-row array;
+`canonicalization` is the frozen common inherited literal; status is
+`pass | fail`; failure is `abort_without_accepted_authority_pair`.
+
+`verify_amendment_10_capture_registration_repository_identity_v1` is true
+exactly when every proof shape, scalar type, member order, row order, count,
+canonicalization, and domain-hash equation passes; the strict v9 authorization
+reproduces its digest and D2-D10 children; all nine ratification blobs and
+seven prefix comparisons pass;
+same-path bytes at H_cap equal D10;
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 < A <= H_cap`;
+authorization bytes remain unchanged A-through-H_cap; all ten blob rows match
+observed commits, modes, OIDs, hashes, and raw bytes; and every inherited
+descriptor-free repository, tracked-state, clean-checkout,
+implementation-tree, and authorization-byte conjunct passes. Proof status is
+`pass` exactly when that Boolean is true and `fail` otherwise. The proof
+freezes before descriptors and has no receipt or future commit.
+
+`fitting_free_model_input_authority_capture_claim.v9` has exactly these eight
+keys in order:
+
+~~~text
+schema_version
+registration_reference
+capture_registration_sha256
+capture_repository_proof
+artifact_vintage_id
+process_start_identity_sha256
+opened_at_utc
+status
+~~~
+
+It embeds the complete proof and retains every inherited exclusive-creation,
+immutability, durability, vintage, process, UTC, status, and failure law.
+`fitting_free_model_input_authority_capture_input.v9` has exactly these 13
+keys in order:
+
+~~~text
+schema_version
+registration_path
+registration_sha256
+claim_path
+claim_schema_version
+claim_artifact_vintage_id
+claim_sha256
+artifact_path
+artifact_vintage_id
+artifact_schema_version
+artifact_sha256
+sidecar_path
+sidecar_sha256
+~~~
+
+It selects the complete v9 registration and claim and unchanged primary and
+sidecar schemas. Their D2 methodology children are transitively bound to
+D3-D10 and H_cap. Required order is `D10 < A <= H_cap < T < C`, retaining all
+sole-parent, only-add, descriptor, and durable-reread laws.
+
+Within the v9 requirement registry, A1 is exactly:
+
+~~~json
+{"requirement_id":"A1","requirement_class":"registration_authority","verification_predicate_id":"verify_amendment_10_fitting_free_a1_model_universe_authority_v1","expected_preimage_schema_version":"authority_predicate_expected_preimage.v1","actual_preimage_schema_version":"authority_predicate_actual_preimage.v1","ordered_source_projections":["ratified_design:fitting_free_model_input_authority_results.rows/0","configuration:fitting_free_model_input_authority_results.rows/0","configuration:fitting_free_model_input_authority_results.authority_capture_input","capture_primary:a1_authority_identity","capture_primary:capture_claim_sha256","capture_claim:capture_repository_proof"],"verification_result_schema_version":"authority_predicate_verification_result.v1","cross_binding":"capture_primary:a1_authority_identity_and_amendment_10_capture_repository_proof"}
+~~~
+
+A3 is exactly:
+
+~~~json
+{"requirement_id":"A3","requirement_class":"registration_authority","verification_predicate_id":"verify_amendment_10_fitting_free_a3_weight_source_authority_v1","expected_preimage_schema_version":"authority_predicate_expected_preimage.v1","actual_preimage_schema_version":"authority_predicate_actual_preimage.v1","ordered_source_projections":["ratified_design:fitting_free_model_input_authority_results.rows/2","configuration:fitting_free_model_input_authority_results.rows/2","configuration:fitting_free_model_input_authority_results.authority_capture_input","capture_primary:a3_authority_identity","capture_sidecar:input_descriptor_identities","capture_primary:capture_claim_sha256","capture_claim:capture_repository_proof"],"verification_result_schema_version":"authority_predicate_verification_result.v1","cross_binding":"capture_primary_and_sidecar:a3_source_keyset_and_amendment_10_capture_repository_proof"}
+~~~
+
+For both rows, expected and actual preimages retain the inherited seven-key
+shape and three-key projection-row shape. A1 has six projections and A3 seven.
+`verify_amendment_10_fitting_free_a1_model_universe_authority_v1` and
+`verify_amendment_10_fitting_free_a3_weight_source_authority_v1` each require
+the complete v9 capture input to equal projection 3; claim digest to match the
+primary; the Git-rebuilt complete repository proof to equal the claim child;
+its D2-D10 identities to equal independent reconstructions; and claim,
+primary, sidecar, triple, and history to be one chain, in addition to all
+inherited substantive A1 or A3 equations. Claim and proof remain lifecycle
+nonauthority and enter no substantive model value.
+
+`fitting_free_registration_domain_identity.v9` has exactly
+`schema_version`, `authority_cutoff_sha256`, `ordered_requirement_ids`,
+`requirement_rows`, `requirement_count`, `requirement_domain_sha256`,
+`authority_status`, and `status`, in that order. Each of its 22 runtime rows
+has exactly `requirement_id`, `requirement_class`,
+`verification_predicate_id`, `expected_preimage`, `actual_preimage`,
+`verification_result`, `requirement_satisfied`, `evidence_identity_sha256`,
+and `status`, in that order. It selects the complete v9 registry and freshly
+reconstructs all rows, unfavorable preimages, Booleans, failure IDs, counts,
+and hashes. `authority_status` passes iff all 22 Booleans do. V-B6 remains
+nonpassing, so no accepted v9 domain presently exists; predecessor, copied,
+carrier, empty-dependency, stale-unit, or stale-member-row reads fail.
+
+It also retains every inherited preimage/result keyset and equation, evidence
+identity, row-order, count, domain-digest, authority-cutoff, and top-status
+law. `ordered_requirement_ids` is exactly the registry's 22-member array and
+`requirement_count` is the JSON integer 22 excluding booleans and equals both
+array lengths. `requirement_domain_sha256` hashes the terminal-LF §10.1
+canonical complete 22-row array; every row's `evidence_identity_sha256`
+hashes its complete ordered evidence preimage under the inherited
+construction; and `authority_cutoff_sha256` binds the accepted authority
+cutoff rather than a proposed or predecessor cutoff. Top `status` is `pass`
+exactly when schema, type, order, count, canonicalization, evidence, cutoff,
+domain-hash, and all authority equations pass and `authority_status` is
+`pass`; it is `fail` otherwise.
+
+`covered_earnings_path_applicability_registry_bundle.v10` has exactly these 16
+keys in order:
+
+~~~text
+schema_version
+path_applicability_specs
+ordered_calibrated_manifest_verification_specs
+calibrated_registration_required_claim_role_arrays
+calibrated_authority_role_binding_specs
+calibrated_family_authority_requirement_specs
+calibrated_noncapture_required_authority_predicate_specs
+calibrated_capture_required_authority_predicate_specs
+calibrated_global_requirement_verification_specs
+fitting_free_requirement_verification_specs
+verification_claim_adjudication_identity
+verification_claim_specs_v2
+verification_claim_results_v2
+verification_claim_specs_fitting_free_v1
+verification_claim_results_fitting_free_v1
+verification_claim_adjudication_source_projection
+~~~
+
+It embeds the complete v9 registry. Every source-derived child is freshly
+reconstructed from accepted post-D10 Q5, inventory, value maps, legal
+authorities, the checked successor relation under the derived-unit reader, and
+exact-empty applicable consumer guards—never G17, configuration, or a
+predecessor bundle. No accepted v10 bundle exists while v9 domain is
+nonpassing or the required physical artifact is unconstructible; attempted
+construction aborts before bundle emission.
+The bundle retains every v9 child's exact schema, scalar and member types,
+equations, member order, row order, count and digest bindings, and cross-child
+identity law except that its own `schema_version` is v10 and the embedded
+fitting-free registry is the freshly reconstructed complete v9 registry.
+
+#### 24.9.3 Receipt and selected-registration successors
+
+`covered_earnings_path_applicability_receipt_core.v9` has exactly these 24
+keys in order:
+
+~~~text
+schema_version
+receipt_id
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+amendment_10_design_identity
+selected_configuration_design_identity
+selected_registration_path
+selected_configuration_schema_version
+selected_implementation_commit
+selected_output_paths_sha256
+pre_reference_configuration_core_sha256
+pre_reference_namespace_core
+pre_reference_namespace_core_sha256
+selected_pre_reference_namespace_scan
+calibrated_registrability_adjudication_input
+fitting_free_registration_domain_identity
+path_applicability_specs_sha256
+path_applicability_result
+~~~
+
+Its amendment children are D2-D10, its fitting-free domain is complete v9,
+its applicability digest hashes the complete v10 bundle, and its result
+carries the v9 domain digest. Every other namespace and construction equation
+is inherited; `receipt_core_sha256` hashes the complete 24-key core. Capture
+validation binds the same v9 claim, input, proof, primary, sidecar, triple, and
+cutoff, with lineage
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 < A <= H_cap < T < C <= HEAD`.
+
+`covered_earnings_path_applicability_receipt.v9` has exactly
+`schema_version`, `receipt_id`, `receipt_core`, `receipt_core_sha256`,
+`registration_reference`, `selected_registration_configuration_sha256`,
+`post_reference_namespace_scan`, `canonicalization`, `status`, and
+`failure_disposition`, in that order. It requires the complete v9 core and
+retains receipt-ID, suffix, namespace, construction, Git-delta, status, and
+failure laws. History dispatch is exact: pre-Amendment-3 uses v1 and
+Amendments 3 through 10 use v2 through v9 respectively.
+
+For either unchanged D1 calibrated or D2 fitting-free configuration,
+`verify_amendment_10_selected_registration_design_lineage_v1` is true exactly
+when: the selected design matches its D1 or D2 ratification blob; receipt D2 is
+revision 4; D3-D9 are revisions 5-11 with their exact blobs; D10 is revision
+12 and equals same-path bytes at registration HEAD; all seven prefix
+comparisons pass;
+`D1 < D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 <= registration HEAD`;
+and every inherited repository, implementation-tree, configuration,
+invocation, input, output, history, authority, namespace, and receipt law
+passes. False fails v9 validation without fallback. Present V-B6 and storage
+blockers mean no such accepted receipt can instantiate.
+
+#### 24.9.4 Exact scoped inventory
+
+The complete lifecycle set has exactly these 16 identifiers in order:
+
+1. `amendment_10_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_10_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_10_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v9`;
+5. `verify_amendment_10_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_10_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v9`;
+8. `covered_earnings_path_applicability_registry_bundle.v10`;
+9. `fitting_free_model_input_authority_capture_registration.v9`;
+10. `amendment_10_capture_registration_repository_proof.v1`;
+11. `verify_amendment_10_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v9`;
+13. `fitting_free_model_input_authority_capture_input.v9`;
+14. `covered_earnings_path_applicability_receipt_core.v9`;
+15. `covered_earnings_path_applicability_receipt.v9`; and
+16. `verify_amendment_10_selected_registration_design_lineage_v1`.
+
+The sole nonlifecycle **successor** schema is the fully defined
+`amendment_10_derived_unit_authority_closure_sweep.v1`. The exact successor
+inventory is therefore those 16 followed by that singleton: 17 total.
+Separately, `amendment_10_successor_census.v4` is the derived audit payload
+serialization schema fully defined in §24.6.4; it is outside the successor
+inventory and cannot enter a registry, receipt, version dispatch, or
+production relation.
+`revision_12_full_relation_identity` is the six-position aggregate value
+defined by §24.5.4, not a schema, registered identifier, or new relation.
+`psid_derived_typed_value_unit_relation.v1` and
+`psid_successor_terminal_census.v1` are not identifiers and may not enter a
+registry, receipt, payload, or version dispatch. The exact predicate,
+cleartext segment/start, raw coding-start, title-generic, title-literal, and
+contextual title-start authorities are audit authorities. The statement,
+all-field title, candidate, movement, failure, and census relations are
+derived audit
+outputs, all defined directly in §§24.2-24.4. None is a registered source
+relation, production relation, or separately selectable lifecycle schema. An
+omitted, extra, duplicate, misspelled, undefined, or candidate-selectable
+identifier blocks ratification.
+
+### 24.10 Post-Amendment-10 order and unresolved authority
+
+#### 24.10.1 What remains blocked
+
+Two production blockers survive. First, the corrected successor floor is
+122,255,013,691,442 bytes, about 85.27 times measured capacity, so the
+`pass_with_closed_failures` artifact remains physically unconstructible.
+Second, §23.9.1's V-B6 authority result remains nonpassing: a derived unit
+supplies no missing substantive authority and changes no boundary.
+
+Separately, of the two source-required under-determined members in §24.1,
+`typed_value_unit` is resolved here and `missing_reason_code` is escalated.
+§19.3.2 requires a nonempty source-backed reason for a missing literal, but no
+registered document states a vocabulary or derivation. Its missing
+disposition is reproducible; its reason code is not. A further design
+successor is required, and no default may be invented.
+
+#### 24.10.2 Referee, D10, implementation, Q5, and production
+
+1. Submit the complete append-only candidate to adversarial review without Q5,
+   slot, inventory, registry, capture, correction execution, output, or other
+   non-document production change in the authoring lane.
+2. Resolve every finding and verify: the complete 2,653,817-byte D9 prefix;
+   frozen source identities; the exact 105-anchor fence; 165 clauses including
+   114 positives, 51 defeats, and 80 full-span Actual rows; 16 units; the
+   59,445-segment/1,114,747-start cleartext authority, 203-row raw
+   coding-start authority, 13-row title-literal authority, 38-row
+   title-generic authority, 54,185-row contextual title-start authority, and
+   2,590-row predicate authority; all
+   2,240,669 start-occurrence and candidate pins; the complete 89,599-row
+   title audit with 80,306 matches = 8,203 positive + 72,103 defeated + zero
+   unknown; zero unknown, unselected, or overselected starts; the exact
+   1,545-row positive statement fence; A10-R04's complete pins,
+   abort-without-emission behavior, rollback replacement/unlink injections,
+   retry-and-verify backup preservation, and complete JSON stdout; all
+   completed successor and storage figures; the corrected
+   four-minimum floors; A10-R01-R05; the defined
+   closure sweep; 58-row comparator; 16-name lifecycle plus one-name
+   nonlifecycle successor inventory; the separately defined one-name derived
+   audit payload schema; D10/Q5 edge; and every lifecycle/build walk.
+   Continue until the exact final bytes receive affirmative ratification.
+3. Ratify only those accepted bytes in one identifiable future document-only
+   commit D10. No authoring, audit, response, artifact, Q5, runtime, or
+   registration change may be included.
+4. After D10, separately review the census machinery against frozen sources;
+   rebuild the input once; rerun A10-R01-R05 rather than reading this document;
+   require every byte/count/digest pin; freeze the matched six-position
+   revision-12 relation identity; and first-add Q5 alone at its strict
+   post-D10 single-parent commit.
+5. Only after Q5 may guarded slot authority, official slot registry, and the
+   complete actual inventory be built in official order, with the negative
+   census over 12,762 T-minus keys and fresh derived-unit reads. Rerun R10b
+   immediately after inventory acceptance.
+6. Freshly evaluate V-B6 and all 22 domain rows, rerunning R10a, both R11 arms,
+   and R10b. On present evidence V-B6 is nonpassing and the domain aborts. No
+   bundle, receipt, registration, correction result, publication, or external
+   merge follows.
+7. The §24.9 schemas may instantiate only after later ratified authority
+   changes both presently blocking facts without weakening layer law,
+   fabricating a carrier, promoting a candidate image, defaulting a unit,
+   sourcing a member row from evidence, or copying a predecessor result.
+
+At these draft bytes no D10, Q5, official inventory, bundle, receipt,
+registration, or production result is claimed. Of two under-determined
+source-required members, Amendment 10 resolves one from source prose and
+escalates the other; it publishes the resulting terminal movement and leaves
+both production blockers intact.
+
+**Amendment 10 is inoperative unless and until its exact D10 ratification
+commit is bound by a validator-accepted v9 fresh-registration receipt.** The
+current V-B6 and constructibility failures prevent that receipt. Ratification
+alone authorizes only the separately reviewed machinery, relation rebuild,
+vector rerun, Q5, and expected-negative guarded steps above.
