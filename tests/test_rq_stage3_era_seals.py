@@ -23,6 +23,8 @@ ERA_2_ID = "ry1975_1977_spouse_concept_seam"
 ERA_2_PATH = builder.era_output_path(ERA_2_ID)
 ERA_3_ID = "ry1978_1992_pre_er_totals"
 ERA_3_PATH = builder.era_output_path(ERA_3_ID)
+ERA_4_ID = "ry1993_2001_er_transition"
+ERA_4_PATH = builder.era_output_path(ERA_4_ID)
 EXPECTED_RAW_SHA256 = (
     "bcc3c542bc7e8410e025e4a3aa23ea0bb42da5b579d0c4d346746a9632911a44"
 )
@@ -68,6 +70,21 @@ EXPECTED_ERA_3_INPUT_DOMAIN_SHA256 = (
 EXPECTED_ERA_3_ROW_SEAL_DOMAIN_SHA256 = (
     "4c692ec6ff0554e639ed5ba61f6ac947a799e2e15fe3f85ba09de8279cee8fb0"
 )
+EXPECTED_ERA_4_RAW_SHA256 = (
+    "a58044964bea7bef6c71b28f5f408f658da17eb18e1563c213d4102c84654e9e"
+)
+EXPECTED_ERA_4_CONTENT_SHA256 = (
+    "a4d07990c2066e1e8362dc5339c5fca21bd5b96534781c5a8fe08e7a1dd4a291"
+)
+EXPECTED_ERA_4_INPUT_KEYSET_SHA256 = (
+    "946ef6461b4c67f62dce1d2a79dc64a35f45ab234ca90bdfb115815a2c7224f1"
+)
+EXPECTED_ERA_4_INPUT_DOMAIN_SHA256 = (
+    "72003c0ef143f954dcf76d5fb7eaf312030d141d0101990d0af7c49ab3fb71fd"
+)
+EXPECTED_ERA_4_ROW_SEAL_DOMAIN_SHA256 = (
+    "58ac802c0a171dd328cd32afab72b12c1b8cdc2a2aeca39be23af05f12c2c422"
+)
 
 
 @pytest.fixture(scope="module")
@@ -98,6 +115,16 @@ def era_3_inputs() -> builder.EraInputs:
 @pytest.fixture(scope="module")
 def era_3_rebuilt(era_3_inputs: builder.EraInputs) -> dict:
     return builder.build_era_seal(ERA_3_ID, era_3_inputs)
+
+
+@pytest.fixture(scope="module")
+def era_4_inputs() -> builder.EraInputs:
+    return builder.load_era_inputs(ERA_4_ID)
+
+
+@pytest.fixture(scope="module")
+def era_4_rebuilt(era_4_inputs: builder.EraInputs) -> dict:
+    return builder.build_era_seal(ERA_4_ID, era_4_inputs)
 
 
 def _annotation_replay_pages(
@@ -281,6 +308,57 @@ def test_era_3_pins_exact_counts_identities_and_row_domains(
     )
     assert builder.FORBIDDEN_EMISSION_KEYS.isdisjoint(era_3_rebuilt)
     assert b"raster_only_incompleteness_census" not in raw
+
+
+def test_era_4_pins_exact_counts_identities_and_row_domains(
+    era_4_rebuilt: dict,
+) -> None:
+    assert era_4_rebuilt["interview_waves"] == [
+        1994,
+        1995,
+        1996,
+        1997,
+        1999,
+        2001,
+    ]
+    assert era_4_rebuilt["document_source_positions"] == list(range(52, 64))
+    assert era_4_rebuilt["document_annotation_input_count"] == 12
+    assert era_4_rebuilt["document_annotation_input_keyset_sha256"] == (
+        EXPECTED_ERA_4_INPUT_KEYSET_SHA256
+    )
+    assert era_4_rebuilt["document_annotation_input_domain_sha256"] == (
+        EXPECTED_ERA_4_INPUT_DOMAIN_SHA256
+    )
+    assert {
+        key: era_4_rebuilt[key]
+        for key in builder.PINNED_ANNOTATION_INPUT_SEALS[ERA_4_ID]
+    } == builder.PINNED_ANNOTATION_INPUT_SEALS[ERA_4_ID]
+    assert era_4_rebuilt["row_domain_seal_count"] == 5
+    assert era_4_rebuilt["row_domain_seal_domain_sha256"] == (
+        EXPECTED_ERA_4_ROW_SEAL_DOMAIN_SHA256
+    )
+    assert era_4_rebuilt["row_domain_seal_rows"] == list(
+        builder.PINNED_ROW_DOMAIN_SEALS[ERA_4_ID]
+    )
+    seals = {
+        row["row_domain"]: row for row in era_4_rebuilt["row_domain_seal_rows"]
+    }
+    assert seals["document_source_rows"]["row_count"] == 12
+    assert seals["questionnaire_page_rows"]["row_count"] == 1_622
+    assert seals["questionnaire_occurrence_rows"]["row_count"] == 41_209
+    assert seals["flow_branch_rows"]["row_count"] == 23_335
+
+    raw = ERA_4_PATH.read_bytes()
+    assert len(raw) == 11_863
+    assert len(raw) < builder.MAX_COMMITTED_FILE_BYTES
+    assert hashlib.sha256(raw).hexdigest() == EXPECTED_ERA_4_RAW_SHA256
+    assert era_4_rebuilt["integrity"]["content_sha256"] == (
+        EXPECTED_ERA_4_CONTENT_SHA256
+    )
+    assert era_4_rebuilt["nonauthority_statement"] == (
+        builder.NONAUTHORITY_STATEMENT
+    )
+    assert builder.FORBIDDEN_EMISSION_KEYS.isdisjoint(era_4_rebuilt)
 
 
 def test_era_1_artifact_is_small_canonical_and_nonauthority(

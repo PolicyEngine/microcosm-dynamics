@@ -108,6 +108,7 @@ SEALED_ERA_IDS = (
     "wave1968_ry1968_1974_early_totals",
     "ry1975_1977_spouse_concept_seam",
     "ry1978_1992_pre_er_totals",
+    "ry1993_2001_er_transition",
 )
 
 EXPECTED_RASTER_SIDECAR_POSITIONS = frozenset({6, 10, 12, 24})
@@ -320,6 +321,63 @@ PINNED_ROW_DOMAIN_SEALS: dict[str, tuple[dict[str, Any], ...]] = {
             ),
         },
     ),
+    "ry1993_2001_er_transition": (
+        {
+            "row_domain": "document_source_rows",
+            "row_count": 12,
+            "row_key_fields": ["source_document_id"],
+            "row_keyset_sha256": (
+                "a599e537eb420a48df9b17ad6bcaec385b794291a67f2cfa439dc585375cb7c6"
+            ),
+            "row_domain_sha256": (
+                "a67605f012fa6791ad40069815905f9515eb965aeec03d441fef4c50916024d4"
+            ),
+        },
+        {
+            "row_domain": "whole_document_locator_rows",
+            "row_count": 12,
+            "row_key_fields": ["locator_id"],
+            "row_keyset_sha256": (
+                "605b7932fbecc3a943b6feaee7720ba9ba8120e464e672e8e44ffe4f60a89913"
+            ),
+            "row_domain_sha256": (
+                "7f4876a8aa83119f3f2e3fd543547fdd3459dc179b2b83c1124ff01024a6dc44"
+            ),
+        },
+        {
+            "row_domain": "questionnaire_page_rows",
+            "row_count": 1_622,
+            "row_key_fields": ["questionnaire_page_id"],
+            "row_keyset_sha256": (
+                "e15763d21fb84e43747205912ec80dea1b21783d95314233b16493e77bf58d3e"
+            ),
+            "row_domain_sha256": (
+                "5f74c89b9f2b4607928b9a515f5c5d45e4834de0faa56d472f751ca0275e0b35"
+            ),
+        },
+        {
+            "row_domain": "questionnaire_occurrence_rows",
+            "row_count": 41_209,
+            "row_key_fields": ["questionnaire_occurrence_id"],
+            "row_keyset_sha256": (
+                "c4a89af35317d3155127cf705a4dd527eabcb5330501a42132c1e9bdfb1e7baa"
+            ),
+            "row_domain_sha256": (
+                "33f2b1e6253f162156febb809bca577baad82ca016385f52347b4184df9b9181"
+            ),
+        },
+        {
+            "row_domain": "flow_branch_rows",
+            "row_count": 23_335,
+            "row_key_fields": ["flow_branch_id"],
+            "row_keyset_sha256": (
+                "abc8d0f8e78d9cd714f7bc42e336f5eda9b812fd0a823d2981069ab7495c38a5"
+            ),
+            "row_domain_sha256": (
+                "e49c060e610eab68907a103ee883cb039abfcf55bad87f7fde78af45c261b3c3"
+            ),
+        },
+    ),
 }
 
 PINNED_ANNOTATION_INPUT_SEALS = {
@@ -348,6 +406,15 @@ PINNED_ANNOTATION_INPUT_SEALS = {
         ),
         "document_annotation_input_domain_sha256": (
             "09e6c2e65180e70237a90eac6e67a9e010cf6d79e0a53bb35994cc3b90a5b477"
+        ),
+    },
+    "ry1993_2001_er_transition": {
+        "document_annotation_input_count": 12,
+        "document_annotation_input_keyset_sha256": (
+            "946ef6461b4c67f62dce1d2a79dc64a35f45ab234ca90bdfb115815a2c7224f1"
+        ),
+        "document_annotation_input_domain_sha256": (
+            "72003c0ef143f954dcf76d5fb7eaf312030d141d0101990d0af7c49ab3fb71fd"
         ),
     },
 }
