@@ -1,0 +1,349 @@
+"""Executable fail-closed and satisfiable-fixture checks for A11-R05."""
+
+from __future__ import annotations
+
+import copy
+from dataclasses import replace
+
+import pytest
+
+from scripts import replay_amendment11_no_movement as replay
+
+
+def _numeric_row(
+    field: str,
+    status: str,
+    position: int,
+) -> dict[str, object]:
+    values: dict[str, object] = {
+        "numeric_grammar_derivation_id": f"fixture-derivation:{position}",
+        "interview_wave": 1968,
+        "raw_field_id": field,
+        "dictionary_field_row_ids": [f"dictionary:{field}"],
+        "dictionary_field_rows_sha256": f"{position + 1:064x}",
+        "codebook_field_row_ids": [f"codebook:{field}"],
+        "codebook_field_rows_sha256": f"{position + 11:064x}",
+        "source_format_projection": [],
+        "source_meaning_projection": [],
+        "dictionary_field_meaning": f"fixture field {field}",
+        "derived_parse_kind": "numeric",
+        "normalized_format_profile": {"width": 1},
+        "nonmissing_observation_count": 1,
+        "derivation_status": status,
+        "padding_rule": None,
+        "registered_numeric_grammar": None,
+    }
+    assert tuple(values) == replay.NUMERIC_ROW_KEYS
+    return values
+
+
+def _fields() -> tuple[replay.FixtureField, ...]:
+    return (
+        replay.FixtureField(
+            numeric_grammar_derivation_row=_numeric_row(
+                "V1", replay.TERMINALS[0], 0
+            ),
+            settled_entries=(
+                {
+                    "typed_disposition": "missing",
+                    "missing_reason_code": "fixture-reason:V1:0",
+                },
+                {
+                    "typed_disposition": "json_integer",
+                    "missing_reason_code": None,
+                },
+            ),
+            resolution_reason=None,
+            storage=replay.FixtureStorage(3, 3, 0, 975),
+        ),
+        replay.FixtureField(
+            numeric_grammar_derivation_row=_numeric_row(
+                "V2", replay.TERMINALS[4], 1
+            ),
+            settled_entries=(
+                {
+                    "typed_disposition": "rational",
+                    "missing_reason_code": None,
+                },
+            ),
+            resolution_reason=None,
+            storage=replay.FixtureStorage(0, 0, 0, 0),
+        ),
+        replay.FixtureField(
+            numeric_grammar_derivation_row=_numeric_row(
+                "V3", replay.TERMINALS[8], 2
+            ),
+            settled_entries=(
+                {
+                    "typed_disposition": "missing",
+                    "missing_reason_code": "fixture-reason:V3:0",
+                },
+            ),
+            resolution_reason="fixture_unsupported_token",
+            storage=replay.FixtureStorage(2, 0, 2, 650),
+        ),
+    )
+
+
+def _reason_insensitive_classifier(row, _entries):
+    return row["derivation_status"]
+
+
+def test_production_preflight_stops_at_source_disposition_boundary():
+    evidence = replay.production_blocker_evidence()
+    assert evidence["blocker"] == (
+        "blocked_source_missing_disposition_underdetermined"
+    )
+    assert evidence["source_member_count"] == 561_873
+    assert evidence["source_literal_entry_count"] == 524_590
+    assert evidence["source_numeric_range_entry_count"] == 37_283
+    assert evidence["lexical_missing_candidate_count"] == 231_263
+    assert evidence["literal_lexical_other_count"] == 293_327
+    assert evidence["all_member_lexical_other_count"] == 330_610
+    assert 231_263 + 293_327 == 524_590
+    assert 293_327 + 37_283 == 330_610
+    assert evidence["directly_disproven_lexical_candidate_minimum"] == 61
+    assert evidence["context_required_lexical_candidate_minimum"] == 118
+    assert evidence["blocked_literal_entry_count"] == 524_590
+    assert evidence["structural_null_entry_count"] == 37_283
+    assert evidence["production_nonempty_reason_code_count"] == 0
+    assert evidence["complete_settled_relation_exists"] is False
+    assert evidence["production_replay_started"] is False
+    assert evidence["production_replay_complete"] is False
+    assert evidence["revision_13_full_relation_identity_available"] is False
+    assert evidence["accepted_output_emitted"] is False
+    historical = evidence["historical_predecessor_capacity_evidence"]
+    assert historical["status"] == ("ratified_revision_12_census_reproduced")
+    assert historical["amendment_11_inference_authorized"] is False
+    assert historical["field_count"] == 89_599
+    assert historical["ratified_predecessor_terminal_vector"] == [
+        8_025,
+        273,
+        77,
+        1,
+        67_316,
+        1_145,
+        0,
+        1,
+        421,
+        12_340,
+    ]
+    assert historical["t_plus_field_count"] == 76_837
+    assert historical["t_minus_field_count"] == 12_762
+    assert historical["revision_12_logical_member_count"] == 376_171_374_879
+    assert historical["four_shape_floor_bytes"] == 122_255_013_691_442
+    assert "expected_a11_delta_movement_row_count" not in historical
+    assert "revision_13_full_relation_identity_prefix" not in historical
+    with pytest.raises(
+        replay.SourceMissingDispositionUnderdetermined
+    ) as caught:
+        replay.run_production_gate()
+    assert caught.value.code == (
+        "blocked_source_missing_disposition_underdetermined"
+    )
+
+
+def test_revision_12_capacity_audit_mints_no_amendment_11_inference():
+    evidence = replay.run_historical_capacity_audit()
+    assert evidence["status"] == "ratified_revision_12_census_reproduced"
+    assert evidence["amendment_11_inference_authorized"] is False
+    assert evidence["amendment_11_inference_blocker"] == (
+        "blocked_source_missing_disposition_underdetermined"
+    )
+
+
+def test_production_preflight_rejects_absent_or_mutated_authority(tmp_path):
+    absent = tmp_path / "absent.json"
+    with pytest.raises(replay.ReplayError, match="unreadable"):
+        replay.production_blocker_evidence(absent)
+
+    mutated = tmp_path / "mutated.json"
+    raw = bytearray(replay.AUTHORITY_ARTIFACT.read_bytes())
+    raw[100] ^= 1
+    mutated.write_bytes(raw)
+    with pytest.raises(replay.ReplayError):
+        replay.production_blocker_evidence(mutated)
+
+
+def test_production_cli_emits_no_stdout_or_pass(capsys):
+    assert replay.main() == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "blocked_source_missing_disposition_underdetermined" in captured.err
+    assert "pass" not in captured.err
+
+
+@pytest.mark.parametrize(
+    ("constant", "replacement", "message"),
+    (
+        (
+            "EXPECTED_TERMINAL_VECTOR",
+            (0,) * 10,
+            "terminal vector drift",
+        ),
+        (
+            "EXPECTED_SEVEN_KEY_MEMBER_COUNT",
+            replay.EXPECTED_SEVEN_KEY_MEMBER_COUNT + 1,
+            "four-shape population decomposition drift",
+        ),
+        (
+            "LITERAL_LEXICAL_OTHER_COUNT",
+            replay.LITERAL_LEXICAL_OTHER_COUNT + 1,
+            "lexical literal partition drift",
+        ),
+        (
+            "ALL_MEMBER_LEXICAL_OTHER_COUNT",
+            replay.ALL_MEMBER_LEXICAL_OTHER_COUNT + 1,
+            "all-member lexical-other partition drift",
+        ),
+    ),
+)
+def test_production_pin_mutation_is_discovered(
+    monkeypatch, constant, replacement, message
+):
+    monkeypatch.setattr(replay, constant, replacement)
+    with pytest.raises(replay.ReplayError, match=message):
+        replay.production_blocker_evidence()
+
+
+def test_constructible_fixture_replays_every_required_r05_projection():
+    result = replay.replay_constructible_fixture(
+        _fields(), _reason_insensitive_classifier
+    )
+    assert result["status"] == "pass"
+    assert result["fixture_only"] is True
+    assert (
+        result["conditional_on_supplied_synthetic_missing_dispositions"]
+        is True
+    )
+    assert result["production_source_authority_claimed"] is False
+    assert result["field_count"] == 3
+    assert result["terminal_vector"] == [1, 0, 0, 0, 1, 0, 0, 0, 1, 0]
+    assert result["missing_member_count"] == 2
+    assert result["nonmissing_member_count"] == 2
+    assert result["included_storage"] == {
+        "logical_member_count": 3,
+        "explicit_member_count": 3,
+        "analytic_member_count": 0,
+        "four_shape_floor_bytes": 975,
+    }
+    assert result["excluded_storage"] == {
+        "logical_member_count": 2,
+        "explicit_member_count": 0,
+        "analytic_member_count": 2,
+        "four_shape_floor_bytes": 650,
+    }
+    assert result["t_plus_field_count"] == 2
+    assert result["t_minus_field_count"] == 1
+    assert result["failure_reason_rows"] == [
+        {
+            "derivation_status": replay.TERMINALS[8],
+            "resolution_reason": "fixture_unsupported_token",
+            "field_keys": [[1968, "V3"]],
+        }
+    ]
+    assert result["delta_movement_rows"] == []
+    assert result["delta_movement_sha256"] == replay.EMPTY_ARRAY_SHA256
+    identity = result["fixture_full_relation_identity"]
+    assert identity[0:2] == [
+        "amendment_11_constructible_fixture_full_relation_identity",
+        3,
+    ]
+    assert len(identity) == 6
+    assert all(
+        len(value) == 64 for value in (identity[2], identity[3], identity[5])
+    )
+    assert type(identity[4]) is int and identity[4] > 0
+
+
+def test_reason_string_sensitive_classifier_is_rejected():
+    def classifier(row, entries):
+        if any(
+            str(entry["missing_reason_code"]).startswith("counterfactual")
+            for entry in entries
+            if entry["typed_disposition"] == "missing"
+        ):
+            return replay.TERMINALS[9]
+        return row["derivation_status"]
+
+    with pytest.raises(replay.ReplayError, match="reason-string-sensitive"):
+        replay.replay_constructible_fixture(_fields(), classifier)
+
+
+def test_terminal_movement_is_rejected():
+    def classifier(row, _entries):
+        if row["raw_field_id"] == "V2":
+            return replay.TERMINALS[9]
+        return row["derivation_status"]
+
+    with pytest.raises(replay.ReplayError, match="nonempty delta movement"):
+        replay.replay_constructible_fixture(_fields(), classifier)
+
+
+@pytest.mark.parametrize(
+    ("field_position", "entry_position", "replacement", "message"),
+    (
+        (0, 0, None, "unsettled missing member"),
+        (0, 1, "invented", "nonmissing reason"),
+    ),
+)
+def test_unsettled_or_overassigned_member_is_rejected(
+    field_position, entry_position, replacement, message
+):
+    fields = list(_fields())
+    entries = [dict(entry) for entry in fields[field_position].settled_entries]
+    entries[entry_position]["missing_reason_code"] = replacement
+    fields[field_position] = replace(
+        fields[field_position], settled_entries=tuple(entries)
+    )
+    with pytest.raises(replay.ReplayError, match=message):
+        replay.replay_constructible_fixture(
+            tuple(fields), _reason_insensitive_classifier
+        )
+
+
+def test_duplicate_opaque_reason_code_is_rejected():
+    fields = list(_fields())
+    entries = [dict(entry) for entry in fields[2].settled_entries]
+    entries[0]["missing_reason_code"] = "fixture-reason:V1:0"
+    fields[2] = replace(fields[2], settled_entries=tuple(entries))
+    with pytest.raises(replay.ReplayError, match="duplicate opaque"):
+        replay.replay_constructible_fixture(
+            tuple(fields), _reason_insensitive_classifier
+        )
+
+
+def test_numeric_row_mutation_changes_fixture_relation_identity():
+    baseline = replay.replay_constructible_fixture(
+        _fields(), _reason_insensitive_classifier
+    )
+    fields = list(_fields())
+    row = copy.deepcopy(fields[0].numeric_grammar_derivation_row)
+    row["dictionary_field_meaning"] = "changed source meaning"
+    fields[0] = replace(fields[0], numeric_grammar_derivation_row=row)
+    changed = replay.replay_constructible_fixture(
+        tuple(fields), _reason_insensitive_classifier
+    )
+    before = baseline["fixture_full_relation_identity"]
+    after = changed["fixture_full_relation_identity"]
+    assert before[0:3] == after[0:3]
+    assert before[3:] != after[3:]
+
+
+def test_reason_mutation_changes_field_source_identity_but_not_terminal():
+    baseline = replay.replay_constructible_fixture(
+        _fields(), _reason_insensitive_classifier
+    )
+    fields = list(_fields())
+    entries = [dict(entry) for entry in fields[0].settled_entries]
+    entries[0]["missing_reason_code"] = "fixture-reason:V1:changed"
+    fields[0] = replace(fields[0], settled_entries=tuple(entries))
+    changed = replay.replay_constructible_fixture(
+        tuple(fields), _reason_insensitive_classifier
+    )
+    assert changed["terminal_vector"] == baseline["terminal_vector"]
+    assert changed["delta_movement_rows"] == []
+    before = baseline["fixture_full_relation_identity"]
+    after = changed["fixture_full_relation_identity"]
+    assert before[0:4] == after[0:4]
+    assert before[4:] != after[4:]
