@@ -1634,9 +1634,11 @@ def author_review() -> dict[str, Any]:
         raise ValueError(
             "retained flow labels do not map one-to-one to definitions"
         )
-    resolved_flow_paths: dict[str, list[list[str]]] = {}
+    flow_position_by_symbol = {
+        row["symbol"]: position for position, row in enumerate(flow_defs)
+    }
     for row in flow_defs:
-        review_occurrence_id = _review_id(
+        row["review_id"] = _review_id(
             source_document_id,
             page_texts,
             row["page"],
@@ -1644,41 +1646,45 @@ def author_review() -> dict[str, Any]:
             row["end"],
             F,
         )
-        row["review_id"] = review_occurrence_id
-        resolved: list[list[str]] = []
-        for symbolic_route in row["routes"]:
-            prefix: list[str] = []
-            for symbol in symbolic_route:
-                parent = flow_by_symbol[symbol]
-                parent_paths = resolved_flow_paths[symbol]
-                if prefix not in parent_paths:
-                    raise ValueError(
-                        f"flow ancestry for {row['symbol']} cannot resolve {symbol}"
-                    )
-                prefix.append(
-                    annotation._review_branch_ref(
-                        parent["review_id"], prefix, len(parent_paths)
-                    )
-                )
-            resolved.append(prefix)
-        resolved_flow_paths[row["symbol"]] = resolved
 
-    def resolve_routes(routes: Sequence[Sequence[str]]) -> list[list[str]]:
-        resolved: list[list[str]] = []
-        for route in routes:
-            prefix: list[str] = []
-            for symbol in route:
-                parent = flow_by_symbol[symbol]
-                parent_paths = resolved_flow_paths[symbol]
-                if prefix not in parent_paths:
-                    raise ValueError(f"nonflow route cannot resolve {symbol}")
-                prefix.append(
-                    annotation._review_branch_ref(
-                        parent["review_id"], prefix, len(parent_paths)
-                    )
+    # Retain the route products only as transient authoring evidence. Validate
+    # every symbolic prefix, then serialize only each atom's direct parent
+    # occurrence IDs. A root route dominates descendant routes because that
+    # atom is unconditional under the protocol's prefix semantics.
+    def validate_symbolic_route(
+        symbolic_route: Sequence[str], label: str
+    ) -> None:
+        prefix: tuple[str, ...] = ()
+        for symbol in symbolic_route:
+            parent = flow_by_symbol.get(symbol)
+            if parent is None:
+                raise ValueError(f"{label} has an unknown flow parent")
+            parent_routes = {tuple(route) for route in parent["routes"]}
+            if prefix not in parent_routes:
+                raise ValueError(
+                    f"flow ancestry for {label} cannot resolve {symbol}"
                 )
-            resolved.append(prefix)
-        return resolved
+            prefix = (*prefix, symbol)
+
+    for row in flow_defs:
+        for symbolic_route in row["routes"]:
+            validate_symbolic_route(symbolic_route, row["symbol"])
+
+    def direct_parent_review_ids(
+        routes: Sequence[Sequence[str]],
+    ) -> list[str]:
+        if not routes:
+            raise ValueError("source atom has no applicable route")
+        if any(not route for route in routes):
+            return []
+        terminal_symbols = {route[-1] for route in routes}
+        return [
+            flow_by_symbol[symbol]["review_id"]
+            for symbol in sorted(
+                terminal_symbols,
+                key=flow_position_by_symbol.__getitem__,
+            )
+        ]
 
     ordered_specs = sorted(
         specs.values(),
@@ -1690,27 +1696,35 @@ def author_review() -> dict[str, Any]:
         ),
     )
     occurrence_specs: list[dict[str, Any]] = []
+    transient_routes_by_review_id: dict[str, list[tuple[str, ...]]] = {}
     for row in ordered_specs:
+        review_occurrence_id = _review_id(
+            source_document_id,
+            page_texts,
+            row["page"],
+            row["start"],
+            row["end"],
+            row["kind"],
+        )
+        routes = sorted(row["routes"])
+        for route in routes:
+            validate_symbolic_route(route, review_occurrence_id)
         occurrence_specs.append(
             {
-                "review_occurrence_id": _review_id(
-                    source_document_id,
-                    page_texts,
-                    row["page"],
-                    row["start"],
-                    row["end"],
-                    row["kind"],
-                ),
+                "review_occurrence_id": review_occurrence_id,
                 "page_number": row["page"],
                 "utf8_byte_start": row["start"],
                 "utf8_byte_end": row["end"],
                 "occurrence_kind": row["kind"],
-                "parent_review_branch_paths": resolve_routes(
-                    sorted(row["routes"])
+                "parent_review_occurrence_ids": direct_parent_review_ids(
+                    routes
                 ),
                 "review_note": row["note"],
             }
         )
+        transient_routes_by_review_id[review_occurrence_id] = [
+            tuple(route) for route in routes
+        ]
 
     occurrence_by_id = {
         spec["review_occurrence_id"]: spec for spec in occurrence_specs
@@ -1727,8 +1741,12 @@ def author_review() -> dict[str, Any]:
         return any(
             source_path[: min(len(source_path), len(parent_path))]
             == parent_path[: min(len(source_path), len(parent_path))]
-            for source_path in source["parent_review_branch_paths"]
-            for parent_path in parent["parent_review_branch_paths"]
+            for source_path in transient_routes_by_review_id[
+                source["review_occurrence_id"]
+            ]
+            for parent_path in transient_routes_by_review_id[
+                parent["review_occurrence_id"]
+            ]
         )
 
     local_anchor_specs: list[dict[str, Any]] = []
@@ -1893,6 +1911,8 @@ def author_review() -> dict[str, Any]:
             "whole_page_review": "all_118_pages_including_empty_occurrence_pages",
             "span_granularity": "exact_utf8_lexeme_physical_line_or_source_block",
             "candidate_nonselection": "candidates_joined_only_after_source_rows_complete",
+            "flow_parent_representation": "direct_parent_occurrence_ids_no_path_products",
+            "flow_edge_order": "logical_dag_may_reference_later_extracted_labels",
             "global_ids_assigned": False,
         },
         "page_review_rows": page_review_rows,
