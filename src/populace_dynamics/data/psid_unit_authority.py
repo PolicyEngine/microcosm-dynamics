@@ -176,9 +176,7 @@ _STATEMENT_PROSE_TITLE_HEADS = (
     "the values for this variable ",
 )
 
-_TITLE_TERMINAL_SELECTOR = re.compile(
-    r"--\s*(?P<label>[^\n]+?)\s*$"
-)
+_TITLE_TERMINAL_SELECTOR = re.compile(r"--\s*(?P<label>[^\n]+?)\s*$")
 _TITLE_SINGLE_HYPHEN = re.compile(r"(?<!-)-(?!-)")
 _TITLE_SINGLE_PERIOD_EXCEPTION = (
     "BC6. When did you (HEAD) start and when did you stop working for this "
@@ -390,13 +388,10 @@ def _title_selector_spans(
 
     def admitted_label(label: str) -> bool:
         stripped = label.strip()
-        return (
-            bool(stripped)
-            and (
-                stripped[0].isupper()
-                or stripped[0].isdigit()
-                or stripped[0] in "[("
-            )
+        return bool(stripped) and (
+            stripped[0].isupper()
+            or stripped[0].isdigit()
+            or stripped[0] in "[("
         )
 
     def admitted_singleton_label(label: str) -> bool:
@@ -485,8 +480,7 @@ def _title_selector_spans(
                 and physical_label == 'Wife/"WIFE"'
             )
             if not (
-                admitted_singleton_prefix(prefix)
-                or exact_period_exception
+                admitted_singleton_prefix(prefix) or exact_period_exception
             ):
                 continue
             if not (
@@ -675,9 +669,7 @@ def _generic_title_spans(
                 title, match.start(), match.end()
             )
             matched_family = family
-            if family == "nominal_hour_token" and _reference_hour_title(
-                title
-            ):
+            if family == "nominal_hour_token" and _reference_hour_title(title):
                 matched_family = "reference_hour_token"
             found.append(
                 (
@@ -852,9 +844,7 @@ def _title_start_tags(description: str | None) -> dict[int, str]:
         )
         previous = found.get(offset)
         found[offset] = (
-            tag
-            if previous is None
-            else _merge_title_start_tag(previous, tag)
+            tag if previous is None else _merge_title_start_tag(previous, tag)
         )
     return found
 
