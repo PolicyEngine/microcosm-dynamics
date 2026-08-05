@@ -104,7 +104,10 @@ ERA_SPECS = (
 ERA_BY_ID = {row["era_id"]: row for row in ERA_SPECS}
 
 # Extend this tuple by exactly one member in each later era-seal commit.
-SEALED_ERA_IDS = ("wave1968_ry1968_1974_early_totals",)
+SEALED_ERA_IDS = (
+    "wave1968_ry1968_1974_early_totals",
+    "ry1975_1977_spouse_concept_seam",
+)
 
 EXPECTED_RASTER_SIDECAR_POSITIONS = frozenset({6, 10, 12, 24})
 PINNED_RASTER_SIDECAR_SHA256_BY_POSITION = {
@@ -202,6 +205,84 @@ PINNED_ROW_DOMAIN_SEALS: dict[str, tuple[dict[str, Any], ...]] = {
             ),
         },
     ),
+    "ry1975_1977_spouse_concept_seam": (
+        {
+            "row_domain": "document_source_rows",
+            "row_count": 6,
+            "row_key_fields": ["source_document_id"],
+            "row_keyset_sha256": (
+                "a8272d7c89fed313b421c273f7f1990cae7c7a6278c934b24038813d87997efa"
+            ),
+            "row_domain_sha256": (
+                "2d61e4a9664684e7c85fc99b049e13a2ee9147c2175cf8f9c2255cbeabca9b15"
+            ),
+        },
+        {
+            "row_domain": "whole_document_locator_rows",
+            "row_count": 6,
+            "row_key_fields": ["locator_id"],
+            "row_keyset_sha256": (
+                "781503ddb5c277bbdfc991ffaaa0cc5f5f501a07a82c0327b774c5ff0f85713b"
+            ),
+            "row_domain_sha256": (
+                "143ee1802004812140ef5e019ab4eb422b0a850776e57308f85ae09c2ec1b522"
+            ),
+        },
+        {
+            "row_domain": "questionnaire_page_rows",
+            "row_count": 408,
+            "row_key_fields": ["questionnaire_page_id"],
+            "row_keyset_sha256": (
+                "695f1796cddcd2170e39b8d1e9ae550cdd0f0704326128cac72107309e633ce8"
+            ),
+            "row_domain_sha256": (
+                "08d8421547486b1e657e5c55a578874ec6f4748bc62f0d5cccddcc355780c13e"
+            ),
+        },
+        {
+            "row_domain": "questionnaire_occurrence_rows",
+            "row_count": 2_388,
+            "row_key_fields": ["questionnaire_occurrence_id"],
+            "row_keyset_sha256": (
+                "4a1c87c734d05b858805dcb887c59447a15030deac45dc06077dd79723ec0f48"
+            ),
+            "row_domain_sha256": (
+                "ad5873fc0d47e3717ca005fa0640fde6ec9141e05f282accbc5e57fb90935fdc"
+            ),
+        },
+        {
+            "row_domain": "flow_branch_rows",
+            "row_count": 690,
+            "row_key_fields": ["flow_branch_id"],
+            "row_keyset_sha256": (
+                "43faca7533afa1f4c77d72ebbca5e7c8798d442792b5143670ca75b955b0f253"
+            ),
+            "row_domain_sha256": (
+                "e8d84b554887e2273dd6638d3d4b2f51b71c5cc16decb00ea663c6838a69cd4f"
+            ),
+        },
+    ),
+}
+
+PINNED_ANNOTATION_INPUT_SEALS = {
+    "wave1968_ry1968_1974_early_totals": {
+        "document_annotation_input_count": 16,
+        "document_annotation_input_keyset_sha256": (
+            "4445ff182c45f4fe5bf7624a9cf147b453873e22aac6ba422a9e2ce5cb380634"
+        ),
+        "document_annotation_input_domain_sha256": (
+            "a2036a8115cf35b8ed53c38275b385cf0cd8638f336c04231d083d0fae0ce40c"
+        ),
+    },
+    "ry1975_1977_spouse_concept_seam": {
+        "document_annotation_input_count": 6,
+        "document_annotation_input_keyset_sha256": (
+            "c49b940390be4302579a8780cf76f6e77c5451770f160b8ebb84d13e1738ce9c"
+        ),
+        "document_annotation_input_domain_sha256": (
+            "871a44fa503d4b5ae26f6fdda981d6b2acae758fe37e384b90c48faa8495f27e"
+        ),
+    },
 }
 
 PAGE_KEYS = {
@@ -2107,6 +2188,25 @@ def _constructed_era_seal(inputs: EraInputs) -> dict[str, Any]:
     input_rows = [
         dict(annotation.input_row) for annotation in inputs.annotations
     ]
+    input_seal = {
+        "document_annotation_input_count": len(input_rows),
+        "document_annotation_input_keyset_sha256": _stream_array_digest(
+            [
+                [
+                    row["document_source_position"],
+                    row["source_document_id"],
+                ]
+                for row in input_rows
+            ]
+        ),
+        "document_annotation_input_domain_sha256": _stream_array_digest(
+            input_rows
+        ),
+    }
+    if input_seal != PINNED_ANNOTATION_INPUT_SEALS.get(spec["era_id"]):
+        raise ValueError(
+            "era annotation inputs differ from their pinned identity seal"
+        )
     row_seals = _row_domain_seals(inputs)
     value: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
@@ -2128,19 +2228,7 @@ def _constructed_era_seal(inputs: EraInputs) -> dict[str, Any]:
             positions
         ),
         "document_annotation_input_rows": input_rows,
-        "document_annotation_input_count": len(input_rows),
-        "document_annotation_input_keyset_sha256": _stream_array_digest(
-            [
-                [
-                    row["document_source_position"],
-                    row["source_document_id"],
-                ]
-                for row in input_rows
-            ]
-        ),
-        "document_annotation_input_domain_sha256": _stream_array_digest(
-            input_rows
-        ),
+        **input_seal,
         "row_domain_seal_rows": row_seals,
         "row_domain_seal_count": len(row_seals),
         "row_domain_seal_domain_sha256": _stream_array_digest(row_seals),

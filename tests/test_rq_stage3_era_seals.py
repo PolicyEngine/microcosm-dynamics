@@ -19,6 +19,8 @@ import build_rq_stage3_era_seal as builder  # noqa: E402
 
 ERA_ID = "wave1968_ry1968_1974_early_totals"
 ERA_PATH = builder.era_output_path(ERA_ID)
+ERA_2_ID = "ry1975_1977_spouse_concept_seam"
+ERA_2_PATH = builder.era_output_path(ERA_2_ID)
 EXPECTED_RAW_SHA256 = (
     "bcc3c542bc7e8410e025e4a3aa23ea0bb42da5b579d0c4d346746a9632911a44"
 )
@@ -28,8 +30,26 @@ EXPECTED_CONTENT_SHA256 = (
 EXPECTED_INPUT_DOMAIN_SHA256 = (
     "a2036a8115cf35b8ed53c38275b385cf0cd8638f336c04231d083d0fae0ce40c"
 )
+EXPECTED_INPUT_KEYSET_SHA256 = (
+    "4445ff182c45f4fe5bf7624a9cf147b453873e22aac6ba422a9e2ce5cb380634"
+)
 EXPECTED_ROW_SEAL_DOMAIN_SHA256 = (
     "ef659b290c2e9d5a38d19db7fbe1f16960cc9754a723a38ff23c5f879e4823bc"
+)
+EXPECTED_ERA_2_RAW_SHA256 = (
+    "5a954d5148706378df938231378a81af8f3412024e86c0ee9b1a4aec52f423aa"
+)
+EXPECTED_ERA_2_CONTENT_SHA256 = (
+    "3ac7136e2c8917b6ea0e1321f4a9f2dc6d8305d01f998d2bc4eddb009361413c"
+)
+EXPECTED_ERA_2_INPUT_KEYSET_SHA256 = (
+    "c49b940390be4302579a8780cf76f6e77c5451770f160b8ebb84d13e1738ce9c"
+)
+EXPECTED_ERA_2_INPUT_DOMAIN_SHA256 = (
+    "871a44fa503d4b5ae26f6fdda981d6b2acae758fe37e384b90c48faa8495f27e"
+)
+EXPECTED_ERA_2_ROW_SEAL_DOMAIN_SHA256 = (
+    "f32423b910a57720dcd8ca15664bcb6fe070fa2350d3698e5442585b33756561"
 )
 
 
@@ -41,6 +61,16 @@ def era_inputs() -> builder.EraInputs:
 @pytest.fixture(scope="module")
 def rebuilt(era_inputs: builder.EraInputs) -> dict:
     return builder.build_era_seal(ERA_ID, era_inputs)
+
+
+@pytest.fixture(scope="module")
+def era_2_inputs() -> builder.EraInputs:
+    return builder.load_era_inputs(ERA_2_ID)
+
+
+@pytest.fixture(scope="module")
+def era_2_rebuilt(era_2_inputs: builder.EraInputs) -> dict:
+    return builder.build_era_seal(ERA_2_ID, era_2_inputs)
 
 
 @pytest.fixture(scope="module")
@@ -118,9 +148,16 @@ def test_era_1_pins_counts_keysets_and_row_domains(rebuilt: dict) -> None:
     assert rebuilt["interview_waves"] == list(range(1968, 1976))
     assert rebuilt["document_source_positions"] == list(range(1, 17))
     assert rebuilt["document_annotation_input_count"] == 16
+    assert rebuilt["document_annotation_input_keyset_sha256"] == (
+        EXPECTED_INPUT_KEYSET_SHA256
+    )
     assert rebuilt["document_annotation_input_domain_sha256"] == (
         EXPECTED_INPUT_DOMAIN_SHA256
     )
+    assert {
+        key: rebuilt[key]
+        for key in builder.PINNED_ANNOTATION_INPUT_SEALS[ERA_ID]
+    } == builder.PINNED_ANNOTATION_INPUT_SEALS[ERA_ID]
     assert rebuilt["row_domain_seal_count"] == 5
     assert rebuilt["row_domain_seal_domain_sha256"] == (
         EXPECTED_ROW_SEAL_DOMAIN_SHA256
@@ -133,6 +170,50 @@ def test_era_1_pins_counts_keysets_and_row_domains(rebuilt: dict) -> None:
     assert seals["questionnaire_page_rows"]["row_count"] == 842
     assert seals["questionnaire_occurrence_rows"]["row_count"] == 5_621
     assert seals["flow_branch_rows"]["row_count"] == 1_531
+
+
+def test_era_2_pins_exact_counts_identities_and_row_domains(
+    era_2_rebuilt: dict,
+) -> None:
+    assert era_2_rebuilt["interview_waves"] == [1976, 1977, 1978]
+    assert era_2_rebuilt["document_source_positions"] == list(range(17, 23))
+    assert era_2_rebuilt["document_annotation_input_count"] == 6
+    assert era_2_rebuilt["document_annotation_input_keyset_sha256"] == (
+        EXPECTED_ERA_2_INPUT_KEYSET_SHA256
+    )
+    assert era_2_rebuilt["document_annotation_input_domain_sha256"] == (
+        EXPECTED_ERA_2_INPUT_DOMAIN_SHA256
+    )
+    assert {
+        key: era_2_rebuilt[key]
+        for key in builder.PINNED_ANNOTATION_INPUT_SEALS[ERA_2_ID]
+    } == builder.PINNED_ANNOTATION_INPUT_SEALS[ERA_2_ID]
+    assert era_2_rebuilt["row_domain_seal_count"] == 5
+    assert era_2_rebuilt["row_domain_seal_domain_sha256"] == (
+        EXPECTED_ERA_2_ROW_SEAL_DOMAIN_SHA256
+    )
+    assert era_2_rebuilt["row_domain_seal_rows"] == list(
+        builder.PINNED_ROW_DOMAIN_SEALS[ERA_2_ID]
+    )
+    seals = {
+        row["row_domain"]: row for row in era_2_rebuilt["row_domain_seal_rows"]
+    }
+    assert seals["document_source_rows"]["row_count"] == 6
+    assert seals["questionnaire_page_rows"]["row_count"] == 408
+    assert seals["questionnaire_occurrence_rows"]["row_count"] == 2_388
+    assert seals["flow_branch_rows"]["row_count"] == 690
+
+    raw = ERA_2_PATH.read_bytes()
+    assert len(raw) == 7_883
+    assert len(raw) < builder.MAX_COMMITTED_FILE_BYTES
+    assert hashlib.sha256(raw).hexdigest() == EXPECTED_ERA_2_RAW_SHA256
+    assert era_2_rebuilt["integrity"]["content_sha256"] == (
+        EXPECTED_ERA_2_CONTENT_SHA256
+    )
+    assert era_2_rebuilt["nonauthority_statement"] == (
+        builder.NONAUTHORITY_STATEMENT
+    )
+    assert builder.FORBIDDEN_EMISSION_KEYS.isdisjoint(era_2_rebuilt)
 
 
 def test_era_1_artifact_is_small_canonical_and_nonauthority(
@@ -401,19 +482,20 @@ def test_fully_rehashed_omitted_nested_keys_still_fail_source_led_validation(
             builder.validate_era_seal(mutation, era_inputs)
 
 
-def test_all_era_1_mutations_fail_closed(
-    era_inputs: builder.EraInputs, rebuilt: dict
-) -> None:
-    builder.run_mutation_tests(rebuilt, era_inputs)
+@pytest.mark.parametrize("era_id", builder.SEALED_ERA_IDS)
+def test_all_landed_era_mutations_fail_closed(era_id: str) -> None:
+    inputs = builder.load_era_inputs(era_id)
+    builder.run_mutation_tests(builder.build_era_seal(era_id, inputs), inputs)
 
 
-def test_builder_check_and_mutation_command_passes() -> None:
+@pytest.mark.parametrize("era_id", builder.SEALED_ERA_IDS)
+def test_builder_check_and_mutation_command_passes(era_id: str) -> None:
     subprocess.run(
         [
             sys.executable,
             str(SCRIPTS / "build_rq_stage3_era_seal.py"),
             "--era",
-            ERA_ID,
+            era_id,
             "--check",
             "--mutation-tests",
         ],
