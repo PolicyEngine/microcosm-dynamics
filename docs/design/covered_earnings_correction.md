@@ -47525,3 +47525,1338 @@ commit is bound by a validator-accepted v9 fresh-registration receipt.** The
 current V-B6 and constructibility failures prevent that receipt. Ratification
 alone authorizes only the separately reviewed machinery, relation rebuild,
 vector rerun, Q5, and expected-negative guarded steps above.
+
+## 25. AMENDMENT SECTION — Amendment 11: the fail-closed `missing_reason_code` law
+
+### 25.1 Status, immutable revision-12 base, scope, precedence, and map
+
+- **Status law: PROSPECTIVE DRAFT AMENDMENT.** This section proposes revision
+  13. These authoring bytes, implementation, artifact, tests, audit, referee
+  responses, and commits are not ratification. They authorize no Q5, official
+  inventory, bundle, receipt, registration, correction evaluation, context
+  run, output, publication, merge, or external use. Nothing here is
+  self-ratifying.
+- **Immediate immutable base.** D10 is the complete ratified revision-12
+  design at commit `3e4c6c25094d5853978e6ebe36ecf24e9746f99c`, path
+  `docs/design/covered_earnings_correction.md`, mode `100644`, Git blob
+  `bd2ce2e5d3b09107f3ef1f491b15b7161119f114`, exactly 3,472,168 raw
+  bytes, SHA-256
+  `bc3ea0dac27a57e8bca0d36d88d9962cc67924fddd895191b0556641e9261cba`.
+  Those complete bytes must byte-equal the proposed D11 half-open prefix
+  `[0,3472168)`. Commit
+  `07df16dcae46c4e641042cc2bef8e3a1dae20fd2` is the later
+  revision-12 runtime-registry repin and this implementation lane's base; it
+  is not the D10 document-only identity. Hash, ancestry, or a working-tree
+  path never substitutes for comparing every prefix byte.
+- **Cross-reference correction without prefix mutation.** The Amendment-11
+  charter calls the originating passage “§24.7.1.” D10 has no such heading.
+  The intended immutable §24.7 disposition row is D10 bytes
+  `[3424010,3424095)`, SHA-256
+  `bacf318ca95f7861df040c7353cb170e77261c1b67ec0c5ba12cf8119be19d77`.
+  This observation changes no D10 byte.
+- **Exact scope.** This section gives a total disposition for the
+  `missing_reason_code` member at every one of the 561,873 reachable source
+  entry occurrences. It does not create a taxonomy for DK, NA, RF, refusal,
+  inapplicability, suppression, Wild code, composites, or any other prose.
+  It changes no raw source byte, locator, lexeme, meaning, scalar, range,
+  unit, renderer, terminal, storage member, or coverage rule.
+- **Precedence.** Earlier law controls except where this section expressly
+  corrects the §24.10 blanket source-reproducibility claim to the exact
+  52-authorized / 524,538-unresolved literal partition and replaces the
+  §23/§24 escalation procedure. The binding §24.3 holding is composed and
+  strengthened: reproducible context or a lexical class does not establish a
+  source-authorized member value. Exact source bytes can authorize their own
+  occurrence without authorizing a class. No default may be invented.
+- **Illustrative-fence exception.** D9 lines 3,834-3,837 remain the sole
+  inherited strict-JSON-fence exception. Every JSON value authored here must
+  strict-parse after recursive duplicate-key rejection.
+
+The section is indivisible. Section 25.2 authenticates the evidence and its
+boundary; §25.3 gives the total fail-closed law; §25.4 defines and pins the
+generated audit artifact; §25.5 closes downstream overclaim; §25.6 defines
+A11-R01 through A11-R06; §§25.7-25.9 close law, comparator, and lifecycle
+consumers; and §25.10 fixes the only lawful order.
+
+### 25.2 Complete authenticated evidence record and exact boundary
+
+#### 25.2.1 Originating records and governing ratified bytes
+
+The committed codebook lane report
+`data/external/amendment_11_originating_records/claude-ce-v3compiler-codebook-report.md`
+is 15,872 bytes, SHA-256
+`245cedcd3f5d3ecd2245e8acec14e56511e973707cc5022cb8b75e94a387a605`.
+Its exact originating record is bytes `[13605,14213)`, 608 bytes, SHA-256
+`beada0568d204372f7d26b15f19602aa5ff11c6b8590c8a5d6830d37575d8fb5`.
+It reports a lexically derived missing disposition over the complete
+89,599-field PDF domain. A11's fresh reconstruction counts 231,263 such
+candidate occurrences. Its blanket statement that disposition is derivable
+is a lane interpretation, not source authority; §25.2.4 both rejects that
+blanket rule and identifies the narrower exact-byte source authority that the
+report missed.
+
+The committed Amendment-10 report
+`data/external/amendment_11_originating_records/claude-ce-amend10-report.md`
+is 17,745 bytes, SHA-256
+`9165cd527964bbefa10cb20c8afe69444c776b2b44956dbef239360a6f8b1ddb`.
+Its exact escalation is bytes `[13566,13807)`, 241 bytes, SHA-256
+`a7854580bca100104df376530aa2a1204c3d7dc5360ad2c91d80c8790d0d92d0`.
+Both reports are provenance records only; neither can authorize a source
+member. The terminal-LF canonical two-row record-specification domain has
+SHA-256
+`3921b4c3c4c6658a164b57a48fd1ec35a806cd97adfca05a4389523e692c9f3d`.
+The validator and committed tests open these repository copies, verify both
+complete-file pins and both exact spans, and then reproduce that domain hash.
+
+The controlling D10 spans are:
+
+| Law | D10 half-open bytes | Full SHA-256 | Use here |
+|---|---:|---|---|
+| §4.2 | `[45220,82726)` | `6c1f7a0ab0b0b23d660e226af7a5debfbadb9f5dcc292e38b24c48ba4e7866ba` | source meaning and member shape |
+| §19.3.2 | `[1490102,1574051)` | `557250219593b2d7f53d80471e833e6588fa42d3ea6077aceae94b489b0c5b29` | 47-document extraction and source-backed nonempty-reason requirement |
+| §20.3.5 | `[1845301,1858115)` | `f250ea1f130f90929d4d6a388ab05f4348585673309bcfd88302dd13154afbb3` | conflict, unsupported, and incomplete precedence |
+| §23.3.1 | `[2559891,2567956)` | `1c9c5fbe6dacff72847f4f00bfc7b3c45c272a205e6cf137c88d9e1f4e8cbe80` | tagged literal/range union and no default |
+| §23.9.1 | `[2642976,2648830)` | `27faadb9e678813fc1d25e5a22bf11bf42f206548af932b31b307356edd2625e` | V-B6 remains nonpassing on present evidence |
+| §24.1 | `[2653920,2657453)` | `a4f9cc00444fd74e0c0e3d4fbb6f28fdc7cb7421aa631c9647c4ecd09b7ffb1d` | under-determined-member inventory |
+| §24.3 | `[2692901,3397771)` | `867c24a1ff36f877ad369f3885c85bbe274bee1f0a0ad9deef5138173eb008e7` | registry-exact law and no-currency-default precedent |
+| §24.7 | `[3423012,3429140)` | `b9621c58482cb3b60f5b4363c3ace0b47c24079c65f242c26bfc6db875d61abc` | closure and named-successor discipline |
+| §24.10 | `[3467673,3472168)` | `fcd6e8ec58fcd3920da5889e3e62cea2e55f8dcad3861b0c8aea91f0dadc2b55` | escalation, no-default order, and successor request |
+
+#### 25.2.2 Registry and raw-byte authentication
+
+The sole upstream registry is
+`data/external/psid_questionnaire_dictionary_inventory_registration_required_v1.json`,
+25,474,435 bytes, SHA-256
+`a974c6fb65a9f3d52387163f2e98b7cd8cfdbd57f5e95d1f766b3aa25d167ac0`.
+Filter its stored manifest order to roles `family_codebook`,
+`stata_value_labels`, and `spss_value_labels`. The resulting exact 47-row
+registered array has SHA-256
+`d5b67f8b6b95dded9d8987af5784ea93bdc4b05744c3338619dd3681b7e62957`;
+its projected source rows have SHA-256
+`0d27b2f940413d11727753a820360ac0a680eed503ea85bbe0a1344ed2f187e0`.
+
+| Registered class | Files | Complete bytes |
+|---|---:|---:|
+| family-codebook PDFs | 43 | 109,680,641 |
+| Stata/SPSS value-label documents | 4 | 5,194,449 |
+| **complete source domain** | **47** | **114,875,090** |
+
+Before semantic parsing, the builder opens every path descriptor-relative
+under the anchored source root with no-follow on every component and leaf,
+requires a stable regular file, and compares registered byte size and full
+SHA-256 over the exact opened buffer. All 47 match; mismatch count is zero.
+That exact buffer, not a reopened path or supplied page text, enters the
+parser. The artifact's 47 ordered `source_document_rows` retain every path,
+wave, raw size/hash, decoder/segmentation identity, row/member interval, and
+per-document relation digest, plus its exact source-authority subcount and
+digest. Their complete terminal-LF canonical array has SHA-256
+`528091289177d9558f5e6baac99ca710c1f4db608d5e9150b84a3a6577258122`.
+This is the complete per-source evidence census, not a sample.
+
+#### 25.2.3 Complete structural and lexical census
+
+The pinned PDF decoder for the 43 PDFs is Poppler `pdftotext` 26.04.0 with
+arguments exactly `["-layout","-enc","UTF-8"]`. The four `.do`/`.sps`
+documents use the strict source-text decoder and their per-document decoder
+identities are bound by `derivation_metadata_sha256`; all four decode as
+Windows-1252 in this registered corpus. The 47 raw documents derive 102,179
+canonical rows, 112,382 source-region locators, and 561,873 normalized entry
+occurrences. Source structure and exact-byte authority give the present
+partition:
+
+| Entry kind and exact authority state | Occurrences | Present `missing_reason_code` disposition |
+|---|---:|---|
+| `numeric_range` | 37,283 | structural JSON null |
+| `literal`; exact source value `9,999,999.00` and exact meaning `Missing, not imputed` | 52 | nonempty opaque exact-occurrence code |
+| every other `literal` | 524,538 | source missing disposition unadjudicated; whole settlement blocks |
+| **complete** | **561,873** | exactly one arm; 52 source-authorized codes, but no accepted complete settlement |
+
+The entry-kind vector is 70,235 MSB-first bytes, one = literal, zero = range,
+SHA-256
+`c22dedca28755870ad892d5f7be89e79a02dc30b001bcc6171c19f8ce4d053f3`.
+Its counts are 524,590 and 37,283 and all unused padding bits are zero.
+
+Separately, the predecessor regex produces an audit-only lexical vector:
+231,263 candidate-missing and 330,610 other occurrences. Its 70,235 packed
+bytes have SHA-256
+`0534dd57a3f2ff12db460323b92a583ec4c0e7d7fb3d884a1bef6cced67a15c7`.
+Within literals, 293,327 are lexical-other, so 231,263 + 293,327 = 524,590;
+adding 37,283 ranges gives the all-member lexical-other count 330,610. The
+candidate projection has SHA-256
+`792b02b8deb5341b6b9ca8abd714dbc08242699a1c951685fca89ac4173c1c92`;
+its 35,925 distinct exact meanings have SHA-256
+`6f76fefce541fec600b35d5526d981529a9134cf0a5e6949198315c837614fb1`.
+These are reproducible lexical facts and never source disposition authority.
+
+Independently, the source-authority vector is 70,235 MSB-first bytes, one =
+an exact source-authorized missing literal and zero = every other member. Its
+counts are 52 and 561,821, its SHA-256 is
+`0506ad32d8ecc06e53aec9ecbf4b8c4b4b904dc552f794567bee8deb9906504a`,
+and all unused padding bits are zero. This vector is occurrence-exact; it is
+not a semantic class or a default for neighboring values, fields, or waves.
+
+The 43 PDFs contribute 89,599 rows and 479,345 members; the four label files
+contribute 82,528 members. Candidate counts are 203,283 and 27,980
+respectively. The complete source-row domain, member domain, member-identity
+domain, and locator domain SHA-256 values are respectively
+`5feb5dacc3320f83a7b9eb7a331637721bbb58fe77f4e8f9cfb9165b4bad64ac`,
+`547f6331fa469b3890e41b841cc89d807b9e7779326eb7b4f60b1208e2ddd4a1`,
+`1e8384aec708a30b5beec81e4c4c08e330dd2ca6a33c36a9dfe208b9b8eee312`,
+and `1e261e8f0fa1da3942ca97da9de7d657715d0518e075e9149f546b1165012f8d`.
+
+The inherited 86-dictionary-document empty missing-declaration relation has
+count zero and SHA-256
+`37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570`.
+It is retained only as an inherited compiler fact. It is outside the 47-input
+A11 reproduction; the artifact's `reproduced_from_source_bytes: true` is
+strictly scoped to the 47 registered inputs and must not be read as a new
+reproduction of those 86 documents.
+
+#### 25.2.4 Direct disproof, context boundary, and raw witnesses
+
+The registered sources expose value/range lexemes and source meanings. They
+define no dedicated missing-disposition column, reason-code column,
+atomization, equivalence, priority, semantic taxonomy, or default derivation.
+They do, however, use an exact missing-disposition and reason vocabulary in
+52 literal occurrences: source value `9,999,999.00`, source meaning
+`Missing, not imputed`, and normalized disposition `missing`. Those exact
+bytes authorize only their own opaque occurrence codes.
+
+Corpus-exhaustive targeted sweeps of every normalized occurrence found 118
+literals whose exact meaning contains the case-folded whole word `missing`,
+11,790 literals whose exact meaning contains `imput`, and an intersection of
+exactly 52. The range domain contains one `imput` occurrence. Review of every
+member in those targeted sets found no other whole occurrence that states
+both missingness and non-imputation. The 52 are four entries in each of the
+13 waves 1999, 2001, 2003, 2005, 2007, 2009, 2011, 2013, 2015, 2017, 2019,
+2021, and 2023. Their referee-format compact UTF-8 audit projection is 30,989
+bytes, SHA-256
+`f6d7f8b7f671379a6b4b7ea985415be3fc347ba169e5e07310df3cf3c1b3d2d1`;
+their complete exact-occurrence/code relation has SHA-256
+`177b4f369d499de6af292283793c1bb4cce7f00c84fa6e0657ec4e62d6bc016d`.
+
+The first witness is PDF position 30,
+`family/1999/FAM1999ER_codebook.pdf`, 2,819,749 bytes, SHA-256
+`5accefc4c1b50b3447b1a674ac2750de94568c538873f9bab34c2049c80c6107`,
+page 1068, field `ER16515B2`, row 3566 entry 1, locator
+`psid-source-region:e7f66578b141f5b8f1d5ec1c6f7aeade58e1ac617be05eba92ded11e8a1adc37`.
+Its description includes exact bytes `Not imputed, sub-utility category`.
+
+The broad predecessor lexical rule still has at least 118 context-required
+false-or-ambiguous candidates, SHA-256
+`25a3b74e34d5f594937cdbc9bb260c28ed5db3f0fb9abea07af6603651fd8bfc`.
+Of those, 61 are directly disproven by their source meanings, SHA-256
+`a9be450dc6e38331c5bf491a73de40ad2e72367c40df6ffdeb81e88a4c6e2845`.
+
+Each PDF witness below is pinned first by its complete raw PDF size/hash and
+then by the deterministic UTF-8 output of the named one-page
+`pdftotext -layout -enc UTF-8` extraction. Page spans are half-open offsets in
+that page output; they are not claimed to be offsets into compressed PDF
+bytes.
+
+| Source witness | Complete PDF pin | Page-text pin and exact result |
+|---|---|---|
+| 1970 V1107 | `family/1970/FAM1970_codebook.pdf`; 1,105,895 bytes; `60fc9ccc325b0f3f9ea4167553df9586edd8b2f9b97b89e3a7228b71c1d96ad6` | page 3 `[61,2451)`, `8496a643e1666ac021316143c61815f5a09806f465162d575bdf2a6df324b00a`; locator `psid-source-region:d0981ca551d02af319049cef59de25e245eb2372572dea1bab40ae6b30ff5010`; code 0 “Never refused,” code 1 “Refused at least once,” code 9 “NA” |
+| 1972 V2833 | `family/1972/FAM1972_codebook.pdf`; 1,064,146 bytes; `0c280b4c1610712807d8426ebd39c3689cdcf31a3a08da3397ce4881a4d91105` | page 123 `[59,2950)`, `a076096a66a70d42e5d6937776dde080f19e1dd15f2e11ca004cf46148e12cb6`; locator `psid-source-region:a72190c85141db011fd323c3d8129bff6efb6670bea1a9e8993714f967c88c44`; code 3 is substantive “missing finger,” while code 9 is NA |
+| 1981 V7774 | `family/1981/FAM1981_codebook.pdf`; 1,101,011 bytes; `ae9f3a0b46bad1c610b0ff51c3e26a361dbfb3eb900245699aba47a31cd72a37` | page 72 `[60,2692)`, `c09c2e74c4593e3770c547b07cc2ca362f1ac2287ac6457564fbe77458f164fe`; locator `psid-source-region:5da6ec7c62ca7d18af8ec20d326247835c473b4936cb8b1d5510d462f8236660`; code 3 is “DK how to apply,” while code 99 is “NA; DK” |
+| 1988 V15782 | `family/1988/FAM1988_codebook.pdf`; 2,976,135 bytes; `4e2a75c05ee4b2ca9d44a31063096567f45c97285127a124d2d98a913f772c8f` | page 308 `[60,2321)`, `0e7e858f28da99ccba86367049a35d48064e202d92abbb31c54ea22807152300`; locator `psid-source-region:d698476904a733d006326e65e80702d5cc412417401feb9a41abeea51bb36f12`; code 3 is an accuracy-status category whose prose contains “missing data” |
+
+The ambiguity is also population-wide. Exact candidate meanings include DK
+50,975 times, `NA; refused` 54,409, `NA; DK` 12,290, and
+`DK; NA; refused` 9,249; the exact count-map SHA-256 is
+`499f73b16da86766fb7a71afafffad3b35bae6570fc856d0fe52ab3aee3244f6`.
+Overlapping phrase counts include DK 116,452, NA 123,703, RF 35,840,
+`refus*` 66,189, Inap 90,626, Wild code 683, data suppressed 178, literal
+“missing” 118, don't know 38, and not ascertained 4; their map SHA-256 is
+`dc2f86e4686055409441c894f473772114dd6042b5df89c1a87e03591dd57cdd`.
+No token split, sibling copy, or frequency rule can lawfully choose a value.
+
+Twenty-one historical Wild-code candidates are structurally numeric ranges,
+must remain reason-null, and have ordered witness SHA-256
+`5473c792d62339b1da55c6124ddb548020480d6a8dfcd06b7cc500088d3a15d5`.
+The one range whose meaning contains `imput` likewise remains structurally
+reason-null. The exact factual boundary is therefore: source structure
+determines range versus literal; exact source value/meaning bytes authorize
+52 occurrence-local missing dispositions and opaque codes; source bytes and
+the predecessor algorithm determine the separate lexical audit; and no
+registered source determines the other 524,538 literal dispositions. Nothing
+supports a semantic taxonomy, cross-occurrence equivalence, sibling or wave
+copy, or default.
+
+### 25.3 Total member law
+
+#### 25.3.1 Exact occurrence identity and authenticated relation
+
+Let `M` be the exact 561,873-member concatenation in authenticated
+source-manifest, canonical-row, and normalized-entry order. A member identity
+is the exact 12-position array whose members, in order, are:
+
+~~~text
+psid_codebook_source_member_identity.v1
+global member position
+source-document position
+source-row position
+entry position
+source document ID
+codebook field-row ID
+complete ordered nonempty source-locator-ID array
+entry reference
+entry kind
+exact source value/range lexeme
+exact nonempty source meaning
+~~~
+
+All four positions are nonnegative JSON integers excluding booleans. IDs,
+row and entry equations, entry exact keyset, literal scalar grammar,
+canonical scalar value, range bounds/step, null source unit, null source
+reason, and every per-document count/digest/interval must validate before a
+member is considered. An empty or malformed preimage, invalid scalar/range,
+wrong coordinate, missing/duplicate locator, unregistered member, reordered
+row, or supplied reason aborts. A lexical bit can never repair identity.
+
+#### 25.3.2 Total current outcome and whole-relation nonemission
+
+The current law is exactly:
+
+| Authenticated state | Required member result | Exact disposition or action |
+|---|---|---|
+| `entry_kind == numeric_range` | JSON null | `source_nonmissing_reason_not_applicable` |
+| `entry_kind == literal` and the exact source value/meaning/disposition triple is `9,999,999.00` / `Missing, not imputed` / `missing` | nonempty `psid-source-missing-reason:` exact-occurrence code | current source-authorized missing literal |
+| every other authenticated `literal` | no value may be assigned | `unadjudicated_source_missing_disposition`; abort the complete settlement |
+| `conflicting_member_or_authority` | no value may be assigned | `conflicting_missing_reason_authority`; abort |
+| `duplicate_member_or_authority` | no value may be assigned | `conflicting_missing_reason_authority`; abort |
+| `unknown_or_unregistered_member_or_authority` | no value may be assigned | `incomplete_missing_reason_authority`; abort |
+| `malformed_member_or_authority` | no value may be assigned | `incomplete_missing_reason_authority`; abort |
+| `drifted_member_or_authority` | no value may be assigned | `incomplete_missing_reason_authority`; abort |
+
+For each of the 52 authorized literals, prepend
+`psid_source_missing_reason_preimage.v1` to the exact identity in §25.3.1,
+hash its terminal-LF §10.1 bytes, and append the lowercase digest to
+`psid-source-missing-reason:`. The 52 codes are nonempty and pairwise
+distinct. They preserve exact occurrence bytes and claim no semantic class.
+
+The failure assignment is the following disjoint total function. Let:
+
+~~~text
+S = {conflicting_member_or_authority,
+     duplicate_member_or_authority,
+     unknown_or_unregistered_member_or_authority,
+     malformed_member_or_authority,
+     drifted_member_or_authority}
+C = {conflicting_member_or_authority,
+     duplicate_member_or_authority}
+I = {unknown_or_unregistered_member_or_authority,
+     malformed_member_or_authority,
+     drifted_member_or_authority}
+C ∩ I = ∅
+C ∪ I = S
+
+For every nonempty X ⊆ S:
+  D(X) = conflicting_missing_reason_authority  iff X ∩ C ≠ ∅
+  D(X) = incomplete_missing_reason_authority   iff X ∩ C = ∅
+~~~
+
+The two conditions are disjoint and exhaustive, so every one of the
+`2^5 - 1 = 31` nonempty predicate sets receives exactly one identifier,
+independent of input order. The implementation pins the five singleton rows
+and the two-identifier precedence array into the artifact and mechanically
+enumerates all 31 sets in the committed test battery.
+
+Thus exactly 37,283 structural range arms are null, exactly 52 literal arms
+have source-authorized nonempty opaque codes, and exactly 524,538 literal
+arms have the named unresolved disposition. No accepted complete settled
+relation exists. Because a downstream normalized row is not admissible until
+every required member is determined, the implementation must preflight the
+complete authenticated relation and then abort without emitting even the
+authorized or range-only partial result. The accepted-output nonempty reason
+count is therefore zero, distinct from the 52 authenticated preflight codes.
+Null is not assigned to an unresolved literal, and the broader lexical vector
+assigns no reason.
+
+No later positive, sibling, locale, wave, evidence image, predecessor result,
+or consumer may rescue an earlier failure. `settle_missing_reason_codes` is
+the sole production settlement entry point; after complete preflight it
+raises exactly
+`source missing disposition is unadjudicated for 524538 literals`.
+
+#### 25.3.3 Conditional fixture boundary, not present authority
+
+A satisfiable fixture is mandatory so validators can test all branches
+without pretending complete production can pass. Current preflight uses the
+opaque construction only for the 52 exact source-authorized occurrences in
+§25.3.2. For other occurrences, only a future, separately registered
+exact-occurrence authority that explicitly supplies a unanimous Boolean
+missing disposition may cause the fixture to exercise this conditional
+construction:
+
+1. authenticated nonmissing literal or numeric range returns JSON null;
+2. authenticated missing literal forms the exact identity above with first
+   literal `psid_source_missing_reason_preimage.v1`, hashes its terminal-LF
+   §10.1 bytes, and returns literal `psid-source-missing-reason:` followed by
+   the lowercase SHA-256; and
+3. absent, malformed, disagreeing, duplicated, or colliding claims abort.
+
+The opaque string denotes only that exact occurrence. It claims no semantic
+equivalence and cannot answer whether prose means refused, unknown,
+inapplicable, suppressed, or any other category. The fixture APIs are
+explicitly nonproduction and do not register a future authority, choose the
+future law, settle the remaining 524,538 literals, or permit
+`settle_missing_reason_codes` to emit. A later authenticated authority for
+those unresolved occurrences requires a separate successor amendment and may
+choose a different source-supported construction.
+
+### 25.4 Generated fail-closed authority artifact and exact pins
+
+#### 25.4.1 Artifact identity and canonicalization
+
+The derived audit artifact is
+`data/external/psid_missing_reason_code_authority_v1.json`, with schema and
+artifact ID `psid_missing_reason_code_fail_closed_authority.v1`. It is exactly
+709,526 bytes, raw file SHA-256
+`833c8dca8cec6a44ea4fe6c65d3662ce8ef8b7da062350437cf4f538dc8b6dac`,
+and self-zeroed content SHA-256
+`1fdc2e0a367042dff33bb2ea920e40b55e33345b9c00324239910cc1f07a5e23`.
+Serialization is UTF-8 sorted-key compact JSON with exactly one terminal LF,
+no duplicate key at any depth, no nonfinite number, and `content_sha256`
+computed with that member set to 64 ASCII zeroes.
+
+Its exact top-level members, independent of sorted serialization order, are:
+
+~~~text
+artifact_id
+authority_boundary
+conditional_reason_code_law
+derivation_identity
+entry_kind_vector
+integrity
+lexical_candidate_vector
+registered_source_identity
+schema_version
+source_authority_vector
+source_document_count
+source_document_rows
+source_document_rows_sha256
+source_member_census
+~~~
+
+The artifact binds the exact positive 52-occurrence census and the remaining
+negative boundary; it is not an independent source authority or a semantic
+reason registry. Authority comes only from the authenticated exact source
+bytes reproduced into its occurrence relation. Its
+`reproduced_from_source_bytes: true` has only the 47-source scope stated in
+§25.2.3.
+
+#### 25.4.2 Complete relation and boundary pins
+
+| Relation | Count/bytes | Full SHA-256 |
+|---|---:|---|
+| committed originating-record specification domain | 2 / 33,617 record bytes | `3921b4c3c4c6658a164b57a48fd1ec35a806cd97adfca05a4389523e692c9f3d` |
+| registered source rows | 47 / 114,875,090 source bytes | `d5b67f8b6b95dded9d8987af5784ea93bdc4b05744c3338619dd3681b7e62957` |
+| projected source rows | 47 | `0d27b2f940413d11727753a820360ac0a680eed503ea85bbe0a1344ed2f187e0` |
+| complete source-document census rows | 47 | `528091289177d9558f5e6baac99ca710c1f4db608d5e9150b84a3a6577258122` |
+| canonical source-row domain | 102,179 | `5feb5dacc3320f83a7b9eb7a331637721bbb58fe77f4e8f9cfb9165b4bad64ac` |
+| complete source-member domain | 561,873 | `547f6331fa469b3890e41b841cc89d807b9e7779326eb7b4f60b1208e2ddd4a1` |
+| source-member identity domain | 561,873 | `1e8384aec708a30b5beec81e4c4c08e330dd2ca6a33c36a9dfe208b9b8eee312` |
+| source-locator domain | 112,382 | `1e261e8f0fa1da3942ca97da9de7d657715d0518e075e9149f546b1165012f8d` |
+| lexical candidate identity domain | 231,263 | `e9bfe0593cfbdf4fa218d4e01f0ec60ac9b2350838f6dd631e4d91683ab53baa` |
+| packed exact source-authority vector | 70,235 bytes / 52 one / 561,821 zero | `0506ad32d8ecc06e53aec9ecbf4b8c4b4b904dc552f794567bee8deb9906504a` |
+| referee-format exact source-authority audit | 52 / 30,989 bytes | `f6d7f8b7f671379a6b4b7ea985415be3fc347ba169e5e07310df3cf3c1b3d2d1` |
+| exact source-authorized occurrence/code relation | 52 | `177b4f369d499de6af292283793c1bb4cce7f00c84fa6e0657ec4e62d6bc016d` |
+| directly disproven candidates | 61 | `a9be450dc6e38331c5bf491a73de40ad2e72367c40df6ffdeb81e88a4c6e2845` |
+| minimum context-required candidates | 118 | `25a3b74e34d5f594937cdbc9bb260c28ed5db3f0fb9abea07af6603651fd8bfc` |
+| numeric-range Wild-code defeats | 21 | `5473c792d62339b1da55c6124ddb548020480d6a8dfcd06b7cc500088d3a15d5` |
+| exhaustive rejection-class witnesses | 15 | `01c9fd7a3cb4627e5fef7970fd1fa52ae410505a39c5ce34612d9bf89d6f4f19` |
+
+The 15 classes are lexical negation, substantive refusal event, anatomy
+phrase, accuracy-status phrase, information-access phrase, composite atom
+choice, numeric-range Wild-code defeat, same-spelling equivalence, sibling/
+wave/locale default, empty preimage, unregistered/reordered member, evidence
+laundering, future-authority conflict, collision/duplicate assignment, and
+semantic-taxonomy request. Each row states its required fail-closed action.
+
+#### 25.4.3 Regenerable implementation and no hand-edited derivative
+
+| Position | Repository path | Bytes | Raw SHA-256 |
+|---:|---|---:|---|
+| 0 | `src/populace_dynamics/data/psid_codebook_extraction.py` | 56,370 | `f096db6ad4185eb57782595411196a00dd000bbea9a7d24daac252781c018181` |
+| 1 | `src/populace_dynamics/data/psid_missing_reason_authority.py` | 75,800 | `9fa3c297b7f2e5cd61483b683799727b556488699f194ef0614b9bec7854ce7c` |
+| 2 | `scripts/rebuild_amendment11_missing_reason_authority.py` | 82,244 | `5ce9de2fde0a8e9c54f14846282e01a3d4eb76910bf1484c41e5a001531a28f2` |
+
+The three-row implementation-domain SHA-256 is
+`43c605f8de32114dfcaa2eaadfc34cd4b6fe902566ebfec083fb3f2eefcb6711`.
+The expected-negative R05 executable
+`scripts/replay_amendment11_no_movement.py` is 32,330 bytes, raw SHA-256
+`597670958b6609740eb4742c4144fb448026df82c767ece4db3e30777d6b77e6`.
+The committed
+`test_replay_script_matches_exact_documented_byte_pin` test reads that path
+as bytes and asserts both literals, so a behavior-preserving replay-script
+byte change fails mechanically.
+
+The builder authenticates both committed originating records and spans, the
+registry, and all sources before semantic work, runs per-document derivations
+in confined workers, binds exact implementation bytes before/during/after
+workers, builds from those summaries, validates the complete candidate,
+stages beneath an anchored directory descriptor, and commits with no-follow,
+stable-parent, single-link, fsync, byte reread, and rollback guarantees.
+`--check` performs a fresh reconstruction and exact byte comparison. The JSON
+file is derived only by this builder and must never be hand edited.
+
+### 25.5 Downstream composition and prohibition on inferred movement
+
+#### 25.5.1 No complete successor relation exists
+
+The present law assigns exact missing dispositions and nonempty opaque codes
+to 52 literals, but leaves 524,538 literal dispositions unresolved. It
+therefore cannot produce normalized settled rows, rerun the 89,599-field
+classifier, calculate Amendment-11 terminal movement, recount storage, create
+a revision-13 full-relation identity, or supply a Q5 comparand. The exact §24
+terminal vector, assignments, failure rows, and storage populations remain
+true historical revision-12 facts. Copying them, assuming zero movement, or
+repinning them as revision 13 would ignore the incomplete relation and is
+forbidden.
+
+A constructible synthetic fixture may show that changing only the spelling
+of an already-authorized nonempty opaque reason leaves a fixture classifier
+unchanged. It proves neither the missing/nonmissing disposition nor production
+invariance. A future authenticated disposition can change which values are
+nonmissing and can therefore change terminal assignment, logical ranges,
+member populations, and storage. No current Amendment-11 movement or capacity
+conclusion follows.
+
+#### 25.5.2 Ordered present blockers
+
+The primary current blocker is
+`blocked_source_missing_disposition_underdetermined`: 524,538 literal
+occurrences lack registered disposition authority. Section 23.9.1's V-B6
+also remains nonpassing on the present evidence because no total missing
+substantive authority has been supplied. Section 24's
+122,255,013,691,442-byte four-shape floor and measured-capacity inequality
+remain historical revision-12 results, but cannot be asserted for an unknown
+future settlement. The source blocker precedes any new classifier, movement,
+constructibility, Q5, registry, bundle, receipt, registration, correction,
+or publication question.
+
+Ratifying this negative law would close only the procedure and preserve the
+block. It would not turn an audit artifact into model input or instantiate
+any §25.9 schema. A later source authority must arrive through a separate
+amendment with fresh source evidence, a total disposition/reason law, fresh
+terminal and storage reconstruction, A11-successor gates, a new comparator
+census, and lifecycle analysis.
+
+### 25.6 Mandatory A11-R01 through A11-R06 gates
+
+#### 25.6.1 A11-R01 — registry and raw-source exact cover
+
+Freshly verify both committed originating-record complete bytes and spans,
+their two-row domain hash, the registry byte size/hash, exact 47-row filter
+and order, all 47 raw sizes/full hashes, stable descriptor reads, decoder
+version and arguments, derivation metadata, and the complete
+47/102,179/561,873/112,382 counts before semantic use. Wrong path, traversal,
+symlink, short/long file, reordered registry, source mutation, descriptor
+swap, record drift, decoder drift, parser drift, or metadata drift aborts
+before artifact emission.
+
+#### 25.6.2 A11-R02 — structural vector and evidence-boundary reproduction
+
+Reproduce independently the 70,235-byte entry-kind, nonauthority lexical,
+and exact source-authority vectors, with all counts and hashes in
+§§25.2-25.4. Reproduce the exhaustive 118-literal `missing` sweep, the
+11,790-literal `imput` sweep, their 52-occurrence intersection, the one range
+`imput` occurrence, the 30,989-byte audit projection, the exact occurrence
+relation, the 61 direct disproofs, 118 minimum context-required rows, 21 range
+defeats, and 15 rejection classes. Require exactly 37,283 structural null
+arms, 52 source-authorized literal codes, 524,538 blocked literal arms, zero
+accepted-output reason assignments, and no complete emitted settlement. A
+broad lexical-positive count is never a production-positive count.
+
+#### 25.6.3 A11-R03 — satisfiable conditional nonproduction fixtures
+
+Exercise the current exact source-authorized value/meaning bytes to a
+nonempty opaque occurrence code and near-byte mutants to the unresolved arm.
+Separately exercise, without a future-source-authority claim: one fixture
+missing literal to one nonempty opaque occurrence code; one authenticated
+nonmissing literal to null; one numeric range to null; same spelling at
+distinct occurrences to distinct opaque codes; a whole composite without
+atom choice; and unknown, malformed scalar/range, empty preimage,
+disagreement, duplicate assignment, collision, taxonomy request, and
+range-as-missing conflict to their exact fail-closed actions. Enumerate the
+five-state disposition partition over all 31 nonempty predicate sets. The
+fixture passes only when complete production settlement remains unavailable.
+
+#### 25.6.4 A11-R04 — artifact, fresh build, and transactionality
+
+Strict-parse and validate every nested artifact key, type, order, count,
+digest, vector equation, zero padding bit, source row, boundary row,
+implementation byte, self-zeroed content digest, and canonical byte. A fresh
+47-source build must exact-equal the 709,526-byte artifact. Test output-source
+alias, case alias, parent/leaf swap at every phase, symlink/hard-link addition,
+worker escape, implementation drift, replacement and interruption, backup
+corruption, final fsync failure, rollback restoration, mode normalization,
+and final stable reread. Failure stdout is empty and no partial/staged output
+is accepted.
+
+#### 25.6.5 A11-R05 — expected-negative production gate
+
+After A11-R01 and A11-R04 have completed, the R05 executable must strict-read
+and validator-bind the committed artifact, cross-bind every census/boundary
+constant, verify its own documented 32,330-byte/full-SHA-256 pin, reproduce
+§24 aggregates only as labeled historical evidence, classify the 52 exact
+source-authorized occurrences, and invoke the sole production gate on the
+remaining 524,538 literals. Required result is exit status 2, empty stdout,
+stderr naming
+`blocked_source_missing_disposition_underdetermined`, no replay start, no
+accepted output, no movement relation, no revision-13 relation identity, and
+no Q5. A “pass” result is a gate failure. The separately labeled small
+fixture must remain satisfiable and must mint only a fixture identity.
+
+#### 25.6.6 A11-R06 — mutation coverage and meaning of gate pass
+
+Mutations cover raw same-size byte and truncation; registry size/hash/order;
+decoder/parser metadata; source/locator/row/member reordering; scalar and
+range semantics; both packed vectors and padding; all boundary/census hashes;
+lexical-authority promotion; semantic equivalence/default permission;
+evidence laundering; future conflict; duplicate/collision; implementation
+identity; artifact canonical/content digest; production-versus-fixture entry
+point; output alias/ancestry/link/fsync/replacement/rollback; and R05 artifact
+absence or mutation. Every mutant reaches its named null/abort arm without
+accepted output.
+
+The committed genuine omitted-key battery discovers the top-level object and
+all 16 nested object keysets, deletes each key once at its representative
+path, and requires rejection of all 181 deletions. Its 17 parametrized shape
+nodes plus one completeness node prove all 17 object shapes. This is JSON-key
+deletion, not an absent vector position. A separate committed battery directly
+mutates all 18 `_sha256` fields currently nested under
+`source_member_census` and `authority_boundary`, including every core census
+hash and every boundary hash, and requires rejection of all 18.
+
+The complete A11 gate passes exactly when A11-R01 through A11-R06 prove this
+expected fail-closed outcome in one reviewed run. “Gate pass” means the law
+correctly refuses production; it never means a `missing_reason_code` relation
+was settled. Skipping unavailable raw sources is not a ratification pass.
+
+The exact focused selector is:
+
+~~~shell
+PYTHONPATH=src:. \
+  /Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python -m pytest \
+  tests/data/test_psid_codebook_extraction_validation.py \
+  tests/data/test_psid_missing_reason_authority_artifact.py \
+  tests/data/test_psid_missing_reason_authority_unit.py \
+  tests/estimates/test_birth_evidence_artifact.py \
+  tests/test_rebuild_amendment11_missing_reason_authority.py \
+  tests/test_replay_amendment11_no_movement.py
+~~~
+
+That exact six-module selector collects and passes exactly 223 nodes; no
+unstated deselection or additive module is part of the published count.
+
+### 25.7 Fail-closed replacement inventory and complete closure sweep
+
+The exact design-family dispositions are:
+
+| Earlier law or consumer | Amendment-11 disposition |
+|---|---|
+| §4.2 and §19.3.2 member shape and nonempty source-backed reason requirement | composed with §§25.2-25.3; unchanged and unnarrowed |
+| §23 tagged range/literal union and no-default law | composed with §25.3; strengthened against lexical promotion |
+| §23 `missing_reason_code` under-determination | composed for the 52 exact source-authorized occurrences and escalated unresolved for the remaining 524,538 by named successor §§25.2-25.3 and §25.10; no complete relation is settled |
+| §24.1 two-member inventory | composed: `typed_value_unit` remains historically resolved; 52 `missing_reason_code` occurrences are source-authorized and the other 524,538 literals remain substantively unresolved |
+| §24.7 `missing_reason_code` disposition row | composed-with-named-successor for the exact positive census and escalated-unresolved-by-named-successor for the remainder |
+| §24.10 successor request | procedurally answered with a 52/524,538 partition; its no-default blocker survives for the incomplete relation |
+| predecessor lexical-candidate vectors and evidence images | lawfully unchanged as regression/audit facts only; prohibited as source authority |
+| §24 unit law and A10-R01 through A10-R05 | lawfully unchanged historical law; no Amendment-11 output is copied from it |
+| semantic taxonomy, complete settled relation, movement, Q5, and storage recount | lawfully unavailable because the 52 occurrence codes imply no taxonomy or default and 524,538 literal dispositions remain unresolved |
+| §§24.8-24.9 post-D10 comparator/lifecycle dispatch | replaced for any future post-D11 registration only by §§25.8-25.9; no schema may instantiate now |
+| registry, bundle, receipt, correction, output, and publication consumers | lawfully unchanged and blocked before construction |
+
+Before §25.10 accepts candidate bytes, construct
+`amendment_11_missing_reason_fail_closed_closure_sweep.v1`. It retains
+§24.7's exact 11 keys and order:
+
+~~~text
+schema_version
+design_corpus_ranges
+search_terms
+consumer_edges
+consumer_edge_count
+consumer_edge_domain_sha256
+matched_passages
+matched_passage_count
+matched_passage_domain_sha256
+unresolved_passage_ids
+status
+~~~
+
+Corpus-range, edge, and matched-passage rows retain every exact §24.7 key,
+type, ordering, terminal-LF canonicalization, count/domain equation, and
+lowercase-hex law. The normative corpus is every candidate byte in §§1-25
+except exactly the nine comparator-table intervals in §§17.3, 18.5, 19.5,
+20.6, 21.7, 22.7, 23.7, 24.8, and 25.8. Its ascending nonempty disjoint
+half-open ranges concatenate to exactly those bytes. Passage segmentation is
+§24.7's first-matching physical-line law and exact-partitions every nonblank
+corpus byte.
+
+`search_terms` is exactly this case-sensitive literal array in displayed
+order, with no folding, stemming, separator substitution, or fuzzy match:
+
+~~~text
+missing_reason_code
+typed_disposition
+source_missing_literals
+missing disposition
+reason code
+reason vocabulary
+source-backed reason
+lexical candidate
+lexical_missing_candidate
+registered_source_missing_literal
+unadjudicated_source_missing_disposition
+blocked_source_missing_disposition_underdetermined
+source_nonmissing_reason_not_applicable
+conflicting_missing_reason_authority
+incomplete_missing_reason_authority
+semantic_reason_taxonomy_undetermined
+psid_codebook_source_member_identity.v1
+psid_source_missing_reason_preimage.v1
+psid-source-missing-reason:
+psid_missing_reason_code_fail_closed_authority.v1
+amendment_11_missing_reason_fail_closed_closure_sweep.v1
+reproduced_from_source_bytes
+lexical_candidate_is_source_authority
+authorized_current_literal_disposition_count
+unadjudicated_literal_count
+entry_kind_vector
+lexical_candidate_vector
+source_authority_vector
+source_authorized_missing_literal_count
+source_authorized_missing_occurrences
+numeric_range
+literal
+A11-R01
+A11-R02
+A11-R03
+A11-R04
+A11-R05
+A11-R06
+revision 13
+D10
+D11
+Q5
+fitting_free_requirement_verification_specs.v10
+fitting_free_registration_domain_identity.v10
+covered_earnings_path_applicability_registry_bundle.v11
+covered_earnings_path_applicability_receipt.v10
+--check
+~~~
+
+Literal matches are seeds, not a ceiling. `consumer_edges` exact-covers every
+direct normative dependency that names, inherits, copies, exact-compares,
+foreign-keys, hashes, version-dispatches, validates, or takes a consequence
+from another passage. Relations, ordering, two-independent-array equality,
+transitive closure, repeated-passage treatment, and reachable-array order are
+exactly §24.7. Passage IDs are literal `amendment-11-passage:` plus SHA-256
+of terminal-LF canonical `[start_byte,end_byte,matched_terms]`.
+
+The only allowed disposition/reason pairs are exactly:
+
+| `disposition` | `disposition_reason_code` |
+|---|---|
+| `replaced-by-named-successor` | `named_schema_or_law_replacement` |
+| `composed-with-named-successor` | `named_law_composition` |
+| `superseded-by-construction-by-named-successor` | `named_successor_census_supersession` |
+| `escalated-unresolved-by-named-successor` | `named_unresolved_successor_escalation` |
+| `lawfully-unchanged-with-reason` | `exact_law_preserved_outside_replacement_scope` |
+
+Every successor anchor is nonempty and resolves to exact preserved law or
+§§25.2-25.10. The exact 52-occurrence source-authority passages use
+`composed-with-named-successor`; the incomplete relation and remaining
+524,538 substantive member passages use
+`escalated-unresolved-by-named-successor`. No row may claim the complete
+literal relation is replaced or resolved. Status passes only under every
+inherited reconstruction, segmentation, graph, count, digest, disposition,
+and exact-byte equation, with `unresolved_passage_ids` exactly empty. Empty
+here means every reached design passage received a lawful closure
+disposition; it does **not** mean the remaining source authority or complete
+`missing_reason_code` relation was determined.
+
+### 25.8 Complete revision-13 design-comparator disposition
+
+The §17.3 comparator definition, mixed-preimage rule, complete-paragraph
+inspection, direct/transitive consumer walk, and failure discipline remain.
+The revision-13 census corpus is every normative byte accepted at §25.10 and
+committed as D11, except exactly the nine comparator-table intervals named in
+§25.7. This subsection's interval begins at the next table header and ends
+immediately before the ASCII heading prefix `### 25.9 `.
+
+In addition to every inherited §17.3 search, the exact case-sensitive
+Amendment-11 search augmentation is the following literal array in displayed
+order:
+
+~~~text
+revision 13
+Amendment 11
+D10
+D11
+Q5
+prefix
+missing_reason_code
+psid_codebook_source_member_identity.v1
+source_authority_vector
+source_authorized_missing_occurrences
+source_authorized_missing_literal_count
+source_nonmissing_reason_not_applicable
+unadjudicated_source_missing_disposition
+conflicting_missing_reason_authority
+incomplete_missing_reason_authority
+blocked_source_missing_disposition_underdetermined
+settle_missing_reason_codes
+psid_source_missing_reason_preimage.v1
+psid-source-missing-reason:
+amendment_11_fitting_free_design_identity_expected_preimage.v1
+amendment_11_fitting_free_design_identity_actual_preimage.v1
+verify_amendment_11_fitting_free_design_identity_v1
+fitting_free_requirement_verification_specs.v10
+verify_amendment_11_fitting_free_a1_model_universe_authority_v1
+verify_amendment_11_fitting_free_a3_weight_source_authority_v1
+fitting_free_registration_domain_identity.v10
+covered_earnings_path_applicability_registry_bundle.v11
+fitting_free_model_input_authority_capture_registration.v10
+amendment_11_capture_registration_repository_proof.v1
+verify_amendment_11_capture_registration_repository_identity_v1
+fitting_free_model_input_authority_capture_claim.v10
+fitting_free_model_input_authority_capture_input.v10
+covered_earnings_path_applicability_receipt_core.v10
+covered_earnings_path_applicability_receipt.v10
+verify_amendment_11_selected_registration_design_lineage_v1
+amendment_11_missing_reason_fail_closed_closure_sweep.v1
+psid_missing_reason_code_fail_closed_authority.v1
+revision_13_full_relation_identity
+~~~
+
+No case folding, separator substitution, stemming, pluralization, or fuzzy
+matching is permitted. The inherited complete-paragraph and transitive
+consumer walk still expands beyond these seeds.
+
+| ID | Exact comparator or consumer anchor | Normative revision-13 disposition |
+|---|---|---|
+| DC-01 | §10.1 four-key configuration design shape and exact-byte digest law | lawfully-unchanged-with-reason: generic design shape remains; D11 is added by DC-59-DC-63 |
+| DC-02 | §10.1 pre-claim repository proof comparing configured design, ratification blob, digest, ancestry, and HEAD | lawfully-unchanged-with-reason: ordinary proof remains and terminal D11 proofs close retained cases |
+| DC-03 | §10.4 prelaunch check 1 consumption of the active §10.1 design/repository proof | lawfully-unchanged-with-reason: dispatches to Amendment-11 proof |
+| DC-04 | §12 context configuration import of §10.1 committed-design proof | lawfully-unchanged-with-reason: post-D11 registration carries D11 |
+| DC-05 | §§15.6.3 and 15.8 calibrated configuration exact four-key Amendment-1 design child D1 | lawfully-unchanged-with-reason: D1 remains historical configuration child |
+| DC-06 | §15.8 calibrated D1 configured-blob equals HEAD proof | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` |
+| DC-07 | §16.2 `then_operative_calibrated_design_identity` and its adjudication, manifest, cutoff, and `design_identity_sha256` consumers, as closed by §16.11.2 | lawfully-unchanged-with-reason: D1 methodology remains and D11 is separately bound |
+| DC-08 | §16.2 position-1 D2/configuration/cutoff-byte comparator and receipt cross-binding | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v10`, `fitting_free_registration_domain_identity.v10`, and `covered_earnings_path_applicability_registry_bundle.v11` |
+| DC-09 | §§16.2 and 16.13.7 receipt-core D2 and selected-configuration design children | replaced-by-named-successor: `covered_earnings_path_applicability_receipt_core.v10` and `verify_amendment_11_selected_registration_design_lineage_v1` |
+| DC-10 | §16.2 calibrated D1/D2 dual-design proof against HEAD | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` |
+| DC-11 | §§16.5 and 16.5.2 fitting-free configuration exact D2 design child | lawfully-unchanged-with-reason: configuration remains D2 |
+| DC-12 | §16.5.3 `full_fitting_free_evaluation_provenance.design_identity` equality to configuration design | lawfully-unchanged-with-reason: provenance remains D2 with receipt D2-D11 |
+| DC-13 | §16.5.5 step 1 revision-4 design check and capture-quartet validation | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1` and `verify_amendment_11_capture_registration_repository_identity_v1` |
+| DC-14 | §16.10 capture authorization exact D2 design child | lawfully-unchanged-with-reason: child remains D2 with sibling D3-D11 children |
+| DC-15 | §16.10 capture authorization imported/restated pre-descriptor D2-to-HEAD repository equality | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` |
+| DC-16 | §16.10 capture primary design equality to capture registration | lawfully-unchanged-with-reason: primary remains D2 and D11 joins the hash chain |
+| DC-17 | §16.10 capture sidecar design equality to primary | lawfully-unchanged-with-reason: sidecar remains D2 and D11 joins the hash chain |
+| DC-18 | §16.10 selected fitting-free correction configuration D2-to-HEAD proof | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` |
+| DC-19 | §§16.12.4 and 16.13.7 receipt/configuration design and selected-configuration cross-binding | replaced-by-named-successor: `covered_earnings_path_applicability_receipt_core.v10` and `covered_earnings_path_applicability_receipt.v10` |
+| DC-20 | §§16.13.9 and 16.14.2 registration-history validity through a receipt's complete design bindings | replaced-by-named-successor: `covered_earnings_path_applicability_receipt.v10` and its exact inherited v1-v10 history dispatch |
+| DC-21 | §17.4 position-1 D2/D3/configuration/cutoff-byte and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1` |
+| DC-22 | §17.4 post-D3 capture-registration D2/D3/live-HEAD predicate and complete transitive capture consumers | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` and its exact D2-D11 repository-proof chain |
+| DC-23 | §17.4 selected-registration D1-or-D2/D2/D3/HEAD byte and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` |
+| DC-24 | §18.1 D3 identity, exact 1,310,838-byte design, and immutable revision-6 prefix comparison | lawfully-unchanged-with-reason: D3 remains exact historical prefix |
+| DC-25 | §18.6 terminal position-1 D2/D3/D4/configuration/final-cutoff byte, digest, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v10`, `fitting_free_registration_domain_identity.v10`, and `covered_earnings_path_applicability_registry_bundle.v11` |
+| DC-26 | §18.6 terminal post-D4 capture-registration predicate and all registration-hash, claim, primary/sidecar, history, capture-input, A1/A3, and receipt consumers | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` |
+| DC-27 | §§18.7-18.8 terminal selected-registration D1-or-D2/D2/D3/D4/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` and `covered_earnings_path_applicability_receipt.v10` history dispatch |
+| DC-28 | §19.1 D4 identity, exact 1,376,610-byte design, and immutable revision-7 prefix comparison | lawfully-unchanged-with-reason: D4 remains exact historical prefix |
+| DC-29 | §19.2.5 D5 ratification ordering against the single-parent L5 legal-registry first-add and authority cutoff | lawfully-unchanged-with-reason: legal comparator remains freshly rebuilt |
+| DC-30 | §19.3.3 D5 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D5/Q5 remains independently required |
+| DC-31 | §19.6 terminal position-1 D2/D3/D4/D5/configuration/final-cutoff predicate | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v10`, `fitting_free_registration_domain_identity.v10`, and `covered_earnings_path_applicability_registry_bundle.v11` |
+| DC-32 | §19.6 terminal post-D5 capture-registration predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` |
+| DC-33 | §§19.7-19.8 terminal selected-registration D1-or-D2/D2/D3/D4/D5/registration-HEAD predicate | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` and `covered_earnings_path_applicability_receipt.v10` history dispatch |
+| DC-34 | §20.1 D5 identity, exact 1,781,491-byte design, and immutable revision-8 prefix comparison | lawfully-unchanged-with-reason: D5 remains exact historical prefix |
+| DC-35 | §§20.4.2 and 20.6 D6 ordering against Q5, then Q5 before slot/inventory first-adds and admitting cutoffs through G17-C01 | lawfully-unchanged-with-reason: D6/Q5 remains independently required |
+| DC-36 | §20.7 terminal position-1 D2/D3/D4/D5/D6/configuration/final-cutoff predicate | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v10`, `fitting_free_registration_domain_identity.v10`, and `covered_earnings_path_applicability_registry_bundle.v11` |
+| DC-37 | §20.7 terminal post-D6 capture-registration D2-D6/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` |
+| DC-38 | §§20.7-20.8 terminal selected-registration D1-or-D2/D2-D6/registration-HEAD predicate | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` and `covered_earnings_path_applicability_receipt.v10` history dispatch |
+| DC-39 | §§21.1.1, 21.2, and 21.8.1, plus §21.9.2 steps 2-3, exact D6 identity, accepted-candidate-to-D7-raw-blob equality, and D6-as-2,049,769-byte-prefix-of-D7 comparison | lawfully-unchanged-with-reason: D6/D7 history remains exact |
+| DC-40 | §§21.4.4, 21.7, and 21.9 D7 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: D7/Q5 remains independently required |
+| DC-41 | §21.8 terminal position-1 D2/D3/D4/D5/D6/D7/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v10`, `fitting_free_registration_domain_identity.v10`, and `covered_earnings_path_applicability_registry_bundle.v11` |
+| DC-42 | §21.8 terminal post-D7 capture-registration D2-D7/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` |
+| DC-43 | §§21.8-21.9 terminal selected-registration D1-or-D2/D2-D7/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` and `covered_earnings_path_applicability_receipt.v10` history dispatch |
+| DC-44 | §§22.1, 22.7, and 22.8.1, plus §22.9.2 steps 2-3, exact D7 identity, accepted-candidate-to-D8-raw-blob equality, and D7-as-2,423,590-byte-prefix-of-D8 comparison | lawfully-unchanged-with-reason: D7/D8 history remains exact |
+| DC-45 | §§22.3, 22.7, and 22.9 D8 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: D8/Q5 remains independently required |
+| DC-46 | §22.8 terminal position-1 D2/D3/D4/D5/D6/D7/D8/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v10`, `fitting_free_registration_domain_identity.v10`, and `covered_earnings_path_applicability_registry_bundle.v11` |
+| DC-47 | §22.8 terminal post-D8 capture-registration D2-D8/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` |
+| DC-48 | §§22.8-22.9 terminal selected-registration D1-or-D2/D2-D8/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` and `covered_earnings_path_applicability_receipt.v10` history dispatch |
+| DC-49 | §§23.1, 23.7, and 23.8.1, plus §23.9.2 steps 2-3, exact D8 identity, accepted-candidate-to-D9-raw-blob equality, and D8-as-2,521,700-byte-prefix-of-D9 comparison | lawfully-unchanged-with-reason: D8/D9 history remains exact |
+| DC-50 | §§23.2, 23.7, and 23.9 D9 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: D9/Q5 remains independently required |
+| DC-51 | §23.8 terminal position-1 D2/D3/D4/D5/D6/D7/D8/D9/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1`, `fitting_free_requirement_verification_specs.v10`, `fitting_free_registration_domain_identity.v10`, and `covered_earnings_path_applicability_registry_bundle.v11` |
+| DC-52 | §23.8 terminal post-D9 capture-registration D2-D9/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` |
+| DC-53 | §§23.8-23.9 terminal selected-registration D1-or-D2/D2-D9/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` and `covered_earnings_path_applicability_receipt.v10` history dispatch |
+| DC-54 | §§24.1, 24.8, and 24.9.1, plus §24.10.2 steps 2-3, exact D9 identity, accepted-candidate-to-future-D10-raw-blob equality, and D9-as-2,653,817-byte-prefix-of-D10 comparison | lawfully-unchanged-with-reason: D9/D10 history and exact D10 bytes remain |
+| DC-55 | §§24.4, 24.8, and 24.10 D10 ordering against Q5, then Q5 before slot/inventory first-adds, actual inventory before R10b, and every admitting cutoff through G17-C01 | lawfully-unchanged-with-reason: D10/Q5 and revision-12 relation history remain independently required |
+| DC-56 | §24.9 terminal position-1 D2/D3/D4/D5/D6/D7/D8/D9/D10/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_fitting_free_design_identity_v1` |
+| DC-57 | §24.9 terminal post-D10 capture-registration D2-D10/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` |
+| DC-58 | §§24.9-24.10 terminal selected-registration D1-or-D2/D2-D10/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` |
+| DC-59 | §§25.1, 25.8, and 25.9.1, plus §25.10.2 steps 2-3, exact D10 identity, accepted-candidate-to-future-D11 raw-blob equality, and D10-as-3,472,168-byte-prefix-of-D11 comparison | lawfully-unchanged-with-reason: one live D11 raw-byte identity family; full bytes, hash, mode, blob, prefix, and ancestry all remain required |
+| DC-60 | §§25.3, 25.6, 25.8, and 25.10 D11 ordering before any Q5 first-add, exact A11 production abort before Q5 after classifying 52 authorized literals and finding 524,538 unadjudicated literals, then Q5 before slot/inventory first-adds and admitting cutoffs | lawfully-unchanged-with-reason: D11/Q5 is a guarded ancestry edge presently unreachable; no revision-13 relation identity or Q5 exists, and every D5-D10/Q5 history remains independently required |
+| DC-61 | §25.9 terminal position-1 D2-D11/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal `verify_amendment_11_fitting_free_design_identity_v1` closes v10 registry/domain and v11 bundle consumers but cannot instantiate under current blockers |
+| DC-62 | §25.9 terminal post-D11 capture-registration D2-D11/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free `verify_amendment_11_capture_registration_repository_identity_v1` closes those consumers but cannot instantiate under current blockers |
+| DC-63 | §§25.9-25.10 terminal selected-registration D1-or-D2/D2-D11/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal `verify_amendment_11_selected_registration_design_lineage_v1` closes v10 receipt/history dispatch but cannot instantiate under current blockers |
+
+This is the complete 63-row revision-13 census. The 33
+`replaced-by-named-successor` IDs are DC-06, DC-08, DC-09, DC-10, DC-13,
+DC-15, DC-18, DC-19, DC-20, DC-21, DC-22, DC-23, DC-25, DC-26, DC-27,
+DC-31, DC-32, DC-33, DC-36, DC-37, DC-38, DC-41, DC-42, DC-43, DC-46,
+DC-47, DC-48, DC-51, DC-52, DC-53, DC-56, DC-57, and DC-58. The other 30
+are `lawfully-unchanged-with-reason`. IDs are consecutive and unique; every
+full anchor, reason, and successor is nonempty and resolves. Omission,
+duplicate, shortened anchor, third disposition, undefined successor, wrong
+category count, or incomplete consumer closure blocks ratification.
+
+### 25.9 Prospective D11 lifecycle successors and exact identifier inventory
+
+#### 25.9.1 D11 design and repository identities
+
+D11 has exactly `path`, `ratification_commit`, `blob_sha256`, and `revision`,
+in that order. Path is `docs/design/covered_earnings_correction.md`; commit is
+the future 40-lowercase-hex document-only commit fixed only by §25.10.2 step
+3; the digest covers that complete same-path raw blob; revision is JSON
+integer 13 excluding booleans. D10's complete 3,472,168 bytes byte-equal D11
+range `[0,3472168)` independently of complete digest and ancestry. Before
+ratification no D11 identity or D11-bearing preimage exists; any purported
+actual D11 identity fails. These prospective definitions create no settled
+source relation or Q5 comparand.
+
+`amendment_11_fitting_free_design_identity_expected_preimage.v1` and
+`amendment_11_fitting_free_design_identity_actual_preimage.v1` each have
+exactly these seven keys in order:
+
+~~~text
+schema_version
+requirement_id
+verification_predicate_id
+ordered_source_projections
+source_projection_rows
+source_projection_count
+source_projection_domain_sha256
+~~~
+
+Each projection row has exactly `projection_id`, `value_type`, and
+`value_identity_sha256`, in that order. Count is JSON integer 12 excluding
+booleans and the domain digest hashes the complete canonical 12-row array.
+The ordered projections are D2 through D11, then `configuration:design`, then
+`git_cutoff:docs/design/covered_earnings_correction.md`. The first 11 values
+have type `canonical_json`; the last has `raw_git_bytes`. Let G11 be D11's raw
+blob, K_f^d the staged fitting-free configuration design, C_A the final
+calibrated authority cutoff, and G_C_A its same-path raw bytes. Expected
+values are `[D2,D3,D4,D5,D6,D7,D8,D9,D10,D11,D2,G11]`; actual values are
+`[D2,D3,D4,D5,D6,D7,D8,D9,D10,D11,K_f^d,G_C_A]`.
+
+`fitting_free_requirement_verification_specs.v10` has exactly
+`schema_version`, `ordered_requirement_ids`, `rows`, `row_count`, and
+`failure_disposition`, in that order. It retains §16.2's 22 requirement IDs,
+has integer count 22 and `abort_registration`, freshly evaluates all rows,
+and replaces exactly positions 1, 3, and 5. Each spec row has exactly
+`requirement_id`, `requirement_class`, `verification_predicate_id`,
+`expected_preimage_schema_version`, `actual_preimage_schema_version`,
+`ordered_source_projections`, `verification_result_schema_version`, and
+`cross_binding`, in that order. Position 1 is exactly:
+
+~~~json
+{"requirement_id":"amendment_2_design_identity","requirement_class":"design","verification_predicate_id":"verify_amendment_11_fitting_free_design_identity_v1","expected_preimage_schema_version":"amendment_11_fitting_free_design_identity_expected_preimage.v1","actual_preimage_schema_version":"amendment_11_fitting_free_design_identity_actual_preimage.v1","ordered_source_projections":["ratified_design:amendment_2_design_identity","ratified_design:amendment_3_design_identity","ratified_design:amendment_4_design_identity","ratified_design:amendment_5_design_identity","ratified_design:amendment_6_design_identity","ratified_design:amendment_7_design_identity","ratified_design:amendment_8_design_identity","ratified_design:amendment_9_design_identity","ratified_design:amendment_10_design_identity","ratified_design:amendment_11_design_identity","configuration:design","git_cutoff:docs/design/covered_earnings_correction.md"],"verification_result_schema_version":"exact_identity_verification_result.v1","cross_binding":"receipt_core:amendment_2_amendment_3_amendment_4_amendment_5_amendment_6_amendment_7_amendment_8_amendment_9_amendment_10_and_amendment_11_design_identities"}
+~~~
+
+`verify_amendment_11_fitting_free_design_identity_v1` is true exactly when
+all inherited shape, order, count, digest, and evidence equations pass; both
+reconstructions of D2-D11 deep-equal and all ratification blobs hash; K_f^d
+equals D2 without equating revision-4 configuration bytes to G11; all eight
+raw-prefix comparisons through D11 pass; G_C_A byte-equals G11 and hashes to
+D11; and
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 < D11 <= C_A`, using strict
+Git ancestry for `<` and ancestor-or-equal for the last edge. False uses the
+inherited `predicate_mismatch` result and cannot select a predecessor. Every
+source projection must be freshly evaluated; the expected D11 identity is
+unavailable before ratification and no v10 registry may instantiate under
+Amendment 11 because the §25.3 blocker survives.
+
+#### 25.9.2 Capture, A1/A3, domain, and bundle
+
+`fitting_free_model_input_authority_capture_registration.v10` has exactly
+these 22 keys in order:
+
+~~~text
+schema_version
+registration_reference
+design
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+amendment_10_design_identity
+amendment_11_design_identity
+implementation_commit
+invocation
+environment_lock_input
+environment_spec
+calibrated_registrability_adjudication_input
+selector_implementation_identity
+input_access_specs
+capability_specs
+output_paths
+failure_disposition
+~~~
+
+`design` remains D2 and amendment children are D3-D11. Every retained
+adjudication, invocation, capability, descriptor, input, output-path, and
+failure law is unchanged.
+
+Let A be the unique single-parent commit strictly after D11 first adding only
+that v10 authorization, and freeze capture HEAD H_cap before any environment,
+claim, broker, source, or model-input descriptor opens.
+`amendment_11_capture_registration_repository_proof.v1` has exactly these 20
+keys in order:
+
+~~~text
+schema_version
+capture_registration_sha256
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+amendment_10_design_identity
+amendment_11_design_identity
+authorization_commit
+capture_head
+ordered_design_blob_rows
+design_blob_row_count
+design_blob_domain_sha256
+canonicalization
+status
+failure_disposition
+~~~
+
+Its identity children are D2-D11 and commits are `[A,H_cap]`. Each of its 11
+ordered blob rows—roles `amendment_2_ratification` through
+`amendment_11_ratification`, then `capture_head`—has exactly `role`, `commit`,
+`path`, `tree_mode`, `blob_oid`, and `raw_sha256`, in that order. Count is
+integer 11 excluding booleans; `design_blob_domain_sha256` is lowercase
+64-hex SHA-256 of the terminal-LF §10.1 canonical complete 11-row array;
+`canonicalization` is the frozen common inherited literal; status is
+`pass | fail`; failure is `abort_without_accepted_authority_pair`.
+
+`verify_amendment_11_capture_registration_repository_identity_v1` is true
+exactly when every proof shape, scalar type, member order, row order, count,
+canonicalization, and domain-hash equation passes; the strict v10
+authorization reproduces its digest and D2-D11 children; all ten ratification
+blobs and eight prefix comparisons pass; same-path bytes at H_cap equal D11;
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 < D11 < A <= H_cap`;
+authorization bytes remain unchanged A-through-H_cap; all 11 blob rows match
+observed commits, modes, OIDs, hashes, and raw bytes; and every inherited
+descriptor-free repository, tracked-state, clean-checkout,
+implementation-tree, and authorization-byte conjunct passes. Proof status is
+`pass` exactly when that Boolean is true and `fail` otherwise. The proof
+freezes before descriptors and has no receipt or future commit.
+
+`fitting_free_model_input_authority_capture_claim.v10` has exactly these
+eight keys in order:
+
+~~~text
+schema_version
+registration_reference
+capture_registration_sha256
+capture_repository_proof
+artifact_vintage_id
+process_start_identity_sha256
+opened_at_utc
+status
+~~~
+
+It embeds the complete proof and retains every inherited exclusive-creation,
+immutability, durability, vintage, process, UTC, status, and failure law.
+`fitting_free_model_input_authority_capture_input.v10` has exactly these 13
+keys in order:
+
+~~~text
+schema_version
+registration_path
+registration_sha256
+claim_path
+claim_schema_version
+claim_artifact_vintage_id
+claim_sha256
+artifact_path
+artifact_vintage_id
+artifact_schema_version
+artifact_sha256
+sidecar_path
+sidecar_sha256
+~~~
+
+It selects the complete v10 registration and claim and unchanged primary and
+sidecar schemas. Their D2 methodology children are transitively bound to
+D3-D11 and H_cap. Required order is `D11 < A <= H_cap < T < C`, retaining
+all sole-parent, only-add, descriptor, and durable-reread laws.
+
+Within the v10 requirement registry, A1 is exactly:
+
+~~~json
+{"requirement_id":"A1","requirement_class":"registration_authority","verification_predicate_id":"verify_amendment_11_fitting_free_a1_model_universe_authority_v1","expected_preimage_schema_version":"authority_predicate_expected_preimage.v1","actual_preimage_schema_version":"authority_predicate_actual_preimage.v1","ordered_source_projections":["ratified_design:fitting_free_model_input_authority_results.rows/0","configuration:fitting_free_model_input_authority_results.rows/0","configuration:fitting_free_model_input_authority_results.authority_capture_input","capture_primary:a1_authority_identity","capture_primary:capture_claim_sha256","capture_claim:capture_repository_proof"],"verification_result_schema_version":"authority_predicate_verification_result.v1","cross_binding":"capture_primary:a1_authority_identity_and_amendment_11_capture_repository_proof"}
+~~~
+
+A3 is exactly:
+
+~~~json
+{"requirement_id":"A3","requirement_class":"registration_authority","verification_predicate_id":"verify_amendment_11_fitting_free_a3_weight_source_authority_v1","expected_preimage_schema_version":"authority_predicate_expected_preimage.v1","actual_preimage_schema_version":"authority_predicate_actual_preimage.v1","ordered_source_projections":["ratified_design:fitting_free_model_input_authority_results.rows/2","configuration:fitting_free_model_input_authority_results.rows/2","configuration:fitting_free_model_input_authority_results.authority_capture_input","capture_primary:a3_authority_identity","capture_sidecar:input_descriptor_identities","capture_primary:capture_claim_sha256","capture_claim:capture_repository_proof"],"verification_result_schema_version":"authority_predicate_verification_result.v1","cross_binding":"capture_primary_and_sidecar:a3_source_keyset_and_amendment_11_capture_repository_proof"}
+~~~
+
+For both rows, expected and actual preimages retain the inherited seven-key
+shape and three-key projection-row shape. A1 has six projections and A3
+seven. `verify_amendment_11_fitting_free_a1_model_universe_authority_v1` and
+`verify_amendment_11_fitting_free_a3_weight_source_authority_v1` each require
+the complete v10 capture input to equal projection 3; claim digest to match
+the primary; the Git-rebuilt complete repository proof to equal the claim
+child; its D2-D11 identities to equal independent reconstructions; and claim,
+primary, sidecar, triple, and history to be one chain, in addition to all
+inherited substantive A1 or A3 equations. Claim and proof remain lifecycle
+nonauthority and enter no substantive model value.
+
+`fitting_free_registration_domain_identity.v10` has exactly
+`schema_version`, `authority_cutoff_sha256`, `ordered_requirement_ids`,
+`requirement_rows`, `requirement_count`, `requirement_domain_sha256`,
+`authority_status`, and `status`, in that order. Each of its 22 runtime rows
+has exactly `requirement_id`, `requirement_class`,
+`verification_predicate_id`, `expected_preimage`, `actual_preimage`,
+`verification_result`, `requirement_satisfied`, `evidence_identity_sha256`,
+and `status`, in that order. It selects the complete v10 registry and freshly
+reconstructs all rows, unfavorable preimages, Booleans, failure IDs, counts,
+and hashes. `authority_status` passes iff all 22 Booleans do. The §25.3 source
+blocker and inherited V-B6 remain nonpassing, so no accepted v10 domain exists
+or may instantiate under Amendment 11; predecessor, copied, carrier,
+empty-dependency, stale-unit, or stale-member-row reads fail.
+
+It also retains every inherited preimage/result keyset and equation, evidence
+identity, row-order, count, domain-digest, authority-cutoff, and top-status
+law. `ordered_requirement_ids` is exactly the registry's 22-member array and
+`requirement_count` is the JSON integer 22 excluding booleans and equals both
+array lengths. `requirement_domain_sha256` hashes the terminal-LF §10.1
+canonical complete 22-row array; every row's `evidence_identity_sha256`
+hashes its complete ordered evidence preimage under the inherited
+construction; and `authority_cutoff_sha256` binds the accepted authority
+cutoff rather than a proposed or predecessor cutoff. Top `status` is `pass`
+exactly when schema, type, order, count, canonicalization, evidence, cutoff,
+domain-hash, and all authority equations pass and `authority_status` is
+`pass`; it is `fail` otherwise.
+
+`covered_earnings_path_applicability_registry_bundle.v11` has exactly these
+16 keys in order:
+
+~~~text
+schema_version
+path_applicability_specs
+ordered_calibrated_manifest_verification_specs
+calibrated_registration_required_claim_role_arrays
+calibrated_authority_role_binding_specs
+calibrated_family_authority_requirement_specs
+calibrated_noncapture_required_authority_predicate_specs
+calibrated_capture_required_authority_predicate_specs
+calibrated_global_requirement_verification_specs
+fitting_free_requirement_verification_specs
+verification_claim_adjudication_identity
+verification_claim_specs_v2
+verification_claim_results_v2
+verification_claim_specs_fitting_free_v1
+verification_claim_results_fitting_free_v1
+verification_claim_adjudication_source_projection
+~~~
+
+It embeds the complete v10 registry. Every source-derived child would have to
+be freshly reconstructed from an accepted post-D11 Q5, inventory, value maps,
+legal authorities, a checked successor relation under the missing-reason and
+derived-unit readers, and exact-empty applicable consumer guards—never G17,
+configuration, a predecessor bundle, or the audit artifact. No accepted
+post-D11 Q5 or settled successor relation exists, and §25.10 forbids their
+creation while the source blocker survives; therefore no v11 bundle can be
+emitted or instantiate under Amendment 11. Its closed prospective shape
+retains every v10 child's exact schema, scalar and member types, equations,
+member order, row order, count and digest bindings, and cross-child identity
+law, except that its own `schema_version` is v11 and the embedded fitting-free
+registry is the freshly reconstructed complete v10 registry. Any later
+amendment that lawfully resolves the source blocker must supersede this shape
+with its own bundle, receipt, and lineage versions; it cannot revive a D11
+same-path lineage after D12.
+
+#### 25.9.3 Receipt and selected-registration successors
+
+`covered_earnings_path_applicability_receipt_core.v10` has exactly these 25
+keys in order:
+
+~~~text
+schema_version
+receipt_id
+amendment_2_design_identity
+amendment_3_design_identity
+amendment_4_design_identity
+amendment_5_design_identity
+amendment_6_design_identity
+amendment_7_design_identity
+amendment_8_design_identity
+amendment_9_design_identity
+amendment_10_design_identity
+amendment_11_design_identity
+selected_configuration_design_identity
+selected_registration_path
+selected_configuration_schema_version
+selected_implementation_commit
+selected_output_paths_sha256
+pre_reference_configuration_core_sha256
+pre_reference_namespace_core
+pre_reference_namespace_core_sha256
+selected_pre_reference_namespace_scan
+calibrated_registrability_adjudication_input
+fitting_free_registration_domain_identity
+path_applicability_specs_sha256
+path_applicability_result
+~~~
+
+Its amendment children are D2-D11, its fitting-free domain is complete v10,
+its applicability digest hashes the complete v11 bundle, and its result
+carries the v10 domain digest. Every other namespace and construction
+equation is inherited; `receipt_core_sha256` hashes the complete 25-key core.
+Capture validation binds the same v10 claim, input, proof, primary, sidecar,
+triple, and cutoff, with lineage
+`D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 < D11 < A <= H_cap < T < C <= HEAD`.
+
+`covered_earnings_path_applicability_receipt.v10` has exactly
+`schema_version`, `receipt_id`, `receipt_core`, `receipt_core_sha256`,
+`registration_reference`, `selected_registration_configuration_sha256`,
+`post_reference_namespace_scan`, `canonicalization`, `status`, and
+`failure_disposition`, in that order. It requires the complete v10 core and
+retains receipt-ID, suffix, namespace, construction, Git-delta, status, and
+failure laws. History dispatch is exact: pre-Amendment-3 uses v1 and
+Amendments 3 through 11 use v2 through v10 respectively.
+
+For either unchanged D1 calibrated or D2 fitting-free configuration,
+`verify_amendment_11_selected_registration_design_lineage_v1` is true exactly
+when: the selected design matches its D1 or D2 ratification blob; receipt D2
+is revision 4; D3-D10 are revisions 5-12 with their exact blobs; D11 is
+revision 13 and equals same-path bytes at registration HEAD; all eight prefix
+comparisons pass;
+`D1 < D2 < D3 < D4 < D5 < D6 < D7 < D8 < D9 < D10 < D11 <= registration HEAD`;
+and every inherited repository, implementation-tree, configuration,
+invocation, input, output, history, authority, namespace, and receipt law
+passes. False fails v10 validation without fallback.
+
+These are schema and predicate definitions only. They create no source,
+evidence, settled production relation, Q5, registry instance, bundle,
+receipt, registration, or correction. The §25.3 source blocker prevents the
+first required relation, so no prospective instance may instantiate under
+Amendment 11 even before V-B6 or any fresh constructibility inquiry. A later
+amendment must define and validate its own successor versions.
+
+#### 25.9.4 Exact scoped inventory
+
+The complete lifecycle successor set has exactly these 16 identifiers in
+order:
+
+1. `amendment_11_fitting_free_design_identity_expected_preimage.v1`;
+2. `amendment_11_fitting_free_design_identity_actual_preimage.v1`;
+3. `verify_amendment_11_fitting_free_design_identity_v1`;
+4. `fitting_free_requirement_verification_specs.v10`;
+5. `verify_amendment_11_fitting_free_a1_model_universe_authority_v1`;
+6. `verify_amendment_11_fitting_free_a3_weight_source_authority_v1`;
+7. `fitting_free_registration_domain_identity.v10`;
+8. `covered_earnings_path_applicability_registry_bundle.v11`;
+9. `fitting_free_model_input_authority_capture_registration.v10`;
+10. `amendment_11_capture_registration_repository_proof.v1`;
+11. `verify_amendment_11_capture_registration_repository_identity_v1`;
+12. `fitting_free_model_input_authority_capture_claim.v10`;
+13. `fitting_free_model_input_authority_capture_input.v10`;
+14. `covered_earnings_path_applicability_receipt_core.v10`;
+15. `covered_earnings_path_applicability_receipt.v10`; and
+16. `verify_amendment_11_selected_registration_design_lineage_v1`.
+
+The sole nonlifecycle successor schema is
+`amendment_11_missing_reason_fail_closed_closure_sweep.v1`; the exact
+successor inventory is those 16 followed by that singleton, 17 total. The
+generated `psid_missing_reason_code_fail_closed_authority.v1` is a pinned
+derived audit artifact schema outside that successor inventory and may not
+enter a source registry, receipt, production relation, or version dispatch.
+No `revision_13_full_relation_identity` is defined because no settled
+revision-13 relation exists. Fixture identities are nonlifecycle test values.
+No unlisted alias, predecessor name, or semantic-taxonomy identifier is
+permitted.
+
+### 25.10 Referee, fail-closed ratification boundary, and guarded order
+
+#### 25.10.1 Exact Amendment-11 answer
+
+The authenticated 47-source bytes establish the complete 561,873-member
+structural census and the reproducible lexical audit. They establish at least
+61 direct disproofs and 118 context-required candidate rows. The exhaustive
+targeted sweeps establish exactly 52 source-authorized missing literals—four
+per wave in 13 waves—with exact source value `9,999,999.00` and exact meaning
+`Missing, not imputed`; they establish no other whole occurrence with that
+authority. Thus the source has a narrow exact disposition/reason vocabulary,
+but no dedicated disposition or reason-code columns, semantic taxonomy,
+cross-occurrence equivalence, or default derivation. All 37,283 numeric-range
+members have structural null reason, the 52 exact literals have distinct
+opaque occurrence codes, and the other 524,538 literals have the named
+unadjudicated disposition. Whole production settlement therefore aborts with
+zero accepted output and no complete settled relation. This 37,283 / 52 /
+524,538 partition is the maximum total law the registered evidence supports.
+
+#### 25.10.2 Only lawful sequence
+
+1. Submit the complete append-only candidate to adversarial review without
+   Q5, slot, inventory, registry, capture, correction execution, output, or
+   any other production change in the authoring lane.
+2. Resolve every finding and verify the exact 3,472,168-byte D10 prefix; both
+   committed originating records in full and both exact spans; their record
+   domain; registry and all 47 raw source bytes; all structural, lexical,
+   exact source-authority, counterexample, witness, artifact, replay, and
+   implementation pins;
+   A11-R01 through A11-R06; the complete closure sweep; 63 comparator rows;
+   16 lifecycle plus one closure identifier; strict JSON; balanced fences;
+   and every build/rollback/nonemission predicate. Continue until the exact
+   final bytes receive affirmative ratification.
+3. If authorized, ratify only those accepted document bytes in one
+   identifiable future document-only commit D11. No implementation, artifact,
+   test, audit, response, Q5, runtime, registry, or production change may be
+   included. Ratification fixes only the accepted D11 document bytes and the
+   prospective lifecycle definitions; it does not make Amendment 11
+   operative or instantiate any successor.
+4. After D11, separately review the source machinery and artifact, rerun the
+   full raw-source build and A11-R01 through A11-R06, and require the exact
+   52 authorized / 524,538 unresolved census followed by the named source
+   blocker. Because the expected gate result is an abort, stop. Do not mint a
+   revision-13 relation identity or first-add Q5.
+5. No official slot, inventory, bundle, receipt, registration, correction,
+   context run, output, or publication follows. The §25.9 schemas remain
+   uninstantiated and unselectable.
+6. If later registered evidence supplies a total literal disposition and
+   source-backed reason law, open a separate successor amendment. It must
+   authenticate that evidence, define a new total law without defaults,
+   rebuild terminal/storage facts instead of copying §24, supply fresh gates,
+   comparator closure, and lifecycle analysis, and receive its own
+   ratification before any Q5 or guarded consumer can be reconsidered.
+
+At these draft bytes no D11, revision-13 settled relation, movement result,
+Q5, official inventory, bundle, receipt, registration, or production result
+is claimed. Section 24.10's V-B6 blocker survives on present evidence; its
+revision-12 constructibility result remains historical but is not promoted to
+an unknown future settlement. The newly established source-disposition
+blocker is earlier and controlling.
+
+**Amendment 11 is inoperative unless and until its exact D11 document-only
+bytes receive affirmative ratification and D11 is bound by a
+validator-accepted fresh `covered_earnings_path_applicability_receipt.v10`.
+The source blocker prevents that receipt. Ratification alone authorizes only
+the reviewed audit rebuild and expected-negative A11 gates; it cannot
+authorize production while
+`blocked_source_missing_disposition_underdetermined` survives.**

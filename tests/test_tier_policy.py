@@ -26,3 +26,9 @@ def test__given_collected_suite__then_tiers_match_policy_manifest(
 
     actual_counts = Counter(markers[0] for _, markers in inventory)
     assert dict(actual_counts) == manifest["counts"]
+
+    replay_module = "replay_amendment11" + "_no_movement.py"
+    replay_markers = {
+        markers for nodeid, markers in inventory if replay_module in nodeid
+    }
+    assert replay_markers == {("artifact",)}
