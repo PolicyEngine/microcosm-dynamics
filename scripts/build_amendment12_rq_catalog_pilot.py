@@ -23,6 +23,7 @@ import tempfile
 from collections import Counter, defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from functools import cache
 from pathlib import Path
 from typing import Any
 
@@ -37,6 +38,12 @@ DESIGN_PREFIX_SHA256 = (
     "b06e64e314645300458b6e1c72df23c9bd5090b376f676d1e492312135782d87"
 )
 CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+ARTIFACT_INTEGRITY_KEYS = frozenset(
+    {
+        "canonicalization",
+        "payload_sha256",
+    }
+)
 PINNED_SWEEP_DOMAIN_SHA256 = {
     "role_exact_label_class": (
         "9c2f36a9a4cdc9fde3d790b71498234efde5b17235b9a5023ca4c772ad633e8d"
@@ -73,6 +80,15 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
     ),
     "catalog_only_job_complement": (
         "5f660c565ff79f37c2c76367154ab0b6696e5a9a14f17959ae165f2f6923a5ac"
+    ),
+    "doc036_aggregate_component_slot": (
+        "246a32632554c20aa25bb764e4cb77f3427f964e845a8c0cf65efcb57c1d9bae"
+    ),
+    "predecessor_proof_adjudication_keyset": (
+        "12d4b72affcecd0f0899a5683a2e1ab9bbae3cb37850b572701490e6210e3d12"
+    ),
+    "predecessor_proof_adjudication": (
+        "3476ca8e0cedf33bf101952487f2fb23223eebf5eea745f9259c2b169c3ddda3"
     ),
 }
 
@@ -461,6 +477,11 @@ def _validate_artifact_envelope(
     )
     integrity = artifact.get("integrity")
     _require(isinstance(integrity, dict), "missing integrity")
+    _require_exact_keys(
+        integrity,
+        ARTIFACT_INTEGRITY_KEYS,
+        f"{schema_version} integrity",
+    )
     _require(
         integrity.get("canonicalization") == CANONICALIZATION,
         "bad canonicalization",
@@ -2483,6 +2504,23 @@ def _pilot_census(documents: Sequence[NormalizedDocument]) -> dict[str, Any]:
     }
 
 
+@cache
+def _authenticated_pilot_census_bytes() -> bytes:
+    """Rebuild the complete pilot census once from the pinned source bytes."""
+    documents, _source_identity = _load_documents(SourceReader(None))
+    pilot_documents = [
+        document
+        for document in documents
+        if document.position in PILOT_POSITIONS
+    ]
+    _require(
+        tuple(document.position for document in pilot_documents)
+        == PILOT_POSITIONS,
+        "authenticated pilot census membership drift",
+    )
+    return canonical_bytes(_pilot_census(pilot_documents))
+
+
 def _build_bundle(
     documents: Sequence[NormalizedDocument],
     source_identity: Mapping[str, Any],
@@ -3220,6 +3258,65 @@ _ENVELOPE_KEYS = {
     "artifact_id",
     "authority_kind",
     "integrity",
+}
+PILOT_CENSUS_KEYS = frozenset(
+    {
+        "aggregate_anchor_count",
+        "component_parent_disposition_counts",
+        "document_count",
+        "eligible_cross_category_multi_parent_count",
+        "eligible_ineligible_mixed_multi_parent_count",
+        "field_purpose_count",
+        "flow_branch_count",
+        "head_role_anchor_count",
+        "incompatible_proof_instruction_count",
+        "ineligible_parent_reference_count",
+        "job_anchor_count",
+        "lawful_repeat_coverage_multiple_arm_instruction_count",
+        "lawful_repeat_coverage_none_arm_instruction_count",
+        "local_anchor_count",
+        "local_evidence_row_count",
+        "local_evidence_shape_counts",
+        "noncatalog_aggregate_relation_instruction_count",
+        "otherwise_unresolved_instruction_count",
+        "outside_domain_instruction_count",
+        "questionnaire_occurrence_count",
+        "questionnaire_page_count",
+        "raw_cross_category_multi_parent_count",
+        "repeat_occurrence_count",
+        "role_anchor_count",
+        "serialized_component_parent_cardinality",
+        "source_component_anchor_count",
+        "source_context_anchor_count",
+        "source_remuneration_anchor_count",
+        "spouse_role_anchor_count",
+        "valid_and_incompatible_instruction_overlap_count",
+        "valid_direct_proof_instruction_count",
+    }
+)
+PILOT_CENSUS_NESTED_KEYS = {
+    "component_parent_disposition_counts": frozenset(
+        {
+            "multi_parent_ambiguity_no_selection",
+            "unique_parent_assignment",
+            "zero_lawful_parent_terminal_disposition",
+            "zero_parent_terminal_disposition",
+        }
+    ),
+    "local_evidence_shape_counts": frozenset(
+        {
+            "both_endpoints",
+            "no_endpoints",
+            "partial_endpoints",
+        }
+    ),
+    "serialized_component_parent_cardinality": frozenset(
+        {
+            "multiple",
+            "one",
+            "zero",
+        }
+    ),
 }
 ARTIFACT_TOP_LEVEL_KEYS = {
     "slice": frozenset(
@@ -4890,6 +4987,95 @@ def _validate_proof_adjudication_row(row: Mapping[str, Any]) -> None:
     )
 
 
+def _validate_pilot_census(
+    census: Mapping[str, Any],
+    label: str,
+) -> None:
+    """Exact-walk and independently source-rebuild every census member."""
+    _require(isinstance(census, dict), f"{label}: expected object")
+    _require_exact_keys(census, PILOT_CENSUS_KEYS, label)
+    for key, expected_keys in PILOT_CENSUS_NESTED_KEYS.items():
+        nested = census[key]
+        nested_label = f"{label} {key}"
+        _require(isinstance(nested, dict), f"{nested_label}: expected object")
+        _require_exact_keys(nested, expected_keys, nested_label)
+        for member, value in nested.items():
+            _require_int(value, f"{nested_label}.{member}")
+    for key in PILOT_CENSUS_KEYS - frozenset(PILOT_CENSUS_NESTED_KEYS):
+        _require_int(census[key], f"{label}.{key}")
+
+    source_rebuilt = strict_json_loads(
+        _authenticated_pilot_census_bytes(),
+        "authenticated pilot census",
+    )
+    _require(isinstance(source_rebuilt, dict), "authenticated pilot census")
+    _require_exact_keys(
+        source_rebuilt,
+        PILOT_CENSUS_KEYS,
+        "authenticated pilot census",
+    )
+    for key in sorted(PILOT_CENSUS_KEYS):
+        _require(
+            census[key] == source_rebuilt[key],
+            f"{label}: source reconstruction drift: {key}",
+        )
+
+    evidence_shapes = census["local_evidence_shape_counts"]
+    raw_cardinality = census["serialized_component_parent_cardinality"]
+    dispositions = census["component_parent_disposition_counts"]
+    _require(
+        census["role_anchor_count"]
+        == census["head_role_anchor_count"]
+        + census["spouse_role_anchor_count"],
+        f"{label}: role count equation",
+    )
+    _require(
+        census["source_component_anchor_count"]
+        == census["source_context_anchor_count"]
+        + census["source_remuneration_anchor_count"],
+        f"{label}: component count equation",
+    )
+    _require(
+        census["local_evidence_row_count"] == sum(evidence_shapes.values()),
+        f"{label}: evidence-shape count equation",
+    )
+    _require(
+        census["source_component_anchor_count"]
+        == sum(raw_cardinality.values())
+        == sum(dispositions.values()),
+        f"{label}: component disposition total equation",
+    )
+    _require(
+        raw_cardinality["zero"]
+        == dispositions["zero_parent_terminal_disposition"]
+        and raw_cardinality["one"]
+        == dispositions["unique_parent_assignment"]
+        + dispositions["zero_lawful_parent_terminal_disposition"]
+        and raw_cardinality["multiple"]
+        == dispositions["multi_parent_ambiguity_no_selection"],
+        f"{label}: component disposition arm equations",
+    )
+    _require(
+        census["lawful_repeat_coverage_multiple_arm_instruction_count"] == 0,
+        f"{label}: repeat multiple-arm equation",
+    )
+    _require(
+        census["repeat_occurrence_count"]
+        == census["valid_direct_proof_instruction_count"]
+        + census["outside_domain_instruction_count"]
+        + census["noncatalog_aggregate_relation_instruction_count"]
+        + census["lawful_repeat_coverage_none_arm_instruction_count"],
+        f"{label}: three-arm repeat disposition equation",
+    )
+    _require(
+        census["lawful_repeat_coverage_none_arm_instruction_count"]
+        == census["otherwise_unresolved_instruction_count"]
+        + census["incompatible_proof_instruction_count"]
+        - census["valid_and_incompatible_instruction_overlap_count"],
+        f"{label}: unresolved repeat diagnostic equation",
+    )
+
+
 def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     """Validate a complete generated or committed pilot bundle."""
     _require(set(bundle) == set(OUTPUT_FILENAMES), "artifact bundle drift")
@@ -4980,6 +5166,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     )
 
     census = slice_artifact["pilot_census"]
+    _validate_pilot_census(census, "slice pilot census")
     expected_census = {
         "document_count": 16,
         "questionnaire_page_count": 1_571,
@@ -5521,11 +5708,23 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     for row in proof_adjudications:
         _validate_proof_adjudication_row(row)
     _require(
+        predecessor["doc036_aggregate_component_slot_domain_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["doc036_aggregate_component_slot"],
+        "doc036 adjudication pinned source projection drift",
+    )
+    _require(
         predecessor["populated_local_proof_adjudication_keyset_sha256"]
         == _keyset_sha(
             [row["source_local_evidence_id"] for row in proof_adjudications]
         ),
         "proof adjudication keyset drift",
+    )
+    _require(
+        predecessor["populated_local_proof_adjudication_keyset_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["predecessor_proof_adjudication_keyset"]
+        and predecessor["populated_local_proof_adjudication_domain_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["predecessor_proof_adjudication"],
+        "proof adjudication pinned source projection drift",
     )
     proof_seal_defects = [
         row
@@ -5877,6 +6076,63 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "pilot component ineligible-parent census drift",
     )
 
+    recomputed_role_counts = Counter(
+        row["role"]
+        for row in pilot_role_classes
+        for _member in row["member_occurrence_ids"]
+    )
+    recomputed_raw_cardinality = Counter(
+        (
+            "zero"
+            if row["serialized_parent_cardinality"] == 0
+            else (
+                "one"
+                if row["serialized_parent_cardinality"] == 1
+                else "multiple"
+            )
+        )
+        for row in all_component_rows
+    )
+    recomputed_component_dispositions = dict(
+        sorted(
+            Counter(row["disposition"] for row in all_component_rows).items()
+        )
+    )
+    _require(
+        census["document_count"] == len(pilot_rows)
+        and census["role_anchor_count"] == len(pilot_members)
+        and census["head_role_anchor_count"]
+        == recomputed_role_counts[ROLE_HEAD]
+        and census["spouse_role_anchor_count"]
+        == recomputed_role_counts[ROLE_SPOUSE]
+        and census["source_component_anchor_count"] == len(all_component_rows),
+        "pilot census artifact-cover equations drift",
+    )
+    _require(
+        census["serialized_component_parent_cardinality"]
+        == {
+            key: recomputed_raw_cardinality[key]
+            for key in ("zero", "one", "multiple")
+        }
+        and census["component_parent_disposition_counts"]
+        == recomputed_component_dispositions,
+        "pilot census component disposition recomputation drift",
+    )
+    _require(
+        census["outside_domain_instruction_count"]
+        == len(
+            {row["source_instruction_occurrence_id"] for row in repeat_rows}
+        )
+        and census["noncatalog_aggregate_relation_instruction_count"]
+        == len(
+            {
+                row["source_instruction_occurrence_ids"][0]
+                for row in pilot_aggregate_rows
+            }
+        ),
+        "pilot census repeat disposition recomputation drift",
+    )
+
     gate = bundle["gate"]
     expected_statuses = {
         "slice": "pass_pilot_slice_fixed_nonauthority",
@@ -5942,6 +6198,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         == slice_artifact["design_prefix_identity"],
         "gate design-prefix linkage drift",
     )
+    _validate_pilot_census(gate["pilot_census"], "gate pilot census")
     _require(gate["pilot_census"] == census, "gate pilot census drift")
     _require(
         gate["certification_status"] == "PILOT_NONAUTHORITY_CERTIFIES_NOTHING",
@@ -6629,10 +6886,32 @@ def run_mutation_tests(
     original: Mapping[str, Mapping[str, Any]],
 ) -> list[str]:
     """Require coherently repinned law-level mutations to fail semantically."""
-    mutations: list[tuple[str, Any, str]] = []
+    mutations: list[tuple[str, Any, str, bool]] = []
 
-    def add(name: str, mutate: Any, expected_error: str) -> None:
-        mutations.append((name, mutate, expected_error))
+    def add(
+        name: str,
+        mutate: Any,
+        expected_error: str,
+        *,
+        mutate_after_repin: bool = False,
+    ) -> None:
+        mutations.append((name, mutate, expected_error, mutate_after_repin))
+
+    def forge_slice_integrity_extra(value: dict[str, Any]) -> None:
+        value["slice"]["integrity"]["q5_emitted"] = True
+        gate = value["gate"]
+        identity = next(
+            row
+            for row in gate["artifact_identity_rows"]
+            if row["artifact_role"] == "slice"
+        )
+        raw = canonical_bytes(value["slice"])
+        identity["byte_size"] = len(raw)
+        identity["raw_sha256"] = _sha256(raw)
+        gate["artifact_identity_domain_sha256"] = _domain_sha(
+            gate["artifact_identity_rows"]
+        )
+        value["gate"] = _reseal_artifact(gate)
 
     def forge_parent_and_source_witness(value: dict[str, Any]) -> None:
         pilot_row = value["component"]["unique_parent_assignment_rows"][0]
@@ -6761,6 +7040,33 @@ def run_mutation_tests(
             "q5_emitted", True
         ),
         "nonauthority drift",
+    )
+    add(
+        "slice_integrity_q5_emitted_extra",
+        forge_slice_integrity_extra,
+        "integrity: keyset drift",
+        mutate_after_repin=True,
+    )
+    add(
+        "pilot_census_required_key_omitted",
+        lambda value: value["slice"]["pilot_census"].pop(
+            "component_parent_disposition_counts"
+        ),
+        "slice pilot census: keyset drift",
+    )
+    add(
+        "pilot_census_extra_member",
+        lambda value: value["slice"]["pilot_census"].__setitem__(
+            "forged_extra_member", 1
+        ),
+        "slice pilot census: keyset drift",
+    )
+    add(
+        "pilot_census_parent_dispositions_forged",
+        lambda value: value["slice"]["pilot_census"].__setitem__(
+            "component_parent_disposition_counts", {"forged": 1}
+        ),
+        "component_parent_disposition_counts: keyset drift",
     )
     add(
         "role_assignment_omitted",
@@ -7027,6 +7333,16 @@ def run_mutation_tests(
         "component slot admitted",
     )
     add(
+        "doc036_source_occurrence_forged",
+        lambda value: value["predecessor"][
+            "doc036_aggregate_component_slot_rows"
+        ][0].__setitem__(
+            "source_occurrence_id",
+            "psid-questionnaire-occurrence:coherent-doc036-forgery",
+        ),
+        "doc036 adjudication pinned source projection drift",
+    )
+    add(
         "proof_defect_lawified",
         lambda value: value["predecessor"][
             "populated_local_proof_adjudication_rows"
@@ -7059,6 +7375,22 @@ def run_mutation_tests(
         "law-gap disposition",
     )
     add(
+        "aggregate_law_gap_source_projection_forged",
+        lambda value: next(
+            row
+            for row in value["predecessor"][
+                "populated_local_proof_adjudication_rows"
+            ]
+            if row["third_arm_eligible"]
+        ).update(
+            {
+                "source_instruction_occurrence_ids": [],
+                "evidence_occurrence_ids": [],
+            }
+        ),
+        "proof adjudication pinned source projection drift",
+    )
+    add(
         "gate_claims_certification",
         lambda value: value["gate"].__setitem__(
             "certification_status", "certified"
@@ -7074,10 +7406,14 @@ def run_mutation_tests(
     )
 
     rejected: list[str] = []
-    for name, mutation, expected_error in mutations:
+    for name, mutation, expected_error, mutate_after_repin in mutations:
         candidate = copy.deepcopy(dict(original))
-        mutation(candidate)
-        candidate = _repin_mutated_bundle(candidate)
+        if mutate_after_repin:
+            candidate = _repin_mutated_bundle(candidate)
+            mutation(candidate)
+        else:
+            mutation(candidate)
+            candidate = _repin_mutated_bundle(candidate)
         try:
             validate_bundle(candidate)
         except BuildError as error:

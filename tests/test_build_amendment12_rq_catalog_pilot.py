@@ -57,6 +57,10 @@ DOC064_AGGREGATE_ENDPOINTS = {
 EXPECTED_MUTATIONS = (
     "pilot_slice_reordered",
     "pilot_claims_q5",
+    "slice_integrity_q5_emitted_extra",
+    "pilot_census_required_key_omitted",
+    "pilot_census_extra_member",
+    "pilot_census_parent_dispositions_forged",
     "role_assignment_omitted",
     "role_assignment_role_flipped",
     "role_assignment_class_invented",
@@ -96,10 +100,12 @@ EXPECTED_MUTATIONS = (
     "catalog_only_job_source_member_forged",
     "doc036_law_gap_admitted",
     "doc036_component_slot_admitted",
+    "doc036_source_occurrence_forged",
     "proof_defect_lawified",
     "proof_defect_action_removed",
     "proof_defect_row_omitted",
     "aggregate_law_gap_demoted_to_seal_defect",
+    "aggregate_law_gap_source_projection_forged",
     "gate_claims_certification",
     "gate_claims_repeat_coverage",
 )
