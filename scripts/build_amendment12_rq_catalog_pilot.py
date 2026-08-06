@@ -1024,6 +1024,148 @@ def _component_shape_row(
     }
 
 
+TIER2_FIXTURE_MEMBER_KEYS = frozenset(
+    {"component_anchor_occurrence_id", "parent_candidate_rows"}
+)
+TIER2_FIXTURE_CANDIDATE_KEYS = frozenset(
+    {
+        "source_parent_occurrence_id",
+        "resolved_canonical_parent_node_id",
+        "eligible_parent",
+        "derived_slot_kind",
+        "support_proof_id",
+    }
+)
+
+
+def fold_component_class_fixture(
+    component_kind: str,
+    member_rows: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Execute the prospective tier-2 class fold on synthetic source rows.
+
+    This fixture mints no catalog, relationship, or authority identity.  It
+    makes the class-level cardinality and no-selection law executable before
+    ratification.  Callers remain responsible for proving that the supplied
+    members and candidates exact-cover the pinned source domain.
+    """
+    _require(
+        component_kind in COMPONENT_KINDS, "tier-2 fixture component kind"
+    )
+    _require(bool(member_rows), "tier-2 fixture empty component class")
+    member_ids: list[str] = []
+    raw_counts: list[int] = []
+    all_candidates: list[Mapping[str, Any]] = []
+    for member in member_rows:
+        _require_exact_keys(
+            member, TIER2_FIXTURE_MEMBER_KEYS, "tier-2 fixture member"
+        )
+        member_id = _require_string(
+            member["component_anchor_occurrence_id"],
+            "tier-2 fixture member occurrence",
+        )
+        member_ids.append(member_id)
+        candidates = member["parent_candidate_rows"]
+        _require(isinstance(candidates, list), "tier-2 fixture candidates")
+        source_parent_ids: list[str] = []
+        for candidate in candidates:
+            _require_exact_keys(
+                candidate,
+                TIER2_FIXTURE_CANDIDATE_KEYS,
+                "tier-2 fixture candidate",
+            )
+            source_parent_ids.append(
+                _require_string(
+                    candidate["source_parent_occurrence_id"],
+                    "tier-2 fixture source parent",
+                )
+            )
+            _require_boolean(
+                candidate["eligible_parent"],
+                "tier-2 fixture candidate eligibility",
+            )
+            _require_string(
+                candidate["support_proof_id"],
+                "tier-2 fixture support proof",
+            )
+            if candidate["eligible_parent"]:
+                _require_string(
+                    candidate["resolved_canonical_parent_node_id"],
+                    "tier-2 fixture canonical parent",
+                )
+                _require_string(
+                    candidate["derived_slot_kind"],
+                    "tier-2 fixture slot kind",
+                )
+            else:
+                _require(
+                    candidate["resolved_canonical_parent_node_id"] is None
+                    and candidate["derived_slot_kind"] is None,
+                    "tier-2 fixture ineligible candidate resolved",
+                )
+        _require(
+            len(set(source_parent_ids)) == len(source_parent_ids),
+            "tier-2 fixture duplicate source parent",
+        )
+        raw_counts.append(len(candidates))
+        all_candidates.extend(candidates)
+    _require(
+        len(set(member_ids)) == len(member_ids),
+        "tier-2 fixture duplicate class member",
+    )
+
+    eligible_candidates = [
+        candidate
+        for candidate in all_candidates
+        if candidate["eligible_parent"]
+    ]
+    canonical_parent_ids = list(
+        dict.fromkeys(
+            candidate["resolved_canonical_parent_node_id"]
+            for candidate in eligible_candidates
+        )
+    )
+    slot_kinds = list(
+        dict.fromkeys(
+            candidate["derived_slot_kind"] for candidate in eligible_candidates
+        )
+    )
+    if all(count == 0 for count in raw_counts):
+        disposition = "zero_parent_terminal_disposition"
+    elif any(count > 1 for count in raw_counts):
+        disposition = "multi_parent_ambiguity_no_selection"
+    elif (
+        all(count == 1 for count in raw_counts)
+        and len(eligible_candidates) == len(member_rows)
+        and len(canonical_parent_ids) == 1
+        and len(slot_kinds) == 1
+    ):
+        disposition = "unique_parent_assignment"
+    elif not eligible_candidates:
+        disposition = "zero_lawful_parent_terminal_disposition"
+    else:
+        disposition = "multi_parent_ambiguity_no_selection"
+
+    unique = disposition == "unique_parent_assignment"
+    return {
+        "component_kind": component_kind,
+        "member_occurrence_ids": member_ids,
+        "member_count": len(member_ids),
+        "member_raw_parent_cardinalities": raw_counts,
+        "raw_parent_candidate_count": len(all_candidates),
+        "eligible_parent_candidate_count": len(eligible_candidates),
+        "resolved_canonical_parent_node_ids": canonical_parent_ids,
+        "resolved_slot_kinds": slot_kinds,
+        "disposition": disposition,
+        "unique_parent_node_id": canonical_parent_ids[0] if unique else None,
+        "unique_slot_kind": slot_kinds[0] if unique else None,
+        "forced_parent_selection": False,
+        "tier_2_relationship_arm_eligible": unique,
+        "r_q_relationship_emitted": False,
+        "status": "prospective_fixture_nonauthority",
+    }
+
+
 def _role_classes(
     documents: Sequence[NormalizedDocument],
 ) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:

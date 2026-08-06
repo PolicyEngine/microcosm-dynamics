@@ -355,6 +355,158 @@ def test__component_sweep__is_corpus_exhaustive(bundle):
     assert artifact["ineligible_parent_reference_count"] == 34
 
 
+def _tier2_candidate(
+    source_id,
+    canonical_id="psid-job-slot:job-a",
+    slot_kind="context_only",
+    *,
+    eligible=True,
+):
+    return {
+        "source_parent_occurrence_id": source_id,
+        "resolved_canonical_parent_node_id": (
+            canonical_id if eligible else None
+        ),
+        "eligible_parent": eligible,
+        "derived_slot_kind": slot_kind if eligible else None,
+        "support_proof_id": f"fixture-proof:{source_id}",
+    }
+
+
+def _tier2_member(member_id, candidates):
+    return {
+        "component_anchor_occurrence_id": member_id,
+        "parent_candidate_rows": candidates,
+    }
+
+
+@pytest.mark.parametrize(
+    ("members", "expected_disposition", "relationship_eligible"),
+    (
+        (
+            [_tier2_member("component:zero", [])],
+            "zero_parent_terminal_disposition",
+            False,
+        ),
+        (
+            [
+                _tier2_member(
+                    "component:ineligible",
+                    [_tier2_candidate("parent:role", eligible=False)],
+                )
+            ],
+            "zero_lawful_parent_terminal_disposition",
+            False,
+        ),
+        (
+            [
+                _tier2_member(
+                    "component:unique",
+                    [_tier2_candidate("parent:job-a")],
+                )
+            ],
+            "unique_parent_assignment",
+            True,
+        ),
+        (
+            [
+                _tier2_member(
+                    "component:alias-a",
+                    [_tier2_candidate("parent:job-a-alias-1")],
+                ),
+                _tier2_member(
+                    "component:alias-b",
+                    [_tier2_candidate("parent:job-a-alias-2")],
+                ),
+            ],
+            "unique_parent_assignment",
+            True,
+        ),
+        (
+            [
+                _tier2_member(
+                    "component:same-category-multi",
+                    [
+                        _tier2_candidate("parent:job-a-1"),
+                        _tier2_candidate("parent:job-a-2"),
+                    ],
+                )
+            ],
+            "multi_parent_ambiguity_no_selection",
+            False,
+        ),
+        (
+            [
+                _tier2_member(
+                    "component:cross-category-multi",
+                    [
+                        _tier2_candidate("parent:job-a"),
+                        _tier2_candidate(
+                            "parent:farm",
+                            "psid-job-slot:farm-aggregate",
+                            "farm_aggregate",
+                        ),
+                    ],
+                )
+            ],
+            "multi_parent_ambiguity_no_selection",
+            False,
+        ),
+        (
+            [
+                _tier2_member("component:mixed-zero", []),
+                _tier2_member(
+                    "component:mixed-parent",
+                    [_tier2_candidate("parent:job-a")],
+                ),
+            ],
+            "multi_parent_ambiguity_no_selection",
+            False,
+        ),
+        (
+            [
+                _tier2_member(
+                    "component:conflict-a",
+                    [_tier2_candidate("parent:job-a")],
+                ),
+                _tier2_member(
+                    "component:conflict-b",
+                    [_tier2_candidate("parent:job-b", "psid-job-slot:job-b")],
+                ),
+            ],
+            "multi_parent_ambiguity_no_selection",
+            False,
+        ),
+    ),
+)
+def test__tier2_component_class_fold__has_satisfiable_nonauthority_fixtures(
+    members,
+    expected_disposition,
+    relationship_eligible,
+):
+    result = a12.fold_component_class_fixture("source_context", members)
+    assert result["disposition"] == expected_disposition
+    assert result["tier_2_relationship_arm_eligible"] is relationship_eligible
+    assert result["forced_parent_selection"] is False
+    assert result["r_q_relationship_emitted"] is False
+    assert result["status"] == "prospective_fixture_nonauthority"
+
+
+def test__tier2_component_class_fold__rejects_duplicate_source_candidates():
+    candidate = _tier2_candidate("parent:duplicate")
+    members = [_tier2_member("component:duplicate", [candidate, candidate])]
+    with pytest.raises(a12.BuildError, match="duplicate source parent"):
+        a12.fold_component_class_fixture("source_context", members)
+
+
+def test__tier2_component_class_fold__rejects_resolved_ineligible_candidate():
+    candidate = _tier2_candidate("parent:invalid", eligible=False)
+    candidate["resolved_canonical_parent_node_id"] = "psid-job-slot:invented"
+    members = [_tier2_member("component:invalid", [candidate])]
+    with pytest.raises(a12.BuildError, match="ineligible candidate resolved"):
+        a12.fold_component_class_fixture("source_context", members)
+
+
 def test__predecessor_adjudication__keeps_all_candidates_as_seal_defects(
     bundle,
 ):
