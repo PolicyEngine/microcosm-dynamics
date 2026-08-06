@@ -66,6 +66,12 @@ EXPECTED_MUTATIONS = (
     "component_sweep_row_omitted",
     "component_sweep_source_anchor_forged",
     "component_row_extra_key",
+    "component_class_sweep_row_omitted",
+    "component_class_sweep_relationship_arm_flipped",
+    "job_complement_sweep_row_omitted",
+    "job_complement_coverage_arm_flipped",
+    "exact_pair_support_label_forged",
+    "catalog_only_job_source_member_forged",
     "doc036_law_gap_admitted",
     "doc036_component_slot_admitted",
     "proof_defect_lawified",
@@ -355,6 +361,44 @@ def test__component_sweep__is_corpus_exhaustive(bundle):
     assert artifact["ineligible_parent_reference_count"] == 34
 
 
+def test__derived_class_sweeps__exact_cover_both_source_domains(bundle):
+    artifact = bundle["derived"]
+    assert artifact["component_class_admission_sweep_count"] == 19_507
+    assert artifact["component_class_member_occurrence_count"] == 21_283
+    assert artifact["catalog_only_job_complement_sweep_count"] == 12_357
+    assert artifact["job_class_member_occurrence_count"] == 14_326
+    assert artifact["component_class_candidate_disposition_counts"] == {
+        "multi_parent_ambiguity_no_selection": 1_973,
+        "unique_parent_assignment": 7_934,
+        "zero_lawful_parent_terminal_disposition": 30,
+        "zero_parent_terminal_disposition": 9_570,
+    }
+
+
+def test__derived_class_sweeps__exercise_both_alias_proof_forms(bundle):
+    artifact = bundle["derived"]
+    assert artifact["component_alias_support_origin_counts"] == {
+        "exact_pair_equality_sweep": 746,
+        "sealed_local_evidence": 209,
+    }
+    assert artifact["job_alias_support_origin_counts"] == {
+        "exact_pair_equality_sweep": 647,
+        "sealed_local_evidence": 79,
+    }
+
+
+def test__derived_job_complement__is_a_complete_two_arm_partition(bundle):
+    artifact = bundle["derived"]
+    assert artifact["catalog_only_job_coverage_arm_counts"] == {
+        "relationship_projection_nonempty": 3_359,
+        "terminal_catalog_disposition": 8_998,
+    }
+    assert all(
+        row["catalog_only_disposition_emitted"] is False
+        for row in artifact["catalog_only_job_complement_sweep_rows"]
+    )
+
+
 def _tier2_candidate(
     source_id,
     canonical_id="psid-job-slot:job-a",
@@ -551,6 +595,42 @@ def test__tier2_component_class_fold__rejects_resolved_ineligible_candidate():
         a12.fold_component_class_fixture("source_context", members)
 
 
+@pytest.mark.parametrize(
+    ("relationships", "catalog_only", "coverage_arm"),
+    (
+        ([], True, "terminal_catalog_disposition"),
+        (
+            ["a12-candidate-component-class:fixture"],
+            False,
+            "relationship_projection_nonempty",
+        ),
+    ),
+)
+def test__tier2_job_complement_fold__has_both_satisfiable_arms(
+    relationships,
+    catalog_only,
+    coverage_arm,
+):
+    result = a12.fold_catalog_only_job_complement_fixture(
+        "a12-candidate-job-class:fixture", relationships
+    )
+    assert result["catalog_only_disposition_required"] is catalog_only
+    assert result["coverage_arm"] == coverage_arm
+    assert result["catalog_only_disposition_emitted"] is False
+    assert result["status"] == "prospective_fixture_nonauthority"
+
+
+def test__tier2_job_complement_fold__rejects_duplicate_relationships():
+    with pytest.raises(a12.BuildError, match="duplicate relationship"):
+        a12.fold_catalog_only_job_complement_fixture(
+            "a12-candidate-job-class:fixture",
+            [
+                "a12-candidate-component-class:duplicate",
+                "a12-candidate-component-class:duplicate",
+            ],
+        )
+
+
 def test__predecessor_adjudication__keeps_all_candidates_as_seal_defects(
     bundle,
 ):
@@ -583,7 +663,7 @@ def test__pilot_artifacts__are_canonical_and_below_blob_limit():
 
 def test__gate__pins_every_subordinate_artifact_raw_identity(bundle):
     rows = bundle["gate"]["artifact_identity_rows"]
-    assert len(rows) == 6
+    assert len(rows) == 7
     for row in rows:
         raw = a12.canonical_bytes(bundle[row["artifact_role"]])
         assert row["byte_size"] == len(raw)
@@ -606,9 +686,9 @@ def test__gate_identity_roles__must_be_an_exact_ordered_partition(bundle):
     candidate = copy.deepcopy(bundle)
     gate = copy.deepcopy(candidate["gate"])
     gate["artifact_identity_rows"] = [
-        copy.deepcopy(gate["artifact_identity_rows"][0]) for _ in range(6)
+        copy.deepcopy(gate["artifact_identity_rows"][0]) for _ in range(7)
     ]
-    gate["artifact_identity_count"] = 6
+    gate["artifact_identity_count"] = 7
     gate["artifact_identity_domain_sha256"] = a12._domain_sha(
         gate["artifact_identity_rows"]
     )

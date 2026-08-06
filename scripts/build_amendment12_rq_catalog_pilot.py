@@ -56,6 +56,18 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
     "parent_source_witness": (
         "a89a54310e86cd3d08c40d9fb9cedc9f25dd0069780ecc4e94f8ef596843ebd1"
     ),
+    "component_class_admission_keyset": (
+        "e89fa8d27daea8374317c61a3f914b7a12cb168a16be166122a4fea77723a2e3"
+    ),
+    "component_class_admission": (
+        "92116fb8400eddc0266d0c2ae208f58fa3ba965dc5c77ab723dea5c6b3a4ca2e"
+    ),
+    "catalog_only_job_complement_keyset": (
+        "47ef70e41be3716d51b3fc46d3649add4a0e5a99c5d771cedee3d5111dcaec51"
+    ),
+    "catalog_only_job_complement": (
+        "5f660c565ff79f37c2c76367154ab0b6696e5a9a14f17959ae165f2f6923a5ac"
+    ),
 }
 
 ROLE_HEAD = "head_or_reference_person"
@@ -76,6 +88,10 @@ COMPONENT_KINDS = (
     "source_context",
     "source_remuneration_component",
 )
+COMPONENT_CLASSIFICATION_TO_KIND = {
+    "source_context": "context_anchor",
+    "source_remuneration_component": "remuneration_component_anchor",
+}
 AGGREGATE_CLASSIFICATIONS = (
     "source_role_total",
     "source_farm_aggregate",
@@ -99,12 +115,24 @@ ALLOWED_LOCAL_EVIDENCE_RELATIONS = (
     *ALLOWED_REPEAT_RELATIONS,
     "same_printed_identifier_and_exact_label",
 )
+COMPLETE_LOCAL_EVIDENCE_STATUSES = (
+    "document_local_source_evidence_complete",
+    "local_exact_identifier_and_label_for_global_assembly",
+    "local_resolved_cross_reference_for_global_assembly",
+)
 
 PARENT_KIND_TO_CATEGORY = {
     "job_anchor": "source_job",
     "role_total_anchor": "role_total_sentinel",
     "farm_aggregate_anchor": "farm_aggregate_sentinel",
     "business_aggregate_anchor": "business_aggregate_sentinel",
+}
+CANDIDATE_SENTINEL_PARENT_NODE_IDS = {
+    "role_total_anchor": "a12-candidate-parent-node:role-total-sentinel",
+    "farm_aggregate_anchor": "a12-candidate-parent-node:farm-aggregate-sentinel",
+    "business_aggregate_anchor": (
+        "a12-candidate-parent-node:business-aggregate-sentinel"
+    ),
 }
 INELIGIBLE_PARENT_CATEGORY = {
     "role_anchor": "ineligible_role_anchor",
@@ -260,6 +288,7 @@ ERA_SEALS = (
 OUTPUT_FILENAMES = {
     "slice": "pilot_slice_manifest_v1.json",
     "sweeps": "corpus_exhaustive_targeted_sweeps_v1.json",
+    "derived": "derived_class_complement_sweeps_v1.json",
     "predecessor": "predecessor_defect_adjudication_v1.json",
     "role": "role_assignment_pilot_v1.json",
     "repeat": "outside_domain_repeat_disposition_pilot_v1.json",
@@ -641,6 +670,10 @@ def _normalize_document(
     occurrence_by_id = {
         row["questionnaire_occurrence_id"]: row for row in occurrences
     }
+    occurrence_source_order = {
+        row["questionnaire_occurrence_id"]: index
+        for index, row in enumerate(occurrences)
+    }
     _require(
         len(occurrence_by_id) == len(occurrences),
         f"{path}: duplicate occurrence ID",
@@ -756,8 +789,23 @@ def _normalize_document(
         instructions = _source_instruction_ids(row)
         evidence_ids = list(row["evidence_occurrence_ids"])
         _require(
-            all(value in occurrence_by_id for value in evidence_ids),
-            f"{path}: evidence occurrence is missing",
+            all(
+                value in occurrence_by_id
+                for value in [*instructions, *evidence_ids]
+            ),
+            f"{path}: instruction or evidence occurrence is missing",
+        )
+        evidence_arrays_unique_disjoint = (
+            len(aliases) == len(set(aliases))
+            and len(canonicals) == len(set(canonicals))
+            and not set(aliases) & set(canonicals)
+            and len(instructions) == len(set(instructions))
+            and len(evidence_ids) == len(set(evidence_ids))
+        )
+        evidence_arrays_source_ordered = all(
+            values
+            == sorted(values, key=lambda value: occurrence_source_order[value])
+            for values in (aliases, canonicals, instructions, evidence_ids)
         )
         normalized_evidence.append(
             {
@@ -771,6 +819,12 @@ def _normalize_document(
                 "alias_anchor_occurrence_ids": aliases,
                 "canonical_anchor_occurrence_ids": canonicals,
                 "evidence_occurrence_ids": evidence_ids,
+                "evidence_arrays_unique_disjoint": (
+                    evidence_arrays_unique_disjoint
+                ),
+                "evidence_arrays_source_ordered": (
+                    evidence_arrays_source_ordered
+                ),
                 "unresolved_target_reference": row.get(
                     "unresolved_target_reference"
                 ),
@@ -1166,6 +1220,445 @@ def fold_component_class_fixture(
     }
 
 
+def fold_catalog_only_job_complement_fixture(
+    candidate_job_class_id: str,
+    candidate_relationship_component_class_ids: Sequence[str],
+) -> dict[str, Any]:
+    """Execute the catalog-only complement partition without minting it."""
+    _require_string(candidate_job_class_id, "job complement fixture class")
+    relationships = [
+        _require_string(value, "job complement fixture relationship")
+        for value in candidate_relationship_component_class_ids
+    ]
+    _require(
+        len(set(relationships)) == len(relationships),
+        "job complement fixture duplicate relationship",
+    )
+    catalog_only = not relationships
+    return {
+        "candidate_job_class_id": candidate_job_class_id,
+        "candidate_relationship_component_class_ids": relationships,
+        "candidate_relationship_count": len(relationships),
+        "catalog_only_disposition_required": catalog_only,
+        "coverage_arm": (
+            "terminal_catalog_disposition"
+            if catalog_only
+            else "relationship_projection_nonempty"
+        ),
+        "catalog_only_disposition_emitted": False,
+        "status": "prospective_fixture_nonauthority",
+    }
+
+
+def _candidate_alias_classes(
+    documents: Sequence[NormalizedDocument],
+    occurrence_kinds: frozenset[str],
+) -> list[dict[str, Any]]:
+    """Build complete nonauthority classes under the inherited alias law."""
+    ordered_anchor_rows: list[dict[str, Any]] = []
+    anchor_by_id: dict[str, dict[str, Any]] = {}
+    for document in documents:
+        for anchor in document.anchor_rows:
+            if anchor["occurrence_kind"] not in occurrence_kinds:
+                continue
+            occurrence_id = anchor["source_occurrence_id"]
+            ordered_anchor_rows.append(anchor)
+            anchor_by_id[occurrence_id] = anchor
+
+    parent = {occurrence_id: occurrence_id for occurrence_id in anchor_by_id}
+
+    def find(occurrence_id: str) -> str:
+        while parent[occurrence_id] != occurrence_id:
+            parent[occurrence_id] = parent[parent[occurrence_id]]
+            occurrence_id = parent[occurrence_id]
+        return occurrence_id
+
+    def union(left: str, right: str) -> None:
+        left_root = find(left)
+        right_root = find(right)
+        if left_root != right_root:
+            parent[right_root] = left_root
+
+    source_order = {
+        row["source_occurrence_id"]: index
+        for index, row in enumerate(ordered_anchor_rows)
+    }
+    support_edges: list[tuple[list[str], dict[str, Any]]] = []
+
+    exact_pair_groups: defaultdict[tuple[str, str, str], list[str]] = (
+        defaultdict(list)
+    )
+    for anchor in ordered_anchor_rows:
+        printed_identifier = anchor["printed_identifier"]
+        exact_label = anchor["exact_label"]
+        if not (
+            isinstance(printed_identifier, str)
+            and printed_identifier
+            and isinstance(exact_label, str)
+            and exact_label
+        ):
+            continue
+        exact_pair_groups[
+            (
+                anchor["occurrence_kind"],
+                printed_identifier,
+                exact_label,
+            )
+        ].append(anchor["source_occurrence_id"])
+    for (
+        occurrence_kind,
+        printed_identifier,
+        exact_label,
+    ), members in exact_pair_groups.items():
+        if len(members) < 2:
+            continue
+        for member in members[1:]:
+            union(members[0], member)
+        support_edges.append(
+            (
+                members,
+                {
+                    "alias_support_proof_id": _row_id(
+                        "a12-candidate-exact-pair-alias-support:",
+                        [
+                            occurrence_kind,
+                            printed_identifier,
+                            exact_label,
+                            members[1:],
+                            members[:1],
+                            members,
+                        ],
+                    ),
+                    "support_origin": "exact_pair_equality_sweep",
+                    "relation": ("same_printed_identifier_and_exact_label"),
+                    "member_occurrence_ids": members,
+                    "alias_anchor_occurrence_ids": members[1:],
+                    "canonical_anchor_occurrence_ids": members[:1],
+                    "source_local_evidence_id": None,
+                    "printed_identifier": printed_identifier,
+                    "exact_label": exact_label,
+                    "evidence_occurrence_ids": members,
+                },
+            )
+        )
+
+    for document in documents:
+        for evidence in document.evidence_rows:
+            if not _compatible_direct_proof(evidence):
+                continue
+            directional_endpoints = list(
+                dict.fromkeys(
+                    [
+                        *evidence["alias_anchor_occurrence_ids"],
+                        *evidence["canonical_anchor_occurrence_ids"],
+                    ]
+                )
+            )
+            if not directional_endpoints or not all(
+                value in anchor_by_id for value in directional_endpoints
+            ):
+                continue
+            endpoints = sorted(
+                directional_endpoints, key=lambda value: source_order[value]
+            )
+            endpoint_kinds = {
+                anchor_by_id[value]["occurrence_kind"] for value in endpoints
+            }
+            if len(endpoint_kinds) != 1:
+                continue
+            printed_identifier: str | None = None
+            exact_label: str | None = None
+            if (
+                evidence["relation"]
+                == "same_printed_identifier_and_exact_label"
+            ):
+                printed_values = {
+                    anchor_by_id[value]["printed_identifier"]
+                    for value in endpoints
+                }
+                label_values = {
+                    anchor_by_id[value]["exact_label"] for value in endpoints
+                }
+                if (
+                    len(printed_values) != 1
+                    or len(label_values) != 1
+                    or not all(
+                        isinstance(value, str) and value
+                        for value in [*printed_values, *label_values]
+                    )
+                ):
+                    continue
+                printed_identifier = next(iter(printed_values))
+                exact_label = next(iter(label_values))
+            for endpoint in endpoints[1:]:
+                union(endpoints[0], endpoint)
+            support_edges.append(
+                (
+                    endpoints,
+                    {
+                        "alias_support_proof_id": _row_id(
+                            "a12-candidate-local-alias-support:",
+                            [
+                                evidence["local_evidence_id"],
+                                evidence["relation"],
+                                evidence["alias_anchor_occurrence_ids"],
+                                evidence["canonical_anchor_occurrence_ids"],
+                                evidence["evidence_occurrence_ids"],
+                            ],
+                        ),
+                        "support_origin": "sealed_local_evidence",
+                        "relation": evidence["relation"],
+                        "member_occurrence_ids": endpoints,
+                        "alias_anchor_occurrence_ids": evidence[
+                            "alias_anchor_occurrence_ids"
+                        ],
+                        "canonical_anchor_occurrence_ids": evidence[
+                            "canonical_anchor_occurrence_ids"
+                        ],
+                        "source_local_evidence_id": evidence[
+                            "local_evidence_id"
+                        ],
+                        "printed_identifier": printed_identifier,
+                        "exact_label": exact_label,
+                        "evidence_occurrence_ids": evidence[
+                            "evidence_occurrence_ids"
+                        ],
+                    },
+                )
+            )
+
+    members_by_root: defaultdict[str, list[str]] = defaultdict(list)
+    for anchor in ordered_anchor_rows:
+        occurrence_id = anchor["source_occurrence_id"]
+        members_by_root[find(occurrence_id)].append(occurrence_id)
+
+    support_by_root: defaultdict[str, list[dict[str, Any]]] = defaultdict(list)
+    for endpoints, support in support_edges:
+        root = find(endpoints[0])
+        if support not in support_by_root[root]:
+            support_by_root[root].append(support)
+
+    rows: list[dict[str, Any]] = []
+    observed_roots: set[str] = set()
+    for anchor in ordered_anchor_rows:
+        root = find(anchor["source_occurrence_id"])
+        if root in observed_roots:
+            continue
+        observed_roots.add(root)
+        members = members_by_root[root]
+        supports = support_by_root[root]
+        rows.append(
+            {
+                "canonical_occurrence_id": members[0],
+                "member_occurrence_ids": members,
+                "alias_support_rows": supports,
+                "alias_support_count": len(supports),
+                "alias_support_domain_sha256": _domain_sha(supports),
+            }
+        )
+    return rows
+
+
+def _derived_class_complement_sweep_rows(
+    documents: Sequence[NormalizedDocument],
+    component_shapes: Sequence[Mapping[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Run full-corpus candidate class and job-complement sweeps."""
+    job_classes = _candidate_alias_classes(
+        documents, frozenset({"job_anchor"})
+    )
+    candidate_job_id_by_occurrence: dict[str, str] = {}
+    candidate_job_rows: list[dict[str, Any]] = []
+    for value in job_classes:
+        candidate_job_class_id = _row_id(
+            "a12-candidate-job-class:",
+            [
+                value["canonical_occurrence_id"],
+                value["member_occurrence_ids"],
+            ],
+        )
+        candidate_job_rows.append(
+            {**value, "candidate_job_class_id": candidate_job_class_id}
+        )
+        for occurrence_id in value["member_occurrence_ids"]:
+            candidate_job_id_by_occurrence[occurrence_id] = (
+                candidate_job_class_id
+            )
+
+    shape_by_occurrence = {
+        row["component_anchor_occurrence_id"]: row for row in component_shapes
+    }
+    component_classes = _candidate_alias_classes(
+        documents,
+        frozenset({"context_anchor", "remuneration_component_anchor"}),
+    )
+    component_class_rows: list[dict[str, Any]] = []
+    for value in component_classes:
+        members = value["member_occurrence_ids"]
+        member_shapes = [shape_by_occurrence[member] for member in members]
+        component_kinds = {row["component_kind"] for row in member_shapes}
+        _require(
+            len(component_kinds) == 1,
+            "candidate component class crosses component kinds",
+        )
+        fixture_members: list[dict[str, Any]] = []
+        for shape in member_shapes:
+            fixture_candidates: list[dict[str, Any]] = []
+            for candidate in shape["parent_candidate_rows"]:
+                resolved_parent = None
+                if candidate["eligible_parent"]:
+                    parent_kind = candidate["parent_occurrence_kind"]
+                    if parent_kind == "job_anchor":
+                        resolved_parent = candidate_job_id_by_occurrence[
+                            candidate["parent_occurrence_id"]
+                        ]
+                    else:
+                        resolved_parent = CANDIDATE_SENTINEL_PARENT_NODE_IDS[
+                            parent_kind
+                        ]
+                fixture_candidates.append(
+                    {
+                        "source_parent_occurrence_id": candidate[
+                            "parent_occurrence_id"
+                        ],
+                        "resolved_canonical_parent_node_id": resolved_parent,
+                        "eligible_parent": candidate["eligible_parent"],
+                        "derived_slot_kind": candidate["derived_slot_kind"],
+                        "support_proof_id": _row_id(
+                            "a12-candidate-parent-support:",
+                            [
+                                shape["component_anchor_occurrence_id"],
+                                candidate["parent_occurrence_id"],
+                            ],
+                        ),
+                    }
+                )
+            fixture_members.append(
+                {
+                    "component_anchor_occurrence_id": shape[
+                        "component_anchor_occurrence_id"
+                    ],
+                    "parent_candidate_rows": fixture_candidates,
+                }
+            )
+        folded = fold_component_class_fixture(
+            next(iter(component_kinds)), fixture_members
+        )
+        candidate_component_class_id = _row_id(
+            "a12-candidate-component-class:",
+            [value["canonical_occurrence_id"], members],
+        )
+        sweep_id = _row_id(
+            "a12-component-class-admission-sweep:",
+            [candidate_component_class_id, folded["disposition"]],
+        )
+        component_class_rows.append(
+            {
+                "component_class_admission_sweep_id": sweep_id,
+                "candidate_component_class_id": candidate_component_class_id,
+                "canonical_component_occurrence_id": value[
+                    "canonical_occurrence_id"
+                ],
+                "component_class_member_occurrence_ids": members,
+                "component_class_member_count": len(members),
+                "component_kind": next(iter(component_kinds)),
+                "member_raw_parent_cardinalities": folded[
+                    "member_raw_parent_cardinalities"
+                ],
+                "raw_parent_candidate_count": folded[
+                    "raw_parent_candidate_count"
+                ],
+                "eligible_canonical_parent_count": len(
+                    folded["resolved_canonical_parent_node_ids"]
+                ),
+                "candidate_disposition": folded["disposition"],
+                "candidate_unique_parent_node_id": folded[
+                    "unique_parent_node_id"
+                ],
+                "candidate_unique_slot_kind": folded["unique_slot_kind"],
+                "relationship_arm_eligible": folded[
+                    "tier_2_relationship_arm_eligible"
+                ],
+                "r_q_relationship_emitted": False,
+                "alias_support_rows": value["alias_support_rows"],
+                "alias_support_count": value["alias_support_count"],
+                "alias_support_domain_sha256": value[
+                    "alias_support_domain_sha256"
+                ],
+                "predecessor_reseal_required": True,
+                "status": (
+                    "candidate_class_fold_nonauthority_"
+                    "predecessor_reseal_required"
+                ),
+            }
+        )
+
+    candidate_job_class_ids = {
+        row["candidate_job_class_id"] for row in candidate_job_rows
+    }
+    relationship_components_by_job: defaultdict[str, list[str]] = defaultdict(
+        list
+    )
+    for row in component_class_rows:
+        if not row["relationship_arm_eligible"]:
+            continue
+        parent_id = row["candidate_unique_parent_node_id"]
+        if parent_id not in candidate_job_class_ids:
+            continue
+        relationship_components_by_job[parent_id].append(
+            row["candidate_component_class_id"]
+        )
+
+    job_complement_rows: list[dict[str, Any]] = []
+    for value in candidate_job_rows:
+        candidate_job_class_id = value["candidate_job_class_id"]
+        component_class_ids = relationship_components_by_job[
+            candidate_job_class_id
+        ]
+        folded = fold_catalog_only_job_complement_fixture(
+            candidate_job_class_id, component_class_ids
+        )
+        sweep_id = _row_id(
+            "a12-catalog-only-job-complement-sweep:",
+            [candidate_job_class_id, component_class_ids],
+        )
+        job_complement_rows.append(
+            {
+                "catalog_only_job_complement_sweep_id": sweep_id,
+                "candidate_job_class_id": candidate_job_class_id,
+                "canonical_job_occurrence_id": value[
+                    "canonical_occurrence_id"
+                ],
+                "job_class_member_occurrence_ids": value[
+                    "member_occurrence_ids"
+                ],
+                "job_class_member_count": len(value["member_occurrence_ids"]),
+                "candidate_relationship_component_class_ids": (
+                    component_class_ids
+                ),
+                "candidate_relationship_count": folded[
+                    "candidate_relationship_count"
+                ],
+                "catalog_only_disposition_required": folded[
+                    "catalog_only_disposition_required"
+                ],
+                "coverage_arm": folded["coverage_arm"],
+                "catalog_only_disposition_emitted": False,
+                "alias_support_rows": value["alias_support_rows"],
+                "alias_support_count": value["alias_support_count"],
+                "alias_support_domain_sha256": value[
+                    "alias_support_domain_sha256"
+                ],
+                "predecessor_reseal_required": True,
+                "status": (
+                    "candidate_job_complement_nonauthority_"
+                    "predecessor_reseal_required"
+                ),
+            }
+        )
+    return component_class_rows, job_complement_rows
+
+
 def _role_classes(
     documents: Sequence[NormalizedDocument],
 ) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
@@ -1486,9 +1979,23 @@ def _doc036_defect_rows(
 
 
 def _compatible_direct_proof(evidence: Mapping[str, Any]) -> bool:
+    aliases = evidence["alias_anchor_occurrence_ids"]
+    canonicals = evidence["canonical_anchor_occurrence_ids"]
+    evidence_ids = evidence["evidence_occurrence_ids"]
+    instructions = evidence["source_instruction_occurrence_ids"]
+    endpoints = [*aliases, *canonicals]
+    required_evidence = {*endpoints, *instructions}
     return bool(
-        evidence["alias_anchor_occurrence_ids"]
-        and evidence["canonical_anchor_occurrence_ids"]
+        aliases
+        and canonicals
+        and len(endpoints) == len(set(endpoints))
+        and not set(aliases) & set(canonicals)
+        and evidence_ids
+        and len(evidence_ids) == len(set(evidence_ids))
+        and required_evidence <= set(evidence_ids)
+        and evidence["evidence_arrays_unique_disjoint"]
+        and evidence["evidence_arrays_source_ordered"]
+        and evidence["handoff_status"] in COMPLETE_LOCAL_EVIDENCE_STATUSES
         and not any(evidence["defect_flags"].values())
     )
 
@@ -1900,6 +2407,105 @@ def _build_bundle(
         },
     )
 
+    (
+        component_class_admission_rows,
+        catalog_only_job_complement_rows,
+    ) = _derived_class_complement_sweep_rows(documents, full_component_shapes)
+    derived_sweep_artifact = _artifact(
+        "amendment_12_rq_catalog_derived_class_complement_sweeps.v1",
+        "a12-rq-derived-sweeps:",
+        "amendment_12_derived_class_complement_sweeps_nonauthority",
+        {
+            "tier": 1,
+            "source_corpus_identity": source_identity,
+            "corpus_sweep_artifact_id": sweep_artifact["artifact_id"],
+            "predecessor_artifact_id": predecessor_artifact["artifact_id"],
+            "predecessor_defect_count": 50,
+            "predecessor_reseal_required": True,
+            "component_class_admission_sweep_rows": (
+                component_class_admission_rows
+            ),
+            "component_class_admission_sweep_count": len(
+                component_class_admission_rows
+            ),
+            "component_class_member_occurrence_count": sum(
+                row["component_class_member_count"]
+                for row in component_class_admission_rows
+            ),
+            "component_class_admission_sweep_keyset_sha256": _keyset_sha(
+                [
+                    row["component_class_admission_sweep_id"]
+                    for row in component_class_admission_rows
+                ]
+            ),
+            "component_class_admission_sweep_domain_sha256": _domain_sha(
+                component_class_admission_rows
+            ),
+            "component_class_candidate_disposition_counts": dict(
+                sorted(
+                    Counter(
+                        row["candidate_disposition"]
+                        for row in component_class_admission_rows
+                    ).items()
+                )
+            ),
+            "component_class_relationship_arm_eligible_count": sum(
+                row["relationship_arm_eligible"]
+                for row in component_class_admission_rows
+            ),
+            "component_alias_support_origin_counts": dict(
+                sorted(
+                    Counter(
+                        support["support_origin"]
+                        for row in component_class_admission_rows
+                        for support in row["alias_support_rows"]
+                    ).items()
+                )
+            ),
+            "catalog_only_job_complement_sweep_rows": (
+                catalog_only_job_complement_rows
+            ),
+            "catalog_only_job_complement_sweep_count": len(
+                catalog_only_job_complement_rows
+            ),
+            "job_class_member_occurrence_count": sum(
+                row["job_class_member_count"]
+                for row in catalog_only_job_complement_rows
+            ),
+            "catalog_only_job_complement_sweep_keyset_sha256": _keyset_sha(
+                [
+                    row["catalog_only_job_complement_sweep_id"]
+                    for row in catalog_only_job_complement_rows
+                ]
+            ),
+            "catalog_only_job_complement_sweep_domain_sha256": _domain_sha(
+                catalog_only_job_complement_rows
+            ),
+            "catalog_only_job_coverage_arm_counts": dict(
+                sorted(
+                    Counter(
+                        row["coverage_arm"]
+                        for row in catalog_only_job_complement_rows
+                    ).items()
+                )
+            ),
+            "job_alias_support_origin_counts": dict(
+                sorted(
+                    Counter(
+                        support["support_origin"]
+                        for row in catalog_only_job_complement_rows
+                        for support in row["alias_support_rows"]
+                    ).items()
+                )
+            ),
+            "nonauthority_statement": _nonauthority_statement(),
+            "status": (
+                "pass_derived_class_complement_sweeps_nonauthority_"
+                "predecessor_reseal_required"
+            ),
+        },
+    )
+
     pilot_role_classes: list[dict[str, Any]] = []
     pilot_member_ids = {
         anchor["source_occurrence_id"]
@@ -2064,6 +2670,7 @@ def _build_bundle(
     preliminary = {
         "slice": slice_artifact,
         "sweeps": sweep_artifact,
+        "derived": derived_sweep_artifact,
         "predecessor": predecessor_artifact,
         "role": role_artifact,
         "repeat": repeat_artifact,
@@ -2128,6 +2735,11 @@ ARTIFACT_SPECS = {
         "amendment_12_rq_catalog_corpus_exhaustive_targeted_sweeps.v1",
         "a12-rq-corpus-sweeps:",
         "amendment_12_corpus_exhaustive_shape_sweeps_nonauthority",
+    ),
+    "derived": (
+        "amendment_12_rq_catalog_derived_class_complement_sweeps.v1",
+        "a12-rq-derived-sweeps:",
+        "amendment_12_derived_class_complement_sweeps_nonauthority",
     ),
     "predecessor": (
         "amendment_12_rq_catalog_predecessor_defect_adjudication.v1",
@@ -2212,6 +2824,34 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "eligible_cross_category_multi_parent_count",
             "eligible_ineligible_mixed_multi_parent_count",
             "ineligible_parent_reference_count",
+            "nonauthority_statement",
+            "status",
+        }
+    ),
+    "derived": frozenset(
+        _ENVELOPE_KEYS
+        | {
+            "tier",
+            "source_corpus_identity",
+            "corpus_sweep_artifact_id",
+            "predecessor_artifact_id",
+            "predecessor_defect_count",
+            "predecessor_reseal_required",
+            "component_class_admission_sweep_rows",
+            "component_class_admission_sweep_count",
+            "component_class_member_occurrence_count",
+            "component_class_admission_sweep_keyset_sha256",
+            "component_class_admission_sweep_domain_sha256",
+            "component_class_candidate_disposition_counts",
+            "component_class_relationship_arm_eligible_count",
+            "component_alias_support_origin_counts",
+            "catalog_only_job_complement_sweep_rows",
+            "catalog_only_job_complement_sweep_count",
+            "job_class_member_occurrence_count",
+            "catalog_only_job_complement_sweep_keyset_sha256",
+            "catalog_only_job_complement_sweep_domain_sha256",
+            "catalog_only_job_coverage_arm_counts",
+            "job_alias_support_origin_counts",
             "nonauthority_statement",
             "status",
         }
@@ -2420,6 +3060,62 @@ COMPONENT_SHAPE_ROW_KEYS = frozenset(
         "forced_parent_selection",
         "tier_2_unique_parent_arm_eligible",
         "r_q_relationship_emitted",
+        "status",
+    }
+)
+COMPONENT_CLASS_ADMISSION_SWEEP_ROW_KEYS = frozenset(
+    {
+        "component_class_admission_sweep_id",
+        "candidate_component_class_id",
+        "canonical_component_occurrence_id",
+        "component_class_member_occurrence_ids",
+        "component_class_member_count",
+        "component_kind",
+        "member_raw_parent_cardinalities",
+        "raw_parent_candidate_count",
+        "eligible_canonical_parent_count",
+        "candidate_disposition",
+        "candidate_unique_parent_node_id",
+        "candidate_unique_slot_kind",
+        "relationship_arm_eligible",
+        "r_q_relationship_emitted",
+        "alias_support_rows",
+        "alias_support_count",
+        "alias_support_domain_sha256",
+        "predecessor_reseal_required",
+        "status",
+    }
+)
+ALIAS_SUPPORT_ROW_KEYS = frozenset(
+    {
+        "alias_support_proof_id",
+        "support_origin",
+        "relation",
+        "member_occurrence_ids",
+        "alias_anchor_occurrence_ids",
+        "canonical_anchor_occurrence_ids",
+        "source_local_evidence_id",
+        "printed_identifier",
+        "exact_label",
+        "evidence_occurrence_ids",
+    }
+)
+CATALOG_ONLY_JOB_COMPLEMENT_SWEEP_ROW_KEYS = frozenset(
+    {
+        "catalog_only_job_complement_sweep_id",
+        "candidate_job_class_id",
+        "canonical_job_occurrence_id",
+        "job_class_member_occurrence_ids",
+        "job_class_member_count",
+        "candidate_relationship_component_class_ids",
+        "candidate_relationship_count",
+        "catalog_only_disposition_required",
+        "coverage_arm",
+        "catalog_only_disposition_emitted",
+        "alias_support_rows",
+        "alias_support_count",
+        "alias_support_domain_sha256",
+        "predecessor_reseal_required",
         "status",
     }
 )
@@ -3010,6 +3706,328 @@ def _validate_component_shape_row(
     )
 
 
+def _validate_candidate_alias_support_rows(
+    row: Mapping[str, Any],
+    members: Sequence[str],
+    occurrence_kind: str,
+    label: str,
+) -> None:
+    supports = row["alias_support_rows"]
+    _require(isinstance(supports, list), f"{label}: support rows")
+    _require(
+        row["alias_support_count"] == len(supports),
+        f"{label}: support count",
+    )
+    _require(
+        row["alias_support_domain_sha256"] == _domain_sha(supports),
+        f"{label}: support domain",
+    )
+    member_set = set(members)
+    roots = {member: member for member in members}
+
+    def find(member: str) -> str:
+        while roots[member] != member:
+            roots[member] = roots[roots[member]]
+            member = roots[member]
+        return member
+
+    def union(left: str, right: str) -> None:
+        left_root = find(left)
+        right_root = find(right)
+        if left_root != right_root:
+            roots[right_root] = left_root
+
+    proof_ids: list[str] = []
+    for support in supports:
+        _require_exact_keys(
+            support, ALIAS_SUPPORT_ROW_KEYS, f"{label}: support"
+        )
+        proof_id = _require_string(
+            support["alias_support_proof_id"], f"{label}: support ID"
+        )
+        proof_ids.append(proof_id)
+        support_members = support["member_occurrence_ids"]
+        _require(
+            isinstance(support_members, list)
+            and len(support_members) >= 2
+            and len(set(support_members)) == len(support_members),
+            f"{label}: support members",
+        )
+        _require(
+            set(support_members) <= member_set,
+            f"{label}: support member outside class",
+        )
+        aliases = support["alias_anchor_occurrence_ids"]
+        canonicals = support["canonical_anchor_occurrence_ids"]
+        _require(
+            isinstance(aliases, list)
+            and aliases
+            and isinstance(canonicals, list)
+            and canonicals
+            and len(set(aliases)) == len(aliases)
+            and len(set(canonicals)) == len(canonicals)
+            and not set(aliases) & set(canonicals)
+            and set([*aliases, *canonicals]) == set(support_members),
+            f"{label}: directional endpoints",
+        )
+        evidence_ids = support["evidence_occurrence_ids"]
+        _require(
+            isinstance(evidence_ids, list)
+            and evidence_ids
+            and len(set(evidence_ids)) == len(evidence_ids)
+            and set(support_members) <= set(evidence_ids),
+            f"{label}: support evidence",
+        )
+        for member in support_members[1:]:
+            union(support_members[0], member)
+        relation = support["relation"]
+        _require(
+            relation in ALLOWED_LOCAL_EVIDENCE_RELATIONS,
+            f"{label}: support relation",
+        )
+        origin = support["support_origin"]
+        if origin == "exact_pair_equality_sweep":
+            printed_identifier = _require_string(
+                support["printed_identifier"],
+                f"{label}: support printed identifier",
+            )
+            exact_label = _require_string(
+                support["exact_label"], f"{label}: support exact label"
+            )
+            _require(
+                relation == "same_printed_identifier_and_exact_label"
+                and support["source_local_evidence_id"] is None
+                and aliases == support_members[1:]
+                and canonicals == support_members[:1]
+                and evidence_ids == support_members,
+                f"{label}: exact-pair support shape",
+            )
+            expected_proof_id = _row_id(
+                "a12-candidate-exact-pair-alias-support:",
+                [
+                    occurrence_kind,
+                    printed_identifier,
+                    exact_label,
+                    aliases,
+                    canonicals,
+                    evidence_ids,
+                ],
+            )
+        elif origin == "sealed_local_evidence":
+            source_local_evidence_id = _require_string(
+                support["source_local_evidence_id"],
+                f"{label}: source local evidence ID",
+            )
+            if relation == "same_printed_identifier_and_exact_label":
+                _require_string(
+                    support["printed_identifier"],
+                    f"{label}: local support printed identifier",
+                )
+                _require_string(
+                    support["exact_label"],
+                    f"{label}: local support exact label",
+                )
+            else:
+                _require(
+                    support["printed_identifier"] is None
+                    and support["exact_label"] is None,
+                    f"{label}: non-equality support labels",
+                )
+            expected_proof_id = _row_id(
+                "a12-candidate-local-alias-support:",
+                [
+                    source_local_evidence_id,
+                    relation,
+                    aliases,
+                    canonicals,
+                    evidence_ids,
+                ],
+            )
+        else:
+            raise BuildError(f"{label}: support origin")
+        _require(proof_id == expected_proof_id, f"{label}: support ID")
+    _require(
+        len(proof_ids) == len(set(proof_ids)),
+        f"{label}: duplicate support ID",
+    )
+    _require(
+        len({find(member) for member in members}) == 1,
+        f"{label}: support graph does not connect class",
+    )
+
+
+def _validate_component_class_admission_sweep_row(
+    row: Mapping[str, Any],
+) -> None:
+    label = "component class admission sweep row"
+    _require_exact_keys(row, COMPONENT_CLASS_ADMISSION_SWEEP_ROW_KEYS, label)
+    _require(row["component_kind"] in COMPONENT_KINDS, f"{label}: kind")
+    members = row["component_class_member_occurrence_ids"]
+    _require(isinstance(members, list) and members, f"{label}: members")
+    _require(len(set(members)) == len(members), f"{label}: duplicate member")
+    _require(
+        row["component_class_member_count"] == len(members),
+        f"{label}: member count",
+    )
+    _require(
+        row["canonical_component_occurrence_id"] == members[0],
+        f"{label}: canonical member",
+    )
+    raw_cardinalities = row["member_raw_parent_cardinalities"]
+    _require(
+        isinstance(raw_cardinalities, list)
+        and len(raw_cardinalities) == len(members),
+        f"{label}: raw cardinalities",
+    )
+    for value in raw_cardinalities:
+        _require_int(value, f"{label}: raw cardinality")
+        _require(value >= 0, f"{label}: negative cardinality")
+    _require(
+        row["raw_parent_candidate_count"] == sum(raw_cardinalities),
+        f"{label}: raw candidate count",
+    )
+    eligible_count = _require_int(
+        row["eligible_canonical_parent_count"],
+        f"{label}: eligible canonical count",
+    )
+    _require(eligible_count >= 0, f"{label}: eligible canonical count")
+    disposition = row["candidate_disposition"]
+    _require(
+        disposition
+        in {
+            "zero_parent_terminal_disposition",
+            "zero_lawful_parent_terminal_disposition",
+            "unique_parent_assignment",
+            "multi_parent_ambiguity_no_selection",
+        },
+        f"{label}: disposition",
+    )
+    unique = disposition == "unique_parent_assignment"
+    _require(
+        row["relationship_arm_eligible"] is unique,
+        f"{label}: candidate relationship arm",
+    )
+    _require(
+        row["r_q_relationship_emitted"] is False,
+        f"{label}: emitted R_Q",
+    )
+    if unique:
+        _require(eligible_count == 1, f"{label}: unique eligible count")
+        _require_string(
+            row["candidate_unique_parent_node_id"],
+            f"{label}: unique parent",
+        )
+        _require_string(
+            row["candidate_unique_slot_kind"], f"{label}: unique slot"
+        )
+    else:
+        _require(
+            row["candidate_unique_parent_node_id"] is None
+            and row["candidate_unique_slot_kind"] is None,
+            f"{label}: nonunique selection",
+        )
+    _validate_candidate_alias_support_rows(
+        row,
+        members,
+        COMPONENT_CLASSIFICATION_TO_KIND[row["component_kind"]],
+        label,
+    )
+    _require(
+        row["predecessor_reseal_required"] is True,
+        f"{label}: predecessor prerequisite",
+    )
+    _require(
+        row["status"]
+        == "candidate_class_fold_nonauthority_predecessor_reseal_required",
+        f"{label}: status",
+    )
+    expected_class_id = _row_id(
+        "a12-candidate-component-class:",
+        [row["canonical_component_occurrence_id"], members],
+    )
+    _require(
+        row["candidate_component_class_id"] == expected_class_id,
+        f"{label}: candidate class ID",
+    )
+    _require(
+        row["component_class_admission_sweep_id"]
+        == _row_id(
+            "a12-component-class-admission-sweep:",
+            [expected_class_id, disposition],
+        ),
+        f"{label}: sweep ID",
+    )
+
+
+def _validate_catalog_only_job_complement_sweep_row(
+    row: Mapping[str, Any],
+) -> None:
+    label = "catalog-only job complement sweep row"
+    _require_exact_keys(row, CATALOG_ONLY_JOB_COMPLEMENT_SWEEP_ROW_KEYS, label)
+    members = row["job_class_member_occurrence_ids"]
+    _require(isinstance(members, list) and members, f"{label}: members")
+    _require(len(set(members)) == len(members), f"{label}: duplicate member")
+    _require(
+        row["job_class_member_count"] == len(members),
+        f"{label}: member count",
+    )
+    _require(
+        row["canonical_job_occurrence_id"] == members[0],
+        f"{label}: canonical member",
+    )
+    expected_class_id = _row_id(
+        "a12-candidate-job-class:",
+        [row["canonical_job_occurrence_id"], members],
+    )
+    _require(
+        row["candidate_job_class_id"] == expected_class_id,
+        f"{label}: candidate class ID",
+    )
+    relationships = row["candidate_relationship_component_class_ids"]
+    _require(isinstance(relationships, list), f"{label}: relationships")
+    _require(
+        len(set(relationships)) == len(relationships),
+        f"{label}: duplicate relationship",
+    )
+    _require(
+        row["candidate_relationship_count"] == len(relationships),
+        f"{label}: relationship count",
+    )
+    catalog_only = not relationships
+    _require(
+        row["catalog_only_disposition_required"] is catalog_only,
+        f"{label}: catalog-only biconditional",
+    )
+    expected_arm = (
+        "terminal_catalog_disposition"
+        if catalog_only
+        else "relationship_projection_nonempty"
+    )
+    _require(row["coverage_arm"] == expected_arm, f"{label}: coverage arm")
+    _require(
+        row["catalog_only_disposition_emitted"] is False,
+        f"{label}: emitted disposition",
+    )
+    _validate_candidate_alias_support_rows(row, members, "job_anchor", label)
+    _require(
+        row["predecessor_reseal_required"] is True,
+        f"{label}: predecessor prerequisite",
+    )
+    _require(
+        row["status"]
+        == "candidate_job_complement_nonauthority_predecessor_reseal_required",
+        f"{label}: status",
+    )
+    _require(
+        row["catalog_only_job_complement_sweep_id"]
+        == _row_id(
+            "a12-catalog-only-job-complement-sweep:",
+            [expected_class_id, relationships],
+        ),
+        f"{label}: sweep ID",
+    )
+
+
 def _validate_doc036_defect_row(row: Mapping[str, Any]) -> None:
     label = "doc036 defect row"
     _require_exact_keys(row, DOC036_DEFECT_ROW_KEYS, label)
@@ -3452,6 +4470,247 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "ineligible parent census drift",
     )
 
+    derived = bundle["derived"]
+    _require(derived["tier"] == 1, "derived sweep tier drift")
+    job_complement_rows = _validate_row_digests(
+        derived,
+        "catalog_only_job_complement_sweep_rows",
+        "catalog_only_job_complement_sweep_count",
+        "catalog_only_job_complement_sweep_domain_sha256",
+    )
+    _require(len(job_complement_rows) == 12_357, "job class count drift")
+    _require(
+        derived["catalog_only_job_complement_sweep_keyset_sha256"]
+        == _keyset_sha(
+            [
+                row["catalog_only_job_complement_sweep_id"]
+                for row in job_complement_rows
+            ]
+        ),
+        "job complement sweep keyset drift",
+    )
+    for row in job_complement_rows:
+        _validate_catalog_only_job_complement_sweep_row(row)
+    job_class_by_id = {
+        row["candidate_job_class_id"]: row for row in job_complement_rows
+    }
+    _require(
+        len(job_class_by_id) == len(job_complement_rows),
+        "duplicate candidate job class ID",
+    )
+    candidate_job_id_by_occurrence: dict[str, str] = {}
+    for row in job_complement_rows:
+        for occurrence_id in row["job_class_member_occurrence_ids"]:
+            _require(
+                occurrence_id not in candidate_job_id_by_occurrence,
+                "job occurrence belongs to multiple candidate classes",
+            )
+            candidate_job_id_by_occurrence[occurrence_id] = row[
+                "candidate_job_class_id"
+            ]
+    _require(
+        len(candidate_job_id_by_occurrence) == 14_326
+        and derived["job_class_member_occurrence_count"] == 14_326,
+        "job class member exact cover drift",
+    )
+    job_support_origin_counts = Counter(
+        support["support_origin"]
+        for row in job_complement_rows
+        for support in row["alias_support_rows"]
+    )
+    _require(
+        derived["job_alias_support_origin_counts"]
+        == dict(sorted(job_support_origin_counts.items())),
+        "job alias support census drift",
+    )
+
+    component_class_rows = _validate_row_digests(
+        derived,
+        "component_class_admission_sweep_rows",
+        "component_class_admission_sweep_count",
+        "component_class_admission_sweep_domain_sha256",
+    )
+    _require(
+        len(component_class_rows) == 19_507,
+        "component candidate class count drift",
+    )
+    _require(
+        derived["component_class_admission_sweep_keyset_sha256"]
+        == _keyset_sha(
+            [
+                row["component_class_admission_sweep_id"]
+                for row in component_class_rows
+            ]
+        ),
+        "component class admission sweep keyset drift",
+    )
+    component_class_by_id = {
+        row["candidate_component_class_id"]: row
+        for row in component_class_rows
+    }
+    _require(
+        len(component_class_by_id) == len(component_class_rows),
+        "duplicate candidate component class ID",
+    )
+    shape_by_occurrence = {
+        row["component_anchor_occurrence_id"]: row for row in component_shapes
+    }
+    component_member_ids: list[str] = []
+    for row in component_class_rows:
+        _validate_component_class_admission_sweep_row(row)
+        members = row["component_class_member_occurrence_ids"]
+        component_member_ids.extend(members)
+        _require(
+            all(member in shape_by_occurrence for member in members),
+            "candidate component class has unknown source member",
+        )
+        member_shapes = [shape_by_occurrence[member] for member in members]
+        _require(
+            {shape["component_kind"] for shape in member_shapes}
+            == {row["component_kind"]},
+            "candidate component class kind drift",
+        )
+        fixture_members: list[dict[str, Any]] = []
+        for shape in member_shapes:
+            fixture_candidates: list[dict[str, Any]] = []
+            for candidate in shape["parent_candidate_rows"]:
+                resolved_parent = None
+                if candidate["eligible_parent"]:
+                    parent_kind = candidate["parent_occurrence_kind"]
+                    if parent_kind == "job_anchor":
+                        _require(
+                            candidate["parent_occurrence_id"]
+                            in candidate_job_id_by_occurrence,
+                            "candidate component parent has no job class",
+                        )
+                        resolved_parent = candidate_job_id_by_occurrence[
+                            candidate["parent_occurrence_id"]
+                        ]
+                    else:
+                        resolved_parent = CANDIDATE_SENTINEL_PARENT_NODE_IDS[
+                            parent_kind
+                        ]
+                fixture_candidates.append(
+                    {
+                        "source_parent_occurrence_id": candidate[
+                            "parent_occurrence_id"
+                        ],
+                        "resolved_canonical_parent_node_id": resolved_parent,
+                        "eligible_parent": candidate["eligible_parent"],
+                        "derived_slot_kind": candidate["derived_slot_kind"],
+                        "support_proof_id": _row_id(
+                            "a12-candidate-parent-support:",
+                            [
+                                shape["component_anchor_occurrence_id"],
+                                candidate["parent_occurrence_id"],
+                            ],
+                        ),
+                    }
+                )
+            fixture_members.append(
+                {
+                    "component_anchor_occurrence_id": shape[
+                        "component_anchor_occurrence_id"
+                    ],
+                    "parent_candidate_rows": fixture_candidates,
+                }
+            )
+        folded = fold_component_class_fixture(
+            row["component_kind"], fixture_members
+        )
+        _require(
+            row["member_raw_parent_cardinalities"]
+            == folded["member_raw_parent_cardinalities"]
+            and row["raw_parent_candidate_count"]
+            == folded["raw_parent_candidate_count"]
+            and row["eligible_canonical_parent_count"]
+            == len(folded["resolved_canonical_parent_node_ids"])
+            and row["candidate_disposition"] == folded["disposition"]
+            and row["candidate_unique_parent_node_id"]
+            == folded["unique_parent_node_id"]
+            and row["candidate_unique_slot_kind"] == folded["unique_slot_kind"]
+            and row["relationship_arm_eligible"]
+            is folded["tier_2_relationship_arm_eligible"],
+            "candidate component class fold drift",
+        )
+    _require(
+        len(component_member_ids) == len(set(component_member_ids)) == 21_283
+        and set(component_member_ids) == set(shape_by_occurrence)
+        and derived["component_class_member_occurrence_count"] == 21_283,
+        "component class member exact cover drift",
+    )
+    component_disposition_counts = dict(
+        sorted(
+            Counter(
+                row["candidate_disposition"] for row in component_class_rows
+            ).items()
+        )
+    )
+    _require(
+        derived["component_class_candidate_disposition_counts"]
+        == component_disposition_counts,
+        "component class disposition census drift",
+    )
+    relationship_eligible_count = sum(
+        row["relationship_arm_eligible"] for row in component_class_rows
+    )
+    _require(
+        derived["component_class_relationship_arm_eligible_count"]
+        == relationship_eligible_count,
+        "component relationship-arm census drift",
+    )
+    component_support_origin_counts = Counter(
+        support["support_origin"]
+        for row in component_class_rows
+        for support in row["alias_support_rows"]
+    )
+    _require(
+        derived["component_alias_support_origin_counts"]
+        == dict(sorted(component_support_origin_counts.items())),
+        "component alias support census drift",
+    )
+
+    expected_relationship_components_by_job: defaultdict[str, list[str]] = (
+        defaultdict(list)
+    )
+    for row in component_class_rows:
+        parent_id = row["candidate_unique_parent_node_id"]
+        if row["relationship_arm_eligible"] and parent_id in job_class_by_id:
+            expected_relationship_components_by_job[parent_id].append(
+                row["candidate_component_class_id"]
+            )
+    for row in job_complement_rows:
+        _require(
+            row["candidate_relationship_component_class_ids"]
+            == expected_relationship_components_by_job[
+                row["candidate_job_class_id"]
+            ],
+            "catalog-only job complement projection drift",
+        )
+    job_coverage_counts = dict(
+        sorted(
+            Counter(row["coverage_arm"] for row in job_complement_rows).items()
+        )
+    )
+    _require(
+        derived["catalog_only_job_coverage_arm_counts"] == job_coverage_counts,
+        "catalog-only job coverage census drift",
+    )
+    _require(
+        derived["component_class_admission_sweep_keyset_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["component_class_admission_keyset"]
+        and derived["component_class_admission_sweep_domain_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["component_class_admission"],
+        "component class admission pinned source projection drift",
+    )
+    _require(
+        derived["catalog_only_job_complement_sweep_keyset_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["catalog_only_job_complement_keyset"]
+        and derived["catalog_only_job_complement_sweep_domain_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["catalog_only_job_complement"],
+        "catalog-only job complement pinned source projection drift",
+    )
+
     predecessor = bundle["predecessor"]
     doc036_rows = _validate_row_digests(
         predecessor,
@@ -3741,6 +5000,10 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     expected_statuses = {
         "slice": "pass_pilot_slice_fixed_nonauthority",
         "sweeps": "pass_corpus_exhaustive_targeted_sweeps_nonauthority",
+        "derived": (
+            "pass_derived_class_complement_sweeps_nonauthority_"
+            "predecessor_reseal_required"
+        ),
         "predecessor": "pass_adjudication_with_predecessor_reseal_required",
         "role": "pass_role_assignment_law_pilot_nonauthority",
         "repeat": "pass_outside_domain_repeat_law_pilot_nonauthority",
@@ -3761,8 +5024,16 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     _require(
         sweep["source_corpus_identity"]
         == slice_artifact["source_corpus_identity"]
-        == predecessor["source_corpus_identity"],
+        == predecessor["source_corpus_identity"]
+        == derived["source_corpus_identity"],
         "source corpus identity linkage drift",
+    )
+    _require(
+        derived["corpus_sweep_artifact_id"] == sweep["artifact_id"]
+        and derived["predecessor_artifact_id"] == predecessor["artifact_id"]
+        and derived["predecessor_defect_count"] == 50
+        and derived["predecessor_reseal_required"] is True,
+        "derived sweep predecessor linkage drift",
     )
     _require(
         all(
@@ -3822,7 +5093,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "gate status drift",
     )
     identity_rows = gate["artifact_identity_rows"]
-    _require(len(identity_rows) == 6, "gate identity count drift")
+    _require(len(identity_rows) == 7, "gate identity count drift")
     _require(
         gate["artifact_identity_count"] == len(identity_rows),
         "gate identity count mismatch",
@@ -3834,6 +5105,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     expected_identity_roles = [
         "slice",
         "sweeps",
+        "derived",
         "predecessor",
         "role",
         "repeat",
@@ -3996,6 +5268,96 @@ def _repin_mutated_bundle(
             ],
         )
 
+    derived = bundle["derived"]
+    for row in derived["component_class_admission_sweep_rows"]:
+        members = row["component_class_member_occurrence_ids"]
+        row["component_class_member_count"] = len(members)
+        row["raw_parent_candidate_count"] = sum(
+            row["member_raw_parent_cardinalities"]
+        )
+        row["candidate_component_class_id"] = _row_id(
+            "a12-candidate-component-class:",
+            [row["canonical_component_occurrence_id"], members],
+        )
+        row["component_class_admission_sweep_id"] = _row_id(
+            "a12-component-class-admission-sweep:",
+            [
+                row["candidate_component_class_id"],
+                row["candidate_disposition"],
+            ],
+        )
+        for support in row["alias_support_rows"]:
+            if support["support_origin"] == "exact_pair_equality_sweep":
+                support["alias_support_proof_id"] = _row_id(
+                    "a12-candidate-exact-pair-alias-support:",
+                    [
+                        COMPONENT_CLASSIFICATION_TO_KIND[
+                            row["component_kind"]
+                        ],
+                        support["printed_identifier"],
+                        support["exact_label"],
+                        support["alias_anchor_occurrence_ids"],
+                        support["canonical_anchor_occurrence_ids"],
+                        support["evidence_occurrence_ids"],
+                    ],
+                )
+            else:
+                support["alias_support_proof_id"] = _row_id(
+                    "a12-candidate-local-alias-support:",
+                    [
+                        support["source_local_evidence_id"],
+                        support["relation"],
+                        support["alias_anchor_occurrence_ids"],
+                        support["canonical_anchor_occurrence_ids"],
+                        support["evidence_occurrence_ids"],
+                    ],
+                )
+        row["alias_support_count"] = len(row["alias_support_rows"])
+        row["alias_support_domain_sha256"] = _domain_sha(
+            row["alias_support_rows"]
+        )
+    for row in derived["catalog_only_job_complement_sweep_rows"]:
+        members = row["job_class_member_occurrence_ids"]
+        relationships = row["candidate_relationship_component_class_ids"]
+        row["job_class_member_count"] = len(members)
+        row["candidate_relationship_count"] = len(relationships)
+        row["candidate_job_class_id"] = _row_id(
+            "a12-candidate-job-class:",
+            [row["canonical_job_occurrence_id"], members],
+        )
+        row["catalog_only_job_complement_sweep_id"] = _row_id(
+            "a12-catalog-only-job-complement-sweep:",
+            [row["candidate_job_class_id"], relationships],
+        )
+        for support in row["alias_support_rows"]:
+            if support["support_origin"] == "exact_pair_equality_sweep":
+                support["alias_support_proof_id"] = _row_id(
+                    "a12-candidate-exact-pair-alias-support:",
+                    [
+                        "job_anchor",
+                        support["printed_identifier"],
+                        support["exact_label"],
+                        support["alias_anchor_occurrence_ids"],
+                        support["canonical_anchor_occurrence_ids"],
+                        support["evidence_occurrence_ids"],
+                    ],
+                )
+            else:
+                support["alias_support_proof_id"] = _row_id(
+                    "a12-candidate-local-alias-support:",
+                    [
+                        support["source_local_evidence_id"],
+                        support["relation"],
+                        support["alias_anchor_occurrence_ids"],
+                        support["canonical_anchor_occurrence_ids"],
+                        support["evidence_occurrence_ids"],
+                    ],
+                )
+        row["alias_support_count"] = len(row["alias_support_rows"])
+        row["alias_support_domain_sha256"] = _domain_sha(
+            row["alias_support_rows"]
+        )
+
     slice_artifact = bundle["slice"]
     pilot_rows = slice_artifact["pilot_document_rows"]
     slice_artifact["pilot_document_count"] = len(pilot_rows)
@@ -4104,6 +5466,72 @@ def _repin_mutated_bundle(
         for row in all_predecessor_rows
     )
 
+    component_class_rows = derived["component_class_admission_sweep_rows"]
+    derived["component_class_admission_sweep_count"] = len(
+        component_class_rows
+    )
+    derived["component_class_member_occurrence_count"] = sum(
+        row["component_class_member_count"] for row in component_class_rows
+    )
+    derived["component_class_admission_sweep_keyset_sha256"] = _keyset_sha(
+        [
+            row["component_class_admission_sweep_id"]
+            for row in component_class_rows
+        ]
+    )
+    derived["component_class_admission_sweep_domain_sha256"] = _domain_sha(
+        component_class_rows
+    )
+    derived["component_class_candidate_disposition_counts"] = dict(
+        sorted(
+            Counter(
+                row["candidate_disposition"] for row in component_class_rows
+            ).items()
+        )
+    )
+    derived["component_class_relationship_arm_eligible_count"] = sum(
+        row["relationship_arm_eligible"] for row in component_class_rows
+    )
+    derived["component_alias_support_origin_counts"] = dict(
+        sorted(
+            Counter(
+                support["support_origin"]
+                for row in component_class_rows
+                for support in row["alias_support_rows"]
+            ).items()
+        )
+    )
+    job_complement_rows = derived["catalog_only_job_complement_sweep_rows"]
+    derived["catalog_only_job_complement_sweep_count"] = len(
+        job_complement_rows
+    )
+    derived["job_class_member_occurrence_count"] = sum(
+        row["job_class_member_count"] for row in job_complement_rows
+    )
+    derived["catalog_only_job_complement_sweep_keyset_sha256"] = _keyset_sha(
+        [
+            row["catalog_only_job_complement_sweep_id"]
+            for row in job_complement_rows
+        ]
+    )
+    derived["catalog_only_job_complement_sweep_domain_sha256"] = _domain_sha(
+        job_complement_rows
+    )
+    derived["catalog_only_job_coverage_arm_counts"] = dict(
+        sorted(
+            Counter(row["coverage_arm"] for row in job_complement_rows).items()
+        )
+    )
+    derived["job_alias_support_origin_counts"] = dict(
+        sorted(
+            Counter(
+                support["support_origin"]
+                for row in job_complement_rows
+                for support in row["alias_support_rows"]
+            ).items()
+        )
+    )
+
     role = bundle["role"]
     pilot_classes = role["role_label_class_rows"]
     assignments = role["role_assignment_rows"]
@@ -4174,6 +5602,12 @@ def _repin_mutated_bundle(
     bundle["slice"] = _reseal_artifact(slice_artifact)
     bundle["sweeps"] = _reseal_artifact(sweep)
     bundle["predecessor"] = _reseal_artifact(predecessor)
+    derived["source_corpus_identity"] = bundle["sweeps"][
+        "source_corpus_identity"
+    ]
+    derived["corpus_sweep_artifact_id"] = bundle["sweeps"]["artifact_id"]
+    derived["predecessor_artifact_id"] = bundle["predecessor"]["artifact_id"]
+    bundle["derived"] = _reseal_artifact(derived)
     for key in ("role", "repeat", "component"):
         bundle[key]["source_slice_artifact_id"] = bundle["slice"][
             "artifact_id"
@@ -4202,6 +5636,7 @@ def _repin_mutated_bundle(
         for key in (
             "slice",
             "sweeps",
+            "derived",
             "predecessor",
             "role",
             "repeat",
@@ -4295,6 +5730,28 @@ def run_mutation_tests(
             forged = "X" * len(unresolved["matched_text"].encode("utf-8"))
             unresolved["matched_text"] = forged
             unresolved["matched_utf8_sha256"] = _sha256(forged.encode("utf-8"))
+
+    def forge_catalog_only_job_source_member(value: dict[str, Any]) -> None:
+        referenced_job_occurrence_ids = {
+            candidate["parent_occurrence_id"]
+            for component_row in value["sweeps"]["component_parent_shape_rows"]
+            for candidate in component_row["parent_candidate_rows"]
+            if candidate["parent_occurrence_kind"] == "job_anchor"
+        }
+        row = next(
+            item
+            for item in value["derived"][
+                "catalog_only_job_complement_sweep_rows"
+            ]
+            if item["job_class_member_count"] == 1
+            and item["candidate_relationship_count"] == 0
+            and item["alias_support_count"] == 0
+            and not set(item["job_class_member_occurrence_ids"])
+            & referenced_job_occurrence_ids
+        )
+        forged_id = "psid-questionnaire-occurrence:coherent-job-forgery"
+        row["canonical_job_occurrence_id"] = forged_id
+        row["job_class_member_occurrence_ids"] = [forged_id]
 
     add(
         "pilot_slice_reordered",
@@ -4465,6 +5922,51 @@ def run_mutation_tests(
             0
         ].__setitem__("invented_key", True),
         "component pilot row: keyset drift",
+    )
+    add(
+        "component_class_sweep_row_omitted",
+        lambda value: value["derived"][
+            "component_class_admission_sweep_rows"
+        ].pop(),
+        "component candidate class count drift",
+    )
+    add(
+        "component_class_sweep_relationship_arm_flipped",
+        lambda value: next(
+            row
+            for row in value["derived"]["component_class_admission_sweep_rows"]
+            if row["relationship_arm_eligible"]
+        ).__setitem__("relationship_arm_eligible", False),
+        "candidate relationship arm",
+    )
+    add(
+        "job_complement_sweep_row_omitted",
+        lambda value: value["derived"][
+            "catalog_only_job_complement_sweep_rows"
+        ].pop(),
+        "job class count drift",
+    )
+    add(
+        "job_complement_coverage_arm_flipped",
+        lambda value: value["derived"][
+            "catalog_only_job_complement_sweep_rows"
+        ][0].__setitem__("coverage_arm", "invented_coverage_arm"),
+        "coverage arm",
+    )
+    add(
+        "exact_pair_support_label_forged",
+        lambda value: next(
+            support
+            for row in value["derived"]["component_class_admission_sweep_rows"]
+            for support in row["alias_support_rows"]
+            if support["support_origin"] == "exact_pair_equality_sweep"
+        ).__setitem__("exact_label", "invented exact label"),
+        "component class admission pinned source projection drift",
+    )
+    add(
+        "catalog_only_job_source_member_forged",
+        forge_catalog_only_job_source_member,
+        "catalog-only job complement pinned source projection drift",
     )
     add(
         "doc036_law_gap_admitted",
