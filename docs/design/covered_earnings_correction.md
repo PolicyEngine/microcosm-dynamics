@@ -47561,10 +47561,12 @@ vector rerun, Q5, and expected-negative guarded steps above.
   It changes no raw source byte, locator, lexeme, meaning, scalar, range,
   unit, renderer, terminal, storage member, or coverage rule.
 - **Precedence.** Earlier law controls except where this section expressly
-  corrects the §24.10 claim that a missing disposition is source-reproducible
-  and replaces the §23/§24 escalation procedure. The binding §24.3 holding
-  is composed and strengthened: reproducible context or a lexical class does
-  not establish a source-authorized member value. No default may be invented.
+  corrects the §24.10 blanket source-reproducibility claim to the exact
+  52-authorized / 524,538-unresolved literal partition and replaces the
+  §23/§24 escalation procedure. The binding §24.3 holding is composed and
+  strengthened: reproducible context or a lexical class does not establish a
+  source-authorized member value. Exact source bytes can authorize their own
+  occurrence without authorizing a class. No default may be invented.
 - **Illustrative-fence exception.** D9 lines 3,834-3,837 remain the sole
   inherited strict-JSON-fence exception. Every JSON value authored here must
   strict-parse after recursive duplicate-key rejection.
@@ -47579,24 +47581,31 @@ consumers; and §25.10 fixes the only lawful order.
 
 #### 25.2.1 Originating records and governing ratified bytes
 
-The codebook lane report
-`claude-ce-v3compiler-codebook-report.md` is 15,872 bytes, SHA-256
+The committed codebook lane report
+`data/external/amendment_11_originating_records/claude-ce-v3compiler-codebook-report.md`
+is 15,872 bytes, SHA-256
 `245cedcd3f5d3ecd2245e8acec14e56511e973707cc5022cb8b75e94a387a605`.
 Its exact originating record is bytes `[13605,14213)`, 608 bytes, SHA-256
 `beada0568d204372f7d26b15f19602aa5ff11c6b8590c8a5d6830d37575d8fb5`.
 It reports a lexically derived missing disposition over the complete
-89,599-field PDF domain and no registered reason vocabulary. A11's fresh
-reconstruction counts 231,263 such candidate occurrences. Its statement that
-the disposition is derivable is a lane interpretation, not source authority,
-and is directly disproven by §25.2.4.
+89,599-field PDF domain. A11's fresh reconstruction counts 231,263 such
+candidate occurrences. Its blanket statement that disposition is derivable
+is a lane interpretation, not source authority; §25.2.4 both rejects that
+blanket rule and identifies the narrower exact-byte source authority that the
+report missed.
 
-The Amendment-10 report `claude-ce-amend10-report.md` is 17,745 bytes,
-SHA-256
+The committed Amendment-10 report
+`data/external/amendment_11_originating_records/claude-ce-amend10-report.md`
+is 17,745 bytes, SHA-256
 `9165cd527964bbefa10cb20c8afe69444c776b2b44956dbef239360a6f8b1ddb`.
 Its exact escalation is bytes `[13566,13807)`, 241 bytes, SHA-256
 `a7854580bca100104df376530aa2a1204c3d7dc5360ad2c91d80c8790d0d92d0`.
 Both reports are provenance records only; neither can authorize a source
-member.
+member. The terminal-LF canonical two-row record-specification domain has
+SHA-256
+`3921b4c3c4c6658a164b57a48fd1ec35a806cd97adfca05a4389523e692c9f3d`.
+The validator and committed tests open these repository copies, verify both
+complete-file pins and both exact spans, and then reproduce that domain hash.
 
 The controlling D10 spans are:
 
@@ -47638,9 +47647,9 @@ SHA-256 over the exact opened buffer. All 47 match; mismatch count is zero.
 That exact buffer, not a reopened path or supplied page text, enters the
 parser. The artifact's 47 ordered `source_document_rows` retain every path,
 wave, raw size/hash, decoder/segmentation identity, row/member interval, and
-per-document relation digest. Their complete terminal-LF canonical array has
-SHA-256
-`c6db713d8dee860adeafbcfd0f232ece9ce374ee66dee3fe39c02bd52a39999a`.
+per-document relation digest, plus its exact source-authority subcount and
+digest. Their complete terminal-LF canonical array has SHA-256
+`528091289177d9558f5e6baac99ca710c1f4db608d5e9150b84a3a6577258122`.
 This is the complete per-source evidence census, not a sample.
 
 #### 25.2.3 Complete structural and lexical census
@@ -47651,14 +47660,15 @@ documents use the strict source-text decoder and their per-document decoder
 identities are bound by `derivation_metadata_sha256`; all four decode as
 Windows-1252 in this registered corpus. The 47 raw documents derive 102,179
 canonical rows, 112,382 source-region locators, and 561,873 normalized entry
-occurrences. The only source-structural partition relevant to the present law
-is:
+occurrences. Source structure and exact-byte authority give the present
+partition:
 
-| Entry kind | Occurrences | Present `missing_reason_code` disposition |
+| Entry kind and exact authority state | Occurrences | Present `missing_reason_code` disposition |
 |---|---:|---|
 | `numeric_range` | 37,283 | structural JSON null |
-| `literal` | 524,590 | source missing disposition unadjudicated; whole settlement blocks |
-| **complete** | **561,873** | exactly one arm; zero nonempty assignments |
+| `literal`; exact source value `9,999,999.00` and exact meaning `Missing, not imputed` | 52 | nonempty opaque exact-occurrence code |
+| every other `literal` | 524,538 | source missing disposition unadjudicated; whole settlement blocks |
+| **complete** | **561,873** | exactly one arm; 52 source-authorized codes, but no accepted complete settlement |
 
 The entry-kind vector is 70,235 MSB-first bytes, one = literal, zero = range,
 SHA-256
@@ -47676,6 +47686,13 @@ candidate projection has SHA-256
 its 35,925 distinct exact meanings have SHA-256
 `6f76fefce541fec600b35d5526d981529a9134cf0a5e6949198315c837614fb1`.
 These are reproducible lexical facts and never source disposition authority.
+
+Independently, the source-authority vector is 70,235 MSB-first bytes, one =
+an exact source-authorized missing literal and zero = every other member. Its
+counts are 52 and 561,821, its SHA-256 is
+`0506ad32d8ecc06e53aec9ecbf4b8c4b4b904dc552f794567bee8deb9906504a`,
+and all unused padding bits are zero. This vector is occurrence-exact; it is
+not a semantic class or a default for neighboring values, fields, or waves.
 
 The 43 PDFs contribute 89,599 rows and 479,345 members; the four label files
 contribute 82,528 members. Candidate counts are 203,283 and 27,980
@@ -47697,9 +47714,34 @@ reproduction of those 86 documents.
 #### 25.2.4 Direct disproof, context boundary, and raw witnesses
 
 The registered sources expose value/range lexemes and source meanings. They
-define no missing-disposition column, missing-disposition vocabulary,
-reason-code column, reason vocabulary, atomization, equivalence, priority,
-or reason-code derivation. The lexical rule has at least 118 context-required
+define no dedicated missing-disposition column, reason-code column,
+atomization, equivalence, priority, semantic taxonomy, or default derivation.
+They do, however, use an exact missing-disposition and reason vocabulary in
+52 literal occurrences: source value `9,999,999.00`, source meaning
+`Missing, not imputed`, and normalized disposition `missing`. Those exact
+bytes authorize only their own opaque occurrence codes.
+
+Corpus-exhaustive targeted sweeps of every normalized occurrence found 118
+literals whose exact meaning contains the case-folded whole word `missing`,
+11,790 literals whose exact meaning contains `imput`, and an intersection of
+exactly 52. The range domain contains one `imput` occurrence. Review of every
+member in those targeted sets found no other whole occurrence that states
+both missingness and non-imputation. The 52 are four entries in each of the
+13 waves 1999, 2001, 2003, 2005, 2007, 2009, 2011, 2013, 2015, 2017, 2019,
+2021, and 2023. Their referee-format compact UTF-8 audit projection is 30,989
+bytes, SHA-256
+`f6d7f8b7f671379a6b4b7ea985415be3fc347ba169e5e07310df3cf3c1b3d2d1`;
+their complete exact-occurrence/code relation has SHA-256
+`177b4f369d499de6af292283793c1bb4cce7f00c84fa6e0657ec4e62d6bc016d`.
+
+The first witness is PDF position 30,
+`family/1999/FAM1999ER_codebook.pdf`, 2,819,749 bytes, SHA-256
+`5accefc4c1b50b3447b1a674ac2750de94568c538873f9bab34c2049c80c6107`,
+page 1068, field `ER16515B2`, row 3566 entry 1, locator
+`psid-source-region:e7f66578b141f5b8f1d5ec1c6f7aeade58e1ac617be05eba92ded11e8a1adc37`.
+Its description includes exact bytes `Not imputed, sub-utility category`.
+
+The broad predecessor lexical rule still has at least 118 context-required
 false-or-ambiguous candidates, SHA-256
 `25a3b74e34d5f594937cdbc9bb260c28ed5db3f0fb9abea07af6603651fd8bfc`.
 Of those, 61 are directly disproven by their source meanings, SHA-256
@@ -47731,10 +47773,14 @@ No token split, sibling copy, or frequency rule can lawfully choose a value.
 Twenty-one historical Wild-code candidates are structurally numeric ranges,
 must remain reason-null, and have ordered witness SHA-256
 `5473c792d62339b1da55c6124ddb548020480d6a8dfcd06b7cc500088d3a15d5`.
-The exact factual boundary is therefore: source structure determines range
-versus literal; source bytes and the predecessor algorithm determine the
-lexical audit; no registered source determines a missing/nonmissing
-disposition for any literal or a `missing_reason_code` for any occurrence.
+The one range whose meaning contains `imput` likewise remains structurally
+reason-null. The exact factual boundary is therefore: source structure
+determines range versus literal; exact source value/meaning bytes authorize
+52 occurrence-local missing dispositions and opaque codes; source bytes and
+the predecessor algorithm determine the separate lexical audit; and no
+registered source determines the other 524,538 literal dispositions. Nothing
+supports a semantic taxonomy, cross-occurrence equivalence, sibling or wave
+copy, or default.
 
 ### 25.3 Total member law
 
@@ -47771,36 +47817,75 @@ row, or supplied reason aborts. A lexical bit can never repair identity.
 
 The current law is exactly:
 
-| Authenticated member state | Required member result | Production disposition |
+| Authenticated state | Required member result | Exact disposition or action |
 |---|---|---|
 | `entry_kind == numeric_range` | JSON null | `source_nonmissing_reason_not_applicable` |
-| `entry_kind == literal` | no value may be assigned | `unadjudicated_source_missing_disposition`; abort the complete settlement |
-| unknown, malformed, conflicting, duplicate, or drifted member/authority | no value may be assigned | `conflicting_missing_reason_authority` or `incomplete_missing_reason_authority`; abort |
+| `entry_kind == literal` and the exact source value/meaning/disposition triple is `9,999,999.00` / `Missing, not imputed` / `missing` | nonempty `psid-source-missing-reason:` exact-occurrence code | current source-authorized missing literal |
+| every other authenticated `literal` | no value may be assigned | `unadjudicated_source_missing_disposition`; abort the complete settlement |
+| `conflicting_member_or_authority` | no value may be assigned | `conflicting_missing_reason_authority`; abort |
+| `duplicate_member_or_authority` | no value may be assigned | `conflicting_missing_reason_authority`; abort |
+| `unknown_or_unregistered_member_or_authority` | no value may be assigned | `incomplete_missing_reason_authority`; abort |
+| `malformed_member_or_authority` | no value may be assigned | `incomplete_missing_reason_authority`; abort |
+| `drifted_member_or_authority` | no value may be assigned | `incomplete_missing_reason_authority`; abort |
 
-Thus exactly 37,283 structural range arms are null, exactly 524,590 literal
-arms have the named unresolved disposition, the authorized current literal
-disposition count is zero, the nonempty reason assignment count is zero, and
-no complete settled relation exists. Because a downstream normalized row is
-not admissible until every required member is determined, the implementation
-must preflight the complete authenticated relation and then abort without
-emitting even the range-only partial result. Null is not assigned to a
-literal, because that would silently say “not missing”; a lexical candidate
-is not assigned a reason, because that would silently promote discovery to
-authority.
+For each of the 52 authorized literals, prepend
+`psid_source_missing_reason_preimage.v1` to the exact identity in §25.3.1,
+hash its terminal-LF §10.1 bytes, and append the lowercase digest to
+`psid-source-missing-reason:`. The 52 codes are nonempty and pairwise
+distinct. They preserve exact occurrence bytes and claim no semantic class.
 
-Failure precedence is conflict, then unregistered/drifted identity, then
-incomplete source authority, then the expected named literal blocker. No
-later positive, sibling, locale, wave, evidence image, predecessor result, or
-consumer may rescue an earlier failure. `settle_missing_reason_codes` is the
-sole production settlement entry point; after complete preflight it raises
-exactly `source missing disposition is unadjudicated for 524590 literals`.
+The failure assignment is the following disjoint total function. Let:
+
+~~~text
+S = {conflicting_member_or_authority,
+     duplicate_member_or_authority,
+     unknown_or_unregistered_member_or_authority,
+     malformed_member_or_authority,
+     drifted_member_or_authority}
+C = {conflicting_member_or_authority,
+     duplicate_member_or_authority}
+I = {unknown_or_unregistered_member_or_authority,
+     malformed_member_or_authority,
+     drifted_member_or_authority}
+C ∩ I = ∅
+C ∪ I = S
+
+For every nonempty X ⊆ S:
+  D(X) = conflicting_missing_reason_authority  iff X ∩ C ≠ ∅
+  D(X) = incomplete_missing_reason_authority   iff X ∩ C = ∅
+~~~
+
+The two conditions are disjoint and exhaustive, so every one of the
+`2^5 - 1 = 31` nonempty predicate sets receives exactly one identifier,
+independent of input order. The implementation pins the five singleton rows
+and the two-identifier precedence array into the artifact and mechanically
+enumerates all 31 sets in the committed test battery.
+
+Thus exactly 37,283 structural range arms are null, exactly 52 literal arms
+have source-authorized nonempty opaque codes, and exactly 524,538 literal
+arms have the named unresolved disposition. No accepted complete settled
+relation exists. Because a downstream normalized row is not admissible until
+every required member is determined, the implementation must preflight the
+complete authenticated relation and then abort without emitting even the
+authorized or range-only partial result. The accepted-output nonempty reason
+count is therefore zero, distinct from the 52 authenticated preflight codes.
+Null is not assigned to an unresolved literal, and the broader lexical vector
+assigns no reason.
+
+No later positive, sibling, locale, wave, evidence image, predecessor result,
+or consumer may rescue an earlier failure. `settle_missing_reason_codes` is
+the sole production settlement entry point; after complete preflight it
+raises exactly
+`source missing disposition is unadjudicated for 524538 literals`.
 
 #### 25.3.3 Conditional fixture boundary, not present authority
 
 A satisfiable fixture is mandatory so validators can test all branches
-without pretending production can pass. Only when a future, separately
-registered exact-occurrence authority explicitly supplies a unanimous
-Boolean missing disposition may the fixture exercise this conditional
+without pretending complete production can pass. Current preflight uses the
+opaque construction only for the 52 exact source-authorized occurrences in
+§25.3.2. For other occurrences, only a future, separately registered
+exact-occurrence authority that explicitly supplies a unanimous Boolean
+missing disposition may cause the fixture to exercise this conditional
 construction:
 
 1. authenticated nonmissing literal or numeric range returns JSON null;
@@ -47814,9 +47899,10 @@ The opaque string denotes only that exact occurrence. It claims no semantic
 equivalence and cannot answer whether prose means refused, unknown,
 inapplicable, suppressed, or any other category. The fixture APIs are
 explicitly nonproduction and do not register a future authority, choose the
-future law, satisfy §19.3.2 today, or permit `settle_missing_reason_codes` to
-emit. A later authenticated authority requires a separate successor
-amendment and may choose a different source-supported construction.
+future law, settle the remaining 524,538 literals, or permit
+`settle_missing_reason_codes` to emit. A later authenticated authority for
+those unresolved occurrences requires a separate successor amendment and may
+choose a different source-supported construction.
 
 ### 25.4 Generated fail-closed authority artifact and exact pins
 
@@ -47825,10 +47911,10 @@ amendment and may choose a different source-supported construction.
 The derived audit artifact is
 `data/external/psid_missing_reason_code_authority_v1.json`, with schema and
 artifact ID `psid_missing_reason_code_fail_closed_authority.v1`. It is exactly
-495,337 bytes, raw file SHA-256
-`908aa2e09080fbde6a21cddecbdec89254bba0252443169ff27f71ed7d24bece`,
+709,526 bytes, raw file SHA-256
+`833c8dca8cec6a44ea4fe6c65d3662ce8ef8b7da062350437cf4f538dc8b6dac`,
 and self-zeroed content SHA-256
-`0881c21c4ee66e2a19f1b6145c8a5dc7cd1d5927cc40ecd5d6f4fd9c646b8ce0`.
+`1fdc2e0a367042dff33bb2ea920e40b55e33345b9c00324239910cc1f07a5e23`.
 Serialization is UTF-8 sorted-key compact JSON with exactly one terminal LF,
 no duplicate key at any depth, no nonfinite number, and `content_sha256`
 computed with that member set to 64 ASCII zeroes.
@@ -47845,14 +47931,17 @@ integrity
 lexical_candidate_vector
 registered_source_identity
 schema_version
+source_authority_vector
 source_document_count
 source_document_rows
 source_document_rows_sha256
 source_member_census
 ~~~
 
-The artifact is an audit authority for the negative boundary, never a source
-authority for a literal disposition or reason. Its
+The artifact binds the exact positive 52-occurrence census and the remaining
+negative boundary; it is not an independent source authority or a semantic
+reason registry. Authority comes only from the authenticated exact source
+bytes reproduced into its occurrence relation. Its
 `reproduced_from_source_bytes: true` has only the 47-source scope stated in
 §25.2.3.
 
@@ -47860,14 +47949,18 @@ authority for a literal disposition or reason. Its
 
 | Relation | Count/bytes | Full SHA-256 |
 |---|---:|---|
+| committed originating-record specification domain | 2 / 33,617 record bytes | `3921b4c3c4c6658a164b57a48fd1ec35a806cd97adfca05a4389523e692c9f3d` |
 | registered source rows | 47 / 114,875,090 source bytes | `d5b67f8b6b95dded9d8987af5784ea93bdc4b05744c3338619dd3681b7e62957` |
 | projected source rows | 47 | `0d27b2f940413d11727753a820360ac0a680eed503ea85bbe0a1344ed2f187e0` |
-| complete source-document census rows | 47 | `c6db713d8dee860adeafbcfd0f232ece9ce374ee66dee3fe39c02bd52a39999a` |
+| complete source-document census rows | 47 | `528091289177d9558f5e6baac99ca710c1f4db608d5e9150b84a3a6577258122` |
 | canonical source-row domain | 102,179 | `5feb5dacc3320f83a7b9eb7a331637721bbb58fe77f4e8f9cfb9165b4bad64ac` |
 | complete source-member domain | 561,873 | `547f6331fa469b3890e41b841cc89d807b9e7779326eb7b4f60b1208e2ddd4a1` |
 | source-member identity domain | 561,873 | `1e8384aec708a30b5beec81e4c4c08e330dd2ca6a33c36a9dfe208b9b8eee312` |
 | source-locator domain | 112,382 | `1e261e8f0fa1da3942ca97da9de7d657715d0518e075e9149f546b1165012f8d` |
 | lexical candidate identity domain | 231,263 | `e9bfe0593cfbdf4fa218d4e01f0ec60ac9b2350838f6dd631e4d91683ab53baa` |
+| packed exact source-authority vector | 70,235 bytes / 52 one / 561,821 zero | `0506ad32d8ecc06e53aec9ecbf4b8c4b4b904dc552f794567bee8deb9906504a` |
+| referee-format exact source-authority audit | 52 / 30,989 bytes | `f6d7f8b7f671379a6b4b7ea985415be3fc347ba169e5e07310df3cf3c1b3d2d1` |
+| exact source-authorized occurrence/code relation | 52 | `177b4f369d499de6af292283793c1bb4cce7f00c84fa6e0657ec4e62d6bc016d` |
 | directly disproven candidates | 61 | `a9be450dc6e38331c5bf491a73de40ad2e72367c40df6ffdeb81e88a4c6e2845` |
 | minimum context-required candidates | 118 | `25a3b74e34d5f594937cdbc9bb260c28ed5db3f0fb9abea07af6603651fd8bfc` |
 | numeric-range Wild-code defeats | 21 | `5473c792d62339b1da55c6124ddb548020480d6a8dfcd06b7cc500088d3a15d5` |
@@ -47885,36 +47978,41 @@ semantic-taxonomy request. Each row states its required fail-closed action.
 | Position | Repository path | Bytes | Raw SHA-256 |
 |---:|---|---:|---|
 | 0 | `src/populace_dynamics/data/psid_codebook_extraction.py` | 56,370 | `f096db6ad4185eb57782595411196a00dd000bbea9a7d24daac252781c018181` |
-| 1 | `src/populace_dynamics/data/psid_missing_reason_authority.py` | 54,347 | `1cf37158d4dfcc1aa26fff0698d3d6e751a0735f69ebd179a47e98fd065279bc` |
-| 2 | `scripts/rebuild_amendment11_missing_reason_authority.py` | 75,181 | `a6fa6d61e750c8b7a8b7db21a8b37e5e6d59f51ea36a56e528d5f82cc82a20d9` |
+| 1 | `src/populace_dynamics/data/psid_missing_reason_authority.py` | 75,800 | `9fa3c297b7f2e5cd61483b683799727b556488699f194ef0614b9bec7854ce7c` |
+| 2 | `scripts/rebuild_amendment11_missing_reason_authority.py` | 82,244 | `5ce9de2fde0a8e9c54f14846282e01a3d4eb76910bf1484c41e5a001531a28f2` |
 
 The three-row implementation-domain SHA-256 is
-`04b32ad0d6d416c20ee46067cd87c721ef7f81423be07db893e6b97264d9e932`.
+`43c605f8de32114dfcaa2eaadfc34cd4b6fe902566ebfec083fb3f2eefcb6711`.
 The expected-negative R05 executable
-`scripts/replay_amendment11_no_movement.py` is 31,675 bytes, raw SHA-256
-`7ea659935c776008176542b7b036d57ee4857687765b2169bf9e7d37818c78e7`.
+`scripts/replay_amendment11_no_movement.py` is 32,330 bytes, raw SHA-256
+`597670958b6609740eb4742c4144fb448026df82c767ece4db3e30777d6b77e6`.
+The committed
+`test_replay_script_matches_exact_documented_byte_pin` test reads that path
+as bytes and asserts both literals, so a behavior-preserving replay-script
+byte change fails mechanically.
 
-The builder authenticates the registry and all sources before semantic work,
-runs per-document derivations in confined workers, binds exact implementation
-bytes before/during/after workers, builds from those summaries, validates the
-complete candidate, stages beneath an anchored directory descriptor, and
-commits with no-follow, stable-parent, single-link, fsync, byte reread, and
-rollback guarantees. `--check` performs a fresh reconstruction and exact byte
-comparison. The JSON file is derived only by this builder and must never be
-hand edited.
+The builder authenticates both committed originating records and spans, the
+registry, and all sources before semantic work, runs per-document derivations
+in confined workers, binds exact implementation bytes before/during/after
+workers, builds from those summaries, validates the complete candidate,
+stages beneath an anchored directory descriptor, and commits with no-follow,
+stable-parent, single-link, fsync, byte reread, and rollback guarantees.
+`--check` performs a fresh reconstruction and exact byte comparison. The JSON
+file is derived only by this builder and must never be hand edited.
 
 ### 25.5 Downstream composition and prohibition on inferred movement
 
 #### 25.5.1 No complete successor relation exists
 
-The present law assigns no literal disposition and no nonempty reason. It
+The present law assigns exact missing dispositions and nonempty opaque codes
+to 52 literals, but leaves 524,538 literal dispositions unresolved. It
 therefore cannot produce normalized settled rows, rerun the 89,599-field
 classifier, calculate Amendment-11 terminal movement, recount storage, create
 a revision-13 full-relation identity, or supply a Q5 comparand. The exact §24
 terminal vector, assignments, failure rows, and storage populations remain
 true historical revision-12 facts. Copying them, assuming zero movement, or
-repinning them as revision 13 would promote the disproven lexical vector and
-is forbidden.
+repinning them as revision 13 would ignore the incomplete relation and is
+forbidden.
 
 A constructible synthetic fixture may show that changing only the spelling
 of an already-authorized nonempty opaque reason leaves a fixture classifier
@@ -47927,9 +48025,9 @@ conclusion follows.
 #### 25.5.2 Ordered present blockers
 
 The primary current blocker is
-`blocked_source_missing_disposition_underdetermined`: 524,590 literal
+`blocked_source_missing_disposition_underdetermined`: 524,538 literal
 occurrences lack registered disposition authority. Section 23.9.1's V-B6
-also remains nonpassing on the present evidence because no missing
+also remains nonpassing on the present evidence because no total missing
 substantive authority has been supplied. Section 24's
 122,255,013,691,442-byte four-shape floor and measured-capacity inequality
 remain historical revision-12 results, but cannot be asserted for an unknown
@@ -47948,40 +48046,48 @@ census, and lifecycle analysis.
 
 #### 25.6.1 A11-R01 — registry and raw-source exact cover
 
-Freshly verify the registry byte size/hash, exact 47-row filter and order,
-all 47 raw sizes/full hashes, stable descriptor reads, decoder version and
-arguments, derivation metadata, and the complete 47/102,179/561,873/112,382
-counts before semantic use. Wrong path, traversal, symlink, short/long file,
-reordered registry, source mutation, descriptor swap, decoder drift,
-parser drift, or metadata drift aborts before artifact emission.
+Freshly verify both committed originating-record complete bytes and spans,
+their two-row domain hash, the registry byte size/hash, exact 47-row filter
+and order, all 47 raw sizes/full hashes, stable descriptor reads, decoder
+version and arguments, derivation metadata, and the complete
+47/102,179/561,873/112,382 counts before semantic use. Wrong path, traversal,
+symlink, short/long file, reordered registry, source mutation, descriptor
+swap, record drift, decoder drift, parser drift, or metadata drift aborts
+before artifact emission.
 
 #### 25.6.2 A11-R02 — structural vector and evidence-boundary reproduction
 
-Reproduce the 70,235-byte entry-kind vector and independently the 70,235-byte
-nonauthority lexical vector, with all counts and hashes in §§25.2-25.4.
-Reproduce the 61 direct disproofs, 118 minimum context-required rows, 21 range
+Reproduce independently the 70,235-byte entry-kind, nonauthority lexical,
+and exact source-authority vectors, with all counts and hashes in
+§§25.2-25.4. Reproduce the exhaustive 118-literal `missing` sweep, the
+11,790-literal `imput` sweep, their 52-occurrence intersection, the one range
+`imput` occurrence, the 30,989-byte audit projection, the exact occurrence
+relation, the 61 direct disproofs, 118 minimum context-required rows, 21 range
 defeats, and 15 rejection classes. Require exactly 37,283 structural null
-arms, 524,590 blocked literal arms, zero authorized current literal
-dispositions, zero reason assignments, and no complete emitted settlement.
-A lexical-positive count is never a production-positive count.
+arms, 52 source-authorized literal codes, 524,538 blocked literal arms, zero
+accepted-output reason assignments, and no complete emitted settlement. A
+broad lexical-positive count is never a production-positive count.
 
 #### 25.6.3 A11-R03 — satisfiable conditional nonproduction fixtures
 
-Exercise, without source-authority claim: one authenticated missing literal
-to one nonempty opaque occurrence code; one authenticated nonmissing literal
-to null; one numeric range to null; same spelling at distinct occurrences to
-distinct opaque codes; a whole composite without atom choice; and unknown,
-malformed scalar/range, empty preimage, disagreement, duplicate assignment,
-collision, taxonomy request, and range-as-missing conflict to their exact
-fail-closed actions. The fixture passes only when production settlement
-remains unavailable.
+Exercise the current exact source-authorized value/meaning bytes to a
+nonempty opaque occurrence code and near-byte mutants to the unresolved arm.
+Separately exercise, without a future-source-authority claim: one fixture
+missing literal to one nonempty opaque occurrence code; one authenticated
+nonmissing literal to null; one numeric range to null; same spelling at
+distinct occurrences to distinct opaque codes; a whole composite without
+atom choice; and unknown, malformed scalar/range, empty preimage,
+disagreement, duplicate assignment, collision, taxonomy request, and
+range-as-missing conflict to their exact fail-closed actions. Enumerate the
+five-state disposition partition over all 31 nonempty predicate sets. The
+fixture passes only when complete production settlement remains unavailable.
 
 #### 25.6.4 A11-R04 — artifact, fresh build, and transactionality
 
 Strict-parse and validate every nested artifact key, type, order, count,
 digest, vector equation, zero padding bit, source row, boundary row,
 implementation byte, self-zeroed content digest, and canonical byte. A fresh
-47-source build must exact-equal the 495,337-byte artifact. Test output-source
+47-source build must exact-equal the 709,526-byte artifact. Test output-source
 alias, case alias, parent/leaf swap at every phase, symlink/hard-link addition,
 worker escape, implementation drift, replacement and interruption, backup
 corruption, final fsync failure, rollback restoration, mode normalization,
@@ -47992,9 +48098,11 @@ is accepted.
 
 After A11-R01 and A11-R04 have completed, the R05 executable must strict-read
 and validator-bind the committed artifact, cross-bind every census/boundary
-constant, reproduce §24 aggregates only as labeled historical evidence, and
-invoke the sole production gate. Required result is exit status 2, empty
-stdout, stderr naming
+constant, verify its own documented 32,330-byte/full-SHA-256 pin, reproduce
+§24 aggregates only as labeled historical evidence, classify the 52 exact
+source-authorized occurrences, and invoke the sole production gate on the
+remaining 524,538 literals. Required result is exit status 2, empty stdout,
+stderr naming
 `blocked_source_missing_disposition_underdetermined`, no replay start, no
 accepted output, no movement relation, no revision-13 relation identity, and
 no Q5. A “pass” result is a gate failure. The separately labeled small
@@ -48012,10 +48120,35 @@ point; output alias/ancestry/link/fsync/replacement/rollback; and R05 artifact
 absence or mutation. Every mutant reaches its named null/abort arm without
 accepted output.
 
+The committed genuine omitted-key battery discovers the top-level object and
+all 16 nested object keysets, deletes each key once at its representative
+path, and requires rejection of all 181 deletions. Its 17 parametrized shape
+nodes plus one completeness node prove all 17 object shapes. This is JSON-key
+deletion, not an absent vector position. A separate committed battery directly
+mutates all 18 `_sha256` fields currently nested under
+`source_member_census` and `authority_boundary`, including every core census
+hash and every boundary hash, and requires rejection of all 18.
+
 The complete A11 gate passes exactly when A11-R01 through A11-R06 prove this
 expected fail-closed outcome in one reviewed run. “Gate pass” means the law
 correctly refuses production; it never means a `missing_reason_code` relation
 was settled. Skipping unavailable raw sources is not a ratification pass.
+
+The exact focused selector is:
+
+~~~shell
+PYTHONPATH=src:. \
+  /Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python -m pytest \
+  tests/data/test_psid_codebook_extraction_validation.py \
+  tests/data/test_psid_missing_reason_authority_artifact.py \
+  tests/data/test_psid_missing_reason_authority_unit.py \
+  tests/estimates/test_birth_evidence_artifact.py \
+  tests/test_rebuild_amendment11_missing_reason_authority.py \
+  tests/test_replay_amendment11_no_movement.py
+~~~
+
+That exact six-module selector collects and passes exactly 223 nodes; no
+unstated deselection or additive module is part of the published count.
 
 ### 25.7 Fail-closed replacement inventory and complete closure sweep
 
@@ -48025,13 +48158,13 @@ The exact design-family dispositions are:
 |---|---|
 | §4.2 and §19.3.2 member shape and nonempty source-backed reason requirement | composed with §§25.2-25.3; unchanged and unnarrowed |
 | §23 tagged range/literal union and no-default law | composed with §25.3; strengthened against lexical promotion |
-| §23 `missing_reason_code` under-determination | escalated unresolved by named successor §§25.2-25.3 and §25.10; no literal reason value or complete relation is settled |
-| §24.1 two-member inventory | composed: `typed_value_unit` remains historically resolved; `missing_reason_code` remains substantively unresolved |
-| §24.7 `missing_reason_code` disposition row | escalated-unresolved-by-named-successor to this exact fail-closed law |
-| §24.10 successor request | procedurally answered and substantively unresolved; its no-default blocker survives |
+| §23 `missing_reason_code` under-determination | composed for the 52 exact source-authorized occurrences and escalated unresolved for the remaining 524,538 by named successor §§25.2-25.3 and §25.10; no complete relation is settled |
+| §24.1 two-member inventory | composed: `typed_value_unit` remains historically resolved; 52 `missing_reason_code` occurrences are source-authorized and the other 524,538 literals remain substantively unresolved |
+| §24.7 `missing_reason_code` disposition row | composed-with-named-successor for the exact positive census and escalated-unresolved-by-named-successor for the remainder |
+| §24.10 successor request | procedurally answered with a 52/524,538 partition; its no-default blocker survives for the incomplete relation |
 | predecessor lexical-candidate vectors and evidence images | lawfully unchanged as regression/audit facts only; prohibited as source authority |
 | §24 unit law and A10-R01 through A10-R05 | lawfully unchanged historical law; no Amendment-11 output is copied from it |
-| semantic taxonomy, complete settled relation, movement, Q5, and storage recount | lawfully unavailable with the named source-authority reason |
+| semantic taxonomy, complete settled relation, movement, Q5, and storage recount | lawfully unavailable because the 52 occurrence codes imply no taxonomy or default and 524,538 literal dispositions remain unresolved |
 | §§24.8-24.9 post-D10 comparator/lifecycle dispatch | replaced for any future post-D11 registration only by §§25.8-25.9; no schema may instantiate now |
 | registry, bundle, receipt, correction, output, and publication consumers | lawfully unchanged and blocked before construction |
 
@@ -48093,6 +48226,9 @@ authorized_current_literal_disposition_count
 unadjudicated_literal_count
 entry_kind_vector
 lexical_candidate_vector
+source_authority_vector
+source_authorized_missing_literal_count
+source_authorized_missing_occurrences
 numeric_range
 literal
 A11-R01
@@ -48131,14 +48267,16 @@ The only allowed disposition/reason pairs are exactly:
 | `lawfully-unchanged-with-reason` | `exact_law_preserved_outside_replacement_scope` |
 
 Every successor anchor is nonempty and resolves to exact preserved law or
-§§25.2-25.10. The §23/§24 substantive member rows use
-`escalated-unresolved-by-named-successor`; no row may claim
-`replaced-by-named-successor` or any `resolved-by-*` disposition for the
-literal member. Status passes only under every inherited reconstruction,
-segmentation, graph, count, digest, disposition, and exact-byte equation, with
-`unresolved_passage_ids` exactly empty. Empty here means every reached design
-passage received a lawful closure disposition; it does **not** mean source
-authority or `missing_reason_code` values were determined.
+§§25.2-25.10. The exact 52-occurrence source-authority passages use
+`composed-with-named-successor`; the incomplete relation and remaining
+524,538 substantive member passages use
+`escalated-unresolved-by-named-successor`. No row may claim the complete
+literal relation is replaced or resolved. Status passes only under every
+inherited reconstruction, segmentation, graph, count, digest, disposition,
+and exact-byte equation, with `unresolved_passage_ids` exactly empty. Empty
+here means every reached design passage received a lawful closure
+disposition; it does **not** mean the remaining source authority or complete
+`missing_reason_code` relation was determined.
 
 ### 25.8 Complete revision-13 design-comparator disposition
 
@@ -48162,6 +48300,9 @@ Q5
 prefix
 missing_reason_code
 psid_codebook_source_member_identity.v1
+source_authority_vector
+source_authorized_missing_occurrences
+source_authorized_missing_literal_count
 source_nonmissing_reason_not_applicable
 unadjudicated_source_missing_disposition
 conflicting_missing_reason_authority
@@ -48256,7 +48397,7 @@ consumer walk still expands beyond these seeds.
 | DC-57 | §24.9 terminal post-D10 capture-registration D2-D10/live-capture-HEAD predicate and all transitive capture/receipt consumers | replaced-by-named-successor: `verify_amendment_11_capture_registration_repository_identity_v1` |
 | DC-58 | §§24.9-24.10 terminal selected-registration D1-or-D2/D2-D10/registration-HEAD byte, prefix, and ancestry predicate | replaced-by-named-successor: `verify_amendment_11_selected_registration_design_lineage_v1` |
 | DC-59 | §§25.1, 25.8, and 25.9.1, plus §25.10.2 steps 2-3, exact D10 identity, accepted-candidate-to-future-D11 raw-blob equality, and D10-as-3,472,168-byte-prefix-of-D11 comparison | lawfully-unchanged-with-reason: one live D11 raw-byte identity family; full bytes, hash, mode, blob, prefix, and ancestry all remain required |
-| DC-60 | §§25.3, 25.6, 25.8, and 25.10 D11 ordering before any Q5 first-add, exact A11 production abort before Q5 on 524,590 unadjudicated literals, then Q5 before slot/inventory first-adds and admitting cutoffs | lawfully-unchanged-with-reason: D11/Q5 is a guarded ancestry edge presently unreachable; no revision-13 relation identity or Q5 exists, and every D5-D10/Q5 history remains independently required |
+| DC-60 | §§25.3, 25.6, 25.8, and 25.10 D11 ordering before any Q5 first-add, exact A11 production abort before Q5 after classifying 52 authorized literals and finding 524,538 unadjudicated literals, then Q5 before slot/inventory first-adds and admitting cutoffs | lawfully-unchanged-with-reason: D11/Q5 is a guarded ancestry edge presently unreachable; no revision-13 relation identity or Q5 exists, and every D5-D10/Q5 history remains independently required |
 | DC-61 | §25.9 terminal position-1 D2-D11/configuration/final-cutoff byte, digest, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal `verify_amendment_11_fitting_free_design_identity_v1` closes v10 registry/domain and v11 bundle consumers but cannot instantiate under current blockers |
 | DC-62 | §25.9 terminal post-D11 capture-registration D2-D11/live-capture-HEAD predicate and all transitive capture/receipt consumers | lawfully-unchanged-with-reason: terminal receipt-free `verify_amendment_11_capture_registration_repository_identity_v1` closes those consumers but cannot instantiate under current blockers |
 | DC-63 | §§25.9-25.10 terminal selected-registration D1-or-D2/D2-D11/registration-HEAD byte, prefix, and ancestry predicate | lawfully-unchanged-with-reason: terminal `verify_amendment_11_selected_registration_design_lineage_v1` closes v10 receipt/history dispatch but cannot instantiate under current blockers |
@@ -48657,13 +48798,18 @@ permitted.
 
 The authenticated 47-source bytes establish the complete 561,873-member
 structural census and the reproducible lexical audit. They establish at least
-61 direct disproofs and 118 context-required candidate rows. They establish
-zero authenticated literal missing dispositions, zero source reason
-assignments, and no reason vocabulary or derivation. Therefore all 37,283
-numeric-range members have structural null reason, all 524,590 literals have
-the named unadjudicated disposition, whole production settlement aborts, and
-no complete settled relation exists. This is the maximum total law the
-registered evidence supports.
+61 direct disproofs and 118 context-required candidate rows. The exhaustive
+targeted sweeps establish exactly 52 source-authorized missing literals—four
+per wave in 13 waves—with exact source value `9,999,999.00` and exact meaning
+`Missing, not imputed`; they establish no other whole occurrence with that
+authority. Thus the source has a narrow exact disposition/reason vocabulary,
+but no dedicated disposition or reason-code columns, semantic taxonomy,
+cross-occurrence equivalence, or default derivation. All 37,283 numeric-range
+members have structural null reason, the 52 exact literals have distinct
+opaque occurrence codes, and the other 524,538 literals have the named
+unadjudicated disposition. Whole production settlement therefore aborts with
+zero accepted output and no complete settled relation. This 37,283 / 52 /
+524,538 partition is the maximum total law the registered evidence supports.
 
 #### 25.10.2 Only lawful sequence
 
@@ -48671,8 +48817,10 @@ registered evidence supports.
    Q5, slot, inventory, registry, capture, correction execution, output, or
    any other production change in the authoring lane.
 2. Resolve every finding and verify the exact 3,472,168-byte D10 prefix; both
-   external record spans; registry and all 47 raw source bytes; all structural,
-   lexical, counterexample, witness, artifact, and implementation pins;
+   committed originating records in full and both exact spans; their record
+   domain; registry and all 47 raw source bytes; all structural, lexical,
+   exact source-authority, counterexample, witness, artifact, replay, and
+   implementation pins;
    A11-R01 through A11-R06; the complete closure sweep; 63 comparator rows;
    16 lifecycle plus one closure identifier; strict JSON; balanced fences;
    and every build/rollback/nonemission predicate. Continue until the exact
@@ -48685,8 +48833,9 @@ registered evidence supports.
    operative or instantiate any successor.
 4. After D11, separately review the source machinery and artifact, rerun the
    full raw-source build and A11-R01 through A11-R06, and require the exact
-   named source blocker. Because the expected gate result is an abort, stop.
-   Do not mint a revision-13 relation identity or first-add Q5.
+   52 authorized / 524,538 unresolved census followed by the named source
+   blocker. Because the expected gate result is an abort, stop. Do not mint a
+   revision-13 relation identity or first-add Q5.
 5. No official slot, inventory, bundle, receipt, registration, correction,
    context run, output, or publication follows. The §25.9 schemas remain
    uninstantiated and unselectable.
