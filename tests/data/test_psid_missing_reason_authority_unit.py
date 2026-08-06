@@ -2,12 +2,24 @@
 
 from __future__ import annotations
 
+from itertools import combinations
+
 import pytest
 
 from populace_dynamics.data.psid_missing_reason_authority import (
+    AUTHORITY_FAILURE_DISPOSITION_ROWS,
+    AUTHORITY_FAILURE_STATES,
+    CONFLICTING_AUTHORITY_FAILURE_STATES,
+    CONFLICTING_MISSING_REASON_AUTHORITY,
+    INCOMPLETE_AUTHORITY_FAILURE_STATES,
+    INCOMPLETE_MISSING_REASON_AUTHORITY,
     REASON_CODE_PREFIX,
+    SOURCE_AUTHORIZED_DISPOSITION,
+    SOURCE_AUTHORIZED_MEANING,
+    SOURCE_AUTHORIZED_VALUE_LEXEME,
     MissingReasonAuthorityError,
     SourceMember,
+    authority_failure_disposition,
     candidate_is_missing,
     canonical_json_bytes,
     canonical_sha256,
@@ -18,6 +30,7 @@ from populace_dynamics.data.psid_missing_reason_authority import (
     fixture_request_missing_reason_taxonomy,
     missing_reason_code,
     pack_disposition_bits,
+    source_authorizes_current_missing_reason,
     source_member_identity,
     validate_disposition_vector,
 )
@@ -83,6 +96,16 @@ def _range_member(**entry_changes):
     )
 
 
+def _source_authorized_member(**entry_changes):
+    changes = {
+        "source_value_lexeme": SOURCE_AUTHORIZED_VALUE_LEXEME,
+        "source_meaning": SOURCE_AUTHORIZED_MEANING,
+        "typed_disposition": SOURCE_AUTHORIZED_DISPOSITION,
+    }
+    changes.update(entry_changes)
+    return _member(**changes)
+
+
 def test_canonical_json_has_sorted_keys_ascii_and_one_lf():
     assert canonical_json_bytes({"z": "é", "a": 1}) == (
         b'{"a":1,"z":"\\u00e9"}\n'
@@ -96,6 +119,36 @@ def test_reason_code_is_deterministic_opaque_occurrence_identity():
     assert code.startswith(REASON_CODE_PREFIX)
     assert len(code) == len(REASON_CODE_PREFIX) + 64
     assert "refused" not in code
+
+
+def test_exact_source_authority_bytes_yield_an_opaque_occurrence_code():
+    member = _source_authorized_member()
+    assert source_authorizes_current_missing_reason(member) is True
+    code = missing_reason_code(member)
+    assert code.startswith(REASON_CODE_PREFIX)
+    assert len(code) == len(REASON_CODE_PREFIX) + 64
+    assert SOURCE_AUTHORIZED_VALUE_LEXEME not in code
+    assert SOURCE_AUTHORIZED_MEANING not in code
+
+
+@pytest.mark.parametrize(
+    ("field", "replacement"),
+    [
+        ("source_value_lexeme", "9,999,999.0"),
+        ("source_value_lexeme", "9999999.00"),
+        ("source_meaning", "missing, not imputed"),
+        ("source_meaning", "Missing,  not imputed"),
+        ("source_meaning", "Missing, not imputed."),
+        ("source_meaning", "Missing, imputed"),
+    ],
+)
+def test_near_byte_source_authority_mutants_remain_unauthorized(
+    field, replacement
+):
+    authorized = _source_authorized_member()
+    mutant = _source_authorized_member(**{field: replacement})
+    assert source_authorizes_current_missing_reason(mutant) is False
+    assert missing_reason_code(mutant) != missing_reason_code(authorized)
 
 
 @pytest.mark.parametrize(
@@ -286,8 +339,69 @@ def test_conditional_literal_law_has_satisfiable_future_arms(
         assert value is None
 
 
+def test_five_state_disposition_partition_covers_all_31_predicate_sets():
+    singleton_rows = dict(AUTHORITY_FAILURE_DISPOSITION_ROWS)
+    assert len(AUTHORITY_FAILURE_STATES) == 5
+    assert set(CONFLICTING_AUTHORITY_FAILURE_STATES).isdisjoint(
+        INCOMPLETE_AUTHORITY_FAILURE_STATES
+    )
+    assert set(CONFLICTING_AUTHORITY_FAILURE_STATES) | set(
+        INCOMPLETE_AUTHORITY_FAILURE_STATES
+    ) == set(AUTHORITY_FAILURE_STATES)
+    assert set(singleton_rows) == set(AUTHORITY_FAILURE_STATES)
+    assert {
+        singleton_rows[state] for state in CONFLICTING_AUTHORITY_FAILURE_STATES
+    } == {CONFLICTING_MISSING_REASON_AUTHORITY}
+    assert {
+        singleton_rows[state] for state in INCOMPLETE_AUTHORITY_FAILURE_STATES
+    } == {INCOMPLETE_MISSING_REASON_AUTHORITY}
+
+    observed = {}
+    for width in range(1, len(AUTHORITY_FAILURE_STATES) + 1):
+        for active_states in combinations(AUTHORITY_FAILURE_STATES, width):
+            expected = (
+                CONFLICTING_MISSING_REASON_AUTHORITY
+                if set(active_states).intersection(
+                    CONFLICTING_AUTHORITY_FAILURE_STATES
+                )
+                else INCOMPLETE_MISSING_REASON_AUTHORITY
+            )
+            disposition = authority_failure_disposition(active_states)
+            assert disposition == expected
+            assert authority_failure_disposition(reversed(active_states)) == (
+                expected
+            )
+            observed[frozenset(active_states)] = disposition
+    assert len(observed) == 31
+    assert set(observed.values()) == {
+        CONFLICTING_MISSING_REASON_AUTHORITY,
+        INCOMPLETE_MISSING_REASON_AUTHORITY,
+    }
+
+
+@pytest.mark.parametrize(
+    "active_states",
+    [
+        (),
+        ("unknown_failure_state",),
+        ("malformed_member_or_authority",) * 2,
+        "malformed_member_or_authority",
+        (1,),
+    ],
+)
+def test_disposition_partition_rejects_nonstates_and_nonsets(active_states):
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match="^malformed authority failure predicate set$",
+    ):
+        authority_failure_disposition(active_states)
+
+
 def test_conflicting_future_disposition_claims_abort():
-    with pytest.raises(MissingReasonAuthorityError, match="conflicting"):
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match=f"^{CONFLICTING_MISSING_REASON_AUTHORITY}:",
+    ):
         fixture_conditional_missing_reason_value_from_claims(
             _member(), (True, False)
         )
@@ -295,7 +409,10 @@ def test_conflicting_future_disposition_claims_abort():
 
 @pytest.mark.parametrize("claim", [False, True])
 def test_duplicated_future_disposition_claims_abort(claim):
-    with pytest.raises(MissingReasonAuthorityError, match="duplicated"):
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match=f"^{CONFLICTING_MISSING_REASON_AUTHORITY}:",
+    ):
         fixture_conditional_missing_reason_value_from_claims(
             _member(), (claim, claim)
         )
@@ -303,9 +420,30 @@ def test_duplicated_future_disposition_claims_abort(claim):
 
 def test_duplicate_conditional_assignment_aborts():
     member = _member()
-    with pytest.raises(MissingReasonAuthorityError, match="duplicate"):
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match=f"^{CONFLICTING_MISSING_REASON_AUTHORITY}:",
+    ):
         fixture_conditional_missing_reason_relation(
             ((member, (True,)), (member, (True,)))
+        )
+
+
+def test_empty_conditional_relation_exposes_incomplete_identifier():
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match=f"^{INCOMPLETE_MISSING_REASON_AUTHORITY}:",
+    ):
+        fixture_conditional_missing_reason_relation(())
+
+
+def test_malformed_conditional_claim_exposes_incomplete_identifier():
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match=f"^{INCOMPLETE_MISSING_REASON_AUTHORITY}:",
+    ):
+        fixture_conditional_missing_reason_value_from_claims(
+            _member(), ("missing",)
         )
 
 
@@ -319,7 +457,10 @@ def test_opaque_code_collision_aborts(monkeypatch):
         "missing_reason_code",
         lambda _member: REASON_CODE_PREFIX + "0" * 64,
     )
-    with pytest.raises(MissingReasonAuthorityError, match="collision"):
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match=f"^{CONFLICTING_MISSING_REASON_AUTHORITY}:",
+    ):
         fixture_conditional_missing_reason_relation(
             ((first, (True,)), (second, (True,)))
         )
@@ -329,7 +470,10 @@ def test_numeric_range_is_structurally_null_without_a_default():
     member = _range_member()
     assert fixture_conditional_missing_reason_value(member, None) is None
     assert fixture_conditional_missing_reason_value(member, False) is None
-    with pytest.raises(MissingReasonAuthorityError, match="numeric range"):
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match=f"^{CONFLICTING_MISSING_REASON_AUTHORITY}:",
+    ):
         fixture_conditional_missing_reason_value(member, True)
     with pytest.raises(MissingReasonAuthorityError, match="numeric range"):
         missing_reason_code(member)
@@ -337,7 +481,10 @@ def test_numeric_range_is_structurally_null_without_a_default():
 
 @pytest.mark.parametrize("malformed", [0, 0.0, "false"])
 def test_numeric_range_rejects_nonboolean_disposition_authority(malformed):
-    with pytest.raises(MissingReasonAuthorityError, match="malformed"):
+    with pytest.raises(
+        MissingReasonAuthorityError,
+        match=f"^{INCOMPLETE_MISSING_REASON_AUTHORITY}:",
+    ):
         fixture_conditional_missing_reason_value(_range_member(), malformed)
 
 

@@ -3,12 +3,17 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterator, Mapping
 from copy import deepcopy
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 from populace_dynamics.data.psid_missing_reason_authority import (
+    AUTHORITY_FAILURE_DISPOSITION_ROWS,
+    CONFLICTING_AUTHORITY_FAILURE_STATES,
+    CONFLICTING_MISSING_REASON_AUTHORITY,
     EXPECTED_CENSUS_SHA256S,
     EXPECTED_COUNTEREXAMPLE_COUNT,
     EXPECTED_COUNTEREXAMPLE_SHA256,
@@ -22,11 +27,23 @@ from populace_dynamics.data.psid_missing_reason_authority import (
     EXPECTED_NUMERIC_RANGE_COUNT,
     EXPECTED_RANGE_REJECTION_SHA256,
     EXPECTED_REGISTERED_SOURCE_BYTE_SIZE,
+    EXPECTED_SOURCE_AUTHORIZED_AUDIT_BYTE_SIZE,
+    EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256,
+    EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT,
+    EXPECTED_SOURCE_AUTHORIZED_OCCURRENCE_SHA256,
     EXPECTED_SOURCE_DOCUMENT_ROWS_SHA256,
+    EXPECTED_UNADJUDICATED_LITERAL_COUNT,
+    INCOMPLETE_AUTHORITY_FAILURE_STATES,
+    INCOMPLETE_MISSING_REASON_AUTHORITY,
+    REASON_CODE_PREFIX,
+    SOURCE_AUTHORIZED_DISPOSITION,
+    SOURCE_AUTHORIZED_MEANING,
+    SOURCE_AUTHORIZED_VALUE_LEXEME,
     MissingReasonAuthorityError,
     canonical_json_bytes,
     settle_missing_reason_codes,
     sha256_bytes,
+    utf8_compact_json_bytes,
     validate_authority_artifact,
 )
 
@@ -51,6 +68,64 @@ def _repin_content(candidate):
     candidate["integrity"]["content_sha256"] = sha256_bytes(
         canonical_json_bytes(candidate)
     )
+
+
+_REPRESENTATIVE_OBJECT_PATHS = (
+    (),
+    ("authority_boundary",),
+    ("authority_boundary", "directly_disproven_candidates", 0),
+    ("authority_boundary", "numeric_range_rejection_witnesses"),
+    (
+        "authority_boundary",
+        "numeric_range_rejection_witnesses",
+        "rows",
+        0,
+    ),
+    ("authority_boundary", "rejection_class_witnesses", 0),
+    ("authority_boundary", "source_authorized_missing_audit", "rows", 0),
+    ("conditional_reason_code_law",),
+    ("derivation_identity",),
+    ("derivation_identity", "implementation_files", 0),
+    ("entry_kind_vector",),
+    ("integrity",),
+    ("registered_source_identity",),
+    ("source_document_rows", 0),
+    ("source_member_census",),
+    ("source_member_census", "overlapping_candidate_phrase_counts"),
+    ("source_member_census", "selected_exact_candidate_meaning_counts"),
+)
+
+
+def _value_at_path(value: Any, path: tuple[str | int, ...]) -> Any:
+    for part in path:
+        value = value[part]
+    return value
+
+
+def _iter_objects(
+    value: Any, path: tuple[str | int, ...] = ()
+) -> Iterator[tuple[tuple[str | int, ...], Mapping[str, Any]]]:
+    if isinstance(value, Mapping):
+        yield path, value
+        for key, nested in value.items():
+            yield from _iter_objects(nested, (*path, key))
+    elif isinstance(value, list):
+        for position, nested in enumerate(value):
+            yield from _iter_objects(nested, (*path, position))
+
+
+def _iter_suffix_sha256_paths(
+    value: Any, path: tuple[str | int, ...]
+) -> Iterator[tuple[str | int, ...]]:
+    if isinstance(value, Mapping):
+        for key, nested in value.items():
+            nested_path = (*path, key)
+            if key.endswith("_sha256"):
+                yield nested_path
+            yield from _iter_suffix_sha256_paths(nested, nested_path)
+    elif isinstance(value, list):
+        for position, nested in enumerate(value):
+            yield from _iter_suffix_sha256_paths(nested, (*path, position))
 
 
 def test_artifact_is_exact_section_10_1_json(artifact):
@@ -106,7 +181,7 @@ def test_all_source_relation_digests_are_independently_pinned(artifact):
     )
 
 
-def test_candidate_counts_are_evidence_not_source_authority(artifact):
+def test_candidate_counts_are_distinct_from_exact_source_authority(artifact):
     census = artifact["source_member_census"]
     boundary = artifact["authority_boundary"]
     assert census["pdf_source_row_count"] == 89_599
@@ -114,11 +189,95 @@ def test_candidate_counts_are_evidence_not_source_authority(artifact):
     assert census["pdf_lexical_missing_candidate_count"] == 203_283
     assert census["value_label_lexical_missing_candidate_count"] == 27_980
     assert boundary["lexical_candidate_is_source_authority"] is False
-    assert boundary["authorized_current_literal_disposition_count"] == 0
-    assert boundary["unadjudicated_literal_count"] == 524_590
+    assert boundary["authorized_current_literal_disposition_count"] == (
+        EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+    )
+    assert boundary["unadjudicated_literal_count"] == (
+        EXPECTED_UNADJUDICATED_LITERAL_COUNT
+    )
+    assert (
+        boundary["authorized_current_literal_disposition_count"]
+        + boundary["unadjudicated_literal_count"]
+        == EXPECTED_LITERAL_COUNT
+    )
+    assert boundary["source_defines_missing_disposition_vocabulary"] is True
+    assert boundary["source_defines_reason_vocabulary"] is True
+    assert boundary["source_defines_missing_disposition_column"] is False
+    assert boundary["source_defines_reason_code_column"] is False
     assert boundary["inherited_dictionary_missing_declaration_count"] == 0
     assert boundary["dictionary_missing_declaration_scope"].startswith(
         "inherited_86_document"
+    )
+
+
+def test_all_52_authorized_occurrences_preserve_exact_source_bytes(artifact):
+    census = artifact["source_member_census"]
+    boundary = artifact["authority_boundary"]
+    occurrences = boundary["source_authorized_missing_occurrences"]
+    audit = boundary["source_authorized_missing_audit"]
+    assert occurrences["row_count"] == EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+    assert occurrences["domain_sha256"] == (
+        EXPECTED_SOURCE_AUTHORIZED_OCCURRENCE_SHA256
+    )
+    assert audit["row_count"] == EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+    assert audit["domain_sha256"] == EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256
+    assert len(utf8_compact_json_bytes(audit["rows"])) == (
+        EXPECTED_SOURCE_AUTHORIZED_AUDIT_BYTE_SIZE
+    )
+    assert census["source_authorized_missing_literal_count"] == (
+        EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+    )
+    assert census["source_authorized_missing_audit_sha256"] == (
+        EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256
+    )
+    assert census["source_authorized_missing_occurrence_sha256"] == (
+        EXPECTED_SOURCE_AUTHORIZED_OCCURRENCE_SHA256
+    )
+    assert {
+        (row[0][10], row[0][11], row[4]) for row in occurrences["rows"]
+    } == {
+        (
+            SOURCE_AUTHORIZED_VALUE_LEXEME,
+            SOURCE_AUTHORIZED_MEANING,
+            SOURCE_AUTHORIZED_DISPOSITION,
+        )
+    }
+    assert all(
+        row[5].startswith(REASON_CODE_PREFIX)
+        and len(row[5]) == len(REASON_CODE_PREFIX) + 64
+        for row in occurrences["rows"]
+    )
+    assert len({row[5] for row in occurrences["rows"]}) == 52
+    assert {
+        (
+            row["source_value_lexeme"],
+            row["source_meaning"],
+            row["typed_disposition"],
+        )
+        for row in audit["rows"]
+    } == {
+        (
+            SOURCE_AUTHORIZED_VALUE_LEXEME,
+            SOURCE_AUTHORIZED_MEANING,
+            SOURCE_AUTHORIZED_DISPOSITION,
+        )
+    }
+
+
+def test_artifact_pins_total_failure_disposition_partition(artifact):
+    law = artifact["conditional_reason_code_law"]
+    assert law["authority_failure_disposition_rows"] == [
+        list(row) for row in AUTHORITY_FAILURE_DISPOSITION_ROWS
+    ]
+    assert law["authority_failure_precedence"] == [
+        CONFLICTING_MISSING_REASON_AUTHORITY,
+        INCOMPLETE_MISSING_REASON_AUTHORITY,
+    ]
+    assert law["conflicting_failure_states"] == list(
+        CONFLICTING_AUTHORITY_FAILURE_STATES
+    )
+    assert law["incomplete_failure_states"] == list(
+        INCOMPLETE_AUTHORITY_FAILURE_STATES
     )
 
 
@@ -179,6 +338,68 @@ def test_malformed_relation_precedes_named_production_blocker(artifact):
         MissingReasonAuthorityError, match="malformed source document"
     ):
         settle_missing_reason_codes([{}] * 47, artifact)
+
+
+def _object_path_id(path: tuple[str | int, ...]) -> str:
+    return "top_level" if not path else ".".join(map(str, path))
+
+
+def test_omitted_key_object_shape_matrix_is_complete(artifact):
+    discovered_keysets = {
+        frozenset(value) for _, value in _iter_objects(artifact)
+    }
+    represented_keysets = []
+    for path in _REPRESENTATIVE_OBJECT_PATHS:
+        representative = _value_at_path(artifact, path)
+        assert isinstance(representative, Mapping)
+        represented_keysets.append(frozenset(representative))
+    assert len(discovered_keysets) == 17
+    assert len(set(represented_keysets)) == len(represented_keysets)
+    assert discovered_keysets == set(represented_keysets)
+    assert sum(map(len, represented_keysets)) == 181
+
+
+@pytest.mark.parametrize(
+    "path",
+    _REPRESENTATIVE_OBJECT_PATHS,
+    ids=_object_path_id,
+)
+def test_every_key_in_representative_object_shape_is_required(artifact, path):
+    keys = sorted(_value_at_path(artifact, path))
+    for key in keys:
+        candidate = deepcopy(artifact)
+        del _value_at_path(candidate, path)[key]
+        if (
+            "integrity" in candidate
+            and "content_sha256" in candidate["integrity"]
+        ):
+            _repin_content(candidate)
+        with pytest.raises(MissingReasonAuthorityError):
+            validate_authority_artifact(candidate)
+
+
+def test_every_census_and_boundary_sha256_field_is_directly_mutated(artifact):
+    paths = tuple(
+        _iter_suffix_sha256_paths(
+            artifact["source_member_census"], ("source_member_census",)
+        )
+    ) + tuple(
+        _iter_suffix_sha256_paths(
+            artifact["authority_boundary"], ("authority_boundary",)
+        )
+    )
+    assert len(paths) == 18
+    assert len(set(paths)) == len(paths)
+    for path in paths:
+        candidate = deepcopy(artifact)
+        parent = _value_at_path(candidate, path[:-1])
+        replacement = "0" * 64
+        if parent[path[-1]] == replacement:
+            replacement = "1" * 64
+        parent[path[-1]] = replacement
+        _repin_content(candidate)
+        with pytest.raises(MissingReasonAuthorityError):
+            validate_authority_artifact(candidate)
 
 
 def _mutate_registry(candidate):

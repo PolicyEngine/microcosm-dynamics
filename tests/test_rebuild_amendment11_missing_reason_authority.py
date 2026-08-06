@@ -53,7 +53,9 @@ def test_fresh_47_source_build_is_byte_equal_to_committed_authority():
     assert summary["source_member_count"] == 561_873
     assert summary["literal_member_count"] == 524_590
     assert summary["lexical_missing_candidate_count"] == 231_263
-    assert summary["authorized_reason_assignment_count"] == 0
+    assert summary["authorized_reason_assignment_count"] == 52
+    assert summary["unadjudicated_literal_count"] == 524_538
+    assert 52 + 524_538 == summary["literal_member_count"]
     assert summary["byte_size"] == ARTIFACT.stat().st_size
 
 
@@ -73,6 +75,7 @@ def test_r05_direct_cli_streams_sources_to_exact_terminal_blocker(tmp_path):
     assert "blocked_source_missing_disposition_underdetermined" in (
         completed.stderr
     )
+    assert "524538 literal entries" in completed.stderr
     assert "pass" not in completed.stderr
 
 

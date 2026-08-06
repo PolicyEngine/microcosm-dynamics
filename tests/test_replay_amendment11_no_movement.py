@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import json
 import os
 import subprocess
 import sys
@@ -10,7 +12,97 @@ from dataclasses import replace
 
 import pytest
 
+from populace_dynamics.data import psid_missing_reason_authority as authority
 from scripts import replay_amendment11_no_movement as replay
+
+# Final §25 byte-identity pin for the frozen replay script.
+EXPECTED_REPLAY_SCRIPT_BYTE_SIZE = 32_330
+EXPECTED_REPLAY_SCRIPT_SHA256 = (
+    "597670958b6609740eb4742c4144fb448026df82c767ece4db3e30777d6b77e6"
+)
+EXPECTED_ORIGINATING_RECORD_SPECS = (
+    {
+        "path": (
+            "data/external/amendment_11_originating_records/"
+            "claude-ce-v3compiler-codebook-report.md"
+        ),
+        "byte_size": 15_872,
+        "sha256": (
+            "245cedcd3f5d3ecd2245e8acec14e56511e973707cc5022cb8b75e94a387a605"
+        ),
+        "span_start": 13_605,
+        "span_end": 14_213,
+        "span_byte_size": 608,
+        "span_sha256": (
+            "beada0568d204372f7d26b15f19602aa5ff11c6b8590c8a5d6830d37575d8fb5"
+        ),
+    },
+    {
+        "path": (
+            "data/external/amendment_11_originating_records/"
+            "claude-ce-amend10-report.md"
+        ),
+        "byte_size": 17_745,
+        "sha256": (
+            "9165cd527964bbefa10cb20c8afe69444c776b2b44956dbef239360a6f8b1ddb"
+        ),
+        "span_start": 13_566,
+        "span_end": 13_807,
+        "span_byte_size": 241,
+        "span_sha256": (
+            "a7854580bca100104df376530aa2a1204c3d7dc5360ad2c91d80c8790d0d92d0"
+        ),
+    },
+)
+EXPECTED_ORIGINATING_RECORD_DOMAIN_SHA256 = (
+    "3921b4c3c4c6658a164b57a48fd1ec35a806cd97adfca05a4389523e692c9f3d"
+)
+
+
+def test_replay_script_matches_exact_documented_byte_pin():
+    script = (
+        replay.REPOSITORY_ROOT / "scripts/replay_amendment11_no_movement.py"
+    )
+    raw = script.read_bytes()
+    assert len(raw) == EXPECTED_REPLAY_SCRIPT_BYTE_SIZE
+    assert hashlib.sha256(raw).hexdigest() == EXPECTED_REPLAY_SCRIPT_SHA256
+
+
+def test_committed_originating_records_match_full_byte_and_span_pins():
+    assert authority.ORIGINATING_RECORD_SPECS == (
+        EXPECTED_ORIGINATING_RECORD_SPECS
+    )
+    observed_specs = []
+    for spec in EXPECTED_ORIGINATING_RECORD_SPECS:
+        raw = (replay.REPOSITORY_ROOT / spec["path"]).read_bytes()
+        assert len(raw) == spec["byte_size"]
+        assert hashlib.sha256(raw).hexdigest() == spec["sha256"]
+
+        start = spec["span_start"]
+        end = spec["span_end"]
+        span = raw[start:end]
+        assert 0 <= start < end <= len(raw)
+        assert end - start == spec["span_byte_size"]
+        assert len(span) == spec["span_byte_size"]
+        assert hashlib.sha256(span).hexdigest() == spec["span_sha256"]
+        observed_specs.append(spec)
+
+    encoded_specs = (
+        json.dumps(
+            observed_specs,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+            allow_nan=False,
+        ).encode("ascii")
+        + b"\n"
+    )
+    assert hashlib.sha256(encoded_specs).hexdigest() == (
+        EXPECTED_ORIGINATING_RECORD_DOMAIN_SHA256
+    )
+    assert authority.EXPECTED_ORIGINATING_RECORD_DOMAIN_SHA256 == (
+        EXPECTED_ORIGINATING_RECORD_DOMAIN_SHA256
+    )
 
 
 def _numeric_row(
@@ -100,6 +192,7 @@ def test_production_preflight_stops_at_source_disposition_boundary():
     assert evidence["source_member_count"] == 561_873
     assert evidence["source_literal_entry_count"] == 524_590
     assert evidence["source_numeric_range_entry_count"] == 37_283
+    assert evidence["source_authorized_missing_literal_count"] == 52
     assert evidence["lexical_missing_candidate_count"] == 231_263
     assert evidence["literal_lexical_other_count"] == 293_327
     assert evidence["all_member_lexical_other_count"] == 330_610
@@ -107,9 +200,14 @@ def test_production_preflight_stops_at_source_disposition_boundary():
     assert 293_327 + 37_283 == 330_610
     assert evidence["directly_disproven_lexical_candidate_minimum"] == 61
     assert evidence["context_required_lexical_candidate_minimum"] == 118
-    assert evidence["blocked_literal_entry_count"] == 524_590
+    assert evidence["literal_disposition_action"] == (
+        "classify_source_authorized_then_block_underdetermined"
+    )
+    assert evidence["blocked_literal_entry_count"] == 524_538
+    assert 52 + 524_538 == evidence["source_literal_entry_count"]
     assert evidence["structural_null_entry_count"] == 37_283
-    assert evidence["production_nonempty_reason_code_count"] == 0
+    assert evidence["source_authorized_nonempty_reason_code_count"] == 52
+    assert evidence["accepted_output_nonempty_reason_code_count"] == 0
     assert evidence["complete_settled_relation_exists"] is False
     assert evidence["production_replay_started"] is False
     assert evidence["production_replay_complete"] is False
@@ -162,7 +260,7 @@ def test_production_preflight_rejects_absent_or_mutated_authority(tmp_path):
 
 
 def test_production_cli_emits_no_stdout_or_pass(monkeypatch, capsys):
-    evidence = {"source_literal_entry_count": 524_590}
+    evidence = {"blocked_literal_entry_count": 524_538}
 
     def expected_blocker():
         raise replay.SourceMissingDispositionUnderdetermined(evidence)
@@ -172,6 +270,7 @@ def test_production_cli_emits_no_stdout_or_pass(monkeypatch, capsys):
     captured = capsys.readouterr()
     assert captured.out == ""
     assert "blocked_source_missing_disposition_underdetermined" in captured.err
+    assert "524538 literal entries" in captured.err
     assert "pass" not in captured.err
 
 
@@ -179,7 +278,7 @@ def test_production_gate_delegates_to_settlement_and_rejects_return(
     monkeypatch,
 ):
     authority = {"fixture": "validated authority"}
-    evidence = {"source_literal_entry_count": 524_590}
+    evidence = {"blocked_literal_entry_count": 524_538}
     calls = []
     monkeypatch.setattr(
         replay, "validate_committed_authority", lambda _path: authority
@@ -223,7 +322,7 @@ def test_production_gate_translates_only_exact_terminal_blocker(monkeypatch):
     monkeypatch.setattr(
         replay,
         "_production_blocker_evidence",
-        lambda _authority: {"source_literal_entry_count": 524_590},
+        lambda _authority: {"blocked_literal_entry_count": 524_538},
     )
     monkeypatch.setattr(
         replay,
