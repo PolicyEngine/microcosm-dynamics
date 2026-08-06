@@ -48908,12 +48908,13 @@ The section map is:
 
 1. §26.2 fixes the authenticated source handoffs and preregistered pilot;
 2. §26.3 defines role assignment without occurrence equivalence;
-3. §26.4 defines outside-`R_Q` terminal repeat coverage;
+3. §26.4 defines the disjoint, total three-arm repeat law, including the
+   noncatalog aggregate/repeated-instance disposition;
 4. §26.5 defines zero, unique, and ambiguous component parents and the
    tier-2 equivalence-class fold;
 5. §26.6 composes the prospective catalogs, executable `R_Q`, H, `O_H`, and
    reverse covers;
-6. §26.7 adjudicates every candidate predecessor defect;
+6. §26.7 semantically adjudicates every predecessor candidate;
 7. §26.8 pins the nonauthority pilot artifacts and results;
 8. §26.9 fixes rare-tail sweeps, gates, fixtures, and mutations;
 9. §26.10 closes affected comparators, consumers, identifiers, and lifecycle
@@ -48965,7 +48966,8 @@ The tier-1 slice is exactly positions
 `[1,2,3,9,14,18,23,33,36,40,53,56,58,65,66,78]`, in that order. Its
 terminal-LF canonical position-array SHA-256 is
 `317e3af58e051b3a21dca1852ea4e0363aa8543b8292b10ffbabd0491829bb00`.
-Its 16 authenticated annotation blobs total 89,404,714 raw bytes. Membership
+The third-arm correction changes no slice member or ordering. Its 16
+authenticated annotation blobs total 89,404,714 raw bytes. Membership
 is fixed by the following complete table; the manifest in §26.8 additionally
 fixes every annotation path and raw/content identity.
 
@@ -48983,14 +48985,17 @@ fixes every annotation path and raw/content identity.
 | 40 | `document_040_q87` | `psid-source-document:7953106faa93bf55aef2cf58fc482bee3582e6873b9f4441c8447c8494b08473` | carrier: 22 outside-domain repeats |
 | 53 | `document_053_q94` | `psid-source-document:b11765c461affa9bd1740b35022038660f08da58f88b9c22ee5608773b5ea878` | era-4 local-edge-schema control |
 | 56 | `document_056_fam1996_QxQs` | `psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48` | carrier: outside-domain repeats |
-| 58 | `document_058_fam1997_QxQs` | `psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871` | carrier: outside-domain repeats |
+| 58 | `document_058_fam1997_QxQs` | `psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871` | carrier: outside-domain repeats and one aggregate/repeated-instance relation |
 | 65 | `document_065_q2003` | `psid-source-document:137c5aba0d852578b1b4db15f935505ab4a3a10b881cd1f0b407fd6b6c171d33` | era-5 clean control |
 | 66 | `document_066_fam2005_QxQs` | `psid-source-document:df4a9be59d38749dbf5d663616e6e6bff86ff340d4d53e21a5b9a6b16f687b9d` | carrier: outside-domain repeat |
 | 78 | `document_078_q2017` | `psid-source-document:909899fe2d8a8488f3f708e088925462acb32dde3e3fc8114fa1f7559566f1bc` | era-6 clean control |
 
 The control rule is mechanical: choose the earliest source-order noncarrier
-in each era with zero outside-domain rows, zero defective populated proof
-rows, and zero aggregate-kind `component_slot` rows. It yields exactly
+in each era with zero outside-domain rows, zero populated proof rows carrying
+any predecessor diagnostic flag, and zero aggregate-kind `component_slot`
+rows. The manifest's retained `zero_defective_populated_proof_rows` wording
+names that mechanical flag test; it does not adjudicate an A-only row as a
+seal defect. The rule yields exactly
 positions 3, 18, 23, 53, 65, and 78. Replacing a carrier, choosing a later
 eligible control, changing order, or reading any off-slice row for a pilot
 assignment or disposition aborts. Corpus-exhaustive rare-tail sweeps in
@@ -49095,29 +49100,49 @@ cross-role class, missing source classification, canonical assignment,
 dangling class ID, omitted or duplicate anchor, true alias/equivalence flag,
 or any unreached anchor aborts with no role catalog.
 
-### 26.4 Terminal outside-`R_Q` repeat disposition
+### 26.4 Disjoint, total three-arm repeat coverage
 
 The §19.3.3 sentence requiring every `repeat_or_alias_instruction` to appear
-in an alias evidence array is replaced by a disjoint two-arm coverage law. A
-repeat occurrence is covered if and only if it has either one or more valid
-existing alias-evidence rows under the unchanged three-relation law, or
-exactly one terminal outside-domain row below. No occurrence may use both
-arms. An occurrence in neither arm still aborts universal repeat coverage.
+in alias evidence, and the superseded earlier Amendment-12 repeat
+formulation, are
+replaced by one disjoint, total three-arm law. The arms are:
+
+1. one or more independently valid alias-evidence rows under the unchanged
+   three-relation alias law;
+2. exactly one terminal outside-`R_Q`-domain disposition; or
+3. exactly one honest, complete, in-domain noncatalog aggregate or
+   repeated-instance relation disposition that expressly admits no alias or
+   occurrence equivalence.
 
 Let `D_repeat(1)` be the repeat instructions in the exact pilot documents
 and `D_repeat(2)` the complete six-seal repeat domain. Universal coverage is
 evaluated over `D_repeat(tier)`. The targeted sweep observes all of
 `D_repeat(2)` at tier 1 and serializes its nonauthority shape witnesses; the
-operative terminal artifact admits only rows whose documents are in the
-pilot. All 34 terminal shapes happen to satisfy that pilot predicate.
+operative pilot repeat artifact admits only rows whose documents are in the
+pilot. All 34 terminal shapes and one of the 13 third-arm shapes satisfy the
+pilot predicate.
 
 For each active instruction r, let `A(r)` be the complete set of valid
-`node_alias_rows` whose `evidence_occurrence_ids` contains r, and let `T(r)`
-be the complete set of terminal rows whose
-`source_instruction_occurrence_id` equals r. The exact coverage equation is
-`(|A(r)| > 0) xor (|T(r)| = 1)`. The false arm must have cardinality zero.
-A populated local evidence row that does not survive the complete global
-alias-row law is not a member of `A(r)`.
+`node_alias_rows` whose `evidence_occurrence_ids` contains r; let `T(r)` be
+the complete set of terminal rows whose
+`source_instruction_occurrence_id` equals r; and let `G(r)` be the complete
+set of noncatalog aggregate relation rows whose singleton
+`source_instruction_occurrence_ids` member equals r. The exact one-hot
+coverage equation is
+
+~~~text
+indicator(|A(r)| > 0) + |T(r)| + |G(r)| = 1
+~~~
+
+with `|T(r)|` and `|G(r)|` each restricted to zero or one. Thus an
+instruction claimed by multiple arms, by multiple terminal or aggregate
+records, or by no arm aborts universal repeat coverage. A populated local
+evidence row that does not survive the complete global alias-row law is not
+a member of `A(r)`. A row admitted to `G(r)` is not a member of `A(r)` merely
+because its inherited source schema calls its directional endpoint arrays
+`alias` and `canonical`.
+
+#### 26.4.1 Terminal outside-`R_Q` arm
 
 An `outside_r_q_repeat_terminal_rows` member has exactly
 `outside_domain_repeat_disposition_id`, `document_source_position`,
@@ -49157,13 +49182,165 @@ The corpus-exhaustive terminal set is exactly 34: 17 explicit repeats and 17
 cross-references, with document counts 14:2, 40:22, 56:5, 58:4, and 66:1.
 No other document carries this form. The document-040 witness retains exact
 target text `B4, (P. 7)` inside “SEE B4, (P. 7)--WHETHER SELF-EMPLOYED” and
-does not acquire a catalog endpoint. These 34 terminal rows close only their
-own coverage arm. In the pilot, 106 repeat instructions have valid direct
-proof, 9 have incompatible populated proof rows, 34 have the terminal arm,
-one instruction overlaps the first two diagnostic sets, and 228 are
-otherwise unresolved. Therefore the pilot's overall repeat-catalog status
-is, and must remain, `fail_closed_unresolved_rows_remain`; a terminal-law
-pass is not a universal-repeat pass.
+does not acquire a catalog endpoint. These rows close only their own arm.
+
+#### 26.4.2 Honest noncatalog aggregate/repeated-instance arm
+
+For a sealed local evidence row e and its sole instruction r, the mechanical
+predicate `G_e(r)` is true if and only if every following condition holds:
+
+1. both inherited directional endpoint arrays are populated; each endpoint
+   ID is unique; the arrays are disjoint; r is one
+   `repeat_or_alias_instruction` and is not an endpoint;
+2. `evidence_occurrence_ids` is unique and exact-covers every endpoint and r,
+   and the source attests the endpoint and evidence arrays unique, disjoint,
+   and source ordered;
+3. relation is `explicit_repeat_instruction | explicit_cross_reference`,
+   handoff status is one of
+   `document_local_source_evidence_complete |
+   local_exact_identifier_and_label_for_global_assembly |
+   local_resolved_cross_reference_for_global_assembly`, and
+   `unresolved_target_reference` is null;
+4. the endpoint kind, raw-domain, classification, text, text-digest, page,
+   and half-open byte-span arrays all have endpoint cardinality; every kind
+   is `role_total_anchor | farm_aggregate_anchor |
+   business_aggregate_anchor`; every raw domain is literal `aggregate`; and
+   every classification is the matching aggregate/source-aggregate class;
+5. the instruction text, digest, page, start, and end arrays have cardinality
+   one; every instruction and endpoint digest is SHA-256 of the exact UTF-8
+   text; each page is positive; each span satisfies
+   `0 <= start < end`; and its width is the exact UTF-8 byte length; and
+6. the complete source defect-flag object is exactly
+   `touches_noncatalog_aggregate_endpoint: true` and false for
+   `occurrence_derived_domain_crossing`,
+   `corrected_catalog_domain_crossing`, `raw_node_domain_crossing`,
+   `context_remuneration_mix`, and `head_spouse_mix`.
+
+No label, identifier, endpoint direction, similar text, source-order
+position, or source field name adds a semantic equality premise. This arm
+records an authenticated relation between noncatalog aggregate endpoints or
+separate repeated instances. It asserts neither that the endpoints are one
+node nor that their occurrences are equivalent. An endpoint crossing, mixed
+kind/domain claim, additional defect flag, partial evidence, unresolved
+target, missing byte projection, or failed source reconstruction makes the
+row ineligible for this arm; it does not relax the alias law.
+
+A `noncatalog_aggregate_relation_disposition_rows` member has exactly:
+
+~~~text
+noncatalog_aggregate_relation_disposition_id
+document_source_position
+source_document_id
+source_local_evidence_id
+source_instruction_occurrence_ids
+source_instruction_occurrence_kinds
+source_instruction_matched_texts
+source_instruction_matched_utf8_sha256s
+source_instruction_page_numbers
+source_instruction_utf8_byte_starts
+source_instruction_utf8_byte_ends
+relation
+handoff_status
+evidence_occurrence_ids
+source_alias_anchor_occurrence_ids
+source_canonical_anchor_occurrence_ids
+endpoint_occurrence_kinds
+endpoint_raw_node_domains
+endpoint_classifications
+endpoint_matched_texts
+endpoint_matched_utf8_sha256s
+endpoint_page_numbers
+endpoint_utf8_byte_starts
+endpoint_utf8_byte_ends
+aggregate_relation_disposition
+alias_admitted
+occurrence_equivalence_claimed
+universal_repeat_coverage_arm_satisfied
+status
+~~~
+
+Every projection exact-copies the authenticated source row. The two
+`source_*_anchor_occurrence_ids` names preserve the predecessor schema's
+directional byte evidence only; they are not alias/canonical semantics.
+`aggregate_relation_disposition` is exactly
+`noncatalog_aggregate_or_repeated_instance_relation_no_alias`;
+`alias_admitted` and `occurrence_equivalence_claimed` are false; and
+`universal_repeat_coverage_arm_satisfied` is true. Status is exactly
+`aggregate_relation_nonauthority_disposition` in tier 1 or
+`noncatalog_aggregate_or_repeated_instance_relation_no_alias` in tier 2.
+
+The row-ID prefix is
+`a12-noncatalog-aggregate-relation-disposition:` in tier 1 or
+`psid-noncatalog-aggregate-relation-disposition:` in tier 2, followed by
+SHA-256 of the terminal-LF canonical value array, in this exact order:
+
+~~~text
+[source_document_id,source_local_evidence_id,
+ source_instruction_occurrence_ids,relation,handoff_status,
+ source_alias_anchor_occurrence_ids,
+ source_canonical_anchor_occurrence_ids,evidence_occurrence_ids,
+ endpoint_occurrence_kinds,endpoint_raw_node_domains,
+ endpoint_classifications,source_instruction_matched_texts,
+ source_instruction_matched_utf8_sha256s,
+ source_instruction_page_numbers,source_instruction_utf8_byte_starts,
+ source_instruction_utf8_byte_ends,endpoint_matched_texts,
+ endpoint_matched_utf8_sha256s,endpoint_page_numbers,
+ endpoint_utf8_byte_starts,endpoint_utf8_byte_ends]
+~~~
+
+Rows follow document and local evidence order. Complete count, ordered ID
+keyset digest, and ordered row-domain digest are mandatory. A missing key,
+including on a third-arm record, aborts the exact schema walk.
+
+The referee's document-064 counterexample binds this arm exactly. Its source
+document ID is
+`psid-source-document:52020938fd52c0775e92f05dc88f96c31b9e537e1d7b487ea38601062d0651fa`;
+local evidence ID is
+`rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868`;
+and instruction occurrence is
+`psid-questionnaire-occurrence:fa99afd9bc2e5f07056c445f6ade49fb32fa787c8579bb19b682c4081f477314`.
+The source directional endpoint arrays are exactly
+`[psid-questionnaire-occurrence:bd1f034b1233871d46392ed774c48add7b56ddb0402fe79dcbf7d1c96551f6b7]`
+and
+`[psid-questionnaire-occurrence:5c21cb5d94c4633ea60447057e515d060d87fcc099a08ad79d6ded471f86ed2a]`;
+the exact source evidence order is the latter endpoint, the instruction, then
+the former endpoint. These inherited directions assert no alias or
+canonical equivalence.
+The exact instruction text is “one business, repeat questions G7a-G11b for
+each separate business up to 5.”; its UTF-8 SHA-256 is
+`5cec38fe388606e0c259798d47e39a1e961508c9d4cba9a9b22bf2d13914552e`;
+and its page/start/end projection is `[22,772,847]`. The two endpoint texts
+are each exact `business`, each with SHA-256
+`11d40417959631d3d2420e8cd8709893c11cd7a4db737af63e8d56cfa7866f85`;
+their exact page/start/end projections, in source endpoint order, are
+`[22,830,838]` and `[22,682,690]`. Both endpoint kinds are
+`business_aggregate_anchor`, both raw node domains are `aggregate`, and both
+classifications are `business_aggregate`. The resulting tier-1 row ID is
+`a12-noncatalog-aggregate-relation-disposition:3f38a49694889a40883156ec23b41a917c713d8bd1e11f3729661e33c50a4558`.
+It admits no alias and no occurrence equivalence.
+
+#### 26.4.3 Exhaustive fail-closed census
+
+The corpus-exhaustive census is exactly 2,460 repeat instructions: 257 in
+the valid-alias arm, 34 in the terminal arm, 13 in the aggregate/repeated-
+instance arm, zero claimed by multiple lawful arms, and 2,156 in no lawful
+arm. The diagnostics separately report 25 incompatible-proof instructions,
+2,132 otherwise unresolved instructions, and one valid/incompatible
+diagnostic overlap; that diagnostic overlap is not an arm overlap.
+
+The pilot census is exactly 376: 106 valid-alias, 34 terminal, one
+aggregate/repeated-instance, zero multiple-arm, and 235 no-arm instructions.
+Its diagnostics are eight incompatible-proof instructions, 228 otherwise
+unresolved, and one valid/incompatible diagnostic overlap. The sole pilot
+third-arm row is document position 58; the document-064 referee witness is
+part of the exhaustive corpus sweep, not the operative pilot slice.
+
+Both censuses therefore retain
+`overall_repeat_catalog_coverage_status:
+fail_closed_unresolved_rows_remain`. Any repeat claimed by multiple arms or
+none is a STOP for an official build. Tier 1 serializes the complete no-arm
+census to expose the failure; it does not promote an unresolved instruction
+or turn a per-arm shape pass into universal coverage.
 
 ### 26.5 Component-parent dispositions and tier-2 class fold
 
@@ -49478,6 +49655,10 @@ outside_r_q_repeat_terminal_rows
 outside_r_q_repeat_terminal_count
 outside_r_q_repeat_terminal_keyset_sha256
 outside_r_q_repeat_terminal_domain_sha256
+noncatalog_aggregate_relation_disposition_rows
+noncatalog_aggregate_relation_disposition_count
+noncatalog_aggregate_relation_disposition_keyset_sha256
+noncatalog_aggregate_relation_disposition_domain_sha256
 global_relationship_rows
 global_relationship_count
 global_relationship_keyset_sha256
@@ -49517,15 +49698,18 @@ status
 ~~~
 
 This is a future Q5 authority shape, not the shape of any §26.8 pilot
-artifact. The five inserted row families—label classes, assignments, parent
-resolutions, terminal repeats, and catalog-only jobs—are global
+artifact. The six inserted row families—label classes, assignments, parent
+resolutions, terminal repeats, noncatalog aggregate/repeated-instance
+relations, and catalog-only jobs—are global
 authority-header relations. They do not create new per-era arrays: G17-C01
 carries them inside `authority_header`, while the inherited per-era
 annotation arrays retain their exact shapes. Their source-position and
 first-member/canonical/catalog ordering laws permit deterministic reverse
 grouping without serializing or duplicating a cross-era class. A pilot member
 name, pilot prefix, pilot artifact ID, or pilot result cannot populate an
-official member.
+official member. Neither no-alias repeat-disposition family is a node class,
+component class, catalog coordinate, relationship, H row, or `O_H` edge; each
+discharges only its own §26.4 coverage arm.
 
 #### 26.6.2 Executable relationship relation
 
@@ -49594,30 +49778,48 @@ The reverse cover is replaced by a disjoint disposition cover:
 
 Terminal component and catalog-only job records are proof of nonselection,
 not invented members of H. They carry no purpose expansion. An anchor absent
-from every applicable arm, present in two arms, wrong-wave, wrong-role,
-wrong-kind, branch-incompatible, or attached to a nonunique relationship
+from every applicable arm, present in more than one arm, wrong-wave,
+wrong-role, wrong-kind, branch-incompatible, or attached to a nonunique
+relationship
 aborts. The authority-wide pass predicate at the end of §19.3.3 is composed
-with all role assignment, terminal repeat, class-resolution, catalog
-complement, executable-`R_Q`, H, `O_H`, and disposition-cover equations.
+with all role assignment, both no-alias repeat dispositions,
+class-resolution, catalog complement, executable-`R_Q`, H, `O_H`, and
+disposition-cover equations.
 Passing the new arms cannot waive any unchanged page, occurrence, flow,
 positive-field, absence-proof, source-atom, or canonicalization gate.
 
-### 26.7 Exhaustive predecessor-defect adjudication
+### 26.7 Exhaustive predecessor-candidate adjudication
 
-All 50 candidate predecessor fixes are **seal defects**, not law gaps. A bad
-serialized node domain or incompatible endpoint claim cannot create catalog
-law. Every row has `disposition: predecessor_seal_defect`,
-`law_gap_admitted: false`, and a byte-backed re-adjudication/reseal action.
-No defective serialized domain or proof assertion may feed an official or
-tier-2 alias, assignment, parent resolution, repeat terminal, component
-class, relationship, H witness, or authority row before that action passes.
+The complete predecessor-candidate census splits, after per-row semantic
+adjudication, into exactly **37 seal defects and 13 law gaps**. The eight
+document-036 aggregate-domain rows and 29 incompatible populated local-proof
+rows are seal defects. The remaining 13 populated local-proof rows are complete,
+in-domain, aggregate-only relations satisfying §26.4.2; their source bytes
+are honest and the predecessor law lacked their disposition. They have
+`disposition:
+predecessor_law_gap_repaired_by_noncatalog_aggregate_relation_arm`,
+`law_gap_admitted: true`, and required action
+`ratify_noncatalog_aggregate_relation_arm_before_tier_2`. They are not
+aliases and require no invented endpoint nulling or source reseal.
+The blanket conversion `any(defect_flags) -> predecessor_seal_defect` is
+forbidden; the complete source row must be reconstructed and evaluated
+against the third-arm predicate before its disposition is assigned.
+
+Each of the 37 seal-defect rows has
+`disposition: predecessor_seal_defect`, `law_gap_admitted: false`, and its
+byte-backed re-adjudication/reseal action. No defective serialized domain or
+proof assertion may feed an official or tier-2 alias, assignment, parent
+resolution, repeat terminal, aggregate disposition, component class,
+relationship, H witness, or authority row before that action passes.
 Tier-1 diagnostics may independently read an underlying occurrence's
 authenticated occurrence kind and source span without admitting the
 defective row. In particular, the pilot may retain a doc-036 aggregate
 occurrence as a source parent candidate after independently proving its
 aggregate kind, but it cannot use that row's serialized `component_slot`
 domain or treat the row as alias/equivalence proof. This exception creates no
-official input and expires at predecessor reseal.
+official input and expires at predecessor reseal. Conversely, classifying a
+§26.4.2 row as a seal defect, suppressing its authenticated endpoints, or
+requiring it to pretend its target is outside-domain is a law failure.
 
 #### 26.7.1 Document-036 aggregate-domain rows
 
@@ -49643,12 +49845,15 @@ and is forbidden.
 
 #### 26.7.2 Populated local-proof rows
 
-The following table is the exact 42-row key cover. Flags are overlapping:
+The following table is the exact 42-row source key cover. Flags are
+overlapping diagnostics, not an adjudication shortcut:
 `A` touches a noncatalog aggregate endpoint; `O` has occurrence-derived and
 corrected catalog-domain crossing; `R` has raw serialized-node-domain
 crossing; `C` mixes context and remuneration; and `H` mixes head and spouse.
-Every row's action is
-`readjudicate_source_row_and_reseal_before_tier_2`; none admits alias or law.
+The 13 rows whose complete flag object is A-only and whose evidence satisfies
+§26.4.2 are the law-gap ledger in §26.7.3. Every other row's action is
+`readjudicate_source_row_and_reseal_before_tier_2`. No row admits alias or
+occurrence equivalence.
 
 | Doc | Source local evidence ID | Flags |
 |---:|---|---|
@@ -49695,7 +49900,8 @@ Every row's action is
 | 68 | `rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734` | A |
 | 70 | `rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39` | C |
 
-The overlapping corpus projections are A:28, O:19, R:18, C:15, and H:4.
+The overlapping source projections are A:28, occurrence-derived crossing:19,
+corrected-domain crossing:19, R:18, C:15, and H:4.
 The stage-4 phrase “19 serialized-domain crossings” is corrected, not
 lawified: row
 `rq-local-repeat:d20165da2c897270b8d8708bdd2ee7a860d6c3ac905c9e05dcc622a75b413a92`
@@ -49706,70 +49912,110 @@ The 42 rows cover 38 unique instructions. Tier 1 contains 13 of them—doc 36:
 1, doc 56:9, doc 58:1, doc 66:2—covering nine instructions; the rare-tail
 sweep, not pilot extrapolation, establishes all 42.
 
-Tier 2 is blocked until each of the 50 rows has a byte-backed document
-re-adjudication, document reseal, affected-era reseal, and independent check
-that unaffected domains did not move. The pilot ledger cannot patch a seal.
-Any missing row, added law-gap arm, component-slot admission, changed action,
-or copied pilot adjudication aborts.
+#### 26.7.3 Exact law-gap ledger and corrected split
+
+The following is the complete 13-row law-gap projection, in source order.
+Each row has only A true in its complete six-flag object, satisfies the full
+§26.4.2 predicate, has `third_arm_eligible: true`, admits no alias, has
+status `blocked_pending_third_arm_ratification`, and takes the shared
+disposition and action fixed in §26.7's opening paragraph.
+The census is five `explicit_repeat_instruction` plus eight
+`explicit_cross_reference` rows, with document counts
+7:4, 11:1, 35:2, 44:1, 48:1, 58:1, 61:1, 64:1, and 68:1.
+
+| Doc | Source local evidence ID | Adjudication ID | Relation |
+|---:|---|---|---|
+| 7 | `rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6` | `a12-predecessor-local-proof-adjudication:f672be166ab9daeac248bf73706e89e41268592471542cce422944953748a996` | `explicit_cross_reference` |
+| 7 | `rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045` | `a12-predecessor-local-proof-adjudication:cf4da558bbdca91a38107e3b82bf20488e158c063c1d89e7832c584c1a2c0e32` | `explicit_cross_reference` |
+| 7 | `rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495` | `a12-predecessor-local-proof-adjudication:117bd87725ab459445fbb5ab35714375871c6d744d3b12f6eaafc129d86df40c` | `explicit_cross_reference` |
+| 7 | `rq-local-repeat-evidence:e5ff3d4e974f7c527fd7be988d6075b152586ed1f6ec06f37711bb47667b191d` | `a12-predecessor-local-proof-adjudication:93e33b879b6770b10d3c2938c0df05f0da16ef068af5145caed6a4db2d6729cd` | `explicit_cross_reference` |
+| 11 | `rq-local-repeat-alias-evidence:db641c23f0d13b3befcdde005cf6b3804cc85a7e3985804091a59d826584a0c1` | `a12-predecessor-local-proof-adjudication:dc9f7818e64f8801368000e909e6345d919ddabcc0a5ee77ed90eba1e75cc0e1` | `explicit_repeat_instruction` |
+| 35 | `rq-local-repeat-alias-evidence:e744b798ebfb58ba3b8e1c28c7b0c5cbeadfadd649b5951f25a9326b1dafc0bf` | `a12-predecessor-local-proof-adjudication:4bc04b02ab4f7cd421bec119134bacbd6a8bc5dd9a458abaa08ce85c14e62fd4` | `explicit_repeat_instruction` |
+| 35 | `rq-local-repeat-alias-evidence:9aed9fbcbb6cbe3f0697b12e95522c1a9e539b5e4e2a031b3b2bb531b45f3ced` | `a12-predecessor-local-proof-adjudication:71637b9f1d628746f2bdb334edff066998540e5c22cbbf391b33153c6aeb6834` | `explicit_cross_reference` |
+| 44 | `rq-local-repeat-alias-evidence:92db20a47e9e0771b874238f39d920d69203e822e5cb28cf461394fa9d8bf254` | `a12-predecessor-local-proof-adjudication:d6fec06bff507f2b52c3e188667fb4b4cd918e34706b563c000e71cd495c4ac0` | `explicit_cross_reference` |
+| 48 | `rq-local-repeat-alias-evidence:71cbb45447d775ba33f493a3e0ebe800226d463bf73905566216fcb53287512d` | `a12-predecessor-local-proof-adjudication:18bba0d66140f7477dccdc0717b37a83e1979c9da43f3319f2d0a71f10320888` | `explicit_cross_reference` |
+| 58 | `rq-local-repeat-evidence:4ac3d89c423be55bac47c13cced2fd92151014ef3a45d95fba4b2999cca518f2` | `a12-predecessor-local-proof-adjudication:14f47c7f944f11b4e723a0e5f823df183bbbabbb5f3883205a3111a85ecc5169` | `explicit_repeat_instruction` |
+| 61 | `rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c95a391c5daf54547` | `a12-predecessor-local-proof-adjudication:ede82868419ef59a9ae44a664ee28e56611b30e795cd12e70bc0cb1aec4fbe8a` | `explicit_cross_reference` |
+| 64 | `rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868` | `a12-predecessor-local-proof-adjudication:91430f77330acd1fc8ba0874865d5438503939220833e453e88ad1336446399d` | `explicit_repeat_instruction` |
+| 68 | `rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734` | `a12-predecessor-local-proof-adjudication:543e9dca32365dc4459041c6f77ab69ff157b2792df2677af5ccdb2a0088ab40` | `explicit_repeat_instruction` |
+
+The 42 populated rows therefore split into 29 seal defects and 13 law gaps.
+The seal-defect-only overlapping flag counts are A:15,
+occurrence-derived crossing:19, corrected-domain crossing:19, R:18, C:15,
+and H:4. Adding the eight document-036 domain defects yields the complete
+50-candidate census: 37 seal defects and 13 law gaps. The predecessor
+artifact's exact status is
+`pass_adjudication_with_37_predecessor_reseals_required`; its tier-2
+precondition is
+`all_37_seal_defects_resealed_and_amendment_ratified_before_certification`.
+
+Tier 2 is blocked until all 37 seal defects have byte-backed document
+re-adjudication, document reseal, affected-era reseal, and an independent
+unchanged-domain check, and until the exact third-arm law is ratified. The
+13 law-gap rows retain their authenticated bytes and enter only the no-alias
+third arm after ratification. The pilot ledger cannot patch a seal or
+self-ratify a law. A missing candidate, demoted law gap, lawified
+incompatible row, component-slot admission, changed action, or copied pilot
+adjudication aborts.
 
 ### 26.8 Published tier-1 evidence is permanently NONAUTHORITY
 
 #### 26.8.1 Exact evidence identities
 
-The current eight-file evidence set is fixed across commits
-`f95e8c28c5e42eca01ed22af2173db2e489319eb` and
-`ab26036c2afd50c0fb6a0cc48c45e9f460b1f0b8`. The first commit adds the six
-retained evidence payloads and the original gate; the second adds the
-exhaustive derived-class/complement sweep and replaces the gate so that its
-identity partition binds all seven subordinate artifacts. Paths, modes,
-blobs, byte counts, and raw SHA-256 values below are integrity pins fixing
-the current bytes referees attacked. They are **not authority pins**, do not
+The current eight-file evidence set is fixed at implementation commit
+`294affe787c19aeecb0b9aabc47d508da20bb0df`. It regenerates the retained
+pilot, predecessor, exhaustive-sweep, derived-sweep, and gate evidence under
+the three-arm law; the gate's identity partition binds all seven subordinate
+artifacts. Paths, modes, blobs, byte counts, and raw SHA-256 values below are
+integrity pins fixing the corrected referee evidence. They are **not
+authority pins**, do not
 become expected source values, and may never enter Q5, a wall row, a
 registry, a receipt, or a production preimage.
 
 | File under `docs/analysis/amendment_12_rq_catalog_pilot/` | Blob OID | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `pilot_slice_manifest_v1.json` | `f9a25f3e5f0ea41165fa00c9c3b574b65ecd07e7` | 16,289 | `622efb49ab7ad6e2956c3d05e23ddd60e0b3f5d71da0ec9496c5d6191f91d5c4` |
-| `corpus_exhaustive_targeted_sweeps_v1.json` | `719c12a342f683e4e5a13df281b53ffb290cce00` | 33,904,110 | `93090ae0950e4745731edbd93e56856a0aa26b75083fd2118932de73ec9c0da7` |
-| `derived_class_complement_sweeps_v1.json` | `a04fa9a816f7b4cf1f88a7d87b3713535568b49a` | 39,520,340 | `731e5b5239834789cfff0c0a36ae598807caab5df3b6ad1659b5f7ec23b7ed21` |
-| `predecessor_defect_adjudication_v1.json` | `ca3dd7a3828a7823d38b68431b474a519a7ce0b9` | 234,676 | `7c9879065daafa8fa41ff824036e6d4d5509d71a192d5790c24637f7275f4acc` |
-| `role_assignment_pilot_v1.json` | `7c25ab0d321bcd3d0d50c20fa8ac245c43ec2970` | 1,054,823 | `e212581a018e7c2a373fb241ebc338e4a245fe7bbd8b8e44c8c8404b5bb2875d` |
-| `outside_domain_repeat_disposition_pilot_v1.json` | `8717341575c17bf7e8ce3d14d894fd518c49a3d0` | 44,189 | `63dd893f7a63187cf0ad80c6f291897615c8480c282fcc20eae8c026fb4f34c6` |
-| `component_parent_disposition_pilot_v1.json` | `c5e199fc2677c43eccf7926826080feeeee6d9b2` | 4,032,825 | `868c9224739ebb83f1e1d9177c06e7a978dfa3a9452d20f64b2f9457b99eea9b` |
-| `pilot_gate_result_v1.json` | `ac1607c34d117d263b1083f7f95ff03192450e34` | 5,736 | `2fef4e5509efe700680b5c3d7fc179a4be242c28887a719a01081becd12c6450` |
+| `pilot_slice_manifest_v1.json` | `933964731adcae77fc02f3e24fb61c6c04566309` | 16,471 | `bc79c2f4ccfa812f6d6e2656ab411c8a78fd1095d10a2b854ec9752cff0516b6` |
+| `corpus_exhaustive_targeted_sweeps_v1.json` | `6a1dc7dcfc7794a6c523c42ea19e72e041f279b8` | 33,941,201 | `56f95109f054dea628e06fa7df05a8ff2c706eed81bf6cbc2d88a27d312a7c12` |
+| `derived_class_complement_sweeps_v1.json` | `9ddbf06957b3c0ce4f84f7172c258cca93bcf378` | 39,520,345 | `4f8d2e6754213d8c4b20e9ea4f09762657f423ab13baa78ad143c89798ebd849` |
+| `predecessor_defect_adjudication_v1.json` | `a6c3240086ceeba65d33035fa66b998c64b1ab0e` | 236,772 | `72b2f9c3165ba8e2022cfc269071c3a7e8f1a69efba99f8b948c9237af4a842c` |
+| `role_assignment_pilot_v1.json` | `086094924ec60f9a08e28916abb5c58ddb39917e` | 1,054,823 | `78c24ad1bc9db3d0b1b2775afb97026423fa9041b6eeac240ba206ca2a2f1702` |
+| `outside_domain_repeat_disposition_pilot_v1.json` | `94b34c321ad85d087d4d7e7e7f5bb6b61c3f9d25` | 47,270 | `e93e27ba8370594e57b6221a6bc4e3d173ec46e47d6b5ad0e2148766dba83302` |
+| `component_parent_disposition_pilot_v1.json` | `e1b76a75a185edff63bf5cfb95cdaa50ef028510` | 4,032,825 | `1e717092a209a8e9dea8a66f31267dda98174ed079a93a2d43e64418d5086b07` |
+| `pilot_gate_result_v1.json` | `121cfd14fd941cca3732a2d5d5ccfa6832639e3e` | 5,912 | `7dca5c79fb080ca595f469c0a830430f7363ab8d135ebbe83f8338ccfe102388` |
 
-All modes are `100644`; every file is canonical strict JSON and below
-50,000,000 bytes. Their exact artifact IDs are, in the same order:
+All modes are `100644`; every file is canonical strict JSON, below
+50,000,000 bytes, and the eight total exactly 78,855,619 bytes. Their exact
+artifact IDs are, in the same order:
 
-1. `a12-rq-pilot-slice:3c4572b9ec34945db0b57068b8feb68817aac42c6ce877ab41b912c0dea3c46f`;
-2. `a12-rq-corpus-sweeps:19d54076367a44c5121bc940f3d7a96133ac6b921bd802cf05af396f54100050`;
-3. `a12-rq-derived-sweeps:9882eca21e7cc00592ee1884a8106170a004fd717583bc3f31f653120a9bc569`;
-4. `a12-rq-predecessor-adjudication:cfbae4989d8675efd74356cb6d80c45f0988e67147aa518213a3b803acfa5016`;
-5. `a12-rq-role-pilot:9b5654052723178aa012b66df01ff7f62c2a112d0bb4dfec5e14c32514989b03`;
-6. `a12-rq-repeat-pilot:76c82cdd135eb7f7a0079c1d9914095fcbcca36f35a77ba28ce5006c47cd0209`;
-7. `a12-rq-component-pilot:82e81e598905289a2e16e122f23b26eb866e90977dc73cb81a87eaa2f6ff5c26`;
+1. `a12-rq-pilot-slice:2120157f64f9188d14ae7ce1f3183f37f0424868a2a700d52c7aba111eb07092`;
+2. `a12-rq-corpus-sweeps:594ad99086fe44946f220205e163f586dbf05544e127774e3c6c8298d894eacf`;
+3. `a12-rq-derived-sweeps:4a842162486dcbff84e7c3df1a7a96f811f1f9ca37ad0b8edc73514a9b5a0125`;
+4. `a12-rq-predecessor-adjudication:5a4c21af70dc3978929671bc46592d9bf85fa681c0b4b4a8f28ebd6421990bd2`;
+5. `a12-rq-role-pilot:ad1bcad63f053307bc7eaca73d9e7b3b0e154901944fb1fb4fda220ad61220b1`;
+6. `a12-rq-repeat-pilot:f7ff40eb8d5417324fda53c1e39e11a0d10c832fa5a577d437af66c12e385f1e`;
+7. `a12-rq-component-pilot:5c4fc61a14c6ae07e6188e0322c15ed9ad954a304b777ec2d6e5b29cb2126161`;
    and
-8. `a12-rq-pilot-gate:1c0feb95afe0aa514b12aa770c37ba91f30517c502771a0bfa56fd7c54a4ac1f`.
+8. `a12-rq-pilot-gate:d4720b6da9b830869eabfe92ffaa871e04da474de7a62ff9df0f2f89e10454ad`.
 
 The gate's exact ordered subordinate-role partition is
 `[slice,sweeps,derived,predecessor,role,repeat,component]`;
 `artifact_identity_count` is 7 and the complete identity-row domain SHA-256
-is `0ff9c2adc51f1f6fb9dcf778ffde5bf6f43948e4e962a735ca044e4542833907`.
+is `4026ea72bebb5de28fbf4df9318f420bfe1169518ea8263586baf0d658dbcb22`.
 An omitted, duplicated, reordered, or substituted role aborts even if every
 remaining raw identity is individually valid.
 
-The source-rebuilding implementation, complete satisfiable class-fold and
-job-complement fixtures, exact candidate sweeps, and 39-mutation inventory
-are fixed at commit
-`ab26036c2afd50c0fb6a0cc48c45e9f460b1f0b8`:
+The source-rebuilding implementation, complete satisfiable class-fold,
+job-complement and third-arm fixtures, exact candidate sweeps, and
+53-mutation inventory are fixed at commit
+`294affe787c19aeecb0b9aabc47d508da20bb0df`:
 
 | Path | Mode / blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/build_amendment12_rq_catalog_pilot.py` | `100644` / `a054f7d1919b95a68e1719861ec9465981fab560` | 232,107 | `d7fe15889a665e684f4594851e9ed8258633569f2dfea53e425f5aab5351d05e` |
-| `tests/test_build_amendment12_rq_catalog_pilot.py` | `100644` / `3994ccd9f7aeeee1cc41f8ecfc09e778afcf7bc1` | 26,070 | `4f1f543224f177ebc63da7568f70c5c2aa4450aa4f2452855e0bcc3b8ad739a3` |
+| `scripts/build_amendment12_rq_catalog_pilot.py` | `100644` / `d65e761ae2bcf1c17ecac4defbb88cb2adc667f7` | 286,344 | `1d7304ed56f9474110e343d8fcb375437ad001290d677a91054a2c0a05d653a9` |
+| `tests/test_build_amendment12_rq_catalog_pilot.py` | `100644` / `f911b3501f367832bd8414395fa96d2cb2060562` | 33,930 | `cf8b775824994947fc865db463aa0efb81c80c8bf65db5a50c76806e2e7a187d` |
 
-The table pins the executable builder, class-fold fixture, and
-job-complement fixture baseline.
+The table pins the executable builder, class-fold, job-complement, exact-byte
+aggregate-relation fixtures, and mutation baseline.
 Append-only document-closure tests may extend the test path in the later
 draft commit, but cannot alter, delete, or weaken any pinned fixture or
 builder behavior.
@@ -49781,16 +50027,93 @@ all outputs before replacement, byte-rereads them, and restores every prior
 destination after an injected middle failure. Its build and `--check` paths
 are deterministic. The fixture fold expressly emits no `R_Q`.
 
+Every artifact's `integrity` object has exactly the two keys
+`canonicalization` and `payload_sha256`. The first is the fixed
+canonicalization literal and the second is the artifact payload digest. A
+missing or extra member aborts before either value can be treated as an
+integrity or nonemission claim. In particular, an injected
+`integrity.q5_emitted` member is forbidden even when its enclosing artifact
+raw identity, the gate identity row and domain, and the gate seal are all
+coherently recomputed.
+
+Both the slice and gate copies of `pilot_census` have exactly these 31 keys:
+
+~~~text
+aggregate_anchor_count
+component_parent_disposition_counts
+document_count
+eligible_cross_category_multi_parent_count
+eligible_ineligible_mixed_multi_parent_count
+field_purpose_count
+flow_branch_count
+head_role_anchor_count
+incompatible_proof_instruction_count
+ineligible_parent_reference_count
+job_anchor_count
+lawful_repeat_coverage_multiple_arm_instruction_count
+lawful_repeat_coverage_none_arm_instruction_count
+local_anchor_count
+local_evidence_row_count
+local_evidence_shape_counts
+noncatalog_aggregate_relation_instruction_count
+otherwise_unresolved_instruction_count
+outside_domain_instruction_count
+questionnaire_occurrence_count
+questionnaire_page_count
+raw_cross_category_multi_parent_count
+repeat_occurrence_count
+role_anchor_count
+serialized_component_parent_cardinality
+source_component_anchor_count
+source_context_anchor_count
+source_remuneration_anchor_count
+spouse_role_anchor_count
+valid_and_incompatible_instruction_overlap_count
+valid_direct_proof_instruction_count
+~~~
+
+Every scalar is a JSON integer, not a Boolean. The three map members are
+also exact-walked: `local_evidence_shape_counts` has exactly
+`both_endpoints`, `no_endpoints`, and `partial_endpoints`;
+`serialized_component_parent_cardinality` has exactly `zero`, `one`, and
+`multiple`; and `component_parent_disposition_counts` has exactly
+`zero_parent_terminal_disposition`,
+`zero_lawful_parent_terminal_disposition`, `unique_parent_assignment`, and
+`multi_parent_ambiguity_no_selection`. Every nested value is a JSON integer.
+
+Validation independently rereads the pinned six-seal source, reconstructs
+the exact 16-document slice, and recomputes every census member; equality of
+the gate copy to the slice copy is only an additional linkage check. The
+independent equations include head plus spouse equals role; context plus
+remuneration equals component; evidence-shape, raw-parent-cardinality, and
+parent-disposition totals; raw-zero equals zero-parent, raw-one equals
+zero-lawful plus unique, and raw-multiple equals ambiguity. The repeat
+equations are exactly
+
+~~~text
+repeat = valid_alias + outside_domain + aggregate_relation + no_arm
+no_arm = otherwise_unresolved + incompatible - valid_incompatible_overlap
+multiple_arm = 0
+~~~
+
+so the third-arm member is part of the recomputed disposition partition, not
+an unchecked scalar. Missing, extra, forged-map, copied, noninteger, or
+equation-inconsistent census data aborts.
+
 Every artifact has `tier: 1` and the exact nonauthority statement with
 `pilot_only: true`; `authority_admitted`, `catalog_certified`,
 `global_catalog_emitted`, `q5_emitted`, `r_q_emitted`, `hierarchy_emitted`,
 `slot_emitted`, `inventory_emitted`, `legal_registry_emitted`, and
-`wall_row_emitted` are false. The gate's exact top outcomes are
-`pass_law_shapes_only_nonauthority`,
-`PILOT_NONAUTHORITY_CERTIFIES_NOTHING`,
-`fail_closed_unresolved_rows_remain`, and
-`not_started_requires_ratification_and_predecessor_reseals`. A consumer that
-interprets `pass` without all four values fails closed.
+`wall_row_emitted` are false. The gate's exact controlling outcomes are
+`status: pass_law_shapes_only_nonauthority`,
+`certification_status: PILOT_NONAUTHORITY_CERTIFIES_NOTHING`,
+`three_arm_repeat_law_status: pass_law_shape_only`,
+`overall_repeat_catalog_coverage_status:
+fail_closed_unresolved_rows_remain`,
+`predecessor_input_status: reseal_required_before_tier_2`, and
+`tier_2_protocol_status:
+not_started_requires_ratification_and_predecessor_reseals`. A consumer that
+interprets a per-shape `pass` without all six values fails closed.
 
 #### 26.8.2 Pilot census and law-shape outcomes
 
@@ -49807,14 +50130,15 @@ with no endpoints.
 | Components | 3,095 = 2,247 context + 848 remuneration; raw parent cardinality 1,466 zero / 1,329 one / 300 multiple |
 | Parent dispositions | 1,488 terminal = 1,466 raw zero + 22 one-ineligible; 1,307 unique-arm eligible; 300 ambiguity; zero relationships emitted |
 | Terminal repeats | 34 = 17 repeat + 17 cross-reference; document split 2 / 22 / 5 / 4 / 1 |
-| Repeat remainder | 106 valid-direct-proof instructions; 9 incompatible; 228 otherwise unresolved; overlap of valid and incompatible diagnostics 1 |
-| Predecessor carriers | all eight doc-036 aggregate rows; 13 of the 42 proof-defect rows; all remain blocked seal defects |
+| Aggregate/repeated-instance repeats | one exact third-arm row at document position 58; no alias/equivalence claim |
+| Universal repeat census | 376 = 106 valid-alias + 34 terminal + 1 aggregate/repeated-instance + 235 no-arm; zero multiple-arm; eight incompatible and 228 otherwise unresolved with one valid/incompatible diagnostic overlap |
+| Predecessor carriers | all eight doc-036 aggregate rows; 13 of the 42 populated proof-candidate rows; pilot-local split 12 seal defects / 1 law gap, all blocked pending the applicable reseal or ratification |
 
 The pilot zero partition is 1,104 context + 384 remuneration; unique is 915
 context + 392 remuneration; multi is 228 context + 72 remuneration. It has
 86 raw and 86 eligible cross-category multi rows, zero eligible/ineligible
 mixed multi rows, and 22 ineligible references. These results demonstrate
-that the three law forms are satisfiable at the preregistered scale. They do
+that the amended law forms are satisfiable at the preregistered scale. They do
 not establish any tier-2 equivalence class, full catalog, complete repeat
 cover, H row, or certification fact.
 
@@ -49827,9 +50151,10 @@ nonempty candidate relationship projection and 8,998 terminal-catalog-
 disposition candidates. Its alias-support census is 647 exact-pair plus 79
 sealed-local supports for jobs and 746 exact-pair plus 209 sealed-local
 supports for components. Every such row is NONAUTHORITY, emits no catalog,
-disposition, component slot, relationship, or `R_Q`, and records that all 50
-predecessor reseals remain required. These are exhaustive candidate-law
-results under the pinned defective seals, not tier-2 class or catalog facts.
+disposition, component slot, relationship, or `R_Q`, and records that all 37
+seal-defect reseals and Amendment-12 ratification remain required. These are
+exhaustive candidate-law results under the pinned predecessor seals that
+contain the 37 defects, not tier-2 class or catalog facts.
 
 ### 26.9 Rare-tail sweeps, tier-1 gates, fixtures, and mutation coverage
 
@@ -49855,6 +50180,7 @@ The complete targeted-sweep and pilot-output projection pins are:
 | Pilot document positions | 16 | — | `317e3af58e051b3a21dca1852ea4e0363aa8543b8292b10ffbabd0491829bb00` |
 | Corpus role exact-label classes | 273 | — | `9c2f36a9a4cdc9fde3d790b71498234efde5b17235b9a5023ca4c772ad633e8d` |
 | Corpus outside-domain repeat shapes | 34 | — | `baf5475e21ef404b911a7d7ec6328771caa01961d185f684a3ed63c4fdd8c48a` |
+| Corpus noncatalog aggregate/repeated-instance shapes | 13 | `15b56ba454cc972608c269efb0f1e20fe7d85c9a7e80a030f5de7667df0fe1fc` | `bb1b34fe97ba6cf7b0497aea5b3992c32419511994d02792b24a85740d3ebf83` |
 | Corpus component-parent shapes | 21,283 | `b1aaad10fac7e3a6eb35edabd99c079137404109f0b912f8726446965a1d0524` | `22506ce5d02d6ceee9fc1a51aee25949c5b91cf218355396910ebe8faf53c7a0` |
 | Corpus referenced-parent source witnesses | 8,418 | `e6cc0d564a407a3375975c5522180ad6ec871b3fdd410680b31690f7b24651a9` | `a89a54310e86cd3d08c40d9fb9cedc9f25dd0069780ecc4e94f8ef596843ebd1` |
 | Candidate component-class admission sweeps | 19,507 | `e89fa8d27daea8374317c61a3f914b7a12cb168a16be166122a4fea77723a2e3` | `92116fb8400eddc0266d0c2ae208f58fa3ba965dc5c77ab723dea5c6b3a4ca2e` |
@@ -49862,27 +50188,39 @@ The complete targeted-sweep and pilot-output projection pins are:
 | Pilot role label classes | 69 | — | `97f2a250dd554415156084a47aa4cc240cfda5dbeed44306e2ce977d0adef357` |
 | Pilot role assignments | 947 | `741976528844636a31910030bf0f684f77a3844aebeba2090fa0d8ea8ace68a5` | `3f77350133ae4f9bce3e8b3ae80c5975897ab040814b1bbe544ded766d4966dd` |
 | Pilot terminal repeat dispositions | 34 | `df9b48a648697788b763433de1de50dbfaa082bc5ee5b98297624e6a7d00bd35` | `baf5475e21ef404b911a7d7ec6328771caa01961d185f684a3ed63c4fdd8c48a` |
+| Pilot noncatalog aggregate/repeated-instance dispositions | 1 | `f7b57b82f044a1c07cc7192dbfbde5650d20765faa674398003201b487ebef98` | `330b053604f89b10293c8c72278c861599e5abe0e2c2f5138fe15234b26d8593` |
 | Pilot zero/zero-lawful parent dispositions | 1,488 | — | `9e18a47a0f21c6e6b947c9f0e08272de07ed96034d5af4f47d750a5cfcd7be12` |
 | Pilot unique-parent assignments | 1,307 | — | `a0372053b83ca6ee1f6621c8bc4680258cd85ed03dceb6309afa2ef057598011` |
 | Pilot multi-parent ambiguities | 300 | — | `fe47e877fe1d797bbb62c0ae7d68a5dad88ec3fef88c9a8bd3508c00dc9a4cad` |
 | Complete pilot parent resolutions | 3,095 | `d140d178a538613a988093c36a93129b9dfc6f2df3d4a1028bff682136ba69ef` | `19f644b3ec37bfa9cebf29c2e7d13c77c8da48cde9b86848960142e88849fe75` |
 | Doc-036 aggregate-domain defects | 8 | — | `246a32632554c20aa25bb764e4cb77f3427f964e845a8c0cf65efcb57c1d9bae` |
-| Populated local-proof defects | 42 | `12d4b72affcecd0f0899a5683a2e1ab9bbae3cb37850b572701490e6210e3d12` | `965da8b643b06de28a222dfb30667992ee5823fa2ad991cad46361561a54269d` |
+| Populated local-proof adjudications | 42 | `12d4b72affcecd0f0899a5683a2e1ab9bbae3cb37850b572701490e6210e3d12` | `3476ca8e0cedf33bf101952487f2fb23223eebf5eea745f9259c2b169c3ddda3` |
 
 The role sweep additionally requires 10,521 anchors, 10,519 noncanonical
 anchors reached, 86 head/reference classes, 187 spouse/partner classes, zero
 cross-classification labels, and zero unreached anchors. The repeat sweep
-requires the exact relation and document partitions in §26.4. The component
+requires the exact terminal and aggregate relation/document partitions in
+§26.4 and the corpus census 2,460 / 257 / 34 / 13 / zero multiple-arm /
+2,156 no-arm, with 25 incompatible and 2,132 otherwise unresolved. The component
 sweep requires the complete 10,664/8,809/1,810 raw-cardinality partition,
 466 raw cross-category multi rows split into 462 multiple-eligible and four
 eligible/ineligible-mixed rows, and 34 ineligible references. The
-predecessor sweep requires 50 seal defects and zero law gaps. A count-only
+predecessor sweep requires the exact 37-seal-defect/13-law-gap split and the
+complete §26.7 ledger. A count-only
 sweep, a truncated matching-row projection, a missing source-witness
 projection, or a digest copied from another artifact fails.
+The verifier independently compares the eight document-036 rows to domain
+pin `246a32632554c20aa25bb764e4cb77f3427f964e845a8c0cf65efcb57c1d9bae`
+and the 42 proof adjudications to keyset/domain pins
+`12d4b72affcecd0f0899a5683a2e1ab9bbae3cb37850b572701490e6210e3d12` /
+`3476ca8e0cedf33bf101952487f2fb23223eebf5eea745f9259c2b169c3ddda3`.
+Recomputing only the ledger's own ID or domain after a source-projection
+forgery cannot satisfy this comparison.
 
 Two prospective tier-2 rules depend on authenticated equivalence closure and
-therefore cannot lawfully admit an official class before the 50 predecessor
-reseals. Tier 1 nevertheless executes both rules as corpus-exhaustive
+therefore cannot lawfully admit an official class before the 37 predecessor
+seal-defect reseals and third-arm ratification. Tier 1 nevertheless executes
+both rules as corpus-exhaustive
 candidate sweeps over all 81 documents and serializes every result in
 `derived_class_complement_sweeps_v1.json`. Every row has
 `predecessor_reseal_required: true`; every emission Boolean is false; every
@@ -49904,8 +50242,11 @@ local_resolved_cross_reference_for_global_assembly`, and all six §26.7
 defect flags are false. The sealed
 complete status and pinned source-domain projection control the four lawful
 rows that carry an additional dependent instruction; no candidate inference
-may add or remove evidence. The 42 defective populated proof rows contribute
-no edge. Exact-pair supports follow first-member source order, then sealed-
+may add or remove evidence. The 29 incompatible seal-defect proof rows
+contribute no edge. The 13 honest third-arm rows likewise contribute no alias
+edge; their only lawful use is the no-equivalence §26.4.2 disposition. Thus
+none of the 42 predecessor-candidate proof rows enters alias closure.
+Exact-pair supports follow first-member source order, then sealed-
 local supports follow document/local-evidence order; filtering into a class
 preserves those orders.
 
@@ -49950,7 +50291,7 @@ exact-empty support array. Counts and domain digests reproduce.
    is true exactly when the candidate relationship-class array is empty;
    `coverage_arm` is exactly `relationship_projection_nonempty |
    terminal_catalog_disposition`; `catalog_only_disposition_emitted` is
-   always false. The two arms exact-partition every candidate job class.
+   always false. Both job-complement arms exact-partition every candidate job class.
 
 The exact top-level gate values remain `predecessor_input_status` =
 `reseal_required_before_tier_2` and `tier_2_protocol_status` =
@@ -49975,13 +50316,13 @@ It reports every evaluated failure but emits no partial replacement artifact.
 | Gate | Exact passing predicate |
 |---|---|
 | `A12-R01` | Revision-13 prefix, source commit, six seals, all 81 annotation identities, and the exact 16-position pilot slice independently reproduce. |
-| `A12-R02` | All eight outputs strict-parse, exact-walk, canonicalize, remain below 50,000,000 bytes, cross-bind their identities, and carry every required nonauthority and nonemission value. |
+| `A12-R02` | All eight outputs strict-parse, exact-walk, canonicalize, remain below 50,000,000 bytes, cross-bind their identities, carry the exact two-key integrity object and independently reconstructed exact 31-key pilot census, and carry every required nonauthority and nonemission value. |
 | `A12-R03` | The pilot role classes and assignments exact-cover all and only the two canonicals plus 947 noncanonical anchors, with no alias or equivalence admission; the corpus role sweep also passes. |
-| `A12-R04` | The 34 outside-domain rows reproduce their exact singleton evidence, target bytes, spans, terminal values, and disjoint coverage arm; the corpus repeat sweep passes while overall pilot repeat coverage remains fail-closed. |
+| `A12-R04` | The 34 outside-domain rows and one pilot aggregate/repeated-instance row reproduce their exact evidence, endpoint/instruction bytes, spans, dispositions, no-alias values, and disjoint arms; all 13 corpus aggregate shapes and both universal fail-closed censuses reproduce with zero arm overlap. |
 | `A12-R05` | All 3,095 pilot component anchors retain complete source-parent witnesses and enter exactly one zero/zero-lawful, unique, or ambiguity arm; no relationship is emitted; the corpus component and parent-witness sweeps pass. |
-| `A12-R06` | All eight doc-036 rows and all 42 local-proof rows exact-cover the targeted defect domain as seal defects, zero law gaps, and retain their mandatory reseal actions. |
+| `A12-R06` | All eight doc-036 rows and all 42 local-proof rows exact-cover the 50-candidate domain; per-row semantic adjudication reproduces 37 seal defects, 13 third-arm law gaps, their exact actions, and no alias/equivalence admission. |
 | `A12-R07` | Every §26.9.1 exhaustive projection, including 19,507 candidate component classes and 12,357 candidate job complements, count, order, source identity, keyset, domain digest, and rare-tail partition independently reproduces. |
-| `A12-R08` | The seven evidence artifacts and their gate form one acyclic exact dependency set; staged write, byte reread, replacement, directory sync, and injected-failure rollback pass; all 39 coherently repinned semantic/source mutations reach and fail their intended gates; certification, Q5, authority, H, and tier-2 status remain false or not started. |
+| `A12-R08` | The seven evidence artifacts and their gate form one acyclic exact dependency set; staged write, byte reread, replacement, directory sync, and injected-failure rollback pass; all 53 coherently repinned semantic/source mutations reach and fail their intended gates; certification, Q5, authority, H, and tier-2 status remain false or not started. |
 
 Tier-1 passage is exactly the conjunction `A12-R01` through `A12-R08` and
 the four gate outcomes fixed in §26.8.1. It means only
@@ -49992,8 +50333,9 @@ to pass is a gate failure.
 
 The satisfiable positive fixtures include the two canonical role anchors,
 the doc-001 `J8`/`Head` assignment, the doc-002 null-identifier `she`
-assignment, the complete 34-row outside-domain terminal family, the doc-009
-zero-parent anchor, an eligible singleton parent, an ineligible singleton
+assignment, the complete 34-row outside-domain terminal family, the pilot
+document-058 aggregate/repeated-instance disposition, the corpus document-064
+exact-byte referee witness, the doc-009 zero-parent anchor, an eligible singleton parent, an ineligible singleton
 parent, same-category and cross-category multiple parents, and the doc-033
 multi-parent witness. The prospective class-fold function additionally
 covers eleven nonauthority class cases: raw zero, only ineligible, unique,
@@ -50020,11 +50362,15 @@ scale without promoting either fixture or candidate row.
 Mutation testing changes semantic source or evidence values and then
 recomputes every affected row ID, count, keyset digest, domain digest,
 artifact ID, dependency identity, and gate identity. Thus an identity-only
-failure cannot satisfy mutation coverage. The exact 39-mutation inventory is:
+failure cannot satisfy mutation coverage. The exact 53-mutation inventory is:
 
 ~~~text
 pilot_slice_reordered
 pilot_claims_q5
+slice_integrity_q5_emitted_extra
+pilot_census_required_key_omitted
+pilot_census_extra_member
+pilot_census_parent_dispositions_forged
 role_assignment_omitted
 role_assignment_role_flipped
 role_assignment_class_invented
@@ -50039,6 +50385,13 @@ outside_repeat_universal_arm_false
 outside_repeat_alias_admitted
 outside_repeat_evidence_not_singleton
 outside_repeat_source_target_forged
+aggregate_relation_row_omitted
+aggregate_relation_required_key_omitted
+aggregate_relation_alias_admitted
+aggregate_relation_equivalence_claimed
+aggregate_relation_universal_arm_false
+aggregate_relation_endpoint_domain_changed
+aggregate_relation_source_text_forged
 zero_parent_emits_rq
 unique_parent_forced
 unique_parent_derived_slot_invented
@@ -50057,20 +50410,31 @@ exact_pair_support_label_forged
 catalog_only_job_source_member_forged
 doc036_law_gap_admitted
 doc036_component_slot_admitted
+doc036_source_occurrence_forged
 proof_defect_lawified
 proof_defect_action_removed
 proof_defect_row_omitted
+aggregate_law_gap_demoted_to_seal_defect
+aggregate_law_gap_source_projection_forged
 gate_claims_certification
 gate_claims_repeat_coverage
 ~~~
 
 Every mutation must reach and fail its intended semantic or authenticated-
-source gate after coherent repinning. The six source-projection forgeries—
-role member, outside-domain target, component anchor, combined parent plus
-source witness, exact-pair label, and catalog-only job member—must fail their
+source gate after coherent repinning. The nine source-projection forgeries—
+role member, outside-domain target, aggregate-relation instruction text,
+component anchor, combined parent plus source witness, exact-pair label,
+catalog-only job member, document-036 occurrence, and predecessor law-gap
+projection—must fail their
 respective pinned source comparisons, not merely a stale hash. The two
-derived-row omissions and two coverage-arm flips must reach their exact
-count or semantic equations first. A surviving mutation, wrong failure gate,
+derived-row omissions and three coverage-arm flips must reach their exact
+count or semantic equations first. The third-arm required-key omission must
+reach and fail the exact row-schema walk; the law-gap demotion must reach and
+fail per-row semantic adjudication. The coherently resealed
+`integrity.q5_emitted` extra member must fail the exact two-key integrity
+walk. The missing, extra, and forged census members must fail their exact
+outer or nested walk before gate-copy equality; all valid census members are
+then independently source-recomputed. A surviving mutation, wrong failure gate,
 mutation that does not reach validation, or identity-only mutation result
 fails `A12-R08`.
 
@@ -50085,13 +50449,13 @@ retained as a second totality rule.
 | Earlier normative anchor | Amendment-12 disposition |
 |---|---|
 | §19.3.3 three-key `role_node_rows` and canonical-plus-alias role partition | Replaced by §§26.3 and 26.6.1: four-key role rows and canonical-plus-assignment membership partition; aliases remain independently proved and orthogonal. |
-| §19.3.3 requirement that every repeat instruction occur in alias evidence | Replaced by §26.4's disjoint valid-alias-proof or terminal-outside-domain coverage; an instruction in neither still aborts. |
+| §19.3.3 requirement that every repeat instruction occur in alias evidence, and the superseded earlier Amendment-12 repeat draft | Replaced by §26.4's exact-cover valid-alias, terminal-outside-domain, or honest noncatalog aggregate/repeated-instance coverage; an instruction in multiple arms or none aborts. |
 | §19.3.3 parent-bearing source-component row, component ID preimage, and exactly-one-parent law | Replaced by §§26.5 and 26.6.1: parent-independent component identity plus one explicit class-resolution record. |
 | §19.3.3 one relationship for every source component and source-job nonorphan abort | Replaced by §§26.5–26.6: relationships only for unique class resolutions, terminal zero/multi records, and exact catalog-only job complements. |
 | §19.3.3 `R_Q` as three baselines plus every source component | Replaced by §26.6.2: three baselines plus every and only uniquely resolved source-component class. |
 | §19.3.3 fixed hierarchy-authority shape and authority-wide pass | Composed with the inserted arrays and all exact covers in §§26.3–26.6; unchanged page, occurrence, flow, positive, source-atom, and absence-proof laws remain. |
 | §19.3.3 H coordinate projections, `O_H`, aggregate reverse cover, and complete anchor cover | Replaced only where stated by §26.6.3's executable-`R_Q` projections and disjoint disposition complements; aggregate matching-kind cover remains. |
-| §19.4.2 G17-C01 hierarchy projection and its expected/actual deep comparison | Composed with §26.6: both sides carry the complete successor authority shape, executable `R_Q`, assignments, resolutions, terminal repeats, and catalog complements. |
+| §19.4.2 G17-C01 hierarchy projection and its expected/actual deep comparison | Composed with §26.6: both sides carry the complete successor authority shape, executable `R_Q`, assignments, resolutions, both no-alias repeat disposition arrays, and catalog complements. |
 | §19.4.3 closure search terms and consumer-edge construction | Composed with §26.10.2's exact search augmentation and affected-consumer walk. |
 | §19.8.1 build step 2's alias-only partitions, universal alias-evidence consumption, exact-one parent projection, and old `R_Q` | Replaced by the tier-2 build in §26.11.2; all source-before-consumer ordering and the rest of that step remain. |
 | §25.8 revision-13 comparator and §25.9 prospective D11 lifecycle laws | The 63 historical rows remain exact and are composed with §§26.10.2–26.10.3; no lifecycle successor is instantiated by this draft. |
@@ -50118,9 +50482,11 @@ yet be reverse-projected. Passing this member-only source comparison does not
 populate
 `hierarchy_annotation_authority`, G17, Q5, a slot registry, or an inventory.
 
-The replacement build step authenticates and reseals the 50 predecessor
-rows first, reconstructs all 81 documents, runs all rare-tail sweeps,
-constructs role assignments independently of aliases, constructs component
+The replacement build step authenticates and reseals the 37 predecessor
+seal defects, confirms the 13 law-gap rows byte-for-byte under the ratified
+third-arm predicate, reconstructs all 81 documents, runs all rare-tail sweeps,
+constructs the exact three-arm repeat partition and role assignments
+independently of aliases, constructs component
 classes from only authenticated alias closure, folds the complete parent
 support into resolution records, constructs the full catalogs and executable
 `R_Q`, and only then expands H, `O_H`, purposes, field joins, and reverse
@@ -50154,6 +50520,8 @@ role_assignment_rows
 exact_label_class_role_assignment_non_alias
 outside_r_q_repeat_terminal_rows
 outside_r_q_domain_no_alias_admitted
+noncatalog_aggregate_relation_disposition_rows
+noncatalog_aggregate_or_repeated_instance_relation_no_alias
 component_parent_resolution_rows
 catalog_only_job_disposition_rows
 multi_parent_ambiguity_no_selection
@@ -50162,8 +50530,10 @@ PILOT_NONAUTHORITY_CERTIFIES_NOTHING
 corpus_exhaustive_targeted_sweeps_v1.json
 derived_class_complement_sweeps_v1.json
 predecessor_seal_defect
+predecessor_law_gap_repaired_by_noncatalog_aggregate_relation_arm
 reseal_document_036_with_aggregate_anchor_domain
 readjudicate_source_row_and_reseal_before_tier_2
+ratify_noncatalog_aggregate_relation_arm_before_tier_2
 A12-R01
 A12-R08
 blocked_source_missing_disposition_underdetermined
@@ -50176,10 +50546,10 @@ walk expands beyond these seeds.
 | ID | Exact comparator or consumer anchor | Normative revision-14 disposition |
 |---|---|---|
 | DC-64 | §§26.1, 26.10, and 26.11 exact revision-13 prefix and future document-only Amendment-12 ratification bytes | lawfully-unchanged-with-reason: D11 remains the immutable 3,557,513-byte prefix; the future D12 label denotes only the separately attested document ratification commit and does not instantiate a lifecycle schema |
-| DC-65 | §19.3.3 role catalog, alias partition, and universal repeat-alias coverage | replaced-by-named-successor: §§26.3, 26.4, and 26.6 assignment and terminal-coverage laws |
+| DC-65 | §19.3.3 role catalog, alias partition, and universal repeat-alias coverage | replaced-by-named-successor: §§26.3, 26.4, and 26.6 assignment and disjoint three-arm repeat-coverage laws |
 | DC-66 | §19.3.3 component parent, component ID, catalog totality, job nonorphan, and complete `R_Q` laws | replaced-by-named-successor: §§26.5 and 26.6 parent-independent catalog, explicit resolution, complement, and executable-relation laws |
 | DC-67 | §19.3.3 H/`O_H`/reverse cover, §19.4.2 G17-C01, and §19.8.1 questionnaire-closure build | replaced-by-named-successor: §§26.6, 26.10.1, and 26.11.2 complete disposition-aware consumer composition |
-| DC-68 | §§26.2 and 26.7 authenticated six-seal handoff and all 50 predecessor candidates | lawfully-unchanged-with-reason: source bytes remain controlling; every candidate is a reseal-required defect and zero is admitted as law |
+| DC-68 | §§26.2 and 26.7 authenticated six-seal handoff and the complete 37/13 predecessor-candidate adjudication | lawfully-unchanged-with-reason: source bytes remain controlling; semantic adjudication yields exactly 37 reseal-required defects and 13 honest law gaps repaired only by the no-alias third arm |
 | DC-69 | §§26.8–26.9 pilot artifacts, exhaustive sweeps, gates, fixtures, and mutations | lawfully-unchanged-with-reason: fixed nonauthority evidence may test law shape but cannot enter an authority preimage or certify tier 2 |
 | DC-70 | §§25.8 and 26.10.2 complete design comparator and every affected direct/transitive consumer | replaced-by-named-successor: the inherited 63 rows plus DC-64 through DC-71 form one complete 71-row revision-14 census |
 | DC-71 | §§25.9–25.10 and §§26.10.3–26.11 lifecycle, two-tier ordering, Q5, registration, receipt, and production boundaries | lawfully-unchanged-with-reason: no successor lifecycle instance exists; tier 2 and the independent Amendment-11 blocker must both close before any later production amendment |
@@ -50225,6 +50595,7 @@ a12-rq-pilot-gate:
 The exact pilot/sweep/predecessor member prefixes are
 `a12-role-exact-label-class:`, `a12-pilot-role-assignment:`,
 `a12-outside-rq-repeat-disposition:`,
+`a12-noncatalog-aggregate-relation-disposition:`,
 `a12-component-parent-resolution:`, `a12-parent-source-witness:`,
 `a12-candidate-component-class:`, `a12-candidate-job-class:`,
 `a12-component-class-admission-sweep:`,
@@ -50244,13 +50615,15 @@ is
 The exact prospective official member prefixes are
 `psid-role-exact-label-class:`, `psid-role-assignment:`,
 `psid-outside-rq-repeat-disposition:`,
+`psid-noncatalog-aggregate-relation-disposition:`,
 `psid-component-parent-resolution:`, and
 `psid-catalog-only-job-disposition:`. Those are member-tag/preimage literals
 inside the named future closure authority, not independently selectable
 schemas, and no official row is instantiated here.
 
 The path `scripts/build_amendment12_rq_catalog_pilot.py`, its
-`validate_bundle` verifier, exact §26.9.3 mutation-name set, and
+`validate_bundle` and `_validate_noncatalog_aggregate_relation_row`
+verifiers, exact §26.9.3 mutation-name set, and
 `fold_component_class_fixture` and
 `fold_catalog_only_job_complement_fixture` are nonauthority implementation identifiers,
 not schema versions. `R_Q`, H, `O_H`, D12, Q5, and the gate names are symbolic
@@ -50299,12 +50672,14 @@ The only lawful sequence is:
    bytes;
 3. repin every tier-2 brief to that ratification commit and prohibit every
    pilot artifact and candidate result as expected evidence;
-4. byte-re-adjudicate and reseal the eight doc-036 rows and 42 local-proof
-   rows, rebuild each affected era seal, and prove unaffected source domains
-   unchanged;
+4. byte-re-adjudicate and reseal the eight doc-036 rows and 29 incompatible
+   local-proof rows, rebuild each affected era seal, prove unaffected source
+   domains unchanged, and independently confirm that all 13 law-gap rows
+   retain their exact source bytes and satisfy the ratified third arm;
 5. rebuild the complete 81-document stage-4 relation under the ratified law,
    including per-item adjudication, complete rare-tail sweeps, all
-   assignments, terminal dispositions, alias classes, component classes,
+   assignments, terminal and aggregate/repeated-instance dispositions, alias
+   classes, component classes,
    parent records, candidate catalogs, complements, executable `R_Q`, H,
    `O_H`, and reverse covers;
 6. obtain two independent maximally adversarial referee reconstructions,
@@ -50323,8 +50698,8 @@ conjunctive gates are:
 
 | Gate | Required tier-2 result |
 |---|---|
-| `A12-T2-R01` | Ratified Amendment-12 bytes, all predecessor document reseals, six successor era seals, source identities, and unchanged-domain comparisons pass. |
-| `A12-T2-R02` | Full-corpus role assignment and universal repeat coverage exact-cover their complete denominators with no invented alias or equivalence. |
+| `A12-T2-R01` | Ratified Amendment-12 bytes, all 37 predecessor seal-defect document reseals, six successor era seals, exact confirmation of the 13 law-gap source rows, source identities, and unchanged-domain comparisons pass. |
+| `A12-T2-R02` | Full-corpus role assignment and the valid-alias, terminal-outside-domain, and aggregate/repeated-instance repeat arms form a disjoint exact cover of their complete denominators with no invented alias or equivalence. A repeat in multiple arms or none stops the build. |
 | `A12-T2-R03` | Authenticated alias closure, component-class fold, parent-resolution records, complete catalogs, terminal complements, and executable `R_Q` reproduce without selection. |
 | `A12-T2-R04` | H, `O_H`, aggregate/disposition reverse covers, purpose expansion, and field joins pass; two independent source-side projections deep-equal and pin only the prospective G17-C01 `hierarchy_annotation_authority` member/subpayload, never the unavailable full G17-C01 row, with no actual consumer projection. |
 | `A12-T2-R05` | Tier-2 evidence passes strict schemas, exhaustive mutations, dual independent reconstruction, ratification/source/reseal Git-order checks, and complete raw-byte attestation; no Q5 first-add is performed. |
@@ -50333,14 +50708,19 @@ conjunctive gates are:
 Every gate is conjunctive and fail-closed. A tier-2 census is a newly
 computed result, not a required equality to a pilot or stage-4 candidate
 count except for the authenticated input comparands expressly fixed here.
+In particular, the tier-1 corpus values of zero multiple-arm and 2,156
+no-arm source candidates, and the pilot values of zero and 235, are
+mandatory fail-closed observations, not a universal corpus pass or an
+authorization to discard unresolved candidates.
 Any referee disagreement, unadjudicated item, missing witness, unresolved
 repeat, class conflict, extra equivalence, forced parent, stale seal, copied
 expected value, lifecycle gap, or byte mismatch aborts without a partial
 catalog.
 
 **This prospective amendment remains inoperable. Its pilot is permanently
-NONAUTHORITY; no document ceremony has ratified these laws; all 50
-predecessor defects remain unrepaired; tier 2 has not started; no official
+NONAUTHORITY; no document ceremony has ratified these laws; all 37
+predecessor seal defects remain unrepaired and the 13 law gaps remain blocked
+pending exact third-arm ratification; tier 2 has not started; no official
 catalog, `R_Q`, H, Q5, registry, receipt, wall row, or production result
 exists; and Amendment 11's independent
 `blocked_source_missing_disposition_underdetermined` remains controlling.**
