@@ -1141,7 +1141,7 @@ def fold_component_class_fixture(
         and len(slot_kinds) == 1
     ):
         disposition = "unique_parent_assignment"
-    elif not eligible_candidates:
+    elif all(count == 1 for count in raw_counts) and not eligible_candidates:
         disposition = "zero_lawful_parent_terminal_disposition"
     else:
         disposition = "multi_parent_ambiguity_no_selection"

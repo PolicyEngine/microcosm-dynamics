@@ -465,6 +465,50 @@ def _tier2_member(member_id, candidates):
         ),
         (
             [
+                _tier2_member("component:mixed-zero-ineligible", []),
+                _tier2_member(
+                    "component:mixed-ineligible",
+                    [_tier2_candidate("parent:role", eligible=False)],
+                ),
+            ],
+            "multi_parent_ambiguity_no_selection",
+            False,
+        ),
+        (
+            [
+                _tier2_member(
+                    "component:same-parent-context",
+                    [_tier2_candidate("parent:job-a-context")],
+                ),
+                _tier2_member(
+                    "component:same-parent-other-slot",
+                    [
+                        _tier2_candidate(
+                            "parent:job-a-other-slot",
+                            slot_kind="business_aggregate",
+                        )
+                    ],
+                ),
+            ],
+            "multi_parent_ambiguity_no_selection",
+            False,
+        ),
+        (
+            [
+                _tier2_member(
+                    "component:eligible-singleton",
+                    [_tier2_candidate("parent:job-a")],
+                ),
+                _tier2_member(
+                    "component:ineligible-singleton",
+                    [_tier2_candidate("parent:role", eligible=False)],
+                ),
+            ],
+            "multi_parent_ambiguity_no_selection",
+            False,
+        ),
+        (
+            [
                 _tier2_member(
                     "component:conflict-a",
                     [_tier2_candidate("parent:job-a")],
