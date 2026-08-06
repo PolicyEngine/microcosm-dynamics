@@ -2,12 +2,13 @@
 """Fail-closed Amendment 11 downstream replay preflight.
 
 The production relation cannot presently be replayed.  Registered source
-bytes do not determine which of 524,590 literal entries are missing; the old
-231,263-member lexical vector is a candidate classifier, not source
-authority.  There is therefore no complete settled input relation for
-A11-R05.  Revision 12's capacity result remains an authenticated historical
-census, but Amendment 11 cannot carry it forward: a future disposition
-authority may change the terminal assignment and storage populations.
+bytes explicitly authorize 52 opaque occurrence codes but do not determine
+the disposition of the other 524,538 literal entries; the old 231,263-member
+lexical vector is a candidate classifier, not source authority.  There is
+therefore no complete settled input relation for A11-R05.  Revision 12's
+capacity result remains an authenticated historical census, but Amendment 11
+cannot carry it forward: a future disposition authority may change the
+terminal assignment and storage populations.
 
 This module validates the source-boundary census and the already-ratified
 aggregates only as historical evidence, then raises the named source-authority
@@ -66,6 +67,8 @@ PRODUCTION_FIELD_COUNT = 89_599
 SOURCE_MEMBER_COUNT = 561_873
 SOURCE_LITERAL_ENTRY_COUNT = 524_590
 SOURCE_NUMERIC_RANGE_ENTRY_COUNT = 37_283
+SOURCE_AUTHORIZED_MISSING_LITERAL_COUNT = 52
+UNADJUDICATED_LITERAL_ENTRY_COUNT = 524_538
 LEXICAL_MISSING_CANDIDATE_COUNT = 231_263
 LITERAL_LEXICAL_OTHER_COUNT = 293_327
 ALL_MEMBER_LEXICAL_OTHER_COUNT = 330_610
@@ -85,7 +88,7 @@ EXPECTED_FAILURE_REASON_ROWS_SHA256 = (
     "024ea03ad9c4f4cac6c490e3899bba74a9c78f7de1737cd5c4a7187b69b5bfda"
 )
 EXPECTED_SOURCE_SETTLEMENT_BLOCKER = (
-    "source missing disposition is unadjudicated for 524590 literals"
+    "source missing disposition is unadjudicated for 524538 literals"
 )
 
 TERMINALS = (
@@ -185,7 +188,7 @@ class SourceMissingDispositionUnderdetermined(ReplayError):
         self.evidence = dict(evidence)
         super().__init__(
             f"{self.code}: registered sources do not determine a missing "
-            f"disposition for {evidence['source_literal_entry_count']} "
+            f"disposition for {evidence['blocked_literal_entry_count']} "
             "literal entries; no complete settled relation exists"
         )
 
@@ -413,6 +416,12 @@ def _production_blocker_evidence(
         SOURCE_MEMBER_COUNT
     ):
         raise ReplayError("source entry-kind census drift")
+    if (
+        SOURCE_AUTHORIZED_MISSING_LITERAL_COUNT
+        + UNADJUDICATED_LITERAL_ENTRY_COUNT
+        != SOURCE_LITERAL_ENTRY_COUNT
+    ):
+        raise ReplayError("source authority partition drift")
     if not 0 < LEXICAL_MISSING_CANDIDATE_COUNT < SOURCE_LITERAL_ENTRY_COUNT:
         raise ReplayError("lexical candidate census drift")
     if (
@@ -460,8 +469,8 @@ def _production_blocker_evidence(
         LITERAL_LEXICAL_OTHER_COUNT,
         DIRECTLY_DISPROVEN_LEXICAL_CANDIDATE_MINIMUM,
         CONTEXT_REQUIRED_LEXICAL_CANDIDATE_MINIMUM,
-        0,
-        SOURCE_LITERAL_ENTRY_COUNT,
+        SOURCE_AUTHORIZED_MISSING_LITERAL_COUNT,
+        UNADJUDICATED_LITERAL_ENTRY_COUNT,
     )
     if artifact_values != expected_values:
         raise ReplayError("authority/replay census cross-binding drift")
@@ -471,6 +480,9 @@ def _production_blocker_evidence(
         "source_member_count": SOURCE_MEMBER_COUNT,
         "source_literal_entry_count": SOURCE_LITERAL_ENTRY_COUNT,
         "source_numeric_range_entry_count": (SOURCE_NUMERIC_RANGE_ENTRY_COUNT),
+        "source_authorized_missing_literal_count": (
+            SOURCE_AUTHORIZED_MISSING_LITERAL_COUNT
+        ),
         "lexical_missing_candidate_count": LEXICAL_MISSING_CANDIDATE_COUNT,
         "literal_lexical_other_count": LITERAL_LEXICAL_OTHER_COUNT,
         "all_member_lexical_other_count": ALL_MEMBER_LEXICAL_OTHER_COUNT,
@@ -481,12 +493,15 @@ def _production_blocker_evidence(
             CONTEXT_REQUIRED_LEXICAL_CANDIDATE_MINIMUM
         ),
         "literal_disposition_action": (
-            "blocked_source_missing_disposition_underdetermined"
+            "classify_source_authorized_then_block_underdetermined"
         ),
         "numeric_range_missing_reason_code_action": "json_null",
-        "blocked_literal_entry_count": SOURCE_LITERAL_ENTRY_COUNT,
+        "blocked_literal_entry_count": UNADJUDICATED_LITERAL_ENTRY_COUNT,
         "structural_null_entry_count": SOURCE_NUMERIC_RANGE_ENTRY_COUNT,
-        "production_nonempty_reason_code_count": 0,
+        "source_authorized_nonempty_reason_code_count": (
+            SOURCE_AUTHORIZED_MISSING_LITERAL_COUNT
+        ),
+        "accepted_output_nonempty_reason_code_count": 0,
         "complete_settled_relation_exists": False,
         "production_replay_started": False,
         "production_replay_complete": False,

@@ -34,6 +34,9 @@ sys.path.insert(0, str(REPOSITORY_ROOT / "src"))
 import populace_dynamics.data.psid_codebook_extraction as extraction  # noqa: E402
 from populace_dynamics.data.psid_missing_reason_authority import (  # noqa: E402
     ARTIFACT_ID,
+    AUTHORITY_FAILURE_DISPOSITION_ROWS,
+    CONFLICTING_AUTHORITY_FAILURE_STATES,
+    CONFLICTING_MISSING_REASON_AUTHORITY,
     ENTRY_KIND_VECTOR_ENCODING,
     EXPECTED_CANONICAL_ROW_COUNT,
     EXPECTED_COUNTEREXAMPLE_COUNT,
@@ -62,12 +65,21 @@ from populace_dynamics.data.psid_missing_reason_authority import (  # noqa: E402
     EXPECTED_REGISTRY_SHA256,
     EXPECTED_SELECTED_EXACT_MEANING_COUNTS,
     EXPECTED_SELECTED_EXACT_MEANING_COUNTS_SHA256,
+    EXPECTED_SOURCE_AUTHORITY_PACKED_SHA256,
+    EXPECTED_SOURCE_AUTHORIZED_AUDIT_BYTE_SIZE,
+    EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256,
+    EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT,
+    EXPECTED_SOURCE_AUTHORIZED_OCCURRENCE_SHA256,
     EXPECTED_SOURCE_LOCATOR_COUNT,
+    EXPECTED_UNADJUDICATED_LITERAL_COUNT,
+    INCOMPLETE_AUTHORITY_FAILURE_STATES,
+    INCOMPLETE_MISSING_REASON_AUTHORITY,
     LEXICAL_VECTOR_ENCODING,
     MEMBER_IDENTITY_VERSION,
     REASON_CODE_PREFIX,
     REASON_PREIMAGE_VERSION,
     SCHEMA_VERSION,
+    SOURCE_AUTHORITY_VECTOR_ENCODING,
     MissingReasonAuthorityError,
     candidate_is_missing,
     canonical_json_bytes,
@@ -76,8 +88,13 @@ from populace_dynamics.data.psid_missing_reason_authority import (  # noqa: E402
     iter_source_members,
     pack_disposition_bits,
     sha256_bytes,
+    source_authorized_audit_row,
+    source_authorized_occurrence_row,
+    source_authorizes_current_missing_reason,
     source_member_identity,
+    utf8_compact_json_bytes,
     validate_authority_artifact,
+    verify_originating_records,
 )
 
 DEFAULT_OUTPUT = (
@@ -334,6 +351,7 @@ def load_and_authenticate_sources(
 
 
 def _implementation_identity() -> dict[str, Any]:
+    originating_records = verify_originating_records(REPOSITORY_ROOT)
     paths = (
         "src/populace_dynamics/data/psid_codebook_extraction.py",
         "src/populace_dynamics/data/psid_missing_reason_authority.py",
@@ -352,6 +370,10 @@ def _implementation_identity() -> dict[str, Any]:
         )
     return {
         "interface_version": "amendment_11_missing_reason_fail_closed.v1",
+        "originating_record_count": len(originating_records),
+        "originating_record_domain_sha256": canonical_sha256(
+            list(originating_records)
+        ),
         "pdftotext_arguments": list(extraction.PDFTOTEXT_ARGUMENTS),
         "pdftotext_version": extraction.pdftotext_version(),
         "implementation_files": rows,
@@ -460,6 +482,9 @@ def _summarize_document(
 
     entry_kind_bits = bytearray()
     lexical_bits = bytearray()
+    source_authority_bits = bytearray()
+    authorized_audit_rows: list[dict[str, Any]] = []
+    authorized_occurrence_rows: list[list[Any]] = []
     candidate_meanings: set[str] = set()
     candidate_fields: set[str] = set()
     candidate_counts: Counter[str] = Counter()
@@ -493,12 +518,33 @@ def _summarize_document(
         )
         is_literal = member.entry["entry_kind"] == "literal"
         is_candidate = candidate_is_missing(member)
+        is_source_authorized = source_authorizes_current_missing_reason(member)
         entry_kind_bits.append(int(is_literal))
         lexical_bits.append(int(is_candidate))
+        source_authority_bits.append(int(is_source_authorized))
         candidate_counts[member.entry["typed_disposition"]] += 1
         row = rows_by_id[member.codebook_field_row_id]
         meaning = member.entry["source_meaning"]
         folded = meaning.casefold()
+        if is_source_authorized:
+            authorized_occurrence_rows.append(
+                source_authorized_occurrence_row(
+                    member,
+                    source["interview_wave"],
+                    source["path"],
+                    row["raw_field_id"],
+                )
+            )
+            authorized_audit_rows.append(
+                source_authorized_audit_row(
+                    member,
+                    source["interview_wave"],
+                    source["path"],
+                    row["raw_field_id"],
+                    row["source_label"],
+                    row["source_description"],
+                )
+            )
         accuracy_status = (
             document["canonical_source_path"]
             == "family/1988/FAM1988_codebook.pdf"
@@ -581,6 +627,10 @@ def _summarize_document(
         ],
         "source_member_complete_domain_sha256": complete_hasher.hexdigest(),
         "source_member_identity_sha256": identity_hasher.hexdigest(),
+        "source_authorized_missing_count": len(authorized_occurrence_rows),
+        "source_authorized_missing_occurrence_sha256": canonical_sha256(
+            authorized_occurrence_rows
+        ),
         "lexical_missing_candidate_identity_sha256": (
             candidate_identity_hasher.hexdigest()
         ),
@@ -592,6 +642,9 @@ def _summarize_document(
         "source_document_row": source_document_row,
         "entry_kind_bits": entry_kind_bits.hex(),
         "lexical_candidate_bits": lexical_bits.hex(),
+        "source_authority_bits": source_authority_bits.hex(),
+        "source_authorized_audit_rows": authorized_audit_rows,
+        "source_authorized_occurrence_rows": authorized_occurrence_rows,
         "distinct_candidate_meanings": sorted(candidate_meanings),
         "candidate_field_count": len(candidate_fields),
         "candidate_counts": dict(candidate_counts),
@@ -636,6 +689,9 @@ def _build_artifact_from_summaries(
     source_document_rows: list[dict[str, Any]] = []
     all_entry_kind_bits = bytearray()
     all_lexical_bits = bytearray()
+    all_source_authority_bits = bytearray()
+    authorized_audit_rows: list[dict[str, Any]] = []
+    authorized_occurrence_rows: list[list[Any]] = []
     candidate_meanings: set[str] = set()
     candidate_counts: Counter[str] = Counter()
     range_rows: list[dict[str, Any]] = []
@@ -652,28 +708,55 @@ def _build_artifact_from_summaries(
             raise BuildError("isolated member-start continuity")
         kind_hex = summary.get("entry_kind_bits")
         candidate_hex = summary.get("lexical_candidate_bits")
-        if not isinstance(kind_hex, str) or not isinstance(candidate_hex, str):
+        source_authority_hex = summary.get("source_authority_bits")
+        if (
+            not isinstance(kind_hex, str)
+            or not isinstance(candidate_hex, str)
+            or not isinstance(source_authority_hex, str)
+        ):
             raise BuildError("isolated bit strings")
         try:
             kind_bits = bytes.fromhex(kind_hex)
             lexical_bits = bytes.fromhex(candidate_hex)
+            source_authority_bits = bytes.fromhex(source_authority_hex)
         except ValueError as error:
             raise BuildError("isolated bit encoding") from error
         if (
             len(kind_bits) != len(lexical_bits)
+            or len(kind_bits) != len(source_authority_bits)
             or any(value not in (0, 1) for value in kind_bits)
             or any(value not in (0, 1) for value in lexical_bits)
+            or any(value not in (0, 1) for value in source_authority_bits)
         ):
             raise BuildError("isolated bit domain")
         if row.get("normalized_entry_count") != len(lexical_bits):
             raise BuildError("isolated member count")
         if row.get("lexical_missing_candidate_count") != sum(lexical_bits):
             raise BuildError("isolated candidate count")
+        if row.get("source_authorized_missing_count") != sum(
+            source_authority_bits
+        ):
+            raise BuildError("isolated source-authority count")
         if row.get("member_end") != len(all_lexical_bits) + len(lexical_bits):
             raise BuildError("isolated member-end continuity")
         all_entry_kind_bits.extend(kind_bits)
         all_lexical_bits.extend(lexical_bits)
+        all_source_authority_bits.extend(source_authority_bits)
         source_document_rows.append(dict(row))
+
+        document_occurrences = summary.get("source_authorized_occurrence_rows")
+        document_audit = summary.get("source_authorized_audit_rows")
+        if (
+            not isinstance(document_occurrences, list)
+            or not isinstance(document_audit, list)
+            or len(document_occurrences) != sum(source_authority_bits)
+            or len(document_audit) != len(document_occurrences)
+            or canonical_sha256(document_occurrences)
+            != row.get("source_authorized_missing_occurrence_sha256")
+        ):
+            raise BuildError("isolated source-authorized occurrence rows")
+        authorized_occurrence_rows.extend(document_occurrences)
+        authorized_audit_rows.extend(document_audit)
 
         meanings = summary.get("distinct_candidate_meanings")
         if not isinstance(meanings, list) or meanings != sorted(set(meanings)):
@@ -711,6 +794,25 @@ def _build_artifact_from_summaries(
         raise BuildError("complete numeric-range count")
     if sum(all_lexical_bits) != EXPECTED_LEXICAL_MISSING_COUNT:
         raise BuildError("complete lexical-candidate count")
+    if (
+        sum(all_source_authority_bits)
+        != EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+        or len(authorized_occurrence_rows)
+        != EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+        or len(authorized_audit_rows)
+        != EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+    ):
+        raise BuildError("complete source-authorized occurrence count")
+    if canonical_sha256(authorized_occurrence_rows) != (
+        EXPECTED_SOURCE_AUTHORIZED_OCCURRENCE_SHA256
+    ):
+        raise BuildError("complete source-authorized occurrence digest")
+    audit_raw = utf8_compact_json_bytes(authorized_audit_rows)
+    if (
+        len(audit_raw) != EXPECTED_SOURCE_AUTHORIZED_AUDIT_BYTE_SIZE
+        or sha256_bytes(audit_raw) != EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256
+    ):
+        raise BuildError("complete source-authorized audit digest")
     if len(candidate_meanings) != EXPECTED_DISTINCT_CANDIDATE_MEANING_COUNT:
         raise BuildError("distinct candidate-meaning count")
     if candidate_counts != {
@@ -772,11 +874,23 @@ def _build_artifact_from_summaries(
     lexical_hex, lexical_count = pack_disposition_bits(
         bool(value) for value in all_lexical_bits
     )
+    source_authority_hex, source_authority_count = pack_disposition_bits(
+        bool(value) for value in all_source_authority_bits
+    )
     kind_packed = bytes.fromhex(kind_hex)
     lexical_packed = bytes.fromhex(lexical_hex)
+    source_authority_packed = bytes.fromhex(source_authority_hex)
+    if (
+        source_authority_count != EXPECTED_MEMBER_COUNT
+        or sha256_bytes(source_authority_packed)
+        != EXPECTED_SOURCE_AUTHORITY_PACKED_SHA256
+    ):
+        raise BuildError("source-authority vector digest")
     rejection_rows = _rejection_class_witnesses()
     boundary = {
-        "authorized_current_literal_disposition_count": 0,
+        "authorized_current_literal_disposition_count": (
+            EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+        ),
         "dictionary_missing_declaration_scope": (
             "inherited_86_document_compiler_fact_not_reproduced_by_"
             "47_source_A11"
@@ -800,14 +914,25 @@ def _build_artifact_from_summaries(
             "rows": range_rows,
         },
         "opaque_occurrence_code_conditionally_supported": True,
+        "opaque_occurrence_code_current_source_supported": True,
         "rejection_class_witness_count": len(rejection_rows),
         "rejection_class_witness_sha256": canonical_sha256(rejection_rows),
         "rejection_class_witnesses": rejection_rows,
         "source_defines_missing_disposition_column": False,
-        "source_defines_missing_disposition_vocabulary": False,
+        "source_defines_missing_disposition_vocabulary": True,
         "source_defines_reason_code_column": False,
-        "source_defines_reason_vocabulary": False,
-        "unadjudicated_literal_count": EXPECTED_LITERAL_COUNT,
+        "source_defines_reason_vocabulary": True,
+        "source_authorized_missing_audit": {
+            "domain_sha256": EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256,
+            "row_count": len(authorized_audit_rows),
+            "rows": authorized_audit_rows,
+        },
+        "source_authorized_missing_occurrences": {
+            "domain_sha256": canonical_sha256(authorized_occurrence_rows),
+            "row_count": len(authorized_occurrence_rows),
+            "rows": authorized_occurrence_rows,
+        },
+        "unadjudicated_literal_count": EXPECTED_UNADJUDICATED_LITERAL_COUNT,
     }
     census = {
         "canonical_source_row_count": sum(
@@ -876,6 +1001,15 @@ def _build_artifact_from_summaries(
             "normalized_entry_count",
             "source_member_identity_sha256",
         ),
+        "source_authorized_missing_audit_sha256": (
+            EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256
+        ),
+        "source_authorized_missing_literal_count": (
+            len(authorized_occurrence_rows)
+        ),
+        "source_authorized_missing_occurrence_sha256": canonical_sha256(
+            authorized_occurrence_rows
+        ),
         "value_label_lexical_missing_candidate_count": label_candidates,
     }
     if census["canonical_source_row_count"] != EXPECTED_CANONICAL_ROW_COUNT:
@@ -910,20 +1044,35 @@ def _build_artifact_from_summaries(
         "artifact_id": ARTIFACT_ID,
         "authority_boundary": boundary,
         "conditional_reason_code_law": {
-            "current_literal_action": "abort_without_emission",
-            "current_literal_disposition": (
+            "authority_failure_disposition_rows": [
+                list(row) for row in AUTHORITY_FAILURE_DISPOSITION_ROWS
+            ],
+            "authority_failure_precedence": [
+                CONFLICTING_MISSING_REASON_AUTHORITY,
+                INCOMPLETE_MISSING_REASON_AUTHORITY,
+            ],
+            "conflicting_failure_states": list(
+                CONFLICTING_AUTHORITY_FAILURE_STATES
+            ),
+            "current_source_authorized_missing_literal_action": (
+                "nonempty_opaque_source_occurrence_code"
+            ),
+            "current_unadjudicated_literal_action": "abort_without_emission",
+            "current_unadjudicated_literal_disposition": (
                 "unadjudicated_source_missing_disposition"
             ),
             "future_authenticated_missing_literal_action": (
                 "nonempty_opaque_source_occurrence_code"
             ),
             "future_authenticated_nonmissing_literal_action": "json_null",
+            "incomplete_failure_states": list(
+                INCOMPLETE_AUTHORITY_FAILURE_STATES
+            ),
             "member_identity_version": MEMBER_IDENTITY_VERSION,
             "numeric_range_action": "json_null",
             "reason_code_prefix": REASON_CODE_PREFIX,
             "reason_preimage_version": REASON_PREIMAGE_VERSION,
             "semantic_equivalence_claimed": False,
-            "unknown_or_conflict_action": "abort_without_emission",
         },
         "derivation_identity": dict(implementation_identity),
         "entry_kind_vector": vector(
@@ -964,6 +1113,12 @@ def _build_artifact_from_summaries(
             "source_file_verification": "size_and_full_sha256_match",
         },
         "schema_version": SCHEMA_VERSION,
+        "source_authority_vector": vector(
+            SOURCE_AUTHORITY_VECTOR_ENCODING,
+            source_authority_packed,
+            source_authority_hex,
+            EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT,
+        ),
         "source_document_count": len(source_document_rows),
         "source_document_rows": source_document_rows,
         "source_document_rows_sha256": canonical_sha256(source_document_rows),
@@ -1951,13 +2106,18 @@ def main(argv: Sequence[str] | None = None) -> int:
             "check": args.check,
             "content_sha256": artifact["integrity"]["content_sha256"],
             "file_sha256": sha256_bytes(raw),
-            "authorized_reason_assignment_count": 0,
+            "authorized_reason_assignment_count": (
+                EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+            ),
             "lexical_missing_candidate_count": (
                 EXPECTED_LEXICAL_MISSING_COUNT
             ),
             "literal_member_count": EXPECTED_LITERAL_COUNT,
             "source_member_count": EXPECTED_MEMBER_COUNT,
             "status": "pass",
+            "unadjudicated_literal_count": (
+                EXPECTED_UNADJUDICATED_LITERAL_COUNT
+            ),
         }
         sys.stdout.buffer.write(canonical_json_bytes(summary))
         return 0

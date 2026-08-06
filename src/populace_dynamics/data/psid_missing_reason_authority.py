@@ -1,18 +1,18 @@
 """Fail-closed Amendment-11 law for ``missing_reason_code``.
 
-The 47 registered codebook/value-label sources carry value lexemes and source
-meanings, but no missing-disposition column or reason-code vocabulary.  The
-predecessor extractor's ``typed_disposition`` field is a reproducible lexical
-candidate: it is not source authority.  Registered counterexamples such as
+The 47 registered codebook/value-label sources carry exact value lexemes and
+source meanings.  Fifty-two literal occurrences say both ``Missing`` and
+``not imputed`` and therefore authorize an opaque exact-occurrence reason
+code.  The predecessor extractor's broader ``typed_disposition`` field is
+only a reproducible lexical candidate: registered counterexamples such as
 ``Never refused``, ``Refused at least once``, and ``missing finger`` prove
-that the substring classifier cannot authorize a reason assignment.
+that the substring classifier cannot authorize other assignments.
 
-The current production disposition is therefore deliberately modest.  A
-numeric range has JSON-null ``missing_reason_code`` under the inherited tagged
-union.  Every literal remains unadjudicated until a separate authenticated
-source authority supplies its missing/nonmissing disposition.  The opaque
-occurrence-code construction is defined and testable for such a future
-authority, but this module refuses to settle the current literal relation.
+A numeric range has JSON-null ``missing_reason_code`` under the inherited
+tagged union.  The remaining literals stay unadjudicated.  Production first
+authenticates the complete relation and all 52 exact occurrence codes, then
+refuses to emit a partial settlement because 524,538 literals remain without
+source authority.
 """
 
 from __future__ import annotations
@@ -33,6 +33,70 @@ REASON_CODE_PREFIX = "psid-source-missing-reason:"
 ENTRY_KIND_VECTOR_ENCODING = "msb0-one-is-literal-zero-is-numeric-range"
 LEXICAL_VECTOR_ENCODING = (
     "msb0-one-is-lexical-missing-candidate-zero-is-other-candidate"
+)
+SOURCE_AUTHORITY_VECTOR_ENCODING = (
+    "msb0-one-is-source-authorized-missing-literal-zero-is-other-member"
+)
+
+SOURCE_AUTHORIZED_VALUE_LEXEME = "9,999,999.00"
+SOURCE_AUTHORIZED_MEANING = "Missing, not imputed"
+SOURCE_AUTHORIZED_DISPOSITION = "missing"
+
+CONFLICTING_MISSING_REASON_AUTHORITY = "conflicting_missing_reason_authority"
+INCOMPLETE_MISSING_REASON_AUTHORITY = "incomplete_missing_reason_authority"
+AUTHORITY_FAILURE_STATES = (
+    "conflicting_member_or_authority",
+    "duplicate_member_or_authority",
+    "unknown_or_unregistered_member_or_authority",
+    "malformed_member_or_authority",
+    "drifted_member_or_authority",
+)
+CONFLICTING_AUTHORITY_FAILURE_STATES = AUTHORITY_FAILURE_STATES[:2]
+INCOMPLETE_AUTHORITY_FAILURE_STATES = AUTHORITY_FAILURE_STATES[2:]
+AUTHORITY_FAILURE_DISPOSITION_ROWS = tuple(
+    (state, CONFLICTING_MISSING_REASON_AUTHORITY)
+    for state in CONFLICTING_AUTHORITY_FAILURE_STATES
+) + tuple(
+    (state, INCOMPLETE_MISSING_REASON_AUTHORITY)
+    for state in INCOMPLETE_AUTHORITY_FAILURE_STATES
+)
+
+ORIGINATING_RECORD_SPECS = (
+    {
+        "path": (
+            "data/external/amendment_11_originating_records/"
+            "claude-ce-v3compiler-codebook-report.md"
+        ),
+        "byte_size": 15_872,
+        "sha256": (
+            "245cedcd3f5d3ecd2245e8acec14e56511e973707cc5022cb8b75e94a387a605"
+        ),
+        "span_start": 13_605,
+        "span_end": 14_213,
+        "span_byte_size": 608,
+        "span_sha256": (
+            "beada0568d204372f7d26b15f19602aa5ff11c6b8590c8a5d6830d37575d8fb5"
+        ),
+    },
+    {
+        "path": (
+            "data/external/amendment_11_originating_records/"
+            "claude-ce-amend10-report.md"
+        ),
+        "byte_size": 17_745,
+        "sha256": (
+            "9165cd527964bbefa10cb20c8afe69444c776b2b44956dbef239360a6f8b1ddb"
+        ),
+        "span_start": 13_566,
+        "span_end": 13_807,
+        "span_byte_size": 241,
+        "span_sha256": (
+            "a7854580bca100104df376530aa2a1204c3d7dc5360ad2c91d80c8790d0d92d0"
+        ),
+    },
+)
+EXPECTED_ORIGINATING_RECORD_DOMAIN_SHA256 = (
+    "3921b4c3c4c6658a164b57a48fd1ec35a806cd97adfca05a4389523e692c9f3d"
 )
 
 EXPECTED_REGISTRY_PATH = (
@@ -57,6 +121,8 @@ EXPECTED_CANONICAL_ROW_COUNT = 102_179
 EXPECTED_MEMBER_COUNT = 561_873
 EXPECTED_LITERAL_COUNT = 524_590
 EXPECTED_NUMERIC_RANGE_COUNT = 37_283
+EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT = 52
+EXPECTED_UNADJUDICATED_LITERAL_COUNT = 524_538
 EXPECTED_LEXICAL_MISSING_COUNT = 231_263
 EXPECTED_LEXICAL_OTHER_COUNT = 330_610
 EXPECTED_PDF_ROW_COUNT = 89_599
@@ -68,13 +134,23 @@ EXPECTED_SOURCE_LOCATOR_COUNT = 112_382
 EXPECTED_DICTIONARY_MISSING_DECLARATION_COUNT = 0
 
 EXPECTED_SOURCE_DOCUMENT_ROWS_SHA256 = (
-    "c6db713d8dee860adeafbcfd0f232ece9ce374ee66dee3fe39c02bd52a39999a"
+    "528091289177d9558f5e6baac99ca710c1f4db608d5e9150b84a3a6577258122"
 )
 EXPECTED_ENTRY_KIND_PACKED_SHA256 = (
     "c22dedca28755870ad892d5f7be89e79a02dc30b001bcc6171c19f8ce4d053f3"
 )
 EXPECTED_LEXICAL_PACKED_SHA256 = (
     "0534dd57a3f2ff12db460323b92a583ec4c0e7d7fb3d884a1bef6cced67a15c7"
+)
+EXPECTED_SOURCE_AUTHORITY_PACKED_SHA256 = (
+    "0506ad32d8ecc06e53aec9ecbf4b8c4b4b904dc552f794567bee8deb9906504a"
+)
+EXPECTED_SOURCE_AUTHORIZED_AUDIT_BYTE_SIZE = 30_989
+EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256 = (
+    "f6d7f8b7f671379a6b4b7ea985415be3fc347ba169e5e07310df3cf3c1b3d2d1"
+)
+EXPECTED_SOURCE_AUTHORIZED_OCCURRENCE_SHA256 = (
+    "177b4f369d499de6af292283793c1bb4cce7f00c84fa6e0657ec4e62d6bc016d"
 )
 EXPECTED_COUNTEREXAMPLE_COUNT = 118
 EXPECTED_COUNTEREXAMPLE_SHA256 = (
@@ -225,6 +301,23 @@ def sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
+def utf8_compact_json_bytes(value: Any) -> bytes:
+    """Return sorted-key compact UTF-8 JSON without a terminator."""
+
+    try:
+        return json.dumps(
+            value,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8")
+    except (TypeError, ValueError) as error:
+        raise MissingReasonAuthorityError(
+            "value is not compact UTF-8 JSON"
+        ) from error
+
+
 def canonical_array_sha256(values: Iterable[Any]) -> str:
     digest = hashlib.sha256(b"[")
     for position, value in enumerate(values):
@@ -275,6 +368,63 @@ def _require_sha256(value: Any, label: str) -> str:
     ):
         raise MissingReasonAuthorityError(f"{label} lowercase SHA-256")
     return value
+
+
+def verify_originating_records(
+    repository_root: Path | None = None,
+) -> tuple[dict[str, Any], ...]:
+    """Verify committed provenance records and their originating spans."""
+
+    root = repository_root or Path(__file__).resolve().parents[3]
+    observed = []
+    for spec in ORIGINATING_RECORD_SPECS:
+        path = root / spec["path"]
+        try:
+            raw = path.read_bytes()
+        except OSError as error:
+            raise MissingReasonAuthorityError(
+                "originating record unreadable"
+            ) from error
+        if (
+            len(raw) != spec["byte_size"]
+            or sha256_bytes(raw) != spec["sha256"]
+        ):
+            raise MissingReasonAuthorityError("originating record byte drift")
+        start = spec["span_start"]
+        end = spec["span_end"]
+        span = raw[start:end]
+        if (
+            end - start != spec["span_byte_size"]
+            or len(span) != spec["span_byte_size"]
+            or sha256_bytes(span) != spec["span_sha256"]
+        ):
+            raise MissingReasonAuthorityError("originating record span drift")
+        observed.append(dict(spec))
+    if canonical_sha256(observed) != EXPECTED_ORIGINATING_RECORD_DOMAIN_SHA256:
+        raise MissingReasonAuthorityError("originating record domain drift")
+    return tuple(observed)
+
+
+def authority_failure_disposition(active_states: Iterable[str]) -> str:
+    """Map every nonempty failure-predicate set to one disposition."""
+
+    if isinstance(active_states, (str, bytes, bytearray)):
+        raise MissingReasonAuthorityError(
+            "malformed authority failure predicate set"
+        )
+    states = tuple(active_states)
+    if (
+        not states
+        or any(not isinstance(state, str) for state in states)
+        or len(set(states)) != len(states)
+        or not set(states).issubset(AUTHORITY_FAILURE_STATES)
+    ):
+        raise MissingReasonAuthorityError(
+            "malformed authority failure predicate set"
+        )
+    if set(states).intersection(CONFLICTING_AUTHORITY_FAILURE_STATES):
+        return CONFLICTING_MISSING_REASON_AUTHORITY
+    return INCOMPLETE_MISSING_REASON_AUTHORITY
 
 
 def iter_source_members(
@@ -469,7 +619,7 @@ def missing_reason_preimage(member: SourceMember) -> list[Any]:
 
 
 def missing_reason_code(member: SourceMember) -> str:
-    """Construct an opaque occurrence code without authorizing its use."""
+    """Construct an opaque exact-byte occurrence code."""
 
     if member.entry.get("entry_kind") != "literal":
         raise MissingReasonAuthorityError(
@@ -478,6 +628,91 @@ def missing_reason_code(member: SourceMember) -> str:
     return REASON_CODE_PREFIX + canonical_sha256(
         missing_reason_preimage(member)
     )
+
+
+def source_authorizes_current_missing_reason(member: SourceMember) -> bool:
+    """Recognize only the corpus's exact explicit missing-reason bytes."""
+
+    source_member_identity(member)
+    entry = member.entry
+    return (
+        entry["entry_kind"] == "literal"
+        and entry["source_value_lexeme"] == SOURCE_AUTHORIZED_VALUE_LEXEME
+        and entry["source_meaning"] == SOURCE_AUTHORIZED_MEANING
+        and entry["typed_disposition"] == SOURCE_AUTHORIZED_DISPOSITION
+    )
+
+
+def source_authorized_occurrence_row(
+    member: SourceMember,
+    interview_wave: int,
+    canonical_source_path: str,
+    raw_field_id: str,
+) -> list[Any]:
+    """Serialize one exact authorized occurrence and its opaque code."""
+
+    if not source_authorizes_current_missing_reason(member):
+        raise MissingReasonAuthorityError(
+            "member lacks exact source missing-reason authority"
+        )
+    if (
+        type(interview_wave) is not int
+        or interview_wave < 0
+        or not isinstance(canonical_source_path, str)
+        or not canonical_source_path
+        or not isinstance(raw_field_id, str)
+        or not raw_field_id
+    ):
+        raise MissingReasonAuthorityError(
+            "malformed source-authorized occurrence metadata"
+        )
+    return [
+        source_member_identity(member),
+        interview_wave,
+        canonical_source_path,
+        raw_field_id,
+        SOURCE_AUTHORIZED_DISPOSITION,
+        missing_reason_code(member),
+    ]
+
+
+def source_authorized_audit_row(
+    member: SourceMember,
+    interview_wave: int,
+    canonical_source_path: str,
+    raw_field_id: str,
+    source_label: str,
+    source_description: str,
+) -> dict[str, Any]:
+    """Return the referee-compatible exact 52-row audit projection row."""
+
+    source_authorized_occurrence_row(
+        member,
+        interview_wave,
+        canonical_source_path,
+        raw_field_id,
+    )
+    if (
+        not isinstance(source_label, str)
+        or not source_label
+        or not isinstance(source_description, str)
+        or not source_description
+    ):
+        raise MissingReasonAuthorityError(
+            "malformed source-authorized audit metadata"
+        )
+    return {
+        "wave": interview_wave,
+        "path": canonical_source_path,
+        "raw_field_id": raw_field_id,
+        "source_label": source_label,
+        "source_description": source_description,
+        "entry_ref": member.entry["entry_ref"],
+        "source_value_lexeme": member.entry["source_value_lexeme"],
+        "source_meaning": member.entry["source_meaning"],
+        "typed_disposition": member.entry["typed_disposition"],
+        "source_locator_ids": list(member.source_locator_ids),
+    }
 
 
 def candidate_is_missing(member: SourceMember) -> bool:
@@ -525,11 +760,17 @@ def fixture_conditional_missing_reason_value(
             and type(authenticated_missing) is not bool
         ):
             raise MissingReasonAuthorityError(
-                "malformed disposition authority"
+                authority_failure_disposition(
+                    ("malformed_member_or_authority",)
+                )
+                + ": malformed disposition authority"
             )
         if authenticated_missing is True:
             raise MissingReasonAuthorityError(
-                "numeric range conflicts with missing disposition"
+                authority_failure_disposition(
+                    ("conflicting_member_or_authority",)
+                )
+                + ": numeric range conflicts with missing disposition"
             )
         return None
     if authenticated_missing is None:
@@ -537,7 +778,10 @@ def fixture_conditional_missing_reason_value(
             "source missing disposition is unadjudicated"
         )
     if type(authenticated_missing) is not bool:
-        raise MissingReasonAuthorityError("malformed disposition authority")
+        raise MissingReasonAuthorityError(
+            authority_failure_disposition(("malformed_member_or_authority",))
+            + ": malformed disposition authority"
+        )
     return missing_reason_code(member) if authenticated_missing else None
 
 
@@ -559,15 +803,18 @@ def fixture_conditional_missing_reason_value_from_claims(
         or any(type(claim) is not bool for claim in authenticated_claims)
     ):
         raise MissingReasonAuthorityError(
-            "malformed future disposition claims"
+            authority_failure_disposition(("malformed_member_or_authority",))
+            + ": malformed future disposition claims"
         )
     if len(set(authenticated_claims)) != 1:
         raise MissingReasonAuthorityError(
-            "conflicting future disposition authority"
+            authority_failure_disposition(("conflicting_member_or_authority",))
+            + ": conflicting future disposition authority"
         )
     if len(authenticated_claims) != 1:
         raise MissingReasonAuthorityError(
-            "duplicated future disposition claim"
+            authority_failure_disposition(("duplicate_member_or_authority",))
+            + ": duplicated future disposition claim"
         )
     return fixture_conditional_missing_reason_value(
         member, authenticated_claims[0]
@@ -601,7 +848,12 @@ def fixture_conditional_missing_reason_relation(
     """Exercise duplicate-assignment and opaque-code collision rejection."""
 
     if not assignments:
-        raise MissingReasonAuthorityError("empty conditional fixture relation")
+        raise MissingReasonAuthorityError(
+            authority_failure_disposition(
+                ("unknown_or_unregistered_member_or_authority",)
+            )
+            + ": empty conditional fixture relation"
+        )
     seen_identities: set[str] = set()
     seen_codes: set[str] = set()
     values: list[str | None] = []
@@ -609,7 +861,10 @@ def fixture_conditional_missing_reason_relation(
         identity = source_member_identity_sha256(member)
         if identity in seen_identities:
             raise MissingReasonAuthorityError(
-                "duplicate conditional member assignment"
+                authority_failure_disposition(
+                    ("duplicate_member_or_authority",)
+                )
+                + ": duplicate conditional member assignment"
             )
         seen_identities.add(identity)
         value = fixture_conditional_missing_reason_value_from_claims(
@@ -618,7 +873,10 @@ def fixture_conditional_missing_reason_relation(
         if value is not None:
             if value in seen_codes:
                 raise MissingReasonAuthorityError(
-                    "opaque reason code collision"
+                    authority_failure_disposition(
+                        ("conflicting_member_or_authority",)
+                    )
+                    + ": opaque reason code collision"
                 )
             seen_codes.add(value)
         values.append(value)
@@ -678,6 +936,7 @@ _TOP_LEVEL_KEYS = (
     "lexical_candidate_vector",
     "registered_source_identity",
     "schema_version",
+    "source_authority_vector",
     "source_document_count",
     "source_document_rows",
     "source_document_rows_sha256",
@@ -698,6 +957,8 @@ _SOURCE_DOCUMENT_ROW_KEYS = (
     "position",
     "source_byte_size",
     "source_document_id",
+    "source_authorized_missing_count",
+    "source_authorized_missing_occurrence_sha256",
     "source_locator_count",
     "source_locator_domain_sha256",
     "source_member_complete_domain_sha256",
@@ -733,6 +994,9 @@ _CENSUS_KEYS = (
     "source_member_complete_domain_sha256",
     "source_member_count",
     "source_member_identity_sha256",
+    "source_authorized_missing_audit_sha256",
+    "source_authorized_missing_literal_count",
+    "source_authorized_missing_occurrence_sha256",
     "value_label_lexical_missing_candidate_count",
 )
 
@@ -744,6 +1008,19 @@ _VECTOR_KEYS = (
     "packed_sha256",
     "source_member_count",
     "zero_count",
+)
+
+_AUTHORIZED_AUDIT_ROW_KEYS = (
+    "entry_ref",
+    "path",
+    "raw_field_id",
+    "source_description",
+    "source_label",
+    "source_locator_ids",
+    "source_meaning",
+    "source_value_lexeme",
+    "typed_disposition",
+    "wave",
 )
 
 
@@ -787,9 +1064,84 @@ def _validate_vector(
         raise MissingReasonAuthorityError("vector population equation")
 
 
+def _validate_authorized_occurrence_row(row: Any) -> None:
+    if not isinstance(row, list) or len(row) != 6:
+        raise MissingReasonAuthorityError("authorized occurrence row")
+    identity, wave, path, field, disposition, code = row
+    if not isinstance(identity, list) or len(identity) != 12:
+        raise MissingReasonAuthorityError("authorized occurrence identity")
+    if identity[0] != MEMBER_IDENTITY_VERSION:
+        raise MissingReasonAuthorityError("authorized identity version")
+    for label, value in zip(
+        (
+            "member position",
+            "source document position",
+            "source row position",
+            "entry position",
+        ),
+        identity[1:5],
+        strict=True,
+    ):
+        _require_int(value, f"authorized {label}")
+    document_id = identity[5]
+    row_id = identity[6]
+    locators = identity[7]
+    entry_ref = identity[8]
+    if (
+        not isinstance(document_id, str)
+        or not document_id.startswith("psid-source-document:")
+        or len(document_id) != len("psid-source-document:") + 64
+        or any(
+            character not in _HEX
+            for character in document_id[len("psid-source-document:") :]
+        )
+    ):
+        raise MissingReasonAuthorityError("authorized source document ID")
+    expected_row_id = f"{document_id}#row:{identity[3]}"
+    if row_id != expected_row_id:
+        raise MissingReasonAuthorityError("authorized source row equation")
+    if entry_ref != f"{row_id}:entry:{identity[4]}":
+        raise MissingReasonAuthorityError("authorized entry equation")
+    if (
+        not isinstance(locators, list)
+        or not locators
+        or len(set(locators)) != len(locators)
+        or any(
+            not isinstance(locator, str)
+            or not locator.startswith("psid-source-region:")
+            or len(locator) != len("psid-source-region:") + 64
+            or any(
+                character not in _HEX
+                for character in locator[len("psid-source-region:") :]
+            )
+            for locator in locators
+        )
+    ):
+        raise MissingReasonAuthorityError("authorized locator identity")
+    if (
+        identity[9] != "literal"
+        or identity[10] != SOURCE_AUTHORIZED_VALUE_LEXEME
+        or identity[11] != SOURCE_AUTHORIZED_MEANING
+        or type(wave) is not int
+        or wave < 0
+        or not isinstance(path, str)
+        or not path
+        or not isinstance(field, str)
+        or not field
+        or disposition != SOURCE_AUTHORIZED_DISPOSITION
+    ):
+        raise MissingReasonAuthorityError("authorized exact source bytes")
+    expected_code = REASON_CODE_PREFIX + canonical_sha256(
+        [REASON_PREIMAGE_VERSION, *identity[1:]]
+    )
+    if code != expected_code:
+        raise MissingReasonAuthorityError("authorized opaque occurrence code")
+
+
 def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
     """Validate every nested boundary-artifact pin and equation."""
 
+    originating_records = verify_originating_records()
     if not isinstance(artifact, Mapping):
         raise MissingReasonAuthorityError("authority artifact object")
     _require_exact_keys(artifact, _TOP_LEVEL_KEYS, "authority top level")
@@ -839,6 +1191,7 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
     member_end = 0
     row_total = 0
     candidate_total = 0
+    authorized_total = 0
     locator_total = 0
     identities: set[str] = set()
     paths: set[str] = set()
@@ -857,6 +1210,7 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
             "normalized_entry_count",
             "position",
             "source_byte_size",
+            "source_authorized_missing_count",
             "source_locator_count",
         ):
             _require_int(row[key], f"source document {key}")
@@ -877,6 +1231,7 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
             "derivation_metadata_sha256",
             "lexical_missing_candidate_identity_sha256",
             "source_locator_domain_sha256",
+            "source_authorized_missing_occurrence_sha256",
             "source_member_complete_domain_sha256",
             "source_member_identity_sha256",
             "source_sha256",
@@ -898,6 +1253,7 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
         paths.add(row["canonical_source_path"])
         row_total += row["canonical_row_count"]
         candidate_total += row["lexical_missing_candidate_count"]
+        authorized_total += row["source_authorized_missing_count"]
         locator_total += row["source_locator_count"]
     if member_end != EXPECTED_MEMBER_COUNT:
         raise MissingReasonAuthorityError("source member exact cover")
@@ -926,6 +1282,9 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
         "rational_candidate_count": 3_742,
         "source_locator_count": EXPECTED_SOURCE_LOCATOR_COUNT,
         "source_member_count": EXPECTED_MEMBER_COUNT,
+        "source_authorized_missing_literal_count": (
+            EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+        ),
         "value_label_lexical_missing_candidate_count": (
             EXPECTED_LABEL_LEXICAL_MISSING_COUNT
         ),
@@ -939,6 +1298,10 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
         raise MissingReasonAuthorityError("candidate count equation")
     if locator_total != census["source_locator_count"]:
         raise MissingReasonAuthorityError("locator count equation")
+    if authorized_total != census["source_authorized_missing_literal_count"]:
+        raise MissingReasonAuthorityError(
+            "authorized occurrence count equation"
+        )
     if census["literal_member_count"] + census[
         "numeric_range_member_count"
     ] != (census["source_member_count"]):
@@ -952,6 +1315,14 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
     for key, expected in EXPECTED_CENSUS_SHA256S.items():
         if _require_sha256(census.get(key), key) != expected:
             raise MissingReasonAuthorityError(f"census digest pin: {key}")
+    if census.get("source_authorized_missing_audit_sha256") != (
+        EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256
+    ):
+        raise MissingReasonAuthorityError("authorized audit digest pin")
+    if census.get("source_authorized_missing_occurrence_sha256") != (
+        EXPECTED_SOURCE_AUTHORIZED_OCCURRENCE_SHA256
+    ):
+        raise MissingReasonAuthorityError("authorized occurrence digest pin")
     if census.get("lexical_missing_candidate_projection_sha256") != (
         EXPECTED_MISSING_CANDIDATE_PROJECTION_SHA256
     ):
@@ -991,23 +1362,45 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
         zero_count=EXPECTED_LEXICAL_OTHER_COUNT,
         packed_sha256=EXPECTED_LEXICAL_PACKED_SHA256,
     )
+    _validate_vector(
+        artifact.get("source_authority_vector"),
+        encoding=SOURCE_AUTHORITY_VECTOR_ENCODING,
+        one_count=EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT,
+        zero_count=(
+            EXPECTED_MEMBER_COUNT - EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+        ),
+        packed_sha256=EXPECTED_SOURCE_AUTHORITY_PACKED_SHA256,
+    )
 
     law = artifact.get("conditional_reason_code_law")
     expected_law = {
-        "current_literal_action": "abort_without_emission",
-        "current_literal_disposition": (
+        "authority_failure_disposition_rows": [
+            list(row) for row in AUTHORITY_FAILURE_DISPOSITION_ROWS
+        ],
+        "authority_failure_precedence": [
+            CONFLICTING_MISSING_REASON_AUTHORITY,
+            INCOMPLETE_MISSING_REASON_AUTHORITY,
+        ],
+        "conflicting_failure_states": list(
+            CONFLICTING_AUTHORITY_FAILURE_STATES
+        ),
+        "current_source_authorized_missing_literal_action": (
+            "nonempty_opaque_source_occurrence_code"
+        ),
+        "current_unadjudicated_literal_action": "abort_without_emission",
+        "current_unadjudicated_literal_disposition": (
             "unadjudicated_source_missing_disposition"
         ),
         "future_authenticated_missing_literal_action": (
             "nonempty_opaque_source_occurrence_code"
         ),
         "future_authenticated_nonmissing_literal_action": "json_null",
+        "incomplete_failure_states": list(INCOMPLETE_AUTHORITY_FAILURE_STATES),
         "member_identity_version": MEMBER_IDENTITY_VERSION,
         "numeric_range_action": "json_null",
         "reason_code_prefix": REASON_CODE_PREFIX,
         "reason_preimage_version": REASON_PREIMAGE_VERSION,
         "semantic_equivalence_claimed": False,
-        "unknown_or_conflict_action": "abort_without_emission",
     }
     if not isinstance(law, Mapping) or dict(law) != expected_law:
         raise MissingReasonAuthorityError("conditional reason-code law")
@@ -1031,6 +1424,7 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
         "minimum_counterexamples",
         "numeric_range_rejection_witnesses",
         "opaque_occurrence_code_conditionally_supported",
+        "opaque_occurrence_code_current_source_supported",
         "rejection_class_witness_count",
         "rejection_class_witness_sha256",
         "rejection_class_witnesses",
@@ -1038,15 +1432,15 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
         "source_defines_missing_disposition_vocabulary",
         "source_defines_reason_code_column",
         "source_defines_reason_vocabulary",
+        "source_authorized_missing_audit",
+        "source_authorized_missing_occurrences",
         "unadjudicated_literal_count",
     )
     _require_exact_keys(boundary, boundary_keys, "authority boundary")
     false_keys = (
         "lexical_candidate_is_source_authority",
         "source_defines_missing_disposition_column",
-        "source_defines_missing_disposition_vocabulary",
         "source_defines_reason_code_column",
-        "source_defines_reason_vocabulary",
     )
     if any(boundary[key] is not False for key in false_keys):
         raise MissingReasonAuthorityError("boundary overreach")
@@ -1054,19 +1448,32 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
         raise MissingReasonAuthorityError(
             "conditional occurrence-code support"
         )
+    true_keys = (
+        "opaque_occurrence_code_current_source_supported",
+        "source_defines_missing_disposition_vocabulary",
+        "source_defines_reason_vocabulary",
+    )
+    if any(boundary[key] is not True for key in true_keys):
+        raise MissingReasonAuthorityError("source authority underclaim")
     if (
         _require_int(
             boundary["authorized_current_literal_disposition_count"],
             "authorized literal count",
         )
-        != 0
+        != EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
         or _require_int(
             boundary["unadjudicated_literal_count"],
             "unadjudicated literal count",
         )
-        != EXPECTED_LITERAL_COUNT
+        != EXPECTED_UNADJUDICATED_LITERAL_COUNT
     ):
         raise MissingReasonAuthorityError("literal authority boundary")
+    if (
+        boundary["authorized_current_literal_disposition_count"]
+        + boundary["unadjudicated_literal_count"]
+        != EXPECTED_LITERAL_COUNT
+    ):
+        raise MissingReasonAuthorityError("literal authority partition")
     if boundary["dictionary_missing_declaration_scope"] != (
         "inherited_86_document_compiler_fact_not_reproduced_by_47_source_A11"
     ):
@@ -1081,6 +1488,88 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
         != EXPECTED_EMPTY_ARRAY_SHA256
     ):
         raise MissingReasonAuthorityError("inherited dictionary fact")
+
+    authorized_occurrences = boundary.get(
+        "source_authorized_missing_occurrences"
+    )
+    if not isinstance(authorized_occurrences, Mapping):
+        raise MissingReasonAuthorityError("authorized occurrence relation")
+    _require_exact_keys(
+        authorized_occurrences,
+        ("domain_sha256", "row_count", "rows"),
+        "authorized occurrence relation",
+    )
+    occurrence_rows = authorized_occurrences.get("rows")
+    if not isinstance(occurrence_rows, list) or _require_int(
+        authorized_occurrences.get("row_count"),
+        "authorized occurrence count",
+    ) != len(occurrence_rows):
+        raise MissingReasonAuthorityError("authorized occurrence rows")
+    if (
+        len(occurrence_rows) != EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+        or canonical_sha256(occurrence_rows)
+        != authorized_occurrences.get("domain_sha256")
+        or authorized_occurrences.get("domain_sha256")
+        != EXPECTED_SOURCE_AUTHORIZED_OCCURRENCE_SHA256
+    ):
+        raise MissingReasonAuthorityError("authorized occurrence digest")
+    member_positions = []
+    occurrence_codes = set()
+    for row in occurrence_rows:
+        _validate_authorized_occurrence_row(row)
+        member_positions.append(row[0][1])
+        occurrence_codes.add(row[5])
+    if member_positions != sorted(set(member_positions)) or len(
+        occurrence_codes
+    ) != len(occurrence_rows):
+        raise MissingReasonAuthorityError("authorized occurrence uniqueness")
+
+    authorized_audit = boundary.get("source_authorized_missing_audit")
+    if not isinstance(authorized_audit, Mapping):
+        raise MissingReasonAuthorityError("authorized audit relation")
+    _require_exact_keys(
+        authorized_audit,
+        ("domain_sha256", "row_count", "rows"),
+        "authorized audit relation",
+    )
+    audit_rows = authorized_audit.get("rows")
+    if not isinstance(audit_rows, list) or _require_int(
+        authorized_audit.get("row_count"), "authorized audit count"
+    ) != len(audit_rows):
+        raise MissingReasonAuthorityError("authorized audit rows")
+    audit_raw = utf8_compact_json_bytes(audit_rows)
+    if (
+        len(audit_rows) != EXPECTED_SOURCE_AUTHORIZED_MISSING_COUNT
+        or len(audit_raw) != EXPECTED_SOURCE_AUTHORIZED_AUDIT_BYTE_SIZE
+        or sha256_bytes(audit_raw) != authorized_audit.get("domain_sha256")
+        or authorized_audit.get("domain_sha256")
+        != EXPECTED_SOURCE_AUTHORIZED_AUDIT_SHA256
+    ):
+        raise MissingReasonAuthorityError("authorized audit digest")
+    for audit_row, occurrence_row in zip(
+        audit_rows, occurrence_rows, strict=True
+    ):
+        if not isinstance(audit_row, Mapping):
+            raise MissingReasonAuthorityError("authorized audit row object")
+        _require_exact_keys(
+            audit_row, _AUTHORIZED_AUDIT_ROW_KEYS, "authorized audit row"
+        )
+        identity = occurrence_row[0]
+        if (
+            audit_row["wave"] != occurrence_row[1]
+            or audit_row["path"] != occurrence_row[2]
+            or audit_row["raw_field_id"] != occurrence_row[3]
+            or audit_row["typed_disposition"] != occurrence_row[4]
+            or audit_row["entry_ref"] != identity[8]
+            or audit_row["source_locator_ids"] != identity[7]
+            or audit_row["source_value_lexeme"] != identity[10]
+            or audit_row["source_meaning"] != identity[11]
+            or not isinstance(audit_row["source_label"], str)
+            or not audit_row["source_label"]
+            or not isinstance(audit_row["source_description"], str)
+            or not audit_row["source_description"]
+        ):
+            raise MissingReasonAuthorityError("authorized audit cross-binding")
 
     counterexamples = boundary.get("minimum_counterexamples")
     if not isinstance(counterexamples, list) or _require_int(
@@ -1155,6 +1644,8 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
             "implementation_file_domain_sha256",
             "implementation_files",
             "interface_version",
+            "originating_record_count",
+            "originating_record_domain_sha256",
             "pdftotext_arguments",
             "pdftotext_version",
         ),
@@ -1170,6 +1661,10 @@ def validate_authority_artifact(artifact: Mapping[str, Any]) -> None:
             "UTF-8",
         ]
         or derivation.get("pdftotext_version") != "26.04.0"
+        or derivation.get("originating_record_count")
+        != len(originating_records)
+        or derivation.get("originating_record_domain_sha256")
+        != EXPECTED_ORIGINATING_RECORD_DOMAIN_SHA256
     ):
         raise MissingReasonAuthorityError(
             "derivation implementation interface"
@@ -1257,13 +1752,20 @@ def preflight_source_derivations(
     source_rows = authority["source_document_rows"]
     kind_vector = authority["entry_kind_vector"]
     lexical_vector = authority["lexical_candidate_vector"]
+    source_authority_vector = authority["source_authority_vector"]
     packed_kinds = validate_disposition_vector(
         kind_vector["packed_hex"], kind_vector["source_member_count"]
     )
     packed_candidates = validate_disposition_vector(
         lexical_vector["packed_hex"], lexical_vector["source_member_count"]
     )
+    packed_source_authority = validate_disposition_vector(
+        source_authority_vector["packed_hex"],
+        source_authority_vector["source_member_count"],
+    )
     member_position = 0
+    authorized_occurrence_rows: list[list[Any]] = []
+    authorized_audit_rows: list[dict[str, Any]] = []
     derivation_iterator = iter(derivations)
     for document_position, source_row in enumerate(source_rows):
         try:
@@ -1308,6 +1810,11 @@ def preflight_source_derivations(
             )
 
         members: list[SourceMember] = []
+        document_authorized_occurrences: list[list[Any]] = []
+        rows_by_id = {
+            row["codebook_field_row_id"]: row
+            for row in derivation["canonical_rows"]
+        }
         for local_member in iter_source_members((derivation,)):
             member = SourceMember(
                 member_position=member_position,
@@ -1325,12 +1832,43 @@ def preflight_source_derivations(
             expected_candidate = disposition_at(
                 packed_candidates, member_position, EXPECTED_MEMBER_COUNT
             )
+            expected_source_authority = disposition_at(
+                packed_source_authority,
+                member_position,
+                EXPECTED_MEMBER_COUNT,
+            )
             if (member.entry["entry_kind"] == "literal") != expected_literal:
                 raise MissingReasonAuthorityError("entry-kind vector drift")
             if candidate_is_missing(member) != expected_candidate:
                 raise MissingReasonAuthorityError(
                     "lexical candidate vector drift"
                 )
+            observed_source_authority = (
+                source_authorizes_current_missing_reason(member)
+            )
+            if observed_source_authority != expected_source_authority:
+                raise MissingReasonAuthorityError(
+                    "source-authority vector drift"
+                )
+            if observed_source_authority:
+                row = rows_by_id[member.codebook_field_row_id]
+                occurrence = source_authorized_occurrence_row(
+                    member,
+                    source_row["interview_wave"],
+                    source_row["canonical_source_path"],
+                    row["raw_field_id"],
+                )
+                audit = source_authorized_audit_row(
+                    member,
+                    source_row["interview_wave"],
+                    source_row["canonical_source_path"],
+                    row["raw_field_id"],
+                    row["source_label"],
+                    row["source_description"],
+                )
+                document_authorized_occurrences.append(occurrence)
+                authorized_occurrence_rows.append(occurrence)
+                authorized_audit_rows.append(audit)
             members.append(member)
             member_position += 1
         if source_row["member_end"] != member_position:
@@ -1349,6 +1887,12 @@ def preflight_source_derivations(
                 candidate_identities
             ),
             "normalized_entry_count": len(members),
+            "source_authorized_missing_count": len(
+                document_authorized_occurrences
+            ),
+            "source_authorized_missing_occurrence_sha256": canonical_sha256(
+                document_authorized_occurrences
+            ),
             "source_locator_count": len(locators),
             "source_locator_domain_sha256": canonical_sha256(
                 [
@@ -1382,6 +1926,16 @@ def preflight_source_derivations(
         raise MissingReasonAuthorityError("source document count drift")
     if member_position != EXPECTED_MEMBER_COUNT:
         raise MissingReasonAuthorityError("source member exact-cover drift")
+    expected_occurrences = authority["authority_boundary"][
+        "source_authorized_missing_occurrences"
+    ]["rows"]
+    expected_audit = authority["authority_boundary"][
+        "source_authorized_missing_audit"
+    ]["rows"]
+    if authorized_occurrence_rows != expected_occurrences:
+        raise MissingReasonAuthorityError("authorized occurrence drift")
+    if authorized_audit_rows != expected_audit:
+        raise MissingReasonAuthorityError("authorized audit drift")
 
 
 def settle_missing_reason_codes(
@@ -1392,5 +1946,5 @@ def settle_missing_reason_codes(
 
     preflight_source_derivations(derivations, authority)
     raise MissingReasonAuthorityError(
-        "source missing disposition is unadjudicated for 524590 literals"
+        "source missing disposition is unadjudicated for 524538 literals"
     )
