@@ -44,6 +44,12 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
     "outside_domain_repeat_shape": (
         "baf5475e21ef404b911a7d7ec6328771caa01961d185f684a3ed63c4fdd8c48a"
     ),
+    "noncatalog_aggregate_relation_shape_keyset": (
+        "15b56ba454cc972608c269efb0f1e20fe7d85c9a7e80a030f5de7667df0fe1fc"
+    ),
+    "noncatalog_aggregate_relation_shape": (
+        "bb1b34fe97ba6cf7b0497aea5b3992c32419511994d02792b24a85740d3ebf83"
+    ),
     "component_parent_shape_keyset": (
         "b1aaad10fac7e3a6eb35edabd99c079137404109f0b912f8726446965a1d0524"
     ),
@@ -106,6 +112,15 @@ AGGREGATE_CLASSIFICATION_TO_KIND = {
     "source_role_total": "role_total_anchor",
     "source_farm_aggregate": "farm_aggregate_anchor",
     "source_business_aggregate": "business_aggregate_anchor",
+}
+AGGREGATE_KIND_TO_CLASSIFICATIONS = {
+    "role_total_anchor": frozenset({"role_total", "source_role_total"}),
+    "farm_aggregate_anchor": frozenset(
+        {"farm_aggregate", "source_farm_aggregate"}
+    ),
+    "business_aggregate_anchor": frozenset(
+        {"business_aggregate", "source_business_aggregate"}
+    ),
 }
 ALLOWED_REPEAT_RELATIONS = (
     "explicit_repeat_instruction",
@@ -174,7 +189,7 @@ PILOT_TAGS = {
     40: ("q87_outside_domain_repeat_carrier",),
     53: ("era_4_local_edge_schema_control",),
     56: ("fam1996_outside_domain_repeat_carrier",),
-    58: ("fam1997_outside_domain_repeat_carrier",),
+    58: ("fam1997_outside_domain_and_aggregate_relation_carrier",),
     65: ("era_5_control",),
     66: ("fam2005_outside_domain_repeat_carrier",),
     78: ("era_6_control",),
@@ -816,6 +831,30 @@ def _normalize_document(
                     "handoff_status", row.get("resolution_status")
                 ),
                 "source_instruction_occurrence_ids": instructions,
+                "source_instruction_occurrence_kinds": [
+                    occurrence_by_id[value]["occurrence_kind"]
+                    for value in instructions
+                ],
+                "source_instruction_matched_texts": [
+                    occurrence_by_id[value]["matched_text"]
+                    for value in instructions
+                ],
+                "source_instruction_matched_utf8_sha256s": [
+                    occurrence_by_id[value]["matched_utf8_sha256"]
+                    for value in instructions
+                ],
+                "source_instruction_page_numbers": [
+                    occurrence_by_id[value]["page_number"]
+                    for value in instructions
+                ],
+                "source_instruction_utf8_byte_starts": [
+                    occurrence_by_id[value]["utf8_byte_start"]
+                    for value in instructions
+                ],
+                "source_instruction_utf8_byte_ends": [
+                    occurrence_by_id[value]["utf8_byte_end"]
+                    for value in instructions
+                ],
                 "alias_anchor_occurrence_ids": aliases,
                 "canonical_anchor_occurrence_ids": canonicals,
                 "evidence_occurrence_ids": evidence_ids,
@@ -831,6 +870,25 @@ def _normalize_document(
                 "endpoint_occurrence_kinds": occurrence_kinds,
                 "endpoint_raw_node_domains": raw_node_domains,
                 "endpoint_classifications": classifications,
+                "endpoint_matched_texts": [
+                    value["occurrence_matched_text"] for value in concrete_rows
+                ],
+                "endpoint_matched_utf8_sha256s": [
+                    value["occurrence_matched_utf8_sha256"]
+                    for value in concrete_rows
+                ],
+                "endpoint_page_numbers": [
+                    occurrence_by_id[value]["page_number"]
+                    for value in endpoint_ids
+                ],
+                "endpoint_utf8_byte_starts": [
+                    occurrence_by_id[value]["utf8_byte_start"]
+                    for value in endpoint_ids
+                ],
+                "endpoint_utf8_byte_ends": [
+                    occurrence_by_id[value]["utf8_byte_end"]
+                    for value in endpoint_ids
+                ],
                 "defect_flags": flags,
             }
         )
@@ -1858,7 +1916,225 @@ def _outside_repeat_rows(
     return rows
 
 
-def _proof_defect_rows(
+def _honest_noncatalog_aggregate_relation(
+    evidence: Mapping[str, Any],
+) -> bool:
+    """Return the exact mechanical predicate for the third repeat arm."""
+    aliases = evidence["alias_anchor_occurrence_ids"]
+    canonicals = evidence["canonical_anchor_occurrence_ids"]
+    instructions = evidence["source_instruction_occurrence_ids"]
+    instruction_kinds = evidence["source_instruction_occurrence_kinds"]
+    evidence_ids = evidence["evidence_occurrence_ids"]
+    endpoint_ids = [*aliases, *canonicals]
+    endpoint_kinds = evidence["endpoint_occurrence_kinds"]
+    endpoint_domains = evidence["endpoint_raw_node_domains"]
+    endpoint_classifications = evidence["endpoint_classifications"]
+    instruction_texts = evidence["source_instruction_matched_texts"]
+    instruction_digests = evidence["source_instruction_matched_utf8_sha256s"]
+    instruction_pages = evidence["source_instruction_page_numbers"]
+    instruction_starts = evidence["source_instruction_utf8_byte_starts"]
+    instruction_ends = evidence["source_instruction_utf8_byte_ends"]
+    endpoint_texts = evidence["endpoint_matched_texts"]
+    endpoint_digests = evidence["endpoint_matched_utf8_sha256s"]
+    endpoint_pages = evidence["endpoint_page_numbers"]
+    endpoint_starts = evidence["endpoint_utf8_byte_starts"]
+    endpoint_ends = evidence["endpoint_utf8_byte_ends"]
+    aggregate_only_flags = {
+        "touches_noncatalog_aggregate_endpoint": True,
+        "occurrence_derived_domain_crossing": False,
+        "corrected_catalog_domain_crossing": False,
+        "raw_node_domain_crossing": False,
+        "context_remuneration_mix": False,
+        "head_spouse_mix": False,
+    }
+    return bool(
+        aliases
+        and canonicals
+        and len(instructions) == 1
+        and instruction_kinds == ["repeat_or_alias_instruction"]
+        and len(endpoint_ids) == len(set(endpoint_ids))
+        and not set(aliases) & set(canonicals)
+        and not set(instructions) & set(endpoint_ids)
+        and evidence_ids
+        and len(evidence_ids) == len(set(evidence_ids))
+        and len(evidence_ids) == len(endpoint_ids) + len(instructions)
+        and set(evidence_ids) == {*endpoint_ids, *instructions}
+        and evidence["evidence_arrays_unique_disjoint"]
+        and evidence["evidence_arrays_source_ordered"]
+        and evidence["relation"] in ALLOWED_REPEAT_RELATIONS
+        and evidence["handoff_status"] in COMPLETE_LOCAL_EVIDENCE_STATUSES
+        and evidence["unresolved_target_reference"] is None
+        and endpoint_kinds
+        and len(endpoint_kinds)
+        == len(endpoint_domains)
+        == len(endpoint_classifications)
+        == len(endpoint_texts)
+        == len(endpoint_digests)
+        == len(endpoint_pages)
+        == len(endpoint_starts)
+        == len(endpoint_ends)
+        == len(endpoint_ids)
+        and all(kind in AGGREGATE_OCCURRENCE_KINDS for kind in endpoint_kinds)
+        and all(domain == "aggregate" for domain in endpoint_domains)
+        and all(
+            classification in AGGREGATE_KIND_TO_CLASSIFICATIONS[kind]
+            for kind, classification in zip(
+                endpoint_kinds, endpoint_classifications, strict=True
+            )
+        )
+        and len(instruction_texts)
+        == len(instruction_digests)
+        == len(instruction_pages)
+        == len(instruction_starts)
+        == len(instruction_ends)
+        == 1
+        and all(
+            digest == _sha256(text.encode("utf-8"))
+            for text, digest in zip(
+                instruction_texts, instruction_digests, strict=True
+            )
+        )
+        and all(
+            page > 0
+            and 0 <= start < end
+            and end - start == len(text.encode("utf-8"))
+            for text, page, start, end in zip(
+                instruction_texts,
+                instruction_pages,
+                instruction_starts,
+                instruction_ends,
+                strict=True,
+            )
+        )
+        and all(
+            digest == _sha256(text.encode("utf-8"))
+            for text, digest in zip(
+                endpoint_texts, endpoint_digests, strict=True
+            )
+        )
+        and all(
+            page > 0
+            and 0 <= start < end
+            and end - start == len(text.encode("utf-8"))
+            for text, page, start, end in zip(
+                endpoint_texts,
+                endpoint_pages,
+                endpoint_starts,
+                endpoint_ends,
+                strict=True,
+            )
+        )
+        and evidence["defect_flags"] == aggregate_only_flags
+    )
+
+
+def _noncatalog_aggregate_relation_rows(
+    documents: Sequence[NormalizedDocument],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for document in documents:
+        for evidence in document.evidence_rows:
+            if not _honest_noncatalog_aggregate_relation(evidence):
+                continue
+            instructions = evidence["source_instruction_occurrence_ids"]
+            aliases = evidence["alias_anchor_occurrence_ids"]
+            canonicals = evidence["canonical_anchor_occurrence_ids"]
+            disposition_id = _row_id(
+                "a12-noncatalog-aggregate-relation-disposition:",
+                [
+                    document.source_document_id,
+                    evidence["local_evidence_id"],
+                    instructions,
+                    evidence["relation"],
+                    evidence["handoff_status"],
+                    aliases,
+                    canonicals,
+                    evidence["evidence_occurrence_ids"],
+                    evidence["endpoint_occurrence_kinds"],
+                    evidence["endpoint_raw_node_domains"],
+                    evidence["endpoint_classifications"],
+                    evidence["source_instruction_matched_texts"],
+                    evidence["source_instruction_matched_utf8_sha256s"],
+                    evidence["source_instruction_page_numbers"],
+                    evidence["source_instruction_utf8_byte_starts"],
+                    evidence["source_instruction_utf8_byte_ends"],
+                    evidence["endpoint_matched_texts"],
+                    evidence["endpoint_matched_utf8_sha256s"],
+                    evidence["endpoint_page_numbers"],
+                    evidence["endpoint_utf8_byte_starts"],
+                    evidence["endpoint_utf8_byte_ends"],
+                ],
+            )
+            rows.append(
+                {
+                    "noncatalog_aggregate_relation_disposition_id": (
+                        disposition_id
+                    ),
+                    "document_source_position": document.position,
+                    "source_document_id": document.source_document_id,
+                    "source_local_evidence_id": evidence["local_evidence_id"],
+                    "source_instruction_occurrence_ids": instructions,
+                    "source_instruction_occurrence_kinds": evidence[
+                        "source_instruction_occurrence_kinds"
+                    ],
+                    "source_instruction_matched_texts": evidence[
+                        "source_instruction_matched_texts"
+                    ],
+                    "source_instruction_matched_utf8_sha256s": evidence[
+                        "source_instruction_matched_utf8_sha256s"
+                    ],
+                    "source_instruction_page_numbers": evidence[
+                        "source_instruction_page_numbers"
+                    ],
+                    "source_instruction_utf8_byte_starts": evidence[
+                        "source_instruction_utf8_byte_starts"
+                    ],
+                    "source_instruction_utf8_byte_ends": evidence[
+                        "source_instruction_utf8_byte_ends"
+                    ],
+                    "relation": evidence["relation"],
+                    "handoff_status": evidence["handoff_status"],
+                    "evidence_occurrence_ids": evidence[
+                        "evidence_occurrence_ids"
+                    ],
+                    "source_alias_anchor_occurrence_ids": aliases,
+                    "source_canonical_anchor_occurrence_ids": canonicals,
+                    "endpoint_occurrence_kinds": evidence[
+                        "endpoint_occurrence_kinds"
+                    ],
+                    "endpoint_raw_node_domains": evidence[
+                        "endpoint_raw_node_domains"
+                    ],
+                    "endpoint_classifications": evidence[
+                        "endpoint_classifications"
+                    ],
+                    "endpoint_matched_texts": evidence[
+                        "endpoint_matched_texts"
+                    ],
+                    "endpoint_matched_utf8_sha256s": evidence[
+                        "endpoint_matched_utf8_sha256s"
+                    ],
+                    "endpoint_page_numbers": evidence["endpoint_page_numbers"],
+                    "endpoint_utf8_byte_starts": evidence[
+                        "endpoint_utf8_byte_starts"
+                    ],
+                    "endpoint_utf8_byte_ends": evidence[
+                        "endpoint_utf8_byte_ends"
+                    ],
+                    "aggregate_relation_disposition": (
+                        "noncatalog_aggregate_or_repeated_instance_"
+                        "relation_no_alias"
+                    ),
+                    "alias_admitted": False,
+                    "occurrence_equivalence_claimed": False,
+                    "universal_repeat_coverage_arm_satisfied": True,
+                    "status": "aggregate_relation_nonauthority_disposition",
+                }
+            )
+    return rows
+
+
+def _proof_adjudication_rows(
     documents: Sequence[NormalizedDocument],
 ) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
@@ -1871,13 +2147,41 @@ def _proof_defect_rows(
             flags = evidence["defect_flags"]
             if not any(flags.values()):
                 continue
+            third_arm_eligible = _honest_noncatalog_aggregate_relation(
+                evidence
+            )
+            if third_arm_eligible:
+                disposition = (
+                    "predecessor_law_gap_repaired_by_noncatalog_aggregate_"
+                    "relation_arm"
+                )
+                law_gap_admitted = True
+                required_action = (
+                    "ratify_noncatalog_aggregate_relation_arm_before_tier_2"
+                )
+                rationale = (
+                    "authenticated_aggregate_relation_is_honest_nonalias_"
+                    "law_gap"
+                )
+                status = "blocked_pending_third_arm_ratification"
+            else:
+                disposition = "predecessor_seal_defect"
+                law_gap_admitted = False
+                required_action = (
+                    "readjudicate_source_row_and_reseal_before_tier_2"
+                )
+                rationale = (
+                    "incompatible_endpoint_claim_cannot_be_admitted_as_"
+                    "alias_law_reseal_required"
+                )
+                status = "blocked_predecessor_row"
             row_id = _row_id(
                 "a12-predecessor-local-proof-adjudication:",
                 [
                     document.source_document_id,
                     evidence["local_evidence_id"],
                     flags,
-                    "predecessor_seal_defect",
+                    disposition,
                 ],
             )
             rows.append(
@@ -1909,17 +2213,13 @@ def _proof_defect_rows(
                         "endpoint_classifications"
                     ],
                     "defect_flags": flags,
-                    "disposition": "predecessor_seal_defect",
-                    "law_gap_admitted": False,
+                    "third_arm_eligible": third_arm_eligible,
+                    "disposition": disposition,
+                    "law_gap_admitted": law_gap_admitted,
                     "alias_admitted": False,
-                    "required_action": (
-                        "readjudicate_source_row_and_reseal_before_tier_2"
-                    ),
-                    "adjudicative_rationale": (
-                        "incompatible_endpoint_claim_cannot_be_admitted_as_"
-                        "alias_law_reseal_required"
-                    ),
-                    "status": "blocked_predecessor_row",
+                    "required_action": required_action,
+                    "adjudicative_rationale": rationale,
+                    "status": status,
                 }
             )
     return rows
@@ -2000,16 +2300,90 @@ def _compatible_direct_proof(evidence: Mapping[str, Any]) -> bool:
     )
 
 
+def _repeat_coverage_census(
+    documents: Sequence[NormalizedDocument],
+) -> dict[str, int]:
+    valid_instruction_ids: set[str] = set()
+    incompatible_instruction_ids: set[str] = set()
+    outside_instruction_ids: set[str] = set()
+    aggregate_relation_instruction_ids: list[str] = []
+    repeat_ids: set[str] = set()
+    for document in documents:
+        repeat_ids.update(document.repeat_occurrence_ids)
+        for evidence in document.evidence_rows:
+            instructions = set(evidence["source_instruction_occurrence_ids"])
+            if _compatible_direct_proof(evidence):
+                valid_instruction_ids.update(instructions)
+            elif _honest_noncatalog_aggregate_relation(evidence):
+                aggregate_relation_instruction_ids.extend(instructions)
+            elif (
+                evidence["alias_anchor_occurrence_ids"]
+                and evidence["canonical_anchor_occurrence_ids"]
+            ):
+                incompatible_instruction_ids.update(instructions)
+            if (
+                evidence["handoff_status"]
+                == "local_target_outside_rq_annotation_domain"
+            ):
+                outside_instruction_ids.update(instructions)
+    valid_instruction_ids &= repeat_ids
+    incompatible_instruction_ids &= repeat_ids
+    outside_instruction_ids &= repeat_ids
+    aggregate_relation_counter = Counter(aggregate_relation_instruction_ids)
+    _require(
+        all(count == 1 for count in aggregate_relation_counter.values()),
+        "repeat claimed by multiple aggregate-relation rows",
+    )
+    aggregate_instruction_ids = set(aggregate_relation_counter) & repeat_ids
+    admitted_arms = (
+        valid_instruction_ids,
+        outside_instruction_ids,
+        aggregate_instruction_ids,
+    )
+    arm_membership_count = Counter(
+        instruction_id for arm in admitted_arms for instruction_id in arm
+    )
+    multiple_arm_ids = {
+        instruction_id
+        for instruction_id, count in arm_membership_count.items()
+        if count > 1
+    }
+    _require(not multiple_arm_ids, "repeat claimed by multiple coverage arms")
+    lawful_covered_ids = set().union(*admitted_arms)
+    otherwise_unresolved = repeat_ids - (
+        valid_instruction_ids
+        | incompatible_instruction_ids
+        | outside_instruction_ids
+        | aggregate_instruction_ids
+    )
+    return {
+        "repeat_occurrence_count": len(repeat_ids),
+        "valid_direct_proof_instruction_count": len(valid_instruction_ids),
+        "outside_domain_instruction_count": len(outside_instruction_ids),
+        "noncatalog_aggregate_relation_instruction_count": len(
+            aggregate_instruction_ids
+        ),
+        "incompatible_proof_instruction_count": len(
+            incompatible_instruction_ids
+        ),
+        "valid_and_incompatible_instruction_overlap_count": len(
+            valid_instruction_ids & incompatible_instruction_ids
+        ),
+        "lawful_repeat_coverage_multiple_arm_instruction_count": len(
+            multiple_arm_ids
+        ),
+        "lawful_repeat_coverage_none_arm_instruction_count": len(
+            repeat_ids - lawful_covered_ids
+        ),
+        "otherwise_unresolved_instruction_count": len(otherwise_unresolved),
+    }
+
+
 def _pilot_census(documents: Sequence[NormalizedDocument]) -> dict[str, Any]:
     classification_counts: Counter[str] = Counter()
     occurrence_kind_counts: Counter[str] = Counter()
     evidence_shape_counts: Counter[str] = Counter()
-    valid_instruction_ids: set[str] = set()
-    incompatible_instruction_ids: set[str] = set()
-    outside_instruction_ids: set[str] = set()
-    repeat_ids: set[str] = set()
     for document in documents:
-        repeat_ids.update(document.repeat_occurrence_ids)
         for anchor in document.anchor_rows:
             classification_counts[anchor["classification"]] += 1
             occurrence_kind_counts[anchor["occurrence_kind"]] += 1
@@ -2022,24 +2396,7 @@ def _pilot_census(documents: Sequence[NormalizedDocument]) -> dict[str, Any]:
                 evidence_shape_counts["partial_endpoints"] += 1
             else:
                 evidence_shape_counts["no_endpoints"] += 1
-            instructions = set(evidence["source_instruction_occurrence_ids"])
-            if _compatible_direct_proof(evidence):
-                valid_instruction_ids.update(instructions)
-            elif has_alias and has_canonical:
-                incompatible_instruction_ids.update(instructions)
-            if (
-                evidence["handoff_status"]
-                == "local_target_outside_rq_annotation_domain"
-            ):
-                outside_instruction_ids.update(instructions)
-    valid_instruction_ids &= repeat_ids
-    incompatible_instruction_ids &= repeat_ids
-    outside_instruction_ids &= repeat_ids
-    otherwise_unresolved = repeat_ids - (
-        valid_instruction_ids
-        | incompatible_instruction_ids
-        | outside_instruction_ids
-    )
+    repeat_census = _repeat_coverage_census(documents)
     component_raw_cardinality: Counter[str] = Counter()
     component_dispositions: Counter[str] = Counter()
     raw_cross_category = 0
@@ -2101,22 +2458,13 @@ def _pilot_census(documents: Sequence[NormalizedDocument]) -> dict[str, Any]:
             "source_remuneration_component"
         ],
         "aggregate_anchor_count": aggregate_total,
-        "repeat_occurrence_count": len(repeat_ids),
+        **repeat_census,
         "local_evidence_row_count": sum(
             len(value.evidence_rows) for value in documents
         ),
         "local_evidence_shape_counts": dict(
             sorted(evidence_shape_counts.items())
         ),
-        "valid_direct_proof_instruction_count": len(valid_instruction_ids),
-        "outside_domain_instruction_count": len(outside_instruction_ids),
-        "incompatible_proof_instruction_count": len(
-            incompatible_instruction_ids
-        ),
-        "valid_and_incompatible_instruction_overlap_count": len(
-            valid_instruction_ids & incompatible_instruction_ids
-        ),
-        "otherwise_unresolved_instruction_count": len(otherwise_unresolved),
         "serialized_component_parent_cardinality": {
             key: component_raw_cardinality[key]
             for key in ("zero", "one", "multiple")
@@ -2267,6 +2615,10 @@ def _build_bundle(
                 }
             )
     full_outside_rows = _outside_repeat_rows(documents)
+    full_aggregate_relation_rows = _noncatalog_aggregate_relation_rows(
+        documents
+    )
+    full_repeat_census = _repeat_coverage_census(documents)
     raw_cardinality = Counter()
     disposition_counts = Counter()
     invalid_parent_refs = 0
@@ -2312,6 +2664,22 @@ def _build_bundle(
             "outside_domain_repeat_shape_domain_sha256": _domain_sha(
                 full_outside_rows
             ),
+            "noncatalog_aggregate_relation_shape_rows": (
+                full_aggregate_relation_rows
+            ),
+            "noncatalog_aggregate_relation_shape_count": len(
+                full_aggregate_relation_rows
+            ),
+            "noncatalog_aggregate_relation_shape_keyset_sha256": _keyset_sha(
+                [
+                    row["noncatalog_aggregate_relation_disposition_id"]
+                    for row in full_aggregate_relation_rows
+                ]
+            ),
+            "noncatalog_aggregate_relation_shape_domain_sha256": _domain_sha(
+                full_aggregate_relation_rows
+            ),
+            "repeat_coverage_census": full_repeat_census,
             "component_parent_shape_rows": full_component_shapes,
             "component_parent_shape_count": len(full_component_shapes),
             "component_parent_shape_keyset_sha256": _keyset_sha(
@@ -2359,12 +2727,20 @@ def _build_bundle(
         },
     )
 
-    proof_defects = _proof_defect_rows(documents)
+    proof_adjudications = _proof_adjudication_rows(documents)
     doc036_defects = _doc036_defect_rows(documents)
+    proof_seal_defects = [
+        row
+        for row in proof_adjudications
+        if row["disposition"] == "predecessor_seal_defect"
+    ]
+    proof_law_gaps = [
+        row for row in proof_adjudications if row["law_gap_admitted"]
+    ]
     predecessor_artifact = _artifact(
         "amendment_12_rq_catalog_predecessor_defect_adjudication.v1",
         "a12-rq-predecessor-adjudication:",
-        "amendment_12_predecessor_seal_defect_sweep_nonauthority",
+        "amendment_12_predecessor_adjudication_sweep_nonauthority",
         {
             "tier": 1,
             "source_corpus_identity": source_identity,
@@ -2373,16 +2749,38 @@ def _build_bundle(
             "doc036_aggregate_component_slot_domain_sha256": _domain_sha(
                 doc036_defects
             ),
-            "defective_populated_local_proof_rows": proof_defects,
-            "defective_populated_local_proof_count": len(proof_defects),
-            "defective_populated_local_proof_keyset_sha256": _keyset_sha(
-                [row["source_local_evidence_id"] for row in proof_defects]
+            "populated_local_proof_adjudication_rows": proof_adjudications,
+            "populated_local_proof_adjudication_count": len(
+                proof_adjudications
             ),
-            "defective_populated_local_proof_domain_sha256": _domain_sha(
-                proof_defects
+            "populated_local_proof_adjudication_keyset_sha256": _keyset_sha(
+                [
+                    row["source_local_evidence_id"]
+                    for row in proof_adjudications
+                ]
             ),
-            "defect_category_counts": {
-                key: sum(row["defect_flags"][key] for row in proof_defects)
+            "populated_local_proof_adjudication_domain_sha256": _domain_sha(
+                proof_adjudications
+            ),
+            "populated_local_proof_seal_defect_count": len(proof_seal_defects),
+            "populated_local_proof_law_gap_count": len(proof_law_gaps),
+            "source_flag_counts": {
+                key: sum(
+                    row["defect_flags"][key] for row in proof_adjudications
+                )
+                for key in (
+                    "touches_noncatalog_aggregate_endpoint",
+                    "occurrence_derived_domain_crossing",
+                    "corrected_catalog_domain_crossing",
+                    "raw_node_domain_crossing",
+                    "context_remuneration_mix",
+                    "head_spouse_mix",
+                )
+            },
+            "seal_defect_flag_counts": {
+                key: sum(
+                    row["defect_flags"][key] for row in proof_seal_defects
+                )
                 for key in (
                     "touches_noncatalog_aggregate_endpoint",
                     "occurrence_derived_domain_crossing",
@@ -2393,17 +2791,21 @@ def _build_bundle(
                 )
             },
             "seal_defect_disposition_count": len(doc036_defects)
-            + len(proof_defects),
-            "law_gap_disposition_count": 0,
+            + len(proof_seal_defects),
+            "law_gap_disposition_count": len(proof_law_gaps),
+            "third_arm_law_gap_repair_count": len(proof_law_gaps),
             "tier_2_precondition": (
-                "all_50_rows_readjudicated_and_resealed_before_certification"
+                "all_37_seal_defects_resealed_and_amendment_ratified_before_"
+                "certification"
             ),
             "adjudication_rule": (
-                "incompatible_predecessor_endpoint_or_node_domain_claims_"
-                "remain_seal_defects_and_cannot_create_catalog_law"
+                "aggregate_only_complete_in_domain_relations_use_third_arm_"
+                "while_incompatible_claims_remain_seal_defects"
             ),
             "nonauthority_statement": _nonauthority_statement(),
-            "status": "pass_adjudication_with_predecessor_reseal_required",
+            "status": (
+                "pass_adjudication_with_37_predecessor_reseals_required"
+            ),
         },
     )
 
@@ -2420,7 +2822,7 @@ def _build_bundle(
             "source_corpus_identity": source_identity,
             "corpus_sweep_artifact_id": sweep_artifact["artifact_id"],
             "predecessor_artifact_id": predecessor_artifact["artifact_id"],
-            "predecessor_defect_count": 50,
+            "predecessor_seal_defect_count": 37,
             "predecessor_reseal_required": True,
             "component_class_admission_sweep_rows": (
                 component_class_admission_rows
@@ -2554,6 +2956,9 @@ def _build_bundle(
     )
 
     pilot_outside_rows = _outside_repeat_rows(pilot_documents)
+    pilot_aggregate_relation_rows = _noncatalog_aggregate_relation_rows(
+        pilot_documents
+    )
     repeat_artifact = _artifact(
         "amendment_12_rq_catalog_outside_domain_repeat_pilot.v1",
         "a12-rq-repeat-pilot:",
@@ -2573,14 +2978,14 @@ def _build_bundle(
             "outside_domain_repeat_disposition_domain_sha256": _domain_sha(
                 pilot_outside_rows
             ),
-            "relation_counts": dict(
+            "outside_domain_relation_counts": dict(
                 sorted(
                     Counter(
                         row["relation"] for row in pilot_outside_rows
                     ).items()
                 )
             ),
-            "document_counts": {
+            "outside_domain_document_counts": {
                 str(key): value
                 for key, value in sorted(
                     Counter(
@@ -2589,8 +2994,50 @@ def _build_bundle(
                     ).items()
                 )
             },
+            "noncatalog_aggregate_relation_disposition_rows": (
+                pilot_aggregate_relation_rows
+            ),
+            "noncatalog_aggregate_relation_disposition_count": len(
+                pilot_aggregate_relation_rows
+            ),
+            "noncatalog_aggregate_relation_disposition_keyset_sha256": (
+                _keyset_sha(
+                    [
+                        row["noncatalog_aggregate_relation_disposition_id"]
+                        for row in pilot_aggregate_relation_rows
+                    ]
+                )
+            ),
+            "noncatalog_aggregate_relation_disposition_domain_sha256": (
+                _domain_sha(pilot_aggregate_relation_rows)
+            ),
+            "aggregate_relation_counts": dict(
+                sorted(
+                    Counter(
+                        row["relation"]
+                        for row in pilot_aggregate_relation_rows
+                    ).items()
+                )
+            ),
+            "aggregate_document_counts": {
+                str(key): value
+                for key, value in sorted(
+                    Counter(
+                        row["document_source_position"]
+                        for row in pilot_aggregate_relation_rows
+                    ).items()
+                )
+            },
+            "aggregate_handoff_status_counts": dict(
+                sorted(
+                    Counter(
+                        row["handoff_status"]
+                        for row in pilot_aggregate_relation_rows
+                    ).items()
+                )
+            ),
             "nonauthority_statement": _nonauthority_statement(),
-            "status": "pass_outside_domain_repeat_law_pilot_nonauthority",
+            "status": "pass_three_arm_repeat_law_pilot_nonauthority",
         },
     )
 
@@ -2707,7 +3154,7 @@ def _build_bundle(
             ),
             "pilot_census": pilot_census,
             "role_law_status": "pass",
-            "outside_domain_repeat_law_status": "pass",
+            "three_arm_repeat_law_status": "pass_law_shape_only",
             "component_parent_law_status": "pass",
             "predecessor_input_status": "reseal_required_before_tier_2",
             "overall_repeat_catalog_coverage_status": (
@@ -2744,7 +3191,7 @@ ARTIFACT_SPECS = {
     "predecessor": (
         "amendment_12_rq_catalog_predecessor_defect_adjudication.v1",
         "a12-rq-predecessor-adjudication:",
-        "amendment_12_predecessor_seal_defect_sweep_nonauthority",
+        "amendment_12_predecessor_adjudication_sweep_nonauthority",
     ),
     "role": (
         "amendment_12_rq_catalog_role_assignment_pilot.v1",
@@ -2810,6 +3257,11 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "outside_domain_repeat_shape_rows",
             "outside_domain_repeat_shape_count",
             "outside_domain_repeat_shape_domain_sha256",
+            "noncatalog_aggregate_relation_shape_rows",
+            "noncatalog_aggregate_relation_shape_count",
+            "noncatalog_aggregate_relation_shape_keyset_sha256",
+            "noncatalog_aggregate_relation_shape_domain_sha256",
+            "repeat_coverage_census",
             "component_parent_shape_rows",
             "component_parent_shape_count",
             "component_parent_shape_keyset_sha256",
@@ -2835,7 +3287,7 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "source_corpus_identity",
             "corpus_sweep_artifact_id",
             "predecessor_artifact_id",
-            "predecessor_defect_count",
+            "predecessor_seal_defect_count",
             "predecessor_reseal_required",
             "component_class_admission_sweep_rows",
             "component_class_admission_sweep_count",
@@ -2864,13 +3316,17 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "doc036_aggregate_component_slot_rows",
             "doc036_aggregate_component_slot_count",
             "doc036_aggregate_component_slot_domain_sha256",
-            "defective_populated_local_proof_rows",
-            "defective_populated_local_proof_count",
-            "defective_populated_local_proof_keyset_sha256",
-            "defective_populated_local_proof_domain_sha256",
-            "defect_category_counts",
+            "populated_local_proof_adjudication_rows",
+            "populated_local_proof_adjudication_count",
+            "populated_local_proof_adjudication_keyset_sha256",
+            "populated_local_proof_adjudication_domain_sha256",
+            "populated_local_proof_seal_defect_count",
+            "populated_local_proof_law_gap_count",
+            "source_flag_counts",
+            "seal_defect_flag_counts",
             "seal_defect_disposition_count",
             "law_gap_disposition_count",
+            "third_arm_law_gap_repair_count",
             "tier_2_precondition",
             "adjudication_rule",
             "nonauthority_statement",
@@ -2907,8 +3363,15 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "outside_domain_repeat_disposition_count",
             "outside_domain_repeat_disposition_keyset_sha256",
             "outside_domain_repeat_disposition_domain_sha256",
-            "relation_counts",
-            "document_counts",
+            "outside_domain_relation_counts",
+            "outside_domain_document_counts",
+            "noncatalog_aggregate_relation_disposition_rows",
+            "noncatalog_aggregate_relation_disposition_count",
+            "noncatalog_aggregate_relation_disposition_keyset_sha256",
+            "noncatalog_aggregate_relation_disposition_domain_sha256",
+            "aggregate_relation_counts",
+            "aggregate_document_counts",
+            "aggregate_handoff_status_counts",
             "nonauthority_statement",
             "status",
         }
@@ -2951,7 +3414,7 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "artifact_identity_domain_sha256",
             "pilot_census",
             "role_law_status",
-            "outside_domain_repeat_law_status",
+            "three_arm_repeat_law_status",
             "component_parent_law_status",
             "predecessor_input_status",
             "overall_repeat_catalog_coverage_status",
@@ -3024,6 +3487,39 @@ OUTSIDE_REPEAT_ROW_KEYS = frozenset(
         "terminal_disposition",
         "alias_anchor_occurrence_id",
         "referenced_anchor_occurrence_id",
+        "alias_admitted",
+        "occurrence_equivalence_claimed",
+        "universal_repeat_coverage_arm_satisfied",
+        "status",
+    }
+)
+NONCATALOG_AGGREGATE_RELATION_ROW_KEYS = frozenset(
+    {
+        "noncatalog_aggregate_relation_disposition_id",
+        "document_source_position",
+        "source_document_id",
+        "source_local_evidence_id",
+        "source_instruction_occurrence_ids",
+        "source_instruction_occurrence_kinds",
+        "source_instruction_matched_texts",
+        "source_instruction_matched_utf8_sha256s",
+        "source_instruction_page_numbers",
+        "source_instruction_utf8_byte_starts",
+        "source_instruction_utf8_byte_ends",
+        "relation",
+        "handoff_status",
+        "evidence_occurrence_ids",
+        "source_alias_anchor_occurrence_ids",
+        "source_canonical_anchor_occurrence_ids",
+        "endpoint_occurrence_kinds",
+        "endpoint_raw_node_domains",
+        "endpoint_classifications",
+        "endpoint_matched_texts",
+        "endpoint_matched_utf8_sha256s",
+        "endpoint_page_numbers",
+        "endpoint_utf8_byte_starts",
+        "endpoint_utf8_byte_ends",
+        "aggregate_relation_disposition",
         "alias_admitted",
         "occurrence_equivalence_claimed",
         "universal_repeat_coverage_arm_satisfied",
@@ -3138,7 +3634,7 @@ DOC036_DEFECT_ROW_KEYS = frozenset(
         "status",
     }
 )
-PROOF_DEFECT_ROW_KEYS = frozenset(
+PROOF_ADJUDICATION_ROW_KEYS = frozenset(
     {
         "predecessor_adjudication_id",
         "document_source_position",
@@ -3153,6 +3649,7 @@ PROOF_DEFECT_ROW_KEYS = frozenset(
         "endpoint_raw_node_domains",
         "endpoint_classifications",
         "defect_flags",
+        "third_arm_eligible",
         "disposition",
         "law_gap_admitted",
         "alias_admitted",
@@ -3492,6 +3989,181 @@ def _validate_outside_repeat_row(row: Mapping[str, Any], label: str) -> None:
                 row["source_local_evidence_id"],
                 row["relation"],
                 unresolved,
+            ],
+        ),
+        f"{label}: disposition ID",
+    )
+
+
+def _validate_noncatalog_aggregate_relation_row(
+    row: Mapping[str, Any], label: str
+) -> None:
+    _require_exact_keys(row, NONCATALOG_AGGREGATE_RELATION_ROW_KEYS, label)
+    _require_int(row["document_source_position"], f"{label}: position")
+    _require_string(row["source_document_id"], f"{label}: source document")
+    _require_string(
+        row["source_local_evidence_id"], f"{label}: local evidence"
+    )
+    instructions = row["source_instruction_occurrence_ids"]
+    instruction_kinds = row["source_instruction_occurrence_kinds"]
+    aliases = row["source_alias_anchor_occurrence_ids"]
+    canonicals = row["source_canonical_anchor_occurrence_ids"]
+    endpoints = [*aliases, *canonicals]
+    _require(
+        isinstance(instructions, list)
+        and len(instructions) == 1
+        and instruction_kinds == ["repeat_or_alias_instruction"],
+        f"{label}: singleton repeat instruction",
+    )
+    _require(
+        isinstance(aliases, list)
+        and aliases
+        and isinstance(canonicals, list)
+        and canonicals,
+        f"{label}: populated endpoint sides",
+    )
+    _require(
+        len(endpoints) == len(set(endpoints))
+        and not set(aliases) & set(canonicals)
+        and not set(instructions) & set(endpoints),
+        f"{label}: endpoint or instruction disjointness",
+    )
+    evidence_ids = row["evidence_occurrence_ids"]
+    _require(
+        isinstance(evidence_ids, list)
+        and len(evidence_ids) == len(endpoints) + 1
+        and len(evidence_ids) == len(set(evidence_ids))
+        and set(evidence_ids) == {*endpoints, *instructions},
+        f"{label}: exact evidence cover",
+    )
+    _require(row["relation"] in ALLOWED_REPEAT_RELATIONS, f"{label}: relation")
+    _require(
+        row["handoff_status"] in COMPLETE_LOCAL_EVIDENCE_STATUSES,
+        f"{label}: complete handoff",
+    )
+    endpoint_kinds = row["endpoint_occurrence_kinds"]
+    endpoint_domains = row["endpoint_raw_node_domains"]
+    endpoint_classifications = row["endpoint_classifications"]
+    endpoint_projection_arrays = (
+        endpoint_kinds,
+        endpoint_domains,
+        endpoint_classifications,
+        row["endpoint_matched_texts"],
+        row["endpoint_matched_utf8_sha256s"],
+        row["endpoint_page_numbers"],
+        row["endpoint_utf8_byte_starts"],
+        row["endpoint_utf8_byte_ends"],
+    )
+    _require(
+        all(
+            isinstance(values, list) and len(values) == len(endpoints)
+            for values in endpoint_projection_arrays
+        ),
+        f"{label}: endpoint projections",
+    )
+    _require(
+        all(kind in AGGREGATE_OCCURRENCE_KINDS for kind in endpoint_kinds)
+        and all(domain == "aggregate" for domain in endpoint_domains)
+        and all(
+            classification in AGGREGATE_KIND_TO_CLASSIFICATIONS[kind]
+            for kind, classification in zip(
+                endpoint_kinds, endpoint_classifications, strict=True
+            )
+        ),
+        f"{label}: aggregate endpoint predicate",
+    )
+    byte_projection_groups = (
+        (
+            row["source_instruction_matched_texts"],
+            row["source_instruction_matched_utf8_sha256s"],
+            row["source_instruction_page_numbers"],
+            row["source_instruction_utf8_byte_starts"],
+            row["source_instruction_utf8_byte_ends"],
+            1,
+        ),
+        (
+            row["endpoint_matched_texts"],
+            row["endpoint_matched_utf8_sha256s"],
+            row["endpoint_page_numbers"],
+            row["endpoint_utf8_byte_starts"],
+            row["endpoint_utf8_byte_ends"],
+            len(endpoints),
+        ),
+    )
+    for (
+        texts,
+        digests,
+        pages,
+        starts,
+        ends,
+        expected_count,
+    ) in byte_projection_groups:
+        _require(
+            all(
+                isinstance(values, list) and len(values) == expected_count
+                for values in (texts, digests, pages, starts, ends)
+            ),
+            f"{label}: exact-byte projection lengths",
+        )
+        for text, digest, page, start, end in zip(
+            texts, digests, pages, starts, ends, strict=True
+        ):
+            _require_string(text, f"{label}: matched text")
+            _require(
+                digest == _sha256(text.encode("utf-8")),
+                f"{label}: matched text digest",
+            )
+            _require(
+                _require_int(page, f"{label}: page") > 0
+                and 0 <= _require_int(start, f"{label}: byte start") < end
+                and _require_int(end, f"{label}: byte end") - start
+                == len(text.encode("utf-8")),
+                f"{label}: exact byte span",
+            )
+    _require(
+        row["aggregate_relation_disposition"]
+        == "noncatalog_aggregate_or_repeated_instance_relation_no_alias",
+        f"{label}: disposition",
+    )
+    _require(row["alias_admitted"] is False, f"{label}: alias admitted")
+    _require(
+        row["occurrence_equivalence_claimed"] is False,
+        f"{label}: occurrence equivalence claimed",
+    )
+    _require(
+        row["universal_repeat_coverage_arm_satisfied"] is True,
+        f"{label}: universal arm",
+    )
+    _require(
+        row["status"] == "aggregate_relation_nonauthority_disposition",
+        f"{label}: status",
+    )
+    _require(
+        row["noncatalog_aggregate_relation_disposition_id"]
+        == _row_id(
+            "a12-noncatalog-aggregate-relation-disposition:",
+            [
+                row["source_document_id"],
+                row["source_local_evidence_id"],
+                instructions,
+                row["relation"],
+                row["handoff_status"],
+                aliases,
+                canonicals,
+                evidence_ids,
+                row["endpoint_occurrence_kinds"],
+                row["endpoint_raw_node_domains"],
+                row["endpoint_classifications"],
+                row["source_instruction_matched_texts"],
+                row["source_instruction_matched_utf8_sha256s"],
+                row["source_instruction_page_numbers"],
+                row["source_instruction_utf8_byte_starts"],
+                row["source_instruction_utf8_byte_ends"],
+                row["endpoint_matched_texts"],
+                row["endpoint_matched_utf8_sha256s"],
+                row["endpoint_page_numbers"],
+                row["endpoint_utf8_byte_starts"],
+                row["endpoint_utf8_byte_ends"],
             ],
         ),
         f"{label}: disposition ID",
@@ -4079,9 +4751,9 @@ def _validate_doc036_defect_row(row: Mapping[str, Any]) -> None:
     )
 
 
-def _validate_proof_defect_row(row: Mapping[str, Any]) -> None:
-    label = "proof defect row"
-    _require_exact_keys(row, PROOF_DEFECT_ROW_KEYS, label)
+def _validate_proof_adjudication_row(row: Mapping[str, Any]) -> None:
+    label = "proof adjudication row"
+    _require_exact_keys(row, PROOF_ADJUDICATION_ROW_KEYS, label)
     _require(
         row["relation"] in ALLOWED_LOCAL_EVIDENCE_RELATIONS,
         f"{label}: relation",
@@ -4128,23 +4800,81 @@ def _validate_proof_defect_row(row: Mapping[str, Any]) -> None:
     _require_exact_keys(flags, DEFECT_FLAG_KEYS, f"{label}: defect flags")
     _require(flags == expected_flags, f"{label}: defect flag equations")
     _require(any(flags.values()), f"{label}: no defect")
-    _require(
-        row["disposition"] == "predecessor_seal_defect",
-        f"{label}: disposition",
+    aggregate_only_flags = {
+        "touches_noncatalog_aggregate_endpoint": True,
+        "occurrence_derived_domain_crossing": False,
+        "corrected_catalog_domain_crossing": False,
+        "raw_node_domain_crossing": False,
+        "context_remuneration_mix": False,
+        "head_spouse_mix": False,
+    }
+    expected_third_arm = bool(
+        flags == aggregate_only_flags
+        and row["relation"] in ALLOWED_REPEAT_RELATIONS
+        and all(kind in AGGREGATE_OCCURRENCE_KINDS for kind in endpoint_kinds)
+        and all(domain == "aggregate" for domain in raw_domains)
+        and all(
+            classification in AGGREGATE_KIND_TO_CLASSIFICATIONS[kind]
+            for kind, classification in zip(
+                endpoint_kinds, classifications, strict=True
+            )
+        )
     )
-    _require(row["law_gap_admitted"] is False, f"{label}: law gap admitted")
+    _require(
+        row["third_arm_eligible"] is expected_third_arm,
+        f"{label}: third-arm predicate",
+    )
     _require(row["alias_admitted"] is False, f"{label}: alias admitted")
-    _require(
-        row["required_action"]
-        == "readjudicate_source_row_and_reseal_before_tier_2",
-        f"{label}: required action",
-    )
-    _require(
-        row["adjudicative_rationale"]
-        == "incompatible_endpoint_claim_cannot_be_admitted_as_alias_law_reseal_required",
-        f"{label}: rationale",
-    )
-    _require(row["status"] == "blocked_predecessor_row", f"{label}: status")
+    if expected_third_arm:
+        _require(
+            row["disposition"]
+            == "predecessor_law_gap_repaired_by_noncatalog_aggregate_"
+            "relation_arm",
+            f"{label}: law-gap disposition",
+        )
+        _require(
+            row["law_gap_admitted"] is True,
+            f"{label}: law gap not admitted",
+        )
+        _require(
+            row["required_action"]
+            == "ratify_noncatalog_aggregate_relation_arm_before_tier_2",
+            f"{label}: law-gap required action",
+        )
+        _require(
+            row["adjudicative_rationale"]
+            == "authenticated_aggregate_relation_is_honest_nonalias_"
+            "law_gap",
+            f"{label}: law-gap rationale",
+        )
+        _require(
+            row["status"] == "blocked_pending_third_arm_ratification",
+            f"{label}: law-gap status",
+        )
+    else:
+        _require(
+            row["disposition"] == "predecessor_seal_defect",
+            f"{label}: seal-defect disposition",
+        )
+        _require(
+            row["law_gap_admitted"] is False,
+            f"{label}: seal defect admits law gap",
+        )
+        _require(
+            row["required_action"]
+            == "readjudicate_source_row_and_reseal_before_tier_2",
+            f"{label}: seal-defect required action",
+        )
+        _require(
+            row["adjudicative_rationale"]
+            == "incompatible_endpoint_claim_cannot_be_admitted_as_alias_"
+            "law_reseal_required",
+            f"{label}: seal-defect rationale",
+        )
+        _require(
+            row["status"] == "blocked_predecessor_row",
+            f"{label}: seal-defect status",
+        )
     _require(
         row["predecessor_adjudication_id"]
         == _row_id(
@@ -4269,8 +4999,11 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "local_evidence_row_count": 418,
         "valid_direct_proof_instruction_count": 106,
         "outside_domain_instruction_count": 34,
-        "incompatible_proof_instruction_count": 9,
+        "noncatalog_aggregate_relation_instruction_count": 1,
+        "incompatible_proof_instruction_count": 8,
         "valid_and_incompatible_instruction_overlap_count": 1,
+        "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
+        "lawful_repeat_coverage_none_arm_instruction_count": 235,
         "otherwise_unresolved_instruction_count": 228,
         "raw_cross_category_multi_parent_count": 86,
         "eligible_cross_category_multi_parent_count": 86,
@@ -4368,6 +5101,63 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         sweep["outside_domain_repeat_shape_domain_sha256"]
         == PINNED_SWEEP_DOMAIN_SHA256["outside_domain_repeat_shape"],
         "repeat sweep pinned source projection drift",
+    )
+    sweep_aggregate_rows = _validate_row_digests(
+        sweep,
+        "noncatalog_aggregate_relation_shape_rows",
+        "noncatalog_aggregate_relation_shape_count",
+        "noncatalog_aggregate_relation_shape_domain_sha256",
+    )
+    _require(len(sweep_aggregate_rows) == 13, "aggregate relation sweep drift")
+    for row in sweep_aggregate_rows:
+        _validate_noncatalog_aggregate_relation_row(
+            row, "aggregate relation sweep row"
+        )
+    _require(
+        sweep["noncatalog_aggregate_relation_shape_keyset_sha256"]
+        == _keyset_sha(
+            [
+                row["noncatalog_aggregate_relation_disposition_id"]
+                for row in sweep_aggregate_rows
+            ]
+        ),
+        "aggregate relation sweep keyset drift",
+    )
+    _require(
+        sweep["noncatalog_aggregate_relation_shape_keyset_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "noncatalog_aggregate_relation_shape_keyset"
+        ]
+        and sweep["noncatalog_aggregate_relation_shape_domain_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["noncatalog_aggregate_relation_shape"],
+        "aggregate relation sweep pinned source projection drift",
+    )
+    _require(
+        sweep["repeat_coverage_census"]
+        == {
+            "repeat_occurrence_count": 2_460,
+            "valid_direct_proof_instruction_count": 257,
+            "outside_domain_instruction_count": 34,
+            "noncatalog_aggregate_relation_instruction_count": 13,
+            "incompatible_proof_instruction_count": 25,
+            "valid_and_incompatible_instruction_overlap_count": 1,
+            "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
+            "lawful_repeat_coverage_none_arm_instruction_count": 2_156,
+            "otherwise_unresolved_instruction_count": 2_132,
+        },
+        "corpus repeat coverage census drift",
+    )
+    aggregate_instruction_ids = {
+        row["source_instruction_occurrence_ids"][0]
+        for row in sweep_aggregate_rows
+    }
+    outside_instruction_ids = {
+        row["source_instruction_occurrence_id"] for row in sweep_repeat_rows
+    }
+    _require(
+        len(aggregate_instruction_ids) == len(sweep_aggregate_rows)
+        and not aggregate_instruction_ids & outside_instruction_ids,
+        "aggregate and outside repeat arm overlap",
     )
 
     parent_source_witness_rows = _validate_row_digests(
@@ -4718,48 +5508,76 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "doc036_aggregate_component_slot_count",
         "doc036_aggregate_component_slot_domain_sha256",
     )
-    proof_defects = _validate_row_digests(
+    proof_adjudications = _validate_row_digests(
         predecessor,
-        "defective_populated_local_proof_rows",
-        "defective_populated_local_proof_count",
-        "defective_populated_local_proof_domain_sha256",
+        "populated_local_proof_adjudication_rows",
+        "populated_local_proof_adjudication_count",
+        "populated_local_proof_adjudication_domain_sha256",
     )
     _require(len(doc036_rows) == 8, "doc036 defect count drift")
-    _require(len(proof_defects) == 42, "proof defect count drift")
+    _require(len(proof_adjudications) == 42, "proof adjudication count drift")
     for row in doc036_rows:
         _validate_doc036_defect_row(row)
-    for row in proof_defects:
-        _validate_proof_defect_row(row)
+    for row in proof_adjudications:
+        _validate_proof_adjudication_row(row)
     _require(
-        predecessor["defective_populated_local_proof_keyset_sha256"]
+        predecessor["populated_local_proof_adjudication_keyset_sha256"]
         == _keyset_sha(
-            [row["source_local_evidence_id"] for row in proof_defects]
+            [row["source_local_evidence_id"] for row in proof_adjudications]
         ),
-        "proof defect keyset drift",
+        "proof adjudication keyset drift",
+    )
+    proof_seal_defects = [
+        row
+        for row in proof_adjudications
+        if row["disposition"] == "predecessor_seal_defect"
+    ]
+    proof_law_gaps = [
+        row for row in proof_adjudications if row["law_gap_admitted"]
+    ]
+    _require(
+        predecessor["populated_local_proof_seal_defect_count"]
+        == len(proof_seal_defects)
+        == 29,
+        "proof seal-defect count drift",
     )
     _require(
-        predecessor["law_gap_disposition_count"] == 0,
-        "predecessor law gap was admitted",
+        predecessor["populated_local_proof_law_gap_count"]
+        == len(proof_law_gaps)
+        == 13,
+        "proof law-gap count drift",
     )
     _require(
-        predecessor["seal_defect_disposition_count"] == 50,
+        predecessor["seal_defect_disposition_count"] == 37,
         "predecessor seal defect count drift",
     )
     _require(
+        predecessor["law_gap_disposition_count"]
+        == predecessor["third_arm_law_gap_repair_count"]
+        == 13,
+        "predecessor law-gap count drift",
+    )
+    _require(
+        predecessor["tier_2_precondition"]
+        == "all_37_seal_defects_resealed_and_amendment_ratified_before_"
+        "certification",
+        "predecessor tier-2 precondition drift",
+    )
+    _require(
         predecessor["adjudication_rule"]
-        == "incompatible_predecessor_endpoint_or_node_domain_claims_"
-        "remain_seal_defects_and_cannot_create_catalog_law",
+        == "aggregate_only_complete_in_domain_relations_use_third_arm_"
+        "while_incompatible_claims_remain_seal_defects",
         "predecessor adjudication rule drift",
     )
     _require(
         all(
             row["disposition"] == "predecessor_seal_defect"
-            for row in [*doc036_rows, *proof_defects]
+            for row in [*doc036_rows, *proof_seal_defects]
         ),
-        "predecessor disposition drift",
+        "predecessor seal-defect disposition drift",
     )
     _require(
-        predecessor["defect_category_counts"]
+        predecessor["source_flag_counts"]
         == {
             "touches_noncatalog_aggregate_endpoint": 28,
             "occurrence_derived_domain_crossing": 19,
@@ -4768,7 +5586,24 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
             "context_remuneration_mix": 15,
             "head_spouse_mix": 4,
         },
-        "predecessor category census drift",
+        "predecessor source-flag census drift",
+    )
+    _require(
+        predecessor["seal_defect_flag_counts"]
+        == {
+            "touches_noncatalog_aggregate_endpoint": 15,
+            "occurrence_derived_domain_crossing": 19,
+            "corrected_catalog_domain_crossing": 19,
+            "raw_node_domain_crossing": 18,
+            "context_remuneration_mix": 15,
+            "head_spouse_mix": 4,
+        },
+        "predecessor seal-defect flag census drift",
+    )
+    _require(
+        {row["source_local_evidence_id"] for row in proof_law_gaps}
+        == {row["source_local_evidence_id"] for row in sweep_aggregate_rows},
+        "third-arm rows do not exact-cover predecessor law gaps",
     )
 
     role = bundle["role"]
@@ -4857,7 +5692,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     )
     _require(len(repeat_rows) == 34, "pilot repeat count drift")
     _require(
-        repeat["relation_counts"]
+        repeat["outside_domain_relation_counts"]
         == {
             "explicit_cross_reference": 17,
             "explicit_repeat_instruction": 17,
@@ -4865,7 +5700,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "repeat relation census drift",
     )
     _require(
-        repeat["document_counts"]
+        repeat["outside_domain_document_counts"]
         == {"14": 2, "40": 22, "56": 5, "58": 4, "66": 1},
         "repeat document census drift",
     )
@@ -4884,6 +5719,52 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     _require(
         repeat_rows == sweep_repeat_rows,
         "pilot outside-domain repeat rows differ from exhaustive sweep",
+    )
+    pilot_aggregate_rows = _validate_row_digests(
+        repeat,
+        "noncatalog_aggregate_relation_disposition_rows",
+        "noncatalog_aggregate_relation_disposition_count",
+        "noncatalog_aggregate_relation_disposition_domain_sha256",
+    )
+    _require(len(pilot_aggregate_rows) == 1, "pilot aggregate relation drift")
+    for row in pilot_aggregate_rows:
+        _validate_noncatalog_aggregate_relation_row(
+            row, "aggregate relation pilot row"
+        )
+    _require(
+        repeat["noncatalog_aggregate_relation_disposition_keyset_sha256"]
+        == _keyset_sha(
+            [
+                row["noncatalog_aggregate_relation_disposition_id"]
+                for row in pilot_aggregate_rows
+            ]
+        ),
+        "pilot aggregate relation keyset drift",
+    )
+    _require(
+        repeat["aggregate_relation_counts"]
+        == {"explicit_repeat_instruction": 1}
+        and repeat["aggregate_document_counts"] == {"58": 1}
+        and repeat["aggregate_handoff_status_counts"]
+        == {"local_resolved_cross_reference_for_global_assembly": 1},
+        "pilot aggregate relation census drift",
+    )
+    expected_pilot_aggregate_rows = [
+        row
+        for row in sweep_aggregate_rows
+        if row["document_source_position"] in PILOT_POSITIONS
+    ]
+    _require(
+        pilot_aggregate_rows == expected_pilot_aggregate_rows,
+        "pilot aggregate relations differ from exhaustive sweep",
+    )
+    _require(
+        not {
+            row["source_instruction_occurrence_ids"][0]
+            for row in pilot_aggregate_rows
+        }
+        & {row["source_instruction_occurrence_id"] for row in repeat_rows},
+        "pilot repeat claimed by multiple disposition arms",
     )
 
     component = bundle["component"]
@@ -5004,9 +5885,11 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
             "pass_derived_class_complement_sweeps_nonauthority_"
             "predecessor_reseal_required"
         ),
-        "predecessor": "pass_adjudication_with_predecessor_reseal_required",
+        "predecessor": (
+            "pass_adjudication_with_37_predecessor_reseals_required"
+        ),
         "role": "pass_role_assignment_law_pilot_nonauthority",
-        "repeat": "pass_outside_domain_repeat_law_pilot_nonauthority",
+        "repeat": "pass_three_arm_repeat_law_pilot_nonauthority",
         "component": "pass_component_parent_law_pilot_nonauthority",
         "gate": "pass_law_shapes_only_nonauthority",
     }
@@ -5031,7 +5914,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     _require(
         derived["corpus_sweep_artifact_id"] == sweep["artifact_id"]
         and derived["predecessor_artifact_id"] == predecessor["artifact_id"]
-        and derived["predecessor_defect_count"] == 50
+        and derived["predecessor_seal_defect_count"] == 37
         and derived["predecessor_reseal_required"] is True,
         "derived sweep predecessor linkage drift",
     )
@@ -5072,7 +5955,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     )
     _require(gate["role_law_status"] == "pass", "gate role status")
     _require(
-        gate["outside_domain_repeat_law_status"] == "pass",
+        gate["three_arm_repeat_law_status"] == "pass_law_shape_only",
         "gate repeat status",
     )
     _require(
@@ -5209,6 +6092,37 @@ def _repin_mutated_bundle(
                     row["unresolved_target_reference"],
                 ],
             )
+    for artifact_key, row_key in (
+        ("sweeps", "noncatalog_aggregate_relation_shape_rows"),
+        ("repeat", "noncatalog_aggregate_relation_disposition_rows"),
+    ):
+        for row in bundle[artifact_key][row_key]:
+            row["noncatalog_aggregate_relation_disposition_id"] = _row_id(
+                "a12-noncatalog-aggregate-relation-disposition:",
+                [
+                    row["source_document_id"],
+                    row["source_local_evidence_id"],
+                    row["source_instruction_occurrence_ids"],
+                    row["relation"],
+                    row["handoff_status"],
+                    row["source_alias_anchor_occurrence_ids"],
+                    row["source_canonical_anchor_occurrence_ids"],
+                    row["evidence_occurrence_ids"],
+                    row["endpoint_occurrence_kinds"],
+                    row["endpoint_raw_node_domains"],
+                    row["endpoint_classifications"],
+                    row["source_instruction_matched_texts"],
+                    row["source_instruction_matched_utf8_sha256s"],
+                    row["source_instruction_page_numbers"],
+                    row["source_instruction_utf8_byte_starts"],
+                    row["source_instruction_utf8_byte_ends"],
+                    row["endpoint_matched_texts"],
+                    row["endpoint_matched_utf8_sha256s"],
+                    row["endpoint_page_numbers"],
+                    row["endpoint_utf8_byte_starts"],
+                    row["endpoint_utf8_byte_ends"],
+                ],
+            )
 
     component_row_groups = (
         bundle["sweeps"]["component_parent_shape_rows"],
@@ -5257,7 +6171,9 @@ def _repin_mutated_bundle(
                 row["disposition"],
             ],
         )
-    for row in bundle["predecessor"]["defective_populated_local_proof_rows"]:
+    for row in bundle["predecessor"][
+        "populated_local_proof_adjudication_rows"
+    ]:
         row["predecessor_adjudication_id"] = _row_id(
             "a12-predecessor-local-proof-adjudication:",
             [
@@ -5389,6 +6305,19 @@ def _repin_mutated_bundle(
     sweep["outside_domain_repeat_shape_domain_sha256"] = _domain_sha(
         sweep_repeats
     )
+    sweep_aggregate_rows = sweep["noncatalog_aggregate_relation_shape_rows"]
+    sweep["noncatalog_aggregate_relation_shape_count"] = len(
+        sweep_aggregate_rows
+    )
+    sweep["noncatalog_aggregate_relation_shape_keyset_sha256"] = _keyset_sha(
+        [
+            row["noncatalog_aggregate_relation_disposition_id"]
+            for row in sweep_aggregate_rows
+        ]
+    )
+    sweep["noncatalog_aggregate_relation_shape_domain_sha256"] = _domain_sha(
+        sweep_aggregate_rows
+    )
     component_shapes = sweep["component_parent_shape_rows"]
     sweep["component_parent_shape_count"] = len(component_shapes)
     sweep["component_parent_shape_keyset_sha256"] = _keyset_sha(
@@ -5440,20 +6369,34 @@ def _repin_mutated_bundle(
 
     predecessor = bundle["predecessor"]
     doc036_rows = predecessor["doc036_aggregate_component_slot_rows"]
-    proof_rows = predecessor["defective_populated_local_proof_rows"]
+    proof_rows = predecessor["populated_local_proof_adjudication_rows"]
     predecessor["doc036_aggregate_component_slot_count"] = len(doc036_rows)
     predecessor["doc036_aggregate_component_slot_domain_sha256"] = _domain_sha(
         doc036_rows
     )
-    predecessor["defective_populated_local_proof_count"] = len(proof_rows)
-    predecessor["defective_populated_local_proof_keyset_sha256"] = _keyset_sha(
-        [row["source_local_evidence_id"] for row in proof_rows]
+    predecessor["populated_local_proof_adjudication_count"] = len(proof_rows)
+    predecessor["populated_local_proof_adjudication_keyset_sha256"] = (
+        _keyset_sha([row["source_local_evidence_id"] for row in proof_rows])
     )
-    predecessor["defective_populated_local_proof_domain_sha256"] = _domain_sha(
-        proof_rows
+    predecessor["populated_local_proof_adjudication_domain_sha256"] = (
+        _domain_sha(proof_rows)
     )
-    predecessor["defect_category_counts"] = {
+    proof_seal_defects = [
+        row
+        for row in proof_rows
+        if row["disposition"] == "predecessor_seal_defect"
+    ]
+    proof_law_gaps = [row for row in proof_rows if row["law_gap_admitted"]]
+    predecessor["populated_local_proof_seal_defect_count"] = len(
+        proof_seal_defects
+    )
+    predecessor["populated_local_proof_law_gap_count"] = len(proof_law_gaps)
+    predecessor["source_flag_counts"] = {
         key: sum(row["defect_flags"][key] for row in proof_rows)
+        for key in DEFECT_FLAG_KEYS
+    }
+    predecessor["seal_defect_flag_counts"] = {
+        key: sum(row["defect_flags"][key] for row in proof_seal_defects)
         for key in DEFECT_FLAG_KEYS
     }
     all_predecessor_rows = [*doc036_rows, *proof_rows]
@@ -5462,9 +6405,9 @@ def _repin_mutated_bundle(
         for row in all_predecessor_rows
     )
     predecessor["law_gap_disposition_count"] = sum(
-        row["law_gap_admitted"] or row["disposition"] == "law_gap"
-        for row in all_predecessor_rows
+        row["law_gap_admitted"] for row in all_predecessor_rows
     )
+    predecessor["third_arm_law_gap_repair_count"] = len(proof_law_gaps)
 
     component_class_rows = derived["component_class_admission_sweep_rows"]
     derived["component_class_admission_sweep_count"] = len(
@@ -5555,10 +6498,10 @@ def _repin_mutated_bundle(
     repeat["outside_domain_repeat_disposition_domain_sha256"] = _domain_sha(
         repeat_rows
     )
-    repeat["relation_counts"] = dict(
+    repeat["outside_domain_relation_counts"] = dict(
         sorted(Counter(row["relation"] for row in repeat_rows).items())
     )
-    repeat["document_counts"] = {
+    repeat["outside_domain_document_counts"] = {
         str(key): count
         for key, count in sorted(
             Counter(
@@ -5566,6 +6509,37 @@ def _repin_mutated_bundle(
             ).items()
         )
     }
+    aggregate_rows = repeat["noncatalog_aggregate_relation_disposition_rows"]
+    repeat["noncatalog_aggregate_relation_disposition_count"] = len(
+        aggregate_rows
+    )
+    repeat["noncatalog_aggregate_relation_disposition_keyset_sha256"] = (
+        _keyset_sha(
+            [
+                row["noncatalog_aggregate_relation_disposition_id"]
+                for row in aggregate_rows
+            ]
+        )
+    )
+    repeat["noncatalog_aggregate_relation_disposition_domain_sha256"] = (
+        _domain_sha(aggregate_rows)
+    )
+    repeat["aggregate_relation_counts"] = dict(
+        sorted(Counter(row["relation"] for row in aggregate_rows).items())
+    )
+    repeat["aggregate_document_counts"] = {
+        str(key): count
+        for key, count in sorted(
+            Counter(
+                row["document_source_position"] for row in aggregate_rows
+            ).items()
+        )
+    }
+    repeat["aggregate_handoff_status_counts"] = dict(
+        sorted(
+            Counter(row["handoff_status"] for row in aggregate_rows).items()
+        )
+    )
 
     component = bundle["component"]
     component_groups = (
@@ -5731,6 +6705,29 @@ def run_mutation_tests(
             unresolved["matched_text"] = forged
             unresolved["matched_utf8_sha256"] = _sha256(forged.encode("utf-8"))
 
+    def forge_aggregate_relation_source_text(value: dict[str, Any]) -> None:
+        pilot_row = value["repeat"][
+            "noncatalog_aggregate_relation_disposition_rows"
+        ][0]
+        evidence_id = pilot_row["source_local_evidence_id"]
+        for artifact_key, row_key in (
+            ("sweeps", "noncatalog_aggregate_relation_shape_rows"),
+            ("repeat", "noncatalog_aggregate_relation_disposition_rows"),
+        ):
+            row = next(
+                item
+                for item in value[artifact_key][row_key]
+                if item["source_local_evidence_id"] == evidence_id
+            )
+            raw_length = len(
+                row["source_instruction_matched_texts"][0].encode("utf-8")
+            )
+            forged = "X" * raw_length
+            row["source_instruction_matched_texts"][0] = forged
+            row["source_instruction_matched_utf8_sha256s"][0] = _sha256(
+                forged.encode("utf-8")
+            )
+
     def forge_catalog_only_job_source_member(value: dict[str, Any]) -> None:
         referenced_job_occurrence_ids = {
             candidate["parent_occurrence_id"]
@@ -5856,6 +6853,53 @@ def run_mutation_tests(
         "outside_repeat_source_target_forged",
         forge_outside_target_bytes,
         "repeat sweep pinned source projection drift",
+    )
+    add(
+        "aggregate_relation_row_omitted",
+        lambda value: value["repeat"][
+            "noncatalog_aggregate_relation_disposition_rows"
+        ].pop(),
+        "pilot aggregate relation drift",
+    )
+    add(
+        "aggregate_relation_required_key_omitted",
+        lambda value: value["repeat"][
+            "noncatalog_aggregate_relation_disposition_rows"
+        ][0].pop("occurrence_equivalence_claimed"),
+        "aggregate relation pilot row: keyset drift",
+    )
+    add(
+        "aggregate_relation_alias_admitted",
+        lambda value: value["repeat"][
+            "noncatalog_aggregate_relation_disposition_rows"
+        ][0].__setitem__("alias_admitted", True),
+        "alias admitted",
+    )
+    add(
+        "aggregate_relation_equivalence_claimed",
+        lambda value: value["repeat"][
+            "noncatalog_aggregate_relation_disposition_rows"
+        ][0].__setitem__("occurrence_equivalence_claimed", True),
+        "occurrence equivalence claimed",
+    )
+    add(
+        "aggregate_relation_universal_arm_false",
+        lambda value: value["repeat"][
+            "noncatalog_aggregate_relation_disposition_rows"
+        ][0].__setitem__("universal_repeat_coverage_arm_satisfied", False),
+        "universal arm",
+    )
+    add(
+        "aggregate_relation_endpoint_domain_changed",
+        lambda value: value["repeat"][
+            "noncatalog_aggregate_relation_disposition_rows"
+        ][0]["endpoint_raw_node_domains"].__setitem__(0, "job_slot"),
+        "aggregate endpoint predicate",
+    )
+    add(
+        "aggregate_relation_source_text_forged",
+        forge_aggregate_relation_source_text,
+        "aggregate relation sweep pinned source projection drift",
     )
     add(
         "zero_parent_emits_rq",
@@ -5985,23 +7029,34 @@ def run_mutation_tests(
     add(
         "proof_defect_lawified",
         lambda value: value["predecessor"][
-            "defective_populated_local_proof_rows"
+            "populated_local_proof_adjudication_rows"
         ][0].__setitem__("disposition", "law_gap"),
-        "disposition",
+        "seal-defect disposition",
     )
     add(
         "proof_defect_action_removed",
         lambda value: value["predecessor"][
-            "defective_populated_local_proof_rows"
+            "populated_local_proof_adjudication_rows"
         ][0].__setitem__("required_action", "do_nothing"),
-        "required action",
+        "seal-defect required action",
     )
     add(
         "proof_defect_row_omitted",
         lambda value: value["predecessor"][
-            "defective_populated_local_proof_rows"
+            "populated_local_proof_adjudication_rows"
         ].pop(),
-        "proof defect count drift",
+        "proof adjudication count drift",
+    )
+    add(
+        "aggregate_law_gap_demoted_to_seal_defect",
+        lambda value: next(
+            row
+            for row in value["predecessor"][
+                "populated_local_proof_adjudication_rows"
+            ]
+            if row["third_arm_eligible"]
+        ).__setitem__("disposition", "predecessor_seal_defect"),
+        "law-gap disposition",
     )
     add(
         "gate_claims_certification",

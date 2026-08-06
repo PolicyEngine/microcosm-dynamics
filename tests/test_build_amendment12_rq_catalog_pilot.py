@@ -7,6 +7,7 @@ import hashlib
 import os
 import subprocess
 import sys
+from collections import Counter
 from pathlib import Path
 
 import pytest
@@ -38,6 +39,20 @@ DOC033_MULTI_PARENT = (
     "psid-questionnaire-occurrence:"
     "9c53e235bbf7f670615e101416e21e412385b0a4910f1845e053f2b041b48154"
 )
+DOC064_AGGREGATE_EVIDENCE = (
+    "rq-local-repeat-alias-evidence:"
+    "c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868"
+)
+DOC064_REPEAT = (
+    "psid-questionnaire-occurrence:"
+    "fa99afd9bc2e5f07056c445f6ade49fb32fa787c8579bb19b682c4081f477314"
+)
+DOC064_AGGREGATE_ENDPOINTS = {
+    "psid-questionnaire-occurrence:"
+    "bd1f034b1233871d46392ed774c48add7b56ddb0402fe79dcbf7d1c96551f6b7",
+    "psid-questionnaire-occurrence:"
+    "5c21cb5d94c4633ea60447057e515d060d87fcc099a08ad79d6ded471f86ed2a",
+}
 
 EXPECTED_MUTATIONS = (
     "pilot_slice_reordered",
@@ -56,6 +71,13 @@ EXPECTED_MUTATIONS = (
     "outside_repeat_alias_admitted",
     "outside_repeat_evidence_not_singleton",
     "outside_repeat_source_target_forged",
+    "aggregate_relation_row_omitted",
+    "aggregate_relation_required_key_omitted",
+    "aggregate_relation_alias_admitted",
+    "aggregate_relation_equivalence_claimed",
+    "aggregate_relation_universal_arm_false",
+    "aggregate_relation_endpoint_domain_changed",
+    "aggregate_relation_source_text_forged",
     "zero_parent_emits_rq",
     "unique_parent_forced",
     "unique_parent_derived_slot_invented",
@@ -77,6 +99,7 @@ EXPECTED_MUTATIONS = (
     "proof_defect_lawified",
     "proof_defect_action_removed",
     "proof_defect_row_omitted",
+    "aggregate_law_gap_demoted_to_seal_defect",
     "gate_claims_certification",
     "gate_claims_repeat_coverage",
 )
@@ -199,6 +222,7 @@ def test__amendment_12_design__closes_laws_and_stays_inoperable():
     required = (
         "psid-role-assignment:",
         "terminal_outside_r_q_domain_no_alias_admitted",
+        "noncatalog_aggregate_or_repeated_instance_relation_no_alias",
         "multi_parent_ambiguity_no_selection",
         "component_class_admission_sweep_rows",
         "catalog_only_job_complement_sweep_rows",
@@ -325,11 +349,11 @@ def test__role_sweep__is_corpus_exhaustive_and_role_disjoint(bundle):
 def test__outside_repeat_dispositions__cover_the_exact_34_row_tail(bundle):
     artifact = bundle["repeat"]
     assert artifact["outside_domain_repeat_disposition_count"] == 34
-    assert artifact["relation_counts"] == {
+    assert artifact["outside_domain_relation_counts"] == {
         "explicit_cross_reference": 17,
         "explicit_repeat_instruction": 17,
     }
-    assert artifact["document_counts"] == {
+    assert artifact["outside_domain_document_counts"] == {
         "14": 2,
         "40": 22,
         "56": 5,
@@ -353,11 +377,102 @@ def test__outside_repeat_disposition__retains_q87_witness_without_alias(
     assert row["alias_admitted"] is False
 
 
+def test__noncatalog_aggregate_relations__reproduce_full_and_pilot_census(
+    bundle,
+):
+    full_rows = bundle["sweeps"]["noncatalog_aggregate_relation_shape_rows"]
+    pilot_rows = bundle["repeat"][
+        "noncatalog_aggregate_relation_disposition_rows"
+    ]
+    assert len(full_rows) == 13
+    assert len(pilot_rows) == 1
+    assert Counter(row["relation"] for row in full_rows) == {
+        "explicit_cross_reference": 8,
+        "explicit_repeat_instruction": 5,
+    }
+    assert Counter(row["document_source_position"] for row in full_rows) == {
+        7: 4,
+        11: 1,
+        35: 2,
+        44: 1,
+        48: 1,
+        58: 1,
+        61: 1,
+        64: 1,
+        68: 1,
+    }
+    assert pilot_rows[0]["document_source_position"] == 58
+
+
+def test__noncatalog_aggregate_relation__retains_doc064_exact_bytes_no_alias(
+    bundle,
+):
+    row = next(
+        value
+        for value in bundle["sweeps"][
+            "noncatalog_aggregate_relation_shape_rows"
+        ]
+        if value["source_local_evidence_id"] == DOC064_AGGREGATE_EVIDENCE
+    )
+    assert row["source_instruction_occurrence_ids"] == [DOC064_REPEAT]
+    assert row["source_instruction_matched_texts"] == [
+        "one business, repeat questions G7a-G11b for each separate business "
+        "up to 5."
+    ]
+    assert row["source_instruction_page_numbers"] == [22]
+    assert row["source_instruction_utf8_byte_starts"] == [772]
+    assert row["source_instruction_utf8_byte_ends"] == [847]
+    assert (
+        set(row["source_alias_anchor_occurrence_ids"])
+        | set(row["source_canonical_anchor_occurrence_ids"])
+        == DOC064_AGGREGATE_ENDPOINTS
+    )
+    assert row["endpoint_occurrence_kinds"] == [
+        "business_aggregate_anchor",
+        "business_aggregate_anchor",
+    ]
+    assert row["endpoint_raw_node_domains"] == ["aggregate", "aggregate"]
+    assert row["alias_admitted"] is False
+    assert row["occurrence_equivalence_claimed"] is False
+
+
+def test__three_repeat_arms__are_disjoint_and_unresolved_remains_fail_closed(
+    bundle,
+):
+    sweep = bundle["sweeps"]
+    aggregate_instruction_ids = {
+        row["source_instruction_occurrence_ids"][0]
+        for row in sweep["noncatalog_aggregate_relation_shape_rows"]
+    }
+    outside_instruction_ids = {
+        row["source_instruction_occurrence_id"]
+        for row in sweep["outside_domain_repeat_shape_rows"]
+    }
+    assert aggregate_instruction_ids.isdisjoint(outside_instruction_ids)
+    assert sweep["repeat_coverage_census"] == {
+        "repeat_occurrence_count": 2_460,
+        "valid_direct_proof_instruction_count": 257,
+        "outside_domain_instruction_count": 34,
+        "noncatalog_aggregate_relation_instruction_count": 13,
+        "incompatible_proof_instruction_count": 25,
+        "valid_and_incompatible_instruction_overlap_count": 1,
+        "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
+        "lawful_repeat_coverage_none_arm_instruction_count": 2_156,
+        "otherwise_unresolved_instruction_count": 2_132,
+    }
+    assert bundle["gate"]["overall_repeat_catalog_coverage_status"] == (
+        "fail_closed_unresolved_rows_remain"
+    )
+
+
 def test__repeat_gate__does_not_hide_other_unresolved_instructions(bundle):
     census = bundle["gate"]["pilot_census"]
     assert census["valid_direct_proof_instruction_count"] == 106
     assert census["outside_domain_instruction_count"] == 34
-    assert census["incompatible_proof_instruction_count"] == 9
+    assert census["noncatalog_aggregate_relation_instruction_count"] == 1
+    assert census["incompatible_proof_instruction_count"] == 8
+    assert census["lawful_repeat_coverage_multiple_arm_instruction_count"] == 0
+    assert census["lawful_repeat_coverage_none_arm_instruction_count"] == 235
     assert census["otherwise_unresolved_instruction_count"] == 228
     assert bundle["gate"]["overall_repeat_catalog_coverage_status"] == (
         "fail_closed_unresolved_rows_remain"
@@ -702,19 +817,33 @@ def test__tier2_job_complement_fold__rejects_duplicate_relationships():
         )
 
 
-def test__predecessor_adjudication__keeps_all_candidates_as_seal_defects(
+def test__predecessor_adjudication__reproduces_corrected_37_13_split(
     bundle,
 ):
     artifact = bundle["predecessor"]
     assert artifact["doc036_aggregate_component_slot_count"] == 8
-    assert artifact["defective_populated_local_proof_count"] == 42
-    assert artifact["seal_defect_disposition_count"] == 50
-    assert artifact["law_gap_disposition_count"] == 0
+    assert artifact["populated_local_proof_adjudication_count"] == 42
+    assert artifact["populated_local_proof_seal_defect_count"] == 29
+    assert artifact["populated_local_proof_law_gap_count"] == 13
+    assert artifact["seal_defect_disposition_count"] == 37
+    assert artifact["law_gap_disposition_count"] == 13
+    assert artifact["third_arm_law_gap_repair_count"] == 13
 
 
-def test__predecessor_adjudication__reproduces_overlapping_projections(bundle):
-    assert bundle["predecessor"]["defect_category_counts"] == {
+def test__predecessor_adjudication__reproduces_source_and_seal_flag_censuses(
+    bundle,
+):
+    artifact = bundle["predecessor"]
+    assert artifact["source_flag_counts"] == {
         "touches_noncatalog_aggregate_endpoint": 28,
+        "occurrence_derived_domain_crossing": 19,
+        "corrected_catalog_domain_crossing": 19,
+        "raw_node_domain_crossing": 18,
+        "context_remuneration_mix": 15,
+        "head_spouse_mix": 4,
+    }
+    assert artifact["seal_defect_flag_counts"] == {
+        "touches_noncatalog_aggregate_endpoint": 15,
         "occurrence_derived_domain_crossing": 19,
         "corrected_catalog_domain_crossing": 19,
         "raw_node_domain_crossing": 18,
