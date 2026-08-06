@@ -48860,3 +48860,1487 @@ The source blocker prevents that receipt. Ratification alone authorizes only
 the reviewed audit rebuild and expected-negative A11 gates; it cannot
 authorize production while
 `blocked_source_missing_disposition_underdetermined` survives.**
+
+## 26. AMENDMENT SECTION — Amendment 12: pilot-first `R_Q` catalog laws
+
+### 26.1 Prospective-draft status, immutable base, scope, precedence, and map
+
+This is the **prospective Amendment-12 draft** proposing design revision 14.
+It is a referee input, not a ratification record. Nothing in this section,
+its implementation commits, its pilot evidence, or a passing pilot gate
+self-ratifies, certifies a catalog, admits an alias, creates authority, or
+authorizes production.
+
+The immutable revision-13 base is the path
+`docs/design/covered_earnings_correction.md` at ratification commit
+`d0c38508553c6d410d445270ae5d911647529238`, mode `100644`, blob
+`dc0ce837e64239d16ea61c15d47450b7341d1ce8`, exactly 3,557,513 bytes,
+raw SHA-256
+`b06e64e314645300458b6e1c72df23c9bd5090b376f676d1e492312135782d87`.
+The revision-13 repin at
+`3e3212b5b88af5ae0692a23d68437fb5530074de` changes no byte of that path.
+Any candidate Amendment 12 must have that complete blob byte-for-byte at range
+`[0,3557513)`. Thus §§1–25 are untouched; a mismatch is not an Amendment-12
+candidate.
+
+The adjudicative provenance is the coordinator charter
+`a12-catalog-charter-notes.md`, exactly 4,636 bytes with raw SHA-256
+`4c6c9e5fa61bd0183d889002bc86afe8ea3796c124a432fd248df7b498d76a55`,
+and its complete stage-4 evidence
+`sol-ce-rq-stage4-report.md`, exactly 12,986 bytes with raw SHA-256
+`529eaea1b26b6b0f9ac6f589266e79f205af50680e7d38a4614f85885d99e28b`.
+Those external review records select the question adjudicated here; they are
+not source-corpus members or authority operands.
+
+If and only if the exact future document bytes are affirmatively ratified,
+this section replaces the contradictory catalog laws named in §§26.3–26.7.
+Earlier text controls by silence everywhere else. In particular, this draft
+does not weaken any source-byte, alias-evidence, ordering, clean-tree,
+transaction, registry, receipt, or production gate not expressly named. It
+preserves Amendment 11's controlling
+`blocked_source_missing_disposition_underdetermined`. No revision-14 full
+relation identity, Q5, slot registry, inventory, hierarchy-authority
+instance, registry bundle, lifecycle instance, receipt, wall row, or
+production result is instantiated or emitted here. Prospective schema and
+law definitions below do not constitute such an instance.
+
+The section map is:
+
+1. §26.2 fixes the authenticated source handoffs and preregistered pilot;
+2. §26.3 defines role assignment without occurrence equivalence;
+3. §26.4 defines outside-`R_Q` terminal repeat coverage;
+4. §26.5 defines zero, unique, and ambiguous component parents and the
+   tier-2 equivalence-class fold;
+5. §26.6 composes the prospective catalogs, executable `R_Q`, H, `O_H`, and
+   reverse covers;
+6. §26.7 adjudicates every candidate predecessor defect;
+7. §26.8 pins the nonauthority pilot artifacts and results;
+8. §26.9 fixes rare-tail sweeps, gates, fixtures, and mutations;
+9. §26.10 closes affected comparators, consumers, identifiers, and lifecycle
+   noninstantiation; and
+10. §26.11 fixes the two-tier sequence and inoperability boundary.
+
+All JSON evidence governed here is one strict UTF-8 JSON value with no BOM,
+duplicate object key, nonfinite or binary-inexact number, or trailing value.
+Canonical evidence bytes use sorted keys, compact separators, ASCII escapes,
+no NaN, and exactly one terminal LF. Every schema walk rejects missing,
+extra, mistyped, reordered where order is specified, or unknown members.
+Every count excludes booleans and equals the complete array length; every
+keyset and domain digest is recomputed from the complete ordered projection.
+This section creates no new illustrative-JSON-fence exception. Its fences
+must balance and every authored JSON fence must strict-parse under the
+inherited exception law.
+
+### 26.2 Authenticated corpus handoff and preregistered tier-1 slice
+
+#### 26.2.1 Complete source boundary
+
+The only tier-1 input corpus is the Git tree at
+`19fa24c161e800e004320f0c10e81bce8831af68` on descriptive branch
+`claude/ce-global-q5-extraction`. The branch label selects nothing. The
+stage-2 protocol is
+`docs/analysis/rq_stage2_protocol.md`, 59,048 bytes, raw SHA-256
+`313234c381045f155b0acf9e0b35fd7818aa60e905e1a9934d2c4b5bec816bd7`.
+The six era seals, in exact order, are:
+
+| Position / document positions | Seal commit | Path | Bytes | Raw SHA-256 |
+|---|---|---|---:|---|
+| 1 / 1–16 | `a75151c42e4612a92de7946e2dbc835914f1bb0d` | `docs/analysis/rq_stage3_era_seals/wave1968_ry1968_1974_early_totals_preparation_seal_v1.json` | 14,480 | `bcc3c542bc7e8410e025e4a3aa23ea0bb42da5b579d0c4d346746a9632911a44` |
+| 2 / 17–22 | `9758ca7c013b144eb319ffe97f75b5817670603f` | `docs/analysis/rq_stage3_era_seals/ry1975_1977_spouse_concept_seam_preparation_seal_v1.json` | 7,883 | `5a954d5148706378df938231378a81af8f3412024e86c0ee9b1a4aec52f423aa` |
+| 3 / 23–51 | `e06dd4498dfc7a3b2a2f259f4da2977bea94b949` | `docs/analysis/rq_stage3_era_seals/ry1978_1992_pre_er_totals_preparation_seal_v1.json` | 23,106 | `59ae2e095e079b16b91c1cf5138803939f7b65f951e3fff6b4f789d428c1dde2` |
+| 4 / 52–63 | `b5dc849d8f82f54b46697808444517f26e4015c6` | `docs/analysis/rq_stage3_era_seals/ry1993_2001_er_transition_preparation_seal_v1.json` | 11,863 | `a58044964bea7bef6c71b28f5f408f658da17eb18e1563c213d4102c84654e9e` |
+| 5 / 64–77 | `872a27878a8beaab22c9871775416396ac3425d5` | `docs/analysis/rq_stage3_era_seals/ry2002_2014_modern_bc_de_preparation_seal_v1.json` | 13,171 | `221c28d010cb92a4566910515a9cbd0b342503452de9b9c8e1c223b6bf06cdc1` |
+| 6 / 78–81 | `19fa24c161e800e004320f0c10e81bce8831af68` | `docs/analysis/rq_stage3_era_seals/ry2015_2022_exclusion_lineage_preparation_seal_v1.json` | 6,574 | `3238516e70d8283fa7172308432e5bb1b4f710a06c758bdb51618aca627b1bd9` |
+
+Each seal's content digest, document-position array, stage-2 protocol
+identity, and every annotation input's path, schema, artifact ID, source
+document ID, byte count, raw digest, and content digest are mandatory. The
+six arrays concatenate to positions 1 through 81 without a gap or overlap.
+The handoffs are authenticated source observations, not Q5 and not a settled
+global catalog. No PDF is re-derived in this lane.
+
+#### 26.2.2 Exact pilot membership
+
+The tier-1 slice is exactly positions
+`[1,2,3,9,14,18,23,33,36,40,53,56,58,65,66,78]`, in that order. Its
+terminal-LF canonical position-array SHA-256 is
+`317e3af58e051b3a21dca1852ea4e0363aa8543b8292b10ffbabd0491829bb00`.
+Its 16 authenticated annotation blobs total 89,404,714 raw bytes. Membership
+is fixed by the following complete table; the manifest in §26.8 additionally
+fixes every annotation path and raw/content identity.
+
+| Position | Document | Source document ID | Pilot role |
+|---:|---|---|---|
+| 1 | `document_001_fam1968_QxQs` | `psid-source-document:cfa4d879a9c44c0e007b397bbaa8afc05db555be0ba08e30a86c04d31bbf06d8` | carrier: canonical and J8/Head role witness |
+| 2 | `document_002_q68` | `psid-source-document:2ccf50ebdcc2b1ae8756ee9a20f4298643f1026015bda4cf90a7922b9b43a703` | carrier: null-identifier `she` role witness |
+| 3 | `document_003_fam1969_QxQs` | `psid-source-document:ef8dfca68fb7c22a80b83c1fe09b7f28431be4e22ade7d6e5acc21b660f546d9` | era-1 clean control |
+| 9 | `document_009_fam1972_QxQs` | `psid-source-document:d2d3202855c5ca4d89846302985b553dd6a615bc4682ecc7a914506c687efb25` | carrier: zero-parent component |
+| 14 | `document_014_q74` | `psid-source-document:f9140158fc372056d7ba85654ec3cb3bace413c36f468124159dd55621fb548a` | carrier: outside-domain repeats |
+| 18 | `document_018_q76` | `psid-source-document:9253ce50a2f0aa5aa1d3d944f6901d37e95ef79bbf38ab109bd54356b5815951` | era-2 clean control |
+| 23 | `document_023_fam1979_QxQs` | `psid-source-document:77662056eb09b3faa34013677ddcc2c3db6edb72b53177e3010dc382a74902bf` | era-3 clean control |
+| 33 | `document_033_fam1984_QxQs` | `psid-source-document:9deae98ee08fe007f4f23b2a137207a63c96c0c7ec16f6c32e784b75db8d7adb` | carrier: multi-parent component |
+| 36 | `document_036_q85` | `psid-source-document:1eb6a3a6b41fd8a8a5470fe150626088a0e395a56cb6f336119ee4cd55727fab` | carrier: aggregate-kind `component_slot` defect |
+| 40 | `document_040_q87` | `psid-source-document:7953106faa93bf55aef2cf58fc482bee3582e6873b9f4441c8447c8494b08473` | carrier: 22 outside-domain repeats |
+| 53 | `document_053_q94` | `psid-source-document:b11765c461affa9bd1740b35022038660f08da58f88b9c22ee5608773b5ea878` | era-4 local-edge-schema control |
+| 56 | `document_056_fam1996_QxQs` | `psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48` | carrier: outside-domain repeats |
+| 58 | `document_058_fam1997_QxQs` | `psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871` | carrier: outside-domain repeats |
+| 65 | `document_065_q2003` | `psid-source-document:137c5aba0d852578b1b4db15f935505ab4a3a10b881cd1f0b407fd6b6c171d33` | era-5 clean control |
+| 66 | `document_066_fam2005_QxQs` | `psid-source-document:df4a9be59d38749dbf5d663616e6e6bff86ff340d4d53e21a5b9a6b16f687b9d` | carrier: outside-domain repeat |
+| 78 | `document_078_q2017` | `psid-source-document:909899fe2d8a8488f3f708e088925462acb32dde3e3fc8114fa1f7559566f1bc` | era-6 clean control |
+
+The control rule is mechanical: choose the earliest source-order noncarrier
+in each era with zero outside-domain rows, zero defective populated proof
+rows, and zero aggregate-kind `component_slot` rows. It yields exactly
+positions 3, 18, 23, 53, 65, and 78. Replacing a carrier, choosing a later
+eligible control, changing order, or reading any off-slice row for a pilot
+assignment or disposition aborts. Corpus-exhaustive rare-tail sweeps in
+§26.9 are the sole exception to the pilot boundary. Their own nonauthority
+artifact may serialize complete off-pilot sweep-witness projections,
+including mechanical class, shape, and disposition diagnostics. Such a
+witness is not a member of the operative pilot assignment or resolution
+relations and may never feed a pilot catalog row or authority.
+
+### 26.3 Role assignment is membership proof, not alias proof
+
+#### 26.3.1 Exact-label role classes
+
+The §19.3.3 requirement that all 10,519 noncanonical role anchors become
+aliases of two isolated canonicals is replaced. The two canonical occurrence
+IDs remain exactly:
+
+| Role | Canonical occurrence ID |
+|---|---|
+| `head_or_reference_person` | `psid-questionnaire-occurrence:4226e8c05e9d4cb91c5a1586731d6815c96268cadaebf51b2733c3daf499eda4` |
+| `spouse_or_partner` | `psid-questionnaire-occurrence:b59425917fcfdf5d07adbb4341b86cb4d57d161d3de5fffa5c8338bc16ca63a1` |
+
+Let `D_role(1)` be exactly the role anchors whose document positions are in
+the ordered §26.2.2 pilot slice, and let `D_role(2)` be every authenticated
+role anchor in the six sealed eras. A corpus sweep may observe `D_role(2)`
+during tier 1 and may serialize off-slice nonauthority class-witness rows,
+but emits no off-slice member into the operative role pilot or assignment
+relation. At the active tier, before an assignment is made, group every
+member of `D_role(tier)` by
+identical, nonempty `exact_label` UTF-8 bytes. Those bytes must equal the
+complete occurrence `matched_text`, and their SHA-256 must equal both the
+occurrence digest and any serialized label digest. A label class is lawful
+only when every member has the same one authenticated classification in
+`head_or_reference_person | spouse_or_partner`. A label appearing under both
+roles invalidates the complete class; no majority, source-order, case-fold,
+trim, punctuation, stemming, pronoun, identifier, or synonym rule resolves
+it.
+
+A `role_label_class_rows` member has exactly
+`role_label_class_id`, `role`, `exact_label`, `exact_label_sha256`,
+`member_occurrence_ids`, `member_count`, `member_keyset_sha256`,
+`occurrence_equivalence_claimed`, `alias_class_claimed`, and `status`.
+Its ID prefix is exactly `a12-role-exact-label-class:` in tier 1 and
+`psid-role-exact-label-class:` in tier 2, followed by SHA-256 of the
+terminal-LF canonical value array `[role,exact_label_sha256]`. Members are
+the complete source-order occurrence projection for that exact byte string;
+they are nonempty, unique, and cannot occur in another class. Classes follow
+their first member's complete source order. Count and keyset digest
+exact-cover the array. The final three values are respectively false, false,
+and `role_membership_class_only`. A class proves common role membership only.
+It neither proves that its occurrences denote one person nor creates an
+alias class.
+
+#### 26.3.2 One nonalias assignment per noncanonical anchor
+
+A `role_assignment_rows` member has exactly
+`role_assignment_id`, `document_source_position`, `source_document_id`,
+`source_classification_id`, `role_anchor_occurrence_id`, `assigned_role`,
+`printed_identifier`, `exact_label`, `exact_label_sha256`,
+`role_label_class_id`, `proof_form`, `alias_admitted_by_assignment`,
+`occurrence_equivalence_claimed`, and `status`. `printed_identifier` is the
+exact source string or null; it is never a join key. The assignment's class
+must exist exactly once, contain the occurrence, and agree byte-for-byte on
+role, label, and digest. `proof_form` is exactly
+`exact_label_class_role_assignment_non_alias`;
+`alias_admitted_by_assignment` and `occurrence_equivalence_claimed` are both
+false; status is `assigned_noncanonical_role_anchor`.
+
+The assignment ID prefix is exactly `a12-pilot-role-assignment:` in tier 1
+and `psid-role-assignment:` in tier 2, followed by SHA-256 of the terminal-LF
+canonical value array
+`[source_document_id,role_anchor_occurrence_id,assigned_role,
+role_label_class_id,proof_form]`. The prefix difference prevents a pilot row
+from becoming an official row by copying.
+
+The complete role-anchor partition is now exactly the two distinct canonical
+occurrences plus exactly one assignment occurrence for each other role
+anchor. Canonicals receive no assignment. The two branches are disjoint,
+source ordered, duplicate free, and exact-cover all role anchors. Existing
+lawful `node_alias_rows` remain orthogonal evidence and retain exactly the
+three relations
+`explicit_repeat_instruction | explicit_cross_reference |
+same_printed_identifier_and_exact_label`; this amendment adds no fourth
+alias relation. A truly aliased role occurrence still receives its one role
+assignment, but assignment membership is not evidence for, and cannot be
+inserted into, that alias row.
+
+Every retained role-domain alias row must independently agree with the
+canonical-or-assignment role of its alias occurrence and the role named by
+its canonical node. A cross-role alias, an alias whose occurrence has no
+membership row, or a role disagreement between independent alias and
+assignment proofs aborts the complete role catalog.
+
+The corpus-exhaustive sweep fixes 10,521 role anchors, 273 exact-label
+classes—86 head/reference and 187 spouse/partner—10,519 noncanonical anchors
+reached, zero cross-role labels, and zero unreached anchors. Tier 1 fixes 949
+role anchors, 69 projected classes, 947 assignments, and zero unassigned
+anchors. The J8/Head and null-identifier `she` witnesses retain their exact
+source bytes without being equated to a canonical occurrence. Empty or
+mismatched label bytes, digest disagreement, missing or duplicate class,
+cross-role class, missing source classification, canonical assignment,
+dangling class ID, omitted or duplicate anchor, true alias/equivalence flag,
+or any unreached anchor aborts with no role catalog.
+
+### 26.4 Terminal outside-`R_Q` repeat disposition
+
+The §19.3.3 sentence requiring every `repeat_or_alias_instruction` to appear
+in an alias evidence array is replaced by a disjoint two-arm coverage law. A
+repeat occurrence is covered if and only if it has either one or more valid
+existing alias-evidence rows under the unchanged three-relation law, or
+exactly one terminal outside-domain row below. No occurrence may use both
+arms. An occurrence in neither arm still aborts universal repeat coverage.
+
+Let `D_repeat(1)` be the repeat instructions in the exact pilot documents
+and `D_repeat(2)` the complete six-seal repeat domain. Universal coverage is
+evaluated over `D_repeat(tier)`. The targeted sweep observes all of
+`D_repeat(2)` at tier 1 and serializes its nonauthority shape witnesses; the
+operative terminal artifact admits only rows whose documents are in the
+pilot. All 34 terminal shapes happen to satisfy that pilot predicate.
+
+For each active instruction r, let `A(r)` be the complete set of valid
+`node_alias_rows` whose `evidence_occurrence_ids` contains r, and let `T(r)`
+be the complete set of terminal rows whose
+`source_instruction_occurrence_id` equals r. The exact coverage equation is
+`(|A(r)| > 0) xor (|T(r)| = 1)`. The false arm must have cardinality zero.
+A populated local evidence row that does not survive the complete global
+alias-row law is not a member of `A(r)`.
+
+An `outside_r_q_repeat_terminal_rows` member has exactly
+`outside_domain_repeat_disposition_id`, `document_source_position`,
+`source_document_id`, `source_local_evidence_id`,
+`source_instruction_occurrence_id`, `relation`, `handoff_status`,
+`evidence_occurrence_ids`, `unresolved_target_reference`,
+`terminal_disposition`, `alias_anchor_occurrence_id`,
+`referenced_anchor_occurrence_id`, `alias_admitted`,
+`occurrence_equivalence_claimed`,
+`universal_repeat_coverage_arm_satisfied`, and `status`.
+
+The source instruction must be a sealed `repeat_or_alias_instruction`.
+Relation is `explicit_repeat_instruction | explicit_cross_reference` and
+handoff status is exactly `local_target_outside_rq_annotation_domain`.
+Evidence is the singleton instruction itself. Both endpoint IDs are null;
+both admission Booleans are false. The unresolved target is an exact object
+with `matched_text`, `matched_utf8_sha256`, `page_number`,
+`utf8_byte_start`, and `utf8_byte_end`: text is nonempty, the digest hashes
+its exact UTF-8 bytes, page is positive, the half-open span is valid, and
+span width equals text byte length. The instruction occurs in no other local
+evidence row and is no alias endpoint. Terminal disposition is exactly
+`outside_r_q_domain_no_alias_admitted`, the coverage-arm Boolean is true,
+and status is exactly `terminal_nonauthority_disposition` in tier 1 or
+`terminal_outside_r_q_domain_no_alias_admitted` in tier 2.
+
+The row-ID prefix is exactly `a12-outside-rq-repeat-disposition:` in tier 1
+or `psid-outside-rq-repeat-disposition:` in tier 2, followed by SHA-256 of
+the terminal-LF canonical value array
+`[source_document_id,source_instruction_occurrence_id,
+source_local_evidence_id,relation,unresolved_target_reference]`. Rows follow
+document and local evidence order. The complete keyset and domain digests
+cover every row; an endpoint, second evidence occurrence, normalized or
+empty target, stale span/hash, other evidence use, alias/equivalence claim,
+unknown relation, false coverage arm, duplicate row, or extra carrier aborts.
+
+The corpus-exhaustive terminal set is exactly 34: 17 explicit repeats and 17
+cross-references, with document counts 14:2, 40:22, 56:5, 58:4, and 66:1.
+No other document carries this form. The document-040 witness retains exact
+target text `B4, (P. 7)` inside “SEE B4, (P. 7)--WHETHER SELF-EMPLOYED” and
+does not acquire a catalog endpoint. These 34 terminal rows close only their
+own coverage arm. In the pilot, 106 repeat instructions have valid direct
+proof, 9 have incompatible populated proof rows, 34 have the terminal arm,
+one instruction overlaps the first two diagnostic sets, and 228 are
+otherwise unresolved. Therefore the pilot's overall repeat-catalog status
+is, and must remain, `fail_closed_unresolved_rows_remain`; a terminal-law
+pass is not a universal-repeat pass.
+
+### 26.5 Component-parent dispositions and tier-2 class fold
+
+#### 26.5.1 Tier-1 anchor law
+
+The §19.3.3 scalar `parent_job_slot_id`, parent-bearing component-ID
+preimage, exactly-one-parent totality, one-relationship-per-component law,
+and source-job nonorphan abort are replaced. Tier-1 rows are anchor-level
+law-shape fixtures only. They mint no component slot, job slot,
+relationship, `R_Q`, H, Q5, or authority ID.
+
+Let `D_component(1)` be exactly the source component anchors in the ordered
+pilot documents and `D_component(2)` the complete source component domain in
+the six seals. The corpus sweep observes `D_component(2)` at tier 1 and may
+serialize off-slice nonauthority shape/disposition witness rows, but emits no
+off-slice member into the operative component pilot or resolution relation.
+For each member of `D_component(tier)`, read the complete serialized parent
+array without dropping, sorting,
+deduplicating, or repairing a member. A `parent_candidate_rows` member has
+exactly `parent_occurrence_id`, `parent_occurrence_kind`, `parent_category`,
+`eligible_parent`, `derived_slot_kind`, and `ineligibility_reason`. Every
+candidate must resolve at the same document position to one authenticated
+source anchor with the same occurrence kind. The lawful equations are:
+
+| Parent occurrence kind | Category | Eligible | Derived slot kind |
+|---|---|---|---|
+| `job_anchor` | `source_job` | true | `context_only` for context; `remuneration_component` for remuneration |
+| `role_total_anchor` | `role_total_sentinel` | true | `role_total` |
+| `farm_aggregate_anchor` | `farm_aggregate_sentinel` | true | `farm_aggregate` |
+| `business_aggregate_anchor` | `business_aggregate_sentinel` | true | `business_aggregate` |
+| `role_anchor` | `ineligible_role_anchor` | false | null |
+| `context_anchor` | `ineligible_context_anchor` | false | null |
+| `remuneration_component_anchor` | `ineligible_remuneration_component_anchor` | false | null |
+
+An eligible candidate has null ineligibility reason. An ineligible candidate
+has null slot kind and exact reason
+`parent_occurrence_kind_outside_allowed_equations`. An unknown kind, absent
+source witness, kind mismatch, duplicate parent occurrence in one anchor,
+or altered equation aborts. Ineligible evidence remains serialized; it is
+never silently discarded.
+
+A tier-1 component row has exactly
+`component_parent_resolution_id`, `document_source_position`,
+`source_document_id`, `source_classification_id`,
+`component_anchor_occurrence_id`, `component_kind`,
+`serialized_parent_cardinality`, `eligible_parent_cardinality`,
+`parent_candidate_rows`, `parent_candidate_count`,
+`parent_candidate_domain_sha256`, `raw_parent_category_ambiguity`,
+`eligible_parent_category_ambiguity`,
+`eligible_ineligible_mixed_ambiguity`, `disposition`,
+`forced_parent_selection`, `tier_2_unique_parent_arm_eligible`,
+`r_q_relationship_emitted`, and `status`. Its ID is literal
+`a12-component-parent-resolution:` followed by SHA-256 of the terminal-LF
+canonical array `[source_document_id,component_anchor_occurrence_id,
+component_kind,disposition,parent_candidate_rows]`.
+
+Disposition is the following exhaustive, ordered function of raw serialized
+cardinality, not a favorable-candidate selection:
+
+| Raw cardinality / eligibility | Disposition | Tier-2 arm eligible | Relationship emitted in tier 1 |
+|---|---|---:|---:|
+| zero | `zero_parent_terminal_disposition` | false | false |
+| one, eligible | `unique_parent_assignment` | true | false |
+| one, ineligible | `zero_lawful_parent_terminal_disposition` | false | false |
+| greater than one | `multi_parent_ambiguity_no_selection` | false | false |
+
+`forced_parent_selection` and `r_q_relationship_emitted` are false and
+`status` is exactly `recorded_nonauthority_shape` in every pilot row. The
+three ambiguity Booleans separately report more than one raw category, more
+than one eligible category, and an eligible/ineligible mix.
+Thus a mixed invalid candidate cannot masquerade as a second lawful category.
+Rows partition by disposition; the complete concatenation order is the
+terminal group containing both zero and zero-lawful rows in mutual source
+order, then unique, then multi, preserving source order inside each group.
+Counts, candidate domains, complete keyset, and complete domain all
+reproduce.
+
+#### 26.5.2 Mandatory tier-2 equivalence-class fold
+
+Tier 2 cannot copy the anchor-level pilot partition into an official
+component catalog. It first builds component equivalence classes solely from
+valid, unchanged `node_alias_rows`. Exact-label role assignments are not
+equivalence evidence. The canonical component is the earliest complete
+source-order member. Class members exact-cover all component anchors, are
+unique, and have one common component kind; a kind conflict aborts.
+
+For a class C, retain for every member its complete source-backed parent
+candidate array and raw cardinality. Enrich each eligible candidate with its
+exact resolved canonical parent job/sentinel node and the complete alias
+proof support by which it resolves. No candidate may resolve by label,
+category alone, proximity, document order, job number, or desired slot kind.
+Stable-union support only when two candidates are proved to resolve to the
+same exact canonical parent node; all raw occurrence IDs and ineligible
+rows remain in their member arrays. Ordering is component-member source
+order, then serialized candidate order, with stable first occurrence for the
+canonical-parent support projection.
+
+The prospective class-fold fixture member has exactly
+`component_anchor_occurrence_id` and `parent_candidate_rows`. Its enriched
+candidate has exactly `source_parent_occurrence_id`,
+`resolved_canonical_parent_node_id`, `eligible_parent`,
+`derived_slot_kind`, and `support_proof_id`. Ineligible candidates have null
+canonical parent and slot kind. Member occurrence IDs and source-parent IDs
+are unique in their respective domains.
+
+The class disposition is the following complete precedence function:
+
+1. if every member has raw cardinality zero, use
+   `zero_parent_terminal_disposition`;
+2. else, if any member has raw cardinality greater than one, use
+   `multi_parent_ambiguity_no_selection`, even when two candidates resolve to
+   one canonical parent or some candidates are ineligible;
+3. else, if every member has raw cardinality one, every candidate is
+   eligible, and all resolve to exactly one canonical parent and one slot
+   kind, use `unique_parent_assignment`;
+4. else, if every member has raw cardinality one and every candidate is
+   ineligible, use `zero_lawful_parent_terminal_disposition`; and
+5. otherwise use `multi_parent_ambiguity_no_selection`.
+
+This makes mixed zero/one evidence, different singleton parents, slot-kind
+conflict, and eligible/ineligible conflict explicit ambiguities rather than
+selections. The implemented nonauthority fixtures include raw zero, one
+eligible, one ineligible, same-category multi, cross-category multi, a mixed
+zero/one class, a mixed zero/ineligible class, same canonical parent with
+conflicting slot kinds, eligible/ineligible singleton members, conflicting
+singleton parents, and two alias-class members whose distinct source-parent
+occurrences lawfully resolve to the same canonical parent. They prove every
+arm and boundary conflict is executable; they certify no corpus class.
+
+The fixture's singular `support_proof_id` is an opaque nonauthority witness
+used only to exercise the fold. It is not the official support shape. In the
+official fold, each `member_parent_state_rows` member has exactly
+`component_anchor_occurrence_id`, `serialized_parent_cardinality`,
+`raw_parent_candidate_keys`, and `eligible_canonical_parent_keys`.
+Members follow component occurrence source order. A raw key is the canonical
+two-string array
+`[component_anchor_occurrence_id,source_parent_occurrence_id]`; the member's
+raw-key array follows serialized parent order and its length equals raw
+cardinality. An eligible key is the canonical two-string array
+`[canonical_parent_node_id,derived_slot_kind]`; its member array is the
+stable-unique projection of eligible raw candidates. Empty arrays remain
+present.
+
+Each official `raw_parent_candidate_rows` member has exactly
+`component_anchor_occurrence_id`, `source_parent_occurrence_id`,
+`parent_occurrence_kind`, `parent_category`, `eligible_parent`,
+`derived_slot_kind`, `ineligibility_reason`,
+`resolved_canonical_parent_node_id`, and `support_proof_ids`. Rows follow
+member source order then serialized parent order. The first two values form
+the unique raw key. An ineligible row has null slot kind, exact §26.5.1
+reason, null canonical parent, and an empty support array. An eligible source
+job resolves to the one canonical job node reached only by complete valid
+`node_alias_rows`; `support_proof_ids` is the complete source-order set of
+every valid alias row whose alias and canonical endpoints lie in that
+authenticated equivalence component, and is empty when the component is the
+singleton canonical occurrence. An eligible aggregate occurrence resolves
+directly by authenticated occurrence kind to its exact sentinel and has
+empty support. Proof arrays are unique, source ordered, and cannot contain a
+role assignment or pilot ID.
+
+Each `eligible_canonical_parent_rows` member has exactly
+`canonical_parent_node_id`, `derived_slot_kind`,
+`supporting_raw_parent_candidate_keys`, and `support_proof_ids`. Rows are the
+stable-unique raw-row projection by the exact two-value eligible key, ordered
+by first raw occurrence. Its candidate-key array exact-covers every raw row
+with that key in raw-row order; its proof array is the stable source-order
+union of those rows' complete proof arrays. The raw candidate count is the
+raw-row-array length; its keyset digest hashes the complete ordered raw-key
+array and its domain digest hashes the complete raw-row array. The eligible
+count and digests analogously use the complete eligible-key and eligible-row
+arrays. Every member-state key must resolve exactly once in the matching
+complete row array, and every complete row must be referenced by exactly one
+member state and, when eligible, one eligible canonical row.
+
+An official `component_parent_resolution_rows` member has exactly
+`component_parent_resolution_id`,
+`questionnaire_component_slot_id`,
+`component_class_canonical_occurrence_id`,
+`component_class_member_occurrence_ids`, `component_kind`,
+`member_parent_state_rows`, `raw_parent_candidate_rows`,
+`raw_parent_candidate_count`, `raw_parent_candidate_keyset_sha256`,
+`raw_parent_candidate_domain_sha256`,
+`eligible_canonical_parent_rows`, `eligible_canonical_parent_count`,
+`eligible_canonical_parent_keyset_sha256`,
+`eligible_canonical_parent_domain_sha256`, `disposition`,
+`unique_parent_job_slot_id`, `derived_slot_kind`,
+`forced_parent_selection`, `global_relationship_id`, and `status`.
+Its ID is literal `psid-component-parent-resolution:` followed by SHA-256 of
+the terminal-LF canonical value array
+`[questionnaire_component_slot_id,component_class_member_occurrence_ids,
+member_parent_state_rows,raw_parent_candidate_rows,
+eligible_canonical_parent_rows,disposition]`. All arrays retain the complete
+support described above. Resolution rows follow canonical component
+occurrence source order.
+
+For zero and zero-lawful classes, both unique fields and relationship ID are
+null, forced selection is false, and status is the matching terminal
+disposition. For a unique class, the two unique fields are its sole canonical
+parent and slot kind, forced selection is false, and relationship ID is the
+one recomputed §26.6 ID; status is
+`resolved_unique_parent_assignment`. For a multi class, the complete
+ambiguity evidence remains, all three selection/relationship fields are
+null, forced selection is false, and status is
+`recorded_multi_parent_ambiguity`. In every arm forced selection is false.
+
+`component_parent_resolution_disposition_counts` has exactly
+`zero_parent_terminal_disposition`,
+`zero_lawful_parent_terminal_disposition`, `unique_parent_assignment`, and
+`multi_parent_ambiguity_no_selection`, in that order. Each value is a
+nonnegative JSON integer excluding booleans, equals the exact matching-row
+count, and the four values sum to
+`component_parent_resolution_count`. Missing member or candidate support,
+dropped ineligible row, invented canonicalization, selected first parent,
+duplicated component, fourth implicit arm, wrong nested key or digest, or a
+relationship on a nonunique row aborts.
+
+Tier 2 must freshly report both anchor and class censuses. The corpus-wide
+anchor comparands are 21,283 = 10,664 raw zero / 8,809 raw one / 1,810 raw
+multiple; dispositions are 10,664 zero + 30 zero-lawful + 8,779 unique +
+1,810 multi. There are 466 raw cross-category multi anchors, comprising 462
+with multiple eligible job/sentinel categories and four document-007 rows
+with one eligible job plus one ineligible role anchor; all 466 remain honest
+ambiguities. There are 34 ineligible parent references. These are input
+comparands, not predetermined class-output counts. A tier-2 class count must
+be a fresh consequence of authenticated alias closure and cannot be copied
+from the pilot or stage-4 report.
+
+### 26.6 Prospective catalogs, executable `R_Q`, H, and reverse cover
+
+#### 26.6.1 Exact successor catalog shapes
+
+After ratification and only in tier 2, each `role_node_rows` member has
+exactly `role`, `canonical_occurrence_id`, `alias_ids`, and `assignment_ids`.
+There remain exactly two rows in displayed §26.3 role order. Canonical IDs
+are unchanged. `assignment_ids` is the complete source-order projection of
+all role assignments for that role and exact-covers every noncanonical role
+anchor once across the two rows. `alias_ids` contains only independently
+valid role-domain `node_alias_rows`; it is orthogonal and need not cover the
+assignments. Canonical plus assignment occurrence projections, not canonical
+plus aliases, form the role-anchor partition. The global assignment relation
+follows assigned-anchor source order; the global label-class relation follows
+first-member source order.
+
+The source job catalog retains the §19.3.3 `job_slot_rows` shape and
+parent-independent source-job ID formula. A job class need not be parent of a
+component. For each non-sentinel job row absent from the executable
+relationship job projection, emit exactly one
+`catalog_only_job_disposition_rows` member with exactly
+`catalog_only_job_disposition_id`, `job_slot_id`, `reason`,
+`component_relationship_ids`, and `status`. Reason is
+`catalog_only_job_no_inferred_component`; the relationship array is exact
+empty; status is `terminal_catalog_disposition`. Its ID is literal
+`psid-catalog-only-job-disposition:` followed by SHA-256 of the terminal-LF
+canonical value array `[job_slot_id,reason]`. A job is in exactly one of the
+nonempty relationship projection or this terminal complement. No missing
+child is fabricated. Rows follow the matching source-job catalog order.
+
+Each successor `questionnaire_component_slot_rows` member has exactly
+`questionnaire_component_slot_id`, `component_slot_type`,
+`canonical_occurrence_id`, `alias_ids`, `parent_resolution_id`, and
+`parent_resolution_status`. For a source component, its ID is literal
+`psid-component-slot:` followed by SHA-256 of the terminal-LF canonical
+value array `[component_slot_type,canonical_occurrence_id]`; parent identity
+is deliberately absent. The canonical occurrence and aliases exact-cover
+the class fixed in §26.5. `parent_resolution_id` selects exactly its one
+class-resolution row, and status equals that row's disposition. Therefore a
+zero or ambiguous component remains cataloged without a null coordinate
+inside an `R_Q` relationship.
+
+The three sentinel component rows and four job sentinels retain their exact
+fixed IDs and order. A sentinel component has null parent-resolution ID and
+status `sentinel_baseline`; it participates only in its mandatory matching
+baseline relationship. No source aggregate occurrence becomes a source
+component type.
+
+The prospective `hierarchy_annotation_authority` object has exactly these
+members in this order; names not introduced by Amendment 12 retain their
+complete §19.3.3 meaning:
+
+~~~text
+authority_kind
+questionnaire_document_count
+questionnaire_document_keyset_sha256
+questionnaire_document_domain_sha256
+questionnaire_page_text_derivation_byte_size
+questionnaire_page_text_derivation_sha256
+role_node_rows
+role_node_count
+role_node_domain_sha256
+role_label_class_rows
+role_label_class_count
+role_label_class_domain_sha256
+role_assignment_rows
+role_assignment_count
+role_assignment_keyset_sha256
+role_assignment_domain_sha256
+job_slot_rows
+job_slot_count
+job_slot_domain_sha256
+questionnaire_component_slot_rows
+questionnaire_component_slot_count
+questionnaire_component_slot_domain_sha256
+component_parent_resolution_rows
+component_parent_resolution_count
+component_parent_resolution_keyset_sha256
+component_parent_resolution_domain_sha256
+component_parent_resolution_disposition_counts
+node_alias_rows
+node_alias_count
+node_alias_domain_sha256
+outside_r_q_repeat_terminal_rows
+outside_r_q_repeat_terminal_count
+outside_r_q_repeat_terminal_keyset_sha256
+outside_r_q_repeat_terminal_domain_sha256
+global_relationship_rows
+global_relationship_count
+global_relationship_keyset_sha256
+global_relationship_domain_sha256
+catalog_only_job_disposition_rows
+catalog_only_job_disposition_count
+catalog_only_job_disposition_keyset_sha256
+catalog_only_job_disposition_domain_sha256
+questionnaire_page_count
+questionnaire_page_domain_sha256
+questionnaire_occurrence_count
+questionnaire_occurrence_domain_sha256
+flow_branch_count
+flow_branch_domain_sha256
+hierarchy_row_count
+hierarchy_keyset_sha256
+hierarchy_domain_sha256
+positive_occurrence_row_count
+positive_occurrence_keyset_sha256
+positive_occurrence_domain_sha256
+occurrence_raw_field_reference_count
+occurrence_raw_field_reference_keyset_sha256
+occurrence_raw_field_reference_domain_sha256
+positive_field_join_row_count
+positive_field_join_keyset_sha256
+positive_field_join_domain_sha256
+expanded_disposition_row_count
+expanded_disposition_keyset_sha256
+expanded_disposition_domain_sha256
+near_match_source_annotation_count
+near_match_source_annotation_keyset_sha256
+near_match_source_annotation_domain_sha256
+absence_proof_count
+absence_proof_domain_sha256
+canonical_order
+status
+~~~
+
+This is a future Q5 authority shape, not the shape of any §26.8 pilot
+artifact. The five inserted row families—label classes, assignments, parent
+resolutions, terminal repeats, and catalog-only jobs—are global
+authority-header relations. They do not create new per-era arrays: G17-C01
+carries them inside `authority_header`, while the inherited per-era
+annotation arrays retain their exact shapes. Their source-position and
+first-member/canonical/catalog ordering laws permit deterministic reverse
+grouping without serializing or duplicating a cross-era class. A pilot member
+name, pilot prefix, pilot artifact ID, or pilot result cannot populate an
+official member.
+
+#### 26.6.2 Executable relationship relation
+
+`global_relationship_rows` retains exactly `relationship_id`, `job_slot_id`,
+`questionnaire_component_slot_id`, and `slot_kind`. The relationship ID and
+the five slot-kind equations remain exactly §19.3.3. What changes is the
+domain predicate. A source component emits a relationship if and only if its
+class-resolution disposition is `unique_parent_assignment`; that row's sole
+parent and derived slot kind must reproduce the relationship coordinates.
+Zero, zero-lawful, and multi classes emit none. A relationship with either a
+terminal or ambiguous resolution aborts.
+
+Call the successor executable relation `R_Q`. It is exactly the
+concatenation of:
+
+1. the three mandatory baseline sentinel relationships in the displayed
+   §19.3.3 type-table order; and
+2. one relationship for every uniquely assigned source-component class, in
+   canonical-component occurrence source order.
+
+Those branches are disjoint. IDs and tuples are unique; count equals length;
+the keyset digest hashes the complete ordered ID array; the domain digest
+hashes the complete ordered row array. The complete source-component catalog
+is partitioned exactly by the unique relationship component projection,
+zero/zero-lawful resolution rows, and multi ambiguity rows. The complete
+source-job catalog is partitioned by the unique relationship job projection
+and catalog-only-job terminal rows. Thus catalog totality survives while
+relationship totality does not. Copying the old `three + every component`
+count, omitting a terminal catalog member, or adding an inferred edge aborts.
+
+#### 26.6.3 H, `O_H`, aggregate cover, and disposition cover
+
+The complete executable hierarchy remains
+
+~~~text
+H = W
+    x [head_or_reference_person,spouse_or_partner]
+    x R_Q
+~~~
+
+in that nesting order. Here `R_Q` has only the successor meaning in
+§26.6.2. Therefore `job_slot_ids` and
+`questionnaire_component_slot_ids` used by H deep-equal the stable-unique
+coordinate projections of executable `R_Q`; they do not claim to equal the
+complete job or component catalogs. The complete catalogs equal those
+projections plus their exact disposition complements.
+
+`O_H` remains source-only and precedes purpose prompts. Role anchors resolve
+to an H role through the canonical-or-assignment partition; an assignment is
+adequate role membership but never alias equivalence. Job and component
+anchors enter an H witness only through a uniquely admitted relationship.
+Baseline and aggregate anchors retain their matching-kind witness laws.
+Every finite compatible witness is still unioned; none is selected.
+
+The reverse cover is replaced by a disjoint disposition cover:
+
+1. every role anchor occurs exactly once as a canonical or assignment and,
+   when it participates in `O_H`, resolves through that membership;
+2. every job anchor's catalog class has either at least one executable H
+   relationship witness or one catalog-only-job terminal row;
+3. every component anchor's catalog class has either one executable
+   relationship witness, one zero/zero-lawful terminal resolution, or one
+   complete multi-parent ambiguity resolution; and
+4. every aggregate anchor retains the unchanged matching-kind observed-row
+   reverse cover.
+
+Terminal component and catalog-only job records are proof of nonselection,
+not invented members of H. They carry no purpose expansion. An anchor absent
+from every applicable arm, present in two arms, wrong-wave, wrong-role,
+wrong-kind, branch-incompatible, or attached to a nonunique relationship
+aborts. The authority-wide pass predicate at the end of §19.3.3 is composed
+with all role assignment, terminal repeat, class-resolution, catalog
+complement, executable-`R_Q`, H, `O_H`, and disposition-cover equations.
+Passing the new arms cannot waive any unchanged page, occurrence, flow,
+positive-field, absence-proof, source-atom, or canonicalization gate.
+
+### 26.7 Exhaustive predecessor-defect adjudication
+
+All 50 candidate predecessor fixes are **seal defects**, not law gaps. A bad
+serialized node domain or incompatible endpoint claim cannot create catalog
+law. Every row has `disposition: predecessor_seal_defect`,
+`law_gap_admitted: false`, and a byte-backed re-adjudication/reseal action.
+No defective serialized domain or proof assertion may feed an official or
+tier-2 alias, assignment, parent resolution, repeat terminal, component
+class, relationship, H witness, or authority row before that action passes.
+Tier-1 diagnostics may independently read an underlying occurrence's
+authenticated occurrence kind and source span without admitting the
+defective row. In particular, the pilot may retain a doc-036 aggregate
+occurrence as a source parent candidate after independently proving its
+aggregate kind, but it cannot use that row's serialized `component_slot`
+domain or treat the row as alias/equivalence proof. This exception creates no
+official input and expires at predecessor reseal.
+
+#### 26.7.1 Document-036 aggregate-domain rows
+
+The following eight rows serialize `node_domain: component_slot` while the
+authenticated occurrence kind is aggregate. Correct domain is `aggregate`;
+`component_slot_admitted` is false; action is
+`reseal_document_036_with_aggregate_anchor_domain`.
+
+| Source occurrence ID | Source classification / occurrence kind |
+|---|---|
+| `psid-questionnaire-occurrence:f54ff3d1032b3039fac81e59efa8ed28b6e02afe92502a6618bfac4657dd2f0a` | `source_farm_aggregate` / `farm_aggregate_anchor` |
+| `psid-questionnaire-occurrence:c0572d018543c277e5f8981f38730e82cfd3a7a1f14c43ee83e2c37a197c41ad` | `source_farm_aggregate` / `farm_aggregate_anchor` |
+| `psid-questionnaire-occurrence:2f12bd5b1bb6d958c8401e470d637e0e429a7c22a19c16da8cbe8070c3554b13` | `source_farm_aggregate` / `farm_aggregate_anchor` |
+| `psid-questionnaire-occurrence:7123a433bf2b5c58f37e681b78be6e08d667b0714a1085e2519b45920b824df1` | `source_business_aggregate` / `business_aggregate_anchor` |
+| `psid-questionnaire-occurrence:c5794b122be5265d0500362544ceec603595db5f77d2fb9661e8ef03426f183e` | `source_business_aggregate` / `business_aggregate_anchor` |
+| `psid-questionnaire-occurrence:12a1f8ad95aeafc7eadbdfbc587a0f1749433f7420a572e4ecb98b4ab881c056` | `source_role_total` / `role_total_anchor` |
+| `psid-questionnaire-occurrence:0d131733e66b291c339cb13d2f8c2c232129896ae8134cc95fe8b8b72067c195` | `source_business_aggregate` / `business_aggregate_anchor` |
+| `psid-questionnaire-occurrence:bdc2c5272c0380ba6287b962718f226324241a778c03ea66fe0070fb1fe625ef` | `source_role_total` / `role_total_anchor` |
+
+There is no source-aggregate member in the source-component enum. Adding one
+to accommodate these rows would misclassify aggregate anchors as components
+and is forbidden.
+
+#### 26.7.2 Populated local-proof rows
+
+The following table is the exact 42-row key cover. Flags are overlapping:
+`A` touches a noncatalog aggregate endpoint; `O` has occurrence-derived and
+corrected catalog-domain crossing; `R` has raw serialized-node-domain
+crossing; `C` mixes context and remuneration; and `H` mixes head and spouse.
+Every row's action is
+`readjudicate_source_row_and_reseal_before_tier_2`; none admits alias or law.
+
+| Doc | Source local evidence ID | Flags |
+|---:|---|---|
+| 7 | `rq-local-repeat-evidence:c93bb69e6a4c04717efd8b68e71799b5b4f3cb1c1c20a1b31afe2852d04dab67` | A,O,R |
+| 7 | `rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6` | A |
+| 7 | `rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045` | A |
+| 7 | `rq-local-repeat-evidence:0c25501bcb134ddd36f5f076978ebd01a02d3e731772c4ae5de182d81a76a487` | A,O,R |
+| 7 | `rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495` | A |
+| 7 | `rq-local-repeat-evidence:e5ff3d4e974f7c527fd7be988d6075b152586ed1f6ec06f37711bb47667b191d` | A |
+| 11 | `rq-local-repeat-alias-evidence:db641c23f0d13b3befcdde005cf6b3804cc85a7e3985804091a59d826584a0c1` | A |
+| 11 | `rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716` | A,O,R,C |
+| 12 | `rq-local-repeat-alias-evidence:b8ea2ca5e2b198e2c4f9ec8ef9608a68b53b8c7a0f76435f4c2ca0db3f57a456` | O,R |
+| 13 | `rq-local-repeat-alias-evidence:78c2d51532910f9dbebaac790485bb20e2a0d907e632f4d32c327c185d52a34c` | O,R |
+| 15 | `rq-local-repeat-alias-evidence:224c03c08758f9ea5f0e6920b949ff50afc42ef2165923be05fc7646b8249623` | A,O,R |
+| 15 | `rq-local-repeat-alias-evidence:e3ca944c92c9a5053ff989551b47d8cfbe885565bfc6e0f59886c74a8b3a1331` | A,O,R |
+| 17 | `rq-local-repeat-alias-evidence:238d3e9a1faceb345a3f13380b6cc04a97ed5c9a54d7fe931c178588415c9d11` | A,O,R |
+| 17 | `rq-local-repeat-alias-evidence:6c1381f0c6a1ee424dc21dee75fde1263efbe2cdaa4d4b396a28847fea3b6b89` | A,O,R |
+| 19 | `rq-local-repeat-alias-evidence:6d0ad010bf859e35f2d90ef9ba2dceaf60f4625dacac9cd6c4ed0ccdf814f526` | A,O,R |
+| 19 | `rq-local-repeat-alias-evidence:122109cba974f0e5ed897f0236668a04ed2dca7e5c15f3fa2c47fbd69bec633a` | A,O,R |
+| 35 | `rq-local-repeat-alias-evidence:e744b798ebfb58ba3b8e1c28c7b0c5cbeadfadd649b5951f25a9326b1dafc0bf` | A |
+| 35 | `rq-local-repeat-alias-evidence:9aed9fbcbb6cbe3f0697b12e95522c1a9e539b5e4e2a031b3b2bb531b45f3ced` | A |
+| 36 | `rq-local-repeat:d20165da2c897270b8d8708bdd2ee7a860d6c3ac905c9e05dcc622a75b413a92` | A,O |
+| 44 | `rq-local-repeat-alias-evidence:92db20a47e9e0771b874238f39d920d69203e822e5cb28cf461394fa9d8bf254` | A |
+| 48 | `rq-local-repeat-alias-evidence:71cbb45447d775ba33f493a3e0ebe800226d463bf73905566216fcb53287512d` | A |
+| 52 | `rq-local-repeat-alias-evidence:b2ff04405ce6c20fb6848441dd5fc249ac55b99c6ce21a60ff1ef331b42d8a19` | A,O,R,C,H |
+| 52 | `rq-local-repeat-alias-evidence:e4b4c44f443929ce8facfa51ce2e318e201490d259b01e507d4dded083e8fba2` | A,O,R,C,H |
+| 52 | `rq-local-repeat-alias-evidence:6c17ebd0a0c97a5b46fef9ff2c5326fe45acf482647c6a2fd0d3bf542be17b22` | A,O,R,C,H |
+| 52 | `rq-local-repeat-alias-evidence:f44ce5328602c75bcde9b50b2de94d68582a6fe7080eea03b1de32e622171a22` | A,O,R,C,H |
+| 52 | `rq-local-repeat-alias-evidence:f4de9f70a2b5a851a4d1e56c63dc7a35574c14d877122f6c0983d2e6268fb516` | O,R |
+| 56 | `rq-local-repeat-evidence:d6f7cdeab7418133a2bb1ea992d0b42e0749079e1aa890e799f96310d690bd0c` | O,R |
+| 56 | `rq-local-repeat-evidence:c9b24cb9e34a7050a567093ee0f0500df3e221dd2afa9adfdaba02010fd31509` | C |
+| 56 | `rq-local-repeat-evidence:db438aefe04bee804bdc15f683dba9f90d0963871a6242217b18e09bdbed01c4` | A,O,R |
+| 56 | `rq-local-repeat-evidence:6ce1ef4653dfa56a49ff6baf30052132630c1ed47dfb246dcf38c1e63a24f83f` | C |
+| 56 | `rq-local-repeat-evidence:7e1395227e1f81c5fe864d17e319e56b724424eab5163df68109dd85f81ce5c7` | C |
+| 56 | `rq-local-repeat-evidence:e1e5e2a1b422ae3334fd657b68dbd1922e56e36165b4913c8d309896ac72d6d4` | C |
+| 56 | `rq-local-repeat-evidence:c207d07c88d2bef6b99a038d94a1f870ac038072de4c005241ab9ce3f79439c3` | C |
+| 56 | `rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561328e86ada` | C |
+| 56 | `rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877` | C |
+| 58 | `rq-local-repeat-evidence:4ac3d89c423be55bac47c13cced2fd92151014ef3a45d95fba4b2999cca518f2` | A |
+| 61 | `rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c95a391c5daf54547` | A |
+| 64 | `rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868` | A |
+| 66 | `rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c` | C |
+| 66 | `rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927` | C |
+| 68 | `rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734` | A |
+| 70 | `rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39` | C |
+
+The overlapping corpus projections are A:28, O:19, R:18, C:15, and H:4.
+The stage-4 phrase “19 serialized-domain crossings” is corrected, not
+lawified: row
+`rq-local-repeat:d20165da2c897270b8d8708bdd2ee7a860d6c3ac905c9e05dcc622a75b413a92`
+has remuneration and role-total occurrence kinds, so occurrence-derived and
+corrected domains cross, while both raw nodes serialize `component_slot`.
+Hence raw crossing is 18 and occurrence-derived/corrected crossing is 19.
+The 42 rows cover 38 unique instructions. Tier 1 contains 13 of them—doc 36:
+1, doc 56:9, doc 58:1, doc 66:2—covering nine instructions; the rare-tail
+sweep, not pilot extrapolation, establishes all 42.
+
+Tier 2 is blocked until each of the 50 rows has a byte-backed document
+re-adjudication, document reseal, affected-era reseal, and independent check
+that unaffected domains did not move. The pilot ledger cannot patch a seal.
+Any missing row, added law-gap arm, component-slot admission, changed action,
+or copied pilot adjudication aborts.
+
+### 26.8 Published tier-1 evidence is permanently NONAUTHORITY
+
+#### 26.8.1 Exact evidence identities
+
+The current eight-file evidence set is fixed across commits
+`f95e8c28c5e42eca01ed22af2173db2e489319eb` and
+`ab26036c2afd50c0fb6a0cc48c45e9f460b1f0b8`. The first commit adds the six
+retained evidence payloads and the original gate; the second adds the
+exhaustive derived-class/complement sweep and replaces the gate so that its
+identity partition binds all seven subordinate artifacts. Paths, modes,
+blobs, byte counts, and raw SHA-256 values below are integrity pins fixing
+the current bytes referees attacked. They are **not authority pins**, do not
+become expected source values, and may never enter Q5, a wall row, a
+registry, a receipt, or a production preimage.
+
+| File under `docs/analysis/amendment_12_rq_catalog_pilot/` | Blob OID | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `pilot_slice_manifest_v1.json` | `f9a25f3e5f0ea41165fa00c9c3b574b65ecd07e7` | 16,289 | `622efb49ab7ad6e2956c3d05e23ddd60e0b3f5d71da0ec9496c5d6191f91d5c4` |
+| `corpus_exhaustive_targeted_sweeps_v1.json` | `719c12a342f683e4e5a13df281b53ffb290cce00` | 33,904,110 | `93090ae0950e4745731edbd93e56856a0aa26b75083fd2118932de73ec9c0da7` |
+| `derived_class_complement_sweeps_v1.json` | `a04fa9a816f7b4cf1f88a7d87b3713535568b49a` | 39,520,340 | `731e5b5239834789cfff0c0a36ae598807caab5df3b6ad1659b5f7ec23b7ed21` |
+| `predecessor_defect_adjudication_v1.json` | `ca3dd7a3828a7823d38b68431b474a519a7ce0b9` | 234,676 | `7c9879065daafa8fa41ff824036e6d4d5509d71a192d5790c24637f7275f4acc` |
+| `role_assignment_pilot_v1.json` | `7c25ab0d321bcd3d0d50c20fa8ac245c43ec2970` | 1,054,823 | `e212581a018e7c2a373fb241ebc338e4a245fe7bbd8b8e44c8c8404b5bb2875d` |
+| `outside_domain_repeat_disposition_pilot_v1.json` | `8717341575c17bf7e8ce3d14d894fd518c49a3d0` | 44,189 | `63dd893f7a63187cf0ad80c6f291897615c8480c282fcc20eae8c026fb4f34c6` |
+| `component_parent_disposition_pilot_v1.json` | `c5e199fc2677c43eccf7926826080feeeee6d9b2` | 4,032,825 | `868c9224739ebb83f1e1d9177c06e7a978dfa3a9452d20f64b2f9457b99eea9b` |
+| `pilot_gate_result_v1.json` | `ac1607c34d117d263b1083f7f95ff03192450e34` | 5,736 | `2fef4e5509efe700680b5c3d7fc179a4be242c28887a719a01081becd12c6450` |
+
+All modes are `100644`; every file is canonical strict JSON and below
+50,000,000 bytes. Their exact artifact IDs are, in the same order:
+
+1. `a12-rq-pilot-slice:3c4572b9ec34945db0b57068b8feb68817aac42c6ce877ab41b912c0dea3c46f`;
+2. `a12-rq-corpus-sweeps:19d54076367a44c5121bc940f3d7a96133ac6b921bd802cf05af396f54100050`;
+3. `a12-rq-derived-sweeps:9882eca21e7cc00592ee1884a8106170a004fd717583bc3f31f653120a9bc569`;
+4. `a12-rq-predecessor-adjudication:cfbae4989d8675efd74356cb6d80c45f0988e67147aa518213a3b803acfa5016`;
+5. `a12-rq-role-pilot:9b5654052723178aa012b66df01ff7f62c2a112d0bb4dfec5e14c32514989b03`;
+6. `a12-rq-repeat-pilot:76c82cdd135eb7f7a0079c1d9914095fcbcca36f35a77ba28ce5006c47cd0209`;
+7. `a12-rq-component-pilot:82e81e598905289a2e16e122f23b26eb866e90977dc73cb81a87eaa2f6ff5c26`;
+   and
+8. `a12-rq-pilot-gate:1c0feb95afe0aa514b12aa770c37ba91f30517c502771a0bfa56fd7c54a4ac1f`.
+
+The gate's exact ordered subordinate-role partition is
+`[slice,sweeps,derived,predecessor,role,repeat,component]`;
+`artifact_identity_count` is 7 and the complete identity-row domain SHA-256
+is `0ff9c2adc51f1f6fb9dcf778ffde5bf6f43948e4e962a735ca044e4542833907`.
+An omitted, duplicated, reordered, or substituted role aborts even if every
+remaining raw identity is individually valid.
+
+The source-rebuilding implementation, complete satisfiable class-fold and
+job-complement fixtures, exact candidate sweeps, and 39-mutation inventory
+are fixed at commit
+`ab26036c2afd50c0fb6a0cc48c45e9f460b1f0b8`:
+
+| Path | Mode / blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/build_amendment12_rq_catalog_pilot.py` | `100644` / `a054f7d1919b95a68e1719861ec9465981fab560` | 232,107 | `d7fe15889a665e684f4594851e9ed8258633569f2dfea53e425f5aab5351d05e` |
+| `tests/test_build_amendment12_rq_catalog_pilot.py` | `100644` / `3994ccd9f7aeeee1cc41f8ecfc09e778afcf7bc1` | 26,070 | `4f1f543224f177ebc63da7568f70c5c2aa4450aa4f2452855e0bcc3b8ad739a3` |
+
+The table pins the executable builder, class-fold fixture, and
+job-complement fixture baseline.
+Append-only document-closure tests may extend the test path in the later
+draft commit, but cannot alter, delete, or weaken any pinned fixture or
+builder behavior.
+
+The builder reads only the pinned Git tree or a byte-identical clean source
+worktree, verifies all six seals and 81 annotation identities, reconstructs
+all eight values, validates exact schemas and source-projection pins, stages
+all outputs before replacement, byte-rereads them, and restores every prior
+destination after an injected middle failure. Its build and `--check` paths
+are deterministic. The fixture fold expressly emits no `R_Q`.
+
+Every artifact has `tier: 1` and the exact nonauthority statement with
+`pilot_only: true`; `authority_admitted`, `catalog_certified`,
+`global_catalog_emitted`, `q5_emitted`, `r_q_emitted`, `hierarchy_emitted`,
+`slot_emitted`, `inventory_emitted`, `legal_registry_emitted`, and
+`wall_row_emitted` are false. The gate's exact top outcomes are
+`pass_law_shapes_only_nonauthority`,
+`PILOT_NONAUTHORITY_CERTIFIES_NOTHING`,
+`fail_closed_unresolved_rows_remain`, and
+`not_started_requires_ratification_and_predecessor_reseals`. A consumer that
+interprets `pass` without all four values fails closed.
+
+#### 26.8.2 Pilot census and law-shape outcomes
+
+The exact pilot source census is 16 documents, 1,571 pages, 13,219
+occurrences, 3,480 flow branches, 6,123 local anchors, 3,240 field-purpose
+prompts, 418 local evidence rows, 376 repeats, and 545 aggregate anchors.
+The 418 evidence rows split into 156 with both endpoints, 8 partial, and 254
+with no endpoints.
+
+| Pilot domain | Exact outcome |
+|---|---|
+| Roles | 949 = 530 head/reference + 419 spouse/partner; 69 label classes; 947 noncanonical assignments; zero unassigned; no alias/equivalence claim |
+| Jobs | 1,534 authenticated anchors observed; no official job catalog emitted |
+| Components | 3,095 = 2,247 context + 848 remuneration; raw parent cardinality 1,466 zero / 1,329 one / 300 multiple |
+| Parent dispositions | 1,488 terminal = 1,466 raw zero + 22 one-ineligible; 1,307 unique-arm eligible; 300 ambiguity; zero relationships emitted |
+| Terminal repeats | 34 = 17 repeat + 17 cross-reference; document split 2 / 22 / 5 / 4 / 1 |
+| Repeat remainder | 106 valid-direct-proof instructions; 9 incompatible; 228 otherwise unresolved; overlap of valid and incompatible diagnostics 1 |
+| Predecessor carriers | all eight doc-036 aggregate rows; 13 of the 42 proof-defect rows; all remain blocked seal defects |
+
+The pilot zero partition is 1,104 context + 384 remuneration; unique is 915
+context + 392 remuneration; multi is 228 context + 72 remuneration. It has
+86 raw and 86 eligible cross-category multi rows, zero eligible/ineligible
+mixed multi rows, and 22 ineligible references. These results demonstrate
+that the three law forms are satisfiable at the preregistered scale. They do
+not establish any tier-2 equivalence class, full catalog, complete repeat
+cover, H row, or certification fact.
+
+The pilot-exempt rare-tail candidate sweep separately exact-covers all
+14,326 source-job anchors in 12,357 candidate classes and all 21,283 source-
+component anchors in 19,507 candidate classes. The candidate component fold
+reports 9,570 zero, 30 zero-lawful, 7,934 unique-arm eligible, and 1,973
+ambiguity classes. The source-job complement reports 3,359 classes with a
+nonempty candidate relationship projection and 8,998 terminal-catalog-
+disposition candidates. Its alias-support census is 647 exact-pair plus 79
+sealed-local supports for jobs and 746 exact-pair plus 209 sealed-local
+supports for components. Every such row is NONAUTHORITY, emits no catalog,
+disposition, component slot, relationship, or `R_Q`, and records that all 50
+predecessor reseals remain required. These are exhaustive candidate-law
+results under the pinned defective seals, not tier-2 class or catalog facts.
+
+### 26.9 Rare-tail sweeps, tier-1 gates, fixtures, and mutation coverage
+
+#### 26.9.1 Corpus-exhaustive shape sweeps
+
+Every tier-1 admission, terminal, exception, and ambiguity introduced by
+this amendment has its own exhaustive source-shape sweep over all 81 sealed
+annotations. A sweep starts from the six seal input arrays, visits every
+member in seal, document, and artifact order, records zero as an affirmative
+complete result, and never stops after finding a witness. It must retain
+enough source identity to reconstruct every selected row and every rejected
+near-shape. A regular expression or indexed field test may locate candidates,
+but only a strict source-row reconstruction may admit one. These sweeps are
+exempt from the pilot boundary solely to prove a shape's complete corpus
+denominator. Their serialized off-pilot rows are nonauthority sweep witnesses
+only; they cannot feed an operative pilot relation, equivalence class,
+catalog row, relationship, or expected production value.
+
+The complete targeted-sweep and pilot-output projection pins are:
+
+| Projection | Count | Keyset SHA-256 | Domain SHA-256 |
+|---|---:|---|---|
+| Pilot document positions | 16 | — | `317e3af58e051b3a21dca1852ea4e0363aa8543b8292b10ffbabd0491829bb00` |
+| Corpus role exact-label classes | 273 | — | `9c2f36a9a4cdc9fde3d790b71498234efde5b17235b9a5023ca4c772ad633e8d` |
+| Corpus outside-domain repeat shapes | 34 | — | `baf5475e21ef404b911a7d7ec6328771caa01961d185f684a3ed63c4fdd8c48a` |
+| Corpus component-parent shapes | 21,283 | `b1aaad10fac7e3a6eb35edabd99c079137404109f0b912f8726446965a1d0524` | `22506ce5d02d6ceee9fc1a51aee25949c5b91cf218355396910ebe8faf53c7a0` |
+| Corpus referenced-parent source witnesses | 8,418 | `e6cc0d564a407a3375975c5522180ad6ec871b3fdd410680b31690f7b24651a9` | `a89a54310e86cd3d08c40d9fb9cedc9f25dd0069780ecc4e94f8ef596843ebd1` |
+| Candidate component-class admission sweeps | 19,507 | `e89fa8d27daea8374317c61a3f914b7a12cb168a16be166122a4fea77723a2e3` | `92116fb8400eddc0266d0c2ae208f58fa3ba965dc5c77ab723dea5c6b3a4ca2e` |
+| Candidate catalog-only-job complement sweeps | 12,357 | `47ef70e41be3716d51b3fc46d3649add4a0e5a99c5d771cedee3d5111dcaec51` | `5f660c565ff79f37c2c76367154ab0b6696e5a9a14f17959ae165f2f6923a5ac` |
+| Pilot role label classes | 69 | — | `97f2a250dd554415156084a47aa4cc240cfda5dbeed44306e2ce977d0adef357` |
+| Pilot role assignments | 947 | `741976528844636a31910030bf0f684f77a3844aebeba2090fa0d8ea8ace68a5` | `3f77350133ae4f9bce3e8b3ae80c5975897ab040814b1bbe544ded766d4966dd` |
+| Pilot terminal repeat dispositions | 34 | `df9b48a648697788b763433de1de50dbfaa082bc5ee5b98297624e6a7d00bd35` | `baf5475e21ef404b911a7d7ec6328771caa01961d185f684a3ed63c4fdd8c48a` |
+| Pilot zero/zero-lawful parent dispositions | 1,488 | — | `9e18a47a0f21c6e6b947c9f0e08272de07ed96034d5af4f47d750a5cfcd7be12` |
+| Pilot unique-parent assignments | 1,307 | — | `a0372053b83ca6ee1f6621c8bc4680258cd85ed03dceb6309afa2ef057598011` |
+| Pilot multi-parent ambiguities | 300 | — | `fe47e877fe1d797bbb62c0ae7d68a5dad88ec3fef88c9a8bd3508c00dc9a4cad` |
+| Complete pilot parent resolutions | 3,095 | `d140d178a538613a988093c36a93129b9dfc6f2df3d4a1028bff682136ba69ef` | `19f644b3ec37bfa9cebf29c2e7d13c77c8da48cde9b86848960142e88849fe75` |
+| Doc-036 aggregate-domain defects | 8 | — | `246a32632554c20aa25bb764e4cb77f3427f964e845a8c0cf65efcb57c1d9bae` |
+| Populated local-proof defects | 42 | `12d4b72affcecd0f0899a5683a2e1ab9bbae3cb37850b572701490e6210e3d12` | `965da8b643b06de28a222dfb30667992ee5823fa2ad991cad46361561a54269d` |
+
+The role sweep additionally requires 10,521 anchors, 10,519 noncanonical
+anchors reached, 86 head/reference classes, 187 spouse/partner classes, zero
+cross-classification labels, and zero unreached anchors. The repeat sweep
+requires the exact relation and document partitions in §26.4. The component
+sweep requires the complete 10,664/8,809/1,810 raw-cardinality partition,
+466 raw cross-category multi rows split into 462 multiple-eligible and four
+eligible/ineligible-mixed rows, and 34 ineligible references. The
+predecessor sweep requires 50 seal defects and zero law gaps. A count-only
+sweep, a truncated matching-row projection, a missing source-witness
+projection, or a digest copied from another artifact fails.
+
+Two prospective tier-2 rules depend on authenticated equivalence closure and
+therefore cannot lawfully admit an official class before the 50 predecessor
+reseals. Tier 1 nevertheless executes both rules as corpus-exhaustive
+candidate sweeps over all 81 documents and serializes every result in
+`derived_class_complement_sweeps_v1.json`. Every row has
+`predecessor_reseal_required: true`; every emission Boolean is false; every
+status ends in `nonauthority_predecessor_reseal_required`. A candidate class,
+parent, relationship arm, or complement is not an official catalog fact.
+
+Candidate closure uses exactly two inherited proof forms. First, same-kind
+anchors with nonnull byte-identical `printed_identifier` and `exact_label`
+form an exact-pair equality edge, with no case, whitespace, punctuation, or
+other normalization. Second, a sealed local row contributes an edge only if
+every endpoint belongs to the requested job or component anchor domain and
+all endpoints have one identical occurrence kind, both directional endpoint
+arrays are populated and disjoint, all evidence arrays are unique and source
+ordered, every endpoint and source instruction is included in nonempty
+evidence, handoff status is exactly
+`document_local_source_evidence_complete |
+local_exact_identifier_and_label_for_global_assembly |
+local_resolved_cross_reference_for_global_assembly`, and all six §26.7
+defect flags are false. The sealed
+complete status and pinned source-domain projection control the four lawful
+rows that carry an additional dependent instruction; no candidate inference
+may add or remove evidence. The 42 defective populated proof rows contribute
+no edge. Exact-pair supports follow first-member source order, then sealed-
+local supports follow document/local-evidence order; filtering into a class
+preserves those orders.
+
+Every nested `alias_support_rows` member has exactly
+`alias_support_proof_id`, `support_origin`, `relation`,
+`member_occurrence_ids`, `alias_anchor_occurrence_ids`,
+`canonical_anchor_occurrence_ids`, `source_local_evidence_id`,
+`printed_identifier`, `exact_label`, and `evidence_occurrence_ids`. Origin is
+`exact_pair_equality_sweep | sealed_local_evidence`. Exact-pair support has a
+null local-evidence ID, the exact nonnull pair, earliest canonical endpoint,
+the remaining same-pair endpoints as aliases, and evidence equal to all
+members. Sealed-local support retains its directional endpoints and complete
+evidence; its pair strings are present only for the exact-pair relation. The
+support graph must connect every class member; singleton classes have an
+exact-empty support array. Counts and domain digests reproduce.
+
+1. `component_class_admission_sweep_rows` has exactly the keys
+   `component_class_admission_sweep_id`, `candidate_component_class_id`,
+   `canonical_component_occurrence_id`,
+   `component_class_member_occurrence_ids`,
+   `component_class_member_count`, `component_kind`,
+   `member_raw_parent_cardinalities`, `raw_parent_candidate_count`,
+   `eligible_canonical_parent_count`, `candidate_disposition`,
+   `candidate_unique_parent_node_id`, `candidate_unique_slot_kind`,
+   `relationship_arm_eligible`, `r_q_relationship_emitted`,
+   `alias_support_rows`, `alias_support_count`,
+   `alias_support_domain_sha256`, `predecessor_reseal_required`, and
+   `status`. The 19,507 rows exact-cover all 21,283 component anchors and
+   rerun the §26.5.2 fold from the complete corpus parent-shape sweep.
+   `relationship_arm_eligible` is true exactly for the 7,934 candidate
+   unique rows; `r_q_relationship_emitted` is always false.
+2. `catalog_only_job_complement_sweep_rows` has exactly
+   `catalog_only_job_complement_sweep_id`, `candidate_job_class_id`,
+   `canonical_job_occurrence_id`, `job_class_member_occurrence_ids`,
+   `job_class_member_count`,
+   `candidate_relationship_component_class_ids`,
+   `candidate_relationship_count`, `catalog_only_disposition_required`,
+   `coverage_arm`, `catalog_only_disposition_emitted`,
+   `alias_support_rows`, `alias_support_count`,
+   `alias_support_domain_sha256`, `predecessor_reseal_required`, and
+   `status`. The 12,357 rows exact-cover all 14,326 job anchors. The Boolean
+   is true exactly when the candidate relationship-class array is empty;
+   `coverage_arm` is exactly `relationship_projection_nonempty |
+   terminal_catalog_disposition`; `catalog_only_disposition_emitted` is
+   always false. The two arms exact-partition every candidate job class.
+
+The exact top-level gate values remain `predecessor_input_status` =
+`reseal_required_before_tier_2` and `tier_2_protocol_status` =
+`not_started_requires_ratification_and_predecessor_reseals`. Those values do
+not suppress the exhaustive NONAUTHORITY rows; they prevent any row from
+becoming authority. Before either tier-2 rule admits an official row,
+`A12-T2-R01` must pass and both sweeps must run afresh as preregistered inputs
+to `A12-T2-R03`. A missing derived sweep, early stop, count-only result,
+favorable subset, copied candidate count, or promoted pilot ID aborts.
+
+Any later change to an admission predicate, enum, source schema adapter,
+classification equation, or exception arm invalidates the matching sweep.
+The changed rule cannot run at either tier until a new complete sweep and
+targeted mutation cover are reviewed. Sampling never establishes a rare-tail
+absence.
+
+#### 26.9.2 Exact tier-1 gate relation
+
+The pilot builder evaluates the following eight conjunctive gates in order.
+It reports every evaluated failure but emits no partial replacement artifact.
+
+| Gate | Exact passing predicate |
+|---|---|
+| `A12-R01` | Revision-13 prefix, source commit, six seals, all 81 annotation identities, and the exact 16-position pilot slice independently reproduce. |
+| `A12-R02` | All eight outputs strict-parse, exact-walk, canonicalize, remain below 50,000,000 bytes, cross-bind their identities, and carry every required nonauthority and nonemission value. |
+| `A12-R03` | The pilot role classes and assignments exact-cover all and only the two canonicals plus 947 noncanonical anchors, with no alias or equivalence admission; the corpus role sweep also passes. |
+| `A12-R04` | The 34 outside-domain rows reproduce their exact singleton evidence, target bytes, spans, terminal values, and disjoint coverage arm; the corpus repeat sweep passes while overall pilot repeat coverage remains fail-closed. |
+| `A12-R05` | All 3,095 pilot component anchors retain complete source-parent witnesses and enter exactly one zero/zero-lawful, unique, or ambiguity arm; no relationship is emitted; the corpus component and parent-witness sweeps pass. |
+| `A12-R06` | All eight doc-036 rows and all 42 local-proof rows exact-cover the targeted defect domain as seal defects, zero law gaps, and retain their mandatory reseal actions. |
+| `A12-R07` | Every §26.9.1 exhaustive projection, including 19,507 candidate component classes and 12,357 candidate job complements, count, order, source identity, keyset, domain digest, and rare-tail partition independently reproduces. |
+| `A12-R08` | The seven evidence artifacts and their gate form one acyclic exact dependency set; staged write, byte reread, replacement, directory sync, and injected-failure rollback pass; all 39 coherently repinned semantic/source mutations reach and fail their intended gates; certification, Q5, authority, H, and tier-2 status remain false or not started. |
+
+Tier-1 passage is exactly the conjunction `A12-R01` through `A12-R08` and
+the four gate outcomes fixed in §26.8.1. It means only
+`pass_law_shapes_only_nonauthority`. In particular, preserving the 34-row
+terminal subset while changing
+`overall_repeat_catalog_coverage_status: fail_closed_unresolved_rows_remain`
+to pass is a gate failure.
+
+The satisfiable positive fixtures include the two canonical role anchors,
+the doc-001 `J8`/`Head` assignment, the doc-002 null-identifier `she`
+assignment, the complete 34-row outside-domain terminal family, the doc-009
+zero-parent anchor, an eligible singleton parent, an ineligible singleton
+parent, same-category and cross-category multiple parents, and the doc-033
+multi-parent witness. The prospective class-fold function additionally
+covers eleven nonauthority class cases: raw zero, only ineligible, unique,
+two distinct source-parent aliases resolving to one canonical parent,
+same-category multi, cross-category multi, mixed zero/eligible members,
+mixed zero/ineligible members, one canonical parent with conflicting slot
+kinds, eligible/ineligible singleton members, and conflicting singleton
+parents. It also rejects a duplicate source candidate and a resolved
+ineligible candidate. Every component-anchor and class-fold fixture sets
+forced selection and `R_Q` emission false; the unique cases demonstrate
+eligibility only.
+
+The prospective job-complement fixture separately executes both satisfiable
+arms: an exact-empty candidate relationship array requires
+`terminal_catalog_disposition`, while a nonempty array requires
+`relationship_projection_nonempty`. Both retain
+`catalog_only_disposition_emitted: false` and
+`prospective_fixture_nonauthority`; a duplicate candidate relationship
+aborts. The corpus-derived artifact then exercises both arms at exhaustive
+scale without promoting either fixture or candidate row.
+
+#### 26.9.3 Coherently repinned adversarial mutations
+
+Mutation testing changes semantic source or evidence values and then
+recomputes every affected row ID, count, keyset digest, domain digest,
+artifact ID, dependency identity, and gate identity. Thus an identity-only
+failure cannot satisfy mutation coverage. The exact 39-mutation inventory is:
+
+~~~text
+pilot_slice_reordered
+pilot_claims_q5
+role_assignment_omitted
+role_assignment_role_flipped
+role_assignment_class_invented
+role_assignment_alias_admitted
+role_assignment_equivalence_claimed
+role_sweep_class_omitted
+role_sweep_alias_class_claimed
+role_sweep_source_member_forged
+outside_repeat_target_emptied
+outside_repeat_terminal_changed
+outside_repeat_universal_arm_false
+outside_repeat_alias_admitted
+outside_repeat_evidence_not_singleton
+outside_repeat_source_target_forged
+zero_parent_emits_rq
+unique_parent_forced
+unique_parent_derived_slot_invented
+unique_parent_source_invented
+parent_and_source_witness_forged
+ambiguity_forced_parent
+ambiguity_emits_rq
+component_sweep_row_omitted
+component_sweep_source_anchor_forged
+component_row_extra_key
+component_class_sweep_row_omitted
+component_class_sweep_relationship_arm_flipped
+job_complement_sweep_row_omitted
+job_complement_coverage_arm_flipped
+exact_pair_support_label_forged
+catalog_only_job_source_member_forged
+doc036_law_gap_admitted
+doc036_component_slot_admitted
+proof_defect_lawified
+proof_defect_action_removed
+proof_defect_row_omitted
+gate_claims_certification
+gate_claims_repeat_coverage
+~~~
+
+Every mutation must reach and fail its intended semantic or authenticated-
+source gate after coherent repinning. The six source-projection forgeries—
+role member, outside-domain target, component anchor, combined parent plus
+source witness, exact-pair label, and catalog-only job member—must fail their
+respective pinned source comparisons, not merely a stale hash. The two
+derived-row omissions and two coverage-arm flips must reach their exact
+count or semantic equations first. A surviving mutation, wrong failure gate,
+mutation that does not reach validation, or identity-only mutation result
+fails `A12-R08`.
+
+### 26.10 Replacement closure, comparator, consumers, and noninstantiation
+
+#### 26.10.1 Exact affected-law closure
+
+Upon a future document-only ratification, and not before, the following is
+the complete replacement/composition map. Affected text is not silently
+retained as a second totality rule.
+
+| Earlier normative anchor | Amendment-12 disposition |
+|---|---|
+| §19.3.3 three-key `role_node_rows` and canonical-plus-alias role partition | Replaced by §§26.3 and 26.6.1: four-key role rows and canonical-plus-assignment membership partition; aliases remain independently proved and orthogonal. |
+| §19.3.3 requirement that every repeat instruction occur in alias evidence | Replaced by §26.4's disjoint valid-alias-proof or terminal-outside-domain coverage; an instruction in neither still aborts. |
+| §19.3.3 parent-bearing source-component row, component ID preimage, and exactly-one-parent law | Replaced by §§26.5 and 26.6.1: parent-independent component identity plus one explicit class-resolution record. |
+| §19.3.3 one relationship for every source component and source-job nonorphan abort | Replaced by §§26.5–26.6: relationships only for unique class resolutions, terminal zero/multi records, and exact catalog-only job complements. |
+| §19.3.3 `R_Q` as three baselines plus every source component | Replaced by §26.6.2: three baselines plus every and only uniquely resolved source-component class. |
+| §19.3.3 fixed hierarchy-authority shape and authority-wide pass | Composed with the inserted arrays and all exact covers in §§26.3–26.6; unchanged page, occurrence, flow, positive, source-atom, and absence-proof laws remain. |
+| §19.3.3 H coordinate projections, `O_H`, aggregate reverse cover, and complete anchor cover | Replaced only where stated by §26.6.3's executable-`R_Q` projections and disjoint disposition complements; aggregate matching-kind cover remains. |
+| §19.4.2 G17-C01 hierarchy projection and its expected/actual deep comparison | Composed with §26.6: both sides carry the complete successor authority shape, executable `R_Q`, assignments, resolutions, terminal repeats, and catalog complements. |
+| §19.4.3 closure search terms and consumer-edge construction | Composed with §26.10.2's exact search augmentation and affected-consumer walk. |
+| §19.8.1 build step 2's alias-only partitions, universal alias-evidence consumption, exact-one parent projection, and old `R_Q` | Replaced by the tier-2 build in §26.11.2; all source-before-consumer ordering and the rest of that step remain. |
+| §25.8 revision-13 comparator and §25.9 prospective D11 lifecycle laws | The 63 historical rows remain exact and are composed with §§26.10.2–26.10.3; no lifecycle successor is instantiated by this draft. |
+| §25.10 Amendment-11 production blocker | Lawfully unchanged and controlling after every Amendment-12 tier-2 gate. |
+
+The changed G17-C01 expected side must independently reconstruct the new
+authority from authenticated tier-2 inputs before reading Q5 or a consumer.
+The actual side must reverse-project the same complete values from the
+identity-selected closure and its official consumers. Both sides include
+empty terminal/complement arrays where empty, and deep-equal under §10.1.
+An old authority header, an old all-components relationship projection, a
+pilot array, or a header-only comparison aborts. G17 retains exactly 18
+physical rows; no nineteenth row or alternate G17 schema is introduced.
+
+That expected-versus-actual G17 comparison is a later post-Q5 consumer gate,
+not a tier-2 stage-4 gate. Tier 2 constructs two independent source-side
+candidate projections of only the `hierarchy_annotation_authority` member
+that would later occupy G17-C01's source-side expected subpayload, requires
+those two member values to deep-equal each other, and pins those bytes. It
+does not construct or compare the full eight-field G17-C01 payload: the
+layout, inventory, grammar, proof, and actual-consumer fields are unavailable
+before Q5. Tier 2 has no official consumer from which an actual side could
+yet be reverse-projected. Passing this member-only source comparison does not
+populate
+`hierarchy_annotation_authority`, G17, Q5, a slot registry, or an inventory.
+
+The replacement build step authenticates and reseals the 50 predecessor
+rows first, reconstructs all 81 documents, runs all rare-tail sweeps,
+constructs role assignments independently of aliases, constructs component
+classes from only authenticated alias closure, folds the complete parent
+support into resolution records, constructs the full catalogs and executable
+`R_Q`, and only then expands H, `O_H`, purposes, field joins, and reverse
+covers. No later consumer can select a class, parent, disposition, or sweep
+result.
+
+#### 26.10.2 Complete prospective revision-14 comparator
+
+The inherited §17.3 comparator definition, mixed-preimage rule, passage
+segmentation, complete-paragraph inspection, direct/transitive consumer
+walk, and failure discipline remain. The revision-14 census corpus is every
+normative byte accepted at §26.11 and committed in the future document-only
+Amendment-12 ratification, except exactly the nine inherited comparator-table
+intervals named in §25.7 plus the one Amendment-12 interval defined here.
+This tenth interval begins at the next table header and ends immediately
+before the ASCII heading prefix `#### 26.10.3 `. No inherited interval is
+reintroduced into the search.
+
+In addition to every inherited search, the exact case-sensitive
+Amendment-12 search augmentation is the following literal array in displayed
+order:
+
+~~~text
+revision 14
+Amendment 12
+D11
+D12
+R_Q
+role_label_class_rows
+role_assignment_rows
+exact_label_class_role_assignment_non_alias
+outside_r_q_repeat_terminal_rows
+outside_r_q_domain_no_alias_admitted
+component_parent_resolution_rows
+catalog_only_job_disposition_rows
+multi_parent_ambiguity_no_selection
+unique_parent_assignment
+PILOT_NONAUTHORITY_CERTIFIES_NOTHING
+corpus_exhaustive_targeted_sweeps_v1.json
+derived_class_complement_sweeps_v1.json
+predecessor_seal_defect
+reseal_document_036_with_aggregate_anchor_domain
+readjudicate_source_row_and_reseal_before_tier_2
+A12-R01
+A12-R08
+blocked_source_missing_disposition_underdetermined
+~~~
+
+No case folding, separator substitution, stemming, pluralization, or fuzzy
+matching is permitted. The inherited full-passage and transitive-consumer
+walk expands beyond these seeds.
+
+| ID | Exact comparator or consumer anchor | Normative revision-14 disposition |
+|---|---|---|
+| DC-64 | §§26.1, 26.10, and 26.11 exact revision-13 prefix and future document-only Amendment-12 ratification bytes | lawfully-unchanged-with-reason: D11 remains the immutable 3,557,513-byte prefix; the future D12 label denotes only the separately attested document ratification commit and does not instantiate a lifecycle schema |
+| DC-65 | §19.3.3 role catalog, alias partition, and universal repeat-alias coverage | replaced-by-named-successor: §§26.3, 26.4, and 26.6 assignment and terminal-coverage laws |
+| DC-66 | §19.3.3 component parent, component ID, catalog totality, job nonorphan, and complete `R_Q` laws | replaced-by-named-successor: §§26.5 and 26.6 parent-independent catalog, explicit resolution, complement, and executable-relation laws |
+| DC-67 | §19.3.3 H/`O_H`/reverse cover, §19.4.2 G17-C01, and §19.8.1 questionnaire-closure build | replaced-by-named-successor: §§26.6, 26.10.1, and 26.11.2 complete disposition-aware consumer composition |
+| DC-68 | §§26.2 and 26.7 authenticated six-seal handoff and all 50 predecessor candidates | lawfully-unchanged-with-reason: source bytes remain controlling; every candidate is a reseal-required defect and zero is admitted as law |
+| DC-69 | §§26.8–26.9 pilot artifacts, exhaustive sweeps, gates, fixtures, and mutations | lawfully-unchanged-with-reason: fixed nonauthority evidence may test law shape but cannot enter an authority preimage or certify tier 2 |
+| DC-70 | §§25.8 and 26.10.2 complete design comparator and every affected direct/transitive consumer | replaced-by-named-successor: the inherited 63 rows plus DC-64 through DC-71 form one complete 71-row revision-14 census |
+| DC-71 | §§25.9–25.10 and §§26.10.3–26.11 lifecycle, two-tier ordering, Q5, registration, receipt, and production boundaries | lawfully-unchanged-with-reason: no successor lifecycle instance exists; tier 2 and the independent Amendment-11 blocker must both close before any later production amendment |
+
+The complete prospective revision-14 comparator is the 63 revision-13 rows,
+deep-equal in order and full text, followed by DC-64 through DC-71. All 71
+IDs are consecutive and unique. DC-65, DC-66, DC-67, and DC-70 are the four
+new `replaced-by-named-successor` rows; DC-64, DC-68, DC-69, and DC-71 are
+`lawfully-unchanged-with-reason`. Every named successor resolves to exact
+text in this section. An omitted inherited row, changed historical
+disposition, duplicate, shortened anchor, undefined successor, third
+disposition, wrong 4/4 category split, or incomplete consumer closure blocks
+ratification.
+
+#### 26.10.3 Exact identifier inventory and lifecycle noninstantiation
+
+The exact eight nonauthority artifact schema-version literals are:
+
+~~~text
+amendment_12_rq_catalog_pilot_slice_manifest.v1
+amendment_12_rq_catalog_corpus_exhaustive_targeted_sweeps.v1
+amendment_12_rq_catalog_derived_class_complement_sweeps.v1
+amendment_12_rq_catalog_predecessor_defect_adjudication.v1
+amendment_12_rq_catalog_role_assignment_pilot.v1
+amendment_12_rq_catalog_outside_domain_repeat_pilot.v1
+amendment_12_rq_catalog_component_parent_pilot.v1
+amendment_12_rq_catalog_pilot_gate_result.v1
+~~~
+
+Their artifact-ID prefixes, in the same order, are:
+
+~~~text
+a12-rq-pilot-slice:
+a12-rq-corpus-sweeps:
+a12-rq-derived-sweeps:
+a12-rq-predecessor-adjudication:
+a12-rq-role-pilot:
+a12-rq-repeat-pilot:
+a12-rq-component-pilot:
+a12-rq-pilot-gate:
+~~~
+
+The exact pilot/sweep/predecessor member prefixes are
+`a12-role-exact-label-class:`, `a12-pilot-role-assignment:`,
+`a12-outside-rq-repeat-disposition:`,
+`a12-component-parent-resolution:`, `a12-parent-source-witness:`,
+`a12-candidate-component-class:`, `a12-candidate-job-class:`,
+`a12-component-class-admission-sweep:`,
+`a12-catalog-only-job-complement-sweep:`,
+`a12-candidate-exact-pair-alias-support:`,
+`a12-candidate-local-alias-support:`,
+`a12-predecessor-doc036-aggregate-adjudication:`, and
+`a12-predecessor-local-proof-adjudication:`. They can never identify an
+official row. The three exact candidate aggregate-parent node IDs are
+`a12-candidate-parent-node:role-total-sentinel`,
+`a12-candidate-parent-node:farm-aggregate-sentinel`, and
+`a12-candidate-parent-node:business-aggregate-sentinel`; they also remain
+nonauthority. The exact derived artifact authority kind is
+`amendment_12_derived_class_complement_sweeps_nonauthority`, and its status
+is
+`pass_derived_class_complement_sweeps_nonauthority_predecessor_reseal_required`.
+The exact prospective official member prefixes are
+`psid-role-exact-label-class:`, `psid-role-assignment:`,
+`psid-outside-rq-repeat-disposition:`,
+`psid-component-parent-resolution:`, and
+`psid-catalog-only-job-disposition:`. Those are member-tag/preimage literals
+inside the named future closure authority, not independently selectable
+schemas, and no official row is instantiated here.
+
+The path `scripts/build_amendment12_rq_catalog_pilot.py`, its
+`validate_bundle` verifier, exact §26.9.3 mutation-name set, and
+`fold_component_class_fixture` and
+`fold_catalog_only_job_complement_fixture` are nonauthority implementation identifiers,
+not schema versions. `R_Q`, H, `O_H`, D12, Q5, and the gate names are symbolic
+relations, commits, or predicates, not serialized identifier families unless
+a later ratified section expressly defines one.
+
+This amendment defines no successor version of any §25.9 registry bundle,
+registration domain, capture claim/input, repository proof, receipt core,
+receipt, selected-lineage verifier, full-relation identity, wall row, or
+production result. The prospective D11-bearing §25.9 schemas remain
+uninstantiated and unselectable under their own blockers. There is no
+`revision_14_full_relation_identity`, official Q5 schema instance, migration,
+version dispatch, registration, receipt, or lifecycle object in this draft
+or its pilot commits.
+
+A future document-only Amendment-12 ratification may authorize the tier-2
+evidence build described in §26.11 and nothing else. After tier 2 is
+independently certified, a later controlling amendment must define and
+ratify any production lifecycle successor versions, exact migrations,
+comparators, dispatch, and receipts. Treating the ratification commit, pilot
+artifact, corpus sweep, or tier-2 evidence as one of those missing lifecycle
+objects aborts.
+
+### 26.11 Two-tier order, tier-2 gates, and terminal inoperability
+
+#### 26.11.1 Tier 1 is a law-shape pilot only
+
+Tier 1 is complete only when the exact preregistered slice, the three pilot
+law artifacts, predecessor ledger, both exhaustive corpus-sweep artifacts,
+gate artifact,
+fixtures, and mutations all satisfy §§26.2–26.9. Referees attack those fixed
+bytes and the law at pilot scale. A referee round may require a new draft and
+new pilot evidence, but no draft or pilot result self-ratifies. Pilot passage
+admits only a proposed law shape to the document ceremony. It certifies no
+source equivalence, catalog, repeat cover, parent selection, relationship,
+H row, Q5 input, or production fact.
+
+#### 26.11.2 Tier 2 begins only after ratification and reseals
+
+The only lawful sequence is:
+
+1. complete adversarial tier-1 referee rounds;
+2. ratify the final exact Amendment-12 document bytes in a document-only,
+   single-parent commit whose complete same-path bytes preserve the
+   revision-13 prefix, then independently read and attest those committed
+   bytes;
+3. repin every tier-2 brief to that ratification commit and prohibit every
+   pilot artifact and candidate result as expected evidence;
+4. byte-re-adjudicate and reseal the eight doc-036 rows and 42 local-proof
+   rows, rebuild each affected era seal, and prove unaffected source domains
+   unchanged;
+5. rebuild the complete 81-document stage-4 relation under the ratified law,
+   including per-item adjudication, complete rare-tail sweeps, all
+   assignments, terminal dispositions, alias classes, component classes,
+   parent records, candidate catalogs, complements, executable `R_Q`, H,
+   `O_H`, and reverse covers;
+6. obtain two independent maximally adversarial referee reconstructions,
+   exact-compare and pin only their source-side
+   `hierarchy_annotation_authority` member values—the subpayload that would
+   later occupy G17-C01, not the unavailable full G17-C01 row—perform the
+   ratification read and raw-byte attestation, and publish any certified
+   source-only tier-2 evidence under a separately fixed pre-Q5,
+   nonproduction identity; and
+7. rerun the independent Amendment-11 gate and stop while
+   `blocked_source_missing_disposition_underdetermined` survives.
+
+Tier 2 has its own evidence schemas, sizes, raw hashes, Git identities,
+fixtures, mutations, and gates; no tier-1 pin is promoted. Its minimum
+conjunctive gates are:
+
+| Gate | Required tier-2 result |
+|---|---|
+| `A12-T2-R01` | Ratified Amendment-12 bytes, all predecessor document reseals, six successor era seals, source identities, and unchanged-domain comparisons pass. |
+| `A12-T2-R02` | Full-corpus role assignment and universal repeat coverage exact-cover their complete denominators with no invented alias or equivalence. |
+| `A12-T2-R03` | Authenticated alias closure, component-class fold, parent-resolution records, complete catalogs, terminal complements, and executable `R_Q` reproduce without selection. |
+| `A12-T2-R04` | H, `O_H`, aggregate/disposition reverse covers, purpose expansion, and field joins pass; two independent source-side projections deep-equal and pin only the prospective G17-C01 `hierarchy_annotation_authority` member/subpayload, never the unavailable full G17-C01 row, with no actual consumer projection. |
+| `A12-T2-R05` | Tier-2 evidence passes strict schemas, exhaustive mutations, dual independent reconstruction, ratification/source/reseal Git-order checks, and complete raw-byte attestation; no Q5 first-add is performed. |
+| `A12-T2-R06` | The inherited Amendment-11 production gate is rerun and yields the expected abort until its independently ratified missing-reason authority exists; no Q5 or downstream authority is emitted while it fails. |
+
+Every gate is conjunctive and fail-closed. A tier-2 census is a newly
+computed result, not a required equality to a pilot or stage-4 candidate
+count except for the authenticated input comparands expressly fixed here.
+Any referee disagreement, unadjudicated item, missing witness, unresolved
+repeat, class conflict, extra equivalence, forced parent, stale seal, copied
+expected value, lifecycle gap, or byte mismatch aborts without a partial
+catalog.
+
+**This prospective amendment remains inoperable. Its pilot is permanently
+NONAUTHORITY; no document ceremony has ratified these laws; all 50
+predecessor defects remain unrepaired; tier 2 has not started; no official
+catalog, `R_Q`, H, Q5, registry, receipt, wall row, or production result
+exists; and Amendment 11's independent
+`blocked_source_missing_disposition_underdetermined` remains controlling.**

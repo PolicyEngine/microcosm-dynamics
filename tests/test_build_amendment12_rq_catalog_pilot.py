@@ -145,6 +145,77 @@ def test__revision_13_design__is_an_exact_immutable_prefix():
     assert identity["sha256"] == a12.DESIGN_PREFIX_SHA256
 
 
+def test__amendment_12_design__starts_exactly_after_revision_13():
+    raw = a12.DESIGN_PATH.read_bytes()
+    suffix = raw[a12.DESIGN_PREFIX_BYTES :]
+    heading = (
+        b"\n## 26. AMENDMENT SECTION \xe2\x80\x94 Amendment 12: "
+        b"pilot-first `R_Q` catalog laws\n"
+    )
+    assert suffix.startswith(heading)
+    assert raw.count(b"## 26. AMENDMENT SECTION") == 1
+
+
+def test__amendment_12_design__has_balanced_strict_fences():
+    raw = a12.DESIGN_PATH.read_bytes()[a12.DESIGN_PREFIX_BYTES :]
+    lines = raw.decode("utf-8").splitlines(keepends=True)
+    active = None
+    body = []
+    json_block_count = 0
+    for line_number, line in enumerate(lines, start=1):
+        stripped = line.lstrip(" ")
+        if active is None:
+            if not stripped.startswith(("```", "~~~")):
+                continue
+            marker_character = stripped[0]
+            marker_length = len(stripped) - len(
+                stripped.lstrip(marker_character)
+            )
+            info = stripped[marker_length:].strip()
+            active = (marker_character, marker_length, info, line_number)
+            body = []
+            continue
+        marker_character, marker_length, info, opening_line = active
+        marker = marker_character * marker_length
+        if stripped.startswith(marker) and not stripped[len(marker) :].strip():
+            if info in {"json", "JSON"}:
+                json_block_count += 1
+                a12.strict_json_loads(
+                    "".join(body).encode("utf-8"),
+                    f"Amendment-12 JSON fence at line {opening_line}",
+                )
+            active = None
+            body = []
+            continue
+        body.append(line)
+    assert active is None
+    assert json_block_count == 0
+
+
+def test__amendment_12_design__closes_laws_and_stays_inoperable():
+    section = a12.DESIGN_PATH.read_text(encoding="utf-8").split(
+        "## 26. AMENDMENT SECTION", 1
+    )[1]
+    required = (
+        "psid-role-assignment:",
+        "terminal_outside_r_q_domain_no_alias_admitted",
+        "multi_parent_ambiguity_no_selection",
+        "component_class_admission_sweep_rows",
+        "catalog_only_job_complement_sweep_rows",
+        "derived_class_complement_sweeps_v1.json",
+        "hierarchy_annotation_authority",
+        "A12-T2-R06",
+    )
+    for value in required:
+        assert value in section
+    assert (
+        section.count("The complete prospective revision-14 comparator") == 1
+    )
+    assert section.count("This prospective amendment remains inoperable") == 1
+    assert "PILOT_NONAUTHORITY_CERTIFIES_NOTHING" in section
+    assert "no official\ncatalog, `R_Q`, H, Q5" in section
+
+
 def test__revision_13_design__equals_the_ratification_tree_entry():
     base = subprocess.check_output(
         [
