@@ -75,6 +75,27 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
     "in_domain_component_cross_reference_sweep_keyset": (
         "ace147c0544ce9073e27d83ad4b8ca42545fe10b7570b9687209a3fe3a3e30e7"
     ),
+    "semantic_alias_adjudication_keyset": (
+        "96ba9dabe4a793f8d4d1eb8afa9cd89054d83703f64a75e1c52cefd3f215b001"
+    ),
+    "semantic_alias_instruction_outcome": (
+        "12e7b0d27122ce539df979f1f952b2e8a429e43f8a01ec9f838acd5cd552b68e"
+    ),
+    "semantic_alias_equivalence_instruction_keyset": (
+        "04b8844a2813140fcfb344f7261390a4bef921d8fab80536c6bb0215cd28760a"
+    ),
+    "semantic_alias_redirection_instruction_keyset": (
+        "dc72be9182f5b50fd358e492b952ba83ac41ccd99ec3ba117c8fe075013e8f72"
+    ),
+    "semantic_alias_stop_instruction_keyset": (
+        "ab84c7fa19cdae429024dceb1e4ef3314ca98665b48c274f7edd6c25c4c00662"
+    ),
+    "semantic_alias_fragment_instruction_keyset": (
+        "25c6f38c37df363edfccf5c25c59c98dd7f06753cf19374c808eb011f83fdace"
+    ),
+    "semantic_alias_round_four_new_fragment_keyset": (
+        "8102bbca93364a29ff502e6bc040a575edff81cea43261da31d01515872d6fea"
+    ),
     "component_parent_shape_keyset": (
         "b1aaad10fac7e3a6eb35edabd99c079137404109f0b912f8726446965a1d0524"
     ),
@@ -3482,6 +3503,14 @@ def _component_cross_reference_sweep_counts(
     }
 
 
+def _semantic_alias_outcome_code(row: Mapping[str, Any]) -> str:
+    return {
+        "existing_alias_arm": "A",
+        "admitted_exclusive_destination_redirection": "R",
+        "disclosed_stop_no_redirection_semantics": "S",
+    }[row["repeat_coverage_disposition"]]
+
+
 def _exclusive_placement_shape_kind(text: str) -> str | None:
     normalized = "".join(
         character for character in text.casefold() if character.isalnum()
@@ -4799,6 +4828,80 @@ def _build_bundle(
                     "stop_edge_count",
                 )
             },
+            "semantic_alias_instruction_outcome_domain_sha256": _domain_sha(
+                [
+                    [
+                        row["source_instruction_occurrence_id"],
+                        _semantic_alias_outcome_code(row),
+                    ]
+                    for row in full_component_cross_reference_sweep_rows
+                ]
+            ),
+            "semantic_alias_equivalence_instruction_keyset_sha256": (
+                _keyset_sha(
+                    [
+                        row["source_instruction_occurrence_id"]
+                        for row in full_component_cross_reference_sweep_rows
+                        if _semantic_alias_outcome_code(row) == "A"
+                    ]
+                )
+            ),
+            "semantic_alias_redirection_instruction_keyset_sha256": (
+                _keyset_sha(
+                    [
+                        row["source_instruction_occurrence_id"]
+                        for row in full_component_cross_reference_sweep_rows
+                        if _semantic_alias_outcome_code(row) == "R"
+                    ]
+                )
+            ),
+            "semantic_alias_stop_instruction_keyset_sha256": _keyset_sha(
+                [
+                    row["source_instruction_occurrence_id"]
+                    for row in full_component_cross_reference_sweep_rows
+                    if _semantic_alias_outcome_code(row) == "S"
+                ]
+            ),
+            "semantic_alias_source_instruction_fragment_count": sum(
+                row["source_instruction_fragment"]
+                for row in full_component_cross_reference_sweep_rows
+            ),
+            "semantic_alias_fragment_seal_quality_issue_count": sum(
+                row["tier_2_predecessor_seal_quality_issue"]
+                for row in full_component_cross_reference_sweep_rows
+            ),
+            "semantic_alias_round_three_fragment_reseal_count": sum(
+                row["tier_2_predecessor_ledger_note"]
+                == "round_three_reseal_ledger_already_covers_fragment"
+                for row in full_component_cross_reference_sweep_rows
+            ),
+            "semantic_alias_round_four_new_fragment_reseal_count": sum(
+                row["tier_2_predecessor_ledger_note"]
+                == "new_tier_2_reseal_required_for_incomplete_fragment"
+                for row in full_component_cross_reference_sweep_rows
+            ),
+            "semantic_alias_decisive_fragment_no_reseal_count": sum(
+                row["tier_2_predecessor_ledger_note"]
+                == "fragment_semantically_decisive_no_reseal_required"
+                for row in full_component_cross_reference_sweep_rows
+            ),
+            "semantic_alias_fragment_instruction_keyset_sha256": _keyset_sha(
+                [
+                    row["source_instruction_occurrence_id"]
+                    for row in full_component_cross_reference_sweep_rows
+                    if row["source_instruction_fragment"]
+                ]
+            ),
+            "semantic_alias_round_four_new_fragment_keyset_sha256": (
+                _keyset_sha(
+                    [
+                        row["source_instruction_occurrence_id"]
+                        for row in full_component_cross_reference_sweep_rows
+                        if row["tier_2_predecessor_ledger_note"]
+                        == "new_tier_2_reseal_required_for_incomplete_fragment"
+                    ]
+                )
+            ),
             "in_domain_component_cross_reference_sweep_alias_instruction_count": (
                 component_cross_reference_sweep_counts[
                     "alias_instruction_count"
@@ -4973,6 +5076,7 @@ def _build_bundle(
         {
             "tier": 1,
             "source_corpus_identity": source_identity,
+            "semantic_alias_sweep_artifact_id": sweep_artifact["artifact_id"],
             "doc036_aggregate_component_slot_rows": doc036_defects,
             "doc036_aggregate_component_slot_count": len(doc036_defects),
             "doc036_aggregate_component_slot_domain_sha256": _domain_sha(
@@ -5031,9 +5135,16 @@ def _build_bundle(
                     ).items()
                 )
             ),
+            "round_four_new_fragment_seal_quality_issue_count": 13,
+            "round_four_new_fragment_instruction_keyset_sha256": (
+                sweep_artifact[
+                    "semantic_alias_round_four_new_fragment_keyset_sha256"
+                ]
+            ),
+            "tier_2_predecessor_seal_quality_issue_count": 49,
             "tier_2_precondition": (
-                "all_36_seal_defects_resealed_and_amendment_ratified_before_"
-                "certification"
+                "all_36_round_three_defects_and_13_round_four_fragments_"
+                "repaired_and_amendment_ratified_before_certification"
             ),
             "adjudication_rule": (
                 "round_three_source_cited_semantic_ledger_exact_covers_each_"
@@ -5041,7 +5152,7 @@ def _build_bundle(
             ),
             "nonauthority_statement": _nonauthority_statement(),
             "status": (
-                "pass_adjudication_with_36_predecessor_reseals_required"
+                "pass_adjudication_with_49_predecessor_repairs_required"
             ),
         },
     )
@@ -5064,6 +5175,8 @@ def _build_bundle(
             "corpus_sweep_artifact_id": sweep_artifact["artifact_id"],
             "predecessor_artifact_id": predecessor_artifact["artifact_id"],
             "predecessor_seal_defect_count": 36,
+            "round_four_new_fragment_seal_quality_issue_count": 13,
+            "tier_2_predecessor_seal_quality_issue_count": 49,
             "predecessor_reseal_required": True,
             "component_class_admission_sweep_rows": (
                 component_class_admission_rows
@@ -5631,6 +5744,17 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "semantic_alias_adjudication_keyset_sha256",
             "semantic_alias_adjudication_domain_sha256",
             "semantic_alias_adjudication_outcome_counts",
+            "semantic_alias_instruction_outcome_domain_sha256",
+            "semantic_alias_equivalence_instruction_keyset_sha256",
+            "semantic_alias_redirection_instruction_keyset_sha256",
+            "semantic_alias_stop_instruction_keyset_sha256",
+            "semantic_alias_source_instruction_fragment_count",
+            "semantic_alias_fragment_seal_quality_issue_count",
+            "semantic_alias_round_three_fragment_reseal_count",
+            "semantic_alias_round_four_new_fragment_reseal_count",
+            "semantic_alias_decisive_fragment_no_reseal_count",
+            "semantic_alias_fragment_instruction_keyset_sha256",
+            "semantic_alias_round_four_new_fragment_keyset_sha256",
             "in_domain_component_cross_reference_sweep_alias_instruction_count",
             "in_domain_component_cross_reference_sweep_alias_edge_count",
             "in_domain_component_cross_reference_sweep_redirection_instruction_count",
@@ -5683,6 +5807,8 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "corpus_sweep_artifact_id",
             "predecessor_artifact_id",
             "predecessor_seal_defect_count",
+            "round_four_new_fragment_seal_quality_issue_count",
+            "tier_2_predecessor_seal_quality_issue_count",
             "predecessor_reseal_required",
             "component_class_admission_sweep_rows",
             "component_class_admission_sweep_count",
@@ -5708,6 +5834,7 @@ ARTIFACT_TOP_LEVEL_KEYS = {
         | {
             "tier",
             "source_corpus_identity",
+            "semantic_alias_sweep_artifact_id",
             "doc036_aggregate_component_slot_rows",
             "doc036_aggregate_component_slot_count",
             "doc036_aggregate_component_slot_domain_sha256",
@@ -5723,6 +5850,9 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "law_gap_disposition_count",
             "in_domain_nonalias_law_gap_repair_count",
             "in_domain_nonalias_law_gap_subkind_counts",
+            "round_four_new_fragment_seal_quality_issue_count",
+            "round_four_new_fragment_instruction_keyset_sha256",
+            "tier_2_predecessor_seal_quality_issue_count",
             "tier_2_precondition",
             "adjudication_rule",
             "nonauthority_statement",
@@ -8660,6 +8790,44 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         },
         "semantic alias adjudication aggregate drift",
     )
+    outcome_rows = [
+        [
+            row["source_instruction_occurrence_id"],
+            _semantic_alias_outcome_code(row),
+        ]
+        for row in component_cross_reference_rows
+    ]
+    outcome_instruction_ids = {
+        outcome: [
+            row["source_instruction_occurrence_id"]
+            for row in component_cross_reference_rows
+            if _semantic_alias_outcome_code(row) == outcome
+        ]
+        for outcome in ("A", "R", "S")
+    }
+    _require(
+        sweep["semantic_alias_adjudication_keyset_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["semantic_alias_adjudication_keyset"]
+        and sweep["semantic_alias_instruction_outcome_domain_sha256"]
+        == _domain_sha(outcome_rows)
+        == PINNED_SWEEP_DOMAIN_SHA256["semantic_alias_instruction_outcome"]
+        and sweep["semantic_alias_equivalence_instruction_keyset_sha256"]
+        == _keyset_sha(outcome_instruction_ids["A"])
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "semantic_alias_equivalence_instruction_keyset"
+        ]
+        and sweep["semantic_alias_redirection_instruction_keyset_sha256"]
+        == _keyset_sha(outcome_instruction_ids["R"])
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "semantic_alias_redirection_instruction_keyset"
+        ]
+        and sweep["semantic_alias_stop_instruction_keyset_sha256"]
+        == _keyset_sha(outcome_instruction_ids["S"])
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "semantic_alias_stop_instruction_keyset"
+        ],
+        "semantic alias adjudication source projection pin drift",
+    )
     _require(
         Counter(
             row["tier_2_predecessor_ledger_note"]
@@ -8672,6 +8840,35 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
             "not_a_source_instruction_fragment": 114,
         },
         "semantic alias fragment ledger census drift",
+    )
+    fragment_instruction_ids = [
+        row["source_instruction_occurrence_id"]
+        for row in component_cross_reference_rows
+        if row["source_instruction_fragment"]
+    ]
+    new_fragment_instruction_ids = [
+        row["source_instruction_occurrence_id"]
+        for row in component_cross_reference_rows
+        if row["tier_2_predecessor_ledger_note"]
+        == "new_tier_2_reseal_required_for_incomplete_fragment"
+    ]
+    _require(
+        sweep["semantic_alias_source_instruction_fragment_count"] == 48
+        and sweep["semantic_alias_fragment_seal_quality_issue_count"] == 17
+        and sweep["semantic_alias_round_three_fragment_reseal_count"] == 4
+        and sweep["semantic_alias_round_four_new_fragment_reseal_count"] == 13
+        and sweep["semantic_alias_decisive_fragment_no_reseal_count"] == 31
+        and sweep["semantic_alias_fragment_instruction_keyset_sha256"]
+        == _keyset_sha(fragment_instruction_ids)
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "semantic_alias_fragment_instruction_keyset"
+        ]
+        and sweep["semantic_alias_round_four_new_fragment_keyset_sha256"]
+        == _keyset_sha(new_fragment_instruction_ids)
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "semantic_alias_round_four_new_fragment_keyset"
+        ],
+        "semantic alias fragment source projection pin drift",
     )
     pilot_component_cross_reference_rows = [
         row
@@ -9320,9 +9517,18 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "predecessor law-gap subkind census drift",
     )
     _require(
+        predecessor["semantic_alias_sweep_artifact_id"] == sweep["artifact_id"]
+        and predecessor["round_four_new_fragment_seal_quality_issue_count"]
+        == 13
+        and predecessor["round_four_new_fragment_instruction_keyset_sha256"]
+        == sweep["semantic_alias_round_four_new_fragment_keyset_sha256"]
+        and predecessor["tier_2_predecessor_seal_quality_issue_count"] == 49,
+        "predecessor round-four fragment linkage drift",
+    )
+    _require(
         predecessor["tier_2_precondition"]
-        == "all_36_seal_defects_resealed_and_amendment_ratified_before_"
-        "certification",
+        == "all_36_round_three_defects_and_13_round_four_fragments_repaired_"
+        "and_amendment_ratified_before_certification",
         "predecessor tier-2 precondition drift",
     )
     _require(
@@ -9772,7 +9978,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
             "predecessor_reseal_required"
         ),
         "predecessor": (
-            "pass_adjudication_with_36_predecessor_reseals_required"
+            "pass_adjudication_with_49_predecessor_repairs_required"
         ),
         "role": "pass_role_assignment_law_pilot_nonauthority",
         "repeat": "pass_four_disposition_repeat_law_pilot_nonauthority",
@@ -9801,6 +10007,8 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         derived["corpus_sweep_artifact_id"] == sweep["artifact_id"]
         and derived["predecessor_artifact_id"] == predecessor["artifact_id"]
         and derived["predecessor_seal_defect_count"] == 36
+        and derived["round_four_new_fragment_seal_quality_issue_count"] == 13
+        and derived["tier_2_predecessor_seal_quality_issue_count"] == 49
         and derived["predecessor_reseal_required"] is True,
         "derived sweep predecessor linkage drift",
     )
@@ -10327,6 +10535,71 @@ def _repin_mutated_bundle(
             "stop_edge_count",
         )
     }
+    sweep["semantic_alias_instruction_outcome_domain_sha256"] = _domain_sha(
+        [
+            [
+                row["source_instruction_occurrence_id"],
+                _semantic_alias_outcome_code(row),
+            ]
+            for row in component_cross_reference_rows
+        ]
+    )
+    for outcome, key in (
+        ("A", "semantic_alias_equivalence_instruction_keyset_sha256"),
+        ("R", "semantic_alias_redirection_instruction_keyset_sha256"),
+        ("S", "semantic_alias_stop_instruction_keyset_sha256"),
+    ):
+        sweep[key] = _keyset_sha(
+            [
+                row["source_instruction_occurrence_id"]
+                for row in component_cross_reference_rows
+                if _semantic_alias_outcome_code(row) == outcome
+            ]
+        )
+    sweep["semantic_alias_source_instruction_fragment_count"] = sum(
+        row["source_instruction_fragment"]
+        for row in component_cross_reference_rows
+    )
+    sweep["semantic_alias_fragment_seal_quality_issue_count"] = sum(
+        row["tier_2_predecessor_seal_quality_issue"]
+        for row in component_cross_reference_rows
+    )
+    note_count_fields = (
+        (
+            "round_three_reseal_ledger_already_covers_fragment",
+            "semantic_alias_round_three_fragment_reseal_count",
+        ),
+        (
+            "new_tier_2_reseal_required_for_incomplete_fragment",
+            "semantic_alias_round_four_new_fragment_reseal_count",
+        ),
+        (
+            "fragment_semantically_decisive_no_reseal_required",
+            "semantic_alias_decisive_fragment_no_reseal_count",
+        ),
+    )
+    for note, key in note_count_fields:
+        sweep[key] = sum(
+            row["tier_2_predecessor_ledger_note"] == note
+            for row in component_cross_reference_rows
+        )
+    sweep["semantic_alias_fragment_instruction_keyset_sha256"] = _keyset_sha(
+        [
+            row["source_instruction_occurrence_id"]
+            for row in component_cross_reference_rows
+            if row["source_instruction_fragment"]
+        ]
+    )
+    sweep["semantic_alias_round_four_new_fragment_keyset_sha256"] = (
+        _keyset_sha(
+            [
+                row["source_instruction_occurrence_id"]
+                for row in component_cross_reference_rows
+                if row["tier_2_predecessor_ledger_note"]
+                == "new_tier_2_reseal_required_for_incomplete_fragment"
+            ]
+        )
+    )
     for suffix in (
         "alias_instruction_count",
         "alias_edge_count",
@@ -10501,6 +10774,16 @@ def _repin_mutated_bundle(
                 for row in proof_law_gaps
             ).items()
         )
+    )
+    predecessor["round_four_new_fragment_seal_quality_issue_count"] = sweep[
+        "semantic_alias_round_four_new_fragment_reseal_count"
+    ]
+    predecessor["round_four_new_fragment_instruction_keyset_sha256"] = sweep[
+        "semantic_alias_round_four_new_fragment_keyset_sha256"
+    ]
+    predecessor["tier_2_predecessor_seal_quality_issue_count"] = (
+        predecessor["seal_defect_disposition_count"]
+        + predecessor["round_four_new_fragment_seal_quality_issue_count"]
     )
 
     component_class_rows = derived["component_class_admission_sweep_rows"]
@@ -10696,12 +10979,21 @@ def _repin_mutated_bundle(
 
     bundle["slice"] = _reseal_artifact(slice_artifact)
     bundle["sweeps"] = _reseal_artifact(sweep)
+    predecessor["semantic_alias_sweep_artifact_id"] = bundle["sweeps"][
+        "artifact_id"
+    ]
     bundle["predecessor"] = _reseal_artifact(predecessor)
     derived["source_corpus_identity"] = bundle["sweeps"][
         "source_corpus_identity"
     ]
     derived["corpus_sweep_artifact_id"] = bundle["sweeps"]["artifact_id"]
     derived["predecessor_artifact_id"] = bundle["predecessor"]["artifact_id"]
+    derived["round_four_new_fragment_seal_quality_issue_count"] = bundle[
+        "predecessor"
+    ]["round_four_new_fragment_seal_quality_issue_count"]
+    derived["tier_2_predecessor_seal_quality_issue_count"] = bundle[
+        "predecessor"
+    ]["tier_2_predecessor_seal_quality_issue_count"]
     bundle["derived"] = _reseal_artifact(derived)
     for key in ("role", "repeat", "component"):
         bundle[key]["source_slice_artifact_id"] = bundle["slice"][
