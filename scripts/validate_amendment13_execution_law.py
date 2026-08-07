@@ -1374,7 +1374,7 @@ def _build_ratification_bound_execution_template_for_test(
         ),
         status=RATIFICATION_BOUND_TEMPLATE_STATUS,
     )
-    validate_execution_law(
+    _validate_execution_law(
         law,
         verify_git=False,
         governing_attestation_record_bytes=governing_attestation_record_bytes,
@@ -1839,7 +1839,27 @@ def validate_execution_law(
     verify_git: bool = True,
     governing_attestation_record_bytes: Mapping[str, bytes] | None = None,
 ) -> None:
-    """Fail closed unless ``law`` is the exact Amendment-13 proposal."""
+    """Validate a draft fixture or a Git-authenticated ratification-bound one."""
+
+    governing_identity = law.get("governing_amendment13_ratification_identity")
+    _require(
+        governing_identity == GOVERNING_A13_CANDIDATE_IDENTITY or verify_git,
+        "ratification-bound validation may not disable Git verification",
+    )
+    _validate_execution_law(
+        law,
+        verify_git=verify_git,
+        governing_attestation_record_bytes=governing_attestation_record_bytes,
+    )
+
+
+def _validate_execution_law(
+    law: Mapping[str, Any],
+    *,
+    verify_git: bool = True,
+    governing_attestation_record_bytes: Mapping[str, bytes] | None = None,
+) -> None:
+    """Internal validator with a test-only synthetic-identity path."""
 
     _require_exact_keys(
         law,

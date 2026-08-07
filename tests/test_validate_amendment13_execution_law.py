@@ -261,11 +261,6 @@ def test__ratification_bound_template__replaces_placeholder_everywhere(
         identity,
         records,
     )
-    a13.validate_execution_law(
-        template,
-        verify_git=False,
-        governing_attestation_record_bytes=records,
-    )
     assert template["status"] == a13.RATIFICATION_BOUND_TEMPLATE_STATUS
     assert template["authority_emitted"] is False
     assert template["certification_emitted"] is False
@@ -288,6 +283,23 @@ def test__ratification_bound_template__replaces_placeholder_everywhere(
         template["integrity"]["overlay_domain_sha256"]
         != execution_law["integrity"]["overlay_domain_sha256"]
     )
+
+
+def test__ratification_bound_template__public_validator_cannot_bypass_git():
+    identity, records = _synthetic_governing_identity_and_records()
+    template = a13._build_ratification_bound_execution_template_for_test(
+        identity,
+        records,
+    )
+    with pytest.raises(
+        a13.LawError,
+        match="ratification-bound validation may not disable Git verification",
+    ):
+        a13.validate_execution_law(
+            template,
+            verify_git=False,
+            governing_attestation_record_bytes=records,
+        )
 
 
 def test__ratification_bound_template__rejects_coherently_repinned_forgery():
@@ -368,7 +380,7 @@ def test__ratification_bound_template__rejects_coherently_repinned_forgery():
         a13.LawError,
         match="forged incompatible-proof terminal status or admission",
     ):
-        a13.validate_execution_law(
+        a13._validate_execution_law(
             template,
             verify_git=False,
             governing_attestation_record_bytes=records,
