@@ -13726,17 +13726,17 @@ def run_mutation_tests(
         "source-text semantic adjudication",
     )
     add(
-        "composite_typed_projection_unioned",
+        "composite_union_forgery",
         forge_composite_typed_projection_union,
         "closure law",
     )
     add(
-        "nonledger_structural_filter_admitted_without_semantic_decision",
+        "nonledger_admission_without_semantic_decision",
         remove_nonledger_semantic_decision,
         "sole semantic gate evidence census drift",
     )
     add(
-        "continuation_composition_rule_forged",
+        "continuation_rule_forgery",
         forge_continuation_composition_rule,
         "continuation composition citation",
     )
