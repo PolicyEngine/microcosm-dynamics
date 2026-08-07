@@ -70,10 +70,10 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
         "069455f172490db3db04977542df1bbcda23c6a0350a739830188016622ea5be"
     ),
     "in_domain_component_cross_reference_sweep": (
-        "7d9b1d672c41b8e0cb00532440d9843b01c9afb4eb0ccb4eb4c5e9abbb419238"
+        "31ac9d8b4ca37f9de75286eb8ea044ac4ab5ed1df3d3faed005dff6bfbe24607"
     ),
     "in_domain_component_cross_reference_sweep_keyset": (
-        "536aa7f565ee4856bb39d2c710687fcebcc9e54cca57110bdfdf8738ad29b381"
+        "ace147c0544ce9073e27d83ad4b8ca42545fe10b7570b9687209a3fe3a3e30e7"
     ),
     "component_parent_shape_keyset": (
         "b1aaad10fac7e3a6eb35edabd99c079137404109f0b912f8726446965a1d0524"
@@ -88,16 +88,16 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
         "a89a54310e86cd3d08c40d9fb9cedc9f25dd0069780ecc4e94f8ef596843ebd1"
     ),
     "component_class_admission_keyset": (
-        "e89fa8d27daea8374317c61a3f914b7a12cb168a16be166122a4fea77723a2e3"
+        "4e2338342d33641e28297ba9d6c42aa0d1cf3f1a6c74b2a63cd839fc20842508"
     ),
     "component_class_admission": (
-        "92116fb8400eddc0266d0c2ae208f58fa3ba965dc5c77ab723dea5c6b3a4ca2e"
+        "0f70f83884d3084b87123edfe5b264a8928d6437463e58beb417c3db43b05865"
     ),
     "catalog_only_job_complement_keyset": (
-        "47ef70e41be3716d51b3fc46d3649add4a0e5a99c5d771cedee3d5111dcaec51"
+        "53ffe368335030ba833b7207e98c50d5148e9db9c3eb47de3f1ac134a8d22867"
     ),
     "catalog_only_job_complement": (
-        "5f660c565ff79f37c2c76367154ab0b6696e5a9a14f17959ae165f2f6923a5ac"
+        "e9c5783a2def1c128e18b55c35399943114ccfe164609ee6594e9501bf15e338"
     ),
     "doc036_aggregate_component_slot": (
         "7cbeacb1e431e4e1486c726863cdf4f1213a76e5ab7259c69d390adaae7c7727"
@@ -224,6 +224,325 @@ EXCLUSIVE_DESTINATION_REDIRECTION_EVIDENCE_BY_INSTRUCTION = {
 EXCLUSIVE_DESTINATION_REDIRECTION_INSTRUCTION_IDS = frozenset(
     EXCLUSIVE_DESTINATION_REDIRECTION_EVIDENCE_BY_INSTRUCTION
 )
+
+# Round four exact-covers every one of the 162 structurally complete
+# component cross-reference groups.  These positive members were reviewed
+# against their exact instruction and endpoint text; they are deliberately
+# enumerated so that a new structural match cannot silently enter A.
+SEMANTIC_ALIAS_EQUIVALENCE_INSTRUCTION_IDS = frozenset(
+    """
+psid-questionnaire-occurrence:b71d860ddb620bcecb24104963153dd9282b4ed1e0c4f41b92bdc8b9aa14e0c3
+psid-questionnaire-occurrence:b646a5e30eedfb39db762f4af982fa54c670cac4135202d6e9e79bf4737172db
+psid-questionnaire-occurrence:ace0a3dcf08a213a064bba184a64ec6027f03e0799808ba4112d9b2361255096
+psid-questionnaire-occurrence:23c1cb26196bb52bbadfb4c2bae320d92f1b63e05cfccde3491a9580d19df31f
+psid-questionnaire-occurrence:2b36ea82aa9574b929c7d09ce663c0fcb198167e26435e30827ab45a87ea2a9b
+psid-questionnaire-occurrence:cd32b6a0dd24de3092847e55c4b0ae491552cdca2b0437bb40dcff801b896cd6
+psid-questionnaire-occurrence:d3959f2729b620ffc0fcc7af8c011cbf7edaaf4f3e6b7106e7f466a0186ac5dd
+psid-questionnaire-occurrence:5e4bf9342aed1c83143de14eb06f99d29d2ad9c3075b62dccedb46992f95df50
+psid-questionnaire-occurrence:b60a46a9c2f06b886489ee50a56f5037fe01d2708dbe0af785124881930fb685
+psid-questionnaire-occurrence:502594a73993385ed601ad2e76e74c63a7928d454a6bc81925e07488072d4ead
+psid-questionnaire-occurrence:f9a997e2967869e1efcd4a394b9997f8653795b99b5b22ab98fb305f17c32ad2
+psid-questionnaire-occurrence:6688012788a3847da00066ae36943d67b1155b68e250e2b442f30c27a04ca2c4
+psid-questionnaire-occurrence:5c7ddb3d93be28af9d4f1e5277ab962ba1b2285631477c668599d7192db59c74
+psid-questionnaire-occurrence:47f6485be7e5a54bc1337b2e007bf391d21ad8d1c3b6ac0b04b6eaebd07aaace
+psid-questionnaire-occurrence:e33a0d7082ceb071b0dab2a43f839e72079e3f925d4f9dace3778ea64fb79adf
+psid-questionnaire-occurrence:5a7aa91b0ba7705995498afba4e251af3910cf8aa0e986efdcf66c10a675be6c
+psid-questionnaire-occurrence:33f131fdcaf0988e5204e4f77b137c84323720af25d468c906727ed8d0a859d6
+psid-questionnaire-occurrence:b57f8314dfaa2d60f9c9b671d5f612ceba81041c55e3c58856c413b25276ea35
+psid-questionnaire-occurrence:fbfa289fb84b68c7afef82104ffe5ce16f8effcbbdfde0dc33e813e33212d8f0
+psid-questionnaire-occurrence:bed98c1f41988a65f3b12af219edb5742edbd585bf0b087fa49521614d28daf6
+psid-questionnaire-occurrence:acfc2a236d349fca92974fdf3e4b57b86d4da3207bd586cf47bcdd8ace6d2d49
+psid-questionnaire-occurrence:cbce94d06d4945e9895b939aa32225429e73889db73d742e81686d00e47004c6
+psid-questionnaire-occurrence:5eca138b817e38f3184f038002413d0f262556b172956f0c883e7ad2abaa1b1e
+psid-questionnaire-occurrence:b59df50d23598175746574bd35e62ea3b27526a0e91e1ca5811bde02384874de
+psid-questionnaire-occurrence:503d2f11975bb557c3ddee6852a5a7a96063d93fac9fcc51b5af153a290c5255
+psid-questionnaire-occurrence:edd4b5d3f1fec5163286338804a73ac79147236ce7578d65b984c95698843e35
+psid-questionnaire-occurrence:c8b7abc67ec1d5bc02924ed2dad177f3dc4b9d46a3161c8076a72bcbc90acce9
+psid-questionnaire-occurrence:0ae50306e835ee80fdfac1f32323ab6883513a8b1948551e056dbaaa6492427e
+psid-questionnaire-occurrence:b5265cfb4a2a194d40395c82a0c5e384adddff2611530142cf2844ce6ed20cbe
+psid-questionnaire-occurrence:9582333627cf26561426cef746e0ce6e66c6028d685f25468f2872baeb54c7dc
+psid-questionnaire-occurrence:2a83990d8f2ad60edf9b64c080156663b61220f174a22570bcb51478a7ff4dec
+psid-questionnaire-occurrence:447b1c259449d4ba795bef734e37bcca3b817b32fa72efe75c38c3c857dfaaa2
+psid-questionnaire-occurrence:981e92dc4190d0125ce814b0d4fec1992c2a7ed8e4df3d60de67477ed5902c4a
+psid-questionnaire-occurrence:83219d4dc54fc4aa11b49f5aa3ac89975be369c83e68591ccae5863cc53ebdc1
+psid-questionnaire-occurrence:dd482131fb211af302c6a4b4b05e7fb44ee195cd3c77f0f0871838e54e1db52c
+psid-questionnaire-occurrence:f10796d34dd98656653fed95f0048d0106439addf40e9eb9394b14e20f134a67
+psid-questionnaire-occurrence:e4c83ee8bda422f68fd110b6cdbe97b383d5ea84f93c476af56cb4bd9825492c
+psid-questionnaire-occurrence:aa9e44c051fb65cde8c6dca7f883aa862006842e81438ce70c85469abb836fb1
+psid-questionnaire-occurrence:59d685fdc5bbaa67bffa065cde8409d1264ec555f7d479c5b3bdebf6ac4b5640
+psid-questionnaire-occurrence:a3297062bff0329d8e9149066af31defa03fde342553d3e38cd6ac8437c2ef66
+psid-questionnaire-occurrence:e997afbc88c24e5a8244f198b3fe39765d166eef0eb1a26144f9fcc760773cea
+psid-questionnaire-occurrence:4b1feda2e3308bd0e59e4faacf3680a01971e85cb1ae58ea0ab1f0c515540226
+psid-questionnaire-occurrence:9ddb34628348ec8029dd9fa212fec0d0fff8bad22f62a7a4c2ef2b172d31a837
+psid-questionnaire-occurrence:94ee3e1f701f27f73e1650dfd3e6b79ce1f480243ed96c5fa05e8cff8b6a13d1
+psid-questionnaire-occurrence:def2a0a4d835b0f7c9fe58edcba7f618140fdef3b7745dede245046161629774
+psid-questionnaire-occurrence:e71225563df663f77e984d37f5220152d98acbcb45bc67b90aa39a7f2cf13e6c
+psid-questionnaire-occurrence:fb5e1db03c9b582db8edee265f4ff9735a15a948edf8e2e092ae74219fd3065b
+psid-questionnaire-occurrence:ad47c7b95b1e9d7db921126ec2c53bfa4cc9137b49906d3cdac0a9ccd205bd5d
+psid-questionnaire-occurrence:706a8d8805b00d1f1e2116b007c8f8f66c20bf9b8ba5ee4886a9dbe1f4ca5d57
+psid-questionnaire-occurrence:5bbde7467a270f9d58ad39758f5f6d808a648e79159819dcc1adddb8a5c6af51
+psid-questionnaire-occurrence:85744e7a15ed651fcccdfa9026762911f73e50b9d290a60e4a303f4cd756ccde
+psid-questionnaire-occurrence:941c5c606606a6755c837f29d29e42de9275964eddfe1a927b5a12abcb82939f
+psid-questionnaire-occurrence:c2471ec725d9dd4eb963c722ec740c07ad28d160d956a2a2dea4437c5961afcc
+psid-questionnaire-occurrence:e8363a76340b38ed8dee532049bac2ba079b7de037236b42ad1fd0125ce40851
+psid-questionnaire-occurrence:aea661774ca470f67e7d2e0d1dc34d09d8f994a9c458ac46a57e9f4698c98bf3
+psid-questionnaire-occurrence:7d639fe231212006803f3f9a772a74bb3305c0dfd36cd4cc8f7248b9cc076b23
+psid-questionnaire-occurrence:8a5dcaefe37b6861fbb4fee5d717f2072249faa2b4d4f277590a1fbbff3d721f
+psid-questionnaire-occurrence:9bef34987b7404c9a3c4474c5d8d28eb62cfcf45c90fdb470595db70863a167b
+psid-questionnaire-occurrence:9194fea2c5ad9bf33533d8af336e78a717e33d35382876f8d43e6e4078c64378
+psid-questionnaire-occurrence:e7da6ca9c76c14ee756a4fc04f4d99bfd56d24a005facc756f1d7c01c725b890
+psid-questionnaire-occurrence:cb562486f76e7f4dcb2a4ef574a0ae413de9a2ede4d4450ad2e8cf96058e8b2d
+psid-questionnaire-occurrence:116697de22b8368ba1f36cd21df28d50aa6a4c262f983ba40f0c72f45ad8dc42
+psid-questionnaire-occurrence:d986ab2a3dfc95f31fda53fac4a23b7520ee9fd449d2ef501569afe651b3a369
+psid-questionnaire-occurrence:60a0dbc799f71c571b98e98bba45446635ca486803937c9896b905f83b9f65f5
+psid-questionnaire-occurrence:fc919fa7c0d989d1c628b311ab0ea9c18d1e9190d0d35b31a267d6ee6377ee58
+psid-questionnaire-occurrence:84e86fd6a3e5717650d70c2e355bf4669767e1684a26ed517b410d5a8dc96590
+psid-questionnaire-occurrence:8284bf87ee04825f5d65ee0ac043cdd219354245a6afb48683a3b8241a3da6e2
+psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0
+psid-questionnaire-occurrence:e5c179e56e92961c819c835c813749dd43a2a6fcb43f367e99c45c732d4b12ee
+psid-questionnaire-occurrence:192a7c973b2de1308c73185ebba4fe890d1cac7acda8d8a9ef6d48a9a3083838
+psid-questionnaire-occurrence:ceedb0f652116dcaaba199e11f90365e8bdaf0557d783e0adc5b3ddc3e3aa33b
+psid-questionnaire-occurrence:2e3c4ca992de63540d649d50c46453051caafc183091a09673a42e426bb45a25
+psid-questionnaire-occurrence:38b4a4305699d9807fb95155c3a0d5ffb19292c5ecaec8130c04c183c697f504
+psid-questionnaire-occurrence:14817ab74cf52ea08584954267e7c4b9f93c0197cc29b3e83cfe867bcffb5567
+psid-questionnaire-occurrence:9d98f4d258e0c543a5903a7cb0d65ec6fcd7b15b69ab0c18b3f589fa01e065a5
+psid-questionnaire-occurrence:0f251ffe95a6daf139bc11305e77cf63c1d973aaf28673f39d37ccd4d0369497
+psid-questionnaire-occurrence:7f303a404440c48b5b3a5efb61afb0411eced9eeb8216e8573009bdd1b566332
+psid-questionnaire-occurrence:357281a0ee7987a14867f92a263f3aa1097d8bb5202d45820e4e8af363a7157b
+psid-questionnaire-occurrence:96e419fbdc9217abafba7cbb57ccbe8d8b7891d6983fb7605d93baf0d9f56ba0
+psid-questionnaire-occurrence:a769c4a969cdaca2142d0aab2e2cee8aa2f9f83d4fe1abf4235e4bd9acb5c9f5
+psid-questionnaire-occurrence:455271aa575d2126ae53289ab69e2eeb4fb652c63cad693f8ce70208a351731f
+psid-questionnaire-occurrence:d1068771a81bfbe9e37dba76d7e0b0672712309e5f2d8c39b7af4e11e16352f4
+psid-questionnaire-occurrence:8c356ea86bbe363dcd42fc27b0e9a8c6cd0be0af4b4dcaa2507d408e91c0eb11
+psid-questionnaire-occurrence:499d1b00af29b5829c212f706bbcfb02780c344584b9b1e47cb3b693146ffd39
+psid-questionnaire-occurrence:c38bfe9eb40d5028cec6d604b144eb54eee451a810bae4fd289bca5eefa27a32
+psid-questionnaire-occurrence:35833279648220c82c4340b8a40d6823b3d3fc231eca8180cdd635479521a052
+psid-questionnaire-occurrence:4d30184605579b75c3e2830294e611d79c4c58faee7419bebc24a28184d9f990
+psid-questionnaire-occurrence:0ff86ec95077fbc08920a822b71066f1fd50e719d02f35598a22c85eb2ca6c4a
+psid-questionnaire-occurrence:bbdbc781bb95e0d12442053e1bf4a84094b4b88c42c8e2edb728d659891ee5dc
+psid-questionnaire-occurrence:691e75cf4e4cf1a6d1937617e816779e1648588d0d2d33ef9561dab1438e2f0a
+psid-questionnaire-occurrence:e84a537936c186e2873ea2d79ff28ef6d9cec295b75db355ed318720ca661bac
+psid-questionnaire-occurrence:652edb4ddb3489fc31f8deb25bc521a0187669ff3c3d55d41a18416239b1e100
+psid-questionnaire-occurrence:e7ee4eae79a43a23db51343f8903c79ee8abab8aa39c6be213b8ef7458725be4
+psid-questionnaire-occurrence:720037ffe9e0f5a20134679ee7b82f09a53500dd07bd8394f0a51fafa4e6ff94
+psid-questionnaire-occurrence:3f61d2648af7a3ae2cce9cc83500385e8bc90f19ef684bedc3ae97a26c481ae7
+psid-questionnaire-occurrence:586b32d3786d0c7e475e39b30cf3f5a081a5943bba6093c4bea5886af47812ff
+psid-questionnaire-occurrence:1924cf68355a5de911bb714574ee4111fb817451c1327f4a76523dcea526e68f
+psid-questionnaire-occurrence:026a15afbee5081ff2fc89f6eee812345f8d82301d5295ea059d4a111855ab28
+psid-questionnaire-occurrence:879048f9a5169e56b506da7c84c7780e4da524927635ec6ae52dcbc43a467e5c
+psid-questionnaire-occurrence:f23296c474a6307373681de81cd4dbe088c3c33369c209aa8b755460ffa04f48
+psid-questionnaire-occurrence:c69bb0d19859f92a9be51e97762531f5640f4fdebb5590bb6da568b40cc32c54
+psid-questionnaire-occurrence:6a57948d94a4ebd65684fdb8f571076a74f246dffdecd9fc31cb41f3d30a5105
+psid-questionnaire-occurrence:b8846e646f7a98b01fff065a96eed6fc899b1c37303631af6ed4712d5fb6c609
+psid-questionnaire-occurrence:c06b9de58e43b852420b618360abfcffc67100aedaa6fed3d3f806912df81fe5
+psid-questionnaire-occurrence:1556aa9da4d35ad8e6cad69fd5ef7a779ee3cdadd2dc0c8b9156acd1857223fd
+psid-questionnaire-occurrence:c020df281459e26b8415bdb22c92f9ce30a0302cc21732ddaad3039ddf77b610
+psid-questionnaire-occurrence:f645f651f874f0fb5fc0eb207dce804a17a7b5741aa4cfa3df5364c1678cfeee
+psid-questionnaire-occurrence:c3275a8794901e02bc0e54360ec899e43e61838b586fcf4fd171dbadd368a3ef
+psid-questionnaire-occurrence:7a8a6bb241c7caa6856a50674c1ca8b82b69cf366e1b982c2895bbd6578f3ac0
+psid-questionnaire-occurrence:345ba9c46d178a22f231942df14918350d2546b89e027ab09f835910adaab71a
+psid-questionnaire-occurrence:a0e986272c699e38dfc5cea5846b62387f2ad3b4d3521fd7797f17abb3c6a2fb
+psid-questionnaire-occurrence:ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d
+psid-questionnaire-occurrence:e2a45222a0321da6e02f24873de45bfb4401cb12a315bdbd96750c6afcfc286f
+psid-questionnaire-occurrence:e743178fd99199a9b422f04dc9a8c20a700a2d1f698c58fc87b60067a91e2f72
+psid-questionnaire-occurrence:1e5f65bf74b51459b2db19f2c8b433a9df29a660fcb5bed021e98a71e4c8ff2f
+psid-questionnaire-occurrence:4c354d978faf69b2a8e4f567e344b272c097bdc28cc6986adafcb2f8d38af3ab
+psid-questionnaire-occurrence:728167dc13914f5e6f5a740b22cca014e204476beb5b8ef52f3b90e8367e2251
+psid-questionnaire-occurrence:4e01709eb740fdc9f6af5929ee8834f94aef9de3c52c6bbde1ba9fffca700b24
+psid-questionnaire-occurrence:c7bc4ab94c2320b283203e6d6d677c21f84b9d61e10880b5f9b4d9c0261386d0
+psid-questionnaire-occurrence:120db8f9fcfe512bda9ee1fc71ff05ef6dc628913c5ee9cc2a95c3822b8e54ec
+psid-questionnaire-occurrence:0b3e6cb334c151e47ecc91f4f00703f02d5396a7a6d0a4cf55c2d7c9306fd83f
+psid-questionnaire-occurrence:677f49917f36f8925b3129f47f93aa914ba9ae2fb6612a42839caac415d7a56e
+psid-questionnaire-occurrence:61f38513d63c0700bddf9bee561b472c15d7d64efd12ca7ab544d281120f3790
+psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcce683ff5dee1a9e
+""".split()
+)
+
+SEMANTIC_ALIAS_STOP_INSTRUCTION_IDS_BY_FINDING = {
+    "incomplete_fragment_does_not_prove_occurrence_equivalence": frozenset(
+        """
+psid-questionnaire-occurrence:a37cf7dce81d69ba18e303afdd31a0825103c53d01398e644a312d55155150ba
+psid-questionnaire-occurrence:8b9c6613b23e83dd55af058542e6aec3be341440397c632d91c1b74f073291dd
+psid-questionnaire-occurrence:cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852
+psid-questionnaire-occurrence:b151de324a45124f27e1b426eb06b8a94ccb653cea7cb7af8dd402341d6b61c5
+psid-questionnaire-occurrence:e64ef592cbb11ef00efa78f26682094c8920a21960309c673bbff8008c99a5c8
+psid-questionnaire-occurrence:2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace
+psid-questionnaire-occurrence:9242a1af728bffad6ed96e7636bcaade0e31fe0a21561d97fe500c89cc9e5b12
+psid-questionnaire-occurrence:9969e959ae2d58b54b5fbdfc4f4e6e0f8141f628d67415370e1ccd129017a4fb
+psid-questionnaire-occurrence:4b6c12f1e8e57edd45a3d43a772c69d923ec4c72d8292cdff1ca1f9c0a069e3b
+psid-questionnaire-occurrence:7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233
+psid-questionnaire-occurrence:5eb05b791f0abad829debc9863433e0a8e7bd254aa18ac51b6c750caa48bb46a
+psid-questionnaire-occurrence:d662043b204306d6c052f412fe674574e80fd1a40aca75b1842a212bb1fe8f68
+psid-questionnaire-occurrence:5e89bb2a5186c4afee4a6a2289a4686ddcee89aeeae089b42c24e3ce9ff72708
+""".split()
+    ),
+    "anti_duplication_instruction_disproves_occurrence_equivalence": (
+        frozenset(
+            """
+psid-questionnaire-occurrence:6ed791445d19c2af492a3571d5a0d4b7f635eaeaabb5f5f3abf5424b8d04c03a
+psid-questionnaire-occurrence:124dd16396afb1eb91cdefdaf057c3e2450ca445b7a8ea5f788d472db80cc1ba
+""".split()
+        )
+    ),
+    "conditional_overlap_does_not_prove_occurrence_equivalence": frozenset(
+        """
+psid-questionnaire-occurrence:9a16ad56ed62fe94ea3e8e0c0c41686d7cabc6ee0c9c261549d6774974257bef
+psid-questionnaire-occurrence:a70a44fb68cd2b0ceefb729ae616454f03d7e66fb2bfd088e13d46fc58f349d8
+psid-questionnaire-occurrence:e7eeaf55540d8d463685e599cbcdb12e91b76652a1029311ef206b3183aada05
+psid-questionnaire-occurrence:e44e06b2a1a7e984e7321edb4eac1f28824855c2e9bbfbb2bc099ff6e5e43446
+""".split()
+    ),
+    "dependency_or_derivation_does_not_prove_occurrence_equivalence": (
+        frozenset(
+            """
+psid-questionnaire-occurrence:128e68c5f8b2bb12a7a03f63910789effa54a1c40987efeda703132349b339da
+psid-questionnaire-occurrence:f7c8757b9260deed7395c6d3a68c085df26c7759681cfa6dc1fab7affe8fba4e
+psid-questionnaire-occurrence:074d2fcfa21aa7202ba3d203ee2bb7f60b57d95195b4110a28c725206583a453
+psid-questionnaire-occurrence:1b8479b3776c5e44c6c993326560344b819cd5a8a15ac64264c58d3e6caf3e58
+psid-questionnaire-occurrence:c4f0f31a3b48fdc6794b81acc506b3a40b754a092e3073cdec008faf0ac52a3b
+psid-questionnaire-occurrence:ca223381e53188458633c9029f3df0371945453ead6cd5a736f3ddd29eedca36
+psid-questionnaire-occurrence:86c314ec0cbf47b1935cc4efbbdd5a54f168602175ceb959bd18d887350cad30
+psid-questionnaire-occurrence:6c4a56864bdab02d8e595962fb8f1a997c473f1eb765939ea384284f01f7a3e7
+psid-questionnaire-occurrence:a391cdd9c11b2efa526ca3df01e0acdae2668adcdf00ad547c2e25a7feefbc44
+""".split()
+        )
+    ),
+    "routing_to_additional_sequence_does_not_prove_equivalence": frozenset(
+        {
+            "psid-questionnaire-occurrence:913192535eea428b2564426ecc0722bdf6b5c6166ef46d8f4547afb2882f5028"
+        }
+    ),
+    "parallel_similarity_without_instruction_import_is_not_equivalence": (
+        frozenset(
+            {
+                "psid-questionnaire-occurrence:3874a79cb10aea6c83c58f2b7fc80950b78e09ad893718dccb38f8ebb2da1e23"
+            }
+        )
+    ),
+    "additional_distinct_item_disproves_occurrence_equivalence": frozenset(
+        {
+            "psid-questionnaire-occurrence:7c402f2de259365c89ff3074ff9caf72130b35efce2559e9383a1d6ae8e347fe"
+        }
+    ),
+    "arithmetic_composition_does_not_prove_occurrence_equivalence": (
+        frozenset(
+            {
+                "psid-questionnaire-occurrence:2731f348724837fcf2e8be8fac3d039705671d63b5b4496b18c0a82694395e2f"
+            }
+        )
+    ),
+    "context_remuneration_mix_cannot_form_an_alias_class": frozenset(
+        {
+            "psid-questionnaire-occurrence:cb6e826b4cbe30c065bcad8740672327ac7e1b92c7b36ec418f366b2fa0f9d9c"
+        }
+    ),
+}
+SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION = {
+    instruction_id: finding
+    for finding, instruction_ids in (
+        SEMANTIC_ALIAS_STOP_INSTRUCTION_IDS_BY_FINDING.items()
+    )
+    for instruction_id in instruction_ids
+}
+if len(SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION) != sum(
+    len(value)
+    for value in SEMANTIC_ALIAS_STOP_INSTRUCTION_IDS_BY_FINDING.values()
+):
+    raise RuntimeError("semantic alias STOP ledger overlaps")
+
+# A mid-sentence or unfinished source occurrence is still probative when its
+# extant bytes settle the semantic question.  It is never silently promoted
+# into positive alias proof.  This ledger separately records whether the
+# predecessor's source seal must be repaired before tier 2.
+ROUND_THREE_FRAGMENT_RESEAL_INSTRUCTION_IDS = frozenset(
+    """
+psid-questionnaire-occurrence:f7c8757b9260deed7395c6d3a68c085df26c7759681cfa6dc1fab7affe8fba4e
+psid-questionnaire-occurrence:074d2fcfa21aa7202ba3d203ee2bb7f60b57d95195b4110a28c725206583a453
+psid-questionnaire-occurrence:ca223381e53188458633c9029f3df0371945453ead6cd5a736f3ddd29eedca36
+psid-questionnaire-occurrence:6c4a56864bdab02d8e595962fb8f1a997c473f1eb765939ea384284f01f7a3e7
+""".split()
+)
+ROUND_FOUR_NEW_FRAGMENT_RESEAL_INSTRUCTION_IDS = frozenset(
+    """
+psid-questionnaire-occurrence:a37cf7dce81d69ba18e303afdd31a0825103c53d01398e644a312d55155150ba
+psid-questionnaire-occurrence:8b9c6613b23e83dd55af058542e6aec3be341440397c632d91c1b74f073291dd
+psid-questionnaire-occurrence:cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852
+psid-questionnaire-occurrence:b151de324a45124f27e1b426eb06b8a94ccb653cea7cb7af8dd402341d6b61c5
+psid-questionnaire-occurrence:e64ef592cbb11ef00efa78f26682094c8920a21960309c673bbff8008c99a5c8
+psid-questionnaire-occurrence:2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace
+psid-questionnaire-occurrence:9242a1af728bffad6ed96e7636bcaade0e31fe0a21561d97fe500c89cc9e5b12
+psid-questionnaire-occurrence:9969e959ae2d58b54b5fbdfc4f4e6e0f8141f628d67415370e1ccd129017a4fb
+psid-questionnaire-occurrence:4b6c12f1e8e57edd45a3d43a772c69d923ec4c72d8292cdff1ca1f9c0a069e3b
+psid-questionnaire-occurrence:7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233
+psid-questionnaire-occurrence:5eb05b791f0abad829debc9863433e0a8e7bd254aa18ac51b6c750caa48bb46a
+psid-questionnaire-occurrence:d662043b204306d6c052f412fe674574e80fd1a40aca75b1842a212bb1fe8f68
+psid-questionnaire-occurrence:5e89bb2a5186c4afee4a6a2289a4686ddcee89aeeae089b42c24e3ce9ff72708
+""".split()
+)
+SEMANTICALLY_DECISIVE_FRAGMENT_INSTRUCTION_IDS = frozenset(
+    """
+psid-questionnaire-occurrence:9582333627cf26561426cef746e0ce6e66c6028d685f25468f2872baeb54c7dc
+psid-questionnaire-occurrence:116697de22b8368ba1f36cd21df28d50aa6a4c262f983ba40f0c72f45ad8dc42
+psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0
+psid-questionnaire-occurrence:38b4a4305699d9807fb95155c3a0d5ffb19292c5ecaec8130c04c183c697f504
+psid-questionnaire-occurrence:357281a0ee7987a14867f92a263f3aa1097d8bb5202d45820e4e8af363a7157b
+psid-questionnaire-occurrence:a769c4a969cdaca2142d0aab2e2cee8aa2f9f83d4fe1abf4235e4bd9acb5c9f5
+psid-questionnaire-occurrence:128e68c5f8b2bb12a7a03f63910789effa54a1c40987efeda703132349b339da
+psid-questionnaire-occurrence:499d1b00af29b5829c212f706bbcfb02780c344584b9b1e47cb3b693146ffd39
+psid-questionnaire-occurrence:c38bfe9eb40d5028cec6d604b144eb54eee451a810bae4fd289bca5eefa27a32
+psid-questionnaire-occurrence:35833279648220c82c4340b8a40d6823b3d3fc231eca8180cdd635479521a052
+psid-questionnaire-occurrence:4d30184605579b75c3e2830294e611d79c4c58faee7419bebc24a28184d9f990
+psid-questionnaire-occurrence:913192535eea428b2564426ecc0722bdf6b5c6166ef46d8f4547afb2882f5028
+psid-questionnaire-occurrence:bbdbc781bb95e0d12442053e1bf4a84094b4b88c42c8e2edb728d659891ee5dc
+psid-questionnaire-occurrence:691e75cf4e4cf1a6d1937617e816779e1648588d0d2d33ef9561dab1438e2f0a
+psid-questionnaire-occurrence:c69bb0d19859f92a9be51e97762531f5640f4fdebb5590bb6da568b40cc32c54
+psid-questionnaire-occurrence:c020df281459e26b8415bdb22c92f9ce30a0302cc21732ddaad3039ddf77b610
+psid-questionnaire-occurrence:c3275a8794901e02bc0e54360ec899e43e61838b586fcf4fd171dbadd368a3ef
+psid-questionnaire-occurrence:3874a79cb10aea6c83c58f2b7fc80950b78e09ad893718dccb38f8ebb2da1e23
+psid-questionnaire-occurrence:ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d
+psid-questionnaire-occurrence:e2a45222a0321da6e02f24873de45bfb4401cb12a315bdbd96750c6afcfc286f
+psid-questionnaire-occurrence:c7bc4ab94c2320b283203e6d6d677c21f84b9d61e10880b5f9b4d9c0261386d0
+psid-questionnaire-occurrence:7c402f2de259365c89ff3074ff9caf72130b35efce2559e9383a1d6ae8e347fe
+psid-questionnaire-occurrence:c4f0f31a3b48fdc6794b81acc506b3a40b754a092e3073cdec008faf0ac52a3b
+psid-questionnaire-occurrence:2731f348724837fcf2e8be8fac3d039705671d63b5b4496b18c0a82694395e2f
+psid-questionnaire-occurrence:1dc6faa8137b8a9b0ec95a605682d2982b9baf1eddd86dee961ea99d0ba4510a
+psid-questionnaire-occurrence:e44e06b2a1a7e984e7321edb4eac1f28824855c2e9bbfbb2bc099ff6e5e43446
+psid-questionnaire-occurrence:65f1752d0f6d39346c412c1d492e574979277aa6c78094f1ad79f0d53cf57452
+psid-questionnaire-occurrence:677f49917f36f8925b3129f47f93aa914ba9ae2fb6612a42839caac415d7a56e
+psid-questionnaire-occurrence:61f38513d63c0700bddf9bee561b472c15d7d64efd12ca7ab544d281120f3790
+psid-questionnaire-occurrence:86c314ec0cbf47b1935cc4efbbdd5a54f168602175ceb959bd18d887350cad30
+psid-questionnaire-occurrence:a391cdd9c11b2efa526ca3df01e0acdae2668adcdf00ad547c2e25a7feefbc44
+""".split()
+)
+SOURCE_INSTRUCTION_FRAGMENT_IDS = (
+    ROUND_THREE_FRAGMENT_RESEAL_INSTRUCTION_IDS
+    | ROUND_FOUR_NEW_FRAGMENT_RESEAL_INSTRUCTION_IDS
+    | SEMANTICALLY_DECISIVE_FRAGMENT_INSTRUCTION_IDS
+)
+if len(SOURCE_INSTRUCTION_FRAGMENT_IDS) != 48:
+    raise RuntimeError("source-instruction fragment ledger does not cover 48")
+
+SEMANTIC_ALIAS_EQUIVALENCE_FINDING = (
+    "exact_source_text_proves_named_instruction_import_or_occurrence_"
+    "equivalence"
+)
+SEMANTIC_ALIAS_REDIRECTION_FINDING = (
+    "affirmative_named_destination_and_explicit_current_location_exclusion"
+)
+SEMANTIC_ALIAS_ADJUDICATED_INSTRUCTION_IDS = (
+    SEMANTIC_ALIAS_EQUIVALENCE_INSTRUCTION_IDS
+    | frozenset(SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION)
+    | EXCLUSIVE_DESTINATION_REDIRECTION_INSTRUCTION_IDS
+)
+if (
+    SEMANTIC_ALIAS_EQUIVALENCE_INSTRUCTION_IDS
+    & frozenset(SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION)
+    or SEMANTIC_ALIAS_EQUIVALENCE_INSTRUCTION_IDS
+    & EXCLUSIVE_DESTINATION_REDIRECTION_INSTRUCTION_IDS
+    or frozenset(SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION)
+    & EXCLUSIVE_DESTINATION_REDIRECTION_INSTRUCTION_IDS
+):
+    raise RuntimeError("semantic alias adjudication arms overlap")
 
 # Round three is a complete semantic ledger, not a fallback predicate.  The
 # sets below exact-cover the 42 populated predecessor proof candidates when
@@ -1484,6 +1803,7 @@ def fold_catalog_only_job_complement_fixture(
 def _candidate_alias_classes(
     documents: Sequence[NormalizedDocument],
     occurrence_kinds: frozenset[str],
+    admitted_alias_evidence_ids: frozenset[str],
 ) -> list[dict[str, Any]]:
     """Build complete nonauthority classes under the inherited alias law."""
     ordered_anchor_rows: list[dict[str, Any]] = []
@@ -1575,8 +1895,18 @@ def _candidate_alias_classes(
 
     for document in documents:
         for evidence in document.evidence_rows:
-            if not _compatible_direct_proof(evidence):
+            # Arm selection is already complete.  In particular, evidence
+            # assigned to T, G, R, or semantic STOP never reaches union-find.
+            if (
+                evidence["local_evidence_id"]
+                not in admitted_alias_evidence_ids
+            ):
                 continue
+            if not _compatible_direct_proof(evidence):
+                raise BuildError(
+                    "construction admitted structurally incomplete alias "
+                    f"evidence: {evidence['local_evidence_id']}"
+                )
             directional_endpoints = list(
                 dict.fromkeys(
                     [
@@ -1693,10 +2023,13 @@ def _candidate_alias_classes(
 def _derived_class_complement_sweep_rows(
     documents: Sequence[NormalizedDocument],
     component_shapes: Sequence[Mapping[str, Any]],
+    admitted_alias_evidence_ids: frozenset[str],
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Run full-corpus candidate class and job-complement sweeps."""
     job_classes = _candidate_alias_classes(
-        documents, frozenset({"job_anchor"})
+        documents,
+        frozenset({"job_anchor"}),
+        admitted_alias_evidence_ids,
     )
     candidate_job_id_by_occurrence: dict[str, str] = {}
     candidate_job_rows: list[dict[str, Any]] = []
@@ -1722,6 +2055,7 @@ def _derived_class_complement_sweep_rows(
     component_classes = _candidate_alias_classes(
         documents,
         frozenset({"context_anchor", "remuneration_component_anchor"}),
+        admitted_alias_evidence_ids,
     )
     component_class_rows: list[dict[str, Any]] = []
     for value in component_classes:
@@ -2776,6 +3110,40 @@ def _cross_reference_structural_census(
     }
 
 
+def _fragment_ledger_fields(instruction_id: str) -> dict[str, Any]:
+    if instruction_id in ROUND_THREE_FRAGMENT_RESEAL_INSTRUCTION_IDS:
+        return {
+            "source_instruction_fragment": True,
+            "tier_2_predecessor_seal_quality_issue": True,
+            "tier_2_predecessor_ledger_note": (
+                "round_three_reseal_ledger_already_covers_fragment"
+            ),
+        }
+    if instruction_id in ROUND_FOUR_NEW_FRAGMENT_RESEAL_INSTRUCTION_IDS:
+        return {
+            "source_instruction_fragment": True,
+            "tier_2_predecessor_seal_quality_issue": True,
+            "tier_2_predecessor_ledger_note": (
+                "new_tier_2_reseal_required_for_incomplete_fragment"
+            ),
+        }
+    if instruction_id in SEMANTICALLY_DECISIVE_FRAGMENT_INSTRUCTION_IDS:
+        return {
+            "source_instruction_fragment": True,
+            "tier_2_predecessor_seal_quality_issue": False,
+            "tier_2_predecessor_ledger_note": (
+                "fragment_semantically_decisive_no_reseal_required"
+            ),
+        }
+    return {
+        "source_instruction_fragment": False,
+        "tier_2_predecessor_seal_quality_issue": False,
+        "tier_2_predecessor_ledger_note": (
+            "not_a_source_instruction_fragment"
+        ),
+    }
+
+
 def _in_domain_component_cross_reference_sweep_rows(
     documents: Sequence[NormalizedDocument],
 ) -> list[dict[str, Any]]:
@@ -2908,34 +3276,47 @@ def _in_domain_component_cross_reference_sweep_rows(
             ]
             if redirection is not None:
                 _require(
+                    instruction_id
+                    in EXCLUSIVE_DESTINATION_REDIRECTION_INSTRUCTION_IDS,
+                    "component cross-reference unexpected R member: "
+                    f"{instruction_id}",
+                )
+                _require(
                     redirection["source_local_evidence_ids"] == evidence_ids,
                     f"component cross-reference R ledger drift: {instruction_id}",
                 )
                 disposition = "admitted_exclusive_destination_redirection"
-                semantic_ledger_member = True
-                semantic_finding = (
-                    "affirmative_named_destination_and_explicit_current_"
-                    "location_exclusion"
-                )
+                semantic_finding = SEMANTIC_ALIAS_REDIRECTION_FINDING
                 valid_alias_ids: list[str] = []
                 redirection_id: str | None = redirection[
                     "in_domain_redirection_relation_disposition_id"
                 ]
                 status = "redirection_arm_member"
-            elif compatible_alias_ids:
+            elif instruction_id in SEMANTIC_ALIAS_EQUIVALENCE_INSTRUCTION_IDS:
+                _require(
+                    compatible_alias_ids == evidence_ids,
+                    "semantic alias member lacks structurally complete proof: "
+                    f"{instruction_id}",
+                )
                 disposition = "existing_alias_arm"
-                semantic_ledger_member = False
-                semantic_finding = None
+                semantic_finding = SEMANTIC_ALIAS_EQUIVALENCE_FINDING
                 valid_alias_ids = compatible_alias_ids
                 redirection_id = None
-                status = "valid_alias_cross_reference_candidate"
-            else:
+                status = "source_text_adjudicated_alias_arm_member"
+            elif instruction_id in SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION:
                 disposition = "disclosed_stop_no_redirection_semantics"
-                semantic_ledger_member = False
-                semantic_finding = None
+                semantic_finding = SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION[
+                    instruction_id
+                ]
                 valid_alias_ids = []
                 redirection_id = None
-                status = "fail_closed_cross_reference_candidate"
+                status = "source_text_adjudicated_disclosed_stop"
+            else:
+                raise BuildError(
+                    "component cross-reference absent from semantic alias "
+                    f"ledger: {instruction_id}"
+                )
+            fragment_fields = _fragment_ledger_fields(instruction_id)
             row: dict[str, Any] = {
                 "document_source_position": document.position,
                 "source_document_id": document.source_document_id,
@@ -2997,8 +3378,22 @@ def _in_domain_component_cross_reference_sweep_rows(
                 "destination_occurrence_ids": destination_ids,
                 "structural_candidate_satisfied": True,
                 "pilot_document_member": document.position in PILOT_POSITIONS,
-                "semantic_redirection_ledger_member": (semantic_ledger_member),
-                "semantic_redirection_finding": semantic_finding,
+                "semantic_alias_adjudication_round": 4,
+                "semantic_alias_ledger_member": True,
+                "semantic_alias_finding": semantic_finding,
+                "occurrence_equivalence_proved": (
+                    disposition == "existing_alias_arm"
+                ),
+                **fragment_fields,
+                "semantic_redirection_ledger_member": (
+                    disposition == "admitted_exclusive_destination_redirection"
+                ),
+                "semantic_redirection_finding": (
+                    semantic_finding
+                    if disposition
+                    == "admitted_exclusive_destination_redirection"
+                    else None
+                ),
                 "valid_alias_arm_evidence_ids": valid_alias_ids,
                 "in_domain_redirection_relation_disposition_id": (
                     redirection_id
@@ -3006,6 +3401,27 @@ def _in_domain_component_cross_reference_sweep_rows(
                 "repeat_coverage_disposition": disposition,
                 "status": status,
             }
+            row["semantic_alias_adjudication_id"] = _row_id(
+                "a12-semantic-alias-adjudication:",
+                [
+                    row["source_document_id"],
+                    instruction_id,
+                    evidence_ids,
+                    row["source_instruction_matched_text"],
+                    row["source_instruction_matched_utf8_sha256"],
+                    row["source_instruction_page_number"],
+                    row["source_instruction_utf8_byte_start"],
+                    row["source_instruction_utf8_byte_end"],
+                    row["source_endpoint_matched_text_arrays"],
+                    row["source_endpoint_matched_utf8_sha256_arrays"],
+                    row["source_endpoint_page_number_arrays"],
+                    row["source_endpoint_utf8_byte_start_arrays"],
+                    row["source_endpoint_utf8_byte_end_arrays"],
+                    disposition,
+                    semantic_finding,
+                    fragment_fields,
+                ],
+            )
             row["in_domain_component_cross_reference_sweep_id"] = _row_id(
                 "a12-in-domain-component-cross-reference-sweep:",
                 [
@@ -3016,9 +3432,23 @@ def _in_domain_component_cross_reference_sweep_rows(
                     row["source_alias_anchor_occurrence_id_arrays"],
                     row["source_canonical_anchor_occurrence_id_arrays"],
                     disposition,
+                    row["semantic_alias_adjudication_id"],
                 ],
             )
             rows.append(row)
+    selected_repeat_ids = {
+        instruction_id
+        for document in documents
+        for instruction_id in document.repeat_occurrence_ids
+    }
+    expected_ids = (
+        SEMANTIC_ALIAS_ADJUDICATED_INSTRUCTION_IDS & selected_repeat_ids
+    )
+    actual_ids = {row["source_instruction_occurrence_id"] for row in rows}
+    _require(
+        actual_ids == expected_ids and len(actual_ids) == len(rows),
+        "semantic alias ledger does not exact-cover structural sweep",
+    )
     return rows
 
 
@@ -3721,59 +4151,154 @@ def _compatible_direct_proof(evidence: Mapping[str, Any]) -> bool:
     )
 
 
-def _repeat_coverage_census(
+@dataclass(frozen=True)
+class RepeatArmConstruction:
+    """Construction-time partition and the sole admission set for A."""
+
+    repeat_instruction_ids: frozenset[str]
+    alias_instruction_ids: frozenset[str]
+    alias_evidence_ids: frozenset[str]
+    outside_instruction_ids: frozenset[str]
+    aggregate_instruction_ids: frozenset[str]
+    redirection_instruction_ids: frozenset[str]
+    incompatible_instruction_ids: frozenset[str]
+    structural_stop_instruction_ids: frozenset[str]
+    excluded_nonalias_evidence_ids: frozenset[str]
+
+
+def _repeat_arm_construction(
     documents: Sequence[NormalizedDocument],
-) -> dict[str, int]:
-    valid_instruction_ids: set[str] = set()
-    incompatible_instruction_ids: set[str] = set()
-    outside_instruction_ids: set[str] = set()
-    aggregate_relation_instruction_ids: list[str] = []
-    repeat_ids: set[str] = set()
-    redirection_rows = _in_domain_redirection_rows(documents)
-    redirection_instruction_ids = {
-        row["source_instruction_occurrence_ids"][0] for row in redirection_rows
+    *,
+    outside_rows: Sequence[Mapping[str, Any]] | None = None,
+    aggregate_rows: Sequence[Mapping[str, Any]] | None = None,
+    redirection_rows: Sequence[Mapping[str, Any]] | None = None,
+    structural_rows: Sequence[Mapping[str, Any]] | None = None,
+) -> RepeatArmConstruction:
+    """Select disjoint repeat arms before any alias-class union is possible."""
+    resolved_outside_rows = (
+        list(outside_rows)
+        if outside_rows is not None
+        else _outside_repeat_rows(documents)
+    )
+    resolved_aggregate_rows = (
+        list(aggregate_rows)
+        if aggregate_rows is not None
+        else _noncatalog_aggregate_relation_rows(documents)
+    )
+    resolved_redirection_rows = (
+        list(redirection_rows)
+        if redirection_rows is not None
+        else _in_domain_redirection_rows(documents)
+    )
+    resolved_structural_rows = (
+        list(structural_rows)
+        if structural_rows is not None
+        else _in_domain_component_cross_reference_sweep_rows(documents)
+    )
+
+    repeat_instruction_ids = {
+        instruction_id
+        for document in documents
+        for instruction_id in document.repeat_occurrence_ids
     }
-    _require(
-        len(redirection_instruction_ids) == len(redirection_rows),
-        "duplicate instruction-level redirection disposition",
+    outside_instruction_ids = {
+        row["source_instruction_occurrence_id"]
+        for row in resolved_outside_rows
+    }
+    aggregate_instruction_ids = {
+        instruction_id
+        for row in resolved_aggregate_rows
+        for instruction_id in row["source_instruction_occurrence_ids"]
+    }
+    redirection_instruction_ids = {
+        instruction_id
+        for row in resolved_redirection_rows
+        for instruction_id in row["source_instruction_occurrence_ids"]
+    }
+    outside_evidence_ids = {
+        row["source_local_evidence_id"] for row in resolved_outside_rows
+    }
+    aggregate_evidence_ids = {
+        row["source_local_evidence_id"] for row in resolved_aggregate_rows
+    }
+    redirection_evidence_ids = {
+        evidence_id
+        for row in resolved_redirection_rows
+        for evidence_id in row["source_local_evidence_ids"]
+    }
+
+    structural_alias_evidence_ids: set[str] = set()
+    structural_evidence_ids: set[str] = set()
+    structural_stop_instruction_ids: set[str] = set()
+    for row in resolved_structural_rows:
+        evidence_ids = set(row["source_local_evidence_ids"])
+        structural_evidence_ids.update(evidence_ids)
+        disposition = row["repeat_coverage_disposition"]
+        if disposition == "existing_alias_arm":
+            _require(
+                evidence_ids == set(row["valid_alias_arm_evidence_ids"]),
+                "semantic alias row does not admit its exact evidence set",
+            )
+            structural_alias_evidence_ids.update(evidence_ids)
+        elif disposition == "disclosed_stop_no_redirection_semantics":
+            structural_stop_instruction_ids.add(
+                row["source_instruction_occurrence_id"]
+            )
+
+    excluded_arm_instruction_ids = (
+        outside_instruction_ids
+        | aggregate_instruction_ids
+        | redirection_instruction_ids
+        | structural_stop_instruction_ids
+    )
+    excluded_nonalias_evidence_ids = (
+        outside_evidence_ids
+        | aggregate_evidence_ids
+        | redirection_evidence_ids
+        | (structural_evidence_ids - structural_alias_evidence_ids)
+    )
+    admitted_alias_evidence_ids: set[str] = set()
+    alias_instruction_ids: set[str] = set()
+    incompatible_instruction_ids: set[str] = set(
+        structural_stop_instruction_ids
     )
     for document in documents:
-        repeat_ids.update(document.repeat_occurrence_ids)
         for evidence in document.evidence_rows:
+            evidence_id = evidence["local_evidence_id"]
             instructions = set(evidence["source_instruction_occurrence_ids"])
-            if _compatible_direct_proof(evidence):
-                valid_instruction_ids.update(
-                    instructions - redirection_instruction_ids
-                )
-            elif _honest_noncatalog_aggregate_relation(evidence):
-                aggregate_relation_instruction_ids.extend(instructions)
-            elif (
+            has_directional_endpoints = bool(
                 evidence["alias_anchor_occurrence_ids"]
                 and evidence["canonical_anchor_occurrence_ids"]
+            )
+            if evidence_id in excluded_nonalias_evidence_ids:
+                continue
+            if evidence_id in structural_evidence_ids:
+                _require(
+                    evidence_id in structural_alias_evidence_ids,
+                    "semantic STOP evidence escaped construction exclusion",
+                )
+            if _compatible_direct_proof(evidence):
+                # Exclusion precedes both admission and union.  One excluded
+                # instruction taints the complete evidence row as a support.
+                if instructions & excluded_arm_instruction_ids:
+                    continue
+                admitted_alias_evidence_ids.add(evidence_id)
+                alias_instruction_ids.update(instructions)
+            elif (
+                has_directional_endpoints
+                and not _honest_noncatalog_aggregate_relation(evidence)
             ):
                 incompatible_instruction_ids.update(
                     instructions - redirection_instruction_ids
                 )
-            if (
-                evidence["handoff_status"]
-                == "local_target_outside_rq_annotation_domain"
-            ):
-                outside_instruction_ids.update(instructions)
-    valid_instruction_ids &= repeat_ids
-    incompatible_instruction_ids &= repeat_ids
-    outside_instruction_ids &= repeat_ids
-    aggregate_relation_counter = Counter(aggregate_relation_instruction_ids)
-    _require(
-        all(count == 1 for count in aggregate_relation_counter.values()),
-        "repeat claimed by multiple aggregate-relation rows",
-    )
-    aggregate_instruction_ids = set(aggregate_relation_counter) & repeat_ids
-    _require(
-        redirection_instruction_ids <= repeat_ids,
-        "redirection disposition instruction is outside repeat domain",
-    )
+
+    alias_instruction_ids &= repeat_instruction_ids
+    incompatible_instruction_ids &= repeat_instruction_ids
+    outside_instruction_ids &= repeat_instruction_ids
+    aggregate_instruction_ids &= repeat_instruction_ids
+    redirection_instruction_ids &= repeat_instruction_ids
     admitted_arms = (
-        valid_instruction_ids,
+        alias_instruction_ids,
         outside_instruction_ids,
         aggregate_instruction_ids,
         redirection_instruction_ids,
@@ -3787,38 +4312,73 @@ def _repeat_coverage_census(
         if count > 1
     }
     _require(not multiple_arm_ids, "repeat claimed by multiple coverage arms")
-    lawful_covered_ids = set().union(*admitted_arms)
-    otherwise_unresolved = repeat_ids - (
-        valid_instruction_ids
-        | incompatible_instruction_ids
-        | outside_instruction_ids
-        | aggregate_instruction_ids
-        | redirection_instruction_ids
+    _require(
+        not admitted_alias_evidence_ids & excluded_nonalias_evidence_ids,
+        "nonalias evidence entered alias construction",
+    )
+    _require(
+        structural_alias_evidence_ids <= admitted_alias_evidence_ids,
+        "semantic alias evidence missing from construction",
+    )
+    return RepeatArmConstruction(
+        repeat_instruction_ids=frozenset(repeat_instruction_ids),
+        alias_instruction_ids=frozenset(alias_instruction_ids),
+        alias_evidence_ids=frozenset(admitted_alias_evidence_ids),
+        outside_instruction_ids=frozenset(outside_instruction_ids),
+        aggregate_instruction_ids=frozenset(aggregate_instruction_ids),
+        redirection_instruction_ids=frozenset(redirection_instruction_ids),
+        incompatible_instruction_ids=frozenset(incompatible_instruction_ids),
+        structural_stop_instruction_ids=frozenset(
+            structural_stop_instruction_ids
+        ),
+        excluded_nonalias_evidence_ids=frozenset(
+            excluded_nonalias_evidence_ids
+        ),
+    )
+
+
+def _repeat_coverage_census(
+    documents: Sequence[NormalizedDocument],
+    construction: RepeatArmConstruction | None = None,
+) -> dict[str, int]:
+    resolved = construction or _repeat_arm_construction(documents)
+    lawful_covered_ids = set().union(
+        resolved.alias_instruction_ids,
+        resolved.outside_instruction_ids,
+        resolved.aggregate_instruction_ids,
+        resolved.redirection_instruction_ids,
+    )
+    otherwise_unresolved = resolved.repeat_instruction_ids - (
+        lawful_covered_ids | resolved.incompatible_instruction_ids
     )
     return {
-        "repeat_occurrence_count": len(repeat_ids),
-        "valid_direct_proof_instruction_count": len(valid_instruction_ids),
-        "outside_domain_instruction_count": len(outside_instruction_ids),
+        "repeat_occurrence_count": len(resolved.repeat_instruction_ids),
+        "valid_direct_proof_instruction_count": len(
+            resolved.alias_instruction_ids
+        ),
+        "outside_domain_instruction_count": len(
+            resolved.outside_instruction_ids
+        ),
         "noncatalog_aggregate_relation_instruction_count": len(
-            aggregate_instruction_ids
+            resolved.aggregate_instruction_ids
         ),
         "in_domain_redirection_instruction_count": len(
-            redirection_instruction_ids
+            resolved.redirection_instruction_ids
         ),
         "in_domain_nonalias_relation_instruction_count": len(
-            aggregate_instruction_ids | redirection_instruction_ids
+            resolved.aggregate_instruction_ids
+            | resolved.redirection_instruction_ids
         ),
         "incompatible_proof_instruction_count": len(
-            incompatible_instruction_ids
+            resolved.incompatible_instruction_ids
         ),
         "valid_and_incompatible_instruction_overlap_count": len(
-            valid_instruction_ids & incompatible_instruction_ids
+            resolved.alias_instruction_ids
+            & resolved.incompatible_instruction_ids
         ),
-        "lawful_repeat_coverage_multiple_arm_instruction_count": len(
-            multiple_arm_ids
-        ),
+        "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
         "disclosed_stop_instruction_count": len(
-            repeat_ids - lawful_covered_ids
+            resolved.repeat_instruction_ids - lawful_covered_ids
         ),
         "otherwise_unresolved_instruction_count": len(otherwise_unresolved),
     }
@@ -3841,7 +4401,8 @@ def _pilot_census(documents: Sequence[NormalizedDocument]) -> dict[str, Any]:
                 evidence_shape_counts["partial_endpoints"] += 1
             else:
                 evidence_shape_counts["no_endpoints"] += 1
-    repeat_census = _repeat_coverage_census(documents)
+    repeat_construction = _repeat_arm_construction(documents)
+    repeat_census = _repeat_coverage_census(documents, repeat_construction)
     component_raw_cardinality: Counter[str] = Counter()
     component_dispositions: Counter[str] = Counter()
     raw_cross_category = 0
@@ -4087,6 +4648,13 @@ def _build_bundle(
     full_component_cross_reference_sweep_rows = (
         _in_domain_component_cross_reference_sweep_rows(documents)
     )
+    full_repeat_construction = _repeat_arm_construction(
+        documents,
+        outside_rows=full_outside_rows,
+        aggregate_rows=full_aggregate_relation_rows,
+        redirection_rows=full_redirection_relation_rows,
+        structural_rows=full_component_cross_reference_sweep_rows,
+    )
     component_cross_reference_sweep_counts = (
         _component_cross_reference_sweep_counts(
             full_component_cross_reference_sweep_rows
@@ -4109,7 +4677,9 @@ def _build_bundle(
         for document in documents
         for row in document.repeat_occurrence_rows
     ]
-    full_repeat_census = _repeat_coverage_census(documents)
+    full_repeat_census = _repeat_coverage_census(
+        documents, full_repeat_construction
+    )
     raw_cardinality = Counter()
     disposition_counts = Counter()
     invalid_parent_refs = 0
@@ -4206,6 +4776,29 @@ def _build_bundle(
             "in_domain_component_cross_reference_sweep_domain_sha256": (
                 _domain_sha(full_component_cross_reference_sweep_rows)
             ),
+            "semantic_alias_adjudication_count": len(
+                full_component_cross_reference_sweep_rows
+            ),
+            "semantic_alias_adjudication_keyset_sha256": _keyset_sha(
+                [
+                    row["semantic_alias_adjudication_id"]
+                    for row in full_component_cross_reference_sweep_rows
+                ]
+            ),
+            "semantic_alias_adjudication_domain_sha256": _domain_sha(
+                full_component_cross_reference_sweep_rows
+            ),
+            "semantic_alias_adjudication_outcome_counts": {
+                key: component_cross_reference_sweep_counts[key]
+                for key in (
+                    "alias_instruction_count",
+                    "alias_edge_count",
+                    "redirection_instruction_count",
+                    "redirection_edge_count",
+                    "stop_instruction_count",
+                    "stop_edge_count",
+                )
+            },
             "in_domain_component_cross_reference_sweep_alias_instruction_count": (
                 component_cross_reference_sweep_counts[
                     "alias_instruction_count"
@@ -4456,7 +5049,11 @@ def _build_bundle(
     (
         component_class_admission_rows,
         catalog_only_job_complement_rows,
-    ) = _derived_class_complement_sweep_rows(documents, full_component_shapes)
+    ) = _derived_class_complement_sweep_rows(
+        documents,
+        full_component_shapes,
+        full_repeat_construction.alias_evidence_ids,
+    )
     derived_sweep_artifact = _artifact(
         "amendment_12_rq_catalog_derived_class_complement_sweeps.v1",
         "a12-rq-derived-sweeps:",
@@ -5030,6 +5627,10 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "in_domain_component_cross_reference_sweep_edge_count",
             "in_domain_component_cross_reference_sweep_keyset_sha256",
             "in_domain_component_cross_reference_sweep_domain_sha256",
+            "semantic_alias_adjudication_count",
+            "semantic_alias_adjudication_keyset_sha256",
+            "semantic_alias_adjudication_domain_sha256",
+            "semantic_alias_adjudication_outcome_counts",
             "in_domain_component_cross_reference_sweep_alias_instruction_count",
             "in_domain_component_cross_reference_sweep_alias_edge_count",
             "in_domain_component_cross_reference_sweep_redirection_instruction_count",
@@ -5401,6 +6002,14 @@ IN_DOMAIN_COMPONENT_CROSS_REFERENCE_SWEEP_ROW_KEYS = frozenset(
         "destination_occurrence_ids",
         "structural_candidate_satisfied",
         "pilot_document_member",
+        "semantic_alias_adjudication_id",
+        "semantic_alias_adjudication_round",
+        "semantic_alias_ledger_member",
+        "semantic_alias_finding",
+        "occurrence_equivalence_proved",
+        "source_instruction_fragment",
+        "tier_2_predecessor_seal_quality_issue",
+        "tier_2_predecessor_ledger_note",
         "semantic_redirection_ledger_member",
         "semantic_redirection_finding",
         "valid_alias_arm_evidence_ids",
@@ -6497,8 +7106,26 @@ def _validate_in_domain_component_cross_reference_sweep_row(
         f"{label}: pilot membership",
     )
 
+    _require(
+        row["semantic_alias_adjudication_round"] == 4
+        and row["semantic_alias_ledger_member"] is True,
+        f"{label}: round-four semantic alias ledger",
+    )
+    expected_fragment_fields = _fragment_ledger_fields(instruction_id)
+    _require(
+        {
+            key: row[key]
+            for key in (
+                "source_instruction_fragment",
+                "tier_2_predecessor_seal_quality_issue",
+                "tier_2_predecessor_ledger_note",
+            )
+        }
+        == expected_fragment_fields,
+        f"{label}: fragment seal-quality adjudication",
+    )
     semantic_member = row["semantic_redirection_ledger_member"]
-    _require(isinstance(semantic_member, bool), f"{label}: semantic ledger")
+    _require(isinstance(semantic_member, bool), f"{label}: redirection ledger")
     valid_alias_ids = row["valid_alias_arm_evidence_ids"]
     _require(
         isinstance(valid_alias_ids, list)
@@ -6506,25 +7133,40 @@ def _validate_in_domain_component_cross_reference_sweep_row(
         and set(valid_alias_ids) <= set(evidence_ids),
         f"{label}: alias evidence IDs",
     )
-    defect_free_ids = [
-        evidence_id
-        for evidence_id, flags in zip(
-            evidence_ids, row["source_defect_flag_rows"], strict=True
-        )
-        if not any(flags.values())
-    ]
     disposition = row["repeat_coverage_disposition"]
+    if instruction_id in EXCLUSIVE_DESTINATION_REDIRECTION_INSTRUCTION_IDS:
+        expected_disposition = "admitted_exclusive_destination_redirection"
+        expected_finding = SEMANTIC_ALIAS_REDIRECTION_FINDING
+        expected_status = "redirection_arm_member"
+    elif instruction_id in SEMANTIC_ALIAS_EQUIVALENCE_INSTRUCTION_IDS:
+        expected_disposition = "existing_alias_arm"
+        expected_finding = SEMANTIC_ALIAS_EQUIVALENCE_FINDING
+        expected_status = "source_text_adjudicated_alias_arm_member"
+    elif instruction_id in SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION:
+        expected_disposition = "disclosed_stop_no_redirection_semantics"
+        expected_finding = SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION[
+            instruction_id
+        ]
+        expected_status = "source_text_adjudicated_disclosed_stop"
+    else:
+        raise BuildError(f"{label}: instruction absent from semantic ledger")
+    _require(
+        disposition == expected_disposition
+        and row["semantic_alias_finding"] == expected_finding
+        and row["occurrence_equivalence_proved"]
+        is (disposition == "existing_alias_arm")
+        and row["status"] == expected_status,
+        f"{label}: source-text semantic adjudication",
+    )
     if disposition == "admitted_exclusive_destination_redirection":
         _require(
             semantic_member is True
             and row["semantic_redirection_finding"]
-            == "affirmative_named_destination_and_explicit_current_location_"
-            "exclusion"
+            == SEMANTIC_ALIAS_REDIRECTION_FINDING
             and valid_alias_ids == []
             and isinstance(
                 row["in_domain_redirection_relation_disposition_id"], str
-            )
-            and row["status"] == "redirection_arm_member",
+            ),
             f"{label}: redirection partition member",
         )
     elif disposition == "existing_alias_arm":
@@ -6532,21 +7174,42 @@ def _validate_in_domain_component_cross_reference_sweep_row(
             semantic_member is False
             and row["semantic_redirection_finding"] is None
             and row["in_domain_redirection_relation_disposition_id"] is None
-            and valid_alias_ids == defect_free_ids
-            and valid_alias_ids
-            and row["status"] == "valid_alias_cross_reference_candidate",
+            and valid_alias_ids == evidence_ids,
             f"{label}: alias partition member",
         )
     else:
         _require(
-            disposition == "disclosed_stop_no_redirection_semantics"
-            and semantic_member is False
+            semantic_member is False
             and row["semantic_redirection_finding"] is None
             and row["in_domain_redirection_relation_disposition_id"] is None
-            and valid_alias_ids == defect_free_ids == []
-            and row["status"] == "fail_closed_cross_reference_candidate",
+            and valid_alias_ids == [],
             f"{label}: STOP partition member",
         )
+    _require(
+        row["semantic_alias_adjudication_id"]
+        == _row_id(
+            "a12-semantic-alias-adjudication:",
+            [
+                row["source_document_id"],
+                instruction_id,
+                evidence_ids,
+                instruction_text,
+                row["source_instruction_matched_utf8_sha256"],
+                instruction_page,
+                instruction_start,
+                instruction_end,
+                row["source_endpoint_matched_text_arrays"],
+                row["source_endpoint_matched_utf8_sha256_arrays"],
+                row["source_endpoint_page_number_arrays"],
+                row["source_endpoint_utf8_byte_start_arrays"],
+                row["source_endpoint_utf8_byte_end_arrays"],
+                disposition,
+                expected_finding,
+                expected_fragment_fields,
+            ],
+        ),
+        f"{label}: semantic alias adjudication ID",
+    )
     _require(
         row["in_domain_component_cross_reference_sweep_id"]
         == _row_id(
@@ -6559,6 +7222,7 @@ def _validate_in_domain_component_cross_reference_sweep_row(
                 alias_arrays,
                 canonical_arrays,
                 disposition,
+                row["semantic_alias_adjudication_id"],
             ],
         ),
         f"{label}: sweep ID",
@@ -7698,15 +8362,15 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "aggregate_anchor_count": 545,
         "repeat_occurrence_count": 376,
         "local_evidence_row_count": 418,
-        "valid_direct_proof_instruction_count": 105,
+        "valid_direct_proof_instruction_count": 88,
         "outside_domain_instruction_count": 34,
         "noncatalog_aggregate_relation_instruction_count": 1,
         "in_domain_redirection_instruction_count": 2,
         "in_domain_nonalias_relation_instruction_count": 3,
-        "incompatible_proof_instruction_count": 7,
+        "incompatible_proof_instruction_count": 24,
         "valid_and_incompatible_instruction_overlap_count": 1,
         "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
-        "disclosed_stop_instruction_count": 234,
+        "disclosed_stop_instruction_count": 251,
         "otherwise_unresolved_instruction_count": 228,
         "raw_cross_category_multi_parent_count": 86,
         "eligible_cross_category_multi_parent_count": 86,
@@ -7961,14 +8625,53 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         == {
             "instruction_count": 162,
             "edge_count": 195,
-            "alias_instruction_count": 152,
+            "alias_instruction_count": 124,
             "redirection_instruction_count": 5,
-            "stop_instruction_count": 5,
-            "alias_edge_count": 184,
+            "stop_instruction_count": 33,
+            "alias_edge_count": 154,
             "redirection_edge_count": 6,
-            "stop_edge_count": 5,
+            "stop_edge_count": 35,
         },
         "component cross-reference partition drift",
+    )
+    semantic_adjudication_ids = [
+        row["semantic_alias_adjudication_id"]
+        for row in component_cross_reference_rows
+    ]
+    _require(
+        sweep["semantic_alias_adjudication_count"]
+        == len(semantic_adjudication_ids)
+        == len(set(semantic_adjudication_ids))
+        and sweep["semantic_alias_adjudication_keyset_sha256"]
+        == _keyset_sha(semantic_adjudication_ids)
+        and sweep["semantic_alias_adjudication_domain_sha256"]
+        == _domain_sha(component_cross_reference_rows)
+        and sweep["semantic_alias_adjudication_outcome_counts"]
+        == {
+            key: component_cross_reference_counts[key]
+            for key in (
+                "alias_instruction_count",
+                "alias_edge_count",
+                "redirection_instruction_count",
+                "redirection_edge_count",
+                "stop_instruction_count",
+                "stop_edge_count",
+            )
+        },
+        "semantic alias adjudication aggregate drift",
+    )
+    _require(
+        Counter(
+            row["tier_2_predecessor_ledger_note"]
+            for row in component_cross_reference_rows
+        )
+        == {
+            "round_three_reseal_ledger_already_covers_fragment": 4,
+            "new_tier_2_reseal_required_for_incomplete_fragment": 13,
+            "fragment_semantically_decisive_no_reseal_required": 31,
+            "not_a_source_instruction_fragment": 114,
+        },
+        "semantic alias fragment ledger census drift",
     )
     pilot_component_cross_reference_rows = [
         row
@@ -8005,12 +8708,12 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         == {
             "instruction_count": 91,
             "edge_count": 123,
-            "alias_instruction_count": 85,
+            "alias_instruction_count": 68,
             "redirection_instruction_count": 2,
-            "stop_instruction_count": 4,
-            "alias_edge_count": 116,
+            "stop_instruction_count": 21,
+            "alias_edge_count": 97,
             "redirection_edge_count": 3,
-            "stop_edge_count": 4,
+            "stop_edge_count": 23,
         },
         "pilot component cross-reference partition drift",
     )
@@ -8125,15 +8828,15 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         sweep["repeat_coverage_census"]
         == {
             "repeat_occurrence_count": 2_460,
-            "valid_direct_proof_instruction_count": 253,
+            "valid_direct_proof_instruction_count": 225,
             "outside_domain_instruction_count": 34,
             "noncatalog_aggregate_relation_instruction_count": 13,
             "in_domain_redirection_instruction_count": 5,
             "in_domain_nonalias_relation_instruction_count": 18,
-            "incompatible_proof_instruction_count": 24,
+            "incompatible_proof_instruction_count": 52,
             "valid_and_incompatible_instruction_overlap_count": 1,
             "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
-            "disclosed_stop_instruction_count": 2_155,
+            "disclosed_stop_instruction_count": 2_183,
             "otherwise_unresolved_instruction_count": 2_132,
         },
         "corpus repeat coverage census drift",
@@ -8319,7 +9022,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "component_class_admission_sweep_domain_sha256",
     )
     _require(
-        len(component_class_rows) == 19_507,
+        len(component_class_rows) == 19_536,
         "component candidate class count drift",
     )
     _require(
@@ -8456,6 +9159,47 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         derived["component_alias_support_origin_counts"]
         == dict(sorted(component_support_origin_counts.items())),
         "component alias support census drift",
+    )
+    sealed_alias_support_evidence_ids = {
+        support["source_local_evidence_id"]
+        for row in [*component_class_rows, *job_complement_rows]
+        for support in row["alias_support_rows"]
+        if support["support_origin"] == "sealed_local_evidence"
+    }
+    structural_alias_evidence_ids = {
+        evidence_id
+        for row in component_cross_reference_rows
+        if row["repeat_coverage_disposition"] == "existing_alias_arm"
+        for evidence_id in row["valid_alias_arm_evidence_ids"]
+    }
+    structural_nonalias_evidence_ids = {
+        evidence_id
+        for row in component_cross_reference_rows
+        if row["repeat_coverage_disposition"] != "existing_alias_arm"
+        for evidence_id in row["source_local_evidence_ids"]
+    }
+    explicit_nonalias_evidence_ids = (
+        {row["source_local_evidence_id"] for row in sweep_repeat_rows}
+        | {row["source_local_evidence_id"] for row in sweep_aggregate_rows}
+        | {
+            evidence_id
+            for row in sweep_redirection_rows
+            for evidence_id in row["source_local_evidence_ids"]
+        }
+    )
+    _require(
+        not sealed_alias_support_evidence_ids
+        & (structural_nonalias_evidence_ids | explicit_nonalias_evidence_ids)
+        and (
+            sealed_alias_support_evidence_ids
+            & {
+                evidence_id
+                for row in component_cross_reference_rows
+                for evidence_id in row["source_local_evidence_ids"]
+            }
+        )
+        <= structural_alias_evidence_ids,
+        "R/G/T/STOP evidence entered derived alias support",
     )
 
     expected_relationship_components_by_job: defaultdict[str, list[str]] = (
@@ -9277,6 +10021,35 @@ def _repin_mutated_bundle(
     for row in bundle["sweeps"][
         "in_domain_component_cross_reference_sweep_rows"
     ]:
+        fragment_fields = {
+            key: row[key]
+            for key in (
+                "source_instruction_fragment",
+                "tier_2_predecessor_seal_quality_issue",
+                "tier_2_predecessor_ledger_note",
+            )
+        }
+        row["semantic_alias_adjudication_id"] = _row_id(
+            "a12-semantic-alias-adjudication:",
+            [
+                row["source_document_id"],
+                row["source_instruction_occurrence_id"],
+                row["source_local_evidence_ids"],
+                row["source_instruction_matched_text"],
+                row["source_instruction_matched_utf8_sha256"],
+                row["source_instruction_page_number"],
+                row["source_instruction_utf8_byte_start"],
+                row["source_instruction_utf8_byte_end"],
+                row["source_endpoint_matched_text_arrays"],
+                row["source_endpoint_matched_utf8_sha256_arrays"],
+                row["source_endpoint_page_number_arrays"],
+                row["source_endpoint_utf8_byte_start_arrays"],
+                row["source_endpoint_utf8_byte_end_arrays"],
+                row["repeat_coverage_disposition"],
+                row["semantic_alias_finding"],
+                fragment_fields,
+            ],
+        )
         row["in_domain_component_cross_reference_sweep_id"] = _row_id(
             "a12-in-domain-component-cross-reference-sweep:",
             [
@@ -9287,6 +10060,7 @@ def _repin_mutated_bundle(
                 row["source_alias_anchor_occurrence_id_arrays"],
                 row["source_canonical_anchor_occurrence_id_arrays"],
                 row["repeat_coverage_disposition"],
+                row["semantic_alias_adjudication_id"],
             ],
         )
     for row in bundle["sweeps"][
@@ -9530,6 +10304,29 @@ def _repin_mutated_bundle(
     sweep["in_domain_component_cross_reference_sweep_domain_sha256"] = (
         _domain_sha(component_cross_reference_rows)
     )
+    sweep["semantic_alias_adjudication_count"] = len(
+        component_cross_reference_rows
+    )
+    sweep["semantic_alias_adjudication_keyset_sha256"] = _keyset_sha(
+        [
+            row["semantic_alias_adjudication_id"]
+            for row in component_cross_reference_rows
+        ]
+    )
+    sweep["semantic_alias_adjudication_domain_sha256"] = _domain_sha(
+        component_cross_reference_rows
+    )
+    sweep["semantic_alias_adjudication_outcome_counts"] = {
+        key: component_cross_reference_counts[key]
+        for key in (
+            "alias_instruction_count",
+            "alias_edge_count",
+            "redirection_instruction_count",
+            "redirection_edge_count",
+            "stop_instruction_count",
+            "stop_edge_count",
+        )
+    }
     for suffix in (
         "alias_instruction_count",
         "alias_edge_count",
@@ -10039,6 +10836,51 @@ def run_mutation_tests(
             index
         ] = "psid-questionnaire-occurrence:coherent-role-forgery"
 
+    def append_reused_nonalias_support(
+        value: dict[str, Any], evidence_id: str
+    ) -> None:
+        target_row = next(
+            row
+            for row in value["derived"]["component_class_admission_sweep_rows"]
+            if any(
+                support["support_origin"] == "sealed_local_evidence"
+                for support in row["alias_support_rows"]
+            )
+        )
+        support = copy.deepcopy(
+            next(
+                support
+                for support in target_row["alias_support_rows"]
+                if support["support_origin"] == "sealed_local_evidence"
+            )
+        )
+        support["source_local_evidence_id"] = evidence_id
+        target_row["alias_support_rows"].append(support)
+
+    def reuse_redirection_evidence_as_alias_support(
+        value: dict[str, Any],
+    ) -> None:
+        evidence_id = value["sweeps"]["in_domain_redirection_shape_rows"][0][
+            "source_local_evidence_ids"
+        ][0]
+        append_reused_nonalias_support(value, evidence_id)
+
+    def promote_fragment_stop_to_alias_support(
+        value: dict[str, Any],
+    ) -> None:
+        stop_row = next(
+            row
+            for row in value["sweeps"][
+                "in_domain_component_cross_reference_sweep_rows"
+            ]
+            if row["source_instruction_fragment"]
+            and row["repeat_coverage_disposition"]
+            == "disclosed_stop_no_redirection_semantics"
+        )
+        append_reused_nonalias_support(
+            value, stop_row["source_local_evidence_ids"][0]
+        )
+
     def forge_outside_target_bytes(value: dict[str, Any]) -> None:
         for artifact_key, row_key in (
             ("sweeps", "outside_domain_repeat_shape_rows"),
@@ -10449,6 +11291,23 @@ def run_mutation_tests(
             0
         ].__setitem__("invented_key", True),
         "component pilot row: keyset drift",
+    )
+    add(
+        "redirection_evidence_reused_as_alias_support",
+        reuse_redirection_evidence_as_alias_support,
+        "R/G/T/STOP evidence entered derived alias support",
+    )
+    add(
+        "fragment_stop_promoted_to_alias_support",
+        promote_fragment_stop_to_alias_support,
+        "R/G/T/STOP evidence entered derived alias support",
+    )
+    add(
+        "semantic_alias_adjudication_record_forged",
+        lambda value: value["sweeps"][
+            "in_domain_component_cross_reference_sweep_rows"
+        ][0].__setitem__("semantic_alias_finding", "forged_semantic_finding"),
+        "source-text semantic adjudication",
     )
     add(
         "component_class_sweep_row_omitted",
