@@ -84,13 +84,13 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
         "069455f172490db3db04977542df1bbcda23c6a0350a739830188016622ea5be"
     ),
     "in_domain_component_cross_reference_sweep": (
-        "558362b367682c383623eca972167923edb21535014ec02dc16000393bf73631"
+        "9cf4a80cc5b1e1d4ee7205df895c9a06f1519598ab77b2241687dc900011d75f"
     ),
     "in_domain_component_cross_reference_sweep_keyset": (
-        "bb48fe11602455b8051bf6c4887d7647e79919b94b3cd843e11fb0ff287ad2f1"
+        "bb37fdc977781ed4c3d901b219f8fca5a0b3458123e7bdc56d448b7972358edf"
     ),
     "semantic_alias_adjudication_keyset": (
-        "81fbcb97c333de117ac819f5bd330abd7bd9edf8303c7cfe226171c1718b5ac6"
+        "c858da0445f7d6deb58152f540cc502338ece99d3d8efef0a5a520b7bb8b96ff"
     ),
     "semantic_alias_instruction_outcome": (
         "5acca42cb323c2d11994b69831b7ab2a0f6b604e1ebafe7bd3b787efa3887a14"
@@ -114,16 +114,16 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
         "48c175829e9c6e309b98b04f86a0d52f6e3cdf0ed223b84c73a1961ada5b5526"
     ),
     "alias_evidence_semantic_adjudication_keyset": (
-        "822c5a19d178aecadbc5617a9b136f73ddb3848cfff3863dbd1e64b28867b61a"
+        "ffafaed44de98c83ecf62c10a1c94d0a7c6c157d7bac388a63f7b1f9d77788de"
     ),
     "alias_evidence_semantic_adjudication": (
-        "d1ce3f1d9190ad03ebdb205e5925affc5437060d4b1d7fd7efa19d260bc91a82"
+        "756fc37b17218f18cacb893e94a8fb2e75249b19eff2f403322fb3a4f72eb36b"
     ),
     "approved_alias_pair_keyset": (
-        "71a8c4c54eef3f612070c8eac94d1fe6ad807ed009cc7ff69c72460a1a9215a2"
+        "7314e1782ec3e1ad6bccc8073583c2c1cec7f2a9976dc63b18b2f6c4be1cb43a"
     ),
     "approved_alias_pair": (
-        "48d02ace33c8f6523815b90ceb4bdfde3d9fab640b9b6c0cd5fd98bc45e03244"
+        "c9f6ec7976e0d7effc26cc87e22d4282026403dd5d756834df21b0cd6ac47d6b"
     ),
     "component_parent_shape_keyset": (
         "b1aaad10fac7e3a6eb35edabd99c079137404109f0b912f8726446965a1d0524"
@@ -141,7 +141,7 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
         "3abf42fb2a4dc3f30aec676054423aa546011d01118aafd8034fa7291b1f1c62"
     ),
     "component_class_admission": (
-        "35dd2327859c74032caa56b67c22344f227bef26a307c99cd241223bdf55e73b"
+        "388a6df4988a6736ea24b126f5d6d47464f5d9e4ed2af797533bbfeee32b9eb1"
     ),
     "catalog_only_job_complement_keyset": (
         "5dda6acc66f6b742ecd3bf8d2ac819b6309a89c44c39d6dd7578ad8a7e9496c1"
@@ -227,6 +227,60 @@ CONTINUATION_COMPOSITION_RULE = (
 CONTINUATION_ALIAS_CITATIONS_BY_INSTRUCTION = {
     (
         "psid-questionnaire-occurrence:"
+        "c38bfe9eb40d5028cec6d604b144eb54eee451a810bae4fd289bca5eefa27a32"
+    ): {
+        "leading_occurrence_id": (
+            "psid-questionnaire-occurrence:"
+            "1f27469d6372b82b52d00f73f1f66877ad0a3423c38eca6a89824524ff537fbc"
+        ),
+        "page_number": 40,
+        "page_text_utf8_sha256": (
+            "d4f0cd6d9dfe4874e4de66121f01aab3ee3fa6e5cce85705db6013dc68033df4"
+        ),
+        "combined_utf8_byte_start": 1554,
+        "leading_utf8_byte_end": 1650,
+        "gap_utf8_byte_start": 1650,
+        "gap_utf8_byte_end": 1661,
+        "continuation_utf8_byte_start": 1661,
+        "combined_utf8_byte_end": 1740,
+        "combined_text": (
+            "G8 l .    If employment was irregular and R can't give hours "
+            "per week, try to get an estimate of\n          the total number "
+            "of hours worked in 1995 at that job. See instructions for B79."
+        ),
+        "combined_utf8_sha256": (
+            "c9168a361df7dd99663d16b90e96c4f2da73e3dfe1412df1450d367800d6bf03"
+        ),
+    },
+    (
+        "psid-questionnaire-occurrence:"
+        "e2a45222a0321da6e02f24873de45bfb4401cb12a315bdbd96750c6afcfc286f"
+    ): {
+        "leading_occurrence_id": (
+            "psid-questionnaire-occurrence:"
+            "4e2e0b200ae3624da5e4807b853bb3116bd600ada076fc396ced67677cfb2517"
+        ),
+        "page_number": 43,
+        "page_text_utf8_sha256": (
+            "7099faca6691a74775cc3caaca33c6942045b5c0eb5ae744b935466331c41d6d"
+        ),
+        "combined_utf8_byte_start": 758,
+        "leading_utf8_byte_end": 855,
+        "gap_utf8_byte_start": 855,
+        "gap_utf8_byte_end": 866,
+        "continuation_utf8_byte_start": 866,
+        "combined_utf8_byte_end": 941,
+        "combined_text": (
+            "G81.          If employment was irregular and R can't give "
+            "hours per week, get an estimate of the\n          total number of "
+            "hours worked in 1996 at that job. See instructions for B79."
+        ),
+        "combined_utf8_sha256": (
+            "68eb356f655a6e0205991f68b2152f4b4d857aded464cc406e623c6b40f9247c"
+        ),
+    },
+    (
+        "psid-questionnaire-occurrence:"
         "cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852"
     ): {
         "leading_occurrence_id": (
@@ -306,9 +360,32 @@ CONTINUATION_ALIAS_CITATIONS_BY_INSTRUCTION = {
         ),
     },
 }
-CONTINUATION_RESTORATION_INSTRUCTION_IDS = frozenset(
+CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS = frozenset(
     CONTINUATION_ALIAS_CITATIONS_BY_INSTRUCTION
 )
+CONTINUATION_RESTORATION_INSTRUCTION_IDS = frozenset(
+    {
+        (
+            "psid-questionnaire-occurrence:"
+            "cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852"
+        ),
+        (
+            "psid-questionnaire-occurrence:"
+            "2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace"
+        ),
+        (
+            "psid-questionnaire-occurrence:"
+            "7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233"
+        ),
+    }
+)
+if (
+    len(CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS) != 5
+    or len(CONTINUATION_RESTORATION_INSTRUCTION_IDS) != 3
+    or not CONTINUATION_RESTORATION_INSTRUCTION_IDS
+    < CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS
+):
+    raise RuntimeError("continuation citation and restoration domains drift")
 
 COMPOSITE_IMPORT_INSTRUCTION_IDS = frozenset(
     """
@@ -2125,8 +2202,11 @@ def _candidate_alias_classes(
     )
     for pair_row in admitted_alias_pair_rows:
         _require(
-            pair_row["class_closure_eligible"],
-            "typed composite projection entered occurrence closure",
+            pair_row["pair_kind"] == "atomic_occurrence_pair"
+            and pair_row["class_closure_eligible"] is True
+            and pair_row["typed_projection_union_prohibited"] is False,
+            "non-atomic or typed composite projection entered occurrence "
+            "closure",
         )
         pair_rows_by_evidence_id[pair_row["source_local_evidence_id"]].append(
             pair_row
@@ -4169,8 +4249,12 @@ def _alias_evidence_semantic_adjudication_rows(
                     document, evidence, instruction_id
                 )
                 _require(
-                    bool(continuation_citation) == restored,
-                    "continuation restoration lacks its exact citation",
+                    bool(continuation_citation)
+                    is (
+                        instruction_id
+                        in CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS
+                    ),
+                    "continuation reading lacks its exact citation",
                 )
                 pair_rows.append(
                     _semantic_alias_pair_row(
@@ -4185,7 +4269,8 @@ def _alias_evidence_semantic_adjudication_rows(
                             ][0],
                             "pairing_basis_code": (
                                 CONTINUATION_COMPOSITION_RULE
-                                if restored
+                                if instruction_id
+                                in CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS
                                 else "round_four_exact_source_text_adjudication"
                             ),
                         },
@@ -4195,7 +4280,8 @@ def _alias_evidence_semantic_adjudication_rows(
                 )
                 semantic_finding = (
                     "whitespace_only_continuation_composes_named_import"
-                    if restored
+                    if instruction_id
+                    in CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS
                     else SEMANTIC_ALIAS_EQUIVALENCE_FINDING
                 )
                 decision = "approved_single_pair"
@@ -4467,7 +4553,7 @@ def _in_domain_component_cross_reference_sweep_rows(
                 semantic_finding = (
                     "whitespace_only_continuation_composes_named_import"
                     if instruction_id
-                    in CONTINUATION_RESTORATION_INSTRUCTION_IDS
+                    in CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS
                     else SEMANTIC_ALIAS_EQUIVALENCE_FINDING
                 )
                 valid_alias_ids = compatible_alias_ids
@@ -4500,7 +4586,8 @@ def _in_domain_component_cross_reference_sweep_rows(
             _require(
                 len(continuation_citations)
                 == int(
-                    instruction_id in CONTINUATION_RESTORATION_INSTRUCTION_IDS
+                    instruction_id
+                    in CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS
                 ),
                 "continuation semantic citation coverage drift",
             )
@@ -5427,38 +5514,56 @@ def _repeat_arm_construction(
     semantic_rows: Sequence[Mapping[str, Any]] | None = None,
 ) -> RepeatArmConstruction:
     """Select disjoint repeat arms through the sole semantic gate to A."""
-    resolved_outside_rows = (
-        list(outside_rows)
-        if outside_rows is not None
-        else _outside_repeat_rows(documents)
-    )
-    resolved_aggregate_rows = (
-        list(aggregate_rows)
-        if aggregate_rows is not None
-        else _noncatalog_aggregate_relation_rows(documents)
-    )
-    resolved_redirection_rows = (
-        list(redirection_rows)
-        if redirection_rows is not None
-        else _in_domain_redirection_rows(documents)
-    )
-    resolved_structural_rows = (
-        list(structural_rows)
-        if structural_rows is not None
-        else _in_domain_component_cross_reference_sweep_rows(documents)
-    )
-    if semantic_rows is None:
-        resolved_semantic_rows, _semantic_input_identities = (
-            _alias_evidence_semantic_adjudication_rows(
-                documents,
-                outside_rows=resolved_outside_rows,
-                aggregate_rows=resolved_aggregate_rows,
-                redirection_rows=resolved_redirection_rows,
-                structural_rows=resolved_structural_rows,
+
+    def exact_source_rows(
+        supplied: Sequence[Mapping[str, Any]] | None,
+        derived: list[dict[str, Any]],
+        label: str,
+    ) -> list[dict[str, Any]]:
+        if supplied is not None:
+            _require(
+                canonical_bytes(list(supplied)) == canonical_bytes(derived),
+                f"{label} injection differs from source-derived rows",
             )
+        return derived
+
+    # Optional row arguments are build-time caches, never authorities.  Each
+    # one must byte-match a fresh derivation from the pinned documents before
+    # the semantic ledger can admit any evidence to A.
+    resolved_outside_rows = exact_source_rows(
+        outside_rows,
+        _outside_repeat_rows(documents),
+        "outside-repeat row",
+    )
+    resolved_aggregate_rows = exact_source_rows(
+        aggregate_rows,
+        _noncatalog_aggregate_relation_rows(documents),
+        "aggregate-relation row",
+    )
+    resolved_redirection_rows = exact_source_rows(
+        redirection_rows,
+        _in_domain_redirection_rows(documents),
+        "redirection row",
+    )
+    resolved_structural_rows = exact_source_rows(
+        structural_rows,
+        _in_domain_component_cross_reference_sweep_rows(documents),
+        "structural-filter row",
+    )
+    derived_semantic_rows, _semantic_input_identities = (
+        _alias_evidence_semantic_adjudication_rows(
+            documents,
+            outside_rows=resolved_outside_rows,
+            aggregate_rows=resolved_aggregate_rows,
+            redirection_rows=resolved_redirection_rows,
+            structural_rows=resolved_structural_rows,
         )
-    else:
-        resolved_semantic_rows = list(semantic_rows)
+    )
+    resolved_semantic_rows = exact_source_rows(
+        semantic_rows,
+        derived_semantic_rows,
+        "semantic-adjudication row",
+    )
 
     repeat_instruction_ids = {
         instruction_id
@@ -6097,6 +6202,10 @@ def _build_bundle(
             ),
             "round_five_continuation_restoration_count": sum(
                 row["round_five_continuation_restoration"]
+                for row in full_alias_semantic_adjudication_rows
+            ),
+            "continuation_composition_citation_count": sum(
+                row["continuation_composition_citation"] is not None
                 for row in full_alias_semantic_adjudication_rows
             ),
             "alias_evidence_semantic_adjudication_keyset_sha256": (
@@ -7098,6 +7207,7 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "alias_evidence_semantic_adjudication_count",
             "ca41663_alias_evidence_adjudication_count",
             "round_five_continuation_restoration_count",
+            "continuation_composition_citation_count",
             "alias_evidence_semantic_adjudication_keyset_sha256",
             "alias_evidence_semantic_adjudication_domain_sha256",
             "alias_evidence_semantic_decision_counts",
@@ -8744,7 +8854,7 @@ def _validate_in_domain_component_cross_reference_sweep_row(
         expected_disposition = "existing_alias_arm"
         expected_finding = (
             "whitespace_only_continuation_composes_named_import"
-            if instruction_id in CONTINUATION_RESTORATION_INSTRUCTION_IDS
+            if instruction_id in CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS
             else SEMANTIC_ALIAS_EQUIVALENCE_FINDING
         )
         expected_status = "source_text_adjudicated_alias_arm_member"
@@ -8789,7 +8899,7 @@ def _validate_in_domain_component_cross_reference_sweep_row(
         f"{label}: source-text semantic adjudication",
     )
     continuation_citation = row["continuation_composition_citation"]
-    if instruction_id in CONTINUATION_RESTORATION_INSTRUCTION_IDS:
+    if instruction_id in CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS:
         expected_continuation = CONTINUATION_ALIAS_CITATIONS_BY_INSTRUCTION[
             instruction_id
         ]
@@ -10632,6 +10742,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         == 265
         and sweep["ca41663_alias_evidence_adjudication_count"] == 262
         and sweep["round_five_continuation_restoration_count"] == 3
+        and sweep["continuation_composition_citation_count"] == 5
         and sweep["approved_alias_evidence_count"] == 241
         and sweep["disclosed_stop_alias_evidence_count"] == 24
         and sweep["alias_evidence_semantic_adjudication_keyset_sha256"]
@@ -12670,6 +12781,10 @@ def _repin_mutated_bundle(
     )
     sweep["round_five_continuation_restoration_count"] = sum(
         row["round_five_continuation_restoration"] for row in semantic_rows
+    )
+    sweep["continuation_composition_citation_count"] = sum(
+        row["continuation_composition_citation"] is not None
+        for row in semantic_rows
     )
     sweep["alias_evidence_semantic_adjudication_keyset_sha256"] = _keyset_sha(
         semantic_adjudication_ids

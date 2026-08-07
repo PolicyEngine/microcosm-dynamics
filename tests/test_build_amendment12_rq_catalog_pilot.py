@@ -171,8 +171,13 @@ def rejected_mutations(bundle):
 
 
 @pytest.fixture(scope="module")
-def source_rebuilt_bundle():
-    documents, source_identity = a12._load_documents(a12.SourceReader(None))
+def source_corpus():
+    return a12._load_documents(a12.SourceReader(None))
+
+
+@pytest.fixture(scope="module")
+def source_rebuilt_bundle(source_corpus):
+    documents, source_identity = source_corpus
     value = a12._build_bundle(
         documents,
         source_identity,
@@ -824,6 +829,7 @@ def test__round_five_semantic_gate__exact_covers_every_alias_candidate(
     assert sweep["alias_evidence_semantic_adjudication_count"] == 265
     assert sweep["ca41663_alias_evidence_adjudication_count"] == 262
     assert sweep["round_five_continuation_restoration_count"] == 3
+    assert sweep["continuation_composition_citation_count"] == 5
     assert len(rows) == len(set(row_ids)) == len(set(evidence_ids)) == 265
     assert all(
         set(row) == a12.ALIAS_EVIDENCE_SEMANTIC_ADJUDICATION_ROW_KEYS
@@ -1049,11 +1055,17 @@ def test__round_five_continuations__use_one_exact_whitespace_rule(bundle):
     rows = [
         row
         for row in sweep["alias_evidence_semantic_adjudication_rows"]
-        if row["round_five_continuation_restoration"]
+        if row["continuation_composition_citation"] is not None
     ]
-    assert len(rows) == 3
+    assert len(rows) == 5
     assert {
         row["source_instruction_occurrence_ids"][0] for row in rows
+    } == set(a12.CONTINUATION_ALIAS_CITATION_INSTRUCTION_IDS)
+    assert sum(row["round_five_continuation_restoration"] for row in rows) == 3
+    assert {
+        row["source_instruction_occurrence_ids"][0]
+        for row in rows
+        if row["round_five_continuation_restoration"]
     } == set(a12.CONTINUATION_RESTORATION_INSTRUCTION_IDS)
     structural_by_instruction = {
         row["source_instruction_occurrence_id"]: row
@@ -1093,6 +1105,60 @@ def test__round_five_continuations__use_one_exact_whitespace_rule(bundle):
                 "continuation_composition_citation"
             ]
             == citation
+        )
+
+
+def test__round_five_semantic_gate__rejects_injected_admission_rows(
+    source_corpus,
+):
+    documents, _source_identity = source_corpus
+    construction = a12._repeat_arm_construction(documents)
+    forged_rows = copy.deepcopy(list(construction.semantic_adjudication_rows))
+    stopped = next(
+        row
+        for row in forged_rows
+        if row["candidate_origin"] == "ca41663_nonledger_bypass_adjudication"
+        and not row["approved_pair_rows"]
+    )
+    approved = next(row for row in forged_rows if row["approved_pair_rows"])
+    stopped["approved_pair_rows"] = copy.deepcopy(
+        approved["approved_pair_rows"]
+    )
+    stopped["approved_pair_count"] = len(stopped["approved_pair_rows"])
+
+    with pytest.raises(
+        a12.BuildError,
+        match="semantic-adjudication row injection differs",
+    ):
+        a12._repeat_arm_construction(documents, semantic_rows=forged_rows)
+
+
+def test__round_five_composite_pairs__cannot_enter_union_by_flipped_flags(
+    bundle,
+    source_corpus,
+):
+    documents, _source_identity = source_corpus
+    typed_pair = copy.deepcopy(
+        next(
+            pair
+            for row in bundle["sweeps"][
+                "alias_evidence_semantic_adjudication_rows"
+            ]
+            for pair in row["approved_pair_rows"]
+            if pair["pair_kind"] == "typed_instruction_import_projection"
+        )
+    )
+    typed_pair["class_closure_eligible"] = True
+    typed_pair["typed_projection_union_prohibited"] = False
+
+    with pytest.raises(
+        a12.BuildError,
+        match="non-atomic or typed composite projection",
+    ):
+        a12._candidate_alias_classes(
+            documents,
+            frozenset({"context_anchor", "remuneration_component_anchor"}),
+            [typed_pair],
         )
 
 
