@@ -49166,9 +49166,9 @@ the `ca41663` construction would have admitted (154 rows from the then-current
 structural ledger plus 108 rows that bypassed it), followed by the three
 continuation restorations below. Every row carries exact instruction and
 endpoint citations and an explicit approved-pair or STOP disposition. The
-complete result is 241 approved source-evidence rows, 24 STOP rows, and 270
+complete result is 229 approved source-evidence rows, 36 STOP rows, and 258
 approved pair rows. Of those pairs, 228 are ordinary occurrence-equivalence
-pairs eligible for alias-closure union and 42 are typed composite-import
+pairs eligible for alias-closure union and 30 are typed composite-import
 pairs that are deliberately ineligible for occurrence union.
 
 The 108 formerly bypassing rows have their own exact source-ordered
@@ -49529,21 +49529,24 @@ The 21 structurally composite import groups are sweep rows 70, 72, 78, 81,
 143, and 161. They exact-cover 51 source-evidence rows. A composite group is
 never interpreted as the union of all source and destination endpoints.
 Instead, every source-evidence row is independently adjudicated against the
-exact instruction text. Nineteen groups decompose into 42 typed projection
-pairs derived by semantic question type from 41 source-evidence rows. Ten
-source-evidence rows STOP: all four rows in groups 103 and 140, plus six
-unpaired rows in otherwise decomposed groups. Group 103's text does not
-derive a pairing, and group 140's “comparable questions” proves comparability,
-not equivalence; they are the two full-group STOPs.
+exact instruction text. Fourteen groups decompose into 30 typed projection
+pairs derived by semantic question type from 29 source-evidence rows: seven
+are pure decompositions and seven also disclose partial STOP residue. The
+remaining seven groups are full STOPs. In all, 22 source-evidence rows STOP,
+and nine named selectors are separately disclosed as unmatched; five of
+those selectors are represented by an existing stopped evidence row and four
+have no candidate evidence row. Group 103's named ranges do not derive a
+bijection, and group 140's “comparable questions” proves comparability, not
+equivalence or pairing.
 
-Every one of the 42 pairs is bound to its own exact instruction citation,
+Every one of the 30 pairs is bound to its own exact instruction citation,
 source selector, destination selector, and semantic type in
 `scripts/amendment12_composite_import_adjudication_v1.json`. For example,
 the document-011 text “G2,3,4 See D2-3,3a” derives G3↔D2 by occupation type
 and G4↔D3a by business type; it does not derive an occupation↔business
 edge. Typed projection pairs retain the combined occurrence IDs only as
 source provenance. Because the source seal exposes no distinct occurrence ID
-for each subquestion, these 42 pairs **must not enter occurrence union-find or
+for each subquestion, these 30 pairs **must not enter occurrence union-find or
 alias-class transitive closure**. They support the named typed import only.
 A missing per-pair exact-text citation, a crossed semantic type, a union of a
 whole composite, or promotion of a stopped source-evidence row aborts.
@@ -49615,16 +49618,16 @@ repeat_coverage_disposition,semantic_alias_adjudication_id]`.
 `structural_candidate_satisfied` is true;
 `pilot_document_member` is the exact document-position predicate. The
 round-five semantic projection exact-covers all 162 groups and every one of
-their 195 source-evidence rows. Exact source text admits A for 125 groups /
-147 source-evidence rows and emits 148 approved pairs; five groups / six
-evidence rows enter `admitted_exclusive_destination_redirection`; and 32
-groups / 42 evidence rows remain
+their 195 source-evidence rows. Exact source text admits A for 120 groups /
+135 source-evidence rows and emits 136 approved pairs; five groups / six
+evidence rows enter `admitted_exclusive_destination_redirection`; and 37
+groups / 54 evidence rows remain
 `disclosed_stop_no_redirection_semantics`. The stopped evidence count includes
 rejected edges inside otherwise approved composite groups; group disposition
 is A when at least one exact typed pair survives. No aggregate or terminal
 member can enter this component-only denominator. The pilot projection is
-exactly 91 groups / 123 source-evidence rows: A 69 / 90 with 91 pairs,
-redirection 2 / 3, and STOP 20 / 30. A structural match has no semantic
+exactly 91 groups / 123 source-evidence rows: A 64 / 78 with 79 pairs,
+redirection 2 / 3, and STOP 25 / 42. A structural match has no semantic
 fallback: a new or changed group remains STOP until its exact source text is
 separately adjudicated and ratified.
 
@@ -49650,13 +49653,20 @@ both endpoints and selectors, endpoint digests, and instruction digests.
 Group-level structure never substitutes for either per-evidence decision or
 per-pair citation.
 
-The two static semantic specifications are themselves pinned inputs. The
+The three static semantic specifications are themselves pinned inputs. The
 formerly bypassing 108-row ledger is exactly 74,773 bytes, Git blob
 `abb30ef98d3f858376b1ba0a232d7abcf3f353fe`, and raw SHA-256
 `733f6c88ca19226db713f437ccaed8e8dfe781957f04e2f164b0dfdedb8e9870`.
-The 21-group composite ledger is exactly 131,604 bytes, Git blob
-`6aa2338b5ac0b130c9cf511db522e547b168e36a`, and raw SHA-256
-`47f21d24be95822ba284f10f6a25d8b645cd938d2008bc7762080e2be7d370ff`.
+The 21-group composite ledger is exactly 462,192 bytes, Git blob
+`506009839d8b684347472e63dbad682cc1f605ae`, and raw SHA-256
+`f7ece535faed311a0a863e1f19f6954a428e89d552341f9d88603fe9092072da`.
+Its independent closed selector law is exactly 17,768 bytes, Git blob
+`57b533d964988231b11936ad6f6f3907713863b7`, and raw SHA-256
+`0f85663e9e9681dba405a5a104d6d581b892a6a0e9e3561bb608b2ec4366ebb7`.
+That law fixes the instruction/questionnaire document pair, ordered selector-
+member domains, 30 allowed typed triples, 22 expected STOP tuples, and nine
+unmatched-selector tuples for all 21 groups independently of the adjudication
+ledger.
 The nonledger candidate, single, pairwise, STOP, and approved-pair domain
 pins are respectively
 `330ab9c508c73a05195e0fd99f0403392d1e6ac33ebf9cd65d106c807055a50a`,
@@ -49665,23 +49675,25 @@ pins are respectively
 `eb5efd137757c0786c68a1e3c55d6e1d77975b7d522f691826cc01b70c5b9038`,
 and `a89da31c407dadc07ded065265f5bed214cc7baff2cb175473c7f57ac7220851`.
 The composite instruction, all-evidence, pair-producing-evidence,
-STOP-evidence, typed-pair, and STOP-adjudication pins are respectively
+STOP-evidence, typed-pair, STOP-adjudication, and unmatched-selector pins are
+respectively
 `db29ff8c5bf2530700498fb6385ca3ca5add2e5b89514ac4192f79fb96474e7d`,
 `5dd9705bd5e01e5c0981e77ce89e568da92b94433cd36481b561e99c46083cfc`,
-`c43ae29ea8e1d1790e0ec1d83c489d24419ec373989b461fd92dfbe2891d06bc`,
-`f4a58b2392f7845b774d7ed99c299c2af17ad6f7e9279298afa0bfc7ee6a82a4`,
-`2c71fbd24dbffbad90319404c746571c3924a62cb4035f6ae65709fc430a295e`,
-and `73033dacc85e12dbd0361e420c1f78f0162f8288935a96a5d9e0d4c469028fc7`.
+`aa8b9e15d60b814f268ec79c61f91a05ffa3bd2ced1f00be2b2b0c955c68a6c5`,
+`fd071c959df85fc08f265ed5da3a5cfa1e74a08c36a7577a97c489e9bdf0950a`,
+`a2d6622c296aeb8ba04e3b3611130bddf6aee86a35fc980ff95bc08aceb628ce`,
+`03ea52134362c36fba820c8ba9b49e7e557e59985b1f3cc0043a155e141af218`,
+and `46a6a99f759b93744b5ccfaee9706cf9e11f6869dbd7eb0b6c697c64f9ead408`.
 These internal pins, the generated 265-row adjudication domain, and the
 structural A/R/STOP instruction and evidence partitions must all reproduce
 from source; an identity match alone cannot admit a pair.
 
 The exact ordered structural `[instruction_id,outcome]` domain pin is
-`5acca42cb323c2d11994b69831b7ab2a0f6b604e1ebafe7bd3b787efa3887a14`;
+`13751e724b5c8496c7490161d3ec4f89dc32f6f2097899e9d243f2b10fea601e`;
 the A, R, and STOP instruction-keyset pins are respectively
-`f1c9a85682f7dd5e7aa9ac3faa1deebab3ee67d8dace70e48e3a0d6583a4a870`,
+`f82b497a80e9939ee4b0e2bd07ff6b053b3fa526f982394fe0d22ab9b7fb3e0f`,
 `dc72be9182f5b50fd358e492b952ba83ac41ccd99ec3ba117c8fe075013e8f72`,
-and `182fdd22500c361760cf1973760e1c5178ceaa76f5a5cf88314bbc91e9404973`.
+and `17a517a6cca6d0bb5c0767de49cbdc9dbcc79c963f74e988878112538eae39bd`.
 
 Forty-eight cited instruction occurrences are mid-sentence or unfinished
 fragments. Their ordered keyset pin is
@@ -49780,8 +49792,8 @@ Each count equals its row-array length; source edge count is the exact sum of
 each domain digest hashes every complete row. The 265 semantic rows
 exact-partition by candidate origin as 154 baseline structural, 108 baseline
 bypass, and three continuation restorations, and by decision as 181 single-
-pair approvals, 19 ordinary pairwise approvals, 41 typed pair-producing
-approvals, and 24 STOPs. The continuation counts are exactly three restored
+pair approvals, 19 ordinary pairwise approvals, 29 typed pair-producing
+approvals, and 36 STOPs. The continuation counts are exactly three restored
 rows and five cited applications of the rule. Full and pilot structural partition
 instruction/evidence/pair sums must independently reproduce their respective
 totals.
@@ -49832,16 +49844,16 @@ lawfully absorb it.
 
 #### 26.4.4 Exhaustive fail-closed census
 
-The corpus-exhaustive census is exactly 2,460 repeat instructions: 212 in
+The corpus-exhaustive census is exactly 2,460 repeat instructions: 207 in
 the valid-alias arm, 34 in the terminal arm, 13 in the aggregate/repeated-
 instance sub-kind, five in the redirection sub-kind, zero claimed by multiple
-lawful arms, and 2,196 disclosed STOPs. The diagnostics separately report 64
+lawful arms, and 2,201 disclosed STOPs. The diagnostics separately report 69
 incompatible-proof instructions, 2,132 otherwise unresolved instructions,
 and zero valid/incompatible diagnostic overlap.
 
-The pilot census is exactly 376: 86 valid-alias, 34 terminal, one aggregate
-and two redirection sub-kind members, zero multiple-arm, and 253 disclosed
-STOPs. Its diagnostics are 25 incompatible-proof instructions, 228
+The pilot census is exactly 376: 81 valid-alias, 34 terminal, one aggregate
+and two redirection sub-kind members, zero multiple-arm, and 258 disclosed
+STOPs. Its diagnostics are 30 incompatible-proof instructions, 228
 otherwise unresolved, and zero valid/incompatible diagnostic overlap. The
 pilot aggregate row is at document position 58; both pilot redirection rows
 are at position 66. The document-064 aggregate witness remains part of the
@@ -50511,7 +50523,7 @@ adjudication aborts.
 #### 26.8.1 Exact evidence identities
 
 The current eight-file evidence set is fixed at evidence commit
-`11fdee51f1511774e3508de776e96a1b990802f9`. It regenerates the retained
+`2cd94c1366888f0474bdcff05daf13844b1df127`. It regenerates the retained
 pilot, predecessor, exhaustive-sweep, derived-sweep, and gate evidence under
 the four-disposition law; the gate's identity partition binds all seven subordinate
 artifacts. Paths, modes, blobs, byte counts, and raw SHA-256 values below are
@@ -50522,45 +50534,45 @@ registry, a receipt, or a production preimage.
 
 | File under `docs/analysis/amendment_12_rq_catalog_pilot/` | Blob OID | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `pilot_slice_manifest_v1.json` | `a49d66a61c344e1aecd004a6d13cbd744ce04672` | 16,567 | `e949d41576f0abd40057b84a2b6cc89335179bbbb15ea649d1a156d5b0d07d7d` |
-| `corpus_exhaustive_targeted_sweeps_v1.json` | `56bbeae714f42e748fe98d2bccee79590b72982a` | 36,564,565 | `a7531fb970adf55bfbf76000c6211eaadd64db045b94380722db9c27e67723bc` |
-| `derived_class_complement_sweeps_v1.json` | `558809a3df7df93f908250604d9313081dc231be` | 39,751,470 | `19d46e67af5b964c6bae50a878e334749febd7063031227e516eca299ed36d63` |
-| `predecessor_defect_adjudication_v1.json` | `77308b16e5bdcc79017ed71cf2b8e79a45eb9a71` | 348,595 | `5022eae70dde30d0afebae7f73a4a3d42509cf03d41c07a811ad5fb25ec55a5f` |
-| `role_assignment_pilot_v1.json` | `905c244dcda1c7d015f1c3fbb43046fb70aa8571` | 1,054,823 | `62d2e179ddb648f1e09490e609eb3397835dd3d7b007a344ca07d95683c0b041` |
-| `outside_domain_repeat_disposition_pilot_v1.json` | `08313e4d561151912ed4bda868a5e85b5b1b6b40` | 55,647 | `8c490756ee38679364afa8385d13fc721eccc075d86bab39cc9534b7f93dc1fb` |
-| `component_parent_disposition_pilot_v1.json` | `f07f00f38d845f8b6f528627de09721d877e433d` | 4,032,825 | `c1bbb8311a237db41b90273da19f10b83feaf58856296846a98959ba4d0ba2d0` |
-| `pilot_gate_result_v1.json` | `83f672be59a88f8572ad2ebe22b7684c91d9f12f` | 5,996 | `ba1f39c19df52e3ceb836c54d3193b4eab6bf5fd2e4626fc759dea8c7c4ffa2b` |
+| `pilot_slice_manifest_v1.json` | `32ea452e6d1df561a63d143d6c10f5629759d363` | 16,567 | `46a0331bcf84c7e876c79daeb723ea9df55d8713734a7d12d4ffa471bafdab70` |
+| `corpus_exhaustive_targeted_sweeps_v1.json` | `f90fe9115a7ef6f82305ae96ea462af64c2af790` | 37,001,180 | `54ca1c347d5e77ee06dbb79ed8af3fc5db11d70f787724a9b85474c36a64888d` |
+| `derived_class_complement_sweeps_v1.json` | `fc49d69d21aa81d38a2c68d1c742cdcf0ebfcaed` | 39,751,470 | `9850da1ec4ab3fe8c577151b6841fdfd6f13fd0b0a9c1b5290e5e592f4ef23bb` |
+| `predecessor_defect_adjudication_v1.json` | `ac033641e8bea5551716fb5847660c374eb07c43` | 348,595 | `ee396f53d683d71808e60c661515fd7fd8d5d2e912017f49d096815ff384f8bc` |
+| `role_assignment_pilot_v1.json` | `8a84f8811d3325b9c2dab3476d776c57b9cd2f94` | 1,054,823 | `2ceba665b971998c9e4e38093b206b2e64e55a7fc4757d8ddaeed4e11be1e134` |
+| `outside_domain_repeat_disposition_pilot_v1.json` | `8ae8b99c473ca92beb165a1d385bc4a3797bfb46` | 55,647 | `ac602049a96ffcb021fc1f95edb24dca4287c34b6923289907bff6817a1d1473` |
+| `component_parent_disposition_pilot_v1.json` | `0a4140a27c2897acb412c61981bf7735219854ba` | 4,032,825 | `4f8875f754bf4178e16e6948afcb093265dc9ee445b3d6eeae0527b9b1fb1e82` |
+| `pilot_gate_result_v1.json` | `e69bd9e8559302dcdd6491dbc36028ef124c156b` | 5,996 | `5df502018b09f24d46a24109e56d8222751a537b3b94fcd31001619b968d4d97` |
 
 All modes are `100644`; every file is canonical strict JSON, below
-50,000,000 bytes, and the eight total exactly 81,830,488 bytes. Their exact
+50,000,000 bytes, and the eight total exactly 82,267,103 bytes. Their exact
 artifact IDs are, in the same order:
 
-1. `a12-rq-pilot-slice:15e4edc6d27828caef7f66f8b0d0391c36c5f95b59e20885dce65f4a44f9b067`;
-2. `a12-rq-corpus-sweeps:01ac47d4400bd87ef9398beb30808c86e40cd6885e14ad08fb55da5a5a94f92e`;
-3. `a12-rq-derived-sweeps:a91b7cbeac2df3de488083ad5f058c43f15b0d192b39dbf6f65c0723c8450bc4`;
-4. `a12-rq-predecessor-adjudication:20af1a3084a3664bbb501ffaaac240b34ee29e67397f380504fb50dc35a219ff`;
-5. `a12-rq-role-pilot:c2306a892d3662b03af34546e6846b8f75e7e096f6c4ca1ae39bf20db120fe7e`;
-6. `a12-rq-repeat-pilot:243e4036ef61e418132ca8df95b2b19a8d5722720dcffe553116b38975c40641`;
-7. `a12-rq-component-pilot:609271e3efbf9872f33e316e40bafb33b08dad88a63ed9d01943708ba82d6991`;
+1. `a12-rq-pilot-slice:0b49e5911d3258636727fdc8dd403c3c1da96587afb77398b9612ea3e8709759`;
+2. `a12-rq-corpus-sweeps:8c454bbe406f2a512e121927c08f92a503b0eb137d67635b646619e809b777c3`;
+3. `a12-rq-derived-sweeps:cea23a69786f91a56844355f61370f258b82302aba27dff7ede047818840bc7c`;
+4. `a12-rq-predecessor-adjudication:44283d2b157d6c3be818792167119cdae5a39c15146650f494bfdce814a6a148`;
+5. `a12-rq-role-pilot:85b3046cac9dfb2e1e48562186ce2dbace02125e2b64ff429e49fbc0acd8be13`;
+6. `a12-rq-repeat-pilot:57c7ca91b45f02945af95b8dc8a32541ca3098810a818e5f5023584d51c6c0ee`;
+7. `a12-rq-component-pilot:43e66bf0b5d01eb3a46d0408372be67d0754d9aec083b80de96e1ca2b66f8409`;
    and
-8. `a12-rq-pilot-gate:15b01a851e0881f4b156e159f7289f75e245ebb433b4e0869a7c6c8cdf42ec11`.
+8. `a12-rq-pilot-gate:8dae88848a385fa8ceb17ad5eb481e8c3bfc35ebd44d14dc716e65bfa357f6fd`.
 
 The gate's exact ordered subordinate-role partition is
 `[slice,sweeps,derived,predecessor,role,repeat,component]`;
 `artifact_identity_count` is 7 and the complete identity-row domain SHA-256
-is `da60207facd72ade901e56bfa96d8a501b729813f226b54345c57b63ff35dcfd`.
+is `e439d7b71d8f2a0dc18c8cc6575d7230a0aa3eddd8c9ff6214bd45f94723a774`.
 An omitted, duplicated, reordered, or substituted role aborts even if every
 remaining raw identity is individually valid.
 
 The source-rebuilding implementation, complete satisfiable class-fold,
 job-complement, aggregate, redirection, continuation, and structural-sweep
-fixtures, exact candidate sweeps, and 68-mutation inventory are fixed at
-commit `253964f119e77ce88c6b12472e7dfe4214361fe9`:
+fixtures, exact candidate sweeps, and 71-mutation inventory are fixed at
+commit `2cd94c1366888f0474bdcff05daf13844b1df127`:
 
 | Path | Mode / blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/build_amendment12_rq_catalog_pilot.py` | `100644` / `40e911529c1191ce26bc2bbf278451a8ac5c2849` | 569,904 | `1e0d751a14a7b5b1c891dcc9b137f559357336b42a34ccea14f29b6196c8f0f6` |
-| `tests/test_build_amendment12_rq_catalog_pilot.py` | `100644` / `3bde922a480cee4b1cc317490189233a85bc9a2d` | 82,143 | `4703f0b6612609c654bdd7141d5c202858bd44d88a04d368c43f1bb1d9b8918d` |
+| `scripts/build_amendment12_rq_catalog_pilot.py` | `100644` / `faf4289ea42d68a2b2e6a5f7b4904182cb8fec38` | 632,094 | `c4bf6a93d574d7ad49ac1fb900377cf1ac6fca4218de0f0982cec94a0ebcd83d` |
+| `tests/test_build_amendment12_rq_catalog_pilot.py` | `100644` / `da270499218ceb18bc189230b84b7a8f5cb5695d` | 89,709 | `db5c15231f122a7d90f0853496ac7d87ed33f67f56e7ef7692bd8d7957c033ed` |
 
 The table pins the executable builder, class-fold, job-complement, exact-byte
 aggregate- and redirection-relation fixtures, exhaustive structural
@@ -50684,7 +50696,7 @@ with no endpoints.
 | Terminal repeats | 34 = 17 repeat + 17 cross-reference; document split 2 / 22 / 5 / 4 / 1 |
 | Aggregate/repeated-instance repeats | one exact in-domain nonalias row at document position 58; no alias/equivalence claim |
 | Exclusive-destination redirections | two exact grouped instruction rows at document position 66; no alias/equivalence claim |
-| Universal repeat census | 376 = 86 valid-alias + 34 terminal + 1 aggregate + 2 redirection + 253 disclosed STOP; zero multiple-arm; 25 incompatible and 228 otherwise unresolved with zero valid/incompatible diagnostic overlap |
+| Universal repeat census | 376 = 81 valid-alias + 34 terminal + 1 aggregate + 2 redirection + 258 disclosed STOP; zero multiple-arm; 30 incompatible and 228 otherwise unresolved with zero valid/incompatible diagnostic overlap |
 | Predecessor carriers | all eight doc-036 aggregate rows; 13 of the 42 populated proof-candidate rows; pilot populated-proof split 11 seal defects / 2 law gaps, all blocked pending the applicable reseal or ratification |
 
 The pilot zero partition is 1,104 context + 384 remuneration; unique is 915
@@ -50736,16 +50748,17 @@ The complete targeted-sweep and pilot-output projection pins are:
 | Corpus outside-domain repeat shapes | 34 | — | `baf5475e21ef404b911a7d7ec6328771caa01961d185f684a3ed63c4fdd8c48a` |
 | Corpus noncatalog aggregate/repeated-instance shapes | 13 | `15b56ba454cc972608c269efb0f1e20fe7d85c9a7e80a030f5de7667df0fe1fc` | `bb1b34fe97ba6cf7b0497aea5b3992c32419511994d02792b24a85740d3ebf83` |
 | Corpus in-domain redirection dispositions | 5 | `e32dccc80f88bbbbaf21deab8083607d263dc512abd253023155cb5521e2fa82` | `da11c6af360f3709b14f1a8700900e9fcd0342926b48b8ed8d39c701f8e36aab` |
-| Corpus component cross-reference semantic sweep | 162 groups / 195 source-evidence rows / 195 source edges / 148 A pairs | `bb37fdc977781ed4c3d901b219f8fca5a0b3458123e7bdc56d448b7972358edf` | `9cf4a80cc5b1e1d4ee7205df895c9a06f1519598ab77b2241687dc900011d75f` |
-| Structural semantic adjudications | 162 grouped projections | `c858da0445f7d6deb58152f540cc502338ece99d3d8efef0a5a520b7bb8b96ff` | `9cf4a80cc5b1e1d4ee7205df895c9a06f1519598ab77b2241687dc900011d75f` |
-| Sole-gate alias-evidence adjudications | 265 evidence rows / 270 approved pairs | `ffafaed44de98c83ecf62c10a1c94d0a7c6c157d7bac388a63f7b1f9d77788de` | `756fc37b17218f18cacb893e94a8fb2e75249b19eff2f403322fb3a4f72eb36b` |
-| Approved alias pairs | 270 = 228 occurrence-closure + 42 typed nonunion | `7314e1782ec3e1ad6bccc8073583c2c1cec7f2a9976dc63b18b2f6c4be1cb43a` | `c9f6ec7976e0d7effc26cc87e22d4282026403dd5d756834df21b0cd6ac47d6b` |
-| Pilot projection of structural sweep | 91 groups / 123 source-evidence rows / 91 A pairs | — | — |
+| Corpus component cross-reference semantic sweep | 162 groups / 195 source-evidence rows / 195 source edges / 136 A pairs | `fbddc6aacd86db2d93dc945ba2217c243b05c810f43172cba7aaa4261395daa7` | `3826ff26177f409b855eb3b2aae3e3e1ae4c255f7d8f3db53f15668855ce159d` |
+| Structural semantic adjudications | 162 grouped projections | `d6ef33918540636117740f1d3f8b671c71f18b05e452ae94b3cd8658c79f16f0` | `3826ff26177f409b855eb3b2aae3e3e1ae4c255f7d8f3db53f15668855ce159d` |
+| Sole-gate semantic input identities | 3 pinned inputs | — | `b646228632da7baaeaff2f581c64aad2c087fa56c4870478844abfeb82cafd11` |
+| Sole-gate alias-evidence adjudications | 265 evidence rows / 258 approved pairs | `5b1a310efda8a7c74559c9c424ba72848d745dff9c0961e00095c130d4d8cd7d` | `ebd4d021cd29549fa311ea45c16297f5368eccd42bd3174f536c1945ce7eb884` |
+| Approved alias pairs | 258 = 228 occurrence-closure + 30 typed nonunion | `df298bef2192c88e009c459304eb919c759fd919a1cef6db1612d70cb95f5389` | `6190969e68031be1e3b938baae4fe39371eaed9c8f697f91e59fbbdc66f700c4` |
+| Pilot projection of structural sweep | 91 groups / 123 source-evidence rows / 79 A pairs | — | — |
 | Secondary lexical exclusive-placement regression | 45 | `069455f172490db3db04977542df1bbcda23c6a0350a739830188016622ea5be` | `7f561ce5f6e30e747f6983eff6ba894c3c457888a39bf1bc5615b06d8307ad8e` |
 | Corpus component-parent shapes | 21,283 | `b1aaad10fac7e3a6eb35edabd99c079137404109f0b912f8726446965a1d0524` | `22506ce5d02d6ceee9fc1a51aee25949c5b91cf218355396910ebe8faf53c7a0` |
 | Corpus referenced-parent source witnesses | 8,418 | `e6cc0d564a407a3375975c5522180ad6ec871b3fdd410680b31690f7b24651a9` | `a89a54310e86cd3d08c40d9fb9cedc9f25dd0069780ecc4e94f8ef596843ebd1` |
-| Candidate component-class admission sweeps | 19,585 | `3abf42fb2a4dc3f30aec676054423aa546011d01118aafd8034fa7291b1f1c62` | `388a6df4988a6736ea24b126f5d6d47464f5d9e4ed2af797533bbfeee32b9eb1` |
-| Candidate catalog-only-job complement sweeps | 12,378 | `5dda6acc66f6b742ecd3bf8d2ac819b6309a89c44c39d6dd7578ad8a7e9496c1` | `952f63677811f9dff6387520ee84cc9dba051ed17052d1b3646647f02ecda6f2` |
+| Candidate component-class admission sweeps | 19,585 | `3abf42fb2a4dc3f30aec676054423aa546011d01118aafd8034fa7291b1f1c62` | `c52c4bcb4d20e216f3d84dac71ac375610b1ed393d5697538a3b5ddfd82821ef` |
+| Candidate catalog-only-job complement sweeps | 12,378 | `5dda6acc66f6b742ecd3bf8d2ac819b6309a89c44c39d6dd7578ad8a7e9496c1` | `cef11412144bacb139c5034045b2b002eb6a898fb3ad736f6cdda3874c21138d` |
 | Pilot role label classes | 69 | — | `97f2a250dd554415156084a47aa4cc240cfda5dbeed44306e2ce977d0adef357` |
 | Pilot role assignments | 947 | `741976528844636a31910030bf0f684f77a3844aebeba2090fa0d8ea8ace68a5` | `3f77350133ae4f9bce3e8b3ae80c5975897ab040814b1bbe544ded766d4966dd` |
 | Pilot terminal repeat dispositions | 34 | `df9b48a648697788b763433de1de50dbfaa082bc5ee5b98297624e6a7d00bd35` | `baf5475e21ef404b911a7d7ec6328771caa01961d185f684a3ed63c4fdd8c48a` |
@@ -50762,11 +50775,11 @@ The role sweep additionally requires 10,521 anchors, 10,519 noncanonical
 anchors reached, 86 head/reference classes, 187 spouse/partner classes, zero
 cross-classification labels, and zero unreached anchors. The repeat sweep
 requires every §26.4.3 structural narrowing count, the exact 162/195 source-
-evidence partition A 125/147 with 148 pairs, R 5/6, STOP 32/42, its 91/123
-pilot partition A 69/90 with 91 pairs, R 2/3, STOP 20/30, the secondary
+evidence partition A 120/135 with 136 pairs, R 5/6, STOP 37/54, its 91/123
+pilot partition A 64/78 with 79 pairs, R 2/3, STOP 25/42, the secondary
 45-row lexical regression, the exact terminal and both in-domain
-relation/document partitions in §26.4, and the corpus census 2,460 / 212 / 34
-/ 13 / 5 / zero multiple-arm / 2,196 STOP, with 64 incompatible and 2,132 otherwise
+relation/document partitions in §26.4, and the corpus census 2,460 / 207 / 34
+/ 13 / 5 / zero multiple-arm / 2,201 STOP, with 69 incompatible and 2,132 otherwise
 unresolved. The component
 sweep requires the complete 10,664/8,809/1,810 raw-cardinality partition,
 466 raw cross-category multi rows split into 462 multiple-eligible and four
@@ -50831,7 +50844,7 @@ Likewise, all six R evidence edges are absent from alias support, including
 the five edges that the prior structural-only union leaked into derived
 classes. Any R/G/T/STOP source-local evidence ID in a nested
 `sealed_local_evidence` support aborts before a class can be accepted.
-The 42 typed composite-import pairs are also absent: their combined
+The 30 typed composite-import pairs are also absent: their combined
 occurrence IDs are provenance containers rather than separable subquestion
 nodes, so admitting one to union-find or transitive closure is a composite-
 union forgery. Only the 228 ordinary approved pairs are closure eligible.
@@ -50907,7 +50920,7 @@ It reports every evaluated failure but emits no partial replacement artifact.
 | `A12-R01` | Revision-13 prefix, source commit, six seals, all 81 annotation identities, and the exact 16-position pilot slice independently reproduce. |
 | `A12-R02` | All eight outputs strict-parse, exact-walk, canonicalize, remain below 50,000,000 bytes, cross-bind their identities, carry the exact two-key integrity object and independently reconstructed exact 33-key pilot census, and carry every required nonauthority and nonemission value. |
 | `A12-R03` | The pilot role classes and assignments exact-cover all and only the two canonicals plus 947 noncanonical anchors, with no alias or equivalence admission; the corpus role sweep also passes. |
-| `A12-R04` | The semantic ledger is the sole gate for all 265 alias-evidence candidates and exact-covers them as 241 approved evidence rows / 24 STOPs / 270 pairs, of which 228 are closure eligible and 42 are typed nonunion projections; the 108 formerly bypassing rows reproduce as 75 single-pair / 19 pairwise / 14 STOP decisions and 94 approvals / 122 pairs; all five whitespace-only continuation citations pass and exactly three are restorations; the 21 composite groups reproduce as 19 decomposed / two full STOP, 42 typed pairs from 41 evidence rows, and ten stopped source-evidence rows; the 34 outside-domain rows, 13 aggregate rows, five redirections, 162/195 structural and 91/123 pilot partitions, 48-fragment 4/10/34 ledger, secondary 45-row regression, and both fail-closed five-arm censuses reproduce with zero arm overlap or composite occurrence union. |
+| `A12-R04` | The semantic ledger is the sole gate for all 265 alias-evidence candidates and exact-covers them as 229 approved evidence rows / 36 STOPs / 258 pairs, of which 228 are closure eligible and 30 are typed nonunion projections; the 108 formerly bypassing rows reproduce as 75 single-pair / 19 pairwise / 14 STOP decisions and 94 approvals / 122 pairs; all five whitespace-only continuation citations pass and exactly three are restorations; the 21 composite groups reproduce as 14 decomposed—seven pure and seven with partial STOP residue—plus seven full STOP, 30 typed pairs from 29 evidence rows, 22 stopped source-evidence rows, and nine unmatched selectors; the full 162/195 structural partition is A 120/135 with 136 pairs, R 5/6, STOP 37/54, and its 91/123 pilot projection is A 64/78 with 79 pairs, R 2/3, STOP 25/42; the 48-fragment 4/10/34 ledger, secondary 45-row regression, full five-arm 207/34/13/5/2,201 census, and pilot five-arm 81/34/1/2/258 census reproduce with zero arm overlap or composite occurrence union. |
 | `A12-R05` | All 3,095 pilot component anchors retain complete source-parent witnesses and enter exactly one zero/zero-lawful, unique, or ambiguity arm; no relationship is emitted; the corpus component and parent-witness sweeps pass. |
 | `A12-R06` | All eight doc-036 rows and all 42 local-proof rows exact-cover the 50-candidate domain; source-cited per-row semantic adjudication reproduces 36 seal defects, 14 in-domain-nonalias law gaps, their exact actions, and no alias/equivalence admission. |
 | `A12-R07` | Every §26.9.1 exhaustive projection, including 19,585 candidate component classes and 12,378 candidate job complements, count, order, source identity, keyset, domain digest, and rare-tail partition independently reproduces; no R/G/T/STOP evidence or typed composite projection enters sealed alias support. |
@@ -50952,7 +50965,7 @@ scale without promoting either fixture or candidate row.
 Mutation testing changes semantic source or evidence values and then
 recomputes every affected row ID, count, keyset digest, domain digest,
 artifact ID, dependency identity, and gate identity. Thus an identity-only
-failure cannot satisfy mutation coverage. The exact 68-mutation inventory is:
+failure cannot satisfy mutation coverage. The exact 71-mutation inventory is:
 
 ~~~text
 pilot_slice_reordered
@@ -51005,6 +51018,9 @@ redirection_evidence_reused_as_alias_support
 fragment_stop_promoted_to_alias_support
 semantic_alias_adjudication_record_forged
 composite_union_forgery
+composite_pair_citation_deleted
+composite_pair_citation_swapped
+composite_stop_citation_deleted
 nonledger_admission_without_semantic_decision
 continuation_rule_forgery
 component_class_sweep_row_omitted
@@ -51051,6 +51067,12 @@ nonledger-admission forgery must reach the 265-row exact-cover gate; and the
 continuation-rule forgery must reach the same-page, adjacency, and
 whitespace-gap citation checks. Coherent repinning cannot legalize any of
 them.
+Five additional focused regressions attack the independent closed selector
+law through a coherent selector rename, an outside-named-range citation, a
+cross-document citation, an opaque missing-source claim, and reuse of an
+already-paired selector as unmatched. Each must fail the per-instruction
+selector-relevance and exact-cover commitment even when the mutable ledger's
+own identities are coherent.
 The historically named `redirection_lineage_row_omitted` mutation removes one
 row from the mandatory 162-group structural sweep and coherently repins its
 own identities; the 45-row lexical regression is not substituted as its
@@ -51153,6 +51175,7 @@ approved_alias_pair_rows
 typed_projection_union_prohibited
 amendment12_alias_semantic_adjudication_v1.json
 amendment12_composite_import_adjudication_v1.json
+amendment12_composite_instruction_law_map_v1.json
 disclosed_stop_no_redirection_semantics
 disclosed_stop_instruction_count
 component_parent_resolution_rows
@@ -51263,9 +51286,10 @@ inside the named future closure authority, not independently selectable
 schemas, and no official row is instantiated here.
 
 The path `scripts/build_amendment12_rq_catalog_pilot.py`, its
-two pinned semantic inputs
-`scripts/amendment12_alias_semantic_adjudication_v1.json` and
-`scripts/amendment12_composite_import_adjudication_v1.json`, its
+three pinned semantic inputs
+`scripts/amendment12_alias_semantic_adjudication_v1.json`,
+`scripts/amendment12_composite_import_adjudication_v1.json`, and
+`scripts/amendment12_composite_instruction_law_map_v1.json`, its
 `validate_bundle`, `_validate_noncatalog_aggregate_relation_row`, and
 `_validate_in_domain_redirection_row` and
 `_validate_in_domain_component_cross_reference_sweep_row`
@@ -51360,8 +51384,8 @@ conjunctive gates are:
 Every gate is conjunctive and fail-closed. A tier-2 census is a newly
 computed result, not a required equality to a pilot or stage-4 candidate
 count except for the authenticated input comparands expressly fixed here.
-In particular, the tier-1 corpus values of zero multiple-arm and 2,196
-disclosed STOP source candidates, and the pilot values of zero and 253, are
+In particular, the tier-1 corpus values of zero multiple-arm and 2,201
+disclosed STOP source candidates, and the pilot values of zero and 258, are
 mandatory fail-closed observations, not a universal corpus pass or an
 authorization to discard unresolved candidates.
 Any referee disagreement, unadjudicated item, missing witness, unresolved
