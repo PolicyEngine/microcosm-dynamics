@@ -1918,7 +1918,7 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
         lambda value: value["ratification_identity"].update(
             {
                 "document_blob_oid": (
-                    "dc0ce837c34698d5817552a2266f3832109240ab"
+                    "dc0ce837e64239d16ea61c15d47450b7341d1ce8"
                 ),
                 "document_byte_size": 3_557_513,
                 "document_sha256": (
