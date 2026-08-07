@@ -133,6 +133,9 @@ EXPECTED_MUTATIONS = (
     "component_sweep_row_omitted",
     "component_sweep_source_anchor_forged",
     "component_row_extra_key",
+    "redirection_evidence_reused_as_alias_support",
+    "fragment_stop_promoted_to_alias_support",
+    "semantic_alias_adjudication_record_forged",
     "component_class_sweep_row_omitted",
     "component_class_sweep_relationship_arm_flipped",
     "job_complement_sweep_row_omitted",
@@ -638,12 +641,12 @@ def test__component_cross_reference_sweep__exact_walks_structural_domain(
     } == {
         "in_domain_component_cross_reference_sweep_count": 162,
         "in_domain_component_cross_reference_sweep_edge_count": 195,
-        "in_domain_component_cross_reference_sweep_alias_instruction_count": 152,
-        "in_domain_component_cross_reference_sweep_alias_edge_count": 184,
+        "in_domain_component_cross_reference_sweep_alias_instruction_count": 124,
+        "in_domain_component_cross_reference_sweep_alias_edge_count": 154,
         "in_domain_component_cross_reference_sweep_redirection_instruction_count": 5,
         "in_domain_component_cross_reference_sweep_redirection_edge_count": 6,
-        "in_domain_component_cross_reference_sweep_stop_instruction_count": 5,
-        "in_domain_component_cross_reference_sweep_stop_edge_count": 5,
+        "in_domain_component_cross_reference_sweep_stop_instruction_count": 33,
+        "in_domain_component_cross_reference_sweep_stop_edge_count": 35,
     }
     assert {
         key: sweep[key]
@@ -660,12 +663,12 @@ def test__component_cross_reference_sweep__exact_walks_structural_domain(
     } == {
         "pilot_in_domain_component_cross_reference_sweep_count": 91,
         "pilot_in_domain_component_cross_reference_sweep_edge_count": 123,
-        "pilot_in_domain_component_cross_reference_sweep_alias_instruction_count": 85,
-        "pilot_in_domain_component_cross_reference_sweep_alias_edge_count": 116,
+        "pilot_in_domain_component_cross_reference_sweep_alias_instruction_count": 68,
+        "pilot_in_domain_component_cross_reference_sweep_alias_edge_count": 97,
         "pilot_in_domain_component_cross_reference_sweep_redirection_instruction_count": 2,
         "pilot_in_domain_component_cross_reference_sweep_redirection_edge_count": 3,
-        "pilot_in_domain_component_cross_reference_sweep_stop_instruction_count": 4,
-        "pilot_in_domain_component_cross_reference_sweep_stop_edge_count": 4,
+        "pilot_in_domain_component_cross_reference_sweep_stop_instruction_count": 21,
+        "pilot_in_domain_component_cross_reference_sweep_stop_edge_count": 23,
     }
     assert [
         row["in_domain_redirection_relation_disposition_id"]
@@ -681,7 +684,7 @@ def test__component_cross_reference_sweep__exact_walks_structural_domain(
         for row in rows
         if row["repeat_coverage_disposition"]
         == "disclosed_stop_no_redirection_semantics"
-    } == {
+    } >= {
         "rq-local-repeat-evidence:"
         "c9b24cb9e34a7050a567093ee0f0500df3e221dd2afa9adfdaba02010fd31509",
         "rq-local-repeat-evidence:"
@@ -693,6 +696,290 @@ def test__component_cross_reference_sweep__exact_walks_structural_domain(
         "rq-local-repeat-evidence:"
         "a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39",
     }
+
+
+def test__round_four_semantic_alias_ledger__exact_covers_structural_sweep(
+    bundle,
+):
+    sweep = bundle["sweeps"]
+    rows = sweep["in_domain_component_cross_reference_sweep_rows"]
+    adjudication_ids = [row["semantic_alias_adjudication_id"] for row in rows]
+    assert sweep["semantic_alias_adjudication_count"] == len(rows) == 162
+    assert len(set(adjudication_ids)) == len(adjudication_ids)
+    assert sweep["semantic_alias_adjudication_keyset_sha256"] == (
+        a12._keyset_sha(adjudication_ids)
+    )
+    assert sweep["semantic_alias_adjudication_domain_sha256"] == (
+        a12._domain_sha(rows)
+    )
+
+    dispositions = Counter(row["repeat_coverage_disposition"] for row in rows)
+    assert dispositions == {
+        "existing_alias_arm": 124,
+        "admitted_exclusive_destination_redirection": 5,
+        "disclosed_stop_no_redirection_semantics": 33,
+    }
+    assert sweep["semantic_alias_adjudication_outcome_counts"] == {
+        "alias_instruction_count": 124,
+        "alias_edge_count": 154,
+        "redirection_instruction_count": 5,
+        "redirection_edge_count": 6,
+        "stop_instruction_count": 33,
+        "stop_edge_count": 35,
+    }
+    assert Counter(row["source_instruction_fragment"] for row in rows) == {
+        True: 48,
+        False: 114,
+    }
+    assert Counter(row["tier_2_predecessor_ledger_note"] for row in rows) == {
+        "round_three_reseal_ledger_already_covers_fragment": 4,
+        "new_tier_2_reseal_required_for_incomplete_fragment": 13,
+        "fragment_semantically_decisive_no_reseal_required": 31,
+        "not_a_source_instruction_fragment": 114,
+    }
+
+    for row in rows:
+        assert row["semantic_alias_adjudication_round"] == 4
+        assert row["semantic_alias_ledger_member"] is True
+        assert isinstance(row["semantic_alias_finding"], str)
+        assert row["semantic_alias_finding"]
+        assert isinstance(row["source_instruction_fragment"], bool)
+        assert isinstance(row["tier_2_predecessor_seal_quality_issue"], bool)
+        assert isinstance(row["tier_2_predecessor_ledger_note"], str)
+        assert row["tier_2_predecessor_ledger_note"]
+        if not row["source_instruction_fragment"]:
+            assert row["tier_2_predecessor_seal_quality_issue"] is False
+            assert row["tier_2_predecessor_ledger_note"] == (
+                "not_a_source_instruction_fragment"
+            )
+        alias_member = row["repeat_coverage_disposition"] == (
+            "existing_alias_arm"
+        )
+        assert row["occurrence_equivalence_proved"] is alias_member
+        assert row["valid_alias_arm_evidence_ids"] == (
+            row["source_local_evidence_ids"] if alias_member else []
+        )
+
+        instruction_bytes = row["source_instruction_matched_text"].encode()
+        assert row["source_instruction_matched_utf8_sha256"] == (
+            hashlib.sha256(instruction_bytes).hexdigest()
+        )
+        assert row["source_instruction_utf8_byte_end"] - row[
+            "source_instruction_utf8_byte_start"
+        ] == len(instruction_bytes)
+        assert row["source_instruction_page_number"] > 0
+
+        for texts, digests, pages, starts, ends in zip(
+            row["source_endpoint_matched_text_arrays"],
+            row["source_endpoint_matched_utf8_sha256_arrays"],
+            row["source_endpoint_page_number_arrays"],
+            row["source_endpoint_utf8_byte_start_arrays"],
+            row["source_endpoint_utf8_byte_end_arrays"],
+            strict=True,
+        ):
+            for text, digest, page, start, end in zip(
+                texts, digests, pages, starts, ends, strict=True
+            ):
+                source_bytes = text.encode()
+                assert digest == hashlib.sha256(source_bytes).hexdigest()
+                assert end - start == len(source_bytes)
+                assert page > 0
+
+
+def test__round_four_semantic_alias_ledger__stops_known_false_aliases(
+    bundle,
+):
+    rows = bundle["sweeps"]["in_domain_component_cross_reference_sweep_rows"]
+    by_instruction = {
+        row["source_instruction_occurrence_id"]: row for row in rows
+    }
+    expected = {
+        "psid-questionnaire-occurrence:"
+        "6ed791445d19c2af492a3571d5a0d4b7f635eaeaabb5f5f3abf5424b8d04c03a": {
+            "document_source_position": 15,
+            "source_local_evidence_ids": [
+                "rq-local-repeat-alias-evidence:"
+                "04d8d08f5721c5c76eafc32cea71b6187c6634e84a4d940328553b8c19724d89"
+            ],
+            "source_instruction_matched_text": (
+                "Make sure if an amount i s gi ven for both H7 and H8 that i t "
+                "i s not the\n      same figure recorded twice . Probe to f ind "
+                "out in these cases ."
+            ),
+            "source_instruction_matched_utf8_sha256": (
+                "c32f51ff9f858256afc3a954bbbf0282068dd31417c7ce26bf574dd8b5d3485e"
+            ),
+            "source_instruction_page_number": 40,
+            "source_instruction_utf8_byte_start": 1509,
+            "source_instruction_utf8_byte_end": 1653,
+            "source_endpoint_printed_identifier_arrays": [["I-18", "I-17"]],
+            "semantic_alias_finding": (
+                "anti_duplication_instruction_disproves_occurrence_"
+                "equivalence"
+            ),
+            "source_instruction_fragment": False,
+        },
+        "psid-questionnaire-occurrence:"
+        "8b9c6613b23e83dd55af058542e6aec3be341440397c632d91c1b74f073291dd": {
+            "document_source_position": 17,
+            "source_local_evidence_ids": [
+                "rq-local-repeat-alias-evidence:"
+                "ed65f56aae0cef0e9f3254bf30bf1f22a8b8b1a0bb8769fdcd3e7e3ed64920ca"
+            ],
+            "source_instruction_matched_text": (
+                "Make sure if an amount is given for both H7 and H8 that it "
+                "is not"
+            ),
+            "source_instruction_matched_utf8_sha256": (
+                "638ff7f5607248b60959d5b804b269e5dfbdac96275ef8a8fe135372ba8b237e"
+            ),
+            "source_instruction_page_number": 46,
+            "source_instruction_utf8_byte_start": 844,
+            "source_instruction_utf8_byte_end": 909,
+            "source_endpoint_printed_identifier_arrays": [["H8", "H7"]],
+            "semantic_alias_finding": (
+                "incomplete_fragment_does_not_prove_occurrence_equivalence"
+            ),
+            "source_instruction_fragment": True,
+            "tier_2_predecessor_seal_quality_issue": True,
+            "tier_2_predecessor_ledger_note": (
+                "new_tier_2_reseal_required_for_incomplete_fragment"
+            ),
+        },
+        "psid-questionnaire-occurrence:"
+        "124dd16396afb1eb91cdefdaf057c3e2450ca445b7a8ea5f788d472db80cc1ba": {
+            "document_source_position": 19,
+            "source_local_evidence_ids": [
+                "rq-local-repeat-alias-evidence:"
+                "c4dd9293833e5a1b735bf70a8362777e193d1ff6c5ad216d09223ed63b4b06dd"
+            ],
+            "source_instruction_matched_text": (
+                "Make sure if an amount is given for both H7 and H8 that it "
+                "is not\nthe same figure recorded twice. Probe to find out in "
+                "these cases."
+            ),
+            "source_instruction_matched_utf8_sha256": (
+                "296e1c0d479e1fc24f6a253e31358fbd8b1ba3f59dbdb84822f934c603912b55"
+            ),
+            "source_instruction_page_number": 48,
+            "source_instruction_utf8_byte_start": 846,
+            "source_instruction_utf8_byte_end": 977,
+            "source_endpoint_printed_identifier_arrays": [[None, "H7"]],
+            "semantic_alias_finding": (
+                "anti_duplication_instruction_disproves_occurrence_"
+                "equivalence"
+            ),
+            "source_instruction_fragment": False,
+        },
+        "psid-questionnaire-occurrence:"
+        "2731f348724837fcf2e8be8fac3d039705671d63b5b4496b18c0a82694395e2f": {
+            "document_source_position": 66,
+            "source_local_evidence_ids": [
+                "rq-local-repeat-evidence:"
+                "ea4aa070f2995a7a5d96aae117c086cd870eb75a940ee4a520ce8ad53e98bcf3",
+                "rq-local-repeat-evidence:"
+                "a01ab00d46676b41aa5c4c7d5a8d0c253909acf838ada6d75e7f635ef81bf361",
+            ],
+            "source_instruction_matched_text": (
+                "G4.        Farm income equals total receipts (G2) minus "
+                "operating expenses (G3). Do the"
+            ),
+            "source_instruction_matched_utf8_sha256": (
+                "5460f22809e16521009c10578146b19c2c82eaf3a215866bb216056d491d13a0"
+            ),
+            "source_instruction_page_number": 30,
+            "source_instruction_utf8_byte_start": 106,
+            "source_instruction_utf8_byte_end": 193,
+            "source_endpoint_printed_identifier_arrays": [
+                ["G4.", "G2."],
+                ["G4.", "G3."],
+            ],
+            "semantic_alias_finding": (
+                "arithmetic_composition_does_not_prove_occurrence_"
+                "equivalence"
+            ),
+            "source_instruction_fragment": True,
+            "tier_2_predecessor_seal_quality_issue": False,
+            "tier_2_predecessor_ledger_note": (
+                "fragment_semantically_decisive_no_reseal_required"
+            ),
+        },
+        "psid-questionnaire-occurrence:"
+        "5eb05b791f0abad829debc9863433e0a8e7bd254aa18ac51b6c750caa48bb46a": {
+            "document_source_position": 66,
+            "source_local_evidence_ids": [
+                "rq-local-repeat-evidence:"
+                "ed0c801ba48f634dac9e766d90116aab30f533f82aed9846af81aa739b059aba"
+            ],
+            "source_instruction_matched_text": (
+                "If an amount is given for both G11b and G13, probe to be "
+                "sure that it is not the"
+            ),
+            "source_instruction_matched_utf8_sha256": (
+                "0c923d7121f8b7a02d951ac9c5d8dc7900a2818233eea9c69452c0e8f4dca024"
+            ),
+            "source_instruction_page_number": 31,
+            "source_instruction_utf8_byte_start": 1795,
+            "source_instruction_utf8_byte_end": 1875,
+            "source_endpoint_printed_identifier_arrays": [["G13.", "G11b."]],
+            "semantic_alias_finding": (
+                "incomplete_fragment_does_not_prove_occurrence_equivalence"
+            ),
+            "source_instruction_fragment": True,
+            "tier_2_predecessor_seal_quality_issue": True,
+            "tier_2_predecessor_ledger_note": (
+                "new_tier_2_reseal_required_for_incomplete_fragment"
+            ),
+        },
+    }
+    for instruction_id, citation in expected.items():
+        row = by_instruction[instruction_id]
+        assert {key: row[key] for key in citation} == citation
+        assert row["repeat_coverage_disposition"] == (
+            "disclosed_stop_no_redirection_semantics"
+        )
+        assert row["semantic_alias_ledger_member"] is True
+        assert row["occurrence_equivalence_proved"] is False
+        assert row["valid_alias_arm_evidence_ids"] == []
+        assert row["semantic_alias_finding"]
+
+
+def test__round_four_fragment_stops__carry_tier_2_seal_quality_notes(bundle):
+    rows = bundle["sweeps"]["in_domain_component_cross_reference_sweep_rows"]
+    fragments = [row for row in rows if row["source_instruction_fragment"]]
+    assert len(fragments) == 48
+    known_incomplete_stops = {
+        "psid-questionnaire-occurrence:"
+        "8b9c6613b23e83dd55af058542e6aec3be341440397c632d91c1b74f073291dd",
+        "psid-questionnaire-occurrence:"
+        "5eb05b791f0abad829debc9863433e0a8e7bd254aa18ac51b6c750caa48bb46a",
+    }
+    assert known_incomplete_stops <= {
+        row["source_instruction_occurrence_id"] for row in fragments
+    }
+    assert all(
+        isinstance(row["tier_2_predecessor_seal_quality_issue"], bool)
+        and isinstance(row["tier_2_predecessor_ledger_note"], str)
+        and row["tier_2_predecessor_ledger_note"]
+        for row in fragments
+    )
+    assert Counter(
+        row["tier_2_predecessor_seal_quality_issue"] for row in fragments
+    ) == {True: 17, False: 31}
+    assert Counter(
+        row["tier_2_predecessor_ledger_note"] for row in fragments
+    ) == {
+        "round_three_reseal_ledger_already_covers_fragment": 4,
+        "new_tier_2_reseal_required_for_incomplete_fragment": 13,
+        "fragment_semantically_decisive_no_reseal_required": 31,
+    }
+    for row in fragments:
+        if row["source_instruction_occurrence_id"] in known_incomplete_stops:
+            assert row["repeat_coverage_disposition"] == (
+                "disclosed_stop_no_redirection_semantics"
+            )
+            assert row["occurrence_equivalence_proved"] is False
+            assert row["tier_2_predecessor_seal_quality_issue"] is True
 
 
 def test__lexical_redirection_lineage__remains_a_secondary_regression(bundle):
@@ -771,7 +1058,7 @@ def test__lexical_redirection_lineage__remains_a_secondary_regression(bundle):
     }
 
 
-def test__four_repeat_dispositions__are_disjoint_and_fail_closed(
+def test__five_repeat_dispositions__are_disjoint_and_fail_closed(
     bundle,
 ):
     sweep = bundle["sweeps"]
@@ -792,15 +1079,15 @@ def test__four_repeat_dispositions__are_disjoint_and_fail_closed(
     assert redirection_instruction_ids.isdisjoint(aggregate_instruction_ids)
     assert sweep["repeat_coverage_census"] == {
         "repeat_occurrence_count": 2_460,
-        "valid_direct_proof_instruction_count": 253,
+        "valid_direct_proof_instruction_count": 225,
         "outside_domain_instruction_count": 34,
         "noncatalog_aggregate_relation_instruction_count": 13,
         "in_domain_redirection_instruction_count": 5,
         "in_domain_nonalias_relation_instruction_count": 18,
-        "incompatible_proof_instruction_count": 24,
+        "incompatible_proof_instruction_count": 52,
         "valid_and_incompatible_instruction_overlap_count": 1,
         "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
-        "disclosed_stop_instruction_count": 2_155,
+        "disclosed_stop_instruction_count": 2_183,
         "otherwise_unresolved_instruction_count": 2_132,
     }
     assert bundle["gate"]["overall_repeat_catalog_coverage_status"] == (
@@ -810,16 +1097,16 @@ def test__four_repeat_dispositions__are_disjoint_and_fail_closed(
 
 def test__repeat_gate__does_not_hide_other_unresolved_instructions(bundle):
     census = bundle["gate"]["pilot_census"]
-    assert census["valid_direct_proof_instruction_count"] == 105
+    assert census["valid_direct_proof_instruction_count"] == 88
     assert census["outside_domain_instruction_count"] == 34
     assert census["noncatalog_aggregate_relation_instruction_count"] == 1
     assert census["in_domain_redirection_instruction_count"] == 2
     assert census["in_domain_nonalias_relation_instruction_count"] == 3
-    assert census["incompatible_proof_instruction_count"] == 7
+    assert census["incompatible_proof_instruction_count"] == 24
     assert census["lawful_repeat_coverage_multiple_arm_instruction_count"] == 0
-    assert census["disclosed_stop_instruction_count"] == 234
+    assert census["disclosed_stop_instruction_count"] == 251
     assert census["otherwise_unresolved_instruction_count"] == 228
-    assert 376 == 105 + 34 + 1 + 2 + 234
+    assert 376 == 88 + 34 + 1 + 2 + 251
     assert bundle["gate"]["overall_repeat_catalog_coverage_status"] == (
         "fail_closed_unresolved_rows_remain"
     )
@@ -911,12 +1198,65 @@ def test__derived_class_sweeps__exercise_both_alias_proof_forms(bundle):
     artifact = bundle["derived"]
     assert artifact["component_alias_support_origin_counts"] == {
         "exact_pair_equality_sweep": 746,
-        "sealed_local_evidence": 209,
+        "sealed_local_evidence": 174,
     }
     assert artifact["job_alias_support_origin_counts"] == {
         "exact_pair_equality_sweep": 647,
         "sealed_local_evidence": 79,
     }
+
+
+def test__derived_class_sweeps__construct_aliases_only_from_alias_arm(
+    bundle,
+):
+    structural_rows = bundle["sweeps"][
+        "in_domain_component_cross_reference_sweep_rows"
+    ]
+    structural_evidence_ids = {
+        evidence_id
+        for row in structural_rows
+        for evidence_id in row["source_local_evidence_ids"]
+    }
+    alias_evidence_ids = {
+        evidence_id
+        for row in structural_rows
+        if row["repeat_coverage_disposition"] == "existing_alias_arm"
+        for evidence_id in row["source_local_evidence_ids"]
+    }
+    excluded_evidence_ids = structural_evidence_ids - alias_evidence_ids
+    redirection_evidence_ids = {
+        evidence_id
+        for row in structural_rows
+        if row["repeat_coverage_disposition"]
+        == "admitted_exclusive_destination_redirection"
+        for evidence_id in row["source_local_evidence_ids"]
+    }
+
+    sealed_support_ids = {
+        support["source_local_evidence_id"]
+        for key in (
+            "component_class_admission_sweep_rows",
+            "catalog_only_job_complement_sweep_rows",
+        )
+        for row in bundle["derived"][key]
+        for support in row["alias_support_rows"]
+        if support["support_origin"] == "sealed_local_evidence"
+    }
+    assert structural_evidence_ids & sealed_support_ids == alias_evidence_ids
+    assert excluded_evidence_ids.isdisjoint(sealed_support_ids)
+    assert redirection_evidence_ids.isdisjoint(sealed_support_ids)
+    assert {
+        "rq-local-repeat-alias-evidence:"
+        "d703ee09088e3789c6c77b9a01bc7350062cb744295cce86dd3a0722317cbe2b",
+        "rq-local-repeat-alias-evidence:"
+        "390e91405eab59354cf25f3deb7cb02dfa5924c655c33272fd226d2f5ba7117f",
+        "rq-local-repeat-alias-evidence:"
+        "2d00c4bc66f3191d36f783de3a709adba07c3eb894a054d971d72d64ba2870af",
+        "rq-local-repeat-evidence:"
+        "1851a59e23285cabe0fb25977286cccd786152885b0c8f60bb29517a21f61e23",
+        "rq-local-repeat-evidence:"
+        "191167ca76ad47c4334c5f3b014abd7d520944d9faadca4b4aa80e52766cd7e2",
+    } <= redirection_evidence_ids
 
 
 def test__derived_job_complement__is_a_complete_two_arm_partition(bundle):
