@@ -392,6 +392,12 @@ def _require(condition: bool, message: str) -> None:
         raise LawError(message)
 
 
+def _require_exact_keys(
+    value: Mapping[str, Any], expected: set[str], label: str
+) -> None:
+    _require(set(value) == expected, f"{label} keyset drift")
+
+
 def canonical_json_bytes(value: Any) -> bytes:
     """Return the law's compact, sorted, terminal-LF JSON bytes."""
 
@@ -1296,6 +1302,33 @@ def validate_execution_law(
 ) -> None:
     """Fail closed unless ``law`` is the exact Amendment-13 proposal."""
 
+    _require_exact_keys(
+        law,
+        {
+            "schema_version",
+            "status",
+            "authority_emitted",
+            "certification_emitted",
+            "ratification_identity",
+            "ratification_identity_rule",
+            "overlay_schema_version",
+            "successor_schema_version",
+            "supersession_schema_version",
+            "era_successor_seal_schema_version",
+            "repair_overlay_rows",
+            "semantically_incompatible_local_proof_successor_rows",
+            "incomplete_fragment_terminal_successor_rows",
+            "composed_fragment_successor_rows",
+            "doc036_aggregate_domain_successor_rows",
+            "predecessor_supersession_rows",
+            "successor_era_seal_rows",
+            "untouched_law_gap_predecessor_ids",
+            "amendment12_continuation_domain",
+            "git_order_law",
+            "integrity",
+        },
+        "execution law",
+    )
     _require(law["schema_version"] == SCHEMA_VERSION, "law schema drift")
     _require(
         law["status"] == "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
@@ -1352,6 +1385,38 @@ def validate_execution_law(
         "repair successor IDs are not unique",
     )
     for row in all_successors:
+        expected_keys = {
+            "schema_version",
+            "successor_row_id",
+            "successor_identity_preimage",
+            "successor_kind",
+            "repair_overlay_id",
+            "document_source_position",
+            "source_document_id",
+            "predecessor_annotation_identity",
+            "predecessor_row_domain",
+            "predecessor_row_pointer",
+            "predecessor_row_id",
+            "predecessor_row_canonical_sha256",
+            "successor_payload",
+        }
+        if row["successor_kind"] != "doc036_aggregate_domain_correction":
+            expected_keys.add("predecessor_status_mapping")
+        _require_exact_keys(row, expected_keys, "repair successor row")
+        _require_exact_keys(
+            row["predecessor_annotation_identity"],
+            {
+                "annotation_path",
+                "artifact_id",
+                "schema_version",
+                "source_document_id",
+                "document_source_position",
+                "byte_size",
+                "raw_sha256",
+                "content_sha256",
+            },
+            "predecessor annotation identity",
+        )
         _require(
             row["schema_version"] == SUCCESSOR_SCHEMA_VERSION
             and row["successor_row_id"]
@@ -1362,6 +1427,35 @@ def validate_execution_law(
         )
     for row in proof_rows:
         payload = row["successor_payload"]
+        _require_exact_keys(
+            row["predecessor_status_mapping"],
+            {"status_family", "status_field", "predecessor_status"},
+            "proof predecessor status mapping",
+        )
+        _require_exact_keys(
+            payload,
+            {
+                "terminal_status",
+                "terminal_reason_code",
+                "source_instruction_occurrence_ids",
+                "source_instruction_matched_texts",
+                "source_instruction_matched_utf8_sha256s",
+                "source_instruction_page_numbers",
+                "source_instruction_utf8_byte_starts",
+                "source_instruction_utf8_byte_ends",
+                "alias_anchor_occurrence_ids",
+                "canonical_anchor_occurrence_ids",
+                "endpoint_occurrence_kinds",
+                "endpoint_raw_node_domains",
+                "endpoint_matched_texts",
+                "endpoint_matched_utf8_sha256s",
+                "predecessor_preserved_claim_projection",
+                "alias_admitted",
+                "occurrence_equivalence_admitted",
+                "repeat_coverage_arm_admitted",
+            },
+            "incompatible-proof successor payload",
+        )
         _require(
             payload["terminal_status"] == PROOF_TERMINAL_STATUS
             and payload["alias_admitted"] is False
@@ -1394,6 +1488,37 @@ def validate_execution_law(
     )
     for row in incomplete_rows:
         payload = row["successor_payload"]
+        _require_exact_keys(
+            row["predecessor_status_mapping"],
+            {"status_family", "status_field", "predecessor_status"},
+            "fragment predecessor status mapping",
+        )
+        _require_exact_keys(
+            payload,
+            {
+                "terminal_status",
+                "repair_mode",
+                "disclosed_incomplete_fragment_citation",
+                "continuation_citation",
+                "alias_admitted",
+                "occurrence_equivalence_admitted",
+                "repeat_coverage_arm_admitted",
+            },
+            "incomplete-fragment successor payload",
+        )
+        _require_exact_keys(
+            payload["disclosed_incomplete_fragment_citation"],
+            {
+                "source_occurrence_id",
+                "matched_text",
+                "matched_utf8_sha256",
+                "page_number",
+                "page_text_utf8_sha256",
+                "utf8_byte_start",
+                "utf8_byte_end",
+            },
+            "incomplete-fragment disclosure citation",
+        )
         _require(
             payload["terminal_status"] == INCOMPLETE_FRAGMENT_STATUS
             and payload["repair_mode"]
@@ -1408,6 +1533,49 @@ def validate_execution_law(
         payload = row["successor_payload"]
         citation = payload["composition_citation"]
         expected = COMPOSITION_SPECS[row["document_source_position"]]
+        _require_exact_keys(
+            row["predecessor_status_mapping"],
+            {"status_family", "status_field", "predecessor_status"},
+            "fragment predecessor status mapping",
+        )
+        _require_exact_keys(
+            payload,
+            {
+                "terminal_status",
+                "repair_mode",
+                "predecessor_fragment_citation",
+                "composition_citation",
+                "alias_admitted",
+                "occurrence_equivalence_admitted",
+                "repeat_coverage_arm_admitted",
+            },
+            "composed-fragment successor payload",
+        )
+        _require_exact_keys(
+            citation,
+            {
+                "selector_rule",
+                "candidate_occurrences_in_source_order",
+                "selected_leading_occurrence_id",
+                "composition_rule",
+                "leading_occurrence_id",
+                "continuation_occurrence_id",
+                "page_number",
+                "page_text_utf8_sha256",
+                "combined_utf8_byte_start",
+                "leading_utf8_byte_end",
+                "gap_utf8_byte_start",
+                "gap_utf8_byte_end",
+                "gap_text",
+                "gap_utf8_sha256",
+                "gap_is_whitespace_only",
+                "continuation_utf8_byte_start",
+                "combined_utf8_byte_end",
+                "combined_text",
+                "combined_utf8_sha256",
+            },
+            "composed-fragment citation",
+        )
         _require(
             payload["terminal_status"] == COMPOSED_FRAGMENT_STATUS
             and citation["selector_rule"] == FRAGMENT_SELECTOR_RULE
@@ -1435,6 +1603,17 @@ def validate_execution_law(
         )
     for row in doc036_rows:
         payload = row["successor_payload"]
+        _require_exact_keys(
+            payload,
+            {
+                "terminal_status",
+                "transformation_rule",
+                "predecessor_classification_row",
+                "successor_classification_row",
+                "source_occurrence_citation",
+            },
+            "document-036 successor payload",
+        )
         predecessor = payload["predecessor_classification_row"]
         successor = payload["successor_classification_row"]
         changed_keys = {
@@ -1459,6 +1638,26 @@ def validate_execution_law(
         "supersession edges do not exact-cover successors",
     )
     for row in supersession_rows:
+        _require_exact_keys(
+            row,
+            {
+                "schema_version",
+                "supersession_row_id",
+                "supersession_identity_preimage",
+                "repair_overlay_id",
+                "document_source_position",
+                "predecessor_row_pointer",
+                "predecessor_row_id",
+                "predecessor_row_canonical_sha256",
+                "successor_row_id",
+                "supersession_relation",
+                "status",
+                "predecessor_retained",
+                "predecessor_erasure_permitted",
+                "semantic_consumer_selection",
+            },
+            "predecessor supersession row",
+        )
         _require(
             row["schema_version"] == SUPERSESSION_SCHEMA_VERSION
             and row["supersession_row_id"]
@@ -1483,6 +1682,29 @@ def validate_execution_law(
     overlay_successor_ids: list[str] = []
     overlay_supersession_ids: list[str] = []
     for overlay in overlays:
+        _require_exact_keys(
+            overlay,
+            {
+                "schema_version",
+                "repair_overlay_id",
+                "overlay_identity_preimage",
+                "authority_kind",
+                "document_source_position",
+                "source_document_id",
+                "predecessor_annotation_identity",
+                "predecessor_era_id",
+                "predecessor_era_seal_content_sha256",
+                "predecessor_source_rows_retained",
+                "predecessor_source_row_erasure_permitted",
+                "predecessor_supersession_rows",
+                "semantically_incompatible_local_proof_successor_rows",
+                "incomplete_fragment_terminal_successor_rows",
+                "composed_fragment_successor_rows",
+                "doc036_aggregate_domain_successor_rows",
+                "integrity",
+            },
+            "document repair overlay",
+        )
         _require(
             overlay["schema_version"] == OVERLAY_SCHEMA_VERSION
             and overlay["repair_overlay_id"]
@@ -1522,6 +1744,24 @@ def validate_execution_law(
     era_rows = law["successor_era_seal_rows"]
     _require(len(era_rows) == 6, "all six successor era seals are required")
     for era_row in era_rows:
+        _require_exact_keys(
+            era_row,
+            {
+                "schema_version",
+                "successor_era_seal_id",
+                "successor_era_seal_identity_preimage",
+                "authority_kind",
+                "era_id",
+                "era_order_position",
+                "predecessor_era_seal_identity",
+                "repair_overlay_ids",
+                "successor_row_ids",
+                "supersession_row_ids",
+                "repair_counts",
+                "all_named_domains_present_even_when_empty",
+            },
+            "successor era seal row",
+        )
         counts = era_row["repair_counts"]
         observed = (
             counts["semantically_incompatible_local_proof_count"],
@@ -1568,6 +1808,20 @@ def validate_execution_law(
         "Amendment-12 continuation domain was disturbed",
     )
     order = law["git_order_law"]
+    _require_exact_keys(
+        order,
+        {
+            "ratification_commit_must_be_strict_ancestor_of_every_overlay_first_add",
+            "overlay_first_add_must_be_strict_ancestor_of_containing_era_successor_seal_first_add",
+            "all_six_successor_seal_first_adds_must_be_strict_ancestors_of_tier2_evidence_first_add",
+            "ratification_and_execution_record_commits_must_be_single_parent",
+            "source_seal_identity_is_independently_authenticated_not_promoted_from_tier1",
+            "dual_independent_reconstruction_required",
+            "complete_raw_byte_attestation_required",
+            "q5_first_add_permitted",
+        },
+        "Git-order law",
+    )
     _require(
         all(
             value is True
@@ -1579,6 +1833,30 @@ def validate_execution_law(
     )
 
     integrity = law["integrity"]
+    _require_exact_keys(
+        integrity,
+        {
+            "incompatible_proof_count",
+            "incompatible_proof_id_domain_sha256",
+            "incomplete_fragment_count",
+            "composed_fragment_count",
+            "fragment_evidence_id_domain_sha256",
+            "fragment_instruction_id_domain_sha256",
+            "doc036_aggregate_domain_count",
+            "doc036_classification_id_domain_sha256",
+            "repair_count",
+            "supersession_count",
+            "overlay_count",
+            "successor_era_seal_count",
+            "law_gap_untouched_count",
+            "law_gap_id_domain_sha256",
+            "successor_domain_sha256",
+            "supersession_domain_sha256",
+            "overlay_domain_sha256",
+            "successor_era_seal_domain_sha256",
+        },
+        "execution-law integrity",
+    )
     _require(
         integrity["incompatible_proof_count"] == 28
         and integrity["incompatible_proof_id_domain_sha256"]
