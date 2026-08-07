@@ -51401,7 +51401,7 @@ catalog, `R_Q`, H, Q5, registry, receipt, wall row, or production result
 exists; and Amendment 11's independent
 `blocked_source_missing_disposition_underdetermined` remains controlling.**
 
-## 27. Amendment 13 — ratification identity and tier-2 repair-successor law
+## 27. AMENDMENT SECTION — Amendment 13: ratification identity and tier-2 repair-successor law
 
 ### 27.1 Prospective status, immutable base, narrow scope, and map
 

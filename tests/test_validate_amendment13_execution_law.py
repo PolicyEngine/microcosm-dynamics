@@ -31,6 +31,50 @@ def rejected_mutations(execution_law):
     return a13.run_mutation_tests(execution_law)
 
 
+def _synthetic_governing_identity_and_records():
+    commit = "1" * 40
+    candidate_head = "2" * 40
+    document_sha256 = "3" * 64
+    records = {}
+    attestations = []
+    for index in (1, 2):
+        name = f"amendment-13-ratify-{index}.md"
+        raw = (
+            "# RATIFY\n"
+            f"record_name: {name}\n"
+            f"attested_candidate_head: {candidate_head}\n"
+            f"attested_document_path: {a13.DESIGN_PATH}\n"
+            "attested_document_byte_size: 4000000\n"
+            f"attested_document_sha256: {document_sha256}\n"
+        ).encode()
+        records[name] = raw
+        attestations.append(
+            {
+                "record_name": name,
+                "raw_byte_size": len(raw),
+                "raw_sha256": hashlib.sha256(raw).hexdigest(),
+                "verdict_token": "RATIFY",
+                "attested_candidate_head": candidate_head,
+                "attested_document_byte_size": 4_000_000,
+                "attested_document_sha256": document_sha256,
+            }
+        )
+    identity = {
+        "schema_version": a13.GOVERNING_A13_IDENTITY_SCHEMA_VERSION,
+        "status": a13.GOVERNING_A13_IDENTITY_STATUS,
+        "ratification_commit": commit,
+        "ratification_parents": ["4" * 40],
+        "ratification_commit_changed_paths": [a13.DESIGN_PATH],
+        "document_path": a13.DESIGN_PATH,
+        "document_mode": a13.DESIGN_MODE,
+        "document_blob_oid": "5" * 40,
+        "document_byte_size": 4_000_000,
+        "document_sha256": document_sha256,
+        "dual_ratify_attestations": attestations,
+    }
+    return identity, records
+
+
 def test__draft__emits_neither_authority_nor_certification(execution_law):
     assert execution_law["status"] == (
         "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
@@ -194,57 +238,140 @@ def test__document036__successor_only_extra_key_fails_closed(execution_law):
 
 
 def test__governing_ratification__requires_raw_dual_records():
-    commit = "1" * 40
-    candidate_head = "2" * 40
-    document_sha256 = "3" * 64
-    records = {}
-    attestations = []
-    for index in (1, 2):
-        name = f"amendment-13-ratify-{index}.md"
-        raw = (
-            "# RATIFY\n"
-            f"record_name: {name}\n"
-            f"attested_candidate_head: {candidate_head}\n"
-            f"attested_document_path: {a13.DESIGN_PATH}\n"
-            "attested_document_byte_size: 4000000\n"
-            f"attested_document_sha256: {document_sha256}\n"
-        ).encode()
-        records[name] = raw
-        attestations.append(
-            {
-                "record_name": name,
-                "raw_byte_size": len(raw),
-                "raw_sha256": hashlib.sha256(raw).hexdigest(),
-                "verdict_token": "RATIFY",
-                "attested_candidate_head": candidate_head,
-                "attested_document_byte_size": 4_000_000,
-                "attested_document_sha256": document_sha256,
-            }
-        )
-    identity = {
-        "schema_version": a13.GOVERNING_A13_IDENTITY_SCHEMA_VERSION,
-        "status": a13.GOVERNING_A13_IDENTITY_STATUS,
-        "ratification_commit": commit,
-        "ratification_parents": ["4" * 40],
-        "ratification_commit_changed_paths": [a13.DESIGN_PATH],
-        "document_path": a13.DESIGN_PATH,
-        "document_mode": a13.DESIGN_MODE,
-        "document_blob_oid": "5" * 40,
-        "document_byte_size": 4_000_000,
-        "document_sha256": document_sha256,
-        "dual_ratify_attestations": attestations,
-    }
+    identity, records = _synthetic_governing_identity_and_records()
     a13.validate_governing_amendment13_ratification_identity(
         identity, records, verify_git=False
     )
     forged_records = dict(records)
-    forged_records[attestations[0]["record_name"]] += b"forged\n"
+    forged_records[next(iter(records))] += b"forged\n"
     with pytest.raises(
         a13.LawError,
         match="RATIFY raw bytes do not attest identity",
     ):
         a13.validate_governing_amendment13_ratification_identity(
             identity, forged_records, verify_git=False
+        )
+
+
+def test__ratification_bound_template__replaces_placeholder_everywhere(
+    execution_law,
+):
+    identity, records = _synthetic_governing_identity_and_records()
+    template = a13._build_ratification_bound_execution_template_for_test(
+        identity,
+        records,
+    )
+    a13.validate_execution_law(
+        template,
+        verify_git=False,
+        governing_attestation_record_bytes=records,
+    )
+    assert template["status"] == a13.RATIFICATION_BOUND_TEMPLATE_STATUS
+    assert template["authority_emitted"] is False
+    assert template["certification_emitted"] is False
+    assert template["governing_amendment13_ratification_identity"] == identity
+    assert all(
+        overlay["governing_amendment13_ratification_identity"] == identity
+        and overlay["overlay_identity_preimage"][-2] == identity
+        for overlay in template["repair_overlay_rows"]
+    )
+    assert all(
+        seal["governing_amendment13_ratification_identity"] == identity
+        and seal["successor_era_seal_identity_preimage"][-1] == identity
+        for seal in template["successor_era_seal_rows"]
+    )
+    assert (
+        b"UNAVAILABLE_BEFORE_AMENDMENT_13_RATIFICATION"
+        not in a13.canonical_json_bytes(template)
+    )
+    assert (
+        template["integrity"]["overlay_domain_sha256"]
+        != execution_law["integrity"]["overlay_domain_sha256"]
+    )
+
+
+def test__ratification_bound_template__rejects_coherently_repinned_forgery():
+    identity, records = _synthetic_governing_identity_and_records()
+    template = a13._build_ratification_bound_execution_template_for_test(
+        identity,
+        records,
+    )
+    row = template["semantically_incompatible_local_proof_successor_rows"][0]
+    old_successor_id = row["successor_row_id"]
+    row["successor_payload"][
+        "terminal_reason_code"
+    ] = "forged_but_coherently_repinned_reason"
+    a13._repin_successor(row)
+    new_successor_id = row["successor_row_id"]
+    edge = next(
+        edge
+        for edge in template["predecessor_supersession_rows"]
+        if edge["successor_row_id"] == old_successor_id
+    )
+    old_supersession_id = edge["supersession_row_id"]
+    edge["successor_row_id"] = row["successor_row_id"]
+    edge["supersession_identity_preimage"][5] = row["successor_row_id"]
+    edge["supersession_row_id"] = a13._content_id(
+        "a13-supersession", edge["supersession_identity_preimage"]
+    )
+    new_supersession_id = edge["supersession_row_id"]
+
+    for overlay in template["repair_overlay_rows"]:
+        successors = a13._all_overlay_successors(overlay)
+        edges = overlay["predecessor_supersession_rows"]
+        overlay["integrity"] = {
+            "successor_count": len(successors),
+            "successor_domain_sha256": a13._domain_sha(successors),
+            "supersession_count": len(edges),
+            "supersession_domain_sha256": a13._domain_sha(edges),
+        }
+
+    for era in template["successor_era_seal_rows"]:
+        era["successor_row_ids"] = [
+            new_successor_id if value == old_successor_id else value
+            for value in era["successor_row_ids"]
+        ]
+        era["supersession_row_ids"] = [
+            new_supersession_id if value == old_supersession_id else value
+            for value in era["supersession_row_ids"]
+        ]
+        era["successor_era_seal_identity_preimage"][5] = era[
+            "successor_row_ids"
+        ]
+        era["successor_era_seal_identity_preimage"][6] = era[
+            "supersession_row_ids"
+        ]
+        era["successor_era_seal_id"] = a13._content_id(
+            "a13-successor-era-seal",
+            era["successor_era_seal_identity_preimage"],
+        )
+
+    template["integrity"]["successor_domain_sha256"] = a13._domain_sha(
+        [
+            *template["semantically_incompatible_local_proof_successor_rows"],
+            *template["incomplete_fragment_terminal_successor_rows"],
+            *template["composed_fragment_successor_rows"],
+            *template["doc036_aggregate_domain_successor_rows"],
+        ]
+    )
+    template["integrity"]["supersession_domain_sha256"] = a13._domain_sha(
+        template["predecessor_supersession_rows"]
+    )
+    template["integrity"]["overlay_domain_sha256"] = a13._domain_sha(
+        template["repair_overlay_rows"]
+    )
+    template["integrity"]["successor_era_seal_domain_sha256"] = (
+        a13._domain_sha(template["successor_era_seal_rows"])
+    )
+
+    with pytest.raises(
+        a13.LawError,
+        match="forged incompatible-proof terminal status or admission",
+    ):
+        a13.validate_execution_law(
+            template,
+            verify_git=False,
+            governing_attestation_record_bytes=records,
         )
 
 
@@ -282,11 +409,22 @@ def test__scope__fourteen_law_gaps_and_a12_continuations_are_untouched(
     assert execution_law["untouched_law_gap_predecessor_ids"] == list(
         a13.LAW_GAP_IDS
     )
-    assert execution_law["amendment12_continuation_domain"] == {
-        "disjoint_and_unchanged": True,
-        "continuation_citation_count": 5,
-        "continuation_restoration_count": 3,
-    }
+    continuation = execution_law["amendment12_continuation_domain"]
+    assert continuation["disjoint_and_unchanged"] is True
+    assert continuation["continuation_citation_count"] == 5
+    assert continuation["continuation_restoration_count"] == 3
+    assert len(continuation["continuation_projection_rows"]) == 5
+    assert continuation["continuation_projection_byte_size"] == 1_457
+    assert continuation["continuation_projection_sha256"] == (
+        a13.A12_CONTINUATION_PROJECTION_SHA256
+    )
+    assert (
+        continuation["new_fragment_predecessor_evidence_ids_disjoint"] is True
+    )
+    assert (
+        continuation["new_fragment_instruction_occurrence_ids_disjoint"]
+        is True
+    )
 
 
 def test__nested_authority_and_declared_schema_forgery_fail_closed(
@@ -330,4 +468,4 @@ def test__document__preserves_revision14_as_exact_prefix():
     assert len(ratified) == a13.DESIGN_BYTE_SIZE
     assert hashlib.sha256(ratified).hexdigest() == a13.DESIGN_SHA256
     assert raw[: a13.DESIGN_BYTE_SIZE] == ratified
-    assert raw[a13.DESIGN_BYTE_SIZE :].startswith(b"\n## 27. Amendment 13")
+    assert raw[a13.DESIGN_BYTE_SIZE :].startswith(a13.AMENDMENT13_BOUNDARY)
