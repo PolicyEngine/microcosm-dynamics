@@ -137,6 +137,9 @@ EXPECTED_MUTATIONS = (
     "fragment_stop_promoted_to_alias_support",
     "semantic_alias_adjudication_record_forged",
     "composite_union_forgery",
+    "composite_pair_citation_deleted",
+    "composite_pair_citation_swapped",
+    "composite_stop_citation_deleted",
     "nonledger_admission_without_semantic_decision",
     "continuation_rule_forgery",
     "component_class_sweep_row_omitted",
@@ -650,13 +653,13 @@ def test__component_cross_reference_sweep__exact_walks_structural_domain(
     } == {
         "in_domain_component_cross_reference_sweep_count": 162,
         "in_domain_component_cross_reference_sweep_edge_count": 195,
-        "in_domain_component_cross_reference_sweep_alias_instruction_count": 125,
-        "in_domain_component_cross_reference_sweep_alias_edge_count": 147,
-        "in_domain_component_cross_reference_sweep_alias_pair_count": 148,
+        "in_domain_component_cross_reference_sweep_alias_instruction_count": 120,
+        "in_domain_component_cross_reference_sweep_alias_edge_count": 135,
+        "in_domain_component_cross_reference_sweep_alias_pair_count": 136,
         "in_domain_component_cross_reference_sweep_redirection_instruction_count": 5,
         "in_domain_component_cross_reference_sweep_redirection_edge_count": 6,
-        "in_domain_component_cross_reference_sweep_stop_instruction_count": 32,
-        "in_domain_component_cross_reference_sweep_stop_edge_count": 42,
+        "in_domain_component_cross_reference_sweep_stop_instruction_count": 37,
+        "in_domain_component_cross_reference_sweep_stop_edge_count": 54,
     }
     assert {
         key: sweep[key]
@@ -674,13 +677,13 @@ def test__component_cross_reference_sweep__exact_walks_structural_domain(
     } == {
         "pilot_in_domain_component_cross_reference_sweep_count": 91,
         "pilot_in_domain_component_cross_reference_sweep_edge_count": 123,
-        "pilot_in_domain_component_cross_reference_sweep_alias_instruction_count": 69,
-        "pilot_in_domain_component_cross_reference_sweep_alias_edge_count": 90,
-        "pilot_in_domain_component_cross_reference_sweep_alias_pair_count": 91,
+        "pilot_in_domain_component_cross_reference_sweep_alias_instruction_count": 64,
+        "pilot_in_domain_component_cross_reference_sweep_alias_edge_count": 78,
+        "pilot_in_domain_component_cross_reference_sweep_alias_pair_count": 79,
         "pilot_in_domain_component_cross_reference_sweep_redirection_instruction_count": 2,
         "pilot_in_domain_component_cross_reference_sweep_redirection_edge_count": 3,
-        "pilot_in_domain_component_cross_reference_sweep_stop_instruction_count": 20,
-        "pilot_in_domain_component_cross_reference_sweep_stop_edge_count": 30,
+        "pilot_in_domain_component_cross_reference_sweep_stop_instruction_count": 25,
+        "pilot_in_domain_component_cross_reference_sweep_stop_edge_count": 42,
     }
     assert [
         row["in_domain_redirection_relation_disposition_id"]
@@ -727,18 +730,18 @@ def test__round_five_semantic_alias_ledger__exact_covers_structural_sweep(
 
     dispositions = Counter(row["repeat_coverage_disposition"] for row in rows)
     assert dispositions == {
-        "existing_alias_arm": 125,
+        "existing_alias_arm": 120,
         "admitted_exclusive_destination_redirection": 5,
-        "disclosed_stop_no_redirection_semantics": 32,
+        "disclosed_stop_no_redirection_semantics": 37,
     }
     assert sweep["semantic_alias_adjudication_outcome_counts"] == {
-        "alias_instruction_count": 125,
-        "alias_edge_count": 147,
-        "alias_pair_count": 148,
+        "alias_instruction_count": 120,
+        "alias_edge_count": 135,
+        "alias_pair_count": 136,
         "redirection_instruction_count": 5,
         "redirection_edge_count": 6,
-        "stop_instruction_count": 32,
-        "stop_edge_count": 42,
+        "stop_instruction_count": 37,
+        "stop_edge_count": 54,
     }
     assert Counter(row["source_instruction_fragment"] for row in rows) == {
         True: 48,
@@ -850,19 +853,19 @@ def test__round_five_semantic_gate__exact_covers_every_alias_candidate(
     }
     assert sweep["alias_evidence_semantic_decision_counts"] == {
         "approved_pairwise_decomposition": 19,
-        "approved_pairwise_typed_projection": 41,
+        "approved_pairwise_typed_projection": 29,
         "approved_single_pair": 181,
-        "disclosed_stop": 24,
+        "disclosed_stop": 36,
     }
-    assert sweep["approved_alias_evidence_count"] == 241
-    assert sweep["disclosed_stop_alias_evidence_count"] == 24
+    assert sweep["approved_alias_evidence_count"] == 229
+    assert sweep["disclosed_stop_alias_evidence_count"] == 36
     assert Counter(bool(row["approved_pair_rows"]) for row in rows) == {
-        True: 241,
-        False: 24,
+        True: 229,
+        False: 36,
     }
     assert sweep["approved_alias_pair_rows"] == embedded_pairs
-    assert sweep["approved_alias_pair_count"] == len(pair_ids) == 270
-    assert len(set(pair_ids)) == 270
+    assert sweep["approved_alias_pair_count"] == len(pair_ids) == 258
+    assert len(set(pair_ids)) == 258
     assert sweep["approved_alias_pair_keyset_sha256"] == a12._keyset_sha(
         pair_ids
     )
@@ -870,7 +873,23 @@ def test__round_five_semantic_gate__exact_covers_every_alias_candidate(
         embedded_pairs
     )
     assert sweep["occurrence_closure_alias_pair_count"] == 228
-    assert sweep["typed_projection_alias_pair_count"] == 42
+    assert sweep["typed_projection_alias_pair_count"] == 30
+
+    pilot_rows = [row for row in rows if row["pilot_document_member"]]
+    pilot_pairs = [
+        pair for row in pilot_rows for pair in row["approved_pair_rows"]
+    ]
+    assert len(pilot_rows) == 125
+    assert Counter(bool(row["approved_pair_rows"]) for row in pilot_rows) == {
+        True: 100,
+        False: 25,
+    }
+    assert len(pilot_pairs) == 101
+    assert sum(pair["class_closure_eligible"] for pair in pilot_pairs) == 73
+    assert (
+        sum(pair["typed_projection_union_prohibited"] for pair in pilot_pairs)
+        == 28
+    )
 
     assert sweep["alias_semantic_input_identity_rows"] == [
         {
@@ -884,9 +903,9 @@ def test__round_five_semantic_gate__exact_covers_every_alias_candidate(
             "path": (
                 "scripts/amendment12_composite_import_adjudication_v1.json"
             ),
-            "byte_size": 131_604,
+            "byte_size": 462_192,
             "raw_sha256": (
-                "47f21d24be95822ba284f10f6a25d8b645cd938d2008bc7762080e2be7d370ff"
+                "f7ece535faed311a0a863e1f19f6954a428e89d552341f9d88603fe9092072da"
             ),
         },
     ]
@@ -973,42 +992,115 @@ def test__round_five_nonledger_gate__adjudicates_all_108_bypass_rows(
     ]
 
 
-def test__round_five_composite_imports__decompose_without_union_or_stop(
+def test__round_five_composite_imports__decompose_or_stop_from_exact_text(
     bundle,
 ):
     specification, identity = a12._composite_import_semantic_specification()
     assert identity == {
         "path": "scripts/amendment12_composite_import_adjudication_v1.json",
-        "byte_size": 131_604,
+        "byte_size": 462_192,
         "raw_sha256": (
-            "47f21d24be95822ba284f10f6a25d8b645cd938d2008bc7762080e2be7d370ff"
+            "f7ece535faed311a0a863e1f19f6954a428e89d552341f9d88603fe9092072da"
         ),
     }
     assert specification["census"] == {
-        "decomposed_instruction_group_count": 19,
-        "decomposed_instruction_group_with_partial_stop_count": 6,
-        "full_stop_instruction_group_count": 2,
+        "decomposed_instruction_group_count": 14,
+        "decomposed_instruction_group_with_partial_stop_count": 7,
+        "exact_pairing_selector_citation_row_count": 114,
+        "full_stop_instruction_group_count": 7,
         "instruction_group_count": 21,
+        "missing_pair_stop_available_selector_citation_row_count": 23,
         "pair_producing_evidence_with_multiple_pairs_count": 1,
-        "pair_producing_source_evidence_count": 41,
-        "pure_decomposed_instruction_group_count": 13,
+        "pair_producing_source_evidence_count": 29,
+        "pure_decomposed_instruction_group_count": 7,
+        "selector_source_annotation_count": 3,
         "source_evidence_count": 51,
-        "stop_source_evidence_count": 10,
-        "typed_projection_pair_count": 42,
+        "stop_source_evidence_count": 22,
+        "typed_projection_pair_count": 30,
+        "unmatched_selector_citation_row_count": 9,
+        "unmatched_selector_stop_count": 9,
+        "unmatched_selector_with_stop_evidence_count": 5,
+        "unmatched_selector_without_candidate_evidence_count": 4,
     }
     decisions = specification["instruction_decisions"]
     assert Counter(row["disposition"] for row in decisions) == {
-        "pairwise_decomposition": 13,
-        "pairwise_decomposition_with_disclosed_stops": 6,
-        "disclosed_stop": 2,
+        "pairwise_decomposition": 7,
+        "pairwise_decomposition_with_disclosed_stops": 7,
+        "disclosed_stop": 7,
     }
     assert {
         row["sweep_row_index"]
         for row in decisions
+        if row["disposition"] == "pairwise_decomposition"
+    } == {70, 72, 107, 109, 138, 143, 161}
+    assert {
+        row["sweep_row_index"]
+        for row in decisions
+        if row["disposition"] == "pairwise_decomposition_with_disclosed_stops"
+    } == {88, 90, 91, 125, 127, 128, 139}
+    assert {
+        row["sweep_row_index"]
+        for row in decisions
         if row["disposition"] == "disclosed_stop"
-    } == {103, 140}
-    assert sum(len(row["typed_projection_pairs"]) for row in decisions) == 42
-    assert sum(len(row["stop_evidence_rows"]) for row in decisions) == 10
+    } == {78, 81, 103, 115, 118, 134, 140}
+
+    specification_pairs = [
+        pair for row in decisions for pair in row["typed_projection_pairs"]
+    ]
+    specification_stops = [
+        stop for row in decisions for stop in row["stop_evidence_rows"]
+    ]
+    unmatched_selector_stops = [
+        stop
+        for row in decisions
+        for stop in row["unmatched_selector_stop_rows"]
+    ]
+    assert len(specification_pairs) == 30
+    assert len(specification_stops) == 22
+    assert len(unmatched_selector_stops) == 9
+    assert Counter(
+        stop["represented_by_existing_stop_source_evidence"]
+        for stop in unmatched_selector_stops
+    ) == {True: 5, False: 4}
+    assert all(
+        stop["required_disposition"] == "disclosed_unmatched_selector_stop"
+        and len(stop["selector_citation_rows"]) == 1
+        and stop["selector_citation_rows"][0]["selector_member"]
+        == stop["question_selector"]
+        for stop in unmatched_selector_stops
+    )
+
+    exact_citation_rows = [
+        citation_row
+        for pair in specification_pairs
+        for key in (
+            "alias_selector_citation_rows",
+            "canonical_selector_citation_rows",
+        )
+        for citation_row in pair["exact_pairing_citation"][key]
+    ]
+    assert len(exact_citation_rows) == 114
+    assert Counter(row["citation_kind"] for row in exact_citation_rows) == {
+        "pinned_stage2_questionnaire_occurrence": 98,
+        "pinned_stage1_candidate_occurrence": 16,
+    }
+    assert all(
+        pair["exact_pairing_citation"]["semantic_type"]
+        == pair["semantic_type"]
+        and pair["exact_pairing_citation"]["alias_selector_members"]
+        == pair["alias_question_selector"].split("+")
+        and pair["exact_pairing_citation"]["canonical_selector_members"]
+        == pair["canonical_question_selector"].split("+")
+        and pair["exact_pairing_citation"]["pairing_citation_id"].startswith(
+            "a12-composite-exact-pairing-citation:"
+        )
+        for pair in specification_pairs
+    )
+    assert all(
+        row["matched_utf8_sha256"]
+        == hashlib.sha256(row["matched_text"].encode()).hexdigest()
+        for row in exact_citation_rows
+    )
 
     composite_evidence_ids = {
         evidence_id
@@ -1024,19 +1116,21 @@ def test__round_five_composite_imports__decompose_without_union_or_stop(
     ]
     assert len(semantic_rows) == len(composite_evidence_ids) == 51
     assert Counter(row["decision"] for row in semantic_rows) == {
-        "approved_pairwise_typed_projection": 41,
-        "disclosed_stop": 10,
+        "approved_pairwise_typed_projection": 29,
+        "disclosed_stop": 22,
     }
     typed_pairs = [
         pair for row in semantic_rows for pair in row["approved_pair_rows"]
     ]
-    assert len(typed_pairs) == 42
+    assert len(typed_pairs) == 30
     assert all(
         pair["pair_kind"] == "typed_instruction_import_projection"
         and pair["class_closure_eligible"] is False
         and pair["typed_projection_union_prohibited"] is True
         and pair["alias_question_selector"]
         and pair["canonical_question_selector"]
+        and pair["exact_pairing_citation"]
+        and pair["composite_typed_projection_pair_id"]
         for pair in typed_pairs
     )
     comparable_stop = next(
@@ -1455,15 +1549,15 @@ def test__five_repeat_dispositions__are_disjoint_and_fail_closed(
     assert redirection_instruction_ids.isdisjoint(aggregate_instruction_ids)
     assert sweep["repeat_coverage_census"] == {
         "repeat_occurrence_count": 2_460,
-        "valid_direct_proof_instruction_count": 212,
+        "valid_direct_proof_instruction_count": 207,
         "outside_domain_instruction_count": 34,
         "noncatalog_aggregate_relation_instruction_count": 13,
         "in_domain_redirection_instruction_count": 5,
         "in_domain_nonalias_relation_instruction_count": 18,
-        "incompatible_proof_instruction_count": 64,
+        "incompatible_proof_instruction_count": 69,
         "valid_and_incompatible_instruction_overlap_count": 0,
         "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
-        "disclosed_stop_instruction_count": 2_196,
+        "disclosed_stop_instruction_count": 2_201,
         "otherwise_unresolved_instruction_count": 2_132,
     }
     assert bundle["gate"]["overall_repeat_catalog_coverage_status"] == (
@@ -1473,16 +1567,16 @@ def test__five_repeat_dispositions__are_disjoint_and_fail_closed(
 
 def test__repeat_gate__does_not_hide_other_unresolved_instructions(bundle):
     census = bundle["gate"]["pilot_census"]
-    assert census["valid_direct_proof_instruction_count"] == 86
+    assert census["valid_direct_proof_instruction_count"] == 81
     assert census["outside_domain_instruction_count"] == 34
     assert census["noncatalog_aggregate_relation_instruction_count"] == 1
     assert census["in_domain_redirection_instruction_count"] == 2
     assert census["in_domain_nonalias_relation_instruction_count"] == 3
-    assert census["incompatible_proof_instruction_count"] == 25
+    assert census["incompatible_proof_instruction_count"] == 30
     assert census["lawful_repeat_coverage_multiple_arm_instruction_count"] == 0
-    assert census["disclosed_stop_instruction_count"] == 253
+    assert census["disclosed_stop_instruction_count"] == 258
     assert census["otherwise_unresolved_instruction_count"] == 228
-    assert 376 == 86 + 34 + 1 + 2 + 253
+    assert 376 == 81 + 34 + 1 + 2 + 258
     assert bundle["gate"]["overall_repeat_catalog_coverage_status"] == (
         "fail_closed_unresolved_rows_remain"
     )
