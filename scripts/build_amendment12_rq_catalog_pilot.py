@@ -21,7 +21,7 @@ import os
 import subprocess
 import tempfile
 from collections import Counter, defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
@@ -36,6 +36,9 @@ NONLEDGER_ALIAS_ADJUDICATION_PATH = (
 COMPOSITE_ALIAS_ADJUDICATION_PATH = (
     ROOT / "scripts" / "amendment12_composite_import_adjudication_v1.json"
 )
+COMPOSITE_INSTRUCTION_LAW_PATH = (
+    ROOT / "scripts" / "amendment12_composite_instruction_law_map_v1.json"
+)
 NONLEDGER_ALIAS_ADJUDICATION_BYTE_SIZE = 74_773
 NONLEDGER_ALIAS_ADJUDICATION_SHA256 = (
     "733f6c88ca19226db713f437ccaed8e8dfe781957f04e2f164b0dfdedb8e9870"
@@ -43,6 +46,10 @@ NONLEDGER_ALIAS_ADJUDICATION_SHA256 = (
 COMPOSITE_ALIAS_ADJUDICATION_BYTE_SIZE = 462_192
 COMPOSITE_ALIAS_ADJUDICATION_SHA256 = (
     "f7ece535faed311a0a863e1f19f6954a428e89d552341f9d88603fe9092072da"
+)
+COMPOSITE_INSTRUCTION_LAW_BYTE_SIZE = 17_768
+COMPOSITE_INSTRUCTION_LAW_SHA256 = (
+    "0f85663e9e9681dba405a5a104d6d581b892a6a0e9e3561bb608b2ec4366ebb7"
 )
 
 SOURCE_COMMIT = "19fa24c161e800e004320f0c10e81bce8831af68"
@@ -84,25 +91,25 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
         "069455f172490db3db04977542df1bbcda23c6a0350a739830188016622ea5be"
     ),
     "in_domain_component_cross_reference_sweep": (
-        "9cf4a80cc5b1e1d4ee7205df895c9a06f1519598ab77b2241687dc900011d75f"
+        "3826ff26177f409b855eb3b2aae3e3e1ae4c255f7d8f3db53f15668855ce159d"
     ),
     "in_domain_component_cross_reference_sweep_keyset": (
-        "bb37fdc977781ed4c3d901b219f8fca5a0b3458123e7bdc56d448b7972358edf"
+        "fbddc6aacd86db2d93dc945ba2217c243b05c810f43172cba7aaa4261395daa7"
     ),
     "semantic_alias_adjudication_keyset": (
-        "c858da0445f7d6deb58152f540cc502338ece99d3d8efef0a5a520b7bb8b96ff"
+        "d6ef33918540636117740f1d3f8b671c71f18b05e452ae94b3cd8658c79f16f0"
     ),
     "semantic_alias_instruction_outcome": (
-        "5acca42cb323c2d11994b69831b7ab2a0f6b604e1ebafe7bd3b787efa3887a14"
+        "13751e724b5c8496c7490161d3ec4f89dc32f6f2097899e9d243f2b10fea601e"
     ),
     "semantic_alias_equivalence_instruction_keyset": (
-        "f1c9a85682f7dd5e7aa9ac3faa1deebab3ee67d8dace70e48e3a0d6583a4a870"
+        "f82b497a80e9939ee4b0e2bd07ff6b053b3fa526f982394fe0d22ab9b7fb3e0f"
     ),
     "semantic_alias_redirection_instruction_keyset": (
         "dc72be9182f5b50fd358e492b952ba83ac41ccd99ec3ba117c8fe075013e8f72"
     ),
     "semantic_alias_stop_instruction_keyset": (
-        "182fdd22500c361760cf1973760e1c5178ceaa76f5a5cf88314bbc91e9404973"
+        "17a517a6cca6d0bb5c0767de49cbdc9dbcc79c963f74e988878112538eae39bd"
     ),
     "semantic_alias_fragment_instruction_keyset": (
         "25c6f38c37df363edfccf5c25c59c98dd7f06753cf19374c808eb011f83fdace"
@@ -111,19 +118,19 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
         "74075ac0ca54eff2a9459d4e95f426195c9e01db78040025462aa2f57f486a09"
     ),
     "alias_semantic_input_identity": (
-        "48c175829e9c6e309b98b04f86a0d52f6e3cdf0ed223b84c73a1961ada5b5526"
+        "b646228632da7baaeaff2f581c64aad2c087fa56c4870478844abfeb82cafd11"
     ),
     "alias_evidence_semantic_adjudication_keyset": (
-        "ffafaed44de98c83ecf62c10a1c94d0a7c6c157d7bac388a63f7b1f9d77788de"
+        "5b1a310efda8a7c74559c9c424ba72848d745dff9c0961e00095c130d4d8cd7d"
     ),
     "alias_evidence_semantic_adjudication": (
-        "756fc37b17218f18cacb893e94a8fb2e75249b19eff2f403322fb3a4f72eb36b"
+        "ebd4d021cd29549fa311ea45c16297f5368eccd42bd3174f536c1945ce7eb884"
     ),
     "approved_alias_pair_keyset": (
-        "7314e1782ec3e1ad6bccc8073583c2c1cec7f2a9976dc63b18b2f6c4be1cb43a"
+        "df298bef2192c88e009c459304eb919c759fd919a1cef6db1612d70cb95f5389"
     ),
     "approved_alias_pair": (
-        "c9f6ec7976e0d7effc26cc87e22d4282026403dd5d756834df21b0cd6ac47d6b"
+        "6190969e68031be1e3b938baae4fe39371eaed9c8f697f91e59fbbdc66f700c4"
     ),
     "component_parent_shape_keyset": (
         "b1aaad10fac7e3a6eb35edabd99c079137404109f0b912f8726446965a1d0524"
@@ -141,13 +148,13 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
         "3abf42fb2a4dc3f30aec676054423aa546011d01118aafd8034fa7291b1f1c62"
     ),
     "component_class_admission": (
-        "388a6df4988a6736ea24b126f5d6d47464f5d9e4ed2af797533bbfeee32b9eb1"
+        "c52c4bcb4d20e216f3d84dac71ac375610b1ed393d5697538a3b5ddfd82821ef"
     ),
     "catalog_only_job_complement_keyset": (
         "5dda6acc66f6b742ecd3bf8d2ac819b6309a89c44c39d6dd7578ad8a7e9496c1"
     ),
     "catalog_only_job_complement": (
-        "952f63677811f9dff6387520ee84cc9dba051ed17052d1b3646647f02ecda6f2"
+        "cef11412144bacb139c5034045b2b002eb6a898fb3ad736f6cdda3874c21138d"
     ),
     "doc036_aggregate_component_slot": (
         "7cbeacb1e431e4e1486c726863cdf4f1213a76e5ab7259c69d390adaae7c7727"
@@ -415,15 +422,210 @@ psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcc
 COMPOSITE_IMPORT_STOP_FINDING_BY_INSTRUCTION = {
     (
         "psid-questionnaire-occurrence:"
+        "dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0"
+    ): "exact_selector_text_unavailable_no_pair",
+    (
+        "psid-questionnaire-occurrence:"
+        "ceedb0f652116dcaaba199e11f90365e8bdaf0557d783e0adc5b3ddc3e3aa33b"
+    ): "exact_selector_text_unavailable_no_pair",
+    (
+        "psid-questionnaire-occurrence:"
         "35833279648220c82c4340b8a40d6823b3d3fc231eca8180cdd635479521a052"
-    ): "composite_range_has_no_exact_text_derived_pairing",
+    ): "named_ranges_do_not_derive_a_bijection",
+    (
+        "psid-questionnaire-occurrence:"
+        "586b32d3786d0c7e475e39b30cf3f5a081a5943bba6093c4bea5886af47812ff"
+    ): "exact_selector_text_unavailable_no_pair",
+    (
+        "psid-questionnaire-occurrence:"
+        "879048f9a5169e56b506da7c84c7780e4da524927635ec6ae52dcbc43a467e5c"
+    ): "exact_selector_text_unavailable_no_pair",
+    (
+        "psid-questionnaire-occurrence:"
+        "ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d"
+    ): "mixed_missing_selector_and_unnamed_type_no_pair",
     (
         "psid-questionnaire-occurrence:"
         "4c354d978faf69b2a8e4f567e344b272c097bdc28cc6986adafcb2f8d38af3ab"
-    ): "comparable_questions_do_not_prove_equivalence",
+    ): "comparability_does_not_prove_equivalence_or_pairing",
 }
 COMPOSITE_IMPORT_STOP_INSTRUCTION_IDS = frozenset(
     COMPOSITE_IMPORT_STOP_FINDING_BY_INSTRUCTION
+)
+
+# This is an independent, closed commitment to the exact selector law for
+# each of the 21 composite instructions.  The tuple binds the instruction to
+# the questionnaire in which its named question text must occur.  The digest
+# binds every alias/canonical selector, selector member, typed pairing,
+# evidence STOP, unmatched-selector STOP, and exact selector citation.  A
+# refreshed semantic input therefore cannot silently substitute a selector,
+# questionnaire, pairing, or missing-source claim while merely repinning its
+# own internal IDs.
+COMPOSITE_INSTRUCTION_SOURCE_POSITION_LAW = {
+    70: (
+        "psid-questionnaire-occurrence:"
+        "cb562486f76e7f4dcb2a4ef574a0ae413de9a2ede4d4450ad2e8cf96058e8b2d",
+        56,
+        57,
+    ),
+    72: (
+        "psid-questionnaire-occurrence:"
+        "d986ab2a3dfc95f31fda53fac4a23b7520ee9fd449d2ef501569afe651b3a369",
+        56,
+        57,
+    ),
+    78: (
+        "psid-questionnaire-occurrence:"
+        "dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0",
+        56,
+        57,
+    ),
+    81: (
+        "psid-questionnaire-occurrence:"
+        "ceedb0f652116dcaaba199e11f90365e8bdaf0557d783e0adc5b3ddc3e3aa33b",
+        56,
+        57,
+    ),
+    88: (
+        "psid-questionnaire-occurrence:"
+        "357281a0ee7987a14867f92a263f3aa1097d8bb5202d45820e4e8af363a7157b",
+        56,
+        57,
+    ),
+    90: (
+        "psid-questionnaire-occurrence:"
+        "a769c4a969cdaca2142d0aab2e2cee8aa2f9f83d4fe1abf4235e4bd9acb5c9f5",
+        56,
+        57,
+    ),
+    91: (
+        "psid-questionnaire-occurrence:"
+        "455271aa575d2126ae53289ab69e2eeb4fb652c63cad693f8ce70208a351731f",
+        56,
+        57,
+    ),
+    103: (
+        "psid-questionnaire-occurrence:"
+        "35833279648220c82c4340b8a40d6823b3d3fc231eca8180cdd635479521a052",
+        56,
+        57,
+    ),
+    107: (
+        "psid-questionnaire-occurrence:"
+        "bbdbc781bb95e0d12442053e1bf4a84094b4b88c42c8e2edb728d659891ee5dc",
+        58,
+        59,
+    ),
+    109: (
+        "psid-questionnaire-occurrence:"
+        "e84a537936c186e2873ea2d79ff28ef6d9cec295b75db355ed318720ca661bac",
+        58,
+        59,
+    ),
+    115: (
+        "psid-questionnaire-occurrence:"
+        "586b32d3786d0c7e475e39b30cf3f5a081a5943bba6093c4bea5886af47812ff",
+        58,
+        59,
+    ),
+    118: (
+        "psid-questionnaire-occurrence:"
+        "879048f9a5169e56b506da7c84c7780e4da524927635ec6ae52dcbc43a467e5c",
+        58,
+        59,
+    ),
+    125: (
+        "psid-questionnaire-occurrence:"
+        "c020df281459e26b8415bdb22c92f9ce30a0302cc21732ddaad3039ddf77b610",
+        58,
+        59,
+    ),
+    127: (
+        "psid-questionnaire-occurrence:"
+        "c3275a8794901e02bc0e54360ec899e43e61838b586fcf4fd171dbadd368a3ef",
+        58,
+        59,
+    ),
+    128: (
+        "psid-questionnaire-occurrence:"
+        "7a8a6bb241c7caa6856a50674c1ca8b82b69cf366e1b982c2895bbd6578f3ac0",
+        58,
+        59,
+    ),
+    134: (
+        "psid-questionnaire-occurrence:"
+        "ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d",
+        58,
+        59,
+    ),
+    138: (
+        "psid-questionnaire-occurrence:"
+        "e743178fd99199a9b422f04dc9a8c20a700a2d1f698c58fc87b60067a91e2f72",
+        58,
+        59,
+    ),
+    139: (
+        "psid-questionnaire-occurrence:"
+        "1e5f65bf74b51459b2db19f2c8b433a9df29a660fcb5bed021e98a71e4c8ff2f",
+        58,
+        59,
+    ),
+    140: (
+        "psid-questionnaire-occurrence:"
+        "4c354d978faf69b2a8e4f567e344b272c097bdc28cc6986adafcb2f8d38af3ab",
+        58,
+        59,
+    ),
+    143: (
+        "psid-questionnaire-occurrence:"
+        "c7bc4ab94c2320b283203e6d6d677c21f84b9d61e10880b5f9b4d9c0261386d0",
+        58,
+        59,
+    ),
+    161: (
+        "psid-questionnaire-occurrence:"
+        "3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcce683ff5dee1a9e",
+        70,
+        71,
+    ),
+}
+COMPOSITE_INSTRUCTION_SELECTOR_LAW_SHA256 = {
+    70: "f4b3235fd66b38e8dd39b229160c55101973d0f546a95d6f34e2a309f12548a7",
+    72: "b01dfe54fa6870d260f6e83352c99eb65ae839f0f732629b9511fc5786a2cc01",
+    78: "1664ea9187dae16d70cdba2292075212854233da875bce7b6ad7ae61bb36a30c",
+    81: "867b5e39d5daeb1ed63bea1764bd7e1d185b469c04b7b0e4b39143991f27abe9",
+    88: "8063b1ad4dece89bc4c7d4d85fb6bc71b2b633a7c571a8fbbdafa48008636159",
+    90: "7bd1fe5f79ac9d39780024edae943559b22bc545c4d7c646344da2616bbc399d",
+    91: "6414175c1507414164be3ec53779193f7b0a11683cd774014561111c1e90e5cc",
+    103: "3226094beb56add43a4cf042fc143e2c5a37c6c25d58c369951632dd931781b9",
+    107: "ad21ca8bc848680e27e4af7ddae6f018e1d101ad4bcf0f3948f25b85d6fa48f3",
+    109: "0f559d8494ba40ce1ee4a72aeec212f4ae270376cd23064626e7f538127c9ea0",
+    115: "980b8f7cd5d71101fd3865cd5bdd1e32e878695340ffb5e78a6f00619a0e045f",
+    118: "9aefb9ee1a904e5d8b3860051951a1fe80e95ba674b813d00995225cff3d846c",
+    125: "6eb06df5b3fe165791142dec1b569a1aae6e5d17e3314e523c865aacbd141345",
+    127: "38ebb3fcbacc5c218280643de9f967bbefbbe56142e40d46b4ac7f9fc2705ab0",
+    128: "b8c9d42d343603a56a0cce0de2fc817885ca0ea0031aa2c56b3143ae54ed506b",
+    134: "8613ca102d03e6c73d9c6e13f8ad7128803682d2aed55b0bf7bec7c803a49d0d",
+    138: "491a34fb3e139ccb4bd08754d15f55d8956879bea6ad20ddd585986f368f923a",
+    139: "73aea47cd8ce2f92e0bf9f34a4ff00cf835f3d079e25410a425658a0c9b65fa0",
+    140: "c131879ba6af730d8e0abca3c292c7b8d56ded9aa3b63c7ee12f3ebb24e3f539",
+    143: "0a43bcf6528e2abcf269557f4645251422bf25b6acd954e4abbb3cf69d8b97cf",
+    161: "957d72f7e7f1e7eb14caec2f747ca5347e9a9c903b3cd9ae97d2c7602961dc6e",
+}
+COMPOSITE_STOP_MISSING_SOURCE_ROW_KEYS = frozenset(
+    {"finding", "reason_code", "selector", "side"}
+)
+COMPOSITE_STOP_MISSING_SOURCE_FINDING = (
+    "The registered q96/q97 questionnaire refers the interviewer to a "
+    "separate supplement, but no exact question text for this selector "
+    "appears in the registered questionnaire PDF or its pinned stage-2 "
+    "occurrences."
+)
+COMPOSITE_STOP_MISSING_SOURCE_REASON_CODES = frozenset(
+    {
+        "work_history_supplement_not_in_registered_questionnaire",
+        "yellow_job_supplement_not_in_registered_questionnaire",
+    }
 )
 
 AGGREGATE_RELATION_SUBKIND = "aggregate_or_repeated_instance"
@@ -3757,6 +3959,31 @@ COMPOSITE_UNMATCHED_SELECTOR_STOP_KEYS = frozenset(
         "unmatched_selector_stop_id",
     }
 )
+COMPOSITE_INSTRUCTION_LAW_TOP_KEYS = frozenset(
+    {
+        "instruction_group_count",
+        "instruction_law_rows",
+        "schema_version",
+        "source_adjudication_path",
+        "stop_pair_count",
+        "typed_pair_count",
+        "unmatched_selector_count",
+    }
+)
+COMPOSITE_INSTRUCTION_LAW_ROW_KEYS = frozenset(
+    {
+        "allowed_typed_pair_triples",
+        "expected_instruction_document_source_position",
+        "expected_questionnaire_document_source_position",
+        "expected_stop_pair_tuples",
+        "expected_unmatched_selector_tuples",
+        "instruction_id",
+        "ordered_alias_selector_domain",
+        "ordered_canonical_selector_domain",
+        "sweep_row_index",
+    }
+)
+COMPOSITE_INSTRUCTION_LAW_SELECTOR_KEYS = frozenset({"members", "selector"})
 SELECTOR_STAGE2_CITATION_KEYS = frozenset(
     {
         "authority_registry_id",
@@ -3876,6 +4103,216 @@ def _validate_selector_citation_shape(
     return selector_member, f"{kind}:{source_id}"
 
 
+@cache
+def _composite_instruction_law_specification() -> (
+    tuple[dict[str, Any], dict[str, Any]]
+):
+    """Load the independent closed selector law for composite imports."""
+    value, identity = _load_pinned_semantic_specification(
+        COMPOSITE_INSTRUCTION_LAW_PATH,
+        expected_byte_size=COMPOSITE_INSTRUCTION_LAW_BYTE_SIZE,
+        expected_raw_sha256=COMPOSITE_INSTRUCTION_LAW_SHA256,
+    )
+    _require_exact_keys(
+        value,
+        COMPOSITE_INSTRUCTION_LAW_TOP_KEYS,
+        "composite instruction selector law",
+    )
+    _require(
+        value["schema_version"]
+        == "amendment12-composite-instruction-law-map.audit-v1"
+        and value["source_adjudication_path"]
+        == COMPOSITE_ALIAS_ADJUDICATION_PATH.relative_to(ROOT).as_posix()
+        and value["instruction_group_count"] == 21
+        and value["typed_pair_count"] == 30
+        and value["stop_pair_count"] == 22
+        and value["unmatched_selector_count"] == 9,
+        "composite instruction selector law census drift",
+    )
+    rows = value["instruction_law_rows"]
+    _require(
+        isinstance(rows, list) and len(rows) == 21,
+        "composite instruction selector law row count",
+    )
+    for row in rows:
+        _require_exact_keys(
+            row,
+            COMPOSITE_INSTRUCTION_LAW_ROW_KEYS,
+            "composite instruction selector law row",
+        )
+        index = _require_int(
+            row["sweep_row_index"], "composite instruction law index"
+        )
+        _require(
+            (
+                row["instruction_id"],
+                row["expected_instruction_document_source_position"],
+                row["expected_questionnaire_document_source_position"],
+            )
+            == COMPOSITE_INSTRUCTION_SOURCE_POSITION_LAW.get(index),
+            "composite instruction source-position law drift",
+        )
+        for side in ("alias", "canonical"):
+            selector_rows = row[f"ordered_{side}_selector_domain"]
+            _require(
+                isinstance(selector_rows, list) and selector_rows,
+                f"composite {side} selector law domain",
+            )
+            selectors: list[str] = []
+            members: list[str] = []
+            for selector_row in selector_rows:
+                _require_exact_keys(
+                    selector_row,
+                    COMPOSITE_INSTRUCTION_LAW_SELECTOR_KEYS,
+                    f"composite {side} selector law row",
+                )
+                selectors.append(
+                    _require_string(
+                        selector_row["selector"],
+                        f"composite {side} selector",
+                    )
+                )
+                selector_members = selector_row["members"]
+                _require(
+                    isinstance(selector_members, list)
+                    and selector_members
+                    and all(
+                        isinstance(member, str) and member
+                        for member in selector_members
+                    )
+                    and len(selector_members) == len(set(selector_members)),
+                    f"composite {side} selector member law",
+                )
+                members.extend(selector_members)
+            _require(
+                len(selectors) == len(set(selectors))
+                and len(members) == len(set(members)),
+                f"composite {side} selector law overlap",
+            )
+        _require(
+            all(
+                isinstance(triple, list)
+                and len(triple) == 3
+                and all(isinstance(item, str) and item for item in triple)
+                for triple in row["allowed_typed_pair_triples"]
+            )
+            and all(
+                isinstance(stop, list)
+                and len(stop) == 4
+                and all(isinstance(item, str) and item for item in stop)
+                for stop in row["expected_stop_pair_tuples"]
+            )
+            and all(
+                isinstance(stop, list)
+                and len(stop) == 4
+                and stop[0] in {"alias", "canonical"}
+                and isinstance(stop[1], str)
+                and isinstance(stop[2], str)
+                and isinstance(stop[3], bool)
+                for stop in row["expected_unmatched_selector_tuples"]
+            ),
+            "composite instruction selector law tuple shape",
+        )
+    _require(
+        [row["sweep_row_index"] for row in rows]
+        == list(COMPOSITE_INSTRUCTION_SOURCE_POSITION_LAW)
+        and sum(len(row["allowed_typed_pair_triples"]) for row in rows)
+        == value["typed_pair_count"]
+        and sum(len(row["expected_stop_pair_tuples"]) for row in rows)
+        == value["stop_pair_count"]
+        and sum(len(row["expected_unmatched_selector_tuples"]) for row in rows)
+        == value["unmatched_selector_count"],
+        "composite instruction selector law exact-cover drift",
+    )
+    return value, identity
+
+
+def _composite_instruction_selector_projection(
+    decision: Mapping[str, Any],
+) -> list[Any]:
+    """Project every selector-relevance fact bound by the closed law."""
+    return [
+        decision["sweep_row_index"],
+        decision["instruction_id"],
+        [
+            [
+                pair["source_evidence_id"],
+                pair["alias_combined_occurrence_id"],
+                pair["canonical_combined_occurrence_id"],
+                pair["alias_question_selector"],
+                pair["canonical_question_selector"],
+                pair["semantic_type"],
+                pair["pairing_basis_code"],
+                pair["exact_pairing_citation"],
+            ]
+            for pair in decision["typed_projection_pairs"]
+        ],
+        [
+            [
+                stop["source_evidence_id"],
+                stop["alias_combined_occurrence_id"],
+                stop["canonical_combined_occurrence_id"],
+                stop["alias_question_selector"],
+                stop["canonical_question_selector"],
+                stop["finding_code"],
+                stop["pairing_source_status"],
+                stop["selector_source_audit"],
+            ]
+            for stop in decision["stop_evidence_rows"]
+        ],
+        [
+            [
+                stop["selector_side"],
+                stop["question_selector"],
+                stop["semantic_type"],
+                stop["finding_code"],
+                stop["represented_by_existing_stop_source_evidence"],
+                stop["stop_source_evidence_ids"],
+                stop["selector_citation_rows"],
+            ]
+            for stop in decision["unmatched_selector_stop_rows"]
+        ],
+    ]
+
+
+def _validate_composite_instruction_selector_commitment(
+    decision: Mapping[str, Any],
+) -> None:
+    """Reject any coherent rewrite of an instruction's selector law."""
+    index = decision["sweep_row_index"]
+    _require(
+        index in COMPOSITE_INSTRUCTION_SELECTOR_LAW_SHA256
+        and _domain_sha(_composite_instruction_selector_projection(decision))
+        == COMPOSITE_INSTRUCTION_SELECTOR_LAW_SHA256[index],
+        "composite instruction selector relevance/exact-cover law drift",
+    )
+
+
+def _make_composite_selector_coverer(
+    selector_law_by_side: Mapping[str, Mapping[str, Sequence[str]]],
+    selector_coverage_by_side: dict[str, dict[str, list[str]]],
+) -> Callable[[str, str, Sequence[str], str], None]:
+    """Bind one instruction's selector law and exact-cover accumulator."""
+
+    def cover_selector(
+        side: str, selector: str, members: Sequence[str], label: str
+    ) -> None:
+        expected_members = selector_law_by_side[side].get(selector)
+        _require(
+            expected_members is not None and list(members) == expected_members,
+            f"{label}: selector/member law drift",
+        )
+        prior = selector_coverage_by_side[side].setdefault(
+            selector, list(members)
+        )
+        _require(
+            prior == list(members),
+            f"{label}: conflicting selector coverage",
+        )
+
+    return cover_selector
+
+
 def _composite_import_semantic_specification() -> (
     tuple[dict[str, Any], dict[str, Any]]
 ):
@@ -3927,6 +4364,13 @@ def _composite_import_semantic_specification() -> (
         "composite instruction domain drift",
     )
     decisions = value["instruction_decisions"]
+    instruction_law, _instruction_law_identity = (
+        _composite_instruction_law_specification()
+    )
+    instruction_law_by_index = {
+        row["sweep_row_index"]: row
+        for row in instruction_law["instruction_law_rows"]
+    }
     _require(
         [row["instruction_id"] for row in decisions]
         == value["ordered_instruction_domain"],
@@ -3945,6 +4389,43 @@ def _composite_import_semantic_specification() -> (
         _require_exact_keys(
             decision, COMPOSITE_DECISION_KEYS, "composite decision"
         )
+        sweep_index = decision["sweep_row_index"]
+        law = instruction_law_by_index.get(sweep_index)
+        _require(
+            law is not None
+            and law["instruction_id"] == decision["instruction_id"],
+            "composite instruction is absent from the closed selector law",
+        )
+        instruction_position = law[
+            "expected_instruction_document_source_position"
+        ]
+        questionnaire_position = law[
+            "expected_questionnaire_document_source_position"
+        ]
+        selector_law_by_side = {
+            side: {
+                row["selector"]: row["members"]
+                for row in law[f"ordered_{side}_selector_domain"]
+            }
+            for side in ("alias", "canonical")
+        }
+        selector_coverage_by_side: dict[str, dict[str, list[str]]] = {
+            "alias": {},
+            "canonical": {},
+        }
+        paired_members_by_side: dict[str, set[str]] = {
+            "alias": set(),
+            "canonical": set(),
+        }
+        unmatched_members_by_side: dict[str, set[str]] = {
+            "alias": set(),
+            "canonical": set(),
+        }
+        cover_selector = _make_composite_selector_coverer(
+            selector_law_by_side,
+            selector_coverage_by_side,
+        )
+
         source_ids = decision["source_evidence_ids"]
         approved_ids = decision["pair_producing_source_evidence_ids"]
         rejected_ids = decision["stop_source_evidence_ids"]
@@ -3969,7 +4450,9 @@ def _composite_import_semantic_specification() -> (
                 pair, COMPOSITE_TYPED_PAIR_KEYS, "composite typed pair"
             )
             _require(
-                pair["instruction_id"] == decision["instruction_id"],
+                pair["instruction_id"] == decision["instruction_id"]
+                and pair["instruction_citation"]["document_source_position"]
+                == instruction_position,
                 "composite pair instruction drift",
             )
             citation = pair["exact_pairing_citation"]
@@ -4008,11 +4491,29 @@ def _composite_import_semantic_specification() -> (
                     == len(member_rows),
                     f"composite {side} selector citation exact cover",
                 )
+                selector = pair[f"{side}_question_selector"]
+                cover_selector(
+                    side,
+                    selector,
+                    members,
+                    f"composite typed {side} pair",
+                )
+                _require(
+                    not paired_members_by_side[side] & set(members)
+                    and all(
+                        row["document_source_position"]
+                        == questionnaire_position
+                        for row in citation_rows
+                    ),
+                    f"composite typed {side} pair member or source reuse",
+                )
+                paired_members_by_side[side].update(members)
                 citation_identity_rows.extend(
                     identity for _member, identity in member_rows
                 )
             _require(
                 citation["questionnaire_document_source_position"]
+                == questionnaire_position
                 == citation["alias_selector_citation_rows"][0][
                     "document_source_position"
                 ]
@@ -4068,6 +4569,12 @@ def _composite_import_semantic_specification() -> (
             _require_exact_keys(
                 stop, COMPOSITE_STOP_KEYS, "composite evidence STOP"
             )
+            _require(
+                stop["instruction_id"] == decision["instruction_id"]
+                and stop["instruction_citation"]["document_source_position"]
+                == instruction_position,
+                "composite STOP instruction drift",
+            )
             selector_audit = stop["selector_source_audit"]
             if selector_audit is None:
                 _require(
@@ -4075,6 +4582,16 @@ def _composite_import_semantic_specification() -> (
                     == "exact_instruction_text_does_not_derive_pair",
                     "composite evidence STOP source status drift",
                 )
+                for side in ("alias", "canonical"):
+                    selector = stop[f"{side}_question_selector"]
+                    members = selector_law_by_side[side].get(selector)
+                    if members is not None:
+                        cover_selector(
+                            side,
+                            selector,
+                            members,
+                            f"composite unaudited STOP {side}",
+                        )
             else:
                 _require_exact_keys(
                     selector_audit,
@@ -4089,14 +4606,78 @@ def _composite_import_semantic_specification() -> (
                     and selector_audit["missing_source_rows"],
                     "composite missing-selector STOP drift",
                 )
+                missing_rows = selector_audit["missing_source_rows"]
+                for missing in missing_rows:
+                    _require_exact_keys(
+                        missing,
+                        COMPOSITE_STOP_MISSING_SOURCE_ROW_KEYS,
+                        "composite STOP missing-source row",
+                    )
+                    _require(
+                        missing["side"] in {"alias", "canonical"}
+                        and missing["reason_code"]
+                        in COMPOSITE_STOP_MISSING_SOURCE_REASON_CODES
+                        and missing["finding"]
+                        == COMPOSITE_STOP_MISSING_SOURCE_FINDING
+                        and missing["selector"]
+                        == stop[f"{missing['side']}_question_selector"],
+                        "composite STOP missing-source row law drift",
+                    )
                 for side in ("alias", "canonical"):
-                    for citation in selector_audit[
+                    selector = stop[f"{side}_question_selector"]
+                    citation_rows = selector_audit[
                         f"{side}_selector_citation_rows"
-                    ]:
+                    ]
+                    missing_side_rows = [
+                        row for row in missing_rows if row["side"] == side
+                    ]
+                    member_rows = [
                         _validate_selector_citation_shape(
                             citation,
                             f"composite STOP {side} available citation",
                         )
+                        for citation in citation_rows
+                    ]
+                    if citation_rows:
+                        citation_members = list(
+                            dict.fromkeys(
+                                member for member, _identity in member_rows
+                            )
+                        )
+                        _require(
+                            not missing_side_rows
+                            and all(
+                                citation["document_source_position"]
+                                == questionnaire_position
+                                for citation in citation_rows
+                            ),
+                            f"composite STOP {side} citation source drift",
+                        )
+                        cover_selector(
+                            side,
+                            selector,
+                            citation_members,
+                            f"composite STOP {side} citation",
+                        )
+                    else:
+                        _require(
+                            len(missing_side_rows) == 1,
+                            f"composite STOP {side} missing exact cover",
+                        )
+                        expected_members = selector_law_by_side[side].get(
+                            selector
+                        )
+                        _require(
+                            expected_members is not None,
+                            f"composite STOP {side} missing selector law",
+                        )
+                        cover_selector(
+                            side,
+                            selector,
+                            expected_members,
+                            f"composite STOP {side} missing source",
+                        )
+                    for _citation in citation_rows:
                         missing_stop_citation_count += 1
             expected_stop_id = _row_id(
                 "a12-composite-import-stop:",
@@ -4111,8 +4692,7 @@ def _composite_import_semantic_specification() -> (
                 ],
             )
             _require(
-                stop["instruction_id"] == decision["instruction_id"]
-                and stop["stop_adjudication_id"] == expected_stop_id,
+                stop["stop_adjudication_id"] == expected_stop_id,
                 "composite evidence STOP identity drift",
             )
             stop_ids_in_decision.append(expected_stop_id)
@@ -4139,15 +4719,35 @@ def _composite_import_semantic_specification() -> (
                 isinstance(citation_rows, list) and citation_rows,
                 "composite unmatched selector citation rows",
             )
+            member_rows: list[tuple[str, str]] = []
             for citation in citation_rows:
                 member, _identity = _validate_selector_citation_shape(
                     citation, "composite unmatched selector citation"
                 )
-                _require(
-                    member == stop["question_selector"],
-                    "composite unmatched selector citation exact cover",
-                )
+                member_rows.append((member, _identity))
                 unmatched_selector_citation_count += 1
+            side = stop["selector_side"]
+            unmatched_members = list(
+                dict.fromkeys(member for member, _identity in member_rows)
+            )
+            cover_selector(
+                side,
+                stop["question_selector"],
+                unmatched_members,
+                "composite unmatched selector STOP",
+            )
+            _require(
+                not paired_members_by_side[side] & set(unmatched_members)
+                and not unmatched_members_by_side[side]
+                & set(unmatched_members)
+                and all(
+                    citation["document_source_position"]
+                    == questionnaire_position
+                    for citation in citation_rows
+                ),
+                "composite paired/unmatched selector domain overlap",
+            )
+            unmatched_members_by_side[side].update(unmatched_members)
             expected_unmatched_id = _row_id(
                 "a12-composite-unmatched-selector-stop:",
                 [
@@ -4165,6 +4765,48 @@ def _composite_import_semantic_specification() -> (
                 "composite unmatched selector STOP identity drift",
             )
             unmatched_ids_in_decision.append(expected_unmatched_id)
+        actual_typed_triples = [
+            [
+                pair["alias_question_selector"],
+                pair["canonical_question_selector"],
+                pair["semantic_type"],
+            ]
+            for pair in pairs
+        ]
+        actual_stop_tuples = [
+            [
+                stop["alias_question_selector"],
+                stop["canonical_question_selector"],
+                stop["finding_code"],
+                stop["pairing_source_status"],
+            ]
+            for stop in stops
+        ]
+        actual_unmatched_tuples = [
+            [
+                stop["selector_side"],
+                stop["question_selector"],
+                stop["semantic_type"],
+                stop["represented_by_existing_stop_source_evidence"],
+            ]
+            for stop in unmatched_stops
+        ]
+        _require(
+            actual_typed_triples == law["allowed_typed_pair_triples"]
+            and actual_stop_tuples == law["expected_stop_pair_tuples"]
+            and actual_unmatched_tuples
+            == law["expected_unmatched_selector_tuples"]
+            and selector_coverage_by_side
+            == {
+                side: {
+                    row["selector"]: row["members"]
+                    for row in law[f"ordered_{side}_selector_domain"]
+                }
+                for side in ("alias", "canonical")
+            },
+            "composite instruction selector relevance/exact-cover law drift",
+        )
+        _validate_composite_instruction_selector_commitment(decision)
         expected_disposition = (
             "disclosed_stop"
             if not pairs
@@ -5120,7 +5762,14 @@ def _alias_evidence_semantic_adjudication_rows(
         == len(all_pair_rows),
         "duplicate semantic pair adjudication ID",
     )
-    return adjudication_rows, [nonledger_identity, composite_identity]
+    _instruction_law, instruction_law_identity = (
+        _composite_instruction_law_specification()
+    )
+    return adjudication_rows, [
+        nonledger_identity,
+        composite_identity,
+        instruction_law_identity,
+    ]
 
 
 def _in_domain_component_cross_reference_sweep_rows(
@@ -11254,15 +11903,15 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "aggregate_anchor_count": 545,
         "repeat_occurrence_count": 376,
         "local_evidence_row_count": 418,
-        "valid_direct_proof_instruction_count": 86,
+        "valid_direct_proof_instruction_count": 81,
         "outside_domain_instruction_count": 34,
         "noncatalog_aggregate_relation_instruction_count": 1,
         "in_domain_redirection_instruction_count": 2,
         "in_domain_nonalias_relation_instruction_count": 3,
-        "incompatible_proof_instruction_count": 25,
+        "incompatible_proof_instruction_count": 30,
         "valid_and_incompatible_instruction_overlap_count": 0,
         "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
-        "disclosed_stop_instruction_count": 253,
+        "disclosed_stop_instruction_count": 258,
         "otherwise_unresolved_instruction_count": 228,
         "raw_cross_category_multi_parent_count": 86,
         "eligible_cross_category_multi_parent_count": 86,
@@ -11518,13 +12167,13 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         == {
             "instruction_count": 162,
             "edge_count": 195,
-            "alias_instruction_count": 125,
+            "alias_instruction_count": 120,
             "redirection_instruction_count": 5,
-            "stop_instruction_count": 32,
-            "alias_edge_count": 147,
-            "alias_pair_count": 148,
+            "stop_instruction_count": 37,
+            "alias_edge_count": 135,
+            "alias_pair_count": 136,
             "redirection_edge_count": 6,
-            "stop_edge_count": 42,
+            "stop_edge_count": 54,
         },
         "component cross-reference partition drift",
     )
@@ -11544,6 +12193,13 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
             "byte_size": COMPOSITE_ALIAS_ADJUDICATION_BYTE_SIZE,
             "raw_sha256": COMPOSITE_ALIAS_ADJUDICATION_SHA256,
         },
+        {
+            "path": COMPOSITE_INSTRUCTION_LAW_PATH.relative_to(
+                ROOT
+            ).as_posix(),
+            "byte_size": COMPOSITE_INSTRUCTION_LAW_BYTE_SIZE,
+            "raw_sha256": COMPOSITE_INSTRUCTION_LAW_SHA256,
+        },
     ]
     _require(
         isinstance(semantic_input_rows, list)
@@ -11552,7 +12208,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
             for row in semantic_input_rows
         )
         and semantic_input_rows == expected_semantic_input_rows
-        and sweep["alias_semantic_input_identity_count"] == 2
+        and sweep["alias_semantic_input_identity_count"] == 3
         and sweep["alias_semantic_input_identity_domain_sha256"]
         == _domain_sha(semantic_input_rows)
         == PINNED_SWEEP_DOMAIN_SHA256["alias_semantic_input_identity"],
@@ -11585,9 +12241,9 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     ]
     expected_decisions = {
         "approved_pairwise_decomposition": 19,
-        "approved_pairwise_typed_projection": 41,
+        "approved_pairwise_typed_projection": 29,
         "approved_single_pair": 181,
-        "disclosed_stop": 24,
+        "disclosed_stop": 36,
     }
     expected_origins = {
         "ca41663_nonledger_bypass_adjudication": 108,
@@ -11605,8 +12261,8 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         and sweep["ca41663_alias_evidence_adjudication_count"] == 262
         and sweep["round_five_continuation_restoration_count"] == 3
         and sweep["continuation_composition_citation_count"] == 5
-        and sweep["approved_alias_evidence_count"] == 241
-        and sweep["disclosed_stop_alias_evidence_count"] == 24
+        and sweep["approved_alias_evidence_count"] == 229
+        and sweep["disclosed_stop_alias_evidence_count"] == 36
         and sweep["alias_evidence_semantic_adjudication_keyset_sha256"]
         == _keyset_sha(evidence_adjudication_ids)
         == PINNED_SWEEP_DOMAIN_SHA256[
@@ -11625,8 +12281,8 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     _require(
         isinstance(approved_pair_rows, list)
         and approved_pair_rows == embedded_pair_rows
-        and len(pair_ids) == len(set(pair_ids)) == 270
-        and sweep["approved_alias_pair_count"] == 270
+        and len(pair_ids) == len(set(pair_ids)) == 258
+        and sweep["approved_alias_pair_count"] == 258
         and sweep["approved_alias_pair_keyset_sha256"]
         == _keyset_sha(pair_ids)
         == PINNED_SWEEP_DOMAIN_SHA256["approved_alias_pair_keyset"]
@@ -11634,14 +12290,14 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         == _domain_sha(approved_pair_rows)
         == PINNED_SWEEP_DOMAIN_SHA256["approved_alias_pair"]
         and sweep["occurrence_closure_alias_pair_count"] == 228
-        and sweep["typed_projection_alias_pair_count"] == 42
+        and sweep["typed_projection_alias_pair_count"] == 30
         and sum(row["class_closure_eligible"] for row in approved_pair_rows)
         == 228
         and sum(
             row["typed_projection_union_prohibited"]
             for row in approved_pair_rows
         )
-        == 42,
+        == 30,
         "sole semantic gate pair census drift",
     )
     semantic_row_by_evidence_id = {
@@ -11801,13 +12457,13 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         == {
             "instruction_count": 91,
             "edge_count": 123,
-            "alias_instruction_count": 69,
+            "alias_instruction_count": 64,
             "redirection_instruction_count": 2,
-            "stop_instruction_count": 20,
-            "alias_edge_count": 90,
-            "alias_pair_count": 91,
+            "stop_instruction_count": 25,
+            "alias_edge_count": 78,
+            "alias_pair_count": 79,
             "redirection_edge_count": 3,
-            "stop_edge_count": 30,
+            "stop_edge_count": 42,
         },
         "pilot component cross-reference partition drift",
     )
@@ -11922,15 +12578,15 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         sweep["repeat_coverage_census"]
         == {
             "repeat_occurrence_count": 2_460,
-            "valid_direct_proof_instruction_count": 212,
+            "valid_direct_proof_instruction_count": 207,
             "outside_domain_instruction_count": 34,
             "noncatalog_aggregate_relation_instruction_count": 13,
             "in_domain_redirection_instruction_count": 5,
             "in_domain_nonalias_relation_instruction_count": 18,
-            "incompatible_proof_instruction_count": 64,
+            "incompatible_proof_instruction_count": 69,
             "valid_and_incompatible_instruction_overlap_count": 0,
             "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
-            "disclosed_stop_instruction_count": 2_196,
+            "disclosed_stop_instruction_count": 2_201,
             "otherwise_unresolved_instruction_count": 2_132,
         },
         "corpus repeat coverage census drift",
@@ -14241,6 +14897,45 @@ def run_mutation_tests(
         pair["class_closure_eligible"] = True
         pair["typed_projection_union_prohibited"] = False
 
+    def delete_composite_pair_citation(value: dict[str, Any]) -> None:
+        pair = next(
+            pair
+            for row in value["sweeps"][
+                "alias_evidence_semantic_adjudication_rows"
+            ]
+            for pair in row["approved_pair_rows"]
+            if pair["pair_kind"] == "typed_instruction_import_projection"
+        )
+        pair["exact_pairing_citation"] = None
+
+    def swap_composite_pair_citation(value: dict[str, Any]) -> None:
+        pairs = [
+            pair
+            for row in value["sweeps"][
+                "alias_evidence_semantic_adjudication_rows"
+            ]
+            for pair in row["approved_pair_rows"]
+            if pair["pair_kind"] == "typed_instruction_import_projection"
+        ]
+        replacement = next(
+            pair
+            for pair in pairs[1:]
+            if pair["semantic_type"] != pairs[0]["semantic_type"]
+        )
+        pairs[0]["exact_pairing_citation"] = copy.deepcopy(
+            replacement["exact_pairing_citation"]
+        )
+
+    def delete_composite_stop_citation(value: dict[str, Any]) -> None:
+        row = next(
+            row
+            for row in value["sweeps"][
+                "alias_evidence_semantic_adjudication_rows"
+            ]
+            if row["composite_stop_citation"] is not None
+        )
+        row["composite_stop_citation"] = None
+
     def remove_nonledger_semantic_decision(
         value: dict[str, Any],
     ) -> None:
@@ -14709,6 +15404,21 @@ def run_mutation_tests(
         "composite_union_forgery",
         forge_composite_typed_projection_union,
         "closure law",
+    )
+    add(
+        "composite_pair_citation_deleted",
+        delete_composite_pair_citation,
+        "typed pair lacks its pinned exact-text derivation",
+    )
+    add(
+        "composite_pair_citation_swapped",
+        swap_composite_pair_citation,
+        "typed pair lacks its pinned exact-text derivation",
+    )
+    add(
+        "composite_stop_citation_deleted",
+        delete_composite_stop_citation,
+        "composite STOP citation mismatch",
     )
     add(
         "nonledger_admission_without_semantic_decision",

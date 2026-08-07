@@ -875,7 +875,11 @@ def test__round_five_semantic_gate__exact_covers_every_alias_candidate(
     assert sweep["occurrence_closure_alias_pair_count"] == 228
     assert sweep["typed_projection_alias_pair_count"] == 30
 
-    pilot_rows = [row for row in rows if row["pilot_document_member"]]
+    pilot_rows = [
+        row
+        for row in rows
+        if row["document_source_position"] in a12.PILOT_POSITIONS
+    ]
     pilot_pairs = [
         pair for row in pilot_rows for pair in row["approved_pair_rows"]
     ]
@@ -906,6 +910,15 @@ def test__round_five_semantic_gate__exact_covers_every_alias_candidate(
             "byte_size": 462_192,
             "raw_sha256": (
                 "f7ece535faed311a0a863e1f19f6954a428e89d552341f9d88603fe9092072da"
+            ),
+        },
+        {
+            "path": (
+                "scripts/amendment12_composite_instruction_law_map_v1.json"
+            ),
+            "byte_size": 17_768,
+            "raw_sha256": (
+                "0f85663e9e9681dba405a5a104d6d581b892a6a0e9e3561bb608b2ec4366ebb7"
             ),
         },
     ]
@@ -996,6 +1009,9 @@ def test__round_five_composite_imports__decompose_or_stop_from_exact_text(
     bundle,
 ):
     specification, identity = a12._composite_import_semantic_specification()
+    instruction_law, instruction_law_identity = (
+        a12._composite_instruction_law_specification()
+    )
     assert identity == {
         "path": "scripts/amendment12_composite_import_adjudication_v1.json",
         "byte_size": 462_192,
@@ -1021,6 +1037,27 @@ def test__round_five_composite_imports__decompose_or_stop_from_exact_text(
         "unmatched_selector_stop_count": 9,
         "unmatched_selector_with_stop_evidence_count": 5,
         "unmatched_selector_without_candidate_evidence_count": 4,
+    }
+    assert instruction_law_identity == {
+        "path": "scripts/amendment12_composite_instruction_law_map_v1.json",
+        "byte_size": 17_768,
+        "raw_sha256": (
+            "0f85663e9e9681dba405a5a104d6d581b892a6a0e9e3561bb608b2ec4366ebb7"
+        ),
+    }
+    assert {
+        key: instruction_law[key]
+        for key in (
+            "instruction_group_count",
+            "typed_pair_count",
+            "stop_pair_count",
+            "unmatched_selector_count",
+        )
+    } == {
+        "instruction_group_count": 21,
+        "typed_pair_count": 30,
+        "stop_pair_count": 22,
+        "unmatched_selector_count": 9,
     }
     decisions = specification["instruction_decisions"]
     assert Counter(row["disposition"] for row in decisions) == {
@@ -1084,17 +1121,42 @@ def test__round_five_composite_imports__decompose_or_stop_from_exact_text(
         "pinned_stage2_questionnaire_occurrence": 98,
         "pinned_stage1_candidate_occurrence": 16,
     }
+    law_by_index = {
+        row["sweep_row_index"]: row
+        for row in instruction_law["instruction_law_rows"]
+    }
+    selector_members_by_instruction_and_side = {
+        (row["sweep_row_index"], side): {
+            selector_row["selector"]: selector_row["members"]
+            for selector_row in row[f"ordered_{side}_selector_domain"]
+        }
+        for row in instruction_law["instruction_law_rows"]
+        for side in ("alias", "canonical")
+    }
     assert all(
         pair["exact_pairing_citation"]["semantic_type"]
         == pair["semantic_type"]
         and pair["exact_pairing_citation"]["alias_selector_members"]
-        == pair["alias_question_selector"].split("+")
+        == selector_members_by_instruction_and_side[
+            (decision["sweep_row_index"], "alias")
+        ][pair["alias_question_selector"]]
         and pair["exact_pairing_citation"]["canonical_selector_members"]
-        == pair["canonical_question_selector"].split("+")
+        == selector_members_by_instruction_and_side[
+            (decision["sweep_row_index"], "canonical")
+        ][pair["canonical_question_selector"]]
         and pair["exact_pairing_citation"]["pairing_citation_id"].startswith(
             "a12-composite-exact-pairing-citation:"
         )
-        for pair in specification_pairs
+        and [
+            pair["alias_question_selector"],
+            pair["canonical_question_selector"],
+            pair["semantic_type"],
+        ]
+        in law_by_index[decision["sweep_row_index"]][
+            "allowed_typed_pair_triples"
+        ]
+        for decision in decisions
+        for pair in decision["typed_projection_pairs"]
     )
     assert all(
         row["matched_utf8_sha256"]
@@ -1142,6 +1204,59 @@ def test__round_five_composite_imports__decompose_or_stop_from_exact_text(
         and "comparable questions" in stop["finding"]
         for stop in comparable_stop["stop_evidence_rows"]
     )
+
+
+@pytest.mark.parametrize(
+    "forgery_name",
+    (
+        "coherent_selector_rename",
+        "outside_named_range_citation",
+        "cross_document_citation",
+        "opaque_missing_source_claim",
+        "paired_selector_reused_as_unmatched",
+    ),
+)
+def test__round_five_composite_selector_law__rejects_coherent_forgery(
+    forgery_name,
+):
+    specification, _identity = a12._composite_import_semantic_specification()
+    decisions = {
+        row["sweep_row_index"]: copy.deepcopy(row)
+        for row in specification["instruction_decisions"]
+    }
+
+    if forgery_name == "coherent_selector_rename":
+        decisions[70]["typed_projection_pairs"][0][
+            "alias_question_selector"
+        ] = "B41-renamed"
+        forged = decisions[70]
+    elif forgery_name == "outside_named_range_citation":
+        citation = decisions[70]["typed_projection_pairs"][0][
+            "exact_pairing_citation"
+        ]["alias_selector_citation_rows"][0]
+        citation["selector_member"] = "B40"
+        forged = decisions[70]
+    elif forgery_name == "cross_document_citation":
+        citation = decisions[70]["typed_projection_pairs"][0][
+            "exact_pairing_citation"
+        ]["alias_selector_citation_rows"][0]
+        citation["document_source_position"] = 58
+        forged = decisions[70]
+    elif forgery_name == "opaque_missing_source_claim":
+        decisions[78]["stop_evidence_rows"][0]["selector_source_audit"][
+            "missing_source_rows"
+        ] = [{"assertion": "trust this uncited absence"}]
+        forged = decisions[78]
+    else:
+        unmatched = decisions[88]["unmatched_selector_stop_rows"][0]
+        unmatched["question_selector"] = "B84+B84a"
+        forged = decisions[88]
+
+    with pytest.raises(
+        a12.BuildError,
+        match="composite instruction selector relevance/exact-cover law drift",
+    ):
+        a12._validate_composite_instruction_selector_commitment(forged)
 
 
 def test__round_five_continuations__use_one_exact_whitespace_rule(bundle):
