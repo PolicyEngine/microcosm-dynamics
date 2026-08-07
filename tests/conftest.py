@@ -76,6 +76,7 @@ def _references_committed_artifact(source: str) -> bool:
         "build_ssa_covered_earnings_calibration_targets",
         "covered_earnings_correction_registry",
         "replay_amendment11_no_movement",
+        "build_amendment12_rq_catalog_pilot",
     )
     return (
         references_run_json
