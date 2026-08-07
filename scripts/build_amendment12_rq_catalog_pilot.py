@@ -40,9 +40,9 @@ NONLEDGER_ALIAS_ADJUDICATION_BYTE_SIZE = 74_773
 NONLEDGER_ALIAS_ADJUDICATION_SHA256 = (
     "733f6c88ca19226db713f437ccaed8e8dfe781957f04e2f164b0dfdedb8e9870"
 )
-COMPOSITE_ALIAS_ADJUDICATION_BYTE_SIZE = 131_604
+COMPOSITE_ALIAS_ADJUDICATION_BYTE_SIZE = 462_192
 COMPOSITE_ALIAS_ADJUDICATION_SHA256 = (
-    "47f21d24be95822ba284f10f6a25d8b645cd938d2008bc7762080e2be7d370ff"
+    "f7ece535faed311a0a863e1f19f6954a428e89d552341f9d88603fe9092072da"
 )
 
 SOURCE_COMMIT = "19fa24c161e800e004320f0c10e81bce8831af68"
@@ -1333,9 +1333,14 @@ class NormalizedDocument:
     annotation_path: str
     annotation_identity: dict[str, Any]
     source_document_id: str
+    source_document_row: Mapping[str, Any]
+    candidate_artifact_identity: Mapping[str, Any]
+    whole_document_locator: Mapping[str, Any] | None
     schema_version: str
     page_count: int
     page_text_utf8_sha256_by_number: Mapping[int, str]
+    questionnaire_page_rows_by_number: Mapping[int, Mapping[str, Any]]
+    questionnaire_occurrence_rows_by_id: Mapping[str, Mapping[str, Any]]
     occurrence_count: int
     flow_count: int
     field_purpose_count: int
@@ -1704,12 +1709,22 @@ def _normalize_document(
         annotation_path=path,
         annotation_identity=identity,
         source_document_id=source_document_id,
+        source_document_row=source_row,
+        candidate_artifact_identity=data["candidate_artifact_identity"],
+        whole_document_locator=data.get(
+            "whole_document_locator",
+            next(iter(data.get("whole_document_locator_rows", [])), None),
+        ),
         schema_version=data["schema_version"],
         page_count=len(data["questionnaire_page_rows"]),
         page_text_utf8_sha256_by_number={
             row["page_number"]: row["page_text_utf8_sha256"]
             for row in data["questionnaire_page_rows"]
         },
+        questionnaire_page_rows_by_number={
+            row["page_number"]: row for row in data["questionnaire_page_rows"]
+        },
+        questionnaire_occurrence_rows_by_id=occurrence_by_id,
         occurrence_count=len(occurrences),
         flow_count=len(data["flow_branch_rows"]),
         field_purpose_count=field_purpose_count,
@@ -3660,6 +3675,207 @@ def _nonledger_alias_semantic_specification() -> (
     return value, identity
 
 
+COMPOSITE_DECISION_KEYS = frozenset(
+    {
+        "disposition",
+        "instruction_decision_id",
+        "instruction_id",
+        "pair_producing_source_evidence_ids",
+        "source_evidence_ids",
+        "stop_evidence_rows",
+        "stop_source_evidence_ids",
+        "sweep_row_index",
+        "typed_projection_pairs",
+        "unmatched_selector_stop_rows",
+    }
+)
+COMPOSITE_TYPED_PAIR_KEYS = frozenset(
+    {
+        "alias_combined_occurrence_id",
+        "alias_question_selector",
+        "canonical_combined_occurrence_id",
+        "canonical_question_selector",
+        "exact_pairing_citation",
+        "instruction_citation",
+        "instruction_id",
+        "pairing_basis",
+        "pairing_basis_code",
+        "semantic_type",
+        "source_evidence_id",
+        "typed_projection_pair_id",
+    }
+)
+COMPOSITE_EXACT_PAIRING_CITATION_KEYS = frozenset(
+    {
+        "alias_selector_citation_rows",
+        "alias_selector_members",
+        "canonical_selector_citation_rows",
+        "canonical_selector_members",
+        "citation_rule",
+        "pairing_citation_id",
+        "questionnaire_document_source_position",
+        "selector_citation_domain_sha256",
+        "semantic_type",
+    }
+)
+COMPOSITE_STOP_KEYS = frozenset(
+    {
+        "alias_combined_occurrence_id",
+        "alias_question_selector",
+        "canonical_combined_occurrence_id",
+        "canonical_question_selector",
+        "finding",
+        "finding_code",
+        "instruction_citation",
+        "instruction_id",
+        "pairing_source_status",
+        "selector_source_audit",
+        "source_evidence_id",
+        "stop_adjudication_id",
+    }
+)
+COMPOSITE_STOP_SELECTOR_AUDIT_KEYS = frozenset(
+    {
+        "alias_selector_citation_rows",
+        "canonical_selector_citation_rows",
+        "missing_source_rows",
+        "support_status",
+    }
+)
+COMPOSITE_UNMATCHED_SELECTOR_STOP_KEYS = frozenset(
+    {
+        "finding",
+        "finding_code",
+        "question_selector",
+        "represented_by_existing_stop_source_evidence",
+        "required_disposition",
+        "selector_citation_rows",
+        "selector_side",
+        "semantic_type",
+        "stop_source_evidence_ids",
+        "sweep_row_index",
+        "unmatched_selector_stop_id",
+    }
+)
+SELECTOR_STAGE2_CITATION_KEYS = frozenset(
+    {
+        "authority_registry_id",
+        "citation_kind",
+        "document_source_position",
+        "matched_text",
+        "matched_utf8_sha256",
+        "page_number",
+        "page_text_utf8_sha256",
+        "questionnaire_occurrence_id",
+        "questionnaire_page_id",
+        "registered_path",
+        "registered_pdf_byte_size",
+        "registered_pdf_sha256",
+        "registry_document_id",
+        "selector_member",
+        "source_document_id",
+        "stage2_annotation_path",
+        "stage2_annotation_source_commit",
+        "utf8_byte_span",
+    }
+)
+SELECTOR_STAGE1_CITATION_KEYS = frozenset(
+    {
+        "authority_registry_id",
+        "candidate_artifact_content_sha256",
+        "candidate_artifact_path",
+        "candidate_artifact_payload_sha256",
+        "candidate_artifact_raw_byte_size",
+        "candidate_artifact_raw_sha256",
+        "candidate_detector_rule_ids",
+        "candidate_occurrence_id",
+        "candidate_occurrence_kind",
+        "citation_kind",
+        "document_source_position",
+        "evidence_part",
+        "matched_text",
+        "matched_utf8_sha256",
+        "page_number",
+        "page_text_utf8_sha256",
+        "questionnaire_occurrence_id",
+        "questionnaire_page_id",
+        "registered_path",
+        "registered_pdf_byte_size",
+        "registered_pdf_sha256",
+        "registry_document_id",
+        "selector_member",
+        "source_document_id",
+        "stage2_annotation_path",
+        "stage2_annotation_source_commit",
+        "utf8_byte_span",
+    }
+)
+
+
+def _validate_selector_citation_shape(
+    citation: Mapping[str, Any], label: str
+) -> tuple[str, str]:
+    """Validate the sealed shape of one exact selector-text citation."""
+    kind = citation.get("citation_kind")
+    if kind == "pinned_stage2_questionnaire_occurrence":
+        base_keys = SELECTOR_STAGE2_CITATION_KEYS
+        allowed_keysets = {
+            base_keys,
+            base_keys | {"ocr_note"},
+            base_keys | {"evidence_part"},
+            base_keys | {"evidence_part", "variant_role"},
+            base_keys | {"ocr_note", "variant_role"},
+        }
+    elif kind == "pinned_stage1_candidate_occurrence":
+        base_keys = SELECTOR_STAGE1_CITATION_KEYS - {"evidence_part"}
+        allowed_keysets = {
+            base_keys,
+            base_keys | {"evidence_part"},
+            base_keys | {"ocr_note"},
+            base_keys | {"evidence_part", "ocr_note"},
+        }
+    else:
+        raise BuildError(f"{label}: unsupported selector citation kind")
+    _require(
+        frozenset(citation) in allowed_keysets,
+        f"{label}: selector citation keyset",
+    )
+    if "ocr_note" in citation:
+        _require_string(citation["ocr_note"], f"{label}: OCR note")
+    if "evidence_part" in citation:
+        _require_string(citation["evidence_part"], f"{label}: evidence part")
+    if "variant_role" in citation:
+        _require(
+            citation["variant_role"] in {"head", "wife_or_wife"},
+            f"{label}: variant role",
+        )
+    text = _require_string(citation["matched_text"], f"{label}: text")
+    start = _require_int(
+        citation["utf8_byte_span"]["start"], f"{label}: start"
+    )
+    end = _require_int(citation["utf8_byte_span"]["end"], f"{label}: end")
+    _require(
+        set(citation["utf8_byte_span"]) == {"start", "end"}
+        and start >= 0
+        and end > start
+        and end - start == len(text.encode("utf-8"))
+        and citation["matched_utf8_sha256"] == _sha256(text.encode("utf-8"))
+        and citation["stage2_annotation_source_commit"] == SOURCE_COMMIT
+        and (citation["questionnaire_occurrence_id"] is None)
+        is (kind == "pinned_stage1_candidate_occurrence"),
+        f"{label}: selector citation exact-byte shape",
+    )
+    selector_member = _require_string(
+        citation["selector_member"], f"{label}: selector member"
+    )
+    source_id = _require_string(
+        citation.get("questionnaire_occurrence_id")
+        or citation.get("candidate_occurrence_id"),
+        f"{label}: cited occurrence",
+    )
+    return selector_member, f"{kind}:{source_id}"
+
+
 def _composite_import_semantic_specification() -> (
     tuple[dict[str, Any], dict[str, Any]]
 ):
@@ -3677,16 +3893,23 @@ def _composite_import_semantic_specification() -> (
         "composite semantic specification status drift",
     )
     expected_census = {
-        "decomposed_instruction_group_count": 19,
-        "decomposed_instruction_group_with_partial_stop_count": 6,
-        "full_stop_instruction_group_count": 2,
+        "decomposed_instruction_group_count": 14,
+        "decomposed_instruction_group_with_partial_stop_count": 7,
+        "exact_pairing_selector_citation_row_count": 114,
+        "full_stop_instruction_group_count": 7,
         "instruction_group_count": 21,
+        "missing_pair_stop_available_selector_citation_row_count": 23,
         "pair_producing_evidence_with_multiple_pairs_count": 1,
-        "pair_producing_source_evidence_count": 41,
-        "pure_decomposed_instruction_group_count": 13,
+        "pair_producing_source_evidence_count": 29,
+        "pure_decomposed_instruction_group_count": 7,
+        "selector_source_annotation_count": 3,
         "source_evidence_count": 51,
-        "stop_source_evidence_count": 10,
-        "typed_projection_pair_count": 42,
+        "stop_source_evidence_count": 22,
+        "typed_projection_pair_count": 30,
+        "unmatched_selector_citation_row_count": 9,
+        "unmatched_selector_stop_count": 9,
+        "unmatched_selector_with_stop_evidence_count": 5,
+        "unmatched_selector_without_candidate_evidence_count": 4,
     }
     _require(
         value["census"] == expected_census,
@@ -3714,7 +3937,14 @@ def _composite_import_semantic_specification() -> (
     stop_evidence_ids: list[str] = []
     pair_ids: list[str] = []
     stop_ids: list[str] = []
+    unmatched_selector_stop_ids: list[str] = []
+    exact_pairing_citation_count = 0
+    missing_stop_citation_count = 0
+    unmatched_selector_citation_count = 0
     for decision in decisions:
+        _require_exact_keys(
+            decision, COMPOSITE_DECISION_KEYS, "composite decision"
+        )
         source_ids = decision["source_evidence_ids"]
         approved_ids = decision["pair_producing_source_evidence_ids"]
         rejected_ids = decision["stop_source_evidence_ids"]
@@ -3726,17 +3956,247 @@ def _composite_import_semantic_specification() -> (
         )
         pairs = decision["typed_projection_pairs"]
         stops = decision["stop_evidence_rows"]
+        unmatched_stops = decision["unmatched_selector_stop_rows"]
         _require(
             {row["source_evidence_id"] for row in pairs} == set(approved_ids)
             and {row["source_evidence_id"] for row in stops}
             == set(rejected_ids),
             "composite pair/STOP rows do not match decision domains",
         )
+        pair_ids_in_decision: list[str] = []
+        for pair in pairs:
+            _require_exact_keys(
+                pair, COMPOSITE_TYPED_PAIR_KEYS, "composite typed pair"
+            )
+            _require(
+                pair["instruction_id"] == decision["instruction_id"],
+                "composite pair instruction drift",
+            )
+            citation = pair["exact_pairing_citation"]
+            _require_exact_keys(
+                citation,
+                COMPOSITE_EXACT_PAIRING_CITATION_KEYS,
+                "composite exact pairing citation",
+            )
+            _require(
+                citation["citation_rule"]
+                == "exact_named_instruction_plus_selector_member_text_"
+                "semantic_type_match_derives_only_this_pair"
+                and citation["semantic_type"] == pair["semantic_type"],
+                "composite exact pairing citation semantic rule drift",
+            )
+            citation_identity_rows: list[str] = []
+            for side in ("alias", "canonical"):
+                citation_rows = citation[f"{side}_selector_citation_rows"]
+                _require(
+                    isinstance(citation_rows, list) and citation_rows,
+                    f"composite {side} selector citation rows",
+                )
+                member_rows = [
+                    _validate_selector_citation_shape(
+                        row, f"composite {side} selector citation"
+                    )
+                    for row in citation_rows
+                ]
+                members = citation[f"{side}_selector_members"]
+                _require(
+                    members
+                    == list(
+                        dict.fromkeys(member for member, _id in member_rows)
+                    )
+                    and len({identity for _member, identity in member_rows})
+                    == len(member_rows),
+                    f"composite {side} selector citation exact cover",
+                )
+                citation_identity_rows.extend(
+                    identity for _member, identity in member_rows
+                )
+            _require(
+                citation["questionnaire_document_source_position"]
+                == citation["alias_selector_citation_rows"][0][
+                    "document_source_position"
+                ]
+                == citation["canonical_selector_citation_rows"][0][
+                    "document_source_position"
+                ]
+                and citation["selector_citation_domain_sha256"]
+                == _domain_sha(
+                    [
+                        citation["alias_selector_citation_rows"],
+                        citation["canonical_selector_citation_rows"],
+                        citation["semantic_type"],
+                    ]
+                )
+                and citation["pairing_citation_id"]
+                == _row_id(
+                    "a12-composite-exact-pairing-citation:",
+                    [
+                        pair["instruction_id"],
+                        pair["source_evidence_id"],
+                        pair["alias_question_selector"],
+                        pair["canonical_question_selector"],
+                        pair["semantic_type"],
+                        citation["alias_selector_citation_rows"],
+                        citation["canonical_selector_citation_rows"],
+                    ],
+                ),
+                "composite exact pairing citation identity drift",
+            )
+            expected_pair_id = _row_id(
+                "a12-composite-typed-projection-pair:",
+                [
+                    pair["instruction_id"],
+                    pair["source_evidence_id"],
+                    pair["alias_combined_occurrence_id"],
+                    pair["canonical_combined_occurrence_id"],
+                    pair["alias_question_selector"],
+                    pair["canonical_question_selector"],
+                    pair["semantic_type"],
+                    pair["pairing_basis_code"],
+                    pair["instruction_citation"],
+                    citation,
+                ],
+            )
+            _require(
+                pair["typed_projection_pair_id"] == expected_pair_id,
+                "composite typed pair identity drift",
+            )
+            pair_ids_in_decision.append(expected_pair_id)
+            exact_pairing_citation_count += len(citation_identity_rows)
+        stop_ids_in_decision: list[str] = []
+        for stop in stops:
+            _require_exact_keys(
+                stop, COMPOSITE_STOP_KEYS, "composite evidence STOP"
+            )
+            selector_audit = stop["selector_source_audit"]
+            if selector_audit is None:
+                _require(
+                    stop["pairing_source_status"]
+                    == "exact_instruction_text_does_not_derive_pair",
+                    "composite evidence STOP source status drift",
+                )
+            else:
+                _require_exact_keys(
+                    selector_audit,
+                    COMPOSITE_STOP_SELECTOR_AUDIT_KEYS,
+                    "composite evidence STOP selector audit",
+                )
+                _require(
+                    stop["pairing_source_status"]
+                    == "missing_exact_selector_text"
+                    and selector_audit["support_status"]
+                    == "disclosed_stop_missing_registered_question_text"
+                    and selector_audit["missing_source_rows"],
+                    "composite missing-selector STOP drift",
+                )
+                for side in ("alias", "canonical"):
+                    for citation in selector_audit[
+                        f"{side}_selector_citation_rows"
+                    ]:
+                        _validate_selector_citation_shape(
+                            citation,
+                            f"composite STOP {side} available citation",
+                        )
+                        missing_stop_citation_count += 1
+            expected_stop_id = _row_id(
+                "a12-composite-import-stop:",
+                [
+                    stop["instruction_id"],
+                    stop["source_evidence_id"],
+                    stop["alias_combined_occurrence_id"],
+                    stop["canonical_combined_occurrence_id"],
+                    stop["finding_code"],
+                    stop["pairing_source_status"],
+                    selector_audit,
+                ],
+            )
+            _require(
+                stop["instruction_id"] == decision["instruction_id"]
+                and stop["stop_adjudication_id"] == expected_stop_id,
+                "composite evidence STOP identity drift",
+            )
+            stop_ids_in_decision.append(expected_stop_id)
+        unmatched_ids_in_decision: list[str] = []
+        for stop in unmatched_stops:
+            _require_exact_keys(
+                stop,
+                COMPOSITE_UNMATCHED_SELECTOR_STOP_KEYS,
+                "composite unmatched selector STOP",
+            )
+            _require(
+                stop["sweep_row_index"] == decision["sweep_row_index"]
+                and stop["selector_side"] in {"alias", "canonical"}
+                and stop["required_disposition"]
+                == "disclosed_unmatched_selector_stop"
+                and bool(stop["stop_source_evidence_ids"])
+                is stop["represented_by_existing_stop_source_evidence"]
+                and set(stop["stop_source_evidence_ids"])
+                <= set(decision["stop_source_evidence_ids"]),
+                "composite unmatched selector STOP disposition drift",
+            )
+            citation_rows = stop["selector_citation_rows"]
+            _require(
+                isinstance(citation_rows, list) and citation_rows,
+                "composite unmatched selector citation rows",
+            )
+            for citation in citation_rows:
+                member, _identity = _validate_selector_citation_shape(
+                    citation, "composite unmatched selector citation"
+                )
+                _require(
+                    member == stop["question_selector"],
+                    "composite unmatched selector citation exact cover",
+                )
+                unmatched_selector_citation_count += 1
+            expected_unmatched_id = _row_id(
+                "a12-composite-unmatched-selector-stop:",
+                [
+                    decision["instruction_id"],
+                    stop["selector_side"],
+                    stop["question_selector"],
+                    stop["semantic_type"],
+                    stop["finding_code"],
+                    stop["stop_source_evidence_ids"],
+                    citation_rows,
+                ],
+            )
+            _require(
+                stop["unmatched_selector_stop_id"] == expected_unmatched_id,
+                "composite unmatched selector STOP identity drift",
+            )
+            unmatched_ids_in_decision.append(expected_unmatched_id)
+        expected_disposition = (
+            "disclosed_stop"
+            if not pairs
+            else (
+                "pairwise_decomposition_with_disclosed_stops"
+                if stops or unmatched_stops
+                else "pairwise_decomposition"
+            )
+        )
+        _require(
+            decision["disposition"] == expected_disposition
+            and decision["instruction_decision_id"]
+            == _row_id(
+                "a12-composite-import-instruction-decision:",
+                [
+                    decision["sweep_row_index"],
+                    decision["instruction_id"],
+                    decision["disposition"],
+                    source_ids,
+                    pair_ids_in_decision,
+                    stop_ids_in_decision,
+                    unmatched_ids_in_decision,
+                ],
+            ),
+            "composite instruction decision identity drift",
+        )
         all_evidence_ids.extend(source_ids)
         pair_evidence_ids.extend(approved_ids)
         stop_evidence_ids.extend(rejected_ids)
         pair_ids.extend(row["typed_projection_pair_id"] for row in pairs)
         stop_ids.extend(row["stop_adjudication_id"] for row in stops)
+        unmatched_selector_stop_ids.extend(unmatched_ids_in_decision)
     _require(
         all_evidence_ids == value["ordered_source_evidence_domain"]
         and pair_evidence_ids
@@ -3745,6 +4205,19 @@ def _composite_import_semantic_specification() -> (
         and pair_ids == value["ordered_typed_projection_pair_domain"]
         and stop_ids == value["ordered_stop_adjudication_domain"],
         "composite semantic ordered-domain projection drift",
+    )
+    _require(
+        unmatched_selector_stop_ids
+        == value["ordered_unmatched_selector_stop_domain"]
+        and exact_pairing_citation_count
+        == expected_census["exact_pairing_selector_citation_row_count"]
+        and missing_stop_citation_count
+        == expected_census[
+            "missing_pair_stop_available_selector_citation_row_count"
+        ]
+        and unmatched_selector_citation_count
+        == expected_census["unmatched_selector_citation_row_count"],
+        "composite exact selector citation census drift",
     )
     return value, identity
 
@@ -3763,6 +4236,26 @@ def _composite_import_decisions_by_instruction() -> dict[str, dict[str, Any]]:
         }
         for row in specification["instruction_decisions"]
     }
+
+
+@cache
+def _composite_adjudications_by_id() -> (
+    tuple[dict[str, Mapping[str, Any]], dict[str, Mapping[str, Any]]]
+):
+    """Index the pinned composite pair and STOP decisions by sealed ID."""
+    specification, _identity = _composite_import_semantic_specification()
+    pairs: dict[str, Mapping[str, Any]] = {}
+    stops: dict[str, Mapping[str, Any]] = {}
+    for decision in specification["instruction_decisions"]:
+        for pair in decision["typed_projection_pairs"]:
+            pair_id = pair["typed_projection_pair_id"]
+            _require(pair_id not in pairs, "duplicate composite pair ID")
+            pairs[pair_id] = pair
+        for stop in decision["stop_evidence_rows"]:
+            stop_id = stop["stop_adjudication_id"]
+            _require(stop_id not in stops, "duplicate composite STOP ID")
+            stops[stop_id] = stop
+    return pairs, stops
 
 
 def _semantic_alias_pair_row(
@@ -3790,6 +4283,17 @@ def _semantic_alias_pair_row(
         return evidence[key][index]
 
     class_closure_eligible = pair_kind == "atomic_occurrence_pair"
+    exact_pairing_citation = pair_specification.get("exact_pairing_citation")
+    composite_typed_projection_pair_id = pair_specification.get(
+        "composite_typed_projection_pair_id"
+    )
+    _require(
+        (exact_pairing_citation is not None)
+        is (pair_kind == "typed_instruction_import_projection")
+        and (composite_typed_projection_pair_id is not None)
+        is (pair_kind == "typed_instruction_import_projection"),
+        "typed semantic pair lacks its exact selector citation",
+    )
     row = {
         "source_local_evidence_id": evidence["local_evidence_id"],
         "pair_ordinal": pair_ordinal,
@@ -3805,6 +4309,10 @@ def _semantic_alias_pair_row(
         ),
         "canonical_question_selector": pair_specification.get(
             "canonical_question_selector"
+        ),
+        "exact_pairing_citation": exact_pairing_citation,
+        "composite_typed_projection_pair_id": (
+            composite_typed_projection_pair_id
         ),
         "alias_endpoint_matched_text": endpoint_value(
             "endpoint_matched_texts", alias_index
@@ -3874,6 +4382,8 @@ def _semantic_alias_pair_row(
             row["alias_endpoint_matched_utf8_sha256"],
             row["canonical_endpoint_matched_utf8_sha256"],
             row["source_instruction_matched_utf8_sha256s"],
+            exact_pairing_citation,
+            composite_typed_projection_pair_id,
         ],
     )
     return row
@@ -3889,6 +4399,7 @@ def _semantic_alias_evidence_row(
     decision: str,
     pair_rows: Sequence[Mapping[str, Any]],
     continuation_citation: Mapping[str, Any] | None = None,
+    composite_stop_citation: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Serialize one source-cited decision before any A-arm admission."""
     row = {
@@ -3939,6 +4450,7 @@ def _semantic_alias_evidence_row(
         "approved_pair_rows": list(pair_rows),
         "approved_pair_count": len(pair_rows),
         "continuation_composition_citation": continuation_citation,
+        "composite_stop_citation": composite_stop_citation,
         "status": (
             "source_cited_semantic_alias_approved"
             if pair_rows
@@ -3969,6 +4481,7 @@ def _semantic_alias_evidence_row(
                 for pair in pair_rows
             ],
             continuation_citation,
+            composite_stop_citation,
         ],
     )
     return row
@@ -3998,6 +4511,239 @@ def _validate_composite_instruction_citation(
     )
 
 
+SELECTOR_SOURCE_ANNOTATION_IDENTITY_KEYS = frozenset(
+    {
+        "candidate_artifact_identity",
+        "document_source_position",
+        "source_document_row",
+        "stage2_annotation_artifact_id",
+        "stage2_annotation_path",
+        "stage2_annotation_raw_byte_size",
+        "stage2_annotation_raw_sha256",
+        "stage2_annotation_source_commit",
+        "whole_document_locator",
+    }
+)
+
+
+@cache
+def _load_selector_candidate_artifact(
+    path: str,
+    byte_size: int,
+    raw_sha256: str,
+    content_sha256: str,
+    candidate_payload_sha256: str,
+) -> Mapping[str, Any]:
+    """Load one stage-1 citation carrier from the pinned source commit."""
+    raw = SourceReader(None).read(path)
+    _require(
+        len(raw) == byte_size and _sha256(raw) == raw_sha256,
+        "selector candidate artifact raw identity drift",
+    )
+    value = strict_json_loads(raw, path)
+    _require(
+        isinstance(value, dict)
+        and value["schema_version"]
+        == "rq_stage1_document_annotation_candidates.v1"
+        and value["integrity"]["content_sha256"] == content_sha256
+        and value["candidate_manifest"]["candidate_payload_sha256"]
+        == candidate_payload_sha256,
+        "selector candidate artifact sealed identity drift",
+    )
+    return value
+
+
+def _validate_selector_source_citation(
+    citation: Mapping[str, Any],
+    document_by_position: Mapping[int, NormalizedDocument],
+) -> None:
+    """Deep-match one selector citation to a pinned stage-2 or stage-1 row."""
+    _validate_selector_citation_shape(citation, "selector source citation")
+    position = citation["document_source_position"]
+    _require(
+        position in document_by_position,
+        "selector citation document is absent from authenticated source set",
+    )
+    document = document_by_position[position]
+    source = document.source_document_row
+    storage = source["storage_identity"]
+    page = document.questionnaire_page_rows_by_number.get(
+        citation["page_number"]
+    )
+    _require(
+        citation["source_document_id"] == document.source_document_id
+        and citation["stage2_annotation_path"] == document.annotation_path
+        and citation["stage2_annotation_source_commit"] == SOURCE_COMMIT
+        and citation["registered_pdf_byte_size"] == source["byte_size"]
+        and citation["registered_pdf_sha256"] == source["sha256"]
+        and citation["registered_path"] == storage["registered_path"]
+        and citation["authority_registry_id"]
+        == storage["authority_registry_id"]
+        and citation["registry_document_id"] == storage["document_id"]
+        and source["canonical_source_path"] == citation["registered_path"]
+        and source["storage_disposition"] == "external_registered_file"
+        and page is not None
+        and citation["questionnaire_page_id"] == page["questionnaire_page_id"]
+        and citation["page_text_utf8_sha256"] == page["page_text_utf8_sha256"],
+        "selector citation registered source or page identity drift",
+    )
+    kind = citation["citation_kind"]
+    if kind == "pinned_stage2_questionnaire_occurrence":
+        occurrence = document.questionnaire_occurrence_rows_by_id.get(
+            citation["questionnaire_occurrence_id"]
+        )
+        _require(
+            occurrence is not None
+            and occurrence["source_document_id"] == document.source_document_id
+            and occurrence["page_number"] == citation["page_number"]
+            and occurrence["matched_text"] == citation["matched_text"]
+            and occurrence["matched_utf8_sha256"]
+            == citation["matched_utf8_sha256"]
+            and occurrence["utf8_byte_start"]
+            == citation["utf8_byte_span"]["start"]
+            and occurrence["utf8_byte_end"]
+            == citation["utf8_byte_span"]["end"],
+            "selector stage-2 occurrence citation drift",
+        )
+        return
+
+    candidate_identity = document.candidate_artifact_identity
+    _require(
+        citation["candidate_artifact_path"] == candidate_identity["path"]
+        and citation["candidate_artifact_raw_byte_size"]
+        == candidate_identity["byte_size"]
+        and citation["candidate_artifact_raw_sha256"]
+        == candidate_identity["raw_sha256"]
+        and citation["candidate_artifact_content_sha256"]
+        == candidate_identity["content_sha256"]
+        and citation["candidate_artifact_payload_sha256"]
+        == candidate_identity["candidate_payload_sha256"],
+        "selector stage-1 candidate artifact citation drift",
+    )
+    candidate = _load_selector_candidate_artifact(
+        candidate_identity["path"],
+        candidate_identity["byte_size"],
+        candidate_identity["raw_sha256"],
+        candidate_identity["content_sha256"],
+        candidate_identity["candidate_payload_sha256"],
+    )
+    _require(
+        candidate["document_source_position"] == position
+        and candidate["document_source_row"] == source,
+        "selector candidate artifact document drift",
+    )
+    occurrence = next(
+        (
+            row
+            for row in candidate["candidate_occurrence_rows"]
+            if row["candidate_occurrence_id"]
+            == citation["candidate_occurrence_id"]
+        ),
+        None,
+    )
+    candidate_page = next(
+        (
+            row
+            for row in candidate["candidate_page_rows"]
+            if row["page_number"] == citation["page_number"]
+        ),
+        None,
+    )
+    _require(
+        occurrence is not None
+        and candidate_page is not None
+        and occurrence["source_document_id"] == document.source_document_id
+        and occurrence["page_number"] == citation["page_number"]
+        and occurrence["matched_text"] == citation["matched_text"]
+        and occurrence["matched_utf8_sha256"]
+        == citation["matched_utf8_sha256"]
+        and occurrence["utf8_byte_start"]
+        == citation["utf8_byte_span"]["start"]
+        and occurrence["utf8_byte_end"] == citation["utf8_byte_span"]["end"]
+        and occurrence["occurrence_kind_candidate"]
+        == citation["candidate_occurrence_kind"]
+        and occurrence["detector_rule_ids"]
+        == citation["candidate_detector_rule_ids"]
+        and candidate_page["replay_questionnaire_page_id"]
+        == citation["questionnaire_page_id"]
+        and candidate_page["page_text_utf8_sha256"]
+        == citation["page_text_utf8_sha256"]
+        and (
+            "evidence_part" not in citation or bool(citation["evidence_part"])
+        ),
+        "selector stage-1 candidate occurrence citation drift",
+    )
+
+
+def _validate_composite_selector_sources(
+    specification: Mapping[str, Any],
+    citation_documents: Sequence[NormalizedDocument],
+) -> None:
+    """Authenticate every exact selector citation used by a composite ruling."""
+    document_by_position = {
+        document.position: document for document in citation_documents
+    }
+    source_rows = specification["selector_source_annotation_identity_rows"]
+    _require(
+        [row["document_source_position"] for row in source_rows]
+        == [57, 59, 71],
+        "selector source annotation domain drift",
+    )
+    for row in source_rows:
+        _require_exact_keys(
+            row,
+            SELECTOR_SOURCE_ANNOTATION_IDENTITY_KEYS,
+            "selector source annotation identity",
+        )
+        position = row["document_source_position"]
+        _require(
+            position in document_by_position,
+            "selector source annotation document absent",
+        )
+        document = document_by_position[position]
+        _require(
+            row["stage2_annotation_source_commit"] == SOURCE_COMMIT
+            and row["stage2_annotation_path"] == document.annotation_path
+            and row["stage2_annotation_artifact_id"]
+            == document.annotation_identity["artifact_id"]
+            and row["stage2_annotation_raw_byte_size"]
+            == document.annotation_identity["byte_size"]
+            and row["stage2_annotation_raw_sha256"]
+            == document.annotation_identity["raw_sha256"]
+            and row["source_document_row"] == document.source_document_row
+            and row["candidate_artifact_identity"]
+            == document.candidate_artifact_identity
+            and row["whole_document_locator"]
+            == document.whole_document_locator,
+            "selector source annotation identity drift",
+        )
+
+    citations: list[Mapping[str, Any]] = []
+    for decision in specification["instruction_decisions"]:
+        for pair in decision["typed_projection_pairs"]:
+            exact = pair["exact_pairing_citation"]
+            citations.extend(exact["alias_selector_citation_rows"])
+            citations.extend(exact["canonical_selector_citation_rows"])
+        for stop in decision["stop_evidence_rows"]:
+            selector_audit = stop["selector_source_audit"]
+            if selector_audit is not None:
+                citations.extend(
+                    selector_audit["alias_selector_citation_rows"]
+                )
+                citations.extend(
+                    selector_audit["canonical_selector_citation_rows"]
+                )
+        for stop in decision["unmatched_selector_stop_rows"]:
+            citations.extend(stop["selector_citation_rows"])
+    seen: set[str] = set()
+    for citation in citations:
+        citation_digest = _domain_sha(citation)
+        if citation_digest in seen:
+            continue
+        seen.add(citation_digest)
+        _validate_selector_source_citation(citation, document_by_position)
+
+
 def _alias_evidence_semantic_adjudication_rows(
     documents: Sequence[NormalizedDocument],
     *,
@@ -4005,6 +4751,7 @@ def _alias_evidence_semantic_adjudication_rows(
     aggregate_rows: Sequence[Mapping[str, Any]],
     redirection_rows: Sequence[Mapping[str, Any]],
     structural_rows: Sequence[Mapping[str, Any]],
+    citation_documents: Sequence[NormalizedDocument] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Exact-cover every former A candidate before returning any A pair."""
     document_positions = tuple(document.position for document in documents)
@@ -4013,9 +4760,9 @@ def _alias_evidence_semantic_adjudication_rows(
             "structural_candidate_evidence_count": 157,
             "candidate_evidence_count": 265,
             "ca41663_admitted_evidence_count": 262,
-            "approved_evidence_count": 241,
-            "stop_evidence_count": 24,
-            "approved_pair_count": 270,
+            "approved_evidence_count": 229,
+            "stop_evidence_count": 36,
+            "approved_pair_count": 258,
             "closure_pair_count": 228,
         }
     elif document_positions == PILOT_POSITIONS:
@@ -4023,9 +4770,9 @@ def _alias_evidence_semantic_adjudication_rows(
             "structural_candidate_evidence_count": 100,
             "candidate_evidence_count": 125,
             "ca41663_admitted_evidence_count": 122,
-            "approved_evidence_count": 112,
-            "stop_evidence_count": 13,
-            "approved_pair_count": 113,
+            "approved_evidence_count": 100,
+            "stop_evidence_count": 25,
+            "approved_pair_count": 101,
             "closure_pair_count": 73,
         }
     else:
@@ -4038,6 +4785,10 @@ def _alias_evidence_semantic_adjudication_rows(
     )
     composite_specification, composite_identity = (
         _composite_import_semantic_specification()
+    )
+    _validate_composite_selector_sources(
+        composite_specification,
+        documents if citation_documents is None else citation_documents,
     )
     evidence_by_id: dict[str, tuple[NormalizedDocument, Mapping[str, Any]]] = (
         {}
@@ -4171,6 +4922,7 @@ def _alias_evidence_semantic_adjudication_rows(
         document, evidence = evidence_by_id[evidence_id]
         pair_rows: list[dict[str, Any]] = []
         continuation_citation: Mapping[str, Any] | None = None
+        composite_stop_citation: Mapping[str, Any] | None = None
         if evidence_id in structural_row_by_evidence_id:
             structural_row = structural_row_by_evidence_id[evidence_id]
             instruction_id = structural_row["source_instruction_occurrence_id"]
@@ -4220,6 +4972,12 @@ def _alias_evidence_semantic_adjudication_rows(
                                     "pairing_basis_code": pair[
                                         "pairing_basis_code"
                                     ],
+                                    "exact_pairing_citation": pair[
+                                        "exact_pairing_citation"
+                                    ],
+                                    "composite_typed_projection_pair_id": (
+                                        pair["typed_projection_pair_id"]
+                                    ),
                                 },
                                 pair_ordinal=ordinal,
                                 pair_kind="typed_instruction_import_projection",
@@ -4237,6 +4995,7 @@ def _alias_evidence_semantic_adjudication_rows(
                         evidence,
                         composite_stop["instruction_citation"],
                     )
+                    composite_stop_citation = composite_stop
                     semantic_finding = composite_stop["finding_code"]
                     decision = "disclosed_stop"
             else:
@@ -4327,6 +5086,7 @@ def _alias_evidence_semantic_adjudication_rows(
                 decision=decision,
                 pair_rows=pair_rows,
                 continuation_citation=continuation_citation,
+                composite_stop_citation=composite_stop_citation,
             )
         )
         all_pair_rows.extend(pair_rows)
@@ -5512,6 +6272,7 @@ def _repeat_arm_construction(
     redirection_rows: Sequence[Mapping[str, Any]] | None = None,
     structural_rows: Sequence[Mapping[str, Any]] | None = None,
     semantic_rows: Sequence[Mapping[str, Any]] | None = None,
+    citation_documents: Sequence[NormalizedDocument] | None = None,
 ) -> RepeatArmConstruction:
     """Select disjoint repeat arms through the sole semantic gate to A."""
 
@@ -5557,6 +6318,7 @@ def _repeat_arm_construction(
             aggregate_rows=resolved_aggregate_rows,
             redirection_rows=resolved_redirection_rows,
             structural_rows=resolved_structural_rows,
+            citation_documents=citation_documents,
         )
     )
     resolved_semantic_rows = exact_source_rows(
@@ -5766,7 +6528,11 @@ def _repeat_coverage_census(
     }
 
 
-def _pilot_census(documents: Sequence[NormalizedDocument]) -> dict[str, Any]:
+def _pilot_census(
+    documents: Sequence[NormalizedDocument],
+    *,
+    citation_documents: Sequence[NormalizedDocument] | None = None,
+) -> dict[str, Any]:
     classification_counts: Counter[str] = Counter()
     occurrence_kind_counts: Counter[str] = Counter()
     evidence_shape_counts: Counter[str] = Counter()
@@ -5783,7 +6549,9 @@ def _pilot_census(documents: Sequence[NormalizedDocument]) -> dict[str, Any]:
                 evidence_shape_counts["partial_endpoints"] += 1
             else:
                 evidence_shape_counts["no_endpoints"] += 1
-    repeat_construction = _repeat_arm_construction(documents)
+    repeat_construction = _repeat_arm_construction(
+        documents, citation_documents=citation_documents
+    )
     repeat_census = _repeat_coverage_census(documents, repeat_construction)
     component_raw_cardinality: Counter[str] = Counter()
     component_dispositions: Counter[str] = Counter()
@@ -5885,7 +6653,9 @@ def _authenticated_pilot_census_bytes() -> bytes:
         == PILOT_POSITIONS,
         "authenticated pilot census membership drift",
     )
-    return canonical_bytes(_pilot_census(pilot_documents))
+    return canonical_bytes(
+        _pilot_census(pilot_documents, citation_documents=documents)
+    )
 
 
 def _build_bundle(
@@ -5929,7 +6699,7 @@ def _build_bundle(
                 "selection_tags": list(PILOT_TAGS[document.position]),
             }
         )
-    pilot_census = _pilot_census(pilot_documents)
+    pilot_census = _pilot_census(pilot_documents, citation_documents=documents)
     pilot_annotation_bytes = sum(
         row["annotation_byte_size"] for row in pilot_rows
     )
@@ -7768,6 +8538,7 @@ ALIAS_EVIDENCE_SEMANTIC_ADJUDICATION_ROW_KEYS = frozenset(
         "approved_pair_rows",
         "approved_pair_count",
         "continuation_composition_citation",
+        "composite_stop_citation",
         "status",
     }
 )
@@ -7783,6 +8554,8 @@ ALIAS_SEMANTIC_PAIR_ROW_KEYS = frozenset(
         "canonical_occurrence_id",
         "alias_question_selector",
         "canonical_question_selector",
+        "exact_pairing_citation",
+        "composite_typed_projection_pair_id",
         "alias_endpoint_matched_text",
         "alias_endpoint_matched_utf8_sha256",
         "alias_endpoint_page_number",
@@ -9593,11 +10366,57 @@ def _validate_alias_semantic_pair_row(
         "source_instruction_utf8_byte_starts",
         "source_instruction_utf8_byte_ends",
     )
+    instruction_ids = evidence["source_instruction_occurrence_ids"]
     _require(
         all(pair[key] == evidence[key] for key in instruction_keys),
         f"{label}: source instruction projection",
     )
     closure_eligible = pair_kind == "atomic_occurrence_pair"
+    exact_pairing_citation = pair["exact_pairing_citation"]
+    composite_pair_id = pair["composite_typed_projection_pair_id"]
+    if closure_eligible:
+        _require(
+            pair["alias_question_selector"] is None
+            and pair["canonical_question_selector"] is None
+            and exact_pairing_citation is None
+            and composite_pair_id is None,
+            f"{label}: atomic pair carries composite authority",
+        )
+    else:
+        pinned_pairs, _pinned_stops = _composite_adjudications_by_id()
+        pinned_pair = pinned_pairs.get(composite_pair_id)
+        instruction_citation = {
+            "document_source_position": evidence["document_source_position"],
+            "matched_text": evidence["source_instruction_matched_texts"][0],
+            "matched_utf8_sha256": evidence[
+                "source_instruction_matched_utf8_sha256s"
+            ][0],
+            "page_number": evidence["source_instruction_page_numbers"][0],
+            "source_document_id": evidence["source_document_id"],
+            "utf8_byte_span": {
+                "start": evidence["source_instruction_utf8_byte_starts"][0],
+                "end": evidence["source_instruction_utf8_byte_ends"][0],
+            },
+        }
+        _require(
+            len(instruction_ids) == 1
+            and pinned_pair is not None
+            and pinned_pair["instruction_id"] == instruction_ids[0]
+            and pinned_pair["source_evidence_id"]
+            == evidence["source_local_evidence_id"]
+            and pinned_pair["alias_combined_occurrence_id"] == alias_id
+            and pinned_pair["canonical_combined_occurrence_id"] == canonical_id
+            and pinned_pair["alias_question_selector"]
+            == pair["alias_question_selector"]
+            and pinned_pair["canonical_question_selector"]
+            == pair["canonical_question_selector"]
+            and pinned_pair["semantic_type"] == pair["semantic_type"]
+            and pinned_pair["pairing_basis_code"] == pair["pairing_basis_code"]
+            and pinned_pair["instruction_citation"] == instruction_citation
+            and pinned_pair["exact_pairing_citation"]
+            == exact_pairing_citation,
+            f"{label}: typed pair lacks its pinned exact-text derivation",
+        )
     _require(
         pair["class_closure_eligible"] is closure_eligible
         and pair["typed_projection_union_prohibited"] is (not closure_eligible)
@@ -9622,6 +10441,8 @@ def _validate_alias_semantic_pair_row(
                 pair["alias_endpoint_matched_utf8_sha256"],
                 pair["canonical_endpoint_matched_utf8_sha256"],
                 pair["source_instruction_matched_utf8_sha256s"],
+                exact_pairing_citation,
+                composite_pair_id,
             ],
         ),
         f"{label}: pair adjudication ID",
@@ -9719,6 +10540,46 @@ def _validate_alias_evidence_semantic_adjudication_row(
         f"{label}: semantic outcome",
     )
     _require_string(row["semantic_finding"], f"{label}: finding")
+    continuation_citation = row["continuation_composition_citation"]
+    _require(
+        (continuation_citation is not None)
+        is any(
+            pair["pairing_basis_code"] == CONTINUATION_COMPOSITION_RULE
+            for pair in pairs
+        ),
+        f"{label}: continuation citation/pair mismatch",
+    )
+    composite_stop_citation = row["composite_stop_citation"]
+    composite_stop_expected = (
+        not approved and origin != "ca41663_nonledger_bypass_adjudication"
+    )
+    _require(
+        (composite_stop_citation is not None) is composite_stop_expected,
+        f"{label}: composite STOP citation mismatch",
+    )
+    if composite_stop_citation is not None:
+        _require_exact_keys(
+            composite_stop_citation,
+            COMPOSITE_STOP_KEYS,
+            f"{label}: composite STOP citation",
+        )
+        _pinned_pairs, pinned_stops = _composite_adjudications_by_id()
+        stop_id = composite_stop_citation["stop_adjudication_id"]
+        pinned_stop = pinned_stops.get(stop_id)
+        _require(
+            len(instruction_ids) == 1
+            and pinned_stop == composite_stop_citation
+            and composite_stop_citation["source_evidence_id"]
+            == row["source_local_evidence_id"]
+            and composite_stop_citation["instruction_id"] == instruction_ids[0]
+            and composite_stop_citation["alias_combined_occurrence_id"]
+            == aliases[0]
+            and composite_stop_citation["canonical_combined_occurrence_id"]
+            == canonicals[0]
+            and composite_stop_citation["finding_code"]
+            == row["semantic_finding"],
+            f"{label}: composite STOP lacks its pinned exact-text ruling",
+        )
     _require(
         row["semantic_alias_evidence_adjudication_id"]
         == _row_id(
@@ -9736,7 +10597,8 @@ def _validate_alias_evidence_semantic_adjudication_row(
                     pair["semantic_alias_pair_adjudication_id"]
                     for pair in pairs
                 ],
-                row["continuation_composition_citation"],
+                continuation_citation,
+                composite_stop_citation,
             ],
         ),
         f"{label}: evidence adjudication ID",
@@ -12742,6 +13604,8 @@ def _repin_mutated_bundle(
                     pair["alias_endpoint_matched_utf8_sha256"],
                     pair["canonical_endpoint_matched_utf8_sha256"],
                     pair["source_instruction_matched_utf8_sha256s"],
+                    pair["exact_pairing_citation"],
+                    pair["composite_typed_projection_pair_id"],
                 ],
             )
         semantic_row["approved_pair_count"] = len(
@@ -12763,6 +13627,7 @@ def _repin_mutated_bundle(
                     for pair in semantic_row["approved_pair_rows"]
                 ],
                 semantic_row["continuation_composition_citation"],
+                semantic_row["composite_stop_citation"],
             ],
         )
         semantic_pair_rows.extend(semantic_row["approved_pair_rows"])
