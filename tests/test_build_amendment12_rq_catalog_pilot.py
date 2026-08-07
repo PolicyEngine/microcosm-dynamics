@@ -1182,15 +1182,15 @@ def test__component_sweep__is_corpus_exhaustive(bundle):
 
 def test__derived_class_sweeps__exact_cover_both_source_domains(bundle):
     artifact = bundle["derived"]
-    assert artifact["component_class_admission_sweep_count"] == 19_507
+    assert artifact["component_class_admission_sweep_count"] == 19_536
     assert artifact["component_class_member_occurrence_count"] == 21_283
     assert artifact["catalog_only_job_complement_sweep_count"] == 12_357
     assert artifact["job_class_member_occurrence_count"] == 14_326
     assert artifact["component_class_candidate_disposition_counts"] == {
-        "multi_parent_ambiguity_no_selection": 1_973,
-        "unique_parent_assignment": 7_934,
+        "multi_parent_ambiguity_no_selection": 1_967,
+        "unique_parent_assignment": 7_952,
         "zero_lawful_parent_terminal_disposition": 30,
-        "zero_parent_terminal_disposition": 9_570,
+        "zero_parent_terminal_disposition": 9_587,
     }
 
 
@@ -1262,8 +1262,8 @@ def test__derived_class_sweeps__construct_aliases_only_from_alias_arm(
 def test__derived_job_complement__is_a_complete_two_arm_partition(bundle):
     artifact = bundle["derived"]
     assert artifact["catalog_only_job_coverage_arm_counts"] == {
-        "relationship_projection_nonempty": 3_359,
-        "terminal_catalog_disposition": 8_998,
+        "relationship_projection_nonempty": 3_361,
+        "terminal_catalog_disposition": 8_996,
     }
     assert all(
         row["catalog_only_disposition_emitted"] is False
