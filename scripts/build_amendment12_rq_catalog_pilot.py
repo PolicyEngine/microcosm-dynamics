@@ -394,8 +394,7 @@ if (
 ):
     raise RuntimeError("continuation citation and restoration domains drift")
 
-COMPOSITE_IMPORT_INSTRUCTION_IDS = frozenset(
-    """
+COMPOSITE_IMPORT_INSTRUCTION_IDS = frozenset("""
 psid-questionnaire-occurrence:cb562486f76e7f4dcb2a4ef574a0ae413de9a2ede4d4450ad2e8cf96058e8b2d
 psid-questionnaire-occurrence:d986ab2a3dfc95f31fda53fac4a23b7520ee9fd449d2ef501569afe651b3a369
 psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0
@@ -417,8 +416,7 @@ psid-questionnaire-occurrence:1e5f65bf74b51459b2db19f2c8b433a9df29a660fcb5bed021
 psid-questionnaire-occurrence:4c354d978faf69b2a8e4f567e344b272c097bdc28cc6986adafcb2f8d38af3ab
 psid-questionnaire-occurrence:c7bc4ab94c2320b283203e6d6d677c21f84b9d61e10880b5f9b4d9c0261386d0
 psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcce683ff5dee1a9e
-""".split()
-)
+""".split())
 COMPOSITE_IMPORT_STOP_FINDING_BY_INSTRUCTION = {
     (
         "psid-questionnaire-occurrence:"
@@ -687,8 +685,7 @@ EXCLUSIVE_DESTINATION_REDIRECTION_INSTRUCTION_IDS = frozenset(
 # component cross-reference groups.  These positive members were reviewed
 # against their exact instruction and endpoint text; they are deliberately
 # enumerated so that a new structural match cannot silently enter A.
-_ROUND_FIVE_REVIEWED_ALIAS_INSTRUCTION_IDS = frozenset(
-    """
+_ROUND_FIVE_REVIEWED_ALIAS_INSTRUCTION_IDS = frozenset("""
 psid-questionnaire-occurrence:b71d860ddb620bcecb24104963153dd9282b4ed1e0c4f41b92bdc8b9aa14e0c3
 psid-questionnaire-occurrence:b646a5e30eedfb39db762f4af982fa54c670cac4135202d6e9e79bf4737172db
 psid-questionnaire-occurrence:ace0a3dcf08a213a064bba184a64ec6027f03e0799808ba4112d9b2361255096
@@ -816,8 +813,7 @@ psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcc
 psid-questionnaire-occurrence:cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852
 psid-questionnaire-occurrence:2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace
 psid-questionnaire-occurrence:7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233
-""".split()
-)
+""".split())
 SEMANTIC_ALIAS_EQUIVALENCE_INSTRUCTION_IDS = (
     _ROUND_FIVE_REVIEWED_ALIAS_INSTRUCTION_IDS
     - COMPOSITE_IMPORT_STOP_INSTRUCTION_IDS
@@ -828,8 +824,7 @@ ROUND_FIVE_STRUCTURAL_ALIAS_CANDIDATE_INSTRUCTION_IDS = (
 )
 
 SEMANTIC_ALIAS_STOP_INSTRUCTION_IDS_BY_FINDING = {
-    "incomplete_fragment_does_not_prove_occurrence_equivalence": frozenset(
-        """
+    "incomplete_fragment_does_not_prove_occurrence_equivalence": frozenset("""
 psid-questionnaire-occurrence:a37cf7dce81d69ba18e303afdd31a0825103c53d01398e644a312d55155150ba
 psid-questionnaire-occurrence:8b9c6613b23e83dd55af058542e6aec3be341440397c632d91c1b74f073291dd
 psid-questionnaire-occurrence:b151de324a45124f27e1b426eb06b8a94ccb653cea7cb7af8dd402341d6b61c5
@@ -840,27 +835,21 @@ psid-questionnaire-occurrence:4b6c12f1e8e57edd45a3d43a772c69d923ec4c72d8292cdff1
 psid-questionnaire-occurrence:5eb05b791f0abad829debc9863433e0a8e7bd254aa18ac51b6c750caa48bb46a
 psid-questionnaire-occurrence:d662043b204306d6c052f412fe674574e80fd1a40aca75b1842a212bb1fe8f68
 psid-questionnaire-occurrence:5e89bb2a5186c4afee4a6a2289a4686ddcee89aeeae089b42c24e3ce9ff72708
-""".split()
-    ),
+""".split()),
     "anti_duplication_instruction_disproves_occurrence_equivalence": (
-        frozenset(
-            """
+        frozenset("""
 psid-questionnaire-occurrence:6ed791445d19c2af492a3571d5a0d4b7f635eaeaabb5f5f3abf5424b8d04c03a
 psid-questionnaire-occurrence:124dd16396afb1eb91cdefdaf057c3e2450ca445b7a8ea5f788d472db80cc1ba
-""".split()
-        )
+""".split())
     ),
-    "conditional_overlap_does_not_prove_occurrence_equivalence": frozenset(
-        """
+    "conditional_overlap_does_not_prove_occurrence_equivalence": frozenset("""
 psid-questionnaire-occurrence:9a16ad56ed62fe94ea3e8e0c0c41686d7cabc6ee0c9c261549d6774974257bef
 psid-questionnaire-occurrence:a70a44fb68cd2b0ceefb729ae616454f03d7e66fb2bfd088e13d46fc58f349d8
 psid-questionnaire-occurrence:e7eeaf55540d8d463685e599cbcdb12e91b76652a1029311ef206b3183aada05
 psid-questionnaire-occurrence:e44e06b2a1a7e984e7321edb4eac1f28824855c2e9bbfbb2bc099ff6e5e43446
-""".split()
-    ),
+""".split()),
     "dependency_or_derivation_does_not_prove_occurrence_equivalence": (
-        frozenset(
-            """
+        frozenset("""
 psid-questionnaire-occurrence:128e68c5f8b2bb12a7a03f63910789effa54a1c40987efeda703132349b339da
 psid-questionnaire-occurrence:f7c8757b9260deed7395c6d3a68c085df26c7759681cfa6dc1fab7affe8fba4e
 psid-questionnaire-occurrence:074d2fcfa21aa7202ba3d203ee2bb7f60b57d95195b4110a28c725206583a453
@@ -870,8 +859,7 @@ psid-questionnaire-occurrence:ca223381e53188458633c9029f3df0371945453ead6cd5a736
 psid-questionnaire-occurrence:86c314ec0cbf47b1935cc4efbbdd5a54f168602175ceb959bd18d887350cad30
 psid-questionnaire-occurrence:6c4a56864bdab02d8e595962fb8f1a997c473f1eb765939ea384284f01f7a3e7
 psid-questionnaire-occurrence:a391cdd9c11b2efa526ca3df01e0acdae2668adcdf00ad547c2e25a7feefbc44
-""".split()
-        )
+""".split())
     ),
     "routing_to_additional_sequence_does_not_prove_equivalence": frozenset(
         {
@@ -923,16 +911,13 @@ if len(SEMANTIC_ALIAS_STOP_FINDING_BY_INSTRUCTION) != sum(
 # extant bytes settle the semantic question.  It is never silently promoted
 # into positive alias proof.  This ledger separately records whether the
 # predecessor's source seal must be repaired before tier 2.
-ROUND_THREE_FRAGMENT_RESEAL_INSTRUCTION_IDS = frozenset(
-    """
+ROUND_THREE_FRAGMENT_RESEAL_INSTRUCTION_IDS = frozenset("""
 psid-questionnaire-occurrence:f7c8757b9260deed7395c6d3a68c085df26c7759681cfa6dc1fab7affe8fba4e
 psid-questionnaire-occurrence:074d2fcfa21aa7202ba3d203ee2bb7f60b57d95195b4110a28c725206583a453
 psid-questionnaire-occurrence:ca223381e53188458633c9029f3df0371945453ead6cd5a736f3ddd29eedca36
 psid-questionnaire-occurrence:6c4a56864bdab02d8e595962fb8f1a997c473f1eb765939ea384284f01f7a3e7
-""".split()
-)
-ROUND_FOUR_NEW_FRAGMENT_RESEAL_INSTRUCTION_IDS = frozenset(
-    """
+""".split())
+ROUND_FOUR_NEW_FRAGMENT_RESEAL_INSTRUCTION_IDS = frozenset("""
 psid-questionnaire-occurrence:a37cf7dce81d69ba18e303afdd31a0825103c53d01398e644a312d55155150ba
 psid-questionnaire-occurrence:8b9c6613b23e83dd55af058542e6aec3be341440397c632d91c1b74f073291dd
 psid-questionnaire-occurrence:b151de324a45124f27e1b426eb06b8a94ccb653cea7cb7af8dd402341d6b61c5
@@ -943,10 +928,8 @@ psid-questionnaire-occurrence:4b6c12f1e8e57edd45a3d43a772c69d923ec4c72d8292cdff1
 psid-questionnaire-occurrence:5eb05b791f0abad829debc9863433e0a8e7bd254aa18ac51b6c750caa48bb46a
 psid-questionnaire-occurrence:d662043b204306d6c052f412fe674574e80fd1a40aca75b1842a212bb1fe8f68
 psid-questionnaire-occurrence:5e89bb2a5186c4afee4a6a2289a4686ddcee89aeeae089b42c24e3ce9ff72708
-""".split()
-)
-SEMANTICALLY_DECISIVE_FRAGMENT_INSTRUCTION_IDS = frozenset(
-    """
+""".split())
+SEMANTICALLY_DECISIVE_FRAGMENT_INSTRUCTION_IDS = frozenset("""
 psid-questionnaire-occurrence:9582333627cf26561426cef746e0ce6e66c6028d685f25468f2872baeb54c7dc
 psid-questionnaire-occurrence:116697de22b8368ba1f36cd21df28d50aa6a4c262f983ba40f0c72f45ad8dc42
 psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0
@@ -981,8 +964,7 @@ psid-questionnaire-occurrence:a391cdd9c11b2efa526ca3df01e0acdae2668adcdf00ad547c
 psid-questionnaire-occurrence:cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852
 psid-questionnaire-occurrence:2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace
 psid-questionnaire-occurrence:7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233
-""".split()
-)
+""".split())
 SOURCE_INSTRUCTION_FRAGMENT_IDS = (
     ROUND_THREE_FRAGMENT_RESEAL_INSTRUCTION_IDS
     | ROUND_FOUR_NEW_FRAGMENT_RESEAL_INSTRUCTION_IDS
