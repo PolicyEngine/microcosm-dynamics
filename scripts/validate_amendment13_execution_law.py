@@ -36,6 +36,17 @@ OVERLAY_SCHEMA_VERSION = "rq_stage2_document_repair_overlay.v1"
 SUCCESSOR_SCHEMA_VERSION = "rq_stage2_local_evidence_repair_successor.v1"
 SUPERSESSION_SCHEMA_VERSION = "rq_stage2_predecessor_supersession.v1"
 ERA_SEAL_SCHEMA_VERSION = "rq_stage3_era_repair_successor_seal.v1"
+GOVERNING_A13_IDENTITY_SCHEMA_VERSION = (
+    "amendment_13_governing_ratification_identity.v1"
+)
+GOVERNING_A13_IDENTITY_STATUS = "RATIFIED_AMENDMENT_13_GOVERNING_EXECUTION_LAW"
+GOVERNING_A13_CANDIDATE_IDENTITY = {
+    "schema_version": (
+        "amendment_13_governing_ratification_identity_candidate.v1"
+    ),
+    "status": "UNAVAILABLE_BEFORE_AMENDMENT_13_RATIFICATION",
+    "authority_emitted": False,
+}
 
 PROOF_TERMINAL_STATUS = (
     "terminal_semantically_incompatible_local_proof_no_alias_admitted"
@@ -51,6 +62,25 @@ DOC036_SUCCESSOR_STATUS = (
 )
 SUPERSESSION_RELATION = "predecessor_row_superseded_by_named_successor"
 SUPERSESSION_STATUS = "append_only_predecessor_retained_successor_selected"
+STATUS_MAPPING_BY_FAMILY = {
+    "modern_handoff_status": {
+        "status_family": "modern_handoff_status",
+        "status_field": "handoff_status",
+        "predecessor_status": (
+            "local_resolved_cross_reference_for_global_assembly"
+        ),
+    },
+    "legacy_resolution_status": {
+        "status_family": "legacy_resolution_status",
+        "status_field": "resolution_status",
+        "predecessor_status": "document_local_source_evidence_complete",
+    },
+    "document_036_special_resolution_status": {
+        "status_family": "document_036_special_resolution_status",
+        "status_field": "resolution_status",
+        "predecessor_status": "locally_resolved_document_evidence",
+    },
+}
 FRAGMENT_SELECTOR_RULE = (
     "unique_predecessor_alias_anchor_context_occurrence_at_duplicate_"
     "leading_span"
@@ -68,6 +98,10 @@ DESIGN_BLOB = "626213aa45bce6b8c94b36dcaded16800ce0323d"
 DESIGN_BYTE_SIZE = 3_713_728
 DESIGN_SHA256 = (
     "283a010c1bb135917fd8c1f1aebd1526165f829509d32e7689537167aa8818f5"
+)
+AMENDMENT13_BOUNDARY = (
+    b"\n## 27. Amendment 13 \xe2\x80\x94 ratification identity and tier-2 "
+    b"repair-successor law\n"
 )
 RATIFICATION_CHANGED_PATH_COUNT = 17
 ATTESTED_CANDIDATE_HEAD = "76acad02b0d519d12057b75ab7c21f2c2a4b2433"
@@ -97,7 +131,7 @@ RATIFY_ATTESTATIONS = (
     },
 )
 
-RATIFIED_DESIGN_IDENTITY = {
+AMENDMENT12_RATIFICATION_IDENTITY = {
     "ratification_commit": RATIFICATION_COMMIT,
     "ratification_parents": [RATIFICATION_PARENT],
     "document_path": DESIGN_PATH,
@@ -105,14 +139,10 @@ RATIFIED_DESIGN_IDENTITY = {
     "document_blob_oid": DESIGN_BLOB,
     "document_byte_size": DESIGN_BYTE_SIZE,
     "document_sha256": DESIGN_SHA256,
-    "changed_path_count_observation_not_identity_condition": (
-        RATIFICATION_CHANGED_PATH_COUNT
-    ),
     "dual_ratify_attestations": [dict(row) for row in RATIFY_ATTESTATIONS],
 }
 
-INCOMPATIBLE_PROOF_IDS = tuple(
-    """
+INCOMPATIBLE_PROOF_IDS = tuple("""
 rq-local-repeat-evidence:c93bb69e6a4c04717efd8b68e71799b5b4f3cb1c1c20a1b31afe2852d04dab67
 rq-local-repeat-evidence:0c25501bcb134ddd36f5f076978ebd01a02d3e731772c4ae5de182d81a76a487
 rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716
@@ -141,8 +171,7 @@ rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561
 rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877
 rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c
 rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39
-""".split()
-)
+""".split())
 INCOMPATIBLE_PROOF_ID_DOMAIN_SHA256 = (
     "9c8cb11732939daac176275ae66dfa5a6ce61a2850c82087dd761a6431ac7412"
 )
@@ -216,8 +245,7 @@ FRAGMENT_INSTRUCTION_ID_DOMAIN_SHA256 = (
     "74075ac0ca54eff2a9459d4e95f426195c9e01db78040025462aa2f57f486a09"
 )
 
-DOC036_CLASSIFICATION_IDS = tuple(
-    """
+DOC036_CLASSIFICATION_IDS = tuple("""
 rq-local-anchor:6b757b140c4fdbcfcfe8b974f7894ffc856ab3dca240b7eb61530adca0e2d12a
 rq-local-anchor:11802d91128200f95abc1a42e5e39677f30c955da28e8b89bdc72e10ff8c11ef
 rq-local-anchor:daae302f7bdebd7a8ab43d983faaedecb97ac22f8a7ca7c3af92dbff1cb76de5
@@ -226,14 +254,12 @@ rq-local-anchor:930c509fadfdc037d5e03d65422cc7c3d3b86a9ec3adb7553e86d9654632d4ca
 rq-local-anchor:5a703e10bfd94a486c21d043d7ad980905870b908ea70b2f136c16e835e1a261
 rq-local-anchor:d6d21da4a96eda0e310284ca6cebc059f340e2bdaf2da64f56286d65a03fa283
 rq-local-anchor:93b5b7f3d32e6dda9e3fad1089fc4ba605502765e4de1735223637bc615fff29
-""".split()
-)
+""".split())
 DOC036_CLASSIFICATION_ID_DOMAIN_SHA256 = (
     "1d2271438f3d9a7744e1379ed26ce565ff2731ed0dd8dec357c0bd8a9a271d23"
 )
 
-LAW_GAP_IDS = tuple(
-    """
+LAW_GAP_IDS = tuple("""
 rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6
 rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045
 rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495
@@ -248,10 +274,22 @@ rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c9
 rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868
 rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927
 rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734
-""".split()
-)
+""".split())
 LAW_GAP_ID_DOMAIN_SHA256 = (
     "f2e8a5001527eb975887828ba3e66c3eeac95ec0972454bcef509fba92149883"
+)
+
+EXPECTED_OVERLAY_DOMAIN_SHA256 = (
+    "0588e93fd84da1b949ec951b2c6c5f31f872f53980c333a21091141c774f7fbb"
+)
+EXPECTED_SUCCESSOR_DOMAIN_SHA256 = (
+    "43fbdb31cdff9907ee985724c725ac453dc7134d8dd8e256e1aa6716f24fa029"
+)
+EXPECTED_SUPERSESSION_DOMAIN_SHA256 = (
+    "9a5c1f1bd0871bd1fc60faed4c817b699b0ad571ee73b8b0ed07865db75195df"
+)
+EXPECTED_ERA_SEAL_DOMAIN_SHA256 = (
+    "04b604d6a7c8009b7ebf7bc32e8985da6ab3150b8a4d2eb527e81d844bc7bd6f"
 )
 
 COMPOSITION_SPECS = {
@@ -444,39 +482,285 @@ def _git(*arguments: str, text: bool = False) -> bytes | str:
     return result.stdout
 
 
-def _validate_ratification_identity(identity: Mapping[str, Any]) -> None:
+def _validate_amendment12_ratification_identity(
+    identity: Mapping[str, Any],
+) -> None:
+    _require_exact_keys(
+        identity,
+        {
+            "ratification_commit",
+            "ratification_parents",
+            "document_path",
+            "document_mode",
+            "document_blob_oid",
+            "document_byte_size",
+            "document_sha256",
+            "dual_ratify_attestations",
+        },
+        "Amendment-12 ratification identity",
+    )
     _require(
-        identity == RATIFIED_DESIGN_IDENTITY,
-        "ratification identity is not the exact attested document identity",
+        identity["document_path"] == DESIGN_PATH
+        and identity["document_mode"] == DESIGN_MODE,
+        "ratification identity selects another document path or mode",
+    )
+    _require(
+        isinstance(identity["ratification_parents"], list)
+        and len(identity["ratification_parents"]) == 1,
+        "ratification identity does not name one parent",
     )
     parent_line = str(
         _git(
-            "rev-list", "--parents", "-n", "1", RATIFICATION_COMMIT, text=True
+            "rev-list",
+            "--parents",
+            "-n",
+            "1",
+            identity["ratification_commit"],
+            text=True,
         )
     ).strip()
     _require(
-        parent_line.split() == [RATIFICATION_COMMIT, RATIFICATION_PARENT],
+        parent_line.split()
+        == [
+            identity["ratification_commit"],
+            identity["ratification_parents"][0],
+        ],
         "ratification commit is not the exact single-parent commit",
     )
     tree_line = str(
-        _git("ls-tree", RATIFICATION_COMMIT, "--", DESIGN_PATH, text=True)
+        _git(
+            "ls-tree",
+            identity["ratification_commit"],
+            "--",
+            identity["document_path"],
+            text=True,
+        )
     ).strip()
     _require(
-        tree_line == f"{DESIGN_MODE} blob {DESIGN_BLOB}\t{DESIGN_PATH}",
-        "ratification commit does not select the attested document blob",
+        tree_line
+        == (
+            f"{identity['document_mode']} blob "
+            f"{identity['document_blob_oid']}\t{identity['document_path']}"
+        ),
+        "ratification commit does not select the supplied document blob",
     )
-    raw = _git("show", f"{RATIFICATION_COMMIT}:{DESIGN_PATH}")
+    raw = _git(
+        "show",
+        f"{identity['ratification_commit']}:{identity['document_path']}",
+    )
     _require(
         isinstance(raw, bytes), "ratification blob read was not raw bytes"
     )
     _require(
-        len(raw) == DESIGN_BYTE_SIZE
-        and _sha256(raw) == DESIGN_SHA256
+        len(raw) == identity["document_byte_size"]
+        and _sha256(raw) == identity["document_sha256"]
         and hashlib.sha1(
             b"blob " + str(len(raw)).encode() + b"\0" + raw
         ).hexdigest()
-        == DESIGN_BLOB,
+        == identity["document_blob_oid"],
         "ratification document bytes do not match the dual-hash identity",
+    )
+    _require(
+        identity == AMENDMENT12_RATIFICATION_IDENTITY,
+        "ratification identity is not the exact attested document identity",
+    )
+
+
+def _is_lower_hex(value: Any, length: int) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == length
+        and all(character in "0123456789abcdef" for character in value)
+    )
+
+
+def validate_governing_amendment13_ratification_identity(
+    identity: Mapping[str, Any],
+    attestation_record_bytes: Mapping[str, bytes],
+    *,
+    verify_git: bool = True,
+) -> None:
+    """Validate the future identity that must govern an executed repair."""
+
+    _require_exact_keys(
+        identity,
+        {
+            "schema_version",
+            "status",
+            "ratification_commit",
+            "ratification_parents",
+            "ratification_commit_changed_paths",
+            "document_path",
+            "document_mode",
+            "document_blob_oid",
+            "document_byte_size",
+            "document_sha256",
+            "dual_ratify_attestations",
+        },
+        "governing Amendment-13 ratification identity",
+    )
+    commit = identity["ratification_commit"]
+    parents = identity["ratification_parents"]
+    _require(
+        identity["schema_version"] == GOVERNING_A13_IDENTITY_SCHEMA_VERSION
+        and identity["status"] == GOVERNING_A13_IDENTITY_STATUS,
+        "governing Amendment-13 ratification identity status drift",
+    )
+    _require(
+        _is_lower_hex(commit, 40)
+        and isinstance(parents, list)
+        and len(parents) == 1
+        and _is_lower_hex(parents[0], 40),
+        "governing Amendment-13 ratification commit is not single-parent",
+    )
+    _require(
+        identity["ratification_commit_changed_paths"] == [DESIGN_PATH],
+        "governing Amendment-13 recording act is not document-only",
+    )
+    _require(
+        identity["document_path"] == DESIGN_PATH
+        and identity["document_mode"] == DESIGN_MODE
+        and _is_lower_hex(identity["document_blob_oid"], 40)
+        and isinstance(identity["document_byte_size"], int)
+        and not isinstance(identity["document_byte_size"], bool)
+        and identity["document_byte_size"] > 0
+        and _is_lower_hex(identity["document_sha256"], 64),
+        "governing Amendment-13 document identity is malformed",
+    )
+    attestations = identity["dual_ratify_attestations"]
+    _require(
+        isinstance(attestations, list) and len(attestations) == 2,
+        "governing Amendment-13 identity lacks two RATIFY attestations",
+    )
+    record_names: list[str] = []
+    candidate_heads: list[str] = []
+    for attestation in attestations:
+        _require_exact_keys(
+            attestation,
+            {
+                "record_name",
+                "raw_byte_size",
+                "raw_sha256",
+                "verdict_token",
+                "attested_candidate_head",
+                "attested_document_byte_size",
+                "attested_document_sha256",
+            },
+            "governing Amendment-13 RATIFY attestation",
+        )
+        record_names.append(attestation["record_name"])
+        candidate_heads.append(attestation["attested_candidate_head"])
+        _require(
+            isinstance(attestation["record_name"], str)
+            and bool(attestation["record_name"])
+            and isinstance(attestation["raw_byte_size"], int)
+            and not isinstance(attestation["raw_byte_size"], bool)
+            and attestation["raw_byte_size"] > 0
+            and _is_lower_hex(attestation["raw_sha256"], 64)
+            and attestation["verdict_token"] == "RATIFY"
+            and _is_lower_hex(attestation["attested_candidate_head"], 40)
+            and attestation["attested_document_byte_size"]
+            == identity["document_byte_size"]
+            and attestation["attested_document_sha256"]
+            == identity["document_sha256"],
+            "governing Amendment-13 RATIFY attestation drift",
+        )
+    _require(
+        len(set(record_names)) == 2
+        and len(set(candidate_heads)) == 1
+        and len({row["raw_sha256"] for row in attestations}) == 2,
+        "governing Amendment-13 RATIFY records are not distinct and conjoined",
+    )
+    _require(
+        set(attestation_record_bytes) == set(record_names),
+        "governing Amendment-13 RATIFY raw-record domain drift",
+    )
+    for attestation in attestations:
+        raw_record = attestation_record_bytes[attestation["record_name"]]
+        expected_record = (
+            "# RATIFY\n"
+            f"record_name: {attestation['record_name']}\n"
+            "attested_candidate_head: "
+            f"{attestation['attested_candidate_head']}\n"
+            f"attested_document_path: {DESIGN_PATH}\n"
+            "attested_document_byte_size: "
+            f"{identity['document_byte_size']}\n"
+            f"attested_document_sha256: {identity['document_sha256']}\n"
+        ).encode("utf-8")
+        _require(
+            isinstance(raw_record, bytes)
+            and raw_record == expected_record
+            and len(raw_record) == attestation["raw_byte_size"]
+            and _sha256(raw_record) == attestation["raw_sha256"],
+            "governing Amendment-13 RATIFY raw bytes do not attest identity",
+        )
+    if not verify_git:
+        return
+    _require(
+        commit != RATIFICATION_COMMIT,
+        "governing Amendment-13 commit is not later than Amendment 12",
+    )
+    _git("merge-base", "--is-ancestor", RATIFICATION_COMMIT, commit)
+    parent_line = str(
+        _git("rev-list", "--parents", "-n", "1", commit, text=True)
+    ).strip()
+    _require(
+        parent_line.split() == [commit, parents[0]],
+        "governing Amendment-13 ratification commit is not exact",
+    )
+    changed_paths = str(
+        _git(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            commit,
+            text=True,
+        )
+    ).splitlines()
+    _require(
+        changed_paths == [DESIGN_PATH],
+        "governing Amendment-13 recording act is not document-only",
+    )
+    tree_line = str(
+        _git("ls-tree", commit, "--", DESIGN_PATH, text=True)
+    ).strip()
+    _require(
+        tree_line
+        == (
+            f"{DESIGN_MODE} blob {identity['document_blob_oid']}\t"
+            f"{DESIGN_PATH}"
+        ),
+        "governing Amendment-13 commit does not select its document blob",
+    )
+    candidate_tree_line = str(
+        _git("ls-tree", candidate_heads[0], "--", DESIGN_PATH, text=True)
+    ).strip()
+    _require(
+        candidate_tree_line
+        == (
+            f"{DESIGN_MODE} blob {identity['document_blob_oid']}\t"
+            f"{DESIGN_PATH}"
+        ),
+        "governing Amendment-13 attested candidate selects another blob",
+    )
+    raw = _git("show", f"{commit}:{DESIGN_PATH}")
+    amendment12_raw = _git("show", f"{RATIFICATION_COMMIT}:{DESIGN_PATH}")
+    _require(
+        isinstance(raw, bytes)
+        and len(raw) == identity["document_byte_size"]
+        and _sha256(raw) == identity["document_sha256"]
+        and hashlib.sha1(
+            b"blob " + str(len(raw)).encode() + b"\0" + raw
+        ).hexdigest()
+        == identity["document_blob_oid"],
+        "governing Amendment-13 document bytes fail dual-hash identity",
+    )
+    _require(
+        isinstance(amendment12_raw, bytes)
+        and raw[:DESIGN_BYTE_SIZE] == amendment12_raw
+        and raw[DESIGN_BYTE_SIZE:].startswith(AMENDMENT13_BOUNDARY),
+        "governing Amendment-13 document violates immutable-prefix law",
     )
 
 
@@ -568,7 +852,8 @@ def _overlay_preimage(
         document.position,
         document.source_document_id,
         _annotation_identity(document),
-        RATIFIED_DESIGN_IDENTITY,
+        AMENDMENT12_RATIFICATION_IDENTITY,
+        GOVERNING_A13_CANDIDATE_IDENTITY,
         predecessor_era_seal_content_sha256,
     ]
 
@@ -587,6 +872,7 @@ def _successor_row(
 ) -> dict[str, Any]:
     pointer = f"/{predecessor_row_domain}/{predecessor_row_index}"
     row_sha = _domain_sha(predecessor_row)
+    status_mapping = None if family is None else dict(family)
     preimage = [
         SUCCESSOR_SCHEMA_VERSION,
         successor_kind,
@@ -597,6 +883,7 @@ def _successor_row(
         pointer,
         predecessor_row_id,
         row_sha,
+        status_mapping,
         dict(successor_payload),
     ]
     row = {
@@ -615,7 +902,7 @@ def _successor_row(
         "successor_payload": dict(successor_payload),
     }
     if family is not None:
-        row["predecessor_status_mapping"] = dict(family)
+        row["predecessor_status_mapping"] = status_mapping
     return row
 
 
@@ -1111,6 +1398,12 @@ def build_execution_law() -> dict[str, Any]:
             "document_source_position": position,
             "source_document_id": document.source_document_id,
             "predecessor_annotation_identity": _annotation_identity(document),
+            "amendment12_ratification_identity": copy.deepcopy(
+                AMENDMENT12_RATIFICATION_IDENTITY
+            ),
+            "governing_amendment13_ratification_identity": copy.deepcopy(
+                GOVERNING_A13_CANDIDATE_IDENTITY
+            ),
             "predecessor_era_id": document.era_id,
             "predecessor_era_seal_content_sha256": predecessor_seal_by_era[
                 document.era_id
@@ -1184,7 +1477,8 @@ def build_execution_law() -> dict[str, Any]:
             [row["successor_row_id"] for row in era_successors],
             [row["supersession_row_id"] for row in era_edges],
             counts,
-            RATIFIED_DESIGN_IDENTITY,
+            AMENDMENT12_RATIFICATION_IDENTITY,
+            GOVERNING_A13_CANDIDATE_IDENTITY,
         ]
         era_rows.append(
             {
@@ -1197,6 +1491,12 @@ def build_execution_law() -> dict[str, Any]:
                 "era_id": era_id,
                 "era_order_position": predecessor_seal["era_order_position"],
                 "predecessor_era_seal_identity": predecessor_seal,
+                "amendment12_ratification_identity": copy.deepcopy(
+                    AMENDMENT12_RATIFICATION_IDENTITY
+                ),
+                "governing_amendment13_ratification_identity": copy.deepcopy(
+                    GOVERNING_A13_CANDIDATE_IDENTITY
+                ),
                 "repair_overlay_ids": [
                     row["repair_overlay_id"] for row in era_overlays
                 ],
@@ -1216,7 +1516,19 @@ def build_execution_law() -> dict[str, Any]:
         "status": "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT",
         "authority_emitted": False,
         "certification_emitted": False,
-        "ratification_identity": copy.deepcopy(RATIFIED_DESIGN_IDENTITY),
+        "amendment12_ratification_identity": copy.deepcopy(
+            AMENDMENT12_RATIFICATION_IDENTITY
+        ),
+        "ratification_history_observation": {
+            "changed_path_count": RATIFICATION_CHANGED_PATH_COUNT,
+            "commit_path_shape_is_identity_condition": False,
+        },
+        "governing_amendment13_ratification_identity": copy.deepcopy(
+            GOVERNING_A13_CANDIDATE_IDENTITY
+        ),
+        "governing_amendment13_identity_schema_version": (
+            GOVERNING_A13_IDENTITY_SCHEMA_VERSION
+        ),
         "ratification_identity_rule": (
             "exact_attested_document_blob_not_commit_path_shape"
         ),
@@ -1240,8 +1552,10 @@ def build_execution_law() -> dict[str, Any]:
             "continuation_restoration_count": 3,
         },
         "git_order_law": {
-            "ratification_commit_must_be_strict_ancestor_of_every_overlay_"
-            "first_add": True,
+            "amendment12_ratification_commit_must_be_strict_ancestor_of_"
+            "governing_amendment13_ratification_commit": True,
+            "governing_amendment13_ratification_commit_must_be_validated_"
+            "and_strict_ancestor_of_every_overlay_first_add": True,
             "overlay_first_add_must_be_strict_ancestor_of_containing_era_"
             "successor_seal_first_add": True,
             "all_six_successor_seal_first_adds_must_be_strict_ancestors_of_"
@@ -1309,7 +1623,10 @@ def validate_execution_law(
             "status",
             "authority_emitted",
             "certification_emitted",
-            "ratification_identity",
+            "amendment12_ratification_identity",
+            "ratification_history_observation",
+            "governing_amendment13_ratification_identity",
+            "governing_amendment13_identity_schema_version",
             "ratification_identity_rule",
             "overlay_schema_version",
             "successor_schema_version",
@@ -1331,6 +1648,14 @@ def validate_execution_law(
     )
     _require(law["schema_version"] == SCHEMA_VERSION, "law schema drift")
     _require(
+        law["overlay_schema_version"] == OVERLAY_SCHEMA_VERSION
+        and law["successor_schema_version"] == SUCCESSOR_SCHEMA_VERSION
+        and law["supersession_schema_version"] == SUPERSESSION_SCHEMA_VERSION
+        and law["era_successor_seal_schema_version"]
+        == ERA_SEAL_SCHEMA_VERSION,
+        "declared repair schema version drift",
+    )
+    _require(
         law["status"] == "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
         and law["authority_emitted"] is False
         and law["certification_emitted"] is False,
@@ -1341,11 +1666,32 @@ def validate_execution_law(
         == "exact_attested_document_blob_not_commit_path_shape",
         "ratification identity rule drift",
     )
+    _require(
+        law["ratification_history_observation"]
+        == {
+            "changed_path_count": RATIFICATION_CHANGED_PATH_COUNT,
+            "commit_path_shape_is_identity_condition": False,
+        },
+        "ratification history observation became an identity condition",
+    )
+    _require(
+        law["governing_amendment13_identity_schema_version"]
+        == GOVERNING_A13_IDENTITY_SCHEMA_VERSION,
+        "governing Amendment-13 identity schema drift",
+    )
+    _require(
+        law["governing_amendment13_ratification_identity"]
+        == GOVERNING_A13_CANDIDATE_IDENTITY,
+        "unratified fixture claims a governing Amendment-13 identity",
+    )
     if verify_git:
-        _validate_ratification_identity(law["ratification_identity"])
+        _validate_amendment12_ratification_identity(
+            law["amendment12_ratification_identity"]
+        )
     else:
         _require(
-            law["ratification_identity"] == RATIFIED_DESIGN_IDENTITY,
+            law["amendment12_ratification_identity"]
+            == AMENDMENT12_RATIFICATION_IDENTITY,
             "ratification identity drift",
         )
 
@@ -1419,11 +1765,30 @@ def validate_execution_law(
         )
         _require(
             row["schema_version"] == SUCCESSOR_SCHEMA_VERSION
+            and row["successor_identity_preimage"]
+            == [
+                SUCCESSOR_SCHEMA_VERSION,
+                row["successor_kind"],
+                row["repair_overlay_id"],
+                row["document_source_position"],
+                row["source_document_id"],
+                row["predecessor_annotation_identity"]["artifact_id"],
+                row["predecessor_row_pointer"],
+                row["predecessor_row_id"],
+                row["predecessor_row_canonical_sha256"],
+                row.get("predecessor_status_mapping"),
+                row["successor_payload"],
+            ]
             and row["successor_row_id"]
             == _content_id(
                 "a13-repair-successor", row["successor_identity_preimage"]
             ),
             "successor identity preimage mismatch",
+        )
+        expected_mapping = row.get("predecessor_status_mapping")
+        _require(
+            row["successor_identity_preimage"][-2] == expected_mapping,
+            "successor identity does not bind predecessor status mapping",
         )
     for row in proof_rows:
         payload = row["successor_payload"]
@@ -1464,12 +1829,8 @@ def validate_execution_law(
             "forged incompatible-proof terminal status or admission",
         )
         _require(
-            row["predecessor_status_mapping"]["status_family"]
-            in {
-                "modern_handoff_status",
-                "legacy_resolution_status",
-                "document_036_special_resolution_status",
-            },
+            row["predecessor_status_mapping"]
+            in tuple(STATUS_MAPPING_BY_FAMILY.values()),
             "proof predecessor status family is not deterministic",
         )
     _require(
@@ -1492,6 +1853,11 @@ def validate_execution_law(
             row["predecessor_status_mapping"],
             {"status_family", "status_field", "predecessor_status"},
             "fragment predecessor status mapping",
+        )
+        _require(
+            row["predecessor_status_mapping"]
+            in tuple(STATUS_MAPPING_BY_FAMILY.values()),
+            "fragment predecessor status family is not deterministic",
         )
         _require_exact_keys(
             payload,
@@ -1537,6 +1903,11 @@ def validate_execution_law(
             row["predecessor_status_mapping"],
             {"status_family", "status_field", "predecessor_status"},
             "fragment predecessor status mapping",
+        )
+        _require(
+            row["predecessor_status_mapping"]
+            in tuple(STATUS_MAPPING_BY_FAMILY.values()),
+            "fragment predecessor status family is not deterministic",
         )
         _require_exact_keys(
             payload,
@@ -1601,6 +1972,19 @@ def validate_execution_law(
             and payload["repeat_coverage_arm_admitted"] is False,
             "composed instruction silently claims alias semantics",
         )
+    _require(
+        Counter(
+            row["predecessor_status_mapping"]["status_family"]
+            for row in incomplete_rows
+        )
+        == Counter({"modern_handoff_status": 6, "legacy_resolution_status": 2})
+        and Counter(
+            row["predecessor_status_mapping"]["status_family"]
+            for row in composed_rows
+        )
+        == Counter({"modern_handoff_status": 2}),
+        "fragment predecessor status-family census drift",
+    )
     for row in doc036_rows:
         payload = row["successor_payload"]
         _require_exact_keys(
@@ -1616,6 +2000,21 @@ def validate_execution_law(
         )
         predecessor = payload["predecessor_classification_row"]
         successor = payload["successor_classification_row"]
+        citation = payload["source_occurrence_citation"]
+        _require_exact_keys(
+            citation,
+            {
+                "source_occurrence_id",
+                "occurrence_kind",
+                "matched_text",
+                "matched_utf8_sha256",
+                "page_number",
+                "page_text_utf8_sha256",
+                "utf8_byte_start",
+                "utf8_byte_end",
+            },
+            "document-036 source occurrence citation",
+        )
         changed_keys = {
             key
             for key in predecessor
@@ -1623,9 +2022,20 @@ def validate_execution_law(
         }
         _require(
             payload["terminal_status"] == DOC036_SUCCESSOR_STATUS
+            and payload["transformation_rule"]
+            == "replace_only_node_domain_component_slot_with_aggregate"
+            and set(successor) == set(predecessor)
             and predecessor["node_domain"] == "component_slot"
             and successor["node_domain"] == "aggregate"
-            and changed_keys == {"node_domain"},
+            and changed_keys == {"node_domain"}
+            and citation["source_occurrence_id"]
+            == predecessor["source_occurrence_id"]
+            and citation["occurrence_kind"]
+            in {
+                "farm_aggregate_anchor",
+                "business_aggregate_anchor",
+                "role_total_anchor",
+            },
             "document-036 transformation is not the sole determinate field change",
         )
 
@@ -1633,8 +2043,8 @@ def validate_execution_law(
     _require(len(supersession_rows) == 46, "supersession edge count is not 46")
     successor_by_id = {row["successor_row_id"]: row for row in all_successors}
     _require(
-        {row["successor_row_id"] for row in supersession_rows}
-        == set(successor_by_id),
+        [row["successor_row_id"] for row in supersession_rows]
+        == [row["successor_row_id"] for row in all_successors],
         "supersession edges do not exact-cover successors",
     )
     for row in supersession_rows:
@@ -1660,6 +2070,19 @@ def validate_execution_law(
         )
         _require(
             row["schema_version"] == SUPERSESSION_SCHEMA_VERSION
+            and row["supersession_identity_preimage"]
+            == [
+                SUPERSESSION_SCHEMA_VERSION,
+                row["repair_overlay_id"],
+                row["predecessor_row_pointer"],
+                row["predecessor_row_id"],
+                row["predecessor_row_canonical_sha256"],
+                row["successor_row_id"],
+                SUPERSESSION_RELATION,
+                SUPERSESSION_STATUS,
+                True,
+                False,
+            ]
             and row["supersession_row_id"]
             == _content_id(
                 "a13-supersession", row["supersession_identity_preimage"]
@@ -1679,6 +2102,9 @@ def validate_execution_law(
         == [7, 10, 11, 12, 13, 15, 17, 19, 36, 52, 56, 58, 66, 70],
         "repair overlay document order drift",
     )
+    overlay_by_position = {
+        row["document_source_position"]: row for row in overlays
+    }
     overlay_successor_ids: list[str] = []
     overlay_supersession_ids: list[str] = []
     for overlay in overlays:
@@ -1692,6 +2118,8 @@ def validate_execution_law(
                 "document_source_position",
                 "source_document_id",
                 "predecessor_annotation_identity",
+                "amendment12_ratification_identity",
+                "governing_amendment13_ratification_identity",
                 "predecessor_era_id",
                 "predecessor_era_seal_content_sha256",
                 "predecessor_source_rows_retained",
@@ -1707,17 +2135,49 @@ def validate_execution_law(
         )
         _require(
             overlay["schema_version"] == OVERLAY_SCHEMA_VERSION
+            and overlay["authority_kind"] == "PROSPECTIVE_NONAUTHORITY"
+            and overlay["overlay_identity_preimage"]
+            == [
+                OVERLAY_SCHEMA_VERSION,
+                overlay["document_source_position"],
+                overlay["source_document_id"],
+                overlay["predecessor_annotation_identity"],
+                AMENDMENT12_RATIFICATION_IDENTITY,
+                GOVERNING_A13_CANDIDATE_IDENTITY,
+                overlay["predecessor_era_seal_content_sha256"],
+            ]
             and overlay["repair_overlay_id"]
             == _content_id(
                 "a13-document-repair-overlay",
                 overlay["overlay_identity_preimage"],
             )
+            and overlay["amendment12_ratification_identity"]
+            == AMENDMENT12_RATIFICATION_IDENTITY
+            and overlay["governing_amendment13_ratification_identity"]
+            == GOVERNING_A13_CANDIDATE_IDENTITY
             and overlay["predecessor_source_rows_retained"] is True
             and overlay["predecessor_source_row_erasure_permitted"] is False,
             "overlay identity or append-only rule drift",
         )
         overlay_successors = _all_overlay_successors(overlay)
         overlay_edges = overlay["predecessor_supersession_rows"]
+        expected_overlay_successors = [
+            row
+            for row in all_successors
+            if row["document_source_position"]
+            == overlay["document_source_position"]
+        ]
+        expected_overlay_edges = [
+            row
+            for row in supersession_rows
+            if row["document_source_position"]
+            == overlay["document_source_position"]
+        ]
+        _require(
+            overlay_successors == expected_overlay_successors
+            and overlay_edges == expected_overlay_edges,
+            "overlay rows are not exact projections of top-level domains",
+        )
         _require(
             overlay["integrity"]
             == {
@@ -1735,14 +2195,44 @@ def validate_execution_law(
             row["supersession_row_id"] for row in overlay_edges
         )
     _require(
-        set(overlay_successor_ids) == set(successor_by_id)
-        and set(overlay_supersession_ids)
-        == {row["supersession_row_id"] for row in supersession_rows},
+        Counter(overlay_successor_ids)
+        == Counter({row_id: 1 for row_id in successor_by_id})
+        and Counter(overlay_supersession_ids)
+        == Counter(
+            {row["supersession_row_id"]: 1 for row in supersession_rows}
+        ),
         "overlays do not exact-cover repair and supersession rows",
     )
+    for successor in all_successors:
+        overlay = overlay_by_position[successor["document_source_position"]]
+        _require(
+            successor["repair_overlay_id"] == overlay["repair_overlay_id"]
+            and successor["source_document_id"]
+            == overlay["source_document_id"]
+            and successor["predecessor_annotation_identity"]
+            == overlay["predecessor_annotation_identity"],
+            "successor cross-document overlay linkage drift",
+        )
+    for edge in supersession_rows:
+        successor = successor_by_id[edge["successor_row_id"]]
+        _require(
+            edge["repair_overlay_id"] == successor["repair_overlay_id"]
+            and edge["document_source_position"]
+            == successor["document_source_position"]
+            and edge["predecessor_row_pointer"]
+            == successor["predecessor_row_pointer"]
+            and edge["predecessor_row_id"] == successor["predecessor_row_id"]
+            and edge["predecessor_row_canonical_sha256"]
+            == successor["predecessor_row_canonical_sha256"],
+            "supersession edge does not exact-link its successor",
+        )
 
     era_rows = law["successor_era_seal_rows"]
     _require(len(era_rows) == 6, "all six successor era seals are required")
+    _require(
+        [row["era_id"] for row in era_rows] == list(EXPECTED_ERA_COUNTS),
+        "successor era seal order drift",
+    )
     for era_row in era_rows:
         _require_exact_keys(
             era_row,
@@ -1754,6 +2244,8 @@ def validate_execution_law(
                 "era_id",
                 "era_order_position",
                 "predecessor_era_seal_identity",
+                "amendment12_ratification_identity",
+                "governing_amendment13_ratification_identity",
                 "repair_overlay_ids",
                 "successor_row_ids",
                 "supersession_row_ids",
@@ -1763,6 +2255,17 @@ def validate_execution_law(
             "successor era seal row",
         )
         counts = era_row["repair_counts"]
+        _require_exact_keys(
+            counts,
+            {
+                "semantically_incompatible_local_proof_count",
+                "incomplete_fragment_terminal_count",
+                "composed_fragment_count",
+                "doc036_aggregate_domain_count",
+                "supersession_count",
+            },
+            "successor era repair counts",
+        )
         observed = (
             counts["semantically_incompatible_local_proof_count"],
             counts["incomplete_fragment_terminal_count"],
@@ -1770,21 +2273,89 @@ def validate_execution_law(
             counts["doc036_aggregate_domain_count"],
             counts["supersession_count"],
         )
+        expected_era_overlays = [
+            overlay
+            for overlay in overlays
+            if overlay["predecessor_era_id"] == era_row["era_id"]
+        ]
+        expected_overlay_ids = [
+            overlay["repair_overlay_id"] for overlay in expected_era_overlays
+        ]
+        expected_successor_ids = [
+            row["successor_row_id"]
+            for row in all_successors
+            if overlay_by_position[row["document_source_position"]][
+                "predecessor_era_id"
+            ]
+            == era_row["era_id"]
+        ]
+        expected_supersession_ids = [
+            row["supersession_row_id"]
+            for row in supersession_rows
+            if overlay_by_position[row["document_source_position"]][
+                "predecessor_era_id"
+            ]
+            == era_row["era_id"]
+        ]
         _require(
             era_row["schema_version"] == ERA_SEAL_SCHEMA_VERSION
+            and era_row["authority_kind"] == "PROSPECTIVE_NONAUTHORITY"
+            and era_row["successor_era_seal_identity_preimage"]
+            == [
+                ERA_SEAL_SCHEMA_VERSION,
+                era_row["era_id"],
+                era_row["era_order_position"],
+                era_row["predecessor_era_seal_identity"],
+                era_row["repair_overlay_ids"],
+                era_row["successor_row_ids"],
+                era_row["supersession_row_ids"],
+                era_row["repair_counts"],
+                AMENDMENT12_RATIFICATION_IDENTITY,
+                GOVERNING_A13_CANDIDATE_IDENTITY,
+            ]
             and era_row["successor_era_seal_id"]
             == _content_id(
                 "a13-successor-era-seal",
                 era_row["successor_era_seal_identity_preimage"],
+            )
+            and era_row["amendment12_ratification_identity"]
+            == AMENDMENT12_RATIFICATION_IDENTITY
+            and era_row["governing_amendment13_ratification_identity"]
+            == GOVERNING_A13_CANDIDATE_IDENTITY
+            and era_row["repair_overlay_ids"] == expected_overlay_ids
+            and era_row["successor_row_ids"] == expected_successor_ids
+            and era_row["supersession_row_ids"] == expected_supersession_ids
+            and all(
+                overlay["predecessor_era_seal_content_sha256"]
+                == era_row["predecessor_era_seal_identity"]["content_sha256"]
+                for overlay in expected_era_overlays
             )
             and observed == EXPECTED_ERA_COUNTS[era_row["era_id"]]
             and era_row["all_named_domains_present_even_when_empty"] is True,
             "successor era cascade or zero-era seal drift",
         )
     _require(
-        set().union(*(set(row["successor_row_ids"]) for row in era_rows))
-        == set(successor_by_id),
-        "successors lack unique era-seal membership",
+        Counter(
+            row_id
+            for era_row in era_rows
+            for row_id in era_row["repair_overlay_ids"]
+        )
+        == Counter({row["repair_overlay_id"]: 1 for row in overlays})
+        and Counter(
+            row_id
+            for era_row in era_rows
+            for row_id in era_row["successor_row_ids"]
+        )
+        == Counter({row_id: 1 for row_id in successor_by_id})
+        and Counter(
+            row_id
+            for era_row in era_rows
+            for row_id in era_row["supersession_row_ids"]
+        )
+        == Counter(
+            {row["supersession_row_id"]: 1 for row in supersession_rows}
+        ),
+        "repair rows lack unique era-seal membership",
     )
 
     _require(
@@ -1811,7 +2382,8 @@ def validate_execution_law(
     _require_exact_keys(
         order,
         {
-            "ratification_commit_must_be_strict_ancestor_of_every_overlay_first_add",
+            "amendment12_ratification_commit_must_be_strict_ancestor_of_governing_amendment13_ratification_commit",
+            "governing_amendment13_ratification_commit_must_be_validated_and_strict_ancestor_of_every_overlay_first_add",
             "overlay_first_add_must_be_strict_ancestor_of_containing_era_successor_seal_first_add",
             "all_six_successor_seal_first_adds_must_be_strict_ancestors_of_tier2_evidence_first_add",
             "ratification_and_execution_record_commits_must_be_single_parent",
@@ -1875,7 +2447,15 @@ def validate_execution_law(
         and integrity["overlay_count"] == 14
         and integrity["successor_era_seal_count"] == 6
         and integrity["law_gap_untouched_count"] == 14
-        and integrity["law_gap_id_domain_sha256"] == LAW_GAP_ID_DOMAIN_SHA256,
+        and integrity["law_gap_id_domain_sha256"] == LAW_GAP_ID_DOMAIN_SHA256
+        and integrity["overlay_domain_sha256"]
+        == EXPECTED_OVERLAY_DOMAIN_SHA256
+        and integrity["successor_domain_sha256"]
+        == EXPECTED_SUCCESSOR_DOMAIN_SHA256
+        and integrity["supersession_domain_sha256"]
+        == EXPECTED_SUPERSESSION_DOMAIN_SHA256
+        and integrity["successor_era_seal_domain_sha256"]
+        == EXPECTED_ERA_SEAL_DOMAIN_SHA256,
         "fixed repair-domain integrity drift",
     )
     _require(
@@ -1903,19 +2483,29 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
 
     rejected: list[str] = []
 
-    def reject(name: str, mutate: Any) -> None:
+    def reject(
+        name: str,
+        mutate: Any,
+        expected_message: str,
+        *,
+        verify_git: bool = False,
+    ) -> None:
         candidate = copy.deepcopy(law)
         mutate(candidate)
         try:
-            validate_execution_law(candidate, verify_git=False)
-        except LawError:
+            validate_execution_law(candidate, verify_git=verify_git)
+        except LawError as error:
+            _require(
+                expected_message in str(error),
+                f"mutation failed an unintended gate: {name}: {error}",
+            )
             rejected.append(name)
             return
         raise LawError(f"mutation survived: {name}")
 
     reject(
         "ratification_identity_wrong_blob",
-        lambda value: value["ratification_identity"].update(
+        lambda value: value["amendment12_ratification_identity"].update(
             {
                 "document_blob_oid": (
                     "dc0ce837e64239d16ea61c15d47450b7341d1ce8"
@@ -1926,22 +2516,29 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
                 ),
             }
         ),
+        "ratification commit does not select the supplied document blob",
+        verify_git=True,
     )
     reject(
         "ratification_identity_wrong_commit",
-        lambda value: value["ratification_identity"].update(
+        lambda value: value["amendment12_ratification_identity"].update(
             {
                 "ratification_commit": (
                     "a16f6089eca06e98bf18b8238f056bb6effae383"
-                )
+                ),
+                "ratification_parents": [RATIFICATION_COMMIT],
             }
         ),
+        "ratification identity is not the exact attested document identity",
+        verify_git=True,
     )
     reject(
         "ratification_identity_multiple_parents",
-        lambda value: value["ratification_identity"][
+        lambda value: value["amendment12_ratification_identity"][
             "ratification_parents"
         ].append("0000000000000000000000000000000000000000"),
+        "ratification identity does not name one parent",
+        verify_git=True,
     )
 
     def forge_status(value: dict[str, Any]) -> None:
@@ -1951,7 +2548,11 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
         ] = "local_resolved_cross_reference_for_global_assembly"
         _repin_successor(row)
 
-    reject("successor_terminal_status_forged", forge_status)
+    reject(
+        "successor_terminal_status_forged",
+        forge_status,
+        "forged incompatible-proof terminal status or admission",
+    )
 
     def erase_predecessor(value: dict[str, Any]) -> None:
         row = value["predecessor_supersession_rows"][0]
@@ -1962,7 +2563,11 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
             "a13-supersession", row["supersession_identity_preimage"]
         )
 
-    reject("predecessor_supersession_erasure", erase_predecessor)
+    reject(
+        "predecessor_supersession_erasure",
+        erase_predecessor,
+        "supersession erases or fails to select",
+    )
 
     def forge_selector(value: dict[str, Any]) -> None:
         row = value["composed_fragment_successor_rows"][0]
@@ -1975,7 +2580,11 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
         ]
         _repin_successor(row)
 
-    reject("fragment_duplicate_selector_forged", forge_selector)
+    reject(
+        "fragment_duplicate_selector_forged",
+        forge_selector,
+        "fragment duplicate selector forgery",
+    )
 
     def forge_composition(value: dict[str, Any]) -> None:
         row = value["composed_fragment_successor_rows"][0]
@@ -1990,7 +2599,11 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
         )
         _repin_successor(row)
 
-    reject("fragment_composition_transformation_forged", forge_composition)
+    reject(
+        "fragment_composition_transformation_forged",
+        forge_composition,
+        "fragment composition transformation forgery",
+    )
     _require(
         tuple(rejected) == A13_EXPECTED_MUTATIONS,
         "Amendment-13 mutation inventory drift",

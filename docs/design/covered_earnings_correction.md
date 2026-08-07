@@ -51400,3 +51400,848 @@ pending exact extended-law ratification; tier 2 has not started; no official
 catalog, `R_Q`, H, Q5, registry, receipt, wall row, or production result
 exists; and Amendment 11's independent
 `blocked_source_missing_disposition_underdetermined` remains controlling.**
+
+## 27. Amendment 13 — ratification identity and tier-2 repair-successor law
+
+### 27.1 Prospective status, immutable base, narrow scope, and map
+
+This is the **prospective Amendment-13 draft** proposing design revision 15.
+It is a law proposal, not a recording act, repair execution, reseal, evidence
+bundle, or certification. Nothing in this section or its validation fixture
+self-ratifies. It emits no authority, starts no tier-2 execution, repairs no
+source row, and creates no official catalog, `R_Q`, H, Q5, registry, receipt,
+wall row, or production result.
+
+The immutable revision-14 base is the complete path
+`docs/design/covered_earnings_correction.md` at the Amendment-12 ratification
+commit `29c593d1954d94795e9f092ec4333e7d60a6136f`, mode `100644`, Git blob
+`626213aa45bce6b8c94b36dcaded16800ce0323d`, exactly 3,713,728 bytes, raw
+SHA-256
+`283a010c1bb135917fd8c1f1aebd1526165f829509d32e7689537167aa8818f5`.
+Every Amendment-13 candidate has those bytes unchanged at
+`[0,3713728)`, followed by exactly one LF and this heading. Thus §§1–26 are
+byte-identical historical law. Amendment 13 changes their effect only through
+the expressly named replacements and compositions below; a prefix mismatch
+is not an Amendment-13 candidate.
+
+The controlling diagnostic provenance is the tier-2 STOP report
+`sol-ce-a12-tier2-report.md`, exactly 17,397 bytes with raw SHA-256
+`6d358c2f064d1baefc181bfe0de5c95d754c998b102ea65c5eb09e16dc749a75`.
+Its source-rederivation receipt is the blob
+`9cf91f7426acd21f63c9e061046b95d66b703e64` at commit
+`d6d59229ccf6d3d71dc1052adbd1f983821d7a78`, path
+`docs/analysis/amendment_12_rq_catalog_tier2/fix5_rederivation_confirmation_v1.json`,
+exactly 3,542 bytes with raw SHA-256
+`87af4e64df70414c855b1e87ae45ae1a31f96f2822f3b5d8bc5d05d8be4ebe9a`.
+That receipt records eight of eight revision-14 artifacts byte-identical and
+82,267,103 aggregate bytes. Both records diagnose the execution gap; neither
+is promoted into tier-2 expected evidence or source authority.
+
+This amendment has only two substantive limbs:
+
+1. §27.2 replaces the unsatisfiable Amendment-12 commit-path-shape proxy with
+   the exact attested document-blob identity while preserving every other
+   ceremony and ordering requirement; and
+2. §§27.3–27.6 define append-only successor, supersession, fragment, doc-036,
+   and six-era-seal law for exactly the 46 already-mandatory repairs: 28
+   incompatible local-proof rows, ten incomplete-fragment rows, and eight
+   doc-036 `component_slot` rows.
+
+Section 27.7 fixes the adversarial validation and out-of-scope boundary;
+§27.8 closes replacement, comparator, identifier, and lifecycle effects.
+The 14 Amendment-12 law-gap rows and everything outside the exact 46-repair
+domain are unchanged. The Amendment-12 five-citation continuation domain is
+also unchanged and disjoint. No silence here supplies a default, fallback,
+alias admission, occurrence equivalence, repeat-coverage arm, parent,
+catalog member, or authority value.
+
+All governed serializations use the inherited strict canonical JSON law:
+sorted object keys, compact separators, ASCII escapes, no BOM, duplicate key,
+NaN, nonfinite or binary-inexact number, trailing value, or missing terminal
+LF. A content-ID preimage uses those canonical bytes with the sole terminal LF
+removed. A domain digest uses the complete canonical array including its sole
+terminal LF. Every schema below has the exact named keyset; a missing, extra,
+renamed, mistyped, reordered where order is fixed, or unknown key aborts.
+
+### 27.2 Limb I — Amendment-12 ratification identity
+
+#### 27.2.1 The exact historical identity
+
+For Amendment 12 only, every revision-14 use of “future document-only
+Amendment-12 ratification,” “future document-only ratification,” or the
+equivalent D12 document-only locator/condition is replaced by
+**single-parent commit selecting the exact attested document tree entry,
+conjoined with the dual-RATIFY record**. This includes §26.10.1's replacement trigger,
+§26.10.2's comparator-census corpus locator, §26.10.3's tier-2 authorization,
+DC-64, §26.11.2 step 2, and §26.11's terminal statement that no document
+ceremony ratified Amendment 12. Under this amendment the exact identity below
+satisfies those locators and replaces only that terminal statement's
+ratification-status clause; every nonauthority, unmet-repair, lifecycle,
+pre-Q5, and production-stop clause remains. The following complete identity
+is conjunctive:
+
+| Identity member | Exact value |
+|---|---|
+| Ratification commit | `29c593d1954d94795e9f092ec4333e7d60a6136f` |
+| Exact parent array | [`c033ee527809a220032d28e1c91345a64b221e32`] |
+| Parent count | 1 |
+| Document path | `docs/design/covered_earnings_correction.md` |
+| Tree-entry mode | `100644` |
+| Git blob OID | `626213aa45bce6b8c94b36dcaded16800ce0323d` |
+| Raw byte count | 3,713,728 |
+| Raw SHA-256 | `283a010c1bb135917fd8c1f1aebd1526165f829509d32e7689537167aa8818f5` |
+| Observed changed-path count, not an identity condition | 17 |
+
+The commit's exact parent line is
+`29c593d1954d94795e9f092ec4333e7d60a6136f c033ee527809a220032d28e1c91345a64b221e32`.
+Its exact tree-entry line is
+`100644 blob 626213aa45bce6b8c94b36dcaded16800ce0323d<TAB>docs/design/covered_earnings_correction.md`.
+The 17-path observation explains why the old path-count condition cannot be
+satisfied by history; it is neither ignored nor converted into a required
+value for another commit.
+
+The two independent adjudicative records are:
+
+| Record | Bytes | Raw SHA-256 | Exact first line | Attested candidate HEAD | Attested document bytes / SHA-256 |
+|---|---:|---|---|---|---|
+| `sol-ce-amend12-r5-verdict.md` | 4,394 | `9b407dcd7321da0350895e7798db3705d54be279fa69937cb8fea9a51f733961` | `# RATIFY` | `76acad02b0d519d12057b75ab7c21f2c2a4b2433` | 3,713,728 / `283a010c1bb135917fd8c1f1aebd1526165f829509d32e7689537167aa8818f5` |
+| `sol-ce-amend12-r5b-verdict.md` | 3,396 | `7999f3188bf83bd2b9b520964a36fe7582f6af1217d11869e017f307bd88f145` | `# RATIFY` | `76acad02b0d519d12057b75ab7c21f2c2a4b2433` | 3,713,728 / `283a010c1bb135917fd8c1f1aebd1526165f829509d32e7689537167aa8818f5` |
+
+The candidate HEAD in both records selects the reviewed bytes; the
+ratification commit selects the identical Git blob at the design path. A
+valid read recomputes both the Git blob hash over
+`blob 3713728<NUL> || raw_document_bytes` and the independent raw SHA-256,
+checks the byte count, checks the exact one-parent commit, and exact-compares
+both attestation records. A branch label, abbreviated hash, commit message,
+pull-request prose, changed-path list, working-tree path, or regenerated
+document is not a substitute.
+
+#### 27.2.2 Why document-blob identity is the controlling ceremony
+
+The attested bytes are the law. Commit path count was a proxy intended to
+show that a recording commit did not mix the reviewed document with unrelated
+changes; it did not itself authenticate one document byte. The replacement
+binds the exact path, mode, Git blob OID, independent SHA-256, byte count,
+single parent, exact commit, and two independent affirmative attestations.
+An attacker must therefore reproduce or break the identity of the reviewed
+law bytes and their dual record. Merely adding, deleting, or rearranging an
+unrelated path cannot change the law identity, while a same-path byte
+substitution, same-blob wrong commit, wrong parent array, or attestation-byte
+substitution fails. Binding the thing the proxy was meant to protect is at
+least as forgery-resistant as counting paths and is strictly more direct.
+
+This replacement legalizes Amendment-12 ratification as history actually
+stands. It does not waive the single-parent condition, exact-prefix law,
+independent committed-byte read, raw-byte attestation, dual affirmative
+review, repinning, source authentication, reseal, mutation, clean-tree,
+transaction, or fail-closed requirement. A future amendment may require a
+document-only ratification-record commit as an additional recording act, but
+such a prospective act cannot rewrite or invalidate the exact Amendment-12
+identity fixed here.
+
+#### 27.2.3 A12-T2-R05 Git order under the repaired identity
+
+The A12-T2-R05 phrase “ratification/source/reseal Git-order checks” is
+composed with this exact order and no weaker reading:
+
+1. `29c593d1954d94795e9f092ec4333e7d60a6136f` and its exact blob identity
+   must validate before any repair object is constructed;
+2. that ratification commit must be a strict ancestor of every repair-overlay
+   first-add commit;
+3. each overlay first-add must be a strict ancestor of its containing
+   successor-era-seal first-add;
+4. all six successor-era-seal first-add commits, including the exact empty
+   sixth-era seal, must be strict ancestors of any tier-2 evidence first-add;
+5. every ratification or execution recording commit to which the inherited
+   ceremony applies remains single-parent;
+6. the six predecessor source seals and their `19fa24c161e800e004320f0c10e81bce8831af68`
+   source tree are authenticated independently; no ancestry relation between
+   that source tree and the document-ratification branch is invented;
+7. no tier-1 candidate, adjudication ID, artifact ID, or value is an expected
+   tier-2 repair value; two independent source-side reconstructions must
+   deep-equal and every emitted byte must be attested; and
+8. no Q5 first-add or authority emission is permitted by this sequence.
+
+An absent object, equal rather than strict ancestor, merge commit where a
+single parent is required, source-branch-label selection, seal before overlay,
+evidence before all six seals, tier-1 expected-value import, or Q5 first-add
+aborts.
+
+### 27.3 Limb II — append-only repair overlays and successor identity
+
+#### 27.3.1 Exact affected source boundary
+
+The six Amendment-12 source seals remain the only source boundary. Within
+their pinned `19fa24c161e800e004320f0c10e81bce8831af68` tree, the following
+14 annotation identities contain all and only the 46 repair predecessors.
+The mode for every row is `100644`.
+
+| Doc | Annotation path | Artifact ID | Git blob | Bytes | Raw SHA-256 |
+|---:|---|---|---|---:|---|
+| 7 | `docs/analysis/rq_stage2_annotations/document_007_fam1971_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:ba88d97c3fcf7cf06618582ddf174b107161f8c5b50355fdc5c8ee9ab1896eaa` | `241a7b5d2ec9085d092bd4ea6387c7cd9760542b` | 3,142,928 | `f91c12e095c24c1c02fd2284ae8ffd809220868788d2dae2220e51c0e1f524d4` |
+| 10 | `docs/analysis/rq_stage2_annotations/document_010_q72_annotation_v1.json` | `rq-stage2-document-annotation:c246b6ac6f1d3d5130a729535a770a1cae48b4ffe8052b84acba31792c3e8a3d` | `756cbdd31d830850dd94f5586e15f84aafdfe3c4` | 1,560,168 | `9b082441d90838fad3c008fb3a11ab33c8abcd055ca775a61b2805824c915b1c` |
+| 11 | `docs/analysis/rq_stage2_annotations/document_011_fam1973_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:04095ba7e398810ec8aae85c0d48443b12e95da8e576f3632f218c1c13ef735d` | `896005c368c881d482d69ccb1dc26ba932816d49` | 3,371,068 | `fc248be717aca34365ff9de461edf68fa83ea0b2fe63b2dbf744280d4be1b36a` |
+| 12 | `docs/analysis/rq_stage2_annotations/document_012_q73_annotation_v1.json` | `rq-stage2-document-annotation:1081c0bf7568ee4ed94caed83bf35d58a95ed91d09309052c546a99dddd036d2` | `0db019b22d7e6a83c0fe4ff1b4c838a2e1478af7` | 1,263,172 | `f194d1dc5cb224a842330b370ca570bcbe4840e9f61b0bd395964b313457ce8b` |
+| 13 | `docs/analysis/rq_stage2_annotations/document_013_fam1974_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:51603310b2109733a68e1ca7e81c1e6bb1512a14a9839fb34f801aea913e50d3` | `08dd243454bb108778b1fe9f06489afbbc1f9fd9` | 3,317,882 | `8ea8def642efd489f51c161a07321236fbd52d5062aee983622d7738074925af` |
+| 15 | `docs/analysis/rq_stage2_annotations/document_015_fam1975_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:c71116dc22e8711f9bb981d5a8562c5c965932c3630bdafacb3810c345e5760e` | `a08f0c151175f38488354acb4615e103d023c01b` | 2,565,459 | `ac18f04482ac77706e58dbd82618b901a4c956141de78f902d9a243ab2eca0c1` |
+| 17 | `docs/analysis/rq_stage2_annotations/document_017_fam1976_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:3474783054d68bc110b76dc6616546884b5b87fa7ca195d0f4666a498c86b2a4` | `84afffe9102d9d37474c1968961ee057f1c79257` | 2,658,901 | `0eee588007ca68b50f8a55544b552f6d814c3594c81d1dbc7ccb4c0689d3d395` |
+| 19 | `docs/analysis/rq_stage2_annotations/document_019_fam1977_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:7056b12aa04a8ddfdf326ec23e97c4b94472baa3f9a2f340785495656f887ba1` | `dc37bad6324de3ad807b237feb5e6983f4e030ce` | 3,009,978 | `d991693bc8709032f2c27be477ae440fa565c67da248cf8da45c7472715fa6b4` |
+| 36 | `docs/analysis/rq_stage2_annotations/document_036_q85_annotation_v1.json` | `rq-stage2-document-annotation:e7b77ba960d17edd47e5696c9f5f2322c05e0f40f3a737d04c13f5bf9917a757` | `873fc01a8987c4a7e007db966977cd0d2325159e` | 2,904,623 | `151cb8bd53e51c023026abc28ff35a4a03eeaedef9293eb0cc78d897fafce5a1` |
+| 52 | `docs/analysis/rq_stage2_annotations/document_052_fam1994_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:650d2e65bd2d9f77ff100d5aae96ea773b2777c29f2c3a2c12504e63f7777029` | `6bf6c93fcc7e54d2f34355c620dc4369a03370a3` | 11,428,899 | `6a62c213cbc312f889244f255655c2325e717800a1d7dba6b33af9b25146bcae` |
+| 56 | `docs/analysis/rq_stage2_annotations/document_056_fam1996_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:76928ec4ac058cdc154f178232485dc1d6f65a5961fb3d5a4a67495bc20caf26` | `6605f79b18f77091fefbc68df270a27c305184f0` | 4,273,617 | `8530625a0eca0d2e5175590a3037657b4f40df76fbaca8ab7174d322714eb91d` |
+| 58 | `docs/analysis/rq_stage2_annotations/document_058_fam1997_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:f46732988ff56bc5e0244d3d918f14c729ca5d8187637cc398809b641ae4fa38` | `ec8be4efeda2f7f7027b2e77a8f9b1f432341fe2` | 4,868,501 | `0d0caeec39d3a5871cea098e2d816f4dd9612058b51ce233ef434086ee8c486f` |
+| 66 | `docs/analysis/rq_stage2_annotations/document_066_fam2005_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:1f4d1a31223c38c8e2f8de1453faf134fd88e6e718eae7aa4e277b796d3b74c0` | `c3513389a7e84b4b4c71de8ba141585a579ce1c9` | 4,072,685 | `449ec001f4a2ba36542b9f946321dc7b61ff50bd1082f2011558f1613b336435` |
+| 70 | `docs/analysis/rq_stage2_annotations/document_070_fam2009_QxQs_annotation_v1.json` | `rq-stage2-document-annotation:4966dc98e283f2f1392059fbee4e33d537a358f5847d875b28ed67802db40fec` | `3ea280d76fa6b09dd8eef684554e0baf8a964321` | 3,804,838 | `606be304b71a32049b216d1b9732e41eaee784243627a45f96584cc6f0c22447` |
+
+No tier-1 adjudication row or its `a12-` identifier is a tier-2 input. The
+tables in §§27.4–27.6 bind each predecessor directly by annotation identity,
+JSON Pointer, complete canonical-row SHA-256, source occurrence, page-text
+hash, and byte span where applicable.
+
+#### 27.3.2 Overlay schema, exact arrays, and identities
+
+There is exactly one `rq_stage2_document_repair_overlay.v1` object for each
+of the 14 document positions above. Every overlay has exactly these keys:
+
+~~~text
+schema_version
+repair_overlay_id
+overlay_identity_preimage
+authority_kind
+document_source_position
+source_document_id
+predecessor_annotation_identity
+predecessor_era_id
+predecessor_era_seal_content_sha256
+predecessor_source_rows_retained
+predecessor_source_row_erasure_permitted
+predecessor_supersession_rows
+semantically_incompatible_local_proof_successor_rows
+incomplete_fragment_terminal_successor_rows
+composed_fragment_successor_rows
+doc036_aggregate_domain_successor_rows
+integrity
+~~~
+
+All five arrays are present even when empty. `authority_kind` is exactly
+`PROSPECTIVE_NONAUTHORITY`; `predecessor_source_rows_retained` is true and
+`predecessor_source_row_erasure_permitted` is false. An overlay is an
+append-only companion to the byte-identical predecessor annotation, never an
+in-place rewrite.
+
+Its ID prefix is `a13-document-repair-overlay:`. The exact ordered ID
+preimage is:
+
+~~~text
+[rq_stage2_document_repair_overlay.v1,
+ document_source_position,
+ source_document_id,
+ predecessor_annotation_identity,
+ ratified_design_identity,
+ predecessor_era_seal_content_sha256]
+~~~
+
+`predecessor_annotation_identity` has exactly `annotation_path`,
+`artifact_id`, `schema_version`, `source_document_id`,
+`document_source_position`, `byte_size`, `raw_sha256`, and `content_sha256`.
+`ratified_design_identity` is the complete §27.2.1 object including both
+attestation objects. The era member is the predecessor seal's exact
+`content_sha256`, not an era label or tier-1 result.
+
+Every repair successor has schema
+`rq_stage2_local_evidence_repair_successor.v1`, ID prefix
+`a13-repair-successor:`, and exactly the common keys
+`schema_version`, `successor_row_id`, `successor_identity_preimage`,
+`successor_kind`, `repair_overlay_id`, `document_source_position`,
+`source_document_id`, `predecessor_annotation_identity`,
+`predecessor_row_domain`, `predecessor_row_pointer`, `predecessor_row_id`,
+`predecessor_row_canonical_sha256`, and `successor_payload`.
+Proof and fragment successors additionally and obligatorily carry
+`predecessor_status_mapping`; doc-036 classification successors forbid it.
+The exact ordered successor ID preimage is:
+
+~~~text
+[rq_stage2_local_evidence_repair_successor.v1,
+ successor_kind,
+ repair_overlay_id,
+ document_source_position,
+ source_document_id,
+ predecessor_annotation_artifact_id,
+ predecessor_row_pointer,
+ predecessor_row_id,
+ predecessor_row_canonical_sha256,
+ predecessor_status_mapping_or_null,
+ successor_payload]
+~~~
+
+`predecessor_annotation_artifact_id` is exactly the `artifact_id` projection
+of the row's complete `predecessor_annotation_identity` object. The
+`predecessor_status_mapping_or_null` member is the exact three-key mapping for
+proof and fragment successors and literal null for doc-036 classification
+successors; it is never omitted or defaulted in the identity preimage.
+No generated timestamp, branch, array index outside the authenticated
+pointer, tier-1 adjudication ID, or optional/default member enters either
+preimage.
+
+#### 27.3.3 Append-only supersession, never erasure
+
+Each of the 46 successors has exactly one
+`rq_stage2_predecessor_supersession.v1` edge and no predecessor has two. Its
+ID prefix is `a13-supersession:`; its exact relation is
+`predecessor_row_superseded_by_named_successor`; its exact status is
+`append_only_predecessor_retained_successor_selected`;
+`predecessor_retained` is true; `predecessor_erasure_permitted` is false; and
+`semantic_consumer_selection` is `linked_successor_row`. Its ordered ID
+preimage is:
+
+~~~text
+[rq_stage2_predecessor_supersession.v1,
+ repair_overlay_id,
+ predecessor_row_pointer,
+ predecessor_row_id,
+ predecessor_row_canonical_sha256,
+ successor_row_id,
+ predecessor_row_superseded_by_named_successor,
+ append_only_predecessor_retained_successor_selected,
+ true,
+ false]
+~~~
+
+The source annotation and predecessor row remain byte-identical and
+auditable. A semantic consumer uses the named successor payload, while every
+audit and citation retains the predecessor identity and bytes. Removing,
+editing, nulling, hiding, replacing in place, or garbage-collecting the
+predecessor; omitting or multiplying the edge; selecting the predecessor's
+old semantic claim; or linking across documents aborts.
+
+### 27.4 The 28 semantically incompatible local-proof successors
+
+#### 27.4.1 Exact predecessor domain
+
+The complete ordered predecessor-ID array has 28 members and canonical
+domain SHA-256
+`9c8cb11732939daac176275ae66dfa5a6ce61a2850c82087dd761a6431ac7412`.
+In the table, M, L, and D denote only the exact status-family maps in
+§27.4.2.
+
+| Doc | Predecessor evidence ID | Exact JSON Pointer | Canonical predecessor-row SHA-256 | Family |
+|---:|---|---|---|---|
+| 7 | `rq-local-repeat-evidence:c93bb69e6a4c04717efd8b68e71799b5b4f3cb1c1c20a1b31afe2852d04dab67` | `/local_repeat_or_alias_evidence_rows/7` | `64cd68ff7814468ff338a598240014aa9b8bfede3ed7189a5aa75a3e79148e2f` | M |
+| 7 | `rq-local-repeat-evidence:0c25501bcb134ddd36f5f076978ebd01a02d3e731772c4ae5de182d81a76a487` | `/local_repeat_or_alias_evidence_rows/14` | `c4908ead34f3c9977caae151d1313b49724da3414629228fe3ddb3bfa3ee31eb` | M |
+| 11 | `rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716` | `/local_repeat_alias_evidence_rows/28` | `80f1effbb820ec59b15b92b81577eaf3e7df3bc3696be7357db7bad8a5eab4af` | L |
+| 12 | `rq-local-repeat-alias-evidence:b8ea2ca5e2b198e2c4f9ec8ef9608a68b53b8c7a0f76435f4c2ca0db3f57a456` | `/local_repeat_alias_evidence_rows/4` | `f31d32f6122c7a34cb6f0b509c9da5b340228c076fd18de04e034e7abd2139fc` | L |
+| 13 | `rq-local-repeat-alias-evidence:78c2d51532910f9dbebaac790485bb20e2a0d907e632f4d32c327c185d52a34c` | `/local_repeat_alias_evidence_rows/34` | `18db1f7babbc10f5ef91626daba1285949aeb8b212fab6c5982d5630d56d2bc5` | L |
+| 15 | `rq-local-repeat-alias-evidence:224c03c08758f9ea5f0e6920b949ff50afc42ef2165923be05fc7646b8249623` | `/local_repeat_alias_evidence_rows/12` | `d73781d672945ad425dbff4891f69a16a6a2f6828c31072f64ed680997c1e214` | L |
+| 15 | `rq-local-repeat-alias-evidence:e3ca944c92c9a5053ff989551b47d8cfbe885565bfc6e0f59886c74a8b3a1331` | `/local_repeat_alias_evidence_rows/18` | `f172ba7ac0ae2b67e2616ca9a3bd4ed82d2ea6429a7c099ed57c2a1ca25c0948` | L |
+| 17 | `rq-local-repeat-alias-evidence:238d3e9a1faceb345a3f13380b6cc04a97ed5c9a54d7fe931c178588415c9d11` | `/local_repeat_alias_evidence_rows/10` | `4f233ddf8f42d88f007a68e71cc752441a73465b5673d67636bc286bb796dc00` | L |
+| 17 | `rq-local-repeat-alias-evidence:6c1381f0c6a1ee424dc21dee75fde1263efbe2cdaa4d4b396a28847fea3b6b89` | `/local_repeat_alias_evidence_rows/13` | `ccf6cb23d049a5f67d6bce2f56b2672bdfeb8482f9065f7a300ebe3b5e7fd224` | L |
+| 19 | `rq-local-repeat-alias-evidence:6d0ad010bf859e35f2d90ef9ba2dceaf60f4625dacac9cd6c4ed0ccdf814f526` | `/local_repeat_alias_evidence_rows/14` | `f059cc4242a67e20787239683cf2f62088ebf0be87090a34bab26f17e2207169` | L |
+| 19 | `rq-local-repeat-alias-evidence:122109cba974f0e5ed897f0236668a04ed2dca7e5c15f3fa2c47fbd69bec633a` | `/local_repeat_alias_evidence_rows/20` | `785ecfdbd6e0061f5fdc6b8605ab91f0fa4a590b864d6ec26a2ca3338174e318` | L |
+| 36 | `rq-local-repeat:d20165da2c897270b8d8708bdd2ee7a860d6c3ac905c9e05dcc622a75b413a92` | `/local_repeat_or_alias_evidence_rows/0` | `eba4e095aba33f893191119829a6dc77ee4af05098672fc22e30e2fd5acada04` | D |
+| 52 | `rq-local-repeat-alias-evidence:b2ff04405ce6c20fb6848441dd5fc249ac55b99c6ce21a60ff1ef331b42d8a19` | `/local_repeat_alias_evidence_rows/51` | `e27a061a359bfb6f22cef2caf27f393879893a15f6c8561facaf89914e71c166` | L |
+| 52 | `rq-local-repeat-alias-evidence:e4b4c44f443929ce8facfa51ce2e318e201490d259b01e507d4dded083e8fba2` | `/local_repeat_alias_evidence_rows/52` | `1e649e4c8c357328d5015c9fe8c2c7e4d7b5596d77daa54dbb3edcd9a90fa278` | L |
+| 52 | `rq-local-repeat-alias-evidence:6c17ebd0a0c97a5b46fef9ff2c5326fe45acf482647c6a2fd0d3bf542be17b22` | `/local_repeat_alias_evidence_rows/53` | `a0831cada2f10f151769ee728d5957e5e21463de53890463a2040cc3b2d5626a` | L |
+| 52 | `rq-local-repeat-alias-evidence:f44ce5328602c75bcde9b50b2de94d68582a6fe7080eea03b1de32e622171a22` | `/local_repeat_alias_evidence_rows/54` | `80c2a80b71741c0761ffa8e5fd1b1a6fa3b08669479a06f49f24496c6b3a4bd4` | L |
+| 52 | `rq-local-repeat-alias-evidence:f4de9f70a2b5a851a4d1e56c63dc7a35574c14d877122f6c0983d2e6268fb516` | `/local_repeat_alias_evidence_rows/59` | `1bb12f871b52926501906ecfdc5f6f67225a619d068a9c77c67bb7c8458f37d5` | L |
+| 56 | `rq-local-repeat-evidence:d6f7cdeab7418133a2bb1ea992d0b42e0749079e1aa890e799f96310d690bd0c` | `/local_repeat_or_alias_evidence_rows/44` | `ac6bce0b8b9bc7815bc42df2269a34838311640448893fb1220390537038d345` | M |
+| 56 | `rq-local-repeat-evidence:c9b24cb9e34a7050a567093ee0f0500df3e221dd2afa9adfdaba02010fd31509` | `/local_repeat_or_alias_evidence_rows/54` | `c77bef0f95df8f93ffbf166de1161d25adc970dd8d91c6af40953313b993b879` | M |
+| 56 | `rq-local-repeat-evidence:db438aefe04bee804bdc15f683dba9f90d0963871a6242217b18e09bdbed01c4` | `/local_repeat_or_alias_evidence_rows/56` | `b0ebb027119734ffa0505af9eff52557eee35c50b1ad1848bb755907e3714569` | M |
+| 56 | `rq-local-repeat-evidence:6ce1ef4653dfa56a49ff6baf30052132630c1ed47dfb246dcf38c1e63a24f83f` | `/local_repeat_or_alias_evidence_rows/59` | `19f4bdde9f8efe9bc494d6d62a694444cfaf94f32f9d243bf0fab3ebfa6c4152` | M |
+| 56 | `rq-local-repeat-evidence:7e1395227e1f81c5fe864d17e319e56b724424eab5163df68109dd85f81ce5c7` | `/local_repeat_or_alias_evidence_rows/61` | `fa881cf88f70048fa41416db680ec9e1cfbf26bf87bc1dff6542eaeb265cd014` | M |
+| 56 | `rq-local-repeat-evidence:e1e5e2a1b422ae3334fd657b68dbd1922e56e36165b4913c8d309896ac72d6d4` | `/local_repeat_or_alias_evidence_rows/62` | `0bd0d5f856f98ebd8ceffd8007e465de83f7a8902fbda345adffa3ee49562e7d` | M |
+| 56 | `rq-local-repeat-evidence:c207d07c88d2bef6b99a038d94a1f870ac038072de4c005241ab9ce3f79439c3` | `/local_repeat_or_alias_evidence_rows/63` | `0cb7e8880c9da007224e72fed710bca3634254671e41a26bc2cb31a4fde7c21f` | M |
+| 56 | `rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561328e86ada` | `/local_repeat_or_alias_evidence_rows/67` | `c2ac33cd9d11483aeb22c53f3f8cdd235212e776bfef264c444c285fc7981cb6` | M |
+| 56 | `rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877` | `/local_repeat_or_alias_evidence_rows/74` | `8fb52dbe0ef63b6f2b0d63e8130faf371643c7b75abbf062ce115bdb784259ee` | M |
+| 66 | `rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c` | `/local_repeat_or_alias_evidence_rows/15` | `937194370adfd5a97df05c5e36862d9b4dccf363375c71974ac7cd65bf5de7ea` | M |
+| 70 | `rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39` | `/local_repeat_or_alias_evidence_rows/5` | `c400efc8d69fb4b95df7f18e9d6e50b2f299fe99807611dc983712bf0521c643` | M |
+
+#### 27.4.2 Deterministic predecessor-family map and new terminal status
+
+There is no fallback family. Exactly one of these predicates must hold:
+
+| Code | Exact predecessor predicate | Exact field projection | Count among 28 |
+|---|---|---|---:|
+| M | schema `rq_stage2_document_annotation.v1`; domain `local_repeat_or_alias_evidence_rows`; ID from `local_repeat_evidence_id`; relation from `alias_relation`; `handoff_status=local_resolved_cross_reference_for_global_assembly` | instruction array `source_instruction_occurrence_ids`; singular `alias_anchor_occurrence_id` and `referenced_anchor_occurrence_id` endpoints | 13 |
+| L | schema exactly one of `rq_stage2_document_annotation_nonauthority.v1` or `rq_stage2_document_annotation_local_edges_nonauthority.v1`; domain `local_repeat_alias_evidence_rows`; ID from `local_repeat_alias_evidence_id`; relation from `relation`; `resolution_status=document_local_source_evidence_complete` | singleton `source_occurrence_id`; endpoint arrays `alias_anchor_source_occurrence_ids` and `canonical_anchor_source_occurrence_ids` | 14 |
+| D | doc 36 only; schema `rq_stage2_document_annotation.v1`; domain `local_repeat_or_alias_evidence_rows`; ID from `local_repeat_or_alias_evidence_id`; relation from `alias_relation`; `resolution_status=locally_resolved_document_evidence` | singleton `source_occurrence_id`; resolve `alias_local_anchor_id` and `canonical_local_anchor_id` only through the same annotation's exact `local_anchor_classification_rows.source_occurrence_id` | 1 |
+
+The L count is 13 ordinary legacy rows plus the one doc-12 local-edge row.
+Every proof or fragment successor's `predecessor_status_mapping` object has
+exactly the keys `status_family`, `status_field`, and `predecessor_status`.
+For M their exact values are `modern_handoff_status`, `handoff_status`, and
+`local_resolved_cross_reference_for_global_assembly`; for L they are
+`legacy_resolution_status`, `resolution_status`, and
+`document_local_source_evidence_complete`; for D they are
+`document_036_special_resolution_status`, `resolution_status`, and
+`locally_resolved_document_evidence`. The complete mapping object occupies
+the fixed successor-ID preimage position in §27.3.2.
+The D row resolves alias local anchor
+`rq-local-anchor:6881c8bb12be8d3c56eb1c1ccbcd61c4f9b37d415f261329811a317b68173660`
+to occurrence
+`psid-questionnaire-occurrence:615a1e17e3f575295e0123b4457b783a7186fa8dd00f66ce885e6cea1e5efcf0`
+and canonical local anchor
+`rq-local-anchor:5a703e10bfd94a486c21d043d7ad980905870b908ea70b2f136c16e835e1a261`
+to occurrence
+`psid-questionnaire-occurrence:12a1f8ad95aeafc7eadbdfbc587a0f1749433f7420a572e4ecb98b4ab881c056`.
+Any other schema, domain, ID field, relation field, status field/value, endpoint
+shape, or unresolved local-anchor lookup aborts.
+
+The exact new successor status is
+`terminal_semantically_incompatible_local_proof_no_alias_admitted`. It is
+new because no predecessor status honestly expresses the adjudicated result:
+the old values mean locally complete/resolved, unresolved, preserved, or
+outside-domain. Reusing any one would preserve the false semantic claim that
+caused the STOP.
+
+Each of the 28 `semantically_incompatible_local_proof` successor payloads has
+exact source-instruction text/hash/page/span arrays, exact endpoint
+text/hash/kind/domain arrays, and the predecessor's exact target and evidence
+projection. Its reason code is
+`cited_instruction_does_not_authenticate_the_mixed_or_misbound_endpoint_projection`.
+`alias_admitted`, `occurrence_equivalence_admitted`, and
+`repeat_coverage_arm_admitted` are all false. This status is a terminal
+repair fact, not an A, terminal-outside-`R_Q`, aggregate, redirection, or
+other §26.4 cover arm. It cannot turn the cited predecessor claim into
+positive alias proof.
+
+### 27.5 The ten incomplete-fragment successors
+
+#### 27.5.1 Exact predecessor and source-occurrence domain
+
+The ordered ten-evidence-ID array has canonical SHA-256
+`e61a3f5c5dbdd90804aaea656b40336ff078d8cb8e010317c37e41a2e7dc54a9`;
+the corresponding ordered instruction-occurrence array has canonical
+SHA-256
+`74075ac0ca54eff2a9459d4e95f426195c9e01db78040025462aa2f57f486a09`.
+The §27.4.2 M/L mapping objects apply without fallback: the eight disclosure
+rows contain exactly six M and two L mappings, and both composition rows are
+M, for a ten-row total of eight M and two L. D is forbidden in the fragment
+domain.
+
+| Doc | Evidence ID / predecessor pointer / row SHA-256 | Instruction occurrence | Exact page, span, page-text SHA-256 | Exact current text / text SHA-256 | Repair |
+|---:|---|---|---|---|---|
+| 10 | `rq-local-repeat-alias-evidence:47745f10b28added1b86a6132864c7283ef1ca618468e73ea4c5819fa8359fdf`; `/local_repeat_alias_evidence_rows/1`; `964229919ce61f4187ce43f662596241c7ed7de2709af4cb2ef704dcf4451f95` | `psid-questionnaire-occurrence:a37cf7dce81d69ba18e303afdd31a0825103c53d01398e644a312d55155150ba` | 38 `[1783,1825)`; `a8631d1f185d6236a7e3eeb0b0dd29ff54dd64b28966507b708776870eb64f3b` | `same occupation you started             in`; `d4c919b84e8f72ee77b84b0bbe7da27b66af0f1404f243d4a675d729403806ee` | disclosure |
+| 17 | `rq-local-repeat-alias-evidence:ed65f56aae0cef0e9f3254bf30bf1f22a8b8b1a0bb8769fdcd3e7e3ed64920ca`; `/local_repeat_alias_evidence_rows/12`; `043407c7d16bcebe97a7f7e3dccff3fc6a67a89c0241487457e911bfa897920b` | `psid-questionnaire-occurrence:8b9c6613b23e83dd55af058542e6aec3be341440397c632d91c1b74f073291dd` | 46 `[844,909)`; `f756c0adf34e4f948e6d42ba05247a5782b0a5290a44d31b9438a7dfb3b2f505` | `Make sure if an amount is given for both H7 and H8 that it is not`; `638ff7f5607248b60959d5b804b269e5dfbdac96275ef8a8fe135372ba8b237e` | disclosure |
+| 56 | `rq-local-repeat-evidence:468d69712cdc3c252a164e25627dac13a8d88ba6fc757ebccd173fd6146dbf79`; `/local_repeat_or_alias_evidence_rows/30`; `790d1b20f574c736b408a79ed2b03f4ad9cfc599f5f8ebec6e92c99e5c12ce73` | `psid-questionnaire-occurrence:b151de324a45124f27e1b426eb06b8a94ccb653cea7cb7af8dd402341d6b61c5` | 25 `[1420,1507)`; `3a918d44f0de405dc74bf48bd4a3dcbea48efee5fd64c6f5cf357be020bdb230` | `instructions given for B24-B59. Get exact dates , salary rates, and occupation/industry`; `3650d43f856f8e01ac78308b6df3d9925e8961861ab9a900dbeaa96aebda6932` | disclosure |
+| 56 | `rq-local-repeat-evidence:ae1fe2b52813498193d184b8a35eb56e0ba5418358565974625fc17fb33b0da2`; `/local_repeat_or_alias_evidence_rows/0`; `25c947fc9cfc1204eb49ebfd7d50fc43414a396b820bb1356c97cd920165412c` | `psid-questionnaire-occurrence:e64ef592cbb11ef00efa78f26682094c8920a21960309c673bbff8008c99a5c8` | 40 `[730,808)`; `d4f0cd6d9dfe4874e4de66121f01aab3ee3fa6e5cce85705db6013dc68033df4` | `as many as apply to the OFUM's current situation. (See Bl Q-x-Qs, however, for`; `76db186955fda957792c688b695e068ab52426efe469f1faf587f37c05699052` | disclosure |
+| 58 | `rq-local-repeat-evidence:dd35a09d551e0beff7209a4f0dc0bc96b876b0047622343c964c8134ad96bce2`; `/local_repeat_or_alias_evidence_rows/36`; `cf18661c446224d53035651701cc57cecd7b7c51e3974965c650bff3e0f75e1b` | `psid-questionnaire-occurrence:9242a1af728bffad6ed96e7636bcaade0e31fe0a21561d97fe500c89cc9e5b12` | 19 `[2048,2138)`; `7d0d7dccbcd4be0bca28f0dcc72be043d4d62dd3693b69a40a4d3de6fc168fb8` | `B46-B47. Again we're looking for the most recent position change in 1996. See cautions and`; `786f34b0c413020e110f2cdcef24da69d8eab6f9a16fcd2886efacf1f413fa71` | disclosure |
+| 58 | `rq-local-repeat-evidence:603d228cdb03d6c74221954662165e824edd2cf4775551c6f292ef8c23d398e7`; `/local_repeat_or_alias_evidence_rows/34`; `d1861becccea594af91952c0a0ac70bd68be5c92801f46f5b6f40d0b987cf4af` | `psid-questionnaire-occurrence:9969e959ae2d58b54b5fbdfc4f4e6e0f8141f628d67415370e1ccd129017a4fb` | 27 `[1481,1567)`; `d82cc06624e43460057a28d6165af6f65a7a0d92352f5182b0cffe358abbf828` | `instructions given for B24-B59. Get exact dates, salary rates, and occupation/industry`; `23eaa21f25bb015c742705f301d120f376743fc745989bcdaa5364ab6e7f4a65` | disclosure |
+| 58 | `rq-local-repeat-evidence:12d99ddb4330bf509bf8e686078e98397dd5b3003c76f36fecd1f48303a087e1`; `/local_repeat_or_alias_evidence_rows/0`; `f6eb914ef59fb56506641f9099cc97d44416a7d4506f77f5d9e3bc7a3ebb62bd` | `psid-questionnaire-occurrence:4b6c12f1e8e57edd45a3d43a772c69d923ec4c72d8292cdff1ca1f9c0a069e3b` | 42 `[2645,2730)`; `e4690d10113feb07420ee30d68e3d0694d0ad69ef105fed7d4b5bc3c9adca580` | `select as many as apply to the OFUM's current situation. (See B1 Q-x-Qs, however, for`; `2b79b1a4452b1e2d6adc7da77fd45a0a1ed207a41d2a84c8da9ad67619c86830` | disclosure |
+| 66 | `rq-local-repeat-evidence:ed0c801ba48f634dac9e766d90116aab30f533f82aed9846af81aa739b059aba`; `/local_repeat_or_alias_evidence_rows/12`; `e92b0e7af406f34e5a16104a84aae055e5f3f2c75135c5870dbef8778d25594e` | `psid-questionnaire-occurrence:5eb05b791f0abad829debc9863433e0a8e7bd254aa18ac51b6c750caa48bb46a` | 31 `[1795,1875)`; `f416609187952172da0cbe37fe2d3eb998ce094eb7297d51029c871b986b0961` | `If an amount is given for both G11b and G13, probe to be sure that it is not the`; `0c923d7121f8b7a02d951ac9c5d8dc7900a2818233eea9c69452c0e8f4dca024` | disclosure |
+| 66 | `rq-local-repeat-evidence:072f1a10af512096365db74950dbec13e0ee1d3e293004854d051840c252f3fb`; `/local_repeat_or_alias_evidence_rows/0`; `f83260a756077718b954fd91c9f89db81012ea97d5a0a282c2f4de90940c787f` | `psid-questionnaire-occurrence:d662043b204306d6c052f412fe674574e80fd1a40aca75b1842a212bb1fe8f68` | 40 `[1273,1332)`; `c15cbbe8277db5e1947a851a6e8825e6c744423553f1675b40d2506c64d78dba` | `BC1-BC3/DE1-DE3 QxQs for definitions of employment status.)`; `f2fbb3a50d0d1674a1c9edab70fb1672bfe8b671d781eb1c5bd92d88fd2cc8d4` | composition |
+| 70 | `rq-local-repeat-evidence:c08d6d192cfc873940e5aed3ab53199f828160b3aaec0ce3591c4ce6807b1f71`; `/local_repeat_or_alias_evidence_rows/0`; `d39e8dfd11ea8e321c92e642b6db831157904b950b1638893d217765be53fb71` | `psid-questionnaire-occurrence:5e89bb2a5186c4afee4a6a2289a4686ddcee89aeeae089b42c24e3ce9ff72708` | 50 `[2499,2558)`; `6af0a63fc43dd0a6ce85fde4531a1d663c936b757226fc47a77e1542aa85da37` | `BC1-BC3/DE1-DE3 QxQs for definitions of employment status.)`; `f2fbb3a50d0d1674a1c9edab70fb1672bfe8b671d781eb1c5bd92d88fd2cc8d4` | composition |
+
+#### 27.5.2 Eight terminal disclosures
+
+The first eight table rows have no complete deterministic same-page **sealed
+occurrence** continuation selected by the authenticated annotation. This does
+not claim that no nearby page text exists. Unsealed visible text, including
+text immediately after the doc-66 page-31 span, cannot be invented as an
+occurrence or selected by proximity.
+
+Each receives successor kind
+`incomplete_fragment_terminal_disclosure`, repair mode
+`repair_by_exact_span_disclosure_not_invention`, and the new exact status
+`terminal_incomplete_fragment_disclosed_no_alias_admitted`. The successor
+copies the table's exact occurrence ID, current text, text SHA-256, page,
+page-text SHA-256, and half-open UTF-8 span into
+`disclosed_incomplete_fragment_citation`; `continuation_citation` is null;
+and `alias_admitted`, `occurrence_equivalence_admitted`, and
+`repeat_coverage_arm_admitted` are false. The eight ordered
+`[document_source_position,evidence_id,occurrence_id]` rows have canonical
+domain SHA-256
+`1225491845f8dc1d9104e9ba11ca1f274bc371a4ec4feddbe9efca1dfbb100f6`.
+Completing a sentence, borrowing a nearby span, emitting a synthetic
+occurrence, or treating disclosure as positive proof aborts.
+
+#### 27.5.3 Two exact G75 compositions
+
+Only the last two table rows are composable. Their successor kind is
+`composed_fragment_complete_instruction`, repair mode is
+`exact_same_page_whitespace_composition`, and exact status is
+`complete_instruction_reading_by_exact_whitespace_composition`.
+
+The selector rule is the opaque exact code
+`unique_predecessor_alias_anchor_context_occurrence_at_duplicate_leading_span`.
+At each page there must be exactly two source-ordered leading candidates with
+identical page, span, text, and text hash, and their kinds must be exactly
+`[context_anchor,field_purpose_prompt]`. Select the unique candidate that is
+both `context_anchor` and the predecessor row's exact
+`alias_anchor_occurrence_id`; reject the duplicate `field_purpose_prompt`.
+
+| Doc | Page / page SHA-256 | Duplicate leading span / text SHA-256 | Selected context occurrence | Rejected field-purpose occurrence | Continuation occurrence |
+|---:|---|---|---|---|---|
+| 66 | 40 / `c15cbbe8277db5e1947a851a6e8825e6c744423553f1675b40d2506c64d78dba` | `[1163,1256)` / `1021f9d838c9c537f919c39151194f4a9a73b29e98062b3c6e6da6662d90ddb3` | `psid-questionnaire-occurrence:9fc63af834ead33179a04f232c562cabf46ff899f260413f1722a9e634b2288b` | `psid-questionnaire-occurrence:c80d228a189f6717cb5e9a24039e9e4e91717230b628b16d66723869c988bf73` | `psid-questionnaire-occurrence:d662043b204306d6c052f412fe674574e80fd1a40aca75b1842a212bb1fe8f68` |
+| 70 | 50 / `6af0a63fc43dd0a6ce85fde4531a1d663c936b757226fc47a77e1542aa85da37` | `[2391,2483)` / `e73f4502ed097d89331d556ed2d2e3ff52f44b274b63f2f5ba0627182fac3303` | `psid-questionnaire-occurrence:e6c4259365c5e03ab88abd497ba90522191bdbe51922beb9387252fc97b56911` | `psid-questionnaire-occurrence:cc84a7597efc0f59d1b7960943aad2b3f6ed83bada2c022cc7149db79a7e3937` | `psid-questionnaire-occurrence:5e89bb2a5186c4afee4a6a2289a4686ddcee89aeeae089b42c24e3ce9ff72708` |
+
+The exact composition code is
+`same_page_exact_leading_bytes_plus_whitespace_gap_plus_exact_continuation_bytes`.
+It constructs one citation from the complete contiguous raw page slice:
+selected leading bytes, then every intervening byte, then the exact existing
+continuation bytes. The gap must be nonempty and whitespace-only. It does not
+trim, normalize Unicode, change indentation, concatenate normalized strings,
+or mint an occurrence ID.
+
+For doc 66 the leading text is exactly:
+
+~~~text
+G75.            You may select as many codes as apply to the OFUM’s current situation. (See
+~~~
+
+The gap is `[1256,1273)`, exactly LF followed by 16 ASCII spaces, with
+SHA-256
+`9085bed86afe0e5076de36797b5a6fb0568afee9757a3f128fccafd20073ed1d`.
+The complete `[1163,1332)` slice is 169 UTF-8 bytes:
+
+~~~text
+G75.            You may select as many codes as apply to the OFUM’s current situation. (See
+                BC1-BC3/DE1-DE3 QxQs for definitions of employment status.)
+~~~
+
+Its raw SHA-256 is
+`b0464ed90ae6e945acb9266265be23de87ea4c71f3e3e1f64044efc4de7e35a3`.
+
+For doc 70 the leading text is exactly:
+
+~~~text
+G75.           You may select as many codes as apply to the OFUM’s current situation. (See
+~~~
+
+The gap is `[2483,2499)`, exactly LF followed by 15 ASCII spaces, with
+SHA-256
+`c4c6af77697b2e9aa849e5930932e3c7917371dc46460bd15fe2dc0b3449b261`.
+The complete `[2391,2558)` slice is 167 UTF-8 bytes:
+
+~~~text
+G75.           You may select as many codes as apply to the OFUM’s current situation. (See
+               BC1-BC3/DE1-DE3 QxQs for definitions of employment status.)
+~~~
+
+Its raw SHA-256 is
+`abb07e986b5f123ef36d9aad0b2ee4d25b4d57e8415ef8b67f995279734306f9`.
+The complete selector-plus-composition citation objects have individual
+canonical SHA-256 values
+`04ca237ecd5a6d4f79330e8e6d42b07f7800b992f553716098ccfbb01ef11d2d`
+and
+`97c79722e47e396d0464b4aa75db4e6814aa5cc6def7380501dd6b1b724680a2`;
+their ordered two-object domain is 3,277 canonical bytes with SHA-256
+`6f6755e821109ae3c4a786e33490db1fb06844920047f740a2d01b539e04d824`.
+
+Composition proves only the complete instruction reading. It does not prove
+alias or occurrence equivalence and does not enter an A/T/G/R cover arm.
+Those three admission booleans remain false. Any different duplicate
+selector, cardinality, kind order, leading bytes, gap, span, page, page hash,
+continuation ID, combined bytes, or combined hash aborts.
+
+#### 27.5.4 Amendment-12 continuations remain disjoint
+
+The exact five `continuation_composition_citation` rows and three restoration
+rows ratified in Amendment 12 remain byte-identical, count-identical, and
+governed solely by §26.4. The two G75 objects live only in the distinct
+Amendment-13 `composed_fragment_successor_rows` domain. They do not increase,
+replace, reindex, reinterpret, or supply an expected value for the five-row
+domain. An overlap of instruction ID, predecessor evidence ID, successor ID,
+or domain membership aborts.
+
+### 27.6 Doc-036 correction and the six-era cascade
+
+#### 27.6.1 The eight determinate doc-036 field successors
+
+The ordered classification-ID array has eight members and canonical SHA-256
+`1d2271438f3d9a7744e1379ed26ce565ff2731ed0dd8dec357c0bd8a9a271d23`.
+Each cited occurrence kind is one of `farm_aggregate_anchor`,
+`business_aggregate_anchor`, or `role_total_anchor`. The exact transformation
+is `replace_only_node_domain_component_slot_with_aggregate`; the status is
+`coherent_document_reseal_component_domain_corrected_to_aggregate`.
+
+| Classification ID | Pointer / row SHA-256 | Source occurrence | Page/span | Exact text / text SHA-256 |
+|---|---|---|---|---|
+| `rq-local-anchor:6b757b140c4fdbcfcfe8b974f7894ffc856ab3dca240b7eb61530adca0e2d12a` | `/local_anchor_classification_rows/55`; `afc988dbe4daea2032891cc0bb9f2a59b2d97f3e098fc4aa648d420e0f45196e` | `psid-questionnaire-occurrence:f54ff3d1032b3039fac81e59efa8ed28b6e02afe92502a6618bfac4657dd2f0a` | 26 `[1538,1565)` | `total receipts from farming`; `8abec1041bed32a902a38664d8fb11b91a3315321f7e4dcc42728b46a14c9918` |
+| `rq-local-anchor:11802d91128200f95abc1a42e5e39677f30c955da28e8b89bdc72e10ff8c11ef` | `/local_anchor_classification_rows/56`; `920712f657362e8ef5d7c3e864f9b91bdc6ebce22893def372f8b4be9cc43bde` | `psid-questionnaire-occurrence:c0572d018543c277e5f8981f38730e82cfd3a7a1f14c43ee83e2c37a197c41ad` | 26 `[1734,1758)` | `total operating expenses`; `847268061a8625a02040a16e2e2012b3c48b5f85011f4a38314cdc8b9f6ed30d` |
+| `rq-local-anchor:daae302f7bdebd7a8ab43d983faaedecb97ac22f8a7ca7c3af92dbff1cb76de5` | `/local_anchor_classification_rows/57`; `b5cfb1f8d8e3468bed731f5702f5d2da12e9c4166ae4e0f2ee96a34a1b976a91` | `psid-questionnaire-occurrence:2f12bd5b1bb6d958c8401e470d637e0e429a7c22a19c16da8cbe8070c3554b13` | 26 `[1954,1977)` | `net income from farming`; `9295626e03ae4b41c9f81443abb8a84a8399cc3d037c395dc492defbad5f9de7` |
+| `rq-local-anchor:5d7ea81f571ca24a50d2a03acc07d605e49b7438233f63191fa98147e82f4a7a` | `/local_anchor_classification_rows/58`; `7dd749589d2a2137ab9e79592a4b78cf243944ef991c005ac173ae529615cadb` | `psid-questionnaire-occurrence:7123a433bf2b5c58f37e681b78be6e08d667b0714a1085e2519b45920b824df1` | 26 `[2201,2215)` | `own a business`; `55f6b2eb85d98d5129b54a9708719253f18068da3b2f995ae57b500e380adb39` |
+| `rq-local-anchor:930c509fadfdc037d5e03d65422cc7c3d3b86a9ec3adb7553e86d9654632d4ca` | `/local_anchor_classification_rows/61`; `bf4a90f0e239b3a353c665ec0bd69fdde537c023dd2a0325d7e59ad223ebefee` | `psid-questionnaire-occurrence:c5794b122be5265d0500362544ceec603595db5f77d2fb9661e8ef03426f183e` | 26 `[5862,5902)` | `shareof thetotal  income fromthebusiness`; `931150109ed43b6f3987e796bbb7f6eaab448cafee07073efb1b9bbd4b749598` |
+| `rq-local-anchor:5a703e10bfd94a486c21d043d7ad980905870b908ea70b2f136c16e835e1a261` | `/local_anchor_classification_rows/63`; `7ec784c4ff1619b8688cf035c9774d64007407fc682d5925b89d8a1e0b56c8a9` | `psid-questionnaire-occurrence:12a1f8ad95aeafc7eadbdfbc587a0f1749433f7420a572e4ecb98b4ab881c056` | 26 `[777,802)` | `altogether from wages and`; `1432b919790d44a035065bc5620c7b7abc5d1550c6ff1f43a61b7fd177688c42` |
+| `rq-local-anchor:d6d21da4a96eda0e310284ca6cebc059f340e2bdaf2da64f56286d65a03fa283` | `/local_anchor_classification_rows/65`; `104e707aefaae059981701e6e765d8fedc109c43dc387c22127fec86e5f054ee` | `psid-questionnaire-occurrence:0d131733e66b291c339cb13d2f8c2c232129896ae8134cc95fe8b8b72067c195` | 26 `[2918,2934)` | `practiceor trade`; `255a5bdcb23e97f6c88cc341c6c5d15faf0edd73d178ff5b37840b02b17c2692` |
+| `rq-local-anchor:93b5b7f3d32e6dda9e3fad1089fc4ba605502765e4de1735223637bc615fff29` | `/local_anchor_classification_rows/68`; `ab6cd7392d6fc5f107228c2bdfefed9475c23695682fdda3760da24e73264287` | `psid-questionnaire-occurrence:bdc2c5272c0380ba6287b962718f226324241a778c03ea66fe0070fb1fe625ef` | 28 `[1817,1842)` | `earn altogether from work`; `7f07c545d35318df75c5f7f3769194e88b75b382b6e62df1b5c3d309773f9b7c` |
+
+For each successor, `predecessor_classification_row` is the complete exact
+row and `successor_classification_row` is a deep copy with only
+`node_domain` changed from `component_slot` to `aggregate`. Any other field
+change, reorder, omission, new key, different occurrence kind, or component
+admission aborts.
+
+These eight changes execute under Amendment 12's coherent-document-reseal
+rule only in the same doc-036 overlay that also contains the §27.4 successor
+for proof row `rq-local-repeat:d20165da2c897270b8d8708bdd2ee7a860d6c3ac905c9e05dcc622a75b413a92`
+and all nine supersession edges. Amendment 13 makes that proof successor
+determinate; it does not permit an eight-row partial rewrite or partial era
+seal.
+
+#### 27.6.2 Exact successor-era seal law
+
+Every era, including an era with no affected document, has one
+`rq_stage3_era_repair_successor_seal.v1` object with ID prefix
+`a13-successor-era-seal:`. Its ordered ID preimage is:
+
+~~~text
+[rq_stage3_era_repair_successor_seal.v1,
+ era_id,
+ era_order_position,
+ predecessor_era_seal_identity,
+ ordered_repair_overlay_ids,
+ ordered_successor_row_ids,
+ ordered_supersession_row_ids,
+ exact_repair_counts,
+ ratified_design_identity]
+~~~
+
+The arrays use predecessor document order, then each domain's table order.
+All named arrays exist when empty. The exact prospective fixture census is:
+
+| Era | Exact era ID | Incompatible | Incomplete | Composed | Doc-036 | Supersession | Prospective nonauthority seal ID |
+|---:|---|---:|---:|---:|---:|---:|---|
+| 1 | `wave1968_ry1968_1974_early_totals` | 7 | 1 | 0 | 0 | 8 | `a13-successor-era-seal:596929bd2d65b855d6a28ced7b16578f7e31a7e6da9196fd7c240ea44949e709` |
+| 2 | `ry1975_1977_spouse_concept_seam` | 4 | 1 | 0 | 0 | 5 | `a13-successor-era-seal:a4c9525ea10c68dd1334ce65ff0383f23de64bc3abe75aaecedb43bc78958fba` |
+| 3 | `ry1978_1992_pre_er_totals` | 1 | 0 | 0 | 8 | 9 | `a13-successor-era-seal:bd88a280e5f512b75a7870218f2ee7fd95b053085027c204b5ca0fcd25ceb382` |
+| 4 | `ry1993_2001_er_transition` | 14 | 5 | 0 | 0 | 19 | `a13-successor-era-seal:f5cd887cdf455745f43ac319be63729a44b3ace43a3ef10d7bf35c663059d6df` |
+| 5 | `ry2002_2014_modern_bc_de` | 2 | 1 | 2 | 0 | 5 | `a13-successor-era-seal:5521c4ab1dd719161aa63bef85834b2446e59daa8bc75492b876e269af69e866` |
+| 6 | `ry2015_2022_exclusion_lineage` | 0 | 0 | 0 | 0 | 0 | `a13-successor-era-seal:c468337578f5c02cc55b4b3df50a52ca3b254e57e93bcc458272c56815e03aef` |
+| **Total** | — | **28** | **8** | **2** | **8** | **46** | **6 seals** |
+
+The IDs in this table are deterministic prospective fixture values, not
+emitted seals or authority. Execution later reconstructs them from the exact
+ratified law and source bytes; copying this table as expected evidence is
+forbidden. A missing empty sixth seal, moved member, stale predecessor seal,
+duplicate successor, count inferred from another era, or seal without all
+its overlays and supersession edges aborts.
+
+### 27.7 Scope boundary, executable pins, and attacks
+
+#### 27.7.1 The 14 law gaps remain untouched
+
+The following exact 14 predecessor IDs are outside the 46-repair obligation
+and remain byte-identical, unsuperseded, and absent from every Amendment-13
+overlay, successor, and era-repair member domain:
+
+~~~text
+rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6
+rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045
+rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495
+rq-local-repeat-evidence:e5ff3d4e974f7c527fd7be988d6075b152586ed1f6ec06f37711bb47667b191d
+rq-local-repeat-alias-evidence:db641c23f0d13b3befcdde005cf6b3804cc85a7e3985804091a59d826584a0c1
+rq-local-repeat-alias-evidence:e744b798ebfb58ba3b8e1c28c7b0c5cbeadfadd649b5951f25a9326b1dafc0bf
+rq-local-repeat-alias-evidence:9aed9fbcbb6cbe3f0697b12e95522c1a9e539b5e4e2a031b3b2bb531b45f3ced
+rq-local-repeat-alias-evidence:92db20a47e9e0771b874238f39d920d69203e822e5cb28cf461394fa9d8bf254
+rq-local-repeat-alias-evidence:71cbb45447d775ba33f493a3e0ebe800226d463bf73905566216fcb53287512d
+rq-local-repeat-evidence:4ac3d89c423be55bac47c13cced2fd92151014ef3a45d95fba4b2999cca518f2
+rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c95a391c5daf54547
+rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868
+rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927
+rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734
+~~~
+
+Their ordered ID-array domain SHA-256 is
+`f2e8a5001527eb975887828ba3e66c3eeac95ec0972454bcef509fba92149883`.
+The first 13 remain aggregate-law gaps and the doc-66
+`rq-local-repeat-evidence:5977fa11...` row remains the one redirection-law
+gap under Amendment 12. Amendment 13 neither executes nor reclassifies them.
+
+Everything outside the exact 28 + 10 + 8 tables is also out of scope:
+unaffected rows in the 14 annotations, all rows in the other 67 annotations,
+the complete §26.4 semantic ledger and four-disposition cover, all parent and
+catalog laws, all eight tier-1 artifacts, the five Amendment-12 continuation
+citations, the inherited Amendment-11 blocker, Q5, registry, receipt, and
+production. No successor-law silence may change any of them.
+
+#### 27.7.2 Executable law fixture and integrity pins
+
+The prospective nonauthority validator is fixed at commit
+`620fc2699d9c174012abb014f50f01194595e7ad`, mode `100644`:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `dd5d3708c2f4044a9b034c04ed6e0b14296f0601` | 79,744 | `c1f6ff1488b4c317d016b64d374d63e235be7e8bec849491559706d4dce204b6` |
+
+It reads the six pinned source seals, independently reconstructs each raw
+predecessor row and occurrence citation, verifies the historical Git commit
+and document tree entry, builds no file, and emits no authority. Its exact
+fixture status is `PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT`; both
+`authority_emitted` and `certification_emitted` are false.
+
+The complete reconstructed domains have these current prospective pins:
+
+| Domain | Count | Canonical domain SHA-256 |
+|---|---:|---|
+| Repair overlays | 14 | `4877b04c72824d9422dc5414d880043390668471b10f589651b6727a42fc677e` |
+| All repair successors | 46 | `49c860650dea031b169f78fcbb08c719ef4d060e8676c834c485d59c7fd12bf4` |
+| Supersession edges | 46 | `3407e94b29a3084773c79e0817c9b8d73deb1d3f11ac7393508724b148a2731a` |
+| Successor-era seal fixtures | 6 | `2b4402bf45cce67d8461717aebc21ab5e9bcda973c12ed3092c33ece2b30dfa0` |
+
+These pins fix the law fixture and detect drift; they are not tier-2 evidence
+expected values and cannot be copied into an executed evidence bundle. A
+later execution must rederive the source-side values under the ratified bytes
+and satisfy §27.2.3.
+
+#### 27.7.3 Separate Amendment-13 mutation inventory
+
+Amendment 12's exact 71-name mutation inventory and eight-file bundle remain
+unchanged. Amendment 13 adds a separate exact seven-name inventory:
+
+~~~text
+ratification_identity_wrong_blob
+ratification_identity_wrong_commit
+ratification_identity_multiple_parents
+successor_terminal_status_forged
+predecessor_supersession_erasure
+fragment_duplicate_selector_forged
+fragment_composition_transformation_forged
+~~~
+
+The wrong-blob attack coherently substitutes the revision-13 blob
+`dc0ce837e64239d16ea61c15d47450b7341d1ce8`, 3,557,513 bytes, and raw
+SHA-256
+`b06e64e314645300458b6e1c72df23c9bd5090b376f676d1e492312135782d87`
+while retaining `29c593d1...`; the commit-tree-entry check must reject it.
+The wrong-commit attack substitutes
+`a16f6089eca06e98bf18b8238f056bb6effae383`, which is single-parent and
+contains the same design blob; exact commit identity must reject it. The
+multi-parent attack adds a second parent while keeping every document member
+correct.
+
+The remaining attacks coherently recompute the locally mutable content ID:
+reuse the predecessor “resolved” token as the incompatible successor status;
+flip predecessor retention false and erasure permission true; select the
+same-span `field_purpose_prompt`; or delete the whitespace gap and recompute
+the combined text hash. Each must fail its semantic gate, not merely a stale
+internal hash. An inventory name missing, added, reordered, surviving, or
+failing only an unintended earlier check aborts.
+
+### 27.8 Replacement closure, comparator, identifiers, and inoperability
+
+#### 27.8.1 Exact replacement and composition closure
+
+If and only if the exact Amendment-13 bytes are affirmatively ratified, the
+following is the complete affected-law map. Earlier law controls by silence
+everywhere else.
+
+| Earlier normative anchor | Amendment-13 disposition |
+|---|---|
+| §§26.10.1–26.10.3, DC-64, §26.11.2 step 2, and §26.11's terminal Amendment-12 document-only locator or no-ratification clause | Replaced only for Amendment 12 by §§27.2.1–27.2.2 exact single-parent commit, tree-entry blob, dual-hash, byte-count, and dual-RATIFY identity; every other noninstantiation and stop clause survives. |
+| A12-T2-R05 ratification/source/reseal Git-order phrase | Composed with §27.2.3's exact ancestry, independent source authentication, dual reconstruction, byte attestation, and pre-Q5 stop. |
+| §26.7.2 `readjudicate_source_row_and_reseal_before_tier_2` for the exact 28 table rows | Completed by §§27.3–27.4's new terminal successor, deterministic three-family map, append-only supersession, overlay, and seal membership. |
+| §26.7 and §26.11.2 obligation for the exact ten incomplete fragments | Completed by §27.5: eight terminal disclosed spans and two exact duplicate-selector/whitespace compositions; Amendment 12's five citations remain disjoint. |
+| §26.7.1 eight doc-036 `component_slot` defects | Lawfully unchanged as individually determinate and composed with §§27.3, 27.4, and 27.6 so all nine doc-036 changes enter one coherent overlay and era seal. |
+| §26.7.3 fourteen law-gap rows | Lawfully unchanged and expressly excluded by §27.7.1; no overlay or supersession member is permitted. |
+| §§26.3–26.6 catalog, repeat-cover, parent, `R_Q`, H, and consumer law | Lawfully unchanged: terminal repair and complete-instruction reading do not admit equivalence or add a cover arm. |
+| §§26.8–26.9 eight pilot artifacts and exact 71 mutations | Lawfully unchanged and permanently nonauthority; §27.7 adds a separate seven-attack law fixture. |
+| §26.11 tier-2 execution and Amendment-11 production blocker | Composed only with the repaired prerequisites; this draft itself executes nothing and the independent blocker survives. |
+
+No earlier row is deleted. A supersession edge changes which exact payload a
+repair-aware semantic consumer selects; it does not alter the historical
+annotation, predecessor seal, or tier-1 evidence. A new cover arm, alias
+admission, equivalence, law-gap repair, parent, catalog member, Q5 input, or
+authority would require separate exact ratified law.
+
+#### 27.8.2 Comparator and search closure
+
+The inherited comparator machinery and its 71 revision-14 rows remain exact.
+The Amendment-13 search augmentation is this case-sensitive ordered array:
+
+~~~text
+Amendment 13
+revision 15
+29c593d1954d94795e9f092ec4333e7d60a6136f
+626213aa45bce6b8c94b36dcaded16800ce0323d
+exact_attested_document_blob_not_commit_path_shape
+rq_stage2_document_repair_overlay.v1
+rq_stage2_local_evidence_repair_successor.v1
+rq_stage2_predecessor_supersession.v1
+rq_stage3_era_repair_successor_seal.v1
+terminal_semantically_incompatible_local_proof_no_alias_admitted
+terminal_incomplete_fragment_disclosed_no_alias_admitted
+complete_instruction_reading_by_exact_whitespace_composition
+predecessor_row_superseded_by_named_successor
+unique_predecessor_alias_anchor_context_occurrence_at_duplicate_leading_span
+same_page_exact_leading_bytes_plus_whitespace_gap_plus_exact_continuation_bytes
+A13_EXPECTED_MUTATIONS
+~~~
+
+No case fold, abbreviation, stemming, punctuation substitution, or fuzzy
+match is permitted. The exact six appended comparator rows are:
+
+| ID | Exact anchor | Prospective revision-15 disposition |
+|---|---|---|
+| DC-72 | §§26.10.1–26.10.3, DC-64, §26.11, and §27.2 Amendment-12 ratification identity | replaced-by-named-successor: every revision-14 D12 document-only locator and the obsolete no-ratification clause select actual Amendment-12 history by exact commit/blob/bytes/dual-attestation identity; every other ceremony, noninstantiation, and stop survives |
+| DC-73 | §§26.7.2, 27.3, and 27.4 exact 28 incompatible proof rows | replaced-by-named-successor: terminal no-alias successor, deterministic predecessor-family map, retained predecessor, supersession edge, overlay, and era membership |
+| DC-74 | §§26.7, 26.11.2, and 27.5 exact ten incomplete fragments and five prior continuation citations | replaced-by-named-successor for the ten only: eight disclosed terminal fragments plus two exact G75 compositions; five-citation Amendment-12 domain lawfully unchanged |
+| DC-75 | §§26.7.1, 27.3, and 27.6 doc-036 and six-era reseal | lawfully-unchanged-with-reason: eight sole-field changes were already determinate; the new proof successor now permits one coherent nine-row overlay and all six exact successor-seal domains |
+| DC-76 | §§26.8–26.9 and 27.7 validation evidence, mutations, and 14 law gaps | lawfully-unchanged-with-reason: 71 historical attacks remain exact; seven new attacks are separate; all 14 law gaps and every row outside 46 remain untouched |
+| DC-77 | §§25.10, 26.10–26.11, and 27.8 lifecycle, authority, Q5, and production after applying DC-72's D12 locator | lawfully-unchanged-with-reason: apart from the exact ratification locator named in DC-72, the draft emits no authority, tier-2 execution occurs later if ratified, and the independent Amendment-11 blocker remains controlling |
+
+The prospective comparator is the inherited DC-1 through DC-71 rows,
+deep-equal in order and complete text, followed by DC-72 through DC-77. All
+77 IDs are consecutive and unique. An edited inherited row, omitted affected
+consumer, undefined successor, duplicate ID, shortened anchor, third
+disposition, or unexamined search hit blocks ratification.
+
+#### 27.8.3 Exact new identifiers and terminal noninstantiation
+
+The exact new schema-version literals are:
+
+~~~text
+amendment_13_tier_2_execution_law.v1
+rq_stage2_document_repair_overlay.v1
+rq_stage2_local_evidence_repair_successor.v1
+rq_stage2_predecessor_supersession.v1
+rq_stage3_era_repair_successor_seal.v1
+~~~
+
+The exact new content-ID prefixes are:
+
+~~~text
+a13-document-repair-overlay:
+a13-repair-successor:
+a13-supersession:
+a13-successor-era-seal:
+~~~
+
+The exact new status/relation/operation codes are:
+
+~~~text
+PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT
+PROSPECTIVE_NONAUTHORITY
+terminal_semantically_incompatible_local_proof_no_alias_admitted
+terminal_incomplete_fragment_disclosed_no_alias_admitted
+complete_instruction_reading_by_exact_whitespace_composition
+coherent_document_reseal_component_domain_corrected_to_aggregate
+predecessor_row_superseded_by_named_successor
+append_only_predecessor_retained_successor_selected
+linked_successor_row
+repair_by_exact_span_disclosure_not_invention
+exact_same_page_whitespace_composition
+replace_only_node_domain_component_slot_with_aggregate
+unique_predecessor_alias_anchor_context_occurrence_at_duplicate_leading_span
+same_page_exact_leading_bytes_plus_whitespace_gap_plus_exact_continuation_bytes
+~~~
+
+They are opaque exact-byte codes. None has an alias, default, prefix match,
+case-insensitive form, implicit migration, or “closest” predecessor value.
+The script path, Python symbols, mutation names, diagnostic report, receipt,
+prospective fixture hashes, and tabled candidate IDs are validation
+identifiers, not official evidence or authority schemas.
+
+This amendment defines no successor Q5, hierarchy authority, registry,
+receipt, selected-lineage, full-relation, wall-row, or production schema. It
+does not instantiate even the repair overlays or seals it defines. After
+exact ratification, a separate tier-2 execution lane must rederive all 46
+repairs from the authenticated sources, commit overlays and seals in the
+§27.2.3 order, run dual independent reconstruction and full mutation gates,
+and remain pre-Q5. Passing that work still cannot bypass Amendment 11's
+`blocked_source_missing_disposition_underdetermined` production stop.
+
+**Amendment 13 is an unratified and inoperative draft. It certifies nothing,
+emits no authority, executes none of the 46 repairs, creates none of the six
+successor seals, and starts no tier-2 evidence build. The exact 14 law gaps,
+all other source rows, Q5, every registry and receipt, and every production
+result remain untouched and blocked under the inherited law.**
