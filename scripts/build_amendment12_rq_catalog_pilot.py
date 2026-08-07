@@ -11287,6 +11287,40 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         for support in row["alias_support_rows"]
         if support["support_origin"] == "sealed_local_evidence"
     }
+    approved_pair_by_id = {
+        row["semantic_alias_pair_adjudication_id"]: row
+        for row in approved_pair_rows
+    }
+    sealed_alias_support_rows = [
+        support
+        for row in [*component_class_rows, *job_complement_rows]
+        for support in row["alias_support_rows"]
+        if support["support_origin"] == "sealed_local_evidence"
+    ]
+    for support in sealed_alias_support_rows:
+        semantic_pair_id = support["semantic_alias_pair_adjudication_id"]
+        _require(
+            semantic_pair_id in approved_pair_by_id,
+            "derived alias support lacks a semantic gate pair",
+        )
+        pair = approved_pair_by_id[semantic_pair_id]
+        _require(
+            pair["class_closure_eligible"] is True
+            and pair["typed_projection_union_prohibited"] is False
+            and support["source_local_evidence_id"]
+            == pair["source_local_evidence_id"]
+            and support["alias_anchor_occurrence_ids"]
+            == [pair["alias_occurrence_id"]]
+            and support["canonical_anchor_occurrence_ids"]
+            == [pair["canonical_occurrence_id"]]
+            and support["pairing_basis_code"] == pair["pairing_basis_code"],
+            "typed or mismatched semantic pair entered occurrence closure",
+        )
+    semantic_stop_evidence_ids = {
+        row["source_local_evidence_id"]
+        for row in alias_evidence_adjudications
+        if not row["approved_pair_rows"]
+    }
     structural_alias_evidence_ids = {
         evidence_id
         for row in component_cross_reference_rows
@@ -11310,7 +11344,11 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     )
     _require(
         not sealed_alias_support_evidence_ids
-        & (structural_nonalias_evidence_ids | explicit_nonalias_evidence_ids)
+        & (
+            structural_nonalias_evidence_ids
+            | explicit_nonalias_evidence_ids
+            | semantic_stop_evidence_ids
+        )
         and (
             sealed_alias_support_evidence_ids
             & {
@@ -12066,7 +12104,7 @@ def _reseal_artifact(artifact: Mapping[str, Any]) -> dict[str, Any]:
 def _repin_mutated_bundle(
     value: Mapping[str, Mapping[str, Any]],
 ) -> dict[str, dict[str, Any]]:
-    """Repin all nonsemantic identities after an adversarial mutation."""
+    """Repin derived identities after an adversarial mutation."""
     bundle = copy.deepcopy(dict(value))
 
     for artifact_key, class_row_key in (
@@ -12180,6 +12218,14 @@ def _repin_mutated_bundle(
                 row["source_endpoint_utf8_byte_end_arrays"],
                 row["repeat_coverage_disposition"],
                 row["semantic_alias_finding"],
+                row[
+                    "named_instruction_import_or_occurrence_equivalence_proved"
+                ],
+                row["occurrence_equivalence_proved"],
+                row["pairwise_decomposition_required"],
+                row["approved_pair_count"],
+                row["rejected_source_local_evidence_ids"],
+                row["continuation_composition_citation"],
                 fragment_fields,
             ],
         )
@@ -12306,10 +12352,10 @@ def _repin_mutated_bundle(
                 support["alias_support_proof_id"] = _row_id(
                     "a12-candidate-local-alias-support:",
                     [
-                        support["source_local_evidence_id"],
+                        support["semantic_alias_pair_adjudication_id"],
                         support["relation"],
-                        support["alias_anchor_occurrence_ids"],
-                        support["canonical_anchor_occurrence_ids"],
+                        support["alias_anchor_occurrence_ids"][0],
+                        support["canonical_anchor_occurrence_ids"][0],
                         support["evidence_occurrence_ids"],
                     ],
                 )
@@ -12347,10 +12393,10 @@ def _repin_mutated_bundle(
                 support["alias_support_proof_id"] = _row_id(
                     "a12-candidate-local-alias-support:",
                     [
-                        support["source_local_evidence_id"],
+                        support["semantic_alias_pair_adjudication_id"],
                         support["relation"],
-                        support["alias_anchor_occurrence_ids"],
-                        support["canonical_anchor_occurrence_ids"],
+                        support["alias_anchor_occurrence_ids"][0],
+                        support["canonical_anchor_occurrence_ids"][0],
                         support["evidence_occurrence_ids"],
                     ],
                 )
@@ -12454,6 +12500,7 @@ def _repin_mutated_bundle(
         for key in (
             "alias_instruction_count",
             "alias_edge_count",
+            "alias_pair_count",
             "redirection_instruction_count",
             "redirection_edge_count",
             "stop_instruction_count",
@@ -12528,6 +12575,7 @@ def _repin_mutated_bundle(
     for suffix in (
         "alias_instruction_count",
         "alias_edge_count",
+        "alias_pair_count",
         "redirection_instruction_count",
         "redirection_edge_count",
         "stop_instruction_count",
@@ -12554,6 +12602,7 @@ def _repin_mutated_bundle(
     for suffix in (
         "alias_instruction_count",
         "alias_edge_count",
+        "alias_pair_count",
         "redirection_instruction_count",
         "redirection_edge_count",
         "stop_instruction_count",
@@ -12562,6 +12611,103 @@ def _repin_mutated_bundle(
         sweep[f"pilot_in_domain_component_cross_reference_sweep_{suffix}"] = (
             pilot_component_cross_reference_counts[suffix]
         )
+    semantic_rows = sweep["alias_evidence_semantic_adjudication_rows"]
+    semantic_pair_rows: list[dict[str, Any]] = []
+    for semantic_row in semantic_rows:
+        for pair in semantic_row["approved_pair_rows"]:
+            pair["semantic_alias_pair_adjudication_id"] = _row_id(
+                "a12-semantic-alias-pair-adjudication:",
+                [
+                    semantic_row["source_document_id"],
+                    semantic_row["source_local_evidence_id"],
+                    pair["pair_ordinal"],
+                    pair["pair_kind"],
+                    pair["pairing_basis_code"],
+                    pair["semantic_type"],
+                    pair["alias_occurrence_id"],
+                    pair["canonical_occurrence_id"],
+                    pair["alias_question_selector"],
+                    pair["canonical_question_selector"],
+                    pair["alias_endpoint_matched_utf8_sha256"],
+                    pair["canonical_endpoint_matched_utf8_sha256"],
+                    pair["source_instruction_matched_utf8_sha256s"],
+                ],
+            )
+        semantic_row["approved_pair_count"] = len(
+            semantic_row["approved_pair_rows"]
+        )
+        semantic_row["semantic_alias_evidence_adjudication_id"] = _row_id(
+            "a12-semantic-alias-evidence-adjudication:",
+            [
+                semantic_row["source_document_id"],
+                semantic_row["source_local_evidence_id"],
+                semantic_row["candidate_origin"],
+                semantic_row["ca41663_admitted_alias_evidence"],
+                semantic_row["source_instruction_matched_utf8_sha256s"],
+                semantic_row["endpoint_matched_utf8_sha256s"],
+                semantic_row["semantic_finding"],
+                semantic_row["decision"],
+                [
+                    pair["semantic_alias_pair_adjudication_id"]
+                    for pair in semantic_row["approved_pair_rows"]
+                ],
+                semantic_row["continuation_composition_citation"],
+            ],
+        )
+        semantic_pair_rows.extend(semantic_row["approved_pair_rows"])
+    semantic_adjudication_ids = [
+        row["semantic_alias_evidence_adjudication_id"] for row in semantic_rows
+    ]
+    sweep["alias_semantic_input_identity_count"] = len(
+        sweep["alias_semantic_input_identity_rows"]
+    )
+    sweep["alias_semantic_input_identity_domain_sha256"] = _domain_sha(
+        sweep["alias_semantic_input_identity_rows"]
+    )
+    sweep["alias_evidence_semantic_adjudication_count"] = len(semantic_rows)
+    sweep["ca41663_alias_evidence_adjudication_count"] = sum(
+        row["ca41663_admitted_alias_evidence"] for row in semantic_rows
+    )
+    sweep["round_five_continuation_restoration_count"] = sum(
+        row["round_five_continuation_restoration"] for row in semantic_rows
+    )
+    sweep["alias_evidence_semantic_adjudication_keyset_sha256"] = _keyset_sha(
+        semantic_adjudication_ids
+    )
+    sweep["alias_evidence_semantic_adjudication_domain_sha256"] = _domain_sha(
+        semantic_rows
+    )
+    sweep["alias_evidence_semantic_decision_counts"] = dict(
+        sorted(Counter(row["decision"] for row in semantic_rows).items())
+    )
+    sweep["alias_evidence_semantic_candidate_origin_counts"] = dict(
+        sorted(
+            Counter(row["candidate_origin"] for row in semantic_rows).items()
+        )
+    )
+    sweep["approved_alias_evidence_count"] = sum(
+        bool(row["approved_pair_rows"]) for row in semantic_rows
+    )
+    sweep["disclosed_stop_alias_evidence_count"] = sum(
+        not row["approved_pair_rows"] for row in semantic_rows
+    )
+    sweep["approved_alias_pair_rows"] = semantic_pair_rows
+    sweep["approved_alias_pair_count"] = len(semantic_pair_rows)
+    sweep["approved_alias_pair_keyset_sha256"] = _keyset_sha(
+        [
+            row["semantic_alias_pair_adjudication_id"]
+            for row in semantic_pair_rows
+        ]
+    )
+    sweep["approved_alias_pair_domain_sha256"] = _domain_sha(
+        semantic_pair_rows
+    )
+    sweep["occurrence_closure_alias_pair_count"] = sum(
+        row["class_closure_eligible"] for row in semantic_pair_rows
+    )
+    sweep["typed_projection_alias_pair_count"] = sum(
+        row["typed_projection_union_prohibited"] for row in semantic_pair_rows
+    )
     lineage_rows = sweep["exclusive_destination_redirection_lineage_rows"]
     sweep["exclusive_destination_redirection_lineage_count"] = len(
         lineage_rows
@@ -13072,6 +13218,9 @@ def run_mutation_tests(
             )
         )
         support["source_local_evidence_id"] = evidence_id
+        support["semantic_alias_pair_adjudication_id"] = _row_id(
+            "a12-semantic-alias-pair-adjudication-forgery:", [evidence_id]
+        )
         target_row["alias_support_rows"].append(support)
 
     def reuse_redirection_evidence_as_alias_support(
@@ -13097,6 +13246,56 @@ def run_mutation_tests(
         append_reused_nonalias_support(
             value, stop_row["source_local_evidence_ids"][0]
         )
+
+    def forge_composite_typed_projection_union(
+        value: dict[str, Any],
+    ) -> None:
+        pair = next(
+            pair
+            for row in value["sweeps"][
+                "alias_evidence_semantic_adjudication_rows"
+            ]
+            for pair in row["approved_pair_rows"]
+            if pair["pair_kind"] == "typed_instruction_import_projection"
+        )
+        pair["class_closure_eligible"] = True
+        pair["typed_projection_union_prohibited"] = False
+
+    def remove_nonledger_semantic_decision(
+        value: dict[str, Any],
+    ) -> None:
+        rows = value["sweeps"]["alias_evidence_semantic_adjudication_rows"]
+        index = next(
+            index
+            for index, row in enumerate(rows)
+            if row["candidate_origin"]
+            == "ca41663_nonledger_bypass_adjudication"
+            and row["approved_pair_rows"]
+        )
+        rows.pop(index)
+
+    def forge_continuation_composition_rule(
+        value: dict[str, Any],
+    ) -> None:
+        semantic_row = next(
+            row
+            for row in value["sweeps"][
+                "alias_evidence_semantic_adjudication_rows"
+            ]
+            if row["round_five_continuation_restoration"]
+        )
+        instruction_id = semantic_row["source_instruction_occurrence_ids"][0]
+        structural_row = next(
+            row
+            for row in value["sweeps"][
+                "in_domain_component_cross_reference_sweep_rows"
+            ]
+            if row["source_instruction_occurrence_id"] == instruction_id
+        )
+        for row in (semantic_row, structural_row):
+            row["continuation_composition_citation"][
+                "composition_rule"
+            ] = "forged_non_whitespace_continuation_rule"
 
     def forge_outside_target_bytes(value: dict[str, Any]) -> None:
         for artifact_key, row_key in (
@@ -13512,12 +13711,12 @@ def run_mutation_tests(
     add(
         "redirection_evidence_reused_as_alias_support",
         reuse_redirection_evidence_as_alias_support,
-        "R/G/T/STOP evidence entered derived alias support",
+        "derived alias support lacks a semantic gate pair",
     )
     add(
         "fragment_stop_promoted_to_alias_support",
         promote_fragment_stop_to_alias_support,
-        "R/G/T/STOP evidence entered derived alias support",
+        "derived alias support lacks a semantic gate pair",
     )
     add(
         "semantic_alias_adjudication_record_forged",
@@ -13525,6 +13724,21 @@ def run_mutation_tests(
             "in_domain_component_cross_reference_sweep_rows"
         ][0].__setitem__("semantic_alias_finding", "forged_semantic_finding"),
         "source-text semantic adjudication",
+    )
+    add(
+        "composite_typed_projection_unioned",
+        forge_composite_typed_projection_union,
+        "closure law",
+    )
+    add(
+        "nonledger_structural_filter_admitted_without_semantic_decision",
+        remove_nonledger_semantic_decision,
+        "sole semantic gate evidence census drift",
+    )
+    add(
+        "continuation_composition_rule_forged",
+        forge_continuation_composition_rule,
+        "continuation composition citation",
     )
     add(
         "component_class_sweep_row_omitted",
