@@ -53,6 +53,38 @@ DOC064_AGGREGATE_ENDPOINTS = {
     "psid-questionnaire-occurrence:"
     "5c21cb5d94c4633ea60447057e515d060d87fcc099a08ad79d6ded471f86ed2a",
 }
+DOC064_REDIRECTION_LINEAGE_EVIDENCE = (
+    "rq-local-repeat-alias-evidence:"
+    "1d2d4b2f78a3a7db10584260b2edd900baa0b49ca81a44b37f93c6495c65b1ea"
+)
+DOC064_REDIRECTION_LINEAGE_INSTRUCTION = (
+    "psid-questionnaire-occurrence:"
+    "f72f26cb2f9abc4c7c3a3dc0d22ade4d357e65b6b3c4dd2234cd2013de6ec80c"
+)
+DOC066_REDIRECTION_EVIDENCE = (
+    "rq-local-repeat-evidence:"
+    "5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927"
+)
+DOC066_REDIRECTION_INSTRUCTION = (
+    "psid-questionnaire-occurrence:"
+    "65f1752d0f6d39346c412c1d492e574979277aa6c78094f1ad79f0d53cf57452"
+)
+DOC066_G83_CONTEXT = (
+    "psid-questionnaire-occurrence:"
+    "adb71d63b14c075a96ab9ebe13b307cffa11870c6120fdf19d6c0be70b2e938b"
+)
+DOC066_G78_REMUNERATION = (
+    "psid-questionnaire-occurrence:"
+    "8d4e18a51c801cb05119741cdf0a16249c5f335f462134b10d388363d2ccd54c"
+)
+DOC074_REDIRECTION_LINEAGE_EVIDENCE = (
+    "rq-local-repeat-alias-evidence:"
+    "f3c17106bd1dc9ec836c1ae56e7a1a303a2e19e8bb888e0dc86028d28ce05ef3"
+)
+DOC074_REDIRECTION_LINEAGE_INSTRUCTION = (
+    "psid-questionnaire-occurrence:"
+    "b9cd9b8340c75927fdd98504bfe9663bad709f3d18a75db944b4f8281d0f8af7"
+)
 
 EXPECTED_MUTATIONS = (
     "pilot_slice_reordered",
@@ -82,6 +114,15 @@ EXPECTED_MUTATIONS = (
     "aggregate_relation_universal_arm_false",
     "aggregate_relation_endpoint_domain_changed",
     "aggregate_relation_source_text_forged",
+    "redirection_relation_row_omitted",
+    "redirection_relation_subkind_changed",
+    "redirection_relation_alias_admitted",
+    "redirection_relation_equivalence_claimed",
+    "redirection_relation_universal_arm_false",
+    "redirection_relation_destination_changed",
+    "redirection_relation_source_text_forged",
+    "redirection_lineage_row_omitted",
+    "redirection_law_gap_demoted_to_seal_defect",
     "zero_parent_emits_rq",
     "unique_parent_forced",
     "unique_parent_derived_slot_invented",
@@ -229,6 +270,7 @@ def test__amendment_12_design__closes_laws_and_stays_inoperable():
         "psid-role-assignment:",
         "terminal_outside_r_q_domain_no_alias_admitted",
         "noncatalog_aggregate_or_repeated_instance_relation_no_alias",
+        "authenticated_in_domain_exclusive_destination_relation_no_alias",
         "multi_parent_ambiguity_no_selection",
         "component_class_admission_sweep_rows",
         "catalog_only_job_complement_sweep_rows",
@@ -442,7 +484,294 @@ def test__noncatalog_aggregate_relation__retains_doc064_exact_bytes_no_alias(
     assert row["occurrence_equivalence_claimed"] is False
 
 
-def test__three_repeat_arms__are_disjoint_and_unresolved_remains_fail_closed(
+def test__in_domain_redirection__retains_doc066_exact_bytes_no_alias(bundle):
+    full_rows = bundle["sweeps"]["in_domain_redirection_shape_rows"]
+    pilot_rows = bundle["repeat"]["in_domain_redirection_disposition_rows"]
+    assert len(full_rows) == 5
+    assert len(pilot_rows) == 2
+    assert [row["document_source_position"] for row in full_rows] == [
+        15,
+        17,
+        19,
+        66,
+        66,
+    ]
+    row = next(
+        value
+        for value in full_rows
+        if value["source_instruction_occurrence_ids"]
+        == [DOC066_REDIRECTION_INSTRUCTION]
+    )
+    assert row in pilot_rows
+    assert row["document_source_position"] == 66
+    assert row["source_local_evidence_ids"] == [DOC066_REDIRECTION_EVIDENCE]
+    assert row["relation_subkind"] == a12.REDIRECTION_RELATION_SUBKIND
+    assert row["relation"] == "explicit_cross_reference"
+    assert row["source_instruction_occurrence_ids"] == [
+        DOC066_REDIRECTION_INSTRUCTION
+    ]
+    assert row["source_instruction_matched_texts"] == [
+        "should be included at G78, not here."
+    ]
+    assert row["source_instruction_matched_utf8_sha256s"] == [
+        "447cf2de749df16746e08df868557004cf4aa3281f8a386fbd1b06f230cac7d3"
+    ]
+    assert row["source_instruction_page_numbers"] == [40]
+    assert row["source_instruction_utf8_byte_starts"] == [2250]
+    assert row["source_instruction_utf8_byte_ends"] == [2286]
+    assert row["predecessor_alias_anchor_occurrence_ids"] == [
+        DOC066_G83_CONTEXT
+    ]
+    assert row["predecessor_canonical_anchor_occurrence_ids"] == [
+        DOC066_G78_REMUNERATION
+    ]
+    assert row["current_location_occurrence_id"] == DOC066_G83_CONTEXT
+    assert row["destination_occurrence_ids"] == [DOC066_G78_REMUNERATION]
+    assert row["endpoint_occurrence_kinds"] == [
+        "context_anchor",
+        "remuneration_component_anchor",
+    ]
+    assert row["endpoint_raw_node_domains"] == [
+        "component_slot",
+        "component_slot",
+    ]
+    assert row["endpoint_classifications"] == [
+        "source_context",
+        "source_remuneration_component",
+    ]
+    assert row["endpoint_printed_identifiers"] == ["G83.", "G78."]
+    assert row["alias_admitted"] is False
+    assert row["occurrence_equivalence_claimed"] is False
+    assert row["universal_repeat_coverage_arm_satisfied"] is True
+    grouped = next(
+        value
+        for value in pilot_rows
+        if value["source_instruction_matched_texts"]
+        == [
+            "farming income should be listed at G2-G4 and not be repeated "
+            "here; but if Head’s"
+        ]
+    )
+    assert len(grouped["source_local_evidence_ids"]) == 2
+    assert len(grouped["source_evidence_occurrence_id_arrays"]) == 2
+    assert len(grouped["destination_occurrence_ids"]) == 2
+    assert len(grouped["source_instruction_occurrence_ids"]) == 1
+
+
+def test__component_cross_reference_sweep__exact_walks_structural_domain(
+    bundle,
+):
+    sweep = bundle["sweeps"]
+    assert {
+        key: sweep[key]
+        for key in (
+            "explicit_cross_reference_evidence_count",
+            "explicit_cross_reference_instruction_count",
+            "complete_cross_reference_evidence_count",
+            "complete_cross_reference_instruction_count",
+            "in_domain_nonaggregate_cross_reference_evidence_count",
+            "in_domain_nonaggregate_cross_reference_instruction_count",
+            "wholly_in_domain_nonaggregate_cross_reference_evidence_count",
+            "wholly_in_domain_nonaggregate_cross_reference_instruction_count",
+            "component_cross_reference_evidence_count",
+            "component_cross_reference_instruction_count",
+            "binary_component_cross_reference_evidence_count",
+            "binary_component_cross_reference_instruction_count",
+        )
+    } == {
+        "explicit_cross_reference_evidence_count": 1_915,
+        "explicit_cross_reference_instruction_count": 1_874,
+        "complete_cross_reference_evidence_count": 309,
+        "complete_cross_reference_instruction_count": 268,
+        "in_domain_nonaggregate_cross_reference_evidence_count": 292,
+        "in_domain_nonaggregate_cross_reference_instruction_count": 252,
+        "wholly_in_domain_nonaggregate_cross_reference_evidence_count": 287,
+        "wholly_in_domain_nonaggregate_cross_reference_instruction_count": 251,
+        "component_cross_reference_evidence_count": 217,
+        "component_cross_reference_instruction_count": 178,
+        "binary_component_cross_reference_evidence_count": 205,
+        "binary_component_cross_reference_instruction_count": 166,
+    }
+    rows = sweep["in_domain_component_cross_reference_sweep_rows"]
+    assert len(rows) == 162
+    assert sum(row["source_evidence_count"] for row in rows) == 195
+    assert Counter(row["source_evidence_count"] for row in rows) == {
+        1: 138,
+        2: 15,
+        3: 9,
+    }
+    assert all(
+        set(row) == a12.IN_DOMAIN_COMPONENT_CROSS_REFERENCE_SWEEP_ROW_KEYS
+        and row["structural_candidate_satisfied"] is True
+        for row in rows
+    )
+    assert Counter(row["document_source_position"] for row in rows) == {
+        1: 4,
+        7: 5,
+        10: 1,
+        11: 10,
+        13: 9,
+        15: 13,
+        17: 11,
+        19: 11,
+        35: 1,
+        48: 2,
+        52: 2,
+        56: 35,
+        58: 42,
+        61: 1,
+        66: 10,
+        70: 5,
+    }
+    assert {
+        key: sweep[key]
+        for key in (
+            "in_domain_component_cross_reference_sweep_count",
+            "in_domain_component_cross_reference_sweep_edge_count",
+            "in_domain_component_cross_reference_sweep_alias_instruction_count",
+            "in_domain_component_cross_reference_sweep_alias_edge_count",
+            "in_domain_component_cross_reference_sweep_redirection_instruction_count",
+            "in_domain_component_cross_reference_sweep_redirection_edge_count",
+            "in_domain_component_cross_reference_sweep_stop_instruction_count",
+            "in_domain_component_cross_reference_sweep_stop_edge_count",
+        )
+    } == {
+        "in_domain_component_cross_reference_sweep_count": 162,
+        "in_domain_component_cross_reference_sweep_edge_count": 195,
+        "in_domain_component_cross_reference_sweep_alias_instruction_count": 152,
+        "in_domain_component_cross_reference_sweep_alias_edge_count": 184,
+        "in_domain_component_cross_reference_sweep_redirection_instruction_count": 5,
+        "in_domain_component_cross_reference_sweep_redirection_edge_count": 6,
+        "in_domain_component_cross_reference_sweep_stop_instruction_count": 5,
+        "in_domain_component_cross_reference_sweep_stop_edge_count": 5,
+    }
+    assert {
+        key: sweep[key]
+        for key in (
+            "pilot_in_domain_component_cross_reference_sweep_count",
+            "pilot_in_domain_component_cross_reference_sweep_edge_count",
+            "pilot_in_domain_component_cross_reference_sweep_alias_instruction_count",
+            "pilot_in_domain_component_cross_reference_sweep_alias_edge_count",
+            "pilot_in_domain_component_cross_reference_sweep_redirection_instruction_count",
+            "pilot_in_domain_component_cross_reference_sweep_redirection_edge_count",
+            "pilot_in_domain_component_cross_reference_sweep_stop_instruction_count",
+            "pilot_in_domain_component_cross_reference_sweep_stop_edge_count",
+        )
+    } == {
+        "pilot_in_domain_component_cross_reference_sweep_count": 91,
+        "pilot_in_domain_component_cross_reference_sweep_edge_count": 123,
+        "pilot_in_domain_component_cross_reference_sweep_alias_instruction_count": 85,
+        "pilot_in_domain_component_cross_reference_sweep_alias_edge_count": 116,
+        "pilot_in_domain_component_cross_reference_sweep_redirection_instruction_count": 2,
+        "pilot_in_domain_component_cross_reference_sweep_redirection_edge_count": 3,
+        "pilot_in_domain_component_cross_reference_sweep_stop_instruction_count": 4,
+        "pilot_in_domain_component_cross_reference_sweep_stop_edge_count": 4,
+    }
+    assert [
+        row["in_domain_redirection_relation_disposition_id"]
+        for row in rows
+        if row["repeat_coverage_disposition"]
+        == "admitted_exclusive_destination_redirection"
+    ] == [
+        row["in_domain_redirection_relation_disposition_id"]
+        for row in sweep["in_domain_redirection_shape_rows"]
+    ]
+    assert {
+        row["source_local_evidence_ids"][0]
+        for row in rows
+        if row["repeat_coverage_disposition"]
+        == "disclosed_stop_no_redirection_semantics"
+    } == {
+        "rq-local-repeat-evidence:"
+        "c9b24cb9e34a7050a567093ee0f0500df3e221dd2afa9adfdaba02010fd31509",
+        "rq-local-repeat-evidence:"
+        "6ce1ef4653dfa56a49ff6baf30052132630c1ed47dfb246dcf38c1e63a24f83f",
+        "rq-local-repeat-evidence:"
+        "bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877",
+        "rq-local-repeat-evidence:"
+        "525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c",
+        "rq-local-repeat-evidence:"
+        "a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39",
+    }
+
+
+def test__lexical_redirection_lineage__remains_a_secondary_regression(bundle):
+    sweep = bundle["sweeps"]
+    rows = sweep["exclusive_destination_redirection_lineage_rows"]
+    assert sweep["repeat_instruction_text_scan_count"] == 2_460
+    assert sweep["literal_cross_reference_instruction_count"] == 8
+    assert len(rows) == 45
+    assert sum(len(row["source_local_evidence_ids"]) for row in rows) == 46
+    assert Counter(row["source_text_shape_kind"] for row in rows) == {
+        "business_owner_pay_exclusive_placement": 16,
+        "primary_farm_income_exclusive_placement": 26,
+        "labor_income_g78_exclusive_placement": 3,
+    }
+    g78_rows = [
+        row
+        for row in rows
+        if row["source_text_shape_kind"]
+        == "labor_income_g78_exclusive_placement"
+    ]
+    assert [row["document_source_position"] for row in g78_rows] == [
+        64,
+        66,
+        74,
+    ]
+    assert [row["source_local_evidence_ids"] for row in g78_rows] == [
+        [DOC064_REDIRECTION_LINEAGE_EVIDENCE],
+        [DOC066_REDIRECTION_EVIDENCE],
+        [DOC074_REDIRECTION_LINEAGE_EVIDENCE],
+    ]
+    assert [row["source_instruction_occurrence_id"] for row in g78_rows] == [
+        DOC064_REDIRECTION_LINEAGE_INSTRUCTION,
+        DOC066_REDIRECTION_INSTRUCTION,
+        DOC074_REDIRECTION_LINEAGE_INSTRUCTION,
+    ]
+    admitted = [
+        row for row in rows if row["in_domain_redirection_arm_eligible"]
+    ]
+    stopped = [
+        row
+        for row in rows
+        if row["lineage_disposition"].startswith("disclosed_stop_")
+    ]
+    aggregate = [
+        row
+        for row in rows
+        if row["lineage_disposition"]
+        == "covered_by_existing_aggregate_nonalias_subkind"
+    ]
+    assert len(admitted) == 5
+    assert len(aggregate) == 2
+    assert len(stopped) == 38
+    assert (
+        sweep["exclusive_destination_redirection_lineage_admitted_count"] == 5
+    )
+    assert (
+        sweep["exclusive_destination_redirection_lineage_aggregate_count"] == 2
+    )
+    assert sweep["exclusive_destination_redirection_lineage_stop_count"] == 38
+    assert (
+        sweep["exclusive_destination_redirection_lineage_mixed_stop_count"]
+        == 3
+    )
+    assert (
+        sweep[
+            "exclusive_destination_redirection_lineage_incomplete_stop_count"
+        ]
+        == 35
+    )
+    assert {
+        row["in_domain_redirection_relation_disposition_id"]
+        for row in admitted
+    } == {
+        row["in_domain_redirection_relation_disposition_id"]
+        for row in sweep["in_domain_redirection_shape_rows"]
+    }
+
+
+def test__four_repeat_dispositions__are_disjoint_and_fail_closed(
     bundle,
 ):
     sweep = bundle["sweeps"]
@@ -454,16 +783,24 @@ def test__three_repeat_arms__are_disjoint_and_unresolved_remains_fail_closed(
         row["source_instruction_occurrence_id"]
         for row in sweep["outside_domain_repeat_shape_rows"]
     }
+    redirection_instruction_ids = {
+        row["source_instruction_occurrence_ids"][0]
+        for row in sweep["in_domain_redirection_shape_rows"]
+    }
     assert aggregate_instruction_ids.isdisjoint(outside_instruction_ids)
+    assert redirection_instruction_ids.isdisjoint(outside_instruction_ids)
+    assert redirection_instruction_ids.isdisjoint(aggregate_instruction_ids)
     assert sweep["repeat_coverage_census"] == {
         "repeat_occurrence_count": 2_460,
-        "valid_direct_proof_instruction_count": 257,
+        "valid_direct_proof_instruction_count": 253,
         "outside_domain_instruction_count": 34,
         "noncatalog_aggregate_relation_instruction_count": 13,
-        "incompatible_proof_instruction_count": 25,
+        "in_domain_redirection_instruction_count": 5,
+        "in_domain_nonalias_relation_instruction_count": 18,
+        "incompatible_proof_instruction_count": 24,
         "valid_and_incompatible_instruction_overlap_count": 1,
         "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
-        "lawful_repeat_coverage_none_arm_instruction_count": 2_156,
+        "disclosed_stop_instruction_count": 2_155,
         "otherwise_unresolved_instruction_count": 2_132,
     }
     assert bundle["gate"]["overall_repeat_catalog_coverage_status"] == (
@@ -473,13 +810,16 @@ def test__three_repeat_arms__are_disjoint_and_unresolved_remains_fail_closed(
 
 def test__repeat_gate__does_not_hide_other_unresolved_instructions(bundle):
     census = bundle["gate"]["pilot_census"]
-    assert census["valid_direct_proof_instruction_count"] == 106
+    assert census["valid_direct_proof_instruction_count"] == 105
     assert census["outside_domain_instruction_count"] == 34
     assert census["noncatalog_aggregate_relation_instruction_count"] == 1
-    assert census["incompatible_proof_instruction_count"] == 8
+    assert census["in_domain_redirection_instruction_count"] == 2
+    assert census["in_domain_nonalias_relation_instruction_count"] == 3
+    assert census["incompatible_proof_instruction_count"] == 7
     assert census["lawful_repeat_coverage_multiple_arm_instruction_count"] == 0
-    assert census["lawful_repeat_coverage_none_arm_instruction_count"] == 235
+    assert census["disclosed_stop_instruction_count"] == 234
     assert census["otherwise_unresolved_instruction_count"] == 228
+    assert 376 == 105 + 34 + 1 + 2 + 234
     assert bundle["gate"]["overall_repeat_catalog_coverage_status"] == (
         "fail_closed_unresolved_rows_remain"
     )
@@ -823,17 +1163,89 @@ def test__tier2_job_complement_fold__rejects_duplicate_relationships():
         )
 
 
-def test__predecessor_adjudication__reproduces_corrected_37_13_split(
+def test__predecessor_adjudication__reproduces_round_three_36_14_split(
     bundle,
 ):
     artifact = bundle["predecessor"]
     assert artifact["doc036_aggregate_component_slot_count"] == 8
     assert artifact["populated_local_proof_adjudication_count"] == 42
-    assert artifact["populated_local_proof_seal_defect_count"] == 29
-    assert artifact["populated_local_proof_law_gap_count"] == 13
-    assert artifact["seal_defect_disposition_count"] == 37
-    assert artifact["law_gap_disposition_count"] == 13
-    assert artifact["third_arm_law_gap_repair_count"] == 13
+    assert artifact["populated_local_proof_seal_defect_count"] == 28
+    assert artifact["populated_local_proof_law_gap_count"] == 14
+    assert artifact["seal_defect_disposition_count"] == 36
+    assert artifact["law_gap_disposition_count"] == 14
+    assert artifact["in_domain_nonalias_law_gap_repair_count"] == 14
+    assert artifact["in_domain_nonalias_law_gap_subkind_counts"] == {
+        a12.AGGREGATE_RELATION_SUBKIND: 13,
+        a12.REDIRECTION_RELATION_SUBKIND: 1,
+    }
+
+
+def test__round_three_semantic_ledger__exact_covers_all_42_proof_rows(bundle):
+    rows = bundle["predecessor"]["populated_local_proof_adjudication_rows"]
+    emitted_ids = {row["source_local_evidence_id"] for row in rows}
+    ledgers = (
+        a12.AGGREGATE_RELATION_LAW_GAP_EVIDENCE_IDS,
+        a12.REDIRECTION_LAW_GAP_EVIDENCE_IDS,
+        a12.PREDECESSOR_SEAL_DEFECT_EVIDENCE_IDS,
+    )
+    assert [len(values) for values in ledgers] == [13, 1, 28]
+    assert all(
+        left.isdisjoint(right)
+        for left in ledgers
+        for right in ledgers
+        if left is not right
+    )
+    assert set().union(*ledgers) == emitted_ids
+    changed = next(
+        row
+        for row in rows
+        if row["source_local_evidence_id"] == DOC066_REDIRECTION_EVIDENCE
+    )
+    assert changed["in_domain_nonalias_relation_arm_eligible"] is True
+    assert changed["in_domain_nonalias_relation_subkind"] == (
+        a12.REDIRECTION_RELATION_SUBKIND
+    )
+    assert changed["law_gap_admitted"] is True
+    assert changed["source_instruction_matched_texts"] == [
+        "should be included at G78, not here."
+    ]
+    assert changed["endpoint_printed_identifiers"] == ["G83.", "G78."]
+    assert changed["semantic_adjudication_round"] == 3
+
+
+def test__round_three_pilot_projection__is_11_stop_and_2_relation(bundle):
+    rows = [
+        row
+        for row in bundle["predecessor"][
+            "populated_local_proof_adjudication_rows"
+        ]
+        if row["document_source_position"] in a12.PILOT_POSITIONS
+    ]
+    assert len(rows) == 13
+    assert Counter(
+        row["disposition"] == "predecessor_seal_defect" for row in rows
+    ) == {True: 11, False: 2}
+    assert Counter(
+        row["in_domain_nonalias_relation_subkind"]
+        for row in rows
+        if row["law_gap_admitted"]
+    ) == {
+        a12.AGGREGATE_RELATION_SUBKIND: 1,
+        a12.REDIRECTION_RELATION_SUBKIND: 1,
+    }
+
+
+def test__round_three_adjudications__all_carry_exact_source_citations(bundle):
+    proof_rows = bundle["predecessor"][
+        "populated_local_proof_adjudication_rows"
+    ]
+    doc036_rows = bundle["predecessor"]["doc036_aggregate_component_slot_rows"]
+    assert len(proof_rows) + len(doc036_rows) == 50
+    assert all(row["semantic_adjudication_round"] == 3 for row in proof_rows)
+    assert all(row["semantic_adjudication_round"] == 3 for row in doc036_rows)
+    assert all(row["source_instruction_matched_texts"] for row in proof_rows)
+    assert all(row["endpoint_matched_texts"] for row in proof_rows)
+    assert all(row["source_occurrence_matched_text"] for row in doc036_rows)
 
 
 def test__predecessor_adjudication__reproduces_source_and_seal_flag_censuses(
@@ -853,7 +1265,7 @@ def test__predecessor_adjudication__reproduces_source_and_seal_flag_censuses(
         "occurrence_derived_domain_crossing": 19,
         "corrected_catalog_domain_crossing": 19,
         "raw_node_domain_crossing": 18,
-        "context_remuneration_mix": 15,
+        "context_remuneration_mix": 14,
         "head_spouse_mix": 4,
     }
 
@@ -883,6 +1295,9 @@ def test__gate__is_explicitly_pilot_nonauthority(bundle):
     )
     assert gate["tier_2_protocol_status"] == (
         "not_started_requires_ratification_and_predecessor_reseals"
+    )
+    assert gate["four_disposition_repeat_law_status"] == (
+        "pass_law_shape_only"
     )
     assert gate["nonauthority_statement"]["q5_emitted"] is False
     assert gate["nonauthority_statement"]["r_q_emitted"] is False

@@ -57,6 +57,24 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
     "noncatalog_aggregate_relation_shape": (
         "bb1b34fe97ba6cf7b0497aea5b3992c32419511994d02792b24a85740d3ebf83"
     ),
+    "in_domain_redirection_shape_keyset": (
+        "e32dccc80f88bbbbaf21deab8083607d263dc512abd253023155cb5521e2fa82"
+    ),
+    "in_domain_redirection_shape": (
+        "da11c6af360f3709b14f1a8700900e9fcd0342926b48b8ed8d39c701f8e36aab"
+    ),
+    "exclusive_destination_redirection_lineage": (
+        "7f561ce5f6e30e747f6983eff6ba894c3c457888a39bf1bc5615b06d8307ad8e"
+    ),
+    "exclusive_destination_redirection_lineage_keyset": (
+        "069455f172490db3db04977542df1bbcda23c6a0350a739830188016622ea5be"
+    ),
+    "in_domain_component_cross_reference_sweep": (
+        "7d9b1d672c41b8e0cb00532440d9843b01c9afb4eb0ccb4eb4c5e9abbb419238"
+    ),
+    "in_domain_component_cross_reference_sweep_keyset": (
+        "536aa7f565ee4856bb39d2c710687fcebcc9e54cca57110bdfdf8738ad29b381"
+    ),
     "component_parent_shape_keyset": (
         "b1aaad10fac7e3a6eb35edabd99c079137404109f0b912f8726446965a1d0524"
     ),
@@ -82,13 +100,13 @@ PINNED_SWEEP_DOMAIN_SHA256 = {
         "5f660c565ff79f37c2c76367154ab0b6696e5a9a14f17959ae165f2f6923a5ac"
     ),
     "doc036_aggregate_component_slot": (
-        "246a32632554c20aa25bb764e4cb77f3427f964e845a8c0cf65efcb57c1d9bae"
+        "7cbeacb1e431e4e1486c726863cdf4f1213a76e5ab7259c69d390adaae7c7727"
     ),
     "predecessor_proof_adjudication_keyset": (
         "12d4b72affcecd0f0899a5683a2e1ab9bbae3cb37850b572701490e6210e3d12"
     ),
     "predecessor_proof_adjudication": (
-        "3476ca8e0cedf33bf101952487f2fb23223eebf5eea745f9259c2b169c3ddda3"
+        "9ed12e44e3b9996f21e0eb150c7ab4c0ff117f12e29296d32141ca69b3425746"
     ),
 }
 
@@ -152,6 +170,120 @@ COMPLETE_LOCAL_EVIDENCE_STATUSES = (
     "local_resolved_cross_reference_for_global_assembly",
 )
 
+AGGREGATE_RELATION_SUBKIND = "aggregate_or_repeated_instance"
+REDIRECTION_RELATION_SUBKIND = "exclusive_destination_redirection"
+IN_DOMAIN_NONALIAS_SUBKINDS = (
+    AGGREGATE_RELATION_SUBKIND,
+    REDIRECTION_RELATION_SUBKIND,
+)
+
+# This is a source-cited semantic ledger, not a structural fallback.  The
+# complete 2,460-instruction placement sweep below finds 45 candidate texts.
+# Five instruction-level dispositions survive source review.  One of them has
+# two independently authenticated destination edges; grouping those two rows
+# here is what keeps R(r) singleton at the instruction level.
+EXCLUSIVE_DESTINATION_REDIRECTION_EVIDENCE_BY_INSTRUCTION = {
+    (
+        "psid-questionnaire-occurrence:"
+        "5843e37c0edd529d4a20389341bc0d42a57ff241806821b6f7f49355f6ed5e0e"
+    ): (
+        "rq-local-repeat-alias-evidence:"
+        "d703ee09088e3789c6c77b9a01bc7350062cb744295cce86dd3a0722317cbe2b",
+    ),
+    (
+        "psid-questionnaire-occurrence:"
+        "a60351fcb96320baae7367f589eb3a45f95f7db1bc6c6cf3fbc3fba897c0667e"
+    ): (
+        "rq-local-repeat-alias-evidence:"
+        "390e91405eab59354cf25f3deb7cb02dfa5924c655c33272fd226d2f5ba7117f",
+    ),
+    (
+        "psid-questionnaire-occurrence:"
+        "a0ac9e5d30e32fb183a0dbd492e46ae4554ea8ec15337d8a3d2710f7195073bd"
+    ): (
+        "rq-local-repeat-alias-evidence:"
+        "2d00c4bc66f3191d36f783de3a709adba07c3eb894a054d971d72d64ba2870af",
+    ),
+    (
+        "psid-questionnaire-occurrence:"
+        "1dc6faa8137b8a9b0ec95a605682d2982b9baf1eddd86dee961ea99d0ba4510a"
+    ): (
+        "rq-local-repeat-evidence:"
+        "1851a59e23285cabe0fb25977286cccd786152885b0c8f60bb29517a21f61e23",
+        "rq-local-repeat-evidence:"
+        "191167ca76ad47c4334c5f3b014abd7d520944d9faadca4b4aa80e52766cd7e2",
+    ),
+    (
+        "psid-questionnaire-occurrence:"
+        "65f1752d0f6d39346c412c1d492e574979277aa6c78094f1ad79f0d53cf57452"
+    ): (
+        "rq-local-repeat-evidence:"
+        "5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927",
+    ),
+}
+EXCLUSIVE_DESTINATION_REDIRECTION_INSTRUCTION_IDS = frozenset(
+    EXCLUSIVE_DESTINATION_REDIRECTION_EVIDENCE_BY_INSTRUCTION
+)
+
+# Round three is a complete semantic ledger, not a fallback predicate.  The
+# sets below exact-cover the 42 populated predecessor proof candidates when
+# combined.  Their emitted rows carry each instruction and endpoint's exact
+# text, digest, page, and byte span as the source citation for the decision.
+AGGREGATE_RELATION_LAW_GAP_EVIDENCE_IDS = frozenset(
+    {
+        "rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6",
+        "rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045",
+        "rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495",
+        "rq-local-repeat-evidence:e5ff3d4e974f7c527fd7be988d6075b152586ed1f6ec06f37711bb47667b191d",
+        "rq-local-repeat-alias-evidence:db641c23f0d13b3befcdde005cf6b3804cc85a7e3985804091a59d826584a0c1",
+        "rq-local-repeat-alias-evidence:e744b798ebfb58ba3b8e1c28c7b0c5cbeadfadd649b5951f25a9326b1dafc0bf",
+        "rq-local-repeat-alias-evidence:9aed9fbcbb6cbe3f0697b12e95522c1a9e539b5e4e2a031b3b2bb531b45f3ced",
+        "rq-local-repeat-alias-evidence:92db20a47e9e0771b874238f39d920d69203e822e5cb28cf461394fa9d8bf254",
+        "rq-local-repeat-alias-evidence:71cbb45447d775ba33f493a3e0ebe800226d463bf73905566216fcb53287512d",
+        "rq-local-repeat-evidence:4ac3d89c423be55bac47c13cced2fd92151014ef3a45d95fba4b2999cca518f2",
+        "rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c95a391c5daf54547",
+        "rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868",
+        "rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734",
+    }
+)
+REDIRECTION_LAW_GAP_EVIDENCE_IDS = frozenset(
+    {
+        "rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927",
+    }
+)
+PREDECESSOR_SEAL_DEFECT_EVIDENCE_IDS = frozenset(
+    {
+        "rq-local-repeat-evidence:c93bb69e6a4c04717efd8b68e71799b5b4f3cb1c1c20a1b31afe2852d04dab67",
+        "rq-local-repeat-evidence:0c25501bcb134ddd36f5f076978ebd01a02d3e731772c4ae5de182d81a76a487",
+        "rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716",
+        "rq-local-repeat-alias-evidence:b8ea2ca5e2b198e2c4f9ec8ef9608a68b53b8c7a0f76435f4c2ca0db3f57a456",
+        "rq-local-repeat-alias-evidence:78c2d51532910f9dbebaac790485bb20e2a0d907e632f4d32c327c185d52a34c",
+        "rq-local-repeat-alias-evidence:224c03c08758f9ea5f0e6920b949ff50afc42ef2165923be05fc7646b8249623",
+        "rq-local-repeat-alias-evidence:e3ca944c92c9a5053ff989551b47d8cfbe885565bfc6e0f59886c74a8b3a1331",
+        "rq-local-repeat-alias-evidence:238d3e9a1faceb345a3f13380b6cc04a97ed5c9a54d7fe931c178588415c9d11",
+        "rq-local-repeat-alias-evidence:6c1381f0c6a1ee424dc21dee75fde1263efbe2cdaa4d4b396a28847fea3b6b89",
+        "rq-local-repeat-alias-evidence:6d0ad010bf859e35f2d90ef9ba2dceaf60f4625dacac9cd6c4ed0ccdf814f526",
+        "rq-local-repeat-alias-evidence:122109cba974f0e5ed897f0236668a04ed2dca7e5c15f3fa2c47fbd69bec633a",
+        "rq-local-repeat:d20165da2c897270b8d8708bdd2ee7a860d6c3ac905c9e05dcc622a75b413a92",
+        "rq-local-repeat-alias-evidence:b2ff04405ce6c20fb6848441dd5fc249ac55b99c6ce21a60ff1ef331b42d8a19",
+        "rq-local-repeat-alias-evidence:e4b4c44f443929ce8facfa51ce2e318e201490d259b01e507d4dded083e8fba2",
+        "rq-local-repeat-alias-evidence:6c17ebd0a0c97a5b46fef9ff2c5326fe45acf482647c6a2fd0d3bf542be17b22",
+        "rq-local-repeat-alias-evidence:f44ce5328602c75bcde9b50b2de94d68582a6fe7080eea03b1de32e622171a22",
+        "rq-local-repeat-alias-evidence:f4de9f70a2b5a851a4d1e56c63dc7a35574c14d877122f6c0983d2e6268fb516",
+        "rq-local-repeat-evidence:d6f7cdeab7418133a2bb1ea992d0b42e0749079e1aa890e799f96310d690bd0c",
+        "rq-local-repeat-evidence:c9b24cb9e34a7050a567093ee0f0500df3e221dd2afa9adfdaba02010fd31509",
+        "rq-local-repeat-evidence:db438aefe04bee804bdc15f683dba9f90d0963871a6242217b18e09bdbed01c4",
+        "rq-local-repeat-evidence:6ce1ef4653dfa56a49ff6baf30052132630c1ed47dfb246dcf38c1e63a24f83f",
+        "rq-local-repeat-evidence:7e1395227e1f81c5fe864d17e319e56b724424eab5163df68109dd85f81ce5c7",
+        "rq-local-repeat-evidence:e1e5e2a1b422ae3334fd657b68dbd1922e56e36165b4913c8d309896ac72d6d4",
+        "rq-local-repeat-evidence:c207d07c88d2bef6b99a038d94a1f870ac038072de4c005241ab9ce3f79439c3",
+        "rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561328e86ada",
+        "rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877",
+        "rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c",
+        "rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39",
+    }
+)
+
 PARENT_KIND_TO_CATEGORY = {
     "job_anchor": "source_job",
     "role_total_anchor": "role_total_sentinel",
@@ -207,7 +339,7 @@ PILOT_TAGS = {
     56: ("fam1996_outside_domain_repeat_carrier",),
     58: ("fam1997_outside_domain_and_aggregate_relation_carrier",),
     65: ("era_5_control",),
-    66: ("fam2005_outside_domain_repeat_carrier",),
+    66: ("fam2005_outside_domain_and_in_domain_redirection_carrier",),
     78: ("era_6_control",),
 }
 
@@ -593,6 +725,7 @@ class NormalizedDocument:
     flow_count: int
     field_purpose_count: int
     repeat_occurrence_ids: tuple[str, ...]
+    repeat_occurrence_rows: tuple[dict[str, Any], ...]
     anchor_rows: tuple[dict[str, Any], ...]
     evidence_rows: tuple[dict[str, Any], ...]
 
@@ -765,6 +898,9 @@ def _normalize_document(
             "occurrence_matched_utf8_sha256": occurrence[
                 "matched_utf8_sha256"
             ],
+            "occurrence_page_number": occurrence["page_number"],
+            "occurrence_utf8_byte_start": occurrence["utf8_byte_start"],
+            "occurrence_utf8_byte_end": occurrence["utf8_byte_end"],
             "parent_occurrence_ids": parent_ids,
             "parent_occurrence_kinds": [
                 occurrence_by_id[parent_id]["occurrence_kind"]
@@ -891,6 +1027,9 @@ def _normalize_document(
                 "endpoint_occurrence_kinds": occurrence_kinds,
                 "endpoint_raw_node_domains": raw_node_domains,
                 "endpoint_classifications": classifications,
+                "endpoint_printed_identifiers": [
+                    value["printed_identifier"] for value in concrete_rows
+                ],
                 "endpoint_matched_texts": [
                     value["occurrence_matched_text"] for value in concrete_rows
                 ],
@@ -922,6 +1061,18 @@ def _normalize_document(
         for row in occurrences
         if row["occurrence_kind"] == "repeat_or_alias_instruction"
     )
+    repeat_rows = tuple(
+        {
+            "source_occurrence_id": row["questionnaire_occurrence_id"],
+            "matched_text": row["matched_text"],
+            "matched_utf8_sha256": row["matched_utf8_sha256"],
+            "page_number": row["page_number"],
+            "utf8_byte_start": row["utf8_byte_start"],
+            "utf8_byte_end": row["utf8_byte_end"],
+        }
+        for row in occurrences
+        if row["occurrence_kind"] == "repeat_or_alias_instruction"
+    )
     identity = {
         "annotation_path": path,
         "artifact_id": input_identity["artifact_id"],
@@ -944,6 +1095,7 @@ def _normalize_document(
         flow_count=len(data["flow_branch_rows"]),
         field_purpose_count=field_purpose_count,
         repeat_occurrence_ids=repeat_ids,
+        repeat_occurrence_rows=repeat_rows,
         anchor_rows=tuple(normalized_anchors),
         evidence_rows=tuple(normalized_evidence),
     )
@@ -2049,6 +2201,1068 @@ def _honest_noncatalog_aggregate_relation(
     )
 
 
+def _exact_byte_projection(
+    texts: Any,
+    digests: Any,
+    pages: Any,
+    starts: Any,
+    ends: Any,
+    expected_count: int,
+) -> bool:
+    arrays = (texts, digests, pages, starts, ends)
+    if not all(
+        isinstance(values, list) and len(values) == expected_count
+        for values in arrays
+    ):
+        return False
+    return all(
+        isinstance(text, str)
+        and isinstance(digest, str)
+        and digest == _sha256(text.encode("utf-8"))
+        and isinstance(page, int)
+        and not isinstance(page, bool)
+        and page > 0
+        and isinstance(start, int)
+        and not isinstance(start, bool)
+        and isinstance(end, int)
+        and not isinstance(end, bool)
+        and 0 <= start < end
+        and end - start == len(text.encode("utf-8"))
+        for text, digest, page, start, end in zip(*arrays, strict=True)
+    )
+
+
+def _complete_redirection_evidence_member(
+    evidence: Mapping[str, Any], instruction_id: str
+) -> bool:
+    aliases = evidence["alias_anchor_occurrence_ids"]
+    canonicals = evidence["canonical_anchor_occurrence_ids"]
+    endpoints = [*aliases, *canonicals]
+    evidence_ids = evidence["evidence_occurrence_ids"]
+    endpoint_kinds = evidence["endpoint_occurrence_kinds"]
+    endpoint_classifications = evidence["endpoint_classifications"]
+    endpoint_arrays = (
+        endpoint_kinds,
+        evidence["endpoint_raw_node_domains"],
+        endpoint_classifications,
+        evidence["endpoint_printed_identifiers"],
+        evidence["endpoint_matched_texts"],
+        evidence["endpoint_matched_utf8_sha256s"],
+        evidence["endpoint_page_numbers"],
+        evidence["endpoint_utf8_byte_starts"],
+        evidence["endpoint_utf8_byte_ends"],
+    )
+    allowed_projection = {
+        ("context_anchor", "source_context"),
+        ("remuneration_component_anchor", "source_remuneration_component"),
+    }
+    context_mix = {kind for kind in endpoint_kinds} == {
+        "context_anchor",
+        "remuneration_component_anchor",
+    }
+    return bool(
+        len(aliases) == len(canonicals) == 1
+        and len(endpoints) == len(set(endpoints)) == 2
+        and not set(aliases) & set(canonicals)
+        and instruction_id not in set(endpoints)
+        and evidence["source_instruction_occurrence_ids"] == [instruction_id]
+        and evidence["source_instruction_occurrence_kinds"]
+        == ["repeat_or_alias_instruction"]
+        and len(evidence_ids) == len(set(evidence_ids)) == 3
+        and set(evidence_ids) == {*endpoints, instruction_id}
+        and evidence["evidence_arrays_unique_disjoint"]
+        and evidence["evidence_arrays_source_ordered"]
+        and evidence["relation"] == "explicit_cross_reference"
+        and evidence["handoff_status"] in COMPLETE_LOCAL_EVIDENCE_STATUSES
+        and evidence["unresolved_target_reference"] is None
+        and all(
+            isinstance(values, list) and len(values) == len(endpoints)
+            for values in endpoint_arrays
+        )
+        and evidence["endpoint_raw_node_domains"]
+        == ["component_slot", "component_slot"]
+        and all(
+            (kind, classification) in allowed_projection
+            for kind, classification in zip(
+                endpoint_kinds, endpoint_classifications, strict=True
+            )
+        )
+        and _exact_byte_projection(
+            evidence["source_instruction_matched_texts"],
+            evidence["source_instruction_matched_utf8_sha256s"],
+            evidence["source_instruction_page_numbers"],
+            evidence["source_instruction_utf8_byte_starts"],
+            evidence["source_instruction_utf8_byte_ends"],
+            1,
+        )
+        and _exact_byte_projection(
+            evidence["endpoint_matched_texts"],
+            evidence["endpoint_matched_utf8_sha256s"],
+            evidence["endpoint_page_numbers"],
+            evidence["endpoint_utf8_byte_starts"],
+            evidence["endpoint_utf8_byte_ends"],
+            len(endpoints),
+        )
+        and evidence["defect_flags"]
+        == {
+            "touches_noncatalog_aggregate_endpoint": False,
+            "occurrence_derived_domain_crossing": False,
+            "corrected_catalog_domain_crossing": False,
+            "raw_node_domain_crossing": False,
+            "context_remuneration_mix": context_mix,
+            "head_spouse_mix": False,
+        }
+    )
+
+
+def _complete_cross_reference_evidence_member(
+    evidence: Mapping[str, Any],
+) -> bool:
+    """Return whether a cross-reference carries an exact complete proof."""
+    aliases = evidence["alias_anchor_occurrence_ids"]
+    canonicals = evidence["canonical_anchor_occurrence_ids"]
+    instructions = evidence["source_instruction_occurrence_ids"]
+    endpoints = [*aliases, *canonicals]
+    evidence_ids = evidence["evidence_occurrence_ids"]
+    endpoint_arrays = (
+        evidence["endpoint_occurrence_kinds"],
+        evidence["endpoint_raw_node_domains"],
+        evidence["endpoint_classifications"],
+        evidence["endpoint_printed_identifiers"],
+        evidence["endpoint_matched_texts"],
+        evidence["endpoint_matched_utf8_sha256s"],
+        evidence["endpoint_page_numbers"],
+        evidence["endpoint_utf8_byte_starts"],
+        evidence["endpoint_utf8_byte_ends"],
+    )
+    return bool(
+        aliases
+        and canonicals
+        and len(instructions) == 1
+        and evidence["source_instruction_occurrence_kinds"]
+        == ["repeat_or_alias_instruction"]
+        and len(endpoints) == len(set(endpoints))
+        and not set(aliases) & set(canonicals)
+        and not set(instructions) & set(endpoints)
+        and len(evidence_ids) == len(set(evidence_ids)) == len(endpoints) + 1
+        and set(evidence_ids) == {*endpoints, *instructions}
+        and evidence["evidence_arrays_unique_disjoint"]
+        and evidence["evidence_arrays_source_ordered"]
+        and evidence["relation"] == "explicit_cross_reference"
+        and evidence["handoff_status"] in COMPLETE_LOCAL_EVIDENCE_STATUSES
+        and evidence["unresolved_target_reference"] is None
+        and all(
+            isinstance(values, list) and len(values) == len(endpoints)
+            for values in endpoint_arrays
+        )
+        and _exact_byte_projection(
+            evidence["source_instruction_matched_texts"],
+            evidence["source_instruction_matched_utf8_sha256s"],
+            evidence["source_instruction_page_numbers"],
+            evidence["source_instruction_utf8_byte_starts"],
+            evidence["source_instruction_utf8_byte_ends"],
+            1,
+        )
+        and _exact_byte_projection(
+            evidence["endpoint_matched_texts"],
+            evidence["endpoint_matched_utf8_sha256s"],
+            evidence["endpoint_page_numbers"],
+            evidence["endpoint_utf8_byte_starts"],
+            evidence["endpoint_utf8_byte_ends"],
+            len(endpoints),
+        )
+    )
+
+
+def _in_domain_nonaggregate_cross_reference_evidence_member(
+    evidence: Mapping[str, Any],
+) -> bool:
+    """Return whether every complete endpoint is in-domain nonaggregate."""
+    if not _complete_cross_reference_evidence_member(evidence):
+        return False
+    allowed_classifications = {
+        "role_anchor": frozenset(ROLE_ORDER),
+        "job_anchor": frozenset({"source_job"}),
+        "context_anchor": frozenset({"source_context"}),
+        "remuneration_component_anchor": frozenset(
+            {"source_remuneration_component"}
+        ),
+    }
+    return all(
+        kind in allowed_classifications
+        and raw_domain == _occurrence_catalog_domain(kind)
+        and classification in allowed_classifications[kind]
+        for kind, raw_domain, classification in zip(
+            evidence["endpoint_occurrence_kinds"],
+            evidence["endpoint_raw_node_domains"],
+            evidence["endpoint_classifications"],
+            strict=True,
+        )
+    )
+
+
+def _component_cross_reference_evidence_member(
+    evidence: Mapping[str, Any],
+) -> bool:
+    """Return whether all complete endpoints are component members."""
+    if not _complete_cross_reference_evidence_member(evidence):
+        return False
+    allowed = {
+        ("context_anchor", "source_context"),
+        (
+            "remuneration_component_anchor",
+            "source_remuneration_component",
+        ),
+    }
+    return bool(
+        evidence["endpoint_occurrence_kinds"]
+        and all(
+            value == "component_slot"
+            for value in evidence["endpoint_raw_node_domains"]
+        )
+        and all(
+            (kind, classification) in allowed
+            for kind, classification in zip(
+                evidence["endpoint_occurrence_kinds"],
+                evidence["endpoint_classifications"],
+                strict=True,
+            )
+        )
+    )
+
+
+def _semantic_redirection_evidence_member(
+    evidence: Mapping[str, Any],
+) -> bool:
+    instructions = evidence["source_instruction_occurrence_ids"]
+    if len(instructions) != 1:
+        return False
+    expected_evidence_ids = (
+        EXCLUSIVE_DESTINATION_REDIRECTION_EVIDENCE_BY_INSTRUCTION.get(
+            instructions[0]
+        )
+    )
+    return bool(
+        expected_evidence_ids is not None
+        and evidence["local_evidence_id"] in expected_evidence_ids
+        and _complete_redirection_evidence_member(evidence, instructions[0])
+    )
+
+
+def _redirection_disposition_id(row: Mapping[str, Any]) -> str:
+    return _row_id(
+        "a12-in-domain-redirection-relation-disposition:",
+        [
+            row["source_document_id"],
+            row["source_local_evidence_ids"],
+            row["relation_subkind"],
+            row["source_instruction_occurrence_ids"],
+            row["relation"],
+            row["handoff_status"],
+            row["source_evidence_occurrence_id_arrays"],
+            row["predecessor_alias_anchor_occurrence_ids"],
+            row["predecessor_canonical_anchor_occurrence_ids"],
+            row["evidence_occurrence_ids"],
+            row["endpoint_occurrence_kinds"],
+            row["endpoint_raw_node_domains"],
+            row["endpoint_classifications"],
+            row["endpoint_printed_identifiers"],
+            row["source_instruction_matched_texts"],
+            row["source_instruction_matched_utf8_sha256s"],
+            row["source_instruction_page_numbers"],
+            row["source_instruction_utf8_byte_starts"],
+            row["source_instruction_utf8_byte_ends"],
+            row["endpoint_matched_texts"],
+            row["endpoint_matched_utf8_sha256s"],
+            row["endpoint_page_numbers"],
+            row["endpoint_utf8_byte_starts"],
+            row["endpoint_utf8_byte_ends"],
+        ],
+    )
+
+
+def _in_domain_redirection_rows(
+    documents: Sequence[NormalizedDocument],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    seen_instruction_ids: set[str] = set()
+    selected_repeat_ids = {
+        instruction_id
+        for document in documents
+        for instruction_id in document.repeat_occurrence_ids
+        if instruction_id in EXCLUSIVE_DESTINATION_REDIRECTION_INSTRUCTION_IDS
+    }
+    endpoint_projection_keys = (
+        "endpoint_occurrence_kinds",
+        "endpoint_raw_node_domains",
+        "endpoint_classifications",
+        "endpoint_printed_identifiers",
+        "endpoint_matched_texts",
+        "endpoint_matched_utf8_sha256s",
+        "endpoint_page_numbers",
+        "endpoint_utf8_byte_starts",
+        "endpoint_utf8_byte_ends",
+    )
+    for document in documents:
+        evidence_by_instruction: defaultdict[str, list[dict[str, Any]]] = (
+            defaultdict(list)
+        )
+        for evidence in document.evidence_rows:
+            for instruction_id in evidence[
+                "source_instruction_occurrence_ids"
+            ]:
+                evidence_by_instruction[instruction_id].append(evidence)
+        occurrence_by_id = {
+            row["source_occurrence_id"]: row
+            for row in document.repeat_occurrence_rows
+        }
+        for instruction_id in document.repeat_occurrence_ids:
+            expected_evidence_ids = (
+                EXCLUSIVE_DESTINATION_REDIRECTION_EVIDENCE_BY_INSTRUCTION.get(
+                    instruction_id
+                )
+            )
+            if expected_evidence_ids is None:
+                continue
+            evidence_rows = evidence_by_instruction[instruction_id]
+            _require(
+                tuple(
+                    evidence["local_evidence_id"] for evidence in evidence_rows
+                )
+                == expected_evidence_ids,
+                f"redirection semantic evidence ledger drift: {instruction_id}",
+            )
+            _require(
+                all(
+                    _complete_redirection_evidence_member(
+                        evidence, instruction_id
+                    )
+                    for evidence in evidence_rows
+                ),
+                f"redirection source proof is incomplete: {instruction_id}",
+            )
+            source_occurrence = occurrence_by_id[instruction_id]
+            instruction_projection = (
+                [source_occurrence["matched_text"]],
+                [source_occurrence["matched_utf8_sha256"]],
+                [source_occurrence["page_number"]],
+                [source_occurrence["utf8_byte_start"]],
+                [source_occurrence["utf8_byte_end"]],
+            )
+            _require(
+                all(
+                    (
+                        evidence["source_instruction_matched_texts"],
+                        evidence["source_instruction_matched_utf8_sha256s"],
+                        evidence["source_instruction_page_numbers"],
+                        evidence["source_instruction_utf8_byte_starts"],
+                        evidence["source_instruction_utf8_byte_ends"],
+                    )
+                    == instruction_projection
+                    for evidence in evidence_rows
+                ),
+                f"redirection instruction projection drift: {instruction_id}",
+            )
+            aliases = list(
+                dict.fromkeys(
+                    endpoint_id
+                    for evidence in evidence_rows
+                    for endpoint_id in evidence["alias_anchor_occurrence_ids"]
+                )
+            )
+            canonicals = list(
+                dict.fromkeys(
+                    endpoint_id
+                    for evidence in evidence_rows
+                    for endpoint_id in evidence[
+                        "canonical_anchor_occurrence_ids"
+                    ]
+                )
+            )
+            _require(
+                len(aliases) == 1
+                and canonicals
+                and len(canonicals) == len(set(canonicals))
+                and not set(aliases) & set(canonicals),
+                f"redirection endpoint grouping drift: {instruction_id}",
+            )
+            projection_by_endpoint: dict[str, tuple[Any, ...]] = {}
+            for evidence in evidence_rows:
+                endpoint_ids = [
+                    *evidence["alias_anchor_occurrence_ids"],
+                    *evidence["canonical_anchor_occurrence_ids"],
+                ]
+                for values in zip(
+                    endpoint_ids,
+                    *(evidence[key] for key in endpoint_projection_keys),
+                    strict=True,
+                ):
+                    endpoint_id, *projection = values
+                    prior = projection_by_endpoint.setdefault(
+                        endpoint_id, tuple(projection)
+                    )
+                    _require(
+                        prior == tuple(projection),
+                        f"redirection endpoint projection drift: {endpoint_id}",
+                    )
+            endpoint_ids = [*aliases, *canonicals]
+            endpoint_projections = [
+                projection_by_endpoint[endpoint_id]
+                for endpoint_id in endpoint_ids
+            ]
+            handoff_statuses = {
+                evidence["handoff_status"] for evidence in evidence_rows
+            }
+            _require(
+                len(handoff_statuses) == 1,
+                f"redirection handoff grouping drift: {instruction_id}",
+            )
+            row: dict[str, Any] = {
+                "document_source_position": document.position,
+                "source_document_id": document.source_document_id,
+                "source_local_evidence_ids": list(expected_evidence_ids),
+                "relation_subkind": REDIRECTION_RELATION_SUBKIND,
+                "relation": "explicit_cross_reference",
+                "handoff_status": next(iter(handoff_statuses)),
+                "source_instruction_occurrence_ids": [instruction_id],
+                "source_instruction_occurrence_kinds": [
+                    "repeat_or_alias_instruction"
+                ],
+                "source_instruction_matched_texts": instruction_projection[0],
+                "source_instruction_matched_utf8_sha256s": (
+                    instruction_projection[1]
+                ),
+                "source_instruction_page_numbers": instruction_projection[2],
+                "source_instruction_utf8_byte_starts": (
+                    instruction_projection[3]
+                ),
+                "source_instruction_utf8_byte_ends": instruction_projection[4],
+                "source_evidence_occurrence_id_arrays": [
+                    evidence["evidence_occurrence_ids"]
+                    for evidence in evidence_rows
+                ],
+                "evidence_occurrence_ids": list(
+                    dict.fromkeys(
+                        occurrence_id
+                        for evidence in evidence_rows
+                        for occurrence_id in evidence[
+                            "evidence_occurrence_ids"
+                        ]
+                    )
+                ),
+                "predecessor_alias_anchor_occurrence_ids": aliases,
+                "predecessor_canonical_anchor_occurrence_ids": canonicals,
+                "current_location_occurrence_id": aliases[0],
+                "destination_occurrence_ids": canonicals,
+                **{
+                    key: [
+                        projection[index]
+                        for projection in endpoint_projections
+                    ]
+                    for index, key in enumerate(endpoint_projection_keys)
+                },
+                "redirection_instruction_semantics": (
+                    "affirmative_named_destination_and_explicit_current_"
+                    "location_exclusion"
+                ),
+                "redirection_relation_disposition": (
+                    "authenticated_in_domain_exclusive_destination_"
+                    "relation_no_alias"
+                ),
+                "alias_admitted": False,
+                "occurrence_equivalence_claimed": False,
+                "universal_repeat_coverage_arm_satisfied": True,
+                "status": "redirection_relation_nonauthority_disposition",
+            }
+            row["in_domain_redirection_relation_disposition_id"] = (
+                _redirection_disposition_id(row)
+            )
+            rows.append(row)
+            seen_instruction_ids.add(instruction_id)
+    _require(
+        seen_instruction_ids == selected_repeat_ids,
+        "redirection semantic instruction ledger is not exact-covered",
+    )
+    return rows
+
+
+def _cross_reference_structural_census(
+    documents: Sequence[NormalizedDocument],
+) -> dict[str, int]:
+    """Count each narrowing stage of the complete cross-reference domain."""
+    cross_reference_rows: list[dict[str, Any]] = []
+    all_evidence_by_instruction: defaultdict[str, list[dict[str, Any]]] = (
+        defaultdict(list)
+    )
+    for document in documents:
+        for evidence in document.evidence_rows:
+            for instruction_id in evidence[
+                "source_instruction_occurrence_ids"
+            ]:
+                all_evidence_by_instruction[instruction_id].append(evidence)
+            if evidence["relation"] == "explicit_cross_reference":
+                cross_reference_rows.append(evidence)
+
+    complete_rows = [
+        row
+        for row in cross_reference_rows
+        if _complete_cross_reference_evidence_member(row)
+    ]
+    nonaggregate_rows = [
+        row
+        for row in cross_reference_rows
+        if _in_domain_nonaggregate_cross_reference_evidence_member(row)
+    ]
+    component_rows = [
+        row
+        for row in cross_reference_rows
+        if _component_cross_reference_evidence_member(row)
+    ]
+    binary_component_rows = [
+        row
+        for row in cross_reference_rows
+        if _complete_redirection_evidence_member(
+            row, row["source_instruction_occurrence_ids"][0]
+        )
+    ]
+
+    def instruction_ids(rows: Sequence[Mapping[str, Any]]) -> set[str]:
+        return {row["source_instruction_occurrence_ids"][0] for row in rows}
+
+    wholly_nonaggregate_instruction_ids = {
+        instruction_id
+        for instruction_id, evidence_rows in all_evidence_by_instruction.items()
+        if evidence_rows
+        and all(
+            _in_domain_nonaggregate_cross_reference_evidence_member(row)
+            for row in evidence_rows
+        )
+    }
+    wholly_nonaggregate_evidence_count = sum(
+        len(all_evidence_by_instruction[instruction_id])
+        for instruction_id in wholly_nonaggregate_instruction_ids
+    )
+    return {
+        "explicit_cross_reference_evidence_count": len(cross_reference_rows),
+        "explicit_cross_reference_instruction_count": len(
+            instruction_ids(cross_reference_rows)
+        ),
+        "complete_cross_reference_evidence_count": len(complete_rows),
+        "complete_cross_reference_instruction_count": len(
+            instruction_ids(complete_rows)
+        ),
+        "in_domain_nonaggregate_cross_reference_evidence_count": len(
+            nonaggregate_rows
+        ),
+        "in_domain_nonaggregate_cross_reference_instruction_count": len(
+            instruction_ids(nonaggregate_rows)
+        ),
+        "wholly_in_domain_nonaggregate_cross_reference_evidence_count": (
+            wholly_nonaggregate_evidence_count
+        ),
+        "wholly_in_domain_nonaggregate_cross_reference_instruction_count": (
+            len(wholly_nonaggregate_instruction_ids)
+        ),
+        "component_cross_reference_evidence_count": len(component_rows),
+        "component_cross_reference_instruction_count": len(
+            instruction_ids(component_rows)
+        ),
+        "binary_component_cross_reference_evidence_count": len(
+            binary_component_rows
+        ),
+        "binary_component_cross_reference_instruction_count": len(
+            instruction_ids(binary_component_rows)
+        ),
+    }
+
+
+def _in_domain_component_cross_reference_sweep_rows(
+    documents: Sequence[NormalizedDocument],
+) -> list[dict[str, Any]]:
+    """Exact-walk every instruction-level structural candidate for R."""
+    redirection_by_instruction = {
+        row["source_instruction_occurrence_ids"][0]: row
+        for row in _in_domain_redirection_rows(documents)
+    }
+    endpoint_projection_keys = (
+        "endpoint_occurrence_kinds",
+        "endpoint_raw_node_domains",
+        "endpoint_classifications",
+        "endpoint_printed_identifiers",
+        "endpoint_matched_texts",
+        "endpoint_matched_utf8_sha256s",
+        "endpoint_page_numbers",
+        "endpoint_utf8_byte_starts",
+        "endpoint_utf8_byte_ends",
+    )
+    nested_projection_keys = (
+        "source_endpoint_occurrence_kind_arrays",
+        "source_endpoint_raw_node_domain_arrays",
+        "source_endpoint_classification_arrays",
+        "source_endpoint_printed_identifier_arrays",
+        "source_endpoint_matched_text_arrays",
+        "source_endpoint_matched_utf8_sha256_arrays",
+        "source_endpoint_page_number_arrays",
+        "source_endpoint_utf8_byte_start_arrays",
+        "source_endpoint_utf8_byte_end_arrays",
+    )
+    rows: list[dict[str, Any]] = []
+    for document in documents:
+        evidence_by_instruction: defaultdict[str, list[dict[str, Any]]] = (
+            defaultdict(list)
+        )
+        for evidence in document.evidence_rows:
+            for instruction_id in evidence[
+                "source_instruction_occurrence_ids"
+            ]:
+                evidence_by_instruction[instruction_id].append(evidence)
+        occurrence_by_id = {
+            row["source_occurrence_id"]: row
+            for row in document.repeat_occurrence_rows
+        }
+        for instruction_id in document.repeat_occurrence_ids:
+            evidence_rows = evidence_by_instruction[instruction_id]
+            if not evidence_rows or not all(
+                _complete_redirection_evidence_member(evidence, instruction_id)
+                for evidence in evidence_rows
+            ):
+                continue
+            current_ids = [
+                evidence["alias_anchor_occurrence_ids"][0]
+                for evidence in evidence_rows
+            ]
+            destination_ids = [
+                evidence["canonical_anchor_occurrence_ids"][0]
+                for evidence in evidence_rows
+            ]
+            if len(set(current_ids)) != 1 or len(destination_ids) != len(
+                set(destination_ids)
+            ):
+                continue
+            current_id = current_ids[0]
+            _require(
+                current_id not in set(destination_ids),
+                f"component cross-reference endpoint overlap: {instruction_id}",
+            )
+            source_occurrence = occurrence_by_id[instruction_id]
+            instruction_projection = (
+                [source_occurrence["matched_text"]],
+                [source_occurrence["matched_utf8_sha256"]],
+                [source_occurrence["page_number"]],
+                [source_occurrence["utf8_byte_start"]],
+                [source_occurrence["utf8_byte_end"]],
+            )
+            _require(
+                all(
+                    (
+                        evidence["source_instruction_matched_texts"],
+                        evidence["source_instruction_matched_utf8_sha256s"],
+                        evidence["source_instruction_page_numbers"],
+                        evidence["source_instruction_utf8_byte_starts"],
+                        evidence["source_instruction_utf8_byte_ends"],
+                    )
+                    == instruction_projection
+                    for evidence in evidence_rows
+                ),
+                f"component cross-reference instruction drift: {instruction_id}",
+            )
+            projection_by_endpoint: dict[str, tuple[Any, ...]] = {}
+            for evidence in evidence_rows:
+                endpoint_ids = [
+                    *evidence["alias_anchor_occurrence_ids"],
+                    *evidence["canonical_anchor_occurrence_ids"],
+                ]
+                for values in zip(
+                    endpoint_ids,
+                    *(evidence[key] for key in endpoint_projection_keys),
+                    strict=True,
+                ):
+                    endpoint_id, *projection = values
+                    prior = projection_by_endpoint.setdefault(
+                        endpoint_id, tuple(projection)
+                    )
+                    _require(
+                        prior == tuple(projection),
+                        "component cross-reference endpoint projection drift: "
+                        f"{endpoint_id}",
+                    )
+            handoff_statuses = {
+                evidence["handoff_status"] for evidence in evidence_rows
+            }
+            _require(
+                len(handoff_statuses) == 1,
+                f"component cross-reference handoff drift: {instruction_id}",
+            )
+            evidence_ids = [
+                evidence["local_evidence_id"] for evidence in evidence_rows
+            ]
+            _require(
+                len(evidence_ids) == len(set(evidence_ids)),
+                f"component cross-reference duplicate evidence: {instruction_id}",
+            )
+            redirection = redirection_by_instruction.get(instruction_id)
+            compatible_alias_ids = [
+                evidence["local_evidence_id"]
+                for evidence in evidence_rows
+                if _compatible_direct_proof(evidence)
+            ]
+            if redirection is not None:
+                _require(
+                    redirection["source_local_evidence_ids"] == evidence_ids,
+                    f"component cross-reference R ledger drift: {instruction_id}",
+                )
+                disposition = "admitted_exclusive_destination_redirection"
+                semantic_ledger_member = True
+                semantic_finding = (
+                    "affirmative_named_destination_and_explicit_current_"
+                    "location_exclusion"
+                )
+                valid_alias_ids: list[str] = []
+                redirection_id: str | None = redirection[
+                    "in_domain_redirection_relation_disposition_id"
+                ]
+                status = "redirection_arm_member"
+            elif compatible_alias_ids:
+                disposition = "existing_alias_arm"
+                semantic_ledger_member = False
+                semantic_finding = None
+                valid_alias_ids = compatible_alias_ids
+                redirection_id = None
+                status = "valid_alias_cross_reference_candidate"
+            else:
+                disposition = "disclosed_stop_no_redirection_semantics"
+                semantic_ledger_member = False
+                semantic_finding = None
+                valid_alias_ids = []
+                redirection_id = None
+                status = "fail_closed_cross_reference_candidate"
+            row: dict[str, Any] = {
+                "document_source_position": document.position,
+                "source_document_id": document.source_document_id,
+                "source_instruction_occurrence_id": instruction_id,
+                "source_instruction_occurrence_kind": (
+                    "repeat_or_alias_instruction"
+                ),
+                "source_instruction_matched_text": instruction_projection[0][
+                    0
+                ],
+                "source_instruction_matched_utf8_sha256": (
+                    instruction_projection[1][0]
+                ),
+                "source_instruction_page_number": instruction_projection[2][0],
+                "source_instruction_utf8_byte_start": (
+                    instruction_projection[3][0]
+                ),
+                "source_instruction_utf8_byte_end": instruction_projection[4][
+                    0
+                ],
+                "source_local_evidence_ids": evidence_ids,
+                "source_evidence_count": len(evidence_rows),
+                "source_relations": [
+                    evidence["relation"] for evidence in evidence_rows
+                ],
+                "source_handoff_statuses": [
+                    evidence["handoff_status"] for evidence in evidence_rows
+                ],
+                "source_evidence_occurrence_id_arrays": [
+                    evidence["evidence_occurrence_ids"]
+                    for evidence in evidence_rows
+                ],
+                "source_alias_anchor_occurrence_id_arrays": [
+                    evidence["alias_anchor_occurrence_ids"]
+                    for evidence in evidence_rows
+                ],
+                "source_canonical_anchor_occurrence_id_arrays": [
+                    evidence["canonical_anchor_occurrence_ids"]
+                    for evidence in evidence_rows
+                ],
+                **{
+                    output_key: [
+                        evidence[source_key] for evidence in evidence_rows
+                    ]
+                    for output_key, source_key in zip(
+                        nested_projection_keys,
+                        endpoint_projection_keys,
+                        strict=True,
+                    )
+                },
+                "source_defect_flag_rows": [
+                    evidence["defect_flags"] for evidence in evidence_rows
+                ],
+                "source_unresolved_target_references": [
+                    evidence["unresolved_target_reference"]
+                    for evidence in evidence_rows
+                ],
+                "current_location_occurrence_id": current_id,
+                "destination_occurrence_ids": destination_ids,
+                "structural_candidate_satisfied": True,
+                "pilot_document_member": document.position in PILOT_POSITIONS,
+                "semantic_redirection_ledger_member": (semantic_ledger_member),
+                "semantic_redirection_finding": semantic_finding,
+                "valid_alias_arm_evidence_ids": valid_alias_ids,
+                "in_domain_redirection_relation_disposition_id": (
+                    redirection_id
+                ),
+                "repeat_coverage_disposition": disposition,
+                "status": status,
+            }
+            row["in_domain_component_cross_reference_sweep_id"] = _row_id(
+                "a12-in-domain-component-cross-reference-sweep:",
+                [
+                    row["source_document_id"],
+                    instruction_id,
+                    evidence_ids,
+                    row["source_evidence_occurrence_id_arrays"],
+                    row["source_alias_anchor_occurrence_id_arrays"],
+                    row["source_canonical_anchor_occurrence_id_arrays"],
+                    disposition,
+                ],
+            )
+            rows.append(row)
+    return rows
+
+
+def _component_cross_reference_sweep_counts(
+    rows: Sequence[Mapping[str, Any]],
+) -> dict[str, int]:
+    """Return instruction and evidence-edge counts for the exact partition."""
+    disposition_names = {
+        "alias": "existing_alias_arm",
+        "redirection": "admitted_exclusive_destination_redirection",
+        "stop": "disclosed_stop_no_redirection_semantics",
+    }
+    return {
+        "instruction_count": len(rows),
+        "edge_count": sum(row["source_evidence_count"] for row in rows),
+        **{
+            f"{name}_instruction_count": sum(
+                row["repeat_coverage_disposition"] == disposition
+                for row in rows
+            )
+            for name, disposition in disposition_names.items()
+        },
+        **{
+            f"{name}_edge_count": sum(
+                row["source_evidence_count"]
+                for row in rows
+                if row["repeat_coverage_disposition"] == disposition
+            )
+            for name, disposition in disposition_names.items()
+        },
+    }
+
+
+def _exclusive_placement_shape_kind(text: str) -> str | None:
+    normalized = "".join(
+        character for character in text.casefold() if character.isalnum()
+    )
+    business_owner_pay = (
+        "paythemselves" in normalized
+        and "notbelistedhere" in normalized
+        and any(
+            value in normalized
+            for value in (
+                "shouldberecorded",
+                "shouldhavebeenrecorded",
+                "shouldbetakencareof",
+            )
+        )
+    )
+    farm_primary_income = any(
+        value in normalized
+        for value in (
+            "incomeshouldcome",
+            "incomeshouldgo",
+            "incomeshouldbelisted",
+        )
+    ) and any(
+        value in normalized
+        for value in (
+            "notbeduplicatedhere",
+            "notbeduplicatedher",
+            "notberepeatedhere",
+        )
+    )
+    labor_income_g78 = "shouldbeincludedatg78nothere" in normalized
+    matches = (
+        business_owner_pay,
+        farm_primary_income,
+        labor_income_g78,
+    )
+    if sum(matches) != 1:
+        return None
+    return (
+        "business_owner_pay_exclusive_placement"
+        if business_owner_pay
+        else (
+            "primary_farm_income_exclusive_placement"
+            if farm_primary_income
+            else "labor_income_g78_exclusive_placement"
+        )
+    )
+
+
+def _exclusive_destination_redirection_lineage_rows(
+    documents: Sequence[NormalizedDocument],
+) -> list[dict[str, Any]]:
+    """Exact-walk every source-text member of the placement shape."""
+    disposition_by_instruction = {
+        row["source_instruction_occurrence_ids"][0]: row
+        for row in _in_domain_redirection_rows(documents)
+    }
+    aggregate_by_instruction = {
+        row["source_instruction_occurrence_ids"][0]: row
+        for row in _noncatalog_aggregate_relation_rows(documents)
+    }
+    rows: list[dict[str, Any]] = []
+    for document in documents:
+        evidence_by_instruction: defaultdict[str, list[dict[str, Any]]] = (
+            defaultdict(list)
+        )
+        for evidence in document.evidence_rows:
+            for instruction_id in evidence[
+                "source_instruction_occurrence_ids"
+            ]:
+                evidence_by_instruction[instruction_id].append(evidence)
+        for occurrence in document.repeat_occurrence_rows:
+            shape_kind = _exclusive_placement_shape_kind(
+                occurrence["matched_text"]
+            )
+            if shape_kind is None:
+                continue
+            instruction_id = occurrence["source_occurrence_id"]
+            evidence_rows = evidence_by_instruction[instruction_id]
+            disposition = disposition_by_instruction.get(instruction_id)
+            eligible = disposition is not None
+            aggregate_disposition = aggregate_by_instruction.get(
+                instruction_id
+            )
+            aggregate_covered = aggregate_disposition is not None
+            mixed_aggregate_component = (
+                not eligible
+                and not aggregate_covered
+                and any(
+                    "aggregate" in evidence["endpoint_raw_node_domains"]
+                    and any(
+                        domain != "aggregate"
+                        for domain in evidence["endpoint_raw_node_domains"]
+                    )
+                    for evidence in evidence_rows
+                )
+            )
+            evidence_ids = [
+                evidence["local_evidence_id"] for evidence in evidence_rows
+            ]
+            row_id = _row_id(
+                "a12-exclusive-destination-redirection-lineage:",
+                [
+                    document.source_document_id,
+                    instruction_id,
+                    occurrence["matched_text"],
+                    evidence_ids,
+                ],
+            )
+            rows.append(
+                {
+                    "exclusive_destination_redirection_lineage_id": row_id,
+                    "document_source_position": document.position,
+                    "source_document_id": document.source_document_id,
+                    "source_instruction_occurrence_id": instruction_id,
+                    "source_instruction_matched_text": occurrence[
+                        "matched_text"
+                    ],
+                    "source_instruction_matched_utf8_sha256": occurrence[
+                        "matched_utf8_sha256"
+                    ],
+                    "source_instruction_page_number": occurrence[
+                        "page_number"
+                    ],
+                    "source_instruction_utf8_byte_start": occurrence[
+                        "utf8_byte_start"
+                    ],
+                    "source_instruction_utf8_byte_end": occurrence[
+                        "utf8_byte_end"
+                    ],
+                    "source_text_shape_kind": shape_kind,
+                    "source_local_evidence_ids": evidence_ids,
+                    "source_relations": [
+                        evidence["relation"] for evidence in evidence_rows
+                    ],
+                    "source_handoff_statuses": [
+                        evidence["handoff_status"]
+                        for evidence in evidence_rows
+                    ],
+                    "source_alias_anchor_occurrence_id_arrays": [
+                        evidence["alias_anchor_occurrence_ids"]
+                        for evidence in evidence_rows
+                    ],
+                    "source_canonical_anchor_occurrence_id_arrays": [
+                        evidence["canonical_anchor_occurrence_ids"]
+                        for evidence in evidence_rows
+                    ],
+                    "source_endpoint_occurrence_kind_arrays": [
+                        evidence["endpoint_occurrence_kinds"]
+                        for evidence in evidence_rows
+                    ],
+                    "source_endpoint_raw_node_domain_arrays": [
+                        evidence["endpoint_raw_node_domains"]
+                        for evidence in evidence_rows
+                    ],
+                    "source_endpoint_classification_arrays": [
+                        evidence["endpoint_classifications"]
+                        for evidence in evidence_rows
+                    ],
+                    "source_endpoint_printed_identifier_arrays": [
+                        evidence["endpoint_printed_identifiers"]
+                        for evidence in evidence_rows
+                    ],
+                    "source_unresolved_target_references": [
+                        evidence["unresolved_target_reference"]
+                        for evidence in evidence_rows
+                    ],
+                    "in_domain_redirection_arm_eligible": eligible,
+                    "in_domain_redirection_relation_disposition_id": (
+                        disposition[
+                            "in_domain_redirection_relation_disposition_id"
+                        ]
+                        if eligible
+                        else None
+                    ),
+                    "existing_aggregate_relation_disposition_id": (
+                        aggregate_disposition[
+                            "noncatalog_aggregate_relation_disposition_id"
+                        ]
+                        if aggregate_covered
+                        else None
+                    ),
+                    "lineage_disposition": (
+                        "admitted_exclusive_destination_redirection"
+                        if eligible
+                        else (
+                            "covered_by_existing_aggregate_nonalias_subkind"
+                            if aggregate_covered
+                            else (
+                                "disclosed_stop_mixed_aggregate_component_"
+                                "proof"
+                                if mixed_aggregate_component
+                                else "disclosed_stop_incomplete_local_proof"
+                            )
+                        )
+                    ),
+                    "status": (
+                        "redirection_arm_member"
+                        if eligible
+                        else (
+                            "existing_aggregate_arm_member"
+                            if aggregate_covered
+                            else "fail_closed_lineage_near_shape"
+                        )
+                    ),
+                }
+            )
+    return rows
+
+
 def _noncatalog_aggregate_relation_rows(
     documents: Sequence[NormalizedDocument],
 ) -> list[dict[str, Any]]:
@@ -2158,6 +3372,32 @@ def _noncatalog_aggregate_relation_rows(
 def _proof_adjudication_rows(
     documents: Sequence[NormalizedDocument],
 ) -> list[dict[str, Any]]:
+    semantic_ledger = (
+        AGGREGATE_RELATION_LAW_GAP_EVIDENCE_IDS
+        | REDIRECTION_LAW_GAP_EVIDENCE_IDS
+        | PREDECESSOR_SEAL_DEFECT_EVIDENCE_IDS
+    )
+    _require(
+        not AGGREGATE_RELATION_LAW_GAP_EVIDENCE_IDS
+        & REDIRECTION_LAW_GAP_EVIDENCE_IDS
+        and not AGGREGATE_RELATION_LAW_GAP_EVIDENCE_IDS
+        & PREDECESSOR_SEAL_DEFECT_EVIDENCE_IDS
+        and not REDIRECTION_LAW_GAP_EVIDENCE_IDS
+        & PREDECESSOR_SEAL_DEFECT_EVIDENCE_IDS,
+        "round-three semantic ledger overlaps",
+    )
+    observed_candidates = {
+        evidence["local_evidence_id"]
+        for document in documents
+        for evidence in document.evidence_rows
+        if evidence["alias_anchor_occurrence_ids"]
+        and evidence["canonical_anchor_occurrence_ids"]
+        and any(evidence["defect_flags"].values())
+    }
+    _require(
+        observed_candidates == semantic_ledger,
+        "round-three semantic ledger does not exact-cover proof candidates",
+    )
     rows: list[dict[str, Any]] = []
     for document in documents:
         for evidence in document.evidence_rows:
@@ -2168,23 +3408,68 @@ def _proof_adjudication_rows(
             flags = evidence["defect_flags"]
             if not any(flags.values()):
                 continue
-            third_arm_eligible = _honest_noncatalog_aggregate_relation(
-                evidence
+            evidence_id = evidence["local_evidence_id"]
+            aggregate_eligible = (
+                evidence_id in AGGREGATE_RELATION_LAW_GAP_EVIDENCE_IDS
             )
-            if third_arm_eligible:
+            redirection_eligible = (
+                evidence_id in REDIRECTION_LAW_GAP_EVIDENCE_IDS
+            )
+            seal_defect = evidence_id in PREDECESSOR_SEAL_DEFECT_EVIDENCE_IDS
+            _require(
+                aggregate_eligible
+                == _honest_noncatalog_aggregate_relation(evidence),
+                f"semantic aggregate adjudication drift: {evidence_id}",
+            )
+            _require(
+                redirection_eligible
+                == _semantic_redirection_evidence_member(evidence),
+                f"semantic redirection adjudication drift: {evidence_id}",
+            )
+            _require(
+                sum((aggregate_eligible, redirection_eligible, seal_defect))
+                == 1,
+                f"semantic adjudication is not exact: {evidence_id}",
+            )
+            in_domain_eligible = aggregate_eligible or redirection_eligible
+            if aggregate_eligible:
                 disposition = (
                     "predecessor_law_gap_repaired_by_noncatalog_aggregate_"
                     "relation_arm"
                 )
                 law_gap_admitted = True
                 required_action = (
-                    "ratify_noncatalog_aggregate_relation_arm_before_tier_2"
+                    "ratify_extended_in_domain_nonalias_law_before_tier_2"
                 )
                 rationale = (
                     "authenticated_aggregate_relation_is_honest_nonalias_"
                     "law_gap"
                 )
-                status = "blocked_pending_third_arm_ratification"
+                semantic_finding = (
+                    "cited_instruction_and_aggregate_only_endpoints_"
+                    "authenticate_a_nonalias_aggregate_relation"
+                )
+                relation_subkind: str | None = AGGREGATE_RELATION_SUBKIND
+                status = "blocked_pending_extended_repeat_law_ratification"
+            elif redirection_eligible:
+                disposition = (
+                    "predecessor_law_gap_repaired_by_in_domain_redirection_"
+                    "relation_arm"
+                )
+                law_gap_admitted = True
+                required_action = (
+                    "ratify_extended_in_domain_nonalias_law_before_tier_2"
+                )
+                rationale = (
+                    "authenticated_named_destination_and_not_here_"
+                    "instruction_is_honest_nonalias_redirection_law_gap"
+                )
+                semantic_finding = (
+                    "cited_text_names_G78_as_the_destination_and_excludes_"
+                    "the_current_G83_location"
+                )
+                relation_subkind = REDIRECTION_RELATION_SUBKIND
+                status = "blocked_pending_extended_repeat_law_ratification"
             else:
                 disposition = "predecessor_seal_defect"
                 law_gap_admitted = False
@@ -2195,6 +3480,59 @@ def _proof_adjudication_rows(
                     "incompatible_endpoint_claim_cannot_be_admitted_as_"
                     "alias_law_reseal_required"
                 )
+                relation_subkind = None
+                if evidence_id in {
+                    "rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716",
+                    "rq-local-repeat-alias-evidence:78c2d51532910f9dbebaac790485bb20e2a0d907e632f4d32c327c185d52a34c",
+                    "rq-local-repeat-alias-evidence:b2ff04405ce6c20fb6848441dd5fc249ac55b99c6ce21a60ff1ef331b42d8a19",
+                    "rq-local-repeat-alias-evidence:e4b4c44f443929ce8facfa51ce2e318e201490d259b01e507d4dded083e8fba2",
+                    "rq-local-repeat-alias-evidence:6c17ebd0a0c97a5b46fef9ff2c5326fe45acf482647c6a2fd0d3bf542be17b22",
+                    "rq-local-repeat-alias-evidence:f44ce5328602c75bcde9b50b2de94d68582a6fe7080eea03b1de32e622171a22",
+                }:
+                    semantic_finding = (
+                        "cited_repeat_text_does_not_authenticate_the_"
+                        "heterogeneous_page_wide_endpoint_projection"
+                    )
+                elif evidence_id in {
+                    "rq-local-repeat-evidence:c9b24cb9e34a7050a567093ee0f0500df3e221dd2afa9adfdaba02010fd31509",
+                    "rq-local-repeat-evidence:6ce1ef4653dfa56a49ff6baf30052132630c1ed47dfb246dcf38c1e63a24f83f",
+                    "rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c",
+                    "rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39",
+                }:
+                    semantic_finding = (
+                        "cited_instruction_is_an_incomplete_clause_and_"
+                        "cannot_authenticate_a_complete_redirection"
+                    )
+                elif evidence_id in {
+                    "rq-local-repeat-evidence:db438aefe04bee804bdc15f683dba9f90d0963871a6242217b18e09bdbed01c4",
+                    "rq-local-repeat-evidence:7e1395227e1f81c5fe864d17e319e56b724424eab5163df68109dd85f81ce5c7",
+                    "rq-local-repeat-evidence:e1e5e2a1b422ae3334fd657b68dbd1922e56e36165b4913c8d309896ac72d6d4",
+                    "rq-local-repeat-evidence:c207d07c88d2bef6b99a038d94a1f870ac038072de4c005241ab9ce3f79439c3",
+                    "rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561328e86ada",
+                }:
+                    semantic_finding = (
+                        "cited_income_list_is_shared_with_an_independent_"
+                        "alias_proof_and_does_not_authenticate_this_pairing"
+                    )
+                elif evidence_id == (
+                    "rq-local-repeat-alias-evidence:b8ea2ca5e2b198e2c4f9ec8ef9608a68b53b8c7a0f76435f4c2ca0db3f57a456"
+                ):
+                    semantic_finding = (
+                        "cited_same_occupation_text_asserts_semantics_but_"
+                        "the_job_context_endpoint_crossing_requires_reseal"
+                    )
+                elif evidence_id == (
+                    "rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877"
+                ):
+                    semantic_finding = (
+                        "cited_see_instructions_text_is_mispaired_to_a_"
+                        "context_remuneration_endpoint_claim"
+                    )
+                else:
+                    semantic_finding = (
+                        "cited_instruction_does_not_authenticate_the_mixed_"
+                        "or_misbound_endpoint_projection"
+                    )
                 status = "blocked_predecessor_row"
             row_id = _row_id(
                 "a12-predecessor-local-proof-adjudication:",
@@ -2215,6 +3553,21 @@ def _proof_adjudication_rows(
                     "source_instruction_occurrence_ids": evidence[
                         "source_instruction_occurrence_ids"
                     ],
+                    "source_instruction_matched_texts": evidence[
+                        "source_instruction_matched_texts"
+                    ],
+                    "source_instruction_matched_utf8_sha256s": evidence[
+                        "source_instruction_matched_utf8_sha256s"
+                    ],
+                    "source_instruction_page_numbers": evidence[
+                        "source_instruction_page_numbers"
+                    ],
+                    "source_instruction_utf8_byte_starts": evidence[
+                        "source_instruction_utf8_byte_starts"
+                    ],
+                    "source_instruction_utf8_byte_ends": evidence[
+                        "source_instruction_utf8_byte_ends"
+                    ],
                     "alias_anchor_occurrence_ids": evidence[
                         "alias_anchor_occurrence_ids"
                     ],
@@ -2233,13 +3586,37 @@ def _proof_adjudication_rows(
                     "endpoint_classifications": evidence[
                         "endpoint_classifications"
                     ],
+                    "endpoint_printed_identifiers": evidence[
+                        "endpoint_printed_identifiers"
+                    ],
+                    "endpoint_matched_texts": evidence[
+                        "endpoint_matched_texts"
+                    ],
+                    "endpoint_matched_utf8_sha256s": evidence[
+                        "endpoint_matched_utf8_sha256s"
+                    ],
+                    "endpoint_page_numbers": evidence["endpoint_page_numbers"],
+                    "endpoint_utf8_byte_starts": evidence[
+                        "endpoint_utf8_byte_starts"
+                    ],
+                    "endpoint_utf8_byte_ends": evidence[
+                        "endpoint_utf8_byte_ends"
+                    ],
                     "defect_flags": flags,
-                    "third_arm_eligible": third_arm_eligible,
+                    "semantic_adjudication_round": 3,
+                    "source_text_citation_status": (
+                        "exact_text_digest_page_and_utf8_span_cited"
+                    ),
+                    "in_domain_nonalias_relation_arm_eligible": (
+                        in_domain_eligible
+                    ),
+                    "in_domain_nonalias_relation_subkind": relation_subkind,
                     "disposition": disposition,
                     "law_gap_admitted": law_gap_admitted,
                     "alias_admitted": False,
                     "required_action": required_action,
                     "adjudicative_rationale": rationale,
+                    "row_specific_semantic_finding": semantic_finding,
                     "status": status,
                 }
             )
@@ -2279,6 +3656,21 @@ def _doc036_defect_rows(
                     "local_anchor_classification_id"
                 ],
                 "source_occurrence_id": anchor["source_occurrence_id"],
+                "source_occurrence_matched_text": anchor[
+                    "occurrence_matched_text"
+                ],
+                "source_occurrence_matched_utf8_sha256": anchor[
+                    "occurrence_matched_utf8_sha256"
+                ],
+                "source_occurrence_page_number": anchor[
+                    "occurrence_page_number"
+                ],
+                "source_occurrence_utf8_byte_start": anchor[
+                    "occurrence_utf8_byte_start"
+                ],
+                "source_occurrence_utf8_byte_end": anchor[
+                    "occurrence_utf8_byte_end"
+                ],
                 "source_classification": anchor["classification"],
                 "occurrence_kind": anchor["occurrence_kind"],
                 "serialized_node_domain": anchor["node_domain"],
@@ -2286,12 +3678,20 @@ def _doc036_defect_rows(
                 "disposition": "predecessor_seal_defect",
                 "law_gap_admitted": False,
                 "component_slot_admitted": False,
+                "semantic_adjudication_round": 3,
+                "source_text_citation_status": (
+                    "exact_text_digest_page_and_utf8_span_cited"
+                ),
                 "required_action": (
                     "reseal_document_036_with_aggregate_anchor_domain"
                 ),
                 "adjudicative_rationale": (
                     "aggregate_occurrence_kind_controls_node_domain_"
                     "reseal_required"
+                ),
+                "row_specific_semantic_finding": (
+                    "cited_anchor_text_denotes_an_aggregate_but_the_"
+                    "predecessor_serialized_component_slot"
                 ),
                 "status": "blocked_predecessor_row",
             }
@@ -2329,19 +3729,31 @@ def _repeat_coverage_census(
     outside_instruction_ids: set[str] = set()
     aggregate_relation_instruction_ids: list[str] = []
     repeat_ids: set[str] = set()
+    redirection_rows = _in_domain_redirection_rows(documents)
+    redirection_instruction_ids = {
+        row["source_instruction_occurrence_ids"][0] for row in redirection_rows
+    }
+    _require(
+        len(redirection_instruction_ids) == len(redirection_rows),
+        "duplicate instruction-level redirection disposition",
+    )
     for document in documents:
         repeat_ids.update(document.repeat_occurrence_ids)
         for evidence in document.evidence_rows:
             instructions = set(evidence["source_instruction_occurrence_ids"])
             if _compatible_direct_proof(evidence):
-                valid_instruction_ids.update(instructions)
+                valid_instruction_ids.update(
+                    instructions - redirection_instruction_ids
+                )
             elif _honest_noncatalog_aggregate_relation(evidence):
                 aggregate_relation_instruction_ids.extend(instructions)
             elif (
                 evidence["alias_anchor_occurrence_ids"]
                 and evidence["canonical_anchor_occurrence_ids"]
             ):
-                incompatible_instruction_ids.update(instructions)
+                incompatible_instruction_ids.update(
+                    instructions - redirection_instruction_ids
+                )
             if (
                 evidence["handoff_status"]
                 == "local_target_outside_rq_annotation_domain"
@@ -2356,10 +3768,15 @@ def _repeat_coverage_census(
         "repeat claimed by multiple aggregate-relation rows",
     )
     aggregate_instruction_ids = set(aggregate_relation_counter) & repeat_ids
+    _require(
+        redirection_instruction_ids <= repeat_ids,
+        "redirection disposition instruction is outside repeat domain",
+    )
     admitted_arms = (
         valid_instruction_ids,
         outside_instruction_ids,
         aggregate_instruction_ids,
+        redirection_instruction_ids,
     )
     arm_membership_count = Counter(
         instruction_id for arm in admitted_arms for instruction_id in arm
@@ -2376,6 +3793,7 @@ def _repeat_coverage_census(
         | incompatible_instruction_ids
         | outside_instruction_ids
         | aggregate_instruction_ids
+        | redirection_instruction_ids
     )
     return {
         "repeat_occurrence_count": len(repeat_ids),
@@ -2383,6 +3801,12 @@ def _repeat_coverage_census(
         "outside_domain_instruction_count": len(outside_instruction_ids),
         "noncatalog_aggregate_relation_instruction_count": len(
             aggregate_instruction_ids
+        ),
+        "in_domain_redirection_instruction_count": len(
+            redirection_instruction_ids
+        ),
+        "in_domain_nonalias_relation_instruction_count": len(
+            aggregate_instruction_ids | redirection_instruction_ids
         ),
         "incompatible_proof_instruction_count": len(
             incompatible_instruction_ids
@@ -2393,7 +3817,7 @@ def _repeat_coverage_census(
         "lawful_repeat_coverage_multiple_arm_instruction_count": len(
             multiple_arm_ids
         ),
-        "lawful_repeat_coverage_none_arm_instruction_count": len(
+        "disclosed_stop_instruction_count": len(
             repeat_ids - lawful_covered_ids
         ),
         "otherwise_unresolved_instruction_count": len(otherwise_unresolved),
@@ -2656,6 +4080,35 @@ def _build_bundle(
     full_aggregate_relation_rows = _noncatalog_aggregate_relation_rows(
         documents
     )
+    full_redirection_relation_rows = _in_domain_redirection_rows(documents)
+    cross_reference_structural_census = _cross_reference_structural_census(
+        documents
+    )
+    full_component_cross_reference_sweep_rows = (
+        _in_domain_component_cross_reference_sweep_rows(documents)
+    )
+    component_cross_reference_sweep_counts = (
+        _component_cross_reference_sweep_counts(
+            full_component_cross_reference_sweep_rows
+        )
+    )
+    pilot_component_cross_reference_sweep_counts = (
+        _component_cross_reference_sweep_counts(
+            [
+                row
+                for row in full_component_cross_reference_sweep_rows
+                if row["pilot_document_member"]
+            ]
+        )
+    )
+    full_redirection_lineage_rows = (
+        _exclusive_destination_redirection_lineage_rows(documents)
+    )
+    full_repeat_instruction_rows = [
+        row
+        for document in documents
+        for row in document.repeat_occurrence_rows
+    ]
     full_repeat_census = _repeat_coverage_census(documents)
     raw_cardinality = Counter()
     disposition_counts = Counter()
@@ -2716,6 +4169,151 @@ def _build_bundle(
             ),
             "noncatalog_aggregate_relation_shape_domain_sha256": _domain_sha(
                 full_aggregate_relation_rows
+            ),
+            "in_domain_redirection_shape_rows": (
+                full_redirection_relation_rows
+            ),
+            "in_domain_redirection_shape_count": len(
+                full_redirection_relation_rows
+            ),
+            "in_domain_redirection_shape_keyset_sha256": _keyset_sha(
+                [
+                    row["in_domain_redirection_relation_disposition_id"]
+                    for row in full_redirection_relation_rows
+                ]
+            ),
+            "in_domain_redirection_shape_domain_sha256": _domain_sha(
+                full_redirection_relation_rows
+            ),
+            **cross_reference_structural_census,
+            "in_domain_component_cross_reference_sweep_rows": (
+                full_component_cross_reference_sweep_rows
+            ),
+            "in_domain_component_cross_reference_sweep_count": (
+                component_cross_reference_sweep_counts["instruction_count"]
+            ),
+            "in_domain_component_cross_reference_sweep_edge_count": (
+                component_cross_reference_sweep_counts["edge_count"]
+            ),
+            "in_domain_component_cross_reference_sweep_keyset_sha256": (
+                _keyset_sha(
+                    [
+                        row["in_domain_component_cross_reference_sweep_id"]
+                        for row in full_component_cross_reference_sweep_rows
+                    ]
+                )
+            ),
+            "in_domain_component_cross_reference_sweep_domain_sha256": (
+                _domain_sha(full_component_cross_reference_sweep_rows)
+            ),
+            "in_domain_component_cross_reference_sweep_alias_instruction_count": (
+                component_cross_reference_sweep_counts[
+                    "alias_instruction_count"
+                ]
+            ),
+            "in_domain_component_cross_reference_sweep_alias_edge_count": (
+                component_cross_reference_sweep_counts["alias_edge_count"]
+            ),
+            "in_domain_component_cross_reference_sweep_redirection_instruction_count": (
+                component_cross_reference_sweep_counts[
+                    "redirection_instruction_count"
+                ]
+            ),
+            "in_domain_component_cross_reference_sweep_redirection_edge_count": (
+                component_cross_reference_sweep_counts[
+                    "redirection_edge_count"
+                ]
+            ),
+            "in_domain_component_cross_reference_sweep_stop_instruction_count": (
+                component_cross_reference_sweep_counts[
+                    "stop_instruction_count"
+                ]
+            ),
+            "in_domain_component_cross_reference_sweep_stop_edge_count": (
+                component_cross_reference_sweep_counts["stop_edge_count"]
+            ),
+            "pilot_in_domain_component_cross_reference_sweep_count": (
+                pilot_component_cross_reference_sweep_counts[
+                    "instruction_count"
+                ]
+            ),
+            "pilot_in_domain_component_cross_reference_sweep_edge_count": (
+                pilot_component_cross_reference_sweep_counts["edge_count"]
+            ),
+            "pilot_in_domain_component_cross_reference_sweep_alias_instruction_count": (
+                pilot_component_cross_reference_sweep_counts[
+                    "alias_instruction_count"
+                ]
+            ),
+            "pilot_in_domain_component_cross_reference_sweep_alias_edge_count": (
+                pilot_component_cross_reference_sweep_counts[
+                    "alias_edge_count"
+                ]
+            ),
+            "pilot_in_domain_component_cross_reference_sweep_redirection_instruction_count": (
+                pilot_component_cross_reference_sweep_counts[
+                    "redirection_instruction_count"
+                ]
+            ),
+            "pilot_in_domain_component_cross_reference_sweep_redirection_edge_count": (
+                pilot_component_cross_reference_sweep_counts[
+                    "redirection_edge_count"
+                ]
+            ),
+            "pilot_in_domain_component_cross_reference_sweep_stop_instruction_count": (
+                pilot_component_cross_reference_sweep_counts[
+                    "stop_instruction_count"
+                ]
+            ),
+            "pilot_in_domain_component_cross_reference_sweep_stop_edge_count": (
+                pilot_component_cross_reference_sweep_counts["stop_edge_count"]
+            ),
+            "repeat_instruction_text_scan_count": len(
+                full_repeat_instruction_rows
+            ),
+            "literal_cross_reference_instruction_count": sum(
+                "cross-reference" in row["matched_text"].lower()
+                for row in full_repeat_instruction_rows
+            ),
+            "exclusive_destination_redirection_lineage_rows": (
+                full_redirection_lineage_rows
+            ),
+            "exclusive_destination_redirection_lineage_count": len(
+                full_redirection_lineage_rows
+            ),
+            "exclusive_destination_redirection_lineage_keyset_sha256": (
+                _keyset_sha(
+                    [
+                        row["exclusive_destination_redirection_lineage_id"]
+                        for row in full_redirection_lineage_rows
+                    ]
+                )
+            ),
+            "exclusive_destination_redirection_lineage_domain_sha256": (
+                _domain_sha(full_redirection_lineage_rows)
+            ),
+            "exclusive_destination_redirection_lineage_admitted_count": sum(
+                row["in_domain_redirection_arm_eligible"]
+                for row in full_redirection_lineage_rows
+            ),
+            "exclusive_destination_redirection_lineage_aggregate_count": sum(
+                row["lineage_disposition"]
+                == "covered_by_existing_aggregate_nonalias_subkind"
+                for row in full_redirection_lineage_rows
+            ),
+            "exclusive_destination_redirection_lineage_stop_count": sum(
+                row["lineage_disposition"].startswith("disclosed_stop_")
+                for row in full_redirection_lineage_rows
+            ),
+            "exclusive_destination_redirection_lineage_mixed_stop_count": sum(
+                row["lineage_disposition"]
+                == "disclosed_stop_mixed_aggregate_component_proof"
+                for row in full_redirection_lineage_rows
+            ),
+            "exclusive_destination_redirection_lineage_incomplete_stop_count": sum(
+                row["lineage_disposition"]
+                == "disclosed_stop_incomplete_local_proof"
+                for row in full_redirection_lineage_rows
             ),
             "repeat_coverage_census": full_repeat_census,
             "component_parent_shape_rows": full_component_shapes,
@@ -2831,18 +4429,26 @@ def _build_bundle(
             "seal_defect_disposition_count": len(doc036_defects)
             + len(proof_seal_defects),
             "law_gap_disposition_count": len(proof_law_gaps),
-            "third_arm_law_gap_repair_count": len(proof_law_gaps),
+            "in_domain_nonalias_law_gap_repair_count": len(proof_law_gaps),
+            "in_domain_nonalias_law_gap_subkind_counts": dict(
+                sorted(
+                    Counter(
+                        row["in_domain_nonalias_relation_subkind"]
+                        for row in proof_law_gaps
+                    ).items()
+                )
+            ),
             "tier_2_precondition": (
-                "all_37_seal_defects_resealed_and_amendment_ratified_before_"
+                "all_36_seal_defects_resealed_and_amendment_ratified_before_"
                 "certification"
             ),
             "adjudication_rule": (
-                "aggregate_only_complete_in_domain_relations_use_third_arm_"
-                "while_incompatible_claims_remain_seal_defects"
+                "round_three_source_cited_semantic_ledger_exact_covers_each_"
+                "candidate_without_mechanical_flag_fallback"
             ),
             "nonauthority_statement": _nonauthority_statement(),
             "status": (
-                "pass_adjudication_with_37_predecessor_reseals_required"
+                "pass_adjudication_with_36_predecessor_reseals_required"
             ),
         },
     )
@@ -2860,7 +4466,7 @@ def _build_bundle(
             "source_corpus_identity": source_identity,
             "corpus_sweep_artifact_id": sweep_artifact["artifact_id"],
             "predecessor_artifact_id": predecessor_artifact["artifact_id"],
-            "predecessor_seal_defect_count": 37,
+            "predecessor_seal_defect_count": 36,
             "predecessor_reseal_required": True,
             "component_class_admission_sweep_rows": (
                 component_class_admission_rows
@@ -2997,6 +4603,9 @@ def _build_bundle(
     pilot_aggregate_relation_rows = _noncatalog_aggregate_relation_rows(
         pilot_documents
     )
+    pilot_redirection_relation_rows = _in_domain_redirection_rows(
+        pilot_documents
+    )
     repeat_artifact = _artifact(
         "amendment_12_rq_catalog_outside_domain_repeat_pilot.v1",
         "a12-rq-repeat-pilot:",
@@ -3074,8 +4683,48 @@ def _build_bundle(
                     ).items()
                 )
             ),
+            "in_domain_redirection_disposition_rows": (
+                pilot_redirection_relation_rows
+            ),
+            "in_domain_redirection_disposition_count": len(
+                pilot_redirection_relation_rows
+            ),
+            "in_domain_redirection_disposition_keyset_sha256": _keyset_sha(
+                [
+                    row["in_domain_redirection_relation_disposition_id"]
+                    for row in pilot_redirection_relation_rows
+                ]
+            ),
+            "in_domain_redirection_disposition_domain_sha256": _domain_sha(
+                pilot_redirection_relation_rows
+            ),
+            "redirection_relation_counts": dict(
+                sorted(
+                    Counter(
+                        row["relation"]
+                        for row in pilot_redirection_relation_rows
+                    ).items()
+                )
+            ),
+            "redirection_document_counts": {
+                str(key): value
+                for key, value in sorted(
+                    Counter(
+                        row["document_source_position"]
+                        for row in pilot_redirection_relation_rows
+                    ).items()
+                )
+            },
+            "redirection_handoff_status_counts": dict(
+                sorted(
+                    Counter(
+                        row["handoff_status"]
+                        for row in pilot_redirection_relation_rows
+                    ).items()
+                )
+            ),
             "nonauthority_statement": _nonauthority_statement(),
-            "status": "pass_three_arm_repeat_law_pilot_nonauthority",
+            "status": "pass_four_disposition_repeat_law_pilot_nonauthority",
         },
     )
 
@@ -3192,7 +4841,7 @@ def _build_bundle(
             ),
             "pilot_census": pilot_census,
             "role_law_status": "pass",
-            "three_arm_repeat_law_status": "pass_law_shape_only",
+            "four_disposition_repeat_law_status": "pass_law_shape_only",
             "component_parent_law_status": "pass",
             "predecessor_input_status": "reseal_required_before_tier_2",
             "overall_repeat_catalog_coverage_status": (
@@ -3270,10 +4919,12 @@ PILOT_CENSUS_KEYS = frozenset(
         "flow_branch_count",
         "head_role_anchor_count",
         "incompatible_proof_instruction_count",
+        "in_domain_nonalias_relation_instruction_count",
+        "in_domain_redirection_instruction_count",
         "ineligible_parent_reference_count",
         "job_anchor_count",
         "lawful_repeat_coverage_multiple_arm_instruction_count",
-        "lawful_repeat_coverage_none_arm_instruction_count",
+        "disclosed_stop_instruction_count",
         "local_anchor_count",
         "local_evidence_row_count",
         "local_evidence_shape_counts",
@@ -3358,6 +5009,52 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "noncatalog_aggregate_relation_shape_count",
             "noncatalog_aggregate_relation_shape_keyset_sha256",
             "noncatalog_aggregate_relation_shape_domain_sha256",
+            "in_domain_redirection_shape_rows",
+            "in_domain_redirection_shape_count",
+            "in_domain_redirection_shape_keyset_sha256",
+            "in_domain_redirection_shape_domain_sha256",
+            "explicit_cross_reference_evidence_count",
+            "explicit_cross_reference_instruction_count",
+            "complete_cross_reference_evidence_count",
+            "complete_cross_reference_instruction_count",
+            "in_domain_nonaggregate_cross_reference_evidence_count",
+            "in_domain_nonaggregate_cross_reference_instruction_count",
+            "wholly_in_domain_nonaggregate_cross_reference_evidence_count",
+            "wholly_in_domain_nonaggregate_cross_reference_instruction_count",
+            "component_cross_reference_evidence_count",
+            "component_cross_reference_instruction_count",
+            "binary_component_cross_reference_evidence_count",
+            "binary_component_cross_reference_instruction_count",
+            "in_domain_component_cross_reference_sweep_rows",
+            "in_domain_component_cross_reference_sweep_count",
+            "in_domain_component_cross_reference_sweep_edge_count",
+            "in_domain_component_cross_reference_sweep_keyset_sha256",
+            "in_domain_component_cross_reference_sweep_domain_sha256",
+            "in_domain_component_cross_reference_sweep_alias_instruction_count",
+            "in_domain_component_cross_reference_sweep_alias_edge_count",
+            "in_domain_component_cross_reference_sweep_redirection_instruction_count",
+            "in_domain_component_cross_reference_sweep_redirection_edge_count",
+            "in_domain_component_cross_reference_sweep_stop_instruction_count",
+            "in_domain_component_cross_reference_sweep_stop_edge_count",
+            "pilot_in_domain_component_cross_reference_sweep_count",
+            "pilot_in_domain_component_cross_reference_sweep_edge_count",
+            "pilot_in_domain_component_cross_reference_sweep_alias_instruction_count",
+            "pilot_in_domain_component_cross_reference_sweep_alias_edge_count",
+            "pilot_in_domain_component_cross_reference_sweep_redirection_instruction_count",
+            "pilot_in_domain_component_cross_reference_sweep_redirection_edge_count",
+            "pilot_in_domain_component_cross_reference_sweep_stop_instruction_count",
+            "pilot_in_domain_component_cross_reference_sweep_stop_edge_count",
+            "repeat_instruction_text_scan_count",
+            "literal_cross_reference_instruction_count",
+            "exclusive_destination_redirection_lineage_rows",
+            "exclusive_destination_redirection_lineage_count",
+            "exclusive_destination_redirection_lineage_keyset_sha256",
+            "exclusive_destination_redirection_lineage_domain_sha256",
+            "exclusive_destination_redirection_lineage_admitted_count",
+            "exclusive_destination_redirection_lineage_aggregate_count",
+            "exclusive_destination_redirection_lineage_stop_count",
+            "exclusive_destination_redirection_lineage_mixed_stop_count",
+            "exclusive_destination_redirection_lineage_incomplete_stop_count",
             "repeat_coverage_census",
             "component_parent_shape_rows",
             "component_parent_shape_count",
@@ -3423,7 +5120,8 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "seal_defect_flag_counts",
             "seal_defect_disposition_count",
             "law_gap_disposition_count",
-            "third_arm_law_gap_repair_count",
+            "in_domain_nonalias_law_gap_repair_count",
+            "in_domain_nonalias_law_gap_subkind_counts",
             "tier_2_precondition",
             "adjudication_rule",
             "nonauthority_statement",
@@ -3469,6 +5167,13 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "aggregate_relation_counts",
             "aggregate_document_counts",
             "aggregate_handoff_status_counts",
+            "in_domain_redirection_disposition_rows",
+            "in_domain_redirection_disposition_count",
+            "in_domain_redirection_disposition_keyset_sha256",
+            "in_domain_redirection_disposition_domain_sha256",
+            "redirection_relation_counts",
+            "redirection_document_counts",
+            "redirection_handoff_status_counts",
             "nonauthority_statement",
             "status",
         }
@@ -3511,7 +5216,7 @@ ARTIFACT_TOP_LEVEL_KEYS = {
             "artifact_identity_domain_sha256",
             "pilot_census",
             "role_law_status",
-            "three_arm_repeat_law_status",
+            "four_disposition_repeat_law_status",
             "component_parent_law_status",
             "predecessor_input_status",
             "overall_repeat_catalog_coverage_status",
@@ -3623,6 +5328,116 @@ NONCATALOG_AGGREGATE_RELATION_ROW_KEYS = frozenset(
         "status",
     }
 )
+IN_DOMAIN_REDIRECTION_ROW_KEYS = frozenset(
+    {
+        "in_domain_redirection_relation_disposition_id",
+        "document_source_position",
+        "source_document_id",
+        "source_local_evidence_ids",
+        "relation_subkind",
+        "relation",
+        "handoff_status",
+        "source_instruction_occurrence_ids",
+        "source_instruction_occurrence_kinds",
+        "source_instruction_matched_texts",
+        "source_instruction_matched_utf8_sha256s",
+        "source_instruction_page_numbers",
+        "source_instruction_utf8_byte_starts",
+        "source_instruction_utf8_byte_ends",
+        "source_evidence_occurrence_id_arrays",
+        "evidence_occurrence_ids",
+        "predecessor_alias_anchor_occurrence_ids",
+        "predecessor_canonical_anchor_occurrence_ids",
+        "current_location_occurrence_id",
+        "destination_occurrence_ids",
+        "endpoint_occurrence_kinds",
+        "endpoint_raw_node_domains",
+        "endpoint_classifications",
+        "endpoint_printed_identifiers",
+        "endpoint_matched_texts",
+        "endpoint_matched_utf8_sha256s",
+        "endpoint_page_numbers",
+        "endpoint_utf8_byte_starts",
+        "endpoint_utf8_byte_ends",
+        "redirection_instruction_semantics",
+        "redirection_relation_disposition",
+        "alias_admitted",
+        "occurrence_equivalence_claimed",
+        "universal_repeat_coverage_arm_satisfied",
+        "status",
+    }
+)
+IN_DOMAIN_COMPONENT_CROSS_REFERENCE_SWEEP_ROW_KEYS = frozenset(
+    {
+        "in_domain_component_cross_reference_sweep_id",
+        "document_source_position",
+        "source_document_id",
+        "source_instruction_occurrence_id",
+        "source_instruction_occurrence_kind",
+        "source_instruction_matched_text",
+        "source_instruction_matched_utf8_sha256",
+        "source_instruction_page_number",
+        "source_instruction_utf8_byte_start",
+        "source_instruction_utf8_byte_end",
+        "source_local_evidence_ids",
+        "source_evidence_count",
+        "source_relations",
+        "source_handoff_statuses",
+        "source_evidence_occurrence_id_arrays",
+        "source_alias_anchor_occurrence_id_arrays",
+        "source_canonical_anchor_occurrence_id_arrays",
+        "source_endpoint_occurrence_kind_arrays",
+        "source_endpoint_raw_node_domain_arrays",
+        "source_endpoint_classification_arrays",
+        "source_endpoint_printed_identifier_arrays",
+        "source_endpoint_matched_text_arrays",
+        "source_endpoint_matched_utf8_sha256_arrays",
+        "source_endpoint_page_number_arrays",
+        "source_endpoint_utf8_byte_start_arrays",
+        "source_endpoint_utf8_byte_end_arrays",
+        "source_defect_flag_rows",
+        "source_unresolved_target_references",
+        "current_location_occurrence_id",
+        "destination_occurrence_ids",
+        "structural_candidate_satisfied",
+        "pilot_document_member",
+        "semantic_redirection_ledger_member",
+        "semantic_redirection_finding",
+        "valid_alias_arm_evidence_ids",
+        "in_domain_redirection_relation_disposition_id",
+        "repeat_coverage_disposition",
+        "status",
+    }
+)
+EXCLUSIVE_DESTINATION_REDIRECTION_LINEAGE_ROW_KEYS = frozenset(
+    {
+        "exclusive_destination_redirection_lineage_id",
+        "document_source_position",
+        "source_document_id",
+        "source_instruction_occurrence_id",
+        "source_instruction_matched_text",
+        "source_instruction_matched_utf8_sha256",
+        "source_instruction_page_number",
+        "source_instruction_utf8_byte_start",
+        "source_instruction_utf8_byte_end",
+        "source_text_shape_kind",
+        "source_local_evidence_ids",
+        "source_relations",
+        "source_handoff_statuses",
+        "source_alias_anchor_occurrence_id_arrays",
+        "source_canonical_anchor_occurrence_id_arrays",
+        "source_endpoint_occurrence_kind_arrays",
+        "source_endpoint_raw_node_domain_arrays",
+        "source_endpoint_classification_arrays",
+        "source_endpoint_printed_identifier_arrays",
+        "source_unresolved_target_references",
+        "in_domain_redirection_arm_eligible",
+        "in_domain_redirection_relation_disposition_id",
+        "existing_aggregate_relation_disposition_id",
+        "lineage_disposition",
+        "status",
+    }
+)
 PARENT_CANDIDATE_ROW_KEYS = frozenset(
     {
         "parent_occurrence_id",
@@ -3719,6 +5534,11 @@ DOC036_DEFECT_ROW_KEYS = frozenset(
         "source_document_id",
         "source_classification_id",
         "source_occurrence_id",
+        "source_occurrence_matched_text",
+        "source_occurrence_matched_utf8_sha256",
+        "source_occurrence_page_number",
+        "source_occurrence_utf8_byte_start",
+        "source_occurrence_utf8_byte_end",
         "source_classification",
         "occurrence_kind",
         "serialized_node_domain",
@@ -3726,8 +5546,11 @@ DOC036_DEFECT_ROW_KEYS = frozenset(
         "disposition",
         "law_gap_admitted",
         "component_slot_admitted",
+        "semantic_adjudication_round",
+        "source_text_citation_status",
         "required_action",
         "adjudicative_rationale",
+        "row_specific_semantic_finding",
         "status",
     }
 )
@@ -3739,19 +5562,34 @@ PROOF_ADJUDICATION_ROW_KEYS = frozenset(
         "source_local_evidence_id",
         "relation",
         "source_instruction_occurrence_ids",
+        "source_instruction_matched_texts",
+        "source_instruction_matched_utf8_sha256s",
+        "source_instruction_page_numbers",
+        "source_instruction_utf8_byte_starts",
+        "source_instruction_utf8_byte_ends",
         "alias_anchor_occurrence_ids",
         "canonical_anchor_occurrence_ids",
         "evidence_occurrence_ids",
         "endpoint_occurrence_kinds",
         "endpoint_raw_node_domains",
         "endpoint_classifications",
+        "endpoint_printed_identifiers",
+        "endpoint_matched_texts",
+        "endpoint_matched_utf8_sha256s",
+        "endpoint_page_numbers",
+        "endpoint_utf8_byte_starts",
+        "endpoint_utf8_byte_ends",
         "defect_flags",
-        "third_arm_eligible",
+        "semantic_adjudication_round",
+        "source_text_citation_status",
+        "in_domain_nonalias_relation_arm_eligible",
+        "in_domain_nonalias_relation_subkind",
         "disposition",
         "law_gap_admitted",
         "alias_admitted",
         "required_action",
         "adjudicative_rationale",
+        "row_specific_semantic_finding",
         "status",
     }
 )
@@ -4264,6 +6102,593 @@ def _validate_noncatalog_aggregate_relation_row(
             ],
         ),
         f"{label}: disposition ID",
+    )
+
+
+def _validate_in_domain_redirection_row(
+    row: Mapping[str, Any], label: str
+) -> None:
+    _require_exact_keys(row, IN_DOMAIN_REDIRECTION_ROW_KEYS, label)
+    _require_int(row["document_source_position"], f"{label}: position")
+    _require_string(row["source_document_id"], f"{label}: source document")
+    source_evidence_ids = row["source_local_evidence_ids"]
+    instructions = row["source_instruction_occurrence_ids"]
+    aliases = row["predecessor_alias_anchor_occurrence_ids"]
+    canonicals = row["predecessor_canonical_anchor_occurrence_ids"]
+    _require(
+        isinstance(instructions, list)
+        and len(instructions) == 1
+        and row["source_instruction_occurrence_kinds"]
+        == ["repeat_or_alias_instruction"],
+        f"{label}: singleton instruction",
+    )
+    instruction_id = instructions[0]
+    expected_evidence_ids = (
+        EXCLUSIVE_DESTINATION_REDIRECTION_EVIDENCE_BY_INSTRUCTION.get(
+            instruction_id
+        )
+    )
+    _require(
+        isinstance(source_evidence_ids, list)
+        and tuple(source_evidence_ids) == expected_evidence_ids
+        and isinstance(aliases, list)
+        and isinstance(canonicals, list)
+        and len(aliases) == 1
+        and canonicals
+        and len(canonicals) == len(set(canonicals))
+        and not set(aliases) & set(canonicals)
+        and len(source_evidence_ids) == len(canonicals)
+        and row["current_location_occurrence_id"] == aliases[0]
+        and row["destination_occurrence_ids"] == canonicals,
+        f"{label}: redirection endpoints",
+    )
+    source_evidence_arrays = row["source_evidence_occurrence_id_arrays"]
+    evidence_ids = row["evidence_occurrence_ids"]
+    _require(
+        isinstance(source_evidence_arrays, list)
+        and len(source_evidence_arrays) == len(source_evidence_ids)
+        and all(
+            isinstance(values, list)
+            and len(values) == len(set(values)) == 3
+            and set(values) == {instruction_id, aliases[0], destination_id}
+            for values, destination_id in zip(
+                source_evidence_arrays, canonicals, strict=True
+            )
+        )
+        and isinstance(evidence_ids, list)
+        and len(evidence_ids) == len(set(evidence_ids))
+        and set(evidence_ids)
+        == {
+            occurrence_id
+            for values in source_evidence_arrays
+            for occurrence_id in values
+        }
+        == {instruction_id, *aliases, *canonicals},
+        f"{label}: exact evidence cover",
+    )
+    _require(
+        row["relation_subkind"] == REDIRECTION_RELATION_SUBKIND
+        and row["relation"] == "explicit_cross_reference"
+        and row["handoff_status"] in COMPLETE_LOCAL_EVIDENCE_STATUSES,
+        f"{label}: relation identity",
+    )
+    endpoint_count = len(aliases) + len(canonicals)
+    endpoint_arrays = (
+        row["endpoint_occurrence_kinds"],
+        row["endpoint_raw_node_domains"],
+        row["endpoint_classifications"],
+        row["endpoint_printed_identifiers"],
+        row["endpoint_matched_texts"],
+        row["endpoint_matched_utf8_sha256s"],
+        row["endpoint_page_numbers"],
+        row["endpoint_utf8_byte_starts"],
+        row["endpoint_utf8_byte_ends"],
+    )
+    _require(
+        all(
+            isinstance(values, list) and len(values) == endpoint_count
+            for values in endpoint_arrays
+        )
+        and row["endpoint_raw_node_domains"]
+        == ["component_slot"] * endpoint_count
+        and all(
+            (kind, classification)
+            in {
+                ("context_anchor", "source_context"),
+                (
+                    "remuneration_component_anchor",
+                    "source_remuneration_component",
+                ),
+            }
+            for kind, classification in zip(
+                row["endpoint_occurrence_kinds"],
+                row["endpoint_classifications"],
+                strict=True,
+            )
+        ),
+        f"{label}: endpoint semantic projection",
+    )
+    identifiers = row["endpoint_printed_identifiers"]
+    _require(
+        isinstance(identifiers, list)
+        and len(identifiers) == endpoint_count
+        and all(
+            value is None or isinstance(value, str) and value
+            for value in identifiers
+        ),
+        f"{label}: endpoint printed identifiers",
+    )
+    _require(
+        _exact_byte_projection(
+            row["source_instruction_matched_texts"],
+            row["source_instruction_matched_utf8_sha256s"],
+            row["source_instruction_page_numbers"],
+            row["source_instruction_utf8_byte_starts"],
+            row["source_instruction_utf8_byte_ends"],
+            1,
+        )
+        and _exact_byte_projection(
+            row["endpoint_matched_texts"],
+            row["endpoint_matched_utf8_sha256s"],
+            row["endpoint_page_numbers"],
+            row["endpoint_utf8_byte_starts"],
+            row["endpoint_utf8_byte_ends"],
+            endpoint_count,
+        ),
+        f"{label}: exact source projections",
+    )
+    _require(
+        row["redirection_instruction_semantics"]
+        == "affirmative_named_destination_and_explicit_current_location_"
+        "exclusion"
+        and row["redirection_relation_disposition"]
+        == "authenticated_in_domain_exclusive_destination_relation_no_alias",
+        f"{label}: redirection disposition",
+    )
+    _require(row["alias_admitted"] is False, f"{label}: alias admitted")
+    _require(
+        row["occurrence_equivalence_claimed"] is False,
+        f"{label}: occurrence equivalence",
+    )
+    _require(
+        row["universal_repeat_coverage_arm_satisfied"] is True,
+        f"{label}: universal arm",
+    )
+    _require(
+        row["status"] == "redirection_relation_nonauthority_disposition",
+        f"{label}: status",
+    )
+    _require(
+        row["in_domain_redirection_relation_disposition_id"]
+        == _redirection_disposition_id(row),
+        f"{label}: disposition ID",
+    )
+
+
+def _validate_in_domain_component_cross_reference_sweep_row(
+    row: Mapping[str, Any], label: str
+) -> None:
+    _require_exact_keys(
+        row, IN_DOMAIN_COMPONENT_CROSS_REFERENCE_SWEEP_ROW_KEYS, label
+    )
+    position = _require_int(
+        row["document_source_position"], f"{label}: position"
+    )
+    _require(1 <= position <= 81, f"{label}: source position")
+    _require_string(row["source_document_id"], f"{label}: source document")
+    instruction_id = _require_string(
+        row["source_instruction_occurrence_id"],
+        f"{label}: source instruction",
+    )
+    _require(
+        row["source_instruction_occurrence_kind"]
+        == "repeat_or_alias_instruction",
+        f"{label}: repeat instruction kind",
+    )
+    instruction_text = _require_string(
+        row["source_instruction_matched_text"],
+        f"{label}: instruction text",
+    )
+    _require(
+        row["source_instruction_matched_utf8_sha256"]
+        == _sha256(instruction_text.encode("utf-8")),
+        f"{label}: instruction digest",
+    )
+    instruction_page = _require_int(
+        row["source_instruction_page_number"],
+        f"{label}: instruction page",
+    )
+    instruction_start = _require_int(
+        row["source_instruction_utf8_byte_start"],
+        f"{label}: instruction start",
+    )
+    instruction_end = _require_int(
+        row["source_instruction_utf8_byte_end"],
+        f"{label}: instruction end",
+    )
+    _require(
+        instruction_page > 0
+        and 0 <= instruction_start < instruction_end
+        and instruction_end - instruction_start
+        == len(instruction_text.encode("utf-8")),
+        f"{label}: instruction byte projection",
+    )
+
+    evidence_ids = row["source_local_evidence_ids"]
+    evidence_count = _require_int(
+        row["source_evidence_count"], f"{label}: evidence count"
+    )
+    outer_array_keys = (
+        "source_relations",
+        "source_handoff_statuses",
+        "source_evidence_occurrence_id_arrays",
+        "source_alias_anchor_occurrence_id_arrays",
+        "source_canonical_anchor_occurrence_id_arrays",
+        "source_endpoint_occurrence_kind_arrays",
+        "source_endpoint_raw_node_domain_arrays",
+        "source_endpoint_classification_arrays",
+        "source_endpoint_printed_identifier_arrays",
+        "source_endpoint_matched_text_arrays",
+        "source_endpoint_matched_utf8_sha256_arrays",
+        "source_endpoint_page_number_arrays",
+        "source_endpoint_utf8_byte_start_arrays",
+        "source_endpoint_utf8_byte_end_arrays",
+        "source_defect_flag_rows",
+        "source_unresolved_target_references",
+    )
+    _require(
+        evidence_count > 0
+        and isinstance(evidence_ids, list)
+        and len(evidence_ids) == len(set(evidence_ids)) == evidence_count
+        and all(isinstance(value, str) and value for value in evidence_ids)
+        and all(
+            isinstance(row[key], list) and len(row[key]) == evidence_count
+            for key in outer_array_keys
+        ),
+        f"{label}: parallel evidence projections",
+    )
+    _require(
+        row["source_relations"]
+        == ["explicit_cross_reference"] * evidence_count,
+        f"{label}: explicit cross-reference relation",
+    )
+    handoffs = row["source_handoff_statuses"]
+    _require(
+        len(set(handoffs)) == 1
+        and all(
+            value in COMPLETE_LOCAL_EVIDENCE_STATUSES for value in handoffs
+        ),
+        f"{label}: complete consistent handoff",
+    )
+    _require(
+        row["source_unresolved_target_references"] == [None] * evidence_count,
+        f"{label}: unresolved target",
+    )
+
+    current_id = _require_string(
+        row["current_location_occurrence_id"],
+        f"{label}: current location",
+    )
+    destination_ids = row["destination_occurrence_ids"]
+    alias_arrays = row["source_alias_anchor_occurrence_id_arrays"]
+    canonical_arrays = row["source_canonical_anchor_occurrence_id_arrays"]
+    _require(
+        isinstance(destination_ids, list)
+        and len(destination_ids) == len(set(destination_ids)) == evidence_count
+        and all(isinstance(value, str) and value for value in destination_ids)
+        and current_id not in set(destination_ids)
+        and alias_arrays == [[current_id] for _ in range(evidence_count)]
+        and canonical_arrays == [[value] for value in destination_ids],
+        f"{label}: common current and unique destinations",
+    )
+    evidence_occurrence_arrays = row["source_evidence_occurrence_id_arrays"]
+    _require(
+        all(
+            isinstance(values, list)
+            and len(values) == len(set(values)) == 3
+            and set(values) == {instruction_id, current_id, destination_id}
+            for values, destination_id in zip(
+                evidence_occurrence_arrays, destination_ids, strict=True
+            )
+        ),
+        f"{label}: exact per-edge evidence cover",
+    )
+
+    endpoint_array_keys = (
+        "source_endpoint_occurrence_kind_arrays",
+        "source_endpoint_raw_node_domain_arrays",
+        "source_endpoint_classification_arrays",
+        "source_endpoint_printed_identifier_arrays",
+        "source_endpoint_matched_text_arrays",
+        "source_endpoint_matched_utf8_sha256_arrays",
+        "source_endpoint_page_number_arrays",
+        "source_endpoint_utf8_byte_start_arrays",
+        "source_endpoint_utf8_byte_end_arrays",
+    )
+    _require(
+        all(
+            all(
+                isinstance(values, list) and len(values) == 2
+                for values in row[key]
+            )
+            for key in endpoint_array_keys
+        ),
+        f"{label}: binary endpoint projections",
+    )
+    allowed_endpoint_projections = {
+        ("context_anchor", "source_context"),
+        (
+            "remuneration_component_anchor",
+            "source_remuneration_component",
+        ),
+    }
+    for edge_index in range(evidence_count):
+        kinds = row["source_endpoint_occurrence_kind_arrays"][edge_index]
+        domains = row["source_endpoint_raw_node_domain_arrays"][edge_index]
+        classifications = row["source_endpoint_classification_arrays"][
+            edge_index
+        ]
+        identifiers = row["source_endpoint_printed_identifier_arrays"][
+            edge_index
+        ]
+        _require(
+            domains == ["component_slot", "component_slot"]
+            and all(
+                (kind, classification) in allowed_endpoint_projections
+                for kind, classification in zip(
+                    kinds, classifications, strict=True
+                )
+            )
+            and all(
+                value is None or isinstance(value, str) and value
+                for value in identifiers
+            ),
+            f"{label}: edge {edge_index} endpoint semantics",
+        )
+        _require(
+            _exact_byte_projection(
+                row["source_endpoint_matched_text_arrays"][edge_index],
+                row["source_endpoint_matched_utf8_sha256_arrays"][edge_index],
+                row["source_endpoint_page_number_arrays"][edge_index],
+                row["source_endpoint_utf8_byte_start_arrays"][edge_index],
+                row["source_endpoint_utf8_byte_end_arrays"][edge_index],
+                2,
+            ),
+            f"{label}: edge {edge_index} exact endpoint bytes",
+        )
+        defect_flags = row["source_defect_flag_rows"][edge_index]
+        _require_exact_keys(
+            defect_flags, DEFECT_FLAG_KEYS, f"{label}: edge defect flags"
+        )
+        context_mix = set(kinds) == {
+            "context_anchor",
+            "remuneration_component_anchor",
+        }
+        _require(
+            defect_flags
+            == {
+                "touches_noncatalog_aggregate_endpoint": False,
+                "occurrence_derived_domain_crossing": False,
+                "corrected_catalog_domain_crossing": False,
+                "raw_node_domain_crossing": False,
+                "context_remuneration_mix": context_mix,
+                "head_spouse_mix": False,
+            },
+            f"{label}: edge {edge_index} complete source proof",
+        )
+
+    current_endpoint_projections = [
+        tuple(row[key][edge_index][0] for key in endpoint_array_keys)
+        for edge_index in range(evidence_count)
+    ]
+    _require(
+        all(
+            projection == current_endpoint_projections[0]
+            for projection in current_endpoint_projections
+        ),
+        f"{label}: consistent current endpoint projection",
+    )
+    _require(
+        row["structural_candidate_satisfied"] is True,
+        f"{label}: structural candidate",
+    )
+    _require(
+        row["pilot_document_member"] is (position in PILOT_POSITIONS),
+        f"{label}: pilot membership",
+    )
+
+    semantic_member = row["semantic_redirection_ledger_member"]
+    _require(isinstance(semantic_member, bool), f"{label}: semantic ledger")
+    valid_alias_ids = row["valid_alias_arm_evidence_ids"]
+    _require(
+        isinstance(valid_alias_ids, list)
+        and len(valid_alias_ids) == len(set(valid_alias_ids))
+        and set(valid_alias_ids) <= set(evidence_ids),
+        f"{label}: alias evidence IDs",
+    )
+    defect_free_ids = [
+        evidence_id
+        for evidence_id, flags in zip(
+            evidence_ids, row["source_defect_flag_rows"], strict=True
+        )
+        if not any(flags.values())
+    ]
+    disposition = row["repeat_coverage_disposition"]
+    if disposition == "admitted_exclusive_destination_redirection":
+        _require(
+            semantic_member is True
+            and row["semantic_redirection_finding"]
+            == "affirmative_named_destination_and_explicit_current_location_"
+            "exclusion"
+            and valid_alias_ids == []
+            and isinstance(
+                row["in_domain_redirection_relation_disposition_id"], str
+            )
+            and row["status"] == "redirection_arm_member",
+            f"{label}: redirection partition member",
+        )
+    elif disposition == "existing_alias_arm":
+        _require(
+            semantic_member is False
+            and row["semantic_redirection_finding"] is None
+            and row["in_domain_redirection_relation_disposition_id"] is None
+            and valid_alias_ids == defect_free_ids
+            and valid_alias_ids
+            and row["status"] == "valid_alias_cross_reference_candidate",
+            f"{label}: alias partition member",
+        )
+    else:
+        _require(
+            disposition == "disclosed_stop_no_redirection_semantics"
+            and semantic_member is False
+            and row["semantic_redirection_finding"] is None
+            and row["in_domain_redirection_relation_disposition_id"] is None
+            and valid_alias_ids == defect_free_ids == []
+            and row["status"] == "fail_closed_cross_reference_candidate",
+            f"{label}: STOP partition member",
+        )
+    _require(
+        row["in_domain_component_cross_reference_sweep_id"]
+        == _row_id(
+            "a12-in-domain-component-cross-reference-sweep:",
+            [
+                row["source_document_id"],
+                instruction_id,
+                evidence_ids,
+                evidence_occurrence_arrays,
+                alias_arrays,
+                canonical_arrays,
+                disposition,
+            ],
+        ),
+        f"{label}: sweep ID",
+    )
+
+
+def _validate_redirection_lineage_row(
+    row: Mapping[str, Any], label: str
+) -> None:
+    _require_exact_keys(
+        row, EXCLUSIVE_DESTINATION_REDIRECTION_LINEAGE_ROW_KEYS, label
+    )
+    instruction_id = _require_string(
+        row["source_instruction_occurrence_id"], f"{label}: instruction"
+    )
+    text = _require_string(
+        row["source_instruction_matched_text"], f"{label}: text"
+    )
+    _require(
+        row["source_text_shape_kind"] == _exclusive_placement_shape_kind(text),
+        f"{label}: lineage source-text shape",
+    )
+    _require(
+        row["source_instruction_matched_utf8_sha256"]
+        == _sha256(text.encode("utf-8")),
+        f"{label}: source digest",
+    )
+    page = _require_int(
+        row["source_instruction_page_number"], f"{label}: page"
+    )
+    start = _require_int(
+        row["source_instruction_utf8_byte_start"], f"{label}: start"
+    )
+    end = _require_int(
+        row["source_instruction_utf8_byte_end"], f"{label}: end"
+    )
+    _require(
+        page > 0
+        and 0 <= start < end
+        and end - start == len(text.encode("utf-8")),
+        f"{label}: source span",
+    )
+    evidence_ids = row["source_local_evidence_ids"]
+    outer_arrays = (
+        row["source_relations"],
+        row["source_handoff_statuses"],
+        row["source_alias_anchor_occurrence_id_arrays"],
+        row["source_canonical_anchor_occurrence_id_arrays"],
+        row["source_endpoint_occurrence_kind_arrays"],
+        row["source_endpoint_raw_node_domain_arrays"],
+        row["source_endpoint_classification_arrays"],
+        row["source_endpoint_printed_identifier_arrays"],
+        row["source_unresolved_target_references"],
+    )
+    _require(
+        isinstance(evidence_ids, list)
+        and len(evidence_ids) == len(set(evidence_ids))
+        and all(
+            isinstance(values, list) and len(values) == len(evidence_ids)
+            for values in outer_arrays
+        ),
+        f"{label}: source evidence projections",
+    )
+    eligible = row["in_domain_redirection_arm_eligible"]
+    _require(isinstance(eligible, bool), f"{label}: eligibility")
+    aggregate_id = row["existing_aggregate_relation_disposition_id"]
+    if eligible:
+        _require(
+            aggregate_id is None
+            and row["source_relations"]
+            and all(
+                relation == "explicit_cross_reference"
+                for relation in row["source_relations"]
+            )
+            and row["source_alias_anchor_occurrence_id_arrays"]
+            and all(
+                len(values) == 1
+                for values in row["source_alias_anchor_occurrence_id_arrays"]
+            )
+            and row["source_canonical_anchor_occurrence_id_arrays"]
+            and all(
+                len(values) == 1
+                for values in row[
+                    "source_canonical_anchor_occurrence_id_arrays"
+                ]
+            )
+            and all(
+                value is None
+                for value in row["source_unresolved_target_references"]
+            )
+            and isinstance(
+                row["in_domain_redirection_relation_disposition_id"], str
+            )
+            and row["lineage_disposition"]
+            == "admitted_exclusive_destination_redirection"
+            and row["status"] == "redirection_arm_member",
+            f"{label}: admitted lineage member",
+        )
+    elif aggregate_id is not None:
+        _require(
+            row["in_domain_redirection_relation_disposition_id"] is None
+            and isinstance(aggregate_id, str)
+            and row["lineage_disposition"]
+            == "covered_by_existing_aggregate_nonalias_subkind"
+            and row["status"] == "existing_aggregate_arm_member",
+            f"{label}: aggregate-covered lineage member",
+        )
+    else:
+        _require(
+            row["in_domain_redirection_relation_disposition_id"] is None
+            and row["lineage_disposition"]
+            in {
+                "disclosed_stop_mixed_aggregate_component_proof",
+                "disclosed_stop_incomplete_local_proof",
+            }
+            and row["status"] == "fail_closed_lineage_near_shape",
+            f"{label}: STOP lineage member",
+        )
+    _require(
+        row["exclusive_destination_redirection_lineage_id"]
+        == _row_id(
+            "a12-exclusive-destination-redirection-lineage:",
+            [
+                row["source_document_id"],
+                instruction_id,
+                text,
+                evidence_ids,
+            ],
+        ),
+        f"{label}: lineage ID",
     )
 
 
@@ -4801,6 +7226,29 @@ def _validate_doc036_defect_row(row: Mapping[str, Any]) -> None:
     label = "doc036 defect row"
     _require_exact_keys(row, DOC036_DEFECT_ROW_KEYS, label)
     _require(row["document_source_position"] == 36, f"{label}: position")
+    matched_text = _require_string(
+        row["source_occurrence_matched_text"], f"{label}: source text"
+    )
+    _require(
+        row["source_occurrence_matched_utf8_sha256"]
+        == _sha256(matched_text.encode("utf-8")),
+        f"{label}: source text digest",
+    )
+    page = _require_int(
+        row["source_occurrence_page_number"], f"{label}: source page"
+    )
+    start = _require_int(
+        row["source_occurrence_utf8_byte_start"], f"{label}: source start"
+    )
+    end = _require_int(
+        row["source_occurrence_utf8_byte_end"], f"{label}: source end"
+    )
+    _require(
+        page > 0
+        and 0 <= start < end
+        and end - start == len(matched_text.encode("utf-8")),
+        f"{label}: exact source span",
+    )
     expected_kind = AGGREGATE_CLASSIFICATION_TO_KIND.get(
         row["source_classification"]
     )
@@ -4822,6 +7270,12 @@ def _validate_doc036_defect_row(row: Mapping[str, Any]) -> None:
         f"{label}: component slot admitted",
     )
     _require(
+        row["semantic_adjudication_round"] == 3
+        and row["source_text_citation_status"]
+        == "exact_text_digest_page_and_utf8_span_cited",
+        f"{label}: round-three citation",
+    )
+    _require(
         row["required_action"]
         == "reseal_document_036_with_aggregate_anchor_domain",
         f"{label}: required action",
@@ -4830,6 +7284,12 @@ def _validate_doc036_defect_row(row: Mapping[str, Any]) -> None:
         row["adjudicative_rationale"]
         == "aggregate_occurrence_kind_controls_node_domain_reseal_required",
         f"{label}: rationale",
+    )
+    _require(
+        row["row_specific_semantic_finding"]
+        == "cited_anchor_text_denotes_an_aggregate_but_the_predecessor_"
+        "serialized_component_slot",
+        f"{label}: semantic finding",
     )
     _require(row["status"] == "blocked_predecessor_row", f"{label}: status")
     _require(
@@ -4860,6 +7320,7 @@ def _validate_proof_adjudication_row(row: Mapping[str, Any]) -> None:
     endpoint_kinds = row["endpoint_occurrence_kinds"]
     raw_domains = row["endpoint_raw_node_domains"]
     classifications = row["endpoint_classifications"]
+    printed_identifiers = row["endpoint_printed_identifiers"]
     _require(isinstance(aliases, list) and aliases, f"{label}: aliases")
     _require(
         isinstance(canonicals, list) and canonicals, f"{label}: canonicals"
@@ -4869,8 +7330,40 @@ def _validate_proof_adjudication_row(row: Mapping[str, Any]) -> None:
         len(endpoint_kinds)
         == len(raw_domains)
         == len(classifications)
+        == len(printed_identifiers)
         == endpoint_count,
         f"{label}: endpoint projections",
+    )
+    _require(
+        all(
+            value is None or isinstance(value, str)
+            for value in printed_identifiers
+        ),
+        f"{label}: printed identifiers",
+    )
+    instructions = row["source_instruction_occurrence_ids"]
+    _require(
+        isinstance(instructions, list) and instructions,
+        f"{label}: instructions",
+    )
+    _require(
+        _exact_byte_projection(
+            row["source_instruction_matched_texts"],
+            row["source_instruction_matched_utf8_sha256s"],
+            row["source_instruction_page_numbers"],
+            row["source_instruction_utf8_byte_starts"],
+            row["source_instruction_utf8_byte_ends"],
+            len(instructions),
+        )
+        and _exact_byte_projection(
+            row["endpoint_matched_texts"],
+            row["endpoint_matched_utf8_sha256s"],
+            row["endpoint_page_numbers"],
+            row["endpoint_utf8_byte_starts"],
+            row["endpoint_utf8_byte_ends"],
+            endpoint_count,
+        ),
+        f"{label}: exact source citations",
     )
     expected_flags = {
         "touches_noncatalog_aggregate_endpoint": any(
@@ -4897,80 +7390,95 @@ def _validate_proof_adjudication_row(row: Mapping[str, Any]) -> None:
     _require_exact_keys(flags, DEFECT_FLAG_KEYS, f"{label}: defect flags")
     _require(flags == expected_flags, f"{label}: defect flag equations")
     _require(any(flags.values()), f"{label}: no defect")
-    aggregate_only_flags = {
-        "touches_noncatalog_aggregate_endpoint": True,
-        "occurrence_derived_domain_crossing": False,
-        "corrected_catalog_domain_crossing": False,
-        "raw_node_domain_crossing": False,
-        "context_remuneration_mix": False,
-        "head_spouse_mix": False,
-    }
-    expected_third_arm = bool(
-        flags == aggregate_only_flags
-        and row["relation"] in ALLOWED_REPEAT_RELATIONS
-        and all(kind in AGGREGATE_OCCURRENCE_KINDS for kind in endpoint_kinds)
-        and all(domain == "aggregate" for domain in raw_domains)
-        and all(
-            classification in AGGREGATE_KIND_TO_CLASSIFICATIONS[kind]
-            for kind, classification in zip(
-                endpoint_kinds, classifications, strict=True
-            )
-        )
+    evidence_id = row["source_local_evidence_id"]
+    aggregate_eligible = evidence_id in AGGREGATE_RELATION_LAW_GAP_EVIDENCE_IDS
+    redirection_eligible = evidence_id in REDIRECTION_LAW_GAP_EVIDENCE_IDS
+    seal_defect = evidence_id in PREDECESSOR_SEAL_DEFECT_EVIDENCE_IDS
+    _require(
+        sum((aggregate_eligible, redirection_eligible, seal_defect)) == 1,
+        f"{label}: source-reviewed semantic ledger",
     )
     _require(
-        row["third_arm_eligible"] is expected_third_arm,
-        f"{label}: third-arm predicate",
+        row["semantic_adjudication_round"] == 3
+        and row["source_text_citation_status"]
+        == "exact_text_digest_page_and_utf8_span_cited",
+        f"{label}: round-three citation",
+    )
+    _require(
+        row["in_domain_nonalias_relation_arm_eligible"]
+        is (aggregate_eligible or redirection_eligible),
+        f"{label}: in-domain nonalias disposition",
     )
     _require(row["alias_admitted"] is False, f"{label}: alias admitted")
-    if expected_third_arm:
+    semantic_finding = _require_string(
+        row["row_specific_semantic_finding"], f"{label}: semantic finding"
+    )
+    if aggregate_eligible:
         _require(
-            row["disposition"]
+            row["in_domain_nonalias_relation_subkind"]
+            == AGGREGATE_RELATION_SUBKIND
+            and row["disposition"]
             == "predecessor_law_gap_repaired_by_noncatalog_aggregate_"
-            "relation_arm",
-            f"{label}: law-gap disposition",
+            "relation_arm"
+            and row["law_gap_admitted"] is True
+            and row["required_action"]
+            == "ratify_extended_in_domain_nonalias_law_before_tier_2"
+            and row["adjudicative_rationale"]
+            == "authenticated_aggregate_relation_is_honest_nonalias_law_gap"
+            and semantic_finding
+            == "cited_instruction_and_aggregate_only_endpoints_authenticate_"
+            "a_nonalias_aggregate_relation"
+            and row["status"]
+            == "blocked_pending_extended_repeat_law_ratification",
+            f"{label}: aggregate law-gap adjudication",
         )
+    elif redirection_eligible:
         _require(
-            row["law_gap_admitted"] is True,
-            f"{label}: law gap not admitted",
-        )
-        _require(
-            row["required_action"]
-            == "ratify_noncatalog_aggregate_relation_arm_before_tier_2",
-            f"{label}: law-gap required action",
-        )
-        _require(
-            row["adjudicative_rationale"]
-            == "authenticated_aggregate_relation_is_honest_nonalias_"
-            "law_gap",
-            f"{label}: law-gap rationale",
-        )
-        _require(
-            row["status"] == "blocked_pending_third_arm_ratification",
-            f"{label}: law-gap status",
+            row["in_domain_nonalias_relation_subkind"]
+            == REDIRECTION_RELATION_SUBKIND
+            and row["disposition"]
+            == "predecessor_law_gap_repaired_by_in_domain_redirection_"
+            "relation_arm"
+            and row["law_gap_admitted"] is True
+            and row["required_action"]
+            == "ratify_extended_in_domain_nonalias_law_before_tier_2"
+            and row["adjudicative_rationale"]
+            == "authenticated_named_destination_and_not_here_instruction_"
+            "is_honest_nonalias_redirection_law_gap"
+            and semantic_finding
+            == "cited_text_names_G78_as_the_destination_and_excludes_the_"
+            "current_G83_location"
+            and row["status"]
+            == "blocked_pending_extended_repeat_law_ratification",
+            f"{label}: redirection law-gap adjudication",
         )
     else:
+        allowed_defect_findings = {
+            "cited_repeat_text_does_not_authenticate_the_heterogeneous_page_"
+            "wide_endpoint_projection",
+            "cited_instruction_is_an_incomplete_clause_and_cannot_"
+            "authenticate_a_complete_redirection",
+            "cited_income_list_is_shared_with_an_independent_alias_proof_and_"
+            "does_not_authenticate_this_pairing",
+            "cited_same_occupation_text_asserts_semantics_but_the_job_context_"
+            "endpoint_crossing_requires_reseal",
+            "cited_see_instructions_text_is_mispaired_to_a_context_"
+            "remuneration_endpoint_claim",
+            "cited_instruction_does_not_authenticate_the_mixed_or_misbound_"
+            "endpoint_projection",
+        }
         _require(
-            row["disposition"] == "predecessor_seal_defect",
-            f"{label}: seal-defect disposition",
-        )
-        _require(
-            row["law_gap_admitted"] is False,
-            f"{label}: seal defect admits law gap",
-        )
-        _require(
-            row["required_action"]
-            == "readjudicate_source_row_and_reseal_before_tier_2",
-            f"{label}: seal-defect required action",
-        )
-        _require(
-            row["adjudicative_rationale"]
+            row["in_domain_nonalias_relation_subkind"] is None
+            and row["disposition"] == "predecessor_seal_defect"
+            and row["law_gap_admitted"] is False
+            and row["required_action"]
+            == "readjudicate_source_row_and_reseal_before_tier_2"
+            and row["adjudicative_rationale"]
             == "incompatible_endpoint_claim_cannot_be_admitted_as_alias_"
-            "law_reseal_required",
-            f"{label}: seal-defect rationale",
-        )
-        _require(
-            row["status"] == "blocked_predecessor_row",
-            f"{label}: seal-defect status",
+            "law_reseal_required"
+            and semantic_finding in allowed_defect_findings
+            and row["status"] == "blocked_predecessor_row",
+            f"{label}: seal-defect adjudication",
         )
     _require(
         row["predecessor_adjudication_id"]
@@ -5060,15 +7568,21 @@ def _validate_pilot_census(
         f"{label}: repeat multiple-arm equation",
     )
     _require(
+        census["in_domain_nonalias_relation_instruction_count"]
+        == census["noncatalog_aggregate_relation_instruction_count"]
+        + census["in_domain_redirection_instruction_count"],
+        f"{label}: in-domain relation subkind equation",
+    )
+    _require(
         census["repeat_occurrence_count"]
         == census["valid_direct_proof_instruction_count"]
         + census["outside_domain_instruction_count"]
-        + census["noncatalog_aggregate_relation_instruction_count"]
-        + census["lawful_repeat_coverage_none_arm_instruction_count"],
-        f"{label}: three-arm repeat disposition equation",
+        + census["in_domain_nonalias_relation_instruction_count"]
+        + census["disclosed_stop_instruction_count"],
+        f"{label}: four-disposition repeat exact-cover equation",
     )
     _require(
-        census["lawful_repeat_coverage_none_arm_instruction_count"]
+        census["disclosed_stop_instruction_count"]
         == census["otherwise_unresolved_instruction_count"]
         + census["incompatible_proof_instruction_count"]
         - census["valid_and_incompatible_instruction_overlap_count"],
@@ -5184,13 +7698,15 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         "aggregate_anchor_count": 545,
         "repeat_occurrence_count": 376,
         "local_evidence_row_count": 418,
-        "valid_direct_proof_instruction_count": 106,
+        "valid_direct_proof_instruction_count": 105,
         "outside_domain_instruction_count": 34,
         "noncatalog_aggregate_relation_instruction_count": 1,
-        "incompatible_proof_instruction_count": 8,
+        "in_domain_redirection_instruction_count": 2,
+        "in_domain_nonalias_relation_instruction_count": 3,
+        "incompatible_proof_instruction_count": 7,
         "valid_and_incompatible_instruction_overlap_count": 1,
         "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
-        "lawful_repeat_coverage_none_arm_instruction_count": 235,
+        "disclosed_stop_instruction_count": 234,
         "otherwise_unresolved_instruction_count": 228,
         "raw_cross_category_multi_parent_count": 86,
         "eligible_cross_category_multi_parent_count": 86,
@@ -5319,17 +7835,305 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         == PINNED_SWEEP_DOMAIN_SHA256["noncatalog_aggregate_relation_shape"],
         "aggregate relation sweep pinned source projection drift",
     )
+    sweep_redirection_rows = _validate_row_digests(
+        sweep,
+        "in_domain_redirection_shape_rows",
+        "in_domain_redirection_shape_count",
+        "in_domain_redirection_shape_domain_sha256",
+    )
+    _require(len(sweep_redirection_rows) == 5, "redirection sweep drift")
+    for row in sweep_redirection_rows:
+        _validate_in_domain_redirection_row(row, "redirection sweep row")
+    _require(
+        sweep["in_domain_redirection_shape_keyset_sha256"]
+        == _keyset_sha(
+            [
+                row["in_domain_redirection_relation_disposition_id"]
+                for row in sweep_redirection_rows
+            ]
+        )
+        == PINNED_SWEEP_DOMAIN_SHA256["in_domain_redirection_shape_keyset"]
+        and sweep["in_domain_redirection_shape_domain_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256["in_domain_redirection_shape"],
+        "redirection sweep pinned source projection drift",
+    )
+    expected_cross_reference_structural_census = {
+        "explicit_cross_reference_evidence_count": 1_915,
+        "explicit_cross_reference_instruction_count": 1_874,
+        "complete_cross_reference_evidence_count": 309,
+        "complete_cross_reference_instruction_count": 268,
+        "in_domain_nonaggregate_cross_reference_evidence_count": 292,
+        "in_domain_nonaggregate_cross_reference_instruction_count": 252,
+        "wholly_in_domain_nonaggregate_cross_reference_evidence_count": 287,
+        "wholly_in_domain_nonaggregate_cross_reference_instruction_count": 251,
+        "component_cross_reference_evidence_count": 217,
+        "component_cross_reference_instruction_count": 178,
+        "binary_component_cross_reference_evidence_count": 205,
+        "binary_component_cross_reference_instruction_count": 166,
+    }
+    _require(
+        {key: sweep[key] for key in expected_cross_reference_structural_census}
+        == expected_cross_reference_structural_census,
+        "cross-reference structural narrowing census drift",
+    )
+    component_cross_reference_rows = _validate_row_digests(
+        sweep,
+        "in_domain_component_cross_reference_sweep_rows",
+        "in_domain_component_cross_reference_sweep_count",
+        "in_domain_component_cross_reference_sweep_domain_sha256",
+    )
+    _require(
+        len(component_cross_reference_rows) == 162
+        and sum(
+            row["source_evidence_count"]
+            for row in component_cross_reference_rows
+        )
+        == 195
+        and Counter(
+            row["source_evidence_count"]
+            for row in component_cross_reference_rows
+        )
+        == {1: 138, 2: 15, 3: 9},
+        "component cross-reference sweep census drift",
+    )
+    for row in component_cross_reference_rows:
+        _validate_in_domain_component_cross_reference_sweep_row(
+            row, "component cross-reference sweep row"
+        )
+    component_cross_reference_ids = [
+        row["in_domain_component_cross_reference_sweep_id"]
+        for row in component_cross_reference_rows
+    ]
+    component_cross_reference_instruction_ids = [
+        row["source_instruction_occurrence_id"]
+        for row in component_cross_reference_rows
+    ]
+    component_cross_reference_evidence_ids = [
+        evidence_id
+        for row in component_cross_reference_rows
+        for evidence_id in row["source_local_evidence_ids"]
+    ]
+    _require(
+        len(component_cross_reference_ids)
+        == len(set(component_cross_reference_ids))
+        and len(component_cross_reference_instruction_ids)
+        == len(set(component_cross_reference_instruction_ids))
+        and len(component_cross_reference_evidence_ids)
+        == len(set(component_cross_reference_evidence_ids)),
+        "component cross-reference sweep duplicate group or evidence edge",
+    )
+    _require(
+        sweep["in_domain_component_cross_reference_sweep_keyset_sha256"]
+        == _keyset_sha(component_cross_reference_ids)
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "in_domain_component_cross_reference_sweep_keyset"
+        ]
+        and sweep["in_domain_component_cross_reference_sweep_domain_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "in_domain_component_cross_reference_sweep"
+        ],
+        "component cross-reference sweep pinned source projection drift",
+    )
+    component_cross_reference_counts = _component_cross_reference_sweep_counts(
+        component_cross_reference_rows
+    )
+    for suffix in (
+        "instruction_count",
+        "edge_count",
+        "alias_instruction_count",
+        "alias_edge_count",
+        "redirection_instruction_count",
+        "redirection_edge_count",
+        "stop_instruction_count",
+        "stop_edge_count",
+    ):
+        artifact_key = (
+            "in_domain_component_cross_reference_sweep_count"
+            if suffix == "instruction_count"
+            else f"in_domain_component_cross_reference_sweep_{suffix}"
+        )
+        _require(
+            sweep[artifact_key] == component_cross_reference_counts[suffix],
+            f"component cross-reference sweep {suffix} drift",
+        )
+    _require(
+        component_cross_reference_counts
+        == {
+            "instruction_count": 162,
+            "edge_count": 195,
+            "alias_instruction_count": 152,
+            "redirection_instruction_count": 5,
+            "stop_instruction_count": 5,
+            "alias_edge_count": 184,
+            "redirection_edge_count": 6,
+            "stop_edge_count": 5,
+        },
+        "component cross-reference partition drift",
+    )
+    pilot_component_cross_reference_rows = [
+        row
+        for row in component_cross_reference_rows
+        if row["pilot_document_member"]
+    ]
+    pilot_component_cross_reference_counts = (
+        _component_cross_reference_sweep_counts(
+            pilot_component_cross_reference_rows
+        )
+    )
+    for suffix in (
+        "instruction_count",
+        "edge_count",
+        "alias_instruction_count",
+        "alias_edge_count",
+        "redirection_instruction_count",
+        "redirection_edge_count",
+        "stop_instruction_count",
+        "stop_edge_count",
+    ):
+        artifact_key = (
+            "pilot_in_domain_component_cross_reference_sweep_count"
+            if suffix == "instruction_count"
+            else "pilot_in_domain_component_cross_reference_sweep_" + suffix
+        )
+        _require(
+            sweep[artifact_key]
+            == pilot_component_cross_reference_counts[suffix],
+            f"pilot component cross-reference sweep {suffix} drift",
+        )
+    _require(
+        pilot_component_cross_reference_counts
+        == {
+            "instruction_count": 91,
+            "edge_count": 123,
+            "alias_instruction_count": 85,
+            "redirection_instruction_count": 2,
+            "stop_instruction_count": 4,
+            "alias_edge_count": 116,
+            "redirection_edge_count": 3,
+            "stop_edge_count": 4,
+        },
+        "pilot component cross-reference partition drift",
+    )
+    _require(
+        [
+            row["in_domain_redirection_relation_disposition_id"]
+            for row in component_cross_reference_rows
+            if row["repeat_coverage_disposition"]
+            == "admitted_exclusive_destination_redirection"
+        ]
+        == [
+            row["in_domain_redirection_relation_disposition_id"]
+            for row in sweep_redirection_rows
+        ],
+        "component cross-reference sweep does not exact-walk R members",
+    )
+    redirection_lineage_rows = _validate_row_digests(
+        sweep,
+        "exclusive_destination_redirection_lineage_rows",
+        "exclusive_destination_redirection_lineage_count",
+        "exclusive_destination_redirection_lineage_domain_sha256",
+    )
+    _require(
+        len(redirection_lineage_rows) == 45
+        and sum(
+            len(row["source_local_evidence_ids"])
+            for row in redirection_lineage_rows
+        )
+        == 46
+        and Counter(
+            row["source_text_shape_kind"] for row in redirection_lineage_rows
+        )
+        == {
+            "business_owner_pay_exclusive_placement": 16,
+            "primary_farm_income_exclusive_placement": 26,
+            "labor_income_g78_exclusive_placement": 3,
+        },
+        "lexical redirection lineage regression census drift",
+    )
+    for row in redirection_lineage_rows:
+        _validate_redirection_lineage_row(
+            row, "lexical redirection lineage regression row"
+        )
+    _require(
+        sweep["exclusive_destination_redirection_lineage_keyset_sha256"]
+        == _keyset_sha(
+            [
+                row["exclusive_destination_redirection_lineage_id"]
+                for row in redirection_lineage_rows
+            ]
+        )
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "exclusive_destination_redirection_lineage_keyset"
+        ]
+        and sweep["exclusive_destination_redirection_lineage_domain_sha256"]
+        == PINNED_SWEEP_DOMAIN_SHA256[
+            "exclusive_destination_redirection_lineage"
+        ],
+        "lexical redirection lineage pinned source projection drift",
+    )
+    _require(
+        sweep["repeat_instruction_text_scan_count"] == 2_460
+        and sweep["literal_cross_reference_instruction_count"] == 8
+        and sweep["exclusive_destination_redirection_lineage_admitted_count"]
+        == 5
+        and sweep["exclusive_destination_redirection_lineage_aggregate_count"]
+        == 2
+        and sweep["exclusive_destination_redirection_lineage_stop_count"] == 38
+        and sweep["exclusive_destination_redirection_lineage_mixed_stop_count"]
+        == 3
+        and sweep[
+            "exclusive_destination_redirection_lineage_incomplete_stop_count"
+        ]
+        == 35,
+        "redirection source-text sweep counts drift",
+    )
+    admitted_lineage_rows = [
+        row
+        for row in redirection_lineage_rows
+        if row["in_domain_redirection_arm_eligible"]
+    ]
+    _require(
+        [
+            row["in_domain_redirection_relation_disposition_id"]
+            for row in admitted_lineage_rows
+        ]
+        == [
+            row["in_domain_redirection_relation_disposition_id"]
+            for row in sweep_redirection_rows
+        ],
+        "redirection lineage does not exact-walk admitted members",
+    )
+    aggregate_lineage_ids = {
+        row["existing_aggregate_relation_disposition_id"]
+        for row in redirection_lineage_rows
+        if row["existing_aggregate_relation_disposition_id"] is not None
+    }
+    _require(
+        aggregate_lineage_ids
+        == {
+            row["noncatalog_aggregate_relation_disposition_id"]
+            for row in sweep_aggregate_rows
+            if row["source_instruction_occurrence_ids"][0]
+            in {
+                lineage_row["source_instruction_occurrence_id"]
+                for lineage_row in redirection_lineage_rows
+            }
+        },
+        "redirection lineage does not exact-walk aggregate members",
+    )
     _require(
         sweep["repeat_coverage_census"]
         == {
             "repeat_occurrence_count": 2_460,
-            "valid_direct_proof_instruction_count": 257,
+            "valid_direct_proof_instruction_count": 253,
             "outside_domain_instruction_count": 34,
             "noncatalog_aggregate_relation_instruction_count": 13,
-            "incompatible_proof_instruction_count": 25,
+            "in_domain_redirection_instruction_count": 5,
+            "in_domain_nonalias_relation_instruction_count": 18,
+            "incompatible_proof_instruction_count": 24,
             "valid_and_incompatible_instruction_overlap_count": 1,
             "lawful_repeat_coverage_multiple_arm_instruction_count": 0,
-            "lawful_repeat_coverage_none_arm_instruction_count": 2_156,
+            "disclosed_stop_instruction_count": 2_155,
             "otherwise_unresolved_instruction_count": 2_132,
         },
         "corpus repeat coverage census drift",
@@ -5341,10 +8145,17 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     outside_instruction_ids = {
         row["source_instruction_occurrence_id"] for row in sweep_repeat_rows
     }
+    redirection_instruction_ids = {
+        row["source_instruction_occurrence_ids"][0]
+        for row in sweep_redirection_rows
+    }
     _require(
         len(aggregate_instruction_ids) == len(sweep_aggregate_rows)
-        and not aggregate_instruction_ids & outside_instruction_ids,
-        "aggregate and outside repeat arm overlap",
+        and len(redirection_instruction_ids) == len(sweep_redirection_rows)
+        and not aggregate_instruction_ids & outside_instruction_ids
+        and not redirection_instruction_ids & outside_instruction_ids
+        and not aggregate_instruction_ids & redirection_instruction_ids,
+        "in-domain and outside repeat arms overlap",
     )
 
     parent_source_witness_rows = _validate_row_digests(
@@ -5737,35 +8548,43 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     _require(
         predecessor["populated_local_proof_seal_defect_count"]
         == len(proof_seal_defects)
-        == 29,
+        == 28,
         "proof seal-defect count drift",
     )
     _require(
         predecessor["populated_local_proof_law_gap_count"]
         == len(proof_law_gaps)
-        == 13,
+        == 14,
         "proof law-gap count drift",
     )
     _require(
-        predecessor["seal_defect_disposition_count"] == 37,
+        predecessor["seal_defect_disposition_count"] == 36,
         "predecessor seal defect count drift",
     )
     _require(
         predecessor["law_gap_disposition_count"]
-        == predecessor["third_arm_law_gap_repair_count"]
-        == 13,
+        == predecessor["in_domain_nonalias_law_gap_repair_count"]
+        == 14,
         "predecessor law-gap count drift",
     )
     _require(
+        predecessor["in_domain_nonalias_law_gap_subkind_counts"]
+        == {
+            AGGREGATE_RELATION_SUBKIND: 13,
+            REDIRECTION_RELATION_SUBKIND: 1,
+        },
+        "predecessor law-gap subkind census drift",
+    )
+    _require(
         predecessor["tier_2_precondition"]
-        == "all_37_seal_defects_resealed_and_amendment_ratified_before_"
+        == "all_36_seal_defects_resealed_and_amendment_ratified_before_"
         "certification",
         "predecessor tier-2 precondition drift",
     )
     _require(
         predecessor["adjudication_rule"]
-        == "aggregate_only_complete_in_domain_relations_use_third_arm_"
-        "while_incompatible_claims_remain_seal_defects",
+        == "round_three_source_cited_semantic_ledger_exact_covers_each_"
+        "candidate_without_mechanical_flag_fallback",
         "predecessor adjudication rule drift",
     )
     _require(
@@ -5794,15 +8613,23 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
             "occurrence_derived_domain_crossing": 19,
             "corrected_catalog_domain_crossing": 19,
             "raw_node_domain_crossing": 18,
-            "context_remuneration_mix": 15,
+            "context_remuneration_mix": 14,
             "head_spouse_mix": 4,
         },
         "predecessor seal-defect flag census drift",
     )
     _require(
         {row["source_local_evidence_id"] for row in proof_law_gaps}
-        == {row["source_local_evidence_id"] for row in sweep_aggregate_rows},
-        "third-arm rows do not exact-cover predecessor law gaps",
+        == {row["source_local_evidence_id"] for row in sweep_aggregate_rows}
+        | (
+            {
+                evidence_id
+                for row in sweep_redirection_rows
+                for evidence_id in row["source_local_evidence_ids"]
+            }
+            & REDIRECTION_LAW_GAP_EVIDENCE_IDS
+        ),
+        "in-domain relation rows do not exact-cover predecessor law gaps",
     )
 
     role = bundle["role"]
@@ -5957,12 +8784,62 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
         pilot_aggregate_rows == expected_pilot_aggregate_rows,
         "pilot aggregate relations differ from exhaustive sweep",
     )
+    pilot_redirection_rows = _validate_row_digests(
+        repeat,
+        "in_domain_redirection_disposition_rows",
+        "in_domain_redirection_disposition_count",
+        "in_domain_redirection_disposition_domain_sha256",
+    )
+    _require(len(pilot_redirection_rows) == 2, "pilot redirection drift")
+    for row in pilot_redirection_rows:
+        _validate_in_domain_redirection_row(row, "redirection pilot row")
     _require(
-        not {
+        repeat["in_domain_redirection_disposition_keyset_sha256"]
+        == _keyset_sha(
+            [
+                row["in_domain_redirection_relation_disposition_id"]
+                for row in pilot_redirection_rows
+            ]
+        ),
+        "pilot redirection keyset drift",
+    )
+    _require(
+        repeat["redirection_relation_counts"]
+        == {"explicit_cross_reference": 2}
+        and repeat["redirection_document_counts"] == {"66": 2}
+        and repeat["redirection_handoff_status_counts"]
+        == {"local_resolved_cross_reference_for_global_assembly": 2},
+        "pilot redirection census drift",
+    )
+    expected_pilot_redirection_rows = [
+        row
+        for row in sweep_redirection_rows
+        if row["document_source_position"] in PILOT_POSITIONS
+    ]
+    _require(
+        pilot_redirection_rows == expected_pilot_redirection_rows,
+        "pilot redirections differ from exhaustive sweep",
+    )
+    _require(
+        not (
+            {
+                row["source_instruction_occurrence_ids"][0]
+                for row in pilot_aggregate_rows
+            }
+            | {
+                row["source_instruction_occurrence_ids"][0]
+                for row in pilot_redirection_rows
+            }
+        )
+        & {row["source_instruction_occurrence_id"] for row in repeat_rows}
+        and not {
             row["source_instruction_occurrence_ids"][0]
             for row in pilot_aggregate_rows
         }
-        & {row["source_instruction_occurrence_id"] for row in repeat_rows},
+        & {
+            row["source_instruction_occurrence_ids"][0]
+            for row in pilot_redirection_rows
+        },
         "pilot repeat claimed by multiple disposition arms",
     )
 
@@ -6129,7 +9006,16 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
                 row["source_instruction_occurrence_ids"][0]
                 for row in pilot_aggregate_rows
             }
-        ),
+        )
+        and census["in_domain_redirection_instruction_count"]
+        == len(
+            {
+                row["source_instruction_occurrence_ids"][0]
+                for row in pilot_redirection_rows
+            }
+        )
+        and census["in_domain_nonalias_relation_instruction_count"]
+        == len(pilot_aggregate_rows) + len(pilot_redirection_rows),
         "pilot census repeat disposition recomputation drift",
     )
 
@@ -6142,10 +9028,10 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
             "predecessor_reseal_required"
         ),
         "predecessor": (
-            "pass_adjudication_with_37_predecessor_reseals_required"
+            "pass_adjudication_with_36_predecessor_reseals_required"
         ),
         "role": "pass_role_assignment_law_pilot_nonauthority",
-        "repeat": "pass_three_arm_repeat_law_pilot_nonauthority",
+        "repeat": "pass_four_disposition_repeat_law_pilot_nonauthority",
         "component": "pass_component_parent_law_pilot_nonauthority",
         "gate": "pass_law_shapes_only_nonauthority",
     }
@@ -6170,7 +9056,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     _require(
         derived["corpus_sweep_artifact_id"] == sweep["artifact_id"]
         and derived["predecessor_artifact_id"] == predecessor["artifact_id"]
-        and derived["predecessor_seal_defect_count"] == 37
+        and derived["predecessor_seal_defect_count"] == 36
         and derived["predecessor_reseal_required"] is True,
         "derived sweep predecessor linkage drift",
     )
@@ -6212,7 +9098,7 @@ def validate_bundle(bundle: Mapping[str, Mapping[str, Any]]) -> None:
     )
     _require(gate["role_law_status"] == "pass", "gate role status")
     _require(
-        gate["three_arm_repeat_law_status"] == "pass_law_shape_only",
+        gate["four_disposition_repeat_law_status"] == "pass_law_shape_only",
         "gate repeat status",
     )
     _require(
@@ -6380,6 +9266,41 @@ def _repin_mutated_bundle(
                     row["endpoint_utf8_byte_ends"],
                 ],
             )
+    for artifact_key, row_key in (
+        ("sweeps", "in_domain_redirection_shape_rows"),
+        ("repeat", "in_domain_redirection_disposition_rows"),
+    ):
+        for row in bundle[artifact_key][row_key]:
+            row["in_domain_redirection_relation_disposition_id"] = (
+                _redirection_disposition_id(row)
+            )
+    for row in bundle["sweeps"][
+        "in_domain_component_cross_reference_sweep_rows"
+    ]:
+        row["in_domain_component_cross_reference_sweep_id"] = _row_id(
+            "a12-in-domain-component-cross-reference-sweep:",
+            [
+                row["source_document_id"],
+                row["source_instruction_occurrence_id"],
+                row["source_local_evidence_ids"],
+                row["source_evidence_occurrence_id_arrays"],
+                row["source_alias_anchor_occurrence_id_arrays"],
+                row["source_canonical_anchor_occurrence_id_arrays"],
+                row["repeat_coverage_disposition"],
+            ],
+        )
+    for row in bundle["sweeps"][
+        "exclusive_destination_redirection_lineage_rows"
+    ]:
+        row["exclusive_destination_redirection_lineage_id"] = _row_id(
+            "a12-exclusive-destination-redirection-lineage:",
+            [
+                row["source_document_id"],
+                row["source_instruction_occurrence_id"],
+                row["source_instruction_matched_text"],
+                row["source_local_evidence_ids"],
+            ],
+        )
 
     component_row_groups = (
         bundle["sweeps"]["component_parent_shape_rows"],
@@ -6575,6 +9496,115 @@ def _repin_mutated_bundle(
     sweep["noncatalog_aggregate_relation_shape_domain_sha256"] = _domain_sha(
         sweep_aggregate_rows
     )
+    sweep_redirection_rows = sweep["in_domain_redirection_shape_rows"]
+    sweep["in_domain_redirection_shape_count"] = len(sweep_redirection_rows)
+    sweep["in_domain_redirection_shape_keyset_sha256"] = _keyset_sha(
+        [
+            row["in_domain_redirection_relation_disposition_id"]
+            for row in sweep_redirection_rows
+        ]
+    )
+    sweep["in_domain_redirection_shape_domain_sha256"] = _domain_sha(
+        sweep_redirection_rows
+    )
+    component_cross_reference_rows = sweep[
+        "in_domain_component_cross_reference_sweep_rows"
+    ]
+    component_cross_reference_counts = _component_cross_reference_sweep_counts(
+        component_cross_reference_rows
+    )
+    sweep["in_domain_component_cross_reference_sweep_count"] = (
+        component_cross_reference_counts["instruction_count"]
+    )
+    sweep["in_domain_component_cross_reference_sweep_edge_count"] = (
+        component_cross_reference_counts["edge_count"]
+    )
+    sweep["in_domain_component_cross_reference_sweep_keyset_sha256"] = (
+        _keyset_sha(
+            [
+                row["in_domain_component_cross_reference_sweep_id"]
+                for row in component_cross_reference_rows
+            ]
+        )
+    )
+    sweep["in_domain_component_cross_reference_sweep_domain_sha256"] = (
+        _domain_sha(component_cross_reference_rows)
+    )
+    for suffix in (
+        "alias_instruction_count",
+        "alias_edge_count",
+        "redirection_instruction_count",
+        "redirection_edge_count",
+        "stop_instruction_count",
+        "stop_edge_count",
+    ):
+        sweep[f"in_domain_component_cross_reference_sweep_{suffix}"] = (
+            component_cross_reference_counts[suffix]
+        )
+    pilot_component_cross_reference_counts = (
+        _component_cross_reference_sweep_counts(
+            [
+                row
+                for row in component_cross_reference_rows
+                if row["pilot_document_member"]
+            ]
+        )
+    )
+    sweep["pilot_in_domain_component_cross_reference_sweep_count"] = (
+        pilot_component_cross_reference_counts["instruction_count"]
+    )
+    sweep["pilot_in_domain_component_cross_reference_sweep_edge_count"] = (
+        pilot_component_cross_reference_counts["edge_count"]
+    )
+    for suffix in (
+        "alias_instruction_count",
+        "alias_edge_count",
+        "redirection_instruction_count",
+        "redirection_edge_count",
+        "stop_instruction_count",
+        "stop_edge_count",
+    ):
+        sweep[f"pilot_in_domain_component_cross_reference_sweep_{suffix}"] = (
+            pilot_component_cross_reference_counts[suffix]
+        )
+    lineage_rows = sweep["exclusive_destination_redirection_lineage_rows"]
+    sweep["exclusive_destination_redirection_lineage_count"] = len(
+        lineage_rows
+    )
+    sweep["exclusive_destination_redirection_lineage_keyset_sha256"] = (
+        _keyset_sha(
+            [
+                row["exclusive_destination_redirection_lineage_id"]
+                for row in lineage_rows
+            ]
+        )
+    )
+    sweep["exclusive_destination_redirection_lineage_domain_sha256"] = (
+        _domain_sha(lineage_rows)
+    )
+    sweep["exclusive_destination_redirection_lineage_admitted_count"] = sum(
+        row["in_domain_redirection_arm_eligible"] for row in lineage_rows
+    )
+    sweep["exclusive_destination_redirection_lineage_aggregate_count"] = sum(
+        row["lineage_disposition"]
+        == "covered_by_existing_aggregate_nonalias_subkind"
+        for row in lineage_rows
+    )
+    sweep["exclusive_destination_redirection_lineage_stop_count"] = sum(
+        row["lineage_disposition"].startswith("disclosed_stop_")
+        for row in lineage_rows
+    )
+    sweep["exclusive_destination_redirection_lineage_mixed_stop_count"] = sum(
+        row["lineage_disposition"]
+        == "disclosed_stop_mixed_aggregate_component_proof"
+        for row in lineage_rows
+    )
+    sweep[
+        "exclusive_destination_redirection_lineage_incomplete_stop_count"
+    ] = sum(
+        row["lineage_disposition"] == "disclosed_stop_incomplete_local_proof"
+        for row in lineage_rows
+    )
     component_shapes = sweep["component_parent_shape_rows"]
     sweep["component_parent_shape_count"] = len(component_shapes)
     sweep["component_parent_shape_keyset_sha256"] = _keyset_sha(
@@ -6664,7 +9694,17 @@ def _repin_mutated_bundle(
     predecessor["law_gap_disposition_count"] = sum(
         row["law_gap_admitted"] for row in all_predecessor_rows
     )
-    predecessor["third_arm_law_gap_repair_count"] = len(proof_law_gaps)
+    predecessor["in_domain_nonalias_law_gap_repair_count"] = len(
+        proof_law_gaps
+    )
+    predecessor["in_domain_nonalias_law_gap_subkind_counts"] = dict(
+        sorted(
+            Counter(
+                row["in_domain_nonalias_relation_subkind"]
+                for row in proof_law_gaps
+            ).items()
+        )
+    )
 
     component_class_rows = derived["component_class_admission_sweep_rows"]
     derived["component_class_admission_sweep_count"] = len(
@@ -6795,6 +9835,33 @@ def _repin_mutated_bundle(
     repeat["aggregate_handoff_status_counts"] = dict(
         sorted(
             Counter(row["handoff_status"] for row in aggregate_rows).items()
+        )
+    )
+    redirection_rows = repeat["in_domain_redirection_disposition_rows"]
+    repeat["in_domain_redirection_disposition_count"] = len(redirection_rows)
+    repeat["in_domain_redirection_disposition_keyset_sha256"] = _keyset_sha(
+        [
+            row["in_domain_redirection_relation_disposition_id"]
+            for row in redirection_rows
+        ]
+    )
+    repeat["in_domain_redirection_disposition_domain_sha256"] = _domain_sha(
+        redirection_rows
+    )
+    repeat["redirection_relation_counts"] = dict(
+        sorted(Counter(row["relation"] for row in redirection_rows).items())
+    )
+    repeat["redirection_document_counts"] = {
+        str(key): count
+        for key, count in sorted(
+            Counter(
+                row["document_source_position"] for row in redirection_rows
+            ).items()
+        )
+    }
+    repeat["redirection_handoff_status_counts"] = dict(
+        sorted(
+            Counter(row["handoff_status"] for row in redirection_rows).items()
         )
     )
 
@@ -7007,6 +10074,26 @@ def run_mutation_tests(
                 forged.encode("utf-8")
             )
 
+    def mutate_redirection_rows(value: dict[str, Any], mutation: Any) -> None:
+        for artifact_key, row_key in (
+            ("sweeps", "in_domain_redirection_shape_rows"),
+            ("repeat", "in_domain_redirection_disposition_rows"),
+        ):
+            mutation(value[artifact_key][row_key][0])
+
+    def forge_redirection_source_text(value: dict[str, Any]) -> None:
+        def forge(row: dict[str, Any]) -> None:
+            raw_length = len(
+                row["source_instruction_matched_texts"][0].encode("utf-8")
+            )
+            forged = "X" * raw_length
+            row["source_instruction_matched_texts"][0] = forged
+            row["source_instruction_matched_utf8_sha256s"][0] = _sha256(
+                forged.encode("utf-8")
+            )
+
+        mutate_redirection_rows(value, forge)
+
     def forge_catalog_only_job_source_member(value: dict[str, Any]) -> None:
         referenced_job_occurrence_ids = {
             candidate["parent_occurrence_id"]
@@ -7208,6 +10295,96 @@ def run_mutation_tests(
         "aggregate relation sweep pinned source projection drift",
     )
     add(
+        "redirection_relation_row_omitted",
+        lambda value: value["repeat"][
+            "in_domain_redirection_disposition_rows"
+        ].pop(),
+        "pilot redirection drift",
+    )
+    add(
+        "redirection_relation_subkind_changed",
+        lambda value: mutate_redirection_rows(
+            value,
+            lambda row: row.__setitem__("relation_subkind", "invented"),
+        ),
+        "relation identity",
+    )
+    add(
+        "redirection_relation_alias_admitted",
+        lambda value: mutate_redirection_rows(
+            value, lambda row: row.__setitem__("alias_admitted", True)
+        ),
+        "alias admitted",
+    )
+    add(
+        "redirection_relation_equivalence_claimed",
+        lambda value: mutate_redirection_rows(
+            value,
+            lambda row: row.__setitem__(
+                "occurrence_equivalence_claimed", True
+            ),
+        ),
+        "occurrence equivalence",
+    )
+    add(
+        "redirection_relation_universal_arm_false",
+        lambda value: mutate_redirection_rows(
+            value,
+            lambda row: row.__setitem__(
+                "universal_repeat_coverage_arm_satisfied", False
+            ),
+        ),
+        "universal arm",
+    )
+
+    def change_redirection_destination(value: dict[str, Any]) -> None:
+        for artifact_key, row_key in (
+            ("sweeps", "in_domain_redirection_shape_rows"),
+            ("repeat", "in_domain_redirection_disposition_rows"),
+        ):
+            row = next(
+                candidate
+                for candidate in value[artifact_key][row_key]
+                if candidate["source_local_evidence_ids"]
+                == list(REDIRECTION_LAW_GAP_EVIDENCE_IDS)
+            )
+            row["endpoint_printed_identifiers"][1] = "G79."
+            changed = "should be included at G79, not here."
+            row["source_instruction_matched_texts"][0] = changed
+            row["source_instruction_matched_utf8_sha256s"][0] = _sha256(
+                changed.encode("utf-8")
+            )
+
+    add(
+        "redirection_relation_destination_changed",
+        change_redirection_destination,
+        "redirection sweep pinned source projection drift",
+    )
+    add(
+        "redirection_relation_source_text_forged",
+        forge_redirection_source_text,
+        "redirection sweep pinned source projection drift",
+    )
+    add(
+        "redirection_lineage_row_omitted",
+        lambda value: value["sweeps"][
+            "in_domain_component_cross_reference_sweep_rows"
+        ].pop(),
+        "component cross-reference sweep census drift",
+    )
+    add(
+        "redirection_law_gap_demoted_to_seal_defect",
+        lambda value: next(
+            row
+            for row in value["predecessor"][
+                "populated_local_proof_adjudication_rows"
+            ]
+            if row["in_domain_nonalias_relation_subkind"]
+            == REDIRECTION_RELATION_SUBKIND
+        ).__setitem__("disposition", "predecessor_seal_defect"),
+        "redirection law-gap adjudication",
+    )
+    add(
         "zero_parent_emits_rq",
         lambda value: value["component"]["zero_parent_disposition_rows"][
             0
@@ -7347,14 +10524,14 @@ def run_mutation_tests(
         lambda value: value["predecessor"][
             "populated_local_proof_adjudication_rows"
         ][0].__setitem__("disposition", "law_gap"),
-        "seal-defect disposition",
+        "seal-defect adjudication",
     )
     add(
         "proof_defect_action_removed",
         lambda value: value["predecessor"][
             "populated_local_proof_adjudication_rows"
         ][0].__setitem__("required_action", "do_nothing"),
-        "seal-defect required action",
+        "seal-defect adjudication",
     )
     add(
         "proof_defect_row_omitted",
@@ -7370,9 +10547,10 @@ def run_mutation_tests(
             for row in value["predecessor"][
                 "populated_local_proof_adjudication_rows"
             ]
-            if row["third_arm_eligible"]
+            if row["in_domain_nonalias_relation_subkind"]
+            == AGGREGATE_RELATION_SUBKIND
         ).__setitem__("disposition", "predecessor_seal_defect"),
-        "law-gap disposition",
+        "aggregate law-gap adjudication",
     )
     add(
         "aggregate_law_gap_source_projection_forged",
@@ -7381,14 +10559,15 @@ def run_mutation_tests(
             for row in value["predecessor"][
                 "populated_local_proof_adjudication_rows"
             ]
-            if row["third_arm_eligible"]
+            if row["in_domain_nonalias_relation_subkind"]
+            == AGGREGATE_RELATION_SUBKIND
         ).update(
             {
                 "source_instruction_occurrence_ids": [],
                 "evidence_occurrence_ids": [],
             }
         ),
-        "proof adjudication pinned source projection drift",
+        "proof adjudication row: instructions",
     )
     add(
         "gate_claims_certification",
