@@ -191,6 +191,119 @@ COMPLETE_LOCAL_EVIDENCE_STATUSES = (
     "local_resolved_cross_reference_for_global_assembly",
 )
 
+CONTINUATION_COMPOSITION_RULE = (
+    "adjacent_same_page_occurrences_separated_by_whitespace_only_gaps_"
+    "compose_into_one_instruction_reading"
+)
+CONTINUATION_ALIAS_CITATIONS_BY_INSTRUCTION = {
+    (
+        "psid-questionnaire-occurrence:"
+        "cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852"
+    ): {
+        "leading_occurrence_id": (
+            "psid-questionnaire-occurrence:"
+            "2b9c3ab97eb7ae78af829098bd4ef7f2efff9f0b1a2e2248fc079f7a5229d0a8"
+        ),
+        "page_number": 17,
+        "page_text_utf8_sha256": (
+            "14d9843ed8e0ae9f53d30436aaa58a13bef79c40e11f490bfee9da048d050142"
+        ),
+        "combined_utf8_byte_start": 2247,
+        "leading_utf8_byte_end": 2338,
+        "gap_utf8_byte_start": 2338,
+        "gap_utf8_byte_end": 2361,
+        "continuation_utf8_byte_start": 2361,
+        "combined_utf8_byte_end": 2438,
+        "combined_text": (
+            "B46-B47.              Again we' re looking for the most recent "
+            "position change in 1995. See\n                      cautions "
+            "and instructions at B25-B29 regarding detailing the position "
+            "change."
+        ),
+        "combined_utf8_sha256": (
+            "3bf7f7262536e7e063456bf7b55c713035c0fddfc2fac816eb57972eb7337762"
+        ),
+    },
+    (
+        "psid-questionnaire-occurrence:"
+        "2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace"
+    ): {
+        "leading_occurrence_id": (
+            "psid-questionnaire-occurrence:"
+            "0a487265c65376bfdd593fdf6bce57390eead67f5253990b723a0b6a2adfa5c2"
+        ),
+        "page_number": 40,
+        "page_text_utf8_sha256": (
+            "d4f0cd6d9dfe4874e4de66121f01aab3ee3fa6e5cce85705db6013dc68033df4"
+        ),
+        "combined_utf8_byte_start": 1434,
+        "leading_utf8_byte_end": 1531,
+        "gap_utf8_byte_start": 1531,
+        "gap_utf8_byte_end": 1543,
+        "continuation_utf8_byte_start": 1543,
+        "combined_utf8_byte_end": 1552,
+        "combined_text": (
+            "G79 .      This figure should be the number of weeks in which "
+            "any work was done. See instructions\n           for B78 ."
+        ),
+        "combined_utf8_sha256": (
+            "cf2b2cea5293d143477b4853fa183725b0bf1592f16e127a0958ffa4b0594e32"
+        ),
+    },
+    (
+        "psid-questionnaire-occurrence:"
+        "7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233"
+    ): {
+        "leading_occurrence_id": (
+            "psid-questionnaire-occurrence:"
+            "5d366486b57b6b901a8f0532bbc99104f7d3c1f97275f1e49ef8b6e4c6283531"
+        ),
+        "page_number": 43,
+        "page_text_utf8_sha256": (
+            "7099faca6691a74775cc3caaca33c6942045b5c0eb5ae744b935466331c41d6d"
+        ),
+        "combined_utf8_byte_start": 637,
+        "leading_utf8_byte_end": 724,
+        "gap_utf8_byte_start": 724,
+        "gap_utf8_byte_end": 735,
+        "continuation_utf8_byte_start": 735,
+        "combined_utf8_byte_end": 756,
+        "combined_text": (
+            "G79.          This figure should be the number of weeks in "
+            "which any work was done. See\n          instructions for B78."
+        ),
+        "combined_utf8_sha256": (
+            "fa53889247aef17ea216aa3200135ad519c0dedad239980fb31c349cf8b91b30"
+        ),
+    },
+}
+
+COMPOSITE_IMPORT_INSTRUCTION_IDS = frozenset(
+    """
+psid-questionnaire-occurrence:cb562486f76e7f4dcb2a4ef574a0ae413de9a2ede4d4450ad2e8cf96058e8b2d
+psid-questionnaire-occurrence:d986ab2a3dfc95f31fda53fac4a23b7520ee9fd449d2ef501569afe651b3a369
+psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0
+psid-questionnaire-occurrence:ceedb0f652116dcaaba199e11f90365e8bdaf0557d783e0adc5b3ddc3e3aa33b
+psid-questionnaire-occurrence:357281a0ee7987a14867f92a263f3aa1097d8bb5202d45820e4e8af363a7157b
+psid-questionnaire-occurrence:a769c4a969cdaca2142d0aab2e2cee8aa2f9f83d4fe1abf4235e4bd9acb5c9f5
+psid-questionnaire-occurrence:455271aa575d2126ae53289ab69e2eeb4fb652c63cad693f8ce70208a351731f
+psid-questionnaire-occurrence:35833279648220c82c4340b8a40d6823b3d3fc231eca8180cdd635479521a052
+psid-questionnaire-occurrence:bbdbc781bb95e0d12442053e1bf4a84094b4b88c42c8e2edb728d659891ee5dc
+psid-questionnaire-occurrence:e84a537936c186e2873ea2d79ff28ef6d9cec295b75db355ed318720ca661bac
+psid-questionnaire-occurrence:586b32d3786d0c7e475e39b30cf3f5a081a5943bba6093c4bea5886af47812ff
+psid-questionnaire-occurrence:879048f9a5169e56b506da7c84c7780e4da524927635ec6ae52dcbc43a467e5c
+psid-questionnaire-occurrence:c020df281459e26b8415bdb22c92f9ce30a0302cc21732ddaad3039ddf77b610
+psid-questionnaire-occurrence:c3275a8794901e02bc0e54360ec899e43e61838b586fcf4fd171dbadd368a3ef
+psid-questionnaire-occurrence:7a8a6bb241c7caa6856a50674c1ca8b82b69cf366e1b982c2895bbd6578f3ac0
+psid-questionnaire-occurrence:ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d
+psid-questionnaire-occurrence:e743178fd99199a9b422f04dc9a8c20a700a2d1f698c58fc87b60067a91e2f72
+psid-questionnaire-occurrence:1e5f65bf74b51459b2db19f2c8b433a9df29a660fcb5bed021e98a71e4c8ff2f
+psid-questionnaire-occurrence:4c354d978faf69b2a8e4f567e344b272c097bdc28cc6986adafcb2f8d38af3ab
+psid-questionnaire-occurrence:c7bc4ab94c2320b283203e6d6d677c21f84b9d61e10880b5f9b4d9c0261386d0
+psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcce683ff5dee1a9e
+""".split()
+)
+
 AGGREGATE_RELATION_SUBKIND = "aggregate_or_repeated_instance"
 REDIRECTION_RELATION_SUBKIND = "exclusive_destination_redirection"
 IN_DOMAIN_NONALIAS_SUBKINDS = (
@@ -376,6 +489,9 @@ psid-questionnaire-occurrence:0b3e6cb334c151e47ecc91f4f00703f02d5396a7a6d0a4cf55
 psid-questionnaire-occurrence:677f49917f36f8925b3129f47f93aa914ba9ae2fb6612a42839caac415d7a56e
 psid-questionnaire-occurrence:61f38513d63c0700bddf9bee561b472c15d7d64efd12ca7ab544d281120f3790
 psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcce683ff5dee1a9e
+psid-questionnaire-occurrence:cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852
+psid-questionnaire-occurrence:2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace
+psid-questionnaire-occurrence:7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233
 """.split()
 )
 
@@ -384,14 +500,11 @@ SEMANTIC_ALIAS_STOP_INSTRUCTION_IDS_BY_FINDING = {
         """
 psid-questionnaire-occurrence:a37cf7dce81d69ba18e303afdd31a0825103c53d01398e644a312d55155150ba
 psid-questionnaire-occurrence:8b9c6613b23e83dd55af058542e6aec3be341440397c632d91c1b74f073291dd
-psid-questionnaire-occurrence:cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852
 psid-questionnaire-occurrence:b151de324a45124f27e1b426eb06b8a94ccb653cea7cb7af8dd402341d6b61c5
 psid-questionnaire-occurrence:e64ef592cbb11ef00efa78f26682094c8920a21960309c673bbff8008c99a5c8
-psid-questionnaire-occurrence:2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace
 psid-questionnaire-occurrence:9242a1af728bffad6ed96e7636bcaade0e31fe0a21561d97fe500c89cc9e5b12
 psid-questionnaire-occurrence:9969e959ae2d58b54b5fbdfc4f4e6e0f8141f628d67415370e1ccd129017a4fb
 psid-questionnaire-occurrence:4b6c12f1e8e57edd45a3d43a772c69d923ec4c72d8292cdff1ca1f9c0a069e3b
-psid-questionnaire-occurrence:7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233
 psid-questionnaire-occurrence:5eb05b791f0abad829debc9863433e0a8e7bd254aa18ac51b6c750caa48bb46a
 psid-questionnaire-occurrence:d662043b204306d6c052f412fe674574e80fd1a40aca75b1842a212bb1fe8f68
 psid-questionnaire-occurrence:5e89bb2a5186c4afee4a6a2289a4686ddcee89aeeae089b42c24e3ce9ff72708
@@ -487,14 +600,11 @@ ROUND_FOUR_NEW_FRAGMENT_RESEAL_INSTRUCTION_IDS = frozenset(
     """
 psid-questionnaire-occurrence:a37cf7dce81d69ba18e303afdd31a0825103c53d01398e644a312d55155150ba
 psid-questionnaire-occurrence:8b9c6613b23e83dd55af058542e6aec3be341440397c632d91c1b74f073291dd
-psid-questionnaire-occurrence:cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852
 psid-questionnaire-occurrence:b151de324a45124f27e1b426eb06b8a94ccb653cea7cb7af8dd402341d6b61c5
 psid-questionnaire-occurrence:e64ef592cbb11ef00efa78f26682094c8920a21960309c673bbff8008c99a5c8
-psid-questionnaire-occurrence:2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace
 psid-questionnaire-occurrence:9242a1af728bffad6ed96e7636bcaade0e31fe0a21561d97fe500c89cc9e5b12
 psid-questionnaire-occurrence:9969e959ae2d58b54b5fbdfc4f4e6e0f8141f628d67415370e1ccd129017a4fb
 psid-questionnaire-occurrence:4b6c12f1e8e57edd45a3d43a772c69d923ec4c72d8292cdff1ca1f9c0a069e3b
-psid-questionnaire-occurrence:7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233
 psid-questionnaire-occurrence:5eb05b791f0abad829debc9863433e0a8e7bd254aa18ac51b6c750caa48bb46a
 psid-questionnaire-occurrence:d662043b204306d6c052f412fe674574e80fd1a40aca75b1842a212bb1fe8f68
 psid-questionnaire-occurrence:5e89bb2a5186c4afee4a6a2289a4686ddcee89aeeae089b42c24e3ce9ff72708
@@ -533,6 +643,9 @@ psid-questionnaire-occurrence:677f49917f36f8925b3129f47f93aa914ba9ae2fb6612a4283
 psid-questionnaire-occurrence:61f38513d63c0700bddf9bee561b472c15d7d64efd12ca7ab544d281120f3790
 psid-questionnaire-occurrence:86c314ec0cbf47b1935cc4efbbdd5a54f168602175ceb959bd18d887350cad30
 psid-questionnaire-occurrence:a391cdd9c11b2efa526ca3df01e0acdae2668adcdf00ad547c2e25a7feefbc44
+psid-questionnaire-occurrence:cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852
+psid-questionnaire-occurrence:2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace
+psid-questionnaire-occurrence:7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233
 """.split()
 )
 SOURCE_INSTRUCTION_FRAGMENT_IDS = (
@@ -1061,6 +1174,7 @@ class NormalizedDocument:
     source_document_id: str
     schema_version: str
     page_count: int
+    page_text_utf8_sha256_by_number: Mapping[int, str]
     occurrence_count: int
     flow_count: int
     field_purpose_count: int
@@ -1431,6 +1545,10 @@ def _normalize_document(
         source_document_id=source_document_id,
         schema_version=data["schema_version"],
         page_count=len(data["questionnaire_page_rows"]),
+        page_text_utf8_sha256_by_number={
+            row["page_number"]: row["page_text_utf8_sha256"]
+            for row in data["questionnaire_page_rows"]
+        },
         occurrence_count=len(occurrences),
         flow_count=len(data["flow_branch_rows"]),
         field_purpose_count=field_purpose_count,
@@ -3162,6 +3280,105 @@ def _fragment_ledger_fields(instruction_id: str) -> dict[str, Any]:
         "tier_2_predecessor_ledger_note": (
             "not_a_source_instruction_fragment"
         ),
+    }
+
+
+def _continuation_alias_citation(
+    document: NormalizedDocument,
+    evidence: Mapping[str, Any],
+    instruction_id: str,
+) -> dict[str, Any] | None:
+    """Validate and serialize one whitespace-only continuation reading."""
+    expected = CONTINUATION_ALIAS_CITATIONS_BY_INSTRUCTION.get(
+        instruction_id
+    )
+    if expected is None:
+        return None
+    _require(
+        evidence["source_instruction_occurrence_ids"] == [instruction_id],
+        "continuation citation instruction drift",
+    )
+    leading_id = expected["leading_occurrence_id"]
+    endpoints = [
+        *evidence["alias_anchor_occurrence_ids"],
+        *evidence["canonical_anchor_occurrence_ids"],
+    ]
+    _require(
+        leading_id in endpoints,
+        "continuation citation lacks its leading occurrence",
+    )
+    leading_index = endpoints.index(leading_id)
+    page_number = expected["page_number"]
+    _require(
+        evidence["endpoint_page_numbers"][leading_index] == page_number
+        and evidence["source_instruction_page_numbers"] == [page_number]
+        and document.page_text_utf8_sha256_by_number[page_number]
+        == expected["page_text_utf8_sha256"],
+        "continuation citation page drift",
+    )
+    _require(
+        evidence["endpoint_utf8_byte_starts"][leading_index]
+        == expected["combined_utf8_byte_start"]
+        and evidence["endpoint_utf8_byte_ends"][leading_index]
+        == expected["leading_utf8_byte_end"]
+        and evidence["source_instruction_utf8_byte_starts"]
+        == [expected["continuation_utf8_byte_start"]]
+        and evidence["source_instruction_utf8_byte_ends"]
+        == [expected["combined_utf8_byte_end"]],
+        "continuation citation span drift",
+    )
+    combined = expected["combined_text"].encode("utf-8")
+    combined_start = expected["combined_utf8_byte_start"]
+    _require(
+        len(combined)
+        == expected["combined_utf8_byte_end"] - combined_start
+        and _sha256(combined) == expected["combined_utf8_sha256"],
+        "continuation citation combined bytes drift",
+    )
+
+    def relative(absolute: int) -> int:
+        return absolute - combined_start
+
+    leading = evidence["endpoint_matched_texts"][leading_index].encode(
+        "utf-8"
+    )
+    continuation = evidence["source_instruction_matched_texts"][0].encode(
+        "utf-8"
+    )
+    gap = combined[
+        relative(expected["gap_utf8_byte_start"]) : relative(
+            expected["gap_utf8_byte_end"]
+        )
+    ]
+    _require(
+        combined[: relative(expected["leading_utf8_byte_end"])] == leading
+        and combined[
+            relative(expected["continuation_utf8_byte_start"]) :
+        ]
+        == continuation
+        and gap
+        and gap.decode("utf-8").isspace(),
+        "continuation citation gap is not whitespace-only",
+    )
+    return {
+        "composition_rule": CONTINUATION_COMPOSITION_RULE,
+        "leading_occurrence_id": leading_id,
+        "continuation_occurrence_id": instruction_id,
+        "page_number": page_number,
+        "page_text_utf8_sha256": expected["page_text_utf8_sha256"],
+        "combined_utf8_byte_start": combined_start,
+        "leading_utf8_byte_end": expected["leading_utf8_byte_end"],
+        "gap_utf8_byte_start": expected["gap_utf8_byte_start"],
+        "gap_utf8_byte_end": expected["gap_utf8_byte_end"],
+        "gap_text": gap.decode("utf-8"),
+        "gap_utf8_sha256": _sha256(gap),
+        "gap_is_whitespace_only": True,
+        "continuation_utf8_byte_start": expected[
+            "continuation_utf8_byte_start"
+        ],
+        "combined_utf8_byte_end": expected["combined_utf8_byte_end"],
+        "combined_text": expected["combined_text"],
+        "combined_utf8_sha256": expected["combined_utf8_sha256"],
     }
 
 
