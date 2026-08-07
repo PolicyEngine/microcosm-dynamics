@@ -1,0 +1,1837 @@
+{
+  "adjudication_rule": "A composite named-range import may enter A only as exact-text-derived typed question-selector pairs. Every source evidence ID not used by a derived typed pair is a disclosed STOP.",
+  "authority_kind": "nonauthority_semantic_adjudication_input",
+  "baseline_builder_commit": "ca416634e347bfa5a33e9b3a8c1473d2456dd0dc",
+  "census": {
+    "decomposed_instruction_group_count": 19,
+    "decomposed_instruction_group_with_partial_stop_count": 6,
+    "full_stop_instruction_group_count": 2,
+    "instruction_group_count": 21,
+    "pair_producing_evidence_with_multiple_pairs_count": 1,
+    "pair_producing_source_evidence_count": 41,
+    "pure_decomposed_instruction_group_count": 13,
+    "source_evidence_count": 51,
+    "stop_source_evidence_count": 10,
+    "typed_projection_pair_count": 42
+  },
+  "domain_sha256": {
+    "ordered_instruction_domain": "db29ff8c5bf2530700498fb6385ca3ca5add2e5b89514ac4192f79fb96474e7d",
+    "ordered_pair_producing_source_evidence_domain": "c43ae29ea8e1d1790e0ec1d83c489d24419ec373989b461fd92dfbe2891d06bc",
+    "ordered_source_evidence_domain": "5dd9705bd5e01e5c0981e77ce89e568da92b94433cd36481b561e99c46083cfc",
+    "ordered_stop_adjudication_domain": "73033dacc85e12dbd0361e420c1f78f0162f8288935a96a5d9e0d4c469028fc7",
+    "ordered_stop_source_evidence_domain": "f4a58b2392f7845b774d7ed99c299c2af17ad6f7e9279298afa0bfc7ee6a82a4",
+    "ordered_typed_projection_pair_domain": "2c71fbd24dbffbad90319404c746571c3924a62cb4035f6ae65709fc430a295e"
+  },
+  "id_preimage_rule": {
+    "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1",
+    "stop_adjudication": [
+      "instruction_id",
+      "source_evidence_id",
+      "alias_combined_occurrence_id",
+      "canonical_combined_occurrence_id",
+      "finding_code"
+    ],
+    "typed_projection_pair": [
+      "instruction_id",
+      "source_evidence_id",
+      "alias_combined_occurrence_id",
+      "canonical_combined_occurrence_id",
+      "alias_question_selector",
+      "canonical_question_selector",
+      "semantic_type"
+    ]
+  },
+  "instruction_decisions": [
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:261a08008b071f943f9c7396a93c33c4db65bd8dc5821c63a481fbaee7b6fe03",
+      "instruction_id": "psid-questionnaire-occurrence:cb562486f76e7f4dcb2a4ef574a0ae413de9a2ede4d4450ad2e8cf96058e8b2d",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:760de3bfb5019d60b3ad78f917bbcad74114261c1d05071bf03db70b2342dc62",
+        "rq-local-repeat-evidence:89329c816b488bb304acd9cf0544131ea2d29ba782884812309dcc2b6ccc0e0f",
+        "rq-local-repeat-evidence:5f3957d714052e75b4bd4f8a4fabe05b08ab45fa3a4d9f1224bfb594d09f22d7"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:760de3bfb5019d60b3ad78f917bbcad74114261c1d05071bf03db70b2342dc62",
+        "rq-local-repeat-evidence:89329c816b488bb304acd9cf0544131ea2d29ba782884812309dcc2b6ccc0e0f",
+        "rq-local-repeat-evidence:5f3957d714052e75b4bd4f8a4fabe05b08ab45fa3a4d9f1224bfb594d09f22d7"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 70,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:15f45d5d079d513d2a25aacc61dd51815a83e313b622ad0abfed62252b04562e",
+          "alias_question_selector": "B41+B41a",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:2c7dd99d2f2b18a9ce026c8030a7fe4172ed688507798ef07df9a27a55d43bcf",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "B41-41c See B9-Bll instructions. Remember, occupation and industry answers must be verbatim",
+            "matched_utf8_sha256": "c20f4db87c6abc9553fe92cbfa691e9a64571084e796afa68c70bb4b24288d9e",
+            "page_number": 17,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1021,
+              "start": 930
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:cb562486f76e7f4dcb2a4ef574a0ae413de9a2ede4d4450ad2e8cf96058e8b2d",
+          "pairing_basis": "The exact instruction names B41-B41c and imports B9-B11. Within those named ranges, B41+B41a and B9+B9a are the occupation/title-and-duties questions; semantic type derives this pair without unioning the industry or employer members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:760de3bfb5019d60b3ad78f917bbcad74114261c1d05071bf03db70b2342dc62",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:73f089173f85e92c28704e557810c114b073a851bc15ae24186e56267be728b3"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:15f45d5d079d513d2a25aacc61dd51815a83e313b622ad0abfed62252b04562e",
+          "alias_question_selector": "B41b",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:d4955b393edd86feba24e59a9aaef9b7f0659f9da400f79e17d643910da6bfca",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "B41-41c See B9-Bll instructions. Remember, occupation and industry answers must be verbatim",
+            "matched_utf8_sha256": "c20f4db87c6abc9553fe92cbfa691e9a64571084e796afa68c70bb4b24288d9e",
+            "page_number": 17,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1021,
+              "start": 930
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:cb562486f76e7f4dcb2a4ef574a0ae413de9a2ede4d4450ad2e8cf96058e8b2d",
+          "pairing_basis": "The exact instruction names B41-B41c and imports B9-B11. Within those named ranges, B41b and B10 are the industry/business questions; semantic type derives this pair without unioning the occupation or employer members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:89329c816b488bb304acd9cf0544131ea2d29ba782884812309dcc2b6ccc0e0f",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:7d30fe27fcbe7f98f85d2b4c12fa2bd5ff18d5504e1ba680107b0f2d084f449f"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:15f45d5d079d513d2a25aacc61dd51815a83e313b622ad0abfed62252b04562e",
+          "alias_question_selector": "B41c",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:05cc62aad7613983ebf18d48c16f2bbd2aebabad6a54d68d775133f5fa333e68",
+          "canonical_question_selector": "B11",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "B41-41c See B9-Bll instructions. Remember, occupation and industry answers must be verbatim",
+            "matched_utf8_sha256": "c20f4db87c6abc9553fe92cbfa691e9a64571084e796afa68c70bb4b24288d9e",
+            "page_number": 17,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1021,
+              "start": 930
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:cb562486f76e7f4dcb2a4ef574a0ae413de9a2ede4d4450ad2e8cf96058e8b2d",
+          "pairing_basis": "The exact instruction names B41-B41c and imports B9-B11. Within those named ranges, B41c and B11 are the employer-identity questions; semantic type derives this pair without unioning the occupation or industry members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employer_identity",
+          "source_evidence_id": "rq-local-repeat-evidence:5f3957d714052e75b4bd4f8a4fabe05b08ab45fa3a4d9f1224bfb594d09f22d7",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:76fe4ecc207ae8c2dbc86cefb64c719de5a369a00423e14cc777c609022efbc1"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:599732df517637d1e3662d7145605af12c2b0da97763dd01b0c33ad0f791a079",
+      "instruction_id": "psid-questionnaire-occurrence:d986ab2a3dfc95f31fda53fac4a23b7520ee9fd449d2ef501569afe651b3a369",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:374e250e860bcbb542ede9bd81cadc33caac07a3682ea9e8a075a77c0f2c4d00",
+        "rq-local-repeat-evidence:bc8b43068813b189f79b0c0a0e383623c560582ca83a434c4fdcb515158ea1fd"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:374e250e860bcbb542ede9bd81cadc33caac07a3682ea9e8a075a77c0f2c4d00",
+        "rq-local-repeat-evidence:bc8b43068813b189f79b0c0a0e383623c560582ca83a434c4fdcb515158ea1fd"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 72,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:412f50439e501e1208ccd6a2461251a11357cdf353b1d19a68e767742aa9928e",
+          "alias_question_selector": "B43",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:7079125b8570be8b28218494c2714a6660fda275a8d70aa39236b00d15bc73b1",
+          "canonical_question_selector": "B4+B4a+B4b+B4c",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "B43-44.               See B4-B5 instructions.",
+            "matched_utf8_sha256": "6cbd08562ceee0b315df746ca9acd753dd872d0d471a1fe1d63b7ef11d0a3a50",
+            "page_number": 17,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 2068,
+              "start": 2023
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:d986ab2a3dfc95f31fda53fac4a23b7520ee9fd449d2ef501569afe651b3a369",
+          "pairing_basis": "The exact instruction names B43-B44 and imports B4-B5. B43 and B4 with its B4a-B4c follow-ups classify employee, self-employed, or mixed work; semantic type derives this pair.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employment_arrangement",
+          "source_evidence_id": "rq-local-repeat-evidence:374e250e860bcbb542ede9bd81cadc33caac07a3682ea9e8a075a77c0f2c4d00",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:32e58f61a7d6fe628f5a2a0f02cc76ddb162d809ac359846ff101bf515592258"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:412f50439e501e1208ccd6a2461251a11357cdf353b1d19a68e767742aa9928e",
+          "alias_question_selector": "B44",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:8bf93a0f57432582f055e5ce331f09fb07f78ba305e0e93d2cc67a491017980c",
+          "canonical_question_selector": "B5",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "B43-44.               See B4-B5 instructions.",
+            "matched_utf8_sha256": "6cbd08562ceee0b315df746ca9acd753dd872d0d471a1fe1d63b7ef11d0a3a50",
+            "page_number": 17,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 2068,
+              "start": 2023
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:d986ab2a3dfc95f31fda53fac4a23b7520ee9fd449d2ef501569afe651b3a369",
+          "pairing_basis": "The exact instruction names B43-B44 and imports B4-B5. B44 and B5 ask whether the business is incorporated; semantic type derives this pair.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "business_incorporation_status",
+          "source_evidence_id": "rq-local-repeat-evidence:bc8b43068813b189f79b0c0a0e383623c560582ca83a434c4fdcb515158ea1fd",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:de1bed03f66c5c5b0a79f2db462db1aa93b9cd14d36e2d39301c576723428aca"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:afe69be41338283118060b9151b309d9affe4cf8a7b9af11d8f4c61d7d3bc557",
+      "instruction_id": "psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:14875b838a9218ec7eed9e273bdb1e3f1c746641efca366b3253770c1442a4d1",
+        "rq-local-repeat-evidence:273b333e5b305b9dd034c7ee7c5f1ae2cccd203c09e1b816741782ef6c220b46",
+        "rq-local-repeat-evidence:be47dd3428c6c840701bf15a2a8860c8d0e90b09b3b3a5ac6898cde47f5fce60"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:14875b838a9218ec7eed9e273bdb1e3f1c746641efca366b3253770c1442a4d1",
+        "rq-local-repeat-evidence:273b333e5b305b9dd034c7ee7c5f1ae2cccd203c09e1b816741782ef6c220b46",
+        "rq-local-repeat-evidence:be47dd3428c6c840701bf15a2a8860c8d0e90b09b3b3a5ac6898cde47f5fce60"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 78,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:c73fedf40ef7b7b76613eac6de2a21fd9584dc1f075e5484fe39fb9d548b7322",
+          "alias_question_selector": "S41+S41a",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:2c7dd99d2f2b18a9ce026c8030a7fe4172ed688507798ef07df9a27a55d43bcf",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "S41-41c.    See B9-Bll instructions . Remember, occupation and industry answers must",
+            "matched_utf8_sha256": "58f22dd00cb30c43e4d757170db6cf81c954fd1274cfd80d3acaed0fbd319448",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 341,
+              "start": 257
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0",
+          "pairing_basis": "The exact instruction names S41-S41c and imports B9-B11. Within those named ranges, S41+S41a and B9+B9a are the occupation/title-and-duties questions; semantic type derives this pair without unioning the industry or employer members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:14875b838a9218ec7eed9e273bdb1e3f1c746641efca366b3253770c1442a4d1",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:956eefcf206c589b735fea249e6281f82aa29f83b3e7651ded202c64d2b264d1"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:c73fedf40ef7b7b76613eac6de2a21fd9584dc1f075e5484fe39fb9d548b7322",
+          "alias_question_selector": "S41b",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:d4955b393edd86feba24e59a9aaef9b7f0659f9da400f79e17d643910da6bfca",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "S41-41c.    See B9-Bll instructions . Remember, occupation and industry answers must",
+            "matched_utf8_sha256": "58f22dd00cb30c43e4d757170db6cf81c954fd1274cfd80d3acaed0fbd319448",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 341,
+              "start": 257
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0",
+          "pairing_basis": "The exact instruction names S41-S41c and imports B9-B11. Within those named ranges, S41b and B10 are the industry/business questions; semantic type derives this pair without unioning the occupation or employer members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:273b333e5b305b9dd034c7ee7c5f1ae2cccd203c09e1b816741782ef6c220b46",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:3eee9d9e2fffada911b080e0ab93b296d705e7891d50e16ab2083da0cdec3dfe"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:c73fedf40ef7b7b76613eac6de2a21fd9584dc1f075e5484fe39fb9d548b7322",
+          "alias_question_selector": "S41c",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:05cc62aad7613983ebf18d48c16f2bbd2aebabad6a54d68d775133f5fa333e68",
+          "canonical_question_selector": "B11",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "S41-41c.    See B9-Bll instructions . Remember, occupation and industry answers must",
+            "matched_utf8_sha256": "58f22dd00cb30c43e4d757170db6cf81c954fd1274cfd80d3acaed0fbd319448",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 341,
+              "start": 257
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0",
+          "pairing_basis": "The exact instruction names S41-S41c and imports B9-B11. Within those named ranges, S41c and B11 are the employer-identity questions; semantic type derives this pair without unioning the occupation or industry members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employer_identity",
+          "source_evidence_id": "rq-local-repeat-evidence:be47dd3428c6c840701bf15a2a8860c8d0e90b09b3b3a5ac6898cde47f5fce60",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:9278ee0603ae32ce40c16da5730b73866b2ab57483ecabddc593de645ba1283d"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:ecb595989c99b7c54c8b03fc14aeeca032ad2a114421614311935cf3ca5698b0",
+      "instruction_id": "psid-questionnaire-occurrence:ceedb0f652116dcaaba199e11f90365e8bdaf0557d783e0adc5b3ddc3e3aa33b",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:2060f58eefbde6617c483051e16167d63576c3d299623e8c10367b124242da41",
+        "rq-local-repeat-evidence:d3ef7b371487bb27fd5034d3eb3819dfdb195592c7fc58f7b0f1e8ab4322851e"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:2060f58eefbde6617c483051e16167d63576c3d299623e8c10367b124242da41",
+        "rq-local-repeat-evidence:d3ef7b371487bb27fd5034d3eb3819dfdb195592c7fc58f7b0f1e8ab4322851e"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 81,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:f58462fc42a8bd9353ee26f64997a277ae607dd5788d7d7e786d41414f35a1b7",
+          "alias_question_selector": "S43",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:7079125b8570be8b28218494c2714a6660fda275a8d70aa39236b00d15bc73b1",
+          "canonical_question_selector": "B4+B4a+B4b+B4c",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "S43-44.     See B4-B5 instructions.",
+            "matched_utf8_sha256": "5cce9e8f3c97c37e3653c57d2b5f7ddff8c3b5600561cb89d6c9c9e2423e06ba",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 535,
+              "start": 500
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:ceedb0f652116dcaaba199e11f90365e8bdaf0557d783e0adc5b3ddc3e3aa33b",
+          "pairing_basis": "The exact instruction names S43-S44 and imports B4-B5. S43 and B4 with its B4a-B4c follow-ups classify employee, self-employed, or mixed work; semantic type derives this pair.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employment_arrangement",
+          "source_evidence_id": "rq-local-repeat-evidence:2060f58eefbde6617c483051e16167d63576c3d299623e8c10367b124242da41",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:f81f96dfdd553480cb070b188c58ee7e8212f5401fe481b69142f5da6f46ea5e"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:f58462fc42a8bd9353ee26f64997a277ae607dd5788d7d7e786d41414f35a1b7",
+          "alias_question_selector": "S44",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:8bf93a0f57432582f055e5ce331f09fb07f78ba305e0e93d2cc67a491017980c",
+          "canonical_question_selector": "B5",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "S43-44.     See B4-B5 instructions.",
+            "matched_utf8_sha256": "5cce9e8f3c97c37e3653c57d2b5f7ddff8c3b5600561cb89d6c9c9e2423e06ba",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 535,
+              "start": 500
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:ceedb0f652116dcaaba199e11f90365e8bdaf0557d783e0adc5b3ddc3e3aa33b",
+          "pairing_basis": "The exact instruction names S43-S44 and imports B4-B5. S44 and B5 ask whether the business is incorporated; semantic type derives this pair.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "business_incorporation_status",
+          "source_evidence_id": "rq-local-repeat-evidence:d3ef7b371487bb27fd5034d3eb3819dfdb195592c7fc58f7b0f1e8ab4322851e",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:ed84d87d786788a6bd865f8cfb4c82110b76c6ed638a3e36d634dcf844728bc1"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition_with_disclosed_stops",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:9873c03617b4f8ad3e73c5b34bbcf96adc83c0ef7d48f8b3ff414e455f92fa22",
+      "instruction_id": "psid-questionnaire-occurrence:357281a0ee7987a14867f92a263f3aa1097d8bb5202d45820e4e8af363a7157b",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:52c88fd8891150fbe0e4e22a728bc63be2053d622bdd01798a849f9c53a164e4",
+        "rq-local-repeat-evidence:5324d2691f6bc3141fa9d8fbae50ebf14865466bebf77ef6f4fdf26f2aa23296"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:52c88fd8891150fbe0e4e22a728bc63be2053d622bdd01798a849f9c53a164e4",
+        "rq-local-repeat-evidence:5324d2691f6bc3141fa9d8fbae50ebf14865466bebf77ef6f4fdf26f2aa23296",
+        "rq-local-repeat-evidence:aacba8c9d26db99b8a17ce56d7599af089d19c3f5f168871dad92d5bbab07a1b"
+      ],
+      "stop_evidence_rows": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:d7c3ecff6166072bbedbb6a62c229ceea6717e02ac22289a30cd6a5d9e1f9e49",
+          "alias_question_selector": "B83-B85 (no employer-identity member)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:05cc62aad7613983ebf18d48c16f2bbd2aebabad6a54d68d775133f5fa333e68",
+          "canonical_question_selector": "B11",
+          "finding": "The cited B83-B85 range contains sector/status (B83), occupation and duties (B84+B84a), and industry (B85). Employer name is B86, outside the exact named alias range, so the instruction does not derive a B11 employer-identity pair.",
+          "finding_code": "no_named_alias_member_of_employer_identity_type",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "B83-85. Follow the same general rules that you used for probing on B9-Bll. For example, \"sold",
+            "matched_utf8_sha256": "6bbc5b338c64597c030eca5c1fd8aa1a61a00bced9c60e12eecb69a92d98b7e6",
+            "page_number": 23,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 2216,
+              "start": 2123
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:357281a0ee7987a14867f92a263f3aa1097d8bb5202d45820e4e8af363a7157b",
+          "source_evidence_id": "rq-local-repeat-evidence:aacba8c9d26db99b8a17ce56d7599af089d19c3f5f168871dad92d5bbab07a1b",
+          "stop_adjudication_id": "a12-composite-import-stop:1bcccc6176af243bc43d82dc8f361227aef15ae295ab8ff08cbd0acd3d223b58"
+        }
+      ],
+      "stop_source_evidence_ids": [
+        "rq-local-repeat-evidence:aacba8c9d26db99b8a17ce56d7599af089d19c3f5f168871dad92d5bbab07a1b"
+      ],
+      "sweep_row_index": 88,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:d7c3ecff6166072bbedbb6a62c229ceea6717e02ac22289a30cd6a5d9e1f9e49",
+          "alias_question_selector": "B84+B84a",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:2c7dd99d2f2b18a9ce026c8030a7fe4172ed688507798ef07df9a27a55d43bcf",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "B83-85. Follow the same general rules that you used for probing on B9-Bll. For example, \"sold",
+            "matched_utf8_sha256": "6bbc5b338c64597c030eca5c1fd8aa1a61a00bced9c60e12eecb69a92d98b7e6",
+            "page_number": 23,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 2216,
+              "start": 2123
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:357281a0ee7987a14867f92a263f3aa1097d8bb5202d45820e4e8af363a7157b",
+          "pairing_basis": "The exact instruction applies B9-B11 probing rules to B83-B85. Within the named alias range, B84+B84a are the occupation/title-and-duties questions and match the B9+B9a type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:52c88fd8891150fbe0e4e22a728bc63be2053d622bdd01798a849f9c53a164e4",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:48ccc1c99cec1cd7c2e023536a24ef4d0b02d8d27bcbd0612def0410f96f757d"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:d7c3ecff6166072bbedbb6a62c229ceea6717e02ac22289a30cd6a5d9e1f9e49",
+          "alias_question_selector": "B85",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:d4955b393edd86feba24e59a9aaef9b7f0659f9da400f79e17d643910da6bfca",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "B83-85. Follow the same general rules that you used for probing on B9-Bll. For example, \"sold",
+            "matched_utf8_sha256": "6bbc5b338c64597c030eca5c1fd8aa1a61a00bced9c60e12eecb69a92d98b7e6",
+            "page_number": 23,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 2216,
+              "start": 2123
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:357281a0ee7987a14867f92a263f3aa1097d8bb5202d45820e4e8af363a7157b",
+          "pairing_basis": "The exact instruction applies B9-B11 probing rules to B83-B85. Within the named alias range, B85 is the industry/business question and matches the B10 type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:5324d2691f6bc3141fa9d8fbae50ebf14865466bebf77ef6f4fdf26f2aa23296",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:c79da909b41b621635992ac72eb20b718bd1c7728df486570c29fc0827ee9c48"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition_with_disclosed_stops",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:a64e2d2425f238b41bd97f16a7f246a1c7a3e2168560e0fd7f4e9fe2d6fb0abb",
+      "instruction_id": "psid-questionnaire-occurrence:a769c4a969cdaca2142d0aab2e2cee8aa2f9f83d4fe1abf4235e4bd9acb5c9f5",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:cee24ce70d211b1bbb201564c12b85c737b737040295007c3b9383d60edfffb4",
+        "rq-local-repeat-evidence:77b58dc07701a689beff90985697258b4796fe885181e3fa1968944df53d9650"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:cee24ce70d211b1bbb201564c12b85c737b737040295007c3b9383d60edfffb4",
+        "rq-local-repeat-evidence:77b58dc07701a689beff90985697258b4796fe885181e3fa1968944df53d9650",
+        "rq-local-repeat-evidence:b068bafe10257e3df29c92c5690aeadae8eed5384b447d0536c53f820a151c42"
+      ],
+      "stop_evidence_rows": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:462c54e40e1bf95cdcd7bc4641a21c01d6781924be6dc05dd5c5091c3da6c11c",
+          "alias_question_selector": "C9-C11 (no employer-identity member)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:05cc62aad7613983ebf18d48c16f2bbd2aebabad6a54d68d775133f5fa333e68",
+          "canonical_question_selector": "B11",
+          "finding": "The cited C9-C11 range contains occupation and duties (C9+C10) and industry (C11). Employer name is C14a, outside the exact named alias range, so the instruction does not derive a B11 employer-identity pair.",
+          "finding_code": "no_named_alias_member_of_employer_identity_type",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "C9-11.   Probe for detail, as in the occupation/industry instructions at B9-Bl 1. Remember,",
+            "matched_utf8_sha256": "4689668e5f8454cfb09fd46b316795da57977d38d2252bff59c0f5d14544cfba",
+            "page_number": 25,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1011,
+              "start": 920
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:a769c4a969cdaca2142d0aab2e2cee8aa2f9f83d4fe1abf4235e4bd9acb5c9f5",
+          "source_evidence_id": "rq-local-repeat-evidence:b068bafe10257e3df29c92c5690aeadae8eed5384b447d0536c53f820a151c42",
+          "stop_adjudication_id": "a12-composite-import-stop:799e373d410a3201b4442191004315d265410179aad2a1030cee49afd0bf1793"
+        }
+      ],
+      "stop_source_evidence_ids": [
+        "rq-local-repeat-evidence:b068bafe10257e3df29c92c5690aeadae8eed5384b447d0536c53f820a151c42"
+      ],
+      "sweep_row_index": 90,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:462c54e40e1bf95cdcd7bc4641a21c01d6781924be6dc05dd5c5091c3da6c11c",
+          "alias_question_selector": "C9+C10",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:2c7dd99d2f2b18a9ce026c8030a7fe4172ed688507798ef07df9a27a55d43bcf",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "C9-11.   Probe for detail, as in the occupation/industry instructions at B9-Bl 1. Remember,",
+            "matched_utf8_sha256": "4689668e5f8454cfb09fd46b316795da57977d38d2252bff59c0f5d14544cfba",
+            "page_number": 25,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1011,
+              "start": 920
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:a769c4a969cdaca2142d0aab2e2cee8aa2f9f83d4fe1abf4235e4bd9acb5c9f5",
+          "pairing_basis": "The exact instruction applies the B9-B11 occupation/industry instructions to C9-C11. C9+C10 elicit occupation/title and duties, matching the B9+B9a type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:cee24ce70d211b1bbb201564c12b85c737b737040295007c3b9383d60edfffb4",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:bc00cc24afc3f9f2d8d214c979e3305c12815c097364ee1e836dc619599388a6"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:462c54e40e1bf95cdcd7bc4641a21c01d6781924be6dc05dd5c5091c3da6c11c",
+          "alias_question_selector": "C11",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:d4955b393edd86feba24e59a9aaef9b7f0659f9da400f79e17d643910da6bfca",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "C9-11.   Probe for detail, as in the occupation/industry instructions at B9-Bl 1. Remember,",
+            "matched_utf8_sha256": "4689668e5f8454cfb09fd46b316795da57977d38d2252bff59c0f5d14544cfba",
+            "page_number": 25,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1011,
+              "start": 920
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:a769c4a969cdaca2142d0aab2e2cee8aa2f9f83d4fe1abf4235e4bd9acb5c9f5",
+          "pairing_basis": "The exact instruction applies the B9-B11 occupation/industry instructions to C9-C11. C11 elicits industry/business, matching the B10 type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:77b58dc07701a689beff90985697258b4796fe885181e3fa1968944df53d9650",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:b519f4438daf9a755622761f9f50c09724a688d7e65c2761278f44a68ed7a988"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:499288ed5866361fd2a3b4c0fa4831ceba7d181b9f16cdfa20fc5adc5b61636b",
+      "instruction_id": "psid-questionnaire-occurrence:455271aa575d2126ae53289ab69e2eeb4fb652c63cad693f8ce70208a351731f",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:b481e6117c1d07ae7c9adda93aaf5d92f6bb8a674544ded5d12ae41622b0bfda",
+        "rq-local-repeat-evidence:a6b86b651d4c1d8006f639ad09104357f22c9334c7b72192c92d1094ab0ffde2"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:b481e6117c1d07ae7c9adda93aaf5d92f6bb8a674544ded5d12ae41622b0bfda",
+        "rq-local-repeat-evidence:a6b86b651d4c1d8006f639ad09104357f22c9334c7b72192c92d1094ab0ffde2"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 91,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:59c314360d5bd400f7f4f96c31e7788c7c0e06fa73f971fdbaa1b6e97f37e06e",
+          "alias_question_selector": "C12+C12a+C12b+C12c",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:7079125b8570be8b28218494c2714a6660fda275a8d70aa39236b00d15bc73b1",
+          "canonical_question_selector": "B4+B4a+B4b+B4c",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "C12-14 . For instructions , see B4-B5.",
+            "matched_utf8_sha256": "397314d5ba21006a3701a9a2dc6ebbbf47037022465788af680d0fc24ccee852",
+            "page_number": 25,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1175,
+              "start": 1137
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:455271aa575d2126ae53289ab69e2eeb4fb652c63cad693f8ce70208a351731f",
+          "pairing_basis": "The exact instruction names C12-C14 and imports B4-B5. C12 with C12a-C12c classifies employee, self-employed, or mixed work, matching B4 with B4a-B4c.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employment_arrangement",
+          "source_evidence_id": "rq-local-repeat-evidence:b481e6117c1d07ae7c9adda93aaf5d92f6bb8a674544ded5d12ae41622b0bfda",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:30b4bfe7dea52b5a0a263e47fff36a170399e535397664bba61d3efaec68323a"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:59c314360d5bd400f7f4f96c31e7788c7c0e06fa73f971fdbaa1b6e97f37e06e",
+          "alias_question_selector": "C13",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:8bf93a0f57432582f055e5ce331f09fb07f78ba305e0e93d2cc67a491017980c",
+          "canonical_question_selector": "B5",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "C12-14 . For instructions , see B4-B5.",
+            "matched_utf8_sha256": "397314d5ba21006a3701a9a2dc6ebbbf47037022465788af680d0fc24ccee852",
+            "page_number": 25,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1175,
+              "start": 1137
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:455271aa575d2126ae53289ab69e2eeb4fb652c63cad693f8ce70208a351731f",
+          "pairing_basis": "The exact instruction names C12-C14 and imports B4-B5. C13 asks whether the business is incorporated, matching B5; C14 is a distinct unprojected sector question.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "business_incorporation_status",
+          "source_evidence_id": "rq-local-repeat-evidence:a6b86b651d4c1d8006f639ad09104357f22c9334c7b72192c92d1094ab0ffde2",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:e81cb6cc719eaa4fe4e85a81be597e6dea84b315e0c4d102e98e9a0b769ac8e7"
+        }
+      ]
+    },
+    {
+      "disposition": "disclosed_stop",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:2176b5e6e1aeac9b19b6b79212d23cda0bcc4d1cd1acdb3f9fff6d7f0b2c2643",
+      "instruction_id": "psid-questionnaire-occurrence:35833279648220c82c4340b8a40d6823b3d3fc231eca8180cdd635479521a052",
+      "pair_producing_source_evidence_ids": [],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:9e6075ce060306419bf9b195b2ccd3a168e2a9f6d34586642c641b343512f7e3",
+        "rq-local-repeat-evidence:b3b4b8765b994b209866bddba1ec0a4b457ec1ea35da754b4302be2a0b35fe08"
+      ],
+      "stop_evidence_rows": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:f77a662a8b2be31cf90649b7ec4b48d95b190f41832cca29b6461ee76e313125",
+          "alias_question_selector": "L4-L5 (unresolved composite)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:2c7dd99d2f2b18a9ce026c8030a7fe4172ed688507798ef07df9a27a55d43bcf",
+          "canonical_question_selector": "B9+B9a",
+          "finding": "The exact instruction describes both L4 and L5 as occupation questions (father's occupation and Head's first regular job occupation) while B9 is occupation and B10 is industry. It does not state which L member pairs with B9 and derives no typed bijection.",
+          "finding_code": "named_ranges_do_not_derive_a_bijection",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "L4-5.        Probe to get as clear a picture as possible of the occupation (see objectives for B9-B10",
+            "matched_utf8_sha256": "e09a1aa09304db01988eaf1130a96abfdb8cee29956f90546cb81807c8b0b41d",
+            "page_number": 53,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1263,
+              "start": 1162
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:35833279648220c82c4340b8a40d6823b3d3fc231eca8180cdd635479521a052",
+          "source_evidence_id": "rq-local-repeat-evidence:9e6075ce060306419bf9b195b2ccd3a168e2a9f6d34586642c641b343512f7e3",
+          "stop_adjudication_id": "a12-composite-import-stop:2200f1505da15fa9da3f4038d7f070d3fe409c860968d696e18c08f5dc84c5a8"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:f77a662a8b2be31cf90649b7ec4b48d95b190f41832cca29b6461ee76e313125",
+          "alias_question_selector": "L4-L5 (unresolved composite)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:d4955b393edd86feba24e59a9aaef9b7f0659f9da400f79e17d643910da6bfca",
+          "canonical_question_selector": "B10",
+          "finding": "The exact instruction describes both L4 and L5 as occupation questions (father's occupation and Head's first regular job occupation) while B9 is occupation and B10 is industry. It does not derive an industry-typed L member for B10.",
+          "finding_code": "named_ranges_do_not_derive_a_bijection",
+          "instruction_citation": {
+            "document_source_position": 56,
+            "matched_text": "L4-5.        Probe to get as clear a picture as possible of the occupation (see objectives for B9-B10",
+            "matched_utf8_sha256": "e09a1aa09304db01988eaf1130a96abfdb8cee29956f90546cb81807c8b0b41d",
+            "page_number": 53,
+            "source_document_id": "psid-source-document:1578032027e690b16afc920807dec8a5c2228aaf5440ec1594cd1e2a8dfb9c48",
+            "utf8_byte_span": {
+              "end": 1263,
+              "start": 1162
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:35833279648220c82c4340b8a40d6823b3d3fc231eca8180cdd635479521a052",
+          "source_evidence_id": "rq-local-repeat-evidence:b3b4b8765b994b209866bddba1ec0a4b457ec1ea35da754b4302be2a0b35fe08",
+          "stop_adjudication_id": "a12-composite-import-stop:463326c7245d2b39d53ac1f86dbc751b69ba9b6432b9f218ddd41f02a176297d"
+        }
+      ],
+      "stop_source_evidence_ids": [
+        "rq-local-repeat-evidence:9e6075ce060306419bf9b195b2ccd3a168e2a9f6d34586642c641b343512f7e3",
+        "rq-local-repeat-evidence:b3b4b8765b994b209866bddba1ec0a4b457ec1ea35da754b4302be2a0b35fe08"
+      ],
+      "sweep_row_index": 103,
+      "typed_projection_pairs": []
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:5e42f7d33b65a586748a71a234314ee32723bb2f98515ad654ca257579c08594",
+      "instruction_id": "psid-questionnaire-occurrence:bbdbc781bb95e0d12442053e1bf4a84094b4b88c42c8e2edb728d659891ee5dc",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:900787850cd5ab3114c8d7ed178edd8b2fc04dd42bcf92c322eec3165ef253ee",
+        "rq-local-repeat-evidence:99901887c411d4efc9c0bd36569c8d68164164b084d1176d6a2ec30472b19c8a",
+        "rq-local-repeat-evidence:458e52e766a8f11ef2c64bd89d328d2ea8179c92cb2eec85a68bb1767d1b0e48"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:900787850cd5ab3114c8d7ed178edd8b2fc04dd42bcf92c322eec3165ef253ee",
+        "rq-local-repeat-evidence:99901887c411d4efc9c0bd36569c8d68164164b084d1176d6a2ec30472b19c8a",
+        "rq-local-repeat-evidence:458e52e766a8f11ef2c64bd89d328d2ea8179c92cb2eec85a68bb1767d1b0e48"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 107,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:b3a7c3dee488f3ad62e6f6aca7084500361509b08bc425f43e9a0d1c5c61e0ff",
+          "alias_question_selector": "B41+B41a",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:46ad72f61a8cdb0576692453a029b9a0cffd2de637e08c6a8e10978c48e132dc",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "B41-41c    See B9-B11 instructions. Remember, occupation and industry answers must be verbatim in",
+            "matched_utf8_sha256": "58c3a2a9ef836f3d195356bcd219094a8808e6d80a9fa371da213838ef8ac668",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 876,
+              "start": 779
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:bbdbc781bb95e0d12442053e1bf4a84094b4b88c42c8e2edb728d659891ee5dc",
+          "pairing_basis": "The exact instruction names B41-B41c and imports B9-B11. Within those named ranges, B41+B41a and B9+B9a are the occupation/title-and-duties questions; semantic type derives this pair without unioning the industry or employer members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:900787850cd5ab3114c8d7ed178edd8b2fc04dd42bcf92c322eec3165ef253ee",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:7fc87fe914a49425fbd1fad6d70bb8e9988aa0ae9b68f9c1e2f0ef6c53492bc2"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:b3a7c3dee488f3ad62e6f6aca7084500361509b08bc425f43e9a0d1c5c61e0ff",
+          "alias_question_selector": "B41b",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:09b9bea8500ac3c6ad1a73c4fbd71fef11c095421180271b3b24cd03129a9c07",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "B41-41c    See B9-B11 instructions. Remember, occupation and industry answers must be verbatim in",
+            "matched_utf8_sha256": "58c3a2a9ef836f3d195356bcd219094a8808e6d80a9fa371da213838ef8ac668",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 876,
+              "start": 779
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:bbdbc781bb95e0d12442053e1bf4a84094b4b88c42c8e2edb728d659891ee5dc",
+          "pairing_basis": "The exact instruction names B41-B41c and imports B9-B11. Within those named ranges, B41b and B10 are the industry/business questions; semantic type derives this pair without unioning the occupation or employer members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:99901887c411d4efc9c0bd36569c8d68164164b084d1176d6a2ec30472b19c8a",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:4d10f1c3b2d69aa13f47344b81f6cd86291771eb99a2226b58a60ef436f8d539"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:b3a7c3dee488f3ad62e6f6aca7084500361509b08bc425f43e9a0d1c5c61e0ff",
+          "alias_question_selector": "B41c",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:779cad59d2edd342f0d54bba37255b1991435b329dd7f9bfbfa2dc5db68ee2f6",
+          "canonical_question_selector": "B11",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "B41-41c    See B9-B11 instructions. Remember, occupation and industry answers must be verbatim in",
+            "matched_utf8_sha256": "58c3a2a9ef836f3d195356bcd219094a8808e6d80a9fa371da213838ef8ac668",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 876,
+              "start": 779
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:bbdbc781bb95e0d12442053e1bf4a84094b4b88c42c8e2edb728d659891ee5dc",
+          "pairing_basis": "The exact instruction names B41-B41c and imports B9-B11. Within those named ranges, B41c and B11 are the employer-identity questions; semantic type derives this pair without unioning the occupation or industry members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employer_identity",
+          "source_evidence_id": "rq-local-repeat-evidence:458e52e766a8f11ef2c64bd89d328d2ea8179c92cb2eec85a68bb1767d1b0e48",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:b5bca4e3b78234617b296dddc13c20237f061b07c96d0affbda39eac82b421eb"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:b45a2b2db05873d3b3dc30e775349844f777b9d7eedbc09bd5f0faccbad35513",
+      "instruction_id": "psid-questionnaire-occurrence:e84a537936c186e2873ea2d79ff28ef6d9cec295b75db355ed318720ca661bac",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:b7c739ced7c91a369e58206cc2a475322b2e8a4aade27e7462cf21f712ba4acf",
+        "rq-local-repeat-evidence:b430bf4cf5f6dfc79540868bed5ae4e5195acf5a8e149f1ffb2c2b4e7b55fde3"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:b7c739ced7c91a369e58206cc2a475322b2e8a4aade27e7462cf21f712ba4acf",
+        "rq-local-repeat-evidence:b430bf4cf5f6dfc79540868bed5ae4e5195acf5a8e149f1ffb2c2b4e7b55fde3"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 109,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:914ada9e1fcb87a5557cbcac95af334bd0cb518a8632e0b819a44edd5eb7dbef",
+          "alias_question_selector": "B43",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:82ed3120af2286b67176e11cd584b72be227cd3fffec2a2551c82ec644183455",
+          "canonical_question_selector": "B4+B4a+B4b+B4c",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "B43-44.      See B4-B5 instructions.",
+            "matched_utf8_sha256": "5f4202fd68b985333668ddebf556a46b58fd39be409acf8901db2a80b0eebb3a",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1862,
+              "start": 1826
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:e84a537936c186e2873ea2d79ff28ef6d9cec295b75db355ed318720ca661bac",
+          "pairing_basis": "The exact instruction names B43-B44 and imports B4-B5. B43 and B4 with its B4a-B4c follow-ups classify employee, self-employed, or mixed work; semantic type derives this pair.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employment_arrangement",
+          "source_evidence_id": "rq-local-repeat-evidence:b7c739ced7c91a369e58206cc2a475322b2e8a4aade27e7462cf21f712ba4acf",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:1e17ad32ced610a946ad9505d9be946b2d46c5cbd7a27f7c42e7ab5bed0b0efa"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:914ada9e1fcb87a5557cbcac95af334bd0cb518a8632e0b819a44edd5eb7dbef",
+          "alias_question_selector": "B44",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:8ea83593b702a6997d747f2a22481f90bcc9cfe6eefd705500261e016f94ed09",
+          "canonical_question_selector": "B5",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "B43-44.      See B4-B5 instructions.",
+            "matched_utf8_sha256": "5f4202fd68b985333668ddebf556a46b58fd39be409acf8901db2a80b0eebb3a",
+            "page_number": 19,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1862,
+              "start": 1826
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:e84a537936c186e2873ea2d79ff28ef6d9cec295b75db355ed318720ca661bac",
+          "pairing_basis": "The exact instruction names B43-B44 and imports B4-B5. B44 and B5 ask whether the business is incorporated; semantic type derives this pair.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "business_incorporation_status",
+          "source_evidence_id": "rq-local-repeat-evidence:b430bf4cf5f6dfc79540868bed5ae4e5195acf5a8e149f1ffb2c2b4e7b55fde3",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:a40ea75f3481505abc49e1811b60e932fadb26d10d3804b434e9f7ece8ea5894"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:2d8a1f3bd87cbf537d17dd1c15dc52f3ce1b6350a98b098cf5e665c3d4c6ecdf",
+      "instruction_id": "psid-questionnaire-occurrence:586b32d3786d0c7e475e39b30cf3f5a081a5943bba6093c4bea5886af47812ff",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:dc4a6d58979fd73a654f780b40ed5307ddb178f249d44c70acda9fe2ffa0fff9",
+        "rq-local-repeat-evidence:34d53238ec34f949bc9aaebd9adc6e09417bfc555d5d3c990cd0049b8d5cb74a",
+        "rq-local-repeat-evidence:ec24efdca2edfc9950277a880c74bb73944f318bdcc59ea9e5ab804f3ac3c75c"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:dc4a6d58979fd73a654f780b40ed5307ddb178f249d44c70acda9fe2ffa0fff9",
+        "rq-local-repeat-evidence:34d53238ec34f949bc9aaebd9adc6e09417bfc555d5d3c990cd0049b8d5cb74a",
+        "rq-local-repeat-evidence:ec24efdca2edfc9950277a880c74bb73944f318bdcc59ea9e5ab804f3ac3c75c"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 115,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:b0f04b3f3f318a90fe389d8763ab35e013cf0739694e1c022688e6852a6534b5",
+          "alias_question_selector": "S41+S41a",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:46ad72f61a8cdb0576692453a029b9a0cffd2de637e08c6a8e10978c48e132dc",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "S41-41c.     See B9-B11 instructions. Remember, occupation and industry answers must be verbatim",
+            "matched_utf8_sha256": "160d9c13c3320f67145bffeb19006b243e2a05d4b218153e6780b7e0cafcc9d3",
+            "page_number": 21,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 96,
+              "start": 0
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:586b32d3786d0c7e475e39b30cf3f5a081a5943bba6093c4bea5886af47812ff",
+          "pairing_basis": "The exact instruction names S41-S41c and imports B9-B11. Within those named ranges, S41+S41a and B9+B9a are the occupation/title-and-duties questions; semantic type derives this pair without unioning the industry or employer members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:dc4a6d58979fd73a654f780b40ed5307ddb178f249d44c70acda9fe2ffa0fff9",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:126903d4c3fcbb9ce0a5a7995db539c554b9c6d88850bf2b2ed0cd5d0ba5ffc8"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:b0f04b3f3f318a90fe389d8763ab35e013cf0739694e1c022688e6852a6534b5",
+          "alias_question_selector": "S41b",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:09b9bea8500ac3c6ad1a73c4fbd71fef11c095421180271b3b24cd03129a9c07",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "S41-41c.     See B9-B11 instructions. Remember, occupation and industry answers must be verbatim",
+            "matched_utf8_sha256": "160d9c13c3320f67145bffeb19006b243e2a05d4b218153e6780b7e0cafcc9d3",
+            "page_number": 21,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 96,
+              "start": 0
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:586b32d3786d0c7e475e39b30cf3f5a081a5943bba6093c4bea5886af47812ff",
+          "pairing_basis": "The exact instruction names S41-S41c and imports B9-B11. Within those named ranges, S41b and B10 are the industry/business questions; semantic type derives this pair without unioning the occupation or employer members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:34d53238ec34f949bc9aaebd9adc6e09417bfc555d5d3c990cd0049b8d5cb74a",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:1c91866c83fcab86fc75efabb0b0bf7bb7493230d834bfb33a017b5166c7b64a"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:b0f04b3f3f318a90fe389d8763ab35e013cf0739694e1c022688e6852a6534b5",
+          "alias_question_selector": "S41c",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:779cad59d2edd342f0d54bba37255b1991435b329dd7f9bfbfa2dc5db68ee2f6",
+          "canonical_question_selector": "B11",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "S41-41c.     See B9-B11 instructions. Remember, occupation and industry answers must be verbatim",
+            "matched_utf8_sha256": "160d9c13c3320f67145bffeb19006b243e2a05d4b218153e6780b7e0cafcc9d3",
+            "page_number": 21,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 96,
+              "start": 0
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:586b32d3786d0c7e475e39b30cf3f5a081a5943bba6093c4bea5886af47812ff",
+          "pairing_basis": "The exact instruction names S41-S41c and imports B9-B11. Within those named ranges, S41c and B11 are the employer-identity questions; semantic type derives this pair without unioning the occupation or industry members.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employer_identity",
+          "source_evidence_id": "rq-local-repeat-evidence:ec24efdca2edfc9950277a880c74bb73944f318bdcc59ea9e5ab804f3ac3c75c",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:e21ad8b6b88f17af824aabca7b80c32584ee9c04a6481766663d6a5a9c448d51"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:afad8fb10b30ebe5a28621a8d6e22d305381f202910d9ee8918adb8620dc6af0",
+      "instruction_id": "psid-questionnaire-occurrence:879048f9a5169e56b506da7c84c7780e4da524927635ec6ae52dcbc43a467e5c",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:494590e0350b3eaad50adf744acb90cbeb2b1e91e92c4ca5a603291559f44552",
+        "rq-local-repeat-evidence:62fb5fc4e2109c8d4cb5c8acfa2704b78fcd1998405dad2980103e1015c64cfc"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:494590e0350b3eaad50adf744acb90cbeb2b1e91e92c4ca5a603291559f44552",
+        "rq-local-repeat-evidence:62fb5fc4e2109c8d4cb5c8acfa2704b78fcd1998405dad2980103e1015c64cfc"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 118,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:359055536f6de9ecf5bbca61c9c5511c47572d54e28a0a28a4bbf65f41b1836c",
+          "alias_question_selector": "S43",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:82ed3120af2286b67176e11cd584b72be227cd3fffec2a2551c82ec644183455",
+          "canonical_question_selector": "B4+B4a+B4b+B4c",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "S43-44.      See B4-B5 instructions.",
+            "matched_utf8_sha256": "5b2682687374de100b2b347601d1a570312203602f319dc8a4c3b1d18108ed1a",
+            "page_number": 21,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 296,
+              "start": 260
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:879048f9a5169e56b506da7c84c7780e4da524927635ec6ae52dcbc43a467e5c",
+          "pairing_basis": "The exact instruction names S43-S44 and imports B4-B5. S43 and B4 with its B4a-B4c follow-ups classify employee, self-employed, or mixed work; semantic type derives this pair.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employment_arrangement",
+          "source_evidence_id": "rq-local-repeat-evidence:494590e0350b3eaad50adf744acb90cbeb2b1e91e92c4ca5a603291559f44552",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:808f9a80a27152e38c6cf25a925547420d29661dd5e48388bb3961626634f096"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:359055536f6de9ecf5bbca61c9c5511c47572d54e28a0a28a4bbf65f41b1836c",
+          "alias_question_selector": "S44",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:8ea83593b702a6997d747f2a22481f90bcc9cfe6eefd705500261e016f94ed09",
+          "canonical_question_selector": "B5",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "S43-44.      See B4-B5 instructions.",
+            "matched_utf8_sha256": "5b2682687374de100b2b347601d1a570312203602f319dc8a4c3b1d18108ed1a",
+            "page_number": 21,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 296,
+              "start": 260
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:879048f9a5169e56b506da7c84c7780e4da524927635ec6ae52dcbc43a467e5c",
+          "pairing_basis": "The exact instruction names S43-S44 and imports B4-B5. S44 and B5 ask whether the business is incorporated; semantic type derives this pair.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "business_incorporation_status",
+          "source_evidence_id": "rq-local-repeat-evidence:62fb5fc4e2109c8d4cb5c8acfa2704b78fcd1998405dad2980103e1015c64cfc",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:b605cdcaec24c378411b648a463fc193783c28a505e6be9faae1df1f3095bca1"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition_with_disclosed_stops",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:42a3009f446de6c24a4297a87fa77d5bbacad96f37e9e8f7c814ff17d6ee7a01",
+      "instruction_id": "psid-questionnaire-occurrence:c020df281459e26b8415bdb22c92f9ce30a0302cc21732ddaad3039ddf77b610",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:333b9c2a5dfbcaf0b09001b701ecf688d094718a661309efba3392d15563e358",
+        "rq-local-repeat-evidence:e6f0f01be813c9d432e905408e03228dbc13f43f707878df9a6ab3219f7903e4"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:333b9c2a5dfbcaf0b09001b701ecf688d094718a661309efba3392d15563e358",
+        "rq-local-repeat-evidence:e6f0f01be813c9d432e905408e03228dbc13f43f707878df9a6ab3219f7903e4",
+        "rq-local-repeat-evidence:25bca789c7d2e7442cfbc261e16272d7a4b1edfef88ad7b0f937d64aef3b6ca5"
+      ],
+      "stop_evidence_rows": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:52068834b6311fb6ef49a0d7c20aeec5b0d0ca47c326e4e72c9d86be3afa1b34",
+          "alias_question_selector": "B83-B85 (no employer-identity member)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:779cad59d2edd342f0d54bba37255b1991435b329dd7f9bfbfa2dc5db68ee2f6",
+          "canonical_question_selector": "B11",
+          "finding": "The cited B83-B85 range contains sector/status (B83), occupation and duties (B84+B84a), and industry (B85). Employer name is B86, outside the exact named alias range, so the instruction does not derive a B11 employer-identity pair.",
+          "finding_code": "no_named_alias_member_of_employer_identity_type",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "B83-85.    Follow the same general rules that you used for probing on B9-B11. For example, \"sold",
+            "matched_utf8_sha256": "ff126d2dc61fbd4fd6a6b775194c21c4cbaf1ae10ea3f6e70ac7da903222f2d3",
+            "page_number": 25,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 2242,
+              "start": 2146
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:c020df281459e26b8415bdb22c92f9ce30a0302cc21732ddaad3039ddf77b610",
+          "source_evidence_id": "rq-local-repeat-evidence:25bca789c7d2e7442cfbc261e16272d7a4b1edfef88ad7b0f937d64aef3b6ca5",
+          "stop_adjudication_id": "a12-composite-import-stop:4dd33eff9b9e99ab1ed2fa2c74bfcaaf08c5c53402fab338a5ac0a957e1d74ba"
+        }
+      ],
+      "stop_source_evidence_ids": [
+        "rq-local-repeat-evidence:25bca789c7d2e7442cfbc261e16272d7a4b1edfef88ad7b0f937d64aef3b6ca5"
+      ],
+      "sweep_row_index": 125,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:52068834b6311fb6ef49a0d7c20aeec5b0d0ca47c326e4e72c9d86be3afa1b34",
+          "alias_question_selector": "B84+B84a",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:46ad72f61a8cdb0576692453a029b9a0cffd2de637e08c6a8e10978c48e132dc",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "B83-85.    Follow the same general rules that you used for probing on B9-B11. For example, \"sold",
+            "matched_utf8_sha256": "ff126d2dc61fbd4fd6a6b775194c21c4cbaf1ae10ea3f6e70ac7da903222f2d3",
+            "page_number": 25,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 2242,
+              "start": 2146
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:c020df281459e26b8415bdb22c92f9ce30a0302cc21732ddaad3039ddf77b610",
+          "pairing_basis": "The exact instruction applies B9-B11 probing rules to B83-B85. Within the named alias range, B84+B84a are the occupation/title-and-duties questions and match the B9+B9a type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:333b9c2a5dfbcaf0b09001b701ecf688d094718a661309efba3392d15563e358",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:c6dfa17684a0ed974359f7ea2e66f556acfb2b7ab832841dcb6792b01d27a765"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:52068834b6311fb6ef49a0d7c20aeec5b0d0ca47c326e4e72c9d86be3afa1b34",
+          "alias_question_selector": "B85",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:09b9bea8500ac3c6ad1a73c4fbd71fef11c095421180271b3b24cd03129a9c07",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "B83-85.    Follow the same general rules that you used for probing on B9-B11. For example, \"sold",
+            "matched_utf8_sha256": "ff126d2dc61fbd4fd6a6b775194c21c4cbaf1ae10ea3f6e70ac7da903222f2d3",
+            "page_number": 25,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 2242,
+              "start": 2146
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:c020df281459e26b8415bdb22c92f9ce30a0302cc21732ddaad3039ddf77b610",
+          "pairing_basis": "The exact instruction applies B9-B11 probing rules to B83-B85. Within the named alias range, B85 is the industry/business question and matches the B10 type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:e6f0f01be813c9d432e905408e03228dbc13f43f707878df9a6ab3219f7903e4",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:7e31123dfdd38a6ab10eb287786806b7fc396f9e2c22e788c7dccc6d46e22615"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition_with_disclosed_stops",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:268e560438e8d189c3c89fe852b06ec323218fdabeeeb36c6308808fd13aeb66",
+      "instruction_id": "psid-questionnaire-occurrence:c3275a8794901e02bc0e54360ec899e43e61838b586fcf4fd171dbadd368a3ef",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:a23f685d19cc59dde3cb520d522cc93fd4c45558c65bbf51abe4abfc3fc91253",
+        "rq-local-repeat-evidence:4cb2a3d354fc0360ec2bce23ac504540879bbbe4fa3d41e839237687b0fbc666"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:a23f685d19cc59dde3cb520d522cc93fd4c45558c65bbf51abe4abfc3fc91253",
+        "rq-local-repeat-evidence:4cb2a3d354fc0360ec2bce23ac504540879bbbe4fa3d41e839237687b0fbc666",
+        "rq-local-repeat-evidence:fbbc033a0e1ebfdac2fe6d3843b2b6c9d5117e277ecdb712da5b5f1e1fa2e443"
+      ],
+      "stop_evidence_rows": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:34eeb1030283b33716c5e819671a1b6c261f674f8c1faa94e5acc887ed532a4c",
+          "alias_question_selector": "C9-C11 (no employer-identity member)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:779cad59d2edd342f0d54bba37255b1991435b329dd7f9bfbfa2dc5db68ee2f6",
+          "canonical_question_selector": "B11",
+          "finding": "The cited C9-C11 range contains occupation and duties (C9+C10) and industry (C11). Employer name is C14a, outside the exact named alias range, so the instruction does not derive a B11 employer-identity pair.",
+          "finding_code": "no_named_alias_member_of_employer_identity_type",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "C9-11.     Probe for detail, as in the occupation/industry instructions at B9-B11. Remember,",
+            "matched_utf8_sha256": "39138e0d0a08a38177e2ac3863471665c66237b024bd67019571648356519dbb",
+            "page_number": 27,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1056,
+              "start": 964
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:c3275a8794901e02bc0e54360ec899e43e61838b586fcf4fd171dbadd368a3ef",
+          "source_evidence_id": "rq-local-repeat-evidence:fbbc033a0e1ebfdac2fe6d3843b2b6c9d5117e277ecdb712da5b5f1e1fa2e443",
+          "stop_adjudication_id": "a12-composite-import-stop:c8fc3e0343735e2f30dafbae9af20d645db25a13a17f6633cad672bee245af10"
+        }
+      ],
+      "stop_source_evidence_ids": [
+        "rq-local-repeat-evidence:fbbc033a0e1ebfdac2fe6d3843b2b6c9d5117e277ecdb712da5b5f1e1fa2e443"
+      ],
+      "sweep_row_index": 127,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:34eeb1030283b33716c5e819671a1b6c261f674f8c1faa94e5acc887ed532a4c",
+          "alias_question_selector": "C9+C10",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:46ad72f61a8cdb0576692453a029b9a0cffd2de637e08c6a8e10978c48e132dc",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "C9-11.     Probe for detail, as in the occupation/industry instructions at B9-B11. Remember,",
+            "matched_utf8_sha256": "39138e0d0a08a38177e2ac3863471665c66237b024bd67019571648356519dbb",
+            "page_number": 27,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1056,
+              "start": 964
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:c3275a8794901e02bc0e54360ec899e43e61838b586fcf4fd171dbadd368a3ef",
+          "pairing_basis": "The exact instruction applies the B9-B11 occupation/industry instructions to C9-C11. C9+C10 elicit occupation/title and duties, matching the B9+B9a type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:a23f685d19cc59dde3cb520d522cc93fd4c45558c65bbf51abe4abfc3fc91253",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:e8f4190905ef1a31573c056d8a1544d1d686f6a0677d135ff8b6ddd3483528ef"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:34eeb1030283b33716c5e819671a1b6c261f674f8c1faa94e5acc887ed532a4c",
+          "alias_question_selector": "C11",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:09b9bea8500ac3c6ad1a73c4fbd71fef11c095421180271b3b24cd03129a9c07",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "C9-11.     Probe for detail, as in the occupation/industry instructions at B9-B11. Remember,",
+            "matched_utf8_sha256": "39138e0d0a08a38177e2ac3863471665c66237b024bd67019571648356519dbb",
+            "page_number": 27,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1056,
+              "start": 964
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:c3275a8794901e02bc0e54360ec899e43e61838b586fcf4fd171dbadd368a3ef",
+          "pairing_basis": "The exact instruction applies the B9-B11 occupation/industry instructions to C9-C11. C11 elicits industry/business, matching the B10 type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:4cb2a3d354fc0360ec2bce23ac504540879bbbe4fa3d41e839237687b0fbc666",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:9521191ef9519b158b9be91cdfda3550ad40041b770174d7c174479087521d8f"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:4566a91675eef894dd1a8afe69179b8fe49f9d05e9ee8b11c31b4aef3beb132d",
+      "instruction_id": "psid-questionnaire-occurrence:7a8a6bb241c7caa6856a50674c1ca8b82b69cf366e1b982c2895bbd6578f3ac0",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:7f0254a2f0ecf3aeba5d8bab582192a4dc64def50b83560d7703c1fde8b1e5fb",
+        "rq-local-repeat-evidence:6c932775c79408fcd050b173832014a6b6d315da90dc2c19a0ac8295a3af9bf5"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:7f0254a2f0ecf3aeba5d8bab582192a4dc64def50b83560d7703c1fde8b1e5fb",
+        "rq-local-repeat-evidence:6c932775c79408fcd050b173832014a6b6d315da90dc2c19a0ac8295a3af9bf5"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 128,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:3f99324c68e69fa885049ec59e175b6da1412f99df24dd5e66238c4ad7ad78eb",
+          "alias_question_selector": "C12+C12a+C12b+C12c",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:82ed3120af2286b67176e11cd584b72be227cd3fffec2a2551c82ec644183455",
+          "canonical_question_selector": "B4+B4a+B4b+B4c",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "C12-14.    For instructions, see B4-B5.",
+            "matched_utf8_sha256": "e5b23a5d426a1e4ff3ee82308c90fd50d00d7702bfd54a23bc25eefbbcaf635a",
+            "page_number": 27,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1223,
+              "start": 1184
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:7a8a6bb241c7caa6856a50674c1ca8b82b69cf366e1b982c2895bbd6578f3ac0",
+          "pairing_basis": "The exact instruction names C12-C14 and imports B4-B5. C12 with C12a-C12c classifies employee, self-employed, or mixed work, matching B4 with B4a-B4c.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "employment_arrangement",
+          "source_evidence_id": "rq-local-repeat-evidence:7f0254a2f0ecf3aeba5d8bab582192a4dc64def50b83560d7703c1fde8b1e5fb",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:a84d916ce74899951f20161ce3adebcf3d78eb344a9da28e20e3ebf91ca9735f"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:3f99324c68e69fa885049ec59e175b6da1412f99df24dd5e66238c4ad7ad78eb",
+          "alias_question_selector": "C13",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:8ea83593b702a6997d747f2a22481f90bcc9cfe6eefd705500261e016f94ed09",
+          "canonical_question_selector": "B5",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "C12-14.    For instructions, see B4-B5.",
+            "matched_utf8_sha256": "e5b23a5d426a1e4ff3ee82308c90fd50d00d7702bfd54a23bc25eefbbcaf635a",
+            "page_number": 27,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1223,
+              "start": 1184
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:7a8a6bb241c7caa6856a50674c1ca8b82b69cf366e1b982c2895bbd6578f3ac0",
+          "pairing_basis": "The exact instruction names C12-C14 and imports B4-B5. C13 asks whether the business is incorporated, matching B5; C14 is a distinct unprojected sector question.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "business_incorporation_status",
+          "source_evidence_id": "rq-local-repeat-evidence:6c932775c79408fcd050b173832014a6b6d315da90dc2c19a0ac8295a3af9bf5",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:2f7bdcb3433cf6813c7fc4c589c40a751feebc45682ba6f57faea19fba22bf98"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition_with_disclosed_stops",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:044708a1b98e069f4268f0f31c729a6ad6a9097086eba438a3c82e846f097d77",
+      "instruction_id": "psid-questionnaire-occurrence:ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:7274e3bee4b9e38ebdb9c9ef47c5eb70952732a8732d6d7ae0347d0d50f15e7e",
+        "rq-local-repeat-evidence:5472d94efef80f838fcc82dd32dcc3280f02891e90fb7c53f1fc1728f0f8aa21"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:7274e3bee4b9e38ebdb9c9ef47c5eb70952732a8732d6d7ae0347d0d50f15e7e",
+        "rq-local-repeat-evidence:5472d94efef80f838fcc82dd32dcc3280f02891e90fb7c53f1fc1728f0f8aa21",
+        "rq-local-repeat-evidence:4944943ecb3d743755ad562e27bba458b36e6e28c392b8638ccda2d5eb94dc83"
+      ],
+      "stop_evidence_rows": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:b83addc5d6f1b00afa6269bca2808367b18e76554e0804dde33db1c14a32a4cb",
+          "alias_question_selector": "GJ3-GJ3a (no employer-identity member)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:779cad59d2edd342f0d54bba37255b1991435b329dd7f9bfbfa2dc5db68ee2f6",
+          "canonical_question_selector": "B11",
+          "finding": "The exact alias range is GJ3-GJ3a: GJ3 supplies kind of work and duties and GJ3a supplies industry. Employer name is GJ3b, outside the exact named alias range, so the instruction does not derive a B11 employer-identity pair.",
+          "finding_code": "no_named_alias_member_of_employer_identity_type",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "GJ3-3a.    Follow the same general rules that you used for probing on B9-B11. For example, \"sold",
+            "matched_utf8_sha256": "c32486551eba03d65402559b8713716f1ab8ad723d3be13bfea5fab488627a49",
+            "page_number": 41,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 522,
+              "start": 426
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d",
+          "source_evidence_id": "rq-local-repeat-evidence:4944943ecb3d743755ad562e27bba458b36e6e28c392b8638ccda2d5eb94dc83",
+          "stop_adjudication_id": "a12-composite-import-stop:0cf56a6cf58793f94b42f3a42617093e7bd1497879c5fe5d288b76c273393fad"
+        }
+      ],
+      "stop_source_evidence_ids": [
+        "rq-local-repeat-evidence:4944943ecb3d743755ad562e27bba458b36e6e28c392b8638ccda2d5eb94dc83"
+      ],
+      "sweep_row_index": 134,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:b83addc5d6f1b00afa6269bca2808367b18e76554e0804dde33db1c14a32a4cb",
+          "alias_question_selector": "GJ3 (kind of work and duties)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:46ad72f61a8cdb0576692453a029b9a0cffd2de637e08c6a8e10978c48e132dc",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "GJ3-3a.    Follow the same general rules that you used for probing on B9-B11. For example, \"sold",
+            "matched_utf8_sha256": "c32486551eba03d65402559b8713716f1ab8ad723d3be13bfea5fab488627a49",
+            "page_number": 41,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 522,
+              "start": 426
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d",
+          "pairing_basis": "The exact instruction applies B9-B11 probing rules to GJ3-GJ3a. GJ3 elicits kind of work and duties, matching the B9+B9a occupation/title-and-duties type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:7274e3bee4b9e38ebdb9c9ef47c5eb70952732a8732d6d7ae0347d0d50f15e7e",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:cebae3418f2939fe6ebe44ad54dd331965e6b98ad3ec6a49dbeade06847adcc9"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:b83addc5d6f1b00afa6269bca2808367b18e76554e0804dde33db1c14a32a4cb",
+          "alias_question_selector": "GJ3a",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:09b9bea8500ac3c6ad1a73c4fbd71fef11c095421180271b3b24cd03129a9c07",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "GJ3-3a.    Follow the same general rules that you used for probing on B9-B11. For example, \"sold",
+            "matched_utf8_sha256": "c32486551eba03d65402559b8713716f1ab8ad723d3be13bfea5fab488627a49",
+            "page_number": 41,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 522,
+              "start": 426
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d",
+          "pairing_basis": "The exact instruction applies B9-B11 probing rules to GJ3-GJ3a. GJ3a elicits industry/business, matching the B10 type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:5472d94efef80f838fcc82dd32dcc3280f02891e90fb7c53f1fc1728f0f8aa21",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:d9d77d38d65fe82d11873e17a551929b0cb8ad57bc9ec9fc4f9ee69cd1abd5a7"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:1d656a7547a1b02055259ece9e2421408bae9b3041142dc0b5ace81aeb06ac20",
+      "instruction_id": "psid-questionnaire-occurrence:e743178fd99199a9b422f04dc9a8c20a700a2d1f698c58fc87b60067a91e2f72",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:5aef0c9241370f81c5c53db93567bf538b7891973e7a3ee9a4196df7bcdd1cad",
+        "rq-local-repeat-evidence:22d086725faf3b8eae3723d0a76c79220b32c86ee60965eca4663789325d1dd7"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:5aef0c9241370f81c5c53db93567bf538b7891973e7a3ee9a4196df7bcdd1cad",
+        "rq-local-repeat-evidence:22d086725faf3b8eae3723d0a76c79220b32c86ee60965eca4663789325d1dd7"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 138,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:85153dd81593c30f92c526f77c4a76af47c18614d37015111d004b37d8bff649",
+          "alias_question_selector": "K65+K65a",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:46ad72f61a8cdb0576692453a029b9a0cffd2de637e08c6a8e10978c48e132dc",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "K65-66.   Again, use the same probing technique you use at B9-10 to get all the details of this work.",
+            "matched_utf8_sha256": "349a7fdef89f0d12a8dfa9ab592772a50742daccc098877a5419b1ab723eb1b0",
+            "page_number": 58,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 2178,
+              "start": 2077
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:e743178fd99199a9b422f04dc9a8c20a700a2d1f698c58fc87b60067a91e2f72",
+          "pairing_basis": "The exact instruction applies the B9-B10 probing technique to K65-K66. K65+K65a elicit occupation/title and duties, matching the B9+B9a type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:5aef0c9241370f81c5c53db93567bf538b7891973e7a3ee9a4196df7bcdd1cad",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:7b50b3c1b6158ab0614ba8ace02dc7f06c2114da2cdf45b31f55bdc61e97d916"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:85153dd81593c30f92c526f77c4a76af47c18614d37015111d004b37d8bff649",
+          "alias_question_selector": "K66",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:09b9bea8500ac3c6ad1a73c4fbd71fef11c095421180271b3b24cd03129a9c07",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "K65-66.   Again, use the same probing technique you use at B9-10 to get all the details of this work.",
+            "matched_utf8_sha256": "349a7fdef89f0d12a8dfa9ab592772a50742daccc098877a5419b1ab723eb1b0",
+            "page_number": 58,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 2178,
+              "start": 2077
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:e743178fd99199a9b422f04dc9a8c20a700a2d1f698c58fc87b60067a91e2f72",
+          "pairing_basis": "The exact instruction applies the B9-B10 probing technique to K65-K66. K66 elicits industry/business, matching the B10 type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:22d086725faf3b8eae3723d0a76c79220b32c86ee60965eca4663789325d1dd7",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:bec849fb81b2b80df05a1038b5ccccd9f3c809dae4f4b78903edc3180d897fdd"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition_with_disclosed_stops",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:229fb23749a5d57408800c25fa6a0e1e4c264d66aa7e7fb52bb8e225e8a10552",
+      "instruction_id": "psid-questionnaire-occurrence:1e5f65bf74b51459b2db19f2c8b433a9df29a660fcb5bed021e98a71e4c8ff2f",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:cbff1d14489eb775261f154dd5af08624db6299882db9727d898588750e1c015"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:6985ff3cb3d917e3a7168012a67b8082b10079653bc86fd9d6ee1daa6ebb3c07",
+        "rq-local-repeat-evidence:cbff1d14489eb775261f154dd5af08624db6299882db9727d898588750e1c015"
+      ],
+      "stop_evidence_rows": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:1f03b7100489aafe220493da85ddeddb3d8867486e70e7e39ddef75d7c7b31df",
+          "alias_question_selector": "K92-K93 (no full-time-threshold member)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:06419fa9d9a8e015a6c8acc105c2b6fff135198ff5c1609b098b4baf8b915c41",
+          "canonical_question_selector": "K64",
+          "finding": "The exact K92-K93 range contains occupation/duties and industry. K64 is a full-time-hours definition, so the instruction derives no same-type K92-K93 member to pair with K64.",
+          "finding_code": "no_alias_member_of_full_time_threshold_type",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "K92-93.   See QxQs at K64-K66.",
+            "matched_utf8_sha256": "f3048b0389bbd68ea52a3fafe96e4df69a243467549994eb776729953ccb3687",
+            "page_number": 58,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 2540,
+              "start": 2510
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:1e5f65bf74b51459b2db19f2c8b433a9df29a660fcb5bed021e98a71e4c8ff2f",
+          "source_evidence_id": "rq-local-repeat-evidence:6985ff3cb3d917e3a7168012a67b8082b10079653bc86fd9d6ee1daa6ebb3c07",
+          "stop_adjudication_id": "a12-composite-import-stop:899f5937b825e671fab4e02a9fbc6ebefb6036f1bb33642e7af149d1441bf83b"
+        }
+      ],
+      "stop_source_evidence_ids": [
+        "rq-local-repeat-evidence:6985ff3cb3d917e3a7168012a67b8082b10079653bc86fd9d6ee1daa6ebb3c07"
+      ],
+      "sweep_row_index": 139,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:1f03b7100489aafe220493da85ddeddb3d8867486e70e7e39ddef75d7c7b31df",
+          "alias_question_selector": "K92+K92a",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:85153dd81593c30f92c526f77c4a76af47c18614d37015111d004b37d8bff649",
+          "canonical_question_selector": "K65+K65a",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "K92-93.   See QxQs at K64-K66.",
+            "matched_utf8_sha256": "f3048b0389bbd68ea52a3fafe96e4df69a243467549994eb776729953ccb3687",
+            "page_number": 58,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 2540,
+              "start": 2510
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:1e5f65bf74b51459b2db19f2c8b433a9df29a660fcb5bed021e98a71e4c8ff2f",
+          "pairing_basis": "The exact instruction sends K92-K93 to K64-K66 QxQs. K92+K92a and K65+K65a are the occupation/title-and-duties members, so semantic type derives this projection from the aggregate K65-K66 source evidence without unioning that aggregate occurrence.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:cbff1d14489eb775261f154dd5af08624db6299882db9727d898588750e1c015",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:3c5c310e0bec5eacbee458abbb588faeee7e9f9062a02e790974a80307d30453"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:1f03b7100489aafe220493da85ddeddb3d8867486e70e7e39ddef75d7c7b31df",
+          "alias_question_selector": "K93",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:85153dd81593c30f92c526f77c4a76af47c18614d37015111d004b37d8bff649",
+          "canonical_question_selector": "K66",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "K92-93.   See QxQs at K64-K66.",
+            "matched_utf8_sha256": "f3048b0389bbd68ea52a3fafe96e4df69a243467549994eb776729953ccb3687",
+            "page_number": 58,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 2540,
+              "start": 2510
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:1e5f65bf74b51459b2db19f2c8b433a9df29a660fcb5bed021e98a71e4c8ff2f",
+          "pairing_basis": "The exact instruction sends K92-K93 to K64-K66 QxQs. K93 and K66 are the industry/business members, so semantic type derives this second projection from the same aggregate K65-K66 source evidence without unioning that aggregate occurrence.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:cbff1d14489eb775261f154dd5af08624db6299882db9727d898588750e1c015",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:aa128458943aea62efcca694d150cb95e858aca76d8dd0db066f16fa9b5ab426"
+        }
+      ]
+    },
+    {
+      "disposition": "disclosed_stop",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:07eb0c2ff26583e3a44e939a5da1804d7d657c7e21735e5b264d27c07ef7b0c5",
+      "instruction_id": "psid-questionnaire-occurrence:4c354d978faf69b2a8e4f567e344b272c097bdc28cc6986adafcb2f8d38af3ab",
+      "pair_producing_source_evidence_ids": [],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:1e906169227e5c6fc5d9046e93b646370edeadb8783ec096193dd93f6292b281",
+        "rq-local-repeat-evidence:69febb838c1a50b6ecdda8994e7f5349582898cc39df37b40a344ff228c4c457"
+      ],
+      "stop_evidence_rows": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:db362ad7ba7b2d4299a52f81fdc7015d2f127868eafce1fcc8be3f75ddce9f0f",
+          "alias_question_selector": "L70-L71 (unresolved composite)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:c4c73ab59a225a19c588d8ac6f56fa0e6df4140d8f087031c61777d9dfc747cb",
+          "canonical_question_selector": "K63",
+          "finding": "The exact instruction says only that L70-L71 and K63-K64 are comparable questions. Comparability is not instruction adoption or occurrence equivalence, and the text derives no pair.",
+          "finding_code": "comparability_does_not_prove_equivalence_or_pairing",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "L70-71.   See QxQs for comparable questions K63-64.",
+            "matched_utf8_sha256": "7eb9855d647f0ed006d2a8898f2b14f31536aff2c40cb9323bb5d56da612e02c",
+            "page_number": 60,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1413,
+              "start": 1362
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:4c354d978faf69b2a8e4f567e344b272c097bdc28cc6986adafcb2f8d38af3ab",
+          "source_evidence_id": "rq-local-repeat-evidence:1e906169227e5c6fc5d9046e93b646370edeadb8783ec096193dd93f6292b281",
+          "stop_adjudication_id": "a12-composite-import-stop:1d2f49055eed9ebf1d87391e6605c2ab645d713512e058ffb44f78c06bc93c9d"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:db362ad7ba7b2d4299a52f81fdc7015d2f127868eafce1fcc8be3f75ddce9f0f",
+          "alias_question_selector": "L70-L71 (unresolved composite)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:06419fa9d9a8e015a6c8acc105c2b6fff135198ff5c1609b098b4baf8b915c41",
+          "canonical_question_selector": "K64",
+          "finding": "The exact instruction says only that L70-L71 and K63-K64 are comparable questions. Comparability is not instruction adoption or occurrence equivalence, and the text derives no pair.",
+          "finding_code": "comparability_does_not_prove_equivalence_or_pairing",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "L70-71.   See QxQs for comparable questions K63-64.",
+            "matched_utf8_sha256": "7eb9855d647f0ed006d2a8898f2b14f31536aff2c40cb9323bb5d56da612e02c",
+            "page_number": 60,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1413,
+              "start": 1362
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:4c354d978faf69b2a8e4f567e344b272c097bdc28cc6986adafcb2f8d38af3ab",
+          "source_evidence_id": "rq-local-repeat-evidence:69febb838c1a50b6ecdda8994e7f5349582898cc39df37b40a344ff228c4c457",
+          "stop_adjudication_id": "a12-composite-import-stop:12fcb2fe686cc7b607ed0de89c84b77ee63169ff1d0395f4b42146961b426454"
+        }
+      ],
+      "stop_source_evidence_ids": [
+        "rq-local-repeat-evidence:1e906169227e5c6fc5d9046e93b646370edeadb8783ec096193dd93f6292b281",
+        "rq-local-repeat-evidence:69febb838c1a50b6ecdda8994e7f5349582898cc39df37b40a344ff228c4c457"
+      ],
+      "sweep_row_index": 140,
+      "typed_projection_pairs": []
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:62fbf1e1a3c1927c87382909a1a7fcec6e8c0bc77a97fe6cea22443936857386",
+      "instruction_id": "psid-questionnaire-occurrence:c7bc4ab94c2320b283203e6d6d677c21f84b9d61e10880b5f9b4d9c0261386d0",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:fef26ce3b372d21ce05a70b3a670bf931e6d1264e611b0886d7ea2aad4182606",
+        "rq-local-repeat-evidence:90a5aad86f3fe0cd4cb68e75e74a64f5054dd7eec268e136aa88d444b0dbe825"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:fef26ce3b372d21ce05a70b3a670bf931e6d1264e611b0886d7ea2aad4182606",
+        "rq-local-repeat-evidence:90a5aad86f3fe0cd4cb68e75e74a64f5054dd7eec268e136aa88d444b0dbe825"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 143,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:3e36921b39809d0ed8fd864dbd222578ca7d6020907632c4fb787da0b41182dd",
+          "alias_question_selector": "M4 (kind of work and duties)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:46ad72f61a8cdb0576692453a029b9a0cffd2de637e08c6a8e10978c48e132dc",
+          "canonical_question_selector": "B9+B9a",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "M4-5.         Use the same occupation/industry probing technique as at B9-B10 to get the details on",
+            "matched_utf8_sha256": "87a3ba98c1d02bf8f45cfbb4f6a2b73e74ea768e63bc8ce4bdd890cf0e8855b1",
+            "page_number": 61,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1613,
+              "start": 1514
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:c7bc4ab94c2320b283203e6d6d677c21f84b9d61e10880b5f9b4d9c0261386d0",
+          "pairing_basis": "The exact instruction applies the B9-B10 occupation/industry probing technique to M4-M5. M4 elicits kind of work and duties, matching the B9+B9a occupation/title-and-duties type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:fef26ce3b372d21ce05a70b3a670bf931e6d1264e611b0886d7ea2aad4182606",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:78f640355d7a4224b5e0715de7ee9ab0887b3f5bfc879bb01b572a65d6334e34"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:3e36921b39809d0ed8fd864dbd222578ca7d6020907632c4fb787da0b41182dd",
+          "alias_question_selector": "M5",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:09b9bea8500ac3c6ad1a73c4fbd71fef11c095421180271b3b24cd03129a9c07",
+          "canonical_question_selector": "B10",
+          "instruction_citation": {
+            "document_source_position": 58,
+            "matched_text": "M4-5.         Use the same occupation/industry probing technique as at B9-B10 to get the details on",
+            "matched_utf8_sha256": "87a3ba98c1d02bf8f45cfbb4f6a2b73e74ea768e63bc8ce4bdd890cf0e8855b1",
+            "page_number": 61,
+            "source_document_id": "psid-source-document:8116b39adb145810c342c96762405313e2d6df7d9bd77c9bf7c6558eefdf1871",
+            "utf8_byte_span": {
+              "end": 1613,
+              "start": 1514
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:c7bc4ab94c2320b283203e6d6d677c21f84b9d61e10880b5f9b4d9c0261386d0",
+          "pairing_basis": "The exact instruction applies the B9-B10 occupation/industry probing technique to M4-M5. M5 elicits industry/business, matching the B10 type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:90a5aad86f3fe0cd4cb68e75e74a64f5054dd7eec268e136aa88d444b0dbe825",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:b37b614547f77d418c4b5cb719613662efa99dac03c38bff9e6d2a10db80ec5d"
+        }
+      ]
+    },
+    {
+      "disposition": "pairwise_decomposition",
+      "instruction_decision_id": "a12-composite-import-instruction-decision:6da8805f1dc8fa4577259ea449d18371cf1c3b6e30601fd9dfe43834edbabf51",
+      "instruction_id": "psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcce683ff5dee1a9e",
+      "pair_producing_source_evidence_ids": [
+        "rq-local-repeat-evidence:420cf5ca900596c9d88dde710e08016ea5c06274f45efe1e2c6fbf591c6ddf09",
+        "rq-local-repeat-evidence:f9272e273208385eaa986254e93bef720a07635a12a187bd56ecca841b00141b"
+      ],
+      "source_evidence_ids": [
+        "rq-local-repeat-evidence:420cf5ca900596c9d88dde710e08016ea5c06274f45efe1e2c6fbf591c6ddf09",
+        "rq-local-repeat-evidence:f9272e273208385eaa986254e93bef720a07635a12a187bd56ecca841b00141b"
+      ],
+      "stop_evidence_rows": [],
+      "stop_source_evidence_ids": [],
+      "sweep_row_index": 161,
+      "typed_projection_pairs": [
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:e5eb2a8adc7482ce38e785ffde25ac398d2b4e342d471aa90aa863d14927a86f",
+          "alias_question_selector": "KL72 (kind of work and duties)",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:573048e7a4455b902470a740895051a7df4291bb51c2d7176d824ffc951eee1b",
+          "canonical_question_selector": "BC/DE20",
+          "instruction_citation": {
+            "document_source_position": 70,
+            "matched_text": "KL72-KL73   Again, use the same probing technique you use in Section BC to get all the details",
+            "matched_utf8_sha256": "b2b7e59d94ca74893ad54485928788da813c2bf4186928e248b8192fa1865a7b",
+            "page_number": 103,
+            "source_document_id": "psid-source-document:a7b37ac33b57943a66743b958e223d710bab3c661bab8000d284806c2a2952e6",
+            "utf8_byte_span": {
+              "end": 2474,
+              "start": 2380
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcce683ff5dee1a9e",
+          "pairing_basis": "The exact instruction applies the Section BC probing technique to KL72-KL73. KL72 elicits kind of work and duties, matching the BC/DE20 occupation/title-and-duties type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "occupation_title_and_job_duties",
+          "source_evidence_id": "rq-local-repeat-evidence:420cf5ca900596c9d88dde710e08016ea5c06274f45efe1e2c6fbf591c6ddf09",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:64a9d499f0e0fe41de1edc73e74be7b48f38eeaf8b81268fcf711f606db5a091"
+        },
+        {
+          "alias_combined_occurrence_id": "psid-questionnaire-occurrence:e5eb2a8adc7482ce38e785ffde25ac398d2b4e342d471aa90aa863d14927a86f",
+          "alias_question_selector": "KL73",
+          "canonical_combined_occurrence_id": "psid-questionnaire-occurrence:9a59197b95e5d5bd31c12f8b8bec45b67867e7b8ae9b55a70ab6d0e55249634f",
+          "canonical_question_selector": "BC/DE21",
+          "instruction_citation": {
+            "document_source_position": 70,
+            "matched_text": "KL72-KL73   Again, use the same probing technique you use in Section BC to get all the details",
+            "matched_utf8_sha256": "b2b7e59d94ca74893ad54485928788da813c2bf4186928e248b8192fa1865a7b",
+            "page_number": 103,
+            "source_document_id": "psid-source-document:a7b37ac33b57943a66743b958e223d710bab3c661bab8000d284806c2a2952e6",
+            "utf8_byte_span": {
+              "end": 2474,
+              "start": 2380
+            }
+          },
+          "instruction_id": "psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcce683ff5dee1a9e",
+          "pairing_basis": "The exact instruction applies the Section BC probing technique to KL72-KL73. KL73 elicits industry/business, matching the BC/DE21 type.",
+          "pairing_basis_code": "explicit_named_range_decomposed_by_question_semantic_type",
+          "semantic_type": "industry_or_business",
+          "source_evidence_id": "rq-local-repeat-evidence:f9272e273208385eaa986254e93bef720a07635a12a187bd56ecca841b00141b",
+          "typed_projection_pair_id": "a12-composite-typed-projection-pair:a3c86d99a03bee074b6e2af380a3ec3bf45a79e4374791cc5331b99eb6a6556e"
+        }
+      ]
+    }
+  ],
+  "ordered_instruction_domain": [
+    "psid-questionnaire-occurrence:cb562486f76e7f4dcb2a4ef574a0ae413de9a2ede4d4450ad2e8cf96058e8b2d",
+    "psid-questionnaire-occurrence:d986ab2a3dfc95f31fda53fac4a23b7520ee9fd449d2ef501569afe651b3a369",
+    "psid-questionnaire-occurrence:dfd221be448ee0468cc480dde0566ce1ff56f88eae3c99709ef0ae81a1e72ef0",
+    "psid-questionnaire-occurrence:ceedb0f652116dcaaba199e11f90365e8bdaf0557d783e0adc5b3ddc3e3aa33b",
+    "psid-questionnaire-occurrence:357281a0ee7987a14867f92a263f3aa1097d8bb5202d45820e4e8af363a7157b",
+    "psid-questionnaire-occurrence:a769c4a969cdaca2142d0aab2e2cee8aa2f9f83d4fe1abf4235e4bd9acb5c9f5",
+    "psid-questionnaire-occurrence:455271aa575d2126ae53289ab69e2eeb4fb652c63cad693f8ce70208a351731f",
+    "psid-questionnaire-occurrence:35833279648220c82c4340b8a40d6823b3d3fc231eca8180cdd635479521a052",
+    "psid-questionnaire-occurrence:bbdbc781bb95e0d12442053e1bf4a84094b4b88c42c8e2edb728d659891ee5dc",
+    "psid-questionnaire-occurrence:e84a537936c186e2873ea2d79ff28ef6d9cec295b75db355ed318720ca661bac",
+    "psid-questionnaire-occurrence:586b32d3786d0c7e475e39b30cf3f5a081a5943bba6093c4bea5886af47812ff",
+    "psid-questionnaire-occurrence:879048f9a5169e56b506da7c84c7780e4da524927635ec6ae52dcbc43a467e5c",
+    "psid-questionnaire-occurrence:c020df281459e26b8415bdb22c92f9ce30a0302cc21732ddaad3039ddf77b610",
+    "psid-questionnaire-occurrence:c3275a8794901e02bc0e54360ec899e43e61838b586fcf4fd171dbadd368a3ef",
+    "psid-questionnaire-occurrence:7a8a6bb241c7caa6856a50674c1ca8b82b69cf366e1b982c2895bbd6578f3ac0",
+    "psid-questionnaire-occurrence:ff130ead6f6c53c4759fd4b3e90904e46223850e73772a94277448f7aeeaaa7d",
+    "psid-questionnaire-occurrence:e743178fd99199a9b422f04dc9a8c20a700a2d1f698c58fc87b60067a91e2f72",
+    "psid-questionnaire-occurrence:1e5f65bf74b51459b2db19f2c8b433a9df29a660fcb5bed021e98a71e4c8ff2f",
+    "psid-questionnaire-occurrence:4c354d978faf69b2a8e4f567e344b272c097bdc28cc6986adafcb2f8d38af3ab",
+    "psid-questionnaire-occurrence:c7bc4ab94c2320b283203e6d6d677c21f84b9d61e10880b5f9b4d9c0261386d0",
+    "psid-questionnaire-occurrence:3d43945eef7cdf54dab92db704b47843633833c3964dd5cfcce683ff5dee1a9e"
+  ],
+  "ordered_pair_producing_source_evidence_domain": [
+    "rq-local-repeat-evidence:760de3bfb5019d60b3ad78f917bbcad74114261c1d05071bf03db70b2342dc62",
+    "rq-local-repeat-evidence:89329c816b488bb304acd9cf0544131ea2d29ba782884812309dcc2b6ccc0e0f",
+    "rq-local-repeat-evidence:5f3957d714052e75b4bd4f8a4fabe05b08ab45fa3a4d9f1224bfb594d09f22d7",
+    "rq-local-repeat-evidence:374e250e860bcbb542ede9bd81cadc33caac07a3682ea9e8a075a77c0f2c4d00",
+    "rq-local-repeat-evidence:bc8b43068813b189f79b0c0a0e383623c560582ca83a434c4fdcb515158ea1fd",
+    "rq-local-repeat-evidence:14875b838a9218ec7eed9e273bdb1e3f1c746641efca366b3253770c1442a4d1",
+    "rq-local-repeat-evidence:273b333e5b305b9dd034c7ee7c5f1ae2cccd203c09e1b816741782ef6c220b46",
+    "rq-local-repeat-evidence:be47dd3428c6c840701bf15a2a8860c8d0e90b09b3b3a5ac6898cde47f5fce60",
+    "rq-local-repeat-evidence:2060f58eefbde6617c483051e16167d63576c3d299623e8c10367b124242da41",
+    "rq-local-repeat-evidence:d3ef7b371487bb27fd5034d3eb3819dfdb195592c7fc58f7b0f1e8ab4322851e",
+    "rq-local-repeat-evidence:52c88fd8891150fbe0e4e22a728bc63be2053d622bdd01798a849f9c53a164e4",
+    "rq-local-repeat-evidence:5324d2691f6bc3141fa9d8fbae50ebf14865466bebf77ef6f4fdf26f2aa23296",
+    "rq-local-repeat-evidence:cee24ce70d211b1bbb201564c12b85c737b737040295007c3b9383d60edfffb4",
+    "rq-local-repeat-evidence:77b58dc07701a689beff90985697258b4796fe885181e3fa1968944df53d9650",
+    "rq-local-repeat-evidence:b481e6117c1d07ae7c9adda93aaf5d92f6bb8a674544ded5d12ae41622b0bfda",
+    "rq-local-repeat-evidence:a6b86b651d4c1d8006f639ad09104357f22c9334c7b72192c92d1094ab0ffde2",
+    "rq-local-repeat-evidence:900787850cd5ab3114c8d7ed178edd8b2fc04dd42bcf92c322eec3165ef253ee",
+    "rq-local-repeat-evidence:99901887c411d4efc9c0bd36569c8d68164164b084d1176d6a2ec30472b19c8a",
+    "rq-local-repeat-evidence:458e52e766a8f11ef2c64bd89d328d2ea8179c92cb2eec85a68bb1767d1b0e48",
+    "rq-local-repeat-evidence:b7c739ced7c91a369e58206cc2a475322b2e8a4aade27e7462cf21f712ba4acf",
+    "rq-local-repeat-evidence:b430bf4cf5f6dfc79540868bed5ae4e5195acf5a8e149f1ffb2c2b4e7b55fde3",
+    "rq-local-repeat-evidence:dc4a6d58979fd73a654f780b40ed5307ddb178f249d44c70acda9fe2ffa0fff9",
+    "rq-local-repeat-evidence:34d53238ec34f949bc9aaebd9adc6e09417bfc555d5d3c990cd0049b8d5cb74a",
+    "rq-local-repeat-evidence:ec24efdca2edfc9950277a880c74bb73944f318bdcc59ea9e5ab804f3ac3c75c",
+    "rq-local-repeat-evidence:494590e0350b3eaad50adf744acb90cbeb2b1e91e92c4ca5a603291559f44552",
+    "rq-local-repeat-evidence:62fb5fc4e2109c8d4cb5c8acfa2704b78fcd1998405dad2980103e1015c64cfc",
+    "rq-local-repeat-evidence:333b9c2a5dfbcaf0b09001b701ecf688d094718a661309efba3392d15563e358",
+    "rq-local-repeat-evidence:e6f0f01be813c9d432e905408e03228dbc13f43f707878df9a6ab3219f7903e4",
+    "rq-local-repeat-evidence:a23f685d19cc59dde3cb520d522cc93fd4c45558c65bbf51abe4abfc3fc91253",
+    "rq-local-repeat-evidence:4cb2a3d354fc0360ec2bce23ac504540879bbbe4fa3d41e839237687b0fbc666",
+    "rq-local-repeat-evidence:7f0254a2f0ecf3aeba5d8bab582192a4dc64def50b83560d7703c1fde8b1e5fb",
+    "rq-local-repeat-evidence:6c932775c79408fcd050b173832014a6b6d315da90dc2c19a0ac8295a3af9bf5",
+    "rq-local-repeat-evidence:7274e3bee4b9e38ebdb9c9ef47c5eb70952732a8732d6d7ae0347d0d50f15e7e",
+    "rq-local-repeat-evidence:5472d94efef80f838fcc82dd32dcc3280f02891e90fb7c53f1fc1728f0f8aa21",
+    "rq-local-repeat-evidence:5aef0c9241370f81c5c53db93567bf538b7891973e7a3ee9a4196df7bcdd1cad",
+    "rq-local-repeat-evidence:22d086725faf3b8eae3723d0a76c79220b32c86ee60965eca4663789325d1dd7",
+    "rq-local-repeat-evidence:cbff1d14489eb775261f154dd5af08624db6299882db9727d898588750e1c015",
+    "rq-local-repeat-evidence:fef26ce3b372d21ce05a70b3a670bf931e6d1264e611b0886d7ea2aad4182606",
+    "rq-local-repeat-evidence:90a5aad86f3fe0cd4cb68e75e74a64f5054dd7eec268e136aa88d444b0dbe825",
+    "rq-local-repeat-evidence:420cf5ca900596c9d88dde710e08016ea5c06274f45efe1e2c6fbf591c6ddf09",
+    "rq-local-repeat-evidence:f9272e273208385eaa986254e93bef720a07635a12a187bd56ecca841b00141b"
+  ],
+  "ordered_source_evidence_domain": [
+    "rq-local-repeat-evidence:760de3bfb5019d60b3ad78f917bbcad74114261c1d05071bf03db70b2342dc62",
+    "rq-local-repeat-evidence:89329c816b488bb304acd9cf0544131ea2d29ba782884812309dcc2b6ccc0e0f",
+    "rq-local-repeat-evidence:5f3957d714052e75b4bd4f8a4fabe05b08ab45fa3a4d9f1224bfb594d09f22d7",
+    "rq-local-repeat-evidence:374e250e860bcbb542ede9bd81cadc33caac07a3682ea9e8a075a77c0f2c4d00",
+    "rq-local-repeat-evidence:bc8b43068813b189f79b0c0a0e383623c560582ca83a434c4fdcb515158ea1fd",
+    "rq-local-repeat-evidence:14875b838a9218ec7eed9e273bdb1e3f1c746641efca366b3253770c1442a4d1",
+    "rq-local-repeat-evidence:273b333e5b305b9dd034c7ee7c5f1ae2cccd203c09e1b816741782ef6c220b46",
+    "rq-local-repeat-evidence:be47dd3428c6c840701bf15a2a8860c8d0e90b09b3b3a5ac6898cde47f5fce60",
+    "rq-local-repeat-evidence:2060f58eefbde6617c483051e16167d63576c3d299623e8c10367b124242da41",
+    "rq-local-repeat-evidence:d3ef7b371487bb27fd5034d3eb3819dfdb195592c7fc58f7b0f1e8ab4322851e",
+    "rq-local-repeat-evidence:52c88fd8891150fbe0e4e22a728bc63be2053d622bdd01798a849f9c53a164e4",
+    "rq-local-repeat-evidence:5324d2691f6bc3141fa9d8fbae50ebf14865466bebf77ef6f4fdf26f2aa23296",
+    "rq-local-repeat-evidence:aacba8c9d26db99b8a17ce56d7599af089d19c3f5f168871dad92d5bbab07a1b",
+    "rq-local-repeat-evidence:cee24ce70d211b1bbb201564c12b85c737b737040295007c3b9383d60edfffb4",
+    "rq-local-repeat-evidence:77b58dc07701a689beff90985697258b4796fe885181e3fa1968944df53d9650",
+    "rq-local-repeat-evidence:b068bafe10257e3df29c92c5690aeadae8eed5384b447d0536c53f820a151c42",
+    "rq-local-repeat-evidence:b481e6117c1d07ae7c9adda93aaf5d92f6bb8a674544ded5d12ae41622b0bfda",
+    "rq-local-repeat-evidence:a6b86b651d4c1d8006f639ad09104357f22c9334c7b72192c92d1094ab0ffde2",
+    "rq-local-repeat-evidence:9e6075ce060306419bf9b195b2ccd3a168e2a9f6d34586642c641b343512f7e3",
+    "rq-local-repeat-evidence:b3b4b8765b994b209866bddba1ec0a4b457ec1ea35da754b4302be2a0b35fe08",
+    "rq-local-repeat-evidence:900787850cd5ab3114c8d7ed178edd8b2fc04dd42bcf92c322eec3165ef253ee",
+    "rq-local-repeat-evidence:99901887c411d4efc9c0bd36569c8d68164164b084d1176d6a2ec30472b19c8a",
+    "rq-local-repeat-evidence:458e52e766a8f11ef2c64bd89d328d2ea8179c92cb2eec85a68bb1767d1b0e48",
+    "rq-local-repeat-evidence:b7c739ced7c91a369e58206cc2a475322b2e8a4aade27e7462cf21f712ba4acf",
+    "rq-local-repeat-evidence:b430bf4cf5f6dfc79540868bed5ae4e5195acf5a8e149f1ffb2c2b4e7b55fde3",
+    "rq-local-repeat-evidence:dc4a6d58979fd73a654f780b40ed5307ddb178f249d44c70acda9fe2ffa0fff9",
+    "rq-local-repeat-evidence:34d53238ec34f949bc9aaebd9adc6e09417bfc555d5d3c990cd0049b8d5cb74a",
+    "rq-local-repeat-evidence:ec24efdca2edfc9950277a880c74bb73944f318bdcc59ea9e5ab804f3ac3c75c",
+    "rq-local-repeat-evidence:494590e0350b3eaad50adf744acb90cbeb2b1e91e92c4ca5a603291559f44552",
+    "rq-local-repeat-evidence:62fb5fc4e2109c8d4cb5c8acfa2704b78fcd1998405dad2980103e1015c64cfc",
+    "rq-local-repeat-evidence:333b9c2a5dfbcaf0b09001b701ecf688d094718a661309efba3392d15563e358",
+    "rq-local-repeat-evidence:e6f0f01be813c9d432e905408e03228dbc13f43f707878df9a6ab3219f7903e4",
+    "rq-local-repeat-evidence:25bca789c7d2e7442cfbc261e16272d7a4b1edfef88ad7b0f937d64aef3b6ca5",
+    "rq-local-repeat-evidence:a23f685d19cc59dde3cb520d522cc93fd4c45558c65bbf51abe4abfc3fc91253",
+    "rq-local-repeat-evidence:4cb2a3d354fc0360ec2bce23ac504540879bbbe4fa3d41e839237687b0fbc666",
+    "rq-local-repeat-evidence:fbbc033a0e1ebfdac2fe6d3843b2b6c9d5117e277ecdb712da5b5f1e1fa2e443",
+    "rq-local-repeat-evidence:7f0254a2f0ecf3aeba5d8bab582192a4dc64def50b83560d7703c1fde8b1e5fb",
+    "rq-local-repeat-evidence:6c932775c79408fcd050b173832014a6b6d315da90dc2c19a0ac8295a3af9bf5",
+    "rq-local-repeat-evidence:7274e3bee4b9e38ebdb9c9ef47c5eb70952732a8732d6d7ae0347d0d50f15e7e",
+    "rq-local-repeat-evidence:5472d94efef80f838fcc82dd32dcc3280f02891e90fb7c53f1fc1728f0f8aa21",
+    "rq-local-repeat-evidence:4944943ecb3d743755ad562e27bba458b36e6e28c392b8638ccda2d5eb94dc83",
+    "rq-local-repeat-evidence:5aef0c9241370f81c5c53db93567bf538b7891973e7a3ee9a4196df7bcdd1cad",
+    "rq-local-repeat-evidence:22d086725faf3b8eae3723d0a76c79220b32c86ee60965eca4663789325d1dd7",
+    "rq-local-repeat-evidence:6985ff3cb3d917e3a7168012a67b8082b10079653bc86fd9d6ee1daa6ebb3c07",
+    "rq-local-repeat-evidence:cbff1d14489eb775261f154dd5af08624db6299882db9727d898588750e1c015",
+    "rq-local-repeat-evidence:1e906169227e5c6fc5d9046e93b646370edeadb8783ec096193dd93f6292b281",
+    "rq-local-repeat-evidence:69febb838c1a50b6ecdda8994e7f5349582898cc39df37b40a344ff228c4c457",
+    "rq-local-repeat-evidence:fef26ce3b372d21ce05a70b3a670bf931e6d1264e611b0886d7ea2aad4182606",
+    "rq-local-repeat-evidence:90a5aad86f3fe0cd4cb68e75e74a64f5054dd7eec268e136aa88d444b0dbe825",
+    "rq-local-repeat-evidence:420cf5ca900596c9d88dde710e08016ea5c06274f45efe1e2c6fbf591c6ddf09",
+    "rq-local-repeat-evidence:f9272e273208385eaa986254e93bef720a07635a12a187bd56ecca841b00141b"
+  ],
+  "ordered_stop_adjudication_domain": [
+    "a12-composite-import-stop:1bcccc6176af243bc43d82dc8f361227aef15ae295ab8ff08cbd0acd3d223b58",
+    "a12-composite-import-stop:799e373d410a3201b4442191004315d265410179aad2a1030cee49afd0bf1793",
+    "a12-composite-import-stop:2200f1505da15fa9da3f4038d7f070d3fe409c860968d696e18c08f5dc84c5a8",
+    "a12-composite-import-stop:463326c7245d2b39d53ac1f86dbc751b69ba9b6432b9f218ddd41f02a176297d",
+    "a12-composite-import-stop:4dd33eff9b9e99ab1ed2fa2c74bfcaaf08c5c53402fab338a5ac0a957e1d74ba",
+    "a12-composite-import-stop:c8fc3e0343735e2f30dafbae9af20d645db25a13a17f6633cad672bee245af10",
+    "a12-composite-import-stop:0cf56a6cf58793f94b42f3a42617093e7bd1497879c5fe5d288b76c273393fad",
+    "a12-composite-import-stop:899f5937b825e671fab4e02a9fbc6ebefb6036f1bb33642e7af149d1441bf83b",
+    "a12-composite-import-stop:1d2f49055eed9ebf1d87391e6605c2ab645d713512e058ffb44f78c06bc93c9d",
+    "a12-composite-import-stop:12fcb2fe686cc7b607ed0de89c84b77ee63169ff1d0395f4b42146961b426454"
+  ],
+  "ordered_stop_source_evidence_domain": [
+    "rq-local-repeat-evidence:aacba8c9d26db99b8a17ce56d7599af089d19c3f5f168871dad92d5bbab07a1b",
+    "rq-local-repeat-evidence:b068bafe10257e3df29c92c5690aeadae8eed5384b447d0536c53f820a151c42",
+    "rq-local-repeat-evidence:9e6075ce060306419bf9b195b2ccd3a168e2a9f6d34586642c641b343512f7e3",
+    "rq-local-repeat-evidence:b3b4b8765b994b209866bddba1ec0a4b457ec1ea35da754b4302be2a0b35fe08",
+    "rq-local-repeat-evidence:25bca789c7d2e7442cfbc261e16272d7a4b1edfef88ad7b0f937d64aef3b6ca5",
+    "rq-local-repeat-evidence:fbbc033a0e1ebfdac2fe6d3843b2b6c9d5117e277ecdb712da5b5f1e1fa2e443",
+    "rq-local-repeat-evidence:4944943ecb3d743755ad562e27bba458b36e6e28c392b8638ccda2d5eb94dc83",
+    "rq-local-repeat-evidence:6985ff3cb3d917e3a7168012a67b8082b10079653bc86fd9d6ee1daa6ebb3c07",
+    "rq-local-repeat-evidence:1e906169227e5c6fc5d9046e93b646370edeadb8783ec096193dd93f6292b281",
+    "rq-local-repeat-evidence:69febb838c1a50b6ecdda8994e7f5349582898cc39df37b40a344ff228c4c457"
+  ],
+  "ordered_typed_projection_pair_domain": [
+    "a12-composite-typed-projection-pair:73f089173f85e92c28704e557810c114b073a851bc15ae24186e56267be728b3",
+    "a12-composite-typed-projection-pair:7d30fe27fcbe7f98f85d2b4c12fa2bd5ff18d5504e1ba680107b0f2d084f449f",
+    "a12-composite-typed-projection-pair:76fe4ecc207ae8c2dbc86cefb64c719de5a369a00423e14cc777c609022efbc1",
+    "a12-composite-typed-projection-pair:32e58f61a7d6fe628f5a2a0f02cc76ddb162d809ac359846ff101bf515592258",
+    "a12-composite-typed-projection-pair:de1bed03f66c5c5b0a79f2db462db1aa93b9cd14d36e2d39301c576723428aca",
+    "a12-composite-typed-projection-pair:956eefcf206c589b735fea249e6281f82aa29f83b3e7651ded202c64d2b264d1",
+    "a12-composite-typed-projection-pair:3eee9d9e2fffada911b080e0ab93b296d705e7891d50e16ab2083da0cdec3dfe",
+    "a12-composite-typed-projection-pair:9278ee0603ae32ce40c16da5730b73866b2ab57483ecabddc593de645ba1283d",
+    "a12-composite-typed-projection-pair:f81f96dfdd553480cb070b188c58ee7e8212f5401fe481b69142f5da6f46ea5e",
+    "a12-composite-typed-projection-pair:ed84d87d786788a6bd865f8cfb4c82110b76c6ed638a3e36d634dcf844728bc1",
+    "a12-composite-typed-projection-pair:48ccc1c99cec1cd7c2e023536a24ef4d0b02d8d27bcbd0612def0410f96f757d",
+    "a12-composite-typed-projection-pair:c79da909b41b621635992ac72eb20b718bd1c7728df486570c29fc0827ee9c48",
+    "a12-composite-typed-projection-pair:bc00cc24afc3f9f2d8d214c979e3305c12815c097364ee1e836dc619599388a6",
+    "a12-composite-typed-projection-pair:b519f4438daf9a755622761f9f50c09724a688d7e65c2761278f44a68ed7a988",
+    "a12-composite-typed-projection-pair:30b4bfe7dea52b5a0a263e47fff36a170399e535397664bba61d3efaec68323a",
+    "a12-composite-typed-projection-pair:e81cb6cc719eaa4fe4e85a81be597e6dea84b315e0c4d102e98e9a0b769ac8e7",
+    "a12-composite-typed-projection-pair:7fc87fe914a49425fbd1fad6d70bb8e9988aa0ae9b68f9c1e2f0ef6c53492bc2",
+    "a12-composite-typed-projection-pair:4d10f1c3b2d69aa13f47344b81f6cd86291771eb99a2226b58a60ef436f8d539",
+    "a12-composite-typed-projection-pair:b5bca4e3b78234617b296dddc13c20237f061b07c96d0affbda39eac82b421eb",
+    "a12-composite-typed-projection-pair:1e17ad32ced610a946ad9505d9be946b2d46c5cbd7a27f7c42e7ab5bed0b0efa",
+    "a12-composite-typed-projection-pair:a40ea75f3481505abc49e1811b60e932fadb26d10d3804b434e9f7ece8ea5894",
+    "a12-composite-typed-projection-pair:126903d4c3fcbb9ce0a5a7995db539c554b9c6d88850bf2b2ed0cd5d0ba5ffc8",
+    "a12-composite-typed-projection-pair:1c91866c83fcab86fc75efabb0b0bf7bb7493230d834bfb33a017b5166c7b64a",
+    "a12-composite-typed-projection-pair:e21ad8b6b88f17af824aabca7b80c32584ee9c04a6481766663d6a5a9c448d51",
+    "a12-composite-typed-projection-pair:808f9a80a27152e38c6cf25a925547420d29661dd5e48388bb3961626634f096",
+    "a12-composite-typed-projection-pair:b605cdcaec24c378411b648a463fc193783c28a505e6be9faae1df1f3095bca1",
+    "a12-composite-typed-projection-pair:c6dfa17684a0ed974359f7ea2e66f556acfb2b7ab832841dcb6792b01d27a765",
+    "a12-composite-typed-projection-pair:7e31123dfdd38a6ab10eb287786806b7fc396f9e2c22e788c7dccc6d46e22615",
+    "a12-composite-typed-projection-pair:e8f4190905ef1a31573c056d8a1544d1d686f6a0677d135ff8b6ddd3483528ef",
+    "a12-composite-typed-projection-pair:9521191ef9519b158b9be91cdfda3550ad40041b770174d7c174479087521d8f",
+    "a12-composite-typed-projection-pair:a84d916ce74899951f20161ce3adebcf3d78eb344a9da28e20e3ebf91ca9735f",
+    "a12-composite-typed-projection-pair:2f7bdcb3433cf6813c7fc4c589c40a751feebc45682ba6f57faea19fba22bf98",
+    "a12-composite-typed-projection-pair:cebae3418f2939fe6ebe44ad54dd331965e6b98ad3ec6a49dbeade06847adcc9",
+    "a12-composite-typed-projection-pair:d9d77d38d65fe82d11873e17a551929b0cb8ad57bc9ec9fc4f9ee69cd1abd5a7",
+    "a12-composite-typed-projection-pair:7b50b3c1b6158ab0614ba8ace02dc7f06c2114da2cdf45b31f55bdc61e97d916",
+    "a12-composite-typed-projection-pair:bec849fb81b2b80df05a1038b5ccccd9f3c809dae4f4b78903edc3180d897fdd",
+    "a12-composite-typed-projection-pair:3c5c310e0bec5eacbee458abbb588faeee7e9f9062a02e790974a80307d30453",
+    "a12-composite-typed-projection-pair:aa128458943aea62efcca694d150cb95e858aca76d8dd0db066f16fa9b5ab426",
+    "a12-composite-typed-projection-pair:78f640355d7a4224b5e0715de7ee9ab0887b3f5bfc879bb01b572a65d6334e34",
+    "a12-composite-typed-projection-pair:b37b614547f77d418c4b5cb719613662efa99dac03c38bff9e6d2a10db80ec5d",
+    "a12-composite-typed-projection-pair:64a9d499f0e0fe41de1edc73e74be7b48f38eeaf8b81268fcf711f606db5a091",
+    "a12-composite-typed-projection-pair:a3c86d99a03bee074b6e2af380a3ec3bf45a79e4374791cc5331b99eb6a6556e"
+  ],
+  "representation_rule": "Combined occurrence IDs in this input are provenance only. They do not denote pairwise occurrence equivalence and MUST NOT be supplied to occurrence union-find. A lawful A support is the typed projection pair identified by its question selectors.",
+  "schema_version": "amendment12-composite-import-adjudication-v1",
+  "source_artifact_identity": {
+    "artifact_id": "a12-rq-corpus-sweeps:78553607cffff68220f1e900631b290f18adc1bfb0c6ccfeb35677d69a432cd3",
+    "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1",
+    "path": "docs/analysis/amendment_12_rq_catalog_pilot/corpus_exhaustive_targeted_sweeps_v1.json",
+    "payload_sha256": "78553607cffff68220f1e900631b290f18adc1bfb0c6ccfeb35677d69a432cd3"
+  },
+  "source_commit": "19fa24c161e800e004320f0c10e81bce8831af68",
+  "status": "complete_exact_cover"
+}
