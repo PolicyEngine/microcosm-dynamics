@@ -52471,12 +52471,12 @@ production. No successor-law silence may change any of them.
 #### 27.7.2 Executable law fixture and integrity pins
 
 The prospective nonauthority validator and focused test are fixed at
-implementation commit `eb39f7a07363bcf4ed1a9b40d1cafe1b989d7d5c`, mode `100644`:
+implementation commit `cedba8d99158112807aceaf578b18a698cb5eb06`, mode `100644`:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `0027e47f241387169fe256da4a00c48875f51ab5` | 271,668 | `bc0afab5deda7fe27fb774779daf2e279896ddf4e0a17427d0116393ddbeb904` |
-| `tests/test_validate_amendment13_execution_law.py` | `14388a01edc0280c888a9b6475d99a8927daffc5` | 23,646 | `bf71819359d366a07a177f12588955bb26ae90e5752ad091a8ca6dd76b6acbc1` |
+| `scripts/validate_amendment13_execution_law.py` | `5344056754f54609371ffcab42170f1d6b8a58ec` | 274,744 | `c7618a3882668faff7e793683573667ea0e07cf21cb3b20cf259494dfde89e9c` |
+| `tests/test_validate_amendment13_execution_law.py` | `6f6e0abdc533b7aa1caf70b03b9705c338400b17` | 23,825 | `37903bbe77deacc707fb67c0c74aa7a7bc5ffcb8a1e2f0d322bc2332b5e785de` |
 
 The pin block has exactly that declaration, header, separator, and two ordered
 path rows. Section-hash normalization replaces only the implementation
