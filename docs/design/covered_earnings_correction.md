@@ -51572,19 +51572,43 @@ The actual identity schema is
 lowercase-hex object name; `ratification_commit_changed_paths` has exactly the
 one path above.
 
-The enrollment trust root is not a reviewer-key registry selected by the
-candidate or its author. It is an exact ordered domain of two externally
-authenticated, pre-existing reviewer-authority keys fixed only in the
-module-pinned implementation commit P before the registry commit K. The
-production authority domain and registry identity are both unavailable by
-default. Neither K, Q, C, M, R, a final document, a record, a manifest, nor a
-caller can install, select, or override either root.
+The immutable revision-14 prefix and the two Amendment-12 verdict byte
+identities contain no cryptographic credential that binds a public key to
+either historical reviewer. A public verdict hash is not a key certificate,
+and two identity strings or two keys do not prove two controllers. Therefore
+this enactment has no authenticated enrollment trust root and admits no
+RATIFY-bound transition. The implementation commit P fixes exact literal
+`None` values for `PINNED_A13_EXTERNAL_CERTIFIER_ROOT_IDENTITY`,
+`PINNED_A13_ENROLLMENT_AUTHORITY_ROOT_IDENTITY`, and
+`PINNED_A13_REVIEWER_REGISTRY_IDENTITY`.
 
+The public validator reads R's raw document through the replacement-ref-
+sanitized Git wrapper, parses P from R's exact §27.7 pin block, verifies P's
+pinned validator and test bytes, and reads those three literal assignments
+from P's raw validator bytes without executing them. Live module attributes,
+K, Q, C, M, R, a final document, a record, a manifest, and caller values have
+no force to populate or override them. Because all three authenticated
+markers are `None`, every public governing validator and RATIFY-bound builder
+fails closed with the external reviewer root unavailable.
+
+Only a separately ratified successor law may replace that terminal state. It
+must identify a certifier trust root authenticated outside the Amendment-13
+candidate and draft author's control, then bind an exact authority-root
+artifact to that root before P, K, or the candidate. Merely adding two keys to
+P or K, copying the public Amendment-12 verdict hashes, using distinct labels,
+or asserting independence is insufficient. Until such external credentials
+exist, no implementation or document repin can make this enactment available.
+
+The following authority, registry, authorization, and recording shapes are
+private protocol-mechanics constraints only; satisfying them does not create
+the absent external root. If a separately ratified successor supplies that
+root, the following row constraint applies.
 Each enrollment-authority row has exactly
 `authority_identity`, `prior_record_name`, `prior_record_raw_sha256`,
 `ssh_principal`, `ssh_public_key`, and `ssh_key_fingerprint`. The ordered
 `prior_record_name` and `prior_record_raw_sha256` pairs deep-equal the two
-independent Amendment-12 RATIFY record identities in §27.2.1. Authority
+Amendment-12 RATIFY record identities in §27.2.1, but those public pairs do
+not authenticate either key. Authority
 identities, principals, Ed25519 OpenSSH public keys, and computed SHA-256
 fingerprints are pairwise distinct. No authority identity equals
 `amendment-13-draft-author:max-ghenis`.
@@ -51634,32 +51658,31 @@ domain SHA-256, K's sole parent and registry path, and the fixed authority
 domain. Its stored base64 must decode canonically to the exact SSH signature
 bytes whose size and SHA-256 it carries. Verification uses a one-key
 allowed-signers file containing only authority i's fixed principal and key.
-Both external authorization signatures must validate before K or any
-RATIFY-bound status is accepted.
+Both authorization signatures must validate in the private mechanics check.
+They cannot supply the missing external authentication and therefore cannot
+make K or any RATIFY-bound status publicly acceptable under this enactment.
 
 Registry order is attestation order; caller sorting, caller names, Git
 authorship, unsigned identity strings, or two syntactically distinct keys
-controlled by one actor have no force. K changes exactly the registry path.
-Until two externally controlled authority keys authenticate two actual
-reviewer enrollments and the exact registry identity is installed after P but
-before candidate freeze, the public builder fails closed as unavailable. A
-zero- or one-authority root and a zero- or one-reviewer registry both fail.
-The draft and its author cannot install their own keys and cannot self-ratify.
+controlled by one actor have no force. K changes exactly the registry path. A
+zero- or one-authority root and a zero- or one-reviewer registry both fail,
+and a structurally complete one-actor ceremony also fails at the immutable
+unavailable external-root gate. The draft and its author cannot install their
+own keys and cannot self-ratify.
 
-The recording object is acyclic. Let P be the module-pinned implementation
-commit containing the external enrollment-authority root, K the trusted
-registry commit, Q the single common ceremony base, C the attested candidate,
-M the recording manifest commit, and R the final recording commit. P is a
-strict ancestor of K, and K is a strict ancestor of Q. K is single-parent and
-changes exactly the registry path. C and M are distinct single-parent
-children of Q. C changes exactly the design document. M changes exactly the
-manifest, two registered record paths, and their two registered signature
-paths. R is a single-parent child of M and changes exactly the design document
-to the same mode, blob, bytes, and SHA-256 selected by C. The C-to-R tree
-difference is exactly those five ceremony paths. Thus the validator
-implementation fixes the external authority root before K and C exist and
-derives M from R's sole parent; no validator or candidate must know a future
-record, manifest, or recording-commit hash.
+The private recording-shape check is acyclic. Let P be the module-pinned
+implementation commit containing the three unavailable markers, K the
+synthetic registry commit, Q the single common ceremony base, C the attested
+candidate, M the recording manifest commit, and R the final recording commit.
+P is a strict ancestor of K, and K is a strict ancestor of Q. K is
+single-parent and changes exactly the registry path. C and M are distinct
+single-parent children of Q. C changes exactly the design document. M changes
+exactly the manifest, two registered record paths, and their two registered
+signature paths. R is a single-parent child of M and changes exactly the
+design document to the same mode, blob, bytes, and SHA-256 selected by C. The
+C-to-R tree difference is exactly those five ceremony paths. These private
+tests prove serialization, signature, ancestry, and recording mechanics;
+they emit no authority and cannot discharge the external-root gate.
 
 `recording_manifest_identity` has exactly `schema_version`,
 `manifest_commit`, `manifest_parents`, `manifest_path`, `manifest_mode`,

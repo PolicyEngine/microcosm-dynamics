@@ -365,12 +365,16 @@ def test__governing_ratification__requires_raw_dual_records():
             recording_manifest_identity=manifest_identity,
             recording_manifest=manifest,
         )
+    public_identity = copy.deepcopy(identity)
+    public_identity["ratification_commit"] = str(
+        a13._git("rev-parse", "HEAD", text=True)
+    ).strip()
     with pytest.raises(
         a13.LawError,
-        match="trusted Amendment-13 reviewer registry is unavailable",
+        match="externally authenticated Amendment-13 reviewer root is unavailable",
     ):
         a13.validate_governing_amendment13_ratification_identity(
-            identity,
+            public_identity,
             records,
             signatures,
         )

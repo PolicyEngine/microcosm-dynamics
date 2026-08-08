@@ -10,6 +10,7 @@ adversarial mutation inventory.  Amendment 12's frozen pilot bundle and its
 from __future__ import annotations
 
 import argparse
+import ast
 import base64
 import copy
 import hashlib
@@ -76,16 +77,15 @@ ENROLLMENT_SIGNATURE_NAMESPACE = (
     "policyengine-amendment13-reviewer-enrollment-v1"
 )
 A13_DRAFT_AUTHOR_IDENTITY = "amendment-13-draft-author:max-ghenis"
-# Two independent reviewers have not yet enrolled their public keys.  The
-# public ratification-bound builder therefore remains fail-closed.  A later
-# pre-candidate implementation may install two exact, externally controlled
-# enrollment-authority keys and one exact historical registry identity here;
-# no registry, final document, record, manifest, or caller value can select or
-# override the authority root.
-TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES: (
-    tuple[Mapping[str, Any], ...] | None
-) = None
-TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY: Mapping[str, Any] | None = None
+# The authenticated implementation commit, not these live module attributes,
+# is the production source of truth.  Its three literal None markers record
+# that the immutable revision-14 prefix and the two Amendment-12 verdict bytes
+# contain no cryptographic reviewer credential.  A separately ratified
+# successor implementation must introduce an externally authenticated,
+# pre-draft certifier root before the public path can become available.
+PINNED_A13_EXTERNAL_CERTIFIER_ROOT_IDENTITY: Mapping[str, Any] | None = None
+PINNED_A13_ENROLLMENT_AUTHORITY_ROOT_IDENTITY: Mapping[str, Any] | None = None
+PINNED_A13_REVIEWER_REGISTRY_IDENTITY: Mapping[str, Any] | None = None
 DRAFT_STATUS = "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
 RATIFICATION_BOUND_TEMPLATE_STATUS = (
     "RATIFIED_LAW_BOUND_NONAUTHORITY_EXECUTION_TEMPLATE"
@@ -687,7 +687,7 @@ A13_TRUSTED_RECORDING_LITERALS = (
 )
 
 A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
-    "27.2": "d9caaf97e61642200d9ad8189ed7c0d5be4bccb2b204392451e635401cfd53f4",
+    "27.2": "fa0885bbe82a6573138f3bcfceffb3adce6362c68fcb7cfbbfe2479ec0c3c2d4",
     "27.3": "50b5a2e780a4b5b7152390e85e01df5f5397f5263fb2dd3dae43947a96f91ff0",
     "27.4": "ae7dd9ea588a2242f52d4e66bd3662909eee0f987a1d582db21786837c47253c",
     "27.5": "f5ee9246c5826b5b65e90149cc2e2c7574eb32f49df472ce528fc0690ab26d46",
@@ -2936,32 +2936,101 @@ def _load_canonical_git_json(
     return value
 
 
-def _load_trusted_reviewer_registry() -> tuple[
+_PINNED_PRODUCTION_TRUST_MARKER_NAMES = (
+    "PINNED_A13_EXTERNAL_CERTIFIER_ROOT_IDENTITY",
+    "PINNED_A13_ENROLLMENT_AUTHORITY_ROOT_IDENTITY",
+    "PINNED_A13_REVIEWER_REGISTRY_IDENTITY",
+)
+
+
+def _literal_module_assignment(raw_source: bytes, name: str) -> Any:
+    """Read one literal assignment without executing implementation bytes."""
+
+    try:
+        module = ast.parse(raw_source.decode("utf-8"))
+    except (UnicodeDecodeError, SyntaxError) as error:
+        raise LawError(
+            "authenticated Amendment-13 implementation is not parseable"
+        ) from error
+    values: list[ast.expr | None] = []
+    for statement in module.body:
+        if (
+            isinstance(statement, ast.AnnAssign)
+            and isinstance(statement.target, ast.Name)
+            and statement.target.id == name
+        ):
+            values.append(statement.value)
+        elif isinstance(statement, ast.Assign) and any(
+            isinstance(target, ast.Name) and target.id == name
+            for target in statement.targets
+        ):
+            values.append(statement.value)
+    _require(
+        len(values) == 1 and values[0] is not None,
+        f"authenticated implementation trust marker drift: {name}",
+    )
+    try:
+        return ast.literal_eval(values[0])
+    except (ValueError, TypeError) as error:
+        raise LawError(
+            f"authenticated implementation trust marker is not literal: {name}"
+        ) from error
+
+
+def _authenticated_production_trust_markers(
+    governing_identity: Mapping[str, Any],
+) -> tuple[Any, Any, Any]:
+    """Derive production enrollment state only from authenticated P bytes."""
+
+    commit = governing_identity.get("ratification_commit")
+    path = governing_identity.get("document_path")
+    _require(
+        _is_lower_hex(commit, 40) and path == DESIGN_PATH,
+        "governing Amendment-13 identity cannot select trust state",
+    )
+    raw_document = _git("show", f"{commit}:{DESIGN_PATH}")
+    _require(
+        isinstance(raw_document, bytes),
+        "governing Amendment-13 trust document read was not raw bytes",
+    )
+    pins = _parse_implementation_pins(_a13_sections(raw_document)["27.7"])
+    _verify_implementation_pins(pins)
+    implementation_path = "scripts/validate_amendment13_execution_law.py"
+    raw_implementation = _git(
+        "show", f"{pins['commit']}:{implementation_path}"
+    )
+    _require(
+        isinstance(raw_implementation, bytes),
+        "authenticated Amendment-13 implementation read was not raw bytes",
+    )
+    return tuple(
+        _literal_module_assignment(raw_implementation, name)
+        for name in _PINNED_PRODUCTION_TRUST_MARKER_NAMES
+    )
+
+
+def _load_trusted_reviewer_registry(
+    governing_identity: Mapping[str, Any],
+) -> tuple[
     dict[str, Any],
     dict[str, Any],
     tuple[dict[str, Any], ...],
 ]:
-    """Load the pre-candidate reviewer-key root; callers cannot select it."""
+    """Fail closed until a successor law authenticates an external root."""
 
-    _require(
-        TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY is not None,
-        "trusted Amendment-13 reviewer registry is unavailable",
+    certifier_root, authority_root, registry_identity = (
+        _authenticated_production_trust_markers(governing_identity)
     )
     _require(
-        TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES is not None,
-        "trusted Amendment-13 enrollment authorities are unavailable",
+        certifier_root is not None
+        and authority_root is not None
+        and registry_identity is not None,
+        "externally authenticated Amendment-13 reviewer root is unavailable",
     )
-    identity = copy.deepcopy(dict(TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY))
-    registry = _load_canonical_git_json(
-        identity["registry_commit"],
-        identity["registry_path"],
-        "trusted Amendment-13 reviewer registry",
+    raise LawError(
+        "nonempty Amendment-13 reviewer roots require a separately ratified "
+        "successor implementation"
     )
-    authorities = tuple(
-        copy.deepcopy(dict(row))
-        for row in TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES
-    )
-    return identity, registry, authorities
 
 
 def _ssh_public_key_fingerprint(public_key: Any) -> str:
@@ -3546,7 +3615,7 @@ def validate_governing_amendment13_ratification_identity(
         registry_identity,
         registry,
         enrollment_authorities,
-    ) = _load_trusted_reviewer_registry()
+    ) = _load_trusted_reviewer_registry(identity)
     manifest_identity = identity.get("recording_manifest_identity")
     _require(
         isinstance(manifest_identity, Mapping),
@@ -6195,18 +6264,12 @@ def _build_test_reviewer_registry(
     authorities: Sequence[Mapping[str, Any]],
     authority_key_paths: Sequence[Path],
     registry_parent: str,
-    *,
-    enrollment_signing_key_paths: Sequence[Path] | None = None,
 ) -> dict[str, Any]:
-    """Build K's registry with two externally signed enrollment approvals."""
+    """Build K's synthetic registry for private protocol-shape tests."""
 
     reviewer_rows = [copy.deepcopy(dict(row)) for row in reviewers]
     authority_rows = [copy.deepcopy(dict(row)) for row in authorities]
-    signing_paths = (
-        list(authority_key_paths)
-        if enrollment_signing_key_paths is None
-        else list(enrollment_signing_key_paths)
-    )
+    signing_paths = list(authority_key_paths)
     _require(
         len(reviewer_rows) == len(authority_rows) == len(signing_paths) == 2,
         "synthetic enrollment material is not dual",
@@ -6528,8 +6591,6 @@ def _scratch_signed_ceremony(
     scratch: Path,
     raw_document: bytes,
     key_directory: Path,
-    *,
-    self_enroll_reviewers: bool = False,
 ) -> dict[str, Any]:
     """Create the acyclic K/Q/{C,M}/R signed recording ceremony."""
 
@@ -6564,9 +6625,6 @@ def _scratch_signed_ceremony(
         authorities,
         authority_key_paths,
         registry_parent,
-        enrollment_signing_key_paths=(
-            key_paths if self_enroll_reviewers else None
-        ),
     )
     registry_raw = canonical_json_bytes(registry)
     registry_path = scratch / TRUSTED_REVIEWER_REGISTRY_PATH
@@ -6771,12 +6829,8 @@ def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
     """Exercise isolated parent/path and pinned-source replacement attacks."""
 
     global ROOT
-    global TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES
-    global TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY
 
     original_root = ROOT
-    original_authorities = TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES
-    original_registry_identity = TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY
     with tempfile.TemporaryDirectory(prefix="a13-replace-ref-") as temporary:
         temporary_root = Path(temporary)
         scratch = _new_scratch_repo(original_root, temporary_root)
@@ -6786,20 +6840,26 @@ def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
         _validate_scratch_ceremony(scratch, ceremony)
 
         ROOT = scratch
-        TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES = ceremony[
-            "enrollment_authorities"
-        ]
-        TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY = ceremony["registry_identity"]
         try:
-            validate_governing_amendment13_ratification_identity(
-                ceremony["identity"],
-                ceremony["records"],
-                ceremony["signatures"],
-            )
+            try:
+                validate_governing_amendment13_ratification_identity(
+                    ceremony["identity"],
+                    ceremony["records"],
+                    ceremony["signatures"],
+                )
+            except LawError as error:
+                _require(
+                    "externally authenticated Amendment-13 reviewer root "
+                    "is unavailable" in str(error),
+                    "public synthetic ceremony failed an unintended gate: "
+                    f"{error}",
+                )
+            else:
+                raise LawError(
+                    "public path accepted an unauthenticated synthetic root"
+                )
         finally:
             ROOT = original_root
-            TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES = original_authorities
-            TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY = original_registry_identity
 
         conforming = ceremony["recording_commit"]
         manifest_commit = ceremony["manifest_identity"]["manifest_commit"]
@@ -6958,6 +7018,8 @@ def run_enforcement_mutation_tests(
 ) -> tuple[str, ...]:
     """Run the six enforcement-layer attacks without altering enacted law."""
 
+    global ROOT
+
     rejected: list[str] = []
     raw_document = (ROOT / DESIGN_PATH).read_bytes()
     forged_raw = raw_document.replace(
@@ -7067,8 +7129,8 @@ def run_enforcement_mutation_tests(
         )
     except LawError as error:
         _require(
-            "trusted Amendment-13 reviewer registry is unavailable"
-            in str(error),
+            "externally authenticated Amendment-13 reviewer root is "
+            "unavailable" in str(error),
             f"public dual-record mutation failed an unintended gate: {error}",
         )
     else:
@@ -7080,25 +7142,48 @@ def run_enforcement_mutation_tests(
     ) as temporary:
         temporary_root = Path(temporary)
         scratch = _new_scratch_repo(ROOT, temporary_root)
-        self_enrolled = _scratch_signed_ceremony(
+        one_actor = _scratch_signed_ceremony(
             scratch,
             raw_document,
             temporary_root / "one-actor-keys",
-            self_enroll_reviewers=True,
         )
+        _validate_scratch_ceremony(scratch, one_actor)
+        legacy_names = (
+            "TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES",
+            "TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY",
+        )
+        missing = object()
+        original_legacy_values = {
+            name: globals().get(name, missing) for name in legacy_names
+        }
+        globals()[legacy_names[0]] = one_actor["enrollment_authorities"]
+        globals()[legacy_names[1]] = one_actor["registry_identity"]
+        original_root = ROOT
+        ROOT = scratch
         try:
-            _validate_scratch_ceremony(scratch, self_enrolled)
+            build_ratification_bound_execution_template(
+                one_actor["identity"],
+                one_actor["records"],
+                one_actor["signatures"],
+            )
         except LawError as error:
             _require(
-                "reviewer enrollment authorization signature is not authentic"
-                in str(error),
-                "self-enrollment mutation failed an unintended gate: "
+                "externally authenticated Amendment-13 reviewer root is "
+                "unavailable" in str(error),
+                "one-actor enrollment mutation failed an unintended gate: "
                 f"{error}",
             )
         else:
             raise LawError(
                 "one actor's two pre-enrolled reviewer keys survived"
             )
+        finally:
+            ROOT = original_root
+            for name, value in original_legacy_values.items():
+                if value is missing:
+                    globals().pop(name, None)
+                else:
+                    globals()[name] = value
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[3])
 
     forged_identifier_raw = raw_document.replace(
