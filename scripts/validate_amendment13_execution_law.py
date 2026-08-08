@@ -14,8 +14,10 @@ import copy
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
+import tempfile
 from collections import Counter, defaultdict
 from functools import lru_cache
 from pathlib import Path
@@ -523,6 +525,123 @@ A13_ENFORCEMENT_EXPECTED_MUTATIONS = (
     "git_replace_refs_substitute_parent_and_changed_paths",
 )
 
+A13_SEARCH_AUGMENTATION = (
+    "Amendment 13",
+    "revision 15",
+    RATIFICATION_COMMIT,
+    DESIGN_BLOB,
+    "exact_attested_document_blob_not_commit_path_shape",
+    "amendment_13_governing_ratification_identity_candidate.v1",
+    GOVERNING_A13_IDENTITY_SCHEMA_VERSION,
+    "UNAVAILABLE_BEFORE_AMENDMENT_13_RATIFICATION",
+    GOVERNING_A13_IDENTITY_STATUS,
+    RATIFICATION_BOUND_TEMPLATE_STATUS,
+    "amendment12_ratification_identity",
+    "governing_amendment13_ratification_identity",
+    OVERLAY_SCHEMA_VERSION,
+    SUCCESSOR_SCHEMA_VERSION,
+    SUPERSESSION_SCHEMA_VERSION,
+    ERA_SEAL_SCHEMA_VERSION,
+    PROOF_TERMINAL_STATUS,
+    INCOMPLETE_FRAGMENT_STATUS,
+    COMPOSED_FRAGMENT_STATUS,
+    DOC036_SUCCESSOR_STATUS,
+    "terminal_semantic_incompatibility_umbrella_with_exact_predecessor_finding_preserved",
+    "semantically_incompatible_local_proof",
+    "incomplete_fragment_terminal_disclosure",
+    "composed_fragment_complete_instruction",
+    "doc036_aggregate_domain_correction",
+    SUPERSESSION_RELATION,
+    FRAGMENT_SELECTOR_RULE,
+    COMPOSITION_RULE,
+    "A13_EXPECTED_MUTATIONS",
+)
+
+A13_SCHEMA_LITERALS = (
+    SCHEMA_VERSION,
+    "amendment_13_governing_ratification_identity_candidate.v1",
+    GOVERNING_A13_IDENTITY_SCHEMA_VERSION,
+    OVERLAY_SCHEMA_VERSION,
+    SUCCESSOR_SCHEMA_VERSION,
+    SUPERSESSION_SCHEMA_VERSION,
+    ERA_SEAL_SCHEMA_VERSION,
+)
+A13_CONTENT_ID_PREFIXES = (
+    "a13-document-repair-overlay:",
+    "a13-repair-successor:",
+    "a13-supersession:",
+    "a13-successor-era-seal:",
+)
+A13_STATUS_RELATION_OPERATION_CODES = (
+    DRAFT_STATUS,
+    "PROSPECTIVE_NONAUTHORITY",
+    "UNAVAILABLE_BEFORE_AMENDMENT_13_RATIFICATION",
+    GOVERNING_A13_IDENTITY_STATUS,
+    RATIFICATION_BOUND_TEMPLATE_STATUS,
+    PROOF_TERMINAL_STATUS,
+    "terminal_semantic_incompatibility_umbrella_with_exact_predecessor_finding_preserved",
+    INCOMPLETE_FRAGMENT_STATUS,
+    COMPOSED_FRAGMENT_STATUS,
+    DOC036_SUCCESSOR_STATUS,
+    SUPERSESSION_RELATION,
+    SUPERSESSION_STATUS,
+    "linked_successor_row",
+    "repair_by_exact_span_disclosure_not_invention",
+    "exact_same_page_whitespace_composition",
+    "replace_only_node_domain_component_slot_with_aggregate",
+    FRAGMENT_SELECTOR_RULE,
+    COMPOSITION_RULE,
+    "exact_attested_document_blob_not_commit_path_shape",
+)
+A13_SUCCESSOR_KIND_LITERALS = (
+    "semantically_incompatible_local_proof",
+    "incomplete_fragment_terminal_disclosure",
+    "composed_fragment_complete_instruction",
+    "doc036_aggregate_domain_correction",
+)
+A13_TRUSTED_RECORDING_LITERALS = (
+    TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION,
+    TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION,
+    TRUSTED_RECORDING_MANIFEST_STATUS,
+    TRUSTED_RECORDING_MANIFEST_PATH,
+    "reviewer_identity",
+    "git --no-replace-objects",
+    "GIT_NO_REPLACE_OBJECTS=1",
+)
+
+A13_COMPARATOR_ROWS = (
+    (
+        "DC-72",
+        "§§26.10.1–26.10.3, DC-64, §26.11, and §27.2 Amendment-12 ratification identity",
+        "replaced-by-named-successor: every revision-14 D12 document-only locator and the obsolete no-ratification clause select actual Amendment-12 history by exact commit/blob/bytes/dual-attestation identity; every other ceremony, noninstantiation, and stop survives",
+    ),
+    (
+        "DC-73",
+        "§§26.7.2, 27.3, and 27.4 exact 28 incompatible proof rows",
+        "replaced-by-named-successor: terminal no-alias successor, deterministic predecessor-family map, retained predecessor, supersession edge, overlay, and era membership",
+    ),
+    (
+        "DC-74",
+        "§§26.7, 26.11.2, and 27.5 exact ten incomplete fragments and five prior continuation citations",
+        "replaced-by-named-successor for the ten only: eight disclosed terminal fragments plus two exact G75 compositions; five-citation Amendment-12 domain lawfully unchanged",
+    ),
+    (
+        "DC-75",
+        "§§26.7.1, 27.3, and 27.6 doc-036 and six-era reseal",
+        "lawfully-unchanged-with-reason: eight sole-field changes were already determinate; the new proof successor now permits one coherent nine-row overlay and all six exact successor-seal domains",
+    ),
+    (
+        "DC-76",
+        "§§26.8–26.9 and 27.7 validation evidence, mutations, and 14 law gaps",
+        "lawfully-unchanged-with-reason: 71 historical attacks remain exact; seven new attacks are separate; all 14 law gaps and every row outside 46 remain untouched",
+    ),
+    (
+        "DC-77",
+        "§§25.10, 26.10–26.11, and 27.8 lifecycle, authority, Q5, and production after applying DC-72's D12 locator",
+        "lawfully-unchanged-with-reason: apart from the exact ratification locator named in DC-72, the draft emits no authority, tier-2 execution occurs later if ratified, and the independent Amendment-11 blocker remains controlling",
+    ),
+)
+
 
 def _require(condition: bool, message: str) -> None:
     if not condition:
@@ -565,6 +684,682 @@ def _domain_sha(value: Any) -> str:
 
 def _content_id(prefix: str, preimage: Any) -> str:
     return f"{prefix}:{_sha256(_identity_bytes(preimage))}"
+
+
+_A13_SECTION_HEADINGS = (
+    "### 27.2 Limb I — Amendment-12 ratification identity",
+    "### 27.3 Limb II — append-only repair overlays and successor identity",
+    "### 27.4 The 28 semantically incompatible local-proof successors",
+    "### 27.5 The ten incomplete-fragment successors",
+    "### 27.6 Doc-036 correction and the six-era cascade",
+    "### 27.7 Scope boundary, executable pins, and attacks",
+    "### 27.8 Replacement closure, comparator, identifiers, and inoperability",
+)
+
+
+def _unique_after(text: str, marker: str, label: str) -> str:
+    _require(text.count(marker) == 1, f"{label} marker drift")
+    return text.split(marker, 1)[1]
+
+
+def _a13_sections(raw: bytes) -> dict[str, str]:
+    """Decode the exact suffix and split its uniquely ordered major sections."""
+
+    _require(
+        raw.endswith(b"\n")
+        and len(raw) > DESIGN_BYTE_SIZE
+        and _sha256(raw[:DESIGN_BYTE_SIZE]) == DESIGN_SHA256
+        and raw[DESIGN_BYTE_SIZE:].startswith(AMENDMENT13_BOUNDARY),
+        "governing Amendment-13 document violates immutable-prefix law",
+    )
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise LawError(
+            "governing Amendment-13 document is not UTF-8"
+        ) from error
+    positions: list[int] = []
+    for heading in _A13_SECTION_HEADINGS:
+        marker = f"{heading}\n"
+        _require(text.count(marker) == 1, f"{heading} boundary drift")
+        positions.append(text.index(marker))
+    _require(
+        positions == sorted(positions), "Amendment-13 section order drift"
+    )
+    sections: dict[str, str] = {}
+    for index, heading in enumerate(_A13_SECTION_HEADINGS):
+        start = positions[index]
+        end = positions[index + 1] if index + 1 < len(positions) else len(text)
+        sections[heading.split()[1]] = text[start:end]
+    return sections
+
+
+def _markdown_table(
+    section: str,
+    header: str,
+    separator: str,
+    row_count: int,
+    label: str,
+) -> list[list[str]]:
+    """Parse one exact, single-line Markdown table without cell normalization."""
+
+    marker = f"{header}\n{separator}\n"
+    remainder = _unique_after(section, marker, label)
+    rows: list[list[str]] = []
+    for line in remainder.splitlines():
+        if not line.startswith("|"):
+            break
+        _require(line.endswith("|"), f"{label} row shape drift")
+        rows.append([cell.strip(" ") for cell in line[1:-1].split("|")])
+    expected_columns = len(header[1:-1].split("|"))
+    _require(
+        len(rows) == row_count
+        and all(len(row) == expected_columns for row in rows),
+        f"{label} row/column count drift",
+    )
+    return rows
+
+
+def _fenced_lines_after(section: str, marker: str, label: str) -> list[str]:
+    remainder = _unique_after(section, marker, label)
+    _require(remainder.startswith("~~~text\n"), f"{label} fence start drift")
+    fenced = remainder[len("~~~text\n") :]
+    _require("\n~~~\n" in fenced, f"{label} fence end drift")
+    body, _ = fenced.split("\n~~~\n", 1)
+    return body.split("\n") if body else []
+
+
+def _code_after(section: str, marker: str, label: str) -> str:
+    remainder = _unique_after(section, marker, label)
+    match = re.match(r"\s*`([^`]+)`", remainder)
+    _require(match is not None, f"{label} literal drift")
+    return match.group(1)
+
+
+def _code_tokens(cell: str, expected: int, label: str) -> list[str]:
+    tokens = re.findall(r"`([^`]*)`", cell)
+    _require(len(tokens) == expected, f"{label} token count drift")
+    return tokens
+
+
+def _parse_span(value: str, label: str) -> tuple[int, int]:
+    match = re.fullmatch(r"\[(\d+),(\d+)\)", value)
+    _require(match is not None, f"{label} span drift")
+    start, end = (int(part) for part in match.groups())
+    _require(start < end, f"{label} span is empty or reversed")
+    return start, end
+
+
+def _parse_proof_projection(section: str) -> dict[str, Any]:
+    rows = _markdown_table(
+        section,
+        "| Doc | Predecessor evidence ID | Exact JSON Pointer | Canonical predecessor-row SHA-256 | Family |",
+        "|---:|---|---|---|---|",
+        28,
+        "Amendment-13 proof mapping",
+    )
+    family_match = re.search(
+        r"For M their exact values are `([^`]+)`, `([^`]+)`, and\s+"
+        r"`([^`]+)`; for L they are\s+`([^`]+)`, `([^`]+)`, and\s+"
+        r"`([^`]+)`; for D they are\s+`([^`]+)`, `([^`]+)`, and\s+"
+        r"`([^`]+)`\.",
+        section,
+    )
+    _require(family_match is not None, "proof status-family mapping drift")
+    values = family_match.groups()
+    family_mappings = {
+        code: {
+            "status_family": values[offset],
+            "status_field": values[offset + 1],
+            "predecessor_status": values[offset + 2],
+        }
+        for code, offset in (("M", 0), ("L", 3), ("D", 6))
+    }
+    finding_rows = _markdown_table(
+        section,
+        "| Code | Count | Exact `predecessor_row_specific_semantic_finding` |",
+        "|---|---:|---|",
+        6,
+        "Amendment-13 proof finding map",
+    )
+    findings: dict[str, dict[str, Any]] = {}
+    for code, count, finding_cell in finding_rows:
+        finding = _code_tokens(finding_cell, 1, "proof finding")[0]
+        findings[code] = {"count": int(count), "finding": finding}
+    selector_lines = _fenced_lines_after(
+        section,
+        "above; there is no inference, fallback, or artifact lookup:\n\n",
+        "Amendment-13 proof finding selector",
+    )
+    _require(len(selector_lines) == 1, "proof finding selector shape drift")
+    selector_text = selector_lines[0]
+    _require(
+        selector_text.startswith("[") and selector_text.endswith("]"),
+        "proof finding selector bracket drift",
+    )
+    selector = selector_text[1:-1].split(",")
+    _require(
+        len(selector) == 28 and set(selector) == set(findings),
+        "proof finding selector domain drift",
+    )
+    proof_rows: list[dict[str, Any]] = []
+    for row, finding_code in zip(rows, selector):
+        document, predecessor, pointer, row_sha, family_code = row
+        proof_rows.append(
+            {
+                "document_source_position": int(document),
+                "predecessor_row_id": _code_tokens(
+                    predecessor, 1, "proof predecessor"
+                )[0],
+                "predecessor_row_pointer": _code_tokens(
+                    pointer, 1, "proof pointer"
+                )[0],
+                "predecessor_row_canonical_sha256": _code_tokens(
+                    row_sha, 1, "proof row SHA-256"
+                )[0],
+                "predecessor_status_mapping": family_mappings[family_code],
+                "predecessor_row_specific_semantic_finding": findings[
+                    finding_code
+                ]["finding"],
+            }
+        )
+    return {
+        "predecessor_id_domain_sha256": _code_after(
+            section,
+            "canonical\ndomain SHA-256\n",
+            "proof predecessor domain SHA-256",
+        ),
+        "terminal_status": _code_after(
+            section,
+            "The exact new successor status is\n",
+            "proof terminal status",
+        ),
+        "umbrella_reason_code": _code_after(
+            section,
+            "The exact new umbrella reason code is\n",
+            "proof umbrella reason",
+        ),
+        "finding_counts": {
+            value["finding"]: value["count"] for value in findings.values()
+        },
+        "rows": proof_rows,
+    }
+
+
+def _parse_fragment_table(section: str) -> list[dict[str, Any]]:
+    rows = _markdown_table(
+        section,
+        "| Doc | Evidence ID / predecessor pointer / row SHA-256 | Instruction occurrence | Exact page, span, page-text SHA-256 | Exact current text / text SHA-256 | Repair |",
+        "|---:|---|---|---|---|---|",
+        10,
+        "Amendment-13 fragment mapping",
+    )
+    result: list[dict[str, Any]] = []
+    for row in rows:
+        evidence, pointer, row_sha = _code_tokens(
+            row[1], 3, "fragment predecessor identity"
+        )
+        occurrence = _code_tokens(row[2], 1, "fragment occurrence")[0]
+        span, page_sha = _code_tokens(row[3], 2, "fragment page identity")
+        page_match = re.match(r"(\d+) `", row[3])
+        _require(page_match is not None, "fragment page number drift")
+        start, end = _parse_span(span, "fragment occurrence")
+        matched_text, text_sha = _code_tokens(
+            row[4], 2, "fragment text identity"
+        )
+        _require(
+            row[5] in {"disclosure", "composition"},
+            "fragment repair kind drift",
+        )
+        result.append(
+            {
+                "document_source_position": int(row[0]),
+                "predecessor_row_id": evidence,
+                "predecessor_row_pointer": pointer,
+                "predecessor_row_canonical_sha256": row_sha,
+                "source_occurrence_id": occurrence,
+                "page_number": int(page_match.group(1)),
+                "utf8_byte_start": start,
+                "utf8_byte_end": end,
+                "page_text_utf8_sha256": page_sha,
+                "matched_text": matched_text,
+                "matched_utf8_sha256": text_sha,
+                "repair": row[5],
+            }
+        )
+    return result
+
+
+def _parse_composition_specs(
+    section: str,
+    fragment_rows: Sequence[Mapping[str, Any]],
+) -> dict[int, dict[str, Any]]:
+    selector_rows = _markdown_table(
+        section,
+        "| Doc | Page / page SHA-256 | Duplicate leading span / text SHA-256 | Selected context occurrence | Rejected field-purpose occurrence | Continuation occurrence |",
+        "|---:|---|---|---|---|---|",
+        2,
+        "Amendment-13 composition selector",
+    )
+    result: dict[int, dict[str, Any]] = {}
+    for index, row in enumerate(selector_rows):
+        document = int(row[0])
+        page_match = re.match(r"(\d+) / `([0-9a-f]{64})`", row[1])
+        _require(page_match is not None, "composition page identity drift")
+        span, leading_sha = _code_tokens(
+            row[2], 2, "composition leading identity"
+        )
+        leading_start, leading_end = _parse_span(span, "composition leading")
+        selected = _code_tokens(row[3], 1, "selected composition candidate")[0]
+        rejected = _code_tokens(row[4], 1, "rejected composition candidate")[0]
+        continuation = _code_tokens(row[5], 1, "composition continuation")[0]
+        segment_start = section.index(f"For doc {document} the leading text")
+        if index + 1 < len(selector_rows):
+            next_document = int(selector_rows[index + 1][0])
+            segment_end = section.index(
+                f"For doc {next_document} the leading text"
+            )
+        else:
+            segment_end = section.index(
+                "The complete selector-plus-composition citation objects"
+            )
+        segment = section[segment_start:segment_end]
+        leading_lines = _fenced_lines_after(
+            segment,
+            f"For doc {document} the leading text is exactly:\n\n",
+            f"doc-{document} leading text",
+        )
+        _require(
+            len(leading_lines) == 1, "composition leading text shape drift"
+        )
+        gap_match = re.search(
+            r"The gap is `\[(\d+),(\d+)\)`, exactly LF followed by "
+            r"(\d+) ASCII spaces, with\s+SHA-256\s+`([0-9a-f]{64})`\.",
+            segment,
+        )
+        complete_match = re.search(
+            r"The complete `\[(\d+),(\d+)\)` slice is (\d+) UTF-8 bytes:\n\n",
+            segment,
+        )
+        _require(
+            gap_match is not None and complete_match is not None,
+            "composition gap or complete-span law drift",
+        )
+        complete_lines = _fenced_lines_after(
+            segment,
+            complete_match.group(0),
+            f"doc-{document} combined text",
+        )
+        combined_text = "\n".join(complete_lines)
+        raw_sha_match = re.search(
+            r"Its raw SHA-256 is\s+`([0-9a-f]{64})`\.",
+            segment,
+        )
+        _require(raw_sha_match is not None, "composition raw SHA-256 drift")
+        continuation_row = next(
+            row
+            for row in fragment_rows
+            if row["document_source_position"] == document
+            and row["repair"] == "composition"
+        )
+        gap_start, gap_end, space_count, gap_sha = gap_match.groups()
+        combined_start, combined_end, combined_size = complete_match.groups()
+        gap_text = "\n" + " " * int(space_count)
+        _require(
+            int(gap_start) == leading_end
+            and int(gap_end) == continuation_row["utf8_byte_start"]
+            and int(combined_start) == leading_start
+            and int(combined_end) == continuation_row["utf8_byte_end"]
+            and len(combined_text.encode("utf-8")) == int(combined_size),
+            "composition coordinate law drift",
+        )
+        result[document] = {
+            "page_number": int(page_match.group(1)),
+            "page_text_utf8_sha256": page_match.group(2),
+            "candidate_occurrences_in_source_order": [
+                {
+                    "occurrence_id": selected,
+                    "occurrence_kind": "context_anchor",
+                },
+                {
+                    "occurrence_id": rejected,
+                    "occurrence_kind": "field_purpose_prompt",
+                },
+            ],
+            "selected_leading_occurrence_id": selected,
+            "leading_text": leading_lines[0],
+            "leading_utf8_sha256": leading_sha,
+            "combined_utf8_byte_start": leading_start,
+            "leading_utf8_byte_end": leading_end,
+            "gap_utf8_byte_start": int(gap_start),
+            "gap_utf8_byte_end": int(gap_end),
+            "gap_text": gap_text,
+            "gap_utf8_sha256": gap_sha,
+            "continuation_occurrence_id": continuation,
+            "continuation_utf8_byte_start": continuation_row[
+                "utf8_byte_start"
+            ],
+            "combined_utf8_byte_end": int(combined_end),
+            "combined_text": combined_text,
+            "combined_utf8_sha256": raw_sha_match.group(1),
+        }
+    return result
+
+
+def _parse_fragment_projection(section: str) -> dict[str, Any]:
+    rows = _parse_fragment_table(section)
+    disclosure_section = section[
+        section.index(
+            "#### 27.5.2 Eight terminal disclosures"
+        ) : section.index("#### 27.5.3 Two exact G75 compositions")
+    ]
+    composition_section = section[
+        section.index("#### 27.5.3 Two exact G75 compositions") :
+    ]
+    return {
+        "evidence_id_domain_sha256": _code_after(
+            section,
+            "The ordered ten-evidence-ID array has canonical SHA-256\n",
+            "fragment evidence domain SHA-256",
+        ),
+        "instruction_id_domain_sha256": _code_after(
+            section,
+            "the corresponding ordered instruction-occurrence array has canonical\nSHA-256\n",
+            "fragment instruction domain SHA-256",
+        ),
+        "rows": rows,
+        "disclosure_successor_kind": _code_after(
+            disclosure_section,
+            "Each receives successor kind\n",
+            "fragment disclosure successor kind",
+        ),
+        "disclosure_repair_mode": _code_after(
+            disclosure_section,
+            "repair mode\n",
+            "fragment disclosure repair mode",
+        ),
+        "disclosure_terminal_status": _code_after(
+            disclosure_section,
+            "and the new exact status\n",
+            "fragment disclosure terminal status",
+        ),
+        "composition_successor_kind": _code_after(
+            composition_section,
+            "Only the last two table rows are composable. Their successor kind is\n",
+            "fragment composition successor kind",
+        ),
+        "composition_repair_mode": _code_after(
+            composition_section,
+            "repair mode is\n",
+            "fragment composition repair mode",
+        ),
+        "composition_terminal_status": _code_after(
+            composition_section,
+            "and exact status is\n",
+            "fragment composition terminal status",
+        ),
+        "selector_rule": _code_after(
+            composition_section,
+            "The selector rule is the opaque exact code\n",
+            "fragment selector rule",
+        ),
+        "composition_rule": _code_after(
+            composition_section,
+            "The exact composition code is\n",
+            "fragment composition rule",
+        ),
+        "composition_specs": _parse_composition_specs(section, rows),
+    }
+
+
+def _parse_implementation_pins(section: str) -> dict[str, Any]:
+    match = re.search(
+        r"implementation commit `([0-9a-f]{40})`, mode `([0-9]+)`:",
+        section,
+    )
+    _require(match is not None, "Amendment-13 implementation commit pin drift")
+    rows = _markdown_table(
+        section,
+        "| Path | Git blob | Bytes | Raw SHA-256 |",
+        "|---|---|---:|---|",
+        2,
+        "Amendment-13 implementation pins",
+    )
+    pins = []
+    for path, blob, size, sha256 in rows:
+        pins.append(
+            {
+                "path": _code_tokens(path, 1, "implementation path")[0],
+                "blob_oid": _code_tokens(blob, 1, "implementation blob")[0],
+                "byte_size": int(size.replace(",", "")),
+                "sha256": _code_tokens(sha256, 1, "implementation SHA-256")[0],
+            }
+        )
+    return {"commit": match.group(1), "mode": match.group(2), "files": pins}
+
+
+def _parse_comparator_and_literals(section: str) -> dict[str, Any]:
+    comparator_rows = _markdown_table(
+        section,
+        "| ID | Exact anchor | Prospective revision-15 disposition |",
+        "|---|---|---|",
+        6,
+        "Amendment-13 comparator rows",
+    )
+    return {
+        "search_augmentation": _fenced_lines_after(
+            section,
+            "The Amendment-13 search augmentation is this case-sensitive ordered array:\n\n",
+            "Amendment-13 search augmentation",
+        ),
+        "comparator_rows": comparator_rows,
+        "schema_literals": _fenced_lines_after(
+            section,
+            "The exact new schema-version literals are:\n\n",
+            "Amendment-13 schema literals",
+        ),
+        "content_id_prefixes": _fenced_lines_after(
+            section,
+            "The exact new content-ID prefixes are:\n\n",
+            "Amendment-13 content-ID prefixes",
+        ),
+        "status_relation_operation_codes": _fenced_lines_after(
+            section,
+            "The exact new status/relation/operation codes are:\n\n",
+            "Amendment-13 status/relation/operation codes",
+        ),
+        "successor_kind_literals": _fenced_lines_after(
+            section,
+            "The exact serialized successor-kind literals are:\n\n",
+            "Amendment-13 successor kinds",
+        ),
+    }
+
+
+def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
+    """Derive the canonical enforced projection from the governing bytes."""
+
+    sections = _a13_sections(raw)
+    return {
+        "trusted_recording_literals": _fenced_lines_after(
+            sections["27.2"],
+            "The exact trusted-recording validation literals are:\n\n",
+            "Amendment-13 trusted recording literals",
+        ),
+        "proof": _parse_proof_projection(sections["27.4"]),
+        "fragments": _parse_fragment_projection(sections["27.5"]),
+        "implementation_pins": _parse_implementation_pins(sections["27.7"]),
+        "semantic_mutations": _fenced_lines_after(
+            sections["27.7"],
+            "Amendment 13 adds a separate exact seven-name inventory:\n\n",
+            "Amendment-13 semantic mutation inventory",
+        ),
+        "enforcement_mutations": _fenced_lines_after(
+            sections["27.7"],
+            "The enforcement layer has this separate exact three-name inventory:\n\n",
+            "Amendment-13 enforcement mutation inventory",
+        ),
+        "comparator": _parse_comparator_and_literals(sections["27.8"]),
+    }
+
+
+def _execution_proof_projection(law: Mapping[str, Any]) -> dict[str, Any]:
+    rows = []
+    finding_counts: Counter[str] = Counter()
+    for row in law["semantically_incompatible_local_proof_successor_rows"]:
+        payload = row["successor_payload"]
+        finding = payload["predecessor_row_specific_semantic_finding"]
+        finding_counts[finding] += 1
+        rows.append(
+            {
+                "document_source_position": row["document_source_position"],
+                "predecessor_row_id": row["predecessor_row_id"],
+                "predecessor_row_pointer": row["predecessor_row_pointer"],
+                "predecessor_row_canonical_sha256": row[
+                    "predecessor_row_canonical_sha256"
+                ],
+                "predecessor_status_mapping": row[
+                    "predecessor_status_mapping"
+                ],
+                "predecessor_row_specific_semantic_finding": finding,
+            }
+        )
+    return {
+        "predecessor_id_domain_sha256": (INCOMPATIBLE_PROOF_ID_DOMAIN_SHA256),
+        "terminal_status": PROOF_TERMINAL_STATUS,
+        "umbrella_reason_code": (
+            "terminal_semantic_incompatibility_umbrella_with_exact_"
+            "predecessor_finding_preserved"
+        ),
+        "finding_counts": dict(finding_counts),
+        "rows": rows,
+    }
+
+
+def _execution_fragment_projection(law: Mapping[str, Any]) -> dict[str, Any]:
+    rows = []
+    successor_rows = [
+        *law["incomplete_fragment_terminal_successor_rows"],
+        *law["composed_fragment_successor_rows"],
+    ]
+    for row in successor_rows:
+        payload = row["successor_payload"]
+        if row["successor_kind"] == "incomplete_fragment_terminal_disclosure":
+            citation = payload["disclosed_incomplete_fragment_citation"]
+            repair = "disclosure"
+        else:
+            citation = payload["predecessor_fragment_citation"]
+            repair = "composition"
+        rows.append(
+            {
+                "document_source_position": row["document_source_position"],
+                "predecessor_row_id": row["predecessor_row_id"],
+                "predecessor_row_pointer": row["predecessor_row_pointer"],
+                "predecessor_row_canonical_sha256": row[
+                    "predecessor_row_canonical_sha256"
+                ],
+                "source_occurrence_id": citation["source_occurrence_id"],
+                "page_number": citation["page_number"],
+                "utf8_byte_start": citation["utf8_byte_start"],
+                "utf8_byte_end": citation["utf8_byte_end"],
+                "page_text_utf8_sha256": citation["page_text_utf8_sha256"],
+                "matched_text": citation["matched_text"],
+                "matched_utf8_sha256": citation["matched_utf8_sha256"],
+                "repair": repair,
+            }
+        )
+    return {
+        "evidence_id_domain_sha256": FRAGMENT_EVIDENCE_ID_DOMAIN_SHA256,
+        "instruction_id_domain_sha256": (
+            FRAGMENT_INSTRUCTION_ID_DOMAIN_SHA256
+        ),
+        "rows": rows,
+        "disclosure_successor_kind": (
+            "incomplete_fragment_terminal_disclosure"
+        ),
+        "disclosure_repair_mode": (
+            "repair_by_exact_span_disclosure_not_invention"
+        ),
+        "disclosure_terminal_status": INCOMPLETE_FRAGMENT_STATUS,
+        "composition_successor_kind": (
+            "composed_fragment_complete_instruction"
+        ),
+        "composition_repair_mode": "exact_same_page_whitespace_composition",
+        "composition_terminal_status": COMPOSED_FRAGMENT_STATUS,
+        "selector_rule": FRAGMENT_SELECTOR_RULE,
+        "composition_rule": COMPOSITION_RULE,
+        "composition_specs": COMPOSITION_SPECS,
+    }
+
+
+def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
+    """Authenticate the two document-selected implementation byte identities."""
+
+    _require(
+        pins["mode"] == DESIGN_MODE
+        and [row["path"] for row in pins["files"]]
+        == [
+            "scripts/validate_amendment13_execution_law.py",
+            "tests/test_validate_amendment13_execution_law.py",
+        ],
+        "Amendment-13 implementation pin domain drift",
+    )
+    commit = pins["commit"]
+    _require_exact_commit_object(commit, "Amendment-13 implementation commit")
+    for row in pins["files"]:
+        tree_line = str(
+            _git("ls-tree", commit, "--", row["path"], text=True)
+        ).strip()
+        _require(
+            tree_line
+            == f"{pins['mode']} blob {row['blob_oid']}\t{row['path']}",
+            "Amendment-13 implementation tree-entry pin drift",
+        )
+        raw = _git("show", f"{commit}:{row['path']}")
+        _require(
+            isinstance(raw, bytes)
+            and len(raw) == row["byte_size"]
+            and _sha256(raw) == row["sha256"]
+            and hashlib.sha1(
+                b"blob " + str(len(raw)).encode() + b"\0" + raw
+            ).hexdigest()
+            == row["blob_oid"]
+            and (ROOT / row["path"]).read_bytes() == raw,
+            "Amendment-13 running implementation differs from document pin",
+        )
+
+
+def _validate_document_semantic_projection(
+    raw: bytes,
+    law: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Require the governing bytes, Python controls, and fixture to agree."""
+
+    projection = _parse_document_semantic_projection(raw)
+    expected = {
+        "trusted_recording_literals": list(A13_TRUSTED_RECORDING_LITERALS),
+        "proof": _execution_proof_projection(law),
+        "fragments": _execution_fragment_projection(law),
+        "implementation_pins": projection["implementation_pins"],
+        "semantic_mutations": list(A13_EXPECTED_MUTATIONS),
+        "enforcement_mutations": list(A13_ENFORCEMENT_EXPECTED_MUTATIONS),
+        "comparator": {
+            "search_augmentation": list(A13_SEARCH_AUGMENTATION),
+            "comparator_rows": [list(row) for row in A13_COMPARATOR_ROWS],
+            "schema_literals": list(A13_SCHEMA_LITERALS),
+            "content_id_prefixes": list(A13_CONTENT_ID_PREFIXES),
+            "status_relation_operation_codes": list(
+                A13_STATUS_RELATION_OPERATION_CODES
+            ),
+            "successor_kind_literals": list(A13_SUCCESSOR_KIND_LITERALS),
+        },
+    }
+    _require(
+        projection == expected,
+        "governing Amendment-13 document semantic projection drift",
+    )
+    _verify_implementation_pins(projection["implementation_pins"])
+    return projection
 
 
 @lru_cache(maxsize=1)
@@ -2256,6 +3051,7 @@ def _validate_execution_law(
             "unratified fixture received governing attestation records",
         )
         expected_status = DRAFT_STATUS
+        governing_document_raw = (ROOT / DESIGN_PATH).read_bytes()
     else:
         _require(
             governing_attestation_record_bytes is not None,
@@ -2265,6 +3061,13 @@ def _validate_execution_law(
             validate_governing_amendment13_ratification_identity(
                 governing_identity,
                 governing_attestation_record_bytes,
+            )
+            governing_document_raw = _git(
+                "show",
+                (
+                    f"{governing_identity['ratification_commit']}:"
+                    f"{DESIGN_PATH}"
+                ),
             )
         else:
             _require(
@@ -2281,6 +3084,22 @@ def _validate_execution_law(
                 ),
                 trusted_recording_manifest=trusted_recording_manifest,
             )
+            governing_document_raw = (ROOT / DESIGN_PATH).read_bytes()
+        _require(
+            isinstance(governing_document_raw, bytes)
+            and len(governing_document_raw)
+            == governing_identity["document_byte_size"]
+            and _sha256(governing_document_raw)
+            == governing_identity["document_sha256"]
+            and hashlib.sha1(
+                b"blob "
+                + str(len(governing_document_raw)).encode()
+                + b"\0"
+                + governing_document_raw
+            ).hexdigest()
+            == governing_identity["document_blob_oid"],
+            "governing Amendment-13 semantic document identity drift",
+        )
         expected_status = RATIFICATION_BOUND_TEMPLATE_STATUS
     _require(
         law["status"] == expected_status
@@ -2316,6 +3135,12 @@ def _validate_execution_law(
             == AMENDMENT12_RATIFICATION_IDENTITY,
             "ratification identity drift",
         )
+
+    _require(
+        isinstance(governing_document_raw, bytes),
+        "governing Amendment-13 semantic document read was not raw bytes",
+    )
+    _validate_document_semantic_projection(governing_document_raw, law)
 
     proof_rows = law["semantically_incompatible_local_proof_successor_rows"]
     incomplete_rows = law["incomplete_fragment_terminal_successor_rows"]
@@ -3274,12 +4099,448 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
     return tuple(rejected)
 
 
+def _test_trusted_material(
+    raw_document: bytes,
+    candidate_head: str,
+) -> tuple[list[dict[str, Any]], dict[str, bytes], dict[str, Any]]:
+    """Build internally trusted synthetic records for enforcement mutations."""
+
+    document_sha256 = _sha256(raw_document)
+    document_blob_oid = hashlib.sha1(
+        b"blob " + str(len(raw_document)).encode() + b"\0" + raw_document
+    ).hexdigest()
+    attestations: list[dict[str, Any]] = []
+    records: dict[str, bytes] = {}
+    for index in (1, 2):
+        reviewer = f"independent-enforcement-reviewer-{index}"
+        name = f"amendment-13-enforcement-ratify-{index}.md"
+        raw_record = (
+            "# RATIFY\n"
+            f"reviewer_identity: {reviewer}\n"
+            f"record_name: {name}\n"
+            f"attested_candidate_head: {candidate_head}\n"
+            f"attested_document_path: {DESIGN_PATH}\n"
+            f"attested_document_byte_size: {len(raw_document)}\n"
+            f"attested_document_sha256: {document_sha256}\n"
+        ).encode("utf-8")
+        records[name] = raw_record
+        attestations.append(
+            {
+                "reviewer_identity": reviewer,
+                "record_name": name,
+                "raw_byte_size": len(raw_record),
+                "raw_sha256": _sha256(raw_record),
+                "verdict_token": "RATIFY",
+                "attested_candidate_head": candidate_head,
+                "attested_document_byte_size": len(raw_document),
+                "attested_document_sha256": document_sha256,
+            }
+        )
+    manifest = {
+        "schema_version": TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION,
+        "status": TRUSTED_RECORDING_MANIFEST_STATUS,
+        "attested_candidate_head": candidate_head,
+        "document_path": DESIGN_PATH,
+        "document_mode": DESIGN_MODE,
+        "document_blob_oid": document_blob_oid,
+        "document_byte_size": len(raw_document),
+        "document_sha256": document_sha256,
+        "ordered_reviewer_identities": [
+            row["reviewer_identity"] for row in attestations
+        ],
+        "ordered_ratify_attestations": copy.deepcopy(attestations),
+        "attestation_domain_sha256": _domain_sha(attestations),
+    }
+    return attestations, records, manifest
+
+
+def _test_manifest_identity(
+    manifest: Mapping[str, Any],
+    *,
+    commit: str = "4" * 40,
+    parent: str = "5" * 40,
+) -> dict[str, Any]:
+    raw = canonical_json_bytes(manifest)
+    return {
+        "schema_version": TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION,
+        "manifest_commit": commit,
+        "manifest_parents": [parent],
+        "manifest_path": TRUSTED_RECORDING_MANIFEST_PATH,
+        "manifest_mode": DESIGN_MODE,
+        "manifest_blob_oid": hashlib.sha1(
+            b"blob " + str(len(raw)).encode() + b"\0" + raw
+        ).hexdigest(),
+        "manifest_byte_size": len(raw),
+        "manifest_sha256": _sha256(raw),
+    }
+
+
+def _test_governing_identity(
+    raw_document: bytes,
+    ratification_commit: str,
+    ratification_parent: str,
+    manifest_identity: Mapping[str, Any],
+    attestations: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    return {
+        "schema_version": GOVERNING_A13_IDENTITY_SCHEMA_VERSION,
+        "status": GOVERNING_A13_IDENTITY_STATUS,
+        "ratification_commit": ratification_commit,
+        "ratification_parents": [ratification_parent],
+        "ratification_commit_changed_paths": [DESIGN_PATH],
+        "document_path": DESIGN_PATH,
+        "document_mode": DESIGN_MODE,
+        "document_blob_oid": hashlib.sha1(
+            b"blob " + str(len(raw_document)).encode() + b"\0" + raw_document
+        ).hexdigest(),
+        "document_byte_size": len(raw_document),
+        "document_sha256": _sha256(raw_document),
+        "trusted_recording_manifest_identity": copy.deepcopy(
+            dict(manifest_identity)
+        ),
+        "dual_ratify_attestations": [
+            copy.deepcopy(dict(row)) for row in attestations
+        ],
+    }
+
+
+def _scratch_git(
+    cwd: Path,
+    *arguments: str,
+    text: bool = True,
+) -> bytes | str:
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("GIT_")
+    }
+    result = subprocess.run(
+        ["git", *arguments],
+        cwd=cwd,
+        check=False,
+        capture_output=True,
+        text=text,
+        env=environment,
+    )
+    _require(
+        result.returncode == 0,
+        f"scratch git command failed: {' '.join(arguments)}: {result.stderr}",
+    )
+    return result.stdout
+
+
+def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
+    """Prove raw parent and changed-path checks ignore replacement refs."""
+
+    global ROOT
+
+    original_root = ROOT
+    with tempfile.TemporaryDirectory(prefix="a13-replace-ref-") as temporary:
+        temporary_root = Path(temporary)
+        scratch = temporary_root / "repo"
+        _scratch_git(
+            temporary_root,
+            "clone",
+            "--quiet",
+            "--no-hardlinks",
+            str(original_root),
+            str(scratch),
+        )
+        _scratch_git(scratch, "config", "user.name", "A13 mutation test")
+        _scratch_git(
+            scratch,
+            "config",
+            "user.email",
+            "a13-mutation@example.invalid",
+        )
+        design = scratch / DESIGN_PATH
+        design.write_bytes(raw_document)
+        _scratch_git(scratch, "add", DESIGN_PATH)
+        if str(_scratch_git(scratch, "status", "--porcelain")).strip():
+            _scratch_git(
+                scratch,
+                "commit",
+                "--quiet",
+                "--no-verify",
+                "-m",
+                "A13 replacement candidate",
+            )
+        candidate = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+        attestations, records, manifest = _test_trusted_material(
+            raw_document,
+            candidate,
+        )
+        amendment12_raw = bytes(
+            _scratch_git(
+                scratch,
+                "show",
+                f"{RATIFICATION_COMMIT}:{DESIGN_PATH}",
+                text=False,
+            )
+        )
+        design.write_bytes(amendment12_raw)
+        manifest_path = scratch / TRUSTED_RECORDING_MANIFEST_PATH
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_bytes(canonical_json_bytes(manifest))
+        _scratch_git(
+            scratch,
+            "add",
+            DESIGN_PATH,
+            TRUSTED_RECORDING_MANIFEST_PATH,
+        )
+        _scratch_git(
+            scratch,
+            "commit",
+            "--quiet",
+            "--no-verify",
+            "-m",
+            "Install independent A13 recording manifest",
+        )
+        manifest_commit = str(
+            _scratch_git(scratch, "rev-parse", "HEAD")
+        ).strip()
+        manifest_parent = str(
+            _scratch_git(scratch, "rev-parse", "HEAD^")
+        ).strip()
+        manifest_blob = str(
+            _scratch_git(
+                scratch,
+                "rev-parse",
+                f"HEAD:{TRUSTED_RECORDING_MANIFEST_PATH}",
+            )
+        ).strip()
+        manifest_raw = canonical_json_bytes(manifest)
+        manifest_identity = {
+            "schema_version": (
+                TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION
+            ),
+            "manifest_commit": manifest_commit,
+            "manifest_parents": [manifest_parent],
+            "manifest_path": TRUSTED_RECORDING_MANIFEST_PATH,
+            "manifest_mode": DESIGN_MODE,
+            "manifest_blob_oid": manifest_blob,
+            "manifest_byte_size": len(manifest_raw),
+            "manifest_sha256": _sha256(manifest_raw),
+        }
+        design.write_bytes(raw_document)
+        _scratch_git(scratch, "add", DESIGN_PATH)
+        _scratch_git(
+            scratch,
+            "commit",
+            "--quiet",
+            "--no-verify",
+            "-m",
+            "Conforming document-only recording commit",
+        )
+        conforming = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+        conforming_tree = str(
+            _scratch_git(scratch, "rev-parse", f"{conforming}^{{tree}}")
+        ).strip()
+        wrong_parent = str(
+            _scratch_git(
+                scratch,
+                "commit-tree",
+                conforming_tree,
+                "-p",
+                candidate,
+                "-m",
+                "Raw commit with substituted parent",
+            )
+        ).strip()
+        _scratch_git(scratch, "checkout", "--quiet", manifest_commit)
+        design.write_bytes(raw_document)
+        extra_path = scratch / "forged-extra.txt"
+        extra_path.write_text("extra changed path\n", encoding="utf-8")
+        _scratch_git(scratch, "add", DESIGN_PATH, "forged-extra.txt")
+        _scratch_git(
+            scratch,
+            "commit",
+            "--quiet",
+            "--no-verify",
+            "-m",
+            "Raw commit with hidden extra path",
+        )
+        wrong_paths = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+        _scratch_git(scratch, "replace", wrong_parent, conforming)
+        _scratch_git(scratch, "replace", wrong_paths, conforming)
+        _require(
+            str(
+                _scratch_git(
+                    scratch,
+                    "rev-list",
+                    "--parents",
+                    "-n",
+                    "1",
+                    wrong_parent,
+                )
+            ).split()
+            == [wrong_parent, manifest_commit],
+            "replacement-ref parent attack control did not conform",
+        )
+        _require(
+            str(
+                _scratch_git(
+                    scratch,
+                    "diff-tree",
+                    "--no-commit-id",
+                    "--name-only",
+                    "-r",
+                    wrong_paths,
+                )
+            ).splitlines()
+            == [DESIGN_PATH],
+            "replacement-ref changed-path attack control did not conform",
+        )
+        ROOT = scratch
+        try:
+            for commit, message in (
+                (wrong_parent, "ratification commit is not exact"),
+                (wrong_paths, "recording act is not document-only"),
+            ):
+                identity = _test_governing_identity(
+                    raw_document,
+                    commit,
+                    manifest_commit,
+                    manifest_identity,
+                    attestations,
+                )
+                try:
+                    _validate_governing_amendment13_ratification_identity(
+                        identity,
+                        records,
+                        verify_git=True,
+                        trusted_recording_manifest_identity=manifest_identity,
+                        trusted_recording_manifest=manifest,
+                    )
+                except LawError as error:
+                    _require(
+                        message in str(error),
+                        "replace-ref mutation failed an unintended gate: "
+                        f"{error}",
+                    )
+                else:
+                    raise LawError("replacement-ref mutation survived")
+        finally:
+            ROOT = original_root
+
+
+def run_enforcement_mutation_tests(
+    law: Mapping[str, Any],
+) -> tuple[str, ...]:
+    """Run the three enforcement-layer attacks without altering enacted law."""
+
+    rejected: list[str] = []
+    raw_document = (ROOT / DESIGN_PATH).read_bytes()
+    forged_raw = raw_document.replace(
+        (
+            b"The exact new successor status is\n`"
+            + PROOF_TERMINAL_STATUS.encode("ascii")
+            + b"`."
+        ),
+        (
+            b"The exact new successor status is\n"
+            b"`local_resolved_cross_reference_for_global_assembly`."
+        ),
+        1,
+    )
+    _require(
+        forged_raw != raw_document, "suffix semantic mutation did not apply"
+    )
+    candidate = "a" * 40
+    attestations, records, manifest = _test_trusted_material(
+        forged_raw,
+        candidate,
+    )
+    manifest_identity = _test_manifest_identity(manifest)
+    identity = _test_governing_identity(
+        forged_raw,
+        "b" * 40,
+        manifest_identity["manifest_commit"],
+        manifest_identity,
+        attestations,
+    )
+    _validate_governing_amendment13_ratification_identity(
+        identity,
+        records,
+        verify_git=False,
+        trusted_recording_manifest_identity=manifest_identity,
+        trusted_recording_manifest=manifest,
+    )
+    try:
+        _validate_document_semantic_projection(forged_raw, law)
+    except LawError as error:
+        _require(
+            "document semantic projection drift" in str(error),
+            f"suffix semantic mutation failed an unintended gate: {error}",
+        )
+        rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[0])
+    else:
+        raise LawError("coherently repinned suffix semantic mutation survived")
+
+    attestations, records, manifest = _test_trusted_material(
+        raw_document,
+        candidate,
+    )
+    manifest_identity = _test_manifest_identity(manifest)
+    identity = _test_governing_identity(
+        raw_document,
+        "b" * 40,
+        manifest_identity["manifest_commit"],
+        manifest_identity,
+        attestations,
+    )
+    forged_identity = copy.deepcopy(identity)
+    forged_records: dict[str, bytes] = {}
+    for index, attestation in enumerate(
+        forged_identity["dual_ratify_attestations"],
+        start=1,
+    ):
+        name = f"forged-by-one-actor-{index}.md"
+        raw_record = (
+            "# RATIFY\n"
+            f"reviewer_identity: {attestation['reviewer_identity']}\n"
+            f"record_name: {name}\n"
+            f"attested_candidate_head: {candidate}\n"
+            f"attested_document_path: {DESIGN_PATH}\n"
+            f"attested_document_byte_size: {len(raw_document)}\n"
+            f"attested_document_sha256: {_sha256(raw_document)}\n"
+        ).encode("utf-8")
+        attestation["record_name"] = name
+        attestation["raw_byte_size"] = len(raw_record)
+        attestation["raw_sha256"] = _sha256(raw_record)
+        forged_records[name] = raw_record
+    try:
+        _validate_governing_amendment13_ratification_identity(
+            forged_identity,
+            forged_records,
+            verify_git=False,
+            trusted_recording_manifest_identity=manifest_identity,
+            trusted_recording_manifest=manifest,
+        )
+    except LawError as error:
+        _require(
+            "dual-RATIFY trusted manifest drift" in str(error),
+            f"dual-record mutation failed an unintended gate: {error}",
+        )
+        rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[1])
+    else:
+        raise LawError("coherent dual-record replacement survived")
+
+    _run_replace_ref_enforcement_mutation(raw_document)
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[2])
+    _require(
+        tuple(rejected) == A13_ENFORCEMENT_EXPECTED_MUTATIONS,
+        "Amendment-13 enforcement mutation inventory drift",
+    )
+    return tuple(rejected)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--mutation-tests",
         action="store_true",
-        help="run the exact seven Amendment-13 forgery attacks",
+        help="run seven semantic and three enforcement forgery attacks",
     )
     parser.add_argument(
         "--print-summary",
@@ -3290,6 +4551,9 @@ def main() -> int:
     law = build_execution_law()
     validate_execution_law(law)
     rejected = run_mutation_tests(law) if arguments.mutation_tests else ()
+    enforcement_rejected = (
+        run_enforcement_mutation_tests(law) if arguments.mutation_tests else ()
+    )
     if arguments.print_summary or arguments.mutation_tests:
         print(
             json.dumps(
@@ -3297,8 +4561,16 @@ def main() -> int:
                     "status": law["status"],
                     "authority_emitted": law["authority_emitted"],
                     "integrity": law["integrity"],
-                    "mutation_test_count": len(rejected),
-                    "mutations_rejected": list(rejected),
+                    "mutation_test_count": len(rejected)
+                    + len(enforcement_rejected),
+                    "semantic_mutation_test_count": len(rejected),
+                    "enforcement_mutation_test_count": len(
+                        enforcement_rejected
+                    ),
+                    "mutations_rejected": [
+                        *rejected,
+                        *enforcement_rejected,
+                    ],
                 },
                 indent=2,
                 sort_keys=True,

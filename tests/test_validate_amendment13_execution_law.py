@@ -39,8 +39,11 @@ def rejected_enforcement_mutations(execution_law):
 def _synthetic_governing_identity_and_records():
     commit = "1" * 40
     candidate_head = "2" * 40
-    document_sha256 = "3" * 64
-    document_blob_oid = "5" * 40
+    document_raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    document_sha256 = hashlib.sha256(document_raw).hexdigest()
+    document_blob_oid = hashlib.sha1(
+        b"blob " + str(len(document_raw)).encode() + b"\0" + document_raw
+    ).hexdigest()
     records = {}
     attestations = []
     for index in (1, 2):
@@ -52,7 +55,7 @@ def _synthetic_governing_identity_and_records():
             f"record_name: {name}\n"
             f"attested_candidate_head: {candidate_head}\n"
             f"attested_document_path: {a13.DESIGN_PATH}\n"
-            "attested_document_byte_size: 4000000\n"
+            f"attested_document_byte_size: {len(document_raw)}\n"
             f"attested_document_sha256: {document_sha256}\n"
         ).encode()
         records[name] = raw
@@ -64,7 +67,7 @@ def _synthetic_governing_identity_and_records():
                 "raw_sha256": hashlib.sha256(raw).hexdigest(),
                 "verdict_token": "RATIFY",
                 "attested_candidate_head": candidate_head,
-                "attested_document_byte_size": 4_000_000,
+                "attested_document_byte_size": len(document_raw),
                 "attested_document_sha256": document_sha256,
             }
         )
@@ -75,7 +78,7 @@ def _synthetic_governing_identity_and_records():
         "document_path": a13.DESIGN_PATH,
         "document_mode": a13.DESIGN_MODE,
         "document_blob_oid": document_blob_oid,
-        "document_byte_size": 4_000_000,
+        "document_byte_size": len(document_raw),
         "document_sha256": document_sha256,
         "ordered_reviewer_identities": [
             row["reviewer_identity"] for row in attestations
@@ -106,7 +109,7 @@ def _synthetic_governing_identity_and_records():
         "document_path": a13.DESIGN_PATH,
         "document_mode": a13.DESIGN_MODE,
         "document_blob_oid": document_blob_oid,
-        "document_byte_size": 4_000_000,
+        "document_byte_size": len(document_raw),
         "document_sha256": document_sha256,
         "trusted_recording_manifest_identity": manifest_identity,
         "dual_ratify_attestations": attestations,
