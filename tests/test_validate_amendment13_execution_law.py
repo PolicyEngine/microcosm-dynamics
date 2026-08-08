@@ -384,7 +384,29 @@ def test__closure__real_public_path_adapts_at_revision16():
     )
 
 
-def test__closure__public_registry_rejects_replacement_ref_design_attack():
+def test__closure__public_operativity_rejects_replacement_ref_design_attack(
+    monkeypatch,
+):
+    original_expect_law_error = a13._expect_law_error
+
+    def expect_public_operativity_rejection(
+        action,
+        expected_message,
+        label,
+    ):
+        assert action is a13._public_registry_ratification_context
+        original_expect_law_error(action, expected_message, label)
+        original_expect_law_error(
+            a13.validate_ratification_operativity,
+            expected_message,
+            f"{label} through public operativity",
+        )
+
+    monkeypatch.setattr(
+        a13,
+        "_expect_law_error",
+        expect_public_operativity_rejection,
+    )
     a13._run_public_registry_replace_ref_enforcement_mutation()
 
 
