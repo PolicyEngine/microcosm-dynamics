@@ -4229,8 +4229,11 @@ def _scratch_git(
     return result.stdout
 
 
-def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
-    """Prove raw parent and changed-path checks ignore replacement refs."""
+def _run_replace_ref_enforcement_mutation(
+    raw_document: bytes,
+    semantic_law: Mapping[str, Any],
+) -> None:
+    """Exercise a coherent suffix repin and raw replacement-ref attacks."""
 
     global ROOT
 
@@ -4333,6 +4336,45 @@ def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
             "Conforming document-only recording commit",
         )
         conforming = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+        conforming_identity = _test_governing_identity(
+            raw_document,
+            conforming,
+            manifest_commit,
+            manifest_identity,
+            attestations,
+        )
+        ROOT = scratch
+        try:
+            _validate_governing_amendment13_ratification_identity(
+                conforming_identity,
+                records,
+                verify_git=True,
+                trusted_recording_manifest_identity=manifest_identity,
+                trusted_recording_manifest=manifest,
+            )
+            authenticated_raw = _git("show", f"{conforming}:{DESIGN_PATH}")
+            _require(
+                isinstance(authenticated_raw, bytes)
+                and authenticated_raw == raw_document,
+                "coherent suffix mutation did not authenticate exact bytes",
+            )
+            try:
+                _validate_document_semantic_projection(
+                    authenticated_raw,
+                    semantic_law,
+                )
+            except LawError as error:
+                _require(
+                    "document semantic projection drift" in str(error),
+                    "suffix semantic mutation failed an unintended gate: "
+                    f"{error}",
+                )
+            else:
+                raise LawError(
+                    "coherently repinned suffix semantic mutation survived"
+                )
+        finally:
+            ROOT = original_root
         conforming_tree = str(
             _scratch_git(scratch, "rev-parse", f"{conforming}^{{tree}}")
         ).strip()
@@ -4446,37 +4488,10 @@ def run_enforcement_mutation_tests(
     _require(
         forged_raw != raw_document, "suffix semantic mutation did not apply"
     )
-    candidate = "a" * 40
-    attestations, records, manifest = _test_trusted_material(
-        forged_raw,
-        candidate,
-    )
-    manifest_identity = _test_manifest_identity(manifest)
-    identity = _test_governing_identity(
-        forged_raw,
-        "b" * 40,
-        manifest_identity["manifest_commit"],
-        manifest_identity,
-        attestations,
-    )
-    _validate_governing_amendment13_ratification_identity(
-        identity,
-        records,
-        verify_git=False,
-        trusted_recording_manifest_identity=manifest_identity,
-        trusted_recording_manifest=manifest,
-    )
-    try:
-        _validate_document_semantic_projection(forged_raw, law)
-    except LawError as error:
-        _require(
-            "document semantic projection drift" in str(error),
-            f"suffix semantic mutation failed an unintended gate: {error}",
-        )
-        rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[0])
-    else:
-        raise LawError("coherently repinned suffix semantic mutation survived")
+    _run_replace_ref_enforcement_mutation(forged_raw, law)
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[0])
 
+    candidate = "a" * 40
     attestations, records, manifest = _test_trusted_material(
         raw_document,
         candidate,
@@ -4526,7 +4541,6 @@ def run_enforcement_mutation_tests(
     else:
         raise LawError("coherent dual-record replacement survived")
 
-    _run_replace_ref_enforcement_mutation(raw_document)
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[2])
     _require(
         tuple(rejected) == A13_ENFORCEMENT_EXPECTED_MUTATIONS,
