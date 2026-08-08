@@ -1396,10 +1396,10 @@ def test__design_binding__proves_head_and_ratification_blob_identity():
     # HEAD copies.
     expected_binding = {
         "path": "docs/design/covered_earnings_correction.md",
-        "ratification_commit": "29c593d1954d94795e9f092ec4333e7d60a6136f",
-        "revision": 14,
+        "ratification_commit": "0cf2a90b1decaa52de4bcd1032227092ac9210c5",
+        "revision": 15,
         "blob_sha256": (
-            "283a010c1bb135917fd8c1f1aebd1526165f829509d32e7689537167aa8818f5"
+            "ae939693b8bcd99244135a170fdf268f0120d22a4d5cd857f5fcec525b5c859b"
         ),
     }
     assert {
