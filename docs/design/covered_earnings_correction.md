@@ -53087,8 +53087,8 @@ active Amendment-14-governed implementation identity is exactly mode
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `1e051e261d870499005beecc3c3648c4fd71479e` | 228910 | `ffd2707b130719f4a1b9cc34f4df708cfafa9902ae53e0feef7757eae6d2eaae` |
-| `tests/test_validate_amendment13_execution_law.py` | `3e2fc6ba2b39ad34c6553b1292baf30adf47c1fc` | 22011 | `d4200bd09a496d55d47aec1121a14eacefca6d80d3d9d50a11a9c137592e8bac` |
+| `scripts/validate_amendment13_execution_law.py` | `dad5a34919624bfa3e4c11d5e37580cacbc9912e` | 231877 | `c33a1c584c3256aa138b4356c6c81cb3e33ea81f4cf4f2e986350eb2e75d6b91` |
+| `tests/test_validate_amendment13_execution_law.py` | `8ede1e5ffa98a263cf1d41dfce1140ec6f7f9f15` | 22153 | `05361bd15473e76b4521c4c4cdce102bf97bf138da18c6b3755c2607728cb424` |
 
 For each row, the validator requires the enacted path and mode, recomputes
 the raw byte count, raw SHA-256, and Git blob OID, and requires exact equality
