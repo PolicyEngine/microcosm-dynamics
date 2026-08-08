@@ -7121,9 +7121,13 @@ def run_enforcement_mutation_tests(
         )
     else:
         raise LawError("coherent dual-record replacement survived")
+    public_forged_identity = copy.deepcopy(forged_identity)
+    public_forged_identity["ratification_commit"] = str(
+        _git("rev-parse", "HEAD", text=True)
+    ).strip()
     try:
         build_ratification_bound_execution_template(
-            forged_identity,
+            public_forged_identity,
             forged_records,
             forged_signatures,
         )
