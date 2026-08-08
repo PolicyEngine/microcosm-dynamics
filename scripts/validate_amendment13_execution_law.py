@@ -42,6 +42,24 @@ GOVERNING_A13_IDENTITY_SCHEMA_VERSION = (
     "amendment_13_governing_ratification_identity.v1"
 )
 GOVERNING_A13_IDENTITY_STATUS = "RATIFIED_AMENDMENT_13_GOVERNING_EXECUTION_LAW"
+TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION = (
+    "amendment_13_dual_ratify_recording_manifest_identity.v1"
+)
+TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION = (
+    "amendment_13_dual_ratify_recording_manifest.v1"
+)
+TRUSTED_RECORDING_MANIFEST_STATUS = (
+    "INDEPENDENTLY_AUTHENTICATED_DUAL_RATIFY_RECORDING_MANIFEST"
+)
+TRUSTED_RECORDING_MANIFEST_PATH = (
+    "docs/analysis/amendment_13_ratification/"
+    "dual_ratify_recording_manifest_v1.json"
+)
+# No independent recorder has committed the two future RATIFY records yet.
+# The public ratification-bound builder therefore remains fail-closed.  A
+# later, independently reviewed implementation may install one exact manifest
+# identity here; callers cannot supply or override this trust root.
+TRUSTED_A13_RECORDING_MANIFEST_IDENTITY: Mapping[str, Any] | None = None
 DRAFT_STATUS = "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
 RATIFICATION_BOUND_TEMPLATE_STATUS = (
     "RATIFIED_LAW_BOUND_NONAUTHORITY_EXECUTION_TEMPLATE"
@@ -499,6 +517,11 @@ A13_EXPECTED_MUTATIONS = (
     "fragment_duplicate_selector_forged",
     "fragment_composition_transformation_forged",
 )
+A13_ENFORCEMENT_EXPECTED_MUTATIONS = (
+    "governing_document_semantics_forged_and_repinned",
+    "dual_ratify_records_coherently_self_minted",
+    "git_replace_refs_substitute_parent_and_changed_paths",
+)
 
 
 def _require(condition: bool, message: str) -> None:
@@ -734,16 +757,190 @@ def _is_lower_hex(value: Any, length: int) -> bool:
     )
 
 
+def _load_trusted_recording_manifest() -> (
+    tuple[dict[str, Any], dict[str, Any]]
+):
+    """Load the module-pinned manifest; callers cannot select the trust root."""
+
+    _require(
+        TRUSTED_A13_RECORDING_MANIFEST_IDENTITY is not None,
+        "trusted Amendment-13 recording manifest is unavailable",
+    )
+    manifest_identity = copy.deepcopy(
+        dict(TRUSTED_A13_RECORDING_MANIFEST_IDENTITY)
+    )
+    raw = _git(
+        "show",
+        (
+            f"{manifest_identity['manifest_commit']}:"
+            f"{manifest_identity['manifest_path']}"
+        ),
+    )
+    _require(isinstance(raw, bytes), "trusted manifest read was not raw bytes")
+    try:
+        manifest = a12.strict_json_loads(
+            raw,
+            "trusted Amendment-13 recording manifest",
+        )
+    except a12.BuildError as error:
+        raise LawError(
+            "trusted Amendment-13 recording manifest is invalid"
+        ) from error
+    _require(
+        isinstance(manifest, dict) and raw == canonical_json_bytes(manifest),
+        "trusted Amendment-13 recording manifest is not canonical",
+    )
+    return manifest_identity, manifest
+
+
+def _validate_trusted_recording_manifest(
+    manifest_identity: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    *,
+    verify_git: bool,
+) -> None:
+    """Validate the external trust root and its two exact reviewer records."""
+
+    _require_exact_keys(
+        manifest_identity,
+        {
+            "schema_version",
+            "manifest_commit",
+            "manifest_parents",
+            "manifest_path",
+            "manifest_mode",
+            "manifest_blob_oid",
+            "manifest_byte_size",
+            "manifest_sha256",
+        },
+        "trusted Amendment-13 recording manifest identity",
+    )
+    _require(
+        manifest_identity["schema_version"]
+        == TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION
+        and _is_lower_hex(manifest_identity["manifest_commit"], 40)
+        and isinstance(manifest_identity["manifest_parents"], list)
+        and len(manifest_identity["manifest_parents"]) == 1
+        and _is_lower_hex(manifest_identity["manifest_parents"][0], 40)
+        and manifest_identity["manifest_path"]
+        == TRUSTED_RECORDING_MANIFEST_PATH
+        and manifest_identity["manifest_mode"] == DESIGN_MODE
+        and _is_lower_hex(manifest_identity["manifest_blob_oid"], 40)
+        and isinstance(manifest_identity["manifest_byte_size"], int)
+        and not isinstance(manifest_identity["manifest_byte_size"], bool)
+        and manifest_identity["manifest_byte_size"] > 0
+        and _is_lower_hex(manifest_identity["manifest_sha256"], 64),
+        "trusted Amendment-13 recording manifest identity drift",
+    )
+    _require_exact_keys(
+        manifest,
+        {
+            "schema_version",
+            "status",
+            "attested_candidate_head",
+            "document_path",
+            "document_mode",
+            "document_blob_oid",
+            "document_byte_size",
+            "document_sha256",
+            "ordered_reviewer_identities",
+            "ordered_ratify_attestations",
+            "attestation_domain_sha256",
+        },
+        "trusted Amendment-13 recording manifest",
+    )
+    attestations = manifest["ordered_ratify_attestations"]
+    reviewers = manifest["ordered_reviewer_identities"]
+    _require(
+        manifest["schema_version"] == TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION
+        and manifest["status"] == TRUSTED_RECORDING_MANIFEST_STATUS
+        and _is_lower_hex(manifest["attested_candidate_head"], 40)
+        and manifest["document_path"] == DESIGN_PATH
+        and manifest["document_mode"] == DESIGN_MODE
+        and _is_lower_hex(manifest["document_blob_oid"], 40)
+        and isinstance(manifest["document_byte_size"], int)
+        and not isinstance(manifest["document_byte_size"], bool)
+        and manifest["document_byte_size"] > 0
+        and _is_lower_hex(manifest["document_sha256"], 64)
+        and isinstance(reviewers, list)
+        and len(reviewers) == 2
+        and all(
+            isinstance(reviewer, str)
+            and reviewer
+            and "\r" not in reviewer
+            and "\n" not in reviewer
+            for reviewer in reviewers
+        )
+        and len(set(reviewers)) == 2
+        and isinstance(attestations, list)
+        and len(attestations) == 2
+        and [row.get("reviewer_identity") for row in attestations] == reviewers
+        and manifest["attestation_domain_sha256"] == _domain_sha(attestations),
+        "trusted Amendment-13 recording manifest drift",
+    )
+    if not verify_git:
+        return
+    commit = manifest_identity["manifest_commit"]
+    _require_exact_commit_object(
+        commit,
+        "trusted Amendment-13 recording manifest commit",
+    )
+    parent_line = str(
+        _git("rev-list", "--parents", "-n", "1", commit, text=True)
+    ).strip()
+    _require(
+        parent_line.split()
+        == [commit, manifest_identity["manifest_parents"][0]],
+        "trusted Amendment-13 recording manifest commit is not exact",
+    )
+    tree_line = str(
+        _git(
+            "ls-tree",
+            commit,
+            "--",
+            manifest_identity["manifest_path"],
+            text=True,
+        )
+    ).strip()
+    _require(
+        tree_line
+        == (
+            f"{manifest_identity['manifest_mode']} blob "
+            f"{manifest_identity['manifest_blob_oid']}\t"
+            f"{manifest_identity['manifest_path']}"
+        ),
+        "trusted Amendment-13 recording manifest tree entry drift",
+    )
+    raw = _git(
+        "show",
+        f"{commit}:{manifest_identity['manifest_path']}",
+    )
+    _require(
+        isinstance(raw, bytes)
+        and raw == canonical_json_bytes(manifest)
+        and len(raw) == manifest_identity["manifest_byte_size"]
+        and _sha256(raw) == manifest_identity["manifest_sha256"]
+        and hashlib.sha1(
+            b"blob " + str(len(raw)).encode() + b"\0" + raw
+        ).hexdigest()
+        == manifest_identity["manifest_blob_oid"],
+        "trusted Amendment-13 recording manifest bytes drift",
+    )
+
+
 def validate_governing_amendment13_ratification_identity(
     identity: Mapping[str, Any],
     attestation_record_bytes: Mapping[str, bytes],
 ) -> None:
     """Validate a governing identity, including its exact Git objects."""
 
+    manifest_identity, manifest = _load_trusted_recording_manifest()
     _validate_governing_amendment13_ratification_identity(
         identity,
         attestation_record_bytes,
         verify_git=True,
+        trusted_recording_manifest_identity=manifest_identity,
+        trusted_recording_manifest=manifest,
     )
 
 
@@ -752,6 +949,8 @@ def _validate_governing_amendment13_ratification_identity(
     attestation_record_bytes: Mapping[str, bytes],
     *,
     verify_git: bool,
+    trusted_recording_manifest_identity: Mapping[str, Any],
+    trusted_recording_manifest: Mapping[str, Any],
 ) -> None:
     """Internal identity validator with a test-only synthetic Git path."""
 
@@ -768,6 +967,7 @@ def _validate_governing_amendment13_ratification_identity(
             "document_blob_oid",
             "document_byte_size",
             "document_sha256",
+            "trusted_recording_manifest_identity",
             "dual_ratify_attestations",
         },
         "governing Amendment-13 ratification identity",
@@ -801,6 +1001,16 @@ def _validate_governing_amendment13_ratification_identity(
         "governing Amendment-13 document identity is malformed",
     )
     attestations = identity["dual_ratify_attestations"]
+    _validate_trusted_recording_manifest(
+        trusted_recording_manifest_identity,
+        trusted_recording_manifest,
+        verify_git=verify_git,
+    )
+    _require(
+        identity["trusted_recording_manifest_identity"]
+        == trusted_recording_manifest_identity,
+        "governing Amendment-13 trusted recording manifest drift",
+    )
     _require(
         isinstance(attestations, list) and len(attestations) == 2,
         "governing Amendment-13 identity lacks two RATIFY attestations",
@@ -811,6 +1021,7 @@ def _validate_governing_amendment13_ratification_identity(
         _require_exact_keys(
             attestation,
             {
+                "reviewer_identity",
                 "record_name",
                 "raw_byte_size",
                 "raw_sha256",
@@ -824,7 +1035,11 @@ def _validate_governing_amendment13_ratification_identity(
         record_names.append(attestation["record_name"])
         candidate_heads.append(attestation["attested_candidate_head"])
         _require(
-            isinstance(attestation["record_name"], str)
+            isinstance(attestation["reviewer_identity"], str)
+            and bool(attestation["reviewer_identity"])
+            and "\r" not in attestation["reviewer_identity"]
+            and "\n" not in attestation["reviewer_identity"]
+            and isinstance(attestation["record_name"], str)
             and bool(attestation["record_name"])
             and "\r" not in attestation["record_name"]
             and "\n" not in attestation["record_name"]
@@ -849,12 +1064,32 @@ def _validate_governing_amendment13_ratification_identity(
     _require(
         len(set(record_names)) == 2
         and len(set(candidate_heads)) == 1
+        and len({row["reviewer_identity"] for row in attestations}) == 2
         and len({row["raw_sha256"] for row in attestations}) == 2,
         "governing Amendment-13 RATIFY records are not distinct and conjoined",
     )
     _require(
         record_name_bytes == sorted(record_name_bytes),
         "governing Amendment-13 RATIFY records are not in record-name byte order",
+    )
+    _require(
+        attestations
+        == trusted_recording_manifest["ordered_ratify_attestations"]
+        and [row["reviewer_identity"] for row in attestations]
+        == trusted_recording_manifest["ordered_reviewer_identities"]
+        and candidate_heads[0]
+        == trusted_recording_manifest["attested_candidate_head"]
+        and identity["document_path"]
+        == trusted_recording_manifest["document_path"]
+        and identity["document_mode"]
+        == trusted_recording_manifest["document_mode"]
+        and identity["document_blob_oid"]
+        == trusted_recording_manifest["document_blob_oid"]
+        and identity["document_byte_size"]
+        == trusted_recording_manifest["document_byte_size"]
+        and identity["document_sha256"]
+        == trusted_recording_manifest["document_sha256"],
+        "governing Amendment-13 dual-RATIFY trusted manifest drift",
     )
     _require(
         set(attestation_record_bytes) == set(record_names),
@@ -864,6 +1099,8 @@ def _validate_governing_amendment13_ratification_identity(
         raw_record = attestation_record_bytes[attestation["record_name"]]
         expected_record = (
             "# RATIFY\n"
+            "reviewer_identity: "
+            f"{attestation['reviewer_identity']}\n"
             f"record_name: {attestation['record_name']}\n"
             "attested_candidate_head: "
             f"{attestation['attested_candidate_head']}\n"
@@ -896,7 +1133,8 @@ def _validate_governing_amendment13_ratification_identity(
         _git("rev-list", "--parents", "-n", "1", commit, text=True)
     ).strip()
     _require(
-        parent_line.split() == [commit, parents[0]],
+        parents[0] == trusted_recording_manifest_identity["manifest_commit"]
+        and parent_line.split() == [commit, parents[0]],
         "governing Amendment-13 ratification commit is not exact",
     )
     changed_paths = str(
@@ -923,6 +1161,24 @@ def _validate_governing_amendment13_ratification_identity(
             f"{DESIGN_PATH}"
         ),
         "governing Amendment-13 commit does not select its document blob",
+    )
+    manifest_tree_line = str(
+        _git(
+            "ls-tree",
+            commit,
+            "--",
+            trusted_recording_manifest_identity["manifest_path"],
+            text=True,
+        )
+    ).strip()
+    _require(
+        manifest_tree_line
+        == (
+            f"{trusted_recording_manifest_identity['manifest_mode']} blob "
+            f"{trusted_recording_manifest_identity['manifest_blob_oid']}\t"
+            f"{trusted_recording_manifest_identity['manifest_path']}"
+        ),
+        "governing Amendment-13 commit does not retain trusted manifest",
     )
     candidate_tree_line = str(
         _git("ls-tree", candidate_heads[0], "--", DESIGN_PATH, text=True)
@@ -1438,6 +1694,8 @@ def build_ratification_bound_execution_template(
 def _build_ratification_bound_execution_template_for_test(
     governing_amendment13_ratification_identity: Mapping[str, Any],
     governing_attestation_record_bytes: Mapping[str, bytes],
+    trusted_recording_manifest_identity: Mapping[str, Any],
+    trusted_recording_manifest: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Exercise bound-template semantics without pretending synthetic Git exists."""
 
@@ -1445,6 +1703,10 @@ def _build_ratification_bound_execution_template_for_test(
         governing_amendment13_ratification_identity,
         governing_attestation_record_bytes,
         verify_git=False,
+        trusted_recording_manifest_identity=(
+            trusted_recording_manifest_identity
+        ),
+        trusted_recording_manifest=trusted_recording_manifest,
     )
     law = _construct_execution_law(
         governing_amendment13_ratification_identity=(
@@ -1456,6 +1718,10 @@ def _build_ratification_bound_execution_template_for_test(
         law,
         verify_git=False,
         governing_attestation_record_bytes=governing_attestation_record_bytes,
+        trusted_recording_manifest_identity=(
+            trusted_recording_manifest_identity
+        ),
+        trusted_recording_manifest=trusted_recording_manifest,
     )
     return law
 
@@ -1936,6 +2202,8 @@ def _validate_execution_law(
     *,
     verify_git: bool = True,
     governing_attestation_record_bytes: Mapping[str, bytes] | None = None,
+    trusted_recording_manifest_identity: Mapping[str, Any] | None = None,
+    trusted_recording_manifest: Mapping[str, Any] | None = None,
 ) -> None:
     """Internal validator with a test-only synthetic-identity path."""
 
@@ -1999,10 +2267,19 @@ def _validate_execution_law(
                 governing_attestation_record_bytes,
             )
         else:
+            _require(
+                trusted_recording_manifest_identity is not None
+                and trusted_recording_manifest is not None,
+                "test-only ratification validation lacks trusted manifest",
+            )
             _validate_governing_amendment13_ratification_identity(
                 governing_identity,
                 governing_attestation_record_bytes,
                 verify_git=False,
+                trusted_recording_manifest_identity=(
+                    trusted_recording_manifest_identity
+                ),
+                trusted_recording_manifest=trusted_recording_manifest,
             )
         expected_status = RATIFICATION_BOUND_TEMPLATE_STATUS
     _require(

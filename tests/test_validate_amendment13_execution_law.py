@@ -40,12 +40,15 @@ def _synthetic_governing_identity_and_records():
     commit = "1" * 40
     candidate_head = "2" * 40
     document_sha256 = "3" * 64
+    document_blob_oid = "5" * 40
     records = {}
     attestations = []
     for index in (1, 2):
+        reviewer_identity = f"independent-reviewer-{index}"
         name = f"amendment-13-ratify-{index}.md"
         raw = (
             "# RATIFY\n"
+            f"reviewer_identity: {reviewer_identity}\n"
             f"record_name: {name}\n"
             f"attested_candidate_head: {candidate_head}\n"
             f"attested_document_path: {a13.DESIGN_PATH}\n"
@@ -55,6 +58,7 @@ def _synthetic_governing_identity_and_records():
         records[name] = raw
         attestations.append(
             {
+                "reviewer_identity": reviewer_identity,
                 "record_name": name,
                 "raw_byte_size": len(raw),
                 "raw_sha256": hashlib.sha256(raw).hexdigest(),
@@ -64,20 +68,50 @@ def _synthetic_governing_identity_and_records():
                 "attested_document_sha256": document_sha256,
             }
         )
+    manifest = {
+        "schema_version": a13.TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION,
+        "status": a13.TRUSTED_RECORDING_MANIFEST_STATUS,
+        "attested_candidate_head": candidate_head,
+        "document_path": a13.DESIGN_PATH,
+        "document_mode": a13.DESIGN_MODE,
+        "document_blob_oid": document_blob_oid,
+        "document_byte_size": 4_000_000,
+        "document_sha256": document_sha256,
+        "ordered_reviewer_identities": [
+            row["reviewer_identity"] for row in attestations
+        ],
+        "ordered_ratify_attestations": copy.deepcopy(attestations),
+        "attestation_domain_sha256": a13._domain_sha(attestations),
+    }
+    manifest_identity = {
+        "schema_version": (
+            a13.TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION
+        ),
+        "manifest_commit": "4" * 40,
+        "manifest_parents": ["6" * 40],
+        "manifest_path": a13.TRUSTED_RECORDING_MANIFEST_PATH,
+        "manifest_mode": a13.DESIGN_MODE,
+        "manifest_blob_oid": "7" * 40,
+        "manifest_byte_size": len(a13.canonical_json_bytes(manifest)),
+        "manifest_sha256": hashlib.sha256(
+            a13.canonical_json_bytes(manifest)
+        ).hexdigest(),
+    }
     identity = {
         "schema_version": a13.GOVERNING_A13_IDENTITY_SCHEMA_VERSION,
         "status": a13.GOVERNING_A13_IDENTITY_STATUS,
         "ratification_commit": commit,
-        "ratification_parents": ["4" * 40],
+        "ratification_parents": [manifest_identity["manifest_commit"]],
         "ratification_commit_changed_paths": [a13.DESIGN_PATH],
         "document_path": a13.DESIGN_PATH,
         "document_mode": a13.DESIGN_MODE,
-        "document_blob_oid": "5" * 40,
+        "document_blob_oid": document_blob_oid,
         "document_byte_size": 4_000_000,
         "document_sha256": document_sha256,
+        "trusted_recording_manifest_identity": manifest_identity,
         "dual_ratify_attestations": attestations,
     }
-    return identity, records
+    return identity, records, manifest_identity, manifest
 
 
 def test__draft__emits_neither_authority_nor_certification(execution_law):
@@ -256,9 +290,18 @@ def test__document036__successor_only_extra_key_fails_closed(execution_law):
 
 
 def test__governing_ratification__requires_raw_dual_records():
-    identity, records = _synthetic_governing_identity_and_records()
+    (
+        identity,
+        records,
+        manifest_identity,
+        manifest,
+    ) = _synthetic_governing_identity_and_records()
     a13._validate_governing_amendment13_ratification_identity(
-        identity, records, verify_git=False
+        identity,
+        records,
+        verify_git=False,
+        trusted_recording_manifest_identity=manifest_identity,
+        trusted_recording_manifest=manifest,
     )
     forged_records = dict(records)
     forged_records[next(iter(records))] += b"forged\n"
@@ -267,7 +310,11 @@ def test__governing_ratification__requires_raw_dual_records():
         match="RATIFY raw bytes do not attest identity",
     ):
         a13._validate_governing_amendment13_ratification_identity(
-            identity, forged_records, verify_git=False
+            identity,
+            forged_records,
+            verify_git=False,
+            trusted_recording_manifest_identity=manifest_identity,
+            trusted_recording_manifest=manifest,
         )
     forged_identity = copy.deepcopy(identity)
     forged_identity["dual_ratify_attestations"][0][
@@ -281,6 +328,8 @@ def test__governing_ratification__requires_raw_dual_records():
             forged_identity,
             records,
             verify_git=False,
+            trusted_recording_manifest_identity=manifest_identity,
+            trusted_recording_manifest=manifest,
         )
     reversed_identity = copy.deepcopy(identity)
     reversed_identity["dual_ratify_attestations"].reverse()
@@ -292,6 +341,51 @@ def test__governing_ratification__requires_raw_dual_records():
             reversed_identity,
             records,
             verify_git=False,
+            trusted_recording_manifest_identity=manifest_identity,
+            trusted_recording_manifest=manifest,
+        )
+
+    self_minted_identity = copy.deepcopy(identity)
+    self_minted_records = {}
+    for index, attestation in enumerate(
+        self_minted_identity["dual_ratify_attestations"],
+        start=1,
+    ):
+        name = f"forged-by-one-actor-{index}.md"
+        raw = (
+            "# RATIFY\n"
+            f"reviewer_identity: {attestation['reviewer_identity']}\n"
+            f"record_name: {name}\n"
+            "attested_candidate_head: "
+            f"{attestation['attested_candidate_head']}\n"
+            f"attested_document_path: {a13.DESIGN_PATH}\n"
+            "attested_document_byte_size: "
+            f"{identity['document_byte_size']}\n"
+            "attested_document_sha256: "
+            f"{identity['document_sha256']}\n"
+        ).encode()
+        attestation["record_name"] = name
+        attestation["raw_byte_size"] = len(raw)
+        attestation["raw_sha256"] = hashlib.sha256(raw).hexdigest()
+        self_minted_records[name] = raw
+    with pytest.raises(
+        a13.LawError,
+        match="dual-RATIFY trusted manifest drift",
+    ):
+        a13._validate_governing_amendment13_ratification_identity(
+            self_minted_identity,
+            self_minted_records,
+            verify_git=False,
+            trusted_recording_manifest_identity=manifest_identity,
+            trusted_recording_manifest=manifest,
+        )
+    with pytest.raises(
+        a13.LawError,
+        match="trusted Amendment-13 recording manifest is unavailable",
+    ):
+        a13.validate_governing_amendment13_ratification_identity(
+            identity,
+            records,
         )
 
 
@@ -316,10 +410,17 @@ def test__governing_ratification__candidate_head_must_be_commit_object():
 def test__ratification_bound_template__replaces_placeholder_everywhere(
     execution_law,
 ):
-    identity, records = _synthetic_governing_identity_and_records()
+    (
+        identity,
+        records,
+        manifest_identity,
+        manifest,
+    ) = _synthetic_governing_identity_and_records()
     template = a13._build_ratification_bound_execution_template_for_test(
         identity,
         records,
+        manifest_identity,
+        manifest,
     )
     assert template["status"] == a13.RATIFICATION_BOUND_TEMPLATE_STATUS
     assert template["authority_emitted"] is False
@@ -346,10 +447,17 @@ def test__ratification_bound_template__replaces_placeholder_everywhere(
 
 
 def test__ratification_bound_template__public_validator_cannot_bypass_git():
-    identity, records = _synthetic_governing_identity_and_records()
+    (
+        identity,
+        records,
+        manifest_identity,
+        manifest,
+    ) = _synthetic_governing_identity_and_records()
     template = a13._build_ratification_bound_execution_template_for_test(
         identity,
         records,
+        manifest_identity,
+        manifest,
     )
     with pytest.raises(
         a13.LawError,
@@ -363,10 +471,17 @@ def test__ratification_bound_template__public_validator_cannot_bypass_git():
 
 
 def test__ratification_bound_template__rejects_coherently_repinned_forgery():
-    identity, records = _synthetic_governing_identity_and_records()
+    (
+        identity,
+        records,
+        manifest_identity,
+        manifest,
+    ) = _synthetic_governing_identity_and_records()
     template = a13._build_ratification_bound_execution_template_for_test(
         identity,
         records,
+        manifest_identity,
+        manifest,
     )
     row = template["semantically_incompatible_local_proof_successor_rows"][0]
     old_successor_id = row["successor_row_id"]
@@ -444,6 +559,8 @@ def test__ratification_bound_template__rejects_coherently_repinned_forgery():
             template,
             verify_git=False,
             governing_attestation_record_bytes=records,
+            trusted_recording_manifest_identity=manifest_identity,
+            trusted_recording_manifest=manifest,
         )
 
 
