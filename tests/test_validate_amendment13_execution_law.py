@@ -51,6 +51,10 @@ def _a13_closure_material():
     return closure, closure_raw, binding, verdicts, design_raw
 
 
+def _operativity_materials():
+    return _a13_closure_material(), a13._synthetic_closure_material()
+
+
 def test__draft__emits_neither_authority_nor_certification(execution_law):
     assert execution_law["status"] == a13.DRAFT_STATUS
     assert execution_law["authority_emitted"] is False
@@ -238,6 +242,9 @@ def test__closure__generic_a14_schema_validates_like_a13():
         14,
         verify_git=False,
         ratification_design_raw=design_raw,
+        registry_design_binding=a13._synthetic_registry_design_binding(
+            closure
+        ),
     )
     assert validated == closure
     assert tuple(validated) == a13.CLOSURE_TOP_LEVEL_KEYS
@@ -247,12 +254,73 @@ def test__closure__generic_a14_schema_validates_like_a13():
     )
 
 
-def test__closure__public_path_fails_closed_before_revision16_repin():
+def test__closure__a14_must_match_revision16_design_binding():
+    closure, raw, binding, verdicts, design_raw = (
+        a13._synthetic_closure_material()
+    )
+    registry_binding = a13._synthetic_registry_design_binding(closure)
+    registry_binding["blob_sha256"] = "0" * 64
+    with pytest.raises(
+        a13.LawError,
+        match="does not match the revision-16 registry design binding",
+    ):
+        a13._validate_ratification_closure(
+            raw,
+            binding,
+            verdicts,
+            14,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+            registry_design_binding=registry_binding,
+        )
+
+
+def test__closure__unpaired_unicode_surrogate_fails_closed():
+    closure, _, _, _, _ = a13._synthetic_closure_material()
+    closure["verdict_artifacts"][0]["path"] = "\ud800"
+    raw = a13.canonical_json_bytes(closure)
+    with pytest.raises(
+        a13.LawError,
+        match="unpaired Unicode surrogate",
+    ):
+        a13._strict_canonical_json(raw, "synthetic closure")
+
+
+def test__closure__public_missing_binding_fails_closed(monkeypatch):
+    def fail_context():
+        raise a13.LawError("registry ratification closure binding is missing")
+
+    monkeypatch.setattr(
+        a13, "_public_registry_ratification_context", fail_context
+    )
     with pytest.raises(
         a13.LawError,
         match="registry ratification closure binding is missing",
     ):
         a13.validate_amendment_ratification_closure(13)
+
+
+def test__closure__operativity_requires_both_public_closures(monkeypatch):
+    context = {"revision": 16}
+    observed = []
+
+    monkeypatch.setattr(
+        a13,
+        "_public_registry_ratification_context",
+        lambda: context,
+    )
+
+    def validate(amendment_number, selected_context):
+        assert selected_context is context
+        observed.append(amendment_number)
+        return {"amendment_number": amendment_number}
+
+    monkeypatch.setattr(a13, "_validate_public_ratification_closure", validate)
+    assert a13.validate_ratification_operativity() == {
+        13: {"amendment_number": 13},
+        14: {"amendment_number": 14},
+    }
+    assert observed == [13, 14]
 
 
 def test__closure__ratification_commit_is_exact_single_parent():
@@ -277,12 +345,11 @@ def test__closure__tree_object_cannot_pose_as_commit():
 
 
 def test__ratification_bound_template__replaces_placeholder_everywhere():
-    closure, raw, binding, verdicts, design_raw = _a13_closure_material()
+    amendment13_material, amendment14_material = _operativity_materials()
+    closure = amendment13_material[0]
     template = a13._build_ratification_bound_execution_template_for_test(
-        raw,
-        binding,
-        verdicts,
-        design_raw,
+        amendment13_material,
+        amendment14_material,
     )
     assert template["status"] == a13.RATIFICATION_BOUND_TEMPLATE_STATUS
     assert template["authority_emitted"] is False
@@ -301,12 +368,11 @@ def test__ratification_bound_template__replaces_placeholder_everywhere():
 
 
 def test__ratification_bound_template__public_validator_cannot_bypass_git():
-    closure, raw, binding, verdicts, design_raw = _a13_closure_material()
+    amendment13_material, amendment14_material = _operativity_materials()
+    closure = amendment13_material[0]
     template = a13._build_ratification_bound_execution_template_for_test(
-        raw,
-        binding,
-        verdicts,
-        design_raw,
+        amendment13_material,
+        amendment14_material,
     )
     assert template["governing_amendment13_ratification_identity"] == closure
     with pytest.raises(
@@ -317,12 +383,10 @@ def test__ratification_bound_template__public_validator_cannot_bypass_git():
 
 
 def test__ratification_bound_template__rejects_coherent_source_forgery():
-    closure, raw, binding, verdicts, design_raw = _a13_closure_material()
+    amendment13_material, amendment14_material = _operativity_materials()
     template = a13._build_ratification_bound_execution_template_for_test(
-        raw,
-        binding,
-        verdicts,
-        design_raw,
+        amendment13_material,
+        amendment14_material,
     )
     row = template["semantically_incompatible_local_proof_successor_rows"][0]
     row["successor_payload"][
@@ -336,7 +400,33 @@ def test__ratification_bound_template__rejects_coherent_source_forgery():
         a13._validate_execution_law(
             template,
             verify_git=False,
-            verified_closure=closure,
+            verified_closures={
+                13: amendment13_material[0],
+                14: amendment14_material[0],
+            },
+        )
+
+
+def test__ratification_bound_template__rejects_invalid_a14_closure():
+    amendment13_material, amendment14_material = _operativity_materials()
+    closure, _, _, verdicts, design_raw = amendment14_material
+    forged_closure = copy.deepcopy(closure)
+    forged_closure["extra"] = True
+    forged_raw = a13.canonical_json_bytes(forged_closure)
+    forged_binding = a13._closure_binding(a13.A14_CLOSURE_PATH, forged_raw)
+    with pytest.raises(
+        a13.LawError,
+        match="ratification closure keyset drift",
+    ):
+        a13._build_ratification_bound_execution_template_for_test(
+            amendment13_material,
+            (
+                forged_closure,
+                forged_raw,
+                forged_binding,
+                verdicts,
+                design_raw,
+            ),
         )
 
 

@@ -61,6 +61,13 @@ CLOSURE_TOP_LEVEL_KEYS = (
 )
 CLOSURE_VERDICT_KEYS = ("byte_size", "path", "raw_sha256")
 REGISTRY_CLOSURE_BINDING_KEYS = ("path", "raw_byte_size", "raw_sha256")
+REGISTRY_DESIGN_BINDING_KEYS = (
+    "path",
+    "ratification_commit",
+    "revision",
+    "blob_sha256",
+    "ratification_closures",
+)
 DRAFT_STATUS = "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
 RATIFICATION_BOUND_TEMPLATE_STATUS = (
     "RATIFIED_LAW_BOUND_NONAUTHORITY_EXECUTION_TEMPLATE"
@@ -223,8 +230,7 @@ AMENDMENT12_RATIFICATION_IDENTITY = {
     "dual_ratify_attestations": [dict(row) for row in RATIFY_ATTESTATIONS],
 }
 
-INCOMPATIBLE_PROOF_IDS = tuple(
-    """
+INCOMPATIBLE_PROOF_IDS = tuple("""
 rq-local-repeat-evidence:c93bb69e6a4c04717efd8b68e71799b5b4f3cb1c1c20a1b31afe2852d04dab67
 rq-local-repeat-evidence:0c25501bcb134ddd36f5f076978ebd01a02d3e731772c4ae5de182d81a76a487
 rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716
@@ -253,8 +259,7 @@ rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561
 rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877
 rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c
 rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39
-""".split()
-)
+""".split())
 INCOMPATIBLE_PROOF_ID_DOMAIN_SHA256 = (
     "9c8cb11732939daac176275ae66dfa5a6ce61a2850c82087dd761a6431ac7412"
 )
@@ -388,8 +393,7 @@ FRAGMENT_INSTRUCTION_ID_DOMAIN_SHA256 = (
     "74075ac0ca54eff2a9459d4e95f426195c9e01db78040025462aa2f57f486a09"
 )
 
-DOC036_CLASSIFICATION_IDS = tuple(
-    """
+DOC036_CLASSIFICATION_IDS = tuple("""
 rq-local-anchor:6b757b140c4fdbcfcfe8b974f7894ffc856ab3dca240b7eb61530adca0e2d12a
 rq-local-anchor:11802d91128200f95abc1a42e5e39677f30c955da28e8b89bdc72e10ff8c11ef
 rq-local-anchor:daae302f7bdebd7a8ab43d983faaedecb97ac22f8a7ca7c3af92dbff1cb76de5
@@ -398,14 +402,12 @@ rq-local-anchor:930c509fadfdc037d5e03d65422cc7c3d3b86a9ec3adb7553e86d9654632d4ca
 rq-local-anchor:5a703e10bfd94a486c21d043d7ad980905870b908ea70b2f136c16e835e1a261
 rq-local-anchor:d6d21da4a96eda0e310284ca6cebc059f340e2bdaf2da64f56286d65a03fa283
 rq-local-anchor:93b5b7f3d32e6dda9e3fad1089fc4ba605502765e4de1735223637bc615fff29
-""".split()
-)
+""".split())
 DOC036_CLASSIFICATION_ID_DOMAIN_SHA256 = (
     "1d2271438f3d9a7744e1379ed26ce565ff2731ed0dd8dec357c0bd8a9a271d23"
 )
 
-LAW_GAP_IDS = tuple(
-    """
+LAW_GAP_IDS = tuple("""
 rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6
 rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045
 rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495
@@ -420,8 +422,7 @@ rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c9
 rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868
 rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927
 rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734
-""".split()
-)
+""".split())
 LAW_GAP_ID_DOMAIN_SHA256 = (
     "f2e8a5001527eb975887828ba3e66c3eeac95ec0972454bcef509fba92149883"
 )
@@ -737,7 +738,7 @@ A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
     "27.8": "fdc5441ef8c2f60bb8334658b4c44bcd52f8355b4681a495e81c4b7aaaa5479e",
 }
 A14_SECTION_SEMANTIC_SHA256 = (
-    "c8840e51844a8710a76921e305e596f73fc5b4b0eae0d8b69c081827ec58061a"
+    "28f4cc23989ec767223fadb2a00d1363be0f4ffa3cc39443e41d96a332785763"
 )
 
 A13_COMPARATOR_ROWS = (
@@ -2962,7 +2963,27 @@ def _strict_canonical_json(raw: bytes, label: str) -> dict[str, Any]:
         isinstance(value, dict) and canonical_json_bytes(value) == raw,
         f"{label} is not canonical JSON",
     )
+    _require_no_unpaired_surrogates(value, label)
     return value
+
+
+def _require_no_unpaired_surrogates(value: Any, label: str) -> None:
+    """Reject surrogate code points admitted by Python's JSON decoder."""
+
+    if isinstance(value, str):
+        _require(
+            not any(0xD800 <= ord(character) <= 0xDFFF for character in value),
+            f"{label} contains an unpaired Unicode surrogate",
+        )
+        return
+    if isinstance(value, Mapping):
+        for key, member in value.items():
+            _require_no_unpaired_surrogates(key, label)
+            _require_no_unpaired_surrogates(member, label)
+        return
+    if isinstance(value, list):
+        for member in value:
+            _require_no_unpaired_surrogates(member, label)
 
 
 def _validate_closure_shape(
@@ -3024,9 +3045,8 @@ def _validate_closure_shape(
             "ratification closure verdict identity is malformed",
         )
     _require(
-        len({row["path"] for row in verdicts}) == 2
-        and len({row["raw_sha256"] for row in verdicts}) == 2,
-        "ratification closure verdict identities are not distinct",
+        len({row["path"] for row in verdicts}) == 2,
+        "ratification closure verdict paths are not distinct",
     )
 
 
@@ -3053,6 +3073,7 @@ def _validate_ratification_closure(
     *,
     verify_git: bool,
     ratification_design_raw: bytes | None = None,
+    registry_design_binding: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Validate registry-selected closure bytes and their exact artifacts."""
 
@@ -3088,6 +3109,22 @@ def _validate_ratification_closure(
         _require(
             closure == A13_EXPECTED_CLOSURE,
             "Amendment-13 closure differs from directly enacted values",
+        )
+        _require(
+            registry_design_binding is None,
+            "Amendment-13 closure received an inapplicable design binding",
+        )
+    else:
+        _require(
+            isinstance(registry_design_binding, Mapping)
+            and registry_design_binding.get("path") == DESIGN_PATH
+            and registry_design_binding.get("revision") == 16
+            and registry_design_binding.get("ratification_commit")
+            == closure["ratification_commit"]
+            and registry_design_binding.get("blob_sha256")
+            == closure["attested_candidate_design_raw_sha256"],
+            "Amendment-14 closure does not match the revision-16 registry "
+            "design binding",
         )
 
     verdicts = closure["verdict_artifacts"]
@@ -3142,9 +3179,32 @@ def _validate_ratification_closure(
     return closure
 
 
-def _public_registry_closure_binding(
+def _validate_registry_closure_binding(
+    binding: Mapping[str, Any],
     amendment_number: int,
 ) -> dict[str, Any]:
+    _require_exact_keys(
+        binding,
+        set(REGISTRY_CLOSURE_BINDING_KEYS),
+        "registry ratification closure binding",
+    )
+    expected_path = (
+        f"docs/analysis/amendment_{amendment_number}_ratification/"
+        "closure_v1.json"
+    )
+    _require(
+        binding["path"] == expected_path
+        and type(binding["raw_byte_size"]) is int
+        and binding["raw_byte_size"] > 0
+        and _is_lower_hex(binding["raw_sha256"], 64),
+        "registry ratification closure binding drift",
+    )
+    return dict(binding)
+
+
+def _public_registry_ratification_context() -> dict[str, Any]:
+    """Load the one revision-16 design and two-closure registry context."""
+
     try:
         import covered_earnings_correction_registry as registry
 
@@ -3153,6 +3213,22 @@ def _public_registry_closure_binding(
         raise LawError(
             "registry ratification closure binding is missing"
         ) from error
+    _require(
+        isinstance(design_binding, Mapping),
+        "registry ratification closure binding is missing",
+    )
+    _require_exact_keys(
+        design_binding,
+        set(REGISTRY_DESIGN_BINDING_KEYS),
+        "revision-16 registry design binding",
+    )
+    _require(
+        design_binding["path"] == DESIGN_PATH
+        and design_binding["revision"] == 16
+        and _is_lower_hex(design_binding["ratification_commit"], 40)
+        and _is_lower_hex(design_binding["blob_sha256"], 64),
+        "revision-16 registry design binding drift",
+    )
     closures = design_binding.get("ratification_closures")
     _require(
         isinstance(closures, list)
@@ -3165,16 +3241,99 @@ def _public_registry_closure_binding(
         [row.get("path") for row in closures] == expected_paths,
         "registry ratification closure binding order drift",
     )
-    expected_path = expected_paths[amendment_number - 13]
+    normalized = dict(design_binding)
+    normalized["ratification_closures"] = [
+        _validate_registry_closure_binding(row, amendment_number)
+        for amendment_number, row in zip((13, 14), closures, strict=True)
+    ]
+    return normalized
+
+
+def _public_registry_closure_binding(
+    amendment_number: int,
+    context: Mapping[str, Any],
+) -> dict[str, Any]:
+    _require(
+        amendment_number in {13, 14},
+        "public closure validator supports exactly Amendments 13 and 14",
+    )
+    expected_path = (A13_CLOSURE_PATH, A14_CLOSURE_PATH)[amendment_number - 13]
     selected = next(
-        (row for row in closures if row.get("path") == expected_path),
+        (
+            row
+            for row in context["ratification_closures"]
+            if row["path"] == expected_path
+        ),
         None,
     )
     _require(
         isinstance(selected, Mapping),
         "registry ratification closure binding is missing",
     )
-    return dict(selected)
+    return _validate_registry_closure_binding(selected, amendment_number)
+
+
+def _read_public_repository_file(
+    path: str,
+    label: str,
+    *,
+    require_regular_mode: bool,
+) -> bytes:
+    try:
+        worktree_raw = (ROOT / path).read_bytes()
+    except OSError as error:
+        raise LawError(f"{label} is missing") from error
+    result = _run_git("show", f"HEAD:{path}")
+    _require(
+        result.returncode == 0
+        and isinstance(result.stdout, bytes)
+        and result.stdout == worktree_raw,
+        f"{label} is missing or differs between HEAD and worktree",
+    )
+    if require_regular_mode:
+        tree_line = str(_git("ls-tree", "HEAD", "--", path, text=True)).strip()
+        _require(
+            tree_line
+            == f"{DESIGN_MODE} blob {_git_blob_oid(worktree_raw)}\t{path}",
+            f"{label} is not a mode-100644 regular file in HEAD",
+        )
+    return worktree_raw
+
+
+def _validate_public_ratification_closure(
+    amendment_number: int,
+    context: Mapping[str, Any],
+) -> dict[str, Any]:
+    binding = _public_registry_closure_binding(amendment_number, context)
+    closure_path = binding["path"]
+    worktree_raw = _read_public_repository_file(
+        closure_path,
+        "ratification closure",
+        require_regular_mode=False,
+    )
+    _require(
+        len(worktree_raw) == binding["raw_byte_size"]
+        and _sha256(worktree_raw) == binding["raw_sha256"],
+        "ratification closure bytes differ from the registry repin",
+    )
+    closure = _strict_canonical_json(worktree_raw, closure_path)
+    _validate_closure_shape(closure, amendment_number)
+    verdict_bytes = {
+        row["path"]: _read_public_repository_file(
+            row["path"],
+            "verdict artifact",
+            require_regular_mode=True,
+        )
+        for row in closure["verdict_artifacts"]
+    }
+    return _validate_ratification_closure(
+        worktree_raw,
+        binding,
+        verdict_bytes,
+        amendment_number,
+        verify_git=True,
+        registry_design_binding=context if amendment_number == 14 else None,
+    )
 
 
 def validate_amendment_ratification_closure(
@@ -3182,47 +3341,21 @@ def validate_amendment_ratification_closure(
 ) -> dict[str, Any]:
     """Validate one closure selected only by the current registry repin."""
 
-    _require(
-        amendment_number in {13, 14},
-        "public closure validator supports exactly Amendments 13 and 14",
-    )
-    binding = _public_registry_closure_binding(amendment_number)
-    closure_path = binding["path"]
-    try:
-        worktree_raw = (ROOT / closure_path).read_bytes()
-    except OSError as error:
-        raise LawError("ratification closure is missing") from error
-    result = _run_git("show", f"HEAD:{closure_path}")
-    _require(
-        result.returncode == 0
-        and isinstance(result.stdout, bytes)
-        and result.stdout == worktree_raw,
-        "ratification closure is missing or differs between HEAD and worktree",
-    )
-    closure = _strict_canonical_json(worktree_raw, closure_path)
-    _validate_closure_shape(closure, amendment_number)
-    verdict_bytes: dict[str, bytes] = {}
-    for row in closure["verdict_artifacts"]:
-        path = row["path"]
-        try:
-            raw = (ROOT / path).read_bytes()
-        except OSError as error:
-            raise LawError("verdict artifact is missing") from error
-        head_result = _run_git("show", f"HEAD:{path}")
-        _require(
-            head_result.returncode == 0
-            and isinstance(head_result.stdout, bytes)
-            and head_result.stdout == raw,
-            "verdict artifact is missing or differs between HEAD and worktree",
+    context = _public_registry_ratification_context()
+    return _validate_public_ratification_closure(amendment_number, context)
+
+
+def validate_ratification_operativity() -> dict[int, dict[str, Any]]:
+    """Validate both closures under one revision-16 registry snapshot."""
+
+    context = _public_registry_ratification_context()
+    return {
+        amendment_number: _validate_public_ratification_closure(
+            amendment_number,
+            context,
         )
-        verdict_bytes[path] = raw
-    return _validate_ratification_closure(
-        worktree_raw,
-        binding,
-        verdict_bytes,
-        amendment_number,
-        verify_git=True,
-    )
+        for amendment_number in (13, 14)
+    }
 
 
 def _annotation_identity(document: a12.NormalizedDocument) -> dict[str, Any]:
@@ -3696,41 +3829,81 @@ def build_execution_law() -> dict[str, Any]:
 
 
 def build_ratification_bound_execution_template() -> dict[str, Any]:
-    """Bind the nonauthority execution template to the public A13 closure."""
+    """Bind the template only after both public closures validate."""
 
-    closure = validate_amendment_ratification_closure(13)
-    law = _construct_execution_law(
-        governing_amendment13_ratification_identity=closure,
-        status=RATIFICATION_BOUND_TEMPLATE_STATUS,
-    )
-    validate_execution_law(law, verify_git=True)
-    return law
-
-
-def _build_ratification_bound_execution_template_for_test(
-    closure_raw: bytes,
-    closure_binding: Mapping[str, Any],
-    verdict_bytes: Mapping[str, bytes],
-    ratification_design_raw: bytes,
-) -> dict[str, Any]:
-    """Exercise closure-bound semantics without creating public authority."""
-
-    closure = _validate_ratification_closure(
-        closure_raw,
-        closure_binding,
-        verdict_bytes,
-        13,
-        verify_git=False,
-        ratification_design_raw=ratification_design_raw,
-    )
+    closures = validate_ratification_operativity()
+    closure = closures[13]
     law = _construct_execution_law(
         governing_amendment13_ratification_identity=closure,
         status=RATIFICATION_BOUND_TEMPLATE_STATUS,
     )
     _validate_execution_law(
         law,
+        verify_git=True,
+        verified_closures=closures,
+    )
+    return law
+
+
+def _build_ratification_bound_execution_template_for_test(
+    amendment13_material: tuple[
+        Mapping[str, Any],
+        bytes,
+        Mapping[str, Any],
+        Mapping[str, bytes],
+        bytes,
+    ],
+    amendment14_material: tuple[
+        Mapping[str, Any],
+        bytes,
+        Mapping[str, Any],
+        Mapping[str, bytes],
+        bytes,
+    ],
+) -> dict[str, Any]:
+    """Exercise dual-closure operativity without creating authority."""
+
+    (
+        _,
+        a13_raw,
+        a13_binding,
+        a13_verdicts,
+        a13_design_raw,
+    ) = amendment13_material
+    (
+        a14_expected,
+        a14_raw,
+        a14_binding,
+        a14_verdicts,
+        a14_design_raw,
+    ) = amendment14_material
+    closure13 = _validate_ratification_closure(
+        a13_raw,
+        a13_binding,
+        a13_verdicts,
+        13,
         verify_git=False,
-        verified_closure=closure,
+        ratification_design_raw=a13_design_raw,
+    )
+    closure14 = _validate_ratification_closure(
+        a14_raw,
+        a14_binding,
+        a14_verdicts,
+        14,
+        verify_git=False,
+        ratification_design_raw=a14_design_raw,
+        registry_design_binding=_synthetic_registry_design_binding(
+            a14_expected
+        ),
+    )
+    law = _construct_execution_law(
+        governing_amendment13_ratification_identity=closure13,
+        status=RATIFICATION_BOUND_TEMPLATE_STATUS,
+    )
+    _validate_execution_law(
+        law,
+        verify_git=False,
+        verified_closures={13: closure13, 14: closure14},
     )
     return law
 
@@ -4205,9 +4378,9 @@ def _validate_execution_law(
     law: Mapping[str, Any],
     *,
     verify_git: bool = True,
-    verified_closure: Mapping[str, Any] | None = None,
+    verified_closures: Mapping[int, Mapping[str, Any]] | None = None,
 ) -> None:
-    """Internal validator with one private synthetic-closure path."""
+    """Internal validator with one private dual-closure test path."""
     _require_exact_keys(
         law,
         {
@@ -4254,19 +4427,27 @@ def _validate_execution_law(
     governing_document_raw = (ROOT / DESIGN_PATH).read_bytes()
     if is_candidate_fixture:
         _require(
-            verified_closure is None,
-            "unratified fixture received a ratification closure",
+            verified_closures is None,
+            "unratified fixture received ratification closures",
         )
         expected_status = DRAFT_STATUS
     else:
-        if verify_git:
-            closure = validate_amendment_ratification_closure(13)
-        else:
-            _require(
-                verified_closure is not None,
-                "test-only ratification validation lacks a verified closure",
-            )
-            closure = dict(verified_closure)
+        if verify_git and verified_closures is None:
+            verified_closures = validate_ratification_operativity()
+        _require(
+            isinstance(verified_closures, Mapping)
+            and set(verified_closures) == {13, 14}
+            and all(
+                isinstance(closure, Mapping)
+                for closure in verified_closures.values()
+            ),
+            "ratification validation lacks both verified closures",
+        )
+        closure = dict(verified_closures[13])
+        _require(
+            verified_closures[14]["amendment_number"] == 14,
+            "ratification validation lacks the Amendment-14 closure",
+        )
         _require(
             governing_identity == closure,
             "governing Amendment-13 closure identity drift",
@@ -5364,6 +5545,20 @@ def _closure_binding(path: str, raw: bytes) -> dict[str, Any]:
     }
 
 
+def _synthetic_registry_design_binding(
+    closure: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Build a private revision-16 binding for pure closure tests."""
+
+    return {
+        "path": DESIGN_PATH,
+        "ratification_commit": closure["ratification_commit"],
+        "revision": 16,
+        "blob_sha256": closure["attested_candidate_design_raw_sha256"],
+        "ratification_closures": [],
+    }
+
+
 def _synthetic_closure_material(
     amendment_number: int = 14,
 ) -> tuple[
@@ -5415,7 +5610,7 @@ def _synthetic_closure_material(
 
 
 def _run_replace_ref_enforcement_mutation() -> None:
-    """Exercise a sole-parent replacement attack in an isolated repository."""
+    """Exercise replacement attacks on parent and selected design blob."""
 
     global ROOT
 
@@ -5423,19 +5618,41 @@ def _run_replace_ref_enforcement_mutation() -> None:
     with tempfile.TemporaryDirectory(prefix="a14-replace-ref-") as temporary:
         temporary_root = Path(temporary)
         scratch = _new_scratch_repo(original_root, temporary_root)
-        ratification_tree = str(
+        ratification_design = _scratch_git(
+            scratch,
+            "show",
+            f"{A13_MERGED_RATIFICATION_COMMIT}:{DESIGN_PATH}",
+            text=False,
+        )
+        _require(
+            isinstance(ratification_design, bytes),
+            "replacement-ref design control was not raw bytes",
+        )
+        forged_design_path = temporary_root / "forged-design.md"
+        forged_design_path.write_bytes(ratification_design + b"forged\n")
+        forged_design_blob = str(
             _scratch_git(
                 scratch,
-                "rev-parse",
-                f"{A13_MERGED_RATIFICATION_COMMIT}^{{tree}}",
+                "hash-object",
+                "-w",
+                str(forged_design_path),
             )
         ).strip()
+        _scratch_git(scratch, "read-tree", A13_MERGED_RATIFICATION_COMMIT)
+        _scratch_git(
+            scratch,
+            "update-index",
+            "--add",
+            "--cacheinfo",
+            f"{DESIGN_MODE},{forged_design_blob},{DESIGN_PATH}",
+        )
+        forged_tree = str(_scratch_git(scratch, "write-tree")).strip()
         wrong_parent = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
         forged_commit = str(
             _scratch_git(
                 scratch,
                 "commit-tree",
-                ratification_tree,
+                forged_tree,
                 "-p",
                 wrong_parent,
                 "-m",
@@ -5463,6 +5680,20 @@ def _run_replace_ref_enforcement_mutation() -> None:
             == [forged_commit, A13_MERGED_RATIFICATION_PARENT],
             "replacement-ref parent attack control did not conform",
         )
+        ordinary_tree_line = str(
+            _scratch_git(
+                scratch,
+                "ls-tree",
+                forged_commit,
+                "--",
+                DESIGN_PATH,
+            )
+        ).strip()
+        _require(
+            ordinary_tree_line
+            == (f"{DESIGN_MODE} blob {REVISION15_BLOB_OID}\t{DESIGN_PATH}"),
+            "replacement-ref design attack control did not conform",
+        )
 
         (
             closure,
@@ -5473,20 +5704,73 @@ def _run_replace_ref_enforcement_mutation() -> None:
         ) = _synthetic_closure_material()
         closure["ratification_commit"] = forged_commit
         closure["operator_merge_commit"] = forged_commit
-        closure_raw = canonical_json_bytes(closure)
-        binding = _closure_binding(A14_CLOSURE_PATH, closure_raw)
         ROOT = scratch
         try:
+            parent_closure_raw = canonical_json_bytes(closure)
             _expect_law_error(
                 lambda: _validate_ratification_closure(
-                    closure_raw,
-                    binding,
+                    parent_closure_raw,
+                    _closure_binding(A14_CLOSURE_PATH, parent_closure_raw),
                     verdict_bytes,
                     14,
                     verify_git=True,
+                    registry_design_binding=(
+                        _synthetic_registry_design_binding(closure)
+                    ),
                 ),
                 "sole-parent mismatch",
                 "replacement-ref sole-parent mutation",
+            )
+            closure["ratification_commit_sole_parent"] = wrong_parent
+            blob_closure_raw = canonical_json_bytes(closure)
+            _expect_law_error(
+                lambda: _validate_ratification_closure(
+                    blob_closure_raw,
+                    _closure_binding(A14_CLOSURE_PATH, blob_closure_raw),
+                    verdict_bytes,
+                    14,
+                    verify_git=True,
+                    registry_design_binding=(
+                        _synthetic_registry_design_binding(closure)
+                    ),
+                ),
+                "attests a different design blob",
+                "replacement-ref selected-design mutation",
+            )
+        finally:
+            ROOT = original_root
+
+
+def _run_implementation_blob_enforcement_mutation(
+    implementation_pins: Mapping[str, Any],
+) -> None:
+    """Change one committed implementation blob behind the enacted pin."""
+
+    global ROOT
+
+    original_root = ROOT
+    with tempfile.TemporaryDirectory(
+        prefix="a14-implementation-"
+    ) as temporary:
+        temporary_root = Path(temporary)
+        scratch = _new_scratch_repo(original_root, temporary_root)
+        selected_path = implementation_pins["files"][0]["path"]
+        selected_file = scratch / selected_path
+        selected_file.write_bytes(selected_file.read_bytes() + b"# forged\n")
+        _scratch_git(scratch, "add", selected_path)
+        _scratch_git(
+            scratch,
+            "commit",
+            "--quiet",
+            "-m",
+            "Forge implementation blob",
+        )
+        ROOT = scratch
+        try:
+            _expect_law_error(
+                lambda: _verify_implementation_pins(implementation_pins),
+                "HEAD tree-entry pin drift",
+                "implementation blob mismatch mutation",
             )
         finally:
             ROOT = original_root
@@ -5506,6 +5790,9 @@ def run_enforcement_mutation_tests(
         synthetic_verdicts,
         design_raw,
     ) = _synthetic_closure_material()
+    synthetic_registry_binding = _synthetic_registry_design_binding(
+        synthetic_closure
+    )
 
     forged_raw = raw_document.replace(
         (
@@ -5581,6 +5868,7 @@ def run_enforcement_mutation_tests(
             14,
             verify_git=False,
             ratification_design_raw=design_raw,
+            registry_design_binding=synthetic_registry_binding,
         ),
         "verdict artifact domain drift",
         "missing verdict artifact mutation",
@@ -5595,6 +5883,7 @@ def run_enforcement_mutation_tests(
             14,
             verify_git=False,
             ratification_design_raw=design_raw,
+            registry_design_binding=synthetic_registry_binding,
         ),
         "ratification closure is missing",
         "missing ratification closure mutation",
@@ -5612,6 +5901,7 @@ def run_enforcement_mutation_tests(
             14,
             verify_git=False,
             ratification_design_raw=design_raw,
+            registry_design_binding=synthetic_registry_binding,
         ),
         "verdict byte mismatch",
         "closure verdict byte mismatch mutation",
@@ -5639,6 +5929,9 @@ def run_enforcement_mutation_tests(
             14,
             verify_git=False,
             ratification_design_raw=design_raw,
+            registry_design_binding=_synthetic_registry_design_binding(
+                wrong_blob
+            ),
         ),
         "design byte identity mismatch",
         "closure attested design blob mutation",
@@ -5664,6 +5957,7 @@ def run_enforcement_mutation_tests(
                     14,
                     verify_git=False,
                     ratification_design_raw=design_raw,
+                    registry_design_binding=synthetic_registry_binding,
                 )
             ),
             "ratification closure keyset drift",
@@ -5672,12 +5966,8 @@ def run_enforcement_mutation_tests(
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[8])
 
     projection = _parse_amendment14_projection(raw_document)
-    forged_pins = copy.deepcopy(projection["implementation_pins"])
-    forged_pins["files"][0]["blob_oid"] = "0" * 40
-    _expect_law_error(
-        lambda: _verify_implementation_pins(forged_pins),
-        "HEAD tree-entry pin drift",
-        "implementation blob mismatch mutation",
+    _run_implementation_blob_enforcement_mutation(
+        projection["implementation_pins"]
     )
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[9])
 
@@ -5699,6 +5989,7 @@ def run_enforcement_mutation_tests(
             14,
             verify_git=False,
             ratification_design_raw=design_raw,
+            registry_design_binding=synthetic_registry_binding,
         ),
         "bytes differ from the registry repin",
         "coherent closure substitution against fixed repin",
