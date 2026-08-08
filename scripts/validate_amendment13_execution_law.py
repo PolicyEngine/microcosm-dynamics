@@ -738,7 +738,7 @@ A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
     "27.8": "fdc5441ef8c2f60bb8334658b4c44bcd52f8355b4681a495e81c4b7aaaa5479e",
 }
 A14_SECTION_SEMANTIC_SHA256 = (
-    "28f4cc23989ec767223fadb2a00d1363be0f4ffa3cc39443e41d96a332785763"
+    "8d17464268b95d500dcc4d7640edee0f26180a70172cdb3a3966a8e6d2408062"
 )
 
 A13_COMPARATOR_ROWS = (
@@ -3065,6 +3065,26 @@ def _verdict_attests_design(
     )
 
 
+def _validate_amendment14_ratification_design(raw: bytes) -> None:
+    """Require the exact revision-15 prefix and enacted A14 semantics."""
+
+    _require(
+        len(raw) > REVISION15_BYTE_SIZE
+        and _sha256(raw[:REVISION15_BYTE_SIZE]) == REVISION15_SHA256
+        and _git_blob_oid(raw[:REVISION15_BYTE_SIZE]) == REVISION15_BLOB_OID
+        and raw[REVISION15_BYTE_SIZE:].startswith(AMENDMENT14_BOUNDARY),
+        "Amendment-14 ratification design lacks the immutable revision-15 "
+        "prefix and Amendment-14 boundary",
+    )
+    projection = _parse_amendment14_projection(raw)
+    expected = _canonical_amendment14_projection()
+    expected["implementation_pins"] = projection["implementation_pins"]
+    _require(
+        projection == expected,
+        "Amendment-14 ratification design semantic projection drift",
+    )
+
+
 def _validate_ratification_closure(
     closure_raw: bytes | None,
     closure_binding: Mapping[str, Any],
@@ -3176,6 +3196,8 @@ def _validate_ratification_closure(
         == closure["attested_candidate_design_blob_oid"],
         "closure ratification design byte identity mismatch",
     )
+    if amendment_number == 14:
+        _validate_amendment14_ratification_design(ratification_design_raw)
     return closure
 
 
@@ -5568,11 +5590,12 @@ def _synthetic_closure_material(
     dict[str, bytes],
     bytes,
 ]:
+    design_raw = (ROOT / DESIGN_PATH).read_bytes()
     closure = {
         "amendment_number": amendment_number,
-        "attested_candidate_design_blob_oid": REVISION15_BLOB_OID,
-        "attested_candidate_design_byte_size": REVISION15_BYTE_SIZE,
-        "attested_candidate_design_raw_sha256": REVISION15_SHA256,
+        "attested_candidate_design_blob_oid": _git_blob_oid(design_raw),
+        "attested_candidate_design_byte_size": len(design_raw),
+        "attested_candidate_design_raw_sha256": _sha256(design_raw),
         "operator_merge_commit": A13_MERGED_RATIFICATION_COMMIT,
         "ratification_commit": A13_MERGED_RATIFICATION_COMMIT,
         "ratification_commit_sole_parent": A13_MERGED_RATIFICATION_PARENT,
@@ -5593,13 +5616,6 @@ def _synthetic_closure_material(
         )
     closure_raw = canonical_json_bytes(closure)
     closure_path = f"{directory}/closure_v1.json"
-    design_raw = _git(
-        "show", f"{A13_MERGED_RATIFICATION_COMMIT}:{DESIGN_PATH}"
-    )
-    _require(
-        isinstance(design_raw, bytes),
-        "synthetic closure design read was not raw bytes",
-    )
     return (
         closure,
         closure_raw,
@@ -5618,16 +5634,43 @@ def _run_replace_ref_enforcement_mutation() -> None:
     with tempfile.TemporaryDirectory(prefix="a14-replace-ref-") as temporary:
         temporary_root = Path(temporary)
         scratch = _new_scratch_repo(original_root, temporary_root)
-        ratification_design = _scratch_git(
+        (
+            closure,
+            _,
+            _,
+            verdict_bytes,
+            ratification_design,
+        ) = _synthetic_closure_material()
+        expected_design_path = temporary_root / "expected-design.md"
+        expected_design_path.write_bytes(ratification_design)
+        expected_design_blob = str(
+            _scratch_git(
+                scratch,
+                "hash-object",
+                "-w",
+                str(expected_design_path),
+            )
+        ).strip()
+        _scratch_git(scratch, "read-tree", "HEAD")
+        _scratch_git(
             scratch,
-            "show",
-            f"{A13_MERGED_RATIFICATION_COMMIT}:{DESIGN_PATH}",
-            text=False,
+            "update-index",
+            "--add",
+            "--cacheinfo",
+            f"{DESIGN_MODE},{expected_design_blob},{DESIGN_PATH}",
         )
-        _require(
-            isinstance(ratification_design, bytes),
-            "replacement-ref design control was not raw bytes",
-        )
+        expected_tree = str(_scratch_git(scratch, "write-tree")).strip()
+        replacement_commit = str(
+            _scratch_git(
+                scratch,
+                "commit-tree",
+                expected_tree,
+                "-p",
+                A13_MERGED_RATIFICATION_PARENT,
+                "-m",
+                "Replacement-view ratification commit",
+            )
+        ).strip()
         forged_design_path = temporary_root / "forged-design.md"
         forged_design_path.write_bytes(ratification_design + b"forged\n")
         forged_design_blob = str(
@@ -5638,7 +5681,6 @@ def _run_replace_ref_enforcement_mutation() -> None:
                 str(forged_design_path),
             )
         ).strip()
-        _scratch_git(scratch, "read-tree", A13_MERGED_RATIFICATION_COMMIT)
         _scratch_git(
             scratch,
             "update-index",
@@ -5663,7 +5705,7 @@ def _run_replace_ref_enforcement_mutation() -> None:
             scratch,
             "replace",
             forged_commit,
-            A13_MERGED_RATIFICATION_COMMIT,
+            replacement_commit,
         )
         ordinary_parent_line = str(
             _scratch_git(
@@ -5691,17 +5733,9 @@ def _run_replace_ref_enforcement_mutation() -> None:
         ).strip()
         _require(
             ordinary_tree_line
-            == (f"{DESIGN_MODE} blob {REVISION15_BLOB_OID}\t{DESIGN_PATH}"),
+            == f"{DESIGN_MODE} blob {expected_design_blob}\t{DESIGN_PATH}",
             "replacement-ref design attack control did not conform",
         )
-
-        (
-            closure,
-            _,
-            _,
-            verdict_bytes,
-            _,
-        ) = _synthetic_closure_material()
         closure["ratification_commit"] = forged_commit
         closure["operator_merge_commit"] = forged_commit
         ROOT = scratch

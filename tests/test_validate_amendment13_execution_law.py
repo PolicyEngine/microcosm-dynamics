@@ -275,6 +275,47 @@ def test__closure__a14_must_match_revision16_design_binding():
         )
 
 
+def test__closure__revision15_blob_cannot_pose_as_revision16():
+    closure, _, _, _, _ = a13._synthetic_closure_material()
+    revision15 = a13._git(
+        "show",
+        f"{a13.A13_MERGED_RATIFICATION_COMMIT}:{a13.DESIGN_PATH}",
+    )
+    assert isinstance(revision15, bytes)
+    closure["attested_candidate_design_blob_oid"] = a13._git_blob_oid(
+        revision15
+    )
+    closure["attested_candidate_design_byte_size"] = len(revision15)
+    closure["attested_candidate_design_raw_sha256"] = hashlib.sha256(
+        revision15
+    ).hexdigest()
+    verdicts = {}
+    for position, row in enumerate(closure["verdict_artifacts"], 1):
+        verdict_raw = a13._synthetic_verdict_bytes(
+            closure,
+            f"revision15-{position}",
+        )
+        verdicts[row["path"]] = verdict_raw
+        row["byte_size"] = len(verdict_raw)
+        row["raw_sha256"] = hashlib.sha256(verdict_raw).hexdigest()
+    raw = a13.canonical_json_bytes(closure)
+    with pytest.raises(
+        a13.LawError,
+        match="lacks the immutable revision-15 prefix and Amendment-14 boundary",
+    ):
+        a13._validate_ratification_closure(
+            raw,
+            a13._closure_binding(a13.A14_CLOSURE_PATH, raw),
+            verdicts,
+            14,
+            verify_git=False,
+            ratification_design_raw=revision15,
+            registry_design_binding=a13._synthetic_registry_design_binding(
+                closure
+            ),
+        )
+
+
 def test__closure__unpaired_unicode_surrogate_fails_closed():
     closure, _, _, _, _ = a13._synthetic_closure_material()
     closure["verdict_artifacts"][0]["path"] = "\ud800"
@@ -321,6 +362,26 @@ def test__closure__operativity_requires_both_public_closures(monkeypatch):
         14: {"amendment_number": 14},
     }
     assert observed == [13, 14]
+
+
+def test__closure__real_public_path_adapts_at_revision16():
+    import covered_earnings_correction_registry as registry
+
+    if registry.DESIGN_REVISION < 16:
+        with pytest.raises(
+            a13.LawError,
+            match="registry ratification closure binding is missing",
+        ):
+            a13.validate_ratification_operativity()
+        return
+
+    closures = a13.validate_ratification_operativity()
+    assert set(closures) == {13, 14}
+    template = a13.build_ratification_bound_execution_template()
+    assert template["status"] == a13.RATIFICATION_BOUND_TEMPLATE_STATUS
+    assert template["governing_amendment13_ratification_identity"] == (
+        closures[13]
+    )
 
 
 def test__closure__ratification_commit_is_exact_single_parent():
