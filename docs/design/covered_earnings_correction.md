@@ -52364,12 +52364,12 @@ production. No successor-law silence may change any of them.
 #### 27.7.2 Executable law fixture and integrity pins
 
 The prospective nonauthority validator and focused test are fixed at
-implementation commit `b5011bdd9ea41d7d92831a90ddd6f5ce7e4e6131`, mode `100644`:
+implementation commit `2d1c7a551fe55a413efc0720202892054c120d0c`, mode `100644`:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `27b8807221939c6af111b5a602808ee04b28f485` | 176,719 | `f193448a138809ed00a8409640bdfc6fbb27e4d6101ebc8106821e09a8635945` |
-| `tests/test_validate_amendment13_execution_law.py` | `b39edc36730989063375892ad473b681fb88b816` | 24,087 | `59f1d44b6104f5c29b3ce55a9653601aba25fee7bab3d0b41b2080b338f40b38` |
+| `scripts/validate_amendment13_execution_law.py` | `e2ee16318facd65d31a32e306bfbc2247a37cd59` | 246,386 | `fc68d9805d6c760c77c44b73fed91fc92ad6a360d0081e47f8be80dd7b905cde` |
+| `tests/test_validate_amendment13_execution_law.py` | `a08369a1c07c32457acf15e121163a0dd6e9315d` | 21,309 | `dbfdb7b9bec99e4f2a433836a3f227f2a8a0d084a24a6bd64f7dce870f0e9e76` |
 
 It reads the six pinned source seals, independently reconstructs each raw
 predecessor row and occurrence citation, verifies the historical Git commit
