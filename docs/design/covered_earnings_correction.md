@@ -52364,7 +52364,7 @@ production. No successor-law silence may change any of them.
 #### 27.7.2 Executable law fixture and integrity pins
 
 The prospective nonauthority validator and focused test are fixed at
-implementation commit `2d1c7a551fe55a413efc0720202892054c120d0c`, mode `100644`:
+implementation commit `2d1c7a52306883fa0b795223cab22683d4a2e876`, mode `100644`:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
