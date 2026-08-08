@@ -122,15 +122,6 @@ A12_CONTINUATION_PROJECTION_BYTE_SIZE = 1_457
 A12_CONTINUATION_PROJECTION_SHA256 = (
     "59e03dffa4564a202a39463b80ebb60bae641afc49b78bc42d93c201737116cf"
 )
-A12_PREDECESSOR_ADJUDICATION_PATH = (
-    "docs/analysis/amendment_12_rq_catalog_pilot/"
-    "predecessor_defect_adjudication_v1.json"
-)
-A12_PREDECESSOR_ADJUDICATION_BYTE_SIZE = 348_595
-A12_PREDECESSOR_ADJUDICATION_SHA256 = (
-    "ee396f53d683d71808e60c661515fd7fd8d5d2e912017f49d096815ff384f8bc"
-)
-
 RATIFY_ATTESTATIONS = (
     {
         "record_name": "sol-ce-amend12-r5-verdict.md",
@@ -199,6 +190,65 @@ rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff662
 """.split())
 INCOMPATIBLE_PROOF_ID_DOMAIN_SHA256 = (
     "9c8cb11732939daac176275ae66dfa5a6ce61a2850c82087dd761a6431ac7412"
+)
+PROOF_FINDING_MIXED_ENDPOINT = (
+    "cited_instruction_does_not_authenticate_the_mixed_or_misbound_"
+    "endpoint_projection"
+)
+PROOF_FINDING_HETEROGENEOUS_PAGE = (
+    "cited_repeat_text_does_not_authenticate_the_heterogeneous_page_wide_"
+    "endpoint_projection"
+)
+PROOF_FINDING_JOB_CONTEXT = (
+    "cited_same_occupation_text_asserts_semantics_but_the_job_context_"
+    "endpoint_crossing_requires_reseal"
+)
+PROOF_FINDING_INCOMPLETE_CLAUSE = (
+    "cited_instruction_is_an_incomplete_clause_and_cannot_authenticate_a_"
+    "complete_redirection"
+)
+PROOF_FINDING_SHARED_INCOME_LIST = (
+    "cited_income_list_is_shared_with_an_independent_alias_proof_and_does_"
+    "not_authenticate_this_pairing"
+)
+PROOF_FINDING_MISPAIRED_CONTEXT = (
+    "cited_see_instructions_text_is_mispaired_to_a_context_remuneration_"
+    "endpoint_claim"
+)
+PROOF_PREDECESSOR_FINDING_BY_ID = dict(
+    zip(
+        INCOMPATIBLE_PROOF_IDS,
+        (
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_HETEROGENEOUS_PAGE,
+            PROOF_FINDING_JOB_CONTEXT,
+            PROOF_FINDING_HETEROGENEOUS_PAGE,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_HETEROGENEOUS_PAGE,
+            PROOF_FINDING_HETEROGENEOUS_PAGE,
+            PROOF_FINDING_HETEROGENEOUS_PAGE,
+            PROOF_FINDING_HETEROGENEOUS_PAGE,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_MIXED_ENDPOINT,
+            PROOF_FINDING_INCOMPLETE_CLAUSE,
+            PROOF_FINDING_SHARED_INCOME_LIST,
+            PROOF_FINDING_INCOMPLETE_CLAUSE,
+            PROOF_FINDING_SHARED_INCOME_LIST,
+            PROOF_FINDING_SHARED_INCOME_LIST,
+            PROOF_FINDING_SHARED_INCOME_LIST,
+            PROOF_FINDING_SHARED_INCOME_LIST,
+            PROOF_FINDING_MISPAIRED_CONTEXT,
+            PROOF_FINDING_INCOMPLETE_CLAUSE,
+            PROOF_FINDING_INCOMPLETE_CLAUSE,
+        ),
+    )
 )
 
 FRAGMENT_SPECS = (
@@ -548,30 +598,6 @@ def _amendment12_continuation_projection() -> tuple[tuple[Any, ...], ...]:
     return tuple(projection)
 
 
-@lru_cache(maxsize=1)
-def _predecessor_adjudication_by_evidence_id() -> (
-    Mapping[str, Mapping[str, Any]]
-):
-    """Read exact predecessor findings from Amendment 12's pinned artifact."""
-
-    raw = (ROOT / A12_PREDECESSOR_ADJUDICATION_PATH).read_bytes()
-    _require(
-        len(raw) == A12_PREDECESSOR_ADJUDICATION_BYTE_SIZE
-        and _sha256(raw) == A12_PREDECESSOR_ADJUDICATION_SHA256,
-        "Amendment-12 predecessor adjudication identity drift",
-    )
-    artifact = a12.strict_json_loads(raw, A12_PREDECESSOR_ADJUDICATION_PATH)
-    rows = artifact["populated_local_proof_adjudication_rows"]
-    result = {row["source_local_evidence_id"]: row for row in rows}
-    _require(
-        len(rows) == 42
-        and len(result) == 42
-        and set(INCOMPATIBLE_PROOF_IDS) <= set(result),
-        "Amendment-12 predecessor adjudication row domain drift",
-    )
-    return result
-
-
 def _git(*arguments: str, text: bool = False) -> bytes | str:
     result = subprocess.run(
         ["git", *arguments],
@@ -584,6 +610,20 @@ def _git(*arguments: str, text: bool = False) -> bytes | str:
         result.returncode == 0, f"git command failed: {' '.join(arguments)}"
     )
     return result.stdout
+
+
+def _require_exact_commit_object(object_id: str, label: str) -> None:
+    result = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{object_id}^{{commit}}"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    _require(
+        result.returncode == 0 and result.stdout.strip() == object_id,
+        f"{label} is not an exact commit object",
+    )
 
 
 def _validate_amendment12_ratification_identity(
@@ -681,10 +721,23 @@ def _is_lower_hex(value: Any, length: int) -> bool:
 def validate_governing_amendment13_ratification_identity(
     identity: Mapping[str, Any],
     attestation_record_bytes: Mapping[str, bytes],
-    *,
-    verify_git: bool = True,
 ) -> None:
-    """Validate the future identity that must govern an executed repair."""
+    """Validate a governing identity, including its exact Git objects."""
+
+    _validate_governing_amendment13_ratification_identity(
+        identity,
+        attestation_record_bytes,
+        verify_git=True,
+    )
+
+
+def _validate_governing_amendment13_ratification_identity(
+    identity: Mapping[str, Any],
+    attestation_record_bytes: Mapping[str, bytes],
+    *,
+    verify_git: bool,
+) -> None:
+    """Internal identity validator with a test-only synthetic Git path."""
 
     _require_exact_keys(
         identity,
@@ -757,6 +810,8 @@ def validate_governing_amendment13_ratification_identity(
         _require(
             isinstance(attestation["record_name"], str)
             and bool(attestation["record_name"])
+            and "\r" not in attestation["record_name"]
+            and "\n" not in attestation["record_name"]
             and isinstance(attestation["raw_byte_size"], int)
             and not isinstance(attestation["raw_byte_size"], bool)
             and attestation["raw_byte_size"] > 0
@@ -769,11 +824,21 @@ def validate_governing_amendment13_ratification_identity(
             == identity["document_sha256"],
             "governing Amendment-13 RATIFY attestation drift",
         )
+    try:
+        record_name_bytes = [name.encode("utf-8") for name in record_names]
+    except UnicodeEncodeError as error:
+        raise LawError(
+            "governing Amendment-13 RATIFY record name is not UTF-8"
+        ) from error
     _require(
         len(set(record_names)) == 2
         and len(set(candidate_heads)) == 1
         and len({row["raw_sha256"] for row in attestations}) == 2,
         "governing Amendment-13 RATIFY records are not distinct and conjoined",
+    )
+    _require(
+        record_name_bytes == sorted(record_name_bytes),
+        "governing Amendment-13 RATIFY records are not in record-name byte order",
     )
     _require(
         set(attestation_record_bytes) == set(record_names),
@@ -803,6 +868,12 @@ def validate_governing_amendment13_ratification_identity(
     _require(
         commit != RATIFICATION_COMMIT,
         "governing Amendment-13 commit is not later than Amendment 12",
+    )
+    _require_exact_commit_object(
+        commit, "governing Amendment-13 ratification commit"
+    )
+    _require_exact_commit_object(
+        candidate_heads[0], "governing Amendment-13 attested candidate HEAD"
     )
     _git("merge-base", "--is-ancestor", RATIFICATION_COMMIT, commit)
     parent_line = str(
@@ -1068,24 +1139,16 @@ def _proof_payload(
     normalized: Mapping[str, Any],
     predecessor_row: Mapping[str, Any],
 ) -> dict[str, Any]:
-    predecessor_adjudication = _predecessor_adjudication_by_evidence_id()[
+    predecessor_finding = PROOF_PREDECESSOR_FINDING_BY_ID[
         normalized["local_evidence_id"]
     ]
-    _require(
-        predecessor_adjudication["disposition"] == "predecessor_seal_defect"
-        and predecessor_adjudication["law_gap_admitted"] is False
-        and predecessor_adjudication["alias_admitted"] is False,
-        "incompatible proof predecessor adjudication drift",
-    )
     return {
         "terminal_status": PROOF_TERMINAL_STATUS,
         "terminal_reason_code": (
             "terminal_semantic_incompatibility_umbrella_with_exact_"
             "predecessor_finding_preserved"
         ),
-        "predecessor_row_specific_semantic_finding": (
-            predecessor_adjudication["row_specific_semantic_finding"]
-        ),
+        "predecessor_row_specific_semantic_finding": (predecessor_finding),
         "source_instruction_occurrence_ids": copy.deepcopy(
             normalized["source_instruction_occurrence_ids"]
         ),
@@ -1341,7 +1404,6 @@ def build_ratification_bound_execution_template(
     validate_governing_amendment13_ratification_identity(
         governing_amendment13_ratification_identity,
         governing_attestation_record_bytes,
-        verify_git=True,
     )
     law = _construct_execution_law(
         governing_amendment13_ratification_identity=(
@@ -1363,7 +1425,7 @@ def _build_ratification_bound_execution_template_for_test(
 ) -> dict[str, Any]:
     """Exercise bound-template semantics without pretending synthetic Git exists."""
 
-    validate_governing_amendment13_ratification_identity(
+    _validate_governing_amendment13_ratification_identity(
         governing_amendment13_ratification_identity,
         governing_attestation_record_bytes,
         verify_git=False,
@@ -1915,11 +1977,17 @@ def _validate_execution_law(
             governing_attestation_record_bytes is not None,
             "ratification-bound template lacks governing attestation records",
         )
-        validate_governing_amendment13_ratification_identity(
-            governing_identity,
-            governing_attestation_record_bytes,
-            verify_git=verify_git,
-        )
+        if verify_git:
+            validate_governing_amendment13_ratification_identity(
+                governing_identity,
+                governing_attestation_record_bytes,
+            )
+        else:
+            _validate_governing_amendment13_ratification_identity(
+                governing_identity,
+                governing_attestation_record_bytes,
+                verify_git=False,
+            )
         expected_status = RATIFICATION_BOUND_TEMPLATE_STATUS
     _require(
         law["status"] == expected_status
@@ -2053,9 +2121,6 @@ def _validate_execution_law(
         )
     for row in proof_rows:
         payload = row["successor_payload"]
-        predecessor_adjudication = _predecessor_adjudication_by_evidence_id()[
-            row["predecessor_row_id"]
-        ]
         _require_exact_keys(
             row["predecessor_status_mapping"],
             {"status_family", "status_field", "predecessor_status"},
@@ -2094,7 +2159,7 @@ def _validate_execution_law(
                 "predecessor_finding_preserved"
             )
             and payload["predecessor_row_specific_semantic_finding"]
-            == predecessor_adjudication["row_specific_semantic_finding"]
+            == PROOF_PREDECESSOR_FINDING_BY_ID[row["predecessor_row_id"]]
             and payload["alias_admitted"] is False
             and payload["occurrence_equivalence_admitted"] is False
             and payload["repeat_coverage_arm_admitted"] is False,
@@ -2105,6 +2170,10 @@ def _validate_execution_law(
             in tuple(STATUS_MAPPING_BY_FAMILY.values()),
             "proof predecessor status family is not deterministic",
         )
+    _require(
+        tuple(PROOF_PREDECESSOR_FINDING_BY_ID) == INCOMPATIBLE_PROOF_IDS,
+        "incompatible-proof predecessor finding domain drift",
+    )
     _require(
         Counter(
             row["predecessor_status_mapping"]["status_family"]

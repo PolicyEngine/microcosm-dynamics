@@ -141,6 +141,19 @@ def test__proof_successors__exact_cover_and_status_families(execution_law):
     assert {row["successor_payload"]["terminal_status"] for row in rows} == {
         a13.PROOF_TERMINAL_STATUS
     }
+    assert tuple(a13.PROOF_PREDECESSOR_FINDING_BY_ID) == (
+        a13.INCOMPATIBLE_PROOF_IDS
+    )
+    assert Counter(a13.PROOF_PREDECESSOR_FINDING_BY_ID.values()) == Counter(
+        {
+            a13.PROOF_FINDING_MIXED_ENDPOINT: 11,
+            a13.PROOF_FINDING_HETEROGENEOUS_PAGE: 6,
+            a13.PROOF_FINDING_JOB_CONTEXT: 1,
+            a13.PROOF_FINDING_INCOMPLETE_CLAUSE: 4,
+            a13.PROOF_FINDING_SHARED_INCOME_LIST: 5,
+            a13.PROOF_FINDING_MISPAIRED_CONTEXT: 1,
+        }
+    )
     assert Counter(
         row["predecessor_status_mapping"]["status_family"] for row in rows
     ) == Counter(
@@ -239,7 +252,7 @@ def test__document036__successor_only_extra_key_fails_closed(execution_law):
 
 def test__governing_ratification__requires_raw_dual_records():
     identity, records = _synthetic_governing_identity_and_records()
-    a13.validate_governing_amendment13_ratification_identity(
+    a13._validate_governing_amendment13_ratification_identity(
         identity, records, verify_git=False
     )
     forged_records = dict(records)
@@ -248,8 +261,50 @@ def test__governing_ratification__requires_raw_dual_records():
         a13.LawError,
         match="RATIFY raw bytes do not attest identity",
     ):
-        a13.validate_governing_amendment13_ratification_identity(
+        a13._validate_governing_amendment13_ratification_identity(
             identity, forged_records, verify_git=False
+        )
+    forged_identity = copy.deepcopy(identity)
+    forged_identity["dual_ratify_attestations"][0][
+        "record_name"
+    ] = "injected\nrecord.md"
+    with pytest.raises(
+        a13.LawError,
+        match="governing Amendment-13 RATIFY attestation drift",
+    ):
+        a13._validate_governing_amendment13_ratification_identity(
+            forged_identity,
+            records,
+            verify_git=False,
+        )
+    reversed_identity = copy.deepcopy(identity)
+    reversed_identity["dual_ratify_attestations"].reverse()
+    with pytest.raises(
+        a13.LawError,
+        match="not in record-name byte order",
+    ):
+        a13._validate_governing_amendment13_ratification_identity(
+            reversed_identity,
+            records,
+            verify_git=False,
+        )
+
+
+def test__governing_ratification__candidate_head_must_be_commit_object():
+    tree_object = subprocess.run(
+        ["git", "rev-parse", "HEAD^{tree}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    with pytest.raises(
+        a13.LawError,
+        match="attested candidate HEAD is not an exact commit object",
+    ):
+        a13._require_exact_commit_object(
+            tree_object,
+            "governing Amendment-13 attested candidate HEAD",
         )
 
 
