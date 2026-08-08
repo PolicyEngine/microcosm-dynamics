@@ -16,6 +16,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import math
+import os
 import re
 import subprocess
 from collections.abc import Mapping, Sequence
@@ -613,38 +614,54 @@ class RegistrationAborted(RegistryValidationError):
     """Immutable authority is insufficient to emit a final registry."""
 
 
-def design_binding() -> dict[str, Any]:
-    """Return the ratified design identity."""
+def _run_git(
+    *arguments: str,
+    text: bool = False,
+) -> subprocess.CompletedProcess[bytes] | subprocess.CompletedProcess[str]:
+    """Run raw-object Git with ambient Git controls removed."""
 
-    ancestry = subprocess.run(
-        [
-            "git",
-            "merge-base",
-            "--is-ancestor",
-            BASE_DESIGN_RATIFICATION_COMMIT,
-            DESIGN_RATIFICATION_COMMIT,
-        ],
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("GIT_")
+    }
+    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+    return subprocess.run(
+        ["git", "--no-replace-objects", *arguments],
         cwd=ROOT,
         check=False,
         capture_output=True,
+        text=text,
+        env=environment,
+    )
+
+
+def design_binding() -> dict[str, Any]:
+    """Return the ratified design identity."""
+
+    ancestry = _run_git(
+        "merge-base",
+        "--is-ancestor",
+        BASE_DESIGN_RATIFICATION_COMMIT,
+        DESIGN_RATIFICATION_COMMIT,
     )
     if ancestry.returncode != 0:
         raise RegistrationAborted(
             "base design is not an ancestor of amendment-1 ratification"
         )
     worktree_bytes = (ROOT / DESIGN_PATH).read_bytes()
-    head_bytes = subprocess.run(
-        ["git", "show", f"HEAD:{DESIGN_PATH}"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-    ).stdout
-    ratified_bytes = subprocess.run(
-        ["git", "show", f"{DESIGN_RATIFICATION_COMMIT}:{DESIGN_PATH}"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-    ).stdout
+    head = _run_git("show", f"HEAD:{DESIGN_PATH}")
+    if head.returncode != 0:
+        raise RegistrationAborted(
+            "covered-earnings design is unavailable from HEAD"
+        )
+    ratified = _run_git("show", f"{DESIGN_RATIFICATION_COMMIT}:{DESIGN_PATH}")
+    if ratified.returncode != 0:
+        raise RegistrationAborted(
+            "covered-earnings design is unavailable from ratification commit"
+        )
+    head_bytes = head.stdout
+    ratified_bytes = ratified.stdout
     if not (worktree_bytes == head_bytes == ratified_bytes):
         raise RegistrationAborted(
             "covered-earnings design differs across worktree, HEAD, and "

@@ -2936,24 +2936,6 @@ def _is_lower_hex(value: Any, length: int) -> bool:
     )
 
 
-def _load_canonical_git_json(
-    commit: str,
-    path: str,
-    label: str,
-) -> dict[str, Any]:
-    raw = _git("show", f"{commit}:{path}")
-    _require(isinstance(raw, bytes), f"{label} read was not raw bytes")
-    try:
-        value = a12.strict_json_loads(raw, label)
-    except a12.BuildError as error:
-        raise LawError(f"{label} is invalid") from error
-    _require(
-        isinstance(value, dict) and raw == canonical_json_bytes(value),
-        f"{label} is not canonical",
-    )
-    return value
-
-
 def _strict_canonical_json(raw: bytes, label: str) -> dict[str, Any]:
     try:
         value = a12.strict_json_loads(raw, label)
@@ -5625,8 +5607,107 @@ def _synthetic_closure_material(
     )
 
 
+def _run_public_registry_replace_ref_enforcement_mutation() -> None:
+    """Reject substituted HEAD design bytes at the public registry gate."""
+
+    global ROOT
+
+    import covered_earnings_correction_registry as registry
+
+    original_root = ROOT
+    original_registry_state = {
+        "ROOT": registry.ROOT,
+        "DESIGN_RATIFICATION_COMMIT": registry.DESIGN_RATIFICATION_COMMIT,
+        "DESIGN_REVISION": registry.DESIGN_REVISION,
+        "DESIGN_BLOB_SHA256": registry.DESIGN_BLOB_SHA256,
+    }
+    with tempfile.TemporaryDirectory(
+        prefix="a14-public-replace-ref-"
+    ) as temporary:
+        temporary_root = Path(temporary)
+        scratch = _new_scratch_repo(original_root, temporary_root)
+        expected_design = (scratch / DESIGN_PATH).read_bytes()
+        replacement_commit = str(
+            _scratch_git(scratch, "rev-parse", "HEAD")
+        ).strip()
+        forged_design_path = temporary_root / "forged-head-design.md"
+        forged_design = expected_design + b"forged raw HEAD design\n"
+        forged_design_path.write_bytes(forged_design)
+        forged_design_blob = str(
+            _scratch_git(
+                scratch,
+                "hash-object",
+                "-w",
+                str(forged_design_path),
+            )
+        ).strip()
+        _scratch_git(scratch, "read-tree", "HEAD")
+        _scratch_git(
+            scratch,
+            "update-index",
+            "--add",
+            "--cacheinfo",
+            f"{DESIGN_MODE},{forged_design_blob},{DESIGN_PATH}",
+        )
+        forged_tree = str(_scratch_git(scratch, "write-tree")).strip()
+        forged_commit = str(
+            _scratch_git(
+                scratch,
+                "commit-tree",
+                forged_tree,
+                "-p",
+                replacement_commit,
+                "-m",
+                "Raw HEAD with forged design",
+            )
+        ).strip()
+        _scratch_git(scratch, "update-ref", "HEAD", forged_commit)
+        _scratch_git(scratch, "replace", forged_commit, replacement_commit)
+
+        ordinary_head_design = _scratch_git(
+            scratch,
+            "show",
+            f"HEAD:{DESIGN_PATH}",
+            text=False,
+        )
+        ordinary_ratified_design = _scratch_git(
+            scratch,
+            "show",
+            f"{forged_commit}:{DESIGN_PATH}",
+            text=False,
+        )
+        raw_head_design = _scratch_git(
+            scratch,
+            "--no-replace-objects",
+            "show",
+            f"HEAD:{DESIGN_PATH}",
+            text=False,
+        )
+        _require(
+            ordinary_head_design == ordinary_ratified_design == expected_design
+            and raw_head_design == forged_design,
+            "public replacement-ref design attack control did not conform",
+        )
+
+        ROOT = scratch
+        registry.ROOT = scratch
+        registry.DESIGN_RATIFICATION_COMMIT = forged_commit
+        registry.DESIGN_REVISION = 16
+        registry.DESIGN_BLOB_SHA256 = _sha256(expected_design)
+        try:
+            _expect_law_error(
+                _public_registry_ratification_context,
+                "registry ratification closure binding is missing",
+                "public registry replacement-ref design mutation",
+            )
+        finally:
+            ROOT = original_root
+            for name, value in original_registry_state.items():
+                setattr(registry, name, value)
+
+
 def _run_replace_ref_enforcement_mutation() -> None:
-    """Exercise replacement attacks on parent and selected design blob."""
+    """Exercise private closure and public registry replacement attacks."""
 
     global ROOT
 
@@ -5773,6 +5854,8 @@ def _run_replace_ref_enforcement_mutation() -> None:
             )
         finally:
             ROOT = original_root
+
+    _run_public_registry_replace_ref_enforcement_mutation()
 
 
 def _run_implementation_blob_enforcement_mutation(

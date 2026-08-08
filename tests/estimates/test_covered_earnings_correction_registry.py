@@ -1386,7 +1386,9 @@ def test__verified_role_specs__remain_exact_and_value_independent():
         registry.role_for_year(True)
 
 
-def test__design_binding__proves_head_and_ratification_blob_identity():
+def test__design_binding__proves_head_and_ratification_blob_identity(
+    monkeypatch,
+):
     # The registry constants are asserted against these pinned values
     # unconditionally, so a coherent wrong repin cannot satisfy either
     # leg below. An in-flight append-only amendment lawfully extends
@@ -1431,11 +1433,21 @@ def test__design_binding__proves_head_and_ratification_blob_identity():
         capture_output=True,
     ).stdout
     if worktree_bytes == ratified_bytes:
+        monkeypatch.setenv("GIT_DIR", str(ROOT / "nonexistent-git-dir"))
+        monkeypatch.setenv(
+            "GIT_WORK_TREE", str(ROOT / "nonexistent-git-work-tree")
+        )
+        monkeypatch.setenv("GIT_NO_REPLACE_OBJECTS", "0")
         assert registry.design_binding() == expected_binding
     else:
         assert worktree_bytes == head_bytes
         assert worktree_bytes.startswith(ratified_bytes)
         assert len(worktree_bytes) > len(ratified_bytes)
+        monkeypatch.setenv("GIT_DIR", str(ROOT / "nonexistent-git-dir"))
+        monkeypatch.setenv(
+            "GIT_WORK_TREE", str(ROOT / "nonexistent-git-work-tree")
+        )
+        monkeypatch.setenv("GIT_NO_REPLACE_OBJECTS", "0")
         with pytest.raises(
             registry.RegistrationAborted,
             match="differs across worktree, HEAD, and",

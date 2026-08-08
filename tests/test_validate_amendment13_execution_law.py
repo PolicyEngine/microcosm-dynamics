@@ -384,6 +384,10 @@ def test__closure__real_public_path_adapts_at_revision16():
     )
 
 
+def test__closure__public_registry_rejects_replacement_ref_design_attack():
+    a13._run_public_registry_replace_ref_enforcement_mutation()
+
+
 def test__closure__ratification_commit_is_exact_single_parent():
     closure, raw, binding, verdicts, _ = _a13_closure_material()
     validated = a13._validate_ratification_closure(
