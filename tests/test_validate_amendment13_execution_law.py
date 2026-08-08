@@ -31,6 +31,11 @@ def rejected_mutations(execution_law):
     return a13.run_mutation_tests(execution_law)
 
 
+@pytest.fixture(scope="module")
+def rejected_enforcement_mutations(execution_law):
+    return a13.run_enforcement_mutation_tests(execution_law)
+
+
 def _synthetic_governing_identity_and_records():
     commit = "1" * 40
     candidate_head = "2" * 40
@@ -512,8 +517,15 @@ def test__nested_authority_and_declared_schema_forgery_fail_closed(
             a13.validate_execution_law(candidate, verify_git=False)
 
 
-def test__mutation_inventory__is_separate_and_exact(rejected_mutations):
+def test__mutation_inventory__is_separate_and_exact(
+    rejected_mutations,
+    rejected_enforcement_mutations,
+):
     assert rejected_mutations == a13.A13_EXPECTED_MUTATIONS
+    assert (
+        rejected_enforcement_mutations
+        == a13.A13_ENFORCEMENT_EXPECTED_MUTATIONS
+    )
 
 
 @pytest.mark.parametrize("mutation", a13.A13_EXPECTED_MUTATIONS)
@@ -522,6 +534,14 @@ def test__mutation_inventory__rejects_each_named_forgery(
     mutation,
 ):
     assert mutation in rejected_mutations
+
+
+@pytest.mark.parametrize("mutation", a13.A13_ENFORCEMENT_EXPECTED_MUTATIONS)
+def test__enforcement_inventory__rejects_each_named_forgery(
+    rejected_enforcement_mutations,
+    mutation,
+):
+    assert mutation in rejected_enforcement_mutations
 
 
 def test__document__preserves_revision14_as_exact_prefix():
