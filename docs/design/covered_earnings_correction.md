@@ -53087,8 +53087,8 @@ active Amendment-14-governed implementation identity is exactly mode
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `feb2c503bfa3a10fb2ea65a90ad7ea132a11973c` | 227527 | `907d63b3081d941ce8e8bcf9261de805241007f2605aeef9998b3824c48eb7f2` |
-| `tests/test_validate_amendment13_execution_law.py` | `e28aac0b4e5964e55abf660f76677cf8dd6eb4aa` | 19858 | `3ab07222e145ab9c46cfd9629141edb3f68e7f25c3f611cbfa9f01bb678997d2` |
+| `scripts/validate_amendment13_execution_law.py` | `1e051e261d870499005beecc3c3648c4fd71479e` | 228910 | `ffd2707b130719f4a1b9cc34f4df708cfafa9902ae53e0feef7757eae6d2eaae` |
+| `tests/test_validate_amendment13_execution_law.py` | `3e2fc6ba2b39ad34c6553b1292baf30adf47c1fc` | 22011 | `d4200bd09a496d55d47aec1121a14eacefca6d80d3d9d50a11a9c137592e8bac` |
 
 For each row, the validator requires the enacted path and mode, recomputes
 the raw byte count, raw SHA-256, and Git blob OID, and requires exact equality
@@ -53155,7 +53155,11 @@ performs these checks in fail-closed order:
    entry without replacement refs; and
 8. recompute that design blob's byte count, raw SHA-256, and Git blob OID and
    require exact equality with the closure attestation before constructing a
-   ratification-bound nonauthority execution template.
+   ratification-bound nonauthority execution template; and
+9. for Amendment 14, require the exact immutable revision-15 prefix, the
+   Amendment-14 boundary at byte offset 3,810,536, and the complete enacted
+   Amendment-14 semantic projection. A registry row labeled revision 16 cannot
+   make revision-15-only bytes pass.
 
 Missing registry binding, closure, verdict, commit, parent, design entry, or
 byte identity aborts. The public validator never treats a coherent caller
