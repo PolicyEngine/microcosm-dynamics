@@ -13,6 +13,7 @@ import argparse
 import copy
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from collections import Counter, defaultdict
@@ -598,14 +599,30 @@ def _amendment12_continuation_projection() -> tuple[tuple[Any, ...], ...]:
     return tuple(projection)
 
 
-def _git(*arguments: str, text: bool = False) -> bytes | str:
-    result = subprocess.run(
-        ["git", *arguments],
+def _run_git(
+    *arguments: str,
+    text: bool = False,
+) -> subprocess.CompletedProcess[bytes] | subprocess.CompletedProcess[str]:
+    """Run raw-object Git with ambient Git controls removed."""
+
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("GIT_")
+    }
+    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+    return subprocess.run(
+        ["git", "--no-replace-objects", *arguments],
         cwd=ROOT,
         check=False,
         capture_output=True,
         text=text,
+        env=environment,
     )
+
+
+def _git(*arguments: str, text: bool = False) -> bytes | str:
+    result = _run_git(*arguments, text=text)
     _require(
         result.returncode == 0, f"git command failed: {' '.join(arguments)}"
     )
@@ -613,11 +630,10 @@ def _git(*arguments: str, text: bool = False) -> bytes | str:
 
 
 def _require_exact_commit_object(object_id: str, label: str) -> None:
-    result = subprocess.run(
-        ["git", "rev-parse", "--verify", f"{object_id}^{{commit}}"],
-        cwd=ROOT,
-        check=False,
-        capture_output=True,
+    result = _run_git(
+        "rev-parse",
+        "--verify",
+        f"{object_id}^{{commit}}",
         text=True,
     )
     _require(
