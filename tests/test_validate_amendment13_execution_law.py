@@ -620,12 +620,10 @@ def test__enforcement_inventory__rejects_each_named_forgery(
 
 def test__document__preserves_revision14_as_exact_prefix():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
-    ratified = subprocess.run(
-        ["git", "show", f"{a13.RATIFICATION_COMMIT}:{a13.DESIGN_PATH}"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-    ).stdout
+    ratified = a13._git(
+        "show", f"{a13.RATIFICATION_COMMIT}:{a13.DESIGN_PATH}"
+    )
+    assert isinstance(ratified, bytes)
     assert len(ratified) == a13.DESIGN_BYTE_SIZE
     assert hashlib.sha256(ratified).hexdigest() == a13.DESIGN_SHA256
     assert raw[: a13.DESIGN_BYTE_SIZE] == ratified
