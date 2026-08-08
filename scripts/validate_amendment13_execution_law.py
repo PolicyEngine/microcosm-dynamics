@@ -510,6 +510,38 @@ EXPECTED_ERA_COUNTS = {
     "ry2015_2022_exclusion_lineage": (0, 0, 0, 0, 0),
 }
 
+PROSPECTIVE_ERA_SEAL_IDS = (
+    "a13-successor-era-seal:0a638a9a1bdaf341653c5409b2395081e67657413244478846d3c60cdab377db",
+    "a13-successor-era-seal:2a4d7f0553b9c76b6289b5e343371780cd2c6eccdd6466234307974b5b3c3fe4",
+    "a13-successor-era-seal:531ea88addbc73f77323d7d873f939db0f773534dc04eeac6310c1ffb0e87902",
+    "a13-successor-era-seal:7dcbfb47b7320bf8b7c147cf01b222a22fcdcf66cb92d2a781e296fc1139875c",
+    "a13-successor-era-seal:810397821f6393ef051bef9afc2f4fe689104c0cafb6ac40a3c53ed91da00b51",
+    "a13-successor-era-seal:0cdf284967712845c7fe37f8a292249e42a3e8303ac211d20ec26cbe948def6f",
+)
+
+PROSPECTIVE_DOMAIN_PINS = (
+    (
+        "Repair overlays",
+        14,
+        "adee2e8320759ea709821d48af69ee2c12dec7499a9bef03de23f15c23ba79a5",
+    ),
+    (
+        "All repair successors",
+        46,
+        "63ff5646b640a4252d440810db77a862e2178fc74e61171d287d7984576dcbea",
+    ),
+    (
+        "Supersession edges",
+        46,
+        "396395f20f984a58fc606ab66010fa06af79641c19f5afdc0605ce7b40aef709",
+    ),
+    (
+        "Successor-era seal fixtures",
+        6,
+        "f1c0f05543955ea13a9b1037f80609f30d681b0ea890620d89717beb6c4cac9d",
+    ),
+)
+
 A13_EXPECTED_MUTATIONS = (
     "ratification_identity_wrong_blob",
     "ratification_identity_wrong_commit",
@@ -702,6 +734,33 @@ def _unique_after(text: str, marker: str, label: str) -> str:
     return text.split(marker, 1)[1]
 
 
+def _unique_between(
+    text: str,
+    start_marker: str,
+    end_marker: str,
+    label: str,
+) -> str:
+    """Return text between one exact start marker and its next end marker."""
+
+    remainder = _unique_after(text, start_marker, label)
+    _require(end_marker in remainder, f"{label} end marker drift")
+    return remainder.split(end_marker, 1)[0]
+
+
+def _code_tokens_between(
+    text: str,
+    start_marker: str,
+    end_marker: str,
+    expected: int,
+    label: str,
+) -> list[str]:
+    return _code_tokens(
+        _unique_between(text, start_marker, end_marker, label),
+        expected,
+        label,
+    )
+
+
 def _a13_sections(raw: bytes) -> dict[str, str]:
     """Decode the exact suffix and split its uniquely ordered major sections."""
 
@@ -788,6 +847,405 @@ def _parse_span(value: str, label: str) -> tuple[int, int]:
     start, end = (int(part) for part in match.groups())
     _require(start < end, f"{label} span is empty or reversed")
     return start, end
+
+
+def _parse_identity_projection(section: str) -> dict[str, Any]:
+    """Parse the primary historical and prospective recording declarations."""
+
+    historical_rows = _markdown_table(
+        section,
+        "| Identity member | Exact value |",
+        "|---|---|",
+        7,
+        "Amendment-12 historical identity",
+    )
+    historical_values = {name: value for name, value in historical_rows}
+    attestation_rows = _markdown_table(
+        section,
+        "| Record | Bytes | Raw SHA-256 | Exact first line | Attested candidate HEAD | Attested document bytes / SHA-256 |",
+        "|---|---:|---|---|---|---|",
+        2,
+        "Amendment-12 attestation identities",
+    )
+    parsed_attestations: list[dict[str, Any]] = []
+    for (
+        record,
+        size,
+        raw_sha,
+        first_line,
+        candidate,
+        document,
+    ) in attestation_rows:
+        document_match = re.fullmatch(r"([\d,]+) / `([0-9a-f]{64})`", document)
+        _require(
+            document_match is not None,
+            "Amendment-12 attestation document identity drift",
+        )
+        parsed_attestations.append(
+            {
+                "record_name": _code_tokens(
+                    record, 1, "Amendment-12 attestation record"
+                )[0],
+                "raw_byte_size": int(size.replace(",", "")),
+                "raw_sha256": _code_tokens(
+                    raw_sha, 1, "Amendment-12 attestation SHA-256"
+                )[0],
+                "verdict_token": _code_tokens(
+                    first_line, 1, "Amendment-12 attestation verdict"
+                )[0].removeprefix("# "),
+                "attested_candidate_head": _code_tokens(
+                    candidate, 1, "Amendment-12 attestation candidate"
+                )[0],
+                "attested_document_byte_size": int(
+                    document_match.group(1).replace(",", "")
+                ),
+                "attested_document_sha256": document_match.group(2),
+            }
+        )
+
+    governing_match = re.search(
+        r"The actual identity schema is\n`([^`]+)`, with exact status\n"
+        r"`([^`]+)` and exactly the keys\n",
+        section,
+    )
+    _require(
+        governing_match is not None,
+        "governing Amendment-13 primary schema/status drift",
+    )
+    draft_match = re.search(
+        r"values `([^`]+)`,\n`([^`]+)`, and false\.",
+        section,
+    )
+    _require(
+        draft_match is not None,
+        "governing Amendment-13 draft placeholder values drift",
+    )
+    history_match = re.search(
+        r"object has exactly\n`changed_path_count: (\d+)` and\n"
+        r"`commit_path_shape_is_identity_condition: (true|false)`\.",
+        section,
+    )
+    _require(
+        history_match is not None,
+        "historical changed-path observation drift",
+    )
+    amendment12_attestation_keys = _code_tokens_between(
+        section,
+        "Each `dual_ratify_attestations` member has exactly ",
+        ". The candidate HEAD",
+        7,
+        "Amendment-12 attestation keys",
+    )
+    manifest_status_match = re.search(
+        r"The manifest object has\nexactly .*?\. Its exact\nstatus is\n"
+        r"`([^`]+)`\.",
+        section,
+        flags=re.DOTALL,
+    )
+    _require(
+        manifest_status_match is not None,
+        "trusted recording manifest primary status drift",
+    )
+    return {
+        "amendment12_identity_keys": _code_tokens_between(
+            section,
+            "object has exactly the eight keys\n",
+            ". Its members are\nconjunctive:",
+            8,
+            "Amendment-12 identity keys",
+        ),
+        "amendment12_identity": {
+            "ratification_commit": _code_tokens(
+                historical_values["Ratification commit"],
+                1,
+                "historical ratification commit",
+            )[0],
+            "ratification_parents": _code_tokens(
+                historical_values["Exact parent array"],
+                1,
+                "historical parent array",
+            ),
+            "document_path": _code_tokens(
+                historical_values["Document path"],
+                1,
+                "historical document path",
+            )[0],
+            "document_mode": _code_tokens(
+                historical_values["Tree-entry mode"],
+                1,
+                "historical document mode",
+            )[0],
+            "document_blob_oid": _code_tokens(
+                historical_values["Git blob OID"],
+                1,
+                "historical document blob",
+            )[0],
+            "document_byte_size": int(
+                historical_values["Raw byte count"].replace(",", "")
+            ),
+            "document_sha256": _code_tokens(
+                historical_values["Raw SHA-256"],
+                1,
+                "historical document SHA-256",
+            )[0],
+            "dual_ratify_attestations": parsed_attestations,
+        },
+        "amendment12_attestation_keys": amendment12_attestation_keys,
+        "ratification_history_observation": {
+            "changed_path_count": int(history_match.group(1)),
+            "commit_path_shape_is_identity_condition": (
+                history_match.group(2) == "true"
+            ),
+        },
+        "governing_identity_schema_version": governing_match.group(1),
+        "governing_identity_status": governing_match.group(2),
+        "governing_identity_keys": _code_tokens_between(
+            section,
+            governing_match.group(0),
+            ".\n`ratification_parents`",
+            12,
+            "governing Amendment-13 identity keys",
+        ),
+        "trusted_manifest_identity_keys": _code_tokens_between(
+            section,
+            "`trusted_recording_manifest_identity` has exactly ",
+            ". Its schema\nis ",
+            8,
+            "trusted recording manifest identity keys",
+        ),
+        "trusted_manifest_identity_schema_version": _code_after(
+            section,
+            ". Its schema\nis ",
+            "trusted recording manifest identity schema",
+        ),
+        "trusted_manifest_schema_version": _code_after(
+            section,
+            "contains the exact canonical\n",
+            "trusted recording manifest schema",
+        ),
+        "trusted_manifest_path": _code_after(
+            section,
+            "object at\n",
+            "trusted recording manifest path",
+        ),
+        "trusted_manifest_keys": _code_tokens_between(
+            section,
+            "The manifest object has\nexactly ",
+            ". Its exact\nstatus is",
+            11,
+            "trusted recording manifest keys",
+        ),
+        "trusted_manifest_status": manifest_status_match.group(1),
+        "governing_attestation_keys": [
+            *amendment12_attestation_keys,
+            _code_after(
+                section,
+                "plus the mandatory eighth key\n",
+                "governing Amendment-13 reviewer identity key",
+            ),
+        ],
+        "record_template": _fenced_lines_after(
+            section,
+            "terminal LF and no additional line, under this seven-line template:\n\n",
+            "governing Amendment-13 RATIFY record template",
+        ),
+        "trusted_recording_literals": _fenced_lines_after(
+            section,
+            "The exact trusted-recording validation literals are:\n\n",
+            "Amendment-13 trusted recording literals",
+        ),
+        "draft_placeholder_keys": _code_tokens_between(
+            section,
+            "exact three-key object ",
+            ", with\nvalues ",
+            3,
+            "governing Amendment-13 draft placeholder keys",
+        ),
+        "draft_placeholder_values": [
+            draft_match.group(1),
+            draft_match.group(2),
+            False,
+        ],
+    }
+
+
+def _parse_overlay_projection(section: str) -> dict[str, Any]:
+    """Parse primary annotation, overlay, successor, and supersession law."""
+
+    rows = _markdown_table(
+        section,
+        "| Doc | Annotation path | Artifact ID | Git blob | Bytes | Raw SHA-256 |",
+        "|---:|---|---|---|---:|---|",
+        14,
+        "Amendment-13 annotation identity domain",
+    )
+    annotation_rows = []
+    for document, path, artifact, blob, size, raw_sha in rows:
+        annotation_rows.append(
+            {
+                "document_source_position": int(document),
+                "annotation_path": _code_tokens(path, 1, "annotation path")[0],
+                "artifact_id": _code_tokens(
+                    artifact, 1, "annotation artifact ID"
+                )[0],
+                "git_blob_oid": _code_tokens(blob, 1, "annotation Git blob")[
+                    0
+                ],
+                "byte_size": int(size.replace(",", "")),
+                "raw_sha256": _code_tokens(
+                    raw_sha, 1, "annotation raw SHA-256"
+                )[0],
+            }
+        )
+    overlay_retention_match = re.search(
+        r"`predecessor_source_rows_retained` is (true|false) and\n"
+        r"`predecessor_source_row_erasure_permitted` is (true|false)\.",
+        section,
+    )
+    supersession_retention_match = re.search(
+        r"`predecessor_retained` is (true|false); "
+        r"`predecessor_erasure_permitted` is (true|false); and\n",
+        section,
+    )
+    _require(
+        overlay_retention_match is not None
+        and supersession_retention_match is not None,
+        "Amendment-13 retention/erasure declarations drift",
+    )
+    status_mapping_rule_match = re.search(
+        r"Proof and fragment successors additionally and obligatorily carry\n"
+        r"`([^`]+)`; doc-036 classification successors (forbid|require) it\.",
+        section,
+    )
+    _require(
+        status_mapping_rule_match is not None,
+        "Amendment-13 successor status-mapping rule drift",
+    )
+    return {
+        "source_tree": _code_after(
+            section, "their pinned ", "Amendment-13 source tree"
+        ),
+        "annotation_mode": _code_after(
+            section,
+            "The mode for every row is ",
+            "Amendment-13 annotation mode",
+        ),
+        "annotation_rows": annotation_rows,
+        "overlay_schema_version": _code_after(
+            section,
+            "There is exactly one ",
+            "Amendment-13 overlay schema",
+        ),
+        "overlay_keys": _fenced_lines_after(
+            section,
+            "Every overlay has exactly these keys:\n\n",
+            "Amendment-13 overlay keys",
+        ),
+        "overlay_authority_kind": _code_after(
+            section,
+            "`authority_kind` is exactly\n",
+            "Amendment-13 overlay authority kind",
+        ),
+        "predecessor_source_rows_retained": (
+            overlay_retention_match.group(1) == "true"
+        ),
+        "predecessor_source_row_erasure_permitted": (
+            overlay_retention_match.group(2) == "true"
+        ),
+        "overlay_id_prefix": _code_after(
+            section,
+            "Its ID prefix is ",
+            "Amendment-13 overlay ID prefix",
+        ),
+        "overlay_identity_preimage": _fenced_lines_after(
+            section,
+            "Its ID prefix is `a13-document-repair-overlay:`. The exact ordered ID\npreimage is:\n\n",
+            "Amendment-13 overlay identity preimage",
+        ),
+        "annotation_identity_keys": _code_tokens_between(
+            section,
+            "`predecessor_annotation_identity` has exactly ",
+            ".\n`amendment12_ratification_identity`",
+            8,
+            "predecessor annotation identity keys",
+        ),
+        "overlay_integrity_keys": _code_tokens_between(
+            section,
+            "Overlay `integrity` has\nexactly ",
+            ".\n\nEvery repair successor",
+            4,
+            "overlay integrity keys",
+        ),
+        "successor_schema_version": _code_after(
+            section,
+            "Every repair successor has schema\n",
+            "Amendment-13 successor schema",
+        ),
+        "successor_id_prefix": _code_after(
+            section,
+            "ID prefix\n",
+            "Amendment-13 successor ID prefix",
+        ),
+        "successor_common_keys": _code_tokens_between(
+            section,
+            "and exactly the common keys\n",
+            ".\nProof and fragment successors",
+            13,
+            "Amendment-13 successor common keys",
+        ),
+        "successor_status_mapping_key": status_mapping_rule_match.group(1),
+        "doc036_status_mapping_forbidden": (
+            status_mapping_rule_match.group(2) == "forbid"
+        ),
+        "successor_identity_preimage": _fenced_lines_after(
+            section,
+            "The exact ordered successor ID preimage is:\n\n",
+            "Amendment-13 successor identity preimage",
+        ),
+        "supersession_schema_version": _code_after(
+            section,
+            "Each of the 46 successors has exactly one\n",
+            "Amendment-13 supersession schema",
+        ),
+        "supersession_keys": _code_tokens_between(
+            section,
+            "edge and no predecessor has two. Its\nexact keyset is ",
+            ". Its\nID prefix",
+            14,
+            "Amendment-13 supersession keys",
+        ),
+        "supersession_id_prefix": _code_after(
+            section,
+            "Its\nID prefix is ",
+            "Amendment-13 supersession ID prefix",
+        ),
+        "supersession_relation": _code_after(
+            section,
+            "; its exact relation is\n",
+            "Amendment-13 supersession relation",
+        ),
+        "supersession_status": _code_after(
+            section,
+            "; its exact status is\n",
+            "Amendment-13 supersession status",
+        ),
+        "predecessor_retained": (
+            supersession_retention_match.group(1) == "true"
+        ),
+        "predecessor_erasure_permitted": (
+            supersession_retention_match.group(2) == "true"
+        ),
+        "semantic_consumer_selection": _code_after(
+            section,
+            "`semantic_consumer_selection` is ",
+            "Amendment-13 semantic consumer selection",
+        ),
+        "supersession_identity_preimage": _fenced_lines_after(
+            section,
+            "Its ordered ID\npreimage is:\n\n",
+            "Amendment-13 supersession identity preimage",
+        ),
+    }
 
 
 def _parse_proof_projection(section: str) -> dict[str, Any]:
@@ -1112,6 +1570,225 @@ def _parse_fragment_projection(section: str) -> dict[str, Any]:
     }
 
 
+def _parse_doc036_projection(section: str) -> dict[str, Any]:
+    """Parse the primary doc-036 transformation and six-era cascade."""
+
+    rows = _markdown_table(
+        section,
+        "| Classification ID | Pointer / row SHA-256 | Source occurrence | Page/span | Exact text / text SHA-256 |",
+        "|---|---|---|---|---|",
+        8,
+        "Amendment-13 doc-036 mapping",
+    )
+    doc036_rows: list[dict[str, Any]] = []
+    for classification, predecessor, occurrence, page_span, text_sha in rows:
+        pointer, row_sha = _code_tokens(
+            predecessor, 2, "doc-036 predecessor identity"
+        )
+        page_match = re.fullmatch(r"(\d+) `([^`]+)`", page_span)
+        _require(page_match is not None, "doc-036 page/span drift")
+        start, end = _parse_span(page_match.group(2), "doc-036 source span")
+        matched_text, matched_sha = _code_tokens(
+            text_sha, 2, "doc-036 source text identity"
+        )
+        doc036_rows.append(
+            {
+                "predecessor_row_id": _code_tokens(
+                    classification, 1, "doc-036 classification ID"
+                )[0],
+                "predecessor_row_pointer": pointer,
+                "predecessor_row_canonical_sha256": row_sha,
+                "source_occurrence_id": _code_tokens(
+                    occurrence, 1, "doc-036 source occurrence"
+                )[0],
+                "page_number": int(page_match.group(1)),
+                "utf8_byte_start": start,
+                "utf8_byte_end": end,
+                "matched_text": matched_text,
+                "matched_utf8_sha256": matched_sha,
+            }
+        )
+
+    transformation_match = re.search(
+        r"The exact transformation\nis `([^`]+)`; the status is\n`([^`]+)`\.",
+        section,
+    )
+    _require(
+        transformation_match is not None,
+        "Amendment-13 doc-036 transformation/status drift",
+    )
+    era_rows = _markdown_table(
+        section,
+        "| Era | Exact era ID | Incompatible | Incomplete | Composed | Doc-036 | Supersession | Prospective nonauthority seal ID |",
+        "|---:|---|---:|---:|---:|---:|---:|---|",
+        7,
+        "Amendment-13 successor-era census",
+    )
+    parsed_eras: list[dict[str, Any]] = []
+    for row in era_rows[:6]:
+        parsed_eras.append(
+            {
+                "era_order_position": int(row[0]),
+                "era_id": _code_tokens(row[1], 1, "successor-era ID")[0],
+                "repair_counts": {
+                    "semantically_incompatible_local_proof_count": int(row[2]),
+                    "incomplete_fragment_terminal_count": int(row[3]),
+                    "composed_fragment_count": int(row[4]),
+                    "doc036_aggregate_domain_count": int(row[5]),
+                    "supersession_count": int(row[6]),
+                },
+                "successor_era_seal_id": _code_tokens(
+                    row[7], 1, "successor-era seal ID"
+                )[0],
+            }
+        )
+    total = [
+        cell.removeprefix("**").removesuffix("**") for cell in era_rows[6]
+    ]
+    _require(
+        total[0] == "Total" and total[1] == "—" and total[7] == "6 seals",
+        "Amendment-13 successor-era total row drift",
+    )
+    return {
+        "classification_id_domain_sha256": _code_after(
+            section,
+            "members and canonical SHA-256\n",
+            "doc-036 classification domain SHA-256",
+        ),
+        "transformation_rule": transformation_match.group(1),
+        "terminal_status": transformation_match.group(2),
+        "rows": doc036_rows,
+        "era_schema_version": _code_after(
+            section,
+            "has one\n",
+            "successor-era schema version",
+        ),
+        "era_id_prefix": _code_after(
+            section,
+            "object with ID prefix\n",
+            "successor-era seal ID prefix",
+        ),
+        "era_keys": _code_tokens_between(
+            section,
+            "Its exact keys are ",
+            ". `repair_counts` has exactly\n",
+            14,
+            "successor-era seal keys",
+        ),
+        "repair_count_keys": _code_tokens_between(
+            section,
+            ". `repair_counts` has exactly\n",
+            ". Its ordered ID\npreimage is:",
+            5,
+            "successor-era repair count keys",
+        ),
+        "era_identity_preimage": _fenced_lines_after(
+            section,
+            ". Its ordered ID\npreimage is:\n\n",
+            "successor-era seal identity preimage",
+        ),
+        "era_rows": parsed_eras,
+        "era_totals": {
+            "semantically_incompatible_local_proof_count": int(total[2]),
+            "incomplete_fragment_terminal_count": int(total[3]),
+            "composed_fragment_count": int(total[4]),
+            "doc036_aggregate_domain_count": int(total[5]),
+            "supersession_count": int(total[6]),
+            "successor_era_seal_count": 6,
+        },
+    }
+
+
+def _parse_scope_projection(section: str) -> dict[str, Any]:
+    """Parse scope exclusions, fixture schemas, and domain integrity pins."""
+
+    domain_rows = _markdown_table(
+        section,
+        "| Domain | Count | Canonical domain SHA-256 |",
+        "|---|---:|---|",
+        4,
+        "Amendment-13 prospective domain pins",
+    )
+    domains = []
+    for name, count, domain_sha in domain_rows:
+        domains.append(
+            {
+                "domain": name,
+                "count": int(count),
+                "sha256": _code_tokens(
+                    domain_sha, 1, "prospective domain SHA-256"
+                )[0],
+            }
+        )
+    fixture_match = re.search(
+        r"Its exact\nfixture status is `([^`]+)`; both\n"
+        r"`authority_emitted` and `certification_emitted` are false\.",
+        section,
+    )
+    _require(
+        fixture_match is not None,
+        "Amendment-13 fixture status/authority declaration drift",
+    )
+    return {
+        "law_gap_ids": _fenced_lines_after(
+            section,
+            "member domain:\n\n",
+            "Amendment-13 untouched law-gap IDs",
+        ),
+        "law_gap_id_domain_sha256": _code_after(
+            section,
+            "Their ordered ID-array domain SHA-256 is\n",
+            "Amendment-13 law-gap domain SHA-256",
+        ),
+        "fixture_status": fixture_match.group(1),
+        "authority_emitted": False,
+        "certification_emitted": False,
+        "top_level_keys": _fenced_lines_after(
+            section,
+            "24 keys:\n\n",
+            "Amendment-13 execution-law top-level keys",
+        ),
+        "continuation_domain_keys": _code_tokens_between(
+            section,
+            "`amendment12_continuation_domain` has exactly\n",
+            ".\n`source_artifact_identity`",
+            9,
+            "Amendment-12 continuation-domain keys",
+        ),
+        "source_artifact_identity_keys": _code_tokens_between(
+            section,
+            "`source_artifact_identity` has exactly ",
+            ".\n`ratification_history_observation`",
+            3,
+            "Amendment-12 continuation source identity keys",
+        ),
+        "git_order_keys": _fenced_lines_after(
+            section,
+            "except `q5_first_add_permitted`, which is false:\n\n",
+            "Amendment-13 Git-order keys",
+        ),
+        "integrity_keys": _code_tokens_between(
+            section,
+            "`integrity` has exactly ",
+            ".\n\nThe complete reconstructed domains",
+            18,
+            "Amendment-13 integrity keys",
+        ),
+        "prospective_domain_pins": domains,
+        "implementation_pins": _parse_implementation_pins(section),
+        "semantic_mutations": _fenced_lines_after(
+            section,
+            "Amendment 13 adds a separate exact seven-name inventory:\n\n",
+            "Amendment-13 semantic mutation inventory",
+        ),
+        "enforcement_mutations": _fenced_lines_after(
+            section,
+            "The enforcement layer has this separate exact three-name inventory:\n\n",
+            "Amendment-13 enforcement mutation inventory",
+        ),
+    }
+
+
 def _parse_implementation_pins(section: str) -> dict[str, Any]:
     match = re.search(
         r"implementation commit `([0-9a-f]{40})`, mode `([0-9]+)`:",
@@ -1181,24 +1858,12 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
 
     sections = _a13_sections(raw)
     return {
-        "trusted_recording_literals": _fenced_lines_after(
-            sections["27.2"],
-            "The exact trusted-recording validation literals are:\n\n",
-            "Amendment-13 trusted recording literals",
-        ),
+        "identity": _parse_identity_projection(sections["27.2"]),
+        "overlays": _parse_overlay_projection(sections["27.3"]),
         "proof": _parse_proof_projection(sections["27.4"]),
         "fragments": _parse_fragment_projection(sections["27.5"]),
-        "implementation_pins": _parse_implementation_pins(sections["27.7"]),
-        "semantic_mutations": _fenced_lines_after(
-            sections["27.7"],
-            "Amendment 13 adds a separate exact seven-name inventory:\n\n",
-            "Amendment-13 semantic mutation inventory",
-        ),
-        "enforcement_mutations": _fenced_lines_after(
-            sections["27.7"],
-            "The enforcement layer has this separate exact three-name inventory:\n\n",
-            "Amendment-13 enforcement mutation inventory",
-        ),
+        "doc036": _parse_doc036_projection(sections["27.6"]),
+        "scope": _parse_scope_projection(sections["27.7"]),
         "comparator": _parse_comparator_and_literals(sections["27.8"]),
     }
 
@@ -1292,6 +1957,366 @@ def _execution_fragment_projection(law: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _execution_identity_projection(law: Mapping[str, Any]) -> dict[str, Any]:
+    amendment12_identity = law["amendment12_ratification_identity"]
+    return {
+        "amendment12_identity_keys": list(amendment12_identity),
+        "amendment12_identity": copy.deepcopy(amendment12_identity),
+        "amendment12_attestation_keys": list(
+            amendment12_identity["dual_ratify_attestations"][0]
+        ),
+        "ratification_history_observation": copy.deepcopy(
+            law["ratification_history_observation"]
+        ),
+        "governing_identity_schema_version": (
+            GOVERNING_A13_IDENTITY_SCHEMA_VERSION
+        ),
+        "governing_identity_status": GOVERNING_A13_IDENTITY_STATUS,
+        "governing_identity_keys": [
+            "schema_version",
+            "status",
+            "ratification_commit",
+            "ratification_parents",
+            "ratification_commit_changed_paths",
+            "document_path",
+            "document_mode",
+            "document_blob_oid",
+            "document_byte_size",
+            "document_sha256",
+            "trusted_recording_manifest_identity",
+            "dual_ratify_attestations",
+        ],
+        "trusted_manifest_identity_keys": [
+            "schema_version",
+            "manifest_commit",
+            "manifest_parents",
+            "manifest_path",
+            "manifest_mode",
+            "manifest_blob_oid",
+            "manifest_byte_size",
+            "manifest_sha256",
+        ],
+        "trusted_manifest_identity_schema_version": (
+            TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION
+        ),
+        "trusted_manifest_schema_version": (
+            TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION
+        ),
+        "trusted_manifest_path": TRUSTED_RECORDING_MANIFEST_PATH,
+        "trusted_manifest_keys": [
+            "schema_version",
+            "status",
+            "attested_candidate_head",
+            "document_path",
+            "document_mode",
+            "document_blob_oid",
+            "document_byte_size",
+            "document_sha256",
+            "ordered_reviewer_identities",
+            "ordered_ratify_attestations",
+            "attestation_domain_sha256",
+        ],
+        "trusted_manifest_status": TRUSTED_RECORDING_MANIFEST_STATUS,
+        "governing_attestation_keys": [
+            *list(amendment12_identity["dual_ratify_attestations"][0]),
+            "reviewer_identity",
+        ],
+        "record_template": [
+            "# RATIFY",
+            "reviewer_identity: <exact trusted reviewer identity>",
+            "record_name: <exact record_name>",
+            "attested_candidate_head: <exact 40-lowercase-hex commit>",
+            f"attested_document_path: {DESIGN_PATH}",
+            "attested_document_byte_size: <exact decimal byte count>",
+            "attested_document_sha256: <exact 64-lowercase-hex SHA-256>",
+        ],
+        "trusted_recording_literals": list(A13_TRUSTED_RECORDING_LITERALS),
+        "draft_placeholder_keys": list(GOVERNING_A13_CANDIDATE_IDENTITY),
+        "draft_placeholder_values": list(
+            GOVERNING_A13_CANDIDATE_IDENTITY.values()
+        ),
+    }
+
+
+def _source_annotation_blob_oid(path: str) -> str:
+    line = str(
+        _git("ls-tree", a12.SOURCE_COMMIT, "--", path, text=True)
+    ).strip()
+    match = re.fullmatch(
+        rf"{DESIGN_MODE} blob ([0-9a-f]{{40}})\t{re.escape(path)}", line
+    )
+    _require(match is not None, "source annotation Git tree-entry drift")
+    return match.group(1)
+
+
+def _execution_overlay_projection(law: Mapping[str, Any]) -> dict[str, Any]:
+    overlays = law["repair_overlay_rows"]
+    annotation_by_position = {
+        row["document_source_position"]: row["predecessor_annotation_identity"]
+        for row in overlays
+    }
+    annotation_rows = []
+    for position, identity in sorted(annotation_by_position.items()):
+        annotation_rows.append(
+            {
+                "document_source_position": position,
+                "annotation_path": identity["annotation_path"],
+                "artifact_id": identity["artifact_id"],
+                "git_blob_oid": _source_annotation_blob_oid(
+                    identity["annotation_path"]
+                ),
+                "byte_size": identity["byte_size"],
+                "raw_sha256": identity["raw_sha256"],
+            }
+        )
+    all_successors = [
+        *law["semantically_incompatible_local_proof_successor_rows"],
+        *law["incomplete_fragment_terminal_successor_rows"],
+        *law["composed_fragment_successor_rows"],
+        *law["doc036_aggregate_domain_successor_rows"],
+    ]
+    proof_successor = law[
+        "semantically_incompatible_local_proof_successor_rows"
+    ][0]
+    doc036_successor = law["doc036_aggregate_domain_successor_rows"][0]
+    supersession = law["predecessor_supersession_rows"][0]
+    return {
+        "source_tree": a12.SOURCE_COMMIT,
+        "annotation_mode": DESIGN_MODE,
+        "annotation_rows": annotation_rows,
+        "overlay_schema_version": law["overlay_schema_version"],
+        "overlay_keys": list(overlays[0]),
+        "overlay_authority_kind": overlays[0]["authority_kind"],
+        "predecessor_source_rows_retained": all(
+            row["predecessor_source_rows_retained"] for row in overlays
+        ),
+        "predecessor_source_row_erasure_permitted": any(
+            row["predecessor_source_row_erasure_permitted"] for row in overlays
+        ),
+        "overlay_id_prefix": "a13-document-repair-overlay:",
+        "overlay_identity_preimage": [
+            f"[{OVERLAY_SCHEMA_VERSION},",
+            " document_source_position,",
+            " source_document_id,",
+            " predecessor_annotation_identity,",
+            " amendment12_ratification_identity,",
+            " governing_amendment13_ratification_identity,",
+            " predecessor_era_seal_content_sha256]",
+        ],
+        "annotation_identity_keys": list(
+            overlays[0]["predecessor_annotation_identity"]
+        ),
+        "overlay_integrity_keys": list(overlays[0]["integrity"]),
+        "successor_schema_version": law["successor_schema_version"],
+        "successor_id_prefix": "a13-repair-successor:",
+        "successor_common_keys": [
+            key
+            for key in proof_successor
+            if key != "predecessor_status_mapping"
+        ],
+        "successor_status_mapping_key": "predecessor_status_mapping",
+        "doc036_status_mapping_forbidden": (
+            "predecessor_status_mapping" not in doc036_successor
+            and all(
+                "predecessor_status_mapping" in row
+                for row in all_successors
+                if row["successor_kind"]
+                != "doc036_aggregate_domain_correction"
+            )
+        ),
+        "successor_identity_preimage": [
+            f"[{SUCCESSOR_SCHEMA_VERSION},",
+            " successor_kind,",
+            " repair_overlay_id,",
+            " document_source_position,",
+            " source_document_id,",
+            " predecessor_annotation_artifact_id,",
+            " predecessor_row_pointer,",
+            " predecessor_row_id,",
+            " predecessor_row_canonical_sha256,",
+            " predecessor_status_mapping_or_null,",
+            " successor_payload]",
+        ],
+        "supersession_schema_version": law["supersession_schema_version"],
+        "supersession_keys": list(supersession),
+        "supersession_id_prefix": "a13-supersession:",
+        "supersession_relation": supersession["supersession_relation"],
+        "supersession_status": supersession["status"],
+        "predecessor_retained": all(
+            row["predecessor_retained"]
+            for row in law["predecessor_supersession_rows"]
+        ),
+        "predecessor_erasure_permitted": any(
+            row["predecessor_erasure_permitted"]
+            for row in law["predecessor_supersession_rows"]
+        ),
+        "semantic_consumer_selection": supersession[
+            "semantic_consumer_selection"
+        ],
+        "supersession_identity_preimage": [
+            f"[{SUPERSESSION_SCHEMA_VERSION},",
+            " repair_overlay_id,",
+            " predecessor_row_pointer,",
+            " predecessor_row_id,",
+            " predecessor_row_canonical_sha256,",
+            " successor_row_id,",
+            f" {SUPERSESSION_RELATION},",
+            f" {SUPERSESSION_STATUS},",
+            " true,",
+            " false]",
+        ],
+    }
+
+
+def _execution_doc036_projection(law: Mapping[str, Any]) -> dict[str, Any]:
+    rows = []
+    for row in law["doc036_aggregate_domain_successor_rows"]:
+        payload = row["successor_payload"]
+        citation = payload["source_occurrence_citation"]
+        rows.append(
+            {
+                "predecessor_row_id": row["predecessor_row_id"],
+                "predecessor_row_pointer": row["predecessor_row_pointer"],
+                "predecessor_row_canonical_sha256": row[
+                    "predecessor_row_canonical_sha256"
+                ],
+                "source_occurrence_id": citation["source_occurrence_id"],
+                "page_number": citation["page_number"],
+                "utf8_byte_start": citation["utf8_byte_start"],
+                "utf8_byte_end": citation["utf8_byte_end"],
+                "matched_text": citation["matched_text"],
+                "matched_utf8_sha256": citation["matched_utf8_sha256"],
+            }
+        )
+    era_rows = law["successor_era_seal_rows"]
+    totals = {
+        key: sum(row["repair_counts"][key] for row in era_rows)
+        for key in era_rows[0]["repair_counts"]
+    }
+    totals["successor_era_seal_count"] = len(era_rows)
+    first_payload = law["doc036_aggregate_domain_successor_rows"][0][
+        "successor_payload"
+    ]
+    return {
+        "classification_id_domain_sha256": law["integrity"][
+            "doc036_classification_id_domain_sha256"
+        ],
+        "transformation_rule": first_payload["transformation_rule"],
+        "terminal_status": first_payload["terminal_status"],
+        "rows": rows,
+        "era_schema_version": law["era_successor_seal_schema_version"],
+        "era_id_prefix": "a13-successor-era-seal:",
+        "era_keys": list(era_rows[0]),
+        "repair_count_keys": list(era_rows[0]["repair_counts"]),
+        "era_identity_preimage": [
+            f"[{ERA_SEAL_SCHEMA_VERSION},",
+            " era_id,",
+            " era_order_position,",
+            " predecessor_era_seal_identity,",
+            " ordered_repair_overlay_ids,",
+            " ordered_successor_row_ids,",
+            " ordered_supersession_row_ids,",
+            " exact_repair_counts,",
+            " amendment12_ratification_identity,",
+            " governing_amendment13_ratification_identity]",
+        ],
+        "era_rows": [
+            {
+                "era_order_position": row["era_order_position"],
+                "era_id": row["era_id"],
+                "repair_counts": copy.deepcopy(row["repair_counts"]),
+                "successor_era_seal_id": prospective_id,
+            }
+            for row, prospective_id in zip(era_rows, PROSPECTIVE_ERA_SEAL_IDS)
+        ],
+        "era_totals": totals,
+    }
+
+
+def _execution_scope_projection(law: Mapping[str, Any]) -> dict[str, Any]:
+    continuation = law["amendment12_continuation_domain"]
+    integrity = law["integrity"]
+    return {
+        "law_gap_ids": copy.deepcopy(law["untouched_law_gap_predecessor_ids"]),
+        "law_gap_id_domain_sha256": integrity["law_gap_id_domain_sha256"],
+        "fixture_status": DRAFT_STATUS,
+        "authority_emitted": False,
+        "certification_emitted": False,
+        "top_level_keys": list(law),
+        "continuation_domain_keys": list(continuation),
+        "source_artifact_identity_keys": list(
+            continuation["source_artifact_identity"]
+        ),
+        "git_order_keys": list(law["git_order_law"]),
+        "integrity_keys": list(integrity),
+        "prospective_domain_pins": [
+            {"domain": name, "count": count, "sha256": sha256}
+            for name, count, sha256 in PROSPECTIVE_DOMAIN_PINS
+        ],
+        "semantic_mutations": list(A13_EXPECTED_MUTATIONS),
+        "enforcement_mutations": list(A13_ENFORCEMENT_EXPECTED_MUTATIONS),
+    }
+
+
+@lru_cache(maxsize=1)
+def _canonical_draft_document_projection() -> dict[str, Any]:
+    """Build the immutable document cross-check independently of a caller law."""
+
+    law = _construct_execution_law(
+        governing_amendment13_ratification_identity=(
+            GOVERNING_A13_CANDIDATE_IDENTITY
+        ),
+        status=DRAFT_STATUS,
+    )
+    integrity = law["integrity"]
+    for name, count, sha256 in PROSPECTIVE_DOMAIN_PINS:
+        count_key, sha_key = {
+            "Repair overlays": ("overlay_count", "overlay_domain_sha256"),
+            "All repair successors": (
+                "repair_count",
+                "successor_domain_sha256",
+            ),
+            "Supersession edges": (
+                "supersession_count",
+                "supersession_domain_sha256",
+            ),
+            "Successor-era seal fixtures": (
+                "successor_era_seal_count",
+                "successor_era_seal_domain_sha256",
+            ),
+        }[name]
+        _require(
+            integrity[count_key] == count and integrity[sha_key] == sha256,
+            f"prospective {name} Python pin drift",
+        )
+    _require(
+        tuple(
+            row["successor_era_seal_id"]
+            for row in law["successor_era_seal_rows"]
+        )
+        == PROSPECTIVE_ERA_SEAL_IDS,
+        "prospective successor-era Python pin drift",
+    )
+    return {
+        "identity": _execution_identity_projection(law),
+        "overlays": _execution_overlay_projection(law),
+        "proof": _execution_proof_projection(law),
+        "fragments": _execution_fragment_projection(law),
+        "doc036": _execution_doc036_projection(law),
+        "scope": _execution_scope_projection(law),
+        "comparator": {
+            "search_augmentation": list(A13_SEARCH_AUGMENTATION),
+            "comparator_rows": [list(row) for row in A13_COMPARATOR_ROWS],
+            "schema_literals": list(A13_SCHEMA_LITERALS),
+            "content_id_prefixes": list(A13_CONTENT_ID_PREFIXES),
+            "status_relation_operation_codes": list(
+                A13_STATUS_RELATION_OPERATION_CODES
+            ),
+            "successor_kind_literals": list(A13_SUCCESSOR_KIND_LITERALS),
+        },
+    }
+
+
 def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
     """Authenticate the two document-selected implementation byte identities."""
 
@@ -1336,29 +2361,16 @@ def _validate_document_semantic_projection(
     """Require the governing bytes, Python controls, and fixture to agree."""
 
     projection = _parse_document_semantic_projection(raw)
-    expected = {
-        "trusted_recording_literals": list(A13_TRUSTED_RECORDING_LITERALS),
-        "proof": _execution_proof_projection(law),
-        "fragments": _execution_fragment_projection(law),
-        "implementation_pins": projection["implementation_pins"],
-        "semantic_mutations": list(A13_EXPECTED_MUTATIONS),
-        "enforcement_mutations": list(A13_ENFORCEMENT_EXPECTED_MUTATIONS),
-        "comparator": {
-            "search_augmentation": list(A13_SEARCH_AUGMENTATION),
-            "comparator_rows": [list(row) for row in A13_COMPARATOR_ROWS],
-            "schema_literals": list(A13_SCHEMA_LITERALS),
-            "content_id_prefixes": list(A13_CONTENT_ID_PREFIXES),
-            "status_relation_operation_codes": list(
-                A13_STATUS_RELATION_OPERATION_CODES
-            ),
-            "successor_kind_literals": list(A13_SUCCESSOR_KIND_LITERALS),
-        },
-    }
+    del law  # Never let a caller-mutated law redefine the governing bytes.
+    expected = copy.deepcopy(_canonical_draft_document_projection())
+    expected["scope"]["implementation_pins"] = projection["scope"][
+        "implementation_pins"
+    ]
     _require(
         projection == expected,
         "governing Amendment-13 document semantic projection drift",
     )
-    _verify_implementation_pins(projection["implementation_pins"])
+    _verify_implementation_pins(projection["scope"]["implementation_pins"])
     return projection
 
 
@@ -2449,6 +3461,20 @@ def _doc036_payload(
     }
 
 
+class _RawObjectSourceReader:
+    """Read Amendment-12 source bytes through A13's raw-object Git view."""
+
+    def __init__(self) -> None:
+        _require_exact_commit_object(a12.SOURCE_COMMIT, "pinned source commit")
+
+    def read(self, path: str) -> bytes:
+        raw = _git("show", f"{a12.SOURCE_COMMIT}:{path}")
+        _require(
+            isinstance(raw, bytes), f"pinned source read was not raw: {path}"
+        )
+        return raw
+
+
 def build_execution_law() -> dict[str, Any]:
     """Reconstruct the exact unratified prospective law fixture."""
 
@@ -2532,7 +3558,7 @@ def _construct_execution_law(
         dict(governing_amendment13_ratification_identity)
     )
 
-    reader = a12.SourceReader(None)
+    reader = _RawObjectSourceReader()
     documents, source_identity = a12._load_documents(reader)
     document_by_position = {
         document.position: document for document in documents
