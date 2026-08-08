@@ -10,6 +10,7 @@ adversarial mutation inventory.  Amendment 12's frozen pilot bundle and its
 from __future__ import annotations
 
 import argparse
+import base64
 import copy
 import hashlib
 import json
@@ -57,11 +58,26 @@ TRUSTED_RECORDING_MANIFEST_PATH = (
     "docs/analysis/amendment_13_ratification/"
     "dual_ratify_recording_manifest_v1.json"
 )
-# No independent recorder has committed the two future RATIFY records yet.
-# The public ratification-bound builder therefore remains fail-closed.  A
-# later, independently reviewed implementation may install one exact manifest
-# identity here; callers cannot supply or override this trust root.
-TRUSTED_A13_RECORDING_MANIFEST_IDENTITY: Mapping[str, Any] | None = None
+TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION = (
+    "amendment_13_reviewer_key_registry_identity.v1"
+)
+TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION = (
+    "amendment_13_reviewer_key_registry.v1"
+)
+TRUSTED_REVIEWER_REGISTRY_STATUS = (
+    "INDEPENDENTLY_AUTHENTICATED_PRE_CANDIDATE_REVIEWER_KEYS"
+)
+TRUSTED_REVIEWER_REGISTRY_PATH = (
+    "docs/analysis/amendment_13_ratification/"
+    "trusted_reviewer_key_registry_v1.json"
+)
+RATIFY_SIGNATURE_NAMESPACE = "policyengine-amendment13-ratify-v1"
+# Two independent reviewers have not yet enrolled their public keys.  The
+# public ratification-bound builder therefore remains fail-closed.  A later
+# pre-candidate implementation may install one exact historical registry
+# identity here; no final document, record, manifest, or caller value can
+# select or override this trust root.
+TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY: Mapping[str, Any] | None = None
 DRAFT_STATUS = "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
 RATIFICATION_BOUND_TEMPLATE_STATUS = (
     "RATIFIED_LAW_BOUND_NONAUTHORITY_EXECUTION_TEMPLATE"
@@ -632,14 +648,30 @@ A13_SUCCESSOR_KIND_LITERALS = (
     "doc036_aggregate_domain_correction",
 )
 A13_TRUSTED_RECORDING_LITERALS = (
+    TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION,
+    TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
+    TRUSTED_REVIEWER_REGISTRY_STATUS,
+    TRUSTED_REVIEWER_REGISTRY_PATH,
     TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION,
     TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION,
     TRUSTED_RECORDING_MANIFEST_STATUS,
     TRUSTED_RECORDING_MANIFEST_PATH,
     "reviewer_identity",
+    "ssh-ed25519",
+    RATIFY_SIGNATURE_NAMESPACE,
     "git --no-replace-objects",
     "GIT_NO_REPLACE_OBJECTS=1",
 )
+
+A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
+    "27.2": "809c095858c5d3c116077e2478fcae2522c0425cc5407e24a36d440e0df8f3a8",
+    "27.3": "50b5a2e780a4b5b7152390e85e01df5f5397f5263fb2dd3dae43947a96f91ff0",
+    "27.4": "ae7dd9ea588a2242f52d4e66bd3662909eee0f987a1d582db21786837c47253c",
+    "27.5": "f5ee9246c5826b5b65e90149cc2e2c7574eb32f49df472ce528fc0690ab26d46",
+    "27.6": "b8b23250e218093d892c6ad286f05226469d5abf08a1f87d8a0942bbbbef5d08",
+    "27.7": "346e04aa863485cef3783d2028f738c183f6e1210b28c2ed1ced01373c56bc03",
+    "27.8": "fdc5441ef8c2f60bb8334658b4c44bcd52f8355b4681a495e81c4b7aaaa5479e",
+}
 
 A13_COMPARATOR_ROWS = (
     (
@@ -946,6 +978,24 @@ def _parse_identity_projection(section: str) -> dict[str, Any]:
         manifest_status_match is not None,
         "trusted recording manifest primary status drift",
     )
+    registry_match = re.search(
+        r"Its exact canonical schema is\n`([^`]+)`, its exact status is\n"
+        r"`([^`]+)`, and its path is\n`([^`]+)`\.",
+        section,
+    )
+    _require(
+        registry_match is not None,
+        "trusted reviewer registry primary identity drift",
+    )
+    recording_manifest_match = re.search(
+        r"The manifest object's\nschema is `([^`]+)` and its path is\n"
+        r"`([^`]+)`\.",
+        section,
+    )
+    _require(
+        recording_manifest_match is not None,
+        "recording manifest primary schema/path drift",
+    )
     return {
         "amendment12_identity_keys": _code_tokens_between(
             section,
@@ -1003,47 +1053,67 @@ def _parse_identity_projection(section: str) -> dict[str, Any]:
             section,
             governing_match.group(0),
             ".\n`ratification_parents`",
-            12,
+            13,
             "governing Amendment-13 identity keys",
         ),
-        "trusted_manifest_identity_keys": _code_tokens_between(
+        "trusted_registry_identity_keys": _code_tokens_between(
             section,
-            "`trusted_recording_manifest_identity` has exactly ",
+            "`trusted_reviewer_registry_identity` has exactly ",
+            ". Its schema is\n",
+            8,
+            "trusted reviewer registry identity keys",
+        ),
+        "trusted_registry_identity_schema_version": _code_after(
+            section,
+            ". Its schema is\n",
+            "trusted reviewer registry identity schema",
+        ),
+        "trusted_registry_schema_version": registry_match.group(1),
+        "trusted_registry_status": registry_match.group(2),
+        "trusted_registry_path": registry_match.group(3),
+        "trusted_registry_keys": _code_tokens_between(
+            section,
+            "The registry object has\nexactly ",
+            ".\n\nThere are exactly two ordered reviewer rows.",
+            5,
+            "trusted reviewer registry keys",
+        ),
+        "trusted_reviewer_keys": _code_tokens_between(
+            section,
+            "There are exactly two ordered reviewer rows. Each has exactly\n",
+            ". Each key is an\nEd25519",
+            7,
+            "trusted reviewer keys",
+        ),
+        "recording_manifest_identity_keys": _code_tokens_between(
+            section,
+            "`recording_manifest_identity` has exactly ",
             ". Its schema\nis ",
             8,
-            "trusted recording manifest identity keys",
+            "recording manifest identity keys",
         ),
-        "trusted_manifest_identity_schema_version": _code_after(
+        "recording_manifest_identity_schema_version": _code_after(
             section,
             ". Its schema\nis ",
-            "trusted recording manifest identity schema",
+            "recording manifest identity schema",
         ),
-        "trusted_manifest_schema_version": _code_after(
-            section,
-            "contains the exact canonical\n",
-            "trusted recording manifest schema",
-        ),
-        "trusted_manifest_path": _code_after(
-            section,
-            "object at\n",
-            "trusted recording manifest path",
-        ),
+        "trusted_manifest_schema_version": recording_manifest_match.group(1),
+        "trusted_manifest_path": recording_manifest_match.group(2),
         "trusted_manifest_keys": _code_tokens_between(
             section,
             "The manifest object has\nexactly ",
             ". Its exact\nstatus is",
-            11,
-            "trusted recording manifest keys",
+            12,
+            "recording manifest keys",
         ),
         "trusted_manifest_status": manifest_status_match.group(1),
-        "governing_attestation_keys": [
-            *amendment12_attestation_keys,
-            _code_after(
-                section,
-                "plus the mandatory eighth key\n",
-                "governing Amendment-13 reviewer identity key",
-            ),
-        ],
+        "governing_attestation_keys": _code_tokens_between(
+            section,
+            "Each of the exactly two attestation objects has exactly ",
+            ". It has verdict token ",
+            13,
+            "governing Amendment-13 attestation keys",
+        ),
         "record_template": _fenced_lines_after(
             section,
             "terminal LF and no additional line, under this seven-line template:\n\n",
@@ -1853,11 +1923,50 @@ def _parse_comparator_and_literals(section: str) -> dict[str, Any]:
     }
 
 
+def _section_semantic_sha256s(
+    sections: Mapping[str, str],
+) -> dict[str, str]:
+    """Bind every suffix byte, excluding only the separately verified pins."""
+
+    result: dict[str, str] = {}
+    for section_name in (
+        "27.2",
+        "27.3",
+        "27.4",
+        "27.5",
+        "27.6",
+        "27.7",
+        "27.8",
+    ):
+        semantic_text = sections[section_name]
+        if section_name == "27.7":
+            pin_start = (
+                "The prospective nonauthority validator and focused test are "
+                "fixed at\n"
+            )
+            pin_end = "\n\nIt reads the six pinned source seals"
+            before, remainder = semantic_text.split(pin_start, 1)
+            _require(
+                pin_end in remainder,
+                "Amendment-13 normalized implementation-pin boundary drift",
+            )
+            _, after = remainder.split(pin_end, 1)
+            semantic_text = (
+                before
+                + "<SEPARATELY_AUTHENTICATED_IMPLEMENTATION_PINS>"
+                + pin_end
+                + after
+            )
+        result[section_name] = _sha256(semantic_text.encode("utf-8"))
+    return result
+
+
 def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
     """Derive the canonical enforced projection from the governing bytes."""
 
     sections = _a13_sections(raw)
     return {
+        "section_semantic_sha256": _section_semantic_sha256s(sections),
         "identity": _parse_identity_projection(sections["27.2"]),
         "overlays": _parse_overlay_projection(sections["27.3"]),
         "proof": _parse_proof_projection(sections["27.4"]),
@@ -1983,10 +2092,45 @@ def _execution_identity_projection(law: Mapping[str, Any]) -> dict[str, Any]:
             "document_blob_oid",
             "document_byte_size",
             "document_sha256",
-            "trusted_recording_manifest_identity",
+            "trusted_reviewer_registry_identity",
+            "recording_manifest_identity",
             "dual_ratify_attestations",
         ],
-        "trusted_manifest_identity_keys": [
+        "trusted_registry_identity_keys": [
+            "schema_version",
+            "registry_commit",
+            "registry_parents",
+            "registry_path",
+            "registry_mode",
+            "registry_blob_oid",
+            "registry_byte_size",
+            "registry_sha256",
+        ],
+        "trusted_registry_identity_schema_version": (
+            TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION
+        ),
+        "trusted_registry_schema_version": (
+            TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION
+        ),
+        "trusted_registry_status": TRUSTED_REVIEWER_REGISTRY_STATUS,
+        "trusted_registry_path": TRUSTED_REVIEWER_REGISTRY_PATH,
+        "trusted_registry_keys": [
+            "schema_version",
+            "status",
+            "signature_namespace",
+            "ordered_reviewers",
+            "reviewer_domain_sha256",
+        ],
+        "trusted_reviewer_keys": [
+            "reviewer_identity",
+            "record_name",
+            "record_path",
+            "signature_path",
+            "ssh_principal",
+            "ssh_public_key",
+            "ssh_key_fingerprint",
+        ],
+        "recording_manifest_identity_keys": [
             "schema_version",
             "manifest_commit",
             "manifest_parents",
@@ -1996,7 +2140,7 @@ def _execution_identity_projection(law: Mapping[str, Any]) -> dict[str, Any]:
             "manifest_byte_size",
             "manifest_sha256",
         ],
-        "trusted_manifest_identity_schema_version": (
+        "recording_manifest_identity_schema_version": (
             TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION
         ),
         "trusted_manifest_schema_version": (
@@ -2012,14 +2156,26 @@ def _execution_identity_projection(law: Mapping[str, Any]) -> dict[str, Any]:
             "document_blob_oid",
             "document_byte_size",
             "document_sha256",
+            "trusted_reviewer_registry_identity",
             "ordered_reviewer_identities",
             "ordered_ratify_attestations",
             "attestation_domain_sha256",
         ],
         "trusted_manifest_status": TRUSTED_RECORDING_MANIFEST_STATUS,
         "governing_attestation_keys": [
-            *list(amendment12_identity["dual_ratify_attestations"][0]),
             "reviewer_identity",
+            "record_name",
+            "record_path",
+            "signature_path",
+            "raw_byte_size",
+            "raw_sha256",
+            "signature_byte_size",
+            "signature_sha256",
+            "ssh_key_fingerprint",
+            "verdict_token",
+            "attested_candidate_head",
+            "attested_document_byte_size",
+            "attested_document_sha256",
         ],
         "record_template": [
             "# RATIFY",
@@ -2298,6 +2454,7 @@ def _canonical_draft_document_projection() -> dict[str, Any]:
         "prospective successor-era Python pin drift",
     )
     return {
+        "section_semantic_sha256": dict(A13_SECTION_SEMANTIC_SHA256),
         "identity": _execution_identity_projection(law),
         "overlays": _execution_overlay_projection(law),
         "proof": _execution_proof_projection(law),
@@ -2564,49 +2721,239 @@ def _is_lower_hex(value: Any, length: int) -> bool:
     )
 
 
-def _load_trusted_recording_manifest() -> (
-    tuple[dict[str, Any], dict[str, Any]]
-):
-    """Load the module-pinned manifest; callers cannot select the trust root."""
-
-    _require(
-        TRUSTED_A13_RECORDING_MANIFEST_IDENTITY is not None,
-        "trusted Amendment-13 recording manifest is unavailable",
-    )
-    manifest_identity = copy.deepcopy(
-        dict(TRUSTED_A13_RECORDING_MANIFEST_IDENTITY)
-    )
-    raw = _git(
-        "show",
-        (
-            f"{manifest_identity['manifest_commit']}:"
-            f"{manifest_identity['manifest_path']}"
-        ),
-    )
-    _require(isinstance(raw, bytes), "trusted manifest read was not raw bytes")
+def _load_canonical_git_json(
+    commit: str,
+    path: str,
+    label: str,
+) -> dict[str, Any]:
+    raw = _git("show", f"{commit}:{path}")
+    _require(isinstance(raw, bytes), f"{label} read was not raw bytes")
     try:
-        manifest = a12.strict_json_loads(
-            raw,
-            "trusted Amendment-13 recording manifest",
-        )
+        value = a12.strict_json_loads(raw, label)
     except a12.BuildError as error:
-        raise LawError(
-            "trusted Amendment-13 recording manifest is invalid"
-        ) from error
+        raise LawError(f"{label} is invalid") from error
     _require(
-        isinstance(manifest, dict) and raw == canonical_json_bytes(manifest),
-        "trusted Amendment-13 recording manifest is not canonical",
+        isinstance(value, dict) and raw == canonical_json_bytes(value),
+        f"{label} is not canonical",
     )
-    return manifest_identity, manifest
+    return value
 
 
-def _validate_trusted_recording_manifest(
-    manifest_identity: Mapping[str, Any],
-    manifest: Mapping[str, Any],
+def _load_trusted_reviewer_registry() -> tuple[dict[str, Any], dict[str, Any]]:
+    """Load the pre-candidate reviewer-key root; callers cannot select it."""
+
+    _require(
+        TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY is not None,
+        "trusted Amendment-13 reviewer registry is unavailable",
+    )
+    identity = copy.deepcopy(dict(TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY))
+    registry = _load_canonical_git_json(
+        identity["registry_commit"],
+        identity["registry_path"],
+        "trusted Amendment-13 reviewer registry",
+    )
+    return identity, registry
+
+
+def _ssh_public_key_fingerprint(public_key: Any) -> str:
+    _require(
+        isinstance(public_key, str)
+        and "\r" not in public_key
+        and "\n" not in public_key,
+        "trusted reviewer SSH public key is malformed",
+    )
+    parts = public_key.split()
+    _require(
+        len(parts) >= 2 and parts[0] == "ssh-ed25519",
+        "trusted reviewer key is not Ed25519",
+    )
+    try:
+        raw_key = base64.b64decode(parts[1], validate=True)
+    except (ValueError, TypeError) as error:
+        raise LawError(
+            "trusted reviewer SSH public key is malformed"
+        ) from error
+    digest = base64.b64encode(hashlib.sha256(raw_key).digest()).decode("ascii")
+    return f"SHA256:{digest.rstrip('=')}"
+
+
+def _validate_trusted_reviewer_registry(
+    registry_identity: Mapping[str, Any],
+    registry: Mapping[str, Any],
     *,
     verify_git: bool,
 ) -> None:
-    """Validate the external trust root and its two exact reviewer records."""
+    """Authenticate the two reviewer identities and their signing keys."""
+
+    _require_exact_keys(
+        registry_identity,
+        {
+            "schema_version",
+            "registry_commit",
+            "registry_parents",
+            "registry_path",
+            "registry_mode",
+            "registry_blob_oid",
+            "registry_byte_size",
+            "registry_sha256",
+        },
+        "trusted Amendment-13 reviewer registry identity",
+    )
+    _require(
+        registry_identity["schema_version"]
+        == TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION
+        and _is_lower_hex(registry_identity["registry_commit"], 40)
+        and isinstance(registry_identity["registry_parents"], list)
+        and len(registry_identity["registry_parents"]) == 1
+        and _is_lower_hex(registry_identity["registry_parents"][0], 40)
+        and registry_identity["registry_path"]
+        == TRUSTED_REVIEWER_REGISTRY_PATH
+        and registry_identity["registry_mode"] == DESIGN_MODE
+        and _is_lower_hex(registry_identity["registry_blob_oid"], 40)
+        and isinstance(registry_identity["registry_byte_size"], int)
+        and not isinstance(registry_identity["registry_byte_size"], bool)
+        and registry_identity["registry_byte_size"] > 0
+        and _is_lower_hex(registry_identity["registry_sha256"], 64),
+        "trusted Amendment-13 reviewer registry identity drift",
+    )
+    _require_exact_keys(
+        registry,
+        {
+            "schema_version",
+            "status",
+            "signature_namespace",
+            "ordered_reviewers",
+            "reviewer_domain_sha256",
+        },
+        "trusted Amendment-13 reviewer registry",
+    )
+    reviewers = registry["ordered_reviewers"]
+    _require(
+        registry["schema_version"] == TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION
+        and registry["status"] == TRUSTED_REVIEWER_REGISTRY_STATUS
+        and registry["signature_namespace"] == RATIFY_SIGNATURE_NAMESPACE
+        and isinstance(reviewers, list)
+        and len(reviewers) == 2
+        and registry["reviewer_domain_sha256"] == _domain_sha(reviewers),
+        "trusted Amendment-13 reviewer registry drift",
+    )
+    for reviewer in reviewers:
+        _require_exact_keys(
+            reviewer,
+            {
+                "reviewer_identity",
+                "record_name",
+                "record_path",
+                "signature_path",
+                "ssh_principal",
+                "ssh_public_key",
+                "ssh_key_fingerprint",
+            },
+            "trusted Amendment-13 reviewer",
+        )
+        for key in (
+            "reviewer_identity",
+            "record_name",
+            "record_path",
+            "signature_path",
+            "ssh_principal",
+        ):
+            _require(
+                isinstance(reviewer[key], str)
+                and bool(reviewer[key])
+                and "\r" not in reviewer[key]
+                and "\n" not in reviewer[key],
+                f"trusted reviewer {key} is malformed",
+            )
+        _require(
+            reviewer["record_path"]
+            == (
+                "docs/analysis/amendment_13_ratification/records/"
+                f"{reviewer['record_name']}"
+            )
+            and reviewer["signature_path"] == f"{reviewer['record_path']}.sig"
+            and reviewer["ssh_key_fingerprint"]
+            == _ssh_public_key_fingerprint(reviewer["ssh_public_key"]),
+            "trusted reviewer path or SSH-key identity drift",
+        )
+    for key in (
+        "reviewer_identity",
+        "record_name",
+        "record_path",
+        "signature_path",
+        "ssh_principal",
+        "ssh_public_key",
+        "ssh_key_fingerprint",
+    ):
+        _require(
+            len({row[key] for row in reviewers}) == 2,
+            f"trusted reviewer {key} values are not distinct",
+        )
+    if not verify_git:
+        return
+    commit = registry_identity["registry_commit"]
+    _require_exact_commit_object(
+        commit, "trusted Amendment-13 reviewer registry commit"
+    )
+    parent_line = str(
+        _git("rev-list", "--parents", "-n", "1", commit, text=True)
+    ).strip()
+    _require(
+        parent_line.split()
+        == [commit, registry_identity["registry_parents"][0]],
+        "trusted Amendment-13 reviewer registry commit is not exact",
+    )
+    tree_line = str(
+        _git(
+            "ls-tree",
+            commit,
+            "--",
+            registry_identity["registry_path"],
+            text=True,
+        )
+    ).strip()
+    _require(
+        tree_line
+        == (
+            f"{registry_identity['registry_mode']} blob "
+            f"{registry_identity['registry_blob_oid']}\t"
+            f"{registry_identity['registry_path']}"
+        ),
+        "trusted Amendment-13 reviewer registry tree entry drift",
+    )
+    raw = _git("show", f"{commit}:{registry_identity['registry_path']}")
+    _require(
+        isinstance(raw, bytes)
+        and raw == canonical_json_bytes(registry)
+        and len(raw) == registry_identity["registry_byte_size"]
+        and _sha256(raw) == registry_identity["registry_sha256"]
+        and hashlib.sha1(
+            b"blob " + str(len(raw)).encode() + b"\0" + raw
+        ).hexdigest()
+        == registry_identity["registry_blob_oid"],
+        "trusted Amendment-13 reviewer registry bytes drift",
+    )
+
+
+def _load_recording_manifest(
+    manifest_identity: Mapping[str, Any],
+) -> dict[str, Any]:
+    return _load_canonical_git_json(
+        manifest_identity["manifest_commit"],
+        manifest_identity["manifest_path"],
+        "Amendment-13 recording manifest",
+    )
+
+
+def _validate_recording_manifest(
+    manifest_identity: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    registry_identity: Mapping[str, Any],
+    registry: Mapping[str, Any],
+    *,
+    verify_git: bool,
+) -> None:
+    """Validate the immutable recording object against the reviewer root."""
 
     _require_exact_keys(
         manifest_identity,
@@ -2620,7 +2967,7 @@ def _validate_trusted_recording_manifest(
             "manifest_byte_size",
             "manifest_sha256",
         },
-        "trusted Amendment-13 recording manifest identity",
+        "Amendment-13 recording manifest identity",
     )
     _require(
         manifest_identity["schema_version"]
@@ -2637,7 +2984,7 @@ def _validate_trusted_recording_manifest(
         and not isinstance(manifest_identity["manifest_byte_size"], bool)
         and manifest_identity["manifest_byte_size"] > 0
         and _is_lower_hex(manifest_identity["manifest_sha256"], 64),
-        "trusted Amendment-13 recording manifest identity drift",
+        "Amendment-13 recording manifest identity drift",
     )
     _require_exact_keys(
         manifest,
@@ -2650,11 +2997,12 @@ def _validate_trusted_recording_manifest(
             "document_blob_oid",
             "document_byte_size",
             "document_sha256",
+            "trusted_reviewer_registry_identity",
             "ordered_reviewer_identities",
             "ordered_ratify_attestations",
             "attestation_domain_sha256",
         },
-        "trusted Amendment-13 recording manifest",
+        "Amendment-13 recording manifest",
     )
     attestations = manifest["ordered_ratify_attestations"]
     reviewers = manifest["ordered_reviewer_identities"]
@@ -2669,6 +3017,7 @@ def _validate_trusted_recording_manifest(
         and not isinstance(manifest["document_byte_size"], bool)
         and manifest["document_byte_size"] > 0
         and _is_lower_hex(manifest["document_sha256"], 64)
+        and manifest["trusted_reviewer_registry_identity"] == registry_identity
         and isinstance(reviewers, list)
         and len(reviewers) == 2
         and all(
@@ -2682,15 +3031,17 @@ def _validate_trusted_recording_manifest(
         and isinstance(attestations, list)
         and len(attestations) == 2
         and [row.get("reviewer_identity") for row in attestations] == reviewers
+        and reviewers
+        == [row["reviewer_identity"] for row in registry["ordered_reviewers"]]
         and manifest["attestation_domain_sha256"] == _domain_sha(attestations),
-        "trusted Amendment-13 recording manifest drift",
+        "Amendment-13 recording manifest drift",
     )
     if not verify_git:
         return
     commit = manifest_identity["manifest_commit"]
     _require_exact_commit_object(
         commit,
-        "trusted Amendment-13 recording manifest commit",
+        "Amendment-13 recording manifest commit",
     )
     parent_line = str(
         _git("rev-list", "--parents", "-n", "1", commit, text=True)
@@ -2698,7 +3049,7 @@ def _validate_trusted_recording_manifest(
     _require(
         parent_line.split()
         == [commit, manifest_identity["manifest_parents"][0]],
-        "trusted Amendment-13 recording manifest commit is not exact",
+        "Amendment-13 recording manifest commit is not exact",
     )
     tree_line = str(
         _git(
@@ -2716,7 +3067,7 @@ def _validate_trusted_recording_manifest(
             f"{manifest_identity['manifest_blob_oid']}\t"
             f"{manifest_identity['manifest_path']}"
         ),
-        "trusted Amendment-13 recording manifest tree entry drift",
+        "Amendment-13 recording manifest tree entry drift",
     )
     raw = _git(
         "show",
@@ -2731,33 +3082,99 @@ def _validate_trusted_recording_manifest(
             b"blob " + str(len(raw)).encode() + b"\0" + raw
         ).hexdigest()
         == manifest_identity["manifest_blob_oid"],
-        "trusted Amendment-13 recording manifest bytes drift",
+        "Amendment-13 recording manifest bytes drift",
+    )
+
+
+def _verify_ssh_signature(
+    raw_record: bytes,
+    raw_signature: bytes,
+    reviewer: Mapping[str, Any],
+) -> None:
+    """Verify one record against exactly one pre-enrolled Ed25519 key."""
+
+    _require(
+        isinstance(raw_record, bytes)
+        and isinstance(raw_signature, bytes)
+        and raw_signature.startswith(b"-----BEGIN SSH SIGNATURE-----\n")
+        and raw_signature.endswith(b"-----END SSH SIGNATURE-----\n"),
+        "governing Amendment-13 RATIFY SSH signature bytes are malformed",
+    )
+    with tempfile.TemporaryDirectory(prefix="a13-ssh-verify-") as temporary:
+        temporary_path = Path(temporary)
+        allowed_signers_path = temporary_path / "allowed_signers"
+        signature_path = temporary_path / "record.sig"
+        allowed_signers_path.write_text(
+            f"{reviewer['ssh_principal']} {reviewer['ssh_public_key']}\n",
+            encoding="utf-8",
+        )
+        signature_path.write_bytes(raw_signature)
+        environment = {
+            key: value
+            for key, value in os.environ.items()
+            if not key.startswith("GIT_")
+        }
+        result = subprocess.run(
+            [
+                "/usr/bin/ssh-keygen",
+                "-Y",
+                "verify",
+                "-f",
+                str(allowed_signers_path),
+                "-I",
+                reviewer["ssh_principal"],
+                "-n",
+                RATIFY_SIGNATURE_NAMESPACE,
+                "-s",
+                str(signature_path),
+            ],
+            input=raw_record,
+            check=False,
+            capture_output=True,
+            env=environment,
+        )
+    _require(
+        result.returncode == 0,
+        "governing Amendment-13 RATIFY reviewer signature is not authentic",
     )
 
 
 def validate_governing_amendment13_ratification_identity(
     identity: Mapping[str, Any],
     attestation_record_bytes: Mapping[str, bytes],
+    attestation_signature_bytes: Mapping[str, bytes],
 ) -> None:
     """Validate a governing identity, including its exact Git objects."""
 
-    manifest_identity, manifest = _load_trusted_recording_manifest()
+    registry_identity, registry = _load_trusted_reviewer_registry()
+    manifest_identity = identity.get("recording_manifest_identity")
+    _require(
+        isinstance(manifest_identity, Mapping),
+        "governing Amendment-13 recording manifest identity is absent",
+    )
+    manifest = _load_recording_manifest(manifest_identity)
     _validate_governing_amendment13_ratification_identity(
         identity,
         attestation_record_bytes,
+        attestation_signature_bytes,
         verify_git=True,
-        trusted_recording_manifest_identity=manifest_identity,
-        trusted_recording_manifest=manifest,
+        trusted_reviewer_registry_identity=registry_identity,
+        trusted_reviewer_registry=registry,
+        recording_manifest_identity=manifest_identity,
+        recording_manifest=manifest,
     )
 
 
 def _validate_governing_amendment13_ratification_identity(
     identity: Mapping[str, Any],
     attestation_record_bytes: Mapping[str, bytes],
+    attestation_signature_bytes: Mapping[str, bytes],
     *,
     verify_git: bool,
-    trusted_recording_manifest_identity: Mapping[str, Any],
-    trusted_recording_manifest: Mapping[str, Any],
+    trusted_reviewer_registry_identity: Mapping[str, Any],
+    trusted_reviewer_registry: Mapping[str, Any],
+    recording_manifest_identity: Mapping[str, Any],
+    recording_manifest: Mapping[str, Any],
 ) -> None:
     """Internal identity validator with a test-only synthetic Git path."""
 
@@ -2774,7 +3191,8 @@ def _validate_governing_amendment13_ratification_identity(
             "document_blob_oid",
             "document_byte_size",
             "document_sha256",
-            "trusted_recording_manifest_identity",
+            "trusted_reviewer_registry_identity",
+            "recording_manifest_identity",
             "dual_ratify_attestations",
         },
         "governing Amendment-13 ratification identity",
@@ -2808,15 +3226,24 @@ def _validate_governing_amendment13_ratification_identity(
         "governing Amendment-13 document identity is malformed",
     )
     attestations = identity["dual_ratify_attestations"]
-    _validate_trusted_recording_manifest(
-        trusted_recording_manifest_identity,
-        trusted_recording_manifest,
+    _validate_trusted_reviewer_registry(
+        trusted_reviewer_registry_identity,
+        trusted_reviewer_registry,
+        verify_git=verify_git,
+    )
+    _validate_recording_manifest(
+        recording_manifest_identity,
+        recording_manifest,
+        trusted_reviewer_registry_identity,
+        trusted_reviewer_registry,
         verify_git=verify_git,
     )
     _require(
-        identity["trusted_recording_manifest_identity"]
-        == trusted_recording_manifest_identity,
-        "governing Amendment-13 trusted recording manifest drift",
+        identity["trusted_reviewer_registry_identity"]
+        == trusted_reviewer_registry_identity
+        and identity["recording_manifest_identity"]
+        == recording_manifest_identity,
+        "governing Amendment-13 reviewer or recording identity drift",
     )
     _require(
         isinstance(attestations, list) and len(attestations) == 2,
@@ -2824,14 +3251,20 @@ def _validate_governing_amendment13_ratification_identity(
     )
     record_names: list[str] = []
     candidate_heads: list[str] = []
-    for attestation in attestations:
+    registry_reviewers = trusted_reviewer_registry["ordered_reviewers"]
+    for attestation, reviewer in zip(attestations, registry_reviewers):
         _require_exact_keys(
             attestation,
             {
                 "reviewer_identity",
                 "record_name",
+                "record_path",
+                "signature_path",
                 "raw_byte_size",
                 "raw_sha256",
+                "signature_byte_size",
+                "signature_sha256",
+                "ssh_key_fingerprint",
                 "verdict_token",
                 "attested_candidate_head",
                 "attested_document_byte_size",
@@ -2850,10 +3283,21 @@ def _validate_governing_amendment13_ratification_identity(
             and bool(attestation["record_name"])
             and "\r" not in attestation["record_name"]
             and "\n" not in attestation["record_name"]
+            and attestation["reviewer_identity"]
+            == reviewer["reviewer_identity"]
+            and attestation["record_name"] == reviewer["record_name"]
+            and attestation["record_path"] == reviewer["record_path"]
+            and attestation["signature_path"] == reviewer["signature_path"]
+            and attestation["ssh_key_fingerprint"]
+            == reviewer["ssh_key_fingerprint"]
             and isinstance(attestation["raw_byte_size"], int)
             and not isinstance(attestation["raw_byte_size"], bool)
             and attestation["raw_byte_size"] > 0
             and _is_lower_hex(attestation["raw_sha256"], 64)
+            and isinstance(attestation["signature_byte_size"], int)
+            and not isinstance(attestation["signature_byte_size"], bool)
+            and attestation["signature_byte_size"] > 0
+            and _is_lower_hex(attestation["signature_sha256"], 64)
             and attestation["verdict_token"] == "RATIFY"
             and _is_lower_hex(attestation["attested_candidate_head"], 40)
             and attestation["attested_document_byte_size"]
@@ -2862,12 +3306,6 @@ def _validate_governing_amendment13_ratification_identity(
             == identity["document_sha256"],
             "governing Amendment-13 RATIFY attestation drift",
         )
-    try:
-        record_name_bytes = [name.encode("utf-8") for name in record_names]
-    except UnicodeEncodeError as error:
-        raise LawError(
-            "governing Amendment-13 RATIFY record name is not UTF-8"
-        ) from error
     _require(
         len(set(record_names)) == 2
         and len(set(candidate_heads)) == 1
@@ -2876,34 +3314,32 @@ def _validate_governing_amendment13_ratification_identity(
         "governing Amendment-13 RATIFY records are not distinct and conjoined",
     )
     _require(
-        record_name_bytes == sorted(record_name_bytes),
-        "governing Amendment-13 RATIFY records are not in record-name byte order",
-    )
-    _require(
-        attestations
-        == trusted_recording_manifest["ordered_ratify_attestations"]
+        attestations == recording_manifest["ordered_ratify_attestations"]
         and [row["reviewer_identity"] for row in attestations]
-        == trusted_recording_manifest["ordered_reviewer_identities"]
-        and candidate_heads[0]
-        == trusted_recording_manifest["attested_candidate_head"]
-        and identity["document_path"]
-        == trusted_recording_manifest["document_path"]
-        and identity["document_mode"]
-        == trusted_recording_manifest["document_mode"]
+        == recording_manifest["ordered_reviewer_identities"]
+        and candidate_heads[0] == recording_manifest["attested_candidate_head"]
+        and identity["document_path"] == recording_manifest["document_path"]
+        and identity["document_mode"] == recording_manifest["document_mode"]
         and identity["document_blob_oid"]
-        == trusted_recording_manifest["document_blob_oid"]
+        == recording_manifest["document_blob_oid"]
         and identity["document_byte_size"]
-        == trusted_recording_manifest["document_byte_size"]
+        == recording_manifest["document_byte_size"]
         and identity["document_sha256"]
-        == trusted_recording_manifest["document_sha256"],
-        "governing Amendment-13 dual-RATIFY trusted manifest drift",
+        == recording_manifest["document_sha256"],
+        "governing Amendment-13 dual-RATIFY recording manifest drift",
     )
     _require(
-        set(attestation_record_bytes) == set(record_names),
+        set(attestation_record_bytes)
+        == {row["record_path"] for row in attestations}
+        and set(attestation_signature_bytes)
+        == {row["signature_path"] for row in attestations},
         "governing Amendment-13 RATIFY raw-record domain drift",
     )
-    for attestation in attestations:
-        raw_record = attestation_record_bytes[attestation["record_name"]]
+    for attestation, reviewer in zip(attestations, registry_reviewers):
+        raw_record = attestation_record_bytes[attestation["record_path"]]
+        raw_signature = attestation_signature_bytes[
+            attestation["signature_path"]
+        ]
         expected_record = (
             "# RATIFY\n"
             "reviewer_identity: "
@@ -2920,9 +3356,13 @@ def _validate_governing_amendment13_ratification_identity(
             isinstance(raw_record, bytes)
             and raw_record == expected_record
             and len(raw_record) == attestation["raw_byte_size"]
-            and _sha256(raw_record) == attestation["raw_sha256"],
+            and _sha256(raw_record) == attestation["raw_sha256"]
+            and isinstance(raw_signature, bytes)
+            and len(raw_signature) == attestation["signature_byte_size"]
+            and _sha256(raw_signature) == attestation["signature_sha256"],
             "governing Amendment-13 RATIFY raw bytes do not attest identity",
         )
+        _verify_ssh_signature(raw_record, raw_signature, reviewer)
     if not verify_git:
         return
     _require(
@@ -2940,9 +3380,44 @@ def _validate_governing_amendment13_ratification_identity(
         _git("rev-list", "--parents", "-n", "1", commit, text=True)
     ).strip()
     _require(
-        parents[0] == trusted_recording_manifest_identity["manifest_commit"]
+        parents[0] == recording_manifest_identity["manifest_commit"]
         and parent_line.split() == [commit, parents[0]],
         "governing Amendment-13 ratification commit is not exact",
+    )
+    registry_commit = trusted_reviewer_registry_identity["registry_commit"]
+    manifest_commit = recording_manifest_identity["manifest_commit"]
+    ceremony_base = recording_manifest_identity["manifest_parents"][0]
+    _require(
+        registry_commit
+        not in {ceremony_base, candidate_heads[0], manifest_commit}
+        and manifest_commit != candidate_heads[0],
+        "reviewer registry, candidate, and manifest are not distinct commits",
+    )
+    _git("merge-base", "--is-ancestor", registry_commit, ceremony_base)
+    candidate_parent_line = str(
+        _git(
+            "rev-list",
+            "--parents",
+            "-n",
+            "1",
+            candidate_heads[0],
+            text=True,
+        )
+    ).strip()
+    candidate_changed_paths = str(
+        _git(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            candidate_heads[0],
+            text=True,
+        )
+    ).splitlines()
+    _require(
+        candidate_parent_line.split() == [candidate_heads[0], ceremony_base]
+        and candidate_changed_paths == [DESIGN_PATH],
+        "Amendment-13 candidate and manifest are not sibling ceremony commits",
     )
     changed_paths = str(
         _git(
@@ -2957,6 +3432,40 @@ def _validate_governing_amendment13_ratification_identity(
     _require(
         changed_paths == [DESIGN_PATH],
         "governing Amendment-13 recording act is not document-only",
+    )
+    manifest_changed_paths = str(
+        _git(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            manifest_commit,
+            text=True,
+        )
+    ).splitlines()
+    expected_manifest_paths = sorted(
+        [
+            recording_manifest_identity["manifest_path"],
+            *[row["record_path"] for row in attestations],
+            *[row["signature_path"] for row in attestations],
+        ]
+    )
+    _require(
+        manifest_changed_paths == expected_manifest_paths,
+        "Amendment-13 manifest commit changed-path domain drift",
+    )
+    candidate_recording_diff = str(
+        _git(
+            "diff",
+            "--name-only",
+            candidate_heads[0],
+            commit,
+            text=True,
+        )
+    ).splitlines()
+    _require(
+        candidate_recording_diff == expected_manifest_paths,
+        "Amendment-13 candidate/recording trees differ outside ceremony paths",
     )
     tree_line = str(
         _git("ls-tree", commit, "--", DESIGN_PATH, text=True)
@@ -2974,19 +3483,29 @@ def _validate_governing_amendment13_ratification_identity(
             "ls-tree",
             commit,
             "--",
-            trusted_recording_manifest_identity["manifest_path"],
+            recording_manifest_identity["manifest_path"],
             text=True,
         )
     ).strip()
     _require(
         manifest_tree_line
         == (
-            f"{trusted_recording_manifest_identity['manifest_mode']} blob "
-            f"{trusted_recording_manifest_identity['manifest_blob_oid']}\t"
-            f"{trusted_recording_manifest_identity['manifest_path']}"
+            f"{recording_manifest_identity['manifest_mode']} blob "
+            f"{recording_manifest_identity['manifest_blob_oid']}\t"
+            f"{recording_manifest_identity['manifest_path']}"
         ),
-        "governing Amendment-13 commit does not retain trusted manifest",
+        "governing Amendment-13 commit does not retain recording manifest",
     )
+    for attestation in attestations:
+        record_path = attestation["record_path"]
+        signature_path = attestation["signature_path"]
+        git_record = _git("show", f"{manifest_commit}:{record_path}")
+        git_signature = _git("show", f"{manifest_commit}:{signature_path}")
+        _require(
+            git_record == attestation_record_bytes[record_path]
+            and git_signature == attestation_signature_bytes[signature_path],
+            "Amendment-13 committed RATIFY record/signature bytes drift",
+        )
     candidate_tree_line = str(
         _git("ls-tree", candidate_heads[0], "--", DESIGN_PATH, text=True)
     ).strip()
@@ -3491,12 +4010,14 @@ def build_execution_law() -> dict[str, Any]:
 def build_ratification_bound_execution_template(
     governing_amendment13_ratification_identity: Mapping[str, Any],
     governing_attestation_record_bytes: Mapping[str, bytes],
+    governing_attestation_signature_bytes: Mapping[str, bytes],
 ) -> dict[str, Any]:
     """Bind the nonauthority execution template to a ratified A13 identity."""
 
     validate_governing_amendment13_ratification_identity(
         governing_amendment13_ratification_identity,
         governing_attestation_record_bytes,
+        governing_attestation_signature_bytes,
     )
     law = _construct_execution_law(
         governing_amendment13_ratification_identity=(
@@ -3508,6 +4029,9 @@ def build_ratification_bound_execution_template(
         law,
         verify_git=True,
         governing_attestation_record_bytes=governing_attestation_record_bytes,
+        governing_attestation_signature_bytes=(
+            governing_attestation_signature_bytes
+        ),
     )
     return law
 
@@ -3515,19 +4039,25 @@ def build_ratification_bound_execution_template(
 def _build_ratification_bound_execution_template_for_test(
     governing_amendment13_ratification_identity: Mapping[str, Any],
     governing_attestation_record_bytes: Mapping[str, bytes],
-    trusted_recording_manifest_identity: Mapping[str, Any],
-    trusted_recording_manifest: Mapping[str, Any],
+    governing_attestation_signature_bytes: Mapping[str, bytes],
+    trusted_reviewer_registry_identity: Mapping[str, Any],
+    trusted_reviewer_registry: Mapping[str, Any],
+    recording_manifest_identity: Mapping[str, Any],
+    recording_manifest: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Exercise bound-template semantics without pretending synthetic Git exists."""
 
     _validate_governing_amendment13_ratification_identity(
         governing_amendment13_ratification_identity,
         governing_attestation_record_bytes,
+        governing_attestation_signature_bytes,
         verify_git=False,
-        trusted_recording_manifest_identity=(
-            trusted_recording_manifest_identity
+        trusted_reviewer_registry_identity=(
+            trusted_reviewer_registry_identity
         ),
-        trusted_recording_manifest=trusted_recording_manifest,
+        trusted_reviewer_registry=trusted_reviewer_registry,
+        recording_manifest_identity=recording_manifest_identity,
+        recording_manifest=recording_manifest,
     )
     law = _construct_execution_law(
         governing_amendment13_ratification_identity=(
@@ -3539,10 +4069,15 @@ def _build_ratification_bound_execution_template_for_test(
         law,
         verify_git=False,
         governing_attestation_record_bytes=governing_attestation_record_bytes,
-        trusted_recording_manifest_identity=(
-            trusted_recording_manifest_identity
+        governing_attestation_signature_bytes=(
+            governing_attestation_signature_bytes
         ),
-        trusted_recording_manifest=trusted_recording_manifest,
+        trusted_reviewer_registry_identity=(
+            trusted_reviewer_registry_identity
+        ),
+        trusted_reviewer_registry=trusted_reviewer_registry,
+        recording_manifest_identity=recording_manifest_identity,
+        recording_manifest=recording_manifest,
     )
     return law
 
@@ -4003,6 +4538,7 @@ def validate_execution_law(
     *,
     verify_git: bool = True,
     governing_attestation_record_bytes: Mapping[str, bytes] | None = None,
+    governing_attestation_signature_bytes: Mapping[str, bytes] | None = None,
 ) -> None:
     """Validate a draft fixture or a Git-authenticated ratification-bound one."""
 
@@ -4015,6 +4551,9 @@ def validate_execution_law(
         law,
         verify_git=verify_git,
         governing_attestation_record_bytes=governing_attestation_record_bytes,
+        governing_attestation_signature_bytes=(
+            governing_attestation_signature_bytes
+        ),
     )
 
 
@@ -4023,8 +4562,11 @@ def _validate_execution_law(
     *,
     verify_git: bool = True,
     governing_attestation_record_bytes: Mapping[str, bytes] | None = None,
-    trusted_recording_manifest_identity: Mapping[str, Any] | None = None,
-    trusted_recording_manifest: Mapping[str, Any] | None = None,
+    governing_attestation_signature_bytes: Mapping[str, bytes] | None = None,
+    trusted_reviewer_registry_identity: Mapping[str, Any] | None = None,
+    trusted_reviewer_registry: Mapping[str, Any] | None = None,
+    recording_manifest_identity: Mapping[str, Any] | None = None,
+    recording_manifest: Mapping[str, Any] | None = None,
 ) -> None:
     """Internal validator with a test-only synthetic-identity path."""
 
@@ -4073,20 +4615,23 @@ def _validate_execution_law(
     )
     if is_candidate_fixture:
         _require(
-            governing_attestation_record_bytes is None,
-            "unratified fixture received governing attestation records",
+            governing_attestation_record_bytes is None
+            and governing_attestation_signature_bytes is None,
+            "unratified fixture received governing attestation material",
         )
         expected_status = DRAFT_STATUS
         governing_document_raw = (ROOT / DESIGN_PATH).read_bytes()
     else:
         _require(
-            governing_attestation_record_bytes is not None,
-            "ratification-bound template lacks governing attestation records",
+            governing_attestation_record_bytes is not None
+            and governing_attestation_signature_bytes is not None,
+            "ratification-bound template lacks signed governing attestations",
         )
         if verify_git:
             validate_governing_amendment13_ratification_identity(
                 governing_identity,
                 governing_attestation_record_bytes,
+                governing_attestation_signature_bytes,
             )
             governing_document_raw = _git(
                 "show",
@@ -4097,18 +4642,23 @@ def _validate_execution_law(
             )
         else:
             _require(
-                trusted_recording_manifest_identity is not None
-                and trusted_recording_manifest is not None,
-                "test-only ratification validation lacks trusted manifest",
+                trusted_reviewer_registry_identity is not None
+                and trusted_reviewer_registry is not None
+                and recording_manifest_identity is not None
+                and recording_manifest is not None,
+                "test-only ratification validation lacks trust material",
             )
             _validate_governing_amendment13_ratification_identity(
                 governing_identity,
                 governing_attestation_record_bytes,
+                governing_attestation_signature_bytes,
                 verify_git=False,
-                trusted_recording_manifest_identity=(
-                    trusted_recording_manifest_identity
+                trusted_reviewer_registry_identity=(
+                    trusted_reviewer_registry_identity
                 ),
-                trusted_recording_manifest=trusted_recording_manifest,
+                trusted_reviewer_registry=trusted_reviewer_registry,
+                recording_manifest_identity=recording_manifest_identity,
+                recording_manifest=recording_manifest,
             )
             governing_document_raw = (ROOT / DESIGN_PATH).read_bytes()
         _require(
@@ -5125,37 +5675,120 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
     return tuple(rejected)
 
 
-def _test_trusted_material(
+def _generate_test_reviewer_keys(
+    directory: Path,
+) -> tuple[list[dict[str, Any]], list[Path]]:
+    directory.mkdir(parents=True, exist_ok=True)
+    reviewers: list[dict[str, Any]] = []
+    key_paths: list[Path] = []
+    for index in (1, 2):
+        reviewer_identity = f"independent-enforcement-reviewer-{index}"
+        name = f"amendment-13-enforcement-ratify-{index}.md"
+        record_path = "docs/analysis/amendment_13_ratification/records/" + name
+        signature_path = f"{record_path}.sig"
+        principal = f"a13-independent-reviewer-{index}"
+        key_path = directory / f"reviewer-{index}"
+        key_result = subprocess.run(
+            [
+                "/usr/bin/ssh-keygen",
+                "-q",
+                "-t",
+                "ed25519",
+                "-N",
+                "",
+                "-f",
+                str(key_path),
+            ],
+            check=False,
+            capture_output=True,
+        )
+        _require(
+            key_result.returncode == 0,
+            "synthetic reviewer key generation failed",
+        )
+        public_key = (
+            key_path.with_suffix(".pub").read_text(encoding="utf-8").strip()
+        )
+        reviewers.append(
+            {
+                "reviewer_identity": reviewer_identity,
+                "record_name": name,
+                "record_path": record_path,
+                "signature_path": signature_path,
+                "ssh_principal": principal,
+                "ssh_public_key": public_key,
+                "ssh_key_fingerprint": _ssh_public_key_fingerprint(public_key),
+            }
+        )
+        key_paths.append(key_path)
+    return reviewers, key_paths
+
+
+def _build_test_signed_material(
     raw_document: bytes,
     candidate_head: str,
-) -> tuple[list[dict[str, Any]], dict[str, bytes], dict[str, Any]]:
-    """Build internally trusted synthetic records for enforcement mutations."""
-
+    reviewers: Sequence[Mapping[str, Any]],
+    key_paths: Sequence[Path],
+    registry_identity: Mapping[str, Any],
+) -> tuple[
+    list[dict[str, Any]],
+    dict[str, bytes],
+    dict[str, bytes],
+    dict[str, Any],
+]:
     document_sha256 = _sha256(raw_document)
     document_blob_oid = hashlib.sha1(
         b"blob " + str(len(raw_document)).encode() + b"\0" + raw_document
     ).hexdigest()
     attestations: list[dict[str, Any]] = []
     records: dict[str, bytes] = {}
-    for index in (1, 2):
-        reviewer = f"independent-enforcement-reviewer-{index}"
-        name = f"amendment-13-enforcement-ratify-{index}.md"
+    signatures: dict[str, bytes] = {}
+    for reviewer, key_path in zip(reviewers, key_paths):
+        reviewer_identity = reviewer["reviewer_identity"]
+        name = reviewer["record_name"]
         raw_record = (
             "# RATIFY\n"
-            f"reviewer_identity: {reviewer}\n"
+            f"reviewer_identity: {reviewer_identity}\n"
             f"record_name: {name}\n"
             f"attested_candidate_head: {candidate_head}\n"
             f"attested_document_path: {DESIGN_PATH}\n"
             f"attested_document_byte_size: {len(raw_document)}\n"
             f"attested_document_sha256: {document_sha256}\n"
         ).encode("utf-8")
-        records[name] = raw_record
+        sign_result = subprocess.run(
+            [
+                "/usr/bin/ssh-keygen",
+                "-Y",
+                "sign",
+                "-q",
+                "-f",
+                str(key_path),
+                "-n",
+                RATIFY_SIGNATURE_NAMESPACE,
+                "-",
+            ],
+            input=raw_record,
+            check=False,
+            capture_output=True,
+        )
+        _require(
+            sign_result.returncode == 0,
+            "synthetic reviewer signature failed",
+        )
+        raw_signature = sign_result.stdout
+        records[reviewer["record_path"]] = raw_record
+        signatures[reviewer["signature_path"]] = raw_signature
         attestations.append(
             {
-                "reviewer_identity": reviewer,
+                "reviewer_identity": reviewer_identity,
                 "record_name": name,
+                "record_path": reviewer["record_path"],
+                "signature_path": reviewer["signature_path"],
                 "raw_byte_size": len(raw_record),
                 "raw_sha256": _sha256(raw_record),
+                "signature_byte_size": len(raw_signature),
+                "signature_sha256": _sha256(raw_signature),
+                "ssh_key_fingerprint": reviewer["ssh_key_fingerprint"],
                 "verdict_token": "RATIFY",
                 "attested_candidate_head": candidate_head,
                 "attested_document_byte_size": len(raw_document),
@@ -5171,13 +5804,77 @@ def _test_trusted_material(
         "document_blob_oid": document_blob_oid,
         "document_byte_size": len(raw_document),
         "document_sha256": document_sha256,
+        "trusted_reviewer_registry_identity": copy.deepcopy(registry_identity),
         "ordered_reviewer_identities": [
             row["reviewer_identity"] for row in attestations
         ],
         "ordered_ratify_attestations": copy.deepcopy(attestations),
         "attestation_domain_sha256": _domain_sha(attestations),
     }
-    return attestations, records, manifest
+    return attestations, records, signatures, manifest
+
+
+def _test_trusted_material(
+    raw_document: bytes,
+    candidate_head: str,
+) -> tuple[
+    list[dict[str, Any]],
+    dict[str, bytes],
+    dict[str, bytes],
+    dict[str, Any],
+    dict[str, Any],
+    dict[str, Any],
+]:
+    """Build signed synthetic records under a fixed test reviewer registry."""
+
+    with tempfile.TemporaryDirectory(prefix="a13-reviewer-keys-") as temporary:
+        reviewers, key_paths = _generate_test_reviewer_keys(Path(temporary))
+        registry = {
+            "schema_version": TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
+            "status": TRUSTED_REVIEWER_REGISTRY_STATUS,
+            "signature_namespace": RATIFY_SIGNATURE_NAMESPACE,
+            "ordered_reviewers": reviewers,
+            "reviewer_domain_sha256": _domain_sha(reviewers),
+        }
+        registry_identity = _test_registry_identity(registry)
+        attestations, records, signatures, manifest = (
+            _build_test_signed_material(
+                raw_document,
+                candidate_head,
+                reviewers,
+                key_paths,
+                registry_identity,
+            )
+        )
+    return (
+        attestations,
+        records,
+        signatures,
+        registry_identity,
+        registry,
+        manifest,
+    )
+
+
+def _test_registry_identity(
+    registry: Mapping[str, Any],
+    *,
+    commit: str = "8" * 40,
+    parent: str = "9" * 40,
+) -> dict[str, Any]:
+    raw = canonical_json_bytes(registry)
+    return {
+        "schema_version": TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION,
+        "registry_commit": commit,
+        "registry_parents": [parent],
+        "registry_path": TRUSTED_REVIEWER_REGISTRY_PATH,
+        "registry_mode": DESIGN_MODE,
+        "registry_blob_oid": hashlib.sha1(
+            b"blob " + str(len(raw)).encode() + b"\0" + raw
+        ).hexdigest(),
+        "registry_byte_size": len(raw),
+        "registry_sha256": _sha256(raw),
+    }
 
 
 def _test_manifest_identity(
@@ -5205,6 +5902,7 @@ def _test_governing_identity(
     raw_document: bytes,
     ratification_commit: str,
     ratification_parent: str,
+    registry_identity: Mapping[str, Any],
     manifest_identity: Mapping[str, Any],
     attestations: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any]:
@@ -5221,9 +5919,10 @@ def _test_governing_identity(
         ).hexdigest(),
         "document_byte_size": len(raw_document),
         "document_sha256": _sha256(raw_document),
-        "trusted_recording_manifest_identity": copy.deepcopy(
-            dict(manifest_identity)
+        "trusted_reviewer_registry_identity": copy.deepcopy(
+            dict(registry_identity)
         ),
+        "recording_manifest_identity": copy.deepcopy(dict(manifest_identity)),
         "dual_ratify_attestations": [
             copy.deepcopy(dict(row)) for row in attestations
         ],
@@ -5255,133 +5954,214 @@ def _scratch_git(
     return result.stdout
 
 
-def _run_replace_ref_enforcement_mutation(
+def _scratch_signed_ceremony(
+    scratch: Path,
     raw_document: bytes,
-    semantic_law: Mapping[str, Any],
-) -> None:
-    """Exercise a coherent suffix repin and raw replacement-ref attacks."""
+    key_directory: Path,
+) -> dict[str, Any]:
+    """Create the acyclic K/Q/{C,M}/R signed recording ceremony."""
 
+    design = scratch / DESIGN_PATH
+    amendment12_raw = bytes(
+        _scratch_git(
+            scratch,
+            "show",
+            f"{RATIFICATION_COMMIT}:{DESIGN_PATH}",
+            text=False,
+        )
+    )
+    design.write_bytes(amendment12_raw)
+    _scratch_git(scratch, "add", DESIGN_PATH)
+    _scratch_git(
+        scratch,
+        "commit",
+        "--quiet",
+        "--no-verify",
+        "-m",
+        "Prepare pre-candidate recording base",
+    )
+    reviewers, key_paths = _generate_test_reviewer_keys(key_directory)
+    registry = {
+        "schema_version": TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
+        "status": TRUSTED_REVIEWER_REGISTRY_STATUS,
+        "signature_namespace": RATIFY_SIGNATURE_NAMESPACE,
+        "ordered_reviewers": reviewers,
+        "reviewer_domain_sha256": _domain_sha(reviewers),
+    }
+    registry_raw = canonical_json_bytes(registry)
+    registry_path = scratch / TRUSTED_REVIEWER_REGISTRY_PATH
+    registry_path.parent.mkdir(parents=True, exist_ok=True)
+    registry_path.write_bytes(registry_raw)
+    _scratch_git(scratch, "add", TRUSTED_REVIEWER_REGISTRY_PATH)
+    _scratch_git(
+        scratch,
+        "commit",
+        "--quiet",
+        "--no-verify",
+        "-m",
+        "Install pre-candidate reviewer key registry",
+    )
+    registry_commit = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+    registry_identity = _test_registry_identity(
+        registry,
+        commit=registry_commit,
+        parent=str(_scratch_git(scratch, "rev-parse", "HEAD^")).strip(),
+    )
+    _scratch_git(
+        scratch,
+        "commit",
+        "--allow-empty",
+        "--quiet",
+        "--no-verify",
+        "-m",
+        "Freeze Amendment 13 ceremony base",
+    )
+    ceremony_base = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+
+    design.write_bytes(raw_document)
+    _scratch_git(scratch, "add", DESIGN_PATH)
+    _scratch_git(
+        scratch,
+        "commit",
+        "--quiet",
+        "--no-verify",
+        "-m",
+        "Amendment 13 attested candidate",
+    )
+    candidate = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+    attestations, records, signatures, manifest = _build_test_signed_material(
+        raw_document,
+        candidate,
+        reviewers,
+        key_paths,
+        registry_identity,
+    )
+
+    _scratch_git(scratch, "checkout", "--quiet", ceremony_base)
+    manifest_path = scratch / TRUSTED_RECORDING_MANIFEST_PATH
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_raw = canonical_json_bytes(manifest)
+    manifest_path.write_bytes(manifest_raw)
+    for path, raw in {**records, **signatures}.items():
+        target = scratch / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(raw)
+    ceremony_paths = [TRUSTED_RECORDING_MANIFEST_PATH, *records, *signatures]
+    _scratch_git(scratch, "add", *ceremony_paths)
+    _scratch_git(
+        scratch,
+        "commit",
+        "--quiet",
+        "--no-verify",
+        "-m",
+        "Commit signed Amendment 13 recording manifest",
+    )
+    manifest_commit = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+    manifest_identity = _test_manifest_identity(
+        manifest,
+        commit=manifest_commit,
+        parent=ceremony_base,
+    )
+    design.write_bytes(raw_document)
+    _scratch_git(scratch, "add", DESIGN_PATH)
+    _scratch_git(
+        scratch,
+        "commit",
+        "--quiet",
+        "--no-verify",
+        "-m",
+        "Record signed Amendment 13 law",
+    )
+    recording_commit = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+    identity = _test_governing_identity(
+        raw_document,
+        recording_commit,
+        manifest_commit,
+        registry_identity,
+        manifest_identity,
+        attestations,
+    )
+    return {
+        "candidate": candidate,
+        "recording_commit": recording_commit,
+        "identity": identity,
+        "attestations": attestations,
+        "records": records,
+        "signatures": signatures,
+        "registry_identity": registry_identity,
+        "registry": registry,
+        "manifest_identity": manifest_identity,
+        "manifest": manifest,
+    }
+
+
+def _validate_scratch_ceremony(
+    scratch: Path,
+    ceremony: Mapping[str, Any],
+) -> None:
     global ROOT
 
     original_root = ROOT
-    with tempfile.TemporaryDirectory(prefix="a13-replace-ref-") as temporary:
+    ROOT = scratch
+    try:
+        _validate_governing_amendment13_ratification_identity(
+            ceremony["identity"],
+            ceremony["records"],
+            ceremony["signatures"],
+            verify_git=True,
+            trusted_reviewer_registry_identity=ceremony["registry_identity"],
+            trusted_reviewer_registry=ceremony["registry"],
+            recording_manifest_identity=ceremony["manifest_identity"],
+            recording_manifest=ceremony["manifest"],
+        )
+    finally:
+        ROOT = original_root
+
+
+def _new_scratch_repo(original_root: Path, temporary_root: Path) -> Path:
+    scratch = temporary_root / "repo"
+    _scratch_git(
+        temporary_root,
+        "clone",
+        "--quiet",
+        "--no-hardlinks",
+        str(original_root),
+        str(scratch),
+    )
+    _scratch_git(scratch, "config", "user.name", "A13 mutation test")
+    _scratch_git(
+        scratch,
+        "config",
+        "user.email",
+        "a13-mutation@example.invalid",
+    )
+    return scratch
+
+
+def _run_coherent_suffix_enforcement_mutation(
+    forged_document: bytes,
+    semantic_law: Mapping[str, Any],
+) -> None:
+    global ROOT
+
+    original_root = ROOT
+    with tempfile.TemporaryDirectory(
+        prefix="a13-semantic-repin-"
+    ) as temporary:
         temporary_root = Path(temporary)
-        scratch = temporary_root / "repo"
-        _scratch_git(
-            temporary_root,
-            "clone",
-            "--quiet",
-            "--no-hardlinks",
-            str(original_root),
-            str(scratch),
+        scratch = _new_scratch_repo(original_root, temporary_root)
+        ceremony = _scratch_signed_ceremony(
+            scratch, forged_document, temporary_root / "keys"
         )
-        _scratch_git(scratch, "config", "user.name", "A13 mutation test")
-        _scratch_git(
-            scratch,
-            "config",
-            "user.email",
-            "a13-mutation@example.invalid",
-        )
-        design = scratch / DESIGN_PATH
-        design.write_bytes(raw_document)
-        _scratch_git(scratch, "add", DESIGN_PATH)
-        if str(_scratch_git(scratch, "status", "--porcelain")).strip():
-            _scratch_git(
-                scratch,
-                "commit",
-                "--quiet",
-                "--no-verify",
-                "-m",
-                "A13 replacement candidate",
-            )
-        candidate = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
-        attestations, records, manifest = _test_trusted_material(
-            raw_document,
-            candidate,
-        )
-        amendment12_raw = bytes(
-            _scratch_git(
-                scratch,
-                "show",
-                f"{RATIFICATION_COMMIT}:{DESIGN_PATH}",
-                text=False,
-            )
-        )
-        design.write_bytes(amendment12_raw)
-        manifest_path = scratch / TRUSTED_RECORDING_MANIFEST_PATH
-        manifest_path.parent.mkdir(parents=True, exist_ok=True)
-        manifest_path.write_bytes(canonical_json_bytes(manifest))
-        _scratch_git(
-            scratch,
-            "add",
-            DESIGN_PATH,
-            TRUSTED_RECORDING_MANIFEST_PATH,
-        )
-        _scratch_git(
-            scratch,
-            "commit",
-            "--quiet",
-            "--no-verify",
-            "-m",
-            "Install independent A13 recording manifest",
-        )
-        manifest_commit = str(
-            _scratch_git(scratch, "rev-parse", "HEAD")
-        ).strip()
-        manifest_parent = str(
-            _scratch_git(scratch, "rev-parse", "HEAD^")
-        ).strip()
-        manifest_blob = str(
-            _scratch_git(
-                scratch,
-                "rev-parse",
-                f"HEAD:{TRUSTED_RECORDING_MANIFEST_PATH}",
-            )
-        ).strip()
-        manifest_raw = canonical_json_bytes(manifest)
-        manifest_identity = {
-            "schema_version": (
-                TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION
-            ),
-            "manifest_commit": manifest_commit,
-            "manifest_parents": [manifest_parent],
-            "manifest_path": TRUSTED_RECORDING_MANIFEST_PATH,
-            "manifest_mode": DESIGN_MODE,
-            "manifest_blob_oid": manifest_blob,
-            "manifest_byte_size": len(manifest_raw),
-            "manifest_sha256": _sha256(manifest_raw),
-        }
-        design.write_bytes(raw_document)
-        _scratch_git(scratch, "add", DESIGN_PATH)
-        _scratch_git(
-            scratch,
-            "commit",
-            "--quiet",
-            "--no-verify",
-            "-m",
-            "Conforming document-only recording commit",
-        )
-        conforming = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
-        conforming_identity = _test_governing_identity(
-            raw_document,
-            conforming,
-            manifest_commit,
-            manifest_identity,
-            attestations,
-        )
+        _validate_scratch_ceremony(scratch, ceremony)
         ROOT = scratch
         try:
-            _validate_governing_amendment13_ratification_identity(
-                conforming_identity,
-                records,
-                verify_git=True,
-                trusted_recording_manifest_identity=manifest_identity,
-                trusted_recording_manifest=manifest,
+            authenticated_raw = _git(
+                "show",
+                f"{ceremony['recording_commit']}:{DESIGN_PATH}",
             )
-            authenticated_raw = _git("show", f"{conforming}:{DESIGN_PATH}")
             _require(
-                isinstance(authenticated_raw, bytes)
-                and authenticated_raw == raw_document,
+                authenticated_raw == forged_document,
                 "coherent suffix mutation did not authenticate exact bytes",
             )
             try:
@@ -5401,6 +6181,37 @@ def _run_replace_ref_enforcement_mutation(
                 )
         finally:
             ROOT = original_root
+
+
+def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
+    """Exercise isolated parent/path and pinned-source replacement attacks."""
+
+    global ROOT, TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY
+
+    original_root = ROOT
+    original_registry_identity = TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY
+    with tempfile.TemporaryDirectory(prefix="a13-replace-ref-") as temporary:
+        temporary_root = Path(temporary)
+        scratch = _new_scratch_repo(original_root, temporary_root)
+        ceremony = _scratch_signed_ceremony(
+            scratch, raw_document, temporary_root / "keys"
+        )
+        _validate_scratch_ceremony(scratch, ceremony)
+
+        ROOT = scratch
+        TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY = ceremony["registry_identity"]
+        try:
+            validate_governing_amendment13_ratification_identity(
+                ceremony["identity"],
+                ceremony["records"],
+                ceremony["signatures"],
+            )
+        finally:
+            ROOT = original_root
+            TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY = original_registry_identity
+
+        conforming = ceremony["recording_commit"]
+        manifest_commit = ceremony["manifest_identity"]["manifest_commit"]
         conforming_tree = str(
             _scratch_git(scratch, "rev-parse", f"{conforming}^{{tree}}")
         ).strip()
@@ -5410,12 +6221,13 @@ def _run_replace_ref_enforcement_mutation(
                 "commit-tree",
                 conforming_tree,
                 "-p",
-                candidate,
+                ceremony["candidate"],
                 "-m",
                 "Raw commit with substituted parent",
             )
         ).strip()
         _scratch_git(scratch, "checkout", "--quiet", manifest_commit)
+        design = scratch / DESIGN_PATH
         design.write_bytes(raw_document)
         extra_path = scratch / "forged-extra.txt"
         extra_path.write_text("extra changed path\n", encoding="utf-8")
@@ -5465,20 +6277,22 @@ def _run_replace_ref_enforcement_mutation(
                 (wrong_parent, "ratification commit is not exact"),
                 (wrong_paths, "recording act is not document-only"),
             ):
-                identity = _test_governing_identity(
-                    raw_document,
-                    commit,
-                    manifest_commit,
-                    manifest_identity,
-                    attestations,
-                )
+                identity = copy.deepcopy(ceremony["identity"])
+                identity["ratification_commit"] = commit
                 try:
                     _validate_governing_amendment13_ratification_identity(
                         identity,
-                        records,
+                        ceremony["records"],
+                        ceremony["signatures"],
                         verify_git=True,
-                        trusted_recording_manifest_identity=manifest_identity,
-                        trusted_recording_manifest=manifest,
+                        trusted_reviewer_registry_identity=ceremony[
+                            "registry_identity"
+                        ],
+                        trusted_reviewer_registry=ceremony["registry"],
+                        recording_manifest_identity=ceremony[
+                            "manifest_identity"
+                        ],
+                        recording_manifest=ceremony["manifest"],
                     )
                 except LawError as error:
                     _require(
@@ -5488,6 +6302,59 @@ def _run_replace_ref_enforcement_mutation(
                     )
                 else:
                     raise LawError("replacement-ref mutation survived")
+
+            source_path = a12.ERA_SEALS[0]["path"]
+            raw_source = _git("show", f"{a12.SOURCE_COMMIT}:{source_path}")
+            source_parent = str(
+                _git("rev-parse", f"{a12.SOURCE_COMMIT}^", text=True)
+            ).strip()
+            _scratch_git(
+                scratch,
+                "checkout",
+                "--quiet",
+                "--detach",
+                a12.SOURCE_COMMIT,
+            )
+            forged_source_bytes = raw_source + b"\n"
+            source_target = scratch / source_path
+            source_target.write_bytes(forged_source_bytes)
+            _scratch_git(scratch, "add", source_path)
+            forged_source_tree = str(
+                _scratch_git(scratch, "write-tree")
+            ).strip()
+            forged_source_commit = str(
+                _scratch_git(
+                    scratch,
+                    "commit-tree",
+                    forged_source_tree,
+                    "-p",
+                    source_parent,
+                    "-m",
+                    "Replacement source commit",
+                )
+            ).strip()
+            _scratch_git(
+                scratch,
+                "replace",
+                a12.SOURCE_COMMIT,
+                forged_source_commit,
+            )
+            ordinary_source = bytes(
+                _scratch_git(
+                    scratch,
+                    "show",
+                    f"{a12.SOURCE_COMMIT}:{source_path}",
+                    text=False,
+                )
+            )
+            _require(
+                ordinary_source != raw_source,
+                "replacement-ref pinned-source control did not substitute",
+            )
+            _require(
+                _RawObjectSourceReader().read(source_path) == raw_source,
+                "A13 pinned-source reader honored a replacement ref",
+            )
         finally:
             ROOT = original_root
 
@@ -5501,72 +6368,101 @@ def run_enforcement_mutation_tests(
     raw_document = (ROOT / DESIGN_PATH).read_bytes()
     forged_raw = raw_document.replace(
         (
-            b"The exact new successor status is\n`"
-            + PROOF_TERMINAL_STATUS.encode("ascii")
+            b"is `replace_only_node_domain_component_slot_with_aggregate`; "
+            b"the status is\n`"
+            + DOC036_SUCCESSOR_STATUS.encode("ascii")
             + b"`."
         ),
         (
-            b"The exact new successor status is\n"
-            b"`local_resolved_cross_reference_for_global_assembly`."
+            b"is `replace_only_node_domain_component_slot_with_aggregate`; "
+            b"the status is\n`locally_resolved_document_evidence`."
         ),
         1,
     )
     _require(
         forged_raw != raw_document, "suffix semantic mutation did not apply"
     )
-    _run_replace_ref_enforcement_mutation(forged_raw, law)
+    _run_coherent_suffix_enforcement_mutation(forged_raw, law)
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[0])
 
     candidate = "a" * 40
-    attestations, records, manifest = _test_trusted_material(
-        raw_document,
-        candidate,
-    )
-    manifest_identity = _test_manifest_identity(manifest)
-    identity = _test_governing_identity(
+    (
+        _,
+        _,
+        _,
+        registry_identity,
+        registry,
+        _,
+    ) = _test_trusted_material(raw_document, candidate)
+    with tempfile.TemporaryDirectory(prefix="a13-attacker-keys-") as temporary:
+        attacker_reviewers, attacker_key_paths = _generate_test_reviewer_keys(
+            Path(temporary)
+        )
+        for index, reviewer in enumerate(attacker_reviewers, start=1):
+            reviewer["reviewer_identity"] = f"forged-one-actor-{index}"
+            reviewer["record_name"] = f"forged-by-one-actor-{index}.md"
+            reviewer["record_path"] = (
+                "docs/analysis/amendment_13_ratification/records/"
+                f"{reviewer['record_name']}"
+            )
+            reviewer["signature_path"] = f"{reviewer['record_path']}.sig"
+            reviewer["ssh_principal"] = f"forged-one-actor-{index}"
+        (
+            forged_attestations,
+            forged_records,
+            forged_signatures,
+            forged_manifest,
+        ) = _build_test_signed_material(
+            raw_document,
+            candidate,
+            attacker_reviewers,
+            attacker_key_paths,
+            registry_identity,
+        )
+    forged_manifest_identity = _test_manifest_identity(forged_manifest)
+    forged_identity = _test_governing_identity(
         raw_document,
         "b" * 40,
-        manifest_identity["manifest_commit"],
-        manifest_identity,
-        attestations,
+        forged_manifest_identity["manifest_commit"],
+        registry_identity,
+        forged_manifest_identity,
+        forged_attestations,
     )
-    forged_identity = copy.deepcopy(identity)
-    forged_records: dict[str, bytes] = {}
-    for index, attestation in enumerate(
-        forged_identity["dual_ratify_attestations"],
-        start=1,
-    ):
-        name = f"forged-by-one-actor-{index}.md"
-        raw_record = (
-            "# RATIFY\n"
-            f"reviewer_identity: {attestation['reviewer_identity']}\n"
-            f"record_name: {name}\n"
-            f"attested_candidate_head: {candidate}\n"
-            f"attested_document_path: {DESIGN_PATH}\n"
-            f"attested_document_byte_size: {len(raw_document)}\n"
-            f"attested_document_sha256: {_sha256(raw_document)}\n"
-        ).encode("utf-8")
-        attestation["record_name"] = name
-        attestation["raw_byte_size"] = len(raw_record)
-        attestation["raw_sha256"] = _sha256(raw_record)
-        forged_records[name] = raw_record
     try:
         _validate_governing_amendment13_ratification_identity(
             forged_identity,
             forged_records,
+            forged_signatures,
             verify_git=False,
-            trusted_recording_manifest_identity=manifest_identity,
-            trusted_recording_manifest=manifest,
+            trusted_reviewer_registry_identity=registry_identity,
+            trusted_reviewer_registry=registry,
+            recording_manifest_identity=forged_manifest_identity,
+            recording_manifest=forged_manifest,
         )
     except LawError as error:
         _require(
-            "dual-RATIFY trusted manifest drift" in str(error),
+            "recording manifest drift" in str(error),
             f"dual-record mutation failed an unintended gate: {error}",
         )
-        rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[1])
     else:
         raise LawError("coherent dual-record replacement survived")
+    try:
+        build_ratification_bound_execution_template(
+            forged_identity,
+            forged_records,
+            forged_signatures,
+        )
+    except LawError as error:
+        _require(
+            "trusted Amendment-13 reviewer registry is unavailable"
+            in str(error),
+            f"public dual-record mutation failed an unintended gate: {error}",
+        )
+    else:
+        raise LawError("public builder accepted self-minted dual records")
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[1])
 
+    _run_replace_ref_enforcement_mutation(raw_document)
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[2])
     _require(
         tuple(rejected) == A13_ENFORCEMENT_EXPECTED_MUTATIONS,
