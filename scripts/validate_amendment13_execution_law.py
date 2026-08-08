@@ -72,11 +72,19 @@ TRUSTED_REVIEWER_REGISTRY_PATH = (
     "trusted_reviewer_key_registry_v1.json"
 )
 RATIFY_SIGNATURE_NAMESPACE = "policyengine-amendment13-ratify-v1"
+ENROLLMENT_SIGNATURE_NAMESPACE = (
+    "policyengine-amendment13-reviewer-enrollment-v1"
+)
+A13_DRAFT_AUTHOR_IDENTITY = "amendment-13-draft-author:max-ghenis"
 # Two independent reviewers have not yet enrolled their public keys.  The
 # public ratification-bound builder therefore remains fail-closed.  A later
-# pre-candidate implementation may install one exact historical registry
-# identity here; no final document, record, manifest, or caller value can
-# select or override this trust root.
+# pre-candidate implementation may install two exact, externally controlled
+# enrollment-authority keys and one exact historical registry identity here;
+# no registry, final document, record, manifest, or caller value can select or
+# override the authority root.
+TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES: (
+    tuple[Mapping[str, Any], ...] | None
+) = None
 TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY: Mapping[str, Any] | None = None
 DRAFT_STATUS = "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
 RATIFICATION_BOUND_TEMPLATE_STATUS = (
@@ -569,7 +577,10 @@ A13_EXPECTED_MUTATIONS = (
 )
 A13_ENFORCEMENT_EXPECTED_MUTATIONS = (
     "governing_document_semantics_forged_and_repinned",
+    "implementation_pin_interval_override_forged_and_repinned",
     "dual_ratify_records_coherently_self_minted",
+    "reviewer_registry_two_keys_one_actor_self_enrolled",
+    "enacted_identifier_absent_from_qualified_inventory",
     "git_replace_refs_substitute_parent_and_changed_paths",
 )
 
@@ -613,6 +624,16 @@ A13_SCHEMA_LITERALS = (
     SUCCESSOR_SCHEMA_VERSION,
     SUPERSESSION_SCHEMA_VERSION,
     ERA_SEAL_SCHEMA_VERSION,
+)
+A13_AUTHENTICATION_SCHEMA_LITERALS = (
+    TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION,
+    TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
+    TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION,
+    TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION,
+)
+A13_AUTHENTICATION_STATUS_LITERALS = (
+    TRUSTED_REVIEWER_REGISTRY_STATUS,
+    TRUSTED_RECORDING_MANIFEST_STATUS,
 )
 A13_CONTENT_ID_PREFIXES = (
     "a13-document-repair-overlay:",
@@ -659,17 +680,19 @@ A13_TRUSTED_RECORDING_LITERALS = (
     "reviewer_identity",
     "ssh-ed25519",
     RATIFY_SIGNATURE_NAMESPACE,
+    ENROLLMENT_SIGNATURE_NAMESPACE,
+    A13_DRAFT_AUTHOR_IDENTITY,
     "git --no-replace-objects",
     "GIT_NO_REPLACE_OBJECTS=1",
 )
 
 A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
-    "27.2": "809c095858c5d3c116077e2478fcae2522c0425cc5407e24a36d440e0df8f3a8",
+    "27.2": "d9caaf97e61642200d9ad8189ed7c0d5be4bccb2b204392451e635401cfd53f4",
     "27.3": "50b5a2e780a4b5b7152390e85e01df5f5397f5263fb2dd3dae43947a96f91ff0",
     "27.4": "ae7dd9ea588a2242f52d4e66bd3662909eee0f987a1d582db21786837c47253c",
     "27.5": "f5ee9246c5826b5b65e90149cc2e2c7574eb32f49df472ce528fc0690ab26d46",
     "27.6": "b8b23250e218093d892c6ad286f05226469d5abf08a1f87d8a0942bbbbef5d08",
-    "27.7": "346e04aa863485cef3783d2028f738c183f6e1210b28c2ed1ced01373c56bc03",
+    "27.7": "34dd35f2ea33d25e17304f19b2d778c8d720cb88b04626dfee8c154e27055650",
     "27.8": "fdc5441ef8c2f60bb8334658b4c44bcd52f8355b4681a495e81c4b7aaaa5479e",
 }
 
@@ -979,8 +1002,8 @@ def _parse_identity_projection(section: str) -> dict[str, Any]:
         "trusted recording manifest primary status drift",
     )
     registry_match = re.search(
-        r"Its exact canonical schema is\n`([^`]+)`, its exact status is\n"
-        r"`([^`]+)`, and its path is\n`([^`]+)`\.",
+        r"has exact canonical schema\n`([^`]+)`, exact status\n"
+        r"`([^`]+)`, and path\n`([^`]+)`\.",
         section,
     )
     _require(
@@ -995,6 +1018,14 @@ def _parse_identity_projection(section: str) -> dict[str, Any]:
     _require(
         recording_manifest_match is not None,
         "recording manifest primary schema/path drift",
+    )
+    bound_status_match = re.search(
+        r"use fixture status\n`([^`]+)`, keep both authority",
+        section,
+    )
+    _require(
+        bound_status_match is not None,
+        "ratification-bound template status drift",
     )
     return {
         "amendment12_identity_keys": _code_tokens_between(
@@ -1075,7 +1106,7 @@ def _parse_identity_projection(section: str) -> dict[str, Any]:
             section,
             "The registry object has\nexactly ",
             ".\n\nThere are exactly two ordered reviewer rows.",
-            5,
+            9,
             "trusted reviewer registry keys",
         ),
         "trusted_reviewer_keys": _code_tokens_between(
@@ -1084,6 +1115,35 @@ def _parse_identity_projection(section: str) -> dict[str, Any]:
             ". Each key is an\nEd25519",
             7,
             "trusted reviewer keys",
+        ),
+        "trusted_enrollment_authority_keys": _code_tokens_between(
+            section,
+            "Each enrollment-authority row has exactly\n",
+            ". The ordered\n`prior_record_name`",
+            6,
+            "trusted enrollment-authority keys",
+        ),
+        "trusted_enrollment_authorization_keys": _code_tokens_between(
+            section,
+            "Each authorization row has exactly\n",
+            ". Each `authorization_preimage`",
+            6,
+            "trusted enrollment-authorization keys",
+        ),
+        "trusted_enrollment_authorization_preimage_keys": (
+            _code_tokens_between(
+                section,
+                "Each `authorization_preimage` has exactly\n",
+                ". The last two values",
+                12,
+                "trusted enrollment-authorization preimage keys",
+            )
+        ),
+        "enrollment_signature_namespace": _code_after(
+            section,
+            "including its terminal LF, is signed under enrollment "
+            "signature namespace\n",
+            "trusted enrollment signature namespace",
         ),
         "recording_manifest_identity_keys": _code_tokens_between(
             section,
@@ -1124,6 +1184,17 @@ def _parse_identity_projection(section: str) -> dict[str, Any]:
             "The exact trusted-recording validation literals are:\n\n",
             "Amendment-13 trusted recording literals",
         ),
+        "authentication_schema_literals": _fenced_lines_after(
+            section,
+            "The exact\nauthentication schema-version inventory is:\n\n",
+            "Amendment-13 authentication schema literals",
+        ),
+        "authentication_status_literals": _fenced_lines_after(
+            section,
+            "The exact authentication status inventory is:\n\n",
+            "Amendment-13 authentication status literals",
+        ),
+        "ratification_bound_template_status": bound_status_match.group(1),
         "draft_placeholder_keys": _code_tokens_between(
             section,
             "exact three-key object ",
@@ -1853,36 +1924,85 @@ def _parse_scope_projection(section: str) -> dict[str, Any]:
         ),
         "enforcement_mutations": _fenced_lines_after(
             section,
-            "The enforcement layer has this separate exact three-name inventory:\n\n",
+            "The enforcement layer has this separate exact six-name inventory:\n\n",
             "Amendment-13 enforcement mutation inventory",
         ),
     }
 
 
+_IMPLEMENTATION_PIN_PATTERN = re.compile(
+    r"The prospective nonauthority validator and focused test are fixed at\n"
+    r"implementation commit `(?P<commit>[0-9a-f]{40})`, mode "
+    r"`(?P<mode>[0-9]+)`:\n\n"
+    r"\| Path \| Git blob \| Bytes \| Raw SHA-256 \|\n"
+    r"\|---\|---\|---:\|---\|\n"
+    r"\| `scripts/validate_amendment13_execution_law\.py` \| "
+    r"`(?P<validator_blob>[0-9a-f]{40})` \| "
+    r"(?P<validator_size>[0-9][0-9,]*) \| "
+    r"`(?P<validator_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `tests/test_validate_amendment13_execution_law\.py` \| "
+    r"`(?P<test_blob>[0-9a-f]{40})` \| "
+    r"(?P<test_size>[0-9][0-9,]*) \| "
+    r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
+)
+_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+    "commit",
+    "mode",
+    "validator_blob",
+    "validator_size",
+    "validator_sha256",
+    "test_blob",
+    "test_size",
+    "test_sha256",
+)
+
+
+def _implementation_pin_match(section: str) -> re.Match[str]:
+    matches = list(_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+    _require(
+        len(matches) == 1,
+        "Amendment-13 implementation pin block grammar drift",
+    )
+    return matches[0]
+
+
 def _parse_implementation_pins(section: str) -> dict[str, Any]:
-    match = re.search(
-        r"implementation commit `([0-9a-f]{40})`, mode `([0-9]+)`:",
-        section,
-    )
-    _require(match is not None, "Amendment-13 implementation commit pin drift")
-    rows = _markdown_table(
-        section,
-        "| Path | Git blob | Bytes | Raw SHA-256 |",
-        "|---|---|---:|---|",
-        2,
-        "Amendment-13 implementation pins",
-    )
-    pins = []
-    for path, blob, size, sha256 in rows:
-        pins.append(
+    match = _implementation_pin_match(section)
+    return {
+        "commit": match.group("commit"),
+        "mode": match.group("mode"),
+        "files": [
             {
-                "path": _code_tokens(path, 1, "implementation path")[0],
-                "blob_oid": _code_tokens(blob, 1, "implementation blob")[0],
-                "byte_size": int(size.replace(",", "")),
-                "sha256": _code_tokens(sha256, 1, "implementation SHA-256")[0],
-            }
-        )
-    return {"commit": match.group(1), "mode": match.group(2), "files": pins}
+                "path": "scripts/validate_amendment13_execution_law.py",
+                "blob_oid": match.group("validator_blob"),
+                "byte_size": int(
+                    match.group("validator_size").replace(",", "")
+                ),
+                "sha256": match.group("validator_sha256"),
+            },
+            {
+                "path": "tests/test_validate_amendment13_execution_law.py",
+                "blob_oid": match.group("test_blob"),
+                "byte_size": int(match.group("test_size").replace(",", "")),
+                "sha256": match.group("test_sha256"),
+            },
+        ],
+    }
+
+
+def _normalize_implementation_pin_values(section: str) -> str:
+    """Normalize only the eight independently authenticated pin values."""
+
+    match = _implementation_pin_match(section)
+    parts: list[str] = []
+    cursor = 0
+    for group in _IMPLEMENTATION_PIN_VALUE_GROUPS:
+        start, end = match.span(group)
+        _require(start >= cursor, "implementation pin capture ordering drift")
+        parts.extend((section[cursor:start], f"<{group.upper()}>"))
+        cursor = end
+    parts.append(section[cursor:])
+    return "".join(parts)
 
 
 def _parse_comparator_and_literals(section: str) -> dict[str, Any]:
@@ -1940,32 +2060,63 @@ def _section_semantic_sha256s(
     ):
         semantic_text = sections[section_name]
         if section_name == "27.7":
-            pin_start = (
-                "The prospective nonauthority validator and focused test are "
-                "fixed at\n"
-            )
-            pin_end = "\n\nIt reads the six pinned source seals"
-            before, remainder = semantic_text.split(pin_start, 1)
-            _require(
-                pin_end in remainder,
-                "Amendment-13 normalized implementation-pin boundary drift",
-            )
-            _, after = remainder.split(pin_end, 1)
-            semantic_text = (
-                before
-                + "<SEPARATELY_AUTHENTICATED_IMPLEMENTATION_PINS>"
-                + pin_end
-                + after
-            )
+            semantic_text = _normalize_implementation_pin_values(semantic_text)
         result[section_name] = _sha256(semantic_text.encode("utf-8"))
     return result
+
+
+def _validate_identifier_inventory_consistency(
+    projection: Mapping[str, Any],
+) -> None:
+    """Require §27.2 authentication identifiers to close §27.8.3 exactly."""
+
+    identity = projection["identity"]
+    comparator = projection["comparator"]
+    authentication_schemas = identity["authentication_schema_literals"]
+    authentication_statuses = identity["authentication_status_literals"]
+    execution_schemas = comparator["schema_literals"]
+    execution_statuses = comparator["status_relation_operation_codes"]
+    trusted_literals = identity["trusted_recording_literals"]
+    enacted_schemas = {
+        identity["governing_identity_schema_version"],
+        identity["draft_placeholder_values"][0],
+        identity["trusted_registry_identity_schema_version"],
+        identity["trusted_registry_schema_version"],
+        identity["recording_manifest_identity_schema_version"],
+        identity["trusted_manifest_schema_version"],
+    }
+    enacted_statuses = {
+        identity["governing_identity_status"],
+        identity["draft_placeholder_values"][1],
+        identity["ratification_bound_template_status"],
+        identity["trusted_registry_status"],
+        identity["trusted_manifest_status"],
+    }
+    _require(
+        tuple(authentication_schemas) == A13_AUTHENTICATION_SCHEMA_LITERALS
+        and tuple(authentication_statuses)
+        == A13_AUTHENTICATION_STATUS_LITERALS
+        and len(execution_schemas) == len(set(execution_schemas))
+        and len(execution_statuses) == len(set(execution_statuses))
+        and len(authentication_schemas) == len(set(authentication_schemas))
+        and len(authentication_statuses) == len(set(authentication_statuses))
+        and set(authentication_schemas).isdisjoint(execution_schemas)
+        and set(authentication_statuses).isdisjoint(execution_statuses)
+        and set(authentication_schemas).issubset(trusted_literals)
+        and set(authentication_statuses).issubset(trusted_literals)
+        and enacted_schemas - set(execution_schemas)
+        == set(authentication_schemas)
+        and enacted_statuses - set(execution_statuses)
+        == set(authentication_statuses),
+        "Amendment-13 enacted identifier inventory consistency drift",
+    )
 
 
 def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
     """Derive the canonical enforced projection from the governing bytes."""
 
     sections = _a13_sections(raw)
-    return {
+    projection = {
         "section_semantic_sha256": _section_semantic_sha256s(sections),
         "identity": _parse_identity_projection(sections["27.2"]),
         "overlays": _parse_overlay_projection(sections["27.3"]),
@@ -1975,6 +2126,8 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
         "scope": _parse_scope_projection(sections["27.7"]),
         "comparator": _parse_comparator_and_literals(sections["27.8"]),
     }
+    _validate_identifier_inventory_consistency(projection)
+    return projection
 
 
 def _execution_proof_projection(law: Mapping[str, Any]) -> dict[str, Any]:
@@ -2118,8 +2271,12 @@ def _execution_identity_projection(law: Mapping[str, Any]) -> dict[str, Any]:
             "schema_version",
             "status",
             "signature_namespace",
+            "enrollment_signature_namespace",
+            "trusted_enrollment_authority_domain_sha256",
             "ordered_reviewers",
             "reviewer_domain_sha256",
+            "ordered_enrollment_authorizations",
+            "enrollment_authorization_domain_sha256",
         ],
         "trusted_reviewer_keys": [
             "reviewer_identity",
@@ -2130,6 +2287,37 @@ def _execution_identity_projection(law: Mapping[str, Any]) -> dict[str, Any]:
             "ssh_public_key",
             "ssh_key_fingerprint",
         ],
+        "trusted_enrollment_authority_keys": [
+            "authority_identity",
+            "prior_record_name",
+            "prior_record_raw_sha256",
+            "ssh_principal",
+            "ssh_public_key",
+            "ssh_key_fingerprint",
+        ],
+        "trusted_enrollment_authorization_keys": [
+            "authority_identity",
+            "authority_ssh_key_fingerprint",
+            "authorization_preimage",
+            "signature_byte_size",
+            "signature_sha256",
+            "signature_base64",
+        ],
+        "trusted_enrollment_authorization_preimage_keys": [
+            "authority_identity",
+            "prior_record_name",
+            "prior_record_raw_sha256",
+            "registry_parent_commit",
+            "registry_path",
+            "reviewer_position",
+            "reviewer_identity",
+            "reviewer_row_sha256",
+            "reviewer_domain_sha256",
+            "trusted_enrollment_authority_domain_sha256",
+            "draft_author_identity",
+            "reviewer_independent_of_draft_author",
+        ],
+        "enrollment_signature_namespace": ENROLLMENT_SIGNATURE_NAMESPACE,
         "recording_manifest_identity_keys": [
             "schema_version",
             "manifest_commit",
@@ -2187,6 +2375,15 @@ def _execution_identity_projection(law: Mapping[str, Any]) -> dict[str, Any]:
             "attested_document_sha256: <exact 64-lowercase-hex SHA-256>",
         ],
         "trusted_recording_literals": list(A13_TRUSTED_RECORDING_LITERALS),
+        "authentication_schema_literals": list(
+            A13_AUTHENTICATION_SCHEMA_LITERALS
+        ),
+        "authentication_status_literals": list(
+            A13_AUTHENTICATION_STATUS_LITERALS
+        ),
+        "ratification_bound_template_status": (
+            RATIFICATION_BOUND_TEMPLATE_STATUS
+        ),
         "draft_placeholder_keys": list(GOVERNING_A13_CANDIDATE_IDENTITY),
         "draft_placeholder_values": list(
             GOVERNING_A13_CANDIDATE_IDENTITY.values()
@@ -2739,12 +2936,20 @@ def _load_canonical_git_json(
     return value
 
 
-def _load_trusted_reviewer_registry() -> tuple[dict[str, Any], dict[str, Any]]:
+def _load_trusted_reviewer_registry() -> tuple[
+    dict[str, Any],
+    dict[str, Any],
+    tuple[dict[str, Any], ...],
+]:
     """Load the pre-candidate reviewer-key root; callers cannot select it."""
 
     _require(
         TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY is not None,
         "trusted Amendment-13 reviewer registry is unavailable",
+    )
+    _require(
+        TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES is not None,
+        "trusted Amendment-13 enrollment authorities are unavailable",
     )
     identity = copy.deepcopy(dict(TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY))
     registry = _load_canonical_git_json(
@@ -2752,7 +2957,11 @@ def _load_trusted_reviewer_registry() -> tuple[dict[str, Any], dict[str, Any]]:
         identity["registry_path"],
         "trusted Amendment-13 reviewer registry",
     )
-    return identity, registry
+    authorities = tuple(
+        copy.deepcopy(dict(row))
+        for row in TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES
+    )
+    return identity, registry, authorities
 
 
 def _ssh_public_key_fingerprint(public_key: Any) -> str:
@@ -2777,14 +2986,69 @@ def _ssh_public_key_fingerprint(public_key: Any) -> str:
     return f"SHA256:{digest.rstrip('=')}"
 
 
+def _validate_enrollment_authorities(
+    authorities: Sequence[Mapping[str, Any]],
+) -> None:
+    """Validate the fixed identities that may authorize reviewer enrollment."""
+
+    _require(
+        isinstance(authorities, (list, tuple)) and len(authorities) == 2,
+        "trusted Amendment-13 enrollment authority root drift",
+    )
+    for authority, prior_record in zip(authorities, RATIFY_ATTESTATIONS):
+        _require_exact_keys(
+            authority,
+            {
+                "authority_identity",
+                "prior_record_name",
+                "prior_record_raw_sha256",
+                "ssh_principal",
+                "ssh_public_key",
+                "ssh_key_fingerprint",
+            },
+            "trusted Amendment-13 enrollment authority",
+        )
+        for key in ("authority_identity", "ssh_principal"):
+            _require(
+                isinstance(authority[key], str)
+                and bool(authority[key])
+                and "\r" not in authority[key]
+                and "\n" not in authority[key],
+                f"trusted enrollment authority {key} is malformed",
+            )
+        _require(
+            authority["authority_identity"] != A13_DRAFT_AUTHOR_IDENTITY
+            and authority["prior_record_name"] == prior_record["record_name"]
+            and authority["prior_record_raw_sha256"]
+            == prior_record["raw_sha256"]
+            and authority["ssh_key_fingerprint"]
+            == _ssh_public_key_fingerprint(authority["ssh_public_key"]),
+            "trusted Amendment-13 enrollment authority identity drift",
+        )
+    for key in (
+        "authority_identity",
+        "prior_record_name",
+        "prior_record_raw_sha256",
+        "ssh_principal",
+        "ssh_public_key",
+        "ssh_key_fingerprint",
+    ):
+        _require(
+            len({row[key] for row in authorities}) == 2,
+            f"trusted enrollment authority {key} values are not distinct",
+        )
+
+
 def _validate_trusted_reviewer_registry(
     registry_identity: Mapping[str, Any],
     registry: Mapping[str, Any],
+    enrollment_authorities: Sequence[Mapping[str, Any]],
     *,
     verify_git: bool,
 ) -> None:
     """Authenticate the two reviewer identities and their signing keys."""
 
+    _validate_enrollment_authorities(enrollment_authorities)
     _require_exact_keys(
         registry_identity,
         {
@@ -2822,16 +3086,28 @@ def _validate_trusted_reviewer_registry(
             "schema_version",
             "status",
             "signature_namespace",
+            "enrollment_signature_namespace",
+            "trusted_enrollment_authority_domain_sha256",
             "ordered_reviewers",
             "reviewer_domain_sha256",
+            "ordered_enrollment_authorizations",
+            "enrollment_authorization_domain_sha256",
         },
         "trusted Amendment-13 reviewer registry",
     )
     reviewers = registry["ordered_reviewers"]
+    authorizations = registry["ordered_enrollment_authorizations"]
+    authority_domain_sha256 = _domain_sha(
+        [dict(row) for row in enrollment_authorities]
+    )
     _require(
         registry["schema_version"] == TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION
         and registry["status"] == TRUSTED_REVIEWER_REGISTRY_STATUS
         and registry["signature_namespace"] == RATIFY_SIGNATURE_NAMESPACE
+        and registry["enrollment_signature_namespace"]
+        == ENROLLMENT_SIGNATURE_NAMESPACE
+        and registry["trusted_enrollment_authority_domain_sha256"]
+        == authority_domain_sha256
         and isinstance(reviewers, list)
         and len(reviewers) == 2
         and registry["reviewer_domain_sha256"] == _domain_sha(reviewers),
@@ -2889,6 +3165,109 @@ def _validate_trusted_reviewer_registry(
             len({row[key] for row in reviewers}) == 2,
             f"trusted reviewer {key} values are not distinct",
         )
+    _require(
+        [row["reviewer_identity"] for row in reviewers]
+        == [row["authority_identity"] for row in enrollment_authorities],
+        "trusted reviewer identities are not externally anchored",
+    )
+    _require(
+        isinstance(authorizations, list)
+        and len(authorizations) == 2
+        and registry["enrollment_authorization_domain_sha256"]
+        == _domain_sha(authorizations),
+        "trusted reviewer enrollment authorization domain drift",
+    )
+    reviewer_domain_sha256 = registry["reviewer_domain_sha256"]
+    for position, (authorization, authority, reviewer) in enumerate(
+        zip(authorizations, enrollment_authorities, reviewers),
+        start=1,
+    ):
+        _require_exact_keys(
+            authorization,
+            {
+                "authority_identity",
+                "authority_ssh_key_fingerprint",
+                "authorization_preimage",
+                "signature_byte_size",
+                "signature_sha256",
+                "signature_base64",
+            },
+            "trusted reviewer enrollment authorization",
+        )
+        preimage = authorization["authorization_preimage"]
+        _require(
+            isinstance(preimage, Mapping),
+            "trusted reviewer enrollment authorization preimage drift",
+        )
+        _require_exact_keys(
+            preimage,
+            {
+                "authority_identity",
+                "prior_record_name",
+                "prior_record_raw_sha256",
+                "registry_parent_commit",
+                "registry_path",
+                "reviewer_position",
+                "reviewer_identity",
+                "reviewer_row_sha256",
+                "reviewer_domain_sha256",
+                "trusted_enrollment_authority_domain_sha256",
+                "draft_author_identity",
+                "reviewer_independent_of_draft_author",
+            },
+            "trusted reviewer enrollment authorization preimage",
+        )
+        expected_preimage = {
+            "authority_identity": authority["authority_identity"],
+            "prior_record_name": authority["prior_record_name"],
+            "prior_record_raw_sha256": authority["prior_record_raw_sha256"],
+            "registry_parent_commit": registry_identity["registry_parents"][0],
+            "registry_path": TRUSTED_REVIEWER_REGISTRY_PATH,
+            "reviewer_position": position,
+            "reviewer_identity": reviewer["reviewer_identity"],
+            "reviewer_row_sha256": _sha256(canonical_json_bytes(reviewer)),
+            "reviewer_domain_sha256": reviewer_domain_sha256,
+            "trusted_enrollment_authority_domain_sha256": (
+                authority_domain_sha256
+            ),
+            "draft_author_identity": A13_DRAFT_AUTHOR_IDENTITY,
+            "reviewer_independent_of_draft_author": True,
+        }
+        _require(
+            dict(preimage) == expected_preimage
+            and authorization["authority_identity"]
+            == authority["authority_identity"]
+            and authorization["authority_ssh_key_fingerprint"]
+            == authority["ssh_key_fingerprint"]
+            and isinstance(authorization["signature_byte_size"], int)
+            and not isinstance(authorization["signature_byte_size"], bool)
+            and authorization["signature_byte_size"] > 0
+            and _is_lower_hex(authorization["signature_sha256"], 64)
+            and isinstance(authorization["signature_base64"], str),
+            "trusted reviewer enrollment authorization drift",
+        )
+        try:
+            raw_signature = base64.b64decode(
+                authorization["signature_base64"], validate=True
+            )
+        except (ValueError, TypeError) as error:
+            raise LawError(
+                "trusted reviewer enrollment signature base64 drift"
+            ) from error
+        _require(
+            base64.b64encode(raw_signature).decode("ascii")
+            == authorization["signature_base64"]
+            and len(raw_signature) == authorization["signature_byte_size"]
+            and _sha256(raw_signature) == authorization["signature_sha256"],
+            "trusted reviewer enrollment signature bytes drift",
+        )
+        _verify_ssh_signature(
+            canonical_json_bytes(expected_preimage),
+            raw_signature,
+            authority,
+            namespace=ENROLLMENT_SIGNATURE_NAMESPACE,
+            label="reviewer enrollment authorization",
+        )
     if not verify_git:
         return
     commit = registry_identity["registry_commit"]
@@ -2902,6 +3281,20 @@ def _validate_trusted_reviewer_registry(
         parent_line.split()
         == [commit, registry_identity["registry_parents"][0]],
         "trusted Amendment-13 reviewer registry commit is not exact",
+    )
+    changed_paths = str(
+        _git(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            commit,
+            text=True,
+        )
+    ).splitlines()
+    _require(
+        changed_paths == [TRUSTED_REVIEWER_REGISTRY_PATH],
+        "trusted Amendment-13 reviewer registry commit is not registry-only",
     )
     tree_line = str(
         _git(
@@ -3089,23 +3482,26 @@ def _validate_recording_manifest(
 def _verify_ssh_signature(
     raw_record: bytes,
     raw_signature: bytes,
-    reviewer: Mapping[str, Any],
+    signer: Mapping[str, Any],
+    *,
+    namespace: str,
+    label: str,
 ) -> None:
-    """Verify one record against exactly one pre-enrolled Ed25519 key."""
+    """Verify bytes against exactly one pre-enrolled Ed25519 key."""
 
     _require(
         isinstance(raw_record, bytes)
         and isinstance(raw_signature, bytes)
         and raw_signature.startswith(b"-----BEGIN SSH SIGNATURE-----\n")
         and raw_signature.endswith(b"-----END SSH SIGNATURE-----\n"),
-        "governing Amendment-13 RATIFY SSH signature bytes are malformed",
+        f"{label} SSH signature bytes are malformed",
     )
     with tempfile.TemporaryDirectory(prefix="a13-ssh-verify-") as temporary:
         temporary_path = Path(temporary)
         allowed_signers_path = temporary_path / "allowed_signers"
         signature_path = temporary_path / "record.sig"
         allowed_signers_path.write_text(
-            f"{reviewer['ssh_principal']} {reviewer['ssh_public_key']}\n",
+            f"{signer['ssh_principal']} {signer['ssh_public_key']}\n",
             encoding="utf-8",
         )
         signature_path.write_bytes(raw_signature)
@@ -3122,9 +3518,9 @@ def _verify_ssh_signature(
                 "-f",
                 str(allowed_signers_path),
                 "-I",
-                reviewer["ssh_principal"],
+                signer["ssh_principal"],
                 "-n",
-                RATIFY_SIGNATURE_NAMESPACE,
+                namespace,
                 "-s",
                 str(signature_path),
             ],
@@ -3135,7 +3531,7 @@ def _verify_ssh_signature(
         )
     _require(
         result.returncode == 0,
-        "governing Amendment-13 RATIFY reviewer signature is not authentic",
+        f"{label} signature is not authentic",
     )
 
 
@@ -3146,7 +3542,11 @@ def validate_governing_amendment13_ratification_identity(
 ) -> None:
     """Validate a governing identity, including its exact Git objects."""
 
-    registry_identity, registry = _load_trusted_reviewer_registry()
+    (
+        registry_identity,
+        registry,
+        enrollment_authorities,
+    ) = _load_trusted_reviewer_registry()
     manifest_identity = identity.get("recording_manifest_identity")
     _require(
         isinstance(manifest_identity, Mapping),
@@ -3160,6 +3560,7 @@ def validate_governing_amendment13_ratification_identity(
         verify_git=True,
         trusted_reviewer_registry_identity=registry_identity,
         trusted_reviewer_registry=registry,
+        trusted_enrollment_authorities=enrollment_authorities,
         recording_manifest_identity=manifest_identity,
         recording_manifest=manifest,
     )
@@ -3173,6 +3574,7 @@ def _validate_governing_amendment13_ratification_identity(
     verify_git: bool,
     trusted_reviewer_registry_identity: Mapping[str, Any],
     trusted_reviewer_registry: Mapping[str, Any],
+    trusted_enrollment_authorities: Sequence[Mapping[str, Any]],
     recording_manifest_identity: Mapping[str, Any],
     recording_manifest: Mapping[str, Any],
 ) -> None:
@@ -3229,6 +3631,7 @@ def _validate_governing_amendment13_ratification_identity(
     _validate_trusted_reviewer_registry(
         trusted_reviewer_registry_identity,
         trusted_reviewer_registry,
+        trusted_enrollment_authorities,
         verify_git=verify_git,
     )
     _validate_recording_manifest(
@@ -3362,7 +3765,13 @@ def _validate_governing_amendment13_ratification_identity(
             and _sha256(raw_signature) == attestation["signature_sha256"],
             "governing Amendment-13 RATIFY raw bytes do not attest identity",
         )
-        _verify_ssh_signature(raw_record, raw_signature, reviewer)
+        _verify_ssh_signature(
+            raw_record,
+            raw_signature,
+            reviewer,
+            namespace=RATIFY_SIGNATURE_NAMESPACE,
+            label="governing Amendment-13 RATIFY reviewer",
+        )
     if not verify_git:
         return
     _require(
@@ -3534,6 +3943,25 @@ def _validate_governing_amendment13_ratification_identity(
         and raw[:DESIGN_BYTE_SIZE] == amendment12_raw
         and raw[DESIGN_BYTE_SIZE:].startswith(AMENDMENT13_BOUNDARY),
         "governing Amendment-13 document violates immutable-prefix law",
+    )
+    implementation_commit = _parse_implementation_pins(
+        _a13_sections(raw)["27.7"]
+    )["commit"]
+    _require_exact_commit_object(
+        implementation_commit,
+        "Amendment-13 enrollment-authority implementation commit",
+    )
+    implementation_ancestry = _run_git(
+        "merge-base",
+        "--is-ancestor",
+        implementation_commit,
+        registry_commit,
+    )
+    _require(
+        implementation_commit != registry_commit
+        and implementation_ancestry.returncode == 0,
+        "enrollment-authority implementation is not a strict ancestor of "
+        "the reviewer registry",
     )
 
 
@@ -4042,6 +4470,7 @@ def _build_ratification_bound_execution_template_for_test(
     governing_attestation_signature_bytes: Mapping[str, bytes],
     trusted_reviewer_registry_identity: Mapping[str, Any],
     trusted_reviewer_registry: Mapping[str, Any],
+    trusted_enrollment_authorities: Sequence[Mapping[str, Any]],
     recording_manifest_identity: Mapping[str, Any],
     recording_manifest: Mapping[str, Any],
 ) -> dict[str, Any]:
@@ -4056,6 +4485,7 @@ def _build_ratification_bound_execution_template_for_test(
             trusted_reviewer_registry_identity
         ),
         trusted_reviewer_registry=trusted_reviewer_registry,
+        trusted_enrollment_authorities=trusted_enrollment_authorities,
         recording_manifest_identity=recording_manifest_identity,
         recording_manifest=recording_manifest,
     )
@@ -4076,6 +4506,7 @@ def _build_ratification_bound_execution_template_for_test(
             trusted_reviewer_registry_identity
         ),
         trusted_reviewer_registry=trusted_reviewer_registry,
+        trusted_enrollment_authorities=trusted_enrollment_authorities,
         recording_manifest_identity=recording_manifest_identity,
         recording_manifest=recording_manifest,
     )
@@ -4565,6 +4996,7 @@ def _validate_execution_law(
     governing_attestation_signature_bytes: Mapping[str, bytes] | None = None,
     trusted_reviewer_registry_identity: Mapping[str, Any] | None = None,
     trusted_reviewer_registry: Mapping[str, Any] | None = None,
+    trusted_enrollment_authorities: Sequence[Mapping[str, Any]] | None = None,
     recording_manifest_identity: Mapping[str, Any] | None = None,
     recording_manifest: Mapping[str, Any] | None = None,
 ) -> None:
@@ -4644,6 +5076,7 @@ def _validate_execution_law(
             _require(
                 trusted_reviewer_registry_identity is not None
                 and trusted_reviewer_registry is not None
+                and trusted_enrollment_authorities is not None
                 and recording_manifest_identity is not None
                 and recording_manifest is not None,
                 "test-only ratification validation lacks trust material",
@@ -4657,6 +5090,9 @@ def _validate_execution_law(
                     trusted_reviewer_registry_identity
                 ),
                 trusted_reviewer_registry=trusted_reviewer_registry,
+                trusted_enrollment_authorities=(
+                    trusted_enrollment_authorities
+                ),
                 recording_manifest_identity=recording_manifest_identity,
                 recording_manifest=recording_manifest,
             )
@@ -5675,6 +6111,53 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
     return tuple(rejected)
 
 
+def _generate_test_ssh_key(key_path: Path, label: str) -> str:
+    key_path.parent.mkdir(parents=True, exist_ok=True)
+    key_result = subprocess.run(
+        [
+            "/usr/bin/ssh-keygen",
+            "-q",
+            "-t",
+            "ed25519",
+            "-N",
+            "",
+            "-f",
+            str(key_path),
+        ],
+        check=False,
+        capture_output=True,
+    )
+    _require(key_result.returncode == 0, f"{label} key generation failed")
+    return key_path.with_suffix(".pub").read_text(encoding="utf-8").strip()
+
+
+def _generate_test_enrollment_authorities(
+    directory: Path,
+) -> tuple[list[dict[str, Any]], list[Path]]:
+    authorities: list[dict[str, Any]] = []
+    key_paths: list[Path] = []
+    for index, prior_record in enumerate(RATIFY_ATTESTATIONS, start=1):
+        key_path = directory / f"authority-{index}"
+        public_key = _generate_test_ssh_key(
+            key_path,
+            "synthetic enrollment authority",
+        )
+        authorities.append(
+            {
+                "authority_identity": (
+                    f"preexisting-amendment12-ratifier-{index}"
+                ),
+                "prior_record_name": prior_record["record_name"],
+                "prior_record_raw_sha256": prior_record["raw_sha256"],
+                "ssh_principal": f"a13-enrollment-authority-{index}",
+                "ssh_public_key": public_key,
+                "ssh_key_fingerprint": _ssh_public_key_fingerprint(public_key),
+            }
+        )
+        key_paths.append(key_path)
+    return authorities, key_paths
+
+
 def _generate_test_reviewer_keys(
     directory: Path,
 ) -> tuple[list[dict[str, Any]], list[Path]]:
@@ -5682,32 +6165,15 @@ def _generate_test_reviewer_keys(
     reviewers: list[dict[str, Any]] = []
     key_paths: list[Path] = []
     for index in (1, 2):
-        reviewer_identity = f"independent-enforcement-reviewer-{index}"
+        reviewer_identity = f"preexisting-amendment12-ratifier-{index}"
         name = f"amendment-13-enforcement-ratify-{index}.md"
         record_path = "docs/analysis/amendment_13_ratification/records/" + name
         signature_path = f"{record_path}.sig"
-        principal = f"a13-independent-reviewer-{index}"
+        principal = f"a13-enrolled-reviewer-{index}"
         key_path = directory / f"reviewer-{index}"
-        key_result = subprocess.run(
-            [
-                "/usr/bin/ssh-keygen",
-                "-q",
-                "-t",
-                "ed25519",
-                "-N",
-                "",
-                "-f",
-                str(key_path),
-            ],
-            check=False,
-            capture_output=True,
-        )
-        _require(
-            key_result.returncode == 0,
-            "synthetic reviewer key generation failed",
-        )
-        public_key = (
-            key_path.with_suffix(".pub").read_text(encoding="utf-8").strip()
+        public_key = _generate_test_ssh_key(
+            key_path,
+            "synthetic reviewer",
         )
         reviewers.append(
             {
@@ -5722,6 +6188,100 @@ def _generate_test_reviewer_keys(
         )
         key_paths.append(key_path)
     return reviewers, key_paths
+
+
+def _build_test_reviewer_registry(
+    reviewers: Sequence[Mapping[str, Any]],
+    authorities: Sequence[Mapping[str, Any]],
+    authority_key_paths: Sequence[Path],
+    registry_parent: str,
+    *,
+    enrollment_signing_key_paths: Sequence[Path] | None = None,
+) -> dict[str, Any]:
+    """Build K's registry with two externally signed enrollment approvals."""
+
+    reviewer_rows = [copy.deepcopy(dict(row)) for row in reviewers]
+    authority_rows = [copy.deepcopy(dict(row)) for row in authorities]
+    signing_paths = (
+        list(authority_key_paths)
+        if enrollment_signing_key_paths is None
+        else list(enrollment_signing_key_paths)
+    )
+    _require(
+        len(reviewer_rows) == len(authority_rows) == len(signing_paths) == 2,
+        "synthetic enrollment material is not dual",
+    )
+    reviewer_domain_sha256 = _domain_sha(reviewer_rows)
+    authority_domain_sha256 = _domain_sha(authority_rows)
+    authorizations: list[dict[str, Any]] = []
+    for position, (reviewer, authority, signing_path) in enumerate(
+        zip(reviewer_rows, authority_rows, signing_paths),
+        start=1,
+    ):
+        preimage = {
+            "authority_identity": authority["authority_identity"],
+            "prior_record_name": authority["prior_record_name"],
+            "prior_record_raw_sha256": authority["prior_record_raw_sha256"],
+            "registry_parent_commit": registry_parent,
+            "registry_path": TRUSTED_REVIEWER_REGISTRY_PATH,
+            "reviewer_position": position,
+            "reviewer_identity": reviewer["reviewer_identity"],
+            "reviewer_row_sha256": _sha256(canonical_json_bytes(reviewer)),
+            "reviewer_domain_sha256": reviewer_domain_sha256,
+            "trusted_enrollment_authority_domain_sha256": (
+                authority_domain_sha256
+            ),
+            "draft_author_identity": A13_DRAFT_AUTHOR_IDENTITY,
+            "reviewer_independent_of_draft_author": True,
+        }
+        sign_result = subprocess.run(
+            [
+                "/usr/bin/ssh-keygen",
+                "-Y",
+                "sign",
+                "-q",
+                "-f",
+                str(signing_path),
+                "-n",
+                ENROLLMENT_SIGNATURE_NAMESPACE,
+                "-",
+            ],
+            input=canonical_json_bytes(preimage),
+            check=False,
+            capture_output=True,
+        )
+        _require(
+            sign_result.returncode == 0,
+            "synthetic reviewer enrollment signature failed",
+        )
+        raw_signature = sign_result.stdout
+        authorizations.append(
+            {
+                "authority_identity": authority["authority_identity"],
+                "authority_ssh_key_fingerprint": authority[
+                    "ssh_key_fingerprint"
+                ],
+                "authorization_preimage": preimage,
+                "signature_byte_size": len(raw_signature),
+                "signature_sha256": _sha256(raw_signature),
+                "signature_base64": base64.b64encode(raw_signature).decode(
+                    "ascii"
+                ),
+            }
+        )
+    return {
+        "schema_version": TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
+        "status": TRUSTED_REVIEWER_REGISTRY_STATUS,
+        "signature_namespace": RATIFY_SIGNATURE_NAMESPACE,
+        "enrollment_signature_namespace": ENROLLMENT_SIGNATURE_NAMESPACE,
+        "trusted_enrollment_authority_domain_sha256": (
+            authority_domain_sha256
+        ),
+        "ordered_reviewers": reviewer_rows,
+        "reviewer_domain_sha256": reviewer_domain_sha256,
+        "ordered_enrollment_authorizations": authorizations,
+        "enrollment_authorization_domain_sha256": _domain_sha(authorizations),
+    }
 
 
 def _build_test_signed_material(
@@ -5823,19 +6383,28 @@ def _test_trusted_material(
     dict[str, bytes],
     dict[str, Any],
     dict[str, Any],
+    tuple[dict[str, Any], ...],
     dict[str, Any],
 ]:
     """Build signed synthetic records under a fixed test reviewer registry."""
 
     with tempfile.TemporaryDirectory(prefix="a13-reviewer-keys-") as temporary:
-        reviewers, key_paths = _generate_test_reviewer_keys(Path(temporary))
-        registry = {
-            "schema_version": TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
-            "status": TRUSTED_REVIEWER_REGISTRY_STATUS,
-            "signature_namespace": RATIFY_SIGNATURE_NAMESPACE,
-            "ordered_reviewers": reviewers,
-            "reviewer_domain_sha256": _domain_sha(reviewers),
-        }
+        temporary_path = Path(temporary)
+        authorities, authority_key_paths = (
+            _generate_test_enrollment_authorities(
+                temporary_path / "authorities"
+            )
+        )
+        reviewers, key_paths = _generate_test_reviewer_keys(
+            temporary_path / "reviewers"
+        )
+        registry_parent = "9" * 40
+        registry = _build_test_reviewer_registry(
+            reviewers,
+            authorities,
+            authority_key_paths,
+            registry_parent,
+        )
         registry_identity = _test_registry_identity(registry)
         attestations, records, signatures, manifest = (
             _build_test_signed_material(
@@ -5852,6 +6421,7 @@ def _test_trusted_material(
         signatures,
         registry_identity,
         registry,
+        tuple(authorities),
         manifest,
     )
 
@@ -5958,6 +6528,8 @@ def _scratch_signed_ceremony(
     scratch: Path,
     raw_document: bytes,
     key_directory: Path,
+    *,
+    self_enroll_reviewers: bool = False,
 ) -> dict[str, Any]:
     """Create the acyclic K/Q/{C,M}/R signed recording ceremony."""
 
@@ -5980,14 +6552,22 @@ def _scratch_signed_ceremony(
         "-m",
         "Prepare pre-candidate recording base",
     )
-    reviewers, key_paths = _generate_test_reviewer_keys(key_directory)
-    registry = {
-        "schema_version": TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
-        "status": TRUSTED_REVIEWER_REGISTRY_STATUS,
-        "signature_namespace": RATIFY_SIGNATURE_NAMESPACE,
-        "ordered_reviewers": reviewers,
-        "reviewer_domain_sha256": _domain_sha(reviewers),
-    }
+    registry_parent = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+    authorities, authority_key_paths = _generate_test_enrollment_authorities(
+        key_directory / "authorities"
+    )
+    reviewers, key_paths = _generate_test_reviewer_keys(
+        key_directory / "reviewers"
+    )
+    registry = _build_test_reviewer_registry(
+        reviewers,
+        authorities,
+        authority_key_paths,
+        registry_parent,
+        enrollment_signing_key_paths=(
+            key_paths if self_enroll_reviewers else None
+        ),
+    )
     registry_raw = canonical_json_bytes(registry)
     registry_path = scratch / TRUSTED_REVIEWER_REGISTRY_PATH
     registry_path.parent.mkdir(parents=True, exist_ok=True)
@@ -6005,7 +6585,7 @@ def _scratch_signed_ceremony(
     registry_identity = _test_registry_identity(
         registry,
         commit=registry_commit,
-        parent=str(_scratch_git(scratch, "rev-parse", "HEAD^")).strip(),
+        parent=registry_parent,
     )
     _scratch_git(
         scratch,
@@ -6090,6 +6670,7 @@ def _scratch_signed_ceremony(
         "signatures": signatures,
         "registry_identity": registry_identity,
         "registry": registry,
+        "enrollment_authorities": tuple(authorities),
         "manifest_identity": manifest_identity,
         "manifest": manifest,
     }
@@ -6111,6 +6692,7 @@ def _validate_scratch_ceremony(
             verify_git=True,
             trusted_reviewer_registry_identity=ceremony["registry_identity"],
             trusted_reviewer_registry=ceremony["registry"],
+            trusted_enrollment_authorities=ceremony["enrollment_authorities"],
             recording_manifest_identity=ceremony["manifest_identity"],
             recording_manifest=ceremony["manifest"],
         )
@@ -6141,6 +6723,8 @@ def _new_scratch_repo(original_root: Path, temporary_root: Path) -> Path:
 def _run_coherent_suffix_enforcement_mutation(
     forged_document: bytes,
     semantic_law: Mapping[str, Any],
+    *,
+    expected_message: str = "document semantic projection drift",
 ) -> None:
     global ROOT
 
@@ -6171,7 +6755,7 @@ def _run_coherent_suffix_enforcement_mutation(
                 )
             except LawError as error:
                 _require(
-                    "document semantic projection drift" in str(error),
+                    expected_message in str(error),
                     "suffix semantic mutation failed an unintended gate: "
                     f"{error}",
                 )
@@ -6186,9 +6770,12 @@ def _run_coherent_suffix_enforcement_mutation(
 def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
     """Exercise isolated parent/path and pinned-source replacement attacks."""
 
-    global ROOT, TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY
+    global ROOT
+    global TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES
+    global TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY
 
     original_root = ROOT
+    original_authorities = TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES
     original_registry_identity = TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY
     with tempfile.TemporaryDirectory(prefix="a13-replace-ref-") as temporary:
         temporary_root = Path(temporary)
@@ -6199,6 +6786,9 @@ def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
         _validate_scratch_ceremony(scratch, ceremony)
 
         ROOT = scratch
+        TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES = ceremony[
+            "enrollment_authorities"
+        ]
         TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY = ceremony["registry_identity"]
         try:
             validate_governing_amendment13_ratification_identity(
@@ -6208,6 +6798,7 @@ def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
             )
         finally:
             ROOT = original_root
+            TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES = original_authorities
             TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY = original_registry_identity
 
         conforming = ceremony["recording_commit"]
@@ -6289,6 +6880,9 @@ def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
                             "registry_identity"
                         ],
                         trusted_reviewer_registry=ceremony["registry"],
+                        trusted_enrollment_authorities=ceremony[
+                            "enrollment_authorities"
+                        ],
                         recording_manifest_identity=ceremony[
                             "manifest_identity"
                         ],
@@ -6362,7 +6956,7 @@ def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
 def run_enforcement_mutation_tests(
     law: Mapping[str, Any],
 ) -> tuple[str, ...]:
-    """Run the three enforcement-layer attacks without altering enacted law."""
+    """Run the six enforcement-layer attacks without altering enacted law."""
 
     rejected: list[str] = []
     raw_document = (ROOT / DESIGN_PATH).read_bytes()
@@ -6385,6 +6979,23 @@ def run_enforcement_mutation_tests(
     _run_coherent_suffix_enforcement_mutation(forged_raw, law)
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[0])
 
+    pin_boundary = b"\n\nIt reads the six pinned source seals"
+    forged_pin_raw = raw_document.replace(
+        pin_boundary,
+        (
+            b"\n\nThe exact enforcement override status is "
+            b"`FORGED_RATIFIED_AUTHORITY`; `authority_emitted` and "
+            b"`certification_emitted` are true." + pin_boundary
+        ),
+        1,
+    )
+    _require(
+        forged_pin_raw != raw_document,
+        "implementation-pin interval mutation did not apply",
+    )
+    _run_coherent_suffix_enforcement_mutation(forged_pin_raw, law)
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[1])
+
     candidate = "a" * 40
     (
         _,
@@ -6392,6 +7003,7 @@ def run_enforcement_mutation_tests(
         _,
         registry_identity,
         registry,
+        enrollment_authorities,
         _,
     ) = _test_trusted_material(raw_document, candidate)
     with tempfile.TemporaryDirectory(prefix="a13-attacker-keys-") as temporary:
@@ -6436,6 +7048,7 @@ def run_enforcement_mutation_tests(
             verify_git=False,
             trusted_reviewer_registry_identity=registry_identity,
             trusted_reviewer_registry=registry,
+            trusted_enrollment_authorities=enrollment_authorities,
             recording_manifest_identity=forged_manifest_identity,
             recording_manifest=forged_manifest,
         )
@@ -6460,10 +7073,58 @@ def run_enforcement_mutation_tests(
         )
     else:
         raise LawError("public builder accepted self-minted dual records")
-    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[1])
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[2])
+
+    with tempfile.TemporaryDirectory(
+        prefix="a13-self-enrollment-"
+    ) as temporary:
+        temporary_root = Path(temporary)
+        scratch = _new_scratch_repo(ROOT, temporary_root)
+        self_enrolled = _scratch_signed_ceremony(
+            scratch,
+            raw_document,
+            temporary_root / "one-actor-keys",
+            self_enroll_reviewers=True,
+        )
+        try:
+            _validate_scratch_ceremony(scratch, self_enrolled)
+        except LawError as error:
+            _require(
+                "reviewer enrollment authorization signature is not authentic"
+                in str(error),
+                "self-enrollment mutation failed an unintended gate: "
+                f"{error}",
+            )
+        else:
+            raise LawError(
+                "one actor's two pre-enrolled reviewer keys survived"
+            )
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[3])
+
+    forged_identifier_raw = raw_document.replace(
+        (
+            b"The actual identity schema is\n"
+            b"`amendment_13_governing_ratification_identity.v1`"
+        ),
+        (
+            b"The actual identity schema is\n"
+            b"`amendment_13_governing_ratification_identity.v2`"
+        ),
+        1,
+    )
+    _require(
+        forged_identifier_raw != raw_document,
+        "identifier-inventory mutation did not apply",
+    )
+    _run_coherent_suffix_enforcement_mutation(
+        forged_identifier_raw,
+        law,
+        expected_message="enacted identifier inventory consistency drift",
+    )
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[4])
 
     _run_replace_ref_enforcement_mutation(raw_document)
-    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[2])
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[5])
     _require(
         tuple(rejected) == A13_ENFORCEMENT_EXPECTED_MUTATIONS,
         "Amendment-13 enforcement mutation inventory drift",
@@ -6476,7 +7137,7 @@ def main() -> int:
     parser.add_argument(
         "--mutation-tests",
         action="store_true",
-        help="run seven semantic and three enforcement forgery attacks",
+        help="run seven semantic and six enforcement forgery attacks",
     )
     parser.add_argument(
         "--print-summary",

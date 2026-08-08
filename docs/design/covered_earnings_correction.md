@@ -51572,43 +51572,94 @@ The actual identity schema is
 lowercase-hex object name; `ratification_commit_changed_paths` has exactly the
 one path above.
 
-The only trust root is a reviewer-key registry committed and module-pinned
-before the candidate document is frozen. Its exact canonical schema is
-`amendment_13_reviewer_key_registry.v1`, its exact status is
-`INDEPENDENTLY_AUTHENTICATED_PRE_CANDIDATE_REVIEWER_KEYS`, and its path is
+The enrollment trust root is not a reviewer-key registry selected by the
+candidate or its author. It is an exact ordered domain of two externally
+authenticated, pre-existing reviewer-authority keys fixed only in the
+module-pinned implementation commit P before the registry commit K. The
+production authority domain and registry identity are both unavailable by
+default. Neither K, Q, C, M, R, a final document, a record, a manifest, nor a
+caller can install, select, or override either root.
+
+Each enrollment-authority row has exactly
+`authority_identity`, `prior_record_name`, `prior_record_raw_sha256`,
+`ssh_principal`, `ssh_public_key`, and `ssh_key_fingerprint`. The ordered
+`prior_record_name` and `prior_record_raw_sha256` pairs deep-equal the two
+independent Amendment-12 RATIFY record identities in §27.2.1. Authority
+identities, principals, Ed25519 OpenSSH public keys, and computed SHA-256
+fingerprints are pairwise distinct. No authority identity equals
+`amendment-13-draft-author:max-ghenis`.
+
+The reviewer-key registry has exact canonical schema
+`amendment_13_reviewer_key_registry.v1`, exact status
+`INDEPENDENTLY_AUTHENTICATED_PRE_CANDIDATE_REVIEWER_KEYS`, and path
 `docs/analysis/amendment_13_ratification/trusted_reviewer_key_registry_v1.json`.
 `trusted_reviewer_registry_identity` has exactly `schema_version`,
 `registry_commit`, `registry_parents`, `registry_path`, `registry_mode`,
 `registry_blob_oid`, `registry_byte_size`, and `registry_sha256`. Its schema is
 `amendment_13_reviewer_key_registry_identity.v1`. The registry object has
 exactly `schema_version`, `status`, `signature_namespace`,
-`ordered_reviewers`, and `reviewer_domain_sha256`.
+`enrollment_signature_namespace`,
+`trusted_enrollment_authority_domain_sha256`, `ordered_reviewers`,
+`reviewer_domain_sha256`, `ordered_enrollment_authorizations`, and
+`enrollment_authorization_domain_sha256`.
 
 There are exactly two ordered reviewer rows. Each has exactly
 `reviewer_identity`, `record_name`, `record_path`, `signature_path`,
 `ssh_principal`, `ssh_public_key`, and `ssh_key_fingerprint`. Each key is an
 Ed25519 OpenSSH public key whose computed SHA-256 fingerprint equals the fixed
-fingerprint. Reviewer identities, names, paths, principals, keys, and
-fingerprints are pairwise distinct. The record path is exactly
+fingerprint. Reviewer identities deep-equal the ordered enrollment-authority
+identities. Names, paths, principals, keys, and fingerprints are pairwise
+distinct. The record path is exactly
 `docs/analysis/amendment_13_ratification/records/<record_name>` and the
-signature path appends `.sig`. Registry order is attestation order; caller
-sorting, caller names, Git authorship, and unsigned identity strings have no
-force. Until two independent reviewers enroll their actual keys and the exact
-registry identity is installed before candidate freeze, the public builder
-fails closed as unavailable. The draft and its author cannot install their
-own keys and cannot self-ratify.
+signature path appends `.sig`.
 
-The recording object is acyclic. Let K be the trusted registry commit, Q the
-single common ceremony base, C the attested candidate, M the recording
-manifest commit, and R the final recording commit. K is a strict ancestor of
-Q. C and M are distinct single-parent children of Q. C changes exactly the
-design document. M changes exactly the manifest, two registered record paths,
-and their two registered signature paths. R is a single-parent child of M and
-changes exactly the design document to the same mode, blob, bytes, and SHA-256
-selected by C. The C-to-R tree difference is exactly those five ceremony
-paths. Thus the validator implementation can pin K before C exists and derive
-M from R's sole parent; no validator or candidate must know a future record,
-manifest, or recording-commit hash.
+`ordered_enrollment_authorizations` has exactly two rows in authority and
+reviewer order. Each authorization row has exactly
+`authority_identity`, `authority_ssh_key_fingerprint`,
+`authorization_preimage`, `signature_byte_size`, `signature_sha256`, and
+`signature_base64`. Each `authorization_preimage` has exactly
+`authority_identity`, `prior_record_name`, `prior_record_raw_sha256`,
+`registry_parent_commit`, `registry_path`, `reviewer_position`,
+`reviewer_identity`, `reviewer_row_sha256`, `reviewer_domain_sha256`,
+`trusted_enrollment_authority_domain_sha256`, `draft_author_identity`, and
+`reviewer_independent_of_draft_author`. The last two values are exactly
+`amendment-13-draft-author:max-ghenis` and true. The canonical preimage,
+including its terminal LF, is signed under enrollment signature namespace
+`policyengine-amendment13-reviewer-enrollment-v1`.
+
+The authority and authorization domain hashes cover their complete ordered
+canonical arrays. Authorization row i must bind authority i, reviewer i,
+reviewer position i, the exact reviewer-row SHA-256, the complete two-reviewer
+domain SHA-256, K's sole parent and registry path, and the fixed authority
+domain. Its stored base64 must decode canonically to the exact SSH signature
+bytes whose size and SHA-256 it carries. Verification uses a one-key
+allowed-signers file containing only authority i's fixed principal and key.
+Both external authorization signatures must validate before K or any
+RATIFY-bound status is accepted.
+
+Registry order is attestation order; caller sorting, caller names, Git
+authorship, unsigned identity strings, or two syntactically distinct keys
+controlled by one actor have no force. K changes exactly the registry path.
+Until two externally controlled authority keys authenticate two actual
+reviewer enrollments and the exact registry identity is installed after P but
+before candidate freeze, the public builder fails closed as unavailable. A
+zero- or one-authority root and a zero- or one-reviewer registry both fail.
+The draft and its author cannot install their own keys and cannot self-ratify.
+
+The recording object is acyclic. Let P be the module-pinned implementation
+commit containing the external enrollment-authority root, K the trusted
+registry commit, Q the single common ceremony base, C the attested candidate,
+M the recording manifest commit, and R the final recording commit. P is a
+strict ancestor of K, and K is a strict ancestor of Q. K is single-parent and
+changes exactly the registry path. C and M are distinct single-parent
+children of Q. C changes exactly the design document. M changes exactly the
+manifest, two registered record paths, and their two registered signature
+paths. R is a single-parent child of M and changes exactly the design document
+to the same mode, blob, bytes, and SHA-256 selected by C. The C-to-R tree
+difference is exactly those five ceremony paths. Thus the validator
+implementation fixes the external authority root before K and C exist and
+derives M from R's sole parent; no validator or candidate must know a future
+record, manifest, or recording-commit hash.
 
 `recording_manifest_identity` has exactly `schema_version`,
 `manifest_commit`, `manifest_parents`, `manifest_path`, `manifest_mode`,
@@ -51658,14 +51709,16 @@ attested_document_byte_size: <exact decimal byte count>
 attested_document_sha256: <exact 64-lowercase-hex SHA-256>
 ~~~
 
-Each registered reviewer signs those exact seven-line bytes with their fixed
-key under the exact OpenSSH signature namespace
+Each externally enrolled reviewer signs those exact seven-line bytes with
+their fixed reviewer key under the exact OpenSSH signature namespace
 `policyengine-amendment13-ratify-v1`. The signature bytes are stored at the
 registered path, and their byte count and SHA-256 deep-equal the manifest row.
 Verification uses a one-key allowed-signers file containing only that row's
 fixed principal and public key. Replacing both records, names, byte counts,
 hashes, signatures, manifest, and recording commit under author-controlled
-keys still fails against K.
+keys still fails against K. Replacing K with two author-controlled,
+pre-enrolled keys still fails against the two external enrollment-authority
+signatures fixed in P.
 
 The exact trusted-recording validation literals are:
 
@@ -51681,9 +51734,38 @@ docs/analysis/amendment_13_ratification/dual_ratify_recording_manifest_v1.json
 reviewer_identity
 ssh-ed25519
 policyengine-amendment13-ratify-v1
+policyengine-amendment13-reviewer-enrollment-v1
+amendment-13-draft-author:max-ghenis
 git --no-replace-objects
 GIT_NO_REPLACE_OBJECTS=1
 ~~~
+
+The “exact new schema-version literals” and “exact new
+status/relation/operation codes” inventories in §27.8.3 are expressly exact
+for the execution-fixture and successor layer. They exclude only the separate
+authentication-layer inventories enacted in this section. The exact
+authentication schema-version inventory is:
+
+~~~text
+amendment_13_reviewer_key_registry_identity.v1
+amendment_13_reviewer_key_registry.v1
+amendment_13_dual_ratify_recording_manifest_identity.v1
+amendment_13_dual_ratify_recording_manifest.v1
+~~~
+
+The exact authentication status inventory is:
+
+~~~text
+INDEPENDENTLY_AUTHENTICATED_PRE_CANDIDATE_REVIEWER_KEYS
+INDEPENDENTLY_AUTHENTICATED_DUAL_RATIFY_RECORDING_MANIFEST
+~~~
+
+The corresponding §27.8.3 and authentication inventories are disjoint. Every
+schema version or status enacted in §27.2 occurs in exactly one corresponding
+inventory, and every authentication inventory member occurs in the exact
+trusted-recording literal list above. A newly enacted identifier absent from
+both inventories, or an omitted, added, duplicated, or cross-listed inventory
+member, fails the semantic projection.
 
 Every Git authentication invocation, including commit peeling, ancestry,
 parent, changed-path, tree-entry, and raw-byte reads, runs with both the global
@@ -51710,11 +51792,13 @@ composed with this exact order and no weaker reading:
 
 1. `29c593d1954d94795e9f092ec4333e7d60a6136f` and its exact blob identity
    must validate before Amendment-13 ratification;
-2. the independently pinned reviewer registry K must be a strict ancestor of
-   Q; C and M must be distinct single-parent children of Q with the exact
-   changed-path domains above; both registered signatures must validate; and R
-   must be the document-only single-parent child of M selecting C's exact law
-   bytes;
+2. the implementation commit P containing the two external
+   enrollment-authority keys must be a strict ancestor of the independently
+   pinned reviewer registry K; K must change only its registry path and be a
+   strict ancestor of Q; both enrollment authorizations must validate; C and M
+   must be distinct single-parent children of Q with the exact changed-path
+   domains above; both registered RATIFY signatures must validate; and R must
+   be the document-only single-parent child of M selecting C's exact law bytes;
 3. the Amendment-12 commit must be a strict ancestor of R, and R must validate
    and be a strict
    ancestor of every repair-overlay first-add commit;
@@ -52371,6 +52455,15 @@ implementation commit `2d1c7a52306883fa0b795223cab22683d4a2e876`, mode `100644`:
 | `scripts/validate_amendment13_execution_law.py` | `e2ee16318facd65d31a32e306bfbc2247a37cd59` | 246,386 | `fc68d9805d6c760c77c44b73fed91fc92ad6a360d0081e47f8be80dd7b905cde` |
 | `tests/test_validate_amendment13_execution_law.py` | `a08369a1c07c32457acf15e121163a0dd6e9315d` | 21,309 | `dbfdb7b9bec99e4f2a433836a3f227f2a8a0d084a24a6bd64f7dce870f0e9e76` |
 
+The pin block has exactly that declaration, header, separator, and two ordered
+path rows. Section-hash normalization replaces only the implementation
+commit, mode, two Git blobs, two byte counts, and two raw SHA-256 values.
+Every path, delimiter, whitespace byte, and all prose before, within, and
+after the block remain in the §27.7 semantic hash. A second declaration, an
+extra row, unconsumed text within the grammar, or any inserted override prose
+therefore fails even when all eight implementation values and the governing
+document are coherently repinned.
+
 It reads the six pinned source seals, independently reconstructs each raw
 predecessor row and occurrence citation, verifies the historical Git commit
 and document tree entry, builds no file, and emits no authority. Its exact
@@ -52474,11 +52567,14 @@ fragment_duplicate_selector_forged
 fragment_composition_transformation_forged
 ~~~
 
-The enforcement layer has this separate exact three-name inventory:
+The enforcement layer has this separate exact six-name inventory:
 
 ~~~text
 governing_document_semantics_forged_and_repinned
+implementation_pin_interval_override_forged_and_repinned
 dual_ratify_records_coherently_self_minted
+reviewer_registry_two_keys_one_actor_self_enrolled
+enacted_identifier_absent_from_qualified_inventory
 git_replace_refs_substitute_parent_and_changed_paths
 ~~~
 
@@ -52486,15 +52582,21 @@ The first attack changes a normative value in §§27.2–27.8 and coherently
 repins the document byte count, SHA-256, Git blob, governing identity, trusted
 reviewer-key registry reference, recording manifest, both raw records, and
 both signatures; the document-derived semantic projection must still disagree
-with the constructed fixture. The second coherently replaces both record
-names, paths, raw bytes, sizes, hashes, signatures, manifest, and recording
-identity under one actor's keys while leaving the independently pinned
-pre-candidate reviewer registry fixed. The third installs replacement refs
-that make a wrong parent, extra changed path, or substituted pinned-source
-object appear conforming to ordinary Git. Each enforcement attack must fail
-its intended trust gate. These three
-tests are additional to, and do not alter, the exact seven-name enacted
-semantic inventory above or Amendment 12's 71 historical attacks.
+with the constructed fixture. The second inserts controlling normative prose
+inside the implementation-pin interval and coherently repins every mutable
+value; the preserved surrounding bytes must disagree with §27.7. The third
+coherently replaces both record names, paths, raw bytes, sizes, hashes,
+signatures, manifest, and recording identity under one actor's keys while
+leaving the independently enrolled reviewer registry fixed. The fourth has
+one actor create two reviewer keys before Q, self-sign both enrollment
+authorizations, and coherently rebuild K/Q/C/M/R while leaving the external
+authority root fixed; enrollment authentication must reject it. The fifth
+enacts a new §27.2 identifier without adding it to either qualified inventory.
+The sixth installs replacement refs that make a wrong parent, extra changed
+path, or substituted pinned-source object appear conforming to ordinary Git.
+Each enforcement attack must fail its intended trust gate. These six tests
+are additional to, and do not alter, the exact seven-name enacted semantic
+inventory above or Amendment 12's 71 historical attacks.
 
 The wrong-blob attack coherently substitutes the revision-13 blob
 `dc0ce837e64239d16ea61c15d47450b7341d1ce8`, 3,557,513 bytes, and raw

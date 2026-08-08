@@ -46,6 +46,7 @@ def _synthetic_governing_identity_and_records():
         signatures,
         registry_identity,
         registry,
+        enrollment_authorities,
         manifest,
     ) = a13._test_trusted_material(document_raw, candidate_head)
     manifest_identity = a13._test_manifest_identity(manifest)
@@ -63,6 +64,7 @@ def _synthetic_governing_identity_and_records():
         signatures,
         registry_identity,
         registry,
+        enrollment_authorities,
         manifest_identity,
         manifest,
     )
@@ -250,6 +252,7 @@ def test__governing_ratification__requires_raw_dual_records():
         signatures,
         registry_identity,
         registry,
+        enrollment_authorities,
         manifest_identity,
         manifest,
     ) = _synthetic_governing_identity_and_records()
@@ -260,9 +263,55 @@ def test__governing_ratification__requires_raw_dual_records():
         verify_git=False,
         trusted_reviewer_registry_identity=registry_identity,
         trusted_reviewer_registry=registry,
+        trusted_enrollment_authorities=enrollment_authorities,
         recording_manifest_identity=manifest_identity,
         recording_manifest=manifest,
     )
+    one_reviewer_registry = copy.deepcopy(registry)
+    one_reviewer_registry["ordered_reviewers"] = one_reviewer_registry[
+        "ordered_reviewers"
+    ][:1]
+    one_reviewer_registry["reviewer_domain_sha256"] = a13._domain_sha(
+        one_reviewer_registry["ordered_reviewers"]
+    )
+    one_reviewer_registry["ordered_enrollment_authorizations"] = (
+        one_reviewer_registry["ordered_enrollment_authorizations"][:1]
+    )
+    one_reviewer_registry["enrollment_authorization_domain_sha256"] = (
+        a13._domain_sha(
+            one_reviewer_registry["ordered_enrollment_authorizations"]
+        )
+    )
+    with pytest.raises(
+        a13.LawError,
+        match="trusted Amendment-13 reviewer registry drift",
+    ):
+        a13._validate_governing_amendment13_ratification_identity(
+            identity,
+            records,
+            signatures,
+            verify_git=False,
+            trusted_reviewer_registry_identity=registry_identity,
+            trusted_reviewer_registry=one_reviewer_registry,
+            trusted_enrollment_authorities=enrollment_authorities,
+            recording_manifest_identity=manifest_identity,
+            recording_manifest=manifest,
+        )
+    with pytest.raises(
+        a13.LawError,
+        match="trusted Amendment-13 enrollment authority root drift",
+    ):
+        a13._validate_governing_amendment13_ratification_identity(
+            identity,
+            records,
+            signatures,
+            verify_git=False,
+            trusted_reviewer_registry_identity=registry_identity,
+            trusted_reviewer_registry=registry,
+            trusted_enrollment_authorities=enrollment_authorities[:1],
+            recording_manifest_identity=manifest_identity,
+            recording_manifest=manifest,
+        )
     forged_records = dict(records)
     forged_records[next(iter(records))] += b"forged\n"
     with pytest.raises(
@@ -276,6 +325,7 @@ def test__governing_ratification__requires_raw_dual_records():
             verify_git=False,
             trusted_reviewer_registry_identity=registry_identity,
             trusted_reviewer_registry=registry,
+            trusted_enrollment_authorities=enrollment_authorities,
             recording_manifest_identity=manifest_identity,
             recording_manifest=manifest,
         )
@@ -294,6 +344,7 @@ def test__governing_ratification__requires_raw_dual_records():
             verify_git=False,
             trusted_reviewer_registry_identity=registry_identity,
             trusted_reviewer_registry=registry,
+            trusted_enrollment_authorities=enrollment_authorities,
             recording_manifest_identity=manifest_identity,
             recording_manifest=manifest,
         )
@@ -310,6 +361,7 @@ def test__governing_ratification__requires_raw_dual_records():
             verify_git=False,
             trusted_reviewer_registry_identity=registry_identity,
             trusted_reviewer_registry=registry,
+            trusted_enrollment_authorities=enrollment_authorities,
             recording_manifest_identity=manifest_identity,
             recording_manifest=manifest,
         )
@@ -351,6 +403,7 @@ def test__ratification_bound_template__replaces_placeholder_everywhere(
         signatures,
         registry_identity,
         registry,
+        enrollment_authorities,
         manifest_identity,
         manifest,
     ) = _synthetic_governing_identity_and_records()
@@ -360,6 +413,7 @@ def test__ratification_bound_template__replaces_placeholder_everywhere(
         signatures,
         registry_identity,
         registry,
+        enrollment_authorities,
         manifest_identity,
         manifest,
     )
@@ -394,6 +448,7 @@ def test__ratification_bound_template__public_validator_cannot_bypass_git():
         signatures,
         registry_identity,
         registry,
+        enrollment_authorities,
         manifest_identity,
         manifest,
     ) = _synthetic_governing_identity_and_records()
@@ -403,6 +458,7 @@ def test__ratification_bound_template__public_validator_cannot_bypass_git():
         signatures,
         registry_identity,
         registry,
+        enrollment_authorities,
         manifest_identity,
         manifest,
     )
@@ -425,6 +481,7 @@ def test__ratification_bound_template__rejects_coherently_repinned_forgery():
         signatures,
         registry_identity,
         registry,
+        enrollment_authorities,
         manifest_identity,
         manifest,
     ) = _synthetic_governing_identity_and_records()
@@ -434,6 +491,7 @@ def test__ratification_bound_template__rejects_coherently_repinned_forgery():
         signatures,
         registry_identity,
         registry,
+        enrollment_authorities,
         manifest_identity,
         manifest,
     )
@@ -516,6 +574,7 @@ def test__ratification_bound_template__rejects_coherently_repinned_forgery():
             governing_attestation_signature_bytes=signatures,
             trusted_reviewer_registry_identity=registry_identity,
             trusted_reviewer_registry=registry,
+            trusted_enrollment_authorities=enrollment_authorities,
             recording_manifest_identity=manifest_identity,
             recording_manifest=manifest,
         )
@@ -620,9 +679,7 @@ def test__enforcement_inventory__rejects_each_named_forgery(
 
 def test__document__preserves_revision14_as_exact_prefix():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
-    ratified = a13._git(
-        "show", f"{a13.RATIFICATION_COMMIT}:{a13.DESIGN_PATH}"
-    )
+    ratified = a13._git("show", f"{a13.RATIFICATION_COMMIT}:{a13.DESIGN_PATH}")
     assert isinstance(ratified, bytes)
     assert len(ratified) == a13.DESIGN_BYTE_SIZE
     assert hashlib.sha256(ratified).hexdigest() == a13.DESIGN_SHA256
