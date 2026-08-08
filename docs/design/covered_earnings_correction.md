@@ -52827,3 +52827,466 @@ emits no authority, executes none of the 46 repairs, creates none of the six
 successor seals, and starts no tier-2 evidence build. The exact 14 law gaps,
 all other source rows, Q5, every registry and receipt, and every production
 result remain untouched and blocked under the inherited law.**
+
+## 28. AMENDMENT SECTION — Amendment 14: closure-bound ratification and blob-bound implementation
+
+### 28.1 Prospective status, immutable base, scope, and source record
+
+This is the **prospective Amendment-14 draft** proposing design revision 16.
+Its first 3,810,536 bytes are the complete revision-15 design, Git blob
+`323ce94dafa70b4496f9e1eaa490f16e9707624b`, with raw SHA-256
+`ae939693b8bcd99244135a170fdf268f0120d22a4d5cd857f5fcec525b5c859b`.
+Those bytes, including every byte of §§27.3–27.6, remain historical law and
+are not edited. This section is append-only. It supersedes predecessor rules
+only through the exact links below.
+
+Amendment 14 has three limbs. Section 28.2 replaces Amendment 13's
+inoperative public-key enrollment and recording act with the campaign's
+closure-bound ratification convention. Sections 28.3–28.4 apply that rule to
+Amendments 13 and 14. Section 28.5 replaces the commit-object implementation
+pin with file-blob pins. Sections 28.6–28.7 enact the public validator and
+mutation inventory. Section 28.8 closes supersession, identifier, and
+lifecycle effects. No other Amendment-13 repair value, source seal, overlay,
+successor, supersession edge, era cascade, law-gap disposition, pre-Q5 stop,
+or Amendment-11 production blocker changes.
+
+The scope correction follows these exact source records:
+
+| Record | Exact identity | Controlling fact |
+|---|---|---|
+| A12-T2-R02 STOP report, `/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-a12-tier2-r02-report.md` | 10,025 bytes; raw SHA-256 `ac19ef20f53dab867149412e28157d756654d037aaa02119a71b56d26aa4d9a6` | Sections 27.2.2, 27.2.3, and 27.8.3 made Amendment 13 inoperative pending the external roots, registry, enrollments, manifest, signed records, and K/Q/C/M/R ceremony. |
+| Amendment-13 charter, `/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-amend13-draft.md` | 5,255 bytes; raw SHA-256 `3b0148b3ff99e111c0b88f90a3933ca8326f5e2edf16c360304c08194387b683` | The charter authorized ratification identity and successor semantics for exactly 46 repairs; it did not charter a public-key infrastructure. |
+| Amendment-13 round-2b verdict, `/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-amend13-r2b-verdict.md` | 7,502 bytes; raw SHA-256 `b8e6753465164037490ee6fc3f598fde393a32527bc87097ea54a5d4cbb20051` | Finding 2 correctly showed that one actor could pre-enroll and control two keys; the attempted cure added the machinery now superseded. |
+| Revision-15 registry repin | commit `8f92d83a97398331411fc9aeb5bb748f16c065a7`, PR #378 | The repository already binds the Amendment-13 design through the outside-the-document registry act. |
+| Operator authorization | Max Ghenis, 2026-08-08, exact orchestration-session phrase `go a14` | The operator authorized this scope correction; the operator's merge of the Amendment-14 design PR is the human authorization act. |
+
+The A12 round-4 coordinator adjudication supplies campaign precedent for an
+orchestrator's scope adjudication. Amendments 1–12 became operative through
+parallel exact-byte review, merge, and registry repin, not through reviewer
+key enrollment. The trust anchors used here are the ratified design bytes,
+two committed adversarial verdict records, replacement-ref-immune public Git
+history, the closure identity fixed by the registry repin, and the named
+operator's accountable merge. The following sections codify that convention
+without claiming a stronger property.
+
+### 28.2 Limb I — the strict closure-bound operative convention
+
+#### 28.2.1 Exact operativity rule and honest trust property
+
+For amendment number *N*, the amendment is **OPERATIVE** if and only if all
+four conditions hold in this order:
+
+1. Two parallel, independently run adversarial referee processes issue
+   affirmative `RATIFY` verdicts over identical exact candidate design byte
+   count, raw SHA-256, and Git blob OID. Each verdict's exact first line is
+   `# RATIFY` and each record contains all three common attested values.
+2. The two exact verdict artifacts are committed directly under
+   `docs/analysis/amendment_N_ratification/`, and the strict closure at
+   `docs/analysis/amendment_N_ratification/closure_v1.json` pins their
+   repository paths, raw byte counts, and raw SHA-256 values.
+3. The named single-parent merged ratification commit carries at
+   `docs/design/covered_earnings_correction.md`, mode `100644`, the exact
+   candidate design blob attested by both verdicts. The closure records the
+   operator's merge commit, which must equal that ratification commit.
+4. A later registry-repin PR is merged. Its design binding selects the new
+   design revision and pins the closure's repository path, raw byte count,
+   and raw SHA-256. A closure that exists without that outside-the-document
+   binding has no operative effect.
+
+The referee processes are parallel and adversarial, and they operate
+independently of the drafter's content-production process. The same operator
+orchestrates both runs and performs the merge and repin. This rule therefore
+makes no claim that two independent humans control the referee processes and
+no claim that reviewer identities are authenticated by public keys. The
+one-actor/two-key protection attempted in Amendment 13 is replaced by the
+public-record protection of exact committed verdict bytes, public Git
+history, a closure pinned outside the document, and operator accountability.
+Any independent-human-review requirement belongs to a later publication gate
+if that gate enacts one.
+
+#### 28.2.2 Exact closure schema and canonical bytes
+
+The schema law is named
+`covered_earnings_amendment_ratification_closure.v1`; the exact filename
+`closure_v1.json` carries its version. A closure object has exactly these
+eight top-level keys in canonical sorted-key serialization:
+
+~~~text
+amendment_number
+attested_candidate_design_blob_oid
+attested_candidate_design_byte_size
+attested_candidate_design_raw_sha256
+operator_merge_commit
+ratification_commit
+ratification_commit_sole_parent
+verdict_artifacts
+~~~
+
+There is no `schema_version` member, status member, default, optional key,
+extension key, alias, migration, or caller-selected fallback. The exact
+`verdict_artifacts` value is an ordered array of exactly two objects. Each
+object has exactly these three keys:
+
+~~~text
+byte_size
+path
+raw_sha256
+~~~
+
+`amendment_number` is a positive JSON integer other than Boolean and equals
+the decimal *N* in the closure path. Every `byte_size` and
+`attested_candidate_design_byte_size` is a positive JSON integer other than
+Boolean. Each SHA-256 is exactly 64 lowercase hexadecimal characters. Each
+blob or commit OID is exactly 40 lowercase hexadecimal characters.
+`ratification_commit_sole_parent` names the only parent returned for
+`ratification_commit`; `operator_merge_commit` equals
+`ratification_commit`. The two verdict paths are distinct regular-file paths
+directly under the matching amendment directory, are not `closure_v1.json`,
+and have mode `100644`. The design path and mode are fixed by this section and
+are not closure keys.
+
+The inherited canonical law applies without relaxation: UTF-8 JSON with
+ASCII escapes, keys sorted lexicographically, compact separators, no duplicate
+key, BOM, NaN, infinity, float, trailing value, or unpaired encoding, and
+exactly one terminal LF. Equivalently, Python
+`json.dumps(value, allow_nan=False, ensure_ascii=True,
+separators=(",", ":"), sort_keys=True).encode("ascii") + b"\\n"`
+must reproduce the raw file exactly after a strict parse. Exact-key checks
+precede value use; no missing value is inferred.
+
+#### 28.2.3 Registry-repin binding and non-self-reference
+
+Revision 16 extends the registry's design binding with the exact key
+`ratification_closures`. Its value is an ordered array with one identity row
+for Amendment 13 followed by one for Amendment 14. Each row has exactly:
+
+~~~text
+path
+raw_byte_size
+raw_sha256
+~~~
+
+The paths are respectively
+`docs/analysis/amendment_13_ratification/closure_v1.json` and
+`docs/analysis/amendment_14_ratification/closure_v1.json`. The repin fills
+each row's positive integer `raw_byte_size` and 64-lowercase-hex
+`raw_sha256` from the committed closure bytes. A public consumer accepts no
+caller-supplied replacement for this binding.
+
+The resulting revision-16 design-binding object has exactly the five keys
+`path`, `ratification_commit`, `revision`, `blob_sha256`, and
+`ratification_closures`. It names revision `16`. The Amendment-14 closure's
+`ratification_commit` must equal that design binding's `ratification_commit`,
+and its `attested_candidate_design_raw_sha256` must equal the design binding's
+`blob_sha256`. The closure validator independently verifies the closure's
+byte count and Git blob OID against that same commit through the sanitized
+wrapper. Thus the Amendment-14 closure is cross-bound to the revision-16
+design identity rather than merely being another well-formed closure.
+
+A closure cannot name the commit that first contains itself or the later
+repin merge: including either unknown commit OID in its own bytes would change
+that OID. The closure instead names the already-existing, design-bearing
+operator merge as both `ratification_commit` and `operator_merge_commit`.
+After that merge, the orchestrator creates the verdict files and closure on
+the registry-repin branch; the repin merge then binds their completed bytes.
+This sequence makes the closure constructible and leaves the repin as the
+outside-the-document binding act it has always been.
+
+### 28.3 Retroactive closure and operativity for Amendment 13
+
+#### 28.3.1 Directly enacted verdict identities
+
+Amendment 14 directly pins the exact two ordered Amendment-13 verdict
+artifacts:
+
+| Path | Bytes | Raw SHA-256 |
+|---|---:|---|
+| `docs/analysis/amendment_13_ratification/sol-ce-amend13-r3-verdict.md` | 6,207 | `7e0f1ad7faec611a08ed8f0123cc484fe981a0f9681e7cd144f4deafb128dc72` |
+| `docs/analysis/amendment_13_ratification/sol-ce-amend13-r3b-verdict.md` | 5,379 | `6cd4b1e5689985685bf88100b78b20b676ae222a323cec20a6c9097799a75383` |
+
+Both files have mode `100644`, first line `# RATIFY`, and attest the same
+candidate design: 3,810,536 bytes, Git blob
+`323ce94dafa70b4496f9e1eaa490f16e9707624b`, raw SHA-256
+`ae939693b8bcd99244135a170fdf268f0120d22a4d5cd857f5fcec525b5c859b`.
+Commit `0aa0e5b50a2a7420e236e27dd1b05f76c8d8b3b9`, sole parent
+`8f92d83a97398331411fc9aeb5bb748f16c065a7`, first adds their byte-identical
+repository copies. The Git blob OIDs
+`4332cf344b0cd4d30161e32bcc850687e1f6e36c` and
+`e5ddfd53fc540c0288bcb941205bae50639bf1e6` are recorded observations; raw
+byte count and SHA-256 are the enacted verdict identities.
+
+#### 28.3.2 Exact Amendment-13 closure values and activation boundary
+
+The Amendment-13 closure created during the Amendment-14 ratification/repin
+step must equal this exact semantic object:
+
+| Closure member | Exact value |
+|---|---|
+| `amendment_number` | `13` |
+| `attested_candidate_design_blob_oid` | `323ce94dafa70b4496f9e1eaa490f16e9707624b` |
+| `attested_candidate_design_byte_size` | `3810536` |
+| `attested_candidate_design_raw_sha256` | `ae939693b8bcd99244135a170fdf268f0120d22a4d5cd857f5fcec525b5c859b` |
+| `ratification_commit` | `0cf2a90b1decaa52de4bcd1032227092ac9210c5` |
+| `ratification_commit_sole_parent` | `a16f6089eca06e98bf18b8238f056bb6effae383` |
+| `operator_merge_commit` | `0cf2a90b1decaa52de4bcd1032227092ac9210c5` |
+| `verdict_artifacts` | the exact two ordered §28.3.1 path/byte/SHA objects |
+
+The reviewed candidate commit
+`d2a7e9c295db0e438457e44351e3493adf2a9751` and the merged PR #377 squash
+`0cf2a90b1decaa52de4bcd1032227092ac9210c5` both carry the attested mode-
+`100644` design blob. The closure uses the merged squash because the registry
+already names it as the revision-15 ratification commit and because it records
+the operator's merge. The candidate commit remains an exact observation in
+both verdict records; commit shape does not replace blob identity.
+
+Amendment 13 becomes operative only when Amendment 14 itself becomes
+operative after the revision-16 repin binds both closures. At that instant,
+§§27.3–27.6's successor law for the 46 repairs becomes operative. This
+activation does not construct an overlay, execute a repair, emit authority or
+certification, authorize Q5, alter the 14 law gaps, or remove Amendment 11's
+independent `blocked_source_missing_disposition_underdetermined` production
+stop.
+
+### 28.4 Amendment-14 closure and the ratification-time sequence
+
+Amendment 14 contains no hash or byte count for either Amendment-14 verdict.
+Putting those values inside the candidate bytes would create circularity: the
+verdicts can exist only after reviewers attest final candidate bytes, while
+adding their hashes to those bytes would change the candidate and invalidate
+both attestations. The closure design removes that circularity without a
+default or placeholder.
+
+The exact Amendment-14 sequence is:
+
+~~~text
+final candidate bytes
+two parallel affirmative RATIFY verdicts on those exact bytes
+operator merge of the design PR
+commit both exact verdict artifacts and both A13/A14 closure_v1.json files on the revision-16 repin branch
+merge the revision-16 registry repin that pins the design and both closure identities
+Amendments 13 and 14 become operative
+~~~
+
+The Amendment-14 closure uses amendment number `14`, the exact final
+candidate design blob identity attested by both verdicts, the single-parent
+operator-merge commit that carries that blob, and the two Amendment-14
+verdict identities. The revision-16 repin, not this prospective text, supplies
+the closure's path/size/SHA identity. Until all steps complete, Amendment 14
+is inoperative and the Amendment-13 closure has no operative effect. This
+section supersedes the predecessor bootstrap formulation that would have put
+Amendment-14 verdict hashes inside Amendment 14.
+
+### 28.5 Limb II — blob-bound implementation identity
+
+#### 28.5.1 Active file pins
+
+Section 27.7's requirement to resolve implementation commit
+`76e7f48ae21232c233029c3b54f0b2f870067169^{commit}` is superseded. The
+active Amendment-14-governed implementation identity is exactly mode
+`100644` and these two path/blob/byte/hash rows:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `feb2c503bfa3a10fb2ea65a90ad7ea132a11973c` | 227527 | `907d63b3081d941ce8e8bcf9261de805241007f2605aeef9998b3824c48eb7f2` |
+| `tests/test_validate_amendment13_execution_law.py` | `e28aac0b4e5964e55abf660f76677cf8dd6eb4aa` | 19858 | `3ab07222e145ab9c46cfd9629141edb3f68e7f25c3f611cbfa9f01bb678997d2` |
+
+For each row, the validator requires the enacted path and mode, recomputes
+the raw byte count, raw SHA-256, and Git blob OID, and requires exact equality
+among the enacted identity, the working-tree bytes, and the `HEAD` tree-entry
+bytes. The check uses the sanitized replacement-ref-immune Git wrapper. It
+does not resolve, peel, authenticate, or require reachability of any
+implementation commit object.
+
+The historical implementation commit
+`76e7f48ae21232c233029c3b54f0b2f870067169`, the squash merge
+`0cf2a90b1decaa52de4bcd1032227092ac9210c5`, and the reachability repair merge
+`56d6f0df8065b1a005104948e402fcf7e136131f` in PR #379 remain recorded
+observations. The squash made the implementation commit unreachable and
+broke revision 15 despite unchanged pinned file blobs. Observations about
+commit topology have no force in the successor implementation identity.
+
+#### 28.5.2 Complete pin-region coverage
+
+The semantic projection recognizes exactly one complete §28.5.1 table and
+normalizes only the mode plus each row's blob OID, decimal byte count, and raw
+SHA-256. It preserves every other byte of §28 in the Amendment-14 semantic
+hash. Extra prose inside or around the table, an extra row, an omitted row,
+another captured value, or controlling text between the table and this
+paragraph changes that semantic hash and aborts. Section 27.7's predecessor
+pin-region grammar and normalized-value coverage remain byte-bound historical
+checks; its commit-object pin has no active verification effect.
+
+### 28.6 Limb III — public closure validator and semantic projection
+
+The lint-clean successor at
+`scripts/validate_amendment13_execution_law.py` removes the external
+certifier root, enrollment-authority root, reviewer key registry, enrollment
+authorizations, recording manifest, SSH signatures, seven-line signed-record
+ceremony, three literal `None` trust markers, and their synthetic scratch
+ceremonies. It retains the replacement-ref-immune wrapper, the six pinned
+source-seal reconstruction, all 46 successor semantics, §§27.3–27.6 identity
+preimages, the 14 untouched law gaps, the five-row Amendment-12 continuation
+projection, the §27.7 normalized-pin coverage check, and Amendment 12's exact
+71-mutation inventory.
+
+The public closure loader obtains the exact revision-16 design binding and
+`ratification_closures` only from the current registry. It accepts no caller
+closure identity and no verification-off switch. Amendment-13 operativity
+requires both the Amendment-13 and Amendment-14 closures to validate under
+the same registry snapshot; validating only the Amendment-13 closure cannot
+activate its successor law. For each selected amendment *N*, the loader
+performs these checks in fail-closed order:
+
+1. require the exact registry binding row and closure path;
+2. require the closure's working-tree bytes and `HEAD` bytes to be identical
+   and to match the registry raw byte count and SHA-256;
+3. strict-parse, canonical-round-trip, and exact-key/type-check the closure;
+4. require each ordered verdict file in both working tree and `HEAD`, require
+   its `HEAD` entry to be a mode-`100644` regular file, verify its closure byte
+   count/SHA-256, exact `# RATIFY` first line, and common design byte/SHA/blob
+   attestation;
+5. for Amendment 13, require the closure verdict array and all other closure
+   values to deep-equal §28.3's directly enacted object;
+6. for Amendment 14, require revision `16` and cross-bind its ratification
+   commit and raw design SHA-256 to the registry design binding;
+7. through the sanitized wrapper, require the named ratification commit to be
+   an exact commit with exactly the named sole parent, require
+   `operator_merge_commit` to equal it, and read the mode-`100644` design tree
+   entry without replacement refs; and
+8. recompute that design blob's byte count, raw SHA-256, and Git blob OID and
+   require exact equality with the closure attestation before constructing a
+   ratification-bound nonauthority execution template.
+
+Missing registry binding, closure, verdict, commit, parent, design entry, or
+byte identity aborts. The public validator never treats a coherent caller
+substitution as authority. A test-only pure helper may validate synthetic
+bytes without Git, but it is private, emits no authority, and cannot replace
+the public registry-selected path.
+
+The document semantic projection now exact-covers the Amendment-14 closure
+keysets, path and type rules, canonicalization law, registry binding keys,
+A13 direct verdict and closure values, operativity sequence, implementation
+pin grammar, active mutations, supersessions, and identifier inventory. The
+projection still exact-covers all revision-15 section hashes. A value added,
+removed, reordered, or enacted outside its qualified inventory aborts.
+
+### 28.7 Exact mutation inventories
+
+Amendment 13's exact seven semantic mutations survive unchanged:
+
+~~~text
+ratification_identity_wrong_blob
+ratification_identity_wrong_commit
+ratification_identity_multiple_parents
+successor_terminal_status_forged
+predecessor_supersession_erasure
+fragment_duplicate_selector_forged
+fragment_composition_transformation_forged
+~~~
+
+The Amendment-14 enforcement inventory is exactly:
+
+~~~text
+governing_document_semantics_forged_and_repinned
+implementation_pin_interval_override_forged_and_repinned
+enacted_identifier_absent_from_qualified_inventory
+git_replace_refs_substitute_parent_and_changed_paths
+verdict_artifact_missing
+ratification_closure_missing
+ratification_closure_verdict_byte_mismatch
+ratification_closure_attested_blob_mismatch
+ratification_closure_schema_keyset_violation
+implementation_pin_blob_mismatch
+ratification_closure_coherent_verdict_and_closure_substitution
+~~~
+
+The schema-keyset mutation separately exercises one extra and one missing key.
+The coherent-substitution mutation replaces both verdict byte strings and
+coherently recomputes their two closure rows and the closure's own bytes. The
+fixed registry identity must reject the substituted closure. Even under a
+test-only coherently substituted binding, the A13 case must reject against
+§28.3's directly enacted verdict and closure values. The implementation-pin
+mutation changes a committed `HEAD` implementation blob while the enacted pin
+remains fixed; the working-tree/`HEAD`/enacted triple equality must reject it. The
+replacement-ref mutation retains its historical exact name; under the
+blob-bound successor it attacks the sole parent and selected design or source
+blob, not a changed-path-count proxy.
+
+Two predecessor enforcement mutations are removed:
+
+~~~text
+dual_ratify_records_coherently_self_minted
+reviewer_registry_two_keys_one_actor_self_enrolled
+~~~
+
+The first depended on the superseded signed-record manifest and fixed key
+registry; the coherent verdict-and-closure substitution replaces its active
+coverage. The second depended entirely on the superseded key-enrollment
+ceremony. Removing those mechanisms removes those mutation inputs, not the
+honest public-record protection stated in §28.2.1. Every mutation name is
+appended to a rejection census only after its intended gate rejects, and an
+omitted, added, reordered, surviving, or wrong-gate mutation aborts.
+
+### 28.8 Replacement closure, identifiers, and terminal prospective status
+
+#### 28.8.1 Exact replacement and composition map
+
+The complete Amendment-14 affected-law map is:
+
+| Earlier normative anchor | Amendment-14 disposition |
+|---|---|
+| §27.2.2 governing Amendment-13 recording act; reviewer-key registry; enrollment authorizations; external certifier and enrollment roots; recording manifest; signed seven-line records; SSH namespaces; three `None` markers; K/Q/C/M/R document-only ceremony | Superseded by §§28.2–28.4's dual-RATIFY committed-verdict, strict-closure, operator-merge, and registry-repin rule. Historical bytes remain; no PKI consumer remains active. |
+| §§27.2.3 and 27.8.3 Amendment-13 unavailable-root and inoperative-draft terminal | Replaced for operativity only when Amendment 14 completes §28.4. Amendment 13 remains inoperative before that instant. |
+| §27.7.2 implementation commit-object reachability and its implementation-ancestry consumers | Superseded by §28.5's path/mode/blob/bytes/SHA working-tree-and-`HEAD` identity. Historical commit observations remain nonnormative. |
+| §27.7.3 six-name enforcement inventory | Composed with §28.7: four non-PKI attacks survive, two PKI attacks are removed for the stated reasons, and seven closure/blob attacks are added. |
+| §§27.3–27.6 exact 46-repair successor law | Byte-identical and unchanged; it becomes operative under §28.3.2 but executes nothing in this amendment. |
+| §§26.8–26.9 Amendment-12 pilot bundle and exact 71 mutations | Lawfully unchanged and permanently nonauthority. |
+| A12-T2-R05 non-PKI order, six source seals, independent source reconstruction, complete byte attestation, pre-Q5 stop, 14 law gaps, and Amendment-11 production blocker | Lawfully unchanged and composed with the closure precondition. |
+
+No earlier row is deleted. No new repair, alias, equivalence, law-gap cure,
+source seal, overlay, era seal, Q5 input, authority, certification, registry
+result, receipt, or production result is emitted.
+
+#### 28.8.2 Exact new identifiers and inventory consistency
+
+The exact Amendment-14 schema and binding identifiers are:
+
+~~~text
+covered_earnings_amendment_ratification_closure.v1
+ratification_closures
+~~~
+
+The exact Amendment-14 path templates are:
+
+~~~text
+docs/analysis/amendment_N_ratification/closure_v1.json
+docs/analysis/amendment_N_ratification/
+~~~
+
+The exact Amendment-14 status and operation identifiers are:
+
+~~~text
+OPERATIVE
+closure_bound_dual_ratify_operator_merge_registry_repin
+working_tree_head_and_enacted_blob_identity
+PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT
+RATIFIED_LAW_BOUND_NONAUTHORITY_EXECUTION_TEMPLATE
+~~~
+
+These qualified inventories are ordered, unique, and disjoint by kind. Every
+new schema, binding, path-template, status, or operation enacted in §28 occurs
+exactly once in its corresponding qualified inventory; historical references
+to predecessor identifiers do not reenact them. There is no alias, case fold,
+prefix match, default, or implicit migration.
+
+#### 28.8.3 Terminal draft effect
+
+**Amendment 14 remains a prospective, unratified, and inoperative draft. It
+certifies nothing, emits no authority, and does not yet make Amendment 13
+operative. Its two Amendment-14 verdict artifacts, both A13/A14 closure files,
+their revision-16 registry identities, and the operator merge commit do not
+exist in these candidate bytes and must not be invented by the validator.
+Only the exact post-RATIFY merge, closure creation, and registry-repin sequence
+in §28.4 can make Amendments 13 and 14 operative. Even then, all 46 repairs
+remain unexecuted, Q5 remains forbidden, the 14 law gaps remain untouched, and
+the Amendment-11 production blocker remains controlling.**
