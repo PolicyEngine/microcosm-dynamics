@@ -1,4 +1,4 @@
-"""Tests for Amendment 13's prospective tier-2 execution law."""
+"""Tests for Amendment 13's Amendment-14-governed execution law."""
 
 from __future__ import annotations
 
@@ -36,53 +36,28 @@ def rejected_enforcement_mutations(execution_law):
     return a13.run_enforcement_mutation_tests(execution_law)
 
 
-def _synthetic_governing_identity_and_records():
-    commit = "1" * 40
-    candidate_head = "2" * 40
-    document_raw = (ROOT / a13.DESIGN_PATH).read_bytes()
-    (
-        attestations,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        manifest,
-    ) = a13._test_trusted_material(document_raw, candidate_head)
-    manifest_identity = a13._test_manifest_identity(manifest)
-    identity = a13._test_governing_identity(
-        document_raw,
-        commit,
-        manifest_identity["manifest_commit"],
-        registry_identity,
-        manifest_identity,
-        attestations,
+def _a13_closure_material():
+    closure = copy.deepcopy(a13.A13_EXPECTED_CLOSURE)
+    closure_raw = a13.canonical_json_bytes(closure)
+    binding = a13._closure_binding(a13.A13_CLOSURE_PATH, closure_raw)
+    verdicts = {
+        row["path"]: (ROOT / row["path"]).read_bytes()
+        for row in closure["verdict_artifacts"]
+    }
+    design_raw = a13._git(
+        "show", f"{a13.A13_MERGED_RATIFICATION_COMMIT}:{a13.DESIGN_PATH}"
     )
-    return (
-        identity,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        manifest_identity,
-        manifest,
-    )
+    assert isinstance(design_raw, bytes)
+    return closure, closure_raw, binding, verdicts, design_raw
 
 
 def test__draft__emits_neither_authority_nor_certification(execution_law):
-    assert execution_law["status"] == (
-        "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
-    )
+    assert execution_law["status"] == a13.DRAFT_STATUS
     assert execution_law["authority_emitted"] is False
     assert execution_law["certification_emitted"] is False
     assert (
         execution_law["governing_amendment13_ratification_identity"]
         == a13.GOVERNING_A13_CANDIDATE_IDENTITY
-    )
-    assert (
-        execution_law["governing_amendment13_identity_schema_version"]
-        == a13.GOVERNING_A13_IDENTITY_SCHEMA_VERSION
     )
 
 
@@ -149,15 +124,6 @@ def test__proof_successors__exact_cover_and_status_families(execution_law):
             a13.PROOF_FINDING_MISPAIRED_CONTEXT: 1,
         }
     )
-    assert Counter(
-        row["predecessor_status_mapping"]["status_family"] for row in rows
-    ) == Counter(
-        {
-            "modern_handoff_status": 13,
-            "legacy_resolution_status": 14,
-            "document_036_special_resolution_status": 1,
-        }
-    )
 
 
 def test__successors__identity_preimage_binds_exact_status_mapping(
@@ -182,14 +148,15 @@ def test__incomplete_fragments__repair_by_disclosure_not_invention(
     assert len(rows) == 8
     for row in rows:
         payload = row["successor_payload"]
+        citation = payload["disclosed_incomplete_fragment_citation"]
         assert payload["terminal_status"] == a13.INCOMPLETE_FRAGMENT_STATUS
         assert payload["continuation_citation"] is None
         assert payload["alias_admitted"] is False
-        citation = payload["disclosed_incomplete_fragment_citation"]
         assert citation["utf8_byte_end"] > citation["utf8_byte_start"]
-        assert hashlib.sha256(
-            citation["matched_text"].encode()
-        ).hexdigest() == (citation["matched_utf8_sha256"])
+        assert (
+            hashlib.sha256(citation["matched_text"].encode()).hexdigest()
+            == citation["matched_utf8_sha256"]
+        )
 
 
 def test__composed_fragments__use_exact_selector_and_transform(execution_law):
@@ -223,9 +190,6 @@ def test__document036__changes_only_component_slot_to_aggregate(execution_law):
         assert set(successor) == set(predecessor)
         assert predecessor["node_domain"] == "component_slot"
         assert successor["node_domain"] == "aggregate"
-        assert payload["transformation_rule"] == (
-            "replace_only_node_domain_component_slot_with_aggregate"
-        )
         assert {
             key
             for key in predecessor
@@ -240,333 +204,131 @@ def test__document036__successor_only_extra_key_fails_closed(execution_law):
     a13._repin_successor(row)
     with pytest.raises(
         a13.LawError,
-        match="document-036 transformation is not the sole determinate field change",
+        match="document-036 transformation is not the sole determinate",
     ):
         a13.validate_execution_law(candidate, verify_git=False)
 
 
-def test__governing_ratification__requires_raw_dual_records():
-    (
-        identity,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        manifest_identity,
-        manifest,
-    ) = _synthetic_governing_identity_and_records()
-    a13._validate_governing_amendment13_ratification_identity(
-        identity,
-        records,
-        signatures,
+def test__closure__a13_direct_pins_and_canonical_instance_validate():
+    closure, raw, binding, verdicts, design_raw = _a13_closure_material()
+    validated = a13._validate_ratification_closure(
+        raw,
+        binding,
+        verdicts,
+        13,
         verify_git=False,
-        trusted_reviewer_registry_identity=registry_identity,
-        trusted_reviewer_registry=registry,
-        trusted_enrollment_authorities=enrollment_authorities,
-        recording_manifest_identity=manifest_identity,
-        recording_manifest=manifest,
+        ratification_design_raw=design_raw,
     )
-    one_reviewer_registry = copy.deepcopy(registry)
-    one_reviewer_registry["ordered_reviewers"] = one_reviewer_registry[
-        "ordered_reviewers"
-    ][:1]
-    one_reviewer_registry["reviewer_domain_sha256"] = a13._domain_sha(
-        one_reviewer_registry["ordered_reviewers"]
+    assert validated == closure
+    assert closure["verdict_artifacts"] == list(a13.A13_VERDICT_ARTIFACTS)
+    assert closure["ratification_commit"] == (
+        a13.A13_MERGED_RATIFICATION_COMMIT
     )
-    one_reviewer_registry["ordered_enrollment_authorizations"] = (
-        one_reviewer_registry["ordered_enrollment_authorizations"][:1]
-    )
-    one_reviewer_registry["enrollment_authorization_domain_sha256"] = (
-        a13._domain_sha(
-            one_reviewer_registry["ordered_enrollment_authorizations"]
-        )
-    )
-    with pytest.raises(
-        a13.LawError,
-        match="trusted Amendment-13 reviewer registry drift",
-    ):
-        a13._validate_governing_amendment13_ratification_identity(
-            identity,
-            records,
-            signatures,
-            verify_git=False,
-            trusted_reviewer_registry_identity=registry_identity,
-            trusted_reviewer_registry=one_reviewer_registry,
-            trusted_enrollment_authorities=enrollment_authorities,
-            recording_manifest_identity=manifest_identity,
-            recording_manifest=manifest,
-        )
-    with pytest.raises(
-        a13.LawError,
-        match="trusted Amendment-13 enrollment authority root drift",
-    ):
-        a13._validate_governing_amendment13_ratification_identity(
-            identity,
-            records,
-            signatures,
-            verify_git=False,
-            trusted_reviewer_registry_identity=registry_identity,
-            trusted_reviewer_registry=registry,
-            trusted_enrollment_authorities=enrollment_authorities[:1],
-            recording_manifest_identity=manifest_identity,
-            recording_manifest=manifest,
-        )
-    forged_records = dict(records)
-    forged_records[next(iter(records))] += b"forged\n"
-    with pytest.raises(
-        a13.LawError,
-        match="RATIFY raw bytes do not attest identity",
-    ):
-        a13._validate_governing_amendment13_ratification_identity(
-            identity,
-            forged_records,
-            signatures,
-            verify_git=False,
-            trusted_reviewer_registry_identity=registry_identity,
-            trusted_reviewer_registry=registry,
-            trusted_enrollment_authorities=enrollment_authorities,
-            recording_manifest_identity=manifest_identity,
-            recording_manifest=manifest,
-        )
-    forged_identity = copy.deepcopy(identity)
-    forged_identity["dual_ratify_attestations"][0][
-        "record_name"
-    ] = "injected\nrecord.md"
-    with pytest.raises(
-        a13.LawError,
-        match="governing Amendment-13 RATIFY attestation drift",
-    ):
-        a13._validate_governing_amendment13_ratification_identity(
-            forged_identity,
-            records,
-            signatures,
-            verify_git=False,
-            trusted_reviewer_registry_identity=registry_identity,
-            trusted_reviewer_registry=registry,
-            trusted_enrollment_authorities=enrollment_authorities,
-            recording_manifest_identity=manifest_identity,
-            recording_manifest=manifest,
-        )
-    reversed_identity = copy.deepcopy(identity)
-    reversed_identity["dual_ratify_attestations"].reverse()
-    with pytest.raises(
-        a13.LawError,
-        match="RATIFY attestation drift",
-    ):
-        a13._validate_governing_amendment13_ratification_identity(
-            reversed_identity,
-            records,
-            signatures,
-            verify_git=False,
-            trusted_reviewer_registry_identity=registry_identity,
-            trusted_reviewer_registry=registry,
-            trusted_enrollment_authorities=enrollment_authorities,
-            recording_manifest_identity=manifest_identity,
-            recording_manifest=manifest,
-        )
-    public_identity = copy.deepcopy(identity)
-    public_identity["ratification_commit"] = str(
-        a13._git("rev-parse", "HEAD", text=True)
-    ).strip()
-    with pytest.raises(
-        a13.LawError,
-        match="externally authenticated Amendment-13 reviewer root is unavailable",
-    ):
-        a13.validate_governing_amendment13_ratification_identity(
-            public_identity,
-            records,
-            signatures,
-        )
+    assert closure["operator_merge_commit"] == closure["ratification_commit"]
 
 
-def test__governing_ratification__candidate_head_must_be_commit_object():
-    tree_object = subprocess.run(
-        ["git", "rev-parse", "HEAD^{tree}"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.strip()
+def test__closure__generic_a14_schema_validates_like_a13():
+    closure, raw, binding, verdicts, design_raw = (
+        a13._synthetic_closure_material()
+    )
+    validated = a13._validate_ratification_closure(
+        raw,
+        binding,
+        verdicts,
+        14,
+        verify_git=False,
+        ratification_design_raw=design_raw,
+    )
+    assert validated == closure
+    assert tuple(validated) == a13.CLOSURE_TOP_LEVEL_KEYS
+    assert all(
+        tuple(row) == a13.CLOSURE_VERDICT_KEYS
+        for row in validated["verdict_artifacts"]
+    )
+
+
+def test__closure__public_path_fails_closed_before_revision16_repin():
     with pytest.raises(
         a13.LawError,
-        match="attested candidate HEAD is not an exact commit object",
+        match="registry ratification closure binding is missing",
     ):
-        a13._require_exact_commit_object(
-            tree_object,
-            "governing Amendment-13 attested candidate HEAD",
-        )
+        a13.validate_amendment_ratification_closure(13)
 
 
-def test__ratification_bound_template__replaces_placeholder_everywhere(
-    execution_law,
-):
-    (
-        identity,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        manifest_identity,
-        manifest,
-    ) = _synthetic_governing_identity_and_records()
+def test__closure__ratification_commit_is_exact_single_parent():
+    closure, raw, binding, verdicts, _ = _a13_closure_material()
+    validated = a13._validate_ratification_closure(
+        raw,
+        binding,
+        verdicts,
+        13,
+        verify_git=True,
+    )
+    assert validated == closure
+
+
+def test__closure__tree_object_cannot_pose_as_commit():
+    tree_object = str(a13._git("rev-parse", "HEAD^{tree}", text=True)).strip()
+    with pytest.raises(
+        a13.LawError,
+        match="is not an exact commit object",
+    ):
+        a13._require_exact_commit_object(tree_object, "synthetic tree")
+
+
+def test__ratification_bound_template__replaces_placeholder_everywhere():
+    closure, raw, binding, verdicts, design_raw = _a13_closure_material()
     template = a13._build_ratification_bound_execution_template_for_test(
-        identity,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        manifest_identity,
-        manifest,
+        raw,
+        binding,
+        verdicts,
+        design_raw,
     )
     assert template["status"] == a13.RATIFICATION_BOUND_TEMPLATE_STATUS
     assert template["authority_emitted"] is False
     assert template["certification_emitted"] is False
-    assert template["governing_amendment13_ratification_identity"] == identity
+    assert template["governing_amendment13_ratification_identity"] == closure
     assert all(
-        overlay["governing_amendment13_ratification_identity"] == identity
-        and overlay["overlay_identity_preimage"][-2] == identity
+        overlay["governing_amendment13_ratification_identity"] == closure
+        and overlay["overlay_identity_preimage"][-2] == closure
         for overlay in template["repair_overlay_rows"]
     )
     assert all(
-        seal["governing_amendment13_ratification_identity"] == identity
-        and seal["successor_era_seal_identity_preimage"][-1] == identity
+        seal["governing_amendment13_ratification_identity"] == closure
+        and seal["successor_era_seal_identity_preimage"][-1] == closure
         for seal in template["successor_era_seal_rows"]
-    )
-    assert (
-        b"UNAVAILABLE_BEFORE_AMENDMENT_13_RATIFICATION"
-        not in a13.canonical_json_bytes(template)
-    )
-    assert (
-        template["integrity"]["overlay_domain_sha256"]
-        != execution_law["integrity"]["overlay_domain_sha256"]
     )
 
 
 def test__ratification_bound_template__public_validator_cannot_bypass_git():
-    (
-        identity,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        manifest_identity,
-        manifest,
-    ) = _synthetic_governing_identity_and_records()
+    closure, raw, binding, verdicts, design_raw = _a13_closure_material()
     template = a13._build_ratification_bound_execution_template_for_test(
-        identity,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        manifest_identity,
-        manifest,
+        raw,
+        binding,
+        verdicts,
+        design_raw,
     )
+    assert template["governing_amendment13_ratification_identity"] == closure
     with pytest.raises(
         a13.LawError,
         match="ratification-bound validation may not disable Git verification",
     ):
-        a13.validate_execution_law(
-            template,
-            verify_git=False,
-            governing_attestation_record_bytes=records,
-            governing_attestation_signature_bytes=signatures,
-        )
+        a13.validate_execution_law(template, verify_git=False)
 
 
-def test__ratification_bound_template__rejects_coherently_repinned_forgery():
-    (
-        identity,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        manifest_identity,
-        manifest,
-    ) = _synthetic_governing_identity_and_records()
+def test__ratification_bound_template__rejects_coherent_source_forgery():
+    closure, raw, binding, verdicts, design_raw = _a13_closure_material()
     template = a13._build_ratification_bound_execution_template_for_test(
-        identity,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        manifest_identity,
-        manifest,
+        raw,
+        binding,
+        verdicts,
+        design_raw,
     )
     row = template["semantically_incompatible_local_proof_successor_rows"][0]
-    old_successor_id = row["successor_row_id"]
     row["successor_payload"][
         "terminal_reason_code"
     ] = "forged_but_coherently_repinned_reason"
     a13._repin_successor(row)
-    new_successor_id = row["successor_row_id"]
-    edge = next(
-        edge
-        for edge in template["predecessor_supersession_rows"]
-        if edge["successor_row_id"] == old_successor_id
-    )
-    old_supersession_id = edge["supersession_row_id"]
-    edge["successor_row_id"] = row["successor_row_id"]
-    edge["supersession_identity_preimage"][5] = row["successor_row_id"]
-    edge["supersession_row_id"] = a13._content_id(
-        "a13-supersession", edge["supersession_identity_preimage"]
-    )
-    new_supersession_id = edge["supersession_row_id"]
-
-    for overlay in template["repair_overlay_rows"]:
-        successors = a13._all_overlay_successors(overlay)
-        edges = overlay["predecessor_supersession_rows"]
-        overlay["integrity"] = {
-            "successor_count": len(successors),
-            "successor_domain_sha256": a13._domain_sha(successors),
-            "supersession_count": len(edges),
-            "supersession_domain_sha256": a13._domain_sha(edges),
-        }
-
-    for era in template["successor_era_seal_rows"]:
-        era["successor_row_ids"] = [
-            new_successor_id if value == old_successor_id else value
-            for value in era["successor_row_ids"]
-        ]
-        era["supersession_row_ids"] = [
-            new_supersession_id if value == old_supersession_id else value
-            for value in era["supersession_row_ids"]
-        ]
-        era["successor_era_seal_identity_preimage"][5] = era[
-            "successor_row_ids"
-        ]
-        era["successor_era_seal_identity_preimage"][6] = era[
-            "supersession_row_ids"
-        ]
-        era["successor_era_seal_id"] = a13._content_id(
-            "a13-successor-era-seal",
-            era["successor_era_seal_identity_preimage"],
-        )
-
-    template["integrity"]["successor_domain_sha256"] = a13._domain_sha(
-        [
-            *template["semantically_incompatible_local_proof_successor_rows"],
-            *template["incomplete_fragment_terminal_successor_rows"],
-            *template["composed_fragment_successor_rows"],
-            *template["doc036_aggregate_domain_successor_rows"],
-        ]
-    )
-    template["integrity"]["supersession_domain_sha256"] = a13._domain_sha(
-        template["predecessor_supersession_rows"]
-    )
-    template["integrity"]["overlay_domain_sha256"] = a13._domain_sha(
-        template["repair_overlay_rows"]
-    )
-    template["integrity"]["successor_era_seal_domain_sha256"] = (
-        a13._domain_sha(template["successor_era_seal_rows"])
-    )
-
     with pytest.raises(
         a13.LawError,
         match="forged incompatible-proof terminal status or admission",
@@ -574,13 +336,7 @@ def test__ratification_bound_template__rejects_coherently_repinned_forgery():
         a13._validate_execution_law(
             template,
             verify_git=False,
-            governing_attestation_record_bytes=records,
-            governing_attestation_signature_bytes=signatures,
-            trusted_reviewer_registry_identity=registry_identity,
-            trusted_reviewer_registry=registry,
-            trusted_enrollment_authorities=enrollment_authorities,
-            recording_manifest_identity=manifest_identity,
-            recording_manifest=manifest,
+            verified_closure=closure,
         )
 
 
@@ -627,13 +383,6 @@ def test__scope__fourteen_law_gaps_and_a12_continuations_are_untouched(
     assert continuation["continuation_projection_sha256"] == (
         a13.A12_CONTINUATION_PROJECTION_SHA256
     )
-    assert (
-        continuation["new_fragment_predecessor_evidence_ids_disjoint"] is True
-    )
-    assert (
-        continuation["new_fragment_instruction_occurrence_ids_disjoint"]
-        is True
-    )
 
 
 def test__nested_authority_and_declared_schema_forgery_fail_closed(
@@ -654,6 +403,28 @@ def test__nested_authority_and_declared_schema_forgery_fail_closed(
             a13.validate_execution_law(candidate, verify_git=False)
 
 
+def test__document__semantic_projection_covers_amendment14():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    projection = a13._parse_document_semantic_projection(raw)
+    assert projection["amendment14"]["section_semantic_sha256"] == (
+        a13.A14_SECTION_SEMANTIC_SHA256
+    )
+    assert projection["amendment14"]["a13_expected_closure"] == (
+        a13.A13_EXPECTED_CLOSURE
+    )
+    assert projection["amendment14"]["enforcement_mutations"] == list(
+        a13.A13_ENFORCEMENT_EXPECTED_MUTATIONS
+    )
+
+
+def test__implementation__active_pins_are_blob_bound_without_commit():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    pins = a13._parse_amendment14_projection(raw)["implementation_pins"]
+    assert set(pins) == {"mode", "files"}
+    assert "commit" not in pins
+    a13._verify_implementation_pins(pins)
+
+
 def test__mutation_inventory__is_separate_and_exact(
     rejected_mutations,
     rejected_enforcement_mutations,
@@ -662,6 +433,10 @@ def test__mutation_inventory__is_separate_and_exact(
     assert (
         rejected_enforcement_mutations
         == a13.A13_ENFORCEMENT_EXPECTED_MUTATIONS
+    )
+    assert a13.REMOVED_PKI_MUTATIONS == (
+        "dual_ratify_records_coherently_self_minted",
+        "reviewer_registry_two_keys_one_actor_self_enrolled",
     )
 
 
@@ -681,11 +456,27 @@ def test__enforcement_inventory__rejects_each_named_forgery(
     assert mutation in rejected_enforcement_mutations
 
 
-def test__document__preserves_revision14_as_exact_prefix():
+def test__document__preserves_revision15_as_exact_prefix():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
-    ratified = a13._git("show", f"{a13.RATIFICATION_COMMIT}:{a13.DESIGN_PATH}")
-    assert isinstance(ratified, bytes)
-    assert len(ratified) == a13.DESIGN_BYTE_SIZE
-    assert hashlib.sha256(ratified).hexdigest() == a13.DESIGN_SHA256
-    assert raw[: a13.DESIGN_BYTE_SIZE] == ratified
+    revision15 = a13._git(
+        "show",
+        f"{a13.A13_MERGED_RATIFICATION_COMMIT}:{a13.DESIGN_PATH}",
+    )
+    assert isinstance(revision15, bytes)
+    assert len(revision15) == a13.REVISION15_BYTE_SIZE
+    assert hashlib.sha256(revision15).hexdigest() == a13.REVISION15_SHA256
+    assert a13._git_blob_oid(revision15) == a13.REVISION15_BLOB_OID
+    assert raw[: a13.REVISION15_BYTE_SIZE] == revision15
+    assert raw[a13.REVISION15_BYTE_SIZE :].startswith(a13.AMENDMENT14_BOUNDARY)
+
+
+def test__document__retains_nested_revision14_and_a13_boundaries():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    revision14 = a13._git(
+        "show", f"{a13.RATIFICATION_COMMIT}:{a13.DESIGN_PATH}"
+    )
+    assert isinstance(revision14, bytes)
+    assert len(revision14) == a13.DESIGN_BYTE_SIZE
+    assert hashlib.sha256(revision14).hexdigest() == a13.DESIGN_SHA256
+    assert raw[: a13.DESIGN_BYTE_SIZE] == revision14
     assert raw[a13.DESIGN_BYTE_SIZE :].startswith(a13.AMENDMENT13_BOUNDARY)

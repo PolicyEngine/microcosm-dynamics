@@ -1,17 +1,16 @@
-"""Validate Amendment 13's prospective tier-2 execution law.
+"""Validate Amendment 13's Amendment-14-governed execution law.
 
 This module emits no authority and writes no artifact.  It reconstructs the
 proposed repair overlays from the six pinned stage-2 source seals, checks the
-historical Amendment-12 ratification blob, and exercises Amendment 13's own
-adversarial mutation inventory.  Amendment 12's frozen pilot bundle and its
-71 mutations are deliberately not changed.
+historical Amendment-12 ratification blob, authenticates Amendment 13 through
+the public dual-RATIFY record codified by Amendment 14, and exercises the
+separate adversarial mutation inventories.  Amendment 12's frozen pilot bundle
+and its 71 mutations are deliberately not changed.
 """
 
 from __future__ import annotations
 
 import argparse
-import ast
-import base64
 import copy
 import hashlib
 import json
@@ -21,9 +20,10 @@ import subprocess
 import sys
 import tempfile
 from collections import Counter, defaultdict
+from collections.abc import Callable, Mapping, Sequence
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -46,46 +46,21 @@ GOVERNING_A13_IDENTITY_SCHEMA_VERSION = (
     "amendment_13_governing_ratification_identity.v1"
 )
 GOVERNING_A13_IDENTITY_STATUS = "RATIFIED_AMENDMENT_13_GOVERNING_EXECUTION_LAW"
-TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION = (
-    "amendment_13_dual_ratify_recording_manifest_identity.v1"
+CLOSURE_SCHEMA_IDENTIFIER = (
+    "covered_earnings_amendment_ratification_closure.v1"
 )
-TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION = (
-    "amendment_13_dual_ratify_recording_manifest.v1"
+CLOSURE_TOP_LEVEL_KEYS = (
+    "amendment_number",
+    "attested_candidate_design_blob_oid",
+    "attested_candidate_design_byte_size",
+    "attested_candidate_design_raw_sha256",
+    "operator_merge_commit",
+    "ratification_commit",
+    "ratification_commit_sole_parent",
+    "verdict_artifacts",
 )
-TRUSTED_RECORDING_MANIFEST_STATUS = (
-    "INDEPENDENTLY_AUTHENTICATED_DUAL_RATIFY_RECORDING_MANIFEST"
-)
-TRUSTED_RECORDING_MANIFEST_PATH = (
-    "docs/analysis/amendment_13_ratification/"
-    "dual_ratify_recording_manifest_v1.json"
-)
-TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION = (
-    "amendment_13_reviewer_key_registry_identity.v1"
-)
-TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION = (
-    "amendment_13_reviewer_key_registry.v1"
-)
-TRUSTED_REVIEWER_REGISTRY_STATUS = (
-    "INDEPENDENTLY_AUTHENTICATED_PRE_CANDIDATE_REVIEWER_KEYS"
-)
-TRUSTED_REVIEWER_REGISTRY_PATH = (
-    "docs/analysis/amendment_13_ratification/"
-    "trusted_reviewer_key_registry_v1.json"
-)
-RATIFY_SIGNATURE_NAMESPACE = "policyengine-amendment13-ratify-v1"
-ENROLLMENT_SIGNATURE_NAMESPACE = (
-    "policyengine-amendment13-reviewer-enrollment-v1"
-)
-A13_DRAFT_AUTHOR_IDENTITY = "amendment-13-draft-author:max-ghenis"
-# The authenticated implementation commit, not these live module attributes,
-# is the production source of truth.  Its three literal None markers record
-# that the immutable revision-14 prefix and the two Amendment-12 verdict bytes
-# contain no cryptographic reviewer credential.  A separately ratified
-# successor implementation must introduce an externally authenticated,
-# pre-draft certifier root before the public path can become available.
-PINNED_A13_EXTERNAL_CERTIFIER_ROOT_IDENTITY: Mapping[str, Any] | None = None
-PINNED_A13_ENROLLMENT_AUTHORITY_ROOT_IDENTITY: Mapping[str, Any] | None = None
-PINNED_A13_REVIEWER_REGISTRY_IDENTITY: Mapping[str, Any] | None = None
+CLOSURE_VERDICT_KEYS = ("byte_size", "path", "raw_sha256")
+REGISTRY_CLOSURE_BINDING_KEYS = ("path", "raw_byte_size", "raw_sha256")
 DRAFT_STATUS = "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT"
 RATIFICATION_BOUND_TEMPLATE_STATUS = (
     "RATIFIED_LAW_BOUND_NONAUTHORITY_EXECUTION_TEMPLATE"
@@ -153,6 +128,51 @@ AMENDMENT13_BOUNDARY = (
     b"\n## 27. AMENDMENT SECTION \xe2\x80\x94 Amendment 13: ratification "
     b"identity and tier-2 repair-successor law\n"
 )
+REVISION15_BYTE_SIZE = 3_810_536
+REVISION15_SHA256 = (
+    "ae939693b8bcd99244135a170fdf268f0120d22a4d5cd857f5fcec525b5c859b"
+)
+REVISION15_BLOB_OID = "323ce94dafa70b4496f9e1eaa490f16e9707624b"
+AMENDMENT14_BOUNDARY = (
+    b"\n## 28. AMENDMENT SECTION \xe2\x80\x94 Amendment 14: closure-bound "
+    b"ratification and blob-bound implementation\n"
+)
+A13_MERGED_RATIFICATION_COMMIT = "0cf2a90b1decaa52de4bcd1032227092ac9210c5"
+A13_MERGED_RATIFICATION_PARENT = "a16f6089eca06e98bf18b8238f056bb6effae383"
+A13_CLOSURE_PATH = "docs/analysis/amendment_13_ratification/closure_v1.json"
+A14_CLOSURE_PATH = "docs/analysis/amendment_14_ratification/closure_v1.json"
+A13_VERDICT_ARTIFACTS = (
+    {
+        "path": (
+            "docs/analysis/amendment_13_ratification/"
+            "sol-ce-amend13-r3-verdict.md"
+        ),
+        "byte_size": 6_207,
+        "raw_sha256": (
+            "7e0f1ad7faec611a08ed8f0123cc484fe981a0f9681e7cd144f4deafb128dc72"
+        ),
+    },
+    {
+        "path": (
+            "docs/analysis/amendment_13_ratification/"
+            "sol-ce-amend13-r3b-verdict.md"
+        ),
+        "byte_size": 5_379,
+        "raw_sha256": (
+            "6cd4b1e5689985685bf88100b78b20b676ae222a323cec20a6c9097799a75383"
+        ),
+    },
+)
+A13_EXPECTED_CLOSURE = {
+    "amendment_number": 13,
+    "attested_candidate_design_blob_oid": REVISION15_BLOB_OID,
+    "attested_candidate_design_byte_size": REVISION15_BYTE_SIZE,
+    "attested_candidate_design_raw_sha256": REVISION15_SHA256,
+    "operator_merge_commit": A13_MERGED_RATIFICATION_COMMIT,
+    "ratification_commit": A13_MERGED_RATIFICATION_COMMIT,
+    "ratification_commit_sole_parent": A13_MERGED_RATIFICATION_PARENT,
+    "verdict_artifacts": [dict(row) for row in A13_VERDICT_ARTIFACTS],
+}
 RATIFICATION_CHANGED_PATH_COUNT = 17
 ATTESTED_CANDIDATE_HEAD = "76acad02b0d519d12057b75ab7c21f2c2a4b2433"
 A12_SWEEP_PATH = (
@@ -203,7 +223,8 @@ AMENDMENT12_RATIFICATION_IDENTITY = {
     "dual_ratify_attestations": [dict(row) for row in RATIFY_ATTESTATIONS],
 }
 
-INCOMPATIBLE_PROOF_IDS = tuple("""
+INCOMPATIBLE_PROOF_IDS = tuple(
+    """
 rq-local-repeat-evidence:c93bb69e6a4c04717efd8b68e71799b5b4f3cb1c1c20a1b31afe2852d04dab67
 rq-local-repeat-evidence:0c25501bcb134ddd36f5f076978ebd01a02d3e731772c4ae5de182d81a76a487
 rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716
@@ -232,7 +253,8 @@ rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561
 rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877
 rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c
 rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39
-""".split())
+""".split()
+)
 INCOMPATIBLE_PROOF_ID_DOMAIN_SHA256 = (
     "9c8cb11732939daac176275ae66dfa5a6ce61a2850c82087dd761a6431ac7412"
 )
@@ -293,6 +315,7 @@ PROOF_PREDECESSOR_FINDING_BY_ID = dict(
             PROOF_FINDING_INCOMPLETE_CLAUSE,
             PROOF_FINDING_INCOMPLETE_CLAUSE,
         ),
+        strict=True,
     )
 )
 
@@ -365,7 +388,8 @@ FRAGMENT_INSTRUCTION_ID_DOMAIN_SHA256 = (
     "74075ac0ca54eff2a9459d4e95f426195c9e01db78040025462aa2f57f486a09"
 )
 
-DOC036_CLASSIFICATION_IDS = tuple("""
+DOC036_CLASSIFICATION_IDS = tuple(
+    """
 rq-local-anchor:6b757b140c4fdbcfcfe8b974f7894ffc856ab3dca240b7eb61530adca0e2d12a
 rq-local-anchor:11802d91128200f95abc1a42e5e39677f30c955da28e8b89bdc72e10ff8c11ef
 rq-local-anchor:daae302f7bdebd7a8ab43d983faaedecb97ac22f8a7ca7c3af92dbff1cb76de5
@@ -374,12 +398,14 @@ rq-local-anchor:930c509fadfdc037d5e03d65422cc7c3d3b86a9ec3adb7553e86d9654632d4ca
 rq-local-anchor:5a703e10bfd94a486c21d043d7ad980905870b908ea70b2f136c16e835e1a261
 rq-local-anchor:d6d21da4a96eda0e310284ca6cebc059f340e2bdaf2da64f56286d65a03fa283
 rq-local-anchor:93b5b7f3d32e6dda9e3fad1089fc4ba605502765e4de1735223637bc615fff29
-""".split())
+""".split()
+)
 DOC036_CLASSIFICATION_ID_DOMAIN_SHA256 = (
     "1d2271438f3d9a7744e1379ed26ce565ff2731ed0dd8dec357c0bd8a9a271d23"
 )
 
-LAW_GAP_IDS = tuple("""
+LAW_GAP_IDS = tuple(
+    """
 rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6
 rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045
 rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495
@@ -394,7 +420,8 @@ rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c9
 rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868
 rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927
 rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734
-""".split())
+""".split()
+)
 LAW_GAP_ID_DOMAIN_SHA256 = (
     "f2e8a5001527eb975887828ba3e66c3eeac95ec0972454bcef509fba92149883"
 )
@@ -578,10 +605,27 @@ A13_EXPECTED_MUTATIONS = (
 A13_ENFORCEMENT_EXPECTED_MUTATIONS = (
     "governing_document_semantics_forged_and_repinned",
     "implementation_pin_interval_override_forged_and_repinned",
+    "enacted_identifier_absent_from_qualified_inventory",
+    "git_replace_refs_substitute_parent_and_changed_paths",
+    "verdict_artifact_missing",
+    "ratification_closure_missing",
+    "ratification_closure_verdict_byte_mismatch",
+    "ratification_closure_attested_blob_mismatch",
+    "ratification_closure_schema_keyset_violation",
+    "implementation_pin_blob_mismatch",
+    "ratification_closure_coherent_verdict_and_closure_substitution",
+)
+A13_HISTORICAL_ENFORCEMENT_MUTATIONS = (
+    "governing_document_semantics_forged_and_repinned",
+    "implementation_pin_interval_override_forged_and_repinned",
     "dual_ratify_records_coherently_self_minted",
     "reviewer_registry_two_keys_one_actor_self_enrolled",
     "enacted_identifier_absent_from_qualified_inventory",
     "git_replace_refs_substitute_parent_and_changed_paths",
+)
+REMOVED_PKI_MUTATIONS = (
+    "dual_ratify_records_coherently_self_minted",
+    "reviewer_registry_two_keys_one_actor_self_enrolled",
 )
 
 A13_SEARCH_AUGMENTATION = (
@@ -625,16 +669,6 @@ A13_SCHEMA_LITERALS = (
     SUPERSESSION_SCHEMA_VERSION,
     ERA_SEAL_SCHEMA_VERSION,
 )
-A13_AUTHENTICATION_SCHEMA_LITERALS = (
-    TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION,
-    TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
-    TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION,
-    TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION,
-)
-A13_AUTHENTICATION_STATUS_LITERALS = (
-    TRUSTED_REVIEWER_REGISTRY_STATUS,
-    TRUSTED_RECORDING_MANIFEST_STATUS,
-)
 A13_CONTENT_ID_PREFIXES = (
     "a13-document-repair-overlay:",
     "a13-repair-successor:",
@@ -668,22 +702,29 @@ A13_SUCCESSOR_KIND_LITERALS = (
     "composed_fragment_complete_instruction",
     "doc036_aggregate_domain_correction",
 )
-A13_TRUSTED_RECORDING_LITERALS = (
-    TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION,
-    TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
-    TRUSTED_REVIEWER_REGISTRY_STATUS,
-    TRUSTED_REVIEWER_REGISTRY_PATH,
-    TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION,
-    TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION,
-    TRUSTED_RECORDING_MANIFEST_STATUS,
-    TRUSTED_RECORDING_MANIFEST_PATH,
-    "reviewer_identity",
-    "ssh-ed25519",
-    RATIFY_SIGNATURE_NAMESPACE,
-    ENROLLMENT_SIGNATURE_NAMESPACE,
-    A13_DRAFT_AUTHOR_IDENTITY,
-    "git --no-replace-objects",
-    "GIT_NO_REPLACE_OBJECTS=1",
+
+A14_SCHEMA_BINDING_IDENTIFIERS = (
+    CLOSURE_SCHEMA_IDENTIFIER,
+    "ratification_closures",
+)
+A14_PATH_TEMPLATES = (
+    "docs/analysis/amendment_N_ratification/closure_v1.json",
+    "docs/analysis/amendment_N_ratification/",
+)
+A14_STATUS_OPERATION_IDENTIFIERS = (
+    "OPERATIVE",
+    "closure_bound_dual_ratify_operator_merge_registry_repin",
+    "working_tree_head_and_enacted_blob_identity",
+    DRAFT_STATUS,
+    RATIFICATION_BOUND_TEMPLATE_STATUS,
+)
+A14_RATIFICATION_SEQUENCE = (
+    "final candidate bytes",
+    "two parallel affirmative RATIFY verdicts on those exact bytes",
+    "operator merge of the design PR",
+    "commit both exact verdict artifacts and both A13/A14 closure_v1.json files on the revision-16 repin branch",
+    "merge the revision-16 registry repin that pins the design and both closure identities",
+    "Amendments 13 and 14 become operative",
 )
 
 A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
@@ -695,6 +736,9 @@ A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
     "27.7": "2dfcffcba99639a6d9b00efc6d0d06364a4c0e2fd522238f07dc715228d8ad2e",
     "27.8": "fdc5441ef8c2f60bb8334658b4c44bcd52f8355b4681a495e81c4b7aaaa5479e",
 }
+A14_SECTION_SEMANTIC_SHA256 = (
+    "c8840e51844a8710a76921e305e596f73fc5b4b0eae0d8b69c081827ec58061a"
+)
 
 A13_COMPARATOR_ROWS = (
     (
@@ -817,17 +861,17 @@ def _code_tokens_between(
 
 
 def _a13_sections(raw: bytes) -> dict[str, str]:
-    """Decode the exact suffix and split its uniquely ordered major sections."""
+    """Decode revision 15 and split its uniquely ordered major sections."""
 
     _require(
-        raw.endswith(b"\n")
-        and len(raw) > DESIGN_BYTE_SIZE
-        and _sha256(raw[:DESIGN_BYTE_SIZE]) == DESIGN_SHA256
+        len(raw) >= REVISION15_BYTE_SIZE
+        and _sha256(raw[:REVISION15_BYTE_SIZE]) == REVISION15_SHA256
+        and raw[:REVISION15_BYTE_SIZE].endswith(b"\n")
         and raw[DESIGN_BYTE_SIZE:].startswith(AMENDMENT13_BOUNDARY),
         "governing Amendment-13 document violates immutable-prefix law",
     )
     try:
-        text = raw.decode("utf-8")
+        text = raw[:REVISION15_BYTE_SIZE].decode("utf-8")
     except UnicodeDecodeError as error:
         raise LawError(
             "governing Amendment-13 document is not UTF-8"
@@ -905,7 +949,7 @@ def _parse_span(value: str, label: str) -> tuple[int, int]:
 
 
 def _parse_identity_projection(section: str) -> dict[str, Any]:
-    """Parse the primary historical and prospective recording declarations."""
+    """Parse only the surviving historical identity declarations."""
 
     historical_rows = _markdown_table(
         section,
@@ -957,75 +1001,30 @@ def _parse_identity_projection(section: str) -> dict[str, Any]:
                 "attested_document_sha256": document_match.group(2),
             }
         )
-
     governing_match = re.search(
         r"The actual identity schema is\n`([^`]+)`, with exact status\n"
         r"`([^`]+)` and exactly the keys\n",
         section,
     )
-    _require(
-        governing_match is not None,
-        "governing Amendment-13 primary schema/status drift",
-    )
     draft_match = re.search(
         r"values `([^`]+)`,\n`([^`]+)`, and false\.",
         section,
-    )
-    _require(
-        draft_match is not None,
-        "governing Amendment-13 draft placeholder values drift",
     )
     history_match = re.search(
         r"object has exactly\n`changed_path_count: (\d+)` and\n"
         r"`commit_path_shape_is_identity_condition: (true|false)`\.",
         section,
     )
-    _require(
-        history_match is not None,
-        "historical changed-path observation drift",
-    )
-    amendment12_attestation_keys = _code_tokens_between(
-        section,
-        "Each `dual_ratify_attestations` member has exactly ",
-        ". The candidate HEAD",
-        7,
-        "Amendment-12 attestation keys",
-    )
-    manifest_status_match = re.search(
-        r"The manifest object has\nexactly .*?\. Its exact\nstatus is\n"
-        r"`([^`]+)`\.",
-        section,
-        flags=re.DOTALL,
-    )
-    _require(
-        manifest_status_match is not None,
-        "trusted recording manifest primary status drift",
-    )
-    registry_match = re.search(
-        r"has exact canonical schema\n`([^`]+)`, exact status\n"
-        r"`([^`]+)`, and path\n`([^`]+)`\.",
-        section,
-    )
-    _require(
-        registry_match is not None,
-        "trusted reviewer registry primary identity drift",
-    )
-    recording_manifest_match = re.search(
-        r"The manifest object's\nschema is `([^`]+)` and its path is\n"
-        r"`([^`]+)`\.",
-        section,
-    )
-    _require(
-        recording_manifest_match is not None,
-        "recording manifest primary schema/path drift",
-    )
     bound_status_match = re.search(
         r"use fixture status\n`([^`]+)`, keep both authority",
         section,
     )
     _require(
-        bound_status_match is not None,
-        "ratification-bound template status drift",
+        governing_match is not None
+        and draft_match is not None
+        and history_match is not None
+        and bound_status_match is not None,
+        "historical Amendment-13 identity declarations drift",
     )
     return {
         "amendment12_identity_keys": _code_tokens_between(
@@ -1071,129 +1070,21 @@ def _parse_identity_projection(section: str) -> dict[str, Any]:
             )[0],
             "dual_ratify_attestations": parsed_attestations,
         },
-        "amendment12_attestation_keys": amendment12_attestation_keys,
+        "amendment12_attestation_keys": _code_tokens_between(
+            section,
+            "Each `dual_ratify_attestations` member has exactly ",
+            ". The candidate HEAD",
+            7,
+            "Amendment-12 attestation keys",
+        ),
         "ratification_history_observation": {
             "changed_path_count": int(history_match.group(1)),
             "commit_path_shape_is_identity_condition": (
                 history_match.group(2) == "true"
             ),
         },
-        "governing_identity_schema_version": governing_match.group(1),
-        "governing_identity_status": governing_match.group(2),
-        "governing_identity_keys": _code_tokens_between(
-            section,
-            governing_match.group(0),
-            ".\n`ratification_parents`",
-            13,
-            "governing Amendment-13 identity keys",
-        ),
-        "trusted_registry_identity_keys": _code_tokens_between(
-            section,
-            "`trusted_reviewer_registry_identity` has exactly ",
-            ". Its schema is\n",
-            8,
-            "trusted reviewer registry identity keys",
-        ),
-        "trusted_registry_identity_schema_version": _code_after(
-            section,
-            ". Its schema is\n",
-            "trusted reviewer registry identity schema",
-        ),
-        "trusted_registry_schema_version": registry_match.group(1),
-        "trusted_registry_status": registry_match.group(2),
-        "trusted_registry_path": registry_match.group(3),
-        "trusted_registry_keys": _code_tokens_between(
-            section,
-            "The registry object has\nexactly ",
-            ".\n\nThere are exactly two ordered reviewer rows.",
-            9,
-            "trusted reviewer registry keys",
-        ),
-        "trusted_reviewer_keys": _code_tokens_between(
-            section,
-            "There are exactly two ordered reviewer rows. Each has exactly\n",
-            ". Each key is an\nEd25519",
-            7,
-            "trusted reviewer keys",
-        ),
-        "trusted_enrollment_authority_keys": _code_tokens_between(
-            section,
-            "Each enrollment-authority row has exactly\n",
-            ". The ordered\n`prior_record_name`",
-            6,
-            "trusted enrollment-authority keys",
-        ),
-        "trusted_enrollment_authorization_keys": _code_tokens_between(
-            section,
-            "Each authorization row has exactly\n",
-            ". Each `authorization_preimage`",
-            6,
-            "trusted enrollment-authorization keys",
-        ),
-        "trusted_enrollment_authorization_preimage_keys": (
-            _code_tokens_between(
-                section,
-                "Each `authorization_preimage` has exactly\n",
-                ". The last two values",
-                12,
-                "trusted enrollment-authorization preimage keys",
-            )
-        ),
-        "enrollment_signature_namespace": _code_after(
-            section,
-            "including its terminal LF, is signed under enrollment "
-            "signature namespace\n",
-            "trusted enrollment signature namespace",
-        ),
-        "recording_manifest_identity_keys": _code_tokens_between(
-            section,
-            "`recording_manifest_identity` has exactly ",
-            ". Its schema\nis ",
-            8,
-            "recording manifest identity keys",
-        ),
-        "recording_manifest_identity_schema_version": _code_after(
-            section,
-            ". Its schema\nis ",
-            "recording manifest identity schema",
-        ),
-        "trusted_manifest_schema_version": recording_manifest_match.group(1),
-        "trusted_manifest_path": recording_manifest_match.group(2),
-        "trusted_manifest_keys": _code_tokens_between(
-            section,
-            "The manifest object has\nexactly ",
-            ". Its exact\nstatus is",
-            12,
-            "recording manifest keys",
-        ),
-        "trusted_manifest_status": manifest_status_match.group(1),
-        "governing_attestation_keys": _code_tokens_between(
-            section,
-            "Each of the exactly two attestation objects has exactly ",
-            ". It has verdict token ",
-            13,
-            "governing Amendment-13 attestation keys",
-        ),
-        "record_template": _fenced_lines_after(
-            section,
-            "terminal LF and no additional line, under this seven-line template:\n\n",
-            "governing Amendment-13 RATIFY record template",
-        ),
-        "trusted_recording_literals": _fenced_lines_after(
-            section,
-            "The exact trusted-recording validation literals are:\n\n",
-            "Amendment-13 trusted recording literals",
-        ),
-        "authentication_schema_literals": _fenced_lines_after(
-            section,
-            "The exact\nauthentication schema-version inventory is:\n\n",
-            "Amendment-13 authentication schema literals",
-        ),
-        "authentication_status_literals": _fenced_lines_after(
-            section,
-            "The exact authentication status inventory is:\n\n",
-            "Amendment-13 authentication status literals",
-        ),
+        "legacy_governing_identity_schema_version": governing_match.group(1),
+        "legacy_governing_identity_status": governing_match.group(2),
         "ratification_bound_template_status": bound_status_match.group(1),
         "draft_placeholder_keys": _code_tokens_between(
             section,
@@ -1442,7 +1333,7 @@ def _parse_proof_projection(section: str) -> dict[str, Any]:
         "proof finding selector domain drift",
     )
     proof_rows: list[dict[str, Any]] = []
-    for row, finding_code in zip(rows, selector):
+    for row, finding_code in zip(rows, selector, strict=True):
         document, predecessor, pointer, row_sha, family_code = row
         proof_rows.append(
             {
@@ -1916,7 +1807,7 @@ def _parse_scope_projection(section: str) -> dict[str, Any]:
             "Amendment-13 integrity keys",
         ),
         "prospective_domain_pins": domains,
-        "implementation_pins": _parse_implementation_pins(section),
+        "implementation_pins": _parse_legacy_implementation_pins(section),
         "semantic_mutations": _fenced_lines_after(
             section,
             "Amendment 13 adds a separate exact seven-name inventory:\n\n",
@@ -1930,7 +1821,7 @@ def _parse_scope_projection(section: str) -> dict[str, Any]:
     }
 
 
-_IMPLEMENTATION_PIN_PATTERN = re.compile(
+_LEGACY_IMPLEMENTATION_PIN_PATTERN = re.compile(
     r"The prospective nonauthority validator and focused test are fixed at\n"
     r"implementation commit `(?P<commit>[0-9a-f]{40})`, mode "
     r"`(?P<mode>[0-9]+)`:\n\n"
@@ -1945,7 +1836,7 @@ _IMPLEMENTATION_PIN_PATTERN = re.compile(
     r"(?P<test_size>[0-9][0-9,]*) \| "
     r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
 )
-_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+_LEGACY_IMPLEMENTATION_PIN_VALUE_GROUPS = (
     "commit",
     "mode",
     "validator_blob",
@@ -1957,8 +1848,8 @@ _IMPLEMENTATION_PIN_VALUE_GROUPS = (
 )
 
 
-def _implementation_pin_match(section: str) -> re.Match[str]:
-    matches = list(_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+def _legacy_implementation_pin_match(section: str) -> re.Match[str]:
+    matches = list(_LEGACY_IMPLEMENTATION_PIN_PATTERN.finditer(section))
     _require(
         len(matches) == 1,
         "Amendment-13 implementation pin block grammar drift",
@@ -1966,8 +1857,8 @@ def _implementation_pin_match(section: str) -> re.Match[str]:
     return matches[0]
 
 
-def _parse_implementation_pins(section: str) -> dict[str, Any]:
-    match = _implementation_pin_match(section)
+def _parse_legacy_implementation_pins(section: str) -> dict[str, Any]:
+    match = _legacy_implementation_pin_match(section)
     return {
         "commit": match.group("commit"),
         "mode": match.group("mode"),
@@ -1990,19 +1881,271 @@ def _parse_implementation_pins(section: str) -> dict[str, Any]:
     }
 
 
-def _normalize_implementation_pin_values(section: str) -> str:
+def _normalize_legacy_implementation_pin_values(section: str) -> str:
     """Normalize only the eight independently authenticated pin values."""
 
-    match = _implementation_pin_match(section)
+    match = _legacy_implementation_pin_match(section)
     parts: list[str] = []
     cursor = 0
-    for group in _IMPLEMENTATION_PIN_VALUE_GROUPS:
+    for group in _LEGACY_IMPLEMENTATION_PIN_VALUE_GROUPS:
         start, end = match.span(group)
         _require(start >= cursor, "implementation pin capture ordering drift")
         parts.extend((section[cursor:start], f"<{group.upper()}>"))
         cursor = end
     parts.append(section[cursor:])
     return "".join(parts)
+
+
+_ACTIVE_IMPLEMENTATION_PIN_PATTERN = re.compile(
+    r"The\nactive Amendment-14-governed implementation identity is exactly mode\n"
+    r"`(?P<mode>[0-9]+)` and these two path/blob/byte/hash rows:\n\n"
+    r"\| Path \| Git blob \| Bytes \| Raw SHA-256 \|\n"
+    r"\|---\|---\|---:\|---\|\n"
+    r"\| `scripts/validate_amendment13_execution_law\.py` \| "
+    r"`(?P<validator_blob>[0-9a-f]{40})` \| "
+    r"(?P<validator_size>[0-9][0-9,]*) \| "
+    r"`(?P<validator_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `tests/test_validate_amendment13_execution_law\.py` \| "
+    r"`(?P<test_blob>[0-9a-f]{40})` \| "
+    r"(?P<test_size>[0-9][0-9,]*) \| "
+    r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
+)
+_ACTIVE_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+    "mode",
+    "validator_blob",
+    "validator_size",
+    "validator_sha256",
+    "test_blob",
+    "test_size",
+    "test_sha256",
+)
+
+
+def _active_implementation_pin_match(section: str) -> re.Match[str]:
+    matches = list(_ACTIVE_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+    _require(
+        len(matches) == 1,
+        "Amendment-14 implementation pin block grammar drift",
+    )
+    return matches[0]
+
+
+def _parse_implementation_pins(section: str) -> dict[str, Any]:
+    match = _active_implementation_pin_match(section)
+    return {
+        "mode": match.group("mode"),
+        "files": [
+            {
+                "path": "scripts/validate_amendment13_execution_law.py",
+                "blob_oid": match.group("validator_blob"),
+                "byte_size": int(
+                    match.group("validator_size").replace(",", "")
+                ),
+                "sha256": match.group("validator_sha256"),
+            },
+            {
+                "path": "tests/test_validate_amendment13_execution_law.py",
+                "blob_oid": match.group("test_blob"),
+                "byte_size": int(match.group("test_size").replace(",", "")),
+                "sha256": match.group("test_sha256"),
+            },
+        ],
+    }
+
+
+def _normalize_implementation_pin_values(section: str) -> str:
+    """Normalize only the seven active file-pin values."""
+
+    match = _active_implementation_pin_match(section)
+    parts: list[str] = []
+    cursor = 0
+    for group in _ACTIVE_IMPLEMENTATION_PIN_VALUE_GROUPS:
+        start, end = match.span(group)
+        _require(start >= cursor, "active implementation pin ordering drift")
+        parts.extend((section[cursor:start], f"<{group.upper()}>"))
+        cursor = end
+    parts.append(section[cursor:])
+    return "".join(parts)
+
+
+def _amendment14_text(raw: bytes) -> str:
+    _require(
+        len(raw) > REVISION15_BYTE_SIZE
+        and _sha256(raw[:REVISION15_BYTE_SIZE]) == REVISION15_SHA256
+        and raw[REVISION15_BYTE_SIZE:].startswith(AMENDMENT14_BOUNDARY)
+        and raw.endswith(b"\n"),
+        "governing Amendment-14 document violates immutable-prefix law",
+    )
+    try:
+        return raw[REVISION15_BYTE_SIZE:].decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise LawError("governing Amendment-14 suffix is not UTF-8") from error
+
+
+def _parse_a14_verdict_artifacts(section: str) -> list[dict[str, Any]]:
+    rows = _markdown_table(
+        section,
+        "| Path | Bytes | Raw SHA-256 |",
+        "|---|---:|---|",
+        2,
+        "Amendment-13 verdict identities",
+    )
+    return [
+        {
+            "path": _code_tokens(path, 1, "A13 verdict path")[0],
+            "byte_size": int(size.replace(",", "")),
+            "raw_sha256": _code_tokens(raw_sha, 1, "A13 verdict SHA-256")[0],
+        }
+        for path, size, raw_sha in rows
+    ]
+
+
+def _parse_a13_expected_closure(
+    section: str,
+    verdict_artifacts: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    rows = _markdown_table(
+        section,
+        "| Closure member | Exact value |",
+        "|---|---|",
+        8,
+        "Amendment-13 closure values",
+    )
+    values = {name: value for name, value in rows}
+    _require(
+        values["`verdict_artifacts`"]
+        == "the exact two ordered \u00a728.3.1 path/byte/SHA objects",
+        "Amendment-13 closure verdict reference drift",
+    )
+    return {
+        "amendment_number": int(
+            _code_tokens(
+                values["`amendment_number`"],
+                1,
+                "A13 closure amendment number",
+            )[0]
+        ),
+        "attested_candidate_design_blob_oid": _code_tokens(
+            values["`attested_candidate_design_blob_oid`"],
+            1,
+            "A13 closure design blob",
+        )[0],
+        "attested_candidate_design_byte_size": int(
+            _code_tokens(
+                values["`attested_candidate_design_byte_size`"],
+                1,
+                "A13 closure design size",
+            )[0]
+        ),
+        "attested_candidate_design_raw_sha256": _code_tokens(
+            values["`attested_candidate_design_raw_sha256`"],
+            1,
+            "A13 closure design SHA-256",
+        )[0],
+        "ratification_commit": _code_tokens(
+            values["`ratification_commit`"],
+            1,
+            "A13 closure ratification commit",
+        )[0],
+        "ratification_commit_sole_parent": _code_tokens(
+            values["`ratification_commit_sole_parent`"],
+            1,
+            "A13 closure ratification parent",
+        )[0],
+        "operator_merge_commit": _code_tokens(
+            values["`operator_merge_commit`"],
+            1,
+            "A13 closure operator merge",
+        )[0],
+        "verdict_artifacts": [dict(row) for row in verdict_artifacts],
+    }
+
+
+def _parse_amendment14_projection(raw: bytes) -> dict[str, Any]:
+    section = _amendment14_text(raw)
+    verdict_artifacts = _parse_a14_verdict_artifacts(section)
+    projection = {
+        "section_semantic_sha256": _sha256(
+            _normalize_implementation_pin_values(section).encode()
+        ),
+        "closure_top_level_keys": _fenced_lines_after(
+            section,
+            "eight top-level keys in canonical sorted-key serialization:\n\n",
+            "Amendment-14 closure top-level keys",
+        ),
+        "closure_verdict_keys": _fenced_lines_after(
+            section,
+            "object has exactly these three keys:\n\n",
+            "Amendment-14 closure verdict keys",
+        ),
+        "registry_closure_binding_keys": _fenced_lines_after(
+            section,
+            "Each row has exactly:\n\n",
+            "Amendment-14 registry closure binding keys",
+        ),
+        "a13_verdict_artifacts": verdict_artifacts,
+        "a13_expected_closure": _parse_a13_expected_closure(
+            section, verdict_artifacts
+        ),
+        "ratification_sequence": _fenced_lines_after(
+            section,
+            "The exact Amendment-14 sequence is:\n\n",
+            "Amendment-14 ratification sequence",
+        ),
+        "implementation_pins": _parse_implementation_pins(section),
+        "semantic_mutations": _fenced_lines_after(
+            section,
+            "Amendment 13's exact seven semantic mutations survive unchanged:\n\n",
+            "Amendment-14 semantic mutations",
+        ),
+        "enforcement_mutations": _fenced_lines_after(
+            section,
+            "The Amendment-14 enforcement inventory is exactly:\n\n",
+            "Amendment-14 enforcement mutations",
+        ),
+        "removed_mutations": _fenced_lines_after(
+            section,
+            "Two predecessor enforcement mutations are removed:\n\n",
+            "Amendment-14 removed mutations",
+        ),
+        "schema_binding_identifiers": _fenced_lines_after(
+            section,
+            "The exact Amendment-14 schema and binding identifiers are:\n\n",
+            "Amendment-14 schema and binding identifiers",
+        ),
+        "path_templates": _fenced_lines_after(
+            section,
+            "The exact Amendment-14 path templates are:\n\n",
+            "Amendment-14 path templates",
+        ),
+        "status_operation_identifiers": _fenced_lines_after(
+            section,
+            "The exact Amendment-14 status and operation identifiers are:\n\n",
+            "Amendment-14 status and operation identifiers",
+        ),
+    }
+    _validate_a14_identifier_inventory(projection)
+    return projection
+
+
+def _validate_a14_identifier_inventory(
+    projection: Mapping[str, Any],
+) -> None:
+    inventories = (
+        projection["schema_binding_identifiers"],
+        projection["path_templates"],
+        projection["status_operation_identifiers"],
+    )
+    _require(
+        tuple(inventories[0]) == A14_SCHEMA_BINDING_IDENTIFIERS
+        and tuple(inventories[1]) == A14_PATH_TEMPLATES
+        and tuple(inventories[2]) == A14_STATUS_OPERATION_IDENTIFIERS
+        and all(len(values) == len(set(values)) for values in inventories)
+        and set(inventories[0]).isdisjoint(inventories[1])
+        and set(inventories[0]).isdisjoint(inventories[2])
+        and set(inventories[1]).isdisjoint(inventories[2]),
+        "Amendment-14 enacted identifier inventory consistency drift",
+    )
 
 
 def _parse_comparator_and_literals(section: str) -> dict[str, Any]:
@@ -2060,7 +2203,9 @@ def _section_semantic_sha256s(
     ):
         semantic_text = sections[section_name]
         if section_name == "27.7":
-            semantic_text = _normalize_implementation_pin_values(semantic_text)
+            semantic_text = _normalize_legacy_implementation_pin_values(
+                semantic_text
+            )
         result[section_name] = _sha256(semantic_text.encode("utf-8"))
     return result
 
@@ -2068,46 +2213,16 @@ def _section_semantic_sha256s(
 def _validate_identifier_inventory_consistency(
     projection: Mapping[str, Any],
 ) -> None:
-    """Require §27.2 authentication identifiers to close §27.8.3 exactly."""
+    """Require the surviving Amendment-13 inventories to remain exact."""
 
-    identity = projection["identity"]
     comparator = projection["comparator"]
-    authentication_schemas = identity["authentication_schema_literals"]
-    authentication_statuses = identity["authentication_status_literals"]
-    execution_schemas = comparator["schema_literals"]
-    execution_statuses = comparator["status_relation_operation_codes"]
-    trusted_literals = identity["trusted_recording_literals"]
-    enacted_schemas = {
-        identity["governing_identity_schema_version"],
-        identity["draft_placeholder_values"][0],
-        identity["trusted_registry_identity_schema_version"],
-        identity["trusted_registry_schema_version"],
-        identity["recording_manifest_identity_schema_version"],
-        identity["trusted_manifest_schema_version"],
-    }
-    enacted_statuses = {
-        identity["governing_identity_status"],
-        identity["draft_placeholder_values"][1],
-        identity["ratification_bound_template_status"],
-        identity["trusted_registry_status"],
-        identity["trusted_manifest_status"],
-    }
+    schemas = comparator["schema_literals"]
+    statuses = comparator["status_relation_operation_codes"]
     _require(
-        tuple(authentication_schemas) == A13_AUTHENTICATION_SCHEMA_LITERALS
-        and tuple(authentication_statuses)
-        == A13_AUTHENTICATION_STATUS_LITERALS
-        and len(execution_schemas) == len(set(execution_schemas))
-        and len(execution_statuses) == len(set(execution_statuses))
-        and len(authentication_schemas) == len(set(authentication_schemas))
-        and len(authentication_statuses) == len(set(authentication_statuses))
-        and set(authentication_schemas).isdisjoint(execution_schemas)
-        and set(authentication_statuses).isdisjoint(execution_statuses)
-        and set(authentication_schemas).issubset(trusted_literals)
-        and set(authentication_statuses).issubset(trusted_literals)
-        and enacted_schemas - set(execution_schemas)
-        == set(authentication_schemas)
-        and enacted_statuses - set(execution_statuses)
-        == set(authentication_statuses),
+        tuple(schemas) == A13_SCHEMA_LITERALS
+        and tuple(statuses) == A13_STATUS_RELATION_OPERATION_CODES
+        and len(schemas) == len(set(schemas))
+        and len(statuses) == len(set(statuses)),
         "Amendment-13 enacted identifier inventory consistency drift",
     )
 
@@ -2125,6 +2240,7 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
         "doc036": _parse_doc036_projection(sections["27.6"]),
         "scope": _parse_scope_projection(sections["27.7"]),
         "comparator": _parse_comparator_and_literals(sections["27.8"]),
+        "amendment14": _parse_amendment14_projection(raw),
     }
     _validate_identifier_inventory_consistency(projection)
     return projection
@@ -2230,156 +2346,11 @@ def _execution_identity_projection(law: Mapping[str, Any]) -> dict[str, Any]:
         "ratification_history_observation": copy.deepcopy(
             law["ratification_history_observation"]
         ),
-        "governing_identity_schema_version": (
-            GOVERNING_A13_IDENTITY_SCHEMA_VERSION
+        "legacy_governing_identity_schema_version": (
+            "amendment_13_governing_ratification_identity.v1"
         ),
-        "governing_identity_status": GOVERNING_A13_IDENTITY_STATUS,
-        "governing_identity_keys": [
-            "schema_version",
-            "status",
-            "ratification_commit",
-            "ratification_parents",
-            "ratification_commit_changed_paths",
-            "document_path",
-            "document_mode",
-            "document_blob_oid",
-            "document_byte_size",
-            "document_sha256",
-            "trusted_reviewer_registry_identity",
-            "recording_manifest_identity",
-            "dual_ratify_attestations",
-        ],
-        "trusted_registry_identity_keys": [
-            "schema_version",
-            "registry_commit",
-            "registry_parents",
-            "registry_path",
-            "registry_mode",
-            "registry_blob_oid",
-            "registry_byte_size",
-            "registry_sha256",
-        ],
-        "trusted_registry_identity_schema_version": (
-            TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION
-        ),
-        "trusted_registry_schema_version": (
-            TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION
-        ),
-        "trusted_registry_status": TRUSTED_REVIEWER_REGISTRY_STATUS,
-        "trusted_registry_path": TRUSTED_REVIEWER_REGISTRY_PATH,
-        "trusted_registry_keys": [
-            "schema_version",
-            "status",
-            "signature_namespace",
-            "enrollment_signature_namespace",
-            "trusted_enrollment_authority_domain_sha256",
-            "ordered_reviewers",
-            "reviewer_domain_sha256",
-            "ordered_enrollment_authorizations",
-            "enrollment_authorization_domain_sha256",
-        ],
-        "trusted_reviewer_keys": [
-            "reviewer_identity",
-            "record_name",
-            "record_path",
-            "signature_path",
-            "ssh_principal",
-            "ssh_public_key",
-            "ssh_key_fingerprint",
-        ],
-        "trusted_enrollment_authority_keys": [
-            "authority_identity",
-            "prior_record_name",
-            "prior_record_raw_sha256",
-            "ssh_principal",
-            "ssh_public_key",
-            "ssh_key_fingerprint",
-        ],
-        "trusted_enrollment_authorization_keys": [
-            "authority_identity",
-            "authority_ssh_key_fingerprint",
-            "authorization_preimage",
-            "signature_byte_size",
-            "signature_sha256",
-            "signature_base64",
-        ],
-        "trusted_enrollment_authorization_preimage_keys": [
-            "authority_identity",
-            "prior_record_name",
-            "prior_record_raw_sha256",
-            "registry_parent_commit",
-            "registry_path",
-            "reviewer_position",
-            "reviewer_identity",
-            "reviewer_row_sha256",
-            "reviewer_domain_sha256",
-            "trusted_enrollment_authority_domain_sha256",
-            "draft_author_identity",
-            "reviewer_independent_of_draft_author",
-        ],
-        "enrollment_signature_namespace": ENROLLMENT_SIGNATURE_NAMESPACE,
-        "recording_manifest_identity_keys": [
-            "schema_version",
-            "manifest_commit",
-            "manifest_parents",
-            "manifest_path",
-            "manifest_mode",
-            "manifest_blob_oid",
-            "manifest_byte_size",
-            "manifest_sha256",
-        ],
-        "recording_manifest_identity_schema_version": (
-            TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION
-        ),
-        "trusted_manifest_schema_version": (
-            TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION
-        ),
-        "trusted_manifest_path": TRUSTED_RECORDING_MANIFEST_PATH,
-        "trusted_manifest_keys": [
-            "schema_version",
-            "status",
-            "attested_candidate_head",
-            "document_path",
-            "document_mode",
-            "document_blob_oid",
-            "document_byte_size",
-            "document_sha256",
-            "trusted_reviewer_registry_identity",
-            "ordered_reviewer_identities",
-            "ordered_ratify_attestations",
-            "attestation_domain_sha256",
-        ],
-        "trusted_manifest_status": TRUSTED_RECORDING_MANIFEST_STATUS,
-        "governing_attestation_keys": [
-            "reviewer_identity",
-            "record_name",
-            "record_path",
-            "signature_path",
-            "raw_byte_size",
-            "raw_sha256",
-            "signature_byte_size",
-            "signature_sha256",
-            "ssh_key_fingerprint",
-            "verdict_token",
-            "attested_candidate_head",
-            "attested_document_byte_size",
-            "attested_document_sha256",
-        ],
-        "record_template": [
-            "# RATIFY",
-            "reviewer_identity: <exact trusted reviewer identity>",
-            "record_name: <exact record_name>",
-            "attested_candidate_head: <exact 40-lowercase-hex commit>",
-            f"attested_document_path: {DESIGN_PATH}",
-            "attested_document_byte_size: <exact decimal byte count>",
-            "attested_document_sha256: <exact 64-lowercase-hex SHA-256>",
-        ],
-        "trusted_recording_literals": list(A13_TRUSTED_RECORDING_LITERALS),
-        "authentication_schema_literals": list(
-            A13_AUTHENTICATION_SCHEMA_LITERALS
-        ),
-        "authentication_status_literals": list(
-            A13_AUTHENTICATION_STATUS_LITERALS
+        "legacy_governing_identity_status": (
+            "RATIFIED_AMENDMENT_13_GOVERNING_EXECUTION_LAW"
         ),
         "ratification_bound_template_status": (
             RATIFICATION_BOUND_TEMPLATE_STATUS
@@ -2580,7 +2551,9 @@ def _execution_doc036_projection(law: Mapping[str, Any]) -> dict[str, Any]:
                 "repair_counts": copy.deepcopy(row["repair_counts"]),
                 "successor_era_seal_id": prospective_id,
             }
-            for row, prospective_id in zip(era_rows, PROSPECTIVE_ERA_SEAL_IDS)
+            for row, prospective_id in zip(
+                era_rows, PROSPECTIVE_ERA_SEAL_IDS, strict=True
+            )
         ],
         "era_totals": totals,
     }
@@ -2607,7 +2580,26 @@ def _execution_scope_projection(law: Mapping[str, Any]) -> dict[str, Any]:
             for name, count, sha256 in PROSPECTIVE_DOMAIN_PINS
         ],
         "semantic_mutations": list(A13_EXPECTED_MUTATIONS),
+        "enforcement_mutations": list(A13_HISTORICAL_ENFORCEMENT_MUTATIONS),
+    }
+
+
+def _canonical_amendment14_projection() -> dict[str, Any]:
+    return {
+        "section_semantic_sha256": A14_SECTION_SEMANTIC_SHA256,
+        "closure_top_level_keys": list(CLOSURE_TOP_LEVEL_KEYS),
+        "closure_verdict_keys": list(CLOSURE_VERDICT_KEYS),
+        "registry_closure_binding_keys": list(REGISTRY_CLOSURE_BINDING_KEYS),
+        "a13_verdict_artifacts": [dict(row) for row in A13_VERDICT_ARTIFACTS],
+        "a13_expected_closure": copy.deepcopy(A13_EXPECTED_CLOSURE),
+        "ratification_sequence": list(A14_RATIFICATION_SEQUENCE),
+        "implementation_pins": None,
+        "semantic_mutations": list(A13_EXPECTED_MUTATIONS),
         "enforcement_mutations": list(A13_ENFORCEMENT_EXPECTED_MUTATIONS),
+        "removed_mutations": list(REMOVED_PKI_MUTATIONS),
+        "schema_binding_identifiers": list(A14_SCHEMA_BINDING_IDENTIFIERS),
+        "path_templates": list(A14_PATH_TEMPLATES),
+        "status_operation_identifiers": list(A14_STATUS_OPERATION_IDENTIFIERS),
     }
 
 
@@ -2668,12 +2660,24 @@ def _canonical_draft_document_projection() -> dict[str, Any]:
             ),
             "successor_kind_literals": list(A13_SUCCESSOR_KIND_LITERALS),
         },
+        "amendment14": _canonical_amendment14_projection(),
     }
 
 
-def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
-    """Authenticate the two document-selected implementation byte identities."""
+def _git_blob_oid(raw: bytes) -> str:
+    return hashlib.sha1(
+        b"blob " + str(len(raw)).encode() + b"\0" + raw
+    ).hexdigest()
 
+
+def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
+    """Authenticate active file identities against the worktree and HEAD."""
+
+    _require_exact_keys(
+        pins,
+        {"mode", "files"},
+        "Amendment-14 implementation pins",
+    )
     _require(
         pins["mode"] == DESIGN_MODE
         and [row["path"] for row in pins["files"]]
@@ -2681,30 +2685,38 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
             "scripts/validate_amendment13_execution_law.py",
             "tests/test_validate_amendment13_execution_law.py",
         ],
-        "Amendment-13 implementation pin domain drift",
+        "Amendment-14 implementation pin domain drift",
     )
-    commit = pins["commit"]
-    _require_exact_commit_object(commit, "Amendment-13 implementation commit")
     for row in pins["files"]:
+        _require_exact_keys(
+            row,
+            {"path", "blob_oid", "byte_size", "sha256"},
+            "Amendment-14 implementation file pin",
+        )
+        _require(
+            _is_lower_hex(row["blob_oid"], 40)
+            and type(row["byte_size"]) is int
+            and row["byte_size"] > 0
+            and _is_lower_hex(row["sha256"], 64),
+            "Amendment-14 implementation file pin is malformed",
+        )
         tree_line = str(
-            _git("ls-tree", commit, "--", row["path"], text=True)
+            _git("ls-tree", "HEAD", "--", row["path"], text=True)
         ).strip()
         _require(
             tree_line
             == f"{pins['mode']} blob {row['blob_oid']}\t{row['path']}",
-            "Amendment-13 implementation tree-entry pin drift",
+            "Amendment-14 implementation HEAD tree-entry pin drift",
         )
-        raw = _git("show", f"{commit}:{row['path']}")
+        head_raw = _git("show", f"HEAD:{row['path']}")
+        worktree_raw = (ROOT / row["path"]).read_bytes()
         _require(
-            isinstance(raw, bytes)
-            and len(raw) == row["byte_size"]
-            and _sha256(raw) == row["sha256"]
-            and hashlib.sha1(
-                b"blob " + str(len(raw)).encode() + b"\0" + raw
-            ).hexdigest()
-            == row["blob_oid"]
-            and (ROOT / row["path"]).read_bytes() == raw,
-            "Amendment-13 running implementation differs from document pin",
+            isinstance(head_raw, bytes)
+            and worktree_raw == head_raw
+            and len(head_raw) == row["byte_size"]
+            and _sha256(head_raw) == row["sha256"]
+            and _git_blob_oid(head_raw) == row["blob_oid"],
+            "Amendment-14 implementation blob identity mismatch",
         )
 
 
@@ -2720,11 +2732,16 @@ def _validate_document_semantic_projection(
     expected["scope"]["implementation_pins"] = projection["scope"][
         "implementation_pins"
     ]
+    expected["amendment14"]["implementation_pins"] = projection["amendment14"][
+        "implementation_pins"
+    ]
     _require(
         projection == expected,
-        "governing Amendment-13 document semantic projection drift",
+        "governing Amendment-14 document semantic projection drift",
     )
-    _verify_implementation_pins(projection["scope"]["implementation_pins"])
+    _verify_implementation_pins(
+        projection["amendment14"]["implementation_pins"]
+    )
     return projection
 
 
@@ -2936,1101 +2953,275 @@ def _load_canonical_git_json(
     return value
 
 
-_PINNED_PRODUCTION_TRUST_MARKER_NAMES = (
-    "PINNED_A13_EXTERNAL_CERTIFIER_ROOT_IDENTITY",
-    "PINNED_A13_ENROLLMENT_AUTHORITY_ROOT_IDENTITY",
-    "PINNED_A13_REVIEWER_REGISTRY_IDENTITY",
-)
-
-
-def _literal_module_assignment(raw_source: bytes, name: str) -> Any:
-    """Read one literal assignment without executing implementation bytes."""
-
+def _strict_canonical_json(raw: bytes, label: str) -> dict[str, Any]:
     try:
-        module = ast.parse(raw_source.decode("utf-8"))
-    except (UnicodeDecodeError, SyntaxError) as error:
-        raise LawError(
-            "authenticated Amendment-13 implementation is not parseable"
-        ) from error
-    values: list[ast.expr | None] = []
-    for statement in module.body:
-        if (
-            isinstance(statement, ast.AnnAssign)
-            and isinstance(statement.target, ast.Name)
-            and statement.target.id == name
-        ):
-            values.append(statement.value)
-        elif isinstance(statement, ast.Assign) and any(
-            isinstance(target, ast.Name) and target.id == name
-            for target in statement.targets
-        ):
-            values.append(statement.value)
+        value = a12.strict_json_loads(raw, label)
+    except a12.BuildError as error:
+        raise LawError(f"{label} is invalid strict JSON") from error
     _require(
-        len(values) == 1 and values[0] is not None,
-        f"authenticated implementation trust marker drift: {name}",
+        isinstance(value, dict) and canonical_json_bytes(value) == raw,
+        f"{label} is not canonical JSON",
     )
-    try:
-        return ast.literal_eval(values[0])
-    except (ValueError, TypeError) as error:
-        raise LawError(
-            f"authenticated implementation trust marker is not literal: {name}"
-        ) from error
+    return value
 
 
-def _authenticated_production_trust_markers(
-    governing_identity: Mapping[str, Any],
-) -> tuple[Any, Any, Any]:
-    """Derive production enrollment state only from authenticated P bytes."""
-
-    commit = governing_identity.get("ratification_commit")
-    path = governing_identity.get("document_path")
-    _require(
-        _is_lower_hex(commit, 40) and path == DESIGN_PATH,
-        "governing Amendment-13 identity cannot select trust state",
-    )
-    raw_document = _git("show", f"{commit}:{DESIGN_PATH}")
-    _require(
-        isinstance(raw_document, bytes),
-        "governing Amendment-13 trust document read was not raw bytes",
-    )
-    pins = _parse_implementation_pins(_a13_sections(raw_document)["27.7"])
-    _verify_implementation_pins(pins)
-    implementation_path = "scripts/validate_amendment13_execution_law.py"
-    raw_implementation = _git(
-        "show", f"{pins['commit']}:{implementation_path}"
-    )
-    _require(
-        isinstance(raw_implementation, bytes),
-        "authenticated Amendment-13 implementation read was not raw bytes",
-    )
-    return tuple(
-        _literal_module_assignment(raw_implementation, name)
-        for name in _PINNED_PRODUCTION_TRUST_MARKER_NAMES
-    )
-
-
-def _load_trusted_reviewer_registry(
-    governing_identity: Mapping[str, Any],
-) -> tuple[
-    dict[str, Any],
-    dict[str, Any],
-    tuple[dict[str, Any], ...],
-]:
-    """Fail closed until a successor law authenticates an external root."""
-
-    certifier_root, authority_root, registry_identity = (
-        _authenticated_production_trust_markers(governing_identity)
-    )
-    _require(
-        certifier_root is not None
-        and authority_root is not None
-        and registry_identity is not None,
-        "externally authenticated Amendment-13 reviewer root is unavailable",
-    )
-    raise LawError(
-        "nonempty Amendment-13 reviewer roots require a separately ratified "
-        "successor implementation"
-    )
-
-
-def _ssh_public_key_fingerprint(public_key: Any) -> str:
-    _require(
-        isinstance(public_key, str)
-        and "\r" not in public_key
-        and "\n" not in public_key,
-        "trusted reviewer SSH public key is malformed",
-    )
-    parts = public_key.split()
-    _require(
-        len(parts) >= 2 and parts[0] == "ssh-ed25519",
-        "trusted reviewer key is not Ed25519",
-    )
-    try:
-        raw_key = base64.b64decode(parts[1], validate=True)
-    except (ValueError, TypeError) as error:
-        raise LawError(
-            "trusted reviewer SSH public key is malformed"
-        ) from error
-    digest = base64.b64encode(hashlib.sha256(raw_key).digest()).decode("ascii")
-    return f"SHA256:{digest.rstrip('=')}"
-
-
-def _validate_enrollment_authorities(
-    authorities: Sequence[Mapping[str, Any]],
+def _validate_closure_shape(
+    closure: Mapping[str, Any],
+    amendment_number: int,
 ) -> None:
-    """Validate the fixed identities that may authorize reviewer enrollment."""
-
-    _require(
-        isinstance(authorities, (list, tuple)) and len(authorities) == 2,
-        "trusted Amendment-13 enrollment authority root drift",
+    _require_exact_keys(
+        closure,
+        set(CLOSURE_TOP_LEVEL_KEYS),
+        "ratification closure",
     )
-    for authority, prior_record in zip(authorities, RATIFY_ATTESTATIONS):
+    _require(
+        type(closure["amendment_number"]) is int
+        and closure["amendment_number"] == amendment_number
+        and amendment_number > 0,
+        "ratification closure amendment number drift",
+    )
+    _require(
+        _is_lower_hex(closure["attested_candidate_design_blob_oid"], 40)
+        and type(closure["attested_candidate_design_byte_size"]) is int
+        and closure["attested_candidate_design_byte_size"] > 0
+        and _is_lower_hex(closure["attested_candidate_design_raw_sha256"], 64)
+        and _is_lower_hex(closure["ratification_commit"], 40)
+        and _is_lower_hex(closure["ratification_commit_sole_parent"], 40)
+        and _is_lower_hex(closure["operator_merge_commit"], 40),
+        "ratification closure design or commit identity is malformed",
+    )
+    _require(
+        closure["operator_merge_commit"] == closure["ratification_commit"],
+        "ratification closure operator merge is not the ratification commit",
+    )
+    verdicts = closure["verdict_artifacts"]
+    expected_directory = (
+        f"docs/analysis/amendment_{amendment_number}_ratification"
+    )
+    _require(
+        isinstance(verdicts, list) and len(verdicts) == 2,
+        "ratification closure does not have exactly two verdict artifacts",
+    )
+    for verdict in verdicts:
+        _require(
+            isinstance(verdict, Mapping),
+            "ratification closure verdict row is not an object",
+        )
         _require_exact_keys(
-            authority,
-            {
-                "authority_identity",
-                "prior_record_name",
-                "prior_record_raw_sha256",
-                "ssh_principal",
-                "ssh_public_key",
-                "ssh_key_fingerprint",
-            },
-            "trusted Amendment-13 enrollment authority",
+            verdict,
+            set(CLOSURE_VERDICT_KEYS),
+            "ratification closure verdict artifact",
         )
-        for key in ("authority_identity", "ssh_principal"):
-            _require(
-                isinstance(authority[key], str)
-                and bool(authority[key])
-                and "\r" not in authority[key]
-                and "\n" not in authority[key],
-                f"trusted enrollment authority {key} is malformed",
-            )
+        path = verdict["path"]
         _require(
-            authority["authority_identity"] != A13_DRAFT_AUTHOR_IDENTITY
-            and authority["prior_record_name"] == prior_record["record_name"]
-            and authority["prior_record_raw_sha256"]
-            == prior_record["raw_sha256"]
-            and authority["ssh_key_fingerprint"]
-            == _ssh_public_key_fingerprint(authority["ssh_public_key"]),
-            "trusted Amendment-13 enrollment authority identity drift",
+            isinstance(path, str)
+            and Path(path).as_posix() == path
+            and Path(path).parent.as_posix() == expected_directory
+            and Path(path).name != "closure_v1.json"
+            and type(verdict["byte_size"]) is int
+            and verdict["byte_size"] > 0
+            and _is_lower_hex(verdict["raw_sha256"], 64),
+            "ratification closure verdict identity is malformed",
         )
-    for key in (
-        "authority_identity",
-        "prior_record_name",
-        "prior_record_raw_sha256",
-        "ssh_principal",
-        "ssh_public_key",
-        "ssh_key_fingerprint",
-    ):
-        _require(
-            len({row[key] for row in authorities}) == 2,
-            f"trusted enrollment authority {key} values are not distinct",
-        )
+    _require(
+        len({row["path"] for row in verdicts}) == 2
+        and len({row["raw_sha256"] for row in verdicts}) == 2,
+        "ratification closure verdict identities are not distinct",
+    )
 
 
-def _validate_trusted_reviewer_registry(
-    registry_identity: Mapping[str, Any],
-    registry: Mapping[str, Any],
-    enrollment_authorities: Sequence[Mapping[str, Any]],
+def _verdict_attests_design(
+    raw: bytes,
+    closure: Mapping[str, Any],
+) -> None:
+    byte_size = closure["attested_candidate_design_byte_size"]
+    decimal_forms = (str(byte_size).encode(), f"{byte_size:,}".encode())
+    _require(
+        raw.startswith(b"# RATIFY\n")
+        and closure["attested_candidate_design_blob_oid"].encode() in raw
+        and closure["attested_candidate_design_raw_sha256"].encode() in raw
+        and any(value in raw for value in decimal_forms),
+        "verdict artifact does not affirm the closure design attestation",
+    )
+
+
+def _validate_ratification_closure(
+    closure_raw: bytes | None,
+    closure_binding: Mapping[str, Any],
+    verdict_bytes: Mapping[str, bytes],
+    amendment_number: int,
     *,
     verify_git: bool,
-) -> None:
-    """Authenticate the two reviewer identities and their signing keys."""
-
-    _validate_enrollment_authorities(enrollment_authorities)
-    _require_exact_keys(
-        registry_identity,
-        {
-            "schema_version",
-            "registry_commit",
-            "registry_parents",
-            "registry_path",
-            "registry_mode",
-            "registry_blob_oid",
-            "registry_byte_size",
-            "registry_sha256",
-        },
-        "trusted Amendment-13 reviewer registry identity",
-    )
-    _require(
-        registry_identity["schema_version"]
-        == TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION
-        and _is_lower_hex(registry_identity["registry_commit"], 40)
-        and isinstance(registry_identity["registry_parents"], list)
-        and len(registry_identity["registry_parents"]) == 1
-        and _is_lower_hex(registry_identity["registry_parents"][0], 40)
-        and registry_identity["registry_path"]
-        == TRUSTED_REVIEWER_REGISTRY_PATH
-        and registry_identity["registry_mode"] == DESIGN_MODE
-        and _is_lower_hex(registry_identity["registry_blob_oid"], 40)
-        and isinstance(registry_identity["registry_byte_size"], int)
-        and not isinstance(registry_identity["registry_byte_size"], bool)
-        and registry_identity["registry_byte_size"] > 0
-        and _is_lower_hex(registry_identity["registry_sha256"], 64),
-        "trusted Amendment-13 reviewer registry identity drift",
-    )
-    _require_exact_keys(
-        registry,
-        {
-            "schema_version",
-            "status",
-            "signature_namespace",
-            "enrollment_signature_namespace",
-            "trusted_enrollment_authority_domain_sha256",
-            "ordered_reviewers",
-            "reviewer_domain_sha256",
-            "ordered_enrollment_authorizations",
-            "enrollment_authorization_domain_sha256",
-        },
-        "trusted Amendment-13 reviewer registry",
-    )
-    reviewers = registry["ordered_reviewers"]
-    authorizations = registry["ordered_enrollment_authorizations"]
-    authority_domain_sha256 = _domain_sha(
-        [dict(row) for row in enrollment_authorities]
-    )
-    _require(
-        registry["schema_version"] == TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION
-        and registry["status"] == TRUSTED_REVIEWER_REGISTRY_STATUS
-        and registry["signature_namespace"] == RATIFY_SIGNATURE_NAMESPACE
-        and registry["enrollment_signature_namespace"]
-        == ENROLLMENT_SIGNATURE_NAMESPACE
-        and registry["trusted_enrollment_authority_domain_sha256"]
-        == authority_domain_sha256
-        and isinstance(reviewers, list)
-        and len(reviewers) == 2
-        and registry["reviewer_domain_sha256"] == _domain_sha(reviewers),
-        "trusted Amendment-13 reviewer registry drift",
-    )
-    for reviewer in reviewers:
-        _require_exact_keys(
-            reviewer,
-            {
-                "reviewer_identity",
-                "record_name",
-                "record_path",
-                "signature_path",
-                "ssh_principal",
-                "ssh_public_key",
-                "ssh_key_fingerprint",
-            },
-            "trusted Amendment-13 reviewer",
-        )
-        for key in (
-            "reviewer_identity",
-            "record_name",
-            "record_path",
-            "signature_path",
-            "ssh_principal",
-        ):
-            _require(
-                isinstance(reviewer[key], str)
-                and bool(reviewer[key])
-                and "\r" not in reviewer[key]
-                and "\n" not in reviewer[key],
-                f"trusted reviewer {key} is malformed",
-            )
-        _require(
-            reviewer["record_path"]
-            == (
-                "docs/analysis/amendment_13_ratification/records/"
-                f"{reviewer['record_name']}"
-            )
-            and reviewer["signature_path"] == f"{reviewer['record_path']}.sig"
-            and reviewer["ssh_key_fingerprint"]
-            == _ssh_public_key_fingerprint(reviewer["ssh_public_key"]),
-            "trusted reviewer path or SSH-key identity drift",
-        )
-    for key in (
-        "reviewer_identity",
-        "record_name",
-        "record_path",
-        "signature_path",
-        "ssh_principal",
-        "ssh_public_key",
-        "ssh_key_fingerprint",
-    ):
-        _require(
-            len({row[key] for row in reviewers}) == 2,
-            f"trusted reviewer {key} values are not distinct",
-        )
-    _require(
-        [row["reviewer_identity"] for row in reviewers]
-        == [row["authority_identity"] for row in enrollment_authorities],
-        "trusted reviewer identities are not externally anchored",
-    )
-    _require(
-        isinstance(authorizations, list)
-        and len(authorizations) == 2
-        and registry["enrollment_authorization_domain_sha256"]
-        == _domain_sha(authorizations),
-        "trusted reviewer enrollment authorization domain drift",
-    )
-    reviewer_domain_sha256 = registry["reviewer_domain_sha256"]
-    for position, (authorization, authority, reviewer) in enumerate(
-        zip(authorizations, enrollment_authorities, reviewers),
-        start=1,
-    ):
-        _require_exact_keys(
-            authorization,
-            {
-                "authority_identity",
-                "authority_ssh_key_fingerprint",
-                "authorization_preimage",
-                "signature_byte_size",
-                "signature_sha256",
-                "signature_base64",
-            },
-            "trusted reviewer enrollment authorization",
-        )
-        preimage = authorization["authorization_preimage"]
-        _require(
-            isinstance(preimage, Mapping),
-            "trusted reviewer enrollment authorization preimage drift",
-        )
-        _require_exact_keys(
-            preimage,
-            {
-                "authority_identity",
-                "prior_record_name",
-                "prior_record_raw_sha256",
-                "registry_parent_commit",
-                "registry_path",
-                "reviewer_position",
-                "reviewer_identity",
-                "reviewer_row_sha256",
-                "reviewer_domain_sha256",
-                "trusted_enrollment_authority_domain_sha256",
-                "draft_author_identity",
-                "reviewer_independent_of_draft_author",
-            },
-            "trusted reviewer enrollment authorization preimage",
-        )
-        expected_preimage = {
-            "authority_identity": authority["authority_identity"],
-            "prior_record_name": authority["prior_record_name"],
-            "prior_record_raw_sha256": authority["prior_record_raw_sha256"],
-            "registry_parent_commit": registry_identity["registry_parents"][0],
-            "registry_path": TRUSTED_REVIEWER_REGISTRY_PATH,
-            "reviewer_position": position,
-            "reviewer_identity": reviewer["reviewer_identity"],
-            "reviewer_row_sha256": _sha256(canonical_json_bytes(reviewer)),
-            "reviewer_domain_sha256": reviewer_domain_sha256,
-            "trusted_enrollment_authority_domain_sha256": (
-                authority_domain_sha256
-            ),
-            "draft_author_identity": A13_DRAFT_AUTHOR_IDENTITY,
-            "reviewer_independent_of_draft_author": True,
-        }
-        _require(
-            dict(preimage) == expected_preimage
-            and authorization["authority_identity"]
-            == authority["authority_identity"]
-            and authorization["authority_ssh_key_fingerprint"]
-            == authority["ssh_key_fingerprint"]
-            and isinstance(authorization["signature_byte_size"], int)
-            and not isinstance(authorization["signature_byte_size"], bool)
-            and authorization["signature_byte_size"] > 0
-            and _is_lower_hex(authorization["signature_sha256"], 64)
-            and isinstance(authorization["signature_base64"], str),
-            "trusted reviewer enrollment authorization drift",
-        )
-        try:
-            raw_signature = base64.b64decode(
-                authorization["signature_base64"], validate=True
-            )
-        except (ValueError, TypeError) as error:
-            raise LawError(
-                "trusted reviewer enrollment signature base64 drift"
-            ) from error
-        _require(
-            base64.b64encode(raw_signature).decode("ascii")
-            == authorization["signature_base64"]
-            and len(raw_signature) == authorization["signature_byte_size"]
-            and _sha256(raw_signature) == authorization["signature_sha256"],
-            "trusted reviewer enrollment signature bytes drift",
-        )
-        _verify_ssh_signature(
-            canonical_json_bytes(expected_preimage),
-            raw_signature,
-            authority,
-            namespace=ENROLLMENT_SIGNATURE_NAMESPACE,
-            label="reviewer enrollment authorization",
-        )
-    if not verify_git:
-        return
-    commit = registry_identity["registry_commit"]
-    _require_exact_commit_object(
-        commit, "trusted Amendment-13 reviewer registry commit"
-    )
-    parent_line = str(
-        _git("rev-list", "--parents", "-n", "1", commit, text=True)
-    ).strip()
-    _require(
-        parent_line.split()
-        == [commit, registry_identity["registry_parents"][0]],
-        "trusted Amendment-13 reviewer registry commit is not exact",
-    )
-    changed_paths = str(
-        _git(
-            "diff-tree",
-            "--no-commit-id",
-            "--name-only",
-            "-r",
-            commit,
-            text=True,
-        )
-    ).splitlines()
-    _require(
-        changed_paths == [TRUSTED_REVIEWER_REGISTRY_PATH],
-        "trusted Amendment-13 reviewer registry commit is not registry-only",
-    )
-    tree_line = str(
-        _git(
-            "ls-tree",
-            commit,
-            "--",
-            registry_identity["registry_path"],
-            text=True,
-        )
-    ).strip()
-    _require(
-        tree_line
-        == (
-            f"{registry_identity['registry_mode']} blob "
-            f"{registry_identity['registry_blob_oid']}\t"
-            f"{registry_identity['registry_path']}"
-        ),
-        "trusted Amendment-13 reviewer registry tree entry drift",
-    )
-    raw = _git("show", f"{commit}:{registry_identity['registry_path']}")
-    _require(
-        isinstance(raw, bytes)
-        and raw == canonical_json_bytes(registry)
-        and len(raw) == registry_identity["registry_byte_size"]
-        and _sha256(raw) == registry_identity["registry_sha256"]
-        and hashlib.sha1(
-            b"blob " + str(len(raw)).encode() + b"\0" + raw
-        ).hexdigest()
-        == registry_identity["registry_blob_oid"],
-        "trusted Amendment-13 reviewer registry bytes drift",
-    )
-
-
-def _load_recording_manifest(
-    manifest_identity: Mapping[str, Any],
+    ratification_design_raw: bytes | None = None,
 ) -> dict[str, Any]:
-    return _load_canonical_git_json(
-        manifest_identity["manifest_commit"],
-        manifest_identity["manifest_path"],
-        "Amendment-13 recording manifest",
-    )
+    """Validate registry-selected closure bytes and their exact artifacts."""
 
-
-def _validate_recording_manifest(
-    manifest_identity: Mapping[str, Any],
-    manifest: Mapping[str, Any],
-    registry_identity: Mapping[str, Any],
-    registry: Mapping[str, Any],
-    *,
-    verify_git: bool,
-) -> None:
-    """Validate the immutable recording object against the reviewer root."""
-
-    _require_exact_keys(
-        manifest_identity,
-        {
-            "schema_version",
-            "manifest_commit",
-            "manifest_parents",
-            "manifest_path",
-            "manifest_mode",
-            "manifest_blob_oid",
-            "manifest_byte_size",
-            "manifest_sha256",
-        },
-        "Amendment-13 recording manifest identity",
-    )
     _require(
-        manifest_identity["schema_version"]
-        == TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION
-        and _is_lower_hex(manifest_identity["manifest_commit"], 40)
-        and isinstance(manifest_identity["manifest_parents"], list)
-        and len(manifest_identity["manifest_parents"]) == 1
-        and _is_lower_hex(manifest_identity["manifest_parents"][0], 40)
-        and manifest_identity["manifest_path"]
-        == TRUSTED_RECORDING_MANIFEST_PATH
-        and manifest_identity["manifest_mode"] == DESIGN_MODE
-        and _is_lower_hex(manifest_identity["manifest_blob_oid"], 40)
-        and isinstance(manifest_identity["manifest_byte_size"], int)
-        and not isinstance(manifest_identity["manifest_byte_size"], bool)
-        and manifest_identity["manifest_byte_size"] > 0
-        and _is_lower_hex(manifest_identity["manifest_sha256"], 64),
-        "Amendment-13 recording manifest identity drift",
+        isinstance(closure_raw, bytes),
+        "ratification closure is missing",
     )
     _require_exact_keys(
-        manifest,
-        {
-            "schema_version",
-            "status",
-            "attested_candidate_head",
-            "document_path",
-            "document_mode",
-            "document_blob_oid",
-            "document_byte_size",
-            "document_sha256",
-            "trusted_reviewer_registry_identity",
-            "ordered_reviewer_identities",
-            "ordered_ratify_attestations",
-            "attestation_domain_sha256",
-        },
-        "Amendment-13 recording manifest",
+        closure_binding,
+        set(REGISTRY_CLOSURE_BINDING_KEYS),
+        "registry ratification closure binding",
     )
-    attestations = manifest["ordered_ratify_attestations"]
-    reviewers = manifest["ordered_reviewer_identities"]
+    expected_path = (
+        f"docs/analysis/amendment_{amendment_number}_ratification/"
+        "closure_v1.json"
+    )
     _require(
-        manifest["schema_version"] == TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION
-        and manifest["status"] == TRUSTED_RECORDING_MANIFEST_STATUS
-        and _is_lower_hex(manifest["attested_candidate_head"], 40)
-        and manifest["document_path"] == DESIGN_PATH
-        and manifest["document_mode"] == DESIGN_MODE
-        and _is_lower_hex(manifest["document_blob_oid"], 40)
-        and isinstance(manifest["document_byte_size"], int)
-        and not isinstance(manifest["document_byte_size"], bool)
-        and manifest["document_byte_size"] > 0
-        and _is_lower_hex(manifest["document_sha256"], 64)
-        and manifest["trusted_reviewer_registry_identity"] == registry_identity
-        and isinstance(reviewers, list)
-        and len(reviewers) == 2
-        and all(
-            isinstance(reviewer, str)
-            and reviewer
-            and "\r" not in reviewer
-            and "\n" not in reviewer
-            for reviewer in reviewers
+        closure_binding["path"] == expected_path
+        and type(closure_binding["raw_byte_size"]) is int
+        and closure_binding["raw_byte_size"] > 0
+        and _is_lower_hex(closure_binding["raw_sha256"], 64),
+        "registry ratification closure binding drift",
+    )
+    _require(
+        isinstance(closure_raw, bytes)
+        and len(closure_raw) == closure_binding["raw_byte_size"]
+        and _sha256(closure_raw) == closure_binding["raw_sha256"],
+        "ratification closure bytes differ from the registry repin",
+    )
+    closure = _strict_canonical_json(closure_raw, expected_path)
+    _validate_closure_shape(closure, amendment_number)
+    if amendment_number == 13:
+        _require(
+            closure == A13_EXPECTED_CLOSURE,
+            "Amendment-13 closure differs from directly enacted values",
         )
-        and len(set(reviewers)) == 2
-        and isinstance(attestations, list)
-        and len(attestations) == 2
-        and [row.get("reviewer_identity") for row in attestations] == reviewers
-        and reviewers
-        == [row["reviewer_identity"] for row in registry["ordered_reviewers"]]
-        and manifest["attestation_domain_sha256"] == _domain_sha(attestations),
-        "Amendment-13 recording manifest drift",
-    )
-    if not verify_git:
-        return
-    commit = manifest_identity["manifest_commit"]
-    _require_exact_commit_object(
-        commit,
-        "Amendment-13 recording manifest commit",
-    )
-    parent_line = str(
-        _git("rev-list", "--parents", "-n", "1", commit, text=True)
-    ).strip()
+
+    verdicts = closure["verdict_artifacts"]
     _require(
-        parent_line.split()
-        == [commit, manifest_identity["manifest_parents"][0]],
-        "Amendment-13 recording manifest commit is not exact",
+        set(verdict_bytes) == {row["path"] for row in verdicts},
+        "ratification closure verdict artifact domain drift",
     )
-    tree_line = str(
-        _git(
-            "ls-tree",
-            commit,
-            "--",
-            manifest_identity["manifest_path"],
-            text=True,
+    for row in verdicts:
+        raw = verdict_bytes[row["path"]]
+        _require(
+            isinstance(raw, bytes)
+            and len(raw) == row["byte_size"]
+            and _sha256(raw) == row["raw_sha256"],
+            "ratification closure verdict byte mismatch",
         )
-    ).strip()
-    _require(
-        tree_line
-        == (
-            f"{manifest_identity['manifest_mode']} blob "
-            f"{manifest_identity['manifest_blob_oid']}\t"
-            f"{manifest_identity['manifest_path']}"
-        ),
-        "Amendment-13 recording manifest tree entry drift",
-    )
-    raw = _git(
-        "show",
-        f"{commit}:{manifest_identity['manifest_path']}",
-    )
-    _require(
-        isinstance(raw, bytes)
-        and raw == canonical_json_bytes(manifest)
-        and len(raw) == manifest_identity["manifest_byte_size"]
-        and _sha256(raw) == manifest_identity["manifest_sha256"]
-        and hashlib.sha1(
-            b"blob " + str(len(raw)).encode() + b"\0" + raw
-        ).hexdigest()
-        == manifest_identity["manifest_blob_oid"],
-        "Amendment-13 recording manifest bytes drift",
-    )
+        _verdict_attests_design(raw, closure)
 
-
-def _verify_ssh_signature(
-    raw_record: bytes,
-    raw_signature: bytes,
-    signer: Mapping[str, Any],
-    *,
-    namespace: str,
-    label: str,
-) -> None:
-    """Verify bytes against exactly one pre-enrolled Ed25519 key."""
-
-    _require(
-        isinstance(raw_record, bytes)
-        and isinstance(raw_signature, bytes)
-        and raw_signature.startswith(b"-----BEGIN SSH SIGNATURE-----\n")
-        and raw_signature.endswith(b"-----END SSH SIGNATURE-----\n"),
-        f"{label} SSH signature bytes are malformed",
-    )
-    with tempfile.TemporaryDirectory(prefix="a13-ssh-verify-") as temporary:
-        temporary_path = Path(temporary)
-        allowed_signers_path = temporary_path / "allowed_signers"
-        signature_path = temporary_path / "record.sig"
-        allowed_signers_path.write_text(
-            f"{signer['ssh_principal']} {signer['ssh_public_key']}\n",
-            encoding="utf-8",
+    commit = closure["ratification_commit"]
+    if verify_git:
+        _require_exact_commit_object(commit, "closure ratification commit")
+        parent_line = str(
+            _git("rev-list", "--parents", "-n", "1", commit, text=True)
+        ).strip()
+        _require(
+            parent_line.split()
+            == [commit, closure["ratification_commit_sole_parent"]],
+            "closure ratification commit sole-parent mismatch",
         )
-        signature_path.write_bytes(raw_signature)
-        environment = {
-            key: value
-            for key, value in os.environ.items()
-            if not key.startswith("GIT_")
-        }
-        result = subprocess.run(
-            [
-                "/usr/bin/ssh-keygen",
-                "-Y",
-                "verify",
-                "-f",
-                str(allowed_signers_path),
-                "-I",
-                signer["ssh_principal"],
-                "-n",
-                namespace,
-                "-s",
-                str(signature_path),
-            ],
-            input=raw_record,
-            check=False,
-            capture_output=True,
-            env=environment,
+        tree_line = str(
+            _git("ls-tree", commit, "--", DESIGN_PATH, text=True)
+        ).strip()
+        _require(
+            tree_line
+            == (
+                f"{DESIGN_MODE} blob "
+                f"{closure['attested_candidate_design_blob_oid']}\t"
+                f"{DESIGN_PATH}"
+            ),
+            "closure attests a different design blob than the ratification commit",
         )
+        ratification_design_raw = _git("show", f"{commit}:{DESIGN_PATH}")
     _require(
-        result.returncode == 0,
-        f"{label} signature is not authentic",
+        isinstance(ratification_design_raw, bytes)
+        and len(ratification_design_raw)
+        == closure["attested_candidate_design_byte_size"]
+        and _sha256(ratification_design_raw)
+        == closure["attested_candidate_design_raw_sha256"]
+        and _git_blob_oid(ratification_design_raw)
+        == closure["attested_candidate_design_blob_oid"],
+        "closure ratification design byte identity mismatch",
     )
+    return closure
 
 
-def validate_governing_amendment13_ratification_identity(
-    identity: Mapping[str, Any],
-    attestation_record_bytes: Mapping[str, bytes],
-    attestation_signature_bytes: Mapping[str, bytes],
-) -> None:
-    """Validate a governing identity, including its exact Git objects."""
+def _public_registry_closure_binding(
+    amendment_number: int,
+) -> dict[str, Any]:
+    try:
+        import covered_earnings_correction_registry as registry
 
-    (
-        registry_identity,
-        registry,
-        enrollment_authorities,
-    ) = _load_trusted_reviewer_registry(identity)
-    manifest_identity = identity.get("recording_manifest_identity")
+        design_binding = registry.design_binding()
+    except Exception as error:
+        raise LawError(
+            "registry ratification closure binding is missing"
+        ) from error
+    closures = design_binding.get("ratification_closures")
     _require(
-        isinstance(manifest_identity, Mapping),
-        "governing Amendment-13 recording manifest identity is absent",
+        isinstance(closures, list)
+        and len(closures) == 2
+        and all(isinstance(row, Mapping) for row in closures),
+        "registry ratification closure binding is missing",
     )
-    manifest = _load_recording_manifest(manifest_identity)
-    _validate_governing_amendment13_ratification_identity(
-        identity,
-        attestation_record_bytes,
-        attestation_signature_bytes,
+    expected_paths = [A13_CLOSURE_PATH, A14_CLOSURE_PATH]
+    _require(
+        [row.get("path") for row in closures] == expected_paths,
+        "registry ratification closure binding order drift",
+    )
+    expected_path = expected_paths[amendment_number - 13]
+    selected = next(
+        (row for row in closures if row.get("path") == expected_path),
+        None,
+    )
+    _require(
+        isinstance(selected, Mapping),
+        "registry ratification closure binding is missing",
+    )
+    return dict(selected)
+
+
+def validate_amendment_ratification_closure(
+    amendment_number: int,
+) -> dict[str, Any]:
+    """Validate one closure selected only by the current registry repin."""
+
+    _require(
+        amendment_number in {13, 14},
+        "public closure validator supports exactly Amendments 13 and 14",
+    )
+    binding = _public_registry_closure_binding(amendment_number)
+    closure_path = binding["path"]
+    try:
+        worktree_raw = (ROOT / closure_path).read_bytes()
+    except OSError as error:
+        raise LawError("ratification closure is missing") from error
+    result = _run_git("show", f"HEAD:{closure_path}")
+    _require(
+        result.returncode == 0
+        and isinstance(result.stdout, bytes)
+        and result.stdout == worktree_raw,
+        "ratification closure is missing or differs between HEAD and worktree",
+    )
+    closure = _strict_canonical_json(worktree_raw, closure_path)
+    _validate_closure_shape(closure, amendment_number)
+    verdict_bytes: dict[str, bytes] = {}
+    for row in closure["verdict_artifacts"]:
+        path = row["path"]
+        try:
+            raw = (ROOT / path).read_bytes()
+        except OSError as error:
+            raise LawError("verdict artifact is missing") from error
+        head_result = _run_git("show", f"HEAD:{path}")
+        _require(
+            head_result.returncode == 0
+            and isinstance(head_result.stdout, bytes)
+            and head_result.stdout == raw,
+            "verdict artifact is missing or differs between HEAD and worktree",
+        )
+        verdict_bytes[path] = raw
+    return _validate_ratification_closure(
+        worktree_raw,
+        binding,
+        verdict_bytes,
+        amendment_number,
         verify_git=True,
-        trusted_reviewer_registry_identity=registry_identity,
-        trusted_reviewer_registry=registry,
-        trusted_enrollment_authorities=enrollment_authorities,
-        recording_manifest_identity=manifest_identity,
-        recording_manifest=manifest,
-    )
-
-
-def _validate_governing_amendment13_ratification_identity(
-    identity: Mapping[str, Any],
-    attestation_record_bytes: Mapping[str, bytes],
-    attestation_signature_bytes: Mapping[str, bytes],
-    *,
-    verify_git: bool,
-    trusted_reviewer_registry_identity: Mapping[str, Any],
-    trusted_reviewer_registry: Mapping[str, Any],
-    trusted_enrollment_authorities: Sequence[Mapping[str, Any]],
-    recording_manifest_identity: Mapping[str, Any],
-    recording_manifest: Mapping[str, Any],
-) -> None:
-    """Internal identity validator with a test-only synthetic Git path."""
-
-    _require_exact_keys(
-        identity,
-        {
-            "schema_version",
-            "status",
-            "ratification_commit",
-            "ratification_parents",
-            "ratification_commit_changed_paths",
-            "document_path",
-            "document_mode",
-            "document_blob_oid",
-            "document_byte_size",
-            "document_sha256",
-            "trusted_reviewer_registry_identity",
-            "recording_manifest_identity",
-            "dual_ratify_attestations",
-        },
-        "governing Amendment-13 ratification identity",
-    )
-    commit = identity["ratification_commit"]
-    parents = identity["ratification_parents"]
-    _require(
-        identity["schema_version"] == GOVERNING_A13_IDENTITY_SCHEMA_VERSION
-        and identity["status"] == GOVERNING_A13_IDENTITY_STATUS,
-        "governing Amendment-13 ratification identity status drift",
-    )
-    _require(
-        _is_lower_hex(commit, 40)
-        and isinstance(parents, list)
-        and len(parents) == 1
-        and _is_lower_hex(parents[0], 40),
-        "governing Amendment-13 ratification commit is not single-parent",
-    )
-    _require(
-        identity["ratification_commit_changed_paths"] == [DESIGN_PATH],
-        "governing Amendment-13 recording act is not document-only",
-    )
-    _require(
-        identity["document_path"] == DESIGN_PATH
-        and identity["document_mode"] == DESIGN_MODE
-        and _is_lower_hex(identity["document_blob_oid"], 40)
-        and isinstance(identity["document_byte_size"], int)
-        and not isinstance(identity["document_byte_size"], bool)
-        and identity["document_byte_size"] > 0
-        and _is_lower_hex(identity["document_sha256"], 64),
-        "governing Amendment-13 document identity is malformed",
-    )
-    attestations = identity["dual_ratify_attestations"]
-    _validate_trusted_reviewer_registry(
-        trusted_reviewer_registry_identity,
-        trusted_reviewer_registry,
-        trusted_enrollment_authorities,
-        verify_git=verify_git,
-    )
-    _validate_recording_manifest(
-        recording_manifest_identity,
-        recording_manifest,
-        trusted_reviewer_registry_identity,
-        trusted_reviewer_registry,
-        verify_git=verify_git,
-    )
-    _require(
-        identity["trusted_reviewer_registry_identity"]
-        == trusted_reviewer_registry_identity
-        and identity["recording_manifest_identity"]
-        == recording_manifest_identity,
-        "governing Amendment-13 reviewer or recording identity drift",
-    )
-    _require(
-        isinstance(attestations, list) and len(attestations) == 2,
-        "governing Amendment-13 identity lacks two RATIFY attestations",
-    )
-    record_names: list[str] = []
-    candidate_heads: list[str] = []
-    registry_reviewers = trusted_reviewer_registry["ordered_reviewers"]
-    for attestation, reviewer in zip(attestations, registry_reviewers):
-        _require_exact_keys(
-            attestation,
-            {
-                "reviewer_identity",
-                "record_name",
-                "record_path",
-                "signature_path",
-                "raw_byte_size",
-                "raw_sha256",
-                "signature_byte_size",
-                "signature_sha256",
-                "ssh_key_fingerprint",
-                "verdict_token",
-                "attested_candidate_head",
-                "attested_document_byte_size",
-                "attested_document_sha256",
-            },
-            "governing Amendment-13 RATIFY attestation",
-        )
-        record_names.append(attestation["record_name"])
-        candidate_heads.append(attestation["attested_candidate_head"])
-        _require(
-            isinstance(attestation["reviewer_identity"], str)
-            and bool(attestation["reviewer_identity"])
-            and "\r" not in attestation["reviewer_identity"]
-            and "\n" not in attestation["reviewer_identity"]
-            and isinstance(attestation["record_name"], str)
-            and bool(attestation["record_name"])
-            and "\r" not in attestation["record_name"]
-            and "\n" not in attestation["record_name"]
-            and attestation["reviewer_identity"]
-            == reviewer["reviewer_identity"]
-            and attestation["record_name"] == reviewer["record_name"]
-            and attestation["record_path"] == reviewer["record_path"]
-            and attestation["signature_path"] == reviewer["signature_path"]
-            and attestation["ssh_key_fingerprint"]
-            == reviewer["ssh_key_fingerprint"]
-            and isinstance(attestation["raw_byte_size"], int)
-            and not isinstance(attestation["raw_byte_size"], bool)
-            and attestation["raw_byte_size"] > 0
-            and _is_lower_hex(attestation["raw_sha256"], 64)
-            and isinstance(attestation["signature_byte_size"], int)
-            and not isinstance(attestation["signature_byte_size"], bool)
-            and attestation["signature_byte_size"] > 0
-            and _is_lower_hex(attestation["signature_sha256"], 64)
-            and attestation["verdict_token"] == "RATIFY"
-            and _is_lower_hex(attestation["attested_candidate_head"], 40)
-            and attestation["attested_document_byte_size"]
-            == identity["document_byte_size"]
-            and attestation["attested_document_sha256"]
-            == identity["document_sha256"],
-            "governing Amendment-13 RATIFY attestation drift",
-        )
-    _require(
-        len(set(record_names)) == 2
-        and len(set(candidate_heads)) == 1
-        and len({row["reviewer_identity"] for row in attestations}) == 2
-        and len({row["raw_sha256"] for row in attestations}) == 2,
-        "governing Amendment-13 RATIFY records are not distinct and conjoined",
-    )
-    _require(
-        attestations == recording_manifest["ordered_ratify_attestations"]
-        and [row["reviewer_identity"] for row in attestations]
-        == recording_manifest["ordered_reviewer_identities"]
-        and candidate_heads[0] == recording_manifest["attested_candidate_head"]
-        and identity["document_path"] == recording_manifest["document_path"]
-        and identity["document_mode"] == recording_manifest["document_mode"]
-        and identity["document_blob_oid"]
-        == recording_manifest["document_blob_oid"]
-        and identity["document_byte_size"]
-        == recording_manifest["document_byte_size"]
-        and identity["document_sha256"]
-        == recording_manifest["document_sha256"],
-        "governing Amendment-13 dual-RATIFY recording manifest drift",
-    )
-    _require(
-        set(attestation_record_bytes)
-        == {row["record_path"] for row in attestations}
-        and set(attestation_signature_bytes)
-        == {row["signature_path"] for row in attestations},
-        "governing Amendment-13 RATIFY raw-record domain drift",
-    )
-    for attestation, reviewer in zip(attestations, registry_reviewers):
-        raw_record = attestation_record_bytes[attestation["record_path"]]
-        raw_signature = attestation_signature_bytes[
-            attestation["signature_path"]
-        ]
-        expected_record = (
-            "# RATIFY\n"
-            "reviewer_identity: "
-            f"{attestation['reviewer_identity']}\n"
-            f"record_name: {attestation['record_name']}\n"
-            "attested_candidate_head: "
-            f"{attestation['attested_candidate_head']}\n"
-            f"attested_document_path: {DESIGN_PATH}\n"
-            "attested_document_byte_size: "
-            f"{identity['document_byte_size']}\n"
-            f"attested_document_sha256: {identity['document_sha256']}\n"
-        ).encode("utf-8")
-        _require(
-            isinstance(raw_record, bytes)
-            and raw_record == expected_record
-            and len(raw_record) == attestation["raw_byte_size"]
-            and _sha256(raw_record) == attestation["raw_sha256"]
-            and isinstance(raw_signature, bytes)
-            and len(raw_signature) == attestation["signature_byte_size"]
-            and _sha256(raw_signature) == attestation["signature_sha256"],
-            "governing Amendment-13 RATIFY raw bytes do not attest identity",
-        )
-        _verify_ssh_signature(
-            raw_record,
-            raw_signature,
-            reviewer,
-            namespace=RATIFY_SIGNATURE_NAMESPACE,
-            label="governing Amendment-13 RATIFY reviewer",
-        )
-    if not verify_git:
-        return
-    _require(
-        commit != RATIFICATION_COMMIT,
-        "governing Amendment-13 commit is not later than Amendment 12",
-    )
-    _require_exact_commit_object(
-        commit, "governing Amendment-13 ratification commit"
-    )
-    _require_exact_commit_object(
-        candidate_heads[0], "governing Amendment-13 attested candidate HEAD"
-    )
-    _git("merge-base", "--is-ancestor", RATIFICATION_COMMIT, commit)
-    parent_line = str(
-        _git("rev-list", "--parents", "-n", "1", commit, text=True)
-    ).strip()
-    _require(
-        parents[0] == recording_manifest_identity["manifest_commit"]
-        and parent_line.split() == [commit, parents[0]],
-        "governing Amendment-13 ratification commit is not exact",
-    )
-    registry_commit = trusted_reviewer_registry_identity["registry_commit"]
-    manifest_commit = recording_manifest_identity["manifest_commit"]
-    ceremony_base = recording_manifest_identity["manifest_parents"][0]
-    _require(
-        registry_commit
-        not in {ceremony_base, candidate_heads[0], manifest_commit}
-        and manifest_commit != candidate_heads[0],
-        "reviewer registry, candidate, and manifest are not distinct commits",
-    )
-    _git("merge-base", "--is-ancestor", registry_commit, ceremony_base)
-    candidate_parent_line = str(
-        _git(
-            "rev-list",
-            "--parents",
-            "-n",
-            "1",
-            candidate_heads[0],
-            text=True,
-        )
-    ).strip()
-    candidate_changed_paths = str(
-        _git(
-            "diff-tree",
-            "--no-commit-id",
-            "--name-only",
-            "-r",
-            candidate_heads[0],
-            text=True,
-        )
-    ).splitlines()
-    _require(
-        candidate_parent_line.split() == [candidate_heads[0], ceremony_base]
-        and candidate_changed_paths == [DESIGN_PATH],
-        "Amendment-13 candidate and manifest are not sibling ceremony commits",
-    )
-    changed_paths = str(
-        _git(
-            "diff-tree",
-            "--no-commit-id",
-            "--name-only",
-            "-r",
-            commit,
-            text=True,
-        )
-    ).splitlines()
-    _require(
-        changed_paths == [DESIGN_PATH],
-        "governing Amendment-13 recording act is not document-only",
-    )
-    manifest_changed_paths = str(
-        _git(
-            "diff-tree",
-            "--no-commit-id",
-            "--name-only",
-            "-r",
-            manifest_commit,
-            text=True,
-        )
-    ).splitlines()
-    expected_manifest_paths = sorted(
-        [
-            recording_manifest_identity["manifest_path"],
-            *[row["record_path"] for row in attestations],
-            *[row["signature_path"] for row in attestations],
-        ]
-    )
-    _require(
-        manifest_changed_paths == expected_manifest_paths,
-        "Amendment-13 manifest commit changed-path domain drift",
-    )
-    candidate_recording_diff = str(
-        _git(
-            "diff",
-            "--name-only",
-            candidate_heads[0],
-            commit,
-            text=True,
-        )
-    ).splitlines()
-    _require(
-        candidate_recording_diff == expected_manifest_paths,
-        "Amendment-13 candidate/recording trees differ outside ceremony paths",
-    )
-    tree_line = str(
-        _git("ls-tree", commit, "--", DESIGN_PATH, text=True)
-    ).strip()
-    _require(
-        tree_line
-        == (
-            f"{DESIGN_MODE} blob {identity['document_blob_oid']}\t"
-            f"{DESIGN_PATH}"
-        ),
-        "governing Amendment-13 commit does not select its document blob",
-    )
-    manifest_tree_line = str(
-        _git(
-            "ls-tree",
-            commit,
-            "--",
-            recording_manifest_identity["manifest_path"],
-            text=True,
-        )
-    ).strip()
-    _require(
-        manifest_tree_line
-        == (
-            f"{recording_manifest_identity['manifest_mode']} blob "
-            f"{recording_manifest_identity['manifest_blob_oid']}\t"
-            f"{recording_manifest_identity['manifest_path']}"
-        ),
-        "governing Amendment-13 commit does not retain recording manifest",
-    )
-    for attestation in attestations:
-        record_path = attestation["record_path"]
-        signature_path = attestation["signature_path"]
-        git_record = _git("show", f"{manifest_commit}:{record_path}")
-        git_signature = _git("show", f"{manifest_commit}:{signature_path}")
-        _require(
-            git_record == attestation_record_bytes[record_path]
-            and git_signature == attestation_signature_bytes[signature_path],
-            "Amendment-13 committed RATIFY record/signature bytes drift",
-        )
-    candidate_tree_line = str(
-        _git("ls-tree", candidate_heads[0], "--", DESIGN_PATH, text=True)
-    ).strip()
-    _require(
-        candidate_tree_line
-        == (
-            f"{DESIGN_MODE} blob {identity['document_blob_oid']}\t"
-            f"{DESIGN_PATH}"
-        ),
-        "governing Amendment-13 attested candidate selects another blob",
-    )
-    raw = _git("show", f"{commit}:{DESIGN_PATH}")
-    amendment12_raw = _git("show", f"{RATIFICATION_COMMIT}:{DESIGN_PATH}")
-    _require(
-        isinstance(raw, bytes)
-        and len(raw) == identity["document_byte_size"]
-        and _sha256(raw) == identity["document_sha256"]
-        and hashlib.sha1(
-            b"blob " + str(len(raw)).encode() + b"\0" + raw
-        ).hexdigest()
-        == identity["document_blob_oid"],
-        "governing Amendment-13 document bytes fail dual-hash identity",
-    )
-    _require(
-        isinstance(amendment12_raw, bytes)
-        and raw[:DESIGN_BYTE_SIZE] == amendment12_raw
-        and raw[DESIGN_BYTE_SIZE:].startswith(AMENDMENT13_BOUNDARY),
-        "governing Amendment-13 document violates immutable-prefix law",
-    )
-    implementation_commit = _parse_implementation_pins(
-        _a13_sections(raw)["27.7"]
-    )["commit"]
-    _require_exact_commit_object(
-        implementation_commit,
-        "Amendment-13 enrollment-authority implementation commit",
-    )
-    implementation_ancestry = _run_git(
-        "merge-base",
-        "--is-ancestor",
-        implementation_commit,
-        registry_commit,
-    )
-    _require(
-        implementation_commit != registry_commit
-        and implementation_ancestry.returncode == 0,
-        "enrollment-authority implementation is not a strict ancestor of "
-        "the reviewer registry",
     )
 
 
@@ -4504,80 +3695,42 @@ def build_execution_law() -> dict[str, Any]:
     return law
 
 
-def build_ratification_bound_execution_template(
-    governing_amendment13_ratification_identity: Mapping[str, Any],
-    governing_attestation_record_bytes: Mapping[str, bytes],
-    governing_attestation_signature_bytes: Mapping[str, bytes],
-) -> dict[str, Any]:
-    """Bind the nonauthority execution template to a ratified A13 identity."""
+def build_ratification_bound_execution_template() -> dict[str, Any]:
+    """Bind the nonauthority execution template to the public A13 closure."""
 
-    validate_governing_amendment13_ratification_identity(
-        governing_amendment13_ratification_identity,
-        governing_attestation_record_bytes,
-        governing_attestation_signature_bytes,
-    )
+    closure = validate_amendment_ratification_closure(13)
     law = _construct_execution_law(
-        governing_amendment13_ratification_identity=(
-            governing_amendment13_ratification_identity
-        ),
+        governing_amendment13_ratification_identity=closure,
         status=RATIFICATION_BOUND_TEMPLATE_STATUS,
     )
-    validate_execution_law(
-        law,
-        verify_git=True,
-        governing_attestation_record_bytes=governing_attestation_record_bytes,
-        governing_attestation_signature_bytes=(
-            governing_attestation_signature_bytes
-        ),
-    )
+    validate_execution_law(law, verify_git=True)
     return law
 
 
 def _build_ratification_bound_execution_template_for_test(
-    governing_amendment13_ratification_identity: Mapping[str, Any],
-    governing_attestation_record_bytes: Mapping[str, bytes],
-    governing_attestation_signature_bytes: Mapping[str, bytes],
-    trusted_reviewer_registry_identity: Mapping[str, Any],
-    trusted_reviewer_registry: Mapping[str, Any],
-    trusted_enrollment_authorities: Sequence[Mapping[str, Any]],
-    recording_manifest_identity: Mapping[str, Any],
-    recording_manifest: Mapping[str, Any],
+    closure_raw: bytes,
+    closure_binding: Mapping[str, Any],
+    verdict_bytes: Mapping[str, bytes],
+    ratification_design_raw: bytes,
 ) -> dict[str, Any]:
-    """Exercise bound-template semantics without pretending synthetic Git exists."""
+    """Exercise closure-bound semantics without creating public authority."""
 
-    _validate_governing_amendment13_ratification_identity(
-        governing_amendment13_ratification_identity,
-        governing_attestation_record_bytes,
-        governing_attestation_signature_bytes,
+    closure = _validate_ratification_closure(
+        closure_raw,
+        closure_binding,
+        verdict_bytes,
+        13,
         verify_git=False,
-        trusted_reviewer_registry_identity=(
-            trusted_reviewer_registry_identity
-        ),
-        trusted_reviewer_registry=trusted_reviewer_registry,
-        trusted_enrollment_authorities=trusted_enrollment_authorities,
-        recording_manifest_identity=recording_manifest_identity,
-        recording_manifest=recording_manifest,
+        ratification_design_raw=ratification_design_raw,
     )
     law = _construct_execution_law(
-        governing_amendment13_ratification_identity=(
-            governing_amendment13_ratification_identity
-        ),
+        governing_amendment13_ratification_identity=closure,
         status=RATIFICATION_BOUND_TEMPLATE_STATUS,
     )
     _validate_execution_law(
         law,
         verify_git=False,
-        governing_attestation_record_bytes=governing_attestation_record_bytes,
-        governing_attestation_signature_bytes=(
-            governing_attestation_signature_bytes
-        ),
-        trusted_reviewer_registry_identity=(
-            trusted_reviewer_registry_identity
-        ),
-        trusted_reviewer_registry=trusted_reviewer_registry,
-        trusted_enrollment_authorities=trusted_enrollment_authorities,
-        recording_manifest_identity=recording_manifest_identity,
-        recording_manifest=recording_manifest,
+        verified_closure=closure,
     )
     return law
 
@@ -5037,40 +4190,24 @@ def validate_execution_law(
     law: Mapping[str, Any],
     *,
     verify_git: bool = True,
-    governing_attestation_record_bytes: Mapping[str, bytes] | None = None,
-    governing_attestation_signature_bytes: Mapping[str, bytes] | None = None,
 ) -> None:
-    """Validate a draft fixture or a Git-authenticated ratification-bound one."""
+    """Validate a draft fixture or a public closure-bound template."""
 
     governing_identity = law.get("governing_amendment13_ratification_identity")
     _require(
         governing_identity == GOVERNING_A13_CANDIDATE_IDENTITY or verify_git,
         "ratification-bound validation may not disable Git verification",
     )
-    _validate_execution_law(
-        law,
-        verify_git=verify_git,
-        governing_attestation_record_bytes=governing_attestation_record_bytes,
-        governing_attestation_signature_bytes=(
-            governing_attestation_signature_bytes
-        ),
-    )
+    _validate_execution_law(law, verify_git=verify_git)
 
 
 def _validate_execution_law(
     law: Mapping[str, Any],
     *,
     verify_git: bool = True,
-    governing_attestation_record_bytes: Mapping[str, bytes] | None = None,
-    governing_attestation_signature_bytes: Mapping[str, bytes] | None = None,
-    trusted_reviewer_registry_identity: Mapping[str, Any] | None = None,
-    trusted_reviewer_registry: Mapping[str, Any] | None = None,
-    trusted_enrollment_authorities: Sequence[Mapping[str, Any]] | None = None,
-    recording_manifest_identity: Mapping[str, Any] | None = None,
-    recording_manifest: Mapping[str, Any] | None = None,
+    verified_closure: Mapping[str, Any] | None = None,
 ) -> None:
-    """Internal validator with a test-only synthetic-identity path."""
-
+    """Internal validator with one private synthetic-closure path."""
     _require_exact_keys(
         law,
         {
@@ -5114,72 +4251,25 @@ def _validate_execution_law(
     is_candidate_fixture = (
         governing_identity == GOVERNING_A13_CANDIDATE_IDENTITY
     )
+    governing_document_raw = (ROOT / DESIGN_PATH).read_bytes()
     if is_candidate_fixture:
         _require(
-            governing_attestation_record_bytes is None
-            and governing_attestation_signature_bytes is None,
-            "unratified fixture received governing attestation material",
+            verified_closure is None,
+            "unratified fixture received a ratification closure",
         )
         expected_status = DRAFT_STATUS
-        governing_document_raw = (ROOT / DESIGN_PATH).read_bytes()
     else:
-        _require(
-            governing_attestation_record_bytes is not None
-            and governing_attestation_signature_bytes is not None,
-            "ratification-bound template lacks signed governing attestations",
-        )
         if verify_git:
-            validate_governing_amendment13_ratification_identity(
-                governing_identity,
-                governing_attestation_record_bytes,
-                governing_attestation_signature_bytes,
-            )
-            governing_document_raw = _git(
-                "show",
-                (
-                    f"{governing_identity['ratification_commit']}:"
-                    f"{DESIGN_PATH}"
-                ),
-            )
+            closure = validate_amendment_ratification_closure(13)
         else:
             _require(
-                trusted_reviewer_registry_identity is not None
-                and trusted_reviewer_registry is not None
-                and trusted_enrollment_authorities is not None
-                and recording_manifest_identity is not None
-                and recording_manifest is not None,
-                "test-only ratification validation lacks trust material",
+                verified_closure is not None,
+                "test-only ratification validation lacks a verified closure",
             )
-            _validate_governing_amendment13_ratification_identity(
-                governing_identity,
-                governing_attestation_record_bytes,
-                governing_attestation_signature_bytes,
-                verify_git=False,
-                trusted_reviewer_registry_identity=(
-                    trusted_reviewer_registry_identity
-                ),
-                trusted_reviewer_registry=trusted_reviewer_registry,
-                trusted_enrollment_authorities=(
-                    trusted_enrollment_authorities
-                ),
-                recording_manifest_identity=recording_manifest_identity,
-                recording_manifest=recording_manifest,
-            )
-            governing_document_raw = (ROOT / DESIGN_PATH).read_bytes()
+            closure = dict(verified_closure)
         _require(
-            isinstance(governing_document_raw, bytes)
-            and len(governing_document_raw)
-            == governing_identity["document_byte_size"]
-            and _sha256(governing_document_raw)
-            == governing_identity["document_sha256"]
-            and hashlib.sha1(
-                b"blob "
-                + str(len(governing_document_raw)).encode()
-                + b"\0"
-                + governing_document_raw
-            ).hexdigest()
-            == governing_identity["document_blob_oid"],
-            "governing Amendment-13 semantic document identity drift",
+            governing_identity == closure,
+            "governing Amendment-13 closure identity drift",
         )
         expected_status = RATIFICATION_BOUND_TEMPLATE_STATUS
     _require(
@@ -5216,13 +4306,7 @@ def _validate_execution_law(
             == AMENDMENT12_RATIFICATION_IDENTITY,
             "ratification identity drift",
         )
-
-    _require(
-        isinstance(governing_document_raw, bytes),
-        "governing Amendment-13 semantic document read was not raw bytes",
-    )
     _validate_document_semantic_projection(governing_document_raw, law)
-
     proof_rows = law["semantically_incompatible_local_proof_successor_rows"]
     incomplete_rows = law["incomplete_fragment_terminal_successor_rows"]
     composed_rows = law["composed_fragment_successor_rows"]
@@ -6180,388 +5264,6 @@ def run_mutation_tests(law: Mapping[str, Any]) -> tuple[str, ...]:
     return tuple(rejected)
 
 
-def _generate_test_ssh_key(key_path: Path, label: str) -> str:
-    key_path.parent.mkdir(parents=True, exist_ok=True)
-    key_result = subprocess.run(
-        [
-            "/usr/bin/ssh-keygen",
-            "-q",
-            "-t",
-            "ed25519",
-            "-N",
-            "",
-            "-f",
-            str(key_path),
-        ],
-        check=False,
-        capture_output=True,
-    )
-    _require(key_result.returncode == 0, f"{label} key generation failed")
-    return key_path.with_suffix(".pub").read_text(encoding="utf-8").strip()
-
-
-def _generate_test_enrollment_authorities(
-    directory: Path,
-) -> tuple[list[dict[str, Any]], list[Path]]:
-    authorities: list[dict[str, Any]] = []
-    key_paths: list[Path] = []
-    for index, prior_record in enumerate(RATIFY_ATTESTATIONS, start=1):
-        key_path = directory / f"authority-{index}"
-        public_key = _generate_test_ssh_key(
-            key_path,
-            "synthetic enrollment authority",
-        )
-        authorities.append(
-            {
-                "authority_identity": (
-                    f"preexisting-amendment12-ratifier-{index}"
-                ),
-                "prior_record_name": prior_record["record_name"],
-                "prior_record_raw_sha256": prior_record["raw_sha256"],
-                "ssh_principal": f"a13-enrollment-authority-{index}",
-                "ssh_public_key": public_key,
-                "ssh_key_fingerprint": _ssh_public_key_fingerprint(public_key),
-            }
-        )
-        key_paths.append(key_path)
-    return authorities, key_paths
-
-
-def _generate_test_reviewer_keys(
-    directory: Path,
-) -> tuple[list[dict[str, Any]], list[Path]]:
-    directory.mkdir(parents=True, exist_ok=True)
-    reviewers: list[dict[str, Any]] = []
-    key_paths: list[Path] = []
-    for index in (1, 2):
-        reviewer_identity = f"preexisting-amendment12-ratifier-{index}"
-        name = f"amendment-13-enforcement-ratify-{index}.md"
-        record_path = "docs/analysis/amendment_13_ratification/records/" + name
-        signature_path = f"{record_path}.sig"
-        principal = f"a13-enrolled-reviewer-{index}"
-        key_path = directory / f"reviewer-{index}"
-        public_key = _generate_test_ssh_key(
-            key_path,
-            "synthetic reviewer",
-        )
-        reviewers.append(
-            {
-                "reviewer_identity": reviewer_identity,
-                "record_name": name,
-                "record_path": record_path,
-                "signature_path": signature_path,
-                "ssh_principal": principal,
-                "ssh_public_key": public_key,
-                "ssh_key_fingerprint": _ssh_public_key_fingerprint(public_key),
-            }
-        )
-        key_paths.append(key_path)
-    return reviewers, key_paths
-
-
-def _build_test_reviewer_registry(
-    reviewers: Sequence[Mapping[str, Any]],
-    authorities: Sequence[Mapping[str, Any]],
-    authority_key_paths: Sequence[Path],
-    registry_parent: str,
-) -> dict[str, Any]:
-    """Build K's synthetic registry for private protocol-shape tests."""
-
-    reviewer_rows = [copy.deepcopy(dict(row)) for row in reviewers]
-    authority_rows = [copy.deepcopy(dict(row)) for row in authorities]
-    signing_paths = list(authority_key_paths)
-    _require(
-        len(reviewer_rows) == len(authority_rows) == len(signing_paths) == 2,
-        "synthetic enrollment material is not dual",
-    )
-    reviewer_domain_sha256 = _domain_sha(reviewer_rows)
-    authority_domain_sha256 = _domain_sha(authority_rows)
-    authorizations: list[dict[str, Any]] = []
-    for position, (reviewer, authority, signing_path) in enumerate(
-        zip(reviewer_rows, authority_rows, signing_paths),
-        start=1,
-    ):
-        preimage = {
-            "authority_identity": authority["authority_identity"],
-            "prior_record_name": authority["prior_record_name"],
-            "prior_record_raw_sha256": authority["prior_record_raw_sha256"],
-            "registry_parent_commit": registry_parent,
-            "registry_path": TRUSTED_REVIEWER_REGISTRY_PATH,
-            "reviewer_position": position,
-            "reviewer_identity": reviewer["reviewer_identity"],
-            "reviewer_row_sha256": _sha256(canonical_json_bytes(reviewer)),
-            "reviewer_domain_sha256": reviewer_domain_sha256,
-            "trusted_enrollment_authority_domain_sha256": (
-                authority_domain_sha256
-            ),
-            "draft_author_identity": A13_DRAFT_AUTHOR_IDENTITY,
-            "reviewer_independent_of_draft_author": True,
-        }
-        sign_result = subprocess.run(
-            [
-                "/usr/bin/ssh-keygen",
-                "-Y",
-                "sign",
-                "-q",
-                "-f",
-                str(signing_path),
-                "-n",
-                ENROLLMENT_SIGNATURE_NAMESPACE,
-                "-",
-            ],
-            input=canonical_json_bytes(preimage),
-            check=False,
-            capture_output=True,
-        )
-        _require(
-            sign_result.returncode == 0,
-            "synthetic reviewer enrollment signature failed",
-        )
-        raw_signature = sign_result.stdout
-        authorizations.append(
-            {
-                "authority_identity": authority["authority_identity"],
-                "authority_ssh_key_fingerprint": authority[
-                    "ssh_key_fingerprint"
-                ],
-                "authorization_preimage": preimage,
-                "signature_byte_size": len(raw_signature),
-                "signature_sha256": _sha256(raw_signature),
-                "signature_base64": base64.b64encode(raw_signature).decode(
-                    "ascii"
-                ),
-            }
-        )
-    return {
-        "schema_version": TRUSTED_REVIEWER_REGISTRY_SCHEMA_VERSION,
-        "status": TRUSTED_REVIEWER_REGISTRY_STATUS,
-        "signature_namespace": RATIFY_SIGNATURE_NAMESPACE,
-        "enrollment_signature_namespace": ENROLLMENT_SIGNATURE_NAMESPACE,
-        "trusted_enrollment_authority_domain_sha256": (
-            authority_domain_sha256
-        ),
-        "ordered_reviewers": reviewer_rows,
-        "reviewer_domain_sha256": reviewer_domain_sha256,
-        "ordered_enrollment_authorizations": authorizations,
-        "enrollment_authorization_domain_sha256": _domain_sha(authorizations),
-    }
-
-
-def _build_test_signed_material(
-    raw_document: bytes,
-    candidate_head: str,
-    reviewers: Sequence[Mapping[str, Any]],
-    key_paths: Sequence[Path],
-    registry_identity: Mapping[str, Any],
-) -> tuple[
-    list[dict[str, Any]],
-    dict[str, bytes],
-    dict[str, bytes],
-    dict[str, Any],
-]:
-    document_sha256 = _sha256(raw_document)
-    document_blob_oid = hashlib.sha1(
-        b"blob " + str(len(raw_document)).encode() + b"\0" + raw_document
-    ).hexdigest()
-    attestations: list[dict[str, Any]] = []
-    records: dict[str, bytes] = {}
-    signatures: dict[str, bytes] = {}
-    for reviewer, key_path in zip(reviewers, key_paths):
-        reviewer_identity = reviewer["reviewer_identity"]
-        name = reviewer["record_name"]
-        raw_record = (
-            "# RATIFY\n"
-            f"reviewer_identity: {reviewer_identity}\n"
-            f"record_name: {name}\n"
-            f"attested_candidate_head: {candidate_head}\n"
-            f"attested_document_path: {DESIGN_PATH}\n"
-            f"attested_document_byte_size: {len(raw_document)}\n"
-            f"attested_document_sha256: {document_sha256}\n"
-        ).encode("utf-8")
-        sign_result = subprocess.run(
-            [
-                "/usr/bin/ssh-keygen",
-                "-Y",
-                "sign",
-                "-q",
-                "-f",
-                str(key_path),
-                "-n",
-                RATIFY_SIGNATURE_NAMESPACE,
-                "-",
-            ],
-            input=raw_record,
-            check=False,
-            capture_output=True,
-        )
-        _require(
-            sign_result.returncode == 0,
-            "synthetic reviewer signature failed",
-        )
-        raw_signature = sign_result.stdout
-        records[reviewer["record_path"]] = raw_record
-        signatures[reviewer["signature_path"]] = raw_signature
-        attestations.append(
-            {
-                "reviewer_identity": reviewer_identity,
-                "record_name": name,
-                "record_path": reviewer["record_path"],
-                "signature_path": reviewer["signature_path"],
-                "raw_byte_size": len(raw_record),
-                "raw_sha256": _sha256(raw_record),
-                "signature_byte_size": len(raw_signature),
-                "signature_sha256": _sha256(raw_signature),
-                "ssh_key_fingerprint": reviewer["ssh_key_fingerprint"],
-                "verdict_token": "RATIFY",
-                "attested_candidate_head": candidate_head,
-                "attested_document_byte_size": len(raw_document),
-                "attested_document_sha256": document_sha256,
-            }
-        )
-    manifest = {
-        "schema_version": TRUSTED_RECORDING_MANIFEST_SCHEMA_VERSION,
-        "status": TRUSTED_RECORDING_MANIFEST_STATUS,
-        "attested_candidate_head": candidate_head,
-        "document_path": DESIGN_PATH,
-        "document_mode": DESIGN_MODE,
-        "document_blob_oid": document_blob_oid,
-        "document_byte_size": len(raw_document),
-        "document_sha256": document_sha256,
-        "trusted_reviewer_registry_identity": copy.deepcopy(registry_identity),
-        "ordered_reviewer_identities": [
-            row["reviewer_identity"] for row in attestations
-        ],
-        "ordered_ratify_attestations": copy.deepcopy(attestations),
-        "attestation_domain_sha256": _domain_sha(attestations),
-    }
-    return attestations, records, signatures, manifest
-
-
-def _test_trusted_material(
-    raw_document: bytes,
-    candidate_head: str,
-) -> tuple[
-    list[dict[str, Any]],
-    dict[str, bytes],
-    dict[str, bytes],
-    dict[str, Any],
-    dict[str, Any],
-    tuple[dict[str, Any], ...],
-    dict[str, Any],
-]:
-    """Build signed synthetic records under a fixed test reviewer registry."""
-
-    with tempfile.TemporaryDirectory(prefix="a13-reviewer-keys-") as temporary:
-        temporary_path = Path(temporary)
-        authorities, authority_key_paths = (
-            _generate_test_enrollment_authorities(
-                temporary_path / "authorities"
-            )
-        )
-        reviewers, key_paths = _generate_test_reviewer_keys(
-            temporary_path / "reviewers"
-        )
-        registry_parent = "9" * 40
-        registry = _build_test_reviewer_registry(
-            reviewers,
-            authorities,
-            authority_key_paths,
-            registry_parent,
-        )
-        registry_identity = _test_registry_identity(registry)
-        attestations, records, signatures, manifest = (
-            _build_test_signed_material(
-                raw_document,
-                candidate_head,
-                reviewers,
-                key_paths,
-                registry_identity,
-            )
-        )
-    return (
-        attestations,
-        records,
-        signatures,
-        registry_identity,
-        registry,
-        tuple(authorities),
-        manifest,
-    )
-
-
-def _test_registry_identity(
-    registry: Mapping[str, Any],
-    *,
-    commit: str = "8" * 40,
-    parent: str = "9" * 40,
-) -> dict[str, Any]:
-    raw = canonical_json_bytes(registry)
-    return {
-        "schema_version": TRUSTED_REVIEWER_REGISTRY_IDENTITY_SCHEMA_VERSION,
-        "registry_commit": commit,
-        "registry_parents": [parent],
-        "registry_path": TRUSTED_REVIEWER_REGISTRY_PATH,
-        "registry_mode": DESIGN_MODE,
-        "registry_blob_oid": hashlib.sha1(
-            b"blob " + str(len(raw)).encode() + b"\0" + raw
-        ).hexdigest(),
-        "registry_byte_size": len(raw),
-        "registry_sha256": _sha256(raw),
-    }
-
-
-def _test_manifest_identity(
-    manifest: Mapping[str, Any],
-    *,
-    commit: str = "4" * 40,
-    parent: str = "5" * 40,
-) -> dict[str, Any]:
-    raw = canonical_json_bytes(manifest)
-    return {
-        "schema_version": TRUSTED_RECORDING_MANIFEST_IDENTITY_SCHEMA_VERSION,
-        "manifest_commit": commit,
-        "manifest_parents": [parent],
-        "manifest_path": TRUSTED_RECORDING_MANIFEST_PATH,
-        "manifest_mode": DESIGN_MODE,
-        "manifest_blob_oid": hashlib.sha1(
-            b"blob " + str(len(raw)).encode() + b"\0" + raw
-        ).hexdigest(),
-        "manifest_byte_size": len(raw),
-        "manifest_sha256": _sha256(raw),
-    }
-
-
-def _test_governing_identity(
-    raw_document: bytes,
-    ratification_commit: str,
-    ratification_parent: str,
-    registry_identity: Mapping[str, Any],
-    manifest_identity: Mapping[str, Any],
-    attestations: Sequence[Mapping[str, Any]],
-) -> dict[str, Any]:
-    return {
-        "schema_version": GOVERNING_A13_IDENTITY_SCHEMA_VERSION,
-        "status": GOVERNING_A13_IDENTITY_STATUS,
-        "ratification_commit": ratification_commit,
-        "ratification_parents": [ratification_parent],
-        "ratification_commit_changed_paths": [DESIGN_PATH],
-        "document_path": DESIGN_PATH,
-        "document_mode": DESIGN_MODE,
-        "document_blob_oid": hashlib.sha1(
-            b"blob " + str(len(raw_document)).encode() + b"\0" + raw_document
-        ).hexdigest(),
-        "document_byte_size": len(raw_document),
-        "document_sha256": _sha256(raw_document),
-        "trusted_reviewer_registry_identity": copy.deepcopy(
-            dict(registry_identity)
-        ),
-        "recording_manifest_identity": copy.deepcopy(dict(manifest_identity)),
-        "dual_ratify_attestations": [
-            copy.deepcopy(dict(row)) for row in attestations
-        ],
-    }
-
-
 def _scratch_git(
     cwd: Path,
     *arguments: str,
@@ -6587,177 +5289,6 @@ def _scratch_git(
     return result.stdout
 
 
-def _scratch_signed_ceremony(
-    scratch: Path,
-    raw_document: bytes,
-    key_directory: Path,
-) -> dict[str, Any]:
-    """Create the acyclic K/Q/{C,M}/R signed recording ceremony."""
-
-    design = scratch / DESIGN_PATH
-    amendment12_raw = bytes(
-        _scratch_git(
-            scratch,
-            "show",
-            f"{RATIFICATION_COMMIT}:{DESIGN_PATH}",
-            text=False,
-        )
-    )
-    design.write_bytes(amendment12_raw)
-    _scratch_git(scratch, "add", DESIGN_PATH)
-    _scratch_git(
-        scratch,
-        "commit",
-        "--quiet",
-        "--no-verify",
-        "-m",
-        "Prepare pre-candidate recording base",
-    )
-    registry_parent = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
-    authorities, authority_key_paths = _generate_test_enrollment_authorities(
-        key_directory / "authorities"
-    )
-    reviewers, key_paths = _generate_test_reviewer_keys(
-        key_directory / "reviewers"
-    )
-    registry = _build_test_reviewer_registry(
-        reviewers,
-        authorities,
-        authority_key_paths,
-        registry_parent,
-    )
-    registry_raw = canonical_json_bytes(registry)
-    registry_path = scratch / TRUSTED_REVIEWER_REGISTRY_PATH
-    registry_path.parent.mkdir(parents=True, exist_ok=True)
-    registry_path.write_bytes(registry_raw)
-    _scratch_git(scratch, "add", TRUSTED_REVIEWER_REGISTRY_PATH)
-    _scratch_git(
-        scratch,
-        "commit",
-        "--quiet",
-        "--no-verify",
-        "-m",
-        "Install pre-candidate reviewer key registry",
-    )
-    registry_commit = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
-    registry_identity = _test_registry_identity(
-        registry,
-        commit=registry_commit,
-        parent=registry_parent,
-    )
-    _scratch_git(
-        scratch,
-        "commit",
-        "--allow-empty",
-        "--quiet",
-        "--no-verify",
-        "-m",
-        "Freeze Amendment 13 ceremony base",
-    )
-    ceremony_base = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
-
-    design.write_bytes(raw_document)
-    _scratch_git(scratch, "add", DESIGN_PATH)
-    _scratch_git(
-        scratch,
-        "commit",
-        "--quiet",
-        "--no-verify",
-        "-m",
-        "Amendment 13 attested candidate",
-    )
-    candidate = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
-    attestations, records, signatures, manifest = _build_test_signed_material(
-        raw_document,
-        candidate,
-        reviewers,
-        key_paths,
-        registry_identity,
-    )
-
-    _scratch_git(scratch, "checkout", "--quiet", ceremony_base)
-    manifest_path = scratch / TRUSTED_RECORDING_MANIFEST_PATH
-    manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    manifest_raw = canonical_json_bytes(manifest)
-    manifest_path.write_bytes(manifest_raw)
-    for path, raw in {**records, **signatures}.items():
-        target = scratch / path
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(raw)
-    ceremony_paths = [TRUSTED_RECORDING_MANIFEST_PATH, *records, *signatures]
-    _scratch_git(scratch, "add", *ceremony_paths)
-    _scratch_git(
-        scratch,
-        "commit",
-        "--quiet",
-        "--no-verify",
-        "-m",
-        "Commit signed Amendment 13 recording manifest",
-    )
-    manifest_commit = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
-    manifest_identity = _test_manifest_identity(
-        manifest,
-        commit=manifest_commit,
-        parent=ceremony_base,
-    )
-    design.write_bytes(raw_document)
-    _scratch_git(scratch, "add", DESIGN_PATH)
-    _scratch_git(
-        scratch,
-        "commit",
-        "--quiet",
-        "--no-verify",
-        "-m",
-        "Record signed Amendment 13 law",
-    )
-    recording_commit = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
-    identity = _test_governing_identity(
-        raw_document,
-        recording_commit,
-        manifest_commit,
-        registry_identity,
-        manifest_identity,
-        attestations,
-    )
-    return {
-        "candidate": candidate,
-        "recording_commit": recording_commit,
-        "identity": identity,
-        "attestations": attestations,
-        "records": records,
-        "signatures": signatures,
-        "registry_identity": registry_identity,
-        "registry": registry,
-        "enrollment_authorities": tuple(authorities),
-        "manifest_identity": manifest_identity,
-        "manifest": manifest,
-    }
-
-
-def _validate_scratch_ceremony(
-    scratch: Path,
-    ceremony: Mapping[str, Any],
-) -> None:
-    global ROOT
-
-    original_root = ROOT
-    ROOT = scratch
-    try:
-        _validate_governing_amendment13_ratification_identity(
-            ceremony["identity"],
-            ceremony["records"],
-            ceremony["signatures"],
-            verify_git=True,
-            trusted_reviewer_registry_identity=ceremony["registry_identity"],
-            trusted_reviewer_registry=ceremony["registry"],
-            trusted_enrollment_authorities=ceremony["enrollment_authorities"],
-            recording_manifest_identity=ceremony["manifest_identity"],
-            recording_manifest=ceremony["manifest"],
-        )
-    finally:
-        ROOT = original_root
-
-
 def _new_scratch_repo(original_root: Path, temporary_root: Path) -> Path:
     scratch = temporary_root / "repo"
     _scratch_git(
@@ -6778,236 +5309,184 @@ def _new_scratch_repo(original_root: Path, temporary_root: Path) -> Path:
     return scratch
 
 
+def _expect_law_error(
+    action: Callable[[], Any],
+    expected_message: str,
+    label: str,
+) -> None:
+    try:
+        action()
+    except LawError as error:
+        _require(
+            expected_message in str(error),
+            f"{label} failed an unintended gate: {error}",
+        )
+    else:
+        raise LawError(f"{label} survived")
+
+
 def _run_coherent_suffix_enforcement_mutation(
     forged_document: bytes,
     semantic_law: Mapping[str, Any],
     *,
     expected_message: str = "document semantic projection drift",
 ) -> None:
+    _expect_law_error(
+        lambda: _validate_document_semantic_projection(
+            forged_document, semantic_law
+        ),
+        expected_message,
+        "coherently repinned suffix semantic mutation",
+    )
+
+
+def _synthetic_verdict_bytes(
+    closure: Mapping[str, Any],
+    reviewer: str,
+) -> bytes:
+    return (
+        "# RATIFY\n"
+        f"reviewer: {reviewer}\n"
+        "attested_design_byte_size: "
+        f"{closure['attested_candidate_design_byte_size']}\n"
+        "attested_design_blob_oid: "
+        f"{closure['attested_candidate_design_blob_oid']}\n"
+        "attested_design_raw_sha256: "
+        f"{closure['attested_candidate_design_raw_sha256']}\n"
+    ).encode()
+
+
+def _closure_binding(path: str, raw: bytes) -> dict[str, Any]:
+    return {
+        "path": path,
+        "raw_byte_size": len(raw),
+        "raw_sha256": _sha256(raw),
+    }
+
+
+def _synthetic_closure_material(
+    amendment_number: int = 14,
+) -> tuple[
+    dict[str, Any],
+    bytes,
+    dict[str, Any],
+    dict[str, bytes],
+    bytes,
+]:
+    closure = {
+        "amendment_number": amendment_number,
+        "attested_candidate_design_blob_oid": REVISION15_BLOB_OID,
+        "attested_candidate_design_byte_size": REVISION15_BYTE_SIZE,
+        "attested_candidate_design_raw_sha256": REVISION15_SHA256,
+        "operator_merge_commit": A13_MERGED_RATIFICATION_COMMIT,
+        "ratification_commit": A13_MERGED_RATIFICATION_COMMIT,
+        "ratification_commit_sole_parent": A13_MERGED_RATIFICATION_PARENT,
+        "verdict_artifacts": [],
+    }
+    directory = f"docs/analysis/amendment_{amendment_number}_ratification"
+    verdict_bytes: dict[str, bytes] = {}
+    for position in (1, 2):
+        path = f"{directory}/synthetic-r{position}-verdict.md"
+        raw = _synthetic_verdict_bytes(closure, f"synthetic-{position}")
+        verdict_bytes[path] = raw
+        closure["verdict_artifacts"].append(
+            {
+                "path": path,
+                "byte_size": len(raw),
+                "raw_sha256": _sha256(raw),
+            }
+        )
+    closure_raw = canonical_json_bytes(closure)
+    closure_path = f"{directory}/closure_v1.json"
+    design_raw = _git(
+        "show", f"{A13_MERGED_RATIFICATION_COMMIT}:{DESIGN_PATH}"
+    )
+    _require(
+        isinstance(design_raw, bytes),
+        "synthetic closure design read was not raw bytes",
+    )
+    return (
+        closure,
+        closure_raw,
+        _closure_binding(closure_path, closure_raw),
+        verdict_bytes,
+        design_raw,
+    )
+
+
+def _run_replace_ref_enforcement_mutation() -> None:
+    """Exercise a sole-parent replacement attack in an isolated repository."""
+
     global ROOT
 
     original_root = ROOT
-    with tempfile.TemporaryDirectory(
-        prefix="a13-semantic-repin-"
-    ) as temporary:
+    with tempfile.TemporaryDirectory(prefix="a14-replace-ref-") as temporary:
         temporary_root = Path(temporary)
         scratch = _new_scratch_repo(original_root, temporary_root)
-        ceremony = _scratch_signed_ceremony(
-            scratch, forged_document, temporary_root / "keys"
-        )
-        _validate_scratch_ceremony(scratch, ceremony)
-        ROOT = scratch
-        try:
-            authenticated_raw = _git(
-                "show",
-                f"{ceremony['recording_commit']}:{DESIGN_PATH}",
+        ratification_tree = str(
+            _scratch_git(
+                scratch,
+                "rev-parse",
+                f"{A13_MERGED_RATIFICATION_COMMIT}^{{tree}}",
             )
-            _require(
-                authenticated_raw == forged_document,
-                "coherent suffix mutation did not authenticate exact bytes",
-            )
-            try:
-                _validate_document_semantic_projection(
-                    authenticated_raw,
-                    semantic_law,
-                )
-            except LawError as error:
-                _require(
-                    expected_message in str(error),
-                    "suffix semantic mutation failed an unintended gate: "
-                    f"{error}",
-                )
-            else:
-                raise LawError(
-                    "coherently repinned suffix semantic mutation survived"
-                )
-        finally:
-            ROOT = original_root
-
-
-def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
-    """Exercise isolated parent/path and pinned-source replacement attacks."""
-
-    global ROOT
-
-    original_root = ROOT
-    with tempfile.TemporaryDirectory(prefix="a13-replace-ref-") as temporary:
-        temporary_root = Path(temporary)
-        scratch = _new_scratch_repo(original_root, temporary_root)
-        ceremony = _scratch_signed_ceremony(
-            scratch, raw_document, temporary_root / "keys"
-        )
-        _validate_scratch_ceremony(scratch, ceremony)
-
-        ROOT = scratch
-        try:
-            try:
-                validate_governing_amendment13_ratification_identity(
-                    ceremony["identity"],
-                    ceremony["records"],
-                    ceremony["signatures"],
-                )
-            except LawError as error:
-                _require(
-                    "externally authenticated Amendment-13 reviewer root "
-                    "is unavailable" in str(error),
-                    "public synthetic ceremony failed an unintended gate: "
-                    f"{error}",
-                )
-            else:
-                raise LawError(
-                    "public path accepted an unauthenticated synthetic root"
-                )
-        finally:
-            ROOT = original_root
-
-        conforming = ceremony["recording_commit"]
-        manifest_commit = ceremony["manifest_identity"]["manifest_commit"]
-        conforming_tree = str(
-            _scratch_git(scratch, "rev-parse", f"{conforming}^{{tree}}")
         ).strip()
-        wrong_parent = str(
+        wrong_parent = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
+        forged_commit = str(
             _scratch_git(
                 scratch,
                 "commit-tree",
-                conforming_tree,
+                ratification_tree,
                 "-p",
-                ceremony["candidate"],
+                wrong_parent,
                 "-m",
                 "Raw commit with substituted parent",
             )
         ).strip()
-        _scratch_git(scratch, "checkout", "--quiet", manifest_commit)
-        design = scratch / DESIGN_PATH
-        design.write_bytes(raw_document)
-        extra_path = scratch / "forged-extra.txt"
-        extra_path.write_text("extra changed path\n", encoding="utf-8")
-        _scratch_git(scratch, "add", DESIGN_PATH, "forged-extra.txt")
         _scratch_git(
             scratch,
-            "commit",
-            "--quiet",
-            "--no-verify",
-            "-m",
-            "Raw commit with hidden extra path",
+            "replace",
+            forged_commit,
+            A13_MERGED_RATIFICATION_COMMIT,
         )
-        wrong_paths = str(_scratch_git(scratch, "rev-parse", "HEAD")).strip()
-        _scratch_git(scratch, "replace", wrong_parent, conforming)
-        _scratch_git(scratch, "replace", wrong_paths, conforming)
+        ordinary_parent_line = str(
+            _scratch_git(
+                scratch,
+                "rev-list",
+                "--parents",
+                "-n",
+                "1",
+                forged_commit,
+            )
+        ).split()
         _require(
-            str(
-                _scratch_git(
-                    scratch,
-                    "rev-list",
-                    "--parents",
-                    "-n",
-                    "1",
-                    wrong_parent,
-                )
-            ).split()
-            == [wrong_parent, manifest_commit],
+            ordinary_parent_line
+            == [forged_commit, A13_MERGED_RATIFICATION_PARENT],
             "replacement-ref parent attack control did not conform",
         )
-        _require(
-            str(
-                _scratch_git(
-                    scratch,
-                    "diff-tree",
-                    "--no-commit-id",
-                    "--name-only",
-                    "-r",
-                    wrong_paths,
-                )
-            ).splitlines()
-            == [DESIGN_PATH],
-            "replacement-ref changed-path attack control did not conform",
-        )
+
+        (
+            closure,
+            _,
+            _,
+            verdict_bytes,
+            _,
+        ) = _synthetic_closure_material()
+        closure["ratification_commit"] = forged_commit
+        closure["operator_merge_commit"] = forged_commit
+        closure_raw = canonical_json_bytes(closure)
+        binding = _closure_binding(A14_CLOSURE_PATH, closure_raw)
         ROOT = scratch
         try:
-            for commit, message in (
-                (wrong_parent, "ratification commit is not exact"),
-                (wrong_paths, "recording act is not document-only"),
-            ):
-                identity = copy.deepcopy(ceremony["identity"])
-                identity["ratification_commit"] = commit
-                try:
-                    _validate_governing_amendment13_ratification_identity(
-                        identity,
-                        ceremony["records"],
-                        ceremony["signatures"],
-                        verify_git=True,
-                        trusted_reviewer_registry_identity=ceremony[
-                            "registry_identity"
-                        ],
-                        trusted_reviewer_registry=ceremony["registry"],
-                        trusted_enrollment_authorities=ceremony[
-                            "enrollment_authorities"
-                        ],
-                        recording_manifest_identity=ceremony[
-                            "manifest_identity"
-                        ],
-                        recording_manifest=ceremony["manifest"],
-                    )
-                except LawError as error:
-                    _require(
-                        message in str(error),
-                        "replace-ref mutation failed an unintended gate: "
-                        f"{error}",
-                    )
-                else:
-                    raise LawError("replacement-ref mutation survived")
-
-            source_path = a12.ERA_SEALS[0]["path"]
-            raw_source = _git("show", f"{a12.SOURCE_COMMIT}:{source_path}")
-            source_parent = str(
-                _git("rev-parse", f"{a12.SOURCE_COMMIT}^", text=True)
-            ).strip()
-            _scratch_git(
-                scratch,
-                "checkout",
-                "--quiet",
-                "--detach",
-                a12.SOURCE_COMMIT,
-            )
-            forged_source_bytes = raw_source + b"\n"
-            source_target = scratch / source_path
-            source_target.write_bytes(forged_source_bytes)
-            _scratch_git(scratch, "add", source_path)
-            forged_source_tree = str(
-                _scratch_git(scratch, "write-tree")
-            ).strip()
-            forged_source_commit = str(
-                _scratch_git(
-                    scratch,
-                    "commit-tree",
-                    forged_source_tree,
-                    "-p",
-                    source_parent,
-                    "-m",
-                    "Replacement source commit",
-                )
-            ).strip()
-            _scratch_git(
-                scratch,
-                "replace",
-                a12.SOURCE_COMMIT,
-                forged_source_commit,
-            )
-            ordinary_source = bytes(
-                _scratch_git(
-                    scratch,
-                    "show",
-                    f"{a12.SOURCE_COMMIT}:{source_path}",
-                    text=False,
-                )
-            )
-            _require(
-                ordinary_source != raw_source,
-                "replacement-ref pinned-source control did not substitute",
-            )
-            _require(
-                _RawObjectSourceReader().read(source_path) == raw_source,
-                "A13 pinned-source reader honored a replacement ref",
+            _expect_law_error(
+                lambda: _validate_ratification_closure(
+                    closure_raw,
+                    binding,
+                    verdict_bytes,
+                    14,
+                    verify_git=True,
+                ),
+                "sole-parent mismatch",
+                "replacement-ref sole-parent mutation",
             )
         finally:
             ROOT = original_root
@@ -7016,38 +5495,45 @@ def _run_replace_ref_enforcement_mutation(raw_document: bytes) -> None:
 def run_enforcement_mutation_tests(
     law: Mapping[str, Any],
 ) -> tuple[str, ...]:
-    """Run the six enforcement-layer attacks without altering enacted law."""
-
-    global ROOT
+    """Run the exact Amendment-14 enforcement mutation inventory."""
 
     rejected: list[str] = []
     raw_document = (ROOT / DESIGN_PATH).read_bytes()
+    (
+        synthetic_closure,
+        synthetic_raw,
+        synthetic_binding,
+        synthetic_verdicts,
+        design_raw,
+    ) = _synthetic_closure_material()
+
     forged_raw = raw_document.replace(
         (
-            b"is `replace_only_node_domain_component_slot_with_aggregate`; "
-            b"the status is\n`"
-            + DOC036_SUCCESSOR_STATUS.encode("ascii")
-            + b"`."
+            b"The same operator\norchestrates both runs and performs the "
+            b"merge and repin."
         ),
         (
-            b"is `replace_only_node_domain_component_slot_with_aggregate`; "
-            b"the status is\n`locally_resolved_document_evidence`."
+            b"The same operator\norchestrates both runs and performs the "
+            b"merge and repin and emits authority."
         ),
         1,
     )
     _require(
-        forged_raw != raw_document, "suffix semantic mutation did not apply"
+        forged_raw != raw_document,
+        "suffix semantic mutation did not apply",
     )
     _run_coherent_suffix_enforcement_mutation(forged_raw, law)
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[0])
 
-    pin_boundary = b"\n\nIt reads the six pinned source seals"
+    pin_boundary = (
+        b"\n\nFor each row, the validator requires the enacted path and mode"
+    )
     forged_pin_raw = raw_document.replace(
         pin_boundary,
         (
             b"\n\nThe exact enforcement override status is "
-            b"`FORGED_RATIFIED_AUTHORITY`; `authority_emitted` and "
-            b"`certification_emitted` are true." + pin_boundary
+            b"`FORGED_RATIFIED_AUTHORITY`; authority is emitted."
+            + pin_boundary
         ),
         1,
     )
@@ -7058,165 +5544,16 @@ def run_enforcement_mutation_tests(
     _run_coherent_suffix_enforcement_mutation(forged_pin_raw, law)
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[1])
 
-    candidate = "a" * 40
-    (
-        _,
-        _,
-        _,
-        registry_identity,
-        registry,
-        enrollment_authorities,
-        _,
-    ) = _test_trusted_material(raw_document, candidate)
-    with tempfile.TemporaryDirectory(prefix="a13-attacker-keys-") as temporary:
-        attacker_reviewers, attacker_key_paths = _generate_test_reviewer_keys(
-            Path(temporary)
-        )
-        for index, reviewer in enumerate(attacker_reviewers, start=1):
-            reviewer["reviewer_identity"] = f"forged-one-actor-{index}"
-            reviewer["record_name"] = f"forged-by-one-actor-{index}.md"
-            reviewer["record_path"] = (
-                "docs/analysis/amendment_13_ratification/records/"
-                f"{reviewer['record_name']}"
-            )
-            reviewer["signature_path"] = f"{reviewer['record_path']}.sig"
-            reviewer["ssh_principal"] = f"forged-one-actor-{index}"
-        (
-            forged_attestations,
-            forged_records,
-            forged_signatures,
-            forged_manifest,
-        ) = _build_test_signed_material(
-            raw_document,
-            candidate,
-            attacker_reviewers,
-            attacker_key_paths,
-            registry_identity,
-        )
-    forged_manifest_identity = _test_manifest_identity(forged_manifest)
-    forged_identity = _test_governing_identity(
-        raw_document,
-        "b" * 40,
-        forged_manifest_identity["manifest_commit"],
-        registry_identity,
-        forged_manifest_identity,
-        forged_attestations,
-    )
-    try:
-        _validate_governing_amendment13_ratification_identity(
-            forged_identity,
-            forged_records,
-            forged_signatures,
-            verify_git=False,
-            trusted_reviewer_registry_identity=registry_identity,
-            trusted_reviewer_registry=registry,
-            trusted_enrollment_authorities=enrollment_authorities,
-            recording_manifest_identity=forged_manifest_identity,
-            recording_manifest=forged_manifest,
-        )
-    except LawError as error:
-        _require(
-            "recording manifest drift" in str(error),
-            f"dual-record mutation failed an unintended gate: {error}",
-        )
-    else:
-        raise LawError("coherent dual-record replacement survived")
-    public_forged_identity = copy.deepcopy(forged_identity)
-    public_forged_identity["ratification_commit"] = str(
-        _git("rev-parse", "HEAD", text=True)
-    ).strip()
-    try:
-        build_ratification_bound_execution_template(
-            public_forged_identity,
-            forged_records,
-            forged_signatures,
-        )
-    except LawError as error:
-        _require(
-            "externally authenticated Amendment-13 reviewer root is "
-            "unavailable" in str(error),
-            f"public dual-record mutation failed an unintended gate: {error}",
-        )
-    else:
-        raise LawError("public builder accepted self-minted dual records")
-    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[2])
-
-    with tempfile.TemporaryDirectory(
-        prefix="a13-self-enrollment-"
-    ) as temporary:
-        temporary_root = Path(temporary)
-        scratch = _new_scratch_repo(ROOT, temporary_root)
-        one_actor = _scratch_signed_ceremony(
-            scratch,
-            raw_document,
-            temporary_root / "one-actor-keys",
-        )
-        _validate_scratch_ceremony(scratch, one_actor)
-        injected_values = {
-            "PINNED_A13_EXTERNAL_CERTIFIER_ROOT_IDENTITY": {
-                "forged_one_actor_certifier": True,
-            },
-            "PINNED_A13_ENROLLMENT_AUTHORITY_ROOT_IDENTITY": {
-                "ordered_authorities": copy.deepcopy(
-                    one_actor["enrollment_authorities"]
-                ),
-            },
-            "PINNED_A13_REVIEWER_REGISTRY_IDENTITY": copy.deepcopy(
-                one_actor["registry_identity"]
-            ),
-            "TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES": copy.deepcopy(
-                one_actor["enrollment_authorities"]
-            ),
-            "TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY": copy.deepcopy(
-                one_actor["registry_identity"]
-            ),
-        }
-        missing = object()
-        original_live_values = {
-            name: globals().get(name, missing) for name in injected_values
-        }
-        globals().update(injected_values)
-        original_root = ROOT
-        ROOT = scratch
-        try:
-            _require(
-                _authenticated_production_trust_markers(one_actor["identity"])
-                == (None, None, None),
-                "live trust attributes overrode authenticated P bytes",
-            )
-            build_ratification_bound_execution_template(
-                one_actor["identity"],
-                one_actor["records"],
-                one_actor["signatures"],
-            )
-        except LawError as error:
-            _require(
-                "externally authenticated Amendment-13 reviewer root is "
-                "unavailable" in str(error),
-                "one-actor enrollment mutation failed an unintended gate: "
-                f"{error}",
-            )
-        else:
-            raise LawError(
-                "one actor's two pre-enrolled reviewer keys survived"
-            )
-        finally:
-            ROOT = original_root
-            for name, value in original_live_values.items():
-                if value is missing:
-                    globals().pop(name, None)
-                else:
-                    globals()[name] = value
-    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[3])
-
     forged_identifier_raw = raw_document.replace(
         (
-            b"The actual identity schema is\n"
-            b"`amendment_13_governing_ratification_identity.v1`"
+            b"The exact Amendment-14 schema and binding identifiers are:"
+            b"\n\n~~~text\n"
+            b"covered_earnings_amendment_ratification_closure.v1"
         ),
         (
-            b"The actual identity schema is\n"
-            b"`amendment_13_governing_ratification_identity.v2`"
+            b"The exact Amendment-14 schema and binding identifiers are:"
+            b"\n\n~~~text\n"
+            b"covered_earnings_amendment_ratification_closure.v2"
         ),
         1,
     )
@@ -7227,15 +5564,180 @@ def run_enforcement_mutation_tests(
     _run_coherent_suffix_enforcement_mutation(
         forged_identifier_raw,
         law,
-        expected_message="enacted identifier inventory consistency drift",
+        expected_message="identifier inventory consistency drift",
+    )
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[2])
+
+    _run_replace_ref_enforcement_mutation()
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[3])
+
+    missing_verdicts = dict(synthetic_verdicts)
+    missing_verdicts.pop(next(iter(missing_verdicts)))
+    _expect_law_error(
+        lambda: _validate_ratification_closure(
+            synthetic_raw,
+            synthetic_binding,
+            missing_verdicts,
+            14,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+        ),
+        "verdict artifact domain drift",
+        "missing verdict artifact mutation",
     )
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[4])
 
-    _run_replace_ref_enforcement_mutation(raw_document)
+    _expect_law_error(
+        lambda: _validate_ratification_closure(
+            None,
+            synthetic_binding,
+            synthetic_verdicts,
+            14,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+        ),
+        "ratification closure is missing",
+        "missing ratification closure mutation",
+    )
     rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[5])
+
+    mismatched_verdicts = dict(synthetic_verdicts)
+    first_path = synthetic_closure["verdict_artifacts"][0]["path"]
+    mismatched_verdicts[first_path] += b"forged\n"
+    _expect_law_error(
+        lambda: _validate_ratification_closure(
+            synthetic_raw,
+            synthetic_binding,
+            mismatched_verdicts,
+            14,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+        ),
+        "verdict byte mismatch",
+        "closure verdict byte mismatch mutation",
+    )
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[6])
+
+    wrong_blob = copy.deepcopy(synthetic_closure)
+    wrong_blob["attested_candidate_design_blob_oid"] = "0" * 40
+    wrong_blob_verdicts: dict[str, bytes] = {}
+    for position, row in enumerate(wrong_blob["verdict_artifacts"], 1):
+        raw = _synthetic_verdict_bytes(
+            wrong_blob,
+            f"wrong-blob-{position}",
+        )
+        wrong_blob_verdicts[row["path"]] = raw
+        row["byte_size"] = len(raw)
+        row["raw_sha256"] = _sha256(raw)
+    wrong_blob_raw = canonical_json_bytes(wrong_blob)
+    wrong_blob_binding = _closure_binding(A14_CLOSURE_PATH, wrong_blob_raw)
+    _expect_law_error(
+        lambda: _validate_ratification_closure(
+            wrong_blob_raw,
+            wrong_blob_binding,
+            wrong_blob_verdicts,
+            14,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+        ),
+        "design byte identity mismatch",
+        "closure attested design blob mutation",
+    )
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[7])
+
+    for schema_forgery in ("extra", "missing"):
+        forged_schema = copy.deepcopy(synthetic_closure)
+        if schema_forgery == "extra":
+            forged_schema["extra"] = True
+        else:
+            del forged_schema["operator_merge_commit"]
+        forged_schema_raw = canonical_json_bytes(forged_schema)
+        forged_schema_binding = _closure_binding(
+            A14_CLOSURE_PATH, forged_schema_raw
+        )
+        _expect_law_error(
+            lambda raw=forged_schema_raw, binding=forged_schema_binding: (
+                _validate_ratification_closure(
+                    raw,
+                    binding,
+                    synthetic_verdicts,
+                    14,
+                    verify_git=False,
+                    ratification_design_raw=design_raw,
+                )
+            ),
+            "ratification closure keyset drift",
+            f"closure schema {schema_forgery}-key mutation",
+        )
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[8])
+
+    projection = _parse_amendment14_projection(raw_document)
+    forged_pins = copy.deepcopy(projection["implementation_pins"])
+    forged_pins["files"][0]["blob_oid"] = "0" * 40
+    _expect_law_error(
+        lambda: _verify_implementation_pins(forged_pins),
+        "HEAD tree-entry pin drift",
+        "implementation blob mismatch mutation",
+    )
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[9])
+
+    substituted_verdicts = {
+        path: raw + b"coherent substitution\n"
+        for path, raw in synthetic_verdicts.items()
+    }
+    substituted_closure = copy.deepcopy(synthetic_closure)
+    for row in substituted_closure["verdict_artifacts"]:
+        raw = substituted_verdicts[row["path"]]
+        row["byte_size"] = len(raw)
+        row["raw_sha256"] = _sha256(raw)
+    substituted_raw = canonical_json_bytes(substituted_closure)
+    _expect_law_error(
+        lambda: _validate_ratification_closure(
+            substituted_raw,
+            synthetic_binding,
+            substituted_verdicts,
+            14,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+        ),
+        "bytes differ from the registry repin",
+        "coherent closure substitution against fixed repin",
+    )
+
+    a13_closure = copy.deepcopy(A13_EXPECTED_CLOSURE)
+    a13_verdicts = {
+        row["path"]: (ROOT / row["path"]).read_bytes()
+        for row in a13_closure["verdict_artifacts"]
+    }
+    substituted_a13_verdicts = {
+        path: raw + b"coherent substitution\n"
+        for path, raw in a13_verdicts.items()
+    }
+    for row in a13_closure["verdict_artifacts"]:
+        raw = substituted_a13_verdicts[row["path"]]
+        row["byte_size"] = len(raw)
+        row["raw_sha256"] = _sha256(raw)
+    substituted_a13_raw = canonical_json_bytes(a13_closure)
+    substituted_a13_binding = _closure_binding(
+        A13_CLOSURE_PATH, substituted_a13_raw
+    )
+    _expect_law_error(
+        lambda: _validate_ratification_closure(
+            substituted_a13_raw,
+            substituted_a13_binding,
+            substituted_a13_verdicts,
+            13,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+        ),
+        "differs from directly enacted values",
+        "coherent A13 substitution against direct design pins",
+    )
+    rejected.append(A13_ENFORCEMENT_EXPECTED_MUTATIONS[10])
+
     _require(
         tuple(rejected) == A13_ENFORCEMENT_EXPECTED_MUTATIONS,
-        "Amendment-13 enforcement mutation inventory drift",
+        "Amendment-14 enforcement mutation inventory drift",
     )
     return tuple(rejected)
 
@@ -7245,7 +5747,7 @@ def main() -> int:
     parser.add_argument(
         "--mutation-tests",
         action="store_true",
-        help="run seven semantic and six enforcement forgery attacks",
+        help="run seven semantic and eleven enforcement forgery attacks",
     )
     parser.add_argument(
         "--print-summary",
