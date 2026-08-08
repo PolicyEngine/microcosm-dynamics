@@ -51739,9 +51739,12 @@ registered path, and their byte count and SHA-256 deep-equal the manifest row.
 Verification uses a one-key allowed-signers file containing only that row's
 fixed principal and public key. Replacing both records, names, byte counts,
 hashes, signatures, manifest, and recording commit under author-controlled
-keys still fails against K. Replacing K with two author-controlled,
-pre-enrolled keys still fails against the two external enrollment-authority
-signatures fixed in P.
+keys fails the private mechanics check against its supplied K. That check does
+not authenticate independence. Even a coherent one-actor replacement of both
+authority keys, both reviewer keys, both enrollment signatures, K, the
+manifest, both RATIFY signatures, and the recording commits cannot pass the
+public check: authenticated P still contains the three `None` markers and the
+public validator fails at the unavailable external-root gate.
 
 The exact trusted-recording validation literals are:
 
@@ -51815,15 +51818,19 @@ composed with this exact order and no weaker reading:
 
 1. `29c593d1954d94795e9f092ec4333e7d60a6136f` and its exact blob identity
    must validate before Amendment-13 ratification;
-2. the implementation commit P containing the two external
-   enrollment-authority keys must be a strict ancestor of the independently
-   pinned reviewer registry K; K must change only its registry path and be a
-   strict ancestor of Q; both enrollment authorizations must validate; C and M
-   must be distinct single-parent children of Q with the exact changed-path
-   domains above; both registered RATIFY signatures must validate; and R must
-   be the document-only single-parent child of M selecting C's exact law bytes;
-3. the Amendment-12 commit must be a strict ancestor of R, and R must validate
-   and be a strict
+2. the implementation commit P containing the three authenticated `None`
+   markers must validate, so the current public path terminates before K and
+   no K/Q/C/M/R sequence can ratify this enactment. The private mechanics test
+   still requires P to be a strict ancestor of K; K must change only its
+   registry path and be a strict ancestor of Q; both enrollment
+   authorizations must validate; C and M must be distinct single-parent
+   children of Q with the exact changed-path domains above; both registered
+   RATIFY signatures must validate; and R must be the document-only
+   single-parent child of M selecting C's exact law bytes. Passing that private
+   sequence emits no status and cannot replace the missing external root;
+3. under any separately ratified successor that first supplies the missing
+   external root, the Amendment-12 commit must be a strict ancestor of R, and
+   R must validate and be a strict
    ancestor of every repair-overlay first-add commit;
 4. each overlay first-add must be a strict ancestor of its containing
    successor-era-seal first-add;
@@ -52611,10 +52618,13 @@ value; the preserved surrounding bytes must disagree with §27.7. The third
 coherently replaces both record names, paths, raw bytes, sizes, hashes,
 signatures, manifest, and recording identity under one actor's keys while
 leaving the independently enrolled reviewer registry fixed. The fourth has
-one actor create two reviewer keys before Q, self-sign both enrollment
-authorizations, and coherently rebuild K/Q/C/M/R while leaving the external
-authority root fixed; enrollment authentication must reject it. The fifth
-enacts a new §27.2 identifier without adding it to either qualified inventory.
+one actor create both authority keys and both reviewer keys, sign both
+enrollments and RATIFY records coherently, and rebuild K/Q/C/M/R. The private
+mechanics check must accept that structurally complete control; the attack
+then overwrites all current and legacy live trust attributes. The public
+loader must still derive three `None` markers from P's authenticated raw bytes
+and reject at the unavailable external-root gate. The fifth enacts a new §27.2
+identifier without adding it to either qualified inventory.
 The sixth installs replacement refs that make a wrong parent, extra changed
 path, or substituted pinned-source object appear conforming to ordinary Git.
 Each enforcement attack must fail its intended trust gate. These six tests

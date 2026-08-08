@@ -687,12 +687,12 @@ A13_TRUSTED_RECORDING_LITERALS = (
 )
 
 A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
-    "27.2": "fa0885bbe82a6573138f3bcfceffb3adce6362c68fcb7cfbbfe2479ec0c3c2d4",
+    "27.2": "2e1d4e8282e393f2f8f8092c5b9823d69a4e6926fb5fbd753b77813e47f7941e",
     "27.3": "50b5a2e780a4b5b7152390e85e01df5f5397f5263fb2dd3dae43947a96f91ff0",
     "27.4": "ae7dd9ea588a2242f52d4e66bd3662909eee0f987a1d582db21786837c47253c",
     "27.5": "f5ee9246c5826b5b65e90149cc2e2c7574eb32f49df472ce528fc0690ab26d46",
     "27.6": "b8b23250e218093d892c6ad286f05226469d5abf08a1f87d8a0942bbbbef5d08",
-    "27.7": "34dd35f2ea33d25e17304f19b2d778c8d720cb88b04626dfee8c154e27055650",
+    "27.7": "2dfcffcba99639a6d9b00efc6d0d06364a4c0e2fd522238f07dc715228d8ad2e",
     "27.8": "fdc5441ef8c2f60bb8334658b4c44bcd52f8355b4681a495e81c4b7aaaa5479e",
 }
 
@@ -7152,19 +7152,38 @@ def run_enforcement_mutation_tests(
             temporary_root / "one-actor-keys",
         )
         _validate_scratch_ceremony(scratch, one_actor)
-        legacy_names = (
-            "TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES",
-            "TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY",
-        )
-        missing = object()
-        original_legacy_values = {
-            name: globals().get(name, missing) for name in legacy_names
+        injected_values = {
+            "PINNED_A13_EXTERNAL_CERTIFIER_ROOT_IDENTITY": {
+                "forged_one_actor_certifier": True,
+            },
+            "PINNED_A13_ENROLLMENT_AUTHORITY_ROOT_IDENTITY": {
+                "ordered_authorities": copy.deepcopy(
+                    one_actor["enrollment_authorities"]
+                ),
+            },
+            "PINNED_A13_REVIEWER_REGISTRY_IDENTITY": copy.deepcopy(
+                one_actor["registry_identity"]
+            ),
+            "TRUSTED_A13_REVIEWER_ENROLLMENT_AUTHORITIES": copy.deepcopy(
+                one_actor["enrollment_authorities"]
+            ),
+            "TRUSTED_A13_REVIEWER_REGISTRY_IDENTITY": copy.deepcopy(
+                one_actor["registry_identity"]
+            ),
         }
-        globals()[legacy_names[0]] = one_actor["enrollment_authorities"]
-        globals()[legacy_names[1]] = one_actor["registry_identity"]
+        missing = object()
+        original_live_values = {
+            name: globals().get(name, missing) for name in injected_values
+        }
+        globals().update(injected_values)
         original_root = ROOT
         ROOT = scratch
         try:
+            _require(
+                _authenticated_production_trust_markers(one_actor["identity"])
+                == (None, None, None),
+                "live trust attributes overrode authenticated P bytes",
+            )
             build_ratification_bound_execution_template(
                 one_actor["identity"],
                 one_actor["records"],
@@ -7183,7 +7202,7 @@ def run_enforcement_mutation_tests(
             )
         finally:
             ROOT = original_root
-            for name, value in original_legacy_values.items():
+            for name, value in original_live_values.items():
                 if value is missing:
                     globals().pop(name, None)
                 else:
