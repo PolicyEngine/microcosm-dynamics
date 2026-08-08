@@ -108,6 +108,14 @@ ignore = [
 # versions, at which point they must be removed.
 "scripts/select_m6_remarriage_round2.py" = ["I001"]
 "scripts/reduce_m6_remarriage_round2.py" = ["UP035"]
+# The Amendment 13 execution-law validator is byte-pinned by the ratified
+# design (§27.7, implementation pin commit 76e7f48) and self-verified against
+# that blob by `_verify_implementation_pins`; its bytes cannot be edited to
+# edited without breaking the ratified document SHA and the pin. Every lint
+# rule that fires on it is therefore exempted (B905 zip-strict, plus UP012/
+# UP035 caught by newer ruff). This exemption stands until a future amendment
+# refreezes a lint-clean validator, at which point it must be removed.
+"scripts/validate_amendment13_execution_law.py" = ["B905", "UP012", "UP035"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
