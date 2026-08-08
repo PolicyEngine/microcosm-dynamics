@@ -51477,27 +51477,32 @@ DC-64, §26.11.2 step 2, and §26.11's terminal statement that no document
 ceremony ratified Amendment 12. Under this amendment the exact identity below
 satisfies those locators and replaces only that terminal statement's
 ratification-status clause; every nonauthority, unmet-repair, lifecycle,
-pre-Q5, and production-stop clause remains. The following complete identity
-is conjunctive:
+pre-Q5, and production-stop clause remains. The serialized
+`amendment12_ratification_identity` object has exactly the eight keys
+`ratification_commit`, `ratification_parents`, `document_path`,
+`document_mode`, `document_blob_oid`, `document_byte_size`,
+`document_sha256`, and `dual_ratify_attestations`. Its members are
+conjunctive:
 
 | Identity member | Exact value |
 |---|---|
 | Ratification commit | `29c593d1954d94795e9f092ec4333e7d60a6136f` |
 | Exact parent array | [`c033ee527809a220032d28e1c91345a64b221e32`] |
-| Parent count | 1 |
 | Document path | `docs/design/covered_earnings_correction.md` |
 | Tree-entry mode | `100644` |
 | Git blob OID | `626213aa45bce6b8c94b36dcaded16800ce0323d` |
 | Raw byte count | 3,713,728 |
 | Raw SHA-256 | `283a010c1bb135917fd8c1f1aebd1526165f829509d32e7689537167aa8818f5` |
-| Observed changed-path count, not an identity condition | 17 |
 
 The commit's exact parent line is
 `29c593d1954d94795e9f092ec4333e7d60a6136f c033ee527809a220032d28e1c91345a64b221e32`.
 Its exact tree-entry line is
 `100644 blob 626213aa45bce6b8c94b36dcaded16800ce0323d<TAB>docs/design/covered_earnings_correction.md`.
-The 17-path observation explains why the old path-count condition cannot be
-satisfied by history; it is neither ignored nor converted into a required
+The separate `ratification_history_observation` object has exactly
+`changed_path_count: 17` and
+`commit_path_shape_is_identity_condition: false`. It explains why the old
+path-count condition cannot be satisfied by history without becoming part of
+the identity preimage. It is neither ignored nor converted into a required
 value for another commit.
 
 The two independent adjudicative records are:
@@ -51507,14 +51512,20 @@ The two independent adjudicative records are:
 | `sol-ce-amend12-r5-verdict.md` | 4,394 | `9b407dcd7321da0350895e7798db3705d54be279fa69937cb8fea9a51f733961` | `# RATIFY` | `76acad02b0d519d12057b75ab7c21f2c2a4b2433` | 3,713,728 / `283a010c1bb135917fd8c1f1aebd1526165f829509d32e7689537167aa8818f5` |
 | `sol-ce-amend12-r5b-verdict.md` | 3,396 | `7999f3188bf83bd2b9b520964a36fe7582f6af1217d11869e017f307bd88f145` | `# RATIFY` | `76acad02b0d519d12057b75ab7c21f2c2a4b2433` | 3,713,728 / `283a010c1bb135917fd8c1f1aebd1526165f829509d32e7689537167aa8818f5` |
 
-The candidate HEAD in both records selects the reviewed bytes; the
-ratification commit selects the identical Git blob at the design path. A
-valid read recomputes both the Git blob hash over
+Each `dual_ratify_attestations` member has exactly `record_name`,
+`raw_byte_size`, `raw_sha256`, `verdict_token`,
+`attested_candidate_head`, `attested_document_byte_size`, and
+`attested_document_sha256`. The candidate HEAD in both identities selects the
+reviewed bytes; the ratification commit selects the identical Git blob at the
+design path. A valid read recomputes both the Git blob hash over
 `blob 3713728<NUL> || raw_document_bytes` and the independent raw SHA-256,
-checks the byte count, checks the exact one-parent commit, and exact-compares
-both attestation records. A branch label, abbreviated hash, commit message,
-pull-request prose, changed-path list, working-tree path, or regenerated
-document is not a substitute.
+checks the byte count and exact one-parent commit, and exact-compares the two
+pinned attestation identities, including their authenticated raw-record sizes
+and hashes. The historical raw record files are not inputs to the shipped
+validator. The displayed attestation order is exact. A branch label,
+abbreviated hash, commit message, pull-request
+prose, changed-path list, working-tree path, or regenerated document is not a
+substitute.
 
 #### 27.2.2 Why document-blob identity is the controlling ceremony
 
@@ -51534,10 +51545,63 @@ This replacement legalizes Amendment-12 ratification as history actually
 stands. It does not waive the single-parent condition, exact-prefix law,
 independent committed-byte read, raw-byte attestation, dual affirmative
 review, repinning, source authentication, reseal, mutation, clean-tree,
-transaction, or fail-closed requirement. A future amendment may require a
-document-only ratification-record commit as an additional recording act, but
-such a prospective act cannot rewrite or invalidate the exact Amendment-12
-identity fixed here.
+transaction, or fail-closed requirement. It is not retroactive precedent for
+the recording act below and cannot rewrite or invalidate the exact
+Amendment-12 identity fixed here.
+
+##### Governing Amendment-13 recording act
+
+Amendment 13 itself must be ratified before any overlay is constructed. Its
+recording act is a later single-parent commit whose changed-path array is
+exactly [`docs/design/covered_earnings_correction.md`]. Both the recording
+commit and the common candidate HEAD named by two distinct affirmative raw
+records must select the same mode-`100644` document blob. That document must
+retain the exact revision-14 prefix and begin this amendment at the boundary
+fixed in §27.1. This document-only condition is prospective and mandatory for
+Amendment 13; it does not recharacterize Amendment-12 history.
+
+The actual identity schema is
+`amendment_13_governing_ratification_identity.v1`, with exact status
+`RATIFIED_AMENDMENT_13_GOVERNING_EXECUTION_LAW` and exactly the keys
+`schema_version`, `status`, `ratification_commit`, `ratification_parents`,
+`ratification_commit_changed_paths`, `document_path`, `document_mode`,
+`document_blob_oid`, `document_byte_size`, `document_sha256`, and
+`dual_ratify_attestations`. `ratification_parents` has exactly one 40-byte
+lowercase-hex object name; `ratification_commit_changed_paths` has exactly the
+one path above. Each of the exactly two attestation objects has exactly the
+same seven keys fixed for Amendment 12 in §27.2.1, has verdict token `RATIFY`,
+names the common candidate HEAD, and binds the governing document byte count
+and SHA-256. Each `record_name` is nonempty and contains neither CR nor LF.
+The two record names and raw SHA-256 values are distinct, and the attestation
+array is in ascending unsigned lexicographic order of the raw UTF-8
+`record_name` bytes, with no tie or alternate ordering. Both
+`ratification_commit` and `attested_candidate_head` must resolve as the exact
+named 40-lowercase-hex commit object: peeling `<object>^{commit}` must return
+that same object name. A tree, blob, or tag that merely leads to usable tree
+bytes is not that commit object.
+
+Each supplied governing attestation record is exact UTF-8 bytes, with a sole
+terminal LF and no additional line, under this six-line template:
+
+~~~text
+# RATIFY
+record_name: <exact record_name>
+attested_candidate_head: <exact 40-lowercase-hex commit>
+attested_document_path: docs/design/covered_earnings_correction.md
+attested_document_byte_size: <exact decimal byte count>
+attested_document_sha256: <exact 64-lowercase-hex SHA-256>
+~~~
+
+Before that recording act exists, the only lawful draft placeholder is the
+exact three-key object `schema_version`, `status`, `authority_emitted`, with
+values `amendment_13_governing_ratification_identity_candidate.v1`,
+`UNAVAILABLE_BEFORE_AMENDMENT_13_RATIFICATION`, and false. It may appear only
+in the unratified fixture. A ratification-bound template must replace every
+placeholder occurrence with the actual identity, use fixture status
+`RATIFIED_LAW_BOUND_NONAUTHORITY_EXECUTION_TEMPLATE`, keep both authority and
+certification false, authenticate the raw records and Git history, and
+deep-equal a fresh source-derived reconstruction. Supplying a synthetic
+identity while disabling Git verification is not a lawful public operation.
 
 #### 27.2.3 A12-T2-R05 Git order under the repaired identity
 
@@ -51545,22 +51609,25 @@ The A12-T2-R05 phrase “ratification/source/reseal Git-order checks” is
 composed with this exact order and no weaker reading:
 
 1. `29c593d1954d94795e9f092ec4333e7d60a6136f` and its exact blob identity
-   must validate before any repair object is constructed;
-2. that ratification commit must be a strict ancestor of every repair-overlay
-   first-add commit;
-3. each overlay first-add must be a strict ancestor of its containing
+   must validate before Amendment-13 ratification;
+2. that Amendment-12 commit must be a strict ancestor of the exact governing
+   Amendment-13 recording commit, which must satisfy the document-only,
+   single-parent, dual-record law above;
+3. the governing Amendment-13 recording commit must validate and be a strict
+   ancestor of every repair-overlay first-add commit;
+4. each overlay first-add must be a strict ancestor of its containing
    successor-era-seal first-add;
-4. all six successor-era-seal first-add commits, including the exact empty
+5. all six successor-era-seal first-add commits, including the exact empty
    sixth-era seal, must be strict ancestors of any tier-2 evidence first-add;
-5. every ratification or execution recording commit to which the inherited
+6. every ratification or execution recording commit to which the inherited
    ceremony applies remains single-parent;
-6. the six predecessor source seals and their `19fa24c161e800e004320f0c10e81bce8831af68`
+7. the six predecessor source seals and their `19fa24c161e800e004320f0c10e81bce8831af68`
    source tree are authenticated independently; no ancestry relation between
    that source tree and the document-ratification branch is invented;
-7. no tier-1 candidate, adjudication ID, artifact ID, or value is an expected
+8. no tier-1 candidate, adjudication ID, artifact ID, or value is an expected
    tier-2 repair value; two independent source-side reconstructions must
    deep-equal and every emitted byte must be attested; and
-8. no Q5 first-add or authority emission is permitted by this sequence.
+9. no Q5 first-add or authority emission is permitted by this sequence.
 
 An absent object, equal rather than strict ancestor, merge commit where a
 single parent is required, source-branch-label selection, seal before overlay,
@@ -51611,6 +51678,8 @@ authority_kind
 document_source_position
 source_document_id
 predecessor_annotation_identity
+amendment12_ratification_identity
+governing_amendment13_ratification_identity
 predecessor_era_id
 predecessor_era_seal_content_sha256
 predecessor_source_rows_retained
@@ -51637,16 +51706,21 @@ preimage is:
  document_source_position,
  source_document_id,
  predecessor_annotation_identity,
- ratified_design_identity,
+ amendment12_ratification_identity,
+ governing_amendment13_ratification_identity,
  predecessor_era_seal_content_sha256]
 ~~~
 
 `predecessor_annotation_identity` has exactly `annotation_path`,
 `artifact_id`, `schema_version`, `source_document_id`,
 `document_source_position`, `byte_size`, `raw_sha256`, and `content_sha256`.
-`ratified_design_identity` is the complete §27.2.1 object including both
-attestation objects. The era member is the predecessor seal's exact
-`content_sha256`, not an era label or tier-1 result.
+`amendment12_ratification_identity` is the exact eight-key §27.2.1 object.
+`governing_amendment13_ratification_identity` is the exact actual identity
+from the governing recording act; only the prospective draft fixture uses the
+exact placeholder. The era member is the predecessor seal's exact
+`content_sha256`, not an era label or tier-1 result. Overlay `integrity` has
+exactly `successor_count`, `successor_domain_sha256`, `supersession_count`,
+and `supersession_domain_sha256`.
 
 Every repair successor has schema
 `rq_stage2_local_evidence_repair_successor.v1`, ID prefix
@@ -51687,6 +51761,12 @@ preimage.
 
 Each of the 46 successors has exactly one
 `rq_stage2_predecessor_supersession.v1` edge and no predecessor has two. Its
+exact keyset is `schema_version`, `supersession_row_id`,
+`supersession_identity_preimage`, `repair_overlay_id`,
+`document_source_position`, `predecessor_row_pointer`, `predecessor_row_id`,
+`predecessor_row_canonical_sha256`, `successor_row_id`,
+`supersession_relation`, `status`, `predecessor_retained`,
+`predecessor_erasure_permitted`, and `semantic_consumer_selection`. Its
 ID prefix is `a13-supersession:`; its exact relation is
 `predecessor_row_superseded_by_named_successor`; its exact status is
 `append_only_predecessor_retained_successor_selected`;
@@ -51794,15 +51874,69 @@ outside-domain. Reusing any one would preserve the false semantic claim that
 caused the STOP.
 
 Each of the 28 `semantically_incompatible_local_proof` successor payloads has
-exact source-instruction text/hash/page/span arrays, exact endpoint
-text/hash/kind/domain arrays, and the predecessor's exact target and evidence
-projection. Its reason code is
-`cited_instruction_does_not_authenticate_the_mixed_or_misbound_endpoint_projection`.
+exactly the keys `terminal_status`, `terminal_reason_code`,
+`predecessor_row_specific_semantic_finding`,
+`source_instruction_occurrence_ids`, `source_instruction_matched_texts`,
+`source_instruction_matched_utf8_sha256s`,
+`source_instruction_page_numbers`, `source_instruction_utf8_byte_starts`,
+`source_instruction_utf8_byte_ends`, `alias_anchor_occurrence_ids`,
+`canonical_anchor_occurrence_ids`, `endpoint_occurrence_kinds`,
+`endpoint_raw_node_domains`, `endpoint_matched_texts`,
+`endpoint_matched_utf8_sha256s`, `predecessor_preserved_claim_projection`,
 `alias_admitted`, `occurrence_equivalence_admitted`, and
-`repeat_coverage_arm_admitted` are all false. This status is a terminal
-repair fact, not an A, terminal-outside-`R_Q`, aggregate, redirection, or
-other §26.4 cover arm. It cannot turn the cited predecessor claim into
-positive alias proof.
+`repeat_coverage_arm_admitted`. Thus every source-instruction
+text/hash/page/span array, endpoint text/hash/kind/domain array, and the
+predecessor's exact target-and-evidence projection is bound.
+
+`predecessor_preserved_claim_projection` has no open or optional key
+selection. Its exact keyset is family-specific, and every value is an exact
+deep copy from the authenticated predecessor row:
+
+| Family | Exact projection keyset |
+|---|---|
+| M | `alias_relation`, `source_instruction_occurrence_ids`, `alias_anchor_occurrence_id`, `referenced_anchor_occurrence_id`, `evidence_occurrence_ids`, `unresolved_target_reference` |
+| L | `relation`, `source_occurrence_id`, `alias_anchor_source_occurrence_ids`, `canonical_anchor_source_occurrence_ids`, `evidence_occurrence_ids`, `target_scope` |
+| D | `alias_relation`, `source_occurrence_id`, `alias_local_anchor_id`, `canonical_local_anchor_id`, `evidence_occurrence_ids`, `printed_target` |
+
+An absent named key, additional key, family-crossed key, reordered array, or
+changed value aborts.
+
+The exact new umbrella reason code is
+`terminal_semantic_incompatibility_umbrella_with_exact_predecessor_finding_preserved`.
+It does not overwrite the row-specific finding. These six shorthand codes
+select the exact payload string and have no meaning outside this mapping:
+
+| Code | Count | Exact `predecessor_row_specific_semantic_finding` |
+|---|---:|---|
+| F1 | 11 | `cited_instruction_does_not_authenticate_the_mixed_or_misbound_endpoint_projection` |
+| F2 | 6 | `cited_repeat_text_does_not_authenticate_the_heterogeneous_page_wide_endpoint_projection` |
+| F3 | 1 | `cited_same_occupation_text_asserts_semantics_but_the_job_context_endpoint_crossing_requires_reseal` |
+| F4 | 4 | `cited_instruction_is_an_incomplete_clause_and_cannot_authenticate_a_complete_redirection` |
+| F5 | 5 | `cited_income_list_is_shared_with_an_independent_alias_proof_and_does_not_authenticate_this_pairing` |
+| F6 | 1 | `cited_see_instructions_text_is_mispaired_to_a_context_remuneration_endpoint_claim` |
+
+The exact selector array below is indexed one-for-one by the 28 rows of
+§27.4.1 in displayed order. Its *i*th code supplies that row's exact string
+above; there is no inference, fallback, or artifact lookup:
+
+~~~text
+[F1,F1,F2,F3,F2,F1,F1,F1,F1,F1,F1,F1,F2,F2,F2,F2,F1,F1,F4,F5,F4,F5,F5,F5,F5,F6,F4,F4]
+~~~
+
+The historical tier-1 drafting artifact
+`predecessor_defect_adjudication_v1.json`, Git blob
+`ac033641e8bea5551716fb5847660c374eb07c43`, 348,595 bytes, raw SHA-256
+`ee396f53d683d71808e60c661515fd7fd8d5d2e912017f49d096815ff384f8bc`,
+was used only to audit the displayed mapping while drafting. It is not an
+execution input, expected-value oracle, identity-preimage member, or authority.
+The self-contained table, selector array, and exact strings above are the
+sole row-specific finding law.
+
+`alias_admitted`, `occurrence_equivalence_admitted`, and
+`repeat_coverage_arm_admitted` are all false. This status is a terminal repair
+fact, not an A, terminal-outside-`R_Q`, aggregate, redirection, or other
+§26.4 cover arm. It cannot turn the cited predecessor claim into positive
+alias proof.
 
 ### 27.5 The ten incomplete-fragment successors
 
@@ -51843,6 +51977,12 @@ Each receives successor kind
 `incomplete_fragment_terminal_disclosure`, repair mode
 `repair_by_exact_span_disclosure_not_invention`, and the new exact status
 `terminal_incomplete_fragment_disclosed_no_alias_admitted`. The successor
+payload has exactly `terminal_status`, `repair_mode`,
+`disclosed_incomplete_fragment_citation`, `continuation_citation`,
+`alias_admitted`, `occurrence_equivalence_admitted`, and
+`repeat_coverage_arm_admitted`. Its disclosure citation has exactly
+`source_occurrence_id`, `matched_text`, `matched_utf8_sha256`, `page_number`,
+`page_text_utf8_sha256`, `utf8_byte_start`, and `utf8_byte_end`. The successor
 copies the table's exact occurrence ID, current text, text SHA-256, page,
 page-text SHA-256, and half-open UTF-8 span into
 `disclosed_incomplete_fragment_citation`; `continuation_citation` is null;
@@ -51860,6 +52000,22 @@ Only the last two table rows are composable. Their successor kind is
 `composed_fragment_complete_instruction`, repair mode is
 `exact_same_page_whitespace_composition`, and exact status is
 `complete_instruction_reading_by_exact_whitespace_composition`.
+Their payload has exactly `terminal_status`, `repair_mode`,
+`predecessor_fragment_citation`, `composition_citation`, `alias_admitted`,
+`occurrence_equivalence_admitted`, and `repeat_coverage_arm_admitted`.
+`predecessor_fragment_citation` has the same exact seven-key citation shape as
+the disclosure citation above. `composition_citation` has exactly
+`selector_rule`, `candidate_occurrences_in_source_order`,
+`selected_leading_occurrence_id`, `composition_rule`,
+`leading_occurrence_id`, `continuation_occurrence_id`, `page_number`,
+`page_text_utf8_sha256`, `combined_utf8_byte_start`,
+`leading_utf8_byte_end`, `gap_utf8_byte_start`, `gap_utf8_byte_end`,
+`gap_text`, `gap_utf8_sha256`, `gap_is_whitespace_only`,
+`continuation_utf8_byte_start`, `combined_utf8_byte_end`, `combined_text`, and
+`combined_utf8_sha256`. Every member of
+`candidate_occurrences_in_source_order` has exactly the two keys
+`occurrence_id` and `occurrence_kind`; an additional or absent member key
+aborts.
 
 The selector rule is the opaque exact code
 `unique_predecessor_alias_anchor_context_occurrence_at_duplicate_leading_span`.
@@ -51876,11 +52032,16 @@ both `context_anchor` and the predecessor row's exact
 
 The exact composition code is
 `same_page_exact_leading_bytes_plus_whitespace_gap_plus_exact_continuation_bytes`.
-It constructs one citation from the complete contiguous raw page slice:
-selected leading bytes, then every intervening byte, then the exact existing
-continuation bytes. The gap must be nonempty and whitespace-only. It does not
-trim, normalize Unicode, change indentation, concatenate normalized strings,
-or mint an occurrence ID.
+It constructs one exact citation from the sealed leading occurrence bytes,
+every disclosed intervening whitespace byte, and the sealed continuation
+occurrence bytes. Coordinate equality requires
+`combined_start = leading_start`, `leading_end = gap_start`,
+`gap_end = continuation_start`, and `combined_end = continuation_end` on the
+same page. The pinned page-text hash binds the page identity; the validator
+does not claim to ingest a separate raw full-page byte artifact. The gap must
+be nonempty and whitespace-only. The transformation does not trim, normalize
+Unicode, change indentation, concatenate normalized strings, or mint an
+occurrence ID.
 
 For doc 66 the leading text is exactly:
 
@@ -51937,11 +52098,30 @@ continuation ID, combined bytes, or combined hash aborts.
 
 The exact five `continuation_composition_citation` rows and three restoration
 rows ratified in Amendment 12 remain byte-identical, count-identical, and
-governed solely by §26.4. The two G75 objects live only in the distinct
-Amendment-13 `composed_fragment_successor_rows` domain. They do not increase,
-replace, reindex, reinterpret, or supply an expected value for the five-row
-domain. An overlap of instruction ID, predecessor evidence ID, successor ID,
-or domain membership aborts.
+governed solely by §26.4. They are rederived from
+`corpus_exhaustive_targeted_sweeps_v1.json`, Git blob
+`f90fe9115a7ef6f82305ae96ea462af64c2af790`, 37,001,180 bytes, raw SHA-256
+`54ca1c347d5e77ee06dbb79ed8af3fc5db11d70f787724a9b85474c36a64888d`.
+The exact ordered projection fields are document position, predecessor
+evidence ID, leading occurrence ID, and continuation occurrence ID:
+
+| Doc | Predecessor evidence ID | Leading occurrence ID | Continuation occurrence ID |
+|---:|---|---|---|
+| 56 | `rq-local-repeat-evidence:1ab1e8bce813324859b14c7cb0ade8c45d27ec0a93fa1d99dbeb2ae2b27b3339` | `psid-questionnaire-occurrence:2b9c3ab97eb7ae78af829098bd4ef7f2efff9f0b1a2e2248fc079f7a5229d0a8` | `psid-questionnaire-occurrence:cf07296eb4c2e4bf77a81fabe6ec3254e12debe22805dd0dec123a4370e87852` |
+| 56 | `rq-local-repeat-evidence:c41cb5c640f0af94e51f8d9b4cc1cc6c042e2cdcf774278ce1831aa858f30bcf` | `psid-questionnaire-occurrence:0a487265c65376bfdd593fdf6bce57390eead67f5253990b723a0b6a2adfa5c2` | `psid-questionnaire-occurrence:2a56a4440b9e5714367c02fa09a0a480d015258b5023ddf32de22bf6871d3ace` |
+| 56 | `rq-local-repeat-evidence:e33b422250b4f7ca5e597b117125175a5dbe7f7afb1e07a10dbc39284b75eae3` | `psid-questionnaire-occurrence:1f27469d6372b82b52d00f73f1f66877ad0a3423c38eca6a89824524ff537fbc` | `psid-questionnaire-occurrence:c38bfe9eb40d5028cec6d604b144eb54eee451a810bae4fd289bca5eefa27a32` |
+| 58 | `rq-local-repeat-evidence:fa82b9cb69f6d5e19ef92b49c55d4a533f3fa7f87772cafeb30054f48029b4ab` | `psid-questionnaire-occurrence:5d366486b57b6b901a8f0532bbc99104f7d3c1f97275f1e49ef8b6e4c6283531` | `psid-questionnaire-occurrence:7bbe18e8a8c52ccfa5e4bfdfe884bc8829006e3a55cad2861b674621042f9233` |
+| 58 | `rq-local-repeat-evidence:13d4f8bcd810beb22c7787ac847e2f21e8edddce56a54c591237c21a2e949280` | `psid-questionnaire-occurrence:4e2e0b200ae3624da5e4807b853bb3116bd600ada076fc396ced67677cfb2517` | `psid-questionnaire-occurrence:e2a45222a0321da6e02f24873de45bfb4401cb12a315bdbd96750c6afcfc286f` |
+
+The canonical four-field projection is exactly 1,457 bytes with SHA-256
+`59e03dffa4564a202a39463b80ebb60bae641afc49b78bc42d93c201737116cf`.
+The two G75 objects live only in the distinct Amendment-13
+`composed_fragment_successor_rows` domain. The validator executes set
+disjointness for all ten new predecessor evidence IDs and instruction IDs
+against these five rows. The new objects do not increase, replace, reindex,
+reinterpret, or supply an expected value for the five-row domain. Any evidence
+or instruction overlap, projection drift, source-artifact drift, or domain
+membership overlap aborts.
 
 ### 27.6 Doc-036 correction and the six-era cascade
 
@@ -51971,6 +52151,13 @@ row and `successor_classification_row` is a deep copy with only
 change, reorder, omission, new key, different occurrence kind, or component
 admission aborts.
 
+Each doc-036 payload has exactly `terminal_status`, `transformation_rule`,
+`predecessor_classification_row`, `successor_classification_row`, and
+`source_occurrence_citation`. The citation has exactly
+`source_occurrence_id`, `occurrence_kind`, `matched_text`,
+`matched_utf8_sha256`, `page_number`, `page_text_utf8_sha256`,
+`utf8_byte_start`, and `utf8_byte_end`.
+
 These eight changes execute under Amendment 12's coherent-document-reseal
 rule only in the same doc-036 overlay that also contains the §27.4 successor
 for proof row `rq-local-repeat:d20165da2c897270b8d8708bdd2ee7a860d6c3ac905c9e05dcc622a75b413a92`
@@ -51982,7 +52169,17 @@ seal.
 
 Every era, including an era with no affected document, has one
 `rq_stage3_era_repair_successor_seal.v1` object with ID prefix
-`a13-successor-era-seal:`. Its ordered ID preimage is:
+`a13-successor-era-seal:`. Its exact keys are `schema_version`,
+`successor_era_seal_id`, `successor_era_seal_identity_preimage`,
+`authority_kind`, `era_id`, `era_order_position`,
+`predecessor_era_seal_identity`, `amendment12_ratification_identity`,
+`governing_amendment13_ratification_identity`, `repair_overlay_ids`,
+`successor_row_ids`, `supersession_row_ids`, `repair_counts`, and
+`all_named_domains_present_even_when_empty`. `repair_counts` has exactly
+`semantically_incompatible_local_proof_count`,
+`incomplete_fragment_terminal_count`, `composed_fragment_count`,
+`doc036_aggregate_domain_count`, and `supersession_count`. Its ordered ID
+preimage is:
 
 ~~~text
 [rq_stage3_era_repair_successor_seal.v1,
@@ -51993,20 +52190,25 @@ Every era, including an era with no affected document, has one
  ordered_successor_row_ids,
  ordered_supersession_row_ids,
  exact_repair_counts,
- ratified_design_identity]
+ amendment12_ratification_identity,
+ governing_amendment13_ratification_identity]
 ~~~
 
-The arrays use predecessor document order, then each domain's table order.
-All named arrays exist when empty. The exact prospective fixture census is:
+Overlay arrays use ascending source-document position. Successor and
+supersession arrays use exact domain order: the §27.4 proof table, then the
+eight §27.5 disclosure rows, then the two §27.5 composition rows, then the
+§27.6.1 doc-036 classification table; each era filters that concatenation
+without reordering it. All named arrays exist when empty. The exact prospective
+fixture census is:
 
 | Era | Exact era ID | Incompatible | Incomplete | Composed | Doc-036 | Supersession | Prospective nonauthority seal ID |
 |---:|---|---:|---:|---:|---:|---:|---|
-| 1 | `wave1968_ry1968_1974_early_totals` | 7 | 1 | 0 | 0 | 8 | `a13-successor-era-seal:596929bd2d65b855d6a28ced7b16578f7e31a7e6da9196fd7c240ea44949e709` |
-| 2 | `ry1975_1977_spouse_concept_seam` | 4 | 1 | 0 | 0 | 5 | `a13-successor-era-seal:a4c9525ea10c68dd1334ce65ff0383f23de64bc3abe75aaecedb43bc78958fba` |
-| 3 | `ry1978_1992_pre_er_totals` | 1 | 0 | 0 | 8 | 9 | `a13-successor-era-seal:bd88a280e5f512b75a7870218f2ee7fd95b053085027c204b5ca0fcd25ceb382` |
-| 4 | `ry1993_2001_er_transition` | 14 | 5 | 0 | 0 | 19 | `a13-successor-era-seal:f5cd887cdf455745f43ac319be63729a44b3ace43a3ef10d7bf35c663059d6df` |
-| 5 | `ry2002_2014_modern_bc_de` | 2 | 1 | 2 | 0 | 5 | `a13-successor-era-seal:5521c4ab1dd719161aa63bef85834b2446e59daa8bc75492b876e269af69e866` |
-| 6 | `ry2015_2022_exclusion_lineage` | 0 | 0 | 0 | 0 | 0 | `a13-successor-era-seal:c468337578f5c02cc55b4b3df50a52ca3b254e57e93bcc458272c56815e03aef` |
+| 1 | `wave1968_ry1968_1974_early_totals` | 7 | 1 | 0 | 0 | 8 | `a13-successor-era-seal:0a638a9a1bdaf341653c5409b2395081e67657413244478846d3c60cdab377db` |
+| 2 | `ry1975_1977_spouse_concept_seam` | 4 | 1 | 0 | 0 | 5 | `a13-successor-era-seal:2a4d7f0553b9c76b6289b5e343371780cd2c6eccdd6466234307974b5b3c3fe4` |
+| 3 | `ry1978_1992_pre_er_totals` | 1 | 0 | 0 | 8 | 9 | `a13-successor-era-seal:531ea88addbc73f77323d7d873f939db0f773534dc04eeac6310c1ffb0e87902` |
+| 4 | `ry1993_2001_er_transition` | 14 | 5 | 0 | 0 | 19 | `a13-successor-era-seal:7dcbfb47b7320bf8b7c147cf01b222a22fcdcf66cb92d2a781e296fc1139875c` |
+| 5 | `ry2002_2014_modern_bc_de` | 2 | 1 | 2 | 0 | 5 | `a13-successor-era-seal:810397821f6393ef051bef9afc2f4fe689104c0cafb6ac40a3c53ed91da00b51` |
+| 6 | `ry2015_2022_exclusion_lineage` | 0 | 0 | 0 | 0 | 0 | `a13-successor-era-seal:0cdf284967712845c7fe37f8a292249e42a3e8303ac211d20ec26cbe948def6f` |
 | **Total** | — | **28** | **8** | **2** | **8** | **46** | **6 seals** |
 
 The IDs in this table are deterministic prospective fixture values, not
@@ -52043,9 +52245,11 @@ rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38
 
 Their ordered ID-array domain SHA-256 is
 `f2e8a5001527eb975887828ba3e66c3eeac95ec0972454bcef509fba92149883`.
-The first 13 remain aggregate-law gaps and the doc-66
-`rq-local-repeat-evidence:5977fa11...` row remains the one redirection-law
-gap under Amendment 12. Amendment 13 neither executes nor reclassifies them.
+The 13 rows other than the doc-66
+`rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927`
+row remain aggregate-law gaps. That exact doc-66 row remains the sole
+redirection-law gap under Amendment 12. Amendment 13 neither executes nor
+reclassifies them.
 
 Everything outside the exact 28 + 10 + 8 tables is also out of scope:
 unaffected rows in the 14 annotations, all rows in the other 67 annotations,
@@ -52056,27 +52260,96 @@ production. No successor-law silence may change any of them.
 
 #### 27.7.2 Executable law fixture and integrity pins
 
-The prospective nonauthority validator is fixed at commit
-`620fc2699d9c174012abb014f50f01194595e7ad`, mode `100644`:
+The prospective nonauthority validator and focused test are fixed at
+implementation commit `8d5037afe5c13ac6e6f0a571cf14abb6b06f8359`, mode `100644`:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `dd5d3708c2f4044a9b034c04ed6e0b14296f0601` | 79,744 | `c1f6ff1488b4c317d016b64d374d63e235be7e8bec849491559706d4dce204b6` |
+| `scripts/validate_amendment13_execution_law.py` | `9627587805eea6b81bba0bad5e5621025f609754` | 116,830 | `25ac710f08a1ecd9dce2085c3916953756541ff57e48bb2612eab88e1633f263` |
+| `tests/test_validate_amendment13_execution_law.py` | `2f03c8366696ff1434a929a93310594d7002d735` | 19,145 | `d9631a48b52e6be398ab929b1ee1ea055db6634d990581c76c0d6901cf6b0cd5` |
 
 It reads the six pinned source seals, independently reconstructs each raw
 predecessor row and occurrence citation, verifies the historical Git commit
 and document tree entry, builds no file, and emits no authority. Its exact
 fixture status is `PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT`; both
-`authority_emitted` and `certification_emitted` are false.
+`authority_emitted` and `certification_emitted` are false. It separately
+validates the future ratification-bound template and refuses a public
+no-Git-verification bypass.
+
+The top-level `amendment_13_tier_2_execution_law.v1` object has exactly these
+24 keys:
+
+~~~text
+schema_version
+status
+authority_emitted
+certification_emitted
+amendment12_ratification_identity
+ratification_history_observation
+governing_amendment13_ratification_identity
+governing_amendment13_identity_schema_version
+ratification_identity_rule
+overlay_schema_version
+successor_schema_version
+supersession_schema_version
+era_successor_seal_schema_version
+repair_overlay_rows
+semantically_incompatible_local_proof_successor_rows
+incomplete_fragment_terminal_successor_rows
+composed_fragment_successor_rows
+doc036_aggregate_domain_successor_rows
+predecessor_supersession_rows
+successor_era_seal_rows
+untouched_law_gap_predecessor_ids
+amendment12_continuation_domain
+git_order_law
+integrity
+~~~
+
+`amendment12_continuation_domain` has exactly
+`disjoint_and_unchanged`, `continuation_citation_count`,
+`continuation_restoration_count`, `source_artifact_identity`,
+`continuation_projection_rows`, `continuation_projection_byte_size`,
+`continuation_projection_sha256`,
+`new_fragment_predecessor_evidence_ids_disjoint`, and
+`new_fragment_instruction_occurrence_ids_disjoint`.
+`source_artifact_identity` has exactly `path`, `byte_size`, and `raw_sha256`.
+`ratification_history_observation` has the exact two-key shape fixed in
+§27.2.1.
+
+`git_order_law` has exactly these nine keys, whose Boolean values are true
+except `q5_first_add_permitted`, which is false:
+
+~~~text
+amendment12_ratification_commit_must_be_strict_ancestor_of_governing_amendment13_ratification_commit
+governing_amendment13_ratification_commit_must_be_validated_and_strict_ancestor_of_every_overlay_first_add
+overlay_first_add_must_be_strict_ancestor_of_containing_era_successor_seal_first_add
+all_six_successor_seal_first_adds_must_be_strict_ancestors_of_tier2_evidence_first_add
+ratification_and_execution_record_commits_must_be_single_parent
+source_seal_identity_is_independently_authenticated_not_promoted_from_tier1
+dual_independent_reconstruction_required
+complete_raw_byte_attestation_required
+q5_first_add_permitted
+~~~
+
+`integrity` has exactly `incompatible_proof_count`,
+`incompatible_proof_id_domain_sha256`, `incomplete_fragment_count`,
+`composed_fragment_count`, `fragment_evidence_id_domain_sha256`,
+`fragment_instruction_id_domain_sha256`, `doc036_aggregate_domain_count`,
+`doc036_classification_id_domain_sha256`, `repair_count`,
+`supersession_count`, `overlay_count`, `successor_era_seal_count`,
+`law_gap_untouched_count`, `law_gap_id_domain_sha256`,
+`successor_domain_sha256`, `supersession_domain_sha256`,
+`overlay_domain_sha256`, and `successor_era_seal_domain_sha256`.
 
 The complete reconstructed domains have these current prospective pins:
 
 | Domain | Count | Canonical domain SHA-256 |
 |---|---:|---|
-| Repair overlays | 14 | `4877b04c72824d9422dc5414d880043390668471b10f589651b6727a42fc677e` |
-| All repair successors | 46 | `49c860650dea031b169f78fcbb08c719ef4d060e8676c834c485d59c7fd12bf4` |
-| Supersession edges | 46 | `3407e94b29a3084773c79e0817c9b8d73deb1d3f11ac7393508724b148a2731a` |
-| Successor-era seal fixtures | 6 | `2b4402bf45cce67d8461717aebc21ab5e9bcda973c12ed3092c33ece2b30dfa0` |
+| Repair overlays | 14 | `adee2e8320759ea709821d48af69ee2c12dec7499a9bef03de23f15c23ba79a5` |
+| All repair successors | 46 | `63ff5646b640a4252d440810db77a862e2178fc74e61171d287d7984576dcbea` |
+| Supersession edges | 46 | `396395f20f984a58fc606ab66010fa06af79641c19f5afdc0605ce7b40aef709` |
+| Successor-era seal fixtures | 6 | `f1c0f05543955ea13a9b1037f80609f30d681b0ea890620d89717beb6c4cac9d` |
 
 These pins fix the law fixture and detect drift; they are not tier-2 evidence
 expected values and cannot be copied into an executed evidence bundle. A
@@ -52117,6 +52390,13 @@ the combined text hash. Each must fail its semantic gate, not merely a stale
 internal hash. An inventory name missing, added, reordered, surviving, or
 failing only an unintended earlier check aborts.
 
+For both draft and ratification-bound fixtures, the validator finally
+reconstructs the complete law afresh from the pinned source bytes and requires
+deep equality. Coherently changing a payload reason or citation and repinning
+the successor, edge, overlay, era, and top-level hashes therefore still
+aborts; content-ID self-consistency is not a substitute for the enacted
+semantics.
+
 ### 27.8 Replacement closure, comparator, identifiers, and inoperability
 
 #### 27.8.1 Exact replacement and composition closure
@@ -52128,6 +52408,7 @@ everywhere else.
 | Earlier normative anchor | Amendment-13 disposition |
 |---|---|
 | §§26.10.1–26.10.3, DC-64, §26.11.2 step 2, and §26.11's terminal Amendment-12 document-only locator or no-ratification clause | Replaced only for Amendment 12 by §§27.2.1–27.2.2 exact single-parent commit, tree-entry blob, dual-hash, byte-count, and dual-RATIFY identity; every other noninstantiation and stop clause survives. |
+| §27.2.2 governing Amendment-13 recording act and every overlay, era-seal, and Git-order consumer | New mandatory successor law: one document-only, single-parent recording commit and two exact raw RATIFY records bind the actual governing identity; the draft placeholder is forbidden after ratification. |
 | A12-T2-R05 ratification/source/reseal Git-order phrase | Composed with §27.2.3's exact ancestry, independent source authentication, dual reconstruction, byte attestation, and pre-Q5 stop. |
 | §26.7.2 `readjudicate_source_row_and_reseal_before_tier_2` for the exact 28 table rows | Completed by §§27.3–27.4's new terminal successor, deterministic three-family map, append-only supersession, overlay, and seal membership. |
 | §26.7 and §26.11.2 obligation for the exact ten incomplete fragments | Completed by §27.5: eight terminal disclosed spans and two exact duplicate-selector/whitespace compositions; Amendment 12's five citations remain disjoint. |
@@ -52146,6 +52427,13 @@ authority would require separate exact ratified law.
 #### 27.8.2 Comparator and search closure
 
 The inherited comparator machinery and its 71 revision-14 rows remain exact.
+The revision-15 census corpus is every normative byte accepted at §27.8.3
+and committed in the governing Amendment-13 recording act, except exactly the
+ten inherited comparator-table intervals named in §26.10.2 plus the one
+Amendment-13 interval defined here. This eleventh interval begins at the next
+table header and ends immediately before the ASCII heading prefix
+`#### 27.8.3 `. No inherited interval is reintroduced into the search.
+
 The Amendment-13 search augmentation is this case-sensitive ordered array:
 
 ~~~text
@@ -52154,6 +52442,13 @@ revision 15
 29c593d1954d94795e9f092ec4333e7d60a6136f
 626213aa45bce6b8c94b36dcaded16800ce0323d
 exact_attested_document_blob_not_commit_path_shape
+amendment_13_governing_ratification_identity_candidate.v1
+amendment_13_governing_ratification_identity.v1
+UNAVAILABLE_BEFORE_AMENDMENT_13_RATIFICATION
+RATIFIED_AMENDMENT_13_GOVERNING_EXECUTION_LAW
+RATIFIED_LAW_BOUND_NONAUTHORITY_EXECUTION_TEMPLATE
+amendment12_ratification_identity
+governing_amendment13_ratification_identity
 rq_stage2_document_repair_overlay.v1
 rq_stage2_local_evidence_repair_successor.v1
 rq_stage2_predecessor_supersession.v1
@@ -52161,6 +52456,12 @@ rq_stage3_era_repair_successor_seal.v1
 terminal_semantically_incompatible_local_proof_no_alias_admitted
 terminal_incomplete_fragment_disclosed_no_alias_admitted
 complete_instruction_reading_by_exact_whitespace_composition
+coherent_document_reseal_component_domain_corrected_to_aggregate
+terminal_semantic_incompatibility_umbrella_with_exact_predecessor_finding_preserved
+semantically_incompatible_local_proof
+incomplete_fragment_terminal_disclosure
+composed_fragment_complete_instruction
+doc036_aggregate_domain_correction
 predecessor_row_superseded_by_named_successor
 unique_predecessor_alias_anchor_context_occurrence_at_duplicate_leading_span
 same_page_exact_leading_bytes_plus_whitespace_gap_plus_exact_continuation_bytes
@@ -52181,9 +52482,14 @@ match is permitted. The exact six appended comparator rows are:
 
 The prospective comparator is the inherited DC-1 through DC-71 rows,
 deep-equal in order and complete text, followed by DC-72 through DC-77. All
-77 IDs are consecutive and unique. An edited inherited row, omitted affected
-consumer, undefined successor, duplicate ID, shortened anchor, third
-disposition, or unexamined search hit blocks ratification.
+77 IDs are consecutive and unique. Revision 14 contains exactly 37
+`replaced-by-named-successor` and 34 lawfully-unchanged rows. DC-72 through
+DC-74 add exactly three replacements; DC-75 through DC-77 add exactly three
+lawfully-unchanged rows. Revision 15 therefore contains exactly 40
+replaced-by-named-successor and 37 lawfully-unchanged rows. An edited inherited
+row, wrong category count, omitted affected consumer, undefined successor,
+duplicate ID, shortened anchor, third disposition, or unexamined search hit
+blocks ratification.
 
 #### 27.8.3 Exact new identifiers and terminal noninstantiation
 
@@ -52191,6 +52497,8 @@ The exact new schema-version literals are:
 
 ~~~text
 amendment_13_tier_2_execution_law.v1
+amendment_13_governing_ratification_identity_candidate.v1
+amendment_13_governing_ratification_identity.v1
 rq_stage2_document_repair_overlay.v1
 rq_stage2_local_evidence_repair_successor.v1
 rq_stage2_predecessor_supersession.v1
@@ -52211,7 +52519,11 @@ The exact new status/relation/operation codes are:
 ~~~text
 PROSPECTIVE_NONAUTHORITY_UNRATIFIED_DRAFT
 PROSPECTIVE_NONAUTHORITY
+UNAVAILABLE_BEFORE_AMENDMENT_13_RATIFICATION
+RATIFIED_AMENDMENT_13_GOVERNING_EXECUTION_LAW
+RATIFIED_LAW_BOUND_NONAUTHORITY_EXECUTION_TEMPLATE
 terminal_semantically_incompatible_local_proof_no_alias_admitted
+terminal_semantic_incompatibility_umbrella_with_exact_predecessor_finding_preserved
 terminal_incomplete_fragment_disclosed_no_alias_admitted
 complete_instruction_reading_by_exact_whitespace_composition
 coherent_document_reseal_component_domain_corrected_to_aggregate
@@ -52223,6 +52535,16 @@ exact_same_page_whitespace_composition
 replace_only_node_domain_component_slot_with_aggregate
 unique_predecessor_alias_anchor_context_occurrence_at_duplicate_leading_span
 same_page_exact_leading_bytes_plus_whitespace_gap_plus_exact_continuation_bytes
+exact_attested_document_blob_not_commit_path_shape
+~~~
+
+The exact serialized successor-kind literals are:
+
+~~~text
+semantically_incompatible_local_proof
+incomplete_fragment_terminal_disclosure
+composed_fragment_complete_instruction
+doc036_aggregate_domain_correction
 ~~~
 
 They are opaque exact-byte codes. None has an alias, default, prefix match,
