@@ -779,9 +779,14 @@ def test__document__amendment15_nonpin_semantics_are_hash_bound():
 
 def test__implementation__active_pins_are_blob_bound_without_commit():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
-    pins = a13._parse_amendment14_projection(raw)["implementation_pins"]
+    pins = a13._parse_amendment15_projection(raw)["implementation_pins"]
     assert set(pins) == {"mode", "files"}
     assert "commit" not in pins
+    assert [row["path"] for row in pins["files"]] == [
+        "scripts/validate_amendment13_execution_law.py",
+        "tests/test_validate_amendment13_execution_law.py",
+        "scripts/build_amendment13_tier2_repairs.py",
+    ]
     a13._verify_implementation_pins(pins)
 
 

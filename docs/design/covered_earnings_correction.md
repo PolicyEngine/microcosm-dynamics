@@ -53819,20 +53819,44 @@ outputs concatenated in the displayed component order and hashed under
 §29.4.1's canonicalization.
 
 The public validator derives these values through
-`run_complete_mutation_census()`. That operation invokes the executable
+`run_complete_mutation_census()`. Before every execution, that operation reads
+the active §29.5.1 publisher row, requires the publisher's exact mode-`100644`
+`HEAD` tree entry and working-tree/`HEAD` byte equality, and recomputes its Git
+blob OID, byte size, and raw SHA-256. A mismatch aborts before census execution.
+It then launches the repository Python executable with `-I -B` and the verified
+publisher file path in a fresh interpreter. The child environment strips every
+inherited `GIT_*` variable and sets `GIT_NO_REPLACE_OBJECTS=1`, exactly as the
+Git wrapper does. The child's sole explicit census mode executes the
 Amendment-12 71-mutation runner, then the Amendment-13 seven-mutation and
 Amendment-14 eleven-mutation runners, and then the exact named Amendment-15
-11-mutation runner `run_amendment15_mutation_tests()`. It may not substitute
-expected-name constants or a caller-supplied census for any execution. A
-runner's fixed specification binds the name, preparation function, operative
-gate callable, intended exception class, and intended-message predicate.
-Preparation completes outside the scope that catches the gate rejection; a
-setup exception therefore cannot authenticate a name. The runner appends a
-mutation name only after invoking that bound gate callable and observing its
-bound intended exception and message. A missing, extra, duplicate, renamed,
-reordered, non-rejecting, wrong-class, wrong-message, wrong-gate, or
-setup-failing mutation, or any component/aggregate count, domain, order,
-digest, or status disagreement, aborts.
+11-mutation runner `run_amendment15_mutation_tests()`.
+
+The successful child's complete stdout is one strict-canonical JSON object and
+nothing else. It has exactly `aggregate`, `components`, and `schema_version`;
+`schema_version` is
+`amendment_15_complete_mutation_census_execution.v1`; `components` is the
+ordered three-member domain displayed above; and every component has exactly
+`component_id`, `rejected_count`, `rejected_domain_sha256`, and
+`rejected_names`. `aggregate` has exactly `rejected_count` and
+`rejected_domain_sha256`. The parent rejects duplicate/missing/extra keys,
+noncanonical or trailing bytes, wrong types, non-names, duplicate/reordered
+names, wrong component identities, counts or digests, a wrong aggregate, child
+failure, or any stderr. It supplies no defaults and authenticates all fields,
+including recomputing every name-array digest and the concatenated aggregate,
+before projecting the result into the certificate census.
+
+No expected-name constant or caller-supplied census may substitute for any
+execution. Every remaining authenticated in-process call link is captured at
+definition time rather than resolved from a rebindable module global at call
+time. A runner's fixed specification binds the name, preparation function,
+operative gate callable, intended exception class, and intended-message
+predicate. Preparation completes outside the scope that catches the gate
+rejection; a setup exception therefore cannot authenticate a name. The runner
+appends a mutation name only after invoking that bound gate callable and
+observing its bound intended exception and message. A missing, extra,
+duplicate, renamed, reordered, non-rejecting, wrong-class, wrong-message,
+wrong-gate, or setup-failing mutation, or any component/aggregate count,
+domain, order, digest, or status disagreement, aborts.
 
 The Amendment-15 runner's fixed specification is exactly this ordered table.
 Each intended-message predicate is case-sensitive substring membership in
@@ -53853,14 +53877,28 @@ Each intended-message predicate is case-sensitive substring membership in
 | `ceremony_topology_bound_squash_selected` | `_prepare_topology_squash_mutation` | `_gate_topology_merge_mode` | `PublicationError` | `requires a no-fast-forward merge commit` |
 
 `validate_tier2_certification_contract()` is the only callable that composes
-the complete certificate contract. On every call it first executes the full
-100-name census and then sequentially applies narrow predicates for the
-top-level schema, ratification, source, member, reconstructions, gate results,
-Git attestation, lifecycle, execution-derived census, and integrity. Each
-Amendment-15 certificate mutation invokes only its exact assigned narrow
-predicate, never that public compositor or another complete-contract wrapper.
-No narrow predicate accepts a complete certificate plus a caller-supplied
-census or otherwise reaches the complete contract body.
+the complete certificate contract. Its definition-time closure binds the
+cross-process census operation and the complete in-process predicate graph. On
+every call it first executes the full 100-name census and then sequentially
+applies narrow predicates for the top-level schema, ratification, source,
+member, reconstructions, gate results, Git attestation, lifecycle,
+execution-derived census, and integrity. Rebinding the module's public census,
+executor, inherited runner, or narrow-predicate names at call time therefore
+cannot change the authenticated path. Each Amendment-15 certificate mutation
+invokes only its exact assigned narrow predicate, never that public compositor
+or another complete-contract wrapper. No narrow predicate accepts a complete
+certificate plus a caller-supplied census or otherwise reaches the complete
+contract body.
+
+This integrity law defends the supported interfaces against census or runner
+substitution, call-time module-global rebinding, and tampered publisher bytes:
+the parent verifies the enacted pin and a fresh interpreter executes those
+verified bytes. It does not claim that in-process Python can resist an actor
+with arbitrary same-process patching power over closure cells, function
+objects, interpreter memory, or the Python runtime itself. Such arbitrary
+same-process patching is outside this law's trust boundary and requires a
+separate process or operating-system trust mechanism; it cannot be made an
+honest in-process Python guarantee.
 
 `integrity` has exactly `canonicalization` and `payload_sha256`. Its
 canonicalization is §29.4.1's exact code. The payload preimage is the complete
@@ -53912,20 +53950,21 @@ read rule keeps the already-operative nonauthority tier-2 validators runnable
 while a successor draft is reviewed; it cannot create authority from the
 draft.
 The active Amendment-15 implementation identity for the Amendment-13/14
-semantic validator is exactly mode `100644` and these two
-path/blob/byte/hash rows:
+semantic validator and the census publisher is exactly mode `100644`
+and these three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `bec57628f21434934e5c3d4be84b6010b4a27bca` | 238331 | `12dfb07829342a9a6a12c2472acd2af7b20d729a914ab31680739a94feed623a` |
-| `tests/test_validate_amendment13_execution_law.py` | `458d39a3e7a59096d9c9bd62b364d129e4591153` | 29435 | `7704974f4f6b4459fc2e4865d523d4432730442bca679c29967c0011481666ef` |
+| `scripts/validate_amendment13_execution_law.py` | `167854de0e9b9a92f05680e09a4ac0be59d22f76` | 239044 | `c93d661508f6690fbbbb1f140ba54a248c15d7458d5c7c9f4e9847aefd5bee86` |
+| `tests/test_validate_amendment13_execution_law.py` | `4c57861b849341a5bfe097df28183e245c4399a2` | 29667 | `5c05205dc29f0d51b380627ccca4c55ee0a0f31f12f49eea3d39371bc8e584be` |
+| `scripts/build_amendment13_tier2_repairs.py` | `71fa421a4af9d8fae5179c87631242996a000d5e` | 111116 | `255730495e26de7d6f5c61d69a7c809c6d9652fecc9dcb19778b4c37925433f8` |
 
 For each row, the validator requires exact path, mode, working-tree/`HEAD`
 bytes, byte size, raw SHA-256, and Git blob OID through the sanitized wrapper.
 Section 28.5's two rows remain the immutable historical revision-16 pins;
 they do not remain active after this successor table is ratified. The
 semantic validator hashes the complete Amendment-15 suffix after normalizing
-only the seven separately verified mode/blob/byte/hash values in the table
+only the ten separately verified mode/blob/byte/hash values in the table
 above. It compares that digest with its compiled revision-17 expectation, so
 any non-pin change anywhere in §§29.1–29.8 aborts. The implementation and
 tests additionally enforce the parsed pins, closed keysets, codes, paths,

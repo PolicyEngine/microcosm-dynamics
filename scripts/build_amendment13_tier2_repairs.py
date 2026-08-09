@@ -216,6 +216,11 @@ COMPLETE_MUTATION_DOMAIN_SHA256 = (
     "fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3"
 )
 MUTATION_CENSUS_STATUS = "pass_all_expected_mutations_rejected"
+COMPLETE_MUTATION_CENSUS_SCHEMA_VERSION = (
+    "amendment_15_complete_mutation_census_execution.v1"
+)
+COMPLETE_MUTATION_CENSUS_CHILD_FLAG = "--emit-complete-mutation-census"
+PUBLISHER_IMPLEMENTATION_PATH = "scripts/build_amendment13_tier2_repairs.py"
 
 
 class MutationBinding(NamedTuple):
@@ -816,99 +821,6 @@ def _execute_amendment15_mutation(binding: MutationBinding) -> str:
     return binding.name
 
 
-def _execute_complete_mutation_names() -> (
-    tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...]]
-):
-    """Execute every default inherited and A15 runner for this call."""
-
-    a12_names = _execute_a12_mutation_tests()
-    law = a13.build_execution_law()
-    a13.validate_execution_law(law)
-    a13_names = tuple(a13.run_mutation_tests(law))
-    a14_names = tuple(a13.run_enforcement_mutation_tests(law))
-    a15_names = run_amendment15_mutation_tests()
-    return a12_names, a13_names, a14_names, a15_names
-
-
-def _compose_complete_mutation_census(
-    outputs: Sequence[Sequence[str]],
-) -> dict[str, Any]:
-    """Private fault-injection seam over already executed runner outputs."""
-
-    _require(
-        len(outputs) == 4,
-        "complete mutation runner component domain drift",
-    )
-    a12_names, a13_names, a14_names, a15_names = (
-        tuple(names) for names in outputs
-    )
-
-    _require(
-        a13_names == a13.A13_EXPECTED_MUTATIONS,
-        "Amendment-13 seven-mutation runner output drift",
-    )
-    _require(
-        a14_names == a13.A13_ENFORCEMENT_EXPECTED_MUTATIONS,
-        "Amendment-14 eleven-mutation runner output drift",
-    )
-    _require(
-        a15_names == A15_EXPECTED_MUTATIONS,
-        "Amendment-15 eleven-mutation runner output drift",
-    )
-    inherited_names = (*a13_names, *a14_names)
-    components = [
-        _component_mutation_census(
-            "amendment_12_historical",
-            a12_names,
-            expected_count=A12_MUTATION_COUNT,
-            expected_domain_sha256=A12_MUTATION_DOMAIN_SHA256,
-        ),
-        _component_mutation_census(
-            "amendments_13_14_inherited",
-            inherited_names,
-            expected_count=A13_A14_MUTATION_COUNT,
-            expected_domain_sha256=A13_A14_MUTATION_DOMAIN_SHA256,
-        ),
-        _component_mutation_census(
-            "amendment_15",
-            a15_names,
-            expected_count=len(A15_EXPECTED_MUTATIONS),
-            expected_domain_sha256=A15_MUTATION_DOMAIN_SHA256,
-        ),
-    ]
-    all_names = (*a12_names, *inherited_names, *a15_names)
-    aggregate_digest = _mutation_domain_sha256(all_names)
-    _require(
-        len(all_names) == COMPLETE_MUTATION_COUNT
-        and len(set(all_names)) == COMPLETE_MUTATION_COUNT
-        and aggregate_digest == COMPLETE_MUTATION_DOMAIN_SHA256,
-        "complete mutation census drift: "
-        f"count={len(all_names)}, unique={len(set(all_names))}, "
-        f"domain={aggregate_digest}",
-    )
-    census = {
-        "components": components,
-        "expected_count": COMPLETE_MUTATION_COUNT,
-        "expected_domain_sha256": COMPLETE_MUTATION_DOMAIN_SHA256,
-        "rejected_count": len(all_names),
-        "rejected_domain_sha256": aggregate_digest,
-        "status": MUTATION_CENSUS_STATUS,
-    }
-    _require(
-        census == _expected_mutation_census(),
-        "execution-derived mutation census disagrees with the exact target",
-    )
-    return census
-
-
-def run_complete_mutation_census() -> dict[str, Any]:
-    """Execute and authenticate the exact ordered 71 + 18 + 11 census."""
-
-    return _compose_complete_mutation_census(
-        _execute_complete_mutation_names()
-    )
-
-
 def _validate_certification_top_level(value: Mapping[str, Any]) -> None:
     """Validate only the certificate's top-level schema and fixed codes."""
 
@@ -1369,27 +1281,829 @@ _run_amendment15_mutation_bindings = run_amendment15_mutation_tests
 del _create_amendment15_mutation_runner
 
 
-def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
-    """Execute all 100 attacks, then validate the bound certificate schema."""
+def _create_complete_mutation_census_protocol() -> tuple[
+    Callable[
+        [],
+        tuple[
+            tuple[str, ...],
+            tuple[str, ...],
+            tuple[str, ...],
+            tuple[str, ...],
+        ],
+    ],
+    Callable[[Sequence[Sequence[str]]], dict[str, Any]],
+    Callable[[], bytes],
+    Callable[[bytes], dict[str, Any]],
+    Callable[[], Path],
+    Callable[[], dict[str, Any]],
+]:
+    """Close every authenticated census link over its definition-time object."""
 
-    executed_census = run_complete_mutation_census()
-    _validate_certification_top_level(value)
-    _validate_certification_ratification(value["ratification_binding"])
-    _validate_certification_source(value["source_build_identity"])
-    _validate_certification_member(value["source_hierarchy_member_identity"])
-    _validate_certification_reconstructions(
-        value["reconstruction_rows"],
-        value["source_hierarchy_member_identity"],
-        value["source_build_identity"],
+    publication_error = PublicationError
+    deepcopy = copy.deepcopy
+    execute_a12 = _execute_a12_mutation_tests
+    build_law = a13.build_execution_law
+    validate_law = a13.validate_execution_law
+    run_a13 = a13.run_mutation_tests
+    run_a14 = a13.run_enforcement_mutation_tests
+    run_a15 = run_amendment15_mutation_tests
+    json_dumps = json.dumps
+    json_loads = json.loads
+    sha1 = hashlib.sha1
+    sha256 = hashlib.sha256
+    subprocess_run = subprocess.run
+    source_environment = os.environ
+    python_executable = sys.executable
+    root = ROOT
+    design_path = ROOT / a13.DESIGN_PATH
+    publisher_relative_path = PUBLISHER_IMPLEMENTATION_PATH
+    publisher_path = ROOT / publisher_relative_path
+    child_flag = COMPLETE_MUTATION_CENSUS_CHILD_FLAG
+    schema_version = COMPLETE_MUTATION_CENSUS_SCHEMA_VERSION
+    status = MUTATION_CENSUS_STATUS
+    expected_a13_names = tuple(a13.A13_EXPECTED_MUTATIONS)
+    expected_a14_names = tuple(a13.A13_ENFORCEMENT_EXPECTED_MUTATIONS)
+    expected_a15_names = tuple(A15_EXPECTED_MUTATIONS)
+    expected_component_specs = (
+        (
+            "amendment_12_historical",
+            A12_MUTATION_COUNT,
+            A12_MUTATION_DOMAIN_SHA256,
+        ),
+        (
+            "amendments_13_14_inherited",
+            A13_A14_MUTATION_COUNT,
+            A13_A14_MUTATION_DOMAIN_SHA256,
+        ),
+        (
+            "amendment_15",
+            len(expected_a15_names),
+            A15_MUTATION_DOMAIN_SHA256,
+        ),
     )
-    _validate_certification_gates(value["gate_results"])
-    _validate_certification_git_attestation(value["git_order_attestation"])
-    _validate_certification_lifecycle(value["lifecycle"])
-    _validate_certification_mutation_census(
-        value["mutation_census"],
-        executed_census,
+    complete_count = COMPLETE_MUTATION_COUNT
+    complete_digest = COMPLETE_MUTATION_DOMAIN_SHA256
+    expected_certificate_census = deepcopy(_expected_mutation_census())
+    expected_pin_paths = (
+        "scripts/validate_amendment13_execution_law.py",
+        "tests/test_validate_amendment13_execution_law.py",
+        publisher_relative_path,
     )
-    _validate_certification_integrity(value)
+    enacted_implementation_pins = deepcopy(
+        a13._parse_amendment15_implementation_pins(design_path.read_bytes())
+    )
+
+    def require(condition: bool, message: str) -> None:
+        if not condition:
+            raise publication_error(message)
+
+    def require_exact_keys(
+        value: Mapping[str, Any], expected: frozenset[str], label: str
+    ) -> None:
+        require(isinstance(value, Mapping), f"{label} is not an object")
+        actual = frozenset(value)
+        require(
+            actual == expected,
+            f"{label} keyset drift; missing={sorted(expected - actual)!r}, "
+            f"extra={sorted(actual - expected)!r}",
+        )
+
+    def canonical_json_bytes(value: Any) -> bytes:
+        try:
+            text = json_dumps(
+                value,
+                allow_nan=False,
+                ensure_ascii=True,
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+        except (TypeError, ValueError) as error:
+            raise publication_error(
+                "complete mutation census is not strict canonical JSON"
+            ) from error
+        return text.encode("ascii") + b"\n"
+
+    def mutation_domain_sha256(names: Sequence[str]) -> str:
+        return sha256(canonical_json_bytes(list(names))).hexdigest()
+
+    def git_blob_oid(raw: bytes) -> str:
+        return sha1(
+            b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw
+        ).hexdigest()
+
+    def execute_complete_mutation_names() -> tuple[
+        tuple[str, ...],
+        tuple[str, ...],
+        tuple[str, ...],
+        tuple[str, ...],
+    ]:
+        """Execute the definition-time-bound inherited and A15 runners."""
+
+        a12_names = tuple(execute_a12())
+        law = build_law()
+        validate_law(law)
+        a13_names = tuple(run_a13(law))
+        a14_names = tuple(run_a14(law))
+        a15_names = tuple(run_a15())
+        return a12_names, a13_names, a14_names, a15_names
+
+    def component_census(
+        component_id: str,
+        names: tuple[str, ...],
+        expected_count: int,
+        expected_digest: str,
+    ) -> dict[str, Any]:
+        require(
+            all(type(name) is str and name for name in names),
+            f"{component_id} mutation census contains a non-name",
+        )
+        digest = mutation_domain_sha256(names)
+        require(
+            len(names) == expected_count
+            and len(set(names)) == expected_count
+            and digest == expected_digest,
+            f"{component_id} mutation census drift: count={len(names)}, "
+            f"unique={len(set(names))}, domain={digest}",
+        )
+        return {
+            "component_id": component_id,
+            "expected_count": expected_count,
+            "expected_domain_sha256": expected_digest,
+            "rejected_count": len(names),
+            "rejected_domain_sha256": digest,
+            "status": status,
+        }
+
+    def compose_complete_mutation_census(
+        outputs: Sequence[Sequence[str]],
+    ) -> dict[str, Any]:
+        """Authenticate already-executed runner outputs for fault injection."""
+
+        require(
+            len(outputs) == 4,
+            "complete mutation runner component domain drift",
+        )
+        a12_names, a13_names, a14_names, a15_names = (
+            tuple(names) for names in outputs
+        )
+        require(
+            a13_names == expected_a13_names,
+            "Amendment-13 seven-mutation runner output drift",
+        )
+        require(
+            a14_names == expected_a14_names,
+            "Amendment-14 eleven-mutation runner output drift",
+        )
+        require(
+            a15_names == expected_a15_names,
+            "Amendment-15 eleven-mutation runner output drift",
+        )
+        inherited_names = (*a13_names, *a14_names)
+        component_names = (a12_names, inherited_names, a15_names)
+        components = [
+            component_census(component_id, names, count, digest)
+            for (component_id, count, digest), names in zip(
+                expected_component_specs,
+                component_names,
+                strict=True,
+            )
+        ]
+        all_names = (*a12_names, *inherited_names, *a15_names)
+        aggregate_digest = mutation_domain_sha256(all_names)
+        require(
+            len(all_names) == complete_count
+            and len(set(all_names)) == complete_count
+            and aggregate_digest == complete_digest,
+            "complete mutation census drift: "
+            f"count={len(all_names)}, unique={len(set(all_names))}, "
+            f"domain={aggregate_digest}",
+        )
+        census = {
+            "components": components,
+            "expected_count": complete_count,
+            "expected_domain_sha256": complete_digest,
+            "rejected_count": len(all_names),
+            "rejected_domain_sha256": aggregate_digest,
+            "status": status,
+        }
+        require(
+            census == expected_certificate_census,
+            "execution-derived mutation census disagrees with the exact target",
+        )
+        return census
+
+    def execution_evidence(
+        outputs: Sequence[Sequence[str]],
+    ) -> dict[str, Any]:
+        compose_complete_mutation_census(outputs)
+        a12_names, a13_names, a14_names, a15_names = (
+            tuple(names) for names in outputs
+        )
+        component_names = (
+            a12_names,
+            (*a13_names, *a14_names),
+            a15_names,
+        )
+        all_names = tuple(name for names in component_names for name in names)
+        return {
+            "aggregate": {
+                "rejected_count": len(all_names),
+                "rejected_domain_sha256": mutation_domain_sha256(all_names),
+            },
+            "components": [
+                {
+                    "component_id": component_id,
+                    "rejected_count": len(names),
+                    "rejected_domain_sha256": mutation_domain_sha256(names),
+                    "rejected_names": list(names),
+                }
+                for (component_id, _, _), names in zip(
+                    expected_component_specs,
+                    component_names,
+                    strict=True,
+                )
+            ],
+            "schema_version": schema_version,
+        }
+
+    def emit_complete_mutation_census_bytes() -> bytes:
+        """Run the real census and emit its sole canonical child result."""
+
+        return canonical_json_bytes(
+            execution_evidence(execute_complete_mutation_names())
+        )
+
+    def reject_duplicate_keys(
+        pairs: list[tuple[str, Any]],
+    ) -> dict[str, Any]:
+        value: dict[str, Any] = {}
+        for key, member in pairs:
+            if key in value:
+                raise ValueError(f"duplicate key: {key}")
+            value[key] = member
+        return value
+
+    def reject_nonfinite(value: str) -> None:
+        raise ValueError(f"non-finite number: {value}")
+
+    def authenticate_complete_mutation_census_bytes(
+        raw: bytes,
+    ) -> dict[str, Any]:
+        """Strict-parse and fully authenticate one child census result."""
+
+        try:
+            value = json_loads(
+                raw,
+                object_pairs_hook=reject_duplicate_keys,
+                parse_constant=reject_nonfinite,
+            )
+        except (TypeError, ValueError, UnicodeDecodeError) as error:
+            raise publication_error(
+                "fresh-interpreter mutation census is invalid strict JSON"
+            ) from error
+        require(
+            isinstance(value, dict) and canonical_json_bytes(value) == raw,
+            "fresh-interpreter mutation census is not canonical JSON",
+        )
+        require_exact_keys(
+            value,
+            frozenset({"aggregate", "components", "schema_version"}),
+            "fresh-interpreter mutation census",
+        )
+        require(
+            value["schema_version"] == schema_version,
+            "fresh-interpreter mutation census schema-version drift",
+        )
+        components = value["components"]
+        require(
+            isinstance(components, list)
+            and len(components) == len(expected_component_specs),
+            "fresh-interpreter mutation component domain drift",
+        )
+        authenticated_names: list[str] = []
+        for index, (component, expected_spec) in enumerate(
+            zip(components, expected_component_specs, strict=True)
+        ):
+            require_exact_keys(
+                component,
+                frozenset(
+                    {
+                        "component_id",
+                        "rejected_count",
+                        "rejected_domain_sha256",
+                        "rejected_names",
+                    }
+                ),
+                "fresh-interpreter mutation component",
+            )
+            component_id, expected_count, expected_digest = expected_spec
+            names = component["rejected_names"]
+            require(
+                component["component_id"] == component_id
+                and isinstance(names, list)
+                and all(type(name) is str and name for name in names)
+                and type(component["rejected_count"]) is int
+                and component["rejected_count"] == expected_count
+                and len(names) == expected_count
+                and len(set(names)) == expected_count
+                and component["rejected_domain_sha256"] == expected_digest
+                and mutation_domain_sha256(names) == expected_digest,
+                f"fresh-interpreter {component_id} mutation evidence drift",
+            )
+            if index == 1:
+                require(
+                    tuple(names) == (*expected_a13_names, *expected_a14_names),
+                    "fresh-interpreter inherited mutation names drift",
+                )
+            elif index == 2:
+                require(
+                    tuple(names) == expected_a15_names,
+                    "fresh-interpreter Amendment-15 mutation names drift",
+                )
+            authenticated_names.extend(names)
+        require_exact_keys(
+            value["aggregate"],
+            frozenset({"rejected_count", "rejected_domain_sha256"}),
+            "fresh-interpreter mutation aggregate",
+        )
+        require(
+            type(value["aggregate"]["rejected_count"]) is int
+            and value["aggregate"]["rejected_count"] == complete_count
+            and len(authenticated_names) == complete_count
+            and len(set(authenticated_names)) == complete_count
+            and value["aggregate"]["rejected_domain_sha256"] == complete_digest
+            and mutation_domain_sha256(authenticated_names) == complete_digest,
+            "fresh-interpreter aggregate mutation evidence drift",
+        )
+        return deepcopy(expected_certificate_census)
+
+    def sanitized_environment() -> dict[str, str]:
+        environment = {
+            key: value
+            for key, value in source_environment.items()
+            if not key.startswith("GIT_")
+        }
+        environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+        return environment
+
+    def run_git(*arguments: str) -> subprocess.CompletedProcess[bytes]:
+        return subprocess_run(
+            ["git", "--no-replace-objects", *arguments],
+            cwd=root,
+            check=False,
+            capture_output=True,
+            env=sanitized_environment(),
+        )
+
+    def verify_publisher_implementation_pin() -> Path:
+        """Authenticate the publisher path against the enacted A15 pin."""
+
+        pins = deepcopy(enacted_implementation_pins)
+        require_exact_keys(
+            pins,
+            frozenset({"files", "mode"}),
+            "Amendment-15 implementation pins",
+        )
+        require(
+            pins["mode"] == "100644"
+            and isinstance(pins["files"], list)
+            and tuple(row["path"] for row in pins["files"])
+            == expected_pin_paths,
+            "Amendment-15 implementation pin domain drift",
+        )
+        row = pins["files"][2]
+        require_exact_keys(
+            row,
+            frozenset({"blob_oid", "byte_size", "path", "sha256"}),
+            "Amendment-15 publisher implementation pin",
+        )
+        require(
+            row["path"] == publisher_relative_path
+            and type(row["byte_size"]) is int
+            and row["byte_size"] > 0
+            and type(row["blob_oid"]) is str
+            and len(row["blob_oid"]) == 40
+            and all(
+                character in "0123456789abcdef"
+                for character in row["blob_oid"]
+            )
+            and type(row["sha256"]) is str
+            and len(row["sha256"]) == 64
+            and all(
+                character in "0123456789abcdef" for character in row["sha256"]
+            ),
+            "Amendment-15 publisher implementation pin is malformed",
+        )
+        require(
+            publisher_path.is_file() and not publisher_path.is_symlink(),
+            "Amendment-15 publisher path is not a regular file",
+        )
+        worktree_raw = publisher_path.read_bytes()
+        require(
+            len(worktree_raw) == row["byte_size"]
+            and sha256(worktree_raw).hexdigest() == row["sha256"]
+            and git_blob_oid(worktree_raw) == row["blob_oid"],
+            "Amendment-15 publisher implementation pin mismatch",
+        )
+        tree = run_git("ls-tree", "HEAD", "--", publisher_relative_path)
+        require(
+            tree.returncode == 0
+            and tree.stderr == b""
+            and tree.stdout
+            == (
+                f"100644 blob {row['blob_oid']}\t{publisher_relative_path}\n"
+            ).encode("ascii"),
+            "Amendment-15 publisher HEAD tree-entry pin drift",
+        )
+        head = run_git("show", f"HEAD:{publisher_relative_path}")
+        require(
+            head.returncode == 0
+            and head.stderr == b""
+            and head.stdout == worktree_raw,
+            "Amendment-15 publisher working-tree/HEAD byte drift",
+        )
+        return publisher_path
+
+    def run_complete_mutation_census() -> dict[str, Any]:
+        """Run pin-verified bytes in a fresh isolated Python interpreter."""
+
+        verified_path = verify_publisher_implementation_pin()
+        result = subprocess_run(
+            [
+                python_executable,
+                "-I",
+                "-B",
+                str(verified_path),
+                child_flag,
+            ],
+            cwd=root,
+            check=False,
+            capture_output=True,
+            env=sanitized_environment(),
+        )
+        require(
+            result.returncode == 0 and result.stderr == b"",
+            "fresh-interpreter complete mutation census execution failed",
+        )
+        return authenticate_complete_mutation_census_bytes(result.stdout)
+
+    return (
+        execute_complete_mutation_names,
+        compose_complete_mutation_census,
+        emit_complete_mutation_census_bytes,
+        authenticate_complete_mutation_census_bytes,
+        verify_publisher_implementation_pin,
+        run_complete_mutation_census,
+    )
+
+
+(
+    _execute_complete_mutation_names,
+    _compose_complete_mutation_census,
+    _emit_complete_mutation_census_bytes,
+    _authenticate_complete_mutation_census_bytes,
+    _verify_publisher_implementation_pin,
+    run_complete_mutation_census,
+) = _create_complete_mutation_census_protocol()
+del _create_complete_mutation_census_protocol
+
+
+def _create_tier2_certification_contract_validator() -> (
+    Callable[[Mapping[str, Any]], None]
+):
+    """Close the remaining in-process certificate graph at definition time."""
+
+    publication_error = PublicationError
+    execute_authenticated_census = run_complete_mutation_census
+    json_dumps = json.dumps
+    sha256 = hashlib.sha256
+    top_level_keys = frozenset(CERTIFICATION_TOP_LEVEL_KEYS)
+    schema_version = CERTIFICATION_SCHEMA_VERSION
+    artifact_role = CERTIFICATION_ARTIFACT_ROLE
+    certification_status = CERTIFICATION_STATUS
+    ratification_keys = frozenset(CERTIFICATION_RATIFICATION_KEYS)
+    source_keys = frozenset(CERTIFICATION_SOURCE_BUILD_KEYS)
+    source_constants = copy.deepcopy(CERTIFICATION_SOURCE_COUNTS_AND_DOMAINS)
+    member_keys = frozenset(CERTIFICATION_MEMBER_KEYS)
+    reconstruction_keys = frozenset(CERTIFICATION_RECONSTRUCTION_KEYS)
+    reconstruction_policy = CERTIFICATION_RECONSTRUCTION_DEPENDENCY_POLICY
+    reconstruction_ids = tuple(CERTIFICATION_RECONSTRUCTION_IDS)
+    reconstruction_paths = tuple(CERTIFICATION_RECONSTRUCTION_PATHS)
+    gate_ids = tuple(CERTIFICATION_GATE_IDS)
+    git_attestation = copy.deepcopy(CERTIFICATION_GIT_ATTESTATION)
+    lifecycle_constant = copy.deepcopy(CERTIFICATION_LIFECYCLE)
+    census_status = MUTATION_CENSUS_STATUS
+    expected_census = copy.deepcopy(_expected_mutation_census())
+    artifact_id_prefix = CERTIFICATION_ARTIFACT_ID_PREFIX
+
+    def require(condition: bool, message: str) -> None:
+        if not condition:
+            raise publication_error(message)
+
+    def require_exact_keys(
+        value: Mapping[str, Any], expected: frozenset[str], label: str
+    ) -> None:
+        require(isinstance(value, Mapping), f"{label} is not an object")
+        actual = frozenset(value)
+        require(
+            actual == expected,
+            f"{label} keyset drift; missing={sorted(expected - actual)!r}, "
+            f"extra={sorted(actual - expected)!r}",
+        )
+
+    def is_lower_hex(value: Any, length: int) -> bool:
+        return (
+            type(value) is str
+            and len(value) == length
+            and all(character in "0123456789abcdef" for character in value)
+        )
+
+    def canonical_json_bytes(value: Any) -> bytes:
+        try:
+            text = json_dumps(
+                value,
+                allow_nan=False,
+                ensure_ascii=True,
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+        except (TypeError, ValueError) as error:
+            raise publication_error(
+                "tier-2 certification contains noncanonical JSON values"
+            ) from error
+        return text.encode("ascii") + b"\n"
+
+    def payload_sha256(value: Mapping[str, Any]) -> str:
+        payload = {
+            key: value[key]
+            for key in value
+            if key not in {"artifact_id", "integrity"}
+        }
+        return sha256(canonical_json_bytes(payload)).hexdigest()
+
+    def validate_top_level(value: Mapping[str, Any]) -> None:
+        require_exact_keys(value, top_level_keys, "tier-2 certification")
+        require(
+            value["schema_version"] == schema_version
+            and value["artifact_role"] == artifact_role
+            and value["status"] == certification_status,
+            "tier-2 certification fixed code drift",
+        )
+
+    def validate_ratification(ratification: Mapping[str, Any]) -> None:
+        require_exact_keys(
+            ratification,
+            ratification_keys,
+            "tier-2 certification ratification binding",
+        )
+        require(
+            type(ratification["amendment_number"]) is int
+            and ratification["amendment_number"] == 15
+            and type(ratification["design_revision"]) is int
+            and ratification["design_revision"] == 17
+            and ratification["design_path"]
+            == "docs/design/covered_earnings_correction.md"
+            and ratification["closure_path"]
+            == "docs/analysis/amendment_15_ratification/closure_v1.json"
+            and type(ratification["closure_byte_size"]) is int
+            and ratification["closure_byte_size"] > 0
+            and type(ratification["design_byte_size"]) is int
+            and ratification["design_byte_size"] > 3_836_294
+            and is_lower_hex(ratification["closure_raw_sha256"], 64)
+            and is_lower_hex(ratification["design_blob_oid"], 40)
+            and is_lower_hex(ratification["design_raw_sha256"], 64)
+            and is_lower_hex(ratification["ratification_commit"], 40)
+            and is_lower_hex(
+                ratification["ratification_commit_sole_parent"], 40
+            ),
+            "tier-2 certification ratification binding drift",
+        )
+
+    def validate_source(source: Mapping[str, Any]) -> None:
+        require_exact_keys(
+            source,
+            source_keys,
+            "tier-2 certification source build identity",
+        )
+        require(
+            type(source["questionnaire_document_count"]) is int
+            and type(source["source_document_count"]) is int
+            and all(
+                source[key] == expected
+                for key, expected in source_constants.items()
+            )
+            and is_lower_hex(source["tier2_build_input_domain_sha256"], 64),
+            "tier-2 certification source build identity drift",
+        )
+
+    def validate_member(member: Mapping[str, Any]) -> None:
+        require_exact_keys(
+            member,
+            member_keys,
+            "tier-2 certification member identity",
+        )
+        require(
+            member["authority_kind"]
+            == "prospective_g17_c01_source_member_pre_q5"
+            and member["canonicalization"]
+            == "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+            and member["member_name"] == "hierarchy_annotation_authority"
+            and member["status"] == "pass"
+            and type(member["canonical_byte_size"]) is int
+            and member["canonical_byte_size"] > 0
+            and is_lower_hex(member["raw_sha256"], 64),
+            "tier-2 certification member identity drift",
+        )
+
+    def validate_reconstructions(
+        rows: Sequence[Mapping[str, Any]],
+        member: Mapping[str, Any],
+        source: Mapping[str, Any],
+    ) -> None:
+        require(
+            isinstance(rows, list) and len(rows) == 2,
+            "tier-2 certification requires exactly two reconstructions",
+        )
+        for row in rows:
+            require_exact_keys(
+                row,
+                reconstruction_keys,
+                "tier-2 certification reconstruction row",
+            )
+            require(
+                row["implementation_mode"] == "100644"
+                and row["implementation_dependency_paths"]
+                == [row["implementation_path"]]
+                and row["implementation_dependency_policy"]
+                == reconstruction_policy
+                and row["status"] == "pass_independent_source_reconstruction"
+                and type(row["implementation_byte_size"]) is int
+                and row["implementation_byte_size"] > 0
+                and type(row["member_canonical_byte_size"]) is int
+                and row["member_canonical_byte_size"] > 0
+                and is_lower_hex(row["implementation_blob_oid"], 40)
+                and is_lower_hex(row["implementation_raw_sha256"], 64),
+                "tier-2 certification reconstruction implementation drift",
+            )
+        require(
+            tuple(row["reconstruction_id"] for row in rows)
+            == reconstruction_ids
+            and tuple(row["implementation_path"] for row in rows)
+            == reconstruction_paths
+            and len({row["implementation_blob_oid"] for row in rows}) == 2
+            and len({row["implementation_raw_sha256"] for row in rows}) == 2,
+            "tier-2 certification referee implementations are not distinct",
+        )
+        require(
+            all(
+                row["member_canonical_byte_size"]
+                == member["canonical_byte_size"]
+                and row["member_raw_sha256"] == member["raw_sha256"]
+                and row["tier2_build_input_domain_sha256"]
+                == source["tier2_build_input_domain_sha256"]
+                for row in rows
+            ),
+            "tier-2 certification reconstruction disagreement",
+        )
+
+    def validate_gates(gates: Sequence[Mapping[str, Any]]) -> None:
+        require(
+            isinstance(gates, list)
+            and all(isinstance(row, Mapping) for row in gates)
+            and [row.get("gate_id") for row in gates] == list(gate_ids),
+            "tier-2 certification gate domain or order drift",
+        )
+        for row in gates:
+            require(
+                frozenset(row) == frozenset({"gate_id", "status"})
+                and row["status"] == "pass",
+                "tier-2 certification gate result drift",
+            )
+
+    def validate_mutation_census(
+        mutation: Mapping[str, Any],
+        executed_census: Mapping[str, Any],
+    ) -> None:
+        require_exact_keys(
+            mutation,
+            frozenset(
+                {
+                    "components",
+                    "expected_count",
+                    "expected_domain_sha256",
+                    "rejected_count",
+                    "rejected_domain_sha256",
+                    "status",
+                }
+            ),
+            "tier-2 certification mutation census",
+        )
+        components = mutation["components"]
+        require(
+            isinstance(components, list) and len(components) == 3,
+            "tier-2 certification mutation component domain drift",
+        )
+        component_keys = frozenset(
+            {
+                "component_id",
+                "expected_count",
+                "expected_domain_sha256",
+                "rejected_count",
+                "rejected_domain_sha256",
+                "status",
+            }
+        )
+        for component in components:
+            require_exact_keys(
+                component,
+                component_keys,
+                "tier-2 certification mutation component",
+            )
+            require(
+                type(component["expected_count"]) is int
+                and type(component["rejected_count"]) is int
+                and is_lower_hex(component["expected_domain_sha256"], 64)
+                and is_lower_hex(component["rejected_domain_sha256"], 64)
+                and component["status"] == census_status,
+                "tier-2 certification mutation component value drift",
+            )
+        require(
+            type(mutation["expected_count"]) is int
+            and type(mutation["rejected_count"]) is int
+            and is_lower_hex(mutation["expected_domain_sha256"], 64)
+            and is_lower_hex(mutation["rejected_domain_sha256"], 64)
+            and mutation["status"] == census_status,
+            "tier-2 certification aggregate mutation census value drift",
+        )
+        require(
+            mutation == executed_census and mutation == expected_census,
+            "tier-2 certification execution-derived mutation census drift",
+        )
+
+    def validate_integrity(value: Mapping[str, Any]) -> None:
+        integrity = value["integrity"]
+        require(
+            isinstance(integrity, Mapping)
+            and frozenset(integrity)
+            == frozenset({"canonicalization", "payload_sha256"})
+            and integrity["canonicalization"]
+            == "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+            and is_lower_hex(integrity["payload_sha256"], 64),
+            "tier-2 certification integrity drift",
+        )
+        digest = payload_sha256(value)
+        require(
+            integrity["payload_sha256"] == digest
+            and value["artifact_id"] == artifact_id_prefix + digest,
+            "tier-2 certification raw-byte payload attestation drift",
+        )
+
+    def validate_tier2_certification_contract(
+        value: Mapping[str, Any],
+    ) -> None:
+        """Execute the child census, then apply the closed predicate graph."""
+
+        executed_census = execute_authenticated_census()
+        validate_top_level(value)
+        validate_ratification(value["ratification_binding"])
+        validate_source(value["source_build_identity"])
+        validate_member(value["source_hierarchy_member_identity"])
+        validate_reconstructions(
+            value["reconstruction_rows"],
+            value["source_hierarchy_member_identity"],
+            value["source_build_identity"],
+        )
+        validate_gates(value["gate_results"])
+        require(
+            value["git_order_attestation"] == git_attestation,
+            "tier-2 certification Git-order attestation drift",
+        )
+        lifecycle = value["lifecycle"]
+        lifecycle_boolean_keys = {
+            key
+            for key, expected in lifecycle_constant.items()
+            if type(expected) is bool
+        }
+        require(
+            isinstance(lifecycle, Mapping)
+            and all(
+                type(lifecycle.get(key)) is bool
+                for key in lifecycle_boolean_keys
+            )
+            and type(lifecycle.get("next_required_gate")) is str
+            and lifecycle == lifecycle_constant,
+            "tier-2 certification forbidden emission or lifecycle drift",
+        )
+        validate_mutation_census(value["mutation_census"], executed_census)
+        validate_integrity(value)
+
+    return validate_tier2_certification_contract
+
+
+validate_tier2_certification_contract = (
+    _create_tier2_certification_contract_validator()
+)
+del _create_tier2_certification_contract_validator
 
 
 def validate_ceremony_merge_mode(
@@ -2311,6 +3025,11 @@ def validate_git_publication_order(
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        COMPLETE_MUTATION_CENSUS_CHILD_FLAG,
+        action="store_true",
+        help="emit only the canonical complete-mutation census child result",
+    )
+    parser.add_argument(
         "--artifacts",
         choices=ARTIFACT_SELECTIONS,
         default="all",
@@ -2344,6 +3063,16 @@ def main(arguments: Sequence[str] | None = None) -> int:
         parser.error("--require-committed requires the repository output root")
 
     try:
+        if options.emit_complete_mutation_census:
+            _require(
+                not options.check
+                and not options.require_committed
+                and options.artifacts == "all"
+                and is_repository_publication,
+                "complete-mutation census mode accepts no publication options",
+            )
+            sys.stdout.buffer.write(_emit_complete_mutation_census_bytes())
+            return 0
         law, expected_values = build_artifact_values()
         required = "none"
         if options.require_committed:
