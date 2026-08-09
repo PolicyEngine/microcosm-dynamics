@@ -1119,9 +1119,12 @@ def test__certification_bound_predicates__reject_prepared_attacks():
             "raw-byte payload attestation",
         ),
     ):
-        prepared_arguments = prepare()
-        with pytest.raises(publisher.PublicationError, match=message):
-            gate(*prepared_arguments)
+        preparation = prepare()
+        try:
+            with pytest.raises(publisher.PublicationError, match=message):
+                gate(*preparation.arguments)
+        finally:
+            preparation.contexts.close()
 
 
 def test__amendment15_named_runner__executes_all_bound_attacks():
@@ -1137,7 +1140,7 @@ def test__amendment15_mutation_executor__calls_the_bound_gate():
 
     def prepare():
         events.append(("prepare", None))
-        return (prepared,)
+        return publisher._activate_mutation_preparation((prepared,))
 
     def gate(value):
         events.append(("gate", value))
@@ -1180,6 +1183,112 @@ def test__amendment15_mutation_executor__does_not_count_setup_rejection():
 
 
 @pytest.mark.parametrize(
+    ("mutation_name", "patch_attribute"),
+    (
+        (
+            "ordered_history_attestation_order_forged",
+            "_is_strict_ancestor",
+        ),
+        (
+            "ordered_history_archive_ref_absent_or_unfetchable",
+            "_run_git",
+        ),
+    ),
+)
+def test__amendment15_real_binding__does_not_count_patch_entry_rejection(
+    monkeypatch,
+    mutation_name,
+    patch_attribute,
+):
+    binding = next(
+        row
+        for row in publisher.A15_MUTATION_BINDINGS
+        if row.name == mutation_name
+    )
+    validator_calls = []
+
+    class RejectDuringEntry:
+        def __enter__(self):
+            raise binding.expected_exception(binding.expected_message)
+
+        def __exit__(self, *_):
+            raise AssertionError("failed context entry must not be torn down")
+
+    def rejecting_patch(target, attribute, *_args, **_kwargs):
+        assert target is publisher
+        assert attribute == patch_attribute
+        return RejectDuringEntry()
+
+    def validator():
+        validator_calls.append(True)
+        raise AssertionError("setup failure reached the operative validator")
+
+    monkeypatch.setattr(publisher.mock.patch, "object", rejecting_patch)
+    monkeypatch.setattr(
+        publisher,
+        "validate_ordered_ceremony_attestation",
+        validator,
+    )
+
+    with pytest.raises(publisher.PublicationError, match="setup failed"):
+        publisher._execute_amendment15_mutation(binding)
+    assert validator_calls == []
+
+
+@pytest.mark.parametrize(
+    ("mutation_name", "patch_attribute"),
+    (
+        (
+            "ordered_history_attestation_order_forged",
+            "_is_strict_ancestor",
+        ),
+        (
+            "ordered_history_archive_ref_absent_or_unfetchable",
+            "_run_git",
+        ),
+    ),
+)
+def test__amendment15_real_binding__does_not_count_patch_teardown_rejection(
+    monkeypatch,
+    mutation_name,
+    patch_attribute,
+):
+    binding = next(
+        row
+        for row in publisher.A15_MUTATION_BINDINGS
+        if row.name == mutation_name
+    )
+    validator_calls = []
+
+    class RejectDuringTeardown:
+        def __enter__(self):
+            return None
+
+        def __exit__(self, *_):
+            raise binding.expected_exception(binding.expected_message)
+
+    def rejecting_patch(target, attribute, *_args, **_kwargs):
+        assert target is publisher
+        assert attribute == patch_attribute
+        return RejectDuringTeardown()
+
+    def validator():
+        validator_calls.append(mutation_name)
+        raise binding.expected_exception(binding.expected_message)
+
+    monkeypatch.setattr(publisher.mock.patch, "object", rejecting_patch)
+    monkeypatch.setattr(
+        publisher,
+        "validate_ordered_ceremony_attestation",
+        validator,
+    )
+
+    with pytest.raises(publisher.PublicationError, match="teardown failed"):
+        publisher._execute_amendment15_mutation(binding)
+    assert validator_calls == [mutation_name]
+
+
+@pytest.mark.parametrize(
     ("fault", "error_pattern"),
     (
         ("non_rejection", "survived bound gate"),
@@ -1208,7 +1317,10 @@ def test__amendment15_mutation_executor__fails_closed_on_gate_result(
 
     binding = publisher.MutationBinding(
         "synthetic_private_mutation",
-        functools.partial(_return_value, (object(),)),
+        functools.partial(
+            publisher._activate_mutation_preparation,
+            (object(),),
+        ),
         gate,
         publisher.PublicationError,
         "intended rejection",

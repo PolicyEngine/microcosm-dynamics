@@ -18,6 +18,7 @@ import subprocess
 import sys
 from collections import Counter
 from collections.abc import Callable, Mapping, Sequence
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Any, NamedTuple
 from unittest import mock
@@ -221,10 +222,17 @@ class MutationBinding(NamedTuple):
     """Bind one named attack to its exact rejecting gate and error."""
 
     name: str
-    prepare: Callable[[], tuple[Any, ...]]
+    prepare: Callable[[], MutationPreparation]
     gate: Callable[..., Any]
     expected_exception: type[Exception]
     expected_message: str
+
+
+class MutationPreparation(NamedTuple):
+    """Hold bound gate arguments and already-entered mutation contexts."""
+
+    arguments: tuple[Any, ...]
+    contexts: ExitStack
 
 
 CERTIFICATION_SCHEMA_VERSION = (
@@ -600,103 +608,46 @@ def _build_a15_attack_certificate_candidate() -> dict[str, Any]:
     return value
 
 
-def _prepare_attestation_identity_mutation() -> tuple[dict[str, Any]]:
+def _activate_mutation_preparation(
+    arguments: tuple[Any, ...],
+    *contexts: Any,
+) -> MutationPreparation:
+    """Enter every fault-injection context before the rejection catcher."""
+
+    stack = ExitStack()
+    try:
+        for context in contexts:
+            stack.enter_context(context)
+    except Exception:
+        stack.close()
+        raise
+    return MutationPreparation(arguments, stack)
+
+
+def _prepare_attestation_identity_mutation() -> MutationPreparation:
     candidate = copy.deepcopy(ORDERED_CEREMONY_ATTESTATION)
     candidate["stages"][1]["commit"] = TIER2_SQUASH_COMMIT
-    return (candidate,)
+    return _activate_mutation_preparation((candidate,))
 
 
-def _prepare_attestation_order_mutation() -> tuple[None]:
-    return (None,)
+def _prepare_attestation_order_mutation() -> MutationPreparation:
+    return _activate_mutation_preparation(
+        (),
+        mock.patch.object(
+            sys.modules[__name__],
+            "_is_strict_ancestor",
+            return_value=False,
+        ),
+    )
 
 
-def _prepare_attestation_tree_mutation() -> tuple[dict[str, Any]]:
+def _prepare_attestation_tree_mutation() -> MutationPreparation:
     candidate = copy.deepcopy(ORDERED_CEREMONY_ATTESTATION)
     candidate["tree_oid"] = "0" * 40
-    return (candidate,)
+    return _activate_mutation_preparation((candidate,))
 
 
-def _prepare_absent_archive_mutation() -> tuple[None]:
-    return (None,)
-
-
-def _prepare_exception_reuse_mutation() -> tuple[Path, str, dict[str, Any]]:
-    return (
-        Path("scripts/build_amendment13_tier2_repairs.py"),
-        TIER2_SQUASH_COMMIT,
-        {
-            "stage_commits": {
-                stage["role"]: stage["commit"]
-                for stage in ORDERED_CEREMONY_ATTESTATION["stages"]
-            }
-        },
-    )
-
-
-def _prepare_schema_keyset_mutation() -> tuple[dict[str, Any]]:
-    candidate = _build_a15_attack_certificate_candidate()
-    candidate.pop("status")
-    return (candidate,)
-
-
-def _prepare_reconstruction_disagreement_mutation() -> tuple[Any, ...]:
-    candidate = _build_a15_attack_certificate_candidate()
-    candidate["reconstruction_rows"][1]["member_raw_sha256"] = "a" * 64
-    _repin_synthetic_certification(candidate)
-    return (
-        candidate["reconstruction_rows"],
-        candidate["source_hierarchy_member_identity"],
-        candidate["source_build_identity"],
-    )
-
-
-def _prepare_reused_referee_mutation() -> tuple[Any, ...]:
-    candidate = _build_a15_attack_certificate_candidate()
-    left, right = candidate["reconstruction_rows"]
-    right["implementation_blob_oid"] = left["implementation_blob_oid"]
-    right["implementation_raw_sha256"] = left["implementation_raw_sha256"]
-    _repin_synthetic_certification(candidate)
-    return (
-        candidate["reconstruction_rows"],
-        candidate["source_hierarchy_member_identity"],
-        candidate["source_build_identity"],
-    )
-
-
-def _prepare_forbidden_emission_mutation() -> tuple[Mapping[str, Any]]:
-    candidate = _build_a15_attack_certificate_candidate()
-    candidate["lifecycle"]["authority_emitted"] = True
-    _repin_synthetic_certification(candidate)
-    return (candidate["lifecycle"],)
-
-
-def _prepare_raw_attestation_mutation() -> tuple[dict[str, Any]]:
-    candidate = _build_a15_attack_certificate_candidate()
-    candidate["artifact_id"] = CERTIFICATION_ARTIFACT_ID_PREFIX + "f" * 64
-    return (candidate,)
-
-
-def _prepare_topology_squash_mutation() -> tuple[list[str], str]:
-    return ["first_or_last_add_identity"], "squash"
-
-
-def _gate_ordered_attestation(candidate: Mapping[str, Any]) -> None:
-    _validate_ordered_ceremony_attestation(
-        repo_root=ROOT,
-        attestation=candidate,
-    )
-
-
-def _gate_ordered_attestation_order(_: None) -> None:
-    with mock.patch.object(
-        sys.modules[__name__],
-        "_is_strict_ancestor",
-        return_value=False,
-    ):
-        validate_ordered_ceremony_attestation()
-
-
-def _gate_absent_archive_ref(_: None) -> None:
+def _prepare_absent_archive_mutation() -> MutationPreparation:
     original = _run_git
 
     def absent_ref(repo_root: Path, *arguments: str):
@@ -709,8 +660,93 @@ def _gate_absent_archive_ref(_: None) -> None:
             )
         return original(repo_root, *arguments)
 
-    with mock.patch.object(sys.modules[__name__], "_run_git", absent_ref):
-        validate_ordered_ceremony_attestation()
+    return _activate_mutation_preparation(
+        (),
+        mock.patch.object(sys.modules[__name__], "_run_git", absent_ref),
+    )
+
+
+def _prepare_exception_reuse_mutation() -> MutationPreparation:
+    return _activate_mutation_preparation(
+        (
+            Path("scripts/build_amendment13_tier2_repairs.py"),
+            TIER2_SQUASH_COMMIT,
+            {
+                "stage_commits": {
+                    stage["role"]: stage["commit"]
+                    for stage in ORDERED_CEREMONY_ATTESTATION["stages"]
+                }
+            },
+        )
+    )
+
+
+def _prepare_schema_keyset_mutation() -> MutationPreparation:
+    candidate = _build_a15_attack_certificate_candidate()
+    candidate.pop("status")
+    return _activate_mutation_preparation((candidate,))
+
+
+def _prepare_reconstruction_disagreement_mutation() -> MutationPreparation:
+    candidate = _build_a15_attack_certificate_candidate()
+    candidate["reconstruction_rows"][1]["member_raw_sha256"] = "a" * 64
+    _repin_synthetic_certification(candidate)
+    return _activate_mutation_preparation(
+        (
+            candidate["reconstruction_rows"],
+            candidate["source_hierarchy_member_identity"],
+            candidate["source_build_identity"],
+        )
+    )
+
+
+def _prepare_reused_referee_mutation() -> MutationPreparation:
+    candidate = _build_a15_attack_certificate_candidate()
+    left, right = candidate["reconstruction_rows"]
+    right["implementation_blob_oid"] = left["implementation_blob_oid"]
+    right["implementation_raw_sha256"] = left["implementation_raw_sha256"]
+    _repin_synthetic_certification(candidate)
+    return _activate_mutation_preparation(
+        (
+            candidate["reconstruction_rows"],
+            candidate["source_hierarchy_member_identity"],
+            candidate["source_build_identity"],
+        )
+    )
+
+
+def _prepare_forbidden_emission_mutation() -> MutationPreparation:
+    candidate = _build_a15_attack_certificate_candidate()
+    candidate["lifecycle"]["authority_emitted"] = True
+    _repin_synthetic_certification(candidate)
+    return _activate_mutation_preparation((candidate["lifecycle"],))
+
+
+def _prepare_raw_attestation_mutation() -> MutationPreparation:
+    candidate = _build_a15_attack_certificate_candidate()
+    candidate["artifact_id"] = CERTIFICATION_ARTIFACT_ID_PREFIX + "f" * 64
+    return _activate_mutation_preparation((candidate,))
+
+
+def _prepare_topology_squash_mutation() -> MutationPreparation:
+    return _activate_mutation_preparation(
+        (["first_or_last_add_identity"], "squash")
+    )
+
+
+def _gate_ordered_attestation(candidate: Mapping[str, Any]) -> None:
+    _validate_ordered_ceremony_attestation(
+        repo_root=ROOT,
+        attestation=candidate,
+    )
+
+
+def _gate_ordered_attestation_order() -> None:
+    validate_ordered_ceremony_attestation()
+
+
+def _gate_absent_archive_ref() -> None:
+    validate_ordered_ceremony_attestation()
 
 
 def _gate_first_add_exception_reuse(
@@ -742,23 +778,42 @@ def _execute_amendment15_mutation(binding: MutationBinding) -> str:
             f"{binding.name}: {type(error).__name__}: {error}"
         ) from error
 
+    expected_error = None
+    wrong_error = None
     try:
-        binding.gate(*prepared)
-    except binding.expected_exception as error:
-        _require(
-            binding.expected_message in str(error),
-            f"mutation {binding.name} hit wrong bound gate "
-            f"{binding.gate.__name__}: {error}",
-        )
-        return binding.name
-    except Exception as error:
+        try:
+            binding.gate(*prepared.arguments)
+        except binding.expected_exception as error:
+            expected_error = error
+        except Exception as error:
+            wrong_error = error
+    finally:
+        try:
+            prepared.contexts.close()
+        except Exception as error:
+            raise PublicationError(
+                f"mutation teardown failed after bound gate "
+                f"{binding.gate.__name__}: {binding.name}: "
+                f"{type(error).__name__}: {error}"
+            ) from error
+
+    if wrong_error is not None:
         raise PublicationError(
             f"mutation {binding.name} raised wrong exception at bound gate "
-            f"{binding.gate.__name__}: {type(error).__name__}: {error}"
-        ) from error
-    raise PublicationError(
-        f"mutation survived bound gate {binding.gate.__name__}: {binding.name}"
+            f"{binding.gate.__name__}: {type(wrong_error).__name__}: "
+            f"{wrong_error}"
+        ) from wrong_error
+    if expected_error is None:
+        raise PublicationError(
+            f"mutation survived bound gate {binding.gate.__name__}: "
+            f"{binding.name}"
+        )
+    _require(
+        binding.expected_message in str(expected_error),
+        f"mutation {binding.name} hit wrong bound gate "
+        f"{binding.gate.__name__}: {expected_error}",
     )
+    return binding.name
 
 
 def _run_amendment15_mutation_bindings(
