@@ -53796,11 +53796,40 @@ source hierarchy authority itself.
 
 #### 29.4.7 Integrity and complete raw-byte attestation
 
-`mutation_census` has exactly `expected_count`,
+`mutation_census` has exactly `components`, `expected_count`,
 `expected_domain_sha256`, `rejected_count`, `rejected_domain_sha256`, and
-`status`. Both counts are integer `11`; both digests are
-`285f4f349d27099b64053f88f5292890392fd547643b083410c30f0c5b93b1c8`;
-and status is `pass_all_expected_mutations_rejected`.
+`status`. `components` is an ordered three-member array. Each member has
+exactly `component_id`, `expected_count`, `expected_domain_sha256`,
+`rejected_count`, `rejected_domain_sha256`, and `status`, with these exact
+values:
+
+| `component_id` | Expected/rejected count | Expected/rejected domain SHA-256 |
+|---|---:|---|
+| `amendment_12_historical` | 71 / 71 | `89ff204fad60051c82ea2b3a9e1c95243a5576ae720ecaad1a97174fb71871c8` |
+| `amendments_13_14_inherited` | 18 / 18 | `03495fb62524cc9b5877fd7baf085b9d69a441a4fcbadc9cf1a29ee35d2f06d3` |
+| `amendment_15` | 11 / 11 | `285f4f349d27099b64053f88f5292890392fd547643b083410c30f0c5b93b1c8` |
+
+Every component count is an integer, and every component status is
+`pass_all_expected_mutations_rejected`. The enclosing expected and rejected
+counts are both integer `100`; both enclosing digests are
+`fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3`;
+and the enclosing status is `pass_all_expected_mutations_rejected`. The
+aggregate ordered name array is exactly the three executable component
+outputs concatenated in the displayed component order and hashed under
+§29.4.1's canonicalization.
+
+The public validator derives these values through
+`run_complete_mutation_census()`. That operation invokes the executable
+Amendment-12 71-mutation runner, then the Amendment-13 seven-mutation and
+Amendment-14 eleven-mutation runners, and then the exact named Amendment-15
+11-mutation runner `run_amendment15_mutation_tests()`. It may not substitute
+expected-name constants or a caller-supplied census for any execution. A
+runner appends a mutation name only after that mutation independently raises
+its bound intended exception class at its bound gate and satisfies its
+intended-message predicate. A missing, extra, duplicate, renamed, reordered,
+non-rejecting, wrong-class, wrong-message, or wrong-gate mutation, or any
+component/aggregate count, domain, order, digest, or status disagreement,
+aborts.
 
 `integrity` has exactly `canonicalization` and `payload_sha256`. Its
 canonicalization is §29.4.1's exact code. The payload preimage is the complete
@@ -53857,7 +53886,7 @@ path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `4c5c250601ac053a8415a4dd1f6a58be7a737e46` | 236886 | `f828930cbcb7f49a5ae2c346310ff60c5a247edca44040bf277ae421f4467cdd` |
+| `scripts/validate_amendment13_execution_law.py` | `d42d5ca9586b8c686b5a0c818e5ee21e7570a861` | 236904 | `88c7999afd6403e73e8d72585d42c5019725154466377e98ba028fe0e6906ed3` |
 | `tests/test_validate_amendment13_execution_law.py` | `7797837f76e3c185d40ec6cc90f0c2e75bcd7504` | 23520 | `bdf1b86acdad3dd3dada03e71eb426fca4b297e541f7ef9170420ee846c88f3b` |
 
 For each row, the validator requires exact path, mode, working-tree/`HEAD`

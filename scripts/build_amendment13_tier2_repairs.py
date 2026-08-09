@@ -10,6 +10,7 @@ certification, Q5 input, or production output.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -18,7 +19,8 @@ import sys
 from collections import Counter
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -199,6 +201,98 @@ A15_EXPECTED_MUTATIONS = (
 )
 A15_MUTATION_DOMAIN_SHA256 = (
     "285f4f349d27099b64053f88f5292890392fd547643b083410c30f0c5b93b1c8"
+)
+A12_MUTATION_COUNT = 71
+A12_MUTATION_DOMAIN_SHA256 = (
+    "89ff204fad60051c82ea2b3a9e1c95243a5576ae720ecaad1a97174fb71871c8"
+)
+A13_A14_MUTATION_COUNT = 18
+A13_A14_MUTATION_DOMAIN_SHA256 = (
+    "03495fb62524cc9b5877fd7baf085b9d69a441a4fcbadc9cf1a29ee35d2f06d3"
+)
+COMPLETE_MUTATION_COUNT = 100
+COMPLETE_MUTATION_DOMAIN_SHA256 = (
+    "fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3"
+)
+MUTATION_CENSUS_STATUS = "pass_all_expected_mutations_rejected"
+
+
+class MutationBinding(NamedTuple):
+    """Bind one named attack to its exact rejecting gate and error."""
+
+    name: str
+    gate: str
+    expected_exception: type[Exception]
+    expected_message: str
+
+
+A15_MUTATION_BINDINGS = (
+    MutationBinding(
+        "ordered_history_attestation_identity_forged",
+        "ordered_ceremony_stage_identity",
+        PublicationError,
+        "overlays commit identity drift",
+    ),
+    MutationBinding(
+        "ordered_history_attestation_order_forged",
+        "ordered_ceremony_strict_ancestor_chain",
+        PublicationError,
+        "strict-ancestor chain drift",
+    ),
+    MutationBinding(
+        "ordered_history_attestation_tree_identity_forged",
+        "ordered_ceremony_tree_identity",
+        PublicationError,
+        "tree identity drift",
+    ),
+    MutationBinding(
+        "ordered_history_archive_ref_absent_or_unfetchable",
+        "ordered_ceremony_archive_ref",
+        PublicationError,
+        "archive ref is absent or was not fetched",
+    ),
+    MutationBinding(
+        "ordered_history_first_add_exception_reused",
+        "ordered_ceremony_first_add_exception_scope",
+        PublicationError,
+        "cannot reuse the tier-2 squash exception",
+    ),
+    MutationBinding(
+        "tier2_certification_schema_keyset_drift",
+        "tier2_certification_exact_schema",
+        PublicationError,
+        "keyset drift",
+    ),
+    MutationBinding(
+        "tier2_certification_reconstruction_disagreement",
+        "tier2_certification_independent_reconstruction",
+        PublicationError,
+        "reconstruction disagreement",
+    ),
+    MutationBinding(
+        "tier2_certification_referee_implementation_reused",
+        "tier2_certification_distinct_referees",
+        PublicationError,
+        "not distinct",
+    ),
+    MutationBinding(
+        "tier2_certification_forbidden_emission_forged",
+        "tier2_certification_lifecycle_stop",
+        PublicationError,
+        "forbidden emission or lifecycle drift",
+    ),
+    MutationBinding(
+        "tier2_certification_raw_byte_attestation_forged",
+        "tier2_certification_payload_identity",
+        PublicationError,
+        "raw-byte payload attestation drift",
+    ),
+    MutationBinding(
+        "ceremony_topology_bound_squash_selected",
+        "ceremony_merge_mode_topology_classifier",
+        PublicationError,
+        "requires a no-fast-forward merge commit",
+    ),
 )
 
 CERTIFICATION_SCHEMA_VERSION = (
@@ -387,8 +481,479 @@ def _certification_payload_sha256(value: Mapping[str, Any]) -> str:
     return hashlib.sha256(a13.canonical_json_bytes(payload)).hexdigest()
 
 
-def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
-    """Validate Amendment 15's noncertifying schema fixture."""
+def _mutation_domain_sha256(names: Sequence[str]) -> str:
+    """Hash one exact ordered mutation-name array."""
+
+    return hashlib.sha256(a13.canonical_json_bytes(list(names))).hexdigest()
+
+
+def _expected_mutation_census() -> dict[str, Any]:
+    """Return the fixed target census used only as an execution comparator."""
+
+    components = (
+        (
+            "amendment_12_historical",
+            A12_MUTATION_COUNT,
+            A12_MUTATION_DOMAIN_SHA256,
+        ),
+        (
+            "amendments_13_14_inherited",
+            A13_A14_MUTATION_COUNT,
+            A13_A14_MUTATION_DOMAIN_SHA256,
+        ),
+        (
+            "amendment_15",
+            len(A15_EXPECTED_MUTATIONS),
+            A15_MUTATION_DOMAIN_SHA256,
+        ),
+    )
+    return {
+        "components": [
+            {
+                "component_id": component_id,
+                "expected_count": count,
+                "expected_domain_sha256": digest,
+                "rejected_count": count,
+                "rejected_domain_sha256": digest,
+                "status": MUTATION_CENSUS_STATUS,
+            }
+            for component_id, count, digest in components
+        ],
+        "expected_count": COMPLETE_MUTATION_COUNT,
+        "expected_domain_sha256": COMPLETE_MUTATION_DOMAIN_SHA256,
+        "rejected_count": COMPLETE_MUTATION_COUNT,
+        "rejected_domain_sha256": COMPLETE_MUTATION_DOMAIN_SHA256,
+        "status": MUTATION_CENSUS_STATUS,
+    }
+
+
+def _component_mutation_census(
+    component_id: str,
+    rejected_names: Sequence[str],
+    *,
+    expected_count: int,
+    expected_domain_sha256: str,
+) -> dict[str, Any]:
+    """Fail closed unless one runner returned its exact ordered domain."""
+
+    names = tuple(rejected_names)
+    _require(
+        all(isinstance(name, str) and name for name in names),
+        f"{component_id} mutation census contains a non-name",
+    )
+    digest = _mutation_domain_sha256(names)
+    _require(
+        len(names) == expected_count
+        and len(set(names)) == expected_count
+        and digest == expected_domain_sha256,
+        f"{component_id} mutation census drift: count={len(names)}, "
+        f"unique={len(set(names))}, domain={digest}",
+    )
+    return {
+        "component_id": component_id,
+        "expected_count": expected_count,
+        "expected_domain_sha256": expected_domain_sha256,
+        "rejected_count": len(names),
+        "rejected_domain_sha256": digest,
+        "status": MUTATION_CENSUS_STATUS,
+    }
+
+
+def _execute_a12_mutation_tests() -> tuple[str, ...]:
+    """Load, validate, and attack the committed Amendment-12 bundle."""
+
+    bundle = a13.a12.load_committed_bundle()
+    a13.a12.validate_bundle(bundle)
+    return tuple(a13.a12.run_mutation_tests(bundle))
+
+
+def _execute_a13_mutation_tests() -> tuple[str, ...]:
+    law = a13.build_execution_law()
+    a13.validate_execution_law(law)
+    return tuple(a13.run_mutation_tests(law))
+
+
+def _execute_a14_mutation_tests() -> tuple[str, ...]:
+    law = a13.build_execution_law()
+    a13.validate_execution_law(law)
+    return tuple(a13.run_enforcement_mutation_tests(law))
+
+
+def _repin_synthetic_certification(value: dict[str, Any]) -> None:
+    digest = _certification_payload_sha256(value)
+    value["artifact_id"] = CERTIFICATION_ARTIFACT_ID_PREFIX + digest
+    value["integrity"] = {
+        "canonicalization": (
+            "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+        ),
+        "payload_sha256": digest,
+    }
+
+
+def _build_a15_attack_certificate_candidate() -> dict[str, Any]:
+    """Build the nonemitting structural baseline attacked inside the runner."""
+
+    member_sha = "1" * 64
+    input_sha = "2" * 64
+    value: dict[str, Any] = {
+        "artifact_id": "",
+        "artifact_role": CERTIFICATION_ARTIFACT_ROLE,
+        "gate_results": [
+            {"gate_id": gate_id, "status": "pass"}
+            for gate_id in CERTIFICATION_GATE_IDS
+        ],
+        "git_order_attestation": copy.deepcopy(CERTIFICATION_GIT_ATTESTATION),
+        "integrity": {},
+        "lifecycle": copy.deepcopy(CERTIFICATION_LIFECYCLE),
+        "mutation_census": _expected_mutation_census(),
+        "ratification_binding": {
+            "amendment_number": 15,
+            "closure_byte_size": 1_000,
+            "closure_path": (
+                "docs/analysis/amendment_15_ratification/closure_v1.json"
+            ),
+            "closure_raw_sha256": "3" * 64,
+            "design_blob_oid": "4" * 40,
+            "design_byte_size": 4_000_000,
+            "design_path": "docs/design/covered_earnings_correction.md",
+            "design_raw_sha256": "5" * 64,
+            "design_revision": 17,
+            "ratification_commit": "6" * 40,
+            "ratification_commit_sole_parent": "7" * 40,
+        },
+        "reconstruction_rows": [
+            {
+                "implementation_blob_oid": "8" * 40,
+                "implementation_byte_size": 10_000,
+                "implementation_dependency_paths": [
+                    CERTIFICATION_RECONSTRUCTION_PATHS[0]
+                ],
+                "implementation_dependency_policy": (
+                    CERTIFICATION_RECONSTRUCTION_DEPENDENCY_POLICY
+                ),
+                "implementation_mode": "100644",
+                "implementation_path": CERTIFICATION_RECONSTRUCTION_PATHS[0],
+                "implementation_raw_sha256": "8" * 64,
+                "member_canonical_byte_size": 123_456,
+                "member_raw_sha256": member_sha,
+                "reconstruction_id": CERTIFICATION_RECONSTRUCTION_IDS[0],
+                "status": "pass_independent_source_reconstruction",
+                "tier2_build_input_domain_sha256": input_sha,
+            },
+            {
+                "implementation_blob_oid": "9" * 40,
+                "implementation_byte_size": 11_000,
+                "implementation_dependency_paths": [
+                    CERTIFICATION_RECONSTRUCTION_PATHS[1]
+                ],
+                "implementation_dependency_policy": (
+                    CERTIFICATION_RECONSTRUCTION_DEPENDENCY_POLICY
+                ),
+                "implementation_mode": "100644",
+                "implementation_path": CERTIFICATION_RECONSTRUCTION_PATHS[1],
+                "implementation_raw_sha256": "9" * 64,
+                "member_canonical_byte_size": 123_456,
+                "member_raw_sha256": member_sha,
+                "reconstruction_id": CERTIFICATION_RECONSTRUCTION_IDS[1],
+                "status": "pass_independent_source_reconstruction",
+                "tier2_build_input_domain_sha256": input_sha,
+            },
+        ],
+        "schema_version": CERTIFICATION_SCHEMA_VERSION,
+        "source_build_identity": {
+            **CERTIFICATION_SOURCE_COUNTS_AND_DOMAINS,
+            "tier2_build_input_domain_sha256": input_sha,
+        },
+        "source_hierarchy_member_identity": {
+            "authority_kind": "prospective_g17_c01_source_member_pre_q5",
+            "canonical_byte_size": 123_456,
+            "canonicalization": (
+                "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+            ),
+            "member_name": "hierarchy_annotation_authority",
+            "raw_sha256": member_sha,
+            "status": "pass",
+        },
+        "status": CERTIFICATION_STATUS,
+    }
+    _repin_synthetic_certification(value)
+    return value
+
+
+def _default_a15_mutation_actions() -> dict[str, Callable[[], Any]]:
+    """Construct all eleven production attacks in their enacted order."""
+
+    def reject_attestation_identity() -> None:
+        candidate = copy.deepcopy(ORDERED_CEREMONY_ATTESTATION)
+        candidate["stages"][1]["commit"] = TIER2_SQUASH_COMMIT
+        _validate_ordered_ceremony_attestation(
+            repo_root=ROOT,
+            attestation=candidate,
+        )
+
+    def reject_attestation_order() -> None:
+        with mock.patch.object(
+            sys.modules[__name__],
+            "_is_strict_ancestor",
+            return_value=False,
+        ):
+            validate_ordered_ceremony_attestation()
+
+    def reject_attestation_tree() -> None:
+        candidate = copy.deepcopy(ORDERED_CEREMONY_ATTESTATION)
+        candidate["tree_oid"] = "0" * 40
+        _validate_ordered_ceremony_attestation(
+            repo_root=ROOT,
+            attestation=candidate,
+        )
+
+    def reject_absent_archive_ref() -> None:
+        original = _run_git
+
+        def absent_ref(repo_root: Path, *arguments: str):
+            if arguments[:3] == ("show-ref", "--verify", "--hash"):
+                return subprocess.CompletedProcess(
+                    arguments,
+                    1,
+                    stdout=b"",
+                    stderr=b"absent archive ref",
+                )
+            return original(repo_root, *arguments)
+
+        with mock.patch.object(sys.modules[__name__], "_run_git", absent_ref):
+            validate_ordered_ceremony_attestation()
+
+    def reject_exception_reuse() -> None:
+        _attested_order_commit_for_squashed_first_add(
+            Path("scripts/build_amendment13_tier2_repairs.py"),
+            TIER2_SQUASH_COMMIT,
+            {
+                "stage_commits": {
+                    stage["role"]: stage["commit"]
+                    for stage in ORDERED_CEREMONY_ATTESTATION["stages"]
+                }
+            },
+        )
+
+    def reject_schema_keyset() -> None:
+        candidate = _build_a15_attack_certificate_candidate()
+        candidate.pop("status")
+        _validate_tier2_certification_contract(
+            candidate,
+            executed_mutation_census=_expected_mutation_census(),
+        )
+
+    def reject_reconstruction_disagreement() -> None:
+        candidate = _build_a15_attack_certificate_candidate()
+        candidate["reconstruction_rows"][1]["member_raw_sha256"] = "a" * 64
+        _repin_synthetic_certification(candidate)
+        _validate_tier2_certification_contract(
+            candidate,
+            executed_mutation_census=_expected_mutation_census(),
+        )
+
+    def reject_reused_referee() -> None:
+        candidate = _build_a15_attack_certificate_candidate()
+        left, right = candidate["reconstruction_rows"]
+        right["implementation_blob_oid"] = left["implementation_blob_oid"]
+        right["implementation_raw_sha256"] = left["implementation_raw_sha256"]
+        _repin_synthetic_certification(candidate)
+        _validate_tier2_certification_contract(
+            candidate,
+            executed_mutation_census=_expected_mutation_census(),
+        )
+
+    def reject_forbidden_emission() -> None:
+        candidate = _build_a15_attack_certificate_candidate()
+        candidate["lifecycle"]["authority_emitted"] = True
+        _repin_synthetic_certification(candidate)
+        _validate_tier2_certification_contract(
+            candidate,
+            executed_mutation_census=_expected_mutation_census(),
+        )
+
+    def reject_raw_attestation() -> None:
+        candidate = _build_a15_attack_certificate_candidate()
+        candidate["artifact_id"] = CERTIFICATION_ARTIFACT_ID_PREFIX + "f" * 64
+        _validate_tier2_certification_contract(
+            candidate,
+            executed_mutation_census=_expected_mutation_census(),
+        )
+
+    def reject_topology_squash() -> None:
+        validate_ceremony_merge_mode(
+            ["first_or_last_add_identity"],
+            "squash",
+        )
+
+    return {
+        "ordered_history_attestation_identity_forged": (
+            reject_attestation_identity
+        ),
+        "ordered_history_attestation_order_forged": reject_attestation_order,
+        "ordered_history_attestation_tree_identity_forged": (
+            reject_attestation_tree
+        ),
+        "ordered_history_archive_ref_absent_or_unfetchable": (
+            reject_absent_archive_ref
+        ),
+        "ordered_history_first_add_exception_reused": reject_exception_reuse,
+        "tier2_certification_schema_keyset_drift": reject_schema_keyset,
+        "tier2_certification_reconstruction_disagreement": (
+            reject_reconstruction_disagreement
+        ),
+        "tier2_certification_referee_implementation_reused": (
+            reject_reused_referee
+        ),
+        "tier2_certification_forbidden_emission_forged": (
+            reject_forbidden_emission
+        ),
+        "tier2_certification_raw_byte_attestation_forged": (
+            reject_raw_attestation
+        ),
+        "ceremony_topology_bound_squash_selected": reject_topology_squash,
+    }
+
+
+def run_amendment15_mutation_tests(
+    actions: Mapping[str, Callable[[], Any]] | None = None,
+) -> tuple[str, ...]:
+    """Execute each exact A15 attack and append only its intended rejection."""
+
+    selected_actions = (
+        _default_a15_mutation_actions() if actions is None else actions
+    )
+    _require(
+        tuple(selected_actions) == A15_EXPECTED_MUTATIONS,
+        "Amendment-15 mutation action domain or order drift",
+    )
+    rejected: list[str] = []
+    for binding in A15_MUTATION_BINDINGS:
+        action = selected_actions[binding.name]
+        try:
+            action()
+        except binding.expected_exception as error:
+            _require(
+                binding.expected_message in str(error),
+                f"mutation {binding.name} hit wrong gate "
+                f"{binding.gate}: {error}",
+            )
+            rejected.append(binding.name)
+        except Exception as error:
+            raise PublicationError(
+                f"mutation {binding.name} raised wrong exception for "
+                f"{binding.gate}: {type(error).__name__}: {error}"
+            ) from error
+        else:
+            raise PublicationError(
+                f"mutation survived intended gate {binding.gate}: "
+                f"{binding.name}"
+            )
+    _require(
+        tuple(rejected) == A15_EXPECTED_MUTATIONS,
+        "Amendment-15 rejected mutation census drift",
+    )
+    return tuple(rejected)
+
+
+def _execute_complete_mutation_names() -> (
+    tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...]]
+):
+    """Execute every default inherited and A15 runner for this call."""
+
+    a12_names = _execute_a12_mutation_tests()
+    law = a13.build_execution_law()
+    a13.validate_execution_law(law)
+    a13_names = tuple(a13.run_mutation_tests(law))
+    a14_names = tuple(a13.run_enforcement_mutation_tests(law))
+    a15_names = run_amendment15_mutation_tests()
+    return a12_names, a13_names, a14_names, a15_names
+
+
+def run_complete_mutation_census(
+    *,
+    a12_runner: Callable[[], Sequence[str]] | None = None,
+    a13_runner: Callable[[], Sequence[str]] | None = None,
+    a14_runner: Callable[[], Sequence[str]] | None = None,
+    a15_runner: Callable[[], Sequence[str]] | None = None,
+) -> dict[str, Any]:
+    """Execute and authenticate the exact ordered 71 + 18 + 11 census."""
+
+    supplied = (a12_runner, a13_runner, a14_runner, a15_runner)
+    if all(runner is None for runner in supplied):
+        a12_names, a13_names, a14_names, a15_names = (
+            _execute_complete_mutation_names()
+        )
+    else:
+        a12_names = tuple((a12_runner or _execute_a12_mutation_tests)())
+        a13_names = tuple((a13_runner or _execute_a13_mutation_tests)())
+        a14_names = tuple((a14_runner or _execute_a14_mutation_tests)())
+        a15_names = tuple((a15_runner or run_amendment15_mutation_tests)())
+
+    _require(
+        a13_names == a13.A13_EXPECTED_MUTATIONS,
+        "Amendment-13 seven-mutation runner output drift",
+    )
+    _require(
+        a14_names == a13.A13_ENFORCEMENT_EXPECTED_MUTATIONS,
+        "Amendment-14 eleven-mutation runner output drift",
+    )
+    _require(
+        a15_names == A15_EXPECTED_MUTATIONS,
+        "Amendment-15 eleven-mutation runner output drift",
+    )
+    inherited_names = (*a13_names, *a14_names)
+    components = [
+        _component_mutation_census(
+            "amendment_12_historical",
+            a12_names,
+            expected_count=A12_MUTATION_COUNT,
+            expected_domain_sha256=A12_MUTATION_DOMAIN_SHA256,
+        ),
+        _component_mutation_census(
+            "amendments_13_14_inherited",
+            inherited_names,
+            expected_count=A13_A14_MUTATION_COUNT,
+            expected_domain_sha256=A13_A14_MUTATION_DOMAIN_SHA256,
+        ),
+        _component_mutation_census(
+            "amendment_15",
+            a15_names,
+            expected_count=len(A15_EXPECTED_MUTATIONS),
+            expected_domain_sha256=A15_MUTATION_DOMAIN_SHA256,
+        ),
+    ]
+    all_names = (*a12_names, *inherited_names, *a15_names)
+    aggregate_digest = _mutation_domain_sha256(all_names)
+    _require(
+        len(all_names) == COMPLETE_MUTATION_COUNT
+        and len(set(all_names)) == COMPLETE_MUTATION_COUNT
+        and aggregate_digest == COMPLETE_MUTATION_DOMAIN_SHA256,
+        "complete mutation census drift: "
+        f"count={len(all_names)}, unique={len(set(all_names))}, "
+        f"domain={aggregate_digest}",
+    )
+    census = {
+        "components": components,
+        "expected_count": COMPLETE_MUTATION_COUNT,
+        "expected_domain_sha256": COMPLETE_MUTATION_DOMAIN_SHA256,
+        "rejected_count": len(all_names),
+        "rejected_domain_sha256": aggregate_digest,
+        "status": MUTATION_CENSUS_STATUS,
+    }
+    _require(
+        census == _expected_mutation_census(),
+        "execution-derived mutation census disagrees with the exact target",
+    )
+    return census
+
+
+def _validate_tier2_certification_contract(
+    value: Mapping[str, Any],
+    *,
+    executed_mutation_census: Mapping[str, Any],
+) -> None:
+    """Validate the schema against an already executed mutation census."""
 
     _require_exact_keys(
         value, CERTIFICATION_TOP_LEVEL_KEYS, "tier-2 certification"
@@ -562,23 +1127,68 @@ def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
 
     mutation = value["mutation_census"]
     _require(
-        isinstance(mutation, Mapping)
-        and set(mutation)
-        == {
+        isinstance(mutation, Mapping),
+        "tier-2 certification mutation census is not an object",
+    )
+    _require_exact_keys(
+        mutation,
+        frozenset(
+            {
+                "components",
+                "expected_count",
+                "expected_domain_sha256",
+                "rejected_count",
+                "rejected_domain_sha256",
+                "status",
+            }
+        ),
+        "tier-2 certification mutation census",
+    )
+    components = mutation["components"]
+    _require(
+        isinstance(components, list) and len(components) == 3,
+        "tier-2 certification mutation component domain drift",
+    )
+    component_keys = frozenset(
+        {
+            "component_id",
             "expected_count",
             "expected_domain_sha256",
             "rejected_count",
             "rejected_domain_sha256",
             "status",
         }
-        and type(mutation["expected_count"]) is int
+    )
+    for component in components:
+        _require(
+            isinstance(component, Mapping),
+            "tier-2 certification mutation component is not an object",
+        )
+        _require_exact_keys(
+            component,
+            component_keys,
+            "tier-2 certification mutation component",
+        )
+        _require(
+            type(component["expected_count"]) is int
+            and type(component["rejected_count"]) is int
+            and _is_lower_hex(component["expected_domain_sha256"], 64)
+            and _is_lower_hex(component["rejected_domain_sha256"], 64)
+            and component["status"] == MUTATION_CENSUS_STATUS,
+            "tier-2 certification mutation component value drift",
+        )
+    _require(
+        type(mutation["expected_count"]) is int
         and type(mutation["rejected_count"]) is int
-        and mutation["expected_count"] == mutation["rejected_count"] == 11
-        and mutation["expected_domain_sha256"]
-        == mutation["rejected_domain_sha256"]
-        == A15_MUTATION_DOMAIN_SHA256
-        and mutation["status"] == "pass_all_expected_mutations_rejected",
-        "tier-2 certification mutation census drift",
+        and _is_lower_hex(mutation["expected_domain_sha256"], 64)
+        and _is_lower_hex(mutation["rejected_domain_sha256"], 64)
+        and mutation["status"] == MUTATION_CENSUS_STATUS,
+        "tier-2 certification aggregate mutation census value drift",
+    )
+    _require(
+        mutation == executed_mutation_census
+        and mutation == _expected_mutation_census(),
+        "tier-2 certification execution-derived mutation census drift",
     )
 
     integrity = value["integrity"]
@@ -596,6 +1206,15 @@ def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
         and value["artifact_id"]
         == CERTIFICATION_ARTIFACT_ID_PREFIX + payload_sha256,
         "tier-2 certification raw-byte payload attestation drift",
+    )
+
+
+def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
+    """Execute all 100 attacks, then validate the bound certificate schema."""
+
+    _validate_tier2_certification_contract(
+        value,
+        executed_mutation_census=run_complete_mutation_census(),
     )
 
 
