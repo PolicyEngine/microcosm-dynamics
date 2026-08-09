@@ -1398,17 +1398,42 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
     # HEAD copies.
     expected_binding = {
         "path": "docs/design/covered_earnings_correction.md",
-        "ratification_commit": "0cf2a90b1decaa52de4bcd1032227092ac9210c5",
-        "revision": 15,
+        "ratification_commit": "062d74187e3263cd4a7fad3851a9b8c699a2556c",
+        "revision": 16,
         "blob_sha256": (
-            "ae939693b8bcd99244135a170fdf268f0120d22a4d5cd857f5fcec525b5c859b"
+            "c4f3ae022d2e623f4316600e16ec3bded10f0160d197ce64e37f35015e55c92f"
         ),
+        "ratification_closures": [
+            {
+                "path": (
+                    "docs/analysis/amendment_13_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": 842,
+                "raw_sha256": (
+                    "fce13fc1e5e2b4026a34dab735ca36186b147260bd0a137979aa52711affabd7"
+                ),
+            },
+            {
+                "path": (
+                    "docs/analysis/amendment_14_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": 842,
+                "raw_sha256": (
+                    "0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4"
+                ),
+            },
+        ],
     }
     assert {
         "path": registry.DESIGN_PATH,
         "ratification_commit": registry.DESIGN_RATIFICATION_COMMIT,
         "revision": registry.DESIGN_REVISION,
         "blob_sha256": registry.DESIGN_BLOB_SHA256,
+        "ratification_closures": [
+            dict(binding) for binding in registry.RATIFICATION_CLOSURE_BINDINGS
+        ],
     } == expected_binding
     ratified_bytes = subprocess.run(
         [
@@ -1425,6 +1450,20 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
         hashlib.sha256(ratified_bytes).hexdigest()
         == expected_binding["blob_sha256"]
     )
+    for closure_binding in expected_binding["ratification_closures"]:
+        closure_bytes = (ROOT / closure_binding["path"]).read_bytes()
+        assert len(closure_bytes) == closure_binding["raw_byte_size"]
+        assert (
+            hashlib.sha256(closure_bytes).hexdigest()
+            == closure_binding["raw_sha256"]
+        )
+        closure_head_bytes = subprocess.run(
+            ["git", "show", f"HEAD:{closure_binding['path']}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        assert closure_head_bytes == closure_bytes
     worktree_bytes = (ROOT / expected_binding["path"]).read_bytes()
     head_bytes = subprocess.run(
         ["git", "show", f"HEAD:{expected_binding['path']}"],
