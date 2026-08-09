@@ -28,10 +28,26 @@ import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
 BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
-DESIGN_RATIFICATION_COMMIT = "0cf2a90b1decaa52de4bcd1032227092ac9210c5"
-DESIGN_REVISION = 15
+DESIGN_RATIFICATION_COMMIT = "062d74187e3263cd4a7fad3851a9b8c699a2556c"
+DESIGN_REVISION = 16
 DESIGN_BLOB_SHA256 = (
-    "ae939693b8bcd99244135a170fdf268f0120d22a4d5cd857f5fcec525b5c859b"
+    "c4f3ae022d2e623f4316600e16ec3bded10f0160d197ce64e37f35015e55c92f"
+)
+RATIFICATION_CLOSURE_BINDINGS = (
+    {
+        "path": ("docs/analysis/amendment_13_ratification/closure_v1.json"),
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "fce13fc1e5e2b4026a34dab735ca36186b147260bd0a137979aa52711affabd7"
+        ),
+    },
+    {
+        "path": ("docs/analysis/amendment_14_ratification/closure_v1.json"),
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4"
+        ),
+    },
 )
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -674,6 +690,9 @@ def design_binding() -> dict[str, Any]:
         "ratification_commit": DESIGN_RATIFICATION_COMMIT,
         "revision": DESIGN_REVISION,
         "blob_sha256": DESIGN_BLOB_SHA256,
+        "ratification_closures": [
+            dict(binding) for binding in RATIFICATION_CLOSURE_BINDINGS
+        ],
     }
 
 
