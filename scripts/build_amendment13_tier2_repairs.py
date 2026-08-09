@@ -816,30 +816,6 @@ def _execute_amendment15_mutation(binding: MutationBinding) -> str:
     return binding.name
 
 
-def _run_amendment15_mutation_bindings(
-    bindings: Sequence[MutationBinding],
-) -> tuple[str, ...]:
-    """Private fault-injection seam for the fixed production binding table."""
-
-    selected = tuple(bindings)
-    _require(
-        selected == A15_MUTATION_BINDINGS,
-        "Amendment-15 mutation binding specification drift",
-    )
-    rejected = tuple(_execute_amendment15_mutation(row) for row in selected)
-    _require(
-        rejected == A15_EXPECTED_MUTATIONS,
-        "Amendment-15 rejected mutation census drift",
-    )
-    return rejected
-
-
-def run_amendment15_mutation_tests() -> tuple[str, ...]:
-    """Execute each fixed A15 mutation through its bound real gate."""
-
-    return _run_amendment15_mutation_bindings(A15_MUTATION_BINDINGS)
-
-
 def _execute_complete_mutation_names() -> (
     tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...]]
 ):
@@ -1233,85 +1209,164 @@ def _validate_certification_integrity(value: Mapping[str, Any]) -> None:
     )
 
 
-A15_MUTATION_BINDINGS = (
-    MutationBinding(
-        "ordered_history_attestation_identity_forged",
-        _prepare_attestation_identity_mutation,
-        _gate_ordered_attestation,
-        PublicationError,
-        "overlays commit identity drift",
-    ),
-    MutationBinding(
-        "ordered_history_attestation_order_forged",
-        _prepare_attestation_order_mutation,
-        _gate_ordered_attestation_order,
-        PublicationError,
-        "strict-ancestor chain drift",
-    ),
-    MutationBinding(
-        "ordered_history_attestation_tree_identity_forged",
-        _prepare_attestation_tree_mutation,
-        _gate_ordered_attestation,
-        PublicationError,
-        "tree identity drift",
-    ),
-    MutationBinding(
-        "ordered_history_archive_ref_absent_or_unfetchable",
-        _prepare_absent_archive_mutation,
-        _gate_absent_archive_ref,
-        PublicationError,
-        "archive ref is absent or was not fetched",
-    ),
-    MutationBinding(
-        "ordered_history_first_add_exception_reused",
-        _prepare_exception_reuse_mutation,
-        _gate_first_add_exception_reuse,
-        PublicationError,
-        "cannot reuse the tier-2 squash exception",
-    ),
-    MutationBinding(
-        "tier2_certification_schema_keyset_drift",
-        _prepare_schema_keyset_mutation,
-        _validate_certification_top_level,
-        PublicationError,
-        "keyset drift",
-    ),
-    MutationBinding(
-        "tier2_certification_reconstruction_disagreement",
-        _prepare_reconstruction_disagreement_mutation,
-        _validate_certification_reconstructions,
-        PublicationError,
-        "reconstruction disagreement",
-    ),
-    MutationBinding(
-        "tier2_certification_referee_implementation_reused",
-        _prepare_reused_referee_mutation,
-        _validate_certification_reconstructions,
-        PublicationError,
-        "not distinct",
-    ),
-    MutationBinding(
-        "tier2_certification_forbidden_emission_forged",
-        _prepare_forbidden_emission_mutation,
-        _validate_certification_lifecycle,
-        PublicationError,
-        "forbidden emission or lifecycle drift",
-    ),
-    MutationBinding(
-        "tier2_certification_raw_byte_attestation_forged",
-        _prepare_raw_attestation_mutation,
-        _validate_certification_integrity,
-        PublicationError,
-        "raw-byte payload attestation drift",
-    ),
-    MutationBinding(
-        "ceremony_topology_bound_squash_selected",
-        _prepare_topology_squash_mutation,
-        _gate_topology_merge_mode,
-        PublicationError,
-        "requires a no-fast-forward merge commit",
-    ),
+def _create_amendment15_mutation_runner() -> (
+    tuple[tuple[MutationBinding, ...], Callable[[], tuple[str, ...]]]
+):
+    """Capture the fixed callables and bind them to the enacted design."""
+
+    fixed_bindings = (
+        MutationBinding(
+            "ordered_history_attestation_identity_forged",
+            _prepare_attestation_identity_mutation,
+            _gate_ordered_attestation,
+            PublicationError,
+            "overlays commit identity drift",
+        ),
+        MutationBinding(
+            "ordered_history_attestation_order_forged",
+            _prepare_attestation_order_mutation,
+            _gate_ordered_attestation_order,
+            PublicationError,
+            "strict-ancestor chain drift",
+        ),
+        MutationBinding(
+            "ordered_history_attestation_tree_identity_forged",
+            _prepare_attestation_tree_mutation,
+            _gate_ordered_attestation,
+            PublicationError,
+            "tree identity drift",
+        ),
+        MutationBinding(
+            "ordered_history_archive_ref_absent_or_unfetchable",
+            _prepare_absent_archive_mutation,
+            _gate_absent_archive_ref,
+            PublicationError,
+            "archive ref is absent or was not fetched",
+        ),
+        MutationBinding(
+            "ordered_history_first_add_exception_reused",
+            _prepare_exception_reuse_mutation,
+            _gate_first_add_exception_reuse,
+            PublicationError,
+            "cannot reuse the tier-2 squash exception",
+        ),
+        MutationBinding(
+            "tier2_certification_schema_keyset_drift",
+            _prepare_schema_keyset_mutation,
+            _validate_certification_top_level,
+            PublicationError,
+            "keyset drift",
+        ),
+        MutationBinding(
+            "tier2_certification_reconstruction_disagreement",
+            _prepare_reconstruction_disagreement_mutation,
+            _validate_certification_reconstructions,
+            PublicationError,
+            "reconstruction disagreement",
+        ),
+        MutationBinding(
+            "tier2_certification_referee_implementation_reused",
+            _prepare_reused_referee_mutation,
+            _validate_certification_reconstructions,
+            PublicationError,
+            "not distinct",
+        ),
+        MutationBinding(
+            "tier2_certification_forbidden_emission_forged",
+            _prepare_forbidden_emission_mutation,
+            _validate_certification_lifecycle,
+            PublicationError,
+            "forbidden emission or lifecycle drift",
+        ),
+        MutationBinding(
+            "tier2_certification_raw_byte_attestation_forged",
+            _prepare_raw_attestation_mutation,
+            _validate_certification_integrity,
+            PublicationError,
+            "raw-byte payload attestation drift",
+        ),
+        MutationBinding(
+            "ceremony_topology_bound_squash_selected",
+            _prepare_topology_squash_mutation,
+            _gate_topology_merge_mode,
+            PublicationError,
+            "requires a no-fast-forward merge commit",
+        ),
+    )
+    fixed_projection = tuple(
+        (
+            binding.name,
+            binding.prepare.__name__,
+            binding.gate.__name__,
+            binding.expected_exception.__name__,
+            binding.expected_message,
+        )
+        for binding in fixed_bindings
+    )
+    validate_document_projection = a13._validate_document_semantic_projection
+    design_path = ROOT / a13.DESIGN_PATH
+    execute_mutation = _execute_amendment15_mutation
+    mutation_domain_sha256 = A15_MUTATION_DOMAIN_SHA256
+
+    def run_amendment15_mutation_tests() -> tuple[str, ...]:
+        """Execute the immutable design-verified Amendment-15 bindings."""
+
+        try:
+            document_projection = validate_document_projection(
+                design_path.read_bytes(),
+                {},
+            )
+            enacted_rows = document_projection["amendment15"][
+                "mutation_bindings"
+            ]
+            enacted_projection = tuple(
+                (
+                    row["name"],
+                    row["prepare"],
+                    row["gate"],
+                    row["expected_exception"],
+                    row["expected_message"],
+                )
+                for row in enacted_rows
+            )
+        except Exception as error:
+            raise PublicationError(
+                "Amendment-15 enacted mutation binding specification could "
+                f"not be verified: {type(error).__name__}: {error}"
+            ) from error
+
+        _require(
+            all(
+                type(value) is str
+                for row in enacted_projection
+                for value in row
+            )
+            and enacted_projection == fixed_projection,
+            "Amendment-15 mutation binding specification drift",
+        )
+        enacted_names = tuple(row[0] for row in enacted_projection)
+        _require(
+            hashlib.sha256(
+                a13.canonical_json_bytes(list(enacted_names))
+            ).hexdigest()
+            == mutation_domain_sha256,
+            "Amendment-15 mutation binding name domain drift",
+        )
+        rejected = tuple(execute_mutation(row) for row in fixed_bindings)
+        _require(
+            rejected == enacted_names,
+            "Amendment-15 rejected mutation census drift",
+        )
+        return rejected
+
+    return fixed_bindings, run_amendment15_mutation_tests
+
+
+A15_MUTATION_BINDINGS, run_amendment15_mutation_tests = (
+    _create_amendment15_mutation_runner()
 )
+_run_amendment15_mutation_bindings = run_amendment15_mutation_tests
+del _create_amendment15_mutation_runner
 
 
 def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:

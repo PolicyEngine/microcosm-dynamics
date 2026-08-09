@@ -898,6 +898,23 @@ def test__amendment15_mutation_inventory__is_exact_and_disjoint():
         for binding in publisher.A15_MUTATION_BINDINGS
     )
     assert observed_bindings == expected_bindings
+    document_projection = a13._validate_document_semantic_projection(
+        (ROOT / a13.DESIGN_PATH).read_bytes(),
+        {},
+    )
+    enacted_bindings = tuple(
+        (
+            row["name"],
+            row["prepare"],
+            row["gate"],
+            row["expected_exception"],
+            row["expected_message"],
+        )
+        for row in document_projection["amendment15"]["mutation_bindings"]
+    )
+    assert enacted_bindings == tuple(
+        (*row[:3], row[3].__name__, row[4]) for row in expected_bindings
+    )
     assert publisher.A15_EXPECTED_MUTATIONS == tuple(
         row[0] for row in expected_bindings
     )
@@ -926,6 +943,14 @@ def test__mutation_census_public_apis__have_no_injection_seams():
         tuple(
             inspect.signature(
                 publisher.run_amendment15_mutation_tests
+            ).parameters
+        )
+        == ()
+    )
+    assert (
+        tuple(
+            inspect.signature(
+                publisher._run_amendment15_mutation_bindings
             ).parameters
         )
         == ()
@@ -1248,6 +1273,63 @@ def test__amendment15_real_binding__does_not_count_patch_entry_rejection(
         ),
     ),
 )
+def test__amendment15_public_runner__does_not_count_patch_entry_rejection(
+    monkeypatch,
+    mutation_name,
+    patch_attribute,
+):
+    binding = next(
+        row
+        for row in publisher.A15_MUTATION_BINDINGS
+        if row.name == mutation_name
+    )
+    original_patch_object = publisher.mock.patch.object
+    target_gate_calls = []
+    context_events = []
+
+    class RejectDuringEntry:
+        def __enter__(self):
+            context_events.append("enter")
+            raise binding.expected_exception(binding.expected_message)
+
+        def __exit__(self, *_):
+            context_events.append("exit")
+            return False
+
+    def selective_patch(target, attribute, *args, **kwargs):
+        if target is publisher and attribute == patch_attribute:
+            return RejectDuringEntry()
+        return original_patch_object(target, attribute, *args, **kwargs)
+
+    def profile_target_gate(frame, event, _argument):
+        if event == "call" and frame.f_code is binding.gate.__code__:
+            target_gate_calls.append(frame.f_code)
+
+    monkeypatch.setattr(publisher.mock.patch, "object", selective_patch)
+    sys.setprofile(profile_target_gate)
+    try:
+        with pytest.raises(publisher.PublicationError, match="setup failed"):
+            publisher.run_amendment15_mutation_tests()
+    finally:
+        sys.setprofile(None)
+
+    assert context_events == ["enter"]
+    assert target_gate_calls == []
+
+
+@pytest.mark.parametrize(
+    ("mutation_name", "patch_attribute"),
+    (
+        (
+            "ordered_history_attestation_order_forged",
+            "_is_strict_ancestor",
+        ),
+        (
+            "ordered_history_archive_ref_absent_or_unfetchable",
+            "_run_git",
+        ),
+    ),
+)
 def test__amendment15_real_binding__does_not_count_patch_teardown_rejection(
     monkeypatch,
     mutation_name,
@@ -1329,77 +1411,66 @@ def test__amendment15_mutation_executor__fails_closed_on_gate_result(
         publisher._execute_amendment15_mutation(binding)
 
 
-@pytest.mark.parametrize(
-    ("field", "replacement"),
-    (
-        ("name", "wrong_mutation_name"),
-        ("expected_exception", ValueError),
-        ("expected_message", "wrong intended message"),
-    ),
-)
-def test__amendment15_binding_runner__rejects_wrong_binding_spec(
-    field,
-    replacement,
+def test__amendment15_binding_runner__accepts_no_forged_binding_parameter():
+    equality_calls = []
+
+    class AlwaysEqualBinding:
+        def __eq__(self, other):
+            equality_calls.append(other)
+            return True
+
+    with pytest.raises(TypeError):
+        publisher._run_amendment15_mutation_bindings((AlwaysEqualBinding(),))
+    assert equality_calls == []
+
+
+def test__amendment15_binding_runner__ignores_global_table_rebinding(
+    monkeypatch,
 ):
-    bindings = list(publisher.A15_MUTATION_BINDINGS)
-    bindings[0] = bindings[0]._replace(**{field: replacement})
-    with pytest.raises(
-        publisher.PublicationError,
-        match="binding specification drift",
-    ):
-        publisher._run_amendment15_mutation_bindings(bindings)
+    forged_calls = []
+    fixed_bindings = publisher.A15_MUTATION_BINDINGS
+    intended_gate_codes = []
 
-
-@pytest.mark.parametrize("fault", ("missing", "extra", "reordered"))
-def test__amendment15_binding_runner__rejects_wrong_binding_domain(fault):
-    bindings = list(publisher.A15_MUTATION_BINDINGS)
-    if fault == "missing":
-        bindings.pop()
-    elif fault == "extra":
-        bindings.append(bindings[-1])
-    else:
-        bindings[:2] = reversed(bindings[:2])
-    with pytest.raises(
-        publisher.PublicationError,
-        match="binding specification drift",
-    ):
-        publisher._run_amendment15_mutation_bindings(bindings)
-
-
-def test__amendment15_binding_runner__does_not_call_a_forged_gate():
-    calls = []
-    original = publisher.A15_MUTATION_BINDINGS[0]
-
-    def forged_gate(value):
-        calls.append(value)
-        raise original.expected_exception(original.expected_message)
-
-    bindings = list(publisher.A15_MUTATION_BINDINGS)
-    bindings[0] = original._replace(gate=forged_gate)
-    with pytest.raises(
-        publisher.PublicationError,
-        match="binding specification drift",
-    ):
-        publisher._run_amendment15_mutation_bindings(bindings)
-    assert calls == []
-
-
-def test__amendment15_binding_runner__does_not_call_a_forged_prepare():
-    calls = []
-    original = publisher.A15_MUTATION_BINDINGS[0]
+    def profile_intended_gates(frame, event, _argument):
+        if event == "call" and any(
+            frame.f_code is binding.gate.__code__ for binding in fixed_bindings
+        ):
+            intended_gate_codes.append(frame.f_code)
 
     def forged_prepare():
-        calls.append(True)
-        return object()
+        forged_calls.append("prepare")
+        return publisher._activate_mutation_preparation(())
 
-    bindings = list(publisher.A15_MUTATION_BINDINGS)
-    bindings[0] = original._replace(prepare=forged_prepare)
-    with pytest.raises(
-        publisher.PublicationError,
-        match="binding specification drift",
-    ):
-        publisher._run_amendment15_mutation_bindings(bindings)
-    assert calls == []
+    def forged_gate():
+        forged_calls.append("gate")
+        raise publisher.PublicationError("forged intended rejection")
+
+    forged_bindings = tuple(
+        binding._replace(
+            prepare=forged_prepare,
+            gate=forged_gate,
+            expected_message="forged intended rejection",
+        )
+        for binding in fixed_bindings
+    )
+    monkeypatch.setattr(
+        publisher,
+        "A15_MUTATION_BINDINGS",
+        forged_bindings,
+    )
+
+    sys.setprofile(profile_intended_gates)
+    try:
+        assert (
+            publisher.run_amendment15_mutation_tests()
+            == publisher.A15_EXPECTED_MUTATIONS
+        )
+    finally:
+        sys.setprofile(None)
+    assert forged_calls == []
+    assert intended_gate_codes == [
+        binding.gate.__code__ for binding in fixed_bindings
+    ]
 
 
 def test__complete_mutation_census__executes_and_binds_all_100_names():
