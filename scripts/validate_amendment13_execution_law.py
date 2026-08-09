@@ -750,7 +750,7 @@ A14_SECTION_SEMANTIC_SHA256 = (
     "8d17464268b95d500dcc4d7640edee0f26180a70172cdb3a3966a8e6d2408062"
 )
 A15_SECTION_SEMANTIC_SHA256 = (
-    "895d8d73b48208a863dc3dfb1e4ef086056541af2017a66fa0a2e6c504e595a7"
+    "f01fec823f6335126e52c27c0da644ad1c6fc36681746afa5ceadf05fc22b368"
 )
 
 A13_COMPARATOR_ROWS = (
@@ -2070,6 +2070,43 @@ def _parse_amendment15_implementation_pins(raw: bytes) -> dict[str, Any]:
     }
 
 
+def _parse_amendment15_mutation_bindings(
+    section: str,
+) -> list[dict[str, str]]:
+    """Parse the exact design-authoritative Amendment-15 binding table."""
+
+    rows = _markdown_table(
+        section,
+        (
+            "| Mutation name | Preparation callable | Operative gate callable "
+            "| Intended exception class | Intended-message substring |"
+        ),
+        "|---|---|---|---|---|",
+        11,
+        "Amendment-15 mutation binding specification",
+    )
+    return [
+        {
+            "name": _code_tokens(name, 1, "A15 mutation name")[0],
+            "prepare": _code_tokens(
+                prepare, 1, "A15 mutation preparation callable"
+            )[0],
+            "gate": _code_tokens(gate, 1, "A15 mutation gate callable")[0],
+            "expected_exception": _code_tokens(
+                expected_exception,
+                1,
+                "A15 mutation intended exception class",
+            )[0],
+            "expected_message": _code_tokens(
+                expected_message,
+                1,
+                "A15 mutation intended-message substring",
+            )[0],
+        }
+        for name, prepare, gate, expected_exception, expected_message in rows
+    ]
+
+
 def _parse_amendment15_projection(raw: bytes) -> dict[str, Any]:
     section = _amendment15_text(raw)
     return {
@@ -2079,6 +2116,7 @@ def _parse_amendment15_projection(raw: bytes) -> dict[str, Any]:
             )
         ),
         "implementation_pins": _parse_amendment15_implementation_pins(raw),
+        "mutation_bindings": _parse_amendment15_mutation_bindings(section),
     }
 
 
@@ -2729,6 +2767,7 @@ def _canonical_amendment15_projection() -> dict[str, Any]:
     return {
         "section_semantic_sha256": A15_SECTION_SEMANTIC_SHA256,
         "implementation_pins": None,
+        "mutation_bindings": None,
     }
 
 
@@ -2872,6 +2911,9 @@ def _validate_document_semantic_projection(
     ]
     expected["amendment15"]["implementation_pins"] = projection["amendment15"][
         "implementation_pins"
+    ]
+    expected["amendment15"]["mutation_bindings"] = projection["amendment15"][
+        "mutation_bindings"
     ]
     _require(
         projection == expected,

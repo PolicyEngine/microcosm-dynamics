@@ -53834,6 +53834,24 @@ reordered, non-rejecting, wrong-class, wrong-message, wrong-gate, or
 setup-failing mutation, or any component/aggregate count, domain, order,
 digest, or status disagreement, aborts.
 
+The Amendment-15 runner's fixed specification is exactly this ordered table.
+Each intended-message predicate is case-sensitive substring membership in
+`str(error)`:
+
+| Mutation name | Preparation callable | Operative gate callable | Intended exception class | Intended-message substring |
+|---|---|---|---|---|
+| `ordered_history_attestation_identity_forged` | `_prepare_attestation_identity_mutation` | `_gate_ordered_attestation` | `PublicationError` | `overlays commit identity drift` |
+| `ordered_history_attestation_order_forged` | `_prepare_attestation_order_mutation` | `_gate_ordered_attestation_order` | `PublicationError` | `strict-ancestor chain drift` |
+| `ordered_history_attestation_tree_identity_forged` | `_prepare_attestation_tree_mutation` | `_gate_ordered_attestation` | `PublicationError` | `tree identity drift` |
+| `ordered_history_archive_ref_absent_or_unfetchable` | `_prepare_absent_archive_mutation` | `_gate_absent_archive_ref` | `PublicationError` | `archive ref is absent or was not fetched` |
+| `ordered_history_first_add_exception_reused` | `_prepare_exception_reuse_mutation` | `_gate_first_add_exception_reuse` | `PublicationError` | `cannot reuse the tier-2 squash exception` |
+| `tier2_certification_schema_keyset_drift` | `_prepare_schema_keyset_mutation` | `_validate_certification_top_level` | `PublicationError` | `keyset drift` |
+| `tier2_certification_reconstruction_disagreement` | `_prepare_reconstruction_disagreement_mutation` | `_validate_certification_reconstructions` | `PublicationError` | `reconstruction disagreement` |
+| `tier2_certification_referee_implementation_reused` | `_prepare_reused_referee_mutation` | `_validate_certification_reconstructions` | `PublicationError` | `not distinct` |
+| `tier2_certification_forbidden_emission_forged` | `_prepare_forbidden_emission_mutation` | `_validate_certification_lifecycle` | `PublicationError` | `forbidden emission or lifecycle drift` |
+| `tier2_certification_raw_byte_attestation_forged` | `_prepare_raw_attestation_mutation` | `_validate_certification_integrity` | `PublicationError` | `raw-byte payload attestation drift` |
+| `ceremony_topology_bound_squash_selected` | `_prepare_topology_squash_mutation` | `_gate_topology_merge_mode` | `PublicationError` | `requires a no-fast-forward merge commit` |
+
 `validate_tier2_certification_contract()` is the only callable that composes
 the complete certificate contract. On every call it first executes the full
 100-name census and then sequentially applies narrow predicates for the
@@ -53899,8 +53917,8 @@ path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `54fdeb7148841bf343bef58554e6cc7db9580ce9` | 236886 | `c913b39fc6bf7f639f75a79fac6df0b192966acd343e82efdda2e67015d7fc8c` |
-| `tests/test_validate_amendment13_execution_law.py` | `7797837f76e3c185d40ec6cc90f0c2e75bcd7504` | 23520 | `bdf1b86acdad3dd3dada03e71eb426fca4b297e541f7ef9170420ee846c88f3b` |
+| `scripts/validate_amendment13_execution_law.py` | `bec57628f21434934e5c3d4be84b6010b4a27bca` | 238331 | `12dfb07829342a9a6a12c2472acd2af7b20d729a914ab31680739a94feed623a` |
+| `tests/test_validate_amendment13_execution_law.py` | `458d39a3e7a59096d9c9bd62b364d129e4591153` | 29435 | `7704974f4f6b4459fc2e4865d523d4432730442bca679c29967c0011481666ef` |
 
 For each row, the validator requires exact path, mode, working-tree/`HEAD`
 bytes, byte size, raw SHA-256, and Git blob OID through the sanitized wrapper.

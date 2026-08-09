@@ -597,6 +597,169 @@ def test__document__semantic_projection_covers_amendment14():
     )
 
 
+def test__document__amendment15_mutation_binding_spec_is_exact():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    rows = a13._parse_amendment15_projection(raw)["mutation_bindings"]
+    observed = tuple(
+        (
+            row["name"],
+            row["prepare"],
+            row["gate"],
+            row["expected_exception"],
+            row["expected_message"],
+        )
+        for row in rows
+    )
+    assert observed == (
+        (
+            "ordered_history_attestation_identity_forged",
+            "_prepare_attestation_identity_mutation",
+            "_gate_ordered_attestation",
+            "PublicationError",
+            "overlays commit identity drift",
+        ),
+        (
+            "ordered_history_attestation_order_forged",
+            "_prepare_attestation_order_mutation",
+            "_gate_ordered_attestation_order",
+            "PublicationError",
+            "strict-ancestor chain drift",
+        ),
+        (
+            "ordered_history_attestation_tree_identity_forged",
+            "_prepare_attestation_tree_mutation",
+            "_gate_ordered_attestation",
+            "PublicationError",
+            "tree identity drift",
+        ),
+        (
+            "ordered_history_archive_ref_absent_or_unfetchable",
+            "_prepare_absent_archive_mutation",
+            "_gate_absent_archive_ref",
+            "PublicationError",
+            "archive ref is absent or was not fetched",
+        ),
+        (
+            "ordered_history_first_add_exception_reused",
+            "_prepare_exception_reuse_mutation",
+            "_gate_first_add_exception_reuse",
+            "PublicationError",
+            "cannot reuse the tier-2 squash exception",
+        ),
+        (
+            "tier2_certification_schema_keyset_drift",
+            "_prepare_schema_keyset_mutation",
+            "_validate_certification_top_level",
+            "PublicationError",
+            "keyset drift",
+        ),
+        (
+            "tier2_certification_reconstruction_disagreement",
+            "_prepare_reconstruction_disagreement_mutation",
+            "_validate_certification_reconstructions",
+            "PublicationError",
+            "reconstruction disagreement",
+        ),
+        (
+            "tier2_certification_referee_implementation_reused",
+            "_prepare_reused_referee_mutation",
+            "_validate_certification_reconstructions",
+            "PublicationError",
+            "not distinct",
+        ),
+        (
+            "tier2_certification_forbidden_emission_forged",
+            "_prepare_forbidden_emission_mutation",
+            "_validate_certification_lifecycle",
+            "PublicationError",
+            "forbidden emission or lifecycle drift",
+        ),
+        (
+            "tier2_certification_raw_byte_attestation_forged",
+            "_prepare_raw_attestation_mutation",
+            "_validate_certification_integrity",
+            "PublicationError",
+            "raw-byte payload attestation drift",
+        ),
+        (
+            "ceremony_topology_bound_squash_selected",
+            "_prepare_topology_squash_mutation",
+            "_gate_topology_merge_mode",
+            "PublicationError",
+            "requires a no-fast-forward merge commit",
+        ),
+    )
+
+
+@pytest.mark.parametrize(
+    ("original", "forged", "row_index", "field", "forged_value"),
+    (
+        (
+            b"| `ordered_history_attestation_identity_forged` | "
+            b"`_prepare_attestation_identity_mutation` | "
+            b"`_gate_ordered_attestation` | `PublicationError` | "
+            b"`overlays commit identity drift` |",
+            b"| `ordered_history_attestation_identity_substituted` | "
+            b"`_prepare_attestation_identity_mutation` | "
+            b"`_gate_ordered_attestation` | `PublicationError` | "
+            b"`overlays commit identity drift` |",
+            0,
+            "name",
+            "ordered_history_attestation_identity_substituted",
+        ),
+        (
+            b"| `ordered_history_attestation_order_forged` | "
+            b"`_prepare_attestation_order_mutation` | "
+            b"`_gate_ordered_attestation_order` | `PublicationError` | "
+            b"`strict-ancestor chain drift` |",
+            b"| `ordered_history_attestation_order_forged` | "
+            b"`_prepare_attestation_order_mutation` | "
+            b"`_gate_ordered_attestation` | `PublicationError` | "
+            b"`strict-ancestor chain drift` |",
+            1,
+            "gate",
+            "_gate_ordered_attestation",
+        ),
+        (
+            b"| `tier2_certification_schema_keyset_drift` | "
+            b"`_prepare_schema_keyset_mutation` | "
+            b"`_validate_certification_top_level` | `PublicationError` | "
+            b"`keyset drift` |",
+            b"| `tier2_certification_schema_keyset_drift` | "
+            b"`_prepare_schema_keyset_mutation` | "
+            b"`_validate_certification_top_level` | `ValueError` | "
+            b"`keyset drift` |",
+            5,
+            "expected_exception",
+            "ValueError",
+        ),
+    ),
+)
+def test__document__amendment15_binding_identity_is_semantically_bound(
+    original,
+    forged,
+    row_index,
+    field,
+    forged_value,
+):
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    baseline = a13._parse_amendment15_projection(raw)
+    assert raw.count(original) == 1
+    candidate = raw.replace(original, forged, 1)
+    changed = a13._parse_amendment15_projection(candidate)
+    assert changed["mutation_bindings"][row_index][field] == forged_value
+    assert changed["mutation_bindings"] != baseline["mutation_bindings"]
+    assert (
+        changed["section_semantic_sha256"]
+        != baseline["section_semantic_sha256"]
+    )
+    with pytest.raises(
+        a13.LawError,
+        match="Amendment-14/15 document semantic projection drift",
+    ):
+        a13._validate_document_semantic_projection(candidate, {})
+
+
 def test__document__amendment15_nonpin_semantics_are_hash_bound():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
     original = b"| `source_document_count` | `257` |"
