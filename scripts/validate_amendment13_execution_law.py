@@ -5651,7 +5651,7 @@ def _run_coherent_suffix_enforcement_mutation(
     forged_document: bytes,
     semantic_law: Mapping[str, Any],
     *,
-    expected_message: str = "document semantic projection drift",
+    expected_message: str = "Amendment-15 document violates immutable-prefix law",
 ) -> None:
     _expect_law_error(
         lambda: _validate_document_semantic_projection(
