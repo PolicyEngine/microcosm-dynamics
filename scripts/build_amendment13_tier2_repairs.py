@@ -89,6 +89,9 @@ ORDERED_CEREMONY_RECEIPT_COMMIT = "cbc44fe1642106e1bfecee869de1b9c61f832756"
 ORDERED_CEREMONY_OVERLAY_COMMIT = "c6091f06955a3dd8e554f38833fe2eb43e7b08e0"
 ORDERED_CEREMONY_SEAL_COMMIT = "44c6641aa0ec57036a54e0988a5f18b50a15e50c"
 ORDERED_CEREMONY_EVIDENCE_COMMIT = "ba4bd4a734dc5ddd835bb7374bf5a37c12a190ae"
+ORDERED_CEREMONY_RECEIPT_TREE = "321991ced87fe19d0c14e4642aaf44eaf17ca26b"
+ORDERED_CEREMONY_OVERLAY_TREE = "0fed299d439203d959c7a9b1812e4856671db951"
+ORDERED_CEREMONY_SEAL_TREE = "4b6233a9583d8cb90a46bc85b1840ce5b4ebe0de"
 ORDERED_CEREMONY_TREE_OID = "507e7062cac23b08a397dd5e959d1ff7d1827bc4"
 TIER2_SQUASH_COMMIT = "a352e66284b60997210c634bb427141e7e523a75"
 
@@ -136,24 +139,28 @@ ORDERED_CEREMONY_ATTESTATION = {
             "role": "receipt",
             "commit": ORDERED_CEREMONY_RECEIPT_COMMIT,
             "parent": ORDERED_CEREMONY_BASE_COMMIT,
+            "tree_oid": ORDERED_CEREMONY_RECEIPT_TREE,
             "changed_paths": ORDERED_CEREMONY_CHANGED_PATHS["receipt"],
         },
         {
             "role": "overlays",
             "commit": ORDERED_CEREMONY_OVERLAY_COMMIT,
             "parent": ORDERED_CEREMONY_RECEIPT_COMMIT,
+            "tree_oid": ORDERED_CEREMONY_OVERLAY_TREE,
             "changed_paths": ORDERED_CEREMONY_CHANGED_PATHS["overlays"],
         },
         {
             "role": "seals",
             "commit": ORDERED_CEREMONY_SEAL_COMMIT,
             "parent": ORDERED_CEREMONY_OVERLAY_COMMIT,
+            "tree_oid": ORDERED_CEREMONY_SEAL_TREE,
             "changed_paths": ORDERED_CEREMONY_CHANGED_PATHS["seals"],
         },
         {
             "role": "evidence",
             "commit": ORDERED_CEREMONY_EVIDENCE_COMMIT,
             "parent": ORDERED_CEREMONY_SEAL_COMMIT,
+            "tree_oid": ORDERED_CEREMONY_TREE_OID,
             "changed_paths": ORDERED_CEREMONY_CHANGED_PATHS["evidence"],
         },
     ),
@@ -166,6 +173,9 @@ ORDERED_ARTIFACT_COMMIT_BY_PATH = {
     **{path: ORDERED_CEREMONY_SEAL_COMMIT for path in ORDERED_SEAL_PATHS},
     TARGETED_SWEEP_PATH: ORDERED_CEREMONY_EVIDENCE_COMMIT,
 }
+ORDERED_ARTIFACT_PATH_DOMAIN_SHA256 = (
+    "504159116708ee4d5e2cc8abec130ca8679d22cce928dca42af12be305361c17"
+)
 SQUASH_CHANGED_PATHS = tuple(
     sorted(
         changed_path
@@ -208,6 +218,12 @@ CERTIFICATION_BUILDER_PATH = (
 )
 CERTIFICATION_VALIDATOR_PATH = (
     "scripts/validate_amendment12_tier2_source_hierarchy_certification.py"
+)
+CERTIFICATION_BUILDER_FUNCTION = "build_certification"
+CERTIFICATION_RECONSTRUCTION_FUNCTION = "reconstruct_source_hierarchy_member"
+CERTIFICATION_VALIDATOR_FUNCTION = "validate_committed_certification"
+CERTIFICATION_RECONSTRUCTION_DEPENDENCY_POLICY = (
+    "self_contained_single_file_stdlib_only_no_shared_reconstruction_v1"
 )
 CERTIFICATION_TOP_LEVEL_KEYS = frozenset(
     {
@@ -266,6 +282,8 @@ CERTIFICATION_RECONSTRUCTION_KEYS = frozenset(
     {
         "implementation_blob_oid",
         "implementation_byte_size",
+        "implementation_dependency_paths",
+        "implementation_dependency_policy",
         "implementation_mode",
         "implementation_path",
         "implementation_raw_sha256",
@@ -322,20 +340,16 @@ CERTIFICATION_SOURCE_COUNTS_AND_DOMAINS = {
     ),
 }
 
-TOPOLOGY_BOUND_REQUIREMENT_CODES = frozenset(
-    {
-        "premerge_commit_reachability",
-        "first_or_last_add_identity",
-        "exact_parent_or_changed_path_domain",
-        "strict_or_equal_ancestry_order",
-    }
+TOPOLOGY_BOUND_REQUIREMENT_CODES = (
+    "premerge_commit_reachability",
+    "first_or_last_add_identity",
+    "exact_parent_or_changed_path_domain",
+    "strict_or_equal_ancestry_order",
 )
-BLOB_TREE_BOUND_REQUIREMENT_CODES = frozenset(
-    {
-        "path_mode_blob_byte_hash",
-        "resulting_tree_identity",
-        "document_only_postmerge_closure",
-    }
+BLOB_TREE_BOUND_REQUIREMENT_CODES = (
+    "path_mode_blob_byte_hash",
+    "resulting_tree_identity",
+    "document_only_postmerge_closure",
 )
 CEREMONY_MERGE_MODES = frozenset({"no_fast_forward_merge_commit", "squash"})
 
@@ -397,7 +411,9 @@ def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
         "tier-2 certification ratification binding",
     )
     _require(
-        ratification["amendment_number"] == 15
+        type(ratification["amendment_number"]) is int
+        and ratification["amendment_number"] == 15
+        and type(ratification["design_revision"]) is int
         and ratification["design_revision"] == 17
         and ratification["design_path"]
         == "docs/design/covered_earnings_correction.md"
@@ -426,7 +442,9 @@ def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
         "tier-2 certification source build identity",
     )
     _require(
-        all(
+        type(source["questionnaire_document_count"]) is int
+        and type(source["source_document_count"]) is int
+        and all(
             source[key] == expected
             for key, expected in CERTIFICATION_SOURCE_COUNTS_AND_DOMAINS.items()
         )
@@ -473,9 +491,15 @@ def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
         )
         _require(
             row["implementation_mode"] == "100644"
+            and row["implementation_dependency_paths"]
+            == [row["implementation_path"]]
+            and row["implementation_dependency_policy"]
+            == CERTIFICATION_RECONSTRUCTION_DEPENDENCY_POLICY
             and row["status"] == "pass_independent_source_reconstruction"
             and type(row["implementation_byte_size"]) is int
             and row["implementation_byte_size"] > 0
+            and type(row["member_canonical_byte_size"]) is int
+            and row["member_canonical_byte_size"] > 0
             and _is_lower_hex(row["implementation_blob_oid"], 40)
             and _is_lower_hex(row["implementation_raw_sha256"], 64),
             "tier-2 certification reconstruction implementation drift",
@@ -503,6 +527,7 @@ def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
     gates = value["gate_results"]
     _require(
         isinstance(gates, list)
+        and all(isinstance(row, Mapping) for row in gates)
         and [row.get("gate_id") for row in gates]
         == list(CERTIFICATION_GATE_IDS),
         "tier-2 certification gate domain or order drift",
@@ -519,8 +544,19 @@ def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
         value["git_order_attestation"] == CERTIFICATION_GIT_ATTESTATION,
         "tier-2 certification Git-order attestation drift",
     )
+    lifecycle = value["lifecycle"]
+    lifecycle_boolean_keys = {
+        key
+        for key, expected in CERTIFICATION_LIFECYCLE.items()
+        if type(expected) is bool
+    }
     _require(
-        value["lifecycle"] == CERTIFICATION_LIFECYCLE,
+        isinstance(lifecycle, Mapping)
+        and all(
+            type(lifecycle.get(key)) is bool for key in lifecycle_boolean_keys
+        )
+        and type(lifecycle.get("next_required_gate")) is str
+        and lifecycle == CERTIFICATION_LIFECYCLE,
         "tier-2 certification forbidden emission or lifecycle drift",
     )
 
@@ -535,6 +571,8 @@ def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
             "rejected_domain_sha256",
             "status",
         }
+        and type(mutation["expected_count"]) is int
+        and type(mutation["rejected_count"]) is int
         and mutation["expected_count"] == mutation["rejected_count"] == 11
         and mutation["expected_domain_sha256"]
         == mutation["rejected_domain_sha256"]
@@ -567,26 +605,31 @@ def validate_ceremony_merge_mode(
     """Enforce the testable Amendment-15 merge-mode decision table."""
 
     codes = tuple(requirement_codes)
-    known = (
-        TOPOLOGY_BOUND_REQUIREMENT_CODES | BLOB_TREE_BOUND_REQUIREMENT_CODES
+    ordered_known = (
+        TOPOLOGY_BOUND_REQUIREMENT_CODES + BLOB_TREE_BOUND_REQUIREMENT_CODES
     )
+    known = set(ordered_known)
     _require(codes, "ceremony merge-mode classification is empty")
     _require(
         len(codes) == len(set(codes)) and set(codes) <= known,
         "ceremony merge-mode classification is duplicate or unknown",
     )
     _require(
+        codes == tuple(code for code in ordered_known if code in set(codes)),
+        "ceremony merge-mode classification order drift",
+    )
+    _require(
         merge_mode in CEREMONY_MERGE_MODES,
         "ceremony merge mode is unknown or ancestry-rewriting",
     )
-    if set(codes) & TOPOLOGY_BOUND_REQUIREMENT_CODES:
+    if set(codes) & set(TOPOLOGY_BOUND_REQUIREMENT_CODES):
         _require(
             merge_mode == "no_fast_forward_merge_commit",
             "topology-bound ceremony requires a no-fast-forward merge commit",
         )
     if merge_mode == "squash":
         _require(
-            set(codes) <= BLOB_TREE_BOUND_REQUIREMENT_CODES,
+            set(codes) <= set(BLOB_TREE_BOUND_REQUIREMENT_CODES),
             "squash selected for a non-blob-bound ceremony",
         )
 
@@ -1037,12 +1080,12 @@ def _changed_path_domain(
     return tuple(sorted(rows))
 
 
-def validate_ordered_ceremony_attestation(
+def _validate_ordered_ceremony_attestation(
     *,
-    repo_root: Path = ROOT,
-    attestation: Mapping[str, Any] = ORDERED_CEREMONY_ATTESTATION,
+    repo_root: Path,
+    attestation: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Authenticate the exact archived tier-2 publication ceremony."""
+    """Private injectable core for the ordered-history mutation tests."""
 
     _require(
         set(attestation)
@@ -1064,6 +1107,16 @@ def validate_ordered_ceremony_attestation(
     _require(
         attestation["squash_commit"] == TIER2_SQUASH_COMMIT,
         "ordered ceremony squash identity drift",
+    )
+    path_domain_sha256 = hashlib.sha256(
+        a13.canonical_json_bytes(
+            sorted(path.as_posix() for path in ORDERED_ARTIFACT_COMMIT_BY_PATH)
+        )
+    ).hexdigest()
+    _require(
+        len(ORDERED_ARTIFACT_COMMIT_BY_PATH) == 22
+        and path_domain_sha256 == ORDERED_ARTIFACT_PATH_DOMAIN_SHA256,
+        "ordered ceremony artifact path domain drift",
     )
 
     ref_result = _run_git(
@@ -1092,7 +1145,8 @@ def validate_ordered_ceremony_attestation(
     resolved: dict[str, str] = {}
     for stage, expected in zip(stages, expected_stages, strict=True):
         _require(
-            set(stage) == {"role", "commit", "parent", "changed_paths"},
+            set(stage)
+            == {"role", "commit", "parent", "tree_oid", "changed_paths"},
             "ordered ceremony stage keyset drift",
         )
         role = stage["role"]
@@ -1106,6 +1160,10 @@ def validate_ordered_ceremony_attestation(
             f"ordered ceremony {role} parent identity drift",
         )
         _require(
+            stage["tree_oid"] == expected["tree_oid"],
+            f"ordered ceremony {role} tree identity drift",
+        )
+        _require(
             tuple(stage["changed_paths"]) == expected["changed_paths"],
             f"ordered ceremony {role} changed-path attestation drift",
         )
@@ -1115,6 +1173,10 @@ def validate_ordered_ceremony_attestation(
         _require(
             parent == stage["parent"],
             f"ordered ceremony {role} actual parent drift",
+        )
+        _require(
+            _commit_tree(repo_root, stage["commit"]) == stage["tree_oid"],
+            f"ordered ceremony {role} actual tree drift",
         )
         _require(
             _changed_path_domain(repo_root, stage["commit"])
@@ -1181,6 +1243,26 @@ def validate_ordered_ceremony_attestation(
             ordered_raw == squash_raw == head_raw,
             f"ordered/squash/HEAD blob mismatch for {path.as_posix()}",
         )
+        expected_tree_entry = (
+            f"100644 blob {a13._git_blob_oid(ordered_raw)}\t{path.as_posix()}"
+        )
+        for revision in (ordered_commit, TIER2_SQUASH_COMMIT, "HEAD"):
+            actual_tree_entry = (
+                _git_output(
+                    repo_root,
+                    "ls-tree",
+                    revision,
+                    "--",
+                    path.as_posix(),
+                )
+                .decode("utf-8")
+                .strip()
+            )
+            _require(
+                actual_tree_entry == expected_tree_entry,
+                f"ordered artifact mode/blob drift at {revision}: "
+                f"{path.as_posix()}",
+            )
 
     return {
         "archive_ref": ORDERED_CEREMONY_LOCAL_REF,
@@ -1189,6 +1271,17 @@ def validate_ordered_ceremony_attestation(
         "squash_commit": TIER2_SQUASH_COMMIT,
         "stage_commits": resolved,
     }
+
+
+def validate_ordered_ceremony_attestation(
+    *, repo_root: Path = ROOT
+) -> dict[str, Any]:
+    """Authenticate only the enacted archived tier-2 ceremony."""
+
+    return _validate_ordered_ceremony_attestation(
+        repo_root=repo_root,
+        attestation=ORDERED_CEREMONY_ATTESTATION,
+    )
 
 
 def _attested_order_commit_for_squashed_first_add(

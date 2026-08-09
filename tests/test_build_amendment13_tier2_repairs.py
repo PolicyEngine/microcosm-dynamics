@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import subprocess
 import sys
 from pathlib import Path
@@ -70,6 +71,12 @@ def _certification_fixture():
             {
                 "implementation_blob_oid": "8" * 40,
                 "implementation_byte_size": 10_000,
+                "implementation_dependency_paths": [
+                    publisher.CERTIFICATION_RECONSTRUCTION_PATHS[0]
+                ],
+                "implementation_dependency_policy": (
+                    publisher.CERTIFICATION_RECONSTRUCTION_DEPENDENCY_POLICY
+                ),
                 "implementation_mode": "100644",
                 "implementation_path": (
                     publisher.CERTIFICATION_RECONSTRUCTION_PATHS[0]
@@ -86,6 +93,12 @@ def _certification_fixture():
             {
                 "implementation_blob_oid": "9" * 40,
                 "implementation_byte_size": 11_000,
+                "implementation_dependency_paths": [
+                    publisher.CERTIFICATION_RECONSTRUCTION_PATHS[1]
+                ],
+                "implementation_dependency_policy": (
+                    publisher.CERTIFICATION_RECONSTRUCTION_DEPENDENCY_POLICY
+                ),
                 "implementation_mode": "100644",
                 "implementation_path": (
                     publisher.CERTIFICATION_RECONSTRUCTION_PATHS[1]
@@ -383,7 +396,9 @@ def test__ordered_history_mutation__rejects_identity_forgery(monkeypatch):
     with pytest.raises(
         publisher.PublicationError, match="overlays commit identity drift"
     ):
-        publisher.validate_ordered_ceremony_attestation(attestation=candidate)
+        publisher._validate_ordered_ceremony_attestation(
+            repo_root=ROOT, attestation=candidate
+        )
 
     candidate = copy.deepcopy(publisher.ORDERED_CEREMONY_ATTESTATION)
     candidate["stages"][1]["changed_paths"] = candidate["stages"][1][
@@ -392,7 +407,9 @@ def test__ordered_history_mutation__rejects_identity_forgery(monkeypatch):
     with pytest.raises(
         publisher.PublicationError, match="changed-path attestation drift"
     ):
-        publisher.validate_ordered_ceremony_attestation(attestation=candidate)
+        publisher._validate_ordered_ceremony_attestation(
+            repo_root=ROOT, attestation=candidate
+        )
 
     original = publisher._run_git
 
@@ -431,13 +448,37 @@ def test__ordered_history_mutation__rejects_wrong_order(monkeypatch):
         publisher.validate_ordered_ceremony_attestation()
 
 
-def test__ordered_history_mutation__rejects_tree_mismatch():
+def test__ordered_history_mutation__rejects_tree_mismatch(monkeypatch):
     candidate = copy.deepcopy(publisher.ORDERED_CEREMONY_ATTESTATION)
     candidate["tree_oid"] = "0" * 40
     with pytest.raises(
         publisher.PublicationError, match="tree identity drift"
     ):
-        publisher.validate_ordered_ceremony_attestation(attestation=candidate)
+        publisher._validate_ordered_ceremony_attestation(
+            repo_root=ROOT, attestation=candidate
+        )
+
+    original = publisher._commit_tree
+
+    def wrong_actual_tree(repo_root, commit):
+        if commit == publisher.ORDERED_CEREMONY_EVIDENCE_COMMIT:
+            return "f" * 40
+        return original(repo_root, commit)
+
+    monkeypatch.setattr(publisher, "_commit_tree", wrong_actual_tree)
+    with pytest.raises(
+        publisher.PublicationError, match="evidence actual tree drift"
+    ):
+        publisher.validate_ordered_ceremony_attestation()
+
+    candidate = copy.deepcopy(publisher.ORDERED_CEREMONY_ATTESTATION)
+    candidate["stages"][1]["tree_oid"] = "0" * 40
+    with pytest.raises(
+        publisher.PublicationError, match="overlays tree identity drift"
+    ):
+        publisher._validate_ordered_ceremony_attestation(
+            repo_root=ROOT, attestation=candidate
+        )
 
 
 def test__ordered_history_mutation__rejects_absent_archive_ref(tmp_path):
@@ -445,6 +486,24 @@ def test__ordered_history_mutation__rejects_absent_archive_ref(tmp_path):
         publisher.PublicationError, match="archive ref is absent"
     ):
         publisher.validate_ordered_ceremony_attestation(repo_root=tmp_path)
+
+
+def test__ordered_history_mutation__rejects_artifact_mode_drift(monkeypatch):
+    original = publisher._git_output
+    selected = publisher.RECEIPT_PATH.as_posix()
+
+    def wrong_mode(repo_root, *arguments):
+        if arguments == ("ls-tree", "HEAD", "--", selected):
+            actual = original(repo_root, *arguments)
+            assert actual.startswith(b"100644 blob ")
+            return actual.replace(b"100644 blob ", b"100755 blob ", 1)
+        return original(repo_root, *arguments)
+
+    monkeypatch.setattr(publisher, "_git_output", wrong_mode)
+    with pytest.raises(
+        publisher.PublicationError, match="artifact mode/blob drift"
+    ):
+        publisher.validate_ordered_ceremony_attestation()
 
 
 def test__ordered_history_mutation__rejects_exception_reuse():
@@ -497,7 +556,29 @@ def test__first_add_rule__still_rejects_two_live_adds(monkeypatch):
 
 
 def test__certification_contract__accepts_minimal_total_fixture():
+    assert publisher.CERTIFICATION_BUILDER_FUNCTION == "build_certification"
+    assert publisher.CERTIFICATION_RECONSTRUCTION_FUNCTION == (
+        "reconstruct_source_hierarchy_member"
+    )
+    assert publisher.CERTIFICATION_VALIDATOR_FUNCTION == (
+        "validate_committed_certification"
+    )
     publisher.validate_tier2_certification_contract(_certification_fixture())
+
+
+def test__certification_contract__future_paths_remain_uninstantiated():
+    future_paths = (
+        publisher.CERTIFICATION_PATH,
+        Path(publisher.CERTIFICATION_BUILDER_PATH),
+        Path(publisher.CERTIFICATION_VALIDATOR_PATH),
+    )
+    for relative_path in future_paths:
+        assert not (ROOT / relative_path).exists()
+        assert publisher._first_add_commits(ROOT, relative_path) == ()
+        result = publisher._run_git(
+            ROOT, "cat-file", "-e", f"HEAD:{relative_path.as_posix()}"
+        )
+        assert result.returncode != 0
 
 
 def test__certification_mutation__rejects_schema_keyset_drift():
@@ -519,6 +600,31 @@ def test__certification_mutation__rejects_schema_keyset_drift():
             publisher.validate_tier2_certification_contract(candidate)
 
 
+@pytest.mark.parametrize(
+    ("domain", "key"),
+    (
+        ("ratification_binding", "amendment_number"),
+        ("ratification_binding", "design_revision"),
+        ("source_build_identity", "questionnaire_document_count"),
+        ("source_build_identity", "source_document_count"),
+        ("mutation_census", "expected_count"),
+        ("mutation_census", "rejected_count"),
+        ("reconstruction_row", "member_canonical_byte_size"),
+    ),
+)
+def test__certification_mutation__rejects_numeric_type_drift(domain, key):
+    candidate = _certification_fixture()
+    target = (
+        candidate["reconstruction_rows"][0]
+        if domain == "reconstruction_row"
+        else candidate[domain]
+    )
+    target[key] = float(target[key])
+    _repin_certification(candidate)
+    with pytest.raises(publisher.PublicationError):
+        publisher.validate_tier2_certification_contract(candidate)
+
+
 def test__certification_mutation__rejects_reconstruction_disagreement():
     candidate = _certification_fixture()
     candidate["reconstruction_rows"][1]["member_raw_sha256"] = "a" * 64
@@ -538,13 +644,34 @@ def test__certification_mutation__rejects_reused_implementation():
     with pytest.raises(publisher.PublicationError, match="not distinct"):
         publisher.validate_tier2_certification_contract(candidate)
 
+    candidate = _certification_fixture()
+    candidate["reconstruction_rows"][1]["implementation_dependency_paths"] = [
+        publisher.CERTIFICATION_VALIDATOR_PATH,
+        publisher.CERTIFICATION_BUILDER_PATH,
+    ]
+    _repin_certification(candidate)
+    with pytest.raises(
+        publisher.PublicationError, match="implementation drift"
+    ):
+        publisher.validate_tier2_certification_contract(candidate)
+
 
 def test__certification_mutation__rejects_forbidden_emission():
-    candidate = _certification_fixture()
-    candidate["lifecycle"]["authority_emitted"] = True
-    _repin_certification(candidate)
-    with pytest.raises(publisher.PublicationError, match="forbidden emission"):
-        publisher.validate_tier2_certification_contract(candidate)
+    candidates = []
+    for key, forged_value in (
+        ("authority_emitted", True),
+        ("authority_emitted", 0),
+        ("nonauthority", 1),
+    ):
+        candidate = _certification_fixture()
+        candidate["lifecycle"][key] = forged_value
+        _repin_certification(candidate)
+        candidates.append(candidate)
+    for candidate in candidates:
+        with pytest.raises(
+            publisher.PublicationError, match="forbidden emission"
+        ):
+            publisher.validate_tier2_certification_contract(candidate)
 
 
 def test__certification_mutation__rejects_raw_byte_attestation_forgery():
@@ -566,6 +693,13 @@ def test__merge_mode__enforces_topology_and_blob_bound_matrix():
     publisher.validate_ceremony_merge_mode(
         ["path_mode_blob_byte_hash"], "squash"
     )
+    publisher.validate_ceremony_merge_mode(
+        ["path_mode_blob_byte_hash", "resulting_tree_identity"], "squash"
+    )
+    publisher.validate_ceremony_merge_mode(
+        ["first_or_last_add_identity", "path_mode_blob_byte_hash"],
+        "no_fast_forward_merge_commit",
+    )
     for mode in ("squash", "rebase", "fast_forward"):
         with pytest.raises(publisher.PublicationError):
             publisher.validate_ceremony_merge_mode(
@@ -577,6 +711,16 @@ def test__merge_mode__enforces_topology_and_blob_bound_matrix():
         publisher.validate_ceremony_merge_mode(
             ["unclassified_requirement"], "squash"
         )
+    with pytest.raises(publisher.PublicationError, match="order drift"):
+        publisher.validate_ceremony_merge_mode(
+            ["resulting_tree_identity", "path_mode_blob_byte_hash"],
+            "squash",
+        )
+    with pytest.raises(publisher.PublicationError, match="requires"):
+        publisher.validate_ceremony_merge_mode(
+            ["first_or_last_add_identity", "path_mode_blob_byte_hash"],
+            "squash",
+        )
 
 
 def test__amendment15_mutation_inventory__is_exact_and_disjoint():
@@ -585,3 +729,17 @@ def test__amendment15_mutation_inventory__is_exact_and_disjoint():
     assert publisher.A15_MUTATION_DOMAIN_SHA256 == (
         "285f4f349d27099b64053f88f5292890392fd547643b083410c30f0c5b93b1c8"
     )
+    mutation_digest = hashlib.sha256(
+        a13.canonical_json_bytes(list(publisher.A15_EXPECTED_MUTATIONS))
+    ).hexdigest()
+    assert mutation_digest == publisher.A15_MUTATION_DOMAIN_SHA256
+    path_digest = hashlib.sha256(
+        a13.canonical_json_bytes(
+            sorted(
+                path.as_posix()
+                for path in publisher.ORDERED_ARTIFACT_COMMIT_BY_PATH
+            )
+        )
+    ).hexdigest()
+    assert len(publisher.ORDERED_ARTIFACT_COMMIT_BY_PATH) == 22
+    assert path_digest == publisher.ORDERED_ARTIFACT_PATH_DOMAIN_SHA256

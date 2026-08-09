@@ -1392,10 +1392,10 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
     # The registry constants are asserted against these pinned values
     # unconditionally, so a coherent wrong repin cannot satisfy either
     # leg below. An in-flight append-only amendment lawfully extends
-    # the design past the pinned ratification blob; the binding must
-    # then fail closed until a post-merge repin, with the ratified
-    # bytes surviving as an exact byte prefix of both the worktree and
-    # HEAD copies.
+    # the design past the pinned ratification blob. The narrow
+    # prospective-suffix rule retains the revision-16 binding only when
+    # the ratified bytes survive as the exact prefix of byte-identical
+    # worktree and HEAD copies.
     expected_binding = {
         "path": "docs/design/covered_earnings_correction.md",
         "ratification_commit": "062d74187e3263cd4a7fad3851a9b8c699a2556c",

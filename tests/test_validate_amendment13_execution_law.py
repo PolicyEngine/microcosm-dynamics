@@ -592,6 +592,26 @@ def test__document__semantic_projection_covers_amendment14():
     assert projection["amendment14"]["enforcement_mutations"] == list(
         a13.A13_ENFORCEMENT_EXPECTED_MUTATIONS
     )
+    assert projection["amendment15"]["section_semantic_sha256"] == (
+        a13.A15_SECTION_SEMANTIC_SHA256
+    )
+
+
+def test__document__amendment15_nonpin_semantics_are_hash_bound():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    original = b"| `source_document_count` | `257` |"
+    forged = b"| `source_document_count` | `258` |"
+    assert raw.count(original) == 1
+    candidate = raw.replace(original, forged, 1)
+    assert (
+        a13._parse_amendment15_projection(candidate)["section_semantic_sha256"]
+        != a13.A15_SECTION_SEMANTIC_SHA256
+    )
+    with pytest.raises(
+        a13.LawError,
+        match="Amendment-14/15 document semantic projection drift",
+    ):
+        a13._validate_document_semantic_projection(candidate, {})
 
 
 def test__implementation__active_pins_are_blob_bound_without_commit():

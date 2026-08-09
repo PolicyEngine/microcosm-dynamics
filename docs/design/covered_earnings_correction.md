@@ -53540,8 +53540,10 @@ hosting-platform act of choosing the merge button is procedural and cannot
 be proved by a pre-ratification unit test; the orchestrator records its
 selected mode and validator result, while the postmerge graph is the
 controlling testable fact. PR #377 is a historical blob-bound squash under
-§28, whereas PR #382 demonstrates why a topology-bound publication must use
-the preserving mode. Neither incident creates a general exception.
+§28's later successor identity, but its then-active topology-bound requirement
+made the squash incident a failure; PR #382 independently demonstrates why a
+topology-bound publication must use the preserving mode. Neither later cure
+creates a general exception.
 
 ### 29.4 Limb III — exact A12-T2 source-hierarchy certification
 
@@ -53560,11 +53562,15 @@ The sole builder path is
 independent public validator path is
 `scripts/validate_amendment12_tier2_source_hierarchy_certification.py`; it
 exports `validate_committed_certification()` and its CLI performs the same
-public operation under `--check`. The builder may construct the first
+public operation under `--check`. The builder exports `build_certification()`;
+its CLI writes only the fixed artifact path. Both modules separately export
+`reconstruct_source_hierarchy_member()`, with no caller path, expected member,
+identity, or verification switch. The builder may construct the first
 reconstruction, but it may not validate its own implementation identity or
-supply the second reconstruction. The public validator independently derives
-all repository, source, ratification, history, byte, schema, and lifecycle
-facts and accepts no caller-supplied identity or verification-off switch.
+supply the second reconstruction. The public validator reruns both
+implementations from fixed authenticated inputs, independently derives all
+repository, source, ratification, history, byte, schema, and lifecycle facts,
+and accepts no caller-supplied identity or verification-off switch.
 
 These paths and the artifact are future identities. They do not exist in the
 revision-17 candidate and must not be stubbed, first-added, selected, or
@@ -53691,6 +53697,8 @@ G17-C01 row, an actual consumer projection, Q5 input, or authority emission.
 ~~~text
 implementation_blob_oid
 implementation_byte_size
+implementation_dependency_paths
+implementation_dependency_policy
 implementation_mode
 implementation_path
 implementation_raw_sha256
@@ -53709,9 +53717,28 @@ status is `pass_independent_source_reconstruction`. The two implementation
 blob OIDs differ and the two implementation raw hashes differ. They run
 separately over the identical authenticated
 `tier2_build_input_domain_sha256`; neither imports the other's output or the
-certificate's expected member value. Both derived member byte sizes and
-hashes must deep-equal `source_hierarchy_member_identity`. Any disagreement
-aborts A12-T2-R04 and therefore R05.
+certificate's expected member value. Before consulting either claimed hash,
+the public validator retains both complete reconstructed member values,
+requires an exact deep equality, strict-canonicalizes both, and requires
+byte-for-byte equality. Both independently derived member byte sizes and
+hashes must then deep-equal `source_hierarchy_member_identity`. Any
+disagreement aborts A12-T2-R04 and therefore R05.
+
+For each row, `implementation_dependency_paths` is an ordered singleton array
+containing only that row's own `implementation_path`, and
+`implementation_dependency_policy` is the opaque exact code
+`self_contained_single_file_stdlib_only_no_shared_reconstruction_v1`. Each
+`reconstruct_source_hierarchy_member()` is therefore a separately implemented,
+self-contained reconstruction: its transitive reconstruction-logic callable
+closure may use only its own pinned file and the Python standard library. It
+must not import, call, wrap, dispatch to, copy a result from, or otherwise
+reuse the other referee or any shared repository-local reconstruction
+implementation. Common authenticated raw input bytes are inputs, not shared
+logic. The future public validator derives the complete local import/call
+closure by static inspection, audits the isolated runtime import/call trace,
+and exact-compares each singleton with its serialized row before comparing
+results. A distinct wrapper blob that delegates to the builder is the
+`tier2_certification_referee_implementation_reused` mutation and aborts.
 
 `gate_results` is an ordered array of exactly five objects, each with only
 `gate_id` and `status`. The gate IDs are exactly `A12-T2-R01` through
@@ -53726,7 +53753,7 @@ attestation. Passing the certificate advances only to A12-T2-R06.
 
 `git_order_attestation` is exactly this seven-key object:
 
-~~~json
+~~~text
 {
   "archive_ref": "refs/heads/ceremony-archive/a12-tier2-r03-ordered",
   "archive_tip_commit": "ba4bd4a734dc5ddd835bb7374bf5a37c12a190ae",
@@ -53747,7 +53774,7 @@ document/repair branch.
 
 `lifecycle` is exactly this ten-key semantic object:
 
-~~~json
+~~~text
 {
   "actual_consumer_projection_emitted": false,
   "authority_emitted": false,
@@ -53818,26 +53845,33 @@ remaining bytes begin with the unique exact Amendment-15 boundary and end in
 one LF. The registry continues to return revision `16`, its revision-16 raw
 SHA-256, its revision-16 ratification commit, and only the Amendment-13/14
 closures; it neither hashes the prospective suffix into that binding nor
-makes Amendment 15 operative. A prefix mismatch, another boundary, missing
-suffix, dirty working tree, or different `HEAD` aborts. This narrow read rule
-keeps the already-operative nonauthority tier-2 validators runnable while a
-successor draft is reviewed; it cannot create authority from the draft.
+makes Amendment 15 operative. The exact revision-16 document without a
+suffix remains lawful. For a longer candidate, a prefix mismatch, another or
+missing boundary, dirty working tree, or different `HEAD` aborts. This narrow
+read rule keeps the already-operative nonauthority tier-2 validators runnable
+while a successor draft is reviewed; it cannot create authority from the
+draft.
 The active Amendment-15 implementation identity for the Amendment-13/14
 semantic validator is exactly mode `100644` and these two
 path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `9bd28721df04057ff642302aee87e6b701850ddb` | 235087 | `b2d8f6378a1be909a0038ab80b2c6eb025c9ad9a0cc0e4636f43ff0228ce53f5` |
-| `tests/test_validate_amendment13_execution_law.py` | `5da8929ec67a31398c7d01b54fec1861dcedc075` | 22768 | `b0ef913ed01aa5ad2af5fec9d0096e9900ac3ef0d7f072d81b5e0d0b2889f2e4` |
+| `scripts/validate_amendment13_execution_law.py` | `62917cc3ef0e749d2cf7755b22c27f59346476d1` | 236869 | `ad49578476227bb659c2543e92b2cb9491910b837ef2c6eef96371e78553ce1b` |
+| `tests/test_validate_amendment13_execution_law.py` | `7797837f76e3c185d40ec6cc90f0c2e75bcd7504` | 23520 | `bdf1b86acdad3dd3dada03e71eb426fca4b297e541f7ef9170420ee846c88f3b` |
 
 For each row, the validator requires exact path, mode, working-tree/`HEAD`
 bytes, byte size, raw SHA-256, and Git blob OID through the sanitized wrapper.
 Section 28.5's two rows remain the immutable historical revision-16 pins;
 they do not remain active after this successor table is ratified. The
-Amendment-15 projection exact-covers §§29.1–29.8, including every closed
-keyset, code, path, commit, tree, count, hash, mutation, replacement, and
-noninstantiation rule.
+semantic validator hashes the complete Amendment-15 suffix after normalizing
+only the seven separately verified mode/blob/byte/hash values in the table
+above. It compares that digest with its compiled revision-17 expectation, so
+any non-pin change anywhere in §§29.1–29.8 aborts. The implementation and
+tests additionally enforce the parsed pins, closed keysets, codes, paths,
+commits, trees, counts, hashes, mutation domain, and noninstantiation rules
+named in the operations they perform. The design remains the sole authority;
+no implementation constant can add to or replace these bytes.
 
 #### 29.5.2 Exact new mutation domain
 
@@ -53919,6 +53953,7 @@ pass
 pass_independent_source_reconstruction
 pass_all_expected_mutations_rejected
 python-json-sort-keys-compact-ascii-no-nan-lf-v1
+self_contained_single_file_stdlib_only_no_shared_reconstruction_v1
 no_fast_forward_merge_commit
 squash
 ~~~

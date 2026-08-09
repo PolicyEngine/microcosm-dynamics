@@ -749,6 +749,9 @@ A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
 A14_SECTION_SEMANTIC_SHA256 = (
     "8d17464268b95d500dcc4d7640edee0f26180a70172cdb3a3966a8e6d2408062"
 )
+A15_SECTION_SEMANTIC_SHA256 = (
+    "9667a544a7870caca5ad9feefeac5bae7765ad074319e3b4279740831e6a6a6e"
+)
 
 A13_COMPARATOR_ROWS = (
     (
@@ -1993,6 +1996,15 @@ _A15_IMPLEMENTATION_PIN_PATTERN = re.compile(
     r"(?P<test_size>[0-9][0-9,]*) \| "
     r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
 )
+_A15_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+    "mode",
+    "validator_blob",
+    "validator_size",
+    "validator_sha256",
+    "test_blob",
+    "test_size",
+    "test_sha256",
+)
 
 
 def _amendment15_text(raw: bytes) -> str:
@@ -2010,14 +2022,33 @@ def _amendment15_text(raw: bytes) -> str:
         raise LawError("governing Amendment-15 suffix is not UTF-8") from error
 
 
-def _parse_amendment15_implementation_pins(raw: bytes) -> dict[str, Any]:
-    section = _amendment15_text(raw)
+def _amendment15_implementation_pin_match(section: str) -> re.Match[str]:
     matches = list(_A15_IMPLEMENTATION_PIN_PATTERN.finditer(section))
     _require(
         len(matches) == 1,
         "Amendment-15 implementation pin block grammar drift",
     )
-    match = matches[0]
+    return matches[0]
+
+
+def _normalize_amendment15_implementation_pin_values(section: str) -> str:
+    """Normalize only the seven independently authenticated A15 pin values."""
+
+    match = _amendment15_implementation_pin_match(section)
+    parts: list[str] = []
+    cursor = 0
+    for group in _A15_IMPLEMENTATION_PIN_VALUE_GROUPS:
+        start, end = match.span(group)
+        _require(start >= cursor, "Amendment-15 pin capture ordering drift")
+        parts.extend((section[cursor:start], f"<{group.upper()}>"))
+        cursor = end
+    parts.append(section[cursor:])
+    return "".join(parts)
+
+
+def _parse_amendment15_implementation_pins(raw: bytes) -> dict[str, Any]:
+    section = _amendment15_text(raw)
+    match = _amendment15_implementation_pin_match(section)
     return {
         "mode": match.group("mode"),
         "files": [
@@ -2036,6 +2067,18 @@ def _parse_amendment15_implementation_pins(raw: bytes) -> dict[str, Any]:
                 "sha256": match.group("test_sha256"),
             },
         ],
+    }
+
+
+def _parse_amendment15_projection(raw: bytes) -> dict[str, Any]:
+    section = _amendment15_text(raw)
+    return {
+        "section_semantic_sha256": _sha256(
+            _normalize_amendment15_implementation_pin_values(section).encode(
+                "utf-8"
+            )
+        ),
+        "implementation_pins": _parse_amendment15_implementation_pins(raw),
     }
 
 
@@ -2319,6 +2362,7 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
         "scope": _parse_scope_projection(sections["27.7"]),
         "comparator": _parse_comparator_and_literals(sections["27.8"]),
         "amendment14": _parse_amendment14_projection(raw),
+        "amendment15": _parse_amendment15_projection(raw),
     }
     _validate_identifier_inventory_consistency(projection)
     return projection
@@ -2681,6 +2725,13 @@ def _canonical_amendment14_projection() -> dict[str, Any]:
     }
 
 
+def _canonical_amendment15_projection() -> dict[str, Any]:
+    return {
+        "section_semantic_sha256": A15_SECTION_SEMANTIC_SHA256,
+        "implementation_pins": None,
+    }
+
+
 @lru_cache(maxsize=1)
 def _canonical_draft_document_projection() -> dict[str, Any]:
     """Build the immutable document cross-check independently of a caller law."""
@@ -2739,6 +2790,7 @@ def _canonical_draft_document_projection() -> dict[str, Any]:
             "successor_kind_literals": list(A13_SUCCESSOR_KIND_LITERALS),
         },
         "amendment14": _canonical_amendment14_projection(),
+        "amendment15": _canonical_amendment15_projection(),
     }
 
 
@@ -2818,9 +2870,12 @@ def _validate_document_semantic_projection(
     expected["amendment14"]["implementation_pins"] = projection["amendment14"][
         "implementation_pins"
     ]
+    expected["amendment15"]["implementation_pins"] = projection["amendment15"][
+        "implementation_pins"
+    ]
     _require(
         projection == expected,
-        "governing Amendment-14 document semantic projection drift",
+        "governing Amendment-14/15 document semantic projection drift",
     )
     _verify_implementation_pins(
         projection["amendment14"]["implementation_pins"]

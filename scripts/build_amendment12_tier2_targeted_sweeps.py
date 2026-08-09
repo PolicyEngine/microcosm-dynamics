@@ -3,7 +3,7 @@
 
 This builder starts from a fresh, in-memory reconstruction of all 81 pinned
 source documents and the operative Amendment-13/14 execution template.  It
-emits one nonauthority corpus-certification artifact only after all six
+emits one nonauthority targeted-sweep evidence artifact only after all six
 successor-era seals exist as committed, byte-exact files.  It emits no
 catalog authority, certification, Q5 input, or production output.
 """
