@@ -603,6 +603,23 @@ def test__certification_contract__does_not_resolve_rebound_public_census(
         "run_complete_mutation_census",
         forged_execution,
     )
+    for name in (
+        "top_level",
+        "ratification",
+        "source",
+        "member",
+        "reconstructions",
+        "gates",
+        "git_attestation",
+        "lifecycle",
+        "mutation_census",
+        "integrity",
+    ):
+        monkeypatch.setattr(
+            publisher,
+            f"_validate_certification_{name}",
+            lambda *arguments, name=name: calls.append((name, arguments)),
+        )
     publisher.validate_tier2_certification_contract(candidate)
     assert calls == []
 
@@ -1001,15 +1018,19 @@ def test__certification_public_validator__definition_binds_complete_graph(
     closure = inspect.getclosurevars(
         publisher.validate_tier2_certification_contract
     ).nonlocals
+    validator_names = (
+        "validate_top_level",
+        "validate_ratification",
+        "validate_source",
+        "validate_member",
+        "validate_reconstructions",
+        "validate_gates",
+        "validate_mutation_census",
+        "validate_integrity",
+    )
+    original_validators = {name: closure[name] for name in validator_names}
     assert closure["execute_authenticated_census"] is original_census
-    assert callable(closure["validate_top_level"])
-    assert callable(closure["validate_ratification"])
-    assert callable(closure["validate_source"])
-    assert callable(closure["validate_member"])
-    assert callable(closure["validate_reconstructions"])
-    assert callable(closure["validate_gates"])
-    assert callable(closure["validate_mutation_census"])
-    assert callable(closure["validate_integrity"])
+    assert all(callable(value) for value in original_validators.values())
 
     monkeypatch.setattr(publisher, "run_complete_mutation_census", lambda: {})
     for name in (
@@ -1034,7 +1055,9 @@ def test__certification_public_validator__definition_binds_complete_graph(
         publisher.validate_tier2_certification_contract
     ).nonlocals
     assert rebound["execute_authenticated_census"] is original_census
-    assert rebound["validate_top_level"] is closure["validate_top_level"]
+    assert {
+        name: rebound[name] for name in validator_names
+    } == original_validators
 
 
 def test__complete_census__tampered_publisher_bytes_reject_before_child(
@@ -1042,6 +1065,7 @@ def test__complete_census__tampered_publisher_bytes_reject_before_child(
 ):
     publisher_path = ROOT / publisher.PUBLISHER_IMPLEMENTATION_PATH
     original_read_bytes = Path.read_bytes
+    process_calls = []
 
     def tampered_read_bytes(path):
         raw = original_read_bytes(path)
@@ -1049,59 +1073,69 @@ def test__complete_census__tampered_publisher_bytes_reject_before_child(
             return raw + b"# tampered after enacted pin\n"
         return raw
 
+    def unexpected_process(*arguments, **kwargs):
+        process_calls.append((arguments, kwargs))
+        raise AssertionError("pin mismatch launched a subprocess")
+
     monkeypatch.setattr(Path, "read_bytes", tampered_read_bytes)
+    monkeypatch.setattr(subprocess, "Popen", unexpected_process)
     with pytest.raises(
         publisher.PublicationError,
         match="publisher implementation pin mismatch",
     ):
         publisher.run_complete_mutation_census()
+    assert process_calls == []
 
 
 def _forged_child_census_evidence():
-    component_specs = (
-        (
-            "amendment_12_historical",
-            publisher.A12_MUTATION_COUNT,
-            publisher.A12_MUTATION_DOMAIN_SHA256,
-        ),
-        (
-            "amendments_13_14_inherited",
-            publisher.A13_A14_MUTATION_COUNT,
-            publisher.A13_A14_MUTATION_DOMAIN_SHA256,
-        ),
-        (
-            "amendment_15",
-            len(publisher.A15_EXPECTED_MUTATIONS),
-            publisher.A15_MUTATION_DOMAIN_SHA256,
-        ),
+    a12_names, a13_names, a14_names, a15_names = _executed_mutation_outputs()
+    component_names = (
+        ("amendment_12_historical", a12_names),
+        ("amendments_13_14_inherited", (*a13_names, *a14_names)),
+        ("amendment_15", a15_names),
+    )
+    complete_names = tuple(
+        name for _, names in component_names for name in names
     )
     return {
         "aggregate": {
-            "rejected_count": publisher.COMPLETE_MUTATION_COUNT,
-            "rejected_domain_sha256": (
-                publisher.COMPLETE_MUTATION_DOMAIN_SHA256
-            ),
+            "rejected_count": len(complete_names),
+            "rejected_domain_sha256": hashlib.sha256(
+                a13.canonical_json_bytes(list(complete_names))
+            ).hexdigest(),
         },
         "components": [
             {
                 "component_id": component_id,
-                "rejected_count": count,
-                "rejected_domain_sha256": digest,
-                "rejected_names": [
-                    f"forged_{component_id}_{index}" for index in range(count)
-                ],
+                "rejected_count": len(names),
+                "rejected_domain_sha256": hashlib.sha256(
+                    a13.canonical_json_bytes(list(names))
+                ).hexdigest(),
+                "rejected_names": list(names),
             }
-            for component_id, count, digest in component_specs
+            for component_id, names in component_names
         ],
         "schema_version": (publisher.COMPLETE_MUTATION_CENSUS_SCHEMA_VERSION),
     }
 
 
+def test__complete_census__authenticates_exact_child_evidence():
+    raw = a13.canonical_json_bytes(_forged_child_census_evidence())
+    assert publisher._authenticate_complete_mutation_census_bytes(raw) == (
+        publisher._expected_mutation_census()
+    )
+
+
 @pytest.mark.parametrize(
-    "mutation",
-    ("wrong_digest", "missing_key", "extra_key", "wrong_schema"),
+    ("mutation", "message"),
+    (
+        ("wrong_digest", "historical mutation evidence drift"),
+        ("missing_key", "mutation component keyset drift"),
+        ("extra_key", "mutation aggregate keyset drift"),
+        ("wrong_schema", "schema-version drift"),
+    ),
 )
-def test__complete_census__forged_child_json_is_rejected(mutation):
+def test__complete_census__forged_child_json_is_rejected(mutation, message):
     evidence = _forged_child_census_evidence()
     if mutation == "wrong_digest":
         evidence["components"][0]["rejected_domain_sha256"] = "0" * 64
@@ -1112,8 +1146,75 @@ def test__complete_census__forged_child_json_is_rejected(mutation):
     else:
         evidence["schema_version"] = "forged.v1"
     raw = a13.canonical_json_bytes(evidence)
-    with pytest.raises(publisher.PublicationError):
+    with pytest.raises(publisher.PublicationError, match=message):
         publisher._authenticate_complete_mutation_census_bytes(raw)
+
+
+def test__complete_census__forged_subprocess_stdout_is_rejected(monkeypatch):
+    evidence = _forged_child_census_evidence()
+    evidence["components"][0]["rejected_domain_sha256"] = "0" * 64
+    forged_stdout = a13.canonical_json_bytes(evidence)
+    original_popen = subprocess.Popen
+    child_calls = []
+
+    class ForgedChildProcess:
+        def __init__(self, arguments):
+            self.args = arguments
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *arguments):
+            return False
+
+        def communicate(self, input=None, timeout=None):
+            assert input is None
+            assert timeout is None
+            return forged_stdout, b""
+
+        def poll(self):
+            return 0
+
+    def intercept_popen(arguments, *popen_args, **popen_kwargs):
+        if arguments[0] == "git":
+            return original_popen(arguments, *popen_args, **popen_kwargs)
+        child_calls.append(arguments)
+        return ForgedChildProcess(arguments)
+
+    monkeypatch.setattr(subprocess, "Popen", intercept_popen)
+    with pytest.raises(
+        publisher.PublicationError,
+        match="historical mutation evidence drift",
+    ):
+        publisher.run_complete_mutation_census()
+    assert child_calls == [
+        [
+            sys.executable,
+            "-I",
+            "-B",
+            str(ROOT / publisher.PUBLISHER_IMPLEMENTATION_PATH),
+            publisher.COMPLETE_MUTATION_CENSUS_CHILD_FLAG,
+        ]
+    ]
+
+
+def test__complete_census__child_cli_rejects_publication_options():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-B",
+            str(ROOT / publisher.PUBLISHER_IMPLEMENTATION_PATH),
+            publisher.COMPLETE_MUTATION_CENSUS_CHILD_FLAG,
+            "--check",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+    )
+    assert result.returncode == 2
+    assert result.stdout == b""
+    assert b"census mode accepts no publication options" in result.stderr
 
 
 def test__complete_census__noncanonical_or_trailing_child_bytes_reject():
