@@ -239,8 +239,7 @@ AMENDMENT12_RATIFICATION_IDENTITY = {
     "dual_ratify_attestations": [dict(row) for row in RATIFY_ATTESTATIONS],
 }
 
-INCOMPATIBLE_PROOF_IDS = tuple(
-    """
+INCOMPATIBLE_PROOF_IDS = tuple("""
 rq-local-repeat-evidence:c93bb69e6a4c04717efd8b68e71799b5b4f3cb1c1c20a1b31afe2852d04dab67
 rq-local-repeat-evidence:0c25501bcb134ddd36f5f076978ebd01a02d3e731772c4ae5de182d81a76a487
 rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716
@@ -269,8 +268,7 @@ rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561
 rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877
 rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c
 rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39
-""".split()
-)
+""".split())
 INCOMPATIBLE_PROOF_ID_DOMAIN_SHA256 = (
     "9c8cb11732939daac176275ae66dfa5a6ce61a2850c82087dd761a6431ac7412"
 )
@@ -404,8 +402,7 @@ FRAGMENT_INSTRUCTION_ID_DOMAIN_SHA256 = (
     "74075ac0ca54eff2a9459d4e95f426195c9e01db78040025462aa2f57f486a09"
 )
 
-DOC036_CLASSIFICATION_IDS = tuple(
-    """
+DOC036_CLASSIFICATION_IDS = tuple("""
 rq-local-anchor:6b757b140c4fdbcfcfe8b974f7894ffc856ab3dca240b7eb61530adca0e2d12a
 rq-local-anchor:11802d91128200f95abc1a42e5e39677f30c955da28e8b89bdc72e10ff8c11ef
 rq-local-anchor:daae302f7bdebd7a8ab43d983faaedecb97ac22f8a7ca7c3af92dbff1cb76de5
@@ -414,14 +411,12 @@ rq-local-anchor:930c509fadfdc037d5e03d65422cc7c3d3b86a9ec3adb7553e86d9654632d4ca
 rq-local-anchor:5a703e10bfd94a486c21d043d7ad980905870b908ea70b2f136c16e835e1a261
 rq-local-anchor:d6d21da4a96eda0e310284ca6cebc059f340e2bdaf2da64f56286d65a03fa283
 rq-local-anchor:93b5b7f3d32e6dda9e3fad1089fc4ba605502765e4de1735223637bc615fff29
-""".split()
-)
+""".split())
 DOC036_CLASSIFICATION_ID_DOMAIN_SHA256 = (
     "1d2271438f3d9a7744e1379ed26ce565ff2731ed0dd8dec357c0bd8a9a271d23"
 )
 
-LAW_GAP_IDS = tuple(
-    """
+LAW_GAP_IDS = tuple("""
 rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6
 rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045
 rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495
@@ -436,8 +431,7 @@ rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c9
 rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868
 rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927
 rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734
-""".split()
-)
+""".split())
 LAW_GAP_ID_DOMAIN_SHA256 = (
     "f2e8a5001527eb975887828ba3e66c3eeac95ec0972454bcef509fba92149883"
 )
@@ -756,7 +750,7 @@ A14_SECTION_SEMANTIC_SHA256 = (
     "8d17464268b95d500dcc4d7640edee0f26180a70172cdb3a3966a8e6d2408062"
 )
 A15_SECTION_SEMANTIC_SHA256 = (
-    "549de5cca4bdc0277c19046b561afe980e6cf00e98d38a9a3c2f0c67ac249adf"
+    "a1e7bcb2aabc2b43cc92b09e1d8bf96d644d377ae70d81d9c5f40d7fafa94f3b"
 )
 
 A13_COMPARATOR_ROWS = (

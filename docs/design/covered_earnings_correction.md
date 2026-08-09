@@ -53819,10 +53819,11 @@ outputs concatenated in the displayed component order and hashed under
 §29.4.1's canonicalization.
 
 The public validator derives these values through
-`run_complete_mutation_census()`. Before every execution, that operation reads
-the active §29.5.1 publisher row, requires the publisher's exact mode-`100644`
-`HEAD` tree entry and working-tree/`HEAD` byte equality, and recomputes its Git
-blob OID, byte size, and raw SHA-256. A mismatch aborts before census execution.
+`run_complete_mutation_census()`. At definition time, that operation captures
+the active §29.5.1 publisher row. Before every execution it uses that captured
+row to require the publisher's exact mode-`100644` `HEAD` tree entry and
+working-tree/`HEAD` byte equality, and recomputes its Git blob OID, byte size,
+and raw SHA-256. A mismatch aborts before census execution.
 It then launches the repository Python executable with `-I -B` and the verified
 publisher file path in a fresh interpreter. The child environment strips every
 inherited `GIT_*` variable and sets `GIT_NO_REPLACE_OBJECTS=1`, exactly as the
@@ -53955,7 +53956,7 @@ and these three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `167854de0e9b9a92f05680e09a4ac0be59d22f76` | 239044 | `c93d661508f6690fbbbb1f140ba54a248c15d7458d5c7c9f4e9847aefd5bee86` |
+| `scripts/validate_amendment13_execution_law.py` | `cecff7d4935ac558ff87cc75e5a70e58c976f605` | 239026 | `fb1f5ad9e89e2acfefb90837d53e2aea1ec29320582a2e328bcdcd618fc14a2a` |
 | `tests/test_validate_amendment13_execution_law.py` | `4c57861b849341a5bfe097df28183e245c4399a2` | 29667 | `5c05205dc29f0d51b380627ccca4c55ee0a0f31f12f49eea3d39371bc8e584be` |
 | `scripts/build_amendment13_tier2_repairs.py` | `9f4b59e6730442e1a4d97ccd9addd68839e2793c` | 111195 | `38b5a0fad93d2dc0e18a64c8a03bfc6a4148844ff2ec835e3042eaee8d436ed0` |
 
