@@ -30,8 +30,13 @@ DESIGN_PATH = "docs/design/covered_earnings_correction.md"
 BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
 DESIGN_RATIFICATION_COMMIT = "062d74187e3263cd4a7fad3851a9b8c699a2556c"
 DESIGN_REVISION = 16
+DESIGN_BYTE_SIZE = 3_836_294
 DESIGN_BLOB_SHA256 = (
     "c4f3ae022d2e623f4316600e16ec3bded10f0160d197ce64e37f35015e55c92f"
+)
+AMENDMENT15_BOUNDARY = (
+    b"\n## 29. AMENDMENT SECTION \xe2\x80\x94 Amendment 15: ordered "
+    b"publication attestation and tier-2 certification\n"
 )
 RATIFICATION_CLOSURE_BINDINGS = (
     {
@@ -652,6 +657,24 @@ def _run_git(
     )
 
 
+def _preserves_ratified_design_prefix(
+    current_bytes: bytes, ratified_bytes: bytes
+) -> bool:
+    """Accept only the exact ratified bytes or one prospective A15 suffix."""
+
+    if current_bytes == ratified_bytes:
+        return True
+    suffix = current_bytes[DESIGN_BYTE_SIZE:]
+    return (
+        len(ratified_bytes) == DESIGN_BYTE_SIZE
+        and len(current_bytes) > DESIGN_BYTE_SIZE
+        and current_bytes[:DESIGN_BYTE_SIZE] == ratified_bytes
+        and suffix.startswith(AMENDMENT15_BOUNDARY)
+        and current_bytes.count(AMENDMENT15_BOUNDARY) == 1
+        and current_bytes.endswith(b"\n")
+    )
+
+
 def design_binding() -> dict[str, Any]:
     """Return the ratified design identity."""
 
@@ -678,12 +701,17 @@ def design_binding() -> dict[str, Any]:
         )
     head_bytes = head.stdout
     ratified_bytes = ratified.stdout
-    if not (worktree_bytes == head_bytes == ratified_bytes):
+    if worktree_bytes != head_bytes or not _preserves_ratified_design_prefix(
+        worktree_bytes, ratified_bytes
+    ):
         raise RegistrationAborted(
-            "covered-earnings design differs across worktree, HEAD, and "
-            "ratification commit"
+            "covered-earnings design differs across worktree and HEAD or "
+            "violates the ratified-prefix/prospective-suffix boundary"
         )
-    if hashlib.sha256(head_bytes).hexdigest() != DESIGN_BLOB_SHA256:
+    if (
+        len(ratified_bytes) != DESIGN_BYTE_SIZE
+        or hashlib.sha256(ratified_bytes).hexdigest() != DESIGN_BLOB_SHA256
+    ):
         raise RegistrationAborted("covered-earnings design blob digest drift")
     return {
         "path": DESIGN_PATH,

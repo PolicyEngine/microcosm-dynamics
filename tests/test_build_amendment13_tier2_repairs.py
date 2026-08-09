@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import subprocess
 import sys
 from pathlib import Path
 
@@ -15,6 +16,109 @@ if str(SCRIPTS) not in sys.path:
 
 import build_amendment13_tier2_repairs as publisher  # noqa: E402
 import validate_amendment13_execution_law as a13  # noqa: E402
+
+
+def _repin_certification(value):
+    digest = publisher._certification_payload_sha256(value)
+    value["artifact_id"] = publisher.CERTIFICATION_ARTIFACT_ID_PREFIX + digest
+    value["integrity"] = {
+        "canonicalization": (
+            "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+        ),
+        "payload_sha256": digest,
+    }
+
+
+def _certification_fixture():
+    member_sha = "1" * 64
+    input_sha = "2" * 64
+    value = {
+        "artifact_id": "",
+        "artifact_role": publisher.CERTIFICATION_ARTIFACT_ROLE,
+        "gate_results": [
+            {"gate_id": gate_id, "status": "pass"}
+            for gate_id in publisher.CERTIFICATION_GATE_IDS
+        ],
+        "git_order_attestation": copy.deepcopy(
+            publisher.CERTIFICATION_GIT_ATTESTATION
+        ),
+        "integrity": {},
+        "lifecycle": copy.deepcopy(publisher.CERTIFICATION_LIFECYCLE),
+        "mutation_census": {
+            "expected_count": 11,
+            "expected_domain_sha256": publisher.A15_MUTATION_DOMAIN_SHA256,
+            "rejected_count": 11,
+            "rejected_domain_sha256": publisher.A15_MUTATION_DOMAIN_SHA256,
+            "status": "pass_all_expected_mutations_rejected",
+        },
+        "ratification_binding": {
+            "amendment_number": 15,
+            "closure_byte_size": 1_000,
+            "closure_path": (
+                "docs/analysis/amendment_15_ratification/closure_v1.json"
+            ),
+            "closure_raw_sha256": "3" * 64,
+            "design_blob_oid": "4" * 40,
+            "design_byte_size": 4_000_000,
+            "design_path": "docs/design/covered_earnings_correction.md",
+            "design_raw_sha256": "5" * 64,
+            "design_revision": 17,
+            "ratification_commit": "6" * 40,
+            "ratification_commit_sole_parent": "7" * 40,
+        },
+        "reconstruction_rows": [
+            {
+                "implementation_blob_oid": "8" * 40,
+                "implementation_byte_size": 10_000,
+                "implementation_mode": "100644",
+                "implementation_path": (
+                    publisher.CERTIFICATION_RECONSTRUCTION_PATHS[0]
+                ),
+                "implementation_raw_sha256": "8" * 64,
+                "member_canonical_byte_size": 123_456,
+                "member_raw_sha256": member_sha,
+                "reconstruction_id": (
+                    publisher.CERTIFICATION_RECONSTRUCTION_IDS[0]
+                ),
+                "status": "pass_independent_source_reconstruction",
+                "tier2_build_input_domain_sha256": input_sha,
+            },
+            {
+                "implementation_blob_oid": "9" * 40,
+                "implementation_byte_size": 11_000,
+                "implementation_mode": "100644",
+                "implementation_path": (
+                    publisher.CERTIFICATION_RECONSTRUCTION_PATHS[1]
+                ),
+                "implementation_raw_sha256": "9" * 64,
+                "member_canonical_byte_size": 123_456,
+                "member_raw_sha256": member_sha,
+                "reconstruction_id": (
+                    publisher.CERTIFICATION_RECONSTRUCTION_IDS[1]
+                ),
+                "status": "pass_independent_source_reconstruction",
+                "tier2_build_input_domain_sha256": input_sha,
+            },
+        ],
+        "schema_version": publisher.CERTIFICATION_SCHEMA_VERSION,
+        "source_build_identity": {
+            **publisher.CERTIFICATION_SOURCE_COUNTS_AND_DOMAINS,
+            "tier2_build_input_domain_sha256": input_sha,
+        },
+        "source_hierarchy_member_identity": {
+            "authority_kind": "prospective_g17_c01_source_member_pre_q5",
+            "canonical_byte_size": 123_456,
+            "canonicalization": (
+                "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+            ),
+            "member_name": "hierarchy_annotation_authority",
+            "raw_sha256": member_sha,
+            "status": "pass",
+        },
+        "status": publisher.CERTIFICATION_STATUS,
+    }
+    _repin_certification(value)
+    return value
 
 
 @pytest.fixture(scope="module")
@@ -255,3 +359,229 @@ def test__live_git_order__validates_before_and_after_publication(publication):
             publisher.validate_git_publication_order(
                 law, values, required=required
             )
+
+
+def test__ordered_history__authenticates_exact_collapsed_publication():
+    attestation = publisher.validate_ordered_ceremony_attestation()
+    assert attestation == {
+        "archive_ref": publisher.ORDERED_CEREMONY_LOCAL_REF,
+        "archive_tip_commit": publisher.ORDERED_CEREMONY_EVIDENCE_COMMIT,
+        "tree_oid": publisher.ORDERED_CEREMONY_TREE_OID,
+        "squash_commit": publisher.TIER2_SQUASH_COMMIT,
+        "stage_commits": {
+            "receipt": publisher.ORDERED_CEREMONY_RECEIPT_COMMIT,
+            "overlays": publisher.ORDERED_CEREMONY_OVERLAY_COMMIT,
+            "seals": publisher.ORDERED_CEREMONY_SEAL_COMMIT,
+            "evidence": publisher.ORDERED_CEREMONY_EVIDENCE_COMMIT,
+        },
+    }
+
+
+def test__ordered_history_mutation__rejects_identity_forgery(monkeypatch):
+    candidate = copy.deepcopy(publisher.ORDERED_CEREMONY_ATTESTATION)
+    candidate["stages"][1]["commit"] = publisher.TIER2_SQUASH_COMMIT
+    with pytest.raises(
+        publisher.PublicationError, match="overlays commit identity drift"
+    ):
+        publisher.validate_ordered_ceremony_attestation(attestation=candidate)
+
+    candidate = copy.deepcopy(publisher.ORDERED_CEREMONY_ATTESTATION)
+    candidate["stages"][1]["changed_paths"] = candidate["stages"][1][
+        "changed_paths"
+    ][:-1]
+    with pytest.raises(
+        publisher.PublicationError, match="changed-path attestation drift"
+    ):
+        publisher.validate_ordered_ceremony_attestation(attestation=candidate)
+
+    original = publisher._run_git
+
+    def wrong_tip(repo_root, *arguments):
+        if arguments[:3] == ("show-ref", "--verify", "--hash"):
+            return subprocess.CompletedProcess(
+                arguments,
+                0,
+                stdout=(publisher.TIER2_SQUASH_COMMIT + "\n").encode(),
+                stderr=b"",
+            )
+        return original(repo_root, *arguments)
+
+    monkeypatch.setattr(publisher, "_run_git", wrong_tip)
+    with pytest.raises(
+        publisher.PublicationError, match="resolves to the wrong tip"
+    ):
+        publisher.validate_ordered_ceremony_attestation()
+
+
+def test__ordered_history_mutation__rejects_wrong_order(monkeypatch):
+    original = publisher._is_strict_ancestor
+
+    def wrong_order(repo_root, ancestor, descendant):
+        if (
+            ancestor == publisher.ORDERED_CEREMONY_OVERLAY_COMMIT
+            and descendant == publisher.ORDERED_CEREMONY_SEAL_COMMIT
+        ):
+            return False
+        return original(repo_root, ancestor, descendant)
+
+    monkeypatch.setattr(publisher, "_is_strict_ancestor", wrong_order)
+    with pytest.raises(
+        publisher.PublicationError, match="strict-ancestor chain drift"
+    ):
+        publisher.validate_ordered_ceremony_attestation()
+
+
+def test__ordered_history_mutation__rejects_tree_mismatch():
+    candidate = copy.deepcopy(publisher.ORDERED_CEREMONY_ATTESTATION)
+    candidate["tree_oid"] = "0" * 40
+    with pytest.raises(
+        publisher.PublicationError, match="tree identity drift"
+    ):
+        publisher.validate_ordered_ceremony_attestation(attestation=candidate)
+
+
+def test__ordered_history_mutation__rejects_absent_archive_ref(tmp_path):
+    with pytest.raises(
+        publisher.PublicationError, match="archive ref is absent"
+    ):
+        publisher.validate_ordered_ceremony_attestation(repo_root=tmp_path)
+
+
+def test__ordered_history_mutation__rejects_exception_reuse():
+    attestation = {
+        "stage_commits": {
+            "receipt": publisher.ORDERED_CEREMONY_RECEIPT_COMMIT,
+            "overlays": publisher.ORDERED_CEREMONY_OVERLAY_COMMIT,
+            "seals": publisher.ORDERED_CEREMONY_SEAL_COMMIT,
+            "evidence": publisher.ORDERED_CEREMONY_EVIDENCE_COMMIT,
+        }
+    }
+    with pytest.raises(publisher.PublicationError, match="cannot reuse"):
+        publisher._attested_order_commit_for_squashed_first_add(
+            Path("scripts/build_amendment13_tier2_repairs.py"),
+            publisher.TIER2_SQUASH_COMMIT,
+            attestation,
+        )
+    with pytest.raises(
+        publisher.PublicationError, match="exception commit drift"
+    ):
+        publisher._attested_order_commit_for_squashed_first_add(
+            publisher.RECEIPT_PATH,
+            publisher.ORDERED_CEREMONY_RECEIPT_COMMIT,
+            attestation,
+        )
+
+
+def test__first_add_rule__still_rejects_two_live_adds(monkeypatch):
+    def two_adds(repo_root, *arguments):
+        return subprocess.CompletedProcess(
+            arguments,
+            0,
+            stdout=(
+                publisher.TIER2_SQUASH_COMMIT
+                + "\n"
+                + publisher.ORDERED_CEREMONY_OVERLAY_COMMIT
+                + "\n"
+            ).encode(),
+            stderr=b"",
+        )
+
+    monkeypatch.setattr(publisher, "_run_git", two_adds)
+    with pytest.raises(
+        publisher.PublicationError, match="more than one first-add commit"
+    ):
+        publisher._first_add_commits(
+            ROOT,
+            publisher.ORDERED_OVERLAY_PATHS[0],
+        )
+
+
+def test__certification_contract__accepts_minimal_total_fixture():
+    publisher.validate_tier2_certification_contract(_certification_fixture())
+
+
+def test__certification_mutation__rejects_schema_keyset_drift():
+    candidates = []
+    missing = _certification_fixture()
+    missing.pop("status")
+    _repin_certification(missing)
+    candidates.append(missing)
+    extra = _certification_fixture()
+    extra["extra"] = None
+    _repin_certification(extra)
+    candidates.append(extra)
+    nested = _certification_fixture()
+    nested["reconstruction_rows"][0].pop("implementation_mode")
+    _repin_certification(nested)
+    candidates.append(nested)
+    for candidate in candidates:
+        with pytest.raises(publisher.PublicationError, match="keyset drift"):
+            publisher.validate_tier2_certification_contract(candidate)
+
+
+def test__certification_mutation__rejects_reconstruction_disagreement():
+    candidate = _certification_fixture()
+    candidate["reconstruction_rows"][1]["member_raw_sha256"] = "a" * 64
+    _repin_certification(candidate)
+    with pytest.raises(
+        publisher.PublicationError, match="reconstruction disagreement"
+    ):
+        publisher.validate_tier2_certification_contract(candidate)
+
+
+def test__certification_mutation__rejects_reused_implementation():
+    candidate = _certification_fixture()
+    left, right = candidate["reconstruction_rows"]
+    right["implementation_blob_oid"] = left["implementation_blob_oid"]
+    right["implementation_raw_sha256"] = left["implementation_raw_sha256"]
+    _repin_certification(candidate)
+    with pytest.raises(publisher.PublicationError, match="not distinct"):
+        publisher.validate_tier2_certification_contract(candidate)
+
+
+def test__certification_mutation__rejects_forbidden_emission():
+    candidate = _certification_fixture()
+    candidate["lifecycle"]["authority_emitted"] = True
+    _repin_certification(candidate)
+    with pytest.raises(publisher.PublicationError, match="forbidden emission"):
+        publisher.validate_tier2_certification_contract(candidate)
+
+
+def test__certification_mutation__rejects_raw_byte_attestation_forgery():
+    candidate = _certification_fixture()
+    candidate["artifact_id"] = (
+        publisher.CERTIFICATION_ARTIFACT_ID_PREFIX + "f" * 64
+    )
+    with pytest.raises(
+        publisher.PublicationError, match="raw-byte payload attestation"
+    ):
+        publisher.validate_tier2_certification_contract(candidate)
+
+
+def test__merge_mode__enforces_topology_and_blob_bound_matrix():
+    publisher.validate_ceremony_merge_mode(
+        ["strict_or_equal_ancestry_order"],
+        "no_fast_forward_merge_commit",
+    )
+    publisher.validate_ceremony_merge_mode(
+        ["path_mode_blob_byte_hash"], "squash"
+    )
+    for mode in ("squash", "rebase", "fast_forward"):
+        with pytest.raises(publisher.PublicationError):
+            publisher.validate_ceremony_merge_mode(
+                ["first_or_last_add_identity"], mode
+            )
+    with pytest.raises(publisher.PublicationError, match="empty"):
+        publisher.validate_ceremony_merge_mode([], "squash")
+    with pytest.raises(publisher.PublicationError, match="unknown"):
+        publisher.validate_ceremony_merge_mode(
+            ["unclassified_requirement"], "squash"
+        )
+
+
+def test__amendment15_mutation_inventory__is_exact_and_disjoint():
+    assert len(publisher.A15_EXPECTED_MUTATIONS) == 11
+    assert len(set(publisher.A15_EXPECTED_MUTATIONS)) == 11
+    assert publisher.A15_MUTATION_DOMAIN_SHA256 == (
+        "285f4f349d27099b64053f88f5292890392fd547643b083410c30f0c5b93b1c8"
+    )

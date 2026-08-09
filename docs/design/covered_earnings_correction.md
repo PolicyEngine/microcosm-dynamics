@@ -53294,3 +53294,655 @@ Only the exact post-RATIFY merge, closure creation, and registry-repin sequence
 in §28.4 can make Amendments 13 and 14 operative. Even then, all 46 repairs
 remain unexecuted, Q5 remains forbidden, the 14 law gaps remain untouched, and
 the Amendment-11 production blocker remains controlling.**
+
+## 29. AMENDMENT SECTION — Amendment 15: ordered publication attestation and tier-2 certification
+
+### 29.1 Prospective status, immutable base, and closed scope
+
+This is the **prospective Amendment-15 draft** proposing design revision 17.
+Its first 3,836,294 bytes are the complete revision-16 design, mode `100644`,
+Git blob `4a3280c849070359232ab445635e016e98de3981`, and raw SHA-256
+`c4f3ae022d2e623f4316600e16ec3bded10f0160d197ce64e37f35015e55c92f`.
+Those bytes are an immutable prefix. This section is append-only and changes
+earlier law only through the exact compositions and replacements below. In
+particular, it does not edit or weaken §§27.3–27.6.
+
+Amendment 15 has three limbs. Section 29.2 authenticates the already-published
+vintage-1 tier-2 repair history without changing any artifact byte. Section
+29.3 enacts the merge-mode rule exposed by the Amendment-14 PR #377 and
+tier-2 PR #382 squash incidents. Sections 29.4–29.5 define the one missing
+pre-Q5 tier-2 certification contract and its adversarial validation. This
+amendment does not cure any of the 14 law gaps and does not define, select,
+instantiate, or authorize the Amendment-11/lifecycle successor program named
+in §§25.10.2 and 26.10.3, its 524,538 literals, Q5, a full G17-C01 row, any
+registry successor, or any production output. That program requires a later
+controlling amendment.
+
+The ratification and operativity rule in §§28.2–28.4 composes forward for
+Amendment 15. A prospective implementation or schema fixture is
+NONAUTHORITY. No certification artifact may be first-added until the exact
+revision-17 bytes have two affirmative verdicts, the operator merge exists,
+and the revision-17 registry repin binds the Amendment-15 closure. A closure
+for amendment number `15` uses
+`docs/analysis/amendment_15_ratification/closure_v1.json` and the same strict
+schema and public-record validation as §28.6.
+
+### 29.2 Limb I — authenticated ordered-ceremony history
+
+#### 29.2.1 Exact archived witness
+
+The immutable ordered witness is the remote ref
+`refs/heads/ceremony-archive/a12-tier2-r03-ordered`. Its locally fetched
+remote-tracking name is
+`refs/remotes/origin/ceremony-archive/a12-tier2-r03-ordered`. The witness is
+not merged, rebased, rewritten, copied into a new commit series, or selected
+by a mutable branch label alone. The validator resolves the fetched ref to
+the following exact tip and authenticates each named object independently.
+
+| Role | Exact commit | Exact sole parent | Commit tree | Exact changed-path domain |
+|---|---|---|---|---|
+| revision-16 re-derivation confirmation | `cbc44fe1642106e1bfecee869de1b9c61f832756` | `ace88cda0e588f1b847552a31787cc69324d8646` | `321991ced87fe19d0c14e4642aaf44eaf17ca26b` | add only `docs/analysis/amendment_12_rq_catalog_tier2/fix5_rederivation_confirmation_v1.json` |
+| all 46 repair overlays | `c6091f06955a3dd8e554f38833fe2eb43e7b08e0` | `cbc44fe1642106e1bfecee869de1b9c61f832756` | `0fed299d439203d959c7a9b1812e4856671db951` | add exactly the 14 §29.2.2 overlay paths, `scripts/build_amendment13_tier2_repairs.py`, and `tests/test_build_amendment13_tier2_repairs.py` |
+| all six successor-era seals | `44c6641aa0ec57036a54e0988a5f18b50a15e50c` | `c6091f06955a3dd8e554f38833fe2eb43e7b08e0` | `4b6233a9583d8cb90a46bc85b1840ce5b4ebe0de` | add exactly the six §29.2.2 seal paths |
+| targeted-sweep evidence | `ba4bd4a734dc5ddd835bb7374bf5a37c12a190ae` | `44c6641aa0ec57036a54e0988a5f18b50a15e50c` | `507e7062cac23b08a397dd5e959d1ff7d1827bc4` | add the targeted-sweep artifact, its builder, and its test, and modify only `tests/tier_counts.json` |
+
+Every row is an exact commit object with exactly the displayed one parent and
+exactly the displayed name-status path domain. The validator proves the
+strict chain
+
+~~~text
+ace88cda0e588f1b847552a31787cc69324d8646
+  < cbc44fe1642106e1bfecee869de1b9c61f832756
+  < c6091f06955a3dd8e554f38833fe2eb43e7b08e0
+  < 44c6641aa0ec57036a54e0988a5f18b50a15e50c
+  < ba4bd4a734dc5ddd835bb7374bf5a37c12a190ae
+~~~
+
+where every `<` is Git strict ancestry, not timestamp, author date, commit
+date, lexical order, reflog order, or equality. The remote-tracking ref must
+resolve exactly to `ba4bd4a734dc5ddd835bb7374bf5a37c12a190ae`.
+
+#### 29.2.2 Closed artifact domain
+
+The 22 and only 22 artifacts eligible for the ordered-witness adjudication
+are these exact mode-`100644` paths:
+
+~~~text
+docs/analysis/amendment_12_rq_catalog_tier2/fix5_rederivation_confirmation_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_007_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_010_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_011_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_012_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_013_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_015_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_017_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_019_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_036_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_052_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_056_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_058_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_066_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_repair_overlays_v1/document_070_repair_overlay_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_successor_era_seals_v1/era_01_successor_seal_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_successor_era_seals_v1/era_02_successor_seal_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_successor_era_seals_v1/era_03_successor_seal_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_successor_era_seals_v1/era_04_successor_seal_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_successor_era_seals_v1/era_05_successor_seal_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/amendment_13_successor_era_seals_v1/era_06_successor_seal_v1.json
+docs/analysis/amendment_12_rq_catalog_tier2/targeted_sweeps/admission_rule_targeted_sweeps_v1.json
+~~~
+
+Their sorted path-array domain SHA-256 is
+`504159116708ee4d5e2cc8abec130ca8679d22cce928dca42af12be305361c17`.
+The receipt maps only to `cbc44fe1642106e1bfecee869de1b9c61f832756`;
+the 14 overlays map only to
+`c6091f06955a3dd8e554f38833fe2eb43e7b08e0`; the six seals map only to
+`44c6641aa0ec57036a54e0988a5f18b50a15e50c`; and the targeted sweep maps
+only to `ba4bd4a734dc5ddd835bb7374bf5a37c12a190ae`.
+
+#### 29.2.3 Tree identity and the master publication bridge
+
+The archived tip tree is exactly
+`507e7062cac23b08a397dd5e959d1ff7d1827bc4`. Tier-2 PR #382 was squash-
+merged as exact single-parent commit
+`a352e66284b60997210c634bb427141e7e523a75`, whose sole parent is
+`ace88cda0e588f1b847552a31787cc69324d8646` and whose tree is also exactly
+`507e7062cac23b08a397dd5e959d1ff7d1827bc4`. Its exact name-status change
+domain is the union of all four tabled domains in §29.2.1, with no other
+path. Thus the branch-tip tree, squash tree, and bytes first published on
+master are identical; only their commit topology differs.
+
+For each of the 22 paths, the validator must independently derive the live
+history with `git log --full-history --diff-filter=A`. It requires exactly
+one live first-add commit and requires that commit to be exactly
+`a352e66284b60997210c634bb427141e7e523a75`. It then uses the exact mapped
+archived commit only as that artifact's order witness for §27.2.3 clauses
+3–5. It still requires the live squash to be an ancestor of or equal to the
+validated repository state, and it authenticates every current artifact blob
+against the squash/tree witness. The archived witness is not a second live
+first-add, a replacement object, or permission to select different bytes.
+
+The ordinary unique-first-add rule remains absolute. A literal exception
+allowing two add commits would make a later merge of the archive branch
+indistinguishable from a reused cure and would weaken the enacted guarantee;
+therefore Amendment 15 enacts the narrower exception to **which authenticated
+commit supplies order**, not to the count of live add commits. It applies
+only when all 22 paths have the same exact live first-add
+`a352e66284b60997210c634bb427141e7e523a75` and the complete attestation
+passes. Zero or two live add commits, another path, another first-add, a
+partial domain, or a new artifact always aborts. No future artifact may reuse
+this bridge.
+
+#### 29.2.4 Receipt classification and clause-5 boundary
+
+The exact 3,542-byte receipt at the first §29.2.2 path has Git blob
+`812c8b5fca1626ce91a7e7327032bad98068cfa3` and raw SHA-256
+`e388e8bb46256f3586e9652c175e2076d56f38b4442359f96658d8cf68493f99`.
+It is the revision-16 successor to §27.1's diagnostic re-derivation receipt:
+it confirms pre-repair byte identity of eight already-existing tier-1
+artifacts and their pins. Consistently with §27.1 and §27.8.3, it is a
+diagnostic validation confirmation, not source authority, a repair overlay,
+a successor seal, an A12-T2-R04 reconstruction, or “tier-2 evidence” under
+§27.2.3 clause 5. Its receipt-before-overlay position is therefore required
+by this attestation but does not violate clause 5. The targeted-sweep artifact
+at `ba4bd4a734dc5ddd835bb7374bf5a37c12a190ae` is the first and only artifact
+in this closed domain adjudicated as clause-5 tier-2 evidence.
+
+#### 29.2.5 Replacement-ref immunity and fail-closed result
+
+Every ref resolution, object peel, parent count, tree read, changed-path read,
+first-add search, merge-base comparison, and blob read in this adjudication
+uses §27.2.2's sanitized wrapper: global `git --no-replace-objects`,
+`GIT_NO_REPLACE_OBJECTS=1`, and an environment from which every other
+`GIT_*` variable has been removed. The validator accepts neither a caller-
+supplied ref, commit, path map, tree, nor verification-off option.
+
+An absent or unresolvable fetched archive ref, wrong ref tip, unavailable
+object, wrong commit identity, tag peel, extra or missing parent, wrong sole
+parent, changed-path drift, wrong order, non-strict edge, wrong stage tree,
+archive-tip/squash tree mismatch, wrong squash parent or path domain, live
+blob mismatch, nonunique live first-add, partial 22-path cohort, or exception-
+reuse attempt aborts. Only after all checks pass does the ordered witness
+satisfy §27.2.3 clauses 3–5 for this vintage. Every future tier-2 publication
+continues to require ordinary live unique first-adds and strict Git ancestry.
+
+### 29.3 Limb II — ceremony merge-mode law
+
+#### 29.3.1 Requirement classification and lawful modes
+
+Before merging any ceremony PR, the orchestrator classifies every direct and
+transitive enacted consumer of the PR's artifacts. The complete topology-
+bound requirement-code inventory is:
+
+~~~text
+premerge_commit_reachability
+first_or_last_add_identity
+exact_parent_or_changed_path_domain
+strict_or_equal_ancestry_order
+~~~
+
+A requirement is topology-bound if it depends on a premerge commit remaining
+reachable, a first-add or last-add commit identity, an exact parent or
+changed-path domain, or any strict/equal ancestry or order relationship. If
+any consumer is topology-bound, or if classification is incomplete or
+unknown, the only lawful integration mode is
+`no_fast_forward_merge_commit`: preserve the reviewed commits unchanged and
+create an explicit merge commit. Squash, rebase, fast-forward, cherry-pick,
+GitHub's “rebase and merge,” or any other ancestry-rewriting or ancestry-
+eliding mode is forbidden for that ceremony.
+
+The complete blob/tree-bound requirement-code inventory is:
+
+~~~text
+path_mode_blob_byte_hash
+resulting_tree_identity
+document_only_postmerge_closure
+~~~
+
+Squash is lawful only when **every** direct and transitive requirement is
+wholly bound by these codes: exact path/mode/blob/byte/hash identity, exact
+resulting-tree identity, or a document-only postmerge closure that expressly
+binds the integration commit after it exists. Typical members are one logical
+artifact, a document-only proposal, and an explicitly blob-bound identity
+such as §28.5's Amendment-14 pins. Calling a PR “document-only” does not
+override a topology-bound consumer. A mixed classification is topology-bound.
+There is no default, alias, prefix match, or best-effort classification.
+
+The transport merge commit used to preserve a reviewed branch may have the
+two parents intrinsic to that merge. It is not thereby one of the
+single-parent recording, ratification, artifact-first-add, or execution
+commits governed elsewhere. Every such governed commit retains its enacted
+single-parent law.
+
+#### 29.3.2 Mandatory premerge proof
+
+Immediately before the merge, against freshly fetched candidate and
+protected-branch tips, the orchestrator must:
+
+1. enumerate the exact changed paths and every enacted direct or transitive
+   consumer that names their blobs, trees, commits, first-adds, parents,
+   changed-path domains, or ancestry;
+2. emit the complete ordered requirement-code classification and reject an
+   empty, duplicated, or unknown code;
+3. synthesize the proposed postmerge DAG for the selected hosting-platform
+   mode and prove that every topology-bound commit remains the same object
+   and every required strict/equal ancestry predicate remains true;
+4. run each sanitized Git-order and identity validator against that proposed
+   DAG, or an exact local merge made from the two fetched tips, before the
+   irreversible hosted merge action; and
+5. after the merge, fetch the actual protected-branch tip and rerun the same
+   validators against the actual DAG and tree before any dependent ceremony
+   proceeds.
+
+The pure requirement-code classifier, synthetic-DAG result, and actual
+postmerge Git graph are mechanically testable and fail closed. The human or
+hosting-platform act of choosing the merge button is procedural and cannot
+be proved by a pre-ratification unit test; the orchestrator records its
+selected mode and validator result, while the postmerge graph is the
+controlling testable fact. PR #377 is a historical blob-bound squash under
+§28, whereas PR #382 demonstrates why a topology-bound publication must use
+the preserving mode. Neither incident creates a general exception.
+
+### 29.4 Limb III — exact A12-T2 source-hierarchy certification
+
+#### 29.4.1 Artifact, builder, validator, and noninstantiation
+
+The one A12-T2-R05 certification artifact has exact path
+`docs/analysis/amendment_12_rq_catalog_tier2/certification/source_hierarchy_certification_v1.json`,
+mode `100644`, schema
+`amendment_12_tier2_source_hierarchy_certification.v1`, artifact-ID prefix
+`a12-tier2-source-hierarchy-certification:`, artifact role
+`pre_q5_source_only_tier2_certification_nonauthority`, and status
+`pass_a12_t2_r05_source_hierarchy_certification`.
+
+The sole builder path is
+`scripts/build_amendment12_tier2_source_hierarchy_certification.py`. The
+independent public validator path is
+`scripts/validate_amendment12_tier2_source_hierarchy_certification.py`; it
+exports `validate_committed_certification()` and its CLI performs the same
+public operation under `--check`. The builder may construct the first
+reconstruction, but it may not validate its own implementation identity or
+supply the second reconstruction. The public validator independently derives
+all repository, source, ratification, history, byte, schema, and lifecycle
+facts and accepts no caller-supplied identity or verification-off switch.
+
+These paths and the artifact are future identities. They do not exist in the
+revision-17 candidate and must not be stubbed, first-added, selected, or
+treated as a passed gate before Amendment 15 is operative and the full source
+build and both independent reconstructions exist. The schema fixture in the
+Amendment-15 tests validates only law shape; it is noncertifying and cannot be
+copied into the future path.
+
+Every JSON object has exactly its enacted keyset. Serialization uses Python
+JSON `sort_keys=True`, compact separators, `ensure_ascii=True`,
+`allow_nan=False`, UTF-8, and one terminal LF, identified by the opaque code
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`. Duplicate, missing, extra,
+renamed, mistyped, case-folded, unknown, defaulted, nonfinite, noncanonical,
+or trailing content aborts.
+
+#### 29.4.2 Exact top-level schema
+
+The certification object has exactly these 13 keys:
+
+~~~text
+artifact_id
+artifact_role
+gate_results
+git_order_attestation
+integrity
+lifecycle
+mutation_census
+ratification_binding
+reconstruction_rows
+schema_version
+source_build_identity
+source_hierarchy_member_identity
+status
+~~~
+
+`schema_version`, `artifact_role`, and `status` equal §29.4.1's exact opaque
+codes. `artifact_id` and `integrity` obey §29.4.7. Every other member obeys
+the exact closed contract below; no omitted member has a default.
+
+#### 29.4.3 Ratification and source-build bindings
+
+`ratification_binding` has exactly these 11 keys:
+
+~~~text
+amendment_number
+closure_byte_size
+closure_path
+closure_raw_sha256
+design_blob_oid
+design_byte_size
+design_path
+design_raw_sha256
+design_revision
+ratification_commit
+ratification_commit_sole_parent
+~~~
+
+`amendment_number` is integer `15`; `design_revision` is integer `17`;
+`design_path` is `docs/design/covered_earnings_correction.md`; and
+`closure_path` is
+`docs/analysis/amendment_15_ratification/closure_v1.json`. The two byte sizes
+are positive exact integers and `design_byte_size` is greater than 3,836,294.
+The design blob is 40 lowercase hex; both raw hashes are 64 lowercase hex;
+and both commit names are 40 lowercase hex. The public validator obtains all
+values from the operative revision-17 registry/closure snapshot and then
+independently authenticates the closure, design bytes, exact commit object,
+sole parent, and mode-`100644` tree entry through the sanitized wrapper.
+
+`source_build_identity` has exactly these seven keys:
+
+~~~text
+questionnaire_document_count
+questionnaire_document_domain_sha256
+questionnaire_document_keyset_sha256
+source_document_count
+source_document_domain_sha256
+source_document_keyset_sha256
+tier2_build_input_domain_sha256
+~~~
+
+The exact authenticated input comparands are:
+
+| Member | Exact value |
+|---|---|
+| `questionnaire_document_count` | `81` |
+| `questionnaire_document_keyset_sha256` | `3326c9ba70b7f83f19b0ea934630d26ced73f230be1628cb74031d17160cb1a5` |
+| `questionnaire_document_domain_sha256` | `b06139b147391d06b4f90a8f28de472a936ec08b3e9eb37001a5a70e2b3c3543` |
+| `source_document_count` | `257` |
+| `source_document_keyset_sha256` | `8b7cad855b791c5cd7d235a74d4a0f1ecc7511dc0458db11d6b04c1b6af2c36a` |
+| `source_document_domain_sha256` | `9d7a98db7c2889eba150f70935f492aebbc41cd521e4139dc1ec886ecd9945ce` |
+
+`tier2_build_input_domain_sha256` is a newly derived 64-lowercase-hex digest
+of the complete, ordered, identity-bearing full-source build input domain.
+It is not copied from a pilot count or expected result. The validator
+reconstructs that preimage from authenticated source and repair/seal bytes.
+
+#### 29.4.4 Exact source-hierarchy member identity
+
+`source_hierarchy_member_identity` has exactly:
+
+~~~text
+authority_kind
+canonical_byte_size
+canonicalization
+member_name
+raw_sha256
+status
+~~~
+
+Its `authority_kind` is
+`prospective_g17_c01_source_member_pre_q5`, `member_name` is
+`hierarchy_annotation_authority`, `status` is `pass`, and canonicalization is
+§29.4.1's exact code. `canonical_byte_size` is a positive integer and
+`raw_sha256` is the 64-lowercase-hex SHA-256 of the independently reproduced
+strict-canonical member bytes **without** embedding those potentially large
+member bytes in the certificate. This is only the source-side subpayload that
+§26.11.2(6) says would later occupy G17-C01. It is not the unavailable full
+G17-C01 row, an actual consumer projection, Q5 input, or authority emission.
+
+#### 29.4.5 R04 dual reconstruction and R05 gates
+
+`reconstruction_rows` is an ordered two-object array. Each object has exactly:
+
+~~~text
+implementation_blob_oid
+implementation_byte_size
+implementation_mode
+implementation_path
+implementation_raw_sha256
+member_canonical_byte_size
+member_raw_sha256
+reconstruction_id
+status
+tier2_build_input_domain_sha256
+~~~
+
+The rows are ordered `R04X-7F2A`, then `R04X-C91D`. Their corresponding
+implementation paths are respectively the §29.4.1 builder and public
+validator paths. Every implementation mode is `100644`; byte size is a
+positive integer; blob is 40 lowercase hex; raw SHA is 64 lowercase hex; and
+status is `pass_independent_source_reconstruction`. The two implementation
+blob OIDs differ and the two implementation raw hashes differ. They run
+separately over the identical authenticated
+`tier2_build_input_domain_sha256`; neither imports the other's output or the
+certificate's expected member value. Both derived member byte sizes and
+hashes must deep-equal `source_hierarchy_member_identity`. Any disagreement
+aborts A12-T2-R04 and therefore R05.
+
+`gate_results` is an ordered array of exactly five objects, each with only
+`gate_id` and `status`. The gate IDs are exactly `A12-T2-R01` through
+`A12-T2-R05` in numeric order and every status is `pass`. The validator
+independently reruns or authenticates the complete result behind each row;
+the serialized word `pass` has no force by itself. R05 requires strict schema,
+the complete mutation census, both independent R04 reconstructions, the
+ratification/source/reseal Git order including §29.2, and raw-byte
+attestation. Passing the certificate advances only to A12-T2-R06.
+
+#### 29.4.6 Git-order, source, and lifecycle bindings
+
+`git_order_attestation` is exactly this seven-key object:
+
+~~~json
+{
+  "archive_ref": "refs/heads/ceremony-archive/a12-tier2-r03-ordered",
+  "archive_tip_commit": "ba4bd4a734dc5ddd835bb7374bf5a37c12a190ae",
+  "attestation_id": "a15-ordered-tier2-history:v1",
+  "source_commit": "19fa24c161e800e004320f0c10e81bce8831af68",
+  "source_tree_oid": "e35f9cd65017ece46de2f0c0dbc57f4321c0b8d4",
+  "squash_commit": "a352e66284b60997210c634bb427141e7e523a75",
+  "tree_oid": "507e7062cac23b08a397dd5e959d1ff7d1827bc4"
+}
+~~~
+
+The opaque `attestation_id` invokes the complete §29.2 proof; the seven
+strings are not sufficient unless the public validator reruns it. The source
+commit and tree compose with §27.2.3 clause 7: the six predecessor source
+seals, exact tree entry domain, and raw source bytes are independently
+authenticated without inventing ancestry between the source branch and the
+document/repair branch.
+
+`lifecycle` is exactly this ten-key semantic object:
+
+~~~json
+{
+  "actual_consumer_projection_emitted": false,
+  "authority_emitted": false,
+  "certification_emitted": true,
+  "full_g17_c01_row_emitted": false,
+  "nonauthority": true,
+  "next_required_gate": "A12-T2-R06",
+  "production_output_emitted": false,
+  "q5_first_add_performed": false,
+  "q5_input_emitted": false,
+  "source_only_evidence_emitted": true
+}
+~~~
+
+Changing any false to true, changing either required true to false, changing
+the next gate, adding a lifecycle output, or emitting the named forbidden
+object aborts. Certification is evidence that R01–R05 passed; it is never the
+source hierarchy authority itself.
+
+#### 29.4.7 Integrity and complete raw-byte attestation
+
+`mutation_census` has exactly `expected_count`,
+`expected_domain_sha256`, `rejected_count`, `rejected_domain_sha256`, and
+`status`. Both counts are integer `11`; both digests are
+`285f4f349d27099b64053f88f5292890392fd547643b083410c30f0c5b93b1c8`;
+and status is `pass_all_expected_mutations_rejected`.
+
+`integrity` has exactly `canonicalization` and `payload_sha256`. Its
+canonicalization is §29.4.1's exact code. The payload preimage is the complete
+top-level object after removing only `artifact_id` and `integrity`, serialized
+under that code; `payload_sha256` is its 64-lowercase-hex SHA-256 and
+`artifact_id` equals the §29.4.1 prefix concatenated with that digest.
+
+The artifact cannot serialize its own complete-file hash, Git blob, or
+first-add commit without circularity. Instead, the public validator
+strict-parses and canonical-round-trips the committed raw bytes, recomputes
+the payload identity, then independently derives and reports the complete
+file's byte size, raw SHA-256, Git blob OID, mode, and unique first-add commit
+from the mode-`100644` `HEAD` tree entry through the sanitized wrapper. It
+requires working-tree/`HEAD` raw-byte equality and requires the first-add to
+be a strict descendant of the operative Amendment-15 ratification/repin and
+of the authenticated seal/evidence history. This derived attestation, not a
+self-asserted field, satisfies §26.11.2(6)'s complete raw-byte requirement.
+Any later change, second add, working-tree substitution, mode mismatch, or
+history failure aborts.
+
+### 29.5 Validation, implementation identity, and mutation census
+
+#### 29.5.1 Public history implementation and active semantic pins
+
+`scripts/build_amendment13_tier2_repairs.py` remains the repair publisher and
+public Git-order validator. Its `_first_add_commit` continues to require at
+most one add commit for every queried path; `validate_ordered_ceremony_attestation`
+authenticates §29.2 before any mapped order witness is used; and
+`validate_git_publication_order` returns whether ordinary live history or the
+exact archived witness supplied each comparison. The targeted-sweep builder
+at `scripts/build_amendment12_tier2_targeted_sweeps.py` uses the same
+authenticated mapping and may not independently weaken it.
+
+The Amendment-14 semantic projection is now delimited at the unique exact
+Amendment-15 boundary at byte offset 3,836,294. Section 28 remains byte-
+identical historical law rather than silently expanding through end of file.
+While Amendment 15 remains prospective, the revision-16 registry binding may
+read a `HEAD`/working-tree document longer than its ratified bytes only when
+`HEAD` and the working tree are byte-identical, their first 3,836,294 bytes
+deep-equal the registry-selected revision-16 ratification blob, and the
+remaining bytes begin with the unique exact Amendment-15 boundary and end in
+one LF. The registry continues to return revision `16`, its revision-16 raw
+SHA-256, its revision-16 ratification commit, and only the Amendment-13/14
+closures; it neither hashes the prospective suffix into that binding nor
+makes Amendment 15 operative. A prefix mismatch, another boundary, missing
+suffix, dirty working tree, or different `HEAD` aborts. This narrow read rule
+keeps the already-operative nonauthority tier-2 validators runnable while a
+successor draft is reviewed; it cannot create authority from the draft.
+The active Amendment-15 implementation identity for the Amendment-13/14
+semantic validator is exactly mode `100644` and these two
+path/blob/byte/hash rows:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `9bd28721df04057ff642302aee87e6b701850ddb` | 235087 | `b2d8f6378a1be909a0038ab80b2c6eb025c9ad9a0cc0e4636f43ff0228ce53f5` |
+| `tests/test_validate_amendment13_execution_law.py` | `5da8929ec67a31398c7d01b54fec1861dcedc075` | 22768 | `b0ef913ed01aa5ad2af5fec9d0096e9900ac3ef0d7f072d81b5e0d0b2889f2e4` |
+
+For each row, the validator requires exact path, mode, working-tree/`HEAD`
+bytes, byte size, raw SHA-256, and Git blob OID through the sanitized wrapper.
+Section 28.5's two rows remain the immutable historical revision-16 pins;
+they do not remain active after this successor table is ratified. The
+Amendment-15 projection exact-covers §§29.1–29.8, including every closed
+keyset, code, path, commit, tree, count, hash, mutation, replacement, and
+noninstantiation rule.
+
+#### 29.5.2 Exact new mutation domain
+
+The Amendment-15 enforcement inventory is exactly:
+
+~~~text
+ordered_history_attestation_identity_forged
+ordered_history_attestation_order_forged
+ordered_history_attestation_tree_identity_forged
+ordered_history_archive_ref_absent_or_unfetchable
+ordered_history_first_add_exception_reused
+tier2_certification_schema_keyset_drift
+tier2_certification_reconstruction_disagreement
+tier2_certification_referee_implementation_reused
+tier2_certification_forbidden_emission_forged
+tier2_certification_raw_byte_attestation_forged
+ceremony_topology_bound_squash_selected
+~~~
+
+The ordered canonical name-array domain SHA-256 is
+`285f4f349d27099b64053f88f5292890392fd547643b083410c30f0c5b93b1c8`.
+The identity attack covers a wrong stage SHA, parent, or changed-path domain;
+the order attack covers a reversed/equal/nonancestor edge; the tree attack
+covers archive-tip/squash/tree-entry disagreement; and the archive attack
+covers a missing, unresolvable, or wrong-tip fetched ref. Exception reuse
+introduces a new path, another first-add, or a partial cohort. Schema drift
+separately exercises missing and extra keys. The reconstruction attacks cover
+member disagreement and reuse of one implementation under two labels. The
+emission attack forges a lifecycle/authority/Q5/G17 value. Raw-byte attack
+forges payload identity or committed bytes. The merge attack chooses squash
+for any topology-bound or mixed requirement set.
+
+Every mutation is appended to the rejection census only after its intended
+gate rejects. Amendment 12's exact 71 historical mutations and Amendments
+13/14's exact 18 active mutations remain unchanged and must all reject.
+Revision 17 therefore requires 100 of 100 total expected mutations to reject:
+71 inherited plus 18 inherited plus 11 new. A removed, omitted, added,
+renamed, reordered, passing, or wrong-gate mutation aborts.
+
+The merge-mode preflight cannot unit-test a future operator's physical click.
+It does test the closed classifier and reject-squash rule; the orchestrator's
+record and actual postmerge DAG supply the remaining procedural evidence.
+
+### 29.6 Exact replacement, composition, and out-of-scope map
+
+| Earlier normative anchor | Amendment-15 disposition |
+|---|---|
+| §27.2.3 clauses 3–5 for the already-published vintage-1 tier-2 paths | Satisfied only through §§29.2.1–29.2.5's exact ordered archived witness plus identical master-squash tree. The ordinary live-order law remains controlling for every future artifact. |
+| §27.2.3 clause 5's “tier-2 evidence” boundary | Composed with §29.2.4: the exact revision-16 re-derivation receipt is diagnostic pre-repair confirmation and not clause-5 evidence; the targeted sweep remains evidence after all six seals. |
+| `_first_add_commit` unique-first-add enforcement | Lawfully unchanged. The exact 22-path/a352 bridge substitutes an authenticated order witness only after retaining exactly one live first-add per path. It never permits a second add. |
+| §§28.2–28.4 ceremony integration and §28.5 blob-bound pins | Composed with §29.3. A wholly blob/tree-bound ceremony may squash; a topology-bound or mixed ceremony requires a preserving merge commit and pre/postmerge proof. |
+| §26.11.2(6), A12-T2-R04, and A12-T2-R05 underdetermined certification identity | Completed by §29.4's exact source-member certificate, dual independently identified reconstruction implementations, ratification/source/order bindings, lifecycle stop, integrity, public validator, and future paths. |
+| §§27.3–27.6 exact 46 repair and six-seal semantics | Byte-identical, operative, and unchanged. The history attestation validates their publication order but changes no content. |
+| §§25.10.2 and 26.10.3 missing-reason/lifecycle successor, 524,538 unadjudicated literals, A12-T2-R06, Q5, full G17-C01, registries, receipts, wall rows, and production | Explicitly out of scope and still blocked. The certificate advances only to the expected A12-T2-R06 stop. |
+
+No path outside §29.2.2 gains an order exception. No tier-1 artifact or value
+becomes an expected tier-2 result. No archive label substitutes for pinned
+objects, no historical tree emits authority, and no passing schema fixture
+instantiates the future certificate.
+
+### 29.7 Exact new identifier inventories
+
+The exact new schema and artifact identifiers are:
+
+~~~text
+amendment_12_tier2_source_hierarchy_certification.v1
+a12-tier2-source-hierarchy-certification:
+a15-ordered-tier2-history:v1
+~~~
+
+The exact new role, status, authority-kind, canonicalization, and operation
+codes are:
+
+~~~text
+pre_q5_source_only_tier2_certification_nonauthority
+pass_a12_t2_r05_source_hierarchy_certification
+prospective_g17_c01_source_member_pre_q5
+pass
+pass_independent_source_reconstruction
+pass_all_expected_mutations_rejected
+python-json-sort-keys-compact-ascii-no-nan-lf-v1
+no_fast_forward_merge_commit
+squash
+~~~
+
+The exact requirement codes are the four topology-bound and three blob/tree-
+bound codes in §29.3.1. The exact reconstruction IDs are `R04X-7F2A` and
+`R04X-C91D`. The exact future paths and Python/CLI names are those in
+§29.4.1. These are opaque, ordered within their qualified inventories,
+unique, and disjoint by kind. None has an alias, case fold, prefix match,
+implicit migration, default, or closest-value interpretation. Commit OIDs,
+tree OIDs, paths, mutation names, gate IDs, prior enacted codes, and Python
+symbols are not silently promoted into another identifier family.
+
+### 29.8 Terminal draft and execution effect
+
+**Amendment 15 remains a prospective, unratified, and inoperative draft. It
+does not alter the archived branch or any published artifact byte, certify
+tier 2, instantiate the §29.4 artifact or its future programs, emit source
+authority, create a full G17-C01 row, first-add Q5, or produce a registry,
+receipt, wall row, or production result. If ratified and registry-repinned,
+it authenticates the exact vintage-1 publication order, enforces the general
+merge-mode law, and supplies the minimal-total schema needed for the later
+full source build, dual R04 reconstruction, and R05 certification. Passing
+R05 then requires A12-T2-R06, where the independently unchanged Amendment-11
+`blocked_source_missing_disposition_underdetermined` stop remains controlling
+until a later amendment lawfully resolves the out-of-scope lifecycle
+program.**
