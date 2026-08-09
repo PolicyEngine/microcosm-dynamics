@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import functools
 import hashlib
+import inspect
 import subprocess
 import sys
 from pathlib import Path
@@ -42,42 +43,13 @@ def _executed_mutation_outputs():
 def _executed_mutation_census():
     """Compose a census from the four real, fully executed runner outputs."""
 
-    outputs = _executed_mutation_outputs()
-    return publisher.run_complete_mutation_census(
-        a12_runner=functools.partial(tuple, outputs[0]),
-        a13_runner=functools.partial(tuple, outputs[1]),
-        a14_runner=functools.partial(tuple, outputs[2]),
-        a15_runner=functools.partial(tuple, outputs[3]),
+    return publisher._compose_complete_mutation_census(
+        _executed_mutation_outputs()
     )
 
 
-def _validate_fixture_contract(value):
-    publisher._validate_tier2_certification_contract(
-        value,
-        executed_mutation_census=_executed_mutation_census(),
-    )
-
-
-def _raise_intended_mutation_error(binding):
-    raise binding.expected_exception(binding.expected_message)
-
-
-def _raise_mutation_error(exception, message):
-    raise exception(message)
-
-
-def _return_mutation_names(names):
-    return names
-
-
-def _intended_rejection_actions():
-    return {
-        binding.name: functools.partial(
-            _raise_intended_mutation_error,
-            binding,
-        )
-        for binding in publisher.A15_MUTATION_BINDINGS
-    }
+def _return_value(value):
+    return value
 
 
 def _certification_fixture():
@@ -382,8 +354,10 @@ def test__first_add_relationships__reject_drop_and_same_commit(publication):
             overlay_commits=complete_overlays,
             seal_commits=complete_seals,
             overlay_era_positions=overlay_era_positions,
-            strict_ancestor=lambda earlier, later: earlier != later
-            and (earlier, later) == ("ratification", "batch"),
+            strict_ancestor=lambda earlier, later: (
+                earlier != later
+                and (earlier, later) == ("ratification", "batch")
+            ),
         )
 
 
@@ -651,26 +625,34 @@ def test__certification_contract__future_paths_remain_uninstantiated():
 
 
 def test__certification_mutation__rejects_schema_keyset_drift():
-    candidates = []
     missing = _certification_fixture()
     missing.pop("status")
     _repin_certification(missing)
-    candidates.append(missing)
     extra = _certification_fixture()
     extra["extra"] = None
     _repin_certification(extra)
-    candidates.append(extra)
+    for candidate in (missing, extra):
+        with pytest.raises(publisher.PublicationError, match="keyset drift"):
+            publisher._validate_certification_top_level(candidate)
+
     nested = _certification_fixture()
     nested["reconstruction_rows"][0].pop("implementation_mode")
     _repin_certification(nested)
-    candidates.append(nested)
+    with pytest.raises(publisher.PublicationError, match="keyset drift"):
+        publisher._validate_certification_reconstructions(
+            nested["reconstruction_rows"],
+            nested["source_hierarchy_member_identity"],
+            nested["source_build_identity"],
+        )
+
     nested_census = _certification_fixture()
     nested_census["mutation_census"]["components"][0].pop("status")
     _repin_certification(nested_census)
-    candidates.append(nested_census)
-    for candidate in candidates:
-        with pytest.raises(publisher.PublicationError, match="keyset drift"):
-            _validate_fixture_contract(candidate)
+    with pytest.raises(publisher.PublicationError, match="keyset drift"):
+        publisher._validate_certification_mutation_census(
+            nested_census["mutation_census"],
+            _executed_mutation_census(),
+        )
 
 
 @pytest.mark.parametrize(
@@ -698,7 +680,21 @@ def test__certification_mutation__rejects_numeric_type_drift(domain, key):
     target[key] = float(target[key])
     _repin_certification(candidate)
     with pytest.raises(publisher.PublicationError):
-        _validate_fixture_contract(candidate)
+        if domain in {"mutation_census", "mutation_component"}:
+            publisher._validate_certification_mutation_census(
+                candidate["mutation_census"],
+                _executed_mutation_census(),
+            )
+        elif domain == "reconstruction_row":
+            publisher._validate_certification_reconstructions(
+                candidate["reconstruction_rows"],
+                candidate["source_hierarchy_member_identity"],
+                candidate["source_build_identity"],
+            )
+        elif domain == "ratification_binding":
+            publisher._validate_certification_ratification(candidate[domain])
+        else:
+            publisher._validate_certification_source(candidate[domain])
 
 
 def test__certification_mutation__rejects_reconstruction_disagreement():
@@ -708,7 +704,11 @@ def test__certification_mutation__rejects_reconstruction_disagreement():
     with pytest.raises(
         publisher.PublicationError, match="reconstruction disagreement"
     ):
-        _validate_fixture_contract(candidate)
+        publisher._validate_certification_reconstructions(
+            candidate["reconstruction_rows"],
+            candidate["source_hierarchy_member_identity"],
+            candidate["source_build_identity"],
+        )
 
 
 def test__certification_mutation__rejects_reused_implementation():
@@ -718,7 +718,11 @@ def test__certification_mutation__rejects_reused_implementation():
     right["implementation_raw_sha256"] = left["implementation_raw_sha256"]
     _repin_certification(candidate)
     with pytest.raises(publisher.PublicationError, match="not distinct"):
-        _validate_fixture_contract(candidate)
+        publisher._validate_certification_reconstructions(
+            candidate["reconstruction_rows"],
+            candidate["source_hierarchy_member_identity"],
+            candidate["source_build_identity"],
+        )
 
     candidate = _certification_fixture()
     candidate["reconstruction_rows"][1]["implementation_dependency_paths"] = [
@@ -729,7 +733,11 @@ def test__certification_mutation__rejects_reused_implementation():
     with pytest.raises(
         publisher.PublicationError, match="implementation drift"
     ):
-        _validate_fixture_contract(candidate)
+        publisher._validate_certification_reconstructions(
+            candidate["reconstruction_rows"],
+            candidate["source_hierarchy_member_identity"],
+            candidate["source_build_identity"],
+        )
 
 
 def test__certification_mutation__rejects_forbidden_emission():
@@ -747,7 +755,7 @@ def test__certification_mutation__rejects_forbidden_emission():
         with pytest.raises(
             publisher.PublicationError, match="forbidden emission"
         ):
-            _validate_fixture_contract(candidate)
+            publisher._validate_certification_lifecycle(candidate["lifecycle"])
 
 
 def test__certification_mutation__rejects_raw_byte_attestation_forgery():
@@ -758,7 +766,7 @@ def test__certification_mutation__rejects_raw_byte_attestation_forgery():
     with pytest.raises(
         publisher.PublicationError, match="raw-byte payload attestation"
     ):
-        _validate_fixture_contract(candidate)
+        publisher._validate_certification_integrity(candidate)
 
 
 def test__merge_mode__enforces_topology_and_blob_bound_matrix():
@@ -803,72 +811,93 @@ def test__amendment15_mutation_inventory__is_exact_and_disjoint():
     expected_bindings = (
         (
             "ordered_history_attestation_identity_forged",
-            "ordered_ceremony_stage_identity",
+            "_prepare_attestation_identity_mutation",
+            "_gate_ordered_attestation",
             publisher.PublicationError,
             "overlays commit identity drift",
         ),
         (
             "ordered_history_attestation_order_forged",
-            "ordered_ceremony_strict_ancestor_chain",
+            "_prepare_attestation_order_mutation",
+            "_gate_ordered_attestation_order",
             publisher.PublicationError,
             "strict-ancestor chain drift",
         ),
         (
             "ordered_history_attestation_tree_identity_forged",
-            "ordered_ceremony_tree_identity",
+            "_prepare_attestation_tree_mutation",
+            "_gate_ordered_attestation",
             publisher.PublicationError,
             "tree identity drift",
         ),
         (
             "ordered_history_archive_ref_absent_or_unfetchable",
-            "ordered_ceremony_archive_ref",
+            "_prepare_absent_archive_mutation",
+            "_gate_absent_archive_ref",
             publisher.PublicationError,
             "archive ref is absent or was not fetched",
         ),
         (
             "ordered_history_first_add_exception_reused",
-            "ordered_ceremony_first_add_exception_scope",
+            "_prepare_exception_reuse_mutation",
+            "_gate_first_add_exception_reuse",
             publisher.PublicationError,
             "cannot reuse the tier-2 squash exception",
         ),
         (
             "tier2_certification_schema_keyset_drift",
-            "tier2_certification_exact_schema",
+            "_prepare_schema_keyset_mutation",
+            "_validate_certification_top_level",
             publisher.PublicationError,
             "keyset drift",
         ),
         (
             "tier2_certification_reconstruction_disagreement",
-            "tier2_certification_independent_reconstruction",
+            "_prepare_reconstruction_disagreement_mutation",
+            "_validate_certification_reconstructions",
             publisher.PublicationError,
             "reconstruction disagreement",
         ),
         (
             "tier2_certification_referee_implementation_reused",
-            "tier2_certification_distinct_referees",
+            "_prepare_reused_referee_mutation",
+            "_validate_certification_reconstructions",
             publisher.PublicationError,
             "not distinct",
         ),
         (
             "tier2_certification_forbidden_emission_forged",
-            "tier2_certification_lifecycle_stop",
+            "_prepare_forbidden_emission_mutation",
+            "_validate_certification_lifecycle",
             publisher.PublicationError,
             "forbidden emission or lifecycle drift",
         ),
         (
             "tier2_certification_raw_byte_attestation_forged",
-            "tier2_certification_payload_identity",
+            "_prepare_raw_attestation_mutation",
+            "_validate_certification_integrity",
             publisher.PublicationError,
             "raw-byte payload attestation drift",
         ),
         (
             "ceremony_topology_bound_squash_selected",
-            "ceremony_merge_mode_topology_classifier",
+            "_prepare_topology_squash_mutation",
+            "_gate_topology_merge_mode",
             publisher.PublicationError,
             "requires a no-fast-forward merge commit",
         ),
     )
-    assert tuple(publisher.A15_MUTATION_BINDINGS) == expected_bindings
+    observed_bindings = tuple(
+        (
+            binding.name,
+            binding.prepare.__name__,
+            binding.gate.__name__,
+            binding.expected_exception,
+            binding.expected_message,
+        )
+        for binding in publisher.A15_MUTATION_BINDINGS
+    )
+    assert observed_bindings == expected_bindings
     assert publisher.A15_EXPECTED_MUTATIONS == tuple(
         row[0] for row in expected_bindings
     )
@@ -892,6 +921,209 @@ def test__amendment15_mutation_inventory__is_exact_and_disjoint():
     assert path_digest == publisher.ORDERED_ARTIFACT_PATH_DOMAIN_SHA256
 
 
+def test__mutation_census_public_apis__have_no_injection_seams():
+    assert (
+        tuple(
+            inspect.signature(
+                publisher.run_amendment15_mutation_tests
+            ).parameters
+        )
+        == ()
+    )
+    assert (
+        tuple(
+            inspect.signature(
+                publisher.run_complete_mutation_census
+            ).parameters
+        )
+        == ()
+    )
+    assert tuple(
+        inspect.signature(
+            publisher.validate_tier2_certification_contract
+        ).parameters
+    ) == ("value",)
+
+
+def test__certification_public_validator__fresh_runs_then_sequences_predicates(
+    monkeypatch,
+):
+    candidate = {
+        key: object()
+        for key in (
+            "gate_results",
+            "git_order_attestation",
+            "lifecycle",
+            "mutation_census",
+            "ratification_binding",
+            "reconstruction_rows",
+            "source_build_identity",
+            "source_hierarchy_member_identity",
+        )
+    }
+    executed_census = object()
+    events = []
+
+    def run_census():
+        events.append(("run_census",))
+        return executed_census
+
+    def recorder(label):
+        def record(*arguments):
+            events.append((label, *arguments))
+
+        return record
+
+    monkeypatch.setattr(
+        publisher,
+        "run_complete_mutation_census",
+        run_census,
+    )
+    predicate_names = (
+        "top_level",
+        "ratification",
+        "source",
+        "member",
+        "reconstructions",
+        "gates",
+        "git_attestation",
+        "lifecycle",
+        "mutation_census",
+        "integrity",
+    )
+    for name in predicate_names:
+        monkeypatch.setattr(
+            publisher,
+            f"_validate_certification_{name}",
+            recorder(name),
+        )
+
+    publisher.validate_tier2_certification_contract(candidate)
+
+    assert events == [
+        ("run_census",),
+        ("top_level", candidate),
+        ("ratification", candidate["ratification_binding"]),
+        ("source", candidate["source_build_identity"]),
+        ("member", candidate["source_hierarchy_member_identity"]),
+        (
+            "reconstructions",
+            candidate["reconstruction_rows"],
+            candidate["source_hierarchy_member_identity"],
+            candidate["source_build_identity"],
+        ),
+        ("gates", candidate["gate_results"]),
+        ("git_attestation", candidate["git_order_attestation"]),
+        ("lifecycle", candidate["lifecycle"]),
+        (
+            "mutation_census",
+            candidate["mutation_census"],
+            executed_census,
+        ),
+        ("integrity", candidate),
+    ]
+
+
+def test__certification_validation__has_no_private_full_validator():
+    assert not hasattr(
+        publisher,
+        "_validate_tier2_certification_contract_against_census",
+    )
+    assert not hasattr(publisher, "_gate_tier2_certification")
+
+
+def test__certification_private_predicates__have_narrow_signatures():
+    expected_parameters = {
+        "_validate_certification_top_level": ("value",),
+        "_validate_certification_ratification": ("ratification",),
+        "_validate_certification_source": ("source",),
+        "_validate_certification_member": ("member",),
+        "_validate_certification_reconstructions": (
+            "rows",
+            "member",
+            "source",
+        ),
+        "_validate_certification_gates": ("gates",),
+        "_validate_certification_git_attestation": ("attestation",),
+        "_validate_certification_lifecycle": ("lifecycle",),
+        "_validate_certification_mutation_census": (
+            "mutation",
+            "executed_census",
+        ),
+        "_validate_certification_integrity": ("value",),
+    }
+    observed_parameters = {
+        name: tuple(inspect.signature(getattr(publisher, name)).parameters)
+        for name in expected_parameters
+    }
+    assert observed_parameters == expected_parameters
+
+
+def test__certification_private_predicates__validate_only_their_domains():
+    candidate = _certification_fixture()
+    publisher._validate_certification_ratification(
+        candidate["ratification_binding"]
+    )
+    publisher._validate_certification_source(
+        candidate["source_build_identity"]
+    )
+    publisher._validate_certification_member(
+        candidate["source_hierarchy_member_identity"]
+    )
+    publisher._validate_certification_reconstructions(
+        candidate["reconstruction_rows"],
+        candidate["source_hierarchy_member_identity"],
+        candidate["source_build_identity"],
+    )
+    publisher._validate_certification_gates(candidate["gate_results"])
+    publisher._validate_certification_git_attestation(
+        candidate["git_order_attestation"]
+    )
+    publisher._validate_certification_lifecycle(candidate["lifecycle"])
+    publisher._validate_certification_mutation_census(
+        candidate["mutation_census"],
+        _executed_mutation_census(),
+    )
+
+    candidate["lifecycle"]["authority_emitted"] = True
+    _repin_certification(candidate)
+    publisher._validate_certification_top_level(candidate)
+    publisher._validate_certification_integrity(candidate)
+
+
+def test__certification_bound_predicates__reject_prepared_attacks():
+    for prepare, gate, message in (
+        (
+            publisher._prepare_schema_keyset_mutation,
+            publisher._validate_certification_top_level,
+            "keyset drift",
+        ),
+        (
+            publisher._prepare_reconstruction_disagreement_mutation,
+            publisher._validate_certification_reconstructions,
+            "reconstruction disagreement",
+        ),
+        (
+            publisher._prepare_reused_referee_mutation,
+            publisher._validate_certification_reconstructions,
+            "not distinct",
+        ),
+        (
+            publisher._prepare_forbidden_emission_mutation,
+            publisher._validate_certification_lifecycle,
+            "forbidden emission",
+        ),
+        (
+            publisher._prepare_raw_attestation_mutation,
+            publisher._validate_certification_integrity,
+            "raw-byte payload attestation",
+        ),
+    ):
+        prepared_arguments = prepare()
+        with pytest.raises(publisher.PublicationError, match=message):
+            gate(*prepared_arguments)
+
+
 def test__amendment15_named_runner__executes_all_bound_attacks():
     assert (
         publisher.run_amendment15_mutation_tests()
@@ -899,50 +1131,163 @@ def test__amendment15_named_runner__executes_all_bound_attacks():
     )
 
 
-def test__amendment15_named_runner__accepts_only_exact_action_domain():
-    actions = _intended_rejection_actions()
-    assert (
-        publisher.run_amendment15_mutation_tests(actions)
-        == publisher.A15_EXPECTED_MUTATIONS
-    )
+def test__amendment15_mutation_executor__calls_the_bound_gate():
+    prepared = object()
+    events = []
 
-    missing = dict(tuple(actions.items())[1:])
-    extra = {**actions, "unexpected_mutation": next(iter(actions.values()))}
-    reordered = dict(reversed(tuple(actions.items())))
-    for candidate in (missing, extra, reordered):
-        with pytest.raises(publisher.PublicationError):
-            publisher.run_amendment15_mutation_tests(candidate)
+    def prepare():
+        events.append(("prepare", None))
+        return (prepared,)
+
+    def gate(value):
+        events.append(("gate", value))
+        raise publisher.PublicationError("intended rejection")
+
+    binding = publisher.MutationBinding(
+        "synthetic_private_mutation",
+        prepare,
+        gate,
+        publisher.PublicationError,
+        "intended rejection",
+    )
+    assert (
+        publisher._execute_amendment15_mutation(binding)
+        == "synthetic_private_mutation"
+    )
+    assert events == [("prepare", None), ("gate", prepared)]
+
+
+def test__amendment15_mutation_executor__does_not_count_setup_rejection():
+    gate_calls = []
+
+    def reject_during_setup():
+        raise publisher.PublicationError("intended rejection")
+
+    def gate(value):
+        gate_calls.append(value)
+        raise publisher.PublicationError("intended rejection")
+
+    binding = publisher.MutationBinding(
+        "synthetic_private_mutation",
+        reject_during_setup,
+        gate,
+        publisher.PublicationError,
+        "intended rejection",
+    )
+    with pytest.raises(publisher.PublicationError, match="setup failed"):
+        publisher._execute_amendment15_mutation(binding)
+    assert gate_calls == []
 
 
 @pytest.mark.parametrize(
-    "fault",
-    ("non_rejection", "wrong_exception", "wrong_message", "wrong_gate"),
+    ("fault", "error_pattern"),
+    (
+        ("non_rejection", "survived bound gate"),
+        ("wrong_exception", "raised wrong exception"),
+        ("wrong_message", "hit wrong bound gate"),
+    ),
 )
-def test__amendment15_named_runner__fails_closed_on_unintended_result(fault):
-    actions = _intended_rejection_actions()
-    binding = publisher.A15_MUTATION_BINDINGS[0]
-
+def test__amendment15_mutation_executor__fails_closed_on_gate_result(
+    fault,
+    error_pattern,
+):
     if fault == "non_rejection":
-        action = functools.partial(_return_mutation_names, None)
-    elif fault == "wrong_exception":
-        action = functools.partial(
-            _raise_mutation_error,
-            ValueError,
-            binding.expected_message,
-        )
-    elif fault == "wrong_message":
-        action = functools.partial(
-            _raise_mutation_error,
-            binding.expected_exception,
-            "unintended rejection message",
-        )
-    else:
-        wrong_gate = publisher.A15_MUTATION_BINDINGS[1]
-        action = functools.partial(_raise_intended_mutation_error, wrong_gate)
 
-    actions[binding.name] = action
-    with pytest.raises(publisher.PublicationError):
-        publisher.run_amendment15_mutation_tests(actions)
+        def gate(_):
+            return None
+
+    elif fault == "wrong_exception":
+
+        def gate(_):
+            raise ValueError("intended rejection")
+
+    else:
+
+        def gate(_):
+            raise publisher.PublicationError("different rejection")
+
+    binding = publisher.MutationBinding(
+        "synthetic_private_mutation",
+        functools.partial(_return_value, (object(),)),
+        gate,
+        publisher.PublicationError,
+        "intended rejection",
+    )
+    with pytest.raises(publisher.PublicationError, match=error_pattern):
+        publisher._execute_amendment15_mutation(binding)
+
+
+@pytest.mark.parametrize(
+    ("field", "replacement"),
+    (
+        ("name", "wrong_mutation_name"),
+        ("expected_exception", ValueError),
+        ("expected_message", "wrong intended message"),
+    ),
+)
+def test__amendment15_binding_runner__rejects_wrong_binding_spec(
+    field,
+    replacement,
+):
+    bindings = list(publisher.A15_MUTATION_BINDINGS)
+    bindings[0] = bindings[0]._replace(**{field: replacement})
+    with pytest.raises(
+        publisher.PublicationError,
+        match="binding specification drift",
+    ):
+        publisher._run_amendment15_mutation_bindings(bindings)
+
+
+@pytest.mark.parametrize("fault", ("missing", "extra", "reordered"))
+def test__amendment15_binding_runner__rejects_wrong_binding_domain(fault):
+    bindings = list(publisher.A15_MUTATION_BINDINGS)
+    if fault == "missing":
+        bindings.pop()
+    elif fault == "extra":
+        bindings.append(bindings[-1])
+    else:
+        bindings[:2] = reversed(bindings[:2])
+    with pytest.raises(
+        publisher.PublicationError,
+        match="binding specification drift",
+    ):
+        publisher._run_amendment15_mutation_bindings(bindings)
+
+
+def test__amendment15_binding_runner__does_not_call_a_forged_gate():
+    calls = []
+    original = publisher.A15_MUTATION_BINDINGS[0]
+
+    def forged_gate(value):
+        calls.append(value)
+        raise original.expected_exception(original.expected_message)
+
+    bindings = list(publisher.A15_MUTATION_BINDINGS)
+    bindings[0] = original._replace(gate=forged_gate)
+    with pytest.raises(
+        publisher.PublicationError,
+        match="binding specification drift",
+    ):
+        publisher._run_amendment15_mutation_bindings(bindings)
+    assert calls == []
+
+
+def test__amendment15_binding_runner__does_not_call_a_forged_prepare():
+    calls = []
+    original = publisher.A15_MUTATION_BINDINGS[0]
+
+    def forged_prepare():
+        calls.append(True)
+        return object()
+
+    bindings = list(publisher.A15_MUTATION_BINDINGS)
+    bindings[0] = original._replace(prepare=forged_prepare)
+    with pytest.raises(
+        publisher.PublicationError,
+        match="binding specification drift",
+    ):
+        publisher._run_amendment15_mutation_bindings(bindings)
+    assert calls == []
 
 
 def test__complete_mutation_census__executes_and_binds_all_100_names():
@@ -1013,10 +1358,10 @@ def test__complete_mutation_census__executes_and_binds_all_100_names():
         (0, "missing"),
         (1, "extra"),
         (2, "reordered"),
-        (0, "same_count_duplicate"),
+        (3, "same_count_duplicate"),
     ),
 )
-def test__complete_mutation_census__fails_closed_on_inherited_drift(
+def test__complete_mutation_census__fails_closed_on_component_drift(
     component_index,
     fault,
 ):
@@ -1032,10 +1377,19 @@ def test__complete_mutation_census__fails_closed_on_inherited_drift(
         selected[0] = selected[1]
     outputs[component_index] = tuple(selected)
 
-    runner_names = ("a12_runner", "a13_runner", "a14_runner", "a15_runner")
-    runners = {
-        name: functools.partial(_return_mutation_names, outputs[index])
-        for index, name in enumerate(runner_names)
-    }
     with pytest.raises(publisher.PublicationError):
-        publisher.run_complete_mutation_census(**runners)
+        publisher._compose_complete_mutation_census(outputs)
+
+
+@pytest.mark.parametrize("fault", ("missing_component", "extra_component"))
+def test__complete_mutation_census__fails_closed_on_runner_domain_drift(fault):
+    outputs = list(_executed_mutation_outputs())
+    if fault == "missing_component":
+        outputs.pop()
+    else:
+        outputs.append(())
+    with pytest.raises(
+        publisher.PublicationError,
+        match="runner component domain drift",
+    ):
+        publisher._compose_complete_mutation_census(outputs)

@@ -53824,12 +53824,25 @@ Amendment-12 71-mutation runner, then the Amendment-13 seven-mutation and
 Amendment-14 eleven-mutation runners, and then the exact named Amendment-15
 11-mutation runner `run_amendment15_mutation_tests()`. It may not substitute
 expected-name constants or a caller-supplied census for any execution. A
-runner appends a mutation name only after that mutation independently raises
-its bound intended exception class at its bound gate and satisfies its
-intended-message predicate. A missing, extra, duplicate, renamed, reordered,
-non-rejecting, wrong-class, wrong-message, or wrong-gate mutation, or any
-component/aggregate count, domain, order, digest, or status disagreement,
-aborts.
+runner's fixed specification binds the name, preparation function, operative
+gate callable, intended exception class, and intended-message predicate.
+Preparation completes outside the scope that catches the gate rejection; a
+setup exception therefore cannot authenticate a name. The runner appends a
+mutation name only after invoking that bound gate callable and observing its
+bound intended exception and message. A missing, extra, duplicate, renamed,
+reordered, non-rejecting, wrong-class, wrong-message, wrong-gate, or
+setup-failing mutation, or any component/aggregate count, domain, order,
+digest, or status disagreement, aborts.
+
+`validate_tier2_certification_contract()` is the only callable that composes
+the complete certificate contract. On every call it first executes the full
+100-name census and then sequentially applies narrow predicates for the
+top-level schema, ratification, source, member, reconstructions, gate results,
+Git attestation, lifecycle, execution-derived census, and integrity. Each
+Amendment-15 certificate mutation invokes only its exact assigned narrow
+predicate, never that public compositor or another complete-contract wrapper.
+No narrow predicate accepts a complete certificate plus a caller-supplied
+census or otherwise reaches the complete contract body.
 
 `integrity` has exactly `canonicalization` and `payload_sha256`. Its
 canonicalization is §29.4.1's exact code. The payload preimage is the complete
@@ -53886,7 +53899,7 @@ path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `d42d5ca9586b8c686b5a0c818e5ee21e7570a861` | 236904 | `88c7999afd6403e73e8d72585d42c5019725154466377e98ba028fe0e6906ed3` |
+| `scripts/validate_amendment13_execution_law.py` | `b6a7de629f30e9d54654c21603f59a0cf6ba5ac5` | 236904 | `60613cbd2f4b97d2f8f41a16fdc7b58e505b49111bd428e0f4b4b0419abaae0b` |
 | `tests/test_validate_amendment13_execution_law.py` | `7797837f76e3c185d40ec6cc90f0c2e75bcd7504` | 23520 | `bdf1b86acdad3dd3dada03e71eb426fca4b297e541f7ef9170420ee846c88f3b` |
 
 For each row, the validator requires exact path, mode, working-tree/`HEAD`

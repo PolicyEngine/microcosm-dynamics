@@ -221,79 +221,11 @@ class MutationBinding(NamedTuple):
     """Bind one named attack to its exact rejecting gate and error."""
 
     name: str
-    gate: str
+    prepare: Callable[[], tuple[Any, ...]]
+    gate: Callable[..., Any]
     expected_exception: type[Exception]
     expected_message: str
 
-
-A15_MUTATION_BINDINGS = (
-    MutationBinding(
-        "ordered_history_attestation_identity_forged",
-        "ordered_ceremony_stage_identity",
-        PublicationError,
-        "overlays commit identity drift",
-    ),
-    MutationBinding(
-        "ordered_history_attestation_order_forged",
-        "ordered_ceremony_strict_ancestor_chain",
-        PublicationError,
-        "strict-ancestor chain drift",
-    ),
-    MutationBinding(
-        "ordered_history_attestation_tree_identity_forged",
-        "ordered_ceremony_tree_identity",
-        PublicationError,
-        "tree identity drift",
-    ),
-    MutationBinding(
-        "ordered_history_archive_ref_absent_or_unfetchable",
-        "ordered_ceremony_archive_ref",
-        PublicationError,
-        "archive ref is absent or was not fetched",
-    ),
-    MutationBinding(
-        "ordered_history_first_add_exception_reused",
-        "ordered_ceremony_first_add_exception_scope",
-        PublicationError,
-        "cannot reuse the tier-2 squash exception",
-    ),
-    MutationBinding(
-        "tier2_certification_schema_keyset_drift",
-        "tier2_certification_exact_schema",
-        PublicationError,
-        "keyset drift",
-    ),
-    MutationBinding(
-        "tier2_certification_reconstruction_disagreement",
-        "tier2_certification_independent_reconstruction",
-        PublicationError,
-        "reconstruction disagreement",
-    ),
-    MutationBinding(
-        "tier2_certification_referee_implementation_reused",
-        "tier2_certification_distinct_referees",
-        PublicationError,
-        "not distinct",
-    ),
-    MutationBinding(
-        "tier2_certification_forbidden_emission_forged",
-        "tier2_certification_lifecycle_stop",
-        PublicationError,
-        "forbidden emission or lifecycle drift",
-    ),
-    MutationBinding(
-        "tier2_certification_raw_byte_attestation_forged",
-        "tier2_certification_payload_identity",
-        PublicationError,
-        "raw-byte payload attestation drift",
-    ),
-    MutationBinding(
-        "ceremony_topology_bound_squash_selected",
-        "ceremony_merge_mode_topology_classifier",
-        PublicationError,
-        "requires a no-fast-forward merge commit",
-    ),
-)
 
 CERTIFICATION_SCHEMA_VERSION = (
     "amendment_12_tier2_source_hierarchy_certification.v1"
@@ -567,18 +499,6 @@ def _execute_a12_mutation_tests() -> tuple[str, ...]:
     return tuple(a13.a12.run_mutation_tests(bundle))
 
 
-def _execute_a13_mutation_tests() -> tuple[str, ...]:
-    law = a13.build_execution_law()
-    a13.validate_execution_law(law)
-    return tuple(a13.run_mutation_tests(law))
-
-
-def _execute_a14_mutation_tests() -> tuple[str, ...]:
-    law = a13.build_execution_law()
-    a13.validate_execution_law(law)
-    return tuple(a13.run_enforcement_mutation_tests(law))
-
-
 def _repin_synthetic_certification(value: dict[str, Any]) -> None:
     digest = _certification_payload_sha256(value)
     value["artifact_id"] = CERTIFICATION_ARTIFACT_ID_PREFIX + digest
@@ -680,180 +600,189 @@ def _build_a15_attack_certificate_candidate() -> dict[str, Any]:
     return value
 
 
-def _default_a15_mutation_actions() -> dict[str, Callable[[], Any]]:
-    """Construct all eleven production attacks in their enacted order."""
+def _prepare_attestation_identity_mutation() -> tuple[dict[str, Any]]:
+    candidate = copy.deepcopy(ORDERED_CEREMONY_ATTESTATION)
+    candidate["stages"][1]["commit"] = TIER2_SQUASH_COMMIT
+    return (candidate,)
 
-    def reject_attestation_identity() -> None:
-        candidate = copy.deepcopy(ORDERED_CEREMONY_ATTESTATION)
-        candidate["stages"][1]["commit"] = TIER2_SQUASH_COMMIT
-        _validate_ordered_ceremony_attestation(
-            repo_root=ROOT,
-            attestation=candidate,
+
+def _prepare_attestation_order_mutation() -> tuple[None]:
+    return (None,)
+
+
+def _prepare_attestation_tree_mutation() -> tuple[dict[str, Any]]:
+    candidate = copy.deepcopy(ORDERED_CEREMONY_ATTESTATION)
+    candidate["tree_oid"] = "0" * 40
+    return (candidate,)
+
+
+def _prepare_absent_archive_mutation() -> tuple[None]:
+    return (None,)
+
+
+def _prepare_exception_reuse_mutation() -> tuple[Path, str, dict[str, Any]]:
+    return (
+        Path("scripts/build_amendment13_tier2_repairs.py"),
+        TIER2_SQUASH_COMMIT,
+        {
+            "stage_commits": {
+                stage["role"]: stage["commit"]
+                for stage in ORDERED_CEREMONY_ATTESTATION["stages"]
+            }
+        },
+    )
+
+
+def _prepare_schema_keyset_mutation() -> tuple[dict[str, Any]]:
+    candidate = _build_a15_attack_certificate_candidate()
+    candidate.pop("status")
+    return (candidate,)
+
+
+def _prepare_reconstruction_disagreement_mutation() -> tuple[Any, ...]:
+    candidate = _build_a15_attack_certificate_candidate()
+    candidate["reconstruction_rows"][1]["member_raw_sha256"] = "a" * 64
+    _repin_synthetic_certification(candidate)
+    return (
+        candidate["reconstruction_rows"],
+        candidate["source_hierarchy_member_identity"],
+        candidate["source_build_identity"],
+    )
+
+
+def _prepare_reused_referee_mutation() -> tuple[Any, ...]:
+    candidate = _build_a15_attack_certificate_candidate()
+    left, right = candidate["reconstruction_rows"]
+    right["implementation_blob_oid"] = left["implementation_blob_oid"]
+    right["implementation_raw_sha256"] = left["implementation_raw_sha256"]
+    _repin_synthetic_certification(candidate)
+    return (
+        candidate["reconstruction_rows"],
+        candidate["source_hierarchy_member_identity"],
+        candidate["source_build_identity"],
+    )
+
+
+def _prepare_forbidden_emission_mutation() -> tuple[Mapping[str, Any]]:
+    candidate = _build_a15_attack_certificate_candidate()
+    candidate["lifecycle"]["authority_emitted"] = True
+    _repin_synthetic_certification(candidate)
+    return (candidate["lifecycle"],)
+
+
+def _prepare_raw_attestation_mutation() -> tuple[dict[str, Any]]:
+    candidate = _build_a15_attack_certificate_candidate()
+    candidate["artifact_id"] = CERTIFICATION_ARTIFACT_ID_PREFIX + "f" * 64
+    return (candidate,)
+
+
+def _prepare_topology_squash_mutation() -> tuple[list[str], str]:
+    return ["first_or_last_add_identity"], "squash"
+
+
+def _gate_ordered_attestation(candidate: Mapping[str, Any]) -> None:
+    _validate_ordered_ceremony_attestation(
+        repo_root=ROOT,
+        attestation=candidate,
+    )
+
+
+def _gate_ordered_attestation_order(_: None) -> None:
+    with mock.patch.object(
+        sys.modules[__name__],
+        "_is_strict_ancestor",
+        return_value=False,
+    ):
+        validate_ordered_ceremony_attestation()
+
+
+def _gate_absent_archive_ref(_: None) -> None:
+    original = _run_git
+
+    def absent_ref(repo_root: Path, *arguments: str):
+        if arguments[:3] == ("show-ref", "--verify", "--hash"):
+            return subprocess.CompletedProcess(
+                arguments,
+                1,
+                stdout=b"",
+                stderr=b"absent archive ref",
+            )
+        return original(repo_root, *arguments)
+
+    with mock.patch.object(sys.modules[__name__], "_run_git", absent_ref):
+        validate_ordered_ceremony_attestation()
+
+
+def _gate_first_add_exception_reuse(
+    relative_path: Path,
+    observed_first_add: str,
+    attestation: Mapping[str, Any],
+) -> None:
+    _attested_order_commit_for_squashed_first_add(
+        relative_path,
+        observed_first_add,
+        attestation,
+    )
+
+
+def _gate_topology_merge_mode(
+    requirement_codes: Sequence[str], merge_mode: str
+) -> None:
+    validate_ceremony_merge_mode(requirement_codes, merge_mode)
+
+
+def _execute_amendment15_mutation(binding: MutationBinding) -> str:
+    """Prepare outside the rejection scope, then call the bound real gate."""
+
+    try:
+        prepared = binding.prepare()
+    except Exception as error:
+        raise PublicationError(
+            f"mutation setup failed before bound gate {binding.gate.__name__}: "
+            f"{binding.name}: {type(error).__name__}: {error}"
+        ) from error
+
+    try:
+        binding.gate(*prepared)
+    except binding.expected_exception as error:
+        _require(
+            binding.expected_message in str(error),
+            f"mutation {binding.name} hit wrong bound gate "
+            f"{binding.gate.__name__}: {error}",
         )
-
-    def reject_attestation_order() -> None:
-        with mock.patch.object(
-            sys.modules[__name__],
-            "_is_strict_ancestor",
-            return_value=False,
-        ):
-            validate_ordered_ceremony_attestation()
-
-    def reject_attestation_tree() -> None:
-        candidate = copy.deepcopy(ORDERED_CEREMONY_ATTESTATION)
-        candidate["tree_oid"] = "0" * 40
-        _validate_ordered_ceremony_attestation(
-            repo_root=ROOT,
-            attestation=candidate,
-        )
-
-    def reject_absent_archive_ref() -> None:
-        original = _run_git
-
-        def absent_ref(repo_root: Path, *arguments: str):
-            if arguments[:3] == ("show-ref", "--verify", "--hash"):
-                return subprocess.CompletedProcess(
-                    arguments,
-                    1,
-                    stdout=b"",
-                    stderr=b"absent archive ref",
-                )
-            return original(repo_root, *arguments)
-
-        with mock.patch.object(sys.modules[__name__], "_run_git", absent_ref):
-            validate_ordered_ceremony_attestation()
-
-    def reject_exception_reuse() -> None:
-        _attested_order_commit_for_squashed_first_add(
-            Path("scripts/build_amendment13_tier2_repairs.py"),
-            TIER2_SQUASH_COMMIT,
-            {
-                "stage_commits": {
-                    stage["role"]: stage["commit"]
-                    for stage in ORDERED_CEREMONY_ATTESTATION["stages"]
-                }
-            },
-        )
-
-    def reject_schema_keyset() -> None:
-        candidate = _build_a15_attack_certificate_candidate()
-        candidate.pop("status")
-        _validate_tier2_certification_contract(
-            candidate,
-            executed_mutation_census=_expected_mutation_census(),
-        )
-
-    def reject_reconstruction_disagreement() -> None:
-        candidate = _build_a15_attack_certificate_candidate()
-        candidate["reconstruction_rows"][1]["member_raw_sha256"] = "a" * 64
-        _repin_synthetic_certification(candidate)
-        _validate_tier2_certification_contract(
-            candidate,
-            executed_mutation_census=_expected_mutation_census(),
-        )
-
-    def reject_reused_referee() -> None:
-        candidate = _build_a15_attack_certificate_candidate()
-        left, right = candidate["reconstruction_rows"]
-        right["implementation_blob_oid"] = left["implementation_blob_oid"]
-        right["implementation_raw_sha256"] = left["implementation_raw_sha256"]
-        _repin_synthetic_certification(candidate)
-        _validate_tier2_certification_contract(
-            candidate,
-            executed_mutation_census=_expected_mutation_census(),
-        )
-
-    def reject_forbidden_emission() -> None:
-        candidate = _build_a15_attack_certificate_candidate()
-        candidate["lifecycle"]["authority_emitted"] = True
-        _repin_synthetic_certification(candidate)
-        _validate_tier2_certification_contract(
-            candidate,
-            executed_mutation_census=_expected_mutation_census(),
-        )
-
-    def reject_raw_attestation() -> None:
-        candidate = _build_a15_attack_certificate_candidate()
-        candidate["artifact_id"] = CERTIFICATION_ARTIFACT_ID_PREFIX + "f" * 64
-        _validate_tier2_certification_contract(
-            candidate,
-            executed_mutation_census=_expected_mutation_census(),
-        )
-
-    def reject_topology_squash() -> None:
-        validate_ceremony_merge_mode(
-            ["first_or_last_add_identity"],
-            "squash",
-        )
-
-    return {
-        "ordered_history_attestation_identity_forged": (
-            reject_attestation_identity
-        ),
-        "ordered_history_attestation_order_forged": reject_attestation_order,
-        "ordered_history_attestation_tree_identity_forged": (
-            reject_attestation_tree
-        ),
-        "ordered_history_archive_ref_absent_or_unfetchable": (
-            reject_absent_archive_ref
-        ),
-        "ordered_history_first_add_exception_reused": reject_exception_reuse,
-        "tier2_certification_schema_keyset_drift": reject_schema_keyset,
-        "tier2_certification_reconstruction_disagreement": (
-            reject_reconstruction_disagreement
-        ),
-        "tier2_certification_referee_implementation_reused": (
-            reject_reused_referee
-        ),
-        "tier2_certification_forbidden_emission_forged": (
-            reject_forbidden_emission
-        ),
-        "tier2_certification_raw_byte_attestation_forged": (
-            reject_raw_attestation
-        ),
-        "ceremony_topology_bound_squash_selected": reject_topology_squash,
-    }
+        return binding.name
+    except Exception as error:
+        raise PublicationError(
+            f"mutation {binding.name} raised wrong exception at bound gate "
+            f"{binding.gate.__name__}: {type(error).__name__}: {error}"
+        ) from error
+    raise PublicationError(
+        f"mutation survived bound gate {binding.gate.__name__}: {binding.name}"
+    )
 
 
-def run_amendment15_mutation_tests(
-    actions: Mapping[str, Callable[[], Any]] | None = None,
+def _run_amendment15_mutation_bindings(
+    bindings: Sequence[MutationBinding],
 ) -> tuple[str, ...]:
-    """Execute each exact A15 attack and append only its intended rejection."""
+    """Private fault-injection seam for the fixed production binding table."""
 
-    selected_actions = (
-        _default_a15_mutation_actions() if actions is None else actions
-    )
+    selected = tuple(bindings)
     _require(
-        tuple(selected_actions) == A15_EXPECTED_MUTATIONS,
-        "Amendment-15 mutation action domain or order drift",
+        selected == A15_MUTATION_BINDINGS,
+        "Amendment-15 mutation binding specification drift",
     )
-    rejected: list[str] = []
-    for binding in A15_MUTATION_BINDINGS:
-        action = selected_actions[binding.name]
-        try:
-            action()
-        except binding.expected_exception as error:
-            _require(
-                binding.expected_message in str(error),
-                f"mutation {binding.name} hit wrong gate "
-                f"{binding.gate}: {error}",
-            )
-            rejected.append(binding.name)
-        except Exception as error:
-            raise PublicationError(
-                f"mutation {binding.name} raised wrong exception for "
-                f"{binding.gate}: {type(error).__name__}: {error}"
-            ) from error
-        else:
-            raise PublicationError(
-                f"mutation survived intended gate {binding.gate}: "
-                f"{binding.name}"
-            )
+    rejected = tuple(_execute_amendment15_mutation(row) for row in selected)
     _require(
-        tuple(rejected) == A15_EXPECTED_MUTATIONS,
+        rejected == A15_EXPECTED_MUTATIONS,
         "Amendment-15 rejected mutation census drift",
     )
-    return tuple(rejected)
+    return rejected
+
+
+def run_amendment15_mutation_tests() -> tuple[str, ...]:
+    """Execute each fixed A15 mutation through its bound real gate."""
+
+    return _run_amendment15_mutation_bindings(A15_MUTATION_BINDINGS)
 
 
 def _execute_complete_mutation_names() -> (
@@ -870,25 +799,18 @@ def _execute_complete_mutation_names() -> (
     return a12_names, a13_names, a14_names, a15_names
 
 
-def run_complete_mutation_census(
-    *,
-    a12_runner: Callable[[], Sequence[str]] | None = None,
-    a13_runner: Callable[[], Sequence[str]] | None = None,
-    a14_runner: Callable[[], Sequence[str]] | None = None,
-    a15_runner: Callable[[], Sequence[str]] | None = None,
+def _compose_complete_mutation_census(
+    outputs: Sequence[Sequence[str]],
 ) -> dict[str, Any]:
-    """Execute and authenticate the exact ordered 71 + 18 + 11 census."""
+    """Private fault-injection seam over already executed runner outputs."""
 
-    supplied = (a12_runner, a13_runner, a14_runner, a15_runner)
-    if all(runner is None for runner in supplied):
-        a12_names, a13_names, a14_names, a15_names = (
-            _execute_complete_mutation_names()
-        )
-    else:
-        a12_names = tuple((a12_runner or _execute_a12_mutation_tests)())
-        a13_names = tuple((a13_runner or _execute_a13_mutation_tests)())
-        a14_names = tuple((a14_runner or _execute_a14_mutation_tests)())
-        a15_names = tuple((a15_runner or run_amendment15_mutation_tests)())
+    _require(
+        len(outputs) == 4,
+        "complete mutation runner component domain drift",
+    )
+    a12_names, a13_names, a14_names, a15_names = (
+        tuple(names) for names in outputs
+    )
 
     _require(
         a13_names == a13.A13_EXPECTED_MUTATIONS,
@@ -948,12 +870,16 @@ def run_complete_mutation_census(
     return census
 
 
-def _validate_tier2_certification_contract(
-    value: Mapping[str, Any],
-    *,
-    executed_mutation_census: Mapping[str, Any],
-) -> None:
-    """Validate the schema against an already executed mutation census."""
+def run_complete_mutation_census() -> dict[str, Any]:
+    """Execute and authenticate the exact ordered 71 + 18 + 11 census."""
+
+    return _compose_complete_mutation_census(
+        _execute_complete_mutation_names()
+    )
+
+
+def _validate_certification_top_level(value: Mapping[str, Any]) -> None:
+    """Validate only the certificate's top-level schema and fixed codes."""
 
     _require_exact_keys(
         value, CERTIFICATION_TOP_LEVEL_KEYS, "tier-2 certification"
@@ -965,7 +891,12 @@ def _validate_tier2_certification_contract(
         "tier-2 certification fixed code drift",
     )
 
-    ratification = value["ratification_binding"]
+
+def _validate_certification_ratification(
+    ratification: Mapping[str, Any],
+) -> None:
+    """Validate only the ratification-binding invariant."""
+
     _require(
         isinstance(ratification, Mapping),
         "tier-2 certification ratification binding is not an object",
@@ -996,7 +927,10 @@ def _validate_tier2_certification_contract(
         "tier-2 certification ratification binding drift",
     )
 
-    source = value["source_build_identity"]
+
+def _validate_certification_source(source: Mapping[str, Any]) -> None:
+    """Validate only the source-build identity invariant."""
+
     _require(
         isinstance(source, Mapping),
         "tier-2 certification source build identity is not an object",
@@ -1017,7 +951,10 @@ def _validate_tier2_certification_contract(
         "tier-2 certification source build identity drift",
     )
 
-    member = value["source_hierarchy_member_identity"]
+
+def _validate_certification_member(member: Mapping[str, Any]) -> None:
+    """Validate only the reconstructed member identity invariant."""
+
     _require(
         isinstance(member, Mapping),
         "tier-2 certification member identity is not an object",
@@ -1039,7 +976,14 @@ def _validate_tier2_certification_contract(
         "tier-2 certification member identity drift",
     )
 
-    rows = value["reconstruction_rows"]
+
+def _validate_certification_reconstructions(
+    rows: Sequence[Mapping[str, Any]],
+    member: Mapping[str, Any],
+    source: Mapping[str, Any],
+) -> None:
+    """Validate only the two-referee reconstruction invariant."""
+
     _require(
         isinstance(rows, list) and len(rows) == 2,
         "tier-2 certification requires exactly two reconstructions",
@@ -1089,7 +1033,12 @@ def _validate_tier2_certification_contract(
         "tier-2 certification reconstruction disagreement",
     )
 
-    gates = value["gate_results"]
+
+def _validate_certification_gates(
+    gates: Sequence[Mapping[str, Any]],
+) -> None:
+    """Validate only the ordered five-gate result invariant."""
+
     _require(
         isinstance(gates, list)
         and all(isinstance(row, Mapping) for row in gates)
@@ -1105,11 +1054,21 @@ def _validate_tier2_certification_contract(
             "tier-2 certification gate result drift",
         )
 
+
+def _validate_certification_git_attestation(
+    attestation: Mapping[str, Any],
+) -> None:
+    """Validate only the bound Git-order attestation invariant."""
+
     _require(
-        value["git_order_attestation"] == CERTIFICATION_GIT_ATTESTATION,
+        attestation == CERTIFICATION_GIT_ATTESTATION,
         "tier-2 certification Git-order attestation drift",
     )
-    lifecycle = value["lifecycle"]
+
+
+def _validate_certification_lifecycle(lifecycle: Mapping[str, Any]) -> None:
+    """Validate only the nonauthority lifecycle-stop invariant."""
+
     lifecycle_boolean_keys = {
         key
         for key, expected in CERTIFICATION_LIFECYCLE.items()
@@ -1125,7 +1084,13 @@ def _validate_tier2_certification_contract(
         "tier-2 certification forbidden emission or lifecycle drift",
     )
 
-    mutation = value["mutation_census"]
+
+def _validate_certification_mutation_census(
+    mutation: Mapping[str, Any],
+    executed_census: Mapping[str, Any],
+) -> None:
+    """Validate only the serialized-versus-executed census invariant."""
+
     _require(
         isinstance(mutation, Mapping),
         "tier-2 certification mutation census is not an object",
@@ -1186,10 +1151,14 @@ def _validate_tier2_certification_contract(
         "tier-2 certification aggregate mutation census value drift",
     )
     _require(
-        mutation == executed_mutation_census
+        mutation == executed_census
         and mutation == _expected_mutation_census(),
         "tier-2 certification execution-derived mutation census drift",
     )
+
+
+def _validate_certification_integrity(value: Mapping[str, Any]) -> None:
+    """Validate only the payload and artifact-identity invariant."""
 
     integrity = value["integrity"]
     _require(
@@ -1209,13 +1178,108 @@ def _validate_tier2_certification_contract(
     )
 
 
+A15_MUTATION_BINDINGS = (
+    MutationBinding(
+        "ordered_history_attestation_identity_forged",
+        _prepare_attestation_identity_mutation,
+        _gate_ordered_attestation,
+        PublicationError,
+        "overlays commit identity drift",
+    ),
+    MutationBinding(
+        "ordered_history_attestation_order_forged",
+        _prepare_attestation_order_mutation,
+        _gate_ordered_attestation_order,
+        PublicationError,
+        "strict-ancestor chain drift",
+    ),
+    MutationBinding(
+        "ordered_history_attestation_tree_identity_forged",
+        _prepare_attestation_tree_mutation,
+        _gate_ordered_attestation,
+        PublicationError,
+        "tree identity drift",
+    ),
+    MutationBinding(
+        "ordered_history_archive_ref_absent_or_unfetchable",
+        _prepare_absent_archive_mutation,
+        _gate_absent_archive_ref,
+        PublicationError,
+        "archive ref is absent or was not fetched",
+    ),
+    MutationBinding(
+        "ordered_history_first_add_exception_reused",
+        _prepare_exception_reuse_mutation,
+        _gate_first_add_exception_reuse,
+        PublicationError,
+        "cannot reuse the tier-2 squash exception",
+    ),
+    MutationBinding(
+        "tier2_certification_schema_keyset_drift",
+        _prepare_schema_keyset_mutation,
+        _validate_certification_top_level,
+        PublicationError,
+        "keyset drift",
+    ),
+    MutationBinding(
+        "tier2_certification_reconstruction_disagreement",
+        _prepare_reconstruction_disagreement_mutation,
+        _validate_certification_reconstructions,
+        PublicationError,
+        "reconstruction disagreement",
+    ),
+    MutationBinding(
+        "tier2_certification_referee_implementation_reused",
+        _prepare_reused_referee_mutation,
+        _validate_certification_reconstructions,
+        PublicationError,
+        "not distinct",
+    ),
+    MutationBinding(
+        "tier2_certification_forbidden_emission_forged",
+        _prepare_forbidden_emission_mutation,
+        _validate_certification_lifecycle,
+        PublicationError,
+        "forbidden emission or lifecycle drift",
+    ),
+    MutationBinding(
+        "tier2_certification_raw_byte_attestation_forged",
+        _prepare_raw_attestation_mutation,
+        _validate_certification_integrity,
+        PublicationError,
+        "raw-byte payload attestation drift",
+    ),
+    MutationBinding(
+        "ceremony_topology_bound_squash_selected",
+        _prepare_topology_squash_mutation,
+        _gate_topology_merge_mode,
+        PublicationError,
+        "requires a no-fast-forward merge commit",
+    ),
+)
+
+
 def validate_tier2_certification_contract(value: Mapping[str, Any]) -> None:
     """Execute all 100 attacks, then validate the bound certificate schema."""
 
-    _validate_tier2_certification_contract(
-        value,
-        executed_mutation_census=run_complete_mutation_census(),
+    executed_census = run_complete_mutation_census()
+    _validate_certification_top_level(value)
+    _validate_certification_ratification(value["ratification_binding"])
+    _validate_certification_source(value["source_build_identity"])
+    _validate_certification_member(value["source_hierarchy_member_identity"])
+    _validate_certification_reconstructions(
+        value["reconstruction_rows"],
+        value["source_hierarchy_member_identity"],
+        value["source_build_identity"],
     )
+    _validate_certification_gates(value["gate_results"])
+    _validate_certification_git_attestation(value["git_order_attestation"])
+    _validate_certification_lifecycle(value["lifecycle"])
+    _validate_certification_mutation_census(
+        value["mutation_census"],
+        executed_census,
+    )
+    _validate_certification_integrity(value)
 
 
 def validate_ceremony_merge_mode(
