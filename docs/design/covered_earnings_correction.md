@@ -53957,7 +53957,7 @@ and these three path/blob/byte/hash rows:
 |---|---|---:|---|
 | `scripts/validate_amendment13_execution_law.py` | `167854de0e9b9a92f05680e09a4ac0be59d22f76` | 239044 | `c93d661508f6690fbbbb1f140ba54a248c15d7458d5c7c9f4e9847aefd5bee86` |
 | `tests/test_validate_amendment13_execution_law.py` | `4c57861b849341a5bfe097df28183e245c4399a2` | 29667 | `5c05205dc29f0d51b380627ccca4c55ee0a0f31f12f49eea3d39371bc8e584be` |
-| `scripts/build_amendment13_tier2_repairs.py` | `71fa421a4af9d8fae5179c87631242996a000d5e` | 111116 | `255730495e26de7d6f5c61d69a7c809c6d9652fecc9dcb19778b4c37925433f8` |
+| `scripts/build_amendment13_tier2_repairs.py` | `9f4b59e6730442e1a4d97ccd9addd68839e2793c` | 111195 | `38b5a0fad93d2dc0e18a64c8a03bfc6a4148844ff2ec835e3042eaee8d436ed0` |
 
 For each row, the validator requires exact path, mode, working-tree/`HEAD`
 bytes, byte size, raw SHA-256, and Git blob OID through the sanitized wrapper.

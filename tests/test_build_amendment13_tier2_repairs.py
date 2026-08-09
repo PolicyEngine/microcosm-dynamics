@@ -603,6 +603,7 @@ def test__certification_contract__does_not_resolve_rebound_public_census(
         "run_complete_mutation_census",
         forged_execution,
     )
+    monkeypatch.setattr(publisher, "Mapping", int)
     for name in (
         "top_level",
         "ratification",
@@ -1003,12 +1004,45 @@ def test__complete_census__same_process_runner_rebinding_is_ineffective(
     monkeypatch.setattr(a13, "run_mutation_tests", forged)
     monkeypatch.setattr(a13, "run_enforcement_mutation_tests", forged)
     monkeypatch.setattr(publisher, "run_amendment15_mutation_tests", forged)
+    monkeypatch.setattr(publisher, "Mapping", int)
 
     census = publisher.run_complete_mutation_census()
 
     assert census == publisher._expected_mutation_census()
     assert census["rejected_count"] == 100
     assert calls == []
+
+
+def test__authenticated_parent_closures__have_no_module_global_links():
+    roots = (
+        publisher._execute_complete_mutation_names,
+        publisher._compose_complete_mutation_census,
+        publisher._emit_complete_mutation_census_bytes,
+        publisher._authenticate_complete_mutation_census_bytes,
+        publisher._verify_publisher_implementation_pin,
+        publisher.run_complete_mutation_census,
+        publisher.validate_tier2_certification_contract,
+    )
+    factory_qualnames = (
+        "_create_complete_mutation_census_protocol.<locals>",
+        "_create_tier2_certification_contract_validator.<locals>",
+    )
+    pending = list(roots)
+    observed = set()
+    while pending:
+        function = pending.pop()
+        if id(function) in observed:
+            continue
+        observed.add(id(function))
+        if function.__qualname__.startswith(factory_qualnames):
+            assert inspect.getclosurevars(function).globals == {}
+        if function.__closure__ is None:
+            continue
+        pending.extend(
+            value
+            for cell in function.__closure__
+            if inspect.isfunction(value := cell.cell_contents)
+        )
 
 
 def test__certification_public_validator__definition_binds_complete_graph(

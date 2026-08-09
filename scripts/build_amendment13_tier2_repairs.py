@@ -1309,6 +1309,7 @@ def _create_complete_mutation_census_protocol() -> tuple[
     run_a15 = run_amendment15_mutation_tests
     json_dumps = json.dumps
     json_loads = json.loads
+    mapping_type = Mapping
     sha1 = hashlib.sha1
     sha256 = hashlib.sha256
     subprocess_run = subprocess.run
@@ -1360,7 +1361,7 @@ def _create_complete_mutation_census_protocol() -> tuple[
     def require_exact_keys(
         value: Mapping[str, Any], expected: frozenset[str], label: str
     ) -> None:
-        require(isinstance(value, Mapping), f"{label} is not an object")
+        require(isinstance(value, mapping_type), f"{label} is not an object")
         actual = frozenset(value)
         require(
             actual == expected,
@@ -1776,6 +1777,7 @@ def _create_tier2_certification_contract_validator() -> (
     publication_error = PublicationError
     execute_authenticated_census = run_complete_mutation_census
     json_dumps = json.dumps
+    mapping_type = Mapping
     sha256 = hashlib.sha256
     top_level_keys = frozenset(CERTIFICATION_TOP_LEVEL_KEYS)
     schema_version = CERTIFICATION_SCHEMA_VERSION
@@ -1803,7 +1805,7 @@ def _create_tier2_certification_contract_validator() -> (
     def require_exact_keys(
         value: Mapping[str, Any], expected: frozenset[str], label: str
     ) -> None:
-        require(isinstance(value, Mapping), f"{label} is not an object")
+        require(isinstance(value, mapping_type), f"{label} is not an object")
         actual = frozenset(value)
         require(
             actual == expected,
@@ -1969,7 +1971,7 @@ def _create_tier2_certification_contract_validator() -> (
     def validate_gates(gates: Sequence[Mapping[str, Any]]) -> None:
         require(
             isinstance(gates, list)
-            and all(isinstance(row, Mapping) for row in gates)
+            and all(isinstance(row, mapping_type) for row in gates)
             and [row.get("gate_id") for row in gates] == list(gate_ids),
             "tier-2 certification gate domain or order drift",
         )
@@ -2043,7 +2045,7 @@ def _create_tier2_certification_contract_validator() -> (
     def validate_integrity(value: Mapping[str, Any]) -> None:
         integrity = value["integrity"]
         require(
-            isinstance(integrity, Mapping)
+            isinstance(integrity, mapping_type)
             and frozenset(integrity)
             == frozenset({"canonicalization", "payload_sha256"})
             and integrity["canonicalization"]
@@ -2085,7 +2087,7 @@ def _create_tier2_certification_contract_validator() -> (
             if type(expected) is bool
         }
         require(
-            isinstance(lifecycle, Mapping)
+            isinstance(lifecycle, mapping_type)
             and all(
                 type(lifecycle.get(key)) is bool
                 for key in lifecycle_boolean_keys
