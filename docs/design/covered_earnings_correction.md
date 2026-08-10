@@ -54081,3 +54081,579 @@ R05 then requires A12-T2-R06, where the independently unchanged Amendment-11
 `blocked_source_missing_disposition_underdetermined` stop remains controlling
 until a later amendment lawfully resolves the out-of-scope lifecycle
 program.**
+
+## 30. AMENDMENT SECTION — Amendment 16: generalized ratification oracle and combined revision-18 activation
+
+### 30.1 Prospective status, immutable base, cause, and closed scope
+
+This is the **prospective Amendment-16 draft** proposing design revision 18.
+Its first 3,881,111 bytes are the complete revision-17 Amendment-15 design,
+mode `100644`, Git blob `50a2a14e1c8845d342dca83559688866e97dc4a7`,
+and raw SHA-256
+`556311b72ec6c8e30eeda4b0f602e0f7f43b9d080c2454966fa3dda3a561d16e`.
+Those bytes, including every byte of §§27.3–27.6 and §§28–29, are an
+immutable prefix. This section is append-only. It changes predecessor law
+only through the exact supersession and composition links below.
+
+Amendment 15 is ratified and merged but cannot activate itself. Section
+28.2.1 condition 4 makes a later registry repin necessary for operativity;
+§29.1 requires that repin to bind the Amendment-15 closure; and §29.8 gives
+Amendment 15 force only “if ratified and registry-repinned.” Section 29.4.3
+then requires A12-T2-R05 to authenticate Amendment-15 material from an
+operative snapshot. The implementation that §29.5.1 pins, however, accepts
+only revision 16, exactly two closure rows, and Amendments 13 and 14. It
+rejects the required revision-17 shape before Amendment 15 can acquire force.
+Because §29.5.1 pins those exact bytes, changing that oracle requires this
+successor amendment rather than an ungoverned implementation edit.
+
+The pinned predecessor code makes the conflict concrete. Its
+`_public_registry_ratification_context` requires revision 16 and two closure
+bindings; `_public_registry_closure_binding` admits only Amendments 13 and 14;
+`validate_ratification_operativity` iterates only that pair; and
+`_validate_ratification_closure` cross-binds every non-A13 closure as though it
+were terminal Amendment 14. Those controls are the implementation identity in
+§29.5.1 and the code-level subjects of the activation-scope report cited
+below. Their exact fail-closed results include `revision-16 registry design
+binding drift` and `public closure validator supports exactly Amendments 13
+and 14`. Thus a revision-17, three-closure A13/A14/A15 binding cannot satisfy
+the very predecessor oracle that Amendment 15 made immutable.
+
+The following exact records establish that diagnosis and the historical
+Amendment-15 identity:
+
+| Record | Exact identity | Controlling fact |
+|---|---|---|
+| A15 activation-scope report, `/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-a15-activation-scope-report.md` | 8,851 bytes; raw SHA-256 `ebad2d7d92ea2fab704d4e04b62d28319da96e334bc39712c8edbb9617c5b87c` | Master is green at revision 16 with the A13/A14 closures and the exact A15 suffix, but the §29.5.1 oracle rejects revision 17, three closures, or Amendment 15. The report concludes that Amendment 16 and a combined revision-18 repin are required. |
+| Final A15 referee record, `/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-amend15-r4-verdict.md` | 6,652 bytes; raw SHA-256 `61e2943e27ae20e219fed5de8aaad86fe744904ab1c387484a2a5175c73fd11e` | Exact first line `# RATIFY`; attests the 3,881,111-byte revision-17 design, its raw SHA-256, and Git blob. |
+| Final parallel A15 referee record, `/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-amend15-r4b-verdict.md` | 6,141 bytes; raw SHA-256 `df3302dbe06ced4b99bc1a6952d0f866f5ea6afa6ab2dcbe84ce68d26aa03bf6` | Exact first line `# RATIFY`; independently attests the same revision-17 byte identity. |
+| Amendment-15 operator merge | commit `c2ffe3e95152ff005485f55acaf75259e6095195`, sole parent `a352e66284b60997210c634bb427141e7e523a75`, PR #384 | The single-parent merge carries the exact attested mode-`100644` design blob and supplies the historical A15 closure's `ratification_commit` and `operator_merge_commit`. |
+| Current operative registry | revision `16`, ratification commit `062d74187e3263cd4a7fad3851a9b8c699a2556c`, ordered A13/A14 closure rows | This state remains valid and operative while Amendment 16 is prospective. It neither activates Amendment 15 nor binds any A15/A16 closure. |
+
+Amendment 16 has three limbs. Section 30.2 replaces the fixed-width
+operativity oracle with a revision-general exact-domain law. Section 30.3
+performs the one necessary bootstrap by making Amendments 15 and 16 acquire
+force together at revision 18 and composes A12-T2-R05's historical A15
+selector forward. Sections 30.4–30.5 enact the implementation identity,
+semantic projection, and separate oracle-mutation inventory. Sections
+30.6–30.8 close the exact supersessions, identifiers, and lifecycle effects.
+
+This amendment generalizes only ratification operativity. It does not change
+the §28.2.2 eight-key closure schema, the A13 exact closure, the historical
+A13/A14 verdict bytes, the A15 ordered-history attestation, the merge-mode
+law, the §29.4 certification keysets or values, the three-component 100-name
+cross-process census, the 46 repair semantics, the six successor-era seals,
+the replacement-ref-immune Git wrapper, the 14 law gaps, Q5, G17-C01, or the
+Amendment-11 production blocker.
+
+### 30.2 Limb I — revision-general ratification operativity
+
+#### 30.2.1 Enacted revision, terminal-amendment, and count law
+
+The design has used one exact correspondence since Amendment 1: amendment
+number *N* proposes design revision *N* + 2. Thus Amendment 1 corresponds to
+revision 3 (§15.1), Amendment 13 to revision 15 (§27.1), Amendment 14 to
+revision 16 (§28.1), Amendment 15 to revision 17 (§29.1), and Amendment 16
+to revision 18 under §30.1. Amendment number and design revision are distinct
+values and neither may be inferred from a closure array label alone.
+
+For every permitted terminal registry revision *R*, define:
+
+~~~text
+terminal_amendment = R - 2
+first_closure_amendment = 13
+ordered_closure_domain = [13, 14, ..., R - 2]
+closure_count = (R - 2) - 13 + 1 = R - 14
+~~~
+
+Equivalently, the exact ordered closure domain is every integer amendment
+number in Python's half-open `range(13, R - 1)`. The closure at position *i*,
+zero based, is Amendment `13 + i`; its generated path is
+`docs/analysis/amendment_{13+i}_ratification/closure_v1.json`. A public
+consumer derives this domain and every path from *R*. It does not carry a
+fixed amendment tuple, fixed path tuple, maximum amendment number, or
+“all non-13 means Amendment 14” fallback.
+
+The initial and bootstrap states are exact:
+
+| Terminal registry revision | Terminal amendment | Ordered closure domain | Exact count | Disposition |
+|---:|---:|---|---:|---|
+| `16` | `14` | `[13, 14]` | `2 = 16 - 14` | Existing historical operative state; remains valid. |
+| `17` | `15` | `[13, 14, 15]` | `3 = 17 - 14` | Forbidden terminal state by the combined-activation rule in §30.3; arithmetic shape alone cannot activate A15. |
+| `18` | `16` | `[13, 14, 15, 16]` | `4 = 18 - 14` | Required next state; activates A15 and A16 together. |
+| `19` | `17` | `[13, 14, 15, 16, 17]` | `5 = 19 - 14` | First ordinary post-bootstrap example under the general law. |
+
+A terminal ratification registry is permitted exactly when *R* is integer 16
+or an integer greater than or equal to 18. Boolean, noninteger, revision below
+16, and revision 17 abort. The revision-17 exclusion is the single historical
+bootstrap exception; it does not introduce a fixed upper bound. After the
+combined revision-18 activation, revision 19 and every later integer revision
+use the same equations without another operativity meta-amendment.
+
+#### 30.2.2 Exact registry context and ordered-domain validation
+
+The registry design-binding keyset remains exactly the five keys enacted by
+§28.2.3:
+
+~~~text
+path
+ratification_commit
+revision
+blob_sha256
+ratification_closures
+~~~
+
+The public loader obtains that object only from the current registry and
+accepts no caller-supplied context, closure, path array, revision, expected
+count, or verification-off switch. It requires the design path, 40-lowercase-
+hex ratification commit, and 64-lowercase-hex raw design SHA-256. It derives
+the amendment domain and `R - 14` count before selecting any row.
+
+`ratification_closures` must be an array of exactly `R - 14` objects in the
+generated order. Every object retains §28.2.3's exact `path`,
+`raw_byte_size`, and `raw_sha256` keyset and value types. The ordered path
+array must deep-equal the generated A13-through-A`R-2` array. A missing,
+extra, duplicated, reordered, relabeled, sparse, nonobject, or malformed row,
+a wrong count even with individually valid rows, or a nonterminal revision
+aborts before a closure file is read.
+
+The selector uses the proved zero-based position `N - 13`; it does not search
+an open array for the first matching path. The selected row must still carry
+the generated path for *N*. This exact-position rule makes a duplicate or
+reordered path fail at the context gate rather than silently choosing one
+coherent row.
+
+#### 30.2.3 Generic closure validation and terminal cross-binding
+
+Every selected closure, including future closures, retains §28.2.2's exact
+eight-key schema, two ordered three-key verdict rows, strict canonical JSON,
+and one terminal LF. For Amendment *N*, the common validator must:
+
+1. require the generated A*N* closure path and registry-bound closure byte
+   count and raw SHA-256;
+2. require working-tree/`HEAD` byte equality for the closure and every verdict
+   file, with each verdict a mode-`100644` regular file;
+3. require the closure's integer `amendment_number` to equal *N*, require both
+   distinct verdict paths to be directly under the generated A*N* directory,
+   and enforce every §28.2.2 key, type, length, canonicalization, and path rule;
+4. require both exact verdict bytes to begin `# RATIFY` and contain the same
+   candidate design byte count, raw SHA-256, and Git blob OID as the closure;
+5. through the sanitized replacement-ref-immune wrapper, require the exact
+   commit object, its one named parent, equality of operator merge and
+   ratification commit, and the mode-`100644` design tree entry;
+6. recompute the selected design bytes, byte count, raw SHA-256, and Git blob
+   OID and require exact equality with the closure;
+7. derive the complete append-only amendment-heading sequence from those
+   selected historical design bytes, require its terminal amendment to be
+   exactly *N*, and therefore require the attested design revision to be
+   exactly *N* + 2; and
+8. apply every amendment-specific semantic projection already enacted for
+   those bytes in addition to, never instead of, this generic validation.
+
+Amendment 13 remains the sole directly enacted exact-object exception. Its
+closure must still deep-equal §28.3.2, including both §28.3.1 verdict rows;
+the generic rule may not weaken, reconstruct, or substitute that object.
+Amendment 14 retains its exact revision-16 byte/blob/SHA identity and complete
+§28 semantic projection. Amendment 15 retains the exact revision-17 identity
+in §30.1 and complete §29 semantic projection. Amendment 16 uses §30's exact
+projection. A future amendment may extend its own semantic projection and
+implementation pins, but its admission into the closure domain already
+follows the arithmetic law and common checks above.
+
+Only the terminal closure A`R-2` cross-binds to the terminal registry design
+identity. Its `ratification_commit` must equal the registry binding's
+`ratification_commit`; its `attested_candidate_design_raw_sha256` must equal
+the registry binding's `blob_sha256`; and `R` must equal its amendment number
+plus 2. Every earlier non-A13 closure instead authenticates its own historical
+N+2 design, commit, parent, tree entry, verdicts, and closure binding. Requiring
+an A14 or A15 historical closure to equal the revision-18 commit or SHA would
+be false; omitting its own historical design checks would be weaker. A
+nonterminal candidate presented as another amendment fails the terminal-
+heading relation even if an attacker coherently relabels its closure and
+verdict paths.
+
+#### 30.2.4 Atomic public operativity and permanent generality
+
+`validate_ratification_operativity()` obtains one registry snapshot, derives
+its complete ordered amendment domain, and validates every closure under that
+same snapshot. It returns an insertion-ordered mapping with exactly those
+integer keys only after all rows pass. An error at any position returns no
+operative subset.
+
+`validate_amendment_ratification_closure(N)` is a selector, not a partial
+activation path. It first invokes the complete operativity operation and only
+then returns key *N*. It cannot validate or activate A15, A16, or any future
+amendment alone. The ratification-bound Amendment-13 execution template may
+select closure 13 only after the complete current domain validates; its
+verified-closure check accepts exactly the same derived contiguous domain,
+not a fixed `{13, 14}` set.
+
+After revision 18, Amendment *N* becomes operative through the ordinary
+§28.2 sequence when the terminal registry revision *N* + 2 binds the exact
+ordered A13-through-A*N* closure domain and every row passes this law. The
+domain length and public loops grow from the registry revision. No successor
+amendment is required merely to increase a hardcoded closure count, add a
+path to a fixed tuple, admit *N* to a fixed selector set, or change an
+iteration bound.
+
+### 30.3 Limb II — combined revision-18 activation and A15 selection
+
+#### 30.3.1 One bootstrap from revision 16 to revision 18
+
+Before the revision-18 repin, the current revision-16 registry and its A13/A14
+closures remain the complete operative snapshot. The prospective A15 and A16
+suffixes do not change that binding, do not make either amendment operative,
+and do not change the already-operative force of Amendments 13 and 14.
+
+Revision 17 must not be merged as a terminal registry repin. For Amendment 15
+only, §28.2.1 condition 4 as composed by §29.1 is superseded on the identity
+of the activating registry: the required outside-the-document act is the
+combined revision-18 repin defined here, not a revision-17 repin. Section
+29.1's literal “revision-17 registry repin” requirement is superseded on that
+point only. Its final revision-17 candidate identity, two affirmative
+verdicts, operator merge, strict closure schema, and public validation remain
+required and unchanged. No revision-17 registry event is deemed to have
+occurred.
+
+The next lawful repin selects revision 18 and binds exactly these four ordered
+paths:
+
+~~~text
+docs/analysis/amendment_13_ratification/closure_v1.json
+docs/analysis/amendment_14_ratification/closure_v1.json
+docs/analysis/amendment_15_ratification/closure_v1.json
+docs/analysis/amendment_16_ratification/closure_v1.json
+~~~
+
+The Amendment-14 row is not merely a path retained in that array. Its exact
+already-operative historical binding is:
+
+| Historical closure | Exact path | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| Amendment 14 | `docs/analysis/amendment_14_ratification/closure_v1.json` | 842 | `0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4` |
+
+At revision 18 and every later terminal snapshot, the A14 row must deep-equal
+that path/size/SHA object. Because the closure is strict canonical JSON and
+the common validator requires its bytes to equal the binding, this also
+preserves its exact two historical verdict identities and complete closure
+object. The A13 row remains even stricter: its parsed object must deep-equal
+§28.3.2, which uniquely fixes its canonical bytes and binding.
+
+It fills each row's positive `raw_byte_size` and 64-lowercase-hex
+`raw_sha256` from the committed closure bytes. It binds the final
+Amendment-16 design commit and raw SHA as the terminal registry identity.
+The A13 and A14 rows remain their already-operative exact historical closure
+identities; the repin neither rewrites nor re-ratifies them.
+
+#### 30.3.2 Exact historical Amendment-15 verdict and closure identity
+
+The revision-18 repin branch commits byte-identical copies of the final two
+Amendment-15 RATIFY records at these exact ordered paths and identities:
+
+| Path | Bytes | Raw SHA-256 |
+|---|---:|---|
+| `docs/analysis/amendment_15_ratification/sol-ce-amend15-r4-verdict.md` | 6,652 | `61e2943e27ae20e219fed5de8aaad86fe744904ab1c387484a2a5175c73fd11e` |
+| `docs/analysis/amendment_15_ratification/sol-ce-amend15-r4b-verdict.md` | 6,141 | `df3302dbe06ced4b99bc1a6952d0f866f5ea6afa6ab2dcbe84ce68d26aa03bf6` |
+
+The Amendment-15 closure at the third §30.3.1 path must equal this exact
+semantic object:
+
+| Closure member | Exact value |
+|---|---|
+| `amendment_number` | `15` |
+| `attested_candidate_design_blob_oid` | `50a2a14e1c8845d342dca83559688866e97dc4a7` |
+| `attested_candidate_design_byte_size` | `3881111` |
+| `attested_candidate_design_raw_sha256` | `556311b72ec6c8e30eeda4b0f602e0f7f43b9d080c2454966fa3dda3a561d16e` |
+| `ratification_commit` | `c2ffe3e95152ff005485f55acaf75259e6095195` |
+| `ratification_commit_sole_parent` | `a352e66284b60997210c634bb427141e7e523a75` |
+| `operator_merge_commit` | `c2ffe3e95152ff005485f55acaf75259e6095195` |
+| `verdict_artifacts` | the exact two ordered §30.3.2 path/byte/SHA objects |
+
+The reviewed candidate HEAD named by the verdict prose and the PR #384 merge
+carry the same attested design blob. The closure names the operator merge
+because §28.2.1 requires the merged design-bearing commit and because the
+registry's historical selector authenticates bytes rather than promoting the
+review-branch commit topology. The generic validator also derives terminal
+Amendment 15 and revision 17 from those exact design bytes.
+
+#### 30.3.3 Amendment-16 ratification-time artifacts and closure
+
+Amendment 16 contains no hash or byte count for either Amendment-16 verdict
+and no hash or byte count for its own closure. Section 28.4's circularity
+analysis and post-verdict closure convention compose forward unchanged. The
+exact Amendment-16 closure uses amendment number `16`, the §28.2.2 eight-key
+schema, the final candidate design identity attested by both A16 verdicts,
+the single-parent operator merge that carries those bytes, and the two exact
+committed verdict path/byte/SHA rows. Its exact path is
+`docs/analysis/amendment_16_ratification/closure_v1.json`.
+
+The combined sequence is:
+
+~~~text
+final Amendment-16 candidate bytes with the exact revision-17 prefix
+two parallel affirmative Amendment-16 RATIFY verdicts on those exact bytes
+operator merge of the Amendment-16 design PR
+commit the exact A15 verdict copies, the A15 closure, both exact A16 verdict artifacts, and the A16 closure on the revision-18 repin branch
+merge the revision-18 registry repin that pins the final design and ordered A13/A14/A15/A16 closure identities
+validate the complete four-closure snapshot under the generalized oracle
+Amendments 15 and 16 become operative simultaneously
+~~~
+
+The verdict and closure files first exist after final candidate review and the
+operator merge. The later registry merge supplies their outside-the-document
+path/size/SHA bindings. This is the same non-self-referential convention
+enacted by §§28.2.3 and 28.4, not a default, placeholder, invented verdict, or
+self-hash omission.
+
+#### 30.3.4 Simultaneous force and exact operative delta
+
+When and only when the revision-18 repin and complete validation succeed, the
+operative amendment mapping changes atomically from `{13, 14}` to
+`{13, 14, 15, 16}`. The exact newly operative delta is `{15, 16}`. There is no
+observable lawful state in which A15 is operative and A16 is not, or A16 is
+operative and A15 is not. A missing A15 or A16 row, an A15-only revision-17
+attempt, an A16-only selector attempt, or any failed historical row leaves
+both new amendments inoperative.
+
+At that instant Amendment 15 authenticates the §29.2 ordered publication
+history, enforces §29.3's general merge-mode law, and supplies §29.4's future
+certification contract. Amendment 16 supplies the generalized operativity law
+and the selector composition below. Neither activation constructs the future
+source hierarchy, emits certification or authority, first-adds Q5, cures a
+law gap, or removes the Amendment-11 production stop.
+
+#### 30.3.5 A12-T2-R05 historical A15 selector supersession
+
+For A12-T2-R05 only, §29.4.3's instruction to obtain values from the
+“operative revision-17 registry/closure snapshot” is superseded. The public
+validator first validates the complete operative revision-18 A13/A14/A15/A16
+snapshot and then selects its Amendment-15 closure at exact position 2. It
+uses that closure and its authenticated historical design commit to populate
+the existing 11-key `ratification_binding`.
+
+The serialized member remains historical Amendment-15 material:
+
+~~~text
+amendment_number = 15
+design_revision = 17
+design_path = docs/design/covered_earnings_correction.md
+closure_path = docs/analysis/amendment_15_ratification/closure_v1.json
+~~~
+
+The remaining byte sizes, hashes, blob, commit, and parent are those
+authenticated by the selected A15 closure. The enclosing selected snapshot is
+revision 18; the selected historical design is revision 17. The validator
+must not serialize `design_revision = 18`, add a snapshot key, change the
+11-key schema, or pretend that an operative revision-17 registry existed.
+
+Section 29.4.7's phrase “operative Amendment-15 ratification/repin” now means
+the combined revision-18 repin that makes Amendments 15 and 16 operative. A
+future certification first-add must be a strict descendant of that repin and
+of the other §29.4.7 history. This composition changes only the source
+snapshot and ancestry locator. Every A15 certification schema, reconstruction,
+source, gate, lifecycle, byte-attestation, and census requirement survives.
+
+### 30.4 Limb III — generalized implementation and semantic identity
+
+#### 30.4.1 Active successor file pins
+
+Section 29.5.1's three file rows remain immutable historical A15 pins but are
+superseded as the active implementation identity. The Amendment-16-governed
+identity is exactly mode `100644` and these three path/blob/byte/hash rows:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `8f953e99ff9550d02ccd2ba7d70102a823ebfae3` | 277,563 | `d67737d14334d79b2ccff2204b186f6a6b6857ab48dd58a1beedc189c0a22217` |
+| `tests/test_validate_amendment13_execution_law.py` | `896cee5ef49cdafa04a4b8562cf96522493d3ccd` | 43,437 | `49ecbe15c264b9b7a7a61a04a13f4347340b7b5fc189965746829e183cbd8abd` |
+| `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
+
+For every row, the public validator requires the exact path and mode,
+working-tree/`HEAD` equality, byte count, raw SHA-256, and Git blob OID through
+the sanitized replacement-ref-immune wrapper. The publisher's definition-
+time cross-process verifier selects this A16 table and retains its closed
+call graph. No implementation commit object is a pin.
+
+#### 30.4.2 Complete A16 semantic projection and pin-region coverage
+
+The Amendment-15 semantic projection is delimited at the unique exact
+Amendment-16 boundary at byte offset 3,881,111. Section 29 remains
+byte-identical historical law, and its normalized semantic SHA-256 remains
+`a1e7bcb2aabc2b43cc92b09e1d8bf96d644d377ae70d81d9c5f40d7fafa94f3b`.
+The parser requires the complete exact revision-17 prefix, exactly one A16
+boundary, UTF-8, and one terminal LF.
+
+The A16 projection exact-parses and independently compares at least these
+enacted values:
+
+~~~text
+amendment_revision_offset = 2
+first_closure_amendment = 13
+closure_count_subtrahend = 14
+historical_terminal_revision = 16
+forbidden_standalone_revision = 17
+combined_activation_revision = 18
+combined_activation_closure_domain = [13, 14, 15, 16]
+combined_activation_newly_operative_domain = [15, 16]
+historical_r05_amendment_number = 15
+historical_r05_design_revision = 17
+historical_r05_snapshot_revision = 18
+inherited_complete_mutation_count = 100
+inherited_complete_mutation_domain_sha256 = fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3
+~~~
+
+It also exact-projects the generated-path rule, A14 historical closure
+binding, A15 verdict rows and expected closure object, A16 ratification
+sequence, A16 mutation-name array and digest, historical R05 binding, active
+pin path domain, supersession map, and qualified identifier inventories. The
+normalized complete-A16 suffix SHA binds every other A16 byte.
+
+Only the ten independently authenticated values in §30.4.1 are normalized:
+one mode plus each row's blob OID, decimal byte count, and raw SHA-256. A
+captured pin value may change without changing the normalized semantic SHA,
+but it must pass the separate Git/blob check. An extra, missing, duplicated,
+or reordered row, an uncaptured value, prose inserted in or adjacent to the
+table, a second pin block, or any non-pin semantic edit changes the A16 hash
+and aborts. Sections 27.7, 28.5, and 29.5 retain their complete historical
+pin-region coverage and supersession evidence.
+
+#### 30.4.3 Preserved runtime and prospective-suffix behavior
+
+The generalized validator preserves the existing replacement-ref-immune Git
+wrapper, strict JSON reader, A13 exact-object comparison, A14 semantic
+projection, all §§27.3–27.6 execution-law reconstruction and hashes, 14
+untouched law gaps, Amendment-12 continuation projection, source seals,
+replacement and identifier sweeps, and the A13/A14 mutation runners.
+
+The current revision-16 registry may continue to read a `HEAD`/working-tree
+document longer than 3,836,294 bytes only through §29.5.1's exact ratified-
+prefix/prospective-suffix rule. Because the complete candidate still begins
+with the unique A15 boundary at offset 3,836,294, appending the uniquely
+delimited A16 section does not change the registry's returned revision,
+commit, SHA, or A13/A14 closure rows. That compatibility keeps existing
+operative nonauthority validators runnable during review; it does not bind
+or activate A15 or A16.
+
+### 30.5 Separate Amendment-16 oracle mutation inventory
+
+The Amendment-16 operativity enforcement inventory is exactly:
+
+~~~text
+ratification_operativity_wrong_closure_count_for_revision
+ratification_operativity_closure_order_forged
+ratification_operativity_non_a13_closure_forged_as_another
+ratification_operativity_nonterminal_registry_revision
+ratification_operativity_combined_activation_missing_closure
+ratification_operativity_amendment15_alone_activation
+ratification_operativity_amendment16_alone_activation
+~~~
+
+The ordered canonical name-array domain SHA-256 is
+`1e00099f636c1a727839ebc298b965cd0981e0ad8f23189367ba7dbd0eddb871`.
+`run_amendment16_oracle_mutation_tests()` accepts no caller input. Before
+executing these seven attacks, it invokes the definition-time pin-bound
+`run_complete_mutation_census()` operation in a fresh interpreter and
+requires the exact inherited three components, 100 rejected names, and
+aggregate digest
+`fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3`.
+An inherited census failure aborts and no A16 name is authenticated.
+
+The first attack exercises too few and too many closure rows for a derived
+revision while retaining well-formed rows. The second swaps two otherwise
+valid generated paths. The third coherently relabels a non-A13 closure and
+its verdict directory while using another amendment's terminal design. The
+fourth supplies a registry/design binding whose claimed terminal revision
+does not match its terminal closure and N+2 design. The fifth removes one
+member from the revision-18 four-closure set. The sixth attempts the otherwise
+arithmetically shaped revision-17 A15-only activation. The seventh invokes an
+A16 selector against a snapshot lacking the complete A13/A14/A15/A16 set.
+
+Each name is appended only after its assigned gate raises `LawError` with the
+intended case-sensitive message. A setup error, wrong exception class, wrong
+message, unintended earlier gate, surviving attack, missing/extra/renamed/
+reordered name, wrong name-array digest, or failure to authenticate the
+inherited census aborts.
+
+These seven names are not a fourth §29.4.7 certificate component and are not
+added to its aggregate. The A15 certification contract remains exactly three
+components and 100 names: Amendment 12's 71, Amendments 13/14's 18, and
+Amendment 15's 11, in their existing order with their existing component and
+aggregate digests. Amendment 16 tests the operativity oracle separately
+because it does not revise that future certification schema.
+
+### 30.6 Exact replacement, composition, and preservation map
+
+| Earlier normative anchor | Amendment-16 disposition |
+|---|---|
+| §28.6's revision-16/two-closure public loader and §29.5.1's pinned implementation of it | Superseded by §§30.2 and 30.4's revision-derived terminal domain, generated order, generic non-A13 validation, terminal-only cross-binding, complete-set selector, semantic projection, and successor file pins. Historical bytes and pin identities remain. |
+| §28.3.2 directly enacted A13 closure and §28.6(5) exact-object check | Lawfully unchanged and mandatory in every terminal domain. No generic reconstruction may replace it. |
+| §28.6's Amendment-14 semantic-design check | Lawfully unchanged and strengthened against later-suffix substitution by requiring the exact revision-16 identity and terminal Amendment 14. |
+| §§28.2.1(4), 29.1, and 29.8 A15 revision-17 repin locator | Superseded for A15 only by §§30.3.1–30.3.4's combined revision-18 outside-the-document binding. Every verdict, merge, closure, and validation condition survives; A15 and A16 acquire force together. |
+| §29.4.3 operative revision-17 snapshot selector and §29.4.7 operative-A15-repin ancestry phrase | Superseded only by §30.3.5: validate the full operative revision-18 snapshot, select its historical A15/revision-17 closure row, and treat the combined repin as the required ancestor. The serialized 11-key A15 binding remains unchanged. |
+| §29.5.1 active validator/test/publisher rows | Superseded as active pins by §30.4.1. The three-path domain, blob-bound method, working-tree/`HEAD` equality, mode, replacement-ref immunity, and complete normalized pin-region coverage remain. |
+| §29.4.7 and §29.5.2 three-component 100-name cross-process census and A15 certification schema | Byte-for-byte semantics and exact values preserved. Section 30.5 authenticates that result before a separate seven-name A16 oracle runner; it does not alter the certificate. |
+| §29.2 ordered publication attestation, §29.3 merge-mode law, and §29.4 certification contract | Lawfully unchanged in content and made operative only at the combined activation. No history byte, classifier code, keyset, reconstruction requirement, or lifecycle value changes. |
+| §§27.3–27.6 exact 46 repair successors, overlays, supersessions, compositions, doc-036 correction, and six successor-era seals | Byte-identical, operative, and unchanged. The generalized oracle changes no repair semantic value or artifact byte. |
+| §§26.8–26.9 Amendment-12 pilot and 71 mutations; Amendment-13 seven and Amendment-14 eleven mutations; Amendment-15 eleven mutations | Lawfully unchanged. All 100 existing attacks still execute through the existing definition-time-bound fresh-process census. |
+| Fourteen law gaps, A12-T2-R06, Amendment-11's `blocked_source_missing_disposition_underdetermined` stop, Q5, full G17-C01, application-specific contents and instantiation of registry successors after revision 18, receipts, wall rows, and production | Explicitly out of scope and still blocked. Sections 30.2.1 and 30.2.4 still govern the ratification-operativity shape of every such successor. This amendment creates only ratification operativity and selector law. |
+
+No predecessor byte is deleted. No closure file, verdict file, registry row,
+certification, repair, Q5 input, authority row, receipt, wall row, or
+production output is instantiated by this prospective section.
+
+### 30.7 Exact new identifiers and closed inventories
+
+The exact Amendment-16 schema and operation identifiers are:
+
+~~~text
+terminal_revision_general_ratification_operativity.v1
+combined_revision_18_amendments_15_16_activation
+historical_amendment_closure_selected_from_terminal_registry_snapshot
+complete_closure_domain_before_single_closure_selection
+terminal_closure_only_registry_cross_binding
+~~~
+
+The exact Amendment-16 status identifiers are:
+
+~~~text
+PROSPECTIVE_NONAUTHORITY_UNRATIFIED_AMENDMENT_16
+OPERATIVE_COMBINED_REVISION_18_AMENDMENTS_15_16
+FORBIDDEN_STANDALONE_REVISION_17
+~~~
+
+The exact new public/private Python identifiers are:
+
+~~~text
+_ratification_amendment_numbers
+_validate_registry_ratification_context
+_terminal_design_amendment
+_validate_non_a13_ratification_design
+_validate_ratification_operativity_context
+run_amendment16_oracle_mutation_tests
+~~~
+
+The exact new path identities are the A15 and A16 closure paths in §30.3.1
+and the two A15 verdict paths in §30.3.2. The generated closure and directory
+templates remain the existing §28.8.2 identifiers rather than new schemas.
+The §28.2.2 closure schema identifier, registry key, top-level keys, verdict
+keys, canonicalization, and path templates are reused unchanged.
+
+Each qualified inventory is ordered, unique, closed, and disjoint by kind.
+There is no alias, case fold, prefix match, default, closest revision, sparse
+range, missing-row tolerance, implicit migration, or caller-selected
+substitution. Arithmetic expressions, commit OIDs, SHA values, file paths,
+mutation names, historical identifiers, and Python symbols are not silently
+promoted into another identifier family.
+
+### 30.8 Terminal prospective effect
+
+**Amendment 16 remains a prospective, unratified, and inoperative draft. The
+current operative state remains revision 16 with exactly the Amendment-13 and
+Amendment-14 closures. This draft does not make Amendment 15 operative,
+instantiate either new closure, alter a verdict or registry byte, certify tier
+2, emit authority, construct a repair, first-add Q5, create G17-C01, cure a
+law gap, or produce a receipt, wall row, or production result. Only final A16
+candidate review, two affirmative A16 verdicts, the operator merge, creation
+of the exact A15/A16 ratification artifacts, and the combined revision-18
+registry repin can make Amendments 15 and 16 operative together. Even then,
+the A12-T2-R05 source build and dual reconstruction remain future work, and
+the independently unchanged Amendment-11 production blocker remains
+controlling.**

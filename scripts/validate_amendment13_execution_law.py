@@ -1,11 +1,11 @@
-"""Validate Amendment 13's Amendment-14-governed execution law.
+"""Validate Amendment 13's Amendment-16-governed execution law.
 
 This module emits no authority and writes no artifact.  It reconstructs the
 proposed repair overlays from the six pinned stage-2 source seals, checks the
-historical Amendment-12 ratification blob, authenticates Amendment 13 through
-the public dual-RATIFY record codified by Amendment 14, and exercises the
-separate adversarial mutation inventories.  Amendment 12's frozen pilot bundle
-and its 71 mutations are deliberately not changed.
+historical Amendment-12 ratification blob, authenticates the complete
+revision-derived amendment-closure domain under Amendment 16's generalized
+oracle, and exercises the separate adversarial mutation inventories.
+Amendment 12's frozen pilot bundle and its 71 mutations are not changed.
 """
 
 from __future__ import annotations
@@ -153,10 +153,36 @@ AMENDMENT15_BOUNDARY = (
     b"\n## 29. AMENDMENT SECTION \xe2\x80\x94 Amendment 15: ordered "
     b"publication attestation and tier-2 certification\n"
 )
+REVISION17_BYTE_SIZE = 3_881_111
+REVISION17_SHA256 = (
+    "556311b72ec6c8e30eeda4b0f602e0f7f43b9d080c2454966fa3dda3a561d16e"
+)
+REVISION17_BLOB_OID = "50a2a14e1c8845d342dca83559688866e97dc4a7"
+AMENDMENT16_BOUNDARY = (
+    b"\n## 30. AMENDMENT SECTION \xe2\x80\x94 Amendment 16: generalized "
+    b"ratification oracle and combined revision-18 activation\n"
+)
+FIRST_CLOSURE_AMENDMENT = 13
+HISTORICAL_TERMINAL_REVISION = 16
+FORBIDDEN_STANDALONE_REVISION = 17
+COMBINED_ACTIVATION_REVISION = 18
 A13_MERGED_RATIFICATION_COMMIT = "0cf2a90b1decaa52de4bcd1032227092ac9210c5"
 A13_MERGED_RATIFICATION_PARENT = "a16f6089eca06e98bf18b8238f056bb6effae383"
+A14_MERGED_RATIFICATION_COMMIT = "062d74187e3263cd4a7fad3851a9b8c699a2556c"
+A14_MERGED_RATIFICATION_PARENT = "8f92d83a97398331411fc9aeb5bb748f16c065a7"
+A15_MERGED_RATIFICATION_COMMIT = "c2ffe3e95152ff005485f55acaf75259e6095195"
+A15_MERGED_RATIFICATION_PARENT = "a352e66284b60997210c634bb427141e7e523a75"
 A13_CLOSURE_PATH = "docs/analysis/amendment_13_ratification/closure_v1.json"
 A14_CLOSURE_PATH = "docs/analysis/amendment_14_ratification/closure_v1.json"
+A15_CLOSURE_PATH = "docs/analysis/amendment_15_ratification/closure_v1.json"
+A16_CLOSURE_PATH = "docs/analysis/amendment_16_ratification/closure_v1.json"
+A14_HISTORICAL_CLOSURE_BINDING = {
+    "path": A14_CLOSURE_PATH,
+    "raw_byte_size": 842,
+    "raw_sha256": (
+        "0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4"
+    ),
+}
 A13_VERDICT_ARTIFACTS = (
     {
         "path": (
@@ -188,6 +214,38 @@ A13_EXPECTED_CLOSURE = {
     "ratification_commit": A13_MERGED_RATIFICATION_COMMIT,
     "ratification_commit_sole_parent": A13_MERGED_RATIFICATION_PARENT,
     "verdict_artifacts": [dict(row) for row in A13_VERDICT_ARTIFACTS],
+}
+A15_VERDICT_ARTIFACTS = (
+    {
+        "path": (
+            "docs/analysis/amendment_15_ratification/"
+            "sol-ce-amend15-r4-verdict.md"
+        ),
+        "byte_size": 6_652,
+        "raw_sha256": (
+            "61e2943e27ae20e219fed5de8aaad86fe744904ab1c387484a2a5175c73fd11e"
+        ),
+    },
+    {
+        "path": (
+            "docs/analysis/amendment_15_ratification/"
+            "sol-ce-amend15-r4b-verdict.md"
+        ),
+        "byte_size": 6_141,
+        "raw_sha256": (
+            "df3302dbe06ced4b99bc1a6952d0f866f5ea6afa6ab2dcbe84ce68d26aa03bf6"
+        ),
+    },
+)
+A15_EXPECTED_CLOSURE = {
+    "amendment_number": 15,
+    "attested_candidate_design_blob_oid": REVISION17_BLOB_OID,
+    "attested_candidate_design_byte_size": REVISION17_BYTE_SIZE,
+    "attested_candidate_design_raw_sha256": REVISION17_SHA256,
+    "operator_merge_commit": A15_MERGED_RATIFICATION_COMMIT,
+    "ratification_commit": A15_MERGED_RATIFICATION_COMMIT,
+    "ratification_commit_sole_parent": A15_MERGED_RATIFICATION_PARENT,
+    "verdict_artifacts": [dict(row) for row in A15_VERDICT_ARTIFACTS],
 }
 RATIFICATION_CHANGED_PATH_COUNT = 17
 ATTESTED_CANDIDATE_HEAD = "76acad02b0d519d12057b75ab7c21f2c2a4b2433"
@@ -736,6 +794,74 @@ A14_RATIFICATION_SEQUENCE = (
     "merge the revision-16 registry repin that pins the design and both closure identities",
     "Amendments 13 and 14 become operative",
 )
+A16_RATIFICATION_LAW_VALUES = {
+    "amendment_revision_offset": 2,
+    "first_closure_amendment": 13,
+    "closure_count_subtrahend": 14,
+    "historical_terminal_revision": 16,
+    "forbidden_standalone_revision": 17,
+    "combined_activation_revision": 18,
+    "combined_activation_closure_domain": [13, 14, 15, 16],
+    "combined_activation_newly_operative_domain": [15, 16],
+    "historical_r05_amendment_number": 15,
+    "historical_r05_design_revision": 17,
+    "historical_r05_snapshot_revision": 18,
+    "inherited_complete_mutation_count": 100,
+    "inherited_complete_mutation_domain_sha256": (
+        "fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3"
+    ),
+}
+A16_COMBINED_CLOSURE_PATHS = tuple(
+    f"docs/analysis/amendment_{amendment_number}_ratification/closure_v1.json"
+    for amendment_number in (13, 14, 15, 16)
+)
+A16_RATIFICATION_SEQUENCE = (
+    "final Amendment-16 candidate bytes with the exact revision-17 prefix",
+    "two parallel affirmative Amendment-16 RATIFY verdicts on those exact bytes",
+    "operator merge of the Amendment-16 design PR",
+    "commit the exact A15 verdict copies, the A15 closure, both exact A16 verdict artifacts, and the A16 closure on the revision-18 repin branch",
+    "merge the revision-18 registry repin that pins the final design and ordered A13/A14/A15/A16 closure identities",
+    "validate the complete four-closure snapshot under the generalized oracle",
+    "Amendments 15 and 16 become operative simultaneously",
+)
+A16_HISTORICAL_R05_BINDING = {
+    "amendment_number": 15,
+    "design_revision": 17,
+    "design_path": DESIGN_PATH,
+    "closure_path": A15_CLOSURE_PATH,
+}
+A16_EXPECTED_MUTATIONS = (
+    "ratification_operativity_wrong_closure_count_for_revision",
+    "ratification_operativity_closure_order_forged",
+    "ratification_operativity_non_a13_closure_forged_as_another",
+    "ratification_operativity_nonterminal_registry_revision",
+    "ratification_operativity_combined_activation_missing_closure",
+    "ratification_operativity_amendment15_alone_activation",
+    "ratification_operativity_amendment16_alone_activation",
+)
+A16_MUTATION_DOMAIN_SHA256 = (
+    "1e00099f636c1a727839ebc298b965cd0981e0ad8f23189367ba7dbd0eddb871"
+)
+A16_SCHEMA_OPERATION_IDENTIFIERS = (
+    "terminal_revision_general_ratification_operativity.v1",
+    "combined_revision_18_amendments_15_16_activation",
+    "historical_amendment_closure_selected_from_terminal_registry_snapshot",
+    "complete_closure_domain_before_single_closure_selection",
+    "terminal_closure_only_registry_cross_binding",
+)
+A16_STATUS_IDENTIFIERS = (
+    "PROSPECTIVE_NONAUTHORITY_UNRATIFIED_AMENDMENT_16",
+    "OPERATIVE_COMBINED_REVISION_18_AMENDMENTS_15_16",
+    "FORBIDDEN_STANDALONE_REVISION_17",
+)
+A16_PYTHON_IDENTIFIERS = (
+    "_ratification_amendment_numbers",
+    "_validate_registry_ratification_context",
+    "_terminal_design_amendment",
+    "_validate_non_a13_ratification_design",
+    "_validate_ratification_operativity_context",
+    "run_amendment16_oracle_mutation_tests",
+)
 
 A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
     "27.2": "2e1d4e8282e393f2f8f8092c5b9823d69a4e6926fb5fbd753b77813e47f7941e",
@@ -751,6 +877,9 @@ A14_SECTION_SEMANTIC_SHA256 = (
 )
 A15_SECTION_SEMANTIC_SHA256 = (
     "a1e7bcb2aabc2b43cc92b09e1d8bf96d644d377ae70d81d9c5f40d7fafa94f3b"
+)
+A16_SECTION_SEMANTIC_SHA256 = (
+    "8ed37933bc04d9c2233d62c74385bd03d8e0862067147a295218e37bcd11125a"
 )
 
 A13_COMPARATOR_ROWS = (
@@ -2014,6 +2143,38 @@ _A15_IMPLEMENTATION_PIN_VALUE_GROUPS = (
     "publisher_sha256",
 )
 
+_A16_IMPLEMENTATION_PIN_PATTERN = re.compile(
+    r"The Amendment-16-governed\n"
+    r"identity is exactly mode `(?P<mode>[0-9]+)` and these three "
+    r"path/blob/byte/hash rows:\n\n"
+    r"\| Path \| Git blob \| Bytes \| Raw SHA-256 \|\n"
+    r"\|---\|---\|---:\|---\|\n"
+    r"\| `scripts/validate_amendment13_execution_law\.py` \| "
+    r"`(?P<validator_blob>[0-9a-f]{40})` \| "
+    r"(?P<validator_size>[0-9][0-9,]*) \| "
+    r"`(?P<validator_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `tests/test_validate_amendment13_execution_law\.py` \| "
+    r"`(?P<test_blob>[0-9a-f]{40})` \| "
+    r"(?P<test_size>[0-9][0-9,]*) \| "
+    r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `scripts/build_amendment13_tier2_repairs\.py` \| "
+    r"`(?P<publisher_blob>[0-9a-f]{40})` \| "
+    r"(?P<publisher_size>[0-9][0-9,]*) \| "
+    r"`(?P<publisher_sha256>[0-9a-f]{64})` \|\n"
+)
+_A16_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+    "mode",
+    "validator_blob",
+    "validator_size",
+    "validator_sha256",
+    "test_blob",
+    "test_size",
+    "test_sha256",
+    "publisher_blob",
+    "publisher_size",
+    "publisher_sha256",
+)
+
 
 def _amendment15_text(raw: bytes) -> str:
     _require(
@@ -2024,8 +2185,15 @@ def _amendment15_text(raw: bytes) -> str:
         and raw.endswith(b"\n"),
         "governing Amendment-15 document violates immutable-prefix law",
     )
+    suffix = raw[REVISION16_BYTE_SIZE:]
+    if AMENDMENT16_BOUNDARY in suffix:
+        _require(
+            suffix.count(AMENDMENT16_BOUNDARY) == 1,
+            "governing document has an ambiguous Amendment-16 boundary",
+        )
+        suffix = suffix[: suffix.index(AMENDMENT16_BOUNDARY)]
     try:
-        return raw[REVISION16_BYTE_SIZE:].decode("utf-8")
+        return suffix.decode("utf-8")
     except UnicodeDecodeError as error:
         raise LawError("governing Amendment-15 suffix is not UTF-8") from error
 
@@ -2134,6 +2302,358 @@ def _parse_amendment15_projection(raw: bytes) -> dict[str, Any]:
         "implementation_pins": _parse_amendment15_implementation_pins(raw),
         "mutation_bindings": _parse_amendment15_mutation_bindings(section),
     }
+
+
+def _amendment16_text(raw: bytes) -> str:
+    _require(
+        len(raw) > REVISION17_BYTE_SIZE
+        and _sha256(raw[:REVISION17_BYTE_SIZE]) == REVISION17_SHA256
+        and _git_blob_oid(raw[:REVISION17_BYTE_SIZE]) == REVISION17_BLOB_OID
+        and raw[REVISION17_BYTE_SIZE:].startswith(AMENDMENT16_BOUNDARY)
+        and raw.count(AMENDMENT16_BOUNDARY) == 1
+        and raw.endswith(b"\n"),
+        "governing Amendment-16 document violates immutable-prefix law",
+    )
+    suffix = raw[REVISION17_BYTE_SIZE:]
+    headings = list(_AMENDMENT_SECTION_PATTERN.finditer(suffix))
+    _require(
+        headings and int(headings[0].group("amendment")) == 16,
+        "governing Amendment-16 boundary sequence drift",
+    )
+    if len(headings) > 1:
+        next_boundary = headings[1].start()
+        _require(
+            next_boundary > 0
+            and suffix[next_boundary - 1 : next_boundary] == b"\n",
+            "governing Amendment-16 successor boundary drift",
+        )
+        suffix = suffix[: next_boundary - 1]
+    try:
+        return suffix.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise LawError("governing Amendment-16 suffix is not UTF-8") from error
+
+
+def _amendment16_implementation_pin_match(section: str) -> re.Match[str]:
+    matches = list(_A16_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+    _require(
+        len(matches) == 1,
+        "Amendment-16 implementation pin block grammar drift",
+    )
+    return matches[0]
+
+
+def _normalize_amendment16_implementation_pin_values(section: str) -> str:
+    """Normalize only the ten independently authenticated A16 pin values."""
+
+    match = _amendment16_implementation_pin_match(section)
+    parts: list[str] = []
+    cursor = 0
+    for group in _A16_IMPLEMENTATION_PIN_VALUE_GROUPS:
+        start, end = match.span(group)
+        _require(start >= cursor, "Amendment-16 pin capture ordering drift")
+        parts.extend((section[cursor:start], f"<{group.upper()}>"))
+        cursor = end
+    parts.append(section[cursor:])
+    return "".join(parts)
+
+
+def _parse_amendment16_implementation_pins(raw: bytes) -> dict[str, Any]:
+    section = _amendment16_text(raw)
+    match = _amendment16_implementation_pin_match(section)
+    return {
+        "mode": match.group("mode"),
+        "files": [
+            {
+                "path": "scripts/validate_amendment13_execution_law.py",
+                "blob_oid": match.group("validator_blob"),
+                "byte_size": int(
+                    match.group("validator_size").replace(",", "")
+                ),
+                "sha256": match.group("validator_sha256"),
+            },
+            {
+                "path": "tests/test_validate_amendment13_execution_law.py",
+                "blob_oid": match.group("test_blob"),
+                "byte_size": int(match.group("test_size").replace(",", "")),
+                "sha256": match.group("test_sha256"),
+            },
+            {
+                "path": "scripts/build_amendment13_tier2_repairs.py",
+                "blob_oid": match.group("publisher_blob"),
+                "byte_size": int(
+                    match.group("publisher_size").replace(",", "")
+                ),
+                "sha256": match.group("publisher_sha256"),
+            },
+        ],
+    }
+
+
+def _parse_active_implementation_pins(raw: bytes) -> dict[str, Any]:
+    """Select the newest append-only implementation-pin successor."""
+
+    if len(raw) > REVISION17_BYTE_SIZE:
+        return _parse_amendment16_implementation_pins(raw)
+    if len(raw) > REVISION16_BYTE_SIZE:
+        return _parse_amendment15_implementation_pins(raw)
+    return _parse_amendment14_projection(raw)["implementation_pins"]
+
+
+def _parse_amendment16_law_values(section: str) -> dict[str, Any]:
+    lines = _fenced_lines_after(
+        section,
+        "The A16 projection exact-parses and independently compares at least "
+        "these\nenacted values:\n\n",
+        "Amendment-16 ratification law values",
+    )
+    expected_names = tuple(A16_RATIFICATION_LAW_VALUES)
+    _require(
+        len(lines) == len(expected_names),
+        "Amendment-16 ratification law value count drift",
+    )
+    values: dict[str, Any] = {}
+    for expected_name, line in zip(expected_names, lines, strict=True):
+        _require(" = " in line, "Amendment-16 ratification law row drift")
+        name, serialized = line.split(" = ", 1)
+        _require(
+            name == expected_name,
+            "Amendment-16 ratification law value order drift",
+        )
+        if serialized.startswith("["):
+            try:
+                value = json.loads(serialized)
+            except json.JSONDecodeError as error:
+                raise LawError(
+                    "Amendment-16 ratification law array drift"
+                ) from error
+        elif serialized.isdigit():
+            value = int(serialized)
+        else:
+            value = serialized
+        values[name] = value
+    return values
+
+
+def _parse_a16_verdict_artifacts(section: str) -> list[dict[str, Any]]:
+    rows = _markdown_table(
+        section,
+        "| Path | Bytes | Raw SHA-256 |",
+        "|---|---:|---|",
+        2,
+        "Amendment-15 verdict identities in Amendment 16",
+    )
+    return [
+        {
+            "path": _code_tokens(path, 1, "A15 verdict path")[0],
+            "byte_size": int(size.replace(",", "")),
+            "raw_sha256": _code_tokens(raw_sha, 1, "A15 verdict SHA-256")[0],
+        }
+        for path, size, raw_sha in rows
+    ]
+
+
+def _parse_a14_historical_binding_from_a16(section: str) -> dict[str, Any]:
+    rows = _markdown_table(
+        section,
+        "| Historical closure | Exact path | Bytes | Raw SHA-256 |",
+        "|---|---|---:|---|",
+        1,
+        "Amendment-14 historical closure binding in Amendment 16",
+    )
+    label, path, size, raw_sha = rows[0]
+    _require(
+        label == "Amendment 14",
+        "Amendment-14 historical closure label drift",
+    )
+    return {
+        "path": _code_tokens(path, 1, "historical A14 closure path")[0],
+        "raw_byte_size": int(size.replace(",", "")),
+        "raw_sha256": _code_tokens(
+            raw_sha,
+            1,
+            "historical A14 closure SHA-256",
+        )[0],
+    }
+
+
+def _parse_a15_expected_closure_from_a16(
+    section: str,
+    verdict_artifacts: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    rows = _markdown_table(
+        section,
+        "| Closure member | Exact value |",
+        "|---|---|",
+        8,
+        "Amendment-15 closure values in Amendment 16",
+    )
+    values = {name: value for name, value in rows}
+    _require(
+        values["`verdict_artifacts`"]
+        == "the exact two ordered §30.3.2 path/byte/SHA objects",
+        "Amendment-15 closure verdict reference drift",
+    )
+    return {
+        "amendment_number": int(
+            _code_tokens(
+                values["`amendment_number`"],
+                1,
+                "A15 closure amendment number",
+            )[0]
+        ),
+        "attested_candidate_design_blob_oid": _code_tokens(
+            values["`attested_candidate_design_blob_oid`"],
+            1,
+            "A15 closure design blob",
+        )[0],
+        "attested_candidate_design_byte_size": int(
+            _code_tokens(
+                values["`attested_candidate_design_byte_size`"],
+                1,
+                "A15 closure design size",
+            )[0]
+        ),
+        "attested_candidate_design_raw_sha256": _code_tokens(
+            values["`attested_candidate_design_raw_sha256`"],
+            1,
+            "A15 closure design SHA-256",
+        )[0],
+        "ratification_commit": _code_tokens(
+            values["`ratification_commit`"],
+            1,
+            "A15 closure ratification commit",
+        )[0],
+        "ratification_commit_sole_parent": _code_tokens(
+            values["`ratification_commit_sole_parent`"],
+            1,
+            "A15 closure ratification parent",
+        )[0],
+        "operator_merge_commit": _code_tokens(
+            values["`operator_merge_commit`"],
+            1,
+            "A15 closure operator merge",
+        )[0],
+        "verdict_artifacts": [dict(row) for row in verdict_artifacts],
+    }
+
+
+def _parse_a16_historical_r05_binding(section: str) -> dict[str, Any]:
+    lines = _fenced_lines_after(
+        section,
+        "The serialized member remains historical Amendment-15 material:\n\n",
+        "Amendment-16 historical R05 binding",
+    )
+    expected_names = tuple(A16_HISTORICAL_R05_BINDING)
+    _require(
+        len(lines) == len(expected_names),
+        "Amendment-16 historical R05 binding count drift",
+    )
+    binding: dict[str, Any] = {}
+    for expected_name, line in zip(expected_names, lines, strict=True):
+        _require(" = " in line, "Amendment-16 historical R05 row drift")
+        name, value = line.split(" = ", 1)
+        _require(
+            name == expected_name,
+            "Amendment-16 historical R05 binding order drift",
+        )
+        binding[name] = int(value) if value.isdigit() else value
+    return binding
+
+
+def _parse_amendment16_projection(raw: bytes) -> dict[str, Any]:
+    section = _amendment16_text(raw)
+    verdict_artifacts = _parse_a16_verdict_artifacts(section)
+    oracle_mutations = _fenced_lines_after(
+        section,
+        "The Amendment-16 operativity enforcement inventory is exactly:\n\n",
+        "Amendment-16 oracle mutations",
+    )
+    mutation_digest = _code_after(
+        section,
+        "The ordered canonical name-array domain SHA-256 is\n",
+        "Amendment-16 oracle mutation digest",
+    )
+    _require(
+        _sha256(canonical_json_bytes(oracle_mutations)) == mutation_digest,
+        "Amendment-16 oracle mutation name-array digest drift",
+    )
+    projection = {
+        "section_semantic_sha256": _sha256(
+            _normalize_amendment16_implementation_pin_values(section).encode(
+                "utf-8"
+            )
+        ),
+        "ratification_law_values": _parse_amendment16_law_values(section),
+        "ordered_domain_expression": _code_after(
+            section,
+            "ordered closure domain is every integer amendment\nnumber in "
+            "Python's half-open ",
+            "Amendment-16 ordered domain expression",
+        ),
+        "generated_closure_path_rule": _code_after(
+            section,
+            "zero based, is Amendment `13 + i`; its generated path is\n",
+            "Amendment-16 generated closure path rule",
+        ),
+        "combined_closure_paths": _fenced_lines_after(
+            section,
+            "The next lawful repin selects revision 18 and binds exactly "
+            "these four ordered\npaths:\n\n",
+            "Amendment-16 combined closure paths",
+        ),
+        "a14_historical_closure_binding": (
+            _parse_a14_historical_binding_from_a16(section)
+        ),
+        "a15_verdict_artifacts": verdict_artifacts,
+        "a15_expected_closure": _parse_a15_expected_closure_from_a16(
+            section, verdict_artifacts
+        ),
+        "ratification_sequence": _fenced_lines_after(
+            section,
+            "The combined sequence is:\n\n",
+            "Amendment-16 ratification sequence",
+        ),
+        "historical_r05_binding": _parse_a16_historical_r05_binding(section),
+        "implementation_pins": _parse_amendment16_implementation_pins(raw),
+        "oracle_mutations": oracle_mutations,
+        "oracle_mutation_domain_sha256": mutation_digest,
+        "supersession_map": _markdown_table(
+            section,
+            "| Earlier normative anchor | Amendment-16 disposition |",
+            "|---|---|",
+            11,
+            "Amendment-16 supersession map",
+        ),
+        "schema_operation_identifiers": _fenced_lines_after(
+            section,
+            "The exact Amendment-16 schema and operation identifiers are:\n\n",
+            "Amendment-16 schema and operation identifiers",
+        ),
+        "status_identifiers": _fenced_lines_after(
+            section,
+            "The exact Amendment-16 status identifiers are:\n\n",
+            "Amendment-16 status identifiers",
+        ),
+        "python_identifiers": _fenced_lines_after(
+            section,
+            "The exact new public/private Python identifiers are:\n\n",
+            "Amendment-16 Python identifiers",
+        ),
+    }
+    inventories = (
+        projection["schema_operation_identifiers"],
+        projection["status_identifiers"],
+        projection["python_identifiers"],
+    )
+    _require(
+        all(len(values) == len(set(values)) for values in inventories)
+        and set(inventories[0]).isdisjoint(inventories[1])
+        and set(inventories[0]).isdisjoint(inventories[2])
+        and set(inventories[1]).isdisjoint(inventories[2]),
+        "Amendment-16 enacted identifier inventory consistency drift",
+    )
+    return projection
 
 
 def _amendment14_text(raw: bytes) -> str:
@@ -2417,6 +2937,7 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
         "comparator": _parse_comparator_and_literals(sections["27.8"]),
         "amendment14": _parse_amendment14_projection(raw),
         "amendment15": _parse_amendment15_projection(raw),
+        "amendment16": _parse_amendment16_projection(raw),
     }
     _validate_identifier_inventory_consistency(projection)
     return projection
@@ -2787,6 +3308,32 @@ def _canonical_amendment15_projection() -> dict[str, Any]:
     }
 
 
+def _canonical_amendment16_projection() -> dict[str, Any]:
+    return {
+        "section_semantic_sha256": A16_SECTION_SEMANTIC_SHA256,
+        "ratification_law_values": copy.deepcopy(A16_RATIFICATION_LAW_VALUES),
+        "ordered_domain_expression": "range(13, R - 1)",
+        "generated_closure_path_rule": (
+            "docs/analysis/amendment_{13+i}_ratification/closure_v1.json"
+        ),
+        "combined_closure_paths": list(A16_COMBINED_CLOSURE_PATHS),
+        "a14_historical_closure_binding": copy.deepcopy(
+            A14_HISTORICAL_CLOSURE_BINDING
+        ),
+        "a15_verdict_artifacts": [dict(row) for row in A15_VERDICT_ARTIFACTS],
+        "a15_expected_closure": copy.deepcopy(A15_EXPECTED_CLOSURE),
+        "ratification_sequence": list(A16_RATIFICATION_SEQUENCE),
+        "historical_r05_binding": copy.deepcopy(A16_HISTORICAL_R05_BINDING),
+        "implementation_pins": None,
+        "oracle_mutations": list(A16_EXPECTED_MUTATIONS),
+        "oracle_mutation_domain_sha256": A16_MUTATION_DOMAIN_SHA256,
+        "supersession_map": None,
+        "schema_operation_identifiers": list(A16_SCHEMA_OPERATION_IDENTIFIERS),
+        "status_identifiers": list(A16_STATUS_IDENTIFIERS),
+        "python_identifiers": list(A16_PYTHON_IDENTIFIERS),
+    }
+
+
 @lru_cache(maxsize=1)
 def _canonical_draft_document_projection() -> dict[str, Any]:
     """Build the immutable document cross-check independently of a caller law."""
@@ -2846,6 +3393,7 @@ def _canonical_draft_document_projection() -> dict[str, Any]:
         },
         "amendment14": _canonical_amendment14_projection(),
         "amendment15": _canonical_amendment15_projection(),
+        "amendment16": _canonical_amendment16_projection(),
     }
 
 
@@ -2865,7 +3413,10 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
     )
     current_design = (ROOT / DESIGN_PATH).read_bytes()
     label = "Amendment-14"
-    if len(current_design) > REVISION16_BYTE_SIZE:
+    if len(current_design) > REVISION17_BYTE_SIZE:
+        pins = _parse_amendment16_implementation_pins(current_design)
+        label = "Amendment-16"
+    elif len(current_design) > REVISION16_BYTE_SIZE:
         pins = _parse_amendment15_implementation_pins(current_design)
         label = "Amendment-15"
     _require(
@@ -2932,9 +3483,15 @@ def _validate_document_semantic_projection(
     expected["amendment15"]["mutation_bindings"] = projection["amendment15"][
         "mutation_bindings"
     ]
+    expected["amendment16"]["implementation_pins"] = projection["amendment16"][
+        "implementation_pins"
+    ]
+    expected["amendment16"]["supersession_map"] = projection["amendment16"][
+        "supersession_map"
+    ]
     _require(
         projection == expected,
-        "governing Amendment-14/15 document semantic projection drift",
+        "governing Amendment-14/15/16 document semantic projection drift",
     )
     _verify_implementation_pins(
         projection["amendment14"]["implementation_pins"]
@@ -3243,16 +3800,45 @@ def _verdict_attests_design(
     )
 
 
+_AMENDMENT_SECTION_PATTERN = re.compile(
+    rb"^## (?P<section>[0-9]+)\. AMENDMENT SECTION \xe2\x80\x94 "
+    rb"Amendment (?P<amendment>[0-9]+):[^\n]+$",
+    re.MULTILINE,
+)
+
+
+def _terminal_design_amendment(raw: bytes) -> int:
+    """Return the exact terminal amendment encoded by append-only headings."""
+
+    rows = [
+        (int(match.group("section")), int(match.group("amendment")))
+        for match in _AMENDMENT_SECTION_PATTERN.finditer(raw)
+    ]
+    _require(
+        rows
+        and rows
+        == [
+            (amendment_number + 14, amendment_number)
+            for amendment_number in range(1, rows[-1][1] + 1)
+        ],
+        "ratification design amendment heading sequence drift",
+    )
+    return rows[-1][1]
+
+
 def _validate_amendment14_ratification_design(raw: bytes) -> None:
     """Require the exact revision-15 prefix and enacted A14 semantics."""
 
     _require(
-        len(raw) > REVISION15_BYTE_SIZE
+        len(raw) == REVISION16_BYTE_SIZE
+        and _sha256(raw) == REVISION16_SHA256
+        and _git_blob_oid(raw) == REVISION16_BLOB_OID
         and _sha256(raw[:REVISION15_BYTE_SIZE]) == REVISION15_SHA256
         and _git_blob_oid(raw[:REVISION15_BYTE_SIZE]) == REVISION15_BLOB_OID
-        and raw[REVISION15_BYTE_SIZE:].startswith(AMENDMENT14_BOUNDARY),
+        and raw[REVISION15_BYTE_SIZE:].startswith(AMENDMENT14_BOUNDARY)
+        and _terminal_design_amendment(raw) == 14,
         "Amendment-14 ratification design lacks the immutable revision-15 "
-        "prefix and Amendment-14 boundary",
+        "prefix, Amendment-14 boundary, or exact revision-16 identity",
     )
     projection = _parse_amendment14_projection(raw)
     expected = _canonical_amendment14_projection()
@@ -3261,6 +3847,88 @@ def _validate_amendment14_ratification_design(raw: bytes) -> None:
         projection == expected,
         "Amendment-14 ratification design semantic projection drift",
     )
+
+
+def _validate_amendment15_ratification_design(raw: bytes) -> None:
+    """Require the exact revision-17 identity and enacted A15 semantics."""
+
+    _require(
+        len(raw) == REVISION17_BYTE_SIZE
+        and _sha256(raw) == REVISION17_SHA256
+        and _git_blob_oid(raw) == REVISION17_BLOB_OID
+        and _sha256(raw[:REVISION16_BYTE_SIZE]) == REVISION16_SHA256
+        and _git_blob_oid(raw[:REVISION16_BYTE_SIZE]) == REVISION16_BLOB_OID
+        and raw[REVISION16_BYTE_SIZE:].startswith(AMENDMENT15_BOUNDARY)
+        and _terminal_design_amendment(raw) == 15,
+        "Amendment-15 ratification design lacks the immutable revision-16 "
+        "prefix, Amendment-15 boundary, or exact revision-17 identity",
+    )
+    projection = _parse_amendment15_projection(raw)
+    expected = _canonical_amendment15_projection()
+    expected["implementation_pins"] = projection["implementation_pins"]
+    expected["mutation_bindings"] = projection["mutation_bindings"]
+    _require(
+        projection == expected,
+        "Amendment-15 ratification design semantic projection drift",
+    )
+
+
+def _validate_inherited_amendment16_ratification_design(raw: bytes) -> None:
+    """Preserve the revision-17 prefix and A16 semantics in every successor."""
+
+    _require(
+        len(raw) > REVISION17_BYTE_SIZE
+        and _sha256(raw[:REVISION17_BYTE_SIZE]) == REVISION17_SHA256
+        and _git_blob_oid(raw[:REVISION17_BYTE_SIZE]) == REVISION17_BLOB_OID
+        and raw[REVISION17_BYTE_SIZE:].startswith(AMENDMENT16_BOUNDARY),
+        "Amendment-16 ratification design lacks the immutable revision-17 "
+        "prefix or Amendment-16 boundary",
+    )
+    projection = _parse_amendment16_projection(raw)
+    expected = _canonical_amendment16_projection()
+    expected["implementation_pins"] = projection["implementation_pins"]
+    expected["supersession_map"] = projection["supersession_map"]
+    _require(
+        projection == expected,
+        "Amendment-16 ratification design semantic projection drift",
+    )
+
+
+def _validate_amendment16_ratification_design(raw: bytes) -> None:
+    """Require an Amendment-16-terminal design with exact inherited law."""
+
+    _require(
+        _terminal_design_amendment(raw) == 16,
+        "Amendment-16 ratification design is not terminal Amendment 16",
+    )
+    _validate_inherited_amendment16_ratification_design(raw)
+
+
+def _validate_non_a13_ratification_design(
+    raw: bytes,
+    amendment_number: int,
+) -> None:
+    """Validate a closure's own N-to-revision-(N+2) design identity."""
+
+    _require(
+        amendment_number >= 14,
+        "generic ratification design validator received Amendment 13",
+    )
+    terminal_amendment = _terminal_design_amendment(raw)
+    _require(
+        terminal_amendment == amendment_number,
+        f"ratification closure for Amendment {amendment_number} attests "
+        f"terminal Amendment {terminal_amendment} instead of Amendment "
+        f"{amendment_number}",
+    )
+    if amendment_number == 14:
+        _validate_amendment14_ratification_design(raw)
+    elif amendment_number == 15:
+        _validate_amendment15_ratification_design(raw)
+    elif amendment_number == 16:
+        _validate_amendment16_ratification_design(raw)
+    elif amendment_number > 16:
+        _validate_inherited_amendment16_ratification_design(raw)
 
 
 def _validate_ratification_closure(
@@ -3313,17 +3981,50 @@ def _validate_ratification_closure(
             "Amendment-13 closure received an inapplicable design binding",
         )
     else:
+        if amendment_number == 15:
+            _require(
+                closure == A15_EXPECTED_CLOSURE,
+                "Amendment-15 closure differs from directly enacted values",
+            )
         _require(
-            isinstance(registry_design_binding, Mapping)
-            and registry_design_binding.get("path") == DESIGN_PATH
-            and registry_design_binding.get("revision") == 16
-            and registry_design_binding.get("ratification_commit")
-            == closure["ratification_commit"]
-            and registry_design_binding.get("blob_sha256")
-            == closure["attested_candidate_design_raw_sha256"],
-            "Amendment-14 closure does not match the revision-16 registry "
-            "design binding",
+            isinstance(registry_design_binding, Mapping),
+            "non-Amendment-13 closure lacks a terminal registry context",
         )
+        registry_design_binding = _validate_registry_ratification_context(
+            registry_design_binding
+        )
+        amendment_numbers = _ratification_amendment_numbers(
+            registry_design_binding["revision"]
+        )
+        _require(
+            amendment_number in amendment_numbers,
+            "closure amendment is outside the terminal registry domain",
+        )
+        if (
+            amendment_number == 14
+            and registry_design_binding["revision"]
+            >= COMBINED_ACTIVATION_REVISION
+        ):
+            _require(
+                dict(closure_binding) == A14_HISTORICAL_CLOSURE_BINDING,
+                "Amendment-14 historical closure binding drift",
+            )
+        if amendment_number == amendment_numbers[-1]:
+            revision = registry_design_binding["revision"]
+            _require(
+                revision == amendment_number + 2
+                and registry_design_binding["ratification_commit"]
+                == closure["ratification_commit"]
+                and registry_design_binding["blob_sha256"]
+                == closure["attested_candidate_design_raw_sha256"],
+                f"terminal Amendment-{amendment_number} closure does not "
+                f"match the revision-{revision} registry design binding",
+            )
+        else:
+            _require(
+                amendment_number + 2 < registry_design_binding["revision"],
+                "nonterminal closure revision relation drift",
+            )
 
     verdicts = closure["verdict_artifacts"]
     _require(
@@ -3374,8 +4075,11 @@ def _validate_ratification_closure(
         == closure["attested_candidate_design_blob_oid"],
         "closure ratification design byte identity mismatch",
     )
-    if amendment_number == 14:
-        _validate_amendment14_ratification_design(ratification_design_raw)
+    if amendment_number != 13:
+        _validate_non_a13_ratification_design(
+            ratification_design_raw,
+            amendment_number,
+        )
     return closure
 
 
@@ -3402,8 +4106,98 @@ def _validate_registry_closure_binding(
     return dict(binding)
 
 
+def _ratification_closure_path(amendment_number: int) -> str:
+    return (
+        f"docs/analysis/amendment_{amendment_number}_ratification/"
+        "closure_v1.json"
+    )
+
+
+def _ratification_amendment_numbers(revision: int) -> tuple[int, ...]:
+    """Derive the complete closure domain for one terminal registry revision."""
+
+    _require(
+        type(revision) is int,
+        "terminal ratification registry revision is not an integer",
+    )
+    _require(
+        revision != FORBIDDEN_STANDALONE_REVISION,
+        "revision 17 cannot be a terminal ratification registry; "
+        "Amendments 15 and 16 require combined revision-18 activation",
+    )
+    _require(
+        revision == HISTORICAL_TERMINAL_REVISION
+        or revision >= COMBINED_ACTIVATION_REVISION,
+        "registry revision is not a lawful terminal ratification revision",
+    )
+    terminal_amendment = revision - 2
+    amendment_numbers = tuple(
+        range(FIRST_CLOSURE_AMENDMENT, terminal_amendment + 1)
+    )
+    _require(
+        len(amendment_numbers) == revision - 14,
+        "terminal ratification closure-count law drift",
+    )
+    return amendment_numbers
+
+
+def _validate_registry_ratification_context(
+    design_binding: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate a revision-general terminal design and closure binding."""
+
+    _require_exact_keys(
+        design_binding,
+        set(REGISTRY_DESIGN_BINDING_KEYS),
+        "terminal registry design binding",
+    )
+    _require(
+        design_binding["path"] == DESIGN_PATH
+        and _is_lower_hex(design_binding["ratification_commit"], 40)
+        and _is_lower_hex(design_binding["blob_sha256"], 64),
+        "terminal registry design binding drift",
+    )
+    amendment_numbers = _ratification_amendment_numbers(
+        design_binding["revision"]
+    )
+    closures = design_binding.get("ratification_closures")
+    _require(
+        isinstance(closures, list)
+        and all(isinstance(row, Mapping) for row in closures),
+        "registry ratification closure binding is missing",
+    )
+    _require(
+        len(closures) == len(amendment_numbers),
+        "registry ratification closure count drift",
+    )
+    expected_paths = [
+        _ratification_closure_path(amendment_number)
+        for amendment_number in amendment_numbers
+    ]
+    _require(
+        [row.get("path") for row in closures] == expected_paths,
+        "registry ratification closure binding order drift",
+    )
+    normalized = dict(design_binding)
+    normalized["ratification_closures"] = [
+        _validate_registry_closure_binding(row, amendment_number)
+        for amendment_number, row in zip(
+            amendment_numbers,
+            closures,
+            strict=True,
+        )
+    ]
+    if design_binding["revision"] >= COMBINED_ACTIVATION_REVISION:
+        _require(
+            normalized["ratification_closures"][1]
+            == A14_HISTORICAL_CLOSURE_BINDING,
+            "Amendment-14 historical closure binding drift",
+        )
+    return normalized
+
+
 def _public_registry_ratification_context() -> dict[str, Any]:
-    """Load the one revision-16 design and two-closure registry context."""
+    """Load the current terminal registry-selected closure context."""
 
     try:
         import covered_earnings_correction_registry as registry
@@ -3417,57 +4211,25 @@ def _public_registry_ratification_context() -> dict[str, Any]:
         isinstance(design_binding, Mapping),
         "registry ratification closure binding is missing",
     )
-    _require_exact_keys(
-        design_binding,
-        set(REGISTRY_DESIGN_BINDING_KEYS),
-        "revision-16 registry design binding",
-    )
-    _require(
-        design_binding["path"] == DESIGN_PATH
-        and design_binding["revision"] == 16
-        and _is_lower_hex(design_binding["ratification_commit"], 40)
-        and _is_lower_hex(design_binding["blob_sha256"], 64),
-        "revision-16 registry design binding drift",
-    )
-    closures = design_binding.get("ratification_closures")
-    _require(
-        isinstance(closures, list)
-        and len(closures) == 2
-        and all(isinstance(row, Mapping) for row in closures),
-        "registry ratification closure binding is missing",
-    )
-    expected_paths = [A13_CLOSURE_PATH, A14_CLOSURE_PATH]
-    _require(
-        [row.get("path") for row in closures] == expected_paths,
-        "registry ratification closure binding order drift",
-    )
-    normalized = dict(design_binding)
-    normalized["ratification_closures"] = [
-        _validate_registry_closure_binding(row, amendment_number)
-        for amendment_number, row in zip((13, 14), closures, strict=True)
-    ]
-    return normalized
+    return _validate_registry_ratification_context(design_binding)
 
 
 def _public_registry_closure_binding(
     amendment_number: int,
     context: Mapping[str, Any],
 ) -> dict[str, Any]:
+    amendment_numbers = _ratification_amendment_numbers(context["revision"])
     _require(
-        amendment_number in {13, 14},
-        "public closure validator supports exactly Amendments 13 and 14",
+        amendment_number in amendment_numbers,
+        "amendment is outside the terminal registry closure domain",
     )
-    expected_path = (A13_CLOSURE_PATH, A14_CLOSURE_PATH)[amendment_number - 13]
-    selected = next(
-        (
-            row
-            for row in context["ratification_closures"]
-            if row["path"] == expected_path
-        ),
-        None,
-    )
+    selected = context["ratification_closures"][
+        amendment_number - FIRST_CLOSURE_AMENDMENT
+    ]
     _require(
-        isinstance(selected, Mapping),
+        isinstance(selected, Mapping)
+        and selected.get("path")
+        == _ratification_closure_path(amendment_number),
         "registry ratification closure binding is missing",
     )
     return _validate_registry_closure_binding(selected, amendment_number)
@@ -3532,30 +4294,55 @@ def _validate_public_ratification_closure(
         verdict_bytes,
         amendment_number,
         verify_git=True,
-        registry_design_binding=context if amendment_number == 14 else None,
+        registry_design_binding=context if amendment_number != 13 else None,
     )
 
 
 def validate_amendment_ratification_closure(
     amendment_number: int,
 ) -> dict[str, Any]:
-    """Validate one closure selected only by the current registry repin."""
+    """Select one closure only after validating the complete operative set."""
 
-    context = _public_registry_ratification_context()
-    return _validate_public_ratification_closure(amendment_number, context)
+    closures = validate_ratification_operativity()
+    _require(
+        amendment_number in closures,
+        "amendment is outside the terminal registry closure domain",
+    )
+    return closures[amendment_number]
+
+
+def _validate_ratification_operativity_context(
+    context: Mapping[str, Any],
+    closure_validator: Callable[[int, Mapping[str, Any]], Mapping[str, Any]],
+) -> dict[int, dict[str, Any]]:
+    """Validate one complete context through a privately supplied loader."""
+
+    context = _validate_registry_ratification_context(context)
+    amendment_numbers = _ratification_amendment_numbers(context["revision"])
+    closures: dict[int, dict[str, Any]] = {}
+    for amendment_number in amendment_numbers:
+        closure = closure_validator(amendment_number, context)
+        _require(
+            isinstance(closure, Mapping)
+            and closure.get("amendment_number") == amendment_number,
+            "validated ratification closure amendment domain drift",
+        )
+        closures[amendment_number] = dict(closure)
+    _require(
+        tuple(closures) == amendment_numbers,
+        "ratification operativity closure domain drift",
+    )
+    return closures
 
 
 def validate_ratification_operativity() -> dict[int, dict[str, Any]]:
-    """Validate both closures under one revision-16 registry snapshot."""
+    """Validate the exact complete closure domain under one registry snapshot."""
 
     context = _public_registry_ratification_context()
-    return {
-        amendment_number: _validate_public_ratification_closure(
-            amendment_number,
-            context,
-        )
-        for amendment_number in (13, 14)
-    }
+    return _validate_ratification_operativity_context(
+        context,
+        _validate_public_ratification_closure,
+    )
 
 
 def _annotation_identity(document: a12.NormalizedDocument) -> dict[str, Any]:
@@ -4634,14 +5421,23 @@ def _validate_execution_law(
     else:
         if verify_git and verified_closures is None:
             verified_closures = validate_ratification_operativity()
+        closure_numbers = (
+            tuple(verified_closures)
+            if isinstance(verified_closures, Mapping)
+            else ()
+        )
+        implied_revision = closure_numbers[-1] + 2 if closure_numbers else 0
         _require(
             isinstance(verified_closures, Mapping)
-            and set(verified_closures) == {13, 14}
+            and bool(closure_numbers)
+            and closure_numbers
+            == _ratification_amendment_numbers(implied_revision)
             and all(
                 isinstance(closure, Mapping)
-                for closure in verified_closures.values()
+                and closure.get("amendment_number") == amendment_number
+                for amendment_number, closure in verified_closures.items()
             ),
-            "ratification validation lacks both verified closures",
+            "ratification validation lacks the exact verified closure domain",
         )
         closure = dict(verified_closures[13])
         _require(
@@ -5747,20 +6543,34 @@ def _closure_binding(path: str, raw: bytes) -> dict[str, Any]:
 
 def _synthetic_registry_design_binding(
     closure: Mapping[str, Any],
+    *,
+    revision: int | None = None,
 ) -> dict[str, Any]:
-    """Build a private revision-16 binding for pure closure tests."""
+    """Build one private terminal binding for pure closure tests."""
 
+    if revision is None:
+        revision = closure["amendment_number"] + 2
+    amendment_numbers = _ratification_amendment_numbers(revision)
     return {
         "path": DESIGN_PATH,
         "ratification_commit": closure["ratification_commit"],
-        "revision": 16,
+        "revision": revision,
         "blob_sha256": closure["attested_candidate_design_raw_sha256"],
-        "ratification_closures": [],
+        "ratification_closures": [
+            {
+                "path": _ratification_closure_path(amendment_number),
+                "raw_byte_size": amendment_number,
+                "raw_sha256": f"{amendment_number:064x}",
+            }
+            for amendment_number in amendment_numbers
+        ],
     }
 
 
 def _synthetic_closure_material(
     amendment_number: int = 14,
+    *,
+    design_raw: bytes | None = None,
 ) -> tuple[
     dict[str, Any],
     bytes,
@@ -5768,7 +6578,23 @@ def _synthetic_closure_material(
     dict[str, bytes],
     bytes,
 ]:
-    design_raw = (ROOT / DESIGN_PATH).read_bytes()
+    if design_raw is None:
+        if amendment_number == 14:
+            design_raw = _git(
+                "show",
+                f"{A14_MERGED_RATIFICATION_COMMIT}:{DESIGN_PATH}",
+            )
+        elif amendment_number == 15:
+            design_raw = _git(
+                "show",
+                f"{A15_MERGED_RATIFICATION_COMMIT}:{DESIGN_PATH}",
+            )
+        else:
+            design_raw = (ROOT / DESIGN_PATH).read_bytes()
+    _require(
+        isinstance(design_raw, bytes),
+        "synthetic closure design bytes are unavailable",
+    )
     closure = {
         "amendment_number": amendment_number,
         "attested_candidate_design_blob_oid": _git_blob_oid(design_raw),
@@ -5801,6 +6627,210 @@ def _synthetic_closure_material(
         verdict_bytes,
         design_raw,
     )
+
+
+def _synthetic_oracle_context(
+    revision: int,
+    amendment_numbers: Sequence[int],
+    *,
+    ratification_commit: str = A13_MERGED_RATIFICATION_COMMIT,
+    blob_sha256: str = REVISION17_SHA256,
+) -> dict[str, Any]:
+    """Build a shape-valid private context without invoking the oracle."""
+
+    context = {
+        "path": DESIGN_PATH,
+        "ratification_commit": ratification_commit,
+        "revision": revision,
+        "blob_sha256": blob_sha256,
+        "ratification_closures": [
+            {
+                "path": _ratification_closure_path(amendment_number),
+                "raw_byte_size": amendment_number,
+                "raw_sha256": f"{amendment_number:064x}",
+            }
+            for amendment_number in amendment_numbers
+        ],
+    }
+    if revision >= COMBINED_ACTIVATION_REVISION and 14 in amendment_numbers:
+        position = tuple(amendment_numbers).index(14)
+        context["ratification_closures"][position] = copy.deepcopy(
+            A14_HISTORICAL_CLOSURE_BINDING
+        )
+    return context
+
+
+def _run_amendment16_oracle_attacks() -> tuple[str, ...]:
+    """Execute only A16's separate seven revision-general attacks."""
+
+    rejected: list[str] = []
+
+    ordinary_domain = tuple(range(13, 18))
+    too_few = _synthetic_oracle_context(19, ordinary_domain)
+    too_few["ratification_closures"].pop()
+    _expect_law_error(
+        lambda: _validate_registry_ratification_context(too_few),
+        "registry ratification closure count drift",
+        "revision-general too-few closure mutation",
+    )
+    too_many = _synthetic_oracle_context(19, ordinary_domain)
+    too_many["ratification_closures"].append(
+        {
+            "path": _ratification_closure_path(18),
+            "raw_byte_size": 18,
+            "raw_sha256": f"{18:064x}",
+        }
+    )
+    _expect_law_error(
+        lambda: _validate_registry_ratification_context(too_many),
+        "registry ratification closure count drift",
+        "revision-general too-many closure mutation",
+    )
+    rejected.append(A16_EXPECTED_MUTATIONS[0])
+
+    wrong_order = _synthetic_oracle_context(19, ordinary_domain)
+    wrong_order["ratification_closures"][2:4] = reversed(
+        wrong_order["ratification_closures"][2:4]
+    )
+    _expect_law_error(
+        lambda: _validate_registry_ratification_context(wrong_order),
+        "registry ratification closure binding order drift",
+        "revision-general closure-order mutation",
+    )
+    rejected.append(A16_EXPECTED_MUTATIONS[1])
+
+    revision17_raw = _git(
+        "show",
+        f"{A15_MERGED_RATIFICATION_COMMIT}:{DESIGN_PATH}",
+    )
+    _require(
+        isinstance(revision17_raw, bytes),
+        "Amendment-16 mutation setup lacks revision-17 design bytes",
+    )
+    (
+        forged_a16,
+        forged_a16_raw,
+        forged_a16_binding,
+        forged_a16_verdicts,
+        forged_a16_design,
+    ) = _synthetic_closure_material(16, design_raw=revision17_raw)
+    forged_a16_context = _synthetic_oracle_context(
+        18,
+        tuple(range(13, 17)),
+        ratification_commit=forged_a16["ratification_commit"],
+        blob_sha256=forged_a16["attested_candidate_design_raw_sha256"],
+    )
+    _expect_law_error(
+        lambda: _validate_ratification_closure(
+            forged_a16_raw,
+            forged_a16_binding,
+            forged_a16_verdicts,
+            16,
+            verify_git=False,
+            ratification_design_raw=forged_a16_design,
+            registry_design_binding=forged_a16_context,
+        ),
+        "attests terminal Amendment 15 instead of Amendment 16",
+        "non-A13 closure relabeling mutation",
+    )
+    rejected.append(A16_EXPECTED_MUTATIONS[2])
+
+    revision18_raw = (ROOT / DESIGN_PATH).read_bytes()
+    (
+        forged_a17,
+        forged_a17_raw,
+        forged_a17_binding,
+        forged_a17_verdicts,
+        forged_a17_design,
+    ) = _synthetic_closure_material(17, design_raw=revision18_raw)
+    forged_a17_context = _synthetic_oracle_context(
+        19,
+        ordinary_domain,
+        ratification_commit=forged_a17["ratification_commit"],
+        blob_sha256=forged_a17["attested_candidate_design_raw_sha256"],
+    )
+    _expect_law_error(
+        lambda: _validate_ratification_closure(
+            forged_a17_raw,
+            forged_a17_binding,
+            forged_a17_verdicts,
+            17,
+            verify_git=False,
+            ratification_design_raw=forged_a17_design,
+            registry_design_binding=forged_a17_context,
+        ),
+        "attests terminal Amendment 16 instead of Amendment 17",
+        "nonterminal registry/design relation mutation",
+    )
+    rejected.append(A16_EXPECTED_MUTATIONS[3])
+
+    missing_combined = _synthetic_oracle_context(
+        18,
+        tuple(range(13, 17)),
+    )
+    missing_combined["ratification_closures"].pop(2)
+    _expect_law_error(
+        lambda: _validate_registry_ratification_context(missing_combined),
+        "registry ratification closure count drift",
+        "combined revision-18 missing-closure mutation",
+    )
+    rejected.append(A16_EXPECTED_MUTATIONS[4])
+
+    amendment15_alone = _synthetic_oracle_context(
+        17,
+        tuple(range(13, 16)),
+    )
+    _expect_law_error(
+        lambda: _validate_registry_ratification_context(amendment15_alone),
+        "revision 17 cannot be a terminal ratification registry",
+        "Amendment-15-alone activation mutation",
+    )
+    rejected.append(A16_EXPECTED_MUTATIONS[5])
+
+    import covered_earnings_correction_registry as registry
+
+    amendment16_alone = _synthetic_oracle_context(18, (16,))
+    original_design_binding = registry.design_binding
+    registry.design_binding = lambda: copy.deepcopy(amendment16_alone)
+    try:
+        _expect_law_error(
+            lambda: validate_amendment_ratification_closure(16),
+            "registry ratification closure count drift",
+            "Amendment-16-alone selector mutation",
+        )
+    finally:
+        registry.design_binding = original_design_binding
+    rejected.append(A16_EXPECTED_MUTATIONS[6])
+
+    rejected_tuple = tuple(rejected)
+    _require(
+        rejected_tuple == A16_EXPECTED_MUTATIONS
+        and len(set(rejected_tuple)) == len(rejected_tuple)
+        and _sha256(canonical_json_bytes(list(rejected_tuple)))
+        == A16_MUTATION_DOMAIN_SHA256,
+        "Amendment-16 oracle mutation inventory drift",
+    )
+    return rejected_tuple
+
+
+def run_amendment16_oracle_mutation_tests() -> tuple[str, ...]:
+    """Authenticate the inherited census, then execute seven A16 attacks."""
+
+    import build_amendment13_tier2_repairs as publisher
+
+    inherited_census = publisher.run_complete_mutation_census()
+    _require(
+        inherited_census == publisher._expected_mutation_census()
+        and len(inherited_census["components"]) == 3
+        and inherited_census["rejected_count"]
+        == A16_RATIFICATION_LAW_VALUES["inherited_complete_mutation_count"]
+        and inherited_census["rejected_domain_sha256"]
+        == A16_RATIFICATION_LAW_VALUES[
+            "inherited_complete_mutation_domain_sha256"
+        ],
+        "Amendment-16 inherited complete mutation census drift",
+    )
+    return _run_amendment16_oracle_attacks()
 
 
 def _run_public_registry_replace_ref_enforcement_mutation() -> None:
