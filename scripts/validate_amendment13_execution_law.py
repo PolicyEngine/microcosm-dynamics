@@ -144,6 +144,15 @@ AMENDMENT14_BOUNDARY = (
     b"\n## 28. AMENDMENT SECTION \xe2\x80\x94 Amendment 14: closure-bound "
     b"ratification and blob-bound implementation\n"
 )
+REVISION16_BYTE_SIZE = 3_836_294
+REVISION16_SHA256 = (
+    "c4f3ae022d2e623f4316600e16ec3bded10f0160d197ce64e37f35015e55c92f"
+)
+REVISION16_BLOB_OID = "4a3280c849070359232ab445635e016e98de3981"
+AMENDMENT15_BOUNDARY = (
+    b"\n## 29. AMENDMENT SECTION \xe2\x80\x94 Amendment 15: ordered "
+    b"publication attestation and tier-2 certification\n"
+)
 A13_MERGED_RATIFICATION_COMMIT = "0cf2a90b1decaa52de4bcd1032227092ac9210c5"
 A13_MERGED_RATIFICATION_PARENT = "a16f6089eca06e98bf18b8238f056bb6effae383"
 A13_CLOSURE_PATH = "docs/analysis/amendment_13_ratification/closure_v1.json"
@@ -739,6 +748,9 @@ A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
 }
 A14_SECTION_SEMANTIC_SHA256 = (
     "8d17464268b95d500dcc4d7640edee0f26180a70172cdb3a3966a8e6d2408062"
+)
+A15_SECTION_SEMANTIC_SHA256 = (
+    "a1e7bcb2aabc2b43cc92b09e1d8bf96d644d377ae70d81d9c5f40d7fafa94f3b"
 )
 
 A13_COMPARATOR_ROWS = (
@@ -1969,6 +1981,161 @@ def _normalize_implementation_pin_values(section: str) -> str:
     return "".join(parts)
 
 
+_A15_IMPLEMENTATION_PIN_PATTERN = re.compile(
+    r"The active Amendment-15 implementation identity for the Amendment-13/14\n"
+    r"semantic validator and the census publisher is exactly mode "
+    r"`(?P<mode>[0-9]+)`\n"
+    r"and these three path/blob/byte/hash rows:\n\n"
+    r"\| Path \| Git blob \| Bytes \| Raw SHA-256 \|\n"
+    r"\|---\|---\|---:\|---\|\n"
+    r"\| `scripts/validate_amendment13_execution_law\.py` \| "
+    r"`(?P<validator_blob>[0-9a-f]{40})` \| "
+    r"(?P<validator_size>[0-9][0-9,]*) \| "
+    r"`(?P<validator_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `tests/test_validate_amendment13_execution_law\.py` \| "
+    r"`(?P<test_blob>[0-9a-f]{40})` \| "
+    r"(?P<test_size>[0-9][0-9,]*) \| "
+    r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `scripts/build_amendment13_tier2_repairs\.py` \| "
+    r"`(?P<publisher_blob>[0-9a-f]{40})` \| "
+    r"(?P<publisher_size>[0-9][0-9,]*) \| "
+    r"`(?P<publisher_sha256>[0-9a-f]{64})` \|\n"
+)
+_A15_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+    "mode",
+    "validator_blob",
+    "validator_size",
+    "validator_sha256",
+    "test_blob",
+    "test_size",
+    "test_sha256",
+    "publisher_blob",
+    "publisher_size",
+    "publisher_sha256",
+)
+
+
+def _amendment15_text(raw: bytes) -> str:
+    _require(
+        len(raw) > REVISION16_BYTE_SIZE
+        and _sha256(raw[:REVISION16_BYTE_SIZE]) == REVISION16_SHA256
+        and _git_blob_oid(raw[:REVISION16_BYTE_SIZE]) == REVISION16_BLOB_OID
+        and raw[REVISION16_BYTE_SIZE:].startswith(AMENDMENT15_BOUNDARY)
+        and raw.endswith(b"\n"),
+        "governing Amendment-15 document violates immutable-prefix law",
+    )
+    try:
+        return raw[REVISION16_BYTE_SIZE:].decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise LawError("governing Amendment-15 suffix is not UTF-8") from error
+
+
+def _amendment15_implementation_pin_match(section: str) -> re.Match[str]:
+    matches = list(_A15_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+    _require(
+        len(matches) == 1,
+        "Amendment-15 implementation pin block grammar drift",
+    )
+    return matches[0]
+
+
+def _normalize_amendment15_implementation_pin_values(section: str) -> str:
+    """Normalize only the ten independently authenticated A15 pin values."""
+
+    match = _amendment15_implementation_pin_match(section)
+    parts: list[str] = []
+    cursor = 0
+    for group in _A15_IMPLEMENTATION_PIN_VALUE_GROUPS:
+        start, end = match.span(group)
+        _require(start >= cursor, "Amendment-15 pin capture ordering drift")
+        parts.extend((section[cursor:start], f"<{group.upper()}>"))
+        cursor = end
+    parts.append(section[cursor:])
+    return "".join(parts)
+
+
+def _parse_amendment15_implementation_pins(raw: bytes) -> dict[str, Any]:
+    section = _amendment15_text(raw)
+    match = _amendment15_implementation_pin_match(section)
+    return {
+        "mode": match.group("mode"),
+        "files": [
+            {
+                "path": "scripts/validate_amendment13_execution_law.py",
+                "blob_oid": match.group("validator_blob"),
+                "byte_size": int(
+                    match.group("validator_size").replace(",", "")
+                ),
+                "sha256": match.group("validator_sha256"),
+            },
+            {
+                "path": "tests/test_validate_amendment13_execution_law.py",
+                "blob_oid": match.group("test_blob"),
+                "byte_size": int(match.group("test_size").replace(",", "")),
+                "sha256": match.group("test_sha256"),
+            },
+            {
+                "path": "scripts/build_amendment13_tier2_repairs.py",
+                "blob_oid": match.group("publisher_blob"),
+                "byte_size": int(
+                    match.group("publisher_size").replace(",", "")
+                ),
+                "sha256": match.group("publisher_sha256"),
+            },
+        ],
+    }
+
+
+def _parse_amendment15_mutation_bindings(
+    section: str,
+) -> list[dict[str, str]]:
+    """Parse the exact design-authoritative Amendment-15 binding table."""
+
+    rows = _markdown_table(
+        section,
+        (
+            "| Mutation name | Preparation callable | Operative gate callable "
+            "| Intended exception class | Intended-message substring |"
+        ),
+        "|---|---|---|---|---|",
+        11,
+        "Amendment-15 mutation binding specification",
+    )
+    return [
+        {
+            "name": _code_tokens(name, 1, "A15 mutation name")[0],
+            "prepare": _code_tokens(
+                prepare, 1, "A15 mutation preparation callable"
+            )[0],
+            "gate": _code_tokens(gate, 1, "A15 mutation gate callable")[0],
+            "expected_exception": _code_tokens(
+                expected_exception,
+                1,
+                "A15 mutation intended exception class",
+            )[0],
+            "expected_message": _code_tokens(
+                expected_message,
+                1,
+                "A15 mutation intended-message substring",
+            )[0],
+        }
+        for name, prepare, gate, expected_exception, expected_message in rows
+    ]
+
+
+def _parse_amendment15_projection(raw: bytes) -> dict[str, Any]:
+    section = _amendment15_text(raw)
+    return {
+        "section_semantic_sha256": _sha256(
+            _normalize_amendment15_implementation_pin_values(section).encode(
+                "utf-8"
+            )
+        ),
+        "implementation_pins": _parse_amendment15_implementation_pins(raw),
+        "mutation_bindings": _parse_amendment15_mutation_bindings(section),
+    }
+
+
 def _amendment14_text(raw: bytes) -> str:
     _require(
         len(raw) > REVISION15_BYTE_SIZE
@@ -1977,8 +2144,15 @@ def _amendment14_text(raw: bytes) -> str:
         and raw.endswith(b"\n"),
         "governing Amendment-14 document violates immutable-prefix law",
     )
+    suffix = raw[REVISION15_BYTE_SIZE:]
+    if AMENDMENT15_BOUNDARY in suffix:
+        _require(
+            suffix.count(AMENDMENT15_BOUNDARY) == 1,
+            "governing document has an ambiguous Amendment-15 boundary",
+        )
+        suffix = suffix[: suffix.index(AMENDMENT15_BOUNDARY)]
     try:
-        return raw[REVISION15_BYTE_SIZE:].decode("utf-8")
+        return suffix.decode("utf-8")
     except UnicodeDecodeError as error:
         raise LawError("governing Amendment-14 suffix is not UTF-8") from error
 
@@ -2242,6 +2416,7 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
         "scope": _parse_scope_projection(sections["27.7"]),
         "comparator": _parse_comparator_and_literals(sections["27.8"]),
         "amendment14": _parse_amendment14_projection(raw),
+        "amendment15": _parse_amendment15_projection(raw),
     }
     _validate_identifier_inventory_consistency(projection)
     return projection
@@ -2604,6 +2779,14 @@ def _canonical_amendment14_projection() -> dict[str, Any]:
     }
 
 
+def _canonical_amendment15_projection() -> dict[str, Any]:
+    return {
+        "section_semantic_sha256": A15_SECTION_SEMANTIC_SHA256,
+        "implementation_pins": None,
+        "mutation_bindings": None,
+    }
+
+
 @lru_cache(maxsize=1)
 def _canonical_draft_document_projection() -> dict[str, Any]:
     """Build the immutable document cross-check independently of a caller law."""
@@ -2662,6 +2845,7 @@ def _canonical_draft_document_projection() -> dict[str, Any]:
             "successor_kind_literals": list(A13_SUCCESSOR_KIND_LITERALS),
         },
         "amendment14": _canonical_amendment14_projection(),
+        "amendment15": _canonical_amendment15_projection(),
     }
 
 
@@ -2679,27 +2863,33 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
         {"mode", "files"},
         "Amendment-14 implementation pins",
     )
+    current_design = (ROOT / DESIGN_PATH).read_bytes()
+    label = "Amendment-14"
+    if len(current_design) > REVISION16_BYTE_SIZE:
+        pins = _parse_amendment15_implementation_pins(current_design)
+        label = "Amendment-15"
     _require(
         pins["mode"] == DESIGN_MODE
         and [row["path"] for row in pins["files"]]
         == [
             "scripts/validate_amendment13_execution_law.py",
             "tests/test_validate_amendment13_execution_law.py",
+            "scripts/build_amendment13_tier2_repairs.py",
         ],
-        "Amendment-14 implementation pin domain drift",
+        f"{label} implementation pin domain drift",
     )
     for row in pins["files"]:
         _require_exact_keys(
             row,
             {"path", "blob_oid", "byte_size", "sha256"},
-            "Amendment-14 implementation file pin",
+            f"{label} implementation file pin",
         )
         _require(
             _is_lower_hex(row["blob_oid"], 40)
             and type(row["byte_size"]) is int
             and row["byte_size"] > 0
             and _is_lower_hex(row["sha256"], 64),
-            "Amendment-14 implementation file pin is malformed",
+            f"{label} implementation file pin is malformed",
         )
         tree_line = str(
             _git("ls-tree", "HEAD", "--", row["path"], text=True)
@@ -2707,7 +2897,7 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
         _require(
             tree_line
             == f"{pins['mode']} blob {row['blob_oid']}\t{row['path']}",
-            "Amendment-14 implementation HEAD tree-entry pin drift",
+            f"{label} implementation HEAD tree-entry pin drift",
         )
         head_raw = _git("show", f"HEAD:{row['path']}")
         worktree_raw = (ROOT / row["path"]).read_bytes()
@@ -2717,7 +2907,7 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
             and len(head_raw) == row["byte_size"]
             and _sha256(head_raw) == row["sha256"]
             and _git_blob_oid(head_raw) == row["blob_oid"],
-            "Amendment-14 implementation blob identity mismatch",
+            f"{label} implementation blob identity mismatch",
         )
 
 
@@ -2736,9 +2926,15 @@ def _validate_document_semantic_projection(
     expected["amendment14"]["implementation_pins"] = projection["amendment14"][
         "implementation_pins"
     ]
+    expected["amendment15"]["implementation_pins"] = projection["amendment15"][
+        "implementation_pins"
+    ]
+    expected["amendment15"]["mutation_bindings"] = projection["amendment15"][
+        "mutation_bindings"
+    ]
     _require(
         projection == expected,
-        "governing Amendment-14 document semantic projection drift",
+        "governing Amendment-14/15 document semantic projection drift",
     )
     _verify_implementation_pins(
         projection["amendment14"]["implementation_pins"]
@@ -5514,7 +5710,7 @@ def _run_coherent_suffix_enforcement_mutation(
     forged_document: bytes,
     semantic_law: Mapping[str, Any],
     *,
-    expected_message: str = "document semantic projection drift",
+    expected_message: str = "Amendment-15 document violates immutable-prefix law",
 ) -> None:
     _expect_law_error(
         lambda: _validate_document_semantic_projection(

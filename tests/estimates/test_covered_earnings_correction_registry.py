@@ -1392,10 +1392,10 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
     # The registry constants are asserted against these pinned values
     # unconditionally, so a coherent wrong repin cannot satisfy either
     # leg below. An in-flight append-only amendment lawfully extends
-    # the design past the pinned ratification blob; the binding must
-    # then fail closed until a post-merge repin, with the ratified
-    # bytes surviving as an exact byte prefix of both the worktree and
-    # HEAD copies.
+    # the design past the pinned ratification blob. The narrow
+    # prospective-suffix rule retains the revision-16 binding only when
+    # the ratified bytes survive as the exact prefix of byte-identical
+    # worktree and HEAD copies.
     expected_binding = {
         "path": "docs/design/covered_earnings_correction.md",
         "ratification_commit": "062d74187e3263cd4a7fad3851a9b8c699a2556c",
@@ -1487,8 +1487,37 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
             "GIT_WORK_TREE", str(ROOT / "nonexistent-git-work-tree")
         )
         monkeypatch.setenv("GIT_NO_REPLACE_OBJECTS", "0")
-        with pytest.raises(
-            registry.RegistrationAborted,
-            match="differs across worktree, HEAD, and",
-        ):
-            registry.design_binding()
+        assert registry.design_binding() == expected_binding
+
+
+def test__design_binding__prospective_suffix_is_exactly_scoped():
+    ratified_bytes = subprocess.run(
+        [
+            "git",
+            "show",
+            f"{registry.DESIGN_RATIFICATION_COMMIT}:{registry.DESIGN_PATH}",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    current_bytes = (ROOT / registry.DESIGN_PATH).read_bytes()
+
+    assert registry._preserves_ratified_design_prefix(
+        ratified_bytes, ratified_bytes
+    )
+    assert registry._preserves_ratified_design_prefix(
+        current_bytes, ratified_bytes
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        b"x" + current_bytes[1:], ratified_bytes
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        ratified_bytes + b"\n## 29. wrong boundary\n", ratified_bytes
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        current_bytes + registry.AMENDMENT15_BOUNDARY, ratified_bytes
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        current_bytes.removesuffix(b"\n"), ratified_bytes
+    )
