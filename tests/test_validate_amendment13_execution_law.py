@@ -1,4 +1,4 @@
-"""Tests for Amendment 13's Amendment-14-governed execution law."""
+"""Tests for Amendment 13's Amendment-16-governed execution law."""
 
 from __future__ import annotations
 
@@ -53,6 +53,32 @@ def _a13_closure_material():
 
 def _operativity_materials():
     return _a13_closure_material(), a13._synthetic_closure_material()
+
+
+def _synthetic_registry_context(revision):
+    amendment_numbers = tuple(range(13, revision - 1))
+    context = {
+        "path": a13.DESIGN_PATH,
+        "ratification_commit": "a" * 40,
+        "revision": revision,
+        "blob_sha256": "b" * 64,
+        "ratification_closures": [
+            {
+                "path": (
+                    f"docs/analysis/amendment_{amendment_number}_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": amendment_number,
+                "raw_sha256": f"{amendment_number:064x}",
+            }
+            for amendment_number in amendment_numbers
+        ],
+    }
+    if revision >= a13.COMBINED_ACTIVATION_REVISION:
+        context["ratification_closures"][1] = copy.deepcopy(
+            a13.A14_HISTORICAL_CLOSURE_BINDING
+        )
+    return context
 
 
 def test__draft__emits_neither_authority_nor_certification(execution_law):
@@ -301,7 +327,7 @@ def test__closure__revision15_blob_cannot_pose_as_revision16():
     raw = a13.canonical_json_bytes(closure)
     with pytest.raises(
         a13.LawError,
-        match="lacks the immutable revision-15 prefix and Amendment-14 boundary",
+        match="attests terminal Amendment 13 instead of Amendment 14",
     ):
         a13._validate_ratification_closure(
             raw,
@@ -313,6 +339,100 @@ def test__closure__revision15_blob_cannot_pose_as_revision16():
             registry_design_binding=a13._synthetic_registry_design_binding(
                 closure
             ),
+        )
+
+
+def test__closure__historical_a15_design_is_nonterminal_at_revision18():
+    design_raw = a13._git(
+        "show",
+        f"{a13.A15_MERGED_RATIFICATION_COMMIT}:{a13.DESIGN_PATH}",
+    )
+    assert isinstance(design_raw, bytes)
+    context = a13._validate_registry_ratification_context(
+        _synthetic_registry_context(18)
+    )
+    a13._validate_non_a13_ratification_design(design_raw, 15)
+    assert a13._terminal_design_amendment(design_raw) == 15
+    assert context["ratification_closures"][2]["path"] == a13.A15_CLOSURE_PATH
+    assert 15 + 2 < context["revision"]
+
+
+def test__closure__historical_a15_closure_is_an_exact_enacted_object():
+    closure, raw, binding, verdicts, design_raw = (
+        a13._synthetic_closure_material(15)
+    )
+    with pytest.raises(
+        a13.LawError,
+        match="Amendment-15 closure differs from directly enacted values",
+    ):
+        a13._validate_ratification_closure(
+            raw,
+            binding,
+            verdicts,
+            15,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+            registry_design_binding=_synthetic_registry_context(18),
+        )
+
+
+def test__closure__non_a13_closure_cannot_forge_another_amendment():
+    revision17 = a13._git(
+        "show",
+        f"{a13.A15_MERGED_RATIFICATION_COMMIT}:{a13.DESIGN_PATH}",
+    )
+    assert isinstance(revision17, bytes)
+    closure, raw, binding, verdicts, design_raw = (
+        a13._synthetic_closure_material(16, design_raw=revision17)
+    )
+    context = _synthetic_registry_context(18)
+    context["ratification_commit"] = closure["ratification_commit"]
+    context["blob_sha256"] = closure["attested_candidate_design_raw_sha256"]
+    with pytest.raises(
+        a13.LawError,
+        match="attests terminal Amendment 15 instead of Amendment 16",
+    ):
+        a13._validate_ratification_closure(
+            raw,
+            binding,
+            verdicts,
+            16,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+            registry_design_binding=context,
+        )
+
+
+def test__closure__revision18_preserves_exact_historical_a14_binding():
+    path = ROOT / a13.A14_CLOSURE_PATH
+    closure_raw = path.read_bytes()
+    closure = a13._strict_canonical_json(closure_raw, a13.A14_CLOSURE_PATH)
+    closure["operator_merge_commit"] = (
+        "ace88cda0e588f1b847552a31787cc69324d8646"
+    )
+    closure["ratification_commit"] = "ace88cda0e588f1b847552a31787cc69324d8646"
+    closure["ratification_commit_sole_parent"] = (
+        a13.A14_MERGED_RATIFICATION_COMMIT
+    )
+    forged_raw = a13.canonical_json_bytes(closure)
+    forged_binding = a13._closure_binding(a13.A14_CLOSURE_PATH, forged_raw)
+    context = _synthetic_registry_context(18)
+    context["ratification_closures"][1] = forged_binding
+    verdicts = {
+        row["path"]: (ROOT / row["path"]).read_bytes()
+        for row in closure["verdict_artifacts"]
+    }
+    with pytest.raises(
+        a13.LawError,
+        match="Amendment-14 historical closure binding drift",
+    ):
+        a13._validate_ratification_closure(
+            forged_raw,
+            forged_binding,
+            verdicts,
+            14,
+            verify_git=True,
+            registry_design_binding=context,
         )
 
 
@@ -342,7 +462,7 @@ def test__closure__public_missing_binding_fails_closed(monkeypatch):
 
 
 def test__closure__operativity_requires_both_public_closures(monkeypatch):
-    context = {"revision": 16}
+    context = _synthetic_registry_context(16)
     observed = []
 
     monkeypatch.setattr(
@@ -352,7 +472,7 @@ def test__closure__operativity_requires_both_public_closures(monkeypatch):
     )
 
     def validate(amendment_number, selected_context):
-        assert selected_context is context
+        assert selected_context == context
         observed.append(amendment_number)
         return {"amendment_number": amendment_number}
 
@@ -362,6 +482,142 @@ def test__closure__operativity_requires_both_public_closures(monkeypatch):
         14: {"amendment_number": 14},
     }
     assert observed == [13, 14]
+
+
+@pytest.mark.parametrize(
+    ("revision", "amendment_numbers", "closure_count"),
+    (
+        (16, (13, 14), 2),
+        (18, (13, 14, 15, 16), 4),
+        (19, (13, 14, 15, 16, 17), 5),
+    ),
+)
+def test__closure__general_revision_domain_law(
+    revision,
+    amendment_numbers,
+    closure_count,
+):
+    assert a13._ratification_amendment_numbers(revision) == amendment_numbers
+    context = a13._validate_registry_ratification_context(
+        _synthetic_registry_context(revision)
+    )
+    assert len(context["ratification_closures"]) == closure_count
+    assert closure_count == revision - 14
+
+
+def test__closure__revision17_standalone_activation_is_forbidden():
+    with pytest.raises(
+        a13.LawError,
+        match="revision 17 cannot be a terminal ratification registry",
+    ):
+        a13._validate_registry_ratification_context(
+            _synthetic_registry_context(17)
+        )
+
+
+@pytest.mark.parametrize("mutation", ("wrong_count", "wrong_order"))
+def test__closure__generalized_registry_domain_fails_closed(mutation):
+    context = _synthetic_registry_context(18)
+    if mutation == "wrong_count":
+        context["ratification_closures"].pop()
+        message = "closure count drift"
+    else:
+        context["ratification_closures"][1:3] = reversed(
+            context["ratification_closures"][1:3]
+        )
+        message = "closure binding order drift"
+    with pytest.raises(a13.LawError, match=message):
+        a13._validate_registry_ratification_context(context)
+
+
+def test__closure__revision18_operativity_is_atomic_and_ordered():
+    context = a13._validate_registry_ratification_context(
+        _synthetic_registry_context(18)
+    )
+    observed = []
+
+    def validate(amendment_number, selected_context):
+        assert selected_context == context
+        observed.append(amendment_number)
+        return {"amendment_number": amendment_number}
+
+    closures = a13._validate_ratification_operativity_context(
+        context, validate
+    )
+    assert tuple(closures) == (13, 14, 15, 16)
+    assert observed == [13, 14, 15, 16]
+
+
+def test__closure__revision18_combined_set_passes_generalized_oracle():
+    a13_material = _a13_closure_material()
+    a14_path = ROOT / a13.A14_CLOSURE_PATH
+    a14_raw = a14_path.read_bytes()
+    a14_closure = a13._strict_canonical_json(a14_raw, a13.A14_CLOSURE_PATH)
+    a14_design = a13._git(
+        "show",
+        f"{a13.A14_MERGED_RATIFICATION_COMMIT}:{a13.DESIGN_PATH}",
+    )
+    assert isinstance(a14_design, bytes)
+    a14_material = (
+        a14_closure,
+        a14_raw,
+        a13._closure_binding(a13.A14_CLOSURE_PATH, a14_raw),
+        {
+            row["path"]: (ROOT / row["path"]).read_bytes()
+            for row in a14_closure["verdict_artifacts"]
+        },
+        a14_design,
+    )
+    a15_design = a13._git(
+        "show",
+        f"{a13.A15_MERGED_RATIFICATION_COMMIT}:{a13.DESIGN_PATH}",
+    )
+    assert isinstance(a15_design, bytes)
+    a16_material = a13._synthetic_closure_material(
+        16,
+        design_raw=(ROOT / a13.DESIGN_PATH).read_bytes(),
+    )
+    materials = {13: a13_material, 14: a14_material, 16: a16_material}
+    context = {
+        "path": a13.DESIGN_PATH,
+        "ratification_commit": a16_material[0]["ratification_commit"],
+        "revision": 18,
+        "blob_sha256": a16_material[0]["attested_candidate_design_raw_sha256"],
+        "ratification_closures": [
+            a13_material[2],
+            a14_material[2],
+            a13._closure_binding(
+                a13.A15_CLOSURE_PATH,
+                a13.canonical_json_bytes(a13.A15_EXPECTED_CLOSURE),
+            ),
+            a16_material[2],
+        ],
+    }
+
+    def validate(amendment_number, selected_context):
+        if amendment_number == 15:
+            a13._validate_closure_shape(a13.A15_EXPECTED_CLOSURE, 15)
+            a13._validate_non_a13_ratification_design(a15_design, 15)
+            return a13.A15_EXPECTED_CLOSURE
+        closure, raw, binding, verdicts, design_raw = materials[
+            amendment_number
+        ]
+        return a13._validate_ratification_closure(
+            raw,
+            binding,
+            verdicts,
+            amendment_number,
+            verify_git=False,
+            ratification_design_raw=design_raw,
+            registry_design_binding=(
+                selected_context if amendment_number != 13 else None
+            ),
+        )
+
+    closures = a13._validate_ratification_operativity_context(
+        context, validate
+    )
+    assert tuple(closures) == (13, 14, 15, 16)
 
 
 def test__closure__real_public_path_adapts_at_revision16():
@@ -580,7 +836,7 @@ def test__nested_authority_and_declared_schema_forgery_fail_closed(
             a13.validate_execution_law(candidate, verify_git=False)
 
 
-def test__document__semantic_projection_covers_amendment14():
+def test__document__semantic_projection_covers_amendments14_through16():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
     projection = a13._parse_document_semantic_projection(raw)
     assert projection["amendment14"]["section_semantic_sha256"] == (
@@ -594,6 +850,26 @@ def test__document__semantic_projection_covers_amendment14():
     )
     assert projection["amendment15"]["section_semantic_sha256"] == (
         a13.A15_SECTION_SEMANTIC_SHA256
+    )
+    amendment16 = projection["amendment16"]
+    assert amendment16["section_semantic_sha256"] == (
+        a13.A16_SECTION_SEMANTIC_SHA256
+    )
+    assert amendment16["ratification_law_values"] == (
+        a13.A16_RATIFICATION_LAW_VALUES
+    )
+    assert amendment16["a14_historical_closure_binding"] == (
+        a13.A14_HISTORICAL_CLOSURE_BINDING
+    )
+    assert amendment16["a15_expected_closure"] == a13.A15_EXPECTED_CLOSURE
+    assert amendment16["historical_r05_binding"] == (
+        a13.A16_HISTORICAL_R05_BINDING
+    )
+    assert tuple(amendment16["oracle_mutations"]) == (
+        a13.A16_EXPECTED_MUTATIONS
+    )
+    assert amendment16["oracle_mutation_domain_sha256"] == (
+        a13.A16_MUTATION_DOMAIN_SHA256
     )
 
 
@@ -755,7 +1031,7 @@ def test__document__amendment15_binding_identity_is_semantically_bound(
     )
     with pytest.raises(
         a13.LawError,
-        match="Amendment-14/15 document semantic projection drift",
+        match="Amendment-16 document violates immutable-prefix law",
     ):
         a13._validate_document_semantic_projection(candidate, {})
 
@@ -772,14 +1048,14 @@ def test__document__amendment15_nonpin_semantics_are_hash_bound():
     )
     with pytest.raises(
         a13.LawError,
-        match="Amendment-14/15 document semantic projection drift",
+        match="Amendment-16 document violates immutable-prefix law",
     ):
         a13._validate_document_semantic_projection(candidate, {})
 
 
 def test__implementation__active_pins_are_blob_bound_without_commit():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
-    pins = a13._parse_amendment15_projection(raw)["implementation_pins"]
+    pins = a13._parse_active_implementation_pins(raw)
     assert set(pins) == {"mode", "files"}
     assert "commit" not in pins
     assert [row["path"] for row in pins["files"]] == [
@@ -788,6 +1064,116 @@ def test__implementation__active_pins_are_blob_bound_without_commit():
         "scripts/build_amendment13_tier2_repairs.py",
     ]
     a13._verify_implementation_pins(pins)
+
+
+def test__document__amendment16_pin_values_are_normalized_but_only_pins():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    baseline = a13._parse_amendment16_projection(raw)
+    section = a13._amendment16_text(raw)
+    match = a13._amendment16_implementation_pin_match(section)
+    start, end = match.span("validator_sha256")
+    absolute_start = a13.REVISION17_BYTE_SIZE + len(
+        section[:start].encode("utf-8")
+    )
+    absolute_end = a13.REVISION17_BYTE_SIZE + len(
+        section[:end].encode("utf-8")
+    )
+    replacement = (
+        "1" if match.group("validator_sha256")[0] != "1" else "2"
+    ) + match.group("validator_sha256")[1:]
+    candidate = (
+        raw[:absolute_start] + replacement.encode() + raw[absolute_end:]
+    )
+    changed = a13._parse_amendment16_projection(candidate)
+    assert changed["implementation_pins"] != baseline["implementation_pins"]
+    assert changed["section_semantic_sha256"] == (
+        baseline["section_semantic_sha256"]
+    )
+
+
+def test__document__amendment16_nonpin_semantics_are_hash_bound():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    original = b"closure_count_subtrahend = 14"
+    forged = b"closure_count_subtrahend = 15"
+    assert raw.count(original) == 1
+    candidate = raw.replace(original, forged, 1)
+    changed = a13._parse_amendment16_projection(candidate)
+    assert changed["ratification_law_values"]["closure_count_subtrahend"] == 15
+    assert (
+        changed["section_semantic_sha256"] != a13.A16_SECTION_SEMANTIC_SHA256
+    )
+    with pytest.raises(
+        a13.LawError,
+        match="Amendment-14/15/16 document semantic projection drift",
+    ):
+        a13._validate_document_semantic_projection(candidate, {})
+
+
+def test__document__successor_must_preserve_inherited_a16_projection():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    successor = raw + (
+        b"\n## 31. AMENDMENT SECTION \xe2\x80\x94 Amendment 17: "
+        b"synthetic successor\n\nProspective successor.\n"
+    )
+    a13._validate_non_a13_ratification_design(successor, 17)
+    forged = successor.replace(
+        b"closure_count_subtrahend = 14",
+        b"closure_count_subtrahend = 15",
+        1,
+    )
+    with pytest.raises(
+        a13.LawError,
+        match="Amendment-16 ratification design semantic projection drift",
+    ):
+        a13._validate_non_a13_ratification_design(forged, 17)
+
+
+def test__amendment16_oracle_mutations_are_separate_and_exact():
+    rejected = a13._run_amendment16_oracle_attacks()
+    assert rejected == a13.A16_EXPECTED_MUTATIONS
+    assert hashlib.sha256(
+        a13.canonical_json_bytes(list(rejected))
+    ).hexdigest() == (a13.A16_MUTATION_DOMAIN_SHA256)
+
+
+def test__amendment16_public_runner_authenticates_inherited_census(
+    monkeypatch,
+):
+    import build_amendment13_tier2_repairs as publisher
+
+    expected = publisher._expected_mutation_census()
+    monkeypatch.setattr(
+        publisher,
+        "run_complete_mutation_census",
+        lambda: copy.deepcopy(expected),
+    )
+    assert a13.run_amendment16_oracle_mutation_tests() == (
+        a13.A16_EXPECTED_MUTATIONS
+    )
+
+
+def test__amendment16_public_runner_stops_before_attacks_on_census_drift(
+    monkeypatch,
+):
+    import build_amendment13_tier2_repairs as publisher
+
+    forged = publisher._expected_mutation_census()
+    forged["rejected_count"] = 99
+    monkeypatch.setattr(
+        publisher,
+        "run_complete_mutation_census",
+        lambda: forged,
+    )
+    monkeypatch.setattr(
+        a13,
+        "_run_amendment16_oracle_attacks",
+        lambda: pytest.fail("A16 attacks ran after inherited census drift"),
+    )
+    with pytest.raises(
+        a13.LawError,
+        match="inherited complete mutation census drift",
+    ):
+        a13.run_amendment16_oracle_mutation_tests()
 
 
 def test__mutation_inventory__is_separate_and_exact(
@@ -833,6 +1219,20 @@ def test__document__preserves_revision15_as_exact_prefix():
     assert a13._git_blob_oid(revision15) == a13.REVISION15_BLOB_OID
     assert raw[: a13.REVISION15_BYTE_SIZE] == revision15
     assert raw[a13.REVISION15_BYTE_SIZE :].startswith(a13.AMENDMENT14_BOUNDARY)
+
+
+def test__document__preserves_revision17_as_exact_prefix():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    revision17 = a13._git(
+        "show",
+        f"{a13.A15_MERGED_RATIFICATION_COMMIT}:{a13.DESIGN_PATH}",
+    )
+    assert isinstance(revision17, bytes)
+    assert len(revision17) == a13.REVISION17_BYTE_SIZE
+    assert hashlib.sha256(revision17).hexdigest() == a13.REVISION17_SHA256
+    assert a13._git_blob_oid(revision17) == a13.REVISION17_BLOB_OID
+    assert raw[: a13.REVISION17_BYTE_SIZE] == revision17
+    assert raw[a13.REVISION17_BYTE_SIZE :].startswith(a13.AMENDMENT16_BOUNDARY)
 
 
 def test__document__retains_nested_revision14_and_a13_boundaries():

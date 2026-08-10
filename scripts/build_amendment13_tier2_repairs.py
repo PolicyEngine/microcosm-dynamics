@@ -1351,7 +1351,7 @@ def _create_complete_mutation_census_protocol() -> tuple[
         publisher_relative_path,
     )
     enacted_implementation_pins = deepcopy(
-        a13._parse_amendment15_implementation_pins(design_path.read_bytes())
+        a13._parse_active_implementation_pins(design_path.read_bytes())
     )
 
     def require(condition: bool, message: str) -> None:
@@ -1657,26 +1657,26 @@ def _create_complete_mutation_census_protocol() -> tuple[
         )
 
     def verify_publisher_implementation_pin() -> Path:
-        """Authenticate the publisher path against the enacted A15 pin."""
+        """Authenticate the publisher path against the enacted active pin."""
 
         pins = deepcopy(enacted_implementation_pins)
         require_exact_keys(
             pins,
             frozenset({"files", "mode"}),
-            "Amendment-15 implementation pins",
+            "active implementation pins",
         )
         require(
             pins["mode"] == "100644"
             and isinstance(pins["files"], list)
             and tuple(row["path"] for row in pins["files"])
             == expected_pin_paths,
-            "Amendment-15 implementation pin domain drift",
+            "active implementation pin domain drift",
         )
         row = pins["files"][2]
         require_exact_keys(
             row,
             frozenset({"blob_oid", "byte_size", "path", "sha256"}),
-            "Amendment-15 publisher implementation pin",
+            "active publisher implementation pin",
         )
         require(
             row["path"] == publisher_relative_path
@@ -1693,18 +1693,18 @@ def _create_complete_mutation_census_protocol() -> tuple[
             and all(
                 character in "0123456789abcdef" for character in row["sha256"]
             ),
-            "Amendment-15 publisher implementation pin is malformed",
+            "active publisher implementation pin is malformed",
         )
         require(
             publisher_path.is_file() and not publisher_path.is_symlink(),
-            "Amendment-15 publisher path is not a regular file",
+            "active publisher path is not a regular file",
         )
         worktree_raw = publisher_path.read_bytes()
         require(
             len(worktree_raw) == row["byte_size"]
             and sha256(worktree_raw).hexdigest() == row["sha256"]
             and git_blob_oid(worktree_raw) == row["blob_oid"],
-            "Amendment-15 publisher implementation pin mismatch",
+            "active publisher implementation pin mismatch",
         )
         tree = run_git("ls-tree", "HEAD", "--", publisher_relative_path)
         require(
@@ -1714,14 +1714,14 @@ def _create_complete_mutation_census_protocol() -> tuple[
             == (
                 f"100644 blob {row['blob_oid']}\t{publisher_relative_path}\n"
             ).encode("ascii"),
-            "Amendment-15 publisher HEAD tree-entry pin drift",
+            "active publisher HEAD tree-entry pin drift",
         )
         head = run_git("show", f"HEAD:{publisher_relative_path}")
         require(
             head.returncode == 0
             and head.stderr == b""
             and head.stdout == worktree_raw,
-            "Amendment-15 publisher working-tree/HEAD byte drift",
+            "active publisher working-tree/HEAD byte drift",
         )
         return publisher_path
 
