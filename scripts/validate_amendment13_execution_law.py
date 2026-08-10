@@ -162,6 +162,15 @@ AMENDMENT16_BOUNDARY = (
     b"\n## 30. AMENDMENT SECTION \xe2\x80\x94 Amendment 16: generalized "
     b"ratification oracle and combined revision-18 activation\n"
 )
+REVISION18_BYTE_SIZE = 3_915_641
+REVISION18_SHA256 = (
+    "17a4bc2b48bd48039ce0777dd22f265eff156fe2484efd6c7b106c5c642dd1b6"
+)
+REVISION18_BLOB_OID = "114089d99b83c5073e21b6fb64cd701719ac5741"
+AMENDMENT17_BOUNDARY = (
+    b"\n## 31. AMENDMENT SECTION \xe2\x80\x94 Amendment 17: test-pin "
+    b"activation cure and executed-transition ratification\n"
+)
 FIRST_CLOSURE_AMENDMENT = 13
 HISTORICAL_TERMINAL_REVISION = 16
 FORBIDDEN_STANDALONE_REVISION = 17
@@ -2175,6 +2184,26 @@ _A16_IMPLEMENTATION_PIN_VALUE_GROUPS = (
     "publisher_sha256",
 )
 
+_A17_IMPLEMENTATION_PIN_PATTERN = re.compile(
+    r"The Amendment-17-governed active identity is exactly mode "
+    r"`(?P<mode>[0-9]+)` and these\n"
+    r"three path/blob/byte/hash rows:\n\n"
+    r"\| Path \| Git blob \| Bytes \| Raw SHA-256 \|\n"
+    r"\|---\|---\|---:\|---\|\n"
+    r"\| `scripts/validate_amendment13_execution_law\.py` \| "
+    r"`(?P<validator_blob>[0-9a-f]{40})` \| "
+    r"(?P<validator_size>[0-9][0-9,]*) \| "
+    r"`(?P<validator_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `tests/test_validate_amendment13_execution_law\.py` \| "
+    r"`(?P<test_blob>[0-9a-f]{40})` \| "
+    r"(?P<test_size>[0-9][0-9,]*) \| "
+    r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `scripts/build_amendment13_tier2_repairs\.py` \| "
+    r"`(?P<publisher_blob>[0-9a-f]{40})` \| "
+    r"(?P<publisher_size>[0-9][0-9,]*) \| "
+    r"`(?P<publisher_sha256>[0-9a-f]{64})` \|\n"
+)
+
 
 def _amendment15_text(raw: bytes) -> str:
     _require(
@@ -2390,9 +2419,78 @@ def _parse_amendment16_implementation_pins(raw: bytes) -> dict[str, Any]:
     }
 
 
+def _amendment17_text(raw: bytes) -> str:
+    _require(
+        len(raw) > REVISION18_BYTE_SIZE
+        and _sha256(raw[:REVISION18_BYTE_SIZE]) == REVISION18_SHA256
+        and _git_blob_oid(raw[:REVISION18_BYTE_SIZE]) == REVISION18_BLOB_OID
+        and raw[REVISION18_BYTE_SIZE:].startswith(AMENDMENT17_BOUNDARY)
+        and raw.count(AMENDMENT17_BOUNDARY) == 1
+        and raw.endswith(b"\n"),
+        "governing Amendment-17 document violates immutable-prefix law",
+    )
+    suffix = raw[REVISION18_BYTE_SIZE:]
+    headings = list(_AMENDMENT_SECTION_PATTERN.finditer(suffix))
+    _require(
+        headings and int(headings[0].group("amendment")) == 17,
+        "governing Amendment-17 boundary sequence drift",
+    )
+    if len(headings) > 1:
+        next_boundary = headings[1].start()
+        _require(
+            next_boundary > 0
+            and suffix[next_boundary - 1 : next_boundary] == b"\n",
+            "governing Amendment-17 successor boundary drift",
+        )
+        suffix = suffix[: next_boundary - 1]
+    try:
+        return suffix.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise LawError("governing Amendment-17 suffix is not UTF-8") from error
+
+
+def _parse_amendment17_implementation_pins(raw: bytes) -> dict[str, Any]:
+    section = _amendment17_text(raw)
+    matches = list(_A17_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+    _require(
+        len(matches) == 1,
+        "Amendment-17 implementation pin block grammar drift",
+    )
+    match = matches[0]
+    return {
+        "mode": match.group("mode"),
+        "files": [
+            {
+                "path": "scripts/validate_amendment13_execution_law.py",
+                "blob_oid": match.group("validator_blob"),
+                "byte_size": int(
+                    match.group("validator_size").replace(",", "")
+                ),
+                "sha256": match.group("validator_sha256"),
+            },
+            {
+                "path": "tests/test_validate_amendment13_execution_law.py",
+                "blob_oid": match.group("test_blob"),
+                "byte_size": int(match.group("test_size").replace(",", "")),
+                "sha256": match.group("test_sha256"),
+            },
+            {
+                "path": "scripts/build_amendment13_tier2_repairs.py",
+                "blob_oid": match.group("publisher_blob"),
+                "byte_size": int(
+                    match.group("publisher_size").replace(",", "")
+                ),
+                "sha256": match.group("publisher_sha256"),
+            },
+        ],
+    }
+
+
 def _parse_active_implementation_pins(raw: bytes) -> dict[str, Any]:
     """Select the newest append-only implementation-pin successor."""
 
+    if len(raw) > REVISION18_BYTE_SIZE:
+        return _parse_amendment17_implementation_pins(raw)
     if len(raw) > REVISION17_BYTE_SIZE:
         return _parse_amendment16_implementation_pins(raw)
     if len(raw) > REVISION16_BYTE_SIZE:
@@ -3413,7 +3511,10 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
     )
     current_design = (ROOT / DESIGN_PATH).read_bytes()
     label = "Amendment-14"
-    if len(current_design) > REVISION17_BYTE_SIZE:
+    if len(current_design) > REVISION18_BYTE_SIZE:
+        pins = _parse_amendment17_implementation_pins(current_design)
+        label = "Amendment-17"
+    elif len(current_design) > REVISION17_BYTE_SIZE:
         pins = _parse_amendment16_implementation_pins(current_design)
         label = "Amendment-16"
     elif len(current_design) > REVISION16_BYTE_SIZE:
@@ -6735,7 +6836,7 @@ def _run_amendment16_oracle_attacks() -> tuple[str, ...]:
     )
     rejected.append(A16_EXPECTED_MUTATIONS[2])
 
-    revision18_raw = (ROOT / DESIGN_PATH).read_bytes()
+    revision18_raw = (ROOT / DESIGN_PATH).read_bytes()[:REVISION18_BYTE_SIZE]
     (
         forged_a17,
         forged_a17_raw,

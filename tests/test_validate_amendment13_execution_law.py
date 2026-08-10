@@ -18,6 +18,12 @@ if str(SCRIPTS) not in sys.path:
 
 import validate_amendment13_execution_law as a13  # noqa: E402
 
+A17_TEST_MUTATIONS = (
+    "revision_general_test_expected_domain_forged",
+    "revision_general_test_revision17_accepted",
+    "activation_transition_full_pinned_battery_bypassed",
+)
+
 
 @pytest.fixture(scope="module")
 def execution_law():
@@ -79,6 +85,109 @@ def _synthetic_registry_context(revision):
             a13.A14_HISTORICAL_CLOSURE_BINDING
         )
     return context
+
+
+def _assert_revision_general_expectation(revision, candidate_expected):
+    assert type(revision) is int
+    assert revision == 16 or revision >= 18
+    assert tuple(candidate_expected) == tuple(range(13, revision - 1))
+
+
+def _expected_terminal_operativity_domain(revision):
+    expected = tuple(range(13, revision - 1))
+    _assert_revision_general_expectation(revision, expected)
+    return expected
+
+
+def _assert_revision_general_public_result(revision, closures):
+    assert tuple(closures) == _expected_terminal_operativity_domain(revision)
+
+
+def _assert_executed_transition_evidence(evidence):
+    assert set(evidence) == {
+        "simulated_state_authority",
+        "simulated_state_identity_sha256",
+        "terminal_revision",
+        "public_oracle",
+        "full_pinned_battery",
+    }
+    assert evidence["simulated_state_authority"] == "NONAUTHORITY"
+    state_identity = evidence["simulated_state_identity_sha256"]
+    assert len(state_identity) == 64
+    revision = evidence["terminal_revision"]
+    expected = _expected_terminal_operativity_domain(revision)
+    oracle = evidence["public_oracle"]
+    assert set(oracle) == {
+        "executed",
+        "exit_code",
+        "operative_amendments",
+        "simulated_state_identity_sha256",
+    }
+    assert oracle["executed"] is True
+    assert oracle["exit_code"] == 0
+    assert tuple(oracle["operative_amendments"]) == expected
+    assert oracle["simulated_state_identity_sha256"] == state_identity
+    battery = evidence["full_pinned_battery"]
+    assert set(battery) == {
+        "executed",
+        "exit_code",
+        "test_path",
+        "collected",
+        "passed",
+        "failed",
+        "simulated_state_identity_sha256",
+    }
+    assert battery["executed"] is True
+    assert battery["exit_code"] == 0
+    assert battery["test_path"] == (
+        "tests/test_validate_amendment13_execution_law.py"
+    )
+    assert type(battery["collected"]) is int and battery["collected"] > 0
+    assert battery["passed"] == battery["collected"]
+    assert battery["failed"] == 0
+    assert battery["simulated_state_identity_sha256"] == state_identity
+
+
+def _run_amendment17_test_mutations():
+    rejected = []
+    for revision in (16, 18, 19):
+        forged = tuple(range(13, revision - 2))
+        with pytest.raises(AssertionError):
+            _assert_revision_general_expectation(revision, forged)
+    rejected.append(A17_TEST_MUTATIONS[0])
+
+    with pytest.raises(AssertionError):
+        _assert_revision_general_expectation(17, (13, 14, 15))
+    rejected.append(A17_TEST_MUTATIONS[1])
+
+    bypassed_evidence = {
+        "simulated_state_authority": "NONAUTHORITY",
+        "simulated_state_identity_sha256": "a" * 64,
+        "terminal_revision": 18,
+        "public_oracle": {
+            "executed": True,
+            "exit_code": 0,
+            "operative_amendments": [13, 14, 15, 16],
+            "simulated_state_identity_sha256": "a" * 64,
+        },
+        "full_pinned_battery": {
+            "executed": True,
+            "exit_code": 0,
+            "test_path": "tests/test_validate_amendment13_execution_law.py",
+            "collected": 76,
+            "passed": 76,
+            "failed": 0,
+            "simulated_state_identity_sha256": "b" * 64,
+        },
+    }
+    with pytest.raises(AssertionError):
+        _assert_executed_transition_evidence(bypassed_evidence)
+    rejected.append(A17_TEST_MUTATIONS[2])
+
+    rejected_tuple = tuple(rejected)
+    assert rejected_tuple == A17_TEST_MUTATIONS
+    assert len(set(rejected_tuple)) == len(rejected_tuple)
+    return rejected_tuple
 
 
 def test__draft__emits_neither_authority_nor_certification(execution_law):
@@ -513,6 +622,7 @@ def test__closure__revision17_standalone_activation_is_forbidden():
         a13._validate_registry_ratification_context(
             _synthetic_registry_context(17)
         )
+    assert _run_amendment17_test_mutations() == A17_TEST_MUTATIONS
 
 
 @pytest.mark.parametrize("mutation", ("wrong_count", "wrong_order"))
@@ -575,7 +685,9 @@ def test__closure__revision18_combined_set_passes_generalized_oracle():
     assert isinstance(a15_design, bytes)
     a16_material = a13._synthetic_closure_material(
         16,
-        design_raw=(ROOT / a13.DESIGN_PATH).read_bytes(),
+        design_raw=(ROOT / a13.DESIGN_PATH).read_bytes()[
+            : a13.REVISION18_BYTE_SIZE
+        ],
     )
     materials = {13: a13_material, 14: a14_material, 16: a16_material}
     context = {
@@ -631,8 +743,16 @@ def test__closure__real_public_path_adapts_at_revision16():
             a13.validate_ratification_operativity()
         return
 
+    if registry.DESIGN_REVISION == 17:
+        with pytest.raises(
+            a13.LawError,
+            match="revision 17 cannot be a terminal ratification registry",
+        ):
+            a13.validate_ratification_operativity()
+        return
+
     closures = a13.validate_ratification_operativity()
-    assert set(closures) == {13, 14}
+    _assert_revision_general_public_result(registry.DESIGN_REVISION, closures)
     template = a13.build_ratification_bound_execution_template()
     assert template["status"] == a13.RATIFICATION_BOUND_TEMPLATE_STATUS
     assert template["governing_amendment13_ratification_identity"] == (
@@ -1064,6 +1184,24 @@ def test__implementation__active_pins_are_blob_bound_without_commit():
         "scripts/build_amendment13_tier2_repairs.py",
     ]
     a13._verify_implementation_pins(pins)
+    if len(raw) > a13.REVISION18_BYTE_SIZE:
+        a16 = {
+            row["path"]: row
+            for row in a13._parse_amendment16_implementation_pins(raw)["files"]
+        }
+        a17 = {row["path"]: row for row in pins["files"]}
+        assert (
+            a17["scripts/build_amendment13_tier2_repairs.py"]
+            == a16["scripts/build_amendment13_tier2_repairs.py"]
+        )
+        assert (
+            a17["scripts/validate_amendment13_execution_law.py"]
+            != a16["scripts/validate_amendment13_execution_law.py"]
+        )
+        assert (
+            a17["tests/test_validate_amendment13_execution_law.py"]
+            != a16["tests/test_validate_amendment13_execution_law.py"]
+        )
 
 
 def test__document__amendment16_pin_values_are_normalized_but_only_pins():
@@ -1110,7 +1248,7 @@ def test__document__amendment16_nonpin_semantics_are_hash_bound():
 
 
 def test__document__successor_must_preserve_inherited_a16_projection():
-    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()[: a13.REVISION18_BYTE_SIZE]
     successor = raw + (
         b"\n## 31. AMENDMENT SECTION \xe2\x80\x94 Amendment 17: "
         b"synthetic successor\n\nProspective successor.\n"
