@@ -1165,7 +1165,46 @@ def _source_locators(raw_by_id: Mapping[str, bytes]) -> list[dict[str, Any]]:
     return locators
 
 
+# Repo authority rows record each cited source exactly as adjudicated.
+# The adjudication-era authoring commit was squash-merged away, but its
+# complete tree survives byte-identically in the reachable merge commit
+# below, so rows re-derive every identity from those immutable bytes
+# rather than the evolving working tree, keeping the artifact
+# byte-frozen under lawful later edits.
+ADJUDICATION_SOURCE_COMMIT = "5f1808873d6e74dff8527dc00ad5e47c9338fef9"
+
+# Ratified documents may only grow by appendment, so their adjudicated
+# bytes must remain an exact byte prefix of the current file; other
+# cited sources may lawfully change after adjudication and carry no
+# live check.
+APPEND_ONLY_AUTHORITY_PATHS = frozenset(
+    {
+        "docs/design/covered_earnings_correction.md",
+        "docs/design/first_estimates_report.md",
+    }
+)
+
+
+def _adjudicated_source_bytes(committed_path: str) -> bytes:
+    return subprocess.run(
+        ["git", "show", f"{ADJUDICATION_SOURCE_COMMIT}:{committed_path}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+
+
+def _verify_append_only_prefix(
+    committed_path: str, adjudicated: bytes, live: bytes
+) -> None:
+    if not live.startswith(adjudicated):
+        raise ValueError(
+            f"{committed_path} violates append-only authority prefix"
+        )
+
+
 def _repo_authority_locators() -> list[dict[str, Any]]:
+    raw_by_path: dict[str, bytes] = {}
     rows = []
     for (
         locator_id,
@@ -1174,16 +1213,20 @@ def _repo_authority_locators() -> list[dict[str, Any]]:
         line_end,
         description,
     ) in REPO_AUTHORITY_LOCATOR_SPECS:
-        raw = subprocess.run(
-            ["git", "show", f"HEAD:{committed_path}"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-        ).stdout
+        if committed_path not in raw_by_path:
+            raw = _adjudicated_source_bytes(committed_path)
+            if committed_path in APPEND_ONLY_AUTHORITY_PATHS:
+                _verify_append_only_prefix(
+                    committed_path,
+                    raw,
+                    (ROOT / committed_path).read_bytes(),
+                )
+            raw_by_path[committed_path] = raw
+        raw = raw_by_path[committed_path]
         lines = raw.splitlines(keepends=True)
         if not 1 <= line_start <= line_end <= len(lines):
             raise ValueError(
-                f"{locator_id} line range is outside committed repo bytes"
+                f"{locator_id} line range is outside adjudicated bytes"
             )
         byte_start = sum(map(len, lines[: line_start - 1]))
         byte_end = sum(map(len, lines[:line_end]))

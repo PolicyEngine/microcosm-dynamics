@@ -19,6 +19,12 @@
 # Preserve byte-pinned external HTML response bodies exactly.
 data/external/*.source.html binary
 
+# Locator-pinned codebook artifacts are canonical UTF-8 JSON with LF bytes.
+data/external/psid_codebook_field_evidence/*.json text eol=lf
+data/external/psid_codebook_inventory_adjudication_v1.json text eol=lf
+data/external/psid_questionnaire_dictionary_inventory_registration_required_v1.json text eol=lf
+data/external/psid_modern_job_context_raw_extraction_specs_v1.json text eol=lf
+
 # Use bd merge for beads JSONL files
 .beads/issues.jsonl merge=beads
 

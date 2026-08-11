@@ -25,6 +25,7 @@ Two tiers, mirroring the other run/floor tests:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -34,6 +35,9 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT = ROOT / "runs" / "replication_r7_sharing_v1.json"
+ARTIFACT_SHA256 = (
+    "85f7d1dfd680d7d23975046526f1972774719af302a414e02c2c9f19f53c559b"
+)
 SCRIPTS = ROOT / "scripts"
 
 REAL_DATA = Path("~/PolicyEngine/psid-data").expanduser()
@@ -83,6 +87,7 @@ def _cell(table: list[dict], status: str, sex: str) -> dict:
 # Schema and reported-not-gated framing (always runnable)
 # =====================================================================
 def test_schema_and_reported_not_gated():
+    assert hashlib.sha256(ARTIFACT.read_bytes()).hexdigest() == ARTIFACT_SHA256
     art = _artifact()
     assert art["schema_version"] == "replication_r7_sharing.v1"
     assert art["run"] == "replication_r7_sharing_v1"
@@ -140,6 +145,14 @@ def test_anchor_provenance_package_defs_and_citations():
     # descriptive provenance only and feeds no result.
     t3 = prov["table3_winners_losers_2049"]
     assert "p.19" in t3["citation"]
+    assert (
+        "adult current-law scheduled oasdi beneficiaries"
+        in t3["population"].lower()
+    )
+    assert "OASI and DI" in t3["population"]
+    assert "marital status are measured in 2049" in t3["classification_timing"]
+    assert "sex-by-marital-status" in t3["conditional_denominator"]
+    assert "Table 4 population" in t3["cohort_scope_note"]
     assert tuple(t3["bucket_order"]) == BUCKETS
     assert "source_arithmetic_note" in t3
     assert "109.1" in t3["source_arithmetic_note"]
@@ -163,10 +176,12 @@ def test_anchor_provenance_package_defs_and_citations():
     assert "p.24" in t5["citation"]
     assert t5["rows"]["all_people"] == [5.17, 4.96, 5.48, 4.79]
     # Named deltas present.
-    assert any(
-        "1943-1957" in d or "1960-1980" in d
-        for d in prov["named_population_deltas"]
-    )
+    deltas = " ".join(prov["named_population_deltas"])
+    assert "1943-1957" in deltas
+    assert "age-62 eligibility" in deltas
+    assert "OASI and DI" in deltas
+    assert "conditional on their respective" in deltas
+    assert "1960-1980 cohorts in 2049" not in deltas
 
 
 def test_study_population_and_coverage():
