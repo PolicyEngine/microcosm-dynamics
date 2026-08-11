@@ -54753,8 +54753,8 @@ three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `c72e48f1edd32aaea88f1ae3cf19122924a0a122` | 281,632 | `8eac25db8df9464f3c851572cf0772b105125b64e21a5e7b405278061a972f6c` |
-| `tests/test_validate_amendment13_execution_law.py` | `56d9b0f461f2adcc4f0813387433fc7d9402d7dd` | 53,369 | `8e13f243cacaadfef4370e40e1725c06ef8117f84a87090eab5796edf20f034f` |
+| `scripts/validate_amendment13_execution_law.py` | `4c5b98a246509923b2eabe62d4b84512703fdfe5` | 305,272 | `fcb723f60390879bb3416c1fbf1d0c17b8e062b3237cdf96d4c3f0783a610448` |
+| `tests/test_validate_amendment13_execution_law.py` | `cf614625bcefbacd2ec7fc6392a828a554a07e44` | 57,614 | `f01ca7780d07a97316fb7a364ef96249126234da747a78c2f3572b49567321fd` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
 The validator delta is limited to recognizing the exact revision-18 prefix,
