@@ -1460,7 +1460,7 @@ def test__document__amendment16_nonpin_semantics_are_hash_bound():
     )
     with pytest.raises(
         a13.LawError,
-        match="Amendment-14/15/16 document semantic projection drift",
+        match="Amendment-17 document violates immutable-prefix law",
     ):
         a13._validate_document_semantic_projection(candidate, {})
 
