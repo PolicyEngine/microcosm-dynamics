@@ -1,10 +1,10 @@
-# Populace dynamics
+# Microcosm dynamics
 
 > **Design paper:** a citable distillation of this book is published at
-> https://populace.dev/papers/dynamics (web and PDF).
+> https://microcosm.institute/papers/dynamics (web and PDF).
 
 This repository contains the design and validation program for
-`populace`'s longitudinal **Dynamics** layer — an open, scored
+**Microcosm**'s longitudinal **Dynamics** layer (repo renamed from populace-dynamics 2026-08-07; the Python package remains `populace_dynamics` pending the registered design-binding repin — see the rename issue) — an open, scored
 extension of PolicyEngine's country-agnostic microdata stack. Its
 first validation domain is U.S. Social Security, chosen because it
 forces lifetime earnings, family structure, disability, and claiming
@@ -100,6 +100,8 @@ earnings, family structure, disability, and claiming dynamics right.
 
 The main planning documents are a Quarto book in [`docs/`](docs/):
 
+- [standing benchmark wall](benchmarks/wall.md):
+  append-only cross-model validation progress tracker
 - [index.md](docs/index.md):
   executive summary, scope, and core project decisions
 - [funder-summary.md](docs/funder-summary.md):

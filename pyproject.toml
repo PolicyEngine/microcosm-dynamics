@@ -108,7 +108,6 @@ ignore = [
 # versions, at which point they must be removed.
 "scripts/select_m6_remarriage_round2.py" = ["I001"]
 "scripts/reduce_m6_remarriage_round2.py" = ["UP035"]
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"

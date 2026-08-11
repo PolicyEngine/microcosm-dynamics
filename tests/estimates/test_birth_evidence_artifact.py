@@ -67,10 +67,19 @@ def test_reducer_input_identity_matches_reviewed_branch():
 def test_context_report_sources_are_outside_historical_reducer_identity():
     assert reducer.POST_REVIEW_SOURCE_EXCLUSIONS == (
         Path("src/populace_dynamics/artifacts.py"),
+        Path("src/populace_dynamics/firms/targets.py"),
+        Path("src/populace_dynamics/data/psid_codebook_extraction.py"),
         Path("src/populace_dynamics/data/psid_covered_earnings_registry.py"),
         Path("src/populace_dynamics/data/psid_job_context.py"),
         Path("src/populace_dynamics/data/psid_job_context_registry.py"),
+        Path("src/populace_dynamics/data/psid_missing_reason_authority.py"),
         Path("src/populace_dynamics/data/psid_questionnaire_inventory.py"),
+        Path("src/populace_dynamics/data/psid_unit_authority.py"),
+        Path("src/populace_dynamics/data/psid_unit_predicate_authority.py"),
+        Path("src/populace_dynamics/data/psid_unit_title_authority.py"),
+        Path(
+            "src/populace_dynamics/data/historical_coverage_rule_validation.py"
+        ),
         Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
         Path("src/populace_dynamics/estimates/anchor_context_publication.py"),
         Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
@@ -143,9 +152,11 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
     module_paths = _repository_module_paths()
     root_module = "scripts.first_estimates_birth_evidence"
     psid_exclusions = {
+        "populace_dynamics.data.psid_codebook_extraction",
         "populace_dynamics.data.psid_covered_earnings_registry",
         "populace_dynamics.data.psid_job_context",
         "populace_dynamics.data.psid_job_context_registry",
+        "populace_dynamics.data.psid_missing_reason_authority",
         "populace_dynamics.data.psid_questionnaire_inventory",
     }
     assert root_module in module_paths

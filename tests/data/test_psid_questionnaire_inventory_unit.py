@@ -163,6 +163,25 @@ def test_required_format_pair_cannot_be_silently_omitted(tmp_path: Path):
         inventory._format_pair_for_wave(tmp_path, 2019)
 
 
+def test_codebook_authority_file_must_be_unique(tmp_path: Path):
+    with pytest.raises(
+        inventory.DictionaryDriftError,
+        match="expected exactly one codebook PDF",
+    ):
+        inventory._single_codebook_file(tmp_path)
+
+    first = tmp_path / "FAM1976_codebook.pdf"
+    first.touch()
+    assert inventory._single_codebook_file(tmp_path) == first
+
+    (tmp_path / "alternate_codebook_public.pdf").touch()
+    with pytest.raises(
+        inventory.DictionaryDriftError,
+        match="expected exactly one codebook PDF",
+    ):
+        inventory._single_codebook_file(tmp_path)
+
+
 def test_paired_dictionary_label_drift_fails_closed(tmp_path: Path):
     do_path = tmp_path / "FAM.do"
     sps_path = tmp_path / "FAM.sps"
