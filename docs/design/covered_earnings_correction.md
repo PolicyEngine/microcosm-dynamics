@@ -54832,12 +54832,23 @@ law requires it, but it is never a substitute for executing the transition.
 
 #### 31.3.3 Exact receipt and referee verification
 
-The receipt is outside the candidate bytes to avoid self-reference. Its
-`simulated_state_manifest` has exactly the following keys:
+The receipt is outside the candidate bytes to avoid self-reference. The
+receipt has exactly these six top-level keys:
 
 ~~~text
-schema_version = executed_transition_state.v1
-simulated_state_authority = NONAUTHORITY
+simulated_state_authority
+simulated_state_identity_sha256
+simulated_state_manifest
+terminal_revision
+public_oracle
+full_pinned_battery
+~~~
+
+Its `simulated_state_manifest` has exactly these seven keys:
+
+~~~text
+schema_version
+simulated_state_authority
 candidate_or_scratch_HEAD
 terminal_revision
 canonical_registry_binding
@@ -54845,38 +54856,83 @@ ordered_closure_identities
 full_pinned_battery_test_identity
 ~~~
 
-Each closure identity contains its exact path, byte count, raw SHA-256, and
-Git blob. The test identity contains its exact path, mode, Git blob, byte
-count, and raw SHA-256. The `simulated_state_identity_sha256` is SHA-256 of
-that manifest serialized as ASCII JSON with keys sorted, no insignificant
-whitespace, no nonfinite values, and one terminal LF. The receipt must record
-at least:
+The manifest's `schema_version` is exactly
+`executed_transition_state.v1`, and its `simulated_state_authority` is
+exactly `NONAUTHORITY`. Each closure identity has exactly these four keys:
 
 ~~~text
-simulated_state_authority
-simulated_state_identity_sha256
-simulated_state_manifest
-terminal_revision
-public_oracle.entrypoint
-public_oracle.executed
-public_oracle.exit_code
-public_oracle.operative_amendments
-public_oracle.simulated_state_identity_sha256
-full_pinned_battery.test_path
-full_pinned_battery.test_mode_blob_bytes_sha256
-full_pinned_battery.exact_command
-full_pinned_battery.executed
-full_pinned_battery.exit_code
-full_pinned_battery.collected_passed_failed_skipped_deselected_xfailed_xpassed
-full_pinned_battery.simulated_state_identity_sha256
+path
+raw_byte_size
+raw_sha256
+git_blob
 ~~~
 
-The two state-identity values must equal the top-level value. Each referee
-must verify the registry and closure identities, inspect both complete
-outputs, recompute the receipt byte count and raw SHA-256, and identify that
-exact receipt in the verdict. A claimed command, current-state-only run,
-oracle-only run, battery-only run, simulated-state battery bypass, or receipt
-whose outputs came from different states is unratifiable.
+The `full_pinned_battery_test_identity` has exactly these five keys:
+
+~~~text
+path
+mode
+git_blob
+raw_byte_size
+raw_sha256
+~~~
+
+The `public_oracle` object has exactly these five keys:
+
+~~~text
+entrypoint
+executed
+exit_code
+operative_amendments
+simulated_state_identity_sha256
+~~~
+
+The `full_pinned_battery` object has exactly these thirteen keys:
+
+~~~text
+executed
+exit_code
+test_path
+test_mode_blob_bytes_sha256
+exact_command
+collected
+passed
+failed
+skipped
+deselected
+xfailed
+xpassed
+simulated_state_identity_sha256
+~~~
+
+Every key set above is closed: no key may be omitted or defaulted, and no
+additional key is permitted. The following members are JSON integers, not
+booleans, and the exit codes and five nonpassing outcome counts are exactly
+zero:
+
+~~~text
+public_oracle.exit_code
+full_pinned_battery.exit_code
+full_pinned_battery.collected
+full_pinned_battery.passed
+full_pinned_battery.failed
+full_pinned_battery.skipped
+full_pinned_battery.deselected
+full_pinned_battery.xfailed
+full_pinned_battery.xpassed
+~~~
+
+The `simulated_state_identity_sha256` is SHA-256 of the manifest serialized
+as ASCII JSON with keys sorted, no insignificant whitespace, no nonfinite
+values, and one terminal LF. The two nested state-identity values must equal
+the top-level value.
+
+Each referee must verify the registry and closure identities, inspect both
+complete outputs, recompute the receipt byte count and raw SHA-256, and
+identify that exact receipt in the verdict. A claimed command,
+current-state-only run, oracle-only run, battery-only run, simulated-state
+battery bypass, or receipt whose outputs came from different states is
+unratifiable.
 
 ### 31.4 Limb III — Amendment-17 revision-18 executed transition
 
@@ -54937,8 +54993,9 @@ The first attack presents wrong independently expected domains for lawful
 revisions 16, 18, and 19. The second presents the arithmetic revision-17
 three-amendment domain as acceptable. The third presents both a focused
 one-test run and an executed green battery bound to a different state identity
-from the revision-18 oracle. Each attack is recorded only after both bypass
-variants reject.
+from the revision-18 oracle. That third name is recorded only after the
+focused-run, wrong-state, extra-receipt-key, and boolean-as-integer variants
+all reject. Those schema variants do not add a fourth inventory name.
 
 These three names are neither a fourth §29.4.7 census component nor additions
 to the A16 oracle inventory. Amendment 12's 71, Amendments 13/14's 18, and
