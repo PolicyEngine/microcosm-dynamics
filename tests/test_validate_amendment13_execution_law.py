@@ -23,6 +23,11 @@ A17_TEST_MUTATIONS = (
     "revision_general_test_revision17_accepted",
     "activation_transition_full_pinned_battery_bypassed",
 )
+A17_FULL_PINNED_BATTERY_COMMAND = (
+    "/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python "
+    "-m pytest -q tests/test_validate_amendment13_execution_law.py"
+)
+A17_FULL_PINNED_BATTERY_COLLECTED = 76
 
 
 @pytest.fixture(scope="module")
@@ -107,22 +112,78 @@ def _assert_executed_transition_evidence(evidence):
     assert set(evidence) == {
         "simulated_state_authority",
         "simulated_state_identity_sha256",
+        "simulated_state_manifest",
         "terminal_revision",
         "public_oracle",
         "full_pinned_battery",
     }
     assert evidence["simulated_state_authority"] == "NONAUTHORITY"
+    manifest = evidence["simulated_state_manifest"]
+    assert set(manifest) == {
+        "schema_version",
+        "simulated_state_authority",
+        "candidate_or_scratch_HEAD",
+        "terminal_revision",
+        "canonical_registry_binding",
+        "ordered_closure_identities",
+        "full_pinned_battery_test_identity",
+    }
+    assert manifest["schema_version"] == "executed_transition_state.v1"
+    assert manifest["simulated_state_authority"] == "NONAUTHORITY"
+    assert a13._is_lower_hex(manifest["candidate_or_scratch_HEAD"], 40)
     state_identity = evidence["simulated_state_identity_sha256"]
-    assert len(state_identity) == 64
+    assert (
+        state_identity
+        == hashlib.sha256(a13.canonical_json_bytes(manifest)).hexdigest()
+    )
     revision = evidence["terminal_revision"]
+    assert manifest["terminal_revision"] == revision
     expected = _expected_terminal_operativity_domain(revision)
+    registry_binding = a13._validate_registry_ratification_context(
+        manifest["canonical_registry_binding"]
+    )
+    assert registry_binding["revision"] == revision
+    closure_identities = manifest["ordered_closure_identities"]
+    assert all(
+        set(row) == {"path", "raw_byte_size", "raw_sha256", "git_blob"}
+        and a13._is_lower_hex(row["git_blob"], 40)
+        for row in closure_identities
+    )
+    assert [row["path"] for row in closure_identities] == [
+        row["path"] for row in registry_binding["ratification_closures"]
+    ]
+    assert [
+        {
+            "path": row["path"],
+            "raw_byte_size": row["raw_byte_size"],
+            "raw_sha256": row["raw_sha256"],
+        }
+        for row in closure_identities
+    ] == registry_binding["ratification_closures"]
+    pins = a13._parse_active_implementation_pins(
+        (ROOT / a13.DESIGN_PATH).read_bytes()
+    )
+    test_pin = next(
+        row
+        for row in pins["files"]
+        if row["path"] == "tests/test_validate_amendment13_execution_law.py"
+    )
+    assert manifest["full_pinned_battery_test_identity"] == {
+        "path": test_pin["path"],
+        "mode": pins["mode"],
+        "git_blob": test_pin["blob_oid"],
+        "raw_byte_size": test_pin["byte_size"],
+        "raw_sha256": test_pin["sha256"],
+    }
     oracle = evidence["public_oracle"]
     assert set(oracle) == {
+        "entrypoint",
         "executed",
         "exit_code",
         "operative_amendments",
         "simulated_state_identity_sha256",
     }
+    assert oracle["entrypoint"] == "validate_ratification_operativity"
     assert oracle["executed"] is True
     assert oracle["exit_code"] == 0
     assert tuple(oracle["operative_amendments"]) == expected
@@ -132,9 +193,15 @@ def _assert_executed_transition_evidence(evidence):
         "executed",
         "exit_code",
         "test_path",
+        "test_mode_blob_bytes_sha256",
+        "exact_command",
         "collected",
         "passed",
         "failed",
+        "skipped",
+        "deselected",
+        "xfailed",
+        "xpassed",
         "simulated_state_identity_sha256",
     }
     assert battery["executed"] is True
@@ -142,9 +209,21 @@ def _assert_executed_transition_evidence(evidence):
     assert battery["test_path"] == (
         "tests/test_validate_amendment13_execution_law.py"
     )
-    assert type(battery["collected"]) is int and battery["collected"] > 0
-    assert battery["passed"] == battery["collected"]
-    assert battery["failed"] == 0
+    assert (
+        battery["test_mode_blob_bytes_sha256"]
+        == manifest["full_pinned_battery_test_identity"]
+    )
+    assert battery["exact_command"] == A17_FULL_PINNED_BATTERY_COMMAND
+    assert battery["collected"] == A17_FULL_PINNED_BATTERY_COLLECTED
+    assert battery["passed"] == A17_FULL_PINNED_BATTERY_COLLECTED
+    for outcome in (
+        "failed",
+        "skipped",
+        "deselected",
+        "xfailed",
+        "xpassed",
+    ):
+        assert battery[outcome] == 0
     assert battery["simulated_state_identity_sha256"] == state_identity
 
 
@@ -160,28 +239,86 @@ def _run_amendment17_test_mutations():
         _assert_revision_general_expectation(17, (13, 14, 15))
     rejected.append(A17_TEST_MUTATIONS[1])
 
-    bypassed_evidence = {
+    pins = a13._parse_active_implementation_pins(
+        (ROOT / a13.DESIGN_PATH).read_bytes()
+    )
+    test_pin = next(
+        row
+        for row in pins["files"]
+        if row["path"] == "tests/test_validate_amendment13_execution_law.py"
+    )
+    context = _synthetic_registry_context(18)
+    closure_identities = [
+        {
+            **row,
+            "git_blob": f"{position:040x}",
+        }
+        for position, row in enumerate(
+            context["ratification_closures"], start=13
+        )
+    ]
+    manifest = {
+        "schema_version": "executed_transition_state.v1",
         "simulated_state_authority": "NONAUTHORITY",
-        "simulated_state_identity_sha256": "a" * 64,
+        "candidate_or_scratch_HEAD": "c" * 40,
+        "terminal_revision": 18,
+        "canonical_registry_binding": context,
+        "ordered_closure_identities": closure_identities,
+        "full_pinned_battery_test_identity": {
+            "path": test_pin["path"],
+            "mode": pins["mode"],
+            "git_blob": test_pin["blob_oid"],
+            "raw_byte_size": test_pin["byte_size"],
+            "raw_sha256": test_pin["sha256"],
+        },
+    }
+    state_identity = hashlib.sha256(
+        a13.canonical_json_bytes(manifest)
+    ).hexdigest()
+    complete_evidence = {
+        "simulated_state_authority": "NONAUTHORITY",
+        "simulated_state_identity_sha256": state_identity,
+        "simulated_state_manifest": manifest,
         "terminal_revision": 18,
         "public_oracle": {
+            "entrypoint": "validate_ratification_operativity",
             "executed": True,
             "exit_code": 0,
             "operative_amendments": [13, 14, 15, 16],
-            "simulated_state_identity_sha256": "a" * 64,
+            "simulated_state_identity_sha256": state_identity,
         },
         "full_pinned_battery": {
             "executed": True,
             "exit_code": 0,
             "test_path": "tests/test_validate_amendment13_execution_law.py",
-            "collected": 76,
-            "passed": 76,
+            "test_mode_blob_bytes_sha256": manifest[
+                "full_pinned_battery_test_identity"
+            ],
+            "exact_command": A17_FULL_PINNED_BATTERY_COMMAND,
+            "collected": A17_FULL_PINNED_BATTERY_COLLECTED,
+            "passed": A17_FULL_PINNED_BATTERY_COLLECTED,
             "failed": 0,
-            "simulated_state_identity_sha256": "b" * 64,
+            "skipped": 0,
+            "deselected": 0,
+            "xfailed": 0,
+            "xpassed": 0,
+            "simulated_state_identity_sha256": state_identity,
         },
     }
+    _assert_executed_transition_evidence(complete_evidence)
+
+    focused_bypass = copy.deepcopy(complete_evidence)
+    focused_bypass["full_pinned_battery"].update(
+        {"collected": 1, "passed": 1, "deselected": 75}
+    )
     with pytest.raises(AssertionError):
-        _assert_executed_transition_evidence(bypassed_evidence)
+        _assert_executed_transition_evidence(focused_bypass)
+    wrong_state_bypass = copy.deepcopy(complete_evidence)
+    wrong_state_bypass["full_pinned_battery"][
+        "simulated_state_identity_sha256"
+    ] = ("d" * 64)
+    with pytest.raises(AssertionError):
+        _assert_executed_transition_evidence(wrong_state_bypass)
     rejected.append(A17_TEST_MUTATIONS[2])
 
     rejected_tuple = tuple(rejected)

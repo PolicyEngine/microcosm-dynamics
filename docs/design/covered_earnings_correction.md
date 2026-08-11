@@ -54754,7 +54754,7 @@ three path/blob/byte/hash rows:
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
 | `scripts/validate_amendment13_execution_law.py` | `c72e48f1edd32aaea88f1ae3cf19122924a0a122` | 281,632 | `8eac25db8df9464f3c851572cf0772b105125b64e21a5e7b405278061a972f6c` |
-| `tests/test_validate_amendment13_execution_law.py` | `1438f28ed0713e12df874f6b5a8d41656d27cd0b` | 48,358 | `ed8f680fe97cb5ea8d00b76065345effb96011bb7c2daf1399e2342317de4415` |
+| `tests/test_validate_amendment13_execution_law.py` | `56d9b0f461f2adcc4f0813387433fc7d9402d7dd` | 53,369 | `8e13f243cacaadfef4370e40e1725c06ef8117f84a87090eab5796edf20f034f` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
 The validator delta is limited to recognizing the exact revision-18 prefix,
@@ -54767,6 +54767,13 @@ equality, byte count, raw SHA-256, Git blob, sanitized Git, and replacement-ref
 check survives.
 
 This is a narrow ceremony-validation bootstrap, not Amendment-17 operativity.
+Before either A17 verdict, §31.3 may select these exact proposed successor
+pins solely for the required `NONAUTHORITY` candidate-transition execution,
+but only after the referee verifies every proposed pin against candidate
+`HEAD`. That pre-ratification selection neither supersedes §30.4.1 nor permits
+any other use of unratified bytes. When a candidate does not change the pinned
+battery, §31.3 instead selects the already-active pins.
+
 After dual affirmative A17 review and the operator merge, these exact bytes
 may validate the still-pending revision-18 A15/A16 transition even though the
 public result remains exactly Amendments 13 through 16. They do not add
@@ -54807,10 +54814,13 @@ Against one identical simulated-state identity it shall execute, in order:
    with every ordinary Git, artifact, closure, design, and implementation-pin
    verification enabled, and require exit zero plus the exact post-activation
    ordered amendment domain; and
-2. the entire actively pinned
-   `tests/test_validate_amendment13_execution_law.py` battery against that
-   same simulated registry and `HEAD`, with exit zero and every collected test
-   passing.
+2. the entire selected `tests/test_validate_amendment13_execution_law.py`
+   battery against that same simulated registry and `HEAD`, with exit zero
+   and every collected test passing. The selected identity is the active pin
+   unless the candidate itself proposes a successor pin for that battery; in
+   that case it is exactly the proposed path, mode, blob, byte count, and raw
+   SHA-256 verified against candidate `HEAD` under §31.2.2's narrow
+   pre-ratification exception.
 
 Calling a private context helper, supplying a verification-off switch,
 mocking the public loader or closure validator, selecting only focused test
@@ -54822,16 +54832,31 @@ law requires it, but it is never a substitute for executing the transition.
 
 #### 31.3.3 Exact receipt and referee verification
 
-The receipt is outside the candidate bytes to avoid self-reference. It must
-record at least:
+The receipt is outside the candidate bytes to avoid self-reference. Its
+`simulated_state_manifest` has exactly the following keys:
 
 ~~~text
-simulated_state_authority
-simulated_state_identity_sha256
+schema_version = executed_transition_state.v1
+simulated_state_authority = NONAUTHORITY
 candidate_or_scratch_HEAD
 terminal_revision
 canonical_registry_binding
 ordered_closure_identities
+full_pinned_battery_test_identity
+~~~
+
+Each closure identity contains its exact path, byte count, raw SHA-256, and
+Git blob. The test identity contains its exact path, mode, Git blob, byte
+count, and raw SHA-256. The `simulated_state_identity_sha256` is SHA-256 of
+that manifest serialized as ASCII JSON with keys sorted, no insignificant
+whitespace, no nonfinite values, and one terminal LF. The receipt must record
+at least:
+
+~~~text
+simulated_state_authority
+simulated_state_identity_sha256
+simulated_state_manifest
+terminal_revision
 public_oracle.entrypoint
 public_oracle.executed
 public_oracle.exit_code
@@ -54872,8 +54897,8 @@ Its `ratification_closures` array is exactly these four rows in this order:
 |---:|---|---:|---|---|
 | 13 | `docs/analysis/amendment_13_ratification/closure_v1.json` | 842 | `fce13fc1e5e2b4026a34dab735ca36186b147260bd0a137979aa52711affabd7` | `abc1145fec35af1673e7852d77f701828e3de139` |
 | 14 | `docs/analysis/amendment_14_ratification/closure_v1.json` | 842 | `0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4` | `a13e1384d1f81d3072f7ac7af1c0fd547b9c5709` |
-| 15 | `docs/analysis/amendment_15_ratification/closure_v1.json` | 842 | `f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a` | `f2aea26b014109bc0e9bc91ad12b700670028c07` |
-| 16 | `docs/analysis/amendment_16_ratification/closure_v1.json` | 842 | `5a39ba6965504db9b72a6057f1ac32e547487947662b3528a13ba17a5bab260c` | `e5d933c48d846bfc955a729e8a78f10ccbd954a6` |
+| 15 | `docs/analysis/amendment_15_ratification/closure_v1.json` | 842 | `f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a` | `7ec67cbfa239b57e13f6b1d470c6e143a9be6f05` |
+| 16 | `docs/analysis/amendment_16_ratification/closure_v1.json` | 842 | `5a39ba6965504db9b72a6057f1ac32e547487947662b3528a13ba17a5bab260c` | `24422550fb7d1dc9c33074f2c0ac4ce0c28c6fa5` |
 
 The A15 closure binds the two exact §30.3.2 verdicts. The A16 closure binds
 the exact 3,525-byte
@@ -54889,10 +54914,11 @@ bytes and the enacted A15/A16 commit, parent, design-blob, byte, and SHA
 values; they are not trusted merely from the stopped lane.
 
 The required public output is ordered `(13, 14, 15, 16)`. The required full
-corrected battery result is every test collected from the exact §31.2.2 test
-file passing against that same revision-18 state. The Amendment-17 draft
-report and its machine-readable receipt carry the executed outputs and exact
-receipt identities. Those records are evidence for the referees; they remain
+corrected battery result is all 76 tests collected from the exact §31.2.2 test
+file passing against that same revision-18 state, with zero failed, skipped,
+deselected, xfailed, or xpassed tests. The Amendment-17 draft report and its
+machine-readable receipt carry the executed outputs and exact receipt
+identities. Those records are evidence for the referees; they remain
 nonauthority and do not instantiate the real revision-18 repin.
 
 ### 31.5 Exact mutations, supersession, and preservation
@@ -54909,9 +54935,10 @@ Its ordered canonical name-array SHA-256 is
 `b19ebcbf47278d63e12bd8021334a88910895bdfe48caf2d49c6bbe3014417e6`.
 The first attack presents wrong independently expected domains for lawful
 revisions 16, 18, and 19. The second presents the arithmetic revision-17
-three-amendment domain as acceptable. The third presents an executed, green
-battery receipt bound to a different state identity from the revision-18
-oracle. Each attack is recorded only after the assigned assertion rejects.
+three-amendment domain as acceptable. The third presents both a focused
+one-test run and an executed green battery bound to a different state identity
+from the revision-18 oracle. Each attack is recorded only after both bypass
+variants reject.
 
 These three names are neither a fourth §29.4.7 census component nor additions
 to the A16 oracle inventory. Amendment 12's 71, Amendments 13/14's 18, and
