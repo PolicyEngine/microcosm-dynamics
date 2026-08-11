@@ -108,6 +108,40 @@ def _assert_revision_general_public_result(revision, closures):
     assert tuple(closures) == _expected_terminal_operativity_domain(revision)
 
 
+def _assert_public_oracle_reaches_implementation_pin_verifier(
+    monkeypatch,
+    expected_domain,
+):
+    original_verifier = a13._verify_implementation_pins
+
+    def pin_verifier_must_raise(*args, **kwargs):
+        raise RuntimeError("PIN_VERIFIER_REACHED")
+
+    monkeypatch.setattr(
+        a13,
+        "_verify_implementation_pins",
+        pin_verifier_must_raise,
+    )
+    with pytest.raises(RuntimeError, match="PIN_VERIFIER_REACHED"):
+        a13.validate_ratification_operativity()
+
+    verifier_calls = []
+
+    def counting_verifier(pins):
+        verifier_calls.append(copy.deepcopy(pins))
+        return original_verifier(pins)
+
+    monkeypatch.setattr(
+        a13,
+        "_verify_implementation_pins",
+        counting_verifier,
+    )
+    closures = a13.validate_ratification_operativity()
+    assert tuple(closures) == expected_domain
+    assert len(verifier_calls) >= 1
+    return closures
+
+
 def _assert_executed_transition_evidence(evidence):
     assert set(evidence) == {
         "simulated_state_authority",
@@ -821,7 +855,9 @@ def test__closure__revision18_operativity_is_atomic_and_ordered():
     assert observed == [13, 14, 15, 16]
 
 
-def test__closure__revision18_combined_set_passes_generalized_oracle():
+def test__closure__revision18_combined_set_passes_generalized_oracle(
+    monkeypatch,
+):
     a13_material = _a13_closure_material()
     a14_path = ROOT / a13.A14_CLOSURE_PATH
     a14_raw = a14_path.read_bytes()
@@ -894,8 +930,22 @@ def test__closure__revision18_combined_set_passes_generalized_oracle():
     )
     assert tuple(closures) == (13, 14, 15, 16)
 
+    monkeypatch.setattr(
+        a13,
+        "_public_registry_ratification_context",
+        lambda: context,
+    )
+    monkeypatch.setattr(a13, "_validate_public_ratification_closure", validate)
+    public_closures = (
+        _assert_public_oracle_reaches_implementation_pin_verifier(
+            monkeypatch,
+            (13, 14, 15, 16),
+        )
+    )
+    assert tuple(public_closures) == (13, 14, 15, 16)
 
-def test__closure__real_public_path_adapts_at_revision16():
+
+def test__closure__real_public_path_adapts_at_revision16(monkeypatch):
     import covered_earnings_correction_registry as registry
 
     if registry.DESIGN_REVISION < 16:
@@ -914,7 +964,13 @@ def test__closure__real_public_path_adapts_at_revision16():
             a13.validate_ratification_operativity()
         return
 
-    closures = a13.validate_ratification_operativity()
+    expected_domain = _expected_terminal_operativity_domain(
+        registry.DESIGN_REVISION
+    )
+    closures = _assert_public_oracle_reaches_implementation_pin_verifier(
+        monkeypatch,
+        expected_domain,
+    )
     _assert_revision_general_public_result(registry.DESIGN_REVISION, closures)
     template = a13.build_ratification_bound_execution_template()
     assert template["status"] == a13.RATIFICATION_BOUND_TEMPLATE_STATUS

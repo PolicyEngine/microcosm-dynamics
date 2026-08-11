@@ -54705,11 +54705,14 @@ ratification obligation. Section 31.4 applies that obligation to this
 amendment's revision-18 cure. Sections 31.5–31.6 close mutations,
 supersessions, preservation, and lifecycle effect.
 
-This amendment does **not** change `_ratification_amendment_numbers`,
+This amendment changes `validate_ratification_operativity` only by requiring
+it to invoke active implementation-pin verification directly after obtaining
+the one public registry snapshot and before validating or returning the
+complete closure mapping. It does **not** otherwise change
+`_ratification_amendment_numbers`,
 `_validate_registry_ratification_context`,
-`_validate_ratification_operativity_context`,
-`validate_ratification_operativity`, the revision-17 prohibition, the
-revision-18 four-closure law, any closure or verdict schema, any registry
+`_validate_ratification_operativity_context`, the revision-17 prohibition,
+the revision-18 four-closure law, any closure or verdict schema, any registry
 value, the A15/A16 activation delta, the 100-name inherited census, the seven
 A16 oracle attacks, the 46 repair semantics, §§27.3–27.6, the census
 machinery, Q5, G17-C01, any law gap, or the Amendment-11 production stop.
@@ -54753,16 +54756,19 @@ three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `586d45439dde5c075cc1dc44f36d5bd7d7d61a77` | 305,254 | `a93c59da2a6cf50486cba5ca391204e2c7c3a2c88ff64d2c66ce804b4b683804` |
-| `tests/test_validate_amendment13_execution_law.py` | `cf614625bcefbacd2ec7fc6392a828a554a07e44` | 57,614 | `f01ca7780d07a97316fb7a364ef96249126234da747a78c2f3572b49567321fd` |
+| `scripts/validate_amendment13_execution_law.py` | `b10a4d092c1e4c7088a78f5c3068a3261804f4a3` | 305,370 | `149e655309419d2b0e990e1915cca1e99541ea859c62c206418362a52188313b` |
+| `tests/test_validate_amendment13_execution_law.py` | `223e6300eb9b378bef28aa78314dbe78af34bcba` | 59,143 | `b217deff3b3ce3768087e4e244580b79881894b0235e1664a72c9b099e40c255` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
 The validator delta is limited to recognizing the exact revision-18 prefix,
-the unique Amendment-17 boundary and table, and selecting these successor
-pins in the existing blob-bound verifier. The publisher row is byte-identical
-to §30.4.1. The validator and corrected-test rows change only because the pin
-resolver, prospective-suffix fixtures, revision-general expectation, and the
-three §31.5 attacks are in those files. Every path, mode, working-tree/`HEAD`
+the unique Amendment-17 boundary and table, selecting these successor pins in
+the existing blob-bound verifier, and requiring the public operativity
+entrypoint to execute that active verifier before it validates or returns the
+complete closure mapping. The publisher row is byte-identical to §30.4.1. The
+validator and corrected-test rows change only because the pin resolver,
+public-oracle pin-verifier reachability and its bound regression,
+prospective-suffix fixtures, revision-general expectation, and the three
+§31.5 attacks are in those files. Every path, mode, working-tree/`HEAD`
 equality, byte count, raw SHA-256, Git blob, sanitized Git, and replacement-ref
 check survives.
 
@@ -54821,6 +54827,12 @@ Against one identical simulated-state identity it shall execute, in order:
    that case it is exactly the proposed path, mode, blob, byte count, and raw
    SHA-256 verified against candidate `HEAD` under §31.2.2's narrow
    pre-ratification exception.
+
+For the first execution, the public entrypoint itself invokes the active
+implementation-pin verifier after obtaining its one registry snapshot and
+before validating or returning the complete closure mapping. Reachability
+only through a separate document-semantic validator does not satisfy this
+requirement.
 
 Calling a private context helper, supplying a verification-off switch,
 mocking the public loader or closure validator, selecting only focused test

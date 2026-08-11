@@ -872,7 +872,7 @@ A16_PYTHON_IDENTIFIERS = (
     "run_amendment16_oracle_mutation_tests",
 )
 A17_SECTION_SEMANTIC_SHA256 = (
-    "d522322f1f30256877c67b8cab02c513b4a2527c235d6f4faf3700b7a5b93fbd"
+    "b2acce3c1e42d1e58b216cb8643fdc927c741b439621ed66053a1973ac092774"
 )
 A17_REVISION_DOMAIN_RULES = (
     "permitted terminal R = 16 or any integer R >= 18",
@@ -5131,6 +5131,9 @@ def validate_ratification_operativity() -> dict[int, dict[str, Any]]:
     """Validate the exact complete closure domain under one registry snapshot."""
 
     context = _public_registry_ratification_context()
+    _verify_implementation_pins(
+        _parse_active_implementation_pins((ROOT / DESIGN_PATH).read_bytes())
+    )
     return _validate_ratification_operativity_context(
         context,
         _validate_public_ratification_closure,
