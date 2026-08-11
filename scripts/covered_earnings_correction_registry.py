@@ -16,6 +16,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import math
+import os
 import re
 import subprocess
 from collections.abc import Mapping, Sequence
@@ -27,10 +28,31 @@ import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
 BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
-DESIGN_RATIFICATION_COMMIT = "15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"
-DESIGN_REVISION = 3
+DESIGN_RATIFICATION_COMMIT = "062d74187e3263cd4a7fad3851a9b8c699a2556c"
+DESIGN_REVISION = 16
+DESIGN_BYTE_SIZE = 3_836_294
 DESIGN_BLOB_SHA256 = (
-    "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
+    "c4f3ae022d2e623f4316600e16ec3bded10f0160d197ce64e37f35015e55c92f"
+)
+AMENDMENT15_BOUNDARY = (
+    b"\n## 29. AMENDMENT SECTION \xe2\x80\x94 Amendment 15: ordered "
+    b"publication attestation and tier-2 certification\n"
+)
+RATIFICATION_CLOSURE_BINDINGS = (
+    {
+        "path": ("docs/analysis/amendment_13_ratification/closure_v1.json"),
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "fce13fc1e5e2b4026a34dab735ca36186b147260bd0a137979aa52711affabd7"
+        ),
+    },
+    {
+        "path": ("docs/analysis/amendment_14_ratification/closure_v1.json"),
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4"
+        ),
+    },
 )
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -613,50 +635,92 @@ class RegistrationAborted(RegistryValidationError):
     """Immutable authority is insufficient to emit a final registry."""
 
 
-def design_binding() -> dict[str, Any]:
-    """Return the ratified design identity."""
+def _run_git(
+    *arguments: str,
+    text: bool = False,
+) -> subprocess.CompletedProcess[bytes] | subprocess.CompletedProcess[str]:
+    """Run raw-object Git with ambient Git controls removed."""
 
-    ancestry = subprocess.run(
-        [
-            "git",
-            "merge-base",
-            "--is-ancestor",
-            BASE_DESIGN_RATIFICATION_COMMIT,
-            DESIGN_RATIFICATION_COMMIT,
-        ],
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("GIT_")
+    }
+    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+    return subprocess.run(
+        ["git", "--no-replace-objects", *arguments],
         cwd=ROOT,
         check=False,
         capture_output=True,
+        text=text,
+        env=environment,
+    )
+
+
+def _preserves_ratified_design_prefix(
+    current_bytes: bytes, ratified_bytes: bytes
+) -> bool:
+    """Accept only the exact ratified bytes or one prospective A15 suffix."""
+
+    if current_bytes == ratified_bytes:
+        return True
+    suffix = current_bytes[DESIGN_BYTE_SIZE:]
+    return (
+        len(ratified_bytes) == DESIGN_BYTE_SIZE
+        and len(current_bytes) > DESIGN_BYTE_SIZE
+        and current_bytes[:DESIGN_BYTE_SIZE] == ratified_bytes
+        and suffix.startswith(AMENDMENT15_BOUNDARY)
+        and current_bytes.count(AMENDMENT15_BOUNDARY) == 1
+        and current_bytes.endswith(b"\n")
+    )
+
+
+def design_binding() -> dict[str, Any]:
+    """Return the ratified design identity."""
+
+    ancestry = _run_git(
+        "merge-base",
+        "--is-ancestor",
+        BASE_DESIGN_RATIFICATION_COMMIT,
+        DESIGN_RATIFICATION_COMMIT,
     )
     if ancestry.returncode != 0:
         raise RegistrationAborted(
             "base design is not an ancestor of amendment-1 ratification"
         )
     worktree_bytes = (ROOT / DESIGN_PATH).read_bytes()
-    head_bytes = subprocess.run(
-        ["git", "show", f"HEAD:{DESIGN_PATH}"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-    ).stdout
-    ratified_bytes = subprocess.run(
-        ["git", "show", f"{DESIGN_RATIFICATION_COMMIT}:{DESIGN_PATH}"],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-    ).stdout
-    if not (worktree_bytes == head_bytes == ratified_bytes):
+    head = _run_git("show", f"HEAD:{DESIGN_PATH}")
+    if head.returncode != 0:
         raise RegistrationAborted(
-            "covered-earnings design differs across worktree, HEAD, and "
-            "ratification commit"
+            "covered-earnings design is unavailable from HEAD"
         )
-    if hashlib.sha256(head_bytes).hexdigest() != DESIGN_BLOB_SHA256:
+    ratified = _run_git("show", f"{DESIGN_RATIFICATION_COMMIT}:{DESIGN_PATH}")
+    if ratified.returncode != 0:
+        raise RegistrationAborted(
+            "covered-earnings design is unavailable from ratification commit"
+        )
+    head_bytes = head.stdout
+    ratified_bytes = ratified.stdout
+    if worktree_bytes != head_bytes or not _preserves_ratified_design_prefix(
+        worktree_bytes, ratified_bytes
+    ):
+        raise RegistrationAborted(
+            "covered-earnings design differs across worktree and HEAD or "
+            "violates the ratified-prefix/prospective-suffix boundary"
+        )
+    if (
+        len(ratified_bytes) != DESIGN_BYTE_SIZE
+        or hashlib.sha256(ratified_bytes).hexdigest() != DESIGN_BLOB_SHA256
+    ):
         raise RegistrationAborted("covered-earnings design blob digest drift")
     return {
         "path": DESIGN_PATH,
         "ratification_commit": DESIGN_RATIFICATION_COMMIT,
         "revision": DESIGN_REVISION,
         "blob_sha256": DESIGN_BLOB_SHA256,
+        "ratification_closures": [
+            dict(binding) for binding in RATIFICATION_CLOSURE_BINDINGS
+        ],
     }
 
 
