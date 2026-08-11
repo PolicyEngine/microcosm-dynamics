@@ -134,13 +134,20 @@ PRODUCTION_SOURCE_PATHS = (
 )
 POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/artifacts.py"),
+    Path("src/populace_dynamics/firms/targets.py"),
     # Entry-11 PSID data-layer additions are downstream source readers and
     # registries.  They are outside the reviewed birth-evidence projection
     # implementation and must not invalidate its historical identity seal.
+    Path("src/populace_dynamics/data/psid_codebook_extraction.py"),
     Path("src/populace_dynamics/data/psid_covered_earnings_registry.py"),
     Path("src/populace_dynamics/data/psid_job_context.py"),
     Path("src/populace_dynamics/data/psid_job_context_registry.py"),
+    Path("src/populace_dynamics/data/psid_missing_reason_authority.py"),
     Path("src/populace_dynamics/data/psid_questionnaire_inventory.py"),
+    Path("src/populace_dynamics/data/psid_unit_authority.py"),
+    Path("src/populace_dynamics/data/psid_unit_predicate_authority.py"),
+    Path("src/populace_dynamics/data/psid_unit_title_authority.py"),
+    Path("src/populace_dynamics/data/historical_coverage_rule_validation.py"),
     Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
     Path("src/populace_dynamics/estimates/anchor_context_publication.py"),
     Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
