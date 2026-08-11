@@ -3,7 +3,7 @@
 
 This builder starts from a fresh, in-memory reconstruction of all 81 pinned
 source documents and the operative Amendment-13/14 execution template.  It
-emits one nonauthority corpus-certification artifact only after all six
+emits one nonauthority targeted-sweep evidence artifact only after all six
 successor-era seals exist as committed, byte-exact files.  It emits no
 catalog authority, certification, Q5 input, or production output.
 """
@@ -29,6 +29,7 @@ if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
 import build_amendment12_rq_catalog_pilot as a12  # noqa: E402
+import build_amendment13_tier2_repairs as repairs  # noqa: E402
 import validate_amendment13_execution_law as a13  # noqa: E402
 
 DEFAULT_OUTPUT_ROOT = (
@@ -143,16 +144,27 @@ def _portable_path(path: Path, fallback_root: Path) -> str:
 
 
 def _git(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("GIT_")
+    }
+    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
     return subprocess.run(
         ["git", "--no-replace-objects", *args],
         cwd=ROOT,
         check=check,
         capture_output=True,
         text=True,
+        env=environment,
     )
 
 
-def _first_add_commit(path: Path) -> str:
+def _first_add_commit(
+    path: Path,
+    *,
+    attestation: Mapping[str, Any] | None = None,
+) -> str:
     _require(
         path.resolve().is_relative_to(ROOT),
         f"committed seal path is outside repository: {path}",
@@ -187,6 +199,14 @@ def _first_add_commit(path: Path) -> str:
         reachable.returncode == 0,
         f"successor seal first-add is not reachable from HEAD: {relative}",
     )
+    if commit == repairs.TIER2_SQUASH_COMMIT:
+        if attestation is None:
+            attestation = repairs.validate_ordered_ceremony_attestation(
+                repo_root=ROOT
+            )
+        return repairs._attested_order_commit_for_squashed_first_add(
+            Path(relative), commit, attestation
+        )
     return commit
 
 
@@ -256,6 +276,7 @@ def _load_successor_seal_bindings(
     seal_root: Path,
     *,
     verify_git: bool,
+    attestation: Mapping[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     expected_rows = execution_law["successor_era_seal_rows"]
     _require(
@@ -291,7 +312,11 @@ def _load_successor_seal_bindings(
             value == expected,
             f"successor seal differs from operative law: {path}",
         )
-        first_add_commit = _first_add_commit(path) if verify_git else None
+        first_add_commit = (
+            _first_add_commit(path, attestation=attestation)
+            if verify_git
+            else None
+        )
         bindings.append(
             {
                 "era_order_position": expected["era_order_position"],
@@ -701,12 +726,20 @@ def build_artifact(
     verify_git: bool = True,
 ) -> dict[str, Any]:
     """Build one source-derived, ratification-bound targeted-sweep object."""
+    attestation = (
+        repairs.validate_ordered_ceremony_attestation(repo_root=ROOT)
+        if verify_git
+        else None
+    )
     documents, bundle = _source_rebuild(source_root)
     execution_law = a13.build_ratification_bound_execution_template()
     sweep = bundle["sweeps"]
     ledger_rows = sweep["alias_evidence_semantic_adjudication_rows"]
     seal_bindings = _load_successor_seal_bindings(
-        execution_law, seal_root, verify_git=verify_git
+        execution_law,
+        seal_root,
+        verify_git=verify_git,
+        attestation=attestation,
     )
     document_positions = [document.position for document in documents]
     continuation = _build_continuation_sweep(ledger_rows, execution_law)
@@ -1244,7 +1277,8 @@ def _write_artifact(artifact: Mapping[str, Any], output_root: Path) -> Path:
 
 
 def _check_git_order(artifact: Mapping[str, Any], output_path: Path) -> None:
-    evidence_commit = _first_add_commit(output_path)
+    attestation = repairs.validate_ordered_ceremony_attestation(repo_root=ROOT)
+    evidence_commit = _first_add_commit(output_path, attestation=attestation)
     head = _git("rev-parse", "HEAD").stdout.strip()
     for row in artifact["successor_seal_bindings"]:
         commit = row["first_add_commit"]
@@ -1256,10 +1290,11 @@ def _check_git_order(artifact: Mapping[str, Any], output_path: Path) -> None:
             evidence_commit,
             f"seal {row['era_order_position']} before sweep evidence",
         )
+    if head != repairs.TIER2_SQUASH_COMMIT:
         _require_strict_ancestor(
-            commit,
+            repairs.TIER2_SQUASH_COMMIT,
             head,
-            f"seal {row['era_order_position']} before check HEAD",
+            "tier-2 squash publication before check HEAD",
         )
 
 

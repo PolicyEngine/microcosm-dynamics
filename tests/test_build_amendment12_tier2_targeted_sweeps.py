@@ -220,6 +220,23 @@ def test__committed_seal_gate__rejects_untracked_fixture(tmp_path):
         )
 
 
+def test__live_ordered_attestation__replays_committed_sweep():
+    law = a13.build_ratification_bound_execution_template()
+    attestation = sweeps.repairs.validate_ordered_ceremony_attestation()
+    rows = sweeps._load_successor_seal_bindings(
+        law,
+        sweeps.DEFAULT_SUCCESSOR_SEAL_ROOT,
+        verify_git=True,
+        attestation=attestation,
+    )
+    assert {row["first_add_commit"] for row in rows} == {
+        sweeps.repairs.ORDERED_CEREMONY_SEAL_COMMIT
+    }
+    output_path = sweeps.DEFAULT_OUTPUT_ROOT / sweeps.OUTPUT_FILENAME
+    committed = sweeps._load_artifact(output_path)
+    sweeps._check_git_order(committed, output_path)
+
+
 def _mutation_certification(value):
     value["lifecycle"]["certification_emitted"] = True
 
