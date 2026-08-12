@@ -1393,15 +1393,15 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
     # unconditionally, so a coherent wrong repin cannot satisfy either
     # leg below. An in-flight append-only amendment lawfully extends
     # the design past the pinned ratification blob. The narrow
-    # prospective-suffix rule retains the revision-16 binding only when
+    # prospective-suffix rule retains the revision-18 binding only when
     # the ratified bytes survive as the exact prefix of byte-identical
     # worktree and HEAD copies.
     expected_binding = {
         "path": "docs/design/covered_earnings_correction.md",
-        "ratification_commit": "062d74187e3263cd4a7fad3851a9b8c699a2556c",
-        "revision": 16,
+        "ratification_commit": "60289833febdf88cb9d8977ac1282a0f4b97b278",
+        "revision": 18,
         "blob_sha256": (
-            "c4f3ae022d2e623f4316600e16ec3bded10f0160d197ce64e37f35015e55c92f"
+            "17a4bc2b48bd48039ce0777dd22f265eff156fe2484efd6c7b106c5c642dd1b6"
         ),
         "ratification_closures": [
             {
@@ -1422,6 +1422,26 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
                 "raw_byte_size": 842,
                 "raw_sha256": (
                     "0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4"
+                ),
+            },
+            {
+                "path": (
+                    "docs/analysis/amendment_15_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": 842,
+                "raw_sha256": (
+                    "f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a"
+                ),
+            },
+            {
+                "path": (
+                    "docs/analysis/amendment_16_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": 842,
+                "raw_sha256": (
+                    "5a39ba6965504db9b72a6057f1ac32e547487947662b3528a13ba17a5bab260c"
                 ),
             },
         ],
@@ -1513,10 +1533,10 @@ def test__design_binding__prospective_suffix_is_exactly_scoped():
         b"x" + current_bytes[1:], ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        ratified_bytes + b"\n## 29. wrong boundary\n", ratified_bytes
+        ratified_bytes + b"\n## 31. wrong boundary\n", ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        current_bytes + registry.AMENDMENT15_BOUNDARY, ratified_bytes
+        current_bytes + registry.AMENDMENT17_BOUNDARY, ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
         current_bytes.removesuffix(b"\n"), ratified_bytes
