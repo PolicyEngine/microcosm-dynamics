@@ -1,0 +1,27 @@
+{
+  "artifact": "tenure_floors_v1.json",
+  "status": "SOURCE_INPUT_DIGESTS",
+  "source_inputs": [
+    {
+      "year": "2020",
+      "path": "jan20pub.csv",
+      "sha256": "ab0383891ed4e953128e55692d03c7731c2963de7356abf83d872b1a3fcf5af5",
+      "bytes": 187155717,
+      "official_url": "https://www2.census.gov/programs-surveys/cps/datasets/2020/supp/jan20pub.csv"
+    },
+    {
+      "year": "2022",
+      "path": "jan22pub.csv",
+      "sha256": "f09bd072084b00dc10f8336cf8ee3f35e6673a4d5827155183f33923ccce96c8",
+      "bytes": 172630423,
+      "official_url": "https://www2.census.gov/programs-surveys/cps/datasets/2022/supp/jan22pub.csv"
+    },
+    {
+      "year": "2024",
+      "path": "jan24pub.csv",
+      "sha256": "ae0141ebe5f8255421e7e6c7cd1179caaf84e60a4297a58d8deddde32895771d",
+      "bytes": 171536589,
+      "official_url": "https://www2.census.gov/programs-surveys/cps/datasets/2024/supp/jan24pub.csv"
+    }
+  ]
+}
