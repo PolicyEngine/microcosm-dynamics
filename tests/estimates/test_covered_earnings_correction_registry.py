@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import subprocess
 import sys
 from pathlib import Path
 
@@ -1384,12 +1386,138 @@ def test__verified_role_specs__remain_exact_and_value_independent():
         registry.role_for_year(True)
 
 
-def test__design_binding__proves_head_and_ratification_blob_identity():
-    assert registry.design_binding() == {
+def test__design_binding__proves_head_and_ratification_blob_identity(
+    monkeypatch,
+):
+    # The registry constants are asserted against these pinned values
+    # unconditionally, so a coherent wrong repin cannot satisfy either
+    # leg below. An in-flight append-only amendment lawfully extends
+    # the design past the pinned ratification blob. The narrow
+    # prospective-suffix rule retains the revision-16 binding only when
+    # the ratified bytes survive as the exact prefix of byte-identical
+    # worktree and HEAD copies.
+    expected_binding = {
         "path": "docs/design/covered_earnings_correction.md",
-        "ratification_commit": ("15e3ca57eb92d8385e7ec893e60c460fad1f3a6e"),
-        "revision": 3,
+        "ratification_commit": "062d74187e3263cd4a7fad3851a9b8c699a2556c",
+        "revision": 16,
         "blob_sha256": (
-            "f882ea1d67a6d4991838d7b3a40120347d4b1cbb882de796f5d42be1acb40cd7"
+            "c4f3ae022d2e623f4316600e16ec3bded10f0160d197ce64e37f35015e55c92f"
         ),
+        "ratification_closures": [
+            {
+                "path": (
+                    "docs/analysis/amendment_13_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": 842,
+                "raw_sha256": (
+                    "fce13fc1e5e2b4026a34dab735ca36186b147260bd0a137979aa52711affabd7"
+                ),
+            },
+            {
+                "path": (
+                    "docs/analysis/amendment_14_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": 842,
+                "raw_sha256": (
+                    "0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4"
+                ),
+            },
+        ],
     }
+    assert {
+        "path": registry.DESIGN_PATH,
+        "ratification_commit": registry.DESIGN_RATIFICATION_COMMIT,
+        "revision": registry.DESIGN_REVISION,
+        "blob_sha256": registry.DESIGN_BLOB_SHA256,
+        "ratification_closures": [
+            dict(binding) for binding in registry.RATIFICATION_CLOSURE_BINDINGS
+        ],
+    } == expected_binding
+    ratified_bytes = subprocess.run(
+        [
+            "git",
+            "show",
+            f"{expected_binding['ratification_commit']}:"
+            f"{expected_binding['path']}",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    assert (
+        hashlib.sha256(ratified_bytes).hexdigest()
+        == expected_binding["blob_sha256"]
+    )
+    for closure_binding in expected_binding["ratification_closures"]:
+        closure_bytes = (ROOT / closure_binding["path"]).read_bytes()
+        assert len(closure_bytes) == closure_binding["raw_byte_size"]
+        assert (
+            hashlib.sha256(closure_bytes).hexdigest()
+            == closure_binding["raw_sha256"]
+        )
+        closure_head_bytes = subprocess.run(
+            ["git", "show", f"HEAD:{closure_binding['path']}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        assert closure_head_bytes == closure_bytes
+    worktree_bytes = (ROOT / expected_binding["path"]).read_bytes()
+    head_bytes = subprocess.run(
+        ["git", "show", f"HEAD:{expected_binding['path']}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    if worktree_bytes == ratified_bytes:
+        monkeypatch.setenv("GIT_DIR", str(ROOT / "nonexistent-git-dir"))
+        monkeypatch.setenv(
+            "GIT_WORK_TREE", str(ROOT / "nonexistent-git-work-tree")
+        )
+        monkeypatch.setenv("GIT_NO_REPLACE_OBJECTS", "0")
+        assert registry.design_binding() == expected_binding
+    else:
+        assert worktree_bytes == head_bytes
+        assert worktree_bytes.startswith(ratified_bytes)
+        assert len(worktree_bytes) > len(ratified_bytes)
+        monkeypatch.setenv("GIT_DIR", str(ROOT / "nonexistent-git-dir"))
+        monkeypatch.setenv(
+            "GIT_WORK_TREE", str(ROOT / "nonexistent-git-work-tree")
+        )
+        monkeypatch.setenv("GIT_NO_REPLACE_OBJECTS", "0")
+        assert registry.design_binding() == expected_binding
+
+
+def test__design_binding__prospective_suffix_is_exactly_scoped():
+    ratified_bytes = subprocess.run(
+        [
+            "git",
+            "show",
+            f"{registry.DESIGN_RATIFICATION_COMMIT}:{registry.DESIGN_PATH}",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    current_bytes = (ROOT / registry.DESIGN_PATH).read_bytes()
+
+    assert registry._preserves_ratified_design_prefix(
+        ratified_bytes, ratified_bytes
+    )
+    assert registry._preserves_ratified_design_prefix(
+        current_bytes, ratified_bytes
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        b"x" + current_bytes[1:], ratified_bytes
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        ratified_bytes + b"\n## 29. wrong boundary\n", ratified_bytes
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        current_bytes + registry.AMENDMENT15_BOUNDARY, ratified_bytes
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        current_bytes.removesuffix(b"\n"), ratified_bytes
+    )

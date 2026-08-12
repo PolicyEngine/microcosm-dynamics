@@ -219,9 +219,89 @@
    "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
    "p50": "2026-08-04",
    "p80": "2026-08-08",
-   "status": "open",
+   "status": "superseded",
    "supersedes": 12,
    "revision_reason": "Two referee rulings added mandatory ceremonies to the path: (1) no lawful registration exists with zero registrable calibration rows, so Amendment 2 (fitting-free path) must ratify first (drafted; in referee rounds); (2) the ratified inventory law admits no narrowed PSID inventory, so the complete 43-wave codebook authentication/extraction ceremony is required before unit-3 registration (codebook PDFs are staged locally, bounding the work). p50 moves two days.",
+   "resolution": null,
+   "superseded_by": [
+    14
+   ]
+  },
+  {
+   "id": 14,
+   "registered_at": "2026-08-01T03:30:00Z",
+   "forecaster": "claude-fable-5 (session orchestrator)",
+   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+   "p50": "2026-08-06",
+   "p80": "2026-08-10",
+   "status": "superseded",
+   "supersedes": 13,
+   "revision_reason": "Material evidence from three completed units after Amendment-2 ratification (merged 2026-07-31). (1) The prerequisite-registry lane proved all nine crosswalk registries foreign-key the official PSID inventory, which the operative source adjudication declares not emitted, so registries cannot precede a source repin. (2) The questionnaire-extraction unit (merged, referee-confirmed SHIP) closed the V-B5 and V-B8 evidentiary residuals entirely but left one genuine V-B6 residual: no document among the 456 captured questionnaire/procedures volumes supplies the exact allocation from V4901-V4906 secondary-job components to the annual V4379/V5289/V5788 wife labor-income totals, confirmed by two independent corpus-wide sweeps. (3) The design's own registration truth table aborts the fitting-free witness while any V-B row fails, so resolution now requires: an outside-corpus evidence hunt for the allocation rule, a prospectively-replacing source-identity amendment (Amendment 3, drafting), its ratification and registry repin, the nine prerequisite registries with separate reviews, the crosswalk commit ceremony, the value-blind registrability adjudication, and the A1/A3 capture ceremony before registration and the sealed run. p50 moves two days on the amendment-and-registries stack; the p80 tail carries the risk that the allocation rule is unrecoverable outside the corpus and the V-B6 requirement needs its own ratified revision.",
+   "resolution": null,
+   "superseded_by": [
+    15
+   ]
+  },
+  {
+   "id": 15,
+   "registered_at": "2026-08-02T16:15:00Z",
+   "forecaster": "claude-fable-5 (session orchestrator)",
+   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+   "p50": "2026-08-10",
+   "p80": "2026-08-14",
+   "status": "superseded",
+   "supersedes": 14,
+   "revision_reason": "Material evidence from the amendment cascade and the measured R_Q scale wall, all landed after entry 14 registered. (1) Four further design amendments proved necessary and were ratified through adversarial rounds: A3 (successor V-B source identity + comparator census, revision 5), A4 (V-B6 inclusive-total fact revision, revision 6), A5 (consolidated legal schema and official-inventory dispositions, five rounds, revision 7), and A6 (fixed-width missing-token grammar completion, four rounds, revision 8, merged 2026-08-02 via #356/#358) whose ratified totality census maps all 89,599 inventory fields with total literal registration. (2) A5's schema law requires ONE global six-era 43-wave Q5 annotation artifact; stage 1 sealed 469,198 candidate review rows over 81 questionnaire documents and the per-document annotation factory has sealed 12 of 81 with a measured cadence of ~12 documents/day on three lanes, putting corpus completion near 2026-08-05 with era seals, the global catalog, reverse-cover, and independent reconstruction review behind it. (3) The legal-registry lane (merged #357) narrowed six source gaps to two, both still registration-blocking until captured (Section 218 instrument universe, inventory-gated; base determinations 1975-77 and 1982-89). (4) Official-inventory emission became lawful only with revision 8 and its first attempt is in flight. The remaining chain - inventory, nine crosswalk registries, the single-add crosswalk ceremony, value-blind registrability adjudication, capture ceremony, fresh registration, sealed run, publication - sits behind the R_Q long pole, moving p50 from 2026-08-06 to 2026-08-10.",
+   "resolution": null,
+   "superseded_by": [
+    16
+   ]
+  },
+  {
+   "id": 16,
+   "registered_at": "2026-08-07T18:09:00Z",
+   "forecaster": "claude-fable-5 (session orchestrator)",
+   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+   "p50": "2026-08-14",
+   "p80": "2026-08-20",
+   "status": "superseded",
+   "supersedes": 15,
+   "revision_reason": "Material evidence from the continued amendment cascade, the stage-4 fail-closed discovery, and lane capacity, all landed after entry 15 registered (2026-08-02). (1) Five further design amendments proved necessary and were ratified through adversarial referee rounds: A7 (consumption-boundary law, revision 9, #360/#361), A8 (analytic range partitions, revision 10, #363/#364), A9 (arm-ambiguous serializability, revision 11, merged 2026-08-03 via #365/#366), A10 (unit authority, revision 12, merged 2026-08-05 via #368/#369), and A11 (missing-reason authority, revision 13, merged 2026-08-06 via #370/#371); the 81-document corpus is fully sealed with six era consolidations. (2) The stage-4 disposition pass then failed closed (report 2026-08-05), surfacing repeat-instruction semantics outside the ratified laws; Amendment 12 was chartered the same day and through four completed adversarial rounds plus five fix cycles (2026-08-05 through 2026-08-07) grew into a full repeat-encounter law — a five-arm partition with an explicit continuation rule, typed pairwise decomposition of composite instructions, and a semantic-ledger-only gate to the alias arm. Round 5, the ratification attempt, is in flight at registration time. (3) The Amendment 12 charter adopted a two-tier protocol — pilot-slice lawmaking followed by full-corpus tier-2 certification — inserting a corpus-wide repair pass (tier-2 repair total currently measured at 46 = 36 + 10 at the fifth fix cycle) between ratification and the stage-5+ chain that entry 15's dates assumed would follow stage 4 directly. (4) Lane capacity collapsed across the window: travel-window process kills on 2026-08-05/06 and weekly usage caps left three of four Codex lanes capped or unauthenticated as of 2026-08-07 (stated resets 2026-08-10 through 2026-08-11), with a single live lane carrying both round-5 referees. Remaining chain to the criterion: A12 ratification and revision-14 repin, tier-2 certification, H/O_H reverse-cover, reconstruction review, Q5, official inventory, crosswalks, adjudication, capture, gate registration, the sealed one-shot run, and the publication PR. p50 moves 2026-08-10 to 2026-08-14; p80 2026-08-14 to 2026-08-20.",
+   "resolution": null,
+   "superseded_by": [
+    17
+   ]
+  },
+  {
+   "id": 17,
+   "registered_at": "2026-08-09T11:13:00Z",
+   "forecaster": "claude-fable-5 (session orchestrator)",
+   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+   "p50": "2026-08-17",
+   "p80": "2026-08-23",
+   "status": "superseded",
+   "supersedes": 16,
+   "revision_reason": "Material evidence landed after entry 16 registered (2026-08-07). (1) The tier-2 execution chain required two further ratified amendments: A13 (tier-2 execution law: terminal successor status for the 28 incompatible proof rows, fragment disclosure/composition law, blob-bound ratification identity; ratified 2026-08-08, merged #377, revision 15 via #378 after a squash-orphan incident cured by #379) and A14 (operative-convention scope correction replacing A13's self-blocking external-PKI recording machinery with the codified dual-RATIFY + committed-verdict + closure convention; operator-authorized, ratified and merged #380, revision 16 + operative closures via #381). (2) Tier-2 A12-T2-R03 then executed the complete reseal obligation on 2026-08-09 — exactly 46 repairs with 46 supersession edges, all six successor era seals, corpus-exhaustive sweeps over all 81 documents with zero unexplained hits, 89/89 mutations — but the certification PR #382 was squash-merged, collapsing the enacted §27.2.3 cl.3-5 first-add ordering (overlays strictly before seals strictly before evidence) into one commit: master's Tests now fail (test__live_git_order__validates_before_and_after_publication, 'an overlay first-add is not a strict ancestor of its era seal') and the cure is underdetermined under current law because first-add history is immutable and the validator requires at most one add-commit per path. Amendment 15 is drafting to enact the ordered-ceremony-branch attestation cure (the true ordered history is preserved at ceremony-archive/a12-tier2-r03-ordered, tip tree byte-identical to the squash tree), a merge-mode law, and the tier-2 certification schema. All PRs are blocked on the red master until it lands. (3) A section-cited endgame mapping against the revision-16 design established that roughly 17-18 macro gates remain between the current state and this entry's criterion, including the full tier-2 step-5 source build (H, O_H, reverse covers, dispositions, catalogs, executable R_Q), the A12-T2-R05 dual-adversarial reconstruction certification, the R06 rerun reproducing the Amendment 11 abort, and — dominating the remaining schedule — the separately ratified source-authority and lifecycle successor program the design requires before Q5 (SS25.10.2, SS26.10.3): authenticated separately registered source-backed evidence covering 524,538 literals without disposition authority plus 37,283 structural-null ranges, a total no-default disposition/reason law, and rebuilt terminal/storage facts, gates, comparator closure, and lifecycle. (4) No entry-criterion validator or ceremony runner is implemented yet; the design names runner scripts that do not exist in the tree. p50 moves 2026-08-14 to 2026-08-17; p80 2026-08-20 to 2026-08-23.",
+   "resolution": null,
+   "superseded_by": [
+    18
+   ]
+  },
+  {
+   "id": 18,
+   "registered_at": "2026-08-11T18:40:00Z",
+   "forecaster": "claude-fable-5 (session orchestrator)",
+   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+   "p50": "2026-09-08",
+   "p80": "2026-09-22",
+   "status": "open",
+   "supersedes": 17,
+   "revision_reason": "Material evidence landed after entry 17 registered (2026-08-09), dominated by the forecast-deciding Amendment 11 convention-probe verdict of 2026-08-11. (1) The probe, executed read-only against the authenticated corpus pinned at master 60289833 (43 codebook PDFs plus 4 official Stata/SPSS setup files, 114,875,090 bytes, zero hash mismatches), found NO broad official PSID missing-data convention: the only authenticated semantic convention is the 2021 CATI note (Don't Know and NA/Refused indistinguishable for CATI cases), explicitly bound by 12 variables in the 2021 family codebook plus 12 variable-local 2023 row statements whose referenced global note (ER82001) is absent from the 2023 codebook; the four setup files declare no missing-value machinery at all (no Stata mvdecode/extended missing, no SPSS MISSING VALUES); and lexeme-only rules are provably unsound (codes 8 and 9 recur as August and September in date fields; a lexeme-level Boolean commits at least 22,849 minimal modal errors, with 4,062 conflicts inside the top-100 pair slice alone). Strict declared-scope coverage of the 524,538 unresolved literal occurrences under the Amendment 11 missing-reason relation is 48 occurrences (0.009%); a deliberately generous whole-2021-wave sensitivity still covers only 10,255 (2.0%), leaving residuals of 524,490 and 514,283 occurrences respectively across 50,105 distinct (lexeme, meaning) pair families, 31,781 of them singletons. A NONAUTHORITY shadow-run of both candidate maps through the registered fixture law reproduced the Amendment 11 relation-level abort (incomplete_missing_reason_authority) with zero settled outputs. (2) Consequence: the one-amendment-plus-sweeps completion that entry 17's dates could still accommodate is foreclosed. Clearing the Amendment 11 production stop - the gate ahead of reconstruction, Q5, official inventory, V-B6, and publication - requires a multi-lane evidence campaign (additional official manuals and scoped series rules where they exist, plus an occurrence-local residual adjudication ledger for the remainder) consolidated into a single controlling successor amendment (A18, revision 20). (3) The activation chain also lengthened by two ceremonies entry 17 did not price: Amendment 16 (generalized ratification oracle - amendment N maps to revision N+2, closure domain range(13, R-1), atomic revision-18 bootstrap activating A15+A16 together; ratified on a round-1 dual RATIFY and merged 2026-08-10 via #385) and Amendment 17 (test-pin activation cure plus the executed-transition rule, required because an A16-pinned test still hardcoded the {13,14} closure set and blocked the revision-18 repin; round-1 dual REWRITE, fix-1 landed 2026-08-11 at 4de9944, round-2 re-review dispatching at registration time). The revision-18 repin, tier-2 R04/R05/R06 certification stages, and the tier-2 step-5 full source build all remain ahead of the evidence campaign itself, and the endgame mapping still counts roughly 13 state-transition groups to this entry's criterion, with every stage to date having added at least one unplanned ceremony. p50 moves 2026-08-17 to 2026-09-08; p80 2026-08-23 to 2026-09-22.",
    "resolution": null
   }
  ]

@@ -1,0 +1,525 @@
+{
+  "rows": {
+    "ssa_4b7_all_workers_share_100000_119999": {
+      "header": "100,000-119,999",
+      "observations": [
+        {
+          "denominator_thousands": 157041,
+          "numerator_thousands": 4363,
+          "share": 0.027782553600652057,
+          "year": 2015
+        },
+        {
+          "denominator_thousands": 159539,
+          "numerator_thousands": 4502,
+          "share": 0.028218805433154276,
+          "year": 2016
+        },
+        {
+          "denominator_thousands": 161452,
+          "numerator_thousands": 4948,
+          "share": 0.030646879567921115,
+          "year": 2017
+        },
+        {
+          "denominator_thousands": 163589,
+          "numerator_thousands": 5314,
+          "share": 0.03248384671340983,
+          "year": 2018
+        },
+        {
+          "denominator_thousands": 165250,
+          "numerator_thousands": 5631,
+          "share": 0.03407564296520424,
+          "year": 2019
+        },
+        {
+          "denominator_thousands": 163764,
+          "numerator_thousands": 5839,
+          "share": 0.035654966903592974,
+          "year": 2020
+        },
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 6405,
+          "share": 0.03888440313503603,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 7194,
+          "share": 0.04269968364009758,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 8
+    },
+    "ssa_4b7_all_workers_share_10000_19999": {
+      "header": "10,000-19,999",
+      "observations": [
+        {
+          "denominator_thousands": 157041,
+          "numerator_thousands": 24098,
+          "share": 0.15345037283257237,
+          "year": 2015
+        },
+        {
+          "denominator_thousands": 159539,
+          "numerator_thousands": 23843,
+          "share": 0.1494493509424028,
+          "year": 2016
+        },
+        {
+          "denominator_thousands": 161452,
+          "numerator_thousands": 23394,
+          "share": 0.14489755469117757,
+          "year": 2017
+        },
+        {
+          "denominator_thousands": 163589,
+          "numerator_thousands": 22763,
+          "share": 0.13914749769238763,
+          "year": 2018
+        },
+        {
+          "denominator_thousands": 165250,
+          "numerator_thousands": 22014,
+          "share": 0.13321633888048412,
+          "year": 2019
+        },
+        {
+          "denominator_thousands": 163764,
+          "numerator_thousands": 21203,
+          "share": 0.12947290002686793,
+          "year": 2020
+        },
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 19630,
+          "share": 0.11917265160667562,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 18838,
+          "share": 0.11181215463054743,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 3
+    },
+    "ssa_4b7_all_workers_share_120000_139999": {
+      "header": "120,000-139,999",
+      "observations": [
+        {
+          "denominator_thousands": 161452,
+          "numerator_thousands": 1390,
+          "share": 0.008609369967544533,
+          "year": 2017
+        },
+        {
+          "denominator_thousands": 163589,
+          "numerator_thousands": 1726,
+          "share": 0.010550831657385277,
+          "year": 2018
+        },
+        {
+          "denominator_thousands": 165250,
+          "numerator_thousands": 2628,
+          "share": 0.01590317700453858,
+          "year": 2019
+        },
+        {
+          "denominator_thousands": 163764,
+          "numerator_thousands": 3512,
+          "share": 0.021445494736327887,
+          "year": 2020
+        },
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 4117,
+          "share": 0.02499408082856258,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 4715,
+          "share": 0.027985683675710325,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 9
+    },
+    "ssa_4b7_all_workers_share_140000_149999": {
+      "header": "140,000-149,999",
+      "observations": [
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 575,
+          "share": 0.0034907934118104163,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 1382,
+          "share": 0.008202802723188053,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 10
+    },
+    "ssa_4b7_all_workers_share_150000_160199": {
+      "header": "150,000-160,199",
+      "observations": [
+        {
+          "denominator_thousands": 170248,
+          "numerator_thousands": 1757,
+          "share": 0.010320238710586908,
+          "year": 2023
+        }
+      ],
+      "one_based_data_column": 11
+    },
+    "ssa_4b7_all_workers_share_1_9999": {
+      "header": "1-9,999",
+      "observations": [
+        {
+          "denominator_thousands": 157041,
+          "numerator_thousands": 33419,
+          "share": 0.21280429951413962,
+          "year": 2015
+        },
+        {
+          "denominator_thousands": 159539,
+          "numerator_thousands": 33148,
+          "share": 0.20777364782278943,
+          "year": 2016
+        },
+        {
+          "denominator_thousands": 161452,
+          "numerator_thousands": 32558,
+          "share": 0.20165745856353592,
+          "year": 2017
+        },
+        {
+          "denominator_thousands": 163589,
+          "numerator_thousands": 31639,
+          "share": 0.19340542457011167,
+          "year": 2018
+        },
+        {
+          "denominator_thousands": 165250,
+          "numerator_thousands": 30616,
+          "share": 0.18527080181543115,
+          "year": 2019
+        },
+        {
+          "denominator_thousands": 163764,
+          "numerator_thousands": 32942,
+          "share": 0.20115532107178624,
+          "year": 2020
+        },
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 29503,
+          "share": 0.17911109222372648,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 26984,
+          "share": 0.16016239412627092,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 2
+    },
+    "ssa_4b7_all_workers_share_20000_39999": {
+      "header": "20,000-39,999",
+      "observations": [
+        {
+          "denominator_thousands": 157041,
+          "numerator_thousands": 39182,
+          "share": 0.24950172248011665,
+          "year": 2015
+        },
+        {
+          "denominator_thousands": 159539,
+          "numerator_thousands": 40103,
+          "share": 0.2513680040617028,
+          "year": 2016
+        },
+        {
+          "denominator_thousands": 161452,
+          "numerator_thousands": 40218,
+          "share": 0.2491019002551842,
+          "year": 2017
+        },
+        {
+          "denominator_thousands": 163589,
+          "numerator_thousands": 40525,
+          "share": 0.2477244802523397,
+          "year": 2018
+        },
+        {
+          "denominator_thousands": 165250,
+          "numerator_thousands": 40578,
+          "share": 0.2455552193645991,
+          "year": 2019
+        },
+        {
+          "denominator_thousands": 163764,
+          "numerator_thousands": 37168,
+          "share": 0.22696074839403044,
+          "year": 2020
+        },
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 37298,
+          "share": 0.22643410899774769,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 36607,
+          "share": 0.21727930483917876,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 4
+    },
+    "ssa_4b7_all_workers_share_40000_59999": {
+      "header": "40,000-59,999",
+      "observations": [
+        {
+          "denominator_thousands": 157041,
+          "numerator_thousands": 24647,
+          "share": 0.15694627517654625,
+          "year": 2015
+        },
+        {
+          "denominator_thousands": 159539,
+          "numerator_thousands": 25426,
+          "share": 0.15937168968089307,
+          "year": 2016
+        },
+        {
+          "denominator_thousands": 161452,
+          "numerator_thousands": 26142,
+          "share": 0.1619180933032728,
+          "year": 2017
+        },
+        {
+          "denominator_thousands": 163589,
+          "numerator_thousands": 26915,
+          "share": 0.1645281773224361,
+          "year": 2018
+        },
+        {
+          "denominator_thousands": 165250,
+          "numerator_thousands": 27671,
+          "share": 0.16744931921331316,
+          "year": 2019
+        },
+        {
+          "denominator_thousands": 163764,
+          "numerator_thousands": 26852,
+          "share": 0.16396766078014705,
+          "year": 2020
+        },
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 28305,
+          "share": 0.17183810003703276,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 29981,
+          "share": 0.17795096124739582,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 5
+    },
+    "ssa_4b7_all_workers_share_60000_79999": {
+      "header": "60,000-79,999",
+      "observations": [
+        {
+          "denominator_thousands": 157041,
+          "numerator_thousands": 13700,
+          "share": 0.0872383645035373,
+          "year": 2015
+        },
+        {
+          "denominator_thousands": 159539,
+          "numerator_thousands": 14128,
+          "share": 0.08855514952456767,
+          "year": 2016
+        },
+        {
+          "denominator_thousands": 161452,
+          "numerator_thousands": 14809,
+          "share": 0.09172385600673884,
+          "year": 2017
+        },
+        {
+          "denominator_thousands": 163589,
+          "numerator_thousands": 15576,
+          "share": 0.09521422589538417,
+          "year": 2018
+        },
+        {
+          "denominator_thousands": 165250,
+          "numerator_thousands": 16326,
+          "share": 0.09879576399394856,
+          "year": 2019
+        },
+        {
+          "denominator_thousands": 163764,
+          "numerator_thousands": 16310,
+          "share": 0.0995945384822061,
+          "year": 2020
+        },
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 17557,
+          "share": 0.10658758248896606,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 19250,
+          "share": 0.11425756325714184,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 6
+    },
+    "ssa_4b7_all_workers_share_80000_99999": {
+      "header": "80,000-99,999",
+      "observations": [
+        {
+          "denominator_thousands": 157041,
+          "numerator_thousands": 7704,
+          "share": 0.049057252564616884,
+          "year": 2015
+        },
+        {
+          "denominator_thousands": 159539,
+          "numerator_thousands": 7968,
+          "share": 0.049943900864365454,
+          "year": 2016
+        },
+        {
+          "denominator_thousands": 161452,
+          "numerator_thousands": 8380,
+          "share": 0.05190397145900949,
+          "year": 2017
+        },
+        {
+          "denominator_thousands": 163589,
+          "numerator_thousands": 8875,
+          "share": 0.054251813997273655,
+          "year": 2018
+        },
+        {
+          "denominator_thousands": 165250,
+          "numerator_thousands": 9402,
+          "share": 0.056895612708018156,
+          "year": 2019
+        },
+        {
+          "denominator_thousands": 163764,
+          "numerator_thousands": 9615,
+          "share": 0.05871253755404118,
+          "year": 2020
+        },
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 10451,
+          "share": 0.06344744686405333,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 11584,
+          "share": 0.06875634352055746,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 7
+    },
+    "ssa_4b7_all_workers_share_at_taxable_maximum": {
+      "header": "Workers with maximum earnings",
+      "observations": [
+        {
+          "denominator_thousands": 157041,
+          "numerator_thousands": 9928,
+          "share": 0.06321915932781885,
+          "year": 2015
+        },
+        {
+          "denominator_thousands": 159539,
+          "numerator_thousands": 10421,
+          "share": 0.06531945167012454,
+          "year": 2016
+        },
+        {
+          "denominator_thousands": 161452,
+          "numerator_thousands": 9613,
+          "share": 0.059540916185615536,
+          "year": 2017
+        },
+        {
+          "denominator_thousands": 163589,
+          "numerator_thousands": 10256,
+          "share": 0.06269370189927195,
+          "year": 2018
+        },
+        {
+          "denominator_thousands": 165250,
+          "numerator_thousands": 10384,
+          "share": 0.06283812405446293,
+          "year": 2019
+        },
+        {
+          "denominator_thousands": 163764,
+          "numerator_thousands": 10323,
+          "share": 0.06303583205100022,
+          "year": 2020
+        },
+        {
+          "denominator_thousands": 164719,
+          "numerator_thousands": 10878,
+          "share": 0.06603974040638906,
+          "year": 2021
+        },
+        {
+          "denominator_thousands": 168479,
+          "numerator_thousands": 11944,
+          "share": 0.0708931083399118,
+          "year": 2022
+        }
+      ],
+      "one_based_data_column": 12
+    }
+  },
+  "schema_version": "ssa_supplement_4b7_band_shares.v1",
+  "source": {
+    "capture_manifest": {
+      "path": "data/external/snapshots/ssa_level_anchors_vintage1/capture_manifest.txt",
+      "sha256": "569dbed5922c2192277eb671685a5859ba1440e30289e8c252e1762956c150ca"
+    },
+    "capture_path": "data/external/snapshots/ssa_level_anchors_vintage1/supplement2025_4b.html",
+    "capture_sha256": "c228920ea9d53b1e323e5933b6d9f926e3c9b609d868b549fabc40118554b449",
+    "capture_size_bytes": 488165,
+    "denominator": "same-year Table 4.B7 all-worker Total",
+    "document": "Annual Statistical Supplement, 2025",
+    "locator": "div#table4.b7 > table",
+    "publisher": "Social Security Administration",
+    "table": "4.B7",
+    "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/4b.html#table4.b7"
+  },
+  "transform": "printed band thousand-count divided by the same-year, same-panel printed Total; structural N/A cells excluded"
+}

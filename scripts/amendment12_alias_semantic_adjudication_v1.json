@@ -1,0 +1,983 @@
+{
+  "baseline_builder_commit": "ca416634e347bfa5a33e9b3a8c1473d2456dd0dc",
+  "baseline_nonledger_candidate_domain_sha256": "330ab9c508c73a05195e0fd99f0403392d1e6ac33ebf9cd65d106c807055a50a",
+  "nonledger_approved_pair_domain_sha256": "a89da31c407dadc07ded065265f5bed214cc7baff2cb175473c7f57ac7220851",
+  "nonledger_census": {
+    "approved_evidence_count": 94,
+    "approved_instructionless_evidence_count": 2,
+    "approved_nonrepeat_instruction_count": 2,
+    "approved_pair_count": 122,
+    "approved_pairwise_decomposition_evidence_count": 19,
+    "approved_repeat_instruction_count": 87,
+    "approved_single_pair_evidence_count": 75,
+    "ca41663_admitted_nonledger_evidence_count": 108,
+    "ca41663_admitted_structural_ledger_evidence_count": 154,
+    "ca41663_total_admitted_alias_evidence_count": 262,
+    "disclosed_stop_evidence_count": 14,
+    "pilot_approved_pair_count": 22,
+    "pilot_approved_pairwise_decomposition_evidence_count": 0,
+    "pilot_approved_repeat_instruction_count": 17,
+    "pilot_approved_single_pair_evidence_count": 22,
+    "pilot_disclosed_stop_evidence_count": 3,
+    "pilot_evidence_count": 25,
+    "pilot_stopped_repeat_instruction_count": 3,
+    "stopped_repeat_instruction_count": 14
+  },
+  "nonledger_pairwise_decisions": [
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:8e794bfd2ac02c58a5f816c5be82c84818dd6e92f00d1ae9cf73eaed299ce7d3",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:39dd9eb5c9aa1441cbcf9f1c80006e57de9b1327bb53bc575b6900508ee1ee1f",
+          "pairing_basis_code": "explicit_shared_head_reference_decomposes_to_two_pairs"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:10dbed93b9f98dd673318721c03472b672291ddf9bf9769d42adfae8228704e8",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:39dd9eb5c9aa1441cbcf9f1c80006e57de9b1327bb53bc575b6900508ee1ee1f",
+          "pairing_basis_code": "explicit_shared_head_reference_decomposes_to_two_pairs"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:3cf3aabace6c44b62f9933a7fb4864f999ceab5915a6739fbf9f9b36a896dc5b"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:c55183a33ddc79e2a64ef3dcc82aefca20b5a70f27f843ad376a4826f277d2b4",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:49e9e391f783da11e164f92fc313d46e769ec0fcd7159c85ed261153437c4efb",
+          "pairing_basis_code": "explicit_shared_spouse_reference_decomposes_to_two_pairs"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:9ff30a384d93d983326cf0502298c7e4e185454a868a3969ac689f720f2b501d",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:49e9e391f783da11e164f92fc313d46e769ec0fcd7159c85ed261153437c4efb",
+          "pairing_basis_code": "explicit_shared_spouse_reference_decomposes_to_two_pairs"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:a8fae07531b05e1689149e4cab9d375dc137df5f88e2814c6d62e98b62aa1ade"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:461a60bd8c59e3ec95f78d4c4772da7d4c7e1268d14cc2df55a012e7d77bf855",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:346745c8a898ae4b6921ce296332865cf590063daaaffaf58301aee9e3cb64f3",
+          "pairing_basis_code": "named_question_range_decomposes_by_occupation_and_business_type"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:eb6f5b26b1304bd8b75e619fa967e6d8aaa0e2aef66bcf14d9caf75eaa4aab52",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:9fc6863143ef821fe6dfeb00f32a50f42381f9b555a704fec5dda2bea07b1b21",
+          "pairing_basis_code": "named_question_range_decomposes_by_occupation_and_business_type"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:f05c18c7c4061be215d08d28c6b8ad79ac45c10c85f0ebac801bd538b6ec91ff"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:3406c519828a6e4ed9bf9a58df5265b08473cfe4d23f08eed5f2dccb0f734eda",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:dda225bb228cef9e00ea5749065be826f7dbf1759f01eac7693885c66dfb5022",
+          "pairing_basis_code": "named_question_range_decomposes_by_occupation_and_business_type"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:b54bd0d9b1ae3864f2807d1159c523f5e0ce0322c6b97d4d7d2fe567568829fe",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:3dbf63b88fa760afbd6de7bcd997342b2413b6e6d83bdc92bde8210b84742398",
+          "pairing_basis_code": "named_question_range_decomposes_by_occupation_and_business_type"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:837290689525ed21f5be4012ba4ea9b2ec3c09c040069a20929a41387831d36e"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:ab3a334b031d7dc4da14b92ef52e2583d15f33ab9f41182f8f6e743e39ed1905",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:009d66ff9a55ee0f57cd6a37c632ffa4128b921100a890be4c3643a86e75231f",
+          "pairing_basis_code": "same_objectives_range_decomposes_by_weeks_and_hours_type"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:f41357ed7996cc61e98e9daabe8af2d8df3f1907c5aa969d132b749aaecce15f",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:6a99cf4c927529787ab30fdb378f99f380743b03a66fa626e9ef95520e259e0b",
+          "pairing_basis_code": "same_objectives_range_decomposes_by_weeks_and_hours_type"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:b1f138d44bc0f3ab6f927255698dd0518c842d860036a3932d6ca1cad6a4a5e6"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:7802f0c6875804a6229e83568a49b4cf1c00a47a364a7e9d31a538880e0db864",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:038e349202040a0a51922bdf620102affc92c3cd654bf6f9a5ae437e42523834",
+          "pairing_basis_code": "named_question_range_decomposes_by_occupation_and_business_type"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:bc26091c1e65a82a392d0d2d38510e29bf90e4cedf8a6a94c7f25f0c9d487b37",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:469277aac28ccb599879148284943a2ee206ec01f9511fd27afb18447d131282",
+          "pairing_basis_code": "named_question_range_decomposes_by_occupation_and_business_type"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:fece8cc1f3aaf607d7f69c2ddacfe2a7dd32da6fd2ae7f2c96bfe8a6db832c12"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:3d6db24f917d1b57a0bd6fd8ef093d55d2b72c7ae97ca4c761b8c74b0a5ab5bb",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:b0a04eb146390329c38ed7135dc1328bcb8565c31e7c82699c02dd0feb2f15b0",
+          "pairing_basis_code": "named_question_range_decomposes_by_unemployment_and_amount_type"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:d285776b84ab4837b00d42348a9a4609726dcc9a9d2aec2eede30c4b3ac042d7",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:a90103fef1473d494921d976cc121375e0809f02a0d2aea9cfc66c7e3ff9955d",
+          "pairing_basis_code": "named_question_range_decomposes_by_unemployment_and_amount_type"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:60bd395782c71055026d5fc3be4b32d5af697e29f9787157e90f39b0854375cc"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:233e475cd5c152206bb065f7702e2d7736f81d68b98e63b32af641858a7a1152",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:3e599e218968be362fd97ed1b6d4e670b0a883ead081cff0b17c16869620a459",
+          "pairing_basis_code": "named_equal_length_range_decomposes_by_question_text_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:1424b5e2d4202d68d041b7dc715b48d5ca7a803adde880817ffdbd75df58f8d1",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:a5043a2d36b8232c7e57b2b94acb02572b5ccde40189738e60253034e6bd9f52",
+          "pairing_basis_code": "named_equal_length_range_decomposes_by_question_text_and_order"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:1a0e62181dc482beaa5414544a83cb6651068c4e5f24d4b1982fd6254bb61a90"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:cbd0118d62087bf9f68ca120b6ff0fb6b1e85b841f170f94f13a0c41e91f7737",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:07f982851996fa38f9ec298635a39025e2ead0f9f69677e1996bd49eddc7febe",
+          "pairing_basis_code": "named_range_decomposes_by_sickness_cause_followup_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:93f3a45e3bcd2115b88a40de29587b9fed6484ce2f91390e90976e3ca7388e62",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:c62e45df4f3b205bbee358a3ecd76973f70e02454f1fa023bc9157362ff22864",
+          "pairing_basis_code": "named_range_decomposes_by_sickness_cause_followup_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:267858198be179294107cd9eac1e01c829b0cdeea80988f670e2e4f1b299f805",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:5bf247d8138172575bc9abffccfe8cf4e57c7004d6cf78210510f092d473be57",
+          "pairing_basis_code": "named_range_decomposes_by_sickness_cause_followup_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:581cdcf904f88b7826b1c5f8b98945fc5e3c1bacc54a8951fa916e2a7ebc2be7",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:11af11806eb917f62670c7c08b32b84e0afc7810c3f185ae0cf4473e64b35aa6",
+          "pairing_basis_code": "named_range_decomposes_by_sickness_cause_followup_and_order"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:2747015d8c1c6d36df95a4627a681248ae2d092354d06ccc94e2aca46e821f65"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:85e78b7f3edf10320c10221dd2efb98c34d1ff32b6b15e2bd2e1fb23fd7cb819",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:8f771a6bacab8f9c3bee9fcbd6d48d6289833e127f909dcb65d83aa076f3b54a",
+          "pairing_basis_code": "named_equal_length_range_decomposes_by_question_text_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:52f011c0b87e914429d8e636dddea4845e5bab022ad4896e455915a74fb7b6a2",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:1c457d96314ed618f6c35ebe188044879fd82432139c1fcb7e345384f3d16fc2",
+          "pairing_basis_code": "named_equal_length_range_decomposes_by_question_text_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:a86ce1a37b36a7ba7a18e74dfbb73698bdff79e325b800f9d1a062a0307a5aed",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:d659e261636a5d8969ada9fb0c613d47ef169cceaf6754373a01ec73b7f3aaa8",
+          "pairing_basis_code": "named_equal_length_range_decomposes_by_question_text_and_order"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:4aa53baf84a570975252c362e4572f17788867d3bebefbd501114b231c484c90"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:39578f9254d92c7f0fdfbd3bc68e4a405dfd11015afa8f36053cc6133eaa2105",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:9b84ab4331162b516e8e2ba75eabee4aa09aca70b634862a2a3e681e5272254a",
+          "pairing_basis_code": "named_question_range_decomposes_by_occupation_and_business_type"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:4ac0fe90fff431b2f3047e51a4d4c0ee8da0906fd32fe5416f6f8d3713d1512e",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:5862ecb0c52af8dae16943cb46e0a804bf72718b67ebef0b45e64cbe20b9e6f5",
+          "pairing_basis_code": "named_question_range_decomposes_by_occupation_and_business_type"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:2b36e8a5f2a1da87ebf78ef4a39f30c8aadf22d1086cf62d690f775d5f34ce16"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:496199ae6723c74e317ac093c71a1dc546bcdce9e277507a9147affea825b315",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:f61c5464cfd6dd8d105bcc16e9d6b2e0e459f13e9a54d023edeb13921dc2e0ff",
+          "pairing_basis_code": "named_range_decomposes_by_question_text_while_distinct_D37_is_unpaired"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:7cde7acdb593b09161f8c556f8e2f50a8476a295fdb0d687629b4ae72159bf3c",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:a4df500f0e9c5ba504916824813935f75090b911f737c10c61429f2a4da5d9ed",
+          "pairing_basis_code": "named_range_decomposes_by_question_text_while_distinct_D37_is_unpaired"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:8f4c963118e393a25f24fc54a2dc18e25b963b3b57aa5288264379025ad5a52c"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:23637997679c00f0d2873992a761b2fe77302908be4736cf16ee42542b60beb1",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:ba538519b509a1e868069d817af324fdbd1ac16f4313c04e6a3ed201327ef6df",
+          "pairing_basis_code": "named_range_decomposes_by_sickness_cause_followup_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:c1b824d8757fcf598cf3af7010097fee39ad0680da0c4fc0f6e498fa8bceac12",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:684ddc65ff5be7d7de8394e65a8e1280784447fd1896a3c1f8af02d588c4ba4b",
+          "pairing_basis_code": "named_range_decomposes_by_sickness_cause_followup_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:272c4f5c29835dd3c8058efdf945539c95d2a9680d655a0fcfaab7e9e18e3c6e",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:fbb4d99bc502e6f061be89b996febfdda63d176f2b3048589980552b6f81e406",
+          "pairing_basis_code": "named_range_decomposes_by_sickness_cause_followup_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:266ac0948675ed1b068fc86bf94d0c6ff5d01a0e5502e30e38619ccc928d24d3",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:f9d1f355174bcf3d8ba6ed69c613d954b7e086012dddd2516648de56829390f6",
+          "pairing_basis_code": "named_range_decomposes_by_sickness_cause_followup_and_order"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e864aa0e31d6d5e8182522a582b08862b5ecadb5c8ade5642ed03fc763918424"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:618a7e0e7c41d38418e26d5f8324c787597d2d6ca9251fd73239f7c038571495",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:27b676ca9c48253984e8a472a01416527ad72129c61e7814c86fe9d71f3787e7",
+          "pairing_basis_code": "named_range_decomposes_by_unemployment_sequence_text_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:c2b070465009f9daffbbec22f6aa7d1942d912da23a4223390de96ec12e725b0",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:37998d0ab60b75a0c83e166c35f8bf939d5f95b292ecf2dada9afaed26593f19",
+          "pairing_basis_code": "named_range_decomposes_by_unemployment_sequence_text_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:176710d19db3b7043920693d063fc96cd6024df84669be1e02d5f6627652ca35",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:a9bf47b22281b1c7f3c93302da575e2d98ac11953c492a3543197e16c0893a2b",
+          "pairing_basis_code": "named_range_decomposes_by_unemployment_sequence_text_and_order"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:4595cb16e1e433f591299dc12e9ba26d75d2f666c70024266c5991082cfcbe00",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:c112b6b0a03969d5fe21046870eaf7ee75a32c24b45b1e2b529724c4c7577ded",
+          "pairing_basis_code": "named_range_decomposes_by_unemployment_sequence_text_and_order"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:b595d161ba855ad7c2919f2c8e98b6d5e5caca8116ade3e4606fde20f6002e21"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:49312476c5755357fbdf660ff7698065c5be700ccb853e3b62749042d92438d0",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:d57b822431527a424996c7f33e99146917e048b7d4f5a3e57690fba809b05e30",
+          "pairing_basis_code": "explicit_common_present_employer_reference_decomposes_to_four_pairs"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:0632e3584b9533ff65c3737f31adb09f63710bb3b877f5a7c23ae588ef1075b2",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:d57b822431527a424996c7f33e99146917e048b7d4f5a3e57690fba809b05e30",
+          "pairing_basis_code": "explicit_common_present_employer_reference_decomposes_to_four_pairs"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:c7b37e4d12895039a3f6f426c69e7e9cb2ec8b8bb5700a3ed96c2e12cd90db47",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:d57b822431527a424996c7f33e99146917e048b7d4f5a3e57690fba809b05e30",
+          "pairing_basis_code": "explicit_common_present_employer_reference_decomposes_to_four_pairs"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:81db3e2b4861415ed3187fce4d147893bad0925751b633430d9215d8afcd9fa9",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:d57b822431527a424996c7f33e99146917e048b7d4f5a3e57690fba809b05e30",
+          "pairing_basis_code": "explicit_common_present_employer_reference_decomposes_to_four_pairs"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:f32208c231e65a2caffe174c83f5cbf1924c571704b344cf0b2bc867fc648443"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:a4d518fd9e8928d34c3fc65bc07a9dce84cf7ccabe9356d0e7b140f31103ac16",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:3e937da2ffd0917c4ed23063e1dc826be43f95be46088893d06741606def931d",
+          "pairing_basis_code": "explicit_renaming_of_that_job_as_extra_job_decomposes_to_two_pairs"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:3b67cbf049c7de48329d40844593c296a6355fe0788537d6b3a42c959e6d09a1",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:3e937da2ffd0917c4ed23063e1dc826be43f95be46088893d06741606def931d",
+          "pairing_basis_code": "explicit_renaming_of_that_job_as_extra_job_decomposes_to_two_pairs"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e731497d9523678483c5a778c518cdaa4e2ee1053f526035e9941334bb4b4afc"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:5122d91d042b460ccad69ff8e8476f524aea6234ae3d284e1fd2e7bc330fb44b",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:c314f20e2999ab30d27ec7ce837603dc435172314f1c9e8587ba7fe939b6f324",
+          "pairing_basis_code": "IO19a_which_job_and_that_job_anaphora_decomposes_to_IO19_job"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:63acb461c42190348599e0e8e4bddee3c60b2f452e10ab1b6621fcc6ed405aaa",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:c314f20e2999ab30d27ec7ce837603dc435172314f1c9e8587ba7fe939b6f324",
+          "pairing_basis_code": "IO19a_which_job_and_that_job_anaphora_decomposes_to_IO19_job"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:72dedef947bfd763154ed9bfe78cf3878282dc708bdd7f26b1cb98a0d04ef1e8"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:34180d04641af6a51a9e4c0641b0d644b305d3ec3a1a0febd079ffd8fe9df56a",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:5b2e795a257b39dea51b1f7538a78b23168737af019841978f3213821322bef9",
+          "pairing_basis_code": "IO19a_which_job_and_that_job_anaphora_decomposes_to_IO19_job"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:c5ec9790f8e0df9a4b5fd34382cbb81484c25f24f4cccb3ab75d2c07ec1a1464",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:5b2e795a257b39dea51b1f7538a78b23168737af019841978f3213821322bef9",
+          "pairing_basis_code": "IO19a_which_job_and_that_job_anaphora_decomposes_to_IO19_job"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:abd7d80b1512eb76bcfb570e8ee52e5cb32e8ea828193856e30aff5367fc8e1c"
+    },
+    {
+      "pairs": [
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:63fc9d967328f2973ff8de1fca665956af00cca34074e429192a6c261962ddf1",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:26aba7999ad6c5ce0bf3cc0cb60c3550696adf623d7d4a318ae0dac77a9df26b",
+          "pairing_basis_code": "IO19a_which_job_and_that_job_anaphora_decomposes_to_IO19_job"
+        },
+        {
+          "alias_occurrence_id": "psid-questionnaire-occurrence:575ccc90ad9f9a382626e80792ecaf4bdab5d253c0847a97cf56dd509390c6e4",
+          "canonical_occurrence_id": "psid-questionnaire-occurrence:26aba7999ad6c5ce0bf3cc0cb60c3550696adf623d7d4a318ae0dac77a9df26b",
+          "pairing_basis_code": "IO19a_which_job_and_that_job_anaphora_decomposes_to_IO19_job"
+        }
+      ],
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:c96cd50e02601b784f7d3a7c62e5d4ea6db82d3fcbef354ec9eff12d49d0463c"
+    }
+  ],
+  "nonledger_pairwise_domain_sha256": "093dd50905431d4ff1fb17af9801401dd21d52239a4b22ce164eb8c22bc04bd7",
+  "nonledger_single_pair_decisions": [
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:44307fc1b6c40a3248c39a29dc92883b7c5b62aae15882a4dca6b3e21ff7faf1",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:8c63906a4d31feca3bb5103857aa485ed4b4d09a9416dc3fffe6fac974b742a2",
+      "pairing_basis_code": "named_f2_occupation_reply_import_and_occupation_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e0a56457274df3666987b1b9b5356f5bbde11d349ff629ca79ef75fccb2b3224"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:aa0eb507303da225e5d98d4b0f5be53495554447c0eba8766d29558cb649d8c2",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:a083e36a901a6698ebf8fac183fb03eb37484d9faeb835a203440b48933fef15",
+      "pairing_basis_code": "named_f2_occupation_reply_import_and_occupation_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:5b32cee57c56b008b3dc5059e3e33d9b24c35577ed498306b28c9ab2ad7fa228"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:e50c5d597e36d49d9c2fba7b5c1db51305e54512064c095d4ae6e2e511fb25e9",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:e6bbf46e01b89c1879ef5318bfb0a3cab70b77a8b856c5e71b1cf1c5301940bb",
+      "pairing_basis_code": "identical_printed_identifier_and_exact_label_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:879a1a3043467ab07747e0b138a8e61701ecb6a4e4825039e891e3c5d2fb05cc"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:d711ef69433150fa1729839fd42bee52300239fb04168c2fbc4ac267b3eeb365",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:9c381e3c8ae0a90c2e385a426dc26dcd4fffa15f7c4b1dd22f9378e1289dfa12",
+      "pairing_basis_code": "identical_printed_identifier_and_exact_label_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:5e54d029ad6666989cbc87d8585bef63a8fa60826047770bfc5984ed7ef41f02"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:b54edd2a5f01729569d3e4cccac995f82720a5954aa712c4d07d104d5a3c5ccc",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:19a08350984922ea3359625bf474803118ad435e6c91f8c695b1ec881c005190",
+      "pairing_basis_code": "named_question_objectives_reference_and_matching_question_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-evidence:211847f083671832ea528d018da546a21908fb229c40ad610870c4fa39f11232"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:effe41f037aab296dbd66fa6621e978b01ee806d69a1a8aa1413f1e8de347997",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:47514292fd6b8ee98f7237d702df3b09a413ae49e48c53cc880c2ba073679625",
+      "pairing_basis_code": "named_question_objectives_reference_and_matching_question_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-evidence:bbeed0bb380adc83f2b968ae21cec1812817aa6bf8fd5f68d31d7e6ce5aadf98"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:bf46ba6fff89c291a4ea9086f63b82749344d4dbafc77cd5376d04125ea02c34",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:eabf1a198897adc406ba498900b957e858b66798867b0134ee59958852ef3b53",
+      "pairing_basis_code": "named_question_objectives_reference_and_matching_question_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-evidence:8bcafcddd5390150afa2a40c3ee5a348c652b6aa507809301c5d5919e479ddea"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:d9560161c7b14310ef1b37d662a920802d5b2ac5a277a8d0e69617dc23e98569",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:d15d8e02065267121b430990e9eeea056bf6f62f373a2654deade238acdf9858",
+      "pairing_basis_code": "named_question_objectives_reference_and_matching_question_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-evidence:140a24a3b8b6f1a529bf502ad480af193bdc50a0ef051f1af6950ff464ce5cc1"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:a69214d5fdf1aaaf3ae84d974e8ab559e2408bae5f6e253a470e5bd59cd1373b",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:4bf0c50e11c20014c099d8a87c69fd7a2b058a6a4950569bf3377252423c8674",
+      "pairing_basis_code": "explicit_previous_page_repetition_and_matching_occupation_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:f3f9e68cb9abbd4dc45226c9a242130b49218fb944c9af7afc54247739ef42b0"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:f33215af96e9b86932ad47f5058df476e992257f233ddb05c12dc2ff993187a0",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:5bc1918d41dfea5dc73ef1f372c5750e53e9a628d5c066ee95be50cfdebec424",
+      "pairing_basis_code": "named_h21_reference_and_matching_roster_instruction_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:c485c4241054b37d2b0dce248adb5fffdd8b94f46d7da4dd9b2c65eb90473dbf"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:78cbbdf8be3597edfa859245a9b7b280f2c79d011e7d06df57b0d826011e1631",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:8e57095722745fd3ce1182547b253f31a4d0828e4cb3eebcf6d724745b1c7089",
+      "pairing_basis_code": "explicit_wife_occupation_reference_proves_spouse_role_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:83f5682da849088fa3aa09b41e5bb6baac67de42c1b35da9a7c9d7b9ceb3d2c2"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:13b8ce65d2e8cf19634367457884c760643a07ef613d529612c3e7293adca31d",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:d7b6d682577c71c7eba9b051b24720caa01028d904679abe8c9605da0bb82b9d",
+      "pairing_basis_code": "identical_printed_identifier_and_exact_label_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-evidence:74b7b3876585dc267196d44f5528475c8728c16d17646971960802b9e02e42e3"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:0fcd471dcc267b3809f13cc654f51459bdf33184cc43e1868c1dd1b32883bca0",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:0336948aafb68b6621afa9275e9e346359742495e055ce617b3fce9d486c6a2d",
+      "pairing_basis_code": "identical_printed_identifier_and_exact_label_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-evidence:9358651a00da0c505703b164b4aa0bd4ec3927a91d963c4f8d86383bb8c4aa2a"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:eabda28069e143dac25e89e0fb0e80b94fb4cd53f3f2a7082e40d508c8ffb67d",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:90ad2becda99828e7373d640c6042af9e6af385584f5afe491ea5b578d7a530c",
+      "pairing_basis_code": "named_b16_repeat_and_matching_job_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:1214b724204b05efc3d0c09c96c2eb6d6cc68e45088188e4257db46052990be9"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:d33549d510caf450cd80fdd74d17417e3862dad4e6a308ed684ecc3694c1927c",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:e998cc37ac19e0ca97858b957a68269d60e4623ab2c486c8688194b8907a9069",
+      "pairing_basis_code": "named_question_range_repeat_and_matching_extra_job_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:efce879700823bff31025f2a3f3a3cf675dac1340077fded8b6264d7e87e6f40"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:e5ad4c0cb2ea74666464501b6b5cc62891f9afc7fa7eb52b5063d9e6abb5a72f",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:ae0152a85d15ca84fd56678c43a3ac6b8e5b6c048a25358846c0c7f2c3d5f5d3",
+      "pairing_basis_code": "named_question_range_repeat_and_matching_extra_job_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:a6ee5b821a677d21b473f145eaa285963f10817c6a55210ee1a010b63b89dd31"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:9ee25d224e8475c87c4d6738cb93626d703ba253ba765ba0cfa7340f2525f905",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:64d7402db6b0c2aed2668011c19d8eb017fc605e267ca9372ab42fdea88bec9b",
+      "pairing_basis_code": "named_question_range_repeat_and_matching_extra_job_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:991d7481f8f591ab49f406688fbb7ff93b3c1e625b6a7264743e1733384fada7"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:0eecc2aaa5c8731a11045f8c9b90dfe6565497d31187fcfca657e86369ffa861",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:86732189628f7912fe020ee602d9017e2ab69ff0c62afd111cfd0087c7f7ba63",
+      "pairing_basis_code": "named_question_range_repeat_and_matching_extra_job_type_derive_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:af1ee41f080a10f24bf5d60752a26d82a2847c65d5d4f08f57c69fff1bc46265"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:1bcd15d09953654ce222f1eeab9eca2bd153ecf1c469de36ef0b4114e008e1e1",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:65f70d972466b2fb8aa6cd4232f0552209c8b84c7aa9c768cc952ed9260203b7",
+      "pairing_basis_code": "named_b9_b10_reference_and_occupation_type_derive_b9_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e88b430c27de20dca2cc05e24c8ff42f438fc02aeb9ea01a5076ca4469fc66bf"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:b11af39229a4e07fa3d535e8b1f239d0c6a922589a96600e076ae0c88654807d",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:d57b822431527a424996c7f33e99146917e048b7d4f5a3e57690fba809b05e30",
+      "pairing_basis_code": "explicit_same_employer_anaphora_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:34c0c365f7e0064b6c394ea3d14fd8cce712af92c20e4aa9382dbe308984b8ff"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:51347d41a6e416818f007d93aeb55066f57cf3546f07963997982e23467fc8fd",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:48489e955f798a0a9ae3e6c48512d8cc5448185015f885172dca071b3f6f0585",
+      "pairing_basis_code": "identical_printed_identifier_and_exact_label_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:9c387306075ab857f6f0b633da74d7708340aa0eb1772f0458c40287455c048f"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:454ffd1d1242a621b91b8ee15e7c4972732dcd8c1b9e4764d3365dac08368821",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:25e6ec673c3957928bc4e3b38891b172712ee9a58648e5ecaf6b2f4de4d76d53",
+      "pairing_basis_code": "identical_printed_identifier_and_exact_label_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:56444a413699998b36a2928f5f3d7f242d35758b94b12171a3816458266be473"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:51347d41a6e416818f007d93aeb55066f57cf3546f07963997982e23467fc8fd",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:48489e955f798a0a9ae3e6c48512d8cc5448185015f885172dca071b3f6f0585",
+      "pairing_basis_code": "identical_printed_identifier_and_exact_label_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:520ec2f504d5acbaaf380c89ad49b7c4f16a434b6be50406c911878a4808bb11"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:454ffd1d1242a621b91b8ee15e7c4972732dcd8c1b9e4764d3365dac08368821",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:25e6ec673c3957928bc4e3b38891b172712ee9a58648e5ecaf6b2f4de4d76d53",
+      "pairing_basis_code": "identical_printed_identifier_and_exact_label_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e7e53faef42c9bcb855293e907822c5fad9656ba534ab1360a4310d6c4c138a5"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:0e5cd60352ae941d4aac2beb4f9fb948b855d421714e3ee74294d1290b92006d",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:e620ffa6277d32ea0b8aaa7e62bd92f8134b987826dffb04529168d7045c48c0",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:53dd9fd3e3042e961c6ebb83e57923781e0571b2078354e6b3c3fdcc763d2bc3"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:76450ecd41300a89d666a08052234c9742d9b7ca7e4d9e18f66646bf74e25595",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:a54a7475f5d594eb1276f0d5ead39c2dbf9736dd46b9fb61ca91ce5b90af1d4c",
+      "pairing_basis_code": "explicit_prior_title_reference_proves_main_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e92d0a333acc3bef4f4442c0321b545e8f7c11a0160f6e572188608de40b1f7c"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:63b5660379dcdf8ee24646e2bec102222ea53d2a71d86176d704f7e6465887c3",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:e620ffa6277d32ea0b8aaa7e62bd92f8134b987826dffb04529168d7045c48c0",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:fa16d90741873028574d599e7c934356d1c57ea51538903330f22530a55f411e"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:a212d11cd11c34c4f60a6eaa215055703030d614242ffe986d7383a7ab4b23ce",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:28601ebe956ed29e65912056e8046624d33e76bfb6e99b2974f2b1f614356de0",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:d6b1005d56e7dd1ed772728c612ba114259f87fb4a8e2cfffd74c49fda340f1a"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:5bb7f2cb294dfc2588bcdf4dd89c3481a1b44590bf6de56e16fc25ba929e62ea",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:9e89856e66e23d9c5838009289db83d907329c99dda61c0f61450c726bf8f000",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:1decd43073b81d6be4d82a9923f74dbe7fb3d4b843dba9fab4e3a5cc78a02f09"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:108cd38cddc88ee9fd86cd9f6a4e8edba5c2ec7386238eaa63d6e8523a06f268",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:5bb7f2cb294dfc2588bcdf4dd89c3481a1b44590bf6de56e16fc25ba929e62ea",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:22b7fe670eabe8e92e1fad19dde5a26fc9dd889cf68895e802c15e6bf1c42436"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:11f89fc1846d714ff475ccbd3f6c41b3894c1f93eeb05457125cc3c2a728d887",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:d97ae730c6e74ccf616f7290e545f3533c90e9565482d80f8296bb430808caf3",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:3ae600065f9c315e89ed720caa3cba85599dfe6c35fe22a22f86196dca5955f9"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:5843eed4cb20f193ab4506158943ad979e5f76409a35511885517bf4965b126d",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:63cca142295129c0849d47e4a11e7f2af4b57ee2ac0abd5d71f427edb5b17c18",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:4be37b9219f2c3bd6b85f42b2edee98147c253ba7302e486ae18e78124cc0f54"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:fc06c94ba77015e0ccc886c3e8c183959fee739ffacd4faa07ace2f04b51d114",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:656701a0e8feb6d366854a83fc6dd998e781867980c8c8a8b3968242d0d92a6a",
+      "pairing_basis_code": "explicit_prior_title_reference_proves_main_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:b6508b6b3eae96ed7ab546004483641e7177dd3bc2d1cd64dba54985c28ca628"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:0f3e9632e52f7a12827731805617883a9bebf90fa43a1a7b537f4eb0b9aebff2",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:63cca142295129c0849d47e4a11e7f2af4b57ee2ac0abd5d71f427edb5b17c18",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:cf577ceb57e592bee536cf9208ea84dd143d566d7cce5c89d6645470c4d41022"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:79485385a1a9b433aa4603d2c49c9a70fac03324bf28007189fc2c43daef607b",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:1c4b86a804a762d9b93acbe8e0fb9344108a511803b3be62c7418e862ef83203",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:2e85f085bf5c06c338cb4f8b671d96b70b249a7fd1d322779dd0fb6322876e39"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:b3ee2353a527024bc8c90b766c684e79ffabe89203711b8025a3b1929ccca52f",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:eb27ed092b99dab2d35cb6092a96ce3c4ab84632de8b6a21c80f6e5eac402317",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:4ad076ad00e1f004d5aad7447358e74fcb300b67f8c4014c6c16dc45500e5ee2"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:53e72d1607629d878bb625fdb46c59b238cff8f1130f913b1aef66c119e4a108",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:b3ee2353a527024bc8c90b766c684e79ffabe89203711b8025a3b1929ccca52f",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:1614d98fa783595996841b4f81d8193a629be3454fc8db93dc5b1b7d3fd266d8"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:d059e4cffa2af5fad65939188ef4c20935db4bbe2fdcc2ddb56a5197488ecb9a",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:38a6904cd496e8f5ef95dc7d9010365f2d2a8fb5df455d9f9d42ba286aaf3589",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:ab8571fb6e25ada9264853470c6e67792f9d65d0587e6e9d4103110d468dd07e"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:e8aef5d98eac520fccc3fbeae2b030fd48a2e84b2659b3166038f59d704c870a",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:850453270b8a0c5cb97bd469bd51a2539c22f6a311f42f08650aeb11e0e8c1b6",
+      "pairing_basis_code": "explicit_named_series_repeat_proves_spouse_role_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-evidence:13c974b825f22ca6d815af1494b76a4767fd291ae720c62e1976442af7941ce6"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:5b6bba33fcb8212480e00f84af258245de5173afccb7f582a9671e5bb18a940a",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:d1bc9c98ffb81f1e2c78edb236d3c4c20f77df626b4850f042e707515fd105b5",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:c5de7414eccac4891f7c77cce4c6ab4e4f2ba406ef93dec49bc0a3c4d43aa3fc"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:c63afe70da49166222e662429c190d34e81fea4cac8de5b1b1fe675e8d671762",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:aadeeaa4c4077bc62c466895e665e01a2079d38d3d4fed74e2815dfaf2bf066d",
+      "pairing_basis_code": "explicit_prior_title_reference_proves_main_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:2c11552261785a5f15e4d7f7630ca1ff142c3d78c332b125f113455421c9671b"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:0bb348915b56a67d8a092e72b4299a79448660117c99441e771ee60efbb97240",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:d1bc9c98ffb81f1e2c78edb236d3c4c20f77df626b4850f042e707515fd105b5",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:74ac932d93b72fbb2cdefdfec99c76e0dbfcdc65486eca010aa8bf3623473ab4"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:777d1e1d5eb8b6a3b7b31f00e2f279b1ba9925585e89bbbb648a4c74ea3d3af4",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:f7d68bf2b4c2084e6831d9b535edb1b3bc32d2d9c5e82924d5370a51b4f22c9e",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:37d1db5ca1ecee91059c166b151cc02601f078e069fb7ecfd3f0eecccba9a978"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:15602554310cf058a63b410b6a6201665397b9efb2a6b5f777760c1a2b0cb948",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:777d1e1d5eb8b6a3b7b31f00e2f279b1ba9925585e89bbbb648a4c74ea3d3af4",
+      "pairing_basis_code": "explicit_earlier_extra_job_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:c1610380c026d17c5c534d7360e3e6cf9dbe9d9318ddcfb666f3351263bf8505"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:dac3fc2cd9ac6a4b9c6a99267c5b0f5c5d035e970d545bd37e691c50fdcc3c3d",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:d1bc9c98ffb81f1e2c78edb236d3c4c20f77df626b4850f042e707515fd105b5",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:c78b984edcdb2232f130eb48ea55d0ee6c54875c7159aceb98b7b611e90b1cb3"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:56c5dc11541591f71a348c467b9b09ad40e983898104a4e77a196a3fffb7498b",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:dac3fc2cd9ac6a4b9c6a99267c5b0f5c5d035e970d545bd37e691c50fdcc3c3d",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:10ec91d8762a896e8d6fd976ae89df65dd505987b5d6db900aaa5c63f2b9c4bd"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:7282ad44871920ba151a05628827d84944187277dae8abfbcae6c7c1ee3e7cc5",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:f7d68bf2b4c2084e6831d9b535edb1b3bc32d2d9c5e82924d5370a51b4f22c9e",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:5161e9978493544db1ad9dabb9505cef1be17f3bab7e94994e106952dda0a91f"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:1e68b8e06f0f79c432bafd4c5ff448164d0a9d9e62422288dc963d758a16cb74",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:7282ad44871920ba151a05628827d84944187277dae8abfbcae6c7c1ee3e7cc5",
+      "pairing_basis_code": "explicit_earlier_extra_job_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:079dab818fd8bbcae377348a48cbfbf5378bc2f851d64248ea6d62dcddb9af02"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:c2dd4a6db18d0326e9760e032847dafc1c25555c579a262c6973a398e06f1908",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:9eb697cbf62226cced028e7d333e1b34ee0dddba60f8dfa9cb9b0478d9befe4d",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e6eb853a787d2562e55b5b206075e3952a06f7a83f8a0fb0fb3c06c1ed445657"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:116b7f1a499bd77a98f380f72214b3b53b402788c0193aece8f5f61b7de3924f",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:f2c4dc0331a741eb418bc06a5db362a319b978213810133b154b53649c8c2d31",
+      "pairing_basis_code": "explicit_prior_title_reference_proves_main_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:ab5d5c124156158fc8de5627e36aa3a8f41d7e7f3a4135916b9cf199beed01b1"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:2548a0840262ccfbddadce0793307cace4005fb9d0a3ec908f66f9bf6156b662",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:9eb697cbf62226cced028e7d333e1b34ee0dddba60f8dfa9cb9b0478d9befe4d",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:a16aa652d6f6e9782ceba989414385c79e0150b079ba2e4c35241a9a7ac86df9"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:56a07a423750d8c1d0a7bcc679f7073a861afd5799cce93ff121e87dadea6922",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:f7d68bf2b4c2084e6831d9b535edb1b3bc32d2d9c5e82924d5370a51b4f22c9e",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:60c3f6bddc0f4a207b0d7e3d1810d47363c2b4bab1f740c94a13503cc9276235"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:fbcc2dd7cdedcb35b4d403da9e0eed6a30277900ccae591451ee0c6689279018",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:56a07a423750d8c1d0a7bcc679f7073a861afd5799cce93ff121e87dadea6922",
+      "pairing_basis_code": "explicit_earlier_extra_job_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:a9bb59844db5521ebac951b46618fdd3d94f80c2d760250a43ac423db039b227"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:2260dd7e18fc50983a21f796e43ac853c4c297aee992a68c778495487ca3e994",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:fbb15cbad1e4d959acc124f880424999868eb0c2fb56fe1add82f19e005d1ca4",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:251d86ec08532857a42f4738de56bb5c5816651d2b8179999c06149928e981e2"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:dd5f66e216b23df330dcf85a0b1f1ba39a510be6ab73a3650f9c5e7593d021f9",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:4bbb8b56d2663db288b98c811f3d45e3f24b07f4048d56099c930cb70654c83f",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:9e2f426fef3e0c4a7c133c9852f45ea63ecb97f561e9874169d0c2833cc8b213"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:49a3b555de64ef8df7b9d535837b6f7dc680c32c581b7486b6280a5b4c87939d",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:dd5f66e216b23df330dcf85a0b1f1ba39a510be6ab73a3650f9c5e7593d021f9",
+      "pairing_basis_code": "explicit_earlier_extra_job_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:4dbbfbfb279447dd779fa3f2bfa7e172b0c0115d51a83b464ef8febc9b05281f"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:4de11fcbbec4efeb65764f2b9c9c167a703aa12e5dd985b6308bbd23636b8ac9",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:1d1cc566671a8231e242d1de97ffd1bad7ca8a119bbfc1173ea27df7beecc764",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:fba1552f4cd1974b700e049707ac8d6c6170395ef42efd1fcc887d39d598893b"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:635365552e8ba47ebe772b35d79b653ebfb65778862bf79608ff8e5ae1bb39e9",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:48e75a58cf8970b319b1d034dd1b5ec4c0e7f4d61b4447a9859e6f1d2f2a11c2",
+      "pairing_basis_code": "explicit_prior_title_reference_proves_main_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:07eadc347da3098f17f952313dfa71519d2d3fe56827e708082ee12c1034cc09"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:6d35d59db36153498e6585de0c23f87b57eac89b7b250864ec3446229ff59f23",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:1d1cc566671a8231e242d1de97ffd1bad7ca8a119bbfc1173ea27df7beecc764",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:60c077ae48b1674408b9b07116bf93910749bc771b2cf06883b86cda7875e1ce"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:62243b26e7c856946a5a449b8a9dfd2317ec44c7eedb69c6c3a7d50a60ebb7fd",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:58c49ab184d4b804f6d44a69f89b679e88e0c759509a3a477a2e9fde53aba37c",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:9a69de435c9b01501d00a2c7f04a394166c161f4bafbc147fd4b2c0c86fcedc7"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:30a9ee1b501f11da0d1615425b474c22acd01750d40a2b1883113989f5734d0a",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:62243b26e7c856946a5a449b8a9dfd2317ec44c7eedb69c6c3a7d50a60ebb7fd",
+      "pairing_basis_code": "explicit_earlier_extra_job_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:be9167dbdd515f31e532fc9cba5bb3e95d8441c82480bf1dc65cc1af44e65518"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:89f584e98bdf5da9faefba7847a0aab8f26c5631657a90b737afdc54c1a87296",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:1d1cc566671a8231e242d1de97ffd1bad7ca8a119bbfc1173ea27df7beecc764",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:9d1ef204b047dace28998b70a131e38d2d12eacb4623d48284ac6dd95aec9d6e"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:839b9c30a51960efb0191d673eb05388e7871c7de9af3a8765fed1cc86989c47",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:89f584e98bdf5da9faefba7847a0aab8f26c5631657a90b737afdc54c1a87296",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e0622bcb3644c55b7d5c85c7ecac817b23b3a8e881fde95fc6509fa754924f02"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:c0e99ea4907dbdf6d428c46a53d680f66f5bcae7210d5a573db1cdcfd30df9f1",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:58c49ab184d4b804f6d44a69f89b679e88e0c759509a3a477a2e9fde53aba37c",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:f694f40069f2aefafdd00e1a66967031b6f506d3f31c0d1026c34cf033caefb5"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:40f89598ece6a45283d52405c6f4d95d833f1c25042e29cf76c9480dc8ff0b09",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:c0e99ea4907dbdf6d428c46a53d680f66f5bcae7210d5a573db1cdcfd30df9f1",
+      "pairing_basis_code": "explicit_earlier_extra_job_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:7e35ab046c7d8c6fce81a40517594088300da0feb28a51f2eef1905551d89368"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:68446442716b3963e7468f18f67c93618af447312c65213895cb798e9e169a62",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:21d84cc54fb8b75617e8f69857a03d0216a0dc642298b535a63f21e247147530",
+      "pairing_basis_code": "explicit_that_main_job_title_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:c47b5e61eece24ff161e814441e9d6d8c9d1621876277e7806a1b2f46066d5bb"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:5fb582eca3e135a857509526d17b79404033cac4e17cea0b22025aefe7812bdb",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:556d143252b788ca83fb155bbef283d59ed9d00999c58de6c16e7d1cbc79590e",
+      "pairing_basis_code": "explicit_prior_title_reference_proves_main_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:686814b29062baa52028503a0ed7c626219c6af68b75f7e93832b4fd7930e4b3"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:1dde3ff6ad4de308f02cd947a0e23962bdf298c7c637a820ce9ae7d5bbe6657e",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:21d84cc54fb8b75617e8f69857a03d0216a0dc642298b535a63f21e247147530",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:ad447ae3b57d83d1a1f1762c32551c4f97bce23fdd43beee3bd8e4cfc51c87d6"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:74fb9e95d71ea17b0646d029b031cd64ea8c1e928b494878f15e38ebfe8239b6",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:58c49ab184d4b804f6d44a69f89b679e88e0c759509a3a477a2e9fde53aba37c",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:55a8a1542ff0ea9c95bbf475598cff334e96d46bd590b64cdc1975f81332788f"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:5c723913e0e62d0f91dc369ed05573fc9c5109704cf209fa1bfe1a2b985c84b0",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:74fb9e95d71ea17b0646d029b031cd64ea8c1e928b494878f15e38ebfe8239b6",
+      "pairing_basis_code": "explicit_earlier_extra_job_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:5948f2ea2757c8870c59b1c5fa40c3acf655ad9b3da48288c941ee76eff040da"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:c3a943ba9c3e3b7d117fcb3589c322d4d1f09843feadc986f13aa3c2bb447258",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:9a9cd9517170e1fd9a3dd1635f3ecc6668c547392b1159718d77cb20fcf75514",
+      "pairing_basis_code": "explicit_main_job_only_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:45ffb0768b5d2fdc92159a359c1c85ae132d4aaca6be2f626394efa555b07395"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:4e750b015418b8f47f4bd39cbfd9649c29cf4b1b7b6a371962757a85b30c1ef9",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:890c4235670e251ba4282a6b4f95a79b5c9ad27e011fb93d92b6205ded9c0bcc",
+      "pairing_basis_code": "explicit_employer_named_job_renaming_proves_extra_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:19a6e23501b0ad575ff83d24a9b57fd6115d855a3c5ae4364cda9d15617d51cc"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:7b4b8fb5436825df7d010a8a0720ae3011f9ac280ad4e5fa89ae5aa0a3a8899e",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:4e750b015418b8f47f4bd39cbfd9649c29cf4b1b7b6a371962757a85b30c1ef9",
+      "pairing_basis_code": "explicit_earlier_extra_job_reference_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:df493ac6be25b287adf85383bb02c66562339e219c5512543d902ef4e9f02caa"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:7adaf01c7346d0ce0989b2f1f069c17a54d7bb89b45442512b5eef703d3835ac",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:6c20eb7eb037039b0245c0563b5c9073cfe0b3f9f923e7fd6269aeb8d258f0f9",
+      "pairing_basis_code": "explicit_same_employer_anaphora_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:1d6d5a3856a2ff905133ec58b16ab0de9711203263f90cf5a2de58341a9fc3c2"
+    },
+    {
+      "alias_occurrence_id": "psid-questionnaire-occurrence:28eb4c19582d6e77ff9a80c38642b921f2b587b6baff25449df2d1448a792199",
+      "canonical_occurrence_id": "psid-questionnaire-occurrence:9ada73ba54aeab9ce6fb5a893b2d4c4fcd896a726d8d152af2cd54d100f6bc70",
+      "pairing_basis_code": "explicit_same_employer_anaphora_proves_job_coreference",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:6b4c9450138b8cc7f83bd0271f48f8ebf13b7390490ee8ff8244f60828c7d50d"
+    }
+  ],
+  "nonledger_single_pair_domain_sha256": "5a5edc53afe9576abed6e472fe2757a0eff23c404c84a483a4400ccc7e29c364",
+  "nonledger_stop_decisions": [
+    {
+      "semantic_finding": "disjunctive_destination_does_not_prove_one_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e182e057e1d16a5940845675199ba7c680cd448b608074e2f799102cd364c9f6"
+    },
+    {
+      "semantic_finding": "disjunctive_destination_does_not_prove_one_pair",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:1ea66bc0102d3d4dcc2dec2736a2397410a80edc8a8b9bf2fef02e8277a5c5ca"
+    },
+    {
+      "semantic_finding": "disjunctive_destination_and_unpaired_composite_do_not_prove_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:04f1c6063dc9cc203eceb657f5c6d90b2e91a1f5fd0632b3cc88bd56ab7e5930"
+    },
+    {
+      "semantic_finding": "operational_same_treatment_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:7526eca82ede8ed0359ed367b6b0de4a4f003b26f4d51124a45518e0f9534b5a"
+    },
+    {
+      "semantic_finding": "contrastive_information_reference_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-evidence:c3bd14ed3a40661a268a7d55510e4afc12ea315f05f6d7f58130953911c7b007"
+    },
+    {
+      "semantic_finding": "dependency_enumeration_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-evidence:2c4dc2320af609088ac673d442368e3b3723079f17d46a69f1d4e3fd5242fc48"
+    },
+    {
+      "semantic_finding": "repeated_instance_instruction_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-evidence:658d5ed241b2af57fe07e9e49161f99dff5ce6f144fd8269463006609aeff679"
+    },
+    {
+      "semantic_finding": "conditional_identity_question_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:a0d6b77458308da4c6280c85c9ae8e0e5bb1680f0d47fd0bc38036a641af76e1"
+    },
+    {
+      "semantic_finding": "conditional_identity_question_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:0f4378c5862bdfab469e7011b7965b20aea25498fae96a21d9393a94e37bf457"
+    },
+    {
+      "semantic_finding": "conditional_identity_question_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:a4900401718dfc0fdba2a399ccd53001ef9c4f763932a68ee15148a261896c0d"
+    },
+    {
+      "semantic_finding": "conditional_identity_question_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e2f6def0ba99df20fbc7777061b0cae0d15c0025ff780280e3fb85a97e06826d"
+    },
+    {
+      "semantic_finding": "conditional_identity_question_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:c1a20ae327c328adcbb42b8288ac9e01fe10fe0e8ddca3a2be0b7cd0c864817c"
+    },
+    {
+      "semantic_finding": "conditional_identity_question_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:e721a3164a514ea6124f22a93f3da162a17ea86bba0c4badebc61b315c859f8b"
+    },
+    {
+      "semantic_finding": "incomplete_disjunctive_definition_does_not_prove_occurrence_equivalence",
+      "source_local_evidence_id": "rq-local-repeat-alias-evidence:85c895e0258c84ed44754dbbfb0f730382a4dfd4c98bdf32751d136fd65ba402"
+    }
+  ],
+  "nonledger_stop_domain_sha256": "eb5efd137757c0786c68a1e3c55d6e1d77975b7d522f691826cc01b70c5b9038",
+  "ordered_nonledger_candidate_evidence_ids": [
+    "rq-local-repeat-alias-evidence:e0a56457274df3666987b1b9b5356f5bbde11d349ff629ca79ef75fccb2b3224",
+    "rq-local-repeat-alias-evidence:5b32cee57c56b008b3dc5059e3e33d9b24c35577ed498306b28c9ab2ad7fa228",
+    "rq-local-repeat-alias-evidence:879a1a3043467ab07747e0b138a8e61701ecb6a4e4825039e891e3c5d2fb05cc",
+    "rq-local-repeat-alias-evidence:5e54d029ad6666989cbc87d8585bef63a8fa60826047770bfc5984ed7ef41f02",
+    "rq-local-repeat-alias-evidence:3cf3aabace6c44b62f9933a7fb4864f999ceab5915a6739fbf9f9b36a896dc5b",
+    "rq-local-repeat-alias-evidence:a8fae07531b05e1689149e4cab9d375dc137df5f88e2814c6d62e98b62aa1ade",
+    "rq-local-repeat-evidence:211847f083671832ea528d018da546a21908fb229c40ad610870c4fa39f11232",
+    "rq-local-repeat-evidence:bbeed0bb380adc83f2b968ae21cec1812817aa6bf8fd5f68d31d7e6ce5aadf98",
+    "rq-local-repeat-evidence:8bcafcddd5390150afa2a40c3ee5a348c652b6aa507809301c5d5919e479ddea",
+    "rq-local-repeat-evidence:140a24a3b8b6f1a529bf502ad480af193bdc50a0ef051f1af6950ff464ce5cc1",
+    "rq-local-repeat-alias-evidence:f3f9e68cb9abbd4dc45226c9a242130b49218fb944c9af7afc54247739ef42b0",
+    "rq-local-repeat-alias-evidence:f05c18c7c4061be215d08d28c6b8ad79ac45c10c85f0ebac801bd538b6ec91ff",
+    "rq-local-repeat-alias-evidence:c485c4241054b37d2b0dce248adb5fffdd8b94f46d7da4dd9b2c65eb90473dbf",
+    "rq-local-repeat-alias-evidence:83f5682da849088fa3aa09b41e5bb6baac67de42c1b35da9a7c9d7b9ceb3d2c2",
+    "rq-local-repeat-alias-evidence:837290689525ed21f5be4012ba4ea9b2ec3c09c040069a20929a41387831d36e",
+    "rq-local-repeat-alias-evidence:b1f138d44bc0f3ab6f927255698dd0518c842d860036a3932d6ca1cad6a4a5e6",
+    "rq-local-repeat-evidence:74b7b3876585dc267196d44f5528475c8728c16d17646971960802b9e02e42e3",
+    "rq-local-repeat-evidence:9358651a00da0c505703b164b4aa0bd4ec3927a91d963c4f8d86383bb8c4aa2a",
+    "rq-local-repeat-alias-evidence:fece8cc1f3aaf607d7f69c2ddacfe2a7dd32da6fd2ae7f2c96bfe8a6db832c12",
+    "rq-local-repeat-alias-evidence:60bd395782c71055026d5fc3be4b32d5af697e29f9787157e90f39b0854375cc",
+    "rq-local-repeat-alias-evidence:1a0e62181dc482beaa5414544a83cb6651068c4e5f24d4b1982fd6254bb61a90",
+    "rq-local-repeat-alias-evidence:2747015d8c1c6d36df95a4627a681248ae2d092354d06ccc94e2aca46e821f65",
+    "rq-local-repeat-alias-evidence:4aa53baf84a570975252c362e4572f17788867d3bebefbd501114b231c484c90",
+    "rq-local-repeat-alias-evidence:2b36e8a5f2a1da87ebf78ef4a39f30c8aadf22d1086cf62d690f775d5f34ce16",
+    "rq-local-repeat-alias-evidence:8f4c963118e393a25f24fc54a2dc18e25b963b3b57aa5288264379025ad5a52c",
+    "rq-local-repeat-alias-evidence:e864aa0e31d6d5e8182522a582b08862b5ecadb5c8ade5642ed03fc763918424",
+    "rq-local-repeat-alias-evidence:b595d161ba855ad7c2919f2c8e98b6d5e5caca8116ade3e4606fde20f6002e21",
+    "rq-local-repeat-alias-evidence:1214b724204b05efc3d0c09c96c2eb6d6cc68e45088188e4257db46052990be9",
+    "rq-local-repeat-alias-evidence:e182e057e1d16a5940845675199ba7c680cd448b608074e2f799102cd364c9f6",
+    "rq-local-repeat-alias-evidence:1ea66bc0102d3d4dcc2dec2736a2397410a80edc8a8b9bf2fef02e8277a5c5ca",
+    "rq-local-repeat-alias-evidence:efce879700823bff31025f2a3f3a3cf675dac1340077fded8b6264d7e87e6f40",
+    "rq-local-repeat-alias-evidence:a6ee5b821a677d21b473f145eaa285963f10817c6a55210ee1a010b63b89dd31",
+    "rq-local-repeat-alias-evidence:991d7481f8f591ab49f406688fbb7ff93b3c1e625b6a7264743e1733384fada7",
+    "rq-local-repeat-alias-evidence:af1ee41f080a10f24bf5d60752a26d82a2847c65d5d4f08f57c69fff1bc46265",
+    "rq-local-repeat-alias-evidence:e88b430c27de20dca2cc05e24c8ff42f438fc02aeb9ea01a5076ca4469fc66bf",
+    "rq-local-repeat-alias-evidence:04f1c6063dc9cc203eceb657f5c6d90b2e91a1f5fd0632b3cc88bd56ab7e5930",
+    "rq-local-repeat-alias-evidence:34c0c365f7e0064b6c394ea3d14fd8cce712af92c20e4aa9382dbe308984b8ff",
+    "rq-local-repeat-alias-evidence:f32208c231e65a2caffe174c83f5cbf1924c571704b344cf0b2bc867fc648443",
+    "rq-local-repeat-alias-evidence:e731497d9523678483c5a778c518cdaa4e2ee1053f526035e9941334bb4b4afc",
+    "rq-local-repeat-alias-evidence:7526eca82ede8ed0359ed367b6b0de4a4f003b26f4d51124a45518e0f9534b5a",
+    "rq-local-repeat-alias-evidence:9c387306075ab857f6f0b633da74d7708340aa0eb1772f0458c40287455c048f",
+    "rq-local-repeat-alias-evidence:56444a413699998b36a2928f5f3d7f242d35758b94b12171a3816458266be473",
+    "rq-local-repeat-alias-evidence:520ec2f504d5acbaaf380c89ad49b7c4f16a434b6be50406c911878a4808bb11",
+    "rq-local-repeat-alias-evidence:e7e53faef42c9bcb855293e907822c5fad9656ba534ab1360a4310d6c4c138a5",
+    "rq-local-repeat-alias-evidence:53dd9fd3e3042e961c6ebb83e57923781e0571b2078354e6b3c3fdcc763d2bc3",
+    "rq-local-repeat-alias-evidence:e92d0a333acc3bef4f4442c0321b545e8f7c11a0160f6e572188608de40b1f7c",
+    "rq-local-repeat-alias-evidence:fa16d90741873028574d599e7c934356d1c57ea51538903330f22530a55f411e",
+    "rq-local-repeat-alias-evidence:d6b1005d56e7dd1ed772728c612ba114259f87fb4a8e2cfffd74c49fda340f1a",
+    "rq-local-repeat-alias-evidence:1decd43073b81d6be4d82a9923f74dbe7fb3d4b843dba9fab4e3a5cc78a02f09",
+    "rq-local-repeat-alias-evidence:22b7fe670eabe8e92e1fad19dde5a26fc9dd889cf68895e802c15e6bf1c42436",
+    "rq-local-repeat-alias-evidence:3ae600065f9c315e89ed720caa3cba85599dfe6c35fe22a22f86196dca5955f9",
+    "rq-local-repeat-alias-evidence:4be37b9219f2c3bd6b85f42b2edee98147c253ba7302e486ae18e78124cc0f54",
+    "rq-local-repeat-alias-evidence:b6508b6b3eae96ed7ab546004483641e7177dd3bc2d1cd64dba54985c28ca628",
+    "rq-local-repeat-alias-evidence:cf577ceb57e592bee536cf9208ea84dd143d566d7cce5c89d6645470c4d41022",
+    "rq-local-repeat-alias-evidence:2e85f085bf5c06c338cb4f8b671d96b70b249a7fd1d322779dd0fb6322876e39",
+    "rq-local-repeat-alias-evidence:4ad076ad00e1f004d5aad7447358e74fcb300b67f8c4014c6c16dc45500e5ee2",
+    "rq-local-repeat-alias-evidence:1614d98fa783595996841b4f81d8193a629be3454fc8db93dc5b1b7d3fd266d8",
+    "rq-local-repeat-alias-evidence:ab8571fb6e25ada9264853470c6e67792f9d65d0587e6e9d4103110d468dd07e",
+    "rq-local-repeat-evidence:c3bd14ed3a40661a268a7d55510e4afc12ea315f05f6d7f58130953911c7b007",
+    "rq-local-repeat-evidence:2c4dc2320af609088ac673d442368e3b3723079f17d46a69f1d4e3fd5242fc48",
+    "rq-local-repeat-evidence:658d5ed241b2af57fe07e9e49161f99dff5ce6f144fd8269463006609aeff679",
+    "rq-local-repeat-evidence:13c974b825f22ca6d815af1494b76a4767fd291ae720c62e1976442af7941ce6",
+    "rq-local-repeat-alias-evidence:c5de7414eccac4891f7c77cce4c6ab4e4f2ba406ef93dec49bc0a3c4d43aa3fc",
+    "rq-local-repeat-alias-evidence:2c11552261785a5f15e4d7f7630ca1ff142c3d78c332b125f113455421c9671b",
+    "rq-local-repeat-alias-evidence:74ac932d93b72fbb2cdefdfec99c76e0dbfcdc65486eca010aa8bf3623473ab4",
+    "rq-local-repeat-alias-evidence:37d1db5ca1ecee91059c166b151cc02601f078e069fb7ecfd3f0eecccba9a978",
+    "rq-local-repeat-alias-evidence:c1610380c026d17c5c534d7360e3e6cf9dbe9d9318ddcfb666f3351263bf8505",
+    "rq-local-repeat-alias-evidence:c78b984edcdb2232f130eb48ea55d0ee6c54875c7159aceb98b7b611e90b1cb3",
+    "rq-local-repeat-alias-evidence:10ec91d8762a896e8d6fd976ae89df65dd505987b5d6db900aaa5c63f2b9c4bd",
+    "rq-local-repeat-alias-evidence:5161e9978493544db1ad9dabb9505cef1be17f3bab7e94994e106952dda0a91f",
+    "rq-local-repeat-alias-evidence:079dab818fd8bbcae377348a48cbfbf5378bc2f851d64248ea6d62dcddb9af02",
+    "rq-local-repeat-alias-evidence:e6eb853a787d2562e55b5b206075e3952a06f7a83f8a0fb0fb3c06c1ed445657",
+    "rq-local-repeat-alias-evidence:ab5d5c124156158fc8de5627e36aa3a8f41d7e7f3a4135916b9cf199beed01b1",
+    "rq-local-repeat-alias-evidence:a16aa652d6f6e9782ceba989414385c79e0150b079ba2e4c35241a9a7ac86df9",
+    "rq-local-repeat-alias-evidence:60c3f6bddc0f4a207b0d7e3d1810d47363c2b4bab1f740c94a13503cc9276235",
+    "rq-local-repeat-alias-evidence:a9bb59844db5521ebac951b46618fdd3d94f80c2d760250a43ac423db039b227",
+    "rq-local-repeat-alias-evidence:251d86ec08532857a42f4738de56bb5c5816651d2b8179999c06149928e981e2",
+    "rq-local-repeat-alias-evidence:9e2f426fef3e0c4a7c133c9852f45ea63ecb97f561e9874169d0c2833cc8b213",
+    "rq-local-repeat-alias-evidence:4dbbfbfb279447dd779fa3f2bfa7e172b0c0115d51a83b464ef8febc9b05281f",
+    "rq-local-repeat-alias-evidence:a0d6b77458308da4c6280c85c9ae8e0e5bb1680f0d47fd0bc38036a641af76e1",
+    "rq-local-repeat-alias-evidence:0f4378c5862bdfab469e7011b7965b20aea25498fae96a21d9393a94e37bf457",
+    "rq-local-repeat-alias-evidence:a4900401718dfc0fdba2a399ccd53001ef9c4f763932a68ee15148a261896c0d",
+    "rq-local-repeat-alias-evidence:e2f6def0ba99df20fbc7777061b0cae0d15c0025ff780280e3fb85a97e06826d",
+    "rq-local-repeat-alias-evidence:c1a20ae327c328adcbb42b8288ac9e01fe10fe0e8ddca3a2be0b7cd0c864817c",
+    "rq-local-repeat-alias-evidence:e721a3164a514ea6124f22a93f3da162a17ea86bba0c4badebc61b315c859f8b",
+    "rq-local-repeat-alias-evidence:fba1552f4cd1974b700e049707ac8d6c6170395ef42efd1fcc887d39d598893b",
+    "rq-local-repeat-alias-evidence:07eadc347da3098f17f952313dfa71519d2d3fe56827e708082ee12c1034cc09",
+    "rq-local-repeat-alias-evidence:60c077ae48b1674408b9b07116bf93910749bc771b2cf06883b86cda7875e1ce",
+    "rq-local-repeat-alias-evidence:9a69de435c9b01501d00a2c7f04a394166c161f4bafbc147fd4b2c0c86fcedc7",
+    "rq-local-repeat-alias-evidence:be9167dbdd515f31e532fc9cba5bb3e95d8441c82480bf1dc65cc1af44e65518",
+    "rq-local-repeat-alias-evidence:9d1ef204b047dace28998b70a131e38d2d12eacb4623d48284ac6dd95aec9d6e",
+    "rq-local-repeat-alias-evidence:e0622bcb3644c55b7d5c85c7ecac817b23b3a8e881fde95fc6509fa754924f02",
+    "rq-local-repeat-alias-evidence:f694f40069f2aefafdd00e1a66967031b6f506d3f31c0d1026c34cf033caefb5",
+    "rq-local-repeat-alias-evidence:7e35ab046c7d8c6fce81a40517594088300da0feb28a51f2eef1905551d89368",
+    "rq-local-repeat-alias-evidence:c47b5e61eece24ff161e814441e9d6d8c9d1621876277e7806a1b2f46066d5bb",
+    "rq-local-repeat-alias-evidence:686814b29062baa52028503a0ed7c626219c6af68b75f7e93832b4fd7930e4b3",
+    "rq-local-repeat-alias-evidence:ad447ae3b57d83d1a1f1762c32551c4f97bce23fdd43beee3bd8e4cfc51c87d6",
+    "rq-local-repeat-alias-evidence:55a8a1542ff0ea9c95bbf475598cff334e96d46bd590b64cdc1975f81332788f",
+    "rq-local-repeat-alias-evidence:5948f2ea2757c8870c59b1c5fa40c3acf655ad9b3da48288c941ee76eff040da",
+    "rq-local-repeat-alias-evidence:45ffb0768b5d2fdc92159a359c1c85ae132d4aaca6be2f626394efa555b07395",
+    "rq-local-repeat-alias-evidence:19a6e23501b0ad575ff83d24a9b57fd6115d855a3c5ae4364cda9d15617d51cc",
+    "rq-local-repeat-alias-evidence:df493ac6be25b287adf85383bb02c66562339e219c5512543d902ef4e9f02caa",
+    "rq-local-repeat-alias-evidence:1d6d5a3856a2ff905133ec58b16ab0de9711203263f90cf5a2de58341a9fc3c2",
+    "rq-local-repeat-alias-evidence:85c895e0258c84ed44754dbbfb0f730382a4dfd4c98bdf32751d136fd65ba402",
+    "rq-local-repeat-alias-evidence:6b4c9450138b8cc7f83bd0271f48f8ebf13b7390490ee8ff8244f60828c7d50d",
+    "rq-local-repeat-alias-evidence:72dedef947bfd763154ed9bfe78cf3878282dc708bdd7f26b1cb98a0d04ef1e8",
+    "rq-local-repeat-alias-evidence:abd7d80b1512eb76bcfb570e8ee52e5cb32e8ea828193856e30aff5367fc8e1c",
+    "rq-local-repeat-alias-evidence:c96cd50e02601b784f7d3a7c62e5d4ea6db82d3fcbef354ec9eff12d49d0463c"
+  ],
+  "schema_version": "amendment12-alias-semantic-adjudication-spec-v1",
+  "status": "complete_exact_cover_semantic_specification"
+}

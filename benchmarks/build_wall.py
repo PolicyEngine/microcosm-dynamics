@@ -1,0 +1,340 @@
+#!/usr/bin/env python3
+"""Render the publishable standing benchmark wall from registry and history."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from collections import Counter, defaultdict
+from pathlib import Path
+from typing import Any
+
+from schema import (
+    GAP_CLASSES,
+    TIERS,
+    label_state_summary,
+    latest_records,
+    load_history,
+    load_registry,
+    require,
+    sha256_bytes,
+    validate_history_against_registry,
+)
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE / "wall.md"
+
+
+def compact_number(value: Any) -> str:
+    """Render one scalar without implying more precision than stored."""
+
+    if isinstance(value, bool) or value is None:
+        return str(value).lower()
+    if isinstance(value, int):
+        return f"{value:,}"
+    if isinstance(value, float):
+        if value == 0:
+            return "0"
+        absolute = abs(value)
+        if absolute >= 1000:
+            return f"{value:,.2f}"
+        if absolute >= 100:
+            return f"{value:.3f}"
+        if absolute >= 1:
+            return f"{value:.4f}"
+        return f"{value:.6g}"
+    return str(value)
+
+
+def escape(text: str) -> str:
+    """Escape text for a Markdown table cell."""
+
+    return text.replace("|", "\\|").replace("\n", "<br>")
+
+
+def display_mapping(mapping: dict[str, Any], skip: set[str]) -> str:
+    """Render meaningful fields from one observation mapping."""
+
+    parts = []
+    for key, value in mapping.items():
+        if key in skip or key.startswith("sample_sd_"):
+            continue
+        if key in {"variation_note", "definition"}:
+            continue
+        label = key.replace("_", " ")
+        rendered = display_value(value)
+        parts.append(
+            rendered
+            if len(mapping) - len(skip) == 1
+            else f"{label}: {rendered}"
+        )
+    return ", ".join(parts)
+
+
+def display_value(value: Any) -> str:
+    """Render scalar, annual-path, or ordering history values compactly."""
+
+    if isinstance(value, list):
+        if not value:
+            return "[]"
+        if all(isinstance(item, str) for item in value):
+            return " → ".join(value)
+        if all(isinstance(item, dict) and "year" in item for item in value):
+            return "; ".join(
+                f"{item['year']}: {display_mapping(item, {'year'})}"
+                for item in value
+            )
+        return json.dumps(value, ensure_ascii=False, sort_keys=True)
+    if isinstance(value, dict):
+        return display_mapping(value, set())
+    return compact_number(value)
+
+
+def display_deviation(deviation: dict[str, Any]) -> str:
+    """Render every registered deviation component except verbose definitions."""
+
+    parts = []
+    for key, value in deviation.items():
+        if key in {"definition", "signed_native_unit"}:
+            continue
+        parts.append(f"{key.replace('_', ' ')}: {display_value(value)}")
+    if not parts:
+        return "No numeric magnitude comparison"
+    return "<br>".join(parts)
+
+
+def trend_for(
+    row_records: list[dict[str, Any]], latest: dict[str, Any]
+) -> str:
+    """Report neutral change status without treating direction as improvement."""
+
+    if len(row_records) == 1:
+        return "n/a"
+    prior = row_records[-2]
+    if prior["deviation"] == latest["deviation"]:
+        return "unchanged"
+    return "changed"
+
+
+def tier_heading(tier: str) -> str:
+    """Return a readable label for a registry tier."""
+
+    return tier.replace("_", " ").title()
+
+
+def row_count_text(count: int) -> str:
+    """Return one compact row-count phrase with honest grammar."""
+
+    return f"{count} {'row' if count == 1 else 'rows'}"
+
+
+def render_honest_labels(records: list[dict[str, Any]]) -> str:
+    """Render label diversity and claims from one latest history block."""
+
+    summary = label_state_summary(records)
+    embedded = summary["embedded_arrays"]
+    if embedded:
+        embedded_text = "; ".join(
+            "`"
+            + json.dumps(item["labels"], ensure_ascii=False)
+            + "` ("
+            + row_count_text(item["row_count"])
+            + ")"
+            for item in embedded
+        )
+    else:
+        embedded_text = "none"
+    ratified = json.dumps(
+        summary["ratified_fitting_free_exact_label_array"],
+        ensure_ascii=False,
+    )
+    activation = (
+        "asserts"
+        if summary["ratified_array_activation_asserted_by_this_matrix"]
+        else "does not assert"
+    )
+    population = (
+        "This evaluation asserts population alignment."
+        if summary["population_alignment_claim"]
+        else "No population-alignment claim is made."
+    )
+    individual = (
+        "This evaluation asserts individual administrative truth."
+        if summary["individual_administrative_truth_claim"]
+        else "No individual-administrative-truth claim is made."
+    )
+    return (
+        "The latest evaluation's distinct source-artifact embedded label "
+        f"arrays are {embedded_text}. Rows with no embedded label array: "
+        f"{summary['no_array_count']}. The registered design's exact "
+        f"fitting-free array is `{ratified}` (locator "
+        f"`{summary['ratified_array_locator']}`); this evaluation "
+        f"{activation} that its activation event has occurred. {population} "
+        f"{individual} Every displayed model value remains "
+        f"**{summary['matrix_display']}**."
+    )
+
+
+def render() -> bytes:
+    """Return deterministic Markdown bytes without mutating the filesystem."""
+
+    registry, registry_raw = load_registry()
+    history, _ = load_history()
+    current_registry_sha = sha256_bytes(registry_raw)
+    validate_history_against_registry(history, registry, current_registry_sha)
+    entries = registry["entries"]
+    by_id = {entry["row_id"]: entry for entry in entries}
+    latest = latest_records(history)
+    require(set(latest) == set(by_id), "wall is missing active registry rows")
+    require(
+        all(
+            record["registry_sha"] == current_registry_sha
+            for record in latest.values()
+        ),
+        "latest wall records do not use the current registry",
+    )
+
+    records_by_row = defaultdict(list)
+    for record in history:
+        records_by_row[record["row_id"]].append(record)
+
+    latest_label_records = [latest[entry["row_id"]] for entry in entries]
+    honest_labels = render_honest_labels(latest_label_records)
+    gap_counts = Counter(record["gap_class"] for record in latest.values())
+    evaluated_run = next(iter(latest.values()))["evaluated_at_run"]
+    require(
+        all(
+            record["evaluated_at_run"] == evaluated_run
+            for record in latest.values()
+        ),
+        "latest wall records do not form one evaluation run set",
+    )
+
+    output = [
+        "# Standing benchmark wall",
+        "",
+        "<!-- Generated by build_wall.py; do not edit by hand. -->",
+        "",
+        (
+            "This is the publishable, validation-only view of "
+            "[the benchmark registry](registry.json) and its "
+            "[append-only history](history.jsonl). It compares only ratios, "
+            "shares, trajectories, and orderings; no national-dollar or "
+            "population-alignment claim is made."
+        ),
+        "",
+        "## Honest labels",
+        "",
+        honest_labels,
+        "",
+        (
+            "These benchmark values and gaps may never inform model "
+            "construction, calibration targets, candidate selection, or "
+            "tolerance adjudication. Model-triangulation rows are informative, "
+            "never normative, and are never fixed toward. See the "
+            "[benchmark protocol](README.md)."
+        ),
+        "",
+        f"Seed/latest evaluation artifact SHA: `{evaluated_run}`.",
+        "",
+    ]
+
+    for tier in TIERS:
+        tier_entries = [entry for entry in entries if entry["tier"] == tier]
+        output.extend(
+            [
+                f"## {tier_heading(tier)}",
+                "",
+                registry["tiers"][tier]["gap_law"],
+                "",
+                "| Row | Our | Published | Gap | Gap class | Trend |",
+                "|---|---|---|---|---|---|",
+            ]
+        )
+        for entry in tier_entries:
+            row_id = entry["row_id"]
+            record = latest[row_id]
+            our = (
+                f"{display_value(record['our']['value'])} "
+                f"{record['our']['unit']}"
+            )
+            published = (
+                f"{display_value(record['published']['value'])} "
+                f"{record['published']['unit']}"
+            )
+            gap = (
+                f"{display_deviation(record['deviation'])}<br>"
+                f"{record['gap_note']}"
+            )
+            cells = [
+                f"`{row_id}`<br>{entry['quantity']}",
+                our,
+                published,
+                gap,
+                f"`{record['gap_class']}`",
+                trend_for(records_by_row[row_id], record),
+            ]
+            output.append(
+                "| " + " | ".join(escape(cell) for cell in cells) + " |"
+            )
+        output.append("")
+
+    output.extend(
+        [
+            "## Gap ledger",
+            "",
+            (
+                "Each row receives one primary class; its full secondary "
+                "mismatch-code ledger remains in the registry. Any evaluated "
+                "`unexplained` row or missing gap note fails the harness."
+            ),
+            "",
+            "| Gap class | Current rows | Closure condition |",
+            "|---|---:|---|",
+        ]
+    )
+    for gap_class in GAP_CLASSES:
+        closure = registry["gap_classes"][gap_class]["closure_condition"]
+        output.append(
+            f"| `{gap_class}` | {gap_counts[gap_class]} | {escape(closure)} |"
+        )
+    output.extend(
+        [
+            "",
+            (
+                "Trend is `n/a` for a row's first evaluation. Later walls use "
+                "the neutral labels `changed` or `unchanged`; movement is not "
+                "called improvement without a separately pre-registered "
+                "direction law."
+            ),
+            "",
+        ]
+    )
+    rendered = "\n".join(output).encode("utf-8")
+    require(
+        b"https://" not in rendered and b"http://" not in rendered,
+        "wall may not contain external links",
+    )
+    return rendered
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="fail if wall.md differs; never write",
+    )
+    args = parser.parse_args()
+    expected = render()
+    if args.check:
+        if not OUT.exists():
+            raise SystemExit(f"missing generated artifact: {OUT}")
+        if OUT.read_bytes() != expected:
+            raise SystemExit(f"generated artifact is stale: {OUT}")
+        return
+    OUT.write_bytes(expected)
+
+
+if __name__ == "__main__":
+    main()
