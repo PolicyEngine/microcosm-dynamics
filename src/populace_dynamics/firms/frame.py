@@ -82,6 +82,8 @@ from .targets import load_susb_sector_size
 
 __all__ = [
     "CELL_KEYS",
+    "DEFAULT_WEIGHT_BOUNDS",
+    "EMPLOYMENT_OUT_OF_SCOPE_SECTORS",
     "susb_cell_targets",
     "sponsor_frame",
     "post_stratify",
@@ -91,6 +93,27 @@ __all__ = [
 
 #: The post-stratification cell: NAICS sector x canonical firm-size band.
 CELL_KEYS = ("naics_sector", "canonical_band")
+
+#: Sectors whose sponsor employment is **already counted elsewhere** and
+#: must be excluded from the employment margin.
+#:
+#: NAICS 55 (Management of Companies and Enterprises) is a holding-company
+#: sector: one Form 5500 covers the whole enterprise's workforce, while
+#: SUSB attributes those workers to the *operating* sectors and records
+#: only head-office staff under 55. Including them double-counts. The
+#: effect is not marginal — measured on the 2023 files NAICS 55 yields
+#: 42,676,524 weighted employees against SUSB's 3,661,977 (**11.7x**),
+#: which is **24% of all weighted employment in the frame**. It is
+#: systematic across every band, not a thin-cell artifact::
+#:
+#:     1-9      1.0x        100-499   6.0x
+#:     10-49    2.6x        500+     12.4x
+#:     50-99    4.2x
+#:
+#: These sponsors are kept in the **firm** margin — SUSB does count
+#: 25,413 NAICS 55 firms, and the frame reproduces them — but their
+#: employment is flagged out of scope rather than summed.
+EMPLOYMENT_OUT_OF_SCOPE_SECTORS = frozenset({"55"})
 
 _BAND_ORDER = [band.name for band in CANONICAL_BANDS]
 
@@ -238,43 +261,130 @@ def post_stratify(
     return out
 
 
-def _cell_weights(sizes, target_firms: float, target_employment: float):
-    """Maximum-entropy weights matching a cell's firm and size margins.
+def _solve_tilt(sizes, target_mean: float, free) -> float:
+    """Exponential-tilt parameter matching ``target_mean`` on ``free``.
+
+    Newton iteration on the tilt: the derivative of the weighted mean
+    with respect to the tilt is the weighted variance, so the step is
+    ``(target - mean) / variance``.
+    """
+    import numpy as np
+
+    free_sizes = sizes[free]
+    tilt = 0.0
+    for _ in range(200):
+        weights = np.exp(np.clip(tilt * (free_sizes - target_mean), -700, 700))
+        total = weights.sum()
+        if total <= 0 or not np.isfinite(total):
+            break
+        mean = (weights * free_sizes).sum() / total
+        variance = (weights * free_sizes**2).sum() / total - mean**2
+        if variance <= 0 or not np.isfinite(variance):
+            break
+        step = (target_mean - mean) / variance
+        tilt += step
+        if abs(step) < 1e-12:
+            break
+    return tilt
+
+
+#: Default weight bounds. An unbounded exponential tilt produced a
+#: 3,866 weight next to a 1.3e-08 one in the 35-record NAICS 99
+#: (unclassified) cell — a single record standing in for 3,866 firms is
+#: not a calibration, it is a leverage point. Bounded calibration is
+#: the Deville-Sarndal (1992) remedy the project already cites.
+#:
+#: 140 is the knee of the measured sensitivity curve, not a guess. The
+#: p99 weight is 76.5, so bounds above ~140 never bind and give
+#: identical margins; below it the firm margin degrades sharply:
+#:
+#: ====== ============ ===========
+#: bound  firm ratio   emp ratio
+#: ====== ============ ===========
+#: 50           0.7023      0.9766
+#: 100          0.9558      1.0151
+#: 120          0.9705      1.0173
+#: 130          0.9960      1.0226
+#: **140**      0.9988      1.0237
+#: 250          0.9988      1.0237
+#: 1000         0.9990      1.0237
+#: ====== ============ ===========
+#:
+#: So 140 is the tightest bound that costs nothing on either margin,
+#: and it is a referee parameter like the OSHA employment cap, not an
+#: implementation default to inherit silently.
+DEFAULT_WEIGHT_BOUNDS = (0.1, 140.0)
+
+
+def _cell_weights(
+    sizes,
+    target_firms: float,
+    target_employment: float,
+    bounds: tuple[float, float] | None = DEFAULT_WEIGHT_BOUNDS,
+):
+    """Bounded maximum-entropy weights for one cell's two margins.
 
     Solves ``w_i = exp(l * (p_i - mean))`` scaled so ``sum(w) ==
     target_firms`` and ``sum(w * p) == target_employment``. The
     exponential tilt keeps every weight strictly positive, which a
     linear calibration does not guarantee.
 
-    Returns ``(weights, None)`` on success, or ``(None, reason)`` when
-    the target mean lies outside the observed support — no reweighting
-    of the observed records can reach a mean they do not bracket.
+    ``bounds`` clips weights to ``[lo, hi]`` and re-solves the tilt on
+    the records still free, iterating until the clipped set is stable.
+    Because the tilt is monotone in ``p_i``, clipping only ever removes
+    the extremes, so the procedure terminates. Bounding trades exactness
+    on the employment margin for the absence of leverage points; the
+    residual is returned so the caller can report it rather than
+    discover it later.
+
+    Returns ``(weights, None, residual)`` on success, or
+    ``(None, reason, None)`` when the target mean lies outside the
+    observed support — no reweighting of the observed records can reach
+    a mean they do not bracket.
     """
     import numpy as np
 
     sizes = np.asarray(sizes, dtype=float)
     if target_firms <= 0 or len(sizes) == 0:
-        return None, "empty cell or non-positive firm target"
+        return None, "empty cell or non-positive firm target", None
     target_mean = target_employment / target_firms
     if not (sizes.min() <= target_mean <= sizes.max()):
-        return None, (
-            f"target mean {target_mean:.1f} outside observed support "
-            f"[{sizes.min():.0f}, {sizes.max():.0f}]"
+        return (
+            None,
+            (
+                f"target mean {target_mean:.1f} outside observed support "
+                f"[{sizes.min():.0f}, {sizes.max():.0f}]"
+            ),
+            None,
         )
-    tilt = 0.0
-    for _ in range(200):
-        weights = np.exp(tilt * (sizes - target_mean))
-        total = weights.sum()
-        mean = (weights * sizes).sum() / total
-        variance = (weights * sizes * sizes).sum() / total - mean * mean
-        if variance <= 0:
+
+    free = np.ones(len(sizes), dtype=bool)
+    weights = np.ones(len(sizes), dtype=float)
+    for _ in range(20):
+        tilt = _solve_tilt(sizes, target_mean, free)
+        # Clip the exponent before exponentiating: a wide cell (500 to
+        # 2.5M participants) can overflow float64 mid-solve, and an inf
+        # weight silently poisons the rescale to NaN.
+        weights = np.exp(np.clip(tilt * (sizes - target_mean), -700, 700))
+        weights *= target_firms / weights.sum()
+        if bounds is None:
             break
-        step = (target_mean - mean) / variance
-        tilt += step
-        if abs(step) < 1e-12:
+        lo, hi = bounds
+        clipped = (weights < lo) | (weights > hi)
+        if not clipped.any() or not (free & ~clipped).any():
             break
-    weights = np.exp(tilt * (sizes - target_mean))
-    return weights * (target_firms / weights.sum()), None
+        weights = np.clip(weights, lo, hi)
+        free = ~clipped
+    if bounds is not None:
+        # Final clip is NOT followed by a rescale. Rescaling to hit the
+        # firm total after clipping pushes weights straight back over
+        # the bound — that bug left two NAICS 99 records at 4,138 while
+        # the bound was nominally 250. The firm-margin residual this
+        # leaves is returned instead of being papered over.
+        weights = np.clip(weights, *bounds)
+    residual = float((weights * sizes).sum() - target_employment)
+    firm_residual = float(weights.sum() - target_firms)
+    return weights, None, (residual, firm_residual)
 
 
 def calibrate_dual_margin(
@@ -282,6 +392,8 @@ def calibrate_dual_margin(
     targets: pd.DataFrame | None = None,
     *,
     size_column: str = "active_participants",
+    weight_bounds: tuple[float, float] | None = DEFAULT_WEIGHT_BOUNDS,
+    firm_only_fallback: bool = True,
 ) -> pd.DataFrame:
     """Weight records to match SUSB firm **and** employment margins.
 
@@ -314,16 +426,19 @@ def calibrate_dual_margin(
 
     weights = pd.Series(0.0, index=frame.index)
     infeasible: list[dict[str, object]] = []
+    residuals: list[dict[str, object]] = []
     calibrated = 0
+    firm_only = 0
     indexed = targets.set_index(list(CELL_KEYS))
     for cell, group in frame.groupby(list(CELL_KEYS)):
         if cell not in indexed.index:
             continue
         row = indexed.loc[cell]
-        cell_weights, reason = _cell_weights(
+        cell_weights, reason, residual = _cell_weights(
             group[size_column].to_numpy(),
             float(row["firms"]),
             float(row["employment"]),
+            weight_bounds,
         )
         if cell_weights is None:
             infeasible.append(
@@ -332,23 +447,83 @@ def calibrate_dual_margin(
                     "reason": reason,
                     "susb_firms": int(row["firms"]),
                     "susb_employment": int(row["employment"]),
+                    "firm_margin_held": bool(firm_only_fallback),
                 }
             )
+            if firm_only_fallback:
+                # The employment target is out of scope for this cell
+                # (module docstring), but the firm count is sound. Hold
+                # the firm margin and drop only the employment
+                # constraint, rather than losing the cell's firms.
+                #
+                # The same bound applies here. NAICS 55's 500+ cell has
+                # 7,373 SUSB firms behind very few sponsors, so an
+                # unbounded fallback weight reaches 4,138 — a worse
+                # leverage point than the one bounding was added to
+                # remove. Bounding it under-counts that cell's firms
+                # instead, which is recorded rather than hidden.
+                flat = float(row["firms"]) / len(group)
+                if weight_bounds is not None:
+                    flat = min(max(flat, weight_bounds[0]), weight_bounds[1])
+                weights.loc[group.index] = flat
+                infeasible[-1]["fallback_weight"] = flat
+                infeasible[-1]["firms_represented"] = flat * len(group)
+                firm_only += 1
             continue
         weights.loc[group.index] = cell_weights
         calibrated += 1
+        if residual and any(residual):
+            residuals.append(
+                {
+                    "cell": "/".join(cell),
+                    "employment_residual": residual[0],
+                    "firm_residual": residual[1],
+                }
+            )
 
     out = frame.copy()
     out["weight"] = weights
     weighted_employment = float((out[size_column] * out["weight"]).sum())
+    scoped = targets.copy()
+    excluded = {entry["cell"] for entry in infeasible}
+    # Whole-sector exclusions (NAICS 55) join the cell-level ones, so a
+    # downstream consumer cannot accidentally sum double-counted
+    # employment: the flag travels on the frame, not just in attrs.
+    cell_key = out["naics_sector"] + "/" + out["canonical_band"]
+    out["employment_in_scope"] = ~(
+        cell_key.isin(excluded)
+        | out["naics_sector"].isin(EMPLOYMENT_OUT_OF_SCOPE_SECTORS)
+    )
+    excluded = excluded | {
+        f"{row.naics_sector}/{row.canonical_band}"
+        for row in targets.itertuples()
+        if row.naics_sector in EMPLOYMENT_OUT_OF_SCOPE_SECTORS
+    }
+    scoped_key = scoped["naics_sector"] + "/" + scoped["canonical_band"]
+    in_scope = scoped[~scoped_key.isin(excluded)]
     out.attrs["calibrated_cells"] = calibrated
+    out.attrs["firm_only_cells"] = firm_only
     out.attrs["infeasible_cells"] = infeasible
+    out.attrs["weight_bounds"] = weight_bounds
+    out.attrs["bounded_cell_residuals"] = residuals
     out.attrs["weighted_firms"] = float(out["weight"].sum())
     out.attrs["target_firms"] = int(targets["firms"].sum())
     out.attrs["weighted_employment"] = weighted_employment
     out.attrs["target_employment"] = int(targets["employment"].sum())
     out.attrs["employment_ratio"] = (
         weighted_employment / targets["employment"].sum()
+    )
+    # The honest ratio excludes cells whose published employment is out
+    # of scope for their own size class; including them compares against
+    # a target that cannot be met by construction.
+    out.attrs["in_scope_target_employment"] = int(in_scope["employment"].sum())
+    in_scope_rows = out[out["employment_in_scope"]]
+    out.attrs["in_scope_employment_ratio"] = (
+        float((in_scope_rows[size_column] * in_scope_rows["weight"]).sum())
+        / in_scope["employment"].sum()
+    )
+    out.attrs["employment_out_of_scope_sectors"] = sorted(
+        EMPLOYMENT_OUT_OF_SCOPE_SECTORS
     )
     return out
 
