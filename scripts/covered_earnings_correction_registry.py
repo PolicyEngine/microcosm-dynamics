@@ -28,15 +28,15 @@ import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
 BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
-DESIGN_RATIFICATION_COMMIT = "062d74187e3263cd4a7fad3851a9b8c699a2556c"
-DESIGN_REVISION = 16
-DESIGN_BYTE_SIZE = 3_836_294
+DESIGN_RATIFICATION_COMMIT = "60289833febdf88cb9d8977ac1282a0f4b97b278"
+DESIGN_REVISION = 18
+DESIGN_BYTE_SIZE = 3_915_641
 DESIGN_BLOB_SHA256 = (
-    "c4f3ae022d2e623f4316600e16ec3bded10f0160d197ce64e37f35015e55c92f"
+    "17a4bc2b48bd48039ce0777dd22f265eff156fe2484efd6c7b106c5c642dd1b6"
 )
-AMENDMENT15_BOUNDARY = (
-    b"\n## 29. AMENDMENT SECTION \xe2\x80\x94 Amendment 15: ordered "
-    b"publication attestation and tier-2 certification\n"
+AMENDMENT17_BOUNDARY = (
+    b"\n## 31. AMENDMENT SECTION \xe2\x80\x94 Amendment 17: test-pin "
+    b"activation cure and executed-transition ratification\n"
 )
 RATIFICATION_CLOSURE_BINDINGS = (
     {
@@ -51,6 +51,20 @@ RATIFICATION_CLOSURE_BINDINGS = (
         "raw_byte_size": 842,
         "raw_sha256": (
             "0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4"
+        ),
+    },
+    {
+        "path": ("docs/analysis/amendment_15_ratification/closure_v1.json"),
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a"
+        ),
+    },
+    {
+        "path": ("docs/analysis/amendment_16_ratification/closure_v1.json"),
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "5a39ba6965504db9b72a6057f1ac32e547487947662b3528a13ba17a5bab260c"
         ),
     },
 )
@@ -660,7 +674,7 @@ def _run_git(
 def _preserves_ratified_design_prefix(
     current_bytes: bytes, ratified_bytes: bytes
 ) -> bool:
-    """Accept only the exact ratified bytes or one prospective A15 suffix."""
+    """Accept only the exact ratified bytes or one prospective A17 suffix."""
 
     if current_bytes == ratified_bytes:
         return True
@@ -669,8 +683,8 @@ def _preserves_ratified_design_prefix(
         len(ratified_bytes) == DESIGN_BYTE_SIZE
         and len(current_bytes) > DESIGN_BYTE_SIZE
         and current_bytes[:DESIGN_BYTE_SIZE] == ratified_bytes
-        and suffix.startswith(AMENDMENT15_BOUNDARY)
-        and current_bytes.count(AMENDMENT15_BOUNDARY) == 1
+        and suffix.startswith(AMENDMENT17_BOUNDARY)
+        and current_bytes.count(AMENDMENT17_BOUNDARY) == 1
         and current_bytes.endswith(b"\n")
     )
 
