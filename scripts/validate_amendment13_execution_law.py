@@ -162,6 +162,15 @@ AMENDMENT16_BOUNDARY = (
     b"\n## 30. AMENDMENT SECTION \xe2\x80\x94 Amendment 16: generalized "
     b"ratification oracle and combined revision-18 activation\n"
 )
+REVISION18_BYTE_SIZE = 3_915_641
+REVISION18_SHA256 = (
+    "17a4bc2b48bd48039ce0777dd22f265eff156fe2484efd6c7b106c5c642dd1b6"
+)
+REVISION18_BLOB_OID = "114089d99b83c5073e21b6fb64cd701719ac5741"
+AMENDMENT17_BOUNDARY = (
+    b"\n## 31. AMENDMENT SECTION \xe2\x80\x94 Amendment 17: test-pin "
+    b"activation cure and executed-transition ratification\n"
+)
 FIRST_CLOSURE_AMENDMENT = 13
 HISTORICAL_TERMINAL_REVISION = 16
 FORBIDDEN_STANDALONE_REVISION = 17
@@ -861,6 +870,225 @@ A16_PYTHON_IDENTIFIERS = (
     "_validate_non_a13_ratification_design",
     "_validate_ratification_operativity_context",
     "run_amendment16_oracle_mutation_tests",
+)
+A17_SECTION_SEMANTIC_SHA256 = (
+    "b2acce3c1e42d1e58b216cb8643fdc927c741b439621ed66053a1973ac092774"
+)
+A17_REVISION_DOMAIN_RULES = (
+    "permitted terminal R = 16 or any integer R >= 18",
+    "expected operative domain = tuple(range(13, R - 1))",
+    "revision 16 expected domain = (13, 14)",
+    "revision 18 expected domain = (13, 14, 15, 16)",
+    "revision 19 expected domain = (13, 14, 15, 16, 17)",
+    "revision 17 = forbidden before any result comparison",
+)
+A17_EXECUTED_TRANSITION_OBLIGATION = {
+    "scope": "Amendment 17 and every future activation-affecting amendment",
+    "ambiguity_disposition": "fails closed into this obligation",
+    "ratification_verdict": "# RATIFY",
+    "invalid_demonstration_disposition": "unratifiable",
+    "simulated_state_authority": "NONAUTHORITY",
+    "execution_order": [
+        "validate_ratification_operativity()",
+        "tests/test_validate_amendment13_execution_law.py",
+    ],
+    "same_state_required": True,
+    "implementation_pin_verification_required": True,
+}
+A17_RECEIPT_SCHEMA = {
+    "top_level_keys": [
+        "simulated_state_authority",
+        "simulated_state_identity_sha256",
+        "simulated_state_manifest",
+        "terminal_revision",
+        "public_oracle",
+        "full_pinned_battery",
+    ],
+    "manifest_keys": [
+        "schema_version",
+        "simulated_state_authority",
+        "candidate_or_scratch_HEAD",
+        "terminal_revision",
+        "canonical_registry_binding",
+        "ordered_closure_identities",
+        "full_pinned_battery_test_identity",
+    ],
+    "manifest_schema_version": "executed_transition_state.v1",
+    "manifest_authority": "NONAUTHORITY",
+    "closure_identity_keys": [
+        "path",
+        "raw_byte_size",
+        "raw_sha256",
+        "git_blob",
+    ],
+    "test_identity_keys": [
+        "path",
+        "mode",
+        "git_blob",
+        "raw_byte_size",
+        "raw_sha256",
+    ],
+    "public_oracle_keys": [
+        "entrypoint",
+        "executed",
+        "exit_code",
+        "operative_amendments",
+        "simulated_state_identity_sha256",
+    ],
+    "full_pinned_battery_keys": [
+        "executed",
+        "exit_code",
+        "test_path",
+        "test_mode_blob_bytes_sha256",
+        "exact_command",
+        "collected",
+        "passed",
+        "failed",
+        "skipped",
+        "deselected",
+        "xfailed",
+        "xpassed",
+        "simulated_state_identity_sha256",
+    ],
+    "integer_fields": [
+        "public_oracle.exit_code",
+        "full_pinned_battery.exit_code",
+        "full_pinned_battery.collected",
+        "full_pinned_battery.passed",
+        "full_pinned_battery.failed",
+        "full_pinned_battery.skipped",
+        "full_pinned_battery.deselected",
+        "full_pinned_battery.xfailed",
+        "full_pinned_battery.xpassed",
+    ],
+    "closed_without_defaults_or_extra_keys": True,
+    "canonicalization": (
+        "ascii_json_sorted_keys_no_insignificant_whitespace_"
+        "no_nonfinite_values_one_terminal_lf"
+    ),
+    "nested_state_identities_equal_top_level": True,
+}
+A17_TRANSITION_REGISTRY_BINDING = {
+    "path": DESIGN_PATH,
+    "ratification_commit": "60289833febdf88cb9d8977ac1282a0f4b97b278",
+    "revision": 18,
+    "blob_sha256": REVISION18_SHA256,
+}
+A17_TRANSITION_CLOSURE_IDENTITIES = (
+    {
+        "amendment_number": 13,
+        "path": A13_CLOSURE_PATH,
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "fce13fc1e5e2b4026a34dab735ca36186b147260bd0a137979aa52711affabd7"
+        ),
+        "git_blob": "abc1145fec35af1673e7852d77f701828e3de139",
+    },
+    {
+        "amendment_number": 14,
+        "path": A14_CLOSURE_PATH,
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4"
+        ),
+        "git_blob": "a13e1384d1f81d3072f7ac7af1c0fd547b9c5709",
+    },
+    {
+        "amendment_number": 15,
+        "path": A15_CLOSURE_PATH,
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a"
+        ),
+        "git_blob": "7ec67cbfa239b57e13f6b1d470c6e143a9be6f05",
+    },
+    {
+        "amendment_number": 16,
+        "path": A16_CLOSURE_PATH,
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "5a39ba6965504db9b72a6057f1ac32e547487947662b3528a13ba17a5bab260c"
+        ),
+        "git_blob": "24422550fb7d1dc9c33074f2c0ac4ce0c28c6fa5",
+    },
+)
+A17_TRANSITION_VERDICT_ARTIFACTS = (
+    {
+        "path": (
+            "docs/analysis/amendment_16_ratification/"
+            "sol-ce-amend16-r1-verdict.md"
+        ),
+        "byte_size": 3_525,
+        "raw_sha256": (
+            "68206da2c65de1b5334eca6207e1a9ebfd62c774d1a62db366ab275c28240723"
+        ),
+    },
+    {
+        "path": (
+            "docs/analysis/amendment_16_ratification/"
+            "sol-ce-amend16-r1b-verdict.md"
+        ),
+        "byte_size": 4_124,
+        "raw_sha256": (
+            "4c1ebf07f59bb78e9f629c3a7a0d5a6adc19fa63f612f77e1acea8feb296f3c9"
+        ),
+    },
+)
+A17_REQUIRED_PUBLIC_OUTPUT = (13, 14, 15, 16)
+A17_FULL_PINNED_BATTERY = {
+    "test_path": "tests/test_validate_amendment13_execution_law.py",
+    "exit_code": 0,
+    "collected": 76,
+    "passed": 76,
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0,
+    "xpassed": 0,
+}
+A17_EXPECTED_MUTATIONS = (
+    "revision_general_test_expected_domain_forged",
+    "revision_general_test_revision17_accepted",
+    "activation_transition_full_pinned_battery_bypassed",
+)
+A17_MUTATION_DOMAIN_SHA256 = (
+    "b19ebcbf47278d63e12bd8021334a88910895bdfe48caf2d49c6bbe3014417e6"
+)
+A17_MUTATION_CENSUS = {
+    "inherited_complete_mutation_count": 100,
+    "inherited_complete_mutation_domain_sha256": (
+        "fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3"
+    ),
+    "amendment16_mutation_count": 7,
+    "amendment16_mutation_domain_sha256": A16_MUTATION_DOMAIN_SHA256,
+}
+A17_SUPERSESSION_MAP = (
+    (
+        "§30.4.1 active implementation rows",
+        "Superseded as active prospective-validation pins only by "
+        "§31.2.2's complete table. Historical identities remain immutable.",
+    ),
+    (
+        "§30.3.4 exact revision-18 result and §§30.2.1–30.2.4 general "
+        "oracle",
+        "Lawfully unchanged. The corrected test now expects their result.",
+    ),
+    (
+        "A16 ratification demonstration and §30.3.3 sequence",
+        "Composed with §31.3: every future activation-affecting amendment "
+        "must execute both the public oracle and full pinned battery against "
+        "one post-transition state before RATIFY.",
+    ),
+    (
+        "§29.4.7 100-name census and §30.5 seven-name oracle inventory",
+        "Lawfully unchanged and separately re-executed; the three A17 "
+        "attacks remain outside both.",
+    ),
+    (
+        "§§27.3–27.6, closure schemas and historical objects, census "
+        "machinery, repair semantics, blockers, and out-of-scope work",
+        "Byte-identical and lawfully unchanged.",
+    ),
 )
 
 A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
@@ -2175,6 +2403,38 @@ _A16_IMPLEMENTATION_PIN_VALUE_GROUPS = (
     "publisher_sha256",
 )
 
+_A17_IMPLEMENTATION_PIN_PATTERN = re.compile(
+    r"The Amendment-17-governed active identity is exactly mode "
+    r"`(?P<mode>[0-9]+)` and these\n"
+    r"three path/blob/byte/hash rows:\n\n"
+    r"\| Path \| Git blob \| Bytes \| Raw SHA-256 \|\n"
+    r"\|---\|---\|---:\|---\|\n"
+    r"\| `scripts/validate_amendment13_execution_law\.py` \| "
+    r"`(?P<validator_blob>[0-9a-f]{40})` \| "
+    r"(?P<validator_size>[0-9][0-9,]*) \| "
+    r"`(?P<validator_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `tests/test_validate_amendment13_execution_law\.py` \| "
+    r"`(?P<test_blob>[0-9a-f]{40})` \| "
+    r"(?P<test_size>[0-9][0-9,]*) \| "
+    r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `scripts/build_amendment13_tier2_repairs\.py` \| "
+    r"`(?P<publisher_blob>[0-9a-f]{40})` \| "
+    r"(?P<publisher_size>[0-9][0-9,]*) \| "
+    r"`(?P<publisher_sha256>[0-9a-f]{64})` \|\n"
+)
+_A17_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+    "mode",
+    "validator_blob",
+    "validator_size",
+    "validator_sha256",
+    "test_blob",
+    "test_size",
+    "test_sha256",
+    "publisher_blob",
+    "publisher_size",
+    "publisher_sha256",
+)
+
 
 def _amendment15_text(raw: bytes) -> str:
     _require(
@@ -2390,9 +2650,474 @@ def _parse_amendment16_implementation_pins(raw: bytes) -> dict[str, Any]:
     }
 
 
+def _amendment17_text(raw: bytes) -> str:
+    _require(
+        len(raw) > REVISION18_BYTE_SIZE
+        and _sha256(raw[:REVISION18_BYTE_SIZE]) == REVISION18_SHA256
+        and _git_blob_oid(raw[:REVISION18_BYTE_SIZE]) == REVISION18_BLOB_OID
+        and raw[REVISION18_BYTE_SIZE:].startswith(AMENDMENT17_BOUNDARY)
+        and raw.count(AMENDMENT17_BOUNDARY) == 1
+        and raw.endswith(b"\n"),
+        "governing Amendment-17 document violates immutable-prefix law",
+    )
+    suffix = raw[REVISION18_BYTE_SIZE:]
+    headings = list(_AMENDMENT_SECTION_PATTERN.finditer(suffix))
+    _require(
+        headings and int(headings[0].group("amendment")) == 17,
+        "governing Amendment-17 boundary sequence drift",
+    )
+    if len(headings) > 1:
+        next_boundary = headings[1].start()
+        _require(
+            next_boundary > 0
+            and suffix[next_boundary - 1 : next_boundary] == b"\n",
+            "governing Amendment-17 successor boundary drift",
+        )
+        suffix = suffix[: next_boundary - 1]
+    try:
+        return suffix.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise LawError("governing Amendment-17 suffix is not UTF-8") from error
+
+
+def _amendment17_implementation_pin_match(section: str) -> re.Match[str]:
+    matches = list(_A17_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+    _require(
+        len(matches) == 1,
+        "Amendment-17 implementation pin block grammar drift",
+    )
+    return matches[0]
+
+
+def _normalize_amendment17_implementation_pin_values(section: str) -> str:
+    """Normalize only the ten independently authenticated A17 pin values."""
+
+    match = _amendment17_implementation_pin_match(section)
+    parts: list[str] = []
+    cursor = 0
+    for group in _A17_IMPLEMENTATION_PIN_VALUE_GROUPS:
+        start, end = match.span(group)
+        _require(start >= cursor, "Amendment-17 pin capture ordering drift")
+        parts.extend((section[cursor:start], f"<{group.upper()}>"))
+        cursor = end
+    parts.append(section[cursor:])
+    return "".join(parts)
+
+
+def _parse_amendment17_implementation_pins(raw: bytes) -> dict[str, Any]:
+    section = _amendment17_text(raw)
+    match = _amendment17_implementation_pin_match(section)
+    return {
+        "mode": match.group("mode"),
+        "files": [
+            {
+                "path": "scripts/validate_amendment13_execution_law.py",
+                "blob_oid": match.group("validator_blob"),
+                "byte_size": int(
+                    match.group("validator_size").replace(",", "")
+                ),
+                "sha256": match.group("validator_sha256"),
+            },
+            {
+                "path": "tests/test_validate_amendment13_execution_law.py",
+                "blob_oid": match.group("test_blob"),
+                "byte_size": int(match.group("test_size").replace(",", "")),
+                "sha256": match.group("test_sha256"),
+            },
+            {
+                "path": "scripts/build_amendment13_tier2_repairs.py",
+                "blob_oid": match.group("publisher_blob"),
+                "byte_size": int(
+                    match.group("publisher_size").replace(",", "")
+                ),
+                "sha256": match.group("publisher_sha256"),
+            },
+        ],
+    }
+
+
+def _parse_a17_executed_transition_obligation(
+    section: str,
+) -> dict[str, Any]:
+    scope_match = re.search(
+        r"For (?P<scope>Amendment 17 and every future activation-affecting "
+        r"amendment), the\nfollowing is a \*\*RATIFICATION OBLIGATION\*\*\.",
+        section,
+    )
+    ambiguity_match = re.search(
+        r"Ambiguity is\nactivation-affecting and (?P<disposition>fails "
+        r"closed into this obligation)\.",
+        section,
+    )
+    failure_match = re.search(
+        r"unverified demonstration makes the amendment "
+        r"(?P<disposition>[a-z]+)\.",
+        section,
+    )
+    _require(
+        scope_match is not None
+        and ambiguity_match is not None
+        and failure_match is not None,
+        "Amendment-17 executed-transition obligation grammar drift",
+    )
+    ratification_verdict = _code_after(
+        section,
+        "following is a **RATIFICATION OBLIGATION**. Before either referee "
+        "may emit\n",
+        "Amendment-17 ratification verdict",
+    )
+    authority = _code_after(
+        section,
+        "repository. The simulation is permanently ",
+        "Amendment-17 simulated-state authority",
+    )
+    public_entrypoint = _code_after(
+        section,
+        "1. the unmodified public ",
+        "Amendment-17 public entrypoint",
+    )
+    battery_path = _code_after(
+        section,
+        "2. the entire selected ",
+        "Amendment-17 full pinned battery path",
+    )
+    _require(
+        section.count(
+            "Against one identical simulated-state identity it shall "
+            "execute, in order:\n"
+        )
+        == 1
+        and section.count(
+            "with every ordinary Git, artifact, closure, design, and "
+            "implementation-pin\n   verification enabled"
+        )
+        == 1,
+        "Amendment-17 same-state execution rule drift",
+    )
+    return {
+        "scope": scope_match.group("scope"),
+        "ambiguity_disposition": ambiguity_match.group("disposition"),
+        "ratification_verdict": ratification_verdict,
+        "invalid_demonstration_disposition": failure_match.group(
+            "disposition"
+        ),
+        "simulated_state_authority": authority,
+        "execution_order": [public_entrypoint, battery_path],
+        "same_state_required": True,
+        "implementation_pin_verification_required": True,
+    }
+
+
+def _parse_a17_receipt_schema(section: str) -> dict[str, Any]:
+    schema = {
+        "top_level_keys": _fenced_lines_after(
+            section,
+            "receipt has exactly these six top-level keys:\n\n",
+            "Amendment-17 receipt top-level keys",
+        ),
+        "manifest_keys": _fenced_lines_after(
+            section,
+            "Its `simulated_state_manifest` has exactly these seven "
+            "keys:\n\n",
+            "Amendment-17 simulated-state manifest keys",
+        ),
+        "manifest_schema_version": _code_after(
+            section,
+            "The manifest's `schema_version` is exactly\n",
+            "Amendment-17 manifest schema version",
+        ),
+        "manifest_authority": _code_after(
+            section,
+            "and its `simulated_state_authority` is\nexactly ",
+            "Amendment-17 manifest authority",
+        ),
+        "closure_identity_keys": _fenced_lines_after(
+            section,
+            "Each closure identity has exactly these four keys:\n\n",
+            "Amendment-17 closure identity keys",
+        ),
+        "test_identity_keys": _fenced_lines_after(
+            section,
+            "The `full_pinned_battery_test_identity` has exactly these five "
+            "keys:\n\n",
+            "Amendment-17 test identity keys",
+        ),
+        "public_oracle_keys": _fenced_lines_after(
+            section,
+            "The `public_oracle` object has exactly these five keys:\n\n",
+            "Amendment-17 public-oracle keys",
+        ),
+        "full_pinned_battery_keys": _fenced_lines_after(
+            section,
+            "The `full_pinned_battery` object has exactly these thirteen "
+            "keys:\n\n",
+            "Amendment-17 full-pinned-battery keys",
+        ),
+        "integer_fields": _fenced_lines_after(
+            section,
+            "booleans, and the exit codes and five nonpassing outcome counts "
+            "are exactly\nzero:\n\n",
+            "Amendment-17 receipt integer fields",
+        ),
+        "closed_without_defaults_or_extra_keys": True,
+        "canonicalization": (
+            "ascii_json_sorted_keys_no_insignificant_whitespace_"
+            "no_nonfinite_values_one_terminal_lf"
+        ),
+        "nested_state_identities_equal_top_level": True,
+    }
+    _require(
+        section.count(
+            "Every key set above is closed: no key may be omitted or "
+            "defaulted, and no\nadditional key is permitted."
+        )
+        == 1
+        and section.count(
+            "as ASCII JSON with keys sorted, no insignificant whitespace, "
+            "no nonfinite\nvalues, and one terminal LF."
+        )
+        == 1
+        and section.count(
+            "The two nested state-identity values must equal\nthe top-level "
+            "value."
+        )
+        == 1,
+        "Amendment-17 exact receipt closure or identity rule drift",
+    )
+    return schema
+
+
+def _parse_a17_transition_registry_binding(section: str) -> dict[str, Any]:
+    rows = _markdown_table(
+        section,
+        "| Binding member | Exact value |",
+        "|---|---|",
+        4,
+        "Amendment-17 transition registry binding",
+    )
+    values = {name: value for name, value in rows}
+    _require(
+        tuple(values)
+        == ("`path`", "`ratification_commit`", "`revision`", "`blob_sha256`"),
+        "Amendment-17 transition registry binding order drift",
+    )
+    return {
+        "path": _code_tokens(values["`path`"], 1, "A17 design path")[0],
+        "ratification_commit": _code_tokens(
+            values["`ratification_commit`"],
+            1,
+            "A17 transition ratification commit",
+        )[0],
+        "revision": int(
+            _code_tokens(
+                values["`revision`"],
+                1,
+                "A17 transition revision",
+            )[0]
+        ),
+        "blob_sha256": _code_tokens(
+            values["`blob_sha256`"],
+            1,
+            "A17 transition design SHA-256",
+        )[0],
+    }
+
+
+def _parse_a17_transition_closure_identities(
+    section: str,
+) -> list[dict[str, Any]]:
+    rows = _markdown_table(
+        section,
+        "| Amendment | Exact path | Bytes | Raw SHA-256 | Git blob |",
+        "|---:|---|---:|---|---|",
+        4,
+        "Amendment-17 transition closure identities",
+    )
+    identities = [
+        {
+            "amendment_number": int(amendment_number),
+            "path": _code_tokens(path, 1, "A17 closure path")[0],
+            "raw_byte_size": int(byte_size.replace(",", "")),
+            "raw_sha256": _code_tokens(
+                raw_sha256,
+                1,
+                "A17 closure SHA-256",
+            )[0],
+            "git_blob": _code_tokens(git_blob, 1, "A17 closure blob")[0],
+        }
+        for amendment_number, path, byte_size, raw_sha256, git_blob in rows
+    ]
+    _require(
+        [row["amendment_number"] for row in identities] == [13, 14, 15, 16],
+        "Amendment-17 transition closure order drift",
+    )
+    return identities
+
+
+def _parse_a17_transition_verdict_artifacts(
+    section: str,
+) -> list[dict[str, Any]]:
+    block = _unique_between(
+        section,
+        "The A16 closure binds\n",
+        "Their canonical closure identities",
+        "Amendment-17 transition verdict artifacts",
+    )
+    matches = re.findall(
+        r"(?:the exact|and the exact) (?P<size>[0-9][0-9,]*)-byte\n"
+        r"`(?P<path>[^`]+)`\nwith raw SHA-256\n"
+        r"`(?P<raw_sha256>[0-9a-f]{64})`",
+        block,
+    )
+    _require(
+        len(matches) == 2,
+        "Amendment-17 transition verdict identity grammar drift",
+    )
+    return [
+        {
+            "path": path,
+            "byte_size": int(size.replace(",", "")),
+            "raw_sha256": raw_sha256,
+        }
+        for size, path, raw_sha256 in matches
+    ]
+
+
+def _parse_a17_required_public_output(section: str) -> list[int]:
+    serialized = _code_after(
+        section,
+        "The required public output is ordered ",
+        "Amendment-17 required public output",
+    )
+    match = re.fullmatch(r"\(([0-9]+(?:, [0-9]+)*)\)", serialized)
+    _require(match is not None, "Amendment-17 public output tuple drift")
+    return [int(value) for value in match.group(1).split(", ")]
+
+
+def _parse_a17_full_pinned_battery(
+    section: str,
+    obligation: Mapping[str, Any],
+) -> dict[str, Any]:
+    match = re.search(
+        r"The required full\ncorrected battery result is all "
+        r"(?P<count>[0-9]+) tests collected from the exact §31\.2\.2 test\n"
+        r"file passing against that same revision-18 state, with zero "
+        r"failed, skipped,\ndeselected, xfailed, or xpassed tests\.",
+        section,
+    )
+    _require(
+        match is not None
+        and section.count(
+            "verification enabled, and require exit zero plus the exact "
+            "post-activation"
+        )
+        == 1
+        and section.count("battery against that same simulated registry") == 1
+        and section.count("`HEAD`, with exit zero") == 1,
+        "Amendment-17 full pinned battery rule drift",
+    )
+    count = int(match.group("count"))
+    return {
+        "test_path": obligation["execution_order"][1],
+        "exit_code": 0,
+        "collected": count,
+        "passed": count,
+        "failed": 0,
+        "skipped": 0,
+        "deselected": 0,
+        "xfailed": 0,
+        "xpassed": 0,
+    }
+
+
+def _parse_a17_mutation_census(section: str) -> dict[str, Any]:
+    inherited = re.search(
+        r"exact (?P<count>[0-9]+)-name inherited census with\naggregate "
+        r"digest\n`(?P<digest>[0-9a-f]{64})`\.",
+        section,
+    )
+    amendment16 = re.search(
+        r"The (?P<count>seven) A16 attacks remain separate, ordered, and "
+        r"unchanged with digest\n`(?P<digest>[0-9a-f]{64})`\.",
+        section,
+    )
+    _require(
+        inherited is not None and amendment16 is not None,
+        "Amendment-17 inherited mutation census grammar drift",
+    )
+    return {
+        "inherited_complete_mutation_count": int(inherited.group("count")),
+        "inherited_complete_mutation_domain_sha256": inherited.group("digest"),
+        "amendment16_mutation_count": {"seven": 7}[amendment16.group("count")],
+        "amendment16_mutation_domain_sha256": amendment16.group("digest"),
+    }
+
+
+def _parse_amendment17_projection(raw: bytes) -> dict[str, Any]:
+    section = _amendment17_text(raw)
+    obligation = _parse_a17_executed_transition_obligation(section)
+    mutations = _fenced_lines_after(
+        section,
+        "The separate Amendment-17 test/ceremony mutation inventory is "
+        "exactly:\n\n",
+        "Amendment-17 test and ceremony mutations",
+    )
+    mutation_digest = _code_after(
+        section,
+        "Its ordered canonical name-array SHA-256 is\n",
+        "Amendment-17 mutation domain SHA-256",
+    )
+    _require(
+        _sha256(canonical_json_bytes(mutations)) == mutation_digest,
+        "Amendment-17 mutation name-array digest drift",
+    )
+    return {
+        "section_semantic_sha256": _sha256(
+            _normalize_amendment17_implementation_pin_values(section).encode(
+                "utf-8"
+            )
+        ),
+        "implementation_pins": _parse_amendment17_implementation_pins(raw),
+        "revision_domain_rules": _fenced_lines_after(
+            section,
+            "test independently derives the expected ordered operative "
+            "domain as:\n\n",
+            "Amendment-17 revision-domain rules",
+        ),
+        "executed_transition_obligation": obligation,
+        "receipt_schema": _parse_a17_receipt_schema(section),
+        "transition_registry_binding": (
+            _parse_a17_transition_registry_binding(section)
+        ),
+        "transition_closure_identities": (
+            _parse_a17_transition_closure_identities(section)
+        ),
+        "transition_verdict_artifacts": (
+            _parse_a17_transition_verdict_artifacts(section)
+        ),
+        "required_public_output": _parse_a17_required_public_output(section),
+        "full_pinned_battery": _parse_a17_full_pinned_battery(
+            section,
+            obligation,
+        ),
+        "test_ceremony_mutations": mutations,
+        "test_ceremony_mutation_domain_sha256": mutation_digest,
+        "mutation_census": _parse_a17_mutation_census(section),
+        "supersession_map": _markdown_table(
+            section,
+            "| Earlier normative anchor | Amendment-17 disposition |",
+            "|---|---|",
+            5,
+            "Amendment-17 supersession map",
+        ),
+    }
+
+
 def _parse_active_implementation_pins(raw: bytes) -> dict[str, Any]:
     """Select the newest append-only implementation-pin successor."""
 
+    if len(raw) > REVISION18_BYTE_SIZE:
+        return _parse_amendment17_implementation_pins(raw)
     if len(raw) > REVISION17_BYTE_SIZE:
         return _parse_amendment16_implementation_pins(raw)
     if len(raw) > REVISION16_BYTE_SIZE:
@@ -2938,6 +3663,7 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
         "amendment14": _parse_amendment14_projection(raw),
         "amendment15": _parse_amendment15_projection(raw),
         "amendment16": _parse_amendment16_projection(raw),
+        "amendment17": _parse_amendment17_projection(raw),
     }
     _validate_identifier_inventory_consistency(projection)
     return projection
@@ -3334,6 +4060,33 @@ def _canonical_amendment16_projection() -> dict[str, Any]:
     }
 
 
+def _canonical_amendment17_projection() -> dict[str, Any]:
+    return {
+        "section_semantic_sha256": A17_SECTION_SEMANTIC_SHA256,
+        "implementation_pins": None,
+        "revision_domain_rules": list(A17_REVISION_DOMAIN_RULES),
+        "executed_transition_obligation": copy.deepcopy(
+            A17_EXECUTED_TRANSITION_OBLIGATION
+        ),
+        "receipt_schema": copy.deepcopy(A17_RECEIPT_SCHEMA),
+        "transition_registry_binding": copy.deepcopy(
+            A17_TRANSITION_REGISTRY_BINDING
+        ),
+        "transition_closure_identities": [
+            dict(row) for row in A17_TRANSITION_CLOSURE_IDENTITIES
+        ],
+        "transition_verdict_artifacts": [
+            dict(row) for row in A17_TRANSITION_VERDICT_ARTIFACTS
+        ],
+        "required_public_output": list(A17_REQUIRED_PUBLIC_OUTPUT),
+        "full_pinned_battery": copy.deepcopy(A17_FULL_PINNED_BATTERY),
+        "test_ceremony_mutations": list(A17_EXPECTED_MUTATIONS),
+        "test_ceremony_mutation_domain_sha256": (A17_MUTATION_DOMAIN_SHA256),
+        "mutation_census": copy.deepcopy(A17_MUTATION_CENSUS),
+        "supersession_map": [list(row) for row in A17_SUPERSESSION_MAP],
+    }
+
+
 @lru_cache(maxsize=1)
 def _canonical_draft_document_projection() -> dict[str, Any]:
     """Build the immutable document cross-check independently of a caller law."""
@@ -3394,6 +4147,7 @@ def _canonical_draft_document_projection() -> dict[str, Any]:
         "amendment14": _canonical_amendment14_projection(),
         "amendment15": _canonical_amendment15_projection(),
         "amendment16": _canonical_amendment16_projection(),
+        "amendment17": _canonical_amendment17_projection(),
     }
 
 
@@ -3413,7 +4167,10 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
     )
     current_design = (ROOT / DESIGN_PATH).read_bytes()
     label = "Amendment-14"
-    if len(current_design) > REVISION17_BYTE_SIZE:
+    if len(current_design) > REVISION18_BYTE_SIZE:
+        pins = _parse_amendment17_implementation_pins(current_design)
+        label = "Amendment-17"
+    elif len(current_design) > REVISION17_BYTE_SIZE:
         pins = _parse_amendment16_implementation_pins(current_design)
         label = "Amendment-16"
     elif len(current_design) > REVISION16_BYTE_SIZE:
@@ -3489,9 +4246,12 @@ def _validate_document_semantic_projection(
     expected["amendment16"]["supersession_map"] = projection["amendment16"][
         "supersession_map"
     ]
+    expected["amendment17"]["implementation_pins"] = projection["amendment17"][
+        "implementation_pins"
+    ]
     _require(
         projection == expected,
-        "governing Amendment-14/15/16 document semantic projection drift",
+        "governing Amendment-14/15/16/17 document semantic projection drift",
     )
     _verify_implementation_pins(
         projection["amendment14"]["implementation_pins"]
@@ -3904,6 +4664,36 @@ def _validate_amendment16_ratification_design(raw: bytes) -> None:
     _validate_inherited_amendment16_ratification_design(raw)
 
 
+def _validate_inherited_amendment17_ratification_design(raw: bytes) -> None:
+    """Preserve the revision-18 prefix and A17 semantics in every successor."""
+
+    _require(
+        len(raw) > REVISION18_BYTE_SIZE
+        and _sha256(raw[:REVISION18_BYTE_SIZE]) == REVISION18_SHA256
+        and _git_blob_oid(raw[:REVISION18_BYTE_SIZE]) == REVISION18_BLOB_OID
+        and raw[REVISION18_BYTE_SIZE:].startswith(AMENDMENT17_BOUNDARY),
+        "Amendment-17 ratification design lacks the immutable revision-18 "
+        "prefix or Amendment-17 boundary",
+    )
+    projection = _parse_amendment17_projection(raw)
+    expected = _canonical_amendment17_projection()
+    expected["implementation_pins"] = projection["implementation_pins"]
+    _require(
+        projection == expected,
+        "Amendment-17 ratification design semantic projection drift",
+    )
+
+
+def _validate_amendment17_ratification_design(raw: bytes) -> None:
+    """Require an Amendment-17-terminal design with exact inherited law."""
+
+    _require(
+        _terminal_design_amendment(raw) == 17,
+        "Amendment-17 ratification design is not terminal Amendment 17",
+    )
+    _validate_inherited_amendment17_ratification_design(raw)
+
+
 def _validate_non_a13_ratification_design(
     raw: bytes,
     amendment_number: int,
@@ -3927,8 +4717,10 @@ def _validate_non_a13_ratification_design(
         _validate_amendment15_ratification_design(raw)
     elif amendment_number == 16:
         _validate_amendment16_ratification_design(raw)
-    elif amendment_number > 16:
-        _validate_inherited_amendment16_ratification_design(raw)
+    elif amendment_number == 17:
+        _validate_amendment17_ratification_design(raw)
+    elif amendment_number > 17:
+        _validate_inherited_amendment17_ratification_design(raw)
 
 
 def _validate_ratification_closure(
@@ -4339,6 +5131,9 @@ def validate_ratification_operativity() -> dict[int, dict[str, Any]]:
     """Validate the exact complete closure domain under one registry snapshot."""
 
     context = _public_registry_ratification_context()
+    _verify_implementation_pins(
+        _parse_active_implementation_pins((ROOT / DESIGN_PATH).read_bytes())
+    )
     return _validate_ratification_operativity_context(
         context,
         _validate_public_ratification_closure,
@@ -6735,7 +7530,7 @@ def _run_amendment16_oracle_attacks() -> tuple[str, ...]:
     )
     rejected.append(A16_EXPECTED_MUTATIONS[2])
 
-    revision18_raw = (ROOT / DESIGN_PATH).read_bytes()
+    revision18_raw = (ROOT / DESIGN_PATH).read_bytes()[:REVISION18_BYTE_SIZE]
     (
         forged_a17,
         forged_a17_raw,
