@@ -28,11 +28,11 @@ import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
 BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
-DESIGN_RATIFICATION_COMMIT = "60289833febdf88cb9d8977ac1282a0f4b97b278"
-DESIGN_REVISION = 18
-DESIGN_BYTE_SIZE = 3_915_641
+DESIGN_RATIFICATION_COMMIT = "131b070c1d516512dcc8a49650dd4e76b4998605"
+DESIGN_REVISION = 19
+DESIGN_BYTE_SIZE = 3_934_849
 DESIGN_BLOB_SHA256 = (
-    "17a4bc2b48bd48039ce0777dd22f265eff156fe2484efd6c7b106c5c642dd1b6"
+    "29055c5606a54587107498e8adcdbc8546f93caceabe89238975288db72e7fe1"
 )
 AMENDMENT17_BOUNDARY = (
     b"\n## 31. AMENDMENT SECTION \xe2\x80\x94 Amendment 17: test-pin "
@@ -65,6 +65,13 @@ RATIFICATION_CLOSURE_BINDINGS = (
         "raw_byte_size": 842,
         "raw_sha256": (
             "5a39ba6965504db9b72a6057f1ac32e547487947662b3528a13ba17a5bab260c"
+        ),
+    },
+    {
+        "path": ("docs/analysis/amendment_17_ratification/closure_v1.json"),
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "24e2548a77b237ef97aabf6eec63926e3b80daa0759b2dfcb5fe62dc9499987e"
         ),
     },
 )
