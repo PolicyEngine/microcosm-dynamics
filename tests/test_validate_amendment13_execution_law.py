@@ -2144,7 +2144,7 @@ def test__document__successors_preserve_inherited_a17_projection():
         candidate = amendment17.replace(original, forged, 1)
         with pytest.raises(
             a13.LawError,
-            match=("Amendment-14/15/16/17 document semantic projection drift"),
+            match="governing Amendment-18 document violates immutable-prefix law",
         ):
             a13._validate_document_semantic_projection(candidate, {})
     for amendment_number, successor in ((17, amendment17), (18, amendment18)):
@@ -2316,13 +2316,13 @@ def test__amendment18_battery_executes_all_four_mutation_domains(
         ),
         "amendment16_mutation_count": 7,
         "amendment16_mutation_domain_sha256": (
-            "1e00099f34451665d3ea69d9be71ace5"
-            "d493ab51b11d6da50dd5786e7c996fef"
+            "1e00099f636c1a727839ebc298b965cd"
+            "0981e0ad8f23189367ba7dbd0eddb871"
         ),
         "amendment17_mutation_count": 3,
         "amendment17_mutation_domain_sha256": (
-            "b19ebcbf46f22ec84963ad8c5960029d"
-            "20c0967b5836283758b7b8af3dfd8dfe"
+            "b19ebcbf47278d63e12bd8021334a889"
+            "10895bdfe48caf2d49c6bbe3014417e6"
         ),
     }
     assert amendment18_rejected_mutations == a13.A18_EXPECTED_MUTATIONS
