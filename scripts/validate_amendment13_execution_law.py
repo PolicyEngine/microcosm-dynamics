@@ -171,6 +171,15 @@ AMENDMENT17_BOUNDARY = (
     b"\n## 31. AMENDMENT SECTION \xe2\x80\x94 Amendment 17: test-pin "
     b"activation cure and executed-transition ratification\n"
 )
+REVISION19_BYTE_SIZE = 3_934_849
+REVISION19_SHA256 = (
+    "29055c5606a54587107498e8adcdbc8546f93caceabe89238975288db72e7fe1"
+)
+REVISION19_BLOB_OID = "84b31290ecd2d1001b6ea802b9a97a86260cdfda"
+AMENDMENT18_BOUNDARY = (
+    b"\n## 32. AMENDMENT SECTION \xe2\x80\x94 Amendment 18: tier-2 "
+    b"certification contract cure\n"
+)
 FIRST_CLOSURE_AMENDMENT = 13
 HISTORICAL_TERMINAL_REVISION = 16
 FORBIDDEN_STANDALONE_REVISION = 17
@@ -190,6 +199,13 @@ A14_HISTORICAL_CLOSURE_BINDING = {
     "raw_byte_size": 842,
     "raw_sha256": (
         "0770fc470187d41bc32198b1acbad61927f07f27f26192cb5093a30e411d57d4"
+    ),
+}
+A15_HISTORICAL_CLOSURE_BINDING = {
+    "path": A15_CLOSURE_PATH,
+    "raw_byte_size": 842,
+    "raw_sha256": (
+        "f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a"
     ),
 }
 A13_VERDICT_ARTIFACTS = (
@@ -306,7 +322,8 @@ AMENDMENT12_RATIFICATION_IDENTITY = {
     "dual_ratify_attestations": [dict(row) for row in RATIFY_ATTESTATIONS],
 }
 
-INCOMPATIBLE_PROOF_IDS = tuple("""
+INCOMPATIBLE_PROOF_IDS = tuple(
+    """
 rq-local-repeat-evidence:c93bb69e6a4c04717efd8b68e71799b5b4f3cb1c1c20a1b31afe2852d04dab67
 rq-local-repeat-evidence:0c25501bcb134ddd36f5f076978ebd01a02d3e731772c4ae5de182d81a76a487
 rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716
@@ -335,7 +352,8 @@ rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561
 rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877
 rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c
 rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39
-""".split())
+""".split()
+)
 INCOMPATIBLE_PROOF_ID_DOMAIN_SHA256 = (
     "9c8cb11732939daac176275ae66dfa5a6ce61a2850c82087dd761a6431ac7412"
 )
@@ -469,7 +487,8 @@ FRAGMENT_INSTRUCTION_ID_DOMAIN_SHA256 = (
     "74075ac0ca54eff2a9459d4e95f426195c9e01db78040025462aa2f57f486a09"
 )
 
-DOC036_CLASSIFICATION_IDS = tuple("""
+DOC036_CLASSIFICATION_IDS = tuple(
+    """
 rq-local-anchor:6b757b140c4fdbcfcfe8b974f7894ffc856ab3dca240b7eb61530adca0e2d12a
 rq-local-anchor:11802d91128200f95abc1a42e5e39677f30c955da28e8b89bdc72e10ff8c11ef
 rq-local-anchor:daae302f7bdebd7a8ab43d983faaedecb97ac22f8a7ca7c3af92dbff1cb76de5
@@ -478,12 +497,14 @@ rq-local-anchor:930c509fadfdc037d5e03d65422cc7c3d3b86a9ec3adb7553e86d9654632d4ca
 rq-local-anchor:5a703e10bfd94a486c21d043d7ad980905870b908ea70b2f136c16e835e1a261
 rq-local-anchor:d6d21da4a96eda0e310284ca6cebc059f340e2bdaf2da64f56286d65a03fa283
 rq-local-anchor:93b5b7f3d32e6dda9e3fad1089fc4ba605502765e4de1735223637bc615fff29
-""".split())
+""".split()
+)
 DOC036_CLASSIFICATION_ID_DOMAIN_SHA256 = (
     "1d2271438f3d9a7744e1379ed26ce565ff2731ed0dd8dec357c0bd8a9a271d23"
 )
 
-LAW_GAP_IDS = tuple("""
+LAW_GAP_IDS = tuple(
+    """
 rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6
 rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045
 rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495
@@ -498,7 +519,8 @@ rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c9
 rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868
 rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927
 rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734
-""".split())
+""".split()
+)
 LAW_GAP_ID_DOMAIN_SHA256 = (
     "f2e8a5001527eb975887828ba3e66c3eeac95ec0972454bcef509fba92149883"
 )
@@ -1090,6 +1112,459 @@ A17_SUPERSESSION_MAP = (
         "Byte-identical and lawfully unchanged.",
     ),
 )
+
+A18_SECTION_SEMANTIC_SHA256 = (
+    "f590858e700734f84a1169aba959648ff058deb81344ce3c8f65b29c441ab4d4"
+)
+A18_BUILD_INPUT_DOMAIN_CONTRACT = {
+    "schema_version": "amendment_12_tier2_build_input_domain.v1",
+    "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1",
+    "envelope_keys": [
+        "schema_version",
+        "canonicalization",
+        "questionnaire_document_count",
+        "questionnaire_document_keyset_sha256",
+        "questionnaire_document_domain_sha256",
+        "source_document_count",
+        "source_document_keyset_sha256",
+        "source_document_domain_sha256",
+        "repair_seal_evidence_count",
+        "repair_seal_evidence_path_domain_sha256",
+        "row_count",
+        "rows",
+    ],
+    "row_keys": ["input_class", "input_identity"],
+    "source_identity_keys": [
+        "source_document_id",
+        "document_role",
+        "interview_waves",
+        "canonical_source_path",
+        "storage_disposition",
+        "storage_identity",
+        "byte_size",
+        "sha256",
+    ],
+    "repair_identity_keys": [
+        "path",
+        "mode",
+        "git_blob",
+        "byte_size",
+        "raw_sha256",
+    ],
+    "questionnaire_document_count": 81,
+    "questionnaire_document_keyset_sha256": (
+        "3326c9ba70b7f83f19b0ea934630d26ced73f230be1628cb74031d17160cb1a5"
+    ),
+    "questionnaire_document_domain_sha256": (
+        "b06139b147391d06b4f90a8f28de472a936ec08b3e9eb37001a5a70e2b3c3543"
+    ),
+    "source_document_count": 257,
+    "source_document_keyset_sha256": (
+        "8b7cad855b791c5cd7d235a74d4a0f1ecc7511dc0458db11d6b04c1b6af2c36a"
+    ),
+    "source_document_domain_sha256": (
+        "9d7a98db7c2889eba150f70935f492aebbc41cd521e4139dc1ec886ecd9945ce"
+    ),
+    "repair_seal_evidence_count": 22,
+    "repair_seal_evidence_path_domain_sha256": (
+        "504159116708ee4d5e2cc8abec130ca8679d22cce928dca42af12be305361c17"
+    ),
+    "row_count": 279,
+    "input_classes": ["source_document", "repair_seal_evidence"],
+    "source_position_domain": [0, 256],
+    "repair_position_domain": [257, 278],
+    "source_order": "document_role_wave_canonical_source_path_v1",
+    "questionnaire_slice_role": "questionnaire_flow",
+    "repair_order": "unsigned_utf8_repository_path",
+    "digest_member": "tier2_build_input_domain_sha256",
+    "dual_canonical_byte_equality_required": True,
+    "artifact_persisted": False,
+}
+A18_HISTORICAL_R05_BINDING = {
+    "amendment_number": 15,
+    "closure_byte_size": 842,
+    "closure_path": A15_CLOSURE_PATH,
+    "closure_raw_sha256": (
+        "f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a"
+    ),
+    "design_blob_oid": REVISION17_BLOB_OID,
+    "design_byte_size": REVISION17_BYTE_SIZE,
+    "design_path": DESIGN_PATH,
+    "design_raw_sha256": REVISION17_SHA256,
+    "design_revision": 17,
+    "ratification_commit": A15_MERGED_RATIFICATION_COMMIT,
+    "ratification_commit_sole_parent": A15_MERGED_RATIFICATION_PARENT,
+}
+A18_R06_RESULT_CONTRACT = {
+    "path": (
+        "docs/analysis/amendment_12_rq_catalog_tier2/certification/"
+        "amendment11_expected_abort_result_v1.json"
+    ),
+    "mode": DESIGN_MODE,
+    "schema_version": "amendment_12_tier2_r06_expected_abort_result.v1",
+    "artifact_id_prefix": "a12-tier2-r06-expected-abort-result:",
+    "artifact_role": (
+        "evidence_expected_amendment11_abort_reproduced_nonauthority"
+    ),
+    "status": "pass_a12_t2_r06_expected_abort_reproduced",
+    "gate_id": "A12-T2-R06",
+    "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1",
+    "top_level_keys": [
+        "artifact_id",
+        "artifact_role",
+        "gate_id",
+        "input_identities",
+        "integrity",
+        "lifecycle",
+        "nonemission_evidence",
+        "process_result",
+        "schema_version",
+        "status",
+        "test_result",
+    ],
+    "integrity_keys": ["canonicalization", "payload_sha256"],
+    "payload_excluded_keys": ["artifact_id", "integrity"],
+    "input_identity_keys": [
+        "r05_certification",
+        "amendment11_authority_artifact",
+        "amendment11_replay_executable",
+        "amendment11_source_registry",
+    ],
+    "input_identity_row_keys": [
+        "path",
+        "mode",
+        "git_blob",
+        "byte_size",
+        "raw_sha256",
+    ],
+    "fixed_input_identities": {
+        "amendment11_authority_artifact": {
+            "path": "data/external/psid_missing_reason_code_authority_v1.json",
+            "mode": DESIGN_MODE,
+            "git_blob": "97e22fd1a91f521d7f7ac335fcd1212b3cb166ac",
+            "byte_size": 709_526,
+            "raw_sha256": (
+                "833c8dca8cec6a44ea4fe6c65d3662ce8ef8b7da062350437cf4f538dc8b6dac"
+            ),
+        },
+        "amendment11_replay_executable": {
+            "path": "scripts/replay_amendment11_no_movement.py",
+            "mode": DESIGN_MODE,
+            "git_blob": "5fab6c62a3794b66ccb95599e409ccdf9a8b6044",
+            "byte_size": 32_330,
+            "raw_sha256": (
+                "597670958b6609740eb4742c4144fb448026df82c767ece4db3e30777d6b77e6"
+            ),
+        },
+        "amendment11_source_registry": {
+            "path": (
+                "data/external/"
+                "psid_questionnaire_dictionary_inventory_registration_"
+                "required_v1.json"
+            ),
+            "mode": DESIGN_MODE,
+            "git_blob": "a2e6bfa8b19c35dfde235d8ece7e233a5d833e9e",
+            "byte_size": 25_474_435,
+            "raw_sha256": (
+                "a974c6fb65a9f3d52387163f2e98b7cd8cfdbd57f5e95d1f766b3aa25d167ac0"
+            ),
+        },
+    },
+    "source_registry_projection": {
+        "source_count": 47,
+        "source_byte_size": 114_875_090,
+        "registered_row_sha256": (
+            "d5b67f8b6b95dded9d8987af5784ea93bdc4b05744c3338619dd3681b7e62957"
+        ),
+        "projected_row_sha256": (
+            "0d27b2f940413d11727753a820360ac0a680eed503ea85bbe0a1344ed2f187e0"
+        ),
+    },
+    "process_result_keys": [
+        "command",
+        "exit_code",
+        "stdout_byte_size",
+        "stdout_raw_sha256",
+        "stderr_byte_size",
+        "stderr_raw_sha256",
+        "stderr_exact_text",
+        "abort_code",
+        "source_authorized_literal_count",
+        "blocked_literal_count",
+        "numeric_range_structural_null_count",
+    ],
+    "process_command": [
+        "/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python",
+        "scripts/replay_amendment11_no_movement.py",
+    ],
+    "process_result": {
+        "exit_code": 2,
+        "stdout_byte_size": 0,
+        "stdout_raw_sha256": (
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        ),
+        "stderr_byte_size": 174,
+        "stderr_raw_sha256": (
+            "79c608eb8baf3b31ea8f14cf461cde27d8637e43602ead19e39dc5388ed9903b"
+        ),
+        "stderr_exact_text": (
+            "blocked_source_missing_disposition_underdetermined: registered "
+            "sources do not determine a missing disposition for 524538 "
+            "literal entries; no complete settled relation exists\n"
+        ),
+        "abort_code": "blocked_source_missing_disposition_underdetermined",
+        "source_authorized_literal_count": 52,
+        "blocked_literal_count": 524_538,
+        "numeric_range_structural_null_count": 37_283,
+    },
+    "process_integer_fields": [
+        "exit_code",
+        "stdout_byte_size",
+        "stderr_byte_size",
+        "source_authorized_literal_count",
+        "blocked_literal_count",
+        "numeric_range_structural_null_count",
+    ],
+    "test_result_keys": [
+        "command",
+        "environment",
+        "module_paths",
+        "module_path_domain_sha256",
+        "module_count",
+        "expected_collected",
+        "exit_code",
+        "collected",
+        "passed",
+        "failed",
+        "skipped",
+        "deselected",
+        "xfailed",
+        "xpassed",
+    ],
+    "test_module_paths": [
+        "tests/data/test_psid_codebook_extraction_validation.py",
+        "tests/data/test_psid_missing_reason_authority_artifact.py",
+        "tests/data/test_psid_missing_reason_authority_unit.py",
+        "tests/estimates/test_birth_evidence_artifact.py",
+        "tests/test_rebuild_amendment11_missing_reason_authority.py",
+        "tests/test_replay_amendment11_no_movement.py",
+    ],
+    "test_module_path_domain_sha256": (
+        "a5099c464482c5b652e31e5dfa958703a4ae4c75c1dc1e4caa03cb2aef408063"
+    ),
+    "test_command": [
+        "/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/data/test_psid_codebook_extraction_validation.py",
+        "tests/data/test_psid_missing_reason_authority_artifact.py",
+        "tests/data/test_psid_missing_reason_authority_unit.py",
+        "tests/estimates/test_birth_evidence_artifact.py",
+        "tests/test_rebuild_amendment11_missing_reason_authority.py",
+        "tests/test_replay_amendment11_no_movement.py",
+    ],
+    "test_environment": {"PYTHONPATH": "src:."},
+    "test_result": {
+        "module_count": 6,
+        "expected_collected": 223,
+        "exit_code": 0,
+        "collected": 223,
+        "passed": 223,
+        "failed": 0,
+        "skipped": 0,
+        "deselected": 0,
+        "xfailed": 0,
+        "xpassed": 0,
+    },
+    "test_integer_fields": [
+        "module_count",
+        "expected_collected",
+        "exit_code",
+        "collected",
+        "passed",
+        "failed",
+        "skipped",
+        "deselected",
+        "xfailed",
+        "xpassed",
+    ],
+    "lifecycle_keys": [
+        "nonauthority",
+        "expected_abort_reproduced",
+        "accepted_output_emitted",
+        "production_replay_started",
+        "movement_relation_emitted",
+        "revision_13_relation_identity_emitted",
+        "q5_input_emitted",
+        "q5_first_add_performed",
+        "full_g17_c01_row_emitted",
+        "authority_emitted",
+        "production_output_emitted",
+        "next_required_state",
+    ],
+    "lifecycle": {
+        "nonauthority": True,
+        "expected_abort_reproduced": True,
+        "accepted_output_emitted": False,
+        "production_replay_started": False,
+        "movement_relation_emitted": False,
+        "revision_13_relation_identity_emitted": False,
+        "q5_input_emitted": False,
+        "q5_first_add_performed": False,
+        "full_g17_c01_row_emitted": False,
+        "authority_emitted": False,
+        "production_output_emitted": False,
+        "next_required_state": "A19_SUCCESSOR_PROGRAM_STOP",
+    },
+    "nonemission_evidence_keys": [
+        "execution_commit",
+        "execution_tree_oid",
+        "repository_manifest_sha256_before",
+        "repository_manifest_sha256_after",
+        "repository_clean_before",
+        "repository_clean_after",
+        "repository_read_only",
+        "network_disabled",
+        "captured_streams",
+        "result_path_absent_after_execution",
+    ],
+    "nonemission_true_fields": [
+        "repository_clean_before",
+        "repository_clean_after",
+        "repository_read_only",
+        "network_disabled",
+        "result_path_absent_after_execution",
+    ],
+    "captured_streams": ["stdout", "stderr"],
+    "manifest_row_keys": [
+        "path",
+        "mode",
+        "git_blob",
+        "byte_size",
+        "raw_sha256",
+    ],
+    "first_add_after_r05": True,
+    "first_add_minimum_revision": 20,
+    "first_add_name_status_delta": [
+        [
+            "A",
+            (
+                "docs/analysis/amendment_12_rq_catalog_tier2/"
+                "certification/amendment11_expected_abort_result_v1.json"
+            ),
+        ]
+    ],
+    "immutable_after_first_add": True,
+}
+A18_ACTIVATION_TRANSITION = {
+    "activation_affecting": True,
+    "ambiguity_fails_closed_into_obligation": True,
+    "simulated_state_authority": "NONAUTHORITY",
+    "terminal_revision": 20,
+    "terminal_amendment": 18,
+    "ordered_closure_domain": [13, 14, 15, 16, 17, 18],
+    "closure_count": 6,
+    "closure_count_subtrahend": 14,
+    "public_entrypoint": "validate_ratification_operativity",
+    "same_state_required": True,
+    "full_pinned_battery_required": True,
+    "all_nonpassing_counts": 0,
+    "receipt_inside_candidate_bytes": False,
+    "r05_public_entrypoint": "validate_ratification_operativity",
+    "r05_minimum_terminal_revision": 18,
+    "r05_expected_domain_expression": "tuple(range(13, R - 1))",
+    "r05_selected_zero_based_position": 2,
+    "r05_selected_amendment": 15,
+}
+A18_EXPECTED_MUTATIONS = (
+    "tier2_build_input_domain_preimage_forged",
+    "tier2_r05_current_snapshot_or_historical_binding_forged",
+    "tier2_r06_result_or_lifecycle_forged",
+)
+A18_MUTATION_DOMAIN_SHA256 = (
+    "1bf9f6d30461d003cab597a405cb5cc9855273372ed3e7e5b36b1627eaa11108"
+)
+A18_MUTATION_CENSUS = {
+    "inherited_complete_mutation_count": 100,
+    "inherited_complete_mutation_domain_sha256": (
+        "fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3"
+    ),
+    "amendment16_mutation_count": 7,
+    "amendment16_mutation_domain_sha256": A16_MUTATION_DOMAIN_SHA256,
+    "amendment17_mutation_count": 3,
+    "amendment17_mutation_domain_sha256": A17_MUTATION_DOMAIN_SHA256,
+}
+A18_SUPERSESSION_MAP = (
+    (
+        "§29.4.3 undefined `tier2_build_input_domain_sha256` sentence and "
+        "§29.4.5 equality-only use",
+        "Superseded and completed by §32.2's 279-row closed preimage, "
+        "subset equations, ordering, canonicalization, and dual-byte "
+        "equality. The predecessor text remains historical.",
+    ),
+    (
+        "§29.4.3 operative revision-17 selector, §30.3.5 revision-18-literal "
+        "R05 selector, and §30.4.2 `historical_r05_snapshot_revision=18`",
+        "Superseded only as an active R05 locator by §32.3's complete "
+        "current-revision selector for every terminal revision at least 18. "
+        "The exact 11 historical A15 values, revision-18 first-operativity "
+        "ancestry, and revision-18 historical receipt fact remain unchanged.",
+    ),
+    (
+        "§26.11.2 A12-T2-R06 expected abort without a durable result contract "
+        "and §§29.6/30.6 statements that R06 results remain undefined/out "
+        "of scope",
+        "Superseded only by §32.4's nonauthority result path, schema, "
+        "first-add order, and A19 stop. The abort, six-module gate, blocker, "
+        "and all prohibitions remain unchanged.",
+    ),
+    (
+        "§31.2.2 active implementation rows",
+        "Superseded as active prospective-validation pins only by §32.5.1. "
+        "Historical identities and the three-path domain remain immutable.",
+    ),
+    (
+        "§§30.2.1–30.2.4 general oracle and §31.3 executed-transition "
+        "obligation",
+        "Lawfully unchanged and composed with §32.3's R05 consumer and "
+        "§32.5.3's mandatory revision-20 same-state demonstration.",
+    ),
+    (
+        "§29.4 R04/R05 artifact schemas, isolation, five gates, lifecycle, "
+        "Git order, 100-name census, integrity, and raw-byte attestation",
+        "Lawfully unchanged except the exact preimage and selector "
+        "successors named above. No R05 artifact is instantiated.",
+    ),
+    (
+        "§§27.3–27.6 repair semantics and seals; 14 law gaps; 524,538 "
+        "missing-reason dispositions; Q5; G17-C01; registries; receipts of "
+        "record; and production",
+        "Byte-identical and lawfully unchanged. The R06 evidence records a "
+        "stop and grants no authority.",
+    ),
+)
+A18_NEW_IDENTIFIERS = {
+    "schema_and_path": [
+        "amendment_12_tier2_build_input_domain.v1",
+        "amendment_12_tier2_r06_expected_abort_result.v1",
+        (
+            "docs/analysis/amendment_12_rq_catalog_tier2/certification/"
+            "amendment11_expected_abort_result_v1.json"
+        ),
+        "a12-tier2-r06-expected-abort-result:",
+    ],
+    "status_role_lifecycle": [
+        "pass_a12_t2_r06_expected_abort_reproduced",
+        "evidence_expected_amendment11_abort_reproduced_nonauthority",
+        "A19_SUCCESSOR_PROGRAM_STOP",
+    ],
+    "input_class": ["source_document", "repair_seal_evidence"],
+    "python": [
+        "_validate_amendment18_ratification_design",
+        "_validate_inherited_amendment18_ratification_design",
+        "run_amendment18_contract_mutation_tests",
+    ],
+}
 
 A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
     "27.2": "2e1d4e8282e393f2f8f8092c5b9823d69a4e6926fb5fbd753b77813e47f7941e",
@@ -2435,6 +2910,38 @@ _A17_IMPLEMENTATION_PIN_VALUE_GROUPS = (
     "publisher_sha256",
 )
 
+_A18_IMPLEMENTATION_PIN_PATTERN = re.compile(
+    r"The\nAmendment-18-governed active identity is exactly mode "
+    r"`(?P<mode>[0-9]+)` and these\n"
+    r"three path/blob/byte/hash rows:\n\n"
+    r"\| Path \| Git blob \| Bytes \| Raw SHA-256 \|\n"
+    r"\|---\|---\|---:\|---\|\n"
+    r"\| `scripts/validate_amendment13_execution_law\.py` \| "
+    r"`(?P<validator_blob>[0-9a-f]{40})` \| "
+    r"(?P<validator_size>[0-9][0-9,]*) \| "
+    r"`(?P<validator_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `tests/test_validate_amendment13_execution_law\.py` \| "
+    r"`(?P<test_blob>[0-9a-f]{40})` \| "
+    r"(?P<test_size>[0-9][0-9,]*) \| "
+    r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `scripts/build_amendment13_tier2_repairs\.py` \| "
+    r"`(?P<publisher_blob>[0-9a-f]{40})` \| "
+    r"(?P<publisher_size>[0-9][0-9,]*) \| "
+    r"`(?P<publisher_sha256>[0-9a-f]{64})` \|\n"
+)
+_A18_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+    "mode",
+    "validator_blob",
+    "validator_size",
+    "validator_sha256",
+    "test_blob",
+    "test_size",
+    "test_sha256",
+    "publisher_blob",
+    "publisher_size",
+    "publisher_sha256",
+)
+
 
 def _amendment15_text(raw: bytes) -> str:
     _require(
@@ -3113,9 +3620,281 @@ def _parse_amendment17_projection(raw: bytes) -> dict[str, Any]:
     }
 
 
+def _amendment18_text(raw: bytes) -> str:
+    """Return only the A18 suffix while preserving every inherited byte."""
+
+    _require(
+        len(raw) > REVISION19_BYTE_SIZE
+        and _sha256(raw[:REVISION19_BYTE_SIZE]) == REVISION19_SHA256
+        and _git_blob_oid(raw[:REVISION19_BYTE_SIZE]) == REVISION19_BLOB_OID
+        and raw[REVISION19_BYTE_SIZE:].startswith(AMENDMENT18_BOUNDARY)
+        and raw.count(AMENDMENT18_BOUNDARY) == 1
+        and raw.endswith(b"\n"),
+        "governing Amendment-18 document violates immutable-prefix law",
+    )
+    suffix = raw[REVISION19_BYTE_SIZE:]
+    headings = list(_AMENDMENT_SECTION_PATTERN.finditer(suffix))
+    _require(
+        headings and int(headings[0].group("amendment")) == 18,
+        "governing Amendment-18 boundary sequence drift",
+    )
+    if len(headings) > 1:
+        next_boundary = headings[1].start()
+        _require(
+            next_boundary > 0
+            and suffix[next_boundary - 1 : next_boundary] == b"\n",
+            "governing Amendment-18 successor boundary drift",
+        )
+        suffix = suffix[: next_boundary - 1]
+    try:
+        return suffix.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise LawError("governing Amendment-18 suffix is not UTF-8") from error
+
+
+def _amendment18_implementation_pin_match(section: str) -> re.Match[str]:
+    matches = list(_A18_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+    _require(
+        len(matches) == 1,
+        "Amendment-18 implementation pin block grammar drift",
+    )
+    return matches[0]
+
+
+def _normalize_amendment18_implementation_pin_values(section: str) -> str:
+    """Normalize only the ten independently authenticated A18 pin values."""
+
+    match = _amendment18_implementation_pin_match(section)
+    parts: list[str] = []
+    cursor = 0
+    for group in _A18_IMPLEMENTATION_PIN_VALUE_GROUPS:
+        start, end = match.span(group)
+        _require(start >= cursor, "Amendment-18 pin capture ordering drift")
+        parts.extend((section[cursor:start], f"<{group.upper()}>"))
+        cursor = end
+    parts.append(section[cursor:])
+    return "".join(parts)
+
+
+def _parse_amendment18_implementation_pins(raw: bytes) -> dict[str, Any]:
+    section = _amendment18_text(raw)
+    match = _amendment18_implementation_pin_match(section)
+    return {
+        "mode": match.group("mode"),
+        "files": [
+            {
+                "path": "scripts/validate_amendment13_execution_law.py",
+                "blob_oid": match.group("validator_blob"),
+                "byte_size": int(
+                    match.group("validator_size").replace(",", "")
+                ),
+                "sha256": match.group("validator_sha256"),
+            },
+            {
+                "path": "tests/test_validate_amendment13_execution_law.py",
+                "blob_oid": match.group("test_blob"),
+                "byte_size": int(match.group("test_size").replace(",", "")),
+                "sha256": match.group("test_sha256"),
+            },
+            {
+                "path": "scripts/build_amendment13_tier2_repairs.py",
+                "blob_oid": match.group("publisher_blob"),
+                "byte_size": int(
+                    match.group("publisher_size").replace(",", "")
+                ),
+                "sha256": match.group("publisher_sha256"),
+            },
+        ],
+    }
+
+
+def _parse_a18_build_input_domain_contract(section: str) -> dict[str, Any]:
+    value = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    value["envelope_keys"] = _fenced_lines_after(
+        section,
+        "It has exactly these twelve keys:\n\n",
+        "Amendment-18 build-input envelope keys",
+    )
+    value["row_keys"] = _fenced_lines_after(
+        section,
+        "Each of the 279 `rows` objects has exactly:\n\n",
+        "Amendment-18 build-input row keys",
+    )
+    value["source_identity_keys"] = _fenced_lines_after(
+        section,
+        "`input_identity` has exactly the eight §19.3.3 source-document "
+        "keys:\n\n",
+        "Amendment-18 source identity keys",
+    )
+    value["repair_identity_keys"] = _fenced_lines_after(
+        section,
+        "`repair_seal_evidence` and `input_identity` has exactly:\n\n",
+        "Amendment-18 repair identity keys",
+    )
+    return value
+
+
+def _parse_a18_historical_r05_binding(section: str) -> dict[str, Any]:
+    rows = _markdown_table(
+        section,
+        "| Key | Exact value |",
+        "|---|---|",
+        11,
+        "Amendment-18 historical R05 binding",
+    )
+    parsed: dict[str, Any] = {}
+    integer_keys = {
+        "amendment_number",
+        "closure_byte_size",
+        "design_byte_size",
+        "design_revision",
+    }
+    for key_cell, value_cell in rows:
+        key = _code_tokens(key_cell, 1, "A18 R05 key")[0]
+        value = _code_tokens(value_cell, 1, "A18 R05 value")[0]
+        parsed[key] = int(value) if key in integer_keys else value
+    _require(
+        tuple(parsed) == tuple(A18_HISTORICAL_R05_BINDING),
+        "Amendment-18 historical R05 binding order drift",
+    )
+    return parsed
+
+
+def _parse_a18_r06_result_contract(section: str) -> dict[str, Any]:
+    value = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    value["top_level_keys"] = _fenced_lines_after(
+        section,
+        "It has\nexactly these eleven top-level keys:\n\n",
+        "Amendment-18 R06 top-level keys",
+    )
+    value["input_identity_keys"] = _fenced_lines_after(
+        section,
+        "`input_identities` has exactly:\n\n",
+        "Amendment-18 R06 input identities",
+    )
+    value["process_result_keys"] = _fenced_lines_after(
+        section,
+        "`process_result` has exactly:\n\n",
+        "Amendment-18 R06 process-result keys",
+    )
+    value["test_result_keys"] = _fenced_lines_after(
+        section,
+        "`test_result` has exactly:\n\n",
+        "Amendment-18 R06 test-result keys",
+    )
+    value["test_module_paths"] = _fenced_lines_after(
+        section,
+        "The exact ordered six module paths are:\n\n",
+        "Amendment-18 R06 module paths",
+    )
+    value["lifecycle_keys"] = _fenced_lines_after(
+        section,
+        "`lifecycle` has exactly:\n\n",
+        "Amendment-18 R06 lifecycle keys",
+    )
+    value["nonemission_evidence_keys"] = _fenced_lines_after(
+        section,
+        "`nonemission_evidence` has exactly:\n\n",
+        "Amendment-18 R06 nonemission keys",
+    )
+    return value
+
+
+def _parse_a18_mutation_census(section: str) -> dict[str, Any]:
+    match = re.search(
+        r"exact inherited\n100-name census with digest\n"
+        r"`(?P<inherited>[0-9a-f]{64})`\.\n"
+        r"Amendment 16's seven remain exact with digest\n"
+        r"`(?P<a16>[0-9a-f]{64})`\.\n"
+        r"Amendment 17's three remain exact with digest\n"
+        r"`(?P<a17>[0-9a-f]{64})`\.",
+        section,
+    )
+    _require(match is not None, "Amendment-18 mutation census grammar drift")
+    return {
+        "inherited_complete_mutation_count": 100,
+        "inherited_complete_mutation_domain_sha256": match.group("inherited"),
+        "amendment16_mutation_count": 7,
+        "amendment16_mutation_domain_sha256": match.group("a16"),
+        "amendment17_mutation_count": 3,
+        "amendment17_mutation_domain_sha256": match.group("a17"),
+    }
+
+
+def _parse_a18_new_identifiers(section: str) -> dict[str, list[str]]:
+    return {
+        "schema_and_path": _fenced_lines_after(
+            section,
+            "The exact new schema and path identifiers are:\n\n",
+            "Amendment-18 schema/path identifiers",
+        ),
+        "status_role_lifecycle": _fenced_lines_after(
+            section,
+            "The exact new status, role, and lifecycle identifiers are:\n\n",
+            "Amendment-18 status/role/lifecycle identifiers",
+        ),
+        "input_class": _fenced_lines_after(
+            section,
+            "The exact new input-class identifiers are:\n\n",
+            "Amendment-18 input-class identifiers",
+        ),
+        "python": _fenced_lines_after(
+            section,
+            "The exact new Python identifiers are:\n\n",
+            "Amendment-18 Python identifiers",
+        ),
+    }
+
+
+def _parse_amendment18_projection(raw: bytes) -> dict[str, Any]:
+    section = _amendment18_text(raw)
+    mutations = _fenced_lines_after(
+        section,
+        "The separate Amendment-18 contract-cure mutation inventory is "
+        "exactly:\n\n",
+        "Amendment-18 contract mutations",
+    )
+    mutation_digest = _code_after(
+        section,
+        "Its ordered canonical name-array is 142 bytes with SHA-256\n",
+        "Amendment-18 mutation domain SHA-256",
+    )
+    _require(
+        _sha256(canonical_json_bytes(mutations)) == mutation_digest,
+        "Amendment-18 mutation name-array digest drift",
+    )
+    return {
+        "section_semantic_sha256": _sha256(
+            _normalize_amendment18_implementation_pin_values(section).encode(
+                "utf-8"
+            )
+        ),
+        "implementation_pins": _parse_amendment18_implementation_pins(raw),
+        "build_input_domain_contract": (
+            _parse_a18_build_input_domain_contract(section)
+        ),
+        "historical_r05_binding": _parse_a18_historical_r05_binding(section),
+        "r06_result_contract": _parse_a18_r06_result_contract(section),
+        "activation_transition": copy.deepcopy(A18_ACTIVATION_TRANSITION),
+        "contract_mutations": mutations,
+        "contract_mutation_domain_sha256": mutation_digest,
+        "mutation_census": _parse_a18_mutation_census(section),
+        "supersession_map": _markdown_table(
+            section,
+            "| Earlier normative anchor | Amendment-18 disposition |",
+            "|---|---|",
+            7,
+            "Amendment-18 supersession map",
+        ),
+        "new_identifiers": _parse_a18_new_identifiers(section),
+    }
+
+
 def _parse_active_implementation_pins(raw: bytes) -> dict[str, Any]:
     """Select the newest append-only implementation-pin successor."""
 
+    if len(raw) > REVISION19_BYTE_SIZE:
+        return _parse_amendment18_implementation_pins(raw)
     if len(raw) > REVISION18_BYTE_SIZE:
         return _parse_amendment17_implementation_pins(raw)
     if len(raw) > REVISION17_BYTE_SIZE:
@@ -3664,6 +4443,7 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
         "amendment15": _parse_amendment15_projection(raw),
         "amendment16": _parse_amendment16_projection(raw),
         "amendment17": _parse_amendment17_projection(raw),
+        "amendment18": _parse_amendment18_projection(raw),
     }
     _validate_identifier_inventory_consistency(projection)
     return projection
@@ -4087,6 +4867,24 @@ def _canonical_amendment17_projection() -> dict[str, Any]:
     }
 
 
+def _canonical_amendment18_projection() -> dict[str, Any]:
+    return {
+        "section_semantic_sha256": A18_SECTION_SEMANTIC_SHA256,
+        "implementation_pins": None,
+        "build_input_domain_contract": copy.deepcopy(
+            A18_BUILD_INPUT_DOMAIN_CONTRACT
+        ),
+        "historical_r05_binding": copy.deepcopy(A18_HISTORICAL_R05_BINDING),
+        "r06_result_contract": copy.deepcopy(A18_R06_RESULT_CONTRACT),
+        "activation_transition": copy.deepcopy(A18_ACTIVATION_TRANSITION),
+        "contract_mutations": list(A18_EXPECTED_MUTATIONS),
+        "contract_mutation_domain_sha256": A18_MUTATION_DOMAIN_SHA256,
+        "mutation_census": copy.deepcopy(A18_MUTATION_CENSUS),
+        "supersession_map": [list(row) for row in A18_SUPERSESSION_MAP],
+        "new_identifiers": copy.deepcopy(A18_NEW_IDENTIFIERS),
+    }
+
+
 @lru_cache(maxsize=1)
 def _canonical_draft_document_projection() -> dict[str, Any]:
     """Build the immutable document cross-check independently of a caller law."""
@@ -4148,6 +4946,7 @@ def _canonical_draft_document_projection() -> dict[str, Any]:
         "amendment15": _canonical_amendment15_projection(),
         "amendment16": _canonical_amendment16_projection(),
         "amendment17": _canonical_amendment17_projection(),
+        "amendment18": _canonical_amendment18_projection(),
     }
 
 
@@ -4167,7 +4966,10 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
     )
     current_design = (ROOT / DESIGN_PATH).read_bytes()
     label = "Amendment-14"
-    if len(current_design) > REVISION18_BYTE_SIZE:
+    if len(current_design) > REVISION19_BYTE_SIZE:
+        pins = _parse_amendment18_implementation_pins(current_design)
+        label = "Amendment-18"
+    elif len(current_design) > REVISION18_BYTE_SIZE:
         pins = _parse_amendment17_implementation_pins(current_design)
         label = "Amendment-17"
     elif len(current_design) > REVISION17_BYTE_SIZE:
@@ -4249,9 +5051,12 @@ def _validate_document_semantic_projection(
     expected["amendment17"]["implementation_pins"] = projection["amendment17"][
         "implementation_pins"
     ]
+    expected["amendment18"]["implementation_pins"] = projection["amendment18"][
+        "implementation_pins"
+    ]
     _require(
         projection == expected,
-        "governing Amendment-14/15/16/17 document semantic projection drift",
+        "governing Amendment-14/15/16/17/18 document semantic projection drift",
     )
     _verify_implementation_pins(
         projection["amendment14"]["implementation_pins"]
@@ -4694,6 +5499,36 @@ def _validate_amendment17_ratification_design(raw: bytes) -> None:
     _validate_inherited_amendment17_ratification_design(raw)
 
 
+def _validate_inherited_amendment18_ratification_design(raw: bytes) -> None:
+    """Preserve the revision-19 prefix and A18 semantics in every successor."""
+
+    _require(
+        len(raw) > REVISION19_BYTE_SIZE
+        and _sha256(raw[:REVISION19_BYTE_SIZE]) == REVISION19_SHA256
+        and _git_blob_oid(raw[:REVISION19_BYTE_SIZE]) == REVISION19_BLOB_OID
+        and raw[REVISION19_BYTE_SIZE:].startswith(AMENDMENT18_BOUNDARY),
+        "Amendment-18 ratification design lacks the immutable revision-19 "
+        "prefix or Amendment-18 boundary",
+    )
+    projection = _parse_amendment18_projection(raw)
+    expected = _canonical_amendment18_projection()
+    expected["implementation_pins"] = projection["implementation_pins"]
+    _require(
+        projection == expected,
+        "Amendment-18 ratification design semantic projection drift",
+    )
+
+
+def _validate_amendment18_ratification_design(raw: bytes) -> None:
+    """Require an Amendment-18-terminal design with exact inherited law."""
+
+    _require(
+        _terminal_design_amendment(raw) == 18,
+        "Amendment-18 ratification design is not terminal Amendment 18",
+    )
+    _validate_inherited_amendment18_ratification_design(raw)
+
+
 def _validate_non_a13_ratification_design(
     raw: bytes,
     amendment_number: int,
@@ -4719,8 +5554,10 @@ def _validate_non_a13_ratification_design(
         _validate_amendment16_ratification_design(raw)
     elif amendment_number == 17:
         _validate_amendment17_ratification_design(raw)
-    elif amendment_number > 17:
-        _validate_inherited_amendment17_ratification_design(raw)
+    elif amendment_number == 18:
+        _validate_amendment18_ratification_design(raw)
+    elif amendment_number > 18:
+        _validate_inherited_amendment18_ratification_design(raw)
 
 
 def _validate_ratification_closure(
@@ -4984,6 +5821,11 @@ def _validate_registry_ratification_context(
             normalized["ratification_closures"][1]
             == A14_HISTORICAL_CLOSURE_BINDING,
             "Amendment-14 historical closure binding drift",
+        )
+        _require(
+            normalized["ratification_closures"][2]
+            == A15_HISTORICAL_CLOSURE_BINDING,
+            "Amendment-15 historical R05 closure binding drift",
         )
     return normalized
 
@@ -7346,7 +8188,7 @@ def _synthetic_registry_design_binding(
     if revision is None:
         revision = closure["amendment_number"] + 2
     amendment_numbers = _ratification_amendment_numbers(revision)
-    return {
+    result = {
         "path": DESIGN_PATH,
         "ratification_commit": closure["ratification_commit"],
         "revision": revision,
@@ -7360,6 +8202,14 @@ def _synthetic_registry_design_binding(
             for amendment_number in amendment_numbers
         ],
     }
+    if revision >= COMBINED_ACTIVATION_REVISION:
+        result["ratification_closures"][1] = copy.deepcopy(
+            A14_HISTORICAL_CLOSURE_BINDING
+        )
+        result["ratification_closures"][2] = copy.deepcopy(
+            A15_HISTORICAL_CLOSURE_BINDING
+        )
+    return result
 
 
 def _synthetic_closure_material(
@@ -7451,6 +8301,11 @@ def _synthetic_oracle_context(
         position = tuple(amendment_numbers).index(14)
         context["ratification_closures"][position] = copy.deepcopy(
             A14_HISTORICAL_CLOSURE_BINDING
+        )
+    if revision >= COMBINED_ACTIVATION_REVISION and 15 in amendment_numbers:
+        position = tuple(amendment_numbers).index(15)
+        context["ratification_closures"][position] = copy.deepcopy(
+            A15_HISTORICAL_CLOSURE_BINDING
         )
     return context
 
@@ -7626,6 +8481,353 @@ def run_amendment16_oracle_mutation_tests() -> tuple[str, ...]:
         "Amendment-16 inherited complete mutation census drift",
     )
     return _run_amendment16_oracle_attacks()
+
+
+def run_amendment18_contract_mutation_tests() -> tuple[str, ...]:
+    """Execute inherited censuses, then the three grouped A18 attacks."""
+
+    import build_amendment13_tier2_repairs as publisher
+
+    inherited = publisher.run_complete_mutation_census()
+    _require(
+        inherited == publisher._expected_mutation_census()
+        and inherited["rejected_count"]
+        == A18_MUTATION_CENSUS["inherited_complete_mutation_count"]
+        and inherited["rejected_domain_sha256"]
+        == A18_MUTATION_CENSUS["inherited_complete_mutation_domain_sha256"],
+        "Amendment-18 inherited complete mutation census drift",
+    )
+    amendment16 = _run_amendment16_oracle_attacks()
+    _require(
+        amendment16 == A16_EXPECTED_MUTATIONS
+        and _sha256(canonical_json_bytes(list(amendment16)))
+        == A18_MUTATION_CENSUS["amendment16_mutation_domain_sha256"],
+        "Amendment-18 inherited Amendment-16 mutation census drift",
+    )
+
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("GIT_")
+    }
+    environment["PYTHONPATH"] = "src:."
+    amendment17_node = (
+        "tests/test_validate_amendment13_execution_law.py::"
+        "test__closure__revision17_standalone_activation_is_forbidden"
+    )
+    amendment17_result = subprocess.run(
+        [
+            A18_R06_RESULT_CONTRACT["process_command"][0],
+            "-m",
+            "pytest",
+            "-q",
+            amendment17_node,
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+        env=environment,
+    )
+    _require(
+        amendment17_result.returncode == 0
+        and re.search(r"(?:^|\s)1 passed(?:\s|$)", amendment17_result.stdout)
+        is not None
+        and all(
+            marker not in amendment17_result.stdout
+            for marker in (
+                " failed",
+                " skipped",
+                " deselected",
+                " xfailed",
+                " xpassed",
+            )
+        )
+        and len(A17_EXPECTED_MUTATIONS)
+        == A18_MUTATION_CENSUS["amendment17_mutation_count"]
+        and _sha256(canonical_json_bytes(list(A17_EXPECTED_MUTATIONS)))
+        == A18_MUTATION_CENSUS["amendment17_mutation_domain_sha256"],
+        "Amendment-18 inherited Amendment-17 mutation census drift",
+    )
+
+    def same_json_types(candidate: Any, expected: Any) -> bool:
+        if type(candidate) is not type(expected):
+            return False
+        if isinstance(expected, Mapping):
+            return set(candidate) == set(expected) and all(
+                same_json_types(candidate[key], expected[key])
+                for key in expected
+            )
+        if isinstance(expected, list):
+            return len(candidate) == len(expected) and all(
+                same_json_types(left, right)
+                for left, right in zip(candidate, expected, strict=True)
+            )
+        return True
+
+    def validate_exact_contract(
+        raw: bytes,
+        expected: Mapping[str, Any],
+        message: str,
+    ) -> dict[str, Any]:
+        try:
+            candidate = _strict_canonical_json(raw, message)
+            _require(
+                candidate == expected and same_json_types(candidate, expected),
+                message,
+            )
+        except LawError as error:
+            raise LawError(message) from error
+        return candidate
+
+    def reject_contract_variants(
+        expected: Mapping[str, Any],
+        variants: Sequence[Mapping[str, Any] | bytes],
+        message: str,
+        label: str,
+    ) -> None:
+        validate_exact_contract(
+            canonical_json_bytes(expected), expected, message
+        )
+        for position, variant in enumerate(variants):
+            raw = (
+                variant
+                if isinstance(variant, bytes)
+                else canonical_json_bytes(variant)
+            )
+            _expect_law_error(
+                lambda raw=raw: validate_exact_contract(
+                    raw, expected, message
+                ),
+                message,
+                f"{label} variant {position}",
+            )
+
+    rejected: list[str] = []
+
+    build_variants: list[Mapping[str, Any] | bytes] = []
+    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant.pop("schema_version")
+    build_variants.append(variant)
+    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant["unregistered_member"] = None
+    build_variants.append(variant)
+    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant["envelope_keys"] = list(reversed(variant["envelope_keys"]))
+    build_variants.append(variant)
+    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant["input_classes"][1] = "repair_evidence"
+    build_variants.append(variant)
+    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant["source_document_domain_sha256"] = "0" * 64
+    build_variants.append(variant)
+    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant["row_count"] = True
+    build_variants.append(variant)
+    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant["row_keys"].append("input_identity")
+    build_variants.append(variant)
+    build_canonical = canonical_json_bytes(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    build_variants.extend(
+        (
+            build_canonical[:-1] + b" \n",
+            b'{"schema_version":1,"schema_version":2}\n',
+        )
+    )
+    reject_contract_variants(
+        A18_BUILD_INPUT_DOMAIN_CONTRACT,
+        build_variants,
+        "Amendment-18 build-input-domain contract drift",
+        "Amendment-18 build-input-domain attack",
+    )
+    rejected.append(A18_EXPECTED_MUTATIONS[0])
+
+    def select_historical_r05(
+        context: Mapping[str, Any],
+        validated_closures: Mapping[int, Mapping[str, Any]],
+        binding: Mapping[str, Any],
+    ) -> dict[str, Any]:
+        try:
+            normalized = _validate_registry_ratification_context(context)
+            revision = normalized["revision"]
+            amendment_numbers = _ratification_amendment_numbers(revision)
+            _require(
+                revision >= 18
+                and amendment_numbers == tuple(range(13, revision - 1))
+                and amendment_numbers[2] == 15
+                and tuple(validated_closures) == amendment_numbers
+                and dict(validated_closures[15]) == A15_EXPECTED_CLOSURE
+                and normalized["ratification_closures"][2]
+                == A15_HISTORICAL_CLOSURE_BINDING
+                and dict(binding) == A18_HISTORICAL_R05_BINDING
+                and tuple(binding) == tuple(A18_HISTORICAL_R05_BINDING),
+                "Amendment-18 R05 selector or binding drift",
+            )
+        except (KeyError, IndexError, LawError) as error:
+            raise LawError(
+                "Amendment-18 R05 selector or binding drift"
+            ) from error
+        return copy.deepcopy(A18_HISTORICAL_R05_BINDING)
+
+    contexts: dict[int, dict[str, Any]] = {}
+    closures_by_revision: dict[int, dict[int, Mapping[str, Any]]] = {}
+    for revision in (18, 19, 20):
+        amendment_numbers = tuple(range(13, revision - 1))
+        contexts[revision] = _synthetic_oracle_context(
+            revision,
+            amendment_numbers,
+        )
+        closures_by_revision[revision] = {
+            amendment_number: (
+                copy.deepcopy(A15_EXPECTED_CLOSURE)
+                if amendment_number == 15
+                else {"amendment_number": amendment_number}
+            )
+            for amendment_number in amendment_numbers
+        }
+        _require(
+            select_historical_r05(
+                contexts[revision],
+                closures_by_revision[revision],
+                A18_HISTORICAL_R05_BINDING,
+            )
+            == A18_HISTORICAL_R05_BINDING,
+            "Amendment-18 lawful R05 selector control drift",
+        )
+
+    r05_attacks: list[
+        tuple[
+            Mapping[str, Any],
+            Mapping[int, Mapping[str, Any]],
+            Mapping[str, Any],
+        ]
+    ] = []
+    r05_attacks.append(
+        (
+            contexts[20],
+            closures_by_revision[18],
+            A18_HISTORICAL_R05_BINDING,
+        )
+    )
+    context = copy.deepcopy(contexts[20])
+    context["ratification_closures"].pop()
+    r05_attacks.append(
+        (context, closures_by_revision[20], A18_HISTORICAL_R05_BINDING)
+    )
+    context = copy.deepcopy(contexts[20])
+    context["ratification_closures"][2:4] = reversed(
+        context["ratification_closures"][2:4]
+    )
+    r05_attacks.append(
+        (context, closures_by_revision[20], A18_HISTORICAL_R05_BINDING)
+    )
+    context = copy.deepcopy(contexts[20])
+    context["ratification_closures"].pop(2)
+    r05_attacks.append(
+        (context, closures_by_revision[20], A18_HISTORICAL_R05_BINDING)
+    )
+    binding = copy.deepcopy(A18_HISTORICAL_R05_BINDING)
+    binding["design_revision"] = 18
+    r05_attacks.append((contexts[20], closures_by_revision[20], binding))
+    closures = copy.deepcopy(closures_by_revision[20])
+    closures[15]["attested_candidate_design_raw_sha256"] = "0" * 64
+    r05_attacks.append((contexts[20], closures, A18_HISTORICAL_R05_BINDING))
+    context16 = _synthetic_oracle_context(16, (13, 14))
+    r05_attacks.append(
+        (
+            context16,
+            {13: {"amendment_number": 13}, 14: {"amendment_number": 14}},
+            A18_HISTORICAL_R05_BINDING,
+        )
+    )
+    for position, (context, closures, binding) in enumerate(r05_attacks):
+        _expect_law_error(
+            lambda context=context, closures=closures, binding=binding: (
+                select_historical_r05(context, closures, binding)
+            ),
+            "Amendment-18 R05 selector or binding drift",
+            f"Amendment-18 R05 selector attack {position}",
+        )
+    rejected.append(A18_EXPECTED_MUTATIONS[1])
+
+    r06_variants: list[Mapping[str, Any] | bytes] = []
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant.pop("schema_version")
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["unregistered_member"] = None
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["top_level_keys"].pop()
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["input_identity_row_keys"].append("reported_identity")
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["fixed_input_identities"]["amendment11_authority_artifact"][
+        "raw_sha256"
+    ] = ("0" * 64)
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["process_result"]["exit_code"] = True
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["process_result"]["stderr_exact_text"] = "substring only\n"
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["test_command"].pop()
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["test_environment"]["PYTHONPATH"] = "."
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["test_result"]["deselected"] = 1
+    r06_variants.append(variant)
+    for field in (
+        "q5_input_emitted",
+        "q5_first_add_performed",
+        "authority_emitted",
+        "production_output_emitted",
+    ):
+        variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+        variant["lifecycle"][field] = True
+        r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["lifecycle"]["next_required_state"] = "CONTINUE"
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["captured_streams"].append("artifact")
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["first_add_minimum_revision"] = 19
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A18_R06_RESULT_CONTRACT)
+    variant["first_add_name_status_delta"].append(["M", DESIGN_PATH])
+    r06_variants.append(variant)
+    r06_canonical = canonical_json_bytes(A18_R06_RESULT_CONTRACT)
+    r06_variants.extend(
+        (
+            r06_canonical[:-1] + b" \n",
+            b'{"schema_version":1,"schema_version":2}\n',
+        )
+    )
+    reject_contract_variants(
+        A18_R06_RESULT_CONTRACT,
+        r06_variants,
+        "Amendment-18 R06 result or lifecycle contract drift",
+        "Amendment-18 R06 contract attack",
+    )
+    rejected.append(A18_EXPECTED_MUTATIONS[2])
+
+    rejected_tuple = tuple(rejected)
+    _require(
+        rejected_tuple == A18_EXPECTED_MUTATIONS
+        and len(set(rejected_tuple)) == len(rejected_tuple)
+        and _sha256(canonical_json_bytes(list(rejected_tuple)))
+        == A18_MUTATION_DOMAIN_SHA256,
+        "Amendment-18 mutation inventory drift",
+    )
+    return rejected_tuple
 
 
 def _run_public_registry_replace_ref_enforcement_mutation() -> None:

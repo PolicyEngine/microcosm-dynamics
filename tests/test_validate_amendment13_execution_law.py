@@ -28,6 +28,15 @@ A17_FULL_PINNED_BATTERY_COMMAND = (
     "-m pytest -q tests/test_validate_amendment13_execution_law.py"
 )
 A17_FULL_PINNED_BATTERY_COLLECTED = 76
+A18_FULL_PINNED_BATTERY_COLLECTED = 106
+A18_TEST_MUTATIONS = (
+    "tier2_build_input_domain_preimage_forged",
+    "tier2_r05_current_snapshot_or_historical_binding_forged",
+    "tier2_r06_result_or_lifecycle_forged",
+)
+A18_MUTATION_DOMAIN_SHA256 = (
+    "1bf9f6d30461d003cab597a405cb5cc9855273372ed3e7e5b36b1627eaa11108"
+)
 
 
 @pytest.fixture(scope="module")
@@ -89,7 +98,41 @@ def _synthetic_registry_context(revision):
         context["ratification_closures"][1] = copy.deepcopy(
             a13.A14_HISTORICAL_CLOSURE_BINDING
         )
+        context["ratification_closures"][2] = {
+            "path": a13.A18_HISTORICAL_R05_BINDING["closure_path"],
+            "raw_byte_size": a13.A18_HISTORICAL_R05_BINDING[
+                "closure_byte_size"
+            ],
+            "raw_sha256": a13.A18_HISTORICAL_R05_BINDING["closure_raw_sha256"],
+        }
     return context
+
+
+def _amendment19_successor(amendment18):
+    return amendment18 + (
+        b"\n## 33. AMENDMENT SECTION \xe2\x80\x94 Amendment 19: "
+        b"synthetic successor\n\nProspective successor.\n"
+    )
+
+
+def _select_historical_r05_fixture(context, validated_closures):
+    """Mirror the closed selector law without inventing a production API."""
+
+    context = a13._validate_registry_ratification_context(context)
+    amendment_numbers = a13._ratification_amendment_numbers(
+        context["revision"]
+    )
+    assert context["revision"] >= 18
+    assert amendment_numbers == tuple(range(13, context["revision"] - 1))
+    assert tuple(validated_closures) == amendment_numbers
+    assert amendment_numbers[2] == 15
+    assert context["ratification_closures"][2] == {
+        "path": a13.A18_HISTORICAL_R05_BINDING["closure_path"],
+        "raw_byte_size": a13.A18_HISTORICAL_R05_BINDING["closure_byte_size"],
+        "raw_sha256": a13.A18_HISTORICAL_R05_BINDING["closure_raw_sha256"],
+    }
+    assert validated_closures[15] == a13.A15_EXPECTED_CLOSURE
+    return copy.deepcopy(a13.A18_HISTORICAL_R05_BINDING)
 
 
 def _assert_revision_general_expectation(revision, candidate_expected):
@@ -142,7 +185,14 @@ def _assert_public_oracle_reaches_implementation_pin_verifier(
     return closures
 
 
-def _assert_executed_transition_evidence(evidence):
+def _assert_executed_transition_evidence(
+    evidence,
+    *,
+    expected_revision=18,
+    expected_domain=(13, 14, 15, 16),
+    expected_command=A17_FULL_PINNED_BATTERY_COMMAND,
+    expected_collected=A17_FULL_PINNED_BATTERY_COLLECTED,
+):
     assert set(evidence) == {
         "simulated_state_authority",
         "simulated_state_identity_sha256",
@@ -171,8 +221,10 @@ def _assert_executed_transition_evidence(evidence):
         == hashlib.sha256(a13.canonical_json_bytes(manifest)).hexdigest()
     )
     revision = evidence["terminal_revision"]
+    assert revision == expected_revision
     assert manifest["terminal_revision"] == revision
     expected = _expected_terminal_operativity_domain(revision)
+    assert expected == expected_domain
     registry_binding = a13._validate_registry_ratification_context(
         manifest["canonical_registry_binding"]
     )
@@ -259,9 +311,9 @@ def _assert_executed_transition_evidence(evidence):
         battery["test_mode_blob_bytes_sha256"]
         == manifest["full_pinned_battery_test_identity"]
     )
-    assert battery["exact_command"] == A17_FULL_PINNED_BATTERY_COMMAND
-    assert battery["collected"] == A17_FULL_PINNED_BATTERY_COLLECTED
-    assert battery["passed"] == A17_FULL_PINNED_BATTERY_COLLECTED
+    assert battery["exact_command"] == expected_command
+    assert battery["collected"] == expected_collected
+    assert battery["passed"] == expected_collected
     for outcome in (
         "failed",
         "skipped",
@@ -271,6 +323,88 @@ def _assert_executed_transition_evidence(evidence):
     ):
         assert battery[outcome] == 0
     assert battery["simulated_state_identity_sha256"] == state_identity
+
+
+def _synthetic_transition_evidence(revision, collected):
+    pins = a13._parse_active_implementation_pins(
+        (ROOT / a13.DESIGN_PATH).read_bytes()
+    )
+    test_pin = next(
+        row
+        for row in pins["files"]
+        if row["path"] == "tests/test_validate_amendment13_execution_law.py"
+    )
+    context = _synthetic_registry_context(revision)
+    closure_identities = [
+        {
+            **row,
+            "git_blob": f"{position:040x}",
+        }
+        for position, row in enumerate(
+            context["ratification_closures"], start=13
+        )
+    ]
+    manifest = {
+        "schema_version": "executed_transition_state.v1",
+        "simulated_state_authority": "NONAUTHORITY",
+        "candidate_or_scratch_HEAD": "c" * 40,
+        "terminal_revision": revision,
+        "canonical_registry_binding": context,
+        "ordered_closure_identities": closure_identities,
+        "full_pinned_battery_test_identity": {
+            "path": test_pin["path"],
+            "mode": pins["mode"],
+            "git_blob": test_pin["blob_oid"],
+            "raw_byte_size": test_pin["byte_size"],
+            "raw_sha256": test_pin["sha256"],
+        },
+    }
+    state_identity = hashlib.sha256(
+        a13.canonical_json_bytes(manifest)
+    ).hexdigest()
+    return {
+        "simulated_state_authority": "NONAUTHORITY",
+        "simulated_state_identity_sha256": state_identity,
+        "simulated_state_manifest": manifest,
+        "terminal_revision": revision,
+        "public_oracle": {
+            "entrypoint": "validate_ratification_operativity",
+            "executed": True,
+            "exit_code": 0,
+            "operative_amendments": list(range(13, revision - 1)),
+            "simulated_state_identity_sha256": state_identity,
+        },
+        "full_pinned_battery": {
+            "executed": True,
+            "exit_code": 0,
+            "test_path": "tests/test_validate_amendment13_execution_law.py",
+            "test_mode_blob_bytes_sha256": manifest[
+                "full_pinned_battery_test_identity"
+            ],
+            "exact_command": A17_FULL_PINNED_BATTERY_COMMAND,
+            "collected": collected,
+            "passed": collected,
+            "failed": 0,
+            "skipped": 0,
+            "deselected": 0,
+            "xfailed": 0,
+            "xpassed": 0,
+            "simulated_state_identity_sha256": state_identity,
+        },
+    }
+
+
+def _repin_synthetic_transition_state(evidence):
+    state_identity = hashlib.sha256(
+        a13.canonical_json_bytes(evidence["simulated_state_manifest"])
+    ).hexdigest()
+    evidence["simulated_state_identity_sha256"] = state_identity
+    evidence["public_oracle"][
+        "simulated_state_identity_sha256"
+    ] = state_identity
+    evidence["full_pinned_battery"][
+        "simulated_state_identity_sha256"
+    ] = state_identity
 
 
 def _run_amendment17_test_mutations():
@@ -385,6 +519,89 @@ def _run_amendment17_test_mutations():
     assert rejected_tuple == A17_TEST_MUTATIONS
     assert len(set(rejected_tuple)) == len(rejected_tuple)
     return rejected_tuple
+
+
+def test__amendment18_transition_receipt_schema_accepts_revision20_fixture():
+    evidence = _synthetic_transition_evidence(
+        20,
+        A18_FULL_PINNED_BATTERY_COLLECTED,
+    )
+    _assert_executed_transition_evidence(
+        evidence,
+        expected_revision=20,
+        expected_domain=(13, 14, 15, 16, 17, 18),
+        expected_collected=A18_FULL_PINNED_BATTERY_COLLECTED,
+    )
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    (
+        "wrong_count",
+        "wrong_order",
+        "revision19_with_six",
+        "boolean_integer",
+        "different_state",
+        "focused_battery",
+    ),
+)
+def test__amendment18_transition_receipt_variants_fail_closed(mutation):
+    evidence = _synthetic_transition_evidence(
+        20,
+        A18_FULL_PINNED_BATTERY_COLLECTED,
+    )
+    expected_revision = 20
+    expected_domain = (13, 14, 15, 16, 17, 18)
+    if mutation == "wrong_count":
+        evidence["simulated_state_manifest"]["canonical_registry_binding"][
+            "ratification_closures"
+        ].pop()
+        evidence["simulated_state_manifest"][
+            "ordered_closure_identities"
+        ].pop()
+        _repin_synthetic_transition_state(evidence)
+    elif mutation == "wrong_order":
+        context = evidence["simulated_state_manifest"][
+            "canonical_registry_binding"
+        ]
+        context["ratification_closures"][4:6] = reversed(
+            context["ratification_closures"][4:6]
+        )
+        identities = evidence["simulated_state_manifest"][
+            "ordered_closure_identities"
+        ]
+        identities[4:6] = reversed(identities[4:6])
+        _repin_synthetic_transition_state(evidence)
+    elif mutation == "revision19_with_six":
+        evidence["terminal_revision"] = 19
+        evidence["simulated_state_manifest"]["terminal_revision"] = 19
+        evidence["simulated_state_manifest"]["canonical_registry_binding"][
+            "revision"
+        ] = 19
+        expected_revision = 19
+        expected_domain = (13, 14, 15, 16, 17)
+        _repin_synthetic_transition_state(evidence)
+    elif mutation == "boolean_integer":
+        evidence["full_pinned_battery"]["collected"] = True
+    elif mutation == "different_state":
+        evidence["full_pinned_battery"]["simulated_state_identity_sha256"] = (
+            "d" * 64
+        )
+    else:
+        evidence["full_pinned_battery"].update(
+            {
+                "collected": 1,
+                "passed": 1,
+                "deselected": A18_FULL_PINNED_BATTERY_COLLECTED - 1,
+            }
+        )
+    with pytest.raises((AssertionError, a13.LawError)):
+        _assert_executed_transition_evidence(
+            evidence,
+            expected_revision=expected_revision,
+            expected_domain=expected_domain,
+            expected_collected=A18_FULL_PINNED_BATTERY_COLLECTED,
+        )
 
 
 def test__draft__emits_neither_authority_nor_certification(execution_law):
@@ -796,6 +1013,7 @@ def test__closure__operativity_requires_both_public_closures(monkeypatch):
         (16, (13, 14), 2),
         (18, (13, 14, 15, 16), 4),
         (19, (13, 14, 15, 16, 17), 5),
+        (20, (13, 14, 15, 16, 17, 18), 6),
     ),
 )
 def test__closure__general_revision_domain_law(
@@ -853,6 +1071,127 @@ def test__closure__revision18_operativity_is_atomic_and_ordered():
     )
     assert tuple(closures) == (13, 14, 15, 16)
     assert observed == [13, 14, 15, 16]
+
+
+def test__closure__revision20_operativity_is_atomic_and_ordered():
+    context = a13._validate_registry_ratification_context(
+        _synthetic_registry_context(20)
+    )
+    observed = []
+
+    def validate(amendment_number, selected_context):
+        assert selected_context == context
+        observed.append(amendment_number)
+        return {"amendment_number": amendment_number}
+
+    closures = a13._validate_ratification_operativity_context(
+        context, validate
+    )
+    assert tuple(closures) == (13, 14, 15, 16, 17, 18)
+    assert observed == [13, 14, 15, 16, 17, 18]
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    (
+        "missing_a18",
+        "extra_a19",
+        "wrong_order",
+        "duplicate_a17",
+        "wrong_a18_path",
+        "revision19_with_six",
+    ),
+)
+def test__closure__revision20_domain_variants_fail_closed(mutation):
+    context = _synthetic_registry_context(20)
+    if mutation == "missing_a18":
+        context["ratification_closures"].pop()
+    elif mutation == "extra_a19":
+        context["ratification_closures"].append(
+            {
+                "path": (
+                    "docs/analysis/amendment_19_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": 19,
+                "raw_sha256": f"{19:064x}",
+            }
+        )
+    elif mutation == "wrong_order":
+        context["ratification_closures"][4:6] = reversed(
+            context["ratification_closures"][4:6]
+        )
+    elif mutation == "duplicate_a17":
+        context["ratification_closures"][5] = copy.deepcopy(
+            context["ratification_closures"][4]
+        )
+    elif mutation == "wrong_a18_path":
+        context["ratification_closures"][5][
+            "path"
+        ] = "docs/analysis/amendment_19_ratification/closure_v1.json"
+    else:
+        context["revision"] = 19
+    with pytest.raises(a13.LawError):
+        a13._validate_registry_ratification_context(context)
+
+
+@pytest.mark.parametrize("revision", (18, 19, 20))
+def test__tier2_r05__current_snapshot_selects_exact_historical_a15(
+    revision,
+    monkeypatch,
+):
+    context = _synthetic_registry_context(revision)
+    context["ratification_closures"][2] = {
+        "path": a13.A18_HISTORICAL_R05_BINDING["closure_path"],
+        "raw_byte_size": a13.A18_HISTORICAL_R05_BINDING["closure_byte_size"],
+        "raw_sha256": a13.A18_HISTORICAL_R05_BINDING["closure_raw_sha256"],
+    }
+    context = a13._validate_registry_ratification_context(context)
+    observed = []
+
+    def validate(amendment_number, selected_context):
+        assert selected_context == context
+        observed.append(amendment_number)
+        if amendment_number == 15:
+            return copy.deepcopy(a13.A15_EXPECTED_CLOSURE)
+        return {"amendment_number": amendment_number}
+
+    monkeypatch.setattr(
+        a13,
+        "_public_registry_ratification_context",
+        lambda: context,
+    )
+    monkeypatch.setattr(a13, "_validate_public_ratification_closure", validate)
+    monkeypatch.setattr(a13, "_verify_implementation_pins", lambda pins: None)
+    validated_closures = a13.validate_ratification_operativity()
+    assert observed == list(range(13, revision - 1))
+    assert (
+        _select_historical_r05_fixture(
+            context,
+            validated_closures,
+        )
+        == a13.A18_HISTORICAL_R05_BINDING
+    )
+
+
+@pytest.mark.parametrize("mutation", ("absent", "moved", "mismatched"))
+def test__tier2_r05__a15_selector_prerequisites_fail_closed(mutation):
+    context = _synthetic_registry_context(20)
+    context["ratification_closures"][2] = {
+        "path": a13.A18_HISTORICAL_R05_BINDING["closure_path"],
+        "raw_byte_size": a13.A18_HISTORICAL_R05_BINDING["closure_byte_size"],
+        "raw_sha256": a13.A18_HISTORICAL_R05_BINDING["closure_raw_sha256"],
+    }
+    if mutation == "absent":
+        context["ratification_closures"].pop(2)
+    elif mutation == "moved":
+        context["ratification_closures"][2:4] = reversed(
+            context["ratification_closures"][2:4]
+        )
+    else:
+        context["ratification_closures"][2]["raw_sha256"] = "0" * 64
+    with pytest.raises(a13.LawError):
+        a13._validate_registry_ratification_context(context)
 
 
 def test__closure__revision18_combined_set_passes_generalized_oracle(
@@ -967,6 +1306,14 @@ def test__closure__real_public_path_adapts_at_revision16(monkeypatch):
     expected_domain = _expected_terminal_operativity_domain(
         registry.DESIGN_REVISION
     )
+    if registry.DESIGN_REVISION in (19, 20):
+        assert (
+            expected_domain
+            == {
+                19: (13, 14, 15, 16, 17),
+                20: (13, 14, 15, 16, 17, 18),
+            }[registry.DESIGN_REVISION]
+        )
     closures = _assert_public_oracle_reaches_implementation_pin_verifier(
         monkeypatch,
         expected_domain,
@@ -1175,7 +1522,7 @@ def test__nested_authority_and_declared_schema_forgery_fail_closed(
             a13.validate_execution_law(candidate, verify_git=False)
 
 
-def test__document__semantic_projection_covers_amendments14_through17():
+def test__document__semantic_projection_covers_amendments14_through18():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
     projection = a13._parse_document_semantic_projection(raw)
     assert projection["amendment14"]["section_semantic_sha256"] == (
@@ -1243,6 +1590,220 @@ def test__document__semantic_projection_covers_amendments14_through17():
     assert amendment17["supersession_map"] == [
         list(row) for row in a13.A17_SUPERSESSION_MAP
     ]
+    amendment18 = projection["amendment18"]
+    assert set(amendment18) == {
+        "section_semantic_sha256",
+        "implementation_pins",
+        "build_input_domain_contract",
+        "historical_r05_binding",
+        "r06_result_contract",
+        "activation_transition",
+        "contract_mutations",
+        "contract_mutation_domain_sha256",
+        "mutation_census",
+        "supersession_map",
+        "new_identifiers",
+    }
+    assert amendment18["section_semantic_sha256"] == (
+        a13.A18_SECTION_SEMANTIC_SHA256
+    )
+    assert amendment18["implementation_pins"] == (
+        a13._parse_amendment18_implementation_pins(raw)
+    )
+    assert amendment18["build_input_domain_contract"] == (
+        a13.A18_BUILD_INPUT_DOMAIN_CONTRACT
+    )
+    assert amendment18["historical_r05_binding"] == (
+        a13.A18_HISTORICAL_R05_BINDING
+    )
+    assert set(amendment18["historical_r05_binding"]) == {
+        "amendment_number",
+        "closure_byte_size",
+        "closure_path",
+        "closure_raw_sha256",
+        "design_blob_oid",
+        "design_byte_size",
+        "design_path",
+        "design_raw_sha256",
+        "design_revision",
+        "ratification_commit",
+        "ratification_commit_sole_parent",
+    }
+    assert amendment18["r06_result_contract"] == (a13.A18_R06_RESULT_CONTRACT)
+    assert amendment18["activation_transition"] == (
+        a13.A18_ACTIVATION_TRANSITION
+    )
+    activation = amendment18["activation_transition"]
+    assert activation["r05_public_entrypoint"] == (
+        "validate_ratification_operativity"
+    )
+    assert activation["r05_minimum_terminal_revision"] == 18
+    assert activation["r05_expected_domain_expression"] == (
+        "tuple(range(13, R - 1))"
+    )
+    assert activation["r05_selected_zero_based_position"] == 2
+    assert activation["r05_selected_amendment"] == 15
+    assert tuple(amendment18["contract_mutations"]) == (
+        a13.A18_EXPECTED_MUTATIONS
+    )
+    assert amendment18["contract_mutation_domain_sha256"] == (
+        a13.A18_MUTATION_DOMAIN_SHA256
+    )
+    assert amendment18["mutation_census"] == a13.A18_MUTATION_CENSUS
+    assert amendment18["supersession_map"] == [
+        list(row) for row in a13.A18_SUPERSESSION_MAP
+    ]
+    assert amendment18["new_identifiers"] == a13.A18_NEW_IDENTIFIERS
+    assert amendment18["new_identifiers"] == {
+        "schema_and_path": [
+            "amendment_12_tier2_build_input_domain.v1",
+            "amendment_12_tier2_r06_expected_abort_result.v1",
+            (
+                "docs/analysis/amendment_12_rq_catalog_tier2/"
+                "certification/amendment11_expected_abort_result_v1.json"
+            ),
+            "a12-tier2-r06-expected-abort-result:",
+        ],
+        "status_role_lifecycle": [
+            "pass_a12_t2_r06_expected_abort_reproduced",
+            "evidence_expected_amendment11_abort_reproduced_nonauthority",
+            "A19_SUCCESSOR_PROGRAM_STOP",
+        ],
+        "input_class": ["source_document", "repair_seal_evidence"],
+        "python": [
+            "_validate_amendment18_ratification_design",
+            "_validate_inherited_amendment18_ratification_design",
+            "run_amendment18_contract_mutation_tests",
+        ],
+    }
+
+
+def test__document__amendment18_three_limb_values_are_exact():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    amendment18 = a13._parse_amendment18_projection(raw)
+    assert (
+        amendment18["build_input_domain_contract"]["schema_version"]
+        == "amendment_12_tier2_build_input_domain.v1"
+    )
+    build_input = amendment18["build_input_domain_contract"]
+    assert build_input["questionnaire_document_count"] == 81
+    assert build_input["source_document_count"] == 257
+    assert build_input["repair_seal_evidence_count"] == 22
+    assert build_input["row_count"] == 279
+    assert build_input["source_position_domain"] == [0, 256]
+    assert build_input["repair_position_domain"] == [257, 278]
+    assert build_input["dual_canonical_byte_equality_required"] is True
+    assert build_input["artifact_persisted"] is False
+    assert amendment18["historical_r05_binding"] == {
+        "amendment_number": 15,
+        "closure_byte_size": 842,
+        "closure_path": (
+            "docs/analysis/amendment_15_ratification/closure_v1.json"
+        ),
+        "closure_raw_sha256": (
+            "f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a"
+        ),
+        "design_blob_oid": "50a2a14e1c8845d342dca83559688866e97dc4a7",
+        "design_byte_size": 3_881_111,
+        "design_path": "docs/design/covered_earnings_correction.md",
+        "design_raw_sha256": (
+            "556311b72ec6c8e30eeda4b0f602e0f7f43b9d080c2454966fa3dda3a561d16e"
+        ),
+        "design_revision": 17,
+        "ratification_commit": ("c2ffe3e95152ff005485f55acaf75259e6095195"),
+        "ratification_commit_sole_parent": (
+            "a352e66284b60997210c634bb427141e7e523a75"
+        ),
+    }
+    r06 = amendment18["r06_result_contract"]
+    assert r06["path"] == (
+        "docs/analysis/amendment_12_rq_catalog_tier2/certification/"
+        "amendment11_expected_abort_result_v1.json"
+    )
+    assert r06["schema_version"] == (
+        "amendment_12_tier2_r06_expected_abort_result.v1"
+    )
+    assert r06["top_level_keys"] == [
+        "artifact_id",
+        "artifact_role",
+        "gate_id",
+        "input_identities",
+        "integrity",
+        "lifecycle",
+        "nonemission_evidence",
+        "process_result",
+        "schema_version",
+        "status",
+        "test_result",
+    ]
+    assert r06["integrity_keys"] == ["canonicalization", "payload_sha256"]
+    assert r06["input_identity_keys"] == [
+        "r05_certification",
+        "amendment11_authority_artifact",
+        "amendment11_replay_executable",
+        "amendment11_source_registry",
+    ]
+    assert r06["input_identity_row_keys"] == [
+        "path",
+        "mode",
+        "git_blob",
+        "byte_size",
+        "raw_sha256",
+    ]
+    for identity in r06["fixed_input_identities"].values():
+        assert set(identity) == set(r06["input_identity_row_keys"])
+        assert identity["mode"] == "100644"
+    assert r06["process_result"]["exit_code"] == 2
+    assert r06["process_result"]["stderr_byte_size"] == 174
+    assert r06["process_command"] == [
+        "/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python",
+        "scripts/replay_amendment11_no_movement.py",
+    ]
+    for field in r06["process_integer_fields"]:
+        assert type(r06["process_result"][field]) is int
+    assert r06["test_result"]["module_count"] == 6
+    assert r06["test_result"]["collected"] == 223
+    assert len(r06["test_module_paths"]) == 6
+    assert r06["test_command"] == [
+        "/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python",
+        "-m",
+        "pytest",
+        *r06["test_module_paths"],
+    ]
+    assert r06["test_environment"] == {"PYTHONPATH": "src:."}
+    for field in r06["test_integer_fields"]:
+        assert type(r06["test_result"][field]) is int
+    assert set(r06["lifecycle"]) == set(r06["lifecycle_keys"])
+    assert r06["lifecycle"]["nonauthority"] is True
+    assert r06["lifecycle"]["q5_input_emitted"] is False
+    assert r06["lifecycle"]["q5_first_add_performed"] is False
+    assert r06["lifecycle"]["authority_emitted"] is False
+    assert r06["lifecycle"]["next_required_state"] == (
+        "A19_SUCCESSOR_PROGRAM_STOP"
+    )
+    assert r06["nonemission_evidence_keys"] == [
+        "execution_commit",
+        "execution_tree_oid",
+        "repository_manifest_sha256_before",
+        "repository_manifest_sha256_after",
+        "repository_clean_before",
+        "repository_clean_after",
+        "repository_read_only",
+        "network_disabled",
+        "captured_streams",
+        "result_path_absent_after_execution",
+    ]
+    assert r06["manifest_row_keys"] == [
+        "path",
+        "mode",
+        "git_blob",
+        "byte_size",
+        "raw_sha256",
+    ]
+    assert r06["first_add_minimum_revision"] == 20
+    assert r06["first_add_after_r05"] is True
+    assert r06["first_add_name_status_delta"] == [["A", r06["path"]]]
+    assert r06["immutable_after_first_add"] is True
 
 
 def test__document__amendment15_mutation_binding_spec_is_exact():
@@ -1436,7 +1997,25 @@ def test__implementation__active_pins_are_blob_bound_without_commit():
         "scripts/build_amendment13_tier2_repairs.py",
     ]
     a13._verify_implementation_pins(pins)
-    if len(raw) > a13.REVISION18_BYTE_SIZE:
+    if len(raw) > a13.REVISION19_BYTE_SIZE:
+        a17 = {
+            row["path"]: row
+            for row in a13._parse_amendment17_implementation_pins(raw)["files"]
+        }
+        a18 = {row["path"]: row for row in pins["files"]}
+        assert (
+            a18["scripts/build_amendment13_tier2_repairs.py"]
+            == a17["scripts/build_amendment13_tier2_repairs.py"]
+        )
+        assert (
+            a18["scripts/validate_amendment13_execution_law.py"]
+            != a17["scripts/validate_amendment13_execution_law.py"]
+        )
+        assert (
+            a18["tests/test_validate_amendment13_execution_law.py"]
+            != a17["tests/test_validate_amendment13_execution_law.py"]
+        )
+    elif len(raw) > a13.REVISION18_BYTE_SIZE:
         a16 = {
             row["path"]: row
             for row in a13._parse_amendment16_implementation_pins(raw)["files"]
@@ -1456,7 +2035,7 @@ def test__implementation__active_pins_are_blob_bound_without_commit():
         )
 
 
-def test__document__amendment16_and17_pin_values_are_normalized_only():
+def test__document__amendment16_through18_pin_values_are_normalized_only():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
     baseline = a13._parse_amendment16_projection(raw)
     section = a13._amendment16_text(raw)
@@ -1502,6 +2081,28 @@ def test__document__amendment16_and17_pin_values_are_normalized_only():
         baseline["section_semantic_sha256"]
     )
 
+    baseline = a13._parse_amendment18_projection(raw)
+    section = a13._amendment18_text(raw)
+    match = a13._amendment18_implementation_pin_match(section)
+    start, end = match.span("validator_sha256")
+    absolute_start = a13.REVISION19_BYTE_SIZE + len(
+        section[:start].encode("utf-8")
+    )
+    absolute_end = a13.REVISION19_BYTE_SIZE + len(
+        section[:end].encode("utf-8")
+    )
+    replacement = (
+        "1" if match.group("validator_sha256")[0] != "1" else "2"
+    ) + match.group("validator_sha256")[1:]
+    candidate = (
+        raw[:absolute_start] + replacement.encode() + raw[absolute_end:]
+    )
+    changed = a13._parse_amendment18_projection(candidate)
+    assert changed["implementation_pins"] != baseline["implementation_pins"]
+    assert changed["section_semantic_sha256"] == (
+        baseline["section_semantic_sha256"]
+    )
+
 
 def test__document__amendment16_nonpin_semantics_are_hash_bound():
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
@@ -1522,11 +2123,8 @@ def test__document__amendment16_nonpin_semantics_are_hash_bound():
 
 
 def test__document__successors_preserve_inherited_a17_projection():
-    amendment17 = (ROOT / a13.DESIGN_PATH).read_bytes()
-    amendment18 = amendment17 + (
-        b"\n## 32. AMENDMENT SECTION \xe2\x80\x94 Amendment 18: "
-        b"synthetic successor\n\nProspective successor.\n"
-    )
+    amendment18 = (ROOT / a13.DESIGN_PATH).read_bytes()
+    amendment17 = amendment18[: a13.REVISION19_BYTE_SIZE]
     forgeries = (
         (
             b"executed_transition_state.v1",
@@ -1568,6 +2166,78 @@ def test__document__successors_preserve_inherited_a17_projection():
                     candidate,
                     amendment_number,
                 )
+
+
+def test__document__amendment18_terminal_and_inherited_routes_accept():
+    amendment18 = (ROOT / a13.DESIGN_PATH).read_bytes()
+    amendment19 = _amendment19_successor(amendment18)
+    a13._validate_amendment18_ratification_design(amendment18)
+    a13._validate_non_a13_ratification_design(amendment18, 18)
+    a13._validate_inherited_amendment18_ratification_design(amendment19)
+    a13._validate_non_a13_ratification_design(amendment19, 19)
+
+
+def test__document__arbitrary_amendment18_suffix_fails_both_routes():
+    amendment18 = (ROOT / a13.DESIGN_PATH).read_bytes()
+    arbitrary = amendment18[: a13.REVISION19_BYTE_SIZE] + (
+        a13.AMENDMENT18_BOUNDARY + b"\nArbitrary unprojected law.\n"
+    )
+    with pytest.raises(a13.LawError):
+        a13._validate_amendment18_ratification_design(arbitrary)
+    with pytest.raises(a13.LawError):
+        a13._validate_non_a13_ratification_design(arbitrary, 18)
+    arbitrary_successor = _amendment19_successor(arbitrary)
+    with pytest.raises(a13.LawError):
+        a13._validate_inherited_amendment18_ratification_design(
+            arbitrary_successor
+        )
+    with pytest.raises(a13.LawError):
+        a13._validate_non_a13_ratification_design(arbitrary_successor, 19)
+
+
+@pytest.mark.parametrize(
+    ("original", "forged"),
+    (
+        (
+            b"504159116708ee4d5e2cc8abec130ca8679d22cce928dca42af12be305361c17",
+            b"004159116708ee4d5e2cc8abec130ca8679d22cce928dca42af12be305361c17",
+        ),
+        (
+            b"f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a",
+            b"048ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a",
+        ),
+        (
+            b"79c608eb8baf3b31ea8f14cf461cde27d8637e43602ead19e39dc5388ed9903b",
+            b"09c608eb8baf3b31ea8f14cf461cde27d8637e43602ead19e39dc5388ed9903b",
+        ),
+    ),
+)
+def test__document__three_limb_forgeries_fail_terminal_and_inherited_routes(
+    original,
+    forged,
+):
+    amendment18 = (ROOT / a13.DESIGN_PATH).read_bytes()
+    prefix = amendment18[: a13.REVISION19_BYTE_SIZE]
+    suffix = amendment18[a13.REVISION19_BYTE_SIZE :]
+    assert suffix.count(original) == 1
+    forged_amendment18 = prefix + suffix.replace(original, forged, 1)
+    changed = a13._parse_amendment18_projection(forged_amendment18)
+    assert changed["section_semantic_sha256"] != (
+        a13.A18_SECTION_SEMANTIC_SHA256
+    )
+    with pytest.raises(
+        a13.LawError,
+        match="Amendment-18 ratification design semantic projection drift",
+    ):
+        a13._validate_amendment18_ratification_design(forged_amendment18)
+    forged_amendment19 = _amendment19_successor(forged_amendment18)
+    with pytest.raises(
+        a13.LawError,
+        match="Amendment-18 ratification design semantic projection drift",
+    ):
+        a13._validate_inherited_amendment18_ratification_design(
+            forged_amendment19
+        )
 
 
 def test__amendment16_oracle_mutations_are_separate_and_exact():
@@ -1616,6 +2286,50 @@ def test__amendment16_public_runner_stops_before_attacks_on_census_drift(
         match="inherited complete mutation census drift",
     ):
         a13.run_amendment16_oracle_mutation_tests()
+
+
+@pytest.fixture(scope="module")
+def amendment18_rejected_mutations():
+    return a13.run_amendment18_contract_mutation_tests()
+
+
+def test__amendment18_contract_mutations_are_separate_and_exact(
+    amendment18_rejected_mutations,
+):
+    rejected = amendment18_rejected_mutations
+    assert rejected == a13.A18_EXPECTED_MUTATIONS == A18_TEST_MUTATIONS
+    assert (
+        hashlib.sha256(a13.canonical_json_bytes(list(rejected))).hexdigest()
+        == a13.A18_MUTATION_DOMAIN_SHA256
+        == (A18_MUTATION_DOMAIN_SHA256)
+    )
+
+
+def test__amendment18_battery_executes_all_four_mutation_domains(
+    amendment18_rejected_mutations,
+):
+    assert a13.A18_MUTATION_CENSUS == {
+        "inherited_complete_mutation_count": 100,
+        "inherited_complete_mutation_domain_sha256": (
+            "fe2efd7b96c24b7cbd3c6ce350d44906"
+            "eb5a88b8b35ee77565c1b133cbf1f3e3"
+        ),
+        "amendment16_mutation_count": 7,
+        "amendment16_mutation_domain_sha256": (
+            "1e00099f34451665d3ea69d9be71ace5"
+            "d493ab51b11d6da50dd5786e7c996fef"
+        ),
+        "amendment17_mutation_count": 3,
+        "amendment17_mutation_domain_sha256": (
+            "b19ebcbf46f22ec84963ad8c5960029d"
+            "20c0967b5836283758b7b8af3dfd8dfe"
+        ),
+    }
+    assert amendment18_rejected_mutations == a13.A18_EXPECTED_MUTATIONS
+    assert len(amendment18_rejected_mutations) == 3
+    assert a13.A18_MUTATION_DOMAIN_SHA256 == (
+        "1bf9f6d30461d003cab597a405cb5cc9" "855273372ed3e7e5b36b1627eaa11108"
+    )
 
 
 def test__mutation_inventory__is_separate_and_exact(
@@ -1675,6 +2389,23 @@ def test__document__preserves_revision17_as_exact_prefix():
     assert a13._git_blob_oid(revision17) == a13.REVISION17_BLOB_OID
     assert raw[: a13.REVISION17_BYTE_SIZE] == revision17
     assert raw[a13.REVISION17_BYTE_SIZE :].startswith(a13.AMENDMENT16_BOUNDARY)
+
+
+def test__document__preserves_revision19_as_exact_prefix():
+    raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    revision19 = raw[: a13.REVISION19_BYTE_SIZE]
+    assert a13.REVISION19_BYTE_SIZE == 3_934_849
+    assert a13.REVISION19_SHA256 == (
+        "29055c5606a54587107498e8adcdbc8546f93caceabe89238975288db72e7fe1"
+    )
+    assert a13.REVISION19_BLOB_OID == (
+        "84b31290ecd2d1001b6ea802b9a97a86260cdfda"
+    )
+    assert len(revision19) == a13.REVISION19_BYTE_SIZE
+    assert hashlib.sha256(revision19).hexdigest() == a13.REVISION19_SHA256
+    assert a13._git_blob_oid(revision19) == a13.REVISION19_BLOB_OID
+    assert raw[a13.REVISION19_BYTE_SIZE :].startswith(a13.AMENDMENT18_BOUNDARY)
+    assert raw.count(a13.AMENDMENT18_BOUNDARY) == 1
 
 
 def test__document__retains_nested_revision14_and_a13_boundaries():

@@ -55508,9 +55508,9 @@ three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `0000000000000000000000000000000000000000` | 1 | `0000000000000000000000000000000000000000000000000000000000000000` |
-| `tests/test_validate_amendment13_execution_law.py` | `0000000000000000000000000000000000000000` | 1 | `0000000000000000000000000000000000000000000000000000000000000000` |
-| `scripts/build_amendment13_tier2_repairs.py` | `0000000000000000000000000000000000000000` | 1 | `0000000000000000000000000000000000000000000000000000000000000000` |
+| `scripts/validate_amendment13_execution_law.py` | `82421ad14387da810b945efbb0b031b6857bdb21` | 349,611 | `8ddfdb72f6baa06f4effd33b3237a9b15d73d7cf07e1e5d8999592e6a9e36215` |
+| `tests/test_validate_amendment13_execution_law.py` | `6e3dec0a69207fa797d9a57202b9a7fc4880ded5` | 86,201 | `73f96c2bca19c2872a99700731a8db46e342428a0e229cd9be73539aa9a00713` |
+| `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
 Every §31.2.2 mode, working-tree/`HEAD`, blob, byte, hash, replacement-ref,
 public-oracle reachability, publisher isolation, and narrow candidate-review
