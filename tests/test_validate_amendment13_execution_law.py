@@ -28,7 +28,7 @@ A17_FULL_PINNED_BATTERY_COMMAND = (
     "-m pytest -q tests/test_validate_amendment13_execution_law.py"
 )
 A17_FULL_PINNED_BATTERY_COLLECTED = 76
-A18_FULL_PINNED_BATTERY_COLLECTED = 106
+A18_FULL_PINNED_BATTERY_COLLECTED = 107
 A18_TEST_MUTATIONS = (
     "tier2_build_input_domain_preimage_forged",
     "tier2_r05_current_snapshot_or_historical_binding_forged",
@@ -1135,7 +1135,7 @@ def test__closure__revision20_domain_variants_fail_closed(mutation):
         a13._validate_registry_ratification_context(context)
 
 
-@pytest.mark.parametrize("revision", (18, 19, 20))
+@pytest.mark.parametrize("revision", (18, 19, 20, 21))
 def test__tier2_r05__current_snapshot_selects_exact_historical_a15(
     revision,
     monkeypatch,

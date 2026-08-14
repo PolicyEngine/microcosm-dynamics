@@ -3709,7 +3709,124 @@ def _parse_amendment18_implementation_pins(raw: bytes) -> dict[str, Any]:
 
 
 def _parse_a18_build_input_domain_contract(section: str) -> dict[str, Any]:
-    value = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    comparands = re.search(
+        r"The questionnaire values\nare integer `(?P<questionnaire_count>[0-9]+)`, "
+        r"keyset SHA-256\n`(?P<questionnaire_keyset>[0-9a-f]{64})`,\n"
+        r"and domain SHA-256\n`(?P<questionnaire_domain>[0-9a-f]{64})`\.\n"
+        r"The source values are integer `(?P<source_count>[0-9]+)`, "
+        r"keyset SHA-256\n`(?P<source_keyset>[0-9a-f]{64})`,\n"
+        r"and domain SHA-256\n`(?P<source_domain>[0-9a-f]{64})`\.\n"
+        r"The repair/seal/evidence count is integer `(?P<repair_count>[0-9]+)`; "
+        r"its ordered path-array digest\nis "
+        r"`(?P<repair_domain>[0-9a-f]{64})`;\nand `row_count` is integer "
+        r"`(?P<row_count>[0-9]+)`\.",
+        section,
+    )
+    _require(
+        comparands is not None,
+        "Amendment-18 build-input comparand grammar drift",
+    )
+    positions = re.search(
+        r"For positions (?P<source_first>[0-9]+) through "
+        r"(?P<source_last>[0-9]+), `input_class` is "
+        r"`(?P<source_class>[^`]+)`.*?For positions "
+        r"(?P<repair_first>[0-9]+) through (?P<repair_last>[0-9]+), "
+        r"`input_class` is\n`(?P<repair_class>[^`]+)`",
+        section,
+        re.DOTALL,
+    )
+    _require(
+        positions is not None,
+        "Amendment-18 build-input class-boundary grammar drift",
+    )
+    source_order = _code_after(
+        section,
+        "The 257 identities deep-equal the complete independently "
+        "reconstructed `U`\nrows, in §19.3.3's existing\n",
+        "Amendment-18 source ordering law",
+    )
+    questionnaire_role_match = re.search(
+        r"The complete 81-row\n`document_role == (?P<role>[^`]+)` slice",
+        section,
+    )
+    _require(
+        questionnaire_role_match is not None,
+        "Amendment-18 questionnaire slice role grammar drift",
+    )
+    questionnaire_role = questionnaire_role_match.group("role")
+    digest_member = _code_after(
+        section,
+        "The SHA-256 of exactly those bytes is\n",
+        "Amendment-18 build-input digest member",
+    )
+    repair_order_match = re.search(
+        r"They are sorted once by (?P<order>unsigned UTF-8 repository path);",
+        section,
+    )
+    _require(
+        repair_order_match is not None,
+        "Amendment-18 repair ordering law grammar drift",
+    )
+    repair_order = (
+        repair_order_match.group("order")
+        .replace("UTF-8", "UTF8")
+        .lower()
+        .replace("-", "_")
+        .replace(" ", "_")
+    )
+    _require(
+        "R04 requires their\nenvelope objects and canonical bytes to "
+        "deep-equal byte-for-byte" in section
+        and "it does not embed or persist this envelope" in section,
+        "Amendment-18 byte-equality or ephemeral-envelope law drift",
+    )
+    value = {
+        "schema_version": _code_after(
+            section,
+            "one ephemeral object with schema\n",
+            "Amendment-18 build-input schema",
+        ),
+        "canonicalization": _code_after(
+            section,
+            "`canonicalization` is exactly\n",
+            "Amendment-18 build-input canonicalization",
+        ),
+        "questionnaire_document_count": int(
+            comparands.group("questionnaire_count")
+        ),
+        "questionnaire_document_keyset_sha256": comparands.group(
+            "questionnaire_keyset"
+        ),
+        "questionnaire_document_domain_sha256": comparands.group(
+            "questionnaire_domain"
+        ),
+        "source_document_count": int(comparands.group("source_count")),
+        "source_document_keyset_sha256": comparands.group("source_keyset"),
+        "source_document_domain_sha256": comparands.group("source_domain"),
+        "repair_seal_evidence_count": int(comparands.group("repair_count")),
+        "repair_seal_evidence_path_domain_sha256": comparands.group(
+            "repair_domain"
+        ),
+        "row_count": int(comparands.group("row_count")),
+        "input_classes": [
+            positions.group("source_class"),
+            positions.group("repair_class"),
+        ],
+        "source_position_domain": [
+            int(positions.group("source_first")),
+            int(positions.group("source_last")),
+        ],
+        "repair_position_domain": [
+            int(positions.group("repair_first")),
+            int(positions.group("repair_last")),
+        ],
+        "source_order": source_order,
+        "questionnaire_slice_role": questionnaire_role,
+        "repair_order": repair_order,
+        "digest_member": digest_member,
+        "dual_canonical_byte_equality_required": True,
+        "artifact_persisted": False,
+    }
     value["envelope_keys"] = _fenced_lines_after(
         section,
         "It has exactly these twelve keys:\n\n",
@@ -3732,6 +3849,83 @@ def _parse_a18_build_input_domain_contract(section: str) -> dict[str, Any]:
         "Amendment-18 repair identity keys",
     )
     return value
+
+
+def _parse_a18_activation_transition(section: str) -> dict[str, Any]:
+    r05_revision = re.search(
+        r"The terminal revision \*R\*\nmust be an integer greater than or "
+        r"equal to (?P<revision>[0-9]+) and the returned ordered\ndomain "
+        r"must deep-equal `(?P<domain>[^`]+)`\.",
+        section,
+    )
+    r05_selection = re.search(
+        r"select Amendment (?P<amendment>[0-9]+) at proved zero-based\n"
+        r"position (?P<position>[0-9]+)\.",
+        section,
+    )
+    activation = re.search(
+        r"Its simulated terminal registry revision is integer "
+        r"`(?P<revision>[0-9]+)`; terminal Amendment\n"
+        r"(?P<amendment>[0-9]+); ordered closure domain "
+        r"`\((?P<domain>[0-9, ]+)\)`; and exact closure\ncount "
+        r"`(?P<count>[0-9]+) = (?P<revision_again>[0-9]+) - "
+        r"(?P<subtrahend>[0-9]+)`\.",
+        section,
+    )
+    _require(
+        r05_revision is not None
+        and r05_selection is not None
+        and activation is not None
+        and activation.group("revision") == activation.group("revision_again"),
+        "Amendment-18 activation or R05 selector grammar drift",
+    )
+    public_entrypoint = _code_after(
+        section,
+        "The unmodified public\n",
+        "Amendment-18 activation public entrypoint",
+    ).removesuffix("()")
+    r05_entrypoint = _code_after(
+        section,
+        "The validator calls the unmodified\npublic ",
+        "Amendment-18 R05 public entrypoint",
+    ).removesuffix("()")
+    _require(
+        "Amendment 18 is **activation-affecting**" in section
+        and "Ambiguity would independently fail closed into the same result."
+        in section
+        and "one executed\nsame-state NONAUTHORITY demonstration" in section
+        and "complete final pinned test battery\nmust run against that "
+        "identical state" in section
+        and "with zero\nfailed, skipped, deselected, xfailed, or xpassed "
+        "tests" in section
+        and "receipt remains outside candidate bytes" in section,
+        "Amendment-18 activation obligation prose drift",
+    )
+    return {
+        "activation_affecting": True,
+        "ambiguity_fails_closed_into_obligation": True,
+        "simulated_state_authority": "NONAUTHORITY",
+        "terminal_revision": int(activation.group("revision")),
+        "terminal_amendment": int(activation.group("amendment")),
+        "ordered_closure_domain": [
+            int(value.strip())
+            for value in activation.group("domain").split(",")
+        ],
+        "closure_count": int(activation.group("count")),
+        "closure_count_subtrahend": int(activation.group("subtrahend")),
+        "public_entrypoint": public_entrypoint,
+        "same_state_required": True,
+        "full_pinned_battery_required": True,
+        "all_nonpassing_counts": 0,
+        "receipt_inside_candidate_bytes": False,
+        "r05_public_entrypoint": r05_entrypoint,
+        "r05_minimum_terminal_revision": int(r05_revision.group("revision")),
+        "r05_expected_domain_expression": r05_revision.group("domain"),
+        "r05_selected_zero_based_position": int(
+            r05_selection.group("position")
+        ),
+        "r05_selected_amendment": int(r05_selection.group("amendment")),
+    }
 
 
 def _parse_a18_historical_r05_binding(section: str) -> dict[str, Any]:
@@ -3875,7 +4069,7 @@ def _parse_amendment18_projection(raw: bytes) -> dict[str, Any]:
         ),
         "historical_r05_binding": _parse_a18_historical_r05_binding(section),
         "r06_result_contract": _parse_a18_r06_result_contract(section),
-        "activation_transition": copy.deepcopy(A18_ACTIVATION_TRANSITION),
+        "activation_transition": _parse_a18_activation_transition(section),
         "contract_mutations": mutations,
         "contract_mutation_domain_sha256": mutation_digest,
         "mutation_census": _parse_a18_mutation_census(section),
@@ -8603,43 +8797,665 @@ def run_amendment18_contract_mutation_tests() -> tuple[str, ...]:
                 f"{label} variant {position}",
             )
 
+    def canonical_repository_path(path: Any) -> bool:
+        if not isinstance(path, str) or not path:
+            return False
+        candidate = Path(path)
+        return (
+            not candidate.is_absolute()
+            and candidate.as_posix() == path
+            and all(part not in {"", ".", ".."} for part in candidate.parts)
+        )
+
+    def load_source_root(path: str, label: str) -> Mapping[str, Any]:
+        raw = _read_public_repository_file(
+            path,
+            label,
+            require_regular_mode=True,
+        )
+        try:
+            value = a12.strict_json_loads(raw, path)
+        except a12.BuildError as error:
+            raise LawError(f"{label} is invalid strict JSON") from error
+        _require(isinstance(value, Mapping), f"{label} is not an object")
+        return value
+
+    def source_document_row(
+        *,
+        document_role: str,
+        interview_wave: int,
+        canonical_source_path: str,
+        storage_authority: str,
+        storage_document_id: str,
+        byte_size: int,
+        sha256: str,
+    ) -> dict[str, Any]:
+        _require(
+            type(interview_wave) is int
+            and canonical_repository_path(canonical_source_path)
+            and isinstance(storage_document_id, str)
+            and bool(storage_document_id)
+            and type(byte_size) is int
+            and byte_size > 0
+            and _is_lower_hex(sha256, 64),
+            "Amendment-18 reconstructed source row is malformed",
+        )
+        identity_preimage = [
+            document_role,
+            [interview_wave],
+            canonical_source_path,
+            byte_size,
+            sha256,
+        ]
+        return {
+            "source_document_id": (
+                "psid-source-document:"
+                + _sha256(canonical_json_bytes(identity_preimage))
+            ),
+            "document_role": document_role,
+            "interview_waves": [interview_wave],
+            "canonical_source_path": canonical_source_path,
+            "storage_disposition": "external_registered_file",
+            "storage_identity": {
+                "authority_registry_id": storage_authority,
+                "document_id": storage_document_id,
+                "registered_path": canonical_source_path,
+            },
+            "byte_size": byte_size,
+            "sha256": sha256,
+        }
+
+    def reconstruct_source_rows() -> list[dict[str, Any]]:
+        questionnaire_root = load_source_root(
+            "data/external/"
+            "psid_questionnaire_corpus_authority_registration_attempt_v1.json",
+            "Amendment-18 questionnaire source root",
+        )
+        field_root = load_source_root(
+            "data/external/"
+            "psid_questionnaire_dictionary_inventory_registration_required_v1.json",
+            "Amendment-18 field source root",
+        )
+        waves = field_root.get("interview_waves")
+        questionnaire_candidates = questionnaire_root.get(
+            "document_candidates"
+        )
+        field_manifest = field_root.get("source_authority_manifest")
+        _require(
+            questionnaire_root.get("schema_version")
+            == (
+                "psid_questionnaire_corpus_authority_registration_"
+                "attempt.v1"
+            )
+            and questionnaire_root.get("registration_status") == "pass"
+            and isinstance(questionnaire_candidates, list)
+            and len(questionnaire_candidates) == 456
+            and isinstance(waves, list)
+            and len(waves) == 43
+            and all(type(wave) is int for wave in waves)
+            and len(set(waves)) == len(waves)
+            and isinstance(field_manifest, list)
+            and len(field_manifest) == 176,
+            "Amendment-18 source-root denominator drift",
+        )
+        rows: list[dict[str, Any]] = []
+        for wave in waves:
+            core_basename = (
+                f"q{wave % 100:02d}.pdf"
+                if wave <= 1997
+                else f"q{wave:04d}.pdf"
+            )
+            source_specs = (
+                (
+                    "https://psidonline.isr.umich.edu/documents/psid/"
+                    f"questionnaires/{core_basename}",
+                    "Questionnaire",
+                    False,
+                ),
+                (
+                    "https://psidonline.isr.umich.edu/data/Documentation/"
+                    f"Fam/{wave}/QxQs.pdf",
+                    "QxQ",
+                    True,
+                ),
+            )
+            for source_url, link_text, optional in source_specs:
+                matches = [
+                    row
+                    for row in questionnaire_candidates
+                    if isinstance(row, Mapping)
+                    and row.get("source_url") == source_url
+                ]
+                if optional and not matches:
+                    continue
+                _require(
+                    len(matches) == 1,
+                    "Amendment-18 questionnaire source selection drift",
+                )
+                source = matches[0]
+                observed = source.get("observed_identity")
+                locator = source.get("locator")
+                _require(
+                    isinstance(observed, Mapping)
+                    and isinstance(locator, Mapping)
+                    and source.get("availability") == "verified"
+                    and source.get("source_link_text") == link_text
+                    and source.get("digest_row_filename")
+                    == source.get("on_disk_filename")
+                    == observed.get("filename")
+                    == locator.get("filename")
+                    and type(source.get("expected_size_bytes")) is int
+                    and source["expected_size_bytes"]
+                    == observed.get("size_bytes")
+                    == locator.get("size_bytes")
+                    and _is_lower_hex(source.get("expected_sha256"), 64)
+                    and source["expected_sha256"]
+                    == observed.get("sha256")
+                    == locator.get("full_file_sha256")
+                    == locator.get("range_sha256"),
+                    "Amendment-18 questionnaire source identity drift",
+                )
+                canonical_source_path = (
+                    "documentation/capture1/" + source["on_disk_filename"]
+                )
+                rows.append(
+                    source_document_row(
+                        document_role="questionnaire_flow",
+                        interview_wave=wave,
+                        canonical_source_path=canonical_source_path,
+                        storage_authority=(
+                            "psid_questionnaire_corpus_authority_registry.v1"
+                        ),
+                        storage_document_id=source["source_document_id"],
+                        byte_size=source["expected_size_bytes"],
+                        sha256=source["expected_sha256"],
+                    )
+                )
+
+        role_by_source_role = {
+            "stata_setup": "dictionary_layout",
+            "spss_setup": "dictionary_layout",
+            "family_codebook": "codebook",
+            "stata_value_labels": "codebook",
+            "spss_value_labels": "codebook",
+            "raw_fixed_width": "raw_fixed_width_data",
+        }
+        for source in field_manifest:
+            _require(
+                isinstance(source, Mapping)
+                and {
+                    "dictionary_role",
+                    "document_id",
+                    "encoding",
+                    "interview_wave",
+                    "path",
+                    "sha256",
+                    "size_bytes",
+                }
+                <= set(source)
+                and source.get("dictionary_role") in role_by_source_role
+                and source.get("interview_wave") in waves,
+                "Amendment-18 field source manifest drift",
+            )
+            rows.append(
+                source_document_row(
+                    document_role=role_by_source_role[
+                        source["dictionary_role"]
+                    ],
+                    interview_wave=source["interview_wave"],
+                    canonical_source_path=source["path"],
+                    storage_authority=(
+                        "psid_questionnaire_dictionary_inventory."
+                        "registration_required.v1"
+                    ),
+                    storage_document_id=source["document_id"],
+                    byte_size=source["size_bytes"],
+                    sha256=source["sha256"],
+                )
+            )
+
+        role_order = {
+            "questionnaire_flow": 0,
+            "dictionary_layout": 1,
+            "codebook": 2,
+            "raw_fixed_width_data": 3,
+        }
+        wave_order = {wave: position for position, wave in enumerate(waves)}
+        rows.sort(
+            key=lambda row: (
+                role_order[row["document_role"]],
+                wave_order[row["interview_waves"][0]],
+                row["canonical_source_path"].encode("utf-8"),
+                row["source_document_id"],
+            )
+        )
+        questionnaire_rows = [
+            row
+            for row in rows
+            if row["document_role"]
+            == A18_BUILD_INPUT_DOMAIN_CONTRACT["questionnaire_slice_role"]
+        ]
+        _require(
+            len(rows)
+            == A18_BUILD_INPUT_DOMAIN_CONTRACT["source_document_count"]
+            and len(questionnaire_rows)
+            == A18_BUILD_INPUT_DOMAIN_CONTRACT["questionnaire_document_count"]
+            and _sha256(
+                canonical_json_bytes(
+                    [row["source_document_id"] for row in questionnaire_rows]
+                )
+            )
+            == A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "questionnaire_document_keyset_sha256"
+            ]
+            and _sha256(canonical_json_bytes(questionnaire_rows))
+            == A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "questionnaire_document_domain_sha256"
+            ]
+            and _sha256(
+                canonical_json_bytes(
+                    [row["source_document_id"] for row in rows]
+                )
+            )
+            == A18_BUILD_INPUT_DOMAIN_CONTRACT["source_document_keyset_sha256"]
+            and _sha256(canonical_json_bytes(rows))
+            == A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "source_document_domain_sha256"
+            ],
+            "Amendment-18 independently reconstructed source domain drift",
+        )
+        return rows
+
+    def reconstruct_repair_identities() -> list[dict[str, Any]]:
+        tier2_root = "docs/analysis/amendment_12_rq_catalog_tier2"
+        overlay_positions = (
+            7,
+            10,
+            11,
+            12,
+            13,
+            15,
+            17,
+            19,
+            36,
+            52,
+            56,
+            58,
+            66,
+            70,
+        )
+        paths = sorted(
+            [
+                f"{tier2_root}/fix5_rederivation_confirmation_v1.json",
+                *(
+                    f"{tier2_root}/amendment_13_repair_overlays_v1/"
+                    f"document_{position:03d}_repair_overlay_v1.json"
+                    for position in overlay_positions
+                ),
+                *(
+                    f"{tier2_root}/amendment_13_successor_era_seals_v1/"
+                    f"era_{position:02d}_successor_seal_v1.json"
+                    for position in range(1, 7)
+                ),
+                f"{tier2_root}/targeted_sweeps/"
+                "admission_rule_targeted_sweeps_v1.json",
+            ],
+            key=lambda path: path.encode("utf-8"),
+        )
+        _require(
+            len(paths)
+            == A18_BUILD_INPUT_DOMAIN_CONTRACT["repair_seal_evidence_count"]
+            and _sha256(canonical_json_bytes(paths))
+            == A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "repair_seal_evidence_path_domain_sha256"
+            ],
+            "Amendment-18 repair/seal path domain drift",
+        )
+        identities: list[dict[str, Any]] = []
+        for path in paths:
+            _require(
+                canonical_repository_path(path),
+                "Amendment-18 repair/seal path is noncanonical",
+            )
+            raw = _read_public_repository_file(
+                path,
+                "Amendment-18 repair/seal evidence",
+                require_regular_mode=True,
+            )
+            identities.append(
+                {
+                    "path": path,
+                    "mode": DESIGN_MODE,
+                    "git_blob": _git_blob_oid(raw),
+                    "byte_size": len(raw),
+                    "raw_sha256": _sha256(raw),
+                }
+            )
+        return identities
+
+    expected_source_rows = reconstruct_source_rows()
+    expected_repair_identities = reconstruct_repair_identities()
+
+    def build_input_envelope() -> dict[str, Any]:
+        return {
+            "schema_version": A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "schema_version"
+            ],
+            "canonicalization": A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "canonicalization"
+            ],
+            "questionnaire_document_count": A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "questionnaire_document_count"
+            ],
+            "questionnaire_document_keyset_sha256": (
+                A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                    "questionnaire_document_keyset_sha256"
+                ]
+            ),
+            "questionnaire_document_domain_sha256": (
+                A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                    "questionnaire_document_domain_sha256"
+                ]
+            ),
+            "source_document_count": A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "source_document_count"
+            ],
+            "source_document_keyset_sha256": A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "source_document_keyset_sha256"
+            ],
+            "source_document_domain_sha256": A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "source_document_domain_sha256"
+            ],
+            "repair_seal_evidence_count": A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "repair_seal_evidence_count"
+            ],
+            "repair_seal_evidence_path_domain_sha256": (
+                A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                    "repair_seal_evidence_path_domain_sha256"
+                ]
+            ),
+            "row_count": A18_BUILD_INPUT_DOMAIN_CONTRACT["row_count"],
+            "rows": [
+                *(
+                    {
+                        "input_class": "source_document",
+                        "input_identity": copy.deepcopy(identity),
+                    }
+                    for identity in expected_source_rows
+                ),
+                *(
+                    {
+                        "input_class": "repair_seal_evidence",
+                        "input_identity": copy.deepcopy(identity),
+                    }
+                    for identity in expected_repair_identities
+                ),
+            ],
+        }
+
+    def validate_build_input_envelope(raw: bytes) -> str:
+        try:
+            candidate = _strict_canonical_json(
+                raw,
+                "Amendment-18 build-input-domain envelope",
+            )
+            _require_exact_keys(
+                candidate,
+                set(A18_BUILD_INPUT_DOMAIN_CONTRACT["envelope_keys"]),
+                "Amendment-18 build-input-domain envelope",
+            )
+            for field in (
+                "questionnaire_document_count",
+                "source_document_count",
+                "repair_seal_evidence_count",
+                "row_count",
+            ):
+                _require(
+                    type(candidate[field]) is int
+                    and candidate[field]
+                    == A18_BUILD_INPUT_DOMAIN_CONTRACT[field],
+                    "Amendment-18 build-input-domain integer drift",
+                )
+            for field in (
+                "schema_version",
+                "canonicalization",
+                "questionnaire_document_keyset_sha256",
+                "questionnaire_document_domain_sha256",
+                "source_document_keyset_sha256",
+                "source_document_domain_sha256",
+                "repair_seal_evidence_path_domain_sha256",
+            ):
+                _require(
+                    candidate[field] == A18_BUILD_INPUT_DOMAIN_CONTRACT[field],
+                    "Amendment-18 build-input-domain comparand drift",
+                )
+            rows = candidate["rows"]
+            _require(
+                isinstance(rows, list)
+                and len(rows) == A18_BUILD_INPUT_DOMAIN_CONTRACT["row_count"],
+                "Amendment-18 build-input-domain row count drift",
+            )
+            source_count = A18_BUILD_INPUT_DOMAIN_CONTRACT[
+                "source_document_count"
+            ]
+            source_rows = rows[:source_count]
+            repair_rows = rows[source_count:]
+            for position, (row, expected_identity) in enumerate(
+                zip(source_rows, expected_source_rows, strict=True)
+            ):
+                _require(
+                    isinstance(row, Mapping),
+                    "Amendment-18 source input row is not an object",
+                )
+                _require_exact_keys(
+                    row,
+                    set(A18_BUILD_INPUT_DOMAIN_CONTRACT["row_keys"]),
+                    "Amendment-18 source input row",
+                )
+                identity = row["input_identity"]
+                _require(
+                    row["input_class"] == "source_document"
+                    and isinstance(identity, Mapping),
+                    "Amendment-18 source input class drift",
+                )
+                _require_exact_keys(
+                    identity,
+                    set(
+                        A18_BUILD_INPUT_DOMAIN_CONTRACT["source_identity_keys"]
+                    ),
+                    "Amendment-18 source input identity",
+                )
+                _require(
+                    type(identity["byte_size"]) is int
+                    and identity["byte_size"] > 0
+                    and _is_lower_hex(identity["sha256"], 64)
+                    and identity["source_document_id"]
+                    == (
+                        "psid-source-document:"
+                        + _sha256(
+                            canonical_json_bytes(
+                                [
+                                    identity["document_role"],
+                                    identity["interview_waves"],
+                                    identity["canonical_source_path"],
+                                    identity["byte_size"],
+                                    identity["sha256"],
+                                ]
+                            )
+                        )
+                    )
+                    and canonical_repository_path(
+                        identity["canonical_source_path"]
+                    )
+                    and dict(identity) == expected_identity,
+                    f"Amendment-18 source input identity drift at {position}",
+                )
+            for position, (row, expected_identity) in enumerate(
+                zip(
+                    repair_rows,
+                    expected_repair_identities,
+                    strict=True,
+                ),
+                start=source_count,
+            ):
+                _require(
+                    isinstance(row, Mapping),
+                    "Amendment-18 repair input row is not an object",
+                )
+                _require_exact_keys(
+                    row,
+                    set(A18_BUILD_INPUT_DOMAIN_CONTRACT["row_keys"]),
+                    "Amendment-18 repair input row",
+                )
+                identity = row["input_identity"]
+                _require(
+                    row["input_class"] == "repair_seal_evidence"
+                    and isinstance(identity, Mapping),
+                    "Amendment-18 repair input class drift",
+                )
+                _require_exact_keys(
+                    identity,
+                    set(
+                        A18_BUILD_INPUT_DOMAIN_CONTRACT["repair_identity_keys"]
+                    ),
+                    "Amendment-18 repair input identity",
+                )
+                _require(
+                    canonical_repository_path(identity["path"])
+                    and identity["mode"] == DESIGN_MODE
+                    and _is_lower_hex(identity["git_blob"], 40)
+                    and type(identity["byte_size"]) is int
+                    and identity["byte_size"] > 0
+                    and _is_lower_hex(identity["raw_sha256"], 64)
+                    and dict(identity) == expected_identity,
+                    f"Amendment-18 repair input identity drift at {position}",
+                )
+            source_identities = [
+                dict(row["input_identity"]) for row in source_rows
+            ]
+            questionnaire_identities = [
+                row
+                for row in source_identities
+                if row["document_role"] == "questionnaire_flow"
+            ]
+            repair_identities = [
+                dict(row["input_identity"]) for row in repair_rows
+            ]
+            _require(
+                len({row["source_document_id"] for row in source_identities})
+                == len(source_identities)
+                and len({row["path"] for row in repair_identities})
+                == len(repair_identities)
+                and _sha256(
+                    canonical_json_bytes(
+                        [
+                            row["source_document_id"]
+                            for row in questionnaire_identities
+                        ]
+                    )
+                )
+                == candidate["questionnaire_document_keyset_sha256"]
+                and _sha256(canonical_json_bytes(questionnaire_identities))
+                == candidate["questionnaire_document_domain_sha256"]
+                and _sha256(
+                    canonical_json_bytes(
+                        [
+                            row["source_document_id"]
+                            for row in source_identities
+                        ]
+                    )
+                )
+                == candidate["source_document_keyset_sha256"]
+                and _sha256(canonical_json_bytes(source_identities))
+                == candidate["source_document_domain_sha256"]
+                and _sha256(
+                    canonical_json_bytes(
+                        [row["path"] for row in repair_identities]
+                    )
+                )
+                == candidate["repair_seal_evidence_path_domain_sha256"],
+                "Amendment-18 build-input-domain membership equation drift",
+            )
+        except (KeyError, TypeError, LawError) as error:
+            raise LawError(
+                "Amendment-18 build-input-domain envelope drift"
+            ) from error
+        return _sha256(raw)
+
     rejected: list[str] = []
 
+    expected_build_envelope = build_input_envelope()
+    build_canonical = canonical_json_bytes(expected_build_envelope)
+    build_digest = validate_build_input_envelope(build_canonical)
+    _require(
+        _is_lower_hex(build_digest, 64)
+        and build_digest
+        == validate_build_input_envelope(
+            canonical_json_bytes(copy.deepcopy(expected_build_envelope))
+        ),
+        "Amendment-18 independent build-input canonical bytes disagree",
+    )
+
     build_variants: list[Mapping[str, Any] | bytes] = []
-    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant = copy.deepcopy(expected_build_envelope)
     variant.pop("schema_version")
     build_variants.append(variant)
-    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant = copy.deepcopy(expected_build_envelope)
     variant["unregistered_member"] = None
     build_variants.append(variant)
-    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
-    variant["envelope_keys"] = list(reversed(variant["envelope_keys"]))
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"].pop(0)
     build_variants.append(variant)
-    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
-    variant["input_classes"][1] = "repair_evidence"
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"].append(copy.deepcopy(variant["rows"][-1]))
     build_variants.append(variant)
-    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"][1] = copy.deepcopy(variant["rows"][0])
+    build_variants.append(variant)
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"][0:2] = reversed(variant["rows"][0:2])
+    build_variants.append(variant)
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"][0]["input_class"] = "repair_seal_evidence"
+    build_variants.append(variant)
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"][0]["input_identity"]["sha256"] = "0" * 64
+    build_variants.append(variant)
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"][0]["input_identity"]["byte_size"] = True
+    build_variants.append(variant)
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"][257]["input_identity"]["path"] = "../forged.json"
+    build_variants.append(variant)
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"][0]["unregistered_member"] = None
+    build_variants.append(variant)
+    variant = copy.deepcopy(expected_build_envelope)
+    variant["rows"][0]["input_identity"].pop("storage_identity")
+    build_variants.append(variant)
+    variant = copy.deepcopy(expected_build_envelope)
     variant["source_document_domain_sha256"] = "0" * 64
     build_variants.append(variant)
-    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
+    variant = copy.deepcopy(expected_build_envelope)
     variant["row_count"] = True
     build_variants.append(variant)
-    variant = copy.deepcopy(A18_BUILD_INPUT_DOMAIN_CONTRACT)
-    variant["row_keys"].append("input_identity")
-    build_variants.append(variant)
-    build_canonical = canonical_json_bytes(A18_BUILD_INPUT_DOMAIN_CONTRACT)
     build_variants.extend(
         (
             build_canonical[:-1] + b" \n",
             b'{"schema_version":1,"schema_version":2}\n',
         )
     )
-    reject_contract_variants(
-        A18_BUILD_INPUT_DOMAIN_CONTRACT,
-        build_variants,
-        "Amendment-18 build-input-domain contract drift",
-        "Amendment-18 build-input-domain attack",
-    )
+    for position, variant in enumerate(build_variants):
+        raw = (
+            variant
+            if isinstance(variant, bytes)
+            else canonical_json_bytes(variant)
+        )
+        _expect_law_error(
+            lambda raw=raw: validate_build_input_envelope(raw),
+            "Amendment-18 build-input-domain envelope drift",
+            f"Amendment-18 build-input-domain attack variant {position}",
+        )
     rejected.append(A18_EXPECTED_MUTATIONS[0])
 
     def select_historical_r05(
@@ -8671,7 +9487,7 @@ def run_amendment18_contract_mutation_tests() -> tuple[str, ...]:
 
     contexts: dict[int, dict[str, Any]] = {}
     closures_by_revision: dict[int, dict[int, Mapping[str, Any]]] = {}
-    for revision in (18, 19, 20):
+    for revision in (18, 19, 20, 21):
         amendment_numbers = tuple(range(13, revision - 1))
         contexts[revision] = _synthetic_oracle_context(
             revision,

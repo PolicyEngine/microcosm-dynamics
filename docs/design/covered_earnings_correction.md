@@ -55508,8 +55508,8 @@ three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `82421ad14387da810b945efbb0b031b6857bdb21` | 349,611 | `8ddfdb72f6baa06f4effd33b3237a9b15d73d7cf07e1e5d8999592e6a9e36215` |
-| `tests/test_validate_amendment13_execution_law.py` | `a586e790f0348b7c22f14305612cba8e58932c8b` | 86,414 | `5a734ff7b4c9569da3089380f67739af0005efe35fdf6004b172cb124a604063` |
+| `scripts/validate_amendment13_execution_law.py` | `862218784985bef7814ea02e0710cae9d44017a8` | 382,150 | `5503d833b531f8e9503cd55e97f2b9a252145f33ad1d11af7ef0144efa6eabe2` |
+| `tests/test_validate_amendment13_execution_law.py` | `1e8a6edad9757052a6d35ab238b470e7ec8b7b9d` | 86,418 | `9353ad55e0fa463a44454578a3b1cccb2f2ec1d02505aad40b5210b7d7afbf9e` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
 Every §31.2.2 mode, working-tree/`HEAD`, blob, byte, hash, replacement-ref,
