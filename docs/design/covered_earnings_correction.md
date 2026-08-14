@@ -55045,3 +55045,634 @@ itself still requires a later lawful revision-19 closure and registry repin.
 The standing §31.3 obligation makes every activation-affecting amendment
 without same-state executed-transition evidence unratifiable. All independent
 production blockers and out-of-scope lifecycle work remain controlling.**
+
+## 32. AMENDMENT SECTION — Amendment 18: tier-2 certification contract cure
+
+### 32.1 Prospective status, immutable base, defects, and closed scope
+
+This is the **prospective Amendment-18 draft** proposing design revision 20.
+Its first 3,934,849 bytes are the complete operative revision-19
+Amendment-17 design, mode `100644`, Git blob
+`84b31290ecd2d1001b6ea802b9a97a86260cdfda`, and raw SHA-256
+`29055c5606a54587107498e8adcdbc8546f93caceabe89238975288db72e7fe1`.
+Those bytes, including all of Amendments 13 through 17, are an immutable
+prefix. This section is append-only and changes predecessor law only through
+the exact supersession and composition links below.
+
+The retained tier-2 step-5 scope report,
+`/Users/maxghenis/m6-sol-lanes/e8-ops/sol-ce-tier2-step5-scope-report.md`, is
+51,223 bytes with raw SHA-256
+`ab2c1b8dab825f310037b0a3d85221f6c38016aaf31e29922f0085a826bf5e72`.
+Its findings have been independently confirmed against the enacted bytes.
+First, §29.4.3 names a `tier2_build_input_domain_sha256` but enacts no unique
+preimage. Second, §30.3.5 requires an R05 validator to use revision 18 even
+though the public oracle now exposes only the complete current revision-19
+snapshot. Third, §26.11.2 enacts an exact expected-negative A12-T2-R06 run but
+no durable result path or schema.
+
+Amendment 18 has three limbs. Section 32.2 fixes the complete input-domain
+preimage. Section 32.3 generalizes the R05 selector while preserving the
+historical Amendment-15 binding. Section 32.4 enacts a durable R06 evidence
+result. Sections 32.5–32.8 bind implementation, projection, activation,
+mutations, supersession, identifiers, and terminal effect. This amendment
+does not perform R04, R05, or R06; first-add either future result; emit Q5,
+G17-C01, an authority, a registry successor, a receipt of record, or
+production; decide any of the 524,538 missing-reason dispositions; or remove
+the Amendment-11 stop.
+
+### 32.2 Limb I — exact tier-2 build-input-domain preimage
+
+#### 32.2.1 Closed envelope and row schemas
+
+The value serialized as `source_build_identity.tier2_build_input_domain_sha256`
+under §29.4.3 is the SHA-256 of one ephemeral object with schema
+`amendment_12_tier2_build_input_domain.v1`. The object is not a new repository
+artifact. It has exactly these twelve keys:
+
+~~~text
+schema_version
+canonicalization
+questionnaire_document_count
+questionnaire_document_keyset_sha256
+questionnaire_document_domain_sha256
+source_document_count
+source_document_keyset_sha256
+source_document_domain_sha256
+repair_seal_evidence_count
+repair_seal_evidence_path_domain_sha256
+row_count
+rows
+~~~
+
+`schema_version` is the exact schema above. `canonicalization` is exactly
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1`. The questionnaire values
+are integer `81`, keyset SHA-256
+`3326c9ba70b7f83f19b0ea934630d26ced73f230be1628cb74031d17160cb1a5`,
+and domain SHA-256
+`b06139b147391d06b4f90a8f28de472a936ec08b3e9eb37001a5a70e2b3c3543`.
+The source values are integer `257`, keyset SHA-256
+`8b7cad855b791c5cd7d235a74d4a0f1ecc7511dc0458db11d6b04c1b6af2c36a`,
+and domain SHA-256
+`9d7a98db7c2889eba150f70935f492aebbc41cd521e4139dc1ec886ecd9945ce`.
+The repair/seal/evidence count is integer `22`; its ordered path-array digest
+is `504159116708ee4d5e2cc8abec130ca8679d22cce928dca42af12be305361c17`;
+and `row_count` is integer `279`. Every stated integer excludes booleans.
+
+Each of the 279 `rows` objects has exactly:
+
+~~~text
+input_class
+input_identity
+~~~
+
+For positions 0 through 256, `input_class` is `source_document` and
+`input_identity` has exactly the eight §19.3.3 source-document keys:
+
+~~~text
+source_document_id
+document_role
+interview_waves
+canonical_source_path
+storage_disposition
+storage_identity
+byte_size
+sha256
+~~~
+
+The 257 identities deep-equal the complete independently reconstructed `U`
+rows, in §19.3.3's existing
+`document_role_wave_canonical_source_path_v1` order. The complete 81-row
+`document_role == questionnaire_flow` slice, without duplication in `rows`,
+must reproduce the three questionnaire comparands above. The complete 257
+rows must reproduce the source comparands. Every row is reauthenticated from
+its registered full bytes before it enters the preimage; a candidate
+certificate, pilot, cache, or processed result cannot supply an expected row.
+
+For positions 257 through 278, `input_class` is
+`repair_seal_evidence` and `input_identity` has exactly:
+
+~~~text
+path
+mode
+git_blob
+byte_size
+raw_sha256
+~~~
+
+`path` is canonical, repository-relative, traversal-free UTF-8; `mode` is
+`100644`; `git_blob` is 40 lowercase hex; `byte_size` is a positive JSON
+integer excluding booleans; and `raw_sha256` is 64 lowercase hex. Each row
+must match the working tree, `HEAD`, and complete raw file bytes through the
+replacement-ref-immune Git wrapper.
+
+#### 32.2.2 Closed membership and total order
+
+The last 22 paths are exactly the §29.2.2 domain: the 14 Amendment-13 repair
+overlays, six successor-era seals, rederivation confirmation, and targeted
+sweep artifact. They are sorted once by unsigned UTF-8 repository path; no
+file-system enumeration order is admissible. The complete ordered domain is
+therefore the 257 source rows in their inherited canonical order followed by
+the 22 path-sorted identity rows. There is no other member: not a pilot
+artifact, semantic ledger, implementation file, annotation duplicated
+outside `U`, ratification object, Git commit, derived row, cache, Q5 input,
+consumer projection, or expected result.
+
+The validator requires exactly 257 `source_document` rows followed by
+exactly 22 `repair_seal_evidence` rows; exact class boundaries; unique source
+IDs and repair paths; the stated subset, count, keyset, row-domain, and path-
+domain equations; and exact row schemas. Omission, addition, duplicate,
+reorder, identity drift, raw-byte drift, wrong class, boolean integer,
+noncanonical path, or extra/missing key aborts before either R04 member hash
+is consulted.
+
+#### 32.2.3 One byte-producing rule
+
+After all values are independently reconstructed, serialize the complete
+envelope with Python JSON `sort_keys=True`, compact separators,
+`ensure_ascii=True`, `allow_nan=False`, UTF-8, and exactly one terminal LF.
+The SHA-256 of exactly those bytes is
+`tier2_build_input_domain_sha256`. Each R04 implementation independently
+constructs and retains those complete bytes and digest. R04 requires their
+envelope objects and canonical bytes to deep-equal byte-for-byte before R05
+may use the digest. The certificate serializes only the digest already
+required by §29.4.3; it does not embed or persist this envelope.
+
+### 32.3 Limb II — revision-general R05 ratification selector
+
+#### 32.3.1 Current complete snapshot, historical selected material
+
+For A12-T2-R05 only, §§29.4.3 and 30.3.5's revision-17/revision-18-literal
+snapshot instructions are superseded. The validator calls the unmodified
+public `validate_ratification_operativity()` entrypoint and validates its
+complete **current** terminal registry snapshot. The terminal revision *R*
+must be an integer greater than or equal to 18 and the returned ordered
+domain must deep-equal `tuple(range(13, R - 1))`. Only after every current
+closure passes does the validator select Amendment 15 at proved zero-based
+position 2. There is no historical-registry loader, caller-supplied snapshot,
+closest-revision fallback, cached revision-18 object, fixed current maximum,
+or partial A15-only validation.
+
+The selected closure must exact-match the directly enacted Amendment-15
+closure and its historical design identity. The 11-key
+`ratification_binding` remains byte-for-byte the unambiguous historical
+material confirmed in the tier-2 step-5 scope report §2.1:
+
+| Key | Exact value |
+|---|---|
+| `amendment_number` | integer `15` |
+| `closure_byte_size` | integer `842` |
+| `closure_path` | `docs/analysis/amendment_15_ratification/closure_v1.json` |
+| `closure_raw_sha256` | `f48ac7a42178f79665900540701e75bf3cb066778c9a0b75eae18b0fa774049a` |
+| `design_blob_oid` | `50a2a14e1c8845d342dca83559688866e97dc4a7` |
+| `design_byte_size` | integer `3881111` |
+| `design_path` | `docs/design/covered_earnings_correction.md` |
+| `design_raw_sha256` | `556311b72ec6c8e30eeda4b0f602e0f7f43b9d080c2454966fa3dda3a561d16e` |
+| `design_revision` | integer `17` |
+| `ratification_commit` | `c2ffe3e95152ff005485f55acaf75259e6095195` |
+| `ratification_commit_sole_parent` | `a352e66284b60997210c634bb427141e7e523a75` |
+
+The enclosing current snapshot revision is deliberately not serialized. A
+revision-18, revision-19, revision-20, or later lawful snapshot selects the
+same historical values after authenticating a different complete current
+domain. Absence, relocation, mismatch, changed bytes, wrong historical
+design, incomplete current snapshot, or terminal revision below 18 aborts.
+
+#### 32.3.2 Ancestry composition
+
+Section 29.4.7's required R05 first-add ancestry remains the revision-18
+combined repin that first made Amendments 15 and 16 operative. Later current
+registry repins are validated selectors, not replacements for that historical
+strict-ancestor edge. The certification first-add must also be a descendant
+of the current operative registry state at its execution. This composition
+changes no certificate keyset, lifecycle value, R04 isolation requirement,
+100-name inherited certificate census, or ordered-history proof.
+
+### 32.4 Limb III — exact A12-T2-R06 result law
+
+#### 32.4.1 Artifact, canonicalization, and top-level schema
+
+The one durable A12-T2-R06 result artifact has exact path
+`docs/analysis/amendment_12_rq_catalog_tier2/certification/amendment11_expected_abort_result_v1.json`,
+mode `100644`, schema
+`amendment_12_tier2_r06_expected_abort_result.v1`, artifact-ID prefix
+`a12-tier2-r06-expected-abort-result:`, artifact role
+`evidence_expected_amendment11_abort_reproduced_nonauthority`, and status
+`pass_a12_t2_r06_expected_abort_reproduced`.
+
+The artifact uses §29.4.1's exact
+`python-json-sort-keys-compact-ascii-no-nan-lf-v1` serialization. It has
+exactly these eleven top-level keys:
+
+~~~text
+artifact_id
+artifact_role
+gate_id
+input_identities
+integrity
+lifecycle
+nonemission_evidence
+process_result
+schema_version
+status
+test_result
+~~~
+
+`gate_id` is `A12-T2-R06`. `integrity` has exactly `canonicalization` and
+`payload_sha256`. Its canonicalization is §29.4.1's code. The payload
+preimage is the complete top-level object after removing only `artifact_id`
+and `integrity`, serialized under that law; `artifact_id` is the fixed prefix
+plus `payload_sha256`. Duplicate, missing, extra, renamed, mistyped,
+nonfinite, noncanonical, or trailing content aborts.
+
+#### 32.4.2 Closed input identities
+
+`input_identities` has exactly:
+
+~~~text
+r05_certification
+amendment11_authority_artifact
+amendment11_replay_executable
+amendment11_source_registry
+~~~
+
+Each identity has exactly `path`, `mode`, `git_blob`, `byte_size`, and
+`raw_sha256`; all type, canonical-path, mode, hex, full-byte, working-tree,
+and `HEAD` checks in §32.2.1 apply. The R05 identity is freshly derived from
+the immutable committed complete
+`source_hierarchy_certification_v1.json`; it is not self-reported by that
+file. The other three identities are exactly:
+
+| Role | Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---|---:|---|
+| Amendment-11 authority artifact | `data/external/psid_missing_reason_code_authority_v1.json` | `97e22fd1a91f521d7f7ac335fcd1212b3cb166ac` | 709,526 | `833c8dca8cec6a44ea4fe6c65d3662ce8ef8b7da062350437cf4f538dc8b6dac` |
+| Expected-negative executable | `scripts/replay_amendment11_no_movement.py` | `5fab6c62a3794b66ccb95599e409ccdf9a8b6044` | 32,330 | `597670958b6609740eb4742c4144fb448026df82c767ece4db3e30777d6b77e6` |
+| Complete 47-source registry | `data/external/psid_questionnaire_dictionary_inventory_registration_required_v1.json` | `a2e6bfa8b19c35dfde235d8ece7e233a5d833e9e` | 25,474,435 | `a974c6fb65a9f3d52387163f2e98b7cd8cfdbd57f5e95d1f766b3aa25d167ac0` |
+
+Before process execution, the validator also reauthenticates the registry's
+complete 47-row source domain, 114,875,090 source bytes, registered-row
+SHA-256
+`d5b67f8b6b95dded9d8987af5784ea93bdc4b05744c3338619dd3681b7e62957`,
+and projected-row SHA-256
+`0d27b2f940413d11727753a820360ac0a680eed503ea85bbe0a1344ed2f187e0`.
+Those derived comparands do not enlarge the four-member `input_identities`
+object.
+
+#### 32.4.3 Recorded process and full-gate results
+
+`process_result` has exactly:
+
+~~~text
+command
+exit_code
+stdout_byte_size
+stdout_raw_sha256
+stderr_byte_size
+stderr_raw_sha256
+stderr_exact_text
+abort_code
+source_authorized_literal_count
+blocked_literal_count
+numeric_range_structural_null_count
+~~~
+
+`command` is exactly the two-string array
+`["/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python",
+"scripts/replay_amendment11_no_movement.py"]`. The executable runs from the
+repository root with inherited `GIT_*` variables removed. `exit_code` is JSON
+integer 2. Stdout is exactly zero bytes with SHA-256
+`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+Stderr is exactly 174 bytes with SHA-256
+`79c608eb8baf3b31ea8f14cf461cde27d8637e43602ead19e39dc5388ed9903b`
+and exact UTF-8 text, including its one terminal LF:
+
+~~~text
+blocked_source_missing_disposition_underdetermined: registered sources do not determine a missing disposition for 524538 literal entries; no complete settled relation exists
+~~~
+
+`abort_code` is
+`blocked_source_missing_disposition_underdetermined`. The three counts are
+JSON integers `52`, `524538`, and `37283`. A zero exit, another nonzero exit,
+nonempty stdout, substring-only stderr match, changed whitespace, or count
+drift fails R06.
+
+The complete plain-JSON-integer member list is exactly:
+
+~~~text
+exit_code
+stdout_byte_size
+stderr_byte_size
+source_authorized_literal_count
+blocked_literal_count
+numeric_range_structural_null_count
+~~~
+
+Every member in that list excludes booleans.
+
+`test_result` has exactly:
+
+~~~text
+command
+environment
+module_paths
+module_path_domain_sha256
+module_count
+expected_collected
+exit_code
+collected
+passed
+failed
+skipped
+deselected
+xfailed
+xpassed
+~~~
+
+The exact ordered six module paths are:
+
+~~~text
+tests/data/test_psid_codebook_extraction_validation.py
+tests/data/test_psid_missing_reason_authority_artifact.py
+tests/data/test_psid_missing_reason_authority_unit.py
+tests/estimates/test_birth_evidence_artifact.py
+tests/test_rebuild_amendment11_missing_reason_authority.py
+tests/test_replay_amendment11_no_movement.py
+~~~
+
+Their canonical ordered path-array SHA-256 is
+`a5099c464482c5b652e31e5dfa958703a4ae4c75c1dc1e4caa03cb2aef408063`.
+`command` is the §25.6.6 selector encoded as an array beginning with the
+mandated Python, `-m`, `pytest`, followed by those six paths in that exact
+order. `environment` has exactly one key, `PYTHONPATH`, whose value is
+`src:.`. Both commands run from the repository root with inherited `GIT_*`
+variables removed. `module_count` is integer 6; `expected_collected`,
+`collected`, and `passed` are integers 223; `exit_code`, `failed`, `skipped`,
+`deselected`, `xfailed`, and `xpassed` are integers zero.
+
+The complete plain-JSON-integer member list is exactly:
+
+~~~text
+module_count
+expected_collected
+exit_code
+collected
+passed
+failed
+skipped
+deselected
+xfailed
+xpassed
+~~~
+
+Every member in that list excludes booleans. No module may be omitted,
+added, selected by glob, or deselected.
+
+#### 32.4.4 NONAUTHORITY, nonemission, order, and terminal stop
+
+`lifecycle` has exactly:
+
+~~~text
+nonauthority
+expected_abort_reproduced
+accepted_output_emitted
+production_replay_started
+movement_relation_emitted
+revision_13_relation_identity_emitted
+q5_input_emitted
+q5_first_add_performed
+full_g17_c01_row_emitted
+authority_emitted
+production_output_emitted
+next_required_state
+~~~
+
+`nonauthority` and `expected_abort_reproduced` are true. Every emission,
+first-add, or start member is false. `next_required_state` is exactly
+`A19_SUCCESSOR_PROGRAM_STOP`. R06 proves only that the enacted abort remains
+reproducible after R05. It cannot be interpreted as source disposition,
+authority, production readiness, Q5 admission, or permission to continue.
+The next program state is a stop awaiting Amendment 19's separately ratified
+missing-reason/lifecycle successor law; Amendment 18 does not define or
+promise that successor's substance.
+
+`nonemission_evidence` has exactly:
+
+~~~text
+execution_commit
+execution_tree_oid
+repository_manifest_sha256_before
+repository_manifest_sha256_after
+repository_clean_before
+repository_clean_after
+repository_read_only
+network_disabled
+captured_streams
+result_path_absent_after_execution
+~~~
+
+The commit and tree are 40 lowercase hex and identify the clean isolated
+pre-result checkout. The two manifest hashes are 64 lowercase hex and must
+equal. Each manifest is the §29.4.1 canonical array of every nonignored
+tracked or untracked repository path in unsigned UTF-8 path order, where
+each row has exactly `path`, `mode`, `git_blob`, `byte_size`, and
+`raw_sha256`; all working bytes are reread and tracked rows exact-match
+`HEAD`. `repository_clean_before`, `repository_clean_after`,
+`repository_read_only`, `network_disabled`, and
+`result_path_absent_after_execution` are true. `captured_streams` is exactly
+`["stdout", "stderr"]`. The operating-system sandbox makes the repository
+read-only, disables network access, and exposes no writable output channel
+other than the two captured streams. The independently derived before/after
+manifests, clean states, and absent result path prove durable repository
+nonemission; lifecycle booleans are not accepted as self-attestation.
+
+The R06 artifact may be first-added only after Amendment 18 is operative at
+revision 20 and the exact committed R05 certification has passed. Its unique
+first-add must be a strict descendant of both the operative revision-20
+repin and the certification's unique first-add, and its name-status delta is
+add-only the one fixed R06 result path. At construction and independent
+validation, the complete six-module gate and standalone process are rerun,
+every input and output identity and both repository manifests are
+independently derived, and the result is staged transactionally only after
+the isolated execution ends. The artifact is immutable thereafter. A result
+created before R05, an edited R05 certificate, a partial test run, a copied
+operational log, other repository output, or a later rewrite always aborts.
+
+### 32.5 Implementation pins, semantic projection, and activation obligation
+
+#### 32.5.1 Active successor pins and registry-state boundary
+
+Section 31.2.2 remains immutable historical A17 law but is superseded as the
+active prospective-validation identity after the exact Amendment-18
+candidate receives both affirmative verdicts and its operator merge. The
+Amendment-18-governed active identity is exactly mode `100644` and these
+three path/blob/byte/hash rows:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `0000000000000000000000000000000000000000` | 1 | `0000000000000000000000000000000000000000000000000000000000000000` |
+| `tests/test_validate_amendment13_execution_law.py` | `0000000000000000000000000000000000000000` | 1 | `0000000000000000000000000000000000000000000000000000000000000000` |
+| `scripts/build_amendment13_tier2_repairs.py` | `0000000000000000000000000000000000000000` | 1 | `0000000000000000000000000000000000000000000000000000000000000000` |
+
+Every §31.2.2 mode, working-tree/`HEAD`, blob, byte, hash, replacement-ref,
+public-oracle reachability, publisher isolation, and narrow candidate-review
+rule survives. `scripts/covered_earnings_correction_registry.py` is mutable
+registry state rather than operativity implementation: the later real or
+simulated repin must change its revision/design/closure binding while the
+three pinned validator/battery/publisher files remain identical. Pinning the
+registry file as immutable implementation would make §31.3's required
+post-transition state impossible. Its A18 prospective-suffix acceptance is
+nevertheless exact-projected and regression-tested, and no production
+revision-20 value is written by this draft.
+
+#### 32.5.2 Complete Amendment-18 projection and successor routing
+
+The Amendment-18 semantic projection requires the exact revision-19 prefix,
+one Amendment-18 boundary, UTF-8, and one terminal LF. It exact-parses and
+independently compares every value in §§32.1–32.8, including both preimage
+schemas, every count and digest, membership and order rules, all 11 R05
+values, both R06 schemas and every nested keyset/value, nonauthority and
+lifecycle values, activation determination, mutations, censuses,
+supersessions, identifier inventory, active pin path domain, and registry-
+state boundary. Its normalized complete-suffix SHA-256 binds every other
+A18 byte. Only the mode and each active pin row's blob, decimal byte count,
+and raw SHA-256 are normalized; all are separately Git-authenticated.
+
+The general non-A13 closure router adds
+`_validate_amendment18_ratification_design` for terminal Amendment 18 and
+`_validate_inherited_amendment18_ratification_design` for every later
+amendment. A closure labeled Amendment 18 must attest exact A18-terminal
+bytes. Every later closure must preserve the complete exact revision-19
+prefix, A18 boundary, and A18 projection. It may not fall back to inherited
+A17 validation alone. The document projection, terminal-A18 route, and
+inherited-successor route all apply before an A18 or later closure passes.
+
+#### 32.5.3 Activation-affecting determination and revision-20 execution
+
+Amendment 18 is **activation-affecting** under §31.3.1. Section 32.3 changes
+a public selector used by a registry-repin-adjacent R05 validator; §32.5.2
+supplies closure-admission and test behavior for Amendment 18 and later
+revisions. Ambiguity would independently fail closed into the same result.
+
+Before either referee may emit `# RATIFY`, §31.3 requires one executed
+same-state NONAUTHORITY demonstration against the final committed identities.
+Its simulated terminal registry revision is integer `20`; terminal Amendment
+18; ordered closure domain `(13, 14, 15, 16, 17, 18)`; and exact closure
+count `6 = 20 - 14`. The unmodified public
+`validate_ratification_operativity()` must return that exact order after full
+pin/Git/artifact/design verification. The complete final pinned test battery
+must run against that identical state and pass every collected test with zero
+failed, skipped, deselected, xfailed, or xpassed tests. Wrong count, missing,
+extra, duplicate, reorder, wrong A18 generated path, terminal revision 19
+with six closures, a private-helper-only run, focused battery, stale test
+identity, or two state identities is unratifiable.
+
+The exact §31.3.3 receipt remains outside candidate bytes to avoid
+self-reference. It is generated strictly after the final code/test commit,
+formatters, pin values, and all other code edits. Referees recompute its
+closed keysets, strict integers, manifest identity, exact outputs, byte size,
+and raw SHA-256 and cite that external identity. No receipt hash or simulated
+state hash is pinned in this section.
+
+### 32.6 Exact Amendment-18 mutation inventory and inherited censuses
+
+The separate Amendment-18 contract-cure mutation inventory is exactly:
+
+~~~text
+tier2_build_input_domain_preimage_forged
+tier2_r05_current_snapshot_or_historical_binding_forged
+tier2_r06_result_or_lifecycle_forged
+~~~
+
+Its ordered canonical name-array is 142 bytes with SHA-256
+`1bf9f6d30461d003cab597a405cb5cc9855273372ed3e7e5b36b1627eaa11108`.
+The first name is recorded only after missing, extra, duplicate, reordered,
+wrong-class, identity-drift, boolean-integer, and noncanonical-byte variants
+all reject. The second is recorded only after historical revision-18
+selection, incomplete current snapshot, moved/absent A15, and changed 11-key
+historical-value variants reject. The third is recorded only after
+top-level/nested extra and missing keys, wrong/bool integers, wrong process or
+test output, input drift, emission, Q5, authority, and next-state variants
+reject. Every name is appended only after its complete grouped attack reaches
+and fails the intended gate.
+
+These three names do not enter any predecessor census. Amendment 12's 71,
+Amendments 13/14's 18, and Amendment 15's 11 remain the exact inherited
+100-name census with digest
+`fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3`.
+Amendment 16's seven remain exact with digest
+`1e00099f636c1a727839ebc298b965cd0981e0ad8f23189367ba7dbd0eddb871`.
+Amendment 17's three remain exact with digest
+`b19ebcbf47278d63e12bd8021334a88910895bdfe48caf2d49c6bbe3014417e6`.
+The A18 runner executes and authenticates those three inherited results in
+that order before its own attacks. An inherited change, skipped runner,
+surviving mutation, wrong gate, reordering, or count/digest inflation aborts.
+
+### 32.7 Supersession, preservation, and exact new identifiers
+
+The exact disposition is:
+
+| Earlier normative anchor | Amendment-18 disposition |
+|---|---|
+| §29.4.3 undefined `tier2_build_input_domain_sha256` sentence and §29.4.5 equality-only use | Superseded and completed by §32.2's 279-row closed preimage, subset equations, ordering, canonicalization, and dual-byte equality. The predecessor text remains historical. |
+| §29.4.3 operative revision-17 selector, §30.3.5 revision-18-literal R05 selector, and §30.4.2 `historical_r05_snapshot_revision=18` | Superseded only as an active R05 locator by §32.3's complete current-revision selector for every terminal revision at least 18. The exact 11 historical A15 values, revision-18 first-operativity ancestry, and revision-18 historical receipt fact remain unchanged. |
+| §26.11.2 A12-T2-R06 expected abort without a durable result contract and §§29.6/30.6 statements that R06 results remain undefined/out of scope | Superseded only by §32.4's nonauthority result path, schema, first-add order, and A19 stop. The abort, six-module gate, blocker, and all prohibitions remain unchanged. |
+| §31.2.2 active implementation rows | Superseded as active prospective-validation pins only by §32.5.1. Historical identities and the three-path domain remain immutable. |
+| §§30.2.1–30.2.4 general oracle and §31.3 executed-transition obligation | Lawfully unchanged and composed with §32.3's R05 consumer and §32.5.3's mandatory revision-20 same-state demonstration. |
+| §29.4 R04/R05 artifact schemas, isolation, five gates, lifecycle, Git order, 100-name census, integrity, and raw-byte attestation | Lawfully unchanged except the exact preimage and selector successors named above. No R05 artifact is instantiated. |
+| §§27.3–27.6 repair semantics and seals; 14 law gaps; 524,538 missing-reason dispositions; Q5; G17-C01; registries; receipts of record; and production | Byte-identical and lawfully unchanged. The R06 evidence records a stop and grants no authority. |
+
+No predecessor byte is deleted. No current registry, closure, verdict,
+certification, R06 result, repair, source authority, Q5 input, G17-C01 row,
+receipt of record, wall row, or production output is instantiated.
+
+The exact new schema and path identifiers are:
+
+~~~text
+amendment_12_tier2_build_input_domain.v1
+amendment_12_tier2_r06_expected_abort_result.v1
+docs/analysis/amendment_12_rq_catalog_tier2/certification/amendment11_expected_abort_result_v1.json
+a12-tier2-r06-expected-abort-result:
+~~~
+
+The exact new status, role, and lifecycle identifiers are:
+
+~~~text
+pass_a12_t2_r06_expected_abort_reproduced
+evidence_expected_amendment11_abort_reproduced_nonauthority
+A19_SUCCESSOR_PROGRAM_STOP
+~~~
+
+The exact new input-class identifiers are:
+
+~~~text
+source_document
+repair_seal_evidence
+~~~
+
+The exact new Python identifiers are:
+
+~~~text
+_validate_amendment18_ratification_design
+_validate_inherited_amendment18_ratification_design
+run_amendment18_contract_mutation_tests
+~~~
+
+Each qualified inventory is ordered, unique, closed, and disjoint by kind.
+Existing schema, path, status, role, lifecycle, input-class, mutation, and
+Python names are not recounted as new. Symbolic gate IDs, historical hashes,
+commands, row keys, report paths, and arithmetic expressions are not silently
+promoted into another identifier family.
+
+### 32.8 Terminal prospective effect
+
+**Amendment 18 remains a prospective, unratified, and inoperative draft. The
+current operative registry remains revision 19 with exactly ordered
+Amendments 13, 14, 15, 16, and 17. This draft neither changes that registry
+nor activates Amendment 18. Only two affirmative verdicts on final exact A18
+bytes, the §31.3 revision-20 same-state demonstration, the operator merge,
+creation of the Amendment-18 closure, and a later revision-20 registry repin
+can make Amendment 18 operative. That future repin must bind exactly six
+ordered closures for Amendments 13 through 18. Even then, R04/R05 must still
+be built from authenticated source bytes before R06; R06 must reproduce and
+record the expected abort; no Q5 or authority follows; and execution stops at
+`A19_SUCCESSOR_PROGRAM_STOP` until a separate successor law resolves the
+independent Amendment-11 source blocker.**
