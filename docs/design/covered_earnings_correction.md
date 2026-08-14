@@ -55335,11 +55335,12 @@ blocked_literal_count
 numeric_range_structural_null_count
 ~~~
 
-`command` is exactly the two-string array
-`["/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python",
-"scripts/replay_amendment11_no_movement.py"]`. The executable runs from the
-repository root with inherited `GIT_*` variables removed. `exit_code` is JSON
-integer 2. Stdout is exactly zero bytes with SHA-256
+`command` is exactly the two-string array whose first member is the executing
+validator process's current `sys.executable` and whose second member is
+`"scripts/replay_amendment11_no_movement.py"`. The executable runs from the
+repository root with inherited `GIT_*` variables removed. No repository-local
+or machine-local interpreter path is fixed by this contract. `exit_code` is
+JSON integer 2. Stdout is exactly zero bytes with SHA-256
 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
 Stderr is exactly 174 bytes with SHA-256
 `79c608eb8baf3b31ea8f14cf461cde27d8637e43602ead19e39dc5388ed9903b`
@@ -55401,10 +55402,12 @@ tests/test_replay_amendment11_no_movement.py
 Their canonical ordered path-array SHA-256 is
 `a5099c464482c5b652e31e5dfa958703a4ae4c75c1dc1e4caa03cb2aef408063`.
 `command` is the §25.6.6 selector encoded as an array beginning with the
-mandated Python, `-m`, `pytest`, followed by those six paths in that exact
-order. `environment` has exactly one key, `PYTHONPATH`, whose value is
-`src:.`. Both commands run from the repository root with inherited `GIT_*`
-variables removed. `module_count` is integer 6; `expected_collected`,
+executing validator process's current `sys.executable`, then `-m`, `pytest`,
+followed by those six paths in that exact order. No repository-local or
+machine-local interpreter path is fixed by this contract. `environment` has
+exactly one key, `PYTHONPATH`, whose value is `src:.`. Both commands run from
+the repository root with inherited `GIT_*` variables removed. `module_count`
+is integer 6; `expected_collected`,
 `collected`, and `passed` are integers 223; `exit_code`, `failed`, `skipped`,
 `deselected`, `xfailed`, and `xpassed` are integers zero.
 
@@ -55508,8 +55511,8 @@ three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `f629491608e967466cc1497e23924473627e18eb` | 382,978 | `a3c80803b82b3eb87b19b7a9c611c8d21fb7a9b6e6f986f13f60ec6871aba471` |
-| `tests/test_validate_amendment13_execution_law.py` | `1e8a6edad9757052a6d35ab238b470e7ec8b7b9d` | 86,418 | `9353ad55e0fa463a44454578a3b1cccb2f2ec1d02505aad40b5210b7d7afbf9e` |
+| `scripts/validate_amendment13_execution_law.py` | `6e9927e7cb80231deacbbe8627e02417587afa97` | 382,884 | `8e50642949f3da258418550699b643083566c141f676a7f10c819eeaaf3075df` |
+| `tests/test_validate_amendment13_execution_law.py` | `38535ad322e836099f8d4200ab5a3fae0a2527b9` | 86,255 | `ad38ab4aee3958f60f065024939887b9bab9c608efee663511f2022426ba3729` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
 Every §31.2.2 mode, working-tree/`HEAD`, blob, byte, hash, replacement-ref,

@@ -24,8 +24,8 @@ A17_TEST_MUTATIONS = (
     "activation_transition_full_pinned_battery_bypassed",
 )
 A17_FULL_PINNED_BATTERY_COMMAND = (
-    "/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python "
-    "-m pytest -q tests/test_validate_amendment13_execution_law.py"
+    f"{sys.executable} -m pytest -q "
+    "tests/test_validate_amendment13_execution_law.py"
 )
 A17_FULL_PINNED_BATTERY_COLLECTED = 76
 A18_FULL_PINNED_BATTERY_COLLECTED = 107
@@ -1756,7 +1756,7 @@ def test__document__amendment18_three_limb_values_are_exact():
     assert r06["process_result"]["exit_code"] == 2
     assert r06["process_result"]["stderr_byte_size"] == 174
     assert r06["process_command"] == [
-        "/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python",
+        sys.executable,
         "scripts/replay_amendment11_no_movement.py",
     ]
     for field in r06["process_integer_fields"]:
@@ -1765,7 +1765,7 @@ def test__document__amendment18_three_limb_values_are_exact():
     assert r06["test_result"]["collected"] == 223
     assert len(r06["test_module_paths"]) == 6
     assert r06["test_command"] == [
-        "/Users/maxghenis/PolicyEngine/social-security-model/.venv/bin/python",
+        sys.executable,
         "-m",
         "pytest",
         *r06["test_module_paths"],
