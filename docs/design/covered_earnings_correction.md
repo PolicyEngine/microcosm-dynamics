@@ -55509,7 +55509,7 @@ three path/blob/byte/hash rows:
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
 | `scripts/validate_amendment13_execution_law.py` | `82421ad14387da810b945efbb0b031b6857bdb21` | 349,611 | `8ddfdb72f6baa06f4effd33b3237a9b15d73d7cf07e1e5d8999592e6a9e36215` |
-| `tests/test_validate_amendment13_execution_law.py` | `43146ed7647ce13a89d072e578b10fc71c28e905` | 86,204 | `3ce821e8aa75229fcda486c5eba6fe80a4a6a74ea018095fca904bdb69d371e0` |
+| `tests/test_validate_amendment13_execution_law.py` | `a586e790f0348b7c22f14305612cba8e58932c8b` | 86,414 | `5a734ff7b4c9569da3089380f67739af0005efe35fdf6004b172cb124a604063` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
 Every §31.2.2 mode, working-tree/`HEAD`, blob, byte, hash, replacement-ref,

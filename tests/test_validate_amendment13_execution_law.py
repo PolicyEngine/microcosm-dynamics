@@ -2152,15 +2152,20 @@ def test__document__successors_preserve_inherited_a17_projection():
             successor,
             amendment_number,
         )
+        expected_message = (
+            "Amendment-17 ratification design semantic projection drift"
+            if amendment_number == 17
+            else (
+                "Amendment-18 ratification design lacks the immutable "
+                "revision-19 prefix or Amendment-18 boundary"
+            )
+        )
         for original, forged in forgeries:
             assert successor.count(original) == 1
             candidate = successor.replace(original, forged, 1)
             with pytest.raises(
                 a13.LawError,
-                match=(
-                    "Amendment-17 ratification design semantic projection "
-                    "drift"
-                ),
+                match=expected_message,
             ):
                 a13._validate_non_a13_ratification_design(
                     candidate,
