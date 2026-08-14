@@ -1393,15 +1393,15 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
     # unconditionally, so a coherent wrong repin cannot satisfy either
     # leg below. An in-flight append-only amendment lawfully extends
     # the design past the pinned ratification blob. The narrow
-    # prospective-suffix rule retains the revision-18 binding only when
+    # prospective-suffix rule retains the revision-19 binding only when
     # the ratified bytes survive as the exact prefix of byte-identical
     # worktree and HEAD copies.
     expected_binding = {
         "path": "docs/design/covered_earnings_correction.md",
-        "ratification_commit": "60289833febdf88cb9d8977ac1282a0f4b97b278",
-        "revision": 18,
+        "ratification_commit": "131b070c1d516512dcc8a49650dd4e76b4998605",
+        "revision": 19,
         "blob_sha256": (
-            "17a4bc2b48bd48039ce0777dd22f265eff156fe2484efd6c7b106c5c642dd1b6"
+            "29055c5606a54587107498e8adcdbc8546f93caceabe89238975288db72e7fe1"
         ),
         "ratification_closures": [
             {
@@ -1442,6 +1442,16 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
                 "raw_byte_size": 842,
                 "raw_sha256": (
                     "5a39ba6965504db9b72a6057f1ac32e547487947662b3528a13ba17a5bab260c"
+                ),
+            },
+            {
+                "path": (
+                    "docs/analysis/amendment_17_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": 842,
+                "raw_sha256": (
+                    "24e2548a77b237ef97aabf6eec63926e3b80daa0759b2dfcb5fe62dc9499987e"
                 ),
             },
         ],
