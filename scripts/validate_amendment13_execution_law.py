@@ -8807,11 +8807,24 @@ def run_amendment18_contract_mutation_tests() -> tuple[str, ...]:
             and all(part not in {"", ".", ".."} for part in candidate.parts)
         )
 
-    def load_source_root(path: str, label: str) -> Mapping[str, Any]:
+    def load_source_root(
+        path: str,
+        label: str,
+        *,
+        expected_blob: str,
+        expected_byte_size: int,
+        expected_sha256: str,
+    ) -> Mapping[str, Any]:
         raw = _read_public_repository_file(
             path,
             label,
             require_regular_mode=True,
+        )
+        _require(
+            len(raw) == expected_byte_size
+            and _sha256(raw) == expected_sha256
+            and _git_blob_oid(raw) == expected_blob,
+            f"{label} enacted byte identity drift",
         )
         try:
             value = a12.strict_json_loads(raw, path)
@@ -8870,11 +8883,21 @@ def run_amendment18_contract_mutation_tests() -> tuple[str, ...]:
             "data/external/"
             "psid_questionnaire_corpus_authority_registration_attempt_v1.json",
             "Amendment-18 questionnaire source root",
+            expected_blob="825f6c61ef9d4a161886cbc44f5cc914d65160d2",
+            expected_byte_size=520_656,
+            expected_sha256=(
+                "07c5bad57d702416da7ee668f504646ba85b9868a7f38819cdec85638c97558c"
+            ),
         )
         field_root = load_source_root(
             "data/external/"
             "psid_questionnaire_dictionary_inventory_registration_required_v1.json",
             "Amendment-18 field source root",
+            expected_blob="a2e6bfa8b19c35dfde235d8ece7e233a5d833e9e",
+            expected_byte_size=25_474_435,
+            expected_sha256=(
+                "a974c6fb65a9f3d52387163f2e98b7cd8cfdbd57f5e95d1f766b3aa25d167ac0"
+            ),
         )
         waves = field_root.get("interview_waves")
         questionnaire_candidates = questionnaire_root.get(
