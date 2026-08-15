@@ -1543,11 +1543,19 @@ def test__design_binding__prospective_suffix_is_exactly_scoped():
         b"x" + current_bytes[1:], ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        ratified_bytes + b"\n## 31. wrong boundary\n", ratified_bytes
+        ratified_bytes + b"\n## 32. wrong boundary\n", ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        current_bytes + registry.AMENDMENT17_BOUNDARY, ratified_bytes
+        current_bytes + registry.AMENDMENT18_BOUNDARY, ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
         current_bytes.removesuffix(b"\n"), ratified_bytes
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        current_bytes
+        + (
+            b"\n## 33. AMENDMENT SECTION \xe2\x80\x94 Amendment 19: "
+            b"unauthorized successor\n"
+        ),
+        ratified_bytes,
     )

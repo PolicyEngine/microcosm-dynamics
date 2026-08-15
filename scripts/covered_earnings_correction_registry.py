@@ -34,9 +34,9 @@ DESIGN_BYTE_SIZE = 3_934_849
 DESIGN_BLOB_SHA256 = (
     "29055c5606a54587107498e8adcdbc8546f93caceabe89238975288db72e7fe1"
 )
-AMENDMENT17_BOUNDARY = (
-    b"\n## 31. AMENDMENT SECTION \xe2\x80\x94 Amendment 17: test-pin "
-    b"activation cure and executed-transition ratification\n"
+AMENDMENT18_BOUNDARY = (
+    b"\n## 32. AMENDMENT SECTION \xe2\x80\x94 Amendment 18: tier-2 "
+    b"certification contract cure\n"
 )
 RATIFICATION_CLOSURE_BINDINGS = (
     {
@@ -681,7 +681,7 @@ def _run_git(
 def _preserves_ratified_design_prefix(
     current_bytes: bytes, ratified_bytes: bytes
 ) -> bool:
-    """Accept only the exact ratified bytes or one prospective A17 suffix."""
+    """Accept only the exact ratified bytes or one prospective A18 suffix."""
 
     if current_bytes == ratified_bytes:
         return True
@@ -690,8 +690,9 @@ def _preserves_ratified_design_prefix(
         len(ratified_bytes) == DESIGN_BYTE_SIZE
         and len(current_bytes) > DESIGN_BYTE_SIZE
         and current_bytes[:DESIGN_BYTE_SIZE] == ratified_bytes
-        and suffix.startswith(AMENDMENT17_BOUNDARY)
-        and current_bytes.count(AMENDMENT17_BOUNDARY) == 1
+        and suffix.startswith(AMENDMENT18_BOUNDARY)
+        and current_bytes.count(AMENDMENT18_BOUNDARY) == 1
+        and suffix.count(b"\n## ") == 1
         and current_bytes.endswith(b"\n")
     )
 
