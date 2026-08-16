@@ -1542,30 +1542,70 @@ def test__design_binding__prospective_suffix_is_exactly_scoped():
         capture_output=True,
     ).stdout
     current_bytes = (ROOT / registry.DESIGN_PATH).read_bytes()
+    revision20_bytes = current_bytes[: registry.REVISION20_DESIGN_BYTE_SIZE]
+    lawful_amendment19_bytes = (
+        revision20_bytes
+        + registry.AMENDMENT19_BOUNDARY
+        + b"Lawful Amendment 19 body.\n"
+    )
 
     assert registry._preserves_ratified_design_prefix(
         ratified_bytes, ratified_bytes
     )
+    assert len(revision20_bytes) == registry.REVISION20_DESIGN_BYTE_SIZE
+    assert (
+        hashlib.sha256(revision20_bytes).hexdigest()
+        == registry.REVISION20_DESIGN_SHA256
+    )
     assert registry._preserves_ratified_design_prefix(
-        current_bytes, ratified_bytes
+        revision20_bytes, ratified_bytes
+    )
+    assert registry._preserves_ratified_design_prefix(
+        lawful_amendment19_bytes, ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        b"x" + current_bytes[1:], ratified_bytes
+        b"x" + lawful_amendment19_bytes[1:], ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
         ratified_bytes + b"\n## 32. wrong boundary\n", ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        current_bytes + registry.AMENDMENT18_BOUNDARY, ratified_bytes
+        revision20_bytes + registry.AMENDMENT18_BOUNDARY, ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        current_bytes.removesuffix(b"\n"), ratified_bytes
+        lawful_amendment19_bytes.removesuffix(b"\n"), ratified_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        current_bytes
+        revision20_bytes
         + (
             b"\n## 33. AMENDMENT SECTION \xe2\x80\x94 Amendment 19: "
             b"unauthorized successor\n"
         ),
+        ratified_bytes,
+    )
+    malformed_revision20_bytes = (
+        revision20_bytes[:-2] + b"X" + revision20_bytes[-1:]
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        malformed_revision20_bytes
+        + registry.AMENDMENT19_BOUNDARY
+        + b"Lawful Amendment 19 body.\n",
+        ratified_bytes,
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        lawful_amendment19_bytes + registry.AMENDMENT19_BOUNDARY,
+        ratified_bytes,
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        ratified_bytes
+        + registry.AMENDMENT19_BOUNDARY
+        + b"reordered\n"
+        + registry.AMENDMENT18_BOUNDARY
+        + b"Amendment 18 body.\n",
+        ratified_bytes,
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        lawful_amendment19_bytes
+        + b"\n## 34. AMENDMENT SECTION \xe2\x80\x94 Amendment 20: extra\n",
         ratified_bytes,
     )

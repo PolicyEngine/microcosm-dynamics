@@ -38,6 +38,15 @@ AMENDMENT18_BOUNDARY = (
     b"\n## 32. AMENDMENT SECTION \xe2\x80\x94 Amendment 18: tier-2 "
     b"certification contract cure\n"
 )
+REVISION20_DESIGN_BYTE_SIZE = 3_964_278
+REVISION20_DESIGN_SHA256 = (
+    "631d3b2b8ecab1c29ec0595550a6d2b798f49ff96e74c722801d24c48ab111ec"
+)
+REVISION20_DESIGN_BLOB_OID = "016c0fff757b54da730ae0044216416cde2d2c33"
+AMENDMENT19_BOUNDARY = (
+    b"\n## 33. AMENDMENT SECTION \xe2\x80\x94 Amendment 19: "
+    b"source-hierarchy member-construction cure\n"
+)
 RATIFICATION_CLOSURE_BINDINGS = (
     {
         "path": ("docs/analysis/amendment_13_ratification/closure_v1.json"),
@@ -688,19 +697,47 @@ def _run_git(
 def _preserves_ratified_design_prefix(
     current_bytes: bytes, ratified_bytes: bytes
 ) -> bool:
-    """Accept only the exact ratified bytes or one prospective A18 suffix."""
+    """Accept the ratified bytes or exact ordered prospective A18/A19 suffixes."""
 
     if current_bytes == ratified_bytes:
         return True
     suffix = current_bytes[DESIGN_BYTE_SIZE:]
-    return (
+    if not (
         len(ratified_bytes) == DESIGN_BYTE_SIZE
         and len(current_bytes) > DESIGN_BYTE_SIZE
         and current_bytes[:DESIGN_BYTE_SIZE] == ratified_bytes
         and suffix.startswith(AMENDMENT18_BOUNDARY)
         and current_bytes.count(AMENDMENT18_BOUNDARY) == 1
-        and suffix.count(b"\n## ") == 1
         and current_bytes.endswith(b"\n")
+    ):
+        return False
+
+    top_level_suffix_heading_count = suffix.count(b"\n## ")
+    if top_level_suffix_heading_count == 1:
+        return current_bytes.count(AMENDMENT19_BOUNDARY) == 0
+    if top_level_suffix_heading_count != 2:
+        return False
+
+    revision20_bytes = current_bytes[:REVISION20_DESIGN_BYTE_SIZE]
+    revision20_blob_preimage = (
+        b"blob "
+        + str(len(revision20_bytes)).encode("ascii")
+        + b"\0"
+        + revision20_bytes
+    )
+    amendment19_suffix = current_bytes[REVISION20_DESIGN_BYTE_SIZE:]
+    return (
+        len(current_bytes) > REVISION20_DESIGN_BYTE_SIZE
+        and len(revision20_bytes) == REVISION20_DESIGN_BYTE_SIZE
+        and hashlib.sha256(revision20_bytes).hexdigest()
+        == REVISION20_DESIGN_SHA256
+        and hashlib.sha1(
+            revision20_blob_preimage, usedforsecurity=False
+        ).hexdigest()
+        == REVISION20_DESIGN_BLOB_OID
+        and amendment19_suffix.startswith(AMENDMENT19_BOUNDARY)
+        and amendment19_suffix.count(b"\n## ") == 1
+        and current_bytes.count(AMENDMENT19_BOUNDARY) == 1
     )
 
 
