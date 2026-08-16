@@ -645,7 +645,7 @@ def _nonempty_string(value: object, where: str) -> str:
 
 
 def verify_design_binding() -> dict[str, Any]:
-    """Require the live, HEAD, and ratification design bytes to be revision 7."""
+    """Require revision 7 to be the exact live and HEAD design prefix."""
 
     ancestry = subprocess.run(
         [
@@ -674,10 +674,12 @@ def verify_design_binding() -> dict[str, Any]:
         check=True,
         capture_output=True,
     ).stdout
-    if not (worktree_bytes == head_bytes == ratified_bytes):
-        raise ValueError("covered-earnings design differs from revision 7")
+    if worktree_bytes != head_bytes:
+        raise ValueError("covered-earnings worktree design differs from HEAD")
     if _sha256(ratified_bytes) != DESIGN_BLOB_SHA256:
         raise ValueError("covered-earnings revision-7 design digest drift")
+    if not head_bytes.startswith(ratified_bytes):
+        raise ValueError("covered-earnings revision-7 design prefix drift")
     return {
         "path": DESIGN_PATH,
         "ratification_commit": DESIGN_RATIFICATION_COMMIT,

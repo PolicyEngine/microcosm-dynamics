@@ -180,6 +180,15 @@ AMENDMENT18_BOUNDARY = (
     b"\n## 32. AMENDMENT SECTION \xe2\x80\x94 Amendment 18: tier-2 "
     b"certification contract cure\n"
 )
+REVISION20_BYTE_SIZE = 3_964_278
+REVISION20_SHA256 = (
+    "631d3b2b8ecab1c29ec0595550a6d2b798f49ff96e74c722801d24c48ab111ec"
+)
+REVISION20_BLOB_OID = "016c0fff757b54da730ae0044216416cde2d2c33"
+AMENDMENT19_BOUNDARY = (
+    b"\n## 33. AMENDMENT SECTION \xe2\x80\x94 Amendment 19: source-"
+    b"hierarchy member-construction cure\n"
+)
 FIRST_CLOSURE_AMENDMENT = 13
 HISTORICAL_TERMINAL_REVISION = 16
 FORBIDDEN_STANDALONE_REVISION = 17
@@ -1560,6 +1569,889 @@ A18_NEW_IDENTIFIERS = {
     ],
 }
 
+A19_SECTION_SEMANTIC_SHA256 = (
+    "1af9e180f4467a2c1817a12b515112dfaf96e2bcc72519bc2bde4a0423e5296d"
+)
+A19_OFFICIAL_PURPOSES = [
+    "interview_and_role_attachment",
+    "amount",
+    "reporting_unit",
+    "month_or_exposure",
+    "assignment",
+    "employee_self_or_mixed",
+    "incorporation",
+    "government_level",
+    "industry",
+    "occupation",
+    "enrollment",
+    "job_identifier",
+    "state_of_residence",
+    "section_218_group",
+    "section_218_position",
+    "public_retirement_system_participation",
+    "federal_retirement_system",
+    "federal_service",
+    "railroad_covered_employer",
+    "railroad_covered_service",
+    "ministerial_service",
+    "clergy_remuneration",
+    "church_employee_service",
+    "religious_order_service",
+    "clergy_or_religious_exemption",
+    "domestic_service",
+    "agricultural_service",
+    "election_work",
+    "family_service",
+    "casual_service",
+    "foreign_government_service",
+    "international_organization_service",
+    "nonresident_alien_status",
+    "employer_school_nexus",
+    "statutory_student_service",
+]
+A19_PURPOSE_MAPPING_CONTRACT = {
+    "prompt_row_keys": [
+        "source_prompt_occurrence_id",
+        "source_classification_row_id",
+        "serialized_source_literals",
+        "explicit_official_purposes",
+        "unresolved_legacy_literals",
+        "purpose_mapping_disposition",
+    ],
+    "prompt_row_order": "questionnaire_occurrence_source_order",
+    "construction_order": [
+        "authenticate_fixed_prompt_denominator",
+        "construct_complete_purpose_mapping_rows_keyset_domain_and_counts",
+        "compute_U_underdetermined_mapping_prompt_count",
+        "select_failure_or_normal_variant",
+        "normal_variant_only_construct_O_H_purpose_independent",
+        "normal_variant_only_evaluate_O_P_witnesses",
+    ],
+    "source_classification_resolution": (
+        "zero_or_one_same_annotation_row_by_shape_specific_occurrence_id"
+    ),
+    "source_classification_join_keys": {
+        "plural": "source_prompt_occurrence_id",
+        "singular": "source_occurrence_id",
+    },
+    "source_classification_status_rules": {
+        "plural": {
+            "key": "annotation_status",
+            "value": "complete",
+        },
+        "singular": {
+            "key": "classification_status",
+            "value": "complete_document_local_provisional",
+        },
+    },
+    "plural_source_row_keys": [
+        "annotation_status",
+        "applicable_anchor_occurrence_ids",
+        "exact_prompt",
+        "exact_prompt_utf8_span",
+        "field_purposes",
+        "local_field_purpose_classification_id",
+        "source_prompt_occurrence_id",
+    ],
+    "singular_source_row_keys": [
+        "classification_status",
+        "exact_prompt",
+        "exact_prompt_sha256",
+        "field_purpose",
+        "local_field_purpose_classification_id",
+        "source_occurrence_id",
+        "supported_local_anchor_ids",
+    ],
+    "official_purpose_order": A19_OFFICIAL_PURPOSES,
+    "official_projection_rule": (
+        "stable_unique_intersection_with_official_purpose_order"
+    ),
+    "legacy_projection_rule": (
+        "complete_stable_unique_source_literal_complement"
+    ),
+    "disposition_order": [
+        "complete_official_mapping",
+        "partial_official_mapping_with_legacy_residue_underdetermined",
+        "legacy_only_mapping_underdetermined",
+        "missing_mapping_underdetermined",
+    ],
+    "disposition_counts": {
+        "complete_official_mapping": 818,
+        "partial_official_mapping_with_legacy_residue_underdetermined": 14,
+        "legacy_only_mapping_underdetermined": 56,
+        "missing_mapping_underdetermined": 21_083,
+    },
+    "source_annotation_document_count": 81,
+    "classification_document_count": 9,
+    "classification_document_rows": [
+        {
+            "document_position": 7,
+            "official_mapped_prompt_count": 43,
+            "prompt_count": 99,
+        },
+        {
+            "document_position": 14,
+            "official_mapped_prompt_count": 50,
+            "prompt_count": 50,
+        },
+        {
+            "document_position": 34,
+            "official_mapped_prompt_count": 5,
+            "prompt_count": 5,
+        },
+        {
+            "document_position": 36,
+            "official_mapped_prompt_count": 133,
+            "prompt_count": 133,
+        },
+        {
+            "document_position": 40,
+            "official_mapped_prompt_count": 174,
+            "prompt_count": 174,
+        },
+        {
+            "document_position": 56,
+            "official_mapped_prompt_count": 128,
+            "prompt_count": 128,
+        },
+        {
+            "document_position": 58,
+            "official_mapped_prompt_count": 149,
+            "prompt_count": 149,
+        },
+        {
+            "document_position": 66,
+            "official_mapped_prompt_count": 85,
+            "prompt_count": 85,
+        },
+        {
+            "document_position": 70,
+            "official_mapped_prompt_count": 65,
+            "prompt_count": 65,
+        },
+    ],
+    "field_purpose_prompt_count": 21_971,
+    "first_source_prompt_occurrence_id": (
+        "psid-questionnaire-occurrence:"
+        "17d4dd6699adc429dc5548b30763fc11425469927c1f02c41c15ae6a93c3828a"
+    ),
+    "last_source_prompt_occurrence_id": (
+        "psid-questionnaire-occurrence:"
+        "d1c8bdfb99364eff8092c663c399e6e4391e6fcd9c6bb742bdda13f1df489980"
+    ),
+    "purpose_mapping_keyset_canonical_byte_size": 2_131_189,
+    "purpose_mapping_keyset_sha256": (
+        "2d1300eaae5c8259f1cda59907d2cf0b8174faf5a37a3549e6d6f3eec9618921"
+    ),
+    "purpose_mapping_domain_canonical_byte_size": 7_244_433,
+    "purpose_mapping_domain_sha256": (
+        "53158188e774c75fcbe6b7af57bfa747060c80193556eac7a0e289e02b63ed1e"
+    ),
+    "classification_row_count": 888,
+    "unclassified_prompt_count": 21_083,
+    "official_mapped_prompt_count": 832,
+    "missing_official_mapping_prompt_count": 21_139,
+    "official_only_prompt_count": 818,
+    "mixed_official_legacy_prompt_count": 14,
+    "legacy_only_prompt_count": 56,
+    "underdetermined_mapping_prompt_count": 21_153,
+    "official_edge_count": 980,
+    "official_only_edge_count": 963,
+    "mixed_official_edge_count": 17,
+    "official_purpose_observed_count": 14,
+    "legacy_edge_count": 74,
+    "mixed_legacy_edge_count": 14,
+    "legacy_only_edge_count": 60,
+    "legacy_row_count": 70,
+    "legacy_literals": [
+        "business_share",
+        "employment_status",
+        "farm_operating_expenses",
+        "farm_receipts",
+        "hours_worked",
+        "in_kind_receipt",
+        "income_source",
+        "job_tenure",
+        "net_farm_income",
+        "rate",
+        "receipt_indicator",
+        "time_not_worked",
+        "weeks_worked",
+    ],
+    "no_current_prompt_source_proved_no_purpose": True,
+    "normal_variant_known_positive_relation": (
+        "existing_same_wave_branch_compatible_anchor_witness_using_only_"
+        "explicit_official_purposes"
+    ),
+    "underdetermined_selects_early_failure_variant": True,
+    "selected_failure_variant_evaluates_o_h": False,
+    "selected_failure_variant_evaluates_o_p": False,
+    "normal_variant_o_h_remains_purpose_independent": True,
+    "normal_variant_o_h_precedes_o_p_witness_evaluation": True,
+    "text_transfer_forbidden": True,
+    "similarity_transfer_forbidden": True,
+    "legacy_literal_promotion_forbidden": True,
+    "manual_addition_forbidden": True,
+    "exact_text_transfer_audit": {
+        "missing_official_mapping_prompt_count": 21_139,
+        "mapped_text_class_conflict_count": 8,
+        "shared_text_ambiguous_prompt_count": 12,
+        "shared_text_prompt_count": 246,
+        "shared_text_unique_mapping_prompt_count": 234,
+        "unmatched_text_prompt_count": 20_893,
+    },
+}
+A19_SEMANTIC_BINDING_CONTRACT = {
+    "authenticated_annotation_document_count": 81,
+    "authenticated_complete_semantic_binding_relation_count": 0,
+    "audit_is_discovery_evidence_not_selected_branch_member_input": True,
+    "purpose_mapping_does_not_create_five_coordinate_binding": True,
+    "candidate_binding_forbidden": True,
+    "text_inference_forbidden": True,
+    "failure_selector_precedes_semantic_binding_evaluation": True,
+    "selected_failure_variant_serializes_near_match_rows": False,
+    "normal_variant_requires_inherited_complete_semantic_bindings": True,
+}
+A19_SOURCE_HIERARCHY_FAILURE_MEMBER = {
+    "authority_kind": "source_only_canonical_questionnaire_annotation",
+    "questionnaire_document_count": 81,
+    "questionnaire_document_keyset_sha256": (
+        "3326c9ba70b7f83f19b0ea934630d26ced73f230be1628cb74031d17160cb1a5"
+    ),
+    "questionnaire_document_domain_sha256": (
+        "b06139b147391d06b4f90a8f28de472a936ec08b3e9eb37001a5a70e2b3c3543"
+    ),
+    "purpose_mapping_row_count": 21_971,
+    "purpose_mapping_keyset_sha256": (
+        "2d1300eaae5c8259f1cda59907d2cf0b8174faf5a37a3549e6d6f3eec9618921"
+    ),
+    "purpose_mapping_domain_sha256": (
+        "53158188e774c75fcbe6b7af57bfa747060c80193556eac7a0e289e02b63ed1e"
+    ),
+    "purpose_mapping_disposition_counts": {
+        "complete_official_mapping": 818,
+        "partial_official_mapping_with_legacy_residue_underdetermined": 14,
+        "legacy_only_mapping_underdetermined": 56,
+        "missing_mapping_underdetermined": 21_083,
+    },
+    "canonical_order": "questionnaire_occurrence_source_order",
+    "status": "fail_source_purpose_mapping_underdetermined",
+}
+A19_SOURCE_HIERARCHY_MEMBER_IDENTITY = {
+    "authority_kind": ("pre_q5_source_hierarchy_failure_member_nonauthority"),
+    "canonical_byte_size": 877,
+    "canonicalization": "python-json-sort-keys-compact-ascii-no-nan-lf-v1",
+    "member_name": "hierarchy_annotation_authority",
+    "raw_sha256": (
+        "1651c50ff1f171ac420e55982cb060db70946f9283999c3d9edb2fa140d467c5"
+    ),
+    "status": "fail_source_purpose_mapping_underdetermined",
+}
+A19_A12_SUCCESSOR_AUTHORITY_HEADER_KEYS = [
+    "authority_kind",
+    "questionnaire_document_count",
+    "questionnaire_document_keyset_sha256",
+    "questionnaire_document_domain_sha256",
+    "questionnaire_page_text_derivation_byte_size",
+    "questionnaire_page_text_derivation_sha256",
+    "role_node_rows",
+    "role_node_count",
+    "role_node_domain_sha256",
+    "role_label_class_rows",
+    "role_label_class_count",
+    "role_label_class_domain_sha256",
+    "role_assignment_rows",
+    "role_assignment_count",
+    "role_assignment_keyset_sha256",
+    "role_assignment_domain_sha256",
+    "job_slot_rows",
+    "job_slot_count",
+    "job_slot_domain_sha256",
+    "questionnaire_component_slot_rows",
+    "questionnaire_component_slot_count",
+    "questionnaire_component_slot_domain_sha256",
+    "component_parent_resolution_rows",
+    "component_parent_resolution_count",
+    "component_parent_resolution_keyset_sha256",
+    "component_parent_resolution_domain_sha256",
+    "component_parent_resolution_disposition_counts",
+    "node_alias_rows",
+    "node_alias_count",
+    "node_alias_domain_sha256",
+    "outside_r_q_repeat_terminal_rows",
+    "outside_r_q_repeat_terminal_count",
+    "outside_r_q_repeat_terminal_keyset_sha256",
+    "outside_r_q_repeat_terminal_domain_sha256",
+    "noncatalog_aggregate_relation_disposition_rows",
+    "noncatalog_aggregate_relation_disposition_count",
+    "noncatalog_aggregate_relation_disposition_keyset_sha256",
+    "noncatalog_aggregate_relation_disposition_domain_sha256",
+    "in_domain_redirection_disposition_rows",
+    "in_domain_redirection_disposition_count",
+    "in_domain_redirection_disposition_keyset_sha256",
+    "in_domain_redirection_disposition_domain_sha256",
+    "global_relationship_rows",
+    "global_relationship_count",
+    "global_relationship_keyset_sha256",
+    "global_relationship_domain_sha256",
+    "catalog_only_job_disposition_rows",
+    "catalog_only_job_disposition_count",
+    "catalog_only_job_disposition_keyset_sha256",
+    "catalog_only_job_disposition_domain_sha256",
+    "questionnaire_page_count",
+    "questionnaire_page_domain_sha256",
+    "questionnaire_occurrence_count",
+    "questionnaire_occurrence_domain_sha256",
+    "flow_branch_count",
+    "flow_branch_domain_sha256",
+    "hierarchy_row_count",
+    "hierarchy_keyset_sha256",
+    "hierarchy_domain_sha256",
+    "positive_occurrence_row_count",
+    "positive_occurrence_keyset_sha256",
+    "positive_occurrence_domain_sha256",
+    "occurrence_raw_field_reference_count",
+    "occurrence_raw_field_reference_keyset_sha256",
+    "occurrence_raw_field_reference_domain_sha256",
+    "positive_field_join_row_count",
+    "positive_field_join_keyset_sha256",
+    "positive_field_join_domain_sha256",
+    "expanded_disposition_row_count",
+    "expanded_disposition_keyset_sha256",
+    "expanded_disposition_domain_sha256",
+    "near_match_source_annotation_count",
+    "near_match_source_annotation_keyset_sha256",
+    "near_match_source_annotation_domain_sha256",
+    "absence_proof_count",
+    "absence_proof_domain_sha256",
+    "canonical_order",
+    "status",
+]
+A19_SOURCE_HIERARCHY_FAILURE_CONTRACT = {
+    "selection_stage": (
+        "after_purpose_mapping_before_all_pass_member_construction"
+    ),
+    "selection_predicate": "underdetermined_mapping_prompt_count_gt_zero",
+    "fixed_selector_value": True,
+    "global_purpose_mapping_rows_constructed_before_selection": True,
+    "selected_failure_variant_serializes_per_era_purpose_mapping_rows": False,
+    "failure_member_keys": [
+        "authority_kind",
+        "questionnaire_document_count",
+        "questionnaire_document_keyset_sha256",
+        "questionnaire_document_domain_sha256",
+        "purpose_mapping_row_count",
+        "purpose_mapping_keyset_sha256",
+        "purpose_mapping_domain_sha256",
+        "purpose_mapping_disposition_counts",
+        "canonical_order",
+        "status",
+    ],
+    "forbidden_authority_header_keys": [
+        "questionnaire_page_text_derivation_byte_size",
+        "questionnaire_page_text_derivation_sha256",
+        "role_node_rows",
+        "role_node_count",
+        "role_node_domain_sha256",
+        "role_label_class_rows",
+        "role_label_class_count",
+        "role_label_class_domain_sha256",
+        "role_assignment_rows",
+        "role_assignment_count",
+        "role_assignment_keyset_sha256",
+        "role_assignment_domain_sha256",
+        "job_slot_rows",
+        "job_slot_count",
+        "job_slot_domain_sha256",
+        "questionnaire_component_slot_rows",
+        "questionnaire_component_slot_count",
+        "questionnaire_component_slot_domain_sha256",
+        "component_parent_resolution_rows",
+        "component_parent_resolution_count",
+        "component_parent_resolution_keyset_sha256",
+        "component_parent_resolution_domain_sha256",
+        "component_parent_resolution_disposition_counts",
+        "node_alias_rows",
+        "node_alias_count",
+        "node_alias_domain_sha256",
+        "outside_r_q_repeat_terminal_rows",
+        "outside_r_q_repeat_terminal_count",
+        "outside_r_q_repeat_terminal_keyset_sha256",
+        "outside_r_q_repeat_terminal_domain_sha256",
+        "noncatalog_aggregate_relation_disposition_rows",
+        "noncatalog_aggregate_relation_disposition_count",
+        "noncatalog_aggregate_relation_disposition_keyset_sha256",
+        "noncatalog_aggregate_relation_disposition_domain_sha256",
+        "in_domain_redirection_disposition_rows",
+        "in_domain_redirection_disposition_count",
+        "in_domain_redirection_disposition_keyset_sha256",
+        "in_domain_redirection_disposition_domain_sha256",
+        "global_relationship_rows",
+        "global_relationship_count",
+        "global_relationship_keyset_sha256",
+        "global_relationship_domain_sha256",
+        "catalog_only_job_disposition_rows",
+        "catalog_only_job_disposition_count",
+        "catalog_only_job_disposition_keyset_sha256",
+        "catalog_only_job_disposition_domain_sha256",
+        "questionnaire_page_count",
+        "questionnaire_page_domain_sha256",
+        "questionnaire_occurrence_count",
+        "questionnaire_occurrence_domain_sha256",
+        "flow_branch_count",
+        "flow_branch_domain_sha256",
+        "hierarchy_row_count",
+        "hierarchy_keyset_sha256",
+        "hierarchy_preproof_domain_sha256",
+        "hierarchy_domain_sha256",
+        "positive_occurrence_row_count",
+        "positive_occurrence_keyset_sha256",
+        "positive_occurrence_domain_sha256",
+        "occurrence_raw_field_reference_count",
+        "occurrence_raw_field_reference_keyset_sha256",
+        "occurrence_raw_field_reference_domain_sha256",
+        "positive_field_join_row_count",
+        "positive_field_join_keyset_sha256",
+        "positive_field_join_domain_sha256",
+        "expanded_disposition_row_count",
+        "expanded_disposition_keyset_sha256",
+        "expanded_disposition_domain_sha256",
+        "near_match_source_annotation_count",
+        "near_match_source_annotation_keyset_sha256",
+        "near_match_source_annotation_domain_sha256",
+        "absence_proof_count",
+        "absence_proof_domain_sha256",
+    ],
+    "forbidden_evaluation_or_serialization": [
+        "O_H",
+        "O_P",
+        "H",
+        "reverse_cover",
+        "purpose_expansion",
+        "semantic_bindings",
+        "questionnaire_page_rows",
+        "questionnaire_occurrence_rows",
+        "flow_branch_rows",
+        "role_node_rows",
+        "role_label_class_rows",
+        "role_assignment_rows",
+        "job_slot_rows",
+        "questionnaire_component_slot_rows",
+        "component_parent_resolution_rows",
+        "node_alias_rows",
+        "outside_r_q_repeat_terminal_rows",
+        "noncatalog_aggregate_relation_disposition_rows",
+        "in_domain_redirection_disposition_rows",
+        "global_relationship_rows",
+        "catalog_only_job_disposition_rows",
+        "whole_document_locators",
+        "field_stream_locators",
+        "hierarchy_preproof_rows",
+        "hierarchy_preproof_domain_sha256",
+        "hierarchy_rows",
+        "hierarchy_domain_sha256",
+        "positive_occurrence_rows",
+        "occurrence_raw_field_reference_rows",
+        "positive_field_join_rows",
+        "expanded_disposition_rows",
+        "near_match_source_annotation_rows",
+        "absence_proofs",
+        "all_pass_only_counts_keysets_and_domain_digests",
+        "per_era_purpose_mapping_rows",
+        "all_per_era_arrays_counts_keysets_and_domain_digests",
+        "era_rows",
+        "era_row_count",
+        "era_id_order",
+        "era_domain_sha256",
+        "normal_authority_header",
+        "A12-T2-R04_overall_gate",
+        "Q5",
+        "G17-C01",
+        "official_inventory",
+        "official_slot_registry",
+        "authority_emission",
+        "production_output",
+    ],
+    "failure_member": A19_SOURCE_HIERARCHY_FAILURE_MEMBER,
+    "failure_member_canonical_byte_size": 877,
+    "failure_member_raw_sha256": (
+        "1651c50ff1f171ac420e55982cb060db70946f9283999c3d9edb2fa140d467c5"
+    ),
+    "source_hierarchy_member_identity_keys": [
+        "authority_kind",
+        "canonical_byte_size",
+        "canonicalization",
+        "member_name",
+        "raw_sha256",
+        "status",
+    ],
+    "source_hierarchy_member_identity": A19_SOURCE_HIERARCHY_MEMBER_IDENTITY,
+    "source_hierarchy_member_identity_canonical_byte_size": 351,
+    "source_hierarchy_member_identity_raw_sha256": (
+        "077c6a19e44d8abdf96422a8d2d203fdf263ecbbfb70cb9bb3dc9522a3dcd2bd"
+    ),
+    "r04_dual_reconstruction_required": True,
+    "r04_independent_reconstruction_subresult_count": 2,
+    "r04_independent_reconstruction_subresult_status": (
+        "pass_independent_source_reconstruction"
+    ),
+    "r04_independent_reconstruction_subresults_require_exact_selected_"
+    "member_bytes": True,
+    "a12_t2_r04_overall_gate_preserved": True,
+    "a12_t2_r04_selected_failure_gate_pass_permitted": False,
+    "r05_requires_passing_normal_member": True,
+    "r05_pass_or_certification_emission_permitted": False,
+    "q5_or_authority_emission_permitted": False,
+}
+A19_HIERARCHY_CONSTRUCTION_CONTRACT = {
+    "canonicalization": ("python-json-sort-keys-compact-ascii-no-nan-lf-v1"),
+    "applicability": "only_if_purpose_failure_selector_false",
+    "selected_failure_variant_executes_hierarchy_construction": False,
+    "preproof_row_keys": [
+        "questionnaire_slot_id",
+        "interview_wave",
+        "role",
+        "relationship_id",
+        "job_slot",
+        "questionnaire_component_slot",
+        "slot_kind",
+        "hierarchy_presence",
+        "hierarchy_occurrence_ids",
+        "flow_branch_ids",
+        "flow_branch_paths",
+        "source_locator_ids",
+    ],
+    "final_row_keys": [
+        "questionnaire_slot_id",
+        "interview_wave",
+        "role",
+        "relationship_id",
+        "job_slot",
+        "questionnaire_component_slot",
+        "slot_kind",
+        "hierarchy_presence",
+        "hierarchy_occurrence_ids",
+        "flow_branch_ids",
+        "flow_branch_paths",
+        "source_locator_ids",
+        "hierarchy_absence_proof_id",
+    ],
+    "preproof_projection_rule": (
+        "delete_only_hierarchy_absence_proof_id_without_placeholder"
+    ),
+    "header_insertions": [
+        "hierarchy_preproof_domain_sha256",
+        "purpose_mapping_row_count",
+        "purpose_mapping_keyset_sha256",
+        "purpose_mapping_domain_sha256",
+        "purpose_mapping_disposition_counts",
+    ],
+    "per_era_insertion": "purpose_mapping_rows",
+    "g17_c01_normal_projection_sides": ["expected", "actual"],
+    "g17_c01_normal_per_era_insertion_order": [
+        "hierarchy_rows",
+        "purpose_mapping_rows",
+        "positive_occurrence_rows",
+    ],
+    "g17_c01_normal_direct_concatenation_header_members": [
+        "purpose_mapping_row_count",
+        "purpose_mapping_keyset_sha256",
+        "purpose_mapping_domain_sha256",
+        "purpose_mapping_disposition_counts",
+    ],
+    "selected_failure_variant_executes_g17_c01_projection": False,
+    "search_implementation_keys": [
+        "authority_kind",
+        "questionnaire_page_text_derivation_sha256",
+        "questionnaire_page_domain_sha256",
+        "questionnaire_occurrence_domain_sha256",
+        "flow_branch_domain_sha256",
+        "role_node_domain_sha256",
+        "job_slot_domain_sha256",
+        "questionnaire_component_slot_domain_sha256",
+        "node_alias_domain_sha256",
+        "global_relationship_domain_sha256",
+        "hierarchy_preproof_domain_sha256",
+        "positive_occurrence_domain_sha256",
+        "near_match_source_annotation_count",
+        "near_match_source_annotation_keyset_sha256",
+        "near_match_source_annotation_domain_sha256",
+    ],
+    "replaced_search_key": "hierarchy_domain_sha256",
+    "preproof_digest_formula": (
+        "D0=SHA256(C(direct_era_order_concatenation_of_preproof_rows))"
+    ),
+    "proof_id_preimage_order": [
+        "era_id",
+        "target_predicate",
+        "searched_interview_waves",
+        "searched_locator_ids",
+        "searched_layout_keyset_sha256",
+        "searched_codebook_keyset_sha256",
+        "search_implementation",
+    ],
+    "proof_id_formula": (
+        "A_h=psid-absence-proof:+SHA256(C(proof_id_preimage))"
+    ),
+    "final_digest_formula": (
+        "D1=SHA256(C(direct_era_order_concatenation_of_final_rows))"
+    ),
+    "dependency_order": [
+        "preproof_rows",
+        "hierarchy_preproof_domain_sha256",
+        "search_implementation",
+        "absence_proof_ids",
+        "final_hierarchy_rows",
+        "hierarchy_domain_sha256",
+        "dependent_proof_expanded_era_and_member_digests",
+    ],
+    "preproof_forbidden_dependencies": [
+        "hierarchy_absence_proof_id",
+        "final_hierarchy_row",
+        "hierarchy_domain_sha256",
+        "absence_proof",
+        "absence_proof_domain_sha256",
+        "expanded_disposition_row",
+        "expanded_disposition_domain_sha256",
+        "era_digest",
+        "member_digest",
+    ],
+    "placeholder_forbidden": True,
+    "fixed_point_iteration_forbidden": True,
+}
+A19_SUCCESSOR_ROUTING_CONTRACT = {
+    "historical_amendment18_next_required_state": (
+        "A19_SUCCESSOR_PROGRAM_STOP"
+    ),
+    "active_next_required_state": "A20_SUCCESSOR_PROGRAM_STOP",
+    "active_lifecycle_derivation": (
+        "deep_copy_A18_R06_RESULT_CONTRACT_lifecycle_replace_only_"
+        "next_required_state"
+    ),
+    "all_other_r06_members_unchanged": True,
+    "current_amendment": 19,
+    "current_revision": 21,
+    "deferred_program_amendment": 20,
+    "deferred_program_revision": 22,
+    "deferred_campaign_substance": "OUT_OF_SCOPE",
+    "historical_identifier_is_not_active_alias": True,
+    "r06_artifact_blocked_while_r05_nonpass": True,
+}
+A19_ACTIVATION_TRANSITION = {
+    "activation_affecting": True,
+    "ambiguity_fails_closed_into_obligation": True,
+    "simulated_state_authority": "NONAUTHORITY",
+    "terminal_revision": 21,
+    "terminal_amendment": 19,
+    "ordered_closure_domain": [13, 14, 15, 16, 17, 18, 19],
+    "closure_count": 7,
+    "closure_count_subtrahend": 14,
+    "public_entrypoint": "validate_ratification_operativity",
+    "same_state_required": True,
+    "full_pinned_battery_required": True,
+    "all_nonpassing_counts": 0,
+    "receipt_inside_candidate_bytes": False,
+    "activation_requires_later_registry_repin": True,
+    "production_registry_revision_in_draft": 20,
+    "production_oracle_changed_by_draft": False,
+}
+A19_EXPECTED_MUTATIONS = (
+    "source_purpose_totality_or_binding_disposition_forged",
+    "hierarchy_preproof_final_digest_order_forged",
+    "r06_successor_program_stop_numbering_forged",
+)
+A19_MUTATION_DOMAIN_BYTE_SIZE = 151
+A19_MUTATION_DOMAIN_SHA256 = (
+    "002aa021325c18e311cc778562ad0e937468a90c378db0740290fcf617929101"
+)
+A19_MUTATION_CENSUS = {
+    "inherited_complete_mutation_count": 100,
+    "inherited_complete_mutation_domain_sha256": (
+        "fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3"
+    ),
+    "amendment16_mutation_count": 7,
+    "amendment16_mutation_domain_sha256": A16_MUTATION_DOMAIN_SHA256,
+    "amendment17_mutation_count": 3,
+    "amendment17_mutation_domain_sha256": A17_MUTATION_DOMAIN_SHA256,
+    "amendment18_mutation_count": 3,
+    "amendment18_mutation_domain_sha256": A18_MUTATION_DOMAIN_SHA256,
+}
+A19_SUPERSESSION_MAP = (
+    (
+        "§19.3.3 O_H-before-purpose-classification order and O_P "
+        "prompt-classification and universal-consumption law",
+        "Superseded in construction order: authenticate the fixed prompt "
+        "denominator, build the complete purpose rows and census, compute U, "
+        "and select the failure or normal variant before O_H. The selected "
+        "failure arm stops without O_H. On the normal arm O_H remains "
+        "purpose-independent and runs after the selector but before O_P "
+        "witness evaluation. Only explicit official purposes can enter O_P; "
+        "no missing or legacy value is defaulted or promoted.",
+    ),
+    (
+        "§§19.3.3 and 26.6.1 effective authority keyset, canonical_order, "
+        "pass | fail status, per-era keysets, and direct-concatenation law",
+        "Superseded by the status-discriminated union. The selected failure "
+        "arm is exactly the ten-key header and new failure status; all 73 "
+        "pass-only effective header keys and every era row are forbidden. "
+        "Its global purpose-mapping relation is a completed selector "
+        "precursor, not a serialized per-era purpose_mapping_rows array. "
+        "The normal arm composes §26.6.1's 78-key successor header with only "
+        "the five named A19 header members and per-era purpose_mapping_rows, "
+        "and otherwise retains the inherited status, keysets, and "
+        "concatenation rules.",
+    ),
+    (
+        "§19.3.3 independently reviewed complete semantic_bindings use "
+        "and cross-check law",
+        "Preserved on the normal arm. It is not evaluated on the selected "
+        "failure arm, which serializes neither an empty binding nor a "
+        "near-match row; candidate, text, inventory, crosswalk, or reader "
+        "content remains forbidden.",
+    ),
+    (
+        "§19.3.3 hierarchy row proof-ID, hierarchy digest, search object, "
+        "and proof serialization law",
+        "On the normal arm, superseded only in construction order by the D0 "
+        "preproof-row projection, D0-bearing 15-key search object, proof IDs, "
+        "final rows, and D1 final digest. On the selected failure arm every "
+        "such member and digest is forbidden.",
+    ),
+    (
+        "§19.3.3 raw-field ambiguity abort, occurrence-reference and "
+        "positive-join nonempty/equal-count cover, and expanded-disposition "
+        "join/proof tagged union",
+        "Preserved on the normal arm. They are not executed on the selected "
+        "failure arm; no empty, null, partial, or registration-required row "
+        "may stand in for them.",
+    ),
+    (
+        "§19.3.3 two-literal proof conclusion and Class-A/Class-B/"
+        "inventory keyed joins",
+        "Preserved on the normal arm. The failure arm creates no third proof "
+        "conclusion and prohibits every proof, join, inventory key, or "
+        "downstream projection.",
+    ),
+    (
+        "§§19.4.2 and 26.10.1 G17-C01 expected/actual era_annotation_rows, "
+        "Q5, inventory, slot, and authority projections",
+        "On the normal arm, both expected and actual G17-C01 era projections "
+        "insert per-era purpose_mapping_rows immediately after hierarchy_rows "
+        "and before positive_occurrence_rows; direct era-order concatenation "
+        "must reproduce purpose_mapping_row_count, "
+        "purpose_mapping_keyset_sha256, purpose_mapping_domain_sha256, and "
+        "purpose_mapping_disposition_counts in the authority header. All "
+        "other projection law is preserved. The selected failure arm remains "
+        "expressly prohibited, and its ten-key nonauthority header cannot "
+        "occupy G17-C01.",
+    ),
+    (
+        "§26.11.2 A12-T2-R04 gate and §§29.4.4–29.4.5 "
+        "source-member identity, R04, and passing R05 certificate",
+        "The overall §26.11.2 A12-T2-R04 gate is preserved and is not "
+        "executed or passing on the selected failure arm because its H, O_H, "
+        "reverse-cover, purpose-expansion, and field-join conjuncts are "
+        "forbidden. Only its two independent reconstruction subresults may "
+        "each return pass_independent_source_reconstruction by exactly "
+        "reproducing the selected 877-byte failure member. The six-key "
+        "identity uses the exact failure-specific authority kind and "
+        "fail_source_purpose_mapping_underdetermined status. R05 and its "
+        "certificate still require a passing normal member and cannot pass "
+        "on the current input.",
+    ),
+    (
+        "§32.4.4, §32.7, and §32.8 active A19 successor-program stop",
+        "Historical A18 bytes remain exact; active post-A19 routing is "
+        "A20_SUCCESSOR_PROGRAM_STOP with no alias, and the deferred campaign "
+        "is Amendment 20/revision 22 and out of scope.",
+    ),
+    (
+        "§32.5.1 active implementation rows",
+        "Superseded as active prospective-validation pins only by the "
+        "Amendment-19 table. Historical identities and the three-path domain "
+        "remain immutable.",
+    ),
+    (
+        "§31.3 executed-transition obligation and generalized oracle",
+        "Lawfully unchanged and applied to the mandatory revision-21 "
+        "same-state demonstration. Activation still requires a later real "
+        "registry repin.",
+    ),
+)
+A19_NEW_IDENTIFIERS = {
+    "schema": [
+        "amendment_19_source_hierarchy_member_construction_law.v1",
+    ],
+    "disposition_status_reason_lifecycle": [
+        "complete_official_mapping",
+        "partial_official_mapping_with_legacy_residue_underdetermined",
+        "legacy_only_mapping_underdetermined",
+        "missing_mapping_underdetermined",
+        "fail_source_purpose_mapping_underdetermined",
+        "A20_SUCCESSOR_PROGRAM_STOP",
+    ],
+    "authority_kind_and_canonical_order": [
+        "pre_q5_source_hierarchy_failure_member_nonauthority",
+        "questionnaire_occurrence_source_order",
+    ],
+    "member": [
+        "hierarchy_preproof_domain_sha256",
+        "purpose_mapping_rows",
+        "source_classification_row_id",
+        "serialized_source_literals",
+        "explicit_official_purposes",
+        "unresolved_legacy_literals",
+        "purpose_mapping_disposition",
+        "purpose_mapping_row_count",
+        "purpose_mapping_keyset_sha256",
+        "purpose_mapping_domain_sha256",
+        "purpose_mapping_disposition_counts",
+    ],
+    "python": [
+        "_validate_amendment19_ratification_design",
+        "_validate_inherited_amendment19_ratification_design",
+        "run_amendment19_member_law_mutation_tests",
+    ],
+}
+A19_NORMATIVE_MANIFEST = {
+    "schema_version": (
+        "amendment_19_source_hierarchy_member_construction_law.v1"
+    ),
+    "canonicalization": ("python-json-sort-keys-compact-ascii-no-nan-lf-v1"),
+    "prefix_identity": {
+        "blob_oid": REVISION20_BLOB_OID,
+        "byte_size": REVISION20_BYTE_SIZE,
+        "raw_sha256": REVISION20_SHA256,
+    },
+    "authenticated_build_input_envelope": {
+        "canonical_byte_size": 168_504,
+        "raw_sha256": (
+            "f34ced6e80e1bf72e68635b4f729c5b983c094fd25d16105a6c161ccd52fff63"
+        ),
+        "row_count": 279,
+    },
+    "purpose_mapping_contract": A19_PURPOSE_MAPPING_CONTRACT,
+    "semantic_binding_contract": A19_SEMANTIC_BINDING_CONTRACT,
+    "source_hierarchy_failure_contract": (
+        A19_SOURCE_HIERARCHY_FAILURE_CONTRACT
+    ),
+    "hierarchy_construction_contract": A19_HIERARCHY_CONSTRUCTION_CONTRACT,
+    "successor_routing_contract": A19_SUCCESSOR_ROUTING_CONTRACT,
+    "activation_transition": A19_ACTIVATION_TRANSITION,
+    "mutation_inventory": list(A19_EXPECTED_MUTATIONS),
+    "mutation_domain_byte_size": A19_MUTATION_DOMAIN_BYTE_SIZE,
+    "mutation_domain_sha256": A19_MUTATION_DOMAIN_SHA256,
+    "mutation_census": A19_MUTATION_CENSUS,
+    "supersession_map": [list(row) for row in A19_SUPERSESSION_MAP],
+    "new_identifiers": A19_NEW_IDENTIFIERS,
+    "production_registry_boundary": {
+        "closure_count": 6,
+        "ordered_closure_domain": [13, 14, 15, 16, 17, 18],
+        "revision": 20,
+        "unchanged_by_draft": True,
+    },
+}
+
 A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
     "27.2": "2e1d4e8282e393f2f8f8092c5b9823d69a4e6926fb5fbd753b77813e47f7941e",
     "27.3": "50b5a2e780a4b5b7152390e85e01df5f5397f5263fb2dd3dae43947a96f91ff0",
@@ -2936,6 +3828,38 @@ _A18_IMPLEMENTATION_PIN_VALUE_GROUPS = (
     "publisher_sha256",
 )
 
+_A19_IMPLEMENTATION_PIN_PATTERN = re.compile(
+    r"The Amendment-19-governed active identity is exactly mode "
+    r"`(?P<mode>[0-9]+)` and these\n"
+    r"three path/blob/byte/hash rows:\n\n"
+    r"\| Path \| Git blob \| Bytes \| Raw SHA-256 \|\n"
+    r"\|---\|---\|---:\|---\|\n"
+    r"\| `scripts/validate_amendment13_execution_law\.py` \| "
+    r"`(?P<validator_blob>[0-9a-f]{40})` \| "
+    r"(?P<validator_size>[0-9][0-9,]*) \| "
+    r"`(?P<validator_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `tests/test_validate_amendment13_execution_law\.py` \| "
+    r"`(?P<test_blob>[0-9a-f]{40})` \| "
+    r"(?P<test_size>[0-9][0-9,]*) \| "
+    r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `scripts/build_amendment13_tier2_repairs\.py` \| "
+    r"`(?P<publisher_blob>[0-9a-f]{40})` \| "
+    r"(?P<publisher_size>[0-9][0-9,]*) \| "
+    r"`(?P<publisher_sha256>[0-9a-f]{64})` \|\n"
+)
+_A19_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+    "mode",
+    "validator_blob",
+    "validator_size",
+    "validator_sha256",
+    "test_blob",
+    "test_size",
+    "test_sha256",
+    "publisher_blob",
+    "publisher_size",
+    "publisher_sha256",
+)
+
 
 def _amendment15_text(raw: bytes) -> str:
     _require(
@@ -4078,9 +5002,142 @@ def _parse_amendment18_projection(raw: bytes) -> dict[str, Any]:
     }
 
 
+def _amendment19_text(raw: bytes) -> str:
+    """Return only the A19 suffix while preserving every inherited byte."""
+
+    _require(
+        len(raw) > REVISION20_BYTE_SIZE
+        and _sha256(raw[:REVISION20_BYTE_SIZE]) == REVISION20_SHA256
+        and _git_blob_oid(raw[:REVISION20_BYTE_SIZE]) == REVISION20_BLOB_OID
+        and raw[REVISION20_BYTE_SIZE:].startswith(AMENDMENT19_BOUNDARY)
+        and raw.count(AMENDMENT19_BOUNDARY) == 1
+        and raw.endswith(b"\n"),
+        "governing Amendment-19 document violates immutable-prefix law",
+    )
+    suffix = raw[REVISION20_BYTE_SIZE:]
+    headings = list(_AMENDMENT_SECTION_PATTERN.finditer(suffix))
+    _require(
+        headings and int(headings[0].group("amendment")) == 19,
+        "governing Amendment-19 boundary sequence drift",
+    )
+    if len(headings) > 1:
+        next_boundary = headings[1].start()
+        _require(
+            next_boundary > 0
+            and suffix[next_boundary - 1 : next_boundary] == b"\n",
+            "governing Amendment-19 successor boundary drift",
+        )
+        suffix = suffix[: next_boundary - 1]
+    try:
+        return suffix.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise LawError("governing Amendment-19 suffix is not UTF-8") from error
+
+
+def _amendment19_implementation_pin_match(section: str) -> re.Match[str]:
+    matches = list(_A19_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+    _require(
+        len(matches) == 1,
+        "Amendment-19 implementation pin block grammar drift",
+    )
+    return matches[0]
+
+
+def _normalize_amendment19_implementation_pin_values(section: str) -> str:
+    """Normalize only the ten independently authenticated A19 pin values."""
+
+    match = _amendment19_implementation_pin_match(section)
+    parts: list[str] = []
+    cursor = 0
+    for group in _A19_IMPLEMENTATION_PIN_VALUE_GROUPS:
+        start, end = match.span(group)
+        _require(start >= cursor, "Amendment-19 pin capture ordering drift")
+        parts.extend((section[cursor:start], f"<{group.upper()}>"))
+        cursor = end
+    parts.append(section[cursor:])
+    return "".join(parts)
+
+
+def _parse_amendment19_implementation_pins(raw: bytes) -> dict[str, Any]:
+    section = _amendment19_text(raw)
+    match = _amendment19_implementation_pin_match(section)
+    return {
+        "mode": match.group("mode"),
+        "files": [
+            {
+                "path": "scripts/validate_amendment13_execution_law.py",
+                "blob_oid": match.group("validator_blob"),
+                "byte_size": int(
+                    match.group("validator_size").replace(",", "")
+                ),
+                "sha256": match.group("validator_sha256"),
+            },
+            {
+                "path": "tests/test_validate_amendment13_execution_law.py",
+                "blob_oid": match.group("test_blob"),
+                "byte_size": int(match.group("test_size").replace(",", "")),
+                "sha256": match.group("test_sha256"),
+            },
+            {
+                "path": "scripts/build_amendment13_tier2_repairs.py",
+                "blob_oid": match.group("publisher_blob"),
+                "byte_size": int(
+                    match.group("publisher_size").replace(",", "")
+                ),
+                "sha256": match.group("publisher_sha256"),
+            },
+        ],
+    }
+
+
+def _parse_a19_normative_manifest(section: str) -> dict[str, Any]:
+    marker = (
+        "The exact Amendment-19 normative manifest is this one-line "
+        "terminal-LF canonical JSON value:\n\n"
+    )
+    remainder = _unique_after(
+        section,
+        marker,
+        "Amendment-19 normative manifest",
+    )
+    _require(
+        remainder.startswith("~~~text\n"),
+        "Amendment-19 normative manifest fence start drift",
+    )
+    fenced = remainder[len("~~~text\n") :]
+    _require(
+        "\n~~~\n" in fenced,
+        "Amendment-19 normative manifest fence end drift",
+    )
+    body, _ = fenced.split("\n~~~\n", 1)
+    _require(
+        "\n" not in body and bool(body),
+        "Amendment-19 normative manifest line shape drift",
+    )
+    return _strict_canonical_json(
+        body.encode("ascii") + b"\n",
+        "Amendment-19 normative manifest",
+    )
+
+
+def _parse_amendment19_projection(raw: bytes) -> dict[str, Any]:
+    section = _amendment19_text(raw)
+    return {
+        "section_semantic_sha256": _sha256(
+            _normalize_amendment19_implementation_pin_values(section).encode(
+                "utf-8"
+            )
+        ),
+        "implementation_pins": _parse_amendment19_implementation_pins(raw),
+        "normative_manifest": _parse_a19_normative_manifest(section),
+    }
+
+
 def _parse_active_implementation_pins(raw: bytes) -> dict[str, Any]:
     """Select the newest append-only implementation-pin successor."""
 
+    if len(raw) > REVISION20_BYTE_SIZE:
+        return _parse_amendment19_implementation_pins(raw)
     if len(raw) > REVISION19_BYTE_SIZE:
         return _parse_amendment18_implementation_pins(raw)
     if len(raw) > REVISION18_BYTE_SIZE:
@@ -4632,6 +5689,7 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
         "amendment16": _parse_amendment16_projection(raw),
         "amendment17": _parse_amendment17_projection(raw),
         "amendment18": _parse_amendment18_projection(raw),
+        "amendment19": _parse_amendment19_projection(raw),
     }
     _validate_identifier_inventory_consistency(projection)
     return projection
@@ -5073,6 +6131,14 @@ def _canonical_amendment18_projection() -> dict[str, Any]:
     }
 
 
+def _canonical_amendment19_projection() -> dict[str, Any]:
+    return {
+        "section_semantic_sha256": A19_SECTION_SEMANTIC_SHA256,
+        "implementation_pins": None,
+        "normative_manifest": copy.deepcopy(A19_NORMATIVE_MANIFEST),
+    }
+
+
 @lru_cache(maxsize=1)
 def _canonical_draft_document_projection() -> dict[str, Any]:
     """Build the immutable document cross-check independently of a caller law."""
@@ -5135,6 +6201,7 @@ def _canonical_draft_document_projection() -> dict[str, Any]:
         "amendment16": _canonical_amendment16_projection(),
         "amendment17": _canonical_amendment17_projection(),
         "amendment18": _canonical_amendment18_projection(),
+        "amendment19": _canonical_amendment19_projection(),
     }
 
 
@@ -5154,7 +6221,10 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
     )
     current_design = (ROOT / DESIGN_PATH).read_bytes()
     label = "Amendment-14"
-    if len(current_design) > REVISION19_BYTE_SIZE:
+    if len(current_design) > REVISION20_BYTE_SIZE:
+        pins = _parse_amendment19_implementation_pins(current_design)
+        label = "Amendment-19"
+    elif len(current_design) > REVISION19_BYTE_SIZE:
         pins = _parse_amendment18_implementation_pins(current_design)
         label = "Amendment-18"
     elif len(current_design) > REVISION18_BYTE_SIZE:
@@ -5242,9 +6312,13 @@ def _validate_document_semantic_projection(
     expected["amendment18"]["implementation_pins"] = projection["amendment18"][
         "implementation_pins"
     ]
+    expected["amendment19"]["implementation_pins"] = projection["amendment19"][
+        "implementation_pins"
+    ]
     _require(
         projection == expected,
-        "governing Amendment-14/15/16/17/18 document semantic projection drift",
+        "governing Amendment-14/15/16/17/18/19 document semantic projection "
+        "drift",
     )
     _verify_implementation_pins(
         projection["amendment14"]["implementation_pins"]
@@ -5717,6 +6791,63 @@ def _validate_amendment18_ratification_design(raw: bytes) -> None:
     _validate_inherited_amendment18_ratification_design(raw)
 
 
+def _validate_inherited_amendment19_ratification_design(raw: bytes) -> None:
+    """Preserve the revision-20 prefix and A19 semantics in every successor."""
+
+    _require(
+        len(raw) > REVISION20_BYTE_SIZE
+        and _sha256(raw[:REVISION20_BYTE_SIZE]) == REVISION20_SHA256
+        and _git_blob_oid(raw[:REVISION20_BYTE_SIZE]) == REVISION20_BLOB_OID
+        and raw[REVISION20_BYTE_SIZE:].startswith(AMENDMENT19_BOUNDARY),
+        "Amendment-19 ratification design lacks the immutable revision-20 "
+        "prefix or Amendment-19 boundary",
+    )
+    _validate_inherited_amendment18_ratification_design(raw)
+    projection = _parse_amendment19_projection(raw)
+    manifest = projection["normative_manifest"]
+    _validate_a19_purpose_mapping_contract(
+        manifest["purpose_mapping_contract"]
+    )
+    _validate_a19_semantic_binding_contract(
+        manifest["semantic_binding_contract"]
+    )
+    _validate_a19_source_hierarchy_failure_contract(
+        manifest["source_hierarchy_failure_contract"]
+    )
+    _validate_a19_hierarchy_construction_contract(
+        manifest["hierarchy_construction_contract"]
+    )
+    _validate_a19_successor_and_activation_contract(
+        manifest["successor_routing_contract"],
+        manifest["activation_transition"],
+        manifest["production_registry_boundary"],
+    )
+    _require(
+        manifest["mutation_inventory"] == list(A19_EXPECTED_MUTATIONS)
+        and len(canonical_json_bytes(manifest["mutation_inventory"]))
+        == A19_MUTATION_DOMAIN_BYTE_SIZE
+        and _sha256(canonical_json_bytes(manifest["mutation_inventory"]))
+        == A19_MUTATION_DOMAIN_SHA256,
+        "Amendment-19 mutation manifest drift",
+    )
+    expected = _canonical_amendment19_projection()
+    expected["implementation_pins"] = projection["implementation_pins"]
+    _require(
+        projection == expected,
+        "Amendment-19 ratification design semantic projection drift",
+    )
+
+
+def _validate_amendment19_ratification_design(raw: bytes) -> None:
+    """Require an Amendment-19-terminal design with exact inherited law."""
+
+    _require(
+        _terminal_design_amendment(raw) == 19,
+        "Amendment-19 ratification design is not terminal Amendment 19",
+    )
+    _validate_inherited_amendment19_ratification_design(raw)
+
+
 def _validate_non_a13_ratification_design(
     raw: bytes,
     amendment_number: int,
@@ -5744,6 +6875,10 @@ def _validate_non_a13_ratification_design(
         _validate_amendment17_ratification_design(raw)
     elif amendment_number == 18:
         _validate_amendment18_ratification_design(raw)
+    elif amendment_number == 19:
+        _validate_amendment19_ratification_design(raw)
+    elif amendment_number > 19:
+        _validate_inherited_amendment19_ratification_design(raw)
     elif amendment_number > 18:
         _validate_inherited_amendment18_ratification_design(raw)
 
@@ -9661,6 +10796,1138 @@ def run_amendment18_contract_mutation_tests() -> tuple[str, ...]:
         and _sha256(canonical_json_bytes(list(rejected_tuple)))
         == A18_MUTATION_DOMAIN_SHA256,
         "Amendment-18 mutation inventory drift",
+    )
+    return rejected_tuple
+
+
+def _a19_same_json_types(candidate: Any, expected: Any) -> bool:
+    if type(candidate) is not type(expected):
+        return False
+    if isinstance(expected, Mapping):
+        return set(candidate) == set(expected) and all(
+            _a19_same_json_types(candidate[key], expected[key])
+            for key in expected
+        )
+    if isinstance(expected, list):
+        return len(candidate) == len(expected) and all(
+            _a19_same_json_types(left, right)
+            for left, right in zip(candidate, expected, strict=True)
+        )
+    return True
+
+
+def _validate_a19_purpose_mapping_contract(
+    candidate: Mapping[str, Any],
+) -> None:
+    message = "Amendment-19 purpose-mapping totality contract drift"
+    try:
+        _require(
+            isinstance(candidate, Mapping)
+            and _a19_same_json_types(candidate, A19_PURPOSE_MAPPING_CONTRACT),
+            message,
+        )
+        dispositions = candidate["disposition_counts"]
+        document_rows = candidate["classification_document_rows"]
+        underdetermined_count = sum(
+            dispositions[key]
+            for key in candidate["disposition_order"]
+            if key != "complete_official_mapping"
+        )
+        _require(
+            len(candidate["official_purpose_order"]) == 35
+            and len(set(candidate["official_purpose_order"])) == 35
+            and len(candidate["legacy_literals"]) == 13
+            and len(set(candidate["legacy_literals"])) == 13
+            and not set(candidate["legacy_literals"])
+            & set(candidate["official_purpose_order"])
+            and sum(dispositions.values())
+            == candidate["field_purpose_prompt_count"]
+            and dispositions["missing_mapping_underdetermined"]
+            == candidate["unclassified_prompt_count"]
+            and dispositions["complete_official_mapping"]
+            + dispositions[
+                "partial_official_mapping_with_legacy_residue_underdetermined"
+            ]
+            == candidate["official_mapped_prompt_count"]
+            and dispositions["legacy_only_mapping_underdetermined"]
+            + dispositions["missing_mapping_underdetermined"]
+            == candidate["missing_official_mapping_prompt_count"]
+            and candidate["official_only_edge_count"]
+            + candidate["mixed_official_edge_count"]
+            == candidate["official_edge_count"]
+            and candidate["mixed_legacy_edge_count"]
+            + candidate["legacy_only_edge_count"]
+            == candidate["legacy_edge_count"]
+            and len(document_rows)
+            == candidate["classification_document_count"]
+            and sum(row["prompt_count"] for row in document_rows)
+            == candidate["classification_row_count"]
+            and sum(
+                row["official_mapped_prompt_count"] for row in document_rows
+            )
+            == candidate["official_mapped_prompt_count"]
+            and candidate["classification_row_count"]
+            + candidate["unclassified_prompt_count"]
+            == candidate["field_purpose_prompt_count"]
+            and candidate["source_classification_resolution"]
+            == (
+                "zero_or_one_same_annotation_row_by_shape_specific_"
+                "occurrence_id"
+            )
+            and candidate["construction_order"]
+            == [
+                "authenticate_fixed_prompt_denominator",
+                "construct_complete_purpose_mapping_rows_keyset_domain_"
+                "and_counts",
+                "compute_U_underdetermined_mapping_prompt_count",
+                "select_failure_or_normal_variant",
+                "normal_variant_only_construct_O_H_purpose_independent",
+                "normal_variant_only_evaluate_O_P_witnesses",
+            ]
+            and candidate["source_classification_join_keys"]
+            == {
+                "plural": "source_prompt_occurrence_id",
+                "singular": "source_occurrence_id",
+            }
+            and candidate["source_classification_status_rules"]
+            == {
+                "plural": {
+                    "key": "annotation_status",
+                    "value": "complete",
+                },
+                "singular": {
+                    "key": "classification_status",
+                    "value": "complete_document_local_provisional",
+                },
+            }
+            and candidate["source_classification_join_keys"]["plural"]
+            in candidate["plural_source_row_keys"]
+            and candidate["source_classification_join_keys"]["singular"]
+            in candidate["singular_source_row_keys"]
+            and candidate["source_classification_status_rules"]["plural"][
+                "key"
+            ]
+            in candidate["plural_source_row_keys"]
+            and candidate["source_classification_status_rules"]["singular"][
+                "key"
+            ]
+            in candidate["singular_source_row_keys"]
+            and candidate["purpose_mapping_keyset_canonical_byte_size"]
+            == 2_131_189
+            and candidate["purpose_mapping_keyset_sha256"]
+            == (
+                "2d1300eaae5c8259f1cda59907d2cf0b8174faf5a37a3549e6d6f3eec9618921"
+            )
+            and candidate["purpose_mapping_domain_canonical_byte_size"]
+            == 7_244_433
+            and candidate["purpose_mapping_domain_sha256"]
+            == (
+                "53158188e774c75fcbe6b7af57bfa747060c80193556eac7a0e289e02b63ed1e"
+            )
+            and candidate["first_source_prompt_occurrence_id"]
+            == (
+                "psid-questionnaire-occurrence:"
+                "17d4dd6699adc429dc5548b30763fc11425469927c1f02c41c15ae6a93c3828a"
+            )
+            and candidate["last_source_prompt_occurrence_id"]
+            == (
+                "psid-questionnaire-occurrence:"
+                "d1c8bdfb99364eff8092c663c399e6e4391e6fcd9c6bb742bdda13f1df489980"
+            )
+            and candidate["underdetermined_mapping_prompt_count"]
+            == underdetermined_count
+            == 21_153
+            and candidate["no_current_prompt_source_proved_no_purpose"] is True
+            and candidate["underdetermined_selects_early_failure_variant"]
+            is True
+            and candidate["selected_failure_variant_evaluates_o_h"] is False
+            and candidate["selected_failure_variant_evaluates_o_p"] is False
+            and candidate["normal_variant_o_h_remains_purpose_independent"]
+            is True
+            and candidate["normal_variant_o_h_precedes_o_p_witness_evaluation"]
+            is True
+            and candidate == A19_PURPOSE_MAPPING_CONTRACT,
+            message,
+        )
+    except (KeyError, TypeError, ValueError, LawError) as error:
+        raise LawError(message) from error
+
+
+def _validate_a19_semantic_binding_contract(
+    candidate: Mapping[str, Any],
+) -> None:
+    message = "Amendment-19 semantic-binding totality contract drift"
+    try:
+        _require(
+            isinstance(candidate, Mapping)
+            and _a19_same_json_types(
+                candidate,
+                A19_SEMANTIC_BINDING_CONTRACT,
+            )
+            and candidate[
+                "authenticated_complete_semantic_binding_relation_count"
+            ]
+            == 0
+            and candidate[
+                "audit_is_discovery_evidence_not_selected_branch_member_input"
+            ]
+            is True
+            and candidate[
+                "failure_selector_precedes_semantic_binding_evaluation"
+            ]
+            is True
+            and candidate[
+                "selected_failure_variant_serializes_near_match_rows"
+            ]
+            is False
+            and candidate[
+                "normal_variant_requires_inherited_complete_semantic_bindings"
+            ]
+            is True
+            and candidate == A19_SEMANTIC_BINDING_CONTRACT,
+            message,
+        )
+    except (KeyError, TypeError, LawError) as error:
+        raise LawError(message) from error
+
+
+def _validate_a19_source_hierarchy_failure_contract(
+    candidate: Mapping[str, Any],
+) -> None:
+    message = "Amendment-19 early source-hierarchy failure contract drift"
+    try:
+        _require(
+            isinstance(candidate, Mapping)
+            and _a19_same_json_types(
+                candidate,
+                A19_SOURCE_HIERARCHY_FAILURE_CONTRACT,
+            ),
+            message,
+        )
+        failure_member = candidate["failure_member"]
+        member_identity = candidate["source_hierarchy_member_identity"]
+        failure_bytes = canonical_json_bytes(failure_member)
+        identity_bytes = canonical_json_bytes(member_identity)
+        underdetermined_count = A19_PURPOSE_MAPPING_CONTRACT[
+            "underdetermined_mapping_prompt_count"
+        ]
+        shared_inherited_header_keys = {
+            "authority_kind",
+            "questionnaire_document_count",
+            "questionnaire_document_keyset_sha256",
+            "questionnaire_document_domain_sha256",
+            "canonical_order",
+            "status",
+        }
+        shared_purpose_summary_keys = {
+            "purpose_mapping_row_count",
+            "purpose_mapping_keyset_sha256",
+            "purpose_mapping_domain_sha256",
+            "purpose_mapping_disposition_counts",
+        }
+        effective_normal_header_keys = list(
+            A19_A12_SUCCESSOR_AUTHORITY_HEADER_KEYS
+        )
+        hierarchy_domain_position = effective_normal_header_keys.index(
+            "hierarchy_domain_sha256"
+        )
+        effective_normal_header_keys.insert(
+            hierarchy_domain_position,
+            "hierarchy_preproof_domain_sha256",
+        )
+        hierarchy_domain_position += 1
+        for offset, key in enumerate(
+            (
+                "purpose_mapping_row_count",
+                "purpose_mapping_keyset_sha256",
+                "purpose_mapping_domain_sha256",
+                "purpose_mapping_disposition_counts",
+            ),
+            start=1,
+        ):
+            effective_normal_header_keys.insert(
+                hierarchy_domain_position + offset,
+                key,
+            )
+        expected_forbidden_header_keys = [
+            key
+            for key in effective_normal_header_keys
+            if key not in candidate["failure_member_keys"]
+        ]
+        a12_row_families = {
+            "role_label_class_rows",
+            "role_assignment_rows",
+            "component_parent_resolution_rows",
+            "outside_r_q_repeat_terminal_rows",
+            "noncatalog_aggregate_relation_disposition_rows",
+            "in_domain_redirection_disposition_rows",
+            "catalog_only_job_disposition_rows",
+        }
+        _require(
+            candidate["selection_stage"]
+            == "after_purpose_mapping_before_all_pass_member_construction"
+            and candidate["selection_predicate"]
+            == "underdetermined_mapping_prompt_count_gt_zero"
+            and candidate["fixed_selector_value"]
+            is (underdetermined_count > 0)
+            and candidate[
+                "global_purpose_mapping_rows_constructed_before_selection"
+            ]
+            is True
+            and candidate[
+                "selected_failure_variant_serializes_per_era_purpose_"
+                "mapping_rows"
+            ]
+            is False
+            and underdetermined_count == 21_153
+            and isinstance(failure_member, Mapping)
+            and set(failure_member) == set(candidate["failure_member_keys"])
+            and len(candidate["failure_member_keys"])
+            == len(set(candidate["failure_member_keys"]))
+            == 10
+            and len(A19_A12_SUCCESSOR_AUTHORITY_HEADER_KEYS)
+            == len(set(A19_A12_SUCCESSOR_AUTHORITY_HEADER_KEYS))
+            == 78
+            and set(A19_A12_SUCCESSOR_AUTHORITY_HEADER_KEYS)
+            & set(candidate["failure_member_keys"])
+            == shared_inherited_header_keys
+            and shared_purpose_summary_keys
+            <= set(candidate["failure_member_keys"])
+            and not shared_purpose_summary_keys
+            & set(A19_A12_SUCCESSOR_AUTHORITY_HEADER_KEYS)
+            and len(effective_normal_header_keys)
+            == len(set(effective_normal_header_keys))
+            == 83
+            and set(candidate["failure_member_keys"])
+            <= set(effective_normal_header_keys)
+            and candidate["forbidden_authority_header_keys"]
+            == expected_forbidden_header_keys
+            and len(candidate["forbidden_authority_header_keys"])
+            == len(set(candidate["forbidden_authority_header_keys"]))
+            == 73
+            and set(candidate["forbidden_authority_header_keys"])
+            == set(effective_normal_header_keys)
+            - set(candidate["failure_member_keys"])
+            and not set(failure_member)
+            & set(candidate["forbidden_authority_header_keys"])
+            and len(candidate["forbidden_evaluation_or_serialization"])
+            == len(set(candidate["forbidden_evaluation_or_serialization"]))
+            and a12_row_families
+            <= set(candidate["forbidden_evaluation_or_serialization"])
+            and "per_era_purpose_mapping_rows"
+            in candidate["forbidden_evaluation_or_serialization"]
+            and "era_rows"
+            in candidate["forbidden_evaluation_or_serialization"]
+            and "normal_authority_header"
+            in candidate["forbidden_evaluation_or_serialization"]
+            and "A12-T2-R04_overall_gate"
+            in candidate["forbidden_evaluation_or_serialization"]
+            and {"H", "O_H", "reverse_cover", "purpose_expansion"}
+            <= set(candidate["forbidden_evaluation_or_serialization"])
+            and {"Q5", "G17-C01", "authority_emission", "production_output"}
+            <= set(candidate["forbidden_evaluation_or_serialization"])
+            and failure_member["purpose_mapping_disposition_counts"]
+            == A19_PURPOSE_MAPPING_CONTRACT["disposition_counts"]
+            and failure_member["purpose_mapping_row_count"]
+            == A19_PURPOSE_MAPPING_CONTRACT["field_purpose_prompt_count"]
+            and failure_member["purpose_mapping_keyset_sha256"]
+            == A19_PURPOSE_MAPPING_CONTRACT["purpose_mapping_keyset_sha256"]
+            and failure_member["purpose_mapping_domain_sha256"]
+            == A19_PURPOSE_MAPPING_CONTRACT["purpose_mapping_domain_sha256"]
+            and failure_member == A19_SOURCE_HIERARCHY_FAILURE_MEMBER
+            and len(failure_bytes)
+            == candidate["failure_member_canonical_byte_size"]
+            == member_identity["canonical_byte_size"]
+            == 877
+            and _sha256(failure_bytes)
+            == candidate["failure_member_raw_sha256"]
+            == member_identity["raw_sha256"]
+            == (
+                "1651c50ff1f171ac420e55982cb060db70946f9283999c3d9edb2fa140d467c5"
+            )
+            and isinstance(member_identity, Mapping)
+            and set(member_identity)
+            == set(candidate["source_hierarchy_member_identity_keys"])
+            and len(candidate["source_hierarchy_member_identity_keys"])
+            == len(set(candidate["source_hierarchy_member_identity_keys"]))
+            and member_identity == A19_SOURCE_HIERARCHY_MEMBER_IDENTITY
+            and member_identity["authority_kind"]
+            == "pre_q5_source_hierarchy_failure_member_nonauthority"
+            and member_identity["member_name"]
+            == "hierarchy_annotation_authority"
+            and member_identity["status"]
+            == failure_member["status"]
+            == "fail_source_purpose_mapping_underdetermined"
+            and len(identity_bytes)
+            == candidate[
+                "source_hierarchy_member_identity_canonical_byte_size"
+            ]
+            == 351
+            and _sha256(identity_bytes)
+            == candidate["source_hierarchy_member_identity_raw_sha256"]
+            == (
+                "077c6a19e44d8abdf96422a8d2d203fdf263ecbbfb70cb9bb3dc9522a3dcd2bd"
+            )
+            and candidate["r04_dual_reconstruction_required"] is True
+            and candidate["r04_independent_reconstruction_subresult_count"]
+            == 2
+            and candidate["r04_independent_reconstruction_subresult_status"]
+            == "pass_independent_source_reconstruction"
+            and candidate[
+                "r04_independent_reconstruction_subresults_require_exact_"
+                "selected_member_bytes"
+            ]
+            is True
+            and candidate["a12_t2_r04_overall_gate_preserved"] is True
+            and candidate["a12_t2_r04_selected_failure_gate_pass_permitted"]
+            is False
+            and candidate["r05_requires_passing_normal_member"] is True
+            and candidate["r05_pass_or_certification_emission_permitted"]
+            is False
+            and candidate["q5_or_authority_emission_permitted"] is False
+            and candidate == A19_SOURCE_HIERARCHY_FAILURE_CONTRACT,
+            message,
+        )
+    except (KeyError, TypeError, LawError) as error:
+        raise LawError(message) from error
+
+
+def _validate_a19_hierarchy_construction_contract(
+    candidate: Mapping[str, Any],
+) -> None:
+    message = "Amendment-19 staged hierarchy construction contract drift"
+    try:
+        _require(
+            isinstance(candidate, Mapping)
+            and _a19_same_json_types(
+                candidate,
+                A19_HIERARCHY_CONSTRUCTION_CONTRACT,
+            ),
+            message,
+        )
+        preproof_keys = candidate["preproof_row_keys"]
+        final_keys = candidate["final_row_keys"]
+        search_keys = candidate["search_implementation_keys"]
+        _require(
+            final_keys[:-1] == preproof_keys
+            and final_keys[-1] == "hierarchy_absence_proof_id"
+            and "hierarchy_absence_proof_id" not in preproof_keys
+            and "hierarchy_preproof_domain_sha256" in search_keys
+            and "hierarchy_domain_sha256" not in search_keys
+            and len(search_keys) == 15
+            and len(set(search_keys)) == 15
+            and candidate["applicability"]
+            == "only_if_purpose_failure_selector_false"
+            and candidate[
+                "selected_failure_variant_executes_hierarchy_construction"
+            ]
+            is False
+            and candidate["per_era_insertion"] == "purpose_mapping_rows"
+            and candidate["g17_c01_normal_projection_sides"]
+            == ["expected", "actual"]
+            and candidate["g17_c01_normal_per_era_insertion_order"]
+            == [
+                "hierarchy_rows",
+                "purpose_mapping_rows",
+                "positive_occurrence_rows",
+            ]
+            and candidate["g17_c01_normal_direct_concatenation_header_members"]
+            == [
+                "purpose_mapping_row_count",
+                "purpose_mapping_keyset_sha256",
+                "purpose_mapping_domain_sha256",
+                "purpose_mapping_disposition_counts",
+            ]
+            and candidate[
+                "selected_failure_variant_executes_g17_c01_projection"
+            ]
+            is False
+            and candidate["dependency_order"]
+            == [
+                "preproof_rows",
+                "hierarchy_preproof_domain_sha256",
+                "search_implementation",
+                "absence_proof_ids",
+                "final_hierarchy_rows",
+                "hierarchy_domain_sha256",
+                "dependent_proof_expanded_era_and_member_digests",
+            ]
+            and candidate == A19_HIERARCHY_CONSTRUCTION_CONTRACT,
+            message,
+        )
+    except (KeyError, TypeError, LawError) as error:
+        raise LawError(message) from error
+
+
+def _a19_worked_search_implementation(preproof_digest: str) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key in A19_HIERARCHY_CONSTRUCTION_CONTRACT[
+        "search_implementation_keys"
+    ]:
+        if key == "authority_kind":
+            value[key] = "source_only_canonical_questionnaire_annotation"
+        elif key == "near_match_source_annotation_count":
+            value[key] = 0
+        elif key in {
+            "near_match_source_annotation_keyset_sha256",
+            "near_match_source_annotation_domain_sha256",
+        }:
+            value[key] = (
+                "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+            )
+        elif key == "hierarchy_preproof_domain_sha256":
+            value[key] = preproof_digest
+        else:
+            value[key] = "0" * 64
+    return value
+
+
+def _derive_a19_staged_hierarchy_identity(
+    preproof_rows: Sequence[Mapping[str, Any]],
+    proof_targets: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    message = "Amendment-19 staged hierarchy worked identity drift"
+    preproof_keys = A19_HIERARCHY_CONSTRUCTION_CONTRACT["preproof_row_keys"]
+    target_keys = A19_HIERARCHY_CONSTRUCTION_CONTRACT[
+        "proof_id_preimage_order"
+    ][:-1]
+    _require(
+        len(preproof_rows) == len(proof_targets) > 0,
+        message,
+    )
+    normalized_rows: list[dict[str, Any]] = []
+    normalized_targets: list[dict[str, Any]] = []
+    for row, target in zip(preproof_rows, proof_targets, strict=True):
+        _require(
+            isinstance(row, Mapping)
+            and list(row) == preproof_keys
+            and isinstance(target, Mapping)
+            and list(target) == target_keys,
+            message,
+        )
+        normalized_rows.append(copy.deepcopy(dict(row)))
+        normalized_targets.append(copy.deepcopy(dict(target)))
+    preproof_digest = _sha256(canonical_json_bytes(normalized_rows))
+    search = _a19_worked_search_implementation(preproof_digest)
+    proof_ids = []
+    final_rows = []
+    for row, target in zip(
+        normalized_rows,
+        normalized_targets,
+        strict=True,
+    ):
+        preimage = [target[key] for key in target_keys]
+        preimage.append(search)
+        proof_id = "psid-absence-proof:" + _sha256(
+            canonical_json_bytes(preimage)
+        )
+        proof_ids.append(proof_id)
+        final_row = copy.deepcopy(row)
+        final_row["hierarchy_absence_proof_id"] = (
+            proof_id
+            if row["hierarchy_presence"] == "structural_hierarchy_node"
+            else None
+        )
+        final_rows.append(final_row)
+    final_digest = _sha256(canonical_json_bytes(final_rows))
+    return {
+        "preproof_rows": normalized_rows,
+        "hierarchy_preproof_domain_sha256": preproof_digest,
+        "proof_targets": normalized_targets,
+        "search_implementation": search,
+        "absence_proof_ids": proof_ids,
+        "final_hierarchy_rows": final_rows,
+        "hierarchy_domain_sha256": final_digest,
+    }
+
+
+def _validate_a19_staged_hierarchy_identity(
+    candidate: Mapping[str, Any],
+) -> None:
+    message = "Amendment-19 staged hierarchy worked identity drift"
+    try:
+        _require_exact_keys(
+            candidate,
+            {
+                "preproof_rows",
+                "hierarchy_preproof_domain_sha256",
+                "proof_targets",
+                "search_implementation",
+                "absence_proof_ids",
+                "final_hierarchy_rows",
+                "hierarchy_domain_sha256",
+            },
+            "Amendment-19 staged hierarchy worked identity",
+        )
+        expected = _derive_a19_staged_hierarchy_identity(
+            candidate["preproof_rows"],
+            candidate["proof_targets"],
+        )
+        row = candidate["preproof_rows"][0]
+        target = candidate["proof_targets"][0]
+        relationship_preimage = [
+            row["job_slot"],
+            row["questionnaire_component_slot"],
+            row["slot_kind"],
+        ]
+        slot_preimage = [
+            row["interview_wave"],
+            1968,
+            row["role"],
+            row["job_slot"],
+            row["questionnaire_component_slot"],
+            row["slot_kind"],
+        ]
+        _require(
+            candidate == expected
+            and candidate["preproof_rows"] == [_a19_worked_preproof_row()]
+            and candidate["proof_targets"] == [_a19_worked_proof_target()]
+            and row["relationship_id"]
+            == "psid-questionnaire-relationship:"
+            + _sha256(canonical_json_bytes(relationship_preimage))
+            and row["questionnaire_slot_id"]
+            == "psid-questionnaire-slot:"
+            + _sha256(canonical_json_bytes(slot_preimage))
+            and target["target_predicate"]
+            == {
+                "roles": ["head_or_reference_person"],
+                "job_slot_ids": ["psid-job-slot:role-total"],
+                "questionnaire_component_slot_ids": [
+                    "psid-component-slot:role-total"
+                ],
+                "slot_kinds": ["role_total"],
+                "field_purposes": ["amount"],
+                "quantifier": (
+                    "no_matching_questionnaire_node_in_searched_domain"
+                ),
+            }
+            and candidate["search_implementation"]["authority_kind"]
+            == "source_only_canonical_questionnaire_annotation"
+            and candidate["hierarchy_preproof_domain_sha256"]
+            == (
+                "b3789fc44458bf3f361242ac3b891a357de9640eaf72f9ec4f103b7378f74af6"
+            )
+            and candidate["absence_proof_ids"]
+            == [
+                "psid-absence-proof:"
+                "f374f82fcbbbc2757e85568e380a75061d4707a7467650ceb9f09382638e9101"
+            ]
+            and candidate["hierarchy_domain_sha256"]
+            == (
+                "4dd38d95cb08aff565edce70b716bb9f30aef607dcddc2e0c1f51cb8a1bbf453"
+            ),
+            message,
+        )
+    except (KeyError, TypeError, LawError) as error:
+        raise LawError(message) from error
+
+
+def _validate_a19_successor_and_activation_contract(
+    routing: Mapping[str, Any],
+    activation: Mapping[str, Any],
+    production_boundary: Mapping[str, Any] | None = None,
+) -> None:
+    message = "Amendment-19 successor-stop or revision-21 routing drift"
+    if production_boundary is None:
+        production_boundary = A19_NORMATIVE_MANIFEST[
+            "production_registry_boundary"
+        ]
+    expected_production_boundary = A19_NORMATIVE_MANIFEST[
+        "production_registry_boundary"
+    ]
+    try:
+        _require(
+            isinstance(routing, Mapping)
+            and isinstance(activation, Mapping)
+            and isinstance(production_boundary, Mapping)
+            and _a19_same_json_types(routing, A19_SUCCESSOR_ROUTING_CONTRACT)
+            and _a19_same_json_types(activation, A19_ACTIVATION_TRANSITION)
+            and _a19_same_json_types(
+                production_boundary,
+                expected_production_boundary,
+            )
+            and routing["historical_amendment18_next_required_state"]
+            == "A19_SUCCESSOR_PROGRAM_STOP"
+            and routing["active_next_required_state"]
+            == "A20_SUCCESSOR_PROGRAM_STOP"
+            and routing["active_lifecycle_derivation"]
+            == (
+                "deep_copy_A18_R06_RESULT_CONTRACT_lifecycle_replace_only_"
+                "next_required_state"
+            )
+            and routing["all_other_r06_members_unchanged"] is True
+            and routing["current_amendment"] == 19
+            and routing["current_revision"] == 21
+            and routing["deferred_program_amendment"] == 20
+            and routing["deferred_program_revision"] == 22
+            and routing["deferred_campaign_substance"] == "OUT_OF_SCOPE"
+            and routing["historical_identifier_is_not_active_alias"] is True
+            and routing["r06_artifact_blocked_while_r05_nonpass"] is True
+            and activation["terminal_revision"] == 21
+            and activation["terminal_amendment"] == 19
+            and activation["ordered_closure_domain"] == list(range(13, 20))
+            and activation["closure_count"]
+            == len(activation["ordered_closure_domain"])
+            == activation["terminal_revision"]
+            - activation["closure_count_subtrahend"]
+            and activation["activation_affecting"] is True
+            and activation["same_state_required"] is True
+            and activation["full_pinned_battery_required"] is True
+            and activation["receipt_inside_candidate_bytes"] is False
+            and activation["activation_requires_later_registry_repin"] is True
+            and activation["production_registry_revision_in_draft"] == 20
+            and activation["production_oracle_changed_by_draft"] is False
+            and production_boundary["revision"] == 20
+            and production_boundary["ordered_closure_domain"]
+            == list(range(13, 19))
+            and production_boundary["closure_count"]
+            == len(production_boundary["ordered_closure_domain"])
+            == production_boundary["revision"]
+            - activation["closure_count_subtrahend"]
+            and production_boundary["revision"]
+            == activation["production_registry_revision_in_draft"]
+            == activation["terminal_revision"] - 1
+            and production_boundary["unchanged_by_draft"] is True
+            and routing == A19_SUCCESSOR_ROUTING_CONTRACT
+            and activation == A19_ACTIVATION_TRANSITION
+            and production_boundary == expected_production_boundary,
+            message,
+        )
+    except (KeyError, TypeError, LawError) as error:
+        raise LawError(message) from error
+
+
+def _a19_worked_preproof_row() -> dict[str, Any]:
+    values: dict[str, Any] = {
+        "questionnaire_slot_id": (
+            "psid-questionnaire-slot:"
+            "58e93ce163bb81b1b7838cc36fef0994f207b05684d2a2bb571d5800f87ff7a9"
+        ),
+        "interview_wave": 1968,
+        "role": "head_or_reference_person",
+        "relationship_id": (
+            "psid-questionnaire-relationship:"
+            "ff2a7f7263d10214f6868b9355f73a30b226ab2cb618dc89e03b96c8e8246159"
+        ),
+        "job_slot": "psid-job-slot:role-total",
+        "questionnaire_component_slot": "psid-component-slot:role-total",
+        "slot_kind": "role_total",
+        "hierarchy_presence": "structural_hierarchy_node",
+        "hierarchy_occurrence_ids": [],
+        "flow_branch_ids": [],
+        "flow_branch_paths": [],
+        "source_locator_ids": [],
+    }
+    return {
+        key: values[key]
+        for key in A19_HIERARCHY_CONSTRUCTION_CONTRACT["preproof_row_keys"]
+    }
+
+
+def _a19_worked_proof_target() -> dict[str, Any]:
+    values: dict[str, Any] = {
+        "era_id": "wave1968_ry1968_1974_early_totals",
+        "target_predicate": {
+            "roles": ["head_or_reference_person"],
+            "job_slot_ids": ["psid-job-slot:role-total"],
+            "questionnaire_component_slot_ids": [
+                "psid-component-slot:role-total"
+            ],
+            "slot_kinds": ["role_total"],
+            "field_purposes": ["amount"],
+            "quantifier": (
+                "no_matching_questionnaire_node_in_searched_domain"
+            ),
+        },
+        "searched_interview_waves": [1968],
+        "searched_locator_ids": ["psid-whole-document:" + "0" * 64],
+        "searched_layout_keyset_sha256": "1" * 64,
+        "searched_codebook_keyset_sha256": "2" * 64,
+    }
+    return {
+        key: values[key]
+        for key in A19_HIERARCHY_CONSTRUCTION_CONTRACT[
+            "proof_id_preimage_order"
+        ][:-1]
+    }
+
+
+def run_amendment19_member_law_mutation_tests() -> tuple[str, ...]:
+    """Execute inherited censuses, then three grouped A19 law attacks."""
+
+    amendment18 = run_amendment18_contract_mutation_tests()
+    _require(
+        amendment18 == A18_EXPECTED_MUTATIONS
+        and len(amendment18)
+        == A19_MUTATION_CENSUS["amendment18_mutation_count"]
+        and _sha256(canonical_json_bytes(list(amendment18)))
+        == A19_MUTATION_CENSUS["amendment18_mutation_domain_sha256"],
+        "Amendment-19 inherited Amendment-18 mutation census drift",
+    )
+    _require(
+        A18_MUTATION_CENSUS["inherited_complete_mutation_count"]
+        == A19_MUTATION_CENSUS["inherited_complete_mutation_count"]
+        and A18_MUTATION_CENSUS["inherited_complete_mutation_domain_sha256"]
+        == A19_MUTATION_CENSUS["inherited_complete_mutation_domain_sha256"]
+        and A18_MUTATION_CENSUS["amendment16_mutation_count"]
+        == A19_MUTATION_CENSUS["amendment16_mutation_count"]
+        and A18_MUTATION_CENSUS["amendment16_mutation_domain_sha256"]
+        == A19_MUTATION_CENSUS["amendment16_mutation_domain_sha256"]
+        and A18_MUTATION_CENSUS["amendment17_mutation_count"]
+        == A19_MUTATION_CENSUS["amendment17_mutation_count"]
+        and A18_MUTATION_CENSUS["amendment17_mutation_domain_sha256"]
+        == A19_MUTATION_CENSUS["amendment17_mutation_domain_sha256"],
+        "Amendment-19 inherited mutation census chain drift",
+    )
+
+    rejected: list[str] = []
+
+    _validate_a19_purpose_mapping_contract(A19_PURPOSE_MAPPING_CONTRACT)
+    _validate_a19_semantic_binding_contract(A19_SEMANTIC_BINDING_CONTRACT)
+    _validate_a19_source_hierarchy_failure_contract(
+        A19_SOURCE_HIERARCHY_FAILURE_CONTRACT
+    )
+    purpose_variants: list[tuple[str, Mapping[str, Any]]] = []
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["field_purpose_prompt_count"] = 21_970
+    purpose_variants.append(("prompt denominator", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["disposition_counts"]["missing_mapping_underdetermined"] = 21_082
+    purpose_variants.append(("disposition partition", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["official_purpose_order"][0:2] = reversed(
+        variant["official_purpose_order"][0:2]
+    )
+    purpose_variants.append(("official purpose order", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["disposition_order"][-1] = "no_purpose"
+    purpose_variants.append(("invented no-purpose default", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["text_transfer_forbidden"] = False
+    purpose_variants.append(("text transfer", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["source_classification_join_keys"][
+        "singular"
+    ] = "source_prompt_occurrence_id"
+    purpose_variants.append(("singular join key", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["source_classification_status_rules"]["plural"][
+        "value"
+    ] = "complete_document_local_provisional"
+    purpose_variants.append(("plural source status", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["source_classification_status_rules"]["singular"][
+        "value"
+    ] = "complete"
+    purpose_variants.append(("singular source status", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["purpose_mapping_domain_sha256"] = "0" * 64
+    purpose_variants.append(("purpose domain identity", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["underdetermined_mapping_prompt_count"] = 21_152
+    purpose_variants.append(("underdetermined selector count", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["construction_order"][1], variant["construction_order"][4] = (
+        variant["construction_order"][4],
+        variant["construction_order"][1],
+    )
+    purpose_variants.append(("O_H before purpose selector", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["selected_failure_variant_evaluates_o_h"] = True
+    purpose_variants.append(("failure arm executes O_H", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["normal_variant_o_h_remains_purpose_independent"] = False
+    purpose_variants.append(("purpose-dependent normal O_H", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["normal_variant_o_h_precedes_o_p_witness_evaluation"] = False
+    purpose_variants.append(("normal O_P precedes O_H", variant))
+    variant = copy.deepcopy(A19_PURPOSE_MAPPING_CONTRACT)
+    variant["field_purpose_prompt_count"] = True
+    purpose_variants.append(("boolean prompt count", variant))
+    for label, variant in purpose_variants:
+        _expect_law_error(
+            lambda variant=variant: _validate_a19_purpose_mapping_contract(
+                variant
+            ),
+            "Amendment-19 purpose-mapping totality contract drift",
+            f"Amendment-19 purpose attack {label}",
+        )
+    binding_variants: list[Mapping[str, Any]] = []
+    variant = copy.deepcopy(A19_SEMANTIC_BINDING_CONTRACT)
+    variant["authenticated_complete_semantic_binding_relation_count"] = 1
+    binding_variants.append(variant)
+    variant = copy.deepcopy(A19_SEMANTIC_BINDING_CONTRACT)
+    variant["failure_selector_precedes_semantic_binding_evaluation"] = False
+    binding_variants.append(variant)
+    variant = copy.deepcopy(A19_SEMANTIC_BINDING_CONTRACT)
+    variant["selected_failure_variant_serializes_near_match_rows"] = True
+    binding_variants.append(variant)
+    for position, variant in enumerate(binding_variants):
+        _expect_law_error(
+            lambda variant=variant: _validate_a19_semantic_binding_contract(
+                variant
+            ),
+            "Amendment-19 semantic-binding totality contract drift",
+            f"Amendment-19 binding attack {position}",
+        )
+    failure_variants: list[Mapping[str, Any]] = []
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["fixed_selector_value"] = False
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["selection_stage"] = "after_all_pass_member_construction"
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    del variant["failure_member"]["purpose_mapping_domain_sha256"]
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["failure_member"]["hierarchy_domain_sha256"] = "0" * 64
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["failure_member_canonical_byte_size"] = 878
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["source_hierarchy_member_identity"][
+        "authority_kind"
+    ] = "prospective_g17_c01_source_member_pre_q5"
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["forbidden_authority_header_keys"].remove("role_assignment_rows")
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["forbidden_authority_header_keys"].append(
+        "purpose_mapping_row_count"
+    )
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["forbidden_evaluation_or_serialization"].remove(
+        "catalog_only_job_disposition_rows"
+    )
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["r04_independent_reconstruction_subresult_status"] = "pass"
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant[
+        "r04_independent_reconstruction_subresults_require_exact_selected_"
+        "member_bytes"
+    ] = False
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["a12_t2_r04_overall_gate_preserved"] = False
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["a12_t2_r04_selected_failure_gate_pass_permitted"] = True
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["forbidden_evaluation_or_serialization"].remove(
+        "A12-T2-R04_overall_gate"
+    )
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant["r05_requires_passing_normal_member"] = False
+    failure_variants.append(variant)
+    variant = copy.deepcopy(A19_SOURCE_HIERARCHY_FAILURE_CONTRACT)
+    variant[
+        "selected_failure_variant_serializes_per_era_purpose_mapping_rows"
+    ] = True
+    failure_variants.append(variant)
+    for position, variant in enumerate(failure_variants):
+        _expect_law_error(
+            lambda variant=variant: (
+                _validate_a19_source_hierarchy_failure_contract(variant)
+            ),
+            "Amendment-19 early source-hierarchy failure contract drift",
+            f"Amendment-19 early failure attack {position}",
+        )
+    rejected.append(A19_EXPECTED_MUTATIONS[0])
+
+    _validate_a19_hierarchy_construction_contract(
+        A19_HIERARCHY_CONSTRUCTION_CONTRACT
+    )
+    worked_identity = _derive_a19_staged_hierarchy_identity(
+        [_a19_worked_preproof_row()],
+        [_a19_worked_proof_target()],
+    )
+    _validate_a19_staged_hierarchy_identity(worked_identity)
+    hierarchy_variants: list[Mapping[str, Any]] = []
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    variant["preproof_row_keys"].append("hierarchy_absence_proof_id")
+    hierarchy_variants.append(variant)
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    index = variant["search_implementation_keys"].index(
+        "hierarchy_preproof_domain_sha256"
+    )
+    variant["search_implementation_keys"][index] = "hierarchy_domain_sha256"
+    hierarchy_variants.append(variant)
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    variant["dependency_order"][1:3] = reversed(
+        variant["dependency_order"][1:3]
+    )
+    hierarchy_variants.append(variant)
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    variant["placeholder_forbidden"] = False
+    hierarchy_variants.append(variant)
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    variant["applicability"] = "unconditional"
+    hierarchy_variants.append(variant)
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    variant["selected_failure_variant_executes_hierarchy_construction"] = True
+    hierarchy_variants.append(variant)
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    variant["g17_c01_normal_per_era_insertion_order"][1:3] = reversed(
+        variant["g17_c01_normal_per_era_insertion_order"][1:3]
+    )
+    hierarchy_variants.append(variant)
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    variant["g17_c01_normal_projection_sides"] = ["expected"]
+    hierarchy_variants.append(variant)
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    variant["g17_c01_normal_direct_concatenation_header_members"].remove(
+        "purpose_mapping_disposition_counts"
+    )
+    hierarchy_variants.append(variant)
+    variant = copy.deepcopy(A19_HIERARCHY_CONSTRUCTION_CONTRACT)
+    variant["selected_failure_variant_executes_g17_c01_projection"] = True
+    hierarchy_variants.append(variant)
+    for position, variant in enumerate(hierarchy_variants):
+        _expect_law_error(
+            lambda variant=variant: (
+                _validate_a19_hierarchy_construction_contract(variant)
+            ),
+            "Amendment-19 staged hierarchy construction contract drift",
+            f"Amendment-19 hierarchy contract attack {position}",
+        )
+    identity_variants: list[Mapping[str, Any]] = []
+    variant = copy.deepcopy(worked_identity)
+    variant["hierarchy_preproof_domain_sha256"] = variant[
+        "hierarchy_domain_sha256"
+    ]
+    identity_variants.append(variant)
+    variant = copy.deepcopy(worked_identity)
+    variant["search_implementation"]["hierarchy_preproof_domain_sha256"] = (
+        variant["hierarchy_domain_sha256"]
+    )
+    identity_variants.append(variant)
+    variant = copy.deepcopy(worked_identity)
+    variant["absence_proof_ids"][0] = "psid-absence-proof:" + "0" * 64
+    identity_variants.append(variant)
+    variant = copy.deepcopy(worked_identity)
+    variant["final_hierarchy_rows"][0]["hierarchy_absence_proof_id"] = None
+    identity_variants.append(variant)
+    variant = copy.deepcopy(worked_identity)
+    variant["proof_targets"][0]["target_predicate"][
+        "quantifier"
+    ] = "none_exist"
+    identity_variants.append(variant)
+    variant = copy.deepcopy(worked_identity)
+    variant["search_implementation"][
+        "authority_kind"
+    ] = "worked_identity_nonauthority"
+    identity_variants.append(variant)
+    variant = copy.deepcopy(worked_identity)
+    variant["preproof_rows"][0]["relationship_id"] = (
+        "psid-questionnaire-relationship:" + "0" * 64
+    )
+    identity_variants.append(variant)
+    variant = copy.deepcopy(worked_identity)
+    variant["preproof_rows"][0]["questionnaire_slot_id"] = (
+        "psid-questionnaire-slot:" + "0" * 64
+    )
+    identity_variants.append(variant)
+    for position, variant in enumerate(identity_variants):
+        _expect_law_error(
+            lambda variant=variant: _validate_a19_staged_hierarchy_identity(
+                variant
+            ),
+            "Amendment-19 staged hierarchy worked identity drift",
+            f"Amendment-19 hierarchy identity attack {position}",
+        )
+    rejected.append(A19_EXPECTED_MUTATIONS[1])
+
+    _validate_a19_successor_and_activation_contract(
+        A19_SUCCESSOR_ROUTING_CONTRACT,
+        A19_ACTIVATION_TRANSITION,
+        A19_NORMATIVE_MANIFEST["production_registry_boundary"],
+    )
+    successor_variants: list[
+        tuple[Mapping[str, Any], Mapping[str, Any], Mapping[str, Any]]
+    ] = []
+    production_boundary = A19_NORMATIVE_MANIFEST[
+        "production_registry_boundary"
+    ]
+    routing = copy.deepcopy(A19_SUCCESSOR_ROUTING_CONTRACT)
+    routing["active_next_required_state"] = "A19_SUCCESSOR_PROGRAM_STOP"
+    successor_variants.append(
+        (routing, A19_ACTIVATION_TRANSITION, production_boundary)
+    )
+    routing = copy.deepcopy(A19_SUCCESSOR_ROUTING_CONTRACT)
+    routing["historical_identifier_is_not_active_alias"] = False
+    successor_variants.append(
+        (routing, A19_ACTIVATION_TRANSITION, production_boundary)
+    )
+    routing = copy.deepcopy(A19_SUCCESSOR_ROUTING_CONTRACT)
+    routing["deferred_campaign_substance"] = "IN_SCOPE"
+    successor_variants.append(
+        (routing, A19_ACTIVATION_TRANSITION, production_boundary)
+    )
+    activation = copy.deepcopy(A19_ACTIVATION_TRANSITION)
+    activation["ordered_closure_domain"] = [13, 14, 15, 16, 17, 19, 18]
+    successor_variants.append(
+        (A19_SUCCESSOR_ROUTING_CONTRACT, activation, production_boundary)
+    )
+    activation = copy.deepcopy(A19_ACTIVATION_TRANSITION)
+    activation["closure_count"] = True
+    successor_variants.append(
+        (A19_SUCCESSOR_ROUTING_CONTRACT, activation, production_boundary)
+    )
+    activation = copy.deepcopy(A19_ACTIVATION_TRANSITION)
+    activation["terminal_revision"] = 20
+    successor_variants.append(
+        (A19_SUCCESSOR_ROUTING_CONTRACT, activation, production_boundary)
+    )
+    activation = copy.deepcopy(A19_ACTIVATION_TRANSITION)
+    activation["production_registry_revision_in_draft"] = 19
+    successor_variants.append(
+        (A19_SUCCESSOR_ROUTING_CONTRACT, activation, production_boundary)
+    )
+    wrong_base_boundary = {
+        "closure_count": 5,
+        "ordered_closure_domain": [13, 14, 15, 16, 17],
+        "revision": 19,
+        "unchanged_by_draft": True,
+    }
+    successor_variants.append(
+        (
+            A19_SUCCESSOR_ROUTING_CONTRACT,
+            A19_ACTIVATION_TRANSITION,
+            wrong_base_boundary,
+        )
+    )
+    for position, (routing, activation, production_boundary) in enumerate(
+        successor_variants
+    ):
+        _expect_law_error(
+            lambda routing=routing, activation=activation, production_boundary=production_boundary: (
+                _validate_a19_successor_and_activation_contract(
+                    routing,
+                    activation,
+                    production_boundary,
+                )
+            ),
+            "Amendment-19 successor-stop or revision-21 routing drift",
+            f"Amendment-19 successor attack {position}",
+        )
+    rejected.append(A19_EXPECTED_MUTATIONS[2])
+
+    rejected_tuple = tuple(rejected)
+    rejected_bytes = canonical_json_bytes(list(rejected_tuple))
+    _require(
+        rejected_tuple == A19_EXPECTED_MUTATIONS
+        and len(set(rejected_tuple)) == len(rejected_tuple)
+        and len(rejected_bytes) == A19_MUTATION_DOMAIN_BYTE_SIZE
+        and _sha256(rejected_bytes) == A19_MUTATION_DOMAIN_SHA256,
+        "Amendment-19 mutation inventory drift",
     )
     return rejected_tuple
 
