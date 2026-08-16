@@ -2,7 +2,7 @@
 
 ## Status
 
-**INTERRUPTED** — live execution checkpoint after Stage 0. This status is
+**INTERRUPTED** — live execution checkpoint after Stage 1. This status is
 replaced at Stage 7, or earlier if an enacted fail-closed condition requires a
 lawful stop.
 
@@ -14,7 +14,7 @@ forbidden downstream object has been emitted.
 | Stage | Required operation | Disposition |
 |---|---|---|
 | 0 | Reauthenticate revision-20 operativity, read the controlling law and precedent, fingerprint the checkout, and resolve the former revision-binding gap. | Complete. |
-| 1 | Reconstruct the exact 279-row build-input domain and reauthenticate all six source comparands. | Pending. |
+| 1 | Reconstruct the exact 279-row build-input domain and reauthenticate all six source comparands. | Complete. |
 | 2 | Implement the independent `R04X-7F2A` builder. | Pending. |
 | 3 | Implement the independent `R04X-C91D` validator and its static/runtime independence audits. | Pending. |
 | 4 | Build, commit, and publicly validate the fixed-path R04/R05 certificate. | Pending. |
@@ -112,7 +112,56 @@ composition choice.
 
 ## Stage 1 — build-input domain
 
-Pending.
+The complete §32.2 envelope was constructed ephemerally and was not written
+to the repository. The reconstruction authenticated the two Git-root
+artifacts, all four registered questionnaire-capture inputs, both complete
+upstream disposition relations, every included source file under
+`/Users/maxghenis/PolicyEngine/psid-data`, and every one of the 22
+repair/seal/evidence paths against both `HEAD` and working bytes.
+
+The source projection had exactly these role counts:
+
+| Role | Rows | Authenticated bytes |
+|---|---:|---:|
+| `questionnaire_flow` | 81 | 1,226,736,045 |
+| `dictionary_layout` | 86 | included below |
+| `codebook` | 47 | included below |
+| `raw_fixed_width_data` | 43 | included below |
+| Three field-source roles combined | 176 | 1,514,409,083 |
+| Complete source domain | 257 | 2,741,145,128 |
+
+The questionnaire link dispositions reproduced `81 / 1 / 383` for included,
+out-of-wave 2025, and other. The accepted-document dispositions reproduced
+`81 / 1 / 374`. All 81 selected documents and all 176 field-source files
+were regular, nonsymlink files whose complete bytes matched their registered
+sizes and SHA-256 values.
+
+The six enacted comparands were freshly recomputed, not copied:
+
+| Comparand | Derived value |
+|---|---|
+| `questionnaire_document_count` | `81` |
+| `questionnaire_document_keyset_sha256` | `3326c9ba70b7f83f19b0ea934630d26ced73f230be1628cb74031d17160cb1a5` |
+| `questionnaire_document_domain_sha256` | `b06139b147391d06b4f90a8f28de472a936ec08b3e9eb37001a5a70e2b3c3543` |
+| `source_document_count` | `257` |
+| `source_document_keyset_sha256` | `8b7cad855b791c5cd7d235a74d4a0f1ecc7511dc0458db11d6b04c1b6af2c36a` |
+| `source_document_domain_sha256` | `9d7a98db7c2889eba150f70935f492aebbc41cd521e4139dc1ec886ecd9945ce` |
+
+The 22 repair/seal/evidence identities totaled 4,345,235 bytes. Their paths
+were sorted once by unsigned UTF-8 and reproduced path-array SHA-256
+`504159116708ee4d5e2cc8abec130ca8679d22cce928dca42af12be305361c17`.
+The final class boundary was exactly 257 `source_document` rows followed by
+22 `repair_seal_evidence` rows.
+
+Python sorted-key, compact, ASCII, no-NaN serialization with one terminal LF
+produced exactly 168,504 envelope bytes and the newly derived digest:
+
+```text
+tier2_build_input_domain_sha256=
+f34ced6e80e1bf72e68635b4f729c5b983c094fd25d16105a6c161ccd52fff63
+```
+
+The envelope itself remains ephemeral as §32.2.3 requires.
 
 ## Stage 2 — `R04X-7F2A` builder
 
