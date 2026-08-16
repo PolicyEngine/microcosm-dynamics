@@ -699,7 +699,18 @@ def _preserves_ratified_design_prefix(
 ) -> bool:
     """Accept the exact revision-20 bytes or one prospective A19 suffix."""
 
-    if len(ratified_bytes) != REVISION20_DESIGN_BYTE_SIZE:
+    if not (
+        len(ratified_bytes) == DESIGN_BYTE_SIZE
+        and hashlib.sha256(ratified_bytes).hexdigest() == DESIGN_BLOB_SHA256
+    ):
+        return False
+    if current_bytes == ratified_bytes:
+        return True
+    if not (
+        DESIGN_REVISION == 20
+        and DESIGN_BYTE_SIZE == REVISION20_DESIGN_BYTE_SIZE
+        and DESIGN_BLOB_SHA256 == REVISION20_DESIGN_SHA256
+    ):
         return False
     revision20_blob_preimage = (
         b"blob "
@@ -715,8 +726,6 @@ def _preserves_ratified_design_prefix(
         == REVISION20_DESIGN_BLOB_OID
     ):
         return False
-    if current_bytes == ratified_bytes:
-        return True
 
     amendment19_suffix = current_bytes[REVISION20_DESIGN_BYTE_SIZE:]
     return (

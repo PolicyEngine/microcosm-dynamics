@@ -1530,7 +1530,7 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
         assert registry.design_binding() == expected_binding
 
 
-def test__design_binding__prospective_suffix_is_exactly_scoped():
+def test__design_binding__prospective_suffix_is_exactly_scoped(monkeypatch):
     ratified_bytes = subprocess.run(
         [
             "git",
@@ -1615,4 +1615,21 @@ def test__design_binding__prospective_suffix_is_exactly_scoped():
         lawful_amendment19_bytes
         + b"\n## 34. AMENDMENT SECTION \xe2\x80\x94 Amendment 20: extra\n",
         ratified_bytes,
+    )
+
+    monkeypatch.setattr(registry, "DESIGN_REVISION", 21)
+    monkeypatch.setattr(registry, "DESIGN_BYTE_SIZE", len(current_bytes))
+    monkeypatch.setattr(
+        registry,
+        "DESIGN_BLOB_SHA256",
+        hashlib.sha256(current_bytes).hexdigest(),
+    )
+    assert registry._preserves_ratified_design_prefix(
+        current_bytes,
+        current_bytes,
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        current_bytes
+        + b"\n## 34. AMENDMENT SECTION \xe2\x80\x94 Amendment 20: extra\n",
+        current_bytes,
     )
