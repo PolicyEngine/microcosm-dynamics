@@ -28,11 +28,11 @@ import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
 BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
-DESIGN_RATIFICATION_COMMIT = "0262efacf88e86771e31910102d083824354bc2e"
-DESIGN_REVISION = 20
-DESIGN_BYTE_SIZE = 3_964_278
+DESIGN_RATIFICATION_COMMIT = "b87fd7a66b2fc902f1f78eaaa7ef87cc49734c77"
+DESIGN_REVISION = 21
+DESIGN_BYTE_SIZE = 4_025_587
 DESIGN_BLOB_SHA256 = (
-    "631d3b2b8ecab1c29ec0595550a6d2b798f49ff96e74c722801d24c48ab111ec"
+    "38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9"
 )
 AMENDMENT18_BOUNDARY = (
     b"\n## 32. AMENDMENT SECTION \xe2\x80\x94 Amendment 18: tier-2 "
@@ -88,6 +88,13 @@ RATIFICATION_CLOSURE_BINDINGS = (
         "raw_byte_size": 842,
         "raw_sha256": (
             "0080de3cc529d2f732835316a5566e58c887a9bd7592259acfe35ecaa3813fca"
+        ),
+    },
+    {
+        "path": ("docs/analysis/amendment_19_ratification/closure_v1.json"),
+        "raw_byte_size": 844,
+        "raw_sha256": (
+            "6897fc054ed95f69d160c9d765cb11b2357ff5861df027fa9e181b8fc8d3ae12"
         ),
     },
 )
@@ -697,7 +704,7 @@ def _run_git(
 def _preserves_ratified_design_prefix(
     current_bytes: bytes, ratified_bytes: bytes
 ) -> bool:
-    """Accept the exact revision-20 bytes or one prospective A19 suffix."""
+    """Accept exact ratified bytes or one pre-activation A19 suffix."""
 
     if not (
         len(ratified_bytes) == DESIGN_BYTE_SIZE
