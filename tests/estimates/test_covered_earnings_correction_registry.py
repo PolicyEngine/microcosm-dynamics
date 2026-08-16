@@ -1391,17 +1391,15 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
 ):
     # The registry constants are asserted against these pinned values
     # unconditionally, so a coherent wrong repin cannot satisfy either
-    # leg below. An in-flight append-only amendment lawfully extends
-    # the design past the pinned ratification blob. The narrow
-    # prospective-suffix rule retains the revision-20 binding only when
-    # the ratified bytes survive as the exact prefix of byte-identical
-    # worktree and HEAD copies.
+    # leg below. The revision-21 ratification blob must be byte-identical
+    # across the ratification commit, HEAD, and worktree. The historical
+    # pre-activation revision-20 suffix seam is tested separately below.
     expected_binding = {
         "path": "docs/design/covered_earnings_correction.md",
-        "ratification_commit": "0262efacf88e86771e31910102d083824354bc2e",
-        "revision": 20,
+        "ratification_commit": "b87fd7a66b2fc902f1f78eaaa7ef87cc49734c77",
+        "revision": 21,
         "blob_sha256": (
-            "631d3b2b8ecab1c29ec0595550a6d2b798f49ff96e74c722801d24c48ab111ec"
+            "38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9"
         ),
         "ratification_closures": [
             {
@@ -1464,6 +1462,16 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
                     "0080de3cc529d2f732835316a5566e58c887a9bd7592259acfe35ecaa3813fca"
                 ),
             },
+            {
+                "path": (
+                    "docs/analysis/amendment_19_ratification/"
+                    "closure_v1.json"
+                ),
+                "raw_byte_size": 844,
+                "raw_sha256": (
+                    "6897fc054ed95f69d160c9d765cb11b2357ff5861df027fa9e181b8fc8d3ae12"
+                ),
+            },
         ],
     }
     assert {
@@ -1511,23 +1519,13 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
         check=True,
         capture_output=True,
     ).stdout
-    if worktree_bytes == ratified_bytes:
-        monkeypatch.setenv("GIT_DIR", str(ROOT / "nonexistent-git-dir"))
-        monkeypatch.setenv(
-            "GIT_WORK_TREE", str(ROOT / "nonexistent-git-work-tree")
-        )
-        monkeypatch.setenv("GIT_NO_REPLACE_OBJECTS", "0")
-        assert registry.design_binding() == expected_binding
-    else:
-        assert worktree_bytes == head_bytes
-        assert worktree_bytes.startswith(ratified_bytes)
-        assert len(worktree_bytes) > len(ratified_bytes)
-        monkeypatch.setenv("GIT_DIR", str(ROOT / "nonexistent-git-dir"))
-        monkeypatch.setenv(
-            "GIT_WORK_TREE", str(ROOT / "nonexistent-git-work-tree")
-        )
-        monkeypatch.setenv("GIT_NO_REPLACE_OBJECTS", "0")
-        assert registry.design_binding() == expected_binding
+    assert worktree_bytes == head_bytes == ratified_bytes
+    monkeypatch.setenv("GIT_DIR", str(ROOT / "nonexistent-git-dir"))
+    monkeypatch.setenv(
+        "GIT_WORK_TREE", str(ROOT / "nonexistent-git-work-tree")
+    )
+    monkeypatch.setenv("GIT_NO_REPLACE_OBJECTS", "0")
+    assert registry.design_binding() == expected_binding
 
 
 def test__design_binding__prospective_suffix_is_exactly_scoped(monkeypatch):
@@ -1542,42 +1540,73 @@ def test__design_binding__prospective_suffix_is_exactly_scoped(monkeypatch):
         capture_output=True,
     ).stdout
     current_bytes = (ROOT / registry.DESIGN_PATH).read_bytes()
-    revision20_bytes = ratified_bytes
+    revision20_bytes = subprocess.run(
+        [
+            "git",
+            "show",
+            "0262efacf88e86771e31910102d083824354bc2e:"
+            f"{registry.DESIGN_PATH}",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
     lawful_amendment19_bytes = (
         revision20_bytes
         + registry.AMENDMENT19_BOUNDARY
         + b"Lawful Amendment 19 body.\n"
     )
 
+    assert current_bytes == ratified_bytes
     assert registry._preserves_ratified_design_prefix(
         ratified_bytes, ratified_bytes
     )
+    assert not registry._preserves_ratified_design_prefix(
+        current_bytes
+        + b"\n## 34. AMENDMENT SECTION \xe2\x80\x94 Amendment 20: extra\n",
+        ratified_bytes,
+    )
+
     assert len(revision20_bytes) == registry.REVISION20_DESIGN_BYTE_SIZE
     assert current_bytes.startswith(revision20_bytes)
     assert (
         hashlib.sha256(revision20_bytes).hexdigest()
         == registry.REVISION20_DESIGN_SHA256
     )
-    assert registry._preserves_ratified_design_prefix(
-        revision20_bytes, ratified_bytes
+    monkeypatch.setattr(registry, "DESIGN_REVISION", 20)
+    monkeypatch.setattr(
+        registry,
+        "DESIGN_BYTE_SIZE",
+        registry.REVISION20_DESIGN_BYTE_SIZE,
+    )
+    monkeypatch.setattr(
+        registry,
+        "DESIGN_BLOB_SHA256",
+        registry.REVISION20_DESIGN_SHA256,
     )
     assert registry._preserves_ratified_design_prefix(
-        current_bytes, ratified_bytes
+        revision20_bytes, revision20_bytes
     )
     assert registry._preserves_ratified_design_prefix(
-        lawful_amendment19_bytes, ratified_bytes
+        current_bytes, revision20_bytes
+    )
+    assert registry._preserves_ratified_design_prefix(
+        lawful_amendment19_bytes, revision20_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        b"x" + lawful_amendment19_bytes[1:], ratified_bytes
+        b"x" + lawful_amendment19_bytes[1:], revision20_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
-        ratified_bytes + b"\n## 32. wrong boundary\n", ratified_bytes
+        revision20_bytes + b"\n## 32. wrong boundary\n",
+        revision20_bytes,
     )
     assert not registry._preserves_ratified_design_prefix(
-        revision20_bytes + registry.AMENDMENT18_BOUNDARY, ratified_bytes
+        revision20_bytes + registry.AMENDMENT18_BOUNDARY,
+        revision20_bytes,
     )
     assert not registry._preserves_ratified_design_prefix(
-        lawful_amendment19_bytes.removesuffix(b"\n"), ratified_bytes
+        lawful_amendment19_bytes.removesuffix(b"\n"),
+        revision20_bytes,
     )
     assert not registry._preserves_ratified_design_prefix(
         revision20_bytes
@@ -1585,7 +1614,7 @@ def test__design_binding__prospective_suffix_is_exactly_scoped(monkeypatch):
             b"\n## 33. AMENDMENT SECTION \xe2\x80\x94 Amendment 19: "
             b"unauthorized successor\n"
         ),
-        ratified_bytes,
+        revision20_bytes,
     )
     malformed_revision20_bytes = (
         revision20_bytes[:-2] + b"X" + revision20_bytes[-1:]
@@ -1597,39 +1626,22 @@ def test__design_binding__prospective_suffix_is_exactly_scoped(monkeypatch):
         malformed_revision20_bytes
         + registry.AMENDMENT19_BOUNDARY
         + b"Lawful Amendment 19 body.\n",
-        ratified_bytes,
+        revision20_bytes,
     )
     assert not registry._preserves_ratified_design_prefix(
         lawful_amendment19_bytes + registry.AMENDMENT19_BOUNDARY,
-        ratified_bytes,
+        revision20_bytes,
     )
     assert not registry._preserves_ratified_design_prefix(
-        ratified_bytes
+        revision20_bytes
         + registry.AMENDMENT19_BOUNDARY
         + b"reordered\n"
         + registry.AMENDMENT18_BOUNDARY
         + b"Amendment 18 body.\n",
-        ratified_bytes,
+        revision20_bytes,
     )
     assert not registry._preserves_ratified_design_prefix(
         lawful_amendment19_bytes
         + b"\n## 34. AMENDMENT SECTION \xe2\x80\x94 Amendment 20: extra\n",
-        ratified_bytes,
-    )
-
-    monkeypatch.setattr(registry, "DESIGN_REVISION", 21)
-    monkeypatch.setattr(registry, "DESIGN_BYTE_SIZE", len(current_bytes))
-    monkeypatch.setattr(
-        registry,
-        "DESIGN_BLOB_SHA256",
-        hashlib.sha256(current_bytes).hexdigest(),
-    )
-    assert registry._preserves_ratified_design_prefix(
-        current_bytes,
-        current_bytes,
-    )
-    assert not registry._preserves_ratified_design_prefix(
-        current_bytes
-        + b"\n## 34. AMENDMENT SECTION \xe2\x80\x94 Amendment 20: extra\n",
-        current_bytes,
+        revision20_bytes,
     )
