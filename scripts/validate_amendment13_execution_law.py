@@ -1576,7 +1576,7 @@ A18_NEW_IDENTIFIERS = {
 }
 
 A19_SECTION_SEMANTIC_SHA256 = (
-    "b761653ab4df8b1372a6cea02dceaea38d3bf635882759a9158defe643cff9ac"
+    "d4740a02964d7dbd074c62260a0f7753e9e77105375a208446b2ecc889ea25e7"
 )
 A19_OFFICIAL_PURPOSES = [
     "interview_and_role_attachment",
@@ -2258,7 +2258,7 @@ A19_ACTIVATION_TRANSITION = {
     "all_nonpassing_counts": 0,
     "receipt_inside_candidate_bytes": False,
     "activation_requires_later_registry_repin": True,
-    "production_registry_revision_in_draft": 19,
+    "production_registry_revision_in_draft": 20,
     "production_oracle_changed_by_draft": False,
 }
 A19_EXPECTED_MUTATIONS = (
@@ -2451,9 +2451,9 @@ A19_NORMATIVE_MANIFEST = {
     "supersession_map": [list(row) for row in A19_SUPERSESSION_MAP],
     "new_identifiers": A19_NEW_IDENTIFIERS,
     "production_registry_boundary": {
-        "closure_count": 5,
-        "ordered_closure_domain": [13, 14, 15, 16, 17],
-        "revision": 19,
+        "closure_count": 6,
+        "ordered_closure_domain": [13, 14, 15, 16, 17, 18],
+        "revision": 20,
         "unchanged_by_draft": True,
     },
 }
@@ -6826,6 +6826,7 @@ def _validate_inherited_amendment19_ratification_design(raw: bytes) -> None:
     _validate_a19_successor_and_activation_contract(
         manifest["successor_routing_contract"],
         manifest["activation_transition"],
+        manifest["production_registry_boundary"],
     )
     _require(
         manifest["mutation_inventory"] == list(A19_EXPECTED_MUTATIONS)
@@ -11430,14 +11431,27 @@ def _validate_a19_staged_hierarchy_identity(
 def _validate_a19_successor_and_activation_contract(
     routing: Mapping[str, Any],
     activation: Mapping[str, Any],
+    production_boundary: Mapping[str, Any] | None = None,
 ) -> None:
     message = "Amendment-19 successor-stop or revision-21 routing drift"
+    if production_boundary is None:
+        production_boundary = A19_NORMATIVE_MANIFEST[
+            "production_registry_boundary"
+        ]
+    expected_production_boundary = A19_NORMATIVE_MANIFEST[
+        "production_registry_boundary"
+    ]
     try:
         _require(
             isinstance(routing, Mapping)
             and isinstance(activation, Mapping)
+            and isinstance(production_boundary, Mapping)
             and _a19_same_json_types(routing, A19_SUCCESSOR_ROUTING_CONTRACT)
             and _a19_same_json_types(activation, A19_ACTIVATION_TRANSITION)
+            and _a19_same_json_types(
+                production_boundary,
+                expected_production_boundary,
+            )
             and routing["historical_amendment18_next_required_state"]
             == "A19_SUCCESSOR_PROGRAM_STOP"
             and routing["active_next_required_state"]
@@ -11466,8 +11480,23 @@ def _validate_a19_successor_and_activation_contract(
             and activation["same_state_required"] is True
             and activation["full_pinned_battery_required"] is True
             and activation["receipt_inside_candidate_bytes"] is False
+            and activation["activation_requires_later_registry_repin"] is True
+            and activation["production_registry_revision_in_draft"] == 20
+            and activation["production_oracle_changed_by_draft"] is False
+            and production_boundary["revision"] == 20
+            and production_boundary["ordered_closure_domain"]
+            == list(range(13, 19))
+            and production_boundary["closure_count"]
+            == len(production_boundary["ordered_closure_domain"])
+            == production_boundary["revision"]
+            - activation["closure_count_subtrahend"]
+            and production_boundary["revision"]
+            == activation["production_registry_revision_in_draft"]
+            == activation["terminal_revision"] - 1
+            and production_boundary["unchanged_by_draft"] is True
             and routing == A19_SUCCESSOR_ROUTING_CONTRACT
-            and activation == A19_ACTIVATION_TRANSITION,
+            and activation == A19_ACTIVATION_TRANSITION
+            and production_boundary == expected_production_boundary,
             message,
         )
     except (KeyError, TypeError, LawError) as error:
@@ -11825,32 +11854,71 @@ def run_amendment19_member_law_mutation_tests() -> tuple[str, ...]:
     _validate_a19_successor_and_activation_contract(
         A19_SUCCESSOR_ROUTING_CONTRACT,
         A19_ACTIVATION_TRANSITION,
+        A19_NORMATIVE_MANIFEST["production_registry_boundary"],
     )
-    successor_variants: list[tuple[Mapping[str, Any], Mapping[str, Any]]] = []
+    successor_variants: list[
+        tuple[Mapping[str, Any], Mapping[str, Any], Mapping[str, Any]]
+    ] = []
+    production_boundary = A19_NORMATIVE_MANIFEST[
+        "production_registry_boundary"
+    ]
     routing = copy.deepcopy(A19_SUCCESSOR_ROUTING_CONTRACT)
     routing["active_next_required_state"] = "A19_SUCCESSOR_PROGRAM_STOP"
-    successor_variants.append((routing, A19_ACTIVATION_TRANSITION))
+    successor_variants.append(
+        (routing, A19_ACTIVATION_TRANSITION, production_boundary)
+    )
     routing = copy.deepcopy(A19_SUCCESSOR_ROUTING_CONTRACT)
     routing["historical_identifier_is_not_active_alias"] = False
-    successor_variants.append((routing, A19_ACTIVATION_TRANSITION))
+    successor_variants.append(
+        (routing, A19_ACTIVATION_TRANSITION, production_boundary)
+    )
     routing = copy.deepcopy(A19_SUCCESSOR_ROUTING_CONTRACT)
     routing["deferred_campaign_substance"] = "IN_SCOPE"
-    successor_variants.append((routing, A19_ACTIVATION_TRANSITION))
+    successor_variants.append(
+        (routing, A19_ACTIVATION_TRANSITION, production_boundary)
+    )
     activation = copy.deepcopy(A19_ACTIVATION_TRANSITION)
     activation["ordered_closure_domain"] = [13, 14, 15, 16, 17, 19, 18]
-    successor_variants.append((A19_SUCCESSOR_ROUTING_CONTRACT, activation))
+    successor_variants.append(
+        (A19_SUCCESSOR_ROUTING_CONTRACT, activation, production_boundary)
+    )
     activation = copy.deepcopy(A19_ACTIVATION_TRANSITION)
     activation["closure_count"] = True
-    successor_variants.append((A19_SUCCESSOR_ROUTING_CONTRACT, activation))
+    successor_variants.append(
+        (A19_SUCCESSOR_ROUTING_CONTRACT, activation, production_boundary)
+    )
     activation = copy.deepcopy(A19_ACTIVATION_TRANSITION)
     activation["terminal_revision"] = 20
-    successor_variants.append((A19_SUCCESSOR_ROUTING_CONTRACT, activation))
-    for position, (routing, activation) in enumerate(successor_variants):
+    successor_variants.append(
+        (A19_SUCCESSOR_ROUTING_CONTRACT, activation, production_boundary)
+    )
+    activation = copy.deepcopy(A19_ACTIVATION_TRANSITION)
+    activation["production_registry_revision_in_draft"] = 19
+    successor_variants.append(
+        (A19_SUCCESSOR_ROUTING_CONTRACT, activation, production_boundary)
+    )
+    wrong_base_boundary = {
+        "closure_count": 5,
+        "ordered_closure_domain": [13, 14, 15, 16, 17],
+        "revision": 19,
+        "unchanged_by_draft": True,
+    }
+    successor_variants.append(
+        (
+            A19_SUCCESSOR_ROUTING_CONTRACT,
+            A19_ACTIVATION_TRANSITION,
+            wrong_base_boundary,
+        )
+    )
+    for position, (routing, activation, production_boundary) in enumerate(
+        successor_variants
+    ):
         _expect_law_error(
-            lambda routing=routing, activation=activation: (
+            lambda routing=routing, activation=activation, production_boundary=production_boundary: (
                 _validate_a19_successor_and_activation_contract(
                     routing,
                     activation,
+                    production_boundary,
                 )
             ),
             "Amendment-19 successor-stop or revision-21 routing drift",

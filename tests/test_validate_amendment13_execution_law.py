@@ -1904,9 +1904,9 @@ def test__document__semantic_projection_covers_amendments14_through19():
     ]
     assert manifest["new_identifiers"] == a13.A19_NEW_IDENTIFIERS
     assert manifest["production_registry_boundary"] == {
-        "closure_count": 5,
-        "ordered_closure_domain": [13, 14, 15, 16, 17],
-        "revision": 19,
+        "closure_count": 6,
+        "ordered_closure_domain": [13, 14, 15, 16, 17, 18],
+        "revision": 20,
         "unchanged_by_draft": True,
     }
 
@@ -2566,7 +2566,7 @@ def test__amendment19__successor_numbering_and_revision21_route_are_exact():
     assert activation["full_pinned_battery_required"] is True
     assert activation["receipt_inside_candidate_bytes"] is False
     assert activation["activation_requires_later_registry_repin"] is True
-    assert activation["production_registry_revision_in_draft"] == 19
+    assert activation["production_registry_revision_in_draft"] == 20
     assert activation["production_oracle_changed_by_draft"] is False
     historical = copy.deepcopy(a13.A18_R06_RESULT_CONTRACT)
     active = copy.deepcopy(historical)
