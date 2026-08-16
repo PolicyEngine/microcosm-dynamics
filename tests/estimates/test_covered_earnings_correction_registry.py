@@ -1542,7 +1542,7 @@ def test__design_binding__prospective_suffix_is_exactly_scoped():
         capture_output=True,
     ).stdout
     current_bytes = (ROOT / registry.DESIGN_PATH).read_bytes()
-    revision20_bytes = current_bytes[: registry.REVISION20_DESIGN_BYTE_SIZE]
+    revision20_bytes = ratified_bytes
     lawful_amendment19_bytes = (
         revision20_bytes
         + registry.AMENDMENT19_BOUNDARY
@@ -1553,12 +1553,16 @@ def test__design_binding__prospective_suffix_is_exactly_scoped():
         ratified_bytes, ratified_bytes
     )
     assert len(revision20_bytes) == registry.REVISION20_DESIGN_BYTE_SIZE
+    assert current_bytes.startswith(revision20_bytes)
     assert (
         hashlib.sha256(revision20_bytes).hexdigest()
         == registry.REVISION20_DESIGN_SHA256
     )
     assert registry._preserves_ratified_design_prefix(
         revision20_bytes, ratified_bytes
+    )
+    assert registry._preserves_ratified_design_prefix(
+        current_bytes, ratified_bytes
     )
     assert registry._preserves_ratified_design_prefix(
         lawful_amendment19_bytes, ratified_bytes
@@ -1585,6 +1589,9 @@ def test__design_binding__prospective_suffix_is_exactly_scoped():
     )
     malformed_revision20_bytes = (
         revision20_bytes[:-2] + b"X" + revision20_bytes[-1:]
+    )
+    assert not registry._preserves_ratified_design_prefix(
+        malformed_revision20_bytes, malformed_revision20_bytes
     )
     assert not registry._preserves_ratified_design_prefix(
         malformed_revision20_bytes
