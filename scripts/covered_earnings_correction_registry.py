@@ -28,11 +28,11 @@ import build_ssa_covered_earnings_calibration_targets as extraction
 
 DESIGN_PATH = "docs/design/covered_earnings_correction.md"
 BASE_DESIGN_RATIFICATION_COMMIT = "59fd058b943c2b9960af9cb98ecdec97709cc2dd"
-DESIGN_RATIFICATION_COMMIT = "131b070c1d516512dcc8a49650dd4e76b4998605"
-DESIGN_REVISION = 19
-DESIGN_BYTE_SIZE = 3_934_849
+DESIGN_RATIFICATION_COMMIT = "0262efacf88e86771e31910102d083824354bc2e"
+DESIGN_REVISION = 20
+DESIGN_BYTE_SIZE = 3_964_278
 DESIGN_BLOB_SHA256 = (
-    "29055c5606a54587107498e8adcdbc8546f93caceabe89238975288db72e7fe1"
+    "631d3b2b8ecab1c29ec0595550a6d2b798f49ff96e74c722801d24c48ab111ec"
 )
 AMENDMENT18_BOUNDARY = (
     b"\n## 32. AMENDMENT SECTION \xe2\x80\x94 Amendment 18: tier-2 "
@@ -72,6 +72,13 @@ RATIFICATION_CLOSURE_BINDINGS = (
         "raw_byte_size": 842,
         "raw_sha256": (
             "24e2548a77b237ef97aabf6eec63926e3b80daa0759b2dfcb5fe62dc9499987e"
+        ),
+    },
+    {
+        "path": ("docs/analysis/amendment_18_ratification/closure_v1.json"),
+        "raw_byte_size": 842,
+        "raw_sha256": (
+            "0080de3cc529d2f732835316a5566e58c887a9bd7592259acfe35ecaa3813fca"
         ),
     },
 )
