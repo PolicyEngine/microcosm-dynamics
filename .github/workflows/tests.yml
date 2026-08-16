@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.11', '3.13']
+        python-version: ['3.14']
         shard: [1, 2, 3, 4]
     name: pytest-shard (${{ matrix.python-version }}, ${{ matrix.shard }}/4)
     steps:
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.11', '3.13']
+        python-version: ['3.14']
     steps:
       - name: Verify all shards passed
         run: test "${{ needs.pytest-shard.result }}" = "success"
