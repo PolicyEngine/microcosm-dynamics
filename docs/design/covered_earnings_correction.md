@@ -55679,3 +55679,625 @@ be built from authenticated source bytes before R06; R06 must reproduce and
 record the expected abort; no Q5 or authority follows; and execution stops at
 `A19_SUCCESSOR_PROGRAM_STOP` until a separate successor law resolves the
 independent Amendment-11 source blocker.**
+
+## 33. AMENDMENT SECTION — Amendment 19: source-hierarchy member-construction cure
+
+### 33.1 Status, immutable prefix, verified defects, and scope
+
+This section is Amendment 19 and therefore proposes design revision 21 under
+§30.2.1. Its immutable prefix is the complete Amendment-18-terminal design:
+3,964,278 bytes, raw SHA-256
+`631d3b2b8ecab1c29ec0595550a6d2b798f49ff96e74c722801d24c48ab111ec`,
+and Git blob `016c0fff757b54da730ae0044216416cde2d2c33`. Every prefix byte
+survives. Nothing in this section edits, reinterprets, or normalizes an A18
+byte.
+
+Two independent source-reconstruction lanes authenticated source commit
+`19fa24c161e800e004320f0c10e81bce8831af68`, tree
+`e35f9cd65017ece46de2f0c0dbc57f4321c0b8d4`, all six predecessor
+seals, their 81 selected annotation blobs, both upstream roots, and the 22
+repair/seal inputs. Each independently derived the same §32.2 envelope:
+279 rows, 168,504 terminal-LF canonical bytes, and SHA-256
+`f34ced6e80e1bf72e68635b4f729c5b983c094fd25d16105a6c161ccd52fff63`.
+The authenticated source domain is therefore available and stable.
+
+The 7F2A lane then found that §19.3.3 does not define the classifier required
+by its phrase “classified to that purpose.” Its source audit is reproduced
+in §33.2. The C91D lane independently found that the final hierarchy digest
+contains a proof ID whose own preimage contains that final digest. Its
+dependency cycle and cure are reproduced in §33.3. Neither gap has a lawful
+derivation in the inherited bytes: no placeholder, exclusion, staged digest,
+fixed-point selection, corpus-wide classifier, or complete
+`semantic_bindings` relation exists. The two development
+reports are respectively 7,533 bytes with raw
+SHA-256
+`f2f3daf757f7d1826ff3c07e8ed874983478d0a2326486848d9c32f5013cb46f`
+and 6,774 bytes with raw SHA-256
+`f192d9d5691b6f023d1e506f21b0f48190017ee9fe8e5092877b9b2bb5f565fe`.
+Those reports are discovery evidence, not authority inputs; this section's
+closed rules control.
+
+This amendment makes every prompt's source disposition and the selected
+source-member variant uniquely constructible. It does not invent a source
+meaning. The current authenticated input selects the closed failure-header
+variant before any pass-only hierarchy, positive, binding, raw-field,
+expanded, proof, era, or authority-member digest is evaluated. Those members
+are structurally inapplicable, not empty, null, defaulted, or left for a
+writer. The normal member variant remains prospective and, when selected,
+uses §33.3's acyclic digest order. This draft emits no R05 certificate, R06
+result, Q5 input, authority, G17-C01 row, registry repin, production output,
+or missing-reason disposition.
+
+### 33.2 Limb I — total prompt-purpose disposition
+
+#### 33.2.1 Authenticated census and non-generalizing mechanism
+
+The complete 81-document annotation domain contains exactly 21,971
+`field_purpose_prompt` occurrences. Exactly nine documents—source positions
+7, 14, 34, 36, 40, 56, 58, 66, and 70—contain a classification relation,
+with respectively 99, 50, 5, 133, 174, 128, 149, 85, and 65 rows. The total
+is 888. The remaining 72 documents contain no classification row.
+
+The ratified-order intersection with the inherited 35-purpose domain gives
+exactly 832 prompts with at least one official edge and 980 official edges
+over 14 official purposes. That is not a completeness finding. The exact
+partition is:
+
+| Source-derived prompt class | Prompts | Official edges | Legacy edges |
+|---|---:|---:|---:|
+| official-only | 818 | 963 | 0 |
+| mixed official and legacy | 14 | 17 | 14 |
+| legacy-only | 56 | 0 | 60 |
+| no classification row | 21,083 | 0 | 0 |
+
+Thus 21,139 prompts lack any official mapping. Seventy classified rows carry
+74 out-of-domain edges using exactly 13 distinct literals in unsigned UTF-8
+order:
+
+~~~text
+business_share
+employment_status
+farm_operating_expenses
+farm_receipts
+hours_worked
+in_kind_receipt
+income_source
+job_tenure
+net_farm_income
+rate
+receipt_indicator
+time_not_worked
+weeks_worked
+~~~
+
+The 832-prompt mechanism does **not** generalize. It is nine builders' manual,
+document-local complete-page-review tables, not an enacted corpus-wide
+classifier. Even a forbidden exact-text transfer reaches only 246 of the
+21,139 missing prompts: 234 have one observed mapping set, 12 occur in
+ambiguous classes, and 20,893 have no mapped exact-text class. Eight mapped
+exact-text classes themselves conflict. Similarity, keyword, stable-first,
+majority, inherited literal promotion, and a new reviewer choice are equally
+unauthorized. No current prompt is source-proved to have no purpose.
+
+#### 33.2.2 Exact six-key total relation
+
+Before either `O_H` or `O_P`, construct `purpose_mapping_rows` as one row for
+every `field_purpose_prompt`, in inherited questionnaire-occurrence source
+order.
+Each row has exactly:
+
+~~~text
+source_prompt_occurrence_id
+source_classification_row_id
+serialized_source_literals
+explicit_official_purposes
+unresolved_legacy_literals
+purpose_mapping_disposition
+~~~
+
+Resolve zero or one classification row in the prompt's same authenticated
+annotation by an exact keyset-tagged join. The seven-key plural
+`field_purposes` form joins its `source_prompt_occurrence_id` to the prompt's
+`questionnaire_occurrence_id` and requires exactly
+`annotation_status: complete`. The seven-key singular `field_purpose` form
+joins its `source_occurrence_id` to that prompt ID and requires exactly
+`classification_status: complete_document_local_provisional`. Those are the
+only two forms, join keys, and status literals; treating the singular key as
+`source_prompt_occurrence_id`, accepting either status on the other form, a
+cross-annotation match, or more than one match aborts. For the plural form,
+`serialized_source_literals` exact-copies the complete source array; for the
+singular form it is the one-member array containing the source scalar. With
+no source row it is exact empty and `source_classification_row_id` is null;
+otherwise that ID exact-copies the row's
+`local_field_purpose_classification_id`.
+
+`explicit_official_purposes` is the stable-unique intersection of the
+serialized literals with the inherited 35-purpose array, ordered by that
+array. `unresolved_legacy_literals` is the complete stable-unique source-order
+complement. A duplicate source literal, invalid row shape/status, or literal
+outside both exact projections aborts. Exactly one disposition follows:
+
+- `complete_official_mapping` iff a row exists, the official projection is
+  nonempty, and the legacy projection is empty;
+- `partial_official_mapping_with_legacy_residue_underdetermined` iff both
+  projections are nonempty;
+- `legacy_only_mapping_underdetermined` iff a row exists, the official
+  projection is empty, and the legacy projection is nonempty; or
+- `missing_mapping_underdetermined` iff no row exists.
+
+An existing row with both projections empty aborts rather than acquiring a
+fifth/default class. The four disposition counts are exactly 818, 14, 56,
+and 21,083. Their sum is 21,971, and exactly 21,153 rows have a disposition
+other than `complete_official_mapping`. The ordered occurrence-ID array is
+2,131,189 canonical bytes with SHA-256
+`2d1300eaae5c8259f1cda59907d2cf0b8174faf5a37a3549e6d6f3eec9618921`;
+its first and last values are respectively
+`psid-questionnaire-occurrence:17d4dd6699adc429dc5548b30763fc11425469927c1f02c41c15ae6a93c3828a`
+and
+`psid-questionnaire-occurrence:d1c8bdfb99364eff8092c663c399e6e4391e6fcd9c6bb742bdda13f1df489980`.
+The complete ordered six-key row array is 7,244,433 canonical bytes with
+SHA-256
+`53158188e774c75fcbe6b7af57bfa747060c80193556eac7a0e289e02b63ed1e`.
+Both identities were independently reproduced from the six seals and their
+81 authenticated annotation blobs; neither is copied from a candidate.
+
+Only on the normal variant selected under §33.2.3 do the row count, keyset
+digest, domain digest, and exact four-key disposition-count object enter the
+authority header, in that order, immediately after final
+`hierarchy_domain_sha256` and before inherited
+`positive_occurrence_row_count`. Each era then carries its complete
+source-order slice as `purpose_mapping_rows` immediately after
+`hierarchy_rows` and before `positive_occurrence_rows`; direct era-order
+concatenation must reproduce the header relation.
+
+This total relation supersedes §19.3.3's undefined classification and
+prompt-consumption sentences and its requirement to construct `O_H` before
+classifying purpose prompts. Every prompt is consumed by exactly one row.
+The variant selector therefore runs first. On the normal variant, `O_H`
+remains purpose-independent and is constructed after the selector and before
+any `O_P` witness evaluation. Only `explicit_official_purposes` may supply the
+purpose coordinate of an otherwise inherited same-wave, branch-compatible
+hierarchy-anchor witness, so the mathematical `O_P` relation has one exact
+source-derived result. A legacy literal, missing row, unresolved residue,
+text transfer, similarity transfer, default, or candidate row supplies no
+`O_P` edge. Silence is not `no_purpose` and is not evidence of absence. On
+the selected current failure variant, `O_P` and its digest are not evaluated
+or serialized; §33.2.3 makes them structurally inapplicable rather than
+pretending that underdetermination is negative evidence.
+
+#### 33.2.3 Closed early-failure member and construction precedence
+
+Immediately after authenticating the fixed denominator and constructing the
+complete purpose-mapping row, keyset, digest, and four-count relations, and
+before reading any candidate or claimed status, compute strict JSON integer
+
+~~~text
+U = partial_official_mapping_with_legacy_residue_underdetermined
+  + legacy_only_mapping_underdetermined
+  + missing_mapping_underdetermined
+~~~
+
+A Boolean, float, string, missing count, reordered relation, or alternate
+arithmetic aborts. If and only if `U > 0`, select the closed failure-header
+variant. If and only if `U == 0`, select the normal member variant and proceed
+to `O_H`, `O_P`, semantic bindings, field attachment, and §33.3. The two
+variants are disjoint; no fallback, best effort, or partially constructed
+normal member exists. The current authenticated value is exactly
+`14 + 56 + 21,083 = 21,153`, so the failure variant is mandatory.
+
+On that variant, `hierarchy_annotation_authority` has exactly these ten
+members. The displayed inventory order is normative; canonical member bytes
+still follow §29.4.1's sorted-key rule:
+
+~~~text
+authority_kind
+questionnaire_document_count
+questionnaire_document_keyset_sha256
+questionnaire_document_domain_sha256
+purpose_mapping_row_count
+purpose_mapping_keyset_sha256
+purpose_mapping_domain_sha256
+purpose_mapping_disposition_counts
+canonical_order
+status
+~~~
+
+`authority_kind` is the inherited literal
+`source_only_canonical_questionnaire_annotation`; `canonical_order` is
+`questionnaire_occurrence_source_order`; and status is exactly
+`fail_source_purpose_mapping_underdetermined`. The remaining values are the
+authenticated document and §33.2.2 purpose identities. Its exact canonical
+value is:
+
+~~~json
+{"authority_kind":"source_only_canonical_questionnaire_annotation","canonical_order":"questionnaire_occurrence_source_order","purpose_mapping_disposition_counts":{"complete_official_mapping":818,"legacy_only_mapping_underdetermined":56,"missing_mapping_underdetermined":21083,"partial_official_mapping_with_legacy_residue_underdetermined":14},"purpose_mapping_domain_sha256":"53158188e774c75fcbe6b7af57bfa747060c80193556eac7a0e289e02b63ed1e","purpose_mapping_keyset_sha256":"2d1300eaae5c8259f1cda59907d2cf0b8174faf5a37a3549e6d6f3eec9618921","purpose_mapping_row_count":21971,"questionnaire_document_count":81,"questionnaire_document_domain_sha256":"b06139b147391d06b4f90a8f28de472a936ec08b3e9eb37001a5a70e2b3c3543","questionnaire_document_keyset_sha256":"3326c9ba70b7f83f19b0ea934630d26ced73f230be1628cb74031d17160cb1a5","status":"fail_source_purpose_mapping_underdetermined"}
+~~~
+
+With one terminal LF it is exactly 877 bytes and has SHA-256
+`1651c50ff1f171ac420e55982cb060db70946f9283999c3d9edb2fa140d467c5`.
+Every other normal-member key is forbidden on this variant. In particular,
+`O_H`, `O_P`, hierarchy and positive rows, raw-field references and joins,
+expanded rows, source-annotation bindings, proofs, D0, D1, era rows, the
+normal authority header, and all their counts, keysets, and domain digests
+are not executed and are not serialized. Empty arrays, nulls, zero digests,
+partial rows, or a claimed `not_proved` proof are not substitutes. Q5, G17,
+inventory joins, slot projection, authority, and production are likewise
+not executed. This exact schema selection is the fail-closed downstream
+handling; there is no unknown selected-variant digest.
+
+Section 29.4.4's six-key identity shape, canonicalizer, member name, and
+size/hash equations survive. On this failure arm its exact value is:
+
+~~~json
+{"authority_kind":"pre_q5_source_hierarchy_failure_member_nonauthority","canonical_byte_size":877,"canonicalization":"python-json-sort-keys-compact-ascii-no-nan-lf-v1","member_name":"hierarchy_annotation_authority","raw_sha256":"1651c50ff1f171ac420e55982cb060db70946f9283999c3d9edb2fa140d467c5","status":"fail_source_purpose_mapping_underdetermined"}
+~~~
+
+The identity is 351 canonical bytes; its diagnostic SHA-256 is
+`077c6a19e44d8abdf96422a8d2d203fdf263ecbbfb70cb9bb3dc9522a3dcd2bd`.
+The failure-specific authority kind prevents this nonauthority header from
+being mistaken for a future G17-C01 subpayload. Both R04 implementations must
+independently reproduce the 21,971 rows, the two row-domain identities, the
+877 member bytes, and this six-key identity. Each reconstruction subresult
+may return the inherited `pass_independent_source_reconstruction` status.
+The overall §26.11.2 A12-T2-R04 gate remains preserved and nonpassing: its
+pass-only `H`, `O_H`, reverse-cover, purpose-expansion, and field-join
+conjuncts are not executed on this arm. The member status also does not pass.
+R05 and certification therefore cannot pass.
+
+A complete recursive audit also finds zero authenticated
+`semantic_bindings` relations. The selected failure arm precedes that
+evaluation: it serializes no invented empty binding, near-match row, or new
+proof conclusion and does not weaken the inherited normal-variant binding
+gate. As a downstream cross-check, the fully classified 1971 occupation
+prompt
+`psid-questionnaire-occurrence:ef1df047b0899af2a91a9661e024580613b2ef895f8d1eaf209fd4dfbf9fce16`
+has exact leading token `D2.` while same-wave authenticated field evidence
+has both `V1984` and `V1984_A` beginning with that token. The inherited
+normal path would lawfully abort rather than choose a field. That witness is
+not a singleton exception or identity input; it confirms why continuing
+past the selected failure arm would be invention. Only a later ratified,
+authenticated source state with `U == 0`, plus every inherited normal gate,
+can select the normal variant.
+
+### 33.3 Limb II — acyclic hierarchy construction order
+
+#### 33.3.1 Preproof rows and stage-1 digest
+
+This section governs only the normal member variant selected when §33.2.3's
+failure selector is false. The current authenticated input does not execute
+it. Its law is nevertheless complete so that no future normal construction
+can recreate the D↔A cycle.
+
+For each H-order hierarchy member, construct `b_h` as the inherited final
+hierarchy row with exactly `hierarchy_absence_proof_id` deleted. It has the
+first 12 inherited keys in their displayed order. Deletion means the member
+is absent: null, zero, empty text, a provisional ID, or another placeholder
+is forbidden. No proof, proof ID, final hierarchy row, final hierarchy
+digest, proof-domain digest, expanded row/digest, era digest, or enclosing
+member digest may enter any `b_h` or its derivation.
+
+Let `C` remain §29.4.1 terminal-LF canonical JSON. Directly concatenate all
+six era `b_h` arrays in inherited H order and compute:
+
+~~~text
+B  = [b_h for h in H]
+D0 = SHA256(C(B))
+~~~
+
+The authority header inserts `hierarchy_preproof_domain_sha256 = D0`
+immediately after `hierarchy_keyset_sha256` and immediately before the
+inherited final `hierarchy_domain_sha256`. D0 adds no per-era member beyond
+§33.2.2's already enacted `purpose_mapping_rows` insertion. The member-only
+R04 projection and both expected and actual G17-C01 complete-header
+projections carry the inserted value.
+
+#### 33.3.2 Proof IDs, final rows, and stage-2 digest
+
+The inherited `search_implementation` remains exactly 15 keys. At its former
+`hierarchy_domain_sha256` position, replace that key with
+`hierarchy_preproof_domain_sha256` and deep-copy D0. The final digest key is
+forbidden in that object; retaining both keys recreates the cycle and aborts.
+All other 14 keys and meanings remain exact.
+
+Compute each inherited seven-position proof-ID preimage with that D0-bearing
+search object:
+
+~~~text
+A_h = "psid-absence-proof:" + SHA256(C([
+  era_id,
+  target_predicate,
+  searched_interview_waves,
+  searched_locator_ids,
+  searched_layout_keyset_sha256,
+  searched_codebook_keyset_sha256,
+  search_implementation
+]))
+~~~
+
+Then form final 13-key `r_h` rows by appending `A_h` for a structural
+hierarchy row and null for an observed row. Observed rows may still have a
+proof for their nonempty missing-purpose complement, but their hierarchy-row
+member stays null under inherited law. Compute inherited per-era final
+hierarchy digests and the authority-wide final value:
+
+~~~text
+R  = [r_h for h in H]
+D1 = SHA256(C(R))
+hierarchy_domain_sha256 = D1
+~~~
+
+Only after D1 may the implementation compute proof-domain,
+expanded-disposition, era, and enclosing member digests. Every proof ID and
+dependent digest is regenerated. No iteration, fixed-point search, writer
+choice, or digest equality assumption is permitted. The exact mandatory
+construction order is:
+
+~~~text
+B -> D0 -> search_implementation -> A_h -> R -> D1
+                                                   \-> dependent final digests
+~~~
+
+#### 33.3.3 Worked identity
+
+The executable NONAUTHORITY worked fixture uses the inherited
+`source_only_canonical_questionnaire_annotation` authority kind, exact
+role-total sentinels, formula-derived relationship and slot IDs, the exact
+proof quantifier, one grammar-valid synthetic whole-document locator, and
+§29.4.1 canonicalization. The complete preproof row, target without its
+seventh search member, and D0-bearing search object are respectively:
+
+~~~json
+{"flow_branch_ids":[],"flow_branch_paths":[],"hierarchy_occurrence_ids":[],"hierarchy_presence":"structural_hierarchy_node","interview_wave":1968,"job_slot":"psid-job-slot:role-total","questionnaire_component_slot":"psid-component-slot:role-total","questionnaire_slot_id":"psid-questionnaire-slot:58e93ce163bb81b1b7838cc36fef0994f207b05684d2a2bb571d5800f87ff7a9","relationship_id":"psid-questionnaire-relationship:ff2a7f7263d10214f6868b9355f73a30b226ab2cb618dc89e03b96c8e8246159","role":"head_or_reference_person","slot_kind":"role_total","source_locator_ids":[]}
+{"era_id":"wave1968_ry1968_1974_early_totals","searched_codebook_keyset_sha256":"2222222222222222222222222222222222222222222222222222222222222222","searched_interview_waves":[1968],"searched_layout_keyset_sha256":"1111111111111111111111111111111111111111111111111111111111111111","searched_locator_ids":["psid-whole-document:0000000000000000000000000000000000000000000000000000000000000000"],"target_predicate":{"field_purposes":["amount"],"job_slot_ids":["psid-job-slot:role-total"],"quantifier":"no_matching_questionnaire_node_in_searched_domain","questionnaire_component_slot_ids":["psid-component-slot:role-total"],"roles":["head_or_reference_person"],"slot_kinds":["role_total"]}}
+{"authority_kind":"source_only_canonical_questionnaire_annotation","flow_branch_domain_sha256":"0000000000000000000000000000000000000000000000000000000000000000","global_relationship_domain_sha256":"0000000000000000000000000000000000000000000000000000000000000000","hierarchy_preproof_domain_sha256":"b3789fc44458bf3f361242ac3b891a357de9640eaf72f9ec4f103b7378f74af6","job_slot_domain_sha256":"0000000000000000000000000000000000000000000000000000000000000000","near_match_source_annotation_count":0,"near_match_source_annotation_domain_sha256":"37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570","near_match_source_annotation_keyset_sha256":"37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570","node_alias_domain_sha256":"0000000000000000000000000000000000000000000000000000000000000000","positive_occurrence_domain_sha256":"0000000000000000000000000000000000000000000000000000000000000000","questionnaire_component_slot_domain_sha256":"0000000000000000000000000000000000000000000000000000000000000000","questionnaire_occurrence_domain_sha256":"0000000000000000000000000000000000000000000000000000000000000000","questionnaire_page_domain_sha256":"0000000000000000000000000000000000000000000000000000000000000000","questionnaire_page_text_derivation_sha256":"0000000000000000000000000000000000000000000000000000000000000000","role_node_domain_sha256":"0000000000000000000000000000000000000000000000000000000000000000"}
+~~~
+
+The relationship ID hashes
+`[psid-job-slot:role-total,psid-component-slot:role-total,role_total]`;
+the slot ID hashes
+`[1968,1968,head_or_reference_person,psid-job-slot:role-total,
+psid-component-slot:role-total,role_total]`. Recompute D0 from the one-row
+array, append the displayed search object as proof-preimage position seven,
+append the resulting proof ID to the final row, and compute D1. The exact
+identities are:
+
+~~~text
+D0 = b3789fc44458bf3f361242ac3b891a357de9640eaf72f9ec4f103b7378f74af6
+A_h = psid-absence-proof:f374f82fcbbbc2757e85568e380a75061d4707a7467650ceb9f09382638e9101
+D1 = 4dd38d95cb08aff565edce70b716bb9f30aef607dcddc2e0c1f51cb8a1bbf453
+~~~
+
+Replacing D0 with D1 in the search object, adding a proof key or placeholder
+to `b_h`, changing the proof ID, clearing the final structural ID, or
+reordering any stage changes or invalidates that identity.
+
+### 33.4 Limb III — successor numbering reconciliation
+
+The literal `A19_SUCCESSOR_PROGRAM_STOP` in §§32.4.4, 32.7, and 32.8 remains
+an exact historical A18 value. It is not edited or recounted as new. Section
+30.2.1 nevertheless makes this amendment A19/revision 21, so the deferred
+missing-reason/lifecycle campaign is necessarily Amendment 20/revision 22.
+For every post-A19 consumer, the active R06 lifecycle successor is exactly
+`A20_SUCCESSOR_PROGRAM_STOP`: deep-copy the complete inherited
+`A18_R06_RESULT_CONTRACT.lifecycle` and replace only `next_required_state`.
+Every other R06 top-level, nested, identity, lifecycle, process, test,
+nonemission, order, and integrity member remains byte-for-byte governed by
+A18. `A19_SUCCESSOR_PROGRAM_STOP` is not an alias, fallback, alternate
+spelling, or accepted active value.
+
+The external campaign charter is 25,123 bytes with raw SHA-256
+`06b3aa7180422f520e702d28658b6f2a5fc631449371d9662c04bf824ec47684`.
+Its A19/revision-21 labels are superseded planning labels only. None of its
+missing-reason rules, artifacts, values, campaigns, or execution permissions
+enters this amendment. The campaign is A20/revision 22 and remains wholly out
+of scope. Moreover, current R05 is nonpassing under §33.2, so the A18 R06
+artifact cannot yet be emitted; the A20 stop is exact routing, not permission
+to skip R05.
+
+### 33.5 Implementation pins, projection, and activation obligation
+
+#### 33.5.1 Active pins and registry-state boundary
+
+Section 32.5.1 remains immutable historical A18 law but is superseded as the
+active prospective-validation identity after the exact Amendment-19
+candidate receives both affirmative verdicts and its operator merge. The Amendment-19-governed active identity is exactly mode `100644` and these
+three path/blob/byte/hash rows:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `0000000000000000000000000000000000000000` | 1 | `0000000000000000000000000000000000000000000000000000000000000000` |
+| `tests/test_validate_amendment13_execution_law.py` | `0000000000000000000000000000000000000000` | 1 | `0000000000000000000000000000000000000000000000000000000000000000` |
+| `scripts/build_amendment13_tier2_repairs.py` | `0000000000000000000000000000000000000000` | 1 | `0000000000000000000000000000000000000000000000000000000000000000` |
+
+Every inherited mode, working-tree/HEAD equality, Git-blob, byte, raw-hash,
+replacement-ref, public-oracle reachability, publisher isolation, and narrow
+candidate-review rule survives. The three-path domain is unchanged. The
+registry module remains mutable transition state. Its prospective loader may
+admit exactly the A18-only prefix or the exact ordered A18+A19 candidate while
+its production binding remains revision 19 with exactly ordered Amendments
+13 through 17. This draft writes no revision-20 or revision-21 production
+binding.
+
+#### 33.5.2 Complete A19 projection and successor routing
+
+The A19 semantic projection requires the exact 3,964,278-byte revision-20
+prefix, one A19 boundary, UTF-8, and one terminal LF. It strict-parses the
+complete §33.8 manifest, independently compares every nested exact value,
+and hashes the entire normalized A19 suffix. Only the mode and each of the
+three active pin rows' blob, decimal byte count, and raw SHA-256 are
+normalized; all are separately Git-authenticated. Every other normative
+value—including the terminal-A19 and inherited-successor routes—is bound at
+draft time.
+
+The general closure router applies the complete inherited A18 projection and
+`_validate_amendment19_ratification_design` to a terminal Amendment 19. Every
+later amendment applies the inherited A18 projection and
+`_validate_inherited_amendment19_ratification_design`. An arbitrary A19
+suffix, A18-only fallback for amendment 19 or later, changed manifest,
+changed non-pin prose, wrong heading, or alternate successor stop aborts.
+
+#### 33.5.3 Activation-affecting revision-21 demonstration
+
+Amendment 19 is **activation-affecting** under §31.3.1 because it supplies
+terminal/inherited A19 closure behavior and active successor pins. Ambiguity
+would independently fail closed into the same obligation. Before either
+referee may emit `# RATIFY`, one fresh final-identity same-state NONAUTHORITY
+demonstration must execute the unmodified public
+`validate_ratification_operativity()` and the complete final pinned test
+battery. Its exact terminal registry revision is integer 21; terminal
+Amendment 19; ordered closure domain `(13, 14, 15, 16, 17, 18, 19)`; and
+closure count `7 = 21 - 14`. The public output must equal that order. Every
+test must pass with zero failed, skipped, deselected, xfailed, or xpassed.
+
+The exact-keyset, integer-strict §31.3.3 receipt remains external to candidate
+bytes and NONAUTHORITY. It is generated only after the final code/test commit,
+final Black pass, and every pin value. No receipt or simulated-state identity
+enters this suffix. Missing/extra/duplicate/reordered closures, a wrong A19
+generated path, revision 20 with seven closures, boolean integers, a private
+helper, focused battery, stale test identity, two states, or extra receipt
+key aborts. Activation can occur only at a later real revision-21 registry
+repin; this draft does not activate itself.
+
+### 33.6 Exact mutation inventory and inherited censuses
+
+The separate Amendment-19 member-law mutation inventory is exactly:
+
+~~~text
+source_purpose_totality_or_binding_disposition_forged
+hierarchy_preproof_final_digest_order_forged
+r06_successor_program_stop_numbering_forged
+~~~
+
+Its terminal-LF canonical name array is 151 bytes with SHA-256
+`002aa021325c18e311cc778562ad0e937468a90c378db0740290fcf617929101`.
+The first name is appended only after wrong denominators and partitions,
+plural/singular join-key exchange, wrong shape status, official-order or
+pinned-domain changes, invented `no_purpose`, text transfer, boolean counts,
+failure-selector bypass, wrong ten-key failure member or identity, an
+empty/null pass field, binding-use continuation, positive/join continuation,
+and Q5 bypass variants reach and fail their intended gates. The second is
+appended only after preproof proof-ID insertion, D1-in-search, reordered
+dependency, placeholder, D0/D1 substitution, proof-ID, final-row, wrong
+search-authority, wrong target-quantifier, and noncatalog sentinel variants
+fail. The third is appended only after active-A19 alias, dual acceptance,
+premature campaign admission, wrong revision/domain/order/count, and boolean
+variants fail. A name is appended only after every grouped attack rejects at
+its intended gate.
+
+The runner first executes and authenticates the inherited 100-name census
+with digest
+`fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3`,
+then A16's seven with digest
+`1e00099f636c1a727839ebc298b965cd0981e0ad8f23189367ba7dbd0eddb871`,
+then A17's three with digest
+`b19ebcbf47278d63e12bd8021334a88910895bdfe48caf2d49c6bbe3014417e6`,
+then A18's three with digest
+`1bf9f6d30461d003cab597a405cb5cc9855273372ed3e7e5b36b1627eaa11108`,
+and only then the three A19 attacks. Every predecessor inventory remains
+unchanged. Drift, omission, reordering, wrong-gate rejection, or inflation
+aborts.
+
+### 33.7 Supersession, preservation, and exact new identifiers
+
+The complete supersession disposition is:
+
+| Earlier normative anchor | Amendment-19 disposition |
+|---|---|
+| §19.3.3 `O_H`-before-purpose-classification order and `O_P` prompt-classification and universal-consumption law | Superseded in construction order: authenticate the fixed prompt denominator, build the complete purpose rows and census, compute `U`, and select the failure or normal variant before `O_H`. The selected failure arm stops without `O_H`. On the normal arm `O_H` remains purpose-independent and runs after the selector but before `O_P` witness evaluation. Only explicit official purposes can enter `O_P`; no missing or legacy value is defaulted or promoted. |
+| §§19.3.3 and 26.6.1 effective authority keyset, `canonical_order`, `pass \| fail` status, per-era keysets, and direct-concatenation law | Superseded by the status-discriminated union. The selected failure arm is exactly the ten-key header and new failure status; all 73 pass-only effective header keys and every era row are forbidden. Its global purpose-mapping relation is a completed selector precursor, not a serialized per-era `purpose_mapping_rows` array. The normal arm composes §26.6.1's 78-key successor header with only the five named A19 header members and per-era `purpose_mapping_rows`, and otherwise retains the inherited status, keysets, and concatenation rules. |
+| §19.3.3 independently reviewed complete `semantic_bindings` use and cross-check law | Preserved on the normal arm. It is not evaluated on the selected failure arm, which serializes neither an empty binding nor a near-match row; candidate, text, inventory, crosswalk, or reader content remains forbidden. |
+| §19.3.3 hierarchy row proof-ID, hierarchy digest, search object, and proof serialization law | On the normal arm, superseded only in construction order by the D0 preproof-row projection, D0-bearing 15-key search object, proof IDs, final rows, and D1 final digest. On the selected failure arm every such member and digest is forbidden. |
+| §19.3.3 raw-field ambiguity abort, occurrence-reference and positive-join nonempty/equal-count cover, and expanded-disposition join/proof tagged union | Preserved on the normal arm. They are not executed on the selected failure arm; no empty, null, partial, or registration-required row may stand in for them. |
+| §19.3.3 two-literal proof conclusion and Class-A/Class-B/inventory keyed joins | Preserved on the normal arm. The failure arm creates no third proof conclusion and prohibits every proof, join, inventory key, or downstream projection. |
+| §§19.4.2 and 26.10.1 G17-C01 expected/actual `era_annotation_rows`, Q5, inventory, slot, and authority projections | On the normal arm, both expected and actual G17-C01 era projections insert per-era `purpose_mapping_rows` immediately after `hierarchy_rows` and before `positive_occurrence_rows`; direct era-order concatenation must reproduce `purpose_mapping_row_count`, `purpose_mapping_keyset_sha256`, `purpose_mapping_domain_sha256`, and `purpose_mapping_disposition_counts` in the authority header. All other projection law is preserved. The selected failure arm remains expressly prohibited, and its ten-key nonauthority header cannot occupy G17-C01. |
+| §26.11.2 A12-T2-R04 gate and §§29.4.4–29.4.5 source-member identity, R04, and passing R05 certificate | The overall §26.11.2 A12-T2-R04 gate is preserved and is not executed or passing on the selected failure arm because its `H`, `O_H`, reverse-cover, purpose-expansion, and field-join conjuncts are forbidden. Only its two independent reconstruction subresults may each return `pass_independent_source_reconstruction` by exactly reproducing the selected 877-byte failure member. The six-key identity uses the exact failure-specific authority kind and `fail_source_purpose_mapping_underdetermined` status. R05 and its certificate still require a passing normal member and cannot pass on the current input. |
+| §§32.4.4, 32.7, and 32.8 active A19 successor-program stop | Historical A18 bytes remain exact; active post-A19 routing is `A20_SUCCESSOR_PROGRAM_STOP` with no alias, and the deferred campaign is Amendment 20/revision 22 and out of scope. |
+| §32.5.1 active implementation rows | Superseded as active prospective-validation pins only by the Amendment-19 table. Historical identities and the three-path domain remain immutable. |
+| §31.3 executed-transition obligation and generalized oracle | Lawfully unchanged and applied to the mandatory revision-21 same-state demonstration. Activation still requires a later real registry repin. |
+
+No predecessor byte is deleted. On the normal arm, every source identity,
+catalog, relationship, H/`O_H`, positive witness, field join, locator,
+canonicalization, era order, proof target, expanded row, integrity rule,
+Git-order rule, inherited census, and noninstantiation rule not expressly
+named above remains exact. On the selected failure arm, the table's explicit
+nonexecution rules control; an omitted pass-only member is forbidden, not
+silently waived.
+
+The exact new schema identifier is:
+
+~~~text
+amendment_19_source_hierarchy_member_construction_law.v1
+~~~
+
+The exact new disposition, status, reason, and lifecycle identifiers are:
+
+~~~text
+complete_official_mapping
+partial_official_mapping_with_legacy_residue_underdetermined
+legacy_only_mapping_underdetermined
+missing_mapping_underdetermined
+fail_source_purpose_mapping_underdetermined
+A20_SUCCESSOR_PROGRAM_STOP
+~~~
+
+The exact new authority-kind and canonical-order identifiers are:
+
+~~~text
+pre_q5_source_hierarchy_failure_member_nonauthority
+questionnaire_occurrence_source_order
+~~~
+
+The exact new member identifiers are:
+
+~~~text
+hierarchy_preproof_domain_sha256
+purpose_mapping_rows
+source_classification_row_id
+serialized_source_literals
+explicit_official_purposes
+unresolved_legacy_literals
+purpose_mapping_disposition
+purpose_mapping_row_count
+purpose_mapping_keyset_sha256
+purpose_mapping_domain_sha256
+purpose_mapping_disposition_counts
+~~~
+
+The exact new Python identifiers are:
+
+~~~text
+_validate_amendment19_ratification_design
+_validate_inherited_amendment19_ratification_design
+run_amendment19_member_law_mutation_tests
+~~~
+
+Each qualified inventory is ordered, unique, closed, and disjoint by kind.
+The historical `A19_SUCCESSOR_PROGRAM_STOP`, inherited
+`unresolved_semantic_binding`, row keys, formulas, hashes, commands, and
+symbolic D0/D1 names are not recounted as new.
+
+### 33.8 Exact machine projection
+
+The exact Amendment-19 normative manifest is this one-line terminal-LF canonical JSON value:
+
+~~~json
+{"activation_transition":{"activation_affecting":true,"activation_requires_later_registry_repin":true,"all_nonpassing_counts":0,"ambiguity_fails_closed_into_obligation":true,"closure_count":7,"closure_count_subtrahend":14,"full_pinned_battery_required":true,"ordered_closure_domain":[13,14,15,16,17,18,19],"production_oracle_changed_by_draft":false,"production_registry_revision_in_draft":19,"public_entrypoint":"validate_ratification_operativity","receipt_inside_candidate_bytes":false,"same_state_required":true,"simulated_state_authority":"NONAUTHORITY","terminal_amendment":19,"terminal_revision":21},"authenticated_build_input_envelope":{"canonical_byte_size":168504,"raw_sha256":"f34ced6e80e1bf72e68635b4f729c5b983c094fd25d16105a6c161ccd52fff63","row_count":279},"canonicalization":"python-json-sort-keys-compact-ascii-no-nan-lf-v1","hierarchy_construction_contract":{"applicability":"only_if_purpose_failure_selector_false","canonicalization":"python-json-sort-keys-compact-ascii-no-nan-lf-v1","dependency_order":["preproof_rows","hierarchy_preproof_domain_sha256","search_implementation","absence_proof_ids","final_hierarchy_rows","hierarchy_domain_sha256","dependent_proof_expanded_era_and_member_digests"],"final_digest_formula":"D1=SHA256(C(direct_era_order_concatenation_of_final_rows))","final_row_keys":["questionnaire_slot_id","interview_wave","role","relationship_id","job_slot","questionnaire_component_slot","slot_kind","hierarchy_presence","hierarchy_occurrence_ids","flow_branch_ids","flow_branch_paths","source_locator_ids","hierarchy_absence_proof_id"],"fixed_point_iteration_forbidden":true,"g17_c01_normal_direct_concatenation_header_members":["purpose_mapping_row_count","purpose_mapping_keyset_sha256","purpose_mapping_domain_sha256","purpose_mapping_disposition_counts"],"g17_c01_normal_per_era_insertion_order":["hierarchy_rows","purpose_mapping_rows","positive_occurrence_rows"],"g17_c01_normal_projection_sides":["expected","actual"],"header_insertions":["hierarchy_preproof_domain_sha256","purpose_mapping_row_count","purpose_mapping_keyset_sha256","purpose_mapping_domain_sha256","purpose_mapping_disposition_counts"],"per_era_insertion":"purpose_mapping_rows","placeholder_forbidden":true,"preproof_digest_formula":"D0=SHA256(C(direct_era_order_concatenation_of_preproof_rows))","preproof_forbidden_dependencies":["hierarchy_absence_proof_id","final_hierarchy_row","hierarchy_domain_sha256","absence_proof","absence_proof_domain_sha256","expanded_disposition_row","expanded_disposition_domain_sha256","era_digest","member_digest"],"preproof_projection_rule":"delete_only_hierarchy_absence_proof_id_without_placeholder","preproof_row_keys":["questionnaire_slot_id","interview_wave","role","relationship_id","job_slot","questionnaire_component_slot","slot_kind","hierarchy_presence","hierarchy_occurrence_ids","flow_branch_ids","flow_branch_paths","source_locator_ids"],"proof_id_formula":"A_h=psid-absence-proof:+SHA256(C(proof_id_preimage))","proof_id_preimage_order":["era_id","target_predicate","searched_interview_waves","searched_locator_ids","searched_layout_keyset_sha256","searched_codebook_keyset_sha256","search_implementation"],"replaced_search_key":"hierarchy_domain_sha256","search_implementation_keys":["authority_kind","questionnaire_page_text_derivation_sha256","questionnaire_page_domain_sha256","questionnaire_occurrence_domain_sha256","flow_branch_domain_sha256","role_node_domain_sha256","job_slot_domain_sha256","questionnaire_component_slot_domain_sha256","node_alias_domain_sha256","global_relationship_domain_sha256","hierarchy_preproof_domain_sha256","positive_occurrence_domain_sha256","near_match_source_annotation_count","near_match_source_annotation_keyset_sha256","near_match_source_annotation_domain_sha256"],"selected_failure_variant_executes_g17_c01_projection":false,"selected_failure_variant_executes_hierarchy_construction":false},"mutation_census":{"amendment16_mutation_count":7,"amendment16_mutation_domain_sha256":"1e00099f636c1a727839ebc298b965cd0981e0ad8f23189367ba7dbd0eddb871","amendment17_mutation_count":3,"amendment17_mutation_domain_sha256":"b19ebcbf47278d63e12bd8021334a88910895bdfe48caf2d49c6bbe3014417e6","amendment18_mutation_count":3,"amendment18_mutation_domain_sha256":"1bf9f6d30461d003cab597a405cb5cc9855273372ed3e7e5b36b1627eaa11108","inherited_complete_mutation_count":100,"inherited_complete_mutation_domain_sha256":"fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3"},"mutation_domain_byte_size":151,"mutation_domain_sha256":"002aa021325c18e311cc778562ad0e937468a90c378db0740290fcf617929101","mutation_inventory":["source_purpose_totality_or_binding_disposition_forged","hierarchy_preproof_final_digest_order_forged","r06_successor_program_stop_numbering_forged"],"new_identifiers":{"authority_kind_and_canonical_order":["pre_q5_source_hierarchy_failure_member_nonauthority","questionnaire_occurrence_source_order"],"disposition_status_reason_lifecycle":["complete_official_mapping","partial_official_mapping_with_legacy_residue_underdetermined","legacy_only_mapping_underdetermined","missing_mapping_underdetermined","fail_source_purpose_mapping_underdetermined","A20_SUCCESSOR_PROGRAM_STOP"],"member":["hierarchy_preproof_domain_sha256","purpose_mapping_rows","source_classification_row_id","serialized_source_literals","explicit_official_purposes","unresolved_legacy_literals","purpose_mapping_disposition","purpose_mapping_row_count","purpose_mapping_keyset_sha256","purpose_mapping_domain_sha256","purpose_mapping_disposition_counts"],"python":["_validate_amendment19_ratification_design","_validate_inherited_amendment19_ratification_design","run_amendment19_member_law_mutation_tests"],"schema":["amendment_19_source_hierarchy_member_construction_law.v1"]},"prefix_identity":{"blob_oid":"016c0fff757b54da730ae0044216416cde2d2c33","byte_size":3964278,"raw_sha256":"631d3b2b8ecab1c29ec0595550a6d2b798f49ff96e74c722801d24c48ab111ec"},"production_registry_boundary":{"closure_count":5,"ordered_closure_domain":[13,14,15,16,17],"revision":19,"unchanged_by_draft":true},"purpose_mapping_contract":{"classification_document_count":9,"classification_document_rows":[{"document_position":7,"official_mapped_prompt_count":43,"prompt_count":99},{"document_position":14,"official_mapped_prompt_count":50,"prompt_count":50},{"document_position":34,"official_mapped_prompt_count":5,"prompt_count":5},{"document_position":36,"official_mapped_prompt_count":133,"prompt_count":133},{"document_position":40,"official_mapped_prompt_count":174,"prompt_count":174},{"document_position":56,"official_mapped_prompt_count":128,"prompt_count":128},{"document_position":58,"official_mapped_prompt_count":149,"prompt_count":149},{"document_position":66,"official_mapped_prompt_count":85,"prompt_count":85},{"document_position":70,"official_mapped_prompt_count":65,"prompt_count":65}],"classification_row_count":888,"construction_order":["authenticate_fixed_prompt_denominator","construct_complete_purpose_mapping_rows_keyset_domain_and_counts","compute_U_underdetermined_mapping_prompt_count","select_failure_or_normal_variant","normal_variant_only_construct_O_H_purpose_independent","normal_variant_only_evaluate_O_P_witnesses"],"disposition_counts":{"complete_official_mapping":818,"legacy_only_mapping_underdetermined":56,"missing_mapping_underdetermined":21083,"partial_official_mapping_with_legacy_residue_underdetermined":14},"disposition_order":["complete_official_mapping","partial_official_mapping_with_legacy_residue_underdetermined","legacy_only_mapping_underdetermined","missing_mapping_underdetermined"],"exact_text_transfer_audit":{"mapped_text_class_conflict_count":8,"missing_official_mapping_prompt_count":21139,"shared_text_ambiguous_prompt_count":12,"shared_text_prompt_count":246,"shared_text_unique_mapping_prompt_count":234,"unmatched_text_prompt_count":20893},"field_purpose_prompt_count":21971,"first_source_prompt_occurrence_id":"psid-questionnaire-occurrence:17d4dd6699adc429dc5548b30763fc11425469927c1f02c41c15ae6a93c3828a","last_source_prompt_occurrence_id":"psid-questionnaire-occurrence:d1c8bdfb99364eff8092c663c399e6e4391e6fcd9c6bb742bdda13f1df489980","legacy_edge_count":74,"legacy_literal_promotion_forbidden":true,"legacy_literals":["business_share","employment_status","farm_operating_expenses","farm_receipts","hours_worked","in_kind_receipt","income_source","job_tenure","net_farm_income","rate","receipt_indicator","time_not_worked","weeks_worked"],"legacy_only_edge_count":60,"legacy_only_prompt_count":56,"legacy_projection_rule":"complete_stable_unique_source_literal_complement","legacy_row_count":70,"manual_addition_forbidden":true,"missing_official_mapping_prompt_count":21139,"mixed_legacy_edge_count":14,"mixed_official_edge_count":17,"mixed_official_legacy_prompt_count":14,"no_current_prompt_source_proved_no_purpose":true,"normal_variant_known_positive_relation":"existing_same_wave_branch_compatible_anchor_witness_using_only_explicit_official_purposes","normal_variant_o_h_precedes_o_p_witness_evaluation":true,"normal_variant_o_h_remains_purpose_independent":true,"official_edge_count":980,"official_mapped_prompt_count":832,"official_only_edge_count":963,"official_only_prompt_count":818,"official_projection_rule":"stable_unique_intersection_with_official_purpose_order","official_purpose_observed_count":14,"official_purpose_order":["interview_and_role_attachment","amount","reporting_unit","month_or_exposure","assignment","employee_self_or_mixed","incorporation","government_level","industry","occupation","enrollment","job_identifier","state_of_residence","section_218_group","section_218_position","public_retirement_system_participation","federal_retirement_system","federal_service","railroad_covered_employer","railroad_covered_service","ministerial_service","clergy_remuneration","church_employee_service","religious_order_service","clergy_or_religious_exemption","domestic_service","agricultural_service","election_work","family_service","casual_service","foreign_government_service","international_organization_service","nonresident_alien_status","employer_school_nexus","statutory_student_service"],"plural_source_row_keys":["annotation_status","applicable_anchor_occurrence_ids","exact_prompt","exact_prompt_utf8_span","field_purposes","local_field_purpose_classification_id","source_prompt_occurrence_id"],"prompt_row_keys":["source_prompt_occurrence_id","source_classification_row_id","serialized_source_literals","explicit_official_purposes","unresolved_legacy_literals","purpose_mapping_disposition"],"prompt_row_order":"questionnaire_occurrence_source_order","purpose_mapping_domain_canonical_byte_size":7244433,"purpose_mapping_domain_sha256":"53158188e774c75fcbe6b7af57bfa747060c80193556eac7a0e289e02b63ed1e","purpose_mapping_keyset_canonical_byte_size":2131189,"purpose_mapping_keyset_sha256":"2d1300eaae5c8259f1cda59907d2cf0b8174faf5a37a3549e6d6f3eec9618921","selected_failure_variant_evaluates_o_h":false,"selected_failure_variant_evaluates_o_p":false,"similarity_transfer_forbidden":true,"singular_source_row_keys":["classification_status","exact_prompt","exact_prompt_sha256","field_purpose","local_field_purpose_classification_id","source_occurrence_id","supported_local_anchor_ids"],"source_annotation_document_count":81,"source_classification_join_keys":{"plural":"source_prompt_occurrence_id","singular":"source_occurrence_id"},"source_classification_resolution":"zero_or_one_same_annotation_row_by_shape_specific_occurrence_id","source_classification_status_rules":{"plural":{"key":"annotation_status","value":"complete"},"singular":{"key":"classification_status","value":"complete_document_local_provisional"}},"text_transfer_forbidden":true,"unclassified_prompt_count":21083,"underdetermined_mapping_prompt_count":21153,"underdetermined_selects_early_failure_variant":true},"schema_version":"amendment_19_source_hierarchy_member_construction_law.v1","semantic_binding_contract":{"audit_is_discovery_evidence_not_selected_branch_member_input":true,"authenticated_annotation_document_count":81,"authenticated_complete_semantic_binding_relation_count":0,"candidate_binding_forbidden":true,"failure_selector_precedes_semantic_binding_evaluation":true,"normal_variant_requires_inherited_complete_semantic_bindings":true,"purpose_mapping_does_not_create_five_coordinate_binding":true,"selected_failure_variant_serializes_near_match_rows":false,"text_inference_forbidden":true},"source_hierarchy_failure_contract":{"a12_t2_r04_overall_gate_preserved":true,"a12_t2_r04_selected_failure_gate_pass_permitted":false,"failure_member":{"authority_kind":"source_only_canonical_questionnaire_annotation","canonical_order":"questionnaire_occurrence_source_order","purpose_mapping_disposition_counts":{"complete_official_mapping":818,"legacy_only_mapping_underdetermined":56,"missing_mapping_underdetermined":21083,"partial_official_mapping_with_legacy_residue_underdetermined":14},"purpose_mapping_domain_sha256":"53158188e774c75fcbe6b7af57bfa747060c80193556eac7a0e289e02b63ed1e","purpose_mapping_keyset_sha256":"2d1300eaae5c8259f1cda59907d2cf0b8174faf5a37a3549e6d6f3eec9618921","purpose_mapping_row_count":21971,"questionnaire_document_count":81,"questionnaire_document_domain_sha256":"b06139b147391d06b4f90a8f28de472a936ec08b3e9eb37001a5a70e2b3c3543","questionnaire_document_keyset_sha256":"3326c9ba70b7f83f19b0ea934630d26ced73f230be1628cb74031d17160cb1a5","status":"fail_source_purpose_mapping_underdetermined"},"failure_member_canonical_byte_size":877,"failure_member_keys":["authority_kind","questionnaire_document_count","questionnaire_document_keyset_sha256","questionnaire_document_domain_sha256","purpose_mapping_row_count","purpose_mapping_keyset_sha256","purpose_mapping_domain_sha256","purpose_mapping_disposition_counts","canonical_order","status"],"failure_member_raw_sha256":"1651c50ff1f171ac420e55982cb060db70946f9283999c3d9edb2fa140d467c5","fixed_selector_value":true,"forbidden_authority_header_keys":["questionnaire_page_text_derivation_byte_size","questionnaire_page_text_derivation_sha256","role_node_rows","role_node_count","role_node_domain_sha256","role_label_class_rows","role_label_class_count","role_label_class_domain_sha256","role_assignment_rows","role_assignment_count","role_assignment_keyset_sha256","role_assignment_domain_sha256","job_slot_rows","job_slot_count","job_slot_domain_sha256","questionnaire_component_slot_rows","questionnaire_component_slot_count","questionnaire_component_slot_domain_sha256","component_parent_resolution_rows","component_parent_resolution_count","component_parent_resolution_keyset_sha256","component_parent_resolution_domain_sha256","component_parent_resolution_disposition_counts","node_alias_rows","node_alias_count","node_alias_domain_sha256","outside_r_q_repeat_terminal_rows","outside_r_q_repeat_terminal_count","outside_r_q_repeat_terminal_keyset_sha256","outside_r_q_repeat_terminal_domain_sha256","noncatalog_aggregate_relation_disposition_rows","noncatalog_aggregate_relation_disposition_count","noncatalog_aggregate_relation_disposition_keyset_sha256","noncatalog_aggregate_relation_disposition_domain_sha256","in_domain_redirection_disposition_rows","in_domain_redirection_disposition_count","in_domain_redirection_disposition_keyset_sha256","in_domain_redirection_disposition_domain_sha256","global_relationship_rows","global_relationship_count","global_relationship_keyset_sha256","global_relationship_domain_sha256","catalog_only_job_disposition_rows","catalog_only_job_disposition_count","catalog_only_job_disposition_keyset_sha256","catalog_only_job_disposition_domain_sha256","questionnaire_page_count","questionnaire_page_domain_sha256","questionnaire_occurrence_count","questionnaire_occurrence_domain_sha256","flow_branch_count","flow_branch_domain_sha256","hierarchy_row_count","hierarchy_keyset_sha256","hierarchy_preproof_domain_sha256","hierarchy_domain_sha256","positive_occurrence_row_count","positive_occurrence_keyset_sha256","positive_occurrence_domain_sha256","occurrence_raw_field_reference_count","occurrence_raw_field_reference_keyset_sha256","occurrence_raw_field_reference_domain_sha256","positive_field_join_row_count","positive_field_join_keyset_sha256","positive_field_join_domain_sha256","expanded_disposition_row_count","expanded_disposition_keyset_sha256","expanded_disposition_domain_sha256","near_match_source_annotation_count","near_match_source_annotation_keyset_sha256","near_match_source_annotation_domain_sha256","absence_proof_count","absence_proof_domain_sha256"],"forbidden_evaluation_or_serialization":["O_H","O_P","H","reverse_cover","purpose_expansion","semantic_bindings","questionnaire_page_rows","questionnaire_occurrence_rows","flow_branch_rows","role_node_rows","role_label_class_rows","role_assignment_rows","job_slot_rows","questionnaire_component_slot_rows","component_parent_resolution_rows","node_alias_rows","outside_r_q_repeat_terminal_rows","noncatalog_aggregate_relation_disposition_rows","in_domain_redirection_disposition_rows","global_relationship_rows","catalog_only_job_disposition_rows","whole_document_locators","field_stream_locators","hierarchy_preproof_rows","hierarchy_preproof_domain_sha256","hierarchy_rows","hierarchy_domain_sha256","positive_occurrence_rows","occurrence_raw_field_reference_rows","positive_field_join_rows","expanded_disposition_rows","near_match_source_annotation_rows","absence_proofs","all_pass_only_counts_keysets_and_domain_digests","per_era_purpose_mapping_rows","all_per_era_arrays_counts_keysets_and_domain_digests","era_rows","era_row_count","era_id_order","era_domain_sha256","normal_authority_header","A12-T2-R04_overall_gate","Q5","G17-C01","official_inventory","official_slot_registry","authority_emission","production_output"],"global_purpose_mapping_rows_constructed_before_selection":true,"q5_or_authority_emission_permitted":false,"r04_dual_reconstruction_required":true,"r04_independent_reconstruction_subresult_count":2,"r04_independent_reconstruction_subresult_status":"pass_independent_source_reconstruction","r04_independent_reconstruction_subresults_require_exact_selected_member_bytes":true,"r05_pass_or_certification_emission_permitted":false,"r05_requires_passing_normal_member":true,"selected_failure_variant_serializes_per_era_purpose_mapping_rows":false,"selection_predicate":"underdetermined_mapping_prompt_count_gt_zero","selection_stage":"after_purpose_mapping_before_all_pass_member_construction","source_hierarchy_member_identity":{"authority_kind":"pre_q5_source_hierarchy_failure_member_nonauthority","canonical_byte_size":877,"canonicalization":"python-json-sort-keys-compact-ascii-no-nan-lf-v1","member_name":"hierarchy_annotation_authority","raw_sha256":"1651c50ff1f171ac420e55982cb060db70946f9283999c3d9edb2fa140d467c5","status":"fail_source_purpose_mapping_underdetermined"},"source_hierarchy_member_identity_canonical_byte_size":351,"source_hierarchy_member_identity_keys":["authority_kind","canonical_byte_size","canonicalization","member_name","raw_sha256","status"],"source_hierarchy_member_identity_raw_sha256":"077c6a19e44d8abdf96422a8d2d203fdf263ecbbfb70cb9bb3dc9522a3dcd2bd"},"successor_routing_contract":{"active_lifecycle_derivation":"deep_copy_A18_R06_RESULT_CONTRACT_lifecycle_replace_only_next_required_state","active_next_required_state":"A20_SUCCESSOR_PROGRAM_STOP","all_other_r06_members_unchanged":true,"current_amendment":19,"current_revision":21,"deferred_campaign_substance":"OUT_OF_SCOPE","deferred_program_amendment":20,"deferred_program_revision":22,"historical_amendment18_next_required_state":"A19_SUCCESSOR_PROGRAM_STOP","historical_identifier_is_not_active_alias":true,"r06_artifact_blocked_while_r05_nonpass":true},"supersession_map":[["\u00a719.3.3 O_H-before-purpose-classification order and O_P prompt-classification and universal-consumption law","Superseded in construction order: authenticate the fixed prompt denominator, build the complete purpose rows and census, compute U, and select the failure or normal variant before O_H. The selected failure arm stops without O_H. On the normal arm O_H remains purpose-independent and runs after the selector but before O_P witness evaluation. Only explicit official purposes can enter O_P; no missing or legacy value is defaulted or promoted."],["\u00a7\u00a719.3.3 and 26.6.1 effective authority keyset, canonical_order, pass | fail status, per-era keysets, and direct-concatenation law","Superseded by the status-discriminated union. The selected failure arm is exactly the ten-key header and new failure status; all 73 pass-only effective header keys and every era row are forbidden. Its global purpose-mapping relation is a completed selector precursor, not a serialized per-era purpose_mapping_rows array. The normal arm composes \u00a726.6.1's 78-key successor header with only the five named A19 header members and per-era purpose_mapping_rows, and otherwise retains the inherited status, keysets, and concatenation rules."],["\u00a719.3.3 independently reviewed complete semantic_bindings use and cross-check law","Preserved on the normal arm. It is not evaluated on the selected failure arm, which serializes neither an empty binding nor a near-match row; candidate, text, inventory, crosswalk, or reader content remains forbidden."],["\u00a719.3.3 hierarchy row proof-ID, hierarchy digest, search object, and proof serialization law","On the normal arm, superseded only in construction order by the D0 preproof-row projection, D0-bearing 15-key search object, proof IDs, final rows, and D1 final digest. On the selected failure arm every such member and digest is forbidden."],["\u00a719.3.3 raw-field ambiguity abort, occurrence-reference and positive-join nonempty/equal-count cover, and expanded-disposition join/proof tagged union","Preserved on the normal arm. They are not executed on the selected failure arm; no empty, null, partial, or registration-required row may stand in for them."],["\u00a719.3.3 two-literal proof conclusion and Class-A/Class-B/inventory keyed joins","Preserved on the normal arm. The failure arm creates no third proof conclusion and prohibits every proof, join, inventory key, or downstream projection."],["\u00a7\u00a719.4.2 and 26.10.1 G17-C01 expected/actual era_annotation_rows, Q5, inventory, slot, and authority projections","On the normal arm, both expected and actual G17-C01 era projections insert per-era purpose_mapping_rows immediately after hierarchy_rows and before positive_occurrence_rows; direct era-order concatenation must reproduce purpose_mapping_row_count, purpose_mapping_keyset_sha256, purpose_mapping_domain_sha256, and purpose_mapping_disposition_counts in the authority header. All other projection law is preserved. The selected failure arm remains expressly prohibited, and its ten-key nonauthority header cannot occupy G17-C01."],["\u00a726.11.2 A12-T2-R04 gate and \u00a7\u00a729.4.4\u201329.4.5 source-member identity, R04, and passing R05 certificate","The overall \u00a726.11.2 A12-T2-R04 gate is preserved and is not executed or passing on the selected failure arm because its H, O_H, reverse-cover, purpose-expansion, and field-join conjuncts are forbidden. Only its two independent reconstruction subresults may each return pass_independent_source_reconstruction by exactly reproducing the selected 877-byte failure member. The six-key identity uses the exact failure-specific authority kind and fail_source_purpose_mapping_underdetermined status. R05 and its certificate still require a passing normal member and cannot pass on the current input."],["\u00a732.4.4, \u00a732.7, and \u00a732.8 active A19 successor-program stop","Historical A18 bytes remain exact; active post-A19 routing is A20_SUCCESSOR_PROGRAM_STOP with no alias, and the deferred campaign is Amendment 20/revision 22 and out of scope."],["\u00a732.5.1 active implementation rows","Superseded as active prospective-validation pins only by the Amendment-19 table. Historical identities and the three-path domain remain immutable."],["\u00a731.3 executed-transition obligation and generalized oracle","Lawfully unchanged and applied to the mandatory revision-21 same-state demonstration. Activation still requires a later real registry repin."]]}
+~~~
+
+The manifest and the prose are cumulative law. A difference between them,
+including a count, type, key, order, digest, status, supersession, identifier,
+or registry boundary, aborts rather than selecting either representation.
+
+### 33.9 Terminal prospective effect
+
+**Amendment 19 remains a prospective, unratified, and inoperative draft. The
+current operative registry remains revision 19 with exactly Amendments 13
+through 17, and the production oracle is unchanged. This draft neither
+activates Amendment 18 nor Amendment 19. Only two affirmative verdicts on
+the final exact A19 bytes, the required fresh revision-21 same-state
+demonstration, the operator merge, creation of the A19 closure, and a later
+revision-21 registry repin can activate it. Even after activation, the
+authenticated inputs yield an exact fail-closed source member: R04 bytes are
+derivable, but R05, Q5, G17, authority, and production cannot pass. The
+missing-reason campaign remains outside this amendment as A20/revision 22,
+and active routing is `A20_SUCCESSOR_PROGRAM_STOP` with no alias.**
