@@ -1570,7 +1570,7 @@ A18_NEW_IDENTIFIERS = {
 }
 
 A19_SECTION_SEMANTIC_SHA256 = (
-    "d4740a02964d7dbd074c62260a0f7753e9e77105375a208446b2ecc889ea25e7"
+    "1af9e180f4467a2c1817a12b515112dfaf96e2bcc72519bc2bde4a0423e5296d"
 )
 A19_OFFICIAL_PURPOSES = [
     "interview_and_role_attachment",
@@ -5101,10 +5101,10 @@ def _parse_a19_normative_manifest(section: str) -> dict[str, Any]:
         "Amendment-19 normative manifest",
     )
     _require(
-        remainder.startswith("~~~json\n"),
+        remainder.startswith("~~~text\n"),
         "Amendment-19 normative manifest fence start drift",
     )
-    fenced = remainder[len("~~~json\n") :]
+    fenced = remainder[len("~~~text\n") :]
     _require(
         "\n~~~\n" in fenced,
         "Amendment-19 normative manifest fence end drift",

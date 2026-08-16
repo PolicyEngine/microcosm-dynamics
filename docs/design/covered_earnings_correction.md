@@ -56105,7 +56105,7 @@ three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `076b9e37fd43d83c29da2fb7b6250940f3a5a753` | 475,622 | `c1aeeb2f0798828b4c48f5df39c4f9be1457188a9e8efc7a6d40403284d79965` |
+| `scripts/validate_amendment13_execution_law.py` | `d55d77f882101d5f8cc0934417dd5b52973a8eb0` | 475,604 | `e37dd55aa329f16154c01fb3bc6ba5a871f164c42bd9b7d1f255335b0f7f3152` |
 | `tests/test_validate_amendment13_execution_law.py` | `2fcea537455b8240e4b1bb065da5bc1a8ed583de` | 140,910 | `82568780e29ac6d9efe4b03de94fc3325388c7a3cae148197e95d3fb94fd7376` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
