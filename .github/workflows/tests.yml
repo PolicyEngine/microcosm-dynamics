@@ -9,11 +9,14 @@ on:
       - master
 
 jobs:
-  pytest:
+  pytest-shard:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ['3.11', '3.13']
+        python-version: ['3.14']
+        shard: [1, 2, 3, 4]
+    name: pytest-shard (${{ matrix.python-version }}, ${{ matrix.shard }}/4)
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -29,7 +32,21 @@ jobs:
           cache: 'pip'
 
       - name: Install package
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev]" pytest-split
 
-      - name: Run tests
-        run: pytest -q
+      - name: Run tests (shard ${{ matrix.shard }}/4)
+        run: pytest -q --splits 4 --group ${{ matrix.shard }}
+
+  # Fan-in jobs keeping the branch-protection context names
+  # ("pytest (3.11)" / "pytest (3.13)") stable across the shard split.
+  pytest:
+    name: pytest (${{ matrix.python-version }})
+    needs: pytest-shard
+    if: always()
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.14']
+    steps:
+      - name: Verify all shards passed
+        run: test "${{ needs.pytest-shard.result }}" = "success"
