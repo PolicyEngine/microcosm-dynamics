@@ -2463,9 +2463,58 @@ A19_NORMATIVE_MANIFEST = {
 }
 
 A20_SECTION_SEMANTIC_SHA256: str | None = (
-    "530ac9a2e7ca3ded253fb250876e41240554d958ee34563cf001b6f02cf152b7"
+    "f2b88a4638312a1c2ddc775a2b6226b43d7e481a9ef26efad1c27f77e3ba6f22"
 )
 A20_CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+A20_COMMON_IDENTITY_NAMES = [
+    "physical_source_identity",
+    "evidence_statement_identity",
+    "missing_reason_source_domain_identity",
+    "purpose_source_domain_identity",
+    "a20_successor_source_binding_identity",
+    "r04_q5_shape_identity",
+    "r06_six_module_identity",
+    "r06_collected_node_id_identity",
+    "dormant_lifecycle_definition_identity",
+]
+A20_ARM_IDENTITY_CONTRACTS = {
+    "missing_reason_authority_status": {
+        "pass_status": "pass",
+        "failure_status": "fail_permanent_missing_reason_authority_residue",
+        "pass_identity_names": [
+            "missing_reason_rule_set_identity",
+            "missing_reason_successor_relation_identity",
+            "missing_representation_bridge_identity",
+        ],
+        "failure_shadow_identity_name": (
+            "missing_reason_failure_shadow_identity"
+        ),
+    },
+    "purpose_authority_status": {
+        "pass_status": "pass",
+        "failure_status": "fail_permanent_purpose_authority_residue",
+        "pass_identity_names": [
+            "purpose_rule_set_identity",
+            "purpose_authority_mapping_identity",
+        ],
+        "failure_shadow_identity_name": "purpose_failure_shadow_identity",
+    },
+    "prompt_field_semantic_binding_status": {
+        "pass_status": "pass",
+        "failure_status": (
+            "fail_permanent_prompt_field_or_semantic_binding_residue"
+        ),
+        "pass_identity_names": [
+            "prompt_field_evidence_identity",
+            "prompt_field_candidate_set_identity",
+            "zero_candidate_positive_group_identity",
+            "semantic_binding_identity",
+        ],
+        "failure_shadow_identity_name": (
+            "prompt_field_semantic_failure_shadow_identity"
+        ),
+    },
+}
 A20_EXPECTED_IDENTITY_NAMES = [
     "physical_source_identity",
     "evidence_statement_identity",
@@ -2485,6 +2534,67 @@ A20_EXPECTED_IDENTITY_NAMES = [
     "r06_six_module_identity",
     "r06_collected_node_id_identity",
     "dormant_lifecycle_definition_identity",
+    "missing_reason_failure_shadow_identity",
+    "purpose_failure_shadow_identity",
+    "prompt_field_semantic_failure_shadow_identity",
+]
+A20_PASS_IDENTITY_KEYS = [
+    "identity_name",
+    "row_count",
+    "ordered_keyset_sha256",
+    "row_domain_sha256",
+    "status",
+]
+A20_ARM_PASS_IDENTITY_KEYS = [
+    "identity_name",
+    "arm_status_member",
+    "arm_status",
+    "row_count",
+    "ordered_keyset_sha256",
+    "row_domain_sha256",
+    "status",
+]
+A20_SUCCESSOR_BINDING_IDENTITY_KEYS = [
+    "identity_name",
+    "row_count",
+    "ordered_keyset_sha256",
+    "row_domain_sha256",
+    "arm_status_bindings",
+    "active_identity_bindings_sha256",
+    "status",
+]
+A20_FAILURE_SHADOW_IDENTITY_KEYS = [
+    "schema_version",
+    "identity_name",
+    "arm_status_member",
+    "arm_status",
+    "shadow_row_count",
+    "shadow_ordered_keyset_sha256",
+    "shadow_row_domain_sha256",
+    "complement_identity",
+    "forbidden_output_identity_names",
+    "nonemission_evidence",
+    "status",
+]
+A20_NONEMISSION_COMPLEMENT_IDENTITY_KEYS = [
+    "schema_version",
+    "complement_of_identity_names",
+    "row_count",
+    "ordered_keyset_sha256",
+    "row_domain_sha256",
+    "status",
+]
+A20_FAILURE_NONEMISSION_EVIDENCE_KEYS = [
+    "execution_commit",
+    "execution_tree_oid",
+    "repository_manifest_sha256_before",
+    "repository_manifest_sha256_after",
+    "repository_clean_before",
+    "repository_clean_after",
+    "repository_read_only",
+    "network_disabled",
+    "captured_streams",
+    "forbidden_outputs_absent_after_execution",
 ]
 A20_EVIDENCE_FREEZE = {
     "schema_version": "a20_evidence_freeze.v1",
@@ -2515,6 +2625,27 @@ A20_EVIDENCE_FREEZE_CONTRACT = {
             "pass",
             "fail_permanent_prompt_field_or_semantic_binding_residue",
         ],
+    },
+    "identity_contract": {
+        "common_identity_names": A20_COMMON_IDENTITY_NAMES,
+        "arm_identity_contracts": A20_ARM_IDENTITY_CONTRACTS,
+        "pass_identity_keys": A20_PASS_IDENTITY_KEYS,
+        "arm_pass_identity_keys": A20_ARM_PASS_IDENTITY_KEYS,
+        "successor_binding_identity_keys": (
+            A20_SUCCESSOR_BINDING_IDENTITY_KEYS
+        ),
+        "failure_shadow_identity_keys": A20_FAILURE_SHADOW_IDENTITY_KEYS,
+        "nonemission_complement_identity_keys": (
+            A20_NONEMISSION_COMPLEMENT_IDENTITY_KEYS
+        ),
+        "failure_nonemission_evidence_keys": (
+            A20_FAILURE_NONEMISSION_EVIDENCE_KEYS
+        ),
+        "successor_binding_identity_name": (
+            "a20_successor_source_binding_identity"
+        ),
+        "successor_binding_digest_excludes_self": True,
+        "failure_shadow_rows_are_exact_forbidden_output_complement": True,
     },
     "ratification_readiness_iff_freeze_shape_statuses_and_identities": True,
     "semantic_arm_pass_required_for_ratification": False,
@@ -2672,6 +2803,9 @@ A20_SOURCE_INFRASTRUCTURE_CONTRACT = {
         "evidence_statement_identity",
         "missing_reason_source_domain_identity",
         "purpose_source_domain_identity",
+        "missing_reason_authority_status",
+        "purpose_authority_status",
+        "prompt_field_semantic_binding_status",
         "missing_reason_rule_set_identity",
         "missing_reason_successor_relation_identity",
         "missing_representation_bridge_identity",
@@ -2682,6 +2816,10 @@ A20_SOURCE_INFRASTRUCTURE_CONTRACT = {
         "zero_candidate_positive_group_identity",
         "semantic_binding_identity",
         "r04_q5_shape_identity",
+        "missing_reason_failure_shadow_identity",
+        "purpose_failure_shadow_identity",
+        "prompt_field_semantic_failure_shadow_identity",
+        "active_identity_bindings_sha256",
         "canonicalization",
         "status",
     ],
@@ -3451,7 +3589,9 @@ A20_RATIFICATION_RECEIPT_CONTRACT = {
     "external_receipt_first_add_precedes_or_equals_closure_first_add": True,
     "scratch_commit_forbidden_as_production_ancestor": True,
     "receipt_candidate_design_tree_mode_blob_rederived": True,
-    "receipt_candidate_design_exactly_cross_binds_registry_closure_and_verdicts": True,
+    "receipt_candidate_design_exactly_cross_binds_historical_a20_closure_and_verdicts": True,
+    "current_terminal_registry_cross_binding_required_iff_a20_terminal_revision22": True,
+    "later_revision_authenticates_historical_a20_design_under_30_2_3": True,
     "receipt_rederives_synthetic_closure_standins_and_registry_binding": True,
     "receipt_public_result_booleans_not_sufficient": True,
     "later_amendment_requires_own_exact_receipt_topology_projection": True,
@@ -3512,7 +3652,7 @@ A20_SUCCESSOR_ROUTING_CONTRACT = {
     },
     "terminal_successor_state": "A20_SUCCESSOR_LIFECYCLE_COMPLETE",
 }
-A20_FULL_PINNED_BATTERY_COLLECTED = 217
+A20_FULL_PINNED_BATTERY_COLLECTED = 218
 A20_FULL_PINNED_BATTERY_COMMAND = (
     "executing_process_sys.executable -m pytest -q "
     "tests/test_validate_amendment13_execution_law.py"
@@ -3545,10 +3685,11 @@ A20_EXPECTED_MUTATIONS = (
     "r06_collection_or_lifecycle_order_forged",
     "receipt_verdict_or_scratch_transition_forged",
     "amendment20_terminal_pin_or_suffix_route_forged",
+    "evidence_freeze_identity_shadow_or_status_forged",
 )
-A20_MUTATION_DOMAIN_BYTE_SIZE = 364
+A20_MUTATION_DOMAIN_BYTE_SIZE = 415
 A20_MUTATION_DOMAIN_SHA256 = (
-    "9cd9692fbb44a9822c9f9c997eb4cdc898b68cd86000aac3af945eecbd4d1a53"
+    "52142486ece9aaa6a2a3d727ef34cd9ab287d7752cc0d7435711f8e864522df0"
 )
 A20_INHERITED_MUTATION_CENSUSES = [
     {
@@ -3584,6 +3725,8 @@ A20_NEW_IDENTIFIERS = {
         "amendment_20_dual_authority_successor_law.v1",
         "executed_transition_state.v2",
         "a20_evidence_freeze.v1",
+        "a20_failure_shadow_identity.v1",
+        "a20_nonemission_complement_identity.v1",
         "a20_physical_source_registry.v1",
         "a20_evidence_statement_registry.v1",
         "a20_missing_reason_source_domain.v1",
@@ -3680,6 +3823,21 @@ A20_NEW_IDENTIFIERS = {
         "prompt_field_semantic_binding_status",
         "expected_identity_bindings",
         "amendment20_ratification_ready",
+        "missing_reason_failure_shadow_identity",
+        "purpose_failure_shadow_identity",
+        "prompt_field_semantic_failure_shadow_identity",
+        "arm_status_bindings",
+        "active_identity_bindings_sha256",
+        "arm_status_member",
+        "arm_status",
+        "shadow_row_count",
+        "shadow_ordered_keyset_sha256",
+        "shadow_row_domain_sha256",
+        "complement_identity",
+        "complement_of_identity_names",
+        "forbidden_output_identity_names",
+        "nonemission_evidence",
+        "forbidden_outputs_absent_after_execution",
         "a20_successor_source_binding_identity",
         "missing_reason_source_domain_identity",
         "purpose_source_domain_identity",
@@ -3723,6 +3881,7 @@ A20_NEW_IDENTIFIERS = {
         "_validate_amendment20_draft_design",
         "_validate_amendment20_ratification_design",
         "_validate_inherited_amendment20_ratification_design",
+        "_validate_amendment20_evidence_freeze",
         "_parse_amendment20_implementation_pins",
         "_parse_amendment20_projection",
         "run_amendment20_contract_mutation_tests",
@@ -6628,6 +6787,281 @@ def _parse_a20_normative_manifest(section: str) -> dict[str, Any]:
     )
 
 
+def _validate_amendment20_evidence_freeze(
+    freeze: Mapping[str, Any],
+    freeze_contract: Mapping[str, Any],
+    *,
+    require_ratification_ready: bool,
+) -> None:
+    """Validate the closed drafting or status-dependent A4 identity shape."""
+
+    _require_exact_keys(
+        freeze,
+        set(A20_EVIDENCE_FREEZE),
+        "Amendment-20 evidence freeze",
+    )
+    identity_contract = freeze_contract.get("identity_contract")
+    _require(
+        isinstance(identity_contract, Mapping)
+        and identity_contract.get("common_identity_names")
+        == A20_COMMON_IDENTITY_NAMES
+        and identity_contract.get("arm_identity_contracts")
+        == A20_ARM_IDENTITY_CONTRACTS
+        and identity_contract.get("pass_identity_keys")
+        == A20_PASS_IDENTITY_KEYS
+        and identity_contract.get("arm_pass_identity_keys")
+        == A20_ARM_PASS_IDENTITY_KEYS
+        and identity_contract.get("successor_binding_identity_keys")
+        == A20_SUCCESSOR_BINDING_IDENTITY_KEYS
+        and identity_contract.get("failure_shadow_identity_keys")
+        == A20_FAILURE_SHADOW_IDENTITY_KEYS
+        and identity_contract.get("nonemission_complement_identity_keys")
+        == A20_NONEMISSION_COMPLEMENT_IDENTITY_KEYS
+        and identity_contract.get("failure_nonemission_evidence_keys")
+        == A20_FAILURE_NONEMISSION_EVIDENCE_KEYS
+        and identity_contract.get("successor_binding_identity_name")
+        == "a20_successor_source_binding_identity"
+        and identity_contract.get("successor_binding_digest_excludes_self")
+        is True
+        and identity_contract.get(
+            "failure_shadow_rows_are_exact_forbidden_output_complement"
+        )
+        is True,
+        "Amendment-20 evidence-freeze identity contract drift",
+    )
+    bindings = freeze.get("expected_identity_bindings")
+    _require(
+        freeze.get("schema_version") == "a20_evidence_freeze.v1"
+        and isinstance(bindings, Mapping)
+        and len(bindings) == len(A20_EXPECTED_IDENTITY_NAMES)
+        and set(bindings) == set(A20_EXPECTED_IDENTITY_NAMES)
+        and type(freeze.get("amendment20_ratification_ready")) is bool,
+        "Amendment-20 evidence-freeze object drift",
+    )
+
+    drafting_status = "not_instantiated_a4_required_before_ratify"
+    freeze_status = freeze.get("amendment20_evidence_freeze_status")
+    if freeze_status == drafting_status:
+        _require(
+            all(
+                freeze.get(status_member) is None
+                for status_member in A20_ARM_IDENTITY_CONTRACTS
+            )
+            and all(identity is None for identity in bindings.values())
+            and freeze["amendment20_ratification_ready"] is False,
+            "Amendment-20 drafting evidence-freeze shape drift",
+        )
+        _require(
+            not require_ratification_ready,
+            "Amendment-20 evidence freeze is not ratification-ready",
+        )
+        return
+
+    status_domains = freeze_contract.get("final_arm_status_domains")
+    _require(
+        freeze_status
+        == freeze_contract.get("final_required_evidence_freeze_status")
+        and isinstance(status_domains, Mapping)
+        and set(status_domains) == set(A20_ARM_IDENTITY_CONTRACTS)
+        and all(
+            freeze.get(status_member) in status_domains[status_member]
+            for status_member in A20_ARM_IDENTITY_CONTRACTS
+        )
+        and freeze["amendment20_ratification_ready"] is True,
+        "Amendment-20 evidence freeze is not ratification-ready",
+    )
+
+    def nonzero_lower_hex(value: Any, length: int) -> bool:
+        return _is_lower_hex(value, length) and value != "0" * length
+
+    def validate_digest_identity(
+        identity: Any,
+        identity_name: str,
+        *,
+        arm_status_member: str | None = None,
+        arm_status: str | None = None,
+    ) -> None:
+        expected_keys = (
+            A20_PASS_IDENTITY_KEYS
+            if arm_status_member is None
+            else A20_ARM_PASS_IDENTITY_KEYS
+        )
+        _require(
+            isinstance(identity, Mapping),
+            f"Amendment-20 {identity_name} identity is absent",
+        )
+        _require_exact_keys(
+            identity,
+            set(expected_keys),
+            f"Amendment-20 {identity_name} identity",
+        )
+        _require(
+            identity["identity_name"] == identity_name
+            and type(identity["row_count"]) is int
+            and identity["row_count"] > 0
+            and nonzero_lower_hex(identity["ordered_keyset_sha256"], 64)
+            and nonzero_lower_hex(identity["row_domain_sha256"], 64)
+            and identity["status"] == "pass",
+            f"Amendment-20 {identity_name} identity count/digest/status drift",
+        )
+        if arm_status_member is not None:
+            _require(
+                identity["arm_status_member"] == arm_status_member
+                and identity["arm_status"] == arm_status == "pass",
+                f"Amendment-20 {identity_name} arm-status cross-binding drift",
+            )
+
+    successor_binding_name = "a20_successor_source_binding_identity"
+    for identity_name in A20_COMMON_IDENTITY_NAMES:
+        if identity_name != successor_binding_name:
+            validate_digest_identity(bindings[identity_name], identity_name)
+
+    for status_member, arm_contract in A20_ARM_IDENTITY_CONTRACTS.items():
+        arm_status = freeze[status_member]
+        pass_identity_names = arm_contract["pass_identity_names"]
+        shadow_name = arm_contract["failure_shadow_identity_name"]
+        if arm_status == arm_contract["pass_status"]:
+            _require(
+                bindings[shadow_name] is None,
+                f"Amendment-20 {status_member} pass carries a failure shadow",
+            )
+            for identity_name in pass_identity_names:
+                validate_digest_identity(
+                    bindings[identity_name],
+                    identity_name,
+                    arm_status_member=status_member,
+                    arm_status=arm_status,
+                )
+            continue
+
+        _require(
+            arm_status == arm_contract["failure_status"]
+            and all(bindings[name] is None for name in pass_identity_names),
+            f"Amendment-20 {status_member} failure emitted a forbidden identity",
+        )
+        shadow = bindings[shadow_name]
+        _require(
+            isinstance(shadow, Mapping),
+            f"Amendment-20 {status_member} failure shadow is absent",
+        )
+        _require_exact_keys(
+            shadow,
+            set(A20_FAILURE_SHADOW_IDENTITY_KEYS),
+            f"Amendment-20 {status_member} failure shadow",
+        )
+        complement_rows = [
+            {"emitted": False, "identity_name": name}
+            for name in pass_identity_names
+        ]
+        complement_keyset_sha256 = _sha256(
+            canonical_json_bytes(pass_identity_names)
+        )
+        complement_domain_sha256 = _sha256(
+            canonical_json_bytes(complement_rows)
+        )
+        _require(
+            shadow["schema_version"] == "a20_failure_shadow_identity.v1"
+            and shadow["identity_name"] == shadow_name
+            and shadow["arm_status_member"] == status_member
+            and shadow["arm_status"] == arm_status
+            and shadow["forbidden_output_identity_names"]
+            == pass_identity_names
+            and type(shadow["shadow_row_count"]) is int
+            and shadow["shadow_row_count"] == len(pass_identity_names)
+            and shadow["shadow_ordered_keyset_sha256"]
+            == complement_keyset_sha256
+            and shadow["shadow_row_domain_sha256"] == complement_domain_sha256
+            and shadow["status"] == arm_status,
+            f"Amendment-20 {status_member} failure-shadow cross-binding drift",
+        )
+
+        complement = shadow["complement_identity"]
+        _require(
+            isinstance(complement, Mapping),
+            f"Amendment-20 {status_member} nonemission complement is absent",
+        )
+        _require_exact_keys(
+            complement,
+            set(A20_NONEMISSION_COMPLEMENT_IDENTITY_KEYS),
+            f"Amendment-20 {status_member} nonemission complement",
+        )
+        _require(
+            complement["schema_version"]
+            == "a20_nonemission_complement_identity.v1"
+            and complement["complement_of_identity_names"]
+            == pass_identity_names
+            and type(complement["row_count"]) is int
+            and complement["row_count"] == len(pass_identity_names)
+            and complement["ordered_keyset_sha256"] == complement_keyset_sha256
+            and complement["row_domain_sha256"] == complement_domain_sha256
+            and complement["status"] == arm_status,
+            f"Amendment-20 {status_member} nonemission complement drift",
+        )
+
+        nonemission = shadow["nonemission_evidence"]
+        _require(
+            isinstance(nonemission, Mapping),
+            f"Amendment-20 {status_member} nonemission evidence is absent",
+        )
+        _require_exact_keys(
+            nonemission,
+            set(A20_FAILURE_NONEMISSION_EVIDENCE_KEYS),
+            f"Amendment-20 {status_member} nonemission evidence",
+        )
+        _require(
+            nonzero_lower_hex(nonemission["execution_commit"], 40)
+            and nonzero_lower_hex(nonemission["execution_tree_oid"], 40)
+            and nonzero_lower_hex(
+                nonemission["repository_manifest_sha256_before"], 64
+            )
+            and nonemission["repository_manifest_sha256_before"]
+            == nonemission["repository_manifest_sha256_after"]
+            and nonemission["repository_clean_before"] is True
+            and nonemission["repository_clean_after"] is True
+            and nonemission["repository_read_only"] is True
+            and nonemission["network_disabled"] is True
+            and nonemission["captured_streams"] == ["stdout", "stderr"]
+            and nonemission["forbidden_outputs_absent_after_execution"]
+            is True,
+            f"Amendment-20 {status_member} durable nonemission evidence drift",
+        )
+
+    successor_binding = bindings[successor_binding_name]
+    _require(
+        isinstance(successor_binding, Mapping),
+        "Amendment-20 successor source-binding identity is absent",
+    )
+    _require_exact_keys(
+        successor_binding,
+        set(A20_SUCCESSOR_BINDING_IDENTITY_KEYS),
+        "Amendment-20 successor source-binding identity",
+    )
+    arm_status_bindings = {
+        status_member: freeze[status_member]
+        for status_member in A20_ARM_IDENTITY_CONTRACTS
+    }
+    active_binding_preimage = {
+        "arm_status_bindings": arm_status_bindings,
+        "expected_identity_bindings": {
+            identity_name: bindings[identity_name]
+            for identity_name in A20_EXPECTED_IDENTITY_NAMES
+            if identity_name != successor_binding_name
+        },
+    }
+    _require(
+        successor_binding["identity_name"] == successor_binding_name
+        and type(successor_binding["row_count"]) is int
+        and successor_binding["row_count"] > 0
+        and nonzero_lower_hex(successor_binding["ordered_keyset_sha256"], 64)
+        and nonzero_lower_hex(successor_binding["row_domain_sha256"], 64)
+        and successor_binding["arm_status_bindings"] == arm_status_bindings
+        and successor_binding["active_identity_bindings_sha256"]
+        == _sha256(canonical_json_bytes(active_binding_preimage))
+        and successor_binding["status"] == "pass",
+        "Amendment-20 successor source-binding identity cross-binding drift",
+    )
+
+
 def _validate_a20_manifest_contract(
     manifest: Mapping[str, Any],
     *,
@@ -6860,12 +7294,13 @@ def _validate_a20_manifest_contract(
     freeze = manifest["amendment20_evidence_freeze"]
     _require(
         freeze_contract == A20_EVIDENCE_FREEZE_CONTRACT
-        and freeze == freeze_contract["object"]
-        and len(freeze["expected_identity_bindings"])
-        == len(A20_EXPECTED_IDENTITY_NAMES)
-        and set(freeze["expected_identity_bindings"])
-        == set(A20_EXPECTED_IDENTITY_NAMES),
+        and freeze == freeze_contract["object"],
         "Amendment-20 evidence-freeze object drift",
+    )
+    _validate_amendment20_evidence_freeze(
+        freeze,
+        freeze_contract,
+        require_ratification_ready=require_ratification_ready,
     )
     receipt = manifest["ratification_receipt"]
     _require(
@@ -6892,7 +7327,15 @@ def _validate_a20_manifest_contract(
         and receipt["receipt_candidate_design_tree_mode_blob_rederived"]
         is True
         and receipt[
-            "receipt_candidate_design_exactly_cross_binds_registry_closure_and_verdicts"
+            "receipt_candidate_design_exactly_cross_binds_historical_a20_closure_and_verdicts"
+        ]
+        is True
+        and receipt[
+            "current_terminal_registry_cross_binding_required_iff_a20_terminal_revision22"
+        ]
+        is True
+        and receipt[
+            "later_revision_authenticates_historical_a20_design_under_30_2_3"
         ]
         is True
         and receipt[
@@ -6991,25 +7434,6 @@ def _validate_a20_manifest_contract(
         manifest == A20_NORMATIVE_MANIFEST,
         "Amendment-20 normative manifest drift",
     )
-    if require_ratification_ready:
-        status_domains = freeze_contract["final_arm_status_domains"]
-        _require(
-            freeze["amendment20_evidence_freeze_status"]
-            == freeze_contract["final_required_evidence_freeze_status"]
-            and all(
-                freeze[name] in allowed
-                for name, allowed in status_domains.items()
-            )
-            and freeze["amendment20_ratification_ready"] is True,
-            "Amendment-20 evidence freeze is not ratification-ready",
-        )
-        _require(
-            all(
-                isinstance(identity, Mapping) and bool(identity)
-                for identity in freeze["expected_identity_bindings"].values()
-            ),
-            "Amendment-20 ratification-ready identity is absent",
-        )
 
 
 def _parse_amendment20_projection(raw: bytes) -> dict[str, Any]:
@@ -10048,6 +10472,7 @@ def _validate_ratification_closure(
     )
     closure = _strict_canonical_json(closure_raw, expected_path)
     _validate_closure_shape(closure, amendment_number)
+    is_terminal_closure = False
     if amendment_number == 13:
         _require(
             closure == A13_EXPECTED_CLOSURE,
@@ -10077,6 +10502,7 @@ def _validate_ratification_closure(
             amendment_number in amendment_numbers,
             "closure amendment is outside the terminal registry domain",
         )
+        is_terminal_closure = amendment_number == amendment_numbers[-1]
         if (
             amendment_number == 14
             and registry_design_binding["revision"]
@@ -10086,7 +10512,7 @@ def _validate_ratification_closure(
                 dict(closure_binding) == A14_HISTORICAL_CLOSURE_BINDING,
                 "Amendment-14 historical closure binding drift",
             )
-        if amendment_number == amendment_numbers[-1]:
+        if is_terminal_closure:
             revision = registry_design_binding["revision"]
             _require(
                 revision == amendment_number + 2
@@ -10144,8 +10570,11 @@ def _validate_ratification_closure(
             == closure["attested_candidate_design_raw_sha256"]
             and _git_blob_oid(receipt_candidate_raw)
             == closure["attested_candidate_design_blob_oid"]
-            and registry_design_binding["blob_sha256"]
-            == _sha256(receipt_candidate_raw),
+            and (
+                not is_terminal_closure
+                or registry_design_binding["blob_sha256"]
+                == _sha256(receipt_candidate_raw)
+            ),
             "Amendment-20 receipt/closure/registry candidate cross-binding drift",
         )
         receipt_byte_size = len(amendment20_transition_receipt_raw)
@@ -15167,7 +15596,7 @@ def run_amendment19_member_law_mutation_tests() -> tuple[str, ...]:
 
 
 def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
-    """Authenticate the five inherited censuses, then run eight A20 attacks."""
+    """Authenticate the inherited censuses, then run nine A20 attack groups."""
 
     amendment19 = run_amendment19_member_law_mutation_tests()
     expected_censuses = A20_INHERITED_MUTATION_CENSUSES
@@ -15223,6 +15652,150 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
                 expected_message,
                 f"{label} {position}",
             )
+
+    def synthetic_identity_digest(label: str) -> str:
+        return _sha256(canonical_json_bytes({"synthetic_identity": label}))
+
+    def synthetic_pass_identity(
+        identity_name: str,
+        *,
+        arm_status_member: str | None = None,
+    ) -> dict[str, Any]:
+        identity = {
+            "identity_name": identity_name,
+            "row_count": 1,
+            "ordered_keyset_sha256": synthetic_identity_digest(
+                f"{identity_name}:keyset"
+            ),
+            "row_domain_sha256": synthetic_identity_digest(
+                f"{identity_name}:domain"
+            ),
+            "status": "pass",
+        }
+        if arm_status_member is not None:
+            identity = {
+                "identity_name": identity_name,
+                "arm_status_member": arm_status_member,
+                "arm_status": "pass",
+                "row_count": identity["row_count"],
+                "ordered_keyset_sha256": identity["ordered_keyset_sha256"],
+                "row_domain_sha256": identity["row_domain_sha256"],
+                "status": identity["status"],
+            }
+        return identity
+
+    def synthetic_failure_shadow(
+        status_member: str,
+        arm_contract: Mapping[str, Any],
+    ) -> dict[str, Any]:
+        pass_identity_names = arm_contract["pass_identity_names"]
+        failure_status = arm_contract["failure_status"]
+        complement_rows = [
+            {"emitted": False, "identity_name": name}
+            for name in pass_identity_names
+        ]
+        keyset_sha256 = _sha256(canonical_json_bytes(pass_identity_names))
+        domain_sha256 = _sha256(canonical_json_bytes(complement_rows))
+        manifest_sha256 = synthetic_identity_digest(
+            f"{status_member}:repository-manifest"
+        )
+        return {
+            "schema_version": "a20_failure_shadow_identity.v1",
+            "identity_name": arm_contract["failure_shadow_identity_name"],
+            "arm_status_member": status_member,
+            "arm_status": failure_status,
+            "shadow_row_count": len(pass_identity_names),
+            "shadow_ordered_keyset_sha256": keyset_sha256,
+            "shadow_row_domain_sha256": domain_sha256,
+            "complement_identity": {
+                "schema_version": "a20_nonemission_complement_identity.v1",
+                "complement_of_identity_names": pass_identity_names,
+                "row_count": len(pass_identity_names),
+                "ordered_keyset_sha256": keyset_sha256,
+                "row_domain_sha256": domain_sha256,
+                "status": failure_status,
+            },
+            "forbidden_output_identity_names": pass_identity_names,
+            "nonemission_evidence": {
+                "execution_commit": hashlib.sha1(
+                    f"{status_member}:commit".encode()
+                ).hexdigest(),
+                "execution_tree_oid": hashlib.sha1(
+                    f"{status_member}:tree".encode()
+                ).hexdigest(),
+                "repository_manifest_sha256_before": manifest_sha256,
+                "repository_manifest_sha256_after": manifest_sha256,
+                "repository_clean_before": True,
+                "repository_clean_after": True,
+                "repository_read_only": True,
+                "network_disabled": True,
+                "captured_streams": ["stdout", "stderr"],
+                "forbidden_outputs_absent_after_execution": True,
+            },
+            "status": failure_status,
+        }
+
+    def synthetic_ready_freeze(
+        failed_status_member: str | None = None,
+    ) -> dict[str, Any]:
+        bindings: dict[str, Any] = {
+            name: None for name in A20_EXPECTED_IDENTITY_NAMES
+        }
+        statuses = {
+            status_member: (
+                arm_contract["failure_status"]
+                if status_member == failed_status_member
+                else arm_contract["pass_status"]
+            )
+            for status_member, arm_contract in A20_ARM_IDENTITY_CONTRACTS.items()
+        }
+        successor_binding_name = "a20_successor_source_binding_identity"
+        for identity_name in A20_COMMON_IDENTITY_NAMES:
+            if identity_name != successor_binding_name:
+                bindings[identity_name] = synthetic_pass_identity(
+                    identity_name
+                )
+        for status_member, arm_contract in A20_ARM_IDENTITY_CONTRACTS.items():
+            if statuses[status_member] == arm_contract["pass_status"]:
+                for identity_name in arm_contract["pass_identity_names"]:
+                    bindings[identity_name] = synthetic_pass_identity(
+                        identity_name,
+                        arm_status_member=status_member,
+                    )
+            else:
+                bindings[arm_contract["failure_shadow_identity_name"]] = (
+                    synthetic_failure_shadow(status_member, arm_contract)
+                )
+        active_binding_preimage = {
+            "arm_status_bindings": statuses,
+            "expected_identity_bindings": {
+                identity_name: bindings[identity_name]
+                for identity_name in A20_EXPECTED_IDENTITY_NAMES
+                if identity_name != successor_binding_name
+            },
+        }
+        bindings[successor_binding_name] = {
+            "identity_name": successor_binding_name,
+            "row_count": 1,
+            "ordered_keyset_sha256": synthetic_identity_digest(
+                f"{successor_binding_name}:keyset"
+            ),
+            "row_domain_sha256": synthetic_identity_digest(
+                f"{successor_binding_name}:domain"
+            ),
+            "arm_status_bindings": statuses,
+            "active_identity_bindings_sha256": _sha256(
+                canonical_json_bytes(active_binding_preimage)
+            ),
+            "status": "pass",
+        }
+        return {
+            "schema_version": "a20_evidence_freeze.v1",
+            "amendment20_evidence_freeze_status": "pass_a4_exact_freeze",
+            **statuses,
+            "expected_identity_bindings": bindings,
+            "amendment20_ratification_ready": True,
+        }
 
     source_variants = []
     variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
@@ -15478,6 +16051,77 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
         "Amendment-20 pin/terminal/revision/domain attack",
     )
     rejected.append(A20_EXPECTED_MUTATIONS[7])
+
+    ready_controls = [
+        synthetic_ready_freeze(),
+        *[
+            synthetic_ready_freeze(status_member)
+            for status_member in A20_ARM_IDENTITY_CONTRACTS
+        ],
+    ]
+    for ready_freeze in ready_controls:
+        _validate_amendment20_evidence_freeze(
+            ready_freeze,
+            A20_EVIDENCE_FREEZE_CONTRACT,
+            require_ratification_ready=True,
+        )
+
+    forged_shadow = synthetic_ready_freeze("missing_reason_authority_status")
+    forged_shadow["expected_identity_bindings"][
+        "missing_reason_failure_shadow_identity"
+    ]["shadow_row_domain_sha256"] = ("f" * 64)
+    _expect_law_error(
+        lambda: _validate_amendment20_evidence_freeze(
+            forged_shadow,
+            A20_EVIDENCE_FREEZE_CONTRACT,
+            require_ratification_ready=True,
+        ),
+        "failure-shadow cross-binding drift",
+        "Amendment-20 forged failure-shadow attack",
+    )
+
+    missing_complement = synthetic_ready_freeze("purpose_authority_status")
+    del missing_complement["expected_identity_bindings"][
+        "purpose_failure_shadow_identity"
+    ]["complement_identity"]
+    _expect_law_error(
+        lambda: _validate_amendment20_evidence_freeze(
+            missing_complement,
+            A20_EVIDENCE_FREEZE_CONTRACT,
+            require_ratification_ready=True,
+        ),
+        "failure shadow keyset drift",
+        "Amendment-20 missing nonemission-complement attack",
+    )
+
+    status_flip = synthetic_ready_freeze(
+        "prompt_field_semantic_binding_status"
+    )
+    status_flip["prompt_field_semantic_binding_status"] = "pass"
+    _expect_law_error(
+        lambda: _validate_amendment20_evidence_freeze(
+            status_flip,
+            A20_EVIDENCE_FREEZE_CONTRACT,
+            require_ratification_ready=True,
+        ),
+        "pass carries a failure shadow",
+        "Amendment-20 arm-status flip attack",
+    )
+
+    truthy_mapping = synthetic_ready_freeze()
+    truthy_mapping["expected_identity_bindings"] = {
+        name: {"truthy": True} for name in A20_EXPECTED_IDENTITY_NAMES
+    }
+    _expect_law_error(
+        lambda: _validate_amendment20_evidence_freeze(
+            truthy_mapping,
+            A20_EVIDENCE_FREEZE_CONTRACT,
+            require_ratification_ready=True,
+        ),
+        "identity keyset drift",
+        "Amendment-20 truthy-mapping regression attack",
+    )
+    rejected.append(A20_EXPECTED_MUTATIONS[8])
 
     rejected_tuple = tuple(rejected)
     rejected_raw = canonical_json_bytes(list(rejected_tuple))

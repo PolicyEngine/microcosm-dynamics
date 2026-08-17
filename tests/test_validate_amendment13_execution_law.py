@@ -56,6 +56,7 @@ A20_TEST_MUTATIONS = (
     "r06_collection_or_lifecycle_order_forged",
     "receipt_verdict_or_scratch_transition_forged",
     "amendment20_terminal_pin_or_suffix_route_forged",
+    "evidence_freeze_identity_shadow_or_status_forged",
 )
 
 
@@ -3905,6 +3906,15 @@ def test__amendment20_evidence_freeze_is_exactly_unready_not_failed():
     assert list(freeze["expected_identity_bindings"]) == (
         a13.A20_EXPECTED_IDENTITY_NAMES
     )
+    assert len(a13.A20_EXPECTED_IDENTITY_NAMES) == 21
+    assert set(
+        contract["failure_shadow_identity_name"]
+        for contract in a13.A20_ARM_IDENTITY_CONTRACTS.values()
+    ) == {
+        "missing_reason_failure_shadow_identity",
+        "purpose_failure_shadow_identity",
+        "prompt_field_semantic_failure_shadow_identity",
+    }
     assert all(
         value is None
         for value in freeze["expected_identity_bindings"].values()
@@ -3915,6 +3925,24 @@ def test__amendment20_evidence_freeze_is_exactly_unready_not_failed():
             "semantic_arm_pass_required_for_ratification"
         ]
         is False
+    )
+    identity_contract = a13.A20_EVIDENCE_FREEZE_CONTRACT["identity_contract"]
+    assert identity_contract["pass_identity_keys"] == (
+        a13.A20_PASS_IDENTITY_KEYS
+    )
+    assert identity_contract["failure_shadow_identity_keys"] == (
+        a13.A20_FAILURE_SHADOW_IDENTITY_KEYS
+    )
+    assert identity_contract["nonemission_complement_identity_keys"] == (
+        a13.A20_NONEMISSION_COMPLEMENT_IDENTITY_KEYS
+    )
+    assert identity_contract["failure_nonemission_evidence_keys"] == (
+        a13.A20_FAILURE_NONEMISSION_EVIDENCE_KEYS
+    )
+    a13._validate_amendment20_evidence_freeze(
+        freeze,
+        a13.A20_EVIDENCE_FREEZE_CONTRACT,
+        require_ratification_ready=False,
     )
 
 
@@ -4141,6 +4169,100 @@ def test__amendment20_qualifying_verdict_variants_fail_closed(
         )
 
 
+def test__amendment20_historical_receipt_uses_a20_design_at_revision23(
+    monkeypatch,
+):
+    historical_design = (ROOT / a13.DESIGN_PATH).read_bytes()
+    historical_sha256 = hashlib.sha256(historical_design).hexdigest()
+    historical_blob_oid = a13._git_blob_oid(historical_design)
+    historical_commit = "c" * 40
+    receipt = {
+        "simulated_state_manifest": {
+            "candidate_commit_identity": {"commit": historical_commit}
+        }
+    }
+    receipt_raw = a13.canonical_json_bytes(receipt)
+    verdict_raw = (
+        "# RATIFY\n"
+        f"attested_design_byte_size: {len(historical_design)}\n"
+        f"attested_design_raw_sha256: {historical_sha256}\n"
+        f"attested_design_blob_oid: {historical_blob_oid}\n"
+        f"executed_transition_receipt_byte_size: {len(receipt_raw)}\n"
+        "executed_transition_receipt_raw_sha256: "
+        f"{hashlib.sha256(receipt_raw).hexdigest()}\n"
+        "executed_transition_receipt_schema: executed_transition_state.v2\n"
+        "---\n"
+    ).encode()
+    verdict_paths = [
+        "docs/analysis/amendment_20_ratification/"
+        "sol-ce-amend20-r1-verdict.md",
+        "docs/analysis/amendment_20_ratification/"
+        "sol-ce-amend20-r1b-verdict.md",
+    ]
+    closure = {
+        "amendment_number": 20,
+        "attested_candidate_design_blob_oid": historical_blob_oid,
+        "attested_candidate_design_byte_size": len(historical_design),
+        "attested_candidate_design_raw_sha256": historical_sha256,
+        "operator_merge_commit": historical_commit,
+        "ratification_commit": historical_commit,
+        "ratification_commit_sole_parent": "d" * 40,
+        "verdict_artifacts": [
+            {
+                "path": path,
+                "byte_size": len(verdict_raw),
+                "raw_sha256": hashlib.sha256(verdict_raw).hexdigest(),
+            }
+            for path in verdict_paths
+        ],
+    }
+    closure_raw = a13.canonical_json_bytes(closure)
+    closure_binding = a13._closure_binding(
+        a13._ratification_closure_path(20), closure_raw
+    )
+    revision23_context = _synthetic_registry_context(23)
+    revision23_context["ratification_closures"][20 - 13] = closure_binding
+    assert revision23_context["ratification_commit"] != historical_commit
+    assert revision23_context["blob_sha256"] != historical_sha256
+
+    receipt_validations = []
+    design_validations = []
+    monkeypatch.setattr(
+        a13,
+        "_validate_amendment20_transition_receipt",
+        lambda value: receipt_validations.append(copy.deepcopy(value))
+        or value,
+    )
+    monkeypatch.setattr(
+        a13,
+        "_validate_amendment20_ratification_design",
+        lambda raw: design_validations.append(raw),
+    )
+
+    def fake_git(*arguments, text=False):
+        assert arguments == (
+            "show",
+            f"{historical_commit}:{a13.DESIGN_PATH}",
+        )
+        assert text is False
+        return historical_design
+
+    monkeypatch.setattr(a13, "_git", fake_git)
+    validated = a13._validate_ratification_closure(
+        closure_raw,
+        closure_binding,
+        {path: verdict_raw for path in verdict_paths},
+        20,
+        verify_git=False,
+        ratification_design_raw=historical_design,
+        registry_design_binding=revision23_context,
+        amendment20_transition_receipt_raw=receipt_raw,
+    )
+    assert validated == closure
+    assert receipt_validations == [receipt]
+    assert design_validations == [historical_design]
+
+
 def test__amendment20_standin_is_distinct_and_never_qualifying(monkeypatch):
     standin = (
         "# RATIFY\n"
@@ -4236,6 +4358,15 @@ def test__amendment20_receipt_v2_changed_path_identity_is_exact():
     )
     assert receipt_contract["external_receipt_mode"] == "100644"
     assert receipt_contract["external_receipt_candidate_ancestry_not_required"]
+    assert receipt_contract[
+        "receipt_candidate_design_exactly_cross_binds_historical_a20_closure_and_verdicts"
+    ]
+    assert receipt_contract[
+        "current_terminal_registry_cross_binding_required_iff_a20_terminal_revision22"
+    ]
+    assert receipt_contract[
+        "later_revision_authenticates_historical_a20_design_under_30_2_3"
+    ]
 
 
 def _synthetic_a20_receipt_v2():
@@ -4640,9 +4771,9 @@ def test__amendment20_mutations_run_only_after_inherited_116(monkeypatch):
         sum(row["count"] for row in a13.A20_INHERITED_MUTATION_CENSUSES) == 116
     )
     raw = a13.canonical_json_bytes(list(rejected))
-    assert len(raw) == 364
+    assert len(raw) == 415
     assert hashlib.sha256(raw).hexdigest() == (
-        "9cd9692fbb44a9822c9f9c997eb4cdc898b68cd86000aac3af945eecbd4d1a53"
+        "52142486ece9aaa6a2a3d727ef34cd9ab287d7752cc0d7435711f8e864522df0"
     )
 
 
