@@ -56302,3 +56302,813 @@ member: R04 bytes are derivable, but R05, Q5, G17, authority, and production
 cannot pass. The missing-reason campaign remains outside this amendment as
 A20/revision 22, and active routing is `A20_SUCCESSOR_PROGRAM_STOP` with no
 alias.**
+
+## 34. AMENDMENT SECTION — Amendment 20: dual-authority covered-earnings correction
+
+### 34.1 Status, immutable prefix, evidence boundary, defects, and scope
+
+This section is the prospective Amendment 20 and therefore proposes design
+revision 22 under §30.2.1. Its immutable, now-operative revision-21 prefix is
+the complete design through §33: exactly 4,025,587 bytes, raw SHA-256
+`38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9`,
+Git blob `1eba7ff6366bad1999de36c9f7261ad6939ad86a`, and mode `100644`.
+The prefix interval is `[0, 4,025,587)`. Every prefix byte survives; no
+historical wording, artifact, closure, or registry value is edited by this
+amendment.
+
+The controlling consolidated campaign charter is the repository-external
+evidence record `e8-ops/sol-ce-a20-charter.md`, exactly 27,368 bytes with raw
+SHA-256
+`5ecd4092f3fc62ef894866a1a5b505d6dba7bb04cde1360ff7134d7d8e927717`.
+The adversarial law-gap report is
+`e8-ops/sol-ce-law-gap-sweep-r21-2026-08-16.md`, exactly 11,805 bytes with raw
+SHA-256
+`39887de99d75a395e97b04f33b4c5264a6828f56c9321cfe248b4ba11a7e5846`.
+Those records prove scope and discovered defects but are NONAUTHORITY for any
+source meaning, missingness, purpose, alias, binding, or field attachment.
+Their machine-local parent path is deliberately not enacted.
+
+The sweep confirmed nine seams: terminal-A19 fixtures, A19-only active-pin
+selection, the unbound R06 223-node result, 46 singleton-token collisions,
+the lifecycle-definition timing conflict, the A19/A12 construction-order
+conflict, the receipt/operativity gap, two silently changed frozen Q5 shapes,
+and the interpreter-token conflict. It also identified nine prospective
+seams. Sections 34.2–34.11 cure every structural seam. Sections 34.5.2 and
+34.3.3 enact the two unresolved factual matters as mandatory evidence probes;
+neither is represented as a proved cure.
+
+This is one two-arm successor law. The missing-reason and purpose-authority
+arms share physical source infrastructure but never share semantic admission,
+claims, digests, or acceptance. There is no planned A21. A split to A21 is
+lawful only after the charter's kill/recharter event and may not preserve a
+claim that A20 is the complete production cure.
+
+The A4 evidence freeze has not occurred. Consequently
+`amendment20_evidence_freeze_status` is exactly
+`not_instantiated_a4_required_before_ratify`, the two expected semantic-domain
+identities and every compiled successor identity are absent, and
+`amendment20_ratification_ready` is false. Absence is a closed drafting status,
+not a wildcard or zero digest. Before either referee may ratify, a later exact
+prospective edit must replace that status with `pass_a4_exact_freeze`, set
+ratification readiness true, and pin every nonempty identity required below.
+Until then, all A20 authority selection, R04 passage, R05, dispatch, lifecycle
+instantiation, and production are forbidden.
+
+### 34.2 Limb I — shared source infrastructure and separate authority domains
+
+#### 34.2.1 Physical-document and statement registries
+
+The A20 physical source envelope has exactly two ordered relations:
+`a20_physical_source_rows` and `a20_evidence_statement_rows`. A physical row
+has exactly these members in this order:
+
+~~~text
+evidence_source_id
+upstream_capture_or_registry_identity
+document_role
+release_or_wave
+representation
+official_url
+canonical_local_path
+storage_identity
+byte_size
+raw_sha256
+access_disposition
+licensing_disposition
+statement_locator_ids
+extraction_tool_identity
+recovered_source_provenance
+~~~
+
+The path is repository-relative, canonical, traversal-free, and contains no
+machine-local absolute prefix. A source identity, storage identity, and path
+are unique. `byte_size` is a positive JSON integer excluding booleans. Every
+hash is lowercase exact-length hex over complete bytes. Official URL, access,
+licensing, release, role, representation, recovery provenance, and extraction
+tool identity are explicit; none may be inferred from a current URL or latest
+edition.
+
+Each statement row has exactly:
+
+~~~text
+evidence_statement_id
+evidence_source_id
+page_or_section_locator
+utf8_byte_start
+utf8_byte_end
+exact_statement_raw_sha256
+extraction_tool_identity
+recovery_provenance_id
+~~~
+
+The half-open span must slice the authenticated source bytes and reproduce the
+statement digest. Locator IDs, statement IDs, and complete preimages are
+unique. OCR or recovered bytes remain distinguishable and must bind the
+original source, recovery method, and exact recovered representation. A
+paraphrase, unavailable text, unregistered source, alias, drift, malformed
+span, or substituted edition supplies no authority.
+
+#### 34.2.2 Two closed semantic projections
+
+Construct exactly two domain projections, in this fixed order:
+
+~~~text
+missing_reason_source_domain
+purpose_source_domain
+~~~
+
+Each projection has exactly `domain_id`, `domain_version`,
+`included_evidence_source_ids`, `excluded_source_dispositions`,
+`source_count`, `source_keyset_sha256`, `source_domain_sha256`,
+`statement_count`, `statement_keyset_sha256`, `statement_domain_sha256`, and
+`status`. Inclusion and exclusion form a complete, disjoint projection of the
+physical source envelope. The two domains independently authenticate every
+foreign key and independently derive all six counts/digests. Shared physical
+bytes do not imply shared admission. Missingness cannot entail purpose;
+purpose cannot entail missingness. A mixed semantic payload or a shared
+accepted semantic digest aborts both projections.
+
+At A4, the final law must pin each complete projection's version, inclusion
+and exclusion counts, ordered keyset digests, row-domain digests, statement
+identities, and exact `pass` status. The current draft fixes those expected
+values as absent and therefore nonpassing. The fixed A11 47-source domain,
+the 81-document questionnaire domain, and A19's historical 257+22=279 build
+input envelope retain their exact identities and members. No A20 row enters,
+renames, widens, or reinterprets those historical relations.
+
+#### 34.2.3 Successor composite binding and dual reconstruction
+
+The separate `a20_successor_source_binding` has exactly
+`historical_a19_build_input_identity`, `physical_source_identity`,
+`evidence_statement_identity`, `missing_reason_source_domain_identity`,
+`purpose_source_domain_identity`, `missing_rule_set_identity`,
+`purpose_rule_set_identity`, `prompt_field_evidence_identity`,
+`semantic_binding_identity`, `canonicalization`, and `status`. Each identity
+is an exact count/keyset/domain-digest object, not a candidate-supplied
+summary. Both independent R04 reconstructors authenticate the immutable
+historical 279-row identity and separately reconstruct every A20 relation
+before reading candidate rows or status. They must deep-equal one another in
+count, order, keyset, complete row bytes, and digest. The purpose and
+missing-reason acceptance gates remain distinct even when a physical document
+appears in both projections.
+
+### 34.3 Limb II — complete missing-reason authority
+
+#### 34.3.1 Authority rules and exact occurrence compiler
+
+Every `missing_reason_authority_rules` row has exactly:
+
+~~~text
+authority_rule_id
+registered_evidence_source_ids
+registered_statement_ids
+rule_kind
+exact_scope_predicate
+explicit_exclusions
+strict_boolean_disposition
+projected_occurrence_count
+projected_occurrence_keyset_sha256
+overlap_conflict_complement_results
+~~~
+
+Every evidence foreign key resolves only inside the admitted
+`missing_reason_source_domain`. Corroborating statements remain within one
+rule. Two rules that agree on one occurrence are still duplicate authority;
+disagreement is conflict. Conflict has precedence over incomplete coverage.
+Each projection is exact, nonzero, disjoint, and exception-complete. A broad
+modal, lexical, frequency, sibling, wave, representation, ordinary-value,
+nearest-rule, priority, majority, or candidate default has zero authority.
+
+The compiler preserves each formerly unresolved literal's complete §25.3.1
+12-position identity, in order: schema tag, global member position,
+source-document position, source-row position, entry position, source
+document ID, codebook field-row ID, complete ordered nonempty locator-ID
+array, entry reference, entry kind, exact source value/range lexeme, and exact
+nonempty source meaning. It produces exactly one strict JSON Boolean claim
+for each of the 524,538 formerly unresolved literal occurrences. Missing,
+extra, duplicate, overlap, conflict, malformed identity, invalid Boolean, or
+uncovered complement aborts the complete relation.
+
+Both independent compilers derive the same exact 524,538 count, ordered
+occurrence-keyset bytes and digest, complete compiled-row bytes and digest,
+rule projections, overlap/conflict complements, and disposition counts.
+Staging is transactional. On any failure, the successor relation is not
+emitted, no partial rule is selectable, and every staged byte is discarded.
+
+#### 34.3.2 Least-risk reason construction and composition
+
+Only after both reconstructions and every preflight pass may the successor
+compose with the inherited 52 source-authorized literals and 37,283 numeric
+structural-null ranges. Unless an admitted official source enacts a richer
+taxonomy, `missing == true` receives the opaque exact-occurrence
+`psid-source-missing-reason:` identity derived from the complete §25.3.1
+identity; `missing == false` receives JSON null; numeric ranges remain JSON
+null. These values assert no semantic missing-reason class.
+
+The historical A11 relation, expected abort, A18 R06 record, 52 identities,
+524,538 blocker count, and 37,283 structural-null count remain byte exact.
+A20 uses a separately versioned settlement entry point and relation. It does
+not rewrite history or interpret the old abort as success.
+
+#### 34.3.3 Mandatory `MD=` representation bridge probe
+
+Before any rule based on the provisional `MD=` convention is admitted,
+construct `missing_representation_bridge_rows`. Each row binds an exact
+historical source/document/locator/wave/field/release coordinate to an exact
+current registered document/raw-field/release coordinate, the admitted
+official-equivalence statement IDs, the two exact representations, and one
+closed bridge disposition. The mapping and complement must be unique,
+complete, independently reconstructed, and bound by counts, ordered keyset
+digest, complete row-domain digest, and disposition census.
+
+The 54,898 direct-field ceiling, 71,635 gross source-era ceiling, and 59,424
+diagnostic shadow are distinct NONAUTHORITY observations. They are never
+averaged, equated, or promoted. The current 54,898-versus-59,424 difference
+and 87 zero projections are unresolved. Until the exact bridge accounts for
+both the difference and all zero projections, the `U24`/`E2-93MD` family
+contributes zero accepted claims and the missing arm remains nonpassing.
+
+### 34.4 Limb III — complete purpose authority
+
+#### 34.4.1 Purpose rules and successor rows
+
+The inherited 35-purpose vocabulary and order remain exact. A different
+purpose literal or order requires an expressly source-backed ontology
+projection in a later exact prospective A20 draft; none exists now. Each
+`purpose_authority_rules` row has exactly:
+
+~~~text
+purpose_authority_source_id
+rule_kind
+registered_evidence_statement_ids
+exact_prompt_scope_predicate
+explicit_exclusions
+explicit_official_purposes
+projected_prompt_count
+projected_prompt_keyset_sha256
+~~~
+
+Every purpose array is nonempty, stable-unique, and in inherited purpose
+order. Exact text can organize a review queue but cannot establish meaning.
+Navigation, universe, proximity, heading, subject matter, or reviewer
+agreement does not entail a purpose. Nonuniform families are killed and
+split to narrower source-backed scopes; no priority or majority rule exists.
+The 13 legacy literals are never lexically translated.
+
+The compiler emits one `purpose_authority_mapping_rows` member for every
+prompt with exactly:
+
+~~~text
+source_prompt_occurrence_id
+authority_basis
+purpose_authority_source_id
+evidence_statement_ids
+explicit_official_purposes
+purpose_mapping_disposition
+~~~
+
+This schema does not overload A19's `source_classification_row_id`. Every one
+of A19's 818 `complete_official_mapping` rows must be expressly re-ratified
+or re-grounded in admitted official evidence; manual origin is not
+grandfathered, and any source conflict reopens the row.
+
+#### 34.4.2 Totality, alternatives, and atomic gate
+
+Under the unchanged ontology and prompt denominator, acceptance requires
+exactly 21,971 successor rows and this exact disposition object:
+
+~~~text
+complete_official_mapping: 21971
+partial_official_mapping_with_legacy_residue_underdetermined: 0
+legacy_only_mapping_underdetermined: 0
+missing_mapping_underdetermined: 0
+U: 0
+~~~
+
+It also requires exact prompt coverage; valid nonempty purpose arrays; zero
+gap, extra, duplicate, zero-match, overlap, or conflict; exact rule
+projections; two independent reconstructions; and equal count, keyset, row
+bytes, row-domain digest, and disposition census. `U == 0` is necessary but
+not sufficient for R04. Failure emits no partial successor row or authority.
+
+A source-backed occurrence-kind/denominator correction, source-backed
+ontology projection, or separately tagged source-proved
+`no_applicable_purpose` arm may replace this shape only if the same exact
+draft also changes the selector, `O_P`, expansion, joins, projections, and
+mutations. Silence or ontology inconvenience cannot create that arm. The
+current draft enacts none of the three alternatives.
+
+### 34.5 Limb IV — acyclic prompt-field evidence and semantic binding
+
+#### 34.5.1 Pre-`O_P` prompt-field relation and the 46 collisions
+
+Before `O_P`, construct `prompt_field_evidence_rows` solely from
+authenticated prompt and field bytes. Each row has exactly:
+
+~~~text
+prompt_field_evidence_id
+source_prompt_occurrence_id
+interview_wave
+prompt_source_locator_ids
+field_source_document_id
+field_source_row_id
+field_source_member
+raw_field_id
+attachment_basis
+official_alias_statement_ids
+attachment_disposition
+candidate_raw_field_ids
+~~~
+
+Allowed positive bases are an exact source identifier or an expressly
+admitted official alias. Every candidate remains materialized in
+`candidate_raw_field_ids`. Zero or multiple candidates fail unless a
+source-backed accepted resolution, admitted alias, or denominator correction
+uniquely resolves the complete candidate set. Exact direct-ID appearance is
+not blanket precedence over a conflicting question token. The inherited
+post-`O_P` positive-field join cannot establish this relation.
+
+The relation must disposition all 46 known violations of §19.3.3's singleton
+field-token law before normal R04 can pass. The mandatory 1985 C68 regression
+is prompt occurrence
+`psid-questionnaire-occurrence:4cd66190a898d568dd20c27140f44f1dff53d229f664f537722624d00c9b4b67`:
+printed `V11804` is direct evidence, while token `C68.` produces both
+`V11804` and `V11805`. It remains an unresolved multiple unless admitted
+source authority supplies the exact A20 resolution; direct-ID priority,
+stable-first choice, or omission is forbidden.
+
+#### 34.5.2 Mandatory zero-candidate grouping probe
+
+Reconstruct a candidate-set row for all 21,971 prompts, including exact
+zero-, one-, and multiple-candidate counts, ordered keyset and row-domain
+digests. Every zero candidate maps through the eventual `O_P` and positive
+rows. `zero_candidate_positive_group_rows` groups the complete reference
+union by `positive_occurrence_id` and records the exact prompt complement.
+Both reconstructors must agree.
+
+The sweep's 15,428 zero-candidate claim and the later diagnostic compiler's
+14,450 count are NONAUTHORITY and disagree. A4 must reproduce and explain
+the difference rather than select either number. Acceptance requires zero
+eventual positive group with an empty reference union and exactly one
+accepted pre-`O_P` attachment for every codebook-supported purpose rule. A
+required zero, an all-zero positive group, or any unresolved multiple stops
+before R04 and R05 absent an admitted alias or denominator correction.
+
+#### 34.5.3 Semantic bindings and post-`O_P` joins
+
+The normal arm retains complete source-atom cover over every questionnaire
+occurrence and field-stream locator and the exact five coordinates `role`,
+`job_slot_id`, `questionnaire_component_slot_id`, `slot_kind`, and
+`field_purpose`. Binding sets are complete, jointly supported, and
+subsumption-maximal. Disposition is exactly `semantically_bound`,
+`no_supported_predicate_dimension`, or `unresolved_semantic_binding`, with
+zero unresolved rows. Both reconstructions build the relation before
+candidate rows are read and agree on count, keyset, complete row bytes,
+domain digest, cross-use, and maximality.
+
+After `O_P`, retain `occurrence_raw_field_reference_rows`,
+`positive_field_join_rows`, nonempty reference and raw-field projections,
+unique same-wave attachment, purpose expansion, and reverse covers. The
+known `Family`, `Dl7.`/`D17.`, and A19 `D2.` ambiguity witnesses are mandatory
+regressions. Only official evidence plus an exact admitted alias, denominator
+correction, or revised law can resolve them; normalization, similarity,
+inventory selection, or omission cannot.
+
+### 34.6 Limb V — selector, R04 order, Q5 shapes, and failure scopes
+
+#### 34.6.1 Exact construction and gate order
+
+The exact active order is:
+
+~~~text
+authenticate fixed historical denominators and both A20 source domains
+construct and seal missing rules, purpose rules, and successor source binding
+compile complete purpose mapping, prompt-field, and semantic evidence inputs
+compute purpose U and all independent acceptance results
+select failure or normal member
+normal only: construct H and purpose-independent source-only O_H
+normal only: require O_H before O_P
+normal only: construct O_P, semantic bindings, post-O_P joins, reverse covers,
+             purpose expansion, D0 -> search/proofs -> D1, and every R04 gate
+normal only: R05 strict certificate and dual normal-member reconstruction
+~~~
+
+This supersedes predecessor precedence and full-build-on-failure only.
+`O_H` remains source-only and precedes `O_P`; the pre-`O_P` field relation
+does not depend on a post-`O_P` join. Purpose totality alone never passes R04.
+Any unresolved source, purpose, attachment, semantic binding, `H`, `O_H`,
+reverse-cover, expansion, join, or other inherited normal conjunct stops
+before R05.
+
+#### 34.6.2 Read, evaluation, and serialization scopes
+
+For failure selection, both reconstructors must authenticate, read, and
+construct `questionnaire_occurrence_rows` solely to derive the fixed prompt
+denominator, purpose rows, candidate sets, and selector inputs. Those reads
+are permitted and required. On a selected failure member, the rows and all
+pass-only arrays remain forbidden from serialization into the historical
+877-byte A19 failure member or from masquerading as evaluated Q5 output.
+Thus `permitted_selector_input_reads` and
+`forbidden_selected_failure_member_serialization` are separate closed sets;
+the unqualified §33.8 combined prohibition is superseded.
+
+The exact historical A19 failure member and identity remain byte exact. An
+A20 evidence failure uses its separately tagged diagnostic status and emits
+no Q5 member, R05 certificate, authority, or production object.
+
+#### 34.6.3 Frozen-shape composition
+
+Section 20.4.2 is superseded only for: A19's already enacted per-era
+`purpose_mapping_rows` insertion; A19's
+`hierarchy_preproof_domain_sha256` search-key replacement; and these A20
+normal-member additions: the successor source-binding identity, two source
+domain identities, missing and purpose rule-set identities,
+`purpose_authority_mapping_rows`, `prompt_field_evidence_rows`, candidate-set
+and zero-group identities, semantic-binding identity, and their exact
+counts/keysets/domain digests and disposition censuses. Each named header
+member is reproduced by direct era-order concatenation where it has per-era
+rows and is present on both expected and actual G17-C01 projections.
+
+All other §20.4.2 top-level, source-manifest, era, occurrence, positive,
+hierarchy, absence-proof, canonical-order, self-zero, and join shapes remain
+exact. A20 preserves A19's acyclic
+`D0 -> search_implementation -> A_h -> final rows -> D1` construction. No
+fixed-point, placeholder, old D1 search member, or copied digest is lawful.
+
+### 34.7 Limb VI — historical R06 authentication and dormant lifecycle law
+
+#### 34.7.1 Six-module collection binding and interpreter
+
+The exact six historical R06 test paths and authenticated identities are:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `tests/data/test_psid_codebook_extraction_validation.py` | `7b2f33af3ff6a4e389a944e349aa222f6ca41519` | 13,718 | `7af8a2847b4428fa7376598cc48333d008f225389eee461f3edae58ca624ff67` |
+| `tests/data/test_psid_missing_reason_authority_artifact.py` | `c8863f4a6a5e915666f0cce2cac4817e73839e9f` | 18,129 | `4f425c776ddba30f3b861812cdcbd0abef5b10ae0f41608bcaa6d456c9cdcd85` |
+| `tests/data/test_psid_missing_reason_authority_unit.py` | `499aa397f75e1d2f62e7c91a929f9ecdcf71a478` | 18,252 | `5e9b7cc33fd560ce5c472c6ac146f07a6b7b238003c6e96f715e417679149cda` |
+| `tests/estimates/test_birth_evidence_artifact.py` | `d4e838a1123d4e07c6f472ff64cfd6c11462f4a8` | 25,883 | `70acf9c2f36f9f88a7e5e2c8c7b5825427d6a44cf1926b0a6c0c7cf4bbb7d5d5` |
+| `tests/test_rebuild_amendment11_missing_reason_authority.py` | `632357933ea37c982d18402d249b74147cd80823` | 22,828 | `eedbab9e3ba3eaad19f08d36472b2fbc53cc5dc62b417a3600d5cb4360368dcb` |
+| `tests/test_replay_amendment11_no_movement.py` | `cc4c1c6d65c89ad97feb0b4f04e6c5d2ecd2405f` | 19,309 | `0875ac524e0cd2e7f3cb6e601026b0d2db5b459c6f426fe5182ac08ebaef9ec1` |
+
+The selector starts with the executing validator process's current
+`sys.executable`, then exact `-m`, `pytest`, and the six paths in displayed
+order. `PYTHONPATH` remains exactly `src:.`; inherited `GIT_*` variables are
+removed. No machine-local interpreter path is enacted. The ordered module
+path-array digest remains
+`a5099c464482c5b652e31e5dfa958703a4ae4c75c1dc1e4caa03cb2aef408063`.
+
+Before replay, collect exact node IDs from those authenticated bytes. The
+terminal-LF canonical ordered 223-node-ID array is 28,268 bytes with raw
+SHA-256
+`09071bf4d9a9a5ee8b9ccc4d8d5c0bd91705c04d3c7c99d6ef155dfdc0dfdf05`.
+Its first and last IDs are respectively
+`tests/data/test_psid_codebook_extraction_validation.py::test_exact_nested_derivation_schemas_accept_generated_shapes[_text_derivation]`
+and
+`tests/test_replay_amendment11_no_movement.py::test_reason_mutation_changes_field_source_identity_but_not_terminal`.
+Only this exact binding explains the historical integer 223. File or
+collection drift aborts before replay rather than changing that recorded
+result. Every historical R06 process result, test result, and JSON byte
+remains exact.
+
+#### 34.7.2 Dormant definitions and ancestry DAG
+
+Section 34 may ratify complete dormant successor definitions before tier-2
+certification. This expressly supersedes §26.10.3 and DC-71 solely as to the
+timing of definitions. A dormant definition is law text and schema only: it
+creates no artifact, instance, selected relation, first-add, dispatch,
+authority, or output. A20 evidence relations may be admitted and settled
+before R06 only while missing-reason dispatch is disabled. The false members
+of §32.4.4 remain exact facts about the historical R06/A11 replay's own
+production/lifecycle emissions; they do not forbid authenticated A20 source
+manifests, rules, candidate relations, or dormant schema definitions.
+
+Every lifecycle envelope has exactly `lifecycle_stage_id`, `schema_id`,
+`predecessor_stage_ids`, `input_identity_ids`, `output_identity_id`,
+`first_add_index`, `selection_enabled`, and `status`. Schema IDs and stage IDs
+are fixed in §34.11. Status is exactly `dormant_definition`,
+`blocked_predecessor`, `pass`, or `fail_atomic_nonemission`. An output identity
+is absent until execution derives and first-adds it; it is never a zero hash.
+Failure leaves the stage and every descendant uninstantiated.
+
+The only ancestry/order is:
+
+~~~text
+revision-22 repin
+  -> admitted and independently settled A20 source relations, dispatch disabled
+  -> complete normal R04
+  -> R05 strict certificate first-add
+  -> exact historical R06 expected-abort rerun and first-add
+  -> accepted missing-reason successor selection and dispatch enablement
+  -> fresh 89,599-field classifier
+  -> terminal movement
+  -> assignments, logical ranges, and storage populations
+  -> constructibility and new full-relation identity
+  -> fresh comparator census
+  -> Q5 admission and first-add
+  -> slot, inventory, full G17-C01, and V-B6
+  -> successor bundles, migrations, capture, receipt, registration,
+     sealed run, wall/ledger, and publication
+~~~
+
+Historical classifier, movement, storage, constructibility, comparator, Q5,
+inventory, and V-B6 facts cannot be copied; zero movement cannot be assumed.
+Each stage authenticates every predecessor identity, uses its versioned
+schema, commits atomically, and first-adds in displayed order. The actual
+objects are post-operative execution outputs; this amendment emits none.
+
+### 34.8 Limb VII — exact ratification, receipt, and scratch-state law
+
+#### 34.8.1 Qualifying affirmative verdict grammar
+
+Prospectively for Amendment 20 and every later activation-affecting
+amendment, §28.2.1 condition 1 is satisfied only by two qualifying affirmative
+verdicts. A qualifying verdict incorporates §§31.3.1–31.3.3 and §30.2.4; the
+receipt is not a fifth operativity condition. Both referees independently
+verify and attest the same external executed-transition receipt before
+emitting their verdicts.
+
+Verdict bytes are strict UTF-8 with no BOM, NUL, or CR, LF separators, and
+exactly one terminal LF. They have exactly these eight lines in order:
+
+~~~text
+# RATIFY
+attested_design_byte_size: <decimal>
+attested_design_raw_sha256: <64 lowercase hex>
+attested_design_blob_oid: <40 lowercase hex>
+executed_transition_receipt_byte_size: <decimal>
+executed_transition_receipt_raw_sha256: <64 lowercase hex>
+executed_transition_receipt_schema: covered_earnings_transition_receipt.v1
+---
+~~~
+
+`<decimal>` is either canonical ungrouped `[1-9][0-9]*` or canonical comma
+grouping `[1-9][0-9]{0,2}(,[0-9]{3})+`; both parse to and must equal the exact
+positive integer. Leading zeroes, spaces, underscores, malformed groups,
+space grouping, incidental substrings, repeated labels, narrative bytes, or
+another line fail. The two verdict files are distinct closure artifacts but
+attest one exact candidate triple and one exact receipt pair.
+
+This exact grammar supersedes §30.2.3's loose “contains” rule and repairs the
+nonexistent §31.5 “A16 ratification demonstration” map anchor. The public
+§30.2.4 path validates A20's semantic projection, qualifying verdicts, and
+receipt attestation before returning a closure domain.
+
+#### 34.8.2 Exact scratch-only transition
+
+The §31.3 same-state demonstration uses an isolated scratch descendant, never
+the production registry. Candidate commit `C` contains the final design and
+pinned implementation and records its actual sole parent. Scratch commit `S`
+is a strict child of `C` and changes only two
+`SIMULATED_NONAUTHORITY` verdict artifacts, one synthetic closure, the mutable
+scratch registry binding, and the exact external receipt machinery. The
+scratch registry is revision 22 with ordered closure domain
+`(13,14,15,16,17,18,19,20)` and design bytes exactly from `C`.
+
+Pre-receipt stand-ins use the same first six design-attestation lines above,
+then exactly:
+
+~~~text
+executed_transition_receipt_status: pending_same_state_execution
+simulation_context: amendment20_same_state_nonauthority_v1
+---
+~~~
+
+They are accepted only by the simulation-context adapter needed to construct
+`S`; they are never qualifying §28 verdicts. The unmodified public oracle and
+complete pinned battery run against that one state. The resulting external
+receipt records `C`, `S`, both trees, exact parents, changed paths, registry
+and closure identities, public-oracle result, complete test census, and zero
+nonpassing outcomes. Real referees then verify that receipt and emit the exact
+§34.8.1 verdicts. A stand-in is tagged NONAUTHORITY, nonmergeable,
+noncopyable, nonreusable, and cannot enter the real closure.
+
+The later real sequence remains: final candidate, same-state receipt, two
+real verdicts, lawful sole-parent operator integration, A20 closure creation,
+and real revision-22 registry repin. This draft changes no registry byte.
+
+### 34.9 Implementation pins, semantic projection, activation, and routing
+
+#### 34.9.1 Active implementation pins and fixpoint
+
+The exact A20 active three-path implementation pin table is deliberately
+pending the final code/test freeze in this first prospective draft. The
+publisher path remains unchanged. `amendment20_ratification_ready == false`
+independently makes the pending table unratifiable. Before final review, the
+table must be replaced by exact mode `100644` and path/blob/byte/raw-SHA rows
+for:
+
+~~~text
+scripts/validate_amendment13_execution_law.py
+tests/test_validate_amendment13_execution_law.py
+scripts/build_amendment13_tier2_repairs.py
+~~~
+
+The semantic projection requires the exact 4,025,587-byte revision-21 prefix,
+one Amendment-20 boundary, UTF-8, and one terminal LF. It strict-parses the
+complete §34.12 manifest and hashes the entire normalized A20 suffix. Exactly
+ten captures may be normalized: mode plus each of the three rows' blob OID,
+decimal byte count, and raw SHA-256. Each remains separately Git- and
+byte-authenticated. No evidence identity, readiness value, manifest member,
+verdict grammar, supersession, routing value, or other prose byte is
+normalized.
+
+The final fixed point is: freeze prose/manifest; compute the normalized §34
+digest; set the validator constant; format code/tests; derive the exact three
+implementation rows; replace only the ten captures; and prove the normalized
+digest unchanged. Any other change invalidates the semantic digest and pins.
+
+#### 34.9.2 Exact route and production boundary
+
+The current production registry remains exact revision 21, terminal
+Amendment 19, ordered closure domain `(13,14,15,16,17,18,19)`, and closure
+count `7 = 21 - 14`. Its ordinary loader must reject the unratified A20 suffix.
+Only the exact §34.8 scratch copy may bind revision 22 before real activation.
+
+For prospective validation, exact revision-21 constants and the A20 boundary
+select A20 pins before A19 pins. A terminal Amendment 20 validates the exact
+A19 prefix and complete A20 projection. Every later amendment first validates
+the inherited A20 projection. An arbitrary A20 suffix, A19-only fallback,
+wrong terminal heading, second A20 boundary, non-pin semantic change, pending
+A4 freeze presented as ready, or alternate active route aborts. Historical
+A19 validation uses only the exact revision-21 prefix and its own pin table.
+
+Amendment 20 is activation-affecting. Its exact proposed transition is
+terminal Amendment 20, revision 22, ordered closure domain
+`(13,14,15,16,17,18,19,20)`, and closure count `8 = 22 - 14`. One final
+same-state public-oracle execution and the complete final pinned battery must
+have zero failed, skipped, deselected, xfailed, or xpassed tests. Activation
+requires the exact receipt, qualifying dual verdicts, operator integration,
+closure, and later real registry repin. This draft performs none of them.
+
+### 34.10 Exact mutation inventory and inherited censuses
+
+The separate Amendment-20 mutation inventory is exactly:
+
+~~~text
+shared_source_domain_or_statement_locator_forged
+missing_reason_rule_or_exact_cover_forged
+purpose_authority_or_totality_forged
+prompt_field_or_semantic_binding_forged
+r04_order_source_binding_or_q5_shape_forged
+r06_collection_or_lifecycle_order_forged
+receipt_verdict_or_scratch_transition_forged
+amendment20_terminal_pin_or_suffix_route_forged
+~~~
+
+Its terminal-LF canonical name array is 364 bytes with raw SHA-256
+`9cd9692fbb44a9822c9f9c997eb4cdc898b68cd86000aac3af945eecbd4d1a53`.
+A name is appended only after every grouped attack reaches and fails its
+intended gate. The attacks include cross-domain admission, source/statement
+drift, missing-rule overlap and incomplete complement, silent grandfathering
+of the 818 purpose rows, a nonzero purpose disposition, every one of the 46
+singleton collisions, C68 direct-ID priority, zero-group omission, MD bridge
+promotion, unresolved semantic binding, wrong construction order, widened
+279 envelope, missing reconstruction binding, Q5 shape omission, machine
+path interpreter, six-file or node-ID drift, premature lifecycle selection,
+loose verdict decimal/line grammar, missing or mismatched receipt, reusable
+scratch stand-in, A19 pin fallback, and terminal/successor forgery.
+
+The runner first executes and authenticates these five separate inherited
+censuses, without relabeling their total as an A20 census:
+
+| Inventory | Count | Raw SHA-256 |
+|---|---:|---|
+| inherited complete certificate | 100 | `fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3` |
+| Amendment 16 | 7 | `1e00099f636c1a727839ebc298b965cd0981e0ad8f23189367ba7dbd0eddb871` |
+| Amendment 17 | 3 | `b19ebcbf47278d63e12bd8021334a88910895bdfe48caf2d49c6bbe3014417e6` |
+| Amendment 18 | 3 | `1bf9f6d30461d003cab597a405cb5cc9855273372ed3e7e5b36b1627eaa11108` |
+| Amendment 19 | 3 | `002aa021325c18e311cc778562ad0e937468a90c378db0740290fcf617929101` |
+
+Only after the inherited `100 + 7 + 3 + 3 + 3 = 116` attacks pass does the
+runner execute the eight A20 attacks. Drift, omission, reordering, wrong-gate
+rejection, type coercion, or census inflation aborts.
+
+### 34.11 Complete supersession, preservation, and new identifiers
+
+The complete supersession and preservation disposition is:
+
+| Earlier normative anchor | Amendment-20 disposition |
+|---|---|
+| §19.3.3 purpose classification, prompt consumption, singleton token/group attachment, semantic bindings, and post-`O_P` joins | Superseded for the A20 successor by admitted purpose rules, complete 21,971-row re-grounding, pre-`O_P` evidence, and source-backed resolution rows that materialize every candidate. All 46 collisions require dispositions; there is no direct-ID priority. The five-coordinate binding, nonempty joins, ambiguity abort absent accepted evidence, reverse covers, and source-only limits survive. |
+| §20.4.2 frozen Q5 shapes; §§33.2.2 and 33.3.2; the corresponding §33.7 shape rows | Superseded only by A19's per-era purpose rows and preproof search-key change and §34.6.3's exhaustive A20 header/per-era additions. Every other frozen shape, ordering, self-zero, and join rule survives. |
+| §§25.2–25.4 historical missing-reason census and settlement | Historical 47-source audit, 12-position identities, 52 authorized literals, 524,538 unresolved blocker, 37,283 numeric nulls, abort, and nonemission remain exact. A20 adds a separately versioned, transactionally selected successor relation. |
+| §25.6.6 exact selector and §§32.4.2–32.4.3 R06 input/test result; the deficient §32.7 row | Superseded only for command position zero by executing-process `sys.executable` and completed by the six exact file identities and 223-node array identity. `PYTHONPATH`, module order, sanitized environment, and historical result survive. |
+| §§25.9–25.10 lifecycle families, §26.10.3, and DC-71 | Superseded solely to allow §34's dormant definitions before certification. No instance, selection, dispatch, first-add, authority, or output exists before the exact R04→R05→historical-R06 order. Other lifecycle ancestry and nonemission rules survive. |
+| §26.6.3, §26.10.1, §33.2.2–§33.2.3, and the first §33.7 construction-order row | Superseded only in precedence and failure-arm nonexecution by §34.6.1. Source-only `O_H` still precedes `O_P` on the normal arm; no purpose failure arm evaluates the full normal build. |
+| §26.11.2 complete R04/R05/R06 gate | Preserved and strengthened by separate source-domain authentication, prompt-field evidence, semantic binding, post-`O_P` joins, and dual reconstruction. Purpose `U == 0` alone is never passing. |
+| §§28.2.1 and 28.4 verdict/operator/closure order | Composed prospectively: condition 1 requires two qualifying §34.8.1 verdicts that attest the same verified §31.3 receipt. Scratch stand-ins are NONAUTHORITY and cannot satisfy the real sequence. The other three iff conditions and real sole-parent sequence survive. |
+| §§29.4.4–29.4.5 source-member identity and independent reconstruction | Composed with the separate A20 successor binding. Both reconstructors preserve the historical 279 envelope and independently authenticate both A20 semantic domains and every successor relation. |
+| §§30.2.3–30.2.4 verdict checking and public atomic operativity | Superseded prospectively by the closed UTF-8/LF/decimal/receipt grammar and A20 projection check before the public oracle returns. Historical closure bytes remain valid under historical law. |
+| §§31.3.1–31.3.3 same-state demonstration and the §31.5 nonexistent “A16 ratification demonstration” map row | Composed with §§28.2.1 and 30.2.4 by §34.8. Receipt verification is part of a qualifying affirmative verdict, not a fifth operativity condition; the exact scratch topology resolves pre-verdict chronology. |
+| §§32.2.1–32.2.2 and §33.8 authenticated 257+22=279 build-input envelope | Preserved byte-for-byte. A20 sources enter only the separately authenticated successor composite and never widen or rename the historical envelope. |
+| §32.4.4 false R06 lifecycle booleans | Preserved as exact facts about the historical R06/A11 execution's production and lifecycle outputs. They do not prohibit pre-R06 evidence relations while dispatch-disabled or dormant law definitions. |
+| §§32.5.1 and 33.5.1 active implementation rows | Historical pin tables remain exact. After final freeze, only the A20 three-row table becomes the active prospective-validation selector; publisher isolation and the three-path domain survive. |
+| §§33.2.2–33.2.3 purpose rows and selected A19 failure member | A19's relation and exact 877-byte historical failure member survive. A20 replaces active successor selection only after all 21,971 rows are source-grounded and every R04 conjunct passes; A20 evidence failures use separate diagnostic statuses. |
+| §33.3.2 D0/search/proof/D1 construction | Preserved exactly and composed after the A20 normal selector. No A20 relation may recreate the digest cycle. |
+| §33.4 obsolete campaign pin and A20 out-of-scope label | Superseded as prospective scope by the exact consolidated charter pin in §34.1. Historical A19 routing remains evidence of its then-deferred program. |
+| §§33.5.2–33.5.3 A19 projection, routing, and activation | Historical A19 validation uses the exact revision-21 prefix. Active prospective routing adds exact A20 terminal/inherited validation and the revision-22 same-state obligation. |
+| §33.6 mutation inventory and inherited census | Preserved as three A19 names after the earlier 113 attacks. A20 runs the five inherited censuses separately, then its own eight-name inventory. |
+| The four §33.7 rows concerning construction order, raw-field ambiguity, Q5 shape, and R04 reconstruction | Superseded or composed exactly as the first, second, sixth, seventh, and ninth rows of this table; no unlisted A19 semantic change is implied. |
+| §33.8 `questionnaire_occurrence_rows` combined evaluation/serialization prohibition | Superseded by two scopes: authenticated read/construction is required for the selector, while serialization into the failure member and treatment as pass-only output remain forbidden. The 877-byte member survives. |
+| §33.9 terminal A19 prospective effect | Preserved as historical drafting law and superseded only as the terminal prospective section by §34.13 after A19's external activation. |
+| §§20.3, 21.3–21.5, 22.2–22.5, 23.2–23.5, and 24.2–24.6 downstream algorithms | Preserved as algorithms but every A20-affected classifier, movement, assignment, range, storage, constructibility, full identity, and comparator fact is freshly recomputed; no historical result is copied. |
+| §§19.6–19.8, 20.7–20.8, 21.8–21.9, 22.8–22.9, 23.8–23.9, 24.9–24.10, and 25.9–25.10 artifact families | Composed with §34.7's versioned lifecycle envelope, exact DAG, atomic gates, and first-add order. Historical artifact bytes and predecessor versions survive. |
+| §§27.3–27.6 repair overlays and six seals; §28.2.2 closure schema/history; §29.4.7 raw 100-census attestation | Fully preserved. A20 neither changes their bytes nor treats their conclusions as authority for either new semantic arm. |
+
+No predecessor byte is deleted. Any prior requirement not expressly changed
+in the table remains exact. A new relation never silently waives an inherited
+normal gate. A failure member's omission is lawful only where §34 expressly
+forbids evaluation or serialization.
+
+The exact new schema identifiers are:
+
+~~~text
+amendment_20_dual_authority_successor_law.v1
+a20_physical_source_registry.v1
+a20_evidence_statement_registry.v1
+a20_missing_reason_source_domain.v1
+a20_purpose_source_domain.v1
+a20_successor_source_binding.v1
+a20_missing_reason_authority_rules.v1
+a20_missing_reason_successor_relation.v1
+a20_missing_representation_bridge.v1
+a20_purpose_authority_rules.v1
+a20_purpose_authority_mapping.v1
+a20_prompt_field_evidence.v1
+a20_zero_candidate_positive_groups.v1
+a20_semantic_bindings.v1
+a20_source_settlement.v1
+a20_normal_r04.v1
+a20_r05_certificate.v1
+a20_historical_r06_binding.v1
+a20_classifier_rebuild.v1
+a20_terminal_movement.v1
+a20_assignments_ranges_storage.v1
+a20_full_relation_identity.v1
+a20_comparator_census.v1
+a20_q5.v1
+a20_slot_inventory_g17_vb6.v1
+a20_publication_chain.v1
+~~~
+
+The exact new status, lifecycle, and authority identifiers are:
+
+~~~text
+not_instantiated_a4_required_before_ratify
+pass_a4_exact_freeze
+dormant_definition
+blocked_predecessor
+fail_atomic_nonemission
+amendment20_same_state_nonauthority_v1
+A20_EVIDENCE_FREEZE_REQUIRED
+A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED
+A20_NORMAL_R04_REQUIRED
+A20_R05_REQUIRED
+A20_HISTORICAL_R06_REQUIRED
+A20_MISSING_REASON_SUCCESSOR_ACTIVE
+A20_RECONSTRUCTION_REQUIRED
+A20_Q5_REQUIRED
+A20_INVENTORY_G17_VB6_REQUIRED
+A20_PUBLICATION_REQUIRED
+A21_SUCCESSOR_PROGRAM_STOP
+~~~
+
+The exact new Python identifiers are:
+
+~~~text
+_validate_amendment20_draft_design
+_validate_amendment20_ratification_design
+_validate_inherited_amendment20_ratification_design
+_parse_amendment20_implementation_pins
+_parse_amendment20_projection
+run_amendment20_contract_mutation_tests
+validate_amendment20_qualifying_verdict
+~~~
+
+Each inventory is ordered, unique, closed, and disjoint by kind.
+
+### 34.12 Exact machine projection
+
+The exact Amendment-20 normative manifest will be inserted here as one-line
+terminal-LF canonical JSON after this prose and the implementation contracts
+are jointly frozen. Its temporary absence, like the pending pin table and A4
+identities, makes this first prospective draft structurally reviewable but
+unratifiable. No validator may interpret this sentence as a manifest.
+
+### 34.13 Terminal prospective effect
+
+**Amendment 20 is a prospective, unratified, evidence-incomplete, and
+inoperative draft. The operative registry remains revision 21 with exactly
+Amendments 13 through 19, and ordinary production loading must reject this
+suffix. This draft cures the nine confirmed legal seams, directly closes
+seven suspected structural seams, and enacts fail-closed evidence probes for
+the zero-candidate grouping and `MD=` representation bridge. It defines but
+does not instantiate the complete successor lifecycle. It emits no source
+admission, authority rule, settlement, R04/R05/R06 object, Q5, inventory,
+production artifact, verdict, receipt, closure, or registry repin. Only a
+later exact A4 freeze, final machine manifest and implementation pins, passing
+normal R04 and all downstream gates, one revision-22 same-state demonstration,
+the external receipt, two qualifying affirmative verdicts, lawful operator
+integration, A20 closure, and real revision-22 registry repin can activate
+it. If complete evidence cannot be frozen, permanent fail-closed residue
+controls; invoking A21 requires the chartered kill/recharter event.**
