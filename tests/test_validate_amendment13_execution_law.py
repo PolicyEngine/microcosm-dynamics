@@ -449,9 +449,7 @@ def _run_amendment17_test_mutations():
         _assert_revision_general_expectation(17, (13, 14, 15))
     rejected.append(A17_TEST_MUTATIONS[1])
 
-    pins = a13._parse_active_implementation_pins(
-        (ROOT / a13.DESIGN_PATH).read_bytes()
-    )
+    pins = _historical_amendment19_implementation_pins()
     test_pin = next(
         row
         for row in pins["files"]

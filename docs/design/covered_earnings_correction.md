@@ -57318,7 +57318,7 @@ three path/blob/byte/hash rows:
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
 | `scripts/validate_amendment13_execution_law.py` | `d87c97bd03706c1a3fa11c025cd00f9310b472f8` | 608,209 | `186051646c2745401ef881d360eb34af2b831b97764a1b46739fa2bad31a4551` |
-| `tests/test_validate_amendment13_execution_law.py` | `5d26a122b88fb435cac261e15cfb7f553bfe712d` | 176,217 | `5718300aaa69cad23078aba51047ea4c0dc2c62a9cc5c91da4c1459ffe5abef8` |
+| `tests/test_validate_amendment13_execution_law.py` | `6ce1b81d7ca9cb9afed692f44b9c0e4f20ef6240` | 176,172 | `074664015dfd475a19ba7466afb8acf7079766e8c2b456ce88f602ccc53333a6` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
 The semantic projection requires the exact 4,025,587-byte revision-21 prefix,
