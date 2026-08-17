@@ -11,6 +11,7 @@ Amendment 12's frozen pilot bundle and its 71 mutations are not changed.
 from __future__ import annotations
 
 import argparse
+import ast
 import copy
 import hashlib
 import json
@@ -188,6 +189,15 @@ REVISION20_BLOB_OID = "016c0fff757b54da730ae0044216416cde2d2c33"
 AMENDMENT19_BOUNDARY = (
     b"\n## 33. AMENDMENT SECTION \xe2\x80\x94 Amendment 19: source-"
     b"hierarchy member-construction cure\n"
+)
+REVISION21_BYTE_SIZE = 4_025_587
+REVISION21_SHA256 = (
+    "38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9"
+)
+REVISION21_BLOB_OID = "1eba7ff6366bad1999de36c9f7261ad6939ad86a"
+AMENDMENT20_BOUNDARY = (
+    b"\n## 34. AMENDMENT SECTION \xe2\x80\x94 Amendment 20: dual-authority "
+    b"covered-earnings correction\n"
 )
 FIRST_CLOSURE_AMENDMENT = 13
 HISTORICAL_TERMINAL_REVISION = 16
@@ -2452,6 +2462,1341 @@ A19_NORMATIVE_MANIFEST = {
     },
 }
 
+A20_SECTION_SEMANTIC_SHA256: str | None = (
+    "530ac9a2e7ca3ded253fb250876e41240554d958ee34563cf001b6f02cf152b7"
+)
+A20_CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
+A20_EXPECTED_IDENTITY_NAMES = [
+    "physical_source_identity",
+    "evidence_statement_identity",
+    "missing_reason_source_domain_identity",
+    "purpose_source_domain_identity",
+    "a20_successor_source_binding_identity",
+    "missing_reason_rule_set_identity",
+    "missing_reason_successor_relation_identity",
+    "missing_representation_bridge_identity",
+    "purpose_rule_set_identity",
+    "purpose_authority_mapping_identity",
+    "prompt_field_evidence_identity",
+    "prompt_field_candidate_set_identity",
+    "zero_candidate_positive_group_identity",
+    "semantic_binding_identity",
+    "r04_q5_shape_identity",
+    "r06_six_module_identity",
+    "r06_collected_node_id_identity",
+    "dormant_lifecycle_definition_identity",
+]
+A20_EVIDENCE_FREEZE = {
+    "schema_version": "a20_evidence_freeze.v1",
+    "amendment20_evidence_freeze_status": (
+        "not_instantiated_a4_required_before_ratify"
+    ),
+    "missing_reason_authority_status": None,
+    "purpose_authority_status": None,
+    "prompt_field_semantic_binding_status": None,
+    "expected_identity_bindings": {
+        name: None for name in A20_EXPECTED_IDENTITY_NAMES
+    },
+    "amendment20_ratification_ready": False,
+}
+A20_EVIDENCE_FREEZE_CONTRACT = {
+    "object": A20_EVIDENCE_FREEZE,
+    "final_required_evidence_freeze_status": "pass_a4_exact_freeze",
+    "final_arm_status_domains": {
+        "missing_reason_authority_status": [
+            "pass",
+            "fail_permanent_missing_reason_authority_residue",
+        ],
+        "purpose_authority_status": [
+            "pass",
+            "fail_permanent_purpose_authority_residue",
+        ],
+        "prompt_field_semantic_binding_status": [
+            "pass",
+            "fail_permanent_prompt_field_or_semantic_binding_residue",
+        ],
+    },
+    "ratification_readiness_iff_freeze_shape_statuses_and_identities": True,
+    "semantic_arm_pass_required_for_ratification": False,
+    "absent_identity_is_not_zero_digest_or_wildcard": True,
+    "authority_selection_permitted": False,
+    "r04_or_later_permitted": False,
+}
+A20_CONTROLLING_EXTERNAL_RECORDS = [
+    {
+        "logical_path": "e8-ops/sol-ce-a20-charter.md",
+        "byte_size": 27_368,
+        "raw_sha256": (
+            "5ecd4092f3fc62ef894866a1a5b505d6dba7bb04cde1360ff7134d7d8e927717"
+        ),
+        "authority": "NONAUTHORITY",
+    },
+    {
+        "logical_path": ("e8-ops/sol-ce-law-gap-sweep-r21-2026-08-16.md"),
+        "byte_size": 11_805,
+        "raw_sha256": (
+            "39887de99d75a395e97b04f33b4c5264a6828f56c9321cfe248b4ba11a7e5846"
+        ),
+        "authority": "NONAUTHORITY",
+    },
+]
+A20_EVIDENCE_CAMPAIGN_CONTRACT = {
+    "stage_order": [
+        "E0_banked_evidence_reauthentication",
+        "E1_shared_source_closure_and_separate_domain_projections",
+        "E2_compilers_representation_bridges_and_measured_pilots",
+        "A1_concentrated_queues",
+        "A2_recurring_remainder",
+        "A3_occurrence_local_residue_with_capacity_kills",
+        "A4_dual_review_reconciliation_and_exact_identity_freeze",
+        "C20_ratification_and_revision_22_activation",
+        "X1_authoritative_settlement_missing_dispatch_disabled",
+        "X2_complete_normal_R04_and_R05",
+        "historical_R06_replay_and_first_add",
+        "fresh_reconstruction",
+        "Q5",
+        "slot_inventory_G17_C01_and_V_B6",
+        "sealed_publication_chain",
+    ],
+    "rounds_formula": "ceil(2L/(3q))",
+    "q_definition": (
+        "observed_independently_reviewed_logical_decisions_per_lane_day"
+    ),
+    "forecast_as_of": "2026-08-15",
+    "conditional_p50": "2026-11-09",
+    "conditional_p80": "2027-01-22",
+    "dates_are_nonauthority_conditional_planning_metadata": True,
+    "fail_closed_kill_categories": [
+        "source_admission",
+        "missing_rule_scope",
+        "purpose_entailment",
+        "family_equivalence",
+        "legacy_vocabulary",
+        "circular_attachment",
+        "prompt_field_ambiguity",
+        "reviewer_origin",
+        "cross_arm_contamination",
+        "missing_convention_arm_capacity",
+        "missing_ledger_capacity",
+        "purpose_ledger_capacity",
+        "acceptance_exact_cover_and_reconstruction",
+        "complete_R04",
+        "downstream_reconstruction_and_publication",
+    ],
+    "permanent_residue_remains_fail_closed": True,
+}
+A20_PHYSICAL_SOURCE_ROW_KEYS = [
+    "evidence_source_id",
+    "upstream_capture_or_registry_identity",
+    "document_role",
+    "release_or_wave",
+    "representation",
+    "official_url",
+    "canonical_local_path",
+    "storage_identity",
+    "byte_size",
+    "raw_sha256",
+    "access_disposition",
+    "licensing_disposition",
+    "statement_locator_ids",
+    "extraction_tool_identity",
+    "recovered_source_provenance",
+]
+A20_EVIDENCE_STATEMENT_ROW_KEYS = [
+    "evidence_statement_id",
+    "evidence_source_id",
+    "page_or_section_locator",
+    "utf8_byte_start",
+    "utf8_byte_end",
+    "exact_statement_raw_sha256",
+    "extraction_tool_identity",
+    "recovery_provenance_id",
+]
+A20_SEMANTIC_DOMAIN_IDENTITY_KEYS = [
+    "domain_id",
+    "domain_version",
+    "included_source_rows",
+    "included_source_count",
+    "included_source_keyset_sha256",
+    "included_source_domain_sha256",
+    "excluded_source_rows",
+    "excluded_source_count",
+    "excluded_source_keyset_sha256",
+    "excluded_source_domain_sha256",
+    "admitted_statement_rows",
+    "statement_count",
+    "statement_keyset_sha256",
+    "statement_domain_sha256",
+    "status",
+]
+A20_SOURCE_INFRASTRUCTURE_CONTRACT = {
+    "physical_relation": "a20_physical_source_rows",
+    "physical_source_row_keys": A20_PHYSICAL_SOURCE_ROW_KEYS,
+    "statement_relation": "a20_evidence_statement_rows",
+    "evidence_statement_row_keys": A20_EVIDENCE_STATEMENT_ROW_KEYS,
+    "semantic_domain_order": [
+        "missing_reason_source_domain",
+        "purpose_source_domain",
+    ],
+    "semantic_domain_identity_keys": A20_SEMANTIC_DOMAIN_IDENTITY_KEYS,
+    "semantic_domains": {
+        "missing_reason_source_domain": {
+            "domain_id": "missing_reason_source_domain",
+            "expected_identity": None,
+            "required_final_status": "pass",
+        },
+        "purpose_source_domain": {
+            "domain_id": "purpose_source_domain",
+            "expected_identity": None,
+            "required_final_status": "pass",
+        },
+    },
+    "inclusion_exclusion_complete_and_disjoint": True,
+    "included_and_excluded_counts_sum_to_physical_count": True,
+    "domains_authenticate_foreign_keys_independently": True,
+    "shared_physical_bytes_imply_shared_semantic_admission": False,
+    "mixed_semantic_payload_or_shared_accepted_digest_aborts_both": True,
+    "path_rule": "repository_relative_canonical_traversal_free",
+    "machine_local_absolute_paths_forbidden": True,
+    "current_url_or_latest_edition_substitution_forbidden": True,
+    "historical_domains_preserved": {
+        "a11_source_count": 47,
+        "questionnaire_document_count": 81,
+        "a19_build_input_source_document_count": 257,
+        "a19_build_input_repair_seal_count": 22,
+        "a19_build_input_row_count": 279,
+    },
+    "successor_source_binding_keys": [
+        "historical_a19_build_input_identity",
+        "physical_source_identity",
+        "evidence_statement_identity",
+        "missing_reason_source_domain_identity",
+        "purpose_source_domain_identity",
+        "missing_reason_rule_set_identity",
+        "missing_reason_successor_relation_identity",
+        "missing_representation_bridge_identity",
+        "purpose_rule_set_identity",
+        "purpose_authority_mapping_identity",
+        "prompt_field_evidence_identity",
+        "prompt_field_candidate_set_identity",
+        "zero_candidate_positive_group_identity",
+        "semantic_binding_identity",
+        "r04_q5_shape_identity",
+        "canonicalization",
+        "status",
+    ],
+    "successor_source_binding_expected_identity": None,
+    "independent_reconstructor_count": 2,
+    "reconstructors_require_count_order_keyset_rows_and_digest_equality": (
+        True
+    ),
+}
+A20_MISSING_REASON_AUTHORITY_CONTRACT = {
+    "authority_rule_row_keys": [
+        "authority_rule_id",
+        "registered_evidence_source_ids",
+        "registered_statement_ids",
+        "rule_kind",
+        "exact_scope_predicate",
+        "explicit_exclusions",
+        "strict_boolean_disposition",
+        "projected_occurrence_count",
+        "projected_occurrence_keyset_sha256",
+        "overlap_conflict_complement_results",
+    ],
+    "occurrence_identity_position_order": [
+        "schema_tag",
+        "global_member_position",
+        "source_document_position",
+        "source_row_position",
+        "entry_position",
+        "source_document_id",
+        "codebook_field_row_id",
+        "ordered_nonempty_locator_id_array",
+        "entry_reference",
+        "entry_kind",
+        "exact_source_value_or_range_lexeme",
+        "exact_nonempty_source_meaning",
+    ],
+    "formerly_unresolved_literal_occurrence_count": 524_538,
+    "inherited_source_authorized_literal_count": 52,
+    "numeric_structural_null_range_count": 37_283,
+    "claim_type": "strict_json_boolean_excluding_integer_coercion",
+    "projection_requirements": [
+        "exact",
+        "nonzero",
+        "disjoint",
+        "collectively_exhaustive",
+        "exception_complete",
+    ],
+    "conflict_precedes_incomplete_coverage": True,
+    "agreeing_duplicate_rules_abort": True,
+    "candidate_defaults_forbidden": True,
+    "independent_compiler_count": 2,
+    "transactional_atomic_nonemission": True,
+    "missing_true_reason_id_prefix": "psid-source-missing-reason:",
+    "missing_false_reason": None,
+    "numeric_range_reason": None,
+    "historical_a11_and_a18_results_preserved": True,
+    "representation_bridge_probe": {
+        "relation": "missing_representation_bridge_rows",
+        "direct_field_ceiling_observation": 54_898,
+        "gross_source_era_ceiling_observation": 71_635,
+        "diagnostic_shadow_observation": 59_424,
+        "zero_projection_observation": 87,
+        "observations_are_nonauthority": True,
+        "accepted_bridge_identity": None,
+        "u24_e2_93md_claims_accepted": 0,
+        "bridge_required_before_acceptance": True,
+    },
+}
+A20_PURPOSE_AUTHORITY_CONTRACT = {
+    "official_purpose_order": A19_OFFICIAL_PURPOSES,
+    "purpose_authority_rule_row_keys": [
+        "purpose_authority_source_id",
+        "rule_kind",
+        "registered_evidence_statement_ids",
+        "exact_prompt_scope_predicate",
+        "explicit_exclusions",
+        "explicit_official_purposes",
+        "projected_prompt_count",
+        "projected_prompt_keyset_sha256",
+    ],
+    "purpose_mapping_row_keys": [
+        "source_prompt_occurrence_id",
+        "authority_basis",
+        "purpose_authority_source_id",
+        "evidence_statement_ids",
+        "explicit_official_purposes",
+        "purpose_mapping_disposition",
+    ],
+    "prompt_denominator": 21_971,
+    "required_disposition_counts": {
+        "complete_official_mapping": 21_971,
+        "partial_official_mapping_with_legacy_residue_underdetermined": 0,
+        "legacy_only_mapping_underdetermined": 0,
+        "missing_mapping_underdetermined": 0,
+        "U": 0,
+    },
+    "inherited_complete_rows_requiring_source_regrounding": 818,
+    "manual_origin_grandfathering_permitted": False,
+    "source_conflict_reopens_row": True,
+    "purpose_arrays_nonempty_stable_unique_in_official_order": True,
+    "exact_prompt_cover_and_zero_gap_extra_duplicate_overlap_conflict": True,
+    "independent_compiler_count": 2,
+    "transactional_atomic_nonemission": True,
+    "source_backed_alternatives": [
+        "occurrence_kind_or_denominator_correction",
+        "ontology_projection",
+        "separately_tagged_no_applicable_purpose_arm",
+    ],
+    "source_backed_alternative_selected": None,
+    "source_classification_row_id_overload_forbidden": True,
+}
+A20_PROMPT_FIELD_SEMANTIC_BINDING_CONTRACT = {
+    "prompt_field_row_keys": [
+        "prompt_field_evidence_id",
+        "source_prompt_occurrence_id",
+        "interview_wave",
+        "prompt_source_locator_ids",
+        "field_source_document_id",
+        "field_source_row_id",
+        "field_source_member",
+        "raw_field_id",
+        "attachment_basis",
+        "official_alias_statement_ids",
+        "attachment_disposition",
+        "candidate_raw_field_ids",
+    ],
+    "construction_stage": "before_O_P",
+    "positive_attachment_bases": [
+        "exact_source_identifier",
+        "expressly_admitted_official_alias",
+    ],
+    "attachment_dispositions": [
+        "accepted_exact_source_identifier",
+        "accepted_expressly_admitted_official_alias",
+        "unresolved_multiple",
+    ],
+    "candidate_sets_materialized": True,
+    "zero_or_multiple_candidates_fail_without_source_resolution": True,
+    "direct_identifier_priority_forbidden": True,
+    "known_singleton_collision_count": 46,
+    "c68_regression": {
+        "source_prompt_occurrence_id": (
+            "psid-questionnaire-occurrence:"
+            "4cd66190a898d568dd20c27140f44f1dff53d229f664f537722624d00c9b4b67"
+        ),
+        "interview_wave": 1985,
+        "printed_direct_field_id": "V11804",
+        "question_token": "C68.",
+        "candidate_raw_field_ids": ["V11804", "V11805"],
+        "draft_disposition": "unresolved_multiple",
+    },
+    "prompt_field_candidate_set_row_keys": [
+        "prompt_field_candidate_set_id",
+        "source_prompt_occurrence_id",
+        "interview_wave",
+        "candidate_prompt_field_evidence_ids",
+        "candidate_raw_field_ids",
+        "candidate_count",
+        "candidate_disposition",
+    ],
+    "prompt_field_candidate_set_id_prefix": (
+        "psid-prompt-field-candidate-set:"
+    ),
+    "prompt_field_candidate_set_id_preimage": [
+        "source_prompt_occurrence_id",
+        "interview_wave",
+        "candidate_prompt_field_evidence_ids",
+        "candidate_raw_field_ids",
+        "candidate_count",
+        "candidate_disposition",
+    ],
+    "prompt_field_candidate_set_dispositions": [
+        "zero_candidates",
+        "one_candidate",
+        "multiple_candidates",
+    ],
+    "prompt_field_candidate_set_order": "complete_prompt_source_order",
+    "candidate_arrays_complete_stable_unique_source_order": True,
+    "candidate_count_is_raw_field_array_length_strict_integer": True,
+    "candidate_disposition_is_iff_count_partition": True,
+    "candidate_set_id_is_sha256_of_canonical_remaining_members": True,
+    "candidate_set_row_ids_and_prompt_ids_unique": True,
+    "zero_candidate_positive_group_row_keys": [
+        "zero_candidate_positive_group_id",
+        "positive_occurrence_id",
+        "zero_candidate_source_prompt_occurrence_ids",
+        "all_source_prompt_occurrence_ids",
+        "complete_reference_union_ids",
+        "empty_reference_union",
+        "group_disposition",
+    ],
+    "zero_candidate_positive_group_id_prefix": (
+        "psid-zero-candidate-positive-group:"
+    ),
+    "zero_candidate_positive_group_id_preimage": [
+        "positive_occurrence_id",
+        "zero_candidate_source_prompt_occurrence_ids",
+        "all_source_prompt_occurrence_ids",
+        "complete_reference_union_ids",
+        "empty_reference_union",
+        "group_disposition",
+    ],
+    "zero_candidate_positive_group_dispositions": [
+        "complete_nonempty_reference_union",
+        "fail_empty_reference_union",
+    ],
+    "zero_candidate_positive_group_order": "positive_occurrence_order",
+    "zero_candidate_group_one_per_qualifying_positive_occurrence": True,
+    "zero_candidate_prompt_arrays_complete_positive_row_projections": True,
+    "zero_candidate_reference_union_complete_stable_unique": True,
+    "empty_reference_union_is_strict_boolean_zero_length_equality": True,
+    "zero_candidate_group_disposition_is_iff_empty_boolean": True,
+    "zero_candidate_group_id_is_sha256_of_canonical_remaining_members": True,
+    "zero_candidate_group_ids_and_positive_ids_unique": True,
+    "zero_candidate_grouping_probe": {
+        "candidate_set_prompt_count": 21_971,
+        "sweep_zero_candidate_observation": 15_428,
+        "diagnostic_zero_candidate_observation": 14_450,
+        "observations_are_nonauthority": True,
+        "difference_explained": False,
+        "accepted_positive_group_with_empty_reference_union_count": None,
+        "accepted_attachment_required_for_codebook_supported_rule": True,
+    },
+    "semantic_binding_coordinates": [
+        "role",
+        "job_slot_id",
+        "questionnaire_component_slot_id",
+        "slot_kind",
+        "field_purpose",
+    ],
+    "semantic_binding_dispositions": [
+        "semantically_bound",
+        "no_supported_predicate_dimension",
+        "unresolved_semantic_binding",
+    ],
+    "required_unresolved_semantic_binding_count": 0,
+    "semantic_binding_serialization": "near_match_source_annotation_rows",
+    "separate_semantic_binding_rows_serialization_permitted": False,
+    "semantic_binding_identity_requires_deep_equality": [
+        "row_count",
+        "ordered_keyset_sha256",
+        "row_domain_sha256",
+    ],
+    "binding_built_before_candidate_rows_read": True,
+    "joint_support_and_subsumption_maximality_required": True,
+    "post_o_p_relations": [
+        "occurrence_raw_field_reference_rows",
+        "positive_field_join_rows",
+        "nonempty_reference_and_raw_field_projections",
+        "unique_same_wave_attachment",
+        "purpose_expansion",
+        "reverse_covers",
+    ],
+    "mandatory_ambiguity_regressions": ["Family", "Dl7./D17.", "D2."],
+}
+A20_R04_Q5_CONTRACT = {
+    "construction_order": [
+        "authenticate_fixed_historical_denominators_and_a20_source_domains",
+        "construct_and_seal_missing_purpose_rules_and_successor_binding",
+        "compile_purpose_prompt_field_and_semantic_inputs",
+        "compute_purpose_U_and_independent_acceptance_results",
+        "select_failure_or_normal_member",
+        "normal_only_construct_H_and_source_only_O_H",
+        "normal_only_require_O_H_before_O_P",
+        "normal_only_construct_O_P_bindings_joins_covers_expansion_D0_search_D1_and_R04",
+        "normal_only_R05_strict_certificate_and_dual_reconstruction",
+    ],
+    "purpose_totality_alone_passes_r04": False,
+    "o_h_source_only": True,
+    "o_h_precedes_o_p_on_normal_arm": True,
+    "permitted_selector_input_reads": [
+        "questionnaire_occurrence_rows",
+        "fixed_prompt_denominator",
+        "purpose_authority_mapping_rows",
+        "prompt_field_candidate_set_rows",
+        "selector_inputs",
+    ],
+    "forbidden_selected_failure_member_serialization": [
+        "questionnaire_occurrence_rows",
+        "all_pass_only_arrays",
+        "Q5",
+        "R05_certificate",
+        "authority",
+        "production_output",
+    ],
+    "historical_a19_failure_member_byte_size": 877,
+    "historical_a19_failure_member_raw_sha256": (
+        "1651c50ff1f171ac420e55982cb060db70946f9283999c3d9edb2fa140d467c5"
+    ),
+    "source_document_manifest_insert_after": "source_document_domain_sha256",
+    "source_document_manifest_additions": [
+        "a20_successor_source_binding_identity",
+        "missing_reason_source_domain_identity",
+        "purpose_source_domain_identity",
+        "missing_reason_rule_set_identity",
+        "purpose_rule_set_identity",
+        "prompt_field_evidence_identity",
+        "semantic_binding_identity",
+    ],
+    "replaced_a19_effective_header_members": [
+        "purpose_mapping_row_count",
+        "purpose_mapping_keyset_sha256",
+        "purpose_mapping_domain_sha256",
+        "purpose_mapping_disposition_counts",
+    ],
+    "normal_effective_header_successor_members": [
+        "purpose_authority_mapping_row_count",
+        "purpose_authority_mapping_keyset_sha256",
+        "purpose_authority_mapping_domain_sha256",
+        "purpose_authority_mapping_disposition_counts",
+        "prompt_field_evidence_row_count",
+        "prompt_field_evidence_keyset_sha256",
+        "prompt_field_evidence_domain_sha256",
+        "prompt_field_evidence_disposition_counts",
+        "prompt_field_candidate_set_row_count",
+        "prompt_field_candidate_set_keyset_sha256",
+        "prompt_field_candidate_set_domain_sha256",
+        "prompt_field_candidate_set_disposition_counts",
+        "zero_candidate_positive_group_row_count",
+        "zero_candidate_positive_group_keyset_sha256",
+        "zero_candidate_positive_group_domain_sha256",
+        "zero_candidate_positive_group_empty_union_count",
+    ],
+    "normal_effective_header_insert_before": "positive_occurrence_row_count",
+    "replaced_a19_era_sequence": [
+        "hierarchy_rows",
+        "purpose_mapping_rows",
+        "positive_occurrence_rows",
+    ],
+    "normal_era_successor_sequence": [
+        "hierarchy_rows",
+        "purpose_authority_mapping_rows",
+        "prompt_field_evidence_rows",
+        "prompt_field_candidate_set_rows",
+        "zero_candidate_positive_group_rows",
+        "positive_occurrence_rows",
+    ],
+    "inherited_semantic_relation_member": "near_match_source_annotation_rows",
+    "inherited_semantic_relation_position": "after_expanded_disposition_rows",
+    "per_era_rows_use_direct_era_order_concatenation": True,
+    "g17_c01_expected_and_actual_shapes_equal": True,
+    "failure_arms_serialize_a20_shape_additions": False,
+    "a19_purpose_mapping_is_historical_nonconsumable_on_a20_normal_path": (
+        True
+    ),
+    "a19_digest_dependency_order_preserved": [
+        "D0",
+        "search_implementation",
+        "A_h",
+        "final_rows",
+        "D1",
+    ],
+}
+A20_R06_FILE_IDENTITIES = [
+    {
+        "path": "tests/data/test_psid_codebook_extraction_validation.py",
+        "mode": "100644",
+        "git_blob": "7b2f33af3ff6a4e389a944e349aa222f6ca41519",
+        "byte_size": 13_718,
+        "raw_sha256": (
+            "7af8a2847b4428fa7376598cc48333d008f225389eee461f3edae58ca624ff67"
+        ),
+    },
+    {
+        "path": "tests/data/test_psid_missing_reason_authority_artifact.py",
+        "mode": "100644",
+        "git_blob": "c8863f4a6a5e915666f0cce2cac4817e73839e9f",
+        "byte_size": 18_129,
+        "raw_sha256": (
+            "4f425c776ddba30f3b861812cdcbd0abef5b10ae0f41608bcaa6d456c9cdcd85"
+        ),
+    },
+    {
+        "path": "tests/data/test_psid_missing_reason_authority_unit.py",
+        "mode": "100644",
+        "git_blob": "499aa397f75e1d2f62e7c91a929f9ecdcf71a478",
+        "byte_size": 18_252,
+        "raw_sha256": (
+            "5e9b7cc33fd560ce5c472c6ac146f07a6b7b238003c6e96f715e417679149cda"
+        ),
+    },
+    {
+        "path": "tests/estimates/test_birth_evidence_artifact.py",
+        "mode": "100644",
+        "git_blob": "d4e838a1123d4e07c6f472ff64cfd6c11462f4a8",
+        "byte_size": 25_883,
+        "raw_sha256": (
+            "70acf9c2f36f9f88a7e5e2c8c7b5825427d6a44cf1926b0a6c0c7cf4bbb7d5d5"
+        ),
+    },
+    {
+        "path": "tests/test_rebuild_amendment11_missing_reason_authority.py",
+        "mode": "100644",
+        "git_blob": "632357933ea37c982d18402d249b74147cd80823",
+        "byte_size": 22_828,
+        "raw_sha256": (
+            "eedbab9e3ba3eaad19f08d36472b2fbc53cc5dc62b417a3600d5cb4360368dcb"
+        ),
+    },
+    {
+        "path": "tests/test_replay_amendment11_no_movement.py",
+        "mode": "100644",
+        "git_blob": "cc4c1c6d65c89ad97feb0b4f04e6c5d2ecd2405f",
+        "byte_size": 19_309,
+        "raw_sha256": (
+            "0875ac524e0cd2e7f3cb6e601026b0d2db5b459c6f426fe5182ac08ebaef9ec1"
+        ),
+    },
+]
+_A20_LIFECYCLE_ROW_SPECS = (
+    (
+        "A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED",
+        "a20_source_settlement.v1",
+        ["REVISION22_REGISTRY_REPIN"],
+        [
+            "revision22_registry_repin_identity",
+            "a20_successor_source_binding_identity",
+            "dormant_lifecycle_definition_identity",
+        ],
+    ),
+    (
+        "A20_NORMAL_R04_REQUIRED",
+        "a20_normal_r04.v1",
+        ["A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED"],
+        [
+            "a20_source_settlement_identity",
+            "historical_a19_build_input_identity",
+        ],
+    ),
+    (
+        "A20_R05_REQUIRED",
+        "a20_r05_certificate.v1",
+        ["A20_NORMAL_R04_REQUIRED"],
+        ["a20_normal_r04_identity"],
+    ),
+    (
+        "A20_HISTORICAL_R06_REQUIRED",
+        "a20_historical_r06_binding.v1",
+        ["A20_R05_REQUIRED"],
+        [
+            "a20_r05_certificate_identity",
+            "r06_six_module_identity",
+            "r06_collected_node_id_identity",
+            "historical_a11_replay_identity",
+        ],
+    ),
+    (
+        "A20_MISSING_REASON_SUCCESSOR_ACTIVE",
+        "a20_missing_reason_successor_relation.v1",
+        ["A20_HISTORICAL_R06_REQUIRED"],
+        [
+            "a20_historical_r06_identity",
+            "missing_reason_successor_relation_identity",
+        ],
+    ),
+    (
+        "A20_CLASSIFIER_REBUILD_REQUIRED",
+        "a20_classifier_rebuild.v1",
+        ["A20_MISSING_REASON_SUCCESSOR_ACTIVE"],
+        [
+            "a20_active_missing_reason_identity",
+            "historical_classifier_input_identity",
+        ],
+    ),
+    (
+        "A20_TERMINAL_MOVEMENT_REQUIRED",
+        "a20_terminal_movement.v1",
+        ["A20_CLASSIFIER_REBUILD_REQUIRED"],
+        ["a20_classifier_rebuild_identity"],
+    ),
+    (
+        "A20_ASSIGNMENT_REBUILD_REQUIRED",
+        "a20_assignment_rebuild.v1",
+        ["A20_TERMINAL_MOVEMENT_REQUIRED"],
+        ["a20_terminal_movement_identity"],
+    ),
+    (
+        "A20_LOGICAL_RANGE_REBUILD_REQUIRED",
+        "a20_logical_range_rebuild.v1",
+        ["A20_ASSIGNMENT_REBUILD_REQUIRED"],
+        ["a20_assignment_rebuild_identity"],
+    ),
+    (
+        "A20_STORAGE_POPULATION_REBUILD_REQUIRED",
+        "a20_storage_population_rebuild.v1",
+        ["A20_LOGICAL_RANGE_REBUILD_REQUIRED"],
+        ["a20_logical_range_rebuild_identity"],
+    ),
+    (
+        "A20_CONSTRUCTIBILITY_REQUIRED",
+        "a20_constructibility.v1",
+        ["A20_STORAGE_POPULATION_REBUILD_REQUIRED"],
+        ["a20_storage_population_rebuild_identity"],
+    ),
+    (
+        "A20_FULL_RELATION_IDENTITY_REQUIRED",
+        "a20_full_relation_identity.v1",
+        ["A20_CONSTRUCTIBILITY_REQUIRED"],
+        ["a20_constructibility_identity"],
+    ),
+    (
+        "A20_COMPARATOR_REQUIRED",
+        "a20_comparator_census.v1",
+        ["A20_FULL_RELATION_IDENTITY_REQUIRED"],
+        ["a20_full_relation_identity"],
+    ),
+    (
+        "A20_Q5_REQUIRED",
+        "a20_q5.v1",
+        ["A20_COMPARATOR_REQUIRED"],
+        ["a20_comparator_census_identity"],
+    ),
+    (
+        "A20_SLOT_REBUILD_REQUIRED",
+        "a20_slot_rebuild.v1",
+        ["A20_Q5_REQUIRED"],
+        ["a20_q5_identity"],
+    ),
+    (
+        "A20_INVENTORY_REBUILD_REQUIRED",
+        "a20_inventory_rebuild.v1",
+        ["A20_SLOT_REBUILD_REQUIRED"],
+        ["a20_slot_rebuild_identity"],
+    ),
+    (
+        "A20_G17_C01_REBUILD_REQUIRED",
+        "a20_g17_c01_rebuild.v1",
+        ["A20_INVENTORY_REBUILD_REQUIRED"],
+        ["a20_inventory_rebuild_identity"],
+    ),
+    (
+        "A20_VB6_REQUIRED",
+        "a20_vb6_successor.v1",
+        ["A20_G17_C01_REBUILD_REQUIRED"],
+        ["a20_g17_c01_rebuild_identity"],
+    ),
+    (
+        "A20_SUCCESSOR_BUNDLES_REQUIRED",
+        "a20_successor_bundles.v1",
+        ["A20_VB6_REQUIRED"],
+        ["a20_vb6_identity"],
+    ),
+    (
+        "A20_MIGRATIONS_REQUIRED",
+        "a20_migrations.v1",
+        ["A20_SUCCESSOR_BUNDLES_REQUIRED"],
+        ["a20_successor_bundles_identity"],
+    ),
+    (
+        "A20_CAPTURE_REQUIRED",
+        "a20_capture.v1",
+        ["A20_MIGRATIONS_REQUIRED"],
+        ["a20_migrations_identity"],
+    ),
+    (
+        "A20_RECEIPT_REQUIRED",
+        "a20_receipt.v1",
+        ["A20_CAPTURE_REQUIRED"],
+        ["a20_capture_identity"],
+    ),
+    (
+        "A20_REGISTRATION_REQUIRED",
+        "a20_registration.v1",
+        ["A20_RECEIPT_REQUIRED"],
+        ["a20_receipt_identity"],
+    ),
+    (
+        "A20_SEALED_RUN_REQUIRED",
+        "a20_sealed_run.v1",
+        ["A20_REGISTRATION_REQUIRED"],
+        ["a20_registration_identity"],
+    ),
+    (
+        "A20_WALL_LEDGER_REQUIRED",
+        "a20_wall_ledger.v1",
+        ["A20_SEALED_RUN_REQUIRED"],
+        ["a20_sealed_run_identity"],
+    ),
+    (
+        "A20_PUBLICATION_REQUIRED",
+        "a20_publication.v1",
+        ["A20_WALL_LEDGER_REQUIRED"],
+        ["a20_wall_ledger_identity"],
+    ),
+)
+A20_DORMANT_LIFECYCLE_ROWS = [
+    {
+        "lifecycle_stage_id": stage_id,
+        "schema_id": schema_id,
+        "predecessor_stage_ids": predecessor_ids,
+        "input_identity_ids": input_ids,
+        "output_identity_id": None,
+        "first_add_index": index,
+        "selection_enabled": False,
+        "status": "dormant_definition",
+    }
+    for index, (stage_id, schema_id, predecessor_ids, input_ids) in enumerate(
+        _A20_LIFECYCLE_ROW_SPECS,
+        start=1,
+    )
+]
+A20_R06_LIFECYCLE_CONTRACT = {
+    "interpreter_selector": "executing_process_sys.executable",
+    "test_command_after_interpreter": [
+        "-m",
+        "pytest",
+        *[row["path"] for row in A20_R06_FILE_IDENTITIES],
+    ],
+    "collection_command_after_interpreter": [
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        *[row["path"] for row in A20_R06_FILE_IDENTITIES],
+    ],
+    "test_environment": {"PYTHONPATH": "src:."},
+    "inherited_git_environment_removed": True,
+    "ambient_pytest_addopts_removed": True,
+    "test_file_identities": A20_R06_FILE_IDENTITIES,
+    "module_path_domain_sha256": (
+        "a5099c464482c5b652e31e5dfa958703a4ae4c75c1dc1e4caa03cb2aef408063"
+    ),
+    "collected_node_id_count": 223,
+    "collected_node_id_array_canonical_byte_size": 28_268,
+    "collected_node_id_array_raw_sha256": (
+        "09071bf4d9a9a5ee8b9ccc4d8d5c0bd91705c04d3c7c99d6ef155dfdc0dfdf05"
+    ),
+    "first_collected_node_id": (
+        "tests/data/test_psid_codebook_extraction_validation.py::"
+        "test_exact_nested_derivation_schemas_accept_generated_shapes"
+        "[_text_derivation]"
+    ),
+    "last_collected_node_id": (
+        "tests/test_replay_amendment11_no_movement.py::"
+        "test_reason_mutation_changes_field_source_identity_but_not_terminal"
+    ),
+    "historical_r06_result_preserved": {
+        "exit_code": 2,
+        "source_authorized_literal_count": 52,
+        "blocked_literal_count": 524_538,
+        "numeric_range_structural_null_count": 37_283,
+    },
+    "dormant_definition_before_certification_permitted": True,
+    "dormant_definition_creates_instance_or_selection": False,
+    "evidence_settlement_before_r06_requires_dispatch_disabled": True,
+    "lifecycle_envelope_keys": [
+        "lifecycle_stage_id",
+        "schema_id",
+        "predecessor_stage_ids",
+        "input_identity_ids",
+        "output_identity_id",
+        "first_add_index",
+        "selection_enabled",
+        "status",
+    ],
+    "lifecycle_statuses": [
+        "dormant_definition",
+        "blocked_predecessor",
+        "pass",
+        "fail_atomic_nonemission",
+    ],
+    "dormant_lifecycle_rows": A20_DORMANT_LIFECYCLE_ROWS,
+    "dormant_lifecycle_row_count": 26,
+    "output_identity_id_prefix": "a20-lifecycle-output:",
+    "output_identity_preimage": [
+        "lifecycle_stage_id",
+        "schema_id",
+        "predecessor_stage_ids",
+        "input_identity_ids",
+        "exact_output_payload_identity",
+    ],
+    "output_identity_preimage_canonicalization": A20_CANONICALIZATION,
+    "selection_enabled_only_on_passing_first_add_index": 5,
+    "blocked_predecessor_output_identity": None,
+    "fail_atomic_nonemission_output_identity": None,
+    "unratified_next_required_state": "A20_SUCCESSOR_PROGRAM_STOP",
+    "revision22_repin_next_required_state": (
+        "A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED"
+    ),
+    "terminal_next_required_state": "A20_SUCCESSOR_LIFECYCLE_COMPLETE",
+    "selection_first_add_dispatch_requires_r04_r05_r06_order": True,
+    "fresh_recomputation_required": [
+        "89599_field_classifier",
+        "terminal_movement",
+        "assignments_logical_ranges_storage",
+        "constructibility_and_full_relation_identity",
+        "comparator_census",
+        "Q5",
+        "slot_inventory_full_G17_C01_and_V_B6",
+        "successor_bundles_through_publication",
+    ],
+    "historical_zero_movement_assumption_permitted": False,
+}
+A20_EXECUTED_TRANSITION_RECEIPT_PATH = (
+    "docs/analysis/amendment_20_ratification/"
+    "executed_transition_receipt_v2.json"
+)
+A20_PRODUCTION_REGISTRY_IDENTITY = {
+    "path": "scripts/covered_earnings_correction_registry.py",
+    "mode": "100644",
+    "git_blob": "92a24e3af4358f75cbead00f223837a68c2f9da8",
+    "byte_size": 55_473,
+    "raw_sha256": (
+        "bd60336e3e388e5ef12f3f204b9bb089" "38c27be4db57f9e6fca6582aed7efb16"
+    ),
+}
+A20_RECEIPT_SCHEMA = {
+    **A17_RECEIPT_SCHEMA,
+    "manifest_keys": [
+        "schema_version",
+        "simulated_state_authority",
+        "candidate_commit_identity",
+        "scratch_transition",
+        "terminal_revision",
+        "canonical_registry_binding",
+        "ordered_closure_identities",
+        "full_pinned_battery_test_identity",
+    ],
+    "manifest_schema_version": "executed_transition_state.v2",
+    "candidate_commit_identity_keys": ["commit", "tree", "sole_parent"],
+    "scratch_transition_keys": [
+        "commit",
+        "tree",
+        "sole_parent",
+        "changed_paths",
+        "changed_path_domain_sha256",
+    ],
+    "scratch_sole_parent_equals_candidate_commit": True,
+    "expected_changed_paths": [
+        (
+            "docs/analysis/amendment_20_ratification/"
+            "sol-ce-amend20-sim-r1-verdict.md"
+        ),
+        (
+            "docs/analysis/amendment_20_ratification/"
+            "sol-ce-amend20-sim-r2-verdict.md"
+        ),
+        "docs/analysis/amendment_20_ratification/closure_v1.json",
+        "scripts/covered_earnings_correction_registry.py",
+    ],
+    "expected_changed_path_domain_canonical_byte_size": 260,
+    "expected_changed_path_domain_sha256": (
+        "5a7912498c4d959fef337f2a1d1cf85a2f254fa29d825d365ccf4fe214ad48a7"
+    ),
+    "changed_path_count": 4,
+    "changed_path_roles": [
+        "simulated_verdict_1",
+        "simulated_verdict_2",
+        "synthetic_amendment20_closure",
+        "scratch_registry_binding",
+    ],
+    "candidate_or_scratch_HEAD_member_superseded": True,
+}
+A20_RATIFICATION_RECEIPT_CONTRACT = {
+    "amendment20_external_receipt_path": (
+        A20_EXECUTED_TRANSITION_RECEIPT_PATH
+    ),
+    "inherited_external_receipt_path_template": (
+        "docs/analysis/amendment_<N>_ratification/"
+        "executed_transition_receipt_v2.json"
+    ),
+    "external_receipt_mode": "100644",
+    "candidate_production_registry_identity": A20_PRODUCTION_REGISTRY_IDENTITY,
+    "external_receipt_outside_candidate_and_scratch": True,
+    "external_receipt_strict_canonical_tracked_head_worktree_read": True,
+    "external_receipt_candidate_ancestry_not_required": True,
+    "external_receipt_first_add_precedes_or_equals_closure_first_add": True,
+    "scratch_commit_forbidden_as_production_ancestor": True,
+    "receipt_candidate_design_tree_mode_blob_rederived": True,
+    "receipt_candidate_design_exactly_cross_binds_registry_closure_and_verdicts": True,
+    "receipt_rederives_synthetic_closure_standins_and_registry_binding": True,
+    "receipt_public_result_booleans_not_sufficient": True,
+    "later_amendment_requires_own_exact_receipt_topology_projection": True,
+    "qualifying_verdict_line_count": 8,
+    "qualifying_verdict_lines": [
+        "# RATIFY",
+        "attested_design_byte_size: <decimal>",
+        "attested_design_raw_sha256: <64 lowercase hex>",
+        "attested_design_blob_oid: <40 lowercase hex>",
+        "executed_transition_receipt_byte_size: <decimal>",
+        "executed_transition_receipt_raw_sha256: <64 lowercase hex>",
+        "executed_transition_receipt_schema: executed_transition_state.v2",
+        "---",
+    ],
+    "decimal_grammar": ("[1-9][0-9]*|[1-9][0-9]{0,2}(,[0-9]{3})+"),
+    "strict_utf8_no_bom_nul_cr": True,
+    "lf_only_exactly_one_terminal_lf": True,
+    "distinct_verdict_artifact_count": 2,
+    "same_candidate_triple_and_receipt_pair_required": True,
+    "scratch": {
+        "candidate_commit_symbol": "C",
+        "scratch_commit_symbol": "S",
+        "scratch_is_strict_child_of_candidate": True,
+        "terminal_revision": 22,
+        "ordered_closure_domain": [13, 14, 15, 16, 17, 18, 19, 20],
+        "allowed_changed_paths": A20_RECEIPT_SCHEMA["expected_changed_paths"],
+        "standin_prefix_line_count": 4,
+        "standin_terminal_lines": [
+            (
+                "executed_transition_receipt_status: "
+                "pending_same_state_execution"
+            ),
+            ("simulation_context: " "amendment20_same_state_nonauthority_v1"),
+            "---",
+        ],
+        "standin_is_qualifying_verdict": False,
+        "standin_is_nonauthority_nonmergeable_noncopyable_nonreusable": True,
+    },
+    "receipt_schema": A20_RECEIPT_SCHEMA,
+    "receipt_is_additional_operativity_condition": False,
+    "public_oracle_validates_projection_verdicts_and_receipt": True,
+}
+A20_SUCCESSOR_ROUTING_CONTRACT = {
+    "immutable_prefix_amendment": 19,
+    "immutable_prefix_revision": 21,
+    "terminal_amendment": 20,
+    "proposed_revision": 22,
+    "amendment20_boundary_count": 1,
+    "a20_pins_selected_before_a19_pins": True,
+    "a19_pin_fallback_for_terminal_a20_permitted": False,
+    "later_amendment_validates_inherited_a20_projection_first": True,
+    "current_production": {
+        "revision": 21,
+        "terminal_amendment": 19,
+        "ordered_closure_domain": [13, 14, 15, 16, 17, 18, 19],
+        "closure_count": 7,
+        "reject_unratified_a20_suffix": True,
+    },
+    "terminal_successor_state": "A20_SUCCESSOR_LIFECYCLE_COMPLETE",
+}
+A20_FULL_PINNED_BATTERY_COLLECTED = 217
+A20_FULL_PINNED_BATTERY_COMMAND = (
+    "executing_process_sys.executable -m pytest -q "
+    "tests/test_validate_amendment13_execution_law.py"
+)
+A20_ACTIVATION_TRANSITION = {
+    "activation_affecting": True,
+    "terminal_revision": 22,
+    "terminal_amendment": 20,
+    "ordered_closure_domain": [13, 14, 15, 16, 17, 18, 19, 20],
+    "closure_count": 8,
+    "closure_count_subtrahend": 14,
+    "public_entrypoint": "validate_ratification_operativity",
+    "same_state_required": True,
+    "full_pinned_battery_required": True,
+    "full_pinned_battery_collected": A20_FULL_PINNED_BATTERY_COLLECTED,
+    "full_pinned_battery_exact_command": A20_FULL_PINNED_BATTERY_COMMAND,
+    "all_nonpassing_counts": 0,
+    "receipt_inside_candidate_bytes": False,
+    "activation_requires_operator_integration_closure_and_registry_repin": (
+        True
+    ),
+    "production_registry_changed_by_draft": False,
+}
+A20_EXPECTED_MUTATIONS = (
+    "shared_source_domain_or_statement_locator_forged",
+    "missing_reason_rule_or_exact_cover_forged",
+    "purpose_authority_or_totality_forged",
+    "prompt_field_or_semantic_binding_forged",
+    "r04_order_source_binding_or_q5_shape_forged",
+    "r06_collection_or_lifecycle_order_forged",
+    "receipt_verdict_or_scratch_transition_forged",
+    "amendment20_terminal_pin_or_suffix_route_forged",
+)
+A20_MUTATION_DOMAIN_BYTE_SIZE = 364
+A20_MUTATION_DOMAIN_SHA256 = (
+    "9cd9692fbb44a9822c9f9c997eb4cdc898b68cd86000aac3af945eecbd4d1a53"
+)
+A20_INHERITED_MUTATION_CENSUSES = [
+    {
+        "inventory": "inherited_complete_certificate",
+        "count": 100,
+        "raw_sha256": (
+            "fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3"
+        ),
+    },
+    {
+        "inventory": "amendment16",
+        "count": 7,
+        "raw_sha256": A16_MUTATION_DOMAIN_SHA256,
+    },
+    {
+        "inventory": "amendment17",
+        "count": 3,
+        "raw_sha256": A17_MUTATION_DOMAIN_SHA256,
+    },
+    {
+        "inventory": "amendment18",
+        "count": 3,
+        "raw_sha256": A18_MUTATION_DOMAIN_SHA256,
+    },
+    {
+        "inventory": "amendment19",
+        "count": 3,
+        "raw_sha256": A19_MUTATION_DOMAIN_SHA256,
+    },
+]
+A20_NEW_IDENTIFIERS = {
+    "schema": [
+        "amendment_20_dual_authority_successor_law.v1",
+        "executed_transition_state.v2",
+        "a20_evidence_freeze.v1",
+        "a20_physical_source_registry.v1",
+        "a20_evidence_statement_registry.v1",
+        "a20_missing_reason_source_domain.v1",
+        "a20_purpose_source_domain.v1",
+        "a20_successor_source_binding.v1",
+        "a20_missing_reason_authority_rules.v1",
+        "a20_missing_reason_successor_relation.v1",
+        "a20_missing_representation_bridge.v1",
+        "a20_purpose_authority_rules.v1",
+        "a20_purpose_authority_mapping.v1",
+        "a20_prompt_field_evidence.v1",
+        "a20_prompt_field_candidate_sets.v1",
+        "a20_zero_candidate_positive_groups.v1",
+        "a20_source_settlement.v1",
+        "a20_normal_r04.v1",
+        "a20_r05_certificate.v1",
+        "a20_historical_r06_binding.v1",
+        "a20_classifier_rebuild.v1",
+        "a20_terminal_movement.v1",
+        "a20_assignment_rebuild.v1",
+        "a20_logical_range_rebuild.v1",
+        "a20_storage_population_rebuild.v1",
+        "a20_constructibility.v1",
+        "a20_full_relation_identity.v1",
+        "a20_comparator_census.v1",
+        "a20_q5.v1",
+        "a20_slot_rebuild.v1",
+        "a20_inventory_rebuild.v1",
+        "a20_g17_c01_rebuild.v1",
+        "a20_vb6_successor.v1",
+        "a20_successor_bundles.v1",
+        "a20_migrations.v1",
+        "a20_capture.v1",
+        "a20_receipt.v1",
+        "a20_registration.v1",
+        "a20_sealed_run.v1",
+        "a20_wall_ledger.v1",
+        "a20_publication.v1",
+    ],
+    "status_lifecycle_authority": [
+        "not_instantiated_a4_required_before_ratify",
+        "pass_a4_exact_freeze",
+        "fail_permanent_missing_reason_authority_residue",
+        "fail_permanent_purpose_authority_residue",
+        "fail_permanent_prompt_field_or_semantic_binding_residue",
+        "dormant_definition",
+        "blocked_predecessor",
+        "fail_atomic_nonemission",
+        "accepted_exact_source_identifier",
+        "accepted_expressly_admitted_official_alias",
+        "unresolved_multiple",
+        "zero_candidates",
+        "one_candidate",
+        "multiple_candidates",
+        "complete_nonempty_reference_union",
+        "fail_empty_reference_union",
+        "SIMULATED_NONAUTHORITY",
+        "pending_same_state_execution",
+        "amendment20_same_state_nonauthority_v1",
+        "REVISION22_REGISTRY_REPIN",
+        "A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED",
+        "A20_NORMAL_R04_REQUIRED",
+        "A20_R05_REQUIRED",
+        "A20_HISTORICAL_R06_REQUIRED",
+        "A20_MISSING_REASON_SUCCESSOR_ACTIVE",
+        "A20_CLASSIFIER_REBUILD_REQUIRED",
+        "A20_TERMINAL_MOVEMENT_REQUIRED",
+        "A20_ASSIGNMENT_REBUILD_REQUIRED",
+        "A20_LOGICAL_RANGE_REBUILD_REQUIRED",
+        "A20_STORAGE_POPULATION_REBUILD_REQUIRED",
+        "A20_CONSTRUCTIBILITY_REQUIRED",
+        "A20_FULL_RELATION_IDENTITY_REQUIRED",
+        "A20_COMPARATOR_REQUIRED",
+        "A20_Q5_REQUIRED",
+        "A20_SLOT_REBUILD_REQUIRED",
+        "A20_INVENTORY_REBUILD_REQUIRED",
+        "A20_G17_C01_REBUILD_REQUIRED",
+        "A20_VB6_REQUIRED",
+        "A20_SUCCESSOR_BUNDLES_REQUIRED",
+        "A20_MIGRATIONS_REQUIRED",
+        "A20_CAPTURE_REQUIRED",
+        "A20_RECEIPT_REQUIRED",
+        "A20_REGISTRATION_REQUIRED",
+        "A20_SEALED_RUN_REQUIRED",
+        "A20_WALL_LEDGER_REQUIRED",
+        "A20_PUBLICATION_REQUIRED",
+        "A20_SUCCESSOR_LIFECYCLE_COMPLETE",
+    ],
+    "member": [
+        "amendment20_evidence_freeze",
+        "amendment20_evidence_freeze_status",
+        "missing_reason_authority_status",
+        "purpose_authority_status",
+        "prompt_field_semantic_binding_status",
+        "expected_identity_bindings",
+        "amendment20_ratification_ready",
+        "a20_successor_source_binding_identity",
+        "missing_reason_source_domain_identity",
+        "purpose_source_domain_identity",
+        "missing_reason_rule_set_identity",
+        "purpose_rule_set_identity",
+        "prompt_field_evidence_identity",
+        "semantic_binding_identity",
+        "purpose_authority_mapping_row_count",
+        "purpose_authority_mapping_keyset_sha256",
+        "purpose_authority_mapping_domain_sha256",
+        "purpose_authority_mapping_disposition_counts",
+        "prompt_field_evidence_row_count",
+        "prompt_field_evidence_keyset_sha256",
+        "prompt_field_evidence_domain_sha256",
+        "prompt_field_evidence_disposition_counts",
+        "prompt_field_candidate_set_row_count",
+        "prompt_field_candidate_set_keyset_sha256",
+        "prompt_field_candidate_set_domain_sha256",
+        "prompt_field_candidate_set_disposition_counts",
+        "zero_candidate_positive_group_row_count",
+        "zero_candidate_positive_group_keyset_sha256",
+        "zero_candidate_positive_group_domain_sha256",
+        "zero_candidate_positive_group_empty_union_count",
+        "purpose_authority_mapping_rows",
+        "prompt_field_evidence_rows",
+        "prompt_field_candidate_set_rows",
+        "zero_candidate_positive_group_rows",
+        "SIMULATED_STATE_AUTHORITY",
+        "SIMULATION_CONTEXT",
+        "candidate_commit_identity",
+        "scratch_transition",
+        "changed_paths",
+        "changed_path_domain_sha256",
+    ],
+    "identity_prefix": [
+        "psid-prompt-field-candidate-set:",
+        "psid-zero-candidate-positive-group:",
+        "a20-lifecycle-output:",
+    ],
+    "python": [
+        "_validate_amendment20_draft_design",
+        "_validate_amendment20_ratification_design",
+        "_validate_inherited_amendment20_ratification_design",
+        "_parse_amendment20_implementation_pins",
+        "_parse_amendment20_projection",
+        "run_amendment20_contract_mutation_tests",
+        "validate_amendment20_qualifying_verdict",
+        "_validate_amendment20_scratch_transition_context",
+        "_amendment20_registry_behavior_ast",
+        "_parse_amendment20_scratch_registry_binding",
+        "_validate_amendment20_transition_receipt",
+        "_validate_amendment20_r06_collection_binding",
+    ],
+}
+A20_SUPERSESSION_COVERAGE = [
+    "19.3.3_prompt_purpose_manifest_era_semantic_and_post_o_p_joins",
+    "20.4.2_and_33.2_33.3_33.7_frozen_q5_shapes",
+    "19.4.2_26.6.1_26.10.1_g17_header_q5_inventory_slot_projections",
+    "25.2_through_25.4_historical_missing_reason_census_and_settlement",
+    "25.5_25.10.1_25.10.2_32.4.4_32.7_32.8_33.4_successor_stop",
+    "25.6.6_32.4.2_32.4.3_32.7_r06_selector_input_and_result",
+    "25.9_25.10_26.10.3_dc71_lifecycle_definition_timing",
+    "26.6.3_26.10.1_33.2.2_33.2.3_33.7_construction_order",
+    "26.11.2_complete_r04_r05_r06_gate",
+    "28.2.1_28.4_verdict_operator_closure_order",
+    "29.4.4_29.4.5_source_member_identity_and_reconstruction",
+    "29.4.1_canonicalization_and_identity_equations",
+    "30.2.3_30.2.4_verdict_checking_and_public_atomic_operativity",
+    "30.2.2_five_key_registry_context_and_caller_context_prohibition",
+    "30.2.1_amendment_revision_arithmetic",
+    "31.3.1_31.3.2_31.3.3_receipt_and_nonexistent_31.5_anchor",
+    "32.2.1_32.2.2_33.8_historical_279_build_input_envelope",
+    "32.4.4_false_r06_lifecycle_booleans",
+    "30.4.1_31.2.2_32.5.1_33.5.1_implementation_pins_and_review",
+    "33.2.2_33.2.3_a19_purpose_rows_and_failure_member",
+    "33.3.2_d0_search_proof_d1_construction",
+    "33.4_obsolete_campaign_pin_and_a20_out_of_scope_label",
+    "33.5.2_33.5.3_a19_projection_routing_and_activation",
+    "33.6_mutation_inventory_and_inherited_census",
+    "33.7_construction_ambiguity_q5_and_reconstruction_rows",
+    "33.8_questionnaire_occurrence_read_vs_serialization_scope",
+    "33.9_terminal_a19_prospective_effect",
+    "20.3_21.3_21.5_22.2_22.5_23.2_23.5_24.2_24.6_algorithms",
+    "19.6_19.8_20.7_20.8_21.8_21.9_22.8_22.9_23.8_23.9_24.9_24.10_25.9_25.10_artifacts",
+    "27.3_27.6_28.2.2_29.4.7_seals_closures_and_census",
+]
+A20_NORMATIVE_MANIFEST = {
+    "schema_version": "amendment_20_dual_authority_successor_law.v1",
+    "canonicalization": A20_CANONICALIZATION,
+    "prefix_identity": {
+        "blob_oid": REVISION21_BLOB_OID,
+        "byte_size": REVISION21_BYTE_SIZE,
+        "raw_sha256": REVISION21_SHA256,
+    },
+    "controlling_external_records": A20_CONTROLLING_EXTERNAL_RECORDS,
+    "amendment20_evidence_freeze": A20_EVIDENCE_FREEZE,
+    "evidence_freeze_contract": A20_EVIDENCE_FREEZE_CONTRACT,
+    "evidence_campaign": A20_EVIDENCE_CAMPAIGN_CONTRACT,
+    "source_infrastructure": A20_SOURCE_INFRASTRUCTURE_CONTRACT,
+    "missing_reason_authority": A20_MISSING_REASON_AUTHORITY_CONTRACT,
+    "purpose_authority": A20_PURPOSE_AUTHORITY_CONTRACT,
+    "prompt_field_semantic_binding": (
+        A20_PROMPT_FIELD_SEMANTIC_BINDING_CONTRACT
+    ),
+    "r04_q5": A20_R04_Q5_CONTRACT,
+    "r06_lifecycle": A20_R06_LIFECYCLE_CONTRACT,
+    "ratification_receipt": A20_RATIFICATION_RECEIPT_CONTRACT,
+    "successor_routing": A20_SUCCESSOR_ROUTING_CONTRACT,
+    "activation_transition": A20_ACTIVATION_TRANSITION,
+    "mutation_inventory": list(A20_EXPECTED_MUTATIONS),
+    "mutation_domain_byte_size": A20_MUTATION_DOMAIN_BYTE_SIZE,
+    "mutation_domain_sha256": A20_MUTATION_DOMAIN_SHA256,
+    "inherited_mutation_censuses": A20_INHERITED_MUTATION_CENSUSES,
+    "supersession_coverage": A20_SUPERSESSION_COVERAGE,
+    "new_identifiers": A20_NEW_IDENTIFIERS,
+}
+
 A13_SECTION_SEMANTIC_SHA256: Mapping[str, str] = {
     "27.2": "2e1d4e8282e393f2f8f8092c5b9823d69a4e6926fb5fbd753b77813e47f7941e",
     "27.3": "50b5a2e780a4b5b7152390e85e01df5f5397f5263fb2dd3dae43947a96f91ff0",
@@ -3860,6 +5205,38 @@ _A19_IMPLEMENTATION_PIN_VALUE_GROUPS = (
     "publisher_sha256",
 )
 
+_A20_IMPLEMENTATION_PIN_PATTERN = re.compile(
+    r"The Amendment-20-governed active identity is exactly mode "
+    r"`(?P<mode>[0-9]+)` and these\n"
+    r"three path/blob/byte/hash rows:\n\n"
+    r"\| Path \| Git blob \| Bytes \| Raw SHA-256 \|\n"
+    r"\|---\|---\|---:\|---\|\n"
+    r"\| `scripts/validate_amendment13_execution_law\.py` \| "
+    r"`(?P<validator_blob>[0-9a-f]{40})` \| "
+    r"(?P<validator_size>[0-9][0-9,]*) \| "
+    r"`(?P<validator_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `tests/test_validate_amendment13_execution_law\.py` \| "
+    r"`(?P<test_blob>[0-9a-f]{40})` \| "
+    r"(?P<test_size>[0-9][0-9,]*) \| "
+    r"`(?P<test_sha256>[0-9a-f]{64})` \|\n"
+    r"\| `scripts/build_amendment13_tier2_repairs\.py` \| "
+    r"`(?P<publisher_blob>[0-9a-f]{40})` \| "
+    r"(?P<publisher_size>[0-9][0-9,]*) \| "
+    r"`(?P<publisher_sha256>[0-9a-f]{64})` \|\n"
+)
+_A20_IMPLEMENTATION_PIN_VALUE_GROUPS = (
+    "mode",
+    "validator_blob",
+    "validator_size",
+    "validator_sha256",
+    "test_blob",
+    "test_size",
+    "test_sha256",
+    "publisher_blob",
+    "publisher_size",
+    "publisher_sha256",
+)
+
 
 def _amendment15_text(raw: bytes) -> str:
     _require(
@@ -5133,9 +6510,528 @@ def _parse_amendment19_projection(raw: bytes) -> dict[str, Any]:
     }
 
 
+def _amendment20_text(raw: bytes) -> str:
+    """Return only A20 while authenticating the complete revision-21 prefix."""
+
+    _require(
+        len(raw) > REVISION21_BYTE_SIZE
+        and _sha256(raw[:REVISION21_BYTE_SIZE]) == REVISION21_SHA256
+        and _git_blob_oid(raw[:REVISION21_BYTE_SIZE]) == REVISION21_BLOB_OID
+        and raw[REVISION21_BYTE_SIZE:].startswith(AMENDMENT20_BOUNDARY)
+        and raw.count(AMENDMENT20_BOUNDARY) == 1
+        and raw.endswith(b"\n"),
+        "governing Amendment-20 document violates immutable-prefix law",
+    )
+    suffix = raw[REVISION21_BYTE_SIZE:]
+    headings = list(_AMENDMENT_SECTION_PATTERN.finditer(suffix))
+    _require(
+        headings and int(headings[0].group("amendment")) == 20,
+        "governing Amendment-20 boundary sequence drift",
+    )
+    if len(headings) > 1:
+        next_boundary = headings[1].start()
+        _require(
+            next_boundary > 0
+            and suffix[next_boundary - 1 : next_boundary] == b"\n",
+            "governing Amendment-20 successor boundary drift",
+        )
+        suffix = suffix[: next_boundary - 1]
+    try:
+        return suffix.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise LawError("governing Amendment-20 suffix is not UTF-8") from error
+
+
+def _amendment20_implementation_pin_match(section: str) -> re.Match[str]:
+    matches = list(_A20_IMPLEMENTATION_PIN_PATTERN.finditer(section))
+    _require(
+        len(matches) == 1,
+        "Amendment-20 implementation pin block grammar drift",
+    )
+    return matches[0]
+
+
+def _normalize_amendment20_implementation_pin_values(section: str) -> str:
+    """Normalize only the ten independently authenticated A20 pin values."""
+
+    match = _amendment20_implementation_pin_match(section)
+    parts: list[str] = []
+    cursor = 0
+    for group in _A20_IMPLEMENTATION_PIN_VALUE_GROUPS:
+        start, end = match.span(group)
+        _require(start >= cursor, "Amendment-20 pin capture ordering drift")
+        parts.extend((section[cursor:start], f"<{group.upper()}>"))
+        cursor = end
+    parts.append(section[cursor:])
+    return "".join(parts)
+
+
+def _parse_amendment20_implementation_pins(raw: bytes) -> dict[str, Any]:
+    section = _amendment20_text(raw)
+    match = _amendment20_implementation_pin_match(section)
+    return {
+        "mode": match.group("mode"),
+        "files": [
+            {
+                "path": "scripts/validate_amendment13_execution_law.py",
+                "blob_oid": match.group("validator_blob"),
+                "byte_size": int(
+                    match.group("validator_size").replace(",", "")
+                ),
+                "sha256": match.group("validator_sha256"),
+            },
+            {
+                "path": "tests/test_validate_amendment13_execution_law.py",
+                "blob_oid": match.group("test_blob"),
+                "byte_size": int(match.group("test_size").replace(",", "")),
+                "sha256": match.group("test_sha256"),
+            },
+            {
+                "path": "scripts/build_amendment13_tier2_repairs.py",
+                "blob_oid": match.group("publisher_blob"),
+                "byte_size": int(
+                    match.group("publisher_size").replace(",", "")
+                ),
+                "sha256": match.group("publisher_sha256"),
+            },
+        ],
+    }
+
+
+def _parse_a20_normative_manifest(section: str) -> dict[str, Any]:
+    marker = (
+        "The exact Amendment-20 normative manifest is this one-line "
+        "terminal-LF canonical JSON value:\n\n"
+    )
+    remainder = _unique_after(
+        section,
+        marker,
+        "Amendment-20 normative manifest",
+    )
+    _require(
+        remainder.startswith("~~~text\n"),
+        "Amendment-20 normative manifest fence start drift",
+    )
+    fenced = remainder[len("~~~text\n") :]
+    _require(
+        "\n~~~\n" in fenced,
+        "Amendment-20 normative manifest fence end drift",
+    )
+    body, _ = fenced.split("\n~~~\n", 1)
+    _require(
+        "\n" not in body and bool(body),
+        "Amendment-20 normative manifest line shape drift",
+    )
+    return _strict_canonical_json(
+        body.encode("ascii") + b"\n",
+        "Amendment-20 normative manifest",
+    )
+
+
+def _validate_a20_manifest_contract(
+    manifest: Mapping[str, Any],
+    *,
+    require_ratification_ready: bool = False,
+) -> None:
+    """Validate every A20 limb from one closed normative projection."""
+
+    _require(
+        manifest["controlling_external_records"]
+        == A20_CONTROLLING_EXTERNAL_RECORDS,
+        "Amendment-20 controlling external-record pins drift",
+    )
+
+    source = manifest["source_infrastructure"]
+    _require(
+        source["physical_source_row_keys"] == A20_PHYSICAL_SOURCE_ROW_KEYS
+        and source["evidence_statement_row_keys"]
+        == A20_EVIDENCE_STATEMENT_ROW_KEYS
+        and source["path_rule"]
+        == "repository_relative_canonical_traversal_free"
+        and source["machine_local_absolute_paths_forbidden"] is True
+        and source["historical_domains_preserved"]
+        == {
+            "a11_source_count": 47,
+            "questionnaire_document_count": 81,
+            "a19_build_input_source_document_count": 257,
+            "a19_build_input_repair_seal_count": 22,
+            "a19_build_input_row_count": 279,
+        }
+        and source["semantic_domain_order"]
+        == ["missing_reason_source_domain", "purpose_source_domain"]
+        and source["semantic_domain_identity_keys"]
+        == A20_SEMANTIC_DOMAIN_IDENTITY_KEYS
+        and source["successor_source_binding_keys"]
+        == A20_SOURCE_INFRASTRUCTURE_CONTRACT["successor_source_binding_keys"]
+        and all(
+            member in source["semantic_domain_identity_keys"]
+            for member in (
+                "included_source_rows",
+                "included_source_count",
+                "included_source_keyset_sha256",
+                "included_source_domain_sha256",
+                "excluded_source_rows",
+                "excluded_source_count",
+                "excluded_source_keyset_sha256",
+                "excluded_source_domain_sha256",
+                "admitted_statement_rows",
+                "statement_count",
+                "statement_keyset_sha256",
+                "statement_domain_sha256",
+                "status",
+            )
+        ),
+        "Amendment-20 separate semantic-domain contract drift",
+    )
+    missing = manifest["missing_reason_authority"]
+    _require(
+        missing["formerly_unresolved_literal_occurrence_count"] == 524_538
+        and len(missing["occurrence_identity_position_order"]) == 12
+        and missing["claim_type"]
+        == "strict_json_boolean_excluding_integer_coercion"
+        and missing["projection_requirements"]
+        == [
+            "exact",
+            "nonzero",
+            "disjoint",
+            "collectively_exhaustive",
+            "exception_complete",
+        ]
+        and missing["representation_bridge_probe"][
+            "observations_are_nonauthority"
+        ]
+        is True
+        and missing["representation_bridge_probe"]["accepted_bridge_identity"]
+        is None
+        and missing["representation_bridge_probe"][
+            "bridge_required_before_acceptance"
+        ]
+        is True
+        and missing["transactional_atomic_nonemission"] is True,
+        "Amendment-20 missing-reason authority contract drift",
+    )
+    purpose = manifest["purpose_authority"]
+    _require(
+        purpose["official_purpose_order"] == A19_OFFICIAL_PURPOSES
+        and purpose["prompt_denominator"] == 21_971
+        and purpose["required_disposition_counts"]
+        == {
+            "complete_official_mapping": 21_971,
+            "partial_official_mapping_with_legacy_residue_underdetermined": 0,
+            "legacy_only_mapping_underdetermined": 0,
+            "missing_mapping_underdetermined": 0,
+            "U": 0,
+        }
+        and purpose["inherited_complete_rows_requiring_source_regrounding"]
+        == 818
+        and purpose["manual_origin_grandfathering_permitted"] is False
+        and purpose["purpose_arrays_nonempty_stable_unique_in_official_order"]
+        is True
+        and purpose[
+            "exact_prompt_cover_and_zero_gap_extra_duplicate_overlap_conflict"
+        ]
+        is True,
+        "Amendment-20 purpose-authority totality contract drift",
+    )
+    prompt = manifest["prompt_field_semantic_binding"]
+    _require(
+        prompt["known_singleton_collision_count"] == 46
+        and prompt["c68_regression"]["candidate_raw_field_ids"]
+        == ["V11804", "V11805"]
+        and prompt["c68_regression"]["draft_disposition"]
+        == "unresolved_multiple"
+        and prompt["direct_identifier_priority_forbidden"] is True
+        and prompt["required_unresolved_semantic_binding_count"] == 0
+        and prompt["attachment_dispositions"]
+        == [
+            "accepted_exact_source_identifier",
+            "accepted_expressly_admitted_official_alias",
+            "unresolved_multiple",
+        ]
+        and len(prompt["prompt_field_candidate_set_row_keys"]) == 7
+        and prompt["prompt_field_candidate_set_dispositions"]
+        == ["zero_candidates", "one_candidate", "multiple_candidates"]
+        and prompt["candidate_arrays_complete_stable_unique_source_order"]
+        is True
+        and prompt["candidate_disposition_is_iff_count_partition"] is True
+        and prompt["candidate_set_id_is_sha256_of_canonical_remaining_members"]
+        is True
+        and prompt["candidate_set_row_ids_and_prompt_ids_unique"] is True
+        and prompt["candidate_count_is_raw_field_array_length_strict_integer"]
+        is True
+        and len(prompt["zero_candidate_positive_group_row_keys"]) == 7
+        and prompt["zero_candidate_positive_group_dispositions"]
+        == [
+            "complete_nonempty_reference_union",
+            "fail_empty_reference_union",
+        ]
+        and prompt[
+            "zero_candidate_group_one_per_qualifying_positive_occurrence"
+        ]
+        is True
+        and prompt[
+            "zero_candidate_prompt_arrays_complete_positive_row_projections"
+        ]
+        is True
+        and prompt["zero_candidate_reference_union_complete_stable_unique"]
+        is True
+        and prompt["zero_candidate_group_disposition_is_iff_empty_boolean"]
+        is True
+        and prompt[
+            "zero_candidate_group_id_is_sha256_of_canonical_remaining_members"
+        ]
+        is True
+        and prompt["zero_candidate_group_ids_and_positive_ids_unique"] is True
+        and prompt[
+            "empty_reference_union_is_strict_boolean_zero_length_equality"
+        ]
+        is True
+        and prompt["zero_candidate_grouping_probe"]
+        == {
+            "candidate_set_prompt_count": 21_971,
+            "sweep_zero_candidate_observation": 15_428,
+            "diagnostic_zero_candidate_observation": 14_450,
+            "observations_are_nonauthority": True,
+            "difference_explained": False,
+            "accepted_positive_group_with_empty_reference_union_count": None,
+            "accepted_attachment_required_for_codebook_supported_rule": True,
+        }
+        and prompt["semantic_binding_serialization"]
+        == "near_match_source_annotation_rows"
+        and prompt["separate_semantic_binding_rows_serialization_permitted"]
+        is False
+        and prompt["semantic_binding_identity_requires_deep_equality"]
+        == ["row_count", "ordered_keyset_sha256", "row_domain_sha256"]
+        and prompt["binding_built_before_candidate_rows_read"] is True,
+        "Amendment-20 prompt-field or semantic-binding contract drift",
+    )
+    r04 = manifest["r04_q5"]
+    _require(
+        r04["construction_order"] == A20_R04_Q5_CONTRACT["construction_order"]
+        and r04["o_h_precedes_o_p_on_normal_arm"] is True
+        and r04["purpose_totality_alone_passes_r04"] is False
+        and "questionnaire_occurrence_rows"
+        in r04["permitted_selector_input_reads"]
+        and "questionnaire_occurrence_rows"
+        in r04["forbidden_selected_failure_member_serialization"]
+        and r04["source_document_manifest_additions"]
+        == A20_R04_Q5_CONTRACT["source_document_manifest_additions"]
+        and r04["normal_effective_header_successor_members"]
+        == A20_R04_Q5_CONTRACT["normal_effective_header_successor_members"]
+        and r04["normal_era_successor_sequence"]
+        == A20_R04_Q5_CONTRACT["normal_era_successor_sequence"]
+        and r04["a19_digest_dependency_order_preserved"]
+        == ["D0", "search_implementation", "A_h", "final_rows", "D1"]
+        and r04[
+            "a19_purpose_mapping_is_historical_nonconsumable_on_a20_normal_path"
+        ]
+        is True,
+        "Amendment-20 R04 order or Q5 shape contract drift",
+    )
+    r06 = manifest["r06_lifecycle"]
+    _require(
+        r06["interpreter_selector"] == "executing_process_sys.executable"
+        and r06["ambient_pytest_addopts_removed"] is True
+        and r06["collection_command_after_interpreter"]
+        == [
+            "-m",
+            "pytest",
+            "--collect-only",
+            "-q",
+            *[row["path"] for row in A20_R06_FILE_IDENTITIES],
+        ]
+        and len(r06["test_file_identities"]) == 6
+        and r06["test_file_identities"] == A20_R06_FILE_IDENTITIES
+        and r06["collected_node_id_count"] == 223
+        and r06["collected_node_id_array_canonical_byte_size"] == 28_268
+        and r06["collected_node_id_array_raw_sha256"]
+        == "09071bf4d9a9a5ee8b9ccc4d8d5c0bd91705c04d3c7c99d6ef155dfdc0dfdf05"
+        and r06["dormant_definition_before_certification_permitted"] is True
+        and r06["dormant_definition_creates_instance_or_selection"] is False
+        and r06["dormant_lifecycle_row_count"] == 26
+        and r06["dormant_lifecycle_rows"] == A20_DORMANT_LIFECYCLE_ROWS
+        and [row["first_add_index"] for row in r06["dormant_lifecycle_rows"]]
+        == list(range(1, 27))
+        and r06["selection_first_add_dispatch_requires_r04_r05_r06_order"]
+        is True,
+        "Amendment-20 R06 collection or lifecycle contract drift",
+    )
+    freeze_contract = manifest["evidence_freeze_contract"]
+    freeze = manifest["amendment20_evidence_freeze"]
+    _require(
+        freeze_contract == A20_EVIDENCE_FREEZE_CONTRACT
+        and freeze == freeze_contract["object"]
+        and len(freeze["expected_identity_bindings"])
+        == len(A20_EXPECTED_IDENTITY_NAMES)
+        and set(freeze["expected_identity_bindings"])
+        == set(A20_EXPECTED_IDENTITY_NAMES),
+        "Amendment-20 evidence-freeze object drift",
+    )
+    receipt = manifest["ratification_receipt"]
+    _require(
+        receipt["amendment20_external_receipt_path"]
+        == A20_EXECUTED_TRANSITION_RECEIPT_PATH
+        and receipt["inherited_external_receipt_path_template"]
+        == (
+            "docs/analysis/amendment_<N>_ratification/"
+            "executed_transition_receipt_v2.json"
+        )
+        and receipt["external_receipt_mode"] == "100644"
+        and receipt["candidate_production_registry_identity"]
+        == A20_PRODUCTION_REGISTRY_IDENTITY
+        and receipt[
+            "external_receipt_strict_canonical_tracked_head_worktree_read"
+        ]
+        is True
+        and receipt["external_receipt_candidate_ancestry_not_required"] is True
+        and receipt[
+            "external_receipt_first_add_precedes_or_equals_closure_first_add"
+        ]
+        is True
+        and receipt["scratch_commit_forbidden_as_production_ancestor"] is True
+        and receipt["receipt_candidate_design_tree_mode_blob_rederived"]
+        is True
+        and receipt[
+            "receipt_candidate_design_exactly_cross_binds_registry_closure_and_verdicts"
+        ]
+        is True
+        and receipt[
+            "receipt_rederives_synthetic_closure_standins_and_registry_binding"
+        ]
+        is True
+        and receipt["receipt_public_result_booleans_not_sufficient"] is True
+        and receipt[
+            "later_amendment_requires_own_exact_receipt_topology_projection"
+        ]
+        is True
+        and receipt["qualifying_verdict_line_count"] == 8
+        and receipt["qualifying_verdict_lines"][-2]
+        == "executed_transition_receipt_schema: executed_transition_state.v2"
+        and receipt["scratch"]["standin_prefix_line_count"] == 4
+        and receipt["receipt_schema"]["top_level_keys"]
+        == A17_RECEIPT_SCHEMA["top_level_keys"]
+        and receipt["receipt_schema"]["manifest_schema_version"]
+        == "executed_transition_state.v2"
+        and receipt["receipt_schema"][
+            "candidate_or_scratch_HEAD_member_superseded"
+        ]
+        is True
+        and len(
+            canonical_json_bytes(
+                receipt["receipt_schema"]["expected_changed_paths"]
+            )
+        )
+        == 260
+        and _sha256(
+            canonical_json_bytes(
+                receipt["receipt_schema"]["expected_changed_paths"]
+            )
+        )
+        == "5a7912498c4d959fef337f2a1d1cf85a2f254fa29d825d365ccf4fe214ad48a7",
+        "Amendment-20 verdict, receipt, or scratch contract drift",
+    )
+    campaign = manifest["evidence_campaign"]
+    _require(
+        campaign == A20_EVIDENCE_CAMPAIGN_CONTRACT
+        and campaign["rounds_formula"] == "ceil(2L/(3q))"
+        and campaign["forecast_as_of"] == "2026-08-15"
+        and campaign["conditional_p50"] == "2026-11-09"
+        and campaign["conditional_p80"] == "2027-01-22"
+        and campaign["dates_are_nonauthority_conditional_planning_metadata"]
+        is True,
+        "Amendment-20 evidence-campaign contract drift",
+    )
+    mutations = manifest["mutation_inventory"]
+    mutation_raw = canonical_json_bytes(mutations)
+    _require(
+        mutations == list(A20_EXPECTED_MUTATIONS)
+        and len(mutation_raw) == A20_MUTATION_DOMAIN_BYTE_SIZE
+        and _sha256(mutation_raw) == A20_MUTATION_DOMAIN_SHA256,
+        "Amendment-20 mutation inventory drift",
+    )
+    routing = manifest["successor_routing"]
+    activation = manifest["activation_transition"]
+    _require(
+        routing == A20_SUCCESSOR_ROUTING_CONTRACT
+        and activation == A20_ACTIVATION_TRANSITION
+        and routing["a20_pins_selected_before_a19_pins"] is True
+        and routing["a19_pin_fallback_for_terminal_a20_permitted"] is False
+        and activation["ordered_closure_domain"]
+        == [13, 14, 15, 16, 17, 18, 19, 20]
+        and activation["closure_count"] == 8,
+        "Amendment-20 successor routing or activation contract drift",
+    )
+    _require(
+        manifest["supersession_coverage"] == A20_SUPERSESSION_COVERAGE
+        and len(manifest["supersession_coverage"]) == 30
+        and any("30.2.2" in row for row in manifest["supersession_coverage"]),
+        "Amendment-20 supersession coverage drift",
+    )
+    _require(
+        all(
+            "A21" not in identifier
+            for values in manifest["new_identifiers"].values()
+            for identifier in values
+        )
+        and all(
+            len(values) == len(set(values))
+            for values in manifest["new_identifiers"].values()
+        )
+        and sum(len(values) for values in manifest["new_identifiers"].values())
+        == len(
+            {
+                identifier
+                for values in manifest["new_identifiers"].values()
+                for identifier in values
+            }
+        ),
+        "Amendment-20 manifest invents an A21 identifier",
+    )
+    _require(
+        manifest == A20_NORMATIVE_MANIFEST,
+        "Amendment-20 normative manifest drift",
+    )
+    if require_ratification_ready:
+        status_domains = freeze_contract["final_arm_status_domains"]
+        _require(
+            freeze["amendment20_evidence_freeze_status"]
+            == freeze_contract["final_required_evidence_freeze_status"]
+            and all(
+                freeze[name] in allowed
+                for name, allowed in status_domains.items()
+            )
+            and freeze["amendment20_ratification_ready"] is True,
+            "Amendment-20 evidence freeze is not ratification-ready",
+        )
+        _require(
+            all(
+                isinstance(identity, Mapping) and bool(identity)
+                for identity in freeze["expected_identity_bindings"].values()
+            ),
+            "Amendment-20 ratification-ready identity is absent",
+        )
+
+
+def _parse_amendment20_projection(raw: bytes) -> dict[str, Any]:
+    section = _amendment20_text(raw)
+    manifest = _parse_a20_normative_manifest(section)
+    _validate_a20_manifest_contract(manifest)
+    return {
+        "section_semantic_sha256": _sha256(
+            _normalize_amendment20_implementation_pin_values(section).encode(
+                "utf-8"
+            )
+        ),
+        "implementation_pins": _parse_amendment20_implementation_pins(raw),
+        "normative_manifest": manifest,
+    }
+
+
 def _parse_active_implementation_pins(raw: bytes) -> dict[str, Any]:
     """Select the newest append-only implementation-pin successor."""
 
+    if len(raw) > REVISION21_BYTE_SIZE:
+        return _parse_amendment20_implementation_pins(raw)
     if len(raw) > REVISION20_BYTE_SIZE:
         return _parse_amendment19_implementation_pins(raw)
     if len(raw) > REVISION19_BYTE_SIZE:
@@ -5690,6 +7586,7 @@ def _parse_document_semantic_projection(raw: bytes) -> dict[str, Any]:
         "amendment17": _parse_amendment17_projection(raw),
         "amendment18": _parse_amendment18_projection(raw),
         "amendment19": _parse_amendment19_projection(raw),
+        "amendment20": _parse_amendment20_projection(raw),
     }
     _validate_identifier_inventory_consistency(projection)
     return projection
@@ -6139,6 +8036,14 @@ def _canonical_amendment19_projection() -> dict[str, Any]:
     }
 
 
+def _canonical_amendment20_projection() -> dict[str, Any]:
+    return {
+        "section_semantic_sha256": A20_SECTION_SEMANTIC_SHA256,
+        "implementation_pins": None,
+        "normative_manifest": copy.deepcopy(A20_NORMATIVE_MANIFEST),
+    }
+
+
 @lru_cache(maxsize=1)
 def _canonical_draft_document_projection() -> dict[str, Any]:
     """Build the immutable document cross-check independently of a caller law."""
@@ -6202,6 +8107,7 @@ def _canonical_draft_document_projection() -> dict[str, Any]:
         "amendment17": _canonical_amendment17_projection(),
         "amendment18": _canonical_amendment18_projection(),
         "amendment19": _canonical_amendment19_projection(),
+        "amendment20": _canonical_amendment20_projection(),
     }
 
 
@@ -6221,7 +8127,10 @@ def _verify_implementation_pins(pins: Mapping[str, Any]) -> None:
     )
     current_design = (ROOT / DESIGN_PATH).read_bytes()
     label = "Amendment-14"
-    if len(current_design) > REVISION20_BYTE_SIZE:
+    if len(current_design) > REVISION21_BYTE_SIZE:
+        pins = _parse_amendment20_implementation_pins(current_design)
+        label = "Amendment-20"
+    elif len(current_design) > REVISION20_BYTE_SIZE:
         pins = _parse_amendment19_implementation_pins(current_design)
         label = "Amendment-19"
     elif len(current_design) > REVISION19_BYTE_SIZE:
@@ -6315,9 +8224,12 @@ def _validate_document_semantic_projection(
     expected["amendment19"]["implementation_pins"] = projection["amendment19"][
         "implementation_pins"
     ]
+    expected["amendment20"]["implementation_pins"] = projection["amendment20"][
+        "implementation_pins"
+    ]
     _require(
         projection == expected,
-        "governing Amendment-14/15/16/17/18/19 document semantic projection "
+        "governing Amendment-14/15/16/17/18/19/20 document semantic projection "
         "drift",
     )
     _verify_implementation_pins(
@@ -6546,6 +8458,1127 @@ def _require_no_unpaired_surrogates(value: Any, label: str) -> None:
     if isinstance(value, list):
         for member in value:
             _require_no_unpaired_surrogates(member, label)
+
+
+_A20_DECIMAL_GRAMMAR = r"(?:[1-9][0-9]*|[1-9][0-9]{0,2}(?:,[0-9]{3})+)"
+_A20_QUALIFYING_VERDICT_PATTERN = re.compile(
+    rf"\A# RATIFY\n"
+    rf"attested_design_byte_size: (?P<design_size>{_A20_DECIMAL_GRAMMAR})\n"
+    rf"attested_design_raw_sha256: (?P<design_sha>[0-9a-f]{{64}})\n"
+    rf"attested_design_blob_oid: (?P<design_blob>[0-9a-f]{{40}})\n"
+    rf"executed_transition_receipt_byte_size: "
+    rf"(?P<receipt_size>{_A20_DECIMAL_GRAMMAR})\n"
+    rf"executed_transition_receipt_raw_sha256: "
+    rf"(?P<receipt_sha>[0-9a-f]{{64}})\n"
+    rf"executed_transition_receipt_schema: executed_transition_state\.v2\n"
+    rf"---\n\Z"
+)
+_A20_SIMULATED_STANDIN_PATTERN = re.compile(
+    rf"\A# RATIFY\n"
+    rf"attested_design_byte_size: (?P<design_size>{_A20_DECIMAL_GRAMMAR})\n"
+    rf"attested_design_raw_sha256: (?P<design_sha>[0-9a-f]{{64}})\n"
+    rf"attested_design_blob_oid: (?P<design_blob>[0-9a-f]{{40}})\n"
+    rf"executed_transition_receipt_status: pending_same_state_execution\n"
+    rf"simulation_context: amendment20_same_state_nonauthority_v1\n"
+    rf"---\n\Z"
+)
+
+
+def _decode_amendment20_verdict(raw: bytes, label: str) -> str:
+    _require(isinstance(raw, bytes), f"{label} is not bytes")
+    _require(
+        not raw.startswith(b"\xef\xbb\xbf")
+        and b"\x00" not in raw
+        and b"\r" not in raw
+        and raw.endswith(b"\n")
+        and not raw.endswith(b"\n\n"),
+        f"{label} violates strict UTF-8/LF framing",
+    )
+    try:
+        return raw.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as error:
+        raise LawError(f"{label} is not strict UTF-8") from error
+
+
+def _a20_decimal(value: str, label: str) -> int:
+    _require(
+        re.fullmatch(_A20_DECIMAL_GRAMMAR, value) is not None,
+        f"{label} decimal grammar drift",
+    )
+    parsed = int(value.replace(",", ""))
+    _require(parsed > 0, f"{label} must be positive")
+    return parsed
+
+
+def validate_amendment20_qualifying_verdict(
+    raw: bytes,
+    *,
+    design_byte_size: int,
+    design_raw_sha256: str,
+    design_blob_oid: str,
+    receipt_byte_size: int,
+    receipt_raw_sha256: str,
+) -> dict[str, Any]:
+    """Strict-parse one A20 qualifying verdict and verify its attestations."""
+
+    _require(
+        type(design_byte_size) is int
+        and design_byte_size > 0
+        and _is_lower_hex(design_raw_sha256, 64)
+        and _is_lower_hex(design_blob_oid, 40),
+        "Amendment-20 expected design attestation is malformed",
+    )
+    _require(
+        type(receipt_byte_size) is int
+        and receipt_byte_size > 0
+        and _is_lower_hex(receipt_raw_sha256, 64),
+        "Amendment-20 expected receipt attestation is malformed",
+    )
+    text = _decode_amendment20_verdict(
+        raw,
+        "Amendment-20 qualifying verdict",
+    )
+    match = _A20_QUALIFYING_VERDICT_PATTERN.fullmatch(text)
+    _require(
+        match is not None, "Amendment-20 qualifying verdict grammar drift"
+    )
+    parsed = {
+        "design_byte_size": _a20_decimal(
+            match.group("design_size"),
+            "Amendment-20 design byte size",
+        ),
+        "design_raw_sha256": match.group("design_sha"),
+        "design_blob_oid": match.group("design_blob"),
+        "receipt_byte_size": _a20_decimal(
+            match.group("receipt_size"),
+            "Amendment-20 receipt byte size",
+        ),
+        "receipt_raw_sha256": match.group("receipt_sha"),
+        "receipt_schema": "executed_transition_state.v2",
+    }
+    _require(
+        parsed["design_byte_size"] == design_byte_size
+        and parsed["design_raw_sha256"] == design_raw_sha256
+        and parsed["design_blob_oid"] == design_blob_oid,
+        "Amendment-20 verdict design attestation mismatch",
+    )
+    _require(
+        parsed["receipt_byte_size"] == receipt_byte_size
+        and parsed["receipt_raw_sha256"] == receipt_raw_sha256,
+        "Amendment-20 verdict receipt attestation mismatch",
+    )
+    return parsed
+
+
+def _validate_amendment20_simulated_standin(
+    raw: bytes,
+    *,
+    design_byte_size: int,
+    design_raw_sha256: str,
+    design_blob_oid: str,
+) -> dict[str, Any]:
+    """Accept only the distinct seven-line scratch-construction stand-in."""
+
+    _require(
+        type(design_byte_size) is int
+        and design_byte_size > 0
+        and _is_lower_hex(design_raw_sha256, 64)
+        and _is_lower_hex(design_blob_oid, 40),
+        "Amendment-20 stand-in expected design attestation is malformed",
+    )
+    text = _decode_amendment20_verdict(
+        raw,
+        "Amendment-20 simulated stand-in",
+    )
+    match = _A20_SIMULATED_STANDIN_PATTERN.fullmatch(text)
+    _require(
+        match is not None, "Amendment-20 simulated stand-in grammar drift"
+    )
+    parsed = {
+        "design_byte_size": _a20_decimal(
+            match.group("design_size"),
+            "Amendment-20 stand-in design byte size",
+        ),
+        "design_raw_sha256": match.group("design_sha"),
+        "design_blob_oid": match.group("design_blob"),
+        "executed_transition_receipt_status": ("pending_same_state_execution"),
+        "simulation_context": "amendment20_same_state_nonauthority_v1",
+    }
+    _require(
+        parsed["design_byte_size"] == design_byte_size
+        and parsed["design_raw_sha256"] == design_raw_sha256
+        and parsed["design_blob_oid"] == design_blob_oid,
+        "Amendment-20 stand-in design attestation mismatch",
+    )
+    return parsed
+
+
+def _validate_amendment20_r06_collection_binding() -> dict[str, Any]:
+    """Reauthenticate the six pinned files and exact 223-node collection."""
+
+    for row in A20_R06_FILE_IDENTITIES:
+        path = row["path"]
+        try:
+            worktree_raw = (ROOT / path).read_bytes()
+        except OSError as error:
+            raise LawError(
+                f"Amendment-20 R06 file is missing: {path}"
+            ) from error
+        head_raw = _git("show", f"HEAD:{path}")
+        tree_line = str(_git("ls-tree", "HEAD", "--", path, text=True)).strip()
+        _require(
+            isinstance(head_raw, bytes)
+            and worktree_raw == head_raw
+            and tree_line == f"{row['mode']} blob {row['git_blob']}\t{path}"
+            and len(worktree_raw) == row["byte_size"]
+            and _sha256(worktree_raw) == row["raw_sha256"]
+            and _git_blob_oid(worktree_raw) == row["git_blob"],
+            f"Amendment-20 R06 pinned file identity drift: {path}",
+        )
+
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("GIT_") and key != "PYTEST_ADDOPTS"
+    }
+    environment["PYTHONPATH"] = "src:."
+    command = [
+        sys.executable,
+        *A20_R06_LIFECYCLE_CONTRACT["collection_command_after_interpreter"],
+    ]
+    result = subprocess.run(
+        command,
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+        env=environment,
+    )
+    _require(
+        result.returncode == 0,
+        "Amendment-20 R06 exact collection command failed",
+    )
+    node_ids = [
+        line
+        for line in result.stdout.splitlines()
+        if "::" in line
+        and any(
+            line.startswith(f"{row['path']}::")
+            for row in A20_R06_FILE_IDENTITIES
+        )
+    ]
+    raw = canonical_json_bytes(node_ids)
+    _require(
+        len(node_ids) == A20_R06_LIFECYCLE_CONTRACT["collected_node_id_count"]
+        and len(raw)
+        == A20_R06_LIFECYCLE_CONTRACT[
+            "collected_node_id_array_canonical_byte_size"
+        ]
+        and _sha256(raw)
+        == A20_R06_LIFECYCLE_CONTRACT["collected_node_id_array_raw_sha256"]
+        and node_ids[0]
+        == A20_R06_LIFECYCLE_CONTRACT["first_collected_node_id"]
+        and node_ids[-1]
+        == A20_R06_LIFECYCLE_CONTRACT["last_collected_node_id"],
+        "Amendment-20 R06 collected-node identity drift",
+    )
+    return {
+        "command": command,
+        "environment": {"PYTHONPATH": "src:."},
+        "file_identities": [dict(row) for row in A20_R06_FILE_IDENTITIES],
+        "node_ids": node_ids,
+        "node_id_array_canonical_byte_size": len(raw),
+        "node_id_array_raw_sha256": _sha256(raw),
+    }
+
+
+def _validate_amendment20_scratch_transition_context(
+    standin_bytes: Mapping[str, bytes],
+) -> dict[str, Any]:
+    """Authenticate the one Git/registry context in which stand-ins exist."""
+
+    expected_paths = A20_RECEIPT_SCHEMA["expected_changed_paths"]
+    verdict_paths = expected_paths[:2]
+    _require(
+        set(standin_bytes) == set(verdict_paths),
+        "Amendment-20 scratch stand-in path domain drift",
+    )
+    scratch_commit = str(_git("rev-parse", "HEAD", text=True)).strip()
+    detached = _run_git("symbolic-ref", "-q", "HEAD", text=True)
+    containing_refs = str(
+        _git(
+            "for-each-ref",
+            "--format=%(refname)",
+            "--contains",
+            scratch_commit,
+            text=True,
+        )
+    ).splitlines()
+    replace_refs = str(
+        _git("for-each-ref", "--format=%(refname)", "refs/replace", text=True)
+    ).splitlines()
+    status_rows = str(_git("status", "--porcelain", text=True)).splitlines()
+    _require(
+        detached.returncode != 0
+        and containing_refs == []
+        and replace_refs == []
+        and status_rows == [],
+        "Amendment-20 scratch must be detached, unreachable, replace-free, and clean",
+    )
+    parent_line = str(
+        _git("rev-list", "--parents", "-n", "1", scratch_commit, text=True)
+    ).strip()
+    parent_tokens = parent_line.split()
+    _require(
+        len(parent_tokens) == 2 and parent_tokens[0] == scratch_commit,
+        "Amendment-20 scratch commit does not have one candidate parent",
+    )
+    candidate_commit = parent_tokens[1]
+    candidate_parent_line = str(
+        _git("rev-list", "--parents", "-n", "1", candidate_commit, text=True)
+    ).strip()
+    candidate_parent_tokens = candidate_parent_line.split()
+    _require(
+        len(candidate_parent_tokens) == 2
+        and candidate_parent_tokens[0] == candidate_commit,
+        "Amendment-20 candidate commit does not have one parent",
+    )
+    candidate_tree = str(
+        _git("rev-parse", f"{candidate_commit}^{{tree}}", text=True)
+    ).strip()
+    scratch_tree = str(
+        _git("rev-parse", f"{scratch_commit}^{{tree}}", text=True)
+    ).strip()
+    changed_paths = str(
+        _git(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            scratch_commit,
+            text=True,
+        )
+    ).splitlines()
+    _require(
+        len(changed_paths) == A20_RECEIPT_SCHEMA["changed_path_count"]
+        and len(set(changed_paths)) == A20_RECEIPT_SCHEMA["changed_path_count"]
+        and set(changed_paths) == set(expected_paths)
+        and len(canonical_json_bytes(expected_paths))
+        == A20_RECEIPT_SCHEMA[
+            "expected_changed_path_domain_canonical_byte_size"
+        ]
+        and _sha256(canonical_json_bytes(expected_paths))
+        == A20_RECEIPT_SCHEMA["expected_changed_path_domain_sha256"],
+        "Amendment-20 scratch changed-path domain drift",
+    )
+    candidate_raw = _git("show", f"{candidate_commit}:{DESIGN_PATH}")
+    _require(
+        isinstance(candidate_raw, bytes),
+        "Amendment-20 candidate design read was not raw bytes",
+    )
+    candidate_design_tree_line = str(
+        _git(
+            "ls-tree",
+            candidate_commit,
+            "--",
+            DESIGN_PATH,
+            text=True,
+        )
+    ).strip()
+    _require(
+        candidate_design_tree_line
+        == (
+            f"{DESIGN_MODE} blob {_git_blob_oid(candidate_raw)}\t"
+            f"{DESIGN_PATH}"
+        ),
+        "Amendment-20 candidate design tree identity drift",
+    )
+    _validate_amendment20_ratification_design(candidate_raw)
+    candidate_pins = _parse_amendment20_implementation_pins(candidate_raw)
+    for row in candidate_pins["files"]:
+        tree_line = str(
+            _git("ls-tree", candidate_commit, "--", row["path"], text=True)
+        ).strip()
+        file_raw = _git("show", f"{candidate_commit}:{row['path']}")
+        _require(
+            tree_line
+            == (
+                f"{candidate_pins['mode']} blob {row['blob_oid']}\t"
+                f"{row['path']}"
+            )
+            and isinstance(file_raw, bytes)
+            and len(file_raw) == row["byte_size"]
+            and _sha256(file_raw) == row["sha256"]
+            and _git_blob_oid(file_raw) == row["blob_oid"],
+            "Amendment-20 candidate implementation pin mismatch",
+        )
+
+    import covered_earnings_correction_registry as registry
+
+    _require(
+        getattr(registry, "SIMULATED_STATE_AUTHORITY", None) == "NONAUTHORITY"
+        and getattr(registry, "SIMULATION_CONTEXT", None)
+        == "amendment20_same_state_nonauthority_v1",
+        "Amendment-20 scratch registry context is absent",
+    )
+    registry_binding = _validate_registry_ratification_context(
+        registry.design_binding()
+    )
+    _require(
+        registry_binding["revision"] == 22
+        and _ratification_amendment_numbers(22)
+        == (13, 14, 15, 16, 17, 18, 19, 20)
+        and registry_binding["ratification_commit"] == candidate_commit
+        and registry_binding["blob_sha256"] == _sha256(candidate_raw),
+        "Amendment-20 scratch registry does not bind candidate revision 22",
+    )
+    closure_raw = _git("show", f"{scratch_commit}:{expected_paths[2]}")
+    _require(
+        isinstance(closure_raw, bytes),
+        "Amendment-20 synthetic closure read was not raw bytes",
+    )
+    closure = _strict_canonical_json(
+        closure_raw,
+        "Amendment-20 synthetic scratch closure",
+    )
+    _validate_closure_shape(closure, 20)
+    _require(
+        closure["attested_candidate_design_byte_size"] == len(candidate_raw)
+        and closure["attested_candidate_design_raw_sha256"]
+        == _sha256(candidate_raw)
+        and closure["attested_candidate_design_blob_oid"]
+        == _git_blob_oid(candidate_raw)
+        and closure["ratification_commit"] == candidate_commit
+        and closure["operator_merge_commit"] == candidate_commit
+        and closure["ratification_commit_sole_parent"]
+        == candidate_parent_tokens[1]
+        and [row["path"] for row in closure["verdict_artifacts"]]
+        == verdict_paths,
+        "Amendment-20 synthetic closure does not bind candidate and stand-ins",
+    )
+    for row in closure["verdict_artifacts"]:
+        raw = standin_bytes[row["path"]]
+        _require(
+            len(raw) == row["byte_size"] and _sha256(raw) == row["raw_sha256"],
+            "Amendment-20 synthetic closure stand-in identity mismatch",
+        )
+        _validate_amendment20_simulated_standin(
+            raw,
+            design_byte_size=len(candidate_raw),
+            design_raw_sha256=_sha256(candidate_raw),
+            design_blob_oid=_git_blob_oid(candidate_raw),
+        )
+    return {
+        "candidate_commit_identity": {
+            "commit": candidate_commit,
+            "tree": candidate_tree,
+            "sole_parent": candidate_parent_tokens[1],
+        },
+        "scratch_transition": {
+            "commit": scratch_commit,
+            "tree": scratch_tree,
+            "sole_parent": candidate_commit,
+            "changed_paths": list(expected_paths),
+            "changed_path_domain_sha256": _sha256(
+                canonical_json_bytes(expected_paths)
+            ),
+        },
+        "changed_paths": list(expected_paths),
+        "registry_binding": registry_binding,
+        "closure": closure,
+    }
+
+
+def _amendment20_registry_behavior_ast(
+    raw: bytes,
+    label: str,
+) -> tuple[str, Counter[str], set[str]]:
+    """Normalize only the closed scratch-binding assignment statements."""
+
+    binding_names = {
+        "DESIGN_PATH",
+        "DESIGN_RATIFICATION_COMMIT",
+        "DESIGN_REVISION",
+        "DESIGN_BYTE_SIZE",
+        "DESIGN_BLOB_SHA256",
+        "RATIFICATION_CLOSURE_BINDINGS",
+        "SIMULATED_STATE_AUTHORITY",
+        "SIMULATION_CONTEXT",
+    }
+    try:
+        module = ast.parse(raw.decode("utf-8"))
+    except (UnicodeDecodeError, SyntaxError) as error:
+        raise LawError(f"{label} is not valid UTF-8 Python") from error
+    removed_counts: Counter[str] = Counter()
+    literal_names: set[str] = set()
+    retained: list[ast.stmt] = []
+    for node in module.body:
+        name: str | None = None
+        value_node: ast.expr | None = None
+        if (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+        ):
+            name = node.targets[0].id
+            value_node = node.value
+        elif isinstance(node, ast.AnnAssign) and isinstance(
+            node.target, ast.Name
+        ):
+            name = node.target.id
+            value_node = node.value
+        if name in binding_names:
+            removed_counts[name] += 1
+            if value_node is not None:
+                try:
+                    ast.literal_eval(value_node)
+                except (ValueError, TypeError):
+                    pass
+                else:
+                    literal_names.add(name)
+        else:
+            retained.append(node)
+    module.body = retained
+
+    def mutated_binding_names(target: ast.AST) -> set[str]:
+        if isinstance(target, ast.Name):
+            return {target.id} if target.id in binding_names else set()
+        if isinstance(target, (ast.Attribute, ast.Subscript)):
+            return mutated_binding_names(target.value)
+        if isinstance(target, (ast.Tuple, ast.List)):
+            return {
+                name
+                for element in target.elts
+                for name in mutated_binding_names(element)
+            }
+        if isinstance(target, ast.Starred):
+            return mutated_binding_names(target.value)
+        return set()
+
+    mutated_names = {
+        name
+        for node in ast.walk(module)
+        if isinstance(getattr(node, "ctx", None), (ast.Store, ast.Del))
+        for name in mutated_binding_names(node)
+    }
+    _require(
+        mutated_names == set(),
+        f"{label} mutates a closed binding name outside its literal assignment",
+    )
+    return (
+        ast.dump(module, include_attributes=False),
+        removed_counts,
+        literal_names,
+    )
+
+
+def _parse_amendment20_scratch_registry_binding(
+    raw: bytes,
+    *,
+    candidate_raw: bytes,
+) -> dict[str, Any]:
+    """Extract the closed literal A20 scratch binding without executing it."""
+
+    required_names = {
+        "DESIGN_PATH",
+        "DESIGN_RATIFICATION_COMMIT",
+        "DESIGN_REVISION",
+        "DESIGN_BYTE_SIZE",
+        "DESIGN_BLOB_SHA256",
+        "RATIFICATION_CLOSURE_BINDINGS",
+        "SIMULATED_STATE_AUTHORITY",
+        "SIMULATION_CONTEXT",
+    }
+    try:
+        source = raw.decode("utf-8")
+        module = ast.parse(source)
+    except (UnicodeDecodeError, SyntaxError) as error:
+        raise LawError(
+            "Amendment-20 scratch registry source is not valid UTF-8 Python"
+        ) from error
+    assignments: dict[str, list[Any]] = {name: [] for name in required_names}
+    for node in module.body:
+        name: str | None = None
+        value_node: ast.expr | None = None
+        if (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+        ):
+            name = node.targets[0].id
+            value_node = node.value
+        elif isinstance(node, ast.AnnAssign) and isinstance(
+            node.target, ast.Name
+        ):
+            name = node.target.id
+            value_node = node.value
+        if name not in required_names or value_node is None:
+            continue
+        try:
+            assignments[name].append(ast.literal_eval(value_node))
+        except (ValueError, TypeError) as error:
+            raise LawError(
+                f"Amendment-20 scratch registry {name} is not literal"
+            ) from error
+    _require(
+        all(len(values) == 1 for values in assignments.values()),
+        "Amendment-20 scratch registry literal assignment domain drift",
+    )
+    scratch_behavior, scratch_counts, scratch_literal_names = (
+        _amendment20_registry_behavior_ast(
+            raw,
+            "Amendment-20 scratch registry source",
+        )
+    )
+    candidate_behavior, candidate_counts, candidate_literal_names = (
+        _amendment20_registry_behavior_ast(
+            candidate_raw,
+            "Amendment-20 candidate registry source",
+        )
+    )
+    candidate_names = required_names - {
+        "SIMULATED_STATE_AUTHORITY",
+        "SIMULATION_CONTEXT",
+    }
+    _require(
+        scratch_counts == Counter({name: 1 for name in required_names})
+        and scratch_literal_names == required_names
+        and candidate_counts == Counter({name: 1 for name in candidate_names})
+        and candidate_literal_names == candidate_names
+        and scratch_behavior == candidate_behavior,
+        "Amendment-20 scratch registry behavior differs from candidate",
+    )
+    values = {name: rows[0] for name, rows in assignments.items()}
+    closures = values["RATIFICATION_CLOSURE_BINDINGS"]
+    _require(
+        values["DESIGN_PATH"] == DESIGN_PATH
+        and _is_lower_hex(values["DESIGN_RATIFICATION_COMMIT"], 40)
+        and type(values["DESIGN_REVISION"]) is int
+        and values["DESIGN_REVISION"] == 22
+        and type(values["DESIGN_BYTE_SIZE"]) is int
+        and values["DESIGN_BYTE_SIZE"] > 0
+        and _is_lower_hex(values["DESIGN_BLOB_SHA256"], 64)
+        and isinstance(closures, (list, tuple))
+        and all(isinstance(row, Mapping) for row in closures)
+        and values["SIMULATED_STATE_AUTHORITY"] == "NONAUTHORITY"
+        and values["SIMULATION_CONTEXT"]
+        == "amendment20_same_state_nonauthority_v1",
+        "Amendment-20 scratch registry literal value drift",
+    )
+    return {
+        "design_byte_size": values["DESIGN_BYTE_SIZE"],
+        "binding": {
+            "path": values["DESIGN_PATH"],
+            "ratification_commit": values["DESIGN_RATIFICATION_COMMIT"],
+            "revision": values["DESIGN_REVISION"],
+            "blob_sha256": values["DESIGN_BLOB_SHA256"],
+            "ratification_closures": [dict(row) for row in closures],
+        },
+        "simulated_state_authority": values["SIMULATED_STATE_AUTHORITY"],
+        "simulation_context": values["SIMULATION_CONTEXT"],
+    }
+
+
+def _validate_amendment20_transition_receipt(
+    receipt: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate receipt-v2 shape, results, and Git-derived identities."""
+
+    schema = A20_RECEIPT_SCHEMA
+    tracked_receipt_raw = _read_public_repository_file(
+        A20_EXECUTED_TRANSITION_RECEIPT_PATH,
+        "Amendment-20 executed-transition receipt",
+        require_regular_mode=True,
+    )
+    _require(
+        tracked_receipt_raw == canonical_json_bytes(receipt),
+        "Amendment-20 receipt object differs from fixed tracked bytes",
+    )
+    _require_exact_keys(
+        receipt,
+        set(schema["top_level_keys"]),
+        "Amendment-20 transition receipt",
+    )
+    manifest = receipt["simulated_state_manifest"]
+    _require(
+        isinstance(manifest, Mapping),
+        "Amendment-20 receipt manifest is not an object",
+    )
+    _require_exact_keys(
+        manifest,
+        set(schema["manifest_keys"]),
+        "Amendment-20 transition receipt manifest",
+    )
+    candidate = manifest["candidate_commit_identity"]
+    scratch = manifest["scratch_transition"]
+    _require(
+        isinstance(candidate, Mapping) and isinstance(scratch, Mapping),
+        "Amendment-20 receipt C/S identity is not an object",
+    )
+    _require_exact_keys(
+        candidate,
+        set(schema["candidate_commit_identity_keys"]),
+        "Amendment-20 candidate commit identity",
+    )
+    _require_exact_keys(
+        scratch,
+        set(schema["scratch_transition_keys"]),
+        "Amendment-20 scratch transition identity",
+    )
+    _require(
+        manifest["schema_version"] == "executed_transition_state.v2"
+        and manifest["simulated_state_authority"] == "NONAUTHORITY"
+        and manifest["terminal_revision"] == 22
+        and receipt["simulated_state_authority"] == "NONAUTHORITY"
+        and receipt["terminal_revision"] == 22
+        and all(
+            _is_lower_hex(candidate[key], 40)
+            for key in ("commit", "tree", "sole_parent")
+        )
+        and all(
+            _is_lower_hex(scratch[key], 40)
+            for key in ("commit", "tree", "sole_parent")
+        )
+        and scratch["sole_parent"] == candidate["commit"]
+        and scratch["changed_paths"] == schema["expected_changed_paths"]
+        and scratch["changed_path_domain_sha256"]
+        == schema["expected_changed_path_domain_sha256"],
+        "Amendment-20 receipt C/S topology or changed paths drift",
+    )
+    _require(
+        receipt["simulated_state_identity_sha256"]
+        == _sha256(canonical_json_bytes(manifest)),
+        "Amendment-20 receipt state identity drift",
+    )
+    state_identity = receipt["simulated_state_identity_sha256"]
+    candidate_parent = str(
+        _git(
+            "rev-list",
+            "--parents",
+            "-n",
+            "1",
+            candidate["commit"],
+            text=True,
+        )
+    ).split()
+    scratch_parent = str(
+        _git(
+            "rev-list",
+            "--parents",
+            "-n",
+            "1",
+            scratch["commit"],
+            text=True,
+        )
+    ).split()
+    resolved_candidate_tree = str(
+        _git("rev-parse", f"{candidate['commit']}^{{tree}}", text=True)
+    ).strip()
+    resolved_scratch_tree = str(
+        _git("rev-parse", f"{scratch['commit']}^{{tree}}", text=True)
+    ).strip()
+    resolved_paths = str(
+        _git(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            scratch["commit"],
+            text=True,
+        )
+    ).splitlines()
+    containing_refs = str(
+        _git(
+            "for-each-ref",
+            "--format=%(refname)",
+            "--contains",
+            scratch["commit"],
+            text=True,
+        )
+    ).splitlines()
+    replace_refs = str(
+        _git(
+            "for-each-ref",
+            "--format=%(refname)",
+            "refs/replace",
+            text=True,
+        )
+    ).splitlines()
+    _require(
+        candidate_parent == [candidate["commit"], candidate["sole_parent"]]
+        and scratch_parent == [scratch["commit"], candidate["commit"]]
+        and resolved_candidate_tree == candidate["tree"]
+        and resolved_scratch_tree == scratch["tree"]
+        and len(resolved_paths) == schema["changed_path_count"]
+        and len(set(resolved_paths)) == schema["changed_path_count"]
+        and set(resolved_paths) == set(schema["expected_changed_paths"])
+        and _sha256(canonical_json_bytes(schema["expected_changed_paths"]))
+        == scratch["changed_path_domain_sha256"]
+        and containing_refs == []
+        and replace_refs == [],
+        "Amendment-20 receipt Git-resolved C/S identity drift",
+    )
+    for commit in (candidate["commit"], scratch["commit"]):
+        receipt_in_transition = _run_git(
+            "cat-file",
+            "-e",
+            f"{commit}:{A20_EXECUTED_TRANSITION_RECEIPT_PATH}",
+        )
+        _require(
+            receipt_in_transition.returncode != 0,
+            "Amendment-20 external receipt is present inside C or S",
+        )
+    closure_path = _ratification_closure_path(20)
+    receipt_first_adds = str(
+        _git(
+            "log",
+            "--format=%H",
+            "--diff-filter=A",
+            "--",
+            A20_EXECUTED_TRANSITION_RECEIPT_PATH,
+            text=True,
+        )
+    ).splitlines()
+    closure_first_adds = str(
+        _git(
+            "log",
+            "--format=%H",
+            "--diff-filter=A",
+            "--",
+            closure_path,
+            text=True,
+        )
+    ).splitlines()
+    _require(
+        len(receipt_first_adds) == 1
+        and len(closure_first_adds) == 1
+        and _is_lower_hex(receipt_first_adds[0], 40)
+        and _is_lower_hex(closure_first_adds[0], 40),
+        "Amendment-20 receipt or closure first-add identity drift",
+    )
+    receipt_first_add = receipt_first_adds[0]
+    closure_first_add = closure_first_adds[0]
+    receipt_precedes_closure = _run_git(
+        "merge-base",
+        "--is-ancestor",
+        receipt_first_add,
+        closure_first_add,
+    )
+    scratch_precedes_head = _run_git(
+        "merge-base",
+        "--is-ancestor",
+        scratch["commit"],
+        "HEAD",
+    )
+    _require(
+        receipt_precedes_closure.returncode == 0
+        and scratch_precedes_head.returncode != 0,
+        "Amendment-20 receipt chronology or scratch isolation drift",
+    )
+    registry_binding = _validate_registry_ratification_context(
+        manifest["canonical_registry_binding"]
+    )
+    _require(
+        registry_binding["revision"] == 22
+        and registry_binding["ratification_commit"] == candidate["commit"],
+        "Amendment-20 receipt registry candidate binding drift",
+    )
+
+    candidate_raw = _git("show", f"{candidate['commit']}:{DESIGN_PATH}")
+    _require(
+        isinstance(candidate_raw, bytes)
+        and registry_binding["blob_sha256"] == _sha256(candidate_raw),
+        "Amendment-20 receipt candidate design identity drift",
+    )
+    candidate_design_tree_line = str(
+        _git(
+            "ls-tree",
+            candidate["commit"],
+            "--",
+            DESIGN_PATH,
+            text=True,
+        )
+    ).strip()
+    _require(
+        candidate_design_tree_line
+        == (
+            f"{DESIGN_MODE} blob {_git_blob_oid(candidate_raw)}\t"
+            f"{DESIGN_PATH}"
+        ),
+        "Amendment-20 receipt candidate design tree identity drift",
+    )
+    _validate_amendment20_ratification_design(candidate_raw)
+    pins = _parse_amendment20_implementation_pins(candidate_raw)
+    for row in pins["files"]:
+        file_raw = _git("show", f"{candidate['commit']}:{row['path']}")
+        tree_line = str(
+            _git(
+                "ls-tree",
+                candidate["commit"],
+                "--",
+                row["path"],
+                text=True,
+            )
+        ).strip()
+        _require(
+            isinstance(file_raw, bytes)
+            and tree_line
+            == f"{pins['mode']} blob {row['blob_oid']}\t{row['path']}"
+            and len(file_raw) == row["byte_size"]
+            and _sha256(file_raw) == row["sha256"]
+            and _git_blob_oid(file_raw) == row["blob_oid"],
+            "Amendment-20 receipt candidate implementation pin drift",
+        )
+
+    closure_identities = manifest["ordered_closure_identities"]
+    _require(
+        isinstance(closure_identities, list) and len(closure_identities) == 8,
+        "Amendment-20 receipt ordered closure identity domain drift",
+    )
+    for amendment_number, row, binding in zip(
+        range(13, 21),
+        closure_identities,
+        registry_binding["ratification_closures"],
+        strict=True,
+    ):
+        _require(
+            isinstance(row, Mapping),
+            "Amendment-20 receipt closure identity is not an object",
+        )
+        _require_exact_keys(
+            row,
+            set(schema["closure_identity_keys"]),
+            "Amendment-20 receipt closure identity",
+        )
+        expected_path = _ratification_closure_path(amendment_number)
+        _require(
+            row["path"] == expected_path
+            and {
+                "path": row["path"],
+                "raw_byte_size": row["raw_byte_size"],
+                "raw_sha256": row["raw_sha256"],
+            }
+            == binding
+            and type(row["raw_byte_size"]) is int
+            and row["raw_byte_size"] > 0
+            and _is_lower_hex(row["raw_sha256"], 64)
+            and _is_lower_hex(row["git_blob"], 40),
+            "Amendment-20 receipt closure identity value drift",
+        )
+        closure_bytes = _git("show", f"{scratch['commit']}:{expected_path}")
+        tree_line = str(
+            _git(
+                "ls-tree",
+                scratch["commit"],
+                "--",
+                expected_path,
+                text=True,
+            )
+        ).strip()
+        _require(
+            isinstance(closure_bytes, bytes)
+            and len(closure_bytes) == row["raw_byte_size"]
+            and _sha256(closure_bytes) == row["raw_sha256"]
+            and _git_blob_oid(closure_bytes) == row["git_blob"]
+            and tree_line
+            == f"{DESIGN_MODE} blob {row['git_blob']}\t{expected_path}",
+            "Amendment-20 receipt closure Git identity drift",
+        )
+
+    synthetic_closure_path = schema["expected_changed_paths"][2]
+    synthetic_closure_raw = _git(
+        "show", f"{scratch['commit']}:{synthetic_closure_path}"
+    )
+    _require(
+        isinstance(synthetic_closure_raw, bytes),
+        "Amendment-20 synthetic closure read was not raw bytes",
+    )
+    synthetic_closure = _strict_canonical_json(
+        synthetic_closure_raw,
+        "Amendment-20 receipt synthetic closure",
+    )
+    _validate_closure_shape(synthetic_closure, 20)
+    standin_paths = schema["expected_changed_paths"][:2]
+    _require(
+        synthetic_closure["attested_candidate_design_blob_oid"]
+        == _git_blob_oid(candidate_raw)
+        and synthetic_closure["attested_candidate_design_byte_size"]
+        == len(candidate_raw)
+        and synthetic_closure["attested_candidate_design_raw_sha256"]
+        == _sha256(candidate_raw)
+        and synthetic_closure["ratification_commit"] == candidate["commit"]
+        and synthetic_closure["operator_merge_commit"] == candidate["commit"]
+        and synthetic_closure["ratification_commit_sole_parent"]
+        == candidate["sole_parent"]
+        and [row["path"] for row in synthetic_closure["verdict_artifacts"]]
+        == standin_paths,
+        "Amendment-20 receipt synthetic closure candidate binding drift",
+    )
+    for row in synthetic_closure["verdict_artifacts"]:
+        path = row["path"]
+        standin_raw = _git("show", f"{scratch['commit']}:{path}")
+        tree_line = str(
+            _git("ls-tree", scratch["commit"], "--", path, text=True)
+        ).strip()
+        _require(
+            isinstance(standin_raw, bytes)
+            and tree_line
+            == f"{DESIGN_MODE} blob {_git_blob_oid(standin_raw)}\t{path}"
+            and len(standin_raw) == row["byte_size"]
+            and _sha256(standin_raw) == row["raw_sha256"],
+            "Amendment-20 receipt synthetic stand-in identity drift",
+        )
+        _validate_amendment20_simulated_standin(
+            standin_raw,
+            design_byte_size=len(candidate_raw),
+            design_raw_sha256=_sha256(candidate_raw),
+            design_blob_oid=_git_blob_oid(candidate_raw),
+        )
+
+    scratch_registry_path = schema["expected_changed_paths"][3]
+    candidate_registry_raw = _git(
+        "show", f"{candidate['commit']}:{scratch_registry_path}"
+    )
+    scratch_registry_raw = _git(
+        "show", f"{scratch['commit']}:{scratch_registry_path}"
+    )
+    candidate_registry_tree_line = str(
+        _git(
+            "ls-tree",
+            candidate["commit"],
+            "--",
+            scratch_registry_path,
+            text=True,
+        )
+    ).strip()
+    scratch_registry_tree_line = str(
+        _git(
+            "ls-tree",
+            scratch["commit"],
+            "--",
+            scratch_registry_path,
+            text=True,
+        )
+    ).strip()
+    _require(
+        scratch_registry_path == A20_PRODUCTION_REGISTRY_IDENTITY["path"]
+        and isinstance(candidate_registry_raw, bytes)
+        and isinstance(scratch_registry_raw, bytes)
+        and len(candidate_registry_raw)
+        == A20_PRODUCTION_REGISTRY_IDENTITY["byte_size"]
+        and _sha256(candidate_registry_raw)
+        == A20_PRODUCTION_REGISTRY_IDENTITY["raw_sha256"]
+        and _git_blob_oid(candidate_registry_raw)
+        == A20_PRODUCTION_REGISTRY_IDENTITY["git_blob"]
+        and candidate_registry_tree_line
+        == (
+            f"{A20_PRODUCTION_REGISTRY_IDENTITY['mode']} blob "
+            f"{A20_PRODUCTION_REGISTRY_IDENTITY['git_blob']}\t"
+            f"{scratch_registry_path}"
+        )
+        and scratch_registry_tree_line
+        == (
+            f"{DESIGN_MODE} blob {_git_blob_oid(scratch_registry_raw)}\t"
+            f"{scratch_registry_path}"
+        ),
+        "Amendment-20 scratch registry tree identity drift",
+    )
+    scratch_registry = _parse_amendment20_scratch_registry_binding(
+        scratch_registry_raw,
+        candidate_raw=candidate_registry_raw,
+    )
+    _require(
+        scratch_registry["binding"] == registry_binding
+        and scratch_registry["binding"]["ratification_commit"]
+        == candidate["commit"]
+        and scratch_registry["design_byte_size"] == len(candidate_raw)
+        and scratch_registry["binding"]["blob_sha256"]
+        == _sha256(candidate_raw),
+        "Amendment-20 scratch registry does not bind receipt candidate state",
+    )
+
+    test_identity = manifest["full_pinned_battery_test_identity"]
+    _require(
+        isinstance(test_identity, Mapping),
+        "Amendment-20 receipt test identity is not an object",
+    )
+    _require_exact_keys(
+        test_identity,
+        set(schema["test_identity_keys"]),
+        "Amendment-20 receipt test identity",
+    )
+    test_path = "tests/test_validate_amendment13_execution_law.py"
+    test_pin = next(row for row in pins["files"] if row["path"] == test_path)
+    expected_test_identity = {
+        "path": test_path,
+        "mode": pins["mode"],
+        "git_blob": test_pin["blob_oid"],
+        "raw_byte_size": test_pin["byte_size"],
+        "raw_sha256": test_pin["sha256"],
+    }
+    _require(
+        dict(test_identity) == expected_test_identity,
+        "Amendment-20 receipt test identity differs from candidate pin",
+    )
+
+    public_oracle = receipt["public_oracle"]
+    battery = receipt["full_pinned_battery"]
+    _require(
+        isinstance(public_oracle, Mapping) and isinstance(battery, Mapping),
+        "Amendment-20 receipt executed result is not an object",
+    )
+    _require_exact_keys(
+        public_oracle,
+        set(schema["public_oracle_keys"]),
+        "Amendment-20 receipt public oracle result",
+    )
+    _require_exact_keys(
+        battery,
+        set(schema["full_pinned_battery_keys"]),
+        "Amendment-20 receipt full pinned battery result",
+    )
+    _require(
+        public_oracle["entrypoint"] == "validate_ratification_operativity"
+        and public_oracle["executed"] is True
+        and type(public_oracle["exit_code"]) is int
+        and public_oracle["exit_code"] == 0
+        and public_oracle["operative_amendments"] == list(range(13, 21))
+        and public_oracle["simulated_state_identity_sha256"] == state_identity,
+        "Amendment-20 receipt public oracle result drift",
+    )
+    integer_fields = (
+        "exit_code",
+        "collected",
+        "passed",
+        "failed",
+        "skipped",
+        "deselected",
+        "xfailed",
+        "xpassed",
+    )
+    _require(
+        battery["executed"] is True
+        and all(type(battery[key]) is int for key in integer_fields)
+        and battery["exit_code"] == 0
+        and battery["test_path"] == test_path
+        and battery["test_mode_blob_bytes_sha256"] == test_identity
+        and battery["exact_command"] == A20_FULL_PINNED_BATTERY_COMMAND
+        and battery["collected"] == A20_FULL_PINNED_BATTERY_COLLECTED
+        and battery["passed"] == A20_FULL_PINNED_BATTERY_COLLECTED
+        and all(
+            battery[key] == 0
+            for key in (
+                "failed",
+                "skipped",
+                "deselected",
+                "xfailed",
+                "xpassed",
+            )
+        )
+        and battery["simulated_state_identity_sha256"] == state_identity,
+        "Amendment-20 receipt full pinned battery result drift",
+    )
+    return dict(receipt)
 
 
 def _validate_closure_shape(
@@ -6848,6 +9881,92 @@ def _validate_amendment19_ratification_design(raw: bytes) -> None:
     _validate_inherited_amendment19_ratification_design(raw)
 
 
+def _validate_amendment20_draft_design(raw: bytes) -> None:
+    """Accept the exact-prefix, fail-closed A20 drafting surface."""
+
+    _require(
+        _terminal_design_amendment(raw) == 20,
+        "Amendment-20 draft design is not terminal Amendment 20",
+    )
+    section = _amendment20_text(raw)
+    _validate_inherited_amendment19_ratification_design(raw)
+    section_numbers = [
+        int(match.group(1))
+        for match in re.finditer(r"^### 34\.([0-9]+)\b", section, re.MULTILINE)
+    ]
+    _require(
+        section_numbers == list(range(1, 14))
+        and section.count(
+            "`amendment20_evidence_freeze_status` is exactly\n"
+            "`not_instantiated_a4_required_before_ratify`"
+        )
+        == 1
+        and section.count("`amendment20_ratification_ready` is false") == 1,
+        "Amendment-20 draft status or section structure drift",
+    )
+    final_manifest_marker = (
+        "The exact Amendment-20 normative manifest is this one-line "
+        "terminal-LF canonical JSON value:\n\n"
+    )
+    if final_manifest_marker in section:
+        projection = _parse_amendment20_projection(raw)
+        if A20_SECTION_SEMANTIC_SHA256 is not None:
+            _require(
+                projection["section_semantic_sha256"]
+                == A20_SECTION_SEMANTIC_SHA256,
+                "Amendment-20 draft semantic projection drift",
+            )
+    else:
+        _require(
+            section.count(
+                "The exact Amendment-20 normative manifest will be inserted "
+                "here as one-line\n"
+            )
+            == 1
+            and section.count(
+                "The exact A20 active three-path implementation pin table is "
+                "deliberately\npending the final code/test freeze"
+            )
+            == 1,
+            "Amendment-20 pending manifest or implementation-pin marker drift",
+        )
+
+
+def _validate_inherited_amendment20_ratification_design(raw: bytes) -> None:
+    """Preserve exact revision-21 and ratification-ready A20 in successors."""
+
+    _require(
+        len(raw) > REVISION21_BYTE_SIZE
+        and _sha256(raw[:REVISION21_BYTE_SIZE]) == REVISION21_SHA256
+        and _git_blob_oid(raw[:REVISION21_BYTE_SIZE]) == REVISION21_BLOB_OID
+        and raw[REVISION21_BYTE_SIZE:].startswith(AMENDMENT20_BOUNDARY),
+        "Amendment-20 ratification design lacks the immutable revision-21 "
+        "prefix or Amendment-20 boundary",
+    )
+    _validate_inherited_amendment19_ratification_design(raw)
+    projection = _parse_amendment20_projection(raw)
+    _validate_a20_manifest_contract(
+        projection["normative_manifest"],
+        require_ratification_ready=True,
+    )
+    _require(
+        isinstance(A20_SECTION_SEMANTIC_SHA256, str)
+        and projection["section_semantic_sha256"]
+        == A20_SECTION_SEMANTIC_SHA256,
+        "Amendment-20 ratification design semantic projection drift",
+    )
+
+
+def _validate_amendment20_ratification_design(raw: bytes) -> None:
+    """Require terminal A20 and reject the current evidence-incomplete draft."""
+
+    _require(
+        _terminal_design_amendment(raw) == 20,
+        "Amendment-20 ratification design is not terminal Amendment 20",
+    )
+    _validate_inherited_amendment20_ratification_design(raw)
+
+
 def _validate_non_a13_ratification_design(
     raw: bytes,
     amendment_number: int,
@@ -6877,10 +9996,10 @@ def _validate_non_a13_ratification_design(
         _validate_amendment18_ratification_design(raw)
     elif amendment_number == 19:
         _validate_amendment19_ratification_design(raw)
-    elif amendment_number > 19:
-        _validate_inherited_amendment19_ratification_design(raw)
-    elif amendment_number > 18:
-        _validate_inherited_amendment18_ratification_design(raw)
+    elif amendment_number == 20:
+        _validate_amendment20_ratification_design(raw)
+    elif amendment_number > 20:
+        _validate_inherited_amendment20_ratification_design(raw)
 
 
 def _validate_ratification_closure(
@@ -6892,8 +10011,14 @@ def _validate_ratification_closure(
     verify_git: bool,
     ratification_design_raw: bytes | None = None,
     registry_design_binding: Mapping[str, Any] | None = None,
+    amendment20_transition_receipt_raw: bytes | None = None,
 ) -> dict[str, Any]:
     """Validate registry-selected closure bytes and their exact artifacts."""
+
+    _require(
+        amendment_number <= 20,
+        "post-Amendment-20 receipt topology requires exact successor law",
+    )
 
     _require(
         isinstance(closure_raw, bytes),
@@ -6983,6 +10108,53 @@ def _validate_ratification_closure(
         set(verdict_bytes) == {row["path"] for row in verdicts},
         "ratification closure verdict artifact domain drift",
     )
+    amendment20_attestations: list[dict[str, Any]] = []
+    receipt_byte_size: int | None = None
+    receipt_raw_sha256: str | None = None
+    if amendment_number > 20:
+        raise LawError(
+            "post-Amendment-20 receipt topology requires exact successor law"
+        )
+    if amendment_number == 20:
+        _require(
+            isinstance(amendment20_transition_receipt_raw, bytes),
+            "Amendment-20 external transition receipt is missing",
+        )
+        receipt = _strict_canonical_json(
+            amendment20_transition_receipt_raw,
+            A20_EXECUTED_TRANSITION_RECEIPT_PATH,
+        )
+        _validate_amendment20_transition_receipt(receipt)
+        _require(
+            isinstance(registry_design_binding, Mapping),
+            "Amendment-20 closure lacks registry candidate cross-binding",
+        )
+        receipt_candidate_commit = receipt["simulated_state_manifest"][
+            "candidate_commit_identity"
+        ]["commit"]
+        receipt_candidate_raw = _git(
+            "show",
+            f"{receipt_candidate_commit}:{DESIGN_PATH}",
+        )
+        _require(
+            isinstance(receipt_candidate_raw, bytes)
+            and len(receipt_candidate_raw)
+            == closure["attested_candidate_design_byte_size"]
+            and _sha256(receipt_candidate_raw)
+            == closure["attested_candidate_design_raw_sha256"]
+            and _git_blob_oid(receipt_candidate_raw)
+            == closure["attested_candidate_design_blob_oid"]
+            and registry_design_binding["blob_sha256"]
+            == _sha256(receipt_candidate_raw),
+            "Amendment-20 receipt/closure/registry candidate cross-binding drift",
+        )
+        receipt_byte_size = len(amendment20_transition_receipt_raw)
+        receipt_raw_sha256 = _sha256(amendment20_transition_receipt_raw)
+    else:
+        _require(
+            amendment20_transition_receipt_raw is None,
+            "pre-Amendment-20 closure received an inapplicable receipt",
+        )
     for row in verdicts:
         raw = verdict_bytes[row["path"]]
         _require(
@@ -6991,7 +10163,31 @@ def _validate_ratification_closure(
             and _sha256(raw) == row["raw_sha256"],
             "ratification closure verdict byte mismatch",
         )
-        _verdict_attests_design(raw, closure)
+        if amendment_number >= 20:
+            amendment20_attestations.append(
+                validate_amendment20_qualifying_verdict(
+                    raw,
+                    design_byte_size=closure[
+                        "attested_candidate_design_byte_size"
+                    ],
+                    design_raw_sha256=closure[
+                        "attested_candidate_design_raw_sha256"
+                    ],
+                    design_blob_oid=closure[
+                        "attested_candidate_design_blob_oid"
+                    ],
+                    receipt_byte_size=receipt_byte_size,
+                    receipt_raw_sha256=receipt_raw_sha256,
+                )
+            )
+        else:
+            _verdict_attests_design(raw, closure)
+    if amendment_number >= 20:
+        _require(
+            len(amendment20_attestations) == 2
+            and amendment20_attestations[0] == amendment20_attestations[1],
+            "Amendment-20 verdicts do not attest one candidate and receipt",
+        )
 
     commit = closure["ratification_commit"]
     if verify_git:
@@ -7223,6 +10419,10 @@ def _validate_public_ratification_closure(
     amendment_number: int,
     context: Mapping[str, Any],
 ) -> dict[str, Any]:
+    _require(
+        amendment_number <= 20,
+        "post-Amendment-20 receipt topology requires exact successor law",
+    )
     binding = _public_registry_closure_binding(amendment_number, context)
     closure_path = binding["path"]
     worktree_raw = _read_public_repository_file(
@@ -7245,6 +10445,36 @@ def _validate_public_ratification_closure(
         )
         for row in closure["verdict_artifacts"]
     }
+    if amendment_number == 20 and any(
+        b"executed_transition_receipt_status:" in raw
+        or b"simulation_context:" in raw
+        for raw in verdict_bytes.values()
+    ):
+        scratch = _validate_amendment20_scratch_transition_context(
+            verdict_bytes
+        )
+        _require(
+            scratch["registry_binding"] == context
+            and scratch["closure"] == closure,
+            "Amendment-20 scratch public closure context drift",
+        )
+        return closure
+
+    if amendment_number == 20:
+        import covered_earnings_correction_registry as registry
+
+        _require(
+            not hasattr(registry, "SIMULATED_STATE_AUTHORITY")
+            and not hasattr(registry, "SIMULATION_CONTEXT"),
+            "Amendment-20 scratch constants are forbidden with real verdicts",
+        )
+        receipt_raw = _read_public_repository_file(
+            A20_EXECUTED_TRANSITION_RECEIPT_PATH,
+            "executed-transition receipt",
+            require_regular_mode=True,
+        )
+    else:
+        receipt_raw = None
     return _validate_ratification_closure(
         worktree_raw,
         binding,
@@ -7252,6 +10482,7 @@ def _validate_public_ratification_closure(
         amendment_number,
         verify_git=True,
         registry_design_binding=context if amendment_number != 13 else None,
+        amendment20_transition_receipt_raw=receipt_raw,
     )
 
 
@@ -7296,9 +10527,12 @@ def validate_ratification_operativity() -> dict[int, dict[str, Any]]:
     """Validate the exact complete closure domain under one registry snapshot."""
 
     context = _public_registry_ratification_context()
-    _verify_implementation_pins(
-        _parse_active_implementation_pins((ROOT / DESIGN_PATH).read_bytes())
+    design_raw = (ROOT / DESIGN_PATH).read_bytes()
+    _require(
+        _terminal_design_amendment(design_raw) == context["revision"] - 2,
+        "ordinary registry/design terminal amendment mismatch",
     )
+    _verify_implementation_pins(_parse_active_implementation_pins(design_raw))
     return _validate_ratification_operativity_context(
         context,
         _validate_public_ratification_closure,
@@ -11928,6 +15162,330 @@ def run_amendment19_member_law_mutation_tests() -> tuple[str, ...]:
         and len(rejected_bytes) == A19_MUTATION_DOMAIN_BYTE_SIZE
         and _sha256(rejected_bytes) == A19_MUTATION_DOMAIN_SHA256,
         "Amendment-19 mutation inventory drift",
+    )
+    return rejected_tuple
+
+
+def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
+    """Authenticate the five inherited censuses, then run eight A20 attacks."""
+
+    amendment19 = run_amendment19_member_law_mutation_tests()
+    expected_censuses = A20_INHERITED_MUTATION_CENSUSES
+    _require(
+        amendment19 == A19_EXPECTED_MUTATIONS
+        and expected_censuses
+        == [
+            {
+                "inventory": "inherited_complete_certificate",
+                "count": 100,
+                "raw_sha256": (
+                    "fe2efd7b96c24b7cbd3c6ce350d44906"
+                    "eb5a88b8b35ee77565c1b133cbf1f3e3"
+                ),
+            },
+            {
+                "inventory": "amendment16",
+                "count": 7,
+                "raw_sha256": A16_MUTATION_DOMAIN_SHA256,
+            },
+            {
+                "inventory": "amendment17",
+                "count": 3,
+                "raw_sha256": A17_MUTATION_DOMAIN_SHA256,
+            },
+            {
+                "inventory": "amendment18",
+                "count": 3,
+                "raw_sha256": A18_MUTATION_DOMAIN_SHA256,
+            },
+            {
+                "inventory": "amendment19",
+                "count": 3,
+                "raw_sha256": A19_MUTATION_DOMAIN_SHA256,
+            },
+        ]
+        and sum(row["count"] for row in expected_censuses) == 116,
+        "Amendment-20 inherited mutation censuses drift",
+    )
+
+    rejected: list[str] = []
+
+    def reject_manifest_variants(
+        variants: Sequence[Mapping[str, Any]],
+        expected_message: str,
+        label: str,
+    ) -> None:
+        for position, candidate in enumerate(variants):
+            _expect_law_error(
+                lambda candidate=candidate: _validate_a20_manifest_contract(
+                    candidate
+                ),
+                expected_message,
+                f"{label} {position}",
+            )
+
+    source_variants = []
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["source_infrastructure"]["semantic_domain_identity_keys"].remove(
+        "excluded_source_rows"
+    )
+    source_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["source_infrastructure"]["evidence_statement_row_keys"].remove(
+        "utf8_byte_start"
+    )
+    source_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["source_infrastructure"][
+        "path_rule"
+    ] = "machine_local_absolute_path"
+    source_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    binding_keys = variant["source_infrastructure"][
+        "successor_source_binding_keys"
+    ]
+    binding_keys[binding_keys.index("missing_reason_rule_set_identity")] = (
+        "missing_rule_set_identity"
+    )
+    source_variants.append(variant)
+    reject_manifest_variants(
+        source_variants,
+        "separate semantic-domain contract drift",
+        "Amendment-20 source domain/statement/path attack",
+    )
+    rejected.append(A20_EXPECTED_MUTATIONS[0])
+
+    missing_variants = []
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["missing_reason_authority"][
+        "formerly_unresolved_literal_occurrence_count"
+    ] = 524_537
+    missing_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["missing_reason_authority"]["projection_requirements"].remove(
+        "collectively_exhaustive"
+    )
+    missing_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["missing_reason_authority"]["claim_type"] = "integer_coercible"
+    missing_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["missing_reason_authority"]["representation_bridge_probe"][
+        "bridge_required_before_acceptance"
+    ] = False
+    missing_variants.append(variant)
+    reject_manifest_variants(
+        missing_variants,
+        "missing-reason authority contract drift",
+        "Amendment-20 missing exact-cover/Boolean/MD attack",
+    )
+    rejected.append(A20_EXPECTED_MUTATIONS[1])
+
+    purpose_variants = []
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["purpose_authority"][
+        "inherited_complete_rows_requiring_source_regrounding"
+    ] = 817
+    purpose_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["purpose_authority"]["required_disposition_counts"]["U"] = 1
+    purpose_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["purpose_authority"][
+        "exact_prompt_cover_and_zero_gap_extra_duplicate_overlap_conflict"
+    ] = False
+    purpose_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["purpose_authority"][
+        "purpose_arrays_nonempty_stable_unique_in_official_order"
+    ] = False
+    purpose_variants.append(variant)
+    reject_manifest_variants(
+        purpose_variants,
+        "purpose-authority totality contract drift",
+        "Amendment-20 purpose 818/U/totality attack",
+    )
+    rejected.append(A20_EXPECTED_MUTATIONS[2])
+
+    prompt_variants = []
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["prompt_field_semantic_binding"]["c68_regression"][
+        "candidate_raw_field_ids"
+    ] = ["V11804"]
+    prompt_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["prompt_field_semantic_binding"][
+        "known_singleton_collision_count"
+    ] = 45
+    prompt_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["prompt_field_semantic_binding"][
+        "candidate_disposition_is_iff_count_partition"
+    ] = False
+    prompt_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["prompt_field_semantic_binding"]["zero_candidate_grouping_probe"][
+        "accepted_positive_group_with_empty_reference_union_count"
+    ] = 1
+    prompt_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["prompt_field_semantic_binding"][
+        "required_unresolved_semantic_binding_count"
+    ] = 1
+    prompt_variants.append(variant)
+    reject_manifest_variants(
+        prompt_variants,
+        "prompt-field or semantic-binding contract drift",
+        "Amendment-20 C68/46/zero/semantic attack",
+    )
+    rejected.append(A20_EXPECTED_MUTATIONS[3])
+
+    r04_variants = []
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["r04_q5"]["construction_order"][5:7] = reversed(
+        variant["r04_q5"]["construction_order"][5:7]
+    )
+    r04_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["r04_q5"]["normal_era_successor_sequence"].remove(
+        "prompt_field_candidate_set_rows"
+    )
+    r04_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["r04_q5"]["a19_digest_dependency_order_preserved"][0] = "D1"
+    r04_variants.append(variant)
+    reject_manifest_variants(
+        r04_variants,
+        "R04 order or Q5 shape contract drift",
+        "Amendment-20 order/Q5/D0 attack",
+    )
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["source_infrastructure"]["historical_domains_preserved"][
+        "a19_build_input_row_count"
+    ] = 278
+    _expect_law_error(
+        lambda: _validate_a20_manifest_contract(variant),
+        "separate semantic-domain contract drift",
+        "Amendment-20 279-row source-binding attack",
+    )
+    rejected.append(A20_EXPECTED_MUTATIONS[4])
+
+    _validate_amendment20_r06_collection_binding()
+    r06_variants = []
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["r06_lifecycle"][
+        "interpreter_selector"
+    ] = "fixed_interpreter_literal_forbidden"
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["r06_lifecycle"]["test_file_identities"][0]["byte_size"] += 1
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["r06_lifecycle"]["collected_node_id_count"] = 222
+    r06_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["r06_lifecycle"]["dormant_lifecycle_rows"][4][
+        "selection_enabled"
+    ] = True
+    r06_variants.append(variant)
+    reject_manifest_variants(
+        r06_variants,
+        "R06 collection or lifecycle contract drift",
+        "Amendment-20 interpreter/file/223/lifecycle attack",
+    )
+    rejected.append(A20_EXPECTED_MUTATIONS[5])
+
+    valid_verdict = (
+        "# RATIFY\n"
+        "attested_design_byte_size: 1\n"
+        f"attested_design_raw_sha256: {'a' * 64}\n"
+        f"attested_design_blob_oid: {'b' * 40}\n"
+        "executed_transition_receipt_byte_size: 2\n"
+        f"executed_transition_receipt_raw_sha256: {'c' * 64}\n"
+        "executed_transition_receipt_schema: executed_transition_state.v2\n"
+        "---\n"
+    ).encode()
+    validate_amendment20_qualifying_verdict(
+        valid_verdict,
+        design_byte_size=1,
+        design_raw_sha256="a" * 64,
+        design_blob_oid="b" * 40,
+        receipt_byte_size=2,
+        receipt_raw_sha256="c" * 64,
+    )
+    _expect_law_error(
+        lambda: validate_amendment20_qualifying_verdict(
+            valid_verdict.replace(b"---\n", b"---\r\n"),
+            design_byte_size=1,
+            design_raw_sha256="a" * 64,
+            design_blob_oid="b" * 40,
+            receipt_byte_size=2,
+            receipt_raw_sha256="c" * 64,
+        ),
+        "strict UTF-8/LF framing",
+        "Amendment-20 verdict grammar attack",
+    )
+    receipt_variants = []
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["ratification_receipt"]["receipt_schema"][
+        "manifest_schema_version"
+    ] = "executed_transition_state.v1"
+    receipt_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["ratification_receipt"][
+        "amendment20_external_receipt_path"
+    ] = "docs/analysis/amendment_20_ratification/receipt.json"
+    receipt_variants.append(variant)
+    reject_manifest_variants(
+        receipt_variants,
+        "verdict, receipt, or scratch contract drift",
+        "Amendment-20 receipt/fixed-path attack",
+    )
+    scratch_verdict_paths = A20_RECEIPT_SCHEMA["expected_changed_paths"][:2]
+    try:
+        _validate_amendment20_scratch_transition_context(
+            {
+                path: b"forged scratch stand-in\n"
+                for path in scratch_verdict_paths
+            }
+        )
+    except LawError:
+        pass
+    else:
+        raise LawError("Amendment-20 live scratch-context attack survived")
+    rejected.append(A20_EXPECTED_MUTATIONS[6])
+
+    routing_variants = []
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["successor_routing"][
+        "a19_pin_fallback_for_terminal_a20_permitted"
+    ] = True
+    routing_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["successor_routing"]["terminal_amendment"] = 19
+    routing_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["activation_transition"]["terminal_revision"] = 21
+    routing_variants.append(variant)
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["activation_transition"]["ordered_closure_domain"] = list(
+        range(13, 20)
+    )
+    routing_variants.append(variant)
+    reject_manifest_variants(
+        routing_variants,
+        "successor routing or activation contract drift",
+        "Amendment-20 pin/terminal/revision/domain attack",
+    )
+    rejected.append(A20_EXPECTED_MUTATIONS[7])
+
+    rejected_tuple = tuple(rejected)
+    rejected_raw = canonical_json_bytes(list(rejected_tuple))
+    _require(
+        rejected_tuple == A20_EXPECTED_MUTATIONS
+        and len(rejected_raw) == A20_MUTATION_DOMAIN_BYTE_SIZE
+        and _sha256(rejected_raw) == A20_MUTATION_DOMAIN_SHA256,
+        "Amendment-20 mutation inventory execution drift",
     )
     return rejected_tuple
 
