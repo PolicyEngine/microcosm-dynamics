@@ -57,6 +57,7 @@ A20_TEST_MUTATIONS = (
     "receipt_verdict_or_scratch_transition_forged",
     "amendment20_terminal_pin_or_suffix_route_forged",
     "evidence_freeze_identity_shadow_or_status_forged",
+    "failure_shadow_nonemission_provenance_forged",
 )
 
 
@@ -3939,10 +3940,46 @@ def test__amendment20_evidence_freeze_is_exactly_unready_not_failed():
     assert identity_contract["failure_nonemission_evidence_keys"] == (
         a13.A20_FAILURE_NONEMISSION_EVIDENCE_KEYS
     )
+    assert {
+        "repository_read_only",
+        "network_disabled",
+        "captured_streams",
+    }.isdisjoint(identity_contract["failure_nonemission_evidence_keys"])
+    assert identity_contract["repository_manifest_row_keys"] == (
+        a13.A20_REPOSITORY_MANIFEST_ROW_KEYS
+    )
+    assert all(
+        len(contract["pass_identity_names"])
+        == len(contract["forbidden_output_paths"])
+        for contract in a13.A20_ARM_IDENTITY_CONTRACTS.values()
+    )
+    assert all(
+        identifier in a13.A20_NEW_IDENTIFIERS["python"]
+        for identifier in (
+            "_canonical_amendment20_repository_path",
+            "_read_amendment20_worktree_file",
+            "_reconstruct_amendment20_repository_manifest",
+            "_validate_amendment20_nonemission_evidence",
+        )
+    )
     a13._validate_amendment20_evidence_freeze(
         freeze,
         a13.A20_EVIDENCE_FREEZE_CONTRACT,
         require_ratification_ready=False,
+    )
+
+
+def test__amendment20_nonemission_provenance_mutation_is_pinned():
+    mutation_raw = a13.canonical_json_bytes(list(A20_TEST_MUTATIONS))
+    assert A20_TEST_MUTATIONS[-1] == (
+        "failure_shadow_nonemission_provenance_forged"
+    )
+    assert len(mutation_raw) == a13.A20_MUTATION_DOMAIN_BYTE_SIZE == 462
+    assert hashlib.sha256(mutation_raw).hexdigest() == (
+        a13.A20_MUTATION_DOMAIN_SHA256
+    )
+    assert a13.A20_MUTATION_DOMAIN_SHA256 == (
+        "10d1466f38f8184940130b89508ac68b60408f8156bef35f65e2c09082bb7d5f"
     )
 
 
@@ -4771,9 +4808,9 @@ def test__amendment20_mutations_run_only_after_inherited_116(monkeypatch):
         sum(row["count"] for row in a13.A20_INHERITED_MUTATION_CENSUSES) == 116
     )
     raw = a13.canonical_json_bytes(list(rejected))
-    assert len(raw) == 415
+    assert len(raw) == 462
     assert hashlib.sha256(raw).hexdigest() == (
-        "52142486ece9aaa6a2a3d727ef34cd9ab287d7752cc0d7435711f8e864522df0"
+        "10d1466f38f8184940130b89508ac68b60408f8156bef35f65e2c09082bb7d5f"
     )
 
 

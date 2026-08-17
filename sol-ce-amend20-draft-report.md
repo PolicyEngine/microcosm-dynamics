@@ -467,3 +467,132 @@ and `FIX1_PROMPT.txt` remain untouched and unstaged. Nothing was pushed.
 
 **STATUS: LAWFUL-STOP.** Both round-1 rewrite findings are cured. A4 remains
 uninstantiated, and Amendment 20 remains unratified and inactive.
+
+## Fix-2 — round-2 nonemission provenance authentication
+
+This append-only section records the sole cure made after both round-2 lanes
+returned REWRITE. It supersedes only Fix-1's failure-shadow authentication
+claim and the mechanically dependent mutation, manifest, semantic-hash,
+implementation-pin, and test-count facts. The round-1 Finding 2 cure and all
+§34.8 historical-receipt behavior remain unchanged.
+
+### Authenticated failure-shadow evidence
+
+Section 34.1.2 and the validator now require each permanent-failure shadow to
+carry two complete §29.4.1 canonical repository-manifest arrays. Every row has
+exactly `path`, `mode`, `git_blob`, `byte_size`, and `raw_sha256`, and the rows
+are complete, unique, and ordered by unsigned UTF-8 path bytes. Each arm also
+cross-binds a fixed, non-caller-selected repository path for every forbidden
+pass output under
+`docs/analysis/amendment_20_ratification/evidence_freeze/`.
+
+The validator now:
+
+- resolves the exact execution commit and tree with replacement objects and
+  inherited `GIT_*` controls disabled;
+- proves that the commit resolves to the supplied tree;
+- recursively enumerates the tree, authenticates every blob, rereads all
+  working bytes in the isolated verification checkout, and requires tracked
+  modes and bytes plus the index to exact-match that tree;
+- enumerates and rereads every nonignored untracked path and requires exact
+  clean porcelain status, including rejection of intent-to-add state;
+- deep-compares both supplied manifests with the independently reconstructed
+  manifest, rederives both terminal-LF canonical SHA-256 values, and requires
+  exact before/after row and digest equality; and
+- independently proves that every fixed forbidden output path is absent from
+  the authenticated after-manifest.
+
+The accepted manifest-only schema retains clean and absence booleans solely
+as redundant assertions that must exact-equal the independently derived
+facts. It makes no unverifiable OS read-only, network, or captured-stream
+claim; `repository_read_only`, `network_disabled`, `captured_streams`, and
+every other extra assertion fail the exact evidence keyset. Thus no lifecycle
+boolean supplies provenance or substitutes for authenticated objects and
+manifests.
+
+### Real controls and killing mutation
+
+The accepted all-pass and three single-arm permanent-failure controls now use
+one real temporary Git repository. The runner commits a tracked sentinel,
+resolves its real commit/tree/blob identities, reconstructs the real manifest
+and digest, validates all four controls, and restores the original repository
+root in `finally`. No accepted control contains a fabricated commit, tree, or
+manifest identity.
+
+The four pre-existing shallow regressions remain in the ninth mutation group
+and still reject: altered shadow digest, missing complement, status flip with
+the old identity union, and arbitrary truthy mappings. The new tenth group,
+`failure_shadow_nonemission_provenance_forged`, starts from the accepted real
+scratch control, substitutes nonexistent 40-hex commit/tree IDs and arbitrary
+equal manifest hashes, retains the complete manifest rows and redundant
+booleans, recomputes the outer successor digest, and fails specifically because
+the execution commit is not an exact commit object.
+
+### Reclosed projection, pins, and inventory
+
+| Field | Fix-2 value |
+|---|---|
+| Evidence-freeze binding names | 21 (unchanged) |
+| A20 mutation groups | 10 |
+| Mutation inventory bytes / SHA-256 | 462 / `10d1466f38f8184940130b89508ac68b60408f8156bef35f65e2c09082bb7d5f` |
+| §34.12 manifest bytes / SHA-256 | 51,288 / `e780602708fec38a111e0d6ed2c87f794b76a016447f57795a3b92d2c933146d` |
+| Semantic-hash fixpoint | `4ac97bf387eaaf868516be1a7fd119e027d059c7f03b861b07a5ccd3a5580d74` |
+| Full pinned module inventory | 219 tests |
+| Repository inventory | 5,776 tests |
+
+The controlling §34.9 implementation pins are:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `60420ce24a151ba22bd4ec8d1d8e5b4bc835e150` | 650,940 | `e49e41c59629d4cb4e06de33e577a8ac49985c4581fae55534777fff9ca11bb8` |
+| `tests/test_validate_amendment13_execution_law.py` | `6102b174f7bed3c3e2102083b0af6943f9d5f4ef` | 182,525 | `8ebe2347ea468394f0c1098d6044ef9e028989db201137f7d1d32b701f564569` |
+| `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
+
+The normalized §34 suffix is 139,683 bytes. Replacing only the ten authorized
+§34.9 captures reproduces the semantic hash above before and after the final
+pin replacement. The canonical §34.12 manifest deep-equals the validator
+constant. The closed §34.11 Python inventory also names all four new
+provenance helpers.
+
+### Fix-2 verification
+
+All execution checks below used committed candidate `18f6c63` in the shared
+repository `.venv-flip`; the report was then added to that same commit without
+changing any design, validator, test, or tier-ledger byte.
+
+| Check | Status/result |
+|---|---|
+| Exact shared-venv Amendment 18/19/20 battery | PASS — 114 passed, 5,662 deselected in 1,201.99s |
+| Pinned validator-module collection | PASS — 219 tests collected |
+| Schema-current real-control and mutation replay | PASS — all four accepted controls validated; four shallow regressions and the coherent nonexistent-object forgery rejected |
+| Lane-A command replay | PASS — archived 6,537-byte command SHA-256 `a0aaf7745efa1a04cd86da209c1aa94fcfd73c4600c8ec89d415f2bd8c004463`; coherent forgery REJECT; both forged objects absent |
+| Lane-B command replay | PASS — archived 6,391-byte command SHA-256 `4e36281777a58c83bc338501bbe5a2ed799d3d57bfb7cef4db47a7db6b6c4141`; baseline and fully forged provenance REJECT; all four object probes absent |
+| Round-1 Finding 2 regression | PASS — included in the 114-test battery; no Finding 2 implementation or test hunk changed |
+| `black -l 79 --check .` | PASS — 592 files would be left unchanged |
+| `ruff check .` | PASS — all checks passed |
+| `git diff --check` | PASS |
+
+The exact 4,025,587-byte immutable design prefix remains byte-identical to
+round-2 HEAD `e092c25`, with raw SHA-256
+`38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9`
+and Git blob `1eba7ff6366bad1999de36c9f7261ad6939ad86a`. The final Fix-2 design
+attestation is 4,165,468 bytes, raw SHA-256
+`b614645eca7bba31e026bb923fa5e9e7cffcf370bb25977e5faa235fc717b578`,
+and Git blob `b755e480d980545692de4d09292b58ee6bae3242`.
+
+### Fix-2 commit and status
+
+The code/design candidate commit `18f6c63` used the exact title
+`Fix Amendment 20 round-2 finding (nonemission provenance authentication)`.
+This report is amended into that same commit; its resulting hash cannot be
+embedded here without a circular self-reference. The unavailable local `bd`
+database required `git commit --no-verify`; no test, formatting, lint, byte,
+semantic, provenance, or ratification requirement was bypassed.
+
+The unrelated untracked `.ceremony-log/`, `CEREMONY_PROMPT.txt`,
+`FIX1_PROMPT.txt`, and `FIX2_PROMPT.txt` remain untouched and unstaged. No
+commit was pushed.
+
+**STATUS: LAWFUL-STOP.** The sole round-2 provenance-authentication finding is
+cured, while the round-1 Finding 2 cure remains intact. A4 remains
+uninstantiated, and Amendment 20 remains unratified and inactive.

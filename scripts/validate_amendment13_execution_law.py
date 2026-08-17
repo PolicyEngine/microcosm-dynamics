@@ -17,13 +17,14 @@ import hashlib
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 import tempfile
 from collections import Counter, defaultdict
 from collections.abc import Callable, Mapping, Sequence
 from functools import lru_cache
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -2463,7 +2464,7 @@ A19_NORMATIVE_MANIFEST = {
 }
 
 A20_SECTION_SEMANTIC_SHA256: str | None = (
-    "f2b88a4638312a1c2ddc775a2b6226b43d7e481a9ef26efad1c27f77e3ba6f22"
+    "4ac97bf387eaaf868516be1a7fd119e027d059c7f03b861b07a5ccd3a5580d74"
 )
 A20_CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 A20_COMMON_IDENTITY_NAMES = [
@@ -2486,6 +2487,14 @@ A20_ARM_IDENTITY_CONTRACTS = {
             "missing_reason_successor_relation_identity",
             "missing_representation_bridge_identity",
         ],
+        "forbidden_output_paths": [
+            "docs/analysis/amendment_20_ratification/evidence_freeze/"
+            "missing_reason_rule_set_identity.json",
+            "docs/analysis/amendment_20_ratification/evidence_freeze/"
+            "missing_reason_successor_relation_identity.json",
+            "docs/analysis/amendment_20_ratification/evidence_freeze/"
+            "missing_representation_bridge_identity.json",
+        ],
         "failure_shadow_identity_name": (
             "missing_reason_failure_shadow_identity"
         ),
@@ -2496,6 +2505,12 @@ A20_ARM_IDENTITY_CONTRACTS = {
         "pass_identity_names": [
             "purpose_rule_set_identity",
             "purpose_authority_mapping_identity",
+        ],
+        "forbidden_output_paths": [
+            "docs/analysis/amendment_20_ratification/evidence_freeze/"
+            "purpose_rule_set_identity.json",
+            "docs/analysis/amendment_20_ratification/evidence_freeze/"
+            "purpose_authority_mapping_identity.json",
         ],
         "failure_shadow_identity_name": "purpose_failure_shadow_identity",
     },
@@ -2509,6 +2524,16 @@ A20_ARM_IDENTITY_CONTRACTS = {
             "prompt_field_candidate_set_identity",
             "zero_candidate_positive_group_identity",
             "semantic_binding_identity",
+        ],
+        "forbidden_output_paths": [
+            "docs/analysis/amendment_20_ratification/evidence_freeze/"
+            "prompt_field_evidence_identity.json",
+            "docs/analysis/amendment_20_ratification/evidence_freeze/"
+            "prompt_field_candidate_set_identity.json",
+            "docs/analysis/amendment_20_ratification/evidence_freeze/"
+            "zero_candidate_positive_group_identity.json",
+            "docs/analysis/amendment_20_ratification/evidence_freeze/"
+            "semantic_binding_identity.json",
         ],
         "failure_shadow_identity_name": (
             "prompt_field_semantic_failure_shadow_identity"
@@ -2573,6 +2598,7 @@ A20_FAILURE_SHADOW_IDENTITY_KEYS = [
     "shadow_row_domain_sha256",
     "complement_identity",
     "forbidden_output_identity_names",
+    "forbidden_output_paths",
     "nonemission_evidence",
     "status",
 ]
@@ -2584,16 +2610,22 @@ A20_NONEMISSION_COMPLEMENT_IDENTITY_KEYS = [
     "row_domain_sha256",
     "status",
 ]
+A20_REPOSITORY_MANIFEST_ROW_KEYS = [
+    "path",
+    "mode",
+    "git_blob",
+    "byte_size",
+    "raw_sha256",
+]
 A20_FAILURE_NONEMISSION_EVIDENCE_KEYS = [
     "execution_commit",
     "execution_tree_oid",
+    "repository_manifest_rows_before",
     "repository_manifest_sha256_before",
+    "repository_manifest_rows_after",
     "repository_manifest_sha256_after",
     "repository_clean_before",
     "repository_clean_after",
-    "repository_read_only",
-    "network_disabled",
-    "captured_streams",
     "forbidden_outputs_absent_after_execution",
 ]
 A20_EVIDENCE_FREEZE = {
@@ -2641,11 +2673,14 @@ A20_EVIDENCE_FREEZE_CONTRACT = {
         "failure_nonemission_evidence_keys": (
             A20_FAILURE_NONEMISSION_EVIDENCE_KEYS
         ),
+        "repository_manifest_row_keys": A20_REPOSITORY_MANIFEST_ROW_KEYS,
         "successor_binding_identity_name": (
             "a20_successor_source_binding_identity"
         ),
         "successor_binding_digest_excludes_self": True,
         "failure_shadow_rows_are_exact_forbidden_output_complement": True,
+        "failure_shadow_paths_are_exact_arm_contract_paths": True,
+        "lifecycle_booleans_are_not_accepted_as_self_attestation": True,
     },
     "ratification_readiness_iff_freeze_shape_statuses_and_identities": True,
     "semantic_arm_pass_required_for_ratification": False,
@@ -3652,7 +3687,7 @@ A20_SUCCESSOR_ROUTING_CONTRACT = {
     },
     "terminal_successor_state": "A20_SUCCESSOR_LIFECYCLE_COMPLETE",
 }
-A20_FULL_PINNED_BATTERY_COLLECTED = 218
+A20_FULL_PINNED_BATTERY_COLLECTED = 219
 A20_FULL_PINNED_BATTERY_COMMAND = (
     "executing_process_sys.executable -m pytest -q "
     "tests/test_validate_amendment13_execution_law.py"
@@ -3686,10 +3721,11 @@ A20_EXPECTED_MUTATIONS = (
     "receipt_verdict_or_scratch_transition_forged",
     "amendment20_terminal_pin_or_suffix_route_forged",
     "evidence_freeze_identity_shadow_or_status_forged",
+    "failure_shadow_nonemission_provenance_forged",
 )
-A20_MUTATION_DOMAIN_BYTE_SIZE = 415
+A20_MUTATION_DOMAIN_BYTE_SIZE = 462
 A20_MUTATION_DOMAIN_SHA256 = (
-    "52142486ece9aaa6a2a3d727ef34cd9ab287d7752cc0d7435711f8e864522df0"
+    "10d1466f38f8184940130b89508ac68b60408f8156bef35f65e2c09082bb7d5f"
 )
 A20_INHERITED_MUTATION_CENSUSES = [
     {
@@ -3836,7 +3872,10 @@ A20_NEW_IDENTIFIERS = {
         "complement_identity",
         "complement_of_identity_names",
         "forbidden_output_identity_names",
+        "forbidden_output_paths",
         "nonemission_evidence",
+        "repository_manifest_rows_before",
+        "repository_manifest_rows_after",
         "forbidden_outputs_absent_after_execution",
         "a20_successor_source_binding_identity",
         "missing_reason_source_domain_identity",
@@ -3882,6 +3921,10 @@ A20_NEW_IDENTIFIERS = {
         "_validate_amendment20_ratification_design",
         "_validate_inherited_amendment20_ratification_design",
         "_validate_amendment20_evidence_freeze",
+        "_canonical_amendment20_repository_path",
+        "_read_amendment20_worktree_file",
+        "_reconstruct_amendment20_repository_manifest",
+        "_validate_amendment20_nonemission_evidence",
         "_parse_amendment20_implementation_pins",
         "_parse_amendment20_projection",
         "run_amendment20_contract_mutation_tests",
@@ -6819,12 +6862,22 @@ def _validate_amendment20_evidence_freeze(
         == A20_NONEMISSION_COMPLEMENT_IDENTITY_KEYS
         and identity_contract.get("failure_nonemission_evidence_keys")
         == A20_FAILURE_NONEMISSION_EVIDENCE_KEYS
+        and identity_contract.get("repository_manifest_row_keys")
+        == A20_REPOSITORY_MANIFEST_ROW_KEYS
         and identity_contract.get("successor_binding_identity_name")
         == "a20_successor_source_binding_identity"
         and identity_contract.get("successor_binding_digest_excludes_self")
         is True
         and identity_contract.get(
             "failure_shadow_rows_are_exact_forbidden_output_complement"
+        )
+        is True
+        and identity_contract.get(
+            "failure_shadow_paths_are_exact_arm_contract_paths"
+        )
+        is True
+        and identity_contract.get(
+            "lifecycle_booleans_are_not_accepted_as_self_attestation"
         )
         is True,
         "Amendment-20 evidence-freeze identity contract drift",
@@ -6919,6 +6972,7 @@ def _validate_amendment20_evidence_freeze(
     for status_member, arm_contract in A20_ARM_IDENTITY_CONTRACTS.items():
         arm_status = freeze[status_member]
         pass_identity_names = arm_contract["pass_identity_names"]
+        forbidden_output_paths = arm_contract["forbidden_output_paths"]
         shadow_name = arm_contract["failure_shadow_identity_name"]
         if arm_status == arm_contract["pass_status"]:
             _require(
@@ -6966,6 +7020,8 @@ def _validate_amendment20_evidence_freeze(
             and shadow["arm_status"] == arm_status
             and shadow["forbidden_output_identity_names"]
             == pass_identity_names
+            and shadow["forbidden_output_paths"] == forbidden_output_paths
+            and len(forbidden_output_paths) == len(pass_identity_names)
             and type(shadow["shadow_row_count"]) is int
             and shadow["shadow_row_count"] == len(pass_identity_names)
             and shadow["shadow_ordered_keyset_sha256"]
@@ -7010,20 +7066,13 @@ def _validate_amendment20_evidence_freeze(
         )
         _require(
             nonzero_lower_hex(nonemission["execution_commit"], 40)
-            and nonzero_lower_hex(nonemission["execution_tree_oid"], 40)
-            and nonzero_lower_hex(
-                nonemission["repository_manifest_sha256_before"], 64
-            )
-            and nonemission["repository_manifest_sha256_before"]
-            == nonemission["repository_manifest_sha256_after"]
-            and nonemission["repository_clean_before"] is True
-            and nonemission["repository_clean_after"] is True
-            and nonemission["repository_read_only"] is True
-            and nonemission["network_disabled"] is True
-            and nonemission["captured_streams"] == ["stdout", "stderr"]
-            and nonemission["forbidden_outputs_absent_after_execution"]
-            is True,
-            f"Amendment-20 {status_member} durable nonemission evidence drift",
+            and nonzero_lower_hex(nonemission["execution_tree_oid"], 40),
+            f"Amendment-20 {status_member} nonemission object identity drift",
+        )
+        _validate_amendment20_nonemission_evidence(
+            nonemission,
+            forbidden_output_paths,
+            status_member=status_member,
         )
 
     successor_binding = bindings[successor_binding_name]
@@ -8757,6 +8806,291 @@ def _require_exact_commit_object(object_id: str, label: str) -> None:
     _require(
         result.returncode == 0 and result.stdout.strip() == object_id,
         f"{label} is not an exact commit object",
+    )
+
+
+def _canonical_amendment20_repository_path(path: Any) -> bool:
+    """Recognize one canonical, traversal-free UTF-8 repository path."""
+
+    if not isinstance(path, str) or not path:
+        return False
+    try:
+        path.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    candidate = PurePosixPath(path)
+    return (
+        not candidate.is_absolute()
+        and candidate.as_posix() == path
+        and all(part not in {"", ".", ".."} for part in candidate.parts)
+    )
+
+
+def _read_amendment20_worktree_file(path: str) -> tuple[bytes, str]:
+    """Reread one regular file or symlink from the execution worktree."""
+
+    worktree_path = ROOT / path
+    try:
+        metadata = worktree_path.lstat()
+        if stat.S_ISLNK(metadata.st_mode):
+            return os.fsencode(os.readlink(worktree_path)), "120000"
+        _require(
+            stat.S_ISREG(metadata.st_mode),
+            "Amendment-20 manifest member is not a file",
+        )
+        mode = "100755" if metadata.st_mode & 0o111 else "100644"
+        return worktree_path.read_bytes(), mode
+    except OSError as error:
+        raise LawError(
+            "Amendment-20 manifest working bytes cannot be reread"
+        ) from error
+
+
+def _reconstruct_amendment20_repository_manifest(
+    execution_tree_oid: str,
+) -> tuple[list[dict[str, Any]], tuple[str, ...]]:
+    """Rebuild the complete tracked/untracked §29.4.1 manifest."""
+
+    tree_listing = _run_git(
+        "ls-tree",
+        "-rz",
+        "--full-tree",
+        execution_tree_oid,
+    )
+    _require(
+        tree_listing.returncode == 0
+        and isinstance(tree_listing.stdout, bytes),
+        "Amendment-20 execution tree cannot be enumerated",
+    )
+    rows: list[dict[str, Any]] = []
+    tracked_paths: set[str] = set()
+    for raw_entry in tree_listing.stdout.split(b"\0"):
+        if not raw_entry:
+            continue
+        try:
+            raw_metadata, raw_path = raw_entry.split(b"\t", 1)
+            mode, object_type, raw_oid = raw_metadata.split(b" ", 2)
+            path = raw_path.decode("utf-8")
+            object_id = raw_oid.decode("ascii")
+            mode_text = mode.decode("ascii")
+            object_type_text = object_type.decode("ascii")
+        except (UnicodeDecodeError, ValueError) as error:
+            raise LawError(
+                "Amendment-20 execution tree has a noncanonical entry"
+            ) from error
+        _require(
+            _canonical_amendment20_repository_path(path)
+            and path not in tracked_paths
+            and object_type_text == "blob"
+            and mode_text in {"100644", "100755", "120000"}
+            and _is_lower_hex(object_id, 40),
+            "Amendment-20 execution tree has an unsupported entry",
+        )
+        blob_result = _run_git("cat-file", "blob", object_id)
+        _require(
+            blob_result.returncode == 0
+            and isinstance(blob_result.stdout, bytes)
+            and _git_blob_oid(blob_result.stdout) == object_id,
+            "Amendment-20 execution tree blob cannot be authenticated",
+        )
+        working_raw, working_mode = _read_amendment20_worktree_file(path)
+        _require(
+            working_mode == mode_text and working_raw == blob_result.stdout,
+            "Amendment-20 tracked working bytes do not exact-match the tree",
+        )
+        tracked_paths.add(path)
+        rows.append(
+            {
+                "path": path,
+                "mode": mode_text,
+                "git_blob": object_id,
+                "byte_size": len(blob_result.stdout),
+                "raw_sha256": _sha256(blob_result.stdout),
+            }
+        )
+
+    untracked_listing = _run_git(
+        "ls-files",
+        "--others",
+        "--exclude-standard",
+        "-z",
+    )
+    _require(
+        untracked_listing.returncode == 0
+        and isinstance(untracked_listing.stdout, bytes),
+        "Amendment-20 nonignored untracked paths cannot be enumerated",
+    )
+    untracked_paths: list[str] = []
+    for raw_path in untracked_listing.stdout.split(b"\0"):
+        if not raw_path:
+            continue
+        try:
+            path = raw_path.decode("utf-8")
+        except UnicodeDecodeError as error:
+            raise LawError(
+                "Amendment-20 untracked path is not UTF-8"
+            ) from error
+        _require(
+            _canonical_amendment20_repository_path(path)
+            and path not in tracked_paths
+            and path not in untracked_paths,
+            "Amendment-20 untracked path is noncanonical or duplicated",
+        )
+        raw, mode_text = _read_amendment20_worktree_file(path)
+        untracked_paths.append(path)
+        rows.append(
+            {
+                "path": path,
+                "mode": mode_text,
+                "git_blob": _git_blob_oid(raw),
+                "byte_size": len(raw),
+                "raw_sha256": _sha256(raw),
+            }
+        )
+
+    rows.sort(key=lambda row: row["path"].encode("utf-8"))
+    index_result = _run_git(
+        "diff",
+        "--cached",
+        "--quiet",
+        execution_tree_oid,
+        "--",
+    )
+    _require(
+        index_result.returncode == 0,
+        "Amendment-20 repository index does not exact-match the tree",
+    )
+    status_result = _run_git(
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all",
+    )
+    _require(
+        status_result.returncode == 0 and status_result.stdout == b"",
+        "Amendment-20 repository is not exactly clean",
+    )
+    return rows, tuple(untracked_paths)
+
+
+def _validate_amendment20_nonemission_evidence(
+    nonemission: Mapping[str, Any],
+    forbidden_output_paths: Sequence[str],
+    *,
+    status_member: str,
+) -> None:
+    """Authenticate failure nonemission without trusting lifecycle booleans."""
+
+    label = f"Amendment-20 {status_member}"
+    execution_commit = nonemission["execution_commit"]
+    execution_tree_oid = nonemission["execution_tree_oid"]
+    commit_result = _run_git(
+        "rev-parse",
+        "--verify",
+        f"{execution_commit}^{{commit}}",
+        text=True,
+    )
+    _require(
+        commit_result.returncode == 0
+        and commit_result.stdout.strip() == execution_commit,
+        f"{label} execution commit is not an exact commit object",
+    )
+    tree_result = _run_git(
+        "rev-parse",
+        "--verify",
+        f"{execution_tree_oid}^{{tree}}",
+        text=True,
+    )
+    _require(
+        tree_result.returncode == 0
+        and tree_result.stdout.strip() == execution_tree_oid,
+        f"{label} execution tree is not an exact tree object",
+    )
+    commit_tree_result = _run_git(
+        "rev-parse",
+        "--verify",
+        f"{execution_commit}^{{tree}}",
+        text=True,
+    )
+    _require(
+        commit_tree_result.returncode == 0
+        and commit_tree_result.stdout.strip() == execution_tree_oid,
+        f"{label} execution commit/tree binding drift",
+    )
+
+    supplied_manifests: list[list[dict[str, Any]]] = []
+    for phase in ("before", "after"):
+        manifest = nonemission[f"repository_manifest_rows_{phase}"]
+        _require(
+            isinstance(manifest, list),
+            f"{label} repository manifest {phase} is not an array",
+        )
+        paths: list[str] = []
+        for row in manifest:
+            _require(
+                isinstance(row, Mapping),
+                f"{label} repository manifest {phase} row is not an object",
+            )
+            _require_exact_keys(
+                row,
+                set(A20_REPOSITORY_MANIFEST_ROW_KEYS),
+                f"{label} repository manifest {phase} row",
+            )
+            _require(
+                _canonical_amendment20_repository_path(row["path"])
+                and row["mode"] in {"100644", "100755", "120000"}
+                and _is_lower_hex(row["git_blob"], 40)
+                and type(row["byte_size"]) is int
+                and row["byte_size"] >= 0
+                and _is_lower_hex(row["raw_sha256"], 64),
+                f"{label} repository manifest {phase} row identity drift",
+            )
+            paths.append(row["path"])
+        _require(
+            paths == sorted(paths, key=lambda path: path.encode("utf-8"))
+            and len(paths) == len(set(paths)),
+            f"{label} repository manifest {phase} order/domain drift",
+        )
+        supplied_manifests.append([dict(row) for row in manifest])
+
+    before_rows, after_rows = supplied_manifests
+    reconstructed_rows, untracked_paths = (
+        _reconstruct_amendment20_repository_manifest(execution_tree_oid)
+    )
+    _require(
+        before_rows == reconstructed_rows and after_rows == reconstructed_rows,
+        f"{label} repository manifest authentication drift",
+    )
+    before_sha256 = _sha256(canonical_json_bytes(before_rows))
+    after_sha256 = _sha256(canonical_json_bytes(after_rows))
+    _require(
+        nonemission["repository_manifest_sha256_before"] == before_sha256
+        and nonemission["repository_manifest_sha256_after"] == after_sha256
+        and before_rows == after_rows
+        and before_sha256 == after_sha256,
+        f"{label} repository manifest digest or equality drift",
+    )
+    _require(
+        all(
+            _canonical_amendment20_repository_path(path)
+            for path in forbidden_output_paths
+        )
+        and len(forbidden_output_paths) == len(set(forbidden_output_paths)),
+        f"{label} forbidden output path domain drift",
+    )
+    after_paths = {row["path"] for row in after_rows}
+    forbidden_outputs_absent = all(
+        path not in after_paths for path in forbidden_output_paths
+    )
+    repository_clean = not untracked_paths
+    _require(
+        repository_clean
+        and forbidden_outputs_absent
+        and nonemission["repository_clean_before"] is repository_clean
+        and nonemission["repository_clean_after"] is repository_clean
+        and nonemission["forbidden_outputs_absent_after_execution"]
+        is forbidden_outputs_absent,
+        f"{label} independently derived nonemission facts drift",
     )
 
 
@@ -15596,7 +15930,9 @@ def run_amendment19_member_law_mutation_tests() -> tuple[str, ...]:
 
 
 def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
-    """Authenticate the inherited censuses, then run nine A20 attack groups."""
+    """Authenticate the inherited censuses, then run ten A20 attack groups."""
+
+    global ROOT
 
     amendment19 = run_amendment19_member_law_mutation_tests()
     expected_censuses = A20_INHERITED_MUTATION_CENSUSES
@@ -15687,6 +16023,7 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
     def synthetic_failure_shadow(
         status_member: str,
         arm_contract: Mapping[str, Any],
+        nonemission_evidence: Mapping[str, Any],
     ) -> dict[str, Any]:
         pass_identity_names = arm_contract["pass_identity_names"]
         failure_status = arm_contract["failure_status"]
@@ -15696,9 +16033,6 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
         ]
         keyset_sha256 = _sha256(canonical_json_bytes(pass_identity_names))
         domain_sha256 = _sha256(canonical_json_bytes(complement_rows))
-        manifest_sha256 = synthetic_identity_digest(
-            f"{status_member}:repository-manifest"
-        )
         return {
             "schema_version": "a20_failure_shadow_identity.v1",
             "identity_name": arm_contract["failure_shadow_identity_name"],
@@ -15716,27 +16050,15 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
                 "status": failure_status,
             },
             "forbidden_output_identity_names": pass_identity_names,
-            "nonemission_evidence": {
-                "execution_commit": hashlib.sha1(
-                    f"{status_member}:commit".encode()
-                ).hexdigest(),
-                "execution_tree_oid": hashlib.sha1(
-                    f"{status_member}:tree".encode()
-                ).hexdigest(),
-                "repository_manifest_sha256_before": manifest_sha256,
-                "repository_manifest_sha256_after": manifest_sha256,
-                "repository_clean_before": True,
-                "repository_clean_after": True,
-                "repository_read_only": True,
-                "network_disabled": True,
-                "captured_streams": ["stdout", "stderr"],
-                "forbidden_outputs_absent_after_execution": True,
-            },
+            "forbidden_output_paths": arm_contract["forbidden_output_paths"],
+            "nonemission_evidence": copy.deepcopy(nonemission_evidence),
             "status": failure_status,
         }
 
     def synthetic_ready_freeze(
         failed_status_member: str | None = None,
+        *,
+        nonemission_evidence: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
         bindings: dict[str, Any] = {
             name: None for name in A20_EXPECTED_IDENTITY_NAMES
@@ -15763,8 +16085,16 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
                         arm_status_member=status_member,
                     )
             else:
+                _require(
+                    nonemission_evidence is not None,
+                    "Amendment-20 synthetic failure lacks real provenance",
+                )
                 bindings[arm_contract["failure_shadow_identity_name"]] = (
-                    synthetic_failure_shadow(status_member, arm_contract)
+                    synthetic_failure_shadow(
+                        status_member,
+                        arm_contract,
+                        nonemission_evidence,
+                    )
                 )
         active_binding_preimage = {
             "arm_status_bindings": statuses,
@@ -15796,6 +16126,26 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
             "expected_identity_bindings": bindings,
             "amendment20_ratification_ready": True,
         }
+
+    def rebind_synthetic_successor(freeze: Mapping[str, Any]) -> None:
+        statuses = {
+            status_member: freeze[status_member]
+            for status_member in A20_ARM_IDENTITY_CONTRACTS
+        }
+        bindings = freeze["expected_identity_bindings"]
+        successor_binding_name = "a20_successor_source_binding_identity"
+        active_binding_preimage = {
+            "arm_status_bindings": statuses,
+            "expected_identity_bindings": {
+                identity_name: bindings[identity_name]
+                for identity_name in A20_EXPECTED_IDENTITY_NAMES
+                if identity_name != successor_binding_name
+            },
+        }
+        bindings[successor_binding_name]["arm_status_bindings"] = statuses
+        bindings[successor_binding_name]["active_identity_bindings_sha256"] = (
+            _sha256(canonical_json_bytes(active_binding_preimage))
+        )
 
     source_variants = []
     variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
@@ -16052,76 +16402,182 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
     )
     rejected.append(A20_EXPECTED_MUTATIONS[7])
 
-    ready_controls = [
-        synthetic_ready_freeze(),
-        *[
-            synthetic_ready_freeze(status_member)
-            for status_member in A20_ARM_IDENTITY_CONTRACTS
-        ],
-    ]
-    for ready_freeze in ready_controls:
-        _validate_amendment20_evidence_freeze(
-            ready_freeze,
-            A20_EVIDENCE_FREEZE_CONTRACT,
-            require_ratification_ready=True,
+    original_root = ROOT
+    with tempfile.TemporaryDirectory(
+        prefix="a20-nonemission-provenance-"
+    ) as temporary:
+        temporary_root = Path(temporary)
+        scratch = temporary_root / "repo"
+        _scratch_git(temporary_root, "init", "--quiet", str(scratch))
+        _scratch_git(scratch, "config", "user.name", "A20 mutation test")
+        _scratch_git(
+            scratch,
+            "config",
+            "user.email",
+            "a20-mutation@example.invalid",
         )
+        sentinel_path = scratch / "tracked-sentinel.txt"
+        sentinel_path.write_bytes(b"authenticated A20 manifest state\n")
+        _scratch_git(scratch, "add", "tracked-sentinel.txt")
+        _scratch_git(
+            scratch,
+            "commit",
+            "--quiet",
+            "-m",
+            "Authenticated A20 nonemission control",
+        )
+        execution_commit = str(
+            _scratch_git(scratch, "rev-parse", "HEAD")
+        ).strip()
+        execution_tree_oid = str(
+            _scratch_git(scratch, "rev-parse", "HEAD^{tree}")
+        ).strip()
+        ROOT = scratch
+        try:
+            manifest_rows, untracked_paths = (
+                _reconstruct_amendment20_repository_manifest(
+                    execution_tree_oid
+                )
+            )
+            _require(
+                untracked_paths == ()
+                and [row["path"] for row in manifest_rows]
+                == ["tracked-sentinel.txt"],
+                "Amendment-20 real scratch provenance control drift",
+            )
+            manifest_sha256 = _sha256(canonical_json_bytes(manifest_rows))
+            nonemission_evidence = {
+                "execution_commit": execution_commit,
+                "execution_tree_oid": execution_tree_oid,
+                "repository_manifest_rows_before": copy.deepcopy(
+                    manifest_rows
+                ),
+                "repository_manifest_sha256_before": manifest_sha256,
+                "repository_manifest_rows_after": copy.deepcopy(manifest_rows),
+                "repository_manifest_sha256_after": manifest_sha256,
+                "repository_clean_before": True,
+                "repository_clean_after": True,
+                "forbidden_outputs_absent_after_execution": True,
+            }
 
-    forged_shadow = synthetic_ready_freeze("missing_reason_authority_status")
-    forged_shadow["expected_identity_bindings"][
-        "missing_reason_failure_shadow_identity"
-    ]["shadow_row_domain_sha256"] = ("f" * 64)
-    _expect_law_error(
-        lambda: _validate_amendment20_evidence_freeze(
-            forged_shadow,
-            A20_EVIDENCE_FREEZE_CONTRACT,
-            require_ratification_ready=True,
-        ),
-        "failure-shadow cross-binding drift",
-        "Amendment-20 forged failure-shadow attack",
-    )
+            ready_controls = [
+                synthetic_ready_freeze(),
+                *[
+                    synthetic_ready_freeze(
+                        status_member,
+                        nonemission_evidence=nonemission_evidence,
+                    )
+                    for status_member in A20_ARM_IDENTITY_CONTRACTS
+                ],
+            ]
+            for ready_freeze in ready_controls:
+                _validate_amendment20_evidence_freeze(
+                    ready_freeze,
+                    A20_EVIDENCE_FREEZE_CONTRACT,
+                    require_ratification_ready=True,
+                )
 
-    missing_complement = synthetic_ready_freeze("purpose_authority_status")
-    del missing_complement["expected_identity_bindings"][
-        "purpose_failure_shadow_identity"
-    ]["complement_identity"]
-    _expect_law_error(
-        lambda: _validate_amendment20_evidence_freeze(
-            missing_complement,
-            A20_EVIDENCE_FREEZE_CONTRACT,
-            require_ratification_ready=True,
-        ),
-        "failure shadow keyset drift",
-        "Amendment-20 missing nonemission-complement attack",
-    )
+            forged_shadow = synthetic_ready_freeze(
+                "missing_reason_authority_status",
+                nonemission_evidence=nonemission_evidence,
+            )
+            forged_shadow["expected_identity_bindings"][
+                "missing_reason_failure_shadow_identity"
+            ]["shadow_row_domain_sha256"] = ("f" * 64)
+            _expect_law_error(
+                lambda: _validate_amendment20_evidence_freeze(
+                    forged_shadow,
+                    A20_EVIDENCE_FREEZE_CONTRACT,
+                    require_ratification_ready=True,
+                ),
+                "failure-shadow cross-binding drift",
+                "Amendment-20 forged failure-shadow attack",
+            )
 
-    status_flip = synthetic_ready_freeze(
-        "prompt_field_semantic_binding_status"
-    )
-    status_flip["prompt_field_semantic_binding_status"] = "pass"
-    _expect_law_error(
-        lambda: _validate_amendment20_evidence_freeze(
-            status_flip,
-            A20_EVIDENCE_FREEZE_CONTRACT,
-            require_ratification_ready=True,
-        ),
-        "pass carries a failure shadow",
-        "Amendment-20 arm-status flip attack",
-    )
+            missing_complement = synthetic_ready_freeze(
+                "purpose_authority_status",
+                nonemission_evidence=nonemission_evidence,
+            )
+            del missing_complement["expected_identity_bindings"][
+                "purpose_failure_shadow_identity"
+            ]["complement_identity"]
+            _expect_law_error(
+                lambda: _validate_amendment20_evidence_freeze(
+                    missing_complement,
+                    A20_EVIDENCE_FREEZE_CONTRACT,
+                    require_ratification_ready=True,
+                ),
+                "failure shadow keyset drift",
+                "Amendment-20 missing nonemission-complement attack",
+            )
 
-    truthy_mapping = synthetic_ready_freeze()
-    truthy_mapping["expected_identity_bindings"] = {
-        name: {"truthy": True} for name in A20_EXPECTED_IDENTITY_NAMES
-    }
-    _expect_law_error(
-        lambda: _validate_amendment20_evidence_freeze(
-            truthy_mapping,
-            A20_EVIDENCE_FREEZE_CONTRACT,
-            require_ratification_ready=True,
-        ),
-        "identity keyset drift",
-        "Amendment-20 truthy-mapping regression attack",
-    )
-    rejected.append(A20_EXPECTED_MUTATIONS[8])
+            status_flip = synthetic_ready_freeze(
+                "prompt_field_semantic_binding_status",
+                nonemission_evidence=nonemission_evidence,
+            )
+            status_flip["prompt_field_semantic_binding_status"] = "pass"
+            _expect_law_error(
+                lambda: _validate_amendment20_evidence_freeze(
+                    status_flip,
+                    A20_EVIDENCE_FREEZE_CONTRACT,
+                    require_ratification_ready=True,
+                ),
+                "pass carries a failure shadow",
+                "Amendment-20 arm-status flip attack",
+            )
+
+            truthy_mapping = synthetic_ready_freeze()
+            truthy_mapping["expected_identity_bindings"] = {
+                name: {"truthy": True} for name in A20_EXPECTED_IDENTITY_NAMES
+            }
+            _expect_law_error(
+                lambda: _validate_amendment20_evidence_freeze(
+                    truthy_mapping,
+                    A20_EVIDENCE_FREEZE_CONTRACT,
+                    require_ratification_ready=True,
+                ),
+                "identity keyset drift",
+                "Amendment-20 truthy-mapping regression attack",
+            )
+            rejected.append(A20_EXPECTED_MUTATIONS[8])
+
+            coherent_forgery = synthetic_ready_freeze(
+                "missing_reason_authority_status",
+                nonemission_evidence=nonemission_evidence,
+            )
+            forged_nonemission = coherent_forgery[
+                "expected_identity_bindings"
+            ]["missing_reason_failure_shadow_identity"]["nonemission_evidence"]
+            forged_nonemission.update(
+                {
+                    "execution_commit": "4" * 40,
+                    "execution_tree_oid": "5" * 40,
+                    "repository_manifest_sha256_before": "6" * 64,
+                    "repository_manifest_sha256_after": "6" * 64,
+                }
+            )
+            rebind_synthetic_successor(coherent_forgery)
+            _require(
+                _run_git("cat-file", "-e", f"{'4' * 40}^{{commit}}").returncode
+                != 0
+                and _run_git(
+                    "cat-file", "-e", f"{'5' * 40}^{{tree}}"
+                ).returncode
+                != 0,
+                "Amendment-20 forged object control unexpectedly exists",
+            )
+            _expect_law_error(
+                lambda: _validate_amendment20_evidence_freeze(
+                    coherent_forgery,
+                    A20_EVIDENCE_FREEZE_CONTRACT,
+                    require_ratification_ready=True,
+                ),
+                "execution commit is not an exact commit object",
+                "Amendment-20 coherent nonemission provenance forgery",
+            )
+            rejected.append(A20_EXPECTED_MUTATIONS[9])
+        finally:
+            ROOT = original_root
 
     rejected_tuple = tuple(rejected)
     rejected_raw = canonical_json_bytes(list(rejected_tuple))
