@@ -35,7 +35,7 @@ jobs:
         run: pip install -e ".[dev]" pytest-split
 
       - name: Run tests (shard ${{ matrix.shard }}/4)
-        run: pytest -q --splits 4 --group ${{ matrix.shard }} --splitting-algorithm least_duration --durations-path .test_durations
+        run: pytest -q --splits 4 --group ${{ matrix.shard }} --splitting-algorithm duration_based_chunks --durations-path .test_durations
 
   # Fan-in jobs keeping the branch-protection context names
   # ("pytest (3.11)" / "pytest (3.13)") stable across the shard split.
