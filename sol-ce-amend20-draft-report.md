@@ -727,3 +727,125 @@ and unstaged. Nothing was pushed.
 
 **STATUS: LAWFUL-STOP.** Both adjudicated round-3 findings are cured. A4
 remains uninstantiated, and Amendment 20 remains unratified and inactive.
+
+## A4 execution attempt — lawful stop at step 1
+
+This append-only section records the requested A4 continuation attempted on
+2026-08-17 EDT from exact candidate
+`69d0e55917faa99f198241e39ff499136b44e3ca`. The pre-A4 report was 51,814
+bytes with raw SHA-256
+`5e797320ee67ad6ba49f3e0088898fbd3ab22178ee3c5cbf2d990c7772dd0612`;
+all of those bytes are preserved. No normative design, validator, test,
+registry, gate, run, or analysis-artifact byte was edited.
+
+### Authenticated execution boundary
+
+The revision-21 design prefix was rederived from the working bytes before
+the attempt. It remains exactly 4,025,587 bytes with raw SHA-256
+`38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9`
+and Git blob `1eba7ff6366bad1999de36c9f7261ad6939ad86a`; `cmp` against
+`dd33d6d:docs/design/covered_earnings_correction.md` passed over the complete
+prefix interval. Candidate `HEAD` had tree
+`99eb9039b2a0f757251cf105f00aea6214f4b6a2`.
+
+The following current evidence-side records were reread as raw bytes at the
+attempt boundary. They are NONAUTHORITY campaign records, not substitutes for
+the relations and identities that §34 requires.
+
+| Record | Bytes | Raw SHA-256 |
+|---|---:|---|
+| `e8-ops/sol-ce-a20-charter.md` | 27,368 | `5ecd4092f3fc62ef894866a1a5b505d6dba7bb04cde1360ff7134d7d8e927717` |
+| `e8-ops/sol-ce-e1-exit-report.md` | 47,492 | `37fdf8b59262c4258ef1af8721a629c3812aac095e1026c2e04272e9d22fc063` |
+| `e8-ops/sol-ce-e3-full-compile-report.md` | 20,163 | `8c5ae0c50024c75c555477359c70b54a499a68181356d2acb360e2a03be0996b` |
+| `e8-ops/sol-ce-e3-p2-full-report.md` | 20,286 | `5ef7ceb1f743527955972cda8f1878151d21d6629d65acb81349f43edf418b83` |
+| `e8-ops/sol-ce-a1-finish-report.md` | 40,862 | `5a3a36dfb330fd4c6b1643038099348bd89e2e89d5667ecab348c272bac786cd` |
+| `e8-ops/sol-ce-a2-frontier-301-600-report.md` | 65,558 | `955681d107ee8d3377299db1763c56f9ae7e9bfb081b285e247ad8b6d810bc44` |
+| `e8-ops/sol-ce-purpose-prod-r4-report.md` | 53,717 | `ecbf2a349574b035cba674dce8945cb17c50ac6fcbe301b060f50626da174f07` |
+
+The tracked tree and the complete `e8-ops` file domain contain no A4 exact
+freeze, admitted physical-source registry, admitted statement registry,
+complete domain projection, final dual-review reconciliation, or executed
+Amendment-20 transition receipt. The round-4 referee records settle the draft
+law; they do not purport to be either of the two §34 A4 evidence reviews.
+
+### Enacted-order disposition
+
+**Step 1 — STOPPED LAWFULLY.** The two independent evidence reviews are not
+complete and therefore cannot be reconciled:
+
+- the E1 exit report says source admission is open/fail-closed, with no
+  admitted 193-row registry or domain digest, and says acceptance has not
+  passed;
+- the missing-arm full compilation is expressly
+  `NONAUTHORITY_DEVELOPMENT_ONLY`; it settles 3,045 of 524,538 identities,
+  leaves 521,493 occurrences in 49,732 pair families unsettled, and triggers
+  the recharter/capacity kill rather than emitting settlement authority;
+- the purpose full compilation covers 51 of the 21,153 underdetermined
+  prompts, leaves 21,102 fail-closed, and has only a scoped independent
+  reduction rather than the two complete reconstructions A4 requires;
+- the combined missing A2 proposals reach only first-pass rank 600 of 7,629;
+  the authenticated frontier record says ranks 601–7,629 are untouched, and
+  no complete independent second-pass result exists; and
+- the latest completed purpose production record stops after queue rank 680
+  of 21,099, with rank 681 explicitly next and no round-5 result present.
+
+These are not merely nonpassing semantic results that can be frozen as an
+arm-specific permanent-failure member. Section 34.1.2 requires all nine
+common pass identities in every ratification-ready outcome, including the
+physical-source, evidence-statement, both semantic-domain, successor-binding,
+R04/Q5, two R06, and dormant-lifecycle identities. Those authenticated common
+objects do not exist. A permanent-failure arm would additionally require its
+exact complement, forbidden-output domain, authenticated execution
+commit/tree, equal complete before/after repository manifests, and derived
+nonemission facts. No such A4 failure-shadow execution exists. Reviewer
+agreement, development digests, and the absence of output cannot manufacture
+either kind of identity.
+
+Successful-arm execution has an additional unresolved byte-placement gap:
+§34 fixes the relation schemas and identity equations but enacts no repository
+paths for the successful review/source/relation byte objects. It fixes paths
+only for a failure shadow's forbidden outputs. Choosing storage locations at
+execution time would make the authenticated identity domain caller-selected.
+This gap must also be adjudicated before any later successful A4 freeze.
+
+**Steps 2 through 7 — NOT ENTERED.** Because step 1 did not complete, no
+source registry, semantic-domain projection, rule-set complement, compiled
+524,538-row or 21,971-row relation, prompt-field/semantic relation, MD= bridge,
+count, keyset, row domain, reconstruction result, lifecycle identity, or
+expected-failure identity was promoted or frozen.
+
+**Step 8 — NOT EXECUTED.** The §34.12 manifest and validator constant remain
+at the exact drafting state: freeze status
+`not_instantiated_a4_required_before_ratify`, all three arm statuses JSON
+null, all 21 expected identity bindings JSON null, and readiness false. The
+§34.9 normalized semantic hash, implementation pins, and manifest were not
+recomputed. Starting the 93392ca-style one-commit fixpoint without A4 inputs
+would convert absent authority into self-authenticating bytes and is
+forbidden.
+
+**Step 9 — NOT EXECUTED.** The final Amendment 18/19/20 battery, post-A4
+same-state scratch transition, external v2 receipt, qualifying verdicts,
+integration, closure, and real revision-22 registry repin all remain behind
+step 1. In particular,
+`e8-ops/sol-ce-amend20-executed-transition-receipt-v2.json` and its generation
+report were deliberately not created: there is no lawful post-A4 candidate
+state for either file to attest. Running or publishing those later acts here
+would violate the enacted order and the receipt's same-state premise.
+
+### Stop-state hygiene
+
+The shared repository environment left all 592 Python files unchanged under
+`black --check -l 79 .`; `ruff check --no-cache .` passed; and
+`git diff --check` passed. A direct import assertion revalidated the exact
+drafting freeze: 21 null identity bindings, three null arm statuses, and
+readiness false. The only tracked change is this append-only report section.
+
+### Result
+
+**STATUS: LAWFUL-STOP AT A4 STEP 1.** No source identity was guessed, no
+development digest was promoted, no permanent-failure shadow was fabricated,
+and readiness remains false. The exact continuation requires a lawful response
+to the triggered recharter/capacity kill, completion and reconciliation of the
+resulting evidence program, the complete authenticated common objects, and
+either pass relations or exact failure shadows. Only then may execution
+restart at A4 step 1 from those bytes.
