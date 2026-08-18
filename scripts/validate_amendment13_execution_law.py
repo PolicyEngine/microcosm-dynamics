@@ -2464,7 +2464,7 @@ A19_NORMATIVE_MANIFEST = {
 }
 
 A20_SECTION_SEMANTIC_SHA256: str | None = (
-    "4ac97bf387eaaf868516be1a7fd119e027d059c7f03b861b07a5ccd3a5580d74"
+    "639acea748e3a4170f315eaedea9aa43e3663cd011d36dcc7f9c386efecb554d"
 )
 A20_CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 A20_COMMON_IDENTITY_NAMES = [
@@ -7489,6 +7489,27 @@ def _parse_amendment20_projection(raw: bytes) -> dict[str, Any]:
     section = _amendment20_text(raw)
     manifest = _parse_a20_normative_manifest(section)
     _validate_a20_manifest_contract(manifest)
+    supersession_rows = _markdown_table(
+        section,
+        "| Earlier normative anchor | Amendment-20 disposition |",
+        "|---|---|",
+        len(manifest["supersession_coverage"]),
+        "Amendment-20 supersession disposition",
+    )
+    mutation_disposition_position = manifest["supersession_coverage"].index(
+        "33.6_mutation_inventory_and_inherited_census"
+    )
+    _require(
+        len(manifest["mutation_inventory"]) == 10
+        and supersession_rows[mutation_disposition_position]
+        == [
+            "§33.6 mutation inventory and inherited census",
+            "Preserved as three A19 names after the earlier 113 attacks. "
+            "A20 runs the five inherited censuses separately, then its "
+            "own ten-name inventory.",
+        ],
+        "Amendment-20 mutation inventory prose disposition drift",
+    )
     return {
         "section_semantic_sha256": _sha256(
             _normalize_amendment20_implementation_pin_values(section).encode(
@@ -8826,10 +8847,14 @@ def _canonical_amendment20_repository_path(path: Any) -> bool:
     )
 
 
-def _read_amendment20_worktree_file(path: str) -> tuple[bytes, str]:
+def _read_amendment20_worktree_file(
+    path: str,
+    *,
+    verification_root: Path,
+) -> tuple[bytes, str]:
     """Reread one regular file or symlink from the execution worktree."""
 
-    worktree_path = ROOT / path
+    worktree_path = verification_root / path
     try:
         metadata = worktree_path.lstat()
         if stat.S_ISLNK(metadata.st_mode):
@@ -8848,10 +8873,14 @@ def _read_amendment20_worktree_file(path: str) -> tuple[bytes, str]:
 
 def _reconstruct_amendment20_repository_manifest(
     execution_tree_oid: str,
+    *,
+    verification_root: Path,
 ) -> tuple[list[dict[str, Any]], tuple[str, ...]]:
     """Rebuild the complete tracked/untracked §29.4.1 manifest."""
 
     tree_listing = _run_git(
+        "-C",
+        str(verification_root),
         "ls-tree",
         "-rz",
         "--full-tree",
@@ -8886,14 +8915,23 @@ def _reconstruct_amendment20_repository_manifest(
             and _is_lower_hex(object_id, 40),
             "Amendment-20 execution tree has an unsupported entry",
         )
-        blob_result = _run_git("cat-file", "blob", object_id)
+        blob_result = _run_git(
+            "-C",
+            str(verification_root),
+            "cat-file",
+            "blob",
+            object_id,
+        )
         _require(
             blob_result.returncode == 0
             and isinstance(blob_result.stdout, bytes)
             and _git_blob_oid(blob_result.stdout) == object_id,
             "Amendment-20 execution tree blob cannot be authenticated",
         )
-        working_raw, working_mode = _read_amendment20_worktree_file(path)
+        working_raw, working_mode = _read_amendment20_worktree_file(
+            path,
+            verification_root=verification_root,
+        )
         _require(
             working_mode == mode_text and working_raw == blob_result.stdout,
             "Amendment-20 tracked working bytes do not exact-match the tree",
@@ -8910,6 +8948,8 @@ def _reconstruct_amendment20_repository_manifest(
         )
 
     untracked_listing = _run_git(
+        "-C",
+        str(verification_root),
         "ls-files",
         "--others",
         "--exclude-standard",
@@ -8936,7 +8976,10 @@ def _reconstruct_amendment20_repository_manifest(
             and path not in untracked_paths,
             "Amendment-20 untracked path is noncanonical or duplicated",
         )
-        raw, mode_text = _read_amendment20_worktree_file(path)
+        raw, mode_text = _read_amendment20_worktree_file(
+            path,
+            verification_root=verification_root,
+        )
         untracked_paths.append(path)
         rows.append(
             {
@@ -8950,6 +8993,8 @@ def _reconstruct_amendment20_repository_manifest(
 
     rows.sort(key=lambda row: row["path"].encode("utf-8"))
     index_result = _run_git(
+        "-C",
+        str(verification_root),
         "diff",
         "--cached",
         "--quiet",
@@ -8961,6 +9006,8 @@ def _reconstruct_amendment20_repository_manifest(
         "Amendment-20 repository index does not exact-match the tree",
     )
     status_result = _run_git(
+        "-C",
+        str(verification_root),
         "status",
         "--porcelain=v1",
         "-z",
@@ -9054,9 +9101,58 @@ def _validate_amendment20_nonemission_evidence(
         supplied_manifests.append([dict(row) for row in manifest])
 
     before_rows, after_rows = supplied_manifests
-    reconstructed_rows, untracked_paths = (
-        _reconstruct_amendment20_repository_manifest(execution_tree_oid)
-    )
+    with tempfile.TemporaryDirectory(
+        prefix="a20-verification-checkout-"
+    ) as temporary:
+        verification_root = Path(temporary) / "checkout"
+        checkout_needs_cleanup = False
+        try:
+            checkout_result = _run_git(
+                "worktree",
+                "add",
+                "--detach",
+                "--quiet",
+                str(verification_root),
+                execution_commit,
+            )
+            checkout_needs_cleanup = (
+                checkout_result.returncode == 0 or verification_root.exists()
+            )
+            _require(
+                checkout_result.returncode == 0,
+                f"{label} execution commit cannot be materialized",
+            )
+            checkout_head = _run_git(
+                "-C",
+                str(verification_root),
+                "rev-parse",
+                "--verify",
+                "HEAD^{commit}",
+                text=True,
+            )
+            _require(
+                checkout_head.returncode == 0
+                and checkout_head.stdout.strip() == execution_commit,
+                f"{label} verification checkout identity drift",
+            )
+            reconstructed_rows, untracked_paths = (
+                _reconstruct_amendment20_repository_manifest(
+                    execution_tree_oid,
+                    verification_root=verification_root,
+                )
+            )
+        finally:
+            if checkout_needs_cleanup:
+                cleanup_result = _run_git(
+                    "worktree",
+                    "remove",
+                    "--force",
+                    str(verification_root),
+                )
+                _require(
+                    cleanup_result.returncode == 0,
+                    f"{label} verification checkout cleanup failed",
+                )
     _require(
         before_rows == reconstructed_rows and after_rows == reconstructed_rows,
         f"{label} repository manifest authentication drift",
@@ -16436,7 +16532,8 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
         try:
             manifest_rows, untracked_paths = (
                 _reconstruct_amendment20_repository_manifest(
-                    execution_tree_oid
+                    execution_tree_oid,
+                    verification_root=scratch,
                 )
             )
             _require(
@@ -16460,6 +16557,43 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
                 "forbidden_outputs_absent_after_execution": True,
             }
 
+            sentinel_path.write_bytes(b"later clean A20 manifest state\n")
+            _scratch_git(scratch, "add", "tracked-sentinel.txt")
+            _scratch_git(
+                scratch,
+                "commit",
+                "--quiet",
+                "-m",
+                "Later clean A20 repository state",
+            )
+            later_commit = str(
+                _scratch_git(scratch, "rev-parse", "HEAD")
+            ).strip()
+            later_tree_oid = str(
+                _scratch_git(scratch, "rev-parse", "HEAD^{tree}")
+            ).strip()
+            worktree_state_before = _scratch_git(
+                scratch,
+                "worktree",
+                "list",
+                "--porcelain",
+            )
+            _require(
+                later_commit != execution_commit
+                and later_tree_oid != execution_tree_oid
+                and sentinel_path.read_bytes()
+                != b"authenticated A20 manifest state\n"
+                and _scratch_git(
+                    scratch,
+                    "status",
+                    "--porcelain=v1",
+                    "-z",
+                    text=False,
+                )
+                == b"",
+                "Amendment-20 different-current-tree control drift",
+            )
+
             ready_controls = [
                 synthetic_ready_freeze(),
                 *[
@@ -16476,6 +16610,16 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
                     A20_EVIDENCE_FREEZE_CONTRACT,
                     require_ratification_ready=True,
                 )
+            _require(
+                _scratch_git(
+                    scratch,
+                    "worktree",
+                    "list",
+                    "--porcelain",
+                )
+                == worktree_state_before,
+                "Amendment-20 verification checkout cleanup drift",
+            )
 
             forged_shadow = synthetic_ready_freeze(
                 "missing_reason_authority_status",

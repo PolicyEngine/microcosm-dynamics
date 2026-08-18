@@ -57501,8 +57501,8 @@ three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `60420ce24a151ba22bd4ec8d1d8e5b4bc835e150` | 650,940 | `e49e41c59629d4cb4e06de33e577a8ac49985c4581fae55534777fff9ca11bb8` |
-| `tests/test_validate_amendment13_execution_law.py` | `6102b174f7bed3c3e2102083b0af6943f9d5f4ef` | 182,525 | `8ebe2347ea468394f0c1098d6044ef9e028989db201137f7d1d32b701f564569` |
+| `scripts/validate_amendment13_execution_law.py` | `c82e9662c2a5481979f54fca92fa86b1e95213fd` | 655,687 | `e83379bc6475393c389d2f4396915d08e332b33d40890431e8ca883c6e7430ea` |
+| `tests/test_validate_amendment13_execution_law.py` | `9c10ed3377847d0b61fd851d651c8f81fffdae44` | 183,140 | `62dc2a782f72c59e92229df2a2b3c34ae5b283b5065675bf99f855ad1a70113b` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
 The semantic projection requires the exact 4,025,587-byte revision-21 prefix,
@@ -57641,7 +57641,7 @@ The complete supersession and preservation disposition is:
 | §33.3.2 D0/search/proof/D1 construction | Preserved exactly and composed after the A20 normal selector. No A20 relation may recreate the digest cycle. |
 | §33.4 obsolete campaign pin and A20 out-of-scope label | Superseded as prospective scope by the exact consolidated charter pin in §34.1. Historical A19 routing remains evidence of its then-deferred program. |
 | §§33.5.2–33.5.3 A19 projection, routing, and activation | Historical A19 validation uses the exact revision-21 prefix. Active prospective routing adds exact A20 terminal/inherited validation and the revision-22 same-state obligation. |
-| §33.6 mutation inventory and inherited census | Preserved as three A19 names after the earlier 113 attacks. A20 runs the five inherited censuses separately, then its own nine-name inventory. |
+| §33.6 mutation inventory and inherited census | Preserved as three A19 names after the earlier 113 attacks. A20 runs the five inherited censuses separately, then its own ten-name inventory. |
 | The four §33.7 rows concerning construction order, raw-field ambiguity, Q5 shape, and R04 reconstruction | Superseded or composed exactly as the first, second, sixth, seventh, and ninth rows of this table; no unlisted A19 semantic change is implied. |
 | §33.8 `questionnaire_occurrence_rows` combined evaluation/serialization prohibition | Superseded by two scopes: authenticated read/construction is required for the selector, while serialization into the failure member and treatment as pass-only output remain forbidden. The 877-byte member survives. |
 | §33.9 terminal A19 prospective effect | Preserved as historical drafting law and superseded only as the terminal prospective section by §34.13 after A19's external activation. |

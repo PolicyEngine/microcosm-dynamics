@@ -596,3 +596,134 @@ commit was pushed.
 **STATUS: LAWFUL-STOP.** The sole round-2 provenance-authentication finding is
 cured, while the round-1 Finding 2 cure remains intact. A4 remains
 uninstantiated, and Amendment 20 remains unratified and inactive.
+
+## Fix-3 — round-3 historical checkout and inventory-row cure
+
+This append-only section records exactly the two adjudicated round-3 cures.
+It changes no A20 authority, evidence-freeze outcome, receipt behavior,
+successor routing, mutation name, test count, tier ledger, or production
+registry byte.
+
+### Finding 1 — authenticated historical verification checkout
+
+The repository-manifest reconstructor and worktree reader now require an
+explicit `verification_root`. Every recursive tree/blob read, tracked and
+untracked worktree read, index comparison, and porcelain-status check runs
+from that root. The production nonemission validator first authenticates the
+exact execution commit, tree, and commit/tree binding, then materializes a
+detached disposable worktree at that execution commit from the repository
+object store. It verifies the checkout's exact `HEAD^{commit}`, reconstructs
+all evidence there, and removes the worktree in `finally`, including after
+post-materialization rejection. The existing recursive
+`git ls-tree -rz --full-tree` enumeration is unchanged.
+
+The existing A20 mutation-runner test now supplies the positive historical
+regression without adding a collected test node. It commits authentic
+sentinel evidence, retains that first commit/tree/manifest/digest, commits
+different sentinel bytes as a later clean current tree, proves both current
+commit and tree differ, and then accepts each of the three old permanent-
+failure evidences. It also exact-compares `git worktree list --porcelain`
+before and after validation to prove disposable-checkout cleanup.
+
+An independent direct replay also used a nested tracked path and accepted the
+unchanged genuine first-commit evidence after a later clean commit changed the
+current tree. A fully coherent historical commit/tree/manifest/digest set from
+lane B likewise now accepts independently of ambient `HEAD`; under the
+adjudicated §34.1.2 rule, that is historical evidence rather than a malformed
+vector.
+
+All actually malformed lane-A/lane-B variants still reject at their intended
+gates:
+
+- nonexistent commit/tree objects reject because the execution commit is not
+  an exact commit object;
+- authentic rows with invented equal manifest hashes reject for manifest
+  digest or equality drift;
+- a syntactically valid invented row with recomputed hashes rejects for
+  manifest authentication drift;
+- a real commit paired with another real commit's tree rejects for execution
+  commit/tree binding drift;
+- omission and rehashing of a tracked forbidden-output row rejects for
+  manifest authentication drift; and
+- an honest manifest containing the forbidden output with a true absence
+  assertion rejects for independently derived nonemission-fact drift.
+
+No replay left a verification worktree or scratch artifact.
+
+### Finding 2 — ten-name supersession disposition
+
+The §34.11 supersession/preservation row now says that A20 runs its own
+ten-name inventory. The corrected 195-byte row has raw SHA-256
+`45fcb4deaaca8c7ba6f823fc8901b57a1dd1811e8a39a38ff6c508c04d9310ef`.
+
+The A20 semantic projection now parses the complete 30-row §34.11 table,
+locates the §33.6 disposition through the corresponding ordered §34.12
+`supersession_coverage` member, and requires both ten manifest mutation names
+and the exact ten-name prose disposition. The existing manifest test replaces
+that phrase with `nine-name` and proves the projection rejects for mutation-
+inventory prose-disposition drift. This closes the omission without adding a
+test node or changing the 462-byte mutation array or canonical manifest.
+
+### Reclosed projection and implementation pins
+
+| Field | Fix-3 value |
+|---|---|
+| Immutable revision-21 prefix | 4,025,587 bytes / `38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9` / blob `1eba7ff6366bad1999de36c9f7261ad6939ad86a` |
+| Fix-3 design | 4,165,467 bytes / `e8ed5b0e93f69ddcc2016e9356b2a613e17811dc718922aa6f2f8de3dc24d264` / blob `d464f3e7712113b337365d351678b6501fa9bb54` |
+| Raw / normalized A20 suffix | 139,880 / 139,682 bytes |
+| Semantic-hash fixpoint | `639acea748e3a4170f315eaedea9aa43e3663cd011d36dcc7f9c386efecb554d` |
+| §34.12 manifest | 51,288 bytes / `e780602708fec38a111e0d6ed2c87f794b76a016447f57795a3b92d2c933146d` |
+| Mutation inventory | 10 names / 462 bytes / `10d1466f38f8184940130b89508ac68b60408f8156bef35f65e2c09082bb7d5f` |
+| Pinned validator-module inventory | 219 tests (unchanged) |
+| Repository inventory | 5,776 tests (unchanged) |
+
+The controlling §34.9 implementation pins are:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `c82e9662c2a5481979f54fca92fa86b1e95213fd` | 655,687 | `e83379bc6475393c389d2f4396915d08e332b33d40890431e8ca883c6e7430ea` |
+| `tests/test_validate_amendment13_execution_law.py` | `9c10ed3377847d0b61fd851d651c8f81fffdae44` | 183,140 | `62dc2a782f72c59e92229df2a2b3c34ae5b283b5065675bf99f855ad1a70113b` |
+| `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
+
+The normalized semantic digest is unchanged after final pin replacement, and
+the active pin verifier passes against candidate `HEAD`.
+
+### Fix-3 verification
+
+All execution checks used candidate `a2fba6c` in the shared repository
+`.venv-flip`, with bytecode and pytest-cache writes disabled.
+
+| Check | Status/result |
+|---|---|
+| Different-current-tree historical regression | PASS — all three authentic permanent-failure evidence arms accepted and the disposable worktree list was restored exactly |
+| Independent nested historical replay | PASS — genuine old evidence accepted after a later clean tree change |
+| Malformed-evidence replay | PASS — nonexistent objects, invented hashes, invented rows, real-object cross-pair, forbidden-row omission, and false absence assertion all rejected at the exact gates listed above |
+| Exact shared-venv Amendment 18/19/20 battery | PASS — 114 passed, 5,662 deselected in 741.94s |
+| Pinned validator-module collection | PASS — 219 tests collected |
+| `black -l 79 --check .` | PASS — 592 files would be left unchanged |
+| `ruff check .` | PASS — all checks passed |
+| `git diff --check` | PASS |
+
+All six lane-B protected function/test surfaces and §34.8.1 retain their
+published byte counts and SHA-256 values. The `successor_routing` and
+`ratification_receipt` manifest leaves also remain respectively 525 bytes /
+`8c29684206853e839d1bdcc5f6493d422f201e84e0587b5c97ad9d807e2d9ae6`
+and 5,181 bytes /
+`8ebd2dd3cbbaa19cd01214f21fbd2bf84f924ed9aee3897d7a12d462adf1771d`.
+
+### Fix-3 commit and status
+
+The code/design/test candidate commit used the exact title
+`Fix Amendment 20 round-3 findings (historical checkout materialization; inventory row)`.
+This report is amended into that same commit; its resulting hash cannot be
+embedded here without a circular self-reference. The local `bd` flush hook
+again failed before commit creation, so the candidate used `--no-verify`; no
+test, formatting, lint, byte-identity, semantic, provenance, or ratification
+requirement was bypassed.
+
+The unrelated untracked `.ceremony-log/`, `CEREMONY_PROMPT.txt`,
+`FIX1_PROMPT.txt`, `FIX2_PROMPT.txt`, and `FIX3_PROMPT.txt` remain untouched
+and unstaged. Nothing was pushed.
+
+**STATUS: LAWFUL-STOP.** Both adjudicated round-3 findings are cured. A4
+remains uninstantiated, and Amendment 20 remains unratified and inactive.

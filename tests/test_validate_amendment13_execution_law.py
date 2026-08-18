@@ -3826,7 +3826,10 @@ def test__amendment19_battery_authenticates_all_inherited_censuses(
 
 
 def test__amendment20_manifest_covers_dual_domains_and_campaign():
+    design_raw = (ROOT / a13.DESIGN_PATH).read_bytes()
+    projection = a13._parse_amendment20_projection(design_raw)
     manifest = a13.A20_NORMATIVE_MANIFEST
+    assert projection["normative_manifest"] == manifest
     a13._validate_a20_manifest_contract(manifest)
     assert manifest["controlling_external_records"] == [
         {
@@ -3884,6 +3887,19 @@ def test__amendment20_manifest_covers_dual_domains_and_campaign():
     assert len(campaign["fail_closed_kill_categories"]) == 15
     assert len(manifest["supersession_coverage"]) == 30
     assert any("30.2.2" in row for row in manifest["supersession_coverage"])
+    ten_name_disposition = b"then its own ten-name inventory."
+    assert design_raw.count(ten_name_disposition) == 1
+    with pytest.raises(
+        a13.LawError,
+        match="mutation inventory prose disposition drift",
+    ):
+        a13._parse_amendment20_projection(
+            design_raw.replace(
+                ten_name_disposition,
+                b"then its own nine-name inventory.",
+                1,
+            )
+        )
     identifiers = manifest["new_identifiers"]
     assert "a20_prompt_field_candidate_sets.v1" in identifiers["schema"]
     assert "a20_semantic_bindings.v1" not in identifiers["schema"]
