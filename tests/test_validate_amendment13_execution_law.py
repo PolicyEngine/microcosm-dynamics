@@ -58,6 +58,10 @@ A20_TEST_MUTATIONS = (
     "amendment20_terminal_pin_or_suffix_route_forged",
     "evidence_freeze_identity_shadow_or_status_forged",
     "failure_shadow_nonemission_provenance_forged",
+    "determined_as_source_underdetermined_without_ruling_forged",
+    "source_underdetermined_as_no_applicable_purpose_forged",
+    "source_underdetermined_a4_census_binding_forged",
+    "completed_ontology_new_arm_omitted",
 )
 
 
@@ -3896,16 +3900,16 @@ def test__amendment20_manifest_covers_dual_domains_and_campaign():
     assert len(campaign["fail_closed_kill_categories"]) == 15
     assert len(manifest["supersession_coverage"]) == 30
     assert any("30.2.2" in row for row in manifest["supersession_coverage"])
-    ten_name_disposition = b"then its own ten-name inventory."
-    assert design_raw.count(ten_name_disposition) == 1
+    fourteen_name_disposition = b"then its own fourteen-name inventory."
+    assert design_raw.count(fourteen_name_disposition) == 1
     with pytest.raises(
         a13.LawError,
         match="mutation inventory prose disposition drift",
     ):
         a13._parse_amendment20_projection(
             design_raw.replace(
-                ten_name_disposition,
-                b"then its own nine-name inventory.",
+                fourteen_name_disposition,
+                b"then its own thirteen-name inventory.",
                 1,
             )
         )
@@ -3996,16 +4000,49 @@ def test__amendment20_evidence_freeze_is_exactly_unready_not_failed():
 
 def test__amendment20_nonemission_provenance_mutation_is_pinned():
     mutation_raw = a13.canonical_json_bytes(list(A20_TEST_MUTATIONS))
-    assert A20_TEST_MUTATIONS[-1] == (
-        "failure_shadow_nonemission_provenance_forged"
+    assert A20_TEST_MUTATIONS[-4:] == (
+        "determined_as_source_underdetermined_without_ruling_forged",
+        "source_underdetermined_as_no_applicable_purpose_forged",
+        "source_underdetermined_a4_census_binding_forged",
+        "completed_ontology_new_arm_omitted",
     )
-    assert len(mutation_raw) == a13.A20_MUTATION_DOMAIN_BYTE_SIZE == 462
+    assert len(mutation_raw) == a13.A20_MUTATION_DOMAIN_BYTE_SIZE
     assert hashlib.sha256(mutation_raw).hexdigest() == (
         a13.A20_MUTATION_DOMAIN_SHA256
     )
-    assert a13.A20_MUTATION_DOMAIN_SHA256 == (
-        "10d1466f38f8184940130b89508ac68b60408f8156bef35f65e2c09082bb7d5f"
+
+
+def test__amendment20_completed_purpose_ontology_is_fail_closed():
+    purpose = a13.A20_PURPOSE_AUTHORITY_CONTRACT
+    assert purpose["completed_ontology_order"] == [
+        *a13.A19_OFFICIAL_PURPOSES,
+        "source_underdetermined",
+    ]
+    assert purpose["prompt_denominator_a4_freeze_slot"] is None
+    assert purpose["required_disposition_counts"] == {
+        "complete_official_mapping": None,
+        "source_underdetermined": None,
+        "U": 0,
+    }
+    assert purpose["source_underdetermined_count_a4_freeze_slot"] is None
+    assert purpose[
+        "source_underdetermined_requires_reconciled_adjudication_ruling"
+    ]
+    assert purpose[
+        "source_underdetermined_uses_determined_row_provenance_authentication"
+    ]
+    assert not purpose["source_underdetermined_is_no_applicable_purpose"]
+    assert purpose["source_backed_alternative_selected"] == (
+        "ontology_projection"
     )
+    assert not purpose["exact_row_agreement_is_authority_gate"]
+    assert purpose[
+        "macro_per_prompt_jaccard_minimum_calibration_diagnostic"
+    ] == ("90%")
+    r04 = a13.A20_R04_Q5_CONTRACT
+    assert not r04["purpose_totality_alone_passes_r04"]
+    assert r04["o_p_order"] == purpose["completed_ontology_order"]
+    assert r04["selector_purpose_domain"] == "completed_purpose_ontology"
 
 
 def test__amendment20_c68_and_zero_candidate_probes_fail_closed():
@@ -4833,10 +4870,8 @@ def test__amendment20_mutations_run_only_after_inherited_116(monkeypatch):
         sum(row["count"] for row in a13.A20_INHERITED_MUTATION_CENSUSES) == 116
     )
     raw = a13.canonical_json_bytes(list(rejected))
-    assert len(raw) == 462
-    assert hashlib.sha256(raw).hexdigest() == (
-        "10d1466f38f8184940130b89508ac68b60408f8156bef35f65e2c09082bb7d5f"
-    )
+    assert len(raw) == a13.A20_MUTATION_DOMAIN_BYTE_SIZE
+    assert hashlib.sha256(raw).hexdigest() == (a13.A20_MUTATION_DOMAIN_SHA256)
 
 
 def test__mutation_inventory__is_separate_and_exact(

@@ -342,8 +342,7 @@ AMENDMENT12_RATIFICATION_IDENTITY = {
     "dual_ratify_attestations": [dict(row) for row in RATIFY_ATTESTATIONS],
 }
 
-INCOMPATIBLE_PROOF_IDS = tuple(
-    """
+INCOMPATIBLE_PROOF_IDS = tuple("""
 rq-local-repeat-evidence:c93bb69e6a4c04717efd8b68e71799b5b4f3cb1c1c20a1b31afe2852d04dab67
 rq-local-repeat-evidence:0c25501bcb134ddd36f5f076978ebd01a02d3e731772c4ae5de182d81a76a487
 rq-local-repeat-alias-evidence:c7020c1c35780475871c3d0ddce0767b1fe22b6f6c45c79fbd03093519ffc716
@@ -372,8 +371,7 @@ rq-local-repeat-evidence:fd7a9eebc0d44fe9cf4ba8795b478b2d6a933b8aa42dd45d52cb561
 rq-local-repeat-evidence:bb6ce7690468d1ef2e0d4a22bfa831bf9b81f7824db8a9dd59e06df44434c877
 rq-local-repeat-evidence:525a55100f92a4f6f05e156d9d784029ea29126e2c5374195545513375b36e8c
 rq-local-repeat-evidence:a06a1898968a9dc0d44b34bbd5ca9efc9bb856a56bde685815ff6621d1f82b39
-""".split()
-)
+""".split())
 INCOMPATIBLE_PROOF_ID_DOMAIN_SHA256 = (
     "9c8cb11732939daac176275ae66dfa5a6ce61a2850c82087dd761a6431ac7412"
 )
@@ -507,8 +505,7 @@ FRAGMENT_INSTRUCTION_ID_DOMAIN_SHA256 = (
     "74075ac0ca54eff2a9459d4e95f426195c9e01db78040025462aa2f57f486a09"
 )
 
-DOC036_CLASSIFICATION_IDS = tuple(
-    """
+DOC036_CLASSIFICATION_IDS = tuple("""
 rq-local-anchor:6b757b140c4fdbcfcfe8b974f7894ffc856ab3dca240b7eb61530adca0e2d12a
 rq-local-anchor:11802d91128200f95abc1a42e5e39677f30c955da28e8b89bdc72e10ff8c11ef
 rq-local-anchor:daae302f7bdebd7a8ab43d983faaedecb97ac22f8a7ca7c3af92dbff1cb76de5
@@ -517,14 +514,12 @@ rq-local-anchor:930c509fadfdc037d5e03d65422cc7c3d3b86a9ec3adb7553e86d9654632d4ca
 rq-local-anchor:5a703e10bfd94a486c21d043d7ad980905870b908ea70b2f136c16e835e1a261
 rq-local-anchor:d6d21da4a96eda0e310284ca6cebc059f340e2bdaf2da64f56286d65a03fa283
 rq-local-anchor:93b5b7f3d32e6dda9e3fad1089fc4ba605502765e4de1735223637bc615fff29
-""".split()
-)
+""".split())
 DOC036_CLASSIFICATION_ID_DOMAIN_SHA256 = (
     "1d2271438f3d9a7744e1379ed26ce565ff2731ed0dd8dec357c0bd8a9a271d23"
 )
 
-LAW_GAP_IDS = tuple(
-    """
+LAW_GAP_IDS = tuple("""
 rq-local-repeat-evidence:0e380305f67b13fceef903d3e1c24590891a63e1beeefbc6953d58334baaf4e6
 rq-local-repeat-evidence:f3b859c0dbda01517b66f70b0652a84d0c0b048a38c4deea4477ea05d3be5045
 rq-local-repeat-evidence:da2954a94634f3371ef85000ce0db5f121f0968a6704264434573867c6522495
@@ -539,8 +534,7 @@ rq-local-repeat-alias-evidence:1c3c1a81c8d783c04813b7e1c0a5654ecab4f43d0ffd290c9
 rq-local-repeat-alias-evidence:c0fdbc2f6b82371351dbcf266ab083dba8c20cce3298e283012ec5c618bca868
 rq-local-repeat-evidence:5977fa11c007f370ece29867bc0d2b6c5d492990396b50d86959b1ec5ec87927
 rq-local-repeat-alias-evidence:1120df9c2c375e51c32b9a546f3dbbd176366ba6de7258c38c344dd84b5f0734
-""".split()
-)
+""".split())
 LAW_GAP_ID_DOMAIN_SHA256 = (
     "f2e8a5001527eb975887828ba3e66c3eeac95ec0972454bcef509fba92149883"
 )
@@ -2470,7 +2464,7 @@ A19_NORMATIVE_MANIFEST = {
 }
 
 A20_SECTION_SEMANTIC_SHA256: str | None = (
-    "639acea748e3a4170f315eaedea9aa43e3663cd011d36dcc7f9c386efecb554d"
+    "21e8e4bd2753b0ae1a5caf496323725c56fcb537232b60de449bed2a26c1071e"
 )
 A20_CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 A20_COMMON_IDENTITY_NAMES = [
@@ -2931,6 +2925,10 @@ A20_MISSING_REASON_AUTHORITY_CONTRACT = {
 }
 A20_PURPOSE_AUTHORITY_CONTRACT = {
     "official_purpose_order": A19_OFFICIAL_PURPOSES,
+    "completed_ontology_order": [
+        *A19_OFFICIAL_PURPOSES,
+        "source_underdetermined",
+    ],
     "purpose_authority_rule_row_keys": [
         "purpose_authority_source_id",
         "rule_kind",
@@ -2948,15 +2946,24 @@ A20_PURPOSE_AUTHORITY_CONTRACT = {
         "evidence_statement_ids",
         "explicit_official_purposes",
         "purpose_mapping_disposition",
+        "reconciled_adjudication_ruling_id",
     ],
-    "prompt_denominator": 21_971,
+    "prompt_denominator_a4_freeze_slot": None,
     "required_disposition_counts": {
-        "complete_official_mapping": 21_971,
-        "partial_official_mapping_with_legacy_residue_underdetermined": 0,
-        "legacy_only_mapping_underdetermined": 0,
-        "missing_mapping_underdetermined": 0,
+        "complete_official_mapping": None,
+        "source_underdetermined": None,
         "U": 0,
     },
+    "source_underdetermined_count_a4_freeze_slot": None,
+    "source_underdetermined_requires_reconciled_adjudication_ruling": True,
+    "source_underdetermined_uses_determined_row_provenance_authentication": True,
+    "source_underdetermined_means_authenticated_sources_determine_no_nonempty_subset": True,
+    "source_underdetermined_is_no_applicable_purpose": False,
+    "disposition_relation_total_under_completed_ontology": True,
+    "u_definition": "prompt_without_lawful_completed_ontology_disposition",
+    "authority_gate_uses_reconciled_outcomes": True,
+    "exact_row_agreement_is_authority_gate": False,
+    "macro_per_prompt_jaccard_minimum_calibration_diagnostic": "90%",
     "inherited_complete_rows_requiring_source_regrounding": 818,
     "manual_origin_grandfathering_permitted": False,
     "source_conflict_reopens_row": True,
@@ -2969,7 +2976,7 @@ A20_PURPOSE_AUTHORITY_CONTRACT = {
         "ontology_projection",
         "separately_tagged_no_applicable_purpose_arm",
     ],
-    "source_backed_alternative_selected": None,
+    "source_backed_alternative_selected": "ontology_projection",
     "source_classification_row_id_overload_forbidden": True,
 }
 A20_PROMPT_FIELD_SEMANTIC_BINDING_CONTRACT = {
@@ -3114,6 +3121,8 @@ A20_PROMPT_FIELD_SEMANTIC_BINDING_CONTRACT = {
         "purpose_expansion",
         "reverse_covers",
     ],
+    "post_o_p_relations_use_completed_purpose_ontology": True,
+    "post_o_p_exact_token_joins_without_silent_unions": True,
     "mandatory_ambiguity_regressions": ["Family", "Dl7./D17.", "D2."],
 }
 A20_R04_Q5_CONTRACT = {
@@ -3129,6 +3138,10 @@ A20_R04_Q5_CONTRACT = {
         "normal_only_R05_strict_certificate_and_dual_reconstruction",
     ],
     "purpose_totality_alone_passes_r04": False,
+    "selector_purpose_domain": "completed_purpose_ontology",
+    "o_p_order": [*A19_OFFICIAL_PURPOSES, "source_underdetermined"],
+    "purpose_expansion_domain": "completed_purpose_ontology",
+    "purpose_rule_projection_domain": "completed_purpose_ontology",
     "o_h_source_only": True,
     "o_h_precedes_o_p_on_normal_arm": True,
     "permitted_selector_input_reads": [
@@ -3693,7 +3706,7 @@ A20_SUCCESSOR_ROUTING_CONTRACT = {
     },
     "terminal_successor_state": "A20_SUCCESSOR_LIFECYCLE_COMPLETE",
 }
-A20_FULL_PINNED_BATTERY_COLLECTED = 219
+A20_FULL_PINNED_BATTERY_COLLECTED = 220
 A20_FULL_PINNED_BATTERY_COMMAND = (
     "executing_process_sys.executable -m pytest -q "
     "tests/test_validate_amendment13_execution_law.py"
@@ -3728,10 +3741,14 @@ A20_EXPECTED_MUTATIONS = (
     "amendment20_terminal_pin_or_suffix_route_forged",
     "evidence_freeze_identity_shadow_or_status_forged",
     "failure_shadow_nonemission_provenance_forged",
+    "determined_as_source_underdetermined_without_ruling_forged",
+    "source_underdetermined_as_no_applicable_purpose_forged",
+    "source_underdetermined_a4_census_binding_forged",
+    "completed_ontology_new_arm_omitted",
 )
-A20_MUTATION_DOMAIN_BYTE_SIZE = 462
+A20_MUTATION_DOMAIN_BYTE_SIZE = 667
 A20_MUTATION_DOMAIN_SHA256 = (
-    "10d1466f38f8184940130b89508ac68b60408f8156bef35f65e2c09082bb7d5f"
+    "e00e567040a3525f0ecf121cacf12c8aeeac90d31b63ad686d18e3ce1ffe9762"
 )
 A20_INHERITED_MUTATION_CENSUSES = [
     {
@@ -7202,15 +7219,31 @@ def _validate_a20_manifest_contract(
     purpose = manifest["purpose_authority"]
     _require(
         purpose["official_purpose_order"] == A19_OFFICIAL_PURPOSES
-        and purpose["prompt_denominator"] == 21_971
+        and purpose["completed_ontology_order"]
+        == [*A19_OFFICIAL_PURPOSES, "source_underdetermined"]
+        and purpose["prompt_denominator_a4_freeze_slot"] is None
         and purpose["required_disposition_counts"]
         == {
-            "complete_official_mapping": 21_971,
-            "partial_official_mapping_with_legacy_residue_underdetermined": 0,
-            "legacy_only_mapping_underdetermined": 0,
-            "missing_mapping_underdetermined": 0,
+            "complete_official_mapping": None,
+            "source_underdetermined": None,
             "U": 0,
         }
+        and purpose["source_underdetermined_count_a4_freeze_slot"] is None
+        and purpose[
+            "source_underdetermined_requires_reconciled_adjudication_ruling"
+        ]
+        is True
+        and purpose[
+            "source_underdetermined_uses_determined_row_provenance_authentication"
+        ]
+        is True
+        and purpose["source_underdetermined_is_no_applicable_purpose"] is False
+        and purpose["disposition_relation_total_under_completed_ontology"]
+        is True
+        and purpose["authority_gate_uses_reconciled_outcomes"] is True
+        and purpose["exact_row_agreement_is_authority_gate"] is False
+        and purpose["source_backed_alternative_selected"]
+        == "ontology_projection"
         and purpose["inherited_complete_rows_requiring_source_regrounding"]
         == 818
         and purpose["manual_origin_grandfathering_permitted"] is False
@@ -7299,6 +7332,12 @@ def _validate_a20_manifest_contract(
         r04["construction_order"] == A20_R04_Q5_CONTRACT["construction_order"]
         and r04["o_h_precedes_o_p_on_normal_arm"] is True
         and r04["purpose_totality_alone_passes_r04"] is False
+        and r04["selector_purpose_domain"] == "completed_purpose_ontology"
+        and r04["o_p_order"]
+        == [*A19_OFFICIAL_PURPOSES, "source_underdetermined"]
+        and r04["purpose_expansion_domain"] == "completed_purpose_ontology"
+        and r04["purpose_rule_projection_domain"]
+        == "completed_purpose_ontology"
         and "questionnaire_occurrence_rows"
         in r04["permitted_selector_input_reads"]
         and "questionnaire_occurrence_rows"
@@ -7506,13 +7545,13 @@ def _parse_amendment20_projection(raw: bytes) -> dict[str, Any]:
         "33.6_mutation_inventory_and_inherited_census"
     )
     _require(
-        len(manifest["mutation_inventory"]) == 10
+        len(manifest["mutation_inventory"]) == 14
         and supersession_rows[mutation_disposition_position]
         == [
             "§33.6 mutation inventory and inherited census",
             "Preserved as three A19 names after the earlier 113 attacks. "
             "A20 runs the five inherited censuses separately, then its "
-            "own ten-name inventory.",
+            "own fourteen-name inventory.",
         ],
         "Amendment-20 mutation inventory prose disposition drift",
     )
@@ -16783,6 +16822,59 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
             rejected.append(A20_EXPECTED_MUTATIONS[9])
         finally:
             ROOT = original_root
+
+    completed_ontology_variants = []
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["purpose_authority"][
+        "source_underdetermined_requires_reconciled_adjudication_ruling"
+    ] = False
+    completed_ontology_variants.append(
+        (
+            variant,
+            "determined row rewritten without an adjudication ruling",
+            A20_EXPECTED_MUTATIONS[10],
+        )
+    )
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["purpose_authority"][
+        "source_underdetermined_is_no_applicable_purpose"
+    ] = True
+    completed_ontology_variants.append(
+        (
+            variant,
+            "source-underdetermined/no-applicable-purpose conflation",
+            A20_EXPECTED_MUTATIONS[11],
+        )
+    )
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    variant["purpose_authority"][
+        "source_underdetermined_count_a4_freeze_slot"
+    ] = 1
+    completed_ontology_variants.append(
+        (
+            variant,
+            "underdetermined census disagreement with the A4 binding",
+            A20_EXPECTED_MUTATIONS[12],
+        )
+    )
+    variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    del variant["purpose_authority"]["required_disposition_counts"][
+        "source_underdetermined"
+    ]
+    completed_ontology_variants.append(
+        (
+            variant,
+            "completed disposition object missing the new arm",
+            A20_EXPECTED_MUTATIONS[13],
+        )
+    )
+    for variant, label, mutation_name in completed_ontology_variants:
+        _expect_law_error(
+            lambda variant=variant: _validate_a20_manifest_contract(variant),
+            "purpose-authority totality contract drift",
+            f"Amendment-20 {label}",
+        )
+        rejected.append(mutation_name)
 
     rejected_tuple = tuple(rejected)
     rejected_raw = canonical_json_bytes(list(rejected_tuple))

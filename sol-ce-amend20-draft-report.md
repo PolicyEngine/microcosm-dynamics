@@ -900,3 +900,80 @@ the pin replacement itself leaves the normalized semantic digest unchanged;
 the interregnum-branch prose in this section is report narrative, not §34
 text. The pinned battery collects 219 and passes 219 with the previously
 failing A13-era families green; exact runs are recorded on the fix-4a commit.
+
+## Fix-4b: source-backed purpose-gate ontology projection
+
+Fix-4b enacts the chartered option-(b) decision without changing authority or
+instantiating A4 evidence. Section 34.4 now completes the inherited purpose
+ontology with the exact `source_underdetermined` arm. That arm requires a
+reconciled adjudication ruling proving that authenticated sources determine no
+nonempty inherited-purpose subset, carries the same provenance authentication
+as determined rows, and is expressly distinct from the determined negative
+`no_applicable_purpose`.
+
+Every evidence-dependent purpose count is an A4 freeze-slot: the prompt
+denominator, determined census, and underdetermined census remain JSON null in
+the drafting manifest. `U` now counts prompts lacking any lawful completed-
+ontology disposition and remains required to equal zero. Reconciled outcomes,
+not exact-row agreement, gate authority; macro per-prompt Jaccard at or above
+90% survives only as a calibration diagnostic. The evidence citation records
+85.90% exact-row agreement, 90.17% macro Jaccard, and 61% of mismatches sharing
+at least one literal without hardcoding the determined/underdetermined census.
+
+The same draft extends the selector domain, `O_P` order, purpose expansion,
+post-`O_P` exact-token joins, reverse covers, and rule projections over the
+completed ontology. Silent unions and conflation remain forbidden. The
+machine contract keeps `purpose_totality_alone_passes_r04` false.
+
+Four new mutation rows reject: a determined row rewritten as
+`source_underdetermined` without its ruling; conflation into
+`no_applicable_purpose`; an underdetermined census disagreeing with its A4
+binding; and omission of the new arm from the disposition object. The A20
+inventory is therefore 14 names, 667 canonical bytes, raw SHA-256
+`e00e567040a3525f0ecf121cacf12c8aeeac90d31b63ad686d18e3ce1ffe9762`.
+
+### Fix-4b projection and pin closure
+
+| Field | Fix-4b value |
+|---|---|
+| Immutable revision-21 prefix | 4,025,587 bytes / `38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9` / blob `1eba7ff6366bad1999de36c9f7261ad6939ad86a` |
+| Fix-4b design | 4,170,813 bytes / `cb7c96b0b9b2fcf85fd13bf1e7be5de927f2427eb0fb232d45586174018528aa` / blob `5633652debd76805c6a39175bab01b7727f23b1f` |
+| Raw / normalized A20 suffix | 145,226 / 145,028 bytes |
+| Semantic-hash fixpoint | `21e8e4bd2753b0ae1a5caf496323725c56fcb537232b60de449bed2a26c1071e` |
+| §34.12 manifest | 54,005 bytes / `366011726a0c9543d8118081adfda9eeb6f8d38fa25d51a3c57b8e155bc9a8c8` |
+| Pinned validator-module inventory | 220 tests |
+
+The controlling §34.9.1 pins are:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `a980d3883e0b9f970688734483021cc22dccaf5c` | 662,294 | `ea29c2a5f50e113ef427ac12dc3a8988e0e0367ba0ef1da2090159beb20114d4` |
+| `tests/test_validate_amendment13_execution_law.py` | `a6f2501f93417e3131d3df36913746fe0dd1b4c7` | 185,060 | `fdea7cd33074a3f20b9e22dc73924c9ec5fb7c8c19de81e9754c6c6263d6e5ed` |
+| `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
+
+### Fix-4b verification
+
+| Check | Status/result |
+|---|---|
+| Full pinned validator battery | PASS — 220 passed in 585.98s; zero nonpassing |
+| A13-era sweeps | PASS — 22 tests |
+| A13-era repairs | PASS — 75 tests |
+| A13-era replay | PASS — 21 tests |
+| A13-era rebuild | PASS — 31 tests |
+| A13-era benchmarks | PASS — 10 tests |
+| Five-family combined execution | PASS — 159 passed in 1,282.90s |
+| Repository-established `black -l 79 --check .` | PASS |
+| `ruff check .` | PASS |
+| Immutable-prefix/boundary/terminal-LF check | PASS — exact prefix hash, one boundary, one suffix `\n## `, terminal LF |
+| `git diff --check` | PASS |
+
+The code/design/test candidate was committed with the exact title
+`Fix Amendment 20 fix-4b (purpose-gate ontology completion)`. This report and
+the ceremony-unique Fix-4b report are amended into that same commit, so its
+final hash is not embedded here. The production registry, `runs/`, and
+`gates.yaml` remain untouched. No staging file is committed and nothing is
+pushed.
+
+**STATUS: LAWFUL-STOP.** The purpose-gate ontology projection is complete and
+defensively enforced. A4 remains uninstantiated; Amendment 20 remains
+unratified and inactive.
