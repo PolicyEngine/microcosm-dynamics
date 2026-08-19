@@ -849,3 +849,54 @@ to the triggered recharter/capacity kill, completion and reconciliation of the
 resulting evidence program, the complete authenticated common objects, and
 either pass relations or exact failure shadows. Only then may execution
 restart at A4 step 1 from those bytes.
+
+## Fix-4a: lawful interregnum resolution for A13-era consumers
+
+The 2026-08-18 CI triage on PR #405 surfaced 120 shard-2 setup errors across
+the A12/A13-era catalog families. The root cause is architectural, not a
+draft edit gone wrong: this draft pins the fail-closed registry posture
+(`reject_unratified_a20_suffix: true`; the registry module byte-pinned by
+`A20_PRODUCTION_REGISTRY_IDENTITY`; registry changes reserved to the repin's
+scratch transition), and at revision 21 the production registry's suffix
+allowance is the vestigial Amendment-19 clause, so `design_binding()` lawfully
+aborts on every tree carrying the Amendment-20 suffix. The Amendment-19
+generation avoided this by having its draft open the registry's suffix window
+(the #398 precedent); this draft deliberately abandoned that architecture and
+must therefore supply the interregnum resolution the abandonment requires —
+otherwise the draft branch and post-merge master remain unregistrable until
+the revision-22 repin.
+
+Fix-4a supplies that resolution on the validator side and leaves the
+production registry byte-identical:
+
+1. `_interregnum_amendment20_design_binding()` fast-paths
+   `registry.design_binding()` and, only on `RegistrationAborted`, accepts
+   exactly one tree state — registry pins still at revision 21, worktree
+   equal to `HEAD`, and the complete immutable-prefix authentication of
+   `_amendment20_text` (pinned 4,025,587-byte prefix by SHA-256 and blob
+   OID, single boundary, single `\n## `, terminal LF) — answering with the
+   registry's own revision-21 identity. Every other deviation re-raises the
+   abort unchanged, and the revision-22 repin disarms the branch permanently
+   because the registry pins stop matching the revision-21 constants.
+2. `validate_ratification_operativity` gains the interregnum branch:
+   `terminal_amendment == revision - 1` is accepted only at revision 21 and
+   only after `_amendment20_text` re-authentication; the ordinary
+   `revision - 2` law is unchanged everywhere else.
+3. `test__closure__real_public_path_adapts_at_revision16` now distinguishes
+   the single lawful interregnum signature (real public path succeeds with
+   closure domain 13-19) from every other terminal/revision mismatch (still
+   must abort with the ordinary mismatch error and zero verifier calls).
+
+The controlling §34.9 implementation pins after fix-4a are:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `6a09abf1a4eec7e5c6bdbb3e33f2948509089d17` | 658,135 | `f835f94a0f62ab81103fecf08f0538ea253d9f3c7ab827a919633b9bf77756e7` |
+| `tests/test_validate_amendment13_execution_law.py` | `860b0655a4e5f61e96cb3eb61a7a99055d727407` | 183,461 | `b6ba215bbf5cc2d7c4b1b7a3fa588c4a4145b3f92c7fa02a2bf049e66aefbbb2` |
+| `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
+
+The §34.9.1 semantic projection normalizes exactly the ten pin captures, so
+the pin replacement itself leaves the normalized semantic digest unchanged;
+the interregnum-branch prose in this section is report narrative, not §34
+text. The pinned battery collects 219 and passes 219 with the previously
+failing A13-era families green; exact runs are recorded on the fix-4a commit.

@@ -1462,6 +1462,15 @@ def test__closure__real_public_path_adapts_at_revision16(monkeypatch):
 
     raw = (ROOT / a13.DESIGN_PATH).read_bytes()
     if a13._terminal_design_amendment(raw) != registry.DESIGN_REVISION - 2:
+        if (
+            registry.DESIGN_REVISION == 21
+            and a13._terminal_design_amendment(raw) == 20
+        ):
+            closures = a13.validate_ratification_operativity()
+            assert tuple(closures) == tuple(
+                range(a13.FIRST_CLOSURE_AMENDMENT, 20)
+            )
+            return
         verifier_calls = []
         context = _synthetic_registry_context(registry.DESIGN_REVISION)
         monkeypatch.setattr(
