@@ -56903,9 +56903,9 @@ bodies; collapsing them to one body aborts.
 
 Worked 1976 `V4632` example: prompt position 1,843 contains two exact `V4632`
 token matches. The first row carries the minimal byte interval of the first
-six-byte ASCII token and the second carries the disjoint minimal byte interval
-of the second six-byte token. Each interval is derived directly from the same
-authenticated prompt bytes. Across each of the three canonical field-source
+five-byte ASCII token and the second carries the disjoint minimal byte
+interval of the second five-byte token. Each interval is derived directly
+from the same authenticated prompt bytes. Across each of the three canonical field-source
 rows, the two spans therefore remain distinct; omitting, widening, equating,
 or deduplicating those coordinates aborts. The identical rule applies to the
 two `V4991` spans at position 1,938.
@@ -57567,7 +57567,7 @@ three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `8be8ee08046d66057bd5f7409b66d23941d0241e` | 666,439 | `e2ff05ae7deec7b152f320f750e0f5e1449304babf487d92083e6e3856d20bd7` |
+| `scripts/validate_amendment13_execution_law.py` | `dbb2ad81902e8f4b1f2e97de0e873429c45086a1` | 666,439 | `ea7cdf0f6639619ddef45537c45ac7fd20523cda011b1835632bf0f5aa42613a` |
 | `tests/test_validate_amendment13_execution_law.py` | `b91f8a193589f11ad1de9a2cf294e24e7d01996a` | 185,950 | `0447d19588bf9a4a929844e2be1bf28e5127f48c2becb12625c2cde08c22a458` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 

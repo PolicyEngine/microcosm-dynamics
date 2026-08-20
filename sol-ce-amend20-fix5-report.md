@@ -25,7 +25,7 @@ or changing the 1985 C68 disposition.
 ## Worked V4632 example
 
 At 1976 prompt position 1,843, the first and second literal `V4632` matches
-receive their own minimal six-byte ASCII token intervals in the authenticated
+receive their own minimal five-byte ASCII token intervals in the authenticated
 prompt bytes. Each of the three canonical field-source rows therefore retains
 two coordinate-distinct evidence bodies. Omitting or equating the spans
 aborts. The same law covers the two `V4991` matches at position 1,938.
