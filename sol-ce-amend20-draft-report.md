@@ -977,3 +977,21 @@ pushed.
 **STATUS: LAWFUL-STOP.** The purpose-gate ontology projection is complete and
 defensively enforced. A4 remains uninstantiated; Amendment 20 remains
 unratified and inactive.
+
+## Fix-4c: registry estimates tests learn the lawful interregnum
+
+Two `tests/estimates/test_covered_earnings_correction_registry.py` tests
+pinned the Amendment-19-era steady-state assumption that the worktree design
+always equals the ratified bytes and that `design_binding()` succeeds on a
+draft tree. Under this draft's fail-closed architecture the lawful
+Amendment-20 interregnum is a second, byte-exact state: both tests now accept
+either the pristine equality or exactly one authenticated Amendment-20 suffix
+over the byte-identical revision-21 prefix — and in the interregnum they
+assert the production gate still raises `RegistrationAborted` while the
+validator's `_interregnum_amendment20_design_binding()` answers with the same
+revision-21 identity. One revision-20-era prefix-preservation assertion now
+feeds `ratified_bytes` (equal to the old argument at steady state) so its
+meaning — the revision-21 design is the lawful Amendment-19-suffixed
+successor of revision 20 — is stated directly. The estimates module is
+outside the §34.9.1 pin table and the pinned battery; the 221-test module
+passes complete, and no pinned file changed in this round.
