@@ -2464,7 +2464,7 @@ A19_NORMATIVE_MANIFEST = {
 }
 
 A20_SECTION_SEMANTIC_SHA256: str | None = (
-    "21e8e4bd2753b0ae1a5caf496323725c56fcb537232b60de449bed2a26c1071e"
+    "f1f49f15a5d946712729614272fd92ee86e4e728b0e60eb51d907465557386ce"
 )
 A20_CANONICALIZATION = "python-json-sort-keys-compact-ascii-no-nan-lf-v1"
 A20_COMMON_IDENTITY_NAMES = [
@@ -2984,6 +2984,7 @@ A20_PROMPT_FIELD_SEMANTIC_BINDING_CONTRACT = {
         "prompt_field_evidence_id",
         "source_prompt_occurrence_id",
         "interview_wave",
+        "questionnaire_span",
         "prompt_source_locator_ids",
         "field_source_document_id",
         "field_source_row_id",
@@ -2994,6 +2995,39 @@ A20_PROMPT_FIELD_SEMANTIC_BINDING_CONTRACT = {
         "attachment_disposition",
         "candidate_raw_field_ids",
     ],
+    "questionnaire_span_keys": ["utf8_byte_start", "utf8_byte_end"],
+    "questionnaire_span_basis": "prompt_source_utf8_byte_half_open_interval",
+    "questionnaire_span_minimal_exact_identifier_token_match": True,
+    "questionnaire_span_bounds_strict_integers_excluding_booleans": True,
+    "questionnaire_span_requires_0_le_start_lt_end_le_prompt_byte_length": True,
+    "prompt_field_evidence_id_prefix": "psid-prompt-field-evidence:",
+    "prompt_field_evidence_id_preimage": [
+        "source_prompt_occurrence_id",
+        "interview_wave",
+        "questionnaire_span",
+        "prompt_source_locator_ids",
+        "field_source_document_id",
+        "field_source_row_id",
+        "field_source_member",
+        "raw_field_id",
+        "attachment_basis",
+        "official_alias_statement_ids",
+        "attachment_disposition",
+        "candidate_raw_field_ids",
+    ],
+    "prompt_field_evidence_id_canonicalization": A20_CANONICALIZATION,
+    "prompt_field_evidence_order": [
+        "complete_prompt_source_position",
+        "interview_wave",
+        "source_prompt_occurrence_id",
+        "questionnaire_span.utf8_byte_start",
+        "questionnaire_span.utf8_byte_end",
+        "attachment_branch_direct_before_question_token",
+        "field_reconstruction_document_row_member_order",
+    ],
+    "exact_duplicate_evidence_emission_aborts": True,
+    "coordinate_distinct_spans_must_have_distinct_row_bodies": True,
+    "coordinate_distinct_span_collapse_aborts": True,
     "construction_stage": "before_O_P",
     "positive_attachment_bases": [
         "exact_source_identifier",
@@ -3007,7 +3041,35 @@ A20_PROMPT_FIELD_SEMANTIC_BINDING_CONTRACT = {
     "candidate_sets_materialized": True,
     "zero_or_multiple_candidates_fail_without_source_resolution": True,
     "direct_identifier_priority_forbidden": True,
-    "known_singleton_collision_count": 46,
+    "collision_census": {
+        "domain": "historical_same_coordinate_leading_question_token_conflicts",
+        "complete_official_prompt_count": 818,
+        "multiple_count": 46,
+    },
+    "complete_official_prompt_candidate_census": {
+        "domain": "prompt_level_stable_unique_complete_candidate_union",
+        "complete_official_prompt_count": 818,
+        "multiple_count": 49,
+        "additional_noncollision_candidate_sets": [
+            {
+                "interview_wave": 1974,
+                "candidate_raw_field_ids": ["V3585", "V3586"],
+            },
+            {
+                "interview_wave": 1985,
+                "candidate_raw_field_ids": ["V11649", "V11648"],
+            },
+            {
+                "interview_wave": 1985,
+                "candidate_raw_field_ids": ["V11616", "V11676"],
+            },
+        ],
+    },
+    "full_prompt_candidate_census": {
+        "domain": "multiple_candidates_over_full_prompt_denominator",
+        "prompt_count": 21_971,
+        "multiple_count": 2_349,
+    },
     "c68_regression": {
         "source_prompt_occurrence_id": (
             "psid-questionnaire-occurrence:"
@@ -3745,10 +3807,11 @@ A20_EXPECTED_MUTATIONS = (
     "source_underdetermined_as_no_applicable_purpose_forged",
     "source_underdetermined_a4_census_binding_forged",
     "completed_ontology_new_arm_omitted",
+    "coordinate_distinct_questionnaire_spans_collapsed_to_one_body_forged",
 )
-A20_MUTATION_DOMAIN_BYTE_SIZE = 667
+A20_MUTATION_DOMAIN_BYTE_SIZE = 738
 A20_MUTATION_DOMAIN_SHA256 = (
-    "e00e567040a3525f0ecf121cacf12c8aeeac90d31b63ad686d18e3ce1ffe9762"
+    "eab546538a26abac04f559b73646bbca9d240832ae9d9ee82c6295a1462d0e2b"
 )
 A20_INHERITED_MUTATION_CENSUSES = [
     {
@@ -3935,6 +3998,7 @@ A20_NEW_IDENTIFIERS = {
         "changed_path_domain_sha256",
     ],
     "identity_prefix": [
+        "psid-prompt-field-evidence:",
         "psid-prompt-field-candidate-set:",
         "psid-zero-candidate-positive-group:",
         "a20-lifecycle-output:",
@@ -7257,7 +7321,32 @@ def _validate_a20_manifest_contract(
     )
     prompt = manifest["prompt_field_semantic_binding"]
     _require(
-        prompt["known_singleton_collision_count"] == 46
+        prompt["collision_census"]
+        == {
+            "domain": (
+                "historical_same_coordinate_leading_question_token_conflicts"
+            ),
+            "complete_official_prompt_count": 818,
+            "multiple_count": 46,
+        }
+        and prompt["complete_official_prompt_candidate_census"]
+        == A20_PROMPT_FIELD_SEMANTIC_BINDING_CONTRACT[
+            "complete_official_prompt_candidate_census"
+        ]
+        and prompt["full_prompt_candidate_census"]
+        == {
+            "domain": "multiple_candidates_over_full_prompt_denominator",
+            "prompt_count": 21_971,
+            "multiple_count": 2_349,
+        }
+        and len(prompt["prompt_field_row_keys"]) == 13
+        and prompt["questionnaire_span_keys"]
+        == ["utf8_byte_start", "utf8_byte_end"]
+        and prompt["prompt_field_evidence_id_prefix"]
+        == "psid-prompt-field-evidence:"
+        and len(prompt["prompt_field_evidence_id_preimage"]) == 12
+        and prompt["coordinate_distinct_span_collapse_aborts"] is True
+        and prompt["exact_duplicate_evidence_emission_aborts"] is True
         and prompt["c68_regression"]["candidate_raw_field_ids"]
         == ["V11804", "V11805"]
         and prompt["c68_regression"]["draft_disposition"]
@@ -7545,13 +7634,13 @@ def _parse_amendment20_projection(raw: bytes) -> dict[str, Any]:
         "33.6_mutation_inventory_and_inherited_census"
     )
     _require(
-        len(manifest["mutation_inventory"]) == 14
+        len(manifest["mutation_inventory"]) == 15
         and supersession_rows[mutation_disposition_position]
         == [
             "§33.6 mutation inventory and inherited census",
             "Preserved as three A19 names after the earlier 113 attacks. "
             "A20 runs the five inherited censuses separately, then its "
-            "own fourteen-name inventory.",
+            "own fifteen-name inventory.",
         ],
         "Amendment-20 mutation inventory prose disposition drift",
     )
@@ -16126,7 +16215,7 @@ def run_amendment19_member_law_mutation_tests() -> tuple[str, ...]:
 
 
 def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
-    """Authenticate the inherited censuses, then run ten A20 attack groups."""
+    """Authenticate inherited censuses, then run closed A20 mutations."""
 
     global ROOT
 
@@ -16433,8 +16522,8 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
     ] = ["V11804"]
     prompt_variants.append(variant)
     variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
-    variant["prompt_field_semantic_binding"][
-        "known_singleton_collision_count"
+    variant["prompt_field_semantic_binding"]["collision_census"][
+        "multiple_count"
     ] = 45
     prompt_variants.append(variant)
     variant = copy.deepcopy(A20_NORMATIVE_MANIFEST)
@@ -16875,6 +16964,17 @@ def run_amendment20_contract_mutation_tests() -> tuple[str, ...]:
             f"Amendment-20 {label}",
         )
         rejected.append(mutation_name)
+
+    collapsed_span = copy.deepcopy(A20_NORMATIVE_MANIFEST)
+    collapsed_span["prompt_field_semantic_binding"][
+        "coordinate_distinct_span_collapse_aborts"
+    ] = False
+    _expect_law_error(
+        lambda: _validate_a20_manifest_contract(collapsed_span),
+        "prompt-field or semantic-binding contract drift",
+        "Amendment-20 coordinate-distinct questionnaire spans collapsed",
+    )
+    rejected.append(A20_EXPECTED_MUTATIONS[14])
 
     rejected_tuple = tuple(rejected)
     rejected_raw = canonical_json_bytes(list(rejected_tuple))

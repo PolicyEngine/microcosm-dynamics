@@ -62,6 +62,7 @@ A20_TEST_MUTATIONS = (
     "source_underdetermined_as_no_applicable_purpose_forged",
     "source_underdetermined_a4_census_binding_forged",
     "completed_ontology_new_arm_omitted",
+    "coordinate_distinct_questionnaire_spans_collapsed_to_one_body_forged",
 )
 
 
@@ -3900,16 +3901,16 @@ def test__amendment20_manifest_covers_dual_domains_and_campaign():
     assert len(campaign["fail_closed_kill_categories"]) == 15
     assert len(manifest["supersession_coverage"]) == 30
     assert any("30.2.2" in row for row in manifest["supersession_coverage"])
-    fourteen_name_disposition = b"then its own fourteen-name inventory."
-    assert design_raw.count(fourteen_name_disposition) == 1
+    fifteen_name_disposition = b"then its own fifteen-name inventory."
+    assert design_raw.count(fifteen_name_disposition) == 1
     with pytest.raises(
         a13.LawError,
         match="mutation inventory prose disposition drift",
     ):
         a13._parse_amendment20_projection(
             design_raw.replace(
-                fourteen_name_disposition,
-                b"then its own thirteen-name inventory.",
+                fifteen_name_disposition,
+                b"then its own fourteen-name inventory.",
                 1,
             )
         )
@@ -3917,6 +3918,7 @@ def test__amendment20_manifest_covers_dual_domains_and_campaign():
     assert "a20_prompt_field_candidate_sets.v1" in identifiers["schema"]
     assert "a20_semantic_bindings.v1" not in identifiers["schema"]
     assert identifiers["identity_prefix"] == [
+        "psid-prompt-field-evidence:",
         "psid-prompt-field-candidate-set:",
         "psid-zero-candidate-positive-group:",
         "a20-lifecycle-output:",
@@ -4000,11 +4002,12 @@ def test__amendment20_evidence_freeze_is_exactly_unready_not_failed():
 
 def test__amendment20_nonemission_provenance_mutation_is_pinned():
     mutation_raw = a13.canonical_json_bytes(list(A20_TEST_MUTATIONS))
-    assert A20_TEST_MUTATIONS[-4:] == (
+    assert A20_TEST_MUTATIONS[-5:] == (
         "determined_as_source_underdetermined_without_ruling_forged",
         "source_underdetermined_as_no_applicable_purpose_forged",
         "source_underdetermined_a4_census_binding_forged",
         "completed_ontology_new_arm_omitted",
+        "coordinate_distinct_questionnaire_spans_collapsed_to_one_body_forged",
     )
     assert len(mutation_raw) == a13.A20_MUTATION_DOMAIN_BYTE_SIZE
     assert hashlib.sha256(mutation_raw).hexdigest() == (
@@ -4047,7 +4050,25 @@ def test__amendment20_completed_purpose_ontology_is_fail_closed():
 
 def test__amendment20_c68_and_zero_candidate_probes_fail_closed():
     contract = a13.A20_PROMPT_FIELD_SEMANTIC_BINDING_CONTRACT
-    assert contract["known_singleton_collision_count"] == 46
+    assert contract["collision_census"] == {
+        "domain": "historical_same_coordinate_leading_question_token_conflicts",
+        "complete_official_prompt_count": 818,
+        "multiple_count": 46,
+    }
+    assert (
+        contract["complete_official_prompt_candidate_census"]["multiple_count"]
+        == 49
+    )
+    assert contract["full_prompt_candidate_census"] == {
+        "domain": "multiple_candidates_over_full_prompt_denominator",
+        "prompt_count": 21_971,
+        "multiple_count": 2_349,
+    }
+    assert contract["prompt_field_row_keys"][3] == "questionnaire_span"
+    assert contract["prompt_field_evidence_id_prefix"] == (
+        "psid-prompt-field-evidence:"
+    )
+    assert contract["coordinate_distinct_span_collapse_aborts"]
     assert contract["c68_regression"] == {
         "source_prompt_occurrence_id": (
             "psid-questionnaire-occurrence:"

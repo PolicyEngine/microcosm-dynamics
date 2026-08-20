@@ -995,3 +995,37 @@ meaning — the revision-21 design is the lawful Amendment-19-suffixed
 successor of revision 20 — is stated directly. The estimates module is
 outside the §34.9.1 pin table and the pinned battery; the 221-test module
 passes complete, and no pinned file changed in this round.
+
+## Fix-5: limb-IV span, identifier, and census-domain law
+
+Fix-5 closes the three constructibility gaps found independently by both
+limb-IV builders. Section 34.5.1 now has a 13-key evidence schema containing
+the minimal exact-match questionnaire UTF-8 byte span; enacts the
+`psid-prompt-field-evidence:` prefix, complete 12-member ID preimage, complete
+row order, and duplicate/collapsed-span abort law; and gives the repeated 1976
+`V4632` and `V4991` matches distinct bodies by construction.
+
+The 46, 49, and 2,349 observations now quantify separate exact domains: the
+historical same-coordinate leading-question-token collision census among 818
+complete-official prompts; the complete stable-unique candidate union over
+those 818; and `multiple_candidates` over all 21,971 prompts. The three extra
+complete-official multiples are ordinary noncollision evidence. All counts
+remain freeze-slots, and the C68 row remains exactly `unresolved_multiple`.
+
+The A20 mutation inventory adds the coordinate-distinct-span-collapse
+rejection vector and is repinned to 738 bytes / SHA-256
+`eab546538a26abac04f559b73646bbca9d240832ae9d9ee82c6295a1462d0e2b`.
+The §34.12 projection, identifier inventory, semantic fixpoint, and §34.9.1
+implementation rows are recomputed. Full verification receipts are in
+`sol-ce-amend20-fix5-report.md`.
+
+The exact pinned battery passes 220/220 in 545.76s. The combined five
+historical A13 families plus estimates produced 796 passes and one
+environment-only estimates import-root failure when the shared venv selected
+the parent checkout; rerunning estimates with the prescribed
+`PYTHONPATH=src:.` passes 638/638 in 27.10s. Ruff and diff checks pass. Changed
+Python files pass installed Black 25.11.0 at line length 79. The required
+`uvx black@latest` wrapper could not resolve PyPI after repeated DNS retries;
+the repository-wide installed-Black check also reports pre-existing unrelated
+format drift in `scripts/build_amendment12_rq_catalog_pilot.py`, which fix-5
+does not change.
