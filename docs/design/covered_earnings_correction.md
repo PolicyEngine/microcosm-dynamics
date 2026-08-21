@@ -56960,9 +56960,14 @@ Each `prompt_field_candidate_set_rows` member has exactly
 `prompt_field_candidate_set_id`, `source_prompt_occurrence_id`,
 `interview_wave`, `candidate_prompt_field_evidence_ids`,
 `candidate_raw_field_ids`, `candidate_count`, and `candidate_disposition`.
-The two candidate arrays are the complete stable-unique §34.5.1 projections
-in source order; count is a JSON integer excluding booleans and equals the
-raw-field array length. Disposition is exactly `zero_candidates`,
+For each prompt, before the independent §34.5.1 evidence-row sort, the
+candidate projection stream concatenates all direct-branch evidence events
+in questionnaire-span then field-reconstruction order and then all
+question-token-branch events in the same within-branch order;
+`candidate_prompt_field_evidence_ids` and `candidate_raw_field_ids` are
+respectively the complete stable-unique `prompt_field_evidence_id` and
+scalar `raw_field_id` projections of that one stream. Count is a JSON
+integer excluding booleans and equals the raw-field array length. Disposition is exactly `zero_candidates`,
 `one_candidate`, or `multiple_candidates` iff count is respectively zero,
 one, or greater than one. The ID is literal
 `psid-prompt-field-candidate-set:` plus SHA-256 of terminal-LF canonical JSON
@@ -57567,7 +57572,7 @@ three path/blob/byte/hash rows:
 
 | Path | Git blob | Bytes | Raw SHA-256 |
 |---|---|---:|---|
-| `scripts/validate_amendment13_execution_law.py` | `dbb2ad81902e8f4b1f2e97de0e873429c45086a1` | 666,439 | `ea7cdf0f6639619ddef45537c45ac7fd20523cda011b1835632bf0f5aa42613a` |
+| `scripts/validate_amendment13_execution_law.py` | `5a8f318b8ea24b3ca22c71e874eae22ba9f4fa3e` | 666,439 | `2e1f07f849743f09a0cb6ec07033b1b379e5b62696c7451ed45bbe2e306e9f90` |
 | `tests/test_validate_amendment13_execution_law.py` | `b91f8a193589f11ad1de9a2cf294e24e7d01996a` | 185,950 | `0447d19588bf9a4a929844e2be1bf28e5127f48c2becb12625c2cde08c22a458` |
 | `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
 
