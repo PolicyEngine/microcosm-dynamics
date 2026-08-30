@@ -8,6 +8,40 @@
     "pr_state": "open; draft ratified through round 6.2",
     "next_ceremony": "A4 evidence freeze, then the C20 ratification chain toward revision 22"
   },
+  "foundations": [
+    {
+      "text": "The Dynamics paper: the full design, the benchmark comparison against DYNASIM, MINT, and CBOLT, and the evaluation plan.",
+      "href": "https://microcosm.institute/dynamics/paper"
+    },
+    {
+      "text": "The population-view scoring harness: geometry blocks, trajectory windows, and the moment battery that scores candidate models.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/tree/master/src/populace_dynamics/harness"
+    },
+    {
+      "text": "Label-verified PSID readers building the 1968–2022 head/spouse earnings panel, plus the demographic and earnings data modules around it.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/tree/master/src/populace_dynamics/data"
+    },
+    {
+      "text": "A statutory Social Security benefit oracle (AIME/PIA) whose parameters load from PolicyEngine-US.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/tree/master/src/populace_dynamics/ss"
+    },
+    {
+      "text": "A locked, pre-registered evaluation contract: gate-1 thresholds are ratified and change only through public amendment plus a fresh referee round.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/blob/master/gates.yaml"
+    },
+    {
+      "text": "145 committed evidence artifacts — noise floors, gate runs, sensitivities — each pinned by reproduction tests.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/tree/master/runs"
+    },
+    {
+      "text": "The covered-earnings correction design itself, advanced through adversarial referee review to registry revision 21, with Amendment 20 in the ceremony pipeline.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/pull/405"
+    },
+    {
+      "text": "A public timeline-forecast ledger: 21 registered entries, every revision with its reasons on the record.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/blob/master/docs/forecasts/timeline_ledger.json"
+    }
+  ],
   "arms": [
     {
       "key": "purpose",

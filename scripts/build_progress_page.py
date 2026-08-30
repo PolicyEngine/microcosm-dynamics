@@ -58,6 +58,16 @@ def build() -> str:
         f"{fw['pr_state']}; next step, the {fw['next_ceremony']}.)\n"
     )
 
+    parts.append("## Already built\n")
+    parts.append(
+        "The foundations below are complete and in the repository "
+        "today; the campaign tracked on this page is the verification "
+        "layer on top of them.\n"
+    )
+    for f in data.get("foundations", []):
+        parts.append(f"- [{f['text']}]({f['href']})")
+    parts.append("")
+
     parts.append("## Verification arms\n")
     for arm in data["arms"]:
         pct = 100.0 * arm["done"] / arm["total"]

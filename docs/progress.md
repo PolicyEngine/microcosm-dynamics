@@ -6,6 +6,19 @@
 
 Dynamics builds Social Security earnings histories from the PSID, and the corrected covered-earnings series is only as credible as the reading of the source documentation beneath it. Before that series ships, every piece of documentation the construction relies on is independently verified by the three arms below; the design is pre-registered and ratifies only when they complete. (Internally: the evidence campaign behind Amendment 20 (two-arm evidence charter for the covered-earnings correction design), under review in PR #405, open; draft ratified through round 6.2; next step, the A4 evidence freeze, then the C20 ratification chain toward revision 22.)
 
+## Already built
+
+The foundations below are complete and in the repository today; the campaign tracked on this page is the verification layer on top of them.
+
+- [The Dynamics paper: the full design, the benchmark comparison against DYNASIM, MINT, and CBOLT, and the evaluation plan.](https://microcosm.institute/dynamics/paper)
+- [The population-view scoring harness: geometry blocks, trajectory windows, and the moment battery that scores candidate models.](https://github.com/PolicyEngine/microcosm-dynamics/tree/master/src/populace_dynamics/harness)
+- [Label-verified PSID readers building the 1968–2022 head/spouse earnings panel, plus the demographic and earnings data modules around it.](https://github.com/PolicyEngine/microcosm-dynamics/tree/master/src/populace_dynamics/data)
+- [A statutory Social Security benefit oracle (AIME/PIA) whose parameters load from PolicyEngine-US.](https://github.com/PolicyEngine/microcosm-dynamics/tree/master/src/populace_dynamics/ss)
+- [A locked, pre-registered evaluation contract: gate-1 thresholds are ratified and change only through public amendment plus a fresh referee round.](https://github.com/PolicyEngine/microcosm-dynamics/blob/master/gates.yaml)
+- [145 committed evidence artifacts — noise floors, gate runs, sensitivities — each pinned by reproduction tests.](https://github.com/PolicyEngine/microcosm-dynamics/tree/master/runs)
+- [The covered-earnings correction design itself, advanced through adversarial referee review to registry revision 21, with Amendment 20 in the ceremony pipeline.](https://github.com/PolicyEngine/microcosm-dynamics/pull/405)
+- [A public timeline-forecast ledger: 21 registered entries, every revision with its reasons on the record.](https://github.com/PolicyEngine/microcosm-dynamics/blob/master/docs/forecasts/timeline_ledger.json)
+
 ## Verification arms
 
 
