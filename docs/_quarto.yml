@@ -10,20 +10,21 @@ book:
       affiliation: PolicyEngine
   date: "2026"
   favicon: favicon.ico
-  repo-url: https://github.com/PolicyEngine/populace-dynamics
+  repo-url: https://github.com/PolicyEngine/microcosm-dynamics
   repo-actions: [edit, issue]
-  site-url: https://policyengine.github.io/populace-dynamics
+  site-url: https://policyengine.github.io/microcosm-dynamics
   sidebar:
     logo: policyengine.png
   page-footer:
     left: "Copyright 2026, Max Ghenis"
     right:
       - text: GitHub
-        href: https://github.com/PolicyEngine/populace-dynamics
+        href: https://github.com/PolicyEngine/microcosm-dynamics
       - text: PolicyEngine
         href: https://policyengine.org
   chapters:
     - index.md
+    - progress.md
     - funder-summary.md
     - domains-of-validity.md
     - policy-applications.md
