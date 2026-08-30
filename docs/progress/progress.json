@@ -12,7 +12,7 @@
     {
       "key": "purpose",
       "label": "Prompt-purpose census",
-      "description": "Rank-by-rank purpose adjudication over the residual prompt domain. Each block runs a full pass, a dense audit, and a correction sweep before its entries are adopted into the governing ledger (now v1.42).",
+      "description": "Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.",
       "done": 11260,
       "total": 20815,
       "unit": "prompts adopted (contiguous R1–R11260)"
@@ -20,7 +20,7 @@
     {
       "key": "a3",
       "label": "A3 classification arm",
-      "description": "Systematic classification of the compiled 41,103-row variable queue under the class library (v1.19), in 800-rank blocks with 20% dense audits and correction sweeps.",
+      "description": "Deciding how zeros and missing readings in the source data should be interpreted — a true zero, a question that was never asked, or an inapplicable route — across a 41,103-row queue of PSID variable readings, in 800-row blocks with 20% independent audits and correction sweeps.",
       "done": 34400,
       "total": 41103,
       "unit": "queue rows final-adopted"
@@ -28,7 +28,7 @@
     {
       "key": "q5",
       "label": "Q5 semantic annotation",
-      "description": "Per-document binding-array annotation of the PSID questionnaire corpus: two independent lanes per document, then a reconciliation that seals a table of record.",
+      "description": "Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.",
       "done": 33,
       "total": 257,
       "unit": "documents sealed"

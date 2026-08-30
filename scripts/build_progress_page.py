@@ -47,12 +47,15 @@ def build() -> str:
     )
     fw = data["framework"]
     parts.append(
-        "This page tracks the evidence campaign behind "
-        f"{fw['amendment']}: three verification arms that must complete "
-        "before the A4 evidence freeze and the ratification ceremony. "
-        f"The design itself is under review in PR #{fw['pr']} "
-        f"({fw['pr_state']}); the next ceremony step is the "
-        f"{fw['next_ceremony']}.\n"
+        "Dynamics builds Social Security earnings histories from the "
+        "PSID, and the corrected covered-earnings series is only as "
+        "credible as the reading of the source documentation beneath "
+        "it. Before that series ships, every piece of documentation "
+        "the construction relies on is independently verified by the "
+        "three arms below; the design is pre-registered and ratifies "
+        "only when they complete. (Internally: the evidence campaign "
+        f"behind {fw['amendment']}, under review in PR #{fw['pr']}, "
+        f"{fw['pr_state']}; next step, the {fw['next_ceremony']}.)\n"
     )
 
     parts.append("## Verification arms\n")

@@ -4,7 +4,7 @@
 
 *Snapshot as of 2026-08-30T11:15:00Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
 
-This page tracks the evidence campaign behind Amendment 20 (two-arm evidence charter for the covered-earnings correction design): three verification arms that must complete before the A4 evidence freeze and the ratification ceremony. The design itself is under review in PR #405 (open; draft ratified through round 6.2); the next ceremony step is the A4 evidence freeze, then the C20 ratification chain toward revision 22.
+Dynamics builds Social Security earnings histories from the PSID, and the corrected covered-earnings series is only as credible as the reading of the source documentation beneath it. Before that series ships, every piece of documentation the construction relies on is independently verified by the three arms below; the design is pre-registered and ratifies only when they complete. (Internally: the evidence campaign behind Amendment 20 (two-arm evidence charter for the covered-earnings correction design), under review in PR #405, open; draft ratified through round 6.2; next step, the A4 evidence freeze, then the C20 ratification chain toward revision 22.)
 
 ## Verification arms
 
@@ -22,7 +22,7 @@ This page tracks the evidence campaign behind Amendment 20 (two-arm evidence cha
                 width: 54.1%;"></div>
   </div>
   <div style="font-size: 0.9em; color: #555;">prompts adopted (contiguous R1–R11260).
-  Rank-by-rank purpose adjudication over the residual prompt domain. Each block runs a full pass, a dense audit, and a correction sweep before its entries are adopted into the governing ledger (now v1.42).</div>
+  Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.</div>
 </div>
 
 
@@ -39,7 +39,7 @@ This page tracks the evidence campaign behind Amendment 20 (two-arm evidence cha
                 width: 83.7%;"></div>
   </div>
   <div style="font-size: 0.9em; color: #555;">queue rows final-adopted.
-  Systematic classification of the compiled 41,103-row variable queue under the class library (v1.19), in 800-rank blocks with 20% dense audits and correction sweeps.</div>
+  Deciding how zeros and missing readings in the source data should be interpreted — a true zero, a question that was never asked, or an inapplicable route — across a 41,103-row queue of PSID variable readings, in 800-row blocks with 20% independent audits and correction sweeps.</div>
 </div>
 
 
@@ -56,7 +56,7 @@ This page tracks the evidence campaign behind Amendment 20 (two-arm evidence cha
                 width: 12.8%;"></div>
   </div>
   <div style="font-size: 0.9em; color: #555;">documents sealed.
-  Per-document binding-array annotation of the PSID questionnaire corpus: two independent lanes per document, then a reconciliation that seals a table of record.</div>
+  Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.</div>
 </div>
 
 ## Timeline forecast
