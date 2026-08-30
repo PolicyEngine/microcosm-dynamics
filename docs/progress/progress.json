@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "description": "Data behind docs/progress.md (the development-progress dashboard). Update this file and run `python scripts/build_progress_page.py`; never edit docs/progress.md by hand.",
+  "as_of": "2026-08-30T11:15:00Z",
+  "framework": {
+    "amendment": "Amendment 20 (two-arm evidence charter for the covered-earnings correction design)",
+    "pr": 405,
+    "pr_state": "open; draft ratified through round 6.2",
+    "next_ceremony": "A4 evidence freeze, then the C20 ratification chain toward revision 22"
+  },
+  "arms": [
+    {
+      "key": "purpose",
+      "label": "Prompt-purpose census",
+      "description": "Rank-by-rank purpose adjudication over the residual prompt domain. Each block runs a full pass, a dense audit, and a correction sweep before its entries are adopted into the governing ledger (now v1.42).",
+      "done": 11260,
+      "total": 20815,
+      "unit": "prompts adopted (contiguous R1–R11260)"
+    },
+    {
+      "key": "a3",
+      "label": "A3 classification arm",
+      "description": "Systematic classification of the compiled 41,103-row variable queue under the class library (v1.19), in 800-rank blocks with 20% dense audits and correction sweeps.",
+      "done": 34400,
+      "total": 41103,
+      "unit": "queue rows final-adopted"
+    },
+    {
+      "key": "q5",
+      "label": "Q5 semantic annotation",
+      "description": "Per-document binding-array annotation of the PSID questionnaire corpus: two independent lanes per document, then a reconciliation that seals a table of record.",
+      "done": 33,
+      "total": 257,
+      "unit": "documents sealed"
+    }
+  ],
+  "forecast": {
+    "ledger_entry": 21,
+    "registered_at": "2026-08-20",
+    "milestones": [
+      {
+        "name": "Milestone A — revision-22 ratification (A20 framework operative)",
+        "p50": "2026-09-08",
+        "p80": "2026-09-22",
+        "note": "Not gated by the Q5 program; requires the A4 evidence freeze and the C20 ceremony chain."
+      },
+      {
+        "name": "Milestone B — corrected-earnings successor authority and publication (the resolution event)",
+        "p50": "2026-10-14",
+        "p80": "2026-12-02",
+        "note": "Gated by the Q5 program, the span/collapse cure (discharged), and completion of the purpose census."
+      }
+    ]
+  },
+  "milestones": [
+    {
+      "date": "2026-08-30",
+      "text": "E3 questionnaire era completed and the E4 era opened overnight; f94 complete; purpose census reaches 54.10% contiguous. A3 reaches the 1968-era queue boundary (83.7%). Q5 seals documents 048–049 (33/257)."
+    },
+    {
+      "date": "2026-08-29",
+      "text": "Purpose census crosses 50% of the residual domain (contiguous R1–R10457 = 50.24%); q93 B+C complete."
+    },
+    {
+      "date": "2026-08-28",
+      "text": "f91 complete; purpose census at 43.11% contiguous; governing ledger reaches v1.26."
+    },
+    {
+      "date": "2026-08-26",
+      "text": "f89-era tranche closed: contiguous R1–R8552 = 41.09%; every rank of the 1,920-rank tranche went through pass, dense audit, adjudication where audits split, and correction sweep."
+    },
+    {
+      "date": "2026-08-20",
+      "text": "Timeline-forecast entry 21 registered: scope bifurcation into milestones A and B."
+    }
+  ],
+  "links": [
+    {
+      "text": "Amendment 20 draft (PR #405)",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/pull/405"
+    },
+    {
+      "text": "Pre-registered gate contract (gates.yaml)",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/blob/master/gates.yaml"
+    },
+    {
+      "text": "Timeline forecast ledger (machine-readable)",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/blob/master/docs/forecasts/timeline_ledger.json"
+    },
+    {
+      "text": "The Populace dynamics paper",
+      "href": "https://populace.dev/papers/dynamics"
+    }
+  ]
+}
