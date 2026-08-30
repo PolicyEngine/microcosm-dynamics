@@ -1,34 +1,68 @@
 {
   "schema_version": 1,
   "description": "Data behind docs/progress.md (the development-progress dashboard). Update this file and run `python scripts/build_progress_page.py`; never edit docs/progress.md by hand.",
-  "as_of": "2026-08-30T11:15:00Z",
+  "as_of": "2026-08-30T13:30:00Z",
   "framework": {
     "amendment": "Amendment 20 (two-arm evidence charter for the covered-earnings correction design)",
     "pr": 405,
     "pr_state": "open; draft ratified through round 6.2",
     "next_ceremony": "A4 evidence freeze, then the C20 ratification chain toward revision 22"
   },
+  "foundations": [
+    {
+      "text": "The Dynamics paper: the full design, the benchmark comparison against DYNASIM, MINT, and CBOLT, and the evaluation plan.",
+      "href": "https://microcosm.institute/dynamics/paper"
+    },
+    {
+      "text": "The population-view scoring harness: geometry blocks, trajectory windows, and the moment battery that scores candidate models.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/tree/master/src/populace_dynamics/harness"
+    },
+    {
+      "text": "Label-verified PSID readers building the 1968–2022 head/spouse earnings panel, plus the demographic and earnings data modules around it.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/tree/master/src/populace_dynamics/data"
+    },
+    {
+      "text": "A statutory Social Security benefit oracle (AIME/PIA) whose parameters load from PolicyEngine-US.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/tree/master/src/populace_dynamics/ss"
+    },
+    {
+      "text": "A locked, pre-registered evaluation contract: gate-1 thresholds are ratified and change only through public amendment plus a fresh referee round.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/blob/master/gates.yaml"
+    },
+    {
+      "text": "145 committed evidence artifacts — noise floors, gate runs, sensitivities — each pinned by reproduction tests.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/tree/master/runs"
+    },
+    {
+      "text": "The covered-earnings correction design itself, advanced through adversarial referee review to registry revision 21, with Amendment 20 in the ceremony pipeline.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/pull/405"
+    },
+    {
+      "text": "A public timeline-forecast ledger: 21 registered entries, every revision with its reasons on the record.",
+      "href": "https://github.com/PolicyEngine/microcosm-dynamics/blob/master/docs/forecasts/timeline_ledger.json"
+    }
+  ],
   "arms": [
     {
       "key": "purpose",
       "label": "Prompt-purpose census",
-      "description": "Rank-by-rank purpose adjudication over the residual prompt domain. Each block runs a full pass, a dense audit, and a correction sweep before its entries are adopted into the governing ledger (now v1.42).",
-      "done": 11260,
+      "description": "Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.",
+      "done": 11576,
       "total": 20815,
-      "unit": "prompts adopted (contiguous R1–R11260)"
+      "unit": "prompts adopted (contiguous R1–R11576)"
     },
     {
       "key": "a3",
       "label": "A3 classification arm",
-      "description": "Systematic classification of the compiled 41,103-row variable queue under the class library (v1.19), in 800-rank blocks with 20% dense audits and correction sweeps.",
-      "done": 34400,
+      "description": "Deciding how zeros and missing readings in the source data should be interpreted — a true zero, a question that was never asked, or an inapplicable route — across a 41,103-row queue of PSID variable readings, in 800-row blocks with 20% independent audits and correction sweeps.",
+      "done": 35200,
       "total": 41103,
       "unit": "queue rows final-adopted"
     },
     {
       "key": "q5",
       "label": "Q5 semantic annotation",
-      "description": "Per-document binding-array annotation of the PSID questionnaire corpus: two independent lanes per document, then a reconciliation that seals a table of record.",
+      "description": "Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.",
       "done": 33,
       "total": 257,
       "unit": "documents sealed"
@@ -53,6 +87,10 @@
     ]
   },
   "milestones": [
+    {
+      "date": "2026-08-30",
+      "text": "Purpose census reaches 55.61% (q94 B+C closed under ledger v1.44 after the audit reversed the opener’s imported simultaneity frame — the cross-document transfer prohibition holding under pressure); A3 frontier reaches 35,200/41,103 (85.6%)."
+    },
     {
       "date": "2026-08-30",
       "text": "E3 questionnaire era completed and the E4 era opened overnight; f94 complete; purpose census reaches 54.10% contiguous. A3 reaches the 1968-era queue boundary (83.7%). Q5 seals documents 048–049 (33/257)."

@@ -9,6 +9,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "docs" / "progress" / "progress.json"
+SCORECARD = ROOT / "docs" / "progress" / "scorecard.json"
+DETAIL = ROOT / "docs" / "progress" / "detail.json"
 PAGE = ROOT / "docs" / "progress.md"
 
 BAR_TEMPLATE = """
@@ -47,13 +49,26 @@ def build() -> str:
     )
     fw = data["framework"]
     parts.append(
-        "This page tracks the evidence campaign behind "
-        f"{fw['amendment']}: three verification arms that must complete "
-        "before the A4 evidence freeze and the ratification ceremony. "
-        f"The design itself is under review in PR #{fw['pr']} "
-        f"({fw['pr_state']}); the next ceremony step is the "
-        f"{fw['next_ceremony']}.\n"
+        "Dynamics builds Social Security earnings histories from the "
+        "PSID, and the corrected covered-earnings series is only as "
+        "credible as the reading of the source documentation beneath "
+        "it. Before that series ships, every piece of documentation "
+        "the construction relies on is independently verified by the "
+        "three arms below; the design is pre-registered and ratifies "
+        "only when they complete. (Internally: the evidence campaign "
+        f"behind {fw['amendment']}, under review in PR #{fw['pr']}, "
+        f"{fw['pr_state']}; next step, the {fw['next_ceremony']}.)\n"
     )
+
+    parts.append("## Already built\n")
+    parts.append(
+        "The foundations below are complete and in the repository "
+        "today; the campaign tracked on this page is the verification "
+        "layer on top of them.\n"
+    )
+    for f in data.get("foundations", []):
+        parts.append(f"- [{f['text']}]({f['href']})")
+    parts.append("")
 
     parts.append("## Verification arms\n")
     for arm in data["arms"]:
@@ -68,6 +83,113 @@ def build() -> str:
                 description=arm["description"],
             )
         )
+
+    if DETAIL.exists():
+        det = json.loads(DETAIL.read_text())
+        parts.append("## Inside the numbers\n")
+        parts.append(
+            "The three drill-down tables below decompose each arm's "
+            "progress bar row by row. Every row was extracted from the "
+            "campaign's evidence archive and independently re-verified "
+            "against the artifact named in its source column.\n"
+        )
+
+        pu = det["purpose"]
+        parts.append("### Purpose census, document by document\n")
+        parts.append(f"*What one unit is*: {pu['unit']}\n")
+        parts.append(f"*Why the denominator is 20,815*: {pu['denominator']}\n")
+        parts.append(
+            "| Document | Ranks | Count | Status | Dispositions | "
+            "Audit | Adopted |\n|---|---|---|---|---|---|---|"
+        )
+        for r in pu["rows"]:
+            parts.append(
+                f"| {r['document']} | R{r['rank_start']:,}–"
+                f"R{r['rank_end']:,} | {r['ranks']:,} | {r['status']} "
+                f"| {r.get('dispositions') or '—'} | "
+                f"{r.get('audit') or '—'} | "
+                f"{r.get('adopted_on') or '—'} |"
+            )
+        parts.append("")
+
+        a3 = det["a3"]
+        parts.append("### A3 classification, block by block\n")
+        parts.append(f"*What one unit is*: {a3['unit']}\n")
+        parts.append(
+            "| Block | Final census | Audit | Status |\n|---|---|---|---|"
+        )
+        for r in a3["rows"]:
+            parts.append(
+                f"| {r['rank_start']:,}–{r['rank_end']:,} | "
+                f"{r.get('final') or '—'} | {r.get('audit') or '—'} | "
+                f"{r['status']} |"
+            )
+        parts.append("")
+
+        q5 = det["q5"]
+        parts.append("### Q5 annotation, sealed documents\n")
+        parts.append(f"*What one unit is*: {q5['unit']}\n")
+        parts.append(
+            "| Document | Rows sealed | Verdict | Sealed |\n|---|---|---|---|"
+        )
+        for r in q5["rows"]:
+            rs = r.get("rows_sealed")
+            parts.append(
+                f"| {r['label']} | {rs:,} | "
+                f"{r.get('verdict') or '—'} | {r.get('sealed_on') or '—'} |"
+                if rs is not None
+                else f"| {r['label']} | — | {r.get('verdict') or '—'} | "
+                f"{r.get('sealed_on') or '—'} |"
+            )
+        parts.append("")
+
+    if SCORECARD.exists():
+        sc = json.loads(SCORECARD.read_text())
+        parts.append("## Development scorecard\n")
+        parts.append(sc["headline"] + "\n")
+        parts.append(
+            "Every candidate model is registered before its single "
+            "scored run, and every run — pass or fail — is committed. "
+            "The failures are part of the record.\n"
+        )
+        parts.append(
+            "| Gate | What it tests | Candidates | First pass |"
+            "\n|---|---|---|---|"
+        )
+        for g in sc["gates"]:
+            status = (
+                g["first_pass"]
+                if g["first_pass"]
+                else (
+                    "— (thresholds not yet locked)" if not g["locked"] else "—"
+                )
+            )
+            parts.append(
+                f"| **{g['name']}** | {g['tests']} | "
+                f"{g['candidates'] or '—'} | {status} |"
+            )
+        parts.append("")
+
+        ib = sc["incumbent_benchmarks"]
+        parts.append("### Comparisons against the incumbent models\n")
+        parts.append(ib["intro"] + "\n")
+        for item in ib["items"]:
+            link = f" ([source]({item['href']}))" if item["href"] else ""
+            parts.append(
+                f"- **{item['name']}** — *{item['status']}*. "
+                f"{item['detail']}{link}"
+            )
+        parts.append("")
+
+        cap = sc["capabilities"]
+        parts.append("### Capability scorecard vs DYNASIM\n")
+        parts.append(cap["intro"] + "\n")
+        parts.append("| Component | DYNASIM | This project |\n|---|---|---|")
+        for r in cap["rows"]:
+            parts.append(
+                f"| {r['component']} | {r['dynasim']} | {r['ours']} |"
+            )
+        parts.append("")
 
     fc = data["forecast"]
     parts.append("## Timeline forecast\n")
