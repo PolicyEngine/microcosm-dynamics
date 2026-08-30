@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "description": "Data behind the development-scorecard sections of docs/progress.md. Update and run scripts/build_progress_page.py; never edit the generated page by hand.",
+  "as_of": "2026-08-30",
+  "headline": "Eight pre-registered gates; all seven locked gates have a registered first pass; 48 one-shot candidate runs on the public record.",
+  "gates": [
+    {
+      "id": "gate_1",
+      "name": "Earnings-history credibility",
+      "tests": "The backcast earnings process scores against held-out PSID panel moments and geometry blocks, judged against the same-panel noise floor.",
+      "locked": "2026-07-05",
+      "candidates": 13,
+      "first_pass": "Candidate 13 (rank_knn_v5, 2026-07-07): 5/5 seeds geometry, 4/5 battery, C2ST 0.523 ≤ 0.53 — after 12 committed failing runs."
+    },
+    {
+      "id": "gate_2",
+      "name": "Family transitions (marital and fertility)",
+      "tests": "Marriage, divorce, remarriage, widowhood, occupancy, cohort nuptiality, and fertility transitions scored against the PSID marital and childbirth history files.",
+      "locked": "2026-07-08",
+      "candidates": 16,
+      "first_pass": "Candidate 16 (hazard_v16, 2026-07-09): 4/5 seeds across all 46 gated cells — after 15 committed failing runs."
+    },
+    {
+      "id": "gate_2b",
+      "name": "Household composition",
+      "tests": "Who lives with whom: coresidence stocks and wave-to-wave transitions from the PSID relationship matrix — spouse/partner, parent, child, grandchild, household size, multigenerational entry and exit.",
+      "locked": "2026-07-10",
+      "candidates": 9,
+      "first_pass": "Candidate 9 (hazard_v9, 2026-07-11): 4/5 seeds — after 8 committed failing runs."
+    },
+    {
+      "id": "gate_2c",
+      "name": "Marriage × earnings joint",
+      "tests": "Who marries whom by earnings — assortative mating, earnings-conditional marriage hazards, and couple shared-earnings shape, on which spousal and survivor benefit levels depend.",
+      "locked": "2026-07-10",
+      "candidates": 2,
+      "first_pass": "Candidate 2 (hazard_v2, 2026-07-12): 4/5 seeds."
+    },
+    {
+      "id": "gate_m4",
+      "name": "Disability",
+      "tests": "Work-limitation incidence and recovery hazards, disabled-occupancy prevalence, and near-retirement disability exit, anchored against SSA Disability Annual Statistical Report tables.",
+      "locked": "2026-07-12",
+      "candidates": 1,
+      "first_pass": "Candidate 1 (2026-07-12): 5/5 seeds, all 12 gated cells — passed on the first attempt."
+    },
+    {
+      "id": "gate_w1",
+      "name": "Representative-frame transport",
+      "tests": "The PSID-estimated generators transported onto the certified CPS representative frame: 44 gated cross-sectional cells plus SSA administrative margins.",
+      "locked": "2026-07-12",
+      "candidates": 4,
+      "first_pass": "Candidate 4 (2026-07-13): 43/43 cells in-band on 5/5 seeds — after 3 failing candidates."
+    },
+    {
+      "id": "gate_m6",
+      "name": "Temporal-holdout projection drift",
+      "tests": "The projection engine fits on data through 2014 only, then projects and is scored on the held-out 2015–2022 window — a genuine out-of-time test.",
+      "locked": "2026-07-13",
+      "candidates": 3,
+      "first_pass": "Candidate 3 (2026-07-24): 4/5 seeds across the 11 gated cells."
+    },
+    {
+      "id": "gate_3",
+      "name": "Forward projection",
+      "tests": "Near-term components resolve against future administrative publications on named resolution rules — scored when the numbers come out.",
+      "locked": null,
+      "candidates": 0,
+      "first_pass": null
+    }
+  ],
+  "incumbent_benchmarks": {
+    "intro": "Direct number-for-number comparisons against the incumbent models are registered as a benchmark inventory that fills in as modules land — shown here before launch, deliberately.",
+    "items": [
+      {
+        "name": "MINT / CBO / SSA benchmark inventory (tranche 2)",
+        "status": "2 of 60 rows computable",
+        "detail": "60 registered comparison rows against published MINT (19), CBO (30), and SSA Statistical Supplement (11) figures; 58 rows await the modules that compute them. Each row is pinned to the captured source file by hash.",
+        "href": "https://github.com/PolicyEngine/microcosm-dynamics/blob/master/runs/benchmark_tranche2_evaluation_v1.json"
+      },
+      {
+        "name": "Cross-sectional incumbent replacement (Enhanced CPS)",
+        "status": "candidate beats incumbent",
+        "detail": "Archived scorecard: a Microcosm-US candidate against the certified Enhanced CPS 2024 production incumbent on 3,704 calibration targets — candidate loss 0.228 vs incumbent 1.405 (holdout 0.038 vs 0.317). Publication pending in microcosm-benchmarks.",
+        "href": "https://github.com/PolicyEngine/microcosm-benchmarks"
+      },
+      {
+        "name": "DYNASIM output comparisons",
+        "status": "not yet",
+        "detail": "No quantitative DYNASIM-output rows exist yet; today's DYNASIM comparison is the capability table below. Quantitative rows begin at the projection and benefit stages.",
+        "href": null
+      }
+    ]
+  },
+  "capabilities": {
+    "intro": "Component-by-component against DYNASIM, the main non-governmental dynamic benchmark (from the public record; full matrix in the design book).",
+    "rows": [
+      {
+        "component": "Historical earnings",
+        "dynasim": "Lifetime histories from survey plus linked administrative inputs",
+        "ours": "PSID 1968–2022 panel; gate 1 passed (13th candidate)"
+      },
+      {
+        "component": "Family structure",
+        "dynasim": "Marriage, divorce, and family in the annual simulation",
+        "ours": "Gates 2, 2b, 2c passed across three tranches"
+      },
+      {
+        "component": "Disability",
+        "dynasim": "Documented health and work-limitation modules",
+        "ours": "Gate m4 passed, anchored to SSA administrative tables"
+      },
+      {
+        "component": "Base population",
+        "dynasim": "SIPP-based starting sample",
+        "ours": "Certified CPS synthetic frame; transport gate w1 passed"
+      },
+      {
+        "component": "Forward projection",
+        "dynasim": "Annual updating and alignment",
+        "ours": "Temporal-holdout gate m6 passed; forward gate pre-lock"
+      },
+      {
+        "component": "Social Security rule engine",
+        "dynasim": "Rule-based, code not public",
+        "ours": "Open PolicyEngine-US engine plus AIME/PIA oracle (built, not gated)"
+      },
+      {
+        "component": "Claiming behavior",
+        "dynasim": "Retirement-and-timing model",
+        "ours": "Reduced-form claim-age distribution (built, reported, not gated)"
+      },
+      {
+        "component": "Auxiliary benefits",
+        "dynasim": "Spouse and survivor analysis in natural domain",
+        "ours": "Spousal, survivor, widow incl. dual-entitlement logic (built, not gated)"
+      },
+      {
+        "component": "Wealth, assets, and LTSS",
+        "dynasim": "Major documented strength",
+        "ours": "Design-only — a later extension track"
+      }
+    ]
+  }
+}

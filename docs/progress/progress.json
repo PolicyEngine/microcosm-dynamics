@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "description": "Data behind docs/progress.md (the development-progress dashboard). Update this file and run `python scripts/build_progress_page.py`; never edit docs/progress.md by hand.",
-  "as_of": "2026-08-30T11:15:00Z",
+  "as_of": "2026-08-30T13:30:00Z",
   "framework": {
     "amendment": "Amendment 20 (two-arm evidence charter for the covered-earnings correction design)",
     "pr": 405,
@@ -47,15 +47,15 @@
       "key": "purpose",
       "label": "Prompt-purpose census",
       "description": "Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.",
-      "done": 11260,
+      "done": 11576,
       "total": 20815,
-      "unit": "prompts adopted (contiguous R1–R11260)"
+      "unit": "prompts adopted (contiguous R1–R11576)"
     },
     {
       "key": "a3",
       "label": "A3 classification arm",
       "description": "Deciding how zeros and missing readings in the source data should be interpreted — a true zero, a question that was never asked, or an inapplicable route — across a 41,103-row queue of PSID variable readings, in 800-row blocks with 20% independent audits and correction sweeps.",
-      "done": 34400,
+      "done": 35200,
       "total": 41103,
       "unit": "queue rows final-adopted"
     },
@@ -87,6 +87,10 @@
     ]
   },
   "milestones": [
+    {
+      "date": "2026-08-30",
+      "text": "Purpose census reaches 55.61% (q94 B+C closed under ledger v1.44 after the audit reversed the opener’s imported simultaneity frame — the cross-document transfer prohibition holding under pressure); A3 frontier reaches 35,200/41,103 (85.6%)."
+    },
     {
       "date": "2026-08-30",
       "text": "E3 questionnaire era completed and the E4 era opened overnight; f94 complete; purpose census reaches 54.10% contiguous. A3 reaches the 1968-era queue boundary (83.7%). Q5 seals documents 048–049 (33/257)."
