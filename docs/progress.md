@@ -2,7 +2,7 @@
 
 # Development progress
 
-*Snapshot as of 2026-08-31T01:10:00Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
+*Snapshot as of 2026-09-01T18:10:00Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
 
 Dynamics builds Social Security earnings histories from the PSID, and the corrected covered-earnings series is only as credible as the reading of the source documentation beneath it. Before that series ships, every piece of documentation the construction relies on is independently verified by the three arms below; the design is pre-registered and ratifies only when they complete. (Internally: the evidence campaign behind Amendment 20 (two-arm evidence charter for the covered-earnings correction design), under review in PR #405, open; draft ratified through round 6.2; next step, the A4 evidence freeze, then the C20 ratification chain toward revision 22.)
 
@@ -27,14 +27,14 @@ The foundations below are complete and in the repository today; the campaign tra
               align-items: baseline;">
     <strong>Prompt-purpose census</strong>
     <span style="font-variant-numeric: tabular-nums;">
-      12,690 / 20,815 &middot; 61.0%</span>
+      14,779 / 20,815 &middot; 71.0%</span>
   </div>
   <div style="background: #e9ecef; border-radius: 6px; height: 14px;
               margin: 0.35em 0;">
     <div style="background: #2c6496; border-radius: 6px; height: 14px;
-                width: 61.0%;"></div>
+                width: 71.0%;"></div>
   </div>
-  <div style="font-size: 0.9em; color: #555;">prompts adopted (contiguous R1–R12690).
+  <div style="font-size: 0.9em; color: #555;">prompts adopted (contiguous R1–R14779).
   Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.</div>
 </div>
 
@@ -44,14 +44,14 @@ The foundations below are complete and in the repository today; the campaign tra
               align-items: baseline;">
     <strong>A3 classification arm</strong>
     <span style="font-variant-numeric: tabular-nums;">
-      38,400 / 41,103 &middot; 93.4%</span>
+      41,103 / 41,103 &middot; 100.0%</span>
   </div>
   <div style="background: #e9ecef; border-radius: 6px; height: 14px;
               margin: 0.35em 0;">
     <div style="background: #2c6496; border-radius: 6px; height: 14px;
-                width: 93.4%;"></div>
+                width: 100.0%;"></div>
   </div>
-  <div style="font-size: 0.9em; color: #555;">queue rows final-adopted.
+  <div style="font-size: 0.9em; color: #555;">queue rows final-adopted — ARM COMPLETE.
   Deciding how zeros and missing readings in the source data should be interpreted — a true zero, a question that was never asked, or an inapplicable route — across a 41,103-row queue of PSID variable readings, in 800-row blocks with 20% independent audits and correction sweeps.</div>
 </div>
 
@@ -61,12 +61,12 @@ The foundations below are complete and in the repository today; the campaign tra
               align-items: baseline;">
     <strong>Q5 semantic annotation</strong>
     <span style="font-variant-numeric: tabular-nums;">
-      34 / 257 &middot; 13.2%</span>
+      38 / 257 &middot; 14.8%</span>
   </div>
   <div style="background: #e9ecef; border-radius: 6px; height: 14px;
               margin: 0.35em 0;">
     <div style="background: #2c6496; border-radius: 6px; height: 14px;
-                width: 13.2%;"></div>
+                width: 14.8%;"></div>
   </div>
   <div style="font-size: 0.9em; color: #555;">documents sealed.
   Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.</div>
@@ -252,6 +252,7 @@ From the pre-registered timeline ledger, entry 21 (registered 2026-08-20). Dates
 
 ## Recent milestones
 
+- **2026-09-01** — The A3 classification arm COMPLETES: all 41,103 queue rows final-adopted (49,722 adjudicated ranks across the A1/A2/A3 programs, zero predicate defects campaign-wide). Purpose census reaches 71.00% with its last in-scope document (q2001) in the verification cycle; Q5 reaches 38/257.
 - **2026-08-30** — Evening sprint: purpose reaches 60.97% (blocks 5–7 closed; q94–q95 complete; the q96 opener — E4’s final document — enters audit); A3 reaches 93.4% with its first two audit-clean blocks ever; Q5 seals 1992q (34/257) under a new occurrence-local binding-law ruling.
 - **2026-08-30** — Purpose census reaches 55.61% (q94 B+C closed under ledger v1.44 after the audit reversed the opener’s imported simultaneity frame — the cross-document transfer prohibition holding under pressure); A3 frontier reaches 35,200/41,103 (85.6%).
 - **2026-08-30** — E3 questionnaire era completed and the E4 era opened overnight; f94 complete; purpose census reaches 54.10% contiguous. A3 reaches the 1968-era queue boundary (83.7%). Q5 seals documents 048–049 (33/257).
