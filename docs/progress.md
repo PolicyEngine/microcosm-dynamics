@@ -2,7 +2,7 @@
 
 # Development progress
 
-*Snapshot as of 2026-09-02T11:15:00Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
+*Snapshot as of 2026-09-02T22:00:00Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
 
 Dynamics builds Social Security earnings histories from the PSID, and the corrected covered-earnings series is only as credible as the reading of the source documentation beneath it. Before that series ships, every piece of documentation the construction relies on is independently verified by the three arms below; the design is pre-registered and ratifies only when they complete. (Internally: the evidence campaign behind Amendment 20 (two-arm evidence charter for the covered-earnings correction design), under review in PR #405, open; draft ratified through round 6.2; next step, the A4 evidence freeze, then the C20 ratification chain toward revision 22.)
 
@@ -27,14 +27,14 @@ The foundations below are complete and in the repository today; the campaign tra
               align-items: baseline;">
     <strong>Prompt-purpose census</strong>
     <span style="font-variant-numeric: tabular-nums;">
-      16,138 / 20,815 &middot; 77.5%</span>
+      17,022 / 20,815 &middot; 81.8%</span>
   </div>
   <div style="background: #e9ecef; border-radius: 6px; height: 14px;
               margin: 0.35em 0;">
     <div style="background: #2c6496; border-radius: 6px; height: 14px;
-                width: 77.5%;"></div>
+                width: 81.8%;"></div>
   </div>
-  <div style="font-size: 0.9em; color: #555;">prompts adopted (contiguous R1–R16138).
+  <div style="font-size: 0.9em; color: #555;">prompts adopted (contiguous R1–R17022).
   Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.</div>
 </div>
 
@@ -61,12 +61,12 @@ The foundations below are complete and in the repository today; the campaign tra
               align-items: baseline;">
     <strong>Q5 semantic annotation</strong>
     <span style="font-variant-numeric: tabular-nums;">
-      42 / 257 &middot; 16.3%</span>
+      43 / 257 &middot; 16.7%</span>
   </div>
   <div style="background: #e9ecef; border-radius: 6px; height: 14px;
               margin: 0.35em 0;">
     <div style="background: #2c6496; border-radius: 6px; height: 14px;
-                width: 16.3%;"></div>
+                width: 16.7%;"></div>
   </div>
   <div style="font-size: 0.9em; color: #555;">documents sealed.
   Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.</div>
@@ -252,6 +252,7 @@ From the pre-registered timeline ledger, entry 21 (registered 2026-08-20). Dates
 
 ## Recent milestones
 
+- **2026-09-02** — E5 blocks 3–5 close (block 3 CALIBRATED at 100% — the third perfect purpose block); purpose reaches 81.78%. Q5 seals 1997q after a dual-serialization cross-recovery repaired a damaged lane print without a re-run (43/257).
 - **2026-09-02** — Purpose census enters the E5 era (2003–2011 questionnaires; tranche R15625–R17888 pinned) and reaches 77.53% overnight; Q5 seals 1996q and 1997f (42/257).
 - **2026-09-01** — The A3 classification arm COMPLETES: all 41,103 queue rows final-adopted (49,722 adjudicated ranks across the A1/A2/A3 programs, zero predicate defects campaign-wide). Purpose census reaches 71.00% with its last in-scope document (q2001) in the verification cycle; Q5 reaches 38/257.
 - **2026-08-30** — Evening sprint: purpose reaches 60.97% (blocks 5–7 closed; q94–q95 complete; the q96 opener — E4’s final document — enters audit); A3 reaches 93.4% with its first two audit-clean blocks ever; Q5 seals 1992q (34/257) under a new occurrence-local binding-law ruling.

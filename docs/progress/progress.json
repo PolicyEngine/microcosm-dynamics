@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "description": "Data behind docs/progress.md (the development-progress dashboard). Update this file and run `python scripts/build_progress_page.py`; never edit docs/progress.md by hand.",
-  "as_of": "2026-09-02T11:15:00Z",
+  "as_of": "2026-09-02T22:00:00Z",
   "framework": {
     "amendment": "Amendment 20 (two-arm evidence charter for the covered-earnings correction design)",
     "pr": 405,
@@ -47,9 +47,9 @@
       "key": "purpose",
       "label": "Prompt-purpose census",
       "description": "Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.",
-      "done": 16138,
+      "done": 17022,
       "total": 20815,
-      "unit": "prompts adopted (contiguous R1–R16138)"
+      "unit": "prompts adopted (contiguous R1–R17022)"
     },
     {
       "key": "a3",
@@ -63,7 +63,7 @@
       "key": "q5",
       "label": "Q5 semantic annotation",
       "description": "Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.",
-      "done": 42,
+      "done": 43,
       "total": 257,
       "unit": "documents sealed"
     }
@@ -87,6 +87,10 @@
     ]
   },
   "milestones": [
+    {
+      "date": "2026-09-02",
+      "text": "E5 blocks 3–5 close (block 3 CALIBRATED at 100% — the third perfect purpose block); purpose reaches 81.78%. Q5 seals 1997q after a dual-serialization cross-recovery repaired a damaged lane print without a re-run (43/257)."
+    },
     {
       "date": "2026-09-02",
       "text": "Purpose census enters the E5 era (2003–2011 questionnaires; tranche R15625–R17888 pinned) and reaches 77.53% overnight; Q5 seals 1996q and 1997f (42/257)."
