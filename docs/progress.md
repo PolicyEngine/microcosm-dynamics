@@ -2,7 +2,7 @@
 
 # Development progress
 
-*Snapshot as of 2026-09-02T22:00:00Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
+*Snapshot as of 2026-09-03T09:45:00Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
 
 Dynamics builds Social Security earnings histories from the PSID, and the corrected covered-earnings series is only as credible as the reading of the source documentation beneath it. Before that series ships, every piece of documentation the construction relies on is independently verified by the three arms below; the design is pre-registered and ratifies only when they complete. (Internally: the evidence campaign behind Amendment 20 (two-arm evidence charter for the covered-earnings correction design), under review in PR #405, open; draft ratified through round 6.2; next step, the A4 evidence freeze, then the C20 ratification chain toward revision 22.)
 
@@ -27,14 +27,14 @@ The foundations below are complete and in the repository today; the campaign tra
               align-items: baseline;">
     <strong>Prompt-purpose census</strong>
     <span style="font-variant-numeric: tabular-nums;">
-      17,022 / 20,815 &middot; 81.8%</span>
+      17,585 / 20,815 &middot; 84.5%</span>
   </div>
   <div style="background: #e9ecef; border-radius: 6px; height: 14px;
               margin: 0.35em 0;">
     <div style="background: #2c6496; border-radius: 6px; height: 14px;
-                width: 81.8%;"></div>
+                width: 84.5%;"></div>
   </div>
-  <div style="font-size: 0.9em; color: #555;">prompts adopted (contiguous R1–R17022).
+  <div style="font-size: 0.9em; color: #555;">prompts adopted (contiguous R1–R17585).
   Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.</div>
 </div>
 
@@ -61,12 +61,12 @@ The foundations below are complete and in the repository today; the campaign tra
               align-items: baseline;">
     <strong>Q5 semantic annotation</strong>
     <span style="font-variant-numeric: tabular-nums;">
-      43 / 257 &middot; 16.7%</span>
+      45 / 257 &middot; 17.5%</span>
   </div>
   <div style="background: #e9ecef; border-radius: 6px; height: 14px;
               margin: 0.35em 0;">
     <div style="background: #2c6496; border-radius: 6px; height: 14px;
-                width: 16.7%;"></div>
+                width: 17.5%;"></div>
   </div>
   <div style="font-size: 0.9em; color: #555;">documents sealed.
   Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.</div>
@@ -103,8 +103,30 @@ The three drill-down tables below decompose each arm's progress bar row by row. 
 | q93 | R10,218–R10,749 | 532 | adopted | opener R10218-10457 corrected 240 = 222 D / 18 SU; block-7 R10458-10749 corrected 292 = 269 D / 23 SU (sum 491 D / 41 SU) | opener audit 79/89 = 88.76% NOT CALIBRATED; block-7 audit 95/99 = 95.96% NOT CALIBRATED (overlap/reclassification gateway family) -> both corrected | 2026-08-29 |
 | f94 | R10,750–R11,260 | 511 | adopted | block-1 R10750-11039 corrected 290 = 271 D / 19 SU; block-2 R11040-11260 corrected 221 = 198 D / 23 SU (sum 469 D / 42 SU) | block-1 audit 132/139 = 94.96% NOT CALIBRATED (family-concentrated); block-2 audit 96/112 = 85.71% sample / 203/221 = 91.86% guard sweep NOT CALIBRATED -> both corrected | 2026-08-30 |
 | q94 (B+C opener block) | R11,261–R11,576 | 316 | adopted | corrected final 316 = 303 D / 13 SU (UNCOVERED=0; supersedes the provisional pass census 316 = 301 D / 15 SU with 221 ledger-matched / 95 UNCOVERED) | 241/288 = 83.68% sample / 268/316 = 84.81% full NOT CALIBRATED - central simultaneity frame REVERSED (q94 has no simultaneity sentence) -> frame-reversal correction sweep applied; corrected final adopted at the v1.44 fold, q94 B+C CLOSED, contiguous R1-R11576 = 55.61% | 2026-08-30 |
-| q94 (D+E block) | R11,577–R11,894 | 318 | in_cycle | — | — | — |
-| q94 (remainder) | R11,895–R11,974 | 80 | pending | — | — | — |
+| q94 D+E (block 4) | R11,577–R11,894 | 318 | adopted | 304 D / 14 SU | dense audit CALIBRATED 272/272 sample and 318/318 full = 100.00% — the campaign's first calibrated block; folded v1.45 with no sweep | 2026-08-30 |
+| q94 tail + f95 complete + q95 B opener (block 5) | R11,895–R12,163 | 269 | adopted | 236 D / 33 SU (pass census) | 96.90% sample / 97.40% full NOT CALIBRATED (all 7 contradictions in f95) -> f95-focused sweep 269/269; folded v1.50 | 2026-08-30 |
+| q95 C+D (block 6) | R12,164–R12,398 | 235 | adopted | 221 D / 14 SU | 91.26% sampled NOT CALIBRATED (position family + [C,H] composites) -> sweep with 11 corrections; folded v1.53 | 2026-08-30 |
+| q95 tail + f96 complete (block 7) | R12,399–R12,690 | 292 | adopted | 253 D / 39 SU (corrected) | 73.72% sample / 80.82% full NOT CALIBRATED — worst E4 block (41/56 defects in f96 B/S) -> sweep-r2 292/292 with 56 corrections; folded v1.55 | 2026-08-30 |
+| q96 B+C opener (block 8) | R12,691–R12,922 | 232 | adopted | 219 D / 13 SU (corrected) | 100.00% semantic (103/103 sample, 232/232 full) but 90.29% sample / 95.69% full route-completeness NOT CALIBRATED -> route-cure sweep (ten route repairs, no result changes); folded v1.57 | 2026-08-30 |
+| q96 D–L (block 9; E4 tranche close) | R12,923–R13,210 | 288 | adopted | 268 D / 20 SU (corrected) | NOT CALIBRATED: 6 semantic contradictions in 2 families + 4 route recoveries wrong; era-generic 29/29 semantic PASS but receipt-completeness FAIL; pass vector never serialized -> full re-serialization sweep 288/288; folded v1.59; E4 tranche closed | 2026-08-31 |
+| f97 + q97 B opener (block 1) | R13,211–R13,490 | 280 | adopted | 260 D / 20 SU (corrected) | 62.90% NOT CALIBRATED — the campaign's worst (f97-concentrated) -> sweep with 71 corrections; folded v1.62 | 2026-08-31 |
+| q97 C+D (block 2) | R13,491–R13,723 | 233 | adopted | 220 D / 13 SU | CALIBRATED 72/72 sample = 100.00%; 232/233 full; folded v1.63 directly from the pass | 2026-08-31 |
+| q97 tail + f99 first contact (block 3) | R13,724–R14,033 | 310 | adopted | 257 D / 53 SU | 116/127 = 91.34% NOT CALIBRATED -> sweep applying the 23-row manifest, 310/310; folded v1.65 | 2026-09-01 |
+| q1999 B+C opener (block 4) | R14,034–R14,266 | 233 | adopted | 220 D / 13 SU | CALIBRATED 68/68 = 100.00% on all three measures — a first-contact document; folded v1.66 | 2026-09-01 |
+| q1999 D+E (block 5) | R14,267–R14,499 | 233 | adopted | 220 D / 13 SU | CALIBRATED 69/69 = 100.00%; folded v1.67 | 2026-09-01 |
+| q1999 G–R (block 6) | R14,500–R14,779 | 280 | adopted | 230 D / 50 SU | 97.14% sample / 98.93% full NOT CALIBRATED on family concentration only; closed 3-row manifest adopted directly; folded v1.68 | 2026-09-01 |
+| f2001 + q2001 B (block 7) | R14,780–R15,059 | 280 | adopted | 226 D / 54 SU (corrected) | 86.40% semantic / 83.20% route NOT CALIBRATED (f2001-concentrated) -> sweep: 159-row f2001 replay, 24 corrections; folded v1.70 | 2026-09-01 |
+| q2001 C+D (block 8) | R15,060–R15,291 | 232 | adopted | 219 D / 13 SU | CALIBRATED 72/72 = 100.00%; 0 contradictions in 232 rows; folded v1.71 | 2026-09-01 |
+| q2001 E/G/P/K/L/R (block 9; late-E4 tranche close) | R15,292–R15,624 | 333 | adopted | 280 D / 53 SU (corrected) | 92.86% sampled NOT CALIBRATED, but the full-domain replay closed a 17-row manifest -> adopted with corrections under the closed-manifest precedent; folded v1.72 | 2026-09-01 |
+| fam2003 + q2003 BC/DE/G (E5 block 1) | R15,625–R15,883 | 259 | adopted | 224 D / 35 SU (corrected) | 90.00% sample / 92.66% full NOT CALIBRATED (q2003 G concentrated) -> sweep CURED, 259-row replay with 22 E5-rule applications; folded v1.75 | 2026-09-01 |
+| q2003 P/KL/R + fam2005 + q2005 BC/DE (E5 block 2) | R15,884–R16,138 | 255 | adopted | 194 D / 61 SU (corrected) | 93.73% full strict but the sample fails the route/strict limbs, NOT CALIBRATED -> sweep 255/255, 16 substantive corrections (2 q2003 + 14 outside q2003); folded v1.77 | 2026-09-02 |
+| q2005 G/P/KL/R + fam2007 BCDE/F/G (E5 block 3) | R16,139–R16,400 | 262 | adopted | 203 D / 59 SU | CALIBRATED 146/146 = 100.00% on both limbs; folded v1.78 | 2026-09-02 |
+| fam2007 P/KL/R/IO + q2007 BC/DE/G (E5 block 4) | R16,401–R16,729 | 329 | adopted | 247 D / 82 SU | 93.98% strict sample NOT CALIBRATED (family-concentrated); closed 10-row manifest adopted; folded v1.79 | 2026-09-02 |
+| q2007 P/KL/R + fam2009 + q2009 BC/DE (E5 block 5) | R16,730–R17,022 | 293 | adopted | 240 D / 53 SU | NOT CALIBRATED on the receipt-strict limb only (165/165 semantic, 292/293 route); one route correction; folded v1.80 | 2026-09-02 |
+| q2009 G/R/P/KL (E5 block 6) | R17,023–R17,308 | 286 | adopted | 233 D / 53 SU | 97.32% sample / 98.60% full NOT CALIBRATED on family concentration; 4-row manifest adopted; folded v1.81 | 2026-09-02 |
+| fam2011 + q2011 BC/DE (E5 block 7) | R17,309–R17,585 | 277 | adopted | 230 D / 47 SU (corrected) | 77.97% strict sample NOT CALIBRATED (q2011 whole-roster EHC routing family) -> regeneration sweep-r2, 277/277; folded v1.83 | 2026-09-03 |
+| q2011 F/G/R/P/KL (E5 block 8; the tranche's last block) | R17,586–R17,888 | 303 | in_cycle | — | — | — |
+| post-E5-tranche remainder (fam2013 onward; not yet tranched) | R17,889–R20,815 | 2,927 | pending | — | — | — |
 
 ### A3 classification, block by block
 
@@ -156,6 +178,13 @@ The three drill-down tables below decompose each arm's progress bar row by row. 
 | 32,801–33,600 | T 215 / U 47 / F 0 / X 538 | CONTRADICT 147/166 = 88.55% class/decision (sweep: SUSTAIN, audit vindicated 166/166) | final |
 | 33,601–34,400 | T 484 / U 70 / F 1 / X 245 | CONTRADICT 130/162 = 80.25% agreement (32/162 contradictions; sweep SUSTAIN 32/32) | final |
 | 34,401–35,200 | T 59 / U 135 / F 183 / X 423 | NOT CLEAN 145/180 = 80.56% | final |
+| 35,201–36,000 | T 82 / U 14 / F 677 / X 27 | NOT CLEAN 181/182 = 99.45% -> patch-sweep OVERTURNED the audit at 35251: CLEAN 182/182 (first fully clean A3 block); library v1.22 | final |
+| 36,001–36,800 | T 15 / U 40 / F 636 / X 109 | CLEAN 292/292 = 100.00% at audit (no patch-sweep needed); library v1.23 | final |
+| 36,801–37,600 | T 12 / U 14 / F 615 / X 159 | NOT CLEAN 204/225 = 90.67% (21 contradictions, minted-class F on incomplete construction frames) -> patch-sweep SUSTAINED 18/21 + overturned 3, corrected 117 over-fires; library v1.24 | final |
+| 37,601–38,400 | T 2 / U 8 / F 376 / X 414 | NOT CLEAN 99.46% (single dispute 37821) -> patch SUSTAINED the audit + one homolog 38337; library v1.25 | final |
+| 38,401–39,200 | T 5 / U 34 / F 625 / X 136 | NOT CLEAN 90.62% / 92.88% (57 contradictions in five families, zero predicate defects) -> patch-sweep re-ruled all 57; library v1.26 | final |
+| 39,201–40,000 | T 15 / U 9 / F 465 / X 311 | NOT CLEAN 78.97% decision / 65.64% full (253-row over-quarantine) -> patch SUSTAIN 67/67 + 3 amendments, 154 decision corrections; library v1.27 (frame_buildability_guard) | final |
+| 40,001–41,103 | T 457 / U 59 / F 373 / X 214 | NOT CLEAN 282/297 = 94.95% (15 contradictions + the 40819 dispute) -> patch SUSTAIN 15/15 + 48 sweep additions; TERMINUS CONFIRMED; library v1.28 — queue complete | final |
 
 ### Q5 annotation, sealed documents
 
@@ -196,6 +225,18 @@ The three drill-down tables below decompose each arm's progress bar row by row. 
 | 1991 family questionnaire QxQ companion (fam1991_QxQs.pdf) | 1,476 | COMPLETE / SEALED / FAIL / RECALIBRATE | 2026-08-27 |
 | 1991 family questionnaire (q91.pdf) | 2,474 | FAIL / RECALIBRATE (annotation complete and sealed) | 2026-08-29 |
 | 1992 family questionnaire QxQ companion (fam1992_QxQs.pdf) | 1,158 | RECALIBRATE (annotation complete and sealed) | 2026-08-30 |
+| 1992 family questionnaire (q92.pdf) | 2,302 | RECALIBRATE (table of record issued; binding-law ruling in force) | 2026-08-30 |
+| 1993 family questionnaire (q93.pdf) | 7,315 | RECALIBRATE (table of record structurally all-pass) | 2026-08-31 |
+| 1994 family questionnaire QxQ companion (fam1994_QxQs.pdf) | 2,500 | RECALIBRATE (both transports authenticated without repair) | 2026-08-31 |
+| 1994 family questionnaire (q94.pdf) | 2,813 | RECALIBRATE (2,509 bound / 304 empty; zero unresolved) | 2026-09-01 |
+| 1995 family questionnaire QxQ companion (fam1995_QxQs.pdf) | 884 | RECALIBRATE | 2026-09-01 |
+| 1995 family questionnaire (q95.pdf) | 7,145 | RECALIBRATE (largest single-document seal at the time) | 2026-09-01 |
+| 1996 family questionnaire QxQ companion (fam1996_QxQs.pdf) | 363 | RECALIBRATE (clean-block FAIL; complete reconciled table) | 2026-09-01 |
+| 1996 family questionnaire (q96.pdf) | 7,147 | RECALIBRATE (raw agreement 44.90%; all divergent families source-resolved) | 2026-09-02 |
+| 1997 family questionnaire QxQ companion (fam1997_QxQs.pdf) | 450 | RECALIBRATE (dual-serialized; seal ratified against the campaign-chain reconcile) | 2026-09-02 |
+| 1997 family questionnaire (q97.pdf) | 7,628 | RECALIBRATE (dual-serialized; lane B recovered by dual-serialization cross-recovery) | 2026-09-02 |
+| 1999 family questionnaire QxQ companion (fam1999_QxQs.pdf) | 282 | RECALIBRATE (103/282 arrays diverged; all source-resolved) | 2026-09-02 |
+| 1999 family questionnaire (q1999.pdf) | 8,498 | RECALIBRATE (largest table of record: 8,498 rows) | 2026-09-02 |
 
 ## Development scorecard
 
@@ -240,18 +281,19 @@ Component-by-component against DYNASIM, the main non-governmental dynamic benchm
 
 ## Timeline forecast
 
-From the pre-registered timeline ledger, entry 21 (registered 2026-08-20). Dates are point-in-time forecasts, not commitments; the ledger records every revision with its reasons.
+From the pre-registered timeline ledger, entry 22 (registered 2026-09-03). Dates are point-in-time forecasts, not commitments; the ledger records every revision with its reasons.
 
 | Milestone | p50 | p80 |
 |---|---|---|
-| Milestone A — revision-22 ratification (A20 framework operative) | 2026-09-08 | 2026-09-22 |
-| Milestone B — corrected-earnings successor authority and publication (the resolution event) | 2026-10-14 | 2026-12-02 |
+| Milestone A — revision-22 ratification (A20 framework operative) | 2026-09-10 | 2026-09-17 |
+| Milestone B — corrected-earnings successor authority and publication (the resolution event) | 2026-10-21 | 2026-12-04 |
 
-- **Milestone A**: Not gated by the Q5 program; requires the A4 evidence freeze and the C20 ceremony chain.
-- **Milestone B**: Gated by the Q5 program, the span/collapse cure (discharged), and completion of the purpose census.
+- **Milestone A**: Not gated by the Q5 program; requires the purpose census (3,230 ranks remaining at registration), the A4 evidence freeze and the C20 ceremony chain.
+- **Milestone B**: Gated by the Q5 program (45/257 documents, 20.2% of required atoms at registration; two document classes unstarted) and completion of the purpose census.
 
 ## Recent milestones
 
+- **2026-09-03** — E5 blocks 6–7 close (ledger v1.83; purpose reaches 84.48%) and the tranche's last block, block 8 to R17888, is in flight. Q5 seals 1999f and 1999q — the latter the campaign's largest table of record at 8,498 rows — reaching 45/257. An output-order mandate (full serialization first, no placeholders) is adopted as standing process law for large deliverables after a truncated sweep had to be re-run.
 - **2026-09-02** — E5 blocks 3–5 close (block 3 CALIBRATED at 100% — the third perfect purpose block); purpose reaches 81.78%. Q5 seals 1997q after a dual-serialization cross-recovery repaired a damaged lane print without a re-run (43/257).
 - **2026-09-02** — Purpose census enters the E5 era (2003–2011 questionnaires; tranche R15625–R17888 pinned) and reaches 77.53% overnight; Q5 seals 1996q and 1997f (42/257).
 - **2026-09-01** — The A3 classification arm COMPLETES: all 41,103 queue rows final-adopted (49,722 adjudicated ranks across the A1/A2/A3 programs, zero predicate defects campaign-wide). Purpose census reaches 71.00% with its last in-scope document (q2001) in the verification cycle; Q5 reaches 38/257.

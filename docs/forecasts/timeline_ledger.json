@@ -1,371 +1,402 @@
 {
- "schema_version": "forecast_ledger.v1",
- "description": "Append-only schedule forecasts for the Populace dynamics DynaSim-replacement campaign. Rules in docs/forecasts/README.md. Not part of the gates.yaml evaluation contract.",
- "entries": [
-  {
-   "id": 1,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "registered_retroactively": true,
-   "retro_note": "Original tiered estimate was given in-session on 2026-07-16/17 before this ledger existed; entered here verbatim-in-substance at ledger creation and immediately superseded by entries 2-4. Kept so the revision trail starts at the true first estimate.",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Tiered: certified projection engine in days-to-a-week; policy-useful SS estimates in ~2-3 weeks; full DynaSim parity in 4-7 weeks (from ~2026-07-16).",
-   "resolution_criterion": "Superseded before resolution; graded via the criteria of entries 2-4.",
-   "p50": null,
-   "p80": null,
-   "status": "superseded",
-   "superseded_by": [
-    2,
-    3,
-    4
-   ],
-   "resolution": null
-  },
-  {
-   "id": 2,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
-   "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
-   "p50": "2026-07-22",
-   "p80": "2026-07-25",
-   "status": "superseded",
-   "supersedes": 1,
-   "revision_reason": "Evidence since entry 1: floors v4 locked (#237) and round-2 plan ratified (#234) same-day; 5/11 cells already passing with regression constraints; earnings fix fully designed (amendment 4) with q* selection ~7h into compute. Against that: the round-2 selector execution defect (#238) added a full amendment/refreeze/rerun loop (~1 day) on the blocking remarriage path, and machine contention cost ~half a day.",
-   "resolution": null,
-   "superseded_by": [
-    7
-   ]
-  },
-  {
-   "id": 3,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "First DynaSim-style SS estimates: end-to-end benefit and revenue estimates computed on projected earnings/demographic histories from the certified engine, published in-repo with disclosed gaps (no immigration, pre-alignment acceptable).",
-   "resolution_criterion": "A merged PR publishing benefit + revenue estimate tables/analysis derived from a certified-engine projection (statutory AIME/PIA oracle applied to projected histories), explicitly labeled with its disclosed gaps.",
-   "p50": "2026-07-30",
-   "p80": "2026-08-06",
-   "status": "superseded",
-   "supersedes": 1,
-   "revision_reason": "Component inventory is stronger than entry 1 assumed: AIME/PIA oracle, claiming-age, differential mortality, disability, and the M2 revenue/balance analogue are already built and gated; remaining work after certification is assembly plus the M7 factory ceremony (~1 week).",
-   "resolution": null,
-   "superseded_by": [
-    8
-   ]
-  },
-  {
-   "id": 4,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Full-parity SS estimates: immigration and alignment integrated into the certified pipeline (pensions/wealth/LTSS explicitly out of scope pending a separate scoping decision).",
-   "resolution_criterion": "Merged PRs integrating an immigration module and target alignment into the estimate pipeline, with refreshed published estimates superseding the entry-3 gapped release.",
-   "p50": "2026-08-15",
-   "p80": "2026-08-29",
-   "status": "open",
-   "supersedes": 1,
-   "revision_reason": "Carried from entry 1's 4-7 week band, narrowed by observed ceremony velocity (three ratifications on 2026-07-17) and the existing immigration design brief.",
-   "resolution": null
-  },
-  {
-   "id": 5,
-   "registered_at": "2026-07-17T20:38:55Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Registration 8 (M6 candidate 2) is submitted on issue #42 - i.e., all three preconditions cleared: floors v4 (done), the amendment-4 q* lock addendum ratified, and the remarriage designed pause resolved through the round-3 path.",
-   "resolution_criterion": "A registration comment for candidate 2 posted on issue #42 naming runs/gate_m6_candidate2_v1.json, per the one-shot write_new convention.",
-   "p50": "2026-07-19",
-   "p80": "2026-07-21",
-   "status": "superseded",
-   "revision_reason": null,
-   "resolution": {
-    "resolved_at": "2026-07-19T12:09:10Z",
-    "evidence": "https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5015653634",
-    "error_days_p50": 0,
-    "within_p50": true,
-    "within_p80": true,
-    "note": "Superseded entry graded against reality per the ledger rules: resolved exactly on its original p50 date. The revision (entry 6) moved p50 a day later on the governance-ladder discovery; reality landed on the original date."
-   },
-   "superseded_by": [
-    6
-   ]
-  },
-  {
-   "id": 6,
-   "registered_at": "2026-07-18T06:50:03Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Registration 8 (M6 candidate 2) is submitted on issue #42 - i.e., all three preconditions cleared: floors v4 (done), the amendment-4 q* lock addendum ratified, and the remarriage designed pause resolved through the round-3 path.",
-   "resolution_criterion": "A registration comment for candidate 2 posted on issue #42 naming runs/gate_m6_candidate2_v1.json, per the one-shot write_new convention.",
-   "p50": "2026-07-20",
-   "p80": "2026-07-22",
-   "status": "resolved",
-   "supersedes": 5,
-   "revision_reason": "The remarriage train-only ladder completed as a RATIFIED no-op (#247, after the round-3..6 reducer ceremony chain), but the ratified plan's frozen no-op ladder (learning_plan_round2.md section 7) keeps the designed pause ACTIVE and the program's section 9.3 registration condition forbids registration under that disposition. Registration 8 now additionally requires either the decision-9 re-adjudication ceremony or the W1-style surface-question disposition (both proposals launched 07-18). qstar2 also slowed under host contention (uneven 17-64 min/rung). Net: p50 moves 07-19 -> 07-20.",
-   "resolution": {
-    "resolved_at": "2026-07-19T12:09:10Z",
-    "evidence": "https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5015653634",
-    "error_days_p50": -1,
-    "within_p50": true,
-    "within_p80": true
-   }
-  },
-  {
-   "id": 7,
-   "registered_at": "2026-07-18T14:19:53Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
-   "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
-   "p50": "2026-07-25",
-   "p80": "2026-07-29",
-   "status": "superseded",
-   "supersedes": 2,
-   "revision_reason": "The ratified condition-5 conformance measurement (#251, merged e147fa7) puts the post-repair remarriage.18-64 residual transport at 111.5%/125.4%/192.7% of the unchanged 0.403 tolerance at train boundaries 2006/2008/2010 - decisively worse than the 105.8% band the R disposition was adjudicated on, and trending worse toward the scored window. Candidate 2 is therefore modal-FAIL on the 11-cell conjunction; its run (still proceeding under R, with the new numbers in the candid forecast) primarily buys scored validation of the two new deltas plus decisive surface-question evidence. A PASS most likely requires the remarriage surface ceremony (#249 lane) plus a candidate 3. p50 therefore moves 07-22 -> 07-25.",
-   "resolution": null,
-   "superseded_by": [
-    9
-   ]
-  },
-  {
-   "id": 8,
-   "registered_at": "2026-07-18T14:19:53Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "First DynaSim-style SS estimates: end-to-end benefit and revenue estimates computed on projected earnings/demographic histories from the certified engine, published in-repo with disclosed gaps (no immigration, pre-alignment acceptable).",
-   "resolution_criterion": "A merged PR publishing benefit + revenue estimate tables/analysis derived from a certified-engine projection (statutory AIME/PIA oracle applied to projected histories), explicitly labeled with its disclosed gaps.",
-   "p50": "2026-08-02",
-   "p80": "2026-08-09",
-   "status": "resolved",
-   "supersedes": 3,
-   "revision_reason": "Downstream of entry 7's certification shift (candidate-3-after-surface-ceremony now the modal certification path).",
-   "resolution": {
-    "resolved_at": "2026-07-26T08:16:08Z",
-    "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/309 (merged 8b031bc3cfbe6247a155f54458ebd4f10dd6759a): runs/first_estimates_v1.json sha256 719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977, registration populace-dynamics#307; completion record https://github.com/PolicyEngine/populace-dynamics/issues/307#issuecomment-5082585716",
-    "error_days_p50": -7,
-    "within_p50": true,
-    "within_p80": true
-   }
-  },
-  {
-   "id": 9,
-   "registered_at": "2026-07-22T16:30:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
-   "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
-   "p50": "2026-07-26",
-   "p80": "2026-07-30",
-   "status": "resolved",
-   "supersedes": 7,
-   "revision_reason": "The candidate-3 pipeline advanced far faster than the entry-7 modal path assumed (program #270, diagnostic #271, amendment 6 #272 all ratified within ~30h of the candidate-2 verdict; prototype #273 implemented with all preflights green), but the rho-selection ladder consumed the schedule margin: measured pace is ~2h/rung x 17 rungs (~36h sealed run) vs the ~7h q*-ladder precedent, and the first attempt livelocked after 7h39m in an OpenMP join barrier (stack-sampled; permanent), with the restart then catching a fitting-stack HEAD drift from a concurrent lane (guard worked; resolved by a lane-local clone pinned at ee8f7fc1). Hardened attempt 2 launched 2026-07-22 ~12:20 ET puts the ledger at ~00:30 7/24, registration + 23h run on 7/24, verdict ~7/25, and refereed certification 7/25 only if every remaining step lands first-try. With ladder-recurrence risk and the amendment's F1-unresolved-by-design uncertainty, the median certification lands 7/26. p50 7/25 -> 7/26; p80 7/29 -> 7/30.",
-   "resolution": {
-    "resolved_at": "2026-07-24T11:25:00Z",
-    "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/283 (merged 65d151b0937c200f9bc86fae4a3856a1f04b6fbe); ratification note https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5069537907",
-    "error_days_p50": -2,
-    "within_p50": true,
-    "within_p80": true
-   }
-  },
-  {
-   "id": 10,
-   "registered_at": "2026-07-27T05:04:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Anchor context report published: the committed vintage-1 SSA/Trustees level-anchor extraction and the registered context report pairing the first estimates report's frame-relative quantities with official series under the ratified comparison_specs registry and mismatch law (design: docs/design/anchor_context_extraction.md, ratified 1ad337d3).",
-   "resolution_criterion": "Per the ratified design section 5.3: the merge of a publication PR whose payload is the complete primary report pair -- the exact-complete, validator-passing anchor_context_report_v1 with its integrity-bound sidecar. Incident-only, partial, or validator-failing publications and the extraction alone resolve nothing.",
-   "p50": "2026-07-31",
-   "p80": "2026-08-05",
-   "status": "resolved",
-   "supersedes": null,
-   "revision_reason": null,
-   "resolution": {
-    "resolved_at": "2026-07-28T18:16:37Z",
-    "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/330 (merged 97ddeacf7229698c0bff3dfa7534b6f4ef4bb7bb): runs/anchor_context_report_v1.json sha256 1ff3f0a04d9a511079e7b1773e01de48a0f4a9b1ec405d4601d410eb88c2cb34 with sidecar runs/anchor_context_report_v1.json.env.json sha256 9e594df76cbc34a6eb8dc58842d37b528f0ede1e0c104469f558a57cb9fd3b67, registration populace-dynamics#328; completion record https://github.com/PolicyEngine/populace-dynamics/issues/328#issuecomment-5108029974",
-    "error_days_p50": -3,
-    "within_p50": true,
-    "within_p80": true
-   }
-  },
-  {
-   "id": 11,
-   "registered_at": "2026-07-28T18:35:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-08-01",
-   "p80": "2026-08-05",
-   "status": "superseded",
-   "supersedes": null,
-   "revision_reason": null,
-   "resolution": null,
-   "superseded_by": [
-    12
-   ]
-  },
-  {
-   "id": 12,
-   "registered_at": "2026-07-30T03:30:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-08-02",
-   "p80": "2026-08-06",
-   "status": "superseded",
-   "supersedes": 11,
-   "revision_reason": "Material evidence from the unit-1 implementation, confirmed by two adversarial referee rounds: committed primary bytes establish no lawful V-B7 covered-share construction (SSA publishes no literal covered-worker-share cell series; cross-publication quotients are barred and empirically invalid, exceeding 1.0 in 31 of 55 years), and the B2/B11 worker-membership prerequisites need a new methodology-byte capture. The path now includes a public design amendment ceremony plus a capture ceremony before registration, moving p50 by one day.",
-   "resolution": null,
-   "superseded_by": [
-    13
-   ]
-  },
-  {
-   "id": 13,
-   "registered_at": "2026-07-30T13:40:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-08-04",
-   "p80": "2026-08-08",
-   "status": "superseded",
-   "supersedes": 12,
-   "revision_reason": "Two referee rulings added mandatory ceremonies to the path: (1) no lawful registration exists with zero registrable calibration rows, so Amendment 2 (fitting-free path) must ratify first (drafted; in referee rounds); (2) the ratified inventory law admits no narrowed PSID inventory, so the complete 43-wave codebook authentication/extraction ceremony is required before unit-3 registration (codebook PDFs are staged locally, bounding the work). p50 moves two days.",
-   "resolution": null,
-   "superseded_by": [
-    14
-   ]
-  },
-  {
-   "id": 14,
-   "registered_at": "2026-08-01T03:30:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-08-06",
-   "p80": "2026-08-10",
-   "status": "superseded",
-   "supersedes": 13,
-   "revision_reason": "Material evidence from three completed units after Amendment-2 ratification (merged 2026-07-31). (1) The prerequisite-registry lane proved all nine crosswalk registries foreign-key the official PSID inventory, which the operative source adjudication declares not emitted, so registries cannot precede a source repin. (2) The questionnaire-extraction unit (merged, referee-confirmed SHIP) closed the V-B5 and V-B8 evidentiary residuals entirely but left one genuine V-B6 residual: no document among the 456 captured questionnaire/procedures volumes supplies the exact allocation from V4901-V4906 secondary-job components to the annual V4379/V5289/V5788 wife labor-income totals, confirmed by two independent corpus-wide sweeps. (3) The design's own registration truth table aborts the fitting-free witness while any V-B row fails, so resolution now requires: an outside-corpus evidence hunt for the allocation rule, a prospectively-replacing source-identity amendment (Amendment 3, drafting), its ratification and registry repin, the nine prerequisite registries with separate reviews, the crosswalk commit ceremony, the value-blind registrability adjudication, and the A1/A3 capture ceremony before registration and the sealed run. p50 moves two days on the amendment-and-registries stack; the p80 tail carries the risk that the allocation rule is unrecoverable outside the corpus and the V-B6 requirement needs its own ratified revision.",
-   "resolution": null,
-   "superseded_by": [
-    15
-   ]
-  },
-  {
-   "id": 15,
-   "registered_at": "2026-08-02T16:15:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-08-10",
-   "p80": "2026-08-14",
-   "status": "superseded",
-   "supersedes": 14,
-   "revision_reason": "Material evidence from the amendment cascade and the measured R_Q scale wall, all landed after entry 14 registered. (1) Four further design amendments proved necessary and were ratified through adversarial rounds: A3 (successor V-B source identity + comparator census, revision 5), A4 (V-B6 inclusive-total fact revision, revision 6), A5 (consolidated legal schema and official-inventory dispositions, five rounds, revision 7), and A6 (fixed-width missing-token grammar completion, four rounds, revision 8, merged 2026-08-02 via #356/#358) whose ratified totality census maps all 89,599 inventory fields with total literal registration. (2) A5's schema law requires ONE global six-era 43-wave Q5 annotation artifact; stage 1 sealed 469,198 candidate review rows over 81 questionnaire documents and the per-document annotation factory has sealed 12 of 81 with a measured cadence of ~12 documents/day on three lanes, putting corpus completion near 2026-08-05 with era seals, the global catalog, reverse-cover, and independent reconstruction review behind it. (3) The legal-registry lane (merged #357) narrowed six source gaps to two, both still registration-blocking until captured (Section 218 instrument universe, inventory-gated; base determinations 1975-77 and 1982-89). (4) Official-inventory emission became lawful only with revision 8 and its first attempt is in flight. The remaining chain - inventory, nine crosswalk registries, the single-add crosswalk ceremony, value-blind registrability adjudication, capture ceremony, fresh registration, sealed run, publication - sits behind the R_Q long pole, moving p50 from 2026-08-06 to 2026-08-10.",
-   "resolution": null,
-   "superseded_by": [
-    16
-   ]
-  },
-  {
-   "id": 16,
-   "registered_at": "2026-08-07T18:09:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-08-14",
-   "p80": "2026-08-20",
-   "status": "superseded",
-   "supersedes": 15,
-   "revision_reason": "Material evidence from the continued amendment cascade, the stage-4 fail-closed discovery, and lane capacity, all landed after entry 15 registered (2026-08-02). (1) Five further design amendments proved necessary and were ratified through adversarial referee rounds: A7 (consumption-boundary law, revision 9, #360/#361), A8 (analytic range partitions, revision 10, #363/#364), A9 (arm-ambiguous serializability, revision 11, merged 2026-08-03 via #365/#366), A10 (unit authority, revision 12, merged 2026-08-05 via #368/#369), and A11 (missing-reason authority, revision 13, merged 2026-08-06 via #370/#371); the 81-document corpus is fully sealed with six era consolidations. (2) The stage-4 disposition pass then failed closed (report 2026-08-05), surfacing repeat-instruction semantics outside the ratified laws; Amendment 12 was chartered the same day and through four completed adversarial rounds plus five fix cycles (2026-08-05 through 2026-08-07) grew into a full repeat-encounter law \u2014 a five-arm partition with an explicit continuation rule, typed pairwise decomposition of composite instructions, and a semantic-ledger-only gate to the alias arm. Round 5, the ratification attempt, is in flight at registration time. (3) The Amendment 12 charter adopted a two-tier protocol \u2014 pilot-slice lawmaking followed by full-corpus tier-2 certification \u2014 inserting a corpus-wide repair pass (tier-2 repair total currently measured at 46 = 36 + 10 at the fifth fix cycle) between ratification and the stage-5+ chain that entry 15's dates assumed would follow stage 4 directly. (4) Lane capacity collapsed across the window: travel-window process kills on 2026-08-05/06 and weekly usage caps left three of four Codex lanes capped or unauthenticated as of 2026-08-07 (stated resets 2026-08-10 through 2026-08-11), with a single live lane carrying both round-5 referees. Remaining chain to the criterion: A12 ratification and revision-14 repin, tier-2 certification, H/O_H reverse-cover, reconstruction review, Q5, official inventory, crosswalks, adjudication, capture, gate registration, the sealed one-shot run, and the publication PR. p50 moves 2026-08-10 to 2026-08-14; p80 2026-08-14 to 2026-08-20.",
-   "resolution": null,
-   "superseded_by": [
-    17
-   ]
-  },
-  {
-   "id": 17,
-   "registered_at": "2026-08-09T11:13:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-08-17",
-   "p80": "2026-08-23",
-   "status": "superseded",
-   "supersedes": 16,
-   "revision_reason": "Material evidence landed after entry 16 registered (2026-08-07). (1) The tier-2 execution chain required two further ratified amendments: A13 (tier-2 execution law: terminal successor status for the 28 incompatible proof rows, fragment disclosure/composition law, blob-bound ratification identity; ratified 2026-08-08, merged #377, revision 15 via #378 after a squash-orphan incident cured by #379) and A14 (operative-convention scope correction replacing A13's self-blocking external-PKI recording machinery with the codified dual-RATIFY + committed-verdict + closure convention; operator-authorized, ratified and merged #380, revision 16 + operative closures via #381). (2) Tier-2 A12-T2-R03 then executed the complete reseal obligation on 2026-08-09 \u2014 exactly 46 repairs with 46 supersession edges, all six successor era seals, corpus-exhaustive sweeps over all 81 documents with zero unexplained hits, 89/89 mutations \u2014 but the certification PR #382 was squash-merged, collapsing the enacted \u00a727.2.3 cl.3-5 first-add ordering (overlays strictly before seals strictly before evidence) into one commit: master's Tests now fail (test__live_git_order__validates_before_and_after_publication, 'an overlay first-add is not a strict ancestor of its era seal') and the cure is underdetermined under current law because first-add history is immutable and the validator requires at most one add-commit per path. Amendment 15 is drafting to enact the ordered-ceremony-branch attestation cure (the true ordered history is preserved at ceremony-archive/a12-tier2-r03-ordered, tip tree byte-identical to the squash tree), a merge-mode law, and the tier-2 certification schema. All PRs are blocked on the red master until it lands. (3) A section-cited endgame mapping against the revision-16 design established that roughly 17-18 macro gates remain between the current state and this entry's criterion, including the full tier-2 step-5 source build (H, O_H, reverse covers, dispositions, catalogs, executable R_Q), the A12-T2-R05 dual-adversarial reconstruction certification, the R06 rerun reproducing the Amendment 11 abort, and \u2014 dominating the remaining schedule \u2014 the separately ratified source-authority and lifecycle successor program the design requires before Q5 (SS25.10.2, SS26.10.3): authenticated separately registered source-backed evidence covering 524,538 literals without disposition authority plus 37,283 structural-null ranges, a total no-default disposition/reason law, and rebuilt terminal/storage facts, gates, comparator closure, and lifecycle. (4) No entry-criterion validator or ceremony runner is implemented yet; the design names runner scripts that do not exist in the tree. p50 moves 2026-08-14 to 2026-08-17; p80 2026-08-20 to 2026-08-23.",
-   "resolution": null,
-   "superseded_by": [
-    18
-   ]
-  },
-  {
-   "id": 18,
-   "registered_at": "2026-08-11T18:40:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-09-08",
-   "p80": "2026-09-22",
-   "status": "superseded",
-   "supersedes": 17,
-   "revision_reason": "Material evidence landed after entry 17 registered (2026-08-09), dominated by the forecast-deciding Amendment 11 convention-probe verdict of 2026-08-11. (1) The probe, executed read-only against the authenticated corpus pinned at master 60289833 (43 codebook PDFs plus 4 official Stata/SPSS setup files, 114,875,090 bytes, zero hash mismatches), found NO broad official PSID missing-data convention: the only authenticated semantic convention is the 2021 CATI note (Don't Know and NA/Refused indistinguishable for CATI cases), explicitly bound by 12 variables in the 2021 family codebook plus 12 variable-local 2023 row statements whose referenced global note (ER82001) is absent from the 2023 codebook; the four setup files declare no missing-value machinery at all (no Stata mvdecode/extended missing, no SPSS MISSING VALUES); and lexeme-only rules are provably unsound (codes 8 and 9 recur as August and September in date fields; a lexeme-level Boolean commits at least 22,849 minimal modal errors, with 4,062 conflicts inside the top-100 pair slice alone). Strict declared-scope coverage of the 524,538 unresolved literal occurrences under the Amendment 11 missing-reason relation is 48 occurrences (0.009%); a deliberately generous whole-2021-wave sensitivity still covers only 10,255 (2.0%), leaving residuals of 524,490 and 514,283 occurrences respectively across 50,105 distinct (lexeme, meaning) pair families, 31,781 of them singletons. A NONAUTHORITY shadow-run of both candidate maps through the registered fixture law reproduced the Amendment 11 relation-level abort (incomplete_missing_reason_authority) with zero settled outputs. (2) Consequence: the one-amendment-plus-sweeps completion that entry 17's dates could still accommodate is foreclosed. Clearing the Amendment 11 production stop - the gate ahead of reconstruction, Q5, official inventory, V-B6, and publication - requires a multi-lane evidence campaign (additional official manuals and scoped series rules where they exist, plus an occurrence-local residual adjudication ledger for the remainder) consolidated into a single controlling successor amendment (A18, revision 20). (3) The activation chain also lengthened by two ceremonies entry 17 did not price: Amendment 16 (generalized ratification oracle - amendment N maps to revision N+2, closure domain range(13, R-1), atomic revision-18 bootstrap activating A15+A16 together; ratified on a round-1 dual RATIFY and merged 2026-08-10 via #385) and Amendment 17 (test-pin activation cure plus the executed-transition rule, required because an A16-pinned test still hardcoded the {13,14} closure set and blocked the revision-18 repin; round-1 dual REWRITE, fix-1 landed 2026-08-11 at 4de9944, round-2 re-review dispatching at registration time). The revision-18 repin, tier-2 R04/R05/R06 certification stages, and the tier-2 step-5 full source build all remain ahead of the evidence campaign itself, and the endgame mapping still counts roughly 13 state-transition groups to this entry's criterion, with every stage to date having added at least one unplanned ceremony. p50 moves 2026-08-17 to 2026-09-08; p80 2026-08-23 to 2026-09-22.",
-   "resolution": null,
-   "superseded_by": [
-    19
-   ]
-  },
-  {
-   "id": 19,
-   "registered_at": "2026-08-16T03:25:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-11-09",
-   "p80": "2027-01-22",
-   "status": "superseded",
-   "supersedes": 18,
-   "revision_reason": "Material evidence landed after entry 18 registered (2026-08-11). (1) The ceremony chain entry 18 priced actually completed faster than its dates assumed: Amendments 17 (test-pin cure), 18 (tier-2 certification contract cure: build-input preimage, revision-general R05 selector, R06 result law), and 19 (source-hierarchy member-construction cure) were each ratified through adversarial rounds and the registry advanced through revisions 19 and 20 between 2026-08-13 and 2026-08-15, with A19 ratified on a round-1 dual RATIFY and its revision-21 activation in gate at registration time. (2) But the paired independent R04 reconstruction development - the dual-implementation discipline the certification law mandates - discovered two member-construction law gaps (a purpose mapping reaching only ~246 of 21,971 prompts from permitted inputs, and a hierarchy digest/absence-proof circularity), and Amendment 19's referees unanimously adjudicated the passability question the cure raised: Reading A is compelled and Reading B expressly foreclosed - the tier-2 R04 gate remains nonpassing and R05 certification cannot pass while prompt purposes are underdetermined. Tier-2 certification, the R06 abort record, and everything downstream to this entry's criterion therefore lawfully sit behind the evidence campaign, which entry 18 treated as the final pre-publication stage rather than the gate for certification itself. (3) The campaign also gained a second evidence domain: purpose authority for 21,153 underdetermined prompts (a closed 35-literal model-law classification), with the scoping report establishing that clearing purposes is necessary but not sufficient - semantic bindings and exact prompt-to-field joins remain independent R04 gates. (4) The consolidated two-arm A20 charter (2026-08-15) merges both domains over shared source infrastructure with separate authority gates, banks the completed evidence (two independent 60-document E1 passes reconciled to 48 candidate groups including the 1979-1992 MD= field convention with a ~55k-occurrence declared-scope-exact ceiling; a 150-document E2 availability census with zero absent), and prices the remaining critical path - E1-E2 source closure and compilers, A1-A3 adjudication with the family-tail long pole at 19/55 pooled lane-rounds, the A4/C20 amendment ceremony, X-stage authoritative settlement, tier-2 R04/R05, R06, reconstruction, Q5, inventory, V-B6, and publication - at p50 2026-11-09 / p80 2027-01-22, conditional on eventual lawful total settlement and subject to the charter's enacted kill criteria (which would recharter, not extend, the program on capacity or scope failure). p50 moves 2026-09-08 to 2026-11-09; p80 2026-09-22 to 2027-01-22.",
-   "resolution": null,
-   "superseded_by": [
-    20
-   ]
-  },
-  {
-   "id": 20,
-   "registered_at": "2026-08-17T11:55:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "p50": "2026-09-24",
-   "p80": "2026-10-29",
-   "status": "superseded",
-   "supersedes": 19,
-   "revision_reason": "Material evidence landed after entry 19 registered (2026-08-16), all of it measured rather than modeled. (1) The charter-mandated production adjudication-rate measurements are in for BOTH campaign arms, and both cleared their reliability bars: the missing-reason arm's dual-review pipeline has reconciled A1 stage ranks 1-340 at 98-100 percent exact agreement (zero unresolvable rows) with the first-pass frontier at rank 640 of 990 after seven ~2-3 hour three-lane waves, and the purpose arm's rubric-v2 cure measured 96.67 percent blinded dual-pass agreement (29/30 on a stratified sample) with a cured dual-pass q_p of 107.66 decisions per lane-hour - a six-fold improvement over the alert-era 17.6 that had priced entry 19 - lifting the arm's hold and starting production adjudication. (2) At the measured rates the adjudication stages compress from entry 19's dominant months-long pole to weeks: the remaining A1/A2/A3 missing-reason queues (about 49,000 rows) and the 21,102-prompt purpose residue both clear in two to three calendar weeks of continuous three-lane waves, with observed wave cadence running well ahead of the charter's pooled-round day-convention throughout. (3) Repository infrastructure also accelerated the ceremony path: CI pytest is now sharded four ways per Python version (#402), cutting merge-gate latency from about two hours toward the sharded runtime, which compounds across the A20 amendment ceremony, the revision-22 activation, tier-2 R04/R05, R06, and the reconstruction-to-publication chain. (4) The remaining critical path is unchanged in structure - complete the adjudication queues, the A4 freeze, the A20 ceremony and revision-22 activation, X-stage authoritative settlement, tier-2 R04/R05 with the normal member, the R06 abort record, then reconstruction, Q5, official inventory, V-B6, and the publication PR - and every stage to date has added at least one unplanned ceremony, which the p80 buffers. Dates remain conditional on eventual lawful total settlement under the enacted kill criteria. p50 moves 2026-11-09 to 2026-09-24; p80 2027-01-22 to 2026-10-29.",
-   "resolution": null,
-   "superseded_by": [
-    21
-   ]
-  },
-  {
-   "id": 21,
-   "registered_at": "2026-08-20T20:55:00Z",
-   "forecaster": "claude-fable-5 (session orchestrator)",
-   "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
-   "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
-   "scope_bifurcation": {
-    "milestone_a": {
-     "name": "revision-22 ratification: A20 framework operative with exact failure shadows",
-     "gating": "NOT gated by the Q5 semantic program. Grounded in the enacted three-union law (design ~56438-56458: fail_permanent status + sole nonempty shadow is ratification-ready; 'No other null/non-null combination is ratification-ready') and A20_R04_Q5_CONTRACT's construction_order, whose dependent constructions are normal_only_ and lawfully ABSENT on the failure member (adjudicated by the ceremony lane from the enacted text, 2026-08-20; cites verified independently by the registering orchestrator).",
-     "p50": "2026-09-08",
-     "p80": "2026-09-22"
+  "schema_version": "forecast_ledger.v1",
+  "description": "Append-only schedule forecasts for the Populace dynamics DynaSim-replacement campaign. Rules in docs/forecasts/README.md. Not part of the gates.yaml evaluation contract.",
+  "entries": [
+    {
+      "id": 1,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "registered_retroactively": true,
+      "retro_note": "Original tiered estimate was given in-session on 2026-07-16/17 before this ledger existed; entered here verbatim-in-substance at ledger creation and immediately superseded by entries 2-4. Kept so the revision trail starts at the true first estimate.",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Tiered: certified projection engine in days-to-a-week; policy-useful SS estimates in ~2-3 weeks; full DynaSim parity in 4-7 weeks (from ~2026-07-16).",
+      "resolution_criterion": "Superseded before resolution; graded via the criteria of entries 2-4.",
+      "p50": null,
+      "p80": null,
+      "status": "superseded",
+      "superseded_by": [
+        2,
+        3,
+        4
+      ],
+      "resolution": null
     },
-    "milestone_b": {
-     "name": "R04-normal corrected-earnings successor authority and the publication criterion above (the DynaSim-parity track; THE resolution event of this ledger's claim)",
-     "gating": "Gated by (i) the Q5 semantic-annotation program: audited COMPLETABLE-LARGE at 0/257 documents complete, priced >=4,300 evidence lane-hours / 45+ fleet-days at entry-15 measured rates (e8-ops/sol-ce-q5-coverage-audit-report.md, 2026-08-20); (ii) the fix-5 span/collapse sentence for the section-34.5.1 12-key schema (six 1976 V4632/V4991 span-collapse events, discovered independently by two builder lanes); (iii) the purpose option-(b) census completion over the full prompt denominator (~408 lane-hours at measured q_p). If any arm lands permanent-failure at A4, select_failure_or_normal_member is singular and atomic: no partial successor authority ships at revision 22; the normal member re-runs under the dormant-lifecycle machinery post-ratification with no further amendment required.",
-     "p50": "2026-10-14",
-     "p80": "2026-12-02"
+    {
+      "id": 2,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
+      "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
+      "p50": "2026-07-22",
+      "p80": "2026-07-25",
+      "status": "superseded",
+      "supersedes": 1,
+      "revision_reason": "Evidence since entry 1: floors v4 locked (#237) and round-2 plan ratified (#234) same-day; 5/11 cells already passing with regression constraints; earnings fix fully designed (amendment 4) with q* selection ~7h into compute. Against that: the round-2 selector execution defect (#238) added a full amendment/refreeze/rerun loop (~1 day) on the blocking remarriage path, and machine contention cost ~half a day.",
+      "resolution": null,
+      "superseded_by": [
+        7
+      ]
+    },
+    {
+      "id": 3,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "First DynaSim-style SS estimates: end-to-end benefit and revenue estimates computed on projected earnings/demographic histories from the certified engine, published in-repo with disclosed gaps (no immigration, pre-alignment acceptable).",
+      "resolution_criterion": "A merged PR publishing benefit + revenue estimate tables/analysis derived from a certified-engine projection (statutory AIME/PIA oracle applied to projected histories), explicitly labeled with its disclosed gaps.",
+      "p50": "2026-07-30",
+      "p80": "2026-08-06",
+      "status": "superseded",
+      "supersedes": 1,
+      "revision_reason": "Component inventory is stronger than entry 1 assumed: AIME/PIA oracle, claiming-age, differential mortality, disability, and the M2 revenue/balance analogue are already built and gated; remaining work after certification is assembly plus the M7 factory ceremony (~1 week).",
+      "resolution": null,
+      "superseded_by": [
+        8
+      ]
+    },
+    {
+      "id": 4,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Full-parity SS estimates: immigration and alignment integrated into the certified pipeline (pensions/wealth/LTSS explicitly out of scope pending a separate scoping decision).",
+      "resolution_criterion": "Merged PRs integrating an immigration module and target alignment into the estimate pipeline, with refreshed published estimates superseding the entry-3 gapped release.",
+      "p50": "2026-08-15",
+      "p80": "2026-08-29",
+      "status": "open",
+      "supersedes": 1,
+      "revision_reason": "Carried from entry 1's 4-7 week band, narrowed by observed ceremony velocity (three ratifications on 2026-07-17) and the existing immigration design brief.",
+      "resolution": null
+    },
+    {
+      "id": 5,
+      "registered_at": "2026-07-17T20:38:55Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Registration 8 (M6 candidate 2) is submitted on issue #42 - i.e., all three preconditions cleared: floors v4 (done), the amendment-4 q* lock addendum ratified, and the remarriage designed pause resolved through the round-3 path.",
+      "resolution_criterion": "A registration comment for candidate 2 posted on issue #42 naming runs/gate_m6_candidate2_v1.json, per the one-shot write_new convention.",
+      "p50": "2026-07-19",
+      "p80": "2026-07-21",
+      "status": "superseded",
+      "revision_reason": null,
+      "resolution": {
+        "resolved_at": "2026-07-19T12:09:10Z",
+        "evidence": "https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5015653634",
+        "error_days_p50": 0,
+        "within_p50": true,
+        "within_p80": true,
+        "note": "Superseded entry graded against reality per the ledger rules: resolved exactly on its original p50 date. The revision (entry 6) moved p50 a day later on the governance-ladder discovery; reality landed on the original date."
+      },
+      "superseded_by": [
+        6
+      ]
+    },
+    {
+      "id": 6,
+      "registered_at": "2026-07-18T06:50:03Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Registration 8 (M6 candidate 2) is submitted on issue #42 - i.e., all three preconditions cleared: floors v4 (done), the amendment-4 q* lock addendum ratified, and the remarriage designed pause resolved through the round-3 path.",
+      "resolution_criterion": "A registration comment for candidate 2 posted on issue #42 naming runs/gate_m6_candidate2_v1.json, per the one-shot write_new convention.",
+      "p50": "2026-07-20",
+      "p80": "2026-07-22",
+      "status": "resolved",
+      "supersedes": 5,
+      "revision_reason": "The remarriage train-only ladder completed as a RATIFIED no-op (#247, after the round-3..6 reducer ceremony chain), but the ratified plan's frozen no-op ladder (learning_plan_round2.md section 7) keeps the designed pause ACTIVE and the program's section 9.3 registration condition forbids registration under that disposition. Registration 8 now additionally requires either the decision-9 re-adjudication ceremony or the W1-style surface-question disposition (both proposals launched 07-18). qstar2 also slowed under host contention (uneven 17-64 min/rung). Net: p50 moves 07-19 -> 07-20.",
+      "resolution": {
+        "resolved_at": "2026-07-19T12:09:10Z",
+        "evidence": "https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5015653634",
+        "error_days_p50": -1,
+        "within_p50": true,
+        "within_p80": true
+      }
+    },
+    {
+      "id": 7,
+      "registered_at": "2026-07-18T14:19:53Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
+      "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
+      "p50": "2026-07-25",
+      "p80": "2026-07-29",
+      "status": "superseded",
+      "supersedes": 2,
+      "revision_reason": "The ratified condition-5 conformance measurement (#251, merged e147fa7) puts the post-repair remarriage.18-64 residual transport at 111.5%/125.4%/192.7% of the unchanged 0.403 tolerance at train boundaries 2006/2008/2010 - decisively worse than the 105.8% band the R disposition was adjudicated on, and trending worse toward the scored window. Candidate 2 is therefore modal-FAIL on the 11-cell conjunction; its run (still proceeding under R, with the new numbers in the candid forecast) primarily buys scored validation of the two new deltas plus decisive surface-question evidence. A PASS most likely requires the remarriage surface ceremony (#249 lane) plus a candidate 3. p50 therefore moves 07-22 -> 07-25.",
+      "resolution": null,
+      "superseded_by": [
+        9
+      ]
+    },
+    {
+      "id": 8,
+      "registered_at": "2026-07-18T14:19:53Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "First DynaSim-style SS estimates: end-to-end benefit and revenue estimates computed on projected earnings/demographic histories from the certified engine, published in-repo with disclosed gaps (no immigration, pre-alignment acceptable).",
+      "resolution_criterion": "A merged PR publishing benefit + revenue estimate tables/analysis derived from a certified-engine projection (statutory AIME/PIA oracle applied to projected histories), explicitly labeled with its disclosed gaps.",
+      "p50": "2026-08-02",
+      "p80": "2026-08-09",
+      "status": "resolved",
+      "supersedes": 3,
+      "revision_reason": "Downstream of entry 7's certification shift (candidate-3-after-surface-ceremony now the modal certification path).",
+      "resolution": {
+        "resolved_at": "2026-07-26T08:16:08Z",
+        "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/309 (merged 8b031bc3cfbe6247a155f54458ebd4f10dd6759a): runs/first_estimates_v1.json sha256 719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977, registration populace-dynamics#307; completion record https://github.com/PolicyEngine/populace-dynamics/issues/307#issuecomment-5082585716",
+        "error_days_p50": -7,
+        "within_p50": true,
+        "within_p80": true
+      }
+    },
+    {
+      "id": 9,
+      "registered_at": "2026-07-22T16:30:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Certified projection engine: a registered gate_m6 candidate run scores PASS on the 11-cell temporal holdout (>=4-of-5 seeds per the locked contract).",
+      "resolution_criterion": "A scored verdict artifact in runs/ for a registered candidate, published via merged PR, with overall PASS under the live gate_m6 contract.",
+      "p50": "2026-07-26",
+      "p80": "2026-07-30",
+      "status": "resolved",
+      "supersedes": 7,
+      "revision_reason": "The candidate-3 pipeline advanced far faster than the entry-7 modal path assumed (program #270, diagnostic #271, amendment 6 #272 all ratified within ~30h of the candidate-2 verdict; prototype #273 implemented with all preflights green), but the rho-selection ladder consumed the schedule margin: measured pace is ~2h/rung x 17 rungs (~36h sealed run) vs the ~7h q*-ladder precedent, and the first attempt livelocked after 7h39m in an OpenMP join barrier (stack-sampled; permanent), with the restart then catching a fitting-stack HEAD drift from a concurrent lane (guard worked; resolved by a lane-local clone pinned at ee8f7fc1). Hardened attempt 2 launched 2026-07-22 ~12:20 ET puts the ledger at ~00:30 7/24, registration + 23h run on 7/24, verdict ~7/25, and refereed certification 7/25 only if every remaining step lands first-try. With ladder-recurrence risk and the amendment's F1-unresolved-by-design uncertainty, the median certification lands 7/26. p50 7/25 -> 7/26; p80 7/29 -> 7/30.",
+      "resolution": {
+        "resolved_at": "2026-07-24T11:25:00Z",
+        "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/283 (merged 65d151b0937c200f9bc86fae4a3856a1f04b6fbe); ratification note https://github.com/PolicyEngine/populace-dynamics/issues/42#issuecomment-5069537907",
+        "error_days_p50": -2,
+        "within_p50": true,
+        "within_p80": true
+      }
+    },
+    {
+      "id": 10,
+      "registered_at": "2026-07-27T05:04:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Anchor context report published: the committed vintage-1 SSA/Trustees level-anchor extraction and the registered context report pairing the first estimates report's frame-relative quantities with official series under the ratified comparison_specs registry and mismatch law (design: docs/design/anchor_context_extraction.md, ratified 1ad337d3).",
+      "resolution_criterion": "Per the ratified design section 5.3: the merge of a publication PR whose payload is the complete primary report pair -- the exact-complete, validator-passing anchor_context_report_v1 with its integrity-bound sidecar. Incident-only, partial, or validator-failing publications and the extraction alone resolve nothing.",
+      "p50": "2026-07-31",
+      "p80": "2026-08-05",
+      "status": "resolved",
+      "supersedes": null,
+      "revision_reason": null,
+      "resolution": {
+        "resolved_at": "2026-07-28T18:16:37Z",
+        "evidence": "https://github.com/PolicyEngine/populace-dynamics/pull/330 (merged 97ddeacf7229698c0bff3dfa7534b6f4ef4bb7bb): runs/anchor_context_report_v1.json sha256 1ff3f0a04d9a511079e7b1773e01de48a0f4a9b1ec405d4601d410eb88c2cb34 with sidecar runs/anchor_context_report_v1.json.env.json sha256 9e594df76cbc34a6eb8dc58842d37b528f0ede1e0c104469f558a57cb9fd3b67, registration populace-dynamics#328; completion record https://github.com/PolicyEngine/populace-dynamics/issues/328#issuecomment-5108029974",
+        "error_days_p50": -3,
+        "within_p50": true,
+        "within_p80": true
+      }
+    },
+    {
+      "id": 11,
+      "registered_at": "2026-07-28T18:35:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-08-01",
+      "p80": "2026-08-05",
+      "status": "superseded",
+      "supersedes": null,
+      "revision_reason": null,
+      "resolution": null,
+      "superseded_by": [
+        12
+      ]
+    },
+    {
+      "id": 12,
+      "registered_at": "2026-07-30T03:30:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-08-02",
+      "p80": "2026-08-06",
+      "status": "superseded",
+      "supersedes": 11,
+      "revision_reason": "Material evidence from the unit-1 implementation, confirmed by two adversarial referee rounds: committed primary bytes establish no lawful V-B7 covered-share construction (SSA publishes no literal covered-worker-share cell series; cross-publication quotients are barred and empirically invalid, exceeding 1.0 in 31 of 55 years), and the B2/B11 worker-membership prerequisites need a new methodology-byte capture. The path now includes a public design amendment ceremony plus a capture ceremony before registration, moving p50 by one day.",
+      "resolution": null,
+      "superseded_by": [
+        13
+      ]
+    },
+    {
+      "id": 13,
+      "registered_at": "2026-07-30T13:40:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-08-04",
+      "p80": "2026-08-08",
+      "status": "superseded",
+      "supersedes": 12,
+      "revision_reason": "Two referee rulings added mandatory ceremonies to the path: (1) no lawful registration exists with zero registrable calibration rows, so Amendment 2 (fitting-free path) must ratify first (drafted; in referee rounds); (2) the ratified inventory law admits no narrowed PSID inventory, so the complete 43-wave codebook authentication/extraction ceremony is required before unit-3 registration (codebook PDFs are staged locally, bounding the work). p50 moves two days.",
+      "resolution": null,
+      "superseded_by": [
+        14
+      ]
+    },
+    {
+      "id": 14,
+      "registered_at": "2026-08-01T03:30:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-08-06",
+      "p80": "2026-08-10",
+      "status": "superseded",
+      "supersedes": 13,
+      "revision_reason": "Material evidence from three completed units after Amendment-2 ratification (merged 2026-07-31). (1) The prerequisite-registry lane proved all nine crosswalk registries foreign-key the official PSID inventory, which the operative source adjudication declares not emitted, so registries cannot precede a source repin. (2) The questionnaire-extraction unit (merged, referee-confirmed SHIP) closed the V-B5 and V-B8 evidentiary residuals entirely but left one genuine V-B6 residual: no document among the 456 captured questionnaire/procedures volumes supplies the exact allocation from V4901-V4906 secondary-job components to the annual V4379/V5289/V5788 wife labor-income totals, confirmed by two independent corpus-wide sweeps. (3) The design's own registration truth table aborts the fitting-free witness while any V-B row fails, so resolution now requires: an outside-corpus evidence hunt for the allocation rule, a prospectively-replacing source-identity amendment (Amendment 3, drafting), its ratification and registry repin, the nine prerequisite registries with separate reviews, the crosswalk commit ceremony, the value-blind registrability adjudication, and the A1/A3 capture ceremony before registration and the sealed run. p50 moves two days on the amendment-and-registries stack; the p80 tail carries the risk that the allocation rule is unrecoverable outside the corpus and the V-B6 requirement needs its own ratified revision.",
+      "resolution": null,
+      "superseded_by": [
+        15
+      ]
+    },
+    {
+      "id": 15,
+      "registered_at": "2026-08-02T16:15:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-08-10",
+      "p80": "2026-08-14",
+      "status": "superseded",
+      "supersedes": 14,
+      "revision_reason": "Material evidence from the amendment cascade and the measured R_Q scale wall, all landed after entry 14 registered. (1) Four further design amendments proved necessary and were ratified through adversarial rounds: A3 (successor V-B source identity + comparator census, revision 5), A4 (V-B6 inclusive-total fact revision, revision 6), A5 (consolidated legal schema and official-inventory dispositions, five rounds, revision 7), and A6 (fixed-width missing-token grammar completion, four rounds, revision 8, merged 2026-08-02 via #356/#358) whose ratified totality census maps all 89,599 inventory fields with total literal registration. (2) A5's schema law requires ONE global six-era 43-wave Q5 annotation artifact; stage 1 sealed 469,198 candidate review rows over 81 questionnaire documents and the per-document annotation factory has sealed 12 of 81 with a measured cadence of ~12 documents/day on three lanes, putting corpus completion near 2026-08-05 with era seals, the global catalog, reverse-cover, and independent reconstruction review behind it. (3) The legal-registry lane (merged #357) narrowed six source gaps to two, both still registration-blocking until captured (Section 218 instrument universe, inventory-gated; base determinations 1975-77 and 1982-89). (4) Official-inventory emission became lawful only with revision 8 and its first attempt is in flight. The remaining chain - inventory, nine crosswalk registries, the single-add crosswalk ceremony, value-blind registrability adjudication, capture ceremony, fresh registration, sealed run, publication - sits behind the R_Q long pole, moving p50 from 2026-08-06 to 2026-08-10.",
+      "resolution": null,
+      "superseded_by": [
+        16
+      ]
+    },
+    {
+      "id": 16,
+      "registered_at": "2026-08-07T18:09:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-08-14",
+      "p80": "2026-08-20",
+      "status": "superseded",
+      "supersedes": 15,
+      "revision_reason": "Material evidence from the continued amendment cascade, the stage-4 fail-closed discovery, and lane capacity, all landed after entry 15 registered (2026-08-02). (1) Five further design amendments proved necessary and were ratified through adversarial referee rounds: A7 (consumption-boundary law, revision 9, #360/#361), A8 (analytic range partitions, revision 10, #363/#364), A9 (arm-ambiguous serializability, revision 11, merged 2026-08-03 via #365/#366), A10 (unit authority, revision 12, merged 2026-08-05 via #368/#369), and A11 (missing-reason authority, revision 13, merged 2026-08-06 via #370/#371); the 81-document corpus is fully sealed with six era consolidations. (2) The stage-4 disposition pass then failed closed (report 2026-08-05), surfacing repeat-instruction semantics outside the ratified laws; Amendment 12 was chartered the same day and through four completed adversarial rounds plus five fix cycles (2026-08-05 through 2026-08-07) grew into a full repeat-encounter law — a five-arm partition with an explicit continuation rule, typed pairwise decomposition of composite instructions, and a semantic-ledger-only gate to the alias arm. Round 5, the ratification attempt, is in flight at registration time. (3) The Amendment 12 charter adopted a two-tier protocol — pilot-slice lawmaking followed by full-corpus tier-2 certification — inserting a corpus-wide repair pass (tier-2 repair total currently measured at 46 = 36 + 10 at the fifth fix cycle) between ratification and the stage-5+ chain that entry 15's dates assumed would follow stage 4 directly. (4) Lane capacity collapsed across the window: travel-window process kills on 2026-08-05/06 and weekly usage caps left three of four Codex lanes capped or unauthenticated as of 2026-08-07 (stated resets 2026-08-10 through 2026-08-11), with a single live lane carrying both round-5 referees. Remaining chain to the criterion: A12 ratification and revision-14 repin, tier-2 certification, H/O_H reverse-cover, reconstruction review, Q5, official inventory, crosswalks, adjudication, capture, gate registration, the sealed one-shot run, and the publication PR. p50 moves 2026-08-10 to 2026-08-14; p80 2026-08-14 to 2026-08-20.",
+      "resolution": null,
+      "superseded_by": [
+        17
+      ]
+    },
+    {
+      "id": 17,
+      "registered_at": "2026-08-09T11:13:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-08-17",
+      "p80": "2026-08-23",
+      "status": "superseded",
+      "supersedes": 16,
+      "revision_reason": "Material evidence landed after entry 16 registered (2026-08-07). (1) The tier-2 execution chain required two further ratified amendments: A13 (tier-2 execution law: terminal successor status for the 28 incompatible proof rows, fragment disclosure/composition law, blob-bound ratification identity; ratified 2026-08-08, merged #377, revision 15 via #378 after a squash-orphan incident cured by #379) and A14 (operative-convention scope correction replacing A13's self-blocking external-PKI recording machinery with the codified dual-RATIFY + committed-verdict + closure convention; operator-authorized, ratified and merged #380, revision 16 + operative closures via #381). (2) Tier-2 A12-T2-R03 then executed the complete reseal obligation on 2026-08-09 — exactly 46 repairs with 46 supersession edges, all six successor era seals, corpus-exhaustive sweeps over all 81 documents with zero unexplained hits, 89/89 mutations — but the certification PR #382 was squash-merged, collapsing the enacted §27.2.3 cl.3-5 first-add ordering (overlays strictly before seals strictly before evidence) into one commit: master's Tests now fail (test__live_git_order__validates_before_and_after_publication, 'an overlay first-add is not a strict ancestor of its era seal') and the cure is underdetermined under current law because first-add history is immutable and the validator requires at most one add-commit per path. Amendment 15 is drafting to enact the ordered-ceremony-branch attestation cure (the true ordered history is preserved at ceremony-archive/a12-tier2-r03-ordered, tip tree byte-identical to the squash tree), a merge-mode law, and the tier-2 certification schema. All PRs are blocked on the red master until it lands. (3) A section-cited endgame mapping against the revision-16 design established that roughly 17-18 macro gates remain between the current state and this entry's criterion, including the full tier-2 step-5 source build (H, O_H, reverse covers, dispositions, catalogs, executable R_Q), the A12-T2-R05 dual-adversarial reconstruction certification, the R06 rerun reproducing the Amendment 11 abort, and — dominating the remaining schedule — the separately ratified source-authority and lifecycle successor program the design requires before Q5 (SS25.10.2, SS26.10.3): authenticated separately registered source-backed evidence covering 524,538 literals without disposition authority plus 37,283 structural-null ranges, a total no-default disposition/reason law, and rebuilt terminal/storage facts, gates, comparator closure, and lifecycle. (4) No entry-criterion validator or ceremony runner is implemented yet; the design names runner scripts that do not exist in the tree. p50 moves 2026-08-14 to 2026-08-17; p80 2026-08-20 to 2026-08-23.",
+      "resolution": null,
+      "superseded_by": [
+        18
+      ]
+    },
+    {
+      "id": 18,
+      "registered_at": "2026-08-11T18:40:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-09-08",
+      "p80": "2026-09-22",
+      "status": "superseded",
+      "supersedes": 17,
+      "revision_reason": "Material evidence landed after entry 17 registered (2026-08-09), dominated by the forecast-deciding Amendment 11 convention-probe verdict of 2026-08-11. (1) The probe, executed read-only against the authenticated corpus pinned at master 60289833 (43 codebook PDFs plus 4 official Stata/SPSS setup files, 114,875,090 bytes, zero hash mismatches), found NO broad official PSID missing-data convention: the only authenticated semantic convention is the 2021 CATI note (Don't Know and NA/Refused indistinguishable for CATI cases), explicitly bound by 12 variables in the 2021 family codebook plus 12 variable-local 2023 row statements whose referenced global note (ER82001) is absent from the 2023 codebook; the four setup files declare no missing-value machinery at all (no Stata mvdecode/extended missing, no SPSS MISSING VALUES); and lexeme-only rules are provably unsound (codes 8 and 9 recur as August and September in date fields; a lexeme-level Boolean commits at least 22,849 minimal modal errors, with 4,062 conflicts inside the top-100 pair slice alone). Strict declared-scope coverage of the 524,538 unresolved literal occurrences under the Amendment 11 missing-reason relation is 48 occurrences (0.009%); a deliberately generous whole-2021-wave sensitivity still covers only 10,255 (2.0%), leaving residuals of 524,490 and 514,283 occurrences respectively across 50,105 distinct (lexeme, meaning) pair families, 31,781 of them singletons. A NONAUTHORITY shadow-run of both candidate maps through the registered fixture law reproduced the Amendment 11 relation-level abort (incomplete_missing_reason_authority) with zero settled outputs. (2) Consequence: the one-amendment-plus-sweeps completion that entry 17's dates could still accommodate is foreclosed. Clearing the Amendment 11 production stop - the gate ahead of reconstruction, Q5, official inventory, V-B6, and publication - requires a multi-lane evidence campaign (additional official manuals and scoped series rules where they exist, plus an occurrence-local residual adjudication ledger for the remainder) consolidated into a single controlling successor amendment (A18, revision 20). (3) The activation chain also lengthened by two ceremonies entry 17 did not price: Amendment 16 (generalized ratification oracle - amendment N maps to revision N+2, closure domain range(13, R-1), atomic revision-18 bootstrap activating A15+A16 together; ratified on a round-1 dual RATIFY and merged 2026-08-10 via #385) and Amendment 17 (test-pin activation cure plus the executed-transition rule, required because an A16-pinned test still hardcoded the {13,14} closure set and blocked the revision-18 repin; round-1 dual REWRITE, fix-1 landed 2026-08-11 at 4de9944, round-2 re-review dispatching at registration time). The revision-18 repin, tier-2 R04/R05/R06 certification stages, and the tier-2 step-5 full source build all remain ahead of the evidence campaign itself, and the endgame mapping still counts roughly 13 state-transition groups to this entry's criterion, with every stage to date having added at least one unplanned ceremony. p50 moves 2026-08-17 to 2026-09-08; p80 2026-08-23 to 2026-09-22.",
+      "resolution": null,
+      "superseded_by": [
+        19
+      ]
+    },
+    {
+      "id": 19,
+      "registered_at": "2026-08-16T03:25:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-11-09",
+      "p80": "2027-01-22",
+      "status": "superseded",
+      "supersedes": 18,
+      "revision_reason": "Material evidence landed after entry 18 registered (2026-08-11). (1) The ceremony chain entry 18 priced actually completed faster than its dates assumed: Amendments 17 (test-pin cure), 18 (tier-2 certification contract cure: build-input preimage, revision-general R05 selector, R06 result law), and 19 (source-hierarchy member-construction cure) were each ratified through adversarial rounds and the registry advanced through revisions 19 and 20 between 2026-08-13 and 2026-08-15, with A19 ratified on a round-1 dual RATIFY and its revision-21 activation in gate at registration time. (2) But the paired independent R04 reconstruction development - the dual-implementation discipline the certification law mandates - discovered two member-construction law gaps (a purpose mapping reaching only ~246 of 21,971 prompts from permitted inputs, and a hierarchy digest/absence-proof circularity), and Amendment 19's referees unanimously adjudicated the passability question the cure raised: Reading A is compelled and Reading B expressly foreclosed - the tier-2 R04 gate remains nonpassing and R05 certification cannot pass while prompt purposes are underdetermined. Tier-2 certification, the R06 abort record, and everything downstream to this entry's criterion therefore lawfully sit behind the evidence campaign, which entry 18 treated as the final pre-publication stage rather than the gate for certification itself. (3) The campaign also gained a second evidence domain: purpose authority for 21,153 underdetermined prompts (a closed 35-literal model-law classification), with the scoping report establishing that clearing purposes is necessary but not sufficient - semantic bindings and exact prompt-to-field joins remain independent R04 gates. (4) The consolidated two-arm A20 charter (2026-08-15) merges both domains over shared source infrastructure with separate authority gates, banks the completed evidence (two independent 60-document E1 passes reconciled to 48 candidate groups including the 1979-1992 MD= field convention with a ~55k-occurrence declared-scope-exact ceiling; a 150-document E2 availability census with zero absent), and prices the remaining critical path - E1-E2 source closure and compilers, A1-A3 adjudication with the family-tail long pole at 19/55 pooled lane-rounds, the A4/C20 amendment ceremony, X-stage authoritative settlement, tier-2 R04/R05, R06, reconstruction, Q5, inventory, V-B6, and publication - at p50 2026-11-09 / p80 2027-01-22, conditional on eventual lawful total settlement and subject to the charter's enacted kill criteria (which would recharter, not extend, the program on capacity or scope failure). p50 moves 2026-09-08 to 2026-11-09; p80 2026-09-22 to 2027-01-22.",
+      "resolution": null,
+      "superseded_by": [
+        20
+      ]
+    },
+    {
+      "id": 20,
+      "registered_at": "2026-08-17T11:55:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "p50": "2026-09-24",
+      "p80": "2026-10-29",
+      "status": "superseded",
+      "supersedes": 19,
+      "revision_reason": "Material evidence landed after entry 19 registered (2026-08-16), all of it measured rather than modeled. (1) The charter-mandated production adjudication-rate measurements are in for BOTH campaign arms, and both cleared their reliability bars: the missing-reason arm's dual-review pipeline has reconciled A1 stage ranks 1-340 at 98-100 percent exact agreement (zero unresolvable rows) with the first-pass frontier at rank 640 of 990 after seven ~2-3 hour three-lane waves, and the purpose arm's rubric-v2 cure measured 96.67 percent blinded dual-pass agreement (29/30 on a stratified sample) with a cured dual-pass q_p of 107.66 decisions per lane-hour - a six-fold improvement over the alert-era 17.6 that had priced entry 19 - lifting the arm's hold and starting production adjudication. (2) At the measured rates the adjudication stages compress from entry 19's dominant months-long pole to weeks: the remaining A1/A2/A3 missing-reason queues (about 49,000 rows) and the 21,102-prompt purpose residue both clear in two to three calendar weeks of continuous three-lane waves, with observed wave cadence running well ahead of the charter's pooled-round day-convention throughout. (3) Repository infrastructure also accelerated the ceremony path: CI pytest is now sharded four ways per Python version (#402), cutting merge-gate latency from about two hours toward the sharded runtime, which compounds across the A20 amendment ceremony, the revision-22 activation, tier-2 R04/R05, R06, and the reconstruction-to-publication chain. (4) The remaining critical path is unchanged in structure - complete the adjudication queues, the A4 freeze, the A20 ceremony and revision-22 activation, X-stage authoritative settlement, tier-2 R04/R05 with the normal member, the R06 abort record, then reconstruction, Q5, official inventory, V-B6, and the publication PR - and every stage to date has added at least one unplanned ceremony, which the p80 buffers. Dates remain conditional on eventual lawful total settlement under the enacted kill criteria. p50 moves 2026-11-09 to 2026-09-24; p80 2027-01-22 to 2026-10-29.",
+      "resolution": null,
+      "superseded_by": [
+        21
+      ]
+    },
+    {
+      "id": 21,
+      "registered_at": "2026-08-20T20:55:00Z",
+      "forecaster": "claude-fable-5 (session orchestrator)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "scope_bifurcation": {
+        "milestone_a": {
+          "name": "revision-22 ratification: A20 framework operative with exact failure shadows",
+          "gating": "NOT gated by the Q5 semantic program. Grounded in the enacted three-union law (design ~56438-56458: fail_permanent status + sole nonempty shadow is ratification-ready; 'No other null/non-null combination is ratification-ready') and A20_R04_Q5_CONTRACT's construction_order, whose dependent constructions are normal_only_ and lawfully ABSENT on the failure member (adjudicated by the ceremony lane from the enacted text, 2026-08-20; cites verified independently by the registering orchestrator).",
+          "p50": "2026-09-08",
+          "p80": "2026-09-22"
+        },
+        "milestone_b": {
+          "name": "R04-normal corrected-earnings successor authority and the publication criterion above (the DynaSim-parity track; THE resolution event of this ledger's claim)",
+          "gating": "Gated by (i) the Q5 semantic-annotation program: audited COMPLETABLE-LARGE at 0/257 documents complete, priced >=4,300 evidence lane-hours / 45+ fleet-days at entry-15 measured rates (e8-ops/sol-ce-q5-coverage-audit-report.md, 2026-08-20); (ii) the fix-5 span/collapse sentence for the section-34.5.1 12-key schema (six 1976 V4632/V4991 span-collapse events, discovered independently by two builder lanes); (iii) the purpose option-(b) census completion over the full prompt denominator (~408 lane-hours at measured q_p). If any arm lands permanent-failure at A4, select_failure_or_normal_member is singular and atomic: no partial successor authority ships at revision 22; the normal member re-runs under the dormant-lifecycle machinery post-ratification with no further amendment required.",
+          "p50": "2026-10-14",
+          "p80": "2026-12-02"
+        }
+      },
+      "p50": "2026-10-14",
+      "p80": "2026-12-02",
+      "status": "superseded",
+      "supersedes": 20,
+      "engine_assumptions": "Engine assumptions. Stage throughputs in this entry are calibrated on the measured 2026-08 engine: gpt-5.6-sol lanes at the observed adjudication rates (missing-reason dual-review 98-100% agreement; purpose q_p 107.66 decisions/lane-hour under rubric v2) with fable-5 orchestration, on the current fleet quota schedule (weekly caps, Thursday/Monday resets). The forecaster is this engine; dates condition on it as follows. (a) Frontier upgrade (market-implied ~71% probability of a GPT-6-class successor by Oct 1 as of mid-July pricing): expected -2 to -4 weeks on the remaining adjudication-class stages, net of ~1 week re-validation via heterogeneous dual-lane pairing (new model as one lane against a 5.6 lane for one cycle before promotion); ceremony-class and CI/compute-bound stages are largely insensitive. (b) Quota-tier tightening at any new model's launch: transient +days on wave cadence until limits settle. (c) These adjustments shift p50 mass earlier; the p80 tail remains dominated by scope-discovery and kill-criteria risk, not throughput, and is largely engine-insensitive. Cross-reference: the prediction-market and elasticity analysis behind these figures is in the session record accompanying the 2026-08-16 law-gap sweep; the heterogeneous-pairing protocol doubles as the reward-hacking re-benchmark using the enacted mutation censuses as known-answer traps.",
+      "revision_reason": "Material evidence landed 2026-08-20, after entry 20 (2026-08-17). (1) LIMB-IV EVIDENCE STATE MEASURED: two independent section-34.5 builder lanes + a comparator triple-verified the 46 singleton-field-token collision census (canonical 46-ID array SHA 653bff98...); dual disposition lanes adjudicated all 46 as lawfully unresolved_multiple with per-collision source receipts, row-for-row agreement, discharging section-34.5.1's pre-R04 obligation. The v3/section-19.3.2 reconstruction runs green at HEAD and yields 17,313 evidence rows / 21,971 candidate-set rows, hash-stable only up to an unenacted span/collapse convention (the fix-5 gap). (2) Q5 AUDIT: the semantic-binding limb requires the complete Q5 annotation over the fixed 257-document denominator; strict coverage today is 0 documents complete; priced at >=4,300 lane-hours / 45+ fleet-days (COMPLETABLE-LARGE). (3) SHADOW-ROUTE RULING from the enacted text: revision-22 ratification is NOT gated by Q5 (three-union law; normal_only_ construction order), but the corrected-earnings successor AUTHORITY - this claim's actual resolution event - IS, because member selection is singular and atomic. Hence the bifurcation: milestone A holds near the pre-Q5-audit shape (the measured 2026-08-20 cadence - two dual-covered 300-rank A2 blocks per hour, 800-rank A3 blocks at 94.5-100% pair agreement, fork-closure and rubric-v2 stabilization - supports it); the headline p50/p80 moves to milestone B's dates, +20/+34 days versus entry 20, absorbing the Q5 program at measured rates with the engine-assumptions clause attached. Registered per ledger rule 5; supersession is append-only; entry 20's dates remain in its superseded record.",
+      "resolution": null,
+      "superseded_by": [
+        22
+      ]
+    },
+    {
+      "id": 22,
+      "registered_at": "2026-09-03T10:40:00Z",
+      "forecaster": "claude-fable-5-1 (ceremony lane; registered at Max's direction 2026-09-03 — the sequencing orchestrator session remains claude-fable-5)",
+      "claim": "Covered-earnings correction: the section-12 successor that retires the section-3.4 proxy label. A ratified correction design (docs/design/), an implementation behind that design's pre-registered evaluation, and a published runs/ artifact whose earnings inputs carry the corrected covered-earnings label in place of the labor-income proxy label for the corrected series.",
+      "resolution_criterion": "The merge of a publication PR whose payload is a runs/ artifact produced under a ratified covered-earnings correction design committed in docs/design/, passing that design's registered validator, with the corrected covered-earnings label carried in the artifact and the proxy label retired for the corrected series. Incident-only, partial, or validator-failing publications resolve nothing.",
+      "scope_bifurcation": {
+        "milestone_a": {
+          "name": "revision-22 ratification: A20 framework operative with exact failure shadows",
+          "gating": "NOT gated by the Q5 semantic program. Grounded in the enacted three-union law (design ~56438-56458: fail_permanent status + sole nonempty shadow is ratification-ready; 'No other null/non-null combination is ratification-ready') and A20_R04_Q5_CONTRACT's construction_order, whose dependent constructions are normal_only_ and lawfully ABSENT on the failure member (adjudicated by the ceremony lane from the enacted text, 2026-08-20; cites verified independently by the registering orchestrator). Measured state at registration (2026-09-03 04:5x EDT): purpose census contiguous R1-R17585 of 20,815 = 84.48% under ledger v1.83; A3 arm complete (41,103/41,103, library v1.28, 2026-09-01); remaining 3,230 ranks = E5 block 8 (303 ranks, in flight) + the post-E5 remainder (2,927 ranks, fam2013 onward, tranche build not yet dispatched). Then the A4 evidence freeze, a4_readiness + c20_prompts, and the C20 referee chain (A17-A19 each ratified within 1-2 days of dispatch, 2026-08-13 to 2026-08-15).",
+          "p50": "2026-09-10",
+          "p80": "2026-09-17"
+        },
+        "milestone_b": {
+          "name": "R04-normal corrected-earnings successor authority and the publication criterion above (the DynaSim-parity track; THE resolution event of this ledger's claim)",
+          "gating": "Gated by (i) the Q5 semantic-annotation program over the fixed 257-document denominator: 45/257 documents sealed at registration (2026-09-02 22:5x EDT), 81,638 of 404,526 required atoms = 20.2%; the questionnaire/QxQ class is 66.3% by atoms (81,638 of 123,149; 36 of 81 documents remain) while the setup/layout class (86 documents, 179,198 atoms) and the codebook/value-label class (47 documents, 102,179 atoms) are unstarted; the calibration ladder has never left one-document dual annotation (all 45 reconciles ruled RECALIBRATE, clean streak 0); (ii) the fix-5 span/collapse sentence (discharged); (iii) completion of the purpose census (milestone A's precondition). Member selection stays singular and atomic: no partial successor authority ships at revision 22.",
+          "p50": "2026-10-21",
+          "p80": "2026-12-04"
+        }
+      },
+      "p50": "2026-10-21",
+      "p80": "2026-12-04",
+      "status": "open",
+      "supersedes": 21,
+      "engine_assumptions": "Engine assumptions. Adjudication lanes remain gpt-5.6-sol; the sequencing orchestrator (hourly harvest/fold cron) remains claude-fable-5 (1M context); the ceremony lane moved to claude-fable-5-1 at 2026-09-01T18:16Z. No pace change is attributable to that switch: the fold loop (orchestrator + sol lanes) did not change engine, and the measured purpose pace moved from 47-57 ranks/lane-hour on 2026-08-30/31 (a window containing the 08-30 18:55 computer crash and a ~9.5 h usage-dialog wedge) to 88-90 ranks/hour during Tuesday and Wednesday daytime (9/1-9/2; 8 and 5 blocks folded) and back to 28 ranks/hour overnight 9/2-9/3 (block 7: three sol lane-degradation voids in 12 h, two on ~/.codex-6, each re-dispatched). The Tuesday-Wednesday improvement coincides with the closed-manifest fold precedent (v1.63, 2026-08-31 22:5x), the first-contact maximum protocol (2026-09-01 04:5x) and the Monday codex weekly reset, not with the model switch. Q5 pace on two lanes: 5 documents / 18,352 atoms sealed on 9/1 and 4 documents / 16,858 atoms on 9/2, versus 1-2 documents per day on 8/30-8/31. Fleet: codex weekly caps leave 2 of 6 lanes dispatchable (~/.codex-4 at 40%, ~/.codex-6 at 28% weekly used at registration) until the 9/6-9/9 resets; a machine reboot at 2026-09-03 06:04 EDT killed the orchestrator and both in-flight lanes (re-dispatched 06:18 from recorded briefs; ~1.4 h lost). The frontier-upgrade clause of entry 21 remains open (no GPT-6-class successor has launched as of registration); its expected -2 to -4 weeks on adjudication-class stages is still not priced into p50.",
+      "revision_reason": "Material evidence landed 2026-08-21 through 2026-09-03, after entry 21 (2026-08-20). (1) PURPOSE CENSUS MEASURED, NOT MODELED: the option-(b) census entry 21 priced at ~408 lane-hours has adjudicated 17,585 of 20,815 ranks (84.48%) under a 20,815-rank pinned residual index (2026-08-23), folding 6,009 ranks between 2026-08-30 09:20 and 2026-09-03 04:50 EDT (66 ranks/hour average across crash, wedge and void incidents; 88-90/hour in clean daytime windows). The E4 tranche closed 8/31, the late-E4 tranche 9/1, and the E5 tranche stands at 7 of 8 blocks closed; 3,230 ranks remain. Five blocks calibrated at 100% on first audit; family-concentrated misses now fold under the closed-manifest precedent without a sweep cycle. (2) A3 ARM COMPLETE 2026-09-01: 41,103/41,103 ranks; A1 990 + A2 7,629 + A3 41,103 = 49,722 adjudicated ranks with zero predicate defects, library v1.28. (3) Q5 PROGRAM MEASURED: from 0 to 45 of 257 documents sealed in 14 days (81,638 of 404,526 atoms, 20.2%), all in the questionnaire class; the entry-21 price of 45+ fleet-days for the whole program would have implied ~31% of atoms by now, so the program is behind that price on atoms but ahead on the hardest class (questionnaires 66% by atoms). Setup/layout and codebook classes (281,377 atoms) have no measured rate yet; their dates carry the widest interval. Transport hardening landed on the way (sentinel line, dual serialization, output-order mandate) after five lane-transport corruptions, each recovered without re-annotation except one. (4) MILESTONE A moves +2 days at p50 (2026-09-08 -> 2026-09-10) and tightens at p80 (2026-09-22 -> 2026-09-17): the purpose pole is now a 2-4 day measured quantity (3,230 ranks at 28-90 ranks/hour, on a fleet with 2 dispatchable codex lanes until the weekend resets), followed by the freeze and the C20 chain at the A17-A19 cadence. (5) MILESTONE B (the resolution event) moves +7 days at p50 (2026-10-14 -> 2026-10-21) and +2 at p80 (2026-12-02 -> 2026-12-04): the remaining questionnaire class prices at ~8 days at the measured 4-5 documents/day, the two unstarted classes at 17-33 days depending on whether they pace by atom (12-18k/day) or by document cycle (4-5/day), then ~10 days for A4 member selection, the successor build and the publication PR; the p80 tail is still scope-discovery risk (two document classes never attempted; the 2001-2023 questionnaires' EHC structures) plus fuel. (6) EXTERNAL DATE: NASI (Rebecca Vallas's team) offered 2026-09-22 16:00 ET or 2026-10-01 16:30 ET for the model walkthrough; Max's 2026-08-18 note forecast the corrected covered-earnings release for mid-to-late September. Under this entry that release (milestone B) is not expected in either window; the ratified revision-22 framework (milestone A) is expected before either (p80 2026-09-17). Registered per ledger rule 5; supersession is append-only; entry 21's dates remain in its superseded record.",
+      "resolution": null
     }
-   },
-   "p50": "2026-10-14",
-   "p80": "2026-12-02",
-   "status": "open",
-   "supersedes": 20,
-   "engine_assumptions": "Engine assumptions. Stage throughputs in this entry are calibrated on the measured 2026-08 engine: gpt-5.6-sol lanes at the observed adjudication rates (missing-reason dual-review 98-100% agreement; purpose q_p 107.66 decisions/lane-hour under rubric v2) with fable-5 orchestration, on the current fleet quota schedule (weekly caps, Thursday/Monday resets). The forecaster is this engine; dates condition on it as follows. (a) Frontier upgrade (market-implied ~71% probability of a GPT-6-class successor by Oct 1 as of mid-July pricing): expected -2 to -4 weeks on the remaining adjudication-class stages, net of ~1 week re-validation via heterogeneous dual-lane pairing (new model as one lane against a 5.6 lane for one cycle before promotion); ceremony-class and CI/compute-bound stages are largely insensitive. (b) Quota-tier tightening at any new model's launch: transient +days on wave cadence until limits settle. (c) These adjustments shift p50 mass earlier; the p80 tail remains dominated by scope-discovery and kill-criteria risk, not throughput, and is largely engine-insensitive. Cross-reference: the prediction-market and elasticity analysis behind these figures is in the session record accompanying the 2026-08-16 law-gap sweep; the heterogeneous-pairing protocol doubles as the reward-hacking re-benchmark using the enacted mutation censuses as known-answer traps.",
-   "revision_reason": "Material evidence landed 2026-08-20, after entry 20 (2026-08-17). (1) LIMB-IV EVIDENCE STATE MEASURED: two independent section-34.5 builder lanes + a comparator triple-verified the 46 singleton-field-token collision census (canonical 46-ID array SHA 653bff98...); dual disposition lanes adjudicated all 46 as lawfully unresolved_multiple with per-collision source receipts, row-for-row agreement, discharging section-34.5.1's pre-R04 obligation. The v3/section-19.3.2 reconstruction runs green at HEAD and yields 17,313 evidence rows / 21,971 candidate-set rows, hash-stable only up to an unenacted span/collapse convention (the fix-5 gap). (2) Q5 AUDIT: the semantic-binding limb requires the complete Q5 annotation over the fixed 257-document denominator; strict coverage today is 0 documents complete; priced at >=4,300 lane-hours / 45+ fleet-days (COMPLETABLE-LARGE). (3) SHADOW-ROUTE RULING from the enacted text: revision-22 ratification is NOT gated by Q5 (three-union law; normal_only_ construction order), but the corrected-earnings successor AUTHORITY - this claim's actual resolution event - IS, because member selection is singular and atomic. Hence the bifurcation: milestone A holds near the pre-Q5-audit shape (the measured 2026-08-20 cadence - two dual-covered 300-rank A2 blocks per hour, 800-rank A3 blocks at 94.5-100% pair agreement, fork-closure and rubric-v2 stabilization - supports it); the headline p50/p80 moves to milestone B's dates, +20/+34 days versus entry 20, absorbing the Q5 program at measured rates with the engine-assumptions clause attached. Registered per ledger rule 5; supersession is append-only; entry 20's dates remain in its superseded record.",
-   "resolution": null
-  }
- ]
+  ]
 }
