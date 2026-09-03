@@ -1,891 +1,1307 @@
 {
- "schema_version": 1,
- "as_of": "2026-08-30",
- "description": "Row-level drill-down behind the verification arms; extracted from the campaign evidence archive and adversarially verified. Sources name the archive artifact grounding each row.",
- "purpose": {
-  "unit": "One rank = one row of the pinned 20,815-row residual index (e8-ops/sol-ce-purpose-residual-index-v1.txt, file SHA b35519702e6f...) = one prompt occurrence keyed `psid-questionnaire-occurrence:<sha256>` — a single printed questionnaire item in a sealed official PSID questionnaire/QxQ-codebook PDF (staged under ~/PolicyEngine/psid-data/documentation/capture1), located by an exact page/character-span receipt, e.g. `q88:p4[2538,2708)#10bc6b307d41`. What is adjudicated per rank is the prompt's \"purpose\": per sol-ce-purpose-evidence-scope-report.md, purpose \"is the closed model-law classification saying which factual dimension a `field_purpose_prompt` establishes for `O_P`\" — not survey designers' motivation. Each rank is disposed either D (determined: an ordered purpose array over the closed 35-literal space, e.g. `[M]`) or SU (source-underdetermined, with a named condition such as U_ONTOLOGY, U_CONFLICT, or U_SCOPE). Example full row from sol-ce-purpose-ledger-pass-R6172-6576-report.md: \"R6176 | Q7316 | psid-questionnaire-occurrence:091095d3... | E3.CALENDAR_EXPOSURE | D | [M] | q88:p4[2538,2708)#10bc6b307d41\". Documents are the per-wave PSID instruments: f-docs are family-interview QxQ codebooks (e.g. f94 = fam1994_QxQs.pdf) and q-docs are questionnaires (e.g. q94 = q94.pdf, \"1994 Questionnaire\", per the e4-era build's source table).",
-  "denominator": "20,815 = 21,971 − 1,156. sol-ce-purpose-residual-index-v2-report.md states the domain law verbatim: \"The domain law yields **20,815**, not 20,809: E ⊂ D; |C − D − E| = 21,971 − 1,156 = 20,815\", where C is the canonical corpus (sol-ce-purpose-residual-index-report.md: \"The canonical corpus contains 21,971 prompts. Subtracting the same IDs yields **20,815**\") and the 1,156 is the already dual-covered calibration relation from sol-ce-purpose-grand-reconcile-report.md (\"Unique dual-covered prompts: 1,156\" = production ranks 1–1,130 plus 26 unique rubric-sample rows; the six calibration-only exclusions are inside those 26). So the artifacts state the relation to 21,971 directly: 21,971 canonical prompts = 1,156 dual-covered in the pre-census calibration phase + 20,815 residual ranks R1–R20815 that the census adjudicates. The index was pinned 2026-08-23 (board: \"PURPOSE RESIDUAL INDEX PINNED: e8-ops/sol-ce-purpose-residual-index-v1.txt (20,815 rows; R-Q SHA 858a5aa9; file SHA b35519702e6f2e2a2541c25f62878d0125f86c31b383fbc681b5369d0c272c90)\"). Distinct nearby numbers, per the same artifacts: 21,099 is the established-Q `fail_closed_no_rule` queue (an earlier Q namespace; \"Subtracting 1,156 yields **19,943** rows, not approximately 20,815\" — that derivation was explicitly rejected in favor of the canonical 21,971 ordinal), and 21,153 is the evidence-scope report's \"operative burden\" of underdetermined prompts. Board percentage milestones are rank_end/20,815 (e.g. R11260/20,815 = 54.10%, matching \"contiguous R1–R11260 = 54.10%\").",
-  "rows": [
-   {
-    "document": "early blocks R1-R4350 (aggregate: pilot rounds r1-r6 + pre-index production blocks + 452-rank gap block, re-keyed to the pinned index)",
-    "era": null,
-    "rank_start": 1,
-    "rank_end": 4350,
-    "ranks": 4350,
-    "status": "adopted",
-    "dispositions": "3,898 re-keyed rulings = 3,487 D / 411 SU; plus 452 gap-block rulings (D/SU split not stated)",
-    "audit": "coverage audit vs the pinned index: 0 duplicates, 452 gaps in R1-R4350 -> gap block dispatched; gap block reconciled 83.6%",
-    "adopted_on": "2026-08-23",
-    "source": "sol-ce-purpose-coverage-audit-report.md"
-   },
-   {
-    "document": "block R4351-R4650",
-    "era": "E3 (late-E3 tranche f85-f87 = R3537-R5440)",
-    "rank_start": 4351,
-    "rank_end": 4650,
-    "ranks": 300,
-    "status": "adopted",
-    "dispositions": null,
-    "audit": "reconciled 270/300 = 90.000% (below cal-3 reference 93.333%); adopted as table of record under the explicit policy change",
-    "adopted_on": "2026-08-23",
-    "source": "sol-ce-purpose-reconcile-R4351-4650-report.md"
-   },
-   {
-    "document": "block R4651-R4950",
-    "era": "E3 (late-E3 tranche f85-f87 = R3537-R5440)",
-    "rank_start": 4651,
-    "rank_end": 4950,
-    "ranks": 300,
-    "status": "adopted",
-    "dispositions": null,
-    "audit": "reconciled 260/300 = 86.667% (24 application failures + 16 coverage gaps) -> triggered stop-and-diagnose",
-    "adopted_on": "2026-08-23",
-    "source": "sol-ce-purpose-reconcile-R4651-4950-report.md"
-   },
-   {
-    "document": "block R4951-R5250 (f87 opening, families B-D)",
-    "era": "E3 (f87 = R4951-R5440)",
-    "rank_start": 4951,
-    "rank_end": 5250,
-    "ranks": 300,
-    "status": "adopted",
-    "dispositions": null,
-    "audit": "reconciled 264/300 = 88.000% RECALIBRATE - the last dual-pass block, folded as coverage data",
-    "adopted_on": "2026-08-23",
-    "source": "sol-ce-purpose-reconciled-R4951-5250.md"
-   },
-   {
-    "document": "block R5251-R5550 (f87 close + q87 open; first ledger-first calibration block)",
-    "era": "E3 (f87/q87 boundary at R5440/R5441)",
-    "rank_start": 5251,
-    "rank_end": 5550,
-    "ranks": 300,
-    "status": "adopted",
-    "dispositions": "300 = 294 D / 6 SU (corrected block final, 31 corrections)",
-    "audit": "82/99 = 82.83% NOT CALIBRATED (ledger-first calibration) -> corrected via sweep; adopted at the v1.8 fold",
-    "adopted_on": "2026-08-24",
-    "source": "board"
-   },
-   {
-    "document": "block R5551-R5614 (q87 completion)",
-    "era": "E3 (q87 = R5441-R5614)",
-    "rank_start": 5551,
-    "rank_end": 5614,
-    "ranks": 64,
-    "status": "adopted",
-    "dispositions": "64/64 (61 executable + 3 UNCOVERED proposals), 0 SU",
-    "audit": "dense re-calibration audit CALIBRATED 28/28 = 100% (zero contradictions)",
-    "adopted_on": "2026-08-24",
-    "source": "board"
-   },
-   {
-    "document": "f88",
-    "era": "E3 (v1.5 q87/f88/q88 tranche)",
-    "rank_start": 5615,
-    "rank_end": 6171,
-    "ranks": 557,
-    "status": "adopted",
-    "dispositions": "557 = 484 D / 73 SU (sum of corrected block finals: R5615-5914 = 256 D / 44 SU; R5915-6171 = 228 D / 29 SU)",
-    "audit": "R5915-6171 audit 93/100 = 93.00% NOT CALIBRATED (family-concentrated); R5615-5914 audit NOT CALIBRATED -> both blocks sweep-corrected; adopted at the v1.10 fold",
-    "adopted_on": "2026-08-24",
-    "source": "board"
-   },
-   {
-    "document": "q88",
-    "era": "E3 (v1.5 q87/f88/q88 tranche)",
-    "rank_start": 6172,
-    "rank_end": 6632,
-    "ranks": 461,
-    "status": "adopted",
-    "dispositions": "461 = 440 D / 21 SU (sum: R6172-6576 corrected final 405 = 391 D / 14 SU; tail R6577-6632 = 49 D / 7 SU)",
-    "audit": "R6172-6576 audit 87/92 = 94.57% NOT CALIBRATED (family-concentrated) -> corrected (75 corrections); tail audit CALIBRATED 28/28 = 100%; adopted at the v1.12 fold",
-    "adopted_on": "2026-08-25",
-    "source": "sol-ce-purpose-correction-sweep-R6172-6576-report.md"
-   },
-   {
-    "document": "f89",
-    "era": "E3 (f89-era tranche R6633-R8552)",
-    "rank_start": 6633,
-    "rank_end": 7210,
-    "ranks": 578,
-    "status": "adopted",
-    "dispositions": "opener R6633-6903 corrected final 271 = 233 D / 38 SU; block-2 R6904-7210 pass census 307 = 259 D / 48 SU, adopted with the single R7041 -> U_CONFLICT correction",
-    "audit": "opener audit 118/150 = 78.67% NOT CALIBRATED -> corrected (118 corrections); block-2 CALIBRATED 99.32% (145/146)",
-    "adopted_on": "2026-08-25",
-    "source": "sol-ce-purpose-ledger-f89era-build-report.md"
-   },
-   {
-    "document": "q89",
-    "era": "E3 (f89-era tranche R6633-R8552)",
-    "rank_start": 7211,
-    "rank_end": 7558,
-    "ranks": 348,
-    "status": "adopted",
-    "dispositions": "348 = 313 D / 35 SU (corrected block final; 60 routing-only + 10 semantic+routing corrections)",
-    "audit": "113/123 = 91.87% NOT CALIBRATED -> corrected; adopted at the v1.18 fold",
-    "adopted_on": "2026-08-25",
-    "source": "sol-ce-purpose-correction-sweep-R7211-7558-report.md"
-   },
-   {
-    "document": "f90",
-    "era": "E3 (f89-era tranche R6633-R8552)",
-    "rank_start": 7559,
-    "rank_end": 8084,
-    "ranks": 526,
-    "status": "adopted",
-    "dispositions": "opener R7559-7820 corrected 262 = 229 D / 33 SU; block-2 R7821-8084 = 225 D / 39 SU (sum 454 D / 72 SU)",
-    "audit": "opener audit 116/121 = 95.87% NOT CALIBRATED (family-concentrated) -> corrected; block-2 CALIBRATED 99.08%",
-    "adopted_on": "2026-08-26",
-    "source": "sol-ce-purpose-ledger-f89era-build-report.md"
-   },
-   {
-    "document": "q90",
-    "era": "E3 (f89-era tranche R6633-R8552)",
-    "rank_start": 8085,
-    "rank_end": 8552,
-    "ranks": 468,
-    "status": "adopted",
-    "dispositions": "B+C R8085-8295 corrected census 211 = 173 D / 38 SU; D-M R8296-8552 corrected 257 = 182 D / 75 SU (sum 355 D / 113 SU)",
-    "audit": "B+C dual audits split -> geometry adjudication CALIBRATED 85/86 = 98.84%; D-M corrected under the geometry law",
-    "adopted_on": "2026-08-26",
-    "source": "sol-ce-purpose-geometry-adjudication-R8085-8295-report.md"
-   },
-   {
-    "document": "f91",
-    "era": "E3 (f91-era tranche R8553-R10749)",
-    "rank_start": 8553,
-    "rank_end": 8974,
-    "ranks": 422,
-    "status": "adopted",
-    "dispositions": "422 = 368 D / 54 SU (corrected final; 28 sealed semantic corrections)",
-    "audit": "166/194 = 85.57% NOT CALIBRATED -> corrected; adopted at the v1.26 fold",
-    "adopted_on": "2026-08-28",
-    "source": "sol-ce-purpose-audit-R8553-8974-report.md"
-   },
-   {
-    "document": "q91",
-    "era": "E3 (f91-era tranche R8553-R10749)",
-    "rank_start": 8975,
-    "rank_end": 9571,
-    "ranks": 597,
-    "status": "adopted",
-    "dispositions": "opener R8975-9245 corrected 271 = 261 D / 10 SU; block-3 R9246-9571 corrected 326 = 311 D / 15 SU (sum 572 D / 25 SU)",
-    "audit": "opener audit 85/90 = 94.44% NOT CALIBRATED (concentrated defects); block-3 audit 96.55% NOT CALIBRATED (transition-date family) -> both corrected",
-    "adopted_on": "2026-08-28",
-    "source": "board"
-   },
-   {
-    "document": "f92",
-    "era": "E3 (f91-era tranche R8553-R10749)",
-    "rank_start": 9572,
-    "rank_end": 9795,
-    "ranks": 224,
-    "status": "adopted",
-    "dispositions": "224 = 193 D / 31 SU (corrected final; sweep found 12 contradictions, 4 beyond the audit)",
-    "audit": "100/108 = 92.59% NOT CALIBRATED -> corrected; adopted at the v1.32 fold",
-    "adopted_on": "2026-08-28",
-    "source": "sol-ce-purpose-audit-R9572-9795-report.md"
-   },
-   {
-    "document": "q92",
-    "era": "E3 (f91-era tranche R8553-R10749)",
-    "rank_start": 9796,
-    "rank_end": 10217,
-    "ranks": 422,
-    "status": "adopted",
-    "dispositions": "422 = 405 D / 17 SU (corrected final; UNCOVERED=0)",
-    "audit": "140/145 = 96.55% numeric pass but all six SEE-router checkpoint rows misruled -> NOT CALIBRATED -> corrected; adopted at the v1.33 fold",
-    "adopted_on": "2026-08-28",
-    "source": "sol-ce-purpose-audit-R9796-10217-report.md"
-   },
-   {
-    "document": "q93",
-    "era": "E3 (f91-era tranche R8553-R10749; E3->E4 seam at R10749)",
-    "rank_start": 10218,
-    "rank_end": 10749,
-    "ranks": 532,
-    "status": "adopted",
-    "dispositions": "opener R10218-10457 corrected 240 = 222 D / 18 SU; block-7 R10458-10749 corrected 292 = 269 D / 23 SU (sum 491 D / 41 SU)",
-    "audit": "opener audit 79/89 = 88.76% NOT CALIBRATED; block-7 audit 95/99 = 95.96% NOT CALIBRATED (overlap/reclassification gateway family) -> both corrected",
-    "adopted_on": "2026-08-29",
-    "source": "board"
-   },
-   {
-    "document": "f94",
-    "era": "E4 (E4 tranche R10750-R13210)",
-    "rank_start": 10750,
-    "rank_end": 11260,
-    "ranks": 511,
-    "status": "adopted",
-    "dispositions": "block-1 R10750-11039 corrected 290 = 271 D / 19 SU; block-2 R11040-11260 corrected 221 = 198 D / 23 SU (sum 469 D / 42 SU)",
-    "audit": "block-1 audit 132/139 = 94.96% NOT CALIBRATED (family-concentrated); block-2 audit 96/112 = 85.71% sample / 203/221 = 91.86% guard sweep NOT CALIBRATED -> both corrected",
-    "adopted_on": "2026-08-30",
-    "source": "board"
-   },
-   {
-    "document": "q94 (B+C opener block)",
-    "era": "E4 (E4 tranche R10750-R13210)",
-    "rank_start": 11261,
-    "rank_end": 11576,
-    "ranks": 316,
-    "status": "adopted",
-    "dispositions": "corrected final 316 = 303 D / 13 SU (UNCOVERED=0; supersedes the provisional pass census 316 = 301 D / 15 SU with 221 ledger-matched / 95 UNCOVERED)",
-    "audit": "241/288 = 83.68% sample / 268/316 = 84.81% full NOT CALIBRATED - central simultaneity frame REVERSED (q94 has no simultaneity sentence) -> frame-reversal correction sweep applied; corrected final adopted at the v1.44 fold, q94 B+C CLOSED, contiguous R1-R11576 = 55.61%",
-    "adopted_on": "2026-08-30",
-    "source": "sol-ce-purpose-ledger-pass-R11261-11576-report.md"
-   },
-   {
-    "document": "q94 (D+E block)",
-    "era": "E4 (E4 tranche R10750-R13210)",
-    "rank_start": 11577,
-    "rank_end": 11894,
-    "ranks": 318,
-    "status": "in_cycle",
-    "dispositions": null,
-    "audit": null,
-    "adopted_on": null,
-    "source": "board 2026-08-30 08"
-   },
-   {
-    "document": "q94 (remainder)",
-    "era": "E4 (E4 tranche R10750-R13210)",
-    "rank_start": 11895,
-    "rank_end": 11974,
-    "ranks": 80,
-    "status": "pending",
-    "dispositions": null,
-    "audit": null,
-    "adopted_on": null,
-    "source": "sol-ce-purpose-ledger-e4era-build-report.md"
-   }
-  ]
- },
- "a3": {
-  "unit": "One queue row is one compiled-variable \"family\" from the A3 document-local review queue: a single PSID codebook value-meaning (e.g. rank 1's \"Major assignment; probable error of greater than $300 or 10 percent of assignment value (whichever is greater)\", per sol-ce-a3-reconcile-1-300-report.md's scope receipts, which identify each rank by stage/global/lexeme/meaning) grouping all uncovered occurrences of that meaning within one document. Per sol-ce-a3-queue-characterization.md the queue is \"41,103 families / 86,840 uncovered occurrences (mean 2.11, max 38; 31,588 single-occurrence rows). All rows source_document_count = 1 (document-LOCAL...)\". Each rank is adjudicated to a missingness disposition — per sol-ce-a3-reconcile-1-300-report.md: \"T = true/missing; U = underdetermined; F = false/nonmissing\" — with a fourth outcome X/UNCLASSIFIED (fail-closed quarantine where O>0 or R=0) adopted from block 24001 onward under the v1.14 X-vocabulary ruling (\"block finals are now four-set T/U/F/UNCLASSIFIED partitions\").",
-  "denominator": "41,103 is the family count of the a3_document_local review queue in the pinned E3 compile artifact. sol-ce-a3-queue-characterization.md: \"Source: `full_compile_result.json` (SHA c6163e6f…) → `regenerated_review_queues.queues.a3_document_local`. 41,103 families / 86,840 uncovered occurrences\". Cross-pinned in sol-ce-e3-full-compile-report.md: \"| A3 document-local remainder | 41,103 | 86,840 | …\" and \"Families: `10 + 990 + 7,629 + 41,103 = 49,732`\", and reproduced in per-block reports as \"Full ordered A3 queue: `41,103` rows / `29,536,753` bytes; SHA-256 `f8ea167e71e1c43158f162174918bd4d8dfdd461c22772f5fc25939b5a0cef15`\".",
-  "rows": [
-   {
-    "rank_start": 1,
-    "rank_end": 800,
-    "final": "T 729 / U 24 / F 47",
-    "audit": null,
-    "status": "final",
-    "source": "MERGED to satisfy 800-wide alignment"
-   },
-   {
-    "rank_start": 801,
-    "rank_end": 1600,
-    "final": "T 28 / U 759 / F 13",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-final-801-1600.md"
-   },
-   {
-    "rank_start": 1601,
-    "rank_end": 2400,
-    "final": "T 81 / U 686 / F 33",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconcile-1601-2400-report.md"
-   },
-   {
-    "rank_start": 2401,
-    "rank_end": 3200,
-    "final": "T 545 / U 69 / F 186",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconcile-2401-3200-report.md"
-   },
-   {
-    "rank_start": 3201,
-    "rank_end": 4000,
-    "final": "T 568 / U 24 / F 208",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconcile-3201-4000-report.md"
-   },
-   {
-    "rank_start": 4001,
-    "rank_end": 4800,
-    "final": "T 563 / U 26 / F 211",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconcile-4001-4800-report.md"
-   },
-   {
-    "rank_start": 4801,
-    "rank_end": 5600,
-    "final": "T 545 / U 61 / F 194",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconcile-4801-5600-report.md"
-   },
-   {
-    "rank_start": 5601,
-    "rank_end": 6400,
-    "final": "T 665 / U 92 / F 43",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconcile-5601-6400-report.md"
-   },
-   {
-    "rank_start": 6401,
-    "rank_end": 7200,
-    "final": null,
-    "audit": null,
-    "status": "unresolved",
-    "source": "NO reconcile report exists (verified"
-   },
-   {
-    "rank_start": 7201,
-    "rank_end": 8000,
-    "final": "T 673 / U 86 / F 41",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconcile-7201-8000-report.md"
-   },
-   {
-    "rank_start": 8001,
-    "rank_end": 8800,
-    "final": "T 578 / U 62 / F 160",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconcile-8001-8800-report.md"
-   },
-   {
-    "rank_start": 8801,
-    "rank_end": 9600,
-    "final": "T 102 / U 22 / F 676",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconcile-8801-9600-report.md"
-   },
-   {
-    "rank_start": 9601,
-    "rank_end": 10400,
-    "final": "T 701 / U 96 / F 3",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconciled-9601-10400.md"
-   },
-   {
-    "rank_start": 10401,
-    "rank_end": 11200,
-    "final": "T 408 / U 391 / F 1",
-    "audit": null,
-    "status": "final",
-    "source": "sol-ce-a3-reconciled-10401-11200.md"
-   },
-   {
-    "rank_start": 11201,
-    "rank_end": 12000,
-    "final": "T 503 / U 98 / F 199",
-    "audit": "CLEAN 154/154 (contradictions 0)",
-    "status": "final",
-    "source": "sol-ce-a3-final-11201-12000.md"
-   },
-   {
-    "rank_start": 12001,
-    "rank_end": 12800,
-    "final": "T 482 / U 72 / F 246",
-    "audit": "CLEAN 152/152 (library-defect set ∅)",
-    "status": "final",
-    "source": "sol-ce-a3-final-12001-12800.md"
-   },
-   {
-    "rank_start": 12801,
-    "rank_end": 13600,
-    "final": "T 784 / U 10 / F 6",
-    "audit": "CLEAN 160/160 (contradictions ∅)",
-    "status": "final",
-    "source": "sol-ce-a3-final-12801-13600.md"
-   },
-   {
-    "rank_start": 13601,
-    "rank_end": 14400,
-    "final": "T 665 / U 131 / F 4",
-    "audit": "CLEAN 147/147 covered predictions (100%)",
-    "status": "final",
-    "source": "sol-ce-a3-final-13601-14400.md"
-   },
-   {
-    "rank_start": 14401,
-    "rank_end": 15200,
-    "final": "T 323 / U 54 / F 423",
-    "audit": "CLEAN 150/150 (100%)",
-    "status": "final",
-    "source": "sol-ce-a3-final-14401-15200.md"
-   },
-   {
-    "rank_start": 15201,
-    "rank_end": 16000,
-    "final": "T 625 / U 126 / F 49",
-    "audit": "CLEAN 148/148 (100%) (v2 audit)",
-    "status": "final",
-    "source": "sol-ce-a3-final-15201-16000.md"
-   },
-   {
-    "rank_start": 16001,
-    "rank_end": 16800,
-    "final": "T 687 / U 38 / F 75",
-    "audit": "CLEAN 154/154 (100%)",
-    "status": "final",
-    "source": "sol-ce-a3-final-16001-16800.md"
-   },
-   {
-    "rank_start": 16801,
-    "rank_end": 17600,
-    "final": "T 800 / U 0 / F 0",
-    "audit": "CLEAN 160/160 (100%)",
-    "status": "final",
-    "source": "sol-ce-a3-final-16801-17600.md"
-   },
-   {
-    "rank_start": 17601,
-    "rank_end": 18400,
-    "final": "T 800 / U 0 / F 0",
-    "audit": "CLEAN 160/160 (100%)",
-    "status": "final",
-    "source": "sol-ce-a3-final-17601-18400.md"
-   },
-   {
-    "rank_start": 18401,
-    "rank_end": 19200,
-    "final": "T 535 / U 222 / F 43",
-    "audit": "LIBRARY DEFECT — 156/158 = 98.73% (2 contradictions)",
-    "status": "final",
-    "source": "sol-ce-a3-final-18401-19200.md"
-   },
-   {
-    "rank_start": 19201,
-    "rank_end": 20000,
-    "final": "T 743 / U 41 / F 16",
-    "audit": "LIBRARY DEFECT — 160/161 = 99.38% (1 contradiction)",
-    "status": "final",
-    "source": "sol-ce-a3-final-19201-20000.md"
-   },
-   {
-    "rank_start": 20001,
-    "rank_end": 20800,
-    "final": "T 699 / U 100 / F 1",
-    "audit": "CLEAN 148/148 (no library-class defect)",
-    "status": "final",
-    "source": "sol-ce-a3-final-20001-20800.md"
-   },
-   {
-    "rank_start": 20801,
-    "rank_end": 21600,
-    "final": "T 706 / U 91 / F 3",
-    "audit": "NOT CLEAN — 3 library-class defects; 141/144 agree",
-    "status": "final",
-    "source": "sol-ce-a3-final-20801-21600.md"
-   },
-   {
-    "rank_start": 21601,
-    "rank_end": 22400,
-    "final": "T 666 / U 134 / F 0",
-    "audit": "NOT CLEAN — 7 library-class defects; 141/148 agree (frontier paused: 4.7% > bound)",
-    "status": "final",
-    "source": "sol-ce-a3-final-21601-22400.md"
-   },
-   {
-    "rank_start": 22401,
-    "rank_end": 23200,
-    "final": "T 549 / U 248 / F 3",
-    "audit": "CALIBRATED — 40% audit, 264/264 agree, 0.00% contradictions",
-    "status": "final",
-    "source": "sol-ce-a3-final-22401-23200.md"
-   },
-   {
-    "rank_start": 23201,
-    "rank_end": 24000,
-    "final": "T 686 / U 114 / F 0",
-    "audit": "v1 NOT CALIBRATED 65.69%; v2 NOT CLEAN 154/160 agree",
-    "status": "final",
-    "source": "sol-ce-a3-final-23201-24000.md"
-   },
-   {
-    "rank_start": 24001,
-    "rank_end": 24800,
-    "final": "T 738 / U 59 / F 0 / X 3",
-    "audit": "NOT CLEAN — 154 agreements / 5 claimed defects (sweep: 4 audit errors, 1 real)",
-    "status": "final",
-    "source": "sol-ce-a3-final-24001-24800.md"
-   },
-   {
-    "rank_start": 24801,
-    "rank_end": 25600,
-    "final": "T 217 / U 530 / F 2 / X 51",
-    "audit": "NOT CLEAN 151/160 = 94.38% (corrected 150/160 after 2 claims overturned)",
-    "status": "final",
-    "source": "sol-ce-a3-final-24801-25600.md"
-   },
-   {
-    "rank_start": 25601,
-    "rank_end": 26400,
-    "final": "T 416 / U 126 / F 127 / X 131",
-    "audit": "NOT CLEAN 110/163 = 67.48% (v2; corrected score 148/163 = 90.80%, OFUM claim SUSTAINED)",
-    "status": "final",
-    "source": "sol-ce-a3-final-25601-26400.md"
-   },
-   {
-    "rank_start": 26401,
-    "rank_end": 27200,
-    "final": "T 752 / U 47 / F 1 / X 0",
-    "audit": "CLEAN 161/161 = 100.00% (first perfect audit of the arm)",
-    "status": "final",
-    "source": "sol-ce-a3-final-26401-27200.md"
-   },
-   {
-    "rank_start": 27201,
-    "rank_end": 28000,
-    "final": "T 338 / U 15 / F 0 / X 447",
-    "audit": "NOT CLEAN 160/165 = 96.97% (27503 claim overturned by sweep)",
-    "status": "final",
-    "source": "sol-ce-a3-final-27201-28000.md"
-   },
-   {
-    "rank_start": 28001,
-    "rank_end": 28800,
-    "final": "T 205 / U 294 / F 38 / X 263",
-    "audit": "NOT CLEAN 110/162 = 67.90%",
-    "status": "final",
-    "source": "sol-ce-a3-final-28001-28800.md"
-   },
-   {
-    "rank_start": 28801,
-    "rank_end": 29600,
-    "final": "T 314 / U 265 / F 45 / X 176",
-    "audit": "NOT CLEAN 145/162 = 89.51%",
-    "status": "final",
-    "source": "sol-ce-a3-final-28801-29600.md"
-   },
-   {
-    "rank_start": 29601,
-    "rank_end": 30400,
-    "final": "T 0 / U 691 / F 0 / X 109",
-    "audit": "NOT CLEAN 139/160 = 86.88%",
-    "status": "final",
-    "source": "sol-ce-a3-final-29601-30400.md"
-   },
-   {
-    "rank_start": 30401,
-    "rank_end": 31200,
-    "final": "T 0 / U 675 / F 0 / X 125",
-    "audit": "NOT CLEAN 136/160 = 85.00%",
-    "status": "final",
-    "source": "sol-ce-a3-final-30401-31200.md"
-   },
-   {
-    "rank_start": 31201,
-    "rank_end": 32000,
-    "final": "T 437 / U 160 / F 3 / X 200",
-    "audit": "NOT CLEAN 136/166 = 81.93%",
-    "status": "final",
-    "source": "sol-ce-a3-final-31201-32000.md"
-   },
-   {
-    "rank_start": 32001,
-    "rank_end": 32800,
-    "final": "T 290 / U 60 / F 0 / X 450",
-    "audit": "CONTRADICT 77/161 = 47.83% (audit's 69-row over-quarantine claim later OVERTURNED by sweep)",
-    "status": "final",
-    "source": "sol-ce-a3-final-32001-32800.md"
-   },
-   {
-    "rank_start": 32801,
-    "rank_end": 33600,
-    "final": "T 215 / U 47 / F 0 / X 538",
-    "audit": "CONTRADICT 147/166 = 88.55% class/decision (sweep: SUSTAIN, audit vindicated 166/166)",
-    "status": "final",
-    "source": "sol-ce-a3-class-library-v1.md"
-   },
-   {
-    "rank_start": 33601,
-    "rank_end": 34400,
-    "final": "T 484 / U 70 / F 1 / X 245",
-    "audit": "CONTRADICT 130/162 = 80.25% agreement (32/162 contradictions; sweep SUSTAIN 32/32)",
-    "status": "final",
-    "source": "sol-ce-a3-class-library-v1.md"
-   },
-   {
-    "rank_start": 34401,
-    "rank_end": 35200,
-    "final": "T 59 / U 135 / F 183 / X 423",
-    "audit": "NOT CLEAN 145/180 = 80.56%",
-    "status": "final",
-    "source": "sol-ce-a3-class-library-v1.md"
-   }
-  ]
- },
- "q5": {
-  "unit": "Sealing one document is the Q5 arm's per-document closure. Two independent lanes (A and B) each annotate every extracted questionnaire occurrence in one PSID document with semantic-binding arrays, source-only; per the cal2 law ruling on the board, pre-freeze Q5 scope is 'binding arrays only (NE universally), one-document dual blocks'. A reconcile lane then aligns the two lane tables row-by-row, resolves every disagreement against the PSID source PDF (dispositions tallied AB/A/B/SRC), runs an agreed-row seam audit, and emits a canonical table of record — compact sorted-key JSON, one row per occurrence, with a pinned SHA-256 (e.g. sol-ce-q5-doc-1991f-reconcile-report.md: 'Result: reconciliation COMPLETE; canonical annotation SEALED'). The ladder is defined in sol-ce-q5-cal2-reconcile-report.md: 'Dual independent annotation; reconcile all disagreements; 10% agreed-row seam audit', with promotion requiring 'Two consecutive clean blocks'. SEALED is therefore distinct from the clean-block verdict: every one of the 33 sealed documents so far also ruled RECALIBRATE (most FAIL/RECALIBRATE — raw lane agreement below the clean bar), so the ladder has stayed at one document per dual-annotation block with clean streak 0 throughout.",
-  "denominator": "257 is the fixed PSID source-document domain, per sol-ce-q5-coverage-audit-report.md: 'The fixed source domain was previously reproduced as 257 files and 2,741,145,128 bytes, with keyset SHA 8b7cad855b791c5cd7d235a74d4a0f1ecc7511dc0458db11d6b04c1b6af2c36a and domain SHA 9d7a98db7c2889eba150f70935f492aebbc41cd521e4139dc1ec886ecd9945ce', citing the stage-1 report (sol-ce-a12-tier2-r04-r06-gen2-report.md line 116). The audit's class breakdown: Questionnaire/QxQ 81, Setup/layout 86, Codebook/value-label 47, Raw fixed-width 43, 'Total 257' (404,526 required atoms; the 43 raw fixed-width files are 'Semantic N/A' but 'remain mandatory in the fresh-byte replay'). The program board counts seals against this same denominator (e.g. 'Q5 PAUSED at 14/257 docs', 'doc_049 DONE = 33/257').",
-  "rows": [
-   {
-    "doc": "document_004",
-    "label": "1969 family questionnaire (q69)",
-    "rows_sealed": 268,
-    "verdict": "SEALED / RECALIBRATE",
-    "sealed_on": "2026-08-21",
-    "source": "sol-ce-q5-doc-1969q-reconcile-report.md"
-   },
-   {
-    "doc": "document_006",
-    "label": "1970 family questionnaire (q70)",
-    "rows_sealed": 263,
-    "verdict": "SEALED / RECALIBRATE",
-    "sealed_on": "2026-08-22",
-    "source": "sol-ce-q5-doc-1970q-reconcile-report.md"
-   },
-   {
-    "doc": "document_008",
-    "label": "1971 family questionnaire (q71)",
-    "rows_sealed": 252,
-    "verdict": "SEALED / RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1971q-reconcile-report.md"
-   },
-   {
-    "doc": "document_010",
-    "label": "1972 family questionnaire (q72)",
-    "rows_sealed": 181,
-    "verdict": "RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1972q-reconcile-v2-report.md"
-   },
-   {
-    "doc": "document_012",
-    "label": "1973 family questionnaire (q73)",
-    "rows_sealed": 277,
-    "verdict": "RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1973q-reconcile-report.md"
-   },
-   {
-    "doc": "document_014",
-    "label": "1974 family questionnaire (q74)",
-    "rows_sealed": 243,
-    "verdict": "COMPLETE / RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1974q-reconcile-report.md"
-   },
-   {
-    "doc": "document_016",
-    "label": "1975 family questionnaire (q75)",
-    "rows_sealed": 346,
-    "verdict": "COMPLETE / RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1975q-reconcile-report.md"
-   },
-   {
-    "doc": "document_018",
-    "label": "1976 family questionnaire (q76)",
-    "rows_sealed": 453,
-    "verdict": "COMPLETE / RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1976q-reconcile-report.md"
-   },
-   {
-    "doc": "document_020",
-    "label": "1977 family questionnaire (q77)",
-    "rows_sealed": 357,
-    "verdict": "RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1977q-reconcile-report.md"
-   },
-   {
-    "doc": "document_022",
-    "label": "1978 family questionnaire (q78)",
-    "rows_sealed": 362,
-    "verdict": "COMPLETE / RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1978q-reconcile-report.md"
-   },
-   {
-    "doc": "1979q",
-    "label": "1979 family questionnaire (q79.pdf)",
-    "rows_sealed": 281,
-    "verdict": "COMPLETE / RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1979q-reconcile-report.md"
-   },
-   {
-    "doc": "document_026",
-    "label": "1980 family questionnaire (q80)",
-    "rows_sealed": 444,
-    "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1980q-reconcile-v2-report.md"
-   },
-   {
-    "doc": "document_028",
-    "label": "1981 family questionnaire (q81)",
-    "rows_sealed": 468,
-    "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1981q-reconcile-report.md"
-   },
-   {
-    "doc": "document_030",
-    "label": "1982 family questionnaire (q82)",
-    "rows_sealed": 466,
-    "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-23",
-    "source": "sol-ce-q5-doc-1982q-reconcile-report.md"
-   },
-   {
-    "doc": "document_031",
-    "label": "1983 family questionnaire QxQ companion (fam1983_QxQs.pdf)",
-    "rows_sealed": 1025,
-    "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-24",
-    "source": "sol-ce-q5-doc-1983f-reconcile-report.md"
-   },
-   {
-    "doc": "document_032",
-    "label": "1983 family questionnaire (q83.pdf)",
-    "rows_sealed": 501,
-    "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-24",
-    "source": "sol-ce-q5-doc-1983q-reconcile-report.md"
-   },
-   {
-    "doc": "document_034",
-    "label": "1984 family questionnaire (q84)",
-    "rows_sealed": 88,
-    "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-24",
-    "source": "sol-ce-q5-doc-1984q-reconcile-report.md"
-   },
-   {
-    "doc": "document_033",
-    "label": "1984 family questionnaire QxQ companion (fam1984_QxQs.pdf)",
-    "rows_sealed": 3125,
-    "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-24",
-    "source": "sol-ce-q5-doc-1984f-reconcile-report.md"
-   },
-   {
-    "doc": "document_036",
-    "label": "1985 family questionnaire (q85)",
-    "rows_sealed": 306,
-    "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-25",
-    "source": "sol-ce-q5-doc-1985q-reconcile-report.md"
-   },
-   {
-    "doc": "document_035",
-    "label": "1985 family questionnaire QxQ companion (fam1985_QxQs)",
-    "rows_sealed": 5634,
-    "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-25",
-    "source": "sol-ce-q5-doc-1985f-reconcile-report.md"
-   },
-   {
-    "doc": "document_037",
-    "label": "1986 family questionnaire QxQ companion (fam1986_QxQs)",
-    "rows_sealed": 1815,
-    "verdict": "COMPLETE / SEALED / FAIL — RECALIBRATE",
-    "sealed_on": "2026-08-25",
-    "source": "sol-ce-q5-doc-1986f-reconcile-v2-report.md"
-   },
-   {
-    "doc": "document_038",
-    "label": "1986 family questionnaire (q86)",
-    "rows_sealed": 390,
-    "verdict": "COMPLETE / RECALIBRATE",
-    "sealed_on": "2026-08-25",
-    "source": "sol-ce-q5-doc-1986q-reconcile-report.md"
-   },
-   {
-    "doc": "document_039",
-    "label": "1987 family questionnaire QxQ companion (fam1987_QxQs)",
-    "rows_sealed": 1741,
-    "verdict": "COMPLETE / SEALED / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-25",
-    "source": "sol-ce-q5-doc-1987f-reconcile-report.md"
-   },
-   {
-    "doc": "document_040",
-    "label": "1987 family questionnaire (q87)",
-    "rows_sealed": 435,
-    "verdict": "COMPLETE / RECALIBRATE",
-    "sealed_on": "2026-08-25",
-    "source": "sol-ce-q5-doc-1987q-reconcile-report.md"
-   },
-   {
-    "doc": "document_041",
-    "label": "1988 family questionnaire QxQ companion (fam1988_QxQs)",
-    "rows_sealed": 1830,
-    "verdict": "COMPLETE / SEALED / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-25",
-    "source": "sol-ce-q5-doc-1988f-reconcile-report.md"
-   },
-   {
-    "doc": "document_042",
-    "label": "1988 family questionnaire (q88)",
-    "rows_sealed": 1847,
-    "verdict": "COMPLETE / SEALED / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-25",
-    "source": "sol-ce-q5-doc-1988q-reconcile-report.md"
-   },
-   {
-    "doc": "document_043",
-    "label": "1989 family questionnaire QxQ companion (fam1989_QxQs)",
-    "rows_sealed": 1875,
-    "verdict": "COMPLETE / SEALED / Q5 FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-25",
-    "source": "sol-ce-q5-doc-1989f-reconcile-report.md"
-   },
-   {
-    "doc": "document_044",
-    "label": "1989 family questionnaire (q89)",
-    "rows_sealed": 951,
-    "verdict": "FAIL / RECALIBRATE (table complete and reproduced)",
-    "sealed_on": "2026-08-26",
-    "source": "sol-ce-q5-doc-1989q-reconcile-report.md"
-   },
-   {
-    "doc": "document_045",
-    "label": "1990 family questionnaire QxQ companion (fam1990_QxQs)",
-    "rows_sealed": 1723,
-    "verdict": "COMPLETE / SEALED / FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-26",
-    "source": "sol-ce-q5-doc-1990f-reconcile-report.md"
-   },
-   {
-    "doc": "document_046",
-    "label": "1990 family questionnaire (q90.pdf)",
-    "rows_sealed": 1256,
-    "verdict": "COMPLETE (seal) / FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-27",
-    "source": "sol-ce-q5-doc-1990q-reconcile-v2-report.md"
-   },
-   {
-    "doc": "document_047",
-    "label": "1991 family questionnaire QxQ companion (fam1991_QxQs.pdf)",
-    "rows_sealed": 1476,
-    "verdict": "COMPLETE / SEALED / FAIL / RECALIBRATE",
-    "sealed_on": "2026-08-27",
-    "source": "sol-ce-q5-doc-1991f-reconcile-report.md"
-   },
-   {
-    "doc": "document_048",
-    "label": "1991 family questionnaire (q91.pdf)",
-    "rows_sealed": 2474,
-    "verdict": "FAIL / RECALIBRATE (annotation complete and sealed)",
-    "sealed_on": "2026-08-29",
-    "source": "sol-ce-q5-doc-1991q-reconciled-v2-report.md"
-   },
-   {
-    "doc": "document_049",
-    "label": "1992 family questionnaire QxQ companion (fam1992_QxQs.pdf)",
-    "rows_sealed": 1158,
-    "verdict": "RECALIBRATE (annotation complete and sealed)",
-    "sealed_on": "2026-08-30",
-    "source": "sol-ce-q5-doc-1992f-reconciled-v2-report.md"
-   }
-  ]
- }
+  "schema_version": 1,
+  "as_of": "2026-09-03",
+  "description": "Row-level drill-down behind the verification arms; extracted from the campaign evidence archive and adversarially verified. Sources name the archive artifact grounding each row.",
+  "purpose": {
+    "unit": "One rank = one row of the pinned 20,815-row residual index (e8-ops/sol-ce-purpose-residual-index-v1.txt, file SHA b35519702e6f...) = one prompt occurrence keyed `psid-questionnaire-occurrence:<sha256>` — a single printed questionnaire item in a sealed official PSID questionnaire/QxQ-codebook PDF (staged under ~/PolicyEngine/psid-data/documentation/capture1), located by an exact page/character-span receipt, e.g. `q88:p4[2538,2708)#10bc6b307d41`. What is adjudicated per rank is the prompt's \"purpose\": per sol-ce-purpose-evidence-scope-report.md, purpose \"is the closed model-law classification saying which factual dimension a `field_purpose_prompt` establishes for `O_P`\" — not survey designers' motivation. Each rank is disposed either D (determined: an ordered purpose array over the closed 35-literal space, e.g. `[M]`) or SU (source-underdetermined, with a named condition such as U_ONTOLOGY, U_CONFLICT, or U_SCOPE). Example full row from sol-ce-purpose-ledger-pass-R6172-6576-report.md: \"R6176 | Q7316 | psid-questionnaire-occurrence:091095d3... | E3.CALENDAR_EXPOSURE | D | [M] | q88:p4[2538,2708)#10bc6b307d41\". Documents are the per-wave PSID instruments: f-docs are family-interview QxQ codebooks (e.g. f94 = fam1994_QxQs.pdf) and q-docs are questionnaires (e.g. q94 = q94.pdf, \"1994 Questionnaire\", per the e4-era build's source table).",
+    "denominator": "20,815 = 21,971 − 1,156. sol-ce-purpose-residual-index-v2-report.md states the domain law verbatim: \"The domain law yields **20,815**, not 20,809: E ⊂ D; |C − D − E| = 21,971 − 1,156 = 20,815\", where C is the canonical corpus (sol-ce-purpose-residual-index-report.md: \"The canonical corpus contains 21,971 prompts. Subtracting the same IDs yields **20,815**\") and the 1,156 is the already dual-covered calibration relation from sol-ce-purpose-grand-reconcile-report.md (\"Unique dual-covered prompts: 1,156\" = production ranks 1–1,130 plus 26 unique rubric-sample rows; the six calibration-only exclusions are inside those 26). So the artifacts state the relation to 21,971 directly: 21,971 canonical prompts = 1,156 dual-covered in the pre-census calibration phase + 20,815 residual ranks R1–R20815 that the census adjudicates. The index was pinned 2026-08-23 (board: \"PURPOSE RESIDUAL INDEX PINNED: e8-ops/sol-ce-purpose-residual-index-v1.txt (20,815 rows; R-Q SHA 858a5aa9; file SHA b35519702e6f2e2a2541c25f62878d0125f86c31b383fbc681b5369d0c272c90)\"). Distinct nearby numbers, per the same artifacts: 21,099 is the established-Q `fail_closed_no_rule` queue (an earlier Q namespace; \"Subtracting 1,156 yields **19,943** rows, not approximately 20,815\" — that derivation was explicitly rejected in favor of the canonical 21,971 ordinal), and 21,153 is the evidence-scope report's \"operative burden\" of underdetermined prompts. Board percentage milestones are rank_end/20,815 (e.g. R11260/20,815 = 54.10%, matching \"contiguous R1–R11260 = 54.10%\").",
+    "rows": [
+      {
+        "document": "early blocks R1-R4350 (aggregate: pilot rounds r1-r6 + pre-index production blocks + 452-rank gap block, re-keyed to the pinned index)",
+        "era": null,
+        "rank_start": 1,
+        "rank_end": 4350,
+        "ranks": 4350,
+        "status": "adopted",
+        "dispositions": "3,898 re-keyed rulings = 3,487 D / 411 SU; plus 452 gap-block rulings (D/SU split not stated)",
+        "audit": "coverage audit vs the pinned index: 0 duplicates, 452 gaps in R1-R4350 -> gap block dispatched; gap block reconciled 83.6%",
+        "adopted_on": "2026-08-23",
+        "source": "sol-ce-purpose-coverage-audit-report.md"
+      },
+      {
+        "document": "block R4351-R4650",
+        "era": "E3 (late-E3 tranche f85-f87 = R3537-R5440)",
+        "rank_start": 4351,
+        "rank_end": 4650,
+        "ranks": 300,
+        "status": "adopted",
+        "dispositions": null,
+        "audit": "reconciled 270/300 = 90.000% (below cal-3 reference 93.333%); adopted as table of record under the explicit policy change",
+        "adopted_on": "2026-08-23",
+        "source": "sol-ce-purpose-reconcile-R4351-4650-report.md"
+      },
+      {
+        "document": "block R4651-R4950",
+        "era": "E3 (late-E3 tranche f85-f87 = R3537-R5440)",
+        "rank_start": 4651,
+        "rank_end": 4950,
+        "ranks": 300,
+        "status": "adopted",
+        "dispositions": null,
+        "audit": "reconciled 260/300 = 86.667% (24 application failures + 16 coverage gaps) -> triggered stop-and-diagnose",
+        "adopted_on": "2026-08-23",
+        "source": "sol-ce-purpose-reconcile-R4651-4950-report.md"
+      },
+      {
+        "document": "block R4951-R5250 (f87 opening, families B-D)",
+        "era": "E3 (f87 = R4951-R5440)",
+        "rank_start": 4951,
+        "rank_end": 5250,
+        "ranks": 300,
+        "status": "adopted",
+        "dispositions": null,
+        "audit": "reconciled 264/300 = 88.000% RECALIBRATE - the last dual-pass block, folded as coverage data",
+        "adopted_on": "2026-08-23",
+        "source": "sol-ce-purpose-reconciled-R4951-5250.md"
+      },
+      {
+        "document": "block R5251-R5550 (f87 close + q87 open; first ledger-first calibration block)",
+        "era": "E3 (f87/q87 boundary at R5440/R5441)",
+        "rank_start": 5251,
+        "rank_end": 5550,
+        "ranks": 300,
+        "status": "adopted",
+        "dispositions": "300 = 294 D / 6 SU (corrected block final, 31 corrections)",
+        "audit": "82/99 = 82.83% NOT CALIBRATED (ledger-first calibration) -> corrected via sweep; adopted at the v1.8 fold",
+        "adopted_on": "2026-08-24",
+        "source": "board"
+      },
+      {
+        "document": "block R5551-R5614 (q87 completion)",
+        "era": "E3 (q87 = R5441-R5614)",
+        "rank_start": 5551,
+        "rank_end": 5614,
+        "ranks": 64,
+        "status": "adopted",
+        "dispositions": "64/64 (61 executable + 3 UNCOVERED proposals), 0 SU",
+        "audit": "dense re-calibration audit CALIBRATED 28/28 = 100% (zero contradictions)",
+        "adopted_on": "2026-08-24",
+        "source": "board"
+      },
+      {
+        "document": "f88",
+        "era": "E3 (v1.5 q87/f88/q88 tranche)",
+        "rank_start": 5615,
+        "rank_end": 6171,
+        "ranks": 557,
+        "status": "adopted",
+        "dispositions": "557 = 484 D / 73 SU (sum of corrected block finals: R5615-5914 = 256 D / 44 SU; R5915-6171 = 228 D / 29 SU)",
+        "audit": "R5915-6171 audit 93/100 = 93.00% NOT CALIBRATED (family-concentrated); R5615-5914 audit NOT CALIBRATED -> both blocks sweep-corrected; adopted at the v1.10 fold",
+        "adopted_on": "2026-08-24",
+        "source": "board"
+      },
+      {
+        "document": "q88",
+        "era": "E3 (v1.5 q87/f88/q88 tranche)",
+        "rank_start": 6172,
+        "rank_end": 6632,
+        "ranks": 461,
+        "status": "adopted",
+        "dispositions": "461 = 440 D / 21 SU (sum: R6172-6576 corrected final 405 = 391 D / 14 SU; tail R6577-6632 = 49 D / 7 SU)",
+        "audit": "R6172-6576 audit 87/92 = 94.57% NOT CALIBRATED (family-concentrated) -> corrected (75 corrections); tail audit CALIBRATED 28/28 = 100%; adopted at the v1.12 fold",
+        "adopted_on": "2026-08-25",
+        "source": "sol-ce-purpose-correction-sweep-R6172-6576-report.md"
+      },
+      {
+        "document": "f89",
+        "era": "E3 (f89-era tranche R6633-R8552)",
+        "rank_start": 6633,
+        "rank_end": 7210,
+        "ranks": 578,
+        "status": "adopted",
+        "dispositions": "opener R6633-6903 corrected final 271 = 233 D / 38 SU; block-2 R6904-7210 pass census 307 = 259 D / 48 SU, adopted with the single R7041 -> U_CONFLICT correction",
+        "audit": "opener audit 118/150 = 78.67% NOT CALIBRATED -> corrected (118 corrections); block-2 CALIBRATED 99.32% (145/146)",
+        "adopted_on": "2026-08-25",
+        "source": "sol-ce-purpose-ledger-f89era-build-report.md"
+      },
+      {
+        "document": "q89",
+        "era": "E3 (f89-era tranche R6633-R8552)",
+        "rank_start": 7211,
+        "rank_end": 7558,
+        "ranks": 348,
+        "status": "adopted",
+        "dispositions": "348 = 313 D / 35 SU (corrected block final; 60 routing-only + 10 semantic+routing corrections)",
+        "audit": "113/123 = 91.87% NOT CALIBRATED -> corrected; adopted at the v1.18 fold",
+        "adopted_on": "2026-08-25",
+        "source": "sol-ce-purpose-correction-sweep-R7211-7558-report.md"
+      },
+      {
+        "document": "f90",
+        "era": "E3 (f89-era tranche R6633-R8552)",
+        "rank_start": 7559,
+        "rank_end": 8084,
+        "ranks": 526,
+        "status": "adopted",
+        "dispositions": "opener R7559-7820 corrected 262 = 229 D / 33 SU; block-2 R7821-8084 = 225 D / 39 SU (sum 454 D / 72 SU)",
+        "audit": "opener audit 116/121 = 95.87% NOT CALIBRATED (family-concentrated) -> corrected; block-2 CALIBRATED 99.08%",
+        "adopted_on": "2026-08-26",
+        "source": "sol-ce-purpose-ledger-f89era-build-report.md"
+      },
+      {
+        "document": "q90",
+        "era": "E3 (f89-era tranche R6633-R8552)",
+        "rank_start": 8085,
+        "rank_end": 8552,
+        "ranks": 468,
+        "status": "adopted",
+        "dispositions": "B+C R8085-8295 corrected census 211 = 173 D / 38 SU; D-M R8296-8552 corrected 257 = 182 D / 75 SU (sum 355 D / 113 SU)",
+        "audit": "B+C dual audits split -> geometry adjudication CALIBRATED 85/86 = 98.84%; D-M corrected under the geometry law",
+        "adopted_on": "2026-08-26",
+        "source": "sol-ce-purpose-geometry-adjudication-R8085-8295-report.md"
+      },
+      {
+        "document": "f91",
+        "era": "E3 (f91-era tranche R8553-R10749)",
+        "rank_start": 8553,
+        "rank_end": 8974,
+        "ranks": 422,
+        "status": "adopted",
+        "dispositions": "422 = 368 D / 54 SU (corrected final; 28 sealed semantic corrections)",
+        "audit": "166/194 = 85.57% NOT CALIBRATED -> corrected; adopted at the v1.26 fold",
+        "adopted_on": "2026-08-28",
+        "source": "sol-ce-purpose-audit-R8553-8974-report.md"
+      },
+      {
+        "document": "q91",
+        "era": "E3 (f91-era tranche R8553-R10749)",
+        "rank_start": 8975,
+        "rank_end": 9571,
+        "ranks": 597,
+        "status": "adopted",
+        "dispositions": "opener R8975-9245 corrected 271 = 261 D / 10 SU; block-3 R9246-9571 corrected 326 = 311 D / 15 SU (sum 572 D / 25 SU)",
+        "audit": "opener audit 85/90 = 94.44% NOT CALIBRATED (concentrated defects); block-3 audit 96.55% NOT CALIBRATED (transition-date family) -> both corrected",
+        "adopted_on": "2026-08-28",
+        "source": "board"
+      },
+      {
+        "document": "f92",
+        "era": "E3 (f91-era tranche R8553-R10749)",
+        "rank_start": 9572,
+        "rank_end": 9795,
+        "ranks": 224,
+        "status": "adopted",
+        "dispositions": "224 = 193 D / 31 SU (corrected final; sweep found 12 contradictions, 4 beyond the audit)",
+        "audit": "100/108 = 92.59% NOT CALIBRATED -> corrected; adopted at the v1.32 fold",
+        "adopted_on": "2026-08-28",
+        "source": "sol-ce-purpose-audit-R9572-9795-report.md"
+      },
+      {
+        "document": "q92",
+        "era": "E3 (f91-era tranche R8553-R10749)",
+        "rank_start": 9796,
+        "rank_end": 10217,
+        "ranks": 422,
+        "status": "adopted",
+        "dispositions": "422 = 405 D / 17 SU (corrected final; UNCOVERED=0)",
+        "audit": "140/145 = 96.55% numeric pass but all six SEE-router checkpoint rows misruled -> NOT CALIBRATED -> corrected; adopted at the v1.33 fold",
+        "adopted_on": "2026-08-28",
+        "source": "sol-ce-purpose-audit-R9796-10217-report.md"
+      },
+      {
+        "document": "q93",
+        "era": "E3 (f91-era tranche R8553-R10749; E3->E4 seam at R10749)",
+        "rank_start": 10218,
+        "rank_end": 10749,
+        "ranks": 532,
+        "status": "adopted",
+        "dispositions": "opener R10218-10457 corrected 240 = 222 D / 18 SU; block-7 R10458-10749 corrected 292 = 269 D / 23 SU (sum 491 D / 41 SU)",
+        "audit": "opener audit 79/89 = 88.76% NOT CALIBRATED; block-7 audit 95/99 = 95.96% NOT CALIBRATED (overlap/reclassification gateway family) -> both corrected",
+        "adopted_on": "2026-08-29",
+        "source": "board"
+      },
+      {
+        "document": "f94",
+        "era": "E4 (E4 tranche R10750-R13210)",
+        "rank_start": 10750,
+        "rank_end": 11260,
+        "ranks": 511,
+        "status": "adopted",
+        "dispositions": "block-1 R10750-11039 corrected 290 = 271 D / 19 SU; block-2 R11040-11260 corrected 221 = 198 D / 23 SU (sum 469 D / 42 SU)",
+        "audit": "block-1 audit 132/139 = 94.96% NOT CALIBRATED (family-concentrated); block-2 audit 96/112 = 85.71% sample / 203/221 = 91.86% guard sweep NOT CALIBRATED -> both corrected",
+        "adopted_on": "2026-08-30",
+        "source": "board"
+      },
+      {
+        "document": "q94 (B+C opener block)",
+        "era": "E4 (E4 tranche R10750-R13210)",
+        "rank_start": 11261,
+        "rank_end": 11576,
+        "ranks": 316,
+        "status": "adopted",
+        "dispositions": "corrected final 316 = 303 D / 13 SU (UNCOVERED=0; supersedes the provisional pass census 316 = 301 D / 15 SU with 221 ledger-matched / 95 UNCOVERED)",
+        "audit": "241/288 = 83.68% sample / 268/316 = 84.81% full NOT CALIBRATED - central simultaneity frame REVERSED (q94 has no simultaneity sentence) -> frame-reversal correction sweep applied; corrected final adopted at the v1.44 fold, q94 B+C CLOSED, contiguous R1-R11576 = 55.61%",
+        "adopted_on": "2026-08-30",
+        "source": "sol-ce-purpose-ledger-pass-R11261-11576-report.md"
+      },
+      {
+        "document": "q94 D+E (block 4)",
+        "era": "E4 (E4 tranche R10750-R13210)",
+        "rank_start": 11577,
+        "rank_end": 11894,
+        "ranks": 318,
+        "status": "adopted",
+        "dispositions": "304 D / 14 SU",
+        "audit": "dense audit CALIBRATED 272/272 sample and 318/318 full = 100.00% — the campaign's first calibrated block; folded v1.45 with no sweep",
+        "adopted_on": "2026-08-30",
+        "source": "sol-ce-purpose-audit-R11577-11894-report.md"
+      },
+      {
+        "document": "q94 tail + f95 complete + q95 B opener (block 5)",
+        "era": "E4 (E4 tranche R10750-R13210)",
+        "rank_start": 11895,
+        "rank_end": 12163,
+        "ranks": 269,
+        "status": "adopted",
+        "dispositions": "236 D / 33 SU (pass census)",
+        "audit": "96.90% sample / 97.40% full NOT CALIBRATED (all 7 contradictions in f95) -> f95-focused sweep 269/269; folded v1.50",
+        "adopted_on": "2026-08-30",
+        "source": "sol-ce-purpose-correction-sweep-R11895-12163-report.md"
+      },
+      {
+        "document": "q95 C+D (block 6)",
+        "era": "E4 (E4 tranche R10750-R13210)",
+        "rank_start": 12164,
+        "rank_end": 12398,
+        "ranks": 235,
+        "status": "adopted",
+        "dispositions": "221 D / 14 SU",
+        "audit": "91.26% sampled NOT CALIBRATED (position family + [C,H] composites) -> sweep with 11 corrections; folded v1.53",
+        "adopted_on": "2026-08-30",
+        "source": "sol-ce-purpose-correction-sweep-R12164-12398-report.md"
+      },
+      {
+        "document": "q95 tail + f96 complete (block 7)",
+        "era": "E4 (E4 tranche R10750-R13210)",
+        "rank_start": 12399,
+        "rank_end": 12690,
+        "ranks": 292,
+        "status": "adopted",
+        "dispositions": "253 D / 39 SU (corrected)",
+        "audit": "73.72% sample / 80.82% full NOT CALIBRATED — worst E4 block (41/56 defects in f96 B/S) -> sweep-r2 292/292 with 56 corrections; folded v1.55",
+        "adopted_on": "2026-08-30",
+        "source": "sol-ce-purpose-correction-sweep-R12399-12690-report.md"
+      },
+      {
+        "document": "q96 B+C opener (block 8)",
+        "era": "E4 (E4 tranche R10750-R13210)",
+        "rank_start": 12691,
+        "rank_end": 12922,
+        "ranks": 232,
+        "status": "adopted",
+        "dispositions": "219 D / 13 SU (corrected)",
+        "audit": "100.00% semantic (103/103 sample, 232/232 full) but 90.29% sample / 95.69% full route-completeness NOT CALIBRATED -> route-cure sweep (ten route repairs, no result changes); folded v1.57",
+        "adopted_on": "2026-08-30",
+        "source": "sol-ce-purpose-correction-sweep-R12691-12922-report.md"
+      },
+      {
+        "document": "q96 D–L (block 9; E4 tranche close)",
+        "era": "E4 (E4 tranche R10750-R13210)",
+        "rank_start": 12923,
+        "rank_end": 13210,
+        "ranks": 288,
+        "status": "adopted",
+        "dispositions": "268 D / 20 SU (corrected)",
+        "audit": "NOT CALIBRATED: 6 semantic contradictions in 2 families + 4 route recoveries wrong; era-generic 29/29 semantic PASS but receipt-completeness FAIL; pass vector never serialized -> full re-serialization sweep 288/288; folded v1.59; E4 tranche closed",
+        "adopted_on": "2026-08-31",
+        "source": "sol-ce-purpose-correction-sweep-R12923-13210-report.md"
+      },
+      {
+        "document": "f97 + q97 B opener (block 1)",
+        "era": "late E4 (v1.60 tranche R13211-R15624: f97/q97/f99/q1999/f2001/q2001)",
+        "rank_start": 13211,
+        "rank_end": 13490,
+        "ranks": 280,
+        "status": "adopted",
+        "dispositions": "260 D / 20 SU (corrected)",
+        "audit": "62.90% NOT CALIBRATED — the campaign's worst (f97-concentrated) -> sweep with 71 corrections; folded v1.62",
+        "adopted_on": "2026-08-31",
+        "source": "sol-ce-purpose-correction-sweep-R13211-13490-report.md"
+      },
+      {
+        "document": "q97 C+D (block 2)",
+        "era": "late E4 (v1.60 tranche R13211-R15624: f97/q97/f99/q1999/f2001/q2001)",
+        "rank_start": 13491,
+        "rank_end": 13723,
+        "ranks": 233,
+        "status": "adopted",
+        "dispositions": "220 D / 13 SU",
+        "audit": "CALIBRATED 72/72 sample = 100.00%; 232/233 full; folded v1.63 directly from the pass",
+        "adopted_on": "2026-08-31",
+        "source": "sol-ce-purpose-audit-R13491-13723-report.md"
+      },
+      {
+        "document": "q97 tail + f99 first contact (block 3)",
+        "era": "late E4 (v1.60 tranche R13211-R15624: f97/q97/f99/q1999/f2001/q2001)",
+        "rank_start": 13724,
+        "rank_end": 14033,
+        "ranks": 310,
+        "status": "adopted",
+        "dispositions": "257 D / 53 SU",
+        "audit": "116/127 = 91.34% NOT CALIBRATED -> sweep applying the 23-row manifest, 310/310; folded v1.65",
+        "adopted_on": "2026-09-01",
+        "source": "sol-ce-purpose-correction-sweep-R13724-14033-report.md"
+      },
+      {
+        "document": "q1999 B+C opener (block 4)",
+        "era": "late E4 (v1.60 tranche R13211-R15624: f97/q97/f99/q1999/f2001/q2001)",
+        "rank_start": 14034,
+        "rank_end": 14266,
+        "ranks": 233,
+        "status": "adopted",
+        "dispositions": "220 D / 13 SU",
+        "audit": "CALIBRATED 68/68 = 100.00% on all three measures — a first-contact document; folded v1.66",
+        "adopted_on": "2026-09-01",
+        "source": "sol-ce-purpose-audit-R14034-14266-report.md"
+      },
+      {
+        "document": "q1999 D+E (block 5)",
+        "era": "late E4 (v1.60 tranche R13211-R15624: f97/q97/f99/q1999/f2001/q2001)",
+        "rank_start": 14267,
+        "rank_end": 14499,
+        "ranks": 233,
+        "status": "adopted",
+        "dispositions": "220 D / 13 SU",
+        "audit": "CALIBRATED 69/69 = 100.00%; folded v1.67",
+        "adopted_on": "2026-09-01",
+        "source": "sol-ce-purpose-audit-R14267-14499-report.md"
+      },
+      {
+        "document": "q1999 G–R (block 6)",
+        "era": "late E4 (v1.60 tranche R13211-R15624: f97/q97/f99/q1999/f2001/q2001)",
+        "rank_start": 14500,
+        "rank_end": 14779,
+        "ranks": 280,
+        "status": "adopted",
+        "dispositions": "230 D / 50 SU",
+        "audit": "97.14% sample / 98.93% full NOT CALIBRATED on family concentration only; closed 3-row manifest adopted directly; folded v1.68",
+        "adopted_on": "2026-09-01",
+        "source": "sol-ce-purpose-audit-R14500-14779-report.md"
+      },
+      {
+        "document": "f2001 + q2001 B (block 7)",
+        "era": "late E4 (v1.60 tranche R13211-R15624: f97/q97/f99/q1999/f2001/q2001)",
+        "rank_start": 14780,
+        "rank_end": 15059,
+        "ranks": 280,
+        "status": "adopted",
+        "dispositions": "226 D / 54 SU (corrected)",
+        "audit": "86.40% semantic / 83.20% route NOT CALIBRATED (f2001-concentrated) -> sweep: 159-row f2001 replay, 24 corrections; folded v1.70",
+        "adopted_on": "2026-09-01",
+        "source": "sol-ce-purpose-correction-sweep-R14780-15059-report.md"
+      },
+      {
+        "document": "q2001 C+D (block 8)",
+        "era": "late E4 (v1.60 tranche R13211-R15624: f97/q97/f99/q1999/f2001/q2001)",
+        "rank_start": 15060,
+        "rank_end": 15291,
+        "ranks": 232,
+        "status": "adopted",
+        "dispositions": "219 D / 13 SU",
+        "audit": "CALIBRATED 72/72 = 100.00%; 0 contradictions in 232 rows; folded v1.71",
+        "adopted_on": "2026-09-01",
+        "source": "sol-ce-purpose-audit-R15060-15291-report.md"
+      },
+      {
+        "document": "q2001 E/G/P/K/L/R (block 9; late-E4 tranche close)",
+        "era": "late E4 (v1.60 tranche R13211-R15624: f97/q97/f99/q1999/f2001/q2001)",
+        "rank_start": 15292,
+        "rank_end": 15624,
+        "ranks": 333,
+        "status": "adopted",
+        "dispositions": "280 D / 53 SU (corrected)",
+        "audit": "92.86% sampled NOT CALIBRATED, but the full-domain replay closed a 17-row manifest -> adopted with corrections under the closed-manifest precedent; folded v1.72",
+        "adopted_on": "2026-09-01",
+        "source": "sol-ce-purpose-audit-R15292-15624-report.md"
+      },
+      {
+        "document": "fam2003 + q2003 BC/DE/G (E5 block 1)",
+        "era": "E5 (E5 tranche R15625-R17888: wave pairs 2003-2011)",
+        "rank_start": 15625,
+        "rank_end": 15883,
+        "ranks": 259,
+        "status": "adopted",
+        "dispositions": "224 D / 35 SU (corrected)",
+        "audit": "90.00% sample / 92.66% full NOT CALIBRATED (q2003 G concentrated) -> sweep CURED, 259-row replay with 22 E5-rule applications; folded v1.75",
+        "adopted_on": "2026-09-01",
+        "source": "sol-ce-purpose-correction-sweep-R15625-15883-report.md"
+      },
+      {
+        "document": "q2003 P/KL/R + fam2005 + q2005 BC/DE (E5 block 2)",
+        "era": "E5 (E5 tranche R15625-R17888: wave pairs 2003-2011)",
+        "rank_start": 15884,
+        "rank_end": 16138,
+        "ranks": 255,
+        "status": "adopted",
+        "dispositions": "194 D / 61 SU (corrected)",
+        "audit": "93.73% full strict but the sample fails the route/strict limbs, NOT CALIBRATED -> sweep 255/255, 16 substantive corrections (2 q2003 + 14 outside q2003); folded v1.77",
+        "adopted_on": "2026-09-02",
+        "source": "sol-ce-purpose-correction-sweep-R15884-16138-report.md"
+      },
+      {
+        "document": "q2005 G/P/KL/R + fam2007 BCDE/F/G (E5 block 3)",
+        "era": "E5 (E5 tranche R15625-R17888: wave pairs 2003-2011)",
+        "rank_start": 16139,
+        "rank_end": 16400,
+        "ranks": 262,
+        "status": "adopted",
+        "dispositions": "203 D / 59 SU",
+        "audit": "CALIBRATED 146/146 = 100.00% on both limbs; folded v1.78",
+        "adopted_on": "2026-09-02",
+        "source": "sol-ce-purpose-audit-R16139-16400-report.md"
+      },
+      {
+        "document": "fam2007 P/KL/R/IO + q2007 BC/DE/G (E5 block 4)",
+        "era": "E5 (E5 tranche R15625-R17888: wave pairs 2003-2011)",
+        "rank_start": 16401,
+        "rank_end": 16729,
+        "ranks": 329,
+        "status": "adopted",
+        "dispositions": "247 D / 82 SU",
+        "audit": "93.98% strict sample NOT CALIBRATED (family-concentrated); closed 10-row manifest adopted; folded v1.79",
+        "adopted_on": "2026-09-02",
+        "source": "sol-ce-purpose-audit-R16401-16729-report.md"
+      },
+      {
+        "document": "q2007 P/KL/R + fam2009 + q2009 BC/DE (E5 block 5)",
+        "era": "E5 (E5 tranche R15625-R17888: wave pairs 2003-2011)",
+        "rank_start": 16730,
+        "rank_end": 17022,
+        "ranks": 293,
+        "status": "adopted",
+        "dispositions": "240 D / 53 SU",
+        "audit": "NOT CALIBRATED on the receipt-strict limb only (165/165 semantic, 292/293 route); one route correction; folded v1.80",
+        "adopted_on": "2026-09-02",
+        "source": "sol-ce-purpose-audit-R16730-17022-report.md"
+      },
+      {
+        "document": "q2009 G/R/P/KL (E5 block 6)",
+        "era": "E5 (E5 tranche R15625-R17888: wave pairs 2003-2011)",
+        "rank_start": 17023,
+        "rank_end": 17308,
+        "ranks": 286,
+        "status": "adopted",
+        "dispositions": "233 D / 53 SU",
+        "audit": "97.32% sample / 98.60% full NOT CALIBRATED on family concentration; 4-row manifest adopted; folded v1.81",
+        "adopted_on": "2026-09-02",
+        "source": "sol-ce-purpose-audit-R17023-17308-report.md"
+      },
+      {
+        "document": "fam2011 + q2011 BC/DE (E5 block 7)",
+        "era": "E5 (E5 tranche R15625-R17888: wave pairs 2003-2011)",
+        "rank_start": 17309,
+        "rank_end": 17585,
+        "ranks": 277,
+        "status": "adopted",
+        "dispositions": "230 D / 47 SU (corrected)",
+        "audit": "77.97% strict sample NOT CALIBRATED (q2011 whole-roster EHC routing family) -> regeneration sweep-r2, 277/277; folded v1.83",
+        "adopted_on": "2026-09-03",
+        "source": "sol-ce-purpose-correction-sweep-R17309-17585-report.md"
+      },
+      {
+        "document": "q2011 F/G/R/P/KL (E5 block 8; the tranche's last block)",
+        "era": "E5 (E5 tranche R15625-R17888: wave pairs 2003-2011)",
+        "rank_start": 17586,
+        "rank_end": 17888,
+        "ranks": 303,
+        "status": "in_cycle",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "board 2026-09-03 (pass dispatched 04:5x; re-dispatched 06:18 as -r2 after the reboot)"
+      },
+      {
+        "document": "post-E5-tranche remainder (fam2013 onward; not yet tranched)",
+        "era": null,
+        "rank_start": 17889,
+        "rank_end": 20815,
+        "ranks": 2927,
+        "status": "pending",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "sol-ce-purpose-ledger-e5era-build-report.md (first untouched R17889)"
+      }
+    ]
+  },
+  "a3": {
+    "unit": "One queue row is one compiled-variable \"family\" from the A3 document-local review queue: a single PSID codebook value-meaning (e.g. rank 1's \"Major assignment; probable error of greater than $300 or 10 percent of assignment value (whichever is greater)\", per sol-ce-a3-reconcile-1-300-report.md's scope receipts, which identify each rank by stage/global/lexeme/meaning) grouping all uncovered occurrences of that meaning within one document. Per sol-ce-a3-queue-characterization.md the queue is \"41,103 families / 86,840 uncovered occurrences (mean 2.11, max 38; 31,588 single-occurrence rows). All rows source_document_count = 1 (document-LOCAL...)\". Each rank is adjudicated to a missingness disposition — per sol-ce-a3-reconcile-1-300-report.md: \"T = true/missing; U = underdetermined; F = false/nonmissing\" — with a fourth outcome X/UNCLASSIFIED (fail-closed quarantine where O>0 or R=0) adopted from block 24001 onward under the v1.14 X-vocabulary ruling (\"block finals are now four-set T/U/F/UNCLASSIFIED partitions\").",
+    "denominator": "41,103 is the family count of the a3_document_local review queue in the pinned E3 compile artifact. sol-ce-a3-queue-characterization.md: \"Source: `full_compile_result.json` (SHA c6163e6f…) → `regenerated_review_queues.queues.a3_document_local`. 41,103 families / 86,840 uncovered occurrences\". Cross-pinned in sol-ce-e3-full-compile-report.md: \"| A3 document-local remainder | 41,103 | 86,840 | …\" and \"Families: `10 + 990 + 7,629 + 41,103 = 49,732`\", and reproduced in per-block reports as \"Full ordered A3 queue: `41,103` rows / `29,536,753` bytes; SHA-256 `f8ea167e71e1c43158f162174918bd4d8dfdd461c22772f5fc25939b5a0cef15`\".",
+    "rows": [
+      {
+        "rank_start": 1,
+        "rank_end": 800,
+        "final": "T 729 / U 24 / F 47",
+        "audit": null,
+        "status": "final",
+        "source": "MERGED to satisfy 800-wide alignment"
+      },
+      {
+        "rank_start": 801,
+        "rank_end": 1600,
+        "final": "T 28 / U 759 / F 13",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-final-801-1600.md"
+      },
+      {
+        "rank_start": 1601,
+        "rank_end": 2400,
+        "final": "T 81 / U 686 / F 33",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconcile-1601-2400-report.md"
+      },
+      {
+        "rank_start": 2401,
+        "rank_end": 3200,
+        "final": "T 545 / U 69 / F 186",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconcile-2401-3200-report.md"
+      },
+      {
+        "rank_start": 3201,
+        "rank_end": 4000,
+        "final": "T 568 / U 24 / F 208",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconcile-3201-4000-report.md"
+      },
+      {
+        "rank_start": 4001,
+        "rank_end": 4800,
+        "final": "T 563 / U 26 / F 211",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconcile-4001-4800-report.md"
+      },
+      {
+        "rank_start": 4801,
+        "rank_end": 5600,
+        "final": "T 545 / U 61 / F 194",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconcile-4801-5600-report.md"
+      },
+      {
+        "rank_start": 5601,
+        "rank_end": 6400,
+        "final": "T 665 / U 92 / F 43",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconcile-5601-6400-report.md"
+      },
+      {
+        "rank_start": 6401,
+        "rank_end": 7200,
+        "final": null,
+        "audit": null,
+        "status": "unresolved",
+        "source": "NO reconcile report exists (verified"
+      },
+      {
+        "rank_start": 7201,
+        "rank_end": 8000,
+        "final": "T 673 / U 86 / F 41",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconcile-7201-8000-report.md"
+      },
+      {
+        "rank_start": 8001,
+        "rank_end": 8800,
+        "final": "T 578 / U 62 / F 160",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconcile-8001-8800-report.md"
+      },
+      {
+        "rank_start": 8801,
+        "rank_end": 9600,
+        "final": "T 102 / U 22 / F 676",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconcile-8801-9600-report.md"
+      },
+      {
+        "rank_start": 9601,
+        "rank_end": 10400,
+        "final": "T 701 / U 96 / F 3",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconciled-9601-10400.md"
+      },
+      {
+        "rank_start": 10401,
+        "rank_end": 11200,
+        "final": "T 408 / U 391 / F 1",
+        "audit": null,
+        "status": "final",
+        "source": "sol-ce-a3-reconciled-10401-11200.md"
+      },
+      {
+        "rank_start": 11201,
+        "rank_end": 12000,
+        "final": "T 503 / U 98 / F 199",
+        "audit": "CLEAN 154/154 (contradictions 0)",
+        "status": "final",
+        "source": "sol-ce-a3-final-11201-12000.md"
+      },
+      {
+        "rank_start": 12001,
+        "rank_end": 12800,
+        "final": "T 482 / U 72 / F 246",
+        "audit": "CLEAN 152/152 (library-defect set ∅)",
+        "status": "final",
+        "source": "sol-ce-a3-final-12001-12800.md"
+      },
+      {
+        "rank_start": 12801,
+        "rank_end": 13600,
+        "final": "T 784 / U 10 / F 6",
+        "audit": "CLEAN 160/160 (contradictions ∅)",
+        "status": "final",
+        "source": "sol-ce-a3-final-12801-13600.md"
+      },
+      {
+        "rank_start": 13601,
+        "rank_end": 14400,
+        "final": "T 665 / U 131 / F 4",
+        "audit": "CLEAN 147/147 covered predictions (100%)",
+        "status": "final",
+        "source": "sol-ce-a3-final-13601-14400.md"
+      },
+      {
+        "rank_start": 14401,
+        "rank_end": 15200,
+        "final": "T 323 / U 54 / F 423",
+        "audit": "CLEAN 150/150 (100%)",
+        "status": "final",
+        "source": "sol-ce-a3-final-14401-15200.md"
+      },
+      {
+        "rank_start": 15201,
+        "rank_end": 16000,
+        "final": "T 625 / U 126 / F 49",
+        "audit": "CLEAN 148/148 (100%) (v2 audit)",
+        "status": "final",
+        "source": "sol-ce-a3-final-15201-16000.md"
+      },
+      {
+        "rank_start": 16001,
+        "rank_end": 16800,
+        "final": "T 687 / U 38 / F 75",
+        "audit": "CLEAN 154/154 (100%)",
+        "status": "final",
+        "source": "sol-ce-a3-final-16001-16800.md"
+      },
+      {
+        "rank_start": 16801,
+        "rank_end": 17600,
+        "final": "T 800 / U 0 / F 0",
+        "audit": "CLEAN 160/160 (100%)",
+        "status": "final",
+        "source": "sol-ce-a3-final-16801-17600.md"
+      },
+      {
+        "rank_start": 17601,
+        "rank_end": 18400,
+        "final": "T 800 / U 0 / F 0",
+        "audit": "CLEAN 160/160 (100%)",
+        "status": "final",
+        "source": "sol-ce-a3-final-17601-18400.md"
+      },
+      {
+        "rank_start": 18401,
+        "rank_end": 19200,
+        "final": "T 535 / U 222 / F 43",
+        "audit": "LIBRARY DEFECT — 156/158 = 98.73% (2 contradictions)",
+        "status": "final",
+        "source": "sol-ce-a3-final-18401-19200.md"
+      },
+      {
+        "rank_start": 19201,
+        "rank_end": 20000,
+        "final": "T 743 / U 41 / F 16",
+        "audit": "LIBRARY DEFECT — 160/161 = 99.38% (1 contradiction)",
+        "status": "final",
+        "source": "sol-ce-a3-final-19201-20000.md"
+      },
+      {
+        "rank_start": 20001,
+        "rank_end": 20800,
+        "final": "T 699 / U 100 / F 1",
+        "audit": "CLEAN 148/148 (no library-class defect)",
+        "status": "final",
+        "source": "sol-ce-a3-final-20001-20800.md"
+      },
+      {
+        "rank_start": 20801,
+        "rank_end": 21600,
+        "final": "T 706 / U 91 / F 3",
+        "audit": "NOT CLEAN — 3 library-class defects; 141/144 agree",
+        "status": "final",
+        "source": "sol-ce-a3-final-20801-21600.md"
+      },
+      {
+        "rank_start": 21601,
+        "rank_end": 22400,
+        "final": "T 666 / U 134 / F 0",
+        "audit": "NOT CLEAN — 7 library-class defects; 141/148 agree (frontier paused: 4.7% > bound)",
+        "status": "final",
+        "source": "sol-ce-a3-final-21601-22400.md"
+      },
+      {
+        "rank_start": 22401,
+        "rank_end": 23200,
+        "final": "T 549 / U 248 / F 3",
+        "audit": "CALIBRATED — 40% audit, 264/264 agree, 0.00% contradictions",
+        "status": "final",
+        "source": "sol-ce-a3-final-22401-23200.md"
+      },
+      {
+        "rank_start": 23201,
+        "rank_end": 24000,
+        "final": "T 686 / U 114 / F 0",
+        "audit": "v1 NOT CALIBRATED 65.69%; v2 NOT CLEAN 154/160 agree",
+        "status": "final",
+        "source": "sol-ce-a3-final-23201-24000.md"
+      },
+      {
+        "rank_start": 24001,
+        "rank_end": 24800,
+        "final": "T 738 / U 59 / F 0 / X 3",
+        "audit": "NOT CLEAN — 154 agreements / 5 claimed defects (sweep: 4 audit errors, 1 real)",
+        "status": "final",
+        "source": "sol-ce-a3-final-24001-24800.md"
+      },
+      {
+        "rank_start": 24801,
+        "rank_end": 25600,
+        "final": "T 217 / U 530 / F 2 / X 51",
+        "audit": "NOT CLEAN 151/160 = 94.38% (corrected 150/160 after 2 claims overturned)",
+        "status": "final",
+        "source": "sol-ce-a3-final-24801-25600.md"
+      },
+      {
+        "rank_start": 25601,
+        "rank_end": 26400,
+        "final": "T 416 / U 126 / F 127 / X 131",
+        "audit": "NOT CLEAN 110/163 = 67.48% (v2; corrected score 148/163 = 90.80%, OFUM claim SUSTAINED)",
+        "status": "final",
+        "source": "sol-ce-a3-final-25601-26400.md"
+      },
+      {
+        "rank_start": 26401,
+        "rank_end": 27200,
+        "final": "T 752 / U 47 / F 1 / X 0",
+        "audit": "CLEAN 161/161 = 100.00% (first perfect audit of the arm)",
+        "status": "final",
+        "source": "sol-ce-a3-final-26401-27200.md"
+      },
+      {
+        "rank_start": 27201,
+        "rank_end": 28000,
+        "final": "T 338 / U 15 / F 0 / X 447",
+        "audit": "NOT CLEAN 160/165 = 96.97% (27503 claim overturned by sweep)",
+        "status": "final",
+        "source": "sol-ce-a3-final-27201-28000.md"
+      },
+      {
+        "rank_start": 28001,
+        "rank_end": 28800,
+        "final": "T 205 / U 294 / F 38 / X 263",
+        "audit": "NOT CLEAN 110/162 = 67.90%",
+        "status": "final",
+        "source": "sol-ce-a3-final-28001-28800.md"
+      },
+      {
+        "rank_start": 28801,
+        "rank_end": 29600,
+        "final": "T 314 / U 265 / F 45 / X 176",
+        "audit": "NOT CLEAN 145/162 = 89.51%",
+        "status": "final",
+        "source": "sol-ce-a3-final-28801-29600.md"
+      },
+      {
+        "rank_start": 29601,
+        "rank_end": 30400,
+        "final": "T 0 / U 691 / F 0 / X 109",
+        "audit": "NOT CLEAN 139/160 = 86.88%",
+        "status": "final",
+        "source": "sol-ce-a3-final-29601-30400.md"
+      },
+      {
+        "rank_start": 30401,
+        "rank_end": 31200,
+        "final": "T 0 / U 675 / F 0 / X 125",
+        "audit": "NOT CLEAN 136/160 = 85.00%",
+        "status": "final",
+        "source": "sol-ce-a3-final-30401-31200.md"
+      },
+      {
+        "rank_start": 31201,
+        "rank_end": 32000,
+        "final": "T 437 / U 160 / F 3 / X 200",
+        "audit": "NOT CLEAN 136/166 = 81.93%",
+        "status": "final",
+        "source": "sol-ce-a3-final-31201-32000.md"
+      },
+      {
+        "rank_start": 32001,
+        "rank_end": 32800,
+        "final": "T 290 / U 60 / F 0 / X 450",
+        "audit": "CONTRADICT 77/161 = 47.83% (audit's 69-row over-quarantine claim later OVERTURNED by sweep)",
+        "status": "final",
+        "source": "sol-ce-a3-final-32001-32800.md"
+      },
+      {
+        "rank_start": 32801,
+        "rank_end": 33600,
+        "final": "T 215 / U 47 / F 0 / X 538",
+        "audit": "CONTRADICT 147/166 = 88.55% class/decision (sweep: SUSTAIN, audit vindicated 166/166)",
+        "status": "final",
+        "source": "sol-ce-a3-class-library-v1.md"
+      },
+      {
+        "rank_start": 33601,
+        "rank_end": 34400,
+        "final": "T 484 / U 70 / F 1 / X 245",
+        "audit": "CONTRADICT 130/162 = 80.25% agreement (32/162 contradictions; sweep SUSTAIN 32/32)",
+        "status": "final",
+        "source": "sol-ce-a3-class-library-v1.md"
+      },
+      {
+        "rank_start": 34401,
+        "rank_end": 35200,
+        "final": "T 59 / U 135 / F 183 / X 423",
+        "audit": "NOT CLEAN 145/180 = 80.56%",
+        "status": "final",
+        "source": "sol-ce-a3-class-library-v1.md"
+      },
+      {
+        "rank_start": 35201,
+        "rank_end": 36000,
+        "final": "T 82 / U 14 / F 677 / X 27",
+        "audit": "NOT CLEAN 181/182 = 99.45% -> patch-sweep OVERTURNED the audit at 35251: CLEAN 182/182 (first fully clean A3 block); library v1.22",
+        "status": "final",
+        "source": "sol-ce-a3-patch-sweep-35201-36000-report.md"
+      },
+      {
+        "rank_start": 36001,
+        "rank_end": 36800,
+        "final": "T 15 / U 40 / F 636 / X 109",
+        "audit": "CLEAN 292/292 = 100.00% at audit (no patch-sweep needed); library v1.23",
+        "status": "final",
+        "source": "sol-ce-a3-audit-36001-36800-report.md"
+      },
+      {
+        "rank_start": 36801,
+        "rank_end": 37600,
+        "final": "T 12 / U 14 / F 615 / X 159",
+        "audit": "NOT CLEAN 204/225 = 90.67% (21 contradictions, minted-class F on incomplete construction frames) -> patch-sweep SUSTAINED 18/21 + overturned 3, corrected 117 over-fires; library v1.24",
+        "status": "final",
+        "source": "sol-ce-a3-patch-sweep-36801-37600-report.md"
+      },
+      {
+        "rank_start": 37601,
+        "rank_end": 38400,
+        "final": "T 2 / U 8 / F 376 / X 414",
+        "audit": "NOT CLEAN 99.46% (single dispute 37821) -> patch SUSTAINED the audit + one homolog 38337; library v1.25",
+        "status": "final",
+        "source": "sol-ce-a3-patch-sweep-37601-38400-report.md"
+      },
+      {
+        "rank_start": 38401,
+        "rank_end": 39200,
+        "final": "T 5 / U 34 / F 625 / X 136",
+        "audit": "NOT CLEAN 90.62% / 92.88% (57 contradictions in five families, zero predicate defects) -> patch-sweep re-ruled all 57; library v1.26",
+        "status": "final",
+        "source": "sol-ce-a3-patch-sweep-38401-39200-report.md"
+      },
+      {
+        "rank_start": 39201,
+        "rank_end": 40000,
+        "final": "T 15 / U 9 / F 465 / X 311",
+        "audit": "NOT CLEAN 78.97% decision / 65.64% full (253-row over-quarantine) -> patch SUSTAIN 67/67 + 3 amendments, 154 decision corrections; library v1.27 (frame_buildability_guard)",
+        "status": "final",
+        "source": "sol-ce-a3-patch-sweep-39201-40000-report.md"
+      },
+      {
+        "rank_start": 40001,
+        "rank_end": 41103,
+        "final": "T 457 / U 59 / F 373 / X 214",
+        "audit": "NOT CLEAN 282/297 = 94.95% (15 contradictions + the 40819 dispute) -> patch SUSTAIN 15/15 + 48 sweep additions; TERMINUS CONFIRMED; library v1.28 — queue complete",
+        "status": "final",
+        "source": "sol-ce-a3-patch-sweep-40001-41103-report.md"
+      }
+    ]
+  },
+  "q5": {
+    "unit": "Sealing one document is the Q5 arm's per-document closure. Two independent lanes (A and B) each annotate every extracted questionnaire occurrence in one PSID document with semantic-binding arrays, source-only; per the cal2 law ruling on the board, pre-freeze Q5 scope is 'binding arrays only (NE universally), one-document dual blocks'. A reconcile lane then aligns the two lane tables row-by-row, resolves every disagreement against the PSID source PDF (dispositions tallied AB/A/B/SRC), runs an agreed-row seam audit, and emits a canonical table of record — compact sorted-key JSON, one row per occurrence, with a pinned SHA-256 (e.g. sol-ce-q5-doc-1991f-reconcile-report.md: 'Result: reconciliation COMPLETE; canonical annotation SEALED'). The ladder is defined in sol-ce-q5-cal2-reconcile-report.md: 'Dual independent annotation; reconcile all disagreements; 10% agreed-row seam audit', with promotion requiring 'Two consecutive clean blocks'. SEALED is therefore distinct from the clean-block verdict: every one of the 33 sealed documents so far also ruled RECALIBRATE (most FAIL/RECALIBRATE — raw lane agreement below the clean bar), so the ladder has stayed at one document per dual-annotation block with clean streak 0 throughout.",
+    "denominator": "257 is the fixed PSID source-document domain, per sol-ce-q5-coverage-audit-report.md: 'The fixed source domain was previously reproduced as 257 files and 2,741,145,128 bytes, with keyset SHA 8b7cad855b791c5cd7d235a74d4a0f1ecc7511dc0458db11d6b04c1b6af2c36a and domain SHA 9d7a98db7c2889eba150f70935f492aebbc41cd521e4139dc1ec886ecd9945ce', citing the stage-1 report (sol-ce-a12-tier2-r04-r06-gen2-report.md line 116). The audit's class breakdown: Questionnaire/QxQ 81, Setup/layout 86, Codebook/value-label 47, Raw fixed-width 43, 'Total 257' (404,526 required atoms; the 43 raw fixed-width files are 'Semantic N/A' but 'remain mandatory in the fresh-byte replay'). The program board counts seals against this same denominator (e.g. 'Q5 PAUSED at 14/257 docs', 'doc_049 DONE = 33/257').",
+    "rows": [
+      {
+        "doc": "document_004",
+        "label": "1969 family questionnaire (q69)",
+        "rows_sealed": 268,
+        "verdict": "SEALED / RECALIBRATE",
+        "sealed_on": "2026-08-21",
+        "source": "sol-ce-q5-doc-1969q-reconcile-report.md"
+      },
+      {
+        "doc": "document_006",
+        "label": "1970 family questionnaire (q70)",
+        "rows_sealed": 263,
+        "verdict": "SEALED / RECALIBRATE",
+        "sealed_on": "2026-08-22",
+        "source": "sol-ce-q5-doc-1970q-reconcile-report.md"
+      },
+      {
+        "doc": "document_008",
+        "label": "1971 family questionnaire (q71)",
+        "rows_sealed": 252,
+        "verdict": "SEALED / RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1971q-reconcile-report.md"
+      },
+      {
+        "doc": "document_010",
+        "label": "1972 family questionnaire (q72)",
+        "rows_sealed": 181,
+        "verdict": "RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1972q-reconcile-v2-report.md"
+      },
+      {
+        "doc": "document_012",
+        "label": "1973 family questionnaire (q73)",
+        "rows_sealed": 277,
+        "verdict": "RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1973q-reconcile-report.md"
+      },
+      {
+        "doc": "document_014",
+        "label": "1974 family questionnaire (q74)",
+        "rows_sealed": 243,
+        "verdict": "COMPLETE / RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1974q-reconcile-report.md"
+      },
+      {
+        "doc": "document_016",
+        "label": "1975 family questionnaire (q75)",
+        "rows_sealed": 346,
+        "verdict": "COMPLETE / RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1975q-reconcile-report.md"
+      },
+      {
+        "doc": "document_018",
+        "label": "1976 family questionnaire (q76)",
+        "rows_sealed": 453,
+        "verdict": "COMPLETE / RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1976q-reconcile-report.md"
+      },
+      {
+        "doc": "document_020",
+        "label": "1977 family questionnaire (q77)",
+        "rows_sealed": 357,
+        "verdict": "RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1977q-reconcile-report.md"
+      },
+      {
+        "doc": "document_022",
+        "label": "1978 family questionnaire (q78)",
+        "rows_sealed": 362,
+        "verdict": "COMPLETE / RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1978q-reconcile-report.md"
+      },
+      {
+        "doc": "document_024",
+        "label": "1979 family questionnaire (q79.pdf)",
+        "rows_sealed": 281,
+        "verdict": "COMPLETE / RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1979q-reconcile-report.md"
+      },
+      {
+        "doc": "document_026",
+        "label": "1980 family questionnaire (q80)",
+        "rows_sealed": 444,
+        "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1980q-reconcile-v2-report.md"
+      },
+      {
+        "doc": "document_028",
+        "label": "1981 family questionnaire (q81)",
+        "rows_sealed": 468,
+        "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1981q-reconcile-report.md"
+      },
+      {
+        "doc": "document_030",
+        "label": "1982 family questionnaire (q82)",
+        "rows_sealed": 466,
+        "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-23",
+        "source": "sol-ce-q5-doc-1982q-reconcile-report.md"
+      },
+      {
+        "doc": "document_031",
+        "label": "1983 family questionnaire QxQ companion (fam1983_QxQs.pdf)",
+        "rows_sealed": 1025,
+        "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-24",
+        "source": "sol-ce-q5-doc-1983f-reconcile-report.md"
+      },
+      {
+        "doc": "document_032",
+        "label": "1983 family questionnaire (q83.pdf)",
+        "rows_sealed": 501,
+        "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-24",
+        "source": "sol-ce-q5-doc-1983q-reconcile-report.md"
+      },
+      {
+        "doc": "document_034",
+        "label": "1984 family questionnaire (q84)",
+        "rows_sealed": 88,
+        "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-24",
+        "source": "sol-ce-q5-doc-1984q-reconcile-report.md"
+      },
+      {
+        "doc": "document_033",
+        "label": "1984 family questionnaire QxQ companion (fam1984_QxQs.pdf)",
+        "rows_sealed": 3125,
+        "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-24",
+        "source": "sol-ce-q5-doc-1984f-reconcile-report.md"
+      },
+      {
+        "doc": "document_036",
+        "label": "1985 family questionnaire (q85)",
+        "rows_sealed": 306,
+        "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-25",
+        "source": "sol-ce-q5-doc-1985q-reconcile-report.md"
+      },
+      {
+        "doc": "document_035",
+        "label": "1985 family questionnaire QxQ companion (fam1985_QxQs)",
+        "rows_sealed": 5634,
+        "verdict": "COMPLETE / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-25",
+        "source": "sol-ce-q5-doc-1985f-reconcile-report.md"
+      },
+      {
+        "doc": "document_037",
+        "label": "1986 family questionnaire QxQ companion (fam1986_QxQs)",
+        "rows_sealed": 1815,
+        "verdict": "COMPLETE / SEALED / FAIL — RECALIBRATE",
+        "sealed_on": "2026-08-25",
+        "source": "sol-ce-q5-doc-1986f-reconcile-v2-report.md"
+      },
+      {
+        "doc": "document_038",
+        "label": "1986 family questionnaire (q86)",
+        "rows_sealed": 390,
+        "verdict": "COMPLETE / RECALIBRATE",
+        "sealed_on": "2026-08-25",
+        "source": "sol-ce-q5-doc-1986q-reconcile-report.md"
+      },
+      {
+        "doc": "document_039",
+        "label": "1987 family questionnaire QxQ companion (fam1987_QxQs)",
+        "rows_sealed": 1741,
+        "verdict": "COMPLETE / SEALED / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-25",
+        "source": "sol-ce-q5-doc-1987f-reconcile-report.md"
+      },
+      {
+        "doc": "document_040",
+        "label": "1987 family questionnaire (q87)",
+        "rows_sealed": 435,
+        "verdict": "COMPLETE / RECALIBRATE",
+        "sealed_on": "2026-08-25",
+        "source": "sol-ce-q5-doc-1987q-reconcile-report.md"
+      },
+      {
+        "doc": "document_041",
+        "label": "1988 family questionnaire QxQ companion (fam1988_QxQs)",
+        "rows_sealed": 1830,
+        "verdict": "COMPLETE / SEALED / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-25",
+        "source": "sol-ce-q5-doc-1988f-reconcile-report.md"
+      },
+      {
+        "doc": "document_042",
+        "label": "1988 family questionnaire (q88)",
+        "rows_sealed": 1847,
+        "verdict": "COMPLETE / SEALED / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-25",
+        "source": "sol-ce-q5-doc-1988q-reconcile-report.md"
+      },
+      {
+        "doc": "document_043",
+        "label": "1989 family questionnaire QxQ companion (fam1989_QxQs)",
+        "rows_sealed": 1875,
+        "verdict": "COMPLETE / SEALED / Q5 FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-25",
+        "source": "sol-ce-q5-doc-1989f-reconcile-report.md"
+      },
+      {
+        "doc": "document_044",
+        "label": "1989 family questionnaire (q89)",
+        "rows_sealed": 951,
+        "verdict": "FAIL / RECALIBRATE (table complete and reproduced)",
+        "sealed_on": "2026-08-26",
+        "source": "sol-ce-q5-doc-1989q-reconcile-report.md"
+      },
+      {
+        "doc": "document_045",
+        "label": "1990 family questionnaire QxQ companion (fam1990_QxQs)",
+        "rows_sealed": 1723,
+        "verdict": "COMPLETE / SEALED / FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-26",
+        "source": "sol-ce-q5-doc-1990f-reconcile-report.md"
+      },
+      {
+        "doc": "document_046",
+        "label": "1990 family questionnaire (q90.pdf)",
+        "rows_sealed": 1256,
+        "verdict": "COMPLETE (seal) / FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-27",
+        "source": "sol-ce-q5-doc-1990q-reconcile-v2-report.md"
+      },
+      {
+        "doc": "document_047",
+        "label": "1991 family questionnaire QxQ companion (fam1991_QxQs.pdf)",
+        "rows_sealed": 1476,
+        "verdict": "COMPLETE / SEALED / FAIL / RECALIBRATE",
+        "sealed_on": "2026-08-27",
+        "source": "sol-ce-q5-doc-1991f-reconcile-report.md"
+      },
+      {
+        "doc": "document_048",
+        "label": "1991 family questionnaire (q91.pdf)",
+        "rows_sealed": 2474,
+        "verdict": "FAIL / RECALIBRATE (annotation complete and sealed)",
+        "sealed_on": "2026-08-29",
+        "source": "sol-ce-q5-doc-1991q-reconciled-v2-report.md"
+      },
+      {
+        "doc": "document_049",
+        "label": "1992 family questionnaire QxQ companion (fam1992_QxQs.pdf)",
+        "rows_sealed": 1158,
+        "verdict": "RECALIBRATE (annotation complete and sealed)",
+        "sealed_on": "2026-08-30",
+        "source": "sol-ce-q5-doc-1992f-reconciled-v2-report.md"
+      },
+      {
+        "doc": "document_050",
+        "label": "1992 family questionnaire (q92.pdf)",
+        "rows_sealed": 2302,
+        "verdict": "RECALIBRATE (table of record issued; binding-law ruling in force)",
+        "sealed_on": "2026-08-30",
+        "source": "sol-ce-q5-doc-1992q-reconciled-v3-report.md"
+      },
+      {
+        "doc": "document_051",
+        "label": "1993 family questionnaire (q93.pdf)",
+        "rows_sealed": 7315,
+        "verdict": "RECALIBRATE (table of record structurally all-pass)",
+        "sealed_on": "2026-08-31",
+        "source": "sol-ce-q5-doc-1993q-reconciled-report.md"
+      },
+      {
+        "doc": "document_052",
+        "label": "1994 family questionnaire QxQ companion (fam1994_QxQs.pdf)",
+        "rows_sealed": 2500,
+        "verdict": "RECALIBRATE (both transports authenticated without repair)",
+        "sealed_on": "2026-08-31",
+        "source": "sol-ce-q5-doc-1994f-reconciled-v3-report.md"
+      },
+      {
+        "doc": "document_053",
+        "label": "1994 family questionnaire (q94.pdf)",
+        "rows_sealed": 2813,
+        "verdict": "RECALIBRATE (2,509 bound / 304 empty; zero unresolved)",
+        "sealed_on": "2026-09-01",
+        "source": "sol-ce-q5-doc-1994q-reconciled-report.md"
+      },
+      {
+        "doc": "document_054",
+        "label": "1995 family questionnaire QxQ companion (fam1995_QxQs.pdf)",
+        "rows_sealed": 884,
+        "verdict": "RECALIBRATE",
+        "sealed_on": "2026-09-01",
+        "source": "sol-ce-q5-doc-1995f-reconciled-report.md"
+      },
+      {
+        "doc": "document_055",
+        "label": "1995 family questionnaire (q95.pdf)",
+        "rows_sealed": 7145,
+        "verdict": "RECALIBRATE (largest single-document seal at the time)",
+        "sealed_on": "2026-09-01",
+        "source": "sol-ce-q5-doc-1995q-reconciled-report.md"
+      },
+      {
+        "doc": "document_056",
+        "label": "1996 family questionnaire QxQ companion (fam1996_QxQs.pdf)",
+        "rows_sealed": 363,
+        "verdict": "RECALIBRATE (clean-block FAIL; complete reconciled table)",
+        "sealed_on": "2026-09-01",
+        "source": "sol-ce-q5-doc-1996f-reconciled-report.md"
+      },
+      {
+        "doc": "document_057",
+        "label": "1996 family questionnaire (q96.pdf)",
+        "rows_sealed": 7147,
+        "verdict": "RECALIBRATE (raw agreement 44.90%; all divergent families source-resolved)",
+        "sealed_on": "2026-09-02",
+        "source": "sol-ce-q5-doc-1996q-reconciled-report.md"
+      },
+      {
+        "doc": "document_058",
+        "label": "1997 family questionnaire QxQ companion (fam1997_QxQs.pdf)",
+        "rows_sealed": 450,
+        "verdict": "RECALIBRATE (dual-serialized; seal ratified against the campaign-chain reconcile)",
+        "sealed_on": "2026-09-02",
+        "source": "sol-ce-q5-doc-1997f-reconciled-report.md"
+      },
+      {
+        "doc": "document_059",
+        "label": "1997 family questionnaire (q97.pdf)",
+        "rows_sealed": 7628,
+        "verdict": "RECALIBRATE (dual-serialized; lane B recovered by dual-serialization cross-recovery)",
+        "sealed_on": "2026-09-02",
+        "source": "sol-ce-q5-doc-1997q-reconciled-report.md"
+      },
+      {
+        "doc": "document_060",
+        "label": "1999 family questionnaire QxQ companion (fam1999_QxQs.pdf)",
+        "rows_sealed": 282,
+        "verdict": "RECALIBRATE (103/282 arrays diverged; all source-resolved)",
+        "sealed_on": "2026-09-02",
+        "source": "sol-ce-q5-doc-1999f-reconciled-report.md"
+      },
+      {
+        "doc": "document_061",
+        "label": "1999 family questionnaire (q1999.pdf)",
+        "rows_sealed": 8498,
+        "verdict": "RECALIBRATE (largest table of record: 8,498 rows)",
+        "sealed_on": "2026-09-02",
+        "source": "sol-ce-q5-doc-1999q-reconciled-report.md"
+      }
+    ]
+  }
 }
