@@ -240,15 +240,15 @@ Component-by-component against DYNASIM, the main non-governmental dynamic benchm
 
 ## Timeline forecast
 
-From the pre-registered timeline ledger, entry 21 (registered 2026-08-20). Dates are point-in-time forecasts, not commitments; the ledger records every revision with its reasons.
+From the pre-registered timeline ledger, entry 22 (registered 2026-09-03). Dates are point-in-time forecasts, not commitments; the ledger records every revision with its reasons.
 
 | Milestone | p50 | p80 |
 |---|---|---|
-| Milestone A — revision-22 ratification (A20 framework operative) | 2026-09-08 | 2026-09-22 |
-| Milestone B — corrected-earnings successor authority and publication (the resolution event) | 2026-10-14 | 2026-12-02 |
+| Milestone A — revision-22 ratification (A20 framework operative) | 2026-09-10 | 2026-09-17 |
+| Milestone B — corrected-earnings successor authority and publication (the resolution event) | 2026-10-21 | 2026-12-04 |
 
-- **Milestone A**: Not gated by the Q5 program; requires the A4 evidence freeze and the C20 ceremony chain.
-- **Milestone B**: Gated by the Q5 program, the span/collapse cure (discharged), and completion of the purpose census.
+- **Milestone A**: Not gated by the Q5 program; requires the purpose census (3,230 ranks remaining at registration), the A4 evidence freeze and the C20 ceremony chain.
+- **Milestone B**: Gated by the Q5 program (45/257 documents, 20.2% of required atoms at registration; two document classes unstarted) and completion of the purpose census.
 
 ## Recent milestones
 

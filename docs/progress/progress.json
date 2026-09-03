@@ -69,20 +69,20 @@
     }
   ],
   "forecast": {
-    "ledger_entry": 21,
-    "registered_at": "2026-08-20",
+    "ledger_entry": 22,
+    "registered_at": "2026-09-03",
     "milestones": [
       {
         "name": "Milestone A — revision-22 ratification (A20 framework operative)",
-        "p50": "2026-09-08",
-        "p80": "2026-09-22",
-        "note": "Not gated by the Q5 program; requires the A4 evidence freeze and the C20 ceremony chain."
+        "p50": "2026-09-10",
+        "p80": "2026-09-17",
+        "note": "Not gated by the Q5 program; requires the purpose census (3,230 ranks remaining at registration), the A4 evidence freeze and the C20 ceremony chain."
       },
       {
         "name": "Milestone B — corrected-earnings successor authority and publication (the resolution event)",
-        "p50": "2026-10-14",
-        "p80": "2026-12-02",
-        "note": "Gated by the Q5 program, the span/collapse cure (discharged), and completion of the purpose census."
+        "p50": "2026-10-21",
+        "p80": "2026-12-04",
+        "note": "Gated by the Q5 program (45/257 documents, 20.2% of required atoms at registration; two document classes unstarted) and completion of the purpose census."
       }
     ]
   },
