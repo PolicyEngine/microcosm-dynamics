@@ -516,11 +516,11 @@
         "rank_start": 17889,
         "rank_end": 18236,
         "ranks": 348,
-        "status": "in_cycle",
-        "dispositions": null,
-        "audit": "pass 348/348 (225,291 B) -> dense audit NOT CALIBRATED on both limbs; closed 59-row manifest, seals must regenerate; folded v1.86; regeneration sweep in flight",
-        "adopted_on": null,
-        "source": "sol-ce-purpose-audit-R17889-18236-report.md"
+        "status": "adopted",
+        "dispositions": "348/348 regenerated (sweep)",
+        "audit": "pass 348/348 -> dense audit NOT CALIBRATED both limbs (59-row manifest, seals regenerate) -> regeneration sweep 348/348 byte-exact envelope; folded v1.87",
+        "adopted_on": "2026-09-04",
+        "source": "sol-ce-purpose-correction-sweep-R17889-18236-report.md"
       },
       {
         "document": "q2013 R/P/KL + fam2015 complete (final-tranche block 2)",
@@ -528,11 +528,11 @@
         "rank_start": 18237,
         "rank_end": 18526,
         "ranks": 290,
-        "status": "pending",
-        "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+        "status": "adopted",
+        "dispositions": "APPLY 217 / UNCOVERED 73",
+        "audit": "pass recovered byte-exact from durable scratch -> dense audit CALIBRATED 99.37% sample / 99.66% full (one-row manifest R18462); folded v1.88",
+        "adopted_on": "2026-09-04",
+        "source": "sol-ce-purpose-audit-R18237-18526-report.md"
       },
       {
         "document": "q2015 BCDE/G/R/P (final-tranche block 3)",
@@ -540,11 +540,11 @@
         "rank_start": 18527,
         "rank_end": 18838,
         "ranks": 312,
-        "status": "pending",
+        "status": "adopted",
         "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+        "audit": "pass 312/312 -> dense audit CALIBRATED 100% sample and full vector (empty contradiction set; 24/24 receipts byte-exact); folded v1.89",
+        "adopted_on": "2026-09-04",
+        "source": "sol-ce-purpose-audit-R18527-18838-report.md"
       },
       {
         "document": "q2015 KL + q2017 complete (final-tranche block 4)",
@@ -1433,6 +1433,54 @@
         "verdict": "RECALIBRATE (230/370 occurrences diverged; all source-resolved)",
         "sealed_on": "2026-09-03",
         "source": "sol-ce-q5-doc-2003f-reconciled-report.md"
+      },
+      {
+        "doc": "document_065",
+        "label": "2003 family questionnaire (q2003.pdf)",
+        "rows_sealed": 1225,
+        "verdict": "RECALIBRATE (agreement 480/1,225; all divergences source-resolved)",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-2003q-reconciled-report.md"
+      },
+      {
+        "doc": "document_066",
+        "label": "2005 family questionnaire QxQ companion (fam2005_QxQs.pdf)",
+        "rows_sealed": 269,
+        "verdict": "lane A prevailing (174 of 194 divergences to A; common-mode 1/269) — first Opus/Opus pair",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-2005f-reconciled-report.md"
+      },
+      {
+        "doc": "document_067",
+        "label": "2005 family questionnaire (q2005.pdf)",
+        "rows_sealed": 1212,
+        "verdict": "RECALIBRATE (neither lane canonical; common-mode 0/516)",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-2005q-reconciled-report.md"
+      },
+      {
+        "doc": "document_068",
+        "label": "2007 family questionnaire QxQ companion (fam2007_QxQs.pdf)",
+        "rows_sealed": 952,
+        "verdict": "RECONCILED — lane B prevails (917/952 as submitted; common-mode 7/389)",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-2007f-reconciled-report.md"
+      },
+      {
+        "doc": "document_069",
+        "label": "2007 family questionnaire (q2007.pdf)",
+        "rows_sealed": 1605,
+        "verdict": "lane B adopted unmodified as the table of record (1,605/1,605)",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-2007q-reconciled-report.md"
+      },
+      {
+        "doc": "document_070",
+        "label": "2009 family questionnaire QxQ companion (fam2009_QxQs.pdf)",
+        "rows_sealed": 171,
+        "verdict": "both lanes rejected; the reconciled table stands (common-mode 5/171 = 2.9%, the highest yet)",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-2009f-reconciled-report.md"
       }
     ]
   }
