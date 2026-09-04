@@ -156,6 +156,15 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
     Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
     Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+    # The opt-in graph integration is outside the historical reducer and
+    # registered production call paths.  Keep exact file exclusions, with
+    # import-reachability coverage, rather than changing any evidence pin.
+    Path("src/populace_dynamics/graph/__init__.py"),
+    Path("src/populace_dynamics/graph/__main__.py"),
+    Path("src/populace_dynamics/graph/_compat.py"),
+    Path("src/populace_dynamics/graph/model.py"),
+    Path("src/populace_dynamics/graph/runtime.py"),
+    Path("src/populace_dynamics/graph/synthetic.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
