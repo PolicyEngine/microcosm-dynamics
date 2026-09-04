@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "description": "Data behind docs/progress.md (the development-progress dashboard). Update this file and run `python scripts/build_progress_page.py`; never edit docs/progress.md by hand.",
-  "as_of": "2026-09-04T12:20:00Z",
+  "as_of": "2026-09-04T18:30:00Z",
   "framework": {
     "amendment": "Amendment 20 (two-arm evidence charter for the covered-earnings correction design)",
     "pr": 405,
@@ -47,9 +47,9 @@
       "key": "purpose",
       "label": "Prompt-purpose census",
       "description": "Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.",
-      "done": 17888,
+      "done": 18838,
       "total": 20815,
-      "unit": "prompts adopted (contiguous R1–R17888)"
+      "unit": "prompts adopted (contiguous R1–R18838)"
     },
     {
       "key": "a3",
@@ -63,7 +63,7 @@
       "key": "q5",
       "label": "Q5 semantic annotation",
       "description": "Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.",
-      "done": 48,
+      "done": 54,
       "total": 257,
       "unit": "documents sealed"
     }
@@ -89,7 +89,7 @@
   "milestones": [
     {
       "date": "2026-09-04",
-      "text": "After an overnight capacity hold, final-tranche block 1 enters its regeneration sweep and the 2003q reconciliation resumes on the one available Codex lane; a fresh orchestrator session takes over the sequencing record."
+      "text": "Final-tranche blocks 1–3 close (ledger v1.89; purpose reaches 90.50%): block 1 on its regeneration sweep, block 2 CALIBRATED at 99.66% on a one-row manifest, block 3 CALIBRATED at 100% with an empty contradiction set. Q5 seals 2003q, 2005f, 2005q, 2007f, 2007q and 2009f (54/257), the last five on Opus reconciliations; the first Opus/Opus pairs measure common-mode rates of 0.4%, 1.8%, 0.0% and 2.9%. The C20 ceremony-kit correction reaches its fifth round as a Sol-written change that an independent Opus review ACCEPTS, clearing the last precondition on the A4 evidence freeze other than the census itself. Six Claude accounts run Opus lanes in parallel after subfleet's false month-long parks are found and cleared."
     },
     {
       "date": "2026-09-03",
