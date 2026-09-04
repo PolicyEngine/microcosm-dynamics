@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "description": "Data behind docs/progress.md (the development-progress dashboard). Update this file and run `python scripts/build_progress_page.py`; never edit docs/progress.md by hand.",
-  "as_of": "2026-09-03T09:45:00Z",
+  "as_of": "2026-09-04T12:20:00Z",
   "framework": {
     "amendment": "Amendment 20 (two-arm evidence charter for the covered-earnings correction design)",
     "pr": 405,
@@ -38,7 +38,7 @@
       "href": "https://github.com/PolicyEngine/microcosm-dynamics/pull/405"
     },
     {
-      "text": "A public timeline-forecast ledger: 21 registered entries, every revision with its reasons on the record.",
+      "text": "A public timeline-forecast ledger: 22 registered entries, every revision with its reasons on the record.",
       "href": "https://github.com/PolicyEngine/microcosm-dynamics/blob/master/docs/forecasts/timeline_ledger.json"
     }
   ],
@@ -47,9 +47,9 @@
       "key": "purpose",
       "label": "Prompt-purpose census",
       "description": "Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.",
-      "done": 17585,
+      "done": 17888,
       "total": 20815,
-      "unit": "prompts adopted (contiguous R1–R17585)"
+      "unit": "prompts adopted (contiguous R1–R17888)"
     },
     {
       "key": "a3",
@@ -63,7 +63,7 @@
       "key": "q5",
       "label": "Q5 semantic annotation",
       "description": "Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.",
-      "done": 45,
+      "done": 48,
       "total": 257,
       "unit": "documents sealed"
     }
@@ -87,6 +87,14 @@
     ]
   },
   "milestones": [
+    {
+      "date": "2026-09-04",
+      "text": "After an overnight capacity hold, final-tranche block 1 enters its regeneration sweep and the 2003q reconciliation resumes on the one available Codex lane; a fresh orchestrator session takes over the sequencing record."
+    },
+    {
+      "date": "2026-09-03",
+      "text": "The E5 first tranche completes: block 8 closes on its audit's closed 16-row manifest (ledger v1.84; purpose reaches 85.94%). The final tranche R17889–R20815 is planned as the entire remainder — 2,927 ranks across eight documents from 2013 to 2023 in ten blocks (v1.85) — and its first block passes 348/348 and is audited (v1.86) with a 59-row regeneration manifest. Q5 seals 2001f, 2003f and 2001q (48/257), the latter two on Claude Opus reconciliations in 42–43 minutes against a one-to-three-hour Sol baseline."
+    },
     {
       "date": "2026-09-03",
       "text": "E5 blocks 6–7 close (ledger v1.83; purpose reaches 84.48%) and the tranche's last block, block 8 to R17888, is in flight. Q5 seals 1999f and 1999q — the latter the campaign's largest table of record at 8,498 rows — reaching 45/257. An output-order mandate (full serialization first, no placeholders) is adopted as standing process law for large deliverables after a truncated sweep had to be re-run."

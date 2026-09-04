@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "as_of": "2026-09-03",
+  "as_of": "2026-09-04",
   "description": "Row-level drill-down behind the verification arms; extracted from the campaign evidence archive and adversarially verified. Sources name the archive artifact grounding each row.",
   "purpose": {
     "unit": "One rank = one row of the pinned 20,815-row residual index (e8-ops/sol-ce-purpose-residual-index-v1.txt, file SHA b35519702e6f...) = one prompt occurrence keyed `psid-questionnaire-occurrence:<sha256>` — a single printed questionnaire item in a sealed official PSID questionnaire/QxQ-codebook PDF (staged under ~/PolicyEngine/psid-data/documentation/capture1), located by an exact page/character-span receipt, e.g. `q88:p4[2538,2708)#10bc6b307d41`. What is adjudicated per rank is the prompt's \"purpose\": per sol-ce-purpose-evidence-scope-report.md, purpose \"is the closed model-law classification saying which factual dimension a `field_purpose_prompt` establishes for `O_P`\" — not survey designers' motivation. Each rank is disposed either D (determined: an ordered purpose array over the closed 35-literal space, e.g. `[M]`) or SU (source-underdetermined, with a named condition such as U_ONTOLOGY, U_CONFLICT, or U_SCOPE). Example full row from sol-ce-purpose-ledger-pass-R6172-6576-report.md: \"R6176 | Q7316 | psid-questionnaire-occurrence:091095d3... | E3.CALENDAR_EXPOSURE | D | [M] | q88:p4[2538,2708)#10bc6b307d41\". Documents are the per-wave PSID instruments: f-docs are family-interview QxQ codebooks (e.g. f94 = fam1994_QxQs.pdf) and q-docs are questionnaires (e.g. q94 = q94.pdf, \"1994 Questionnaire\", per the e4-era build's source table).",
@@ -504,23 +504,131 @@
         "rank_start": 17586,
         "rank_end": 17888,
         "ranks": 303,
-        "status": "in_cycle",
-        "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "board 2026-09-03 (pass dispatched 04:5x; re-dispatched 06:18 as -r2 after the reboot)"
+        "status": "adopted",
+        "dispositions": "APPLY 226 / UNCOVERED 77 (corrected census)",
+        "audit": "92.04% sample NOT CALIBRATED; closed 16-row manifest across six families adopted per the closed-manifest precedent; folded v1.84 — E5 tranche complete, contiguous R1–R17888",
+        "adopted_on": "2026-09-03",
+        "source": "sol-ce-purpose-audit-R17586-17888-report.md"
       },
       {
-        "document": "post-E5-tranche remainder (fam2013 onward; not yet tranched)",
-        "era": null,
+        "document": "fam2013 complete + q2013 BCDE/G (final-tranche block 1)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
         "rank_start": 17889,
-        "rank_end": 20815,
-        "ranks": 2927,
+        "rank_end": 18236,
+        "ranks": 348,
+        "status": "in_cycle",
+        "dispositions": null,
+        "audit": "pass 348/348 (225,291 B) -> dense audit NOT CALIBRATED on both limbs; closed 59-row manifest, seals must regenerate; folded v1.86; regeneration sweep in flight",
+        "adopted_on": null,
+        "source": "sol-ce-purpose-audit-R17889-18236-report.md"
+      },
+      {
+        "document": "q2013 R/P/KL + fam2015 complete (final-tranche block 2)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
+        "rank_start": 18237,
+        "rank_end": 18526,
+        "ranks": 290,
         "status": "pending",
         "dispositions": null,
         "audit": null,
         "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5era-build-report.md (first untouched R17889)"
+        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+      },
+      {
+        "document": "q2015 BCDE/G/R/P (final-tranche block 3)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
+        "rank_start": 18527,
+        "rank_end": 18838,
+        "ranks": 312,
+        "status": "pending",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+      },
+      {
+        "document": "q2015 KL + q2017 complete (final-tranche block 4)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
+        "rank_start": 18839,
+        "rank_end": 19111,
+        "ranks": 273,
+        "status": "pending",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+      },
+      {
+        "document": "q2019 complete + q2021 A (final-tranche block 5)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
+        "rank_start": 19112,
+        "rank_end": 19384,
+        "ranks": 273,
+        "status": "pending",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+      },
+      {
+        "document": "q2021 BC (final-tranche block 6)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
+        "rank_start": 19385,
+        "rank_end": 19749,
+        "ranks": 365,
+        "status": "pending",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+      },
+      {
+        "document": "q2021 G (final-tranche block 7)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
+        "rank_start": 19750,
+        "rank_end": 20006,
+        "ranks": 257,
+        "status": "pending",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+      },
+      {
+        "document": "q2021 P/KL/IMMIG (final-tranche block 8)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
+        "rank_start": 20007,
+        "rank_end": 20311,
+        "ranks": 305,
+        "status": "pending",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+      },
+      {
+        "document": "q2021 ADDRPAYMENT + q2023 BC (final-tranche block 9)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
+        "rank_start": 20312,
+        "rank_end": 20618,
+        "ranks": 307,
+        "status": "pending",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+      },
+      {
+        "document": "q2023 G/P/KL (final-tranche block 10)",
+        "era": "Final tranche (R17889–R20815: fam2013/q2013 through q2023; E5 through 2015, E6 from 2017)",
+        "rank_start": 20619,
+        "rank_end": 20815,
+        "ranks": 197,
+        "status": "pending",
+        "dispositions": null,
+        "audit": null,
+        "adopted_on": null,
+        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
       }
     ]
   },
@@ -1301,6 +1409,30 @@
         "verdict": "RECALIBRATE (largest table of record: 8,498 rows)",
         "sealed_on": "2026-09-02",
         "source": "sol-ce-q5-doc-1999q-reconciled-report.md"
+      },
+      {
+        "doc": "document_062",
+        "label": "2001 family questionnaire QxQ companion (fam2001_QxQs.pdf)",
+        "rows_sealed": 674,
+        "verdict": "RECALIBRATE (clean streak 0/2)",
+        "sealed_on": "2026-09-03",
+        "source": "sol-ce-q5-doc-2001f-reconciled-report.md"
+      },
+      {
+        "doc": "document_063",
+        "label": "2001 family questionnaire (q2001.pdf)",
+        "rows_sealed": 2825,
+        "verdict": "RECALIBRATE (neither lane canonical; resolved under the 1992q standard)",
+        "sealed_on": "2026-09-03",
+        "source": "sol-ce-q5-doc-2001q-reconciled-report.md"
+      },
+      {
+        "doc": "document_064",
+        "label": "2003 family questionnaire QxQ companion (fam2003_QxQs.pdf)",
+        "rows_sealed": 370,
+        "verdict": "RECALIBRATE (230/370 occurrences diverged; all source-resolved)",
+        "sealed_on": "2026-09-03",
+        "source": "sol-ce-q5-doc-2003f-reconciled-report.md"
       }
     ]
   }
