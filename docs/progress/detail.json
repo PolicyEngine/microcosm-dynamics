@@ -576,11 +576,11 @@
         "rank_start": 19385,
         "rank_end": 19749,
         "ranks": 365,
-        "status": "pending",
-        "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+        "status": "adopted",
+        "dispositions": "APPLY 267 / UNCOVERED 98 (12 proposal entries)",
+        "audit": "pass 365/365 -> dense audit CALIBRATED with a closed three-row manifest (R19623–R19625, BC60A over-fire -> ALL.DIRECT_EXPOSURE; eight of nine charges refuted; EHC recall 25/25); folded v1.92",
+        "adopted_on": "2026-09-05",
+        "source": "sol-ce-purpose-audit-R19385-19749-report.md"
       },
       {
         "document": "q2021 G (final-tranche block 7)",
@@ -1513,6 +1513,46 @@
         "verdict": "adjudication of the contested set: 38 rows with both lanes upheld, 69 lane A upheld, 19 lane B upheld; 156 rows = seal; zero minted identifiers",
         "sealed_on": "2026-09-04",
         "source": "sol-ce-q5-doc-1968f-reconciled-report.md"
+      },
+      {
+        "doc": "document_003",
+        "label": "1969 family questionnaire QxQ companion (fam1969_QxQs.pdf)",
+        "rows_sealed": 159,
+        "verdict": "lane A with exactly 7 row replacements after an 8-block adjudication (confirmed common-mode 0/85 by the per-row method; three exposures recorded on the seal)",
+        "sealed_on": "2026-09-05",
+        "source": "sol-ce-q5-doc-1969f-reconciled-report.md"
+      },
+      {
+        "doc": "document_017",
+        "label": "1976 family questionnaire QxQ companion (fam1976_QxQs.pdf)",
+        "rows_sealed": 385,
+        "verdict": "all 224 agreed rows audited in three strata and upheld (common-mode 0/224, or 5/224 under the stricter reading); reading-invariant, no Q5-status pass asserted",
+        "sealed_on": "2026-09-05",
+        "source": "sol-ce-q5-doc-1976f-reconciled-report.md"
+      },
+      {
+        "doc": "document_023",
+        "label": "1979 family questionnaire QxQ companion (fam1979_QxQs.pdf)",
+        "rows_sealed": 473,
+        "verdict": "revision 2 after two of its four verdicts were adversarially overturned; reading-invariant with three exposures recorded; survived the adversarial seal review",
+        "sealed_on": "2026-09-05",
+        "source": "sol-ce-q5-doc-1979f-reconciled-report.md"
+      },
+      {
+        "doc": "document_027",
+        "label": "1981 family questionnaire QxQ companion (fam1981_QxQs.pdf)",
+        "rows_sealed": 449,
+        "verdict": "revision 2 (six rows and one count corrected under a declared adversarial pass); both lanes and the table write zero component-side sentinels; survived the adversarial seal review",
+        "sealed_on": "2026-09-05",
+        "source": "sol-ce-q5-doc-1981f-reconciled-report.md"
+      },
+      {
+        "doc": "document_019",
+        "label": "1977 family questionnaire QxQ companion (fam1977_QxQs.pdf)",
+        "rows_sealed": 432,
+        "verdict": "revision 2; states the containment ground independently (the strongest of the four seals under adversarial review)",
+        "sealed_on": "2026-09-05",
+        "source": "sol-ce-q5-doc-1977f-reconciled-report.md"
       }
     ]
   }

@@ -2,7 +2,7 @@
 
 # Development progress
 
-*Snapshot as of 2026-09-05T03:45:00Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
+*Snapshot as of 2026-09-05T10:27:00Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
 
 Dynamics builds Social Security earnings histories from the PSID, and the corrected covered-earnings series is only as credible as the reading of the source documentation beneath it. Before that series ships, every piece of documentation the construction relies on is independently verified by the three arms below; the design is pre-registered and ratifies only when they complete. (Internally: the evidence campaign behind Amendment 20 (two-arm evidence charter for the covered-earnings correction design), under review in PR #405, open; draft ratified through round 6.2; next step, the A4 evidence freeze, then the C20 ratification chain toward revision 22.)
 
@@ -27,14 +27,14 @@ The foundations below are complete and in the repository today; the campaign tra
               align-items: baseline;">
     <strong>Prompt-purpose census</strong>
     <span style="font-variant-numeric: tabular-nums;">
-      19,384 / 20,815 &middot; 93.1%</span>
+      19,749 / 20,815 &middot; 94.9%</span>
   </div>
   <div style="background: #e9ecef; border-radius: 6px; height: 14px;
               margin: 0.35em 0;">
     <div style="background: #2c6496; border-radius: 6px; height: 14px;
-                width: 93.1%;"></div>
+                width: 94.9%;"></div>
   </div>
-  <div style="font-size: 0.9em; color: #555;">prompts adopted (contiguous R1–R19384).
+  <div style="font-size: 0.9em; color: #555;">prompts adopted (contiguous R1–R19749).
   Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.</div>
 </div>
 
@@ -61,14 +61,14 @@ The foundations below are complete and in the repository today; the campaign tra
               align-items: baseline;">
     <strong>Q5 semantic annotation</strong>
     <span style="font-variant-numeric: tabular-nums;">
-      58 / 257 &middot; 22.6%</span>
+      63 / 257 &middot; 24.5%</span>
   </div>
   <div style="background: #e9ecef; border-radius: 6px; height: 14px;
               margin: 0.35em 0;">
     <div style="background: #2c6496; border-radius: 6px; height: 14px;
-                width: 22.6%;"></div>
+                width: 24.5%;"></div>
   </div>
-  <div style="font-size: 0.9em; color: #555;">documents sealed.
+  <div style="font-size: 0.9em; color: #555;">documents sealed — 63 of the 81 annotated questionnaires (77.8%); the 257 denominator is the fixed PSID source-documentation domain, of which 43 can never seal and 176 are unstarted.
   Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.</div>
 </div>
 
@@ -131,7 +131,7 @@ The three drill-down tables below decompose each arm's progress bar row by row. 
 | q2015 BCDE/G/R/P (final-tranche block 3) | R18,527–R18,838 | 312 | adopted | — | pass 312/312 -> dense audit CALIBRATED 100% sample and full vector (empty contradiction set; 24/24 receipts byte-exact); folded v1.89 | 2026-09-04 |
 | q2015 KL + q2017 complete (final-tranche block 4) | R18,839–R19,111 | 273 | adopted | — | pass 273/273 -> dense audit CALIBRATED (sampled 144/144; full-vector replay 273/273; row contradictions 0; family concentration none); folded v1.90 | 2026-09-04 |
 | q2019 complete + q2021 A (final-tranche block 5) | R19,112–R19,384 | 273 | adopted | — | pass staged -> dense audit CALIBRATED 100% (sample 144/144; 273/273 rows examined); folded v1.91 (terminal identity 317,298 B, SHA 014aeb13…) | 2026-09-04 |
-| q2021 BC (final-tranche block 6) | R19,385–R19,749 | 365 | pending | — | — | — |
+| q2021 BC (final-tranche block 6) | R19,385–R19,749 | 365 | adopted | APPLY 267 / UNCOVERED 98 (12 proposal entries) | pass 365/365 -> dense audit CALIBRATED with a closed three-row manifest (R19623–R19625, BC60A over-fire -> ALL.DIRECT_EXPOSURE; eight of nine charges refuted; EHC recall 25/25); folded v1.92 | 2026-09-05 |
 | q2021 G (final-tranche block 7) | R19,750–R20,006 | 257 | pending | — | — | — |
 | q2021 P/KL/IMMIG (final-tranche block 8) | R20,007–R20,311 | 305 | pending | — | — | — |
 | q2021 ADDRPAYMENT + q2023 BC (final-tranche block 9) | R20,312–R20,618 | 307 | pending | — | — | — |
@@ -259,6 +259,11 @@ The three drill-down tables below decompose each arm's progress bar row by row. 
 | 2013 family questionnaire QxQ companion (fam2013_QxQs.pdf) | 1,320 | lane B substantially upheld (551 of 610 contested rows) and adopted as the base with 82 corrections; lane A refuted; both refuted on the aggregate class | 2026-09-04 |
 | 2019 family questionnaire (q2019.pdf) | 1,882 | each lane reversed on exactly one axis and upheld on the other (133 + 113 = the 246 contested rows); zero minted identifiers; common-mode 0/1,636 | 2026-09-04 |
 | 1968 family questionnaire QxQ companion (fam1968_QxQs.pdf) | 156 | adjudication of the contested set: 38 rows with both lanes upheld, 69 lane A upheld, 19 lane B upheld; 156 rows = seal; zero minted identifiers | 2026-09-04 |
+| 1969 family questionnaire QxQ companion (fam1969_QxQs.pdf) | 159 | lane A with exactly 7 row replacements after an 8-block adjudication (confirmed common-mode 0/85 by the per-row method; three exposures recorded on the seal) | 2026-09-05 |
+| 1976 family questionnaire QxQ companion (fam1976_QxQs.pdf) | 385 | all 224 agreed rows audited in three strata and upheld (common-mode 0/224, or 5/224 under the stricter reading); reading-invariant, no Q5-status pass asserted | 2026-09-05 |
+| 1979 family questionnaire QxQ companion (fam1979_QxQs.pdf) | 473 | revision 2 after two of its four verdicts were adversarially overturned; reading-invariant with three exposures recorded; survived the adversarial seal review | 2026-09-05 |
+| 1981 family questionnaire QxQ companion (fam1981_QxQs.pdf) | 449 | revision 2 (six rows and one count corrected under a declared adversarial pass); both lanes and the table write zero component-side sentinels; survived the adversarial seal review | 2026-09-05 |
+| 1977 family questionnaire QxQ companion (fam1977_QxQs.pdf) | 432 | revision 2; states the containment ground independently (the strongest of the four seals under adversarial review) | 2026-09-05 |
 
 ## Development scorecard
 
@@ -315,6 +320,7 @@ From the pre-registered timeline ledger, entry 22 (registered 2026-09-03). Dates
 
 ## Recent milestones
 
+- **2026-09-05** — Overnight the purpose census reaches 94.88% (final-tranche block 6 folded as ledger v1.92, the fourth consecutive CALIBRATED audit and the first to carry a correction), and the sixteen-document 1968–1982 family back-catalogue is fully annotated and reconciled: six documents sealed, one seal withdrawn on adversarial review, nine held pending rulings (Q5 63/257, which is 77.8% of the 81 annotated questionnaires — the 257 denominator is the fixed source-documentation domain, 43 of which can never seal; a counter reconciliation confirmed the figure across three instruments). A compile-only dossier found the design fixes seven sentinel identifiers (four job-slot, three component-slot) in a section outside every span the briefs had pinned, overturning the campaign's three-sentinel reading and its bar on the seventh literal; a supersession audit reduced whether the tier-1 minting bar is in force to a single unresolved sentence about Amendment 13's recording act; and a full-corpus atomisation census, replicated by an independent method, found that 331 of 447 enumerated questionnaire items naming Social Security, pensions, annuities or retirement lie in no atom of the sealed evidence base (66 of 81 documents). Materialization closed with 83 tables of record on disk and exactly two documents provably unrecoverable. All open questions are recorded for ruling, not resolved locally.
 - **2026-09-04** — Final-tranche blocks 4 and 5 close (ledger v1.91; purpose reaches 93.13%), both dense audits CALIBRATED at 100% on full 273-row replays; 1,431 ranks remain across blocks 6–10. Q5 seals q2009, fam2013, q2019 and fam1968 (58/257); fam1968 is the first of a sixteen-document back-catalogue of 1968–1982 family volumes found never briefed and now opened. Five reconciled documents are held and q2023 stays unsealed on the campaign's first 'Q5 status does not pass' verdict, pending five law rulings raised for decision rather than resolved locally: the identifier-minting remedy under §26.5.1, two evidence-integrity classes (digest-only and corrupt sealed payloads), the H-object scope of the pinned law extract, and a minting-clause precondition naming a field that nine artifacts lack. A prepare-only materialization sweep of all 69 reconcile reports writes every reproducible table of record to disk as a first-class artifact with provenance marked decoded or reconstructed (64 tables at last count), and recovery runs prove two of the three corrupt payloads (1995q, 1994f) reproducible from surviving emissions.
 - **2026-09-04** — Final-tranche blocks 1–3 close (ledger v1.89; purpose reaches 90.50%): block 1 on its regeneration sweep, block 2 CALIBRATED at 99.66% on a one-row manifest, block 3 CALIBRATED at 100% with an empty contradiction set. Q5 seals 2003q, 2005f, 2005q, 2007f, 2007q and 2009f (54/257), the last five on Opus reconciliations; the first Opus/Opus pairs measure common-mode rates of 0.4%, 1.8%, 0.0% and 2.9%. The C20 ceremony-kit correction reaches its fifth round as a Sol-written change that an independent Opus review ACCEPTS, clearing the last precondition on the A4 evidence freeze other than the census itself. Six Claude accounts run Opus lanes in parallel after subfleet's false month-long parks are found and cleared.
 - **2026-09-03** — The E5 first tranche completes: block 8 closes on its audit's closed 16-row manifest (ledger v1.84; purpose reaches 85.94%). The final tranche R17889–R20815 is planned as the entire remainder — 2,927 ranks across eight documents from 2013 to 2023 in ten blocks (v1.85) — and its first block passes 348/348 and is audited (v1.86) with a 59-row regeneration manifest. Q5 seals 2001f, 2003f and 2001q (48/257), the latter two on Claude Opus reconciliations in 42–43 minutes against a one-to-three-hour Sol baseline.
