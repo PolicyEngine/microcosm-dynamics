@@ -1519,13 +1519,37 @@ def test__design_binding__proves_head_and_ratification_blob_identity(
         check=True,
         capture_output=True,
     ).stdout
-    assert worktree_bytes == head_bytes == ratified_bytes
+    assert worktree_bytes == head_bytes
+    interregnum_suffix = worktree_bytes[len(ratified_bytes) :]
+    if interregnum_suffix:
+        # The lawful Amendment-20 interregnum: the tree carries exactly
+        # one prospective suffix over the byte-identical revision-21
+        # prefix. The production gate must still reject registration,
+        # and the validator's interregnum resolver must answer with the
+        # same revision-21 identity.
+        assert worktree_bytes[: len(ratified_bytes)] == ratified_bytes
+        assert interregnum_suffix.startswith(
+            b"\n## 34. AMENDMENT SECTION \xe2\x80\x94 Amendment 20: "
+        )
+        assert interregnum_suffix.count(b"\n## ") == 1
+        assert worktree_bytes.endswith(b"\n")
+    else:
+        assert worktree_bytes == ratified_bytes
     monkeypatch.setenv("GIT_DIR", str(ROOT / "nonexistent-git-dir"))
     monkeypatch.setenv(
         "GIT_WORK_TREE", str(ROOT / "nonexistent-git-work-tree")
     )
     monkeypatch.setenv("GIT_NO_REPLACE_OBJECTS", "0")
-    assert registry.design_binding() == expected_binding
+    if interregnum_suffix:
+        with pytest.raises(registry.RegistrationAborted):
+            registry.design_binding()
+        import validate_amendment13_execution_law as a13
+
+        assert (
+            a13._interregnum_amendment20_design_binding() == expected_binding
+        )
+    else:
+        assert registry.design_binding() == expected_binding
 
 
 def test__design_binding__prospective_suffix_is_exactly_scoped(monkeypatch):
@@ -1557,7 +1581,16 @@ def test__design_binding__prospective_suffix_is_exactly_scoped(monkeypatch):
         + b"Lawful Amendment 19 body.\n"
     )
 
-    assert current_bytes == ratified_bytes
+    if current_bytes != ratified_bytes:
+        # Lawful Amendment-20 interregnum: exactly one prospective
+        # suffix over the byte-identical revision-21 prefix.
+        assert current_bytes[: len(ratified_bytes)] == ratified_bytes
+        amendment20_suffix = current_bytes[len(ratified_bytes) :]
+        assert amendment20_suffix.startswith(
+            b"\n## 34. AMENDMENT SECTION \xe2\x80\x94 Amendment 20: "
+        )
+        assert amendment20_suffix.count(b"\n## ") == 1
+        assert current_bytes.endswith(b"\n")
     assert registry._preserves_ratified_design_prefix(
         ratified_bytes, ratified_bytes
     )
@@ -1588,7 +1621,7 @@ def test__design_binding__prospective_suffix_is_exactly_scoped(monkeypatch):
         revision20_bytes, revision20_bytes
     )
     assert registry._preserves_ratified_design_prefix(
-        current_bytes, revision20_bytes
+        ratified_bytes, revision20_bytes
     )
     assert registry._preserves_ratified_design_prefix(
         lawful_amendment19_bytes, revision20_bytes
