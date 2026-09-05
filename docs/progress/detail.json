@@ -614,7 +614,7 @@
         "ranks": 307,
         "status": "adopted",
         "dispositions": "APPLY 270 / UNCOVERED 37 (closes q2021 incl. ADDRPAYMENT; opens q2023 §BC)",
-        "audit": "pass 307/307 -> dense audit CALIBRATED: 161/307 sampled (52.4%), agreement 161/161 = 100.00%, correction manifest empty; adopted as issued; folded v1.96 (99.05%). One 63-character rubric digest in the pass's assertion object traced to the dispatch brief -> standing correction adopted (recompute every emitted digest from the named file)",
+        "audit": "pass 307/307 -> dense audit CALIBRATED: 161/307 sampled (52.4%), agreement 161/161 = 100.00%, correction manifest empty of rows (three documentary items); adopted as issued; folded v1.96 (99.05%). One 63-character rubric digest in the pass's assertion object traced to the dispatch brief -> standing correction adopted (recompute every emitted digest from the named file)",
         "adopted_on": "2026-09-05",
         "source": "sol-ce-purpose-audit-R20312-20618-report.md"
       },
@@ -626,9 +626,9 @@
         "ranks": 197,
         "status": "adopted",
         "dispositions": "APPLY 169 / UNCOVERED 28 (G 156, P 17, KL 24; by_construction_exclusions = [Q21822]); the corpus closes at R20815",
-        "audit": "pass 197/197 (APPLY 169 / UNCOVERED 28) -> dense audit CALIBRATED 102/102 = 100% (51.8% sampled; DISAGREE set empty; correction manifest empty of rows and items); charge 9 confirmed the Poppler pdftotext 26.04.0 pin and argument equivalence over all 523 pages of q2023; charge 10 upheld the pass's form-feed frame-recipe correction with no row moved; charge 8 swept all 20,815 index lines end to end with zero gaps or duplicates; the ninth consecutive CALIBRATED block; folded v1.97 (379,534 B / ebe3d2b9…) — the corpus closes at R20815",
+        "audit": "pass 197/197 (APPLY 169 / UNCOVERED 28) -> dense audit CALIBRATED, reported as 102/102 = 100% (51.8% sampled) with 101 distinct ranks (one rank counted twice; 51.3% of ranks); DISAGREE set empty; correction manifest empty of rows and items; charge 9 confirmed the Poppler pdftotext 26.04.0 pin and argument equivalence over all 523 pages of q2023; charge 10 upheld the pass's form-feed frame-recipe correction with no row moved; charge 8 swept all 20,815 index lines end to end with zero gaps or duplicates; the ninth consecutive CALIBRATED block; folded v1.97 (379,534 B / ebe3d2b9…) — the corpus closes at R20815",
         "adopted_on": "2026-09-05",
-        "source": "sol-ce-purpose-audit-R20619-20815-report.md"
+        "source": "sol-ce-purpose-audit-R20619-20815.md"
       }
     ]
   },
