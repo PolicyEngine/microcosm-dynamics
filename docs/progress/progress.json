@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "description": "Data behind docs/progress.md (the development-progress dashboard). Update this file and run `python scripts/build_progress_page.py`; never edit docs/progress.md by hand.",
-  "as_of": "2026-09-05T10:27:00Z",
+  "as_of": "2026-09-05T16:40:00Z",
   "framework": {
     "amendment": "Amendment 20 (two-arm evidence charter for the covered-earnings correction design)",
     "pr": 405,
@@ -47,9 +47,9 @@
       "key": "purpose",
       "label": "Prompt-purpose census",
       "description": "Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.",
-      "done": 19749,
+      "done": 20815,
       "total": 20815,
-      "unit": "prompts adopted (contiguous R1–R19749)"
+      "unit": "prompts adopted (contiguous R1–R20815 — ARM COMPLETE, terminal fold v1.97)"
     },
     {
       "key": "a3",
@@ -65,7 +65,7 @@
       "description": "Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.",
       "done": 63,
       "total": 257,
-      "unit": "documents sealed — 63 of the 81 annotated questionnaires (77.8%); the 257 denominator is the fixed PSID source-documentation domain, of which 43 can never seal and 176 are unstarted"
+      "unit": "documents sealed — 63 of the 81 annotated questionnaires (77.8%); the 257 denominator is the fixed PSID source-documentation domain: every survey instrument is annotated, and the other 176 are non-instrument files (setups, codebooks, raw data), 43 of them classed Semantic N/A by the coverage audit (not a law term)"
     }
   ],
   "forecast": {
@@ -87,6 +87,10 @@
     ]
   },
   "milestones": [
+    {
+      "date": "2026-09-05",
+      "text": "The purpose census is COMPLETE: 20,815 of 20,815 prompts adopted (100.00%) at the terminal fold, ledger v1.97 (ebe3d2b9…). Blocks 7–10 of the final tranche folded through the day (v1.93–v1.97), every audit CALIBRATED; block 8 was folded in two parts after an orchestrator scope error (the brief was cut from the per-section table, leaving 64 ranks unadjudicated until an 8b completion pass) and block 9 closed the 2021 questionnaire entirely. A standing correction now requires every lane to recompute each digest it emits from the named file and run its own 64-hex self-check, after a 63-character digest was copied forward from a dispatch brief. A compile-only decision package (twelve decisions the package orders by how much work each blocks, against 63 sealed, 17 held and 1 withdrawn of the 81 annotated documents, although an errata compile finds that order does not consistently follow its own criterion) is staged for ruling; it lists five items it says the commissioning brief missed, the sharpest being that the worktree the lanes run in is two ratified design revisions behind master (19 vs 21), although the slot-catalog section the top decision turns on is byte-identical at both. Two figures already in front of the ruling were corrected: the atomisation coverage gap is 331 of 447 enumerated Social Security, pension, annuity and retirement items in no atom (74.05%, not the 72.7% the census printed and its replication reproduced without recomputing), and the corpus's page and frame digests are reproducible under the pinned Poppler pdftotext 26.04.0, which the design, the inventory code and the stage-1 replay artifact all name and the code enforces (cross-host determinism untested) (a Chronicle cross-check with pypdf 6.11.0 reproduced 0 of 101 pages, the pinned recipe 101 of 101); the final-tranche pass reports did not restate the build until the block-10 audit did. Q5 stands at 63/257, which is 77.8% of the 81 annotated questionnaires; the remaining 176 files in the fixed domain are setups, codebooks and raw data, not instruments. The open questions are recorded for ruling; the compiler ruled on none of them."
+    },
     {
       "date": "2026-09-05",
       "text": "Overnight the purpose census reaches 94.88% (final-tranche block 6 folded as ledger v1.92, the fourth consecutive CALIBRATED audit and the first to carry a correction), and the sixteen-document 1968–1982 family back-catalogue is fully annotated and reconciled: six documents sealed, one seal withdrawn on adversarial review, nine held pending rulings (Q5 63/257, which is 77.8% of the 81 annotated questionnaires — the 257 denominator is the fixed source-documentation domain, 43 of which can never seal; a counter reconciliation confirmed the figure across three instruments). A compile-only dossier found the design fixes seven sentinel identifiers (four job-slot, three component-slot) in a section outside every span the briefs had pinned, overturning the campaign's three-sentinel reading and its bar on the seventh literal; a supersession audit reduced whether the tier-1 minting bar is in force to a single unresolved sentence about Amendment 13's recording act; and a full-corpus atomisation census, replicated by an independent method, found that 331 of 447 enumerated questionnaire items naming Social Security, pensions, annuities or retirement lie in no atom of the sealed evidence base (66 of 81 documents). Materialization closed with 83 tables of record on disk and exactly two documents provably unrecoverable. All open questions are recorded for ruling, not resolved locally."
