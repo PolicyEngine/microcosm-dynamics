@@ -785,12 +785,35 @@ def run_mortality_graph(
     manifest = run_graph(
         compile_graph(graph), sources=sources, store=store, kernels=registry
     )
+    # Gate exceptions are evidenced failures in the executor's contract and
+    # may deliberately produce no report artifact. Retain that receipt before
+    # reading optional diagnostics, including on a cached failed-gate hit.
+    (output / "manifest.json").write_text(manifest.to_json(), encoding="utf-8")
     model_payload = store.load_bytes(
         manifest.nodes["fit"].opaque_artifacts["model"]
     )
-    report = parse_json(
-        store.load_bytes(manifest.nodes["evaluate"].opaque_artifacts["report"])
-    )
+    evaluation = manifest.nodes["evaluate"]
+    report_key = evaluation.opaque_artifacts.get("report")
+    if report_key is not None:
+        report = parse_json(store.load_bytes(report_key))
+    elif evaluation.receipt.get("outcome") == "fail":
+        report = {
+            "scope": "synthetic_engineering",
+            "boundary_year": boundary_year,
+            "next_period": boundary_year + 1,
+            "engineering_verdict": "not_evaluated",
+            "fixture_verdict": "not_evaluated",
+            "evaluation_gate": {
+                "node_id": "evaluate",
+                "kernel_ref": evaluation.kernel_ref,
+                "outcome": "fail",
+                "evidence": dict(evaluation.receipt.get("evidence", {})),
+            },
+        }
+    else:
+        raise ValueError(
+            "evaluation report is absent without a failed gate receipt"
+        )
     report["node_keys"] = {
         name: node.key for name, node in manifest.nodes.items()
     }
@@ -817,7 +840,6 @@ def run_mortality_graph(
         .reset_index(drop=True)
     )
     (output / "report.json").write_bytes(json_bytes(report))
-    (output / "manifest.json").write_text(manifest.to_json(), encoding="utf-8")
     (output / "model.json").write_bytes(model_payload)
     for entity in (OBS, "person", "period"):
         population.table(entity).to_csv(output / f"{entity}.csv", index=False)

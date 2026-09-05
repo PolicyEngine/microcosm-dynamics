@@ -322,3 +322,157 @@ def test_keyed_kernel_hashes_random_coordinate_encoding(runtime, monkeypatch):
 
     monkeypatch.setattr(Path, "read_bytes", changed_source)
     assert kernel.implementation_hash() != before
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        ("missing_person", "held-out identities must match"),
+        ("wrong_period", "held-out outcomes must be binary deaths"),
+        ("invalid_json", "invalid mortality JSON"),
+    ],
+)
+def test_failed_holdout_exports_named_gate_evidence_cold_and_warm(
+    runtime, inputs, tmp_path, mutation, message, capsys
+):
+    from populace_dynamics.graph.__main__ import main
+
+    holdout = _read(inputs["holdout"])
+    if mutation == "missing_person":
+        holdout["outcomes"].pop()
+    elif mutation == "wrong_period":
+        holdout["outcomes"][0]["year"] = 2014
+    _write(inputs["holdout"], holdout)
+    if mutation == "invalid_json":
+        inputs["holdout"].write_text("{invalid JSON")
+
+    for warm in (False, True):
+        result = _run(runtime, inputs, tmp_path)
+        gate = result.manifest.nodes["evaluate"]
+        assert gate.hit is warm
+        assert gate.receipt["outcome"] == "fail"
+        assert "report" not in gate.opaque_artifacts
+        diagnostic = result.report["evaluation_gate"]
+        assert diagnostic["node_id"] == "evaluate"
+        assert diagnostic["kernel_ref"] == "dynamics.mortality.evaluate@1"
+        assert diagnostic["outcome"] == "fail"
+        assert diagnostic["evidence"]["exception_type"] == "ValueError"
+        assert message in diagnostic["evidence"]["message"]
+        assert result.report["engineering_verdict"] == "not_evaluated"
+        assert result.report["fixture_verdict"] == "not_evaluated"
+        assert "expected_deaths" not in result.report
+        assert "mass" not in result.report
+        assert _read(tmp_path / "output" / "report.json") == result.report
+        assert _read(tmp_path / "output" / "manifest.json") == json.loads(
+            result.manifest.to_json()
+        )
+
+    arguments = ["--output-dir", str(tmp_path / "output")]
+    for name, path in inputs.items():
+        arguments.extend([f"--{name}", str(path)])
+    assert main(arguments) == 1
+    assert "not_evaluated" in capsys.readouterr().out
+    assert (
+        message
+        in _read(tmp_path / "output" / "report.json")["evaluation_gate"][
+            "evidence"
+        ]["message"]
+    )
+
+
+@pytest.mark.parametrize("excluded_person_id", [1009, 1010])
+def test_graph_fit_matches_direct_cutoff_and_ignores_excluded_outcomes(
+    runtime, inputs, tmp_path, excluded_person_id
+):
+    """Future events and late interviews cannot leak through graph mapping."""
+    baseline = _run(runtime, inputs, tmp_path)
+    direct = _fit(inputs)
+    assert baseline.model_payload == direct.to_bytes()
+    assert direct.fit_rows == 8
+    training = _read(inputs["training"])
+    excluded = next(
+        row for row in training if row["person_id"] == excluded_person_id
+    )
+    assert (
+        excluded["event_year"] > 2014
+        or excluded["required_interview_year"] > 2014
+    )
+    excluded["death"] = 1.0 - excluded["death"]
+    excluded["start_weight"] = 50.0
+    excluded["exposure"] = 0.25
+    _write(inputs["training"], training)
+    changed = _run(runtime, inputs, tmp_path)
+    assert not changed.manifest.nodes["training"].hit
+    assert not changed.manifest.nodes["fit"].hit
+    assert changed.model_payload == _fit(inputs).to_bytes()
+    assert changed.model_payload == baseline.model_payload
+    pd.testing.assert_frame_equal(changed.next_slice, baseline.next_slice)
+
+
+@pytest.mark.parametrize(
+    "coordinates",
+    [
+        {"experiment_id": "independent-stream"},
+        {"replicate": 7},
+        {"base_seed": 831},
+    ],
+)
+def test_nondefault_stream_matches_direct_steps_and_reuses_fit(
+    runtime, inputs, tmp_path, coordinates
+):
+    """An accidentally hard-coded default cannot pass both sides of parity."""
+    from microcosm.graph.randomness import keyed_uniform
+
+    from populace_dynamics.engine.steps import advance_age, apply_mortality
+
+    baseline = _run(runtime, inputs, tmp_path)
+    changed = _run(runtime, inputs, tmp_path, **coordinates)
+    assert changed.manifest.nodes["fit"].hit
+    assert (
+        changed.manifest.nodes["fit"].key == baseline.manifest.nodes["fit"].key
+    )
+    assert changed.model_payload == baseline.model_payload
+    assert not changed.manifest.nodes["apply"].hit
+    assert (
+        changed.manifest.nodes["apply"].key
+        != baseline.manifest.nodes["apply"].key
+    )
+    assert changed.report["engineering_verdict"] == "pass"
+
+    initial = pd.DataFrame(_read(inputs["initial"])).sort_values("person_id")
+    initial["year"] = 2014
+    # Derive the oracle directly from the registered coordinate contract,
+    # independently of both mortality_uniforms and _GraphPeriodContext.
+    stream = (
+        "sha256-u53-v1",
+        coordinates.get("experiment_id", "mortality"),
+        coordinates.get("replicate", 0),
+        coordinates.get("base_seed", 0),
+    )
+    keys = [(int(pid), "mortality", 2015, 0) for pid in initial.person_id]
+    uniforms = keyed_uniform(stream=stream, keys=keys)
+    default = keyed_uniform(
+        stream=("sha256-u53-v1", "mortality", 0, 0), keys=keys
+    )
+    assert not np.array_equal(uniforms, default)
+
+    class FixedUniforms:
+        def random(self, n):
+            assert n == len(uniforms)
+            return uniforms.copy()
+
+    context = SimpleNamespace(rng_registry=None, year=2015, metadata={})
+    # Use the independent direct model, not the graph's returned artifact.
+    model = _fit(inputs).model
+    survivors = apply_mortality(initial, context, FixedUniforms(), model=model)
+    expected = advance_age(survivors, context, np.random.default_rng(0))
+    pd.testing.assert_frame_equal(
+        changed.next_slice[["person_id", "age", "year"]].reset_index(
+            drop=True
+        ),
+        expected[["person_id", "age", "year"]].reset_index(drop=True),
+    )
+    assert (
+        changed.next_slice.person_id.tolist()
+        != baseline.next_slice.person_id.tolist()
+    )

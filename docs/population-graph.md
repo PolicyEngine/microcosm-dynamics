@@ -38,6 +38,13 @@ The report, manifest, fitted JSON model, entity tables, and next-period slice
 are written inside the chosen output directory. A failed engineering or
 fixture verdict exits nonzero while retaining the diagnostics.
 
+If malformed held-out input prevents evaluation, the executor records a failed
+`evaluate` gate. The command exports that manifest and a diagnostic report with
+the gate's name, outcome and original exception evidence on both cold and warm
+runs, then exits nonzero. The report marks `engineering_verdict` and
+`fixture_verdict` as `not_evaluated`; it does not invent evaluated deaths or
+mass metrics. Successful evaluation retains the existing report fields.
+
 Four explicit source paths can replace the generated inputs:
 
 ```sh
@@ -122,7 +129,11 @@ python -m pytest -q tests/test_graph_mortality.py \
 The integration tests cover direct execution with an independently injected
 uniform vector, JSON validation, cutoff and holdout isolation, fitted-artifact
 reuse, changed fitting weights, row/chunk/person invariance, cold/warm stores,
-and zero/all-survivor expansion. They skip the optional runtime cases when
-the required core capabilities are unavailable; the JSON and dependency
+and zero/all-survivor expansion. Independent graph-to-direct model parity and
+future-event/late-interview mutations protect cutoff mapping. Nondefault
+experiment, replicate and seed tests independently derive draw coordinates and
+check direct-step parity, fit reuse and changed application identity. They skip
+the optional runtime cases when the required core capabilities are unavailable;
+the JSON and dependency
 boundary tests still run. Importing `populace_dynamics.graph` remains safe
 under Python 3.10–3.12.
