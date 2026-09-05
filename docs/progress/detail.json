@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "as_of": "2026-09-04",
+  "as_of": "2026-09-05",
   "description": "Row-level drill-down behind the verification arms; extracted from the campaign evidence archive and adversarially verified. Sources name the archive artifact grounding each row.",
   "purpose": {
     "unit": "One rank = one row of the pinned 20,815-row residual index (e8-ops/sol-ce-purpose-residual-index-v1.txt, file SHA b35519702e6f...) = one prompt occurrence keyed `psid-questionnaire-occurrence:<sha256>` — a single printed questionnaire item in a sealed official PSID questionnaire/QxQ-codebook PDF (staged under ~/PolicyEngine/psid-data/documentation/capture1), located by an exact page/character-span receipt, e.g. `q88:p4[2538,2708)#10bc6b307d41`. What is adjudicated per rank is the prompt's \"purpose\": per sol-ce-purpose-evidence-scope-report.md, purpose \"is the closed model-law classification saying which factual dimension a `field_purpose_prompt` establishes for `O_P`\" — not survey designers' motivation. Each rank is disposed either D (determined: an ordered purpose array over the closed 35-literal space, e.g. `[M]`) or SU (source-underdetermined, with a named condition such as U_ONTOLOGY, U_CONFLICT, or U_SCOPE). Example full row from sol-ce-purpose-ledger-pass-R6172-6576-report.md: \"R6176 | Q7316 | psid-questionnaire-occurrence:091095d3... | E3.CALENDAR_EXPOSURE | D | [M] | q88:p4[2538,2708)#10bc6b307d41\". Documents are the per-wave PSID instruments: f-docs are family-interview QxQ codebooks (e.g. f94 = fam1994_QxQs.pdf) and q-docs are questionnaires (e.g. q94 = q94.pdf, \"1994 Questionnaire\", per the e4-era build's source table).",
@@ -552,11 +552,11 @@
         "rank_start": 18839,
         "rank_end": 19111,
         "ranks": 273,
-        "status": "pending",
+        "status": "adopted",
         "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+        "audit": "pass 273/273 -> dense audit CALIBRATED (sampled 144/144; full-vector replay 273/273; row contradictions 0; family concentration none); folded v1.90",
+        "adopted_on": "2026-09-04",
+        "source": "sol-ce-purpose-audit-R18839-19111-report.md"
       },
       {
         "document": "q2019 complete + q2021 A (final-tranche block 5)",
@@ -564,11 +564,11 @@
         "rank_start": 19112,
         "rank_end": 19384,
         "ranks": 273,
-        "status": "pending",
+        "status": "adopted",
         "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+        "audit": "pass staged -> dense audit CALIBRATED 100% (sample 144/144; 273/273 rows examined); folded v1.91 (terminal identity 317,298 B, SHA 014aeb13…)",
+        "adopted_on": "2026-09-04",
+        "source": "sol-ce-purpose-audit-R19112-19384-report.md"
       },
       {
         "document": "q2021 BC (final-tranche block 6)",
@@ -1481,6 +1481,38 @@
         "verdict": "both lanes rejected; the reconciled table stands (common-mode 5/171 = 2.9%, the highest yet)",
         "sealed_on": "2026-09-04",
         "source": "sol-ce-q5-doc-2009f-reconciled-report.md"
+      },
+      {
+        "doc": "document_071",
+        "label": "2009 family questionnaire (q2009.pdf)",
+        "rows_sealed": 2282,
+        "verdict": "lane A's coordinate frame upheld as the base; lane B refuted on its central doctrine (2,509 minted node ids)",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-2009q-reconciled-report.md"
+      },
+      {
+        "doc": "document_074",
+        "label": "2013 family questionnaire QxQ companion (fam2013_QxQs.pdf)",
+        "rows_sealed": 1320,
+        "verdict": "lane B substantially upheld (551 of 610 contested rows) and adopted as the base with 82 corrections; lane A refuted; both refuted on the aggregate class",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-2013f-reconciled-report.md"
+      },
+      {
+        "doc": "document_079",
+        "label": "2019 family questionnaire (q2019.pdf)",
+        "rows_sealed": 1882,
+        "verdict": "each lane reversed on exactly one axis and upheld on the other (133 + 113 = the 246 contested rows); zero minted identifiers; common-mode 0/1,636",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-2019q-reconciled-report.md"
+      },
+      {
+        "doc": "document_001",
+        "label": "1968 family questionnaire QxQ companion (fam1968_QxQs.pdf)",
+        "rows_sealed": 156,
+        "verdict": "adjudication of the contested set: 38 rows with both lanes upheld, 69 lane A upheld, 19 lane B upheld; 156 rows = seal; zero minted identifiers",
+        "sealed_on": "2026-09-04",
+        "source": "sol-ce-q5-doc-1968f-reconciled-report.md"
       }
     ]
   }

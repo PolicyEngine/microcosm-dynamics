@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "description": "Data behind docs/progress.md (the development-progress dashboard). Update this file and run `python scripts/build_progress_page.py`; never edit docs/progress.md by hand.",
-  "as_of": "2026-09-04T18:30:00Z",
+  "as_of": "2026-09-05T03:45:00Z",
   "framework": {
     "amendment": "Amendment 20 (two-arm evidence charter for the covered-earnings correction design)",
     "pr": 405,
@@ -47,9 +47,9 @@
       "key": "purpose",
       "label": "Prompt-purpose census",
       "description": "Establishing what each of the ~21,000 remaining items in the PSID's 1968–2023 questionnaires and codebooks is actually asking, so the model only uses variables whose meaning has been adjudicated rather than assumed. Each block runs a full pass, an independent dense audit, and a correction sweep before its entries are adopted into the governing ledger.",
-      "done": 18838,
+      "done": 19384,
       "total": 20815,
-      "unit": "prompts adopted (contiguous R1–R18838)"
+      "unit": "prompts adopted (contiguous R1–R19384)"
     },
     {
       "key": "a3",
@@ -63,7 +63,7 @@
       "key": "q5",
       "label": "Q5 semantic annotation",
       "description": "Verifying which survey questions connect to which data fields, document by document across the PSID questionnaire corpus: two independent annotators per document, then a reconciliation that seals its table of record.",
-      "done": 54,
+      "done": 58,
       "total": 257,
       "unit": "documents sealed"
     }
@@ -87,6 +87,10 @@
     ]
   },
   "milestones": [
+    {
+      "date": "2026-09-04",
+      "text": "Final-tranche blocks 4 and 5 close (ledger v1.91; purpose reaches 93.13%), both dense audits CALIBRATED at 100% on full 273-row replays; 1,431 ranks remain across blocks 6–10. Q5 seals q2009, fam2013, q2019 and fam1968 (58/257); fam1968 is the first of a sixteen-document back-catalogue of 1968–1982 family volumes found never briefed and now opened. Five reconciled documents are held and q2023 stays unsealed on the campaign's first 'Q5 status does not pass' verdict, pending five law rulings raised for decision rather than resolved locally: the identifier-minting remedy under §26.5.1, two evidence-integrity classes (digest-only and corrupt sealed payloads), the H-object scope of the pinned law extract, and a minting-clause precondition naming a field that nine artifacts lack. A prepare-only materialization sweep of all 69 reconcile reports writes every reproducible table of record to disk as a first-class artifact with provenance marked decoded or reconstructed (64 tables at last count), and recovery runs prove two of the three corrupt payloads (1995q, 1994f) reproducible from surviving emissions."
+    },
     {
       "date": "2026-09-04",
       "text": "Final-tranche blocks 1–3 close (ledger v1.89; purpose reaches 90.50%): block 1 on its regeneration sweep, block 2 CALIBRATED at 99.66% on a one-row manifest, block 3 CALIBRATED at 100% with an empty contradiction set. Q5 seals 2003q, 2005f, 2005q, 2007f, 2007q and 2009f (54/257), the last five on Opus reconciliations; the first Opus/Opus pairs measure common-mode rates of 0.4%, 1.8%, 0.0% and 2.9%. The C20 ceremony-kit correction reaches its fifth round as a Sol-written change that an independent Opus review ACCEPTS, clearing the last precondition on the A4 evidence freeze other than the census itself. Six Claude accounts run Opus lanes in parallel after subfleet's false month-long parks are found and cleared."
