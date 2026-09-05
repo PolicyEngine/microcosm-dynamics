@@ -588,11 +588,11 @@
         "rank_start": 19750,
         "rank_end": 20006,
         "ranks": 257,
-        "status": "pending",
-        "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+        "status": "adopted",
+        "dispositions": "APPLY 203 / UNCOVERED 54 (8 proposal entries)",
+        "audit": "pass 257/257 -> dense audit CALIBRATED 163/163, zero-row manifest (fifth consecutive calibrated audit); EHC fired 18 times and was upheld 18/18 on precision and recall; folded v1.93",
+        "adopted_on": "2026-09-05",
+        "source": "sol-ce-purpose-audit-R19750-20006-report.md"
       },
       {
         "document": "q2021 P/KL/IMMIG (final-tranche block 8)",
@@ -600,11 +600,11 @@
         "rank_start": 20007,
         "rank_end": 20311,
         "ranks": 305,
-        "status": "pending",
-        "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+        "status": "adopted",
+        "dispositions": "305 ranks in two passes: R20007–R20247 APPLY 153 / UNCOVERED 88; R20248–R20311 APPLY 27 / UNCOVERED 37",
+        "audit": "q2021 §P audit (136/241 sampled = 56.4%; manifest rebuilt in both directions with zero discrepancies; era discipline clean) folded v1.94 under a 'block closed' heading that covered only the §P part — an orchestrator scope error (brief cut from the per-section table); the KL+IMMIG remainder (64 ranks) ran as an 8b completion pass, audited CALIBRATED 64/64 = 100.00% with zero corrections, and folded v1.95",
+        "adopted_on": "2026-09-05",
+        "source": "sol-ce-purpose-audit-R20248-20311-report.md"
       },
       {
         "document": "q2021 ADDRPAYMENT + q2023 BC (final-tranche block 9)",
@@ -612,11 +612,11 @@
         "rank_start": 20312,
         "rank_end": 20618,
         "ranks": 307,
-        "status": "pending",
-        "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+        "status": "adopted",
+        "dispositions": "APPLY 270 / UNCOVERED 37 (closes q2021 incl. ADDRPAYMENT; opens q2023 §BC)",
+        "audit": "pass 307/307 -> dense audit CALIBRATED: 161/307 sampled (52.4%), agreement 161/161 = 100.00%, correction manifest empty; adopted as issued; folded v1.96 (99.05%). One 63-character rubric digest in the pass's assertion object traced to the dispatch brief -> standing correction adopted (recompute every emitted digest from the named file)",
+        "adopted_on": "2026-09-05",
+        "source": "sol-ce-purpose-audit-R20312-20618-report.md"
       },
       {
         "document": "q2023 G/P/KL (final-tranche block 10)",
@@ -624,11 +624,11 @@
         "rank_start": 20619,
         "rank_end": 20815,
         "ranks": 197,
-        "status": "pending",
-        "dispositions": null,
-        "audit": null,
-        "adopted_on": null,
-        "source": "sol-ce-purpose-ledger-e5final-build-report.md"
+        "status": "adopted",
+        "dispositions": "APPLY 169 / UNCOVERED 28 (G 156, P 17, KL 24; by_construction_exclusions = [Q21822]); the corpus closes at R20815",
+        "audit": "pass 197/197 (APPLY 169 / UNCOVERED 28) -> dense audit CALIBRATED 102/102 = 100% (51.8% sampled; DISAGREE set empty; correction manifest empty of rows and items); charge 9 confirmed the Poppler pdftotext 26.04.0 pin and argument equivalence over all 523 pages of q2023; charge 10 upheld the pass's form-feed frame-recipe correction with no row moved; charge 8 swept all 20,815 index lines end to end with zero gaps or duplicates; the ninth consecutive CALIBRATED block; folded v1.97 (379,534 B / ebe3d2b9…) — the corpus closes at R20815",
+        "adopted_on": "2026-09-05",
+        "source": "sol-ce-purpose-audit-R20619-20815-report.md"
       }
     ]
   },
