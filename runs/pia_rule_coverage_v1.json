@@ -1,0 +1,1538 @@
+{
+  "schema_version": "pia_rule_coverage.v1",
+  "run": "pia_rule_coverage_v1",
+  "reported_not_gated": true,
+  "purpose": "Per-rule coverage of the statutory benefit oracle. Changes no gate. For every statutory rule populace_dynamics.ss implements, records which committed cross-engine cases and which committed SSA worked examples exercise it, which rules have zero case coverage, and what the module does not implement at all. Quotes -- and does not adopt -- the DRAFT definition of the phrase \"computes exactly\".",
+  "component": "statutory benefit oracle (#74 component SF)",
+  "gate_status": {
+    "gates_yaml_block": null,
+    "computes_exactly_occurrences": [
+      {
+        "line": 642,
+        "text": "UNLOCKED tranche 2c; benefit formulas earn per-rule \"computes exactly\""
+      }
+    ],
+    "note": "gates.yaml carries no gate_b2_pia_oracle. The phrase \"computes exactly\" occurs in gate_2's description only, where it awards a status no gate_2 cell gates. This artifact records that as read; it proposes no gate and amends nothing."
+  },
+  "no_engine_executed": {
+    "statement": "This build executed neither the Axiom rules engine nor a policyengine-us Simulation. Every cross-engine and policyengine-us number is quoted from the committed artifacts. The only things that execute either engine are the repo's existing tests in tests/ss/, which are named per rule below and are unchanged by this build.",
+    "engine_revision_quoted": "ffef7b4",
+    "pe_us_revision_quoted": "bf71be3b"
+  },
+  "sources": {
+    "oracle": [
+      {
+        "path": "src/populace_dynamics/ss/benefits.py",
+        "sha256": "2e5e28996624651144b8d8a640caa17a95f0e16769260999b21f214e285b0846",
+        "bytes": 14356
+      },
+      {
+        "path": "src/populace_dynamics/ss/params.py",
+        "sha256": "9b49894b56eaab32daa62032a139ecb33a1d11f657b1523d3bebadebc2387efd",
+        "bytes": 14960
+      },
+      {
+        "path": "src/populace_dynamics/ss/__init__.py",
+        "sha256": "9014fcf3dc4c7d25025cf96bf970c6226f697fc1f8ad8cb37011fa2d1962447e",
+        "bytes": 1347
+      }
+    ],
+    "evidence_artifacts": [
+      {
+        "path": "runs/pia_cross_engine_v1.json",
+        "sha256": "10fe0a046f2d5dd39b159cae2ae2b3aba267279bc88eaaaf1db9e1e3078d43bc",
+        "bytes": 56873
+      },
+      {
+        "path": "runs/aux_benefit_examples_v1.json",
+        "sha256": "502d66688a8d68f0a8b6d392c4508c018c6b4422db7f9e0d71cb1413ee7e1ccb",
+        "bytes": 32815
+      }
+    ],
+    "tests": [
+      {
+        "path": "tests/ss/test_cross_engine.py",
+        "sha256": "7dbad8f80adc41ef33e4c9d2a46e97d63d28ac442d51c2f96c3ab5392f8e86e9",
+        "bytes": 13128
+      },
+      {
+        "path": "tests/ss/test_aux_benefits.py",
+        "sha256": "4c429e6b9d559408d725eb5a038547914bbfa4d79c3648fdab82271300bb158a",
+        "bytes": 14101
+      },
+      {
+        "path": "tests/ss/test_benefits.py",
+        "sha256": "cb0225110778ecb856c0f516c125a6a3c2f068aec7a00647fee26bf15eabb0b9",
+        "bytes": 5092
+      },
+      {
+        "path": "tests/test_claiming.py",
+        "sha256": "da603aa6ad3c1844f58f45371eb7c50190fc9f6eee08c9b5641185b1e999e6b5",
+        "bytes": 19667
+      }
+    ],
+    "consumer": {
+      "path": "src/populace_dynamics/household.py",
+      "sha256": "8b4db38035c6d9d303bfcf1660692653269cf078c2d4930c330c9e9f276aed2c",
+      "bytes": 15772
+    },
+    "code_reference_note": "Every code span in rule_inventory is derived with ast from the pinned module, not typed, so a reproduction test re-derives it."
+  },
+  "frozen_scope": {
+    "quote": "Role: the ORACLE, not the rules engine. Net-new statute encoding lives in Axiom (rulespec-us us/statutes/42/415, 402, 416); this module is a frozen-scope Python reference implementation ... Do not extend this module's rule coverage; extend the Axiom encodings.",
+    "source": "src/populace_dynamics/ss/__init__.py",
+    "consequence": "A missing rule below is a SCOPE decision, not a defect, and is closed in Axiom rather than by growing this module."
+  },
+  "computes_exactly_definition_proposal": {
+    "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+    "status": "proposal_not_ratified",
+    "adopted_here": false,
+    "gates_yaml_line_642": "UNLOCKED tranche 2c; benefit formulas earn per-rule \"computes exactly\"",
+    "conditions": {
+      "E1_independent_re_execution": "A separately implemented engine executes the rule from the same pinned parameters and agrees on every registered case within the committed agreement bound. Precedent and bound already committed: runs/pia_cross_engine_v1.json agreement_tolerance_dollars: 0.005, i.e. to the cent. \"Exactly\" means to the cent, not bit-exact.",
+      "E2_external_anchor": "At least one registered case per rule whose expected value is an SSA-published figure, not our own arithmetic. A case whose expected is recomputed from the same formula tests branch selection, not correctness of the rule.",
+      "E3_exercised_branches_and_boundaries": "Every branch and every boundary of the rule as written is hit by at least one registered case, and the case set is committed cell-by-cell so a referee re-derives rather than trusts."
+    },
+    "exclusions": {
+      "X1_named_non_coverage": "Every statutory rule of the same title that the module does not implement is listed by name and citation, so \"computes exactly\" can never be read as \"computes everything\".",
+      "X2_named_constants": "Every quantity the statute makes a schedule but the module makes a constant is listed with the domain over which the constant is exact."
+    },
+    "why_e1_alone_is_insufficient": "E1 alone is AGREEMENT, not correctness: two engines fed the same parameters can agree on the same mistake. E2 is what makes it a claim about the statute.",
+    "precision_disclosure": {
+      "cross_engine_max_abs_diff_dollars": 0.0,
+      "aux_worked_example_max_abs_deviation": 1.1368683772161603e-13,
+      "pe_us_foundation_max_pia_abs_deviation": 4.8828125045474735e-05,
+      "pe_us_foundation_max_factor_abs_deviation": 5.245208734017126e-08
+    }
+  },
+  "evidence_inventory": {
+    "cross_engine": {
+      "artifact": "runs/pia_cross_engine_v1.json",
+      "n_cases": 240,
+      "engine_revision": "ffef7b4",
+      "pe_us_revision": "bf71be3b",
+      "seed": 20200626,
+      "agreement_tolerance_dollars": 0.005,
+      "max_abs_diff_dollars": 0.0,
+      "n_exact_to_cent": 240,
+      "cohorts": {
+        "2020": {
+          "eligibility_year": 2020,
+          "birth_year": 1958
+        },
+        "2026": {
+          "eligibility_year": 2026,
+          "birth_year": 1964
+        }
+      },
+      "worker_design": "120 workers per cohort (eligibility [2020, 2026]), deterministic seed 20200626. Shapes: all-zeros and astronomical edges; flat low/median/high; rising; declining; spiky; zero-earning spells; wage-base-clipped in many years; three bend-point straddlers (below first, between, above second); and pseudo-random careers drawn from those families with optional zero spells. Each worker's history is nominal earnings for ages 22-62 (41 calendar years, final year = the age-62 eligibility year, so the eligibility-year bend points resolve at the last supplied period).",
+      "declared_exercises": [
+        "sum_top_n_over_periods (over-periods reduction, 415(b))",
+        "derived person-varying n (computation-year count) feeding the reduction",
+        "per-period parameters inside the reduction (wage base, NAWI as step functions)",
+        "invariant-bound per-person inputs (year attained 21/62/60, NAWI at indexing year)",
+        "period-indexed bend points resolved at the last supplied period",
+        "415(g) round-down-to-next-lower-dime floor"
+      ],
+      "notes": "n = 415(b)(2)(B) computation-year count; elapsed = year62 - max(1950, year21) - 1 (= 40 for both cohorts) minus 5 dropout years = 35, matching the oracle's hard-coded 35. The engine's dime floor omits the oracle's 1e-9 epsilon; verified inert for integer AIME x integer bend points by an exhaustive sweep in tests/ss/test_cross_engine.py.",
+      "shape_counts": {
+        "all_zeros": 2,
+        "astronomical": 2,
+        "bend_above_second": 2,
+        "bend_below_first": 2,
+        "bend_between": 2,
+        "clipped_always": 2,
+        "declining": 2,
+        "flat_high": 2,
+        "flat_low": 2,
+        "flat_median": 2,
+        "rand_clipped_always": 25,
+        "rand_declining": 30,
+        "rand_flat_high": 26,
+        "rand_flat_low": 36,
+        "rand_flat_median": 12,
+        "rand_rising": 18,
+        "rand_spiky": 19,
+        "rand_zero_spell": 48,
+        "rising": 2,
+        "spiky": 2,
+        "zero_spell": 2
+      },
+      "n_distinct_shapes": 21,
+      "bracket_occupancy": {
+        "2020": {
+          "n": 120,
+          "bend_points": [
+            960.0,
+            5785.0
+          ],
+          "n_aime_zero": 1,
+          "n_first_bracket_only": 1,
+          "n_reaching_second_bracket": 19,
+          "n_reaching_third_bracket": 99,
+          "min_aime": 0,
+          "max_aime": 10720,
+          "all_three_brackets_exercised": true
+        },
+        "2026": {
+          "n": 120,
+          "bend_points": [
+            1286.0,
+            7749.0
+          ],
+          "n_aime_zero": 1,
+          "n_first_bracket_only": 1,
+          "n_reaching_second_bracket": 30,
+          "n_reaching_third_bracket": 88,
+          "min_aime": 0,
+          "max_aime": 14402,
+          "all_three_brackets_exercised": true
+        }
+      },
+      "dime_floor": {
+        "n_pia_values_on_an_exact_dime": 240,
+        "n_pia_values_not_a_whole_dollar": 215,
+        "note": "Every committed PIA is an exact multiple of ten cents, and most are not whole dollars, so the 415(g) floor is non-vacuous across the case set."
+      },
+      "row_fields": [
+        "abs_diff",
+        "aime_engine",
+        "aime_oracle",
+        "cohort",
+        "id",
+        "pia_engine",
+        "pia_oracle",
+        "shape"
+      ],
+      "what_the_rows_cannot_show": "The rows carry id, cohort, shape, aime_oracle, aime_engine, pia_oracle, pia_engine and abs_diff only. They carry no earnings history, so per-row wage-base clipping and per-row indexation are NOT determinable from the committed bytes; they carry no claiming factor and no auxiliary amount, so every rule from 402(q) onward is invisible to this artifact."
+    },
+    "ssa_worked_examples": {
+      "artifact": "runs/aux_benefit_examples_v1.json",
+      "n_examples": 10,
+      "max_abs_deviation": 1.1368683772161603e-13,
+      "scope_note": "policyengine-us has no spousal/survivor computation (social_security_* are uprated survey inputs), so these auxiliary amounts are validated against SSA's published figures. Deceased-claim factors are derived from the pinned 402(q)/(w) machinery.",
+      "examples": [
+        {
+          "group": "spousal",
+          "name": "spouse_at_fra_half_pia",
+          "citation": "42 USC 402(b)(2)/(c)(2); SSA RS 00615.020; ssa.gov/benefits/retirement/planner/applying7.html",
+          "inputs": {
+            "own_pia": 0.0,
+            "worker_pia": 2000.0,
+            "months_early": 0
+          },
+          "our_output": 1000.0,
+          "expected": 1000.0,
+          "abs_deviation": 0.0,
+          "base_pia": 2000.0,
+          "expected_over_base_pia": 0.5,
+          "note": "spouse's benefit is one-half of the worker's PIA at FRA"
+        },
+        {
+          "group": "spousal",
+          "name": "spouse_at_62_fra67",
+          "citation": "42 USC 402(q)(1); ssa.gov/OACT/quickcalc/spouse.html (32.5% at 62 when FRA is 67)",
+          "inputs": {
+            "own_pia": 0.0,
+            "worker_pia": 2000.0,
+            "months_early": 60
+          },
+          "our_output": 650.0,
+          "expected": 650.0,
+          "abs_deviation": 0.0,
+          "base_pia": 2000.0,
+          "expected_over_base_pia": 0.325,
+          "note": "36*25/36% + 24*5/12% = 35% reduction -> 65% of 50%"
+        },
+        {
+          "group": "spousal",
+          "name": "spouse_at_62_fra66",
+          "citation": "42 USC 402(q)(1); SSA benefit-reduction table (35% at 62 when FRA is 66)",
+          "inputs": {
+            "own_pia": 0.0,
+            "worker_pia": 2000.0,
+            "months_early": 48
+          },
+          "our_output": 700.0,
+          "expected": 700.0,
+          "abs_deviation": 0.0,
+          "base_pia": 2000.0,
+          "expected_over_base_pia": 0.35,
+          "note": "36*25/36% + 12*5/12% = 30% reduction -> 70% of 50%"
+        },
+        {
+          "group": "spousal",
+          "name": "spouse_dual_entitlement_excess",
+          "citation": "42 USC 402(k)(3)(A); SSA RS 00615.020 (excess spouse)",
+          "inputs": {
+            "own_pia": 600.0,
+            "worker_pia": 2000.0,
+            "months_early": 0
+          },
+          "our_output": 400.0,
+          "expected": 400.0,
+          "abs_deviation": 0.0,
+          "base_pia": 2000.0,
+          "expected_over_base_pia": 0.2,
+          "note": "excess of 50%*2000=1000 over own PIA 600"
+        },
+        {
+          "group": "survivor",
+          "name": "widow_at_fra_full_pia",
+          "citation": "42 USC 402(e)(2)(A)/(f)(3)(A); SSA RS 00615.301; ssa.gov/benefits/survivors/",
+          "inputs": {
+            "own_pia": 0.0,
+            "deceased_pia": 1000.0,
+            "survivor_months_early": 0,
+            "deceased_claimed_early_factor": 1.0
+          },
+          "our_output": 1000.0,
+          "expected": 1000.0,
+          "abs_deviation": 0.0,
+          "base_pia": 1000.0,
+          "expected_over_base_pia": 1.0,
+          "note": "widow(er) at survivor FRA gets 100% of the deceased PIA"
+        },
+        {
+          "group": "survivor",
+          "name": "widow_at_60_floor",
+          "citation": "42 USC 402(q); SSA RS 00615.302 (71.5% at age 60)",
+          "inputs": {
+            "own_pia": 0.0,
+            "deceased_pia": 1000.0,
+            "survivor_months_early": 84,
+            "deceased_claimed_early_factor": 1.0
+          },
+          "our_output": 715.0,
+          "expected": 715.0,
+          "abs_deviation": 0.0,
+          "base_pia": 1000.0,
+          "expected_over_base_pia": 0.715,
+          "note": "maximum 28.5% reduction over 84 months (age 60 to FRA 67)"
+        },
+        {
+          "group": "survivor",
+          "name": "widow_at_62_fra66",
+          "citation": "42 USC 402(q); SSA survivors reduction table (81% at 62 when survivor FRA is 66)",
+          "inputs": {
+            "own_pia": 0.0,
+            "deceased_pia": 1000.0,
+            "survivor_months_early": 48,
+            "deceased_claimed_early_factor": 1.0,
+            "survivor_reduction_period_months": 72
+          },
+          "our_output": 809.9999999999999,
+          "expected": 810.0,
+          "abs_deviation": 1.1368683772161603e-13,
+          "base_pia": 1000.0,
+          "expected_over_base_pia": 0.81,
+          "note": "0.285 * 48/72 = 0.19 reduction -> 81% of the deceased PIA"
+        },
+        {
+          "group": "survivor",
+          "name": "rib_lim_82_5_floor",
+          "citation": "42 USC 402(e)(2)(D)/(k)(3)(A); SSA RS 00615.310 (RIB-LIM, 82.5% of PIA)",
+          "inputs": {
+            "own_pia": 0.0,
+            "deceased_pia": 1000.0,
+            "survivor_months_early": 0,
+            "deceased_claimed_early_factor": 0.7499998
+          },
+          "our_output": 825.0,
+          "expected": 825.0,
+          "abs_deviation": 0.0,
+          "base_pia": 1000.0,
+          "expected_over_base_pia": 0.825,
+          "note": "deceased claimed at 62 (0.75 RIB < 0.825); widow gets 82.5%"
+        },
+        {
+          "group": "survivor",
+          "name": "rib_lim_deceased_actual_higher",
+          "citation": "42 USC 402(e)(2)(D); SSA RS 00615.310 (larger of deceased actual or 82.5%)",
+          "inputs": {
+            "own_pia": 0.0,
+            "deceased_pia": 1000.0,
+            "survivor_months_early": 0,
+            "deceased_claimed_early_factor": 0.86666656
+          },
+          "our_output": 866.66656,
+          "expected": 866.66656,
+          "abs_deviation": 0.0,
+          "base_pia": 1000.0,
+          "expected_over_base_pia": 0.86666656,
+          "note": "deceased claimed at 64 (0.86667 RIB > 0.825); widow gets the deceased's actual benefit = PIA * factor (the higher-of branch; the factor is cross-checked against pe-us in pe_us_pia_foundation)"
+        },
+        {
+          "group": "survivor",
+          "name": "drc_pass_through",
+          "citation": "42 USC 402(e)/(f); SSA RS 00615.301 (widow inherits DRCs)",
+          "inputs": {
+            "own_pia": 0.0,
+            "deceased_pia": 1000.0,
+            "survivor_months_early": 0,
+            "deceased_claimed_early_factor": 1.32
+          },
+          "our_output": 1320.0,
+          "expected": 1320.0,
+          "abs_deviation": 0.0,
+          "base_pia": 1000.0,
+          "expected_over_base_pia": 1.32,
+          "note": "deceased claimed at 70 (1.32); widow inherits the credits = PIA * factor (the DRC pass-through branch)"
+        }
+      ],
+      "anchor_classification": {
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified",
+        "rule_as_stated_by_the_packet": "a row counts toward E2 only if its `expected` is an SSA-PUBLISHED figure; a row whose `expected` is recomputed from the same formula tests BRANCH SELECTION, not the correctness of the rule",
+        "packet_published_percentage_anchors": [
+          "spouse_at_fra_half_pia",
+          "spouse_at_62_fra67",
+          "spouse_at_62_fra66",
+          "widow_at_fra_full_pia",
+          "widow_at_60_floor",
+          "widow_at_62_fra66",
+          "rib_lim_82_5_floor"
+        ],
+        "packet_arithmetic_or_branch_selection": [
+          "spouse_dual_entitlement_excess",
+          "rib_lim_deceased_actual_higher",
+          "drc_pass_through"
+        ],
+        "adjudication_note": "The split is the packet's reading of each row's own citation and note, not a measurement. expected_over_base_pia is computed above so a referee re-derives the ratio and adjudicates the classification independently -- drc_pass_through in particular has a ratio of 1.32 whose 32 percent IS published, while the product is the oracle's own."
+      }
+    },
+    "pe_us_pia_foundation": {
+      "artifact": "runs/aux_benefit_examples_v1.json",
+      "oracle": "policyengine_us Simulation",
+      "oracle_available_at_build": true,
+      "n_cases": 40,
+      "eligibility_year": 2026,
+      "aime_values": [
+        1000,
+        2000,
+        4000,
+        6000,
+        9000
+      ],
+      "claim_ages": [
+        62,
+        65,
+        67,
+        70
+      ],
+      "birth_years": [
+        1954,
+        1960
+      ],
+      "max_pia_abs_deviation": 4.8828125045474735e-05,
+      "max_factor_abs_deviation": 5.245208734017126e-08,
+      "factor_coverage": {
+        "derivation": "claiming.benefit_factor short-circuits: it calls 402(q) early_reduction only when the claim precedes FRA, and 402(w) delayed_credit only when it follows FRA. So a case's committed our_factor says which rule it invoked -- below 1 the reduction, above 1 the credit, exactly 1 neither.",
+        "n_cases_invoking_402q_reduction": 20,
+        "n_cases_invoking_402w_credit": 15,
+        "n_cases_exactly_at_fra": 5,
+        "n_cases_at_claim_age_62": 10,
+        "distinct_factors": [
+          [
+            1954,
+            62,
+            0.7499998
+          ],
+          [
+            1954,
+            65,
+            0.93333328
+          ],
+          [
+            1954,
+            67,
+            1.08
+          ],
+          [
+            1954,
+            70,
+            1.32
+          ],
+          [
+            1960,
+            62,
+            0.69999976
+          ],
+          [
+            1960,
+            65,
+            0.86666656
+          ],
+          [
+            1960,
+            67,
+            1.0
+          ],
+          [
+            1960,
+            70,
+            1.24
+          ]
+        ]
+      },
+      "residual_note": "Residual deviations are pe-us float32 array storage (max PIA dev < 1e-4 dollars, i.e. under a hundredth of a cent); the oracle is exact float64. The statutory resolution is identical (both floor PIA to the dime over integer AIME and integer bend points).",
+      "residual_note_is_quoted_not_verified": "The float32 attribution is the committed artifact's own note, read and quoted. This build executed no policyengine-us Simulation and did not re-derive it."
+    },
+    "grids": {
+      "couple_grid": {
+        "n_rows": 36,
+        "worker_pia_values": [
+          1000.0,
+          2000.0,
+          3000.0
+        ],
+        "spouse_pia_values": [
+          0.0,
+          800.0,
+          1600.0
+        ],
+        "worker_claim_ages": [
+          62,
+          67
+        ],
+        "spouse_claim_ages": [
+          62,
+          67
+        ],
+        "n_rows_with_worker_excess": 0,
+        "n_rows_with_spouse_excess": 20,
+        "n_rows_with_both_spouses_drawing_an_excess": 0,
+        "gap": "No row has BOTH spouses drawing an excess, so the symmetric dual-entitlement case is unexercised."
+      },
+      "survivor_grid": {
+        "n_rows": 9,
+        "distinct_own_deceased_pia_pairs": [
+          [
+            800.0,
+            2200.0
+          ]
+        ],
+        "deceased_claim_ages": [
+          62,
+          66,
+          70
+        ],
+        "survivor_claim_ages": [
+          60,
+          63,
+          67
+        ],
+        "deceased_own_factors": [
+          0.75,
+          1.0,
+          1.32
+        ],
+        "gap": "Every row sits at a single (own 800, deceased 2200) PIA pair, so the dual-entitlement max() is exercised at one level ratio only."
+      }
+    }
+  },
+  "rule_inventory": [
+    {
+      "id": "R1_415b1_wage_base_cap",
+      "statute": "42 USC 415(b)(1)",
+      "title": "cap each year's creditable earnings at the contribution and benefit base",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "creditable_history",
+          "kind": "function",
+          "first_line": 68,
+          "last_line": 75
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 240,
+        "n_cases_labelled_wage_base_clipped": 27,
+        "clipped_shape_labels": [
+          "clipped_always",
+          "rand_clipped_always"
+        ],
+        "selector": "every case runs the cap; the shape LABEL asserts clipping for clipped_always and rand_clipped_always",
+        "derivation": "the committed rows carry no earnings history, so the exact number of cases in which the cap BINDS is not determinable from committed bytes. The shape-label count is a lower bound the artifact's own worker_design corroborates ('wage-base-clipped in many years').",
+        "exact_binding_count_determinable": false
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 0,
+      "tests": [
+        "tests/ss/test_benefits.py::test_aime_caps_at_wage_base_and_floors_to_dollar"
+      ],
+      "e1": {
+        "status": "satisfied",
+        "basis": "executed by the Axiom engine and the oracle on all 240 cases, agreeing to the cent"
+      },
+      "e2": {
+        "status": "absent",
+        "basis": "the wage-base series is policyengine-us-sourced; no committed case checks a base value against an SSA determination"
+      },
+      "e3": {
+        "status": "both_branches_reached",
+        "basis": "capped and uncapped years both occur across the shape families; not per-row verifiable"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "partial_no_external_anchor",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R2_415b3_nawi_indexation",
+      "statute": "42 USC 415(b)(3)",
+      "title": "index creditable earnings by NAWI to the age-60 year; nominal at or after it",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "indexed_history",
+          "kind": "function",
+          "first_line": 78,
+          "last_line": 97
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 240,
+        "selector": "every committed cross-engine case",
+        "derivation": "each worker's history spans ages 22-62, and the indexing year is the age-60 year, which falls inside that span; so both the 'year >= indexing_year' branch (the age-60, 61 and 62 years) and the 'year < indexing_year' branch (the 38 earlier years) execute for every case",
+        "derivation_source": "the history span is the committed artifact's own worker_design field ('nominal earnings for ages 22-62 (41 calendar years...)'); the indexing age is _INDEXING_AGE in ss/benefits.py. Both cohorts check out: birth 1958 indexes at 2018 over 1980-2020, birth 1964 at 2024 over 1986-2026.",
+        "branch_derivation_inputs": {
+          "history_span_ages": [
+            22,
+            62
+          ],
+          "indexing_age": 60,
+          "n_years_at_or_after_indexing_year": 3,
+          "n_years_before_indexing_year": 38
+        }
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 0,
+      "tests": [
+        "tests/ss/test_benefits.py::test_indexing_is_neutral_for_constant_relative_earner"
+      ],
+      "e1": {
+        "status": "satisfied",
+        "basis": "all 240 cases, agreeing to the cent"
+      },
+      "e2": {
+        "status": "absent",
+        "basis": "the only committed assertion is an internal invariant (a constant-relative earner indexes to a constant), not an SSA-published figure"
+      },
+      "e3": {
+        "status": "both_branches_reached",
+        "basis": "derived above from the history span"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "partial_no_external_anchor",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R3_415b2B_computation_year_count",
+      "statute": "42 USC 415(b)(2)(B)",
+      "title": "the computation-year count n",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "_COMPUTATION_YEARS",
+          "kind": "constant",
+          "first_line": 61,
+          "last_line": 61
+        },
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "aime",
+          "kind": "function",
+          "first_line": 100,
+          "last_line": 117
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 240,
+        "n_cases_distinguishing_the_constant": 0,
+        "selector": "every case executes it; none distinguishes the oracle's constant from the engine's derived n",
+        "derivation": "the committed artifact's own note records elapsed - 5 = 35 for BOTH cohorts, so the engine's derived n equals the oracle's hard-coded 35 in every committed case",
+        "artifact_note": "n = 415(b)(2)(B) computation-year count; elapsed = year62 - max(1950, year21) - 1 (= 40 for both cohorts) minus 5 dropout years = 35, matching the oracle's hard-coded 35. The engine's dime floor omits the oracle's 1e-9 epsilon; verified inert for integer AIME x integer bend points by an exhaustive sweep in tests/ss/test_cross_engine.py."
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 0,
+      "tests": [],
+      "e1": {
+        "status": "degenerate",
+        "basis": "agreement is unforced: both sides evaluate to 35 on every committed case, so the cases cannot separate a derived n from a constant"
+      },
+      "e2": {
+        "status": "absent",
+        "basis": "no anchor case exists"
+      },
+      "e3": {
+        "status": "unexercised",
+        "basis": "no committed case has n != 35, so the domain-limited constant is never tested outside its exact domain"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "NOT_computes_exactly",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R4_415b_top_n_divide_and_floor",
+      "statute": "42 USC 415(b)",
+      "title": "highest-n selection, division by n x 12, truncation to the dollar",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "aime",
+          "kind": "function",
+          "first_line": 100,
+          "last_line": 117
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 240,
+        "n_cases_reaching_the_zero_pad_branch": 0,
+        "selector": "every case exercises selection, division and truncation; NO case reaches the short-history zero-pad branch",
+        "derivation": "every committed worker's history has 41 entries (ages 22-62, zeros included as entries), so the top-n slice always yields exactly 35 values and the pad is a no-op. The all_zeros and zero_spell shapes carry zero EARNINGS, not missing YEARS, so they do not reach it either.",
+        "derivation_source": "the 41-year span is the committed artifact's own worker_design field; that the zero shapes carry zero-valued ENTRIES rather than absent years is read from the committed builder scripts/build_cross_engine_pia_artifact.py, whose _build_workers constructs every shape as a dict over the full year range. The committed rows carry no history, so this is a source read, not a row-level derivation.",
+        "aime_range": [
+          0,
+          14402
+        ],
+        "n_cases_with_zero_aime": 2
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 0,
+      "tests": [
+        "tests/ss/test_benefits.py::test_aime_caps_at_wage_base_and_floors_to_dollar"
+      ],
+      "e1": {
+        "status": "satisfied",
+        "basis": "all 240 cases, agreeing to the cent"
+      },
+      "e2": {
+        "status": "absent",
+        "basis": "the only committed assertion re-derives the value with the same formula"
+      },
+      "e3": {
+        "status": "branch_unexercised",
+        "basis": "the short-history zero-pad branch is reached by no committed cross-engine case and by no test in tests/ss/. Other in-repo callers of aime() exist (populace_dynamics.estimates.ledgers, populace_dynamics.data.couple_earnings); none is part of a registered case set here."
+      },
+      "packet_proposed_verdict": {
+        "verdict": "partial_no_external_anchor",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R5_415a1A_pia_brackets",
+      "statute": "42 USC 415(a)(1)(A)",
+      "title": "the 90 / 32 / 15 percent brackets",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "pia",
+          "kind": "function",
+          "first_line": 120,
+          "last_line": 131
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 240,
+        "selector": "every case; bracket occupancy computed per cohort from the committed AIME values against the cohort's bend points",
+        "bracket_occupancy": {
+          "2020": {
+            "n": 120,
+            "bend_points": [
+              960.0,
+              5785.0
+            ],
+            "n_aime_zero": 1,
+            "n_first_bracket_only": 1,
+            "n_reaching_second_bracket": 19,
+            "n_reaching_third_bracket": 99,
+            "min_aime": 0,
+            "max_aime": 10720,
+            "all_three_brackets_exercised": true
+          },
+          "2026": {
+            "n": 120,
+            "bend_points": [
+              1286.0,
+              7749.0
+            ],
+            "n_aime_zero": 1,
+            "n_first_bracket_only": 1,
+            "n_reaching_second_bracket": 30,
+            "n_reaching_third_bracket": 88,
+            "min_aime": 0,
+            "max_aime": 14402,
+            "all_three_brackets_exercised": true
+          }
+        },
+        "all_three_brackets_exercised_per_cohort": true
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 40,
+      "tests": [
+        "tests/ss/test_cross_engine.py::TestCommittedArtifact::test_all_three_pia_brackets_exercised",
+        "tests/ss/test_benefits.py::test_pia_worked_example_2026",
+        "tests/ss/test_benefits.py::test_pia_below_first_bend_point_is_90_percent"
+      ],
+      "e1": {
+        "status": "satisfied",
+        "basis": "all 240 cases, agreeing to the cent"
+      },
+      "e2": {
+        "status": "weak",
+        "basis": "test_pia_worked_example_2026 asserts 3263.20, which is the oracle's own arithmetic from SSA's published 2026 bend points -- the BEND POINTS are published, the bracket total is not"
+      },
+      "e3": {
+        "status": "all_branches_exercised",
+        "basis": "all three brackets are occupied in both cohorts, computed above from committed AIME values"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "partial_weak_anchor",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R6_415a1B_bend_points",
+      "statute": "42 USC 415(a)(1)(B)",
+      "title": "bend points from the 1979 base amounts scaled by the NAWI ratio to 1977",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/params.py",
+          "symbol": "bend_points",
+          "kind": "function",
+          "first_line": 138,
+          "last_line": 149
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 240,
+        "n_distinct_eligibility_years": 2,
+        "eligibility_years": [
+          2020,
+          2026
+        ],
+        "selector": "every case resolves bend points, but at only the two committed eligibility years"
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 40,
+      "tests": [
+        "tests/ss/test_benefits.py::test_2026_bend_points_match_ssa_determination",
+        "tests/ss/test_benefits.py::test_derived_2015_bend_points_match_ssa_published"
+      ],
+      "e1": {
+        "status": "satisfied",
+        "basis": "both engines resolve bend points on all 240 cases; params.load_ssa_parameters also cross-checks every stored year against policyengine-us at load time"
+      },
+      "e2": {
+        "status": "satisfied",
+        "basis": "SSA's 2026 determination (1286 / 7749) and 2015 determination (826 / 4980) are asserted directly"
+      },
+      "e3": {
+        "status": "partial",
+        "basis": "two eligibility years carry a published anchor; the remaining in-scope years rest on the load-time cross-check against policyengine-us, which is not an SSA determination"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "computes_exactly_two_years_only",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R7_415g_dime_floor",
+      "statute": "42 USC 415(g)",
+      "title": "round the PIA down to the next lower dime",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "pia",
+          "kind": "function",
+          "first_line": 120,
+          "last_line": 131
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 240,
+        "selector": "every case",
+        "dime_floor": {
+          "n_pia_values_on_an_exact_dime": 240,
+          "n_pia_values_not_a_whole_dollar": 215,
+          "note": "Every committed PIA is an exact multiple of ten cents, and most are not whole dollars, so the 415(g) floor is non-vacuous across the case set."
+        }
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 40,
+      "tests": [
+        "tests/ss/test_cross_engine.py::TestDimeFloorEpsilonIsInert::test_epsilon_never_changes_result"
+      ],
+      "e1": {
+        "status": "satisfied",
+        "basis": "all 240 cases; the engine's plain floor and the oracle's epsilon floor agree exactly"
+      },
+      "e2": {
+        "status": "implied",
+        "basis": "no case anchors the rounding rule on its own; it rides on R6's published bend points and the resulting published PIA scale"
+      },
+      "e3": {
+        "status": "exhaustive",
+        "basis": "an exhaustive sweep over integer AIME 0..15,000 at both eligibility years proves the epsilon inert"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "computes_exactly",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R8_402q_worker_early_reduction",
+      "statute": "42 USC 402(q)",
+      "title": "5/9 of one percent per month for the first 36 months early, 5/12 of one percent per month beyond",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "early_reduction",
+          "kind": "function",
+          "first_line": 134,
+          "last_line": 143
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 0,
+        "selector": "none",
+        "derivation": "the committed cross-engine rows carry aime and pia only; this rule produces neither, so no committed case exercises it"
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 20,
+      "pe_us_foundation_selector": "the foundation cases whose committed our_factor is below 1, i.e. those that invoke the reduction",
+      "tests": [
+        "tests/ss/test_benefits.py::test_early_reduction_at_fra_67_claiming_62"
+      ],
+      "e1": {
+        "status": "policyengine_us_only",
+        "basis": "not in the 240 (which stop at the PIA); the only independent execution is the 20 reduction cases of the policyengine-us foundation block"
+      },
+      "e2": {
+        "status": "satisfied",
+        "basis": "SSA's published 30 percent reduction at 60 months early, and 70 percent of PIA at 62 against an FRA of 67"
+      },
+      "e3": {
+        "status": "partial_and_one_branch_unexercised",
+        "basis": "both rate brackets are reached at 60 months early, but the months-early domain is sampled at the foundation grid's claim ages only. The months_early <= 0 early-return branch is NOT reached: benefit_factor short-circuits before calling early_reduction at or after FRA, and no test in tests/ss/ asserts early_reduction(0)."
+      },
+      "packet_proposed_verdict": {
+        "verdict": "computes_exactly_narrow_domain",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R9_402w_delayed_retirement_credit",
+      "statute": "42 USC 402(w)",
+      "title": "credit per month of delay at the cohort's annual rate, stopping at age 70",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "delayed_credit",
+          "kind": "function",
+          "first_line": 146,
+          "last_line": 164
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 0,
+        "selector": "none",
+        "derivation": "the committed cross-engine rows carry aime and pia only; this rule produces neither, so no committed case exercises it"
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 15,
+      "pe_us_foundation_selector": "the foundation cases whose committed our_factor is above 1, i.e. those that invoke the credit",
+      "tests": [
+        "tests/ss/test_benefits.py::test_delayed_credit_pure_bundle",
+        "tests/ss/test_benefits.py::test_delayed_credit_rate_loads_from_pe_us"
+      ],
+      "e1": {
+        "status": "policyengine_us_only",
+        "basis": "not in the 240; the 15 credit cases of the foundation block are the only independent execution"
+      },
+      "e2": {
+        "status": "satisfied",
+        "basis": "SSA's published 32 percent (48 months at an FRA of 66) and 24 percent (window truncated at age 70 against an FRA of 67)"
+      },
+      "e3": {
+        "status": "partial",
+        "basis": "the 8 percent per year step is scored end to end and the months_late <= 0 early return is asserted directly; the 3 percent step for the earliest cohorts is asserted as a parameter read only, and the credited <= 0 branch (an FRA at or past age 70) is unreachable for every cohort in the committed schedule and is unexercised."
+      },
+      "packet_proposed_verdict": {
+        "verdict": "computes_exactly_narrow_domain",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R10_416l_fra_schedule",
+      "statute": "42 USC 416(l)",
+      "title": "the full retirement age schedule by birth year",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/params.py",
+          "symbol": "fra_months",
+          "kind": "function",
+          "first_line": 162,
+          "last_line": 170
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 0,
+        "selector": "none",
+        "derivation": "the committed cross-engine rows carry aime and pia only; this rule produces neither, so no committed case exercises it"
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 40,
+      "tests": [
+        "tests/ss/test_benefits.py::test_fra_schedule_matches_statute",
+        "tests/test_claiming.py::test_fra_footnote_schedule_matches_oracle"
+      ],
+      "e1": {
+        "status": "satisfied",
+        "basis": "the schedule loads from policyengine-us and is exercised through the foundation block's factor agreement"
+      },
+      "e2": {
+        "status": "satisfied",
+        "basis": "65 / 66 / 67 by birth year asserted directly, and Table 6.B5.1 footnote a's independently published schedule reproduces it"
+      },
+      "e3": {
+        "status": "all_branches_exercised",
+        "basis": "all three FRA plateaus asserted"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "computes_exactly",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R11_402q1_spousal_early_reduction",
+      "statute": "42 USC 402(q)(1)",
+      "title": "25/36 of one percent per month for the first 36 months, 5/12 beyond (the spousal schedule)",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "spousal_early_reduction",
+          "kind": "function",
+          "first_line": 185,
+          "last_line": 202
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 0,
+        "selector": "none",
+        "derivation": "the committed cross-engine rows carry aime and pia only; this rule produces neither, so no committed case exercises it"
+      },
+      "ssa_worked_examples": [
+        "spouse_at_62_fra67",
+        "spouse_at_62_fra66"
+      ],
+      "pe_us_foundation_cases": 0,
+      "tests": [
+        "tests/ss/test_aux_benefits.py::test_spousal_early_reduction_brackets"
+      ],
+      "e1": {
+        "status": "unsatisfiable_today",
+        "basis": "policyengine-us carries no spousal computation, so no second engine exists to disagree -- structural, not incidental"
+      },
+      "e2": {
+        "status": "satisfied",
+        "basis": "SSA's published 32.5 percent of the worker PIA at 62 against an FRA of 67, and 35 percent against an FRA of 66"
+      },
+      "e3": {
+        "status": "partial",
+        "basis": "months_early is exercised at 0, 36, 48 and 60 only; both rate brackets are reached"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "partial_no_independent_engine",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R12_402bc_402k3_spouse_benefit",
+      "statute": "42 USC 402(b)(2)/(c)(2), 402(k)(3)(A)",
+      "title": "one-half of the worker's PIA, offset by the claimant's own PIA before the age reduction",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "spousal_benefit",
+          "kind": "function",
+          "first_line": 205,
+          "last_line": 236
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 0,
+        "selector": "none",
+        "derivation": "the committed cross-engine rows carry aime and pia only; this rule produces neither, so no committed case exercises it"
+      },
+      "ssa_worked_examples": [
+        "spouse_at_fra_half_pia",
+        "spouse_dual_entitlement_excess"
+      ],
+      "pe_us_foundation_cases": 0,
+      "tests": [
+        "tests/ss/test_aux_benefits.py::test_spousal_benefit_headline_shares",
+        "tests/ss/test_aux_benefits.py::test_spousal_dual_entitlement_offset"
+      ],
+      "e1": {
+        "status": "unsatisfiable_today",
+        "basis": "no second engine for the spousal path"
+      },
+      "e2": {
+        "status": "partial",
+        "basis": "the 50 percent share at FRA is published; the excess case's expected value is the oracle's own subtraction"
+      },
+      "e3": {
+        "status": "partial",
+        "basis": "the couple grid has no row in which BOTH spouses draw an excess, so the symmetric dual-entitlement case is unexercised"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "partial",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R13_402q_survivor_reduction_ramp",
+      "statute": "42 USC 402(q); SSA POMS RS 00615.302",
+      "title": "the widow(er) ramp spreading a 28.5 percent maximum reduction to the 71.5 percent floor at age 60",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "survivor_reduction",
+          "kind": "function",
+          "first_line": 242,
+          "last_line": 263
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 0,
+        "selector": "none",
+        "derivation": "the committed cross-engine rows carry aime and pia only; this rule produces neither, so no committed case exercises it"
+      },
+      "ssa_worked_examples": [
+        "widow_at_60_floor",
+        "widow_at_62_fra66"
+      ],
+      "pe_us_foundation_cases": 0,
+      "tests": [
+        "tests/ss/test_aux_benefits.py::test_survivor_reduction_ramp_and_floor",
+        "tests/ss/test_aux_benefits.py::test_widow_reduction_71_5_floor_at_60"
+      ],
+      "e1": {
+        "status": "unsatisfiable_today",
+        "basis": "no second engine for the survivor path"
+      },
+      "e2": {
+        "status": "satisfied_with_a_constant_override",
+        "basis": "the 71.5 percent floor at 60 is anchored on the shipped default; the 81 percent at 62 case reproduces SSA only by overriding survivor_reduction_period_months to 72 in its own inputs, because the shipped default is 84 and the module carries no survivor-FRA schedule"
+      },
+      "e3": {
+        "status": "partial",
+        "basis": "the ramp, its midpoint and its clamp are asserted in unit tests; the committed examples exercise two spans"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "partial_constant_override_required",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R14_402ef_widow_riblim_drc_dual",
+      "statute": "42 USC 402(e)/(f), 402(e)(2)(D)/(k)(3)(A), 402(k)",
+      "title": "widow base, the RIB-LIM cap, the delayed-credit pass-through and the dual-entitlement maximum",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "widow_benefit",
+          "kind": "function",
+          "first_line": 266,
+          "last_line": 328
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 0,
+        "selector": "none",
+        "derivation": "the committed cross-engine rows carry aime and pia only; this rule produces neither, so no committed case exercises it"
+      },
+      "ssa_worked_examples": [
+        "widow_at_fra_full_pia",
+        "rib_lim_82_5_floor",
+        "rib_lim_deceased_actual_higher",
+        "drc_pass_through"
+      ],
+      "pe_us_foundation_cases": 0,
+      "tests": [
+        "tests/ss/test_aux_benefits.py::test_widow_full_pia_and_dual_entitlement",
+        "tests/ss/test_aux_benefits.py::test_rib_lim_cases",
+        "tests/ss/test_aux_benefits.py::test_widow_inherits_credits_but_capped_at_deceased_amount"
+      ],
+      "e1": {
+        "status": "unsatisfiable_today",
+        "basis": "no second engine for the survivor path"
+      },
+      "e2": {
+        "status": "partial",
+        "basis": "100 percent at survivor FRA and the 82.5 percent RIB-LIM floor are published; the higher-of branch and the delayed-credit pass-through have expected values that are the oracle's own PIA x factor products"
+      },
+      "e3": {
+        "status": "partial",
+        "basis": "no committed worked example has own_pia > 0, so the 402(k) dual-entitlement maximum is never anchored to a published figure; the survivor grid exercises it at one PIA pair"
+      },
+      "bundles_multiple_operations": true,
+      "granularity_note": "This rule bundles four statutory operations that could each earn or lose the status separately. The granularity is the packet's cut, not a measurement.",
+      "packet_proposed_verdict": {
+        "verdict": "partial",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R15_402e3_f4_remarriage_protection",
+      "statute": "42 USC 402(e)(3)/(f)(4)",
+      "title": "remarriage at or after age 60 (50 if disabled) does not terminate a widow(er)'s benefit",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "widow_benefit_survives_remarriage",
+          "kind": "function",
+          "first_line": 331,
+          "last_line": 349
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 0,
+        "selector": "none",
+        "derivation": "the committed cross-engine rows carry aime and pia only; this rule produces neither, so no committed case exercises it"
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 0,
+      "tests": [
+        "tests/ss/test_aux_benefits.py::test_remarriage_predicate"
+      ],
+      "e1": {
+        "status": "unsatisfiable_today",
+        "basis": "no second engine for the survivor path"
+      },
+      "e2": {
+        "status": "absent",
+        "basis": "no committed artifact row exercises this rule at all; the only evidence is a unit test asserting the two statutory thresholds"
+      },
+      "e3": {
+        "status": "unit_test_only",
+        "basis": "both thresholds and both sides of each are asserted, but no committed case set carries the rule"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "NOT_computes_exactly_unit_test_only",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    },
+    {
+      "id": "R16_age62_composition",
+      "statute": "42 USC 416(l) composed with 402(q)",
+      "title": "the monthly benefit for a claim at exactly age 62",
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "age62_monthly_benefit",
+          "kind": "function",
+          "first_line": 167,
+          "last_line": 179
+        }
+      ],
+      "cross_engine": {
+        "n_cases": 0,
+        "selector": "none",
+        "derivation": "the committed cross-engine rows carry aime and pia only; this rule produces neither, so no committed case exercises it"
+      },
+      "ssa_worked_examples": [],
+      "pe_us_foundation_cases": 10,
+      "pe_us_foundation_selector": "the foundation cases at claim age 62",
+      "tests": [
+        "tests/ss/test_benefits.py::test_early_reduction_at_fra_67_claiming_62"
+      ],
+      "e1": {
+        "status": "policyengine_us_only",
+        "basis": "the composition is exercised through the foundation block's claim-age-62 cases"
+      },
+      "e2": {
+        "status": "satisfied",
+        "basis": "700.0 at a PIA of 1000 for a worker born 1962, SSA's published 70 percent at 62 against an FRA of 67"
+      },
+      "e3": {
+        "status": "partial_with_a_named_simplification",
+        "basis": "the one-month eligibility subtlety for births on the first two days of a month is documented in the source and ignored; nothing exercises it"
+      },
+      "packet_proposed_verdict": {
+        "verdict": "computes_exactly_with_named_simplification",
+        "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+        "status": "proposal_not_ratified"
+      }
+    }
+  ],
+  "n_rules": 16,
+  "zero_coverage_rules": [
+    {
+      "id": "R15_402e3_f4_remarriage_protection",
+      "statute": "42 USC 402(e)(3)/(f)(4)",
+      "reason": "no committed cross-engine case and no committed SSA worked example exercises this rule",
+      "only_evidence": [
+        "tests/ss/test_aux_benefits.py::test_remarriage_predicate"
+      ]
+    }
+  ],
+  "n_zero_coverage_rules": 1,
+  "coverage_summary": {
+    "rules_with_cross_engine_cases": [
+      "R1_415b1_wage_base_cap",
+      "R2_415b3_nawi_indexation",
+      "R3_415b2B_computation_year_count",
+      "R4_415b_top_n_divide_and_floor",
+      "R5_415a1A_pia_brackets",
+      "R6_415a1B_bend_points",
+      "R7_415g_dime_floor"
+    ],
+    "rules_with_no_cross_engine_case": [
+      "R8_402q_worker_early_reduction",
+      "R9_402w_delayed_retirement_credit",
+      "R10_416l_fra_schedule",
+      "R11_402q1_spousal_early_reduction",
+      "R12_402bc_402k3_spouse_benefit",
+      "R13_402q_survivor_reduction_ramp",
+      "R14_402ef_widow_riblim_drc_dual",
+      "R15_402e3_f4_remarriage_protection",
+      "R16_age62_composition"
+    ],
+    "rules_with_an_ssa_worked_example": [
+      "R11_402q1_spousal_early_reduction",
+      "R12_402bc_402k3_spouse_benefit",
+      "R13_402q_survivor_reduction_ramp",
+      "R14_402ef_widow_riblim_drc_dual"
+    ],
+    "rules_with_no_ssa_worked_example": [
+      "R1_415b1_wage_base_cap",
+      "R2_415b3_nawi_indexation",
+      "R3_415b2B_computation_year_count",
+      "R4_415b_top_n_divide_and_floor",
+      "R5_415a1A_pia_brackets",
+      "R6_415a1B_bend_points",
+      "R7_415g_dime_floor",
+      "R8_402q_worker_early_reduction",
+      "R9_402w_delayed_retirement_credit",
+      "R10_416l_fra_schedule",
+      "R15_402e3_f4_remarriage_protection",
+      "R16_age62_composition"
+    ],
+    "every_named_worked_example_exists": true,
+    "every_named_test_module_is_pinned": true,
+    "every_named_test_exists": true
+  },
+  "named_constants": {
+    "note": "X2 of the proposed definition: quantities the statute makes a SCHEDULE and the module makes a CONSTANT, with the domain over which each is exact.",
+    "computation_years": {
+      "value": 35,
+      "code": {
+        "module": "src/populace_dynamics/ss/benefits.py",
+        "symbol": "_COMPUTATION_YEARS",
+        "kind": "constant",
+        "first_line": 61,
+        "last_line": 61
+      },
+      "statute": "42 USC 415(b)(2)(B)",
+      "exact_domain": "retirement workers attaining age 62 in 1991 or later, for whom elapsed years minus five dropout years is 35",
+      "wrong_outside": "survivor and disability PIAs, where an early death or a disability freeze shortens the elapsed count",
+      "live_caller_outside_the_domain": {
+        "symbol": "widow_benefit",
+        "code": {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "widow_benefit",
+          "kind": "function",
+          "first_line": 266,
+          "last_line": 328
+        },
+        "note": "widow_benefit takes deceased_pia from the caller; a pipeline that computes a deceased worker's PIA through aime() gets a 35-year divisor. No committed artifact scores that path."
+      }
+    },
+    "survivor_reduction_period_months": {
+      "value": 84,
+      "code": {
+        "module": "src/populace_dynamics/ss/params.py",
+        "symbol": "survivor_reduction_period_months",
+        "kind": "field",
+        "first_line": 122,
+        "last_line": 122
+      },
+      "statute": "42 USC 416(l) as applied to survivors",
+      "exact_domain": "survivor cohorts born 1962 or later (survivor FRA 67, an 84-month span)",
+      "wrong_outside": "survivor FRA 65 (60-month span) and 66 (72-month span) cohorts; the shipped default carries no survivor-FRA schedule",
+      "evidence": "the widow_at_62_fra66 worked example reproduces SSA only by overriding the default to 72 in its own inputs"
+    },
+    "one_month_eligibility_subtlety": {
+      "code": {
+        "module": "src/populace_dynamics/ss/benefits.py",
+        "symbol": "age62_monthly_benefit",
+        "kind": "function",
+        "first_line": 167,
+        "last_line": 179
+      },
+      "content": "births on the first two days of a month are ignored; at most one month's reduction factor. Documented in the source and restated here so it sits inside the coverage record, not only in a docstring."
+    }
+  },
+  "not_implemented": {
+    "note": "X1 of the proposed definition. Each entry records the search root, the patterns, the number of Python files searched and the (empty) hit list, so the absence is re-derivable rather than asserted.",
+    "searches": {
+      "family_maximum": {
+        "search_root": "src/populace_dynamics",
+        "patterns": [
+          "family_max",
+          "familyMax"
+        ],
+        "n_files_searched": 143,
+        "hits": [],
+        "absent": true
+      },
+      "wep_gpo": {
+        "search_root": "src/populace_dynamics",
+        "patterns": [
+          "windfall",
+          "WEP",
+          "GPO",
+          "government_pension"
+        ],
+        "n_files_searched": 143,
+        "hits": [],
+        "absent": true
+      },
+      "retirement_earnings_test": {
+        "search_root": "src/populace_dynamics",
+        "patterns": [
+          "earnings_test",
+          "retirement_earnings"
+        ],
+        "n_files_searched": 143,
+        "hits": [],
+        "absent": true
+      },
+      "special_minimum_pia": {
+        "search_root": "src/populace_dynamics",
+        "patterns": [
+          "special_minimum"
+        ],
+        "n_files_searched": 143,
+        "hits": [],
+        "absent": true
+      },
+      "cola_applied_to_pia": {
+        "search_root": "src/populace_dynamics/ss",
+        "patterns": [
+          "cola",
+          "COLA"
+        ],
+        "n_files_searched": 3,
+        "hits": [],
+        "absent": true
+      }
+    },
+    "all_absent": true,
+    "additional_absences_from_a_full_read_of_the_module": [
+      "child's and parent's benefits, and the child-in-care spouse's benefit",
+      "the disability PIA (no freeze, no alternate computation years)",
+      "recomputation for post-entitlement earnings"
+    ],
+    "family_maximum_bites_here": {
+      "symbols": [
+        "spousal_benefit",
+        "widow_benefit"
+      ],
+      "code": [
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "spousal_benefit",
+          "kind": "function",
+          "first_line": 205,
+          "last_line": 236
+        },
+        {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "widow_benefit",
+          "kind": "function",
+          "first_line": 266,
+          "last_line": 328
+        }
+      ],
+      "consumer": "src/populace_dynamics/household.py",
+      "note": "Both auxiliary functions return uncapped amounts and household.CoupleBenefits.total sums both own benefits plus both excess spousal amounts with no cap. The family maximum binds precisely where auxiliary benefits stack, and no committed case stacks enough for it to bind."
+    }
+  },
+  "known_gaps": [
+    {
+      "id": "r3_computation_year_count_is_degenerate",
+      "statement": "The oracle hard-codes 35 and the engine derives n, but the committed artifact's own note records elapsed - 5 = 35 for both cohorts, so no committed case distinguishes them."
+    },
+    {
+      "id": "r4_zero_pad_branch_unexercised",
+      "statement": "The short-history zero-pad branch of aime() is reached by no committed cross-engine case and by no test in tests/ss/: every committed worker history has 41 entries, so the top-n slice always yields 35 values and the pad is a no-op."
+    },
+    {
+      "id": "r8_r16_absent_from_the_240",
+      "statement": "The cross-engine rows carry aime and pia only, so every rule from 402(q) onward rests on the 40-case policyengine-us foundation block and the committed worked examples."
+    },
+    {
+      "id": "r11_r15_no_second_engine",
+      "statement": "policyengine-us has no spousal or survivor computation, so E1 is unsatisfiable for the auxiliary rules today. What would satisfy it is named in ss/__init__.py: the Axiom rulespec-us us/statutes/42/402 encodings."
+    },
+    {
+      "id": "r12_r14_grid_thinness",
+      "statement": "The couple grid has no row with both spouses drawing an excess; the survivor grid sits at a single PIA pair; and no worked example has own_pia above zero, so the dual-entitlement maximum is never anchored to a published figure."
+    }
+  ],
+  "packet_reconciliation": {
+    "packet": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+    "purpose": "Where this build's derivation differs from the coverage claim the DRAFT packet states, the difference is recorded here rather than silently adopted.",
+    "differences": [
+      {
+        "field": "R4 -- the 415(b) short-history zero pad",
+        "packet_states": "E3 satisfied: 'short-history zero-pad branch (:116) hit by all_zeros / zero_spell'",
+        "derived_here": "the branch is hit by NO committed case: every worker history has 41 entries, and the all_zeros and zero_spell shapes carry zero EARNINGS rather than missing YEARS, so the pad is always a no-op",
+        "consequence": "R4's E3 status is branch_unexercised here, not satisfied"
+      },
+      {
+        "field": "R1 -- the count of wage-base-clipped workers",
+        "packet_states": "'clipped_always + rand_clipped_always = 25 workers'",
+        "derived_here": "clipped_always = 2 and rand_clipped_always = 25, so 27 workers carry a clipping shape label",
+        "consequence": "a count correction only; it changes no E1/E2/E3 status, and the exact number of cases in which the cap BINDS remains undeterminable from the committed bytes"
+      },
+      {
+        "field": "the household consumer that stacks auxiliary benefits",
+        "packet_states": "household.couple_benefits (household.py:143-149)",
+        "derived_here": "the summation is the CoupleBenefits.total property; the module's function is couple_benefit",
+        "consequence": "a naming correction; the substance -- that both own benefits and both excess spousal amounts are summed with no family maximum -- holds as read"
+      }
+    ]
+  },
+  "does_not_establish": [
+    "any per-rule status: the E1/E2/E3 fields record what the committed evidence reaches, and the packet's proposed verdicts are quoted for comparison, not adopted",
+    "that the proposed definition of \"computes exactly\" is the right one: no referee round has run",
+    "any statement about the Axiom engine or policyengine-us beyond what the committed artifacts record; neither was executed here",
+    "that the rule granularity is correct: sixteen rules is the packet's cut, and R12 and R14 each bundle several statutory operations"
+  ],
+  "build": {
+    "built_utc": "2026-09-06T16:19:02.593852+00:00",
+    "built_by": "scripts/build_pia_rule_coverage.py"
+  }
+}

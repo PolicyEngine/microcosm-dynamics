@@ -1,0 +1,3096 @@
+{
+  "schema_version": "claiming_publication_floor.v1",
+  "run": "claiming_publication_floor_v1",
+  "reported_not_gated": true,
+  "purpose": "Publication-revision floor for the SSA claim-age reference (Table 6.B5.1). Changes no gate. Measures, from committed inputs, the quantities the DRAFT gate_b2_claiming packet derives its proposed tolerances from: the cross-edition revision floor (no sampling floor exists -- the table is 100 percent Master Beneficiary Record data), the derived power-cap partition, the held-out reference values, and the two holdout rules' out-of-sample scores. Proposes no threshold and ratifies none.",
+  "component": "claiming-age distribution (#74 component CA)",
+  "gate_status": {
+    "gates_yaml_block": null,
+    "note": "gates.yaml carries no gate_b2_claiming. Every knob and partition below is a DRAFT proposal from cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane); none has been through a referee round and none is locked."
+  },
+  "sources": {
+    "edition_2023": {
+      "path": "data/external/ssa_claim_ages_2023supplement.json",
+      "sha256": "f731c9a6b8f9b1727d28fbdd49df6ec700f8762dd4cea30fa1a043c52a7f5b73",
+      "bytes": 67066
+    },
+    "edition_2014": {
+      "path": "data/external/ssa_claim_ages_2014supplement.json",
+      "sha256": "b88e45a08909f0f88a0ff37074c757891759ec988fd7e9fe14362eebd0abe462",
+      "bytes": 44368
+    },
+    "claiming_reference_v1": {
+      "path": "runs/claiming_reference_v1.json",
+      "sha256": "ae80d5c2281a15759948fae3e1f7ed3adbd7127d6a243518ff21196b00b99da9",
+      "bytes": 20799
+    },
+    "edition_2023_supplement_year": 2023,
+    "edition_2014_supplement_year": 2014,
+    "table": "6.B5.1",
+    "schema_versions": [
+      "ssa_claim_ages.v1",
+      "ssa_claim_ages.v1"
+    ]
+  },
+  "no_sampling_floor": {
+    "mbr_100_percent_note": "Master Beneficiary Record, 100 percent data (not a sample) for these entitlement years 1998-2022; the 1985-2001 rows of the sister table 6.B5 are a 1 percent sample, but 6.B5.1 as published is 100 percent data.",
+    "mbr_100_percent_note_2014_edition": "Master Beneficiary Record, 100 percent data (not a sample) for entitlement years 1998-2013.",
+    "table_notes": "The data in this table differ from those in table 6.B5 because awards are summarized here by the year in which entitlement began rather than by the year the award action was posted on the Master Beneficiary Record. The year of entitlement often precedes the year of action because of retroactive entitlements, delayed award actions, and other reasons. Because entitlements can be awarded retroactively, data for current and prior years are subject to revision with each annual update of this table. Because of differences in data sources and calculation methods, statistics reported in this table may differ from those reported by the Office of the Chief Actuary. Totals do not necessarily equal the sum of rounded components. FRA = full retirement age; . . . = not applicable.",
+    "table_notes_2014_edition": "The data in this table differ from those in table 6.B5 because awards are summarized here by the year in which entitlement began rather than by the year the award action was posted on the Master Beneficiary Record. The year of entitlement often precedes the year of action because of retroactive entitlements, delayed award actions, and other reasons. Because entitlements can be awarded retroactively, data for current and prior years are subject to revision with each annual update of this table. Totals do not necessarily equal the sum of rounded components. . . . = not applicable; FRA = full retirement age.",
+    "table_notes_identical_across_editions": false,
+    "retroactive_revision_sentence": "Because entitlements can be awarded retroactively, data for current and prior years are subject to revision with each annual update of this table.",
+    "retroactive_revision_sentence_in_both_editions": true,
+    "table_notes_difference_note": "The two editions' full table notes are NOT identical: the 2023 edition adds a sentence about differences from Office of the Chief Actuary statistics and reorders the footnote key. The sentence this floor rests on -- retroactive entitlement causing revision with each annual update -- is verbatim in both, which is what retroactive_revision_sentence_in_both_editions records.",
+    "consequence": "Table 6.B5.1 is a 100 percent count, not a sample, so no person-disjoint half-split null exists and the sampling-floor construction every locked gate in gates.yaml uses is inapplicable. The measurable noise is REVISION plus ROUNDING, which is what this artifact measures."
+  },
+  "construction": {
+    "overlap_years": [
+      1998,
+      2013
+    ],
+    "settled_years": [
+      1998,
+      2012
+    ],
+    "terminal_year": 2013,
+    "terminal_year_definition": "the last entitlement year the 2014 edition publishes, and therefore the year in that edition most exposed to retroactive revision at the time it was published",
+    "sexes": [
+      "female",
+      "male"
+    ],
+    "published_categories": [
+      "age62",
+      "age63",
+      "age64",
+      "age65",
+      "age66",
+      "disability_conversion",
+      "age67_69",
+      "age70plus"
+    ],
+    "conditional_categories": [
+      "age62",
+      "age63",
+      "age64",
+      "age65",
+      "age66",
+      "age67_69",
+      "age70plus"
+    ],
+    "conditional_construct": "the disability-conversion column is dropped and the remaining seven categories renormalised to sum to 100 -- the object populace_dynamics.claiming.claim_age_pmf emits, re-aggregated to the reference's own partition",
+    "metric": "absolute revision in published percentage points (share on a 0-100 scale), 2023 edition minus 2014 edition, per (sex, entitlement year, category) cell"
+  },
+  "strata": {
+    "published_settled_years": {
+      "n_cells": 240,
+      "nonzero_cells": 1,
+      "mean_pp": 0.000417,
+      "sd_pp": 0.006442,
+      "sd_sample_pp": 0.006455,
+      "max_pp": 0.1,
+      "argmax": {
+        "sex": "male",
+        "year": 2008,
+        "category": "age67_69",
+        "revision_pp": 0.1
+      },
+      "sd_convention": "sd_pp is the POPULATION standard deviation (ddof=0) of the absolute per-cell revisions; sd_sample_pp is the ddof=1 value. The DRAFT tolerance knob quotes sd_pp."
+    },
+    "published_terminal_year": {
+      "n_cells": 16,
+      "nonzero_cells": 16,
+      "mean_pp": 0.5375,
+      "sd_pp": 0.372282,
+      "sd_sample_pp": 0.384491,
+      "max_pp": 1.1,
+      "argmax": {
+        "sex": "female",
+        "year": 2013,
+        "category": "age62",
+        "revision_pp": -1.1
+      },
+      "sd_convention": "sd_pp is the POPULATION standard deviation (ddof=0) of the absolute per-cell revisions; sd_sample_pp is the ddof=1 value. The DRAFT tolerance knob quotes sd_pp."
+    },
+    "published_all_overlap": {
+      "n_cells": 256,
+      "nonzero_cells": 17,
+      "mean_pp": 0.033984,
+      "sd_pp": 0.160009,
+      "sd_sample_pp": 0.160322,
+      "max_pp": 1.1,
+      "argmax": {
+        "sex": "female",
+        "year": 2013,
+        "category": "age62",
+        "revision_pp": -1.1
+      },
+      "sd_convention": "sd_pp is the POPULATION standard deviation (ddof=0) of the absolute per-cell revisions; sd_sample_pp is the ddof=1 value. The DRAFT tolerance knob quotes sd_pp."
+    },
+    "conditional_settled_years": {
+      "n_cells": 210,
+      "nonzero_cells": 7,
+      "mean_pp": 0.00107,
+      "sd_pp": 0.008942,
+      "sd_sample_pp": 0.008963,
+      "max_pp": 0.112333,
+      "argmax": {
+        "sex": "male",
+        "year": 2008,
+        "category": "age67_69",
+        "revision_pp": 0.112333
+      },
+      "sd_convention": "sd_pp is the POPULATION standard deviation (ddof=0) of the absolute per-cell revisions; sd_sample_pp is the ddof=1 value. The DRAFT tolerance knob quotes sd_pp."
+    },
+    "conditional_terminal_year": {
+      "n_cells": 14,
+      "nonzero_cells": 14,
+      "mean_pp": 0.66328,
+      "sd_pp": 0.492993,
+      "sd_sample_pp": 0.511603,
+      "max_pp": 1.590474,
+      "argmax": {
+        "sex": "female",
+        "year": 2013,
+        "category": "age62",
+        "revision_pp": -1.590474
+      },
+      "sd_convention": "sd_pp is the POPULATION standard deviation (ddof=0) of the absolute per-cell revisions; sd_sample_pp is the ddof=1 value. The DRAFT tolerance knob quotes sd_pp."
+    },
+    "conditional_all_overlap": {
+      "n_cells": 224,
+      "nonzero_cells": 21,
+      "mean_pp": 0.042458,
+      "sd_pp": 0.202385,
+      "sd_sample_pp": 0.202838,
+      "max_pp": 1.590474,
+      "argmax": {
+        "sex": "female",
+        "year": 2013,
+        "category": "age62",
+        "revision_pp": -1.590474
+      },
+      "sd_convention": "sd_pp is the POPULATION standard deviation (ddof=0) of the absolute per-cell revisions; sd_sample_pp is the ddof=1 value. The DRAFT tolerance knob quotes sd_pp."
+    },
+    "average_age_column": {
+      "n_rows": 32,
+      "nonzero_rows": 0,
+      "mean_years": 0.0,
+      "max_years": 0.0
+    }
+  },
+  "nonzero_revision_cells": {
+    "published_settled_years": [
+      {
+        "cell": "age67_69|male|2008",
+        "edition_2014_pp": 1.3,
+        "edition_2023_pp": 1.4,
+        "revision_pp": 0.1
+      }
+    ],
+    "published_terminal_year": [
+      {
+        "cell": "age62|female|2013",
+        "edition_2014_pp": 41.3,
+        "edition_2023_pp": 40.2,
+        "revision_pp": -1.1
+      },
+      {
+        "cell": "age63|female|2013",
+        "edition_2014_pp": 6.5,
+        "edition_2023_pp": 6.4,
+        "revision_pp": -0.1
+      },
+      {
+        "cell": "age64|female|2013",
+        "edition_2014_pp": 7.0,
+        "edition_2023_pp": 6.9,
+        "revision_pp": -0.1
+      },
+      {
+        "cell": "age65|female|2013",
+        "edition_2014_pp": 10.9,
+        "edition_2023_pp": 10.7,
+        "revision_pp": -0.2
+      },
+      {
+        "cell": "age66|female|2013",
+        "edition_2014_pp": 13.8,
+        "edition_2023_pp": 14.8,
+        "revision_pp": 1.0
+      },
+      {
+        "cell": "disability_conversion|female|2013",
+        "edition_2014_pp": 16.0,
+        "edition_2023_pp": 15.4,
+        "revision_pp": -0.6
+      },
+      {
+        "cell": "age67_69|female|2013",
+        "edition_2014_pp": 2.1,
+        "edition_2023_pp": 2.7,
+        "revision_pp": 0.6
+      },
+      {
+        "cell": "age70plus|female|2013",
+        "edition_2014_pp": 2.5,
+        "edition_2023_pp": 2.9,
+        "revision_pp": 0.4
+      },
+      {
+        "cell": "age62|male|2013",
+        "edition_2014_pp": 35.7,
+        "edition_2023_pp": 34.7,
+        "revision_pp": -1.0
+      },
+      {
+        "cell": "age63|male|2013",
+        "edition_2014_pp": 6.1,
+        "edition_2023_pp": 6.0,
+        "revision_pp": -0.1
+      },
+      {
+        "cell": "age64|male|2013",
+        "edition_2014_pp": 6.2,
+        "edition_2023_pp": 6.1,
+        "revision_pp": -0.1
+      },
+      {
+        "cell": "age65|male|2013",
+        "edition_2014_pp": 11.0,
+        "edition_2023_pp": 10.7,
+        "revision_pp": -0.3
+      },
+      {
+        "cell": "age66|male|2013",
+        "edition_2014_pp": 19.8,
+        "edition_2023_pp": 20.9,
+        "revision_pp": 1.1
+      },
+      {
+        "cell": "disability_conversion|male|2013",
+        "edition_2014_pp": 17.6,
+        "edition_2023_pp": 16.8,
+        "revision_pp": -0.8
+      },
+      {
+        "cell": "age67_69|male|2013",
+        "edition_2014_pp": 2.2,
+        "edition_2023_pp": 3.0,
+        "revision_pp": 0.8
+      },
+      {
+        "cell": "age70plus|male|2013",
+        "edition_2014_pp": 1.4,
+        "edition_2023_pp": 1.7,
+        "revision_pp": 0.3
+      }
+    ],
+    "conditional_settled_years": [
+      {
+        "cell": "age62|male|2008",
+        "edition_2014_pp": 48.630137,
+        "edition_2023_pp": 48.574686,
+        "revision_pp": -0.055451
+      },
+      {
+        "cell": "age63|male|2008",
+        "edition_2014_pp": 8.105023,
+        "edition_2023_pp": 8.095781,
+        "revision_pp": -0.009242
+      },
+      {
+        "cell": "age64|male|2008",
+        "edition_2014_pp": 9.589041,
+        "edition_2023_pp": 9.578107,
+        "revision_pp": -0.010934
+      },
+      {
+        "cell": "age65|male|2008",
+        "edition_2014_pp": 29.452055,
+        "edition_2023_pp": 29.418472,
+        "revision_pp": -0.033583
+      },
+      {
+        "cell": "age66|male|2008",
+        "edition_2014_pp": 1.940639,
+        "edition_2023_pp": 1.938426,
+        "revision_pp": -0.002213
+      },
+      {
+        "cell": "age67_69|male|2008",
+        "edition_2014_pp": 1.484018,
+        "edition_2023_pp": 1.596351,
+        "revision_pp": 0.112333
+      },
+      {
+        "cell": "age70plus|male|2008",
+        "edition_2014_pp": 0.799087,
+        "edition_2023_pp": 0.798176,
+        "revision_pp": -0.000911
+      }
+    ],
+    "conditional_terminal_year": [
+      {
+        "cell": "age62|female|2013",
+        "edition_2014_pp": 49.108205,
+        "edition_2023_pp": 47.51773,
+        "revision_pp": -1.590474
+      },
+      {
+        "cell": "age63|female|2013",
+        "edition_2014_pp": 7.728894,
+        "edition_2023_pp": 7.565012,
+        "revision_pp": -0.163882
+      },
+      {
+        "cell": "age64|female|2013",
+        "edition_2014_pp": 8.323424,
+        "edition_2023_pp": 8.156028,
+        "revision_pp": -0.167396
+      },
+      {
+        "cell": "age65|female|2013",
+        "edition_2014_pp": 12.960761,
+        "edition_2023_pp": 12.647754,
+        "revision_pp": -0.313007
+      },
+      {
+        "cell": "age66|female|2013",
+        "edition_2014_pp": 16.409037,
+        "edition_2023_pp": 17.49409,
+        "revision_pp": 1.085053
+      },
+      {
+        "cell": "age67_69|female|2013",
+        "edition_2014_pp": 2.497027,
+        "edition_2023_pp": 3.191489,
+        "revision_pp": 0.694462
+      },
+      {
+        "cell": "age70plus|female|2013",
+        "edition_2014_pp": 2.972652,
+        "edition_2023_pp": 3.427896,
+        "revision_pp": 0.455244
+      },
+      {
+        "cell": "age62|male|2013",
+        "edition_2014_pp": 43.325243,
+        "edition_2023_pp": 41.756919,
+        "revision_pp": -1.568323
+      },
+      {
+        "cell": "age63|male|2013",
+        "edition_2014_pp": 7.402913,
+        "edition_2023_pp": 7.220217,
+        "revision_pp": -0.182696
+      },
+      {
+        "cell": "age64|male|2013",
+        "edition_2014_pp": 7.524272,
+        "edition_2023_pp": 7.340554,
+        "revision_pp": -0.183718
+      },
+      {
+        "cell": "age65|male|2013",
+        "edition_2014_pp": 13.349515,
+        "edition_2023_pp": 12.876053,
+        "revision_pp": -0.473462
+      },
+      {
+        "cell": "age66|male|2013",
+        "edition_2014_pp": 24.029126,
+        "edition_2023_pp": 25.150421,
+        "revision_pp": 1.121295
+      },
+      {
+        "cell": "age67_69|male|2013",
+        "edition_2014_pp": 2.669903,
+        "edition_2023_pp": 3.610108,
+        "revision_pp": 0.940205
+      },
+      {
+        "cell": "age70plus|male|2013",
+        "edition_2014_pp": 1.699029,
+        "edition_2023_pp": 2.045728,
+        "revision_pp": 0.346699
+      }
+    ]
+  },
+  "finding": {
+    "revision_is_a_terminal_year_effect": true,
+    "statement": "Every published terminal-year cell moved; across the fifteen settled years a single published cell moved, by one 0.1 pp rounding tick; the average_age column did not move at all. In the conditional construct that one published movement propagates through the renormalising denominator to all seven categories of its (sex, year) row, which is why the conditional settled stratum has more nonzero cells than the published one at the same mean magnitude."
+  },
+  "power_cap": {
+    "rule": "tolerance_pp == round(K_REV * revision_sd_terminal_pp + abs(trend_pp_per_year) * horizon_years + rounding_pp, 2); a cell is gate-eligible iff tolerance_pp <= t_max_pp",
+    "knobs": {
+      "k_rev": 2.0,
+      "revision_sd_terminal_pp": 0.493,
+      "revision_sd_terminal_pp_full_precision": 0.492993,
+      "rounding_pp": 0.05,
+      "t_max_pp": 3.0,
+      "fit_window": [
+        1998,
+        2019
+      ],
+      "horizon_years": [
+        1,
+        2,
+        3
+      ],
+      "trend_estimator": "closed-form OLS slope of the conditional share on the fit years, rounded to 4 decimals"
+    },
+    "knobs_are_a_draft_proposal": "K_REV, the rounding allowance and T_max_pp are quoted from the cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane) DRAFT gate_b2_claiming block. gates.yaml carries no gate_b2_claiming; nothing here is ratified and this artifact proposes no threshold.",
+    "sd_knob_rounding_check": {
+      "note": "The DRAFT knob rounds the measured terminal-year sd to 4 decimals. This block records every cell whose 2-decimal tolerance changes when the full-precision sd is used instead, and whether any cell's gate-eligible status changes with it.",
+      "partition_identical": true,
+      "n_gate_eligibility_flips": 0,
+      "gate_eligibility_flips": [],
+      "n_cells_with_a_different_tolerance": 1,
+      "cells_with_a_different_tolerance": {
+        "age70plus|female|h2": {
+          "tolerance_pp_at_rounded_sd": 1.53,
+          "tolerance_pp_at_full_precision_sd": 1.52,
+          "unrounded_pp": 1.525
+        }
+      }
+    },
+    "n_gate_eligible": 34,
+    "n_report_only_tolerance_above_t_max": 8,
+    "gate_eligible_tolerances_pp": {
+      "age62|female|h1": 2.3,
+      "age63|female|h1": 1.08,
+      "age63|female|h2": 1.12,
+      "age63|female|h3": 1.17,
+      "age64|female|h1": 1.27,
+      "age64|female|h2": 1.51,
+      "age64|female|h3": 1.74,
+      "age65|female|h1": 1.2,
+      "age65|female|h2": 1.37,
+      "age65|female|h3": 1.54,
+      "age66|female|h1": 2.24,
+      "age67_69|female|h1": 1.21,
+      "age67_69|female|h2": 1.38,
+      "age67_69|female|h3": 1.56,
+      "age70plus|female|h1": 1.28,
+      "age70plus|female|h2": 1.53,
+      "age70plus|female|h3": 1.77,
+      "age62|male|h1": 2.27,
+      "age63|male|h1": 1.07,
+      "age63|male|h2": 1.1,
+      "age63|male|h3": 1.13,
+      "age64|male|h1": 1.4,
+      "age64|male|h2": 1.77,
+      "age64|male|h3": 2.14,
+      "age65|male|h1": 1.55,
+      "age65|male|h2": 2.06,
+      "age65|male|h3": 2.57,
+      "age66|male|h1": 2.72,
+      "age67_69|male|h1": 1.29,
+      "age67_69|male|h2": 1.55,
+      "age67_69|male|h3": 1.81,
+      "age70plus|male|h1": 1.24,
+      "age70plus|male|h2": 1.45,
+      "age70plus|male|h3": 1.66
+    },
+    "report_only_tolerance_above_t_max": {
+      "age62|female|h2": {
+        "tolerance_pp_would_be": 3.57,
+        "trend_pp_per_year": -1.2649,
+        "reason": "tolerance_above_t_max"
+      },
+      "age62|female|h3": {
+        "tolerance_pp_would_be": 4.83,
+        "trend_pp_per_year": -1.2649,
+        "reason": "tolerance_above_t_max"
+      },
+      "age66|female|h2": {
+        "tolerance_pp_would_be": 3.45,
+        "trend_pp_per_year": 1.2051,
+        "reason": "tolerance_above_t_max"
+      },
+      "age66|female|h3": {
+        "tolerance_pp_would_be": 4.65,
+        "trend_pp_per_year": 1.2051,
+        "reason": "tolerance_above_t_max"
+      },
+      "age62|male|h2": {
+        "tolerance_pp_would_be": 3.51,
+        "trend_pp_per_year": -1.2368,
+        "reason": "tolerance_above_t_max"
+      },
+      "age62|male|h3": {
+        "tolerance_pp_would_be": 4.75,
+        "trend_pp_per_year": -1.2368,
+        "reason": "tolerance_above_t_max"
+      },
+      "age66|male|h2": {
+        "tolerance_pp_would_be": 4.4,
+        "trend_pp_per_year": 1.6834,
+        "reason": "tolerance_above_t_max"
+      },
+      "age66|male|h3": {
+        "tolerance_pp_would_be": 6.09,
+        "trend_pp_per_year": 1.6834,
+        "reason": "tolerance_above_t_max"
+      }
+    },
+    "derivations": {
+      "age62|female|h1": {
+        "trend_pp_per_year": -1.2649,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 2.3,
+        "tolerance_pp_at_full_precision_sd": 2.3
+      },
+      "age62|female|h2": {
+        "trend_pp_per_year": -1.2649,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 3.57,
+        "tolerance_pp_at_full_precision_sd": 3.57
+      },
+      "age62|female|h3": {
+        "trend_pp_per_year": -1.2649,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 4.83,
+        "tolerance_pp_at_full_precision_sd": 4.83
+      },
+      "age63|female|h1": {
+        "trend_pp_per_year": 0.0439,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.08,
+        "tolerance_pp_at_full_precision_sd": 1.08
+      },
+      "age63|female|h2": {
+        "trend_pp_per_year": 0.0439,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 1.12,
+        "tolerance_pp_at_full_precision_sd": 1.12
+      },
+      "age63|female|h3": {
+        "trend_pp_per_year": 0.0439,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 1.17,
+        "tolerance_pp_at_full_precision_sd": 1.17
+      },
+      "age64|female|h1": {
+        "trend_pp_per_year": -0.2359,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.27,
+        "tolerance_pp_at_full_precision_sd": 1.27
+      },
+      "age64|female|h2": {
+        "trend_pp_per_year": -0.2359,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 1.51,
+        "tolerance_pp_at_full_precision_sd": 1.51
+      },
+      "age64|female|h3": {
+        "trend_pp_per_year": -0.2359,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 1.74,
+        "tolerance_pp_at_full_precision_sd": 1.74
+      },
+      "age65|female|h1": {
+        "trend_pp_per_year": -0.1669,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.2,
+        "tolerance_pp_at_full_precision_sd": 1.2
+      },
+      "age65|female|h2": {
+        "trend_pp_per_year": -0.1669,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 1.37,
+        "tolerance_pp_at_full_precision_sd": 1.37
+      },
+      "age65|female|h3": {
+        "trend_pp_per_year": -0.1669,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 1.54,
+        "tolerance_pp_at_full_precision_sd": 1.54
+      },
+      "age66|female|h1": {
+        "trend_pp_per_year": 1.2051,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 2.24,
+        "tolerance_pp_at_full_precision_sd": 2.24
+      },
+      "age66|female|h2": {
+        "trend_pp_per_year": 1.2051,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 3.45,
+        "tolerance_pp_at_full_precision_sd": 3.45
+      },
+      "age66|female|h3": {
+        "trend_pp_per_year": 1.2051,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 4.65,
+        "tolerance_pp_at_full_precision_sd": 4.65
+      },
+      "age67_69|female|h1": {
+        "trend_pp_per_year": 0.1742,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.21,
+        "tolerance_pp_at_full_precision_sd": 1.21
+      },
+      "age67_69|female|h2": {
+        "trend_pp_per_year": 0.1742,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 1.38,
+        "tolerance_pp_at_full_precision_sd": 1.38
+      },
+      "age67_69|female|h3": {
+        "trend_pp_per_year": 0.1742,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 1.56,
+        "tolerance_pp_at_full_precision_sd": 1.56
+      },
+      "age70plus|female|h1": {
+        "trend_pp_per_year": 0.2445,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.28,
+        "tolerance_pp_at_full_precision_sd": 1.28
+      },
+      "age70plus|female|h2": {
+        "trend_pp_per_year": 0.2445,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 1.53,
+        "tolerance_pp_at_full_precision_sd": 1.52
+      },
+      "age70plus|female|h3": {
+        "trend_pp_per_year": 0.2445,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 1.77,
+        "tolerance_pp_at_full_precision_sd": 1.77
+      },
+      "age62|male|h1": {
+        "trend_pp_per_year": -1.2368,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 2.27,
+        "tolerance_pp_at_full_precision_sd": 2.27
+      },
+      "age62|male|h2": {
+        "trend_pp_per_year": -1.2368,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 3.51,
+        "tolerance_pp_at_full_precision_sd": 3.51
+      },
+      "age62|male|h3": {
+        "trend_pp_per_year": -1.2368,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 4.75,
+        "tolerance_pp_at_full_precision_sd": 4.75
+      },
+      "age63|male|h1": {
+        "trend_pp_per_year": -0.0305,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.07,
+        "tolerance_pp_at_full_precision_sd": 1.07
+      },
+      "age63|male|h2": {
+        "trend_pp_per_year": -0.0305,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 1.1,
+        "tolerance_pp_at_full_precision_sd": 1.1
+      },
+      "age63|male|h3": {
+        "trend_pp_per_year": -0.0305,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 1.13,
+        "tolerance_pp_at_full_precision_sd": 1.13
+      },
+      "age64|male|h1": {
+        "trend_pp_per_year": -0.3683,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.4,
+        "tolerance_pp_at_full_precision_sd": 1.4
+      },
+      "age64|male|h2": {
+        "trend_pp_per_year": -0.3683,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 1.77,
+        "tolerance_pp_at_full_precision_sd": 1.77
+      },
+      "age64|male|h3": {
+        "trend_pp_per_year": -0.3683,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 2.14,
+        "tolerance_pp_at_full_precision_sd": 2.14
+      },
+      "age65|male|h1": {
+        "trend_pp_per_year": -0.5122,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.55,
+        "tolerance_pp_at_full_precision_sd": 1.55
+      },
+      "age65|male|h2": {
+        "trend_pp_per_year": -0.5122,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 2.06,
+        "tolerance_pp_at_full_precision_sd": 2.06
+      },
+      "age65|male|h3": {
+        "trend_pp_per_year": -0.5122,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 2.57,
+        "tolerance_pp_at_full_precision_sd": 2.57
+      },
+      "age66|male|h1": {
+        "trend_pp_per_year": 1.6834,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 2.72,
+        "tolerance_pp_at_full_precision_sd": 2.72
+      },
+      "age66|male|h2": {
+        "trend_pp_per_year": 1.6834,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 4.4,
+        "tolerance_pp_at_full_precision_sd": 4.4
+      },
+      "age66|male|h3": {
+        "trend_pp_per_year": 1.6834,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 6.09,
+        "tolerance_pp_at_full_precision_sd": 6.09
+      },
+      "age67_69|male|h1": {
+        "trend_pp_per_year": 0.2567,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.29,
+        "tolerance_pp_at_full_precision_sd": 1.29
+      },
+      "age67_69|male|h2": {
+        "trend_pp_per_year": 0.2567,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 1.55,
+        "tolerance_pp_at_full_precision_sd": 1.55
+      },
+      "age67_69|male|h3": {
+        "trend_pp_per_year": 0.2567,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 1.81,
+        "tolerance_pp_at_full_precision_sd": 1.81
+      },
+      "age70plus|male|h1": {
+        "trend_pp_per_year": 0.2078,
+        "horizon_years": 1,
+        "rounding": 2,
+        "tolerance_pp": 1.24,
+        "tolerance_pp_at_full_precision_sd": 1.24
+      },
+      "age70plus|male|h2": {
+        "trend_pp_per_year": 0.2078,
+        "horizon_years": 2,
+        "rounding": 2,
+        "tolerance_pp": 1.45,
+        "tolerance_pp_at_full_precision_sd": 1.45
+      },
+      "age70plus|male|h3": {
+        "trend_pp_per_year": 0.2078,
+        "horizon_years": 3,
+        "rounding": 2,
+        "tolerance_pp": 1.66,
+        "tolerance_pp_at_full_precision_sd": 1.66
+      }
+    },
+    "out_of_module_scope": {
+      "cells": [
+        "disability_conversion|female|h1",
+        "disability_conversion|female|h2",
+        "disability_conversion|female|h3",
+        "disability_conversion|male|h1",
+        "disability_conversion|male|h2",
+        "disability_conversion|male|h3"
+      ],
+      "reason": "conversion_flow_owned_by_di_surface",
+      "basis": "The conditional construct excludes the disability-conversion column before any tolerance is derived, so these six cells never enter the surface. They are named here so the exclusion is visible as a SCOPE decision taken before any candidate runs, not a power-cap demotion and not a candidate's performance."
+    }
+  },
+  "reference_values_pp": {
+    "definition": "the held-out conditional share each cell scores against: 100 x category share / sum of the seven non-conversion shares, for entitlement years 2020 (h1), 2021 (h2) and 2022 (h3) of the 2023 edition",
+    "gate_eligible": {
+      "age62|female|h1": 30.5589,
+      "age63|female|h1": 7.1344,
+      "age63|female|h2": 7.416,
+      "age63|female|h3": 7.907,
+      "age64|female|h1": 8.2045,
+      "age64|female|h2": 8.343,
+      "age64|female|h3": 8.6047,
+      "age65|female|h1": 12.8419,
+      "age65|female|h2": 12.7462,
+      "age65|female|h3": 13.9535,
+      "age66|female|h1": 25.327,
+      "age67_69|female|h1": 6.8966,
+      "age67_69|female|h2": 7.8795,
+      "age67_69|female|h3": 7.2093,
+      "age70plus|female|h1": 9.0369,
+      "age70plus|female|h2": 10.4287,
+      "age70plus|female|h3": 10.2326,
+      "age62|male|h1": 28.11,
+      "age63|male|h1": 6.9378,
+      "age63|male|h2": 7.3427,
+      "age63|male|h3": 7.7193,
+      "age64|male|h1": 7.2967,
+      "age64|male|h2": 7.6923,
+      "age64|male|h3": 7.9532,
+      "age65|male|h1": 12.6794,
+      "age65|male|h2": 12.5874,
+      "age65|male|h3": 13.6842,
+      "age66|male|h1": 29.3062,
+      "age67_69|male|h1": 8.3732,
+      "age67_69|male|h2": 9.0909,
+      "age67_69|male|h3": 8.1871,
+      "age70plus|male|h1": 7.2967,
+      "age70plus|male|h2": 9.0909,
+      "age70plus|male|h3": 9.4737
+    },
+    "report_only": {
+      "age62|female|h2": 30.0116,
+      "age62|female|h3": 29.7674,
+      "age66|female|h2": 23.175,
+      "age66|female|h3": 22.3256,
+      "age62|male|h2": 27.972,
+      "age62|male|h3": 27.8363,
+      "age66|male|h2": 26.2238,
+      "age66|male|h3": 25.1462
+    }
+  },
+  "holdout_rules": {
+    "protocol": {
+      "fit_years": [
+        1998,
+        2019
+      ],
+      "holdout_years": [
+        2020,
+        2021,
+        2022
+      ],
+      "horizons": {
+        "2020": 1,
+        "2021": 2,
+        "2022": 3
+      },
+      "rules": {
+        "nearest_year": "predict each held-out year with the last in-sample year (2019); the module's documented default fallback",
+        "linear_trend": "per (sex, category) OLS on the fit years, extrapolated to each held-out year"
+      },
+      "arithmetic_note": "predictions are rounded to 4 decimals before the deviation is taken, matching scripts/build_claiming_reference.py exactly so the published-construct numbers are comparable"
+    },
+    "published": {
+      "nearest_year": {
+        "n_cells": 48,
+        "max_abs_deviation": 3.2,
+        "mean_abs_deviation": 1.1875,
+        "rmse": 1.5411,
+        "argmax": {
+          "sex": "female",
+          "year": 2022,
+          "horizon": 3,
+          "category": "age62",
+          "predicted": 28.8,
+          "actual": 25.6,
+          "deviation": 3.2
+        }
+      },
+      "linear_trend": {
+        "n_cells": 48,
+        "max_abs_deviation": 8.1623,
+        "mean_abs_deviation": 2.2644,
+        "rmse": 2.7588,
+        "argmax": {
+          "sex": "male",
+          "year": 2022,
+          "horizon": 3,
+          "category": "age66",
+          "predicted": 29.6623,
+          "actual": 21.5,
+          "deviation": 8.1623
+        }
+      }
+    },
+    "conditional": {
+      "nearest_year": {
+        "n_cells": 42,
+        "max_abs_deviation": 4.6001,
+        "mean_abs_deviation": 1.3115,
+        "rmse": 1.8727,
+        "argmax": {
+          "sex": "female",
+          "year": 2022,
+          "horizon": 3,
+          "category": "age62",
+          "predicted": 34.3675,
+          "actual": 29.7674,
+          "deviation": 4.6001
+        }
+      },
+      "linear_trend": {
+        "n_cells": 42,
+        "max_abs_deviation": 10.2876,
+        "mean_abs_deviation": 2.7556,
+        "rmse": 3.4981,
+        "argmax": {
+          "sex": "male",
+          "year": 2022,
+          "horizon": 3,
+          "category": "age66",
+          "predicted": 35.4338,
+          "actual": 25.1462,
+          "deviation": 10.2876
+        }
+      }
+    },
+    "per_cell": {
+      "published": {
+        "nearest_year": [
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age62",
+            "predicted": 25.6,
+            "actual": 23.5,
+            "deviation": 2.1
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age62",
+            "predicted": 25.6,
+            "actual": 24.0,
+            "deviation": 1.6
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age62",
+            "predicted": 25.6,
+            "actual": 23.8,
+            "deviation": 1.8
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age63",
+            "predicted": 5.7,
+            "actual": 5.8,
+            "deviation": -0.1
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age63",
+            "predicted": 5.7,
+            "actual": 6.3,
+            "deviation": -0.6
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age63",
+            "predicted": 5.7,
+            "actual": 6.6,
+            "deviation": -0.9
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age64",
+            "predicted": 6.0,
+            "actual": 6.1,
+            "deviation": -0.1
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age64",
+            "predicted": 6.0,
+            "actual": 6.6,
+            "deviation": -0.6
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age64",
+            "predicted": 6.0,
+            "actual": 6.8,
+            "deviation": -0.8
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age65",
+            "predicted": 10.5,
+            "actual": 10.6,
+            "deviation": -0.1
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age65",
+            "predicted": 10.5,
+            "actual": 10.8,
+            "deviation": -0.3
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age65",
+            "predicted": 10.5,
+            "actual": 11.7,
+            "deviation": -1.2
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age66",
+            "predicted": 23.9,
+            "actual": 24.5,
+            "deviation": -0.6
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age66",
+            "predicted": 23.9,
+            "actual": 22.5,
+            "deviation": 1.4
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age66",
+            "predicted": 23.9,
+            "actual": 21.5,
+            "deviation": 2.4
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "disability_conversion",
+            "predicted": 16.6,
+            "actual": 16.4,
+            "deviation": 0.2
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "disability_conversion",
+            "predicted": 16.6,
+            "actual": 14.2,
+            "deviation": 2.4
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "disability_conversion",
+            "predicted": 16.6,
+            "actual": 14.5,
+            "deviation": 2.1
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age67_69",
+            "predicted": 6.6,
+            "actual": 7.0,
+            "deviation": -0.4
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age67_69",
+            "predicted": 6.6,
+            "actual": 7.8,
+            "deviation": -1.2
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age67_69",
+            "predicted": 6.6,
+            "actual": 7.0,
+            "deviation": -0.4
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age70plus",
+            "predicted": 5.1,
+            "actual": 6.1,
+            "deviation": -1.0
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age70plus",
+            "predicted": 5.1,
+            "actual": 7.8,
+            "deviation": -2.7
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age70plus",
+            "predicted": 5.1,
+            "actual": 8.1,
+            "deviation": -3.0
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age62",
+            "predicted": 28.8,
+            "actual": 25.7,
+            "deviation": 3.1
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age62",
+            "predicted": 28.8,
+            "actual": 25.9,
+            "deviation": 2.9
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age62",
+            "predicted": 28.8,
+            "actual": 25.6,
+            "deviation": 3.2
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age63",
+            "predicted": 6.2,
+            "actual": 6.0,
+            "deviation": 0.2
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age63",
+            "predicted": 6.2,
+            "actual": 6.4,
+            "deviation": -0.2
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age63",
+            "predicted": 6.2,
+            "actual": 6.8,
+            "deviation": -0.6
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age64",
+            "predicted": 7.1,
+            "actual": 6.9,
+            "deviation": 0.2
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age64",
+            "predicted": 7.1,
+            "actual": 7.2,
+            "deviation": -0.1
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age64",
+            "predicted": 7.1,
+            "actual": 7.4,
+            "deviation": -0.3
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age65",
+            "predicted": 10.6,
+            "actual": 10.8,
+            "deviation": -0.2
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age65",
+            "predicted": 10.6,
+            "actual": 11.0,
+            "deviation": -0.4
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age65",
+            "predicted": 10.6,
+            "actual": 12.0,
+            "deviation": -1.4
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age66",
+            "predicted": 18.1,
+            "actual": 21.3,
+            "deviation": -3.2
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age66",
+            "predicted": 18.1,
+            "actual": 20.0,
+            "deviation": -1.9
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age66",
+            "predicted": 18.1,
+            "actual": 19.2,
+            "deviation": -1.1
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "disability_conversion",
+            "predicted": 16.2,
+            "actual": 15.9,
+            "deviation": 0.3
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "disability_conversion",
+            "predicted": 16.2,
+            "actual": 13.8,
+            "deviation": 2.4
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "disability_conversion",
+            "predicted": 16.2,
+            "actual": 14.1,
+            "deviation": 2.1
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age67_69",
+            "predicted": 5.6,
+            "actual": 5.8,
+            "deviation": -0.2
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age67_69",
+            "predicted": 5.6,
+            "actual": 6.8,
+            "deviation": -1.2
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age67_69",
+            "predicted": 5.6,
+            "actual": 6.2,
+            "deviation": -0.6
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age70plus",
+            "predicted": 7.4,
+            "actual": 7.6,
+            "deviation": -0.2
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age70plus",
+            "predicted": 7.4,
+            "actual": 9.0,
+            "deviation": -1.6
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age70plus",
+            "predicted": 7.4,
+            "actual": 8.8,
+            "deviation": -1.4
+          }
+        ],
+        "linear_trend": [
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age62",
+            "predicted": 27.1818,
+            "actual": 23.5,
+            "deviation": 3.6818
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age62",
+            "predicted": 25.9929,
+            "actual": 24.0,
+            "deviation": 1.9929
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age62",
+            "predicted": 24.804,
+            "actual": 23.8,
+            "deviation": 1.004
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age63",
+            "predicted": 6.1571,
+            "actual": 5.8,
+            "deviation": 0.3571
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age63",
+            "predicted": 6.1099,
+            "actual": 6.3,
+            "deviation": -0.1901
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age63",
+            "predicted": 6.0627,
+            "actual": 6.6,
+            "deviation": -0.5373
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age64",
+            "predicted": 4.5883,
+            "actual": 6.1,
+            "deviation": -1.5117
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age64",
+            "predicted": 4.2446,
+            "actual": 6.6,
+            "deviation": -2.3554
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age64",
+            "predicted": 3.9009,
+            "actual": 6.8,
+            "deviation": -2.8991
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age65",
+            "predicted": 9.2844,
+            "actual": 10.6,
+            "deviation": -1.3156
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age65",
+            "predicted": 8.7989,
+            "actual": 10.8,
+            "deviation": -2.0011
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age65",
+            "predicted": 8.3133,
+            "actual": 11.7,
+            "deviation": -3.3867
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age66",
+            "predicted": 26.8571,
+            "actual": 24.5,
+            "deviation": 2.3571
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age66",
+            "predicted": 28.2597,
+            "actual": 22.5,
+            "deviation": 5.7597
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age66",
+            "predicted": 29.6623,
+            "actual": 21.5,
+            "deviation": 8.1623
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "disability_conversion",
+            "predicted": 17.0831,
+            "actual": 16.4,
+            "deviation": 0.6831
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "disability_conversion",
+            "predicted": 17.3674,
+            "actual": 14.2,
+            "deviation": 3.1674
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "disability_conversion",
+            "predicted": 17.6517,
+            "actual": 14.5,
+            "deviation": 3.1517
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age67_69",
+            "predicted": 5.2026,
+            "actual": 7.0,
+            "deviation": -1.7974
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age67_69",
+            "predicted": 5.4103,
+            "actual": 7.8,
+            "deviation": -2.3897
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age67_69",
+            "predicted": 5.6181,
+            "actual": 7.0,
+            "deviation": -1.3819
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age70plus",
+            "predicted": 3.6377,
+            "actual": 6.1,
+            "deviation": -2.4623
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age70plus",
+            "predicted": 3.8081,
+            "actual": 7.8,
+            "deviation": -3.9919
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age70plus",
+            "predicted": 3.9786,
+            "actual": 8.1,
+            "deviation": -4.1214
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age62",
+            "predicted": 31.2532,
+            "actual": 25.7,
+            "deviation": 5.5532
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age62",
+            "predicted": 29.9701,
+            "actual": 25.9,
+            "deviation": 4.0701
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age62",
+            "predicted": 28.687,
+            "actual": 25.6,
+            "deviation": 3.087
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age63",
+            "predicted": 6.7584,
+            "actual": 6.0,
+            "deviation": 0.7584
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age63",
+            "predicted": 6.7702,
+            "actual": 6.4,
+            "deviation": 0.3702
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age63",
+            "predicted": 6.782,
+            "actual": 6.8,
+            "deviation": -0.018
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age64",
+            "predicted": 5.9273,
+            "actual": 6.9,
+            "deviation": -0.9727
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age64",
+            "predicted": 5.6862,
+            "actual": 7.2,
+            "deviation": -1.5138
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age64",
+            "predicted": 5.4451,
+            "actual": 7.4,
+            "deviation": -1.9549
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age65",
+            "predicted": 10.0831,
+            "actual": 10.8,
+            "deviation": -0.7169
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age65",
+            "predicted": 9.8892,
+            "actual": 11.0,
+            "deviation": -1.1108
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age65",
+            "predicted": 9.6952,
+            "actual": 12.0,
+            "deviation": -2.3048
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age66",
+            "predicted": 19.4312,
+            "actual": 21.3,
+            "deviation": -1.8688
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age66",
+            "predicted": 20.4426,
+            "actual": 20.0,
+            "deviation": 0.4426
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age66",
+            "predicted": 21.454,
+            "actual": 19.2,
+            "deviation": 2.254
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "disability_conversion",
+            "predicted": 16.6805,
+            "actual": 15.9,
+            "deviation": 0.7805
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "disability_conversion",
+            "predicted": 17.0429,
+            "actual": 13.8,
+            "deviation": 3.2429
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "disability_conversion",
+            "predicted": 17.4052,
+            "actual": 14.1,
+            "deviation": 3.3052
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age67_69",
+            "predicted": 4.4468,
+            "actual": 5.8,
+            "deviation": -1.3532
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age67_69",
+            "predicted": 4.5836,
+            "actual": 6.8,
+            "deviation": -2.2164
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age67_69",
+            "predicted": 4.7205,
+            "actual": 6.2,
+            "deviation": -1.4795
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age70plus",
+            "predicted": 5.3844,
+            "actual": 7.6,
+            "deviation": -2.2156
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age70plus",
+            "predicted": 5.5803,
+            "actual": 9.0,
+            "deviation": -3.4197
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age70plus",
+            "predicted": 5.7762,
+            "actual": 8.8,
+            "deviation": -3.0238
+          }
+        ]
+      },
+      "conditional": {
+        "nearest_year": [
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age62",
+            "predicted": 34.3675,
+            "actual": 30.5589,
+            "deviation": 3.8086
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age62",
+            "predicted": 34.3675,
+            "actual": 30.0116,
+            "deviation": 4.3559
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age62",
+            "predicted": 34.3675,
+            "actual": 29.7674,
+            "deviation": 4.6001
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age63",
+            "predicted": 7.3986,
+            "actual": 7.1344,
+            "deviation": 0.2642
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age63",
+            "predicted": 7.3986,
+            "actual": 7.416,
+            "deviation": -0.0174
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age63",
+            "predicted": 7.3986,
+            "actual": 7.907,
+            "deviation": -0.5084
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age64",
+            "predicted": 8.4726,
+            "actual": 8.2045,
+            "deviation": 0.2681
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age64",
+            "predicted": 8.4726,
+            "actual": 8.343,
+            "deviation": 0.1296
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age64",
+            "predicted": 8.4726,
+            "actual": 8.6047,
+            "deviation": -0.1321
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age65",
+            "predicted": 12.6492,
+            "actual": 12.8419,
+            "deviation": -0.1927
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age65",
+            "predicted": 12.6492,
+            "actual": 12.7462,
+            "deviation": -0.097
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age65",
+            "predicted": 12.6492,
+            "actual": 13.9535,
+            "deviation": -1.3043
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age66",
+            "predicted": 21.599,
+            "actual": 25.327,
+            "deviation": -3.728
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age66",
+            "predicted": 21.599,
+            "actual": 23.175,
+            "deviation": -1.576
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age66",
+            "predicted": 21.599,
+            "actual": 22.3256,
+            "deviation": -0.7266
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age67_69",
+            "predicted": 6.6826,
+            "actual": 6.8966,
+            "deviation": -0.214
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age67_69",
+            "predicted": 6.6826,
+            "actual": 7.8795,
+            "deviation": -1.1969
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age67_69",
+            "predicted": 6.6826,
+            "actual": 7.2093,
+            "deviation": -0.5267
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age70plus",
+            "predicted": 8.8305,
+            "actual": 9.0369,
+            "deviation": -0.2064
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age70plus",
+            "predicted": 8.8305,
+            "actual": 10.4287,
+            "deviation": -1.5982
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age70plus",
+            "predicted": 8.8305,
+            "actual": 10.2326,
+            "deviation": -1.4021
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age62",
+            "predicted": 30.6954,
+            "actual": 28.11,
+            "deviation": 2.5854
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age62",
+            "predicted": 30.6954,
+            "actual": 27.972,
+            "deviation": 2.7234
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age62",
+            "predicted": 30.6954,
+            "actual": 27.8363,
+            "deviation": 2.8591
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age63",
+            "predicted": 6.8345,
+            "actual": 6.9378,
+            "deviation": -0.1033
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age63",
+            "predicted": 6.8345,
+            "actual": 7.3427,
+            "deviation": -0.5082
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age63",
+            "predicted": 6.8345,
+            "actual": 7.7193,
+            "deviation": -0.8848
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age64",
+            "predicted": 7.1942,
+            "actual": 7.2967,
+            "deviation": -0.1025
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age64",
+            "predicted": 7.1942,
+            "actual": 7.6923,
+            "deviation": -0.4981
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age64",
+            "predicted": 7.1942,
+            "actual": 7.9532,
+            "deviation": -0.759
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age65",
+            "predicted": 12.5899,
+            "actual": 12.6794,
+            "deviation": -0.0895
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age65",
+            "predicted": 12.5899,
+            "actual": 12.5874,
+            "deviation": 0.0025
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age65",
+            "predicted": 12.5899,
+            "actual": 13.6842,
+            "deviation": -1.0943
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age66",
+            "predicted": 28.6571,
+            "actual": 29.3062,
+            "deviation": -0.6491
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age66",
+            "predicted": 28.6571,
+            "actual": 26.2238,
+            "deviation": 2.4333
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age66",
+            "predicted": 28.6571,
+            "actual": 25.1462,
+            "deviation": 3.5109
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age67_69",
+            "predicted": 7.9137,
+            "actual": 8.3732,
+            "deviation": -0.4595
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age67_69",
+            "predicted": 7.9137,
+            "actual": 9.0909,
+            "deviation": -1.1772
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age67_69",
+            "predicted": 7.9137,
+            "actual": 8.1871,
+            "deviation": -0.2734
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age70plus",
+            "predicted": 6.1151,
+            "actual": 7.2967,
+            "deviation": -1.1816
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age70plus",
+            "predicted": 6.1151,
+            "actual": 9.0909,
+            "deviation": -2.9758
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age70plus",
+            "predicted": 6.1151,
+            "actual": 9.4737,
+            "deviation": -3.3586
+          }
+        ],
+        "linear_trend": [
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age62",
+            "predicted": 37.8385,
+            "actual": 30.5589,
+            "deviation": 7.2796
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age62",
+            "predicted": 36.5736,
+            "actual": 30.0116,
+            "deviation": 6.562
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age62",
+            "predicted": 35.3087,
+            "actual": 29.7674,
+            "deviation": 5.5413
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age63",
+            "predicted": 8.0821,
+            "actual": 7.1344,
+            "deviation": 0.9477
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age63",
+            "predicted": 8.126,
+            "actual": 7.416,
+            "deviation": 0.71
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age63",
+            "predicted": 8.1699,
+            "actual": 7.907,
+            "deviation": 0.2629
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age64",
+            "predicted": 7.197,
+            "actual": 8.2045,
+            "deviation": -1.0075
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age64",
+            "predicted": 6.9611,
+            "actual": 8.343,
+            "deviation": -1.3819
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age64",
+            "predicted": 6.7252,
+            "actual": 8.6047,
+            "deviation": -1.8795
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age65",
+            "predicted": 12.1213,
+            "actual": 12.8419,
+            "deviation": -0.7206
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age65",
+            "predicted": 11.9543,
+            "actual": 12.7462,
+            "deviation": -0.7919
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age65",
+            "predicted": 11.7874,
+            "actual": 13.9535,
+            "deviation": -2.1661
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age66",
+            "predicted": 22.9982,
+            "actual": 25.327,
+            "deviation": -2.3288
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age66",
+            "predicted": 24.2033,
+            "actual": 23.175,
+            "deviation": 1.0283
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age66",
+            "predicted": 25.4084,
+            "actual": 22.3256,
+            "deviation": 3.0828
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age67_69",
+            "predicted": 5.3222,
+            "actual": 6.8966,
+            "deviation": -1.5744
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age67_69",
+            "predicted": 5.4965,
+            "actual": 7.8795,
+            "deviation": -2.383
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age67_69",
+            "predicted": 5.6707,
+            "actual": 7.2093,
+            "deviation": -1.5386
+          },
+          {
+            "sex": "female",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age70plus",
+            "predicted": 6.4407,
+            "actual": 9.0369,
+            "deviation": -2.5962
+          },
+          {
+            "sex": "female",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age70plus",
+            "predicted": 6.6853,
+            "actual": 10.4287,
+            "deviation": -3.7434
+          },
+          {
+            "sex": "female",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age70plus",
+            "predicted": 6.9298,
+            "actual": 10.2326,
+            "deviation": -3.3028
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age62",
+            "predicted": 32.9959,
+            "actual": 28.11,
+            "deviation": 4.8859
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age62",
+            "predicted": 31.7591,
+            "actual": 27.972,
+            "deviation": 3.7871
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age62",
+            "predicted": 30.5223,
+            "actual": 27.8363,
+            "deviation": 2.686
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age63",
+            "predicted": 7.4144,
+            "actual": 6.9378,
+            "deviation": 0.4766
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age63",
+            "predicted": 7.3839,
+            "actual": 7.3427,
+            "deviation": 0.0412
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age63",
+            "predicted": 7.3534,
+            "actual": 7.7193,
+            "deviation": -0.3659
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age64",
+            "predicted": 5.6259,
+            "actual": 7.2967,
+            "deviation": -1.6708
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age64",
+            "predicted": 5.2576,
+            "actual": 7.6923,
+            "deviation": -2.4347
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age64",
+            "predicted": 4.8893,
+            "actual": 7.9532,
+            "deviation": -3.0639
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age65",
+            "predicted": 11.267,
+            "actual": 12.6794,
+            "deviation": -1.4124
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age65",
+            "predicted": 10.7547,
+            "actual": 12.5874,
+            "deviation": -1.8327
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age65",
+            "predicted": 10.2425,
+            "actual": 13.6842,
+            "deviation": -3.4417
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age66",
+            "predicted": 32.0671,
+            "actual": 29.3062,
+            "deviation": 2.7609
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age66",
+            "predicted": 33.7505,
+            "actual": 26.2238,
+            "deviation": 7.5267
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age66",
+            "predicted": 35.4338,
+            "actual": 25.1462,
+            "deviation": 10.2876
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age67_69",
+            "predicted": 6.2614,
+            "actual": 8.3732,
+            "deviation": -2.1118
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age67_69",
+            "predicted": 6.5181,
+            "actual": 9.0909,
+            "deviation": -2.5728
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age67_69",
+            "predicted": 6.7748,
+            "actual": 8.1871,
+            "deviation": -1.4123
+          },
+          {
+            "sex": "male",
+            "year": 2020,
+            "horizon": 1,
+            "category": "age70plus",
+            "predicted": 4.3684,
+            "actual": 7.2967,
+            "deviation": -2.9283
+          },
+          {
+            "sex": "male",
+            "year": 2021,
+            "horizon": 2,
+            "category": "age70plus",
+            "predicted": 4.5762,
+            "actual": 9.0909,
+            "deviation": -4.5147
+          },
+          {
+            "sex": "male",
+            "year": 2022,
+            "horizon": 3,
+            "category": "age70plus",
+            "predicted": 4.7839,
+            "actual": 9.4737,
+            "deviation": -4.6898
+          }
+        ]
+      }
+    }
+  },
+  "reproduces_claiming_reference_v1": {
+    "artifact": "runs/claiming_reference_v1.json",
+    "artifact_pin": {
+      "path": "runs/claiming_reference_v1.json",
+      "sha256": "ae80d5c2281a15759948fae3e1f7ed3adbd7127d6a243518ff21196b00b99da9",
+      "bytes": 20799
+    },
+    "overlap": "the PUBLISHED eight-category construct and the same fit 1998-2019 / predict 2020-2022 protocol; claiming_reference_v1 scores only that construct",
+    "all_match": true,
+    "rules": {
+      "nearest_year": {
+        "committed_max_abs_deviation": 3.2,
+        "rebuilt_max_abs_deviation": 3.2,
+        "committed_mean_abs_deviation": 1.1875,
+        "rebuilt_mean_abs_deviation": 1.1875,
+        "committed_rmse": 1.5411,
+        "rebuilt_rmse": 1.5411,
+        "committed_n_cells": 48,
+        "rebuilt_n_cells": 48,
+        "match": true
+      },
+      "linear_trend": {
+        "committed_max_abs_deviation": 8.1623,
+        "rebuilt_max_abs_deviation": 8.1623,
+        "committed_mean_abs_deviation": 2.2644,
+        "rebuilt_mean_abs_deviation": 2.2644,
+        "committed_rmse": 2.7588,
+        "rebuilt_rmse": 2.7588,
+        "committed_n_cells": 48,
+        "rebuilt_n_cells": 48,
+        "match": true
+      }
+    }
+  },
+  "candidate_rules_on_the_draft_surface": {
+    "surface": "the 34 DRAFT gate-eligible (category x sex x horizon) cells of the conditional construct",
+    "rule_classes": {
+      "forecast": "rules that predict a held-out year from the fit window's own level and trend. These bound the achievable frontier.",
+      "degenerate": "shapeless, level-only and sex-blind rules, included to show which dimensions the surface has bite on. They are NOT part of the frontier envelope: a degenerate rule that lands near a cell by accident would otherwise flatter it."
+    },
+    "rules": {
+      "deployed_v1_nearest_year": {
+        "rule_class": "forecast",
+        "description": "the module's documented default: predict every out-of-range year with the last fit year (2019) (populace_dynamics.claiming._resolve_year)",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 6,
+        "failing_cells": [
+          "age62|female|h1",
+          "age62|male|h1",
+          "age66|female|h1",
+          "age70plus|female|h2",
+          "age70plus|male|h2",
+          "age70plus|male|h3"
+        ],
+        "max_abs_deviation_pp": 3.8087,
+        "mean_abs_deviation_pp": 0.9499
+      },
+      "uniform_over_seven_categories": {
+        "rule_class": "degenerate",
+        "description": "every category 100/7 pp",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 31,
+        "failing_cells": [
+          "age62|female|h1",
+          "age62|male|h1",
+          "age63|female|h1",
+          "age63|female|h2",
+          "age63|female|h3",
+          "age63|male|h1",
+          "age63|male|h2",
+          "age63|male|h3",
+          "age64|female|h1",
+          "age64|female|h2",
+          "age64|female|h3",
+          "age64|male|h1",
+          "age64|male|h2",
+          "age64|male|h3",
+          "age65|female|h1",
+          "age65|female|h2",
+          "age65|male|h1",
+          "age66|female|h1",
+          "age66|male|h1",
+          "age67_69|female|h1",
+          "age67_69|female|h2",
+          "age67_69|female|h3",
+          "age67_69|male|h1",
+          "age67_69|male|h2",
+          "age67_69|male|h3",
+          "age70plus|female|h1",
+          "age70plus|female|h2",
+          "age70plus|female|h3",
+          "age70plus|male|h1",
+          "age70plus|male|h2",
+          "age70plus|male|h3"
+        ],
+        "max_abs_deviation_pp": 16.2731,
+        "mean_abs_deviation_pp": 6.1909
+      },
+      "fit_window_mean": {
+        "rule_class": "degenerate",
+        "description": "predict each cell by its own 1998-2019 mean",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 23,
+        "failing_cells": [
+          "age62|female|h1",
+          "age62|male|h1",
+          "age64|female|h1",
+          "age64|female|h2",
+          "age64|male|h1",
+          "age64|male|h2",
+          "age65|male|h1",
+          "age65|male|h2",
+          "age65|male|h3",
+          "age66|female|h1",
+          "age66|male|h1",
+          "age67_69|female|h1",
+          "age67_69|female|h2",
+          "age67_69|female|h3",
+          "age67_69|male|h1",
+          "age67_69|male|h2",
+          "age67_69|male|h3",
+          "age70plus|female|h1",
+          "age70plus|female|h2",
+          "age70plus|female|h3",
+          "age70plus|male|h1",
+          "age70plus|male|h2",
+          "age70plus|male|h3"
+        ],
+        "max_abs_deviation_pp": 21.8262,
+        "mean_abs_deviation_pp": 4.9634
+      },
+      "sex_pooled_nearest_year": {
+        "rule_class": "degenerate",
+        "description": "nearest-year with the two sexes averaged",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 8,
+        "failing_cells": [
+          "age62|male|h1",
+          "age66|male|h1",
+          "age67_69|male|h2",
+          "age70plus|female|h1",
+          "age70plus|female|h2",
+          "age70plus|female|h3",
+          "age70plus|male|h2",
+          "age70plus|male|h3"
+        ],
+        "max_abs_deviation_pp": 4.4214,
+        "mean_abs_deviation_pp": 1.0023
+      },
+      "ols_full_fit_window": {
+        "rule_class": "forecast",
+        "description": "OLS on all 22 fit years, extrapolated",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 20,
+        "failing_cells": [
+          "age62|female|h1",
+          "age62|male|h1",
+          "age64|female|h3",
+          "age64|male|h1",
+          "age64|male|h2",
+          "age64|male|h3",
+          "age65|female|h3",
+          "age65|male|h3",
+          "age66|female|h1",
+          "age66|male|h1",
+          "age67_69|female|h1",
+          "age67_69|female|h2",
+          "age67_69|male|h1",
+          "age67_69|male|h2",
+          "age70plus|female|h1",
+          "age70plus|female|h2",
+          "age70plus|female|h3",
+          "age70plus|male|h1",
+          "age70plus|male|h2",
+          "age70plus|male|h3"
+        ],
+        "max_abs_deviation_pp": 7.2796,
+        "mean_abs_deviation_pp": 2.2127
+      },
+      "ols_last_10": {
+        "rule_class": "forecast",
+        "description": "OLS on the last ten fit years",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 5,
+        "failing_cells": [
+          "age63|male|h2",
+          "age63|male|h3",
+          "age66|female|h1",
+          "age70plus|male|h2",
+          "age70plus|male|h3"
+        ],
+        "max_abs_deviation_pp": 2.3345,
+        "mean_abs_deviation_pp": 0.8362
+      },
+      "ols_last_5": {
+        "rule_class": "forecast",
+        "description": "OLS on the last five fit years (2015-2019)",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 2,
+        "failing_cells": [
+          "age63|male|h3",
+          "age66|female|h1"
+        ],
+        "max_abs_deviation_pp": 2.4642,
+        "mean_abs_deviation_pp": 0.5843
+      },
+      "ols_last_3": {
+        "rule_class": "forecast",
+        "description": "OLS on the last three fit years",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 5,
+        "failing_cells": [
+          "age63|male|h3",
+          "age66|female|h1",
+          "age67_69|male|h3",
+          "age70plus|male|h2",
+          "age70plus|male|h3"
+        ],
+        "max_abs_deviation_pp": 2.8131,
+        "mean_abs_deviation_pp": 0.6877
+      },
+      "damped_local_trend_w5_d0.5": {
+        "rule_class": "forecast",
+        "description": "last fit value plus half the 5-year slope",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 4,
+        "failing_cells": [
+          "age62|female|h1",
+          "age66|female|h1",
+          "age70plus|male|h2",
+          "age70plus|male|h3"
+        ],
+        "max_abs_deviation_pp": 3.2338,
+        "mean_abs_deviation_pp": 0.6779
+      },
+      "damped_local_trend_w5_d1.0": {
+        "rule_class": "forecast",
+        "description": "last fit value plus the full 5-year slope",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 2,
+        "failing_cells": [
+          "age63|male|h3",
+          "age66|female|h1"
+        ],
+        "max_abs_deviation_pp": 2.7396,
+        "mean_abs_deviation_pp": 0.5971
+      },
+      "damped_local_trend_w10_d0.5": {
+        "rule_class": "forecast",
+        "description": "last fit value plus half the 10-year slope",
+        "n_gate_eligible_cells": 34,
+        "n_failed": 5,
+        "failing_cells": [
+          "age62|female|h1",
+          "age63|male|h3",
+          "age66|female|h1",
+          "age70plus|male|h2",
+          "age70plus|male|h3"
+        ],
+        "max_abs_deviation_pp": 3.2327,
+        "mean_abs_deviation_pp": 0.7327
+      }
+    },
+    "post_hoc_best_of_forecast_class_envelope": {
+      "description": "per cell, the smallest absolute deviation achieved by any FORECAST-class rule above. NOT prospectively achievable -- it picks the best rule per cell after the fact -- and reported only to bound the frontier.",
+      "rules_in_envelope": [
+        "damped_local_trend_w10_d0.5",
+        "damped_local_trend_w5_d0.5",
+        "damped_local_trend_w5_d1.0",
+        "deployed_v1_nearest_year",
+        "ols_full_fit_window",
+        "ols_last_10",
+        "ols_last_3",
+        "ols_last_5"
+      ],
+      "n_failed": 1,
+      "failing_cells": [
+        "age66|female|h1"
+      ],
+      "max_abs_deviation_pp": 2.3288,
+      "mean_abs_deviation_pp": 0.315,
+      "per_cell_pp": {
+        "age62|female|h1": 1.0881,
+        "age62|male|h1": 0.3694,
+        "age63|female|h1": 0.0215,
+        "age63|female|h2": 0.0174,
+        "age63|female|h3": 0.2629,
+        "age63|male|h1": 0.1033,
+        "age63|male|h2": 0.0412,
+        "age63|male|h3": 0.3659,
+        "age64|female|h1": 0.0627,
+        "age64|female|h2": 0.1031,
+        "age64|female|h3": 0.0077,
+        "age64|male|h1": 0.0098,
+        "age64|male|h2": 0.3592,
+        "age64|male|h3": 0.5738,
+        "age65|female|h1": 0.0233,
+        "age65|female|h2": 0.0196,
+        "age65|female|h3": 0.6679,
+        "age65|male|h1": 0.007,
+        "age65|male|h2": 0.0025,
+        "age65|male|h3": 0.5995,
+        "age66|female|h1": 2.3288,
+        "age66|male|h1": 0.0201,
+        "age67_69|female|h1": 0.0158,
+        "age67_69|female|h2": 0.1235,
+        "age67_69|female|h3": 0.1625,
+        "age67_69|male|h1": 0.0895,
+        "age67_69|male|h2": 0.1946,
+        "age67_69|male|h3": 0.2735,
+        "age70plus|female|h1": 0.188,
+        "age70plus|female|h2": 0.2246,
+        "age70plus|female|h3": 0.0396,
+        "age70plus|male|h1": 0.2361,
+        "age70plus|male|h2": 1.2519,
+        "age70plus|male|h3": 0.8562
+      }
+    },
+    "every_gate_eligible_cell_failed_by_some_rule": true
+  },
+  "deployed_v1_finding": {
+    "reported_not_gated": true,
+    "statement": "Under the DRAFT gate_b2_claiming tolerances the CURRENTLY DEPLOYED v1 nearest-year claiming rule fails 6 of 34 gate-eligible cells. This is a measurement against a DRAFT surface, not a gate verdict: gates.yaml carries no gate_b2_claiming, no candidate has been registered, and no run has been scored.",
+    "n_gate_eligible_cells": 34,
+    "n_failed": 6,
+    "failing_cells": [
+      "age62|female|h1",
+      "age62|male|h1",
+      "age66|female|h1",
+      "age70plus|female|h2",
+      "age70plus|male|h2",
+      "age70plus|male|h3"
+    ],
+    "max_abs_deviation_pp": 3.8087,
+    "mean_abs_deviation_pp": 0.9499,
+    "per_failing_cell": {
+      "age62|female|h1": {
+        "tolerance_pp": 2.3,
+        "reference_pp": 30.5589,
+        "tolerance_is_sd_knob_sensitive": false
+      },
+      "age62|male|h1": {
+        "tolerance_pp": 2.27,
+        "reference_pp": 28.11,
+        "tolerance_is_sd_knob_sensitive": false
+      },
+      "age66|female|h1": {
+        "tolerance_pp": 2.24,
+        "reference_pp": 25.327,
+        "tolerance_is_sd_knob_sensitive": false
+      },
+      "age70plus|female|h2": {
+        "tolerance_pp": 1.53,
+        "reference_pp": 10.4287,
+        "tolerance_is_sd_knob_sensitive": true
+      },
+      "age70plus|male|h2": {
+        "tolerance_pp": 1.45,
+        "reference_pp": 9.0909,
+        "tolerance_is_sd_knob_sensitive": false
+      },
+      "age70plus|male|h3": {
+        "tolerance_pp": 1.66,
+        "reference_pp": 9.4737,
+        "tolerance_is_sd_knob_sensitive": false
+      }
+    },
+    "sd_knob_sensitive_failing_cells": [
+      "age70plus|female|h2"
+    ]
+  },
+  "deviation_arithmetic": {
+    "note": "Two arithmetics, both deliberate, reported side by side. holdout_rules rounds the prediction to 4 decimals before differencing (matching scripts/build_claiming_reference.py so the published construct reproduces the committed artifact exactly); candidate_rules_on_the_draft_surface and deployed_v1_finding difference the unrounded prediction and round once. They differ by at most one 4-decimal ulp.",
+    "rounded_prediction_path": "holdout_rules.per_cell.*, holdout_rules.published.*, holdout_rules.conditional.*, reproduces_claiming_reference_v1",
+    "unrounded_prediction_path": "candidate_rules_on_the_draft_surface.*, deployed_v1_finding",
+    "surface": "the 34 DRAFT gate-eligible cells, under the deployed nearest-year rule -- the one rule both paths score",
+    "n_cells_compared": 34,
+    "n_cells_differing": 10,
+    "max_abs_difference_pp": 0.0001,
+    "n_verdict_flips": 0,
+    "verdict_flips": [],
+    "verdict_identical_under_both_paths": true,
+    "closest_any_cell_comes_to_its_tolerance_pp": 0.0584,
+    "why_no_flip_is_possible_here": "the largest disagreement between the paths is one 4-decimal ulp, and no gate-eligible cell sits within that of its tolerance -- see closest_any_cell_comes_to_its_tolerance_pp",
+    "cells": {
+      "age62|female|h1": {
+        "rounded_prediction_path_pp": 3.8086,
+        "unrounded_prediction_path_pp": 3.8087,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 2.3,
+        "exceeds_tolerance_either_way": true
+      },
+      "age63|male|h2": {
+        "rounded_prediction_path_pp": 0.5082,
+        "unrounded_prediction_path_pp": 0.5081,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 1.1,
+        "exceeds_tolerance_either_way": true
+      },
+      "age64|female|h1": {
+        "rounded_prediction_path_pp": 0.2681,
+        "unrounded_prediction_path_pp": 0.268,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 1.27,
+        "exceeds_tolerance_either_way": true
+      },
+      "age64|male|h1": {
+        "rounded_prediction_path_pp": 0.1025,
+        "unrounded_prediction_path_pp": 0.1024,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 1.4,
+        "exceeds_tolerance_either_way": true
+      },
+      "age65|female|h2": {
+        "rounded_prediction_path_pp": 0.097,
+        "unrounded_prediction_path_pp": 0.0971,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 1.37,
+        "exceeds_tolerance_either_way": true
+      },
+      "age66|female|h1": {
+        "rounded_prediction_path_pp": 3.728,
+        "unrounded_prediction_path_pp": 3.7279,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 2.24,
+        "exceeds_tolerance_either_way": true
+      },
+      "age67_69|male|h3": {
+        "rounded_prediction_path_pp": 0.2734,
+        "unrounded_prediction_path_pp": 0.2735,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 1.81,
+        "exceeds_tolerance_either_way": true
+      },
+      "age70plus|female|h1": {
+        "rounded_prediction_path_pp": 0.2064,
+        "unrounded_prediction_path_pp": 0.2063,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 1.28,
+        "exceeds_tolerance_either_way": true
+      },
+      "age70plus|female|h3": {
+        "rounded_prediction_path_pp": 1.4021,
+        "unrounded_prediction_path_pp": 1.402,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 1.77,
+        "exceeds_tolerance_either_way": true
+      },
+      "age70plus|male|h1": {
+        "rounded_prediction_path_pp": 1.1816,
+        "unrounded_prediction_path_pp": 1.1815,
+        "difference_pp": 0.0001,
+        "tolerance_pp": 1.24,
+        "exceeds_tolerance_either_way": true
+      }
+    }
+  },
+  "packet_reconciliation": {
+    "packet": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+    "purpose": "Where this build's measurement differs from the number the DRAFT packet states, the difference is recorded here rather than silently adopted.",
+    "differences": [
+      {
+        "field": "floor.strata.conditional_settled_years.nonzero_cells",
+        "packet_states": 1,
+        "measured": 7,
+        "note": "The packet carries the PUBLISHED stratum's nonzero count (1) on the CONDITIONAL row. One published cell moving renormalises its whole (sex, year) row, so all seven conditional categories of that row move. The packet's mean, sd and max for the same stratum reproduce exactly, so only the count is affected and no proposed tolerance changes."
+      }
+    ]
+  },
+  "does_not_establish": [
+    "any threshold: no tolerance here is ratified and gates.yaml carries no gate_b2_claiming",
+    "that the DRAFT tolerances are insensitive to the sd knob's 4-decimal rounding: see power_cap.sd_knob_rounding_check, which names every cell whose 2-decimal tolerance moves when the full-precision sd is used",
+    "the revision settle path: the 2021 and 2022 Supplement editions are not staged, so the terminal-year stratum is measured on ONE edition pair and one year (14 conditional cells)",
+    "that the scanned rule class is complete: the candidate rules above are a scan, not a proof that no admissible rule does better",
+    "any cause for the 2020 level shift in the reference: not established by any source read here"
+  ],
+  "build": {
+    "built_utc": "2026-09-06T16:25:42.453192+00:00",
+    "built_by": "scripts/build_claiming_publication_floor.py"
+  }
+}
