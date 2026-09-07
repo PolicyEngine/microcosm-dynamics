@@ -13,9 +13,13 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 import subprocess
+import sys
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
 import pytest
 import yaml
 
@@ -3969,3 +3973,1209 @@ def test_gate_m4_flip_leaves_locked_siblings_byte_identical():
     assert current["gate_2"]["thresholds"]["locked"] is True
     assert current["gate_2"]["gate_2b"]["locked"] is True
     assert current["gate_2"]["gate_2c"]["locked"] is True
+
+
+# --------------------------------------------------------------------------
+# gate_mortality (issue #74 Phase B) THRESHOLD BINDING -- DRAFT, pre-lock.
+# The block does not exist in gates.yaml yet: it is carried as a string in
+# runs/mortality_gate_floors_v1.json (draft_gates_yaml_fragment.text), the
+# gate-3 floors precedent. While GATE_MORTALITY_BLOCK_LANDED is False these
+# bindings read the DRAFT block from the artifact and assert gates.yaml is
+# innocent of it; the commit that inserts the block flips ONE constant and
+# the same bindings run LOCKED-HOT against the live contract (the v3
+# pre-lock-guard shape; the gate_m6 flip precedent 4b75147). Every
+# tolerance is recomputed from the VERIFIED floor basis
+# runs/mortality_floors_v3.json's PER-SEED record, never from a typed
+# number and never from the gate artifact's own copy of the floor.
+# --------------------------------------------------------------------------
+MORTALITY_FLOOR_RUN = "runs/mortality_floors_v3.json"
+#: (size, sha256) of the VERIFIED floor basis (floors v4 at 62d01d6;
+#: verification VERIFIED -- READY FOR THRESHOLD BINDING). Referee A's D1
+#: remedy at binding: nothing machine-readable stopped a rebuilt artifact
+#: from replacing it under the same file name until this constant.
+MORTALITY_FLOOR_COMMITTED = (
+    2_711_564,
+    "8998bca2d7026926cc44a199087810bc654863c12b2d14466ce0ff73f95e0776",
+)
+MORTALITY_GATE_RUN = "runs/mortality_gate_floors_v1.json"
+MORTALITY_FLOOR_KEY = "noise_floor_seeds_0_99"
+MORTALITY_HEADLINE_CONVENTION = "pinned_narrow_midpoint"
+MORTALITY_HEADLINE_UNIVERSE = "declared_1997_plus"
+MORTALITY_CELL_PREFIX = "death."
+#: R9 -- the PROPOSED draw-stream base (issue #74 -> 7400 + k). It enters
+#: gates.yaml only at the flip; until then the live file must not name it.
+MORTALITY_DRAW_STREAM_BASE = 7400
+MORTALITY_CANDIDATE_DRAWS = 20
+MORTALITY_T_MAX = math.log(1.5)
+#: PRE-LOCK MARKER (the v3 test's GATE_MORTALITY_BLOCK_LANDED; referee A
+#: addition (iii)). Flipped to True in the SAME commit that inserts the
+#: block, in every file that carries it (the artifact's flip_plan lists
+#: them). Nothing else in this file changes at the flip.
+GATE_MORTALITY_BLOCK_LANDED = False
+
+
+def _mortality_floor() -> dict:
+    return json.loads((ROOT / MORTALITY_FLOOR_RUN).read_text())
+
+
+def _mortality_gate_floor() -> dict:
+    return json.loads((ROOT / MORTALITY_GATE_RUN).read_text())
+
+
+def _mortality_headline(floor: dict) -> dict:
+    return floor["internal_noise_floor"]["conventions"][
+        MORTALITY_HEADLINE_CONVENTION
+    ]["universes"][MORTALITY_HEADLINE_UNIVERSE]
+
+
+def _mortality_per_seed_values(floor: dict, cell: str) -> np.ndarray:
+    per_seed = _mortality_headline(floor)["per_seed"]
+    assert [s["seed"] for s in per_seed] == list(range(100))
+    return np.array(
+        [s["cells"][cell]["log_ratio_abs"] for s in per_seed], dtype=float
+    )
+
+
+def _mortality_derive(floor: dict, cell: str, k: float, rounding: int):
+    """round(mean + k*sd, rounding) from the PER-SEED record (sd ddof=1)."""
+    values = _mortality_per_seed_values(floor, cell)
+    return round(float(values.mean() + k * values.std(ddof=1)), rounding)
+
+
+def _mortality_sigma(floor: dict, cell: str) -> float:
+    values = _mortality_per_seed_values(floor, cell)
+    return float(np.sqrt((values**2).mean()))
+
+
+def _gate_mortality_block() -> dict:
+    """The gate_mortality block: the artifact's DRAFT fragment pre-flip,
+    the live gates.yaml block post-flip."""
+    if GATE_MORTALITY_BLOCK_LANDED:
+        gates = yaml.safe_load((ROOT / "gates.yaml").read_text())
+        return gates["gates"]["gate_mortality"]
+    text = _mortality_gate_floor()["draft_gates_yaml_fragment"]["text"]
+    return yaml.safe_load("gates:\n" + text)["gates"]["gate_mortality"]
+
+
+def _gate_mortality_thresholds() -> dict:
+    return _gate_mortality_block()["thresholds"]
+
+
+def _mortality_internal_tolerances(block: dict) -> dict:
+    tolerances: dict = {}
+    for view in block["thresholds"]["internal_surface"]["views"].values():
+        tolerances.update(view["tolerances"])
+    return tolerances
+
+
+def _import_mortality_builders():
+    if str(ROOT / "scripts") not in sys.path:
+        sys.path.insert(0, str(ROOT / "scripts"))
+    import build_mortality_floors_v3 as v3b
+    import build_mortality_gate_floors_v1 as gb
+
+    return v3b, gb
+
+
+def test_gate_mortality_floor_basis_bytes_are_pinned_and_read_by_path():
+    """The verified v3 floor's size + sha256 equal the constants here; the
+    gate artifact records that it read exactly those bytes by path
+    (referee A D1 / referee B: 'reading this artifact by path')."""
+    path = ROOT / MORTALITY_FLOOR_RUN
+    assert path.stat().st_size == MORTALITY_FLOOR_COMMITTED[0]
+    assert (
+        hashlib.sha256(path.read_bytes()).hexdigest()
+        == MORTALITY_FLOOR_COMMITTED[1]
+    )
+    art = _mortality_gate_floor()
+    src = art["source_floor"]
+    assert src["path"] == MORTALITY_FLOOR_RUN
+    assert (src["size_bytes"], src["sha256"]) == MORTALITY_FLOOR_COMMITTED
+    assert src["convention"] == MORTALITY_HEADLINE_CONVENTION
+    assert src["universe"] == MORTALITY_HEADLINE_UNIVERSE
+    assert art["schema_version"] == "mortality_gate_floors.v1"
+    assert art["reported_anchor_not_gated"] is True
+    assert art["ceremony"]["gates_yaml_untouched"] is True
+    block = _gate_mortality_block()
+    assert block["derived_from_floor"] == MORTALITY_FLOOR_RUN
+    assert block["derived_from_floor_sha256"] == MORTALITY_FLOOR_COMMITTED[1]
+    assert block["thresholds"]["derived_from"]["sha256"] == (
+        MORTALITY_FLOOR_COMMITTED[1]
+    )
+
+
+def test_gate_mortality_pre_lock_guard_or_live_block():
+    """PRE-LOCK GUARD under GATE_MORTALITY_BLOCK_LANDED (the v3 test's
+    shape, referee B D-5). While False: gates.yaml names neither the gate
+    nor either mortality artifact, and the DRAFT block says it is a draft.
+    Flipped: the block is a live top-level gate citing the gate artifact
+    by path with its ratified sha256."""
+    gates_text = (ROOT / "gates.yaml").read_text()
+    block = _gate_mortality_block()
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        assert "gate_mortality" not in gates_text
+        assert "mortality_gate_floors_v1" not in gates_text
+        assert "mortality_floors_v3" not in gates_text
+        assert block["status"] == "draft_pending_referee_round"
+        assert block["locked"] is False
+        assert block["thresholds"]["locked"] is False
+        assert block["floor_run_sha256"] == "<FILLED AT RATIFICATION>"
+        assert block["lock_ceremony"]["exists"] is False
+        return
+    spec = yaml.safe_load(gates_text)
+    assert "gate_mortality" in spec["gates"]
+    assert block["floor_run"] == MORTALITY_GATE_RUN
+    assert (
+        block["floor_run_sha256"]
+        == hashlib.sha256((ROOT / MORTALITY_GATE_RUN).read_bytes()).hexdigest()
+    )
+    assert block["locked"] is True
+
+
+def test_gate_mortality_internal_tolerances_bind_to_v3_per_seed_values():
+    """Every tolerance in the block == round(mean + k*sd, rounding) over
+    the 100 per-seed |ln(m_A/m_B)| values of v3's headline block, keyed on
+    the floor cell (the gate_m4 binding shape), and equals v3's own
+    cell_stability tolerance -- recomputed here, never typed."""
+    floor = _mortality_floor()
+    v3_stab = _mortality_headline(floor)["cell_stability"]
+    block = _gate_mortality_block()
+    surface = block["thresholds"]["internal_surface"]
+    assert surface["floor_run"] == MORTALITY_GATE_RUN
+    assert surface["floor_key"] == MORTALITY_FLOOR_KEY
+    seen: set = set()
+    for view_name, view in surface["views"].items():
+        rules = view["derivations"]["rules"]
+        tolerances = view["tolerances"]
+        assert set(rules) == set(tolerances), view_name
+        assert view["derivations"]["floor_run"] == MORTALITY_GATE_RUN
+        assert view["derivations"]["floor_key"] == MORTALITY_FLOOR_KEY
+        assert view["quantity_type"] == "flow"
+        for gate_cell, rule in rules.items():
+            cell = rule["key"]
+            assert gate_cell == MORTALITY_CELL_PREFIX + cell
+            assert rule["k"] == 3
+            assert rule["quantity_type"] == "flow"
+            derived = _mortality_derive(
+                floor, cell, rule["k"], rule.get("rounding", 3)
+            )
+            assert derived == pytest.approx(tolerances[gate_cell]), (
+                f"{view_name}.{gate_cell}: derived {derived} != "
+                f"{tolerances[gate_cell]}"
+            )
+            assert derived == v3_stab[cell]["tolerance_k3"]
+            assert derived <= MORTALITY_T_MAX
+            seen.add(cell)
+    assert seen == {"75-84|male", "75-84|female", "85+|male", "85+|female"}
+    # the artifact's own floor block is the SAME derivation, not a copy.
+    art = _mortality_gate_floor()
+    for cell in seen:
+        values = _mortality_per_seed_values(floor, cell)
+        blk = art[MORTALITY_FLOOR_KEY][cell]
+        assert blk["mean"] == pytest.approx(values.mean(), rel=1e-12)
+        assert blk["sd"] == pytest.approx(values.std(ddof=1), rel=1e-12)
+        assert blk["values"] == pytest.approx(values.tolist(), rel=1e-12)
+
+
+def test_gate_mortality_k_sensitivity_1_2_4_beside_k3():
+    """tolerance_k1/k2/k3/k4 in the artifact's cell_stability recompute
+    from the per-seed values for all 14 cells; k_selection.by_k lists the
+    clearing cells at each k; k=3 is the only k keeping both 75-84 cells
+    and clearing the precedent band on both surfaces."""
+    floor = _mortality_floor()
+    art = _mortality_gate_floor()
+    stab = art["cell_stability"]
+    cells = floor["cell_order"]
+    assert set(stab) == set(cells) and len(cells) == 14
+    for cell in cells:
+        for k in (1, 2, 3, 4):
+            assert stab[cell][f"tolerance_k{k}"] == _mortality_derive(
+                floor, cell, k, 3
+            ), (cell, k)
+        assert stab[cell]["realized_sigma"] == pytest.approx(
+            _mortality_sigma(floor, cell), rel=1e-12
+        )
+        assert stab[cell]["clears_t_max_at_k3"] == (
+            stab[cell]["tolerance_k3"] <= MORTALITY_T_MAX
+        )
+    by_k = art["k_selection"]["by_k"]
+    assert art["k_selection"]["chosen_k"] == 3
+    for k in (1, 2, 3, 4):
+        clearing = sorted(
+            c for c in cells if stab[c][f"tolerance_k{k}"] <= MORTALITY_T_MAX
+        )
+        assert by_k[str(k)]["cells_incl_85plus"] == clearing
+        assert by_k[str(k)]["cells_25_84"] == [
+            c for c in clearing if not c.startswith("85+")
+        ]
+    assert by_k["3"]["cells_incl_85plus"] == [
+        "75-84|female",
+        "75-84|male",
+        "85+|female",
+        "85+|male",
+    ]
+    assert "75-84|female" not in by_k["4"]["cells_incl_85plus"]
+    assert by_k["2"]["p_gate_incl_85plus"] < 0.9641
+    assert by_k["2"]["p_gate_25_84"] < 0.9641
+    assert by_k["3"]["p_gate_incl_85plus"] >= 0.9685
+    assert by_k["3"]["p_gate_25_84"] >= 0.9685
+    block_k = _gate_mortality_thresholds()["k_selection"]
+    assert block_k["chosen_k"] == 3
+    for k in ("1", "2", "3", "4"):
+        assert block_k["by_k"][k]["n_cells_25_84"] == by_k[k]["n_cells_25_84"]
+        assert block_k["by_k"][k]["p_gate_25_84"] == by_k[k]["p_gate_25_84"]
+        assert (
+            block_k["by_k"][k]["n_cells_incl_85plus"]
+            == by_k[k]["n_cells_incl_85plus"]
+        )
+        assert (
+            block_k["by_k"][k]["p_gate_incl_85plus"]
+            == by_k[k]["p_gate_incl_85plus"]
+        )
+
+
+def _mortality_partition_under(floor: dict, rule: str) -> tuple[list, dict]:
+    """Recompute one eligibility rule's partition from v3's per-seed
+    death counts (unweighted and Kish) and the k=3 tolerance."""
+    head = _mortality_headline(floor)
+    eligible, reasons = [], {}
+    for cell in floor["cell_order"]:
+        tol = _mortality_derive(floor, cell, 3, 3)
+        min_unwt = min(
+            min(s["cells"][cell]["n_death_a"], s["cells"][cell]["n_death_b"])
+            for s in head["per_seed"]
+        )
+        min_kish = min(
+            min(
+                s["cells"][cell]["kish_death_a"],
+                s["cells"][cell]["kish_death_b"],
+            )
+            for s in head["per_seed"]
+        )
+        if tol > MORTALITY_T_MAX:
+            reasons[cell] = "tolerance_above_t_max"
+        elif rule == "unweighted_worst_seed_ge_20" and min_unwt < 20:
+            reasons[cell] = "below_20_deaths_weaker_half"
+        elif rule == "kish_effective_ge_20" and min_kish < 20:
+            reasons[cell] = "below_20_effective_deaths_weaker_half"
+        else:
+            reasons[cell] = "clears_t_max_at_k3"
+            eligible.append(cell)
+    return sorted(eligible), reasons
+
+
+def test_gate_mortality_partition_under_both_eligibility_rules():
+    """R3: the partition recomputed under BOTH rules from the per-seed
+    counts equals the artifact's; the gated sets are identical (four
+    cells, unweighted min 86-155 / Kish 67.6-120.9); the block's
+    report_only is set-bound to the artifact's gate_partition."""
+    floor = _mortality_floor()
+    art = _mortality_gate_floor()
+    rules = art["eligibility_rules"]
+    for rule in ("unweighted_worst_seed_ge_20", "kish_effective_ge_20"):
+        eligible, reasons = _mortality_partition_under(floor, rule)
+        assert rules[rule]["gate_eligible_internal"] == eligible, rule
+        assert rules[rule]["report_reason"] == reasons, rule
+    assert rules["difference"]["gated_sets_identical"] is True
+    gated = rules["kish_effective_ge_20"]["gate_eligible_internal"]
+    assert gated == ["75-84|female", "75-84|male", "85+|female", "85+|male"]
+    for cell in gated:
+        counts = rules["difference"]["min_counts_on_the_gated_set"][cell]
+        assert counts["unweighted"] >= 86
+        assert counts["kish"] >= 67.5
+    partition = art["gate_partition"]
+    assert partition["internal_gate_eligible"] == [
+        MORTALITY_CELL_PREFIX + c for c in gated
+    ]
+    assert len(partition["report_only"]) == 10
+    assert set(partition["internal_gate_eligible"]).isdisjoint(
+        partition["report_only"]
+    )
+    assert set(partition["internal_gate_eligible"]) | set(
+        partition["report_only"]
+    ) == set(art["reference_moments"])
+    block = _gate_mortality_block()
+    assert set(block["thresholds"]["report_only"]) == set(
+        partition["report_only"]
+    )
+    assert set(_mortality_internal_tolerances(block)) == set(
+        partition["internal_gate_eligible"]
+    )
+    # the R4 alternative partition is the same set minus 85+.
+    alt = partition["r4_alternative_partition"]
+    assert alt["internal_gate_eligible"] == [
+        MORTALITY_CELL_PREFIX + c for c in gated if not c.startswith("85+")
+    ]
+    assert set(alt["report_only"]) == set(partition["report_only"]) | {
+        MORTALITY_CELL_PREFIX + c for c in gated if c.startswith("85+")
+    }
+
+
+def test_gate_mortality_faithful_oc_recomputes_on_both_surfaces():
+    """The faithful-candidate OC (gate_m4 basis) recomputes from the
+    bound tolerances and the per-seed sigmas for the 4-cell and 2-cell
+    surfaces; both sit at or above the precedent band top 0.9685."""
+    floor = _mortality_floor()
+    art = _mortality_gate_floor()
+    block = _gate_mortality_block()
+    tolerances = _mortality_internal_tolerances(block)
+    expected = {}
+    for label, cells in (
+        ("surface_4_cell_incl_85plus", sorted(tolerances)),
+        (
+            "surface_2_cell_25_84",
+            sorted(c for c in tolerances if "85+" not in c),
+        ),
+    ):
+        p_seed = 1.0
+        for gate_cell in cells:
+            cell = gate_cell.removeprefix(MORTALITY_CELL_PREFIX)
+            p_seed *= (
+                2.0
+                * _normal_cdf(
+                    tolerances[gate_cell] / _mortality_sigma(floor, cell)
+                )
+                - 1.0
+            )
+        p_gate = p_seed**5 + 5 * p_seed**4 * (1 - p_seed)
+        expected[label] = (round(p_seed, 4), round(p_gate, 4), len(cells))
+        oc = art["faithful_candidate_oc"][label]
+        assert oc["n_gated_internal_cells"] == len(cells)
+        assert oc["p_seed_pass"] == round(p_seed, 4)
+        assert oc["p_gate_pass_4_of_5"] == round(p_gate, 4)
+        assert oc["p_gate_pass_4_of_5"] >= 0.9685
+        blk = block["thresholds"]["faithful_candidate_oc"][label]
+        assert blk["p_seed_pass"] == round(p_seed, 4)
+        assert blk["p_gate_pass_4_of_5"] == round(p_gate, 4)
+        assert blk["n_gated_internal_cells"] == len(cells)
+    assert expected["surface_4_cell_incl_85plus"] == (0.9622, 0.9868, 4)
+    assert expected["surface_2_cell_25_84"] == (0.9841, 0.9975, 2)
+    assert (
+        block["thresholds"]["faithful_candidate_oc"]["binding_surface"]
+        == "<RULING R4>"
+    )
+
+
+def _mortality_margin(per_seed: list, full_h: dict, stat) -> dict:
+    side_a = [stat(s["hazards_side_a"]) for s in per_seed]
+    both = [
+        stat(h)
+        for s in per_seed
+        for h in (s["hazards_side_a"], s["hazards_side_b"])
+    ]
+    out = {}
+    for label, vals in (("side_a", side_a), ("both_sides", both)):
+        arr = np.array([v for v in vals if v is not None], dtype=float)
+        sd = float(arr.std(ddof=1))
+        out[label] = {
+            "sd": sd,
+            "margin": round(stat(full_h) / sd, 3),
+            "holds": bool(arr.min() > 0),
+        }
+    return out
+
+
+def test_gate_mortality_anchor_margins_and_operating_characteristic():
+    """R5: the dominance margins under both half conventions recompute
+    from v3's per-seed hazard vectors (3.139 / 3.066 sigma) and equal the
+    block; referee A's anchor OC recomputes (0.597 / 0.365 / 0.262 /
+    0.221) from Phi((margin - K) / noise) with the two stated noise
+    models; the remedies' rows recompute; the ruling is FILED, not made."""
+    floor = _mortality_floor()
+    art = _mortality_gate_floor()
+    block = _gate_mortality_block()
+    head = _mortality_headline(floor)
+    full_h = {
+        k: v["psid_m"]
+        for k, v in floor["external_anchor"]["windows"][
+            MORTALITY_HEADLINE_UNIVERSE
+        ]["by_band_sex"].items()
+    }
+
+    def dominance(h: dict, bands=("45-54", "55-64", "65-74")):
+        vals = []
+        for b in bands:
+            m, f = h.get(f"{b}|male", 0.0), h.get(f"{b}|female", 0.0)
+            if m <= 0 or f <= 0:
+                return None
+            vals.append(math.log(m / f))
+        return min(vals)
+
+    margins = _mortality_margin(head["per_seed"], full_h, dominance)
+    assert margins["side_a"]["margin"] == 3.139
+    assert margins["both_sides"]["margin"] == 3.066
+    assert margins["side_a"]["holds"] and margins["both_sides"]["holds"]
+    chk = art["anchor_checks"]["sex_dominance.male_exceeds_female"]
+    cell = block["thresholds"]["anchor_surface"]["cells"][
+        "sex_dominance.male_exceeds_female"
+    ]
+    for conv in ("side_a", "both_sides"):
+        assert chk[conv]["margin_sigma_units"] == margins[conv]["margin"]
+        assert chk[conv]["half_split_sd"] == pytest.approx(
+            margins[conv]["sd"], rel=1e-12
+        )
+        assert cell["margin_sigma_units"][conv] == margins[conv]["margin"]
+        assert cell["real_half_split_sd"][conv] == pytest.approx(
+            margins[conv]["sd"], abs=5e-6
+        )
+        assert cell["holds_on_every_real_half"][conv] is True
+    # v3's own anchor tables agree (the derivation is not a copy).
+    v3_dom = floor["anchor_invariants"]["sex_dominance"][
+        "margins_by_band_set"
+    ]["45-54+55-64+65-74"]
+    assert v3_dom["side_a"]["margin_sigma_units"] == 3.139
+    assert v3_dom["both_sides"]["margin_sigma_units"] == 3.066
+    # the OC rows: Phi((margin - K) / noise), gate = p^5 + 5p^4(1-p).
+    noise = {
+        "draw_noise_only": 1 / math.sqrt(MORTALITY_CANDIDATE_DRAWS),
+        "fitted_excluding_holdout": math.sqrt(
+            1 + 1 / MORTALITY_CANDIDATE_DRAWS
+        ),
+    }
+
+    def row(margin, ratio, k):
+        p = _normal_cdf((margin - k) / ratio)
+        c6 = _normal_cdf((0.0 - k) / ratio)
+        return (
+            round(p, 4),
+            round(p**5 + 5 * p**4 * (1 - p), 4),
+            round(c6, 4),
+            round(c6**5 + 5 * c6**4 * (1 - c6), 4),
+        )
+
+    oc = art["anchor_operating_characteristic"]
+    inherited = oc["inherited_rule_margin_k_3_candidate_side"]
+    for mlabel, conv in (
+        ("headline_3_band_side_a", "side_a"),
+        ("headline_3_band_both_sides", "both_sides"),
+    ):
+        for scen, ratio in noise.items():
+            got = inherited[mlabel][scen]
+            exp = row(margins[conv]["margin"], ratio, 3)
+            assert got["faithful_p_seed"] == exp[0], (mlabel, scen)
+            assert got["faithful_p_gate_4_of_5"] == exp[1], (mlabel, scen)
+            assert got["sex_flat_c6_p_gate_4_of_5"] == exp[3]
+    a_reported = oc["referee_a_reported"]
+    for key, mlabel, scen in (
+        (
+            "side_a_draw_noise_only",
+            "headline_3_band_side_a",
+            "draw_noise_only",
+        ),
+        (
+            "side_a_fitted_excluding_holdout",
+            "headline_3_band_side_a",
+            "fitted_excluding_holdout",
+        ),
+        (
+            "both_sides_draw_noise_only",
+            "headline_3_band_both_sides",
+            "draw_noise_only",
+        ),
+        (
+            "both_sides_fitted_excluding_holdout",
+            "headline_3_band_both_sides",
+            "fitted_excluding_holdout",
+        ),
+    ):
+        got = inherited[mlabel][scen]
+        assert (
+            abs(got["faithful_p_gate_4_of_5"] - a_reported[key]["p_gate"])
+            < 1e-3
+        )
+        assert abs(got["faithful_p_seed"] - a_reported[key]["p_seed"]) < 1e-3
+    # the faithful candidate FAILS the inherited rule most of the time.
+    assert (
+        inherited["headline_3_band_both_sides"]["fitted_excluding_holdout"][
+            "faithful_p_gate_4_of_5"
+        ]
+        < 0.25
+    )
+    # gate_m4's weakest anchor (4.797) clears on the same computation.
+    assert (
+        inherited["gate_m4_weakest_anchor"]["fitted_excluding_holdout"][
+            "faithful_p_gate_4_of_5"
+        ]
+        >= 0.985
+    )
+    # the remedies recompute row by row.
+    for label, k in (("a_bare_positivity_k0", 0), ("b_k1", 1), ("b_k2", 2)):
+        by_margin = oc["remedies_priced"][label]["by_margin"]
+        for mlabel, conv in (
+            ("headline_3_band_side_a", "side_a"),
+            ("headline_3_band_both_sides", "both_sides"),
+        ):
+            for scen, ratio in noise.items():
+                got = by_margin[mlabel][scen]
+                exp = row(margins[conv]["margin"], ratio, k)
+                assert got["faithful_p_gate_4_of_5"] == exp[1], (label, scen)
+                assert got["sex_flat_c6_p_gate_4_of_5"] == exp[3], (
+                    label,
+                    scen,
+                )
+    # bare positivity lets the sex-flat degenerate through 18.75% of runs.
+    assert (
+        oc["remedies_priced"]["a_bare_positivity_k0"]["by_margin"][
+            "headline_3_band_both_sides"
+        ]["draw_noise_only"]["sex_flat_c6_p_gate_4_of_5"]
+        == 0.1875
+    )
+    assert "c_demote_and_rename" in oc["remedies_priced"]
+    assert oc["half_convention_proposed"]["proposal"] == "both_sides"
+    assert "FILED" in oc["status"]
+    # the block carries the OC beside the cell and names the ruling.
+    boc = cell["operating_characteristic"]["inherited_rule_faithful_p_gate"]
+    assert (
+        boc["both_sides_fitted_excluding_holdout"]
+        == inherited["headline_3_band_both_sides"]["fitted_excluding_holdout"][
+            "faithful_p_gate_4_of_5"
+        ]
+    )
+    assert "<RULING R5" in cell["gate_rule"]["candidate_condition"]
+    assert "<RULING R5" in cell["gated"]
+
+
+def test_gate_mortality_teeth_table_recomputes_and_names_the_non_catches():
+    """R11: C1-C6 recompute on the declared-window pinned full-panel
+    hazards against the bound tolerances; C4 and C6 are named as known
+    non-catches; C6's catch is attributed to the anchor with the anchor's
+    OC beside it (the gate_m4 catch_structure template)."""
+    floor = _mortality_floor()
+    art = _mortality_gate_floor()
+    block = _gate_mortality_block()
+    by = floor["external_anchor"]["windows"][MORTALITY_HEADLINE_UNIVERSE][
+        "by_band_sex"
+    ]
+    full_h = {k: v["psid_m"] for k, v in by.items()}
+    nchs = {k: v["nchs_M"] for k, v in by.items()}
+    tol = {
+        k.removeprefix(MORTALITY_CELL_PREFIX): v
+        for k, v in _mortality_internal_tolerances(block).items()
+    }
+    gated = sorted(tol)
+    assert art["degenerate_candidates"]["gated_4_cell_surface"] == gated
+
+    def pooled(sex):
+        keys = [k for k in by if sex is None or k.endswith(f"|{sex}")]
+        return sum(by[k]["psid_deaths_wt"] for k in keys) / sum(
+            by[k]["psid_exposure_py"] for k in keys
+        )
+
+    candidates = {
+        "c1_external_levels": {c: nchs[c] for c in gated},
+        "c2_age_flat_within_sex": {c: pooled(c.split("|")[1]) for c in gated},
+        "c3_fully_flat": {c: pooled(None) for c in gated},
+        "c4_uniform_level_plus_25pct": {c: full_h[c] * 1.25 for c in gated},
+        "c5_uniform_level_minus_25pct": {c: full_h[c] * 0.75 for c in gated},
+        "c6_sex_flat": {c: full_h[f"{c.split('|')[0]}|female"] for c in gated},
+    }
+    rows = art["degenerate_candidates"]["candidates"]
+    for name, cand in candidates.items():
+        scores = {
+            c: round(abs(math.log(cand[c] / full_h[c])), 3) for c in gated
+        }
+        assert rows[name]["scores"] == scores, name
+        fail_4 = sorted(c for c in gated if scores[c] > tol[c])
+        fail_2 = sorted(c for c in fail_4 if not c.startswith("85+"))
+        assert rows[name]["failing_cells_4_cell"] == fail_4, name
+        assert rows[name]["verdict_4_cell_surface"] == (
+            "FAIL" if fail_4 else "PASS"
+        )
+        assert rows[name]["verdict_2_cell_surface_25_84"] == (
+            "FAIL" if fail_2 else "PASS"
+        )
+    assert (
+        rows["c4_uniform_level_plus_25pct"]["verdict_4_cell_surface"] == "PASS"
+    )
+    assert rows["c4_uniform_level_plus_25pct"]["known_non_catch"] is True
+    assert rows["c6_sex_flat"]["verdict_4_cell_surface"] == "PASS"
+    assert (
+        rows["c6_sex_flat"]["known_non_catch_of_the_internal_surface"] is True
+    )
+    assert (
+        rows["c6_sex_flat"]["caught_by"] == "sex_dominance.male_exceeds_female"
+    )
+    assert "anchor_oc_beside_the_catch" in rows["c6_sex_flat"]
+    assert (
+        rows["c2_age_flat_within_sex"]["verdict_2_cell_surface_25_84"]
+        == "FAIL"
+    )
+    assert rows["c3_fully_flat"]["verdict_2_cell_surface_25_84"] == "FAIL"
+    assert rows["c1_external_levels"]["verdict_2_cell_surface_25_84"] == "PASS"
+    assert rows["c1_external_levels"]["failing_cells_4_cell"] == ["85+|female"]
+    assert (
+        rows["c5_uniform_level_minus_25pct"]["verdict_2_cell_surface_25_84"]
+        == "PASS"
+    )
+    assert set(
+        art["degenerate_candidates"]["known_non_catches"]["internal_surface"]
+    ) == {
+        "c4_uniform_level_plus_25pct",
+        "c6_sex_flat",
+    }
+    degen = block["thresholds"]["degenerate_candidates"]
+    for name in (
+        "c1_external_levels",
+        "c2_age_flat_within_sex",
+        "c3_fully_flat",
+        "c6_sex_flat",
+    ):
+        assert degen[name]["scores"] == rows[name]["scores"], name
+    assert degen["c4_uniform_level_plus_25pct"]["score_every_cell"] == 0.223
+    assert degen["c5_uniform_level_minus_25pct"]["score_every_cell"] == 0.288
+    assert (
+        degen["c6_sex_flat"]["caught_by"]
+        == "sex_dominance.male_exceeds_female"
+    )
+    assert "catch_structure" in degen
+
+
+def test_gate_mortality_draw_stream_base_is_distinct_and_not_yet_live():
+    """R9: the proposed base and its 20 draws collide with no seed base
+    gates.yaml names (each extended by +0..99), nor the split seeds 0-99,
+    nor the floors' bootstrap key; the block and the artifact pin the same
+    base; pre-flip the live contract does not name it."""
+    _, gb = _import_mortality_builders()
+    gates_text = (ROOT / "gates.yaml").read_text()
+    bases = gb.enumerate_gates_yaml_seed_bases(gates_text)
+    assert {
+        "5200",
+        "4200",
+        "4100",
+        "9100",
+        "9200",
+        "91000",
+        "20260710",
+    } <= set(bases)
+    stream = set(
+        range(MORTALITY_DRAW_STREAM_BASE, MORTALITY_DRAW_STREAM_BASE + 20)
+    )
+    occupied: set = set(range(100)) | set(range(20260906, 20260906 + 100))
+    for base in bases:
+        occupied |= set(range(int(base), int(base) + 100))
+    assert not (stream & occupied)
+    art = _mortality_gate_floor()
+    assert art["draw_stream"]["proposed_base"] == MORTALITY_DRAW_STREAM_BASE
+    assert art["draw_stream"]["distinct"] is True
+    assert art["draw_stream"]["every_seed_base_named_in_gates_yaml"] == bases
+    proto = _gate_mortality_thresholds()["protocol"]
+    assert proto["draw_stream_base"] == MORTALITY_DRAW_STREAM_BASE
+    assert (
+        f"{MORTALITY_DRAW_STREAM_BASE} + k" in proto["candidate_draw_stream"]
+    )
+    assert proto["candidate_draws"] == MORTALITY_CANDIDATE_DRAWS
+    assert proto["gate_seeds"] == [0, 1, 2, 3, 4]
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        assert (
+            f"draw_stream_base: {MORTALITY_DRAW_STREAM_BASE}" not in gates_text
+        )
+        assert str(MORTALITY_DRAW_STREAM_BASE) not in bases
+
+
+def test_gate_mortality_split_convention_perturbation():
+    """R10: (a) the artifact publishes the restricted-before-split
+    tolerance beside the pinned full-frame one for every 25-84 cell; the
+    knife-edge cell 75-84|male clears the cap under the pinned convention
+    and does NOT under the perturbation; the bound threshold is the full-
+    frame one. (b) SYNTHETIC perturbation, no PSID: the builder's
+    measure_seed splits the FULL frame and windows afterwards -- it equals
+    a split-then-window reference and DIFFERS from window-then-split on
+    every seed, so this test fails if the builder's convention changes."""
+    floor = _mortality_floor()
+    art = _mortality_gate_floor()
+    block = _gate_mortality_block()
+    r10 = art["restricted_split_perturbation"]
+    assert "per_cell" in r10, "R10 needs the PSID-built perturbation block"
+    knife = r10["knife_edge_cell"]
+    full = knife["tolerance_k3_full_frame_before_split"]
+    restricted = knife["tolerance_k3_restricted_25_84_before_split"]
+    assert full == _mortality_derive(floor, "75-84|male", 3, 3)
+    assert full == _mortality_internal_tolerances(block)["death.75-84|male"]
+    assert full <= MORTALITY_T_MAX < restricted
+    assert restricted != full
+    pin = block["thresholds"]["protocol"]["split_frame_pin"]
+    assert pin["full_frame_before_split_tolerance_75_84_male"] == full
+    assert (
+        pin["restricted_25_84_before_split_tolerance_75_84_male"] == restricted
+    )
+    assert "full" in pin["frame"].lower()
+    for cell, entry in r10["per_cell"].items():
+        assert entry["full_frame_before_split"]["tolerance_k3"] == (
+            _mortality_derive(floor, cell, 3, 3)
+        )
+        assert entry["full_frame_before_split"]["equals_committed_v3"] is True
+        vals = np.array(entry["restricted_25_84_before_split"]["values"])
+        assert len(vals) == 100
+        assert entry["restricted_25_84_before_split"]["tolerance_k3"] == round(
+            float(vals.mean() + 3 * vals.std(ddof=1)), 3
+        )
+    assert r10["clearing_set_k3_full_frame"] == ["75-84|female", "75-84|male"]
+    assert r10["clearing_set_k3_restricted"] == ["75-84|female"]
+    # (b) the synthetic perturbation.
+    v3b, _ = _import_mortality_builders()
+    from populace_dynamics.harness import panel as hpanel
+
+    rows = []
+    for pid in range(1, 21):  # LOW ids carry only pre-window slices
+        rows.append(
+            (
+                pid,
+                "male" if pid % 2 else "female",
+                10.0 + pid,
+                78,
+                "75-84",
+                1995,
+                1.0,
+                0.0,
+            )
+        )
+    for pid in range(21, 41):  # in-window persons
+        sex = "male" if pid % 2 else "female"
+        death = 1.0 if pid in (23, 27, 31, 35, 38, 40) else 0.0
+        rows.append(
+            (
+                pid,
+                sex,
+                10.0 + pid,
+                78,
+                "75-84",
+                1999,
+                0.5 if death else 1.0,
+                death,
+            )
+        )
+        if not death:
+            rows.append((pid, sex, 10.0 + pid, 79, "75-84", 1999, 1.0, 0.0))
+    frame = pd.DataFrame(
+        rows,
+        columns=[
+            "person_id",
+            "sex",
+            "weight",
+            "age",
+            "band",
+            "start_wave",
+            "exposure",
+            "death",
+        ],
+    )
+
+    def hazards(df: pd.DataFrame) -> dict:
+        out = {}
+        for (band, sex), g in df.groupby(["band", "sex"]):
+            out[f"{band}|{sex}"] = float(
+                (g.weight * g.death).sum() / (g.weight * g.exposure).sum()
+            )
+        return out
+
+    differs = 0
+    for seed in range(3):
+        got = v3b.measure_seed(seed, frame, start_year_min=1997, full=False)
+        side_a, _ = hpanel.split_panel_by_person(
+            frame, "person_id", fraction=0.5, seed=seed
+        )
+        reference = hazards(side_a[side_a.start_wave >= 1997])
+        windowed = frame[frame.start_wave >= 1997]
+        alt_a, _ = hpanel.split_panel_by_person(
+            windowed, "person_id", fraction=0.5, seed=seed
+        )
+        alternative = hazards(alt_a)
+        # the builder counts side-A persons on the FULL frame.
+        assert got["n_persons_side_a"] == side_a.person_id.nunique()
+        for cell in ("75-84|male", "75-84|female"):
+            assert got["cells"][cell]["m_a"] == pytest.approx(
+                reference.get(cell, 0.0), abs=1e-12
+            )
+            if (
+                abs(reference.get(cell, 0.0) - alternative.get(cell, 0.0))
+                > 1e-9
+            ):
+                differs += 1
+    assert (
+        differs >= 3
+    ), "the synthetic frame no longer separates the two conventions"
+
+
+def test_gate_mortality_draft_block_digest_placeholders_and_wording():
+    """R12 + item 10: the fragment's sha256 and line count recompute; the
+    block parses; every placeholder the ceremony notes list is in the
+    text; the R12 words are absent (whitespace-normalised); the
+    circularity disclosure is present; referee B's covers-prominence
+    statements all hold; start waves read 1997-2021, never 1997-2023."""
+    _, gb = _import_mortality_builders()
+    art = _mortality_gate_floor()
+    frag = art["draft_gates_yaml_fragment"]
+    text = frag["text"]
+    assert (
+        frag["text_sha256"] == hashlib.sha256(text.encode("utf-8")).hexdigest()
+    )
+    assert frag["n_lines"] == len(text.splitlines())
+    assert frag["n_bytes"] == len(text.encode("utf-8"))
+    block = yaml.safe_load("gates:\n" + text)["gates"]["gate_mortality"]
+    assert block["status"] == "draft_pending_referee_round"
+    assert block["locked"] is False
+    assert block["kind"] == "anchor_based"
+    assert block["floor_run"] == MORTALITY_GATE_RUN
+    assert block["floor_run_sha256"] == "<FILLED AT RATIFICATION>"
+    for marker in (
+        "<RULING R3",
+        "<RULING R4",
+        "<RULING R5",
+        "<RULING A(ii)",
+        "<FILLED AT RATIFICATION>",
+    ):
+        assert marker in text, marker
+    notes = block["thresholds"]["ceremony_notes"]
+    assert len(notes["placeholders_the_ratifying_round_must_fill"]) >= 5
+    assert "GATE_MORTALITY_BLOCK_LANDED" in notes["flip_plan"]
+    flat = gb.normalized(text)
+    for word in ("anchored", "aligned", "calibrated to"):
+        assert word not in flat.lower(), word
+    assert (
+        "circularity_disclosure"
+        in block["thresholds"]["external_anchor_report"]
+    )
+    assert (
+        block["thresholds"]["external_anchor_report"][
+            "reported_anchor_not_gated"
+        ]
+        is True
+    )
+    for item in gb.COVERS_PROMINENCE_CHECKLIST:
+        for phrase in item["required_phrases"]:
+            assert phrase in flat, (item["item"], phrase)
+        for phrase in item.get("forbidden_phrases", []):
+            assert phrase not in flat, (item["item"], phrase)
+    assert "1997-2021" in flat and "1997-2023" not in flat
+    assert "packet's literal extreme" not in flat
+    audit = art["wording_audit"]
+    assert audit["forbidden_words_absent_from_fragment"] is True
+    assert audit["forbidden_words_absent_from_artifact"] is True
+    assert audit["all_covers_prominence_items_hold"] is True
+    margins = [m["margin"] for m in block["not_certified"]]
+    assert margins[0] == "mortality_drift"
+    assert {
+        "mortality_levels_against_nchs",
+        "survival_to_claiming_ages",
+        "cells_25_74",
+        "split_unit",
+    } <= set(margins)
+    assert "certifies NOTHING about mortality DRIFT" in gb.normalized(
+        block["covers"]
+    )
+
+
+def _tracked_text_files() -> list:
+    try:
+        listed = subprocess.check_output(
+            ["git", "ls-files"], cwd=ROOT, text=True
+        ).split("\n")
+    except (OSError, subprocess.CalledProcessError):
+        listed = [
+            str(p.relative_to(ROOT)) for p in ROOT.rglob("*") if p.is_file()
+        ]
+    keep = []
+    for rel in listed:
+        if not rel:
+            continue
+        if not (
+            rel == "gates.yaml"
+            or rel.startswith(
+                ("docs/", "scripts/", "tests/", "src/", "runs/", "paper/")
+            )
+        ):
+            continue
+        if rel.endswith(
+            (
+                ".png",
+                ".pdf",
+                ".pkl",
+                ".parquet",
+                ".zip",
+                ".gz",
+                ".h5",
+                ".jpg",
+                ".svg",
+            )
+        ):
+            continue
+        keep.append(ROOT / rel)
+    return keep
+
+
+def test_gate_mortality_draft_block_is_written_nowhere_else():
+    """The draft block's text lives ONLY in the artifact: no other tracked
+    file under gates.yaml / docs / scripts / tests / src / runs / paper
+    contains it (pre-flip); gates.yaml is byte-identical to origin/master
+    if that ref resolves."""
+    art = _mortality_gate_floor()
+    text = art["draft_gates_yaml_fragment"]["text"]
+    needle = json.dumps(text)[1:-1][:400]  # the JSON-escaped form too
+    for path in _tracked_text_files():
+        if path.resolve() == (ROOT / MORTALITY_GATE_RUN).resolve():
+            continue
+        try:
+            body = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+        assert text not in body, path
+        assert needle not in body, path
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        master = _master_gates_mapping()
+        if master is not None:
+            current = yaml.safe_load((ROOT / "gates.yaml").read_text())[
+                "gates"
+            ]
+            assert current == master
+            assert "gate_mortality" not in master
+
+
+def test_gate_mortality_flip_plan_marker_sites_agree():
+    """Referee A addition (iii): every file the flip plan names exists and
+    carries GATE_MORTALITY_BLOCK_LANDED at the SAME value as this file, so
+    the flip is one constant per file in one commit."""
+    art = _mortality_gate_floor()
+    plan = art["flip_plan"]
+    assert plan["marker"] == "GATE_MORTALITY_BLOCK_LANDED"
+    assert (
+        "tests/test_gates_derivations.py" in plan["files_carrying_the_marker"]
+    )
+    pattern = re.compile(r"^GATE_MORTALITY_BLOCK_LANDED = (True|False)$", re.M)
+    for rel in plan["files_carrying_the_marker"]:
+        path = ROOT / rel
+        assert path.is_file(), rel
+        found = pattern.findall(path.read_text())
+        assert len(found) == 1, rel
+        assert (found[0] == "True") is GATE_MORTALITY_BLOCK_LANDED, rel
+
+
+def test_gate_mortality_stability_clause_recomputes_from_v3_bootstrap():
+    """Referee A addition (ii): the cells whose bootstrap P(T <= cap) at
+    100 seeds lies in [0.1, 0.9] recompute from v3's seed_count_stability;
+    no clearing cell is in the band today; the clause is FILED, not
+    adopted, and the block names it as a ruling."""
+    floor = _mortality_floor()
+    art = _mortality_gate_floor()
+    boot = floor["seed_count_stability"]["per_cell"]
+    in_band = {
+        c: boot[c]["at_100_seeds_sigma_v3"]["p_tolerance_at_or_below_t_max"]
+        for c in floor["cell_order"]
+        if 0.1
+        <= boot[c]["at_100_seeds_sigma_v3"]["p_tolerance_at_or_below_t_max"]
+        <= 0.9
+    }
+    clause = art["stability_clause"]
+    assert clause["cells_in_band_today"] == in_band
+    assert set(in_band) == {"65-74|male", "65-74|female"}
+    assert clause["clearing_cells_the_clause_would_demote_today"] == []
+    assert clause["changes_nothing_today"] is True
+    assert (
+        clause["nearest_clearing_cell_to_the_band"]["cell"] == "75-84|female"
+    )
+    assert (
+        clause["nearest_clearing_cell_to_the_band"]["p"]
+        == boot["75-84|female"]["at_100_seeds_sigma_v3"][
+            "p_tolerance_at_or_below_t_max"
+        ]
+    )
+    assert "not adopted" in clause["status"]
+    power_cap = _gate_mortality_thresholds()["power_cap"]
+    assert "<RULING A(ii)" in power_cap["stability_clause"]
+    assert "[0.1, 0.9]" in power_cap["stability_clause"]
+
+
+def test_gate_mortality_r4_evidence_is_report_only_and_recomputes():
+    """R4: the ~27% is LOCATED at gates.yaml gate_m6.not_certified[0]
+    (quoted from the recorded blob) and is NOT the same quantity as any
+    share on this frame (the 85+ share of every 85+-inclusive pool
+    recomputes from v3's declared window: 25.1% for 25+); the censoring
+    bracket is report-only, internally consistent, exceeds the 85+
+    tolerances, and equals referee A's figures to 1e-3; the ruling is
+    priced both ways and made nowhere."""
+    floor = _mortality_floor()
+    art = _mortality_gate_floor()
+    r4 = art["r4_85plus"]
+    item1 = r4["item_1_the_27_percent"]
+    assert item1["located"] is True
+    quoted = " ".join(item1["quoted_text_at_the_blob"] or [])
+    assert "~27%" in quoted and "attrition_confounded_truth" in quoted
+    blob = subprocess.run(
+        ["git", "cat-file", "blob", item1["git_blob_at_binding"]],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if blob.returncode == 0:
+        lines = blob.stdout.splitlines()
+        assert lines[5398:5402] == item1["quoted_text_at_the_blob"]
+        assert "~27%" in " ".join(lines[5398:5402])
+    assert item1["is_it_the_same_quantity_as_anything_here"] is False
+    by = floor["external_anchor"]["windows"][MORTALITY_HEADLINE_UNIVERSE][
+        "by_band_sex"
+    ]
+    bands = floor["age_bands"]
+    deaths = {
+        b: sum(
+            v["psid_deaths_unwt"]
+            for k, v in by.items()
+            if k.startswith(f"{b}|")
+        )
+        for b in bands
+    }
+    for i, start in enumerate(bands[:-1]):
+        pool = bands[i:]
+        total = sum(deaths[b] for b in pool)
+        key = f"{start.split('-')[0]}+"
+        assert item1["shares_of_85plus_events_by_pool"][key][
+            "share_from_85plus"
+        ] == round(deaths["85+"] / total, 4)
+    assert (
+        item1["shares_of_85plus_events_by_pool"]["25+"]["share_from_85plus"]
+        == 0.2512
+    )
+    assert "METADATA-ONLY" in item1["disposition"]
+    bracket = r4["item_2_sensitivity_of_85plus_to_the_censoring_convention"]
+    assert bracket["report_only"] is True and bracket["gates_nothing"] is True
+    for variant in ("unlimited", "le_one_more_grid_interval"):
+        v = bracket["variants"][variant]
+        for cell, row in v["per_cell"].items():
+            assert row["tolerance_k3_pinned"] == _mortality_derive(
+                floor, cell, 3, 3
+            )
+            assert row["bracket_over_tolerance_k3"] == round(
+                row["ln_m_extended_over_m_pinned"]
+                / row["tolerance_k3_pinned"],
+                4,
+            )
+            assert row["ln_m_extended_over_m_pinned"] == pytest.approx(
+                math.log(
+                    row["psid_over_nchs_extended"]
+                    / row["psid_over_nchs_pinned"]
+                ),
+                abs=2e-5,
+            )
+            assert row["exceeds_own_tolerance"] == (
+                row["ln_m_extended_over_m_pinned"] > row["tolerance_k3_pinned"]
+            )
+            assert (
+                abs(
+                    row["ln_m_extended_over_m_pinned"]
+                    - bracket["referee_a_reported"][variant][cell]
+                )
+                < 1e-3
+            )
+    unl = bracket["variants"]["unlimited"]
+    assert unl["cells_where_the_bracket_exceeds_the_tolerance"] == [
+        "85+|female",
+        "85+|male",
+    ]
+    assert unl["per_cell"]["85+|male"]["bracket_over_tolerance_k3"] > 1.0
+    assert unl["per_cell"]["85+|female"]["bracket_over_tolerance_k3"] > 1.4
+    assert unl["added_death_events_declared_window"] == 982
+    assert bracket["missed_exact_decedents"] == 2796
+    ruling = r4["item_3_the_ruling_priced_both_ways"]
+    assert ruling["admit_85plus"]["faithful_oc_p_gate"] == 0.9868
+    assert ruling["exclude_85plus"]["faithful_oc_p_gate"] == 0.9975
+    assert "INTERVIEW-CONDITIONAL" in ruling["certification_scope_either_way"]
+    assert "FILED" in r4["status"]
+    views = _gate_mortality_thresholds()["internal_surface"]["views"]
+    assert "<RULING R4" in views["hazard_reproduction_85plus"]["gated"]
+    assert views["hazard_reproduction"]["gated"] is True
+
+
+def test_gate_mortality_candidate_scoring_frame_is_operational():
+    """Referee A addition (i): the candidate's scoring frame is defined
+    operationally (the side-A person-interval table handed to the
+    candidate; deaths counted inside those intervals only), with per-gate-
+    seed person-id digests the fresh run must reproduce."""
+    art = _mortality_gate_floor()
+    frame = art["candidate_scoring_frame"]
+    assert frame["deaths_counted_inside_those_intervals_only"] is True
+    assert "side-A" in frame["operational_definition"]
+    assert "HANDED" in frame["operational_definition"]
+    per_seed = frame["per_gate_seed"]
+    assert list(per_seed) == ["0", "1", "2", "3", "4"]
+    for seed, row in per_seed.items():
+        assert re.fullmatch(
+            r"[0-9a-f]{64}", row["side_a_person_ids_sha256"]
+        ), seed
+        assert 17_000 < row["n_persons_side_a_full_frame"] < 19_500
+        assert (
+            row["n_persons_side_a_declared_window"]
+            < row["n_persons_side_a_full_frame"]
+        )
+        assert row["n_slices_declared_window"] > 150_000
+        assert set(row["gated_cells"]) == {
+            "75-84|female",
+            "75-84|male",
+            "85+|female",
+            "85+|male",
+        }
+    proto = _gate_mortality_thresholds()["protocol"]
+    assert "INSIDE THOSE INTERVALS ONLY" in proto["candidate_scoring_frame"]
+    assert (
+        proto["fresh_run_artifact_schema"]["scoring_frame_evidence"][
+            "required"
+        ]
+        is True
+    )
+    assert "pad_row_exclusion" in proto
+
+
+def test_gate_mortality_open_questions_are_filed_not_ruled():
+    """Every ruling is FILED and PRICED (R3, R4, R5, A(ii)), PROPOSED (R9),
+    ANSWERED as evidence (R10) or DEFERRED (R8); none is made here."""
+    art = _mortality_gate_floor()
+    questions = {q["id"]: q for q in art["open_questions_for_the_ceremony"]}
+    assert set(questions) == {"R3", "R4", "R5", "R9", "R10", "A(ii)", "R8"}
+    for qid, q in questions.items():
+        status = q["status"]
+        assert any(
+            token in status
+            for token in (
+                "not ruled",
+                "not adopted",
+                "PROPOSED",
+                "ANSWERED as evidence",
+                "DEFERRED",
+            )
+        ), (qid, status)
+    assert questions["R3"]["changes_the_gated_set_today"] is False
+    assert questions["R5"]["half_convention"]["proposal"] == "both_sides"
+    assert questions["R9"]["proposed"] == MORTALITY_DRAW_STREAM_BASE
+    assert (
+        questions["R10"]["knife_edge"][
+            "tolerance_k3_restricted_25_84_before_split"
+        ]
+        > MORTALITY_T_MAX
+    )
+    dnd = " ".join(art["does_not_do"])
+    assert (
+        "edit gates.yaml" in dnd
+        and "score a candidate" in dnd
+        and "make any ruling" in dnd
+    )
+
+
+def test_gate_mortality_record_hygiene_finding_iii_is_quoted_verbatim():
+    """Verification item 10 (V-1): referee A's finding (iii) sentence is
+    carried EXACTLY, with A's numbers, and the v3 label is corrected to
+    'condensed'."""
+    art = _mortality_gate_floor()
+    hygiene = art["record_hygiene"]
+    quote = hygiene["referee_a_finding_iii_verbatim"]
+    for token in (
+        "0.413 → 0.408",
+        "[0.1, 0.9]",
+        "1,000",
+        "P ≈ 0.6",
+        "4.6 s per 100 seeds",
+        "§6",
+    ):
+        assert token in quote, token
+    assert "section 4.3" in hygiene["source"]
+    assert "condensed" in hygiene["v3_label_status"]
+    floor = _mortality_floor()
+    v3_item = floor["open_questions_for_the_ceremony"][8]
+    assert "finding (iii)" in v3_item["question"]
+    assert "VERBATIM" in v3_item["detail"]
