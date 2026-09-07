@@ -72,8 +72,8 @@ V3_COMMITTED = (
 #: THIS artifact's committed bytes (size, sha256), re-stated in the same
 #: commit as any rebuild (the gate-3 digest-pin precedent).
 GATE_V1_COMMITTED = (
-    249_671,
-    "1da6f725191be2b2f15e3b96fa2793c20a697cc12d94726d9c4b308e676906ec",
+    284_425,
+    "aa97e0e363ee9be7ec25fb5bad0b943e8371032573c9612e1b35d950accf1260",
 )
 #: PRE-LOCK MARKER (referee A addition (iii)). False until the commit
 #: that inserts the gate_mortality block flips it -- in every file the
@@ -850,11 +850,21 @@ def test_draw_stream_enumeration_matches_the_live_contract_and_is_distinct():
     art = _artifact()
     draw = art["draw_stream"]
     bases = builder.enumerate_gates_yaml_seed_bases(GATES.read_text())
-    assert draw["every_seed_base_named_in_gates_yaml"] == bases
     assert draw["proposed_base"] == builder.DRAW_STREAM_BASE == 7400
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        assert draw["every_seed_base_named_in_gates_yaml"] == bases
+    else:
+        # LIVE: the artifact is not rebuilt at the flip; the live file
+        # adds exactly the gate's own base (pre-guarded).
+        assert "7400" in bases
+        assert draw["every_seed_base_named_in_gates_yaml"] == {
+            k: v for k, v in bases.items() if k != "7400"
+        }
     stream = set(range(7400, 7420))
     occupied = set(range(100)) | set(range(20260906, 20261006))
     for b in bases:
+        if GATE_MORTALITY_BLOCK_LANDED and b == "7400":
+            continue  # the block's own stream is not a self-collision
         occupied |= set(range(int(b), int(b) + 100))
     assert not (stream & occupied)
     assert draw["distinct"] is True and draw["collisions"] == []
@@ -1108,6 +1118,238 @@ def test_draft_block_text_is_written_nowhere_else():
             continue
         assert text not in body, rel
         assert json.dumps(text)[1:-1][:400] not in body, rel
+
+
+# --------------------------------------------------------------------------
+# The pre-flip re-emission (referee A section 8 S1-S4, S6, S7; referee B
+# conditions 3(i), 3(j), 4; the completed flip plan; the placeholder census)
+# --------------------------------------------------------------------------
+#: referee A's ratifying-round report (mortality-ratify-A/REPORT.md), by
+#: whose digest the 1,000-seed DIAGNOSTIC figures (S1, S3, S4, S6) are
+#: carried in the block. They rebuild nothing; every BOUND number is
+#: still recomputed from v3's per-seed record by the tests above.
+REFEREE_A_RATIFYING_SHA256 = (
+    "c38826343303ed32da6820500881274fb82b82474ac6f1499dab970d1b68c103"
+)
+
+
+def test_pre_flip_substitutions_are_in_the_block_and_no_bound_number_moved():
+    """S1 (split-frame pin reworded as the pre-registered sample), S2
+    (teeth basis: the noise-free centre, with the per-seed side-A
+    verdicts at the gate seeds recomputed here), S3 (the block-luck
+    sentence), S4 (the 1,000-seed-sigma OC), S6 (the anchor's
+    evidence-time margin at 1,000 seeds, by A's digest), S7 (margins
+    rounded to 3 dp before Phi), B 3(i) (key-path citations;
+    gate_m4's full no_self_rescue), B 3(j) (the knife-edge sentence).
+    Every bound number is the same derivation as before."""
+    builder = _import_builder()
+    art = _artifact()
+    v3 = _v3()
+    text = art["draft_gates_yaml_fragment"]["text"]
+    block = _block(art)
+    th = block["thresholds"]
+    # S1: the pin is the pre-registered sample; both tolerances still
+    # equal the artifact's R10 block.
+    assert "PRE-REGISTERED SAMPLE" in text
+    pin = th["protocol"]["split_frame_pin"]
+    knife = art["restricted_split_perturbation"]["knife_edge_cell"]
+    assert (
+        pin["full_frame_before_split_tolerance_75_84_male"]
+        == knife["tolerance_k3_full_frame_before_split"]
+        == art["cell_stability"]["75-84|male"]["tolerance_k3"]
+    )
+    assert (
+        pin["restricted_25_84_before_split_tolerance_75_84_male"]
+        == knife["tolerance_k3_restricted_25_84_before_split"]
+    )
+    # S2: the basis is the noise-free centre; the per-seed side-A
+    # verdicts recompute from v3's per-seed hazards.
+    teeth = art["degenerate_candidates"]
+    assert "NOISE-FREE CENTRE" in teeth["basis"]
+    assert "UPPER BOUND" not in json.dumps(art)
+    head = _head(v3)
+    full_window = v3["external_anchor"]["windows"]["declared_1997_plus"]
+    summary = builder.gate_seed_teeth(
+        full_window, art["cell_stability"], CELLS_GATED, head["per_seed"]
+    )
+    tol = {c: art["cell_stability"][c]["tolerance_k3"] for c in CELLS_GATED}
+    for name, spec in builder.degenerate_candidate_hazards(
+        full_window, CELLS_GATED
+    ).items():
+        g4 = sum(
+            all(
+                abs(math.log(spec["hazard"][c] / s["hazards_side_a"][c]))
+                <= tol[c]
+                for c in CELLS_GATED
+            )
+            for s in head["per_seed"][:5]
+        )
+        assert summary[name][0] == g4, name
+        row = teeth["candidates"][name]["at_the_gate_seeds_per_seed_side_a"]
+        assert row.startswith(f"4-cell surface: {g4}/5 gate seeds pass"), name
+        assert (
+            builder.gate_seed_summary_text(summary, name, 4) in teeth["basis"]
+        ), name
+    assert summary["c1_external_levels"][0] == 3
+    assert summary["c4_uniform_level_plus_25pct"][0] == 1
+    assert summary["c5_uniform_level_minus_25pct"][0] == 0
+    assert summary["c6_sex_flat"][0] == 4
+    assert teeth["known_non_catches"]["whole_gate"] == [
+        "c4_uniform_level_plus_25pct"
+    ]
+    assert (
+        "noise-free centre"
+        in th["degenerate_candidates"]["c4_uniform_level_plus_25pct"][
+            "verdict"
+        ].lower()
+    )
+    # S3 / S4: the block-luck and 1,000-seed-sigma disclosures.
+    margins = {m["margin"]: m["detail"] for m in block["not_certified"]}
+    assert "0.375 / 0.398 / 0.344 / 0.269" in margins["cells_25_74"]
+    assert "0.88 / 0.61" in margins["cells_25_74"]
+    assert REFEREE_A_RATIFYING_SHA256[:16] in margins["cells_25_74"]
+    oc_text = th["faithful_candidate_oc"]["oc_vs_precedent"]
+    assert "0.936 (4 cells) / 0.990 (2 cells)" in oc_text
+    assert "0.9998 / 1.0000" in oc_text
+    # S6: the anchor's evidence-time margin at 1,000 seeds sits beside
+    # the bound margin, attributed by digest; the bound margin is the
+    # artifact's own recomputation and did not move.
+    cell = th["anchor_surface"]["cells"]["sex_dominance.male_exceeds_female"]
+    ev = cell["evidence_time_margin_at_1000_seeds"]
+    assert REFEREE_A_RATIFYING_SHA256 in ev["source"]
+    assert ev["both_sides_sd_2000_halves"] == 0.1055
+    assert ev["margin_sigma_units"] == 2.939
+    assert ev["inverting_halves_of_2000"] == 10
+    assert ev["disjoint_100_seed_blocks_holding_on_every_half"] == "3 of 10"
+    assert ev["disjoint_100_seed_blocks_with_margin_ge_3_sigma"] == "4 of 10"
+    assert ev["disjoint_100_seed_blocks_meeting_both_conditions"] == "2 of 10"
+    assert ev["p_eligible_random_100_seed_block_both_sides"] == 0.2
+    bound = art["anchor_checks"]["sex_dominance.male_exceeds_female"]
+    assert (
+        cell["margin_sigma_units"]["both_sides"]
+        == bound["both_sides"]["margin_sigma_units"]
+    )
+    assert (
+        ev["margin_sigma_units"]
+        < 3
+        <= cell["margin_sigma_units"]["both_sides"]
+    )
+    assert "2.939 sigma" in margins["sex_differential_rides_on_the_anchor"]
+    # S7: margins rounded to 3 dp before Phi.
+    assert (
+        "ROUNDED to 3 dp" in art["anchor_operating_characteristic"]["method"]
+    )
+    # B 3(i): no live line-number citation is left in the block; the
+    # key paths resolve in the live gate_m6; no_self_rescue is gate_m4's.
+    assert "gates.yaml:" not in text and "gate_m6:" not in text
+    gates = yaml.safe_load(GATES.read_text())["gates"]
+    m6 = gates["gate_m6"]
+    assert m6["not_certified"][0]["margin"] == "mortality_drift"
+    anchor = m6["deliverables"]["ssa_nchs_life_table_mortality_anchor"]
+    assert "REJECTED" in anchor["gating"]
+    assert "circularity_disclosure" in anchor
+    assert "mortality" in m6["split_units"]["household_disjoint_families"]
+    for path in (
+        "gate_m6.not_certified[0].detail",
+        "gate_m6.deliverables.ssa_nchs_life_table_mortality_anchor.gating",
+        "gate_m6.deliverables.ssa_nchs_life_table_mortality_anchor.circularity_disclosure",
+        "gate_m6.split_units.household_disjoint_families",
+    ):
+        assert path in text, path
+    assert (
+        th["governance"]["amendment_rules"]["no_self_rescue"]
+        == gates["gate_m4"]["thresholds"]["governance"]["amendment_rules"][
+            "no_self_rescue"
+        ]
+    )
+    # B 3(j): the knife-edge sentence carries both tolerances.
+    conv = margins["conventions_and_the_undercount"]
+    assert "split-frame pin" in conv
+    assert (
+        f"{knife['tolerance_k3_full_frame_before_split']:.3f}" in conv
+        and str(knife["tolerance_k3_restricted_25_84_before_split"]) in conv
+    )
+    # Nothing ruled: every placeholder family is still present.
+    for marker in ("<RULING R3", "<RULING R4", "<RULING R5", "<RULING A(ii)"):
+        assert marker in text, marker
+    assert block["status"] == "draft_pending_referee_round"
+
+
+def test_flip_plan_enumerates_every_assertion_site_and_each_is_guarded():
+    """Referee A ratifying round sections 5.4 and 8; referee B section
+    7.3 and condition 3: the flip plan names EVERY assertion site the
+    flip touches with its pre-flip and post-flip form; each named test
+    exists in the named file; each site marked marker-guarded reads the
+    marker inside that function's body; the withdrawn sentence is gone;
+    the block's ceremony_notes.flip_plan names every guarded test; the
+    placeholder census names the non-proposed rulings' unmarked sites."""
+    art = _artifact()
+    plan = art["flip_plan"]
+    assert "changes nothing else" not in plan["rule"]
+    assert "SAME COMMIT" in plan["rule"]
+    sites = plan["assertion_sites"]
+    assert len(sites) >= 20
+    notes = _block(art)["thresholds"]["ceremony_notes"]
+    notes_plan = notes["flip_plan"]
+    seen = set()
+    for site in sites:
+        for key in (
+            "file",
+            "test",
+            "site_at_f8ccfe8",
+            "pre_flip",
+            "post_flip",
+            "guard",
+        ):
+            assert site[key], (site, key)
+        path = ROOT / site["file"]
+        assert path.is_file(), site["file"]
+        source = path.read_text(encoding="utf-8")
+        name = site["test"]
+        seen.add((site["file"], name))
+        if name == "GATE_MORTALITY_BLOCK_LANDED":
+            assert re.search(
+                r"^GATE_MORTALITY_BLOCK_LANDED = (True|False)$", source, re.M
+            )
+            continue
+        match = re.search(rf"^def {re.escape(name)}\(", source, re.M)
+        assert match, (site["file"], name)
+        body = source[match.start() :]
+        nxt = re.search(r"^(def |@)", body[1:], re.M)
+        body = body[: nxt.start() + 1] if nxt else body
+        if site["guard"].startswith("marker-guarded"):
+            assert "GATE_MORTALITY_BLOCK_LANDED" in body, (site["file"], name)
+            assert name in notes_plan, name
+    for rel in plan["files_carrying_the_marker"]:
+        assert (rel, "GATE_MORTALITY_BLOCK_LANDED") in seen, rel
+    for required in (
+        "test_gate_m4_flip_leaves_locked_siblings_byte_identical",
+        "test_gate_w1_flip_leaves_locked_siblings_byte_identical",
+        "test_gate_mortality_draft_block_is_written_nowhere_else",
+        "test_gate_mortality_draw_stream_base_is_distinct_and_not_yet_live",
+        "test_draw_stream_enumeration_matches_the_live_contract_and_is_distinct",
+        "test_gate_mortality_partition_under_both_eligibility_rules",
+    ):
+        assert any(t == required for _, t in seen), required
+    assert "assertion_sites" in notes_plan
+    assert set(plan["conditional_on_the_rulings"]) == {
+        "R4_exclude",
+        "R5_c_demote_and_rename",
+        "R5_companions_report_only",
+        "A_ii_any_outcome",
+    }
+    census = " ".join(notes["placeholders_the_ratifying_round_must_fill"])
+    for phrase in (
+        "UNMARKED under EXCLUDE",
+        "UNMARKED under (c) DEMOTE",
+        "UNMARKED under COMPANIONS REPORT-ONLY",
+        "RULED A(ii)",
+        "tranche_id",
+        "certification_scope.tranche",
+        "r4_alternative_partition",
+        "header comment",
+    ):
+        assert phrase in census, phrase
 
 
 # --------------------------------------------------------------------------

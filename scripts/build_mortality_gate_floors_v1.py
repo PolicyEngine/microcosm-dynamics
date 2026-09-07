@@ -190,6 +190,30 @@ REFEREE_A_ANCHOR_OC = {
 #: EXACTLY (record hygiene, verification item 10 / V-1): the v3 artifact's
 #: open_questions_for_the_ceremony[8] carries a condensed splice labelled
 #: "VERBATIM"; this artifact carries the sentence as A wrote it.
+#: The ratifying round (2026-09-07): referee A's report, by whose digest
+#: the 1,000-seed DIAGNOSTIC figures (S1, S3, S4, S6) are carried. A
+#: diagnostic on the pinned frame, not a rebuild: no floor number moves.
+REFEREE_A_RATIFYING_REPORT = (
+    "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
+    "mortality-ratify-A/REPORT.md (70,790 B, sha256 "
+    "c38826343303ed32da6820500881274fb82b82474ac6f1499dab970d1b68c103)"
+)
+#: S6 -- the sex-dominance anchor's evidence-time margin at 1,000 seeds
+#: (referee A ratifying round section 3 R5 item 5, section 8 S6;
+#: recompute_anchor_blocks.log). The three block counts are the log's:
+#: 3 of the 10 disjoint 100-seed blocks hold on every half, 4 have a
+#: both-sides margin >= 3 sigma, 2 meet both conditions (A's S6 label
+#: '3 of 10' for 'both' reads as 2 of 10 on A's own log; both counts are
+#: carried). Verified by the pre-flip sitting from A's seeds_0_999.npz.
+REFEREE_A_RATIFYING_1000_SEED_ANCHOR = {
+    "both_sides_sd_2000_halves": 0.1055,
+    "margin_sigma_units": 2.939,
+    "inverting_halves_of_2000": 10,
+    "disjoint_100_seed_blocks_holding_on_every_half": "3 of 10",
+    "disjoint_100_seed_blocks_with_margin_ge_3_sigma": "4 of 10",
+    "disjoint_100_seed_blocks_meeting_both_conditions": "2 of 10",
+    "p_eligible_random_100_seed_block_both_sides": 0.20,
+}
 REFEREE_A_FINDING_III_VERBATIM = (
     "Statistical reading: at 100 seeds the partition status of both "
     "65-74 cells is decided by the seed set, not by the data; the "
@@ -758,7 +782,11 @@ def anchor_operating_characteristic(checks: dict[str, Any]) -> dict[str, Any]:
             "half-split sd under the named half convention; the seed passes "
             "iff the statistic exceeds candidate_k x sigma; the gate passes "
             "iff >= 4 of 5 gate seeds. The faithful candidate's model value "
-            "is the full-panel PSID value; the sex-flat degenerate's is 0."
+            "is the full-panel PSID value; the sex-flat degenerate's is 0. "
+            "Every margin is ROUNDED to 3 dp (margins_sigma_units, as "
+            "committed) BEFORE Phi is applied; the unrounded margin moves "
+            "each row by <= 1e-3 (referee A ratifying round section 2.2; "
+            "substitution S7)."
         ),
         "margins_sigma_units": margins,
         "inherited_rule_margin_k_3_candidate_side": inherited,
@@ -777,6 +805,29 @@ def anchor_operating_characteristic(checks: dict[str, Any]) -> dict[str, Any]:
             "shrink with K"
         ),
         "remedies_priced": remedies,
+        "evidence_time_margin_at_1000_seeds": {
+            "source": REFEREE_A_RATIFYING_REPORT
+            + ", section 3 R5 item 5 and section 8 S6; recompute_anchor_blocks.log",
+            "what": (
+                "a 1,000-seed DIAGNOSTIC of the anchor's evidence-time "
+                "conditions on the pinned frame (both_sides convention), "
+                "disclosed beside the bound margin. It rebuilds nothing: "
+                "margins_sigma_units above is the pre-registered 100-seed "
+                "floor's and is what the bindings recompute"
+            ),
+            **REFEREE_A_RATIFYING_1000_SEED_ANCHOR,
+            "reading": (
+                "the evidence-time conditions (holds on every half; margin "
+                ">= MARGIN_K = 3 sigma) are met at the pre-registered 100 "
+                "seeds (3.066 sigma both_sides; no inversion) and NOT at "
+                "1,000 seeds (2.939 sigma; 10 of 2,000 halves invert); the "
+                "committed block 0-99 is one of the two disjoint blocks "
+                "meeting both. The candidate is tested on the candidate-side "
+                "condition only (R5), never on this margin; any rebuild "
+                "re-evaluates eligibility on the rebuilt floor under the "
+                "ruled convention (A(ii))"
+            ),
+        },
         "half_convention_proposed": {
             "proposal": "both_sides",
             "why": (
@@ -808,18 +859,15 @@ def anchor_operating_characteristic(checks: dict[str, Any]) -> dict[str, Any]:
 # --------------------------------------------------------------------------
 # R11 -- the teeth table
 # --------------------------------------------------------------------------
-def teeth_table(
-    full_window: dict[str, Any],
-    stability: dict[str, Any],
-    gated_4: list[str],
-    anchor_oc: dict[str, Any],
-) -> dict[str, Any]:
-    """Degenerate candidates C1-C6 scored full-panel against the k=3
-    tolerances on the 4-cell and the 2-cell surfaces."""
+def degenerate_candidate_hazards(
+    full_window: dict[str, Any], gated_4: list[str]
+) -> dict[str, dict[str, Any]]:
+    """C1-C6 as full-panel hazards per gated cell (the noise-free
+    centre); pooled rates are the declared-window exposure-weighted
+    rates."""
     by = full_window["by_band_sex"]
     full_h = {k: v["psid_m"] for k, v in by.items()}
     nchs = {k: v["nchs_M"] for k, v in by.items()}
-    gated_2 = [c for c in gated_4 if not c.startswith("85+")]
 
     def pooled(sex: str | None) -> float:
         wd = sum(
@@ -834,12 +882,7 @@ def teeth_table(
         )
         return wd / we
 
-    def scores(cand: dict[str, float]) -> dict[str, float]:
-        return {
-            c: round(abs(math.log(cand[c] / full_h[c])), 3) for c in gated_4
-        }
-
-    candidates = {
+    return {
         "c1_external_levels": {
             "candidate": (
                 "the NCHS 2023 life-table band rates used directly as the "
@@ -876,6 +919,81 @@ def teeth_table(
             },
         },
     }
+
+
+def gate_seed_teeth(
+    full_window: dict[str, Any],
+    stability: dict[str, Any],
+    gated_4: list[str],
+    per_seed: list[dict[str, Any]],
+) -> dict[str, tuple[int, float, int, float]]:
+    """S2 (referee A ratifying round section 6.2): C1-C6 scored PER SEED
+    on side A -- |ln(candidate / m_A,s)| per cell against the k=3
+    tolerance, a seed passes iff every cell in the surface holds. Per
+    candidate: (gate seeds 0-4 passing on the 4-cell surface, seed-pass
+    rate over the 100 floor seeds, the same two on the 2-cell surface).
+    Half-split noise makes a marginal verdict at the noise-free centre
+    uncertain in EITHER direction. Carried as STRINGS in the artifact and
+    the block; no numeric leaf."""
+    tol = {c: stability[c]["tolerance_k3"] for c in gated_4}
+    gated_2 = [c for c in gated_4 if not c.startswith("85+")]
+    out: dict[str, tuple[int, float, int, float]] = {}
+    for name, spec in degenerate_candidate_hazards(
+        full_window, gated_4
+    ).items():
+        cand = spec["hazard"]
+        result: list[float] = []
+        for surface in (gated_4, gated_2):
+            passes = [
+                all(
+                    abs(math.log(cand[c] / s["hazards_side_a"][c])) <= tol[c]
+                    for c in surface
+                )
+                for s in per_seed
+            ]
+            result.append(int(sum(passes[i] for i in GATE_SEEDS)))
+            result.append(round(sum(passes) / len(passes), 2))
+        out[name] = (int(result[0]), result[1], int(result[2]), result[3])
+    return out
+
+
+def gate_seed_verdict(gate: int) -> str:
+    return "PASS" if gate >= 4 else "FAIL"
+
+
+def gate_seed_summary_text(
+    summary: dict[str, tuple[int, float, int, float]], name: str, surface: int
+) -> str:
+    """'3/5 (FAIL; rate 0.37)' for one candidate on one surface."""
+    g4, r4, g2, r2 = summary[name]
+    g, r = (g4, r4) if surface == 4 else (g2, r2)
+    return f"{g}/5 ({gate_seed_verdict(g)}; rate {r:.2f})"
+
+
+def teeth_table(
+    full_window: dict[str, Any],
+    stability: dict[str, Any],
+    gated_4: list[str],
+    anchor_oc: dict[str, Any],
+    per_seed: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Degenerate candidates C1-C6 scored full-panel against the k=3
+    tolerances on the 4-cell and the 2-cell surfaces (the NOISE-FREE
+    CENTRE of teeth), with the per-seed side-A verdicts at the gate seeds
+    beside them (S2, gate_seed_teeth)."""
+    by = full_window["by_band_sex"]
+    full_h = {k: v["psid_m"] for k, v in by.items()}
+    gated_2 = [c for c in gated_4 if not c.startswith("85+")]
+
+    def scores(cand: dict[str, float]) -> dict[str, float]:
+        return {
+            c: round(abs(math.log(cand[c] / full_h[c])), 3) for c in gated_4
+        }
+
+    candidates = degenerate_candidate_hazards(full_window, gated_4)
+    gate_seed_summary = gate_seed_teeth(
+        full_window, stability, gated_4, per_seed
+    )
     tol = {c: stability[c]["tolerance_k3"] for c in gated_4}
     rows: dict[str, Any] = {}
     for name, spec in candidates.items():
@@ -894,13 +1012,29 @@ def teeth_table(
                 min(tol[c] - sc[c] for c in gated_4), 3
             ),
         }
+        g4, r4, g2, r2 = gate_seed_summary[name]
+        rows[name]["at_the_gate_seeds_per_seed_side_a"] = (
+            f"4-cell surface: {g4}/5 gate seeds pass -> "
+            f"{gate_seed_verdict(g4)} (seed-pass rate {r4:.2f} over seeds "
+            f"0-99); 2-cell surface: {g2}/5 -> {gate_seed_verdict(g2)} "
+            f"({r2:.2f}). Scored per seed on side A against the k=3 "
+            "tolerances; the full-panel scores above are the noise-free "
+            "centre (S2)"
+        )
+    c4 = gate_seed_summary["c4_uniform_level_plus_25pct"]
     rows["c4_uniform_level_plus_25pct"]["known_non_catch"] = True
     rows["c4_uniform_level_plus_25pct"]["reading"] = (
-        "PASSES every gated internal cell on both surfaces: ln(1.25) = 0.223 "
-        "is inside every clearing tolerance. The internal surface does NOT "
-        "catch a uniform +25% level error. No anchor cell sees a level "
-        "either (the invariants are level-free), so this is a non-catch of "
-        "the WHOLE gate, stated as such."
+        "PASSES every gated internal cell on both surfaces at the noise-free "
+        "centre: ln(1.25) = 0.223 is inside every clearing tolerance. The "
+        "internal surface does NOT catch a uniform +25% level error at the "
+        "centre, and no anchor cell sees a level either (the invariants are "
+        "level-free), so this is a non-catch of the WHOLE gate at the "
+        "centre, stated as such. Scored per seed on side A at the gate "
+        f"seeds 0-4 it fails {5 - c4[0]} of 5 on the 4-cell surface by "
+        f"half-split noise (seed-pass rate {c4[1]:.2f} over seeds 0-99) and "
+        f"passes {c4[2]} of 5 on the 2-cell surface ({c4[3]:.2f}): a "
+        "non-catch at the centre and a probable catch at the gate seeds on "
+        "the 4-cell surface (referee A ratifying round section 6.2, S2)."
     )
     rows["c5_uniform_level_minus_25pct"]["reading"] = (
         "|ln(0.75)| = 0.288 fails only 85+|female (0.246) and 85+|male "
@@ -939,13 +1073,39 @@ def teeth_table(
         "is why LEVELS stay report-only and why the certification scope is "
         "interview-conditional."
     )
+
+    def gs(name: str, surface: int) -> str:
+        return gate_seed_summary_text(gate_seed_summary, name, surface)
+
     return {
         "basis": (
             "full-panel scoring on the declared universe under the pinned "
             "convention (external_anchor.windows.declared_1997_plus of v3) "
-            "against the k=3 tolerances -- an UPPER BOUND on teeth: per-seed "
-            "side-A scoring adds floor noise and makes each verdict LESS "
-            "likely to fail"
+            "against the k=3 tolerances -- the NOISE-FREE CENTRE of teeth, "
+            "NOT a bound: half-split noise makes a marginal PASS less "
+            "certain exactly as it makes a marginal FAIL less certain "
+            "(referee A ratifying round section 6.2, substitution S2). "
+            "Scored per seed on side A at the gate seeds 0-4 (candidate "
+            "hazards fixed at their full-panel definition; score "
+            "|ln(candidate / m_A,s)|; a seed passes iff every cell in the "
+            "surface holds; gate seeds passing of 5, then the seed-pass "
+            "rate over seeds 0-99; computed here from v3's per-seed "
+            "hazards_side_a and carried as strings): 4-cell surface C1 "
+            f"{gs('c1_external_levels', 4)}, C2 "
+            f"{gs('c2_age_flat_within_sex', 4)}, C3 "
+            f"{gs('c3_fully_flat', 4)}, C4 "
+            f"{gs('c4_uniform_level_plus_25pct', 4)}, C5 "
+            f"{gs('c5_uniform_level_minus_25pct', 4)}, C6 "
+            f"{gs('c6_sex_flat', 4)}; 2-cell surface C1 "
+            f"{gs('c1_external_levels', 2)}, C2 "
+            f"{gs('c2_age_flat_within_sex', 2)}, C3 "
+            f"{gs('c3_fully_flat', 2)}, C4 "
+            f"{gs('c4_uniform_level_plus_25pct', 2)}, C5 "
+            f"{gs('c5_uniform_level_minus_25pct', 2)}, C6 "
+            f"{gs('c6_sex_flat', 2)}. On the actual frame the 4-cell "
+            "surface catches C4 too and C1's 0.004 centre margin becomes a "
+            "3-of-5; the 2-cell surface passes C1, C4 and C5 at the gate "
+            "seeds"
         ),
         "gated_4_cell_surface": gated_4,
         "gated_2_cell_surface_25_84": gated_2,
@@ -954,7 +1114,10 @@ def teeth_table(
             "age-flat and fully-flat hazards FAIL internally by a wide margin "
             "(scores 1.2-2.7 against tolerances 0.25-0.38) -- the age "
             "gradient is decisively gated; a uniform +25% LEVEL error PASSES "
-            "every internal cell and is caught by NOTHING (known non-catch); "
+            "every internal cell at the noise-free centre (a known non-catch "
+            "there) and, scored per seed on side A, fails "
+            f"{5 - c4[0]} of 5 gate seeds on the 4-cell surface by half-split "
+            f"noise (seed-pass rate {c4[1]:.2f}); "
             "a uniform -25% level error is caught only by the 85+ cells (R4); "
             "external NCHS levels with no undercount adjustment pass the "
             "2-cell surface and fail the 4-cell surface by 0.004 at 85+|"
@@ -1342,47 +1505,310 @@ def stability_clause(
 
 
 def flip_plan() -> dict[str, Any]:
+    """Referee A addition (iii), COMPLETED at the pre-flip re-emission
+    (referee A ratifying round sections 5.4 and 8; referee B sections 7.3
+    and 8 condition 3): every assertion site the flip touches, each with
+    its pre-flip and its post-flip form. Line numbers are as at f8ccfe8,
+    the commit both ratifying referees read; sites are keyed by TEST NAME
+    so the record does not go stale when lines move."""
+    deriv = "tests/test_gates_derivations.py"
+    new = "tests/test_mortality_gate_floors_v1.py"
+    w1 = "tests/test_gate_w1_derivations.py"
+    v2 = "tests/test_mortality_floors_v2.py"
+    v3 = "tests/test_mortality_floors_v3.py"
+    already = "marker-guarded (already at f8ccfe8)"
+    guarded = (
+        "marker-guarded (pre-guarded at the pre-flip re-emission over f8ccfe8)"
+    )
+    constant = "one constant; flipped False -> True in the flip commit"
+    unconditional = (
+        "unconditional master-compare; edited in the flip commit as enumerated"
+    )
+    constraint = "not marker-dependent; a constraint on the flip's gates.yaml substitution"
+
+    def site(file: str, test: str, at: str, pre: str, post: str, guard: str):
+        return {
+            "file": file,
+            "test": test,
+            "site_at_f8ccfe8": at,
+            "pre_flip": pre,
+            "post_flip": post,
+            "guard": guard,
+        }
+
+    sites = [
+        site(
+            deriv,
+            "_gate_mortality_block",
+            ":4047-4055",
+            "reads the DRAFT block from the artifact's draft_gates_yaml_fragment.text",
+            "reads the LIVE gates.yaml block, so every derivation binding runs against the live contract (LOCKED-HOT, the 2a lesson)",
+            already,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_pre_lock_guard_or_live_block",
+            ":4107-4133",
+            "gates.yaml names neither the gate nor either mortality artifact; the DRAFT says draft / locked false / <FILLED AT RATIFICATION>",
+            "the block is a live top-level gate citing runs/mortality_gate_floors_v1.json with its ratified sha256; locked true",
+            already,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_partition_under_both_eligibility_rules",
+            ":4300-4303",
+            "set(block.thresholds.report_only) == set(gate_partition.report_only) (admit-shaped)",
+            "== gate_partition.report_only if the 85+ view's ruled `gated` is True (R4 admit), else == r4_alternative_partition.report_only (R4 exclude); the ruled `gated` must be a bool",
+            guarded,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_faithful_oc_recomputes_on_both_surfaces",
+            ":4353-4356",
+            'binding_surface == "<RULING R4>"',
+            "binding_surface in {surface_4_cell_incl_85plus, surface_2_cell_25_84}, no placeholder, and == the 4-cell name iff the 85+ view's `gated` is True (referee A's table instance: surface_4_cell_incl_85plus under R4 admit)",
+            guarded,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_anchor_margins_and_operating_characteristic",
+            ":4534",
+            '"<RULING R5" in cell.gate_rule.candidate_condition',
+            "no placeholder in candidate_condition and it states the 4-of-5 gate-seed rule (referee A's table instance: 'K = 1' under remedy (b))",
+            guarded,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_anchor_margins_and_operating_characteristic",
+            ":4535",
+            '"<RULING R5" in cell.gated',
+            "cell.gated is a bool, True exactly while id == mortality_differential, with tranche_id and certification_scope.tranche equal to id (the R5 remedy (c) demote-and-rename consequence; differential_claim_requires_the_anchor)",
+            guarded,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_draw_stream_base_is_distinct_and_not_yet_live",
+            ":4656",
+            "not (stream & occupied) with every base the live file names in `occupied`",
+            "the gate's own base (7400) is excluded from `occupied`: its own stream is not a self-collision",
+            guarded,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_draw_stream_base_is_distinct_and_not_yet_live",
+            ":4660",
+            "art.draw_stream.every_seed_base_named_in_gates_yaml == the live enumeration",
+            "the live enumeration minus the gate's own base == the artifact's (the artifact is NOT rebuilt at the flip), and the gate's base is in the live enumeration",
+            guarded,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_stability_clause_recomputes_from_v3_bootstrap",
+            ":4983",
+            '"<RULING A(ii)" in power_cap.stability_clause',
+            'no placeholder, and "RULED A(ii)" in power_cap.stability_clause (the ruled text opens with that token whichever option Max takes)',
+            guarded,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_r4_evidence_is_report_only_and_recomputes",
+            ":5082",
+            '"<RULING R4" in views.hazard_reproduction_85plus.gated',
+            "that `gated` is a bool (admit True / exclude False) and the view's status no longer reads pending; hazard_reproduction.gated stays True",
+            guarded,
+        ),
+        site(
+            deriv,
+            "test_gate_mortality_draft_block_is_written_nowhere_else",
+            ":4906-4931",
+            "the DRAFT text and its first 400 JSON-escaped bytes occur in no other tracked file; gates.yaml deep-equals origin/master",
+            "the same text check now INCLUDES the live gates.yaml: the flip MUST rewrite the block's header comment (the DRAFT lines 2-14, 'DRAFT -- NOT APPLIED TO gates.yaml ...') as a lock header (referee B condition 3(a)), or this test reds; the master-compare half is marker-guarded already",
+            constraint,
+        ),
+        site(
+            deriv,
+            "test_gate_m4_flip_leaves_locked_siblings_byte_identical",
+            ":3939-3961",
+            "added keys vs origin/master in (set(), {gate_m4}, {gate_w1}, {gate_m6})",
+            "also {gate_mortality} while the flip PR is open (the gate_w1 / gate_m6 tolerance form); empty once merged",
+            unconditional,
+        ),
+        site(
+            w1,
+            "test_gate_w1_flip_leaves_locked_siblings_byte_identical",
+            ":1204-1230 (the :1223 tolerance)",
+            "added keys in (set(), {gate_w1}, {gate_m6})",
+            "also {gate_mortality} while the flip PR is open",
+            unconditional,
+        ),
+        site(
+            new,
+            "test_gates_yaml_pre_lock_guard",
+            ":191-206",
+            "gates.yaml innocent of the gate and of both mortality artifacts",
+            "the block exists and cites runs/mortality_gate_floors_v1.json by path",
+            already,
+        ),
+        site(
+            new,
+            "test_draw_stream_enumeration_matches_the_live_contract_and_is_distinct",
+            ":853 and :858",
+            "every_seed_base_named_in_gates_yaml == the live enumeration; not (stream & occupied) over every live base",
+            "as the derivations site: the live enumeration minus 7400 equals the artifact's, 7400 is in the live enumeration, and 7400 is excluded from `occupied`",
+            guarded,
+        ),
+        site(
+            v2,
+            "test_gates_yaml_pre_lock_guard",
+            ":159-180",
+            "gates.yaml innocent of this artifact",
+            "the block exists and names the mortality floor basis by path (verified in the v4 verification's clone simulation)",
+            already,
+        ),
+        site(
+            v3,
+            "test_gates_yaml_pre_lock_guard",
+            ":254-280",
+            "gates.yaml innocent of this artifact",
+            "the block exists and cites the v3 artifact by path (verified in the v4 verification's clone simulation)",
+            already,
+        ),
+        site(
+            v2, "GATE_MORTALITY_BLOCK_LANDED", ":67", "False", "True", constant
+        ),
+        site(
+            v3,
+            "GATE_MORTALITY_BLOCK_LANDED",
+            ":115",
+            "False",
+            "True",
+            constant,
+        ),
+        site(
+            deriv,
+            "GATE_MORTALITY_BLOCK_LANDED",
+            ":4014",
+            "False",
+            "True",
+            constant,
+        ),
+        site(
+            new,
+            "GATE_MORTALITY_BLOCK_LANDED",
+            ":81",
+            "False",
+            "True",
+            constant,
+        ),
+    ]
     return {
         "rule": (
             "the commit that inserts the gate_mortality block into gates.yaml "
             "(under `gates:`, after gate_m6) flips GATE_MORTALITY_BLOCK_LANDED "
             "from False to True in EVERY file that carries it, IN THE SAME "
-            "COMMIT, and changes nothing else in those files (the gate_m6 "
-            "flip precedent 4b75147: named guard-test inversions in one "
-            "commit; the v3 pre-lock-guard precedent: one constant, no test "
-            "deleted)"
+            "COMMIT (the gate_m6 flip precedent 4b75147: named guard-test "
+            "inversions in one commit; the v3 pre-lock-guard precedent: one "
+            "constant, no test deleted). Every assertion that reads the LIVE "
+            "block or the LIVE gates.yaml and depends on a placeholder or on "
+            "the block's presence is guarded on the marker with its post-flip "
+            "form written beside its pre-flip form (assertion_sites), so in "
+            "the four marker files the flip is ONE constant each plus the two "
+            "unconditional added-key tolerance sets named there. The earlier "
+            "rule's claim that nothing else in those files moves at the flip "
+            "was FALSE for six tests at f8ccfe8 (referee A section 5.4; "
+            "referee B section 7.3, condition 4) and is WITHDRAWN; the "
+            "pre-flip re-emission pre-guarded every site both referees named."
         ),
         "marker": "GATE_MORTALITY_BLOCK_LANDED",
-        "files_carrying_the_marker": [
-            "tests/test_mortality_floors_v2.py",
-            "tests/test_mortality_floors_v3.py",
-            "tests/test_gates_derivations.py",
-            "tests/test_mortality_gate_floors_v1.py",
+        "files_carrying_the_marker": [v2, v3, deriv, new],
+        "assertion_sites": sites,
+        "gates_yaml_substitutions_at_the_flip": [
+            "append the block under `gates:` after gate_m6 with ONLY these substitutions (referee A section 8; referee B condition 3)",
+            "(a) the header comment (DRAFT lines 2-14) -> a lock header (required: test_gate_mortality_draft_block_is_written_nowhere_else forbids the DRAFT opening bytes in gates.yaml)",
+            "(b) status -> locked at both levels; locked -> true at both levels",
+            "(c) floor_run_sha256: <FILLED AT RATIFICATION> -> the sha256 of runs/mortality_gate_floors_v1.json AS RATIFIED (the artifact is not rebuilt at the flip)",
+            "(d) lock_ceremony.exists -> true; required_before_lock -> a completed record",
+            "(e) internal_surface.views.hazard_reproduction_85plus.status: derived_pending_ruling_R4 -> the ruled status",
+            "(f) every <RULING ...> placeholder token -> the ruled text (R3; R4; R5 rule, half convention, companions; A(ii) = S5), per ceremony_notes.placeholders_the_ratifying_round_must_fill, INCLUDING the unmarked sites it lists for the non-proposed outcomes",
+            "(g) ceremony_notes -> a past-tense record: placeholders_filled_at_ratification, flip_plan as executed, the PR-body wording audit",
+            "(h) history[0] (gate_m4 shape: id, proposed, flipped_live, referee_round, ratified, content) and thresholds.ceremony_record",
+            "(i) DONE at the pre-flip re-emission: the four gates.yaml line citations are key paths; no_self_rescue is gate_m4's full sentence; the gate_m6 circularity citation (was off by one) is a key path",
+            "(j) DONE at the pre-flip re-emission: the split-frame knife-edge sentence in not_certified.conventions_and_the_undercount",
+            "(k) optionally a named publishes_regardless key carrying the existing conjunction sentence, if gate_3 locks first with one",
+            "nothing else: the verification round diffs the ratified block against the pre-flip DRAFT digest and every test hunk against this commit",
         ],
+        "conditional_on_the_rulings": {
+            "R4_exclude": [
+                "covers: '<RULING R4: 4 | 2>' -> 2 and '{75-84<RULING R4: , 85+>}' -> {75-84}",
+                "internal_surface.views.hazard_reproduction_85plus: gated false; status the ruled report-only status; the tolerances stay as report-only evidence",
+                "thresholds.report_only: 10 -> 12 cells (add death.85+|male and death.85+|female with reason excluded_by_ruling_R4 and their Kish counts)",
+                "not_certified[cells_25_74]: margin name and detail must name 85+",
+                "certification_scope.does_not_support: add the 85+ cells",
+                "protocol.fresh_run_artifact_schema.per_draw_per_cell_rates.shape -> [20, 2, 5]",
+                "faithful_candidate_oc.binding_surface -> surface_2_cell_25_84",
+                "tests/test_gates_derivations.py::test_gate_mortality_partition_under_both_eligibility_rules reads r4_alternative_partition (pre-guarded: keyed on the 85+ view's gated)",
+            ],
+            "R5_c_demote_and_rename": [
+                "id -> mortality_reproduction (the marked comment names it; the value is the edit)",
+                "covers: 'the DIFFERENTIAL-MORTALITY module' -> the hazard-reproduction module; drop 'plus <RULING R5: the sex-DOMINANCE anchor over 45-54..65-74 and>'",
+                "thresholds.tranche_id and certification_scope.tranche -> mortality_reproduction (pre-guarded: both must equal id)",
+                "statistic: the candidate-side condition sentence",
+                "anchor_surface.cells.sex_dominance.male_exceeds_female: gated false; gate_rule.candidate_condition '(c) none -- demoted'; unique_catch reworded (a REPORTED cell)",
+                "certification_scope.certifies: drop '<RULING R5: plus the sex DOMINANCE over 45-74 and>'; does_not_support last item: the differential claim unsupported outright",
+                "not_certified[sex_differential_rides_on_the_anchor]: the demotion sentence becomes the operative one",
+                "degenerate_candidates.c6_sex_flat.caught_by -> nothing gated; catch_structure: 'caught ONLY by the sex-dominance anchor' -> uncaught by the whole gate",
+                "governance.amendment_rules.differential_claim_requires_the_anchor fires; every PASS statement says so",
+            ],
+            "R5_companions_report_only": [
+                "anchor_surface.cells.age_gradient.comonotone|male.gated and |female.gated -> false (marked)",
+                "covers: drop 'the age-gradient SHAPE anchors over 55+ per sex'",
+                "certification_scope.certifies: drop 'the age-gradient SHAPE over 55+'",
+                "governance.amendment_rules.differential_claim_requires_the_anchor.rule: drop 'plus the age-gradient shape'",
+                "gate_partition.n_gate_eligible 7 -> 5 is the artifact's record and is NOT rewritten (the artifact is not rebuilt at the flip)",
+            ],
+            "A_ii_any_outcome": [
+                "power_cap.stability_clause -> the ruled text, opening 'RULED A(ii)' (pre-guarded token)",
+                "governance.amendment_rules.floor_seed_count.rule: '<RULING A(ii)> may raise ...' -> the ruled sentence",
+            ],
+        },
         "what_flips_with_it": [
             "tests/test_gates_derivations.py: _gate_mortality_block() reads "
             "the LIVE gates.yaml block instead of the artifact's draft "
             "fragment, so every derivation binding runs against the live "
             "contract (LOCKED-HOT, the 2a lesson); the pre-lock guard inverts "
-            "to assert the block exists and cites runs/mortality_gate_floors_v1.json",
+            "to assert the block exists and cites runs/mortality_gate_floors_v1.json; "
+            "every placeholder-dependent assertion takes its post-flip form "
+            "(assertion_sites)",
             "tests/test_gates_derivations.py "
             "test_gate_m4_flip_leaves_locked_siblings_byte_identical and "
-            "tests/test_gate_w1_derivations.py (:1223) must admit "
+            "tests/test_gate_w1_derivations.py "
+            "test_gate_w1_flip_leaves_locked_siblings_byte_identical must admit "
             "{'gate_mortality'} as a sole added key while the flip PR is open "
             "(the gate_w1 / gate_m6 tolerance form)",
-            "gates.yaml: floor_run_sha256 replaces the <FILLED AT "
-            "RATIFICATION> placeholder with the sha256 of "
-            "runs/mortality_gate_floors_v1.json AS RATIFIED; every <RULING ...> "
-            "placeholder is replaced by the ratifying round's text; status "
-            "-> locked; locked -> true; a history entry is added",
+            "gates.yaml: gates_yaml_substitutions_at_the_flip, and "
+            "conditional_on_the_rulings for the non-proposed outcomes",
             "tests/tier_counts.json and tests/README-tiers.md re-refreshed by "
             "LIVE collection (gate_m4 flip-note 1)",
         ],
         "verified_shape": (
-            "the v4 verification simulated the v2/v3 marker flip in a clone: "
-            "one failure per file pre-flip (the guard), 74 / 44 green "
-            "post-flip with the block under `gates:` (verification report "
-            "section 1, simulations 1-2)"
+            "the v4 verification simulated the v2/v3 marker flip in a clone "
+            "(one failure per file pre-flip, 74 / 44 green post-flip); referee "
+            "A (section 5.4) and referee B (section 7.3) simulated the WHOLE "
+            "flip at f8ccfe8 in scratch clones: without guards, 6 derivation "
+            "tests and 1 new-file test red for the reasons assertion_sites "
+            "names, plus the two enumerated tolerance sets. The pre-flip "
+            "re-emission pre-guarded every marker-dependent site; the two "
+            "tolerance sets remain flip-commit edits by design (they are "
+            "unconditional master-compares)"
+        ),
+        "sequencing_hazard": (
+            "every_seed_base_named_in_gates_yaml records LINE NUMBERS. Any "
+            "gates.yaml edit ABOVE gate_m6 landing before the flip (e.g. a "
+            "gate_3 lock; referee B condition 6) moves them and reds the "
+            "pre-flip enumeration equality in both draw-stream tests for the "
+            "right reason; the remedy is a deterministic re-emission of this "
+            "artifact whose only moved leaves are those line lists, re-pinned "
+            "in the same commit -- never a silent edit"
         ),
     }
 
@@ -1903,6 +2329,34 @@ def draft_fragment(
         else "<PSID>"
     )
     knife_f = t["75-84|male"]
+    s6 = REFEREE_A_RATIFYING_1000_SEED_ANCHOR
+    # S2: the per-seed side-A teeth at the gate seeds, recomputed here
+    # from v3's per-seed record (the same function teeth_table used).
+    _gss = gate_seed_teeth(
+        v3["external_anchor"]["windows"][HEADLINE_UNIVERSE],
+        stability,
+        partition["internal_gate_eligible"],
+        headline_block(v3)["per_seed"],
+    )
+
+    def _gs(name: str, surface: int) -> str:
+        return gate_seed_summary_text(_gss, name, surface)
+
+    gs4c1, gs2c1 = _gs("c1_external_levels", 4), _gs("c1_external_levels", 2)
+    gs4c4, gs2c4 = _gs("c4_uniform_level_plus_25pct", 4), _gs(
+        "c4_uniform_level_plus_25pct", 2
+    )
+    gs4c5, gs2c5 = _gs("c5_uniform_level_minus_25pct", 4), _gs(
+        "c5_uniform_level_minus_25pct", 2
+    )
+    gs4c6, gs2c6 = _gs("c6_sex_flat", 4), _gs("c6_sex_flat", 2)
+    _c4 = _gss["c4_uniform_level_plus_25pct"]
+    c4_fail, c4_rate4, c4_pass2, c4_rate2 = (
+        5 - _c4[0],
+        f"{_c4[1]:.2f}",
+        _c4[2],
+        f"{_c4[3]:.2f}",
+    )
     br = bracket["variants"]["unlimited"]["per_cell"] if bracket else None
     br_txt = (
         f"+{br['85+|male']['ln_m_extended_over_m_pinned']:.3f} / "
@@ -1991,17 +2445,20 @@ def draft_fragment(
     not_certified:
       - margin: mortality_drift
         detail: >-
-          A PASS certifies NOTHING about mortality DRIFT. gate_m6.not_certified[0]
-          (gates.yaml:5396-5405) stands: that is gate_m6's TEMPORAL-HOLDOUT
-          drift surface; this is the person-disjoint REPRODUCTION surface on
-          a different event base. Nothing here weakens it.
+          A PASS certifies NOTHING about mortality DRIFT.
+          gate_m6.not_certified[0].detail (margin mortality_drift; cited by
+          key path, never by live line number) stands: that is gate_m6's
+          TEMPORAL-HOLDOUT drift surface; this is the person-disjoint
+          REPRODUCTION surface on a different event base. Nothing here
+          weakens it.
       - margin: mortality_levels_against_nchs
         detail: >-
           A PASS certifies NOTHING about mortality LEVELS against NCHS. Every
           PSID/NCHS ratio is below 1 in every window (0.360-0.865, median
           0.760); it is the truth's undercount, REPORTED never gated
-          (gates.yaml:5737-5740, '|ln|-gating external mortality LEVELS stays
-          REJECTED'). A candidate that reproduces PSID inherits the undercount.
+          (gate_m6.deliverables.ssa_nchs_life_table_mortality_anchor.gating:
+          '|ln|-gating external mortality LEVELS stays REJECTED'). A
+          candidate that reproduces PSID inherits the undercount.
       - margin: survival_to_claiming_ages
         detail: >-
           SURVIVAL TO CLAIMING AGES (62 / FRA / 67), life expectancy at 65
@@ -2016,7 +2473,16 @@ def draft_fragment(
           tolerances exceed ln(1.5) ({t["25-34|female"]:.3f} down to
           {t["65-74|female"]:.3f}); the two 65-74 cells are seed-decided
           (bootstrap P(clear) 0.443 male / 0.605 female at 100 seeds) and are
-          report-only whatever the R3/R4 rulings.
+          report-only whatever the R3/R4 rulings. The partition's edge is
+          seed-decided: over random 100-seed blocks of a 1,000-seed
+          diagnostic the 65-74 cells clear the cap with probability 0.52 /
+          0.14 and the 75-84 cells with 0.88 / 0.61; only the 85+ cells clear
+          robustly (0.99 / 1.00). The bound tolerances are the pre-registered
+          seeds' (0-99); their 1,000-seed counterparts are 0.375 / 0.398 /
+          0.344 / 0.269 (75-84|male / 75-84|female / 85+|male / 85+|female).
+          (Referee A ratifying round, sections 3 A(ii) and 4, report sha256
+          c38826343303ed32...: a diagnostic on the pinned frame, NOT a rebuild;
+          no floor number moves; substitution S3.)
       - margin: conventions_and_the_undercount
         detail: >-
           The weight universe, the ascertainment convention and the censoring
@@ -2027,13 +2493,21 @@ def draft_fragment(
           disclosed uncertainty of the truth, never a second scoring rule.
           Crediting known deaths after attrition would move the 85+ hazards by
           {br_txt}; the gated hazard is
-          interview-conditional.
+          interview-conditional. The split-frame pin (protocol.split_frame_pin:
+          the full slice frame is split BEFORE any band or window restriction)
+          binds both sides in the same way, and one gated cell's eligibility
+          rides on it: 75-84|male's k=3 tolerance is {knife_f:.3f} under the
+          pinned full-frame split and {knife_r} under a 25-84-restricted split,
+          against the cap 0.4055 -- two 100-seed samples of one floor, so that
+          cell's eligibility is decided by the pre-registered sample (seeds
+          0-99 on the full frame), and any PASS statement carries that.
       - margin: split_unit
         detail: >-
           The split is PERSON-DISJOINT (split_panel_by_person, gate_m4's
           disability convention). It DIFFERS from gate_m6's HOUSEHOLD-DISJOINT
-          mortality family (gates.yaml:5534 split_units); no gate_m6 mortality
-          statement transfers here and none from here transfers to gate_m6.
+          mortality family (gate_m6.split_units.household_disjoint_families);
+          no gate_m6 mortality statement transfers here and none from here
+          transfers to gate_m6.
       - margin: sex_differential_rides_on_the_anchor
         detail: >-
           <RULING R5> Only sex_dominance.male_exceeds_female sees the sex
@@ -2041,7 +2515,14 @@ def draft_fragment(
           85+ 0.203) sits inside its own tolerance, so a sex-flat candidate
           passes every internal cell (degenerate_candidates.c6_sex_flat). If
           the anchor is demoted, the certification narrows to hazard
-          reproduction and the id is renamed mortality_reproduction.
+          reproduction and the id is renamed mortality_reproduction. The
+          anchor's evidence-time conditions (holds on every half; margin >=
+          3 sigma) are met at the pre-registered 100 seeds (3.066 sigma
+          both_sides; no inversion) and NOT at 1,000 seeds (2.939 sigma; 10
+          of 2,000 halves invert; anchor_surface.cells
+          evidence_time_margin_at_1000_seeds); the candidate is tested on
+          the candidate-side condition of gate_rule only (the R5 ruling),
+          never on the evidence-time margin.
     holdout_basis: [ind2023er_demographic_panel, ind2023er_death_file, nchs_life_tables_2023]
     data_staged: >-
       ind2023er is staged on disk (the demographic panel + ER32000 sex +
@@ -2192,15 +2673,22 @@ def draft_fragment(
           before any band or window restriction. Side A is seed s's HOLDOUT;
           side B is the fitting complement. NO person straddles the halves.
         split_frame_pin:
-          # LOAD-BEARING (R10). Restricting the frame to 25-84 BEFORE the
-          # split re-deals every person's side and moves tolerances: under a
-          # 25-84-restricted split frame the 75-84|male k=3 tolerance is
-          # {knife_r} (pinned convention, declared universe) where the pinned
-          # full-frame split gives {knife_f:.3f}; the packet's v1-survival figures
-          # were 0.405 vs 0.335 against a cap of 0.4055. The full-frame
-          # convention is the committed builder's and is pinned here; a
-          # perturbation test in tests/test_gates_derivations.py fails if
-          # the builder's split convention changes.
+          # LOAD-BEARING (R10) as the PRE-REGISTERED SAMPLE: seeds 0-99 on
+          # the full frame define which 100 half-splits the floor is; any
+          # other frame or seed set is a different sample of the same floor,
+          # with se(T) ~ 0.025-0.03 per cell. Restricting the frame to 25-84
+          # BEFORE the split re-deals every person's side (per-seed
+          # correlation +0.08) and gives 75-84|male {knife_r} where the pinned
+          # split gives {knife_f:.3f}: two samples of one floor (permutation
+          # p ~ 0.05; ten disjoint 100-seed blocks span 0.328-0.408;
+          # 1,000-seed T 0.375 full / 0.385 restricted), NOT an effect of the
+          # frame restriction on the estimand (the 75-84 slices are identical
+          # in both frames). The full-frame convention is the committed
+          # builder's and is pinned here; a perturbation test in
+          # tests/test_gates_derivations.py fails if the builder's
+          # split-then-window order changes. (Referee A ratifying round
+          # sections 4 and 8, substitution S1; the packet's v1-survival
+          # figures were 0.405 vs 0.335 against the cap 0.4055.)
           frame: the full slice frame, all ages, all start waves, before band assignment and before the window
           restricted_25_84_before_split_tolerance_75_84_male: {knife_r}
           full_frame_before_split_tolerance_75_84_male: {knife_f:.3f}
@@ -2304,7 +2792,16 @@ def draft_fragment(
           both surfaces sit AT OR ABOVE the precedent band top 0.9685 (gate_m4
           flip-note 2 wording: the band is a floor). The anchor cells add the
           R5 term (anchor_surface.operating_characteristic), which under the
-          inherited candidate-side rule is NOT at or above precedent.
+          inherited candidate-side rule is NOT at or above precedent. At the
+          1,000-seed sigma (0.144 / 0.150 / 0.132 / 0.105) the same method
+          gives 0.936 (4 cells) / 0.990 (2 cells) at the bound tolerances;
+          conditional on the pre-registered gate seeds 0-4 a faithful
+          fitted-on-B candidate passes with 0.9998 / 1.0000 (draw noise only)
+          and 0.959 / 0.993 with a 0.05-log per-cell model error. (Referee A
+          ratifying round, sections 3 R4 and 8, substitution S4: the
+          precedent-band figure above is a property of the pre-registered
+          100-seed floor, not of the true noise floor; the conditional figure
+          is what governs the gate as it will actually run.)
       internal_surface:
         # Tolerances == round(mean + 3*sd, 3) on the 100 per-seed |ln| values
         # of runs/mortality_floors_v3.json's headline block; machine-bound in
@@ -2393,6 +2890,31 @@ def draft_fragment(
                 (both_sides margin, fitted-excluding-holdout noise). More draws
                 do not cure the inherited rule: the fitted-model noise does not
                 shrink with K.
+            evidence_time_margin_at_1000_seeds:
+              # S6 (referee A ratifying round, section 3 R5 item 5 and section
+              # 8): a 1,000-seed DIAGNOSTIC on the pinned frame, disclosed
+              # beside the bound margin by A's report digest. It rebuilds
+              # nothing: margin_sigma_units above is the pre-registered
+              # 100-seed floor's and is what the bindings recompute. The
+              # three block counts are A's recompute_anchor_blocks.log (3
+              # blocks hold on every half; 4 have margin >= 3; 2 meet both).
+              source: referee A ratifying round, mortality-ratify-A/REPORT.md sha256 c38826343303ed32da6820500881274fb82b82474ac6f1499dab970d1b68c103, recompute_anchor_blocks.log (runs/mortality_gate_floors_v1.json anchor_operating_characteristic.evidence_time_margin_at_1000_seeds carries the same values)
+              both_sides_sd_2000_halves: {s6['both_sides_sd_2000_halves']}
+              margin_sigma_units: {s6['margin_sigma_units']}
+              inverting_halves_of_2000: {s6['inverting_halves_of_2000']}
+              disjoint_100_seed_blocks_holding_on_every_half: "{s6['disjoint_100_seed_blocks_holding_on_every_half']}"
+              disjoint_100_seed_blocks_with_margin_ge_3_sigma: "{s6['disjoint_100_seed_blocks_with_margin_ge_3_sigma']}"
+              disjoint_100_seed_blocks_meeting_both_conditions: "{s6['disjoint_100_seed_blocks_meeting_both_conditions']}"
+              p_eligible_random_100_seed_block_both_sides: {s6['p_eligible_random_100_seed_block_both_sides']:.2f}
+              reading: >-
+                the evidence-time conditions (holds on every half; margin >=
+                MARGIN_K = 3 sigma) are met at the pre-registered 100 seeds
+                (3.066 sigma both_sides; no inversion) and NOT at 1,000 seeds
+                (2.939 sigma; 10 of 2,000 halves invert); the committed block
+                0-99 is one of the two disjoint blocks meeting both. The
+                candidate is tested on gate_rule.candidate_condition only,
+                never on this margin; any rebuild re-evaluates eligibility on
+                the rebuilt floor under the ruled convention (A(ii)).
             gate_rule:
               candidate_condition: "<RULING R5: (a) the candidate's per-gate-seed statistic > 0 | (b) > K x real_half_split_sd with K in {{1, 2}} stated here | (c) none -- demoted>; gate passes iff >= 4 of 5 gate seeds. This is the ONLY thing a candidate must satisfy."
               evidence_time_conditions: >-
@@ -2464,13 +2986,18 @@ def draft_fragment(
           forbids, and is not repeated here). The NCHS input contributes no
           information to the fitted model. Any statement that the engine's
           mortality is externally pinned to NCHS is false and must not appear
-          in a PASS statement. Compare gate_m6:5745-5749, which already
-          discloses the same path circularity for the report-only
-          triangulation.
+          in a PASS statement. Compare
+          gate_m6.deliverables.ssa_nchs_life_table_mortality_anchor.circularity_disclosure,
+          which already discloses the same path circularity for the
+          report-only triangulation.
       degenerate_candidates:
         # R11 (runs/mortality_gate_floors_v1.json degenerate_candidates):
         # full-panel scoring on the declared universe against the k=3
-        # tolerances -- an UPPER BOUND on teeth.
+        # tolerances is the NOISE-FREE CENTRE of teeth, not a bound (S2).
+        # Scored per seed on side A at the gate seeds 0-4 (seeds passing of
+        # 5; seed-pass rate over 0-99, from v3's per-seed hazards_side_a):
+        # 4-cell surface C1 {gs4c1}, C4 {gs4c4}, C5 {gs4c5}, C6 {gs4c6};
+        # 2-cell surface C1 {gs2c1}, C4 {gs2c4}, C5 {gs2c5}, C6 {gs2c6}.
         c1_external_levels:
           candidate: NCHS 2023 band rates used directly, no undercount adjustment
           scores: {{ {", ".join(f'"{c}": {teeth["candidates"]["c1_external_levels"]["scores"][c]:.3f}' for c in teeth["gated_4_cell_surface"])} }}
@@ -2484,7 +3011,13 @@ def draft_fragment(
           verdict: FAIL on every surface
         c4_uniform_level_plus_25pct:
           score_every_cell: 0.223
-          verdict: KNOWN NON-CATCH of the WHOLE gate -- PASSES every gated internal cell on both surfaces, and no anchor invariant sees a level.
+          verdict: >-
+            a known non-catch at the NOISE-FREE CENTRE -- PASSES every gated
+            internal cell on both surfaces at full-panel scoring, and no anchor
+            invariant sees a level; scored per seed on side A at the gate seeds
+            it fails {c4_fail} of 5 on the 4-cell surface by half-split noise
+            (seed-pass rate {c4_rate4}) and passes {c4_pass2} of 5 on the 2-cell
+            surface ({c4_rate2}) (S2).
         c5_uniform_level_minus_25pct:
           score_every_cell: 0.288
           verdict: {teeth["candidates"]["c5_uniform_level_minus_25pct"]["verdict_4_cell_surface"]} on the 4-cell surface (85+ cells only), {teeth["candidates"]["c5_uniform_level_minus_25pct"]["verdict_2_cell_surface_25_84"]} on the 2-cell surface -- the R4 ruling decides whether -25% is caught
@@ -2522,8 +3055,10 @@ def draft_fragment(
         amendment_rules:
           inherits: gate_1
           no_self_rescue: >-
-            inherited verbatim from gate_1.amendment_rules: no candidate's
-            committed run verdict changes under a rule proposed after that run.
+            Inherited verbatim from gate_1.amendment_rules: no candidate's
+            committed run verdict changes under a rule proposed after that run;
+            a gate rule amendment applies only to runs registered after its
+            ratification.
           amendments_only_via: >-
             public proposal + adversarial referee round + verification +
             maintainer ratification by merge.
@@ -2569,22 +3104,61 @@ def draft_fragment(
           - the differential (male > female) claim unless the sex-dominance anchor is GATED (R5)
       ceremony_notes:
         placeholders_the_ratifying_round_must_fill:
-          - "<RULING R3>: the eligibility count (Kish effective PROPOSED | unweighted)"
-          - "<RULING R4>: 85+ in the reproduction gate (4-cell surface, OC {oc4["p_gate_pass_4_of_5"]}) | out (2-cell, OC {oc2["p_gate_pass_4_of_5"]})"
-          - "<RULING R5>: the anchor's candidate-side rule ((a) bare positivity | (b) K in {{1, 2}}) | demotion (c) with the rename; the half convention (both_sides PROPOSED | side_a); the age-gradient companions' commissioning"
-          - "<RULING A(ii)>: the stability clause | a 1,000-seed partition decision"
-          - "<FILLED AT RATIFICATION>: floor_run_sha256 = sha256 of runs/mortality_gate_floors_v1.json as ratified"
-          - "draw_stream_base {DRAW_STREAM_BASE}: PROPOSED here; enters gates.yaml only at the flip"
+          # COMPLETE CENSUS (referee B section 5.3, condition 3): every MARKED
+          # token by key path, and for each ruling's NON-proposed outcome every
+          # UNMARKED site it would also touch, so no outcome leaves an unnamed
+          # edit. Sites are named by key path, never by live line number.
+          - "<RULING R3>: the eligibility count (Kish effective PROPOSED | unweighted). MARKED: power_cap.rule (the '<RULING R3: ...>' clause). UNMARKED under either outcome: none (both rules admit the same four cells; the reason strings beside report_only are the Kish ones and stay)."
+          - "<RULING R4>: 85+ in the reproduction gate (4-cell surface, OC {oc4["p_gate_pass_4_of_5"]}) | out (2-cell, OC {oc2["p_gate_pass_4_of_5"]}). MARKED: the header comment; covers ('<RULING R4: 4 | 2>' and '{{75-84<RULING R4: , 85+>}}'); internal_surface.views.hazard_reproduction_85plus (the '# <RULING R4>' comment and gated); protocol.fresh_run_artifact_schema.per_draw_per_cell_rates.shape; faithful_candidate_oc.binding_surface. UNMARKED under ADMIT: internal_surface.views.hazard_reproduction_85plus.status (derived_pending_ruling_R4 -> the ruled status; the pre-guarded post-flip assertion in tests/test_gates_derivations.py::test_gate_mortality_r4_evidence_is_report_only_and_recomputes forbids 'pending'). UNMARKED under EXCLUDE (a restructure, not a fill): report_only (10 -> 12 cells: add death.85+|male and death.85+|female with the reason excluded_by_ruling_R4 and their Kish counts); not_certified[cells_25_74] (margin name and detail must name 85+); certification_scope.does_not_support (add the 85+ cells); k_selection.rationale and degenerate_candidates (the 4-cell figures become report-only evidence); the fresh-run shape [20, 2, 5]; binding_surface -> surface_2_cell_25_84; and tests/test_gates_derivations.py::test_gate_mortality_partition_under_both_eligibility_rules reads r4_alternative_partition (pre-guarded: its post-flip form keys on the 85+ view's gated)."
+          - "<RULING R5>: the anchor's candidate-side rule ((a) bare positivity | (b) K in {{1, 2}}) | demotion (c) with the rename; the half convention (both_sides PROPOSED | side_a); the age-gradient companions' commissioning. MARKED: id (a comment token; the value is the edit under (c)); statistic (the candidate-side condition); anchor_surface.half_convention; anchor_surface.cells.sex_dominance.male_exceeds_female.gated and .gate_rule.candidate_condition (the pre-guarded post-flip assertion in tests/test_gates_derivations.py::test_gate_mortality_anchor_margins_and_operating_characteristic requires a bool gated that is True exactly while id == mortality_differential, tranche_id and certification_scope.tranche equal to id, and a candidate_condition stating the 4-of-5 gate-seed rule with no placeholder); the '<RULING R5-companion>' tokens on age_gradient.comonotone|male.gated and |female.gated; covers ('plus <RULING R5: the sex-DOMINANCE anchor over 45-54..65-74 and>'); certification_scope.certifies ('<RULING R5: plus the sex DOMINANCE over 45-74 and>'); not_certified[sex_differential_rides_on_the_anchor] (its leading token). UNMARKED under (c) DEMOTE: id -> mortality_reproduction; covers ('the DIFFERENTIAL-MORTALITY module'); thresholds.tranche_id; certification_scope.tranche; certification_scope.does_not_support (last item: the differential claim unsupported outright); anchor_surface.cells.sex_dominance.male_exceeds_female.unique_catch ('the ONLY gated cell' -> a REPORTED cell); degenerate_candidates.c6_sex_flat.caught_by (-> nothing gated) and .anchor_oc_beside_the_catch; degenerate_candidates.catch_structure ('caught ONLY by the sex-dominance anchor' -> uncaught by the whole gate); governance.amendment_rules.differential_claim_requires_the_anchor (fires); every PASS statement. UNMARKED under COMPANIONS REPORT-ONLY: covers ('the age-gradient SHAPE anchors over 55+ per sex'); certification_scope.certifies ('the age-gradient SHAPE over 55+'); governance.amendment_rules.differential_claim_requires_the_anchor.rule ('plus the age-gradient shape'); the artifact's gate_partition.n_gate_eligible 7 -> 5 is a record and is NOT rewritten (the artifact is not rebuilt at the flip)."
+          - "<RULING A(ii)>: the stability clause | a 1,000-seed partition decision | neither as priced (referee A: keep the pre-registered basis, disclose the block evidence (S3, S4), pre-register a rebuild rule (S5); referee B: adopt the clause with its deal-dependence recorded and the 1,000-seed rebuild as the amendment path). MARKED: power_cap.stability_clause (its leading token) and governance.amendment_rules.floor_seed_count.rule ('<RULING A(ii)> may raise ...'). The ruled power_cap.stability_clause must open 'RULED A(ii)' whichever option is taken (the pre-guarded post-flip assertion in tests/test_gates_derivations.py::test_gate_mortality_stability_clause_recomputes_from_v3_bootstrap reads that token and forbids a placeholder). UNMARKED under any outcome: none (not_certified[cells_25_74] already carries the 1,000-seed disclosure, S3)."
+          - "<FILLED AT RATIFICATION>: floor_run_sha256 = sha256 of runs/mortality_gate_floors_v1.json as ratified (the top-level key and the header comment)."
+          - "draw_stream_base {DRAW_STREAM_BASE}: PROPOSED here; enters gates.yaml only at the flip. UNMARKED: none in the block; both draw-stream tests exclude the gate's own base from the collision set once landed (pre-guarded)."
+          - "At the flip, independent of every ruling (referee B condition 3): the header comment (DRAFT lines 2-14) is rewritten as a lock header (also required by tests/test_gates_derivations.py::test_gate_mortality_draft_block_is_written_nowhere_else, which forbids the DRAFT opening bytes in gates.yaml); status -> locked (both levels); locked -> true (both); lock_ceremony.exists -> true with required_before_lock -> a completed record; a history[0] entry (gate_m4 shape) and thresholds.ceremony_record; ceremony_notes -> a past-tense record (placeholders_filled_at_ratification; this flip_plan as executed; the PR-body wording audit). The four gates.yaml line citations and no_self_rescue were already replaced (key paths; gate_m4's full sentence) at the pre-flip re-emission, as was the knife-edge sentence."
         flip_plan: >-
-          (referee A, addition (iii)) the commit that inserts this block under
-          `gates:` flips GATE_MORTALITY_BLOCK_LANDED False -> True in
-          tests/test_mortality_floors_v2.py, tests/test_mortality_floors_v3.py,
-          tests/test_gates_derivations.py and
-          tests/test_mortality_gate_floors_v1.py IN THE SAME COMMIT (one
-          constant per file; no test deleted); the derivation bindings then read
-          the LIVE block (LOCKED-HOT); the added-key tolerance sets in
-          tests/test_gates_derivations.py and tests/test_gate_w1_derivations.py
-          admit {{'gate_mortality'}} while the flip PR is open; tier_counts.json
+          (referee A addition (iii), COMPLETED at the pre-flip re-emission:
+          referee A ratifying round sections 5.4 and 8, referee B sections 7.3
+          and 8 condition 3; the full site table with each pre-flip and
+          post-flip form is runs/mortality_gate_floors_v1.json
+          flip_plan.assertion_sites.) The commit that inserts this block under
+          `gates:` (after gate_m6) flips GATE_MORTALITY_BLOCK_LANDED False ->
+          True in tests/test_mortality_floors_v2.py,
+          tests/test_mortality_floors_v3.py, tests/test_gates_derivations.py
+          and tests/test_mortality_gate_floors_v1.py IN THE SAME COMMIT, ONE
+          constant per file, no test deleted. Every assertion that reads the
+          LIVE block or the LIVE gates.yaml and depends on a placeholder or on
+          the block's presence is marker-guarded with its post-flip form beside
+          its pre-flip form: in tests/test_gates_derivations.py the block
+          source switch (_gate_mortality_block), the pre-lock guard
+          (test_gate_mortality_pre_lock_guard_or_live_block), the report-only
+          partition binding
+          (test_gate_mortality_partition_under_both_eligibility_rules),
+          binding_surface
+          (test_gate_mortality_faithful_oc_recomputes_on_both_surfaces), the
+          anchor cell's candidate_condition and gated
+          (test_gate_mortality_anchor_margins_and_operating_characteristic),
+          the draw-stream collision set and enumeration, which exclude the
+          gate's own base once landed
+          (test_gate_mortality_draw_stream_base_is_distinct_and_not_yet_live),
+          the stability-clause token
+          (test_gate_mortality_stability_clause_recomputes_from_v3_bootstrap)
+          and the 85+ view's gated
+          (test_gate_mortality_r4_evidence_is_report_only_and_recomputes); in
+          tests/test_mortality_gate_floors_v1.py the pre-lock guard
+          (test_gates_yaml_pre_lock_guard) and the draw-stream enumeration
+          (test_draw_stream_enumeration_matches_the_live_contract_and_is_distinct);
+          in the v2 and v3 files their pre-lock guards
+          (test_gates_yaml_pre_lock_guard). The two UNCONDITIONAL added-key
+          tolerance sets --
+          tests/test_gates_derivations.py::test_gate_m4_flip_leaves_locked_siblings_byte_identical
+          and
+          tests/test_gate_w1_derivations.py::test_gate_w1_flip_leaves_locked_siblings_byte_identical
+          -- admit {{'gate_mortality'}} while the flip PR is open (the flip
+          commit's only other test edit). The header comment of this block is
+          rewritten at the flip
+          (test_gate_mortality_draft_block_is_written_nowhere_else forbids the
+          DRAFT opening bytes in gates.yaml). The artifact is NOT rebuilt at
+          the flip and its fragment stays the DRAFT record; tier_counts.json
           and README-tiers.md are re-refreshed by live collection.
         wording_audit: >-
           zero occurrences in this block of each of the three words the R12
@@ -2766,7 +3340,7 @@ def run(verbose: bool = True, with_psid: bool = True) -> dict[str, Any]:
         ):
             raise RuntimeError(f"dominance sd {conv} differs from v3")
     anchor_oc = anchor_operating_characteristic(checks)
-    teeth = teeth_table(full_window, stability, gated_4, anchor_oc)
+    teeth = teeth_table(full_window, stability, gated_4, anchor_oc, per_seed)
     gates_text = GATES_PATH.read_text()
     draw = draw_stream_block(gates_text)
     clause = stability_clause(stability, cells)

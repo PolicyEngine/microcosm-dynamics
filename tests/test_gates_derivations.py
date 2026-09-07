@@ -4010,7 +4010,15 @@ MORTALITY_T_MAX = math.log(1.5)
 #: PRE-LOCK MARKER (the v3 test's GATE_MORTALITY_BLOCK_LANDED; referee A
 #: addition (iii)). Flipped to True in the SAME commit that inserts the
 #: block, in every file that carries it (the artifact's flip_plan lists
-#: them). Nothing else in this file changes at the flip.
+#: them). Every assertion below that reads the LIVE block or the LIVE
+#: gates.yaml and depends on a placeholder or on the block's presence
+#: is guarded on this marker with its post-flip form written beside
+#: the pre-flip form (the pre-flip re-emission over f8ccfe8; referee A
+#: ratifying round section 5.4, referee B section 7.3). At the flip
+#: this file changes in exactly two places: this constant, and the
+#: added-key tolerance in
+#: test_gate_m4_flip_leaves_locked_siblings_byte_identical admitting
+#: {"gate_mortality"} while the flip PR is open.
 GATE_MORTALITY_BLOCK_LANDED = False
 
 
@@ -4295,14 +4303,27 @@ def test_gate_mortality_partition_under_both_eligibility_rules():
         partition["report_only"]
     ) == set(art["reference_moments"])
     block = _gate_mortality_block()
-    assert set(block["thresholds"]["report_only"]) == set(
-        partition["report_only"]
-    )
+    # the R4 alternative partition is the same set minus 85+.
+    alt = partition["r4_alternative_partition"]
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        # DRAFT: admit-shaped (the sitting's proposal).
+        expected_report_only = set(partition["report_only"])
+    else:
+        # LIVE: the ruled shape -- R4 admit keeps
+        # gate_partition.report_only, R4 exclude reads
+        # r4_alternative_partition; keyed on the 85+ view's ruled
+        # `gated` (pre-guarded at the pre-flip re-emission).
+        gated_85 = block["thresholds"]["internal_surface"]["views"][
+            "hazard_reproduction_85plus"
+        ]["gated"]
+        assert isinstance(gated_85, bool)
+        expected_report_only = set(
+            partition["report_only"] if gated_85 else alt["report_only"]
+        )
+    assert set(block["thresholds"]["report_only"]) == expected_report_only
     assert set(_mortality_internal_tolerances(block)) == set(
         partition["internal_gate_eligible"]
     )
-    # the R4 alternative partition is the same set minus 85+.
-    alt = partition["r4_alternative_partition"]
     assert alt["internal_gate_eligible"] == [
         MORTALITY_CELL_PREFIX + c for c in gated if not c.startswith("85+")
     ]
@@ -4350,10 +4371,22 @@ def test_gate_mortality_faithful_oc_recomputes_on_both_surfaces():
         assert blk["n_gated_internal_cells"] == len(cells)
     assert expected["surface_4_cell_incl_85plus"] == (0.9622, 0.9868, 4)
     assert expected["surface_2_cell_25_84"] == (0.9841, 0.9975, 2)
-    assert (
-        block["thresholds"]["faithful_candidate_oc"]["binding_surface"]
-        == "<RULING R4>"
-    )
+    binding = block["thresholds"]["faithful_candidate_oc"]["binding_surface"]
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        assert binding == "<RULING R4>"
+    else:
+        # LIVE: the ruled surface, one of the two priced, consistent
+        # with the 85+ view's ruled `gated` (R4 admit -> the 4-cell
+        # surface; exclude -> the 2-cell). Pre-guarded.
+        assert "<RULING" not in binding
+        assert binding in (
+            "surface_4_cell_incl_85plus",
+            "surface_2_cell_25_84",
+        )
+        gated_85 = block["thresholds"]["internal_surface"]["views"][
+            "hazard_reproduction_85plus"
+        ]["gated"]
+        assert gated_85 is (binding == "surface_4_cell_incl_85plus")
 
 
 def _mortality_margin(per_seed: list, full_h: dict, stat) -> dict:
@@ -4531,8 +4564,25 @@ def test_gate_mortality_anchor_margins_and_operating_characteristic():
             "faithful_p_gate_4_of_5"
         ]
     )
-    assert "<RULING R5" in cell["gate_rule"]["candidate_condition"]
-    assert "<RULING R5" in cell["gated"]
+    condition = cell["gate_rule"]["candidate_condition"]
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        assert "<RULING R5" in condition
+        assert "<RULING R5" in cell["gated"]
+    else:
+        # LIVE: the ruled candidate-side rule with no placeholder
+        # left; the cell's `gated` is a bool, True exactly while the
+        # block keeps the differential id (R5 remedy (c) demotes AND
+        # renames: differential_claim_requires_the_anchor), and the
+        # tranche names follow the id. Pre-guarded.
+        assert "<RULING" not in condition
+        assert "4 of 5" in condition
+        assert isinstance(cell["gated"], bool)
+        assert cell["gated"] is (block["id"] == "mortality_differential")
+        assert block["thresholds"]["tranche_id"] == block["id"]
+        assert (
+            block["thresholds"]["certification_scope"]["tranche"]
+            == block["id"]
+        )
 
 
 def test_gate_mortality_teeth_table_recomputes_and_names_the_non_catches():
@@ -4651,13 +4701,29 @@ def test_gate_mortality_draw_stream_base_is_distinct_and_not_yet_live():
         range(MORTALITY_DRAW_STREAM_BASE, MORTALITY_DRAW_STREAM_BASE + 20)
     )
     occupied: set = set(range(100)) | set(range(20260906, 20260906 + 100))
+    own = str(MORTALITY_DRAW_STREAM_BASE)
     for base in bases:
+        if GATE_MORTALITY_BLOCK_LANDED and base == own:
+            # LIVE: the block names its own base; its own stream is
+            # not a collision with itself. Pre-guarded.
+            continue
         occupied |= set(range(int(base), int(base) + 100))
     assert not (stream & occupied)
     art = _mortality_gate_floor()
     assert art["draw_stream"]["proposed_base"] == MORTALITY_DRAW_STREAM_BASE
     assert art["draw_stream"]["distinct"] is True
-    assert art["draw_stream"]["every_seed_base_named_in_gates_yaml"] == bases
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        assert (
+            art["draw_stream"]["every_seed_base_named_in_gates_yaml"] == bases
+        )
+    else:
+        # LIVE: the artifact is not rebuilt at the flip, so its
+        # enumeration is the pre-flip one; the live file adds exactly
+        # the gate's own base. Pre-guarded.
+        assert own in bases
+        assert art["draw_stream"]["every_seed_base_named_in_gates_yaml"] == {
+            k: v for k, v in bases.items() if k != own
+        }
     proto = _gate_mortality_thresholds()["protocol"]
     assert proto["draw_stream_base"] == MORTALITY_DRAW_STREAM_BASE
     assert (
@@ -4980,8 +5046,14 @@ def test_gate_mortality_stability_clause_recomputes_from_v3_bootstrap():
     )
     assert "not adopted" in clause["status"]
     power_cap = _gate_mortality_thresholds()["power_cap"]
-    assert "<RULING A(ii)" in power_cap["stability_clause"]
-    assert "[0.1, 0.9]" in power_cap["stability_clause"]
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        assert "<RULING A(ii)" in power_cap["stability_clause"]
+        assert "[0.1, 0.9]" in power_cap["stability_clause"]
+    else:
+        # LIVE: the ruled text opens 'RULED A(ii)' whichever option
+        # Max takes; no placeholder is left. Pre-guarded.
+        assert "<RULING" not in power_cap["stability_clause"]
+        assert "RULED A(ii)" in power_cap["stability_clause"]
 
 
 def test_gate_mortality_r4_evidence_is_report_only_and_recomputes():
@@ -5079,7 +5151,14 @@ def test_gate_mortality_r4_evidence_is_report_only_and_recomputes():
     assert "INTERVIEW-CONDITIONAL" in ruling["certification_scope_either_way"]
     assert "FILED" in r4["status"]
     views = _gate_mortality_thresholds()["internal_surface"]["views"]
-    assert "<RULING R4" in views["hazard_reproduction_85plus"]["gated"]
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        assert "<RULING R4" in views["hazard_reproduction_85plus"]["gated"]
+    else:
+        # LIVE: the 85+ view's ruled `gated` is a bool (admit True /
+        # exclude False) and its status no longer reads pending.
+        # Pre-guarded.
+        assert isinstance(views["hazard_reproduction_85plus"]["gated"], bool)
+        assert "pending" not in views["hazard_reproduction_85plus"]["status"]
     assert views["hazard_reproduction"]["gated"] is True
 
 
