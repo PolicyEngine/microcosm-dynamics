@@ -24,6 +24,16 @@ Two tiers, mirroring ``tests/test_mortality_floors.py``:
   reruns the declared-universe seed-0 half-split, the v1 seed-0
   half-split and the declared anchor, matching the committed numbers to
   float precision -- with populace.fit never imported.
+
+The 2026-09-07 record sitting (mortality floors v4; referee B's finding
+D-1) changed how this file reads ``gates.yaml``: the cited-line text is
+compared against the contract AT THE COMMIT THE ARTIFACT RECORDS
+(``revision_pins.populace_dynamics_sha``, resolved with ``git show``),
+never against the live file's whole-file sha256 or line count -- the
+gate_m4 / gate_m6 precedent, under which a ratified floor is pinned by
+path and governance and no floor test freezes the live contract. The
+``gate_mortality``-absent assertion sits under a pre-lock marker the
+gate commit flips (``GATE_MORTALITY_BLOCK_LANDED``).
 """
 
 from __future__ import annotations
@@ -32,6 +42,7 @@ import hashlib
 import json
 import math
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -45,6 +56,39 @@ M6_FLOORS = ROOT / "runs" / "m6_holdout_floors_v4.json"
 NCHS = ROOT / "data" / "external" / "nchs_life_tables_2023.json"
 GATES = ROOT / "gates.yaml"
 SCRIPTS = ROOT / "scripts"
+
+#: PRE-LOCK MARKER (referee B, D-5). False until the commit that inserts
+#: the ``gate_mortality`` block into ``gates.yaml`` flips it to True.
+#: While False, ``test_gates_yaml_pre_lock_guard`` asserts gates.yaml is
+#: innocent of this artifact; flipped, the same test asserts the block
+#: exists and names the mortality floor basis by path (the gate2c /
+#: gate_m4 post-lock guard shape). The gate commit flips ONE constant
+#: instead of deleting a test.
+GATE_MORTALITY_BLOCK_LANDED = False
+
+#: The git blob id of ``gates.yaml`` as it was when this artifact was
+#: built (byte-identical at afd8f44, 9b28ca6, 2fbde39 and origin/master
+#: 3196a16 on 2026-09-07). Content-addressed, so it stays reachable
+#: through master's own history after any squash merge; the commit id in
+#: ``revision_pins`` is tried first and this is the fallback.
+GATES_YAML_BLOB_AT_BUILD = "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c"
+
+
+def _gates_yaml_as_recorded(art: dict) -> bytes | None:
+    """gates.yaml AT THE RECORDED COMMIT, or at the recorded blob."""
+    commit = art["revision_pins"]["populace_dynamics_sha"]
+    for argv in (
+        ["git", "show", f"{commit}:gates.yaml"],
+        ["git", "cat-file", "blob", GATES_YAML_BLOB_AT_BUILD],
+    ):
+        try:
+            return subprocess.check_output(
+                argv, cwd=ROOT, stderr=subprocess.DEVNULL
+            )
+        except (OSError, subprocess.CalledProcessError):
+            continue
+    return None
+
 
 T_MAX = math.log(1.5)
 UNIVERSES = ("declared_1997_plus", "all_v1_comparable")
@@ -109,11 +153,28 @@ def test_no_reform_scored_and_nothing_adopted():
             assert "v1_rule_gate_eligible" in cell
 
 
-def test_gates_yaml_does_not_read_this_artifact():
-    """The rebuild is evidence, not a wired-in derivation basis."""
+def test_gates_yaml_pre_lock_guard():
+    """The rebuild is evidence, not a wired-in derivation basis.
+
+    PRE-LOCK GUARD under ``GATE_MORTALITY_BLOCK_LANDED`` (referee B,
+    D-5). While the marker is False, gates.yaml must mention neither
+    this artifact nor ``gate_mortality``. The commit that inserts the
+    gate block flips the marker to True instead of deleting this test;
+    flipped, the same test asserts the block exists and names a
+    mortality floor basis by path -- the gate2c / gate_m4 post-lock
+    guard shape. This artifact (v2) is superseded as the floor basis by
+    v3, so the flipped branch requires only that the block cite a
+    ``runs/mortality_floors_v*.json`` artifact, not this one.
+    """
     gates_text = GATES.read_text()
-    assert "mortality_floors_v2" not in gates_text
-    assert "gate_mortality" not in gates_text
+    if not GATE_MORTALITY_BLOCK_LANDED:
+        assert "mortality_floors_v2" not in gates_text
+        assert "gate_mortality" not in gates_text
+        return
+    yaml = pytest.importorskip("yaml")
+    spec = yaml.safe_load(gates_text)
+    assert "gate_mortality" in spec["gates"]
+    assert re.search(r"runs/mortality_floors_v\d+\.json", gates_text)
 
 
 def test_supersession_is_declared_and_v1_is_retained():
@@ -839,19 +900,39 @@ def test_t_max_scope_quotes_gates_yaml_accurately():
     assert "drift" in scope["what_this_artifact_does_not_claim"].lower()
 
 
-def test_gates_yaml_citations_still_point_at_what_they_claim():
+def test_gates_yaml_citations_match_the_contract_as_recorded():
     """A stale line citation is the defect this rebuild answers.
 
     The artifact records the exact text at every ``gates.yaml`` line it
-    cites. If ``gates.yaml`` moves, this fails loudly rather than
-    leaving the artifact quietly pointing at the wrong rule.
+    cites. The comparison is against gates.yaml AS IT WAS when the
+    citations were made -- the blob at ``revision_pins.populace_
+    dynamics_sha`` (``git show``), or the content-addressed blob
+    ``GATES_YAML_BLOB_AT_BUILD`` -- NEVER against the live file's
+    whole-file sha256 or line count (referee B, D-1: no ratified floor
+    test freezes the live contract, and the gate block itself will move
+    it). ``gates_yaml_sha256`` stays as provenance and must equal the
+    digest of the recorded blob. A citation that was stale when made
+    still fails loudly. Off a git checkout the recorded blob cannot be
+    resolved; the live file then stands in only while it still carries
+    the recorded digest, otherwise the check is skipped with its reason.
     """
     art = _artifact()
     block = art["gates_yaml_citations"]
     assert block["file"] == "gates.yaml"
-    assert block["sha256"] == hashlib.sha256(GATES.read_bytes()).hexdigest()
+    assert re.fullmatch(r"[0-9a-f]{64}", block["sha256"])
     assert art["revision_pins"]["gates_yaml_sha256"] == block["sha256"]
-    lines = GATES.read_text().splitlines()
+    recorded = _gates_yaml_as_recorded(art)
+    if recorded is None:
+        live = GATES.read_bytes()
+        if hashlib.sha256(live).hexdigest() != block["sha256"]:
+            pytest.skip(
+                "gates.yaml at the recorded commit/blob is not resolvable "
+                "from this checkout and the live file has moved on; the "
+                "citation text is checked against the recorded blob only"
+            )
+        recorded = live
+    assert hashlib.sha256(recorded).hexdigest() == block["sha256"]
+    lines = recorded.decode().splitlines()
     assert block["n_lines"] == len(lines)
     assert block["citations"]
     for entry in block["citations"]:

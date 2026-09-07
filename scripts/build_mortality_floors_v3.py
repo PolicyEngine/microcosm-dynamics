@@ -44,10 +44,18 @@ R6 -- the death-ascertainment convention.
     of span <= 2 years the year ``floor((lo + hi) / 2)`` and scores it
     with the exact-year machinery unchanged. The 93 wide codes and 12
     NA-year deaths are published as a sensitivity band whose lower end
-    scores them as survival (v1/v2's treatment) and whose upper end
-    assigns them at the exact deaths' measured in-frame ascertainment
-    rate, respecting each range where one exists. A packet-literal
-    upper end that ignores the ranges is published as well. The
+    scores them as survival (v1/v2's treatment) and whose informed
+    upper end assigns them at the exact deaths' measured in-frame
+    ascertainment rate, respecting each range where one exists. Two
+    further upper ends are published: the RESIDUE-LITERAL end scores
+    the same 67 in-frame residue decedents ignoring their ranges (its
+    convention key ``band_upper_packet_literal`` is retained for path
+    stability; it is NOT the packet's literal assumption, because the
+    75 in-frame narrow-coded decedents the pinned rule assigns but does
+    not count are excluded from it), and the TRULY LITERAL end --
+    added at the 2026-09-07 record sitting after referee B's finding
+    D-2 -- applies the packet's assumption to every one of the 142
+    in-frame non-exact decedents the pinned rule does not count. The
     movement of every gated cell's hazard and tolerance between the
     conventions is MEASURED at 100 seeds, replacing the packet's
     +3.9% / 0.038-log estimate.
@@ -59,6 +67,15 @@ R7 -- the censoring convention.
     the attrition-hazard-by-age evidence R4 shares: per band x sex,
     the wave-to-wave attrition hazard against the death hazard and the
     share of attriters with a later known death.
+
+The 2026-09-07 record sitting (floors v4; both referees' reports are
+digest-cited in the artifact's ``record_corrections``) re-emitted the
+artifact from this builder with every record defect fixed as a string,
+a label or an ADDED measurement; no floor value, tolerance, mean, sd
+or partition moved. The artifact's bytes and this builder's bytes are
+sha256-pinned in ``tests/test_mortality_floors_v3.py``, which also
+pins the ascertainment rule on synthetic frames so the convention
+cannot move where the PSID-gated tests skip.
 
 Run from the repository root with the PSID individual file staged::
 
@@ -112,16 +129,60 @@ CELL_ORDER: tuple[str, ...] = v2b.CELL_ORDER
 #: (the packet's "width <= 2 years": 106 codes at span 1, 94 at span 2).
 NARROW_MAX_SPAN = 2
 
-#: The four death-ascertainment conventions the floor is built under.
+#: The reference constants this builder inherits from the v2 builder,
+#: pinned to literals so a drift in ``build_mortality_floors_v2`` cannot
+#: move them silently (referee A, D2). Checked at import time below and
+#: by the synthetic tier of ``tests/test_mortality_floors_v3.py``.
+REFERENCE_CONSTANTS: dict[str, Any] = {
+    "DECLARED_UNIVERSE_START": 1997,
+    "T_MAX": math.log(1.5),
+    "MARGIN_K": 3,
+    "FLOOR_SEEDS": "0-99",
+    "N_SEEDS": 100,
+    "NARROW_MAX_SPAN": 2,
+}
+
+
+def check_reference_constants() -> None:
+    """Raise if an inherited constant drifted from its pinned literal."""
+    got = {
+        "DECLARED_UNIVERSE_START": DECLARED_UNIVERSE_START,
+        "T_MAX": T_MAX,
+        "MARGIN_K": MARGIN_K,
+        "FLOOR_SEEDS": f"{FLOOR_SEEDS[0]}-{FLOOR_SEEDS[-1]}",
+        "N_SEEDS": len(FLOOR_SEEDS),
+        "NARROW_MAX_SPAN": NARROW_MAX_SPAN,
+    }
+    if got != REFERENCE_CONSTANTS or tuple(FLOOR_SEEDS) != tuple(range(100)):
+        raise RuntimeError(
+            f"reference constants drifted: {got} != {REFERENCE_CONSTANTS}"
+        )
+
+
+check_reference_constants()
+
+#: The five death-ascertainment conventions the floor is built under.
+#: ``CONVENTION_UPPER_LITERAL`` keeps its original key for path
+#: stability; what it scores is the RESIDUE (67 in-frame wide and
+#: NA-year decedents) with ranges ignored, not the packet's literal
+#: assumption -- that is ``CONVENTION_UPPER_TRULY_LITERAL``, added at
+#: the 2026-09-07 record sitting (referee B, D-2).
 CONVENTION_SURVIVAL = "survival_v1_v2"
 CONVENTION_PINNED = "pinned_narrow_midpoint"
 CONVENTION_UPPER_INFORMED = "band_upper_informed"
 CONVENTION_UPPER_LITERAL = "band_upper_packet_literal"
+CONVENTION_UPPER_TRULY_LITERAL = "band_upper_truly_literal"
 CONVENTIONS: tuple[str, ...] = (
     CONVENTION_SURVIVAL,
     CONVENTION_PINNED,
     CONVENTION_UPPER_INFORMED,
     CONVENTION_UPPER_LITERAL,
+    CONVENTION_UPPER_TRULY_LITERAL,
+)
+UPPER_ENDS: tuple[str, ...] = (
+    CONVENTION_UPPER_INFORMED,
+    CONVENTION_UPPER_LITERAL,
+    CONVENTION_UPPER_TRULY_LITERAL,
 )
 UNIVERSES: dict[str, int | None] = {
     "declared_1997_plus": DECLARED_UNIVERSE_START,
@@ -240,6 +301,19 @@ WEIGHT_SERIES_DOCUMENTATION: dict[str, dict[str, Any]] = {
 # --------------------------------------------------------------------------
 def _sha_of_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _git_blob_id(path: Path) -> str:
+    """The git blob id of a file's bytes (``sha1("blob <n>\\0" + bytes)``).
+
+    Content-addressed, so it stays reachable through any commit whose
+    tree carried these exact bytes -- a squash merge cannot orphan it
+    the way it orphans a branch commit. The reproduction test resolves
+    it with ``git cat-file blob`` to compare cited-line text against
+    the contract AS IT WAS when the citations were made.
+    """
+    data = path.read_bytes()
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
 
 
 def _git_sha(cwd: Path) -> str | None:
@@ -482,6 +556,27 @@ def sample_stratum_shares(slices: pd.DataFrame) -> dict[str, Any]:
     return out
 
 
+def _premise_per_cell(slices: pd.DataFrame) -> tuple[dict[str, Any], int, int]:
+    """``ln(m_pre_1997 / m_1997_plus)`` per cell on one frame."""
+    pre = _hazard_map(slices[slices.start_wave < DECLARED_UNIVERSE_START])
+    post = _hazard_map(slices[slices.start_wave >= DECLARED_UNIVERSE_START])
+    premise: dict[str, Any] = {}
+    higher = 0
+    lower = 0
+    for key in CELL_ORDER:
+        lr = _log_ratio(pre.get(key, 0.0), post.get(key, 0.0))
+        premise[key] = {
+            "m_pre_1997_within_window": float(pre.get(key, 0.0)),
+            "m_1997_plus_within_window": float(post.get(key, 0.0)),
+            "ln_pre_over_post": lr,
+            "older_decades_run_higher": (lr is not None and lr > 0),
+        }
+        if lr is not None:
+            higher += lr > 0
+            lower += lr < 0
+    return premise, int(higher), int(lower)
+
+
 def withdrawal_of_v1_caveat(
     slices: pd.DataFrame,
     v1_artifact: dict[str, Any],
@@ -490,8 +585,15 @@ def withdrawal_of_v1_caveat(
     series_summary: dict[str, Any],
     equivalence: dict[str, Any],
     anchor_all: dict[str, Any],
+    pinned_slices: pd.DataFrame,
 ) -> dict[str, Any]:
     """The written withdrawal of ``biennial_caveats[1]``, with its refutation.
+
+    Measured on the SURVIVAL frame (``slices``): the frame v1's caveat
+    was about and the frame v2's figures are on, so every number here
+    equals v2's by value. The premise is measured again on the PINNED
+    frame (``pinned_slices``) and both are recorded, so the record says
+    which frame each figure is on (referee A D4, referee B D-7).
 
     Three measurements, each of which alone defeats the caveat:
 
@@ -509,22 +611,10 @@ def withdrawal_of_v1_caveat(
       cell, against an undercount of 0.15-1.02 log units per cell; the
       claimed offset is at most 0.3% of the smallest undercount.
     """
-    pre = _hazard_map(slices[slices.start_wave < DECLARED_UNIVERSE_START])
-    post = _hazard_map(slices[slices.start_wave >= DECLARED_UNIVERSE_START])
-    premise: dict[str, Any] = {}
-    higher = 0
-    lower = 0
-    for key in CELL_ORDER:
-        lr = _log_ratio(pre.get(key, 0.0), post.get(key, 0.0))
-        premise[key] = {
-            "m_pre_1997_within_window": float(pre.get(key, 0.0)),
-            "m_1997_plus_within_window": float(post.get(key, 0.0)),
-            "ln_pre_over_post": lr,
-            "older_decades_run_higher": (lr is not None and lr > 0),
-        }
-        if lr is not None:
-            higher += lr > 0
-            lower += lr < 0
+    premise, higher, lower = _premise_per_cell(slices)
+    premise_pinned, higher_pinned, lower_pinned = _premise_per_cell(
+        pinned_slices
+    )
     undercount = {
         key: (
             float(abs(math.log(cell["ratio"]))) if cell.get("ratio") else None
@@ -542,7 +632,19 @@ def withdrawal_of_v1_caveat(
         "v2_withdrawal_carried": v2_artifact["exposure_construction"][
             "withdrawn_v1_caveat"
         ]["why_withdrawn"],
+        "measured_on_frame": (
+            f"{CONVENTION_SURVIVAL}: the survival frame (v1/v2's "
+            "convention), which is the frame v1's caveat was about and "
+            "the frame v2's figures are on, so premise_measured, "
+            "mechanism_measured and consequence_measured equal v2's by "
+            "value. The premise is measured again on the pinned frame "
+            "in premise_on_pinned_frame; the mechanism (a weight-scale "
+            "fact of the release) and the consequence (universe "
+            "equivalence, max 0.000356 log) do not depend on the "
+            "ascertainment convention at the precision quoted"
+        ),
         "premise_measured": {
+            "frame": CONVENTION_SURVIVAL,
             "statistic": (
                 "ln(m_pre_1997 / m_1997_plus) per cell, each window's "
                 "hazard weighted by its own series"
@@ -556,6 +658,23 @@ def withdrawal_of_v1_caveat(
                 f"{higher} of 14 cells and fails in {lower}, including "
                 "both 85+ cells where the pre-1997 hazard is about 30% "
                 "LOWER than the 1997+ hazard"
+            ),
+        },
+        "premise_on_pinned_frame": {
+            "frame": CONVENTION_PINNED,
+            "statistic": (
+                "the same statistic on the pinned-convention frame "
+                "(the headline frame); added at the 2026-09-07 record "
+                "sitting so the record states the frame of every "
+                "figure"
+            ),
+            "per_cell": premise_pinned,
+            "n_cells_older_decades_higher": int(higher_pinned),
+            "n_cells_older_decades_lower": int(lower_pinned),
+            "reading": (
+                "on the pinned frame the premise holds in "
+                f"{higher_pinned} of 14 cells and fails in "
+                f"{lower_pinned}; both 85+ cells fail on both frames"
             ),
         },
         "mechanism_measured": {
@@ -609,7 +728,9 @@ def withdrawal_of_v1_caveat(
             f"{lower} of 14 cells, the mechanism cannot operate because "
             "the pre-1997 series carry 0.096% of the weighted "
             "denominator, and the pooled rate is the 1997+ rate to "
-            "4e-4 log units. Nothing in v3 restates it."
+            "4e-4 log units. Nothing in v3 restates it. (Measured on "
+            f"the survival frame; on the pinned frame the premise fails "
+            f"in {lower_pinned} of 14 cells, both 85+ cells included.)"
         ),
     }
 
@@ -667,14 +788,146 @@ def assign_narrow_death_years(dr: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def _grid_wave_containing(
+    year: int, grid: list[int], next_wave: dict[int, int]
+) -> int | None:
+    """The grid wave ``w`` with ``w <= year < next_wave[w]``, else None."""
+    for w in grid:
+        if w in next_wave and w <= year < next_wave[w]:
+            return int(w)
+    return None
+
+
+def narrow_counted_decomposition(
+    narrow: pd.DataFrame,
+    obs: pd.DataFrame,
+    grid: list[int],
+    next_wave: dict[int, int],
+    counted_person_ids: set[int],
+) -> dict[str, Any]:
+    """Why 49 narrow-coded decedents observed at ``lo`` become 44 events.
+
+    The pinned rule counts a narrow code iff the person was observed at
+    the grid wave whose interval contains the assigned midpoint AND the
+    slice age at the midpoint is banded (25+). ``observed_at_lo`` is a
+    record count, not that rule: 6 of the 49 die below every band, and
+    one counted decedent has an off-grid ``lo``. Record by record the
+    identity ``counted == observed_at_wave_of_midpoint & banded`` is
+    asserted, so the link is bytes, not prose (referee A D5, B D-8).
+    """
+    observed_pairs = set(
+        zip(
+            obs.person_id.to_numpy().tolist(),
+            obs.period.to_numpy().tolist(),
+            strict=True,
+        )
+    )
+    age_at = obs.set_index(["person_id", "period"]).age
+    rows: list[dict[str, Any]] = []
+    for rec in narrow.itertuples(index=False):
+        mid = (int(rec.lo) + int(rec.hi)) // 2
+        wave = _grid_wave_containing(mid, grid, next_wave)
+        observed = wave is not None and (int(rec.person_id), wave) in (
+            observed_pairs
+        )
+        age_mid = (
+            int(age_at[(int(rec.person_id), wave)]) + (mid - wave)
+            if observed
+            else None
+        )
+        banded = bool(observed and v1b._band_of(age_mid) is not None)
+        rows.append(
+            {
+                "person_id": int(rec.person_id),
+                "lo": int(rec.lo),
+                "hi": int(rec.hi),
+                "midpoint": mid,
+                "wave_of_midpoint": wave,
+                "observed_at_wave_of_midpoint": bool(observed),
+                "age_at_midpoint": age_mid,
+                "banded_at_midpoint": banded,
+                "observed_at_lo": bool(rec.observed_at_lo),
+                "last_wave_before_lo": bool(rec.last_wave_before_lo),
+                "counted_in_pinned_frame": (
+                    int(rec.person_id) in counted_person_ids
+                ),
+            }
+        )
+    dec = pd.DataFrame(rows)
+    rule_says = dec.observed_at_wave_of_midpoint & dec.banded_at_midpoint
+    if not bool((dec.counted_in_pinned_frame == rule_says).all()):
+        raise RuntimeError(
+            "the pinned frame's counted narrow decedents are not exactly "
+            "those observed at the midpoint's grid wave with a banded age"
+        )
+    off_grid = dec[dec.counted_in_pinned_frame & ~dec.observed_at_lo]
+    return {
+        "rule": (
+            "a narrow code is counted iff the person was observed at the "
+            "grid wave whose interval contains the assigned midpoint AND "
+            "the slice age at the midpoint is banded (25+); "
+            "observed_at_lo is a record count, not that rule"
+        ),
+        "identity_asserted_record_by_record": (
+            "counted_in_pinned_frame == observed_at_wave_of_midpoint AND "
+            "banded_at_midpoint, for every narrow code"
+        ),
+        "n_narrow": int(len(dec)),
+        "observed_at_grid_wave_containing_midpoint": int(
+            dec.observed_at_wave_of_midpoint.sum()
+        ),
+        "of_which_banded_at_midpoint_age": int(rule_says.sum()),
+        "counted_in_pinned_frame": int(dec.counted_in_pinned_frame.sum()),
+        "observed_at_lo": int(dec.observed_at_lo.sum()),
+        "observed_at_lo_and_counted": int(
+            (dec.observed_at_lo & dec.counted_in_pinned_frame).sum()
+        ),
+        "observed_at_lo_not_counted": int(
+            (dec.observed_at_lo & ~dec.counted_in_pinned_frame).sum()
+        ),
+        "observed_at_lo_not_counted_ages_at_midpoint": sorted(
+            int(a)
+            for a in dec[
+                dec.observed_at_lo & ~dec.counted_in_pinned_frame
+            ].age_at_midpoint.tolist()
+        ),
+        "counted_not_observed_at_lo": int(len(off_grid)),
+        "counted_not_observed_at_lo_persons": [
+            {
+                "person_id": int(x.person_id),
+                "lo": int(x.lo),
+                "hi": int(x.hi),
+                "midpoint": int(x.midpoint),
+                "wave_of_midpoint": int(x.wave_of_midpoint),
+                "age_at_midpoint": int(x.age_at_midpoint),
+                "lo_is_grid_wave": bool(int(x.lo) in grid),
+            }
+            for x in off_grid.itertuples(index=False)
+        ],
+        "last_wave_before_lo": int(dec.last_wave_before_lo.sum()),
+        "last_wave_before_lo_and_counted": int(
+            (dec.last_wave_before_lo & dec.counted_in_pinned_frame).sum()
+        ),
+        "last_wave_before_lo_never_scored": int(
+            (dec.last_wave_before_lo & ~dec.counted_in_pinned_frame).sum()
+        ),
+    }
+
+
 def death_record_classification(
     dr: pd.DataFrame,
     obs: pd.DataFrame,
     last: pd.DataFrame,
     grid: list[int],
     next_wave: dict[int, int],
+    counted_person_ids: set[int] | None = None,
 ) -> dict[str, Any]:
-    """Every non-exact death record placed against the observation grid."""
+    """Every non-exact death record placed against the observation grid.
+
+    ``counted_person_ids`` -- the persons with a death event in the
+    pinned frame -- adds ``narrow_counted_decomposition`` (the 49 -> 44
+    link) and lets ``reading`` state it from bytes.
+    """
     counts = dr.death_status.value_counts().to_dict()
     rng = dr[dr.death_status == "range"].copy()
     rng["lo"] = rng.death_year_lo.astype(int)
@@ -726,7 +979,56 @@ def death_record_classification(
             },
         }
 
-    return {
+    decomposition = (
+        narrow_counted_decomposition(
+            narrow, obs, grid, next_wave, counted_person_ids
+        )
+        if counted_person_ids is not None
+        else None
+    )
+    link = ""
+    if decomposition is not None:
+        d = decomposition
+        off = d["counted_not_observed_at_lo_persons"]
+        off_text = "; ".join(
+            f"person {p['person_id']} (lo {p['lo']} is not a grid wave; "
+            f"midpoint {p['midpoint']} lies in the interval starting at "
+            f"the {p['wave_of_midpoint']} wave, where the person was "
+            f"observed, aged {p['age_at_midpoint']} at the midpoint)"
+            for p in off
+        )
+        link = (
+            f" The pinned rule counts {d['counted_in_pinned_frame']} of "
+            f"them, and the link from {d['observed_at_lo']} to "
+            f"{d['counted_in_pinned_frame']} is: "
+            f"{d['observed_at_lo_and_counted']} of the "
+            f"{d['observed_at_lo']} observed at lo are counted, "
+            f"{d['observed_at_lo_not_counted']} are not because the "
+            "midpoint falls at ages "
+            f"{d['observed_at_lo_not_counted_ages_at_midpoint']} (below "
+            f"every band), and {d['counted_not_observed_at_lo']} counted "
+            f"event comes from a decedent NOT observed at lo -- {off_text}. "
+            "Exactly: counted = observed at the grid wave containing the "
+            f"midpoint ({d['observed_at_grid_wave_containing_midpoint']}) "
+            f"AND banded at the midpoint age ({d['of_which_banded_at_midpoint_age']}), "
+            "asserted record by record (narrow_counted_decomposition)."
+        )
+    before_lo = int(narrow.last_wave_before_lo.sum())
+    before_lo_text = (
+        f"{before_lo} in-frame decedents were last observed BEFORE lo"
+        + (
+            f" ({decomposition['last_wave_before_lo_never_scored']} of "
+            "them died after attrition and are never scored -- exactly "
+            "the right-censored case the censoring rule already loses "
+            "for exact deaths; the other "
+            f"{decomposition['last_wave_before_lo_and_counted']} is the "
+            "off-grid-lo decedent above, who IS counted)"
+            if decomposition is not None
+            else " (died after attrition, exactly the right-censored "
+            "case the censoring rule already loses for exact deaths)"
+        )
+    )
+    out = {
         "status_counts": {str(k): int(v) for k, v in counts.items()},
         "range_span_definition": "span = hi - lo (years); narrow = span <= 2",
         "range_span_distribution": {
@@ -761,13 +1063,14 @@ def death_record_classification(
             "the codes record 'last seen at lo, found dead by hi'. Only "
             f"{int(narrow.observed_at_lo.sum())} narrow-coded decedents "
             "were observed at lo under the frame's filters; "
-            f"{int(narrow.last_wave_before_lo.sum())} in-frame decedents "
-            "were last observed BEFORE lo (died after attrition, "
-            "exactly the right-censored case the censoring rule "
-            "already loses for exact deaths), and "
+            f"{before_lo_text}, and "
             f"{int((~narrow.in_frame).sum())} are not in the frame at all."
+            + link
         ),
     }
+    if decomposition is not None:
+        out["narrow_counted_decomposition"] = decomposition
+    return out
 
 
 def ascertainment_rates(
@@ -852,17 +1155,30 @@ def fractional_death_targets(
     respect_ranges: bool,
     exclude_assigned: pd.Series,
 ) -> pd.DataFrame:
-    """Which non-exact decedents the band's upper end scores, and where.
+    """Which non-exact decedents a band upper end scores, and where.
 
-    ``respect_ranges=True`` (the INFORMED upper end): a wide-coded
-    decedent is scored only if their range overlaps the interval after
-    their last observed wave, and only the years inside the range are
-    feasible; an NA-year decedent in the frame is scored with every
-    year of that interval feasible. ``respect_ranges=False`` (the
-    PACKET-LITERAL upper end): every in-frame non-exact decedent not
-    already assigned by the pinned rule is scored in the interval
-    after their last observed wave with every year feasible, ignoring
-    what their range says.
+    ``exclude_assigned`` is a boolean Series indexed by ``person_id``;
+    a True entry removes that decedent from the target set. What is
+    excluded defines the end:
+
+    * ``respect_ranges=True`` with every narrow-assigned decedent
+      excluded (the INFORMED upper end): a wide-coded decedent is
+      scored only if their range overlaps the interval after their
+      last observed wave, and only the years inside the range are
+      feasible; an NA-year decedent in the frame is scored with every
+      year of that interval feasible.
+    * ``respect_ranges=False`` with every narrow-assigned decedent
+      excluded (the RESIDUE-LITERAL upper end, convention key
+      ``band_upper_packet_literal``): the same residue -- the 67
+      in-frame wide and NA-year decedents -- scored in the interval
+      after their last observed wave with every year feasible,
+      ignoring what their range says. NOT the packet's literal
+      assumption: the 75 in-frame narrow-coded decedents the pinned
+      rule assigns but does not count are excluded here.
+    * ``respect_ranges=False`` with only the narrow decedents the
+      pinned rule COUNTS excluded (the TRULY LITERAL upper end): the
+      packet's assumption applied to every in-frame non-exact decedent
+      the pinned rule does not count -- 142 persons.
     """
     rows: list[dict[str, Any]] = []
     non_exact = dr[dr.death_status.isin(["range", "na_dk"])]
@@ -882,15 +1198,19 @@ def fractional_death_targets(
             continue
         nxt = next_wave[w]
         years = list(range(w, nxt))
-        if rec.death_status == "range" and respect_ranges:
+        span = None
+        if rec.death_status == "range":
             lo, hi = int(rec.death_year_lo), int(rec.death_year_hi)
-            years = [y for y in years if lo <= y <= hi]
-            if not years:
-                continue
+            span = hi - lo
+            if respect_ranges:
+                years = [y for y in years if lo <= y <= hi]
+                if not years:
+                    continue
         rows.append(
             {
                 "person_id": int(rec.person_id),
                 "death_status": str(rec.death_status),
+                "range_span": span,
                 "start_wave": w,
                 "next_wave": int(nxt),
                 "age_at_start": int(info.age),
@@ -968,6 +1288,15 @@ def build_convention_frames(
     r = rates["rule_rate_used_by_the_band"]
     p2 = rates["within_two_year_interval_split"]["p_second_year"]
     assigned = dr_pinned.set_index("person_id")["assigned_by_pinned_rule"]
+    # Persons with a death event in the (banded) pinned frame: the
+    # narrow-assigned decedents the pinned rule actually COUNTS.
+    counted_persons = {
+        int(p) for p in pinned[pinned.death > 0].person_id.unique()
+    }
+    assigned_and_counted = pd.Series(
+        assigned.to_numpy() & assigned.index.isin(counted_persons),
+        index=assigned.index,
+    )
 
     targets_informed = fractional_death_targets(
         dr, last, next_wave, respect_ranges=True, exclude_assigned=assigned
@@ -975,31 +1304,62 @@ def build_convention_frames(
     targets_literal = fractional_death_targets(
         dr, last, next_wave, respect_ranges=False, exclude_assigned=assigned
     )
+    targets_truly_literal = fractional_death_targets(
+        dr,
+        last,
+        next_wave,
+        respect_ranges=False,
+        exclude_assigned=assigned_and_counted,
+    )
     upper_informed = apply_fractional_deaths(pinned, targets_informed, r, p2)
     upper_literal = apply_fractional_deaths(pinned, targets_literal, r, p2)
+    upper_truly_literal = apply_fractional_deaths(
+        pinned, targets_truly_literal, r, p2
+    )
 
     frames = {
         CONVENTION_SURVIVAL: survival,
         CONVENTION_PINNED: pinned,
         CONVENTION_UPPER_INFORMED: upper_informed,
         CONVENTION_UPPER_LITERAL: upper_literal,
+        CONVENTION_UPPER_TRULY_LITERAL: upper_truly_literal,
     }
     classification = death_record_classification(
-        dr, obs, last, grid, next_wave
+        dr, obs, last, grid, next_wave, counted_person_ids=counted_persons
     )
 
-    def _targets_block(t: pd.DataFrame) -> dict[str, Any]:
+    def _targets_block(t: pd.DataFrame, frame: pd.DataFrame) -> dict[str, Any]:
         if t.empty:
             return {"n_persons": 0}
         banded = t[t.age_at_start.map(v1b._band_of).notna()]
+        is_range = (t.death_status == "range").to_numpy()
+        span = pd.to_numeric(t.range_span, errors="coerce").to_numpy()
+        with np.errstate(invalid="ignore"):
+            narrow_mask = is_range & (span <= NARROW_MAX_SPAN)
+            wide_mask = is_range & (span > NARROW_MAX_SPAN)
         return {
             "n_persons": int(len(t)),
             "by_status": {
                 str(s): int(n)
                 for s, n in t.death_status.value_counts().items()
             },
+            "by_range_span_class": {
+                "narrow_span_le_2": int(narrow_mask.sum()),
+                "wide_span_ge_3": int(wide_mask.sum()),
+                "na_year": int((t.death_status == "na_dk").sum()),
+            },
             "n_with_banded_start_age": int(len(banded)),
+            "n_with_banded_start_age_and_last_wave_1997_plus": int(
+                (banded.start_wave >= DECLARED_UNIVERSE_START).sum()
+            ),
             "expected_added_death_events_all_ages": float(r * len(t)),
+            "expected_added_death_events_in_banded_frame": float(
+                frame.death.sum() - pinned.death.sum()
+            ),
+            "expected_added_death_events_in_banded_frame_declared_universe": float(
+                _window(frame, DECLARED_UNIVERSE_START).death.sum()
+                - _window(pinned, DECLARED_UNIVERSE_START).death.sum()
+            ),
             "by_start_wave_era": {
                 "pre_1997": int(
                     (t.start_wave < DECLARED_UNIVERSE_START).sum()
@@ -1013,6 +1373,11 @@ def build_convention_frames(
                     {
                         "person_id": int(x.person_id),
                         "death_status": x.death_status,
+                        "range_span": (
+                            int(x.range_span)
+                            if x.death_status == "range"
+                            else None
+                        ),
                         "start_wave": int(x.start_wave),
                         "next_wave": int(x.next_wave),
                         "age_at_start": int(x.age_at_start),
@@ -1074,8 +1439,44 @@ def build_convention_frames(
             "n_slices_pinned": int(len(pinned)),
         },
         "upper_band_targets": {
-            CONVENTION_UPPER_INFORMED: _targets_block(targets_informed),
-            CONVENTION_UPPER_LITERAL: _targets_block(targets_literal),
+            CONVENTION_UPPER_INFORMED: _targets_block(
+                targets_informed, upper_informed
+            ),
+            CONVENTION_UPPER_LITERAL: _targets_block(
+                targets_literal, upper_literal
+            ),
+            CONVENTION_UPPER_TRULY_LITERAL: _targets_block(
+                targets_truly_literal, upper_truly_literal
+            ),
+        },
+        "in_frame_non_exact_accounting": {
+            "non_exact_records": int(
+                dr.death_status.isin(["range", "na_dk"]).sum()
+            ),
+            "in_frame": int(
+                dr[dr.death_status.isin(["range", "na_dk"])]
+                .person_id.isin(last.index)
+                .sum()
+            ),
+            "counted_by_the_pinned_rule": int(
+                dr[dr.death_status.isin(["range", "na_dk"])]
+                .person_id.isin(counted_persons)
+                .sum()
+            ),
+            "not_counted_by_the_pinned_rule": int(
+                dr[dr.death_status.isin(["range", "na_dk"])]
+                .person_id.isin(last.index)
+                .sum()
+                - dr[dr.death_status.isin(["range", "na_dk"])]
+                .person_id.isin(counted_persons)
+                .sum()
+            ),
+            "reading": (
+                "the truly literal end's target set is every in-frame "
+                "non-exact decedent the pinned rule does not count; the "
+                "residue-literal end's is the in-frame wide and NA-year "
+                "decedents only"
+            ),
         },
         "expected_death_events_by_convention": {
             name: float(frame.death.sum()) for name, frame in frames.items()
@@ -1259,6 +1660,7 @@ def attrition_evidence(pi: pd.DataFrame) -> dict[str, Any]:
                 "n_deaths": int(x.death.sum()),
                 "n_attrit": n_attrit,
                 "n_continue": int(x.continues.sum()),
+                "n_continue_and_death": int((x.continues & x.death).sum()),
                 "death_hazard_per_interval_wt": death_wt,
                 "attrition_hazard_per_interval_wt": attrit_wt,
                 "death_hazard_per_interval_unwt": float(x.death.mean()),
@@ -1280,19 +1682,32 @@ def attrition_evidence(pi: pd.DataFrame) -> dict[str, Any]:
             }
         return out
 
+    overlap = int((pi.continues & pi.death).sum())
     return {
         "unit": (
-            "observed person-wave with a following grid wave; outcome "
-            "= continues (observed at the next grid wave) / death "
-            "(pinned-convention death year in the interval, any age) / "
-            "attrit (neither). Hazards are per interval (1 year through "
-            "1996, 2 years from 1997), weighted by the start-wave weight"
+            "observed person-wave with a following grid wave, carrying "
+            "three outcome flags: continues (observed at the next grid "
+            "wave), death (pinned-convention death year in the interval, "
+            "any age) and attrit (neither). The flags are NOT a "
+            "partition: continues and death overlap in the "
+            f"{overlap} person-intervals where a person is recorded dead "
+            "in the interval AND observed at the next wave (the record "
+            "inconsistency in data.post_death_observations), so per cell "
+            "n_continue + n_deaths + n_attrit = n_person_intervals + "
+            "n_continue_and_death. Hazards are per interval (1 year "
+            "through 1996, 2 years from 1997), weighted by the "
+            "start-wave weight"
+        ),
+        "identity": (
+            "n_continue + n_deaths + n_attrit == n_person_intervals + "
+            "n_continue_and_death, per cell and in total"
         ),
         "n_person_intervals_banded": int(len(pi)),
         "totals": {
             "continues": int(pi.continues.sum()),
             "death": int(pi.death.sum()),
             "attrit": int(pi.attrit.sum()),
+            "continue_and_death": overlap,
         },
         "windows": {
             "all": _table(pi),
@@ -1672,15 +2087,24 @@ def convention_movement(
         cells: dict[str, Any] = {}
         max_abs: dict[str, float] = {name: 0.0 for name in CONVENTIONS[1:]}
         max_dT: dict[str, float] = {name: 0.0 for name in CONVENTIONS[1:]}
+        vs_pinned_names = [n for n in CONVENTIONS if n != CONVENTION_PINNED]
+        max_abs_p: dict[str, float] = {n: 0.0 for n in vs_pinned_names}
+        max_dT_p: dict[str, float] = {n: 0.0 for n in vs_pinned_names}
         for key in CELL_ORDER:
             entry: dict[str, Any] = {
                 "hazard": {},
                 "ln_over_survival": {},
                 "tolerance_k3": {},
                 "delta_tolerance_k3": {},
+                "ln_over_pinned": {},
+                "delta_tolerance_k3_vs_pinned": {},
             }
             base = hazards[CONVENTION_SURVIVAL].get(key, 0.0)
             base_t = floors[CONVENTION_SURVIVAL][universe]["cell_stability"][
+                key
+            ].get("tolerance_k3")
+            base_p = hazards[CONVENTION_PINNED].get(key, 0.0)
+            base_pt = floors[CONVENTION_PINNED][universe]["cell_stability"][
                 key
             ].get("tolerance_k3")
             for name in CONVENTIONS:
@@ -1700,6 +2124,16 @@ def convention_movement(
                             t - base_t, 3
                         )
                         max_dT[name] = max(max_dT[name], abs(t - base_t))
+                if name != CONVENTION_PINNED:
+                    lr_p = _log_ratio(m, base_p)
+                    entry["ln_over_pinned"][name] = lr_p
+                    if lr_p is not None:
+                        max_abs_p[name] = max(max_abs_p[name], abs(lr_p))
+                    if t is not None and base_pt is not None:
+                        entry["delta_tolerance_k3_vs_pinned"][name] = round(
+                            t - base_pt, 3
+                        )
+                        max_dT_p[name] = max(max_dT_p[name], abs(t - base_pt))
             entry["clears_t_max_at_k3"] = {
                 name: floors[name][universe]["cell_stability"][key][
                     "clears_t_max_at_k3"
@@ -1717,9 +2151,19 @@ def convention_movement(
                 )
                 for name in CONVENTIONS[1:]
             },
+            "numerator_change_vs_pinned_pct": {
+                name: float(
+                    100.0
+                    * (events[name] - events[CONVENTION_PINNED])
+                    / events[CONVENTION_PINNED]
+                )
+                for name in vs_pinned_names
+            },
             "per_cell": cells,
             "max_abs_ln_over_survival": max_abs,
             "max_abs_delta_tolerance_k3": max_dT,
+            "max_abs_ln_over_pinned": max_abs_p,
+            "max_abs_delta_tolerance_k3_vs_pinned": max_dT_p,
             "clearing_sets_k3": {
                 name: sorted(
                     k
@@ -1732,6 +2176,7 @@ def convention_movement(
             },
         }
     declared = out["declared_1997_plus"]
+    truly = CONVENTION_UPPER_TRULY_LITERAL
     out["packet_estimate_replaced"] = {
         "packet": packet,
         "measured_declared_universe": {
@@ -1742,6 +2187,15 @@ def convention_movement(
             "max_abs_delta_tolerance_k3": declared[
                 "max_abs_delta_tolerance_k3"
             ],
+            "vs_pinned": {
+                "numerator_change_pct": declared[
+                    "numerator_change_vs_pinned_pct"
+                ],
+                "max_abs_ln_over_pinned": declared["max_abs_ln_over_pinned"],
+                "max_abs_delta_tolerance_k3_vs_pinned": declared[
+                    "max_abs_delta_tolerance_k3_vs_pinned"
+                ],
+            },
         },
         "measured_all_window": {
             "numerator_change_pct": out["all_v1_comparable"][
@@ -1753,7 +2207,42 @@ def convention_movement(
             "max_abs_delta_tolerance_k3": out["all_v1_comparable"][
                 "max_abs_delta_tolerance_k3"
             ],
+            "vs_pinned": {
+                "numerator_change_pct": out["all_v1_comparable"][
+                    "numerator_change_vs_pinned_pct"
+                ],
+                "max_abs_ln_over_pinned": out["all_v1_comparable"][
+                    "max_abs_ln_over_pinned"
+                ],
+                "max_abs_delta_tolerance_k3_vs_pinned": out[
+                    "all_v1_comparable"
+                ]["max_abs_delta_tolerance_k3_vs_pinned"],
+            },
         },
+        "truly_literal_end_added_at_the_record_sitting": (
+            f"{truly} applies the packet's assumption to every in-frame "
+            "non-exact decedent the pinned rule does not count. On the "
+            "declared universe it adds "
+            f"{declared['death_events_by_convention'][truly] - declared['death_events_by_convention'][CONVENTION_PINNED]:.3f} "
+            "expected events over the pinned convention "
+            f"({declared['numerator_change_vs_pinned_pct'][truly]:.2f}%), "
+            "moves no cell's hazard by more than "
+            f"{declared['max_abs_ln_over_pinned'][truly]:.4f} log over the "
+            "pinned convention and no k=3 tolerance by more than "
+            f"{declared['max_abs_delta_tolerance_k3_vs_pinned'][truly]:.3f}; "
+            "the clearing set is "
+            + (
+                "unchanged"
+                if declared["clearing_sets_k3"][truly]
+                == declared["clearing_sets_k3"][CONVENTION_PINNED]
+                else "CHANGED"
+            )
+            + ". The packet's own arithmetic (305 x 0.483 = 147 events; "
+            "3,775 x 3.9% = 147) is not approached by any published end "
+            "on the all window: the truly literal end adds "
+            f"{out['all_v1_comparable']['death_events_by_convention'][truly] - out['all_v1_comparable']['death_events_by_convention'][CONVENTION_PINNED]:.3f} "
+            "there"
+        ),
         "why_the_estimate_was_high": (
             "the range codes carry information the estimate discarded: "
             "most record 'last seen at lo, found dead by hi' for persons "
@@ -1980,24 +2469,34 @@ def proposed_thresholds_note(
         "discrepancy would be scored as |ln(m_candidate / m_PSID)| on a "
         "frame built with the same three conventions.\n\n"
         "WEIGHT UNIVERSE (R1). CORE/IMM INDIVIDUAL CROSS-SECTION WT, "
-        "interval start waves 1997-2023. The per-wave resolution table "
+        "interval start waves 1997-2021 (the 2023 wave is the terminal "
+        "grid wave and starts no interval; every interval ends by "
+        "2023). The per-wave resolution table "
         "is committed in weight_universe.resolution_table with each "
         "series' codebook target population and SPSS storage format; "
         "the pre-1997 series are family-scale decimals and carry "
         f"{100 * weights['pre_1997']['share_of_weighted_exposure']:.4f}% "
-        "of the weighted exposure. v1's caveat that older decades bias "
-        "PSID upward is WITHDRAWN with three measurements "
+        "of the weighted exposure (measured on the survival frame; "
+        "weight_universe.measured_on_frame). v1's caveat that older "
+        "decades bias PSID upward is WITHDRAWN with three measurements "
         "(weight_universe.withdrawal_of_v1_caveat).\n\n"
         "DEATH ASCERTAINMENT (R6). Narrow range codes (span <= 2 years, "
         "200 of 293) are assigned floor((lo + hi) / 2) and scored by the "
         "exact-year machinery; the 93 wide codes and 12 NA-year deaths "
-        "are a published sensitivity band. Measured on the declared "
-        "universe, the pinned convention adds "
+        "are a published sensitivity band with three upper ends "
+        "(residue-informed, residue-literal, and the truly literal end "
+        "that applies the packet's assumption to every in-frame "
+        "non-exact decedent the pinned rule does not count). Measured "
+        "on the declared universe, the pinned convention adds "
         f"{declared['numerator_change_vs_survival_pct'][CONVENTION_PINNED]:.2f}% "
         "to the numerator and moves no cell's k=3 tolerance by more "
         f"than {declared['max_abs_delta_tolerance_k3'][CONVENTION_PINNED]:.3f}; "
         "the packet's +3.9% / 0.038-log estimate is replaced by that "
-        "measurement. The convention binds both sides of every score.\n\n"
+        "measurement; the truly literal end moves no k=3 tolerance by "
+        "more than "
+        f"{declared['max_abs_delta_tolerance_k3_vs_pinned'][CONVENTION_UPPER_TRULY_LITERAL]:.3f} "
+        "over the pinned convention. The convention binds both sides of "
+        "every score.\n\n"
         "CENSORING (R7). Exposure ends at the last observed wave and a "
         "death more than one grid interval later is never counted. That "
         "is valid under non-informative nonresponse, and the PSID/NCHS "
@@ -2025,14 +2524,89 @@ def proposed_thresholds_note(
         "TEMPORAL-HOLDOUT DRIFT surface; this is the person-disjoint "
         "REPRODUCTION surface. Nothing here weakens "
         "gate_m6.not_certified[0].\n\n"
+        "CERTIFICATION SCOPE. What a PASS on this basis would and would "
+        "not certify is written in certification_scope. Headline: the "
+        "survivorship STOCK cell (survival to claiming ages; packet R8) "
+        "is DEFERRED -- no such statistic, cell or floor exists here -- "
+        "and the gated hazard is the INTERVIEW-CONDITIONAL PSID hazard, "
+        "not a population hazard.\n\n"
+        "CARRIED FINDINGS. Referee A's three statistical findings on "
+        "the v3 bytes (the anchor cell's operating characteristic, the "
+        "censoring bracket at 85+, the seed-decided 65-74 cells) are "
+        "carried verbatim in open_questions_for_the_ceremony and are "
+        "NOT resolved here.\n\n"
         "BASELINE CONVENTION. Any scored reform must state whether it "
         "runs against the scheduled or payable baseline (issue #74 "
         "protocol note 1). This artifact fixes none of that."
     )
 
 
+#: Referee A's report on the v3 bytes (lens A, statistical), the source
+#: of the three carried findings below. Its numbers are the referee's
+#: own computation and are NOT recomputed by this builder.
+REFEREE_A_REPORT = (
+    "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
+    "mortality-v3-referee-A/REPORT.md (49,071 bytes, sha256 "
+    "3daae3fe3ba767c5...)"
+)
+#: Referee B's report on the v3 bytes (lens B, contract and record).
+REFEREE_B_REPORT = (
+    "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
+    "mortality-v3-referee-B/REPORT.md (44,213 bytes, sha256 "
+    "0c8baddc9cddbbf5...)"
+)
+
+
+def r8_deferral() -> dict[str, str]:
+    """The written R8 deferral, at headline prominence (both referees)."""
+    return {
+        "claim": (
+            "survival to claiming ages (62 / FRA / 67): the survivorship "
+            "STOCK cell (packet R8)"
+        ),
+        "status": (
+            "DEFERRED -- no survivorship statistic, cell or floor exists "
+            "in this artifact, and no PASS on this basis may be read as "
+            "certifying it"
+        ),
+        "reason": (
+            "a survivorship stock is the cumulative product of per-age "
+            "survival probabilities along the age path, so it is a "
+            "different estimand from the per-interval hazard this "
+            "artifact floors: it needs its own half-split floor and its "
+            "own STOCK_K (the packet's R8 item), and a level bias in the "
+            "per-age hazards compounds across the path -- so its relation "
+            "to the interview-conditional undercount would have to be "
+            "measured on its own (referee A's censoring bracket of +0.27 "
+            "to +0.74 log per cell is the per-age input to that). That is "
+            "a new estimand with its own floor build, not a bounded "
+            "addition to a record sitting whose contract is that no floor "
+            "number moves. The packet requires either the statistic with "
+            "its floor or this written deferral before ratification; this "
+            "artifact carries the deferral"
+        ),
+        "consequence_for_the_gate_block": (
+            "the gate block may not list survival to claiming ages under "
+            "covers; it belongs under not_certified until a survivorship "
+            "floor artifact exists"
+        ),
+    }
+
+
 def open_questions_for_the_ceremony() -> list[dict[str, str]]:
+    deferral = r8_deferral()
     return [
+        {
+            "question": (
+                "R8 survivorship STOCK cell (survival to claiming ages) -- "
+                "DEFERRED"
+            ),
+            "detail": (
+                f"{deferral['status']}. {deferral['reason']}. "
+                f"{deferral['consequence_for_the_gate_block']}."
+            ),
+            "status": "deferred by this sitting; recorded in certification_scope.does_not_support[0]",
+        },
         {
             "question": "weighted vs unweighted event-count eligibility",
             "detail": (
@@ -2084,7 +2658,438 @@ def open_questions_for_the_ceremony() -> list[dict[str, str]]:
                 "is not this artifact's act."
             ),
         },
+        {
+            "question": (
+                "referee A finding (i), R5: the sex-dominance anchor has "
+                "no acceptable operating characteristic at its measured "
+                "margin under gate_m4's inherited candidate-side rule"
+            ),
+            "detail": (
+                "carried VERBATIM from referee A's verdict, not resolved "
+                "here: 'At 3.139 sigma (side A) / 3.066 sigma (200 "
+                "halves), a faithful candidate passes the anchor cell "
+                "under gate_m4's inherited candidate-side rule with "
+                "probability 0.60 / 0.37 (model at the full-panel value, "
+                "K=20 draw noise only) or 0.26 / 0.22 (model fitted "
+                "excluding the holdout half, as the registration rule "
+                "requires). gate_m4's anchors never exposed this because "
+                "at >= 4.8 sigma the same computation gives >= 0.985. "
+                "Neither v2 nor v3 computes it. The gate's differential "
+                "name rides on this cell; the ruling must change the "
+                "candidate-side rule or drop the name.'"
+            ),
+            "source": REFEREE_A_REPORT + ", section 4.5 and verdict item 1",
+            "status": (
+                "carried, NOT resolved by this sitting; the numbers are "
+                "the referee's own computation and are not recomputed by "
+                "this builder"
+            ),
+        },
+        {
+            "question": (
+                "referee A finding (ii), R4/R7: the censoring convention, "
+                "not the ascertainment convention, sets the level, and "
+                "at 85+ its bracket exceeds the cells' tolerances"
+            ),
+            "detail": (
+                "carried VERBATIM from referee A's verdict, not resolved "
+                "here: 'Crediting known deaths after attrition moves every "
+                "declared-universe hazard by +0.27 to +0.74 log (85+: "
+                "+0.281 / +0.359 = 1.03x / 1.46x the k=3 tolerances; "
+                "75-84: 0.95-0.98x) and takes the PSID/NCHS median from "
+                "0.760 to 1.036; the R6 convention moves the same hazards "
+                "by <= 0.030. This is the sensitivity of the 85+ cells "
+                "half of R4's evidence item 2, and it is not in v3. Commit "
+                "it as report-only evidence and word the certification "
+                "scope as interview-conditional reproduction.' The "
+                "certification-scope wording is adopted here "
+                "(certification_scope); the bracket itself is NOT "
+                "recomputed or committed by this sitting."
+            ),
+            "source": REFEREE_A_REPORT + ", section 3.4 and verdict item 2",
+            "status": (
+                "carried, NOT resolved by this sitting; the numbers are "
+                "the referee's own computation and are not recomputed by "
+                "this builder"
+            ),
+        },
+        {
+            "question": (
+                "referee A finding (iii): the 65-74 cells are "
+                "seed-decided -- a stability clause is recommended"
+            ),
+            "detail": (
+                "carried VERBATIM from referee A, not resolved here: 'at "
+                "100 seeds the partition status of both 65-74 cells is "
+                "decided by the seed set, not by the data (bootstrap "
+                "P(clear) 0.44 / 0.61 at each cell's own sigma); the "
+                "pre-registered seeds 0-99 make the point estimate the "
+                "convention, and a candidate cannot move it, but a future "
+                "rebuild under any changed convention can flip "
+                "65-74|female at P ~ 0.6. Recommendation for threshold "
+                "binding: pre-register a stability clause -- a cell whose "
+                "bootstrap P(T <= cap) at its own sigma lies in [0.1, "
+                "0.9] is report-only whatever its point tolerance -- "
+                "which changes nothing today and removes the flip risk; "
+                "or decide the partition at 1,000 seeds.' The bootstrap "
+                "probabilities quoted are this artifact's own "
+                "(seed_count_stability); the clause is the referee's "
+                "recommendation and is NOT adopted here."
+            ),
+            "source": REFEREE_A_REPORT
+            + ", section 4.3 and the verdict's lower-severity list",
+            "status": "carried, NOT resolved by this sitting",
+        },
     ]
+
+
+def certification_scope(
+    stability: dict[str, Any], bootstrap: dict[str, Any]
+) -> dict[str, Any]:
+    """What a PASS on this basis would and would not certify.
+
+    Written at headline prominence so the gate block's ``covers`` /
+    ``not_certified`` inherit it rather than invent it. Ratifies
+    nothing. The R8 survivorship deferral is item 0 of
+    ``does_not_support`` (both referees).
+    """
+    clearing = sorted(
+        k for k, v in stability.items() if v["clears_t_max_at_k3"]
+    )
+    p65 = {
+        k: bootstrap["per_cell"][k]["at_100_seeds_sigma_v3"][
+            "p_tolerance_at_or_below_t_max"
+        ]
+        for k in ("65-74|male", "65-74|female")
+    }
+    return {
+        "note": (
+            "what a PASS on this floor basis would and would not "
+            "certify, written here so the gate block's covers and "
+            "not_certified inherit it rather than invent it. Nothing is "
+            "ratified by this block; the rulings it is subject to are in "
+            "open_questions_for_the_ceremony"
+        ),
+        "headline": (
+            "SURVIVAL TO CLAIMING AGES IS NOT CERTIFIED BY THIS BASIS "
+            "(packet R8 -- DEFERRED); THE GATED HAZARD IS THE "
+            "INTERVIEW-CONDITIONAL PSID HAZARD, NOT A POPULATION HAZARD"
+        ),
+        "would_support_if_ratified": [
+            "person-disjoint 50/50 half-split REPRODUCTION of the "
+            "weighted PSID central death rate m(band, sex) on the "
+            "declared weight universe (CORE/IMM INDIVIDUAL CROSS-SECTION "
+            "WT, interval start waves 1997-2021) under the pinned "
+            "ascertainment convention and the declared censoring "
+            "convention, in the cells whose k=3 tolerance clears ln(1.5) "
+            f"on this basis: {clearing} -- subject to the R3 "
+            "(eligibility), R4 (85+) and k rulings",
+            "reproduction of the INTERVIEW-CONDITIONAL PSID hazard: "
+            "exposure ends at the last observed wave and deaths are "
+            "counted only in the one grid interval after it, so the "
+            "PSID/NCHS undercount is part of the truth both sides "
+            "inherit; a PASS certifies reproduction of that hazard, not "
+            "of a population hazard (referee A, section 3.4 wording, "
+            "adopted)",
+        ],
+        "does_not_support": [
+            r8_deferral(),
+            "mortality DRIFT (gate_m6.not_certified[0] stands; "
+            "t_max_scope)",
+            "mortality LEVELS against NCHS: every PSID/NCHS ratio is "
+            "below 1 in every window and is the truth's undercount, "
+            "report-only (external_anchor.gating_ruling_inherited)",
+            "the 25-74 cells: tolerances above the cap at k=3; the two "
+            "65-74 cells are seed-decided (seed_count_stability: "
+            f"P(clear) {p65['65-74|male']:.3f} male / "
+            f"{p65['65-74|female']:.3f} female at 100 seeds)",
+            "any candidate-side scoring rule, k, eligibility rule or "
+            "anchor ruling (open_questions_for_the_ceremony)",
+            "the differential (male > female) claim, which rides on the "
+            "REPORTED sex-dominance anchor whose operating characteristic "
+            "under the inherited candidate-side rule is referee A's "
+            "unresolved finding (i) (open_questions_for_the_ceremony)",
+            "that the censoring is innocuous or the hazard free of the "
+            "undercount (governance.censoring.binds); referee A's "
+            "bracket (+0.27 to +0.74 log per cell, carried as finding "
+            "(ii)) is the size of that dependence and is NOT recomputed "
+            "here",
+        ],
+    }
+
+
+def record_corrections() -> dict[str, Any]:
+    """The 2026-09-07 record sitting: each referee defect and its fix.
+
+    Both referees reproduced every recomputed number of the v3 bytes;
+    what they found were record defects. Each fix is a string, a label
+    or an ADDED measurement; no floor value moved.
+    """
+    return {
+        "sitting": (
+            "2026-09-07 (floors v4): one fix commit over 2fbde39 on "
+            "cap/mortality-floors-v3, the artifact re-emitted from the "
+            "builder"
+        ),
+        "referees": {
+            "A_statistical": REFEREE_A_REPORT,
+            "B_contract_and_record": REFEREE_B_REPORT,
+        },
+        "invariant": (
+            "no floor value, tolerance, mean, sd, realized_sigma, Kish "
+            "count, death count or partition moved between the v3 bytes "
+            "(sha256 b5f6fd0d...) and these; every numeric change is an "
+            "ADDITION (the truly literal band end, the 49 -> 44 "
+            "decomposition, the pinned-frame shares, the attrition "
+            "overlap counts, the movement-vs-pinned block) except "
+            "elapsed_seconds, a wall-clock timing"
+        ),
+        "items": [
+            {
+                "defect": "B D-1 (HIGH)",
+                "what": (
+                    "tests/test_mortality_floors_v2.py and _v3.py froze "
+                    "the LIVE gates.yaml (whole-file sha256 and line "
+                    "count); the first gates.yaml edit -- the gate block "
+                    "itself -- would turn both suites red; no ratified "
+                    "floor does this"
+                ),
+                "fix": (
+                    "both tests compare each cited line's text against "
+                    "gates.yaml AT THE RECORDED GIT BLOB (git cat-file), "
+                    "never the live file's digest or line count; "
+                    "gates_yaml_sha256 stays as provenance"
+                ),
+                "where": [
+                    "gates_yaml_citations.git_blob",
+                    "gates_yaml_citations.rule",
+                    "revision_pins.gates_yaml_git_blob",
+                    "revision_pins.gates_yaml_pin_semantics",
+                    "tests/test_mortality_floors_v3.py",
+                    "tests/test_mortality_floors_v2.py",
+                ],
+            },
+            {
+                "defect": "B D-2 (HIGH as a record claim)",
+                "what": (
+                    "upper_end_packet_literal said it was the packet's "
+                    "assumption taken literally; its bytes score the "
+                    "67-person residue and exclude the 75 in-frame "
+                    "narrow-coded decedents the pinned rule assigns but "
+                    "does not count"
+                ),
+                "fix": (
+                    "relabelled as the RESIDUE-LITERAL end with the "
+                    "exclusion stated in its rule (key retained for path "
+                    "stability); the TRULY LITERAL end ADDED as a fifth "
+                    "convention with its targets, its 100-seed floors on "
+                    "both universes and its movement against the pinned "
+                    "convention"
+                ),
+                "where": [
+                    "death_ascertainment.sensitivity_band.upper_end_packet_literal",
+                    "death_ascertainment.sensitivity_band.upper_end_truly_literal",
+                    "internal_noise_floor.conventions.band_upper_truly_literal",
+                    "death_ascertainment.measured_movement",
+                ],
+            },
+            {
+                "defect": "B D-4 / A D1 (binding)",
+                "what": (
+                    "the v3 builder and the artifact's own digest were "
+                    "pinned nowhere; the ascertainment convention had no "
+                    "synthetic unit test and could move where the "
+                    "PSID-gated tests skip"
+                ),
+                "fix": (
+                    "revision_pins.builder_v3_sha256 pins this builder; "
+                    "the test pins the committed artifact's size and "
+                    "sha256 as a constant and carries synthetic "
+                    "(no-PSID) tests of assign_narrow_death_years, the "
+                    "midpoint tie-break, fractional_death_targets and "
+                    "apply_fractional_deaths' expected-value identities"
+                ),
+                "where": [
+                    "revision_pins.builder_v3_sha256",
+                    "tests/test_mortality_floors_v3.py",
+                ],
+            },
+            {
+                "defect": "A D1 (second half)",
+                "what": (
+                    "97 of 100 seeds per pinned block were pinned only by "
+                    "internal consistency; the PSID-gated test rebuilt "
+                    "seed 0 only"
+                ),
+                "fix": (
+                    "the PSID-gated test reproduces all 100 seeds of the "
+                    "headline block and seeds 0, 37 and 99 of every other "
+                    "block, including the upper ends' floor values"
+                ),
+                "where": ["tests/test_mortality_floors_v3.py"],
+            },
+            {
+                "defect": "B D-3 / A D6 (record)",
+                "what": (
+                    "the attrition table's unit string presented "
+                    "continues / death / attrit as a partition; 12 "
+                    "person-intervals are continue-and-die"
+                ),
+                "fix": (
+                    "the unit string states the overlap and the identity; "
+                    "n_continue_and_death is committed per cell and in "
+                    "total"
+                ),
+                "where": [
+                    "governance.censoring.evidence_against.attrition_versus_death_by_age_and_sex.table.unit",
+                    "governance.censoring.evidence_against.attrition_versus_death_by_age_and_sex.table.identity",
+                    "governance.censoring.evidence_against.attrition_versus_death_by_age_and_sex.table.totals.continue_and_death",
+                ],
+            },
+            {
+                "defect": "B D-9 / A D3 (estimand text)",
+                "what": (
+                    "'interval start waves 1997-2023': the 2023 wave is "
+                    "the terminal grid wave and starts no interval; the "
+                    "frame's start waves are 1997-2021"
+                ),
+                "fix": "'1997-2021 (intervals ending by 2023)' everywhere",
+                "where": [
+                    "estimand.declared_weight_universe",
+                    "estimand.declared_universe_last_start_wave",
+                    "weight_universe.declaration.declared_weight_universe",
+                    "governance.weight_universe.binds",
+                    "proposed_thresholds_note",
+                ],
+            },
+            {
+                "defect": "A D4 / B D-7 (frame unstated)",
+                "what": (
+                    "the R1 per-cell shares, sample strata and the "
+                    "withdrawal were computed on the survival frame "
+                    "beside a pinned-convention headline without saying "
+                    "so"
+                ),
+                "fix": (
+                    "weight_universe.measured_on_frame names the frame and "
+                    "why; the per-cell shares are recomputed on the "
+                    "pinned frame and the difference summarised; the "
+                    "withdrawal states its frame and measures its premise "
+                    "on the pinned frame too"
+                ),
+                "where": [
+                    "weight_universe.measured_on_frame",
+                    "weight_universe.per_cell_shares_pinned_convention",
+                    "weight_universe.per_cell_shares_frame_sensitivity",
+                    "weight_universe.withdrawal_of_v1_caveat.measured_on_frame",
+                    "weight_universe.withdrawal_of_v1_caveat.premise_on_pinned_frame",
+                ],
+            },
+            {
+                "defect": "B D-5 (next-step trap)",
+                "what": (
+                    "the test asserting 'gate_mortality' absent from "
+                    "gates.yaml would have to be deleted silently by the "
+                    "gate commit"
+                ),
+                "fix": (
+                    "the assertion sits under a module-level pre-lock "
+                    "marker the gate commit flips; flipped, the same test "
+                    "asserts the block cites this artifact by path"
+                ),
+                "where": [
+                    "tests/test_mortality_floors_v3.py (GATE_MORTALITY_BLOCK_LANDED)",
+                    "tests/test_mortality_floors_v2.py (GATE_MORTALITY_BLOCK_LANDED)",
+                ],
+            },
+            {
+                "defect": "R8 (both referees)",
+                "what": (
+                    "no survivorship stock statistic and no explicit "
+                    "deferral decision anywhere in the artifact"
+                ),
+                "fix": (
+                    "the deferral is written with its reason at headline "
+                    "prominence: certification_scope.does_not_support[0], "
+                    "open_questions_for_the_ceremony[0], does_not_do"
+                ),
+                "where": [
+                    "certification_scope",
+                    "open_questions_for_the_ceremony",
+                    "does_not_do",
+                ],
+            },
+            {
+                "defect": "A D5 / B D-8 (the 49 -> 44 link)",
+                "what": (
+                    "'only 49 narrow-coded decedents were observed at lo' "
+                    "is a true record count that does not explain the 44 "
+                    "counted events"
+                ),
+                "fix": (
+                    "narrow_counted_decomposition commits the link "
+                    "(counted == observed at the grid wave containing the "
+                    "midpoint AND banded at the midpoint age, asserted "
+                    "record by record) and the reading states it"
+                ),
+                "where": [
+                    "death_ascertainment.classification.narrow_counted_decomposition",
+                    "death_ascertainment.classification.reading",
+                ],
+            },
+            {
+                "defect": "A D7 (upper-band counts)",
+                "what": (
+                    "the upper-band blocks' min_deaths_either_half are "
+                    "rounded expectations over fractional deaths, "
+                    "unlabelled"
+                ),
+                "fix": (
+                    "every convention block carries count_semantics; the "
+                    "fractional conventions' says ROUNDED EXPECTED"
+                ),
+                "where": [
+                    "internal_noise_floor.conventions.*.count_semantics"
+                ],
+            },
+            {
+                "defect": "A D2 (constants and the resolution guard)",
+                "what": (
+                    "T_MAX, MARGIN_K, DECLARED_UNIVERSE_START, FLOOR_SEEDS "
+                    "and CELL_ORDER are imported from the v2 builder; the "
+                    "resolution guard replays the code it guards"
+                ),
+                "fix": (
+                    "REFERENCE_CONSTANTS pins the inherited constants to "
+                    "literals, checked at import and by the test; the "
+                    "guard's reach is stated in resolution_guard_note"
+                ),
+                "where": [
+                    "revision_pins.reference_constants",
+                    "weight_universe.resolution_guard_note",
+                ],
+            },
+            {
+                "defect": "A findings (i), (ii), (iii)",
+                "what": (
+                    "three statistical findings on the v3 bytes -- the "
+                    "anchor cell's operating characteristic (R5), the "
+                    "censoring bracket at 85+ (R4/R7), the seed-decided "
+                    "65-74 cells -- not for this sitting to resolve"
+                ),
+                "fix": (
+                    "carried VERBATIM with the referee's numbers into "
+                    "open_questions_for_the_ceremony, attributed to the "
+                    "referee's report; the certification-scope wording "
+                    "from finding (ii) is adopted; nothing else resolved"
+                ),
+                "where": [
+                    "open_questions_for_the_ceremony",
+                    "certification_scope",
+                ],
+            },
+        ],
+    }
 
 
 # --------------------------------------------------------------------------
@@ -2156,9 +3161,44 @@ def run(verbose: bool = True) -> dict[str, Any]:
         series_summary,
         equivalence,
         anchor_all_survival,
+        pinned,
     )
     strata = sample_stratum_shares(survival)
     cell_shares = per_cell_series_shares(survival, series_by_wave)
+    cell_shares_pinned = per_cell_series_shares(pinned, series_by_wave)
+    frame_sensitivity = {
+        "max_abs_delta_deaths_unwt": max(
+            abs(
+                cell_shares_pinned[k]["deaths_unwt"]
+                - cell_shares[k]["deaths_unwt"]
+            )
+            for k in CELL_ORDER
+        ),
+        "max_abs_delta_pre_1997_share_of_unweighted_deaths_points": float(
+            100.0
+            * max(
+                abs(
+                    cell_shares_pinned[k][
+                        "pre_1997_share_of_unweighted_deaths"
+                    ]
+                    - cell_shares[k]["pre_1997_share_of_unweighted_deaths"]
+                )
+                for k in CELL_ORDER
+            )
+        ),
+        "max_abs_delta_pre_1997_share_of_weighted_exposure_points": float(
+            100.0
+            * max(
+                abs(
+                    cell_shares_pinned[k][
+                        "pre_1997_share_of_weighted_exposure"
+                    ]
+                    - cell_shares[k]["pre_1997_share_of_weighted_exposure"]
+                )
+                for k in CELL_ORDER
+            )
+        ),
+    }
 
     # --- R6 ------------------------------------------------------------
     conv = convention_movement(frames, floors)
@@ -2272,8 +3312,10 @@ def run(verbose: bool = True) -> dict[str, Any]:
             "measurements, not restated (R1.4)",
             "a death-ascertainment convention is PINNED: narrow range "
             "codes at floor((lo+hi)/2); the residue is a published "
-            "sensitivity band with two upper ends (R6.1)",
-            "every cell's hazard and tolerance is measured under four "
+            "sensitivity band with three upper ends -- residue-informed, "
+            "residue-literal, and the truly literal end added at the "
+            "2026-09-07 record sitting (R6.1)",
+            "every cell's hazard and tolerance is measured under five "
             "conventions on both universes at 100 seeds, replacing the "
             "packet's +3.9% / 0.038-log estimate (R6.2)",
             "governance blocks state that the ascertainment and "
@@ -2283,12 +3325,20 @@ def run(verbose: bool = True) -> dict[str, Any]:
             "PSID/NCHS ratios and the attrition-hazard-by-age table (R7, "
             "shared with R4)",
         ],
+        "record_corrections": record_corrections(),
+        "certification_scope": certification_scope(
+            head["cell_stability"], bootstrap
+        ),
         "does_not_do": [
             "edit gates.yaml or any threshold",
             "score a candidate or run a gate",
             "adopt a k, a gate partition or an eligibility rule",
             "rule on 85+ eligibility",
             "delete, edit or supersede any other runs/ artifact",
+            "add a survivorship stock statistic (packet R8 -- DEFERRED; "
+            "certification_scope.does_not_support[0])",
+            "resolve referee A's three statistical findings on the v3 "
+            "bytes (carried verbatim in open_questions_for_the_ceremony)",
         ],
         "t_max_scope": dict(
             v2_artifact["t_max_scope"],
@@ -2307,7 +3357,24 @@ def run(verbose: bool = True) -> dict[str, Any]:
                 sha256=_sha_of_file(M6_PATH),
             ),
         ),
-        "gates_yaml_citations": v2b.gates_yaml_citations(),
+        "gates_yaml_citations": dict(
+            v2b.gates_yaml_citations(),
+            git_blob=_git_blob_id(GATES_PATH),
+            rule=(
+                "each entry records the line number this artifact cites "
+                "and the exact stripped text at that line when the "
+                "artifact was built. The reproduction test compares each "
+                "cited line's text against gates.yaml AT THE RECORDED "
+                "BLOB (git_blob, resolved with git cat-file), never "
+                "against the live file's whole-file digest or line count "
+                "-- the gate_m4 / gate_m6 precedent: a ratified floor is "
+                "pinned by path and governance, and no ratified floor's "
+                "test freezes the live contract. The live contract may "
+                "therefore move (the gate block itself will move it) "
+                "without this suite turning red, while a citation that "
+                "was stale when made still fails loudly"
+            ),
+        ),
         "data": {
             "psid_population": v1_artifact["data"]["psid_population"],
             "psid_wave_calendar": v1_artifact["data"]["psid_wave_calendar"],
@@ -2382,17 +3449,67 @@ def run(verbose: bool = True) -> dict[str, Any]:
                 "slice's series is the one resolved at its START wave"
             ),
             "fallback_patterns": list(panels.DEMOGRAPHIC_CONCEPTS["weight"]),
+            "resolution_guard_note": (
+                "the builder aborts if this table's wave->series map "
+                "differs from build_mortality_floors_v2.weight_series_by_"
+                "wave(); both replay the same panels.DEMOGRAPHIC_CONCEPTS"
+                "['weight'] fallback order against the same label space, "
+                "so the guard catches a divergence between the two "
+                "builders, NOT a change to panels.py's fallback order "
+                "(which would move both). What pins the resolution is the "
+                "committed table itself: the PSID-gated test replays it "
+                "and the always-runnable tests assert its literal "
+                "structure (43 waves, four series, the 1997 boundary)"
+            ),
             "resolution_table": table,
             "series": series_summary,
             "n_series_across_window": len(series_summary),
+            "measured_on_frame": {
+                "frame": CONVENTION_SURVIVAL,
+                "applies_to": [
+                    "measurement",
+                    "universe_equivalence",
+                    "series.*.measured_in_frame",
+                    "sample_strata",
+                    "per_cell_shares",
+                    "withdrawal_of_v1_caveat",
+                ],
+                "why": (
+                    "these are the R1 measurements v2 made and v1's caveat "
+                    "was about, so they are computed on the survival frame "
+                    "(v1/v2's convention) and equal v2's figures by value; "
+                    "the headline floor is on the pinned frame. The "
+                    "per-cell shares are recomputed on the pinned frame in "
+                    "per_cell_shares_pinned_convention and the difference "
+                    "is summarised in per_cell_shares_frame_sensitivity"
+                ),
+            },
             "measurement": weights,
             "universe_equivalence": equivalence,
             "sample_strata": strata,
             "per_cell_shares": cell_shares,
+            "per_cell_shares_pinned_convention": cell_shares_pinned,
+            "per_cell_shares_frame_sensitivity": dict(
+                frame_sensitivity,
+                reading=(
+                    "on the pinned frame the per-cell unweighted death "
+                    "counts are up to "
+                    f"{frame_sensitivity['max_abs_delta_deaths_unwt']} "
+                    "higher (the 44 added narrow-coded events), the "
+                    "pre-1997 share of unweighted deaths moves by at most "
+                    f"{frame_sensitivity['max_abs_delta_pre_1997_share_of_unweighted_deaths_points']:.2f} "
+                    "points and the pre-1997 share of weighted exposure "
+                    "by at most "
+                    f"{frame_sensitivity['max_abs_delta_pre_1997_share_of_weighted_exposure_points']:.4f} "
+                    "points; no conclusion changes"
+                ),
+            ),
             "declaration": {
                 "declared_weight_universe": (
                     "CORE/IMM INDIVIDUAL CROSS-SECTION WT, interval start "
-                    "waves 1997-2023"
+                    "waves 1997-2021 (the 2023 wave is the terminal grid "
+                    "wave and starts no interval; every interval ends by "
+                    "2023)"
                 ),
                 "declared_universe_start_wave": DECLARED_UNIVERSE_START,
                 "why": [
@@ -2491,19 +3608,126 @@ def run(verbose: bool = True) -> dict[str, Any]:
                 },
                 "upper_end_packet_literal": {
                     "convention": CONVENTION_UPPER_LITERAL,
+                    "label": "the RESIDUE-LITERAL upper end",
+                    "name_note": (
+                        "the convention key band_upper_packet_literal and "
+                        "this field name are RETAINED for path stability "
+                        "of the committed floors; they are a misnomer "
+                        "corrected at the 2026-09-07 record sitting "
+                        "(referee B, D-2): this end is NOT the packet's "
+                        "assumption taken literally. The packet's literal "
+                        "assumption is upper_end_truly_literal"
+                    ),
                     "rule": (
-                        "the packet's assumption taken literally: every "
-                        "in-frame non-exact decedent not already assigned "
-                        "by the pinned rule is scored as dying in the "
-                        "interval after their last observed wave with "
-                        "probability r, IGNORING what their range says. "
-                        "Contradicted by the ranges for most of them "
-                        "(classification.*.in_frame_last_wave_before_lo); "
-                        "published as the extreme the estimate implied"
+                        "the RESIDUE -- the in-frame wide-coded (span >= "
+                        "3) and NA-year decedents, 67 persons -- scored as "
+                        "dying in the interval after their last observed "
+                        "wave with probability r, IGNORING what their "
+                        "range says. EXCLUDED from it: every narrow-coded "
+                        "decedent the pinned rule assigns a midpoint to, "
+                        "including the 75 in-frame ones whose midpoint "
+                        "falls outside every interval they were observed "
+                        "at the start of and who are therefore never "
+                        "scored anywhere (classification.narrow_counted_"
+                        "decomposition). On the declared universe it "
+                        "coincides with the informed end (+1.757 expected "
+                        "events from three persons) because every extra "
+                        "person it adds was last seen before 1997"
+                    ),
+                    "what_it_is_not": (
+                        "the packet's arithmetic (305 x 0.483 = 147 "
+                        "events) applied to every non-exact decedent; "
+                        "neither this end nor the truly literal one "
+                        "approaches that figure, because 119 of the 305 "
+                        "are not in the frame and most of the rest died "
+                        "after attrition"
                     ),
                     "targets": ascertainment["upper_band_targets"][
                         CONVENTION_UPPER_LITERAL
                     ],
+                },
+                "upper_end_truly_literal": {
+                    "convention": CONVENTION_UPPER_TRULY_LITERAL,
+                    "label": (
+                        "the TRULY LITERAL upper end -- the packet's "
+                        "assumption applied literally; ADDED at the "
+                        "2026-09-07 record sitting (referee B, D-2)"
+                    ),
+                    "rule": (
+                        "every in-frame non-exact decedent the pinned rule "
+                        "does not COUNT -- the 67 residue decedents plus "
+                        "the 75 narrow-coded decedents whose assigned "
+                        "midpoint produced no event -- is scored as dying "
+                        "in the interval after their last observed wave "
+                        "with probability r, every year of that interval "
+                        "feasible, IGNORING what their range says. "
+                        "Expected exposure and expected deaths replace the "
+                        "person's slices exactly as in the other upper "
+                        "ends (death slice exposure 0.5, the death split "
+                        "across a biennial interval's two slices by the "
+                        "measured second-year share)"
+                    ),
+                    "exclusion": (
+                        "only the narrow-coded decedents the pinned rule "
+                        "counts (the 44 events) are excluded; a decedent "
+                        "assigned a midpoint but not counted is a target"
+                    ),
+                    "targets": ascertainment["upper_band_targets"][
+                        CONVENTION_UPPER_TRULY_LITERAL
+                    ],
+                    "in_frame_non_exact_accounting": ascertainment[
+                        "in_frame_non_exact_accounting"
+                    ],
+                    "movement_vs_pinned": {
+                        universe: {
+                            "expected_death_events": conv[universe][
+                                "death_events_by_convention"
+                            ][CONVENTION_UPPER_TRULY_LITERAL],
+                            "added_over_pinned": (
+                                conv[universe]["death_events_by_convention"][
+                                    CONVENTION_UPPER_TRULY_LITERAL
+                                ]
+                                - conv[universe]["death_events_by_convention"][
+                                    CONVENTION_PINNED
+                                ]
+                            ),
+                            "numerator_change_vs_pinned_pct": conv[universe][
+                                "numerator_change_vs_pinned_pct"
+                            ][CONVENTION_UPPER_TRULY_LITERAL],
+                            "ln_over_pinned_per_cell": {
+                                key: conv[universe]["per_cell"][key][
+                                    "ln_over_pinned"
+                                ][CONVENTION_UPPER_TRULY_LITERAL]
+                                for key in CELL_ORDER
+                            },
+                            "max_abs_ln_over_pinned": conv[universe][
+                                "max_abs_ln_over_pinned"
+                            ][CONVENTION_UPPER_TRULY_LITERAL],
+                            "delta_tolerance_k3_vs_pinned_per_cell": {
+                                key: conv[universe]["per_cell"][key][
+                                    "delta_tolerance_k3_vs_pinned"
+                                ][CONVENTION_UPPER_TRULY_LITERAL]
+                                for key in CELL_ORDER
+                            },
+                            "max_abs_delta_tolerance_k3_vs_pinned": conv[
+                                universe
+                            ]["max_abs_delta_tolerance_k3_vs_pinned"][
+                                CONVENTION_UPPER_TRULY_LITERAL
+                            ],
+                            "clearing_set_k3": conv[universe][
+                                "clearing_sets_k3"
+                            ][CONVENTION_UPPER_TRULY_LITERAL],
+                            "clearing_set_unchanged_from_pinned": bool(
+                                conv[universe]["clearing_sets_k3"][
+                                    CONVENTION_UPPER_TRULY_LITERAL
+                                ]
+                                == conv[universe]["clearing_sets_k3"][
+                                    CONVENTION_PINNED
+                                ]
+                            ),
+                        }
+                        for universe in UNIVERSES
+                    },
                 },
                 "r_used": ascertainment["ascertainment_rates"][
                     "rule_rate_used_by_the_band"
@@ -2527,8 +3751,9 @@ def run(verbose: bool = True) -> dict[str, Any]:
                 "binds": (
                     "the declared universe binds both sides of every score: "
                     "truth and candidate are scored on start waves 1997+ "
-                    "under the cross-section weight, and the all-window "
-                    "floor is report-only"
+                    "(1997-2021; intervals ending by 2023) under the "
+                    "cross-section weight, and the all-window floor is "
+                    "report-only"
                 ),
             },
             "death_ascertainment": {
@@ -2550,10 +3775,24 @@ def run(verbose: bool = True) -> dict[str, Any]:
         },
         "estimand": {
             "statistic": v2_artifact["estimand"]["statistic"],
-            "declared_weight_universe": "CORE/IMM INDIVIDUAL CROSS-SECTION WT, interval start waves 1997-2023",
+            "declared_weight_universe": (
+                "CORE/IMM INDIVIDUAL CROSS-SECTION WT, interval start "
+                "waves 1997-2021 (the 2023 wave is the terminal grid wave "
+                "and starts no interval; every interval ends by 2023)"
+            ),
             "declared_universe_start_wave": DECLARED_UNIVERSE_START,
+            "declared_universe_last_start_wave": int(
+                _window(pinned, DECLARED_UNIVERSE_START).start_wave.max()
+            ),
             "death_ascertainment_convention": CONVENTION_PINNED,
             "censoring_convention": "governance.censoring.rule",
+            "hazard_is_interview_conditional": (
+                "the gated hazard is the INTERVIEW-CONDITIONAL PSID hazard "
+                "-- exposure ends at the last observed wave and deaths are "
+                "counted only in the one interval after it -- not a "
+                "population hazard; the PSID/NCHS undercount is part of "
+                "the truth both sides inherit (certification_scope)"
+            ),
             "see": "weight_universe, death_ascertainment, governance",
         },
         "age_bands": list(v1b.BAND_LABELS),
@@ -2626,8 +3865,44 @@ def run(verbose: bool = True) -> dict[str, Any]:
                         ),
                         CONVENTION_PINNED: "the pinned convention; the headline",
                         CONVENTION_UPPER_INFORMED: "the band's informed upper end",
-                        CONVENTION_UPPER_LITERAL: "the band's packet-literal upper end",
+                        CONVENTION_UPPER_LITERAL: (
+                            "the band's RESIDUE-LITERAL upper end (the key "
+                            "band_upper_packet_literal is retained for path "
+                            "stability; it is NOT the packet's literal "
+                            "assumption -- see death_ascertainment."
+                            "sensitivity_band.upper_end_packet_literal."
+                            "name_note)"
+                        ),
+                        CONVENTION_UPPER_TRULY_LITERAL: (
+                            "the band's TRULY LITERAL upper end (the packet's "
+                            "assumption applied to every in-frame non-exact "
+                            "decedent the pinned rule does not count); ADDED "
+                            "at the 2026-09-07 record sitting"
+                        ),
                     }[name],
+                    "count_semantics": {
+                        CONVENTION_SURVIVAL: (
+                            "exact integer death counts (n_death_a/b, "
+                            "min_deaths_either_half)"
+                        ),
+                        CONVENTION_PINNED: (
+                            "exact integer death counts (n_death_a/b, "
+                            "min_deaths_either_half)"
+                        ),
+                    }.get(
+                        name,
+                        "ROUNDED EXPECTED counts: this convention's frame "
+                        "carries fractional deaths at rate r, so "
+                        "n_death_a/b and min_deaths_either_half are "
+                        "int(round(sum of fractional deaths)) on each half "
+                        "(v1's weighted_hazards convention), not counts of "
+                        "events; the exact expected totals are "
+                        "deaths_expected_a/b in the per-seed cells (not "
+                        "committed for this convention) and "
+                        "death_ascertainment.sensitivity_band."
+                        "expected_death_events_by_convention. Sensitivity "
+                        "block only; nothing gates on these counts",
+                    ),
                     "per_seed_shape": {
                         CONVENTION_SURVIVAL: (
                             "v2 full shape, committed in v2 (identical)"
@@ -2640,6 +3915,7 @@ def run(verbose: bool = True) -> dict[str, Any]:
                         ),
                         CONVENTION_UPPER_INFORMED: "not committed",
                         CONVENTION_UPPER_LITERAL: "not committed",
+                        CONVENTION_UPPER_TRULY_LITERAL: "not committed",
                     }[name],
                     "universes": {
                         universe: {
@@ -2715,8 +3991,18 @@ def run(verbose: bool = True) -> dict[str, Any]:
             "v1_artifact_sha256": _sha_of_file(V1_PATH),
             "v2_artifact_sha256": _sha_of_file(V2_PATH),
             "gates_yaml_sha256": _sha_of_file(GATES_PATH),
+            "gates_yaml_git_blob": _git_blob_id(GATES_PATH),
+            "gates_yaml_pin_semantics": (
+                "PROVENANCE of the contract the citations were made "
+                "against, resolved by the test through git cat-file on "
+                "gates_yaml_git_blob; NOT a freeze of the live file "
+                "(referee B, D-1). The live gates.yaml may move without "
+                "turning this artifact's suite red"
+            ),
             "builder_v1_sha256": _sha_of_file(BUILDER_V1_PATH),
             "builder_v2_sha256": _sha_of_file(BUILDER_V2_PATH),
+            "builder_v3_sha256": _sha_of_file(Path(__file__).resolve()),
+            "reference_constants": dict(REFERENCE_CONSTANTS),
             "psid_ind2023er_txt_sha256": _sha_of_file(
                 ind_dir / "IND2023ER.txt"
             ),
