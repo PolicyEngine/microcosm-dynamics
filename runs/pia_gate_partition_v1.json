@@ -1,0 +1,3701 @@
+{
+  "schema_version": "pia_gate_partition.v1",
+  "run": "pia_gate_partition_v1",
+  "reported_not_gated": true,
+  "component": "statutory benefit oracle (#74 component SF); THRESHOLD BINDING for gate_b2_pia_oracle, the prerequisite of the packet's PIA ceremony step 5",
+  "purpose": "the gate-schema derivation from the VERIFIED coverage record runs/pia_rule_coverage_v1.json: the per-rule E1 / E2 / E3 partition under an explicit total mapping and under every filed alternative, the precision claim, the worked-example classification, the E1 clause, the family-maximum and frozen-scope disclosures re-derived from the modules, the certification scope with what a pass does not authorise, the rulings filed and priced, the wording audit and the DRAFT gate_b2_pia_oracle block as a string. It edits no gates.yaml byte, executes no engine, awards no status and makes no ruling.",
+  "does_not_do": [
+    "edit gates.yaml (byte-identical to origin/master; the block lives only as the string in draft_gates_yaml_fragment.text)",
+    "open runs/pia_rule_coverage_v1.json, runs/pia_cross_engine_v1.json or runs/aux_benefit_examples_v1.json for writing",
+    "execute the Axiom rules engine or a policyengine-us Simulation (neither is run here; the E1 clause records what was and was not re-executed in this ceremony)",
+    "award any per-rule status: the partition is a READING of the coverage record's status labels under an explicit mapping, emitted under every filed alternative; the ratifying round fixes the mapping",
+    "make any ruling: P1, P6, P8, P9, P13, S7 and S8 are FILED and PRICED in open_questions_for_the_ceremony",
+    "retire the two live-file 'gate name absent' tests; the flip commit does that and flips the pre-lock markers in the same commit"
+  ],
+  "source_coverage": {
+    "path": "runs/pia_rule_coverage_v1.json",
+    "size_bytes": 75382,
+    "sha256": "7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d",
+    "schema_version": "pia_rule_coverage.v1",
+    "built_utc": "2026-09-08T00:39:08.282508+00:00",
+    "committed_at": "cd8f167280de47444164d2ab0ec11dd061b59b00 (floors v2)",
+    "verified_by": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-v2-verify/REPORT.md (66,687 bytes, sha256 847f29ac0704c18c...)",
+    "read_by": "path, with size and sha256 checked before any value is read",
+    "its_source_pins_rechecked_on_disk": {
+      "src/populace_dynamics/ss/benefits.py": "2e5e28996624651144b8d8a640caa17a95f0e16769260999b21f214e285b0846",
+      "src/populace_dynamics/ss/params.py": "9b49894b56eaab32daa62032a139ecb33a1d11f657b1523d3bebadebc2387efd",
+      "src/populace_dynamics/ss/__init__.py": "9014fcf3dc4c7d25025cf96bf970c6226f697fc1f8ad8cb37011fa2d1962447e",
+      "runs/pia_cross_engine_v1.json": "10fe0a046f2d5dd39b159cae2ae2b3aba267279bc88eaaaf1db9e1e3078d43bc",
+      "runs/aux_benefit_examples_v1.json": "502d66688a8d68f0a8b6d392c4508c018c6b4422db7f9e0d71cb1413ee7e1ccb",
+      "tests/ss/test_cross_engine.py": "7dbad8f80adc41ef33e4c9d2a46e97d63d28ac442d51c2f96c3ab5392f8e86e9",
+      "tests/ss/test_aux_benefits.py": "4c429e6b9d559408d725eb5a038547914bbfa4d79c3648fdab82271300bb158a",
+      "tests/ss/test_benefits.py": "cb0225110778ecb856c0f516c125a6a3c2f068aec7a00647fee26bf15eabb0b9",
+      "tests/test_claiming.py": "da603aa6ad3c1844f58f45371eb7c50190fc9f6eee08c9b5641185b1e999e6b5",
+      "src/populace_dynamics/household.py": "8b4db38035c6d9d303bfcf1660692653269cf078c2d4930c330c9e9f276aed2c"
+    }
+  },
+  "ceremony": {
+    "step": "the prerequisite of the packet's PIA sequence step 5 (section 11): the per-rule partition bound to the coverage record; P1 is decided first by the round",
+    "packet": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/cap-claiming-pia-gates/REPORT.md (104,338 bytes, sha256 de224e0ccb5a3f7d...)",
+    "referees": {
+      "A_statistical": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-referee-A/REPORT.md (47,570 bytes, sha256 15e614b165bbbfe3...)",
+      "B_contract_and_record": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-referee-B/REPORT.md (62,507 bytes, sha256 4f4eebafdcb995ec...)"
+    },
+    "floors_v2": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-floors-v2/REPORT.md (49,890 bytes, sha256 303f077d9967a405...)",
+    "verification": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-v2-verify/REPORT.md (66,687 bytes, sha256 847f29ac0704c18c...)",
+    "gates_yaml_untouched": true,
+    "gates_yaml_stub": "gate_b2_pia_oracle (DRAFT as a string in draft_gates_yaml_fragment; not in gates.yaml)",
+    "next": "P1 decided -> adversarial referee round on these bound readings -> the rulings -> verification -> ratifying merge with the GATE_B2_PIA_ORACLE_BLOCK_LANDED flip and the live-file guard test retired"
+  },
+  "derivation_convention": {
+    "partition": "per rule, class = all_three if E1, E2 and E3 all hold under the mapping; strict_subset if one or two hold; none if none; the mapping is TOTAL over the labels the coverage record uses and the build fails on an unmapped label",
+    "strict_mapping": {
+      "e1": {
+        "satisfied": true,
+        "policyengine_us_only": true,
+        "degenerate": false,
+        "unsatisfiable_today": false
+      },
+      "e2": {
+        "satisfied": true,
+        "satisfied_with_a_constant_override": false,
+        "weak": false,
+        "partial": false,
+        "implied": false,
+        "absent": false
+      },
+      "e3": {
+        "all_branches_exercised": true,
+        "exhaustive": true,
+        "both_branches_reached": true,
+        "partial": false,
+        "partial_and_one_branch_unexercised": false,
+        "partial_with_a_named_simplification": false,
+        "branch_unexercised": false,
+        "unexercised": false,
+        "unit_test_only": false
+      },
+      "e1_waived_for_label": null
+    },
+    "precision": "\"computes exactly\" means TO THE CENT: |oracle - independent engine| <= 0.005 dollars on every registered case (the bound runs/pia_cross_engine_v1.json commits as agreement_tolerance_dollars). NOT bit-exact.",
+    "rule_id_rule": "the coverage record's sixteen ids, in its order"
+  },
+  "rule_order": [
+    "R1_415b1_wage_base_cap",
+    "R2_415b3_nawi_indexation",
+    "R3_415b2B_computation_year_count",
+    "R4_415b_top_n_divide_and_floor",
+    "R5_415a1A_pia_brackets",
+    "R6_415a1B_bend_points",
+    "R7_415g_dime_floor",
+    "R8_402q_worker_early_reduction",
+    "R9_402w_delayed_retirement_credit",
+    "R10_416l_fra_schedule",
+    "R11_402q1_spousal_early_reduction",
+    "R12_402bc_402k3_spouse_benefit",
+    "R13_402q_survivor_reduction_ramp",
+    "R14_402ef_widow_riblim_drc_dual",
+    "R15_402e3_f4_remarriage_protection",
+    "R16_age62_composition"
+  ],
+  "partitions": {
+    "strict": {
+      "reading": "the definition's letter: E1 holds iff an independent engine executed the rule on every registered case within the committed bound (Axiom on the 240, or the policyengine-us foundation block -- labels satisfied and policyengine_us_only); E2 holds iff at least one registered case's expected value is an SSA-published figure (label satisfied only); E3 holds iff every branch and boundary is hit (labels all_branches_exercised, exhaustive, both_branches_reached)",
+      "mapping": {
+        "e1": {
+          "satisfied": true,
+          "policyengine_us_only": true,
+          "degenerate": false,
+          "unsatisfiable_today": false
+        },
+        "e2": {
+          "satisfied": true,
+          "satisfied_with_a_constant_override": false,
+          "weak": false,
+          "partial": false,
+          "implied": false,
+          "absent": false
+        },
+        "e3": {
+          "all_branches_exercised": true,
+          "exhaustive": true,
+          "both_branches_reached": true,
+          "partial": false,
+          "partial_and_one_branch_unexercised": false,
+          "partial_with_a_named_simplification": false,
+          "branch_unexercised": false,
+          "unexercised": false,
+          "unit_test_only": false
+        },
+        "e1_waived_for_label": null
+      },
+      "all_three": [
+        "R10_416l_fra_schedule"
+      ],
+      "strict_subset": {
+        "R1_415b1_wage_base_cap": [
+          "E2"
+        ],
+        "R2_415b3_nawi_indexation": [
+          "E2"
+        ],
+        "R4_415b_top_n_divide_and_floor": [
+          "E2",
+          "E3"
+        ],
+        "R5_415a1A_pia_brackets": [
+          "E2"
+        ],
+        "R6_415a1B_bend_points": [
+          "E3"
+        ],
+        "R7_415g_dime_floor": [
+          "E2"
+        ],
+        "R8_402q_worker_early_reduction": [
+          "E3"
+        ],
+        "R9_402w_delayed_retirement_credit": [
+          "E3"
+        ],
+        "R11_402q1_spousal_early_reduction": [
+          "E1",
+          "E3"
+        ],
+        "R16_age62_composition": [
+          "E3"
+        ]
+      },
+      "none": [
+        "R3_415b2B_computation_year_count",
+        "R12_402bc_402k3_spouse_benefit",
+        "R13_402q_survivor_reduction_ramp",
+        "R14_402ef_widow_riblim_drc_dual",
+        "R15_402e3_f4_remarriage_protection"
+      ],
+      "n_all_three": 1,
+      "n_strict_subset": 10,
+      "n_none": 5,
+      "per_rule": {
+        "R1_415b1_wage_base_cap": {
+          "status_labels": {
+            "e1": "satisfied",
+            "e2": "absent",
+            "e3": "both_branches_reached"
+          },
+          "holds": {
+            "e1": true,
+            "e2": false,
+            "e3": true
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E2"
+          ],
+          "class": "strict_subset"
+        },
+        "R2_415b3_nawi_indexation": {
+          "status_labels": {
+            "e1": "satisfied",
+            "e2": "absent",
+            "e3": "both_branches_reached"
+          },
+          "holds": {
+            "e1": true,
+            "e2": false,
+            "e3": true
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E2"
+          ],
+          "class": "strict_subset"
+        },
+        "R3_415b2B_computation_year_count": {
+          "status_labels": {
+            "e1": "degenerate",
+            "e2": "absent",
+            "e3": "unexercised"
+          },
+          "holds": {
+            "e1": false,
+            "e2": false,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E1",
+            "E2",
+            "E3"
+          ],
+          "class": "none"
+        },
+        "R4_415b_top_n_divide_and_floor": {
+          "status_labels": {
+            "e1": "satisfied",
+            "e2": "absent",
+            "e3": "branch_unexercised"
+          },
+          "holds": {
+            "e1": true,
+            "e2": false,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E2",
+            "E3"
+          ],
+          "class": "strict_subset"
+        },
+        "R5_415a1A_pia_brackets": {
+          "status_labels": {
+            "e1": "satisfied",
+            "e2": "weak",
+            "e3": "all_branches_exercised"
+          },
+          "holds": {
+            "e1": true,
+            "e2": false,
+            "e3": true
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E2"
+          ],
+          "class": "strict_subset"
+        },
+        "R6_415a1B_bend_points": {
+          "status_labels": {
+            "e1": "satisfied",
+            "e2": "satisfied",
+            "e3": "partial"
+          },
+          "holds": {
+            "e1": true,
+            "e2": true,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E3"
+          ],
+          "class": "strict_subset"
+        },
+        "R7_415g_dime_floor": {
+          "status_labels": {
+            "e1": "satisfied",
+            "e2": "implied",
+            "e3": "exhaustive"
+          },
+          "holds": {
+            "e1": true,
+            "e2": false,
+            "e3": true
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E2"
+          ],
+          "class": "strict_subset"
+        },
+        "R8_402q_worker_early_reduction": {
+          "status_labels": {
+            "e1": "policyengine_us_only",
+            "e2": "satisfied",
+            "e3": "partial_and_one_branch_unexercised"
+          },
+          "holds": {
+            "e1": true,
+            "e2": true,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E3"
+          ],
+          "class": "strict_subset"
+        },
+        "R9_402w_delayed_retirement_credit": {
+          "status_labels": {
+            "e1": "policyengine_us_only",
+            "e2": "satisfied",
+            "e3": "partial"
+          },
+          "holds": {
+            "e1": true,
+            "e2": true,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E3"
+          ],
+          "class": "strict_subset"
+        },
+        "R10_416l_fra_schedule": {
+          "status_labels": {
+            "e1": "satisfied",
+            "e2": "satisfied",
+            "e3": "all_branches_exercised"
+          },
+          "holds": {
+            "e1": true,
+            "e2": true,
+            "e3": true
+          },
+          "e1_waived": false,
+          "failing_conditions": [],
+          "class": "all_three"
+        },
+        "R11_402q1_spousal_early_reduction": {
+          "status_labels": {
+            "e1": "unsatisfiable_today",
+            "e2": "satisfied",
+            "e3": "partial"
+          },
+          "holds": {
+            "e1": false,
+            "e2": true,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E1",
+            "E3"
+          ],
+          "class": "strict_subset"
+        },
+        "R12_402bc_402k3_spouse_benefit": {
+          "status_labels": {
+            "e1": "unsatisfiable_today",
+            "e2": "partial",
+            "e3": "partial"
+          },
+          "holds": {
+            "e1": false,
+            "e2": false,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E1",
+            "E2",
+            "E3"
+          ],
+          "class": "none"
+        },
+        "R13_402q_survivor_reduction_ramp": {
+          "status_labels": {
+            "e1": "unsatisfiable_today",
+            "e2": "satisfied_with_a_constant_override",
+            "e3": "partial"
+          },
+          "holds": {
+            "e1": false,
+            "e2": false,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E1",
+            "E2",
+            "E3"
+          ],
+          "class": "none"
+        },
+        "R14_402ef_widow_riblim_drc_dual": {
+          "status_labels": {
+            "e1": "unsatisfiable_today",
+            "e2": "partial",
+            "e3": "partial"
+          },
+          "holds": {
+            "e1": false,
+            "e2": false,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E1",
+            "E2",
+            "E3"
+          ],
+          "class": "none"
+        },
+        "R15_402e3_f4_remarriage_protection": {
+          "status_labels": {
+            "e1": "unsatisfiable_today",
+            "e2": "absent",
+            "e3": "unit_test_only"
+          },
+          "holds": {
+            "e1": false,
+            "e2": false,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E1",
+            "E2",
+            "E3"
+          ],
+          "class": "none"
+        },
+        "R16_age62_composition": {
+          "status_labels": {
+            "e1": "policyengine_us_only",
+            "e2": "satisfied",
+            "e3": "partial_with_a_named_simplification"
+          },
+          "holds": {
+            "e1": true,
+            "e2": true,
+            "e3": false
+          },
+          "e1_waived": false,
+          "failing_conditions": [
+            "E3"
+          ],
+          "class": "strict_subset"
+        }
+      }
+    },
+    "alternatives": {
+      "axiom_only_e1": {
+        "reading": "E1 requires the Axiom engine: policyengine_us_only does not count",
+        "ruling": "a reading the round may prefer under P6's logic; not in the packet",
+        "mapping": {
+          "e1": {
+            "satisfied": true,
+            "policyengine_us_only": false,
+            "degenerate": false,
+            "unsatisfiable_today": false
+          },
+          "e2": {
+            "satisfied": true,
+            "satisfied_with_a_constant_override": false,
+            "weak": false,
+            "partial": false,
+            "implied": false,
+            "absent": false
+          },
+          "e3": {
+            "all_branches_exercised": true,
+            "exhaustive": true,
+            "both_branches_reached": true,
+            "partial": false,
+            "partial_and_one_branch_unexercised": false,
+            "partial_with_a_named_simplification": false,
+            "branch_unexercised": false,
+            "unexercised": false,
+            "unit_test_only": false
+          },
+          "e1_waived_for_label": null
+        },
+        "all_three": [
+          "R10_416l_fra_schedule"
+        ],
+        "strict_subset": {
+          "R1_415b1_wage_base_cap": [
+            "E2"
+          ],
+          "R2_415b3_nawi_indexation": [
+            "E2"
+          ],
+          "R4_415b_top_n_divide_and_floor": [
+            "E2",
+            "E3"
+          ],
+          "R5_415a1A_pia_brackets": [
+            "E2"
+          ],
+          "R6_415a1B_bend_points": [
+            "E3"
+          ],
+          "R7_415g_dime_floor": [
+            "E2"
+          ],
+          "R8_402q_worker_early_reduction": [
+            "E1",
+            "E3"
+          ],
+          "R9_402w_delayed_retirement_credit": [
+            "E1",
+            "E3"
+          ],
+          "R11_402q1_spousal_early_reduction": [
+            "E1",
+            "E3"
+          ],
+          "R16_age62_composition": [
+            "E1",
+            "E3"
+          ]
+        },
+        "none": [
+          "R3_415b2B_computation_year_count",
+          "R12_402bc_402k3_spouse_benefit",
+          "R13_402q_survivor_reduction_ramp",
+          "R14_402ef_widow_riblim_drc_dual",
+          "R15_402e3_f4_remarriage_protection"
+        ],
+        "n_all_three": 1,
+        "n_strict_subset": 10,
+        "n_none": 5,
+        "per_rule": {
+          "R1_415b1_wage_base_cap": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R2_415b3_nawi_indexation": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R3_415b2B_computation_year_count": {
+            "status_labels": {
+              "e1": "degenerate",
+              "e2": "absent",
+              "e3": "unexercised"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R4_415b_top_n_divide_and_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R5_415a1A_pia_brackets": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "weak",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R6_415a1B_bend_points": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R7_415g_dime_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "implied",
+              "e3": "exhaustive"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R8_402q_worker_early_reduction": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_and_one_branch_unexercised"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R9_402w_delayed_retirement_credit": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R10_416l_fra_schedule": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [],
+            "class": "all_three"
+          },
+          "R11_402q1_spousal_early_reduction": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R12_402bc_402k3_spouse_benefit": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R13_402q_survivor_reduction_ramp": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied_with_a_constant_override",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R14_402ef_widow_riblim_drc_dual": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R15_402e3_f4_remarriage_protection": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "absent",
+              "e3": "unit_test_only"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R16_age62_composition": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_with_a_named_simplification"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "class": "strict_subset"
+          }
+        },
+        "moves_vs_strict": {
+          "R8_402q_worker_early_reduction": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E1",
+                "E3"
+              ]
+            }
+          },
+          "R9_402w_delayed_retirement_credit": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E1",
+                "E3"
+              ]
+            }
+          },
+          "R16_age62_composition": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E1",
+                "E3"
+              ]
+            }
+          }
+        }
+      },
+      "p6_e1_waiver_for_r11_r15": {
+        "reading": "E1 WAIVED per rule where the label is unsatisfiable_today (no second engine exists for the auxiliary path, by construction); the waiver is named per rule and does not fail the rule",
+        "ruling": "P6 option (a)",
+        "mapping": {
+          "e1": {
+            "satisfied": true,
+            "policyengine_us_only": true,
+            "degenerate": false,
+            "unsatisfiable_today": false
+          },
+          "e2": {
+            "satisfied": true,
+            "satisfied_with_a_constant_override": false,
+            "weak": false,
+            "partial": false,
+            "implied": false,
+            "absent": false
+          },
+          "e3": {
+            "all_branches_exercised": true,
+            "exhaustive": true,
+            "both_branches_reached": true,
+            "partial": false,
+            "partial_and_one_branch_unexercised": false,
+            "partial_with_a_named_simplification": false,
+            "branch_unexercised": false,
+            "unexercised": false,
+            "unit_test_only": false
+          },
+          "e1_waived_for_label": "unsatisfiable_today"
+        },
+        "all_three": [
+          "R10_416l_fra_schedule"
+        ],
+        "strict_subset": {
+          "R1_415b1_wage_base_cap": [
+            "E2"
+          ],
+          "R2_415b3_nawi_indexation": [
+            "E2"
+          ],
+          "R4_415b_top_n_divide_and_floor": [
+            "E2",
+            "E3"
+          ],
+          "R5_415a1A_pia_brackets": [
+            "E2"
+          ],
+          "R6_415a1B_bend_points": [
+            "E3"
+          ],
+          "R7_415g_dime_floor": [
+            "E2"
+          ],
+          "R8_402q_worker_early_reduction": [
+            "E3"
+          ],
+          "R9_402w_delayed_retirement_credit": [
+            "E3"
+          ],
+          "R11_402q1_spousal_early_reduction": [
+            "E3"
+          ],
+          "R12_402bc_402k3_spouse_benefit": [
+            "E2",
+            "E3"
+          ],
+          "R13_402q_survivor_reduction_ramp": [
+            "E2",
+            "E3"
+          ],
+          "R14_402ef_widow_riblim_drc_dual": [
+            "E2",
+            "E3"
+          ],
+          "R15_402e3_f4_remarriage_protection": [
+            "E2",
+            "E3"
+          ],
+          "R16_age62_composition": [
+            "E3"
+          ]
+        },
+        "none": [
+          "R3_415b2B_computation_year_count"
+        ],
+        "n_all_three": 1,
+        "n_strict_subset": 14,
+        "n_none": 1,
+        "per_rule": {
+          "R1_415b1_wage_base_cap": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R2_415b3_nawi_indexation": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R3_415b2B_computation_year_count": {
+            "status_labels": {
+              "e1": "degenerate",
+              "e2": "absent",
+              "e3": "unexercised"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R4_415b_top_n_divide_and_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R5_415a1A_pia_brackets": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "weak",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R6_415a1B_bend_points": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R7_415g_dime_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "implied",
+              "e3": "exhaustive"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R8_402q_worker_early_reduction": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_and_one_branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R9_402w_delayed_retirement_credit": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R10_416l_fra_schedule": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [],
+            "class": "all_three"
+          },
+          "R11_402q1_spousal_early_reduction": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R12_402bc_402k3_spouse_benefit": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R13_402q_survivor_reduction_ramp": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied_with_a_constant_override",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R14_402ef_widow_riblim_drc_dual": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R15_402e3_f4_remarriage_protection": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "absent",
+              "e3": "unit_test_only"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R16_age62_composition": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_with_a_named_simplification"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          }
+        },
+        "moves_vs_strict": {
+          "R11_402q1_spousal_early_reduction": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E1",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E3"
+              ]
+            }
+          },
+          "R12_402bc_402k3_spouse_benefit": {
+            "strict": {
+              "class": "none",
+              "failing": [
+                "E1",
+                "E2",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E2",
+                "E3"
+              ]
+            }
+          },
+          "R13_402q_survivor_reduction_ramp": {
+            "strict": {
+              "class": "none",
+              "failing": [
+                "E1",
+                "E2",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E2",
+                "E3"
+              ]
+            }
+          },
+          "R14_402ef_widow_riblim_drc_dual": {
+            "strict": {
+              "class": "none",
+              "failing": [
+                "E1",
+                "E2",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E2",
+                "E3"
+              ]
+            }
+          },
+          "R15_402e3_f4_remarriage_protection": {
+            "strict": {
+              "class": "none",
+              "failing": [
+                "E1",
+                "E2",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E2",
+                "E3"
+              ]
+            }
+          }
+        }
+      },
+      "p9_constant_override_counts_as_e2": {
+        "reading": "E2 holds for satisfied_with_a_constant_override: the 81-percent-at-62 survivor example reproduces SSA only by overriding survivor_reduction_period_months to 72 in its inputs (shipped default 84)",
+        "ruling": "P9 option (b)",
+        "mapping": {
+          "e1": {
+            "satisfied": true,
+            "policyengine_us_only": true,
+            "degenerate": false,
+            "unsatisfiable_today": false
+          },
+          "e2": {
+            "satisfied": true,
+            "satisfied_with_a_constant_override": true,
+            "weak": false,
+            "partial": false,
+            "implied": false,
+            "absent": false
+          },
+          "e3": {
+            "all_branches_exercised": true,
+            "exhaustive": true,
+            "both_branches_reached": true,
+            "partial": false,
+            "partial_and_one_branch_unexercised": false,
+            "partial_with_a_named_simplification": false,
+            "branch_unexercised": false,
+            "unexercised": false,
+            "unit_test_only": false
+          },
+          "e1_waived_for_label": null
+        },
+        "all_three": [
+          "R10_416l_fra_schedule"
+        ],
+        "strict_subset": {
+          "R1_415b1_wage_base_cap": [
+            "E2"
+          ],
+          "R2_415b3_nawi_indexation": [
+            "E2"
+          ],
+          "R4_415b_top_n_divide_and_floor": [
+            "E2",
+            "E3"
+          ],
+          "R5_415a1A_pia_brackets": [
+            "E2"
+          ],
+          "R6_415a1B_bend_points": [
+            "E3"
+          ],
+          "R7_415g_dime_floor": [
+            "E2"
+          ],
+          "R8_402q_worker_early_reduction": [
+            "E3"
+          ],
+          "R9_402w_delayed_retirement_credit": [
+            "E3"
+          ],
+          "R11_402q1_spousal_early_reduction": [
+            "E1",
+            "E3"
+          ],
+          "R13_402q_survivor_reduction_ramp": [
+            "E1",
+            "E3"
+          ],
+          "R16_age62_composition": [
+            "E3"
+          ]
+        },
+        "none": [
+          "R3_415b2B_computation_year_count",
+          "R12_402bc_402k3_spouse_benefit",
+          "R14_402ef_widow_riblim_drc_dual",
+          "R15_402e3_f4_remarriage_protection"
+        ],
+        "n_all_three": 1,
+        "n_strict_subset": 11,
+        "n_none": 4,
+        "per_rule": {
+          "R1_415b1_wage_base_cap": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R2_415b3_nawi_indexation": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R3_415b2B_computation_year_count": {
+            "status_labels": {
+              "e1": "degenerate",
+              "e2": "absent",
+              "e3": "unexercised"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R4_415b_top_n_divide_and_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R5_415a1A_pia_brackets": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "weak",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R6_415a1B_bend_points": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R7_415g_dime_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "implied",
+              "e3": "exhaustive"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R8_402q_worker_early_reduction": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_and_one_branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R9_402w_delayed_retirement_credit": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R10_416l_fra_schedule": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [],
+            "class": "all_three"
+          },
+          "R11_402q1_spousal_early_reduction": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R12_402bc_402k3_spouse_benefit": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R13_402q_survivor_reduction_ramp": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied_with_a_constant_override",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R14_402ef_widow_riblim_drc_dual": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R15_402e3_f4_remarriage_protection": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "absent",
+              "e3": "unit_test_only"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R16_age62_composition": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_with_a_named_simplification"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          }
+        },
+        "moves_vs_strict": {
+          "R13_402q_survivor_reduction_ramp": {
+            "strict": {
+              "class": "none",
+              "failing": [
+                "E1",
+                "E2",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E1",
+                "E3"
+              ]
+            }
+          }
+        }
+      },
+      "p6_waiver_and_p9_override": {
+        "reading": "both alternatives together",
+        "ruling": "P6 (a) + P9 (b)",
+        "mapping": {
+          "e1": {
+            "satisfied": true,
+            "policyengine_us_only": true,
+            "degenerate": false,
+            "unsatisfiable_today": false
+          },
+          "e2": {
+            "satisfied": true,
+            "satisfied_with_a_constant_override": true,
+            "weak": false,
+            "partial": false,
+            "implied": false,
+            "absent": false
+          },
+          "e3": {
+            "all_branches_exercised": true,
+            "exhaustive": true,
+            "both_branches_reached": true,
+            "partial": false,
+            "partial_and_one_branch_unexercised": false,
+            "partial_with_a_named_simplification": false,
+            "branch_unexercised": false,
+            "unexercised": false,
+            "unit_test_only": false
+          },
+          "e1_waived_for_label": "unsatisfiable_today"
+        },
+        "all_three": [
+          "R10_416l_fra_schedule"
+        ],
+        "strict_subset": {
+          "R1_415b1_wage_base_cap": [
+            "E2"
+          ],
+          "R2_415b3_nawi_indexation": [
+            "E2"
+          ],
+          "R4_415b_top_n_divide_and_floor": [
+            "E2",
+            "E3"
+          ],
+          "R5_415a1A_pia_brackets": [
+            "E2"
+          ],
+          "R6_415a1B_bend_points": [
+            "E3"
+          ],
+          "R7_415g_dime_floor": [
+            "E2"
+          ],
+          "R8_402q_worker_early_reduction": [
+            "E3"
+          ],
+          "R9_402w_delayed_retirement_credit": [
+            "E3"
+          ],
+          "R11_402q1_spousal_early_reduction": [
+            "E3"
+          ],
+          "R12_402bc_402k3_spouse_benefit": [
+            "E2",
+            "E3"
+          ],
+          "R13_402q_survivor_reduction_ramp": [
+            "E3"
+          ],
+          "R14_402ef_widow_riblim_drc_dual": [
+            "E2",
+            "E3"
+          ],
+          "R15_402e3_f4_remarriage_protection": [
+            "E2",
+            "E3"
+          ],
+          "R16_age62_composition": [
+            "E3"
+          ]
+        },
+        "none": [
+          "R3_415b2B_computation_year_count"
+        ],
+        "n_all_three": 1,
+        "n_strict_subset": 14,
+        "n_none": 1,
+        "per_rule": {
+          "R1_415b1_wage_base_cap": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R2_415b3_nawi_indexation": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R3_415b2B_computation_year_count": {
+            "status_labels": {
+              "e1": "degenerate",
+              "e2": "absent",
+              "e3": "unexercised"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R4_415b_top_n_divide_and_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R5_415a1A_pia_brackets": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "weak",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R6_415a1B_bend_points": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R7_415g_dime_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "implied",
+              "e3": "exhaustive"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R8_402q_worker_early_reduction": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_and_one_branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R9_402w_delayed_retirement_credit": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R10_416l_fra_schedule": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [],
+            "class": "all_three"
+          },
+          "R11_402q1_spousal_early_reduction": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R12_402bc_402k3_spouse_benefit": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R13_402q_survivor_reduction_ramp": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied_with_a_constant_override",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R14_402ef_widow_riblim_drc_dual": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R15_402e3_f4_remarriage_protection": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "absent",
+              "e3": "unit_test_only"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": true,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R16_age62_composition": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_with_a_named_simplification"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          }
+        },
+        "moves_vs_strict": {
+          "R11_402q1_spousal_early_reduction": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E1",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E3"
+              ]
+            }
+          },
+          "R12_402bc_402k3_spouse_benefit": {
+            "strict": {
+              "class": "none",
+              "failing": [
+                "E1",
+                "E2",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E2",
+                "E3"
+              ]
+            }
+          },
+          "R13_402q_survivor_reduction_ramp": {
+            "strict": {
+              "class": "none",
+              "failing": [
+                "E1",
+                "E2",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E3"
+              ]
+            }
+          },
+          "R14_402ef_widow_riblim_drc_dual": {
+            "strict": {
+              "class": "none",
+              "failing": [
+                "E1",
+                "E2",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E2",
+                "E3"
+              ]
+            }
+          },
+          "R15_402e3_f4_remarriage_protection": {
+            "strict": {
+              "class": "none",
+              "failing": [
+                "E1",
+                "E2",
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E2",
+                "E3"
+              ]
+            }
+          }
+        }
+      },
+      "packet_proposed_verdicts": {
+        "reading": "the packet's own per-rule verdict strings, quoted for comparison and NOT adopted (the coverage record marks them proposal_not_ratified)",
+        "verdicts": {
+          "R1_415b1_wage_base_cap": "partial_no_external_anchor",
+          "R2_415b3_nawi_indexation": "partial_no_external_anchor",
+          "R3_415b2B_computation_year_count": "NOT_computes_exactly",
+          "R4_415b_top_n_divide_and_floor": "partial_no_external_anchor",
+          "R5_415a1A_pia_brackets": "partial_weak_anchor",
+          "R6_415a1B_bend_points": "computes_exactly_two_years_only",
+          "R7_415g_dime_floor": "computes_exactly",
+          "R8_402q_worker_early_reduction": "computes_exactly_narrow_domain",
+          "R9_402w_delayed_retirement_credit": "computes_exactly_narrow_domain",
+          "R10_416l_fra_schedule": "computes_exactly",
+          "R11_402q1_spousal_early_reduction": "partial_no_independent_engine",
+          "R12_402bc_402k3_spouse_benefit": "partial",
+          "R13_402q_survivor_reduction_ramp": "partial_constant_override_required",
+          "R14_402ef_widow_riblim_drc_dual": "partial",
+          "R15_402e3_f4_remarriage_protection": "NOT_computes_exactly_unit_test_only",
+          "R16_age62_composition": "computes_exactly_with_named_simplification"
+        },
+        "rules_the_packet_calls_computes_exactly_or_a_qualified_form": [
+          "R10_416l_fra_schedule",
+          "R16_age62_composition",
+          "R6_415a1B_bend_points",
+          "R7_415g_dime_floor",
+          "R8_402q_worker_early_reduction",
+          "R9_402w_delayed_retirement_credit"
+        ],
+        "rules_holding_all_three_under_the_strict_reading": [
+          "R10_416l_fra_schedule"
+        ],
+        "packet_qualified_forms_that_the_strict_reading_does_not_award": [
+          "R16_age62_composition",
+          "R6_415a1B_bend_points",
+          "R7_415g_dime_floor",
+          "R8_402q_worker_early_reduction",
+          "R9_402w_delayed_retirement_credit"
+        ]
+      }
+    },
+    "invariant_under_every_reading": {
+      "rules_holding_all_three_under_every_variant": [
+        "R10_416l_fra_schedule"
+      ],
+      "rules_holding_none_under_every_variant": [
+        "R3_415b2B_computation_year_count"
+      ]
+    }
+  },
+  "gate_partition": {
+    "all_three": [
+      "R10_416l_fra_schedule"
+    ],
+    "strict_subset": {
+      "R1_415b1_wage_base_cap": [
+        "E2"
+      ],
+      "R2_415b3_nawi_indexation": [
+        "E2"
+      ],
+      "R4_415b_top_n_divide_and_floor": [
+        "E2",
+        "E3"
+      ],
+      "R5_415a1A_pia_brackets": [
+        "E2"
+      ],
+      "R6_415a1B_bend_points": [
+        "E3"
+      ],
+      "R7_415g_dime_floor": [
+        "E2"
+      ],
+      "R8_402q_worker_early_reduction": [
+        "E3"
+      ],
+      "R9_402w_delayed_retirement_credit": [
+        "E3"
+      ],
+      "R11_402q1_spousal_early_reduction": [
+        "E1",
+        "E3"
+      ],
+      "R16_age62_composition": [
+        "E3"
+      ]
+    },
+    "none": [
+      "R3_415b2B_computation_year_count",
+      "R12_402bc_402k3_spouse_benefit",
+      "R13_402q_survivor_reduction_ramp",
+      "R14_402ef_widow_riblim_drc_dual",
+      "R15_402e3_f4_remarriage_protection"
+    ],
+    "n_all_three": 1,
+    "n_strict_subset": 10,
+    "n_none": 5,
+    "reading_applied": "strict (the definition's letter); see partitions.alternatives",
+    "rulings_that_can_move_it": {
+      "P1": "yes: if the clause is struck instead, no partition is awarded and the record stays REPORTED",
+      "P6": "class labels only: E1 waived for R11-R15 moves no rule into all_three (each still fails E2 or E3)",
+      "P8": "yes, on a rebuilt case set: E3 for the sampling-limited rules; R3 would be SEPARATED (an E1 disagreement outside the exact domain), not satisfied",
+      "P9": "class label of R13 only",
+      "P13": "yes, at a finer grain, after a v2 coverage build with per-operation case sets"
+    },
+    "status": "DERIVED under the strict reading; pending the rulings named"
+  },
+  "precision_claim_P11": {
+    "claim": "\"computes exactly\" means TO THE CENT: |oracle - independent engine| <= 0.005 dollars on every registered case (the bound runs/pia_cross_engine_v1.json commits as agreement_tolerance_dollars). NOT bit-exact.",
+    "agreement_tolerance_dollars": 0.005,
+    "observed": {
+      "cross_engine_max_abs_diff_dollars": 0.0,
+      "aux_worked_example_max_abs_deviation": 1.1368683772161603e-13,
+      "pe_us_foundation_max_pia_abs_deviation": 4.8828125045474735e-05,
+      "pe_us_foundation_max_factor_abs_deviation": 5.245208734017126e-08
+    },
+    "largest_observed_dollar_deviation": 4.8828125045474735e-05,
+    "largest_observed_is_within_the_bound": true,
+    "n_cross_engine_cases_exact_to_the_cent": 240,
+    "pe_us_residual_cause_quoted_not_verified": "The float32 attribution is the committed artifact's own note, read and quoted. This build executed no policyengine-us Simulation and did not re-derive it."
+  },
+  "worked_examples_classification_P7": {
+    "artifact": "runs/aux_benefit_examples_v1.json",
+    "n_examples": 10,
+    "max_abs_deviation": 1.1368683772161603e-13,
+    "rule_as_stated_by_the_packet": "a row counts toward E2 only if its `expected` is an SSA-PUBLISHED figure; a row whose `expected` is recomputed from the same formula tests BRANCH SELECTION, not the correctness of the rule",
+    "classification_source": "the packet's reading of each row's citation and note, carried by the coverage record as proposal_not_ratified; NOT a measurement. expected_over_base_pia and ratio_decimal_places are derived so a referee re-adjudicates each row",
+    "n_published_percentage": 7,
+    "n_arithmetic_or_branch_selection": 3,
+    "examples": {
+      "spouse_at_fra_half_pia": {
+        "group": "spousal",
+        "citation": "42 USC 402(b)(2)/(c)(2); SSA RS 00615.020; ssa.gov/benefits/retirement/planner/applying7.html",
+        "expected": 1000.0,
+        "our_output": 1000.0,
+        "abs_deviation": 0.0,
+        "expected_over_base_pia": 0.5,
+        "ratio_decimal_places": 1,
+        "agrees_to_the_cent": true,
+        "packet_classification": "published_percentage"
+      },
+      "spouse_at_62_fra67": {
+        "group": "spousal",
+        "citation": "42 USC 402(q)(1); ssa.gov/OACT/quickcalc/spouse.html (32.5% at 62 when FRA is 67)",
+        "expected": 650.0,
+        "our_output": 650.0,
+        "abs_deviation": 0.0,
+        "expected_over_base_pia": 0.325,
+        "ratio_decimal_places": 3,
+        "agrees_to_the_cent": true,
+        "packet_classification": "published_percentage"
+      },
+      "spouse_at_62_fra66": {
+        "group": "spousal",
+        "citation": "42 USC 402(q)(1); SSA benefit-reduction table (35% at 62 when FRA is 66)",
+        "expected": 700.0,
+        "our_output": 700.0,
+        "abs_deviation": 0.0,
+        "expected_over_base_pia": 0.35,
+        "ratio_decimal_places": 2,
+        "agrees_to_the_cent": true,
+        "packet_classification": "published_percentage"
+      },
+      "spouse_dual_entitlement_excess": {
+        "group": "spousal",
+        "citation": "42 USC 402(k)(3)(A); SSA RS 00615.020 (excess spouse)",
+        "expected": 400.0,
+        "our_output": 400.0,
+        "abs_deviation": 0.0,
+        "expected_over_base_pia": 0.2,
+        "ratio_decimal_places": 1,
+        "agrees_to_the_cent": true,
+        "packet_classification": "arithmetic_or_branch_selection"
+      },
+      "widow_at_fra_full_pia": {
+        "group": "survivor",
+        "citation": "42 USC 402(e)(2)(A)/(f)(3)(A); SSA RS 00615.301; ssa.gov/benefits/survivors/",
+        "expected": 1000.0,
+        "our_output": 1000.0,
+        "abs_deviation": 0.0,
+        "expected_over_base_pia": 1.0,
+        "ratio_decimal_places": 1,
+        "agrees_to_the_cent": true,
+        "packet_classification": "published_percentage"
+      },
+      "widow_at_60_floor": {
+        "group": "survivor",
+        "citation": "42 USC 402(q); SSA RS 00615.302 (71.5% at age 60)",
+        "expected": 715.0,
+        "our_output": 715.0,
+        "abs_deviation": 0.0,
+        "expected_over_base_pia": 0.715,
+        "ratio_decimal_places": 3,
+        "agrees_to_the_cent": true,
+        "packet_classification": "published_percentage"
+      },
+      "widow_at_62_fra66": {
+        "group": "survivor",
+        "citation": "42 USC 402(q); SSA survivors reduction table (81% at 62 when survivor FRA is 66)",
+        "expected": 810.0,
+        "our_output": 809.9999999999999,
+        "abs_deviation": 1.1368683772161603e-13,
+        "expected_over_base_pia": 0.81,
+        "ratio_decimal_places": 2,
+        "agrees_to_the_cent": true,
+        "packet_classification": "published_percentage"
+      },
+      "rib_lim_82_5_floor": {
+        "group": "survivor",
+        "citation": "42 USC 402(e)(2)(D)/(k)(3)(A); SSA RS 00615.310 (RIB-LIM, 82.5% of PIA)",
+        "expected": 825.0,
+        "our_output": 825.0,
+        "abs_deviation": 0.0,
+        "expected_over_base_pia": 0.825,
+        "ratio_decimal_places": 3,
+        "agrees_to_the_cent": true,
+        "packet_classification": "published_percentage"
+      },
+      "rib_lim_deceased_actual_higher": {
+        "group": "survivor",
+        "citation": "42 USC 402(e)(2)(D); SSA RS 00615.310 (larger of deceased actual or 82.5%)",
+        "expected": 866.66656,
+        "our_output": 866.66656,
+        "abs_deviation": 0.0,
+        "expected_over_base_pia": 0.86666656,
+        "ratio_decimal_places": 8,
+        "agrees_to_the_cent": true,
+        "packet_classification": "arithmetic_or_branch_selection"
+      },
+      "drc_pass_through": {
+        "group": "survivor",
+        "citation": "42 USC 402(e)/(f); SSA RS 00615.301 (widow inherits DRCs)",
+        "expected": 1320.0,
+        "our_output": 1320.0,
+        "abs_deviation": 0.0,
+        "expected_over_base_pia": 1.32,
+        "ratio_decimal_places": 2,
+        "agrees_to_the_cent": true,
+        "packet_classification": "arithmetic_or_branch_selection"
+      }
+    },
+    "by_rule": {
+      "R11_402q1_spousal_early_reduction": {
+        "examples": [
+          "spouse_at_62_fra67",
+          "spouse_at_62_fra66"
+        ],
+        "published_percentage": [
+          "spouse_at_62_fra67",
+          "spouse_at_62_fra66"
+        ],
+        "arithmetic_or_branch_selection": [],
+        "e2_status_label": "satisfied"
+      },
+      "R12_402bc_402k3_spouse_benefit": {
+        "examples": [
+          "spouse_at_fra_half_pia",
+          "spouse_dual_entitlement_excess"
+        ],
+        "published_percentage": [
+          "spouse_at_fra_half_pia"
+        ],
+        "arithmetic_or_branch_selection": [
+          "spouse_dual_entitlement_excess"
+        ],
+        "e2_status_label": "partial"
+      },
+      "R13_402q_survivor_reduction_ramp": {
+        "examples": [
+          "widow_at_60_floor",
+          "widow_at_62_fra66"
+        ],
+        "published_percentage": [
+          "widow_at_60_floor",
+          "widow_at_62_fra66"
+        ],
+        "arithmetic_or_branch_selection": [],
+        "e2_status_label": "satisfied_with_a_constant_override"
+      },
+      "R14_402ef_widow_riblim_drc_dual": {
+        "examples": [
+          "widow_at_fra_full_pia",
+          "rib_lim_82_5_floor",
+          "rib_lim_deceased_actual_higher",
+          "drc_pass_through"
+        ],
+        "published_percentage": [
+          "widow_at_fra_full_pia",
+          "rib_lim_82_5_floor"
+        ],
+        "arithmetic_or_branch_selection": [
+          "rib_lim_deceased_actual_higher",
+          "drc_pass_through"
+        ],
+        "e2_status_label": "partial"
+      }
+    },
+    "all_agree_to_the_cent": true,
+    "adjudication_note": "The split is the packet's reading of each row's own citation and note, not a measurement. expected_over_base_pia is computed above so a referee re-derives the ratio and adjudicates the classification independently -- drc_pass_through in particular has a ratio of 1.32 whose 32 percent IS published, while the product is the oracle's own."
+  },
+  "case_set_P8": {
+    "cross_engine": {
+      "n_cases": 240,
+      "eligibility_years": [
+        2020,
+        2026
+      ],
+      "birth_years": [
+        1958,
+        1964
+      ],
+      "history_span_ages": [
+        22,
+        62
+      ],
+      "n_distinct_shapes": 21,
+      "what_the_rows_cannot_show": "The rows carry id, cohort, shape, aime_oracle, aime_engine, pia_oracle, pia_engine and abs_diff only. They carry no earnings history, so per-row wage-base clipping and per-row indexation are NOT determinable from the committed bytes; they carry no claiming factor and no auxiliary amount, so every rule from 402(q) onward is invisible to this artifact."
+    },
+    "pe_us_foundation": {
+      "n_cases": 40,
+      "aime_values": [
+        1000,
+        2000,
+        4000,
+        6000,
+        9000
+      ],
+      "claim_ages": [
+        62,
+        65,
+        67,
+        70
+      ],
+      "birth_years": [
+        1954,
+        1960
+      ]
+    },
+    "couple_grid": {
+      "n_rows": 36,
+      "n_rows_with_worker_excess": 0,
+      "n_rows_with_spouse_excess": 20,
+      "n_rows_with_both_spouses_drawing_an_excess": 0
+    },
+    "survivor_grid": {
+      "n_rows": 9,
+      "distinct_own_deceased_pia_pairs": [
+        [
+          800.0,
+          2200.0
+        ]
+      ]
+    },
+    "per_rule": {
+      "R1_415b1_wage_base_cap": {
+        "cross_engine_cases": 240,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 0,
+        "tests": [
+          "tests/ss/test_benefits.py::test_aime_caps_at_wage_base_and_floors_to_dollar"
+        ]
+      },
+      "R2_415b3_nawi_indexation": {
+        "cross_engine_cases": 240,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 0,
+        "tests": [
+          "tests/ss/test_benefits.py::test_indexing_is_neutral_for_constant_relative_earner"
+        ]
+      },
+      "R3_415b2B_computation_year_count": {
+        "cross_engine_cases": 240,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 0,
+        "tests": []
+      },
+      "R4_415b_top_n_divide_and_floor": {
+        "cross_engine_cases": 240,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 0,
+        "tests": [
+          "tests/ss/test_benefits.py::test_aime_caps_at_wage_base_and_floors_to_dollar"
+        ]
+      },
+      "R5_415a1A_pia_brackets": {
+        "cross_engine_cases": 240,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 40,
+        "tests": [
+          "tests/ss/test_cross_engine.py::TestCommittedArtifact::test_all_three_pia_brackets_exercised",
+          "tests/ss/test_benefits.py::test_pia_worked_example_2026",
+          "tests/ss/test_benefits.py::test_pia_below_first_bend_point_is_90_percent"
+        ]
+      },
+      "R6_415a1B_bend_points": {
+        "cross_engine_cases": 240,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 40,
+        "tests": [
+          "tests/ss/test_benefits.py::test_2026_bend_points_match_ssa_determination",
+          "tests/ss/test_benefits.py::test_derived_2015_bend_points_match_ssa_published"
+        ]
+      },
+      "R7_415g_dime_floor": {
+        "cross_engine_cases": 240,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 40,
+        "tests": [
+          "tests/ss/test_cross_engine.py::TestDimeFloorEpsilonIsInert::test_epsilon_never_changes_result"
+        ]
+      },
+      "R8_402q_worker_early_reduction": {
+        "cross_engine_cases": 0,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 20,
+        "tests": [
+          "tests/ss/test_benefits.py::test_early_reduction_at_fra_67_claiming_62"
+        ]
+      },
+      "R9_402w_delayed_retirement_credit": {
+        "cross_engine_cases": 0,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 15,
+        "tests": [
+          "tests/ss/test_benefits.py::test_delayed_credit_pure_bundle",
+          "tests/ss/test_benefits.py::test_delayed_credit_rate_loads_from_pe_us"
+        ]
+      },
+      "R10_416l_fra_schedule": {
+        "cross_engine_cases": 0,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 40,
+        "tests": [
+          "tests/ss/test_benefits.py::test_fra_schedule_matches_statute",
+          "tests/test_claiming.py::test_fra_footnote_schedule_matches_oracle"
+        ]
+      },
+      "R11_402q1_spousal_early_reduction": {
+        "cross_engine_cases": 0,
+        "ssa_worked_examples": [
+          "spouse_at_62_fra67",
+          "spouse_at_62_fra66"
+        ],
+        "pe_us_foundation_cases": 0,
+        "tests": [
+          "tests/ss/test_aux_benefits.py::test_spousal_early_reduction_brackets"
+        ]
+      },
+      "R12_402bc_402k3_spouse_benefit": {
+        "cross_engine_cases": 0,
+        "ssa_worked_examples": [
+          "spouse_at_fra_half_pia",
+          "spouse_dual_entitlement_excess"
+        ],
+        "pe_us_foundation_cases": 0,
+        "tests": [
+          "tests/ss/test_aux_benefits.py::test_spousal_benefit_headline_shares",
+          "tests/ss/test_aux_benefits.py::test_spousal_dual_entitlement_offset"
+        ]
+      },
+      "R13_402q_survivor_reduction_ramp": {
+        "cross_engine_cases": 0,
+        "ssa_worked_examples": [
+          "widow_at_60_floor",
+          "widow_at_62_fra66"
+        ],
+        "pe_us_foundation_cases": 0,
+        "tests": [
+          "tests/ss/test_aux_benefits.py::test_survivor_reduction_ramp_and_floor",
+          "tests/ss/test_aux_benefits.py::test_widow_reduction_71_5_floor_at_60"
+        ]
+      },
+      "R14_402ef_widow_riblim_drc_dual": {
+        "cross_engine_cases": 0,
+        "ssa_worked_examples": [
+          "widow_at_fra_full_pia",
+          "rib_lim_82_5_floor",
+          "rib_lim_deceased_actual_higher",
+          "drc_pass_through"
+        ],
+        "pe_us_foundation_cases": 0,
+        "tests": [
+          "tests/ss/test_aux_benefits.py::test_widow_full_pia_and_dual_entitlement",
+          "tests/ss/test_aux_benefits.py::test_rib_lim_cases",
+          "tests/ss/test_aux_benefits.py::test_widow_inherits_credits_but_capped_at_deceased_amount"
+        ]
+      },
+      "R15_402e3_f4_remarriage_protection": {
+        "cross_engine_cases": 0,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 0,
+        "tests": [
+          "tests/ss/test_aux_benefits.py::test_remarriage_predicate"
+        ]
+      },
+      "R16_age62_composition": {
+        "cross_engine_cases": 0,
+        "ssa_worked_examples": [],
+        "pe_us_foundation_cases": 10,
+        "tests": [
+          "tests/ss/test_benefits.py::test_early_reduction_at_fra_67_claiming_62"
+        ]
+      }
+    }
+  },
+  "granularity_P13": {
+    "n_rules": 16,
+    "cut": "the packet's sixteen rules (coverage does_not_establish[3])",
+    "rules_flagged_as_bundling_several_statutory_operations": {
+      "R14_402ef_widow_riblim_drc_dual": "This rule bundles four statutory operations that could each earn or lose the status separately. The granularity is the packet's cut, not a measurement."
+    },
+    "also_bundling_per_the_packet": {
+      "R12_402bc_402k3_spouse_benefit": "one-half of the worker's PIA AND the 402(k)(3)(A) dual-entitlement offset (two operations)"
+    },
+    "consequence": "granularity fixes what a downstream citation may claim: a rule that bundles four operations earns or loses the status as a block; splitting R14 into base / RIB-LIM / DRC pass-through / dual entitlement (and R12 into half-PIA / offset) would let each operation carry its own E1 / E2 / E3 -- the coverage record carries no per-operation case sets, so the split partition cannot be derived from committed bytes here"
+  },
+  "e1_clause_S8": {
+    "clause": "E1 as committed 2026-07-05 at engine ffef7b4 (commit 80d3666, runs/pia_cross_engine_v1.json), not re-executed in this ceremony -- for the Axiom half (R1-R7).",
+    "axiom_half": {
+      "rules": [
+        "R1_415b1_wage_base_cap",
+        "R2_415b3_nawi_indexation",
+        "R3_415b2B_computation_year_count",
+        "R4_415b_top_n_divide_and_floor",
+        "R5_415a1A_pia_brackets",
+        "R6_415a1B_bend_points",
+        "R7_415g_dime_floor"
+      ],
+      "engine_revision": "ffef7b4",
+      "pe_us_revision_the_parameters_came_from": "bf71be3b",
+      "re_executed_in_this_ceremony": false,
+      "why": "no host in the ceremony carried the maturin-built Axiom wheel (verification section 16: the pure-Python client has NativeCompiledDenseProgram None, so the tests' own _engine_available probe fails)"
+    },
+    "policyengine_us_half": {
+      "rules": [
+        "R5_415a1A_pia_brackets",
+        "R6_415a1B_bend_points",
+        "R7_415g_dime_floor",
+        "R8_402q_worker_early_reduction",
+        "R9_402w_delayed_retirement_credit",
+        "R10_416l_fra_schedule",
+        "R16_age62_composition"
+      ],
+      "re_executed_in_this_ceremony": true,
+      "by": "the floors v2 independent verification (claiming-v2-verify/REPORT.md section 16)",
+      "test": "tests/ss/test_aux_benefits.py::test_pe_us_simulation_matches_oracle_foundation_live",
+      "cases": 12,
+      "policyengine_us_checkout": "a03e82e5",
+      "result": "PASSED (the oracle's pia() and benefit_factor() agreed to float32 precision)",
+      "note": "even on a host with the Axiom wheel, tests/ss/test_cross_engine.py::test_committed_artifact_matches_live_engine_spotcheck skips unless the policyengine-us checkout is at bf71be3b"
+    },
+    "coverage_record_statement": "This build executed neither the Axiom rules engine nor a policyengine-us Simulation. Every cross-engine and policyengine-us number is quoted from the committed artifacts. The only things that execute either engine are the repo's existing tests in tests/ss/, which are named per rule below and are unchanged by this build."
+  },
+  "family_maximum_P10": {
+    "P10": "the family maximum (the cap on total benefits payable on one earnings record) is NOT IMPLEMENTED; spousal_benefit and widow_benefit return uncapped amounts and the household consumer sums both own benefits and both excess spousal amounts with no cap",
+    "consumer": {
+      "module": "src/populace_dynamics/household.py",
+      "qualified_summation_symbol": "CoupleBenefit.total",
+      "class_lines": [
+        133,
+        149
+      ],
+      "total_property_lines": [
+        142,
+        149
+      ],
+      "couple_benefit_function_lines": [
+        152,
+        182
+      ],
+      "derived_by": "ast over the pinned module at build time; equal to the coverage record's consumer_symbols",
+      "plural_name_defined_anywhere_in_the_module": false,
+      "packet_name_couple_benefits_exists": false,
+      "v1_artifact_name_CoupleBenefits_exists": false
+    },
+    "auxiliary_functions_returning_uncapped_amounts": [
+      "spousal_benefit",
+      "widow_benefit"
+    ],
+    "search": {
+      "root": "src/populace_dynamics",
+      "patterns": [
+        "family_max",
+        "familyMax",
+        "maximum_family_benefit",
+        "fam_max"
+      ],
+      "n_files_searched": 143,
+      "hits": [],
+      "absent": true
+    },
+    "where_it_bites": "precisely where auxiliary benefits stack; no committed case stacks enough on one record for the cap to bind, so the omission is an UNCAUGHT class, recorded as such and never as bite"
+  },
+  "frozen_scope_P15": {
+    "P15": "Role: the ORACLE, not the rules engine. Net-new statute encoding lives in Axiom (rulespec-us us/statutes/42/415, 402, 416); this module is a frozen-scope Python reference implementation ... Do not extend this module's rule coverage; extend the Axiom encodings.",
+    "source": "src/populace_dynamics/ss/__init__.py",
+    "key_sentence": "Do not extend this module's rule coverage; extend the Axiom encodings.",
+    "key_sentence_present_in_module": true,
+    "consequence": "A missing rule below is a SCOPE decision, not a defect, and is closed in Axiom rather than by growing this module.",
+    "clause": "a PASS certifies a FROZEN reference oracle. Extending the module's rule coverage to clear a gap is FORBIDDEN by the module's own docstring, so a missing rule is closed in Axiom (rulespec-us us/statutes/42/415, 402, 416) and re-certified here as a cross-engine case, never by growing this module; a rule that fails is fixed in Axiom, not here."
+  },
+  "known_gaps_restated": {
+    "coverage_record_ids": [
+      "r3_computation_year_count_is_degenerate",
+      "r4_zero_pad_branch_unexercised",
+      "r8_r16_absent_from_the_240",
+      "r11_r15_no_second_engine",
+      "r12_r14_grid_thinness"
+    ],
+    "r3_computation_year_count_is_degenerate": "the oracle hard-codes 35 and the engine derives n; every committed case has elapsed - 5 = 35 for both cohorts, so no case separates the constant from the derived value. Exact domain: retirement workers attaining 62 in 1991 or later. A live caller reaches outside it: widow_benefit takes deceased_pia from the caller, and a deceased worker's PIA computed through aime() gets a 35-year divisor it should not.",
+    "r4_zero_pad_branch_unexercised": "every committed worker history has 41 entries, so the short-history zero pad of aime() is a no-op in every case and in every test under tests/ss/ (derived by ast in the coverage record)",
+    "r8_r16_absent_from_the_240": "the cross-engine rows carry aime and pia only; every rule from 402(q) onward rests on the 40-case policyengine-us foundation block (AIME [1000, 2000, 4000, 6000, 9000], claim ages [62, 65, 67, 70], birth years [1954, 1960]) and the ten worked examples",
+    "r11_r15_no_second_engine": "policyengine-us has no spousal or survivor computation, so E1 is unsatisfiable for the auxiliary rules today -- structural, not incidental; what would satisfy it is the Axiom rulespec-us us/statutes/42/402 encodings",
+    "r12_r14_grid_thinness": "the couple grid has 36 rows and 0 with both spouses drawing an excess; the survivor grid sits at 1 (own, deceased) PIA pair; no worked example has own_pia above zero, so the 402(k) dual-entitlement maximum is never checked against a published figure"
+  },
+  "named_constants_carried": {
+    "note": "X2 of the proposed definition: quantities the statute makes a SCHEDULE and the module makes a CONSTANT, with the domain over which each is exact.",
+    "computation_years": {
+      "value": 35,
+      "code": {
+        "module": "src/populace_dynamics/ss/benefits.py",
+        "symbol": "_COMPUTATION_YEARS",
+        "kind": "constant",
+        "first_line": 61,
+        "last_line": 61
+      },
+      "statute": "42 USC 415(b)(2)(B)",
+      "exact_domain": "retirement workers attaining age 62 in 1991 or later, for whom elapsed years minus five dropout years is 35",
+      "wrong_outside": "survivor and disability PIAs, where an early death or a disability freeze shortens the elapsed count",
+      "live_caller_outside_the_domain": {
+        "symbol": "widow_benefit",
+        "code": {
+          "module": "src/populace_dynamics/ss/benefits.py",
+          "symbol": "widow_benefit",
+          "kind": "function",
+          "first_line": 266,
+          "last_line": 328
+        },
+        "note": "widow_benefit takes deceased_pia from the caller; a pipeline that computes a deceased worker's PIA through aime() gets a 35-year divisor. No committed artifact scores that path."
+      }
+    },
+    "survivor_reduction_period_months": {
+      "value": 84,
+      "code": {
+        "module": "src/populace_dynamics/ss/params.py",
+        "symbol": "survivor_reduction_period_months",
+        "kind": "field",
+        "first_line": 122,
+        "last_line": 122
+      },
+      "statute": "42 USC 416(l) as applied to survivors",
+      "exact_domain": "survivor cohorts born 1962 or later (survivor FRA 67, an 84-month span)",
+      "wrong_outside": "survivor FRA 65 (60-month span) and 66 (72-month span) cohorts; the shipped default carries no survivor-FRA schedule",
+      "evidence": "the widow_at_62_fra66 worked example reproduces SSA only by overriding the default to 72 in its own inputs"
+    },
+    "one_month_eligibility_subtlety": {
+      "code": {
+        "module": "src/populace_dynamics/ss/benefits.py",
+        "symbol": "age62_monthly_benefit",
+        "kind": "function",
+        "first_line": 167,
+        "last_line": 179
+      },
+      "content": "births on the first two days of a month are ignored; at most one month's reduction factor. Documented in the source and restated here so it sits inside the coverage record, not only in a docstring."
+    }
+  },
+  "not_implemented_searches_carried": {
+    "family_maximum": {
+      "search_root": "src/populace_dynamics",
+      "patterns": [
+        "family_max",
+        "familyMax",
+        "maximum_family_benefit",
+        "fam_max"
+      ],
+      "n_files_searched": 143,
+      "hits": [],
+      "absent": true
+    },
+    "wep_gpo": {
+      "search_root": "src/populace_dynamics",
+      "patterns": [
+        "windfall",
+        "WEP",
+        "GPO",
+        "government_pension"
+      ],
+      "n_files_searched": 143,
+      "hits": [],
+      "absent": true
+    },
+    "retirement_earnings_test": {
+      "search_root": "src/populace_dynamics",
+      "patterns": [
+        "earnings_test",
+        "retirement_earnings"
+      ],
+      "n_files_searched": 143,
+      "hits": [],
+      "absent": true
+    },
+    "special_minimum_pia": {
+      "search_root": "src/populace_dynamics",
+      "patterns": [
+        "special_minimum"
+      ],
+      "n_files_searched": 143,
+      "hits": [],
+      "absent": true
+    },
+    "cola_applied_to_pia": {
+      "search_root": "src/populace_dynamics/ss",
+      "patterns": [
+        "cola",
+        "COLA"
+      ],
+      "n_files_searched": 3,
+      "hits": [],
+      "absent": true
+    }
+  },
+  "additional_absences_carried": [
+    "child's and parent's benefits, and the child-in-care spouse's benefit",
+    "the disability PIA (no freeze, no alternate computation years)",
+    "recomputation for post-entitlement earnings"
+  ],
+  "certification_scope": {
+    "tranche": "b2_statutory_benefit_oracle",
+    "headline": "if ratified, a PASS certifies PER RULE, over exactly the registered case set and exactly the domain named in named_constants, that the oracle's value agrees to the cent with an independent execution (E1), matches an SSA-published figure on at least one case (E2) and exercises every branch (E3). The gate-level verdict is the PARTITION, never one boolean; a downstream citation names the RULE, never the gate.",
+    "partition_under_the_strict_reading": {
+      "all_three": [
+        "R10_416l_fra_schedule"
+      ],
+      "strict_subset": {
+        "R1_415b1_wage_base_cap": [
+          "E2"
+        ],
+        "R2_415b3_nawi_indexation": [
+          "E2"
+        ],
+        "R4_415b_top_n_divide_and_floor": [
+          "E2",
+          "E3"
+        ],
+        "R5_415a1A_pia_brackets": [
+          "E2"
+        ],
+        "R6_415a1B_bend_points": [
+          "E3"
+        ],
+        "R7_415g_dime_floor": [
+          "E2"
+        ],
+        "R8_402q_worker_early_reduction": [
+          "E3"
+        ],
+        "R9_402w_delayed_retirement_credit": [
+          "E3"
+        ],
+        "R11_402q1_spousal_early_reduction": [
+          "E1",
+          "E3"
+        ],
+        "R16_age62_composition": [
+          "E3"
+        ]
+      },
+      "none": [
+        "R3_415b2B_computation_year_count",
+        "R12_402bc_402k3_spouse_benefit",
+        "R13_402q_survivor_reduction_ramp",
+        "R14_402ef_widow_riblim_drc_dual",
+        "R15_402e3_f4_remarriage_protection"
+      ]
+    },
+    "supports": [
+      "the #74 SF (statutory formula) component wherever a rule holds all three conditions -- with the CITATION being the rule",
+      "gate_1's benefit_space block (the PIA-proxy functional): a certified R5 / R6 / R7 is what makes that proxy a statutory object rather than a formula"
+    ],
+    "does_not_authorise_P14": [
+      "any household benefit TOTAL: without the family maximum, stacked auxiliary benefits on one earnings record are UNCAPPED (CoupleBenefit.total, household.py)",
+      "any survivor or disability PIA computed through aime(): R3's constant is outside its exact domain there",
+      "spousal or survivor benefit LEVELS in GENERATED panels: those need gate_2c (gates.yaml:772-783) as well as this gate",
+      "any benefit in nominal post-entitlement dollars: no COLA is applied anywhere in ss/",
+      "anything listed in not_implemented (WEP / GPO, the retirement earnings test, the special minimum PIA, child's and parent's benefits, the disability PIA, recomputation)",
+      "any statement about a rule finer than the sixteen-rule cut (P13): R12 and R14 earn or lose the status as blocks",
+      "any rule that holds a strict subset or none of E1 / E2 / E3: the partition names it and the status is NOT awarded",
+      "the claiming-age distribution, which is gate_b2_claiming's"
+    ]
+  },
+  "computes_exactly_definition_carried": {
+    "source": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+    "status": "proposal_not_ratified",
+    "adopted_here": false,
+    "gates_yaml_line_642": "UNLOCKED tranche 2c; benefit formulas earn per-rule \"computes exactly\"",
+    "gates_yaml_line_642_pinned_to_blob": "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c",
+    "conditions": {
+      "E1_independent_re_execution": "A separately implemented engine executes the rule from the same pinned parameters and agrees on every registered case within the committed agreement bound. Precedent and bound already committed: runs/pia_cross_engine_v1.json agreement_tolerance_dollars: 0.005, i.e. to the cent. \"Exactly\" means to the cent, not bit-exact.",
+      "E2_external_anchor": "At least one registered case per rule whose expected value is an SSA-published figure, not our own arithmetic. A case whose expected is recomputed from the same formula tests branch selection, not correctness of the rule.",
+      "E3_exercised_branches_and_boundaries": "Every branch and every boundary of the rule as written is hit by at least one registered case, and the case set is committed cell-by-cell so a referee re-derives rather than trusts."
+    },
+    "exclusions": {
+      "X1_named_non_coverage": "Every statutory rule of the same title that the module does not implement is listed by name and citation, so \"computes exactly\" can never be read as \"computes everything\".",
+      "X2_named_constants": "Every quantity the statute makes a schedule but the module makes a constant is listed with the domain over which the constant is exact."
+    },
+    "why_e1_alone_is_insufficient": "E1 alone is AGREEMENT, not correctness: two engines fed the same parameters can agree on the same mistake. E2 is what makes it a claim about the statute.",
+    "precision_disclosure": {
+      "cross_engine_max_abs_diff_dollars": 0.0,
+      "aux_worked_example_max_abs_deviation": 1.1368683772161603e-13,
+      "pe_us_foundation_max_pia_abs_deviation": 4.8828125045474735e-05,
+      "pe_us_foundation_max_factor_abs_deviation": 5.245208734017126e-08
+    }
+  },
+  "status_provenance_carried": {
+    "statement": "The E1 / E2 / E3 status labels are the builder's READING of the derived evidence, typed as strings in _rule_inventory; the evidence fields beside them (case counts, ast code spans, bracket occupancy, the dime-floor sweep, the factor split, the not-implemented searches and the basis_derivation blocks of R4, R8 and R9) are derived from committed bytes and re-derived by tests. A status label is pinned only by the byte-reproduction test; a later editor can change one by editing a string and rebuilding, which is why the statuses below award nothing and the packet's proposed verdicts are quoted, not adopted (referee A, F8; referee B, D5).",
+    "rules_with_a_derived_e3_basis": [
+      "R4",
+      "R8",
+      "R9"
+    ],
+    "every_derived_basis_holds": true
+  },
+  "packet_reconciliation_carried": {
+    "packet": "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)",
+    "purpose": "Where this build's derivation differs from the coverage claim the DRAFT packet states, the difference is recorded here rather than silently adopted.",
+    "differences": [
+      {
+        "field": "R4 -- the 415(b) short-history zero pad",
+        "packet_states": "E3 satisfied: 'short-history zero-pad branch (:116) hit by all_zeros / zero_spell'",
+        "derived_here": "the branch is hit by NO committed case: every worker history has 41 entries, and the all_zeros and zero_spell shapes carry zero EARNINGS rather than missing YEARS, so the pad is always a no-op",
+        "consequence": "R4's E3 status is branch_unexercised here, not satisfied"
+      },
+      {
+        "field": "R1 -- the count of wage-base-clipped workers",
+        "packet_states": "'clipped_always + rand_clipped_always = 25 workers'",
+        "derived_here": "clipped_always = 2 and rand_clipped_always = 25, so 27 workers carry a clipping shape label",
+        "consequence": "a count correction only; it changes no E1/E2/E3 status, and the exact number of cases in which the cap BINDS remains undeterminable from the committed bytes"
+      },
+      {
+        "field": "the household consumer that stacks auxiliary benefits",
+        "packet_states": "household.couple_benefits (household.py:143-149)",
+        "derived_here": "the summation is the CoupleBenefit.total property (class CoupleBenefit, singular); the module's function is couple_benefit. Both symbols are derived by ast in sources.consumer_symbols.",
+        "consequence": "a naming correction; the substance -- that both own benefits and both excess spousal amounts are summed with no family maximum -- holds as read",
+        "v1_defect": "the v1 artifact named the class CoupleBenefits (plural), a symbol that exists nowhere in src/ or tests/ (referee A, F9-4; referee B, D4 / F1); corrected in v2 and pinned by ast"
+      }
+    ]
+  },
+  "coverage_does_not_establish_carried": [
+    "any per-rule status: the E1/E2/E3 fields record what the committed evidence reaches, and the packet's proposed verdicts are quoted for comparison, not adopted",
+    "that the proposed definition of \"computes exactly\" is the right one: no referee round has run",
+    "any statement about the Axiom engine or policyengine-us beyond what the committed artifacts record; neither was executed here",
+    "that the rule granularity is correct: sixteen rules is the packet's cut, and R12 and R14 each bundle several statutory operations",
+    "that any E1 status has been re-executed in this ceremony: the three engine-backed tests in tests/ss/ skip on a host without the Axiom wheel or a policyengine-us Python, and every E1 status rests on the committed cross-engine artifact as built on its recorded date",
+    "the sequencing of the lock PR: the gates.yaml citation is blob-pinned and survives the gate commit, but the two 'gate name absent from gates.yaml' tests read the live file by design and fail the moment gate_b2_pia_oracle or gate_b2_claiming lands; the commit that inserts either block must retire those assertions or supersede this artifact with a v2 in the same PR",
+    "that the typed bend-point pairs are SSA determinations: the 2026 pair has an SSA-anchor test, the 2020 pair is pinned only to the committed cross-engine rows it reproduces"
+  ],
+  "gates_yaml_citations": {
+    "git_blob_sha1": "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c",
+    "sha256": "596eb4840f4c2e8ef16d883cff8b2fa63828f1b9f8c406037563733d3a2637af",
+    "bytes": 352148,
+    "byte_identical_to_working_tree": true,
+    "computes_exactly": {
+      "occurrences": [
+        642
+      ],
+      "n_occurrences": 1,
+      "line_text": "UNLOCKED tranche 2c; benefit formulas earn per-rule \"computes exactly\""
+    },
+    "standing_rule_lines": [
+      1056,
+      1447,
+      1636,
+      2051,
+      2196,
+      2428,
+      2887,
+      3086,
+      3294,
+      3720,
+      3870,
+      4869
+    ],
+    "line_citations": {
+      "no_self_rescue": 565,
+      "gate_2_n_gated_cells": 917,
+      "gate_2_own_record_outside_2a_2b_2c": 782,
+      "gate_2_spousal_survivor_levels_need_2c": 777,
+      "gate_m4_faithful_candidate_oc": 3206,
+      "gate_w1_tolerance_rule": 4350,
+      "sampling_floor_protocol": 19
+    },
+    "gate_b2_pia_oracle_present": false,
+    "gate_b2_claiming_present": false,
+    "artifact_named": false,
+    "coverage_named": false,
+    "pin_semantics": "PROVENANCE of the line citations only; NOT a freeze of the live file. The coverage record's own citation is blob-pinned the same way and survives the gate commit; the two live-file 'gate name absent' tests do not."
+  },
+  "flip_plan": {
+    "rule": "the commit that inserts the gate_b2_pia_oracle block into gates.yaml (under `gates:`, a NEW top-level key) flips GATE_B2_PIA_ORACLE_BLOCK_LANDED from False to True in EVERY file that carries it, IN THE SAME COMMIT, retires tests/test_pia_rule_coverage.py::test_no_gate_b2_pia_oracle_exists_in_gates_yaml in that commit, admits the new key at every master-compare site, and changes nothing else in those files",
+    "marker": "GATE_B2_PIA_ORACLE_BLOCK_LANDED",
+    "files_carrying_the_marker": [
+      "tests/test_gates_derivations.py",
+      "tests/test_pia_gate_partition_v1.py"
+    ],
+    "live_file_tests_the_flip_retires": [
+      "tests/test_pia_rule_coverage.py::test_no_gate_b2_pia_oracle_exists_in_gates_yaml",
+      "tests/test_claiming_publication_floor.py::test_no_gate_b2_claiming_exists_in_gates_yaml (if the claiming block lands in the same PR; otherwise its own flip retires it)"
+    ],
+    "tests_that_survive_the_flip_unchanged": [
+      "tests/test_pia_rule_coverage.py::test_computes_exactly_citation_is_blob_pinned_and_rescans_from_the_blob (reads the pinned blob from the object store once the working tree moves on; verification section 11 simulation C)"
+    ],
+    "master_compare_sites_that_must_admit_the_new_key": [
+      "tests/test_gates_derivations.py::test_gate_m4_flip_leaves_locked_siblings_byte_identical",
+      "tests/test_gate_w1_derivations.py (the `added in (...)` assert)",
+      "tests/test_gate_m6_derivations.py (the sole-new-key assert)"
+    ],
+    "what_flips_with_it": [
+      "tests/test_gates_derivations.py: _gate_b2_pia_oracle_block() reads the LIVE gates.yaml block instead of the artifact's draft fragment (LOCKED-HOT); the pre-lock guard inverts",
+      "gates.yaml: floor_run_sha256 replaces <FILLED AT RATIFICATION> with the sha256 of runs/pia_gate_partition_v1.json AS RATIFIED; every <RULING ...> placeholder is replaced; status -> locked; locked -> true; a history entry is added",
+      "tests/tier_counts.json and tests/README-tiers.md re-refreshed by LIVE collection"
+    ]
+  },
+  "open_questions_for_the_ceremony": [
+    {
+      "id": "P1",
+      "name": "is_exact_agreement_a_gate",
+      "question": "every locked gate prices a tolerance against measured noise; this one has none. Accept kind exact_agreement_per_rule as a gate kind, or strike the clause 'benefit formulas earn per-rule \"computes exactly\" status' from gates.yaml:642 by amendment instead.",
+      "options": {
+        "a_accept_the_gate_kind": {
+          "what_it_does": "the standing rule is discharged by DEFINING the status (E1 + E2 + E3, X1 + X2, to the cent) and awarding it per rule; the partition under the strict reading is the first award",
+          "priced": {
+            "rules_awarded_under_the_strict_reading": [
+              "R10_416l_fra_schedule"
+            ],
+            "n_strict_subset": 10,
+            "n_none": 5
+          }
+        },
+        "b_strike_gates_yaml_642_by_amendment": {
+          "what_it_does": "gate_2.description drops the clause; no status is defined or awarded; the coverage record and this artifact stay REPORTED; the tests in tests/ss/ remain the only thing that executes either engine",
+          "priced": "a gate_2 metadata-only amendment with its own ceremony; nothing in this block lands; the standing rule is discharged the other way"
+        }
+      },
+      "the_one_outcome_the_standing_rule_forbids": "leaving the clause undefined and unawarded in gate_2.description while gate_2's 46 cells (gates.yaml:917) gate no benefit-formula cell and its own certification_scope puts own-record benefit levels OUTSIDE 2a / 2b / 2c (:782)",
+      "placeholder_in_block": "<RULING P1 gate_kind>",
+      "status": "FILED and PRICED; not ruled (decide first: the packet's section 11 step 2)"
+    },
+    {
+      "id": "P6",
+      "name": "e1_unsatisfiable_for_r11_r15",
+      "question": "no second engine exists for the auxiliary rules, by construction. Waive E1 per rule (the waiver named per rule), or split the gate and hold the auxiliary half until the Axiom 402 encodings land?",
+      "options": {
+        "a_per_rule_e1_waiver": {
+          "partition": {
+            "all_three": [
+              "R10_416l_fra_schedule"
+            ],
+            "strict_subset": {
+              "R1_415b1_wage_base_cap": [
+                "E2"
+              ],
+              "R2_415b3_nawi_indexation": [
+                "E2"
+              ],
+              "R4_415b_top_n_divide_and_floor": [
+                "E2",
+                "E3"
+              ],
+              "R5_415a1A_pia_brackets": [
+                "E2"
+              ],
+              "R6_415a1B_bend_points": [
+                "E3"
+              ],
+              "R7_415g_dime_floor": [
+                "E2"
+              ],
+              "R8_402q_worker_early_reduction": [
+                "E3"
+              ],
+              "R9_402w_delayed_retirement_credit": [
+                "E3"
+              ],
+              "R11_402q1_spousal_early_reduction": [
+                "E3"
+              ],
+              "R12_402bc_402k3_spouse_benefit": [
+                "E2",
+                "E3"
+              ],
+              "R13_402q_survivor_reduction_ramp": [
+                "E2",
+                "E3"
+              ],
+              "R14_402ef_widow_riblim_drc_dual": [
+                "E2",
+                "E3"
+              ],
+              "R15_402e3_f4_remarriage_protection": [
+                "E2",
+                "E3"
+              ],
+              "R16_age62_composition": [
+                "E3"
+              ]
+            },
+            "none": [
+              "R3_415b2B_computation_year_count"
+            ]
+          },
+          "moves_vs_strict": {
+            "R11_402q1_spousal_early_reduction": {
+              "strict": {
+                "class": "strict_subset",
+                "failing": [
+                  "E1",
+                  "E3"
+                ]
+              },
+              "variant": {
+                "class": "strict_subset",
+                "failing": [
+                  "E3"
+                ]
+              }
+            },
+            "R12_402bc_402k3_spouse_benefit": {
+              "strict": {
+                "class": "none",
+                "failing": [
+                  "E1",
+                  "E2",
+                  "E3"
+                ]
+              },
+              "variant": {
+                "class": "strict_subset",
+                "failing": [
+                  "E2",
+                  "E3"
+                ]
+              }
+            },
+            "R13_402q_survivor_reduction_ramp": {
+              "strict": {
+                "class": "none",
+                "failing": [
+                  "E1",
+                  "E2",
+                  "E3"
+                ]
+              },
+              "variant": {
+                "class": "strict_subset",
+                "failing": [
+                  "E2",
+                  "E3"
+                ]
+              }
+            },
+            "R14_402ef_widow_riblim_drc_dual": {
+              "strict": {
+                "class": "none",
+                "failing": [
+                  "E1",
+                  "E2",
+                  "E3"
+                ]
+              },
+              "variant": {
+                "class": "strict_subset",
+                "failing": [
+                  "E2",
+                  "E3"
+                ]
+              }
+            },
+            "R15_402e3_f4_remarriage_protection": {
+              "strict": {
+                "class": "none",
+                "failing": [
+                  "E1",
+                  "E2",
+                  "E3"
+                ]
+              },
+              "variant": {
+                "class": "strict_subset",
+                "failing": [
+                  "E2",
+                  "E3"
+                ]
+              }
+            }
+          },
+          "reading": "no auxiliary rule reaches all three even with E1 waived: each still fails E3 (partial case sets) or E2 (partial / absent), so the waiver moves class labels, not the awarded set"
+        },
+        "b_split_the_gate_and_hold_the_auxiliary_half": {
+          "partition_of_the_own_benefit_half": {
+            "rules": [
+              "R1_415b1_wage_base_cap",
+              "R2_415b3_nawi_indexation",
+              "R3_415b2B_computation_year_count",
+              "R4_415b_top_n_divide_and_floor",
+              "R5_415a1A_pia_brackets",
+              "R6_415a1B_bend_points",
+              "R7_415g_dime_floor",
+              "R8_402q_worker_early_reduction",
+              "R9_402w_delayed_retirement_credit",
+              "R10_416l_fra_schedule",
+              "R16_age62_composition"
+            ],
+            "all_three": [
+              "R10_416l_fra_schedule"
+            ]
+          },
+          "held_rules": [
+            "R11_402q1_spousal_early_reduction",
+            "R12_402bc_402k3_spouse_benefit",
+            "R13_402q_survivor_reduction_ramp",
+            "R14_402ef_widow_riblim_drc_dual",
+            "R15_402e3_f4_remarriage_protection"
+          ],
+          "what_would_release_them": "the Axiom rulespec-us us/statutes/42/402 encodings executing the registered auxiliary cases, committed as a cross-engine artifact with its own bound"
+        }
+      },
+      "placeholder_in_block": "<RULING P6 e1_waiver>",
+      "status": "FILED and PRICED; not ruled"
+    },
+    {
+      "id": "P8",
+      "name": "case_set_sufficiency",
+      "question": "two eligibility years, two birth cohorts, four claim ages, one (own, deceased) survivor pair, zero couple rows with both spouses drawing an excess: is that the registered case set, or must the ceremony build a wider one first?",
+      "facts": {
+        "cross_engine": {
+          "n_cases": 240,
+          "eligibility_years": [
+            2020,
+            2026
+          ],
+          "birth_years": [
+            1958,
+            1964
+          ],
+          "history_span_ages": [
+            22,
+            62
+          ],
+          "n_distinct_shapes": 21,
+          "what_the_rows_cannot_show": "The rows carry id, cohort, shape, aime_oracle, aime_engine, pia_oracle, pia_engine and abs_diff only. They carry no earnings history, so per-row wage-base clipping and per-row indexation are NOT determinable from the committed bytes; they carry no claiming factor and no auxiliary amount, so every rule from 402(q) onward is invisible to this artifact."
+        },
+        "pe_us_foundation": {
+          "n_cases": 40,
+          "aime_values": [
+            1000,
+            2000,
+            4000,
+            6000,
+            9000
+          ],
+          "claim_ages": [
+            62,
+            65,
+            67,
+            70
+          ],
+          "birth_years": [
+            1954,
+            1960
+          ]
+        },
+        "couple_grid": {
+          "n_rows": 36,
+          "n_rows_with_worker_excess": 0,
+          "n_rows_with_spouse_excess": 20,
+          "n_rows_with_both_spouses_drawing_an_excess": 0
+        },
+        "survivor_grid": {
+          "n_rows": 9,
+          "distinct_own_deceased_pia_pairs": [
+            [
+              800.0,
+              2200.0
+            ]
+          ]
+        }
+      },
+      "priced": {
+        "what_a_wider_set_could_move": {
+          "E3_partial_from_sampling": [
+            "R6_415a1B_bend_points",
+            "R8_402q_worker_early_reduction",
+            "R9_402w_delayed_retirement_credit",
+            "R11_402q1_spousal_early_reduction",
+            "R12_402bc_402k3_spouse_benefit",
+            "R13_402q_survivor_reduction_ramp",
+            "R14_402ef_widow_riblim_drc_dual",
+            "R16_age62_composition"
+          ],
+          "E3_branch_unexercised_reachable_with_short_histories": [
+            "R4_415b_top_n_divide_and_floor"
+          ],
+          "R3_would_be_SEPARATED_not_satisfied": "a worker with fewer than 40 elapsed years gives the engine a derived n below 35 while the oracle keeps 35; a wider set converts R3's degenerate agreement into an E1 DISAGREEMENT outside the exact domain, which is the honest result"
+        },
+        "what_a_wider_set_cannot_move": {
+          "E1_for_the_auxiliary_rules": [
+            "R11_402q1_spousal_early_reduction",
+            "R12_402bc_402k3_spouse_benefit",
+            "R13_402q_survivor_reduction_ramp",
+            "R14_402ef_widow_riblim_drc_dual",
+            "R15_402e3_f4_remarriage_protection"
+          ],
+          "why": "no second engine; see P6"
+        },
+        "cost": "the machinery is committed (scripts/build_cross_engine_pia_artifact.py, scripts/build_aux_benefit_examples.py); a rebuilt artifact needs the Axiom wheel for the 240-side and a policyengine-us Python for the foundation side, neither of which the ceremony's hosts had for the Axiom half"
+      },
+      "placeholder_in_block": "<RULING P8 case_set>",
+      "status": "FILED and PRICED; not ruled"
+    },
+    {
+      "id": "P9",
+      "name": "survivor_reduction_period",
+      "question": "is the survivor reduction period certifiable at the shipped constant 84 months? The 81-percent-at-62 worked example reproduces SSA only by overriding survivor_reduction_period_months to 72 in its own inputs.",
+      "options": {
+        "a_constant_override_does_not_satisfy_e2": {
+          "R13_class": "none",
+          "R13_failing": [
+            "E1",
+            "E2",
+            "E3"
+          ]
+        },
+        "b_override_counts_as_e2_with_the_domain_named": {
+          "R13_class": "strict_subset",
+          "R13_failing": [
+            "E1",
+            "E3"
+          ],
+          "moves_vs_strict": {
+            "R13_402q_survivor_reduction_ramp": {
+              "strict": {
+                "class": "none",
+                "failing": [
+                  "E1",
+                  "E2",
+                  "E3"
+                ]
+              },
+              "variant": {
+                "class": "strict_subset",
+                "failing": [
+                  "E1",
+                  "E3"
+                ]
+              }
+            }
+          }
+        },
+        "c_add_a_survivor_fra_schedule": "FORBIDDEN by the frozen-scope clause (P15): the fix lands in Axiom, not in this module"
+      },
+      "named_constant": "survivor_reduction_period_months = 84 (exact for survivor cohorts born 1962 or later); X2 of the definition",
+      "placeholder_in_block": "<RULING P9 survivor_period>",
+      "status": "FILED and PRICED; not ruled"
+    },
+    {
+      "id": "P13",
+      "name": "rule_granularity",
+      "question": "sixteen rules is the packet's cut; R14 bundles four statutory operations and R12 two. Granularity fixes what a downstream citation may claim.",
+      "facts": {
+        "n_rules": 16,
+        "cut": "the packet's sixteen rules (coverage does_not_establish[3])",
+        "rules_flagged_as_bundling_several_statutory_operations": {
+          "R14_402ef_widow_riblim_drc_dual": "This rule bundles four statutory operations that could each earn or lose the status separately. The granularity is the packet's cut, not a measurement."
+        },
+        "also_bundling_per_the_packet": {
+          "R12_402bc_402k3_spouse_benefit": "one-half of the worker's PIA AND the 402(k)(3)(A) dual-entitlement offset (two operations)"
+        },
+        "consequence": "granularity fixes what a downstream citation may claim: a rule that bundles four operations earns or loses the status as a block; splitting R14 into base / RIB-LIM / DRC pass-through / dual entitlement (and R12 into half-PIA / offset) would let each operation carry its own E1 / E2 / E3 -- the coverage record carries no per-operation case sets, so the split partition cannot be derived from committed bytes here"
+      },
+      "priced": "keeping the cut: R12 and R14 are awarded or withheld as blocks (both hold a strict subset under every reading here). Splitting: each operation carries its own conditions, which the coverage record cannot derive from committed bytes (no per-operation case sets), so a split needs a v2 coverage build before any status is awarded at the finer grain",
+      "placeholder_in_block": "<RULING P13 granularity>",
+      "status": "FILED and PRICED; not ruled"
+    },
+    {
+      "id": "S7",
+      "name": "sequencing_constraint",
+      "question": "the two live-file 'gate name absent' tests fail the moment gate_b2_claiming or gate_b2_pia_oracle lands (tests/test_pia_rule_coverage.py::test_no_gate_b2_pia_oracle_exists_in_gates_yaml, tests/test_claiming_publication_floor.py::test_no_gate_b2_claiming_exists_in_gates_yaml); the coverage record's blob-pinned citation survives the commit",
+      "constraint": "the lock commit retires those two assertions and flips the pre-lock markers in the SAME commit (flip_plan), or supersedes the artifacts with a v2 in the same PR",
+      "placeholder_in_block": "ceremony_notes.flip_plan",
+      "status": "RECORDED as a sequencing constraint; not a threshold ruling"
+    },
+    {
+      "id": "S8",
+      "name": "e1_clause",
+      "question": "the E1 status of every rule rests on the committed cross-engine artifact",
+      "clause": "E1 as committed 2026-07-05 at engine ffef7b4 (commit 80d3666, runs/pia_cross_engine_v1.json), not re-executed in this ceremony -- for the Axiom half (R1-R7).",
+      "policyengine_us_half": {
+        "rules": [
+          "R5_415a1A_pia_brackets",
+          "R6_415a1B_bend_points",
+          "R7_415g_dime_floor",
+          "R8_402q_worker_early_reduction",
+          "R9_402w_delayed_retirement_credit",
+          "R10_416l_fra_schedule",
+          "R16_age62_composition"
+        ],
+        "re_executed_in_this_ceremony": true,
+        "by": "the floors v2 independent verification (claiming-v2-verify/REPORT.md section 16)",
+        "test": "tests/ss/test_aux_benefits.py::test_pe_us_simulation_matches_oracle_foundation_live",
+        "cases": 12,
+        "policyengine_us_checkout": "a03e82e5",
+        "result": "PASSED (the oracle's pia() and benefit_factor() agreed to float32 precision)",
+        "note": "even on a host with the Axiom wheel, tests/ss/test_cross_engine.py::test_committed_artifact_matches_live_engine_spotcheck skips unless the policyengine-us checkout is at bf71be3b"
+      },
+      "placeholder_in_block": "<RULING S8 e1_clause>",
+      "status": "CLAUSE CARRIED; the Axiom half not re-executed by anyone in this ceremony"
+    }
+  ],
+  "draft_gates_yaml_fragment": {
+    "text": "  gate_b2_pia_oracle:\n    # DRAFT -- NOT APPLIED TO gates.yaml. Emitted by\n    # scripts/build_pia_gate_partition_v1.py into\n    # runs/pia_gate_partition_v1.json (draft_gates_yaml_fragment.text) at\n    # the threshold-binding sitting of 2026-09-08 (the prerequisite of the\n    # packet's PIA ceremony step 5). Every status label below is READ from\n    # the VERIFIED coverage record runs/pia_rule_coverage_v1.json\n    # (75,382 B, sha256 7517d27a78eaa85e...) and the partition is\n    # DERIVED from those labels under the explicit mapping in\n    # thresholds.statistic; bound by tests/test_gates_derivations.py (the\n    # test_gate_b2_pia_oracle_* bindings). Nothing is typed, nothing is\n    # awarded. Every \"<RULING ...>\" placeholder is an open question the\n    # ratifying round must fill; options and prices are in the artifact's\n    # open_questions_for_the_ceremony. This block also proposes the FIRST\n    # definition of gates.yaml:642's phrase \"computes exactly\".\n    id: b2_statutory_benefit_oracle\n    status: draft_pending_referee_round\n    locked: false\n    kind: exact_agreement_per_rule   # <RULING P1 gate_kind>\n    derived_from_coverage: runs/pia_rule_coverage_v1.json\n    derived_from_coverage_sha256: 7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d\n    derived_from_coverage_size_bytes: 75382\n    floor_run: runs/pia_gate_partition_v1.json\n    floor_run_sha256: <FILLED AT RATIFICATION>\n    covers: >-\n      the STATUTORY BENEFIT ORACLE (#74 component SF): the sixteen\n      enumerated rules of populace_dynamics.ss.benefits and\n      populace_dynamics.ss.params listed in rule_inventory, over EXACTLY\n      their registered case sets. The gate is EXACT-AGREEMENT, not\n      floor-priced: the quantities are statutory arithmetic over pinned\n      parameters, so the null is agreement TO THE CENT and there is no\n      noise floor to derive. It DEFINES the phrase \"computes exactly\"\n      (gates.yaml:642, gate_2.description -- its only occurrence in\n      the file, and undefined there) and awards it PER RULE as a\n      PARTITION: under the strict reading 1 rule holds all three\n      conditions (R10_416l_fra_schedule), 10 hold a strict subset and\n      5 hold none. It certifies a FROZEN-SCOPE REFERENCE ORACLE, NOT a\n      benefit calculator: the rules in not_implemented are absent by design\n      and are published as absent. It does not authorise any household\n      benefit total, any survivor or disability PIA through aime(), any\n      spousal or survivor LEVEL in a generated panel, or any nominal\n      post-entitlement dollar.\n    holdout_basis: []\n    holdout_basis_note: >-\n      DELIBERATELY EMPTY. A statutory formula has no population to hold\n      out: it is a deterministic function of statute and parameters. Its\n      null is agreement with an INDEPENDENT EXECUTION plus agreement with\n      an SSA-PUBLISHED figure -- not a person-disjoint split (gate 1 / 2a /\n      2b / 2c / m4; the sampling-floor protocol at gates.yaml:19) and not a\n      vintage-priced deviation (gate_w1 family B, :4350). The round accepts or\n      rejects this structural claim first (<RULING P1 gate_kind>).\n    external_basis:\n      - axiom_rules_engine (independent Rust implementation; engine_revision ffef7b4, runs/pia_cross_engine_v1.json)\n      - policyengine_us Simulation (independent Python implementation of the own-benefit path only; pe_us_revision bf71be3b)\n      - ssa_published_figures (bend-point determinations; 402(q)/(w) percentages; RS 00615.020 / .301 / .302 / .310 spousal and survivor percentages, cited per row in runs/aux_benefit_examples_v1.json)\n    data_staged: >-\n      runs/pia_cross_engine_v1.json (240 cases, committed, test-pinned by\n      tests/ss/test_cross_engine.py) and runs/aux_benefit_examples_v1.json\n      (10 SSA worked examples + 40 policyengine-us foundation cases + a\n      36-row couple grid + a 9-row survivor grid, committed, test-pinned by\n      tests/ss/test_aux_benefits.py). The per-rule coverage record\n      runs/pia_rule_coverage_v1.json EXISTS (floors v2 at cd8f167,\n      independently verified) and the gate-schema artifact\n      runs/pia_gate_partition_v1.json derives this block from it.\n    lock_ceremony:\n      exists: false\n      required: >-\n        coverage record -> adversarial referees -> fixes -> verification ->\n        THRESHOLD BINDING (this block) -> P1 decided first -> adversarial\n        referee round -> fixes -> verification -> ratifying merge, which\n        fills every placeholder, sets floor_run_sha256, flips\n        GATE_B2_PIA_ORACLE_BLOCK_LANDED and retires the live-file guard\n        test in the same commit. NOT YET RUN past the binding.\n    thresholds:\n      locked: false\n      status: draft_pending_referee_round\n      tranche_id: b2_statutory_benefit_oracle\n      kind: exact_agreement_per_rule\n      coverage_run: runs/pia_rule_coverage_v1.json\n      coverage_run_sha256: 7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d\n      floor_run: runs/pia_gate_partition_v1.json\n      floor_run_sha256: <FILLED AT RATIFICATION>\n      evidence_runs:\n        - { path: runs/pia_cross_engine_v1.json, sha256: 10fe0a046f2d5dd39b159cae2ae2b3aba267279bc88eaaaf1db9e1e3078d43bc }\n        - { path: runs/aux_benefit_examples_v1.json, sha256: 502d66688a8d68f0a8b6d392c4508c018c6b4422db7f9e0d71cb1413ee7e1ccb }\n      e1_clause: \"<RULING S8 e1_clause>\"\n      e1_clause_as_carried: >-\n        E1 as committed 2026-07-05 at engine ffef7b4 (commit 80d3666, runs/pia_cross_engine_v1.json), not re-executed in this ceremony -- for the Axiom half (R1-R7). The policyengine-us half (R8 / R9 / R10 / R16\n        through the 40-case foundation block) WAS re-executed in this\n        ceremony by the floors v2 verification\n        (test_pe_us_simulation_matches_oracle_foundation_live, 12\n        foundation cases, policyengine-us checkout a03e82e5, PASSED). The\n        Axiom half (R1-R7 on the 240) was NOT: no ceremony host carried the\n        maturin-built wheel. Any E1 status below rests on the committed\n        artifact as built on its recorded date.\n      estimand: >-\n        Per RULE (one statutory operation with its own citation and branch\n        structure), the value the oracle computes for every registered case\n        of that rule. Per the standing rule\n        description_claims_exactly_the_scored_surface (gates.yaml:1056,\n        :3294, :4869) the surface claimed is EXACTLY the sixteen rules of\n        rule_inventory over their registered case sets -- NOT the OASDI\n        benefit, NOT any rule in not_implemented, NOT any quantity computed\n        from a constant outside the domain named in named_constants, and\n        NOT any operation finer than the sixteen-rule cut (<RULING P13 granularity>).\n      statistic: >-\n        Per rule, THREE conditions, all required -- the definition of\n        \"computes exactly\" (P2):\n        E1 INDEPENDENT RE-EXECUTION -- |our_value - independent_engine_value|\n           <= 0.005 dollars (TO THE CENT) on EVERY registered case, the bound\n           committed as runs/pia_cross_engine_v1.json.agreement_tolerance_dollars;\n           labels that hold: satisfied, policyengine_us_only; labels that do\n           not: degenerate, unsatisfiable_today (<RULING P6 e1_waiver>).\n        E2 EXTERNAL ANCHOR -- at least one registered case whose expected\n           value is an SSA-PUBLISHED figure, not a value recomputed from the\n           same formula; label that holds: satisfied; labels that do not:\n           satisfied_with_a_constant_override (<RULING P9 survivor_period>),\n           weak, partial, implied, absent.\n        E3 EXERCISED BRANCHES AND BOUNDARIES -- every branch and boundary of\n           the rule as written is hit by at least one registered case, the\n           case set committed cell by cell; labels that hold:\n           all_branches_exercised, exhaustive, both_branches_reached; labels\n           that do not: partial (any form), branch_unexercised, unexercised,\n           unit_test_only.\n        X1 NAMED NON-COVERAGE and X2 NAMED CONSTANTS are published below so\n        the status can never be read as \"computes everything\".\n        PRECISION (P11): NOT bit-exactness. Observed: cross-engine max\n        |diff| 0.0 dollars on 240; aux worked-example max deviation\n        1.1368683772161603e-13; policyengine-us foundation max PIA deviation\n        4.8828125045474735e-05 dollars and max factor deviation\n        5.245208734017126e-08 (float32 storage, the artifact's own note, quoted not\n        verified). \"Exactly\" means TO THE CENT and the block says so.\n        E1 alone is AGREEMENT, not correctness: two engines fed the same\n        parameters can agree on the same mistake; E2 is what makes it a\n        claim about the statute.\n      protocol:\n        deterministic: true\n        seeds: none\n        case_registration: >-\n          A candidate registers, BEFORE scoring, the case set per rule and\n          the independent engine revision. Case sets are committed in the\n          coverage record per rule with every input and both engines'\n          outputs, so a referee re-derives rather than trusts.\n        pass_rule: >-\n          The gate does NOT produce one boolean over all rules. It awards\n          computes_exactly PER RULE, and the gate-level verdict is the\n          PARTITION: which rules hold E1+E2+E3, which hold a strict subset\n          (and which condition fails), and which are not implemented. A\n          partition that changes -- a rule losing a condition -- is a FAIL\n          for that rule and must be published as such. Any downstream\n          artifact citing the oracle must cite the RULE, never the gate.\n      no_floor:\n        rationale: >-\n          There is no noise floor and none is derived. Statutory arithmetic\n          over pinned parameters is deterministic; the only dispersion is\n          floating-point representation, which is BOUNDED, not sampled. The\n          gate-1 / gate-2 / m4 half-split construction and the gate_w1\n          vintage-priced tolerance rule are both INAPPLICABLE and are named\n          so no referee has to ask; the gate_m4 faithful_candidate_oc\n          (gates.yaml:3206) has no analogue here.\n        floating_point_disclosure:\n          cross_engine_max_abs_diff_dollars: 0.0\n          aux_worked_example_max_abs_deviation: 1.1368683772161603e-13\n          pe_us_foundation_max_pia_abs_deviation: 4.8828125045474735e-05\n          pe_us_foundation_max_factor_abs_deviation: 5.245208734017126e-08\n          agreement_tolerance_dollars: 0.005\n      rule_inventory:\n        # Sixteen rules. Every e1 / e2 / e3 value is the coverage record's\n        # status LABEL (the builder's reading of derived evidence, disclosed\n        # as such in status_provenance); strict_reading is the class under\n        # the mapping in statistic; moved_by_an_alternative_reading names\n        # the filed readings that change the class. NOTHING here is awarded.\n        R1_415b1_wage_base_cap:\n          code: \"ss/benefits.py:68-75\"\n          e1: satisfied\n          e2: absent\n          e3: both_branches_reached\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_no_external_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R2_415b3_nawi_indexation:\n          code: \"ss/benefits.py:78-97\"\n          e1: satisfied\n          e2: absent\n          e3: both_branches_reached\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_no_external_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R3_415b2B_computation_year_count:\n          code: \"ss/benefits.py:61-61, ss/benefits.py:100-117\"\n          e1: degenerate\n          e2: absent\n          e3: unexercised\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: NOT_computes_exactly   # quoted, NOT adopted\n          rulings: \"none\"\n        R4_415b_top_n_divide_and_floor:\n          code: \"ss/benefits.py:100-117\"\n          e1: satisfied\n          e2: absent\n          e3: branch_unexercised\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2, E3] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_no_external_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R5_415a1A_pia_brackets:\n          code: \"ss/benefits.py:120-131\"\n          e1: satisfied\n          e2: weak\n          e3: all_branches_exercised\n          cases: { cross_engine: 240, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_weak_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R6_415a1B_bend_points:\n          code: \"ss/params.py:138-149\"\n          e1: satisfied\n          e2: satisfied\n          e3: partial\n          cases: { cross_engine: 240, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: computes_exactly_two_years_only   # quoted, NOT adopted\n          rulings: \"none\"\n        R7_415g_dime_floor:\n          code: \"ss/benefits.py:120-131\"\n          e1: satisfied\n          e2: implied\n          e3: exhaustive\n          cases: { cross_engine: 240, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: computes_exactly   # quoted, NOT adopted\n          rulings: \"none\"\n        R8_402q_worker_early_reduction:\n          code: \"ss/benefits.py:134-143\"\n          e1: policyengine_us_only\n          e2: satisfied\n          e3: partial_and_one_branch_unexercised\n          cases: { cross_engine: 0, pe_us_foundation: 20, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly_narrow_domain   # quoted, NOT adopted\n          rulings: \"none\"\n        R9_402w_delayed_retirement_credit:\n          code: \"ss/benefits.py:146-164\"\n          e1: policyengine_us_only\n          e2: satisfied\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 15, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly_narrow_domain   # quoted, NOT adopted\n          rulings: \"none\"\n        R10_416l_fra_schedule:\n          code: \"ss/params.py:162-170\"\n          e1: satisfied\n          e2: satisfied\n          e3: all_branches_exercised\n          cases: { cross_engine: 0, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: all_three, failing: [] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: computes_exactly   # quoted, NOT adopted\n          rulings: \"none\"\n        R11_402q1_spousal_early_reduction:\n          code: \"ss/benefits.py:185-202\"\n          e1: unsatisfiable_today\n          e2: satisfied\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 2 }\n          strict_reading: { class: strict_subset, failing: [E1, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial_no_independent_engine   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver>\"\n        R12_402bc_402k3_spouse_benefit:\n          code: \"ss/benefits.py:205-236\"\n          e1: unsatisfiable_today\n          e2: partial\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 2 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver> <RULING P13 granularity>\"\n        R13_402q_survivor_reduction_ramp:\n          code: \"ss/benefits.py:242-263\"\n          e1: unsatisfiable_today\n          e2: satisfied_with_a_constant_override\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 2 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p9_constant_override_counts_as_e2, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial_constant_override_required   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver> <RULING P9 survivor_period>\"\n        R14_402ef_widow_riblim_drc_dual:\n          code: \"ss/benefits.py:266-328\"\n          e1: unsatisfiable_today\n          e2: partial\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 4 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver> <RULING P13 granularity>\"\n        R15_402e3_f4_remarriage_protection:\n          code: \"ss/benefits.py:331-349\"\n          e1: unsatisfiable_today\n          e2: absent\n          e3: unit_test_only\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: NOT_computes_exactly_unit_test_only   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver>\"\n        R16_age62_composition:\n          code: \"ss/benefits.py:167-179\"\n          e1: policyengine_us_only\n          e2: satisfied\n          e3: partial_with_a_named_simplification\n          cases: { cross_engine: 0, pe_us_foundation: 10, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly_with_named_simplification   # quoted, NOT adopted\n          rulings: \"none\"\n      partition:\n        strict_reading:\n          all_three: [R10_416l_fra_schedule]\n          strict_subset:\n            R1_415b1_wage_base_cap: [E2]\n            R2_415b3_nawi_indexation: [E2]\n            R4_415b_top_n_divide_and_floor: [E2, E3]\n            R5_415a1A_pia_brackets: [E2]\n            R6_415a1B_bend_points: [E3]\n            R7_415g_dime_floor: [E2]\n            R8_402q_worker_early_reduction: [E3]\n            R9_402w_delayed_retirement_credit: [E3]\n            R11_402q1_spousal_early_reduction: [E1, E3]\n            R16_age62_composition: [E3]\n          none: [R3_415b2B_computation_year_count, R12_402bc_402k3_spouse_benefit, R13_402q_survivor_reduction_ramp, R14_402ef_widow_riblim_drc_dual, R15_402e3_f4_remarriage_protection]\n        invariant_under_every_filed_reading:\n          all_three: [R10_416l_fra_schedule]\n          none: [R3_415b2B_computation_year_count]\n        alternative_readings: >-\n          axiom_only_e1 (policyengine_us_only does not count): all-three\n          [R10_416l_fra_schedule]; p6_e1_waiver_for_r11_r15: all-three\n          [R10_416l_fra_schedule]; p9_constant_override_counts_as_e2:\n          all-three [R10_416l_fra_schedule]; the packet's own\n          proposed verdicts call 6 rules computes_exactly or a qualified\n          form, of which the strict reading awards 1. Every reading is\n          emitted per rule in the artifact's partitions block.\n        status_provenance: >-\n          the labels are the coverage builder's READING of derived evidence\n          (case counts, ast spans, bracket occupancy, the dime-floor sweep,\n          the not-implemented searches, the derived R4 / R8 / R9 bases);\n          a label is pinned only by the byte-reproduction test, which is why\n          this block awards nothing and the packet's verdicts are quoted.\n      worked_examples_classification:\n        # P7: which of the ten rows are SSA-published percentages and which\n        # are the oracle's own arithmetic / branch selection. The split is\n        # the packet's reading, carried by the coverage record; the ratio is\n        # emitted so a referee re-adjudicates each row.\n        n_published_percentage: 7\n        n_arithmetic_or_branch_selection: 3\n        rows:\n          spouse_at_fra_half_pia: { group: spousal, expected_over_base_pia: 0.5, classification: published_percentage }\n          spouse_at_62_fra67: { group: spousal, expected_over_base_pia: 0.325, classification: published_percentage }\n          spouse_at_62_fra66: { group: spousal, expected_over_base_pia: 0.35, classification: published_percentage }\n          spouse_dual_entitlement_excess: { group: spousal, expected_over_base_pia: 0.2, classification: arithmetic_or_branch_selection }\n          widow_at_fra_full_pia: { group: survivor, expected_over_base_pia: 1.0, classification: published_percentage }\n          widow_at_60_floor: { group: survivor, expected_over_base_pia: 0.715, classification: published_percentage }\n          widow_at_62_fra66: { group: survivor, expected_over_base_pia: 0.81, classification: published_percentage }\n          rib_lim_82_5_floor: { group: survivor, expected_over_base_pia: 0.825, classification: published_percentage }\n          rib_lim_deceased_actual_higher: { group: survivor, expected_over_base_pia: 0.86666656, classification: arithmetic_or_branch_selection }\n          drc_pass_through: { group: survivor, expected_over_base_pia: 1.32, classification: arithmetic_or_branch_selection }\n        consequence: >-\n          a row classified arithmetic_or_branch_selection does NOT count\n          toward E2; the coverage record's E2 labels for R12 (partial) and\n          R14 (partial) already reflect that split.\n      case_set:\n        # P8 facts, from the coverage record.\n        cross_engine: { n_cases: 240, eligibility_years: [2020, 2026], birth_years: [1958, 1964], history_span_ages: [22, 62], n_distinct_shapes: 21 }\n        pe_us_foundation: { n_cases: 40, aime_values: [1000, 2000, 4000, 6000, 9000], claim_ages: [62, 65, 67, 70], birth_years: [1954, 1960] }\n        couple_grid: { n_rows: 36, n_rows_with_both_spouses_drawing_an_excess: 0 }\n        survivor_grid: { n_rows: 9, distinct_own_deceased_pia_pairs: 1 }\n        sufficiency: \"<RULING P8 case_set>\"\n      known_gaps:\n        r3_computation_year_count: >-\n          the oracle hard-codes 35 and the engine derives n; every committed case has elapsed - 5 = 35 for both cohorts, so no case separates the constant from the derived value. Exact domain: retirement workers attaining 62 in 1991 or later. A live caller reaches outside it: widow_benefit takes deceased_pia from the caller, and a deceased worker's PIA computed through aime() gets a 35-year divisor it should not.\n        r4_zero_pad_branch_unexercised: >-\n          every committed worker history has 41 entries, so the short-history zero pad of aime() is a no-op in every case and in every test under tests/ss/ (derived by ast in the coverage record)\n        r8_r16_absent_from_the_240: >-\n          the cross-engine rows carry aime and pia only; every rule from 402(q) onward rests on the 40-case policyengine-us foundation block (AIME [1000, 2000, 4000, 6000, 9000], claim ages [62, 65, 67, 70], birth years [1954, 1960]) and the ten worked examples\n        r11_r15_no_second_engine: >-\n          policyengine-us has no spousal or survivor computation, so E1 is unsatisfiable for the auxiliary rules today -- structural, not incidental; what would satisfy it is the Axiom rulespec-us us/statutes/42/402 encodings\n        r12_r14_grid_thinness: >-\n          the couple grid has 36 rows and 0 with both spouses drawing an excess; the survivor grid sits at 1 (own, deceased) PIA pair; no worked example has own_pia above zero, so the 402(k) dual-entitlement maximum is never checked against a published figure\n      named_constants:\n        # X2 of the definition: quantities the statute makes a SCHEDULE and\n        # the module makes a CONSTANT, with the domain over which each is exact.\n        computation_years:\n          value: 35\n          code: ss/benefits.py:61\n          statute: 42 USC 415(b)(2)(B)\n          exact_domain: retirement workers attaining age 62 in 1991 or later, for whom elapsed years minus five dropout years is 35\n          wrong_outside: survivor and disability PIAs, where an early death or a disability freeze shortens the elapsed count\n        survivor_reduction_period_months:\n          value: 84\n          code: ss/params.py:122\n          statute: 42 USC 416(l) as applied to survivors\n          exact_domain: survivor cohorts born 1962 or later (survivor FRA 67, an 84-month span)\n          wrong_outside: >-\n            survivor FRA 65 (60-month span) and 66 (72-month span) cohorts; the shipped default carries no survivor-FRA schedule\n          ruling: \"<RULING P9 survivor_period>\"\n        one_month_eligibility_subtlety:\n          code: ss/benefits.py:167-179\n          content: >-\n            births on the first two days of a month are ignored; at most one month's reduction factor. Documented in the source and restated here so it sits inside the coverage record, not only in a docstring.\n      not_implemented:\n        # X1 of the definition. Each search re-runs in the coverage record's\n        # tests: root, patterns, files searched, empty hit list.\n        family_maximum: >-\n          NOT IMPLEMENTED (P10). the family maximum (the cap on total benefits payable on one earnings record) is NOT IMPLEMENTED; spousal_benefit and widow_benefit return uncapped amounts and the household consumer sums both own benefits and both excess spousal amounts with no cap: spousal_benefit, widow_benefit return UNCAPPED\n          amounts and household.CoupleBenefit.total (class CoupleBenefit,\n          household.py:133-149; the total property :142-149; derived\n          by ast) sums both own benefits and both excess spousal amounts.\n          The family maximum binds precisely where auxiliary benefits stack;\n          no committed case stacks enough for it to bind, so this is a KNOWN\n          UNCAUGHT class, never bite. Search: ['family_max', 'familyMax', 'maximum_family_benefit', 'fam_max'] over\n          143 files under src/populace_dynamics, no hits.\n        wep_gpo: NOT IMPLEMENTED\n        retirement_earnings_test: NOT IMPLEMENTED\n        special_minimum_pia: NOT IMPLEMENTED\n        cola_applied_to_pia: NOT IMPLEMENTED (nothing in ss/ references COLA)\n        child_and_parent_benefits: NOT IMPLEMENTED (incl. the child-in-care spouse)\n        disability_pia: NOT IMPLEMENTED (no freeze, no alternate computation years)\n        recomputation_post_entitlement: NOT IMPLEMENTED\n        by_design: >-\n          Do not extend this module's rule coverage; extend the Axiom encodings. (src/populace_dynamics/ss/__init__.py). These absences\n          are a scope decision, not a defect; the gate publishes them so\n          \"computes exactly\" is never read as \"computes everything\".\n      degenerate_candidates:\n        # Teeth, REASONED from the committed test inventory, not executed\n        # (no engine runs in this ceremony). For an exact-agreement gate the\n        # degenerate candidate is a PERTURBED ORACLE.\n        dime_floor_to_nearest: { candidate: \"415(g) rounds to the NEAREST dime instead of DOWN\", caught_by: \"R7 -- the exhaustive integer-AIME sweep, tests/ss/test_cross_engine.py\" }\n        second_bracket_rate_off_by_0_01: { candidate: \"32% -> 33%\", caught_by: \"R5 -- every worker above the first bend point in the 240\" }\n        bend_point_base_year_wrong: { candidate: \"NAWI base 1978 instead of 1977\", caught_by: \"R6 -- the 2026 and 2015 SSA determinations and the load-time cross-check against every stored policyengine-us year\" }\n        spousal_first_bracket_uses_the_worker_rate: { candidate: \"5/9 %/mo instead of 25/36 %/mo for the spouse\", caught_by: \"R11 -- the 32.5%-at-62 published figure\" }\n        rib_lim_applied_when_the_deceased_delayed: { candidate: \"cap at 82.5% even when the factor exceeds 1\", caught_by: \"R14 -- the DRC pass-through row (1320.0)\" }\n        family_maximum_omitted: { candidate: \"the SHIPPED oracle\", caught_by: \"NOTHING -- a KNOWN UNCAUGHT class (P10)\" }\n        catch_structure: >-\n          every implemented rule with an E2 anchor is caught by a\n          perturbation of the quantity that anchor pins. The uncaught\n          classes are, exactly: R3 outside its exact domain, R11-R15 under\n          an E1-only perturbation (no second engine exists to disagree),\n          and every rule in not_implemented. Stated as uncaught, never\n          advertised as covered.\n      governance:\n        registration: >-\n          Pre-registered on issue #42, as every other candidate run. Because\n          the statistic is exact agreement rather than a threshold, what a\n          candidate registers is the CASE SET and the engine revision; the\n          number is not negotiable.\n        amendment_rules:\n          inherits: gate_1\n          no_self_rescue: >-\n            Inherited verbatim (gates.yaml:565). Sharpened here: a rule may\n            not be REMOVED from rule_inventory, and a case may not be\n            removed from a rule's registered case set, because the oracle\n            failed it.\n          amendments_only_via: >-\n            public proposal + adversarial referee round + verification +\n            maintainer ratification by merge.\n          description_claims_exactly_the_scored_surface: >-\n            Bound by the standing rule (gates.yaml:1056, :3294, :4869). THIS\n            GATE'S FIRST DUTY IS TO DISCHARGE gate_2.description's \"benefit\n            formulas earn per-rule 'computes exactly' status\" (:642), which\n            today claims a status no gate_2 cell gates -- gate_2's 46 cells\n            (:917) contain no benefit-formula cell, and gate_2's own\n            certification_scope puts own-record benefit levels OUTSIDE 2a /\n            2b / 2c (:782). Either this gate defines and awards the status\n            (<RULING P1 gate_kind>), or gate_2's description is amended to\n            drop the clause. Leaving both is the one outcome the standing\n            rule forbids (P3).\n        frozen_scope_clause: >-\n          a PASS certifies a FROZEN reference oracle. Extending the module's rule coverage to clear a gap is FORBIDDEN by the module's own docstring, so a missing rule is closed in Axiom (rulespec-us us/statutes/42/415, 402, 416) and re-certified here as a cross-engine case, never by growing this module; a rule that fails is fixed in Axiom, not here.\n      certification_scope:\n        tranche: b2_statutory_benefit_oracle\n        certifies: >-\n          if ratified, a PASS certifies PER RULE, over exactly the registered case set and exactly the domain named in named_constants, that the oracle's value agrees to the cent with an independent execution (E1), matches an SSA-published figure on at least one case (E2) and exercises every branch (E3). The gate-level verdict is the PARTITION, never one boolean; a downstream citation names the RULE, never the gate.\n        supports:\n          - >-\n            the #74 SF (statutory formula) component wherever a rule holds all three conditions -- with the CITATION being the rule\n          - >-\n            gate_1's benefit_space block (the PIA-proxy functional): a certified R5 / R6 / R7 is what makes that proxy a statutory object rather than a formula\n        does_not_authorise:\n          - >-\n            any household benefit TOTAL: without the family maximum, stacked auxiliary benefits on one earnings record are UNCAPPED (CoupleBenefit.total, household.py)\n          - >-\n            any survivor or disability PIA computed through aime(): R3's constant is outside its exact domain there\n          - >-\n            spousal or survivor benefit LEVELS in GENERATED panels: those need gate_2c (gates.yaml:772-783) as well as this gate\n          - >-\n            any benefit in nominal post-entitlement dollars: no COLA is applied anywhere in ss/\n          - >-\n            anything listed in not_implemented (WEP / GPO, the retirement earnings test, the special minimum PIA, child's and parent's benefits, the disability PIA, recomputation)\n          - >-\n            any statement about a rule finer than the sixteen-rule cut (P13): R12 and R14 earn or lose the status as blocks\n          - >-\n            any rule that holds a strict subset or none of E1 / E2 / E3: the partition names it and the status is NOT awarded\n          - >-\n            the claiming-age distribution, which is gate_b2_claiming's\n      coverage_record_does_not_establish:\n        # every does_not_establish line of runs/pia_rule_coverage_v1.json, carried\n          - >-\n            any per-rule status: the E1/E2/E3 fields record what the committed evidence reaches, and the packet's proposed verdicts are quoted for comparison, not adopted\n          - >-\n            that the proposed definition of \"computes exactly\" is the right one: no referee round has run\n          - >-\n            any statement about the Axiom engine or policyengine-us beyond what the committed artifacts record; neither was executed here\n          - >-\n            that the rule granularity is correct: sixteen rules is the packet's cut, and R12 and R14 each bundle several statutory operations\n          - >-\n            that any E1 status has been re-executed in this ceremony: the three engine-backed tests in tests/ss/ skip on a host without the Axiom wheel or a policyengine-us Python, and every E1 status rests on the committed cross-engine artifact as built on its recorded date\n          - >-\n            the sequencing of the lock PR: the gates.yaml citation is blob-pinned and survives the gate commit, but the two 'gate name absent from gates.yaml' tests read the live file by design and fail the moment gate_b2_pia_oracle or gate_b2_claiming lands; the commit that inserts either block must retire those assertions or supersede this artifact with a v2 in the same PR\n          - >-\n            that the typed bend-point pairs are SSA determinations: the 2026 pair has an SSA-anchor test, the 2020 pair is pinned only to the committed cross-engine rows it reproduces\n      open_rulings:\n        # Each is FILED and PRICED in runs/pia_gate_partition_v1.json\n        # open_questions_for_the_ceremony; none is made here.\n        P1: \"<RULING P1 gate_kind> -- exact agreement as a gate kind vs an amendment striking gates.yaml:642; decide FIRST\"\n        P6: \"<RULING P6 e1_waiver> -- per-rule E1 waivers for R11-R15 vs splitting the gate and holding the auxiliary half\"\n        P8: \"<RULING P8 case_set> -- is the registered case set sufficient, or must a wider one be built first\"\n        P9: \"<RULING P9 survivor_period> -- the 84-month constant vs the override reading of E2\"\n        P13: \"<RULING P13 granularity> -- the sixteen-rule cut vs splitting R12 / R14\"\n        S7: \"sequencing constraint -- ceremony_notes.flip_plan (the two live-file guard tests)\"\n        S8: \"<RULING S8 e1_clause> -- E1 as committed 2026-07-05 at engine ffef7b4, not re-executed (Axiom half)\"\n      ceremony_notes:\n        placeholders_the_ratifying_round_must_fill:\n          - \"<RULING P1 gate_kind>\"\n          - \"<RULING P6 e1_waiver>\"\n          - \"<RULING P8 case_set>\"\n          - \"<RULING P9 survivor_period>\"\n          - \"<RULING P13 granularity>\"\n          - \"<RULING S8 e1_clause>\"\n          - \"<FILLED AT RATIFICATION>\"\n        flip_plan: >-\n          the commit that inserts this block flips\n          GATE_B2_PIA_ORACLE_BLOCK_LANDED from False to True in\n          tests/test_gates_derivations.py and\n          tests/test_pia_gate_partition_v1.py, RETIRES\n          tests/test_pia_rule_coverage.py::\n          test_no_gate_b2_pia_oracle_exists_in_gates_yaml (and its claiming\n          twin tests/test_claiming_publication_floor.py::\n          test_no_gate_b2_claiming_exists_in_gates_yaml if gate_b2_claiming\n          lands in the same PR) -- both read the live file by design and\n          fail the moment the block lands (verification section 11: exactly\n          those two) -- admits the new key at the three master-compare sites\n          (test_gate_m4_flip_leaves_locked_siblings_byte_identical,\n          tests/test_gate_w1_derivations.py, tests/test_gate_m6_derivations.py),\n          fills floor_run_sha256 with the ratified sha256 of\n          runs/pia_gate_partition_v1.json, and re-refreshes the tier\n          manifest -- all in the SAME commit. The coverage record's\n          blob-pinned gates.yaml citation survives the commit unchanged.\n        derivations_bound_by: tests/test_gates_derivations.py (test_gate_b2_pia_oracle_*) and tests/test_pia_gate_partition_v1.py\n        wording_audit: >-\n          the two words the standing wording audit forbids occur 0 times in\n          this block (artifact wording_audit.forbidden_word_counts); the\n          definition of \"computes exactly\" is stated (P2); what a pass does\n          not authorise is stated (P14); every does_not_establish line of\n          the coverage record is carried.\n",
+    "text_sha256": "0486d53a807a84de728705f5999358f3571dfdbe25f582f3df8977fc7b6a2866",
+    "n_lines": 580,
+    "n_bytes": 37946,
+    "indent": "2 spaces under `gates:`; parse with yaml.safe_load('gates:\\n' + text)['gates']['gate_b2_pia_oracle']",
+    "status_in_text": "draft_pending_referee_round",
+    "written_nowhere_else": "asserted by tests/test_pia_gate_partition_v1.py and tests/test_gates_derivations.py: gates.yaml mentions neither gate_b2_pia_oracle nor this artifact nor runs/pia_rule_coverage_v1.json while GATE_B2_PIA_ORACLE_BLOCK_LANDED is False, and the text occurs in no other tracked file"
+  },
+  "revision_pins": {
+    "populace_dynamics_sha": "cd8f167280de47444164d2ab0ec11dd061b59b00",
+    "source_coverage_sha256": "7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d",
+    "source_coverage_size_bytes": 75382,
+    "coverage_builder_sha256": "a45c1bbef5dc32a3a959e2dd8a5e4b940f71b1fc32b9173a7fa255f31e68d6e9",
+    "gate_builder_sha256": "f2eefac24eaec7f20022d1c6d4e2339b5cfdcb7b3b2ad182f18da66ab714cb7c",
+    "gates_yaml_git_blob_for_the_citations": "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c",
+    "gates_yaml_pin_semantics": "PROVENANCE of the line citations only; NOT a freeze of the live file. The coverage record's own citation is blob-pinned the same way and survives the gate commit; the two live-file 'gate name absent' tests do not.",
+    "artifact_schema_version": "pia_gate_partition.v1"
+  },
+  "build": {
+    "built_by": "scripts/build_pia_gate_partition_v1.py"
+  },
+  "wording_audit": {
+    "scope": "the draft gate_b2_pia_oracle block (draft_gates_yaml_fragment.text) and this artifact's JSON with this audit block removed. No PR is opened by this sitting; the PR body's audit is owed by the verification round at PR time.",
+    "forbidden_words": [
+      "anchored",
+      "aligned"
+    ],
+    "forbidden_word_counts": {
+      "anchored": {
+        "fragment": 0,
+        "artifact_excluding_this_block": 0
+      },
+      "aligned": {
+        "fragment": 0,
+        "artifact_excluding_this_block": 0
+      }
+    },
+    "forbidden_words_absent_from_fragment": true,
+    "forbidden_words_absent_from_artifact": true,
+    "required_phrases": [
+      {
+        "item": "the standing rule",
+        "required_phrases": [
+          "description_claims_exactly_the_scored_surface",
+          "gates.yaml:1056, :3294, :4869"
+        ],
+        "required_present": {
+          "description_claims_exactly_the_scored_surface": true,
+          "gates.yaml:1056, :3294, :4869": true
+        },
+        "holds": true
+      },
+      {
+        "item": "computes exactly is defined (P2)",
+        "required_phrases": [
+          "E1 INDEPENDENT RE-EXECUTION",
+          "E2 EXTERNAL ANCHOR",
+          "E3 EXERCISED BRANCHES AND BOUNDARIES",
+          "X1 NAMED NON-COVERAGE",
+          "X2 NAMED CONSTANTS",
+          "TO THE CENT"
+        ],
+        "required_present": {
+          "E1 INDEPENDENT RE-EXECUTION": true,
+          "E2 EXTERNAL ANCHOR": true,
+          "E3 EXERCISED BRANCHES AND BOUNDARIES": true,
+          "X1 NAMED NON-COVERAGE": true,
+          "X2 NAMED CONSTANTS": true,
+          "TO THE CENT": true
+        },
+        "holds": true
+      },
+      {
+        "item": "what a pass does not authorise (P14)",
+        "required_phrases": [
+          "does_not_authorise",
+          "any household benefit TOTAL"
+        ],
+        "required_present": {
+          "does_not_authorise": true,
+          "any household benefit TOTAL": true
+        },
+        "holds": true
+      },
+      {
+        "item": "the E1 clause (S8)",
+        "required_phrases": [
+          "E1 as committed 2026-07-05 at engine ffef7b4",
+          "not re-executed"
+        ],
+        "required_present": {
+          "E1 as committed 2026-07-05 at engine ffef7b4": true,
+          "not re-executed": true
+        },
+        "holds": true
+      },
+      {
+        "item": "family maximum disclosure (P10)",
+        "required_phrases": [
+          "CoupleBenefit.total",
+          "KNOWN UNCAUGHT class"
+        ],
+        "required_present": {
+          "CoupleBenefit.total": true,
+          "KNOWN UNCAUGHT class": true
+        },
+        "holds": true
+      },
+      {
+        "item": "frozen scope (P15)",
+        "required_phrases": [
+          "Do not extend this module's rule coverage; extend the Axiom encodings."
+        ],
+        "required_present": {
+          "Do not extend this module's rule coverage; extend the Axiom encodings.": true
+        },
+        "holds": true
+      },
+      {
+        "item": "precision to the cent (P11)",
+        "required_phrases": [
+          "NOT bit-exactness"
+        ],
+        "required_present": {
+          "NOT bit-exactness": true
+        },
+        "holds": true
+      },
+      {
+        "item": "the partition is the verdict",
+        "required_phrases": [
+          "does NOT produce one boolean"
+        ],
+        "required_present": {
+          "does NOT produce one boolean": true
+        },
+        "holds": true
+      },
+      {
+        "item": "coverage does_not_establish[0] carried",
+        "required_phrases": [
+          "any per-rule status: the E1/E2/E3 fields record what the committed evidence reaches, and the packet's proposed verdicts are quoted for comparison, not adopted"
+        ],
+        "required_present": {
+          "any per-rule status: the E1/E2/E3 fields record what the committed evidence reaches, and the packet's proposed verdicts are quoted for comparison, not adopted": true
+        },
+        "holds": true
+      },
+      {
+        "item": "coverage does_not_establish[1] carried",
+        "required_phrases": [
+          "that the proposed definition of \"computes exactly\" is the right one: no referee round has run"
+        ],
+        "required_present": {
+          "that the proposed definition of \"computes exactly\" is the right one: no referee round has run": true
+        },
+        "holds": true
+      },
+      {
+        "item": "coverage does_not_establish[2] carried",
+        "required_phrases": [
+          "any statement about the Axiom engine or policyengine-us beyond what the committed artifacts record; neither was executed here"
+        ],
+        "required_present": {
+          "any statement about the Axiom engine or policyengine-us beyond what the committed artifacts record; neither was executed here": true
+        },
+        "holds": true
+      },
+      {
+        "item": "coverage does_not_establish[3] carried",
+        "required_phrases": [
+          "that the rule granularity is correct: sixteen rules is the packet's cut, and R12 and R14 each bundle several statutory operations"
+        ],
+        "required_present": {
+          "that the rule granularity is correct: sixteen rules is the packet's cut, and R12 and R14 each bundle several statutory operations": true
+        },
+        "holds": true
+      },
+      {
+        "item": "coverage does_not_establish[4] carried",
+        "required_phrases": [
+          "that any E1 status has been re-executed in this ceremony: the three engine-backed tests in tests/ss/ skip on a host without the Axiom wheel or a policyengine-us Python, and every E1 status rests on the committed cross-engine artifact as built on its recorded date"
+        ],
+        "required_present": {
+          "that any E1 status has been re-executed in this ceremony: the three engine-backed tests in tests/ss/ skip on a host without the Axiom wheel or a policyengine-us Python, and every E1 status rests on the committed cross-engine artifact as built on its recorded date": true
+        },
+        "holds": true
+      },
+      {
+        "item": "coverage does_not_establish[5] carried",
+        "required_phrases": [
+          "the sequencing of the lock PR: the gates.yaml citation is blob-pinned and survives the gate commit, but the two 'gate name absent from gates.yaml' tests read the live file by design and fail the moment gate_b2_pia_oracle or gate_b2_claiming lands; the commit that inserts either block must retire those assertions or supersede this artifact with a v2 in the same PR"
+        ],
+        "required_present": {
+          "the sequencing of the lock PR: the gates.yaml citation is blob-pinned and survives the gate commit, but the two 'gate name absent from gates.yaml' tests read the live file by design and fail the moment gate_b2_pia_oracle or gate_b2_claiming lands; the commit that inserts either block must retire those assertions or supersede this artifact with a v2 in the same PR": true
+        },
+        "holds": true
+      },
+      {
+        "item": "coverage does_not_establish[6] carried",
+        "required_phrases": [
+          "that the typed bend-point pairs are SSA determinations: the 2026 pair has an SSA-anchor test, the 2020 pair is pinned only to the committed cross-engine rows it reproduces"
+        ],
+        "required_present": {
+          "that the typed bend-point pairs are SSA determinations: the 2026 pair has an SSA-anchor test, the 2020 pair is pinned only to the committed cross-engine rows it reproduces": true
+        },
+        "holds": true
+      }
+    ],
+    "all_required_phrases_present": true
+  },
+  "elapsed_seconds": 0.0
+}

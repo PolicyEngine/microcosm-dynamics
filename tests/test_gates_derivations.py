@@ -11,9 +11,13 @@ committed files.
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import math
+import re
 import subprocess
+import sys
+from decimal import ROUND_HALF_EVEN, ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 import pytest
@@ -3969,3 +3973,1982 @@ def test_gate_m4_flip_leaves_locked_siblings_byte_identical():
     assert current["gate_2"]["thresholds"]["locked"] is True
     assert current["gate_2"]["gate_2b"]["locked"] is True
     assert current["gate_2"]["gate_2c"]["locked"] is True
+
+
+# --------------------------------------------------------------------------
+# gate_b2_claiming (issue #74 component CA, Phase B) THRESHOLD BINDING --
+# DRAFT, pre-lock. The block does not exist in gates.yaml yet: it is carried
+# as a string in runs/claiming_gate_floors_v1.json
+# (draft_gates_yaml_fragment.text), the gate-3 / gate_mortality precedent.
+# While GATE_B2_CLAIMING_BLOCK_LANDED is False these bindings read the DRAFT
+# block from the artifact and assert gates.yaml is innocent of it; the
+# commit that inserts the block flips ONE constant and the same bindings run
+# LOCKED-HOT against the live contract (the 2a lesson). Every tolerance is
+# recomputed here from the VERIFIED floor basis
+# runs/claiming_publication_floor_v1.json's STRATA and TRENDS with this
+# module's own Decimal arithmetic -- never from a typed number and never
+# from the gate artifact's own copy -- and every alternative the referees
+# priced is recomputed as a perturbation that FAILS if any knob or the
+# rounding mode changes.
+# --------------------------------------------------------------------------
+B2C_FLOOR_RUN = "runs/claiming_publication_floor_v1.json"
+#: (size, sha256) of the VERIFIED floor basis (floors v2 at cd8f167;
+#: verification VERIFIED -- READY FOR THRESHOLD BINDING). Must not move.
+B2C_FLOOR_COMMITTED = (
+    227_079,
+    "bd78d632219175d2ab47bc7a87661dde782a6a262a26add3a3be349618593ae1",
+)
+B2C_GATE_RUN = "runs/claiming_gate_floors_v1.json"
+#: (size, sha256) of the gate-schema artifact as committed; re-stated in
+#: the same commit as any rebuild.
+B2C_GATE_COMMITTED = (
+    271_833,
+    "7d4eb3e33920fbcf50fe28bc46370704bd282bb897148261314f50b05fe9a16c",
+)
+B2C_EDITION = "data/external/ssa_claim_ages_2023supplement.json"
+B2C_TRANSCRIPTION = "scripts/build_ssa_claim_ages.py"
+B2C_BUILDER = "scripts/build_claiming_gate_floors_v1.py"
+B2C_K_REV = 2.0
+B2C_ROUNDING_PP = 0.05
+B2C_T_MAX_PP = 3.0
+B2C_CATEGORIES = (
+    "age62",
+    "age63",
+    "age64",
+    "age65",
+    "age66",
+    "age67_69",
+    "age70plus",
+)
+B2C_SEXES = ("female", "male")
+B2C_FIT_YEARS = tuple(range(1998, 2020))
+B2C_HOLDOUT = {1: 2020, 2: 2021, 3: 2022}
+B2C_KNIFE = "age66|female|h1"
+B2C_TIE = "age70plus|female|h2"
+#: PRE-LOCK MARKER (the mortality pattern). Flipped to True in the SAME
+#: commit that inserts the block, in every file that carries it (the
+#: artifact's flip_plan lists them), which also retires the live-file
+#: guard test tests/test_claiming_publication_floor.py::
+#: test_no_gate_b2_claiming_exists_in_gates_yaml.
+GATE_B2_CLAIMING_BLOCK_LANDED = False
+
+
+def _b2c_floor() -> dict:
+    return json.loads((ROOT / B2C_FLOOR_RUN).read_text())
+
+
+def _b2c_gate() -> dict:
+    return json.loads((ROOT / B2C_GATE_RUN).read_text())
+
+
+def _b2c_edition() -> dict:
+    return json.loads((ROOT / B2C_EDITION).read_text())
+
+
+def _b2c_cells() -> list[str]:
+    return [
+        f"{c}|{s}|h{h}"
+        for s in B2C_SEXES
+        for c in B2C_CATEGORIES
+        for h in (1, 2, 3)
+    ]
+
+
+def _b2c_tolerance(term_pp, trend, horizon, rounding_pp, mode):
+    """This module's OWN evaluation of the tolerance rule: the exact
+    decimal sum of the three summands quantised to 2 dp under ``mode``."""
+    raw = (
+        Decimal(repr(term_pp))
+        + Decimal(repr(abs(trend))) * horizon
+        + Decimal(repr(rounding_pp))
+    )
+    return float(raw.quantize(Decimal("0.01"), rounding=mode)), raw
+
+
+def _b2c_sd_knob(floor: dict) -> float:
+    return round(floor["strata"]["conditional_terminal_year"]["sd_pp"], 4)
+
+
+def _b2c_trends(floor: dict) -> dict:
+    derivations = floor["power_cap"]["derivations"]
+    return {c: derivations[c]["trend_pp_per_year"] for c in _b2c_cells()}
+
+
+def _b2c_derive(
+    floor: dict,
+    term_by_h=None,
+    k=B2C_K_REV,
+    rounding_pp=B2C_ROUNDING_PP,
+    mode=ROUND_HALF_UP,
+) -> dict:
+    """Every cell's tolerance from the FLOOR's strata and trends."""
+    if term_by_h is None:
+        term = round(k * _b2c_sd_knob(floor), 6)
+        term_by_h = {1: term, 2: term, 3: term}
+    trends = _b2c_trends(floor)
+    out = {}
+    for cell in _b2c_cells():
+        h = int(cell.split("|")[2][1:])
+        tol, raw = _b2c_tolerance(
+            term_by_h[h], trends[cell], h, rounding_pp, mode
+        )
+        out[cell] = {"tolerance_pp": tol, "raw": raw}
+    return out
+
+
+def _b2c_partition(tols: dict) -> tuple[dict, dict]:
+    gated = {
+        c: v["tolerance_pp"]
+        for c, v in tols.items()
+        if v["tolerance_pp"] <= B2C_T_MAX_PP
+    }
+    report = {
+        c: v["tolerance_pp"]
+        for c, v in tols.items()
+        if v["tolerance_pp"] > B2C_T_MAX_PP
+    }
+    return gated, report
+
+
+def _b2c_cond(row: dict) -> dict:
+    cats = row["categories"]
+    total = sum(cats[c] for c in B2C_CATEGORIES)
+    return {c: 100.0 * cats[c] / total for c in B2C_CATEGORIES}
+
+
+def _b2c_series(doc: dict, category: str, sex: str) -> list[float]:
+    return [
+        _b2c_cond(doc["data"][sex][str(y)])[category] for y in B2C_FIT_YEARS
+    ]
+
+
+def _b2c_actual(doc: dict, category: str, sex: str, h: int) -> float:
+    return _b2c_cond(doc["data"][sex][str(B2C_HOLDOUT[h])])[category]
+
+
+def _b2c_ols(xs, ys):
+    mx = sum(xs) / len(xs)
+    my = sum(ys) / len(ys)
+    num = sum((x - mx) * (y - my) for x, y in zip(xs, ys, strict=True))
+    den = sum((x - mx) ** 2 for x in xs)
+    slope = num / den
+    return slope, my - slope * mx
+
+
+def _b2c_predictors(doc: dict) -> dict:
+    """The seventeen scanned rules, this module's own implementations."""
+
+    def series(c, s):
+        return _b2c_series(doc, c, s)
+
+    def nearest(c, s, h):
+        return series(c, s)[-1]
+
+    def uniform(c, s, h):
+        return 100.0 / len(B2C_CATEGORIES)
+
+    def fit_mean(c, s, h):
+        v = series(c, s)
+        return sum(v) / len(v)
+
+    def sex_pooled(c, s, h):
+        return sum(series(c, o)[-1] for o in B2C_SEXES) / len(B2C_SEXES)
+
+    def ols(window):
+        def f(c, s, h):
+            v = series(c, s)[-window:]
+            slope, intercept = _b2c_ols(B2C_FIT_YEARS[-window:], v)
+            return intercept + slope * (B2C_FIT_YEARS[-1] + h)
+
+        return f
+
+    def damped(window, delta):
+        def f(c, s, h):
+            v = series(c, s)[-window:]
+            slope, _ = _b2c_ols(B2C_FIT_YEARS[-window:], v)
+            return series(c, s)[-1] + delta * slope * h
+
+        return f
+
+    forecast = {
+        "deployed_v1_nearest_year": nearest,
+        "ols_full_fit_window": ols(22),
+        "ols_last_10": ols(10),
+        "ols_last_5": ols(5),
+        "ols_last_3": ols(3),
+        "damped_local_trend_w5_d0.5": damped(5, 0.5),
+        "damped_local_trend_w5_d1.0": damped(5, 1.0),
+        "damped_local_trend_w10_d0.5": damped(10, 0.5),
+        **{f"ols_last_{w}": ols(w) for w in (13, 14, 15, 16, 17, 18)},
+    }
+    degenerate = {
+        "uniform_over_seven_categories": uniform,
+        "fit_window_mean": fit_mean,
+        "sex_pooled_nearest_year": sex_pooled,
+    }
+    return {
+        "forecast": forecast,
+        "degenerate": degenerate,
+        "all": {**forecast, **degenerate},
+    }
+
+
+def _b2c_deviations(predict, doc: dict, cells) -> dict:
+    out = {}
+    for cell in cells:
+        c, s, h = cell.split("|")
+        h = int(h[1:])
+        out[cell] = abs(predict(c, s, h) - _b2c_actual(doc, c, s, h))
+    return out
+
+
+def _b2c_failures(devs: dict, gated: dict) -> list[str]:
+    return sorted(c for c, d in devs.items() if d > gated[c])
+
+
+def _gate_b2_claiming_block() -> dict:
+    """The gate_b2_claiming block: the artifact's DRAFT fragment pre-flip,
+    the live gates.yaml block post-flip."""
+    if GATE_B2_CLAIMING_BLOCK_LANDED:
+        gates = yaml.safe_load((ROOT / "gates.yaml").read_text())
+        return gates["gates"]["gate_b2_claiming"]
+    text = _b2c_gate()["draft_gates_yaml_fragment"]["text"]
+    return yaml.safe_load("gates:\n" + text)["gates"]["gate_b2_claiming"]
+
+
+def _b2_tracked_text_files() -> list:
+    try:
+        listed = subprocess.check_output(
+            ["git", "ls-files"], cwd=ROOT, text=True
+        ).split("\n")
+    except (OSError, subprocess.CalledProcessError):
+        listed = [
+            str(p.relative_to(ROOT)) for p in ROOT.rglob("*") if p.is_file()
+        ]
+    keep = []
+    for rel in listed:
+        if not rel:
+            continue
+        if not (
+            rel == "gates.yaml"
+            or rel.startswith(
+                ("docs/", "scripts/", "tests/", "src/", "runs/", "paper/")
+            )
+        ):
+            continue
+        if rel.endswith(
+            (".png", ".pdf", ".pkl", ".parquet", ".zip", ".gz", ".h5")
+        ):
+            continue
+        keep.append(ROOT / rel)
+    return keep
+
+
+def _b2_import_from_path(path: Path, name: str):
+    if str(ROOT / "scripts") not in sys.path:
+        sys.path.insert(0, str(ROOT / "scripts"))
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    # the scratch copy resolves its repository root from its own location;
+    # point every root-relative path at THIS repository
+    module.ROOT = ROOT
+    for attr, rel in (
+        ("SOURCE_FLOOR_PATH", "SOURCE_FLOOR_REL"),
+        ("ARTIFACT_PATH", "ARTIFACT_REL"),
+        ("SOURCE_COVERAGE_PATH", "SOURCE_COVERAGE_REL"),
+    ):
+        if hasattr(module, rel):
+            setattr(module, attr, ROOT / getattr(module, rel))
+    return module
+
+
+def test_gate_b2_claiming_floor_basis_bytes_are_pinned_and_read_by_path():
+    """The verified floor's size + sha256 equal the constants here; the
+    gate artifact records that it read exactly those bytes by path; the
+    block derives from that floor and names its sha256."""
+    path = ROOT / B2C_FLOOR_RUN
+    assert path.stat().st_size == B2C_FLOOR_COMMITTED[0]
+    assert (
+        hashlib.sha256(path.read_bytes()).hexdigest() == B2C_FLOOR_COMMITTED[1]
+    )
+    art = _b2c_gate()
+    src = art["source_floor"]
+    assert src["path"] == B2C_FLOOR_RUN
+    assert (src["size_bytes"], src["sha256"]) == B2C_FLOOR_COMMITTED
+    assert art["schema_version"] == "claiming_gate_floors.v1"
+    assert art["reported_not_gated"] is True
+    assert art["ceremony"]["gates_yaml_untouched"] is True
+    block = _gate_b2_claiming_block()
+    assert block["derived_from_floor"] == B2C_FLOOR_RUN
+    assert block["derived_from_floor_sha256"] == B2C_FLOOR_COMMITTED[1]
+    assert block["thresholds"]["derived_from"]["sha256"] == (
+        B2C_FLOOR_COMMITTED[1]
+    )
+    assert block["thresholds"]["derived_from"]["size_bytes"] == (
+        B2C_FLOOR_COMMITTED[0]
+    )
+
+
+def test_gate_b2_claiming_gate_artifact_bytes_are_pinned():
+    """The gate artifact's committed bytes equal the constants here (the
+    gate-3 digest-pin precedent: re-stated in the same commit as any
+    rebuild), and its own builder sha equals the committed builder."""
+    path = ROOT / B2C_GATE_RUN
+    assert path.stat().st_size == B2C_GATE_COMMITTED[0]
+    assert (
+        hashlib.sha256(path.read_bytes()).hexdigest() == B2C_GATE_COMMITTED[1]
+    )
+    art = _b2c_gate()
+    assert (
+        art["revision_pins"]["gate_builder_sha256"]
+        == hashlib.sha256((ROOT / B2C_BUILDER).read_bytes()).hexdigest()
+    )
+    assert art["revision_pins"]["source_floor_sha256"] == (
+        B2C_FLOOR_COMMITTED[1]
+    )
+
+
+def test_gate_b2_claiming_pre_lock_guard_or_live_block():
+    """PRE-LOCK GUARD under GATE_B2_CLAIMING_BLOCK_LANDED. While False:
+    gates.yaml names neither the gate nor either claiming artifact, and
+    the DRAFT block says it is a draft with the ratification placeholder.
+    Flipped: the block is a live top-level gate citing the gate artifact
+    by path with its ratified sha256."""
+    gates_text = (ROOT / "gates.yaml").read_text()
+    block = _gate_b2_claiming_block()
+    if not GATE_B2_CLAIMING_BLOCK_LANDED:
+        assert "gate_b2_claiming" not in gates_text
+        assert "claiming_gate_floors_v1" not in gates_text
+        assert "claiming_publication_floor_v1" not in gates_text
+        assert block["status"] == "draft_pending_referee_round"
+        assert block["locked"] is False
+        assert block["thresholds"]["locked"] is False
+        assert block["thresholds"]["status"] == "draft_pending_referee_round"
+        assert block["floor_run_sha256"] == "<FILLED AT RATIFICATION>"
+        assert block["thresholds"]["floor_run_sha256"] == (
+            "<FILLED AT RATIFICATION>"
+        )
+        assert block["lock_ceremony"]["exists"] is False
+        return
+    spec = yaml.safe_load(gates_text)
+    assert "gate_b2_claiming" in spec["gates"]
+    assert block["floor_run"] == B2C_GATE_RUN
+    assert (
+        block["floor_run_sha256"]
+        == hashlib.sha256((ROOT / B2C_GATE_RUN).read_bytes()).hexdigest()
+    )
+    assert block["locked"] is True
+
+
+def test_gate_b2_claiming_tolerances_bind_to_floor_strata_and_trends():
+    """Every one of the 42 tolerances (34 gated + 8 report-only) ==
+    quantize(K_REV * sd_knob + |trend| * h + rounding, 2, HALF_UP) with
+    sd_knob = round(floor conditional_terminal_year.sd_pp, 4) and the
+    trend the floor's derivations carry -- recomputed here, never read
+    from the gate artifact, never typed. The block's derivations rules
+    carry the same trend, horizon and unrounded value per cell."""
+    floor = _b2c_floor()
+    derived = _b2c_derive(floor)
+    block = _gate_b2_claiming_block()
+    surface = block["thresholds"]["gated_surface"]
+    rules = surface["derivations"]["rules"]
+    assert set(rules) == set(surface["tolerances_pp"])
+    assert surface["derivations"]["floor_run"] == B2C_FLOOR_RUN
+    knobs = surface["derivations"]["knobs"]
+    assert knobs["k_rev"] == B2C_K_REV
+    assert knobs["rounding_pp"] == B2C_ROUNDING_PP
+    assert knobs["t_max_pp"] == B2C_T_MAX_PP
+    assert knobs["revision_sd_terminal_pp"] == _b2c_sd_knob(floor)
+    assert knobs["rounding_mode"] == "ROUND_HALF_UP"
+    trends = _b2c_trends(floor)
+    for cell, tol in surface["tolerances_pp"].items():
+        assert derived[cell]["tolerance_pp"] == tol, cell
+        rule = rules[cell]
+        assert rule["trend_pp_per_year"] == trends[cell], cell
+        assert rule["horizon_years"] == int(cell.split("|")[2][1:])
+        assert Decimal(str(rule["unrounded_pp"])) == derived[cell]["raw"], cell
+    for cell, entry in surface["report_only_tolerance_above_t_max"].items():
+        assert derived[cell]["tolerance_pp"] == entry["tolerance_pp_would_be"]
+        assert entry["trend_pp_per_year"] == trends[cell]
+    # the gate artifact's own derivation block agrees cell for cell
+    art = _b2c_gate()
+    for cell in _b2c_cells():
+        td = art["tolerance_derivations"][cell]
+        assert td["tolerance_pp"] == derived[cell]["tolerance_pp"], cell
+        assert Decimal(td["unrounded_tolerance_exact"]) == derived[cell]["raw"]
+    # and the floor's DRAFT surface is byte-for-byte the same 42 values
+    cap = floor["power_cap"]
+    assert surface["tolerances_pp"] == cap["gate_eligible_tolerances_pp"]
+    for cell, entry in cap["report_only_tolerance_above_t_max"].items():
+        assert (
+            surface["report_only_tolerance_above_t_max"][cell][
+                "tolerance_pp_would_be"
+            ]
+            == entry["tolerance_pp_would_be"]
+        )
+
+
+def test_gate_b2_claiming_partition_34_8_recomputes():
+    """gated / report-only == the partition the recomputed tolerances
+    imply at T_max 3.0 (34 / 8), the six conversion cells out of scope by
+    reason, and the reference values the floor's held-out conditional
+    shares -- all recomputed, not hand-picked."""
+    floor = _b2c_floor()
+    gated, report = _b2c_partition(_b2c_derive(floor))
+    assert len(gated) == 34 and len(report) == 8
+    block = _gate_b2_claiming_block()
+    surface = block["thresholds"]["gated_surface"]
+    assert set(surface["tolerances_pp"]) == set(gated)
+    assert set(surface["report_only_tolerance_above_t_max"]) == set(report)
+    for entry in surface["report_only_tolerance_above_t_max"].values():
+        assert entry["reason"] == "tolerance_above_t_max"
+        assert entry["tolerance_pp_would_be"] > B2C_T_MAX_PP
+    for tol in surface["tolerances_pp"].values():
+        assert tol <= B2C_T_MAX_PP
+    assert block["thresholds"]["power_cap"]["t_max_pp"] == B2C_T_MAX_PP
+    art = _b2c_gate()
+    part = art["gate_partition"]
+    assert part["gate_eligible"] == [c for c in _b2c_cells() if c in gated]
+    assert part["report_only"] == [c for c in _b2c_cells() if c in report]
+    assert (part["n_gate_eligible"], part["n_report_only"]) == (34, 8)
+    scope = block["thresholds"]["report_only"]["out_of_module_scope"]
+    assert scope["reason"] == "conversion_flow_owned_by_di_surface"
+    assert sorted(scope["cells"]) == sorted(
+        f"disability_conversion|{s}|h{h}" for s in B2C_SEXES for h in (1, 2, 3)
+    )
+    assert set(scope["cells"]).isdisjoint(gated)
+    doc = _b2c_edition()
+    for cell, ref in surface["reference_values_pp"].items():
+        c, s, h = cell.split("|")
+        assert ref == round(_b2c_actual(doc, c, s, int(h[1:])), 4), cell
+    assert set(surface["reference_values_pp"]) == set(gated)
+
+
+def _b2c_rows_equal(row: dict, gated: dict, report: dict, draft_gated: dict):
+    assert row["n_gate_eligible"] == len(gated)
+    assert row["n_report_only_tolerance_above_t_max"] == len(report)
+    assert row["gate_eligible_tolerances_pp"] == gated
+    assert row["report_only_tolerance_above_t_max_pp"] == report
+    assert row["cells_demoted_relative_to_draft"] == sorted(
+        set(draft_gated) - set(gated)
+    )
+    assert row["cells_promoted_relative_to_draft"] == sorted(
+        set(gated) - set(draft_gated)
+    )
+    assert row["partition_identical_to_draft"] is (
+        set(gated) == set(draft_gated)
+    )
+
+
+def test_gate_b2_claiming_grammar_and_k_perturbation_fails_on_any_knob_change():
+    """The twelve grammar x K rows recomputed from the floor's strata and
+    trends with this module's arithmetic, equal to BOTH the gate
+    artifact's alternatives and the floor's own power_cap_alternatives;
+    and the perturbation: the DRAFT surface is reproduced ONLY under the
+    drafted knobs -- every other grammar, K or rounding mode changes at
+    least one tolerance or the partition, so an edited knob fails here."""
+    floor = _b2c_floor()
+    art = _b2c_gate()
+    term = floor["strata"]["conditional_terminal_year"]
+    sd_knob = _b2c_sd_knob(floor)
+    mean_abs = term["mean_pp"]
+    sd_signed = round(term["sd_signed_pp"], 4)
+    max_abs = term["max_pp"]
+    draft = _b2c_derive(floor)
+    draft_gated, draft_report = _b2c_partition(draft)
+    terms = {
+        "k_times_sd_abs_DRAFT": lambda k: round(k * sd_knob, 6),
+        "mean_plus_k_times_sd_abs": lambda k: round(mean_abs + k * sd_knob, 6),
+        "k_times_sd_signed": lambda k: round(k * sd_signed, 6),
+        "max_abs_revision_d2": lambda k: round(max_abs, 6),
+    }
+    gate_rows = art["alternatives"]["grammar_and_k_sweep"]["by_grammar"]
+    floor_rows = floor["power_cap_alternatives"]["grammar_and_k_sweep"][
+        "by_grammar"
+    ]
+    assert set(gate_rows) == set(terms) == set(floor_rows)
+    seen_identical_to_draft = 0
+    for grammar, term_of in terms.items():
+        for k in (1.5, 2.0, 2.5):
+            t = term_of(k)
+            tols = _b2c_derive(floor, term_by_h={1: t, 2: t, 3: t})
+            gated, report = _b2c_partition(tols)
+            for rows in (gate_rows, floor_rows):
+                row = rows[grammar]["by_k"][f"K_{k}"]
+                _b2c_rows_equal(row, gated, report, draft_gated)
+                assert row["age66_female_h1"]["tolerance_pp"] == (
+                    gated.get(B2C_KNIFE, report.get(B2C_KNIFE))
+                )
+            if grammar == "k_times_sd_abs_DRAFT" and k == B2C_K_REV:
+                assert gated == draft_gated and report == draft_report
+                seen_identical_to_draft += 1
+            else:
+                # the perturbation: some tolerance or the partition moves
+                assert gated != draft_gated or report != draft_report, (
+                    grammar,
+                    k,
+                )
+    assert seen_identical_to_draft == 1
+    # the house grammars at K 2.0 demote exactly two cells; the max-based
+    # term the same two at every K
+    two = ["age65|male|h3", "age66|male|h1"]
+    for grammar in ("mean_plus_k_times_sd_abs", "k_times_sd_signed"):
+        row = gate_rows[grammar]["by_k"]["K_2.0"]
+        assert row["cells_demoted_relative_to_draft"] == two
+        assert row["n_gate_eligible"] == 32
+    for k in (1.5, 2.0, 2.5):
+        assert (
+            gate_rows["max_abs_revision_d2"]["by_k"][f"K_{k}"][
+                "cells_demoted_relative_to_draft"
+            ]
+            == two
+        )
+    # the rounding MODE perturbation: half-even moves exactly the tie cell
+    even = _b2c_derive(floor, mode=ROUND_HALF_EVEN)
+    moved = [
+        c
+        for c in _b2c_cells()
+        if even[c]["tolerance_pp"] != draft[c]["tolerance_pp"]
+    ]
+    assert moved == [B2C_TIE]
+    assert draft[B2C_TIE]["raw"] == Decimal("1.5250")
+    assert (draft[B2C_TIE]["tolerance_pp"], even[B2C_TIE]["tolerance_pp"]) == (
+        1.53,
+        1.52,
+    )
+    # the block's knobs are the drafted ones and nothing else
+    knobs = _gate_b2_claiming_block()["thresholds"]["gated_surface"][
+        "derivations"
+    ]["knobs"]
+    assert (knobs["k_rev"], knobs["rounding_pp"], knobs["rounding_mode"]) == (
+        2.0,
+        0.05,
+        "ROUND_HALF_UP",
+    )
+
+
+def test_gate_b2_claiming_k_by_rounding_sweep_recomputes():
+    """K in {1.5, 2.0, 2.5, 3.0} x rounding in {0.01, 0.05, 0.10} under the
+    drafted grammar: partition and tolerances recomputed and equal to the
+    gate artifact and the floor; 34 / 8 everywhere except (2.5, 0.10) ->
+    33 / 9 and K 3.0 -> 32 / 10 (the verified table)."""
+    floor = _b2c_floor()
+    art = _b2c_gate()
+    sd_knob = _b2c_sd_knob(floor)
+    draft_gated, _ = _b2c_partition(_b2c_derive(floor))
+    gate_rows = art["alternatives"]["draft_grammar_k_by_rounding_sweep"][
+        "rows"
+    ]
+    floor_rows = floor["power_cap_alternatives"][
+        "draft_grammar_k_by_rounding_sweep"
+    ]["rows"]
+    expected = {}
+    for k in (1.5, 2.0, 2.5, 3.0):
+        for rounding_pp in (0.01, 0.05, 0.1):
+            t = round(k * sd_knob, 6)
+            tols = _b2c_derive(
+                floor, term_by_h={1: t, 2: t, 3: t}, rounding_pp=rounding_pp
+            )
+            gated, report = _b2c_partition(tols)
+            key = f"K_{k}|rounding_{rounding_pp}"
+            _b2c_rows_equal(gate_rows[key], gated, report, draft_gated)
+            frow = floor_rows[key]
+            assert frow["n_gate_eligible"] == len(gated)
+            assert frow["cells_demoted_relative_to_draft"] == sorted(
+                set(draft_gated) - set(gated)
+            )
+            assert frow["age66_female_h1_tolerance_pp"] == gated.get(
+                B2C_KNIFE, report.get(B2C_KNIFE)
+            )
+            expected[key] = (len(gated), len(report))
+    assert expected["K_2.5|rounding_0.1"] == (33, 9)
+    for rounding_pp in (0.01, 0.05, 0.1):
+        assert expected[f"K_3.0|rounding_{rounding_pp}"] == (32, 10)
+    assert all(
+        v == (34, 8)
+        for key, v in expected.items()
+        if not key.startswith("K_3.0") and key != "K_2.5|rounding_0.1"
+    )
+
+
+def test_gate_b2_claiming_horizon_aware_pricing_recomputes():
+    """h1 / h2 on the conditional settled-years sd (round 4), h3 on the
+    terminal sd: 37 / 5 with exactly age62|female|h2, age62|male|h2 and
+    age66|female|h2 promoted and 24 gated tolerances differing from the
+    DRAFT -- recomputed and equal to the gate artifact and the floor."""
+    floor = _b2c_floor()
+    art = _b2c_gate()
+    settled = round(floor["strata"]["conditional_settled_years"]["sd_pp"], 4)
+    sd_knob = _b2c_sd_knob(floor)
+    draft = _b2c_derive(floor)
+    draft_gated, _ = _b2c_partition(draft)
+    tols = _b2c_derive(
+        floor,
+        term_by_h={
+            1: round(B2C_K_REV * settled, 6),
+            2: round(B2C_K_REV * settled, 6),
+            3: round(B2C_K_REV * sd_knob, 6),
+        },
+    )
+    gated, report = _b2c_partition(tols)
+    assert (len(gated), len(report)) == (37, 5)
+    promoted = sorted(set(gated) - set(draft_gated))
+    assert promoted == ["age62|female|h2", "age62|male|h2", "age66|female|h2"]
+    assert set(draft_gated) <= set(gated)
+    differing = sum(
+        1 for c, t in gated.items() if c in draft_gated and draft_gated[c] != t
+    )
+    assert differing == 24
+    for c in gated:
+        if c.endswith("h3"):
+            assert gated[c] == draft[c]["tolerance_pp"]
+    row = art["alternatives"]["horizon_aware_pricing"]["result"]
+    _b2c_rows_equal(row, gated, report, draft_gated)
+    frow = floor["power_cap_alternatives"]["horizon_aware_pricing"]["result"]
+    _b2c_rows_equal(frow, gated, report, draft_gated)
+    assert art["alternatives"]["horizon_aware_pricing"]["knobs"] == {
+        "k_rev": B2C_K_REV,
+        "revision_sd_h1_h2_pp": settled,
+        "revision_sd_h3_pp": sd_knob,
+        "rounding_pp": B2C_ROUNDING_PP,
+        "t_max_pp": B2C_T_MAX_PP,
+    }
+
+
+def test_gate_b2_claiming_rounding_mode_tie_and_knife_edge_class():
+    """The 13-cell knife-edge class (unrounded tolerance within 0.002 pp
+    of a 2-dp boundary; 9 gate-eligible) and the single exact tie
+    recompute from this module's Decimal sums and equal the gate
+    artifact, the floor and the block's disclosure."""
+    floor = _b2c_floor()
+    art = _b2c_gate()
+    draft = _b2c_derive(floor)
+    gated, _ = _b2c_partition(draft)
+    band = Decimal("0.002")
+    knife = {}
+    for cell in _b2c_cells():
+        raw = draft[cell]["raw"]
+        scaled = raw / Decimal("0.01")
+        frac = scaled - scaled.to_integral_value(rounding="ROUND_FLOOR")
+        distance = abs(frac - Decimal("0.5")) * Decimal("0.01")
+        if distance < band:
+            knife[cell] = (float(distance), distance == 0, cell in gated)
+    assert len(knife) == 13
+    assert sum(1 for v in knife.values() if v[2]) == 9
+    ties = [c for c, v in knife.items() if v[1]]
+    assert ties == [B2C_TIE]
+    kc = art["alternatives"]["knife_edge_class"]
+    assert (kc["n_cells"], kc["n_gate_eligible"]) == (13, 9)
+    assert (
+        set(kc["cells"])
+        == set(knife)
+        == set(floor["power_cap"]["knife_edge_class"]["cells"])
+    )
+    for cell, (distance, tie, eligible) in knife.items():
+        entry = kc["cells"][cell]
+        assert entry["distance_to_boundary_pp"] == distance
+        assert entry["is_exact_tie"] is tie
+        assert entry["gate_eligible"] is eligible
+    half_even = art["alternatives"]["rounding_mode_round_half_even"]
+    assert half_even["n_cells_differing_from_draft"] == 1
+    assert list(half_even["result"]["cells_differing_from_draft"]) == [B2C_TIE]
+    block = _gate_b2_claiming_block()
+    drafted = block["thresholds"]["power_cap"]["rounding_mode_drafted"]
+    assert "ROUND_HALF_UP" in drafted and "1.5250" in drafted
+    assert "13 cells, 9 gate-eligible" in " ".join(drafted.split())
+
+
+def test_gate_b2_claiming_failure_sets_recompute_from_the_edition():
+    """The deployed nearest-year rule and the full-window OLS, scored with
+    this module's own arithmetic on the 2023 edition (pinned by the
+    floor's sources): the DRAFT failure sets (6 and 20 cells, the exact
+    cells and margins) and the failure sets under EVERY alternative row
+    equal the gate artifact's; the deployed finding equals the floor's."""
+    floor = _b2c_floor()
+    art = _b2c_gate()
+    doc = _b2c_edition()
+    pin = floor["sources"]["edition_2023"]
+    assert (
+        hashlib.sha256((ROOT / B2C_EDITION).read_bytes()).hexdigest()
+        == pin["sha256"]
+    )
+    preds = _b2c_predictors(doc)["all"]
+    draft = _b2c_derive(floor)
+    draft_gated, _ = _b2c_partition(draft)
+    dep = _b2c_deviations(preds["deployed_v1_nearest_year"], doc, draft_gated)
+    ols = _b2c_deviations(preds["ols_full_fit_window"], doc, draft_gated)
+    dep_fail = _b2c_failures(dep, draft_gated)
+    ols_fail = _b2c_failures(ols, draft_gated)
+    assert dep_fail == [
+        "age62|female|h1",
+        "age62|male|h1",
+        "age66|female|h1",
+        "age70plus|female|h2",
+        "age70plus|male|h2",
+        "age70plus|male|h3",
+    ]
+    assert len(ols_fail) == 20
+    finding = art["deployed_v1_finding"]
+    assert finding["failing_cells"] == dep_fail
+    assert finding["n_failed"] == 6
+    assert finding["max_abs_deviation_pp"] == round(max(dep.values()), 4)
+    for cell, entry in finding["per_failing_cell"].items():
+        assert entry["deviation_pp"] == round(dep[cell], 4)
+        assert entry["tolerance_pp"] == draft_gated[cell]
+        assert entry["margin_pp"] == round(dep[cell] - draft_gated[cell], 4)
+    ff = floor["deployed_v1_finding"]
+    assert ff["failing_cells"] == dep_fail
+    assert ff["max_abs_deviation_pp"] == finding["max_abs_deviation_pp"]
+    assert ff["mean_abs_deviation_pp"] == finding["mean_abs_deviation_pp"]
+    # every alternative row's two failure sets
+    term = floor["strata"]["conditional_terminal_year"]
+    sd_knob = _b2c_sd_knob(floor)
+    settled = round(floor["strata"]["conditional_settled_years"]["sd_pp"], 4)
+    variants = []
+    terms = {
+        "k_times_sd_abs_DRAFT": lambda k: round(k * sd_knob, 6),
+        "mean_plus_k_times_sd_abs": lambda k: round(
+            term["mean_pp"] + k * sd_knob, 6
+        ),
+        "k_times_sd_signed": lambda k: round(
+            k * round(term["sd_signed_pp"], 4), 6
+        ),
+        "max_abs_revision_d2": lambda k: round(term["max_pp"], 6),
+    }
+    for grammar, term_of in terms.items():
+        for k in (1.5, 2.0, 2.5):
+            t = term_of(k)
+            row = art["alternatives"]["grammar_and_k_sweep"]["by_grammar"][
+                grammar
+            ]["by_k"][f"K_{k}"]
+            variants.append((row, {1: t, 2: t, 3: t}, B2C_ROUNDING_PP, None))
+            frow = floor["power_cap_alternatives"]["grammar_and_k_sweep"][
+                "by_grammar"
+            ][grammar]["by_k"][f"K_{k}"]
+            variants.append((frow, {1: t, 2: t, 3: t}, B2C_ROUNDING_PP, "f"))
+    for k in (1.5, 2.0, 2.5, 3.0):
+        for rounding_pp in (0.01, 0.05, 0.1):
+            t = round(k * sd_knob, 6)
+            key = f"K_{k}|rounding_{rounding_pp}"
+            row = art["alternatives"]["draft_grammar_k_by_rounding_sweep"][
+                "rows"
+            ][key]
+            variants.append((row, {1: t, 2: t, 3: t}, rounding_pp, None))
+    variants.append(
+        (
+            art["alternatives"]["horizon_aware_pricing"]["result"],
+            {
+                1: round(B2C_K_REV * settled, 6),
+                2: round(B2C_K_REV * settled, 6),
+                3: round(B2C_K_REV * sd_knob, 6),
+            },
+            B2C_ROUNDING_PP,
+            None,
+        )
+    )
+    for row, term_by_h, rounding_pp, kind in variants:
+        gated, _ = _b2c_partition(
+            _b2c_derive(floor, term_by_h=term_by_h, rounding_pp=rounding_pp)
+        )
+        dep_v = _b2c_deviations(preds["deployed_v1_nearest_year"], doc, gated)
+        assert row["deployed_v1_failing_cells"] == _b2c_failures(dep_v, gated)
+        assert row["deployed_v1_n_failed"] == len(
+            row["deployed_v1_failing_cells"]
+        )
+        if kind is None:
+            ols_v = _b2c_deviations(preds["ols_full_fit_window"], doc, gated)
+            assert row["ols_full_fit_window_failing_cells"] == _b2c_failures(
+                ols_v, gated
+            )
+            knife_dev = round(ols_v.get(B2C_KNIFE, ols[B2C_KNIFE]), 4)
+            assert row["age66_female_h1"][
+                "ols_full_fit_window_deviation_pp"
+            ] == (knife_dev)
+            assert row["age66_female_h1"]["ols_full_fit_window_clears"] is (
+                B2C_KNIFE in gated and knife_dev <= gated[B2C_KNIFE]
+            )
+
+
+def test_gate_b2_claiming_frontier_scan_recomputes():
+    """C7: the rule-class frontier scan (the faithful_candidate_oc
+    substitute) recomputes with this module's own seventeen rules: every
+    rule's failure set and max, the four envelopes per cell (widened
+    forecast class 0 failures / 1.2519 / 0.2330; packet grid 1 failure,
+    age66|female|h1 at 2.3288 / 0.3150), and the OLS window sweep
+    (windows 12-21 clear the knife cell; none clears all 34)."""
+    floor = _b2c_floor()
+    art = _b2c_gate()
+    doc = _b2c_edition()
+    preds = _b2c_predictors(doc)
+    gated, _ = _b2c_partition(_b2c_derive(floor))
+    scan = art["faithful_candidate_oc_substitute"]
+    committed = floor["candidate_rules_on_the_draft_surface"]
+    assert set(scan["rules"]) == set(preds["all"]) == set(committed["rules"])
+    devs = {}
+    for name, predict in preds["all"].items():
+        d = _b2c_deviations(predict, doc, gated)
+        devs[name] = d
+        for block in (scan["rules"][name], committed["rules"][name]):
+            assert block["failing_cells"] == _b2c_failures(d, gated), name
+            assert block["n_failed"] == len(block["failing_cells"])
+            assert block["max_abs_deviation_pp"] == round(max(d.values()), 4)
+        rounded_mean = round(sum(round(v, 4) for v in d.values()) / len(d), 4)
+        assert (
+            scan["rules"][name]["mean_abs_deviation_pp_4dp_rounded_convention"]
+            == rounded_mean
+        )
+        assert (
+            committed["rules"][name]["mean_abs_deviation_pp"] == rounded_mean
+        )
+
+    def envelope(names):
+        per_cell = {c: min(devs[n][c] for n in names) for c in sorted(gated)}
+        return per_cell, _b2c_failures(per_cell, gated)
+
+    forecast = sorted(preds["forecast"])
+    grid = [
+        "deployed_v1_nearest_year",
+        "ols_full_fit_window",
+        "ols_last_10",
+        "ols_last_5",
+        "ols_last_3",
+        "damped_local_trend_w5_d0.5",
+        "damped_local_trend_w5_d1.0",
+        "damped_local_trend_w10_d0.5",
+    ]
+    eleven = grid + [
+        "uniform_over_seven_categories",
+        "fit_window_mean",
+        "sex_pooled_nearest_year",
+    ]
+    cases = {
+        "post_hoc_best_of_forecast_class_envelope": forecast,
+        "envelope_at_the_packet_window_grid": grid,
+        "envelope_over_the_v1_eleven_rules_including_degenerate": eleven,
+        "envelope_over_all_rules_including_degenerate": sorted(preds["all"]),
+    }
+    for key, names in cases.items():
+        per_cell, failures = envelope(names)
+        for block in (scan[key], committed[key]):
+            assert block["failing_cells"] == failures, key
+            assert block["max_abs_deviation_pp"] == round(
+                max(per_cell.values()), 4
+            )
+            assert block["mean_abs_deviation_pp"] == round(
+                sum(per_cell.values()) / len(per_cell), 4
+            )
+            assert block["per_cell_pp"] == {
+                c: round(v, 4) for c, v in per_cell.items()
+            }
+    assert scan["post_hoc_best_of_forecast_class_envelope"]["n_failed"] == 0
+    assert scan["envelope_at_the_packet_window_grid"]["failing_cells"] == [
+        B2C_KNIFE
+    ]
+    # the window sweep
+    clearing = []
+    zero = []
+    for window in range(2, 23):
+        d = {}
+        for cell in gated:
+            c, s, h = cell.split("|")
+            h = int(h[1:])
+            slope, intercept = _b2c_ols(
+                B2C_FIT_YEARS[-window:], _b2c_series(doc, c, s)[-window:]
+            )
+            d[cell] = abs(
+                intercept
+                + slope * (B2C_FIT_YEARS[-1] + h)
+                - _b2c_actual(doc, c, s, h)
+            )
+        failures = _b2c_failures(d, gated)
+        row = scan["ols_window_sweep"]["rows"][f"ols_last_{window}"]
+        assert row["n_failed"] == len(failures)
+        assert row["age66_female_h1_deviation_pp"] == round(d[B2C_KNIFE], 4)
+        if d[B2C_KNIFE] <= gated[B2C_KNIFE]:
+            clearing.append(window)
+        if not failures:
+            zero.append(window)
+    assert clearing == list(range(12, 22))
+    assert scan["ols_window_sweep"]["windows_clearing_age66_female_h1"] == (
+        clearing
+    )
+    assert (
+        scan["ols_window_sweep"]["windows_with_zero_failures_on_all_34"]
+        == (zero)
+        == []
+    )
+    assert scan["ols_window_sweep"]["best_single_window_by_n_failed"] == (
+        "ols_last_6"
+    )
+    assert scan["recomputed_here_and_equal_to_the_floor"] is True
+    r2 = art["record_hygiene"]["R2_per_rule_mean_convention"]
+    assert r2["rules_where_the_two_conventions_differ"] == ["ols_last_5"]
+
+
+def test_gate_b2_claiming_mutated_builder_fails_the_binding(tmp_path):
+    """SYNTHETIC: a scratch copy of the gate builder with a mutated
+    tolerance rule (a doubled rounding allowance; separately, the
+    quantisation mode changed inside the derivation) derives a different
+    surface and its own check_against_committed RAISES against the
+    verified floor -- so a builder edit that moved the rule cannot
+    reproduce the committed artifact. The unmutated copy does not raise."""
+    source = (ROOT / B2C_BUILDER).read_text()
+    marker_a = "+ Decimal(repr(rounding_pp))"
+    marker_b = "tolerance = quantize(raw, mode)"
+    assert source.count(marker_a) == 1 and source.count(marker_b) == 1
+    clean = tmp_path / "clean_builder.py"
+    clean.write_text(source)
+    module = _b2_import_from_path(clean, "b2c_clean_builder")
+    floor = module.load_source_floor()
+    module.check_against_committed(module.derive_tolerances(floor), floor)
+    doubled = tmp_path / "mutated_rounding.py"
+    doubled.write_text(
+        source.replace(marker_a, "+ Decimal(repr(rounding_pp)) * 2")
+    )
+    mutated = _b2_import_from_path(doubled, "b2c_mutated_rounding")
+    with pytest.raises(RuntimeError, match="differ from the floor"):
+        mutated.check_against_committed(
+            mutated.derive_tolerances(floor), floor
+        )
+    derived = mutated.derive_tolerances(floor)
+    assert all(
+        derived[c]["tolerance_pp"] != _b2c_derive(floor)[c]["tolerance_pp"]
+        for c in _b2c_cells()
+    )
+    mode = tmp_path / "mutated_mode.py"
+    mode.write_text(
+        source.replace(
+            marker_b, 'tolerance = quantize(raw, "ROUND_HALF_EVEN")'
+        )
+    )
+    mutated_mode = _b2_import_from_path(mode, "b2c_mutated_mode")
+    with pytest.raises(RuntimeError, match="1 cell"):
+        mutated_mode.check_against_committed(
+            mutated_mode.derive_tolerances(floor), floor
+        )
+    for name in (
+        "b2c_clean_builder",
+        "b2c_mutated_rounding",
+        "b2c_mutated_mode",
+    ):
+        sys.modules.pop(name, None)
+
+
+def test_gate_b2_claiming_certification_scope_and_circularity_disclosure():
+    """C2 / C3 / C10 / C11 / C13 / C14: the block states the horizon
+    (h in {1, 2, 3} = 2020-2022; gate_w1 deploys at delta 2), claims
+    exactly the scored surface under the standing rule, excludes the six
+    conversion cells by scope, discloses the loader / lookup mechanism and
+    why the temporal holdout de-circularises, and says what a pass does
+    NOT authorise."""
+    block = _gate_b2_claiming_block()
+    t = block["thresholds"]
+    art = _b2c_gate()
+    flat = " ".join(json.dumps(block).split())
+    assert "h in {1, 2, 3}" in " ".join(
+        t["certification_scope"]["horizon"].split()
+    )
+    assert "claim_age_delta_years 2" in flat
+    assert "gates.yaml:1056, :3294, :4869" in flat
+    assert (
+        "description_claims_exactly_the_scored_surface"
+        in t["governance"]["amendment_rules"]
+    )
+    assert "SINGLE-COHORT" in flat and "claiming.py:396-405" in flat
+    assert "No benefit LEVEL is gated here" in " ".join(
+        block["covers"].split()
+    )
+    assert "circularity_disclosure" in t["protocol"]
+    circ = " ".join(t["protocol"]["circularity_disclosure"].split())
+    assert "NEVER READ" in circ and "REPORT-ONLY" in circ
+    assert "claiming.py:169-179" in " ".join(
+        t["protocol"]["fit_isolation"]["rule"].split()
+    )
+    scope = art["certification_scope"]
+    assert scope["horizon_C11"]["priced_horizons_years"] == [1, 2, 3]
+    assert scope["horizon_C11"]["entitlement_years_scored"] == {
+        "h1": 2020,
+        "h2": 2021,
+        "h3": 2022,
+    }
+    assert len(scope["scored_surface_C13"]["gate_eligible_cells"]) == 34
+    assert len(scope["out_of_scope_C10"]["cells"]) == 6
+    assert scope["out_of_scope_C10"]["reason"] == (
+        "conversion_flow_owned_by_di_surface"
+    )
+    dna = " ".join(scope["what_a_pass_authorises_C14"]["does_not_authorise"])
+    assert "re-gating gate_w1's 14 report-only" in dna
+    assert "beyond h = 3" in dna
+    disclosure = art["temporal_holdout_circularity_disclosure"]
+    assert (
+        "claiming.py:169-179"
+        in disclosure["C2_is_the_holdout_a_holdout"]["mechanism"]
+    )
+    assert (
+        "gates.yaml:3758-3761"
+        in disclosure["C3_does_the_temporal_holdout_de_circularise"][
+            "the_finding_it_answers"
+        ]
+    )
+    cites = art["gates_yaml_citations"]["line_citations"]
+    for line in ("1056", "3294", "4869", "4359", "3758", "4568", "565"):
+        assert cites[line]["holds"] is True
+
+
+def test_gate_b2_claiming_fit_isolation_names_every_channel():
+    """F-A: fit_isolation names the three v2 channels AND the 2023
+    edition's transcription script, whose 2020-2022 rows are re-located
+    here by line (male 159-161, female 185-187 as committed); the scan hit
+    no file that is not a named channel; the block's clause names every
+    committed copy of the rows."""
+    art = _b2c_gate()
+    iso = art["fit_isolation"]
+    paths = [c["path"] for c in iso["channels_carrying_the_held_out_actuals"]]
+    assert paths == [
+        B2C_FLOOR_RUN,
+        "runs/claiming_reference_v1.json",
+        B2C_EDITION,
+        B2C_TRANSCRIPTION,
+    ]
+    assert iso["scan"]["every_hit_is_a_named_channel"] is True
+    assert iso["scan"]["files_hit_not_named_as_a_channel"] == []
+    assert set(iso["scan"]["files_hit"]) <= set(paths)
+    script = (ROOT / B2C_TRANSCRIPTION).read_text().splitlines()
+    doc = _b2c_edition()
+    columns = doc["column_schema"]["raw_columns"]
+    found = {}
+    for sex in B2C_SEXES:
+        for year in (2020, 2021, 2022):
+            row = doc["data"][sex][str(year)]
+            values = [
+                str(year),
+                f"{row['number_thousands']:,}",
+                f"{row['average_age']:.1f}",
+                f"{row['published_total']:.1f}",
+            ] + [
+                ". . ." if row["raw"][c] is None else f"{row['raw'][c]:.1f}"
+                for c in columns
+            ]
+            needle = "\t".join(values)
+            hits = [i + 1 for i, line in enumerate(script) if needle in line]
+            assert len(hits) == 1, (sex, year)
+            found.setdefault(sex, []).append(hits[0])
+    channel = iso["channels_carrying_the_held_out_actuals"][-1]
+    assert channel["line_numbers"] == {
+        "male": sorted(found["male"]),
+        "female": sorted(found["female"]),
+    }
+    assert (
+        channel["pin"]["sha256"]
+        == hashlib.sha256((ROOT / B2C_TRANSCRIPTION).read_bytes()).hexdigest()
+    )
+    clause = " ".join(
+        _gate_b2_claiming_block()["thresholds"]["protocol"]["fit_isolation"][
+            "channels_carrying_the_held_out_actuals"
+        ].split()
+    )
+    for path in paths + [B2C_GATE_RUN]:
+        assert path in clause, path
+    assert "EVERY committed copy of its 2020-2022 rows" in clause
+    assert f"{found['male'][0]}-{found['male'][-1]}" in clause
+    assert f"{found['female'][0]}-{found['female'][-1]}" in clause
+
+
+def test_gate_b2_claiming_draft_block_digest_placeholders_and_wording():
+    """The fragment's sha256, line and byte counts recompute; the block
+    parses as a draft; every placeholder the ceremony notes list is in
+    the text; the forbidden words are absent; the floor's eight
+    does_not_establish lines are carried verbatim; the wording audit's
+    flags recompute."""
+    art = _b2c_gate()
+    floor = _b2c_floor()
+    frag = art["draft_gates_yaml_fragment"]
+    text = frag["text"]
+    assert frag["text_sha256"] == hashlib.sha256(text.encode()).hexdigest()
+    assert frag["n_lines"] == len(text.splitlines())
+    assert frag["n_bytes"] == len(text.encode("utf-8"))
+    block = yaml.safe_load("gates:\n" + text)["gates"]["gate_b2_claiming"]
+    assert block["status"] == "draft_pending_referee_round"
+    assert block["locked"] is False
+    assert block["kind"] == "external_reference_temporal_holdout"
+    assert block["floor_run"] == B2C_GATE_RUN
+    for marker in (
+        "<RULING 1 grammar_and_k_rev>",
+        "<RULING 2 horizon_pricing>",
+        "<RULING 3 age66_female_h1>",
+        "<RULING 4 rounding_mode>",
+        "<RULING 5 d0_estimand>",
+        "<RULING 6 d1_editions>",
+        "<RULING S8 e1_clause>",
+        "<FILLED AT RATIFICATION>",
+    ):
+        assert marker in text, marker
+    notes = block["thresholds"]["ceremony_notes"]
+    assert len(notes["placeholders_the_ratifying_round_must_fill"]) == 7
+    assert "GATE_B2_CLAIMING_BLOCK_LANDED" in notes["flip_plan"]
+    assert (
+        "test_no_gate_b2_claiming_exists_in_gates_yaml" in notes["flip_plan"]
+    )
+    assert set(block["thresholds"]["open_rulings"]) == {
+        str(i) for i in range(1, 9)
+    }
+    flat = " ".join(text.split())
+    for word in ("anchored", "aligned"):
+        assert not re.search(rf"\b{word}\b", flat.lower()), word
+    for line in floor["does_not_establish"]:
+        assert " ".join(line.split()) in flat, line[:40]
+    assert (
+        block["thresholds"]["floor"]["does_not_establish"]
+        == floor["does_not_establish"]
+    )
+    audit = art["wording_audit"]
+    assert audit["forbidden_words_absent_from_fragment"] is True
+    assert audit["forbidden_words_absent_from_artifact"] is True
+    assert audit["circularity_disclosure_present"] is True
+    assert audit["all_required_phrases_present"] is True
+    for item in audit["required_phrases"]:
+        for phrase in item["required_phrases"]:
+            assert phrase in flat, (item["item"], phrase)
+    assert "UNAVAILABLE AS WRITTEN" in flat
+    assert "packet correction 7" in flat
+
+
+def test_gate_b2_claiming_draft_block_is_written_nowhere_else():
+    """The draft block's text lives ONLY in the gate artifact: no other
+    tracked file under gates.yaml / docs / scripts / tests / src / runs /
+    paper contains it (pre-flip); gates.yaml is deep-equal to
+    origin/master if that ref resolves."""
+    art = _b2c_gate()
+    text = art["draft_gates_yaml_fragment"]["text"]
+    needle = json.dumps(text)[1:-1][:400]
+    for path in _b2_tracked_text_files():
+        if path.resolve() == (ROOT / B2C_GATE_RUN).resolve():
+            continue
+        try:
+            body = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+        assert text not in body, path
+        assert needle not in body, path
+    if not GATE_B2_CLAIMING_BLOCK_LANDED:
+        master = _master_gates_mapping()
+        if master is not None:
+            current = yaml.safe_load((ROOT / "gates.yaml").read_text())[
+                "gates"
+            ]
+            assert current == master
+            assert "gate_b2_claiming" not in master
+
+
+def test_gate_b2_claiming_open_questions_are_filed_not_ruled():
+    """The eight rulings the verification's Verdict lists, in its order
+    and form: 1 grammar / K_REV (four grammars x three K priced), 2 horizon
+    pricing, 3 the knife edge with option (ii) UNAVAILABLE AS WRITTEN and
+    the demotion consequence, 4 rounding mode, 5 the d0 estimand, 6 the
+    d1 editions, 7 the sequencing constraint, 8 the E1 clause -- none
+    made."""
+    art = _b2c_gate()
+    questions = {q["id"]: q for q in art["open_questions_for_the_ceremony"]}
+    assert list(questions) == [str(i) for i in range(1, 9)]
+    for qid, q in questions.items():
+        assert any(
+            token in q["status"]
+            for token in (
+                "not ruled",
+                "RECORDED",
+                "CLAUSE CARRIED",
+                "not staged",
+            )
+        ), (qid, q["status"])
+    q1 = questions["1"]
+    assert set(q1["priced"]) == {
+        "k_times_sd_abs_DRAFT",
+        "mean_plus_k_times_sd_abs",
+        "k_times_sd_signed",
+        "max_abs_revision_d2",
+    }
+    assert all(len(v) == 3 for v in q1["priced"].values())
+    assert (
+        q1["priced"]["k_times_sd_abs_DRAFT"]["K_2.0"]["partition"] == "34 / 8"
+    )
+    assert q1["priced"]["mean_plus_k_times_sd_abs"]["K_2.0"]["partition"] == (
+        "32 / 10"
+    )
+    assert (
+        q1["priced"]["k_times_sd_abs_DRAFT"]["K_2.0"]["deployed_v1_n_failed"]
+        == 6
+    )
+    assert (
+        questions["2"]["priced"]["settled_sd_on_h1_h2"]["partition"]
+        == "37 / 5"
+    )
+    assert (
+        questions["2"]["priced"]["settled_sd_on_h1_h2"]["deployed_v1_n_failed"]
+        == 15
+    )
+    q3 = questions["3"]
+    assert q3["options"]["ii_structural_demotion_as_drafted"]["status"] == (
+        "UNAVAILABLE AS WRITTEN"
+    )
+    assert (
+        q3["options"]["ii_structural_demotion_as_drafted"]["basis"][
+            "break_covers_age66_female_h1"
+        ]
+        is False
+    )
+    assert "from one failure to zero" in q3["consequence_of_demotion"]
+    assert q3["envelopes"]["packet_window_grid"]["n_failed"] == 1
+    assert q3["envelopes"]["widened_forecast_class"]["n_failed"] == 0
+    assert q3["options"]["i_keep_as_teeth"]["priced"][
+        "windows_clearing_this_cell"
+    ] == list(range(12, 22))
+    q4 = questions["4"]
+    assert q4["priced"]["ROUND_HALF_EVEN"]["n_cells_differing_from_draft"] == 1
+    assert (
+        q4["priced"]["knife_edge_class_to_know_before_any_knob_is_fixed"][
+            "n_cells"
+        ]
+        == 13
+    )
+    assert (
+        "eight-category cap"
+        in questions["5"]["what_a_published_choice_forces"]
+    )
+    assert questions["6"]["priced_interim_alternative"].startswith(
+        "horizon_pricing"
+    )
+    q7 = questions["7"]["question"]
+    assert "test_no_gate_b2_claiming_exists_in_gates_yaml" in q7
+    assert "test_no_gate_b2_pia_oracle_exists_in_gates_yaml" in q7
+    q8 = questions["8"]["clause"]
+    assert "2026-07-05" in q8 and "ffef7b4" in q8 and "not re-executed" in q8
+    assert "a03e82e5" in q8
+    dnd = " ".join(art["does_not_do"])
+    assert "edit gates.yaml" in dnd and "score a candidate" in dnd
+    assert "make any ruling" in dnd
+
+
+def test_gate_b2_claiming_flip_plan_marker_sites_and_guard_tests():
+    """Every file the flip plan names exists and carries
+    GATE_B2_CLAIMING_BLOCK_LANDED at the SAME value as this file; the
+    live-file guard test the flip must retire exists pre-flip and is gone
+    post-flip; the three master-compare sites the flip must widen exist."""
+    art = _b2c_gate()
+    plan = art["flip_plan"]
+    assert plan["marker"] == "GATE_B2_CLAIMING_BLOCK_LANDED"
+    assert (
+        "tests/test_gates_derivations.py" in plan["files_carrying_the_marker"]
+    )
+    pattern = re.compile(
+        r"^GATE_B2_CLAIMING_BLOCK_LANDED = (True|False)$", re.M
+    )
+    for rel in plan["files_carrying_the_marker"]:
+        path = ROOT / rel
+        assert path.is_file(), rel
+        found = pattern.findall(path.read_text())
+        assert len(found) == 1, rel
+        assert (found[0] == "True") is GATE_B2_CLAIMING_BLOCK_LANDED, rel
+    guard = (ROOT / "tests" / "test_claiming_publication_floor.py").read_text()
+    defined = "def test_no_gate_b2_claiming_exists_in_gates_yaml" in guard
+    assert defined is (not GATE_B2_CLAIMING_BLOCK_LANDED)
+    assert plan["live_file_tests_the_flip_retires"][0].endswith(
+        "test_no_gate_b2_claiming_exists_in_gates_yaml"
+    )
+    for site in plan["master_compare_sites_that_must_admit_the_new_key"]:
+        rel = site.split("::")[0].split(" ")[0]
+        assert (ROOT / rel).is_file(), site
+    this = (ROOT / "tests" / "test_gates_derivations.py").read_text()
+    assert "test_gate_m4_flip_leaves_locked_siblings_byte_identical" in this
+
+
+# --------------------------------------------------------------------------
+# gate_b2_pia_oracle (issue #74 component SF) THRESHOLD BINDING -- DRAFT,
+# pre-lock, the same shape: the block is carried as a string in
+# runs/pia_gate_partition_v1.json; the per-rule E1 / E2 / E3 partition is
+# recomputed here from the VERIFIED coverage record
+# runs/pia_rule_coverage_v1.json's status labels under this module's OWN
+# mapping (the definition's letter), and under every filed alternative.
+# --------------------------------------------------------------------------
+B2P_COVERAGE_RUN = "runs/pia_rule_coverage_v1.json"
+B2P_COVERAGE_COMMITTED = (
+    75_382,
+    "7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d",
+)
+B2P_GATE_RUN = "runs/pia_gate_partition_v1.json"
+B2P_GATE_COMMITTED = (
+    169_031,
+    "d14b7192425cc1f91e0e853fd48bca5896f89b1ddb1d2f20cccec24f984735aa",
+)
+B2P_BUILDER = "scripts/build_pia_gate_partition_v1.py"
+#: This module's own mapping -- the definition's letter.
+B2P_E1 = {
+    "satisfied": True,
+    "policyengine_us_only": True,
+    "degenerate": False,
+    "unsatisfiable_today": False,
+}
+B2P_E2 = {
+    "satisfied": True,
+    "satisfied_with_a_constant_override": False,
+    "weak": False,
+    "partial": False,
+    "implied": False,
+    "absent": False,
+}
+B2P_E3 = {
+    "all_branches_exercised": True,
+    "exhaustive": True,
+    "both_branches_reached": True,
+    "partial": False,
+    "partial_and_one_branch_unexercised": False,
+    "partial_with_a_named_simplification": False,
+    "branch_unexercised": False,
+    "unexercised": False,
+    "unit_test_only": False,
+}
+B2P_AUXILIARY = (
+    "R11_402q1_spousal_early_reduction",
+    "R12_402bc_402k3_spouse_benefit",
+    "R13_402q_survivor_reduction_ramp",
+    "R14_402ef_widow_riblim_drc_dual",
+    "R15_402e3_f4_remarriage_protection",
+)
+GATE_B2_PIA_ORACLE_BLOCK_LANDED = False
+
+
+def _b2p_coverage() -> dict:
+    return json.loads((ROOT / B2P_COVERAGE_RUN).read_text())
+
+
+def _b2p_gate() -> dict:
+    return json.loads((ROOT / B2P_GATE_RUN).read_text())
+
+
+def _gate_b2_pia_oracle_block() -> dict:
+    if GATE_B2_PIA_ORACLE_BLOCK_LANDED:
+        gates = yaml.safe_load((ROOT / "gates.yaml").read_text())
+        return gates["gates"]["gate_b2_pia_oracle"]
+    text = _b2p_gate()["draft_gates_yaml_fragment"]["text"]
+    return yaml.safe_load("gates:\n" + text)["gates"]["gate_b2_pia_oracle"]
+
+
+def _b2p_partition(coverage: dict, e1, e2, e3, waive_label=None) -> dict:
+    """This module's own partition from the coverage record's labels."""
+    out = {"all_three": [], "strict_subset": {}, "none": [], "per_rule": {}}
+    for rule in coverage["rule_inventory"]:
+        labels = (
+            rule["e1"]["status"],
+            rule["e2"]["status"],
+            rule["e3"]["status"],
+        )
+        waived = waive_label is not None and labels[0] == waive_label
+        holds = (
+            True if waived else e1[labels[0]],
+            e2[labels[1]],
+            e3[labels[2]],
+        )
+        failing = [
+            n for n, h in zip(("E1", "E2", "E3"), holds, strict=True) if not h
+        ]
+        if not failing:
+            out["all_three"].append(rule["id"])
+            cls = "all_three"
+        elif len(failing) < 3:
+            out["strict_subset"][rule["id"]] = failing
+            cls = "strict_subset"
+        else:
+            out["none"].append(rule["id"])
+            cls = "none"
+        out["per_rule"][rule["id"]] = (cls, failing)
+    return out
+
+
+def test_gate_b2_pia_oracle_coverage_bytes_are_pinned_and_read_by_path():
+    path = ROOT / B2P_COVERAGE_RUN
+    assert path.stat().st_size == B2P_COVERAGE_COMMITTED[0]
+    assert (
+        hashlib.sha256(path.read_bytes()).hexdigest()
+        == B2P_COVERAGE_COMMITTED[1]
+    )
+    art = _b2p_gate()
+    src = art["source_coverage"]
+    assert src["path"] == B2P_COVERAGE_RUN
+    assert (src["size_bytes"], src["sha256"]) == B2P_COVERAGE_COMMITTED
+    assert art["schema_version"] == "pia_gate_partition.v1"
+    assert art["reported_not_gated"] is True
+    block = _gate_b2_pia_oracle_block()
+    assert block["derived_from_coverage"] == B2P_COVERAGE_RUN
+    assert block["derived_from_coverage_sha256"] == B2P_COVERAGE_COMMITTED[1]
+    assert block["thresholds"]["coverage_run_sha256"] == (
+        B2P_COVERAGE_COMMITTED[1]
+    )
+    # the coverage record's own source pins still hold on disk
+    for rel, sha in src["its_source_pins_rechecked_on_disk"].items():
+        assert hashlib.sha256((ROOT / rel).read_bytes()).hexdigest() == sha
+
+
+def test_gate_b2_pia_oracle_gate_artifact_bytes_are_pinned():
+    path = ROOT / B2P_GATE_RUN
+    assert path.stat().st_size == B2P_GATE_COMMITTED[0]
+    assert (
+        hashlib.sha256(path.read_bytes()).hexdigest() == B2P_GATE_COMMITTED[1]
+    )
+    art = _b2p_gate()
+    assert (
+        art["revision_pins"]["gate_builder_sha256"]
+        == hashlib.sha256((ROOT / B2P_BUILDER).read_bytes()).hexdigest()
+    )
+
+
+def test_gate_b2_pia_oracle_pre_lock_guard_or_live_block():
+    gates_text = (ROOT / "gates.yaml").read_text()
+    block = _gate_b2_pia_oracle_block()
+    if not GATE_B2_PIA_ORACLE_BLOCK_LANDED:
+        assert "gate_b2_pia_oracle" not in gates_text
+        assert "pia_gate_partition_v1" not in gates_text
+        assert "pia_rule_coverage_v1" not in gates_text
+        assert block["status"] == "draft_pending_referee_round"
+        assert block["locked"] is False
+        assert block["thresholds"]["locked"] is False
+        assert block["floor_run_sha256"] == "<FILLED AT RATIFICATION>"
+        assert block["lock_ceremony"]["exists"] is False
+        return
+    spec = yaml.safe_load(gates_text)
+    assert "gate_b2_pia_oracle" in spec["gates"]
+    assert block["floor_run"] == B2P_GATE_RUN
+    assert (
+        block["floor_run_sha256"]
+        == hashlib.sha256((ROOT / B2P_GATE_RUN).read_bytes()).hexdigest()
+    )
+    assert block["locked"] is True
+
+
+def test_gate_b2_pia_oracle_partition_recomputes_from_coverage_labels():
+    """Under this module's own mapping (the definition's letter) exactly
+    R10 holds E1+E2+E3; the strict-subset rules and their failing
+    conditions, and the five rules holding none, equal the gate
+    artifact's strict partition and the block's; every label the record
+    uses is in the mapping."""
+    coverage = _b2p_coverage()
+    art = _b2p_gate()
+    mine = _b2p_partition(coverage, B2P_E1, B2P_E2, B2P_E3)
+    strict = art["partitions"]["strict"]
+    assert (
+        mine["all_three"] == strict["all_three"] == ["R10_416l_fra_schedule"]
+    )
+    assert mine["strict_subset"] == strict["strict_subset"]
+    assert mine["none"] == strict["none"]
+    assert set(mine["none"]) == {
+        "R3_415b2B_computation_year_count",
+        "R12_402bc_402k3_spouse_benefit",
+        "R13_402q_survivor_reduction_ramp",
+        "R14_402ef_widow_riblim_drc_dual",
+        "R15_402e3_f4_remarriage_protection",
+    }
+    assert len(mine["strict_subset"]) == 10
+    assert strict["mapping"]["e1"] == B2P_E1
+    assert strict["mapping"]["e2"] == B2P_E2
+    assert strict["mapping"]["e3"] == B2P_E3
+    used = {
+        c: {r[c]["status"] for r in coverage["rule_inventory"]}
+        for c in ("e1", "e2", "e3")
+    }
+    assert used["e1"] <= set(B2P_E1)
+    assert used["e2"] <= set(B2P_E2)
+    assert used["e3"] <= set(B2P_E3)
+    block = _gate_b2_pia_oracle_block()
+    part = block["thresholds"]["partition"]["strict_reading"]
+    assert part["all_three"] == mine["all_three"]
+    assert part["none"] == mine["none"]
+    assert {k: v for k, v in part["strict_subset"].items()} == mine[
+        "strict_subset"
+    ]
+    inventory = block["thresholds"]["rule_inventory"]
+    assert len(inventory) == 16
+    for rule in coverage["rule_inventory"]:
+        entry = inventory[rule["id"]]
+        assert entry["e1"] == rule["e1"]["status"]
+        assert entry["e2"] == rule["e2"]["status"]
+        assert entry["e3"] == rule["e3"]["status"]
+        cls, failing = mine["per_rule"][rule["id"]]
+        assert entry["strict_reading"]["class"] == cls
+        assert entry["strict_reading"]["failing"] == failing
+        assert entry["packet_proposed_verdict"] == (
+            rule["packet_proposed_verdict"]["verdict"]
+        )
+    gp = art["gate_partition"]
+    assert (gp["n_all_three"], gp["n_strict_subset"], gp["n_none"]) == (
+        1,
+        10,
+        5,
+    )
+
+
+def test_gate_b2_pia_oracle_alternative_readings_recompute():
+    """Every filed alternative reading recomputes: Axiom-only E1 moves R8
+    / R9 / R16 out of E1; the P6 waiver moves the five auxiliary rules'
+    labels but none into all_three; the P9 override moves R13's label
+    only; the all-three set is R10 under every reading."""
+    coverage = _b2p_coverage()
+    art = _b2p_gate()
+    alts = art["partitions"]["alternatives"]
+    axiom = _b2p_partition(
+        coverage, {**B2P_E1, "policyengine_us_only": False}, B2P_E2, B2P_E3
+    )
+    assert axiom["all_three"] == alts["axiom_only_e1"]["all_three"]
+    assert axiom["strict_subset"] == alts["axiom_only_e1"]["strict_subset"]
+    assert set(alts["axiom_only_e1"]["moves_vs_strict"]) == {
+        "R8_402q_worker_early_reduction",
+        "R9_402w_delayed_retirement_credit",
+        "R16_age62_composition",
+    }
+    p6 = _b2p_partition(
+        coverage, B2P_E1, B2P_E2, B2P_E3, waive_label="unsatisfiable_today"
+    )
+    assert p6["all_three"] == alts["p6_e1_waiver_for_r11_r15"]["all_three"]
+    assert (
+        p6["strict_subset"]
+        == alts["p6_e1_waiver_for_r11_r15"]["strict_subset"]
+    )
+    assert p6["none"] == alts["p6_e1_waiver_for_r11_r15"]["none"]
+    assert set(alts["p6_e1_waiver_for_r11_r15"]["moves_vs_strict"]) == set(
+        B2P_AUXILIARY
+    )
+    p9 = _b2p_partition(
+        coverage,
+        B2P_E1,
+        {**B2P_E2, "satisfied_with_a_constant_override": True},
+        B2P_E3,
+    )
+    assert (
+        p9["strict_subset"]
+        == alts["p9_constant_override_counts_as_e2"]["strict_subset"]
+    )
+    assert list(
+        alts["p9_constant_override_counts_as_e2"]["moves_vs_strict"]
+    ) == ["R13_402q_survivor_reduction_ramp"]
+    inv = art["partitions"]["invariant_under_every_reading"]
+    assert inv["rules_holding_all_three_under_every_variant"] == [
+        "R10_416l_fra_schedule"
+    ]
+    # only R3 holds none under EVERY reading: the P6 waiver lifts R15's E1
+    assert inv["rules_holding_none_under_every_variant"] == [
+        "R3_415b2B_computation_year_count"
+    ]
+    assert "R15_402e3_f4_remarriage_protection" in p6["strict_subset"]
+    packet = alts["packet_proposed_verdicts"]
+    assert packet["rules_holding_all_three_under_the_strict_reading"] == [
+        "R10_416l_fra_schedule"
+    ]
+    assert (
+        "R7_415g_dime_floor"
+        in packet[
+            "packet_qualified_forms_that_the_strict_reading_does_not_award"
+        ]
+    )
+
+
+def test_gate_b2_pia_oracle_precision_and_e1_clause():
+    """P11: to the cent (0.005 dollars), the four observed deviations
+    equal the coverage record's and the largest is within the bound. S8:
+    the E1 clause names the commit date and engine revision for the Axiom
+    half and records the policyengine-us half as re-executed by the
+    verification."""
+    coverage = _b2p_coverage()
+    art = _b2p_gate()
+    p = art["precision_claim_P11"]
+    ce = coverage["evidence_inventory"]["cross_engine"]
+    assert (
+        p["agreement_tolerance_dollars"]
+        == ce["agreement_tolerance_dollars"]
+        == 0.005
+    )
+    assert (
+        p["observed"]
+        == coverage["computes_exactly_definition_proposal"][
+            "precision_disclosure"
+        ]
+    )
+    assert p["largest_observed_is_within_the_bound"] is True
+    assert p["largest_observed_dollar_deviation"] <= 0.005
+    assert "TO THE CENT" in p["claim"] and "NOT bit-exact" in p["claim"]
+    clause = art["e1_clause_S8"]
+    assert clause["clause"].startswith(
+        "E1 as committed 2026-07-05 at engine ffef7b4"
+    )
+    assert "not re-executed" in clause["clause"]
+    assert (
+        clause["axiom_half"]["engine_revision"]
+        == ce["engine_revision"]
+        == "ffef7b4"
+    )
+    assert clause["axiom_half"]["re_executed_in_this_ceremony"] is False
+    assert clause["axiom_half"]["rules"] == [
+        r["id"]
+        for r in coverage["rule_inventory"]
+        if r["cross_engine"]["n_cases"] > 0
+    ]
+    pe = clause["policyengine_us_half"]
+    assert pe["re_executed_in_this_ceremony"] is True
+    assert pe["cases"] == 12 and pe["policyengine_us_checkout"] == "a03e82e5"
+    assert pe["test"].endswith(
+        "test_pe_us_simulation_matches_oracle_foundation_live"
+    )
+    block = _gate_b2_pia_oracle_block()
+    carried = " ".join(block["thresholds"]["e1_clause_as_carried"].split())
+    assert "E1 as committed 2026-07-05 at engine ffef7b4" in carried
+    assert "a03e82e5" in carried and "PASSED" in carried
+    assert block["thresholds"]["e1_clause"] == "<RULING S8 e1_clause>"
+
+
+def test_gate_b2_pia_oracle_worked_example_classification():
+    """P7: seven published-percentage rows and three arithmetic /
+    branch-selection rows, the packet's split as the coverage record
+    carries it; the ratios recompute; the per-rule E2 support follows."""
+    coverage = _b2p_coverage()
+    art = _b2p_gate()
+    ex = art["worked_examples_classification_P7"]
+    assert (
+        ex["n_published_percentage"],
+        ex["n_arithmetic_or_branch_selection"],
+    ) == (
+        7,
+        3,
+    )
+    assert ex["all_agree_to_the_cent"] is True
+    rows = coverage["evidence_inventory"]["ssa_worked_examples"]["examples"]
+    cls = coverage["evidence_inventory"]["ssa_worked_examples"][
+        "anchor_classification"
+    ]
+    for row in rows:
+        entry = ex["examples"][row["name"]]
+        assert entry["expected_over_base_pia"] == row["expected_over_base_pia"]
+        assert entry["expected_over_base_pia"] == pytest.approx(
+            row["expected"] / row["base_pia"]
+        )
+        expected_label = (
+            "published_percentage"
+            if row["name"] in cls["packet_published_percentage_anchors"]
+            else "arithmetic_or_branch_selection"
+        )
+        assert entry["packet_classification"] == expected_label
+    assert ex["by_rule"]["R14_402ef_widow_riblim_drc_dual"][
+        "arithmetic_or_branch_selection"
+    ] == ["rib_lim_deceased_actual_higher", "drc_pass_through"]
+    assert ex["by_rule"]["R12_402bc_402k3_spouse_benefit"][
+        "arithmetic_or_branch_selection"
+    ] == ["spouse_dual_entitlement_excess"]
+    assert (
+        ex["by_rule"]["R11_402q1_spousal_early_reduction"][
+            "arithmetic_or_branch_selection"
+        ]
+        == []
+    )
+
+
+def test_gate_b2_pia_oracle_family_maximum_and_frozen_scope_by_ast():
+    """P10: the household consumer is CoupleBenefit.total, re-derived by
+    ast here (class, property and function spans) and equal to the gate
+    artifact and the coverage record; no plural name is defined. P15: the
+    frozen-scope sentence is in the module and carried in the block."""
+    import ast as _ast
+
+    art = _b2p_gate()
+    coverage = _b2p_coverage()
+    tree = _ast.parse(
+        (ROOT / "src/populace_dynamics/household.py").read_text()
+    )
+    spans = {}
+    for node in _ast.walk(tree):
+        if isinstance(node, _ast.ClassDef) and node.name == "CoupleBenefit":
+            spans["class"] = [node.lineno, node.end_lineno]
+            for item in node.body:
+                if isinstance(item, _ast.FunctionDef) and item.name == "total":
+                    spans["total"] = [item.lineno, item.end_lineno]
+        if (
+            isinstance(node, _ast.FunctionDef)
+            and node.name == "couple_benefit"
+        ):
+            spans["function"] = [node.lineno, node.end_lineno]
+        if isinstance(node, (_ast.ClassDef, _ast.FunctionDef)):
+            assert node.name not in ("CoupleBenefits", "couple_benefits")
+    fm = art["family_maximum_P10"]["consumer"]
+    assert fm["class_lines"] == spans["class"]
+    assert fm["total_property_lines"] == spans["total"]
+    assert fm["couple_benefit_function_lines"] == spans["function"]
+    cs = coverage["sources"]["consumer_symbols"]
+    assert spans["class"] == [
+        cs["class"]["first_line"],
+        cs["class"]["last_line"],
+    ]
+    assert fm["plural_name_defined_anywhere_in_the_module"] is False
+    text = (ROOT / "src/populace_dynamics/ss/__init__.py").read_text()
+    sentence = art["frozen_scope_P15"]["key_sentence"]
+    assert sentence in " ".join(text.split())
+    block = _gate_b2_pia_oracle_block()
+    flat = " ".join(json.dumps(block).split())
+    assert "CoupleBenefit.total" in flat
+    assert f"household.py:{spans['class'][0]}-{spans['class'][1]}" in flat
+    assert sentence in flat
+    assert "KNOWN UNCAUGHT class" in flat
+
+
+def test_gate_b2_pia_oracle_draft_block_digest_placeholders_and_wording():
+    """The fragment's digest and counts recompute; it parses as a draft;
+    the placeholders are present; the definition of "computes exactly" is
+    stated (P2); what a pass does not authorise is stated (P14); the
+    forbidden words are absent; the coverage record's seven
+    does_not_establish lines are carried verbatim."""
+    art = _b2p_gate()
+    coverage = _b2p_coverage()
+    frag = art["draft_gates_yaml_fragment"]
+    text = frag["text"]
+    assert frag["text_sha256"] == hashlib.sha256(text.encode()).hexdigest()
+    assert frag["n_lines"] == len(text.splitlines())
+    assert frag["n_bytes"] == len(text.encode("utf-8"))
+    block = yaml.safe_load("gates:\n" + text)["gates"]["gate_b2_pia_oracle"]
+    assert block["status"] == "draft_pending_referee_round"
+    assert block["locked"] is False
+    assert block["kind"] == "exact_agreement_per_rule"
+    assert block["holdout_basis"] == []
+    for marker in (
+        "<RULING P1 gate_kind>",
+        "<RULING P6 e1_waiver>",
+        "<RULING P8 case_set>",
+        "<RULING P9 survivor_period>",
+        "<RULING P13 granularity>",
+        "<RULING S8 e1_clause>",
+        "<FILLED AT RATIFICATION>",
+    ):
+        assert marker in text, marker
+    notes = block["thresholds"]["ceremony_notes"]
+    assert len(notes["placeholders_the_ratifying_round_must_fill"]) == 7
+    assert "GATE_B2_PIA_ORACLE_BLOCK_LANDED" in notes["flip_plan"]
+    assert (
+        "test_no_gate_b2_pia_oracle_exists_in_gates_yaml" in notes["flip_plan"]
+    )
+    assert set(block["thresholds"]["open_rulings"]) == {
+        "P1",
+        "P6",
+        "P8",
+        "P9",
+        "P13",
+        "S7",
+        "S8",
+    }
+    flat = " ".join(text.split())
+    for word in ("anchored", "aligned"):
+        assert not re.search(rf"\b{word}\b", flat.lower()), word
+    statistic = " ".join(block["thresholds"]["statistic"].split())
+    for phrase in (
+        "E1 INDEPENDENT RE-EXECUTION",
+        "E2 EXTERNAL ANCHOR",
+        "E3 EXERCISED BRANCHES AND BOUNDARIES",
+        "X1 NAMED NON-COVERAGE",
+        "X2 NAMED CONSTANTS",
+        "TO THE CENT",
+        "NOT bit-exactness",
+    ):
+        assert phrase in statistic, phrase
+    dna = block["thresholds"]["certification_scope"]["does_not_authorise"]
+    assert len(dna) >= 7
+    assert any("household benefit TOTAL" in line for line in dna)
+    assert any("aime()" in line for line in dna)
+    assert any("gate_2c" in line for line in dna)
+    for line in coverage["does_not_establish"]:
+        assert " ".join(line.split()) in flat, line[:40]
+    assert (
+        block["thresholds"]["coverage_record_does_not_establish"]
+        == coverage["does_not_establish"]
+    )
+    audit = art["wording_audit"]
+    assert audit["forbidden_words_absent_from_fragment"] is True
+    assert audit["forbidden_words_absent_from_artifact"] is True
+    assert audit["all_required_phrases_present"] is True
+    assert "gates.yaml:1056, :3294, :4869" in flat
+
+
+def test_gate_b2_pia_oracle_draft_block_is_written_nowhere_else():
+    art = _b2p_gate()
+    text = art["draft_gates_yaml_fragment"]["text"]
+    needle = json.dumps(text)[1:-1][:400]
+    for path in _b2_tracked_text_files():
+        if path.resolve() == (ROOT / B2P_GATE_RUN).resolve():
+            continue
+        try:
+            body = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+        assert text not in body, path
+        assert needle not in body, path
+    if not GATE_B2_PIA_ORACLE_BLOCK_LANDED:
+        master = _master_gates_mapping()
+        if master is not None:
+            current = yaml.safe_load((ROOT / "gates.yaml").read_text())[
+                "gates"
+            ]
+            assert current == master
+            assert "gate_b2_pia_oracle" not in master
+
+
+def test_gate_b2_pia_oracle_open_questions_are_filed_not_ruled():
+    """P1, P6, P8, P9, P13 filed and priced from the coverage record as
+    v2 leaves it; S7 the sequencing constraint; S8 the E1 clause; none
+    made."""
+    art = _b2p_gate()
+    questions = {q["id"]: q for q in art["open_questions_for_the_ceremony"]}
+    assert list(questions) == ["P1", "P6", "P8", "P9", "P13", "S7", "S8"]
+    for qid, q in questions.items():
+        assert any(
+            token in q["status"]
+            for token in ("not ruled", "RECORDED", "CLAUSE CARRIED")
+        ), (qid, q["status"])
+    p1 = questions["P1"]
+    assert p1["options"]["a_accept_the_gate_kind"]["priced"][
+        "rules_awarded_under_the_strict_reading"
+    ] == ["R10_416l_fra_schedule"]
+    assert "gates.yaml:917" in p1["the_one_outcome_the_standing_rule_forbids"]
+    p6 = questions["P6"]
+    assert p6["options"]["a_per_rule_e1_waiver"]["partition"]["all_three"] == [
+        "R10_416l_fra_schedule"
+    ]
+    assert p6["options"]["b_split_the_gate_and_hold_the_auxiliary_half"][
+        "held_rules"
+    ] == list(B2P_AUXILIARY)
+    p8 = questions["P8"]
+    assert (
+        p8["facts"]["couple_grid"][
+            "n_rows_with_both_spouses_drawing_an_excess"
+        ]
+        == 0
+    )
+    assert p8["facts"]["cross_engine"]["eligibility_years"] == [2020, 2026]
+    assert (
+        "R3_would_be_SEPARATED_not_satisfied"
+        in p8["priced"]["what_a_wider_set_could_move"]
+    )
+    p9 = questions["P9"]
+    assert p9["options"]["a_constant_override_does_not_satisfy_e2"][
+        "R13_class"
+    ] == ("none")
+    assert (
+        p9["options"]["b_override_counts_as_e2_with_the_domain_named"][
+            "R13_class"
+        ]
+        == "strict_subset"
+    )
+    assert "FORBIDDEN" in p9["options"]["c_add_a_survivor_fra_schedule"]
+    assert questions["P13"]["facts"]["n_rules"] == 16
+    assert (
+        "test_no_gate_b2_pia_oracle_exists_in_gates_yaml"
+        in questions["S7"]["question"]
+    )
+    assert "2026-07-05" in questions["S8"]["clause"]
+
+
+def test_gate_b2_pia_oracle_flip_plan_marker_sites_and_guard_tests():
+    art = _b2p_gate()
+    plan = art["flip_plan"]
+    assert plan["marker"] == "GATE_B2_PIA_ORACLE_BLOCK_LANDED"
+    pattern = re.compile(
+        r"^GATE_B2_PIA_ORACLE_BLOCK_LANDED = (True|False)$", re.M
+    )
+    for rel in plan["files_carrying_the_marker"]:
+        path = ROOT / rel
+        assert path.is_file(), rel
+        found = pattern.findall(path.read_text())
+        assert len(found) == 1, rel
+        assert (found[0] == "True") is GATE_B2_PIA_ORACLE_BLOCK_LANDED, rel
+    guard = (ROOT / "tests" / "test_pia_rule_coverage.py").read_text()
+    defined = "def test_no_gate_b2_pia_oracle_exists_in_gates_yaml" in guard
+    assert defined is (not GATE_B2_PIA_ORACLE_BLOCK_LANDED)
+    assert "test_computes_exactly_citation_is_blob_pinned" in guard
+    for site in plan["master_compare_sites_that_must_admit_the_new_key"]:
+        rel = site.split("::")[0].split(" ")[0]
+        assert (ROOT / rel).is_file(), site
+
+
+def test_gate_b2_pia_oracle_mutated_builder_fails_the_binding(tmp_path):
+    """SYNTHETIC: a scratch copy of the PIA gate builder whose strict E1
+    mapping no longer counts policyengine_us_only derives a DIFFERENT
+    strict partition (R8 / R9 / R16 move), and one whose E3 mapping counts
+    'partial' awards rules the committed partition does not -- so an
+    edited mapping cannot reproduce the committed artifact."""
+    source = (ROOT / B2P_BUILDER).read_text()
+    coverage = _b2p_coverage()
+    committed = _b2p_gate()["partitions"]["strict"]
+    clean = tmp_path / "clean_pia_builder.py"
+    clean.write_text(source)
+    module = _b2_import_from_path(clean, "b2p_clean_builder")
+    strict = module.partitions(coverage)["strict"]
+    assert strict["all_three"] == committed["all_three"]
+    assert strict["strict_subset"] == committed["strict_subset"]
+    marker = '    "policyengine_us_only": True,\n    "degenerate": False,\n    "unsatisfiable_today": False,\n}\nE1_AXIOM_ONLY'
+    assert source.count(marker) == 1
+    mutated = tmp_path / "mutated_e1.py"
+    mutated.write_text(
+        source.replace(
+            marker,
+            '    "policyengine_us_only": False,\n    "degenerate": False,\n    "unsatisfiable_today": False,\n}\nE1_AXIOM_ONLY',
+        )
+    )
+    m1 = _b2_import_from_path(mutated, "b2p_mutated_e1")
+    s1 = m1.partitions(coverage)["strict"]
+    assert s1["strict_subset"] != committed["strict_subset"]
+    moved = {
+        r
+        for r in committed["per_rule"]
+        if s1["per_rule"][r]["failing_conditions"]
+        != committed["per_rule"][r]["failing_conditions"]
+    }
+    assert moved == {
+        "R8_402q_worker_early_reduction",
+        "R9_402w_delayed_retirement_credit",
+        "R16_age62_composition",
+    }
+    marker3 = '    "both_branches_reached": True,\n    "partial": False,'
+    assert source.count(marker3) == 1
+    mutated3 = tmp_path / "mutated_e3.py"
+    mutated3.write_text(
+        source.replace(
+            marker3, '    "both_branches_reached": True,\n    "partial": True,'
+        )
+    )
+    m3 = _b2_import_from_path(mutated3, "b2p_mutated_e3")
+    s3 = m3.partitions(coverage)["strict"]
+    assert set(s3["all_three"]) > set(committed["all_three"])
+    for name in ("b2p_clean_builder", "b2p_mutated_e1", "b2p_mutated_e3"):
+        sys.modules.pop(name, None)
+
+
+def test_gate_b2_both_blocks_record_the_sequencing_constraint():
+    """Ruling 7 / S7: both artifacts' flip plans name BOTH live-file guard
+    tests; both tests exist today; gates.yaml carries neither gate name
+    nor any of the four artifact names (pre-flip)."""
+    for art in (_b2c_gate(), _b2p_gate()):
+        retired = " ".join(
+            art["flip_plan"]["live_file_tests_the_flip_retires"]
+        )
+        assert "test_no_gate_b2_claiming_exists_in_gates_yaml" in retired
+        assert "test_no_gate_b2_pia_oracle_exists_in_gates_yaml" in retired
+    assert (
+        "def test_no_gate_b2_claiming_exists_in_gates_yaml"
+        in (ROOT / "tests" / "test_claiming_publication_floor.py").read_text()
+    )
+    assert (
+        "def test_no_gate_b2_pia_oracle_exists_in_gates_yaml"
+        in (ROOT / "tests" / "test_pia_rule_coverage.py").read_text()
+    )
+    if not (GATE_B2_CLAIMING_BLOCK_LANDED or GATE_B2_PIA_ORACLE_BLOCK_LANDED):
+        text = (ROOT / "gates.yaml").read_text()
+        for name in (
+            "gate_b2_claiming",
+            "gate_b2_pia_oracle",
+            "claiming_gate_floors_v1",
+            "pia_gate_partition_v1",
+            "claiming_publication_floor_v1",
+            "pia_rule_coverage_v1",
+        ):
+            assert name not in text, name
