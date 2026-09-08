@@ -29,6 +29,27 @@ committed bytes; the cross-engine and policyengine-us figures are the
 committed artifacts' own, and the repo's existing tests
 (``tests/ss/``) are the only thing that runs either engine.
 
+What the v2 revision adds (the two adversarial referees' lists)
+===============================================================
+* The household consumer is named correctly (``CoupleBenefit.total``;
+  the v1 artifact's ``CoupleBenefits`` exists nowhere) and the consumer
+  symbols are pinned by ``ast``, not by substring.
+* The checkable E3 bases are DERIVED and recorded as data a test
+  re-runs: R8 (no test in ``tests/ss/`` calls ``early_reduction(0)``),
+  R4 (the one direct ``aime()`` test builds a 40-entry history, so the
+  zero pad is never reached) and R9 (the ``credited <= 0`` branch is
+  unreachable for every FRA in the committed schedule). Every status
+  label is disclosed as the builder's reading of derived evidence.
+* The typed bend-point pairs are pinned to committed bytes: each pair
+  reproduces all 120 committed PIAs of its cohort from the committed
+  AIMEs, and no neighbouring integer pair does; the 2020 pair's lack of
+  an SSA-anchor test is disclosed.
+* The ``gates.yaml`` citation is pinned to a git blob so the future
+  gate commit does not break the artifact; the sequencing constraint
+  that remains is recorded.
+* ``NOT_IMPLEMENTED_PATTERNS`` widened; ``_spans`` fails loudly on a
+  duplicate function or class name.
+
 Run from the repository root::
 
     .venv/bin/python scripts/build_pia_rule_coverage.py
@@ -40,6 +61,8 @@ import ast
 import datetime as dt
 import hashlib
 import json
+import math
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -65,14 +88,41 @@ PACKET = "cap-claiming-pia-gates REPORT.md (2026-09-06, drafting lane)"
 
 #: Bend points at the two committed eligibility years, as asserted by
 #: tests/ss/test_cross_engine.py::test_all_three_pia_brackets_exercised.
+#: TYPED here (referee B, D6); pinned to committed bytes by
+#: bend_points_provenance, which checks that each pair reproduces every
+#: committed PIA of its cohort from the committed AIMEs.
 BEND_POINTS = {"2020": (960.0, 5785.0), "2026": (1286.0, 7749.0)}
+#: 415(a)(1)(A) bracket factors, as typed in tests/ss/test_benefits.py.
+PIA_FACTORS = (0.90, 0.32, 0.15)
+#: SSA-anchor tests for each typed pair (None where the repo has none).
+BEND_POINT_ANCHOR_TESTS = {
+    "2020": None,
+    "2026": (
+        "tests/ss/test_benefits.py::"
+        "test_2026_bend_points_match_ssa_determination"
+    ),
+}
+
+#: The gates.yaml blob this artifact cites (referee B, D7). The citation
+#: is pinned to the blob, not to the working tree, so the gate commit
+#: that later inserts gate_b2_pia_oracle does not change this artifact's
+#: bytes; the builder reads the blob from the git object store when the
+#: working tree has moved on.
+GATES_YAML_BLOB_SHA1 = "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c"
+COMPUTES_EXACTLY_PHRASE = "computes exactly"
+COMPUTES_EXACTLY_LINE = 642
 
 #: 415(b)(2)(B) computation-year count, hard-coded in the oracle.
 COMPUTATION_YEARS = 35
 
 #: The patterns whose absence establishes the not-implemented list.
 NOT_IMPLEMENTED_PATTERNS = {
-    "family_maximum": ("family_max", "familyMax"),
+    "family_maximum": (
+        "family_max",
+        "familyMax",
+        "maximum_family_benefit",
+        "fam_max",
+    ),
     "wep_gpo": ("windfall", "WEP", "GPO", "government_pension"),
     "retirement_earnings_test": ("earnings_test", "retirement_earnings"),
     "special_minimum_pia": ("special_minimum",),
@@ -114,6 +164,12 @@ def _spans(relative: str) -> dict[str, dict[str, Any]]:
     out: dict[str, dict[str, Any]] = {}
 
     def record(name: str, node: ast.AST, kind: str) -> None:
+        if name in out and out[name]["kind"] in ("function", "class"):
+            raise ValueError(
+                f"{relative}: duplicate {kind} name {name!r} at lines "
+                f"{out[name]['first_line']} and {node.lineno}; a span "
+                "keyed by bare name would silently relabel a rule"
+            )
         out[name] = {
             "module": relative,
             "symbol": name,
@@ -183,18 +239,394 @@ def _grep_absent(root: str, patterns: tuple[str, ...]) -> dict[str, Any]:
     }
 
 
-def _gates_line(number: int) -> str:
-    lines = (ROOT / GATES_REL).read_text().splitlines()
-    return lines[number - 1].strip()
+def _git_blob_sha1(raw: bytes) -> str:
+    """The git object id of ``raw`` as a blob (content-addressed)."""
+    return hashlib.sha1(
+        b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw
+    ).hexdigest()
 
 
-def _gates_phrase_occurrences(phrase: str) -> list[dict[str, Any]]:
-    lines = (ROOT / GATES_REL).read_text().splitlines()
-    return [
+def _gates_yaml_bytes() -> bytes:
+    """The bytes of the PINNED gates.yaml blob.
+
+    The working tree is used when its blob matches the pin; otherwise
+    the blob is read from the git object store, so a later gates.yaml
+    (the one that inserts the gate block) leaves this artifact's bytes
+    unchanged. A missing blob is an error, never a silent re-pin.
+    """
+    on_disk = (ROOT / GATES_REL).read_bytes()
+    if _git_blob_sha1(on_disk) == GATES_YAML_BLOB_SHA1:
+        return on_disk
+    result = subprocess.run(
+        ["git", "cat-file", "blob", GATES_YAML_BLOB_SHA1],
+        cwd=ROOT,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0 or _git_blob_sha1(result.stdout) != (
+        GATES_YAML_BLOB_SHA1
+    ):
+        raise RuntimeError(
+            f"gates.yaml blob {GATES_YAML_BLOB_SHA1} is neither the "
+            "working-tree file nor retrievable from the git object store"
+        )
+    return result.stdout
+
+
+def _gates_citation() -> dict[str, Any]:
+    raw = _gates_yaml_bytes()
+    lines = raw.decode("utf-8").splitlines()
+    occurrences = [
         {"line": index + 1, "text": line.strip()}
         for index, line in enumerate(lines)
-        if phrase in line
+        if COMPUTES_EXACTLY_PHRASE in line
     ]
+    return {
+        "path": GATES_REL,
+        "git_blob_sha1": GATES_YAML_BLOB_SHA1,
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "bytes": len(raw),
+        "phrase": COMPUTES_EXACTLY_PHRASE,
+        "occurrences": occurrences,
+        "n_occurrences": len(occurrences),
+        "cited_line": COMPUTES_EXACTLY_LINE,
+        "cited_line_text": lines[COMPUTES_EXACTLY_LINE - 1].strip(),
+        "gate_b2_pia_oracle_present_in_pinned_blob": (
+            "gate_b2_pia_oracle" in raw.decode("utf-8")
+        ),
+        "pin_note": (
+            "This citation is pinned to a git BLOB of gates.yaml, not "
+            "to the working tree (referee B, D7). The tests rescan the "
+            "pinned blob (from the working tree while it matches, from "
+            "the git object store once it has moved on), so the gate "
+            "commit that inserts gate_b2_pia_oracle -- and adds the "
+            "phrase 'computes exactly' to a new block -- changes "
+            "neither this artifact nor the tests that pin it. What that "
+            "commit MUST still do is retire the two 'gate name absent "
+            "from gates.yaml' assertions (tests/test_pia_rule_coverage."
+            "py and tests/test_claiming_publication_floor.py), which "
+            "read the LIVE file by design and fail the moment either "
+            "gate block lands; see does_not_establish."
+        ),
+    }
+
+
+# --------------------------------------------------------------------------
+# Derived E3 bases and the typed bend points' pin (v2)
+# --------------------------------------------------------------------------
+TESTS_SS_ROOT = "tests/ss"
+
+
+def _call_name(node: ast.Call) -> str | None:
+    func = node.func
+    if isinstance(func, ast.Name):
+        return func.id
+    if isinstance(func, ast.Attribute):
+        return func.attr
+    return None
+
+
+def _call_sites(root: str, function_name: str) -> list[dict[str, Any]]:
+    """Every call of ``function_name`` in the ``.py`` files under
+    ``root``, with its enclosing function and its literal first
+    argument if the first argument is a constant."""
+    sites: list[dict[str, Any]] = []
+    for path in sorted((ROOT / root).rglob("*.py")):
+        tree = ast.parse(path.read_text())
+        for function in ast.walk(tree):
+            if not isinstance(function, ast.FunctionDef):
+                continue
+            for node in ast.walk(function):
+                if (
+                    isinstance(node, ast.Call)
+                    and _call_name(node) == function_name
+                ):
+                    first = node.args[0] if node.args else None
+                    sites.append(
+                        {
+                            "module": path.relative_to(ROOT).as_posix(),
+                            "enclosing_function": function.name,
+                            "line": node.lineno,
+                            "first_argument_literal": (
+                                first.value
+                                if isinstance(first, ast.Constant)
+                                else None
+                            ),
+                            "first_argument_is_literal": isinstance(
+                                first, ast.Constant
+                            ),
+                        }
+                    )
+    return sites
+
+
+def _literal_range_lengths(root: str, module: str, function_name: str):
+    """Lengths of every ``range(a, b)`` with integer literals inside the
+    named function (a static read of how a test builds its history)."""
+    tree = ast.parse((ROOT / module).read_text())
+    lengths: list[int] = []
+    for function in ast.walk(tree):
+        if not (
+            isinstance(function, ast.FunctionDef)
+            and function.name == function_name
+        ):
+            continue
+        for node in ast.walk(function):
+            if (
+                isinstance(node, ast.Call)
+                and _call_name(node) == "range"
+                and len(node.args) == 2
+                and all(
+                    isinstance(arg, ast.Constant)
+                    and isinstance(arg.value, int)
+                    for arg in node.args
+                )
+            ):
+                lengths.append(node.args[1].value - node.args[0].value)
+    return lengths
+
+
+def _module_int_constant(relative: str, name: str) -> int:
+    """The integer a module-level ``NAME = <int expr>`` evaluates to,
+    read with ``ast`` (products of literals allowed, e.g. ``70 * 12``)."""
+    tree = ast.parse((ROOT / relative).read_text())
+    for node in tree.body:
+        if (
+            isinstance(node, ast.Assign)
+            and isinstance(node.targets[0], ast.Name)
+            and node.targets[0].id == name
+        ):
+            return int(
+                eval(compile(ast.Expression(node.value), "<ast>", "eval"))
+            )
+    raise KeyError(f"{relative}: no module-level constant {name}")
+
+
+def _dataclass_field_default(relative: str, name: str) -> Any:
+    tree = ast.parse((ROOT / relative).read_text())
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.AnnAssign)
+            and isinstance(node.target, ast.Name)
+            and node.target.id == name
+            and isinstance(node.value, ast.Constant)
+        ):
+            return node.value.value
+    raise KeyError(f"{relative}: no annotated field {name} with a literal")
+
+
+def _r8_basis_derivation() -> dict[str, Any]:
+    sites = _call_sites(TESTS_SS_ROOT, "early_reduction")
+    literals = sorted(
+        {
+            site["first_argument_literal"]
+            for site in sites
+            if site["first_argument_is_literal"]
+        }
+    )
+    return {
+        "claim": (
+            "no test in tests/ss/ asserts early_reduction(0), so the "
+            "months_early <= 0 early-return branch is reached by no test"
+        ),
+        "derivation_kind": (
+            "static ast read of every early_reduction(...) call under "
+            "tests/ss/: the literal first argument of each call"
+        ),
+        "search_root": TESTS_SS_ROOT,
+        "call_sites": sites,
+        "n_call_sites": len(sites),
+        "first_argument_literals": literals,
+        "every_first_argument_is_a_literal": all(
+            site["first_argument_is_literal"] for site in sites
+        ),
+        "zero_or_negative_asserted": any(
+            isinstance(v, (int, float)) and v <= 0 for v in literals
+        ),
+        "claim_holds": not any(
+            isinstance(v, (int, float)) and v <= 0 for v in literals
+        ),
+    }
+
+
+def _r4_basis_derivation() -> dict[str, Any]:
+    sites = _call_sites(TESTS_SS_ROOT, "aime")
+    per_site = []
+    for site in sites:
+        lengths = _literal_range_lengths(
+            TESTS_SS_ROOT, site["module"], site["enclosing_function"]
+        )
+        per_site.append(
+            {
+                **site,
+                "literal_range_lengths_in_enclosing_test": lengths,
+                "min_history_length_if_literal": (
+                    min(lengths) if lengths else None
+                ),
+            }
+        )
+    every_ge = all(
+        row["min_history_length_if_literal"] is not None
+        and row["min_history_length_if_literal"] >= COMPUTATION_YEARS
+        for row in per_site
+    )
+    return {
+        "claim": (
+            "the short-history zero-pad branch of aime() is reached by "
+            "no test in tests/ss/"
+        ),
+        "derivation_kind": (
+            "static ast read of every aime(...) call under tests/ss/ "
+            "and of the integer-literal range(a, b) calls inside each "
+            "enclosing test (the history the test builds); a dynamic "
+            "history length would require executing the tests"
+        ),
+        "search_root": TESTS_SS_ROOT,
+        "computation_years": COMPUTATION_YEARS,
+        "call_sites": per_site,
+        "n_call_sites": len(sites),
+        "every_direct_aime_test_builds_at_least_n_years": every_ge,
+        "claim_holds": bool(per_site) and every_ge,
+    }
+
+
+def _r9_basis_derivation(doc_2023: dict[str, Any]) -> dict[str, Any]:
+    age_70_months = _module_int_constant(BENEFITS_REL, "_AGE_70_MONTHS")
+    max_delayed_months = _dataclass_field_default(
+        PARAMS_REL, "max_delayed_months"
+    )
+    schedule = doc_2023["fra_schedule"]["schedule"]
+    fra_values = sorted({int(row["fra_months"]) for row in schedule})
+    windows = {
+        str(fra): min(max_delayed_months, age_70_months - fra)
+        for fra in fra_values
+    }
+    return {
+        "claim": (
+            "the credited <= 0 branch of delayed_credit is unreachable "
+            "for every FRA in the committed schedule"
+        ),
+        "derivation_kind": (
+            "arithmetic on committed bytes: window = min("
+            "max_delayed_months, _AGE_70_MONTHS - fra); credited = "
+            "min(months_late, window) with months_late > 0 (the earlier "
+            "return handles months_late <= 0), so credited <= 0 iff "
+            "window <= 0 iff fra >= _AGE_70_MONTHS. The FRA schedule is "
+            "SSA's own (Table 6.B5.1 footnote a) as committed in the "
+            "2023 edition; tests/test_claiming.py::"
+            "test_fra_footnote_schedule_matches_oracle asserts it "
+            "equals the oracle's policyengine-us-loaded schedule."
+        ),
+        "age_70_months": age_70_months,
+        "age_70_months_source": f"{BENEFITS_REL}::_AGE_70_MONTHS (ast)",
+        "max_delayed_months": max_delayed_months,
+        "max_delayed_months_source": (
+            f"{PARAMS_REL}::SSAParameters.max_delayed_months default (ast)"
+        ),
+        "fra_schedule_source": (
+            "data/external/ssa_claim_ages_2023supplement.json::fra_schedule"
+        ),
+        "fra_months_values": fra_values,
+        "max_fra_months": max(fra_values),
+        "window_months_by_fra": windows,
+        "min_window_months": min(windows.values()),
+        "branch_reachable_iff_fra_months_at_least": age_70_months,
+        "claim_holds": min(windows.values()) >= 1,
+    }
+
+
+def _pia(aime_value: float, first: float, second: float) -> float:
+    """415(a)(1)(A) with the 415(g) dime floor, on integer AIME."""
+    amount = (
+        PIA_FACTORS[0] * min(aime_value, first)
+        + PIA_FACTORS[1] * max(0.0, min(aime_value, second) - first)
+        + PIA_FACTORS[2] * max(0.0, aime_value - second)
+    )
+    return math.floor(amount * 10.0 + 1e-9) / 10.0
+
+
+def _bend_points_provenance(cross: dict[str, Any]) -> dict[str, Any]:
+    """Pin the TYPED bend-point pairs to committed bytes (referee B, D6):
+    each pair must reproduce every committed PIA of its cohort from the
+    committed AIME, and no neighbouring integer pair may."""
+    rows = cross["workers"]
+    by_cohort: dict[str, Any] = {}
+    for cohort, (first, second) in BEND_POINTS.items():
+        cohort_rows = [r for r in rows if str(r["cohort"]) == cohort]
+        reproduced = sum(
+            1
+            for r in cohort_rows
+            if abs(_pia(r["aime_oracle"], first, second) - r["pia_oracle"])
+            < 1e-9
+        )
+        neighbours = [
+            [first + d1, second + d2]
+            for d1 in range(-3, 4)
+            for d2 in range(-3, 4)
+            if (d1, d2) != (0, 0)
+            and all(
+                abs(
+                    _pia(r["aime_oracle"], first + d1, second + d2)
+                    - r["pia_oracle"]
+                )
+                < 1e-9
+                for r in cohort_rows
+            )
+        ]
+        by_cohort[cohort] = {
+            "typed_pair": [first, second],
+            "n_rows": len(cohort_rows),
+            "n_rows_reproduced_to_the_dime": reproduced,
+            "reproduces_every_committed_pia": reproduced == len(cohort_rows),
+            "neighbouring_integer_pairs_within_3_dollars_also_reproducing_all_rows": neighbours,
+            "pair_is_unique_within_3_dollars": not neighbours,
+            "ssa_anchor_test": BEND_POINT_ANCHOR_TESTS[cohort],
+        }
+    return {
+        "note": (
+            "BEND_POINTS is TYPED in this builder (copied from "
+            "tests/ss/test_cross_engine.py::test_all_three_pia_brackets_"
+            "exercised), not loaded from policyengine-us. It is pinned "
+            "to committed bytes here: each typed pair, run through the "
+            "90 / 32 / 15 brackets and the dime floor, reproduces every "
+            "committed pia_oracle of its cohort from the committed "
+            "aime_oracle, and no integer pair within three dollars of "
+            "it does. The 2026 pair additionally has an SSA-anchor test; "
+            "the 2020 pair (960 / 5785) has none in the repo, which is "
+            "disclosed rather than repaired."
+        ),
+        "pia_factors_typed": list(PIA_FACTORS),
+        "by_cohort": by_cohort,
+        "every_pair_reproduces_its_cohort": all(
+            block["reproduces_every_committed_pia"]
+            for block in by_cohort.values()
+        ),
+        "pairs_without_an_ssa_anchor_test": sorted(
+            cohort
+            for cohort, block in by_cohort.items()
+            if block["ssa_anchor_test"] is None
+        ),
+    }
+
+
+def _consumer_symbols(household_spans: dict[str, dict[str, Any]]) -> dict:
+    """The household consumer's symbols, by ast (referee B, F1)."""
+    return {
+        "class": household_spans["CoupleBenefit"],
+        "summation_property": household_spans["total"],
+        "function": household_spans["couple_benefit"],
+        "qualified_summation_symbol": "CoupleBenefit.total",
+        "symbol_names_derived_by_ast": [
+            "CoupleBenefit",
+            "total",
+            "couple_benefit",
+        ],
+        "name_the_v1_artifact_used": "CoupleBenefits",
+        "name_the_v1_artifact_used_exists": "CoupleBenefits"
+        in household_spans,
+        "packet_name": "couple_benefits",
+        "packet_name_exists": "couple_benefits" in household_spans,
+    }
 
 
 # --------------------------------------------------------------------------
@@ -466,6 +898,7 @@ def _rule_inventory(
     params_spans: dict[str, dict[str, Any]],
     cross_inventory: dict[str, Any],
     foundation: dict[str, Any],
+    basis_derivations: dict[str, dict[str, Any]],
 ) -> list[dict[str, Any]]:
     n_cases = cross_inventory["n_cases"]
     shapes = cross_inventory["shape_counts"]
@@ -716,6 +1149,7 @@ def _rule_inventory(
                     "populace_dynamics.data.couple_earnings); none is "
                     "part of a registered case set here."
                 ),
+                "basis_derivation": basis_derivations["R4"],
             },
         },
         {
@@ -757,6 +1191,13 @@ def _rule_inventory(
                     "which is the oracle's own arithmetic from SSA's "
                     "published 2026 bend points -- the BEND POINTS are "
                     "published, the bracket total is not"
+                ),
+                "bend_points_note": (
+                    "the bend points the occupancy is scored against are "
+                    "typed in this builder and pinned to the committed "
+                    "rows by evidence_inventory.cross_engine."
+                    "bend_points_provenance; the 2020 pair has no "
+                    "SSA-anchor test in the repo"
                 ),
             },
             "e3": {
@@ -908,6 +1349,7 @@ def _rule_inventory(
                     "calling early_reduction at or after FRA, and no "
                     "test in tests/ss/ asserts early_reduction(0)."
                 ),
+                "basis_derivation": basis_derivations["R8"],
             },
         },
         {
@@ -958,6 +1400,7 @@ def _rule_inventory(
                     "70) is unreachable for every cohort in the "
                     "committed schedule and is unexercised."
                 ),
+                "basis_derivation": basis_derivations["R9"],
             },
         },
         {
@@ -1280,16 +1723,29 @@ def build() -> dict[str, Any]:
     cross = _load(CROSS_ENGINE_REL)
     aux = _load(AUX_REL)
 
+    doc_2023 = _load("data/external/ssa_claim_ages_2023supplement.json")
+
     benefits_spans = _spans(BENEFITS_REL)
     params_spans = _spans(PARAMS_REL)
+    household_spans = _spans(HOUSEHOLD_REL)
 
     cross_inventory = _cross_engine_inventory(cross)
+    cross_inventory["bend_points_provenance"] = _bend_points_provenance(cross)
+    basis_derivations = {
+        "R4": _r4_basis_derivation(),
+        "R8": _r8_basis_derivation(),
+        "R9": _r9_basis_derivation(doc_2023),
+    }
     worked = _worked_example_inventory(aux)
     foundation = _foundation_inventory(aux)
     grids = _grid_inventory(aux)
 
     rules = _rule_inventory(
-        benefits_spans, params_spans, cross_inventory, foundation
+        benefits_spans,
+        params_spans,
+        cross_inventory,
+        foundation,
+        basis_derivations,
     )
     packet_verdicts = _packet_verdicts()
     for rule in rules:
@@ -1335,6 +1791,8 @@ def build() -> dict[str, Any]:
         for name, patterns in NOT_IMPLEMENTED_PATTERNS.items()
     }
 
+    gates_citation = _gates_citation()
+
     return {
         "schema_version": SCHEMA_VERSION,
         "run": RUN,
@@ -1352,9 +1810,7 @@ def build() -> dict[str, Any]:
         "component": "statutory benefit oracle (#74 component SF)",
         "gate_status": {
             "gates_yaml_block": None,
-            "computes_exactly_occurrences": _gates_phrase_occurrences(
-                "computes exactly"
-            ),
+            "gates_yaml_citation": gates_citation,
             "note": (
                 "gates.yaml carries no gate_b2_pia_oracle. The phrase "
                 '"computes exactly" occurs in gate_2\'s description '
@@ -1392,6 +1848,7 @@ def build() -> dict[str, Any]:
                 _pin(TEST_CLAIMING_REL),
             ],
             "consumer": _pin(HOUSEHOLD_REL),
+            "consumer_symbols": _consumer_symbols(household_spans),
             "code_reference_note": (
                 "Every code span in rule_inventory is derived with ast "
                 "from the pinned module, not typed, so a reproduction "
@@ -1418,7 +1875,10 @@ def build() -> dict[str, Any]:
             "source": PACKET,
             "status": "proposal_not_ratified",
             "adopted_here": False,
-            "gates_yaml_line_642": _gates_line(642),
+            "gates_yaml_line_642": gates_citation["cited_line_text"],
+            "gates_yaml_line_642_pinned_to_blob": gates_citation[
+                "git_blob_sha1"
+            ],
             "conditions": {
                 "E1_independent_re_execution": (
                     "A separately implemented engine executes the rule "
@@ -1483,6 +1943,27 @@ def build() -> dict[str, Any]:
             "ssa_worked_examples": worked,
             "pe_us_pia_foundation": foundation,
             "grids": grids,
+        },
+        "status_provenance": {
+            "statement": (
+                "The E1 / E2 / E3 status labels are the builder's "
+                "READING of the derived evidence, typed as strings in "
+                "_rule_inventory; the evidence fields beside them "
+                "(case counts, ast code spans, bracket occupancy, the "
+                "dime-floor sweep, the factor split, the not-implemented "
+                "searches and the basis_derivation blocks of R4, R8 and "
+                "R9) are derived from committed bytes and re-derived by "
+                "tests. A status label is pinned only by the "
+                "byte-reproduction test; a later editor can change one by "
+                "editing a string and rebuilding, which is why the "
+                "statuses below award nothing and the packet's proposed "
+                "verdicts are quoted, not adopted (referee A, F8; "
+                "referee B, D5)."
+            ),
+            "rules_with_a_derived_e3_basis": sorted(basis_derivations),
+            "every_derived_basis_holds": all(
+                block["claim_holds"] for block in basis_derivations.values()
+            ),
         },
         "rule_inventory": rules,
         "n_rules": len(rules),
@@ -1610,11 +2091,18 @@ def build() -> dict[str, Any]:
                 "consumer": HOUSEHOLD_REL,
                 "note": (
                     "Both auxiliary functions return uncapped amounts "
-                    "and household.CoupleBenefits.total sums both own "
+                    "and household.CoupleBenefit.total sums both own "
                     "benefits plus both excess spousal amounts with no "
                     "cap. The family maximum binds precisely where "
                     "auxiliary benefits stack, and no committed case "
                     "stacks enough for it to bind."
+                ),
+                "consumer_symbols": _consumer_symbols(household_spans),
+                "search_patterns_note": (
+                    "the family-maximum absence is re-derivable only "
+                    "against the literal patterns in "
+                    "not_implemented.searches.family_maximum.patterns; "
+                    "v2 widened them (maximum_family_benefit, fam_max)"
                 ),
             },
         },
@@ -1725,15 +2213,23 @@ def build() -> dict[str, Any]:
                         "household.couple_benefits (household.py:143-149)"
                     ),
                     "derived_here": (
-                        "the summation is the CoupleBenefits.total "
-                        "property; the module's function is "
-                        "couple_benefit"
+                        "the summation is the CoupleBenefit.total "
+                        "property (class CoupleBenefit, singular); the "
+                        "module's function is couple_benefit. Both "
+                        "symbols are derived by ast in "
+                        "sources.consumer_symbols."
                     ),
                     "consequence": (
                         "a naming correction; the substance -- that "
                         "both own benefits and both excess spousal "
                         "amounts are summed with no family maximum -- "
                         "holds as read"
+                    ),
+                    "v1_defect": (
+                        "the v1 artifact named the class CoupleBenefits "
+                        "(plural), a symbol that exists nowhere in src/ "
+                        "or tests/ (referee A, F9-4; referee B, D4 / "
+                        "F1); corrected in v2 and pinned by ast"
                     ),
                 },
             ],
@@ -1750,6 +2246,21 @@ def build() -> dict[str, Any]:
             "that the rule granularity is correct: sixteen rules is the "
             "packet's cut, and R12 and R14 each bundle several "
             "statutory operations",
+            "that any E1 status has been re-executed in this ceremony: "
+            "the three engine-backed tests in tests/ss/ skip on a host "
+            "without the Axiom wheel or a policyengine-us Python, and "
+            "every E1 status rests on the committed cross-engine artifact "
+            "as built on its recorded date",
+            "the sequencing of the lock PR: the gates.yaml citation is "
+            "blob-pinned and survives the gate commit, but the two 'gate "
+            "name absent from gates.yaml' tests read the live file by "
+            "design and fail the moment gate_b2_pia_oracle or "
+            "gate_b2_claiming lands; the commit that inserts either "
+            "block must retire those assertions or supersede this "
+            "artifact with a v2 in the same PR",
+            "that the typed bend-point pairs are SSA determinations: the "
+            "2026 pair has an SSA-anchor test, the 2020 pair is pinned "
+            "only to the committed cross-engine rows it reproduces",
         ],
         "build": {
             "built_utc": dt.datetime.now(dt.timezone.utc).isoformat(),

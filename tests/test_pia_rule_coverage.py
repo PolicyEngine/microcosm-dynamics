@@ -22,9 +22,14 @@ Two kinds of test:
   foundation factor split recompute from the committed artifacts; every
   not-implemented search re-runs and is still empty.
 * **Framing.** The artifact stays REPORTED, adopts no definition,
-  quotes ``gates.yaml``'s single ``"computes exactly"`` occurrence as it
-  reads on disk, and records where its derivation differs from the
-  DRAFT packet's claim rather than silently adopting it.
+  quotes ``gates.yaml``'s single ``"computes exactly"`` occurrence from
+  a blob-pinned citation, and records where its derivation differs from
+  the DRAFT packet's claim rather than silently adopting it.
+* **Derived bases (v2).** The consumer symbols are re-derived by
+  ``ast``; the R4 / R8 / R9 E3 bases are re-run as searches over
+  ``tests/ss/``; the typed bend points are re-checked against every
+  committed PIA; the ``gates.yaml`` citation is rescanned from the
+  pinned blob (working tree while it matches, git object store after).
 """
 
 from __future__ import annotations
@@ -32,6 +37,8 @@ from __future__ import annotations
 import ast
 import hashlib
 import json
+import math
+import subprocess
 import sys
 from pathlib import Path
 
@@ -101,20 +108,68 @@ def test_no_gate_b2_pia_oracle_exists_in_gates_yaml():
     assert "gate_b2_pia_oracle" not in GATES.read_text()
 
 
-def test_computes_exactly_occurrences_match_gates_yaml_on_disk():
+def _git_blob_sha1(raw: bytes) -> str:
+    return hashlib.sha1(
+        b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw
+    ).hexdigest()
+
+
+def _pinned_gates_yaml(blob_sha1: str) -> bytes:
+    """The pinned blob: the working tree while it matches, else the git
+    object store (the citation must survive the gate commit)."""
+    on_disk = GATES.read_bytes()
+    if _git_blob_sha1(on_disk) == blob_sha1:
+        return on_disk
+    result = subprocess.run(
+        ["git", "cat-file", "blob", blob_sha1],
+        cwd=ROOT,
+        capture_output=True,
+        check=True,
+    )
+    assert _git_blob_sha1(result.stdout) == blob_sha1
+    return result.stdout
+
+
+def test_computes_exactly_citation_is_blob_pinned_and_rescans_from_the_blob():
+    """Referee B, D7: the citation is pinned to a gates.yaml BLOB so the
+    commit that inserts the gate block changes neither this artifact
+    nor this test."""
     art = _artifact()
-    lines = GATES.read_text().splitlines()
+    citation = art["gate_status"]["gates_yaml_citation"]
+    assert citation["path"] == "gates.yaml"
+    raw = _pinned_gates_yaml(citation["git_blob_sha1"])
+    assert citation["sha256"] == hashlib.sha256(raw).hexdigest()
+    assert citation["bytes"] == len(raw)
+    lines = raw.decode("utf-8").splitlines()
     found = [
         {"line": index + 1, "text": line.strip()}
         for index, line in enumerate(lines)
-        if "computes exactly" in line
+        if citation["phrase"] in line
     ]
-    assert art["gate_status"]["computes_exactly_occurrences"] == found
-    assert len(found) == 1
+    assert citation["phrase"] == "computes exactly"
+    assert citation["occurrences"] == found
+    assert citation["n_occurrences"] == len(found) == 1
+    assert found[0]["line"] == citation["cited_line"] == 642
+    assert citation["cited_line_text"] == lines[641].strip()
     assert (
         art["computes_exactly_definition_proposal"]["gates_yaml_line_642"]
         == lines[641].strip()
     )
+    assert (
+        art["computes_exactly_definition_proposal"][
+            "gates_yaml_line_642_pinned_to_blob"
+        ]
+        == citation["git_blob_sha1"]
+    )
+    assert citation["gate_b2_pia_oracle_present_in_pinned_blob"] is False
+    assert "gate_b2_pia_oracle" not in raw.decode("utf-8")
+
+
+def test_gates_yaml_citation_pin_is_the_builders_constant():
+    builder = _import_builder()
+    citation = _artifact()["gate_status"]["gates_yaml_citation"]
+    assert citation["git_blob_sha1"] == builder.GATES_YAML_BLOB_SHA1
+    assert len(citation["git_blob_sha1"]) == 40
 
 
 def test_the_definition_is_quoted_as_a_proposal_and_not_adopted():
@@ -496,6 +551,14 @@ def test_grid_thinness_recomputes():
 def test_every_not_implemented_search_reruns_and_is_still_empty():
     art = _artifact()["not_implemented"]
     assert art["all_absent"] is True
+    # Referee A, section 5.a item 6: the family-maximum search must
+    # also cover the other names an implementation might carry.
+    assert set(art["searches"]["family_maximum"]["patterns"]) >= {
+        "family_max",
+        "familyMax",
+        "maximum_family_benefit",
+        "fam_max",
+    }
     for name, block in art["searches"].items():
         root = ROOT / block["search_root"]
         files = sorted(root.rglob("*.py"))
@@ -518,6 +581,114 @@ def test_family_maximum_absence_is_disclosed_where_it_bites():
     assert "excess_spousal_a" in household
     assert "excess_spousal_b" in household
     assert "family_max" not in household
+    assert "CoupleBenefit.total" in art["note"]
+    assert "CoupleBenefits" not in art["note"]
+
+
+def test_consumer_symbols_are_pinned_by_ast_and_the_v1_name_does_not_exist():
+    """F1 (referee B, D4; referee A, F9-4): the class is CoupleBenefit;
+    CoupleBenefits exists nowhere. Re-derived here with ast."""
+    art = _artifact()
+    consumer = art["sources"]["consumer"]["path"]
+    tree = ast.parse((ROOT / consumer).read_text())
+    classes = {
+        node.name: node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ClassDef)
+    }
+    functions = {
+        node.name: node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef)
+    }
+    assert "CoupleBenefit" in classes
+    assert "CoupleBenefits" not in classes
+    assert "CoupleBenefits" not in functions
+    assert "couple_benefits" not in functions
+    assert "couple_benefit" in functions
+    methods = {
+        node.name
+        for node in ast.walk(classes["CoupleBenefit"])
+        if isinstance(node, ast.FunctionDef)
+    }
+    assert "total" in methods
+    for block in (
+        art["sources"]["consumer_symbols"],
+        art["not_implemented"]["family_maximum_bites_here"][
+            "consumer_symbols"
+        ],
+    ):
+        assert block["qualified_summation_symbol"] == "CoupleBenefit.total"
+        assert block["class"]["symbol"] == "CoupleBenefit"
+        assert block["class"]["kind"] == "class"
+        assert (block["class"]["first_line"], block["class"]["last_line"]) == (
+            classes["CoupleBenefit"].lineno,
+            classes["CoupleBenefit"].end_lineno,
+        )
+        assert block["summation_property"]["symbol"] == "total"
+        assert block["function"]["symbol"] == "couple_benefit"
+        assert (
+            block["function"]["first_line"],
+            block["function"]["last_line"],
+        ) == (
+            functions["couple_benefit"].lineno,
+            functions["couple_benefit"].end_lineno,
+        )
+        assert block["name_the_v1_artifact_used"] == "CoupleBenefits"
+        assert block["name_the_v1_artifact_used_exists"] is False
+        assert block["packet_name_exists"] is False
+    # No identifier under src/ or tests/ is the plural name (an ast
+    # scan of names, attributes and definitions -- not a substring
+    # search, which would trip on this very sentence).
+    plural = "CoupleBenefit" + "s"
+    for root in ("src", "tests"):
+        for path in (ROOT / root).rglob("*.py"):
+            tree = ast.parse(path.read_text())
+            identifiers = (
+                {
+                    node.id
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.Name)
+                }
+                | {
+                    node.attr
+                    for node in ast.walk(tree)
+                    if isinstance(node, ast.Attribute)
+                }
+                | {
+                    node.name
+                    for node in ast.walk(tree)
+                    if isinstance(node, (ast.FunctionDef, ast.ClassDef))
+                }
+            )
+            assert plural not in identifiers, path
+    recon = next(
+        row
+        for row in art["packet_reconciliation"]["differences"]
+        if "household consumer" in row["field"]
+    )
+    assert "CoupleBenefit.total" in recon["derived_here"]
+    assert "CoupleBenefits" in recon["v1_defect"]
+
+
+def test_spans_fail_loudly_on_a_duplicate_function_name():
+    """Referee A, section 5.a item 7: a nested helper with a colliding
+    name must not silently relabel a rule's span."""
+    builder = _import_builder()
+    probe = ROOT / "tests" / "_dup_span_probe_tmp.py"
+    probe.write_text("def f():\n    pass\n\n\ndef f():\n    pass\n")
+    try:
+        with pytest.raises(ValueError, match="duplicate function name 'f'"):
+            builder._spans("tests/_dup_span_probe_tmp.py")
+    finally:
+        probe.unlink()
+    # The three pinned modules have no duplicate function or class name.
+    for relative in (
+        "src/populace_dynamics/ss/benefits.py",
+        "src/populace_dynamics/ss/params.py",
+        "src/populace_dynamics/household.py",
+    ):
+        assert builder._spans(relative)
 
 
 def test_named_constants_point_at_the_real_declarations():
@@ -547,6 +718,225 @@ def test_computation_year_constant_names_its_live_caller():
         caller["code"]["first_line"],
         caller["code"]["last_line"],
     )
+
+
+# --------------------------------------------------------------------------
+# v2: the checkable E3 bases are derived and re-run here (A6 / B D5)
+# --------------------------------------------------------------------------
+def _rule(art, rule_id):
+    return next(r for r in art["rule_inventory"] if r["id"] == rule_id)
+
+
+def _calls_in_tests_ss(function_name):
+    """This module's own ast scan of tests/ss/ for calls of a name."""
+    sites = []
+    for path in sorted((ROOT / "tests" / "ss").rglob("*.py")):
+        tree = ast.parse(path.read_text())
+        for function in ast.walk(tree):
+            if not isinstance(function, ast.FunctionDef):
+                continue
+            for node in ast.walk(function):
+                if not isinstance(node, ast.Call):
+                    continue
+                func = node.func
+                name = (
+                    func.id
+                    if isinstance(func, ast.Name)
+                    else func.attr if isinstance(func, ast.Attribute) else None
+                )
+                if name == function_name:
+                    first = node.args[0] if node.args else None
+                    sites.append(
+                        (
+                            path.relative_to(ROOT).as_posix(),
+                            function.name,
+                            node.lineno,
+                            (
+                                first.value
+                                if isinstance(first, ast.Constant)
+                                else None
+                            ),
+                        )
+                    )
+    return sites
+
+
+def test_r8_basis_no_test_asserts_early_reduction_at_zero_is_derived():
+    art = _artifact()
+    block = _rule(art, "R8_402q_worker_early_reduction")["e3"][
+        "basis_derivation"
+    ]
+    sites = _calls_in_tests_ss("early_reduction")
+    assert block["n_call_sites"] == len(sites) >= 1
+    assert [
+        (
+            s["module"],
+            s["enclosing_function"],
+            s["line"],
+            s["first_argument_literal"],
+        )
+        for s in block["call_sites"]
+    ] == sites
+    literals = sorted({s[3] for s in sites if s[3] is not None})
+    assert block["first_argument_literals"] == literals
+    assert 0 not in literals
+    assert block["zero_or_negative_asserted"] is False
+    assert block["claim_holds"] is True
+    assert block["every_first_argument_is_a_literal"] is True
+    assert (
+        _rule(art, "R8_402q_worker_early_reduction")["e3"]["status"]
+        == "partial_and_one_branch_unexercised"
+    )
+
+
+def test_r4_basis_no_test_reaches_the_zero_pad_is_derived():
+    art = _artifact()
+    block = _rule(art, "R4_415b_top_n_divide_and_floor")["e3"][
+        "basis_derivation"
+    ]
+    sites = _calls_in_tests_ss("aime")
+    assert block["n_call_sites"] == len(sites) >= 1
+    assert block["computation_years"] == 35
+    for recorded, (module, function, line, _) in zip(
+        block["call_sites"], sites, strict=True
+    ):
+        assert (
+            recorded["module"],
+            recorded["enclosing_function"],
+            recorded["line"],
+        ) == (
+            module,
+            function,
+            line,
+        )
+        # Re-derive the literal range lengths inside the enclosing test.
+        tree = ast.parse((ROOT / module).read_text())
+        lengths = [
+            node.args[1].value - node.args[0].value
+            for fn in ast.walk(tree)
+            if isinstance(fn, ast.FunctionDef) and fn.name == function
+            for node in ast.walk(fn)
+            if isinstance(node, ast.Call)
+            and (isinstance(node.func, ast.Name) and node.func.id == "range")
+            and len(node.args) == 2
+            and all(isinstance(a, ast.Constant) for a in node.args)
+        ]
+        assert recorded["literal_range_lengths_in_enclosing_test"] == lengths
+        assert lengths and min(lengths) >= 35
+        assert recorded["min_history_length_if_literal"] == min(lengths)
+    assert block["every_direct_aime_test_builds_at_least_n_years"] is True
+    assert block["claim_holds"] is True
+    assert "static ast read" in block["derivation_kind"]
+
+
+def test_r9_basis_dead_branch_is_derived_from_the_committed_schedule():
+    art = _artifact()
+    block = _rule(art, "R9_402w_delayed_retirement_credit")["e3"][
+        "basis_derivation"
+    ]
+    doc = json.loads(
+        (
+            ROOT / "data" / "external" / "ssa_claim_ages_2023supplement.json"
+        ).read_text()
+    )
+    fra_values = sorted(
+        {int(r["fra_months"]) for r in doc["fra_schedule"]["schedule"]}
+    )
+    benefits = (
+        ROOT / "src" / "populace_dynamics" / "ss" / "benefits.py"
+    ).read_text()
+    params = (
+        ROOT / "src" / "populace_dynamics" / "ss" / "params.py"
+    ).read_text()
+    assert "_AGE_70_MONTHS = 70 * 12" in benefits
+    assert "max_delayed_months: int = 48" in params
+    assert block["age_70_months"] == 840
+    assert block["max_delayed_months"] == 48
+    assert block["fra_months_values"] == fra_values
+    assert block["max_fra_months"] == max(fra_values) == 804
+    assert block["window_months_by_fra"] == {
+        str(fra): min(48, 840 - fra) for fra in fra_values
+    }
+    assert block["min_window_months"] == 36
+    assert block["branch_reachable_iff_fra_months_at_least"] == 840
+    assert block["claim_holds"] is True
+
+
+def test_status_provenance_discloses_typed_labels_and_derived_bases():
+    art = _artifact()
+    block = art["status_provenance"]
+    assert "builder's READING" in block["statement"]
+    assert block["rules_with_a_derived_e3_basis"] == ["R4", "R8", "R9"]
+    assert block["every_derived_basis_holds"] is True
+    for rule in art["rule_inventory"]:
+        for condition in ("e1", "e2", "e3"):
+            assert isinstance(rule[condition]["status"], str)
+
+
+# --------------------------------------------------------------------------
+# v2: the typed bend points are pinned to the committed rows (B D6)
+# --------------------------------------------------------------------------
+def _own_pia(aime, first, second):
+    amount = (
+        0.90 * min(aime, first)
+        + 0.32 * max(0.0, min(aime, second) - first)
+        + 0.15 * max(0.0, aime - second)
+    )
+    return math.floor(amount * 10.0 + 1e-9) / 10.0
+
+
+def test_typed_bend_points_reproduce_every_committed_pia_and_are_unique():
+    art = _artifact()
+    block = art["evidence_inventory"]["cross_engine"]["bend_points_provenance"]
+    rows = json.loads(CROSS_ENGINE.read_text())["workers"]
+    assert block["pia_factors_typed"] == [0.9, 0.32, 0.15]
+    assert set(block["by_cohort"]) == {"2020", "2026"}
+    for cohort, cell in block["by_cohort"].items():
+        first, second = cell["typed_pair"]
+        occupancy = art["evidence_inventory"]["cross_engine"][
+            "bracket_occupancy"
+        ][cohort]
+        assert occupancy["bend_points"] == [first, second]
+        cohort_rows = [r for r in rows if str(r["cohort"]) == cohort]
+        reproduced = sum(
+            1
+            for r in cohort_rows
+            if abs(_own_pia(r["aime_oracle"], first, second) - r["pia_oracle"])
+            < 1e-9
+        )
+        assert cell["n_rows"] == len(cohort_rows) == 120
+        assert cell["n_rows_reproduced_to_the_dime"] == reproduced == 120
+        assert cell["reproduces_every_committed_pia"] is True
+        neighbours = [
+            [first + d1, second + d2]
+            for d1 in range(-3, 4)
+            for d2 in range(-3, 4)
+            if (d1, d2) != (0, 0)
+            and all(
+                abs(
+                    _own_pia(r["aime_oracle"], first + d1, second + d2)
+                    - r["pia_oracle"]
+                )
+                < 1e-9
+                for r in cohort_rows
+            )
+        ]
+        assert (
+            cell[
+                "neighbouring_integer_pairs_within_3_dollars_also_reproducing_all_rows"
+            ]
+            == neighbours
+            == []
+        )
+        assert cell["pair_is_unique_within_3_dollars"] is True
+    assert block["by_cohort"]["2020"]["typed_pair"] == [960.0, 5785.0]
+    assert block["by_cohort"]["2026"]["typed_pair"] == [1286.0, 7749.0]
+    assert block["by_cohort"]["2020"]["ssa_anchor_test"] is None
+    anchor = block["by_cohort"]["2026"]["ssa_anchor_test"]
+    module, test = anchor.split("::")
+    assert test in _defined_names(module)
+    assert block["pairs_without_an_ssa_anchor_test"] == ["2020"]
+    assert block["every_pair_reproduces_its_cohort"] is True
 
 
 # --------------------------------------------------------------------------

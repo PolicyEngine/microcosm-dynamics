@@ -6,12 +6,24 @@
   "component": "statutory benefit oracle (#74 component SF)",
   "gate_status": {
     "gates_yaml_block": null,
-    "computes_exactly_occurrences": [
-      {
-        "line": 642,
-        "text": "UNLOCKED tranche 2c; benefit formulas earn per-rule \"computes exactly\""
-      }
-    ],
+    "gates_yaml_citation": {
+      "path": "gates.yaml",
+      "git_blob_sha1": "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c",
+      "sha256": "596eb4840f4c2e8ef16d883cff8b2fa63828f1b9f8c406037563733d3a2637af",
+      "bytes": 352148,
+      "phrase": "computes exactly",
+      "occurrences": [
+        {
+          "line": 642,
+          "text": "UNLOCKED tranche 2c; benefit formulas earn per-rule \"computes exactly\""
+        }
+      ],
+      "n_occurrences": 1,
+      "cited_line": 642,
+      "cited_line_text": "UNLOCKED tranche 2c; benefit formulas earn per-rule \"computes exactly\"",
+      "gate_b2_pia_oracle_present_in_pinned_blob": false,
+      "pin_note": "This citation is pinned to a git BLOB of gates.yaml, not to the working tree (referee B, D7). The tests rescan the pinned blob (from the working tree while it matches, from the git object store once it has moved on), so the gate commit that inserts gate_b2_pia_oracle -- and adds the phrase 'computes exactly' to a new block -- changes neither this artifact nor the tests that pin it. What that commit MUST still do is retire the two 'gate name absent from gates.yaml' assertions (tests/test_pia_rule_coverage.py and tests/test_claiming_publication_floor.py), which read the LIVE file by design and fail the moment either gate block lands; see does_not_establish."
+    },
     "note": "gates.yaml carries no gate_b2_pia_oracle. The phrase \"computes exactly\" occurs in gate_2's description only, where it awards a status no gate_2 cell gates. This artifact records that as read; it proposes no gate and amends nothing."
   },
   "no_engine_executed": {
@@ -76,6 +88,39 @@
       "sha256": "8b4db38035c6d9d303bfcf1660692653269cf078c2d4930c330c9e9f276aed2c",
       "bytes": 15772
     },
+    "consumer_symbols": {
+      "class": {
+        "module": "src/populace_dynamics/household.py",
+        "symbol": "CoupleBenefit",
+        "kind": "class",
+        "first_line": 133,
+        "last_line": 149
+      },
+      "summation_property": {
+        "module": "src/populace_dynamics/household.py",
+        "symbol": "total",
+        "kind": "function",
+        "first_line": 142,
+        "last_line": 149
+      },
+      "function": {
+        "module": "src/populace_dynamics/household.py",
+        "symbol": "couple_benefit",
+        "kind": "function",
+        "first_line": 152,
+        "last_line": 182
+      },
+      "qualified_summation_symbol": "CoupleBenefit.total",
+      "symbol_names_derived_by_ast": [
+        "CoupleBenefit",
+        "total",
+        "couple_benefit"
+      ],
+      "name_the_v1_artifact_used": "CoupleBenefits",
+      "name_the_v1_artifact_used_exists": false,
+      "packet_name": "couple_benefits",
+      "packet_name_exists": false
+    },
     "code_reference_note": "Every code span in rule_inventory is derived with ast from the pinned module, not typed, so a reproduction test re-derives it."
   },
   "frozen_scope": {
@@ -88,6 +133,7 @@
     "status": "proposal_not_ratified",
     "adopted_here": false,
     "gates_yaml_line_642": "UNLOCKED tranche 2c; benefit formulas earn per-rule \"computes exactly\"",
+    "gates_yaml_line_642_pinned_to_blob": "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c",
     "conditions": {
       "E1_independent_re_execution": "A separately implemented engine executes the rule from the same pinned parameters and agrees on every registered case within the committed agreement bound. Precedent and bound already committed: runs/pia_cross_engine_v1.json agreement_tolerance_dollars: 0.005, i.e. to the cent. \"Exactly\" means to the cent, not bit-exact.",
       "E2_external_anchor": "At least one registered case per rule whose expected value is an SSA-published figure, not our own arithmetic. A case whose expected is recomputed from the same formula tests branch selection, not correctness of the rule.",
@@ -204,7 +250,45 @@
         "pia_oracle",
         "shape"
       ],
-      "what_the_rows_cannot_show": "The rows carry id, cohort, shape, aime_oracle, aime_engine, pia_oracle, pia_engine and abs_diff only. They carry no earnings history, so per-row wage-base clipping and per-row indexation are NOT determinable from the committed bytes; they carry no claiming factor and no auxiliary amount, so every rule from 402(q) onward is invisible to this artifact."
+      "what_the_rows_cannot_show": "The rows carry id, cohort, shape, aime_oracle, aime_engine, pia_oracle, pia_engine and abs_diff only. They carry no earnings history, so per-row wage-base clipping and per-row indexation are NOT determinable from the committed bytes; they carry no claiming factor and no auxiliary amount, so every rule from 402(q) onward is invisible to this artifact.",
+      "bend_points_provenance": {
+        "note": "BEND_POINTS is TYPED in this builder (copied from tests/ss/test_cross_engine.py::test_all_three_pia_brackets_exercised), not loaded from policyengine-us. It is pinned to committed bytes here: each typed pair, run through the 90 / 32 / 15 brackets and the dime floor, reproduces every committed pia_oracle of its cohort from the committed aime_oracle, and no integer pair within three dollars of it does. The 2026 pair additionally has an SSA-anchor test; the 2020 pair (960 / 5785) has none in the repo, which is disclosed rather than repaired.",
+        "pia_factors_typed": [
+          0.9,
+          0.32,
+          0.15
+        ],
+        "by_cohort": {
+          "2020": {
+            "typed_pair": [
+              960.0,
+              5785.0
+            ],
+            "n_rows": 120,
+            "n_rows_reproduced_to_the_dime": 120,
+            "reproduces_every_committed_pia": true,
+            "neighbouring_integer_pairs_within_3_dollars_also_reproducing_all_rows": [],
+            "pair_is_unique_within_3_dollars": true,
+            "ssa_anchor_test": null
+          },
+          "2026": {
+            "typed_pair": [
+              1286.0,
+              7749.0
+            ],
+            "n_rows": 120,
+            "n_rows_reproduced_to_the_dime": 120,
+            "reproduces_every_committed_pia": true,
+            "neighbouring_integer_pairs_within_3_dollars_also_reproducing_all_rows": [],
+            "pair_is_unique_within_3_dollars": true,
+            "ssa_anchor_test": "tests/ss/test_benefits.py::test_2026_bend_points_match_ssa_determination"
+          }
+        },
+        "every_pair_reproduces_its_cohort": true,
+        "pairs_without_an_ssa_anchor_test": [
+          "2020"
+        ]
+      }
     },
     "ssa_worked_examples": {
       "artifact": "runs/aux_benefit_examples_v1.json",
@@ -531,6 +615,15 @@
       }
     }
   },
+  "status_provenance": {
+    "statement": "The E1 / E2 / E3 status labels are the builder's READING of the derived evidence, typed as strings in _rule_inventory; the evidence fields beside them (case counts, ast code spans, bracket occupancy, the dime-floor sweep, the factor split, the not-implemented searches and the basis_derivation blocks of R4, R8 and R9) are derived from committed bytes and re-derived by tests. A status label is pinned only by the byte-reproduction test; a later editor can change one by editing a string and rebuilding, which is why the statuses below award nothing and the packet's proposed verdicts are quoted, not adopted (referee A, F8; referee B, D5).",
+    "rules_with_a_derived_e3_basis": [
+      "R4",
+      "R8",
+      "R9"
+    ],
+    "every_derived_basis_holds": true
+  },
   "rule_inventory": [
     {
       "id": "R1_415b1_wage_base_cap",
@@ -718,7 +811,29 @@
       },
       "e3": {
         "status": "branch_unexercised",
-        "basis": "the short-history zero-pad branch is reached by no committed cross-engine case and by no test in tests/ss/. Other in-repo callers of aime() exist (populace_dynamics.estimates.ledgers, populace_dynamics.data.couple_earnings); none is part of a registered case set here."
+        "basis": "the short-history zero-pad branch is reached by no committed cross-engine case and by no test in tests/ss/. Other in-repo callers of aime() exist (populace_dynamics.estimates.ledgers, populace_dynamics.data.couple_earnings); none is part of a registered case set here.",
+        "basis_derivation": {
+          "claim": "the short-history zero-pad branch of aime() is reached by no test in tests/ss/",
+          "derivation_kind": "static ast read of every aime(...) call under tests/ss/ and of the integer-literal range(a, b) calls inside each enclosing test (the history the test builds); a dynamic history length would require executing the tests",
+          "search_root": "tests/ss",
+          "computation_years": 35,
+          "call_sites": [
+            {
+              "module": "tests/ss/test_benefits.py",
+              "enclosing_function": "test_aime_caps_at_wage_base_and_floors_to_dollar",
+              "line": 79,
+              "first_argument_literal": null,
+              "first_argument_is_literal": false,
+              "literal_range_lengths_in_enclosing_test": [
+                40
+              ],
+              "min_history_length_if_literal": 40
+            }
+          ],
+          "n_call_sites": 1,
+          "every_direct_aime_test_builds_at_least_n_years": true,
+          "claim_holds": true
+        }
       },
       "packet_proposed_verdict": {
         "verdict": "partial_no_external_anchor",
@@ -787,7 +902,8 @@
       },
       "e2": {
         "status": "weak",
-        "basis": "test_pia_worked_example_2026 asserts 3263.20, which is the oracle's own arithmetic from SSA's published 2026 bend points -- the BEND POINTS are published, the bracket total is not"
+        "basis": "test_pia_worked_example_2026 asserts 3263.20, which is the oracle's own arithmetic from SSA's published 2026 bend points -- the BEND POINTS are published, the bracket total is not",
+        "bend_points_note": "the bend points the occupancy is scored against are typed in this builder and pinned to the committed rows by evidence_inventory.cross_engine.bend_points_provenance; the 2020 pair has no SSA-anchor test in the repo"
       },
       "e3": {
         "status": "all_branches_exercised",
@@ -924,7 +1040,36 @@
       },
       "e3": {
         "status": "partial_and_one_branch_unexercised",
-        "basis": "both rate brackets are reached at 60 months early, but the months-early domain is sampled at the foundation grid's claim ages only. The months_early <= 0 early-return branch is NOT reached: benefit_factor short-circuits before calling early_reduction at or after FRA, and no test in tests/ss/ asserts early_reduction(0)."
+        "basis": "both rate brackets are reached at 60 months early, but the months-early domain is sampled at the foundation grid's claim ages only. The months_early <= 0 early-return branch is NOT reached: benefit_factor short-circuits before calling early_reduction at or after FRA, and no test in tests/ss/ asserts early_reduction(0).",
+        "basis_derivation": {
+          "claim": "no test in tests/ss/ asserts early_reduction(0), so the months_early <= 0 early-return branch is reached by no test",
+          "derivation_kind": "static ast read of every early_reduction(...) call under tests/ss/: the literal first argument of each call",
+          "search_root": "tests/ss",
+          "call_sites": [
+            {
+              "module": "tests/ss/test_aux_benefits.py",
+              "enclosing_function": "test_spousal_early_reduction_brackets",
+              "line": 93,
+              "first_argument_literal": 36,
+              "first_argument_is_literal": true
+            },
+            {
+              "module": "tests/ss/test_benefits.py",
+              "enclosing_function": "test_early_reduction_at_fra_67_claiming_62",
+              "line": 103,
+              "first_argument_literal": 60,
+              "first_argument_is_literal": true
+            }
+          ],
+          "n_call_sites": 2,
+          "first_argument_literals": [
+            36,
+            60
+          ],
+          "every_first_argument_is_a_literal": true,
+          "zero_or_negative_asserted": false,
+          "claim_holds": true
+        }
       },
       "packet_proposed_verdict": {
         "verdict": "computes_exactly_narrow_domain",
@@ -967,7 +1112,50 @@
       },
       "e3": {
         "status": "partial",
-        "basis": "the 8 percent per year step is scored end to end and the months_late <= 0 early return is asserted directly; the 3 percent step for the earliest cohorts is asserted as a parameter read only, and the credited <= 0 branch (an FRA at or past age 70) is unreachable for every cohort in the committed schedule and is unexercised."
+        "basis": "the 8 percent per year step is scored end to end and the months_late <= 0 early return is asserted directly; the 3 percent step for the earliest cohorts is asserted as a parameter read only, and the credited <= 0 branch (an FRA at or past age 70) is unreachable for every cohort in the committed schedule and is unexercised.",
+        "basis_derivation": {
+          "claim": "the credited <= 0 branch of delayed_credit is unreachable for every FRA in the committed schedule",
+          "derivation_kind": "arithmetic on committed bytes: window = min(max_delayed_months, _AGE_70_MONTHS - fra); credited = min(months_late, window) with months_late > 0 (the earlier return handles months_late <= 0), so credited <= 0 iff window <= 0 iff fra >= _AGE_70_MONTHS. The FRA schedule is SSA's own (Table 6.B5.1 footnote a) as committed in the 2023 edition; tests/test_claiming.py::test_fra_footnote_schedule_matches_oracle asserts it equals the oracle's policyengine-us-loaded schedule.",
+          "age_70_months": 840,
+          "age_70_months_source": "src/populace_dynamics/ss/benefits.py::_AGE_70_MONTHS (ast)",
+          "max_delayed_months": 48,
+          "max_delayed_months_source": "src/populace_dynamics/ss/params.py::SSAParameters.max_delayed_months default (ast)",
+          "fra_schedule_source": "data/external/ssa_claim_ages_2023supplement.json::fra_schedule",
+          "fra_months_values": [
+            780,
+            782,
+            784,
+            786,
+            788,
+            790,
+            792,
+            794,
+            796,
+            798,
+            800,
+            802,
+            804
+          ],
+          "max_fra_months": 804,
+          "window_months_by_fra": {
+            "780": 48,
+            "782": 48,
+            "784": 48,
+            "786": 48,
+            "788": 48,
+            "790": 48,
+            "792": 48,
+            "794": 46,
+            "796": 44,
+            "798": 42,
+            "800": 40,
+            "802": 38,
+            "804": 36
+          },
+          "min_window_months": 36,
+          "branch_reachable_iff_fra_months_at_least": 840,
+          "claim_holds": true
+        }
       },
       "packet_proposed_verdict": {
         "verdict": "computes_exactly_narrow_domain",
@@ -1400,7 +1588,9 @@
         "search_root": "src/populace_dynamics",
         "patterns": [
           "family_max",
-          "familyMax"
+          "familyMax",
+          "maximum_family_benefit",
+          "fam_max"
         ],
         "n_files_searched": 143,
         "hits": [],
@@ -1476,7 +1666,41 @@
         }
       ],
       "consumer": "src/populace_dynamics/household.py",
-      "note": "Both auxiliary functions return uncapped amounts and household.CoupleBenefits.total sums both own benefits plus both excess spousal amounts with no cap. The family maximum binds precisely where auxiliary benefits stack, and no committed case stacks enough for it to bind."
+      "note": "Both auxiliary functions return uncapped amounts and household.CoupleBenefit.total sums both own benefits plus both excess spousal amounts with no cap. The family maximum binds precisely where auxiliary benefits stack, and no committed case stacks enough for it to bind.",
+      "consumer_symbols": {
+        "class": {
+          "module": "src/populace_dynamics/household.py",
+          "symbol": "CoupleBenefit",
+          "kind": "class",
+          "first_line": 133,
+          "last_line": 149
+        },
+        "summation_property": {
+          "module": "src/populace_dynamics/household.py",
+          "symbol": "total",
+          "kind": "function",
+          "first_line": 142,
+          "last_line": 149
+        },
+        "function": {
+          "module": "src/populace_dynamics/household.py",
+          "symbol": "couple_benefit",
+          "kind": "function",
+          "first_line": 152,
+          "last_line": 182
+        },
+        "qualified_summation_symbol": "CoupleBenefit.total",
+        "symbol_names_derived_by_ast": [
+          "CoupleBenefit",
+          "total",
+          "couple_benefit"
+        ],
+        "name_the_v1_artifact_used": "CoupleBenefits",
+        "name_the_v1_artifact_used_exists": false,
+        "packet_name": "couple_benefits",
+        "packet_name_exists": false
+      },
+      "search_patterns_note": "the family-maximum absence is re-derivable only against the literal patterns in not_implemented.searches.family_maximum.patterns; v2 widened them (maximum_family_benefit, fam_max)"
     }
   },
   "known_gaps": [
@@ -1520,8 +1744,9 @@
       {
         "field": "the household consumer that stacks auxiliary benefits",
         "packet_states": "household.couple_benefits (household.py:143-149)",
-        "derived_here": "the summation is the CoupleBenefits.total property; the module's function is couple_benefit",
-        "consequence": "a naming correction; the substance -- that both own benefits and both excess spousal amounts are summed with no family maximum -- holds as read"
+        "derived_here": "the summation is the CoupleBenefit.total property (class CoupleBenefit, singular); the module's function is couple_benefit. Both symbols are derived by ast in sources.consumer_symbols.",
+        "consequence": "a naming correction; the substance -- that both own benefits and both excess spousal amounts are summed with no family maximum -- holds as read",
+        "v1_defect": "the v1 artifact named the class CoupleBenefits (plural), a symbol that exists nowhere in src/ or tests/ (referee A, F9-4; referee B, D4 / F1); corrected in v2 and pinned by ast"
       }
     ]
   },
@@ -1529,10 +1754,13 @@
     "any per-rule status: the E1/E2/E3 fields record what the committed evidence reaches, and the packet's proposed verdicts are quoted for comparison, not adopted",
     "that the proposed definition of \"computes exactly\" is the right one: no referee round has run",
     "any statement about the Axiom engine or policyengine-us beyond what the committed artifacts record; neither was executed here",
-    "that the rule granularity is correct: sixteen rules is the packet's cut, and R12 and R14 each bundle several statutory operations"
+    "that the rule granularity is correct: sixteen rules is the packet's cut, and R12 and R14 each bundle several statutory operations",
+    "that any E1 status has been re-executed in this ceremony: the three engine-backed tests in tests/ss/ skip on a host without the Axiom wheel or a policyengine-us Python, and every E1 status rests on the committed cross-engine artifact as built on its recorded date",
+    "the sequencing of the lock PR: the gates.yaml citation is blob-pinned and survives the gate commit, but the two 'gate name absent from gates.yaml' tests read the live file by design and fail the moment gate_b2_pia_oracle or gate_b2_claiming lands; the commit that inserts either block must retire those assertions or supersede this artifact with a v2 in the same PR",
+    "that the typed bend-point pairs are SSA determinations: the 2026 pair has an SSA-anchor test, the 2020 pair is pinned only to the committed cross-engine rows it reproduces"
   ],
   "build": {
-    "built_utc": "2026-09-06T16:19:02.593852+00:00",
+    "built_utc": "2026-09-08T00:39:08.282508+00:00",
     "built_by": "scripts/build_pia_rule_coverage.py"
   }
 }
