@@ -24,6 +24,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -45,8 +46,8 @@ COVERAGE_COMMITTED = (
 #: THIS artifact's committed bytes (size, sha256), re-stated in the same
 #: commit as any rebuild.
 GATE_V1_COMMITTED = (
-    169_031,
-    "d14b7192425cc1f91e0e853fd48bca5896f89b1ddb1d2f20cccec24f984735aa",
+    221_063,
+    "67fbb9455ed7919a14fd54f4fdb2ed7ebf05ba97f8e6456d75cd997b210b74d7",
 )
 #: PRE-LOCK MARKER. False until the commit that inserts the
 #: gate_b2_pia_oracle block flips it, in every file the artifact's
@@ -194,11 +195,28 @@ def test_gates_yaml_citations_derive_by_search_on_the_pinned_blob():
     assert lc["no_self_rescue"] == 565
     assert lc["gate_2_n_gated_cells"] == 917
     assert lc["gate_2_own_record_outside_2a_2b_2c"] == 782
-    if cites["byte_identical_to_working_tree"]:
-        lines = GATES.read_text().split("\n")
-        assert "computes exactly" in lines[641]
-        assert "n_gated_cells: 46" in lines[916]
-        assert "OUTSIDE 2a / 2b / 2c" in lines[781]
+    # referee B F7: recompute the blob sha1 of the working tree and read the
+    # cited lines from the PINNED blob (the claiming twin's form), never
+    # from a build-time flag.
+    raw = GATES.read_bytes()
+    blob = hashlib.sha1(
+        b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw
+    ).hexdigest()
+    if blob == cites["git_blob_sha1"]:
+        assert cites["byte_identical_to_working_tree"] is True
+        lines = raw.decode("utf-8").split("\n")
+    else:
+        result = subprocess.run(
+            ["git", "cat-file", "blob", cites["git_blob_sha1"]],
+            cwd=ROOT,
+            capture_output=True,
+            check=True,
+        )
+        lines = result.stdout.decode("utf-8").split("\n")
+    assert "computes exactly" in lines[641]
+    assert "n_gated_cells: 46" in lines[916]
+    assert "OUTSIDE 2a / 2b / 2c" in lines[781]
+    assert "no_self_rescue" in lines[564]
 
 
 # --------------------------------------------------------------------------
@@ -221,6 +239,7 @@ def test_rule_order_and_partition_counts():
         "P8",
         "P9",
         "P13",
+        "S8_e1_reading",
     }
     strict = art["partitions"]["strict"]
     assert set(strict["all_three"]) | set(strict["strict_subset"]) | set(
@@ -259,11 +278,16 @@ def test_partition_mapping_is_total_over_the_coverage_labels():
         }
 
 
-def test_alternative_readings_keep_r10_as_the_only_full_award():
+def test_alternative_readings_r10_under_label_readings_only():
+    """Referee A D1: R10 holds all three under the strict reading and
+    under every LABEL-based reading; under the evidence-based Axiom-only
+    reading (R10's E1 rests on 0 Axiom cases) no rule does, so the
+    intersection over every filed reading is empty. Referee B F5: the
+    permissive E2 reading for R5 / R7 is emitted and awards three."""
     art = _artifact()
     alts = art["partitions"]["alternatives"]
     for name in (
-        "axiom_only_e1",
+        "axiom_only_e1_label_based_as_filed_at_25680f1",
         "p6_e1_waiver_for_r11_r15",
         "p9_constant_override_counts_as_e2",
         "p6_waiver_and_p9_override",
@@ -271,9 +295,29 @@ def test_alternative_readings_keep_r10_as_the_only_full_award():
         assert alts[name]["all_three"] == ["R10_416l_fra_schedule"], name
         assert "moves_vs_strict" in alts[name]
         assert "ruling" in alts[name]
-    assert art["partitions"]["invariant_under_every_reading"][
-        "rules_holding_all_three_under_every_variant"
+    assert alts["axiom_only_e1"]["all_three"] == []
+    assert alts["axiom_only_e1"]["awarded_set_under_this_reading"] == []
+    assert alts["axiom_only_e1"]["per_rule"]["R10_416l_fra_schedule"][
+        "failing_conditions"
+    ] == ["E1"]
+    assert (
+        alts["axiom_only_e1_label_based_as_filed_at_25680f1"]["superseded"]
+        is True
+    )
+    assert alts["e2_bend_points_count_for_r5_r7"]["all_three"] == [
+        "R5_415a1A_pia_brackets",
+        "R7_415g_dime_floor",
+        "R10_416l_fra_schedule",
+    ]
+    inv = art["partitions"]["invariant_under_every_reading"]
+    assert inv["rules_holding_all_three_under_every_variant"] == []
+    assert inv["rules_holding_all_three_under_every_label_based_reading"] == [
+        "R10_416l_fra_schedule"
+    ]
+    assert art["partitions"]["e1_label_evidence_audit"][
+        "inconsistent_rules"
     ] == ["R10_416l_fra_schedule"]
+    assert art["gate_partition"]["all_three"] == ["R10_416l_fra_schedule"]
     packet = alts["packet_proposed_verdicts"]
     assert set(packet["verdicts"]) == set(RULE_IDS)
     assert (
@@ -345,6 +389,38 @@ def test_e1_clause_family_maximum_and_frozen_scope_blocks():
     assert scope["partition_under_the_strict_reading"]["all_three"] == [
         "R10_416l_fra_schedule"
     ]
+    assert (
+        scope["partition_under_the_evidence_based_axiom_only_reading"][
+            "all_three"
+        ]
+        == []
+    )
+    assert "TEST-BOUND strings" in scope["binding_of_this_text"]
+    assert clause["r10_e1_basis_D1"]["rests_on_the_policyengine_us_half_alone"]
+    assert clause["r10_e1_basis_D1"]["cross_engine_cases"] == 0
+
+
+def test_record_hygiene_and_referee_record():
+    """Referee B F4: the record-hygiene leaf exists here (added at the
+    threshold-fixes re-emission) and states the literal footer cut; fix
+    10: the threshold referee round's co-location disclosure is carried
+    verbatim."""
+    art = _artifact()
+    rh = art["record_hygiene"]
+    assert "literally ABOVE" in rh["R1_report_footer"]
+    assert "145,412" in rh["R1_report_footer"]
+    assert "F4" in rh["added_at"]
+    record = art["referee_record"]
+    assert record["co_location_disclosure_verbatim"].startswith(
+        "**Disclosure (required by the campaign's co-located-referee rule"
+    )
+    assert (
+        "shared an account and a model"
+        in record["co_location_disclosure_verbatim"]
+    )
+    assert "d687d9902e8a0bfa" in record["A_statistical"]
+    assert "55b2d808790fe6a2" in record["B_contract_and_record"]
+    assert art["ceremony"]["threshold_referee_round"] == record
 
 
 # --------------------------------------------------------------------------
@@ -438,20 +514,51 @@ def test_open_questions_and_flip_plan():
         "test_computes_exactly_citation_is_blob_pinned" in s
         for s in plan["tests_that_survive_the_flip_unchanged"]
     )
+    # referee B F1 (ii): the post-flip disposition is recorded, and the
+    # artifact is NOT re-emitted at flip (floor_run_sha256 = AS RATIFIED)
+    assert plan["artifact_re_emitted_at_flip"] is False
+    disp = plan["post_flip_test_dispositions"]
+    assert "option (b)" in disp["decision"]
+    assert "weakening_stated" in disp
 
 
 # --------------------------------------------------------------------------
 # Reproduction
 # --------------------------------------------------------------------------
-def _strip_volatile(art: dict) -> dict:
+def _strip_volatile(art: dict, *, landed: bool | None = None) -> dict:
+    """Build-time metadata a rebuild legitimately moves: the elapsed time
+    and the HEAD the artifact was built at.
+
+    MARKER-AWARE (referee B F1 (ii), option (b), recorded in the
+    artifact's flip_plan.post_flip_test_dispositions): once the block has
+    landed, the flip commit does NOT re-emit the artifact (its bytes stay
+    AS RATIFIED), so the in-memory rebuild legitimately differs in
+    exactly one leaf, which ``test_build_reproduces_the_committed_
+    artifact`` ASSERTS rather than compares: ``gates_yaml_citations.
+    byte_identical_to_working_tree`` reads False (the line citations are
+    still checked against the pinned blob). That one leaf is removed
+    here; nothing else is exempted."""
+    if landed is None:
+        landed = GATE_B2_PIA_ORACLE_BLOCK_LANDED
     out = json.loads(json.dumps(art))
     out.pop("elapsed_seconds", None)
     out["revision_pins"].pop("populace_dynamics_sha", None)
+    if landed:
+        out["gates_yaml_citations"].pop("byte_identical_to_working_tree")
     return out
 
 
 def test_build_reproduces_the_committed_artifact():
+    """The builder, run in memory, reproduces the committed bytes on every
+    key but elapsed_seconds and the HEAD sha. Post-flip (marker True) the
+    artifact is NOT re-emitted -- it stays AS RATIFIED -- and the one
+    flip-created difference is asserted instead of compared (referee B
+    F1 (ii); the weakening is stated in _strip_volatile and in
+    flip_plan.post_flip_test_dispositions)."""
     builder = _import_builder()
     fresh = builder.run(verbose=False)
     committed = _artifact()
     assert _strip_volatile(fresh) == _strip_volatile(committed)
+    assert fresh["gates_yaml_citations"]["byte_identical_to_working_tree"] is (
+        not GATE_B2_PIA_ORACLE_BLOCK_LANDED
+    )

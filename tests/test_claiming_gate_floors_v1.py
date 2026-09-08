@@ -47,8 +47,8 @@ FLOOR_COMMITTED = (
 #: THIS artifact's committed bytes (size, sha256), re-stated in the same
 #: commit as any rebuild (the gate-3 digest-pin precedent).
 GATE_V1_COMMITTED = (
-    271_833,
-    "7d4eb3e33920fbcf50fe28bc46370704bd282bb897148261314f50b05fe9a16c",
+    309_781,
+    "e1983ccaf880c15f9fcc331adaf723f64365c91de9dd73db13bc478e94303843",
 )
 #: PRE-LOCK MARKER (the mortality pattern). False until the commit that
 #: inserts the gate_b2_claiming block flips it -- in every file the
@@ -420,6 +420,10 @@ def test_record_hygiene_r1_r2_r3_r5():
     art = _artifact()
     rh = art["record_hygiene"]
     assert "literally ABOVE" in rh["R1_report_footer"]
+    # referee B F2: the leaf now states what the thresholds report's footer
+    # actually covers, and that THIS sitting's report is cut literally.
+    assert "145,412" in rh["R1_report_footer"]
+    assert "145,436" in rh["R1_report_footer"]
     r2 = rh["R2_per_rule_mean_convention"]
     assert r2["rules_where_the_two_conventions_differ"] == ["ols_last_5"]
     row = r2["by_rule"]["ols_last_5"]
@@ -437,9 +441,19 @@ def test_record_hygiene_r1_r2_r3_r5():
 def test_fit_isolation_scan_names_every_channel_and_hits_only_named_ones():
     art = _artifact()
     iso = art["fit_isolation"]
-    assert iso["n_channels"] == 4
+    assert iso["n_channels"] == 5
     paths = [c["path"] for c in iso["channels_carrying_the_held_out_actuals"]]
-    assert paths[-1] == "scripts/build_ssa_claim_ages.py"
+    assert paths[3] == "scripts/build_ssa_claim_ages.py"
+    # referee B F1 (iii): gates.yaml named as a POST-FLIP channel
+    assert paths[-1] == "gates.yaml"
+    contract = iso["channels_carrying_the_held_out_actuals"][-1]
+    assert contract["carries_the_rows"] == {
+        "pre_flip": False,
+        "post_flip": True,
+    }
+    assert contract["hit_by_this_scan"] is False
+    assert "gates.yaml" in iso["required_draft_clause"]
+    assert "n_files_scanned_note" in iso["scan"]
     assert iso["scan"]["every_hit_is_a_named_channel"] is True
     assert set(iso["scan"]["files_hit"]) == {
         "data/external/ssa_claim_ages_2023supplement.json",
@@ -449,7 +463,7 @@ def test_fit_isolation_scan_names_every_channel_and_hits_only_named_ones():
     for channel in iso["channels_carrying_the_held_out_actuals"]:
         if "pin" in channel:
             assert _sha(ROOT / channel["path"]) == channel["pin"]["sha256"]
-    script = iso["channels_carrying_the_held_out_actuals"][-1]
+    script = iso["channels_carrying_the_held_out_actuals"][3]
     assert script["line_numbers"] == {
         "male": [159, 160, 161],
         "female": [185, 186, 187],
@@ -459,6 +473,17 @@ def test_fit_isolation_scan_names_every_channel_and_hits_only_named_ones():
 
 def test_certification_scope_and_circularity_disclosure_present():
     art = _artifact()
+    # referee A D3: the block says which of its strings the tests bind
+    assert (
+        "TEST-BOUND strings"
+        in art["certification_scope"]["binding_of_this_text"]
+    )
+    assert (
+        _block(art)["thresholds"]["certification_scope"][
+            "binding_of_this_text"
+        ]
+        == art["certification_scope"]["binding_of_this_text"]
+    )
     scope = art["certification_scope"]
     assert scope["horizon_C11"]["priced_horizons_years"] == [1, 2, 3]
     assert "2030+" in scope["horizon_C11"]["deployment_note"]
@@ -572,28 +597,95 @@ def test_open_questions_and_flip_plan():
     for rel in plan["files_carrying_the_marker"]:
         found = pattern.findall((ROOT / rel).read_text())
         assert found == [str(GATE_B2_CLAIMING_BLOCK_LANDED)], rel
+    # referee B F1 (ii): the post-flip disposition is recorded, and the
+    # artifact is NOT re-emitted at flip (floor_run_sha256 = AS RATIFIED)
+    assert plan["artifact_re_emitted_at_flip"] is False
+    disp = plan["post_flip_test_dispositions"]
+    assert "option (b)" in disp["decision"]
+    assert "weakening_stated" in disp
+    assert "gates_yaml_as_a_fit_isolation_channel" in disp
+    d45 = art["packet_open_draft_decisions_d4_d5"]
+    assert set(d45) == {
+        "source",
+        "d4_raw_column_surface",
+        "d5_aggregate_statistic",
+    }
+    assert art["referee_record"]["co_location_disclosure_verbatim"].startswith(
+        "**Disclosure"
+    )
 
 
 # --------------------------------------------------------------------------
 # Reproduction
 # --------------------------------------------------------------------------
-def _strip_volatile(art: dict) -> dict:
+def _strip_volatile(art: dict, *, landed: bool | None = None) -> dict:
     """Build-time metadata a rebuild legitimately moves: the elapsed
     time, the HEAD the artifact was built at (the parent of the commit
     carrying it), and the fit-isolation scan's file COUNT (the number of
     git-tracked text files, which grows with the tree; the scan's HITS
-    are compared)."""
+    are compared).
+
+    MARKER-AWARE (referee B F1 (ii), option (b), recorded in the
+    artifact's flip_plan.post_flip_test_dispositions): while the marker
+    is False nothing else is stripped. Once the block has landed, the
+    flip commit does NOT re-emit the artifact (its bytes stay AS
+    RATIFIED), so the in-memory rebuild legitimately differs in exactly
+    two places, which ``test_build_reproduces_the_committed_artifact``
+    ASSERTS rather than compares: the fit-isolation scan gains the one
+    hit the landed block creates (gates.yaml under signature (a) for the
+    two 2020 rows), and ``gates_yaml_citations.byte_identical_to_
+    working_tree`` reads False. Those two leaves are removed here."""
+    if landed is None:
+        landed = GATE_B2_CLAIMING_BLOCK_LANDED
     out = json.loads(json.dumps(art))
     out.pop("elapsed_seconds", None)
     out["revision_pins"].pop("populace_dynamics_sha", None)
     out["fit_isolation"]["scan"].pop("n_files_scanned", None)
+    if landed:
+        out["gates_yaml_citations"].pop("byte_identical_to_working_tree")
+        scan = out["fit_isolation"]["scan"]
+        scan["hits_by_signature"]["conditional_4dp"].pop("gates.yaml", None)
+        scan["files_hit"] = [f for f in scan["files_hit"] if f != "gates.yaml"]
+        out["fit_isolation"]["channels_carrying_the_held_out_actuals"][-1][
+            "hit_by_this_scan"
+        ] = False
     return out
 
 
 def test_build_reproduces_the_committed_artifact():
     """The builder, run in memory, reproduces the committed bytes on every
-    key but elapsed_seconds and the HEAD sha it was built at."""
+    key but elapsed_seconds, the HEAD sha it was built at and the scan's
+    file count. Post-flip (marker True) the artifact is NOT re-emitted --
+    it stays AS RATIFIED -- and the rebuild's two flip-created
+    differences are asserted to their expected values instead of being
+    compared (referee B F1 (ii); the weakening is stated in
+    _strip_volatile and in flip_plan.post_flip_test_dispositions)."""
     builder = _import_builder()
     fresh = builder.run(verbose=False)
     committed = _artifact()
     assert _strip_volatile(fresh) == _strip_volatile(committed)
+    if GATE_B2_CLAIMING_BLOCK_LANDED:
+        assert fresh["gates_yaml_citations"][
+            "byte_identical_to_working_tree"
+        ] is (False)
+        scan = fresh["fit_isolation"]["scan"]
+        assert scan["hits_by_signature"]["conditional_4dp"]["gates.yaml"] == [
+            "female|2020",
+            "male|2020",
+        ]
+        assert scan["files_hit"] == sorted(
+            committed["fit_isolation"]["scan"]["files_hit"] + ["gates.yaml"]
+        )
+        assert scan["every_hit_is_a_named_channel"] is True
+        assert scan["files_hit_not_named_as_a_channel"] == []
+        assert (
+            fresh["fit_isolation"]["channels_carrying_the_held_out_actuals"][
+                -1
+            ]["hit_by_this_scan"]
+            is True
+        )
+    else:
+        assert fresh["gates_yaml_citations"][
+            "byte_identical_to_working_tree"
+        ] is (True)
+        assert "gates.yaml" not in fresh["fit_isolation"]["scan"]["files_hit"]

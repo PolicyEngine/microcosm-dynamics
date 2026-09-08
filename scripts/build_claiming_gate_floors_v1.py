@@ -23,6 +23,8 @@ and ``runs/mortality_gate_floors_v1.json`` established:
   (C2 / C3), ``fit_isolation`` naming EVERY committed channel carrying
   the held-out actuals (the three v2 names plus verifier F-A's
   ``scripts/build_ssa_claim_ages.py`` transcription rows, found by scan);
+* the demotion consequence for ruling 3 recomputed on the 33 remaining
+  cells, with referee A's 242-rule wider single-rule class (A D2);
 * the eight rulings FILED and PRICED, none made
   (``open_questions_for_the_ceremony``);
 * the DRAFT ``gate_b2_claiming`` block as a string
@@ -40,6 +42,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import subprocess
 import sys
@@ -101,6 +104,108 @@ OUT_OF_SCOPE_REASON = "conversion_flow_owned_by_di_surface"
 #: The words the wording audit forbids in the draft block (referee-B R12
 #: style; the standing 0 x anchored / aligned rule).
 FORBIDDEN_WORDS = ("anchored", "aligned")
+
+#: The threshold referee round's co-location disclosure, carried VERBATIM
+#: from claiming-thr-referee-RECORD.md (5,502 B, sha256 f64634e22136f818...)
+#: into this artifact's referee_record (fixes brief item 10).
+REFEREE_RECORD_DISCLOSURE = '**Disclosure (required by the campaign\'s co-located-referee rule; the same sentence gate 3 and the mortality gate carry):** referees A (statistical) and B (contract/record) of the bound thresholds (commit `25680f1` on `cap/claiming-pia-floors`) shared an account and a model \u2014 both ran as `claude-fable-5-1` on lane `max@farness.ai` (runs 20260908-081523-claiming-thr-referee-a and 20260908-081526-claiming-thr-referee-b, dispatched 08:15 on 2026-09-08). The reason was capacity, not choice: at 08:14 every other Claude lane in the fleet was weekly-capped (rules.foundation Fable and Opus to Sep 13 07:00; axiom-foundation Opus to Sep 12 13:00; hivesight Opus to Sep 12 10:00; rulesfoundation.org, maxghenis.com, max.ghenis@gmail.com, mghenis@gmail.com, optiqal.ai Fable to Sep 12; axiom.org to Sep 10; ubicenter.org disabled by its organisation; policyengine.org out of usage credits \u2014 one-line probes, banner text recorded in `.dashboard-scratch/next-refresh-notes.md`), and the orchestrator (ed26d44e, whose lane farness is) ruled "leave them on farness". This is the seventh co-located adversarial pair by the orchestrator\'s own count; that six-pair measurement is the orchestrator\'s and is uncorroborated \u2014 the r9 kit gate (run 20260908-055516-c20-kit-r9-gate) accepted it "as supplied campaign evidence, NOT VERIFIED independently" and must not be cited as confirming it. The campaign handles a forced co-location by disclosure, not re-run.'
+REFEREE_ROUND = {
+    "round": "adversarial referees on the bound thresholds (commit 25680f1)",
+    "A_statistical": (
+        "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
+        "claiming-thr-referee-A/REPORT.md (55,849 bytes, sha256 "
+        "d687d9902e8a0bfa1421a123afbe28483f0937e35a0177278fa7fe18e53fd7ec)"
+    ),
+    "B_contract_and_record": (
+        "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
+        "claiming-thr-referee-B/REPORT.md (82,628 bytes, sha256 "
+        "55b2d808790fe6a2d3e69fcf9edbf767248b83fb7d15bef76ca7c309c17fd1f3)"
+    ),
+    "record": (
+        "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
+        "claiming-thr-referee-RECORD.md (5,502 bytes, sha256 "
+        "f64634e22136f81860b00079671159086a786c6bd0b18addffdd2d58af96f800)"
+    ),
+    "verdicts": (
+        "both NOT LOCK-READY on record and label grounds; both confirm "
+        "every claiming number (A: 202 / 202 checks; B: every threshold, "
+        "partition, alternative and placeholder from bytes); no claiming "
+        "number moves"
+    ),
+    "co_location_disclosure_verbatim": REFEREE_RECORD_DISCLOSURE,
+    "six_pair_count_status": (
+        "the orchestrator's own and uncorroborated, as the record states"
+    ),
+}
+
+#: Referee B F3: the packet's open_draft_decisions d4 / d5 (its section 5,
+#: report lines 654-666) fell out of the chain at floors v1 with no
+#: recorded disposition. FILED here, not ruled, so the ratifying round
+#: sees the packet raised them.
+PACKET_D4_D5 = {
+    "source": (
+        "the packet's open_draft_decisions (cap-claiming-pia-gates/REPORT.md "
+        "section 5, lines 654-666); absent from floors v1 / v2, both floor "
+        "referee reports, the verification and the 25680f1 binding (referee "
+        "B F3)"
+    ),
+    "d4_raw_column_surface": {
+        "packet_text": (
+            "The reference carries the full 12-column raw schema, including "
+            "age65/66 before/at/after-FRA splits. Gating the RAW columns "
+            "instead of the 8 collapsed categories would let a candidate "
+            "MODEL the FRA transition rather than absorb it, and would make "
+            "the age66 problem disappear into a modellable structure. "
+            "Considered, not adopted here: it multiplies the surface and "
+            "needs its own power analysis."
+        ),
+        "disposition": (
+            "considered by the packet, NOT adopted, NOT filed as a ruling: "
+            "it multiplies the surface and needs its own power analysis "
+            "(a new floor over the raw columns); the DRAFT surface stays "
+            "the seven conditional categories"
+        ),
+        "status": "FILED for the ratifying round's notice; not ruled",
+    },
+    "d5_aggregate_statistic": {
+        "packet_text": (
+            "A mean- or RMSE-over-surface statistic has real headroom "
+            "(deployed 0.95 pp vs best-scanned 0.58 pp on the gated cells) "
+            "where a max-based one does not (no rule beats 2.4 pp "
+            "anywhere). A per-cell conjunction plus a reported aggregate is "
+            "this DRAFT's choice; a referee may prefer the aggregate gated "
+            "and the per-cell reported."
+        ),
+        "disposition": (
+            "the per-cell conjunction is drafted (pass_rule); the RMSE "
+            "aggregates are REPORTED in the floor (holdout_rules."
+            "{published,conditional}.{nearest_year,linear_trend}.rmse) and "
+            "the per-rule means in this artifact's frontier scan; gating an "
+            "aggregate would be a NEW statistic and a NEW floor, not a "
+            "ruling on this one"
+        ),
+        "status": "FILED for the ratifying round's notice; not ruled",
+    },
+}
+
+#: Referee A D3: which strings of the DRAFT block the tests bind, and
+#: what binds the rest. A prose-only mutation outside these passes every
+#: binding once the pins are re-stated (A section 4, M9).
+BINDING_OF_THE_TEXT = (
+    "TEST-BOUND strings of this block: the required phrases the wording "
+    "audit lists (wording_audit.required_phrases), the placeholders "
+    "(ceremony_notes.placeholders_the_ratifying_round_must_fill), the "
+    "digests and sizes (derived_from_floor_*, floor_run, the fragment's "
+    "own text_sha256 / n_lines / n_bytes), every tolerance, reference "
+    "value, trend, unrounded sum, knob, partition member, failing cell, "
+    "margin, envelope and window-sweep figure, the floor.strata table and "
+    "the fit-isolation channels and line numbers. Every OTHER sentence -- "
+    "covers, estimand, certifies, supports, does_not_support, the "
+    "options_as_corrected prose, the rulings' prose -- is bound by the "
+    "ratifying round's READING of the diff, not by a test (referee A D3): "
+    "a prose-only edit passes every binding once the byte pins are "
+    "re-stated, so the round reads it."
+)
 
 _ROUNDING_MODES = {
     "ROUND_HALF_UP": ROUND_HALF_UP,
@@ -804,6 +909,207 @@ def _envelope(
     }
 
 
+def wider_single_rule_class(frame: dict[str, Any]) -> dict[str, Any]:
+    """Referee A's 242-rule wider single-rule class (its wider_scan.py,
+    re-implemented on the builder's own scoring frame): damped local
+    trend w 2-22 x delta in {0.25 .. 2.0} (147), OLS windows 2-22 (21),
+    Holt linear alpha x beta (25), log-share OLS windows 2-22 (21),
+    mean-of-last-m level rules m 1-7 (7), OLS with the seven predictions
+    renormalised to 100 (21). Every rule is one parameter vector applied
+    identically to every (category, sex, horizon)."""
+    fit = frame["fit"]
+    years = fb.FIT_YEARS
+    last = years[-1]
+    rules: dict[str, Any] = {}
+
+    def ols(window):
+        def f(c, s, h):
+            slope, icpt = fb._ols_slope(years[-window:], fit[(c, s)][-window:])
+            return icpt + slope * (last + h)
+
+        return f
+
+    for w in range(2, 23):
+        for d in (0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0):
+
+            def damped(c, s, h, w=w, d=d):
+                slope, _ = fb._ols_slope(years[-w:], fit[(c, s)][-w:])
+                return fit[(c, s)][-1] + d * slope * h
+
+            rules[f"damped_local_trend_w{w}_d{d}"] = damped
+    for w in range(2, 23):
+        rules[f"ols_last_{w}"] = ols(w)
+    for al in (0.1, 0.2, 0.3, 0.5, 0.8):
+        for be in (0.05, 0.1, 0.2, 0.3, 0.5):
+
+            def holt(c, s, h, al=al, be=be):
+                y = fit[(c, s)]
+                level, trend = y[0], y[1] - y[0]
+                for t in range(1, len(y)):
+                    new_level = al * y[t] + (1 - al) * (level + trend)
+                    trend = be * (new_level - level) + (1 - be) * trend
+                    level = new_level
+                return level + h * trend
+
+            rules[f"holt_linear_a{al}_b{be}"] = holt
+    for w in range(2, 23):
+
+        def log_ols(c, s, h, w=w):
+            ys = [math.log(v) for v in fit[(c, s)][-w:]]
+            slope, icpt = fb._ols_slope(years[-w:], ys)
+            return math.exp(icpt + slope * (last + h))
+
+        rules[f"log_share_ols_last_{w}"] = log_ols
+    for m in range(1, 8):
+
+        def level(c, s, h, m=m):
+            v = fit[(c, s)][-m:]
+            return sum(v) / len(v)
+
+        rules[f"mean_of_last_{m}"] = level
+    for w in range(2, 23):
+
+        def renorm(c, s, h, w=w):
+            preds = {}
+            for cat in fb.CONDITIONAL_CATEGORIES:
+                slope, icpt = fb._ols_slope(years[-w:], fit[(cat, s)][-w:])
+                preds[cat] = max(icpt + slope * (last + h), 0.0)
+            return 100.0 * preds[c] / sum(preds.values())
+
+        rules[f"renormalised_ols_last_{w}"] = renorm
+    return rules
+
+
+def _family_of(name: str) -> str:
+    for prefix in (
+        "damped_local_trend",
+        "renormalised_ols_last",
+        "log_share_ols_last",
+        "ols_last",
+        "holt_linear",
+        "mean_of_last",
+    ):
+        if name.startswith(prefix):
+            return prefix
+    raise RuntimeError(name)
+
+
+def demotion_consequence(
+    frame: dict[str, Any],
+    gated: dict[str, float],
+    windows: dict[str, Any],
+) -> dict[str, Any]:
+    """Referee A D2: what demoting the knife cell does to the SINGLE-RULE
+    frontier. Scored on the 33 remaining gate-eligible cells with the
+    scan's own arithmetic (score_rule)."""
+    g33 = {c: t for c, t in gated.items() if c != KNIFE_CELL}
+    preds = frame["predictors"]
+    on_33 = {
+        name: score_rule(spec["predict"], frame, g33)
+        for name, spec in preds.items()
+    }
+
+    def ols(window):
+        def f(c, s, h):
+            slope, icpt = fb._ols_slope(
+                fb.FIT_YEARS[-window:], frame["fit"][(c, s)][-window:]
+            )
+            return icpt + slope * (fb.FIT_YEARS[-1] + h)
+
+        return f
+
+    sweep_on_33 = {
+        w: score_rule(ols(w), frame, g33)["n_failed"] for w in range(2, 23)
+    }
+    wider = wider_single_rule_class(frame)
+    wider_34 = {n: score_rule(f, frame, gated) for n, f in wider.items()}
+    wider_33 = {n: score_rule(f, frame, g33) for n, f in wider.items()}
+    min_34 = min(r["n_failed"] for r in wider_34.values())
+    families: dict[str, list[int]] = {}
+    for name, r in wider_34.items():
+        families.setdefault(_family_of(name), []).append(r["n_failed"])
+    passing_33 = sorted(n for n, r in wider_33.items() if r["n_failed"] == 0)
+    ols6 = score_rule(ols(6), frame, g33)
+    if ols6["n_failed"] != 0 or windows["ols_last_6"][
+        "failing_cells_on_34"
+    ] != [KNIFE_CELL]:
+        raise RuntimeError("ols_last_6 no longer fails exactly the knife cell")
+    return {
+        "surface": (
+            f"the {len(g33)} gate-eligible cells that remain when "
+            f"{KNIFE_CELL} is demoted (ruling 3, option ii')"
+        ),
+        "ols_last_6_on_the_33": {
+            "n_failed": ols6["n_failed"],
+            "max_abs_deviation_pp": ols6["max_abs_deviation_pp"],
+            "on_the_34_it_fails_exactly": windows["ols_last_6"][
+                "failing_cells_on_34"
+            ],
+        },
+        "named_and_sweep_rules_with_zero_failures_on_the_33": sorted(
+            [n for n, r in on_33.items() if r["n_failed"] == 0]
+            + [f"ols_last_{w}" for w, n in sweep_on_33.items() if n == 0]
+        ),
+        "deployed_v1_n_failed_on_the_33": on_33["deployed_v1_nearest_year"][
+            "n_failed"
+        ],
+        "ols_full_fit_window_n_failed_on_the_33": on_33["ols_full_fit_window"][
+            "n_failed"
+        ],
+        "wider_single_rule_class_referee_A": {
+            "source": (
+                "referee A's wider_scan.py (claiming-thr-referee-A/"
+                "referee-scripts/, 4,316 B, sha256 400b3787...), "
+                "re-implemented here on the builder's scoring frame"
+            ),
+            "n_rules": len(wider),
+            "families": {
+                fam: {"n_rules": len(v), "min_n_failed_on_the_34": min(v)}
+                for fam, v in sorted(families.items())
+            },
+            "min_n_failed_on_the_34": min_34,
+            "rules_at_the_minimum_on_the_34": {
+                n: {
+                    "failing_cells": r["failing_cells"],
+                    "max_abs_deviation_pp": r["max_abs_deviation_pp"],
+                }
+                for n, r in sorted(wider_34.items())
+                if r["n_failed"] == min_34
+            },
+            "n_rules_clearing_the_knife_cell_on_the_34": sum(
+                1
+                for r in wider_34.values()
+                if KNIFE_CELL not in r["failing_cells"]
+            ),
+            "rules_passing_33_of_33_with_the_knife_cell_demoted": passing_33,
+            "n_rules_passing_33_of_33": len(passing_33),
+            "referee_A_stated": (
+                "section 5: '5 of my 242 wider-class rules pass 33 / 33'; "
+                "its own wider_scan.out lists exactly three one-failure "
+                "rules, all failing only the knife cell, and no zero-failure "
+                "rule -- so three, not five, pass the 33; recomputed here"
+            ),
+        },
+        "sentence_for_the_ruling_package": (
+            f"{KNIFE_CELL} is the ONLY thing standing between the drafted "
+            "surface and a single-rule pass: with the cell demoted the single "
+            "scanned rule ols_last_6 -- already published as the best single "
+            f"window -- passes {len(g33)} / {len(g33)} (the deployed rule "
+            f"then fails {on_33['deployed_v1_nearest_year']['n_failed']}, "
+            f"OLS-full {on_33['ols_full_fit_window']['n_failed']}), and "
+            f"{len(passing_33)} rules of referee A's {len(wider)}-rule wider "
+            f"class pass it too ({', '.join(passing_33)}); on the 34 no "
+            "single rule in either class passes and the knife cell is the "
+            "unique binding cell across the OLS, damped, Holt, log-share and "
+            "level families. Demotion is therefore not one fewer cell: it is "
+            "the difference between a surface no single scanned rule clears "
+            "and one a named scanned rule clears -- exactly what "
+            "no_self_rescue exists to keep candidate-independent, and why "
+            "(ii') must be a real reason or the cell must stay (referee A D2)."
+        ),
+    }
+
+
 def frontier_scan(
     floor: dict[str, Any], frame: dict[str, Any], gated: dict[str, float]
 ) -> dict[str, Any]:
@@ -889,6 +1195,7 @@ def frontier_scan(
         windows[f"ols_last_{window}"] = {
             "window_years": window,
             "n_failed": len(failures),
+            "failing_cells_on_34": failures,
             "age66_female_h1_deviation_pp": round(values[KNIFE_CELL], 4),
             "age66_female_h1_clears": values[KNIFE_CELL] <= gated[KNIFE_CELL],
         }
@@ -899,6 +1206,7 @@ def frontier_scan(
     )
     if clearing != sweep["windows_clearing_age66_female_h1"]:
         raise RuntimeError("clearing windows differ from the floor")
+    demoted = demotion_consequence(frame, gated, windows)
     return {
         "method": (
             "A deterministic rule has no seed and therefore no operating "
@@ -934,8 +1242,16 @@ def frontier_scan(
             "best_single_window_by_n_failed": min(
                 windows, key=lambda n: (windows[n]["n_failed"], n)
             ),
+            "windows_with_zero_failures_on_the_33_with_the_knife_cell_demoted": sorted(
+                int(n.rsplit("_", 1)[1])
+                for n in demoted[
+                    "named_and_sweep_rules_with_zero_failures_on_the_33"
+                ]
+                if n.startswith("ols_last_")
+            ),
             "rows": windows,
         },
+        "demotion_consequence_D2": demoted,
         "every_gate_eligible_cell_failed_by_some_rule": sorted(gated)
         == sorted({c for r in rules.values() for c in r["failing_cells"]}),
         "per_rule_mean_convention_R2": {
@@ -1155,10 +1471,34 @@ def fit_isolation(
             ),
         }
     )
-    named = {c["path"] for c in channels}
     found = set()
     for by_file in hits.values():
         found.update(by_file)
+    channels.append(
+        {
+            "path": GATES_REL,
+            "fields": [
+                f"gates.{GATE_NAME}.thresholds.gated_surface."
+                "reference_values_pp (34 cells; every h1 cell is gate-"
+                "eligible for both sexes, so all seven 4-dp conditional "
+                "shares of the 2020 female and male rows -- scan signature "
+                "(a)) -- POST-FLIP ONLY"
+            ],
+            "carries_the_rows": {"pre_flip": False, "post_flip": True},
+            "hit_by_this_scan": GATES_REL in found,
+            "note": (
+                "referee B F1 (iii): once the block lands, gates.yaml IS a "
+                "committed copy of the 2020 rows and the flip's rebuild "
+                "reports it as a hit under signature (a); named now so "
+                "every_hit_is_a_named_channel stays true after the flip. "
+                "Pre-flip the block lives only as this artifact's string "
+                "and the scan does not hit gates.yaml (hit_by_this_scan "
+                "False, asserted by the fit-isolation tests). No pin here: "
+                "the pre-flip blob is pinned under gates_yaml_citations."
+            ),
+        }
+    )
+    named = {c["path"] for c in channels}
     unnamed = sorted(found - named)
     return {
         "purpose": floor["fit_isolation"]["purpose"],
@@ -1174,6 +1514,13 @@ def fit_isolation(
                 "the row; this artifact excluded from its own scan"
             ),
             "n_files_scanned": n_scanned,
+            "n_files_scanned_note": (
+                "build metadata: the number of git-tracked text files at "
+                "build time, which grows with the tree (the 25680f1 artifact "
+                "carried 1052 against 1057 tracked files after its own "
+                "commit; this re-emission refreshes it -- referee B F8); "
+                "the reproduction test compares the HITS, not the count"
+            ),
             "files_skipped": skipped,
             "hits_by_signature": hits,
             "files_hit": sorted(found),
@@ -1189,8 +1536,11 @@ def fit_isolation(
             "data/external/ssa_claim_ages_2023supplement.json and "
             f"{TRANSCRIPTION_SCRIPT_REL} (lines "
             f"{male_lines[0]}-{male_lines[-1]}, "
-            f"{female_lines[0]}-{female_lines[-1]}) -- and this artifact "
-            "itself once committed; the registration must fix the rule "
+            f"{female_lines[0]}-{female_lines[-1]}) -- this artifact "
+            "itself once committed, and gates.yaml itself once the block "
+            "lands (its reference_values_pp carry every 2020 conditional "
+            "share; a post-flip channel, referee B F1); the registration "
+            "must fix the rule "
             "class and fit window before scoring."
         ),
     }
@@ -1279,6 +1629,7 @@ def certification_scope(floor: dict[str, Any], part: dict[str, Any]) -> dict:
             "excluded_by": "SCOPE, before any candidate runs; not power, not "
             "candidate performance",
         },
+        "binding_of_this_text": BINDING_OF_THE_TEXT,
         "what_a_pass_authorises_C14": {
             "supports": [
                 "the #74 CA (claiming) component for the claiming / "
@@ -1488,9 +1839,16 @@ def open_questions(
                     },
                 },
             },
-            "consequence_of_demotion": od["age66_female_h1_knife_edge"][
-                "consequence_the_packet_did_not_state"
-            ],
+            "consequence_of_demotion": (
+                od["age66_female_h1_knife_edge"][
+                    "consequence_the_packet_did_not_state"
+                ]
+                + " -- and, the stronger true statement (referee A D2): "
+                + scan["demotion_consequence_D2"][
+                    "sentence_for_the_ruling_package"
+                ]
+            ),
+            "consequence_if_demoted": scan["demotion_consequence_D2"],
             "envelopes": {
                 "packet_window_grid": {
                     "n_failed": packet_env["n_failed"],
@@ -1575,8 +1933,51 @@ def open_questions(
                 "the lock commit must retire those two assertions (and flip "
                 "the pre-lock markers GATE_B2_CLAIMING_BLOCK_LANDED / "
                 "GATE_B2_PIA_ORACLE_BLOCK_LANDED) or supersede the floor "
-                "artifacts with a v2 in the SAME PR; see flip_plan"
+                "artifacts with a v2 in the SAME PR; see flip_plan. Referee "
+                "B F1 (simulated flip, its section 3) found three MORE "
+                "flip-time breakages the 25680f1 record did not name; each "
+                "is dispositioned in flip_plan.post_flip_test_dispositions "
+                "and gates.yaml is named as a post-flip fit-isolation "
+                "channel; the flip was re-simulated by the fixes sitting "
+                "with the dispositions in place"
             ),
+            "flip_time_breakages_recorded_F1": [
+                "tests/test_gates_derivations.py::"
+                "test_gate_b2_both_blocks_record_the_sequencing_constraint "
+                "-- asserted the two retired guard tests still exist "
+                "unconditionally; now marker-conditional (defined is (not "
+                "LANDED)) like its siblings",
+                "tests/test_claiming_gate_floors_v1.py::"
+                "test_build_reproduces_the_committed_artifact and its PIA "
+                "twin -- the in-memory rebuild reads the live tree, so "
+                "post-flip gates_yaml_citations.byte_identical_to_working_"
+                "tree is False and the fit-isolation scan hits gates.yaml; "
+                "now compared MARKER-AWARE: the committed bytes stay AS "
+                "RATIFIED and the rebuild's flip-created differences are "
+                "asserted to their expected values",
+                "tests/test_gates_derivations.py::"
+                "test_gate_m4_flip_leaves_locked_siblings_byte_identical "
+                "(and the gate_w1 / gate_m6 twins) -- the master-compare "
+                "sites the flip plan already names as sites to widen",
+                "tests/test_gates_derivations.py::"
+                "test_gate_b2_pia_oracle_precision_and_e1_clause -- asserted "
+                "the S8 placeholder <RULING S8 e1_clause> against the LIVE "
+                "block unconditionally; found by the fixes sitting's fuller "
+                "simulation (which fills every <RULING ...> placeholder as "
+                "the flip plan says the ratifying round does; referee B's "
+                "simulation left them unfilled); now marker-conditional",
+                "the contract-identity family (found by the fixes sitting): "
+                "runs/legacy_manifest_v1.json carries contract_revision = "
+                "the gates.yaml blob and is re-recorded by "
+                "scripts/build_legacy_manifest.py --transition (the gate_m6 "
+                "lock flip c7af699 precedent); tests/test_gate_m6_floors_v4.py "
+                "pins the LIVE gates.yaml blob as CONTRACT_BLOB_LIVE and is "
+                "re-pinned by every flip (the m6 amendment precedent); "
+                "tests/test_contract_identity.py and "
+                "tests/test_generic_evaluator.py compare gates.yaml with "
+                "HEAD:gates.yaml and pass only once the flip is COMMITTED "
+                "(an uncommitted landed block fails 20 of them)",
+            ],
             "placeholder_in_block": "ceremony_notes.flip_plan",
             "status": "RECORDED as a sequencing constraint; not a threshold ruling",
         },
@@ -1640,13 +2041,92 @@ def flip_plan() -> dict[str, Any]:
             "inverts to assert the block exists and cites "
             f"{ARTIFACT_REL} with its ratified sha256",
             "gates.yaml: floor_run_sha256 replaces <FILLED AT RATIFICATION> "
-            f"with the sha256 of {ARTIFACT_REL} AS RATIFIED; every "
+            f"with the sha256 of {ARTIFACT_REL} AS RATIFIED -- the artifact "
+            "is NOT re-emitted by the flip commit; its committed bytes stay "
+            "the ratified bytes and the reproduction test compares marker-"
+            "aware (post_flip_test_dispositions); every "
             "<RULING ...> placeholder is replaced by the ratifying round's "
             "text; status -> locked; locked -> true; a history entry is "
             "added",
             "tests/tier_counts.json and tests/README-tiers.md re-refreshed "
             "by LIVE collection",
         ],
+        "artifact_re_emitted_at_flip": False,
+        "post_flip_test_dispositions": {
+            "decision": (
+                "referee B F1 (ii), option (b): the flip commit does NOT "
+                "re-emit this artifact; floor_run_sha256 is the sha256 of "
+                "the artifact AS RATIFIED; the reproduction test's comparison "
+                "is MARKER-AWARE -- while the marker is False it is exact "
+                "(every leaf but elapsed_seconds, the HEAD sha and the "
+                "scan's file COUNT); once True it additionally asserts, "
+                "rather than compares, the leaves the flip legitimately "
+                "moves in the rebuild"
+            ),
+            "weakening_stated": (
+                "post-flip the reproduction test no longer proves that the "
+                "rebuild's fit-isolation HITS equal the committed hits and "
+                "that gates_yaml_citations.byte_identical_to_working_tree "
+                "equals the committed True; it proves instead that the "
+                "rebuild's hits equal the committed hits PLUS exactly the "
+                "one hit the flip creates (gates.yaml under signature (a) "
+                "for the two 2020 rows), that gates.yaml is a named channel "
+                "so every_hit_is_a_named_channel stays True, and that the "
+                "flag reads False (the live file has moved on from the "
+                "pinned blob b0c39af1..., whose line citations are still "
+                "checked against the blob). Nothing else is exempted; every "
+                "other leaf stays exactly compared"
+            ),
+            "test_gate_b2_both_blocks_record_the_sequencing_constraint": (
+                "marker-conditional: the two guard tests must exist while "
+                "the markers are False and must be gone once both are True "
+                "(defined is (not LANDED), the siblings' form)"
+            ),
+            "test_build_reproduces_the_committed_artifact": (
+                "marker-aware as decided above (tests/test_claiming_gate_"
+                "floors_v1.py::_strip_volatile and the test body)"
+            ),
+            "test_gate_m4_flip_leaves_locked_siblings_byte_identical": (
+                "widened by the flip commit to admit the new key (a master-"
+                "compare site named above), with the gate_w1 / gate_m6 twins"
+            ),
+            "gates_yaml_as_a_fit_isolation_channel": (
+                "named in fit_isolation.channels_carrying_the_held_out_actuals "
+                "as a POST-FLIP channel (carries_the_rows.post_flip true) and "
+                "in the block's clause (referee B F1 iii)"
+            ),
+            "test_gate_b2_pia_oracle_precision_and_e1_clause": (
+                "marker-conditional: the S8 placeholder stands while the "
+                "marker is False and is gone once the block has landed "
+                "(found by the fixes sitting's simulation, not B's)"
+            ),
+            "contract_identity_family": (
+                "the flip commit ALSO re-records runs/legacy_manifest_v1."
+                "json (scripts/build_legacy_manifest.py --transition; the "
+                "gate_m6 lock flip c7af699 precedent) and re-pins "
+                "CONTRACT_BLOB_LIVE in tests/test_gate_m6_floors_v4.py to "
+                "the post-flip blob; tests/test_contract_identity.py and "
+                "tests/test_generic_evaluator.py need gates.yaml COMMITTED "
+                "(they compare with HEAD:gates.yaml) -- both were added to "
+                "this record by the fixes sitting's simulation"
+            ),
+            "test_gate_m6_derivations_py": (
+                "named above as a master-compare site to widen; the "
+                "simulation found it asserts only the presence of gate_m6 "
+                "and the locked siblings -- nothing to widen there"
+            ),
+            "simulated": (
+                "referee B section 3 at 25680f1 (found the three); the fixes "
+                "sitting in a scratch clone with these dispositions in place "
+                "(blocks landed with the real names, placeholders filled, "
+                "markers flipped, the two guard tests retired, the m4 / w1 "
+                "master-compare sites widened, the legacy manifest "
+                "transitioned, CONTRACT_BLOB_LIVE re-pinned, the flip "
+                "COMMITTED in the clone): the fuller simulation found two "
+                "more breakages, recorded above; with every disposition "
+                "in place no test fails"
+            ),
+        },
     }
 
 
@@ -1688,9 +2168,12 @@ def draft_fragment(
     packet_env = scan["envelope_at_the_packet_window_grid"]
     widened_env = scan["post_hoc_best_of_forecast_class_envelope"]
     sweep = scan["ols_window_sweep"]
+    demoted = scan["demotion_consequence_D2"]
     transition = floor["age66_before_fra_transition"]
     channels = iso["channels_carrying_the_held_out_actuals"]
-    script_channel = channels[-1]
+    script_channel = next(
+        c for c in channels if c["path"] == TRANSCRIPTION_SCRIPT_REL
+    )
     dne = floor["does_not_establish"]
 
     def k_row(grammar: str, k: float) -> str:
@@ -1750,7 +2233,10 @@ def draft_fragment(
     # publication floor runs/claiming_publication_floor_v1.json
     # ({SOURCE_FLOOR_COMMITTED[0]:,} B, sha256 {SOURCE_FLOOR_COMMITTED[1][:16]}...) and bound by
     # tests/test_gates_derivations.py (the test_gate_b2_claiming_* bindings,
-    # LOCKED-HOT on the gate_m4 pattern); nothing is typed. Ceremony order:
+    # LOCKED-HOT on the gate_m4 pattern, which RUN pre-lock against this
+    # string as read from the artifact -- they are not skipped; the marker
+    # only switches their source to the live file); nothing is typed.
+    # Ceremony order:
     # floors v1 -> referees A / B -> floors v2 -> verification -> THIS
     # BINDING -> adversarial referee round on these bound thresholds ->
     # verification -> ratifying merge. Every "<RULING ...>" placeholder is an
@@ -1888,7 +2374,11 @@ def draft_fragment(
             (published-construct actuals), runs/claiming_publication_floor_v1.json
             (reference_values_pp, holdout_rules.per_cell.*.*.actual, every
             tolerance and every candidate score) and
-            runs/claiming_gate_floors_v1.json (this block's own artifact).
+            runs/claiming_gate_floors_v1.json (this block's own artifact) --
+            and, once this block lands, gates.yaml itself: this block's
+            reference_values_pp carry every 2020 conditional share, so the
+            contract file is a POST-FLIP channel (referee B F1; named in the
+            artifact's fit_isolation with carries_the_rows.post_flip true).
             Physical isolation from public data is impossible; the defence
             is procedural -- rule class and fit window registered on issue
             #42 with a justification independent of these artifacts, before
@@ -2101,6 +2591,9 @@ def draft_fragment(
           every OLS window 2..22 scored: no single window clears all {part['n_gate_eligible']}
           cells; windows {clearing} clear age66|female|h1 (OLS-13 at
           {sweep['rows']['ols_last_13']['age66_female_h1_deviation_pp']} against {sweep['age66_female_h1_tolerance_pp']}); the packet's grid {{3, 5, 10, 22}} clears none.
+          With age66|female|h1 demoted, ols_last_6 ALONE passes the
+          remaining {len(part['gate_eligible']) - 1} (windows with zero failures on the {len(part['gate_eligible']) - 1}: {sweep['windows_with_zero_failures_on_the_33_with_the_knife_cell_demoted']};
+          referee A D2, artifact demotion_consequence_D2).
         post_hoc_envelopes:
           packet_window_grid_8_rules: {{ gated_cells_failed: {packet_env['n_failed']}, failing_cells: [{', '.join(f'"{c}"' for c in packet_env['failing_cells'])}], max_pp: {packet_env['max_abs_deviation_pp']}, mean_pp: {packet_env['mean_abs_deviation_pp']} }}
           widened_forecast_class_{widened_env['n_rules']}_rules: {{ gated_cells_failed: {widened_env['n_failed']}, max_pp: {widened_env['max_abs_deviation_pp']}, mean_pp: {widened_env['mean_abs_deviation_pp']}, argmax_cell: "{widened_env['argmax_cell']}" }}
@@ -2127,9 +2620,22 @@ def draft_fragment(
           about 2.9 pp under either house grammar at K 2.0 (mean + K sd
           {g['mean_plus_k_times_sd_abs']['by_k']['K_2.0']['age66_female_h1']['tolerance_pp']:.2f}, K sd(signed) {g['k_times_sd_signed']['by_k']['K_2.0']['age66_female_h1']['tolerance_pp']:.2f}), where OLS-full ({sweep['rows']['ols_last_22']['age66_female_h1_deviation_pp']}) clears
           and the deployed rule ({finding['per_failing_cell'][KNIFE_CELL]['deviation_pp']}) does not. Consequence to weigh:
-          demoting the cell takes the packet-grid envelope from {packet_env['n_failed']} failure to 0.
-          Whatever is ruled must be adopted BEFORE any candidate runs
-          (no_self_rescue).
+          demoting the cell takes the packet-grid envelope from {packet_env['n_failed']} failure to 0 --
+          and, the stronger true statement (referee A D2): this cell is
+          the ONLY thing standing between the drafted surface and a
+          single-rule pass. With it demoted the single scanned rule
+          ols_last_6 (already published above as the best single window)
+          passes {len(part['gate_eligible']) - 1} / {len(part['gate_eligible']) - 1}, and {demoted['wider_single_rule_class_referee_A']['n_rules_passing_33_of_33']} rules of referee A's
+          {demoted['wider_single_rule_class_referee_A']['n_rules']}-rule wider class pass it too
+          ({', '.join(demoted['wider_single_rule_class_referee_A']['rules_passing_33_of_33_with_the_knife_cell_demoted'])}); on the {part['n_gate_eligible']} no single rule in either
+          class passes and the knife cell is the unique binding cell
+          across the OLS, damped, Holt, log-share and level families.
+          Demotion is therefore not one fewer cell; it is the difference
+          between a surface no single scanned rule clears and one a named
+          scanned rule clears -- exactly what no_self_rescue exists to keep
+          candidate-independent, and why (ii') must be a real reason or
+          the cell must stay. Whatever is ruled must be adopted BEFORE any
+          candidate runs (no_self_rescue).
       governance:
         registration: >-
           Pre-registered on issue #42, as every gate-1 / gate-2 / m4 / w1
@@ -2204,6 +2710,8 @@ def draft_fragment(
           - >-
             the SSA claiming PROCESS: the estimand is a published share
             vector, not behaviour.
+        binding_of_this_text: >-
+          {scope['binding_of_this_text']}
       open_rulings:
         # Each is FILED and PRICED in runs/claiming_gate_floors_v1.json
         # open_questions_for_the_ceremony; none is made here.
@@ -2240,8 +2748,46 @@ def draft_fragment(
           tests/test_gate_w1_derivations.py, tests/test_gate_m6_derivations.py),
           fills floor_run_sha256 with the ratified sha256 of
           runs/claiming_gate_floors_v1.json, and re-refreshes the tier
-          manifest -- all in the SAME commit.
-        derivations_bound_by: tests/test_gates_derivations.py (test_gate_b2_claiming_*) and tests/test_claiming_gate_floors_v1.py
+          manifest -- all in the SAME commit. Referee B F1: the flip
+          commit does NOT re-emit this artifact (floor_run_sha256 is the
+          sha256 AS RATIFIED); the three flip-time breakages B found are
+          dispositioned in the artifact's flip_plan.post_flip_test_
+          dispositions -- the sequencing test is marker-conditional, the
+          reproduction test compares marker-aware (post-flip it asserts
+          the rebuild's extra gates.yaml hit and the False
+          byte_identical_to_working_tree flag instead of comparing them),
+          the m4 / w1 / m6 master-compare sites are widened, and
+          gates.yaml is a named post-flip fit-isolation channel -- and the
+          flip was re-simulated with them in place.
+        derivations_bound_by: >-
+          tests/test_gates_derivations.py (test_gate_b2_claiming_*) and
+          tests/test_claiming_gate_floors_v1.py. The bindings RUN pre-lock
+          against this string as read from the artifact and pass; they
+          are NOT skipped (referee B F9, referee A D9): the marker only
+          switches their source to the live file.
+        test_bound_strings: >-
+          {scope['binding_of_this_text']}
+        packet_draft_decisions_not_carried_into_the_block:
+          # referee B F3: the packet's section-5 open_draft_decisions d4 and
+          # d5 fell out of the chain at floors v1; FILED here, not ruled.
+          d4_raw_column_surface: >-
+            considered by the packet, NOT adopted, NOT filed as a ruling:
+            gating the raw 12-column schema instead of the seven
+            conditional categories multiplies the surface and needs its own
+            power analysis (a new floor); the DRAFT surface stays the seven
+            conditional categories (artifact
+            packet_open_draft_decisions_d4_d5).
+          d5_aggregate_statistic: >-
+            the per-cell conjunction is drafted (pass_rule); the RMSE
+            aggregates are REPORTED in the floor (holdout_rules.*.rmse) and
+            the per-rule means in the artifact's frontier scan; gating an
+            aggregate would be a NEW statistic and a NEW floor, not a
+            ruling on this one -- so the ratifying round sees the packet
+            raised it; filed, not ruled.
+        referee_record: >-
+          the threshold referee round's co-location disclosure (referees A
+          and B shared an account and a model, for capacity, not choice)
+          is carried verbatim in the artifact's referee_record.
         wording_audit: >-
           the two words the standing wording audit forbids occur 0 times in
           this block (artifact wording_audit.forbidden_word_counts); the
@@ -2468,7 +3014,10 @@ def run(verbose: bool = True) -> dict[str, Any]:
             ),
             "3_age66_female_h1": (
                 "yes if demoted on a pre-registered reason: 33 / 9; option "
-                "(ii) as drafted is UNAVAILABLE AS WRITTEN"
+                "(ii) as drafted is UNAVAILABLE AS WRITTEN; and demotion "
+                "makes the surface clearable by ONE scanned rule "
+                "(ols_last_6 passes the 33 -- faithful_candidate_oc_"
+                "substitute.demotion_consequence_D2)"
             ),
             "4_rounding_mode": "no: 34 / 8 under both modes (one tolerance moves by a cent)",
             "5_d0_estimand": (
@@ -2550,6 +3099,15 @@ def run(verbose: bool = True) -> dict[str, Any]:
             "floors_v2": FLOORS_V2_REPORT,
             "verification": VERIFICATION_REPORT,
             "gates_yaml_untouched": True,
+            "bindings_run_pre_lock": (
+                "the test_gate_b2_claiming_* bindings in tests/"
+                "test_gates_derivations.py RUN while the marker is False, "
+                "against the draft fragment read from this artifact, and "
+                "pass; they are NOT skipped (referee B F9 / A D9: the 37 "
+                "skips in that file are gate_2 amendment placeholders). The "
+                "marker switches their source to the live gates.yaml block."
+            ),
+            "threshold_referee_round": REFEREE_ROUND,
             "gates_yaml_stub": (
                 f"{GATE_NAME} (DRAFT as a string in draft_gates_yaml_fragment; "
                 "not in gates.yaml)"
@@ -2610,10 +3168,17 @@ def run(verbose: bool = True) -> dict[str, Any]:
         "flip_plan": flip_plan(),
         "record_hygiene": {
             "R1_report_footer": (
-                "the threshold-binding report's footer body is computed "
-                "literally ABOVE its `## Footer -- integrity` heading "
-                "(verifier R1: the v2 report's footer was cut above the "
-                "`---` rule instead)"
+                "the threshold-binding report (claiming-thresholds/REPORT.md, "
+                "146,260 B, sha256 607e262ec3fc08b3...) STATES a body "
+                "computed literally ABOVE its `## Footer -- integrity` "
+                "heading, but its stated digest 8cc2e209... covers 145,436 B "
+                "= the body plus the 24-byte heading line; the literal cut "
+                "is 145,412 B, sha256 0efa98a5... (referee B F2; the v2 "
+                "report's footer was cut above the `---` rule instead, "
+                "verifier R1). That report is digest-pinned by the referee "
+                "round and is not recut. The fixes report (claiming-thr-"
+                "fixes/REPORT.md) computes its footer literally ABOVE the "
+                "heading by `grep -b` offset, exclusive of the heading line."
             ),
             "R2_per_rule_mean_convention": scan["per_rule_mean_convention_R2"],
             "R3_corrected_build_report_section_0b": {
@@ -2636,6 +3201,8 @@ def run(verbose: bool = True) -> dict[str, Any]:
                 "gives 2,291 / 4,861; no diff statement changes"
             ),
         },
+        "packet_open_draft_decisions_d4_d5": PACKET_D4_D5,
+        "referee_record": REFEREE_ROUND,
         "open_questions_for_the_ceremony": open_questions(floor, alt, scan),
         "draft_gates_yaml_fragment": fragment_meta,
         "revision_pins": {

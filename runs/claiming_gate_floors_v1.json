@@ -70,6 +70,16 @@
     "floors_v2": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-floors-v2/REPORT.md (49,890 bytes, sha256 303f077d9967a405e4a9967a8d89c9df909a227fff4d502531f23533351e3ad7)",
     "verification": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-v2-verify/REPORT.md (66,687 bytes, sha256 847f29ac0704c18c...)",
     "gates_yaml_untouched": true,
+    "bindings_run_pre_lock": "the test_gate_b2_claiming_* bindings in tests/test_gates_derivations.py RUN while the marker is False, against the draft fragment read from this artifact, and pass; they are NOT skipped (referee B F9 / A D9: the 37 skips in that file are gate_2 amendment placeholders). The marker switches their source to the live gates.yaml block.",
+    "threshold_referee_round": {
+      "round": "adversarial referees on the bound thresholds (commit 25680f1)",
+      "A_statistical": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-A/REPORT.md (55,849 bytes, sha256 d687d9902e8a0bfa1421a123afbe28483f0937e35a0177278fa7fe18e53fd7ec)",
+      "B_contract_and_record": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-B/REPORT.md (82,628 bytes, sha256 55b2d808790fe6a2d3e69fcf9edbf767248b83fb7d15bef76ca7c309c17fd1f3)",
+      "record": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-RECORD.md (5,502 bytes, sha256 f64634e22136f81860b00079671159086a786c6bd0b18addffdd2d58af96f800)",
+      "verdicts": "both NOT LOCK-READY on record and label grounds; both confirm every claiming number (A: 202 / 202 checks; B: every threshold, partition, alternative and placeholder from bytes); no claiming number moves",
+      "co_location_disclosure_verbatim": "**Disclosure (required by the campaign's co-located-referee rule; the same sentence gate 3 and the mortality gate carry):** referees A (statistical) and B (contract/record) of the bound thresholds (commit `25680f1` on `cap/claiming-pia-floors`) shared an account and a model \u2014 both ran as `claude-fable-5-1` on lane `max@farness.ai` (runs 20260908-081523-claiming-thr-referee-a and 20260908-081526-claiming-thr-referee-b, dispatched 08:15 on 2026-09-08). The reason was capacity, not choice: at 08:14 every other Claude lane in the fleet was weekly-capped (rules.foundation Fable and Opus to Sep 13 07:00; axiom-foundation Opus to Sep 12 13:00; hivesight Opus to Sep 12 10:00; rulesfoundation.org, maxghenis.com, max.ghenis@gmail.com, mghenis@gmail.com, optiqal.ai Fable to Sep 12; axiom.org to Sep 10; ubicenter.org disabled by its organisation; policyengine.org out of usage credits \u2014 one-line probes, banner text recorded in `.dashboard-scratch/next-refresh-notes.md`), and the orchestrator (ed26d44e, whose lane farness is) ruled \"leave them on farness\". This is the seventh co-located adversarial pair by the orchestrator's own count; that six-pair measurement is the orchestrator's and is uncorroborated \u2014 the r9 kit gate (run 20260908-055516-c20-kit-r9-gate) accepted it \"as supplied campaign evidence, NOT VERIFIED independently\" and must not be cited as confirming it. The campaign handles a forced co-location by disclosure, not re-run.",
+      "six_pair_count_status": "the orchestrator's own and uncorroborated, as the record states"
+    },
     "gates_yaml_stub": "gate_b2_claiming (DRAFT as a string in draft_gates_yaml_fragment; not in gates.yaml)",
     "next": "adversarial referee round on these bound thresholds -> the rulings -> verification -> ratifying merge with the GATE_B2_CLAIMING_BLOCK_LANDED flip and the live-file guard tests retired"
   },
@@ -879,7 +889,7 @@
     "rulings_that_can_move_it": {
       "1_grammar_and_k_rev": "yes: 32 / 10 under either house grammar or the max-based term at K 2.0; 33 / 9 under mean + 1.5 sd; 28 / 14 and 27 / 15 at K 2.5 (alternatives.grammar_and_k_sweep)",
       "2_horizon_pricing": "yes: 37 / 5 (age62|female|h2, age62|male|h2, age66|female|h2 promoted) under settled-sd pricing of h1 / h2",
-      "3_age66_female_h1": "yes if demoted on a pre-registered reason: 33 / 9; option (ii) as drafted is UNAVAILABLE AS WRITTEN",
+      "3_age66_female_h1": "yes if demoted on a pre-registered reason: 33 / 9; option (ii) as drafted is UNAVAILABLE AS WRITTEN; and demotion makes the surface clearable by ONE scanned rule (ols_last_6 passes the 33 -- faithful_candidate_oc_substitute.demotion_consequence_D2)",
       "4_rounding_mode": "no: 34 / 8 under both modes (one tolerance moves by a cent)",
       "5_d0_estimand": "yes: a published-construct choice forces a v2 floor with an eight-category cap; the six conversion cells re-enter",
       "6_d1_editions": "only through ruling 2 (a measured settle path)"
@@ -4539,134 +4549,491 @@
       "windows_in_packet_grid_clearing_age66_female_h1": [],
       "windows_with_zero_failures_on_all_34": [],
       "best_single_window_by_n_failed": "ols_last_6",
+      "windows_with_zero_failures_on_the_33_with_the_knife_cell_demoted": [
+        6
+      ],
       "rows": {
         "ols_last_2": {
           "window_years": 2,
           "n_failed": 4,
+          "failing_cells_on_34": [
+            "age63|male|h3",
+            "age66|female|h1",
+            "age67_69|male|h3",
+            "age70plus|male|h2"
+          ],
           "age66_female_h1_deviation_pp": 3.37,
           "age66_female_h1_clears": false
         },
         "ols_last_3": {
           "window_years": 3,
           "n_failed": 5,
+          "failing_cells_on_34": [
+            "age63|male|h3",
+            "age66|female|h1",
+            "age67_69|male|h3",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 2.8131,
           "age66_female_h1_clears": false
         },
         "ols_last_4": {
           "window_years": 4,
           "n_failed": 3,
+          "failing_cells_on_34": [
+            "age63|male|h3",
+            "age66|female|h1",
+            "age70plus|male|h2"
+          ],
           "age66_female_h1_deviation_pp": 2.4305,
           "age66_female_h1_clears": false
         },
         "ols_last_5": {
           "window_years": 5,
           "n_failed": 2,
+          "failing_cells_on_34": [
+            "age63|male|h3",
+            "age66|female|h1"
+          ],
           "age66_female_h1_deviation_pp": 2.4642,
           "age66_female_h1_clears": false
         },
         "ols_last_6": {
           "window_years": 6,
           "n_failed": 1,
+          "failing_cells_on_34": [
+            "age66|female|h1"
+          ],
           "age66_female_h1_deviation_pp": 2.4937,
           "age66_female_h1_clears": false
         },
         "ols_last_7": {
           "window_years": 7,
           "n_failed": 3,
+          "failing_cells_on_34": [
+            "age65|female|h3",
+            "age66|female|h1",
+            "age70plus|male|h2"
+          ],
           "age66_female_h1_deviation_pp": 2.9196,
           "age66_female_h1_clears": false
         },
         "ols_last_8": {
           "window_years": 8,
           "n_failed": 3,
+          "failing_cells_on_34": [
+            "age65|female|h3",
+            "age66|female|h1",
+            "age70plus|male|h2"
+          ],
           "age66_female_h1_deviation_pp": 2.816,
           "age66_female_h1_clears": false
         },
         "ols_last_9": {
           "window_years": 9,
           "n_failed": 4,
+          "failing_cells_on_34": [
+            "age63|male|h3",
+            "age65|female|h3",
+            "age66|female|h1",
+            "age70plus|male|h2"
+          ],
           "age66_female_h1_deviation_pp": 2.5012,
           "age66_female_h1_clears": false
         },
         "ols_last_10": {
           "window_years": 10,
           "n_failed": 5,
+          "failing_cells_on_34": [
+            "age63|male|h2",
+            "age63|male|h3",
+            "age66|female|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 2.3345,
           "age66_female_h1_clears": false
         },
         "ols_last_11": {
           "window_years": 11,
           "n_failed": 4,
+          "failing_cells_on_34": [
+            "age63|male|h3",
+            "age66|female|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 2.3793,
           "age66_female_h1_clears": false
         },
         "ols_last_12": {
           "window_years": 12,
           "n_failed": 11,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age63|male|h3",
+            "age65|female|h1",
+            "age65|female|h2",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 0.8135,
           "age66_female_h1_clears": true
         },
         "ols_last_13": {
           "window_years": 13,
           "n_failed": 13,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age63|male|h3",
+            "age64|male|h3",
+            "age65|female|h1",
+            "age65|female|h2",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 0.0688,
           "age66_female_h1_clears": true
         },
         "ols_last_14": {
           "window_years": 14,
           "n_failed": 15,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age63|male|h3",
+            "age64|male|h2",
+            "age64|male|h3",
+            "age65|female|h1",
+            "age65|female|h2",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age70plus|female|h2",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 0.4779,
           "age66_female_h1_clears": true
         },
         "ols_last_15": {
           "window_years": 15,
           "n_failed": 15,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age63|male|h3",
+            "age64|male|h2",
+            "age64|male|h3",
+            "age65|female|h1",
+            "age65|female|h2",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age70plus|female|h2",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 0.5626,
           "age66_female_h1_clears": true
         },
         "ols_last_16": {
           "window_years": 16,
           "n_failed": 17,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age64|female|h3",
+            "age64|male|h1",
+            "age64|male|h2",
+            "age64|male|h3",
+            "age65|female|h1",
+            "age65|female|h2",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age70plus|female|h1",
+            "age70plus|female|h2",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 0.4329,
           "age66_female_h1_clears": true
         },
         "ols_last_17": {
           "window_years": 17,
           "n_failed": 21,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age64|female|h1",
+            "age64|female|h2",
+            "age64|female|h3",
+            "age64|male|h1",
+            "age64|male|h2",
+            "age64|male|h3",
+            "age65|female|h1",
+            "age65|female|h2",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age67_69|female|h2",
+            "age70plus|female|h1",
+            "age70plus|female|h2",
+            "age70plus|female|h3",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 0.1629,
           "age66_female_h1_clears": true
         },
         "ols_last_18": {
           "window_years": 18,
           "n_failed": 22,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age62|male|h1",
+            "age64|female|h1",
+            "age64|female|h2",
+            "age64|female|h3",
+            "age64|male|h1",
+            "age64|male|h2",
+            "age64|male|h3",
+            "age65|female|h1",
+            "age65|female|h2",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age67_69|female|h2",
+            "age70plus|female|h1",
+            "age70plus|female|h2",
+            "age70plus|female|h3",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 0.1989,
           "age66_female_h1_clears": true
         },
         "ols_last_19": {
           "window_years": 19,
           "n_failed": 22,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age62|male|h1",
+            "age64|female|h1",
+            "age64|female|h2",
+            "age64|female|h3",
+            "age64|male|h1",
+            "age64|male|h2",
+            "age64|male|h3",
+            "age65|female|h1",
+            "age65|female|h2",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age67_69|female|h2",
+            "age70plus|female|h1",
+            "age70plus|female|h2",
+            "age70plus|female|h3",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 0.6413,
           "age66_female_h1_clears": true
         },
         "ols_last_20": {
           "window_years": 20,
           "n_failed": 25,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age62|male|h1",
+            "age64|female|h1",
+            "age64|female|h2",
+            "age64|female|h3",
+            "age64|male|h1",
+            "age64|male|h2",
+            "age64|male|h3",
+            "age65|female|h1",
+            "age65|female|h2",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age67_69|female|h1",
+            "age67_69|female|h2",
+            "age67_69|male|h1",
+            "age67_69|male|h2",
+            "age70plus|female|h1",
+            "age70plus|female|h2",
+            "age70plus|female|h3",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 1.2444,
           "age66_female_h1_clears": true
         },
         "ols_last_21": {
           "window_years": 21,
           "n_failed": 22,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age62|male|h1",
+            "age64|female|h2",
+            "age64|female|h3",
+            "age64|male|h1",
+            "age64|male|h2",
+            "age64|male|h3",
+            "age65|female|h3",
+            "age65|male|h1",
+            "age65|male|h2",
+            "age65|male|h3",
+            "age66|male|h1",
+            "age67_69|female|h1",
+            "age67_69|female|h2",
+            "age67_69|male|h1",
+            "age67_69|male|h2",
+            "age70plus|female|h1",
+            "age70plus|female|h2",
+            "age70plus|female|h3",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 1.7984,
           "age66_female_h1_clears": true
         },
         "ols_last_22": {
           "window_years": 22,
           "n_failed": 20,
+          "failing_cells_on_34": [
+            "age62|female|h1",
+            "age62|male|h1",
+            "age64|female|h3",
+            "age64|male|h1",
+            "age64|male|h2",
+            "age64|male|h3",
+            "age65|female|h3",
+            "age65|male|h3",
+            "age66|female|h1",
+            "age66|male|h1",
+            "age67_69|female|h1",
+            "age67_69|female|h2",
+            "age67_69|male|h1",
+            "age67_69|male|h2",
+            "age70plus|female|h1",
+            "age70plus|female|h2",
+            "age70plus|female|h3",
+            "age70plus|male|h1",
+            "age70plus|male|h2",
+            "age70plus|male|h3"
+          ],
           "age66_female_h1_deviation_pp": 2.3288,
           "age66_female_h1_clears": false
         }
       }
+    },
+    "demotion_consequence_D2": {
+      "surface": "the 33 gate-eligible cells that remain when age66|female|h1 is demoted (ruling 3, option ii')",
+      "ols_last_6_on_the_33": {
+        "n_failed": 0,
+        "max_abs_deviation_pp": 1.3747,
+        "on_the_34_it_fails_exactly": [
+          "age66|female|h1"
+        ]
+      },
+      "named_and_sweep_rules_with_zero_failures_on_the_33": [
+        "ols_last_6"
+      ],
+      "deployed_v1_n_failed_on_the_33": 5,
+      "ols_full_fit_window_n_failed_on_the_33": 19,
+      "wider_single_rule_class_referee_A": {
+        "source": "referee A's wider_scan.py (claiming-thr-referee-A/referee-scripts/, 4,316 B, sha256 400b3787...), re-implemented here on the builder's scoring frame",
+        "n_rules": 242,
+        "families": {
+          "damped_local_trend": {
+            "n_rules": 147,
+            "min_n_failed_on_the_34": 2
+          },
+          "holt_linear": {
+            "n_rules": 25,
+            "min_n_failed_on_the_34": 1
+          },
+          "log_share_ols_last": {
+            "n_rules": 21,
+            "min_n_failed_on_the_34": 3
+          },
+          "mean_of_last": {
+            "n_rules": 7,
+            "min_n_failed_on_the_34": 6
+          },
+          "ols_last": {
+            "n_rules": 21,
+            "min_n_failed_on_the_34": 1
+          },
+          "renormalised_ols_last": {
+            "n_rules": 21,
+            "min_n_failed_on_the_34": 1
+          }
+        },
+        "min_n_failed_on_the_34": 1,
+        "rules_at_the_minimum_on_the_34": {
+          "holt_linear_a0.5_b0.5": {
+            "failing_cells": [
+              "age66|female|h1"
+            ],
+            "max_abs_deviation_pp": 2.9577
+          },
+          "ols_last_6": {
+            "failing_cells": [
+              "age66|female|h1"
+            ],
+            "max_abs_deviation_pp": 2.4937
+          },
+          "renormalised_ols_last_6": {
+            "failing_cells": [
+              "age66|female|h1"
+            ],
+            "max_abs_deviation_pp": 2.4937
+          }
+        },
+        "n_rules_clearing_the_knife_cell_on_the_34": 81,
+        "rules_passing_33_of_33_with_the_knife_cell_demoted": [
+          "holt_linear_a0.5_b0.5",
+          "ols_last_6",
+          "renormalised_ols_last_6"
+        ],
+        "n_rules_passing_33_of_33": 3,
+        "referee_A_stated": "section 5: '5 of my 242 wider-class rules pass 33 / 33'; its own wider_scan.out lists exactly three one-failure rules, all failing only the knife cell, and no zero-failure rule -- so three, not five, pass the 33; recomputed here"
+      },
+      "sentence_for_the_ruling_package": "age66|female|h1 is the ONLY thing standing between the drafted surface and a single-rule pass: with the cell demoted the single scanned rule ols_last_6 -- already published as the best single window -- passes 33 / 33 (the deployed rule then fails 5, OLS-full 19), and 3 rules of referee A's 242-rule wider class pass it too (holt_linear_a0.5_b0.5, ols_last_6, renormalised_ols_last_6); on the 34 no single rule in either class passes and the knife cell is the unique binding cell across the OLS, damped, Holt, log-share and level families. Demotion is therefore not one fewer cell: it is the difference between a surface no single scanned rule clears and one a named scanned rule clears -- exactly what no_self_rescue exists to keep candidate-independent, and why (ii') must be a real reason or the cell must stay (referee A D2)."
     },
     "every_gate_eligible_cell_failed_by_some_rule": true,
     "per_rule_mean_convention_R2": {
@@ -4925,6 +5292,7 @@
       "basis": "The conditional construct excludes the disability-conversion column before any tolerance is derived, so these six cells never enter the surface. They are named here so the exclusion is visible as a SCOPE decision taken before any candidate runs, not a power-cap demotion and not a candidate's performance.",
       "excluded_by": "SCOPE, before any candidate runs; not power, not candidate performance"
     },
+    "binding_of_this_text": "TEST-BOUND strings of this block: the required phrases the wording audit lists (wording_audit.required_phrases), the placeholders (ceremony_notes.placeholders_the_ratifying_round_must_fill), the digests and sizes (derived_from_floor_*, floor_run, the fragment's own text_sha256 / n_lines / n_bytes), every tolerance, reference value, trend, unrounded sum, knob, partition member, failing cell, margin, envelope and window-sweep figure, the floor.strata table and the fit-isolation channels and line numbers. Every OTHER sentence -- covers, estimand, certifies, supports, does_not_support, the options_as_corrected prose, the rulings' prose -- is bound by the ratifying round's READING of the diff, not by a test (referee A D3): a prose-only edit passes every binding once the byte pins are re-stated, so the round reads it.",
     "what_a_pass_authorises_C14": {
       "supports": [
         "the #74 CA (claiming) component for the claiming / mortality-dependent provision class on the OBSERVED frame, at h <= 3 from the 2023 edition's last fit year",
@@ -5011,12 +5379,25 @@
           ]
         },
         "note": "verifier finding F-A: the 2023 edition's verbatim transcription, the source the named edition JSON is built from; carries no information the edition lacks, but it is a committed copy of the 2020-2022 rows and the DRAFT's fit_isolation must name it"
+      },
+      {
+        "path": "gates.yaml",
+        "fields": [
+          "gates.gate_b2_claiming.thresholds.gated_surface.reference_values_pp (34 cells; every h1 cell is gate-eligible for both sexes, so all seven 4-dp conditional shares of the 2020 female and male rows -- scan signature (a)) -- POST-FLIP ONLY"
+        ],
+        "carries_the_rows": {
+          "pre_flip": false,
+          "post_flip": true
+        },
+        "hit_by_this_scan": false,
+        "note": "referee B F1 (iii): once the block lands, gates.yaml IS a committed copy of the 2020 rows and the flip's rebuild reports it as a hit under signature (a); named now so every_hit_is_a_named_channel stays true after the flip. Pre-flip the block lives only as this artifact's string and the scan does not hit gates.yaml (hit_by_this_scan False, asserted by the fit-isolation tests). No pin here: the pre-flip blob is pinned under gates_yaml_citations."
       }
     ],
-    "n_channels": 4,
+    "n_channels": 5,
     "scan": {
       "method": "every git-tracked text file (binary extensions skipped) searched for three signatures of each of the six held-out (sex, entitlement year) rows: (a) all seven 4-dp conditional shares of the row, (b) the row's tab-separated transcription line, (c) all eight JSON category pairs of the row; this artifact excluded from its own scan",
-      "n_files_scanned": 1052,
+      "n_files_scanned": 1057,
+      "n_files_scanned_note": "build metadata: the number of git-tracked text files at build time, which grows with the tree (the 25680f1 artifact carried 1052 against 1057 tracked files after its own commit; this re-emission refreshes it -- referee B F8); the reproduction test compares the HITS, not the count",
       "files_skipped": [
         "data/external/ons_asfr.xlsx",
         "data/external/ons_national_life_tables.xlsx"
@@ -5062,7 +5443,7 @@
       "every_hit_is_a_named_channel": true
     },
     "consequence": "Physical isolation is impossible for public data and for an artifact that publishes every held-out actual and every tolerance. The defence is procedural: the rule class and fit window are registered on issue #42 with a justification independent of this artifact, before any scoring, one shot; a rule class chosen because it lands under a published tolerance on a named cell is what no_self_rescue and registration-before-scoring exist to exclude. The candidate scan above is post hoc and says so; the moment one of its rules is registered as a candidate, its scores here are prior knowledge.",
-    "required_draft_clause": "gate_b2_claiming.protocol.fit_isolation must name the 2023 edition and EVERY committed copy of its 2020-2022 rows -- runs/claiming_publication_floor_v1.json, runs/claiming_reference_v1.json, data/external/ssa_claim_ages_2023supplement.json and scripts/build_ssa_claim_ages.py (lines 159-161, 185-187) -- and this artifact itself once committed; the registration must fix the rule class and fit window before scoring."
+    "required_draft_clause": "gate_b2_claiming.protocol.fit_isolation must name the 2023 edition and EVERY committed copy of its 2020-2022 rows -- runs/claiming_publication_floor_v1.json, runs/claiming_reference_v1.json, data/external/ssa_claim_ages_2023supplement.json and scripts/build_ssa_claim_ages.py (lines 159-161, 185-187) -- this artifact itself once committed, and gates.yaml itself once the block lands (its reference_values_pp carry every 2020 conditional share; a post-flip channel, referee B F1); the registration must fix the rule class and fit window before scoring."
   },
   "gates_yaml_citations": {
     "git_blob_sha1": "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c",
@@ -5233,12 +5614,25 @@
     ],
     "what_flips_with_it": [
       "tests/test_gates_derivations.py: _gate_b2_claiming_block() reads the LIVE gates.yaml block instead of the artifact's draft fragment, so every derivation binding runs against the live contract (LOCKED-HOT, the 2a lesson); the pre-lock guard inverts to assert the block exists and cites runs/claiming_gate_floors_v1.json with its ratified sha256",
-      "gates.yaml: floor_run_sha256 replaces <FILLED AT RATIFICATION> with the sha256 of runs/claiming_gate_floors_v1.json AS RATIFIED; every <RULING ...> placeholder is replaced by the ratifying round's text; status -> locked; locked -> true; a history entry is added",
+      "gates.yaml: floor_run_sha256 replaces <FILLED AT RATIFICATION> with the sha256 of runs/claiming_gate_floors_v1.json AS RATIFIED -- the artifact is NOT re-emitted by the flip commit; its committed bytes stay the ratified bytes and the reproduction test compares marker-aware (post_flip_test_dispositions); every <RULING ...> placeholder is replaced by the ratifying round's text; status -> locked; locked -> true; a history entry is added",
       "tests/tier_counts.json and tests/README-tiers.md re-refreshed by LIVE collection"
-    ]
+    ],
+    "artifact_re_emitted_at_flip": false,
+    "post_flip_test_dispositions": {
+      "decision": "referee B F1 (ii), option (b): the flip commit does NOT re-emit this artifact; floor_run_sha256 is the sha256 of the artifact AS RATIFIED; the reproduction test's comparison is MARKER-AWARE -- while the marker is False it is exact (every leaf but elapsed_seconds, the HEAD sha and the scan's file COUNT); once True it additionally asserts, rather than compares, the leaves the flip legitimately moves in the rebuild",
+      "weakening_stated": "post-flip the reproduction test no longer proves that the rebuild's fit-isolation HITS equal the committed hits and that gates_yaml_citations.byte_identical_to_working_tree equals the committed True; it proves instead that the rebuild's hits equal the committed hits PLUS exactly the one hit the flip creates (gates.yaml under signature (a) for the two 2020 rows), that gates.yaml is a named channel so every_hit_is_a_named_channel stays True, and that the flag reads False (the live file has moved on from the pinned blob b0c39af1..., whose line citations are still checked against the blob). Nothing else is exempted; every other leaf stays exactly compared",
+      "test_gate_b2_both_blocks_record_the_sequencing_constraint": "marker-conditional: the two guard tests must exist while the markers are False and must be gone once both are True (defined is (not LANDED), the siblings' form)",
+      "test_build_reproduces_the_committed_artifact": "marker-aware as decided above (tests/test_claiming_gate_floors_v1.py::_strip_volatile and the test body)",
+      "test_gate_m4_flip_leaves_locked_siblings_byte_identical": "widened by the flip commit to admit the new key (a master-compare site named above), with the gate_w1 / gate_m6 twins",
+      "gates_yaml_as_a_fit_isolation_channel": "named in fit_isolation.channels_carrying_the_held_out_actuals as a POST-FLIP channel (carries_the_rows.post_flip true) and in the block's clause (referee B F1 iii)",
+      "test_gate_b2_pia_oracle_precision_and_e1_clause": "marker-conditional: the S8 placeholder stands while the marker is False and is gone once the block has landed (found by the fixes sitting's simulation, not B's)",
+      "contract_identity_family": "the flip commit ALSO re-records runs/legacy_manifest_v1.json (scripts/build_legacy_manifest.py --transition; the gate_m6 lock flip c7af699 precedent) and re-pins CONTRACT_BLOB_LIVE in tests/test_gate_m6_floors_v4.py to the post-flip blob; tests/test_contract_identity.py and tests/test_generic_evaluator.py need gates.yaml COMMITTED (they compare with HEAD:gates.yaml) -- both were added to this record by the fixes sitting's simulation",
+      "test_gate_m6_derivations_py": "named above as a master-compare site to widen; the simulation found it asserts only the presence of gate_m6 and the locked siblings -- nothing to widen there",
+      "simulated": "referee B section 3 at 25680f1 (found the three); the fixes sitting in a scratch clone with these dispositions in place (blocks landed with the real names, placeholders filled, markers flipped, the two guard tests retired, the m4 / w1 master-compare sites widened, the legacy manifest transitioned, CONTRACT_BLOB_LIVE re-pinned, the flip COMMITTED in the clone): the fuller simulation found two more breakages, recorded above; with every disposition in place no test fails"
+    }
   },
   "record_hygiene": {
-    "R1_report_footer": "the threshold-binding report's footer body is computed literally ABOVE its `## Footer -- integrity` heading (verifier R1: the v2 report's footer was cut above the `---` rule instead)",
+    "R1_report_footer": "the threshold-binding report (claiming-thresholds/REPORT.md, 146,260 B, sha256 607e262ec3fc08b3...) STATES a body computed literally ABOVE its `## Footer -- integrity` heading, but its stated digest 8cc2e209... covers 145,436 B = the body plus the 24-byte heading line; the literal cut is 145,412 B, sha256 0efa98a5... (referee B F2; the v2 report's footer was cut above the `---` rule instead, verifier R1). That report is digest-pinned by the referee round and is not recut. The fixes report (claiming-thr-fixes/REPORT.md) computes its footer literally ABOVE the heading by `grep -b` offset, exclusive of the heading line.",
     "R2_per_rule_mean_convention": {
       "statement": "the floor artifact's candidate_rules_on_the_draft_surface.rules[*].mean_abs_deviation_pp is the mean of the 4-decimal-ROUNDED per-cell deviations; the four envelope means are means of UNROUNDED per-cell values. Both are emitted per rule here; they differ by one 4-dp ulp on the rules listed (verifier R2). The floor artifact is not re-emitted.",
       "rules_where_the_two_conventions_differ": [
@@ -5359,6 +5753,28 @@
       "disposition": "LEFT AS IS: appending rows would move the report's size and sha256, which the floors v2 report (section 0) and the verification (section 0 table) both pin; the four rows are recorded here and in the threshold-binding report instead"
     },
     "R5_leaf_counts": "v2's 2,292 / 4,862 include build.built_utc; excluding it gives 2,291 / 4,861; no diff statement changes"
+  },
+  "packet_open_draft_decisions_d4_d5": {
+    "source": "the packet's open_draft_decisions (cap-claiming-pia-gates/REPORT.md section 5, lines 654-666); absent from floors v1 / v2, both floor referee reports, the verification and the 25680f1 binding (referee B F3)",
+    "d4_raw_column_surface": {
+      "packet_text": "The reference carries the full 12-column raw schema, including age65/66 before/at/after-FRA splits. Gating the RAW columns instead of the 8 collapsed categories would let a candidate MODEL the FRA transition rather than absorb it, and would make the age66 problem disappear into a modellable structure. Considered, not adopted here: it multiplies the surface and needs its own power analysis.",
+      "disposition": "considered by the packet, NOT adopted, NOT filed as a ruling: it multiplies the surface and needs its own power analysis (a new floor over the raw columns); the DRAFT surface stays the seven conditional categories",
+      "status": "FILED for the ratifying round's notice; not ruled"
+    },
+    "d5_aggregate_statistic": {
+      "packet_text": "A mean- or RMSE-over-surface statistic has real headroom (deployed 0.95 pp vs best-scanned 0.58 pp on the gated cells) where a max-based one does not (no rule beats 2.4 pp anywhere). A per-cell conjunction plus a reported aggregate is this DRAFT's choice; a referee may prefer the aggregate gated and the per-cell reported.",
+      "disposition": "the per-cell conjunction is drafted (pass_rule); the RMSE aggregates are REPORTED in the floor (holdout_rules.{published,conditional}.{nearest_year,linear_trend}.rmse) and the per-rule means in this artifact's frontier scan; gating an aggregate would be a NEW statistic and a NEW floor, not a ruling on this one",
+      "status": "FILED for the ratifying round's notice; not ruled"
+    }
+  },
+  "referee_record": {
+    "round": "adversarial referees on the bound thresholds (commit 25680f1)",
+    "A_statistical": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-A/REPORT.md (55,849 bytes, sha256 d687d9902e8a0bfa1421a123afbe28483f0937e35a0177278fa7fe18e53fd7ec)",
+    "B_contract_and_record": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-B/REPORT.md (82,628 bytes, sha256 55b2d808790fe6a2d3e69fcf9edbf767248b83fb7d15bef76ca7c309c17fd1f3)",
+    "record": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-RECORD.md (5,502 bytes, sha256 f64634e22136f81860b00079671159086a786c6bd0b18addffdd2d58af96f800)",
+    "verdicts": "both NOT LOCK-READY on record and label grounds; both confirm every claiming number (A: 202 / 202 checks; B: every threshold, partition, alternative and placeholder from bytes); no claiming number moves",
+    "co_location_disclosure_verbatim": "**Disclosure (required by the campaign's co-located-referee rule; the same sentence gate 3 and the mortality gate carry):** referees A (statistical) and B (contract/record) of the bound thresholds (commit `25680f1` on `cap/claiming-pia-floors`) shared an account and a model \u2014 both ran as `claude-fable-5-1` on lane `max@farness.ai` (runs 20260908-081523-claiming-thr-referee-a and 20260908-081526-claiming-thr-referee-b, dispatched 08:15 on 2026-09-08). The reason was capacity, not choice: at 08:14 every other Claude lane in the fleet was weekly-capped (rules.foundation Fable and Opus to Sep 13 07:00; axiom-foundation Opus to Sep 12 13:00; hivesight Opus to Sep 12 10:00; rulesfoundation.org, maxghenis.com, max.ghenis@gmail.com, mghenis@gmail.com, optiqal.ai Fable to Sep 12; axiom.org to Sep 10; ubicenter.org disabled by its organisation; policyengine.org out of usage credits \u2014 one-line probes, banner text recorded in `.dashboard-scratch/next-refresh-notes.md`), and the orchestrator (ed26d44e, whose lane farness is) ruled \"leave them on farness\". This is the seventh co-located adversarial pair by the orchestrator's own count; that six-pair measurement is the orchestrator's and is uncorroborated \u2014 the r9 kit gate (run 20260908-055516-c20-kit-r9-gate) accepted it \"as supplied campaign evidence, NOT VERIFIED independently\" and must not be cited as confirming it. The campaign handles a forced co-location by disclosure, not re-run.",
+    "six_pair_count_status": "the orchestrator's own and uncorroborated, as the record states"
   },
   "open_questions_for_the_ceremony": [
     {
@@ -5647,7 +6063,82 @@
           }
         }
       },
-      "consequence_of_demotion": "if the cell is demoted, the packet-grid envelope goes from one failure to zero: a per-cell selector over the eight enumerated rules passes 33 / 33",
+      "consequence_of_demotion": "if the cell is demoted, the packet-grid envelope goes from one failure to zero: a per-cell selector over the eight enumerated rules passes 33 / 33 -- and, the stronger true statement (referee A D2): age66|female|h1 is the ONLY thing standing between the drafted surface and a single-rule pass: with the cell demoted the single scanned rule ols_last_6 -- already published as the best single window -- passes 33 / 33 (the deployed rule then fails 5, OLS-full 19), and 3 rules of referee A's 242-rule wider class pass it too (holt_linear_a0.5_b0.5, ols_last_6, renormalised_ols_last_6); on the 34 no single rule in either class passes and the knife cell is the unique binding cell across the OLS, damped, Holt, log-share and level families. Demotion is therefore not one fewer cell: it is the difference between a surface no single scanned rule clears and one a named scanned rule clears -- exactly what no_self_rescue exists to keep candidate-independent, and why (ii') must be a real reason or the cell must stay (referee A D2).",
+      "consequence_if_demoted": {
+        "surface": "the 33 gate-eligible cells that remain when age66|female|h1 is demoted (ruling 3, option ii')",
+        "ols_last_6_on_the_33": {
+          "n_failed": 0,
+          "max_abs_deviation_pp": 1.3747,
+          "on_the_34_it_fails_exactly": [
+            "age66|female|h1"
+          ]
+        },
+        "named_and_sweep_rules_with_zero_failures_on_the_33": [
+          "ols_last_6"
+        ],
+        "deployed_v1_n_failed_on_the_33": 5,
+        "ols_full_fit_window_n_failed_on_the_33": 19,
+        "wider_single_rule_class_referee_A": {
+          "source": "referee A's wider_scan.py (claiming-thr-referee-A/referee-scripts/, 4,316 B, sha256 400b3787...), re-implemented here on the builder's scoring frame",
+          "n_rules": 242,
+          "families": {
+            "damped_local_trend": {
+              "n_rules": 147,
+              "min_n_failed_on_the_34": 2
+            },
+            "holt_linear": {
+              "n_rules": 25,
+              "min_n_failed_on_the_34": 1
+            },
+            "log_share_ols_last": {
+              "n_rules": 21,
+              "min_n_failed_on_the_34": 3
+            },
+            "mean_of_last": {
+              "n_rules": 7,
+              "min_n_failed_on_the_34": 6
+            },
+            "ols_last": {
+              "n_rules": 21,
+              "min_n_failed_on_the_34": 1
+            },
+            "renormalised_ols_last": {
+              "n_rules": 21,
+              "min_n_failed_on_the_34": 1
+            }
+          },
+          "min_n_failed_on_the_34": 1,
+          "rules_at_the_minimum_on_the_34": {
+            "holt_linear_a0.5_b0.5": {
+              "failing_cells": [
+                "age66|female|h1"
+              ],
+              "max_abs_deviation_pp": 2.9577
+            },
+            "ols_last_6": {
+              "failing_cells": [
+                "age66|female|h1"
+              ],
+              "max_abs_deviation_pp": 2.4937
+            },
+            "renormalised_ols_last_6": {
+              "failing_cells": [
+                "age66|female|h1"
+              ],
+              "max_abs_deviation_pp": 2.4937
+            }
+          },
+          "n_rules_clearing_the_knife_cell_on_the_34": 81,
+          "rules_passing_33_of_33_with_the_knife_cell_demoted": [
+            "holt_linear_a0.5_b0.5",
+            "ols_last_6",
+            "renormalised_ols_last_6"
+          ],
+          "n_rules_passing_33_of_33": 3,
+          "referee_A_stated": "section 5: '5 of my 242 wider-class rules pass 33 / 33'; its own wider_scan.out lists exactly three one-failure rules, all failing only the knife cell, and no zero-failure rule -- so three, not five, pass the 33; recomputed here"
+        },
+        "sentence_for_the_ruling_package": "age66|female|h1 is the ONLY thing standing between the drafted surface and a single-rule pass: with the cell demoted the single scanned rule ols_last_6 -- already published as the best single window -- passes 33 / 33 (the deployed rule then fails 5, OLS-full 19), and 3 rules of referee A's 242-rule wider class pass it too (holt_linear_a0.5_b0.5, ols_last_6, renormalised_ols_last_6); on the 34 no single rule in either class passes and the knife cell is the unique binding cell across the OLS, damped, Holt, log-share and level families. Demotion is therefore not one fewer cell: it is the difference between a surface no single scanned rule clears and one a named scanned rule clears -- exactly what no_self_rescue exists to keep candidate-independent, and why (ii') must be a real reason or the cell must stay (referee A D2)."
+      },
       "envelopes": {
         "packet_window_grid": {
           "n_failed": 1,
@@ -5730,7 +6221,14 @@
       "id": "7",
       "name": "pia_sequencing_constraint",
       "question": "the two live-file 'gate name absent' tests -- tests/test_claiming_publication_floor.py::test_no_gate_b2_claiming_exists_in_gates_yaml and tests/test_pia_rule_coverage.py::test_no_gate_b2_pia_oracle_exists_in_gates_yaml -- read the working-tree gates.yaml by design and FAIL the moment gate_b2_claiming or gate_b2_pia_oracle lands (simulated by the verification, section 11: exactly those two, nothing else). The blob-pinned citation itself survives the commit.",
-      "constraint": "the lock commit must retire those two assertions (and flip the pre-lock markers GATE_B2_CLAIMING_BLOCK_LANDED / GATE_B2_PIA_ORACLE_BLOCK_LANDED) or supersede the floor artifacts with a v2 in the SAME PR; see flip_plan",
+      "constraint": "the lock commit must retire those two assertions (and flip the pre-lock markers GATE_B2_CLAIMING_BLOCK_LANDED / GATE_B2_PIA_ORACLE_BLOCK_LANDED) or supersede the floor artifacts with a v2 in the SAME PR; see flip_plan. Referee B F1 (simulated flip, its section 3) found three MORE flip-time breakages the 25680f1 record did not name; each is dispositioned in flip_plan.post_flip_test_dispositions and gates.yaml is named as a post-flip fit-isolation channel; the flip was re-simulated by the fixes sitting with the dispositions in place",
+      "flip_time_breakages_recorded_F1": [
+        "tests/test_gates_derivations.py::test_gate_b2_both_blocks_record_the_sequencing_constraint -- asserted the two retired guard tests still exist unconditionally; now marker-conditional (defined is (not LANDED)) like its siblings",
+        "tests/test_claiming_gate_floors_v1.py::test_build_reproduces_the_committed_artifact and its PIA twin -- the in-memory rebuild reads the live tree, so post-flip gates_yaml_citations.byte_identical_to_working_tree is False and the fit-isolation scan hits gates.yaml; now compared MARKER-AWARE: the committed bytes stay AS RATIFIED and the rebuild's flip-created differences are asserted to their expected values",
+        "tests/test_gates_derivations.py::test_gate_m4_flip_leaves_locked_siblings_byte_identical (and the gate_w1 / gate_m6 twins) -- the master-compare sites the flip plan already names as sites to widen",
+        "tests/test_gates_derivations.py::test_gate_b2_pia_oracle_precision_and_e1_clause -- asserted the S8 placeholder <RULING S8 e1_clause> against the LIVE block unconditionally; found by the fixes sitting's fuller simulation (which fills every <RULING ...> placeholder as the flip plan says the ratifying round does; referee B's simulation left them unfilled); now marker-conditional",
+        "the contract-identity family (found by the fixes sitting): runs/legacy_manifest_v1.json carries contract_revision = the gates.yaml blob and is re-recorded by scripts/build_legacy_manifest.py --transition (the gate_m6 lock flip c7af699 precedent); tests/test_gate_m6_floors_v4.py pins the LIVE gates.yaml blob as CONTRACT_BLOB_LIVE and is re-pinned by every flip (the m6 amendment precedent); tests/test_contract_identity.py and tests/test_generic_evaluator.py compare gates.yaml with HEAD:gates.yaml and pass only once the flip is COMMITTED (an uncommitted landed block fails 20 of them)"
+      ],
       "placeholder_in_block": "ceremony_notes.flip_plan",
       "status": "RECORDED as a sequencing constraint; not a threshold ruling"
     },
@@ -5745,20 +6243,20 @@
     }
   ],
   "draft_gates_yaml_fragment": {
-    "text": "  gate_b2_claiming:\n    # DRAFT -- NOT APPLIED TO gates.yaml. Emitted by\n    # scripts/build_claiming_gate_floors_v1.py into\n    # runs/claiming_gate_floors_v1.json (draft_gates_yaml_fragment.text) at\n    # the threshold-binding sitting of 2026-09-08 (the packet's ceremony\n    # step 4). Every number below is machine-derived from the VERIFIED\n    # publication floor runs/claiming_publication_floor_v1.json\n    # (227,079 B, sha256 bd78d632219175d2...) and bound by\n    # tests/test_gates_derivations.py (the test_gate_b2_claiming_* bindings,\n    # LOCKED-HOT on the gate_m4 pattern); nothing is typed. Ceremony order:\n    # floors v1 -> referees A / B -> floors v2 -> verification -> THIS\n    # BINDING -> adversarial referee round on these bound thresholds ->\n    # verification -> ratifying merge. Every \"<RULING ...>\" placeholder is an\n    # open question the ratifying round must fill; the options and their\n    # prices are in the artifact's open_questions_for_the_ceremony. Until\n    # then every number is DRAFT and the surface is the drafted grammar's.\n    id: b2_claiming_age_distribution\n    status: draft_pending_referee_round\n    locked: false\n    kind: external_reference_temporal_holdout\n    derived_from_floor: runs/claiming_publication_floor_v1.json\n    derived_from_floor_sha256: bd78d632219175d2ab47bc7a87661dde782a6a262a26add3a3be349618593ae1\n    derived_from_floor_size_bytes: 227079\n    floor_run: runs/claiming_gate_floors_v1.json\n    floor_run_sha256: <FILLED AT RATIFICATION>\n    covers: >-\n      the CLAIMING-AGE module (#74 component CA, Phase B): the CONDITIONAL\n      (non-disability-conversion) distribution of retired-worker awardees\n      over age at month of entitlement, by sex, as emitted by\n      populace_dynamics.claiming.claim_age_pmf. The gate is an EXTERNAL-\n      REFERENCE TEMPORAL HOLDOUT: a candidate RULE is fit on SSA Statistical\n      Supplement 2023 Table 6.B5.1 entitlement years 1998-2019 and scored on\n      the HELD-OUT entitlement years 2020, 2021 and 2022 (horizons h = 1, 2,\n      3 from the last fit year), which it has not read. The scored surface\n      is EXACTLY the 34 gate-eligible (category x sex x horizon) cells\n      listed in gated_surface; 8 cells are report-only by the power cap\n      (tolerance_above_t_max) and the 6 disability-conversion cells are OUT\n      OF SCOPE (routed to the DI surface). No claim-age LEVEL inside the fit\n      window is gated (in-window reproduction is a lookup of the file the\n      candidate was fit on: gate_w1 round-1 blocker 1, gates.yaml:3758-3761,\n      circularity_rule :4359-4365). No benefit LEVEL is gated here; the\n      402(q)/(w) factors the module consumes are the oracle's\n      (claiming.py:23-28) and belong to gate_b2_pia_oracle. No horizon\n      beyond h = 3 is priced. Nothing here certifies the SSA claiming\n      PROCESS or any multi-cohort reading of an entitlement year.\n    holdout_basis: [ssa_supplement_2023_6b5_1_entitlement_years_2020_2022]\n    fit_basis: [ssa_supplement_2023_6b5_1_entitlement_years_1998_2019]\n    data_staged: >-\n      Both editions are committed IN-REPO and sha-pinned:\n      data/external/ssa_claim_ages_2023supplement.json (schema\n      ssa_claim_ages.v1, 1998-2022, 50 rows; sha256\n      f731c9a6b8f9b172...) and\n      data/external/ssa_claim_ages_2014supplement.json (1998-2013, 32 rows;\n      sha256 b88e45a08909f0f8...). The 2014 edition is the\n      REVISION-FLOOR basis, not a scoring basis. The publication floor\n      runs/claiming_publication_floor_v1.json EXISTS (floors v2 at cd8f167,\n      independently verified) and the gate-schema artifact\n      runs/claiming_gate_floors_v1.json derives this block from it. The 2021 and\n      2022 editions are NOT staged (<RULING 6 d1_editions>).\n    lock_ceremony:\n      exists: false\n      required: >-\n        The SAME ceremony gate-2a / 2b / 2c / M4 / W1 / mortality follow:\n        floor -> adversarial referees -> fixes -> verification -> THRESHOLD\n        BINDING (this block) -> adversarial referee round on the bound\n        thresholds -> fixes -> verification -> ratifying merge, which fills\n        every placeholder, sets floor_run_sha256, flips\n        GATE_B2_CLAIMING_BLOCK_LANDED and retires the live-file guard test\n        in the same commit. NOT YET RUN past the binding.\n    thresholds:\n      locked: false\n      status: draft_pending_referee_round\n      tranche_id: b2_claiming_age_distribution\n      kind: external_reference_temporal_holdout\n      reference_run: data/external/ssa_claim_ages_2023supplement.json\n      reference_run_sha256: f731c9a6b8f9b1727d28fbdd49df6ec700f8762dd4cea30fa1a043c52a7f5b73\n      floor_run: runs/claiming_gate_floors_v1.json\n      floor_run_sha256: <FILLED AT RATIFICATION>\n      derived_from:\n        path: runs/claiming_publication_floor_v1.json\n        sha256: bd78d632219175d2ab47bc7a87661dde782a6a262a26add3a3be349618593ae1\n        size_bytes: 227079\n        blocks: [\"strata.conditional_terminal_year.sd_pp\", \"strata.conditional_settled_years.sd_pp\",\n          \"power_cap.derivations[*].trend_pp_per_year\", \"reference_values_pp\"]\n      superseded_evidence: >-\n        runs/claiming_reference_v1.json (sha256\n        ae80d5c2281a1575...) -- the reported-not-gated held-out\n        computation on the PUBLISHED 8-category construct (nearest-year max\n        3.2 pp; linear-trend max 8.1623). It is the ROUND-0 record, retained\n        committed and reproduced by the floor\n        (reproduces_claiming_reference_v1.all_match true); this DRAFT scores\n        the CONDITIONAL 7-category construct the module emits\n        (<RULING 5 d0_estimand>).\n      estimand: >-\n        For each (sex, entitlement year in 2020-2022) the CONDITIONAL\n        claim-age share vector over the seven published non-conversion\n        categories {age62, age63, age64, age65, age66, age67_69, age70plus},\n        renormalised to sum to 100 -- exactly the object claim_age_pmf\n        returns (claiming.py:262-303) re-aggregated to the reference's own\n        category partition. The uniform age67_69 -> {67, 68, 69} split\n        (claiming.py:92-99) is INERT under that re-aggregation and is\n        neither gated nor credited. Per the standing rule\n        description_claims_exactly_the_scored_surface (gates.yaml:1056,\n        :3294, :4869) the surface claimed is EXACTLY the gated cells: NOT the\n        SSA claiming process, NOT any benefit level, NOT the disability-\n        conversion flow, and NOT the multi-cohort composition of an\n        entitlement year (expected_reduction_factor is a documented\n        SINGLE-COHORT reading, claiming.py:396-405, not certified here).\n      statistic: >-\n        Per gated cell, the absolute deviation in published percentage\n        points |predicted_pp - reference_pp| on the 0-100 conditional-share\n        scale, the prediction UNROUNDED (deviation_arithmetic in the floor:\n        the rounded-prediction path differs by at most one 4-dp ulp and\n        flips no verdict under either rule scored both ways). Bounded and\n        unit-honest; NEVER |ln ratio| -- a share can be 0.\n      protocol:\n        option: >-\n          external-reference temporal holdout. The candidate is a RULE\n          mapping (sex, entitlement year) to a conditional share vector, fit\n          on 1998-2019 ONLY, evaluated at 2020, 2021 and 2022.\n        deterministic: true\n        seeds: none\n        seed_rule_not_applicable: >-\n          There is no simulation draw and no person split, so no seed\n          conjunction and no 4-of-5 rule. A candidate that additionally\n          SAMPLES integer ages (draw_claim_ages, claiming.py:306-332) does\n          not enter this gate: the sampler is claim_age_pmf plus multinomial\n          noise, so gating the PMF gates the sampler's estimand.\n        fit_isolation:\n          required: true\n          rule: >-\n            The candidate MUST be constructed against a reference object\n            PHYSICALLY restricted to entitlement years 1998-2019. Passing\n            the full document and promising not to look is NOT acceptable:\n            the loader caches the whole file (claiming.py:169-179) and the\n            in-range path returns the held-out row exactly (:200-213, :230).\n            A run whose candidate had access to a 2020-2022 row is\n            INVALIDATED and must be re-registered.\n          channels_carrying_the_held_out_actuals: >-\n            the 2023 edition and EVERY committed copy of its 2020-2022 rows:\n            data/external/ssa_claim_ages_2023supplement.json (the reference\n            document), scripts/build_ssa_claim_ages.py (its verbatim\n            transcription, RAW_TABLE lines 159-161 male and\n            185-187 female -- verifier F-A), runs/claiming_reference_v1.json\n            (published-construct actuals), runs/claiming_publication_floor_v1.json\n            (reference_values_pp, holdout_rules.per_cell.*.*.actual, every\n            tolerance and every candidate score) and\n            runs/claiming_gate_floors_v1.json (this block's own artifact).\n            Physical isolation from public data is impossible; the defence\n            is procedural -- rule class and fit window registered on issue\n            #42 with a justification independent of these artifacts, before\n            any scoring, one shot, no_self_rescue.\n        circularity_disclosure: >-\n          gate_w1's round-1 blocker 1 (gates.yaml:3758-3761) was that the\n          deployed module samples from the anchor it is scored against; the\n          ratified circularity_rule (:4359-4365) keeps the 14 non-conversion\n          claim-age cells report-only (:4568-4573). This gate escapes it\n          only because a candidate fit on 1998-2019 has NEVER READ the\n          2020-2022 rows it is scored on; in-window reproduction stays\n          REPORT-ONLY because it is a lookup of the fit file; and the\n          residual circularity -- every held-out actual and every tolerance\n          is published in the channels named above -- is disclosed rather\n          than denied. The frontier scan in degenerate_candidates is post\n          hoc; once a scanned rule is registered its scores are prior\n          knowledge.\n        pass_rule: >-\n          CONJUNCTION over the 34 gate-eligible cells: the candidate passes\n          iff every gated cell's |predicted_pp - reference_pp| <= that cell's\n          tolerance_pp. Report-only cells and the out-of-scope conversion\n          cells publish on their own rules and never gate. No seed slack.\n      power_cap:\n        t_max_pp: 3.0\n        source: >-\n          inherited VERBATIM from the ratified gate_w1 family-B knob\n          (gates.yaml:4366-4368, t_max_pp 3.0), the only locked precedent in\n          this file for an anchor tolerance denominated in percentage points.\n        rule: >-\n          a cell is gate-eligible iff its derived tolerance_pp <= T_max_pp.\n          Which cells demote is DERIVED from the trend term, never\n          hand-picked: the fast-moving age62 and age66 series exceed the cap\n          at horizons 2-3.\n        demoted_and_report_only: >-\n          8 cells, ALL by the machine reason tolerance_above_t_max.\n          Separately, 6 disability-conversion cells are excluded by SCOPE\n          before any candidate runs (report_only.out_of_module_scope).\n        revision_grammar: \"<RULING 1 grammar_and_k_rev>\"\n        revision_grammar_drafted: >-\n          K_REV * sd(|revision|) on the conditional terminal-year stratum\n          (K_REV 2.0, sd knob 0.493 pp = the 4-dp rounding of 0.492993). This\n          follows NEITHER house grammar (gate-1 derives round(mean + k * sd,\n          r); gate_w1 family B multiplies the sd of a zero-mean residual,\n          whose analogue here is the SIGNED revision, sd 0.826427). Priced\n          beside it, from the same floor bytes (artifact alternatives.\n          grammar_and_k_sweep): drafted K 1.5 / 2.0 / 2.5 -> 34 / 8, deployed fails 10, OLS-full fails 25, age66|female|h1 1.99;\n          34 / 8, deployed fails 6, OLS-full fails 20, age66|female|h1 2.24; 34 / 8, deployed fails 5, OLS-full fails 17, age66|female|h1 2.49.\n          mean + K sd(|d|) K 2.0 -> 32 / 10, deployed fails 4, OLS-full fails 12, age66|female|h1 2.90.\n          K sd(signed d) K 2.0 -> 32 / 10, deployed fails 4, OLS-full fails 12, age66|female|h1 2.91.\n          max |d| (d2) -> 32 / 10, deployed fails 4, OLS-full fails 14, age66|female|h1 2.85.\n        horizon_pricing: \"<RULING 2 horizon_pricing>\"\n        horizon_pricing_drafted: >-\n          the terminal-year sd on EVERY horizon (conservative: h1 = 2020 is\n          three years settled and h2 = 2021 two years settled in the 2023\n          edition; the pair shows rows one to three years settled moved\n          0.0). Priced beside it (alternatives.horizon_aware_pricing):\n          settled sd 0.0089 on h1 / h2 -> 37 / 5, deployed fails\n          15, OLS-full fails 31, promoted \"age62|female|h2\", \"age62|male|h2\", \"age66|female|h2\",\n          24 gated tolerances differ from the DRAFT.\n        rounding_mode: \"<RULING 4 rounding_mode>\"\n        rounding_mode_drafted: >-\n          ROUND_HALF_UP in Decimal on the exact sum of the three summands,\n          quantised to 2 decimals. ROUND_HALF_EVEN differs on exactly\n          1 cell (age70plus|female|h2: unrounded 1.5250\n          -> 1.53 half-up / 1.52 half-even) and nowhere else; the\n          partition is 34 / 8 under both. The knife-edge class\n          (unrounded tolerance within 0.002 pp of a 2-decimal boundary) has\n          13 cells, 9 gate-eligible: \"age62|female|h2\", \"age62|male|h3\", \"age63|female|h2\", \"age63|male|h1\", \"age64|female|h3\", \"age64|male|h1\", \"age65|female|h3\", \"age66|female|h2\", \"age66|male|h3\", \"age67_69|female|h2\", \"age67_69|male|h3\", \"age70plus|female|h2\", \"age70plus|male|h1\".\n          The v1 float evaluation reproduces every DRAFT tolerance\n          (power_cap.rounding_mode.float_path_reproduces_every_tolerance).\n        sd_knob_rounding_check: >-\n          the 4-dp sd knob vs the full-precision sd moves exactly one\n          2-decimal tolerance (the tie cell, 1.53 -> 1.52) and no\n          gate-eligibility flag (floor power_cap.sd_knob_rounding_check).\n      floor:\n        # THE FLOOR IS A PUBLICATION FLOOR, NOT A SAMPLING FLOOR. Table 6.B5.1\n        # is Master Beneficiary Record 100 percent data, not a sample, so no\n        # half-split null exists and the gate-1 / 2 / m4 construction does not\n        # apply. The measurable noise is REVISION + ROUNDING.\n        construction: >-\n          cross-EDITION revision of the same table: the committed 2014\n          edition (entitlement years 1998-2013) against the committed 2023\n          edition, on the 1998-2013 overlap, in conditional-share space. SSA\n          states the mechanism (verbatim in both editions): \"Because entitlements can be awarded retroactively, data for current and prior years are subject to revision with each annual update of this table.\"\n        measured_by: runs/claiming_publication_floor_v1.json (floors v2, cd8f167; verified)\n        strata:\n          conditional_settled_years:  { years: '1998-2012', n_cells: 210, nonzero_cells: 7, mean_pp: 0.00107, sd_pp: 0.008942, max_pp: 0.112333 }\n          conditional_terminal_year:  { years: '2013', n_cells: 14, nonzero_cells: 14, mean_pp: 0.66328, sd_pp: 0.492993, sd_signed_pp: 0.826427, max_pp: 1.590474 }\n          published_settled_years:    { years: '1998-2012', n_cells: 240, nonzero_cells: 1, mean_pp: 0.000417, sd_pp: 0.006442, max_pp: 0.1 }\n          published_terminal_year:    { years: '2013', n_cells: 16, nonzero_cells: 16, mean_pp: 0.5375, sd_pp: 0.372282, max_pp: 1.1 }\n          average_age_column:         { years: '1998-2013', n_rows: 32, nonzero_rows: 0, max_years: 0.0 }\n        strata_note: >-\n          conditional_settled_years.nonzero_cells is 7, not the packet's 1\n          (packet correction 1: one published cell moving renormalises its\n          whole row); the conditional strata's signed revisions sum to zero\n          by construction, so sd_signed_pp equals the RMS.\n        applicable_stratum: conditional_terminal_year\n        applicable_stratum_rationale: >-\n          2022 IS the terminal year of the 2023 edition, the single year most\n          exposed to retroactive revision; 2020-2021 were terminal in the\n          2021 / 2022 editions, which are NOT staged. Pricing all three\n          horizons on the terminal stratum is the CONSERVATIVE choice and is\n          priced as such (<RULING 2 horizon_pricing>, <RULING 6 d1_editions>).\n        finding: >-\n          Publication revision is ENTIRELY a terminal-year effect. All 16\n          published terminal-year cells moved (max 1.1 pp); across the fifteen\n          settled years exactly ONE published cell of 240 moved, by a single\n          0.1 pp rounding tick (age67_69|male|2008); the average_age column\n          did not move at all. The award-count column revised in settled\n          years too (below share resolution) and by several percent in the\n          terminal year (floor number_thousands_column).\n        does_not_establish:\n          - >-\n            any threshold: no tolerance here is ratified and gates.yaml carries no gate_b2_claiming\n          - >-\n            that the DRAFT tolerances are insensitive to the sd knob's 4-decimal rounding: see power_cap.sd_knob_rounding_check, which names every cell whose 2-decimal tolerance moves when the full-precision sd is used\n          - >-\n            the revision settle path: the 2021 and 2022 Supplement editions are not staged, so the terminal-year stratum is measured on ONE edition pair and one year (14 conditional cells)\n          - >-\n            that the scanned rule class is complete: the candidate rules above are a scan, not a proof that no admissible rule does better\n          - >-\n            any cause for the 2020 level shift in the reference: not established by any source read here\n          - >-\n            which revision grammar, K_REV, rounding mode or horizon pricing the gate should bind: power_cap_alternatives emits every variant the referees priced and open_decisions files each ruling; the DRAFT gated_surface is the drafted grammar's until then\n          - >-\n            that the widened forecast class is complete: OLS windows 13-18 are named and every window 2-22 is swept, but Holt, log-share OLS and cross-sex borrowing are not enumerated\n          - >-\n            that the number_thousands revisions in settled years are immaterial for any construct other than the rounded share table (they sit below the share rounding; the count column is measured, not priced)\n      gated_surface:\n        # GATED cells (34). tolerance_pp == quantize(K_REV * sd_knob\n        # + |trend_pp_per_year| * horizon_years + ROUNDING_PP, 2 dp, ROUND_HALF_UP)\n        # in Decimal; K_REV 2.0, sd_knob 0.493, ROUNDING_PP 0.05; gate-eligible\n        # iff <= T_max_pp 3.0. Every value is recomputed from the floor's\n        # strata and trends by tests/test_gates_derivations.py.\n        tolerances_pp:\n          \"age62|female|h1\": 2.30\n          \"age63|female|h1\": 1.08\n          \"age63|female|h2\": 1.12\n          \"age63|female|h3\": 1.17\n          \"age64|female|h1\": 1.27\n          \"age64|female|h2\": 1.51\n          \"age64|female|h3\": 1.74\n          \"age65|female|h1\": 1.20\n          \"age65|female|h2\": 1.37\n          \"age65|female|h3\": 1.54\n          \"age66|female|h1\": 2.24\n          \"age67_69|female|h1\": 1.21\n          \"age67_69|female|h2\": 1.38\n          \"age67_69|female|h3\": 1.56\n          \"age70plus|female|h1\": 1.28\n          \"age70plus|female|h2\": 1.53\n          \"age70plus|female|h3\": 1.77\n          \"age62|male|h1\": 2.27\n          \"age63|male|h1\": 1.07\n          \"age63|male|h2\": 1.10\n          \"age63|male|h3\": 1.13\n          \"age64|male|h1\": 1.40\n          \"age64|male|h2\": 1.77\n          \"age64|male|h3\": 2.14\n          \"age65|male|h1\": 1.55\n          \"age65|male|h2\": 2.06\n          \"age65|male|h3\": 2.57\n          \"age66|male|h1\": 2.72\n          \"age67_69|male|h1\": 1.29\n          \"age67_69|male|h2\": 1.55\n          \"age67_69|male|h3\": 1.81\n          \"age70plus|male|h1\": 1.24\n          \"age70plus|male|h2\": 1.45\n          \"age70plus|male|h3\": 1.66\n        derivations:\n          floor_run: runs/claiming_publication_floor_v1.json\n          floor_key: strata.conditional_terminal_year.sd_pp\n          rule: >-\n            quantize(K_REV * revision_sd_terminal_pp + abs(trend_pp_per_year) *\n            horizon_years + ROUNDING_PP, 2, ROUND_HALF_UP)\n          knobs: {k_rev: 2.0, revision_sd_terminal_pp: 0.493, rounding_pp: 0.05,\n            t_max_pp: 3.0, fit_window: [1998, 2019], horizon_years: [1, 2, 3],\n            rounding_mode: ROUND_HALF_UP}\n          trend_estimator: closed-form OLS slope of the conditional share on 1998-2019, rounded to 4 decimals\n          binding_tests: [test_gate_b2_claiming_tolerances_bind_to_floor_strata_and_trends,\n            test_gate_b2_claiming_partition_34_8_recomputes,\n            test_gate_b2_claiming_grammar_and_k_perturbation_fails_on_any_knob_change,\n            test_gate_b2_claiming_k_by_rounding_sweep_recomputes,\n            test_gate_b2_claiming_horizon_aware_pricing_recomputes,\n            test_gate_b2_claiming_rounding_mode_tie_and_knife_edge_class,\n            test_gate_b2_claiming_failure_sets_recompute_from_the_edition,\n            test_gate_b2_claiming_frontier_scan_recomputes,\n            test_gate_b2_claiming_mutated_builder_fails_the_binding]\n          rules:\n            \"age62|female|h1\": { trend_pp_per_year: -1.2649, horizon_years: 1, rounding: 2, unrounded_pp: 2.3009 }\n            \"age63|female|h1\": { trend_pp_per_year: +0.0439, horizon_years: 1, rounding: 2, unrounded_pp: 1.0799 }\n            \"age63|female|h2\": { trend_pp_per_year: +0.0439, horizon_years: 2, rounding: 2, unrounded_pp: 1.1238 }\n            \"age63|female|h3\": { trend_pp_per_year: +0.0439, horizon_years: 3, rounding: 2, unrounded_pp: 1.1677 }\n            \"age64|female|h1\": { trend_pp_per_year: -0.2359, horizon_years: 1, rounding: 2, unrounded_pp: 1.2719 }\n            \"age64|female|h2\": { trend_pp_per_year: -0.2359, horizon_years: 2, rounding: 2, unrounded_pp: 1.5078 }\n            \"age64|female|h3\": { trend_pp_per_year: -0.2359, horizon_years: 3, rounding: 2, unrounded_pp: 1.7437 }\n            \"age65|female|h1\": { trend_pp_per_year: -0.1669, horizon_years: 1, rounding: 2, unrounded_pp: 1.2029 }\n            \"age65|female|h2\": { trend_pp_per_year: -0.1669, horizon_years: 2, rounding: 2, unrounded_pp: 1.3698 }\n            \"age65|female|h3\": { trend_pp_per_year: -0.1669, horizon_years: 3, rounding: 2, unrounded_pp: 1.5367 }\n            \"age66|female|h1\": { trend_pp_per_year: +1.2051, horizon_years: 1, rounding: 2, unrounded_pp: 2.2411 }\n            \"age67_69|female|h1\": { trend_pp_per_year: +0.1742, horizon_years: 1, rounding: 2, unrounded_pp: 1.2102 }\n            \"age67_69|female|h2\": { trend_pp_per_year: +0.1742, horizon_years: 2, rounding: 2, unrounded_pp: 1.3844 }\n            \"age67_69|female|h3\": { trend_pp_per_year: +0.1742, horizon_years: 3, rounding: 2, unrounded_pp: 1.5586 }\n            \"age70plus|female|h1\": { trend_pp_per_year: +0.2445, horizon_years: 1, rounding: 2, unrounded_pp: 1.2805 }\n            \"age70plus|female|h2\": { trend_pp_per_year: +0.2445, horizon_years: 2, rounding: 2, unrounded_pp: 1.5250 }\n            \"age70plus|female|h3\": { trend_pp_per_year: +0.2445, horizon_years: 3, rounding: 2, unrounded_pp: 1.7695 }\n            \"age62|male|h1\": { trend_pp_per_year: -1.2368, horizon_years: 1, rounding: 2, unrounded_pp: 2.2728 }\n            \"age63|male|h1\": { trend_pp_per_year: -0.0305, horizon_years: 1, rounding: 2, unrounded_pp: 1.0665 }\n            \"age63|male|h2\": { trend_pp_per_year: -0.0305, horizon_years: 2, rounding: 2, unrounded_pp: 1.0970 }\n            \"age63|male|h3\": { trend_pp_per_year: -0.0305, horizon_years: 3, rounding: 2, unrounded_pp: 1.1275 }\n            \"age64|male|h1\": { trend_pp_per_year: -0.3683, horizon_years: 1, rounding: 2, unrounded_pp: 1.4043 }\n            \"age64|male|h2\": { trend_pp_per_year: -0.3683, horizon_years: 2, rounding: 2, unrounded_pp: 1.7726 }\n            \"age64|male|h3\": { trend_pp_per_year: -0.3683, horizon_years: 3, rounding: 2, unrounded_pp: 2.1409 }\n            \"age65|male|h1\": { trend_pp_per_year: -0.5122, horizon_years: 1, rounding: 2, unrounded_pp: 1.5482 }\n            \"age65|male|h2\": { trend_pp_per_year: -0.5122, horizon_years: 2, rounding: 2, unrounded_pp: 2.0604 }\n            \"age65|male|h3\": { trend_pp_per_year: -0.5122, horizon_years: 3, rounding: 2, unrounded_pp: 2.5726 }\n            \"age66|male|h1\": { trend_pp_per_year: +1.6834, horizon_years: 1, rounding: 2, unrounded_pp: 2.7194 }\n            \"age67_69|male|h1\": { trend_pp_per_year: +0.2567, horizon_years: 1, rounding: 2, unrounded_pp: 1.2927 }\n            \"age67_69|male|h2\": { trend_pp_per_year: +0.2567, horizon_years: 2, rounding: 2, unrounded_pp: 1.5494 }\n            \"age67_69|male|h3\": { trend_pp_per_year: +0.2567, horizon_years: 3, rounding: 2, unrounded_pp: 1.8061 }\n            \"age70plus|male|h1\": { trend_pp_per_year: +0.2078, horizon_years: 1, rounding: 2, unrounded_pp: 1.2438 }\n            \"age70plus|male|h2\": { trend_pp_per_year: +0.2078, horizon_years: 2, rounding: 2, unrounded_pp: 1.4516 }\n            \"age70plus|male|h3\": { trend_pp_per_year: +0.2078, horizon_years: 3, rounding: 2, unrounded_pp: 1.6594 }\n        reference_values_pp:  # the held-out conditional shares (4 dp) the cells score against\n          \"age62|female|h1\": 30.5589\n          \"age63|female|h1\": 7.1344\n          \"age63|female|h2\": 7.4160\n          \"age63|female|h3\": 7.9070\n          \"age64|female|h1\": 8.2045\n          \"age64|female|h2\": 8.3430\n          \"age64|female|h3\": 8.6047\n          \"age65|female|h1\": 12.8419\n          \"age65|female|h2\": 12.7462\n          \"age65|female|h3\": 13.9535\n          \"age66|female|h1\": 25.3270\n          \"age67_69|female|h1\": 6.8966\n          \"age67_69|female|h2\": 7.8795\n          \"age67_69|female|h3\": 7.2093\n          \"age70plus|female|h1\": 9.0369\n          \"age70plus|female|h2\": 10.4287\n          \"age70plus|female|h3\": 10.2326\n          \"age62|male|h1\": 28.1100\n          \"age63|male|h1\": 6.9378\n          \"age63|male|h2\": 7.3427\n          \"age63|male|h3\": 7.7193\n          \"age64|male|h1\": 7.2967\n          \"age64|male|h2\": 7.6923\n          \"age64|male|h3\": 7.9532\n          \"age65|male|h1\": 12.6794\n          \"age65|male|h2\": 12.5874\n          \"age65|male|h3\": 13.6842\n          \"age66|male|h1\": 29.3062\n          \"age67_69|male|h1\": 8.3732\n          \"age67_69|male|h2\": 9.0909\n          \"age67_69|male|h3\": 8.1871\n          \"age70plus|male|h1\": 7.2967\n          \"age70plus|male|h2\": 9.0909\n          \"age70plus|male|h3\": 9.4737\n        # REPORT-ONLY by tolerance_above_t_max (8 cells).\n        report_only_tolerance_above_t_max:\n          \"age62|female|h2\": { tolerance_pp_would_be: 3.57, trend_pp_per_year: -1.2649, reason: tolerance_above_t_max }\n          \"age62|female|h3\": { tolerance_pp_would_be: 4.83, trend_pp_per_year: -1.2649, reason: tolerance_above_t_max }\n          \"age66|female|h2\": { tolerance_pp_would_be: 3.45, trend_pp_per_year: +1.2051, reason: tolerance_above_t_max }\n          \"age66|female|h3\": { tolerance_pp_would_be: 4.65, trend_pp_per_year: +1.2051, reason: tolerance_above_t_max }\n          \"age62|male|h2\": { tolerance_pp_would_be: 3.51, trend_pp_per_year: -1.2368, reason: tolerance_above_t_max }\n          \"age62|male|h3\": { tolerance_pp_would_be: 4.75, trend_pp_per_year: -1.2368, reason: tolerance_above_t_max }\n          \"age66|male|h2\": { tolerance_pp_would_be: 4.40, trend_pp_per_year: +1.6834, reason: tolerance_above_t_max }\n          \"age66|male|h3\": { tolerance_pp_would_be: 6.09, trend_pp_per_year: +1.6834, reason: tolerance_above_t_max }\n      report_only:\n        out_of_module_scope:\n          # 6 cells excluded BEFORE any candidate runs, by SCOPE, not by\n          # power and not by any candidate's performance: (a) the module\n          # excludes conversions from its emitted PMF by design\n          # (claiming.py:16-18, :244-256, :296-303) -- a conversion is an\n          # auto-conversion at FRA, not a claiming choice; (b) gates.yaml\n          # :4388-4392 assigns the conversion share to the deployed M4\n          # disability dynamics, \"NOT read from 6.B5.1\".\n          cells: [\"disability_conversion|female|h1\", \"disability_conversion|female|h2\", \"disability_conversion|female|h3\", \"disability_conversion|male|h1\", \"disability_conversion|male|h2\", \"disability_conversion|male|h3\"]\n          reason: conversion_flow_owned_by_di_surface\n          published: >-\n            the conversion share IS published with every candidate run\n            (conversion_share, claiming.py:244-256) and is reconciled\n            against the gate_w1 family-B retained anchor\n            (claim_age.disability_conversion|{female,male}, gates.yaml\n            :4467-4487) -- reported, never gated here.\n        published_8_category_construct: >-\n          the published (un-renormalised) 8-category deviations are\n          published alongside every run so runs/claiming_reference_v1.json\n          stays comparable across the construct change. Reported, never\n          gated.\n        in_window_reproduction: >-\n          exact reproduction of entitlement years 1998-2019 is REPORTED as\n          an integrity check and NEVER gated (circularity_disclosure).\n      degenerate_candidates:\n        # Teeth and the faithful_candidate_oc SUBSTITUTE (C7): a deterministic\n        # rule has no seed and no operating characteristic, so the frontier of\n        # a scanned rule class stands in. RECOMPUTED by the gate artifact from\n        # the floor's scoring frame and equal to the floor's scan; a scan, not\n        # a proof that no admissible rule does better.\n        deployed_v1_nearest_year:\n          description: the module's documented default (claiming.py:200-213), predict every held-out year with 2019\n          gated_cells_failed: 6\n          failing_cells: [\"age62|female|h1\", \"age62|male|h1\", \"age66|female|h1\", \"age70plus|female|h2\", \"age70plus|male|h2\", \"age70plus|male|h3\"]\n          max_pp: 3.8087\n          mean_pp: 0.9499\n          per_failing_cell:\n            \"age62|female|h1\": { deviation_pp: 3.8087, tolerance_pp: 2.30, margin_pp: 1.5087 }\n            \"age62|male|h1\": { deviation_pp: 2.5854, tolerance_pp: 2.27, margin_pp: 0.3154 }\n            \"age66|female|h1\": { deviation_pp: 3.7279, tolerance_pp: 2.24, margin_pp: 1.4879 }\n            \"age70plus|female|h2\": { deviation_pp: 1.5982, tolerance_pp: 1.53, margin_pp: 0.0682 }\n            \"age70plus|male|h2\": { deviation_pp: 2.9758, tolerance_pp: 1.45, margin_pp: 1.5258 }\n            \"age70plus|male|h3\": { deviation_pp: 3.3586, tolerance_pp: 1.66, margin_pp: 1.6986 }\n          verdict: >-\n            FAILS 6 of 34 (C8). Stated up front: adopting this gate as drafted\n            means the CURRENTLY DEPLOYED claiming rule does not pass it. Under\n            both house grammars at K 2.0 the same rule fails 4; under\n            horizon-aware pricing 15. Whether that is bite or mis-pricing is\n            the round's C8, priced in alternatives.\n        uniform_over_seven_categories:\n          gated_cells_failed: 31\n          max_pp: 16.2731\n          verdict: the surface rejects a shapeless candidate.\n        fit_window_mean:\n          gated_cells_failed: 23\n          max_pp: 21.8262\n          verdict: the surface rejects a level-only candidate.\n        sex_pooled_nearest_year:\n          gated_cells_failed: 8\n          max_pp: 4.4214\n          verdict: the SEX dimension has independent bite.\n        best_named_rules:\n          ols_last_5: { gated_cells_failed: 2, max_pp: 2.4642, mean_pp_4dp_convention: 0.5843 }\n          damped_local_trend_w5_d1.0: { gated_cells_failed: 2, max_pp: 2.7396 }\n          ols_last_6_from_the_window_sweep: { gated_cells_failed: 1 }\n        ols_window_sweep: >-\n          every OLS window 2..22 scored: no single window clears all 34\n          cells; windows 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 clear age66|female|h1 (OLS-13 at\n          0.0688 against 2.24); the packet's grid {3, 5, 10, 22} clears none.\n        post_hoc_envelopes:\n          packet_window_grid_8_rules: { gated_cells_failed: 1, failing_cells: [\"age66|female|h1\"], max_pp: 2.3288, mean_pp: 0.315 }\n          widened_forecast_class_14_rules: { gated_cells_failed: 0, max_pp: 1.2519, mean_pp: 0.233, argmax_cell: \"age70plus|male|h2\" }\n          note: NOT prospectively achievable (best rule per cell after the fact); bounds the frontier of THIS enumeration only.\n        catch_structure: >-\n          shapeless and level-only candidates fail broadly; sex-blind\n          candidates fail 8 cells; the deployed frozen-year rule fails the\n          two fastest-drifting families (age62 at h1, age70plus at h2 / h3)\n          and the 2020 age66 level shift, whose cause is UNDETERMINED\n          (packet correction 7: the age66_before_fra composition break\n          begins in entitlement year 2021 and does not cover h1 = 2020).\n          Every gated cell is failed by at least one scanned rule.\n      knife_edge:\n        cell: \"age66|female|h1\"\n        ruling: \"<RULING 3 age66_female_h1>\"\n        options_as_corrected: >-\n          (i) keep as teeth at the drafted 2.24 pp (no single window clears\n          all 34; the best single windows fail exactly this cell);\n          (ii) structural demotion AS DRAFTED is UNAVAILABLE AS WRITTEN --\n          the 2021 age66_before_fra break (null through 2020; female\n          1.0 / male 1.1 in 2021) does not cover entitlement year 2020\n          (packet correction 7); (ii') a different pre-registered reason for\n          2020 -- none is established by any source read; (iii) re-price --\n          about 2.9 pp under either house grammar at K 2.0 (mean + K sd\n          2.90, K sd(signed) 2.91), where OLS-full (2.3288) clears\n          and the deployed rule (3.7279) does not. Consequence to weigh:\n          demoting the cell takes the packet-grid envelope from 1 failure to 0.\n          Whatever is ruled must be adopted BEFORE any candidate runs\n          (no_self_rescue).\n      governance:\n        registration: >-\n          Pre-registered on issue #42, as every gate-1 / gate-2 / m4 / w1\n          candidate run. A gate_b2_claiming candidate registers its rule\n          class, its fit window, its fit-isolation mechanism and its\n          predicted vectors BEFORE scoring. Outer runs are one-shot.\n        amendment_rules:\n          inherits: gate_1\n          no_self_rescue: >-\n            Inherited verbatim from gate_1.amendment_rules (gates.yaml\n            :565-568): no candidate's committed run verdict changes under a\n            rule proposed after that run. Sharpened for this gate: a cell may\n            NOT be demoted because a candidate failed it. The only admissible\n            demotion reasons are the DERIVED power cap\n            (tolerance_above_t_max) and the candidate-independent SCOPE\n            reason above, both fixed at lock.\n          amendments_only_via: >-\n            public proposal + adversarial referee round + verification +\n            maintainer ratification by merge.\n          description_claims_exactly_the_scored_surface: >-\n            Bound by the standing rule (gates.yaml:1056, :3294, :4869):\n            covers / holdout_basis / estimand claim EXACTLY the 34 gated\n            cells. No claiming behaviour outside entitlement years\n            2020-2022, no horizon beyond h = 3, no benefit level, no\n            disability-conversion flow and no multi-cohort reading is\n            headlined beyond what the cells gate.\n        candidate_scale: >-\n          PINNED to the full published margin: 6.B5.1 is Master Beneficiary\n          Record 100 percent data, so there is no subsample and no scale to\n          fix. This is why the floor is a publication floor.\n        weight_definition: >-\n          NONE. The scored quantities are SSA's own published percentage\n          distributions; no reweighting is applied by the candidate or the\n          scorer. Any candidate that reweights the reference is INVALIDATED.\n      certification_scope:\n        tranche: b2_claiming_age_distribution\n        horizon: >-\n          h in {1, 2, 3} from the last fit year 2019 = entitlement years\n          2020, 2021, 2022 (C11). gate_w1 deploys at anchor_frame_year 2024\n          with claim_age_delta_years 2 (gates.yaml:4366-4368), h = 2 and\n          growing; a 2030+ frame is outside anything this gate prices.\n        certifies: >-\n          that a candidate claiming rule reproduces the conditional\n          claim-age distribution of retired-worker awardees, by sex, on\n          three Supplement entitlement years it has not read, at horizons\n          1-3 years past its fit window, on exactly the gated cells, within\n          a publication-revision-priced tolerance. Nothing else (C13).\n        supports:\n          - >-\n            the #74 CA (claiming) component for the claiming /\n            mortality-dependent provision class on the OBSERVED frame, at\n            h <= 3.\n          - >-\n            an ARGUMENT for de-circularising gate_w1 family B's 14\n            report-only claim-age cells (gates.yaml:4568-4573): a candidate\n            certified on a temporal holdout is no longer \"the module that\n            samples from the anchor it is scored against\". Re-gating those\n            cells still requires a gate_w1 amendment with its own ceremony;\n            this gate makes it arguable and does not make it (C14).\n        does_not_support:\n          - >-\n            any benefit LEVEL: the 402(q)/(w) factors the module multiplies\n            through (claiming.py:360-376) are the oracle's and belong to\n            gate_b2_pia_oracle.\n          - >-\n            extrapolation beyond h = 3.\n          - >-\n            the disability-conversion flow (out of scope above) or the\n            multi-cohort composition of an entitlement year: the module's\n            expected_reduction_factor is documented as a SINGLE-COHORT\n            reading (claiming.py:396-405); nothing here certifies it.\n          - >-\n            the SSA claiming PROCESS: the estimand is a published share\n            vector, not behaviour.\n      open_rulings:\n        # Each is FILED and PRICED in runs/claiming_gate_floors_v1.json\n        # open_questions_for_the_ceremony; none is made here.\n        \"1\": \"<RULING 1 grammar_and_k_rev> -- power_cap.revision_grammar\"\n        \"2\": \"<RULING 2 horizon_pricing> -- power_cap.horizon_pricing\"\n        \"3\": \"<RULING 3 age66_female_h1> -- knife_edge.ruling\"\n        \"4\": \"<RULING 4 rounding_mode> -- power_cap.rounding_mode\"\n        \"5\": \"<RULING 5 d0_estimand> -- conditional (drafted) vs published; a published choice forces a v2 floor with an eight-category cap and the six conversion cells re-entering\"\n        \"6\": \"<RULING 6 d1_editions> -- stage the 2021 / 2022 editions or accept horizon_pricing as the interim\"\n        \"7\": \"sequencing constraint -- ceremony_notes.flip_plan (the two live-file guard tests)\"\n        \"8\": \"<RULING S8 e1_clause> -- carried in gate_b2_pia_oracle; E1 as committed 2026-07-05 at engine ffef7b4, not re-executed\"\n      ceremony_notes:\n        placeholders_the_ratifying_round_must_fill:\n          - \"<RULING 1 grammar_and_k_rev>\"\n          - \"<RULING 2 horizon_pricing>\"\n          - \"<RULING 3 age66_female_h1>\"\n          - \"<RULING 4 rounding_mode>\"\n          - \"<RULING 5 d0_estimand>\"\n          - \"<RULING 6 d1_editions>\"\n          - \"<FILLED AT RATIFICATION>\"\n        flip_plan: >-\n          the commit that inserts this block flips\n          GATE_B2_CLAIMING_BLOCK_LANDED from False to True in\n          tests/test_gates_derivations.py and\n          tests/test_claiming_gate_floors_v1.py, RETIRES\n          tests/test_claiming_publication_floor.py::\n          test_no_gate_b2_claiming_exists_in_gates_yaml (and its PIA twin\n          tests/test_pia_rule_coverage.py::\n          test_no_gate_b2_pia_oracle_exists_in_gates_yaml if\n          gate_b2_pia_oracle lands in the same PR) -- both read the live\n          file by design and fail the moment the block lands -- admits\n          the new key at the three master-compare sites\n          (test_gate_m4_flip_leaves_locked_siblings_byte_identical,\n          tests/test_gate_w1_derivations.py, tests/test_gate_m6_derivations.py),\n          fills floor_run_sha256 with the ratified sha256 of\n          runs/claiming_gate_floors_v1.json, and re-refreshes the tier\n          manifest -- all in the SAME commit.\n        derivations_bound_by: tests/test_gates_derivations.py (test_gate_b2_claiming_*) and tests/test_claiming_gate_floors_v1.py\n        wording_audit: >-\n          the two words the standing wording audit forbids occur 0 times in\n          this block (artifact wording_audit.forbidden_word_counts); the\n          circularity disclosure present; the standing rule cited; every\n          does_not_establish line of the floor carried under floor.\n",
-    "text_sha256": "10ad32fd4d6481a12eeb52d123b5eb9d84da2a7c4767ea2f0ff69ca40e4d14c7",
-    "n_lines": 632,
-    "n_bytes": 40972,
+    "text": "  gate_b2_claiming:\n    # DRAFT -- NOT APPLIED TO gates.yaml. Emitted by\n    # scripts/build_claiming_gate_floors_v1.py into\n    # runs/claiming_gate_floors_v1.json (draft_gates_yaml_fragment.text) at\n    # the threshold-binding sitting of 2026-09-08 (the packet's ceremony\n    # step 4). Every number below is machine-derived from the VERIFIED\n    # publication floor runs/claiming_publication_floor_v1.json\n    # (227,079 B, sha256 bd78d632219175d2...) and bound by\n    # tests/test_gates_derivations.py (the test_gate_b2_claiming_* bindings,\n    # LOCKED-HOT on the gate_m4 pattern, which RUN pre-lock against this\n    # string as read from the artifact -- they are not skipped; the marker\n    # only switches their source to the live file); nothing is typed.\n    # Ceremony order:\n    # floors v1 -> referees A / B -> floors v2 -> verification -> THIS\n    # BINDING -> adversarial referee round on these bound thresholds ->\n    # verification -> ratifying merge. Every \"<RULING ...>\" placeholder is an\n    # open question the ratifying round must fill; the options and their\n    # prices are in the artifact's open_questions_for_the_ceremony. Until\n    # then every number is DRAFT and the surface is the drafted grammar's.\n    id: b2_claiming_age_distribution\n    status: draft_pending_referee_round\n    locked: false\n    kind: external_reference_temporal_holdout\n    derived_from_floor: runs/claiming_publication_floor_v1.json\n    derived_from_floor_sha256: bd78d632219175d2ab47bc7a87661dde782a6a262a26add3a3be349618593ae1\n    derived_from_floor_size_bytes: 227079\n    floor_run: runs/claiming_gate_floors_v1.json\n    floor_run_sha256: <FILLED AT RATIFICATION>\n    covers: >-\n      the CLAIMING-AGE module (#74 component CA, Phase B): the CONDITIONAL\n      (non-disability-conversion) distribution of retired-worker awardees\n      over age at month of entitlement, by sex, as emitted by\n      populace_dynamics.claiming.claim_age_pmf. The gate is an EXTERNAL-\n      REFERENCE TEMPORAL HOLDOUT: a candidate RULE is fit on SSA Statistical\n      Supplement 2023 Table 6.B5.1 entitlement years 1998-2019 and scored on\n      the HELD-OUT entitlement years 2020, 2021 and 2022 (horizons h = 1, 2,\n      3 from the last fit year), which it has not read. The scored surface\n      is EXACTLY the 34 gate-eligible (category x sex x horizon) cells\n      listed in gated_surface; 8 cells are report-only by the power cap\n      (tolerance_above_t_max) and the 6 disability-conversion cells are OUT\n      OF SCOPE (routed to the DI surface). No claim-age LEVEL inside the fit\n      window is gated (in-window reproduction is a lookup of the file the\n      candidate was fit on: gate_w1 round-1 blocker 1, gates.yaml:3758-3761,\n      circularity_rule :4359-4365). No benefit LEVEL is gated here; the\n      402(q)/(w) factors the module consumes are the oracle's\n      (claiming.py:23-28) and belong to gate_b2_pia_oracle. No horizon\n      beyond h = 3 is priced. Nothing here certifies the SSA claiming\n      PROCESS or any multi-cohort reading of an entitlement year.\n    holdout_basis: [ssa_supplement_2023_6b5_1_entitlement_years_2020_2022]\n    fit_basis: [ssa_supplement_2023_6b5_1_entitlement_years_1998_2019]\n    data_staged: >-\n      Both editions are committed IN-REPO and sha-pinned:\n      data/external/ssa_claim_ages_2023supplement.json (schema\n      ssa_claim_ages.v1, 1998-2022, 50 rows; sha256\n      f731c9a6b8f9b172...) and\n      data/external/ssa_claim_ages_2014supplement.json (1998-2013, 32 rows;\n      sha256 b88e45a08909f0f8...). The 2014 edition is the\n      REVISION-FLOOR basis, not a scoring basis. The publication floor\n      runs/claiming_publication_floor_v1.json EXISTS (floors v2 at cd8f167,\n      independently verified) and the gate-schema artifact\n      runs/claiming_gate_floors_v1.json derives this block from it. The 2021 and\n      2022 editions are NOT staged (<RULING 6 d1_editions>).\n    lock_ceremony:\n      exists: false\n      required: >-\n        The SAME ceremony gate-2a / 2b / 2c / M4 / W1 / mortality follow:\n        floor -> adversarial referees -> fixes -> verification -> THRESHOLD\n        BINDING (this block) -> adversarial referee round on the bound\n        thresholds -> fixes -> verification -> ratifying merge, which fills\n        every placeholder, sets floor_run_sha256, flips\n        GATE_B2_CLAIMING_BLOCK_LANDED and retires the live-file guard test\n        in the same commit. NOT YET RUN past the binding.\n    thresholds:\n      locked: false\n      status: draft_pending_referee_round\n      tranche_id: b2_claiming_age_distribution\n      kind: external_reference_temporal_holdout\n      reference_run: data/external/ssa_claim_ages_2023supplement.json\n      reference_run_sha256: f731c9a6b8f9b1727d28fbdd49df6ec700f8762dd4cea30fa1a043c52a7f5b73\n      floor_run: runs/claiming_gate_floors_v1.json\n      floor_run_sha256: <FILLED AT RATIFICATION>\n      derived_from:\n        path: runs/claiming_publication_floor_v1.json\n        sha256: bd78d632219175d2ab47bc7a87661dde782a6a262a26add3a3be349618593ae1\n        size_bytes: 227079\n        blocks: [\"strata.conditional_terminal_year.sd_pp\", \"strata.conditional_settled_years.sd_pp\",\n          \"power_cap.derivations[*].trend_pp_per_year\", \"reference_values_pp\"]\n      superseded_evidence: >-\n        runs/claiming_reference_v1.json (sha256\n        ae80d5c2281a1575...) -- the reported-not-gated held-out\n        computation on the PUBLISHED 8-category construct (nearest-year max\n        3.2 pp; linear-trend max 8.1623). It is the ROUND-0 record, retained\n        committed and reproduced by the floor\n        (reproduces_claiming_reference_v1.all_match true); this DRAFT scores\n        the CONDITIONAL 7-category construct the module emits\n        (<RULING 5 d0_estimand>).\n      estimand: >-\n        For each (sex, entitlement year in 2020-2022) the CONDITIONAL\n        claim-age share vector over the seven published non-conversion\n        categories {age62, age63, age64, age65, age66, age67_69, age70plus},\n        renormalised to sum to 100 -- exactly the object claim_age_pmf\n        returns (claiming.py:262-303) re-aggregated to the reference's own\n        category partition. The uniform age67_69 -> {67, 68, 69} split\n        (claiming.py:92-99) is INERT under that re-aggregation and is\n        neither gated nor credited. Per the standing rule\n        description_claims_exactly_the_scored_surface (gates.yaml:1056,\n        :3294, :4869) the surface claimed is EXACTLY the gated cells: NOT the\n        SSA claiming process, NOT any benefit level, NOT the disability-\n        conversion flow, and NOT the multi-cohort composition of an\n        entitlement year (expected_reduction_factor is a documented\n        SINGLE-COHORT reading, claiming.py:396-405, not certified here).\n      statistic: >-\n        Per gated cell, the absolute deviation in published percentage\n        points |predicted_pp - reference_pp| on the 0-100 conditional-share\n        scale, the prediction UNROUNDED (deviation_arithmetic in the floor:\n        the rounded-prediction path differs by at most one 4-dp ulp and\n        flips no verdict under either rule scored both ways). Bounded and\n        unit-honest; NEVER |ln ratio| -- a share can be 0.\n      protocol:\n        option: >-\n          external-reference temporal holdout. The candidate is a RULE\n          mapping (sex, entitlement year) to a conditional share vector, fit\n          on 1998-2019 ONLY, evaluated at 2020, 2021 and 2022.\n        deterministic: true\n        seeds: none\n        seed_rule_not_applicable: >-\n          There is no simulation draw and no person split, so no seed\n          conjunction and no 4-of-5 rule. A candidate that additionally\n          SAMPLES integer ages (draw_claim_ages, claiming.py:306-332) does\n          not enter this gate: the sampler is claim_age_pmf plus multinomial\n          noise, so gating the PMF gates the sampler's estimand.\n        fit_isolation:\n          required: true\n          rule: >-\n            The candidate MUST be constructed against a reference object\n            PHYSICALLY restricted to entitlement years 1998-2019. Passing\n            the full document and promising not to look is NOT acceptable:\n            the loader caches the whole file (claiming.py:169-179) and the\n            in-range path returns the held-out row exactly (:200-213, :230).\n            A run whose candidate had access to a 2020-2022 row is\n            INVALIDATED and must be re-registered.\n          channels_carrying_the_held_out_actuals: >-\n            the 2023 edition and EVERY committed copy of its 2020-2022 rows:\n            data/external/ssa_claim_ages_2023supplement.json (the reference\n            document), scripts/build_ssa_claim_ages.py (its verbatim\n            transcription, RAW_TABLE lines 159-161 male and\n            185-187 female -- verifier F-A), runs/claiming_reference_v1.json\n            (published-construct actuals), runs/claiming_publication_floor_v1.json\n            (reference_values_pp, holdout_rules.per_cell.*.*.actual, every\n            tolerance and every candidate score) and\n            runs/claiming_gate_floors_v1.json (this block's own artifact) --\n            and, once this block lands, gates.yaml itself: this block's\n            reference_values_pp carry every 2020 conditional share, so the\n            contract file is a POST-FLIP channel (referee B F1; named in the\n            artifact's fit_isolation with carries_the_rows.post_flip true).\n            Physical isolation from public data is impossible; the defence\n            is procedural -- rule class and fit window registered on issue\n            #42 with a justification independent of these artifacts, before\n            any scoring, one shot, no_self_rescue.\n        circularity_disclosure: >-\n          gate_w1's round-1 blocker 1 (gates.yaml:3758-3761) was that the\n          deployed module samples from the anchor it is scored against; the\n          ratified circularity_rule (:4359-4365) keeps the 14 non-conversion\n          claim-age cells report-only (:4568-4573). This gate escapes it\n          only because a candidate fit on 1998-2019 has NEVER READ the\n          2020-2022 rows it is scored on; in-window reproduction stays\n          REPORT-ONLY because it is a lookup of the fit file; and the\n          residual circularity -- every held-out actual and every tolerance\n          is published in the channels named above -- is disclosed rather\n          than denied. The frontier scan in degenerate_candidates is post\n          hoc; once a scanned rule is registered its scores are prior\n          knowledge.\n        pass_rule: >-\n          CONJUNCTION over the 34 gate-eligible cells: the candidate passes\n          iff every gated cell's |predicted_pp - reference_pp| <= that cell's\n          tolerance_pp. Report-only cells and the out-of-scope conversion\n          cells publish on their own rules and never gate. No seed slack.\n      power_cap:\n        t_max_pp: 3.0\n        source: >-\n          inherited VERBATIM from the ratified gate_w1 family-B knob\n          (gates.yaml:4366-4368, t_max_pp 3.0), the only locked precedent in\n          this file for an anchor tolerance denominated in percentage points.\n        rule: >-\n          a cell is gate-eligible iff its derived tolerance_pp <= T_max_pp.\n          Which cells demote is DERIVED from the trend term, never\n          hand-picked: the fast-moving age62 and age66 series exceed the cap\n          at horizons 2-3.\n        demoted_and_report_only: >-\n          8 cells, ALL by the machine reason tolerance_above_t_max.\n          Separately, 6 disability-conversion cells are excluded by SCOPE\n          before any candidate runs (report_only.out_of_module_scope).\n        revision_grammar: \"<RULING 1 grammar_and_k_rev>\"\n        revision_grammar_drafted: >-\n          K_REV * sd(|revision|) on the conditional terminal-year stratum\n          (K_REV 2.0, sd knob 0.493 pp = the 4-dp rounding of 0.492993). This\n          follows NEITHER house grammar (gate-1 derives round(mean + k * sd,\n          r); gate_w1 family B multiplies the sd of a zero-mean residual,\n          whose analogue here is the SIGNED revision, sd 0.826427). Priced\n          beside it, from the same floor bytes (artifact alternatives.\n          grammar_and_k_sweep): drafted K 1.5 / 2.0 / 2.5 -> 34 / 8, deployed fails 10, OLS-full fails 25, age66|female|h1 1.99;\n          34 / 8, deployed fails 6, OLS-full fails 20, age66|female|h1 2.24; 34 / 8, deployed fails 5, OLS-full fails 17, age66|female|h1 2.49.\n          mean + K sd(|d|) K 2.0 -> 32 / 10, deployed fails 4, OLS-full fails 12, age66|female|h1 2.90.\n          K sd(signed d) K 2.0 -> 32 / 10, deployed fails 4, OLS-full fails 12, age66|female|h1 2.91.\n          max |d| (d2) -> 32 / 10, deployed fails 4, OLS-full fails 14, age66|female|h1 2.85.\n        horizon_pricing: \"<RULING 2 horizon_pricing>\"\n        horizon_pricing_drafted: >-\n          the terminal-year sd on EVERY horizon (conservative: h1 = 2020 is\n          three years settled and h2 = 2021 two years settled in the 2023\n          edition; the pair shows rows one to three years settled moved\n          0.0). Priced beside it (alternatives.horizon_aware_pricing):\n          settled sd 0.0089 on h1 / h2 -> 37 / 5, deployed fails\n          15, OLS-full fails 31, promoted \"age62|female|h2\", \"age62|male|h2\", \"age66|female|h2\",\n          24 gated tolerances differ from the DRAFT.\n        rounding_mode: \"<RULING 4 rounding_mode>\"\n        rounding_mode_drafted: >-\n          ROUND_HALF_UP in Decimal on the exact sum of the three summands,\n          quantised to 2 decimals. ROUND_HALF_EVEN differs on exactly\n          1 cell (age70plus|female|h2: unrounded 1.5250\n          -> 1.53 half-up / 1.52 half-even) and nowhere else; the\n          partition is 34 / 8 under both. The knife-edge class\n          (unrounded tolerance within 0.002 pp of a 2-decimal boundary) has\n          13 cells, 9 gate-eligible: \"age62|female|h2\", \"age62|male|h3\", \"age63|female|h2\", \"age63|male|h1\", \"age64|female|h3\", \"age64|male|h1\", \"age65|female|h3\", \"age66|female|h2\", \"age66|male|h3\", \"age67_69|female|h2\", \"age67_69|male|h3\", \"age70plus|female|h2\", \"age70plus|male|h1\".\n          The v1 float evaluation reproduces every DRAFT tolerance\n          (power_cap.rounding_mode.float_path_reproduces_every_tolerance).\n        sd_knob_rounding_check: >-\n          the 4-dp sd knob vs the full-precision sd moves exactly one\n          2-decimal tolerance (the tie cell, 1.53 -> 1.52) and no\n          gate-eligibility flag (floor power_cap.sd_knob_rounding_check).\n      floor:\n        # THE FLOOR IS A PUBLICATION FLOOR, NOT A SAMPLING FLOOR. Table 6.B5.1\n        # is Master Beneficiary Record 100 percent data, not a sample, so no\n        # half-split null exists and the gate-1 / 2 / m4 construction does not\n        # apply. The measurable noise is REVISION + ROUNDING.\n        construction: >-\n          cross-EDITION revision of the same table: the committed 2014\n          edition (entitlement years 1998-2013) against the committed 2023\n          edition, on the 1998-2013 overlap, in conditional-share space. SSA\n          states the mechanism (verbatim in both editions): \"Because entitlements can be awarded retroactively, data for current and prior years are subject to revision with each annual update of this table.\"\n        measured_by: runs/claiming_publication_floor_v1.json (floors v2, cd8f167; verified)\n        strata:\n          conditional_settled_years:  { years: '1998-2012', n_cells: 210, nonzero_cells: 7, mean_pp: 0.00107, sd_pp: 0.008942, max_pp: 0.112333 }\n          conditional_terminal_year:  { years: '2013', n_cells: 14, nonzero_cells: 14, mean_pp: 0.66328, sd_pp: 0.492993, sd_signed_pp: 0.826427, max_pp: 1.590474 }\n          published_settled_years:    { years: '1998-2012', n_cells: 240, nonzero_cells: 1, mean_pp: 0.000417, sd_pp: 0.006442, max_pp: 0.1 }\n          published_terminal_year:    { years: '2013', n_cells: 16, nonzero_cells: 16, mean_pp: 0.5375, sd_pp: 0.372282, max_pp: 1.1 }\n          average_age_column:         { years: '1998-2013', n_rows: 32, nonzero_rows: 0, max_years: 0.0 }\n        strata_note: >-\n          conditional_settled_years.nonzero_cells is 7, not the packet's 1\n          (packet correction 1: one published cell moving renormalises its\n          whole row); the conditional strata's signed revisions sum to zero\n          by construction, so sd_signed_pp equals the RMS.\n        applicable_stratum: conditional_terminal_year\n        applicable_stratum_rationale: >-\n          2022 IS the terminal year of the 2023 edition, the single year most\n          exposed to retroactive revision; 2020-2021 were terminal in the\n          2021 / 2022 editions, which are NOT staged. Pricing all three\n          horizons on the terminal stratum is the CONSERVATIVE choice and is\n          priced as such (<RULING 2 horizon_pricing>, <RULING 6 d1_editions>).\n        finding: >-\n          Publication revision is ENTIRELY a terminal-year effect. All 16\n          published terminal-year cells moved (max 1.1 pp); across the fifteen\n          settled years exactly ONE published cell of 240 moved, by a single\n          0.1 pp rounding tick (age67_69|male|2008); the average_age column\n          did not move at all. The award-count column revised in settled\n          years too (below share resolution) and by several percent in the\n          terminal year (floor number_thousands_column).\n        does_not_establish:\n          - >-\n            any threshold: no tolerance here is ratified and gates.yaml carries no gate_b2_claiming\n          - >-\n            that the DRAFT tolerances are insensitive to the sd knob's 4-decimal rounding: see power_cap.sd_knob_rounding_check, which names every cell whose 2-decimal tolerance moves when the full-precision sd is used\n          - >-\n            the revision settle path: the 2021 and 2022 Supplement editions are not staged, so the terminal-year stratum is measured on ONE edition pair and one year (14 conditional cells)\n          - >-\n            that the scanned rule class is complete: the candidate rules above are a scan, not a proof that no admissible rule does better\n          - >-\n            any cause for the 2020 level shift in the reference: not established by any source read here\n          - >-\n            which revision grammar, K_REV, rounding mode or horizon pricing the gate should bind: power_cap_alternatives emits every variant the referees priced and open_decisions files each ruling; the DRAFT gated_surface is the drafted grammar's until then\n          - >-\n            that the widened forecast class is complete: OLS windows 13-18 are named and every window 2-22 is swept, but Holt, log-share OLS and cross-sex borrowing are not enumerated\n          - >-\n            that the number_thousands revisions in settled years are immaterial for any construct other than the rounded share table (they sit below the share rounding; the count column is measured, not priced)\n      gated_surface:\n        # GATED cells (34). tolerance_pp == quantize(K_REV * sd_knob\n        # + |trend_pp_per_year| * horizon_years + ROUNDING_PP, 2 dp, ROUND_HALF_UP)\n        # in Decimal; K_REV 2.0, sd_knob 0.493, ROUNDING_PP 0.05; gate-eligible\n        # iff <= T_max_pp 3.0. Every value is recomputed from the floor's\n        # strata and trends by tests/test_gates_derivations.py.\n        tolerances_pp:\n          \"age62|female|h1\": 2.30\n          \"age63|female|h1\": 1.08\n          \"age63|female|h2\": 1.12\n          \"age63|female|h3\": 1.17\n          \"age64|female|h1\": 1.27\n          \"age64|female|h2\": 1.51\n          \"age64|female|h3\": 1.74\n          \"age65|female|h1\": 1.20\n          \"age65|female|h2\": 1.37\n          \"age65|female|h3\": 1.54\n          \"age66|female|h1\": 2.24\n          \"age67_69|female|h1\": 1.21\n          \"age67_69|female|h2\": 1.38\n          \"age67_69|female|h3\": 1.56\n          \"age70plus|female|h1\": 1.28\n          \"age70plus|female|h2\": 1.53\n          \"age70plus|female|h3\": 1.77\n          \"age62|male|h1\": 2.27\n          \"age63|male|h1\": 1.07\n          \"age63|male|h2\": 1.10\n          \"age63|male|h3\": 1.13\n          \"age64|male|h1\": 1.40\n          \"age64|male|h2\": 1.77\n          \"age64|male|h3\": 2.14\n          \"age65|male|h1\": 1.55\n          \"age65|male|h2\": 2.06\n          \"age65|male|h3\": 2.57\n          \"age66|male|h1\": 2.72\n          \"age67_69|male|h1\": 1.29\n          \"age67_69|male|h2\": 1.55\n          \"age67_69|male|h3\": 1.81\n          \"age70plus|male|h1\": 1.24\n          \"age70plus|male|h2\": 1.45\n          \"age70plus|male|h3\": 1.66\n        derivations:\n          floor_run: runs/claiming_publication_floor_v1.json\n          floor_key: strata.conditional_terminal_year.sd_pp\n          rule: >-\n            quantize(K_REV * revision_sd_terminal_pp + abs(trend_pp_per_year) *\n            horizon_years + ROUNDING_PP, 2, ROUND_HALF_UP)\n          knobs: {k_rev: 2.0, revision_sd_terminal_pp: 0.493, rounding_pp: 0.05,\n            t_max_pp: 3.0, fit_window: [1998, 2019], horizon_years: [1, 2, 3],\n            rounding_mode: ROUND_HALF_UP}\n          trend_estimator: closed-form OLS slope of the conditional share on 1998-2019, rounded to 4 decimals\n          binding_tests: [test_gate_b2_claiming_tolerances_bind_to_floor_strata_and_trends,\n            test_gate_b2_claiming_partition_34_8_recomputes,\n            test_gate_b2_claiming_grammar_and_k_perturbation_fails_on_any_knob_change,\n            test_gate_b2_claiming_k_by_rounding_sweep_recomputes,\n            test_gate_b2_claiming_horizon_aware_pricing_recomputes,\n            test_gate_b2_claiming_rounding_mode_tie_and_knife_edge_class,\n            test_gate_b2_claiming_failure_sets_recompute_from_the_edition,\n            test_gate_b2_claiming_frontier_scan_recomputes,\n            test_gate_b2_claiming_mutated_builder_fails_the_binding]\n          rules:\n            \"age62|female|h1\": { trend_pp_per_year: -1.2649, horizon_years: 1, rounding: 2, unrounded_pp: 2.3009 }\n            \"age63|female|h1\": { trend_pp_per_year: +0.0439, horizon_years: 1, rounding: 2, unrounded_pp: 1.0799 }\n            \"age63|female|h2\": { trend_pp_per_year: +0.0439, horizon_years: 2, rounding: 2, unrounded_pp: 1.1238 }\n            \"age63|female|h3\": { trend_pp_per_year: +0.0439, horizon_years: 3, rounding: 2, unrounded_pp: 1.1677 }\n            \"age64|female|h1\": { trend_pp_per_year: -0.2359, horizon_years: 1, rounding: 2, unrounded_pp: 1.2719 }\n            \"age64|female|h2\": { trend_pp_per_year: -0.2359, horizon_years: 2, rounding: 2, unrounded_pp: 1.5078 }\n            \"age64|female|h3\": { trend_pp_per_year: -0.2359, horizon_years: 3, rounding: 2, unrounded_pp: 1.7437 }\n            \"age65|female|h1\": { trend_pp_per_year: -0.1669, horizon_years: 1, rounding: 2, unrounded_pp: 1.2029 }\n            \"age65|female|h2\": { trend_pp_per_year: -0.1669, horizon_years: 2, rounding: 2, unrounded_pp: 1.3698 }\n            \"age65|female|h3\": { trend_pp_per_year: -0.1669, horizon_years: 3, rounding: 2, unrounded_pp: 1.5367 }\n            \"age66|female|h1\": { trend_pp_per_year: +1.2051, horizon_years: 1, rounding: 2, unrounded_pp: 2.2411 }\n            \"age67_69|female|h1\": { trend_pp_per_year: +0.1742, horizon_years: 1, rounding: 2, unrounded_pp: 1.2102 }\n            \"age67_69|female|h2\": { trend_pp_per_year: +0.1742, horizon_years: 2, rounding: 2, unrounded_pp: 1.3844 }\n            \"age67_69|female|h3\": { trend_pp_per_year: +0.1742, horizon_years: 3, rounding: 2, unrounded_pp: 1.5586 }\n            \"age70plus|female|h1\": { trend_pp_per_year: +0.2445, horizon_years: 1, rounding: 2, unrounded_pp: 1.2805 }\n            \"age70plus|female|h2\": { trend_pp_per_year: +0.2445, horizon_years: 2, rounding: 2, unrounded_pp: 1.5250 }\n            \"age70plus|female|h3\": { trend_pp_per_year: +0.2445, horizon_years: 3, rounding: 2, unrounded_pp: 1.7695 }\n            \"age62|male|h1\": { trend_pp_per_year: -1.2368, horizon_years: 1, rounding: 2, unrounded_pp: 2.2728 }\n            \"age63|male|h1\": { trend_pp_per_year: -0.0305, horizon_years: 1, rounding: 2, unrounded_pp: 1.0665 }\n            \"age63|male|h2\": { trend_pp_per_year: -0.0305, horizon_years: 2, rounding: 2, unrounded_pp: 1.0970 }\n            \"age63|male|h3\": { trend_pp_per_year: -0.0305, horizon_years: 3, rounding: 2, unrounded_pp: 1.1275 }\n            \"age64|male|h1\": { trend_pp_per_year: -0.3683, horizon_years: 1, rounding: 2, unrounded_pp: 1.4043 }\n            \"age64|male|h2\": { trend_pp_per_year: -0.3683, horizon_years: 2, rounding: 2, unrounded_pp: 1.7726 }\n            \"age64|male|h3\": { trend_pp_per_year: -0.3683, horizon_years: 3, rounding: 2, unrounded_pp: 2.1409 }\n            \"age65|male|h1\": { trend_pp_per_year: -0.5122, horizon_years: 1, rounding: 2, unrounded_pp: 1.5482 }\n            \"age65|male|h2\": { trend_pp_per_year: -0.5122, horizon_years: 2, rounding: 2, unrounded_pp: 2.0604 }\n            \"age65|male|h3\": { trend_pp_per_year: -0.5122, horizon_years: 3, rounding: 2, unrounded_pp: 2.5726 }\n            \"age66|male|h1\": { trend_pp_per_year: +1.6834, horizon_years: 1, rounding: 2, unrounded_pp: 2.7194 }\n            \"age67_69|male|h1\": { trend_pp_per_year: +0.2567, horizon_years: 1, rounding: 2, unrounded_pp: 1.2927 }\n            \"age67_69|male|h2\": { trend_pp_per_year: +0.2567, horizon_years: 2, rounding: 2, unrounded_pp: 1.5494 }\n            \"age67_69|male|h3\": { trend_pp_per_year: +0.2567, horizon_years: 3, rounding: 2, unrounded_pp: 1.8061 }\n            \"age70plus|male|h1\": { trend_pp_per_year: +0.2078, horizon_years: 1, rounding: 2, unrounded_pp: 1.2438 }\n            \"age70plus|male|h2\": { trend_pp_per_year: +0.2078, horizon_years: 2, rounding: 2, unrounded_pp: 1.4516 }\n            \"age70plus|male|h3\": { trend_pp_per_year: +0.2078, horizon_years: 3, rounding: 2, unrounded_pp: 1.6594 }\n        reference_values_pp:  # the held-out conditional shares (4 dp) the cells score against\n          \"age62|female|h1\": 30.5589\n          \"age63|female|h1\": 7.1344\n          \"age63|female|h2\": 7.4160\n          \"age63|female|h3\": 7.9070\n          \"age64|female|h1\": 8.2045\n          \"age64|female|h2\": 8.3430\n          \"age64|female|h3\": 8.6047\n          \"age65|female|h1\": 12.8419\n          \"age65|female|h2\": 12.7462\n          \"age65|female|h3\": 13.9535\n          \"age66|female|h1\": 25.3270\n          \"age67_69|female|h1\": 6.8966\n          \"age67_69|female|h2\": 7.8795\n          \"age67_69|female|h3\": 7.2093\n          \"age70plus|female|h1\": 9.0369\n          \"age70plus|female|h2\": 10.4287\n          \"age70plus|female|h3\": 10.2326\n          \"age62|male|h1\": 28.1100\n          \"age63|male|h1\": 6.9378\n          \"age63|male|h2\": 7.3427\n          \"age63|male|h3\": 7.7193\n          \"age64|male|h1\": 7.2967\n          \"age64|male|h2\": 7.6923\n          \"age64|male|h3\": 7.9532\n          \"age65|male|h1\": 12.6794\n          \"age65|male|h2\": 12.5874\n          \"age65|male|h3\": 13.6842\n          \"age66|male|h1\": 29.3062\n          \"age67_69|male|h1\": 8.3732\n          \"age67_69|male|h2\": 9.0909\n          \"age67_69|male|h3\": 8.1871\n          \"age70plus|male|h1\": 7.2967\n          \"age70plus|male|h2\": 9.0909\n          \"age70plus|male|h3\": 9.4737\n        # REPORT-ONLY by tolerance_above_t_max (8 cells).\n        report_only_tolerance_above_t_max:\n          \"age62|female|h2\": { tolerance_pp_would_be: 3.57, trend_pp_per_year: -1.2649, reason: tolerance_above_t_max }\n          \"age62|female|h3\": { tolerance_pp_would_be: 4.83, trend_pp_per_year: -1.2649, reason: tolerance_above_t_max }\n          \"age66|female|h2\": { tolerance_pp_would_be: 3.45, trend_pp_per_year: +1.2051, reason: tolerance_above_t_max }\n          \"age66|female|h3\": { tolerance_pp_would_be: 4.65, trend_pp_per_year: +1.2051, reason: tolerance_above_t_max }\n          \"age62|male|h2\": { tolerance_pp_would_be: 3.51, trend_pp_per_year: -1.2368, reason: tolerance_above_t_max }\n          \"age62|male|h3\": { tolerance_pp_would_be: 4.75, trend_pp_per_year: -1.2368, reason: tolerance_above_t_max }\n          \"age66|male|h2\": { tolerance_pp_would_be: 4.40, trend_pp_per_year: +1.6834, reason: tolerance_above_t_max }\n          \"age66|male|h3\": { tolerance_pp_would_be: 6.09, trend_pp_per_year: +1.6834, reason: tolerance_above_t_max }\n      report_only:\n        out_of_module_scope:\n          # 6 cells excluded BEFORE any candidate runs, by SCOPE, not by\n          # power and not by any candidate's performance: (a) the module\n          # excludes conversions from its emitted PMF by design\n          # (claiming.py:16-18, :244-256, :296-303) -- a conversion is an\n          # auto-conversion at FRA, not a claiming choice; (b) gates.yaml\n          # :4388-4392 assigns the conversion share to the deployed M4\n          # disability dynamics, \"NOT read from 6.B5.1\".\n          cells: [\"disability_conversion|female|h1\", \"disability_conversion|female|h2\", \"disability_conversion|female|h3\", \"disability_conversion|male|h1\", \"disability_conversion|male|h2\", \"disability_conversion|male|h3\"]\n          reason: conversion_flow_owned_by_di_surface\n          published: >-\n            the conversion share IS published with every candidate run\n            (conversion_share, claiming.py:244-256) and is reconciled\n            against the gate_w1 family-B retained anchor\n            (claim_age.disability_conversion|{female,male}, gates.yaml\n            :4467-4487) -- reported, never gated here.\n        published_8_category_construct: >-\n          the published (un-renormalised) 8-category deviations are\n          published alongside every run so runs/claiming_reference_v1.json\n          stays comparable across the construct change. Reported, never\n          gated.\n        in_window_reproduction: >-\n          exact reproduction of entitlement years 1998-2019 is REPORTED as\n          an integrity check and NEVER gated (circularity_disclosure).\n      degenerate_candidates:\n        # Teeth and the faithful_candidate_oc SUBSTITUTE (C7): a deterministic\n        # rule has no seed and no operating characteristic, so the frontier of\n        # a scanned rule class stands in. RECOMPUTED by the gate artifact from\n        # the floor's scoring frame and equal to the floor's scan; a scan, not\n        # a proof that no admissible rule does better.\n        deployed_v1_nearest_year:\n          description: the module's documented default (claiming.py:200-213), predict every held-out year with 2019\n          gated_cells_failed: 6\n          failing_cells: [\"age62|female|h1\", \"age62|male|h1\", \"age66|female|h1\", \"age70plus|female|h2\", \"age70plus|male|h2\", \"age70plus|male|h3\"]\n          max_pp: 3.8087\n          mean_pp: 0.9499\n          per_failing_cell:\n            \"age62|female|h1\": { deviation_pp: 3.8087, tolerance_pp: 2.30, margin_pp: 1.5087 }\n            \"age62|male|h1\": { deviation_pp: 2.5854, tolerance_pp: 2.27, margin_pp: 0.3154 }\n            \"age66|female|h1\": { deviation_pp: 3.7279, tolerance_pp: 2.24, margin_pp: 1.4879 }\n            \"age70plus|female|h2\": { deviation_pp: 1.5982, tolerance_pp: 1.53, margin_pp: 0.0682 }\n            \"age70plus|male|h2\": { deviation_pp: 2.9758, tolerance_pp: 1.45, margin_pp: 1.5258 }\n            \"age70plus|male|h3\": { deviation_pp: 3.3586, tolerance_pp: 1.66, margin_pp: 1.6986 }\n          verdict: >-\n            FAILS 6 of 34 (C8). Stated up front: adopting this gate as drafted\n            means the CURRENTLY DEPLOYED claiming rule does not pass it. Under\n            both house grammars at K 2.0 the same rule fails 4; under\n            horizon-aware pricing 15. Whether that is bite or mis-pricing is\n            the round's C8, priced in alternatives.\n        uniform_over_seven_categories:\n          gated_cells_failed: 31\n          max_pp: 16.2731\n          verdict: the surface rejects a shapeless candidate.\n        fit_window_mean:\n          gated_cells_failed: 23\n          max_pp: 21.8262\n          verdict: the surface rejects a level-only candidate.\n        sex_pooled_nearest_year:\n          gated_cells_failed: 8\n          max_pp: 4.4214\n          verdict: the SEX dimension has independent bite.\n        best_named_rules:\n          ols_last_5: { gated_cells_failed: 2, max_pp: 2.4642, mean_pp_4dp_convention: 0.5843 }\n          damped_local_trend_w5_d1.0: { gated_cells_failed: 2, max_pp: 2.7396 }\n          ols_last_6_from_the_window_sweep: { gated_cells_failed: 1 }\n        ols_window_sweep: >-\n          every OLS window 2..22 scored: no single window clears all 34\n          cells; windows 12, 13, 14, 15, 16, 17, 18, 19, 20, 21 clear age66|female|h1 (OLS-13 at\n          0.0688 against 2.24); the packet's grid {3, 5, 10, 22} clears none.\n          With age66|female|h1 demoted, ols_last_6 ALONE passes the\n          remaining 33 (windows with zero failures on the 33: [6];\n          referee A D2, artifact demotion_consequence_D2).\n        post_hoc_envelopes:\n          packet_window_grid_8_rules: { gated_cells_failed: 1, failing_cells: [\"age66|female|h1\"], max_pp: 2.3288, mean_pp: 0.315 }\n          widened_forecast_class_14_rules: { gated_cells_failed: 0, max_pp: 1.2519, mean_pp: 0.233, argmax_cell: \"age70plus|male|h2\" }\n          note: NOT prospectively achievable (best rule per cell after the fact); bounds the frontier of THIS enumeration only.\n        catch_structure: >-\n          shapeless and level-only candidates fail broadly; sex-blind\n          candidates fail 8 cells; the deployed frozen-year rule fails the\n          two fastest-drifting families (age62 at h1, age70plus at h2 / h3)\n          and the 2020 age66 level shift, whose cause is UNDETERMINED\n          (packet correction 7: the age66_before_fra composition break\n          begins in entitlement year 2021 and does not cover h1 = 2020).\n          Every gated cell is failed by at least one scanned rule.\n      knife_edge:\n        cell: \"age66|female|h1\"\n        ruling: \"<RULING 3 age66_female_h1>\"\n        options_as_corrected: >-\n          (i) keep as teeth at the drafted 2.24 pp (no single window clears\n          all 34; the best single windows fail exactly this cell);\n          (ii) structural demotion AS DRAFTED is UNAVAILABLE AS WRITTEN --\n          the 2021 age66_before_fra break (null through 2020; female\n          1.0 / male 1.1 in 2021) does not cover entitlement year 2020\n          (packet correction 7); (ii') a different pre-registered reason for\n          2020 -- none is established by any source read; (iii) re-price --\n          about 2.9 pp under either house grammar at K 2.0 (mean + K sd\n          2.90, K sd(signed) 2.91), where OLS-full (2.3288) clears\n          and the deployed rule (3.7279) does not. Consequence to weigh:\n          demoting the cell takes the packet-grid envelope from 1 failure to 0 --\n          and, the stronger true statement (referee A D2): this cell is\n          the ONLY thing standing between the drafted surface and a\n          single-rule pass. With it demoted the single scanned rule\n          ols_last_6 (already published above as the best single window)\n          passes 33 / 33, and 3 rules of referee A's\n          242-rule wider class pass it too\n          (holt_linear_a0.5_b0.5, ols_last_6, renormalised_ols_last_6); on the 34 no single rule in either\n          class passes and the knife cell is the unique binding cell\n          across the OLS, damped, Holt, log-share and level families.\n          Demotion is therefore not one fewer cell; it is the difference\n          between a surface no single scanned rule clears and one a named\n          scanned rule clears -- exactly what no_self_rescue exists to keep\n          candidate-independent, and why (ii') must be a real reason or\n          the cell must stay. Whatever is ruled must be adopted BEFORE any\n          candidate runs (no_self_rescue).\n      governance:\n        registration: >-\n          Pre-registered on issue #42, as every gate-1 / gate-2 / m4 / w1\n          candidate run. A gate_b2_claiming candidate registers its rule\n          class, its fit window, its fit-isolation mechanism and its\n          predicted vectors BEFORE scoring. Outer runs are one-shot.\n        amendment_rules:\n          inherits: gate_1\n          no_self_rescue: >-\n            Inherited verbatim from gate_1.amendment_rules (gates.yaml\n            :565-568): no candidate's committed run verdict changes under a\n            rule proposed after that run. Sharpened for this gate: a cell may\n            NOT be demoted because a candidate failed it. The only admissible\n            demotion reasons are the DERIVED power cap\n            (tolerance_above_t_max) and the candidate-independent SCOPE\n            reason above, both fixed at lock.\n          amendments_only_via: >-\n            public proposal + adversarial referee round + verification +\n            maintainer ratification by merge.\n          description_claims_exactly_the_scored_surface: >-\n            Bound by the standing rule (gates.yaml:1056, :3294, :4869):\n            covers / holdout_basis / estimand claim EXACTLY the 34 gated\n            cells. No claiming behaviour outside entitlement years\n            2020-2022, no horizon beyond h = 3, no benefit level, no\n            disability-conversion flow and no multi-cohort reading is\n            headlined beyond what the cells gate.\n        candidate_scale: >-\n          PINNED to the full published margin: 6.B5.1 is Master Beneficiary\n          Record 100 percent data, so there is no subsample and no scale to\n          fix. This is why the floor is a publication floor.\n        weight_definition: >-\n          NONE. The scored quantities are SSA's own published percentage\n          distributions; no reweighting is applied by the candidate or the\n          scorer. Any candidate that reweights the reference is INVALIDATED.\n      certification_scope:\n        tranche: b2_claiming_age_distribution\n        horizon: >-\n          h in {1, 2, 3} from the last fit year 2019 = entitlement years\n          2020, 2021, 2022 (C11). gate_w1 deploys at anchor_frame_year 2024\n          with claim_age_delta_years 2 (gates.yaml:4366-4368), h = 2 and\n          growing; a 2030+ frame is outside anything this gate prices.\n        certifies: >-\n          that a candidate claiming rule reproduces the conditional\n          claim-age distribution of retired-worker awardees, by sex, on\n          three Supplement entitlement years it has not read, at horizons\n          1-3 years past its fit window, on exactly the gated cells, within\n          a publication-revision-priced tolerance. Nothing else (C13).\n        supports:\n          - >-\n            the #74 CA (claiming) component for the claiming /\n            mortality-dependent provision class on the OBSERVED frame, at\n            h <= 3.\n          - >-\n            an ARGUMENT for de-circularising gate_w1 family B's 14\n            report-only claim-age cells (gates.yaml:4568-4573): a candidate\n            certified on a temporal holdout is no longer \"the module that\n            samples from the anchor it is scored against\". Re-gating those\n            cells still requires a gate_w1 amendment with its own ceremony;\n            this gate makes it arguable and does not make it (C14).\n        does_not_support:\n          - >-\n            any benefit LEVEL: the 402(q)/(w) factors the module multiplies\n            through (claiming.py:360-376) are the oracle's and belong to\n            gate_b2_pia_oracle.\n          - >-\n            extrapolation beyond h = 3.\n          - >-\n            the disability-conversion flow (out of scope above) or the\n            multi-cohort composition of an entitlement year: the module's\n            expected_reduction_factor is documented as a SINGLE-COHORT\n            reading (claiming.py:396-405); nothing here certifies it.\n          - >-\n            the SSA claiming PROCESS: the estimand is a published share\n            vector, not behaviour.\n        binding_of_this_text: >-\n          TEST-BOUND strings of this block: the required phrases the wording audit lists (wording_audit.required_phrases), the placeholders (ceremony_notes.placeholders_the_ratifying_round_must_fill), the digests and sizes (derived_from_floor_*, floor_run, the fragment's own text_sha256 / n_lines / n_bytes), every tolerance, reference value, trend, unrounded sum, knob, partition member, failing cell, margin, envelope and window-sweep figure, the floor.strata table and the fit-isolation channels and line numbers. Every OTHER sentence -- covers, estimand, certifies, supports, does_not_support, the options_as_corrected prose, the rulings' prose -- is bound by the ratifying round's READING of the diff, not by a test (referee A D3): a prose-only edit passes every binding once the byte pins are re-stated, so the round reads it.\n      open_rulings:\n        # Each is FILED and PRICED in runs/claiming_gate_floors_v1.json\n        # open_questions_for_the_ceremony; none is made here.\n        \"1\": \"<RULING 1 grammar_and_k_rev> -- power_cap.revision_grammar\"\n        \"2\": \"<RULING 2 horizon_pricing> -- power_cap.horizon_pricing\"\n        \"3\": \"<RULING 3 age66_female_h1> -- knife_edge.ruling\"\n        \"4\": \"<RULING 4 rounding_mode> -- power_cap.rounding_mode\"\n        \"5\": \"<RULING 5 d0_estimand> -- conditional (drafted) vs published; a published choice forces a v2 floor with an eight-category cap and the six conversion cells re-entering\"\n        \"6\": \"<RULING 6 d1_editions> -- stage the 2021 / 2022 editions or accept horizon_pricing as the interim\"\n        \"7\": \"sequencing constraint -- ceremony_notes.flip_plan (the two live-file guard tests)\"\n        \"8\": \"<RULING S8 e1_clause> -- carried in gate_b2_pia_oracle; E1 as committed 2026-07-05 at engine ffef7b4, not re-executed\"\n      ceremony_notes:\n        placeholders_the_ratifying_round_must_fill:\n          - \"<RULING 1 grammar_and_k_rev>\"\n          - \"<RULING 2 horizon_pricing>\"\n          - \"<RULING 3 age66_female_h1>\"\n          - \"<RULING 4 rounding_mode>\"\n          - \"<RULING 5 d0_estimand>\"\n          - \"<RULING 6 d1_editions>\"\n          - \"<FILLED AT RATIFICATION>\"\n        flip_plan: >-\n          the commit that inserts this block flips\n          GATE_B2_CLAIMING_BLOCK_LANDED from False to True in\n          tests/test_gates_derivations.py and\n          tests/test_claiming_gate_floors_v1.py, RETIRES\n          tests/test_claiming_publication_floor.py::\n          test_no_gate_b2_claiming_exists_in_gates_yaml (and its PIA twin\n          tests/test_pia_rule_coverage.py::\n          test_no_gate_b2_pia_oracle_exists_in_gates_yaml if\n          gate_b2_pia_oracle lands in the same PR) -- both read the live\n          file by design and fail the moment the block lands -- admits\n          the new key at the three master-compare sites\n          (test_gate_m4_flip_leaves_locked_siblings_byte_identical,\n          tests/test_gate_w1_derivations.py, tests/test_gate_m6_derivations.py),\n          fills floor_run_sha256 with the ratified sha256 of\n          runs/claiming_gate_floors_v1.json, and re-refreshes the tier\n          manifest -- all in the SAME commit. Referee B F1: the flip\n          commit does NOT re-emit this artifact (floor_run_sha256 is the\n          sha256 AS RATIFIED); the three flip-time breakages B found are\n          dispositioned in the artifact's flip_plan.post_flip_test_\n          dispositions -- the sequencing test is marker-conditional, the\n          reproduction test compares marker-aware (post-flip it asserts\n          the rebuild's extra gates.yaml hit and the False\n          byte_identical_to_working_tree flag instead of comparing them),\n          the m4 / w1 / m6 master-compare sites are widened, and\n          gates.yaml is a named post-flip fit-isolation channel -- and the\n          flip was re-simulated with them in place.\n        derivations_bound_by: >-\n          tests/test_gates_derivations.py (test_gate_b2_claiming_*) and\n          tests/test_claiming_gate_floors_v1.py. The bindings RUN pre-lock\n          against this string as read from the artifact and pass; they\n          are NOT skipped (referee B F9, referee A D9): the marker only\n          switches their source to the live file.\n        test_bound_strings: >-\n          TEST-BOUND strings of this block: the required phrases the wording audit lists (wording_audit.required_phrases), the placeholders (ceremony_notes.placeholders_the_ratifying_round_must_fill), the digests and sizes (derived_from_floor_*, floor_run, the fragment's own text_sha256 / n_lines / n_bytes), every tolerance, reference value, trend, unrounded sum, knob, partition member, failing cell, margin, envelope and window-sweep figure, the floor.strata table and the fit-isolation channels and line numbers. Every OTHER sentence -- covers, estimand, certifies, supports, does_not_support, the options_as_corrected prose, the rulings' prose -- is bound by the ratifying round's READING of the diff, not by a test (referee A D3): a prose-only edit passes every binding once the byte pins are re-stated, so the round reads it.\n        packet_draft_decisions_not_carried_into_the_block:\n          # referee B F3: the packet's section-5 open_draft_decisions d4 and\n          # d5 fell out of the chain at floors v1; FILED here, not ruled.\n          d4_raw_column_surface: >-\n            considered by the packet, NOT adopted, NOT filed as a ruling:\n            gating the raw 12-column schema instead of the seven\n            conditional categories multiplies the surface and needs its own\n            power analysis (a new floor); the DRAFT surface stays the seven\n            conditional categories (artifact\n            packet_open_draft_decisions_d4_d5).\n          d5_aggregate_statistic: >-\n            the per-cell conjunction is drafted (pass_rule); the RMSE\n            aggregates are REPORTED in the floor (holdout_rules.*.rmse) and\n            the per-rule means in the artifact's frontier scan; gating an\n            aggregate would be a NEW statistic and a NEW floor, not a\n            ruling on this one -- so the ratifying round sees the packet\n            raised it; filed, not ruled.\n        referee_record: >-\n          the threshold referee round's co-location disclosure (referees A\n          and B shared an account and a model, for capacity, not choice)\n          is carried verbatim in the artifact's referee_record.\n        wording_audit: >-\n          the two words the standing wording audit forbids occur 0 times in\n          this block (artifact wording_audit.forbidden_word_counts); the\n          circularity disclosure present; the standing rule cited; every\n          does_not_establish line of the floor carried under floor.\n",
+    "text_sha256": "405b7ffd96e122969a701da2348a3daaef20d7cd6a8711099df1005ab2f082fa",
+    "n_lines": 695,
+    "n_bytes": 46564,
     "indent": "2 spaces under `gates:`; parse with yaml.safe_load('gates:\\n' + text)['gates']['gate_b2_claiming']",
     "status_in_text": "draft_pending_referee_round",
     "written_nowhere_else": "asserted by tests/test_claiming_gate_floors_v1.py and tests/test_gates_derivations.py: gates.yaml mentions neither gate_b2_claiming nor this artifact nor runs/claiming_publication_floor_v1.json while GATE_B2_CLAIMING_BLOCK_LANDED is False, and the text occurs in no other tracked file"
   },
   "revision_pins": {
-    "populace_dynamics_sha": "cd8f167280de47444164d2ab0ec11dd061b59b00",
+    "populace_dynamics_sha": "25680f1f2fd0c5bba7e1bd0eded04e4283edd559",
     "source_floor_sha256": "bd78d632219175d2ab47bc7a87661dde782a6a262a26add3a3be349618593ae1",
     "source_floor_size_bytes": 227079,
     "floor_builder_sha256": "56fe8fa842bb46bc045fa2c1f10d1510c13b3ea41949b48d41f348938919b45c",
-    "gate_builder_sha256": "34b2a905b3feb25e0543de7ffdc3dc914168ff1cd7059923c2d8c3c067c1493e",
+    "gate_builder_sha256": "45d1cc2264da818d14687140b5a1c508ba98da7d77328b73d69f18314007564e",
     "edition_2023_sha256": "f731c9a6b8f9b1727d28fbdd49df6ec700f8762dd4cea30fa1a043c52a7f5b73",
     "gates_yaml_git_blob_for_the_citations": "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c",
     "gates_yaml_pin_semantics": "PROVENANCE of the line citations in the DRAFT block only; NOT a freeze of the live file. The two live-file 'gate name absent' tests read the working tree by design.",
@@ -5972,5 +6470,5 @@
     ],
     "all_required_phrases_present": true
   },
-  "elapsed_seconds": 2.3
+  "elapsed_seconds": 2.6
 }

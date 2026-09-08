@@ -12,9 +12,11 @@ from typed verdicts -- everything the ``gate_b2_pia_oracle`` block needs:
   must be in the mapping, or the build fails): which rules hold all
   three, which a strict subset (and which condition fails), which none;
 * the same partition under every filed alternative reading (Axiom-only
-  E1; the P6 per-rule E1 waiver for R11-R15; the P9 constant-override
-  reading of E2; the packet's own proposed verdicts) so a ruling changes
-  a pointer, not a number;
+  E1, applied to the recorded EVIDENCE -- referee A D1 -- with the
+  label-based form retained as superseded; the P6 per-rule E1 waiver for
+  R11-R15; the P9 constant-override reading of E2; the permissive E2
+  reading for R5 / R7 -- referee B F5; the packet's own proposed
+  verdicts) so a ruling changes a pointer, not a number;
 * the precision claim to the cent (P11), the anchor-vs-arithmetic
   classification of the ten worked examples (P7), the E1 clause for the
   Axiom half with the policyengine-us half recorded as re-executed by
@@ -91,6 +93,38 @@ PE_US_HALF_REEXECUTED = {
 }
 FORBIDDEN_WORDS = ("anchored", "aligned")
 
+#: The threshold referee round's co-location disclosure, carried VERBATIM
+#: from claiming-thr-referee-RECORD.md (5,502 B, sha256 f64634e22136f818...)
+#: into this artifact's referee_record (fixes brief item 10).
+REFEREE_RECORD_DISCLOSURE = '**Disclosure (required by the campaign\'s co-located-referee rule; the same sentence gate 3 and the mortality gate carry):** referees A (statistical) and B (contract/record) of the bound thresholds (commit `25680f1` on `cap/claiming-pia-floors`) shared an account and a model \u2014 both ran as `claude-fable-5-1` on lane `max@farness.ai` (runs 20260908-081523-claiming-thr-referee-a and 20260908-081526-claiming-thr-referee-b, dispatched 08:15 on 2026-09-08). The reason was capacity, not choice: at 08:14 every other Claude lane in the fleet was weekly-capped (rules.foundation Fable and Opus to Sep 13 07:00; axiom-foundation Opus to Sep 12 13:00; hivesight Opus to Sep 12 10:00; rulesfoundation.org, maxghenis.com, max.ghenis@gmail.com, mghenis@gmail.com, optiqal.ai Fable to Sep 12; axiom.org to Sep 10; ubicenter.org disabled by its organisation; policyengine.org out of usage credits \u2014 one-line probes, banner text recorded in `.dashboard-scratch/next-refresh-notes.md`), and the orchestrator (ed26d44e, whose lane farness is) ruled "leave them on farness". This is the seventh co-located adversarial pair by the orchestrator\'s own count; that six-pair measurement is the orchestrator\'s and is uncorroborated \u2014 the r9 kit gate (run 20260908-055516-c20-kit-r9-gate) accepted it "as supplied campaign evidence, NOT VERIFIED independently" and must not be cited as confirming it. The campaign handles a forced co-location by disclosure, not re-run.'
+REFEREE_ROUND = {
+    "round": "adversarial referees on the bound thresholds (commit 25680f1)",
+    "A_statistical": (
+        "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
+        "claiming-thr-referee-A/REPORT.md (55,849 bytes, sha256 "
+        "d687d9902e8a0bfa1421a123afbe28483f0937e35a0177278fa7fe18e53fd7ec)"
+    ),
+    "B_contract_and_record": (
+        "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
+        "claiming-thr-referee-B/REPORT.md (82,628 bytes, sha256 "
+        "55b2d808790fe6a2d3e69fcf9edbf767248b83fb7d15bef76ca7c309c17fd1f3)"
+    ),
+    "record": (
+        "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
+        "claiming-thr-referee-RECORD.md (5,502 bytes, sha256 "
+        "f64634e22136f81860b00079671159086a786c6bd0b18addffdd2d58af96f800)"
+    ),
+    "verdicts": (
+        "both NOT LOCK-READY on record and label grounds; both confirm "
+        "every claiming number; A D1 requires one change of bytes on the "
+        "PIA side (the R10 E1 label under the Axiom-only reading)"
+    ),
+    "co_location_disclosure_verbatim": REFEREE_RECORD_DISCLOSURE,
+    "six_pair_count_status": (
+        "the orchestrator's own and uncorroborated, as the record states"
+    ),
+}
+
 PACKET_REPORT = (
     "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/"
     "cap-claiming-pia-gates/REPORT.md (104,338 bytes, sha256 "
@@ -155,6 +189,12 @@ E2_STRICT = {
     "absent": False,
 }
 E2_P9_OVERRIDE = {**E2_STRICT, "satisfied_with_a_constant_override": True}
+#: Referee B F5: the permissive E2 reading under which R5's `weak` (the
+#: bracket RATES are published, the bracket total is not) and R7's
+#: `implied` (rides on R6's published bend points) count as an external
+#: anchor -- the reading under which the packet's proposed verdict for R7
+#: (computes_exactly) would stand. Emitted as an alternative; not adopted.
+E2_R5_R7_PERMISSIVE = {**E2_STRICT, "weak": True, "implied": True}
 E3_STRICT = {
     "all_branches_exercised": True,
     "exhaustive": True,
@@ -289,7 +329,15 @@ def partition_under(
     e3_map: dict[str, bool],
     *,
     waive_e1_label: str | None = None,
+    e1_from_evidence: bool = False,
 ) -> dict[str, Any]:
+    """The partition under one mapping. With ``e1_from_evidence`` E1 is
+    read from the coverage record's RECORDED EVIDENCE -- it holds iff
+    ``cross_engine.n_cases > 0`` and the label is not ``degenerate`` --
+    instead of from the E1 status label (referee A D1: R10's label
+    ``satisfied`` rests on 0 Axiom cases and 40 policyengine-us
+    foundation cases, the evidence class the record labels
+    ``policyengine_us_only`` on R8 / R9 / R16)."""
     per_rule: dict[str, Any] = {}
     all_three: list[str] = []
     strict_subset: dict[str, Any] = {}
@@ -302,8 +350,13 @@ def partition_under(
             "e3": rule["e3"]["status"],
         }
         waived = waive_e1_label is not None and labels["e1"] == waive_e1_label
+        axiom_cases = rule["cross_engine"]["n_cases"]
+        if e1_from_evidence:
+            e1_holds = axiom_cases > 0 and labels["e1"] != "degenerate"
+        else:
+            e1_holds = _holds(e1_map, labels["e1"], "E1")
         holds = {
-            "e1": True if waived else _holds(e1_map, labels["e1"], "E1"),
+            "e1": True if waived else e1_holds,
             "e2": _holds(e2_map, labels["e2"], "E2"),
             "e3": _holds(e3_map, labels["e3"], "E3"),
         }
@@ -314,6 +367,15 @@ def partition_under(
             "e1_waived": waived,
             "failing_conditions": failing,
         }
+        if e1_from_evidence:
+            entry["e1_evidence"] = {
+                "cross_engine_cases": axiom_cases,
+                "pe_us_foundation_cases": rule["pe_us_foundation_cases"],
+                "e1_holds_on_the_evidence": e1_holds,
+                "label_agrees_with_the_evidence": (
+                    _holds(e1_map, labels["e1"], "E1") == e1_holds
+                ),
+            }
         if not failing:
             entry["class"] = "all_three"
             all_three.append(rid)
@@ -330,6 +392,12 @@ def partition_under(
             "e2": e2_map,
             "e3": e3_map,
             "e1_waived_for_label": waive_e1_label,
+            "e1_applied_to": (
+                "the recorded evidence: cross_engine.n_cases > 0 and the "
+                "label is not degenerate (referee A D1)"
+                if e1_from_evidence
+                else "the E1 status label"
+            ),
         },
         "all_three": all_three,
         "strict_subset": strict_subset,
@@ -344,7 +412,15 @@ def partition_under(
 def partitions(coverage: dict[str, Any]) -> dict[str, Any]:
     rules = coverage["rule_inventory"]
     strict = partition_under(rules, E1_STRICT, E2_STRICT, E3_STRICT)
-    axiom_only = partition_under(rules, E1_AXIOM_ONLY, E2_STRICT, E3_STRICT)
+    axiom_only_label = partition_under(
+        rules, E1_AXIOM_ONLY, E2_STRICT, E3_STRICT
+    )
+    axiom_only = partition_under(
+        rules, E1_AXIOM_ONLY, E2_STRICT, E3_STRICT, e1_from_evidence=True
+    )
+    e2_permissive = partition_under(
+        rules, E1_STRICT, E2_R5_R7_PERMISSIVE, E3_STRICT
+    )
     p6 = partition_under(
         rules, E1_STRICT, E2_STRICT, E3_STRICT, waive_e1_label=WAIVABLE_E1
     )
@@ -356,6 +432,61 @@ def partitions(coverage: dict[str, Any]) -> dict[str, Any]:
         E3_STRICT,
         waive_e1_label=WAIVABLE_E1,
     )
+    # A D1's durable check: an E1 label must match the evidence class it
+    # rests on. It cannot raise -- the coverage record is frozen (verified
+    # v2 at cd8f167) -- so the inconsistency is EMITTED and the binding
+    # carries the correction in the evidence-based reading above.
+    expected_by_label = {
+        "satisfied": lambda a, p: a > 0,
+        "policyengine_us_only": lambda a, p: a == 0 and p > 0,
+        "degenerate": lambda a, p: a > 0,
+        "unsatisfiable_today": lambda a, p: a == 0 and p == 0,
+    }
+    audit_rows = {}
+    for rule in rules:
+        label = rule["e1"]["status"]
+        a = rule["cross_engine"]["n_cases"]
+        p = rule["pe_us_foundation_cases"]
+        audit_rows[rule["id"]] = {
+            "label": label,
+            "cross_engine_cases": a,
+            "pe_us_foundation_cases": p,
+            "label_consistent_with_the_evidence": expected_by_label[label](
+                a, p
+            ),
+        }
+    inconsistent = sorted(
+        rid
+        for rid, row in audit_rows.items()
+        if not row["label_consistent_with_the_evidence"]
+    )
+    e1_audit = {
+        "rule": (
+            "an E1 label `satisfied` must rest on cross_engine.n_cases > 0; "
+            "`policyengine_us_only` on 0 Axiom cases and > 0 foundation "
+            "cases; `degenerate` on > 0 Axiom cases (agreement unforced); "
+            "`unsatisfiable_today` on 0 and 0"
+        ),
+        "per_rule": audit_rows,
+        "inconsistent_rules": inconsistent,
+        "finding": (
+            "referee A D1: R10_416l_fra_schedule carries e1.status "
+            "`satisfied` on 0 Axiom cross-engine cases and 40 policyengine-"
+            "us foundation cases -- the evidence class the record labels "
+            "`policyengine_us_only` on R8 (0 / 20), R9 (0 / 15) and R16 "
+            "(0 / 10); e1_clause_S8.policyengine_us_half lists R10 and "
+            "axiom_half does not. The label-based Axiom-only reading "
+            "filed at 25680f1 therefore awarded R10 on its LABEL; applied "
+            "to the evidence it awards no rule."
+        ),
+        "disposition": (
+            "EMITTED, not repaired: the coverage record is frozen and is "
+            "not relabelled; the strict reading (policyengine-us counts as "
+            "an independent engine, the packet's E1 letter) is unchanged "
+            "and still awards R10; the evidence-based Axiom-only reading "
+            "is filed beside it and the invariant is restated"
+        ),
+    }
     packet = {r["id"]: r["packet_proposed_verdict"]["verdict"] for r in rules}
     packet_computes_exactly = sorted(
         rid for rid, v in packet.items() if v.startswith("computes_exactly")
@@ -391,10 +522,67 @@ def partitions(coverage: dict[str, Any]) -> dict[str, Any]:
         },
         "alternatives": {
             "axiom_only_e1": {
-                "reading": "E1 requires the Axiom engine: policyengine_us_only does not count",
-                "ruling": "a reading the round may prefer under P6's logic; not in the packet",
+                "reading": (
+                    "E1 requires the Axiom engine, applied to the RECORDED "
+                    "EVIDENCE (referee A D1): E1 holds iff cross_engine."
+                    "n_cases > 0 and the label is not degenerate. "
+                    "policyengine_us_only does not count, and neither does "
+                    "a `satisfied` label resting on zero Axiom cases (R10: "
+                    "cross_engine 0, pe_us_foundation 40)"
+                ),
+                "ruling": (
+                    "a reading the round may prefer under P6's logic; not "
+                    "in the packet. Computed on the LABEL at 25680f1 (see "
+                    "axiom_only_e1_label_based_as_filed_at_25680f1, retained "
+                    "and superseded) and on the EVIDENCE from this "
+                    "re-emission"
+                ),
+                "awarded_set_under_this_reading": axiom_only["all_three"],
                 **axiom_only,
                 "moves_vs_strict": diff(strict, axiom_only),
+            },
+            "axiom_only_e1_label_based_as_filed_at_25680f1": {
+                "reading": (
+                    "the SAME Axiom-only reading computed on the E1 status "
+                    "LABEL (E1_AXIOM_ONLY applied to e1.status), exactly as "
+                    "filed at 25680f1"
+                ),
+                "ruling": (
+                    "RETAINED FOR THE RECORD AND SUPERSEDED by axiom_only_e1: "
+                    "it awarded R10 because R10's label is `satisfied`, which "
+                    "its evidence (0 Axiom cases) does not support (referee A "
+                    "D1); it is not a filed reading and is not in the "
+                    "invariant"
+                ),
+                "superseded": True,
+                "counted_in_invariant_under_every_reading": False,
+                **axiom_only_label,
+                "moves_vs_strict": diff(strict, axiom_only_label),
+            },
+            "e2_bend_points_count_for_r5_r7": {
+                "reading": (
+                    "E2 holds for `weak` (R5: the bracket RATES are "
+                    "published, the bracket total is not) and `implied` "
+                    "(R7: no case anchors the rounding rule on its own; it "
+                    "rides on R6's published bend points) -- the permissive "
+                    "reading under which the packet's proposed verdict for "
+                    "R7 (computes_exactly) would stand"
+                ),
+                "ruling": (
+                    "referee B F5: the one mapping choice whose permissive "
+                    "alternative was not emitted at 25680f1; named under P1 "
+                    "(open_questions_for_the_ceremony P1, open_rulings.P1) "
+                    "as a ruling for the round; not adopted"
+                ),
+                "what_moves": (
+                    "R5 and R7 join R10 in all_three (1 -> 3 rules); the "
+                    "gate_1 benefit_space support line (certification_scope."
+                    "supports[1]: a certified R5 / R6 / R7 makes the PIA "
+                    "proxy a statutory object) still needs R6, which fails "
+                    "E3 (partial) under every filed reading"
+                ),
+                **e2_permissive,
+                "moves_vs_strict": diff(strict, e2_permissive),
             },
             "p6_e1_waiver_for_r11_r15": {
                 "reading": (
@@ -440,13 +628,23 @@ def partitions(coverage: dict[str, Any]) -> dict[str, Any]:
                 ),
             },
         },
+        "e1_label_evidence_audit": e1_audit,
         "invariant_under_every_reading": {
+            "variants_in_the_intersection": [
+                "strict",
+                "axiom_only_e1",
+                "p6_e1_waiver_for_r11_r15",
+                "p9_constant_override_counts_as_e2",
+                "p6_waiver_and_p9_override",
+                "e2_bend_points_count_for_r5_r7",
+            ],
             "rules_holding_all_three_under_every_variant": sorted(
                 set(strict["all_three"])
                 & set(axiom_only["all_three"])
                 & set(p6["all_three"])
                 & set(p9["all_three"])
                 & set(p6_p9["all_three"])
+                & set(e2_permissive["all_three"])
             ),
             "rules_holding_none_under_every_variant": sorted(
                 set(strict["none"])
@@ -454,6 +652,23 @@ def partitions(coverage: dict[str, Any]) -> dict[str, Any]:
                 & set(p6["none"])
                 & set(p9["none"])
                 & set(p6_p9["none"])
+                & set(e2_permissive["none"])
+            ),
+            "rules_holding_all_three_under_every_label_based_reading": sorted(
+                set(strict["all_three"])
+                & set(axiom_only_label["all_three"])
+                & set(p6["all_three"])
+                & set(p9["all_three"])
+                & set(p6_p9["all_three"])
+                & set(e2_permissive["all_three"])
+            ),
+            "statement": (
+                "under the strict reading R10 alone holds all three; under "
+                "every LABEL-based reading R10 holds all three; under the "
+                "evidence-based Axiom-only reading NO rule does (referee A "
+                "D1). The 25680f1 headline 'R10 under every filed "
+                "alternative reading' is RETRACTED and restated so. The "
+                "strict-reading partition is unchanged."
             ),
         },
     }
@@ -645,6 +860,9 @@ def granularity_facts(coverage: dict[str, Any]) -> dict[str, Any]:
 
 def e1_clause(coverage: dict[str, Any]) -> dict[str, Any]:
     ce = coverage["evidence_inventory"]["cross_engine"]
+    r10 = next(
+        r for r in coverage["rule_inventory"] if r["id"].startswith("R10_")
+    )
     return {
         "clause": (
             f"E1 as committed {CROSS_ENGINE_COMMIT_DATE} at engine "
@@ -680,6 +898,26 @@ def e1_clause(coverage: dict[str, Any]) -> dict[str, Any]:
         "coverage_record_statement": coverage["no_engine_executed"][
             "statement"
         ],
+        "r10_e1_basis_D1": {
+            "rule": r10["id"],
+            "e1_label": r10["e1"]["status"],
+            "cross_engine_cases": r10["cross_engine"]["n_cases"],
+            "pe_us_foundation_cases": r10["pe_us_foundation_cases"],
+            "rests_on_the_policyengine_us_half_alone": (
+                r10["cross_engine"]["n_cases"] == 0
+                and r10["pe_us_foundation_cases"] > 0
+            ),
+            "statement": (
+                "R10's E1 label rests on the policyengine-us foundation "
+                "block alone (the schedule loads from policyengine-us and is "
+                "exercised through the foundation block's factor agreement; "
+                "the cross-engine rows carry aime and pia only) -- the "
+                "evidence class labelled policyengine_us_only on R8 / R9 / "
+                "R16. Under the evidence-based Axiom-only reading "
+                "(partitions.alternatives.axiom_only_e1) R10 does not hold "
+                "E1; under the strict reading it does (referee A D1)."
+            ),
+        },
     }
 
 
@@ -901,6 +1139,26 @@ def gates_yaml_citations() -> dict[str, Any]:
 # --------------------------------------------------------------------------
 # Certification scope (P14) and the rulings
 # --------------------------------------------------------------------------
+#: Referee A D3: which strings of the DRAFT block the tests bind, and
+#: what binds the rest. A prose-only mutation outside these passes every
+#: binding once the pins are re-stated (A section 4, M9).
+BINDING_OF_THE_TEXT = (
+    "TEST-BOUND strings of this block: the required phrases the wording "
+    "audit lists (wording_audit.required_phrases), the placeholders "
+    "(ceremony_notes.placeholders_the_ratifying_round_must_fill), the "
+    "digests and sizes (coverage_run_sha256, derived_from_coverage_*, the "
+    "evidence_runs pins, the fragment's own text_sha256 / n_lines / "
+    "n_bytes), every status label, class, failing list, case count and "
+    "moved_by line of rule_inventory, the partition under every reading, "
+    "the precision figures, the worked-example ratios, the ast-derived "
+    "code spans and the family-maximum symbol. Every OTHER sentence -- "
+    "covers, estimand, certifies, supports, does_not_authorise, the "
+    "rulings' prose -- is bound by the ratifying round's READING of the "
+    "diff, not by a test (referee A D3): a prose-only edit passes every "
+    "binding once the byte pins are re-stated, so the round reads it."
+)
+
+
 def certification_scope(parts: dict[str, Any]) -> dict[str, Any]:
     strict = parts["strict"]
     return {
@@ -919,6 +1177,11 @@ def certification_scope(parts: dict[str, Any]) -> dict[str, Any]:
             "strict_subset": strict["strict_subset"],
             "none": strict["none"],
         },
+        "partition_under_the_evidence_based_axiom_only_reading": {
+            "all_three": parts["alternatives"]["axiom_only_e1"]["all_three"],
+            "note": "referee A D1; see partitions.alternatives.axiom_only_e1",
+        },
+        "binding_of_this_text": BINDING_OF_THE_TEXT,
         "supports": [
             "the #74 SF (statutory formula) component wherever a rule holds "
             "all three conditions -- with the CITATION being the rule",
@@ -981,6 +1244,16 @@ def open_questions(
                         ],
                         "n_strict_subset": strict["n_strict_subset"],
                         "n_none": strict["n_none"],
+                        "rules_awarded_under_the_permissive_e2_reading_for_r5_r7": alts[
+                            "e2_bend_points_count_for_r5_r7"
+                        ][
+                            "all_three"
+                        ],
+                        "rules_awarded_under_the_evidence_based_axiom_only_e1_reading": alts[
+                            "axiom_only_e1"
+                        ][
+                            "all_three"
+                        ],
                     },
                 },
                 "b_strike_gates_yaml_642_by_amendment": {
@@ -997,6 +1270,18 @@ def open_questions(
                     ),
                 },
             },
+            "e2_reading_of_weak_and_implied_F5": (
+                "a ruling for the round, named here so it is decided in the "
+                "open (referee B F5): the strict E2 mapping reads R5's "
+                "`weak` and R7's `implied` as NOT holding (the letter: a "
+                "registered case whose expected value is an SSA-published "
+                "figure); the packet's proposed verdict for R7 was "
+                "computes_exactly. The permissive reading is emitted as "
+                "partitions.alternatives.e2_bend_points_count_for_r5_r7: "
+                "it moves R5 and R7 into all_three (1 -> 3 rules) and with "
+                "them the gate_1 benefit_space support line, which still "
+                "needs R6 (E3 partial under every reading)"
+            ),
             "the_one_outcome_the_standing_rule_forbids": (
                 "leaving the clause undefined and unawarded in "
                 "gate_2.description while gate_2's 46 cells (gates.yaml:917) "
@@ -1043,6 +1328,18 @@ def open_questions(
                             for r in strict["per_rule"]
                             if r not in AUXILIARY_RULES
                         ],
+                        "all_three_under_the_evidence_based_axiom_only_e1_reading": [
+                            rid
+                            for rid in alts["axiom_only_e1"]["all_three"]
+                            if rid not in AUXILIARY_RULES
+                        ],
+                        "caveat_D1": (
+                            "the all_three price is a STRICT-reading price: "
+                            "R10's E1 rests on the policyengine-us half alone "
+                            "(0 Axiom cases / 40 foundation cases), so under "
+                            "the evidence-based Axiom-only reading the "
+                            "own-benefit half awards no rule (referee A D1)"
+                        ),
                         "all_three": [
                             r
                             for r in strict["all_three"]
@@ -1186,8 +1483,50 @@ def open_questions(
             "constraint": (
                 "the lock commit retires those two assertions and flips the "
                 "pre-lock markers in the SAME commit (flip_plan), or "
-                "supersedes the artifacts with a v2 in the same PR"
+                "supersedes the artifacts with a v2 in the same PR. Referee "
+                "B F1 (simulated flip, its section 3) found three MORE "
+                "flip-time breakages the 25680f1 record did not name; each "
+                "is dispositioned in flip_plan.post_flip_test_dispositions "
+                "and was re-simulated by the fixes sitting with the "
+                "dispositions in place"
             ),
+            "flip_time_breakages_recorded_F1": [
+                "tests/test_gates_derivations.py::"
+                "test_gate_b2_both_blocks_record_the_sequencing_constraint "
+                "-- asserted the two retired guard tests still exist "
+                "unconditionally; now marker-conditional (defined is (not "
+                "LANDED)) like its siblings",
+                "tests/test_pia_gate_partition_v1.py::"
+                "test_build_reproduces_the_committed_artifact and its "
+                "claiming twin -- the in-memory rebuild reads the live "
+                "tree, so post-flip gates_yaml_citations."
+                "byte_identical_to_working_tree is False (and the claiming "
+                "scan hits gates.yaml); now compared MARKER-AWARE: the "
+                "committed bytes stay AS RATIFIED and the rebuild's flip-"
+                "created differences are asserted to their expected values",
+                "tests/test_gates_derivations.py::"
+                "test_gate_m4_flip_leaves_locked_siblings_byte_identical "
+                "(and the gate_w1 / gate_m6 twins) -- the master-compare "
+                "sites the flip plan already names as sites to widen",
+                "tests/test_gates_derivations.py::"
+                "test_gate_b2_pia_oracle_precision_and_e1_clause -- asserted "
+                "the S8 placeholder <RULING S8 e1_clause> against the LIVE "
+                "block unconditionally; found by the fixes sitting's fuller "
+                "simulation (which fills every <RULING ...> placeholder as "
+                "the flip plan says the ratifying round does; referee B's "
+                "simulation left them unfilled); now marker-conditional",
+                "the contract-identity family (found by the fixes sitting): "
+                "runs/legacy_manifest_v1.json carries contract_revision = "
+                "the gates.yaml blob and is re-recorded by "
+                "scripts/build_legacy_manifest.py --transition (the gate_m6 "
+                "lock flip c7af699 precedent); tests/test_gate_m6_floors_v4.py "
+                "pins the LIVE gates.yaml blob as CONTRACT_BLOB_LIVE and is "
+                "re-pinned by every flip (the m6 amendment precedent); "
+                "tests/test_contract_identity.py and "
+                "tests/test_generic_evaluator.py compare gates.yaml with "
+                "HEAD:gates.yaml and pass only once the flip is COMMITTED "
+                "(an uncommitted landed block fails 20 of them)",
+            ],
             "placeholder_in_block": "ceremony_notes.flip_plan",
             "status": "RECORDED as a sequencing constraint; not a threshold ruling",
         },
@@ -1244,12 +1583,80 @@ def flip_plan() -> dict[str, Any]:
             "reads the LIVE gates.yaml block instead of the artifact's draft "
             "fragment (LOCKED-HOT); the pre-lock guard inverts",
             "gates.yaml: floor_run_sha256 replaces <FILLED AT RATIFICATION> "
-            f"with the sha256 of {ARTIFACT_REL} AS RATIFIED; every "
+            f"with the sha256 of {ARTIFACT_REL} AS RATIFIED -- the artifact "
+            "is NOT re-emitted by the flip commit; its committed bytes stay "
+            "the ratified bytes and the reproduction test compares marker-"
+            "aware (post_flip_test_dispositions); every "
             "<RULING ...> placeholder is replaced; status -> locked; "
             "locked -> true; a history entry is added",
             "tests/tier_counts.json and tests/README-tiers.md re-refreshed "
             "by LIVE collection",
         ],
+        "artifact_re_emitted_at_flip": False,
+        "post_flip_test_dispositions": {
+            "decision": (
+                "referee B F1 (ii), option (b): the flip commit does NOT "
+                "re-emit this artifact; floor_run_sha256 is the sha256 of "
+                "the artifact AS RATIFIED; the reproduction test's comparison "
+                "is MARKER-AWARE -- while the marker is False it is exact "
+                "(every leaf but elapsed_seconds and the HEAD sha); once "
+                "True it additionally asserts, rather than compares, the "
+                "leaves the flip legitimately moves in the rebuild"
+            ),
+            "weakening_stated": (
+                "post-flip the reproduction test no longer proves that the "
+                "rebuild's gates_yaml_citations.byte_identical_to_working_"
+                "tree equals the committed True; it asserts the rebuild "
+                "reports False (the live file has moved on from the pinned "
+                "blob b0c39af1..., whose line citations are still checked "
+                "against the blob). Nothing else is exempted for this "
+                "artifact; every other leaf stays exactly compared"
+            ),
+            "test_gate_b2_both_blocks_record_the_sequencing_constraint": (
+                "marker-conditional: the two guard tests must exist while "
+                "the markers are False and must be gone once both are True "
+                "(defined is (not LANDED), the siblings' form)"
+            ),
+            "test_build_reproduces_the_committed_artifact": (
+                "marker-aware as decided above (tests/test_pia_gate_"
+                "partition_v1.py::_strip_volatile and the test body)"
+            ),
+            "test_gate_m4_flip_leaves_locked_siblings_byte_identical": (
+                "widened by the flip commit to admit the new key (a master-"
+                "compare site named above), with the gate_w1 / gate_m6 twins"
+            ),
+            "test_gate_b2_pia_oracle_precision_and_e1_clause": (
+                "marker-conditional: the S8 placeholder stands while the "
+                "marker is False and is gone once the block has landed "
+                "(found by the fixes sitting's simulation, not B's)"
+            ),
+            "contract_identity_family": (
+                "the flip commit ALSO re-records runs/legacy_manifest_v1."
+                "json (scripts/build_legacy_manifest.py --transition; the "
+                "gate_m6 lock flip c7af699 precedent) and re-pins "
+                "CONTRACT_BLOB_LIVE in tests/test_gate_m6_floors_v4.py to "
+                "the post-flip blob; tests/test_contract_identity.py and "
+                "tests/test_generic_evaluator.py need gates.yaml COMMITTED "
+                "(they compare with HEAD:gates.yaml) -- both were added to "
+                "this record by the fixes sitting's simulation"
+            ),
+            "test_gate_m6_derivations_py": (
+                "named above as a master-compare site to widen; the "
+                "simulation found it asserts only the presence of gate_m6 "
+                "and the locked siblings -- nothing to widen there"
+            ),
+            "simulated": (
+                "referee B section 3 at 25680f1 (found the three); the fixes "
+                "sitting in a scratch clone with these dispositions in place "
+                "(blocks landed with the real names, placeholders filled, "
+                "markers flipped, the two guard tests retired, the m4 / w1 "
+                "master-compare sites widened, the legacy manifest "
+                "transitioned, CONTRACT_BLOB_LIVE re-pinned, the flip "
+                "COMMITTED in the clone): the fuller simulation found two "
+                "more breakages, recorded above; with every disposition "
+                "in place no test fails"
+            ),
+        },
     }
 
 
@@ -1290,7 +1697,7 @@ def draft_fragment(
         e = strict["per_rule"][rid]
         moves = []
         for name, alt in alts.items():
-            if name == "packet_proposed_verdicts":
+            if name == "packet_proposed_verdicts" or alt.get("superseded"):
                 continue
             if rid in alt["moves_vs_strict"]:
                 moves.append(name)
@@ -1340,8 +1747,10 @@ def draft_fragment(
     # ({SOURCE_COVERAGE_COMMITTED[0]:,} B, sha256 {SOURCE_COVERAGE_COMMITTED[1][:16]}...) and the partition is
     # DERIVED from those labels under the explicit mapping in
     # thresholds.statistic; bound by tests/test_gates_derivations.py (the
-    # test_gate_b2_pia_oracle_* bindings). Nothing is typed, nothing is
-    # awarded. Every "<RULING ...>" placeholder is an open question the
+    # test_gate_b2_pia_oracle_* bindings, which RUN pre-lock against this
+    # string as read from the artifact -- they are not skipped; the marker
+    # only switches their source to the live file). Nothing is typed,
+    # nothing is awarded. Every "<RULING ...>" placeholder is an open question the
     # ratifying round must fill; options and prices are in the artifact's
     # open_questions_for_the_ceremony. This block also proposes the FIRST
     # definition of gates.yaml:{citations['computes_exactly']['occurrences'][0]}'s phrase "computes exactly".
@@ -1424,7 +1833,11 @@ def draft_fragment(
         foundation cases, policyengine-us checkout {clause['policyengine_us_half']['policyengine_us_checkout']}, PASSED). The
         Axiom half (R1-R7 on the 240) was NOT: no ceremony host carried the
         maturin-built wheel. Any E1 status below rests on the committed
-        artifact as built on its recorded date.
+        artifact as built on its recorded date. R10's E1 label `satisfied`
+        rests on the policyengine-us half ALONE (cross_engine cases
+        {clause['r10_e1_basis_D1']['cross_engine_cases']}, pe_us_foundation {clause['r10_e1_basis_D1']['pe_us_foundation_cases']}): under the evidence-based
+        Axiom-only reading (partitions.alternatives.axiom_only_e1) R10
+        does not hold E1; under the strict reading it does (referee A D1).
       estimand: >-
         Per RULE (one statutory operation with its own citation and branch
         structure), the value the oracle computes for every registered case
@@ -1510,13 +1923,26 @@ def draft_fragment(
 {subset_lines}
           none: [{', '.join(strict['none'])}]
         invariant_under_every_filed_reading:
+          # referee A D1: the evidence-based Axiom-only reading awards no
+          # rule, so the intersection over every filed reading is empty;
+          # R10 holds all three under the strict reading and under every
+          # LABEL-based reading. The 25680f1 headline "R10 under every
+          # filed alternative reading" is RETRACTED.
           all_three: [{', '.join(parts['invariant_under_every_reading']['rules_holding_all_three_under_every_variant'])}]
+          all_three_under_every_label_based_reading: [{', '.join(parts['invariant_under_every_reading']['rules_holding_all_three_under_every_label_based_reading'])}]
           none: [{', '.join(parts['invariant_under_every_reading']['rules_holding_none_under_every_variant'])}]
         alternative_readings: >-
-          axiom_only_e1 (policyengine_us_only does not count): all-three
-          [{', '.join(alts['axiom_only_e1']['all_three'])}]; p6_e1_waiver_for_r11_r15: all-three
+          strict reading: all-three [{', '.join(strict['all_three'])}] (R10 alone);
+          axiom_only_e1 (EVIDENCE-based -- E1 holds iff the rule has
+          cross-engine cases; policyengine_us_only does not count and
+          neither does R10's satisfied-on-zero-Axiom-cases label): all-three
+          [{', '.join(alts['axiom_only_e1']['all_three'])}] -- no rule (referee A D1; the label-based form filed at
+          25680f1 awarded R10 and is retained in the artifact as
+          superseded); p6_e1_waiver_for_r11_r15: all-three
           [{', '.join(alts['p6_e1_waiver_for_r11_r15']['all_three'])}]; p9_constant_override_counts_as_e2:
-          all-three [{', '.join(alts['p9_constant_override_counts_as_e2']['all_three'])}]; the packet's own
+          all-three [{', '.join(alts['p9_constant_override_counts_as_e2']['all_three'])}]; e2_bend_points_count_for_r5_r7
+          (R5 weak and R7 implied count for E2; referee B F5, a P1 ruling):
+          all-three [{', '.join(alts['e2_bend_points_count_for_r5_r7']['all_three'])}]; the packet's own
           proposed verdicts call {len(alts['packet_proposed_verdicts']['rules_the_packet_calls_computes_exactly_or_a_qualified_form'])} rules computes_exactly or a qualified
           form, of which the strict reading awards {len(strict['all_three'])}. Every reading is
           emitted per rule in the artifact's partitions block.
@@ -1658,13 +2084,15 @@ def draft_fragment(
             {scope['supports'][1]}
         does_not_authorise:
 {chr(10).join('          - >-' + chr(10) + '            ' + normalized(line) for line in scope['does_not_authorise_P14'])}
+        binding_of_this_text: >-
+          {scope['binding_of_this_text']}
       coverage_record_does_not_establish:
         # every does_not_establish line of runs/pia_rule_coverage_v1.json, carried
 {dne_lines}
       open_rulings:
         # Each is FILED and PRICED in runs/pia_gate_partition_v1.json
         # open_questions_for_the_ceremony; none is made here.
-        P1: "<RULING P1 gate_kind> -- exact agreement as a gate kind vs an amendment striking gates.yaml:{citations['computes_exactly']['occurrences'][0]}; decide FIRST"
+        P1: "<RULING P1 gate_kind> -- exact agreement as a gate kind vs an amendment striking gates.yaml:{citations['computes_exactly']['occurrences'][0]}; decide FIRST. Also under P1 (referee B F5): the E2 reading of R5 weak / R7 implied -- strict does not award them, the permissive reading e2_bend_points_count_for_r5_r7 awards [{', '.join(alts['e2_bend_points_count_for_r5_r7']['all_three'])}]"
         P6: "<RULING P6 e1_waiver> -- per-rule E1 waivers for R11-R15 vs splitting the gate and holding the auxiliary half"
         P8: "<RULING P8 case_set> -- is the registered case set sufficient, or must a wider one be built first"
         P9: "<RULING P9 survivor_period> -- the 84-month constant vs the override reading of E2"
@@ -1698,7 +2126,26 @@ def draft_fragment(
           runs/pia_gate_partition_v1.json, and re-refreshes the tier
           manifest -- all in the SAME commit. The coverage record's
           blob-pinned gates.yaml citation survives the commit unchanged.
-        derivations_bound_by: tests/test_gates_derivations.py (test_gate_b2_pia_oracle_*) and tests/test_pia_gate_partition_v1.py
+          Referee B F1: the flip commit does NOT re-emit this artifact
+          (floor_run_sha256 is the sha256 AS RATIFIED); the three
+          flip-time breakages B found are dispositioned in the artifact's
+          flip_plan.post_flip_test_dispositions -- the sequencing test is
+          marker-conditional, the reproduction test compares marker-aware
+          (post-flip it asserts byte_identical_to_working_tree is False
+          instead of comparing it), the m4 / w1 / m6 master-compare sites
+          are widened -- and the flip was re-simulated with them in place.
+        derivations_bound_by: >-
+          tests/test_gates_derivations.py (test_gate_b2_pia_oracle_*) and
+          tests/test_pia_gate_partition_v1.py. The bindings RUN pre-lock
+          against this string as read from the artifact and pass; they
+          are NOT skipped (referee B F9, referee A D9): the marker only
+          switches their source to the live file.
+        test_bound_strings: >-
+          {scope['binding_of_this_text']}
+        referee_record: >-
+          the threshold referee round's co-location disclosure (referees A
+          and B shared an account and a model, for capacity, not choice)
+          is carried verbatim in the artifact's referee_record.
         wording_audit: >-
           the two words the standing wording audit forbids occur 0 times in
           this block (artifact wording_audit.forbidden_word_counts); the
@@ -1946,6 +2393,15 @@ def run(verbose: bool = True) -> dict[str, Any]:
                 f"{GATE_NAME} (DRAFT as a string in draft_gates_yaml_fragment; "
                 "not in gates.yaml)"
             ),
+            "bindings_run_pre_lock": (
+                "the test_gate_b2_pia_oracle_* bindings in tests/"
+                "test_gates_derivations.py RUN while the marker is False, "
+                "against the draft fragment read from this artifact, and "
+                "pass; they are NOT skipped (referee B F9 / A D9: the 37 "
+                "skips in that file are gate_2 amendment placeholders). The "
+                "marker switches their source to the live gates.yaml block."
+            ),
+            "threshold_referee_round": REFEREE_ROUND,
             "next": (
                 "P1 decided -> adversarial referee round on these bound "
                 "readings -> the rulings -> verification -> ratifying merge "
@@ -2001,6 +2457,12 @@ def run(verbose: bool = True) -> dict[str, Any]:
                     else "yes"
                 ),
                 "P13": "yes, at a finer grain, after a v2 coverage build with per-operation case sets",
+                "S8_e1_reading": (
+                    "yes: under the evidence-based Axiom-only E1 reading "
+                    "(partitions.alternatives.axiom_only_e1) no rule holds "
+                    "all three -- R10's E1 rests on 0 Axiom cases (referee A "
+                    "D1); the strict reading awards R10"
+                ),
             },
             "status": "DERIVED under the strict reading; pending the rulings named",
         },
@@ -2028,6 +2490,26 @@ def run(verbose: bool = True) -> dict[str, Any]:
         "coverage_does_not_establish_carried": coverage["does_not_establish"],
         "gates_yaml_citations": citations,
         "flip_plan": flip_plan(),
+        "record_hygiene": {
+            "added_at": (
+                "the threshold-fixes re-emission (referee B F4: the "
+                "threshold-binding report claimed this leaf existed in both "
+                "artifacts; it existed only in the claiming one)"
+            ),
+            "R1_report_footer": (
+                "the threshold-binding report (claiming-thresholds/REPORT.md, "
+                "146,260 B, sha256 607e262ec3fc08b3...) STATES a body "
+                "computed literally ABOVE its `## Footer -- integrity` "
+                "heading, but its stated digest 8cc2e209... covers 145,436 B "
+                "= the body plus the 24-byte heading line; the literal cut "
+                "is 145,412 B, sha256 0efa98a5... (referee B F2). That "
+                "report is digest-pinned by the referee round and is not "
+                "recut. The fixes report (claiming-thr-fixes/REPORT.md) "
+                "computes its footer literally ABOVE the heading by "
+                "`grep -b` offset, exclusive of the heading line."
+            ),
+        },
+        "referee_record": REFEREE_ROUND,
         "open_questions_for_the_ceremony": open_questions(
             parts, facts, gran, clause
         ),

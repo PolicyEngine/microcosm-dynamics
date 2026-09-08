@@ -45,6 +45,16 @@
     "verification": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-v2-verify/REPORT.md (66,687 bytes, sha256 847f29ac0704c18c...)",
     "gates_yaml_untouched": true,
     "gates_yaml_stub": "gate_b2_pia_oracle (DRAFT as a string in draft_gates_yaml_fragment; not in gates.yaml)",
+    "bindings_run_pre_lock": "the test_gate_b2_pia_oracle_* bindings in tests/test_gates_derivations.py RUN while the marker is False, against the draft fragment read from this artifact, and pass; they are NOT skipped (referee B F9 / A D9: the 37 skips in that file are gate_2 amendment placeholders). The marker switches their source to the live gates.yaml block.",
+    "threshold_referee_round": {
+      "round": "adversarial referees on the bound thresholds (commit 25680f1)",
+      "A_statistical": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-A/REPORT.md (55,849 bytes, sha256 d687d9902e8a0bfa1421a123afbe28483f0937e35a0177278fa7fe18e53fd7ec)",
+      "B_contract_and_record": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-B/REPORT.md (82,628 bytes, sha256 55b2d808790fe6a2d3e69fcf9edbf767248b83fb7d15bef76ca7c309c17fd1f3)",
+      "record": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-RECORD.md (5,502 bytes, sha256 f64634e22136f81860b00079671159086a786c6bd0b18addffdd2d58af96f800)",
+      "verdicts": "both NOT LOCK-READY on record and label grounds; both confirm every claiming number; A D1 requires one change of bytes on the PIA side (the R10 E1 label under the Axiom-only reading)",
+      "co_location_disclosure_verbatim": "**Disclosure (required by the campaign's co-located-referee rule; the same sentence gate 3 and the mortality gate carry):** referees A (statistical) and B (contract/record) of the bound thresholds (commit `25680f1` on `cap/claiming-pia-floors`) shared an account and a model \u2014 both ran as `claude-fable-5-1` on lane `max@farness.ai` (runs 20260908-081523-claiming-thr-referee-a and 20260908-081526-claiming-thr-referee-b, dispatched 08:15 on 2026-09-08). The reason was capacity, not choice: at 08:14 every other Claude lane in the fleet was weekly-capped (rules.foundation Fable and Opus to Sep 13 07:00; axiom-foundation Opus to Sep 12 13:00; hivesight Opus to Sep 12 10:00; rulesfoundation.org, maxghenis.com, max.ghenis@gmail.com, mghenis@gmail.com, optiqal.ai Fable to Sep 12; axiom.org to Sep 10; ubicenter.org disabled by its organisation; policyengine.org out of usage credits \u2014 one-line probes, banner text recorded in `.dashboard-scratch/next-refresh-notes.md`), and the orchestrator (ed26d44e, whose lane farness is) ruled \"leave them on farness\". This is the seventh co-located adversarial pair by the orchestrator's own count; that six-pair measurement is the orchestrator's and is uncorroborated \u2014 the r9 kit gate (run 20260908-055516-c20-kit-r9-gate) accepted it \"as supplied campaign evidence, NOT VERIFIED independently\" and must not be cited as confirming it. The campaign handles a forced co-location by disclosure, not re-run.",
+      "six_pair_count_status": "the orchestrator's own and uncorroborated, as the record states"
+    },
     "next": "P1 decided -> adversarial referee round on these bound readings -> the rulings -> verification -> ratifying merge with the GATE_B2_PIA_ORACLE_BLOCK_LANDED flip and the live-file guard test retired"
   },
   "derivation_convention": {
@@ -75,7 +85,8 @@
         "unexercised": false,
         "unit_test_only": false
       },
-      "e1_waived_for_label": null
+      "e1_waived_for_label": null,
+      "e1_applied_to": "the E1 status label"
     },
     "precision": "\"computes exactly\" means TO THE CENT: |oracle - independent engine| <= 0.005 dollars on every registered case (the bound runs/pia_cross_engine_v1.json commits as agreement_tolerance_dollars). NOT bit-exact.",
     "rule_id_rule": "the coverage record's sixteen ids, in its order"
@@ -127,7 +138,8 @@
           "unexercised": false,
           "unit_test_only": false
         },
-        "e1_waived_for_label": null
+        "e1_waived_for_label": null,
+        "e1_applied_to": "the E1 status label"
       },
       "all_three": [
         "R10_416l_fra_schedule"
@@ -463,8 +475,9 @@
     },
     "alternatives": {
       "axiom_only_e1": {
-        "reading": "E1 requires the Axiom engine: policyengine_us_only does not count",
-        "ruling": "a reading the round may prefer under P6's logic; not in the packet",
+        "reading": "E1 requires the Axiom engine, applied to the RECORDED EVIDENCE (referee A D1): E1 holds iff cross_engine.n_cases > 0 and the label is not degenerate. policyengine_us_only does not count, and neither does a `satisfied` label resting on zero Axiom cases (R10: cross_engine 0, pe_us_foundation 40)",
+        "ruling": "a reading the round may prefer under P6's logic; not in the packet. Computed on the LABEL at 25680f1 (see axiom_only_e1_label_based_as_filed_at_25680f1, retained and superseded) and on the EVIDENCE from this re-emission",
+        "awarded_set_under_this_reading": [],
         "mapping": {
           "e1": {
             "satisfied": true,
@@ -491,7 +504,538 @@
             "unexercised": false,
             "unit_test_only": false
           },
-          "e1_waived_for_label": null
+          "e1_waived_for_label": null,
+          "e1_applied_to": "the recorded evidence: cross_engine.n_cases > 0 and the label is not degenerate (referee A D1)"
+        },
+        "all_three": [],
+        "strict_subset": {
+          "R1_415b1_wage_base_cap": [
+            "E2"
+          ],
+          "R2_415b3_nawi_indexation": [
+            "E2"
+          ],
+          "R4_415b_top_n_divide_and_floor": [
+            "E2",
+            "E3"
+          ],
+          "R5_415a1A_pia_brackets": [
+            "E2"
+          ],
+          "R6_415a1B_bend_points": [
+            "E3"
+          ],
+          "R7_415g_dime_floor": [
+            "E2"
+          ],
+          "R8_402q_worker_early_reduction": [
+            "E1",
+            "E3"
+          ],
+          "R9_402w_delayed_retirement_credit": [
+            "E1",
+            "E3"
+          ],
+          "R10_416l_fra_schedule": [
+            "E1"
+          ],
+          "R11_402q1_spousal_early_reduction": [
+            "E1",
+            "E3"
+          ],
+          "R16_age62_composition": [
+            "E1",
+            "E3"
+          ]
+        },
+        "none": [
+          "R3_415b2B_computation_year_count",
+          "R12_402bc_402k3_spouse_benefit",
+          "R13_402q_survivor_reduction_ramp",
+          "R14_402ef_widow_riblim_drc_dual",
+          "R15_402e3_f4_remarriage_protection"
+        ],
+        "n_all_three": 0,
+        "n_strict_subset": 11,
+        "n_none": 5,
+        "per_rule": {
+          "R1_415b1_wage_base_cap": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 240,
+              "pe_us_foundation_cases": 0,
+              "e1_holds_on_the_evidence": true,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          },
+          "R2_415b3_nawi_indexation": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 240,
+              "pe_us_foundation_cases": 0,
+              "e1_holds_on_the_evidence": true,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          },
+          "R3_415b2B_computation_year_count": {
+            "status_labels": {
+              "e1": "degenerate",
+              "e2": "absent",
+              "e3": "unexercised"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 240,
+              "pe_us_foundation_cases": 0,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "none"
+          },
+          "R4_415b_top_n_divide_and_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 240,
+              "pe_us_foundation_cases": 0,
+              "e1_holds_on_the_evidence": true,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          },
+          "R5_415a1A_pia_brackets": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "weak",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 240,
+              "pe_us_foundation_cases": 40,
+              "e1_holds_on_the_evidence": true,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          },
+          "R6_415a1B_bend_points": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 240,
+              "pe_us_foundation_cases": 40,
+              "e1_holds_on_the_evidence": true,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          },
+          "R7_415g_dime_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "implied",
+              "e3": "exhaustive"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 240,
+              "pe_us_foundation_cases": 40,
+              "e1_holds_on_the_evidence": true,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          },
+          "R8_402q_worker_early_reduction": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_and_one_branch_unexercised"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 0,
+              "pe_us_foundation_cases": 20,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          },
+          "R9_402w_delayed_retirement_credit": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 0,
+              "pe_us_foundation_cases": 15,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          },
+          "R10_416l_fra_schedule": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 0,
+              "pe_us_foundation_cases": 40,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": false
+            },
+            "class": "strict_subset"
+          },
+          "R11_402q1_spousal_early_reduction": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 0,
+              "pe_us_foundation_cases": 0,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          },
+          "R12_402bc_402k3_spouse_benefit": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 0,
+              "pe_us_foundation_cases": 0,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "none"
+          },
+          "R13_402q_survivor_reduction_ramp": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied_with_a_constant_override",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 0,
+              "pe_us_foundation_cases": 0,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "none"
+          },
+          "R14_402ef_widow_riblim_drc_dual": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 0,
+              "pe_us_foundation_cases": 0,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "none"
+          },
+          "R15_402e3_f4_remarriage_protection": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "absent",
+              "e3": "unit_test_only"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 0,
+              "pe_us_foundation_cases": 0,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "none"
+          },
+          "R16_age62_composition": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_with_a_named_simplification"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "e1_evidence": {
+              "cross_engine_cases": 0,
+              "pe_us_foundation_cases": 10,
+              "e1_holds_on_the_evidence": false,
+              "label_agrees_with_the_evidence": true
+            },
+            "class": "strict_subset"
+          }
+        },
+        "moves_vs_strict": {
+          "R8_402q_worker_early_reduction": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E1",
+                "E3"
+              ]
+            }
+          },
+          "R9_402w_delayed_retirement_credit": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E1",
+                "E3"
+              ]
+            }
+          },
+          "R10_416l_fra_schedule": {
+            "strict": {
+              "class": "all_three",
+              "failing": []
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E1"
+              ]
+            }
+          },
+          "R16_age62_composition": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E3"
+              ]
+            },
+            "variant": {
+              "class": "strict_subset",
+              "failing": [
+                "E1",
+                "E3"
+              ]
+            }
+          }
+        }
+      },
+      "axiom_only_e1_label_based_as_filed_at_25680f1": {
+        "reading": "the SAME Axiom-only reading computed on the E1 status LABEL (E1_AXIOM_ONLY applied to e1.status), exactly as filed at 25680f1",
+        "ruling": "RETAINED FOR THE RECORD AND SUPERSEDED by axiom_only_e1: it awarded R10 because R10's label is `satisfied`, which its evidence (0 Axiom cases) does not support (referee A D1); it is not a filed reading and is not in the invariant",
+        "superseded": true,
+        "counted_in_invariant_under_every_reading": false,
+        "mapping": {
+          "e1": {
+            "satisfied": true,
+            "policyengine_us_only": false,
+            "degenerate": false,
+            "unsatisfiable_today": false
+          },
+          "e2": {
+            "satisfied": true,
+            "satisfied_with_a_constant_override": false,
+            "weak": false,
+            "partial": false,
+            "implied": false,
+            "absent": false
+          },
+          "e3": {
+            "all_branches_exercised": true,
+            "exhaustive": true,
+            "both_branches_reached": true,
+            "partial": false,
+            "partial_and_one_branch_unexercised": false,
+            "partial_with_a_named_simplification": false,
+            "branch_unexercised": false,
+            "unexercised": false,
+            "unit_test_only": false
+          },
+          "e1_waived_for_label": null,
+          "e1_applied_to": "the E1 status label"
         },
         "all_three": [
           "R10_416l_fra_schedule"
@@ -878,6 +1422,389 @@
           }
         }
       },
+      "e2_bend_points_count_for_r5_r7": {
+        "reading": "E2 holds for `weak` (R5: the bracket RATES are published, the bracket total is not) and `implied` (R7: no case anchors the rounding rule on its own; it rides on R6's published bend points) -- the permissive reading under which the packet's proposed verdict for R7 (computes_exactly) would stand",
+        "ruling": "referee B F5: the one mapping choice whose permissive alternative was not emitted at 25680f1; named under P1 (open_questions_for_the_ceremony P1, open_rulings.P1) as a ruling for the round; not adopted",
+        "what_moves": "R5 and R7 join R10 in all_three (1 -> 3 rules); the gate_1 benefit_space support line (certification_scope.supports[1]: a certified R5 / R6 / R7 makes the PIA proxy a statutory object) still needs R6, which fails E3 (partial) under every filed reading",
+        "mapping": {
+          "e1": {
+            "satisfied": true,
+            "policyengine_us_only": true,
+            "degenerate": false,
+            "unsatisfiable_today": false
+          },
+          "e2": {
+            "satisfied": true,
+            "satisfied_with_a_constant_override": false,
+            "weak": true,
+            "partial": false,
+            "implied": true,
+            "absent": false
+          },
+          "e3": {
+            "all_branches_exercised": true,
+            "exhaustive": true,
+            "both_branches_reached": true,
+            "partial": false,
+            "partial_and_one_branch_unexercised": false,
+            "partial_with_a_named_simplification": false,
+            "branch_unexercised": false,
+            "unexercised": false,
+            "unit_test_only": false
+          },
+          "e1_waived_for_label": null,
+          "e1_applied_to": "the E1 status label"
+        },
+        "all_three": [
+          "R5_415a1A_pia_brackets",
+          "R7_415g_dime_floor",
+          "R10_416l_fra_schedule"
+        ],
+        "strict_subset": {
+          "R1_415b1_wage_base_cap": [
+            "E2"
+          ],
+          "R2_415b3_nawi_indexation": [
+            "E2"
+          ],
+          "R4_415b_top_n_divide_and_floor": [
+            "E2",
+            "E3"
+          ],
+          "R6_415a1B_bend_points": [
+            "E3"
+          ],
+          "R8_402q_worker_early_reduction": [
+            "E3"
+          ],
+          "R9_402w_delayed_retirement_credit": [
+            "E3"
+          ],
+          "R11_402q1_spousal_early_reduction": [
+            "E1",
+            "E3"
+          ],
+          "R16_age62_composition": [
+            "E3"
+          ]
+        },
+        "none": [
+          "R3_415b2B_computation_year_count",
+          "R12_402bc_402k3_spouse_benefit",
+          "R13_402q_survivor_reduction_ramp",
+          "R14_402ef_widow_riblim_drc_dual",
+          "R15_402e3_f4_remarriage_protection"
+        ],
+        "n_all_three": 3,
+        "n_strict_subset": 8,
+        "n_none": 5,
+        "per_rule": {
+          "R1_415b1_wage_base_cap": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R2_415b3_nawi_indexation": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "both_branches_reached"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2"
+            ],
+            "class": "strict_subset"
+          },
+          "R3_415b2B_computation_year_count": {
+            "status_labels": {
+              "e1": "degenerate",
+              "e2": "absent",
+              "e3": "unexercised"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R4_415b_top_n_divide_and_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "absent",
+              "e3": "branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E2",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R5_415a1A_pia_brackets": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "weak",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [],
+            "class": "all_three"
+          },
+          "R6_415a1B_bend_points": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R7_415g_dime_floor": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "implied",
+              "e3": "exhaustive"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [],
+            "class": "all_three"
+          },
+          "R8_402q_worker_early_reduction": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_and_one_branch_unexercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R9_402w_delayed_retirement_credit": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R10_416l_fra_schedule": {
+            "status_labels": {
+              "e1": "satisfied",
+              "e2": "satisfied",
+              "e3": "all_branches_exercised"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": true
+            },
+            "e1_waived": false,
+            "failing_conditions": [],
+            "class": "all_three"
+          },
+          "R11_402q1_spousal_early_reduction": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E3"
+            ],
+            "class": "strict_subset"
+          },
+          "R12_402bc_402k3_spouse_benefit": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R13_402q_survivor_reduction_ramp": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "satisfied_with_a_constant_override",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R14_402ef_widow_riblim_drc_dual": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "partial",
+              "e3": "partial"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R15_402e3_f4_remarriage_protection": {
+            "status_labels": {
+              "e1": "unsatisfiable_today",
+              "e2": "absent",
+              "e3": "unit_test_only"
+            },
+            "holds": {
+              "e1": false,
+              "e2": false,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "class": "none"
+          },
+          "R16_age62_composition": {
+            "status_labels": {
+              "e1": "policyengine_us_only",
+              "e2": "satisfied",
+              "e3": "partial_with_a_named_simplification"
+            },
+            "holds": {
+              "e1": true,
+              "e2": true,
+              "e3": false
+            },
+            "e1_waived": false,
+            "failing_conditions": [
+              "E3"
+            ],
+            "class": "strict_subset"
+          }
+        },
+        "moves_vs_strict": {
+          "R5_415a1A_pia_brackets": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E2"
+              ]
+            },
+            "variant": {
+              "class": "all_three",
+              "failing": []
+            }
+          },
+          "R7_415g_dime_floor": {
+            "strict": {
+              "class": "strict_subset",
+              "failing": [
+                "E2"
+              ]
+            },
+            "variant": {
+              "class": "all_three",
+              "failing": []
+            }
+          }
+        }
+      },
       "p6_e1_waiver_for_r11_r15": {
         "reading": "E1 WAIVED per rule where the label is unsatisfiable_today (no second engine exists for the auxiliary path, by construction); the waiver is named per rule and does not fail the rule",
         "ruling": "P6 option (a)",
@@ -907,7 +1834,8 @@
             "unexercised": false,
             "unit_test_only": false
           },
-          "e1_waived_for_label": "unsatisfiable_today"
+          "e1_waived_for_label": "unsatisfiable_today",
+          "e1_applied_to": "the E1 status label"
         },
         "all_three": [
           "R10_416l_fra_schedule"
@@ -1361,7 +2289,8 @@
             "unexercised": false,
             "unit_test_only": false
           },
-          "e1_waived_for_label": null
+          "e1_waived_for_label": null,
+          "e1_applied_to": "the E1 status label"
         },
         "all_three": [
           "R10_416l_fra_schedule"
@@ -1745,7 +2674,8 @@
             "unexercised": false,
             "unit_test_only": false
           },
-          "e1_waived_for_label": "unsatisfiable_today"
+          "e1_waived_for_label": "unsatisfiable_today",
+          "e1_applied_to": "the E1 status label"
         },
         "all_three": [
           "R10_416l_fra_schedule"
@@ -2207,13 +3137,129 @@
         ]
       }
     },
-    "invariant_under_every_reading": {
-      "rules_holding_all_three_under_every_variant": [
+    "e1_label_evidence_audit": {
+      "rule": "an E1 label `satisfied` must rest on cross_engine.n_cases > 0; `policyengine_us_only` on 0 Axiom cases and > 0 foundation cases; `degenerate` on > 0 Axiom cases (agreement unforced); `unsatisfiable_today` on 0 and 0",
+      "per_rule": {
+        "R1_415b1_wage_base_cap": {
+          "label": "satisfied",
+          "cross_engine_cases": 240,
+          "pe_us_foundation_cases": 0,
+          "label_consistent_with_the_evidence": true
+        },
+        "R2_415b3_nawi_indexation": {
+          "label": "satisfied",
+          "cross_engine_cases": 240,
+          "pe_us_foundation_cases": 0,
+          "label_consistent_with_the_evidence": true
+        },
+        "R3_415b2B_computation_year_count": {
+          "label": "degenerate",
+          "cross_engine_cases": 240,
+          "pe_us_foundation_cases": 0,
+          "label_consistent_with_the_evidence": true
+        },
+        "R4_415b_top_n_divide_and_floor": {
+          "label": "satisfied",
+          "cross_engine_cases": 240,
+          "pe_us_foundation_cases": 0,
+          "label_consistent_with_the_evidence": true
+        },
+        "R5_415a1A_pia_brackets": {
+          "label": "satisfied",
+          "cross_engine_cases": 240,
+          "pe_us_foundation_cases": 40,
+          "label_consistent_with_the_evidence": true
+        },
+        "R6_415a1B_bend_points": {
+          "label": "satisfied",
+          "cross_engine_cases": 240,
+          "pe_us_foundation_cases": 40,
+          "label_consistent_with_the_evidence": true
+        },
+        "R7_415g_dime_floor": {
+          "label": "satisfied",
+          "cross_engine_cases": 240,
+          "pe_us_foundation_cases": 40,
+          "label_consistent_with_the_evidence": true
+        },
+        "R8_402q_worker_early_reduction": {
+          "label": "policyengine_us_only",
+          "cross_engine_cases": 0,
+          "pe_us_foundation_cases": 20,
+          "label_consistent_with_the_evidence": true
+        },
+        "R9_402w_delayed_retirement_credit": {
+          "label": "policyengine_us_only",
+          "cross_engine_cases": 0,
+          "pe_us_foundation_cases": 15,
+          "label_consistent_with_the_evidence": true
+        },
+        "R10_416l_fra_schedule": {
+          "label": "satisfied",
+          "cross_engine_cases": 0,
+          "pe_us_foundation_cases": 40,
+          "label_consistent_with_the_evidence": false
+        },
+        "R11_402q1_spousal_early_reduction": {
+          "label": "unsatisfiable_today",
+          "cross_engine_cases": 0,
+          "pe_us_foundation_cases": 0,
+          "label_consistent_with_the_evidence": true
+        },
+        "R12_402bc_402k3_spouse_benefit": {
+          "label": "unsatisfiable_today",
+          "cross_engine_cases": 0,
+          "pe_us_foundation_cases": 0,
+          "label_consistent_with_the_evidence": true
+        },
+        "R13_402q_survivor_reduction_ramp": {
+          "label": "unsatisfiable_today",
+          "cross_engine_cases": 0,
+          "pe_us_foundation_cases": 0,
+          "label_consistent_with_the_evidence": true
+        },
+        "R14_402ef_widow_riblim_drc_dual": {
+          "label": "unsatisfiable_today",
+          "cross_engine_cases": 0,
+          "pe_us_foundation_cases": 0,
+          "label_consistent_with_the_evidence": true
+        },
+        "R15_402e3_f4_remarriage_protection": {
+          "label": "unsatisfiable_today",
+          "cross_engine_cases": 0,
+          "pe_us_foundation_cases": 0,
+          "label_consistent_with_the_evidence": true
+        },
+        "R16_age62_composition": {
+          "label": "policyengine_us_only",
+          "cross_engine_cases": 0,
+          "pe_us_foundation_cases": 10,
+          "label_consistent_with_the_evidence": true
+        }
+      },
+      "inconsistent_rules": [
         "R10_416l_fra_schedule"
       ],
+      "finding": "referee A D1: R10_416l_fra_schedule carries e1.status `satisfied` on 0 Axiom cross-engine cases and 40 policyengine-us foundation cases -- the evidence class the record labels `policyengine_us_only` on R8 (0 / 20), R9 (0 / 15) and R16 (0 / 10); e1_clause_S8.policyengine_us_half lists R10 and axiom_half does not. The label-based Axiom-only reading filed at 25680f1 therefore awarded R10 on its LABEL; applied to the evidence it awards no rule.",
+      "disposition": "EMITTED, not repaired: the coverage record is frozen and is not relabelled; the strict reading (policyengine-us counts as an independent engine, the packet's E1 letter) is unchanged and still awards R10; the evidence-based Axiom-only reading is filed beside it and the invariant is restated"
+    },
+    "invariant_under_every_reading": {
+      "variants_in_the_intersection": [
+        "strict",
+        "axiom_only_e1",
+        "p6_e1_waiver_for_r11_r15",
+        "p9_constant_override_counts_as_e2",
+        "p6_waiver_and_p9_override",
+        "e2_bend_points_count_for_r5_r7"
+      ],
+      "rules_holding_all_three_under_every_variant": [],
       "rules_holding_none_under_every_variant": [
         "R3_415b2B_computation_year_count"
-      ]
+      ],
+      "rules_holding_all_three_under_every_label_based_reading": [
+        "R10_416l_fra_schedule"
+      ],
+      "statement": "under the strict reading R10 alone holds all three; under every LABEL-based reading R10 holds all three; under the evidence-based Axiom-only reading NO rule does (referee A D1). The 25680f1 headline 'R10 under every filed alternative reading' is RETRACTED and restated so. The strict-reading partition is unchanged."
     }
   },
   "gate_partition": {
@@ -2270,7 +3316,8 @@
       "P6": "class labels only: E1 waived for R11-R15 moves no rule into all_three (each still fails E2 or E3)",
       "P8": "yes, on a rebuilt case set: E3 for the sampling-limited rules; R3 would be SEPARATED (an E1 disagreement outside the exact domain), not satisfied",
       "P9": "class label of R13 only",
-      "P13": "yes, at a finer grain, after a v2 coverage build with per-operation case sets"
+      "P13": "yes, at a finer grain, after a v2 coverage build with per-operation case sets",
+      "S8_e1_reading": "yes: under the evidence-based Axiom-only E1 reading (partitions.alternatives.axiom_only_e1) no rule holds all three -- R10's E1 rests on 0 Axiom cases (referee A D1); the strict reading awards R10"
     },
     "status": "DERIVED under the strict reading; pending the rulings named"
   },
@@ -2718,7 +3765,15 @@
       "result": "PASSED (the oracle's pia() and benefit_factor() agreed to float32 precision)",
       "note": "even on a host with the Axiom wheel, tests/ss/test_cross_engine.py::test_committed_artifact_matches_live_engine_spotcheck skips unless the policyengine-us checkout is at bf71be3b"
     },
-    "coverage_record_statement": "This build executed neither the Axiom rules engine nor a policyengine-us Simulation. Every cross-engine and policyengine-us number is quoted from the committed artifacts. The only things that execute either engine are the repo's existing tests in tests/ss/, which are named per rule below and are unchanged by this build."
+    "coverage_record_statement": "This build executed neither the Axiom rules engine nor a policyengine-us Simulation. Every cross-engine and policyengine-us number is quoted from the committed artifacts. The only things that execute either engine are the repo's existing tests in tests/ss/, which are named per rule below and are unchanged by this build.",
+    "r10_e1_basis_D1": {
+      "rule": "R10_416l_fra_schedule",
+      "e1_label": "satisfied",
+      "cross_engine_cases": 0,
+      "pe_us_foundation_cases": 40,
+      "rests_on_the_policyengine_us_half_alone": true,
+      "statement": "R10's E1 label rests on the policyengine-us foundation block alone (the schedule loads from policyengine-us and is exercised through the foundation block's factor agreement; the cross-engine rows carry aime and pia only) -- the evidence class labelled policyengine_us_only on R8 / R9 / R16. Under the evidence-based Axiom-only reading (partitions.alternatives.axiom_only_e1) R10 does not hold E1; under the strict reading it does (referee A D1)."
+    }
   },
   "family_maximum_P10": {
     "P10": "the family maximum (the cap on total benefits payable on one earnings record) is NOT IMPLEMENTED; spousal_benefit and widow_benefit return uncapped amounts and the household consumer sums both own benefits and both excess spousal amounts with no cap",
@@ -2942,6 +3997,11 @@
         "R15_402e3_f4_remarriage_protection"
       ]
     },
+    "partition_under_the_evidence_based_axiom_only_reading": {
+      "all_three": [],
+      "note": "referee A D1; see partitions.alternatives.axiom_only_e1"
+    },
+    "binding_of_this_text": "TEST-BOUND strings of this block: the required phrases the wording audit lists (wording_audit.required_phrases), the placeholders (ceremony_notes.placeholders_the_ratifying_round_must_fill), the digests and sizes (coverage_run_sha256, derived_from_coverage_*, the evidence_runs pins, the fragment's own text_sha256 / n_lines / n_bytes), every status label, class, failing list, case count and moved_by line of rule_inventory, the partition under every reading, the precision figures, the worked-example ratios, the ast-derived code spans and the family-maximum symbol. Every OTHER sentence -- covers, estimand, certifies, supports, does_not_authorise, the rulings' prose -- is bound by the ratifying round's READING of the diff, not by a test (referee A D3): a prose-only edit passes every binding once the byte pins are re-stated, so the round reads it.",
     "supports": [
       "the #74 SF (statutory formula) component wherever a rule holds all three conditions -- with the CITATION being the rule",
       "gate_1's benefit_space block (the PIA-proxy functional): a certified R5 / R6 / R7 is what makes that proxy a statutory object rather than a formula"
@@ -3085,9 +4145,34 @@
     ],
     "what_flips_with_it": [
       "tests/test_gates_derivations.py: _gate_b2_pia_oracle_block() reads the LIVE gates.yaml block instead of the artifact's draft fragment (LOCKED-HOT); the pre-lock guard inverts",
-      "gates.yaml: floor_run_sha256 replaces <FILLED AT RATIFICATION> with the sha256 of runs/pia_gate_partition_v1.json AS RATIFIED; every <RULING ...> placeholder is replaced; status -> locked; locked -> true; a history entry is added",
+      "gates.yaml: floor_run_sha256 replaces <FILLED AT RATIFICATION> with the sha256 of runs/pia_gate_partition_v1.json AS RATIFIED -- the artifact is NOT re-emitted by the flip commit; its committed bytes stay the ratified bytes and the reproduction test compares marker-aware (post_flip_test_dispositions); every <RULING ...> placeholder is replaced; status -> locked; locked -> true; a history entry is added",
       "tests/tier_counts.json and tests/README-tiers.md re-refreshed by LIVE collection"
-    ]
+    ],
+    "artifact_re_emitted_at_flip": false,
+    "post_flip_test_dispositions": {
+      "decision": "referee B F1 (ii), option (b): the flip commit does NOT re-emit this artifact; floor_run_sha256 is the sha256 of the artifact AS RATIFIED; the reproduction test's comparison is MARKER-AWARE -- while the marker is False it is exact (every leaf but elapsed_seconds and the HEAD sha); once True it additionally asserts, rather than compares, the leaves the flip legitimately moves in the rebuild",
+      "weakening_stated": "post-flip the reproduction test no longer proves that the rebuild's gates_yaml_citations.byte_identical_to_working_tree equals the committed True; it asserts the rebuild reports False (the live file has moved on from the pinned blob b0c39af1..., whose line citations are still checked against the blob). Nothing else is exempted for this artifact; every other leaf stays exactly compared",
+      "test_gate_b2_both_blocks_record_the_sequencing_constraint": "marker-conditional: the two guard tests must exist while the markers are False and must be gone once both are True (defined is (not LANDED), the siblings' form)",
+      "test_build_reproduces_the_committed_artifact": "marker-aware as decided above (tests/test_pia_gate_partition_v1.py::_strip_volatile and the test body)",
+      "test_gate_m4_flip_leaves_locked_siblings_byte_identical": "widened by the flip commit to admit the new key (a master-compare site named above), with the gate_w1 / gate_m6 twins",
+      "test_gate_b2_pia_oracle_precision_and_e1_clause": "marker-conditional: the S8 placeholder stands while the marker is False and is gone once the block has landed (found by the fixes sitting's simulation, not B's)",
+      "contract_identity_family": "the flip commit ALSO re-records runs/legacy_manifest_v1.json (scripts/build_legacy_manifest.py --transition; the gate_m6 lock flip c7af699 precedent) and re-pins CONTRACT_BLOB_LIVE in tests/test_gate_m6_floors_v4.py to the post-flip blob; tests/test_contract_identity.py and tests/test_generic_evaluator.py need gates.yaml COMMITTED (they compare with HEAD:gates.yaml) -- both were added to this record by the fixes sitting's simulation",
+      "test_gate_m6_derivations_py": "named above as a master-compare site to widen; the simulation found it asserts only the presence of gate_m6 and the locked siblings -- nothing to widen there",
+      "simulated": "referee B section 3 at 25680f1 (found the three); the fixes sitting in a scratch clone with these dispositions in place (blocks landed with the real names, placeholders filled, markers flipped, the two guard tests retired, the m4 / w1 master-compare sites widened, the legacy manifest transitioned, CONTRACT_BLOB_LIVE re-pinned, the flip COMMITTED in the clone): the fuller simulation found two more breakages, recorded above; with every disposition in place no test fails"
+    }
+  },
+  "record_hygiene": {
+    "added_at": "the threshold-fixes re-emission (referee B F4: the threshold-binding report claimed this leaf existed in both artifacts; it existed only in the claiming one)",
+    "R1_report_footer": "the threshold-binding report (claiming-thresholds/REPORT.md, 146,260 B, sha256 607e262ec3fc08b3...) STATES a body computed literally ABOVE its `## Footer -- integrity` heading, but its stated digest 8cc2e209... covers 145,436 B = the body plus the 24-byte heading line; the literal cut is 145,412 B, sha256 0efa98a5... (referee B F2). That report is digest-pinned by the referee round and is not recut. The fixes report (claiming-thr-fixes/REPORT.md) computes its footer literally ABOVE the heading by `grep -b` offset, exclusive of the heading line."
+  },
+  "referee_record": {
+    "round": "adversarial referees on the bound thresholds (commit 25680f1)",
+    "A_statistical": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-A/REPORT.md (55,849 bytes, sha256 d687d9902e8a0bfa1421a123afbe28483f0937e35a0177278fa7fe18e53fd7ec)",
+    "B_contract_and_record": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-B/REPORT.md (82,628 bytes, sha256 55b2d808790fe6a2d3e69fcf9edbf767248b83fb7d15bef76ca7c309c17fd1f3)",
+    "record": "~/m6-sol-lanes/e8-ops/opus-scratch/ceremony-29c03102/claiming-thr-referee-RECORD.md (5,502 bytes, sha256 f64634e22136f81860b00079671159086a786c6bd0b18addffdd2d58af96f800)",
+    "verdicts": "both NOT LOCK-READY on record and label grounds; both confirm every claiming number; A D1 requires one change of bytes on the PIA side (the R10 E1 label under the Axiom-only reading)",
+    "co_location_disclosure_verbatim": "**Disclosure (required by the campaign's co-located-referee rule; the same sentence gate 3 and the mortality gate carry):** referees A (statistical) and B (contract/record) of the bound thresholds (commit `25680f1` on `cap/claiming-pia-floors`) shared an account and a model \u2014 both ran as `claude-fable-5-1` on lane `max@farness.ai` (runs 20260908-081523-claiming-thr-referee-a and 20260908-081526-claiming-thr-referee-b, dispatched 08:15 on 2026-09-08). The reason was capacity, not choice: at 08:14 every other Claude lane in the fleet was weekly-capped (rules.foundation Fable and Opus to Sep 13 07:00; axiom-foundation Opus to Sep 12 13:00; hivesight Opus to Sep 12 10:00; rulesfoundation.org, maxghenis.com, max.ghenis@gmail.com, mghenis@gmail.com, optiqal.ai Fable to Sep 12; axiom.org to Sep 10; ubicenter.org disabled by its organisation; policyengine.org out of usage credits \u2014 one-line probes, banner text recorded in `.dashboard-scratch/next-refresh-notes.md`), and the orchestrator (ed26d44e, whose lane farness is) ruled \"leave them on farness\". This is the seventh co-located adversarial pair by the orchestrator's own count; that six-pair measurement is the orchestrator's and is uncorroborated \u2014 the r9 kit gate (run 20260908-055516-c20-kit-r9-gate) accepted it \"as supplied campaign evidence, NOT VERIFIED independently\" and must not be cited as confirming it. The campaign handles a forced co-location by disclosure, not re-run.",
+    "six_pair_count_status": "the orchestrator's own and uncorroborated, as the record states"
   },
   "open_questions_for_the_ceremony": [
     {
@@ -3102,7 +4187,13 @@
               "R10_416l_fra_schedule"
             ],
             "n_strict_subset": 10,
-            "n_none": 5
+            "n_none": 5,
+            "rules_awarded_under_the_permissive_e2_reading_for_r5_r7": [
+              "R5_415a1A_pia_brackets",
+              "R7_415g_dime_floor",
+              "R10_416l_fra_schedule"
+            ],
+            "rules_awarded_under_the_evidence_based_axiom_only_e1_reading": []
           }
         },
         "b_strike_gates_yaml_642_by_amendment": {
@@ -3110,6 +4201,7 @@
           "priced": "a gate_2 metadata-only amendment with its own ceremony; nothing in this block lands; the standing rule is discharged the other way"
         }
       },
+      "e2_reading_of_weak_and_implied_F5": "a ruling for the round, named here so it is decided in the open (referee B F5): the strict E2 mapping reads R5's `weak` and R7's `implied` as NOT holding (the letter: a registered case whose expected value is an SSA-published figure); the packet's proposed verdict for R7 was computes_exactly. The permissive reading is emitted as partitions.alternatives.e2_bend_points_count_for_r5_r7: it moves R5 and R7 into all_three (1 -> 3 rules) and with them the gate_1 benefit_space support line, which still needs R6 (E3 partial under every reading)",
       "the_one_outcome_the_standing_rule_forbids": "leaving the clause undefined and unawarded in gate_2.description while gate_2's 46 cells (gates.yaml:917) gate no benefit-formula cell and its own certification_scope puts own-record benefit levels OUTSIDE 2a / 2b / 2c (:782)",
       "placeholder_in_block": "<RULING P1 gate_kind>",
       "status": "FILED and PRICED; not ruled (decide first: the packet's section 11 step 2)"
@@ -3279,6 +4371,8 @@
               "R10_416l_fra_schedule",
               "R16_age62_composition"
             ],
+            "all_three_under_the_evidence_based_axiom_only_e1_reading": [],
+            "caveat_D1": "the all_three price is a STRICT-reading price: R10's E1 rests on the policyengine-us half alone (0 Axiom cases / 40 foundation cases), so under the evidence-based Axiom-only reading the own-benefit half awards no rule (referee A D1)",
             "all_three": [
               "R10_416l_fra_schedule"
             ]
@@ -3454,7 +4548,14 @@
       "id": "S7",
       "name": "sequencing_constraint",
       "question": "the two live-file 'gate name absent' tests fail the moment gate_b2_claiming or gate_b2_pia_oracle lands (tests/test_pia_rule_coverage.py::test_no_gate_b2_pia_oracle_exists_in_gates_yaml, tests/test_claiming_publication_floor.py::test_no_gate_b2_claiming_exists_in_gates_yaml); the coverage record's blob-pinned citation survives the commit",
-      "constraint": "the lock commit retires those two assertions and flips the pre-lock markers in the SAME commit (flip_plan), or supersedes the artifacts with a v2 in the same PR",
+      "constraint": "the lock commit retires those two assertions and flips the pre-lock markers in the SAME commit (flip_plan), or supersedes the artifacts with a v2 in the same PR. Referee B F1 (simulated flip, its section 3) found three MORE flip-time breakages the 25680f1 record did not name; each is dispositioned in flip_plan.post_flip_test_dispositions and was re-simulated by the fixes sitting with the dispositions in place",
+      "flip_time_breakages_recorded_F1": [
+        "tests/test_gates_derivations.py::test_gate_b2_both_blocks_record_the_sequencing_constraint -- asserted the two retired guard tests still exist unconditionally; now marker-conditional (defined is (not LANDED)) like its siblings",
+        "tests/test_pia_gate_partition_v1.py::test_build_reproduces_the_committed_artifact and its claiming twin -- the in-memory rebuild reads the live tree, so post-flip gates_yaml_citations.byte_identical_to_working_tree is False (and the claiming scan hits gates.yaml); now compared MARKER-AWARE: the committed bytes stay AS RATIFIED and the rebuild's flip-created differences are asserted to their expected values",
+        "tests/test_gates_derivations.py::test_gate_m4_flip_leaves_locked_siblings_byte_identical (and the gate_w1 / gate_m6 twins) -- the master-compare sites the flip plan already names as sites to widen",
+        "tests/test_gates_derivations.py::test_gate_b2_pia_oracle_precision_and_e1_clause -- asserted the S8 placeholder <RULING S8 e1_clause> against the LIVE block unconditionally; found by the fixes sitting's fuller simulation (which fills every <RULING ...> placeholder as the flip plan says the ratifying round does; referee B's simulation left them unfilled); now marker-conditional",
+        "the contract-identity family (found by the fixes sitting): runs/legacy_manifest_v1.json carries contract_revision = the gates.yaml blob and is re-recorded by scripts/build_legacy_manifest.py --transition (the gate_m6 lock flip c7af699 precedent); tests/test_gate_m6_floors_v4.py pins the LIVE gates.yaml blob as CONTRACT_BLOB_LIVE and is re-pinned by every flip (the m6 amendment precedent); tests/test_contract_identity.py and tests/test_generic_evaluator.py compare gates.yaml with HEAD:gates.yaml and pass only once the flip is COMMITTED (an uncommitted landed block fails 20 of them)"
+      ],
       "placeholder_in_block": "ceremony_notes.flip_plan",
       "status": "RECORDED as a sequencing constraint; not a threshold ruling"
     },
@@ -3486,20 +4587,20 @@
     }
   ],
   "draft_gates_yaml_fragment": {
-    "text": "  gate_b2_pia_oracle:\n    # DRAFT -- NOT APPLIED TO gates.yaml. Emitted by\n    # scripts/build_pia_gate_partition_v1.py into\n    # runs/pia_gate_partition_v1.json (draft_gates_yaml_fragment.text) at\n    # the threshold-binding sitting of 2026-09-08 (the prerequisite of the\n    # packet's PIA ceremony step 5). Every status label below is READ from\n    # the VERIFIED coverage record runs/pia_rule_coverage_v1.json\n    # (75,382 B, sha256 7517d27a78eaa85e...) and the partition is\n    # DERIVED from those labels under the explicit mapping in\n    # thresholds.statistic; bound by tests/test_gates_derivations.py (the\n    # test_gate_b2_pia_oracle_* bindings). Nothing is typed, nothing is\n    # awarded. Every \"<RULING ...>\" placeholder is an open question the\n    # ratifying round must fill; options and prices are in the artifact's\n    # open_questions_for_the_ceremony. This block also proposes the FIRST\n    # definition of gates.yaml:642's phrase \"computes exactly\".\n    id: b2_statutory_benefit_oracle\n    status: draft_pending_referee_round\n    locked: false\n    kind: exact_agreement_per_rule   # <RULING P1 gate_kind>\n    derived_from_coverage: runs/pia_rule_coverage_v1.json\n    derived_from_coverage_sha256: 7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d\n    derived_from_coverage_size_bytes: 75382\n    floor_run: runs/pia_gate_partition_v1.json\n    floor_run_sha256: <FILLED AT RATIFICATION>\n    covers: >-\n      the STATUTORY BENEFIT ORACLE (#74 component SF): the sixteen\n      enumerated rules of populace_dynamics.ss.benefits and\n      populace_dynamics.ss.params listed in rule_inventory, over EXACTLY\n      their registered case sets. The gate is EXACT-AGREEMENT, not\n      floor-priced: the quantities are statutory arithmetic over pinned\n      parameters, so the null is agreement TO THE CENT and there is no\n      noise floor to derive. It DEFINES the phrase \"computes exactly\"\n      (gates.yaml:642, gate_2.description -- its only occurrence in\n      the file, and undefined there) and awards it PER RULE as a\n      PARTITION: under the strict reading 1 rule holds all three\n      conditions (R10_416l_fra_schedule), 10 hold a strict subset and\n      5 hold none. It certifies a FROZEN-SCOPE REFERENCE ORACLE, NOT a\n      benefit calculator: the rules in not_implemented are absent by design\n      and are published as absent. It does not authorise any household\n      benefit total, any survivor or disability PIA through aime(), any\n      spousal or survivor LEVEL in a generated panel, or any nominal\n      post-entitlement dollar.\n    holdout_basis: []\n    holdout_basis_note: >-\n      DELIBERATELY EMPTY. A statutory formula has no population to hold\n      out: it is a deterministic function of statute and parameters. Its\n      null is agreement with an INDEPENDENT EXECUTION plus agreement with\n      an SSA-PUBLISHED figure -- not a person-disjoint split (gate 1 / 2a /\n      2b / 2c / m4; the sampling-floor protocol at gates.yaml:19) and not a\n      vintage-priced deviation (gate_w1 family B, :4350). The round accepts or\n      rejects this structural claim first (<RULING P1 gate_kind>).\n    external_basis:\n      - axiom_rules_engine (independent Rust implementation; engine_revision ffef7b4, runs/pia_cross_engine_v1.json)\n      - policyengine_us Simulation (independent Python implementation of the own-benefit path only; pe_us_revision bf71be3b)\n      - ssa_published_figures (bend-point determinations; 402(q)/(w) percentages; RS 00615.020 / .301 / .302 / .310 spousal and survivor percentages, cited per row in runs/aux_benefit_examples_v1.json)\n    data_staged: >-\n      runs/pia_cross_engine_v1.json (240 cases, committed, test-pinned by\n      tests/ss/test_cross_engine.py) and runs/aux_benefit_examples_v1.json\n      (10 SSA worked examples + 40 policyengine-us foundation cases + a\n      36-row couple grid + a 9-row survivor grid, committed, test-pinned by\n      tests/ss/test_aux_benefits.py). The per-rule coverage record\n      runs/pia_rule_coverage_v1.json EXISTS (floors v2 at cd8f167,\n      independently verified) and the gate-schema artifact\n      runs/pia_gate_partition_v1.json derives this block from it.\n    lock_ceremony:\n      exists: false\n      required: >-\n        coverage record -> adversarial referees -> fixes -> verification ->\n        THRESHOLD BINDING (this block) -> P1 decided first -> adversarial\n        referee round -> fixes -> verification -> ratifying merge, which\n        fills every placeholder, sets floor_run_sha256, flips\n        GATE_B2_PIA_ORACLE_BLOCK_LANDED and retires the live-file guard\n        test in the same commit. NOT YET RUN past the binding.\n    thresholds:\n      locked: false\n      status: draft_pending_referee_round\n      tranche_id: b2_statutory_benefit_oracle\n      kind: exact_agreement_per_rule\n      coverage_run: runs/pia_rule_coverage_v1.json\n      coverage_run_sha256: 7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d\n      floor_run: runs/pia_gate_partition_v1.json\n      floor_run_sha256: <FILLED AT RATIFICATION>\n      evidence_runs:\n        - { path: runs/pia_cross_engine_v1.json, sha256: 10fe0a046f2d5dd39b159cae2ae2b3aba267279bc88eaaaf1db9e1e3078d43bc }\n        - { path: runs/aux_benefit_examples_v1.json, sha256: 502d66688a8d68f0a8b6d392c4508c018c6b4422db7f9e0d71cb1413ee7e1ccb }\n      e1_clause: \"<RULING S8 e1_clause>\"\n      e1_clause_as_carried: >-\n        E1 as committed 2026-07-05 at engine ffef7b4 (commit 80d3666, runs/pia_cross_engine_v1.json), not re-executed in this ceremony -- for the Axiom half (R1-R7). The policyengine-us half (R8 / R9 / R10 / R16\n        through the 40-case foundation block) WAS re-executed in this\n        ceremony by the floors v2 verification\n        (test_pe_us_simulation_matches_oracle_foundation_live, 12\n        foundation cases, policyengine-us checkout a03e82e5, PASSED). The\n        Axiom half (R1-R7 on the 240) was NOT: no ceremony host carried the\n        maturin-built wheel. Any E1 status below rests on the committed\n        artifact as built on its recorded date.\n      estimand: >-\n        Per RULE (one statutory operation with its own citation and branch\n        structure), the value the oracle computes for every registered case\n        of that rule. Per the standing rule\n        description_claims_exactly_the_scored_surface (gates.yaml:1056,\n        :3294, :4869) the surface claimed is EXACTLY the sixteen rules of\n        rule_inventory over their registered case sets -- NOT the OASDI\n        benefit, NOT any rule in not_implemented, NOT any quantity computed\n        from a constant outside the domain named in named_constants, and\n        NOT any operation finer than the sixteen-rule cut (<RULING P13 granularity>).\n      statistic: >-\n        Per rule, THREE conditions, all required -- the definition of\n        \"computes exactly\" (P2):\n        E1 INDEPENDENT RE-EXECUTION -- |our_value - independent_engine_value|\n           <= 0.005 dollars (TO THE CENT) on EVERY registered case, the bound\n           committed as runs/pia_cross_engine_v1.json.agreement_tolerance_dollars;\n           labels that hold: satisfied, policyengine_us_only; labels that do\n           not: degenerate, unsatisfiable_today (<RULING P6 e1_waiver>).\n        E2 EXTERNAL ANCHOR -- at least one registered case whose expected\n           value is an SSA-PUBLISHED figure, not a value recomputed from the\n           same formula; label that holds: satisfied; labels that do not:\n           satisfied_with_a_constant_override (<RULING P9 survivor_period>),\n           weak, partial, implied, absent.\n        E3 EXERCISED BRANCHES AND BOUNDARIES -- every branch and boundary of\n           the rule as written is hit by at least one registered case, the\n           case set committed cell by cell; labels that hold:\n           all_branches_exercised, exhaustive, both_branches_reached; labels\n           that do not: partial (any form), branch_unexercised, unexercised,\n           unit_test_only.\n        X1 NAMED NON-COVERAGE and X2 NAMED CONSTANTS are published below so\n        the status can never be read as \"computes everything\".\n        PRECISION (P11): NOT bit-exactness. Observed: cross-engine max\n        |diff| 0.0 dollars on 240; aux worked-example max deviation\n        1.1368683772161603e-13; policyengine-us foundation max PIA deviation\n        4.8828125045474735e-05 dollars and max factor deviation\n        5.245208734017126e-08 (float32 storage, the artifact's own note, quoted not\n        verified). \"Exactly\" means TO THE CENT and the block says so.\n        E1 alone is AGREEMENT, not correctness: two engines fed the same\n        parameters can agree on the same mistake; E2 is what makes it a\n        claim about the statute.\n      protocol:\n        deterministic: true\n        seeds: none\n        case_registration: >-\n          A candidate registers, BEFORE scoring, the case set per rule and\n          the independent engine revision. Case sets are committed in the\n          coverage record per rule with every input and both engines'\n          outputs, so a referee re-derives rather than trusts.\n        pass_rule: >-\n          The gate does NOT produce one boolean over all rules. It awards\n          computes_exactly PER RULE, and the gate-level verdict is the\n          PARTITION: which rules hold E1+E2+E3, which hold a strict subset\n          (and which condition fails), and which are not implemented. A\n          partition that changes -- a rule losing a condition -- is a FAIL\n          for that rule and must be published as such. Any downstream\n          artifact citing the oracle must cite the RULE, never the gate.\n      no_floor:\n        rationale: >-\n          There is no noise floor and none is derived. Statutory arithmetic\n          over pinned parameters is deterministic; the only dispersion is\n          floating-point representation, which is BOUNDED, not sampled. The\n          gate-1 / gate-2 / m4 half-split construction and the gate_w1\n          vintage-priced tolerance rule are both INAPPLICABLE and are named\n          so no referee has to ask; the gate_m4 faithful_candidate_oc\n          (gates.yaml:3206) has no analogue here.\n        floating_point_disclosure:\n          cross_engine_max_abs_diff_dollars: 0.0\n          aux_worked_example_max_abs_deviation: 1.1368683772161603e-13\n          pe_us_foundation_max_pia_abs_deviation: 4.8828125045474735e-05\n          pe_us_foundation_max_factor_abs_deviation: 5.245208734017126e-08\n          agreement_tolerance_dollars: 0.005\n      rule_inventory:\n        # Sixteen rules. Every e1 / e2 / e3 value is the coverage record's\n        # status LABEL (the builder's reading of derived evidence, disclosed\n        # as such in status_provenance); strict_reading is the class under\n        # the mapping in statistic; moved_by_an_alternative_reading names\n        # the filed readings that change the class. NOTHING here is awarded.\n        R1_415b1_wage_base_cap:\n          code: \"ss/benefits.py:68-75\"\n          e1: satisfied\n          e2: absent\n          e3: both_branches_reached\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_no_external_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R2_415b3_nawi_indexation:\n          code: \"ss/benefits.py:78-97\"\n          e1: satisfied\n          e2: absent\n          e3: both_branches_reached\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_no_external_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R3_415b2B_computation_year_count:\n          code: \"ss/benefits.py:61-61, ss/benefits.py:100-117\"\n          e1: degenerate\n          e2: absent\n          e3: unexercised\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: NOT_computes_exactly   # quoted, NOT adopted\n          rulings: \"none\"\n        R4_415b_top_n_divide_and_floor:\n          code: \"ss/benefits.py:100-117\"\n          e1: satisfied\n          e2: absent\n          e3: branch_unexercised\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2, E3] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_no_external_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R5_415a1A_pia_brackets:\n          code: \"ss/benefits.py:120-131\"\n          e1: satisfied\n          e2: weak\n          e3: all_branches_exercised\n          cases: { cross_engine: 240, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_weak_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R6_415a1B_bend_points:\n          code: \"ss/params.py:138-149\"\n          e1: satisfied\n          e2: satisfied\n          e3: partial\n          cases: { cross_engine: 240, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: computes_exactly_two_years_only   # quoted, NOT adopted\n          rulings: \"none\"\n        R7_415g_dime_floor:\n          code: \"ss/benefits.py:120-131\"\n          e1: satisfied\n          e2: implied\n          e3: exhaustive\n          cases: { cross_engine: 240, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: computes_exactly   # quoted, NOT adopted\n          rulings: \"none\"\n        R8_402q_worker_early_reduction:\n          code: \"ss/benefits.py:134-143\"\n          e1: policyengine_us_only\n          e2: satisfied\n          e3: partial_and_one_branch_unexercised\n          cases: { cross_engine: 0, pe_us_foundation: 20, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly_narrow_domain   # quoted, NOT adopted\n          rulings: \"none\"\n        R9_402w_delayed_retirement_credit:\n          code: \"ss/benefits.py:146-164\"\n          e1: policyengine_us_only\n          e2: satisfied\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 15, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly_narrow_domain   # quoted, NOT adopted\n          rulings: \"none\"\n        R10_416l_fra_schedule:\n          code: \"ss/params.py:162-170\"\n          e1: satisfied\n          e2: satisfied\n          e3: all_branches_exercised\n          cases: { cross_engine: 0, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: all_three, failing: [] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: computes_exactly   # quoted, NOT adopted\n          rulings: \"none\"\n        R11_402q1_spousal_early_reduction:\n          code: \"ss/benefits.py:185-202\"\n          e1: unsatisfiable_today\n          e2: satisfied\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 2 }\n          strict_reading: { class: strict_subset, failing: [E1, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial_no_independent_engine   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver>\"\n        R12_402bc_402k3_spouse_benefit:\n          code: \"ss/benefits.py:205-236\"\n          e1: unsatisfiable_today\n          e2: partial\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 2 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver> <RULING P13 granularity>\"\n        R13_402q_survivor_reduction_ramp:\n          code: \"ss/benefits.py:242-263\"\n          e1: unsatisfiable_today\n          e2: satisfied_with_a_constant_override\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 2 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p9_constant_override_counts_as_e2, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial_constant_override_required   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver> <RULING P9 survivor_period>\"\n        R14_402ef_widow_riblim_drc_dual:\n          code: \"ss/benefits.py:266-328\"\n          e1: unsatisfiable_today\n          e2: partial\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 4 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver> <RULING P13 granularity>\"\n        R15_402e3_f4_remarriage_protection:\n          code: \"ss/benefits.py:331-349\"\n          e1: unsatisfiable_today\n          e2: absent\n          e3: unit_test_only\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: NOT_computes_exactly_unit_test_only   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver>\"\n        R16_age62_composition:\n          code: \"ss/benefits.py:167-179\"\n          e1: policyengine_us_only\n          e2: satisfied\n          e3: partial_with_a_named_simplification\n          cases: { cross_engine: 0, pe_us_foundation: 10, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly_with_named_simplification   # quoted, NOT adopted\n          rulings: \"none\"\n      partition:\n        strict_reading:\n          all_three: [R10_416l_fra_schedule]\n          strict_subset:\n            R1_415b1_wage_base_cap: [E2]\n            R2_415b3_nawi_indexation: [E2]\n            R4_415b_top_n_divide_and_floor: [E2, E3]\n            R5_415a1A_pia_brackets: [E2]\n            R6_415a1B_bend_points: [E3]\n            R7_415g_dime_floor: [E2]\n            R8_402q_worker_early_reduction: [E3]\n            R9_402w_delayed_retirement_credit: [E3]\n            R11_402q1_spousal_early_reduction: [E1, E3]\n            R16_age62_composition: [E3]\n          none: [R3_415b2B_computation_year_count, R12_402bc_402k3_spouse_benefit, R13_402q_survivor_reduction_ramp, R14_402ef_widow_riblim_drc_dual, R15_402e3_f4_remarriage_protection]\n        invariant_under_every_filed_reading:\n          all_three: [R10_416l_fra_schedule]\n          none: [R3_415b2B_computation_year_count]\n        alternative_readings: >-\n          axiom_only_e1 (policyengine_us_only does not count): all-three\n          [R10_416l_fra_schedule]; p6_e1_waiver_for_r11_r15: all-three\n          [R10_416l_fra_schedule]; p9_constant_override_counts_as_e2:\n          all-three [R10_416l_fra_schedule]; the packet's own\n          proposed verdicts call 6 rules computes_exactly or a qualified\n          form, of which the strict reading awards 1. Every reading is\n          emitted per rule in the artifact's partitions block.\n        status_provenance: >-\n          the labels are the coverage builder's READING of derived evidence\n          (case counts, ast spans, bracket occupancy, the dime-floor sweep,\n          the not-implemented searches, the derived R4 / R8 / R9 bases);\n          a label is pinned only by the byte-reproduction test, which is why\n          this block awards nothing and the packet's verdicts are quoted.\n      worked_examples_classification:\n        # P7: which of the ten rows are SSA-published percentages and which\n        # are the oracle's own arithmetic / branch selection. The split is\n        # the packet's reading, carried by the coverage record; the ratio is\n        # emitted so a referee re-adjudicates each row.\n        n_published_percentage: 7\n        n_arithmetic_or_branch_selection: 3\n        rows:\n          spouse_at_fra_half_pia: { group: spousal, expected_over_base_pia: 0.5, classification: published_percentage }\n          spouse_at_62_fra67: { group: spousal, expected_over_base_pia: 0.325, classification: published_percentage }\n          spouse_at_62_fra66: { group: spousal, expected_over_base_pia: 0.35, classification: published_percentage }\n          spouse_dual_entitlement_excess: { group: spousal, expected_over_base_pia: 0.2, classification: arithmetic_or_branch_selection }\n          widow_at_fra_full_pia: { group: survivor, expected_over_base_pia: 1.0, classification: published_percentage }\n          widow_at_60_floor: { group: survivor, expected_over_base_pia: 0.715, classification: published_percentage }\n          widow_at_62_fra66: { group: survivor, expected_over_base_pia: 0.81, classification: published_percentage }\n          rib_lim_82_5_floor: { group: survivor, expected_over_base_pia: 0.825, classification: published_percentage }\n          rib_lim_deceased_actual_higher: { group: survivor, expected_over_base_pia: 0.86666656, classification: arithmetic_or_branch_selection }\n          drc_pass_through: { group: survivor, expected_over_base_pia: 1.32, classification: arithmetic_or_branch_selection }\n        consequence: >-\n          a row classified arithmetic_or_branch_selection does NOT count\n          toward E2; the coverage record's E2 labels for R12 (partial) and\n          R14 (partial) already reflect that split.\n      case_set:\n        # P8 facts, from the coverage record.\n        cross_engine: { n_cases: 240, eligibility_years: [2020, 2026], birth_years: [1958, 1964], history_span_ages: [22, 62], n_distinct_shapes: 21 }\n        pe_us_foundation: { n_cases: 40, aime_values: [1000, 2000, 4000, 6000, 9000], claim_ages: [62, 65, 67, 70], birth_years: [1954, 1960] }\n        couple_grid: { n_rows: 36, n_rows_with_both_spouses_drawing_an_excess: 0 }\n        survivor_grid: { n_rows: 9, distinct_own_deceased_pia_pairs: 1 }\n        sufficiency: \"<RULING P8 case_set>\"\n      known_gaps:\n        r3_computation_year_count: >-\n          the oracle hard-codes 35 and the engine derives n; every committed case has elapsed - 5 = 35 for both cohorts, so no case separates the constant from the derived value. Exact domain: retirement workers attaining 62 in 1991 or later. A live caller reaches outside it: widow_benefit takes deceased_pia from the caller, and a deceased worker's PIA computed through aime() gets a 35-year divisor it should not.\n        r4_zero_pad_branch_unexercised: >-\n          every committed worker history has 41 entries, so the short-history zero pad of aime() is a no-op in every case and in every test under tests/ss/ (derived by ast in the coverage record)\n        r8_r16_absent_from_the_240: >-\n          the cross-engine rows carry aime and pia only; every rule from 402(q) onward rests on the 40-case policyengine-us foundation block (AIME [1000, 2000, 4000, 6000, 9000], claim ages [62, 65, 67, 70], birth years [1954, 1960]) and the ten worked examples\n        r11_r15_no_second_engine: >-\n          policyengine-us has no spousal or survivor computation, so E1 is unsatisfiable for the auxiliary rules today -- structural, not incidental; what would satisfy it is the Axiom rulespec-us us/statutes/42/402 encodings\n        r12_r14_grid_thinness: >-\n          the couple grid has 36 rows and 0 with both spouses drawing an excess; the survivor grid sits at 1 (own, deceased) PIA pair; no worked example has own_pia above zero, so the 402(k) dual-entitlement maximum is never checked against a published figure\n      named_constants:\n        # X2 of the definition: quantities the statute makes a SCHEDULE and\n        # the module makes a CONSTANT, with the domain over which each is exact.\n        computation_years:\n          value: 35\n          code: ss/benefits.py:61\n          statute: 42 USC 415(b)(2)(B)\n          exact_domain: retirement workers attaining age 62 in 1991 or later, for whom elapsed years minus five dropout years is 35\n          wrong_outside: survivor and disability PIAs, where an early death or a disability freeze shortens the elapsed count\n        survivor_reduction_period_months:\n          value: 84\n          code: ss/params.py:122\n          statute: 42 USC 416(l) as applied to survivors\n          exact_domain: survivor cohorts born 1962 or later (survivor FRA 67, an 84-month span)\n          wrong_outside: >-\n            survivor FRA 65 (60-month span) and 66 (72-month span) cohorts; the shipped default carries no survivor-FRA schedule\n          ruling: \"<RULING P9 survivor_period>\"\n        one_month_eligibility_subtlety:\n          code: ss/benefits.py:167-179\n          content: >-\n            births on the first two days of a month are ignored; at most one month's reduction factor. Documented in the source and restated here so it sits inside the coverage record, not only in a docstring.\n      not_implemented:\n        # X1 of the definition. Each search re-runs in the coverage record's\n        # tests: root, patterns, files searched, empty hit list.\n        family_maximum: >-\n          NOT IMPLEMENTED (P10). the family maximum (the cap on total benefits payable on one earnings record) is NOT IMPLEMENTED; spousal_benefit and widow_benefit return uncapped amounts and the household consumer sums both own benefits and both excess spousal amounts with no cap: spousal_benefit, widow_benefit return UNCAPPED\n          amounts and household.CoupleBenefit.total (class CoupleBenefit,\n          household.py:133-149; the total property :142-149; derived\n          by ast) sums both own benefits and both excess spousal amounts.\n          The family maximum binds precisely where auxiliary benefits stack;\n          no committed case stacks enough for it to bind, so this is a KNOWN\n          UNCAUGHT class, never bite. Search: ['family_max', 'familyMax', 'maximum_family_benefit', 'fam_max'] over\n          143 files under src/populace_dynamics, no hits.\n        wep_gpo: NOT IMPLEMENTED\n        retirement_earnings_test: NOT IMPLEMENTED\n        special_minimum_pia: NOT IMPLEMENTED\n        cola_applied_to_pia: NOT IMPLEMENTED (nothing in ss/ references COLA)\n        child_and_parent_benefits: NOT IMPLEMENTED (incl. the child-in-care spouse)\n        disability_pia: NOT IMPLEMENTED (no freeze, no alternate computation years)\n        recomputation_post_entitlement: NOT IMPLEMENTED\n        by_design: >-\n          Do not extend this module's rule coverage; extend the Axiom encodings. (src/populace_dynamics/ss/__init__.py). These absences\n          are a scope decision, not a defect; the gate publishes them so\n          \"computes exactly\" is never read as \"computes everything\".\n      degenerate_candidates:\n        # Teeth, REASONED from the committed test inventory, not executed\n        # (no engine runs in this ceremony). For an exact-agreement gate the\n        # degenerate candidate is a PERTURBED ORACLE.\n        dime_floor_to_nearest: { candidate: \"415(g) rounds to the NEAREST dime instead of DOWN\", caught_by: \"R7 -- the exhaustive integer-AIME sweep, tests/ss/test_cross_engine.py\" }\n        second_bracket_rate_off_by_0_01: { candidate: \"32% -> 33%\", caught_by: \"R5 -- every worker above the first bend point in the 240\" }\n        bend_point_base_year_wrong: { candidate: \"NAWI base 1978 instead of 1977\", caught_by: \"R6 -- the 2026 and 2015 SSA determinations and the load-time cross-check against every stored policyengine-us year\" }\n        spousal_first_bracket_uses_the_worker_rate: { candidate: \"5/9 %/mo instead of 25/36 %/mo for the spouse\", caught_by: \"R11 -- the 32.5%-at-62 published figure\" }\n        rib_lim_applied_when_the_deceased_delayed: { candidate: \"cap at 82.5% even when the factor exceeds 1\", caught_by: \"R14 -- the DRC pass-through row (1320.0)\" }\n        family_maximum_omitted: { candidate: \"the SHIPPED oracle\", caught_by: \"NOTHING -- a KNOWN UNCAUGHT class (P10)\" }\n        catch_structure: >-\n          every implemented rule with an E2 anchor is caught by a\n          perturbation of the quantity that anchor pins. The uncaught\n          classes are, exactly: R3 outside its exact domain, R11-R15 under\n          an E1-only perturbation (no second engine exists to disagree),\n          and every rule in not_implemented. Stated as uncaught, never\n          advertised as covered.\n      governance:\n        registration: >-\n          Pre-registered on issue #42, as every other candidate run. Because\n          the statistic is exact agreement rather than a threshold, what a\n          candidate registers is the CASE SET and the engine revision; the\n          number is not negotiable.\n        amendment_rules:\n          inherits: gate_1\n          no_self_rescue: >-\n            Inherited verbatim (gates.yaml:565). Sharpened here: a rule may\n            not be REMOVED from rule_inventory, and a case may not be\n            removed from a rule's registered case set, because the oracle\n            failed it.\n          amendments_only_via: >-\n            public proposal + adversarial referee round + verification +\n            maintainer ratification by merge.\n          description_claims_exactly_the_scored_surface: >-\n            Bound by the standing rule (gates.yaml:1056, :3294, :4869). THIS\n            GATE'S FIRST DUTY IS TO DISCHARGE gate_2.description's \"benefit\n            formulas earn per-rule 'computes exactly' status\" (:642), which\n            today claims a status no gate_2 cell gates -- gate_2's 46 cells\n            (:917) contain no benefit-formula cell, and gate_2's own\n            certification_scope puts own-record benefit levels OUTSIDE 2a /\n            2b / 2c (:782). Either this gate defines and awards the status\n            (<RULING P1 gate_kind>), or gate_2's description is amended to\n            drop the clause. Leaving both is the one outcome the standing\n            rule forbids (P3).\n        frozen_scope_clause: >-\n          a PASS certifies a FROZEN reference oracle. Extending the module's rule coverage to clear a gap is FORBIDDEN by the module's own docstring, so a missing rule is closed in Axiom (rulespec-us us/statutes/42/415, 402, 416) and re-certified here as a cross-engine case, never by growing this module; a rule that fails is fixed in Axiom, not here.\n      certification_scope:\n        tranche: b2_statutory_benefit_oracle\n        certifies: >-\n          if ratified, a PASS certifies PER RULE, over exactly the registered case set and exactly the domain named in named_constants, that the oracle's value agrees to the cent with an independent execution (E1), matches an SSA-published figure on at least one case (E2) and exercises every branch (E3). The gate-level verdict is the PARTITION, never one boolean; a downstream citation names the RULE, never the gate.\n        supports:\n          - >-\n            the #74 SF (statutory formula) component wherever a rule holds all three conditions -- with the CITATION being the rule\n          - >-\n            gate_1's benefit_space block (the PIA-proxy functional): a certified R5 / R6 / R7 is what makes that proxy a statutory object rather than a formula\n        does_not_authorise:\n          - >-\n            any household benefit TOTAL: without the family maximum, stacked auxiliary benefits on one earnings record are UNCAPPED (CoupleBenefit.total, household.py)\n          - >-\n            any survivor or disability PIA computed through aime(): R3's constant is outside its exact domain there\n          - >-\n            spousal or survivor benefit LEVELS in GENERATED panels: those need gate_2c (gates.yaml:772-783) as well as this gate\n          - >-\n            any benefit in nominal post-entitlement dollars: no COLA is applied anywhere in ss/\n          - >-\n            anything listed in not_implemented (WEP / GPO, the retirement earnings test, the special minimum PIA, child's and parent's benefits, the disability PIA, recomputation)\n          - >-\n            any statement about a rule finer than the sixteen-rule cut (P13): R12 and R14 earn or lose the status as blocks\n          - >-\n            any rule that holds a strict subset or none of E1 / E2 / E3: the partition names it and the status is NOT awarded\n          - >-\n            the claiming-age distribution, which is gate_b2_claiming's\n      coverage_record_does_not_establish:\n        # every does_not_establish line of runs/pia_rule_coverage_v1.json, carried\n          - >-\n            any per-rule status: the E1/E2/E3 fields record what the committed evidence reaches, and the packet's proposed verdicts are quoted for comparison, not adopted\n          - >-\n            that the proposed definition of \"computes exactly\" is the right one: no referee round has run\n          - >-\n            any statement about the Axiom engine or policyengine-us beyond what the committed artifacts record; neither was executed here\n          - >-\n            that the rule granularity is correct: sixteen rules is the packet's cut, and R12 and R14 each bundle several statutory operations\n          - >-\n            that any E1 status has been re-executed in this ceremony: the three engine-backed tests in tests/ss/ skip on a host without the Axiom wheel or a policyengine-us Python, and every E1 status rests on the committed cross-engine artifact as built on its recorded date\n          - >-\n            the sequencing of the lock PR: the gates.yaml citation is blob-pinned and survives the gate commit, but the two 'gate name absent from gates.yaml' tests read the live file by design and fail the moment gate_b2_pia_oracle or gate_b2_claiming lands; the commit that inserts either block must retire those assertions or supersede this artifact with a v2 in the same PR\n          - >-\n            that the typed bend-point pairs are SSA determinations: the 2026 pair has an SSA-anchor test, the 2020 pair is pinned only to the committed cross-engine rows it reproduces\n      open_rulings:\n        # Each is FILED and PRICED in runs/pia_gate_partition_v1.json\n        # open_questions_for_the_ceremony; none is made here.\n        P1: \"<RULING P1 gate_kind> -- exact agreement as a gate kind vs an amendment striking gates.yaml:642; decide FIRST\"\n        P6: \"<RULING P6 e1_waiver> -- per-rule E1 waivers for R11-R15 vs splitting the gate and holding the auxiliary half\"\n        P8: \"<RULING P8 case_set> -- is the registered case set sufficient, or must a wider one be built first\"\n        P9: \"<RULING P9 survivor_period> -- the 84-month constant vs the override reading of E2\"\n        P13: \"<RULING P13 granularity> -- the sixteen-rule cut vs splitting R12 / R14\"\n        S7: \"sequencing constraint -- ceremony_notes.flip_plan (the two live-file guard tests)\"\n        S8: \"<RULING S8 e1_clause> -- E1 as committed 2026-07-05 at engine ffef7b4, not re-executed (Axiom half)\"\n      ceremony_notes:\n        placeholders_the_ratifying_round_must_fill:\n          - \"<RULING P1 gate_kind>\"\n          - \"<RULING P6 e1_waiver>\"\n          - \"<RULING P8 case_set>\"\n          - \"<RULING P9 survivor_period>\"\n          - \"<RULING P13 granularity>\"\n          - \"<RULING S8 e1_clause>\"\n          - \"<FILLED AT RATIFICATION>\"\n        flip_plan: >-\n          the commit that inserts this block flips\n          GATE_B2_PIA_ORACLE_BLOCK_LANDED from False to True in\n          tests/test_gates_derivations.py and\n          tests/test_pia_gate_partition_v1.py, RETIRES\n          tests/test_pia_rule_coverage.py::\n          test_no_gate_b2_pia_oracle_exists_in_gates_yaml (and its claiming\n          twin tests/test_claiming_publication_floor.py::\n          test_no_gate_b2_claiming_exists_in_gates_yaml if gate_b2_claiming\n          lands in the same PR) -- both read the live file by design and\n          fail the moment the block lands (verification section 11: exactly\n          those two) -- admits the new key at the three master-compare sites\n          (test_gate_m4_flip_leaves_locked_siblings_byte_identical,\n          tests/test_gate_w1_derivations.py, tests/test_gate_m6_derivations.py),\n          fills floor_run_sha256 with the ratified sha256 of\n          runs/pia_gate_partition_v1.json, and re-refreshes the tier\n          manifest -- all in the SAME commit. The coverage record's\n          blob-pinned gates.yaml citation survives the commit unchanged.\n        derivations_bound_by: tests/test_gates_derivations.py (test_gate_b2_pia_oracle_*) and tests/test_pia_gate_partition_v1.py\n        wording_audit: >-\n          the two words the standing wording audit forbids occur 0 times in\n          this block (artifact wording_audit.forbidden_word_counts); the\n          definition of \"computes exactly\" is stated (P2); what a pass does\n          not authorise is stated (P14); every does_not_establish line of\n          the coverage record is carried.\n",
-    "text_sha256": "0486d53a807a84de728705f5999358f3571dfdbe25f582f3df8977fc7b6a2866",
-    "n_lines": 580,
-    "n_bytes": 37946,
+    "text": "  gate_b2_pia_oracle:\n    # DRAFT -- NOT APPLIED TO gates.yaml. Emitted by\n    # scripts/build_pia_gate_partition_v1.py into\n    # runs/pia_gate_partition_v1.json (draft_gates_yaml_fragment.text) at\n    # the threshold-binding sitting of 2026-09-08 (the prerequisite of the\n    # packet's PIA ceremony step 5). Every status label below is READ from\n    # the VERIFIED coverage record runs/pia_rule_coverage_v1.json\n    # (75,382 B, sha256 7517d27a78eaa85e...) and the partition is\n    # DERIVED from those labels under the explicit mapping in\n    # thresholds.statistic; bound by tests/test_gates_derivations.py (the\n    # test_gate_b2_pia_oracle_* bindings, which RUN pre-lock against this\n    # string as read from the artifact -- they are not skipped; the marker\n    # only switches their source to the live file). Nothing is typed,\n    # nothing is awarded. Every \"<RULING ...>\" placeholder is an open question the\n    # ratifying round must fill; options and prices are in the artifact's\n    # open_questions_for_the_ceremony. This block also proposes the FIRST\n    # definition of gates.yaml:642's phrase \"computes exactly\".\n    id: b2_statutory_benefit_oracle\n    status: draft_pending_referee_round\n    locked: false\n    kind: exact_agreement_per_rule   # <RULING P1 gate_kind>\n    derived_from_coverage: runs/pia_rule_coverage_v1.json\n    derived_from_coverage_sha256: 7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d\n    derived_from_coverage_size_bytes: 75382\n    floor_run: runs/pia_gate_partition_v1.json\n    floor_run_sha256: <FILLED AT RATIFICATION>\n    covers: >-\n      the STATUTORY BENEFIT ORACLE (#74 component SF): the sixteen\n      enumerated rules of populace_dynamics.ss.benefits and\n      populace_dynamics.ss.params listed in rule_inventory, over EXACTLY\n      their registered case sets. The gate is EXACT-AGREEMENT, not\n      floor-priced: the quantities are statutory arithmetic over pinned\n      parameters, so the null is agreement TO THE CENT and there is no\n      noise floor to derive. It DEFINES the phrase \"computes exactly\"\n      (gates.yaml:642, gate_2.description -- its only occurrence in\n      the file, and undefined there) and awards it PER RULE as a\n      PARTITION: under the strict reading 1 rule holds all three\n      conditions (R10_416l_fra_schedule), 10 hold a strict subset and\n      5 hold none. It certifies a FROZEN-SCOPE REFERENCE ORACLE, NOT a\n      benefit calculator: the rules in not_implemented are absent by design\n      and are published as absent. It does not authorise any household\n      benefit total, any survivor or disability PIA through aime(), any\n      spousal or survivor LEVEL in a generated panel, or any nominal\n      post-entitlement dollar.\n    holdout_basis: []\n    holdout_basis_note: >-\n      DELIBERATELY EMPTY. A statutory formula has no population to hold\n      out: it is a deterministic function of statute and parameters. Its\n      null is agreement with an INDEPENDENT EXECUTION plus agreement with\n      an SSA-PUBLISHED figure -- not a person-disjoint split (gate 1 / 2a /\n      2b / 2c / m4; the sampling-floor protocol at gates.yaml:19) and not a\n      vintage-priced deviation (gate_w1 family B, :4350). The round accepts or\n      rejects this structural claim first (<RULING P1 gate_kind>).\n    external_basis:\n      - axiom_rules_engine (independent Rust implementation; engine_revision ffef7b4, runs/pia_cross_engine_v1.json)\n      - policyengine_us Simulation (independent Python implementation of the own-benefit path only; pe_us_revision bf71be3b)\n      - ssa_published_figures (bend-point determinations; 402(q)/(w) percentages; RS 00615.020 / .301 / .302 / .310 spousal and survivor percentages, cited per row in runs/aux_benefit_examples_v1.json)\n    data_staged: >-\n      runs/pia_cross_engine_v1.json (240 cases, committed, test-pinned by\n      tests/ss/test_cross_engine.py) and runs/aux_benefit_examples_v1.json\n      (10 SSA worked examples + 40 policyengine-us foundation cases + a\n      36-row couple grid + a 9-row survivor grid, committed, test-pinned by\n      tests/ss/test_aux_benefits.py). The per-rule coverage record\n      runs/pia_rule_coverage_v1.json EXISTS (floors v2 at cd8f167,\n      independently verified) and the gate-schema artifact\n      runs/pia_gate_partition_v1.json derives this block from it.\n    lock_ceremony:\n      exists: false\n      required: >-\n        coverage record -> adversarial referees -> fixes -> verification ->\n        THRESHOLD BINDING (this block) -> P1 decided first -> adversarial\n        referee round -> fixes -> verification -> ratifying merge, which\n        fills every placeholder, sets floor_run_sha256, flips\n        GATE_B2_PIA_ORACLE_BLOCK_LANDED and retires the live-file guard\n        test in the same commit. NOT YET RUN past the binding.\n    thresholds:\n      locked: false\n      status: draft_pending_referee_round\n      tranche_id: b2_statutory_benefit_oracle\n      kind: exact_agreement_per_rule\n      coverage_run: runs/pia_rule_coverage_v1.json\n      coverage_run_sha256: 7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d\n      floor_run: runs/pia_gate_partition_v1.json\n      floor_run_sha256: <FILLED AT RATIFICATION>\n      evidence_runs:\n        - { path: runs/pia_cross_engine_v1.json, sha256: 10fe0a046f2d5dd39b159cae2ae2b3aba267279bc88eaaaf1db9e1e3078d43bc }\n        - { path: runs/aux_benefit_examples_v1.json, sha256: 502d66688a8d68f0a8b6d392c4508c018c6b4422db7f9e0d71cb1413ee7e1ccb }\n      e1_clause: \"<RULING S8 e1_clause>\"\n      e1_clause_as_carried: >-\n        E1 as committed 2026-07-05 at engine ffef7b4 (commit 80d3666, runs/pia_cross_engine_v1.json), not re-executed in this ceremony -- for the Axiom half (R1-R7). The policyengine-us half (R8 / R9 / R10 / R16\n        through the 40-case foundation block) WAS re-executed in this\n        ceremony by the floors v2 verification\n        (test_pe_us_simulation_matches_oracle_foundation_live, 12\n        foundation cases, policyengine-us checkout a03e82e5, PASSED). The\n        Axiom half (R1-R7 on the 240) was NOT: no ceremony host carried the\n        maturin-built wheel. Any E1 status below rests on the committed\n        artifact as built on its recorded date. R10's E1 label `satisfied`\n        rests on the policyengine-us half ALONE (cross_engine cases\n        0, pe_us_foundation 40): under the evidence-based\n        Axiom-only reading (partitions.alternatives.axiom_only_e1) R10\n        does not hold E1; under the strict reading it does (referee A D1).\n      estimand: >-\n        Per RULE (one statutory operation with its own citation and branch\n        structure), the value the oracle computes for every registered case\n        of that rule. Per the standing rule\n        description_claims_exactly_the_scored_surface (gates.yaml:1056,\n        :3294, :4869) the surface claimed is EXACTLY the sixteen rules of\n        rule_inventory over their registered case sets -- NOT the OASDI\n        benefit, NOT any rule in not_implemented, NOT any quantity computed\n        from a constant outside the domain named in named_constants, and\n        NOT any operation finer than the sixteen-rule cut (<RULING P13 granularity>).\n      statistic: >-\n        Per rule, THREE conditions, all required -- the definition of\n        \"computes exactly\" (P2):\n        E1 INDEPENDENT RE-EXECUTION -- |our_value - independent_engine_value|\n           <= 0.005 dollars (TO THE CENT) on EVERY registered case, the bound\n           committed as runs/pia_cross_engine_v1.json.agreement_tolerance_dollars;\n           labels that hold: satisfied, policyengine_us_only; labels that do\n           not: degenerate, unsatisfiable_today (<RULING P6 e1_waiver>).\n        E2 EXTERNAL ANCHOR -- at least one registered case whose expected\n           value is an SSA-PUBLISHED figure, not a value recomputed from the\n           same formula; label that holds: satisfied; labels that do not:\n           satisfied_with_a_constant_override (<RULING P9 survivor_period>),\n           weak, partial, implied, absent.\n        E3 EXERCISED BRANCHES AND BOUNDARIES -- every branch and boundary of\n           the rule as written is hit by at least one registered case, the\n           case set committed cell by cell; labels that hold:\n           all_branches_exercised, exhaustive, both_branches_reached; labels\n           that do not: partial (any form), branch_unexercised, unexercised,\n           unit_test_only.\n        X1 NAMED NON-COVERAGE and X2 NAMED CONSTANTS are published below so\n        the status can never be read as \"computes everything\".\n        PRECISION (P11): NOT bit-exactness. Observed: cross-engine max\n        |diff| 0.0 dollars on 240; aux worked-example max deviation\n        1.1368683772161603e-13; policyengine-us foundation max PIA deviation\n        4.8828125045474735e-05 dollars and max factor deviation\n        5.245208734017126e-08 (float32 storage, the artifact's own note, quoted not\n        verified). \"Exactly\" means TO THE CENT and the block says so.\n        E1 alone is AGREEMENT, not correctness: two engines fed the same\n        parameters can agree on the same mistake; E2 is what makes it a\n        claim about the statute.\n      protocol:\n        deterministic: true\n        seeds: none\n        case_registration: >-\n          A candidate registers, BEFORE scoring, the case set per rule and\n          the independent engine revision. Case sets are committed in the\n          coverage record per rule with every input and both engines'\n          outputs, so a referee re-derives rather than trusts.\n        pass_rule: >-\n          The gate does NOT produce one boolean over all rules. It awards\n          computes_exactly PER RULE, and the gate-level verdict is the\n          PARTITION: which rules hold E1+E2+E3, which hold a strict subset\n          (and which condition fails), and which are not implemented. A\n          partition that changes -- a rule losing a condition -- is a FAIL\n          for that rule and must be published as such. Any downstream\n          artifact citing the oracle must cite the RULE, never the gate.\n      no_floor:\n        rationale: >-\n          There is no noise floor and none is derived. Statutory arithmetic\n          over pinned parameters is deterministic; the only dispersion is\n          floating-point representation, which is BOUNDED, not sampled. The\n          gate-1 / gate-2 / m4 half-split construction and the gate_w1\n          vintage-priced tolerance rule are both INAPPLICABLE and are named\n          so no referee has to ask; the gate_m4 faithful_candidate_oc\n          (gates.yaml:3206) has no analogue here.\n        floating_point_disclosure:\n          cross_engine_max_abs_diff_dollars: 0.0\n          aux_worked_example_max_abs_deviation: 1.1368683772161603e-13\n          pe_us_foundation_max_pia_abs_deviation: 4.8828125045474735e-05\n          pe_us_foundation_max_factor_abs_deviation: 5.245208734017126e-08\n          agreement_tolerance_dollars: 0.005\n      rule_inventory:\n        # Sixteen rules. Every e1 / e2 / e3 value is the coverage record's\n        # status LABEL (the builder's reading of derived evidence, disclosed\n        # as such in status_provenance); strict_reading is the class under\n        # the mapping in statistic; moved_by_an_alternative_reading names\n        # the filed readings that change the class. NOTHING here is awarded.\n        R1_415b1_wage_base_cap:\n          code: \"ss/benefits.py:68-75\"\n          e1: satisfied\n          e2: absent\n          e3: both_branches_reached\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_no_external_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R2_415b3_nawi_indexation:\n          code: \"ss/benefits.py:78-97\"\n          e1: satisfied\n          e2: absent\n          e3: both_branches_reached\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_no_external_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R3_415b2B_computation_year_count:\n          code: \"ss/benefits.py:61-61, ss/benefits.py:100-117\"\n          e1: degenerate\n          e2: absent\n          e3: unexercised\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: NOT_computes_exactly   # quoted, NOT adopted\n          rulings: \"none\"\n        R4_415b_top_n_divide_and_floor:\n          code: \"ss/benefits.py:100-117\"\n          e1: satisfied\n          e2: absent\n          e3: branch_unexercised\n          cases: { cross_engine: 240, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2, E3] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: partial_no_external_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R5_415a1A_pia_brackets:\n          code: \"ss/benefits.py:120-131\"\n          e1: satisfied\n          e2: weak\n          e3: all_branches_exercised\n          cases: { cross_engine: 240, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: [e2_bend_points_count_for_r5_r7]\n          packet_proposed_verdict: partial_weak_anchor   # quoted, NOT adopted\n          rulings: \"none\"\n        R6_415a1B_bend_points:\n          code: \"ss/params.py:138-149\"\n          e1: satisfied\n          e2: satisfied\n          e3: partial\n          cases: { cross_engine: 240, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: []\n          packet_proposed_verdict: computes_exactly_two_years_only   # quoted, NOT adopted\n          rulings: \"none\"\n        R7_415g_dime_floor:\n          code: \"ss/benefits.py:120-131\"\n          e1: satisfied\n          e2: implied\n          e3: exhaustive\n          cases: { cross_engine: 240, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E2] }\n          moved_by_an_alternative_reading: [e2_bend_points_count_for_r5_r7]\n          packet_proposed_verdict: computes_exactly   # quoted, NOT adopted\n          rulings: \"none\"\n        R8_402q_worker_early_reduction:\n          code: \"ss/benefits.py:134-143\"\n          e1: policyengine_us_only\n          e2: satisfied\n          e3: partial_and_one_branch_unexercised\n          cases: { cross_engine: 0, pe_us_foundation: 20, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly_narrow_domain   # quoted, NOT adopted\n          rulings: \"none\"\n        R9_402w_delayed_retirement_credit:\n          code: \"ss/benefits.py:146-164\"\n          e1: policyengine_us_only\n          e2: satisfied\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 15, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly_narrow_domain   # quoted, NOT adopted\n          rulings: \"none\"\n        R10_416l_fra_schedule:\n          code: \"ss/params.py:162-170\"\n          e1: satisfied\n          e2: satisfied\n          e3: all_branches_exercised\n          cases: { cross_engine: 0, pe_us_foundation: 40, ssa_worked_examples: 0 }\n          strict_reading: { class: all_three, failing: [] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly   # quoted, NOT adopted\n          rulings: \"none\"\n        R11_402q1_spousal_early_reduction:\n          code: \"ss/benefits.py:185-202\"\n          e1: unsatisfiable_today\n          e2: satisfied\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 2 }\n          strict_reading: { class: strict_subset, failing: [E1, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial_no_independent_engine   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver>\"\n        R12_402bc_402k3_spouse_benefit:\n          code: \"ss/benefits.py:205-236\"\n          e1: unsatisfiable_today\n          e2: partial\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 2 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver> <RULING P13 granularity>\"\n        R13_402q_survivor_reduction_ramp:\n          code: \"ss/benefits.py:242-263\"\n          e1: unsatisfiable_today\n          e2: satisfied_with_a_constant_override\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 2 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p9_constant_override_counts_as_e2, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial_constant_override_required   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver> <RULING P9 survivor_period>\"\n        R14_402ef_widow_riblim_drc_dual:\n          code: \"ss/benefits.py:266-328\"\n          e1: unsatisfiable_today\n          e2: partial\n          e3: partial\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 4 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: partial   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver> <RULING P13 granularity>\"\n        R15_402e3_f4_remarriage_protection:\n          code: \"ss/benefits.py:331-349\"\n          e1: unsatisfiable_today\n          e2: absent\n          e3: unit_test_only\n          cases: { cross_engine: 0, pe_us_foundation: 0, ssa_worked_examples: 0 }\n          strict_reading: { class: none, failing: [E1, E2, E3] }\n          moved_by_an_alternative_reading: [p6_e1_waiver_for_r11_r15, p6_waiver_and_p9_override]\n          packet_proposed_verdict: NOT_computes_exactly_unit_test_only   # quoted, NOT adopted\n          rulings: \"<RULING P6 e1_waiver>\"\n        R16_age62_composition:\n          code: \"ss/benefits.py:167-179\"\n          e1: policyengine_us_only\n          e2: satisfied\n          e3: partial_with_a_named_simplification\n          cases: { cross_engine: 0, pe_us_foundation: 10, ssa_worked_examples: 0 }\n          strict_reading: { class: strict_subset, failing: [E3] }\n          moved_by_an_alternative_reading: [axiom_only_e1]\n          packet_proposed_verdict: computes_exactly_with_named_simplification   # quoted, NOT adopted\n          rulings: \"none\"\n      partition:\n        strict_reading:\n          all_three: [R10_416l_fra_schedule]\n          strict_subset:\n            R1_415b1_wage_base_cap: [E2]\n            R2_415b3_nawi_indexation: [E2]\n            R4_415b_top_n_divide_and_floor: [E2, E3]\n            R5_415a1A_pia_brackets: [E2]\n            R6_415a1B_bend_points: [E3]\n            R7_415g_dime_floor: [E2]\n            R8_402q_worker_early_reduction: [E3]\n            R9_402w_delayed_retirement_credit: [E3]\n            R11_402q1_spousal_early_reduction: [E1, E3]\n            R16_age62_composition: [E3]\n          none: [R3_415b2B_computation_year_count, R12_402bc_402k3_spouse_benefit, R13_402q_survivor_reduction_ramp, R14_402ef_widow_riblim_drc_dual, R15_402e3_f4_remarriage_protection]\n        invariant_under_every_filed_reading:\n          # referee A D1: the evidence-based Axiom-only reading awards no\n          # rule, so the intersection over every filed reading is empty;\n          # R10 holds all three under the strict reading and under every\n          # LABEL-based reading. The 25680f1 headline \"R10 under every\n          # filed alternative reading\" is RETRACTED.\n          all_three: []\n          all_three_under_every_label_based_reading: [R10_416l_fra_schedule]\n          none: [R3_415b2B_computation_year_count]\n        alternative_readings: >-\n          strict reading: all-three [R10_416l_fra_schedule] (R10 alone);\n          axiom_only_e1 (EVIDENCE-based -- E1 holds iff the rule has\n          cross-engine cases; policyengine_us_only does not count and\n          neither does R10's satisfied-on-zero-Axiom-cases label): all-three\n          [] -- no rule (referee A D1; the label-based form filed at\n          25680f1 awarded R10 and is retained in the artifact as\n          superseded); p6_e1_waiver_for_r11_r15: all-three\n          [R10_416l_fra_schedule]; p9_constant_override_counts_as_e2:\n          all-three [R10_416l_fra_schedule]; e2_bend_points_count_for_r5_r7\n          (R5 weak and R7 implied count for E2; referee B F5, a P1 ruling):\n          all-three [R5_415a1A_pia_brackets, R7_415g_dime_floor, R10_416l_fra_schedule]; the packet's own\n          proposed verdicts call 6 rules computes_exactly or a qualified\n          form, of which the strict reading awards 1. Every reading is\n          emitted per rule in the artifact's partitions block.\n        status_provenance: >-\n          the labels are the coverage builder's READING of derived evidence\n          (case counts, ast spans, bracket occupancy, the dime-floor sweep,\n          the not-implemented searches, the derived R4 / R8 / R9 bases);\n          a label is pinned only by the byte-reproduction test, which is why\n          this block awards nothing and the packet's verdicts are quoted.\n      worked_examples_classification:\n        # P7: which of the ten rows are SSA-published percentages and which\n        # are the oracle's own arithmetic / branch selection. The split is\n        # the packet's reading, carried by the coverage record; the ratio is\n        # emitted so a referee re-adjudicates each row.\n        n_published_percentage: 7\n        n_arithmetic_or_branch_selection: 3\n        rows:\n          spouse_at_fra_half_pia: { group: spousal, expected_over_base_pia: 0.5, classification: published_percentage }\n          spouse_at_62_fra67: { group: spousal, expected_over_base_pia: 0.325, classification: published_percentage }\n          spouse_at_62_fra66: { group: spousal, expected_over_base_pia: 0.35, classification: published_percentage }\n          spouse_dual_entitlement_excess: { group: spousal, expected_over_base_pia: 0.2, classification: arithmetic_or_branch_selection }\n          widow_at_fra_full_pia: { group: survivor, expected_over_base_pia: 1.0, classification: published_percentage }\n          widow_at_60_floor: { group: survivor, expected_over_base_pia: 0.715, classification: published_percentage }\n          widow_at_62_fra66: { group: survivor, expected_over_base_pia: 0.81, classification: published_percentage }\n          rib_lim_82_5_floor: { group: survivor, expected_over_base_pia: 0.825, classification: published_percentage }\n          rib_lim_deceased_actual_higher: { group: survivor, expected_over_base_pia: 0.86666656, classification: arithmetic_or_branch_selection }\n          drc_pass_through: { group: survivor, expected_over_base_pia: 1.32, classification: arithmetic_or_branch_selection }\n        consequence: >-\n          a row classified arithmetic_or_branch_selection does NOT count\n          toward E2; the coverage record's E2 labels for R12 (partial) and\n          R14 (partial) already reflect that split.\n      case_set:\n        # P8 facts, from the coverage record.\n        cross_engine: { n_cases: 240, eligibility_years: [2020, 2026], birth_years: [1958, 1964], history_span_ages: [22, 62], n_distinct_shapes: 21 }\n        pe_us_foundation: { n_cases: 40, aime_values: [1000, 2000, 4000, 6000, 9000], claim_ages: [62, 65, 67, 70], birth_years: [1954, 1960] }\n        couple_grid: { n_rows: 36, n_rows_with_both_spouses_drawing_an_excess: 0 }\n        survivor_grid: { n_rows: 9, distinct_own_deceased_pia_pairs: 1 }\n        sufficiency: \"<RULING P8 case_set>\"\n      known_gaps:\n        r3_computation_year_count: >-\n          the oracle hard-codes 35 and the engine derives n; every committed case has elapsed - 5 = 35 for both cohorts, so no case separates the constant from the derived value. Exact domain: retirement workers attaining 62 in 1991 or later. A live caller reaches outside it: widow_benefit takes deceased_pia from the caller, and a deceased worker's PIA computed through aime() gets a 35-year divisor it should not.\n        r4_zero_pad_branch_unexercised: >-\n          every committed worker history has 41 entries, so the short-history zero pad of aime() is a no-op in every case and in every test under tests/ss/ (derived by ast in the coverage record)\n        r8_r16_absent_from_the_240: >-\n          the cross-engine rows carry aime and pia only; every rule from 402(q) onward rests on the 40-case policyengine-us foundation block (AIME [1000, 2000, 4000, 6000, 9000], claim ages [62, 65, 67, 70], birth years [1954, 1960]) and the ten worked examples\n        r11_r15_no_second_engine: >-\n          policyengine-us has no spousal or survivor computation, so E1 is unsatisfiable for the auxiliary rules today -- structural, not incidental; what would satisfy it is the Axiom rulespec-us us/statutes/42/402 encodings\n        r12_r14_grid_thinness: >-\n          the couple grid has 36 rows and 0 with both spouses drawing an excess; the survivor grid sits at 1 (own, deceased) PIA pair; no worked example has own_pia above zero, so the 402(k) dual-entitlement maximum is never checked against a published figure\n      named_constants:\n        # X2 of the definition: quantities the statute makes a SCHEDULE and\n        # the module makes a CONSTANT, with the domain over which each is exact.\n        computation_years:\n          value: 35\n          code: ss/benefits.py:61\n          statute: 42 USC 415(b)(2)(B)\n          exact_domain: retirement workers attaining age 62 in 1991 or later, for whom elapsed years minus five dropout years is 35\n          wrong_outside: survivor and disability PIAs, where an early death or a disability freeze shortens the elapsed count\n        survivor_reduction_period_months:\n          value: 84\n          code: ss/params.py:122\n          statute: 42 USC 416(l) as applied to survivors\n          exact_domain: survivor cohorts born 1962 or later (survivor FRA 67, an 84-month span)\n          wrong_outside: >-\n            survivor FRA 65 (60-month span) and 66 (72-month span) cohorts; the shipped default carries no survivor-FRA schedule\n          ruling: \"<RULING P9 survivor_period>\"\n        one_month_eligibility_subtlety:\n          code: ss/benefits.py:167-179\n          content: >-\n            births on the first two days of a month are ignored; at most one month's reduction factor. Documented in the source and restated here so it sits inside the coverage record, not only in a docstring.\n      not_implemented:\n        # X1 of the definition. Each search re-runs in the coverage record's\n        # tests: root, patterns, files searched, empty hit list.\n        family_maximum: >-\n          NOT IMPLEMENTED (P10). the family maximum (the cap on total benefits payable on one earnings record) is NOT IMPLEMENTED; spousal_benefit and widow_benefit return uncapped amounts and the household consumer sums both own benefits and both excess spousal amounts with no cap: spousal_benefit, widow_benefit return UNCAPPED\n          amounts and household.CoupleBenefit.total (class CoupleBenefit,\n          household.py:133-149; the total property :142-149; derived\n          by ast) sums both own benefits and both excess spousal amounts.\n          The family maximum binds precisely where auxiliary benefits stack;\n          no committed case stacks enough for it to bind, so this is a KNOWN\n          UNCAUGHT class, never bite. Search: ['family_max', 'familyMax', 'maximum_family_benefit', 'fam_max'] over\n          143 files under src/populace_dynamics, no hits.\n        wep_gpo: NOT IMPLEMENTED\n        retirement_earnings_test: NOT IMPLEMENTED\n        special_minimum_pia: NOT IMPLEMENTED\n        cola_applied_to_pia: NOT IMPLEMENTED (nothing in ss/ references COLA)\n        child_and_parent_benefits: NOT IMPLEMENTED (incl. the child-in-care spouse)\n        disability_pia: NOT IMPLEMENTED (no freeze, no alternate computation years)\n        recomputation_post_entitlement: NOT IMPLEMENTED\n        by_design: >-\n          Do not extend this module's rule coverage; extend the Axiom encodings. (src/populace_dynamics/ss/__init__.py). These absences\n          are a scope decision, not a defect; the gate publishes them so\n          \"computes exactly\" is never read as \"computes everything\".\n      degenerate_candidates:\n        # Teeth, REASONED from the committed test inventory, not executed\n        # (no engine runs in this ceremony). For an exact-agreement gate the\n        # degenerate candidate is a PERTURBED ORACLE.\n        dime_floor_to_nearest: { candidate: \"415(g) rounds to the NEAREST dime instead of DOWN\", caught_by: \"R7 -- the exhaustive integer-AIME sweep, tests/ss/test_cross_engine.py\" }\n        second_bracket_rate_off_by_0_01: { candidate: \"32% -> 33%\", caught_by: \"R5 -- every worker above the first bend point in the 240\" }\n        bend_point_base_year_wrong: { candidate: \"NAWI base 1978 instead of 1977\", caught_by: \"R6 -- the 2026 and 2015 SSA determinations and the load-time cross-check against every stored policyengine-us year\" }\n        spousal_first_bracket_uses_the_worker_rate: { candidate: \"5/9 %/mo instead of 25/36 %/mo for the spouse\", caught_by: \"R11 -- the 32.5%-at-62 published figure\" }\n        rib_lim_applied_when_the_deceased_delayed: { candidate: \"cap at 82.5% even when the factor exceeds 1\", caught_by: \"R14 -- the DRC pass-through row (1320.0)\" }\n        family_maximum_omitted: { candidate: \"the SHIPPED oracle\", caught_by: \"NOTHING -- a KNOWN UNCAUGHT class (P10)\" }\n        catch_structure: >-\n          every implemented rule with an E2 anchor is caught by a\n          perturbation of the quantity that anchor pins. The uncaught\n          classes are, exactly: R3 outside its exact domain, R11-R15 under\n          an E1-only perturbation (no second engine exists to disagree),\n          and every rule in not_implemented. Stated as uncaught, never\n          advertised as covered.\n      governance:\n        registration: >-\n          Pre-registered on issue #42, as every other candidate run. Because\n          the statistic is exact agreement rather than a threshold, what a\n          candidate registers is the CASE SET and the engine revision; the\n          number is not negotiable.\n        amendment_rules:\n          inherits: gate_1\n          no_self_rescue: >-\n            Inherited verbatim (gates.yaml:565). Sharpened here: a rule may\n            not be REMOVED from rule_inventory, and a case may not be\n            removed from a rule's registered case set, because the oracle\n            failed it.\n          amendments_only_via: >-\n            public proposal + adversarial referee round + verification +\n            maintainer ratification by merge.\n          description_claims_exactly_the_scored_surface: >-\n            Bound by the standing rule (gates.yaml:1056, :3294, :4869). THIS\n            GATE'S FIRST DUTY IS TO DISCHARGE gate_2.description's \"benefit\n            formulas earn per-rule 'computes exactly' status\" (:642), which\n            today claims a status no gate_2 cell gates -- gate_2's 46 cells\n            (:917) contain no benefit-formula cell, and gate_2's own\n            certification_scope puts own-record benefit levels OUTSIDE 2a /\n            2b / 2c (:782). Either this gate defines and awards the status\n            (<RULING P1 gate_kind>), or gate_2's description is amended to\n            drop the clause. Leaving both is the one outcome the standing\n            rule forbids (P3).\n        frozen_scope_clause: >-\n          a PASS certifies a FROZEN reference oracle. Extending the module's rule coverage to clear a gap is FORBIDDEN by the module's own docstring, so a missing rule is closed in Axiom (rulespec-us us/statutes/42/415, 402, 416) and re-certified here as a cross-engine case, never by growing this module; a rule that fails is fixed in Axiom, not here.\n      certification_scope:\n        tranche: b2_statutory_benefit_oracle\n        certifies: >-\n          if ratified, a PASS certifies PER RULE, over exactly the registered case set and exactly the domain named in named_constants, that the oracle's value agrees to the cent with an independent execution (E1), matches an SSA-published figure on at least one case (E2) and exercises every branch (E3). The gate-level verdict is the PARTITION, never one boolean; a downstream citation names the RULE, never the gate.\n        supports:\n          - >-\n            the #74 SF (statutory formula) component wherever a rule holds all three conditions -- with the CITATION being the rule\n          - >-\n            gate_1's benefit_space block (the PIA-proxy functional): a certified R5 / R6 / R7 is what makes that proxy a statutory object rather than a formula\n        does_not_authorise:\n          - >-\n            any household benefit TOTAL: without the family maximum, stacked auxiliary benefits on one earnings record are UNCAPPED (CoupleBenefit.total, household.py)\n          - >-\n            any survivor or disability PIA computed through aime(): R3's constant is outside its exact domain there\n          - >-\n            spousal or survivor benefit LEVELS in GENERATED panels: those need gate_2c (gates.yaml:772-783) as well as this gate\n          - >-\n            any benefit in nominal post-entitlement dollars: no COLA is applied anywhere in ss/\n          - >-\n            anything listed in not_implemented (WEP / GPO, the retirement earnings test, the special minimum PIA, child's and parent's benefits, the disability PIA, recomputation)\n          - >-\n            any statement about a rule finer than the sixteen-rule cut (P13): R12 and R14 earn or lose the status as blocks\n          - >-\n            any rule that holds a strict subset or none of E1 / E2 / E3: the partition names it and the status is NOT awarded\n          - >-\n            the claiming-age distribution, which is gate_b2_claiming's\n        binding_of_this_text: >-\n          TEST-BOUND strings of this block: the required phrases the wording audit lists (wording_audit.required_phrases), the placeholders (ceremony_notes.placeholders_the_ratifying_round_must_fill), the digests and sizes (coverage_run_sha256, derived_from_coverage_*, the evidence_runs pins, the fragment's own text_sha256 / n_lines / n_bytes), every status label, class, failing list, case count and moved_by line of rule_inventory, the partition under every reading, the precision figures, the worked-example ratios, the ast-derived code spans and the family-maximum symbol. Every OTHER sentence -- covers, estimand, certifies, supports, does_not_authorise, the rulings' prose -- is bound by the ratifying round's READING of the diff, not by a test (referee A D3): a prose-only edit passes every binding once the byte pins are re-stated, so the round reads it.\n      coverage_record_does_not_establish:\n        # every does_not_establish line of runs/pia_rule_coverage_v1.json, carried\n          - >-\n            any per-rule status: the E1/E2/E3 fields record what the committed evidence reaches, and the packet's proposed verdicts are quoted for comparison, not adopted\n          - >-\n            that the proposed definition of \"computes exactly\" is the right one: no referee round has run\n          - >-\n            any statement about the Axiom engine or policyengine-us beyond what the committed artifacts record; neither was executed here\n          - >-\n            that the rule granularity is correct: sixteen rules is the packet's cut, and R12 and R14 each bundle several statutory operations\n          - >-\n            that any E1 status has been re-executed in this ceremony: the three engine-backed tests in tests/ss/ skip on a host without the Axiom wheel or a policyengine-us Python, and every E1 status rests on the committed cross-engine artifact as built on its recorded date\n          - >-\n            the sequencing of the lock PR: the gates.yaml citation is blob-pinned and survives the gate commit, but the two 'gate name absent from gates.yaml' tests read the live file by design and fail the moment gate_b2_pia_oracle or gate_b2_claiming lands; the commit that inserts either block must retire those assertions or supersede this artifact with a v2 in the same PR\n          - >-\n            that the typed bend-point pairs are SSA determinations: the 2026 pair has an SSA-anchor test, the 2020 pair is pinned only to the committed cross-engine rows it reproduces\n      open_rulings:\n        # Each is FILED and PRICED in runs/pia_gate_partition_v1.json\n        # open_questions_for_the_ceremony; none is made here.\n        P1: \"<RULING P1 gate_kind> -- exact agreement as a gate kind vs an amendment striking gates.yaml:642; decide FIRST. Also under P1 (referee B F5): the E2 reading of R5 weak / R7 implied -- strict does not award them, the permissive reading e2_bend_points_count_for_r5_r7 awards [R5_415a1A_pia_brackets, R7_415g_dime_floor, R10_416l_fra_schedule]\"\n        P6: \"<RULING P6 e1_waiver> -- per-rule E1 waivers for R11-R15 vs splitting the gate and holding the auxiliary half\"\n        P8: \"<RULING P8 case_set> -- is the registered case set sufficient, or must a wider one be built first\"\n        P9: \"<RULING P9 survivor_period> -- the 84-month constant vs the override reading of E2\"\n        P13: \"<RULING P13 granularity> -- the sixteen-rule cut vs splitting R12 / R14\"\n        S7: \"sequencing constraint -- ceremony_notes.flip_plan (the two live-file guard tests)\"\n        S8: \"<RULING S8 e1_clause> -- E1 as committed 2026-07-05 at engine ffef7b4, not re-executed (Axiom half)\"\n      ceremony_notes:\n        placeholders_the_ratifying_round_must_fill:\n          - \"<RULING P1 gate_kind>\"\n          - \"<RULING P6 e1_waiver>\"\n          - \"<RULING P8 case_set>\"\n          - \"<RULING P9 survivor_period>\"\n          - \"<RULING P13 granularity>\"\n          - \"<RULING S8 e1_clause>\"\n          - \"<FILLED AT RATIFICATION>\"\n        flip_plan: >-\n          the commit that inserts this block flips\n          GATE_B2_PIA_ORACLE_BLOCK_LANDED from False to True in\n          tests/test_gates_derivations.py and\n          tests/test_pia_gate_partition_v1.py, RETIRES\n          tests/test_pia_rule_coverage.py::\n          test_no_gate_b2_pia_oracle_exists_in_gates_yaml (and its claiming\n          twin tests/test_claiming_publication_floor.py::\n          test_no_gate_b2_claiming_exists_in_gates_yaml if gate_b2_claiming\n          lands in the same PR) -- both read the live file by design and\n          fail the moment the block lands (verification section 11: exactly\n          those two) -- admits the new key at the three master-compare sites\n          (test_gate_m4_flip_leaves_locked_siblings_byte_identical,\n          tests/test_gate_w1_derivations.py, tests/test_gate_m6_derivations.py),\n          fills floor_run_sha256 with the ratified sha256 of\n          runs/pia_gate_partition_v1.json, and re-refreshes the tier\n          manifest -- all in the SAME commit. The coverage record's\n          blob-pinned gates.yaml citation survives the commit unchanged.\n          Referee B F1: the flip commit does NOT re-emit this artifact\n          (floor_run_sha256 is the sha256 AS RATIFIED); the three\n          flip-time breakages B found are dispositioned in the artifact's\n          flip_plan.post_flip_test_dispositions -- the sequencing test is\n          marker-conditional, the reproduction test compares marker-aware\n          (post-flip it asserts byte_identical_to_working_tree is False\n          instead of comparing it), the m4 / w1 / m6 master-compare sites\n          are widened -- and the flip was re-simulated with them in place.\n        derivations_bound_by: >-\n          tests/test_gates_derivations.py (test_gate_b2_pia_oracle_*) and\n          tests/test_pia_gate_partition_v1.py. The bindings RUN pre-lock\n          against this string as read from the artifact and pass; they\n          are NOT skipped (referee B F9, referee A D9): the marker only\n          switches their source to the live file.\n        test_bound_strings: >-\n          TEST-BOUND strings of this block: the required phrases the wording audit lists (wording_audit.required_phrases), the placeholders (ceremony_notes.placeholders_the_ratifying_round_must_fill), the digests and sizes (coverage_run_sha256, derived_from_coverage_*, the evidence_runs pins, the fragment's own text_sha256 / n_lines / n_bytes), every status label, class, failing list, case count and moved_by line of rule_inventory, the partition under every reading, the precision figures, the worked-example ratios, the ast-derived code spans and the family-maximum symbol. Every OTHER sentence -- covers, estimand, certifies, supports, does_not_authorise, the rulings' prose -- is bound by the ratifying round's READING of the diff, not by a test (referee A D3): a prose-only edit passes every binding once the byte pins are re-stated, so the round reads it.\n        referee_record: >-\n          the threshold referee round's co-location disclosure (referees A\n          and B shared an account and a model, for capacity, not choice)\n          is carried verbatim in the artifact's referee_record.\n        wording_audit: >-\n          the two words the standing wording audit forbids occur 0 times in\n          this block (artifact wording_audit.forbidden_word_counts); the\n          definition of \"computes exactly\" is stated (P2); what a pass does\n          not authorise is stated (P14); every does_not_establish line of\n          the coverage record is carried.\n",
+    "text_sha256": "840a75baaf5150a73a5e95ff8a6873afb951eeb32ea8ca735c23810aa77f4fee",
+    "n_lines": 620,
+    "n_bytes": 42496,
     "indent": "2 spaces under `gates:`; parse with yaml.safe_load('gates:\\n' + text)['gates']['gate_b2_pia_oracle']",
     "status_in_text": "draft_pending_referee_round",
     "written_nowhere_else": "asserted by tests/test_pia_gate_partition_v1.py and tests/test_gates_derivations.py: gates.yaml mentions neither gate_b2_pia_oracle nor this artifact nor runs/pia_rule_coverage_v1.json while GATE_B2_PIA_ORACLE_BLOCK_LANDED is False, and the text occurs in no other tracked file"
   },
   "revision_pins": {
-    "populace_dynamics_sha": "cd8f167280de47444164d2ab0ec11dd061b59b00",
+    "populace_dynamics_sha": "25680f1f2fd0c5bba7e1bd0eded04e4283edd559",
     "source_coverage_sha256": "7517d27a78eaa85ec4a12f1dfe9663e535c4ea54ca3d6edf5648ea075dd6d25d",
     "source_coverage_size_bytes": 75382,
     "coverage_builder_sha256": "a45c1bbef5dc32a3a959e2dd8a5e4b940f71b1fc32b9173a7fa255f31e68d6e9",
-    "gate_builder_sha256": "f2eefac24eaec7f20022d1c6d4e2339b5cfdcb7b3b2ad182f18da66ab714cb7c",
+    "gate_builder_sha256": "96766d157e84bc8bd4218d4ef30da3fb4c99150a49adcaf83913a7ab88859d89",
     "gates_yaml_git_blob_for_the_citations": "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c",
     "gates_yaml_pin_semantics": "PROVENANCE of the line citations only; NOT a freeze of the live file. The coverage record's own citation is blob-pinned the same way and survives the gate commit; the two live-file 'gate name absent' tests do not.",
     "artifact_schema_version": "pia_gate_partition.v1"

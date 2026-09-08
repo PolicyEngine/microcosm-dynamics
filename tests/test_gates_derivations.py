@@ -4002,8 +4002,8 @@ B2C_GATE_RUN = "runs/claiming_gate_floors_v1.json"
 #: (size, sha256) of the gate-schema artifact as committed; re-stated in
 #: the same commit as any rebuild.
 B2C_GATE_COMMITTED = (
-    271_833,
-    "7d4eb3e33920fbcf50fe28bc46370704bd282bb897148261314f50b05fe9a16c",
+    309_781,
+    "e1983ccaf880c15f9fcc331adaf723f64365c91de9dd73db13bc478e94303843",
 )
 B2C_EDITION = "data/external/ssa_claim_ages_2023supplement.json"
 B2C_TRANSCRIPTION = "scripts/build_ssa_claim_ages.py"
@@ -4887,6 +4887,185 @@ def test_gate_b2_claiming_frontier_scan_recomputes():
     assert r2["rules_where_the_two_conventions_differ"] == ["ols_last_5"]
 
 
+def test_gate_b2_claiming_demotion_consequence_recomputes():
+    """Referee A D2: with age66|female|h1 demoted, the single scanned rule
+    ols_last_6 passes the remaining 33 cells (it fails exactly the knife
+    cell on the 34), and exactly three rules of referee A's 242-rule
+    wider single-rule class -- re-implemented here -- pass the 33; on the
+    34 no rule of either class passes. The artifact's
+    demotion_consequence_D2, ruling 3's consequence and the block's
+    knife_edge text carry the fact."""
+    floor = _b2c_floor()
+    art = _b2c_gate()
+    doc = _b2c_edition()
+    preds = _b2c_predictors(doc)
+    gated, _ = _b2c_partition(_b2c_derive(floor))
+    g33 = {c: t for c, t in gated.items() if c != B2C_KNIFE}
+    assert len(g33) == 33
+
+    def ols(window):
+        def f(c, s, h):
+            slope, icpt = _b2c_ols(
+                B2C_FIT_YEARS[-window:], _b2c_series(doc, c, s)[-window:]
+            )
+            return icpt + slope * (B2C_FIT_YEARS[-1] + h)
+
+        return f
+
+    assert _b2c_failures(_b2c_deviations(ols(6), doc, gated), gated) == [
+        B2C_KNIFE
+    ]
+    assert _b2c_failures(_b2c_deviations(ols(6), doc, g33), g33) == []
+    zero_on_33 = sorted(
+        [
+            n
+            for n, p in preds["all"].items()
+            if not _b2c_failures(_b2c_deviations(p, doc, g33), g33)
+        ]
+        + [
+            f"ols_last_{w}"
+            for w in range(2, 23)
+            if not _b2c_failures(_b2c_deviations(ols(w), doc, g33), g33)
+        ]
+    )
+    assert zero_on_33 == ["ols_last_6"]
+    # referee A's 242-rule wider class, re-implemented
+    fit = {
+        (c, s): _b2c_series(doc, c, s)
+        for c in B2C_CATEGORIES
+        for s in B2C_SEXES
+    }
+    years = B2C_FIT_YEARS
+    wider = {}
+    for w in range(2, 23):
+        for dlt in (0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0):
+
+            def damped(c, s, h, w=w, dlt=dlt):
+                slope, _ = _b2c_ols(years[-w:], fit[(c, s)][-w:])
+                return fit[(c, s)][-1] + dlt * slope * h
+
+            wider[f"damped_local_trend_w{w}_d{dlt}"] = damped
+        wider[f"ols_last_{w}"] = ols(w)
+
+        def log_ols(c, s, h, w=w):
+            ys = [math.log(v) for v in fit[(c, s)][-w:]]
+            slope, icpt = _b2c_ols(years[-w:], ys)
+            return math.exp(icpt + slope * (years[-1] + h))
+
+        wider[f"log_share_ols_last_{w}"] = log_ols
+
+        def renorm(c, s, h, w=w):
+            out = {}
+            for cat in B2C_CATEGORIES:
+                slope, icpt = _b2c_ols(years[-w:], fit[(cat, s)][-w:])
+                out[cat] = max(icpt + slope * (years[-1] + h), 0.0)
+            return 100.0 * out[c] / sum(out.values())
+
+        wider[f"renormalised_ols_last_{w}"] = renorm
+    for al in (0.1, 0.2, 0.3, 0.5, 0.8):
+        for be in (0.05, 0.1, 0.2, 0.3, 0.5):
+
+            def holt(c, s, h, al=al, be=be):
+                y = fit[(c, s)]
+                level, trend = y[0], y[1] - y[0]
+                for t in range(1, len(y)):
+                    new_level = al * y[t] + (1 - al) * (level + trend)
+                    trend = be * (new_level - level) + (1 - be) * trend
+                    level = new_level
+                return level + h * trend
+
+            wider[f"holt_linear_a{al}_b{be}"] = holt
+    for m in range(1, 8):
+
+        def level_rule(c, s, h, m=m):
+            v = fit[(c, s)][-m:]
+            return sum(v) / len(v)
+
+        wider[f"mean_of_last_{m}"] = level_rule
+    assert len(wider) == 242
+    fails_34 = {
+        n: _b2c_failures(_b2c_deviations(f, doc, gated), gated)
+        for n, f in wider.items()
+    }
+    fails_33 = {
+        n: _b2c_failures(_b2c_deviations(f, doc, g33), g33)
+        for n, f in wider.items()
+    }
+    assert min(len(v) for v in fails_34.values()) == 1
+    at_min = sorted(n for n, v in fails_34.items() if len(v) == 1)
+    assert all(fails_34[n] == [B2C_KNIFE] for n in at_min)
+    passing_33 = sorted(n for n, v in fails_33.items() if not v)
+    assert (
+        passing_33
+        == at_min
+        == ["holt_linear_a0.5_b0.5", "ols_last_6", "renormalised_ols_last_6"]
+    )
+    scan = art["faithful_candidate_oc_substitute"]
+    d2 = scan["demotion_consequence_D2"]
+    assert d2["ols_last_6_on_the_33"]["n_failed"] == 0
+    assert d2["ols_last_6_on_the_33"]["on_the_34_it_fails_exactly"] == [
+        B2C_KNIFE
+    ]
+    assert d2["named_and_sweep_rules_with_zero_failures_on_the_33"] == [
+        "ols_last_6"
+    ]
+    assert scan["ols_window_sweep"][
+        "windows_with_zero_failures_on_the_33_with_the_knife_cell_demoted"
+    ] == [6]
+    wide = d2["wider_single_rule_class_referee_A"]
+    assert wide["n_rules"] == 242
+    assert wide["min_n_failed_on_the_34"] == 1
+    assert sorted(wide["rules_at_the_minimum_on_the_34"]) == at_min
+    assert wide["rules_passing_33_of_33_with_the_knife_cell_demoted"] == (
+        passing_33
+    )
+    assert wide["n_rules_passing_33_of_33"] == 3
+    assert wide["n_rules_clearing_the_knife_cell_on_the_34"] == sum(
+        1 for v in fails_34.values() if B2C_KNIFE not in v
+    )
+    q3 = next(
+        q for q in art["open_questions_for_the_ceremony"] if q["id"] == "3"
+    )
+    assert "ols_last_6" in q3["consequence_of_demotion"]
+    assert q3["consequence_if_demoted"] == d2
+    knife = " ".join(
+        _gate_b2_claiming_block()["thresholds"]["knife_edge"][
+            "options_as_corrected"
+        ].split()
+    )
+    assert "ols_last_6" in knife and "passes 33 / 33" in knife
+    assert "the ONLY thing standing between the drafted surface" in knife
+
+
+def test_gate_b2_claiming_block_strata_table_binds_to_the_floor():
+    """Referee B F6: the block's floor.strata table (five rows) equals the
+    floor's strata on every field it carries, and its year strings are
+    the floor's overlap years."""
+    floor = _b2c_floor()
+    block = _gate_b2_claiming_block()
+    table = block["thresholds"]["floor"]["strata"]
+    expected_years = {
+        "conditional_settled_years": "1998-2012",
+        "conditional_terminal_year": "2013",
+        "published_settled_years": "1998-2012",
+        "published_terminal_year": "2013",
+        "average_age_column": "1998-2013",
+    }
+    assert list(table) == list(expected_years)
+    for name, row in table.items():
+        assert row["years"] == expected_years[name], name
+        for key, value in row.items():
+            if key == "years":
+                continue
+            assert value == floor["strata"][name][key], (name, key)
+        assert {"n_cells", "nonzero_cells", "mean_pp", "sd_pp", "max_pp"} <= (
+            set(row)
+        ) or name == "average_age_column"
+    assert table["conditional_terminal_year"]["sd_signed_pp"] == (
+        floor["strata"]["conditional_terminal_year"]["sd_signed_pp"]
+    )
+
+
 def test_gate_b2_claiming_mutated_builder_fails_the_binding(tmp_path):
     """SYNTHETIC: a scratch copy of the gate builder with a mutated
     tolerance rule (a doubled rounding allowance; separately, the
@@ -5011,10 +5190,20 @@ def test_gate_b2_claiming_fit_isolation_names_every_channel():
         "runs/claiming_reference_v1.json",
         B2C_EDITION,
         B2C_TRANSCRIPTION,
+        "gates.yaml",
     ]
     assert iso["scan"]["every_hit_is_a_named_channel"] is True
     assert iso["scan"]["files_hit_not_named_as_a_channel"] == []
     assert set(iso["scan"]["files_hit"]) <= set(paths)
+    # referee B F1 (iii): gates.yaml is a POST-FLIP channel; the committed
+    # artifact is built pre-flip and its scan does not hit it.
+    contract = iso["channels_carrying_the_held_out_actuals"][-1]
+    assert contract["carries_the_rows"] == {
+        "pre_flip": False,
+        "post_flip": True,
+    }
+    assert contract["hit_by_this_scan"] is False
+    assert "gates.yaml" not in iso["scan"]["files_hit"]
     script = (ROOT / B2C_TRANSCRIPTION).read_text().splitlines()
     doc = _b2c_edition()
     columns = doc["column_schema"]["raw_columns"]
@@ -5035,7 +5224,8 @@ def test_gate_b2_claiming_fit_isolation_names_every_channel():
             hits = [i + 1 for i, line in enumerate(script) if needle in line]
             assert len(hits) == 1, (sex, year)
             found.setdefault(sex, []).append(hits[0])
-    channel = iso["channels_carrying_the_held_out_actuals"][-1]
+    channel = iso["channels_carrying_the_held_out_actuals"][3]
+    assert channel["path"] == B2C_TRANSCRIPTION
     assert channel["line_numbers"] == {
         "male": sorted(found["male"]),
         "female": sorted(found["female"]),
@@ -5054,6 +5244,7 @@ def test_gate_b2_claiming_fit_isolation_names_every_channel():
     assert "EVERY committed copy of its 2020-2022 rows" in clause
     assert f"{found['male'][0]}-{found['male'][-1]}" in clause
     assert f"{found['female'][0]}-{found['female'][-1]}" in clause
+    assert "POST-FLIP channel" in clause
 
 
 def test_gate_b2_claiming_draft_block_digest_placeholders_and_wording():
@@ -5199,6 +5390,7 @@ def test_gate_b2_claiming_open_questions_are_filed_not_ruled():
         is False
     )
     assert "from one failure to zero" in q3["consequence_of_demotion"]
+    assert "ONLY thing standing between" in q3["consequence_of_demotion"]
     assert q3["envelopes"]["packet_window_grid"]["n_failed"] == 1
     assert q3["envelopes"]["widened_forecast_class"]["n_failed"] == 0
     assert q3["options"]["i_keep_as_teeth"]["priced"][
@@ -5225,9 +5417,49 @@ def test_gate_b2_claiming_open_questions_are_filed_not_ruled():
     q8 = questions["8"]["clause"]
     assert "2026-07-05" in q8 and "ffef7b4" in q8 and "not re-executed" in q8
     assert "a03e82e5" in q8
+    assert len(questions["7"]["flip_time_breakages_recorded_F1"]) == 5
     dnd = " ".join(art["does_not_do"])
     assert "edit gates.yaml" in dnd and "score a candidate" in dnd
     assert "make any ruling" in dnd
+    # referee B F3: the packet's d4 / d5 filed, not ruled
+    d45 = art["packet_open_draft_decisions_d4_d5"]
+    for key in ("d4_raw_column_surface", "d5_aggregate_statistic"):
+        assert d45[key]["status"].endswith("not ruled"), key
+        assert "packet_text" in d45[key] and "disposition" in d45[key]
+    assert "holdout_rules" in d45["d5_aggregate_statistic"]["disposition"]
+    floor = _b2c_floor()
+    for construct in ("published", "conditional"):
+        for rule in ("nearest_year", "linear_trend"):
+            assert "rmse" in floor["holdout_rules"][construct][rule]
+    notes = _gate_b2_claiming_block()["thresholds"]["ceremony_notes"]
+    carried = notes["packet_draft_decisions_not_carried_into_the_block"]
+    assert set(carried) == {"d4_raw_column_surface", "d5_aggregate_statistic"}
+    assert "filed, not ruled" in carried["d5_aggregate_statistic"]
+    # fix 10: the threshold referee round's co-location disclosure, verbatim
+    record = art["referee_record"]
+    assert record["co_location_disclosure_verbatim"].startswith(
+        "**Disclosure (required by the campaign's co-located-referee rule"
+    )
+    assert (
+        "shared an account and a model"
+        in record["co_location_disclosure_verbatim"]
+    )
+    assert "uncorroborated" in record["co_location_disclosure_verbatim"]
+    assert "d687d9902e8a0bfa" in record["A_statistical"]
+    assert "55b2d808790fe6a2" in record["B_contract_and_record"]
+    assert art["ceremony"]["threshold_referee_round"] == record
+    assert "carried verbatim" in notes["referee_record"]
+    # referee A D3 and B F9
+    assert (
+        "bound by the ratifying round's READING" in notes["test_bound_strings"]
+    )
+    scope = _gate_b2_claiming_block()["thresholds"]["certification_scope"]
+    assert (
+        scope["binding_of_this_text"]
+        == art["certification_scope"]["binding_of_this_text"]
+    )
+    assert "NOT skipped" in notes["derivations_bound_by"]
+    assert "NOT skipped" in art["ceremony"]["bindings_run_pre_lock"]
 
 
 def test_gate_b2_claiming_flip_plan_marker_sites_and_guard_tests():
@@ -5278,8 +5510,8 @@ B2P_COVERAGE_COMMITTED = (
 )
 B2P_GATE_RUN = "runs/pia_gate_partition_v1.json"
 B2P_GATE_COMMITTED = (
-    169_031,
-    "d14b7192425cc1f91e0e853fd48bca5896f89b1ddb1d2f20cccec24f984735aa",
+    221_063,
+    "67fbb9455ed7919a14fd54f4fdb2ed7ebf05ba97f8e6456d75cd997b210b74d7",
 )
 B2P_BUILDER = "scripts/build_pia_gate_partition_v1.py"
 #: This module's own mapping -- the definition's letter.
@@ -5334,8 +5566,13 @@ def _gate_b2_pia_oracle_block() -> dict:
     return yaml.safe_load("gates:\n" + text)["gates"]["gate_b2_pia_oracle"]
 
 
-def _b2p_partition(coverage: dict, e1, e2, e3, waive_label=None) -> dict:
-    """This module's own partition from the coverage record's labels."""
+def _b2p_partition(
+    coverage: dict, e1, e2, e3, waive_label=None, e1_from_evidence=False
+) -> dict:
+    """This module's own partition from the coverage record's labels --
+    or, with ``e1_from_evidence``, with E1 read from the record's
+    EVIDENCE (cross_engine.n_cases > 0 and the label not degenerate),
+    referee A D1."""
     out = {"all_three": [], "strict_subset": {}, "none": [], "per_rule": {}}
     for rule in coverage["rule_inventory"]:
         labels = (
@@ -5344,8 +5581,15 @@ def _b2p_partition(coverage: dict, e1, e2, e3, waive_label=None) -> dict:
             rule["e3"]["status"],
         )
         waived = waive_label is not None and labels[0] == waive_label
+        if e1_from_evidence:
+            e1_holds = (
+                rule["cross_engine"]["n_cases"] > 0
+                and labels[0] != "degenerate"
+            )
+        else:
+            e1_holds = e1[labels[0]]
         holds = (
-            True if waived else e1[labels[0]],
+            True if waived else e1_holds,
             e2[labels[1]],
             e3[labels[2]],
         )
@@ -5487,23 +5731,122 @@ def test_gate_b2_pia_oracle_partition_recomputes_from_coverage_labels():
 
 
 def test_gate_b2_pia_oracle_alternative_readings_recompute():
-    """Every filed alternative reading recomputes: Axiom-only E1 moves R8
-    / R9 / R16 out of E1; the P6 waiver moves the five auxiliary rules'
-    labels but none into all_three; the P9 override moves R13's label
-    only; the all-three set is R10 under every reading."""
+    """Every filed alternative reading recomputes. Axiom-only E1 applied
+    to the EVIDENCE (referee A D1) moves R8 / R9 / R16 AND R10 out of E1
+    -- R10's `satisfied` rests on 0 Axiom cases and 40 policyengine-us
+    foundation cases -- so it awards NO rule; the label-based form filed
+    at 25680f1 (retained, superseded) awarded R10; the P6 waiver moves
+    the five auxiliary rules' labels but none into all_three; the P9
+    override moves R13's label only; the permissive E2 reading for R5 /
+    R7 (referee B F5) awards three. The all-three set is R10 under every
+    LABEL-based reading and EMPTY under every filed reading; the strict
+    partition is unchanged."""
     coverage = _b2p_coverage()
     art = _b2p_gate()
     alts = art["partitions"]["alternatives"]
+    axiom_e1 = {**B2P_E1, "policyengine_us_only": False}
     axiom = _b2p_partition(
-        coverage, {**B2P_E1, "policyengine_us_only": False}, B2P_E2, B2P_E3
+        coverage, axiom_e1, B2P_E2, B2P_E3, e1_from_evidence=True
     )
-    assert axiom["all_three"] == alts["axiom_only_e1"]["all_three"]
+    assert axiom["all_three"] == alts["axiom_only_e1"]["all_three"] == []
     assert axiom["strict_subset"] == alts["axiom_only_e1"]["strict_subset"]
+    assert axiom["none"] == alts["axiom_only_e1"]["none"]
     assert set(alts["axiom_only_e1"]["moves_vs_strict"]) == {
+        "R8_402q_worker_early_reduction",
+        "R9_402w_delayed_retirement_credit",
+        "R10_416l_fra_schedule",
+        "R16_age62_composition",
+    }
+    r10 = alts["axiom_only_e1"]["per_rule"]["R10_416l_fra_schedule"]
+    assert r10["class"] == "strict_subset"
+    assert r10["failing_conditions"] == ["E1"]
+    assert r10["e1_evidence"] == {
+        "cross_engine_cases": 0,
+        "pe_us_foundation_cases": 40,
+        "e1_holds_on_the_evidence": False,
+        "label_agrees_with_the_evidence": False,
+    }
+    r10_record = next(
+        r for r in coverage["rule_inventory"] if r["id"].startswith("R10")
+    )
+    assert r10_record["e1"]["status"] == "satisfied"
+    assert r10_record["cross_engine"]["n_cases"] == 0
+    assert r10_record["pe_us_foundation_cases"] == 40
+    assert (
+        "R10_416l_fra_schedule"
+        in art["e1_clause_S8"]["policyengine_us_half"]["rules"]
+    )
+    assert (
+        "R10_416l_fra_schedule"
+        not in art["e1_clause_S8"]["axiom_half"]["rules"]
+    )
+    # the label-based form, as filed at 25680f1: retained and superseded
+    label_based = _b2p_partition(coverage, axiom_e1, B2P_E2, B2P_E3)
+    retained = alts["axiom_only_e1_label_based_as_filed_at_25680f1"]
+    assert retained["superseded"] is True
+    assert retained["counted_in_invariant_under_every_reading"] is False
+    assert (
+        label_based["all_three"]
+        == retained["all_three"]
+        == ["R10_416l_fra_schedule"]
+    )
+    assert label_based["strict_subset"] == retained["strict_subset"]
+    assert set(retained["moves_vs_strict"]) == {
         "R8_402q_worker_early_reduction",
         "R9_402w_delayed_retirement_credit",
         "R16_age62_composition",
     }
+    # the E1 label-versus-evidence audit (A D1's durable check)
+    audit = art["partitions"]["e1_label_evidence_audit"]
+    assert audit["inconsistent_rules"] == ["R10_416l_fra_schedule"]
+    for rule in coverage["rule_inventory"]:
+        row = audit["per_rule"][rule["id"]]
+        assert row["label"] == rule["e1"]["status"]
+        assert row["cross_engine_cases"] == rule["cross_engine"]["n_cases"]
+        assert row["pe_us_foundation_cases"] == rule["pe_us_foundation_cases"]
+        consistent = row["label_consistent_with_the_evidence"]
+        if row["label"] == "satisfied":
+            assert consistent is (row["cross_engine_cases"] > 0)
+        elif row["label"] == "policyengine_us_only":
+            assert consistent is (
+                row["cross_engine_cases"] == 0
+                and row["pe_us_foundation_cases"] > 0
+            )
+    # B F5: the permissive E2 reading for R5 / R7
+    permissive = _b2p_partition(
+        coverage, B2P_E1, {**B2P_E2, "weak": True, "implied": True}, B2P_E3
+    )
+    f5 = alts["e2_bend_points_count_for_r5_r7"]
+    assert (
+        permissive["all_three"]
+        == f5["all_three"]
+        == [
+            "R5_415a1A_pia_brackets",
+            "R7_415g_dime_floor",
+            "R10_416l_fra_schedule",
+        ]
+    )
+    assert permissive["strict_subset"] == f5["strict_subset"]
+    assert set(f5["moves_vs_strict"]) == {
+        "R5_415a1A_pia_brackets",
+        "R7_415g_dime_floor",
+    }
+    p1 = next(
+        q for q in art["open_questions_for_the_ceremony"] if q["id"] == "P1"
+    )
+    assert "e2_reading_of_weak_and_implied_F5" in p1
+    assert (
+        p1["options"]["a_accept_the_gate_kind"]["priced"][
+            "rules_awarded_under_the_permissive_e2_reading_for_r5_r7"
+        ]
+        == f5["all_three"]
+    )
+    assert (
+        p1["options"]["a_accept_the_gate_kind"]["priced"][
+            "rules_awarded_under_the_evidence_based_axiom_only_e1_reading"
+        ]
+        == []
+    )
     p6 = _b2p_partition(
         coverage, B2P_E1, B2P_E2, B2P_E3, waive_label="unsatisfiable_today"
     )
@@ -5530,9 +5873,54 @@ def test_gate_b2_pia_oracle_alternative_readings_recompute():
         alts["p9_constant_override_counts_as_e2"]["moves_vs_strict"]
     ) == ["R13_402q_survivor_reduction_ramp"]
     inv = art["partitions"]["invariant_under_every_reading"]
-    assert inv["rules_holding_all_three_under_every_variant"] == [
+    # A D1: the evidence-based Axiom-only reading awards no rule, so the
+    # intersection over every filed reading is EMPTY; R10 holds all three
+    # under every LABEL-based reading and under the strict reading.
+    assert inv["rules_holding_all_three_under_every_variant"] == []
+    assert inv["rules_holding_all_three_under_every_label_based_reading"] == [
         "R10_416l_fra_schedule"
     ]
+    assert inv["variants_in_the_intersection"] == [
+        "strict",
+        "axiom_only_e1",
+        "p6_e1_waiver_for_r11_r15",
+        "p9_constant_override_counts_as_e2",
+        "p6_waiver_and_p9_override",
+        "e2_bend_points_count_for_r5_r7",
+    ]
+    assert "RETRACTED" in inv["statement"]
+    assert art["partitions"]["strict"]["all_three"] == [
+        "R10_416l_fra_schedule"
+    ]
+    block = _gate_b2_pia_oracle_block()
+    bp = block["thresholds"]["partition"]
+    assert bp["invariant_under_every_filed_reading"]["all_three"] == []
+    assert bp["invariant_under_every_filed_reading"][
+        "all_three_under_every_label_based_reading"
+    ] == ["R10_416l_fra_schedule"]
+    assert bp["strict_reading"]["all_three"] == ["R10_416l_fra_schedule"]
+    inventory = block["thresholds"]["rule_inventory"]
+    assert inventory["R10_416l_fra_schedule"][
+        "moved_by_an_alternative_reading"
+    ] == ["axiom_only_e1"]
+    assert inventory["R5_415a1A_pia_brackets"][
+        "moved_by_an_alternative_reading"
+    ] == ["e2_bend_points_count_for_r5_r7"]
+    carried = " ".join(block["thresholds"]["e1_clause_as_carried"].split())
+    assert "R10's E1 label `satisfied` rests on the policyengine-us half" in (
+        carried
+    )
+    q_p6 = next(
+        q for q in art["open_questions_for_the_ceremony"] if q["id"] == "P6"
+    )
+    half = q_p6["options"]["b_split_the_gate_and_hold_the_auxiliary_half"][
+        "partition_of_the_own_benefit_half"
+    ]
+    assert half["all_three"] == ["R10_416l_fra_schedule"]
+    assert half[
+        "all_three_under_the_evidence_based_axiom_only_e1_reading"
+    ] == ([])
+    assert "STRICT-reading price" in half["caveat_D1"]
     # only R3 holds none under EVERY reading: the P6 waiver lifts R15's E1
     assert inv["rules_holding_none_under_every_variant"] == [
         "R3_415b2B_computation_year_count"
@@ -5600,7 +5988,16 @@ def test_gate_b2_pia_oracle_precision_and_e1_clause():
     carried = " ".join(block["thresholds"]["e1_clause_as_carried"].split())
     assert "E1 as committed 2026-07-05 at engine ffef7b4" in carried
     assert "a03e82e5" in carried and "PASSED" in carried
-    assert block["thresholds"]["e1_clause"] == "<RULING S8 e1_clause>"
+    # marker-conditional (the fixes sitting's simulated flip, which fills
+    # every <RULING ...> placeholder as the flip plan says the ratifying
+    # round does, found this assertion unconditional -- a fourth flip-time
+    # breakage referee B's simulation could not see because it left the
+    # placeholders unfilled): the placeholder stands while the marker is
+    # False and is gone once the block has landed.
+    if GATE_B2_PIA_ORACLE_BLOCK_LANDED:
+        assert not block["thresholds"]["e1_clause"].startswith("<RULING")
+    else:
+        assert block["thresholds"]["e1_clause"] == "<RULING S8 e1_clause>"
 
 
 def test_gate_b2_pia_oracle_worked_example_classification():
@@ -5845,7 +6242,47 @@ def test_gate_b2_pia_oracle_open_questions_are_filed_not_ruled():
         "test_no_gate_b2_pia_oracle_exists_in_gates_yaml"
         in questions["S7"]["question"]
     )
+    assert len(questions["S7"]["flip_time_breakages_recorded_F1"]) == 5
     assert "2026-07-05" in questions["S8"]["clause"]
+    assert (
+        "e2_bend_points_count_for_r5_r7"
+        in questions["P1"]["e2_reading_of_weak_and_implied_F5"]
+    )
+    block = _gate_b2_pia_oracle_block()
+    assert (
+        "e2_bend_points_count_for_r5_r7"
+        in block["thresholds"]["open_rulings"]["P1"]
+    )
+    # referee B F4: the record-hygiene leaf now exists here too
+    rh = art["record_hygiene"]
+    assert "literally ABOVE" in rh["R1_report_footer"]
+    assert "145,412" in rh["R1_report_footer"]
+    assert "F4" in rh["added_at"]
+    # fix 10: the co-location disclosure, verbatim
+    record = art["referee_record"]
+    assert record["co_location_disclosure_verbatim"].startswith(
+        "**Disclosure (required by the campaign's co-located-referee rule"
+    )
+    assert "uncorroborated" in record["co_location_disclosure_verbatim"]
+    assert art["ceremony"]["threshold_referee_round"] == record
+    notes = block["thresholds"]["ceremony_notes"]
+    assert "carried verbatim" in notes["referee_record"]
+    # referee A D3 and B F9
+    assert (
+        "bound by the ratifying round's READING" in notes["test_bound_strings"]
+    )
+    assert (
+        block["thresholds"]["certification_scope"]["binding_of_this_text"]
+        == art["certification_scope"]["binding_of_this_text"]
+    )
+    assert "NOT skipped" in notes["derivations_bound_by"]
+    assert "NOT skipped" in art["ceremony"]["bindings_run_pre_lock"]
+    assert (
+        art["certification_scope"][
+            "partition_under_the_evidence_based_axiom_only_reading"
+        ]["all_three"]
+        == []
+    )
 
 
 def test_gate_b2_pia_oracle_flip_plan_marker_sites_and_guard_tests():
@@ -5925,22 +6362,43 @@ def test_gate_b2_pia_oracle_mutated_builder_fails_the_binding(tmp_path):
 
 def test_gate_b2_both_blocks_record_the_sequencing_constraint():
     """Ruling 7 / S7: both artifacts' flip plans name BOTH live-file guard
-    tests; both tests exist today; gates.yaml carries neither gate name
-    nor any of the four artifact names (pre-flip)."""
+    tests and disposition the three flip-time breakages referee B F1
+    found; each guard test exists while its block's marker is False and
+    is gone once it is True (marker-conditional, the siblings' form --
+    B F1 (i)); gates.yaml carries neither gate name nor any of the four
+    artifact names (pre-flip)."""
     for art in (_b2c_gate(), _b2p_gate()):
         retired = " ".join(
             art["flip_plan"]["live_file_tests_the_flip_retires"]
         )
         assert "test_no_gate_b2_claiming_exists_in_gates_yaml" in retired
         assert "test_no_gate_b2_pia_oracle_exists_in_gates_yaml" in retired
-    assert (
+        disp = art["flip_plan"]["post_flip_test_dispositions"]
+        assert art["flip_plan"]["artifact_re_emitted_at_flip"] is False
+        assert "AS RATIFIED" in art["flip_plan"]["what_flips_with_it"][1]
+        for key in (
+            "test_gate_b2_both_blocks_record_the_sequencing_constraint",
+            "test_build_reproduces_the_committed_artifact",
+            "test_gate_m4_flip_leaves_locked_siblings_byte_identical",
+            "weakening_stated",
+        ):
+            assert key in disp, key
+        assert (
+            "marker-conditional"
+            in disp[
+                "test_gate_b2_both_blocks_record_the_sequencing_constraint"
+            ]
+        )
+    claiming_defined = (
         "def test_no_gate_b2_claiming_exists_in_gates_yaml"
         in (ROOT / "tests" / "test_claiming_publication_floor.py").read_text()
     )
-    assert (
+    pia_defined = (
         "def test_no_gate_b2_pia_oracle_exists_in_gates_yaml"
         in (ROOT / "tests" / "test_pia_rule_coverage.py").read_text()
     )
+    assert claiming_defined is (not GATE_B2_CLAIMING_BLOCK_LANDED)
+    assert pia_defined is (not GATE_B2_PIA_ORACLE_BLOCK_LANDED)
     if not (GATE_B2_CLAIMING_BLOCK_LANDED or GATE_B2_PIA_ORACLE_BLOCK_LANDED):
         text = (ROOT / "gates.yaml").read_text()
         for name in (
