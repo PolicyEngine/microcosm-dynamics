@@ -5,8 +5,6 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
 
 jobs:
   pytest-shard:
@@ -54,7 +52,7 @@ jobs:
       - name: Require typed graph capabilities
         run: python -c "from populace_dynamics.graph._compat import require_graph; require_graph()"
       - name: Run graph and existing mortality regressions
-        run: pytest -q tests/test_graph_mortality.py tests/test_m6_engine_refit.py tests/test_m6_engine_steps.py
+        run: pytest -q tests/test_graph_mortality.py tests/test_graph_mortality_trajectory.py tests/test_m6_engine_refit.py tests/test_m6_engine_steps.py
 
   # Fan-in jobs keeping the branch-protection context names
   # ("pytest (3.11)" / "pytest (3.13)") stable across the shard split.
