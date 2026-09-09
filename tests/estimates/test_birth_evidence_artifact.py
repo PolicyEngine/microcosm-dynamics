@@ -88,6 +88,8 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
         Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
         Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+        Path("src/populace_dynamics/engine/entrant_schedule.py"),
+        Path("src/populace_dynamics/engine/entrant_domains.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -205,6 +207,13 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
         "historically excluded PSID modules became reachable from the "
         f"birth-evidence reducer: {sorted(psid_exclusions & reachable)}"
     )
+    entrant_modules = {
+        "populace_dynamics.engine.entrant_schedule",
+        "populace_dynamics.engine.entrant_domains",
+    }
+    assert entrant_modules.issubset(module_paths)
+    assert entrant_modules.isdisjoint(reachable)
+    assert "populace_dynamics.engine.steps" in reachable
 
 
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():
