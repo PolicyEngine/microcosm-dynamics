@@ -166,6 +166,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/graph/runtime.py"),
     Path("src/populace_dynamics/graph/synthetic.py"),
     Path("src/populace_dynamics/graph/trajectory.py"),
+    Path("src/populace_dynamics/graph/trajectory_accounting.py"),
+    # This opt-in accountant is unreachable from the historical projection.
+    # The existing engine loop, steps, and package initializer remain sealed.
+    Path("src/populace_dynamics/engine/accounting.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
