@@ -88,6 +88,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
         Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
         Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+        Path("src/populace_dynamics/engine/accounting.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -130,11 +131,7 @@ def _internal_imports(
     package_parts = module_parts if is_package else module_parts[:-1]
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
-            imports.update(
-                alias.name
-                for alias in node.names
-                if alias.name in module_paths
-            )
+            imports.update(alias.name for alias in node.names)
             continue
         if not isinstance(node, ast.ImportFrom):
             continue
@@ -148,13 +145,61 @@ def _internal_imports(
             base = ".".join(base_parts)
         else:
             base = node.module or ""
-        if base in module_paths:
-            imports.add(base)
+        imports.add(base)
         for alias in node.names:
             candidate = f"{base}.{alias.name}" if base else alias.name
-            if candidate in module_paths:
-                imports.add(candidate)
-    return imports
+            imports.add(candidate)
+    # Importing a leaf executes its parent package initializers too. Include
+    # those even when an imported leaf is external or not a tracked module.
+    internal = set()
+    for imported in imports:
+        parts = imported.split(".")
+        internal.update(
+            parent
+            for length in range(1, len(parts) + 1)
+            if (parent := ".".join(parts[:length])) in module_paths
+        )
+    return internal
+
+
+@pytest.mark.parametrize(
+    "statement",
+    [
+        "import sample.leaf",
+        "from sample.leaf import function",
+        "from sample import leaf",
+        "import sample.untracked_extension",
+    ],
+)
+def test_source_reachability_includes_implicit_package_initializers(
+    tmp_path, statement
+):
+    package = tmp_path / "__init__.py"
+    leaf = tmp_path / "leaf.py"
+    hidden = tmp_path / "hidden.py"
+    consumer = tmp_path / "consumer.py"
+    package.write_text("from . import hidden\n")
+    leaf.write_text("def function(): pass\n")
+    hidden.write_text("")
+    consumer.write_text(statement + "\n")
+    modules = {
+        "consumer": consumer,
+        "sample": package,
+        "sample.leaf": leaf,
+        "sample.hidden": hidden,
+    }
+    reachable = set()
+    pending = ["consumer"]
+    while pending:
+        name = pending.pop()
+        if name in reachable:
+            continue
+        reachable.add(name)
+        pending.extend(
+            _internal_imports(name, modules[name], modules) - reachable
+        )
+    assert {"sample", "sample.hidden"}.issubset(reachable)
+    assert "sample.untracked_extension" not in reachable
 
 
 def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
@@ -205,6 +250,10 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
         "historically excluded PSID modules became reachable from the "
         f"birth-evidence reducer: {sorted(psid_exclusions & reachable)}"
     )
+    assert "populace_dynamics.engine.accounting" in module_paths
+    assert "populace_dynamics.engine.accounting" not in reachable
+    assert "populace_dynamics.engine" in reachable
+    assert "populace_dynamics.engine.steps" in reachable
 
 
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():
