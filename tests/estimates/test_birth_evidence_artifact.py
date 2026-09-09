@@ -95,6 +95,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/graph/runtime.py"),
         Path("src/populace_dynamics/graph/synthetic.py"),
         Path("src/populace_dynamics/graph/trajectory.py"),
+        Path("src/populace_dynamics/graph/trajectory_accounting.py"),
         Path("src/populace_dynamics/engine/accounting.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
@@ -229,6 +230,7 @@ def test_psid_and_graph_exclusions_are_unreachable_from_birth_evidence():
         or name.startswith("populace_dynamics.graph.")
     }
     assert graph_exclusions
+    assert "populace_dynamics.graph.trajectory_accounting" in graph_exclusions
     module_by_path = {
         path.resolve(): module_name
         for module_name, path in module_paths.items()
