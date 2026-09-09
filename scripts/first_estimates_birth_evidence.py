@@ -156,6 +156,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
     Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
     Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+    # This explicit opt-in successor is outside the reviewed projection
+    # call graph. Keep the historical steps.py implementation in the seal.
+    Path("src/populace_dynamics/engine/claiming.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
