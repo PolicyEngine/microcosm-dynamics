@@ -15,4 +15,14 @@ def run_mortality_graph(**kwargs):
     return run(**kwargs)
 
 
-__all__ = ["run_mortality_graph"]
+def run_mortality_trajectory(**kwargs):
+    """Run the existing mortality/ageing steps across annual graph periods."""
+    from ._compat import require_graph
+
+    require_graph()
+    from .trajectory import run_mortality_trajectory as run
+
+    return run(**kwargs)
+
+
+__all__ = ["run_mortality_graph", "run_mortality_trajectory"]
