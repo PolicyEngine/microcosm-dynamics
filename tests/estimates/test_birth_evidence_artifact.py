@@ -88,6 +88,12 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
         Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
         Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+        Path("src/populace_dynamics/graph/__init__.py"),
+        Path("src/populace_dynamics/graph/__main__.py"),
+        Path("src/populace_dynamics/graph/_compat.py"),
+        Path("src/populace_dynamics/graph/model.py"),
+        Path("src/populace_dynamics/graph/runtime.py"),
+        Path("src/populace_dynamics/graph/synthetic.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -157,7 +163,7 @@ def _internal_imports(
     return imports
 
 
-def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
+def test_psid_and_graph_exclusions_are_unreachable_from_birth_evidence():
     module_paths = _repository_module_paths()
     root_module = "scripts.first_estimates_birth_evidence"
     psid_exclusions = {
@@ -170,6 +176,13 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
     }
     assert root_module in module_paths
     assert psid_exclusions.issubset(module_paths)
+    graph_exclusions = {
+        name
+        for name in module_paths
+        if name == "populace_dynamics.graph"
+        or name.startswith("populace_dynamics.graph.")
+    }
+    assert graph_exclusions
     module_by_path = {
         path.resolve(): module_name
         for module_name, path in module_paths.items()
@@ -204,6 +217,10 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
     assert psid_exclusions.isdisjoint(reachable), (
         "historically excluded PSID modules became reachable from the "
         f"birth-evidence reducer: {sorted(psid_exclusions & reachable)}"
+    )
+    assert graph_exclusions.isdisjoint(reachable), (
+        "opt-in graph modules became reachable from the birth-evidence "
+        f"reducer: {sorted(graph_exclusions & reachable)}"
     )
 
 

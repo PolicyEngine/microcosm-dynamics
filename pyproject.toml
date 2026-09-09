@@ -47,6 +47,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Typed artifacts are not yet in the published 0.1.0 packages. Pin both
+# graph and Frame to the same reviewed core revision; this extra needs 3.13+.
+graph = [
+    "microcosm-frame @ git+https://github.com/PolicyEngine/microcosm.git@3ff92b0aea14407d09479bff5623dc7d1a92d008#subdirectory=packages/microcosm-frame",
+    "microcosm-graph @ git+https://github.com/PolicyEngine/microcosm.git@3ff92b0aea14407d09479bff5623dc7d1a92d008#subdirectory=packages/microcosm-graph",
+]
 dev = [
     "pytest>=7.4.0",
     "black>=23.7.0",
