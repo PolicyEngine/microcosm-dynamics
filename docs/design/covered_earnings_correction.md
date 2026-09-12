@@ -56302,3 +56302,1668 @@ member: R04 bytes are derivable, but R05, Q5, G17, authority, and production
 cannot pass. The missing-reason campaign remains outside this amendment as
 A20/revision 22, and active routing is `A20_SUCCESSOR_PROGRAM_STOP` with no
 alias.**
+
+## 34. AMENDMENT SECTION — Amendment 20: dual-authority covered-earnings correction
+
+### 34.1 Status, immutable prefix, evidence boundary, defects, and scope
+
+This section is the prospective Amendment 20 and therefore proposes design
+revision 22 under §30.2.1. Its immutable, now-operative revision-21 prefix is
+the complete design through §33: exactly 4,025,587 bytes, raw SHA-256
+`38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9`,
+Git blob `1eba7ff6366bad1999de36c9f7261ad6939ad86a`, and mode `100644`.
+The prefix interval is `[0, 4,025,587)`. Every prefix byte survives; no
+historical wording, artifact, closure, or registry value is edited by this
+amendment.
+
+The controlling consolidated campaign charter is the repository-external
+evidence record `e8-ops/sol-ce-a20-charter.md`, exactly 27,368 bytes with raw
+SHA-256
+`5ecd4092f3fc62ef894866a1a5b505d6dba7bb04cde1360ff7134d7d8e927717`.
+The adversarial law-gap report is
+`e8-ops/sol-ce-law-gap-sweep-r21-2026-08-16.md`, exactly 11,805 bytes with raw
+SHA-256
+`39887de99d75a395e97b04f33b4c5264a6828f56c9321cfe248b4ba11a7e5846`.
+Those records prove scope and discovered defects but are NONAUTHORITY for any
+source meaning, missingness, purpose, alias, binding, or field attachment.
+Their machine-local parent path is deliberately not enacted.
+
+The sweep confirmed nine seams: terminal-A19 fixtures, A19-only active-pin
+selection, the unbound R06 223-node result, 46 singleton-token collisions,
+the lifecycle-definition timing conflict, the A19/A12 construction-order
+conflict, the receipt/operativity gap, two silently changed frozen Q5 shapes,
+and the interpreter-token conflict. It also identified nine prospective
+seams. Sections 34.2–34.11 cure every structural seam. Sections 34.5.2 and
+34.3.3 enact the two unresolved factual matters as mandatory evidence probes;
+neither is represented as a proved cure.
+
+This is one two-arm successor law. The missing-reason and purpose-authority
+arms share physical source infrastructure but never share semantic admission,
+claims, digests, or acceptance. There is no planned A21. A split to A21 is
+lawful only after the charter's kill/recharter event and may not preserve a
+claim that A20 is the complete production cure.
+
+The A4 evidence freeze has not occurred. Consequently
+`amendment20_evidence_freeze_status` is exactly
+`not_instantiated_a4_required_before_ratify`, the two expected semantic-domain
+identities and every compiled successor identity are absent, and
+`amendment20_ratification_ready` is false. Absence is a closed drafting status,
+not a wildcard or zero digest. Before either referee may ratify, a later exact
+prospective edit must replace that status with `pass_a4_exact_freeze`, set
+ratification readiness true, and pin every nonempty identity required below.
+`pass_a4_exact_freeze` means the dual-review freeze and exact identity process
+passed; it does not mean either semantic arm, R04, or a downstream gate passed.
+The freeze may bind an exact permanent-failure outcome. Until it occurs, all
+A20 authority selection, R04 passage, R05, dispatch, lifecycle instantiation,
+and production are forbidden.
+
+The exact `amendment20_evidence_freeze` object has
+`schema_version`, `amendment20_evidence_freeze_status`,
+`missing_reason_authority_status`, `purpose_authority_status`,
+`prompt_field_semantic_binding_status`, `expected_identity_bindings`, and
+`amendment20_ratification_ready`. Its schema is
+`a20_evidence_freeze.v1`. The current four statuses after the schema are,
+respectively,
+`not_instantiated_a4_required_before_ratify`, JSON null, JSON null, and JSON
+null; `expected_identity_bindings` has every §34.2–§34.7 required name with a
+null value; readiness is false. At A4, the freeze status may become only
+`pass_a4_exact_freeze`; each arm status becomes either `pass` or its exact
+`fail_permanent_*_residue` identifier; and every identity value becomes a
+nonempty exact identity object. Readiness becomes true if and only if those
+shape, freeze, and identity conditions hold. It does not require any arm
+status to be `pass`. Missing keys, an unknown status, a zero/empty identity,
+or readiness true before the exact freeze aborts.
+
+#### 34.1.1 Chartered campaign stages, dates, and kill rules
+
+The two evidence arms run in parallel but exit independently through this
+exact stage order:
+
+~~~text
+E0 banked evidence reauthentication
+E1 shared physical-source closure and separate domain projections
+E2 compilers, representation bridges, and measured pilots
+A1 concentrated queues
+A2 recurring remainder
+A3 occurrence-local residue with capacity kills
+A4 dual-review reconciliation and exact identity freeze
+C20 ratification and revision-22 activation
+X1 authoritative settlement with missing dispatch disabled
+X2 complete normal R04 and R05
+historical R06 replay and first-add
+fresh reconstruction
+Q5
+slot, inventory, G17-C01, and V-B6
+sealed publication chain
+~~~
+
+Bulk adjudication retains `rounds(L, q) = ceil(2L / (3q))`, where `q` is
+observed independently reviewed logical decisions per lane-day, not an
+assumed throughput. The charter's conditional forecast, as of 2026-08-15,
+is p50 2026-11-09 and p80 2027-01-22. Those dates are planning metadata, not
+authority, promises, activation deadlines, or permission to weaken a gate.
+They must be recomputed if measured throughput, available lanes, evidence
+yield, source response, or an A21 kill/recharter event changes an assumption.
+
+The closed kill rules survive: reject any source that fails provenance,
+bytes, release, access, licensing, storage, or locator checks; kill a missing
+rule without a disjoint exact predicate and exception complement; kill a
+purpose rule that proves only navigation, universe, proximity, heading, or
+subject matter; split every nonuniform family; forbid lexical translation of
+legacy purposes, circular attachment, reviewer-created meaning, and
+cross-arm semantics; and stop for any uncovered identity, duplicate,
+overlap, conflict, source drift, reconstruction disagreement, or partial
+emission. If the missing arm exceeds the chartered residue/capacity limits or
+the purpose complement remains near the unscalable prompt-local tail, seek
+official machine-readable clarification rather than manufacturing authority.
+Any R04 or downstream failure remains permanent fail-closed residue until a
+separately scoped lawful cure passes.
+
+#### 34.1.2 Status-dependent A4 identity union and nonemission shadows
+
+For the final A4 freeze, §34.1's unconditional statement that every identity
+value is nonempty is superseded by this closed status-dependent union. The
+current drafting object has exactly 21 expected identity-binding names: the
+previous 18 names followed by, in order,
+`missing_reason_failure_shadow_identity`,
+`purpose_failure_shadow_identity`, and
+`prompt_field_semantic_failure_shadow_identity`; all 21 values remain JSON
+null while the freeze status is
+`not_instantiated_a4_required_before_ratify`. The nine common identities are
+`physical_source_identity`, `evidence_statement_identity`,
+`missing_reason_source_domain_identity`, `purpose_source_domain_identity`,
+`a20_successor_source_binding_identity`, `r04_q5_shape_identity`,
+`r06_six_module_identity`, `r06_collected_node_id_identity`, and
+`dormant_lifecycle_definition_identity`. Every ratification-ready outcome
+requires all nine to be nonempty pass identities.
+
+The remaining identities form these exact three unions:
+
+| Status member | `pass` identities | Permanent-failure status and sole required shadow |
+|---|---|---|
+| `missing_reason_authority_status` | `missing_reason_rule_set_identity`, `missing_reason_successor_relation_identity`, `missing_representation_bridge_identity` | `fail_permanent_missing_reason_authority_residue`; `missing_reason_failure_shadow_identity` |
+| `purpose_authority_status` | `purpose_rule_set_identity`, `purpose_authority_mapping_identity` | `fail_permanent_purpose_authority_residue`; `purpose_failure_shadow_identity` |
+| `prompt_field_semantic_binding_status` | `prompt_field_evidence_identity`, `prompt_field_candidate_set_identity`, `zero_candidate_positive_group_identity`, `semantic_binding_identity` | `fail_permanent_prompt_field_or_semantic_binding_residue`; `prompt_field_semantic_failure_shadow_identity` |
+
+For `pass`, every identity named in that row is nonempty and the row's shadow
+is null. For the exact permanent-failure status, every pass identity named in
+that row is null and the one shadow is nonempty. Thus a shadow proves why a
+forbidden relation is absent; it is not that relation, a partial successor,
+authority, a zero digest, or a wildcard. No other null/non-null combination is
+ratification-ready.
+
+Every ordinary common pass identity has exactly `identity_name`, `row_count`,
+`ordered_keyset_sha256`, `row_domain_sha256`, and `status`. Every arm pass
+identity inserts exact `arm_status_member` and `arm_status` after
+`identity_name`. Counts are positive JSON integers excluding booleans; both
+digests are nonzero 64-character lowercase hex; `identity_name` exact-equals
+its binding key; `status` is `pass`; and an arm identity's two status members
+exact-equal its controlling freeze member and `pass` value.
+
+The `a20_successor_source_binding_identity` instead has exactly
+`identity_name`, `row_count`, `ordered_keyset_sha256`,
+`row_domain_sha256`, `arm_status_bindings`,
+`active_identity_bindings_sha256`, and `status`, under the same positive-count,
+nonzero-digest, exact-name, and pass-status rules. `arm_status_bindings` is the
+exact three-member status mapping in the table's order.
+`active_identity_bindings_sha256` is SHA-256 of terminal-LF §29.4.1 canonical
+JSON of an object with exactly `arm_status_bindings` and
+`expected_identity_bindings`; the latter contains the other 20 binding values
+under their exact names and excludes only
+`a20_successor_source_binding_identity`, preventing a self-digest cycle.
+
+Each failure shadow has schema `a20_failure_shadow_identity.v1` and exactly:
+
+~~~text
+schema_version
+identity_name
+arm_status_member
+arm_status
+shadow_row_count
+shadow_ordered_keyset_sha256
+shadow_row_domain_sha256
+complement_identity
+forbidden_output_identity_names
+forbidden_output_paths
+nonemission_evidence
+status
+~~~
+
+Its identity name, status member, arm status, and status exact-cross-bind the
+selected table row. `forbidden_output_identity_names` is exactly that row's
+displayed pass-identity array. The shadow rows are, in that same order, one
+exact object `{"emitted":false,"identity_name":<name>}` per forbidden output.
+`shadow_row_count` is the array length;
+`shadow_ordered_keyset_sha256` hashes the terminal-LF canonical name array;
+and `shadow_row_domain_sha256` hashes the terminal-LF canonical shadow-row
+array. `forbidden_output_paths` is the same-length array obtained, without a
+caller choice, by mapping each displayed identity name in order to
+`docs/analysis/amendment_20_ratification/evidence_freeze/<identity_name>.json`.
+Every mapped path is repository-relative, canonical, traversal-free, and
+unique. A caller-selected, missing, additional, reordered, or noncanonical
+path aborts.
+
+`complement_identity` has schema
+`a20_nonemission_complement_identity.v1` and exactly `schema_version`,
+`complement_of_identity_names`, `row_count`, `ordered_keyset_sha256`,
+`row_domain_sha256`, and `status`. It exact-copies the forbidden name array,
+count, two rederived digests, and permanent-failure status. A missing, empty,
+zero, forged, reordered, or differently statused complement aborts.
+
+The shadow's `nonemission_evidence` has exactly:
+
+~~~text
+execution_commit
+execution_tree_oid
+repository_manifest_rows_before
+repository_manifest_sha256_before
+repository_manifest_rows_after
+repository_manifest_sha256_after
+repository_clean_before
+repository_clean_after
+forbidden_outputs_absent_after_execution
+~~~
+
+The commit and tree are nonzero 40-character lowercase hex and must resolve,
+with replacement objects disabled and inherited `GIT_*` controls removed, to
+an exact commit object and an exact tree object in the repository object
+store. Resolving `<execution_commit>^{tree}` must return exactly
+`execution_tree_oid`; current `HEAD` equality is not required during later
+historical validation.
+
+Each manifest-row member is a complete §29.4.1 canonical array of every
+nonignored tracked or untracked repository path in unsigned UTF-8 path order.
+Every row has exactly `path`, `mode`, `git_blob`, `byte_size`, and
+`raw_sha256`. The validator recursively enumerates the authenticated execution
+tree, reads each blob from the object store, and independently reconstructs
+every tracked row with exact mode, blob, byte count, and raw digest. In the
+validator's isolated verification checkout it also rereads all working bytes,
+requires every tracked row and the index to exact-match the authenticated
+tree, enumerates and rereads every nonignored untracked path, and requires
+exact porcelain status—including intent-to-add—to be empty. Historical
+validation must materialize that exact verification checkout; current `HEAD`
+identity is not substituted for the authenticated execution commit. Missing,
+extra, duplicate, reordered, malformed, unreadable, noncanonical,
+unsupported-mode, tree-disagreeing, staged, modified, deleted, or
+intent-to-add rows abort.
+
+The validator independently reconstructs and deep-compares both supplied
+arrays, rederives each 64-character manifest SHA-256 from its terminal-LF
+canonical array, and requires the arrays and digests to exact-equal before and
+after. It derives clean state from the authenticated complete path domain and
+derives forbidden-output absence by requiring every fixed
+`forbidden_output_paths` member to be absent from the authenticated
+after-manifest. `repository_clean_before`, `repository_clean_after`, and
+`forbidden_outputs_absent_after_execution` must exact-equal those derived
+facts.
+
+This complete-manifest evidence alternative makes no OS read-only, network,
+or captured-stream assertion: `repository_read_only`, `network_disabled`,
+`captured_streams`, and any other extra assertion fail the exact evidence
+keyset. Equality proves unchanged repository state, not an OS sandbox policy.
+No lifecycle boolean, including a true clean or absence assertion, is accepted
+as self-attestation or as a substitute for the verified Git objects and
+complete manifests. A different evidence alternative may claim read-only,
+network, or stream confinement only when it carries an equivalently
+independently verifiable execution artifact that proves those claims. Those
+verified facts plus the exact complement prove durable repository
+nonemission.
+
+For the successor composite only, §34.2.3's exact field list is extended as
+follows: immediately after `purpose_source_domain_identity`, insert the three
+status members in the table's order; immediately after
+`r04_q5_shape_identity`, insert the three shadow identities in the table's
+order and then `active_identity_bindings_sha256`. Each pass-output or shadow
+field follows the same status-dependent null/non-null rule, and the digest
+exact-equals the freeze identity's cross-binding digest. The composite
+therefore binds the selected statuses, emitted identities, and complements
+without treating a nonemission proof as emitted output.
+
+Ratification readiness is true if and only if the exact freeze status, all
+three allowed arm statuses, every schema/key/count/digest/status check, every
+pass-versus-shadow exclusivity rule, all three status cross-bindings, and the
+successor-binding digest pass. A status flip without the corresponding
+identity-union change, an arbitrary truthy mapping, a forged shadow, or a
+missing complement aborts.
+
+### 34.2 Limb I — shared source infrastructure and separate authority domains
+
+#### 34.2.1 Physical-document and statement registries
+
+The A20 physical source envelope has exactly two ordered relations:
+`a20_physical_source_rows` and `a20_evidence_statement_rows`. A physical row
+has exactly these members in this order:
+
+~~~text
+evidence_source_id
+upstream_capture_or_registry_identity
+document_role
+release_or_wave
+representation
+official_url
+canonical_local_path
+storage_identity
+byte_size
+raw_sha256
+access_disposition
+licensing_disposition
+statement_locator_ids
+extraction_tool_identity
+recovered_source_provenance
+~~~
+
+The path is repository-relative, canonical, traversal-free, and contains no
+machine-local absolute prefix. A source identity, storage identity, and path
+are unique. `byte_size` is a positive JSON integer excluding booleans. Every
+hash is lowercase exact-length hex over complete bytes. Official URL, access,
+licensing, release, role, representation, recovery provenance, and extraction
+tool identity are explicit; none may be inferred from a current URL or latest
+edition.
+
+Each statement row has exactly:
+
+~~~text
+evidence_statement_id
+evidence_source_id
+page_or_section_locator
+utf8_byte_start
+utf8_byte_end
+exact_statement_raw_sha256
+extraction_tool_identity
+recovery_provenance_id
+~~~
+
+The half-open span must slice the authenticated source bytes and reproduce the
+statement digest. Locator IDs, statement IDs, and complete preimages are
+unique. OCR or recovered bytes remain distinguishable and must bind the
+original source, recovery method, and exact recovered representation. A
+paraphrase, unavailable text, unregistered source, alias, drift, malformed
+span, or substituted edition supplies no authority.
+
+#### 34.2.2 Two closed semantic projections
+
+Construct exactly two domain projections, in this fixed order:
+
+~~~text
+missing_reason_source_domain
+purpose_source_domain
+~~~
+
+Each projection has exactly `domain_id`, `domain_version`,
+`included_source_rows`, `included_source_count`,
+`included_source_keyset_sha256`, `included_source_domain_sha256`,
+`excluded_source_rows`, `excluded_source_count`,
+`excluded_source_keyset_sha256`, `excluded_source_domain_sha256`,
+`admitted_statement_rows`, `statement_count`, `statement_keyset_sha256`,
+`statement_domain_sha256`, and `status`. Every exclusion row binds one
+physical source ID and one closed exclusion disposition. Inclusion and
+exclusion form a complete, disjoint projection of the physical source
+envelope; their counts sum to its count. The two domains independently
+authenticate every foreign key and independently derive every count, ordered
+keyset digest, and complete row-domain digest. Shared physical bytes do not
+imply shared admission. Missingness cannot entail purpose; purpose cannot
+entail missingness. A mixed semantic payload or a shared accepted semantic
+digest aborts both projections.
+
+At A4, the final law must pin each complete projection's version, inclusion
+and exclusion counts, ordered keyset digests, row-domain digests, statement
+identities, and exact `pass` status. The current draft fixes those expected
+values as absent and therefore nonpassing. The fixed A11 47-source domain,
+the 81-document questionnaire domain, and A19's historical 257+22=279 build
+input envelope retain their exact identities and members. No A20 row enters,
+renames, widens, or reinterprets those historical relations.
+
+#### 34.2.3 Successor composite binding and dual reconstruction
+
+The separate `a20_successor_source_binding` has exactly
+`historical_a19_build_input_identity`, `physical_source_identity`,
+`evidence_statement_identity`, `missing_reason_source_domain_identity`,
+`purpose_source_domain_identity`, `missing_reason_rule_set_identity`,
+`missing_reason_successor_relation_identity`,
+`missing_representation_bridge_identity`, `purpose_rule_set_identity`,
+`purpose_authority_mapping_identity`, `prompt_field_evidence_identity`,
+`prompt_field_candidate_set_identity`,
+`zero_candidate_positive_group_identity`, `semantic_binding_identity`,
+`r04_q5_shape_identity`, `canonicalization`, and `status`. Each identity
+is an exact count/keyset/domain-digest object, not a candidate-supplied
+summary. Both independent R04 reconstructors authenticate the immutable
+historical 279-row identity and separately reconstruct every A20 relation
+before reading candidate rows or status. They must deep-equal one another in
+count, order, keyset, complete row bytes, and digest. The purpose and
+missing-reason acceptance gates remain distinct even when a physical document
+appears in both projections.
+
+### 34.3 Limb II — complete missing-reason authority
+
+#### 34.3.1 Authority rules and exact occurrence compiler
+
+Every `missing_reason_authority_rules` row has exactly:
+
+~~~text
+authority_rule_id
+registered_evidence_source_ids
+registered_statement_ids
+rule_kind
+exact_scope_predicate
+explicit_exclusions
+strict_boolean_disposition
+projected_occurrence_count
+projected_occurrence_keyset_sha256
+overlap_conflict_complement_results
+~~~
+
+Every evidence foreign key resolves only inside the admitted
+`missing_reason_source_domain`. Corroborating statements remain within one
+rule. Two rules that agree on one occurrence are still duplicate authority;
+disagreement is conflict. Conflict has precedence over incomplete coverage.
+Each projection is exact, nonzero, disjoint, and exception-complete. A broad
+modal, lexical, frequency, sibling, wave, representation, ordinary-value,
+nearest-rule, priority, majority, or candidate default has zero authority.
+
+The compiler preserves each formerly unresolved literal's complete §25.3.1
+12-position identity, in order: schema tag, global member position,
+source-document position, source-row position, entry position, source
+document ID, codebook field-row ID, complete ordered nonempty locator-ID
+array, entry reference, entry kind, exact source value/range lexeme, and exact
+nonempty source meaning. It produces exactly one strict JSON Boolean claim
+for each of the 524,538 formerly unresolved literal occurrences. Missing,
+extra, duplicate, overlap, conflict, malformed identity, invalid Boolean, or
+uncovered complement aborts the complete relation.
+
+Both independent compilers derive the same exact 524,538 count, ordered
+occurrence-keyset bytes and digest, complete compiled-row bytes and digest,
+rule projections, overlap/conflict complements, and disposition counts.
+Staging is transactional. On any failure, the successor relation is not
+emitted, no partial rule is selectable, and every staged byte is discarded.
+
+#### 34.3.2 Least-risk reason construction and composition
+
+Only after both reconstructions and every preflight pass may the successor
+compose with the inherited 52 source-authorized literals and 37,283 numeric
+structural-null ranges. Unless an admitted official source enacts a richer
+taxonomy, `missing == true` receives the opaque exact-occurrence
+`psid-source-missing-reason:` identity derived from the complete §25.3.1
+identity; `missing == false` receives JSON null; numeric ranges remain JSON
+null. These values assert no semantic missing-reason class.
+
+The historical A11 relation, expected abort, A18 R06 record, 52 identities,
+524,538 blocker count, and 37,283 structural-null count remain byte exact.
+A20 uses a separately versioned settlement entry point and relation. It does
+not rewrite history or interpret the old abort as success.
+
+#### 34.3.3 Mandatory `MD=` representation bridge probe
+
+Before any rule based on the provisional `MD=` convention is admitted,
+construct `missing_representation_bridge_rows`. Each row binds an exact
+historical source/document/locator/wave/field/release coordinate to an exact
+current registered document/raw-field/release coordinate, the admitted
+official-equivalence statement IDs, the two exact representations, and one
+closed bridge disposition. The mapping and complement must be unique,
+complete, independently reconstructed, and bound by counts, ordered keyset
+digest, complete row-domain digest, and disposition census.
+
+The 54,898 direct-field ceiling, 71,635 gross source-era ceiling, and 59,424
+diagnostic shadow are distinct NONAUTHORITY observations. They are never
+averaged, equated, or promoted. The current 54,898-versus-59,424 difference
+and 87 zero projections are unresolved. Until the exact bridge accounts for
+both the difference and all zero projections, the `U24`/`E2-93MD` family
+contributes zero accepted claims and the missing arm remains nonpassing.
+
+### 34.4 Limb III — complete purpose authority
+
+#### 34.4.1 Purpose rules and successor rows
+
+The completed purpose ontology is the inherited 35-purpose vocabulary in its
+exact inherited order followed by `source_underdetermined`. That final arm is
+the enacted §34.4.2 source-backed ontology projection; it means a reconciled
+adjudication ruling proves that authenticated sources do not determine any
+nonempty inherited-purpose subset. It is not `no_applicable_purpose`, a
+determined negative, and silence or ontology inconvenience cannot create it.
+Each
+`purpose_authority_rules` row has exactly:
+
+~~~text
+purpose_authority_source_id
+rule_kind
+registered_evidence_statement_ids
+exact_prompt_scope_predicate
+explicit_exclusions
+explicit_official_purposes
+projected_prompt_count
+projected_prompt_keyset_sha256
+~~~
+
+Every purpose array is nonempty, stable-unique, and in inherited purpose
+order. Exact text can organize a review queue but cannot establish meaning.
+Navigation, universe, proximity, heading, subject matter, or reviewer
+agreement does not entail a purpose. Nonuniform families are killed and
+split to narrower source-backed scopes; no priority or majority rule exists.
+The 13 legacy literals are never lexically translated.
+
+The compiler emits one `purpose_authority_mapping_rows` member for every
+prompt with exactly:
+
+~~~text
+source_prompt_occurrence_id
+authority_basis
+purpose_authority_source_id
+evidence_statement_ids
+explicit_official_purposes
+purpose_mapping_disposition
+reconciled_adjudication_ruling_id
+~~~
+
+For a determined row, `reconciled_adjudication_ruling_id` is JSON null. For a
+`source_underdetermined` row it is the nonempty exact ruling identity and the
+row carries the same authenticated source, statement, locator, byte, and
+nonemission-provenance checks as a determined row. A missing, unauthenticated,
+or non-reconciled ruling aborts; reviewer agreement is not a ruling.
+
+This schema does not overload A19's `source_classification_row_id`. Every one
+of A19's 818 `complete_official_mapping` rows must be expressly re-ratified
+or re-grounded in admitted official evidence; manual origin is not
+grandfathered, and any source conflict reopens the row.
+
+#### 34.4.2 Totality, alternatives, and atomic gate
+
+Under the completed ontology, the prompt denominator and both disposition
+counts are exact A4 freeze-slots. The A4 freeze binds each slot to a positive
+JSON integer excluding booleans, requires the two disposition counts to sum
+exactly to the frozen prompt denominator, and requires this exact disposition
+object:
+
+~~~text
+complete_official_mapping: <A4 frozen determined census>
+source_underdetermined: <A4 frozen underdetermined census>
+U: 0
+~~~
+
+`U` is the number of prompts having no lawful disposition under that completed
+ontology. Every prompt must resolve either to a determined nonempty inherited-
+purpose array or to `source_underdetermined`; the relation is total. Acceptance
+also requires exact prompt coverage; zero gap, extra, duplicate, zero-match,
+overlap, or conflict; exact completed-ontology rule projections; two
+independent reconstructions; and equal count, keyset, row bytes, row-domain
+digest, frozen disposition census, and ruling identities. `U == 0` is
+necessary but not sufficient for R04. Failure emits no partial successor row
+or authority.
+
+Pre-reconciliation exact-row agreement is a reviewer-process alert, not an
+authority gate. The reconciled outcomes gate authority. The adjudication
+evidence measured exact-row agreement at 85.90%, macro per-prompt Jaccard at
+90.17%, and found that 61% of row mismatches shared at least one literal.
+Macro per-prompt Jaccard at or above 90% therefore survives only as a
+calibration diagnostic; it cannot select, create, or replace a disposition.
+
+This draft enacts the source-backed ontology-projection alternative and, in
+the same exact draft, changes the selector, `O_P`, expansion, joins,
+projections, and mutations. It does not enact the occurrence-kind/denominator
+correction or the separately tagged source-proved `no_applicable_purpose`
+alternative.
+
+### 34.5 Limb IV — acyclic prompt-field evidence and semantic binding
+
+#### 34.5.1 Pre-`O_P` prompt-field relation and the 46 collisions
+
+Before `O_P`, construct `prompt_field_evidence_rows` solely from
+authenticated prompt and field bytes. Each row has exactly:
+
+~~~text
+prompt_field_evidence_id
+source_prompt_occurrence_id
+interview_wave
+questionnaire_span
+prompt_source_locator_ids
+field_source_document_id
+field_source_row_id
+field_source_member
+raw_field_id
+attachment_basis
+official_alias_statement_ids
+attachment_disposition
+candidate_raw_field_ids
+~~~
+
+`questionnaire_span` has exactly `utf8_byte_start` and `utf8_byte_end`.
+They are JSON integers excluding booleans and identify the minimal half-open
+UTF-8 byte interval `[start,end)` of the exact identifier-token match in the
+authenticated prompt source bytes, with
+`0 <= start < end <= len(prompt_source_utf8_bytes)`. Thus repeated literal
+tokens in one prompt retain distinct coordinates without enlarging the source
+domain.
+
+`prompt_field_evidence_id` is literal
+`psid-prompt-field-evidence:` plus SHA-256 of terminal-LF canonical JSON of
+the remaining 12 members in displayed order. Evidence rows follow complete
+prompt source position, interview wave, source-prompt occurrence ID,
+questionnaire-span start then end, direct branch before question-token
+branch, and field reconstruction document/row/member order. Emitting an exact
+duplicate row aborts. Coordinate-distinct spans must produce distinct row
+bodies; collapsing them to one body aborts.
+
+Worked 1976 `V4632` example: prompt position 1,843 contains two exact `V4632`
+token matches. The first row carries the minimal byte interval of the first
+five-byte ASCII token and the second carries the disjoint minimal byte
+interval of the second five-byte token. Each interval is derived directly
+from the same authenticated prompt bytes. Across each of the three canonical field-source
+rows, the two spans therefore remain distinct; omitting, widening, equating,
+or deduplicating those coordinates aborts. The identical rule applies to the
+two `V4991` spans at position 1,938.
+
+Allowed positive bases are an exact source identifier or an expressly
+admitted official alias. Every candidate remains materialized in
+`candidate_raw_field_ids`. Zero or multiple candidates fail unless a
+source-backed accepted resolution, admitted alias, or denominator correction
+uniquely resolves the complete candidate set. Exact direct-ID appearance is
+not blanket precedence over a conflicting question token. The inherited
+post-`O_P` positive-field join cannot establish this relation.
+
+`attachment_disposition` is exactly
+`accepted_exact_source_identifier`,
+`accepted_expressly_admitted_official_alias`, or `unresolved_multiple`.
+The first two are lawful only when the complete candidate set has exactly one
+source-authorized survivor under the named basis. Every row in an unresolved
+multiple uses the third disposition; no one member is silently selected.
+Zero-candidate prompts have no fabricated evidence row and are instead
+carried by the complete candidate-set and grouping relations in §34.5.2.
+
+The historical collision census is exactly the 46 same-coordinate leading-
+question-token conflicts among the 818 complete-official prompt rows. The
+relation must disposition every member of that domain before normal R04 can
+pass. Separately, the prompt-level stable-unique complete candidate union over
+those 818 rows has 49 multiples. Its three additional ordinary,
+nonoverlapping evidence rows are 1974 `[V3585,V3586]`, 1985
+`[V11649,V11648]`, and 1985 `[V11616,V11676]`; they are not collision-census
+members. Separately again, `multiple_candidates` over the full 21,971-prompt
+denominator is 2,349. These evidence-dependent counts remain A4 freeze-slots:
+the numbers identify observed domains and do not instantiate freeze authority.
+
+The mandatory 1985 C68 regression
+is prompt occurrence
+`psid-questionnaire-occurrence:4cd66190a898d568dd20c27140f44f1dff53d229f664f537722624d00c9b4b67`:
+printed `V11804` is direct evidence, while token `C68.` produces both
+`V11804` and `V11805`. It remains an unresolved multiple unless admitted
+source authority supplies the exact A20 resolution; direct-ID priority,
+stable-first choice, or omission is forbidden.
+
+#### 34.5.2 Mandatory zero-candidate grouping probe
+
+Reconstruct a candidate-set row for every prompt in the A4-frozen denominator,
+including exact
+zero-, one-, and multiple-candidate counts, ordered keyset and row-domain
+digests. Every zero candidate maps through the eventual `O_P` and positive
+rows. `zero_candidate_positive_group_rows` groups the complete reference
+union by `positive_occurrence_id` and records the exact prompt complement.
+Both reconstructors must agree.
+
+Each `prompt_field_candidate_set_rows` member has exactly
+`prompt_field_candidate_set_id`, `source_prompt_occurrence_id`,
+`interview_wave`, `candidate_prompt_field_evidence_ids`,
+`candidate_raw_field_ids`, `candidate_count`, and `candidate_disposition`.
+For each prompt, before the independent §34.5.1 evidence-row sort, the
+candidate projection stream concatenates all direct-branch evidence events
+in questionnaire-span then field-reconstruction order and then all
+question-token-branch events in the same within-branch order;
+`candidate_prompt_field_evidence_ids` and `candidate_raw_field_ids` are
+respectively the complete stable-unique `prompt_field_evidence_id` and
+scalar `raw_field_id` projections of that one stream. Count is a JSON
+integer excluding booleans and equals the raw-field array length. Disposition is exactly `zero_candidates`,
+`one_candidate`, or `multiple_candidates` iff count is respectively zero,
+one, or greater than one. The ID is literal
+`psid-prompt-field-candidate-set:` plus SHA-256 of terminal-LF canonical JSON
+of the remaining six members in displayed order. Rows follow complete prompt
+source order; IDs and prompt IDs are unique.
+
+Each `zero_candidate_positive_group_rows` member has exactly
+`zero_candidate_positive_group_id`, `positive_occurrence_id`,
+`zero_candidate_source_prompt_occurrence_ids`,
+`all_source_prompt_occurrence_ids`, `complete_reference_union_ids`,
+`empty_reference_union`, and `group_disposition`. There is one row for every
+eventual positive occurrence containing at least one zero-candidate prompt.
+The prompt arrays are complete positive-row projections in source order; the
+reference union is the complete stable-unique inherited reference-ID
+projection. `empty_reference_union` is strict Boolean equality to zero union
+length. Disposition is exactly `complete_nonempty_reference_union` when false
+or `fail_empty_reference_union` when true. The ID is literal
+`psid-zero-candidate-positive-group:` plus SHA-256 of terminal-LF canonical
+JSON of the remaining six members in displayed order. Rows follow positive-
+occurrence order; IDs and positive IDs are unique. Each relation's count,
+ordered ID-array keyset digest, complete row-domain digest, and exact
+disposition census are independently reconstructed.
+
+The sweep's 15,428 zero-candidate claim and the later diagnostic compiler's
+14,450 count are NONAUTHORITY and disagree. A4 must reproduce and explain
+the difference rather than select either number. Acceptance requires zero
+eventual positive group with an empty reference union and exactly one
+accepted pre-`O_P` attachment for every codebook-supported purpose rule. A
+required zero, an all-zero positive group, or any unresolved multiple stops
+before R04 and R05 absent an admitted alias or denominator correction.
+
+#### 34.5.3 Semantic bindings and post-`O_P` joins
+
+The normal arm reuses, without renaming or duplicating, the inherited
+`near_match_source_annotation_rows` seven-key row schema, source-occurrence
+schema, `semantic_bindings` array schema, annotation-ID equation, complete-
+locator-union order, count/keyset/domain equations, and cross-use law. The A20
+`semantic_binding_identity` must deep-equal that exact relation's count,
+ordered keyset digest, and row-domain digest; there is no separate
+`semantic_binding_rows` serialization or alternate authority path.
+
+That inherited relation retains complete source-atom cover over every questionnaire
+occurrence and field-stream locator and the exact five coordinates `role`,
+`job_slot_id`, `questionnaire_component_slot_id`, `slot_kind`, and
+`field_purpose`. Binding sets are complete, jointly supported, and
+subsumption-maximal. Disposition is exactly `semantically_bound`,
+`no_supported_predicate_dimension`, or `unresolved_semantic_binding`, with
+zero unresolved rows. Both reconstructions build the relation before
+candidate rows are read and agree on count, keyset, complete row bytes,
+domain digest, cross-use, and maximality.
+
+After `O_P`, retain `occurrence_raw_field_reference_rows`,
+`positive_field_join_rows`, nonempty reference and raw-field projections,
+unique same-wave attachment, purpose expansion, and reverse covers. The
+selector domain, `O_P` order, purpose expansion, post-`O_P` joins, reverse
+covers, and rule projections all use the completed 36-arm order. The new arm
+flows through exact-token joins with the same exactness as every inherited
+purpose; a silent union or conflation is forbidden under §19.3.3. The
+known `Family`, `Dl7.`/`D17.`, and A19 `D2.` ambiguity witnesses are mandatory
+regressions. Only official evidence plus an exact admitted alias, denominator
+correction, or revised law can resolve them; normalization, similarity,
+inventory selection, or omission cannot.
+
+### 34.6 Limb V — selector, R04 order, Q5 shapes, and failure scopes
+
+#### 34.6.1 Exact construction and gate order
+
+The exact active order is:
+
+~~~text
+authenticate fixed historical denominators and both A20 source domains
+construct and seal missing rules, purpose rules, and successor source binding
+compile complete purpose mapping, prompt-field, and semantic evidence inputs
+compute completed-ontology purpose U and all independent acceptance results
+select failure or normal member
+normal only: construct H and purpose-independent source-only O_H
+normal only: require O_H before O_P
+normal only: construct O_P, semantic bindings, post-O_P joins, reverse covers,
+             purpose expansion, D0 -> search/proofs -> D1, and every R04 gate
+normal only: R05 strict certificate and dual normal-member reconstruction
+~~~
+
+This supersedes predecessor precedence and full-build-on-failure only.
+The selector and `O_P` consume the completed 36-arm order, and all purpose
+expansion, joins, reverse covers, and rule projections preserve its exact
+tokens. `O_H` remains source-only and precedes `O_P`; the pre-`O_P` field relation
+does not depend on a post-`O_P` join. Purpose totality alone never passes R04.
+Any unresolved source, purpose, attachment, semantic binding, `H`, `O_H`,
+reverse-cover, expansion, join, or other inherited normal conjunct stops
+before R05.
+
+#### 34.6.2 Read, evaluation, and serialization scopes
+
+For failure selection, both reconstructors must authenticate, read, and
+construct `questionnaire_occurrence_rows` solely to derive the fixed prompt
+denominator, purpose rows, candidate sets, and selector inputs. Those reads
+are permitted and required. On a selected failure member, the rows and all
+pass-only arrays remain forbidden from serialization into the historical
+877-byte A19 failure member or from masquerading as evaluated Q5 output.
+Thus `permitted_selector_input_reads` and
+`forbidden_selected_failure_member_serialization` are separate closed sets;
+the unqualified §33.8 combined prohibition is superseded.
+
+The exact historical A19 failure member and identity remain byte exact. An
+A20 evidence failure uses its separately tagged diagnostic status and emits
+no Q5 member, R05 certificate, authority, or production object.
+
+#### 34.6.3 Frozen-shape composition
+
+Section 20.4.2 is superseded only for A19's already enacted per-era
+`purpose_mapping_rows` insertion; A19's
+`hierarchy_preproof_domain_sha256` search-key replacement; and the following
+closed A20 additions. In `source_document_manifest`, immediately after
+`source_document_domain_sha256`, insert exactly, in order:
+
+~~~text
+a20_successor_source_binding_identity
+missing_reason_source_domain_identity
+purpose_source_domain_identity
+missing_reason_rule_set_identity
+purpose_rule_set_identity
+prompt_field_evidence_identity
+semantic_binding_identity
+~~~
+
+In the A20 normal effective authority header, replace A19's four active
+`purpose_mapping_row_count`, `purpose_mapping_keyset_sha256`,
+`purpose_mapping_domain_sha256`, and `purpose_mapping_disposition_counts`
+members with the first four successor members below, then insert the remaining
+members before inherited `positive_occurrence_row_count`, exactly in order:
+
+~~~text
+purpose_authority_mapping_row_count
+purpose_authority_mapping_keyset_sha256
+purpose_authority_mapping_domain_sha256
+purpose_authority_mapping_disposition_counts
+prompt_field_evidence_row_count
+prompt_field_evidence_keyset_sha256
+prompt_field_evidence_domain_sha256
+prompt_field_evidence_disposition_counts
+prompt_field_candidate_set_row_count
+prompt_field_candidate_set_keyset_sha256
+prompt_field_candidate_set_domain_sha256
+prompt_field_candidate_set_disposition_counts
+zero_candidate_positive_group_row_count
+zero_candidate_positive_group_keyset_sha256
+zero_candidate_positive_group_domain_sha256
+zero_candidate_positive_group_empty_union_count
+~~~
+
+Each A20 normal `era_rows` member replaces A19's adjacent
+`hierarchy_rows`, `purpose_mapping_rows`, `positive_occurrence_rows` triple
+with exactly this ordered sequence:
+
+~~~text
+hierarchy_rows
+purpose_authority_mapping_rows
+prompt_field_evidence_rows
+prompt_field_candidate_set_rows
+zero_candidate_positive_group_rows
+positive_occurrence_rows
+~~~
+
+Both expected and actual G17-C01 projections carry those exact source-
+manifest, header, and era shapes. Direct era-order concatenation independently
+reproduces every displayed row count, ordered keyset digest, complete row-
+domain digest, and disposition census. No failure arm serializes any member
+in these three addition lists. A19's 21,971-row relation remains immutable
+historical audit evidence but is absent and nonconsumable on the A20 normal
+Q5 path; it cannot feed `O_P`, a join, a purpose disposition, or a successor
+digest. Every successor row, including the former 818 complete rows, derives
+only from §34.4 authority. The inherited `near_match_source_annotation_rows`
+remains at its inherited position and exact shape; the source-manifest
+`semantic_binding_identity` is only an independent deep-equality binding to
+that one relation, not a new era array.
+
+All other §20.4.2 top-level, source-manifest, era, occurrence, positive,
+hierarchy, absence-proof, canonical-order, self-zero, and join shapes remain
+exact. A20 preserves A19's acyclic
+`D0 -> search_implementation -> A_h -> final rows -> D1` construction. No
+fixed-point, placeholder, old D1 search member, or copied digest is lawful.
+
+### 34.7 Limb VI — historical R06 authentication and dormant lifecycle law
+
+#### 34.7.1 Six-module collection binding and interpreter
+
+The exact six historical R06 test paths and authenticated identities are:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `tests/data/test_psid_codebook_extraction_validation.py` | `7b2f33af3ff6a4e389a944e349aa222f6ca41519` | 13,718 | `7af8a2847b4428fa7376598cc48333d008f225389eee461f3edae58ca624ff67` |
+| `tests/data/test_psid_missing_reason_authority_artifact.py` | `c8863f4a6a5e915666f0cce2cac4817e73839e9f` | 18,129 | `4f425c776ddba30f3b861812cdcbd0abef5b10ae0f41608bcaa6d456c9cdcd85` |
+| `tests/data/test_psid_missing_reason_authority_unit.py` | `499aa397f75e1d2f62e7c91a929f9ecdcf71a478` | 18,252 | `5e9b7cc33fd560ce5c472c6ac146f07a6b7b238003c6e96f715e417679149cda` |
+| `tests/estimates/test_birth_evidence_artifact.py` | `d4e838a1123d4e07c6f472ff64cfd6c11462f4a8` | 25,883 | `70acf9c2f36f9f88a7e5e2c8c7b5825427d6a44cf1926b0a6c0c7cf4bbb7d5d5` |
+| `tests/test_rebuild_amendment11_missing_reason_authority.py` | `632357933ea37c982d18402d249b74147cd80823` | 22,828 | `eedbab9e3ba3eaad19f08d36472b2fbc53cc5dc62b417a3600d5cb4360368dcb` |
+| `tests/test_replay_amendment11_no_movement.py` | `cc4c1c6d65c89ad97feb0b4f04e6c5d2ecd2405f` | 19,309 | `0875ac524e0cd2e7f3cb6e601026b0d2db5b459c6f426fe5182ac08ebaef9ec1` |
+
+Each listed tree entry has mode `100644`.
+
+The selector starts with the executing validator process's current
+`sys.executable`, then exact `-m`, `pytest`, and the six paths in displayed
+order. `PYTHONPATH` remains exactly `src:.`; inherited `GIT_*` variables are
+removed. No machine-local interpreter path is enacted. The ordered module
+path-array digest remains
+`a5099c464482c5b652e31e5dfa958703a4ae4c75c1dc1e4caa03cb2aef408063`.
+
+The distinct preflight collection command starts with that same dynamic
+interpreter and exact `-m`, `pytest`, `--collect-only`, and `-q` tokens,
+followed by the same six paths in displayed order. It uses the same working
+directory and environment law, removes ambient `PYTEST_ADDOPTS`, and emits no
+authority.
+
+Before replay, collect exact node IDs from those authenticated bytes. The
+terminal-LF canonical ordered 223-node-ID array is 28,268 bytes with raw
+SHA-256
+`09071bf4d9a9a5ee8b9ccc4d8d5c0bd91705c04d3c7c99d6ef155dfdc0dfdf05`.
+Its first and last IDs are respectively
+`tests/data/test_psid_codebook_extraction_validation.py::test_exact_nested_derivation_schemas_accept_generated_shapes[_text_derivation]`
+and
+`tests/test_replay_amendment11_no_movement.py::test_reason_mutation_changes_field_source_identity_but_not_terminal`.
+Because each collected row is the unique node ID scalar, this array is both
+the ordered keyset and complete collected-row domain; the named size and
+digest bind both. `expected_collected`, `collected`, and `passed` derive from
+its exact length and remain 223. Only this exact binding explains the
+historical integer 223. File or
+collection drift aborts before replay rather than changing that recorded
+result. Every historical R06 process result, test result, and JSON byte
+remains exact.
+
+The implementation entry point
+`_validate_amendment20_r06_collection_binding` rereads and authenticates all
+six working-tree and `HEAD` file identities, invokes this exact collection
+command with the executing `sys.executable`, removes inherited `GIT_*`
+variables, and reconstructs the complete node-ID array, byte size, digest,
+and endpoints. Static constants or a reported integer without that execution
+do not satisfy the gate.
+
+#### 34.7.2 Dormant definitions and ancestry DAG
+
+Section 34 may ratify complete dormant successor definitions before tier-2
+certification. This expressly supersedes §26.10.3 and DC-71 solely as to the
+timing of definitions. A dormant definition is law text and schema only: it
+creates no artifact, instance, selected relation, first-add, dispatch,
+authority, or output. A20 evidence relations may be admitted and settled
+before R06 only while missing-reason dispatch is disabled. The false members
+of §32.4.4 remain exact facts about the historical R06/A11 replay's own
+production/lifecycle emissions; they do not forbid authenticated A20 source
+manifests, rules, candidate relations, or dormant schema definitions.
+
+Every lifecycle envelope has exactly `lifecycle_stage_id`, `schema_id`,
+`predecessor_stage_ids`, `input_identity_ids`, `output_identity_id`,
+`first_add_index`, `selection_enabled`, and `status`. Schema IDs and stage IDs
+are fixed in §34.11. Status is exactly `dormant_definition`,
+`blocked_predecessor`, `pass`, or `fail_atomic_nonemission`. An output identity
+is absent until execution derives and first-adds it; it is never a zero hash.
+Failure leaves the stage and every descendant uninstantiated.
+
+The dormant definition relation has exactly these 26 rows and values. The
+displayed row order and `first_add_index` are normative:
+
+| `first_add_index` | `lifecycle_stage_id` | `schema_id` | Exact predecessor stage IDs | Exact input-identity binding roles |
+|---:|---|---|---|---|
+| 1 | `A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED` | `a20_source_settlement.v1` | `REVISION22_REGISTRY_REPIN` | `revision22_registry_repin_identity`, `a20_successor_source_binding_identity`, `dormant_lifecycle_definition_identity` |
+| 2 | `A20_NORMAL_R04_REQUIRED` | `a20_normal_r04.v1` | `A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED` | `a20_source_settlement_identity`, `historical_a19_build_input_identity` |
+| 3 | `A20_R05_REQUIRED` | `a20_r05_certificate.v1` | `A20_NORMAL_R04_REQUIRED` | `a20_normal_r04_identity` |
+| 4 | `A20_HISTORICAL_R06_REQUIRED` | `a20_historical_r06_binding.v1` | `A20_R05_REQUIRED` | `a20_r05_certificate_identity`, `r06_six_module_identity`, `r06_collected_node_id_identity`, `historical_a11_replay_identity` |
+| 5 | `A20_MISSING_REASON_SUCCESSOR_ACTIVE` | `a20_missing_reason_successor_relation.v1` | `A20_HISTORICAL_R06_REQUIRED` | `a20_historical_r06_identity`, `missing_reason_successor_relation_identity` |
+| 6 | `A20_CLASSIFIER_REBUILD_REQUIRED` | `a20_classifier_rebuild.v1` | `A20_MISSING_REASON_SUCCESSOR_ACTIVE` | `a20_active_missing_reason_identity`, `historical_classifier_input_identity` |
+| 7 | `A20_TERMINAL_MOVEMENT_REQUIRED` | `a20_terminal_movement.v1` | `A20_CLASSIFIER_REBUILD_REQUIRED` | `a20_classifier_rebuild_identity` |
+| 8 | `A20_ASSIGNMENT_REBUILD_REQUIRED` | `a20_assignment_rebuild.v1` | `A20_TERMINAL_MOVEMENT_REQUIRED` | `a20_terminal_movement_identity` |
+| 9 | `A20_LOGICAL_RANGE_REBUILD_REQUIRED` | `a20_logical_range_rebuild.v1` | `A20_ASSIGNMENT_REBUILD_REQUIRED` | `a20_assignment_rebuild_identity` |
+| 10 | `A20_STORAGE_POPULATION_REBUILD_REQUIRED` | `a20_storage_population_rebuild.v1` | `A20_LOGICAL_RANGE_REBUILD_REQUIRED` | `a20_logical_range_rebuild_identity` |
+| 11 | `A20_CONSTRUCTIBILITY_REQUIRED` | `a20_constructibility.v1` | `A20_STORAGE_POPULATION_REBUILD_REQUIRED` | `a20_storage_population_rebuild_identity` |
+| 12 | `A20_FULL_RELATION_IDENTITY_REQUIRED` | `a20_full_relation_identity.v1` | `A20_CONSTRUCTIBILITY_REQUIRED` | `a20_constructibility_identity` |
+| 13 | `A20_COMPARATOR_REQUIRED` | `a20_comparator_census.v1` | `A20_FULL_RELATION_IDENTITY_REQUIRED` | `a20_full_relation_identity` |
+| 14 | `A20_Q5_REQUIRED` | `a20_q5.v1` | `A20_COMPARATOR_REQUIRED` | `a20_comparator_census_identity` |
+| 15 | `A20_SLOT_REBUILD_REQUIRED` | `a20_slot_rebuild.v1` | `A20_Q5_REQUIRED` | `a20_q5_identity` |
+| 16 | `A20_INVENTORY_REBUILD_REQUIRED` | `a20_inventory_rebuild.v1` | `A20_SLOT_REBUILD_REQUIRED` | `a20_slot_rebuild_identity` |
+| 17 | `A20_G17_C01_REBUILD_REQUIRED` | `a20_g17_c01_rebuild.v1` | `A20_INVENTORY_REBUILD_REQUIRED` | `a20_inventory_rebuild_identity` |
+| 18 | `A20_VB6_REQUIRED` | `a20_vb6_successor.v1` | `A20_G17_C01_REBUILD_REQUIRED` | `a20_g17_c01_rebuild_identity` |
+| 19 | `A20_SUCCESSOR_BUNDLES_REQUIRED` | `a20_successor_bundles.v1` | `A20_VB6_REQUIRED` | `a20_vb6_identity` |
+| 20 | `A20_MIGRATIONS_REQUIRED` | `a20_migrations.v1` | `A20_SUCCESSOR_BUNDLES_REQUIRED` | `a20_successor_bundles_identity` |
+| 21 | `A20_CAPTURE_REQUIRED` | `a20_capture.v1` | `A20_MIGRATIONS_REQUIRED` | `a20_migrations_identity` |
+| 22 | `A20_RECEIPT_REQUIRED` | `a20_receipt.v1` | `A20_CAPTURE_REQUIRED` | `a20_capture_identity` |
+| 23 | `A20_REGISTRATION_REQUIRED` | `a20_registration.v1` | `A20_RECEIPT_REQUIRED` | `a20_receipt_identity` |
+| 24 | `A20_SEALED_RUN_REQUIRED` | `a20_sealed_run.v1` | `A20_REGISTRATION_REQUIRED` | `a20_registration_identity` |
+| 25 | `A20_WALL_LEDGER_REQUIRED` | `a20_wall_ledger.v1` | `A20_SEALED_RUN_REQUIRED` | `a20_sealed_run_identity` |
+| 26 | `A20_PUBLICATION_REQUIRED` | `a20_publication.v1` | `A20_WALL_LEDGER_REQUIRED` | `a20_wall_ledger_identity` |
+
+The row-22 `a20_receipt.v1` object is the downstream successor-publication
+and applicability receipt inherited from the covered-earnings artifact chain.
+It is not, does not contain, and cannot substitute for the external
+ratification receipt whose schema is `executed_transition_state.v2` in
+§34.8.
+
+The last column contains closed binding-role names, not literal future output
+IDs. At execution, `revision22_registry_repin_identity` exact-equals the real
+repin output. For every later row, the first role exact-equals the actual
+`output_identity_id` first-added by its sole displayed predecessor; the
+remaining roles exact-equal the separately authenticated named historical or
+settlement identity. The instantiated `input_identity_ids` array contains
+those resolved IDs in displayed role order. A role-name substitution,
+unresolved value, stale payload identity in place of the predecessor output,
+or unequal predecessor/output/input edge aborts before the row is evaluated.
+
+In every dormant row `output_identity_id` is JSON null,
+`selection_enabled` is false, and status is `dormant_definition`. At
+execution, `output_identity_id` becomes literal `a20-lifecycle-output:` plus
+SHA-256 of terminal-LF canonical JSON of `[lifecycle_stage_id, schema_id,
+predecessor_stage_ids, input_identity_ids, exact_output_payload_identity]`.
+The transition to `pass` and its first-add are atomic. Only row 5 changes
+`selection_enabled` to true on passage; every other passing row retains false.
+A missing or nonpassing predecessor yields `blocked_predecessor` with null
+output and false selection. Any other failure yields
+`fail_atomic_nonemission`, null output, false selection, and no descendant
+instantiation.
+
+The prefix's historical `A20_SUCCESSOR_PROGRAM_STOP` remains active while A20
+is unratified. Upon a real revision-22 repin, the A20-governed deep copy of the
+historical R06 lifecycle replaces only `next_required_state` with
+`A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED`. Passage of row 26 replaces
+it with `A20_SUCCESSOR_LIFECYCLE_COMPLETE`. Neither state is an A21 alias or
+permission for an unchartered amendment.
+
+The only ancestry/order is:
+
+~~~text
+revision-22 repin
+  -> admitted and independently settled A20 source relations, dispatch disabled
+  -> complete normal R04
+  -> R05 strict certificate first-add
+  -> exact historical R06 expected-abort rerun and first-add
+  -> accepted missing-reason successor selection and dispatch enablement
+  -> fresh 89,599-field classifier
+  -> terminal movement
+  -> assignments, logical ranges, and storage populations
+  -> constructibility and new full-relation identity
+  -> fresh comparator census
+  -> Q5 admission and first-add
+  -> slot, inventory, full G17-C01, and V-B6
+  -> successor bundles, migrations, capture, receipt, registration,
+     sealed run, wall/ledger, and publication
+~~~
+
+Historical classifier, movement, storage, constructibility, comparator, Q5,
+inventory, and V-B6 facts cannot be copied; zero movement cannot be assumed.
+Each stage authenticates every predecessor identity, uses its versioned
+schema, commits atomically, and first-adds in displayed order. The actual
+objects are post-operative execution outputs; this amendment emits none.
+
+### 34.8 Limb VII — exact ratification, receipt, and scratch-state law
+
+#### 34.8.1 Qualifying affirmative verdict grammar
+
+Prospectively for Amendment 20 and every later activation-affecting
+amendment, §28.2.1 condition 1 is satisfied only by two qualifying affirmative
+verdicts. A qualifying verdict incorporates §§31.3.1–31.3.3 and §30.2.4; the
+receipt is not a fifth operativity condition. Both referees independently
+verify and attest the same external executed-transition receipt before
+emitting their verdicts.
+
+Verdict bytes are strict UTF-8 with no BOM, NUL, or CR, LF separators, and
+exactly one terminal LF. They have exactly these eight lines in order:
+
+~~~text
+# RATIFY
+attested_design_byte_size: <decimal>
+attested_design_raw_sha256: <64 lowercase hex>
+attested_design_blob_oid: <40 lowercase hex>
+executed_transition_receipt_byte_size: <decimal>
+executed_transition_receipt_raw_sha256: <64 lowercase hex>
+executed_transition_receipt_schema: executed_transition_state.v2
+---
+~~~
+
+`<decimal>` is either canonical ungrouped `[1-9][0-9]*` or canonical comma
+grouping `[1-9][0-9]{0,2}(,[0-9]{3})+`; both parse to and must equal the exact
+positive integer. Leading zeroes, spaces, underscores, malformed groups,
+space grouping, incidental substrings, repeated labels, narrative bytes, or
+another line fail. The two verdict files are distinct closure artifacts but
+attest one exact candidate triple and one exact receipt pair.
+The receipt's Git-resolved `candidate_commit_identity` design tree entry is
+mode `100644`, and its complete design byte size, raw SHA-256, and Git blob
+must equal that verdict candidate triple, the closure's candidate triple, and
+the design bytes carried at the terminal registry's `ratification_commit`.
+The terminal registry's design binding raw SHA-256 must equal that same triple,
+and its ratification commit must equal the real closure's operator-integration
+commit. Neither equality makes scratch candidate commit `C` equal to that later
+real commit; only their mode-`100644` design byte/blob/SHA identity is
+cross-bound. A receipt for a different internally valid candidate is not
+composable.
+
+The preceding current-terminal-registry cross-binding applies if and only if
+Amendment 20 is the terminal closure, necessarily at revision 22. At revision
+23 or later, Amendment 20 is historical: its receipt candidate design still
+exact-equals the A20 closure and both verdicts, and the receipt's internal
+revision-22 canonical registry binding remains authenticated, but the later
+current terminal registry's design commit and SHA are not compared with A20's
+historical commit or SHA. Instead, §30.2.3 controls: independently authenticate
+the A20 closure's own operator-integration commit, sole parent, mode-`100644`
+tree entry, complete design bytes, byte count, raw SHA-256, Git blob OID, and
+A20 semantic projection. The later current registry authenticates its complete
+closure-binding domain and its own terminal design. It does not rewrite the
+historical A20 design identity.
+
+The A20 receipt is the separate tracked file
+`docs/analysis/amendment_20_ratification/executed_transition_receipt_v2.json`
+with mode `100644`. It is outside candidate `C`, outside scratch `S`, and not
+a verdict artifact. Its strict-canonical JSON bytes are created only after the
+scratch executions complete and before either real verdict; the later real
+artifact sequence first-adds the fixed path no later than closure creation.
+On the real history its unique first-add is an ancestor of or equal to the A20
+closure path's unique first-add. Candidate `C` and the later lawful
+single-parent operator integration need not have the same commit identity and
+need not be ancestor-related: a squash or cherry-pick may carry the identical
+design blob as §§28.3.2 and 28.4 permit. The receipt chronology therefore does
+not require `C` to be an ancestor of its first-add, and it must not make
+unreachable scratch `S` an ancestor of production history.
+The public loader reads that fixed path through the ordinary
+replacement-ref-immune working-tree/`HEAD` verifier, validates the complete
+v2 object under §34.8.2, and requires both verdicts' receipt byte size and raw
+SHA-256 to equal those reread bytes. Absence, an untracked or nonregular file,
+tree/worktree disagreement, another path, noncanonical bytes, or an identity
+mismatch aborts. A later activation-affecting amendment inherits the same
+`docs/analysis/amendment_<N>_ratification/executed_transition_receipt_v2.json`
+path rule unless its own exact law supersedes the receipt schema.
+Path inheritance alone does not invent a later amendment's candidate/scratch
+topology: the A20 implementation must reject `N > 20` until that amendment's
+own exact projection supplies and pins the generalized receipt transition.
+
+This exact grammar supersedes §30.2.3's loose “contains” rule and repairs the
+nonexistent §31.5 “A16 ratification demonstration” map anchor. The public
+§30.2.4 path validates A20's semantic projection, qualifying verdicts, and
+receipt attestation before returning a closure domain.
+
+That supersession is limited to verdict-byte grammar. It does not supersede
+§30.2.3's terminal-versus-historical design selector or permit a historical
+A20 receipt to bind a later terminal registry design.
+
+#### 34.8.2 Exact scratch-only transition
+
+The §31.3 same-state demonstration uses an isolated scratch descendant, never
+the production registry. Candidate commit `C` contains the final design and
+pinned implementation and records its actual sole parent. Scratch commit `S`
+is a strict child of `C` and changes only two
+`SIMULATED_NONAUTHORITY` verdict artifacts, one synthetic closure, the mutable
+scratch registry binding. The
+scratch registry is revision 22 with ordered closure domain
+`(13,14,15,16,17,18,19,20)` and design bytes exactly from `C`.
+
+Pre-receipt stand-ins use this distinct exact seven-line grammar:
+
+~~~text
+# RATIFY
+attested_design_byte_size: <decimal>
+attested_design_raw_sha256: <64 lowercase hex>
+attested_design_blob_oid: <40 lowercase hex>
+executed_transition_receipt_status: pending_same_state_execution
+simulation_context: amendment20_same_state_nonauthority_v1
+---
+~~~
+
+They are accepted only after the public-entrypoint-verifiable
+`_validate_amendment20_scratch_transition_context` predicate passes; they are
+never qualifying §28 verdicts. That predicate has no caller flag, environment
+switch, mock, private entrypoint, or verification bypass. It reads Git and the
+ordinary registry snapshot and requires all of these exact facts:
+
+~~~text
+HEAD is scratch commit S and has sole parent C
+C is the exact final candidate commit and its design/pinned files match §34.9
+HEAD is detached; no Git ref contains S; and no refs/replace ref exists
+the scratch worktree and index are clean at S
+S changes exactly the four ordered paths below and no candidate byte
+the scratch registry declares SIMULATED_STATE_AUTHORITY = NONAUTHORITY
+the scratch registry declares SIMULATION_CONTEXT = amendment20_same_state_nonauthority_v1
+the scratch registry otherwise exact-binds revision 22 and closures 13..20
+the synthetic A20 closure binds the two exact stand-ins and candidate design C
+each stand-in passes the distinct seven-line grammar
+~~~
+
+When and only when the terminal revision-22 closure supplies these two
+stand-ins, the unmodified public entrypoint invokes that predicate itself
+before accepting either artifact and before returning its closure domain. A
+predicate failure is final; the loader does not fall back from malformed real
+verdict bytes to a caller-selected scratch mode. On the later real closure,
+the stand-in grammar is forbidden and the loader instead requires the fixed
+external receipt path and both exact qualifying verdicts in §34.8.1.
+
+The exact allowed changed-path order is:
+
+~~~text
+docs/analysis/amendment_20_ratification/sol-ce-amend20-sim-r1-verdict.md
+docs/analysis/amendment_20_ratification/sol-ce-amend20-sim-r2-verdict.md
+docs/analysis/amendment_20_ratification/closure_v1.json
+scripts/covered_earnings_correction_registry.py
+~~~
+
+That terminal-LF canonical path array is exactly 260 bytes with raw SHA-256
+`5a7912498c4d959fef337f2a1d1cf85a2f254fa29d825d365ccf4fe214ad48a7`.
+
+Candidate C's production registry predecessor is fixed and unchanged: path
+`scripts/covered_earnings_correction_registry.py`, mode `100644`, 55,473
+bytes, Git blob `92a24e3af4358f75cbead00f223837a68c2f9da8`, and raw SHA-256
+`bd60336e3e388e5ef12f3f204b9bb08938c27be4db57f9e6fca6582aed7efb16`.
+The scratch validator rederives that complete identity from C before it may
+normalize any S assignment. Thus C cannot hide a duplicate, nonliteral,
+augmented, deleted, or otherwise mutating binding operation outside the exact
+production-registry bytes.
+
+The detached/unreachable conditions are checked from Git itself: `git
+symbolic-ref -q HEAD` must fail, `git for-each-ref --contains S` must return
+the empty byte string over all refs, and `refs/replace/*` must be absent. A
+ref, tag, replacement, merge, descendant, or other currently observable
+ref-reachable state containing `S` makes this adapter reject at validation
+time. The adapter makes no unobservable claim about deleted refs or a push to
+another repository; the receipt's exact C/S identities remain NONAUTHORITY
+and nonreusable outside the one validated state.
+The two scratch-only registry constants are forbidden in a production
+registry. A stand-in in an ordinary registry, a self-declared context without
+the exact C→S topology and detached-unreachable state, wrong parent/tree/path
+set, dirty index or worktree, real-verdict parser, alternate filename, or
+extra changed byte aborts. The unmodified public oracle and complete pinned
+battery run against that one state. The resulting external
+receipt uses schema `executed_transition_state.v2`. It retains §31.3.3's exact
+six-key top level and the inherited `public_oracle`,
+`full_pinned_battery`, closure-identity, and test-identity keysets. Its
+`simulated_state_manifest` replaces the v1 seven-key shape with exactly:
+
+~~~text
+schema_version
+simulated_state_authority
+candidate_commit_identity
+scratch_transition
+terminal_revision
+canonical_registry_binding
+ordered_closure_identities
+full_pinned_battery_test_identity
+~~~
+
+For A20, the inherited `full_pinned_battery.exact_command` member is the exact
+portable string:
+
+~~~text
+executing_process_sys.executable -m pytest -q tests/test_validate_amendment13_execution_law.py
+~~~
+
+Its first token is a closed selector: the ceremony resolves it to that
+executing validator process's current `sys.executable` before invocation, but
+no host-specific absolute path is serialized. A later verifier checks the
+selector string and authenticated test identity, not equality to the
+verifier's own interpreter pathname.
+
+`schema_version` is `executed_transition_state.v2`; authority is
+`NONAUTHORITY`. `candidate_commit_identity` has exactly `commit`, `tree`, and
+`sole_parent`. Those values exact-equal Git-resolved `C`, `C^{tree}`, and
+`C^`; `C` must have exactly that one parent. `scratch_transition` has exactly
+`commit`, `tree`, `sole_parent`, `changed_paths`, and
+`changed_path_domain_sha256`. Its first three values exact-equal Git-resolved
+`S`, `S^{tree}`, and `C`; `S` must have exactly that one parent. Every commit,
+tree, and parent is 40 lowercase hex. Both independent referees recompute
+those objects and equalities from the repository rather than trusting receipt
+text. `changed_paths` is the exact ordered domain of two simulated
+verdicts, one synthetic closure, and one scratch registry binding—no receipt,
+candidate, implementation, source, or unrelated path enters it—and its
+terminal-LF canonical array digest must equal the named digest. The existing
+`candidate_or_scratch_HEAD` value is thereby superseded by these two explicit
+objects. Every other §31.3.3 type, canonicalization, state-identity equation,
+public result, complete test census, and zero-nonpassing rule survives.
+
+Receipt result booleans are not self-authenticating. The receipt validator
+rereads all four changed paths from Git at `S`: it strict-parses the synthetic
+A20 closure, authenticates and seven-line-parses both stand-ins against that
+closure and candidate triple, and literal-parses the scratch registry's exact
+revision, candidate identity, closure bindings, authority, and simulation
+context without executing caller-selected code. After removing only the six
+ordinary binding assignments from C's registry AST and those same six plus
+the two scratch-only assignments from S's registry AST, the complete
+attribute-free AST dumps must be identical. Each removed name is a unique
+top-level literal assignment; C has no scratch-only assignment. Thus the
+ordinary `design_binding()` implementation and all other executable behavior
+are unchanged. Those registry values must exact-equal the receipt manifest's
+canonical registry binding and C design identity. A self-consistent receipt
+whose S tree carries another closure,
+stand-in, or registry binding aborts even when both recorded execution booleans
+are true.
+
+Real referees verify that receipt and emit the exact §34.8.1 verdicts. A
+stand-in is tagged NONAUTHORITY, nonmergeable,
+noncopyable, nonreusable, and cannot enter the real closure.
+
+The later real sequence remains: final candidate, same-state receipt, two
+real verdicts, lawful sole-parent operator integration, A20 closure creation,
+and real revision-22 registry repin. This draft changes no registry byte.
+
+### 34.9 Implementation pins, semantic projection, activation, and routing
+
+#### 34.9.1 Active implementation pins and fixpoint
+
+The Amendment-20-governed active identity is exactly mode `100644` and these
+three path/blob/byte/hash rows:
+
+| Path | Git blob | Bytes | Raw SHA-256 |
+|---|---|---:|---|
+| `scripts/validate_amendment13_execution_law.py` | `5a8f318b8ea24b3ca22c71e874eae22ba9f4fa3e` | 666,439 | `2e1f07f849743f09a0cb6ec07033b1b379e5b62696c7451ed45bbe2e306e9f90` |
+| `tests/test_validate_amendment13_execution_law.py` | `b91f8a193589f11ad1de9a2cf294e24e7d01996a` | 185,950 | `0447d19588bf9a4a929844e2be1bf28e5127f48c2becb12625c2cde08c22a458` |
+| `scripts/build_amendment13_tier2_repairs.py` | `8e7550ff71cd43f3acd39b7fd1779b6e3a223581` | 111,145 | `2ff0ff39d7ca316fb78c1beb8164300991ea194e803795e642b544bd78b5ef1b` |
+
+The semantic projection requires the exact 4,025,587-byte revision-21 prefix,
+one Amendment-20 boundary, UTF-8, and one terminal LF. It strict-parses the
+complete §34.12 manifest and hashes the entire normalized A20 suffix. Exactly
+ten captures may be normalized: mode plus each of the three rows' blob OID,
+decimal byte count, and raw SHA-256. Each remains separately Git- and
+byte-authenticated. No evidence identity, readiness value, manifest member,
+verdict grammar, supersession, routing value, or other prose byte is
+normalized.
+
+The final fixed point is: freeze prose/manifest; compute the normalized §34
+digest; set the validator constant; format code/tests; derive the exact three
+implementation rows; replace only the ten captures; and prove the normalized
+digest unchanged. Any other change invalidates the semantic digest and pins.
+
+#### 34.9.2 Exact route and production boundary
+
+The current production registry remains exact revision 21, terminal
+Amendment 19, ordered closure domain `(13,14,15,16,17,18,19)`, and closure
+count `7 = 21 - 14`. Its ordinary loader must reject the unratified A20 suffix.
+Only the exact §34.8 scratch copy may bind revision 22 before real activation.
+
+For prospective validation, exact revision-21 constants and the A20 boundary
+select A20 pins before A19 pins. A terminal Amendment 20 validates the exact
+A19 prefix and complete A20 projection. Every later amendment first validates
+the inherited A20 projection. An arbitrary A20 suffix, A19-only fallback,
+wrong terminal heading, second A20 boundary, non-pin semantic change, pending
+A4 freeze presented as ready, or alternate active route aborts. Historical
+A19 validation uses only the exact revision-21 prefix and its own pin table.
+
+Amendment 20 is activation-affecting. Its exact proposed transition is
+terminal Amendment 20, revision 22, ordered closure domain
+`(13,14,15,16,17,18,19,20)`, and closure count `8 = 22 - 14`. One final
+same-state public-oracle execution and the complete final pinned battery must
+have zero failed, skipped, deselected, xfailed, or xpassed tests. Activation
+requires the exact receipt, qualifying dual verdicts, operator integration,
+closure, and later real registry repin. This draft performs none of them.
+
+### 34.10 Exact mutation inventory and inherited censuses
+
+The separate Amendment-20 mutation inventory is exactly:
+
+~~~text
+shared_source_domain_or_statement_locator_forged
+missing_reason_rule_or_exact_cover_forged
+purpose_authority_or_totality_forged
+prompt_field_or_semantic_binding_forged
+r04_order_source_binding_or_q5_shape_forged
+r06_collection_or_lifecycle_order_forged
+receipt_verdict_or_scratch_transition_forged
+amendment20_terminal_pin_or_suffix_route_forged
+evidence_freeze_identity_shadow_or_status_forged
+failure_shadow_nonemission_provenance_forged
+determined_as_source_underdetermined_without_ruling_forged
+source_underdetermined_as_no_applicable_purpose_forged
+source_underdetermined_a4_census_binding_forged
+completed_ontology_new_arm_omitted
+coordinate_distinct_questionnaire_spans_collapsed_to_one_body_forged
+~~~
+
+Its terminal-LF canonical name array is 738 bytes with raw SHA-256
+`eab546538a26abac04f559b73646bbca9d240832ae9d9ee82c6295a1462d0e2b`.
+A name is appended only after every implemented attack in that group reaches
+and fails its intended contract gate. At this evidence-incomplete draft stage,
+the exact attacks are closed-manifest removal or mutation of source-domain,
+statement-span, missing exact-cover/Boolean/bridge, purpose 818/U/totality,
+C68/46/candidate-partition/zero-group/semantic, build-order/Q5/279,
+R06 interpreter/file/count/lifecycle, receipt-schema/path, and
+terminal/revision/routing members; strict verdict CRLF mutation; live
+reauthentication of the six files and 223 collected nodes; and rejection of
+stand-ins in the ordinary attached production worktree. The focused receipt
+tests separately rederive C/S, the synthetic closure, both stand-ins, and the
+scratch registry and reject a function-only registry forgery. These attacks
+do not claim that absent A4 evidence rows or the future same-state scratch
+commit have already been instantiated. The final pinned battery must add and
+pass row-level, rule-overlap, complete-46, zero-group omission, receipt
+absence/mismatch, and valid-scratch reuse attacks against those frozen objects
+before either qualifying verdict; manifest-only rejection cannot substitute
+for that later evidence/runtime coverage.
+
+The ninth group first accepts exact synthetic controls for all-pass and for
+each of the three independent permanent-failure statuses, using one real
+temporary Git repository whose exact commit, tree, blob, manifest rows, and
+manifest digest are reconstructed from its object store. It then rejects a
+forged failure-shadow digest, a missing complement, a status flip that retains
+the prior union of pass identities and shadow, and replacement of all identity
+values by arbitrary truthy mappings. Each of those four attacks continues to
+reach and fail its prior status-dependent freeze gate rather than relying on
+whole-manifest inequality.
+
+The tenth group starts from that accepted real scratch provenance, substitutes
+nonexistent execution commit and tree object IDs plus arbitrary equal manifest
+hashes, retains the complete manifest arrays and the derived clean/absence
+assertions, and recomputes the outer successor-binding digest. It must reach
+raw Git object authentication and fail because the commit does not resolve.
+An unkeyed outer digest, equal caller-provided hashes, or true booleans never
+authenticate the forged provenance.
+
+The final four groups separately reject a determined row rewritten as
+`source_underdetermined` without its reconciled ruling, conflation of
+`source_underdetermined` into `no_applicable_purpose`, disagreement between
+the underdetermined census and its A4 freeze-slot binding, and a completed-
+ontology disposition object missing the new arm. Each reaches and fails the
+purpose-authority contract rather than relying on whole-manifest inequality.
+The fifteenth group collapses two coordinate-distinct questionnaire spans to
+one evidence body and must fail the prompt-field contract.
+
+The runner first executes and authenticates these five separate inherited
+censuses, without relabeling their total as an A20 census:
+
+| Inventory | Count | Raw SHA-256 |
+|---|---:|---|
+| inherited complete certificate | 100 | `fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3` |
+| Amendment 16 | 7 | `1e00099f636c1a727839ebc298b965cd0981e0ad8f23189367ba7dbd0eddb871` |
+| Amendment 17 | 3 | `b19ebcbf47278d63e12bd8021334a88910895bdfe48caf2d49c6bbe3014417e6` |
+| Amendment 18 | 3 | `1bf9f6d30461d003cab597a405cb5cc9855273372ed3e7e5b36b1627eaa11108` |
+| Amendment 19 | 3 | `002aa021325c18e311cc778562ad0e937468a90c378db0740290fcf617929101` |
+
+Only after the inherited `100 + 7 + 3 + 3 + 3 = 116` attacks pass does the
+runner execute the fifteen A20 attacks. Drift, omission, reordering, wrong-gate
+rejection, type coercion, or census inflation aborts.
+
+### 34.11 Complete supersession, preservation, and new identifiers
+
+The complete supersession and preservation disposition is:
+
+| Earlier normative anchor | Amendment-20 disposition |
+|---|---|
+| §19.3.3 purpose classification, prompt consumption, singleton token/group attachment, `source_document_manifest` and `era_rows` shapes, `near_match_source_annotation_rows`/semantic bindings, and post-`O_P` joins | Superseded for the A20 successor by admitted purpose rules, complete A4-frozen-denominator re-grounding over the completed ontology, pre-`O_P` evidence, source-backed resolution rows that materialize every candidate, and only §34.6.3's exact manifest/era replacements. All 46 collisions require dispositions; there is no direct-ID priority. The inherited seven-key near-match row is reused as the sole semantic-binding serialization and deep-equals the A20 identity. Its five-coordinate binding, nonempty exact-token joins, ambiguity abort absent accepted evidence, reverse covers, and source-only limits survive. |
+| §20.4.2 frozen Q5 shapes; §§33.2.2 and 33.3.2; the corresponding §33.7 shape rows | Superseded only by A19's per-era purpose rows and preproof search-key change and §34.6.3's exhaustive A20 header/per-era additions. Every other frozen shape, ordering, self-zero, and join rule survives. |
+| §§19.4.2, 26.6.1, and 26.10.1 expected/actual G17-C01, effective-header, Q5, inventory, and slot projections | On the A20 normal arm, both expected and actual projections carry every exact §34.6.3 header and per-era addition and direct-concatenation identity. Failure arms emit none of those pass-only projections. Every unnamed member and order survives. |
+| §§25.2–25.4 historical missing-reason census and settlement | Historical 47-source audit, 12-position identities, 52 authorized literals, 524,538 unresolved blocker, 37,283 numeric nulls, abort, and nonemission remain exact. A20 adds a separately versioned, transactionally selected successor relation. |
+| §§25.5 and 25.10.1–25.10.2 blocker, no-movement, and later-successor stop; §§32.4.4, 32.7–32.8, and 33.4 active `A20_SUCCESSOR_PROGRAM_STOP` | Historical expected abort, no-movement conclusions, and stop literal survive while A20 is unratified and through R06. Real revision-22 repin changes active `next_required_state` to row 1; only after settled source relations, normal R04, R05, and exact historical R06 may row 5 select the successor and enable dispatch. No earlier conclusion is rewritten. |
+| §25.6.6 exact selector and §§32.4.2–32.4.3 R06 input/test result; the deficient §32.7 row | Superseded only for command position zero by executing-process `sys.executable` and completed by the six exact file identities and 223-node array identity. `PYTHONPATH`, module order, sanitized environment, and historical result survive. |
+| §§25.9–25.10 lifecycle families, §26.10.3, and DC-71 | Superseded solely to allow §34's dormant definitions before certification. After revision-22 activation, rows 1–4 may instantiate and first-add only in their exact source-settlement→R04→R05→historical-R06 order. No successor selection, dispatch, or row-5-through-row-26 instance, first-add, authority, or output exists before that order completes. Other lifecycle ancestry and nonemission rules survive. |
+| §26.6.3, §26.10.1, §33.2.2–§33.2.3, and the first §33.7 construction-order row | Superseded only in precedence and failure-arm nonexecution by §34.6.1. Source-only `O_H` still precedes `O_P` on the normal arm; no purpose failure arm evaluates the full normal build. |
+| §26.11.2 complete R04/R05/R06 gate | Preserved and strengthened by separate source-domain authentication, prompt-field evidence, semantic binding, post-`O_P` joins, and dual reconstruction. Purpose `U == 0` alone is never passing. |
+| §§28.2.1 and 28.4 verdict/operator/closure order | Composed prospectively: condition 1 requires two qualifying §34.8.1 verdicts that attest the same verified §31.3 receipt. Scratch stand-ins are NONAUTHORITY and cannot satisfy the real sequence. The other three iff conditions and real sole-parent sequence survive. |
+| §§29.4.4–29.4.5 source-member identity and independent reconstruction | Composed with the separate A20 successor binding. Both reconstructors preserve the historical 279 envelope and independently authenticate both A20 semantic domains and every successor relation. |
+| §29.4.1 canonicalization and identity equations | Fully preserved for every A20 relation: ASCII JSON, sorted keys, compact separators, no nonfinite value, and one terminal LF. Displayed schema-member order remains normative independently of sorted canonical bytes. |
+| §§30.2.3–30.2.4 verdict checking and public atomic operativity | Superseded prospectively by the closed UTF-8/LF/decimal/receipt grammar and A20 projection check before the public oracle returns. Historical closure bytes remain valid under historical law. |
+| §30.2.2 exact five-key registry context and caller-context prohibition | Preserved for every ordinary production invocation. Candidate C retains the exact pinned revision-21 production-registry bytes. The public-entrypoint scratch adapter may additionally read only the two exact scratch registry constants `SIMULATED_STATE_AUTHORITY` and `SIMULATION_CONTEXT` after the Git-derived detached/unreachable predicate passes; they are absent and forbidden in production, are not caller input, and cannot widen the ordinary five-key context. S's nonbinding AST must otherwise equal C's exactly. |
+| §30.2.1 amendment/revision arithmetic | Preserved and applied: Amendment 20 proposes revision 22, terminal closure 20, and eight closures because `8 = 22 - 14`. |
+| §§31.3.1–31.3.3 same-state demonstration and the §31.5 nonexistent “A16 ratification demonstration” map row | Composed with §§28.2.1 and 30.2.4 by §34.8. Receipt verification is part of a qualifying affirmative verdict, not a fifth operativity condition. The six-key receipt top level survives; its v1 manifest is superseded only by the exact v2 candidate/scratch topology, the portable executing-process command selector, independent synthetic-closure/stand-in/registry rederivation, and the distinct pending stand-in that resolves pre-verdict chronology. |
+| §§32.2.1–32.2.2 and §33.8 authenticated 257+22=279 build-input envelope | Preserved byte-for-byte. A20 sources enter only the separately authenticated successor composite and never widen or rename the historical envelope. |
+| §32.4.4 false R06 lifecycle booleans | Preserved as exact facts about the historical R06/A11 execution's production and lifecycle outputs. They do not prohibit pre-R06 evidence relations while dispatch-disabled or dormant law definitions. |
+| §§30.4.1, 31.2.2, 32.5.1, and 33.5.1 active implementation rows and narrow pre-ratification review | Historical pin tables remain exact. After final freeze, only the A20 three-row table becomes the active prospective-validation selector; publisher isolation, working-tree/HEAD/Git checks, narrow review, and the three-path domain survive. |
+| §§33.2.2–33.2.3 purpose rows and selected A19 failure member | A19's relation survives only as immutable historical audit evidence and is absent/nonconsumable on the A20 normal Q5 path; its exact 877-byte historical failure member also survives. A20 replaces active mapping and selection only after every row in the A4-frozen prompt denominator has a lawful completed-ontology disposition and every R04 conjunct passes; A20 evidence failures use separate diagnostic statuses. |
+| §33.3.2 D0/search/proof/D1 construction | Preserved exactly and composed after the A20 normal selector. No A20 relation may recreate the digest cycle. |
+| §33.4 obsolete campaign pin and A20 out-of-scope label | Superseded as prospective scope by the exact consolidated charter pin in §34.1. Historical A19 routing remains evidence of its then-deferred program. |
+| §§33.5.2–33.5.3 A19 projection, routing, and activation | Historical A19 validation uses the exact revision-21 prefix. Active prospective routing adds exact A20 terminal/inherited validation and the revision-22 same-state obligation. |
+| §33.6 mutation inventory and inherited census | Preserved as three A19 names after the earlier 113 attacks. A20 runs the five inherited censuses separately, then its own fifteen-name inventory. |
+| The four §33.7 rows concerning construction order, raw-field ambiguity, Q5 shape, and R04 reconstruction | Superseded or composed exactly as the first, second, sixth, seventh, and ninth rows of this table; no unlisted A19 semantic change is implied. |
+| §33.8 `questionnaire_occurrence_rows` combined evaluation/serialization prohibition | Superseded by two scopes: authenticated read/construction is required for the selector, while serialization into the failure member and treatment as pass-only output remain forbidden. The 877-byte member survives. |
+| §33.9 terminal A19 prospective effect | Preserved as historical drafting law and superseded only as the terminal prospective section by §34.13 after A19's external activation. |
+| §§20.3, 21.3–21.5, 22.2–22.5, 23.2–23.5, and 24.2–24.6 downstream algorithms | Preserved as algorithms but every A20-affected classifier, movement, assignment, range, storage, constructibility, full identity, and comparator fact is freshly recomputed; no historical result is copied. |
+| §§19.6–19.8, 20.7–20.8, 21.8–21.9, 22.8–22.9, 23.8–23.9, 24.9–24.10, and 25.9–25.10 artifact families | Composed with §34.7's versioned lifecycle envelope, exact DAG, atomic gates, and first-add order. Historical artifact bytes and predecessor versions survive. |
+| §§27.3–27.6 repair overlays and six seals; §28.2.2 closure schema/history; §29.4.7 raw 100-census attestation | Fully preserved. A20 neither changes their bytes nor treats their conclusions as authority for either new semantic arm. |
+
+No predecessor byte is deleted. Any prior requirement not expressly changed
+in the table remains exact. A new relation never silently waives an inherited
+normal gate. A failure member's omission is lawful only where §34 expressly
+forbids evaluation or serialization.
+
+The exact new schema identifiers are:
+
+~~~text
+amendment_20_dual_authority_successor_law.v1
+executed_transition_state.v2
+a20_evidence_freeze.v1
+a20_failure_shadow_identity.v1
+a20_nonemission_complement_identity.v1
+a20_physical_source_registry.v1
+a20_evidence_statement_registry.v1
+a20_missing_reason_source_domain.v1
+a20_purpose_source_domain.v1
+a20_successor_source_binding.v1
+a20_missing_reason_authority_rules.v1
+a20_missing_reason_successor_relation.v1
+a20_missing_representation_bridge.v1
+a20_purpose_authority_rules.v1
+a20_purpose_authority_mapping.v1
+a20_prompt_field_evidence.v1
+a20_prompt_field_candidate_sets.v1
+a20_zero_candidate_positive_groups.v1
+a20_source_settlement.v1
+a20_normal_r04.v1
+a20_r05_certificate.v1
+a20_historical_r06_binding.v1
+a20_classifier_rebuild.v1
+a20_terminal_movement.v1
+a20_assignment_rebuild.v1
+a20_logical_range_rebuild.v1
+a20_storage_population_rebuild.v1
+a20_constructibility.v1
+a20_full_relation_identity.v1
+a20_comparator_census.v1
+a20_q5.v1
+a20_slot_rebuild.v1
+a20_inventory_rebuild.v1
+a20_g17_c01_rebuild.v1
+a20_vb6_successor.v1
+a20_successor_bundles.v1
+a20_migrations.v1
+a20_capture.v1
+a20_receipt.v1
+a20_registration.v1
+a20_sealed_run.v1
+a20_wall_ledger.v1
+a20_publication.v1
+~~~
+
+The exact new status, lifecycle, and authority identifiers are:
+
+~~~text
+not_instantiated_a4_required_before_ratify
+pass_a4_exact_freeze
+fail_permanent_missing_reason_authority_residue
+fail_permanent_purpose_authority_residue
+fail_permanent_prompt_field_or_semantic_binding_residue
+dormant_definition
+blocked_predecessor
+fail_atomic_nonemission
+accepted_exact_source_identifier
+accepted_expressly_admitted_official_alias
+unresolved_multiple
+zero_candidates
+one_candidate
+multiple_candidates
+complete_nonempty_reference_union
+fail_empty_reference_union
+SIMULATED_NONAUTHORITY
+pending_same_state_execution
+amendment20_same_state_nonauthority_v1
+REVISION22_REGISTRY_REPIN
+A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED
+A20_NORMAL_R04_REQUIRED
+A20_R05_REQUIRED
+A20_HISTORICAL_R06_REQUIRED
+A20_MISSING_REASON_SUCCESSOR_ACTIVE
+A20_CLASSIFIER_REBUILD_REQUIRED
+A20_TERMINAL_MOVEMENT_REQUIRED
+A20_ASSIGNMENT_REBUILD_REQUIRED
+A20_LOGICAL_RANGE_REBUILD_REQUIRED
+A20_STORAGE_POPULATION_REBUILD_REQUIRED
+A20_CONSTRUCTIBILITY_REQUIRED
+A20_FULL_RELATION_IDENTITY_REQUIRED
+A20_COMPARATOR_REQUIRED
+A20_Q5_REQUIRED
+A20_SLOT_REBUILD_REQUIRED
+A20_INVENTORY_REBUILD_REQUIRED
+A20_G17_C01_REBUILD_REQUIRED
+A20_VB6_REQUIRED
+A20_SUCCESSOR_BUNDLES_REQUIRED
+A20_MIGRATIONS_REQUIRED
+A20_CAPTURE_REQUIRED
+A20_RECEIPT_REQUIRED
+A20_REGISTRATION_REQUIRED
+A20_SEALED_RUN_REQUIRED
+A20_WALL_LEDGER_REQUIRED
+A20_PUBLICATION_REQUIRED
+A20_SUCCESSOR_LIFECYCLE_COMPLETE
+~~~
+
+The exact new Q5, evidence-freeze, and scratch member identifiers are:
+
+~~~text
+amendment20_evidence_freeze
+amendment20_evidence_freeze_status
+missing_reason_authority_status
+purpose_authority_status
+prompt_field_semantic_binding_status
+expected_identity_bindings
+amendment20_ratification_ready
+missing_reason_failure_shadow_identity
+purpose_failure_shadow_identity
+prompt_field_semantic_failure_shadow_identity
+arm_status_bindings
+active_identity_bindings_sha256
+arm_status_member
+arm_status
+shadow_row_count
+shadow_ordered_keyset_sha256
+shadow_row_domain_sha256
+complement_identity
+complement_of_identity_names
+forbidden_output_identity_names
+forbidden_output_paths
+nonemission_evidence
+repository_manifest_rows_before
+repository_manifest_rows_after
+forbidden_outputs_absent_after_execution
+a20_successor_source_binding_identity
+missing_reason_source_domain_identity
+purpose_source_domain_identity
+missing_reason_rule_set_identity
+purpose_rule_set_identity
+prompt_field_evidence_identity
+semantic_binding_identity
+purpose_authority_mapping_row_count
+purpose_authority_mapping_keyset_sha256
+purpose_authority_mapping_domain_sha256
+purpose_authority_mapping_disposition_counts
+prompt_field_evidence_row_count
+prompt_field_evidence_keyset_sha256
+prompt_field_evidence_domain_sha256
+prompt_field_evidence_disposition_counts
+prompt_field_candidate_set_row_count
+prompt_field_candidate_set_keyset_sha256
+prompt_field_candidate_set_domain_sha256
+prompt_field_candidate_set_disposition_counts
+zero_candidate_positive_group_row_count
+zero_candidate_positive_group_keyset_sha256
+zero_candidate_positive_group_domain_sha256
+zero_candidate_positive_group_empty_union_count
+purpose_authority_mapping_rows
+prompt_field_evidence_rows
+prompt_field_candidate_set_rows
+zero_candidate_positive_group_rows
+SIMULATED_STATE_AUTHORITY
+SIMULATION_CONTEXT
+candidate_commit_identity
+scratch_transition
+changed_paths
+changed_path_domain_sha256
+~~~
+
+The exact new identity prefixes are:
+
+~~~text
+psid-prompt-field-evidence:
+psid-prompt-field-candidate-set:
+psid-zero-candidate-positive-group:
+a20-lifecycle-output:
+~~~
+
+The exact new Python identifiers are:
+
+~~~text
+_validate_amendment20_draft_design
+_validate_amendment20_ratification_design
+_validate_inherited_amendment20_ratification_design
+_validate_amendment20_evidence_freeze
+_canonical_amendment20_repository_path
+_read_amendment20_worktree_file
+_reconstruct_amendment20_repository_manifest
+_validate_amendment20_nonemission_evidence
+_parse_amendment20_implementation_pins
+_parse_amendment20_projection
+run_amendment20_contract_mutation_tests
+validate_amendment20_qualifying_verdict
+_validate_amendment20_scratch_transition_context
+_amendment20_registry_behavior_ast
+_parse_amendment20_scratch_registry_binding
+_validate_amendment20_transition_receipt
+_validate_amendment20_r06_collection_binding
+~~~
+
+Each displayed inventory is ordered, unique, and closed for its stated kind;
+the schema, status/disposition/lifecycle/authority, member, prefix, and Python
+kinds are disjoint. The inherited `near_match_source_annotation_rows` schema
+and its identifiers are deliberately not renamed or recounted.
+
+### 34.12 Exact machine projection
+
+The exact Amendment-20 normative manifest is this one-line terminal-LF canonical JSON value:
+
+~~~text
+{"activation_transition":{"activation_affecting":true,"activation_requires_operator_integration_closure_and_registry_repin":true,"all_nonpassing_counts":0,"closure_count":8,"closure_count_subtrahend":14,"full_pinned_battery_collected":220,"full_pinned_battery_exact_command":"executing_process_sys.executable -m pytest -q tests/test_validate_amendment13_execution_law.py","full_pinned_battery_required":true,"ordered_closure_domain":[13,14,15,16,17,18,19,20],"production_registry_changed_by_draft":false,"public_entrypoint":"validate_ratification_operativity","receipt_inside_candidate_bytes":false,"same_state_required":true,"terminal_amendment":20,"terminal_revision":22},"amendment20_evidence_freeze":{"amendment20_evidence_freeze_status":"not_instantiated_a4_required_before_ratify","amendment20_ratification_ready":false,"expected_identity_bindings":{"a20_successor_source_binding_identity":null,"dormant_lifecycle_definition_identity":null,"evidence_statement_identity":null,"missing_reason_failure_shadow_identity":null,"missing_reason_rule_set_identity":null,"missing_reason_source_domain_identity":null,"missing_reason_successor_relation_identity":null,"missing_representation_bridge_identity":null,"physical_source_identity":null,"prompt_field_candidate_set_identity":null,"prompt_field_evidence_identity":null,"prompt_field_semantic_failure_shadow_identity":null,"purpose_authority_mapping_identity":null,"purpose_failure_shadow_identity":null,"purpose_rule_set_identity":null,"purpose_source_domain_identity":null,"r04_q5_shape_identity":null,"r06_collected_node_id_identity":null,"r06_six_module_identity":null,"semantic_binding_identity":null,"zero_candidate_positive_group_identity":null},"missing_reason_authority_status":null,"prompt_field_semantic_binding_status":null,"purpose_authority_status":null,"schema_version":"a20_evidence_freeze.v1"},"canonicalization":"python-json-sort-keys-compact-ascii-no-nan-lf-v1","controlling_external_records":[{"authority":"NONAUTHORITY","byte_size":27368,"logical_path":"e8-ops/sol-ce-a20-charter.md","raw_sha256":"5ecd4092f3fc62ef894866a1a5b505d6dba7bb04cde1360ff7134d7d8e927717"},{"authority":"NONAUTHORITY","byte_size":11805,"logical_path":"e8-ops/sol-ce-law-gap-sweep-r21-2026-08-16.md","raw_sha256":"39887de99d75a395e97b04f33b4c5264a6828f56c9321cfe248b4ba11a7e5846"}],"evidence_campaign":{"conditional_p50":"2026-11-09","conditional_p80":"2027-01-22","dates_are_nonauthority_conditional_planning_metadata":true,"fail_closed_kill_categories":["source_admission","missing_rule_scope","purpose_entailment","family_equivalence","legacy_vocabulary","circular_attachment","prompt_field_ambiguity","reviewer_origin","cross_arm_contamination","missing_convention_arm_capacity","missing_ledger_capacity","purpose_ledger_capacity","acceptance_exact_cover_and_reconstruction","complete_R04","downstream_reconstruction_and_publication"],"forecast_as_of":"2026-08-15","permanent_residue_remains_fail_closed":true,"q_definition":"observed_independently_reviewed_logical_decisions_per_lane_day","rounds_formula":"ceil(2L/(3q))","stage_order":["E0_banked_evidence_reauthentication","E1_shared_source_closure_and_separate_domain_projections","E2_compilers_representation_bridges_and_measured_pilots","A1_concentrated_queues","A2_recurring_remainder","A3_occurrence_local_residue_with_capacity_kills","A4_dual_review_reconciliation_and_exact_identity_freeze","C20_ratification_and_revision_22_activation","X1_authoritative_settlement_missing_dispatch_disabled","X2_complete_normal_R04_and_R05","historical_R06_replay_and_first_add","fresh_reconstruction","Q5","slot_inventory_G17_C01_and_V_B6","sealed_publication_chain"]},"evidence_freeze_contract":{"absent_identity_is_not_zero_digest_or_wildcard":true,"authority_selection_permitted":false,"final_arm_status_domains":{"missing_reason_authority_status":["pass","fail_permanent_missing_reason_authority_residue"],"prompt_field_semantic_binding_status":["pass","fail_permanent_prompt_field_or_semantic_binding_residue"],"purpose_authority_status":["pass","fail_permanent_purpose_authority_residue"]},"final_required_evidence_freeze_status":"pass_a4_exact_freeze","identity_contract":{"arm_identity_contracts":{"missing_reason_authority_status":{"failure_shadow_identity_name":"missing_reason_failure_shadow_identity","failure_status":"fail_permanent_missing_reason_authority_residue","forbidden_output_paths":["docs/analysis/amendment_20_ratification/evidence_freeze/missing_reason_rule_set_identity.json","docs/analysis/amendment_20_ratification/evidence_freeze/missing_reason_successor_relation_identity.json","docs/analysis/amendment_20_ratification/evidence_freeze/missing_representation_bridge_identity.json"],"pass_identity_names":["missing_reason_rule_set_identity","missing_reason_successor_relation_identity","missing_representation_bridge_identity"],"pass_status":"pass"},"prompt_field_semantic_binding_status":{"failure_shadow_identity_name":"prompt_field_semantic_failure_shadow_identity","failure_status":"fail_permanent_prompt_field_or_semantic_binding_residue","forbidden_output_paths":["docs/analysis/amendment_20_ratification/evidence_freeze/prompt_field_evidence_identity.json","docs/analysis/amendment_20_ratification/evidence_freeze/prompt_field_candidate_set_identity.json","docs/analysis/amendment_20_ratification/evidence_freeze/zero_candidate_positive_group_identity.json","docs/analysis/amendment_20_ratification/evidence_freeze/semantic_binding_identity.json"],"pass_identity_names":["prompt_field_evidence_identity","prompt_field_candidate_set_identity","zero_candidate_positive_group_identity","semantic_binding_identity"],"pass_status":"pass"},"purpose_authority_status":{"failure_shadow_identity_name":"purpose_failure_shadow_identity","failure_status":"fail_permanent_purpose_authority_residue","forbidden_output_paths":["docs/analysis/amendment_20_ratification/evidence_freeze/purpose_rule_set_identity.json","docs/analysis/amendment_20_ratification/evidence_freeze/purpose_authority_mapping_identity.json"],"pass_identity_names":["purpose_rule_set_identity","purpose_authority_mapping_identity"],"pass_status":"pass"}},"arm_pass_identity_keys":["identity_name","arm_status_member","arm_status","row_count","ordered_keyset_sha256","row_domain_sha256","status"],"common_identity_names":["physical_source_identity","evidence_statement_identity","missing_reason_source_domain_identity","purpose_source_domain_identity","a20_successor_source_binding_identity","r04_q5_shape_identity","r06_six_module_identity","r06_collected_node_id_identity","dormant_lifecycle_definition_identity"],"failure_nonemission_evidence_keys":["execution_commit","execution_tree_oid","repository_manifest_rows_before","repository_manifest_sha256_before","repository_manifest_rows_after","repository_manifest_sha256_after","repository_clean_before","repository_clean_after","forbidden_outputs_absent_after_execution"],"failure_shadow_identity_keys":["schema_version","identity_name","arm_status_member","arm_status","shadow_row_count","shadow_ordered_keyset_sha256","shadow_row_domain_sha256","complement_identity","forbidden_output_identity_names","forbidden_output_paths","nonemission_evidence","status"],"failure_shadow_paths_are_exact_arm_contract_paths":true,"failure_shadow_rows_are_exact_forbidden_output_complement":true,"lifecycle_booleans_are_not_accepted_as_self_attestation":true,"nonemission_complement_identity_keys":["schema_version","complement_of_identity_names","row_count","ordered_keyset_sha256","row_domain_sha256","status"],"pass_identity_keys":["identity_name","row_count","ordered_keyset_sha256","row_domain_sha256","status"],"repository_manifest_row_keys":["path","mode","git_blob","byte_size","raw_sha256"],"successor_binding_digest_excludes_self":true,"successor_binding_identity_keys":["identity_name","row_count","ordered_keyset_sha256","row_domain_sha256","arm_status_bindings","active_identity_bindings_sha256","status"],"successor_binding_identity_name":"a20_successor_source_binding_identity"},"object":{"amendment20_evidence_freeze_status":"not_instantiated_a4_required_before_ratify","amendment20_ratification_ready":false,"expected_identity_bindings":{"a20_successor_source_binding_identity":null,"dormant_lifecycle_definition_identity":null,"evidence_statement_identity":null,"missing_reason_failure_shadow_identity":null,"missing_reason_rule_set_identity":null,"missing_reason_source_domain_identity":null,"missing_reason_successor_relation_identity":null,"missing_representation_bridge_identity":null,"physical_source_identity":null,"prompt_field_candidate_set_identity":null,"prompt_field_evidence_identity":null,"prompt_field_semantic_failure_shadow_identity":null,"purpose_authority_mapping_identity":null,"purpose_failure_shadow_identity":null,"purpose_rule_set_identity":null,"purpose_source_domain_identity":null,"r04_q5_shape_identity":null,"r06_collected_node_id_identity":null,"r06_six_module_identity":null,"semantic_binding_identity":null,"zero_candidate_positive_group_identity":null},"missing_reason_authority_status":null,"prompt_field_semantic_binding_status":null,"purpose_authority_status":null,"schema_version":"a20_evidence_freeze.v1"},"r04_or_later_permitted":false,"ratification_readiness_iff_freeze_shape_statuses_and_identities":true,"semantic_arm_pass_required_for_ratification":false},"inherited_mutation_censuses":[{"count":100,"inventory":"inherited_complete_certificate","raw_sha256":"fe2efd7b96c24b7cbd3c6ce350d44906eb5a88b8b35ee77565c1b133cbf1f3e3"},{"count":7,"inventory":"amendment16","raw_sha256":"1e00099f636c1a727839ebc298b965cd0981e0ad8f23189367ba7dbd0eddb871"},{"count":3,"inventory":"amendment17","raw_sha256":"b19ebcbf47278d63e12bd8021334a88910895bdfe48caf2d49c6bbe3014417e6"},{"count":3,"inventory":"amendment18","raw_sha256":"1bf9f6d30461d003cab597a405cb5cc9855273372ed3e7e5b36b1627eaa11108"},{"count":3,"inventory":"amendment19","raw_sha256":"002aa021325c18e311cc778562ad0e937468a90c378db0740290fcf617929101"}],"missing_reason_authority":{"agreeing_duplicate_rules_abort":true,"authority_rule_row_keys":["authority_rule_id","registered_evidence_source_ids","registered_statement_ids","rule_kind","exact_scope_predicate","explicit_exclusions","strict_boolean_disposition","projected_occurrence_count","projected_occurrence_keyset_sha256","overlap_conflict_complement_results"],"candidate_defaults_forbidden":true,"claim_type":"strict_json_boolean_excluding_integer_coercion","conflict_precedes_incomplete_coverage":true,"formerly_unresolved_literal_occurrence_count":524538,"historical_a11_and_a18_results_preserved":true,"independent_compiler_count":2,"inherited_source_authorized_literal_count":52,"missing_false_reason":null,"missing_true_reason_id_prefix":"psid-source-missing-reason:","numeric_range_reason":null,"numeric_structural_null_range_count":37283,"occurrence_identity_position_order":["schema_tag","global_member_position","source_document_position","source_row_position","entry_position","source_document_id","codebook_field_row_id","ordered_nonempty_locator_id_array","entry_reference","entry_kind","exact_source_value_or_range_lexeme","exact_nonempty_source_meaning"],"projection_requirements":["exact","nonzero","disjoint","collectively_exhaustive","exception_complete"],"representation_bridge_probe":{"accepted_bridge_identity":null,"bridge_required_before_acceptance":true,"diagnostic_shadow_observation":59424,"direct_field_ceiling_observation":54898,"gross_source_era_ceiling_observation":71635,"observations_are_nonauthority":true,"relation":"missing_representation_bridge_rows","u24_e2_93md_claims_accepted":0,"zero_projection_observation":87},"transactional_atomic_nonemission":true},"mutation_domain_byte_size":738,"mutation_domain_sha256":"eab546538a26abac04f559b73646bbca9d240832ae9d9ee82c6295a1462d0e2b","mutation_inventory":["shared_source_domain_or_statement_locator_forged","missing_reason_rule_or_exact_cover_forged","purpose_authority_or_totality_forged","prompt_field_or_semantic_binding_forged","r04_order_source_binding_or_q5_shape_forged","r06_collection_or_lifecycle_order_forged","receipt_verdict_or_scratch_transition_forged","amendment20_terminal_pin_or_suffix_route_forged","evidence_freeze_identity_shadow_or_status_forged","failure_shadow_nonemission_provenance_forged","determined_as_source_underdetermined_without_ruling_forged","source_underdetermined_as_no_applicable_purpose_forged","source_underdetermined_a4_census_binding_forged","completed_ontology_new_arm_omitted","coordinate_distinct_questionnaire_spans_collapsed_to_one_body_forged"],"new_identifiers":{"identity_prefix":["psid-prompt-field-evidence:","psid-prompt-field-candidate-set:","psid-zero-candidate-positive-group:","a20-lifecycle-output:"],"member":["amendment20_evidence_freeze","amendment20_evidence_freeze_status","missing_reason_authority_status","purpose_authority_status","prompt_field_semantic_binding_status","expected_identity_bindings","amendment20_ratification_ready","missing_reason_failure_shadow_identity","purpose_failure_shadow_identity","prompt_field_semantic_failure_shadow_identity","arm_status_bindings","active_identity_bindings_sha256","arm_status_member","arm_status","shadow_row_count","shadow_ordered_keyset_sha256","shadow_row_domain_sha256","complement_identity","complement_of_identity_names","forbidden_output_identity_names","forbidden_output_paths","nonemission_evidence","repository_manifest_rows_before","repository_manifest_rows_after","forbidden_outputs_absent_after_execution","a20_successor_source_binding_identity","missing_reason_source_domain_identity","purpose_source_domain_identity","missing_reason_rule_set_identity","purpose_rule_set_identity","prompt_field_evidence_identity","semantic_binding_identity","purpose_authority_mapping_row_count","purpose_authority_mapping_keyset_sha256","purpose_authority_mapping_domain_sha256","purpose_authority_mapping_disposition_counts","prompt_field_evidence_row_count","prompt_field_evidence_keyset_sha256","prompt_field_evidence_domain_sha256","prompt_field_evidence_disposition_counts","prompt_field_candidate_set_row_count","prompt_field_candidate_set_keyset_sha256","prompt_field_candidate_set_domain_sha256","prompt_field_candidate_set_disposition_counts","zero_candidate_positive_group_row_count","zero_candidate_positive_group_keyset_sha256","zero_candidate_positive_group_domain_sha256","zero_candidate_positive_group_empty_union_count","purpose_authority_mapping_rows","prompt_field_evidence_rows","prompt_field_candidate_set_rows","zero_candidate_positive_group_rows","SIMULATED_STATE_AUTHORITY","SIMULATION_CONTEXT","candidate_commit_identity","scratch_transition","changed_paths","changed_path_domain_sha256"],"python":["_validate_amendment20_draft_design","_validate_amendment20_ratification_design","_validate_inherited_amendment20_ratification_design","_validate_amendment20_evidence_freeze","_canonical_amendment20_repository_path","_read_amendment20_worktree_file","_reconstruct_amendment20_repository_manifest","_validate_amendment20_nonemission_evidence","_parse_amendment20_implementation_pins","_parse_amendment20_projection","run_amendment20_contract_mutation_tests","validate_amendment20_qualifying_verdict","_validate_amendment20_scratch_transition_context","_amendment20_registry_behavior_ast","_parse_amendment20_scratch_registry_binding","_validate_amendment20_transition_receipt","_validate_amendment20_r06_collection_binding"],"schema":["amendment_20_dual_authority_successor_law.v1","executed_transition_state.v2","a20_evidence_freeze.v1","a20_failure_shadow_identity.v1","a20_nonemission_complement_identity.v1","a20_physical_source_registry.v1","a20_evidence_statement_registry.v1","a20_missing_reason_source_domain.v1","a20_purpose_source_domain.v1","a20_successor_source_binding.v1","a20_missing_reason_authority_rules.v1","a20_missing_reason_successor_relation.v1","a20_missing_representation_bridge.v1","a20_purpose_authority_rules.v1","a20_purpose_authority_mapping.v1","a20_prompt_field_evidence.v1","a20_prompt_field_candidate_sets.v1","a20_zero_candidate_positive_groups.v1","a20_source_settlement.v1","a20_normal_r04.v1","a20_r05_certificate.v1","a20_historical_r06_binding.v1","a20_classifier_rebuild.v1","a20_terminal_movement.v1","a20_assignment_rebuild.v1","a20_logical_range_rebuild.v1","a20_storage_population_rebuild.v1","a20_constructibility.v1","a20_full_relation_identity.v1","a20_comparator_census.v1","a20_q5.v1","a20_slot_rebuild.v1","a20_inventory_rebuild.v1","a20_g17_c01_rebuild.v1","a20_vb6_successor.v1","a20_successor_bundles.v1","a20_migrations.v1","a20_capture.v1","a20_receipt.v1","a20_registration.v1","a20_sealed_run.v1","a20_wall_ledger.v1","a20_publication.v1"],"status_lifecycle_authority":["not_instantiated_a4_required_before_ratify","pass_a4_exact_freeze","fail_permanent_missing_reason_authority_residue","fail_permanent_purpose_authority_residue","fail_permanent_prompt_field_or_semantic_binding_residue","dormant_definition","blocked_predecessor","fail_atomic_nonemission","accepted_exact_source_identifier","accepted_expressly_admitted_official_alias","unresolved_multiple","zero_candidates","one_candidate","multiple_candidates","complete_nonempty_reference_union","fail_empty_reference_union","SIMULATED_NONAUTHORITY","pending_same_state_execution","amendment20_same_state_nonauthority_v1","REVISION22_REGISTRY_REPIN","A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED","A20_NORMAL_R04_REQUIRED","A20_R05_REQUIRED","A20_HISTORICAL_R06_REQUIRED","A20_MISSING_REASON_SUCCESSOR_ACTIVE","A20_CLASSIFIER_REBUILD_REQUIRED","A20_TERMINAL_MOVEMENT_REQUIRED","A20_ASSIGNMENT_REBUILD_REQUIRED","A20_LOGICAL_RANGE_REBUILD_REQUIRED","A20_STORAGE_POPULATION_REBUILD_REQUIRED","A20_CONSTRUCTIBILITY_REQUIRED","A20_FULL_RELATION_IDENTITY_REQUIRED","A20_COMPARATOR_REQUIRED","A20_Q5_REQUIRED","A20_SLOT_REBUILD_REQUIRED","A20_INVENTORY_REBUILD_REQUIRED","A20_G17_C01_REBUILD_REQUIRED","A20_VB6_REQUIRED","A20_SUCCESSOR_BUNDLES_REQUIRED","A20_MIGRATIONS_REQUIRED","A20_CAPTURE_REQUIRED","A20_RECEIPT_REQUIRED","A20_REGISTRATION_REQUIRED","A20_SEALED_RUN_REQUIRED","A20_WALL_LEDGER_REQUIRED","A20_PUBLICATION_REQUIRED","A20_SUCCESSOR_LIFECYCLE_COMPLETE"]},"prefix_identity":{"blob_oid":"1eba7ff6366bad1999de36c9f7261ad6939ad86a","byte_size":4025587,"raw_sha256":"38139b8ddd24ef7be09e8f149960e8e0b6e39699d84f3783827eff6c294a9ae9"},"prompt_field_semantic_binding":{"attachment_dispositions":["accepted_exact_source_identifier","accepted_expressly_admitted_official_alias","unresolved_multiple"],"binding_built_before_candidate_rows_read":true,"c68_regression":{"candidate_raw_field_ids":["V11804","V11805"],"draft_disposition":"unresolved_multiple","interview_wave":1985,"printed_direct_field_id":"V11804","question_token":"C68.","source_prompt_occurrence_id":"psid-questionnaire-occurrence:4cd66190a898d568dd20c27140f44f1dff53d229f664f537722624d00c9b4b67"},"candidate_arrays_complete_stable_unique_source_order":true,"candidate_count_is_raw_field_array_length_strict_integer":true,"candidate_disposition_is_iff_count_partition":true,"candidate_set_id_is_sha256_of_canonical_remaining_members":true,"candidate_set_row_ids_and_prompt_ids_unique":true,"candidate_sets_materialized":true,"collision_census":{"complete_official_prompt_count":818,"domain":"historical_same_coordinate_leading_question_token_conflicts","multiple_count":46},"complete_official_prompt_candidate_census":{"additional_noncollision_candidate_sets":[{"candidate_raw_field_ids":["V3585","V3586"],"interview_wave":1974},{"candidate_raw_field_ids":["V11649","V11648"],"interview_wave":1985},{"candidate_raw_field_ids":["V11616","V11676"],"interview_wave":1985}],"complete_official_prompt_count":818,"domain":"prompt_level_stable_unique_complete_candidate_union","multiple_count":49},"construction_stage":"before_O_P","coordinate_distinct_span_collapse_aborts":true,"coordinate_distinct_spans_must_have_distinct_row_bodies":true,"direct_identifier_priority_forbidden":true,"empty_reference_union_is_strict_boolean_zero_length_equality":true,"exact_duplicate_evidence_emission_aborts":true,"full_prompt_candidate_census":{"domain":"multiple_candidates_over_full_prompt_denominator","multiple_count":2349,"prompt_count":21971},"joint_support_and_subsumption_maximality_required":true,"mandatory_ambiguity_regressions":["Family","Dl7./D17.","D2."],"positive_attachment_bases":["exact_source_identifier","expressly_admitted_official_alias"],"post_o_p_exact_token_joins_without_silent_unions":true,"post_o_p_relations":["occurrence_raw_field_reference_rows","positive_field_join_rows","nonempty_reference_and_raw_field_projections","unique_same_wave_attachment","purpose_expansion","reverse_covers"],"post_o_p_relations_use_completed_purpose_ontology":true,"prompt_field_candidate_set_dispositions":["zero_candidates","one_candidate","multiple_candidates"],"prompt_field_candidate_set_id_prefix":"psid-prompt-field-candidate-set:","prompt_field_candidate_set_id_preimage":["source_prompt_occurrence_id","interview_wave","candidate_prompt_field_evidence_ids","candidate_raw_field_ids","candidate_count","candidate_disposition"],"prompt_field_candidate_set_order":"complete_prompt_source_order","prompt_field_candidate_set_row_keys":["prompt_field_candidate_set_id","source_prompt_occurrence_id","interview_wave","candidate_prompt_field_evidence_ids","candidate_raw_field_ids","candidate_count","candidate_disposition"],"prompt_field_evidence_id_canonicalization":"python-json-sort-keys-compact-ascii-no-nan-lf-v1","prompt_field_evidence_id_prefix":"psid-prompt-field-evidence:","prompt_field_evidence_id_preimage":["source_prompt_occurrence_id","interview_wave","questionnaire_span","prompt_source_locator_ids","field_source_document_id","field_source_row_id","field_source_member","raw_field_id","attachment_basis","official_alias_statement_ids","attachment_disposition","candidate_raw_field_ids"],"prompt_field_evidence_order":["complete_prompt_source_position","interview_wave","source_prompt_occurrence_id","questionnaire_span.utf8_byte_start","questionnaire_span.utf8_byte_end","attachment_branch_direct_before_question_token","field_reconstruction_document_row_member_order"],"prompt_field_row_keys":["prompt_field_evidence_id","source_prompt_occurrence_id","interview_wave","questionnaire_span","prompt_source_locator_ids","field_source_document_id","field_source_row_id","field_source_member","raw_field_id","attachment_basis","official_alias_statement_ids","attachment_disposition","candidate_raw_field_ids"],"questionnaire_span_basis":"prompt_source_utf8_byte_half_open_interval","questionnaire_span_bounds_strict_integers_excluding_booleans":true,"questionnaire_span_keys":["utf8_byte_start","utf8_byte_end"],"questionnaire_span_minimal_exact_identifier_token_match":true,"questionnaire_span_requires_0_le_start_lt_end_le_prompt_byte_length":true,"required_unresolved_semantic_binding_count":0,"semantic_binding_coordinates":["role","job_slot_id","questionnaire_component_slot_id","slot_kind","field_purpose"],"semantic_binding_dispositions":["semantically_bound","no_supported_predicate_dimension","unresolved_semantic_binding"],"semantic_binding_identity_requires_deep_equality":["row_count","ordered_keyset_sha256","row_domain_sha256"],"semantic_binding_serialization":"near_match_source_annotation_rows","separate_semantic_binding_rows_serialization_permitted":false,"zero_candidate_group_disposition_is_iff_empty_boolean":true,"zero_candidate_group_id_is_sha256_of_canonical_remaining_members":true,"zero_candidate_group_ids_and_positive_ids_unique":true,"zero_candidate_group_one_per_qualifying_positive_occurrence":true,"zero_candidate_grouping_probe":{"accepted_attachment_required_for_codebook_supported_rule":true,"accepted_positive_group_with_empty_reference_union_count":null,"candidate_set_prompt_count":21971,"diagnostic_zero_candidate_observation":14450,"difference_explained":false,"observations_are_nonauthority":true,"sweep_zero_candidate_observation":15428},"zero_candidate_positive_group_dispositions":["complete_nonempty_reference_union","fail_empty_reference_union"],"zero_candidate_positive_group_id_prefix":"psid-zero-candidate-positive-group:","zero_candidate_positive_group_id_preimage":["positive_occurrence_id","zero_candidate_source_prompt_occurrence_ids","all_source_prompt_occurrence_ids","complete_reference_union_ids","empty_reference_union","group_disposition"],"zero_candidate_positive_group_order":"positive_occurrence_order","zero_candidate_positive_group_row_keys":["zero_candidate_positive_group_id","positive_occurrence_id","zero_candidate_source_prompt_occurrence_ids","all_source_prompt_occurrence_ids","complete_reference_union_ids","empty_reference_union","group_disposition"],"zero_candidate_prompt_arrays_complete_positive_row_projections":true,"zero_candidate_reference_union_complete_stable_unique":true,"zero_or_multiple_candidates_fail_without_source_resolution":true},"purpose_authority":{"authority_gate_uses_reconciled_outcomes":true,"completed_ontology_order":["interview_and_role_attachment","amount","reporting_unit","month_or_exposure","assignment","employee_self_or_mixed","incorporation","government_level","industry","occupation","enrollment","job_identifier","state_of_residence","section_218_group","section_218_position","public_retirement_system_participation","federal_retirement_system","federal_service","railroad_covered_employer","railroad_covered_service","ministerial_service","clergy_remuneration","church_employee_service","religious_order_service","clergy_or_religious_exemption","domestic_service","agricultural_service","election_work","family_service","casual_service","foreign_government_service","international_organization_service","nonresident_alien_status","employer_school_nexus","statutory_student_service","source_underdetermined"],"disposition_relation_total_under_completed_ontology":true,"exact_prompt_cover_and_zero_gap_extra_duplicate_overlap_conflict":true,"exact_row_agreement_is_authority_gate":false,"independent_compiler_count":2,"inherited_complete_rows_requiring_source_regrounding":818,"macro_per_prompt_jaccard_minimum_calibration_diagnostic":"90%","manual_origin_grandfathering_permitted":false,"official_purpose_order":["interview_and_role_attachment","amount","reporting_unit","month_or_exposure","assignment","employee_self_or_mixed","incorporation","government_level","industry","occupation","enrollment","job_identifier","state_of_residence","section_218_group","section_218_position","public_retirement_system_participation","federal_retirement_system","federal_service","railroad_covered_employer","railroad_covered_service","ministerial_service","clergy_remuneration","church_employee_service","religious_order_service","clergy_or_religious_exemption","domestic_service","agricultural_service","election_work","family_service","casual_service","foreign_government_service","international_organization_service","nonresident_alien_status","employer_school_nexus","statutory_student_service"],"prompt_denominator_a4_freeze_slot":null,"purpose_arrays_nonempty_stable_unique_in_official_order":true,"purpose_authority_rule_row_keys":["purpose_authority_source_id","rule_kind","registered_evidence_statement_ids","exact_prompt_scope_predicate","explicit_exclusions","explicit_official_purposes","projected_prompt_count","projected_prompt_keyset_sha256"],"purpose_mapping_row_keys":["source_prompt_occurrence_id","authority_basis","purpose_authority_source_id","evidence_statement_ids","explicit_official_purposes","purpose_mapping_disposition","reconciled_adjudication_ruling_id"],"required_disposition_counts":{"U":0,"complete_official_mapping":null,"source_underdetermined":null},"source_backed_alternative_selected":"ontology_projection","source_backed_alternatives":["occurrence_kind_or_denominator_correction","ontology_projection","separately_tagged_no_applicable_purpose_arm"],"source_classification_row_id_overload_forbidden":true,"source_conflict_reopens_row":true,"source_underdetermined_count_a4_freeze_slot":null,"source_underdetermined_is_no_applicable_purpose":false,"source_underdetermined_means_authenticated_sources_determine_no_nonempty_subset":true,"source_underdetermined_requires_reconciled_adjudication_ruling":true,"source_underdetermined_uses_determined_row_provenance_authentication":true,"transactional_atomic_nonemission":true,"u_definition":"prompt_without_lawful_completed_ontology_disposition"},"r04_q5":{"a19_digest_dependency_order_preserved":["D0","search_implementation","A_h","final_rows","D1"],"a19_purpose_mapping_is_historical_nonconsumable_on_a20_normal_path":true,"construction_order":["authenticate_fixed_historical_denominators_and_a20_source_domains","construct_and_seal_missing_purpose_rules_and_successor_binding","compile_purpose_prompt_field_and_semantic_inputs","compute_purpose_U_and_independent_acceptance_results","select_failure_or_normal_member","normal_only_construct_H_and_source_only_O_H","normal_only_require_O_H_before_O_P","normal_only_construct_O_P_bindings_joins_covers_expansion_D0_search_D1_and_R04","normal_only_R05_strict_certificate_and_dual_reconstruction"],"failure_arms_serialize_a20_shape_additions":false,"forbidden_selected_failure_member_serialization":["questionnaire_occurrence_rows","all_pass_only_arrays","Q5","R05_certificate","authority","production_output"],"g17_c01_expected_and_actual_shapes_equal":true,"historical_a19_failure_member_byte_size":877,"historical_a19_failure_member_raw_sha256":"1651c50ff1f171ac420e55982cb060db70946f9283999c3d9edb2fa140d467c5","inherited_semantic_relation_member":"near_match_source_annotation_rows","inherited_semantic_relation_position":"after_expanded_disposition_rows","normal_effective_header_insert_before":"positive_occurrence_row_count","normal_effective_header_successor_members":["purpose_authority_mapping_row_count","purpose_authority_mapping_keyset_sha256","purpose_authority_mapping_domain_sha256","purpose_authority_mapping_disposition_counts","prompt_field_evidence_row_count","prompt_field_evidence_keyset_sha256","prompt_field_evidence_domain_sha256","prompt_field_evidence_disposition_counts","prompt_field_candidate_set_row_count","prompt_field_candidate_set_keyset_sha256","prompt_field_candidate_set_domain_sha256","prompt_field_candidate_set_disposition_counts","zero_candidate_positive_group_row_count","zero_candidate_positive_group_keyset_sha256","zero_candidate_positive_group_domain_sha256","zero_candidate_positive_group_empty_union_count"],"normal_era_successor_sequence":["hierarchy_rows","purpose_authority_mapping_rows","prompt_field_evidence_rows","prompt_field_candidate_set_rows","zero_candidate_positive_group_rows","positive_occurrence_rows"],"o_h_precedes_o_p_on_normal_arm":true,"o_h_source_only":true,"o_p_order":["interview_and_role_attachment","amount","reporting_unit","month_or_exposure","assignment","employee_self_or_mixed","incorporation","government_level","industry","occupation","enrollment","job_identifier","state_of_residence","section_218_group","section_218_position","public_retirement_system_participation","federal_retirement_system","federal_service","railroad_covered_employer","railroad_covered_service","ministerial_service","clergy_remuneration","church_employee_service","religious_order_service","clergy_or_religious_exemption","domestic_service","agricultural_service","election_work","family_service","casual_service","foreign_government_service","international_organization_service","nonresident_alien_status","employer_school_nexus","statutory_student_service","source_underdetermined"],"per_era_rows_use_direct_era_order_concatenation":true,"permitted_selector_input_reads":["questionnaire_occurrence_rows","fixed_prompt_denominator","purpose_authority_mapping_rows","prompt_field_candidate_set_rows","selector_inputs"],"purpose_expansion_domain":"completed_purpose_ontology","purpose_rule_projection_domain":"completed_purpose_ontology","purpose_totality_alone_passes_r04":false,"replaced_a19_effective_header_members":["purpose_mapping_row_count","purpose_mapping_keyset_sha256","purpose_mapping_domain_sha256","purpose_mapping_disposition_counts"],"replaced_a19_era_sequence":["hierarchy_rows","purpose_mapping_rows","positive_occurrence_rows"],"selector_purpose_domain":"completed_purpose_ontology","source_document_manifest_additions":["a20_successor_source_binding_identity","missing_reason_source_domain_identity","purpose_source_domain_identity","missing_reason_rule_set_identity","purpose_rule_set_identity","prompt_field_evidence_identity","semantic_binding_identity"],"source_document_manifest_insert_after":"source_document_domain_sha256"},"r06_lifecycle":{"ambient_pytest_addopts_removed":true,"blocked_predecessor_output_identity":null,"collected_node_id_array_canonical_byte_size":28268,"collected_node_id_array_raw_sha256":"09071bf4d9a9a5ee8b9ccc4d8d5c0bd91705c04d3c7c99d6ef155dfdc0dfdf05","collected_node_id_count":223,"collection_command_after_interpreter":["-m","pytest","--collect-only","-q","tests/data/test_psid_codebook_extraction_validation.py","tests/data/test_psid_missing_reason_authority_artifact.py","tests/data/test_psid_missing_reason_authority_unit.py","tests/estimates/test_birth_evidence_artifact.py","tests/test_rebuild_amendment11_missing_reason_authority.py","tests/test_replay_amendment11_no_movement.py"],"dormant_definition_before_certification_permitted":true,"dormant_definition_creates_instance_or_selection":false,"dormant_lifecycle_row_count":26,"dormant_lifecycle_rows":[{"first_add_index":1,"input_identity_ids":["revision22_registry_repin_identity","a20_successor_source_binding_identity","dormant_lifecycle_definition_identity"],"lifecycle_stage_id":"A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED","output_identity_id":null,"predecessor_stage_ids":["REVISION22_REGISTRY_REPIN"],"schema_id":"a20_source_settlement.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":2,"input_identity_ids":["a20_source_settlement_identity","historical_a19_build_input_identity"],"lifecycle_stage_id":"A20_NORMAL_R04_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED"],"schema_id":"a20_normal_r04.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":3,"input_identity_ids":["a20_normal_r04_identity"],"lifecycle_stage_id":"A20_R05_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_NORMAL_R04_REQUIRED"],"schema_id":"a20_r05_certificate.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":4,"input_identity_ids":["a20_r05_certificate_identity","r06_six_module_identity","r06_collected_node_id_identity","historical_a11_replay_identity"],"lifecycle_stage_id":"A20_HISTORICAL_R06_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_R05_REQUIRED"],"schema_id":"a20_historical_r06_binding.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":5,"input_identity_ids":["a20_historical_r06_identity","missing_reason_successor_relation_identity"],"lifecycle_stage_id":"A20_MISSING_REASON_SUCCESSOR_ACTIVE","output_identity_id":null,"predecessor_stage_ids":["A20_HISTORICAL_R06_REQUIRED"],"schema_id":"a20_missing_reason_successor_relation.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":6,"input_identity_ids":["a20_active_missing_reason_identity","historical_classifier_input_identity"],"lifecycle_stage_id":"A20_CLASSIFIER_REBUILD_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_MISSING_REASON_SUCCESSOR_ACTIVE"],"schema_id":"a20_classifier_rebuild.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":7,"input_identity_ids":["a20_classifier_rebuild_identity"],"lifecycle_stage_id":"A20_TERMINAL_MOVEMENT_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_CLASSIFIER_REBUILD_REQUIRED"],"schema_id":"a20_terminal_movement.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":8,"input_identity_ids":["a20_terminal_movement_identity"],"lifecycle_stage_id":"A20_ASSIGNMENT_REBUILD_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_TERMINAL_MOVEMENT_REQUIRED"],"schema_id":"a20_assignment_rebuild.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":9,"input_identity_ids":["a20_assignment_rebuild_identity"],"lifecycle_stage_id":"A20_LOGICAL_RANGE_REBUILD_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_ASSIGNMENT_REBUILD_REQUIRED"],"schema_id":"a20_logical_range_rebuild.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":10,"input_identity_ids":["a20_logical_range_rebuild_identity"],"lifecycle_stage_id":"A20_STORAGE_POPULATION_REBUILD_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_LOGICAL_RANGE_REBUILD_REQUIRED"],"schema_id":"a20_storage_population_rebuild.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":11,"input_identity_ids":["a20_storage_population_rebuild_identity"],"lifecycle_stage_id":"A20_CONSTRUCTIBILITY_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_STORAGE_POPULATION_REBUILD_REQUIRED"],"schema_id":"a20_constructibility.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":12,"input_identity_ids":["a20_constructibility_identity"],"lifecycle_stage_id":"A20_FULL_RELATION_IDENTITY_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_CONSTRUCTIBILITY_REQUIRED"],"schema_id":"a20_full_relation_identity.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":13,"input_identity_ids":["a20_full_relation_identity"],"lifecycle_stage_id":"A20_COMPARATOR_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_FULL_RELATION_IDENTITY_REQUIRED"],"schema_id":"a20_comparator_census.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":14,"input_identity_ids":["a20_comparator_census_identity"],"lifecycle_stage_id":"A20_Q5_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_COMPARATOR_REQUIRED"],"schema_id":"a20_q5.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":15,"input_identity_ids":["a20_q5_identity"],"lifecycle_stage_id":"A20_SLOT_REBUILD_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_Q5_REQUIRED"],"schema_id":"a20_slot_rebuild.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":16,"input_identity_ids":["a20_slot_rebuild_identity"],"lifecycle_stage_id":"A20_INVENTORY_REBUILD_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_SLOT_REBUILD_REQUIRED"],"schema_id":"a20_inventory_rebuild.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":17,"input_identity_ids":["a20_inventory_rebuild_identity"],"lifecycle_stage_id":"A20_G17_C01_REBUILD_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_INVENTORY_REBUILD_REQUIRED"],"schema_id":"a20_g17_c01_rebuild.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":18,"input_identity_ids":["a20_g17_c01_rebuild_identity"],"lifecycle_stage_id":"A20_VB6_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_G17_C01_REBUILD_REQUIRED"],"schema_id":"a20_vb6_successor.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":19,"input_identity_ids":["a20_vb6_identity"],"lifecycle_stage_id":"A20_SUCCESSOR_BUNDLES_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_VB6_REQUIRED"],"schema_id":"a20_successor_bundles.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":20,"input_identity_ids":["a20_successor_bundles_identity"],"lifecycle_stage_id":"A20_MIGRATIONS_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_SUCCESSOR_BUNDLES_REQUIRED"],"schema_id":"a20_migrations.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":21,"input_identity_ids":["a20_migrations_identity"],"lifecycle_stage_id":"A20_CAPTURE_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_MIGRATIONS_REQUIRED"],"schema_id":"a20_capture.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":22,"input_identity_ids":["a20_capture_identity"],"lifecycle_stage_id":"A20_RECEIPT_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_CAPTURE_REQUIRED"],"schema_id":"a20_receipt.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":23,"input_identity_ids":["a20_receipt_identity"],"lifecycle_stage_id":"A20_REGISTRATION_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_RECEIPT_REQUIRED"],"schema_id":"a20_registration.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":24,"input_identity_ids":["a20_registration_identity"],"lifecycle_stage_id":"A20_SEALED_RUN_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_REGISTRATION_REQUIRED"],"schema_id":"a20_sealed_run.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":25,"input_identity_ids":["a20_sealed_run_identity"],"lifecycle_stage_id":"A20_WALL_LEDGER_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_SEALED_RUN_REQUIRED"],"schema_id":"a20_wall_ledger.v1","selection_enabled":false,"status":"dormant_definition"},{"first_add_index":26,"input_identity_ids":["a20_wall_ledger_identity"],"lifecycle_stage_id":"A20_PUBLICATION_REQUIRED","output_identity_id":null,"predecessor_stage_ids":["A20_WALL_LEDGER_REQUIRED"],"schema_id":"a20_publication.v1","selection_enabled":false,"status":"dormant_definition"}],"evidence_settlement_before_r06_requires_dispatch_disabled":true,"fail_atomic_nonemission_output_identity":null,"first_collected_node_id":"tests/data/test_psid_codebook_extraction_validation.py::test_exact_nested_derivation_schemas_accept_generated_shapes[_text_derivation]","fresh_recomputation_required":["89599_field_classifier","terminal_movement","assignments_logical_ranges_storage","constructibility_and_full_relation_identity","comparator_census","Q5","slot_inventory_full_G17_C01_and_V_B6","successor_bundles_through_publication"],"historical_r06_result_preserved":{"blocked_literal_count":524538,"exit_code":2,"numeric_range_structural_null_count":37283,"source_authorized_literal_count":52},"historical_zero_movement_assumption_permitted":false,"inherited_git_environment_removed":true,"interpreter_selector":"executing_process_sys.executable","last_collected_node_id":"tests/test_replay_amendment11_no_movement.py::test_reason_mutation_changes_field_source_identity_but_not_terminal","lifecycle_envelope_keys":["lifecycle_stage_id","schema_id","predecessor_stage_ids","input_identity_ids","output_identity_id","first_add_index","selection_enabled","status"],"lifecycle_statuses":["dormant_definition","blocked_predecessor","pass","fail_atomic_nonemission"],"module_path_domain_sha256":"a5099c464482c5b652e31e5dfa958703a4ae4c75c1dc1e4caa03cb2aef408063","output_identity_id_prefix":"a20-lifecycle-output:","output_identity_preimage":["lifecycle_stage_id","schema_id","predecessor_stage_ids","input_identity_ids","exact_output_payload_identity"],"output_identity_preimage_canonicalization":"python-json-sort-keys-compact-ascii-no-nan-lf-v1","revision22_repin_next_required_state":"A20_SOURCE_RELATIONS_SETTLED_DISPATCH_DISABLED","selection_enabled_only_on_passing_first_add_index":5,"selection_first_add_dispatch_requires_r04_r05_r06_order":true,"terminal_next_required_state":"A20_SUCCESSOR_LIFECYCLE_COMPLETE","test_command_after_interpreter":["-m","pytest","tests/data/test_psid_codebook_extraction_validation.py","tests/data/test_psid_missing_reason_authority_artifact.py","tests/data/test_psid_missing_reason_authority_unit.py","tests/estimates/test_birth_evidence_artifact.py","tests/test_rebuild_amendment11_missing_reason_authority.py","tests/test_replay_amendment11_no_movement.py"],"test_environment":{"PYTHONPATH":"src:."},"test_file_identities":[{"byte_size":13718,"git_blob":"7b2f33af3ff6a4e389a944e349aa222f6ca41519","mode":"100644","path":"tests/data/test_psid_codebook_extraction_validation.py","raw_sha256":"7af8a2847b4428fa7376598cc48333d008f225389eee461f3edae58ca624ff67"},{"byte_size":18129,"git_blob":"c8863f4a6a5e915666f0cce2cac4817e73839e9f","mode":"100644","path":"tests/data/test_psid_missing_reason_authority_artifact.py","raw_sha256":"4f425c776ddba30f3b861812cdcbd0abef5b10ae0f41608bcaa6d456c9cdcd85"},{"byte_size":18252,"git_blob":"499aa397f75e1d2f62e7c91a929f9ecdcf71a478","mode":"100644","path":"tests/data/test_psid_missing_reason_authority_unit.py","raw_sha256":"5e9b7cc33fd560ce5c472c6ac146f07a6b7b238003c6e96f715e417679149cda"},{"byte_size":25883,"git_blob":"d4e838a1123d4e07c6f472ff64cfd6c11462f4a8","mode":"100644","path":"tests/estimates/test_birth_evidence_artifact.py","raw_sha256":"70acf9c2f36f9f88a7e5e2c8c7b5825427d6a44cf1926b0a6c0c7cf4bbb7d5d5"},{"byte_size":22828,"git_blob":"632357933ea37c982d18402d249b74147cd80823","mode":"100644","path":"tests/test_rebuild_amendment11_missing_reason_authority.py","raw_sha256":"eedbab9e3ba3eaad19f08d36472b2fbc53cc5dc62b417a3600d5cb4360368dcb"},{"byte_size":19309,"git_blob":"cc4c1c6d65c89ad97feb0b4f04e6c5d2ecd2405f","mode":"100644","path":"tests/test_replay_amendment11_no_movement.py","raw_sha256":"0875ac524e0cd2e7f3cb6e601026b0d2db5b459c6f426fe5182ac08ebaef9ec1"}],"unratified_next_required_state":"A20_SUCCESSOR_PROGRAM_STOP"},"ratification_receipt":{"amendment20_external_receipt_path":"docs/analysis/amendment_20_ratification/executed_transition_receipt_v2.json","candidate_production_registry_identity":{"byte_size":55473,"git_blob":"92a24e3af4358f75cbead00f223837a68c2f9da8","mode":"100644","path":"scripts/covered_earnings_correction_registry.py","raw_sha256":"bd60336e3e388e5ef12f3f204b9bb08938c27be4db57f9e6fca6582aed7efb16"},"current_terminal_registry_cross_binding_required_iff_a20_terminal_revision22":true,"decimal_grammar":"[1-9][0-9]*|[1-9][0-9]{0,2}(,[0-9]{3})+","distinct_verdict_artifact_count":2,"external_receipt_candidate_ancestry_not_required":true,"external_receipt_first_add_precedes_or_equals_closure_first_add":true,"external_receipt_mode":"100644","external_receipt_outside_candidate_and_scratch":true,"external_receipt_strict_canonical_tracked_head_worktree_read":true,"inherited_external_receipt_path_template":"docs/analysis/amendment_<N>_ratification/executed_transition_receipt_v2.json","later_amendment_requires_own_exact_receipt_topology_projection":true,"later_revision_authenticates_historical_a20_design_under_30_2_3":true,"lf_only_exactly_one_terminal_lf":true,"public_oracle_validates_projection_verdicts_and_receipt":true,"qualifying_verdict_line_count":8,"qualifying_verdict_lines":["# RATIFY","attested_design_byte_size: <decimal>","attested_design_raw_sha256: <64 lowercase hex>","attested_design_blob_oid: <40 lowercase hex>","executed_transition_receipt_byte_size: <decimal>","executed_transition_receipt_raw_sha256: <64 lowercase hex>","executed_transition_receipt_schema: executed_transition_state.v2","---"],"receipt_candidate_design_exactly_cross_binds_historical_a20_closure_and_verdicts":true,"receipt_candidate_design_tree_mode_blob_rederived":true,"receipt_is_additional_operativity_condition":false,"receipt_public_result_booleans_not_sufficient":true,"receipt_rederives_synthetic_closure_standins_and_registry_binding":true,"receipt_schema":{"candidate_commit_identity_keys":["commit","tree","sole_parent"],"candidate_or_scratch_HEAD_member_superseded":true,"canonicalization":"ascii_json_sorted_keys_no_insignificant_whitespace_no_nonfinite_values_one_terminal_lf","changed_path_count":4,"changed_path_roles":["simulated_verdict_1","simulated_verdict_2","synthetic_amendment20_closure","scratch_registry_binding"],"closed_without_defaults_or_extra_keys":true,"closure_identity_keys":["path","raw_byte_size","raw_sha256","git_blob"],"expected_changed_path_domain_canonical_byte_size":260,"expected_changed_path_domain_sha256":"5a7912498c4d959fef337f2a1d1cf85a2f254fa29d825d365ccf4fe214ad48a7","expected_changed_paths":["docs/analysis/amendment_20_ratification/sol-ce-amend20-sim-r1-verdict.md","docs/analysis/amendment_20_ratification/sol-ce-amend20-sim-r2-verdict.md","docs/analysis/amendment_20_ratification/closure_v1.json","scripts/covered_earnings_correction_registry.py"],"full_pinned_battery_keys":["executed","exit_code","test_path","test_mode_blob_bytes_sha256","exact_command","collected","passed","failed","skipped","deselected","xfailed","xpassed","simulated_state_identity_sha256"],"integer_fields":["public_oracle.exit_code","full_pinned_battery.exit_code","full_pinned_battery.collected","full_pinned_battery.passed","full_pinned_battery.failed","full_pinned_battery.skipped","full_pinned_battery.deselected","full_pinned_battery.xfailed","full_pinned_battery.xpassed"],"manifest_authority":"NONAUTHORITY","manifest_keys":["schema_version","simulated_state_authority","candidate_commit_identity","scratch_transition","terminal_revision","canonical_registry_binding","ordered_closure_identities","full_pinned_battery_test_identity"],"manifest_schema_version":"executed_transition_state.v2","nested_state_identities_equal_top_level":true,"public_oracle_keys":["entrypoint","executed","exit_code","operative_amendments","simulated_state_identity_sha256"],"scratch_sole_parent_equals_candidate_commit":true,"scratch_transition_keys":["commit","tree","sole_parent","changed_paths","changed_path_domain_sha256"],"test_identity_keys":["path","mode","git_blob","raw_byte_size","raw_sha256"],"top_level_keys":["simulated_state_authority","simulated_state_identity_sha256","simulated_state_manifest","terminal_revision","public_oracle","full_pinned_battery"]},"same_candidate_triple_and_receipt_pair_required":true,"scratch":{"allowed_changed_paths":["docs/analysis/amendment_20_ratification/sol-ce-amend20-sim-r1-verdict.md","docs/analysis/amendment_20_ratification/sol-ce-amend20-sim-r2-verdict.md","docs/analysis/amendment_20_ratification/closure_v1.json","scripts/covered_earnings_correction_registry.py"],"candidate_commit_symbol":"C","ordered_closure_domain":[13,14,15,16,17,18,19,20],"scratch_commit_symbol":"S","scratch_is_strict_child_of_candidate":true,"standin_is_nonauthority_nonmergeable_noncopyable_nonreusable":true,"standin_is_qualifying_verdict":false,"standin_prefix_line_count":4,"standin_terminal_lines":["executed_transition_receipt_status: pending_same_state_execution","simulation_context: amendment20_same_state_nonauthority_v1","---"],"terminal_revision":22},"scratch_commit_forbidden_as_production_ancestor":true,"strict_utf8_no_bom_nul_cr":true},"schema_version":"amendment_20_dual_authority_successor_law.v1","source_infrastructure":{"current_url_or_latest_edition_substitution_forbidden":true,"domains_authenticate_foreign_keys_independently":true,"evidence_statement_row_keys":["evidence_statement_id","evidence_source_id","page_or_section_locator","utf8_byte_start","utf8_byte_end","exact_statement_raw_sha256","extraction_tool_identity","recovery_provenance_id"],"historical_domains_preserved":{"a11_source_count":47,"a19_build_input_repair_seal_count":22,"a19_build_input_row_count":279,"a19_build_input_source_document_count":257,"questionnaire_document_count":81},"included_and_excluded_counts_sum_to_physical_count":true,"inclusion_exclusion_complete_and_disjoint":true,"independent_reconstructor_count":2,"machine_local_absolute_paths_forbidden":true,"mixed_semantic_payload_or_shared_accepted_digest_aborts_both":true,"path_rule":"repository_relative_canonical_traversal_free","physical_relation":"a20_physical_source_rows","physical_source_row_keys":["evidence_source_id","upstream_capture_or_registry_identity","document_role","release_or_wave","representation","official_url","canonical_local_path","storage_identity","byte_size","raw_sha256","access_disposition","licensing_disposition","statement_locator_ids","extraction_tool_identity","recovered_source_provenance"],"reconstructors_require_count_order_keyset_rows_and_digest_equality":true,"semantic_domain_identity_keys":["domain_id","domain_version","included_source_rows","included_source_count","included_source_keyset_sha256","included_source_domain_sha256","excluded_source_rows","excluded_source_count","excluded_source_keyset_sha256","excluded_source_domain_sha256","admitted_statement_rows","statement_count","statement_keyset_sha256","statement_domain_sha256","status"],"semantic_domain_order":["missing_reason_source_domain","purpose_source_domain"],"semantic_domains":{"missing_reason_source_domain":{"domain_id":"missing_reason_source_domain","expected_identity":null,"required_final_status":"pass"},"purpose_source_domain":{"domain_id":"purpose_source_domain","expected_identity":null,"required_final_status":"pass"}},"shared_physical_bytes_imply_shared_semantic_admission":false,"statement_relation":"a20_evidence_statement_rows","successor_source_binding_expected_identity":null,"successor_source_binding_keys":["historical_a19_build_input_identity","physical_source_identity","evidence_statement_identity","missing_reason_source_domain_identity","purpose_source_domain_identity","missing_reason_authority_status","purpose_authority_status","prompt_field_semantic_binding_status","missing_reason_rule_set_identity","missing_reason_successor_relation_identity","missing_representation_bridge_identity","purpose_rule_set_identity","purpose_authority_mapping_identity","prompt_field_evidence_identity","prompt_field_candidate_set_identity","zero_candidate_positive_group_identity","semantic_binding_identity","r04_q5_shape_identity","missing_reason_failure_shadow_identity","purpose_failure_shadow_identity","prompt_field_semantic_failure_shadow_identity","active_identity_bindings_sha256","canonicalization","status"]},"successor_routing":{"a19_pin_fallback_for_terminal_a20_permitted":false,"a20_pins_selected_before_a19_pins":true,"amendment20_boundary_count":1,"current_production":{"closure_count":7,"ordered_closure_domain":[13,14,15,16,17,18,19],"reject_unratified_a20_suffix":true,"revision":21,"terminal_amendment":19},"immutable_prefix_amendment":19,"immutable_prefix_revision":21,"later_amendment_validates_inherited_a20_projection_first":true,"proposed_revision":22,"terminal_amendment":20,"terminal_successor_state":"A20_SUCCESSOR_LIFECYCLE_COMPLETE"},"supersession_coverage":["19.3.3_prompt_purpose_manifest_era_semantic_and_post_o_p_joins","20.4.2_and_33.2_33.3_33.7_frozen_q5_shapes","19.4.2_26.6.1_26.10.1_g17_header_q5_inventory_slot_projections","25.2_through_25.4_historical_missing_reason_census_and_settlement","25.5_25.10.1_25.10.2_32.4.4_32.7_32.8_33.4_successor_stop","25.6.6_32.4.2_32.4.3_32.7_r06_selector_input_and_result","25.9_25.10_26.10.3_dc71_lifecycle_definition_timing","26.6.3_26.10.1_33.2.2_33.2.3_33.7_construction_order","26.11.2_complete_r04_r05_r06_gate","28.2.1_28.4_verdict_operator_closure_order","29.4.4_29.4.5_source_member_identity_and_reconstruction","29.4.1_canonicalization_and_identity_equations","30.2.3_30.2.4_verdict_checking_and_public_atomic_operativity","30.2.2_five_key_registry_context_and_caller_context_prohibition","30.2.1_amendment_revision_arithmetic","31.3.1_31.3.2_31.3.3_receipt_and_nonexistent_31.5_anchor","32.2.1_32.2.2_33.8_historical_279_build_input_envelope","32.4.4_false_r06_lifecycle_booleans","30.4.1_31.2.2_32.5.1_33.5.1_implementation_pins_and_review","33.2.2_33.2.3_a19_purpose_rows_and_failure_member","33.3.2_d0_search_proof_d1_construction","33.4_obsolete_campaign_pin_and_a20_out_of_scope_label","33.5.2_33.5.3_a19_projection_routing_and_activation","33.6_mutation_inventory_and_inherited_census","33.7_construction_ambiguity_q5_and_reconstruction_rows","33.8_questionnaire_occurrence_read_vs_serialization_scope","33.9_terminal_a19_prospective_effect","20.3_21.3_21.5_22.2_22.5_23.2_23.5_24.2_24.6_algorithms","19.6_19.8_20.7_20.8_21.8_21.9_22.8_22.9_23.8_23.9_24.9_24.10_25.9_25.10_artifacts","27.3_27.6_28.2.2_29.4.7_seals_closures_and_census"]}
+~~~
+
+### 34.13 Terminal prospective effect
+
+**Amendment 20 is a prospective, unratified, evidence-incomplete, and
+inoperative draft. The operative registry remains revision 21 with exactly
+Amendments 13 through 19, and ordinary production loading must reject this
+suffix. This draft cures the nine confirmed legal seams, directly closes
+seven suspected structural seams, and enacts fail-closed evidence probes for
+the zero-candidate grouping and `MD=` representation bridge. It defines but
+does not instantiate the complete successor lifecycle. It emits no source
+admission, authority rule, settlement, R04/R05/R06 object, Q5, inventory,
+production artifact, verdict, receipt, closure, or registry repin. Only a
+later exact A4 freeze, one revision-22 same-state demonstration, the external
+receipt, two qualifying
+affirmative verdicts, lawful operator integration, A20 closure, and real
+revision-22 registry repin can activate it. After that activation, X-stage
+settlement and every R04/downstream gate execute in §34.7 order and may still
+fail closed. A frozen permanent-failure outcome is ratifiable law but never
+production readiness. If complete evidence identities cannot be frozen, this
+draft remains unratifiable; if the frozen evidence proves permanent residue,
+that exact failure controls. Invoking A21 requires the chartered
+kill/recharter event.**
