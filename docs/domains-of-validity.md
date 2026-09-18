@@ -30,7 +30,7 @@ The public record makes this concrete:
   Advisory Board have recommended revising the fertility and
   mortality-improvement assumptions as realized values ran outside
   the intermediate path for extended periods
-  [@technicalpanel2023].
+  [@technicalpanel2019].
 
 Two expert institutions, each with administrative data and decades of
 refinement, disagree with each other and have both missed realized

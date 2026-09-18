@@ -29,7 +29,7 @@ matching, yearly transition equations, and alignment procedures
 [@favreault2004dynasim3; @favreault2015; @urban2024dynasim4; @smith2001historicalearnings].
 MINT provides the benchmark for a Social Security-focused model with
 matched administrative earnings histories and explicit program-rule
-coverage [@smith2010mint; @butrica2006; @smith2021mint8; @ssa2024mint].
+coverage [@smith2010mint; @smith2021mint8; @ssa2024mint].
 CBO's public materials provide a more limited view, but they still show
 what official long-term analysis optimizes for: macro-fiscal coherence,
 cohort and quintile projections, and official baseline authority

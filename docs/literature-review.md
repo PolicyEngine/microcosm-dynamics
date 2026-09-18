@@ -31,7 +31,7 @@ Broad reviews emphasize recurring building blocks:
 - explicit treatment of drift over long horizons
 
 These themes are well documented in the microsimulation literature
-[@harding1996; @li2013; @van2013].
+[@harding1990; @li2013; @li2014dynamicmodels].
 
 ## 2. The core Social Security problem is lifecycle earnings
 
@@ -69,8 +69,7 @@ reproducible at scale.
 
 The public-data alternative is to transfer longitudinal structure from a
 panel survey or related source into a richer cross-sectional base. This
-is the family of methods most relevant to the present project
-[@rupp2005; @gouskova2010; @deville2011].
+is the family of methods most relevant to the present project.
 
 That literature supports the use of synthetic panels, but it also makes
 the main risk clear: matching marginal distributions is much easier than
@@ -117,7 +116,7 @@ failing on the quantities that actually matter for policy use.
 
 The literature on microsimulation evaluation is clear on one point: the
 credibility of the model depends on external validation, sensitivity
-analysis, and honest reporting of error [@toder2002; @bourguignon2006; @favreault2016].
+analysis, and honest reporting of error [@bourguignon2006; @smith2008mintcomparisons].
 
 That matters especially here because a public synthetic model does not
 have the administrative-data privilege of official agency models. The
@@ -137,7 +136,7 @@ The Social Security literature has long emphasized that aggregate
 solvency does not settle the main policy questions. Progressivity,
 replacement rates, race and gender disparities, family structure, and
 retirement adequacy all matter materially
-[@liebman2002; @whitman2011; @tamborini2013].
+[@liebman2002; @whitman2011; @tamborini2007].
 
 This has two implications for the project:
 
@@ -151,7 +150,7 @@ The literature on reform analysis shows why dynamic models are needed in
 the first place. Work on privatization, progressive indexing, automatic
 adjustment rules, and retirement incentives all depends on lifecycle
 information and distributional detail
-[@gustman2000; @diamond2003; @auerbach2017].
+[@gustman2000; @diamond2005].
 
 The lesson is not that one model can answer every reform question
 equally well. The lesson is that static or purely aggregate tools leave

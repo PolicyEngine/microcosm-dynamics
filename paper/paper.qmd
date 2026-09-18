@@ -159,7 +159,7 @@ is the division of labor the output tiers encode. Successive
 Technical Panels convened by the
 Social Security Advisory Board have recommended revising fertility
 and mortality-improvement assumptions as realized values ran
-persistently outside the projected path [@technicalpanel2023]. Two
+persistently outside the projected path [@technicalpanel2019]. Two
 institutions with administrative data and decades of
 refinement disagree with each other and have both missed realized
 demographic trends; a better microsimulation does not repair that,
@@ -273,7 +273,7 @@ event selection — ranking individual transition probabilities and
 selecting the number of events an external control demands, the
 mechanism CBOLT and DYNASIM use — with trajectory weights reserved
 for base-year representation and slow-moving composition
-[@li2013; @dekkerscumpston2012]. The kernel solves the stacked
+[@li2014; @dekkerscumpston2012]. The kernel solves the stacked
 constraint system as uncertainty-weighted penalized least squares
 against target standard errors, so infeasible combinations resolve
 by SE-weighted compromise rather than silent failure, and projected
@@ -454,8 +454,7 @@ survivorship histories, disability pathways, differential
 mortality, and claiming timing — jointly. A layer that scores well
 here earns reuse in adjacent domains — Supplemental Security Income
 interactions, long-term care, and retirement adequacy, the last of
-which is *harder*, not easier: wealth projection challenged even
-administrative-data models [@favreault2016], and a wealth
+which is *harder*, not easier: wealth projection challenged even MINT, built on administrative earnings records: survey benchmarks of mean financial assets ranged from 0.41 to 1.40 times its projections [@smith2008mintcomparisons], and a wealth
 and pension roadmap is future work, not an assumed extension — and
 in other countries' pension systems.
 
@@ -482,7 +481,7 @@ purchased.
 Every number below recomputes from committed artifacts in the
 project repository; the run log lives in the repository's pull
 requests and the candidate registry in
-[issue #42](https://github.com/PolicyEngine/populace-dynamics/issues/42).
+[issue #42](https://github.com/PolicyEngine/microcosm-dynamics/issues/42).
 
 ## The lock
 
@@ -620,14 +619,14 @@ individual-specific error term in its earnings equations
 [@favreault2015; @urban2024dynasim4]; CBOLT decomposes each
 worker's earnings into a permanent shock — the long-run gap from
 the group mean — and a transitory shock, estimated on
-administrative panel records [@cbo2018]. Both then align:
+administrative panel records [@schwabish2013]. Both then align:
 simulated outputs are recalibrated, typically rank-preservingly, to
-external distributional and aggregate targets [@li2013]. Alignment
+external distributional and aggregate targets [@li2013; @li2014]. Alignment
 is the field's standing admission that generated marginals drift;
 it re-imposes them after the fact and guarantees the published
 tables. The documented cost is that alignment can distort the
 relationships between variables and hits its targets whether or not
-the underlying process is right [@li2013] — the class of silent
+the underlying process is right [@li2014] — the class of silent
 correction this project's gate exists to expose rather than
 absorb: alignment would have masked the fourth candidate's marginal
 failure entirely.
@@ -964,7 +963,7 @@ period-matched fertility series sits at a median PSID/NCHS ratio of
 
 Sixteen candidates have run against the locked family-transition gate,
 each registered on the campaign registry
-([issue #42](https://github.com/PolicyEngine/populace-dynamics/issues/42))
+([issue #42](https://github.com/PolicyEngine/microcosm-dynamics/issues/42))
 before its single scored run and graded against a pre-registered
 forecast after. The ladder narrows the failure from fifteen distinct
 cells to a single pass, and the record of what each step cost is the
@@ -1189,7 +1188,7 @@ own-versus-shared concept delta the price-indexing anchor had carried
 
 : The six external-anchor replications, reported not gated, from the
 committed diagnostic artifacts; each registered on
-[issue #42](https://github.com/PolicyEngine/populace-dynamics/issues/42)
+[issue #42](https://github.com/PolicyEngine/microcosm-dynamics/issues/42)
 before its run. The shared-earnings row (@sec-surface) was run after
 the gate-2a pass validated the marital histories it requires.
 {#tbl-anchors}
@@ -1445,7 +1444,7 @@ Nine candidates have run against the locked household-composition
 gate — its 46 gated cells, its five locked person-split seeds, and
 the twenty-draw mean-over-draws estimator gate 2a ratified and gate
 2b adopted at lock — each registered on the campaign registry
-([issue #42](https://github.com/PolicyEngine/populace-dynamics/issues/42))
+([issue #42](https://github.com/PolicyEngine/microcosm-dynamics/issues/42))
 with a pre-registered forecast before its single scored run and
 graded after. Interleaved with them ran five registered forensics
 rounds — diagnostic, never gated, published whatever they found, each
@@ -1813,7 +1812,7 @@ Two candidates have run against the locked marriage-by-earnings
 gate — its twenty-seven gated cells, its five couple-disjoint split
 seeds, and the twenty-draw mean-over-draws estimator — each
 registered on the campaign registry
-([issue #42](https://github.com/PolicyEngine/populace-dynamics/issues/42))
+([issue #42](https://github.com/PolicyEngine/microcosm-dynamics/issues/42))
 with a pre-registered forecast before its single scored run and
 graded after.
 
@@ -2514,7 +2513,8 @@ projection of this kind has historically required.
 # Related work {#sec-related}
 
 Dynamic microsimulation originates with @orcutt1961; @li2013 survey
-the field's alignment and calibration practice. This design
+the field's models and methods, and @li2014 evaluate its
+alignment methods. This design
 borrows the central structural lesson of DYNASIM [@favreault2015;
 @urban2024dynasim4], MINT [@ssa2024mint], and CBOLT [@cbo2018] —
 an annual state engine with family links and external alignment —
@@ -2561,7 +2561,7 @@ lifetime earnings [@haider2006] — with nonlinear panel frameworks
 quantile machinery used here. The quasi-experimental record on
 claiming responses [@mastrobuoni2009; @behaghelblau2012] anchors
 the behavioral scenario library, and the assumption-failure record
-compiled by successive Technical Panels [@technicalpanel2023]
+compiled by successive Technical Panels [@technicalpanel2019]
 motivates the domains-of-validity framework.
 
 # Status and roadmap {#sec-status}
@@ -2574,7 +2574,7 @@ auxiliary benefits, disability and claiming, mortality and
 projection drift, calibration targets, the Social Security
 validation program, and a source-based DYNASIM dossier — live in
 the project repository at
-[github.com/PolicyEngine/populace-dynamics](https://github.com/PolicyEngine/populace-dynamics).
+[github.com/PolicyEngine/microcosm-dynamics](https://github.com/PolicyEngine/microcosm-dynamics).
 Development proceeds through stage gates defined as score
 thresholds — earnings-history credibility first, family and benefit
 outputs second, forward projection third, productization last —
