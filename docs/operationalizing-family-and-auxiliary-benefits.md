@@ -58,7 +58,7 @@ status alone.
 
 Some of the most visible Social Security adequacy debates run through
 family pathways rather than through the retired-worker benefit formula
-alone [@whitman2011; @tamborini2013].
+alone [@whitman2011; @tamborini2007].
 
 That includes:
 

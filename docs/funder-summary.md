@@ -48,7 +48,7 @@ headline deficit; CBO's long-term projections differ materially from
 the Trustees' for assumption reasons, not arithmetic ones; and
 successive Technical Panels have flagged the assumptions as realized
 values ran outside the projected path
-[@ssa2025trustees; @cbo2024longterm; @technicalpanel2023]. A better
+[@ssa2025trustees; @cbo2024longterm; @technicalpanel2019]. A better
 microsimulation does not fix that, because the variance lives in the
 inputs.
 
