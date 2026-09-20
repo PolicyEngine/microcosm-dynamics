@@ -88,6 +88,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
         Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
         Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+        Path("src/populace_dynamics/person_identity.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -157,19 +158,20 @@ def _internal_imports(
     return imports
 
 
-def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
+def test_post_review_identity_exclusions_are_unreachable_from_birth_evidence():
     module_paths = _repository_module_paths()
     root_module = "scripts.first_estimates_birth_evidence"
-    psid_exclusions = {
+    guarded_exclusions = {
         "populace_dynamics.data.psid_codebook_extraction",
         "populace_dynamics.data.psid_covered_earnings_registry",
         "populace_dynamics.data.psid_job_context",
         "populace_dynamics.data.psid_job_context_registry",
         "populace_dynamics.data.psid_missing_reason_authority",
         "populace_dynamics.data.psid_questionnaire_inventory",
+        "populace_dynamics.person_identity",
     }
     assert root_module in module_paths
-    assert psid_exclusions.issubset(module_paths)
+    assert guarded_exclusions.issubset(module_paths)
     module_by_path = {
         path.resolve(): module_name
         for module_name, path in module_paths.items()
@@ -201,9 +203,9 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
             - reachable
         )
 
-    assert psid_exclusions.isdisjoint(reachable), (
-        "historically excluded PSID modules became reachable from the "
-        f"birth-evidence reducer: {sorted(psid_exclusions & reachable)}"
+    assert guarded_exclusions.isdisjoint(reachable), (
+        "historically excluded modules became reachable from the "
+        f"birth-evidence reducer: {sorted(guarded_exclusions & reachable)}"
     )
 
 

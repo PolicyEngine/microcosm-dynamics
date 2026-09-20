@@ -156,6 +156,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
     Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
     Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+    # The opt-in identity transport is not imported by the historical reducer.
+    # Its exclusion remains guarded by the transitive reachability test.
+    Path("src/populace_dynamics/person_identity.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
