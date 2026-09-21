@@ -189,6 +189,59 @@ def _frame(
     )
 
 
+def test_actual_generator_output_can_be_recorded_without_changing_draws():
+    from populace_dynamics.engine.earnings_domain import EarningsDomainAdapter
+    from populace_dynamics.engine.loop import PeriodContext
+    from populace_dynamics.engine.steps import apply_earnings
+    from populace_dynamics.forward_earnings_history import (
+        ForwardEarningsHistory,
+    )
+    from populace_dynamics.person_identity import (
+        PersonIdentity,
+        PersonIdentityMap,
+    )
+
+    identities = PersonIdentityMap.from_identities(
+        [PersonIdentity("uint64", 2**63 + i) for i in range(21)]
+    )
+    generator = EarningsDomainAdapter(_generator())
+    initial = _frame((0, 1, 10, 20))
+    initial["year"] = np.full(len(initial), 2014, dtype=np.int64)
+    projected = generator.materialize_initial_frame(initial)
+    control = projected.copy(deep=True)
+    history = ForwardEarningsHistory.start(
+        identities,
+        projected,
+        realization_id="invented-generator-draw",
+        generator_digest="a" * 64,
+        source_contract_digest="b" * 64,
+        unit="XTS",
+        price_basis="nominal",
+        lineage_digest="c" * 64,
+    )
+    for year in (2015, 2016, 2017):
+        context = PeriodContext(year - 2014, year, 0, {})
+        projected = apply_earnings(
+            projected, context, np.random.default_rng(year), model=generator
+        )
+        control = apply_earnings(
+            control, context, np.random.default_rng(year), model=generator
+        )
+        projected["year"] = control["year"] = year
+        history = history.append(projected, lineage_digest="d" * 64)
+        pd.testing.assert_frame_equal(projected, control)
+    assert len(history.observations) == 16
+    assert all(
+        row.amount_state == "unavailable"
+        for row in history.for_person(identities.reverse_rows([0])[0])
+    )
+    for key in (1, 10, 20):
+        records = history.for_person(identities.reverse_rows([key])[0])
+        assert records[0].amount_hex == records[1].amount_hex
+        assert records[2].amount_hex == records[3].amount_hex
+        assert records[2].generation_method == "biennial_draw"
+
+
 def test_age_grid_has_eight_bins_and_clips_both_outer_ranges():
     ages = np.asarray(
         [0, 24.999, 25, 29.999, 30, 34.999, 35, 40, 45, 50, 55, 60, 64, 99]
