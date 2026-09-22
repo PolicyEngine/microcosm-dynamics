@@ -62,6 +62,7 @@
  "concept_deltas": [
   "model stock is entitled disabled workers; ASR counts workers in current-payment status (suspensions excluded)",
   "the synthetic population is closed, so it omits post-2008 immigrants",
+  "Census July 1, 2008 single ages are used as end-of-2008 ages (birth_year = 2008 - July 1 age), so the synthetic non-entitled population is about half a year younger than the December 2008 population; the Table 20 stock keeps its own December age groups",
   "rates are held at their fit-year level; no business-cycle or administrative variation after 2008 is modeled",
   "model deaths start the year after award; entitlement often precedes the award",
   "ASR 'other' terminations and elected reduced retirement are not modeled",

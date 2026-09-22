@@ -21,7 +21,11 @@ probabilities used by :mod:`populace_dynamics.engine.di_entitlement`:
   experience): Table 19 by attained age, or Tables 14A-14B by select age and
   duration.  By default one level factor rescales the profile so that the
   expected recoveries on the fit year's exposure equal ASR Table 50's
-  recoveries.
+  recoveries.  The Actuarial Study probabilities are multiple-decrement
+  probabilities, but the loop draws recovery only for the survivors of the
+  mortality step, so the realized recovery probability is ``(1 - q_death)
+  * q_recovery``: 2.5 percent below the fit's target on the 2008 exposure.
+  The fit does not correct for that.
 * **Death** of disabled workers.  The reference profile is Actuarial Study
   No. 118 Table 12 (attained age, ages 16-74) and Table 7C (ages 75-110), or
   Tables 7A-7C by select age and duration.  In the default ``multiplier``
@@ -485,6 +489,9 @@ class DIEntitlementRates:
         values = self.recovery_select.lookup(
             sex_index, select_age, duration, ages
         )
+        # Tables 14A-14B leave the cells past attained age 64 blank ("Recovery
+        # is not considered beyond normal retirement age", then 65), so a
+        # worker with a higher FRA gets zero recovery there on this basis.
         return np.nan_to_num(values, nan=0.0)
 
     def reference_death_probability(

@@ -2,10 +2,13 @@
 
 Status: built on branch `dynamics-di-entitlement-20260922` and fixed after
 two independent agent reviews (the two mortality fixes are marked "Review
-fix" below); not merged, not registered. Every modeling choice below is a
-proposal awaiting the A1 specification freeze. Nothing here computes the
-exercise 1 COLA statistic, reads DYNASIM or Urban Institute values, or uses
-PSID data.
+fix" below). A third review found no further code defect. It added the
+termination-timing and select-gap notes under Named deltas, the
+synthetic-age note on the diagnostic, and release-date and capture checks
+to `data/external/di_asr_2008/provenance.md`. Not merged, not registered.
+Every modeling choice below is a proposal awaiting the A1 specification
+freeze. Nothing here computes the exercise 1 COLA statistic, reads DYNASIM
+or Urban Institute values, or uses PSID data.
 
 ## Why it exists
 
@@ -122,7 +125,9 @@ Builder conventions, explicit in the code:
 December 2008 population from 2009 to 2023:
 
 - Census V2008 single ages, with the ASR 2008 Table 20 DI stock spread evenly
-  within age groups;
+  within age groups. The July 1 ages are used as end-of-2008 ages
+  (`birth_year = 2008 − age`), so the non-entitled records are about half a
+  year younger than the December 2008 population;
 - closed, with NCHS 2000 population mortality held constant (netted of
   DI-origin deaths within each single age and sex, the default);
 - run through the real adapters, on their batch-generator path with fixed
@@ -199,3 +204,22 @@ Readings:
   Trustees Report raises its incidence assumptions for workers expected to
   file for DI rather than reduced retirement benefits as the NRA rises
   (report page 119, footnote 1).
+- Termination timing. The Actuarial Study No. 118 probabilities are
+  multiple-decrement probabilities (the death tables' note: "the
+  probability of death— in a multiple-decrement environment"). The loop
+  applies death in step 1 and recovery to the survivors in step 5, so a
+  continuing worker's realized recovery probability is
+  `(1 − q_death) × q_recovery`. On the 2008 fit exposure, at the
+  Actuarial Study death rates, that is 2.5 percent below the 59,643
+  recoveries the `asr_fitted` level factor targets, because the fit
+  multiplies exposure by `q_recovery` alone. The fit does not correct for
+  it.
+- Under `termination_basis="select_and_ultimate"`, recovery is zero where
+  Actuarial Study No. 118 Tables 14A–14B show no value. Those cells are the
+  select-age and duration pairs that reach attained age 65 or more (select
+  age 56 at duration 9 through select age 64 at durations 1–9); the tables'
+  note says "Recovery is not considered beyond normal retirement age",
+  which was 65 in the 1996–2000 experience. Workers with an FRA above 65
+  therefore have no recovery after 65 on that basis. The attained-age
+  default holds the age-64 value instead (0.000455 for men, 0.000371 for
+  women, before the level factor).

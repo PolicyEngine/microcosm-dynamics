@@ -55,6 +55,27 @@ The 2008 report pages were captured in August 2009, after the report's July
 Vintage 2007 Census file in June 2008, so the `fit_year="2007"` alternative
 uses only information public during 2008.
 
+Release dates, checked on 2026-09-22 by the independent review against
+sources outside the table captures (not committed; read-only Wayback and
+Census requests):
+
+- DI ASR 2008: the report index page reads "released July 2009" in Wayback
+  capture `20090724161104` of
+  `http://www.ssa.gov:80/policy/docs/statcomps/di_asr/2008/index.html`.
+- DI ASR 2007: the index page reads "released September 2008" in Wayback
+  capture `20080913083354` of
+  `http://www.ssa.gov:80/policy/docs/statcomps/di_asr/2007/index.html`.
+- Census Vintage 2008: the committed layout PDF
+  (`raw/census_nc_est2008_alldata_layout.pdf.gz`) states "Release Date: May
+  14, 2009".
+- Census Vintage 2007: the "2008-05" release month was not checked; the
+  capture shows the file was public by 2008-06-06.
+
+The same review confirmed each table capture above against the Wayback CDX
+index: for every row, the CDX SHA-1 digest of that capture equals the SHA-1
+of the decompressed committed file. It also re-downloaded both Census CSVs
+from `www2.census.gov` and reproduced the SHA-256 values above.
+
 ## What the fit uses
 
 - **Award incidence** (per non-entitled population, by age band and sex):

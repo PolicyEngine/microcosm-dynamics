@@ -220,6 +220,52 @@ def test_default_fit_is_pinned(inputs):
     )
 
 
+def test_sequential_timing_realizes_fewer_recoveries_than_targeted(inputs):
+    """Committed 2008 inputs and default rates (a documented named delta).
+
+    The ``asr_fitted`` recovery level makes exposure x q_recovery equal ASR
+    Table 50's 59,643 recoveries.  The Actuarial Study probabilities are
+    multiple-decrement probabilities, but the loop draws recovery only for
+    the survivors of its mortality step, so on the same exposure it
+    realizes exposure x (1 - q_death) x q_recovery: about 2.5 percent fewer.
+    The exposure rule and the simple within-group means repeat the fit's.
+    If the fit starts correcting for survival, update this test and
+    ``docs/design/di_entitlement.md``.
+    """
+    rates = load_di_entitlement_rates()
+    asr = inputs["asr"]["2008"]
+    stock = asr["stock_workers_december"]
+    group_ages = {
+        "Under 25": (18, 24),
+        "25–29": (25, 29),
+        "30–34": (30, 34),
+        "35–39": (35, 39),
+        "40–44": (40, 44),
+        "45–49": (45, 49),
+        "50–54": (50, 54),
+        "55–59": (55, 59),
+        "60–64": (60, 64),
+        "65–FRA": (65, 65),
+    }
+    targeted = 0.0
+    realized = 0.0
+    for index, (sex, section) in enumerate(
+        (("female", "women"), ("male", "men"))
+    ):
+        totals = asr["stock_distribution"][section]
+        prior = totals["2007"]["number_thousands"]
+        current = totals["2008"]["number_thousands"]
+        scale = (prior + current) / (2.0 * current)
+        for label, count in zip(stock["age_groups"], stock[sex], strict=True):
+            lower, upper = group_ages[label]
+            recovery = rates.recovery_attained[index, lower : upper + 1]
+            death = rates.death_attained[index, lower : upper + 1]
+            targeted += count * scale * float(recovery.mean())
+            realized += count * scale * float((recovery * (1 - death)).mean())
+    assert targeted == pytest.approx(59_643, rel=1e-9)
+    assert realized / targeted == pytest.approx(0.975, abs=0.001)
+
+
 @pytest.mark.parametrize("fit_year", FIT_YEARS)
 def test_every_fit_year_loads_and_stays_in_range(fit_year):
     rates = load_di_entitlement_rates(DIEntitlementSpec(fit_year=fit_year))
