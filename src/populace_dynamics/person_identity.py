@@ -129,6 +129,12 @@ class PersonIdentityMap:
         object.__setattr__(self, "entries", entries)
         object.__setattr__(self, "_forward", MappingProxyType(forward))
 
+    def __reduce__(self):
+        # The read-only lookup proxy cannot be pickled. Entries are the only
+        # state, so pickle and deepcopy rebuild through the validating
+        # constructor, which derives a fresh read-only lookup.
+        return (type(self), (self.entries,))
+
     @classmethod
     def from_identities(
         cls, identities: Iterable[PersonIdentity]

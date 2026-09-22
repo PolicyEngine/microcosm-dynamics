@@ -1,6 +1,8 @@
 """Invented identity cases; no population, historical earnings or policy run."""
 
+import copy
 import json
+import pickle
 from dataclasses import FrozenInstanceError
 
 import pytest
@@ -279,6 +281,59 @@ def test_digest_and_prior_manifest_reject_remapping_or_deletion():
         PersonIdentityMap.from_json(
             PersonIdentityMap().to_json(), previous=old
         )
+
+
+def _pickled(value, protocol=pickle.HIGHEST_PROTOCOL):
+    return pickle.loads(pickle.dumps(value, protocol=protocol))
+
+
+@pytest.mark.parametrize(
+    "copier",
+    [
+        *(
+            pytest.param(
+                lambda value, p=p: _pickled(value, p), id=f"pickle-{p}"
+            )
+            for p in range(pickle.HIGHEST_PROTOCOL + 1)
+        ),
+        pytest.param(copy.deepcopy, id="deepcopy"),
+        pytest.param(copy.copy, id="copy"),
+    ],
+)
+def test_map_round_trips_through_pickle_and_copy(copier):
+    identities = (
+        PersonIdentity("uint64", 2**64 - 1),
+        PersonIdentity("int64", -(2**63)),
+        PersonIdentity("string", "é"),
+        PersonIdentity("string", ""),
+    )
+    mapping = PersonIdentityMap.from_identities(identities).append(
+        [PersonIdentity("string", "0")]
+    )
+    restored = copier(mapping)
+    assert type(restored) is PersonIdentityMap
+    assert restored == mapping
+    assert restored.to_json() == mapping.to_json()
+    assert restored.digest == mapping.digest
+    assert restored.map_rows(identities) == mapping.map_rows(identities)
+    assert restored.reverse_rows([4]) == (PersonIdentity("string", "0"),)
+    with pytest.raises(ValueError, match="already admitted"):
+        restored.append([PersonIdentity("string", "é")])
+    with pytest.raises(TypeError):
+        restored._forward[identities[0]] = 8
+    assert copier(PersonIdentityMap()) == PersonIdentityMap()
+
+
+def test_map_reduces_to_its_entries_so_loading_revalidates():
+    mapping = PersonIdentityMap.from_identities(
+        [PersonIdentity("string", "a"), PersonIdentity("string", "b")]
+    )
+    constructor, arguments = mapping.__reduce__()
+    assert constructor is PersonIdentityMap
+    assert arguments == (mapping.entries,)
+    swapped = (IdentityEntry(PersonIdentity("string", "a"), 1),)
+    with pytest.raises(ValueError, match="dense"):
+        constructor(swapped)
 
 
 def test_json_whitespace_does_not_change_canonical_digest():

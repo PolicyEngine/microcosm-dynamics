@@ -1,6 +1,8 @@
 """Invented projection records; no fitting, benefit or population scoring."""
 
+import copy
 import json
+import pickle
 from dataclasses import FrozenInstanceError, replace
 
 import numpy as np
@@ -190,6 +192,68 @@ def test_history_is_frozen_and_observation_inputs_are_snapshotted():
         history.realization_id = "different-career"
     with pytest.raises(FrozenInstanceError):
         history.observations[0].amount_hex = (100.0).hex()
+
+
+@pytest.mark.parametrize(
+    "copier",
+    [
+        pytest.param(
+            lambda value: pickle.loads(pickle.dumps(value, protocol=5)),
+            id="pickle",
+        ),
+        pytest.param(copy.deepcopy, id="deepcopy"),
+    ],
+)
+def test_history_round_trips_through_pickle_and_deepcopy(copier):
+    history = start(frame(values=(0.1, 0.0))).append(
+        frame(2015, (0.1, 0.0)), lineage_digest="d" * 64
+    )
+    restored = copier(history)
+    assert restored == history
+    assert restored.to_json() == history.to_json()
+    assert restored.digest == history.digest
+    assert restored.identity_map.digest == history.identity_map.digest
+    person = PersonIdentity("uint64", 2**64 - 1)
+    assert restored.for_person(person) == history.for_person(person)
+    restored.require_extension_of(history)
+    successor = restored.append(
+        frame(2016, (0.2, 0.0)), lineage_digest="e" * 64
+    )
+    successor.require_extension_of(history)
+
+
+def test_person_id_column_is_read_as_private_keys_not_native_ids():
+    """Invented native IDs 0..10: lexical admission gives native 10 key 2.
+
+    The recorder reads ``person_id`` as this map's private key, so a caller
+    holding native IDs must translate them with ``map_rows`` first.
+    """
+    identities = [PersonIdentity("int64", x) for x in range(11)]
+    identity_map = PersonIdentityMap.from_identities(identities)
+    assert identity_map.map_rows([PersonIdentity("int64", 10)]) == (2,)
+    data = pd.DataFrame(
+        {
+            "person_id": np.asarray(
+                identity_map.map_rows(identities), dtype=np.int64
+            ),
+            "year": np.full(11, 2014, dtype=np.int64),
+            "earnings": np.asarray([1000.0 * x for x in range(11)]),
+            "earnings_domain": np.ones(11, dtype=bool),
+        }
+    )
+    history = ForwardEarningsHistory.start(
+        identity_map,
+        data,
+        realization_id="invented-native-translation",
+        generator_digest="a" * 64,
+        source_contract_digest="b" * 64,
+        lineage_digest="c" * 64,
+        unit="XTS",
+        price_basis="nominal",
+    )
+    for native, identity in enumerate(identities):
+        (row,) = history.for_person(identity)
+        assert float.fromhex(row.amount_hex) == 1000.0 * native
 
 
 def test_loaded_successor_cannot_change_realization_or_erase_old_rows():
