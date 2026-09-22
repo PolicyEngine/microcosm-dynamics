@@ -93,6 +93,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/covered_wage_history.py"),
         Path("src/populace_dynamics/mortality_observer.py"),
         Path("src/populace_dynamics/closed_cohort_history.py"),
+        Path("src/populace_dynamics/assembled_history_observer.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -177,6 +178,7 @@ def test_post_review_identity_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.covered_wage_history",
         "populace_dynamics.mortality_observer",
         "populace_dynamics.closed_cohort_history",
+        "populace_dynamics.assembled_history_observer",
     }
     assert root_module in module_paths
     assert guarded_exclusions.issubset(module_paths)
