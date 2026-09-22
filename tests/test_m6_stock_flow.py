@@ -14,8 +14,12 @@ is involved anywhere in this module.
 
 from __future__ import annotations
 
+import copy
 import json
 import math
+import multiprocessing
+import pickle
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import FrozenInstanceError, dataclass, field
 from inspect import signature
 
@@ -638,6 +642,125 @@ def test_refusal_payload_is_serializable():
         "undeclared_addition",
         "undeclared_exit",
     }
+
+
+# ---------------------------------------------------------------------
+# refusals survive pickling, copying and process boundaries
+# ---------------------------------------------------------------------
+
+REFUSAL_ROUND_TRIPS = [
+    pytest.param(
+        lambda value: pickle.loads(pickle.dumps(value, protocol=0)),
+        id="pickle-protocol-0",
+    ),
+    pytest.param(
+        lambda value: pickle.loads(
+            pickle.dumps(value, protocol=pickle.HIGHEST_PROTOCOL)
+        ),
+        id="pickle-highest-protocol",
+    ),
+    pytest.param(copy.copy, id="copy"),
+    pytest.param(copy.deepcopy, id="deepcopy"),
+]
+
+
+def _undeclared_exit_refusal() -> PopulationReconciliationError:
+    with pytest.raises(PopulationReconciliationError) as caught:
+        reconcile_period(
+            frame(2140, {1: 10.0, 2: 20.0}),
+            frame(2141, {1: 10.0}),
+            opening_year=2140,
+            closing_year=2141,
+        )
+    return caught.value
+
+
+@pytest.mark.parametrize("round_trip", REFUSAL_ROUND_TRIPS)
+def test_reconciliation_refusal_survives_pickle_and_copy(round_trip):
+    """The typed findings are rebuilt, not dropped or re-parsed."""
+    error = _undeclared_exit_refusal()
+    error.add_note("synthetic caller note")
+
+    restored = round_trip(error)
+
+    assert type(restored) is PopulationReconciliationError
+    assert restored is not error
+    assert restored.args == error.args
+    assert str(restored) == str(error)
+    assert isinstance(restored.discrepancies, tuple)
+    assert restored.discrepancies == error.discrepancies
+    assert kinds(restored) == [DiscrepancyKind.UNDECLARED_EXIT]
+    assert restored.discrepancies[0].person_id == 2
+    assert restored.to_dict() == error.to_dict()
+    assert restored.__notes__ == ["synthetic caller note"]
+
+
+def _unknown_kind_refusal() -> None:
+    PopulationEvent(1, "abduction", 2141)
+
+
+def _unpriced_transient_refusal() -> None:
+    reconcile_period(
+        frame(2150, {1: 10.0}),
+        frame(2151, {1: 10.0}),
+        opening_year=2150,
+        closing_year=2151,
+        additions=[entry(7, 2151)],
+        exits=[death(7, 2151, weight=1.0)],
+    )
+
+
+@pytest.mark.parametrize("round_trip", REFUSAL_ROUND_TRIPS)
+@pytest.mark.parametrize(
+    ("refuse", "cause_type"),
+    [
+        pytest.param(_unknown_kind_refusal, ValueError, id="raise-from"),
+        pytest.param(_unpriced_transient_refusal, None, id="raise-from-none"),
+    ],
+)
+def test_input_refusal_keeps_its_explicit_cause_chain(
+    round_trip, refuse, cause_type
+):
+    """``raise ... from`` metadata is rebuilt with the refusal."""
+    with pytest.raises(PopulationAccountingInputError) as caught:
+        refuse()
+    error = caught.value
+
+    restored = round_trip(error)
+
+    assert type(restored) is PopulationAccountingInputError
+    assert str(restored) == str(error)
+    assert restored.__suppress_context__ is True
+    if cause_type is None:
+        assert restored.__cause__ is None
+    else:
+        assert type(restored.__cause__) is cause_type
+        assert str(restored.__cause__) == str(error.__cause__)
+
+
+def test_reconciliation_refusal_crosses_a_process_pool():
+    """A worker's refusal reaches the parent typed, not as a broken pool."""
+    context = multiprocessing.get_context("spawn")
+    with ProcessPoolExecutor(max_workers=1, mp_context=context) as pool:
+        future = pool.submit(
+            reconcile_period,
+            frame(2140, {1: 10.0, 2: 20.0}),
+            frame(2141, {1: 10.0}),
+            opening_year=2140,
+            closing_year=2141,
+        )
+        with pytest.raises(PopulationReconciliationError) as caught:
+            future.result(timeout=120)
+
+    assert kinds(caught.value) == [DiscrepancyKind.UNDECLARED_EXIT]
+    assert caught.value.discrepancies[0].person_id == 2
+    assert caught.value.to_dict()["discrepancies"] == [
+        {
+            "kind": "undeclared_exit",
+            "person_id": 2,
+            "detail": caught.value.discrepancies[0].detail,
+        }
+    ]
 
 
 # ---------------------------------------------------------------------

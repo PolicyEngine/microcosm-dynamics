@@ -48,6 +48,12 @@ class HistoryAccountingError(accounting.PopulationAccountingError):
     Annual input/reconciliation failures retain the original exception as
     ``__cause__``, including its typed discrepancies. No partial history
     account is returned on failure.
+
+    Pickling and copying use the base refusal's ``__reduce__``: they keep
+    the kind, period index, years, person IDs, the already-prefixed message
+    and the ``__cause__``. ``concurrent.futures`` and ``multiprocessing``
+    pools replace ``__cause__`` with their remote traceback text after
+    unpickling, so a pool caller sees these fields but not the typed cause.
     """
 
     def __init__(
