@@ -68,8 +68,10 @@ The reported value per group and statistic is the mean over draws of the
 per-draw statistic (``math.fsum``), with the ``ddof=1`` sample standard
 deviation, the formula of ``estimates.first_report._numeric_aggregate``
 for K >= 2; for one draw the SD is null (that helper would divide by
-zero).  A non-finite value anywhere (float64 overflow) is refused, so every
-number in a result is JSON-finite.  The noise floor follows
+zero).  A non-finite value anywhere (float64 overflow), including the
+half-sample means and floor summaries, is refused with
+:class:`ColaTabulationError`, so every number in a result is
+JSON-finite.  The noise floor follows
 ``runs/replication_mermin_rows_v1.json`` ``conventions.floor`` as computed
 by ``scripts/replication_mermin_rows.py``: for each of five seeds (0-4),
 :func:`populace_dynamics.harness.panel.split_panel_by_person` with
@@ -625,8 +627,10 @@ def _records(
 
 
 def _person_key(value: Any, index: int) -> int | str:
+    # Normalize to the builtin type (numpy.str_ -> str, numpy integer ->
+    # int) so the one-type check compares key types, not container types.
     if isinstance(value, str) and value:
-        return value
+        return str(value)
     if not _is_bool(value) and isinstance(value, Integral):
         return int(value)
     raise ColaTabulationError(
@@ -955,14 +959,30 @@ def _floor_summary(values: list[float]) -> dict[str, Any]:
             "values": [],
         }
     arr = np.array(values, dtype=np.float64)
+    # The numpy mean/std of the committed-floor convention; an overflow
+    # (inf or nan) is refused, never reported.
+    with np.errstate(over="ignore", invalid="ignore"):
+        mean = float(arr.mean())
+        sd = float(arr.std(ddof=1)) if arr.size > 1 else 0.0
     return {
-        "mean": float(arr.mean()),
-        "sd": float(arr.std(ddof=1)) if arr.size > 1 else 0.0,
-        "min": float(arr.min()),
-        "max": float(arr.max()),
+        "mean": _finite(mean, "the floor mean"),
+        "sd": _finite(sd, "the floor sd"),
+        "min": _finite(float(arr.min()), "the floor min"),
+        "max": _finite(float(arr.max()), "the floor max"),
         "n_seeds": int(arr.size),
-        "values": [float(v) for v in arr],
+        "values": [_finite(float(v), "a floor gap") for v in arr],
     }
+
+
+def _side_mean(values: list[float]) -> float:
+    try:
+        total = math.fsum(values)
+    except OverflowError as error:
+        raise ColaTabulationError(
+            "a half-sample mean over draws overflows float64; rescale the "
+            "weights or benefits"
+        ) from error
+    return _finite(total / len(values), "a half-sample mean over draws")
 
 
 def _side_values(
@@ -980,7 +1000,7 @@ def _side_values(
                     cell["draw"] for cell in cells if cell[statistic] is None
                 ]
             else:
-                entry[statistic] = math.fsum(values) / len(values)
+                entry[statistic] = _side_mean(values)
         groups[group.label] = entry
     return {
         "n_persons": int(len(set(rows.person_id[subset].tolist()))),

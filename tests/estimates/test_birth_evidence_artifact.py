@@ -222,8 +222,6 @@ def test_source_reachability_includes_implicit_package_initializers(
     assert "sample.untracked_extension" not in reachable
 
 
-
-
 def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     module_paths = _repository_module_paths()
     root_module = "scripts.first_estimates_birth_evidence"

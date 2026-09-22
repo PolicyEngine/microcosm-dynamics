@@ -697,6 +697,36 @@ def test_float_overflow_is_refused_not_reported():
         _tabulate(rows, age_groups=_single_group())
 
 
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_floor_summary_overflow_is_refused_not_reported():
+    # Invented extreme row: person 0 has a 1e-300 baseline and a 1.5e6
+    # reform benefit (individual ratio 1.5e306), so any half holding person
+    # 0 alone has a mean-of-ratios near 1.5e308.  The full-sample cell is
+    # finite (about 5e307), but the floor averages several such gaps, and
+    # their numpy mean overflows to inf.  That must be refused, not
+    # reported as a non-JSON floor.
+    rows = [_row(0, 0, birth_year=1975, base=1e-300, reform=1.5e6)] + [
+        _row(0, person, birth_year=1975, base=1000.0, reform=900.0)
+        for person in (1, 2)
+    ]
+    with pytest.raises(ColaTabulationError, match="the floor .* not finite"):
+        _tabulate(rows, age_groups=_single_group())
+
+
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_half_sample_mean_overflow_is_a_tabulation_error():
+    # Invented extreme rows over two draws: the half holding person 0 alone
+    # has a mean-of-ratios near 1.5e308 in each draw, whose sum overflows
+    # math.fsum.  That is a ColaTabulationError, not a bare OverflowError.
+    rows = [
+        _row(draw, person, birth_year=1975, base=base, reform=reform)
+        for draw in (0, 1)
+        for person, base, reform in ((0, 1e-300, 1.5e6), (1, 1000.0, 900.0))
+    ]
+    with pytest.raises(ColaTabulationError, match="half-sample mean"):
+        _tabulate(rows, age_groups=_single_group(), draw_indices=(0, 1))
+
+
 def test_benefit_without_beneficiary_flag_is_refused():
     rows = [
         _row(
@@ -767,6 +797,24 @@ def test_mixed_person_id_types_are_refused():
     ]
     with pytest.raises(ColaTabulationError, match="all be integers"):
         _tabulate(rows, age_groups=_single_group())
+
+
+def test_numpy_string_person_ids_are_strings():
+    # numpy.str_ keys (e.g. from an array) mix with builtin str keys: both
+    # are string ids, and equal values are the same person.
+    rows = [
+        _row(0, np.str_("a"), birth_year=1975, base=1000.0, reform=900.0),
+        _row(0, "b", birth_year=1975, base=1000.0, reform=800.0),
+    ]
+    result = _tabulate(rows, age_groups=_single_group())
+    assert result["input_summary"]["n_persons"] == 2
+    assert _group(result, "only")[PRIMARY]["mean"] == pytest.approx(-15.0)
+    duplicate = [
+        _row(0, np.str_("a"), birth_year=1975, base=1000.0, reform=900.0),
+        _row(0, "a", birth_year=1975, base=1000.0, reform=900.0),
+    ]
+    with pytest.raises(ColaTabulationError, match="duplicate"):
+        _tabulate(duplicate, age_groups=_single_group())
 
 
 def test_empty_rows_are_refused():

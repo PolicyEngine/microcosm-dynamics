@@ -54,11 +54,13 @@ Age is `reference_year - birth_year` by default. The default groups are
 
 The reported value is the mean over draws of the per-draw statistic, with the
 `ddof=1` sample SD (null for a single draw). Draws default to K = 20 (indices
-0-19). A non-finite value anywhere (float64 overflow) is refused, so every
-number in a result is finite JSON. The noise floor
-follows `runs/replication_mermin_rows_v1.json` `conventions.floor`. For each
-of seeds 0-4, `harness.panel.split_panel_by_person(fraction=0.5)` splits
-persons into two disjoint halves, so all of a person's draws fall on one side.
+0-19). A non-finite value anywhere (float64 overflow), including the
+half-sample means and floor summaries, is refused with
+`ColaTabulationError`, so every number in a result is finite JSON. The
+noise floor follows `runs/replication_mermin_rows_v1.json`
+`conventions.floor`. For each of seeds 0-4,
+`harness.panel.split_panel_by_person(fraction=0.5)` splits persons into
+two disjoint halves, so all of a person's draws fall on one side.
 The reported estimator is recomputed on each half. The floor is the summary
 of `|side_a - side_b|` over seeds where both halves are defined: mean, sd,
 min, max, n_seeds and values, with dropped seeds listed. Floors are at half
