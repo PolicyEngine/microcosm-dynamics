@@ -283,6 +283,7 @@ def test_committed_rates_run_through_the_loop_and_reconcile():
             population_model=mortality,
             rates=rates,
             death_log=log,
+            weight_column=None,
         ),
         aging=advance_age,
         marital_core=lambda frame, context, rng: MaritalStepResult(
@@ -372,6 +373,7 @@ def test_multiplier_reproduces_as118_under_banded_nchs_2000_mortality():
         population_model=model,
         rates=rates,
         death_log=log,
+        weight_column=None,
     )
     logged = log[2011]
     assert len(logged) == 40
@@ -384,6 +386,83 @@ def test_multiplier_reproduces_as118_under_banded_nchs_2000_mortality():
     assert applied[("male", 55)] == pytest.approx(0.040662, rel=1e-4)
     assert applied[("male", 64)] == pytest.approx(0.056410, rel=1e-4)
     assert applied[("female", 55)] == pytest.approx(0.030052, rel=1e-4)
+
+
+def test_population_total_would_inflate_all_person_mortality(inputs):
+    """Committed 2008 prevalence, AS118 rates, NCHS 2000 single ages.
+
+    The population model is all-person mortality.  Regression: keeping it
+    for non-DI-origin persons (now the ``population_total`` alternative)
+    raised expected deaths in every ASR age group from 45 to 64 by about 25
+    to 35 percent at the December 2008 disabled-worker prevalence (Table 20
+    stock spread evenly within groups over Census July 1, 2008 population).
+    The default ``net_of_di_origin`` keeps them at the population model's.
+    """
+    life = json.loads(NCHS_2000_PATH.read_text(encoding="utf-8"))
+    bands = tuple((age, age) for age in range(100)) + ((100, 120),)
+    probability = {}
+    for sex in ("female", "male"):
+        rows = {int(r["age"]): float(r["qx"]) for r in life["tables"][sex]}
+        for lower, upper in bands:
+            label = AgeSexMortalityModel.band_label(lower, upper)
+            probability[(label, sex)] = rows[lower]
+    model = AgeSexMortalityModel(bands, probability)
+    census = inputs["census_resident_population_july1"]["2008"]
+    stock = inputs["asr"]["2008"]["stock_workers_december"]
+    groups = {"45–49": (45, 49), "50–54": (50, 54), "55–59": (55, 59)}
+    groups["60–64"] = (60, 64)
+    records = []
+    for sex in ("female", "male"):
+        counts = dict(zip(stock["age_groups"], stock[sex], strict=True))
+        for label, (lower, upper) in groups.items():
+            per_age = counts[label] / (upper - lower + 1)
+            for age in range(lower, upper + 1):
+                population = float(census[sex][age])
+                records.append((sex, age, False, population - per_age))
+                records.append((sex, age, True, per_age))
+    frame = pd.DataFrame(
+        records, columns=["sex", "age", "di_entitled", "weight"]
+    )
+    frame["person_id"] = np.arange(1, len(frame) + 1)
+    frame["year"] = 2008
+    frame["birth_year"] = 2008 - frame["age"]
+
+    def fra(birth_year):  # INVENTED: 66 years, then 67 from 1960
+        return 792 if birth_year < 1960 else 804
+
+    ratios = {}
+    for choice in ("population_total", "net_of_di_origin"):
+        rates = load_di_entitlement_rates(
+            DIEntitlementSpec(non_di_mortality=choice)
+        )
+        start = prepare_opening_di_state(frame, rates=rates, fra_schedule=fra)
+        log = {}
+        apply_di_aware_mortality(
+            start,
+            PeriodContext(1, 2009, 0, {}),
+            _ZeroDraw(),
+            population_model=model,
+            rates=rates,
+            death_log=log,
+            weight_column="weight",
+        )
+        applied = log[2009].merge(start[["person_id", "age", "weight"]])
+        for sex in ("female", "male"):
+            for label, (lower, upper) in groups.items():
+                cell = applied[
+                    (applied["sex"] == sex)
+                    & applied["age"].between(lower, upper)
+                ]
+                ratios[(choice, sex, label)] = float(
+                    (cell["weight"] * cell["q_applied"]).sum()
+                    / (cell["weight"] * cell["q_population"]).sum()
+                )
+    for sex in ("female", "male"):
+        for label in groups:
+            assert 1.24 < ratios[("population_total", sex, label)] < 1.36
+            assert ratios[("net_of_di_origin", sex, label)] == pytest.approx(
+                1.0, rel=1e-9
+            )
 
 
 @pytest.fixture(scope="module")

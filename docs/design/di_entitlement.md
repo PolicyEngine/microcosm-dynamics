@@ -1,9 +1,11 @@
 # SSDI disabled-worker entitlement component (Track A item A4)
 
-Status: built on branch `dynamics-di-entitlement-20260922`, unreviewed, not
-registered. Every modeling choice below is a proposal awaiting the A1
-specification freeze. Nothing here computes the exercise 1 COLA statistic,
-reads DYNASIM or Urban Institute values, or uses PSID data.
+Status: built on branch `dynamics-di-entitlement-20260922` and fixed after
+two independent agent reviews (the two mortality fixes are marked "Review
+fix" below); not merged, not registered. Every modeling choice below is a
+proposal awaiting the A1 specification freeze. Nothing here computes the
+exercise 1 COLA statistic, reads DYNASIM or Urban Institute values, or uses
+PSID data.
 
 ## Why it exists
 
@@ -22,10 +24,10 @@ accounting) and `src/populace_dynamics/engine/di_entitlement_rates.py`
 
 | Piece | Loop slot | Behavior |
 |---|---|---|
-| `prepare_opening_di_state` | `PeriodModules.initialize` | Requires an explicit boolean `di_entitled` opening stock (from A3); refuses entitled workers already past FRA, award years after the start year, and other inconsistent inputs; adds the DI state columns. |
-| `apply_di_aware_mortality` | `PeriodModules.mortality` | Uses the same person-keyed MORTALITY uniform as `steps.apply_mortality`, so non-DI people die exactly as before. Entitled workers (and, by default, converted former disabled workers) die at disabled-worker rates. In the multiplier mode it needs the population model's age bands (see Death below). Optionally logs every decedent. |
+| `prepare_opening_di_state` | `PeriodModules.initialize` | Requires an explicit boolean `di_entitled` opening stock (from A3); refuses entitled workers already past FRA, award years after the start year, conversion years before the earliest possible FRA year, and other inconsistent inputs; adds the DI state columns. |
+| `apply_di_aware_mortality` | `PeriodModules.mortality` | Uses the same person-keyed MORTALITY uniform as `steps.apply_mortality`. Entitled workers (and, by default, converted former disabled workers) die at disabled-worker rates. By default everyone else's probability is scaled within each population age band and sex so that the cell's expected deaths stay at the population model's (see Everyone else below). It needs the population model's age bands and an explicit `weight_column`. Optionally logs every decedent and every cell. |
 | `apply_di_entitlement` | `PeriodModules.disability` | At most one transition per person-year. Entitled workers convert in the calendar year they attain FRA (no draw) or face a recovery draw. Everyone else below FRA and aged 18 or older at the start of the year faces award incidence. One uniform per exposed or entitled person from a tagged, person-keyed DISABILITY stream. |
-| `di_stock_flow` | after a run | Checks `stock_end = stock_start + awards + entrants − deaths − recoveries − conversions` for every year, counted and weighted, and cross-checks deaths against the mortality log (a scheduled entitled entrant who dies in its entry year is logged but never enters the stock). |
+| `di_stock_flow` | after a run | Checks `stock_end = stock_start + awards + entrants − deaths − recoveries − conversions` for every year, counted and weighted, and cross-checks deaths against the mortality log. A scheduled entitled entrant who dies in its entry year is logged but never enters the stock; one who recovers or converts in its entry year counts as an entrant and as that termination. |
 
 FRA comes from the statutory birth-year schedule (42 USC 416(l)), injected as
 `SSAParameters.fra_months`; it is not re-typed in this component.
@@ -63,11 +65,31 @@ table ids in its `provenance.md`), extracted by
   On the 2008 exposure the published 1996–2000 rates imply 252,925 deaths
   against ASR's 215,445, a factor of 0.852. That factor is applied only in
   the explicit `asr_fitted` alternative.
+- **Everyone else.** The population mortality model is all-person mortality:
+  the engine's band model (`engine.refit.fit_mortality_model`) is fit on
+  PSID person-year exposure against NCHS rates with no disabled-worker
+  split, and NCHS 2000 covers the whole population, so their deaths already
+  include disabled workers'. By default
+  (`non_di_mortality="net_of_di_origin"`) the mortality adapter keeps each
+  population age band and sex cell's expected (weighted) deaths at
+  the population model's: DI-origin persons take the disabled-worker
+  probability, and every other person's population probability is multiplied
+  by one factor per cell, `(E_population − E_DI) / E_other`. A cell whose
+  DI-origin expected deaths alone exceed the population model's is flagged
+  `infeasible` in the optional cell log, and its other members get
+  probability zero. (Review fix: non-DI persons kept the population
+  probability, which added the disabled-worker excess deaths on top of the
+  population model. At the December 2008 DI prevalence and the Actuarial
+  Study No. 118 rates over NCHS 2000, that raised expected deaths in each
+  ASR age group from 45 to 64 by 25 to 35 percent. That behavior remains
+  available as `population_total`.) Under the net default a person's
+  uniform is still person-keyed, but a non-DI person's probability depends
+  on the DI share of that person's cell.
 
 ## Choices awaiting the A1 freeze
 
 `pending_decisions()` returns this list. Defaults are the plan's primary
-where it names one, otherwise the builder's proposal.
+where it names one, otherwise the builder's or a reviewer's proposal.
 
 | Field | Default | Alternatives | Basis |
 |---|---|---|---|
@@ -77,6 +99,7 @@ where it names one, otherwise the builder's proposal.
 | `recovery_level` | `asr_fitted` | `as118_published` | Builder |
 | `termination_basis` | `attained_age` | `select_and_ultimate` (needs award years for the whole DI-origin stock) | Builder: the PSID opening stock has no award year |
 | `post_conversion_mortality` | `di_origin` | `population` | Builder: Actuarial Study No. 118 follows converted workers |
+| `non_di_mortality` | `net_of_di_origin` | `population_total` | Review: the population model is all-person mortality, so the net default keeps each band-sex cell's expected deaths at the population model's |
 | `death_level` (explicit mode only) | `as118_published` | `asr_fitted` | Builder |
 
 Builder conventions, explicit in the code:
@@ -88,6 +111,9 @@ Builder conventions, explicit in the code:
 - When `birth_month` is absent, July is assumed for FRA attainment.
 - Mortality precedes the DI step, so disabled-worker mortality starts the
   year after the award.
+- An opening conversion year may not precede the earliest calendar year in
+  which FRA can be attained: the birth month when known, otherwise January,
+  with a birth on the first of the month.
 
 ## Validation-only diagnostic
 
@@ -97,8 +123,10 @@ December 2008 population from 2009 to 2023:
 
 - Census V2008 single ages, with the ASR 2008 Table 20 DI stock spread evenly
   within age groups;
-- closed, with NCHS 2000 population mortality held constant;
-- run through the real adapters.
+- closed, with NCHS 2000 population mortality held constant (netted of
+  DI-origin deaths within each single age and sex, the default);
+- run through the real adapters, on their batch-generator path with fixed
+  per-year seeds.
 
 It then compares the projection with the 2023 DI ASR (Tables 19, 35, 49).
 This is a reported diagnostic, not a fitting target, and not PSID or
@@ -106,28 +134,37 @@ Track A. Default variant:
 
 | Year | Men, model (thousands) | Men, ASR | Ratio | Women, model | Women, ASR | Ratio | Awards, model | Awards, ASR |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2010 | 4,105 | 4,310 | 0.95 | 3,754 | 3,894 | 0.96 | 864 | 1,027 |
-| 2013 | 4,343 | 4,642 | 0.94 | 4,101 | 4,299 | 0.95 | 882 | 869 |
-| 2016 | 4,539 | 4,511 | 1.01 | 4,334 | 4,298 | 1.01 | 903 | 706 |
-| 2019 | 4,604 | 4,231 | 1.09 | 4,493 | 4,147 | 1.08 | 881 | 679 |
-| 2022 | 4,634 | 3,808 | 1.22 | 4,516 | 3,796 | 1.19 | 873 | 509 |
+| 2010 | 4,093 | 4,310 | 0.95 | 3,761 | 3,894 | 0.97 | 869 | 1,027 |
+| 2013 | 4,367 | 4,642 | 0.94 | 4,096 | 4,299 | 0.95 | 910 | 869 |
+| 2016 | 4,573 | 4,511 | 1.01 | 4,303 | 4,298 | 1.00 | 910 | 706 |
+| 2019 | 4,638 | 4,231 | 1.10 | 4,477 | 4,147 | 1.08 | 921 | 679 |
+| 2022 | 4,654 | 3,808 | 1.22 | 4,482 | 3,796 | 1.18 | 855 | 509 |
+
+These are the review-fix numbers (net-of-DI non-DI mortality). The earlier
+numbers, with non-DI persons at the full NCHS 2000 level, are reproduced
+exactly by the `non_di_population_total` variant. The stocks of the two
+differ by at most 1.6 percent in any year and annual awards by at most 4.5
+percent. The two runs do not share draws record by record (on the batch
+path the uniforms shift across records when the set of survivors changes),
+so those differences mix the mortality change with simulation noise.
 
 Readings:
 
 - **Level.** Awards held at the 2008 rates miss both the 2009–2011 rise and
   the decline that followed (ASR worker awards were 1.03 million in 2010 and
-  0.51 million in 2022). The stock is 4 to 7 percent low in 2010–2013, then
+  0.51 million in 2022). The stock is 3 to 6 percent low in 2010–2013, then
   about 20 percent high by 2022.
 - **Age distribution.** The mean absolute gap across the eight Table 19 age
-  groups grows from about 0.4 percentage points in 2010 to about 2.3 in
+  groups grows from about 0.4 percentage points in 2010 to about 2.4 in
   2022. The model under-represents the 60–FRA group; in 2023 that group is
-  6.4 points low for men and 6.9 points low for women.
+  6.6 points low for men and 7.3 points low for women.
 - **2023 artifact.** The July birth-month convention gives 2023 no model
   conversions, because the 1956 cohort converts in 2022 and the 1957 cohort
   in 2024. The 2023 model stock and termination counts carry that artifact.
   Cohorts aged under 70 in 2030 have an FRA of 67 and are unaffected.
 - **Other variants.** The artifact also reports the explicit
-  2008-death-level variant and the 2007 fit year.
+  2008-death-level variant, the 2007 fit year, and `population_total`
+  non-DI mortality.
 
 ## Integration notes for A3, A5, and A6
 
@@ -136,7 +173,11 @@ Readings:
 - **A5** injects the two adapters. The claiming step must skip `di_entitled`
   rows, because entitled disabled workers must not draw a retirement claim
   plan. `di_converted` feeds `engine.claiming.apply_claiming` as a conversion
-  in the FRA year.
+  in the FRA year. The mortality adapter needs the population model's age
+  bands (a year-aware wrapper must expose `bands` or pass
+  `population_age_bands`) and an explicit `weight_column` (the cohort
+  weight, or `None` for equal weights); synthetic persons without a weight
+  are refused.
 - **A6** reads `di_award_year` or `di_award_age` for the disabled-worker
   exposure clock. The award year can follow the SSA entitlement date, which
   is a named delta.
@@ -151,3 +192,10 @@ Readings:
 - Award year is used rather than entitlement date.
 - Disabled widow(er)s and disabled adult children are not modeled; only
   disabled workers are.
+- Non-DI mortality is netted of DI-origin deaths within population band-sex
+  cells, so the population model's cell totals are kept, but within a cell
+  the non-DI persons share one factor.
+- No behavioral adjustment of incidence for the rising FRA. The 2008
+  Trustees Report raises its incidence assumptions for workers expected to
+  file for DI rather than reduced retirement benefits as the NRA rises
+  (report page 119, footnote 1).

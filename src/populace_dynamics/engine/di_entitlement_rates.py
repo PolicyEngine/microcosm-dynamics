@@ -37,6 +37,16 @@ probabilities used by :mod:`populace_dynamics.engine.di_entitlement`:
   Trustees Report likewise moves long-range DI death rates at the same rate
   as general-population death rates by age and sex.  ``explicit`` mode
   applies the Actuarial Study probabilities themselves.
+* **Everyone else.**  The population mortality model and the NCHS table are
+  all-person mortality: their deaths already include disabled workers'.
+  By default (``non_di_mortality="net_of_di_origin"``) the adapter therefore
+  scales the non-DI-origin probabilities within each population age band and
+  sex so that the cell's expected deaths stay equal to the population
+  model's; the component redistributes deaths rather than adding them.
+  ``population_total`` keeps the population probabilities for non-DI-origin
+  persons, which adds the disabled-worker excess deaths on top of the
+  population model (about 25 to 35 percent more deaths at ages 45-64 at the
+  2008 disabled-worker prevalence).
 
 Rates are fit or taken from data years no later than 2008 (the DYNASIM
 information date).  The 2023 DI Annual Statistical Report in
@@ -71,6 +81,7 @@ __all__ = [
     "INFORMATION_BOUNDARY_YEAR",
     "MAX_AGE",
     "NCHS_2000_PATH",
+    "NON_DI_MORTALITY",
     "POST_CONVERSION_MORTALITY",
     "RECOVERY_LEVELS",
     "SEXES",
@@ -141,6 +152,7 @@ DEATH_LEVELS = ("as118_published", "asr_fitted")
 RECOVERY_LEVELS = ("asr_fitted", "as118_published")
 TERMINATION_BASES = ("attained_age", "select_and_ultimate")
 POST_CONVERSION_MORTALITY = ("di_origin", "population")
+NON_DI_MORTALITY = ("net_of_di_origin", "population_total")
 
 
 @dataclass(frozen=True)
@@ -181,6 +193,13 @@ class DIEntitlementSpec:
     #: (Actuarial Study No. 118 follows them past conversion).
     #: ``population``: they revert to population mortality.
     post_conversion_mortality: str = "di_origin"
+    #: ``net_of_di_origin``: the population model is all-person mortality,
+    #: so within each population age band and sex the non-DI-origin
+    #: probabilities are scaled to keep the cell's expected (weighted) deaths
+    #: equal to the population model's.  ``population_total``: non-DI-origin
+    #: persons keep the population probabilities, so the DI-origin excess
+    #: deaths are added to the population model's total.
+    non_di_mortality: str = "net_of_di_origin"
     #: Minimum start-of-year age exposed to award incidence.
     min_award_age: int = 18
     #: Birth month assumed when the frame has no ``birth_month`` column; it
@@ -201,6 +220,7 @@ class DIEntitlementSpec:
                 self.post_conversion_mortality,
                 POST_CONVERSION_MORTALITY,
             ),
+            "non_di_mortality": (self.non_di_mortality, NON_DI_MORTALITY),
         }
         for name, (value, allowed) in choices.items():
             if value not in allowed:
@@ -233,6 +253,7 @@ class DIEntitlementSpec:
             "recovery_level": self.recovery_level,
             "termination_basis": self.termination_basis,
             "post_conversion_mortality": self.post_conversion_mortality,
+            "non_di_mortality": self.non_di_mortality,
             "min_award_age": int(self.min_award_age),
             "assumed_birth_month": int(self.assumed_birth_month),
             "validate_age_column": bool(self.validate_age_column),
@@ -274,6 +295,15 @@ _PENDING: tuple[tuple[str, str, str], ...] = (
         "builder default: converted disabled workers keep DI-origin "
         "mortality",
         "population",
+    ),
+    (
+        "non_di_mortality",
+        "review default: the population mortality model (like NCHS 2000) "
+        "is all-person mortality, so keeping it for non-DI-origin persons "
+        "adds the disabled-worker excess deaths on top (about 25-35 percent "
+        "more deaths at ages 45-64 at 2008 DI prevalence)",
+        "population_total (non-DI-origin persons keep the population "
+        "probabilities)",
     ),
     (
         "death_level",

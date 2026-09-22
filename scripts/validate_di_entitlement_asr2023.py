@@ -19,7 +19,11 @@ Governance (critical-path plan section 4):
   improvement), the <=2008 table in the repository, as a single-year-of-age
   ``AgeSexMortalityModel``.  The default multiplier takes its NCHS 2000 base
   at that model's single-age bands, so below age 100 disabled-worker
-  mortality equals the Actuarial Study No. 118 (1996-2000) level.
+  mortality equals the Actuarial Study No. 118 (1996-2000) level.  The
+  NCHS table is all-person mortality, so by default the non-DI-origin
+  records' probabilities are scaled within each single age and sex to keep
+  the expected (weighted) deaths at the NCHS level; the
+  ``non_di_population_total`` variant keeps them at the NCHS level instead.
 * No COLA statistic, benefit, or DYNASIM comparator value is computed.
 
 The adapters run through their no-registry (batch-generator) path with fixed
@@ -106,6 +110,9 @@ VARIANTS = {
         death_mode="explicit", death_level="asr_fitted"
     ),
     "fit_year_2007": DIEntitlementSpec(fit_year="2007"),
+    "non_di_population_total": DIEntitlementSpec(
+        non_di_mortality="population_total"
+    ),
 }
 LABEL = (
     "VALIDATION-ONLY DIAGNOSTIC on a SYNTHETIC opening population (Census "
@@ -279,6 +286,7 @@ def run_variant(
             population_model=mortality,
             rates=rates,
             death_log=death_log,
+            weight_column="weight",
         )
         current = advance_age(current, context, np.random.default_rng(0))
         current = apply_di_entitlement(
@@ -384,7 +392,9 @@ def main() -> int:
         },
         "population_mortality": (
             "NCHS United States Life Tables, 2000 (single years 0-99, age "
-            "100+ as one band), constant over 2009-2023"
+            "100+ as one band), constant over 2009-2023; all-person "
+            "mortality, netted of DI-origin deaths within each age-sex cell "
+            "except in the non_di_population_total variant"
         ),
         "fra_schedule": {
             "source": "SSAParameters.fra_months (policyengine-us tree)",

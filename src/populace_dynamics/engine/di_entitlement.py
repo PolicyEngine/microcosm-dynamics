@@ -18,14 +18,18 @@ Insurance awards.  This module adds an entitlement component with the engine's
   workers are never exposed again.
 * :func:`apply_di_aware_mortality` is the step-1 (``PeriodModules.mortality``)
   adapter.  It uses exactly the person-keyed uniform that
-  :func:`populace_dynamics.engine.steps.apply_mortality` uses, so people who
-  are not of disabled-worker origin die exactly as they would without it,
-  while disabled workers (and, by default, converted former disabled workers)
-  die at disabled-worker rates.  Deaths are the "death" termination; they
-  happen in step 1 because the loop removes decedents there.  In the
-  default multiplier death mode the NCHS 2000 base is averaged over the
-  population model's own age bands, so a banded population model does not
-  reshape the disabled-worker age profile within a band.
+  :func:`populace_dynamics.engine.steps.apply_mortality` uses.  Disabled
+  workers (and, by default, converted former disabled workers) die at
+  disabled-worker rates.  The population model is all-person mortality, so by
+  default (``non_di_mortality="net_of_di_origin"``) everyone else's
+  probability is scaled within each population age band and sex to keep the
+  cell's expected deaths equal to the population model's; with
+  ``population_total`` they die exactly as under ``apply_mortality`` and the
+  disabled-worker excess deaths are added on top.  Deaths are the "death"
+  termination; they happen in step 1 because the loop removes decedents
+  there.  In the default multiplier death mode the NCHS 2000 base is averaged
+  over the population model's own age bands, so a banded population model
+  does not reshape the disabled-worker age profile within a band.
 * :func:`prepare_opening_di_state` validates the opening disabled-worker
   stock (supplied by the A3 cohort builder) and can be the loop's
   ``initialize`` hook.
@@ -63,7 +67,10 @@ Random numbers: step 5 draws one uniform per exposed or entitled person from
 DI_ENTITLEMENT_COMPONENT_TAG, ordinal)``, a stable person-keyed stream (the
 ordinal is the canonical ``person_id`` rank the loop assigns), so one
 person's draw does not depend on anyone else's state.  Without a registry the
-injected generator is consumed once per row in ``person_id`` order.
+injected generator is consumed once per row in ``person_id`` order.  Under
+``net_of_di_origin`` the uniforms stay person-keyed, but a non-DI-origin
+person's death *probability* depends on the disabled-worker share of the
+person's band-sex cell.
 """
 
 from __future__ import annotations
@@ -81,6 +88,7 @@ import numpy as np
 import pandas as pd
 
 from populace_dynamics.engine.di_entitlement_rates import (
+    MAX_AGE,
     SEXES,
     DIEntitlementRates,
     validate_age_bands,
@@ -93,6 +101,7 @@ __all__ = [
     "DI_EVENTS",
     "DI_STATE_COLUMNS",
     "FraSchedule",
+    "MORTALITY_CELL_LOG_COLUMNS",
     "apply_di_aware_mortality",
     "apply_di_entitlement",
     "di_prevalence",
@@ -182,14 +191,10 @@ def _bool_column(frame: pd.DataFrame, column: str) -> np.ndarray:
     return series.to_numpy(dtype=bool)
 
 
-def fra_attainment_year(
-    birth_year: np.ndarray,
-    fra_schedule: FraSchedule | _HasFraMonths,
-    *,
-    birth_month: np.ndarray | None = None,
-    assumed_birth_month: int = 7,
+def _fra_months(
+    birth_year: np.ndarray, fra_schedule: FraSchedule | _HasFraMonths
 ) -> np.ndarray:
-    """Calendar year in which each person attains full retirement age."""
+    """Full retirement age in months for each birth year (checked range)."""
     schedule = (
         fra_schedule.fra_months
         if hasattr(fra_schedule, "fra_months")
@@ -206,7 +211,19 @@ def fra_attainment_year(
                 "the statutory range"
             )
         unique_months[position] = months
-    fra_months = unique_months[inverse.reshape(-1)]
+    return unique_months[inverse.reshape(-1)]
+
+
+def fra_attainment_year(
+    birth_year: np.ndarray,
+    fra_schedule: FraSchedule | _HasFraMonths,
+    *,
+    birth_month: np.ndarray | None = None,
+    assumed_birth_month: int = 7,
+) -> np.ndarray:
+    """Calendar year in which each person attains full retirement age."""
+    births = np.asarray(birth_year, dtype=np.int64)
+    fra_months = _fra_months(births, fra_schedule)
     if birth_month is None:
         month = np.full(len(births), int(assumed_birth_month), dtype=np.int64)
     else:
@@ -348,6 +365,29 @@ def prepare_opening_di_state(
             f"{int(past_fra.sum())} opening disabled workers have already "
             "attained FRA; they should enter as converted, not entitled"
         )
+    if converted.any():
+        # Earliest calendar year FRA can be attained: the birth month when
+        # known, otherwise January, and a birth on the first of the month
+        # (a person attains an age the day before the birthday).
+        months = _birth_months(out)
+        earliest_month = (
+            np.ones(len(out), dtype=np.int64) if months is None else months
+        )
+        earliest_fra_year = (
+            birth_year
+            + (earliest_month - 2 + _fra_months(birth_year, fra_schedule))
+            // 12
+        )
+        conversion_values = conversion_year.fillna(start_year).to_numpy(
+            dtype=np.int64
+        )
+        early = converted & (conversion_values < earliest_fra_year)
+        if early.any():
+            raise ValueError(
+                f"{int(early.sum())} opening conversion years precede the "
+                "earliest possible FRA attainment year; conversion happens "
+                "at FRA"
+            )
     out["di_entitled"] = entitled
     out["di_award_year"] = award_year
     award_age = pd.array([pd.NA] * len(out), dtype="Int64")
@@ -557,18 +597,129 @@ def _population_age_bands(
     population_model: object,
     declared: Sequence[tuple[int, int]] | None,
 ) -> tuple[tuple[int, int], ...]:
-    """The population model's age resolution for the multiplier base."""
+    """The population model's age resolution (multiplier base, net cells)."""
     if declared is not None:
         return validate_age_bands(declared)
     bands = getattr(population_model, "bands", None)
     if bands is None:
         raise ValueError(
-            "the multiplier death mode divides by NCHS 2000 mortality at the "
+            "the multiplier death mode (NCHS 2000 base) and "
+            "net_of_di_origin non-DI mortality (band-sex cells) need the "
             "population model's age resolution; this population model has "
             "no 'bands', so pass population_age_bands (SINGLE_YEAR_AGE_BANDS "
             "for a single-year-of-age model)"
         )
     return validate_age_bands(bands)
+
+
+class _Unset:
+    """Sentinel: a keyword the caller must give explicitly."""
+
+    def __repr__(self) -> str:
+        return "<required>"
+
+
+_REQUIRED = _Unset()
+
+MORTALITY_CELL_LOG_COLUMNS = (
+    "sex",
+    "band_lower",
+    "band_upper",
+    "persons",
+    "di_origin_persons",
+    "weight",
+    "di_origin_weight",
+    "expected_deaths_population_model",
+    "expected_deaths_di_origin",
+    "expected_deaths_applied",
+    "non_di_factor",
+    "infeasible",
+)
+
+
+def _row_weights(frame: pd.DataFrame, weight_column: str | None) -> np.ndarray:
+    if weight_column is None:
+        return np.ones(len(frame))
+    _require(frame, (weight_column,), "DI-aware mortality frame")
+    values = frame[weight_column].to_numpy(dtype=np.float64)
+    if not np.isfinite(values).all() or (values < 0).any():
+        raise ValueError(
+            f"weight column {weight_column!r} must be finite and >= 0"
+        )
+    return values
+
+
+def _net_of_di_origin(
+    q: np.ndarray,
+    q_population: np.ndarray,
+    di_origin: np.ndarray,
+    sex: np.ndarray,
+    start_age: np.ndarray,
+    weight: np.ndarray,
+    bands: Sequence[tuple[int, int]],
+) -> tuple[np.ndarray, pd.DataFrame]:
+    """Scale non-DI-origin probabilities to keep each cell's expected deaths.
+
+    A cell is one population age band and sex.  The population model's
+    expected deaths in the cell, ``sum(w * q_population)``, are all-person
+    deaths.  The DI-origin rows keep their disabled-worker probabilities;
+    every other row's population probability is multiplied by one factor so
+    that the cell's expected deaths are unchanged.  When the DI-origin
+    expected deaths alone exceed the population model's (``infeasible``),
+    the other rows get probability zero and the cell's expected deaths
+    exceed the population model's; the cell log records it.
+    """
+    out = q.copy()
+    lowers = np.asarray([lower for lower, _ in bands], dtype=np.int64)
+    band_index = (
+        np.searchsorted(lowers, np.minimum(start_age, MAX_AGE), side="right")
+        - 1
+    )
+    n_cells = len(SEXES) * len(bands)
+    cell_id = sex * len(bands) + band_index
+    other = ~di_origin
+
+    def total(values: np.ndarray, mask: np.ndarray | None = None):
+        if mask is None:
+            return np.bincount(cell_id, weights=values, minlength=n_cells)
+        return np.bincount(
+            cell_id[mask], weights=values[mask], minlength=n_cells
+        )
+
+    expected_population = total(weight * q_population)
+    expected_di = total(weight * q, di_origin)
+    expected_other = total(weight * q_population, other)
+    di_persons = np.bincount(cell_id[di_origin], minlength=n_cells)
+    adjusted = (di_persons > 0) & (expected_other > 0)
+    factor = np.ones(n_cells)
+    factor[adjusted] = (
+        np.maximum(expected_population - expected_di, 0.0)[adjusted]
+        / expected_other[adjusted]
+    )
+    out[other] = np.clip(
+        q_population[other] * factor[cell_id[other]], 0.0, 1.0
+    )
+    persons = np.bincount(cell_id, minlength=n_cells)
+    present = np.flatnonzero(persons > 0)
+    band_array = np.asarray(bands, dtype=np.int64)
+    cells = pd.DataFrame(
+        {
+            "sex": np.asarray(SEXES, dtype=object)[present // len(bands)],
+            "band_lower": band_array[present % len(bands), 0],
+            "band_upper": band_array[present % len(bands), 1],
+            "persons": persons[present],
+            "di_origin_persons": di_persons[present],
+            "weight": total(weight)[present],
+            "di_origin_weight": total(weight, di_origin)[present],
+            "expected_deaths_population_model": expected_population[present],
+            "expected_deaths_di_origin": expected_di[present],
+            "expected_deaths_applied": total(weight * out)[present],
+            "non_di_factor": factor[present],
+            "infeasible": (expected_di > expected_population)[present],
+        },
+        columns=list(MORTALITY_CELL_LOG_COLUMNS),
+    )
+    return out, cells
 
 
 def apply_di_aware_mortality(
@@ -583,6 +734,8 @@ def apply_di_aware_mortality(
     rates: DIEntitlementRates,
     death_log: MutableMapping[int, pd.DataFrame] | None = None,
     population_age_bands: Sequence[tuple[int, int]] | None = None,
+    weight_column: str | None | _Unset = _REQUIRED,
+    cell_log: MutableMapping[int, pd.DataFrame] | None = None,
 ) -> pd.DataFrame:
     """Step-1 adapter: population mortality with DI-origin death rates.
 
@@ -595,12 +748,27 @@ def apply_di_aware_mortality(
     otherwise the model's ``bands`` attribute (as on
     :class:`populace_dynamics.engine.steps.AgeSexMortalityModel`).  A model
     with neither is refused rather than assumed to be single-age.
+
+    Under ``spec.non_di_mortality="net_of_di_origin"`` (the default) the
+    same bands, by sex, are the cells within which non-DI-origin
+    probabilities are scaled so that each cell's expected deaths equal the
+    population model's.  ``weight_column`` must then be given explicitly:
+    the column of person weights, or ``None`` to count persons equally.
+    ``cell_log[year]``, when given, records every cell's expected deaths
+    (columns :data:`MORTALITY_CELL_LOG_COLUMNS`).
     """
-    multiplier_bands = (
+    net = rates.spec.non_di_mortality == "net_of_di_origin"
+    population_bands = (
         _population_age_bands(population_model, population_age_bands)
-        if rates.spec.death_mode == "multiplier"
+        if rates.spec.death_mode == "multiplier" or net
         else None
     )
+    if net and isinstance(weight_column, _Unset):
+        raise ValueError(
+            "non_di_mortality='net_of_di_origin' needs weight_column: the "
+            "column holding each person's weight, or None to count persons "
+            "equally"
+        )
     _require(
         frame,
         (
@@ -628,6 +796,10 @@ def apply_di_aware_mortality(
                     "q_population",
                     "q_applied",
                 ]
+            )
+        if cell_log is not None and net:
+            cell_log[year] = pd.DataFrame(
+                columns=list(MORTALITY_CELL_LOG_COLUMNS)
             )
         return ordered
     _check_year(ordered, year - 1, "DI-aware mortality (run before aging)")
@@ -665,12 +837,27 @@ def apply_di_aware_mortality(
             select_age=None if select_age is None else select_age[rows],
             duration=None if duration is None else duration[rows],
         )
-        if multiplier_bands is not None:
+        if rates.spec.death_mode == "multiplier":
+            assert population_bands is not None
             base = rates.population_reference_probability(
-                start_age[rows], sex[rows], age_bands=multiplier_bands
+                start_age[rows], sex[rows], age_bands=population_bands
             )
             reference = reference * q_population[rows] / base
         q[rows] = np.clip(reference, 0.0, 1.0)
+    if net:
+        assert population_bands is not None
+        assert not isinstance(weight_column, _Unset)
+        q, cells = _net_of_di_origin(
+            q,
+            q_population,
+            di_origin,
+            sex,
+            start_age,
+            _row_weights(ordered, weight_column),
+            population_bands,
+        )
+        if cell_log is not None:
+            cell_log[year] = cells
     death = uniform < q
     if death_log is not None:
         death_log[year] = pd.DataFrame(
@@ -712,9 +899,13 @@ def di_stock_flow(
     was not in the prior slice is a scheduled entrant who died in its entry
     year (the loop adds scheduled entrants before mortality); it never
     enters the stock, and it must be absent from the current slice.
-    Weighted flows use each person's prior-slice weight (current-slice
-    weight for entrants), so the identity also holds weighted.  Raises
-    ``ValueError`` if any identity fails.
+    ``entrants_entitled`` are the persons absent from the prior slice who
+    were entitled on entry and survived the entry year: their current event
+    is ``continuing``, ``recovery`` or ``conversion`` (a scheduled entrant
+    can recover or convert in its entry year; that entrant is counted both
+    as an entrant and as the termination).  Weighted flows use each person's
+    prior-slice weight (current-slice weight for entrants), so the identity
+    also holds weighted.  Raises ``ValueError`` if any identity fails.
     """
     frames = list(slices)
     rows: list[dict[str, Any]] = []
@@ -754,12 +945,17 @@ def di_stock_flow(
         awards = set(events.index[events == "award"])
         recoveries = set(events.index[events == "recovery"])
         conversions = set(events.index[events == "conversion"])
-        if (recoveries | conversions) - prior_entitled:
+        new_ids = current_ids - previous_ids
+        entrants = {
+            person_id
+            for person_id in new_ids
+            if events[person_id] in ("continuing", "recovery", "conversion")
+        }
+        entitled_at_start = prior_entitled | entrants
+        if (recoveries | conversions) - entitled_at_start:
             raise ValueError(f"{year}: a termination has no prior entitlement")
-        if awards & prior_entitled:
+        if awards & entitled_at_start:
             raise ValueError(f"{year}: an award went to an entitled person")
-        entrants = set(entitled_now.index[entitled_now]) - previous_ids
-        entrants -= awards
         stock_end_ids = set(entitled_now.index[entitled_now])
         flows = {
             "stock_start": prior_entitled,
@@ -771,10 +967,8 @@ def di_stock_flow(
             "stock_end": stock_end_ids,
         }
         expected = (
-            (prior_entitled - deaths - recoveries - conversions)
-            | awards
-            | entrants
-        )
+            entitled_at_start - deaths - recoveries - conversions
+        ) | awards
         if expected != stock_end_ids:
             raise ValueError(
                 f"{year}: disabled-worker stock does not reconcile"

@@ -142,6 +142,7 @@ def test_spec_defaults_are_the_proposed_primaries():
     assert spec.death_mode == "multiplier"
     assert spec.fit_year == "2008"
     assert spec.termination_basis == "attained_age"
+    assert spec.non_di_mortality == "net_of_di_origin"
     fields = {row["field"] for row in pending_decisions()}
     assert {
         "incidence_basis",
@@ -150,6 +151,7 @@ def test_spec_defaults_are_the_proposed_primaries():
         "recovery_level",
         "termination_basis",
         "post_conversion_mortality",
+        "non_di_mortality",
         "death_level",
     } == fields
 
@@ -163,6 +165,7 @@ def test_spec_defaults_are_the_proposed_primaries():
         {"death_mode": "multiplier", "death_level": "asr_fitted"},
         {"termination_basis": "duration"},
         {"post_conversion_mortality": "none"},
+        {"non_di_mortality": "none"},
         {"min_award_age": 70},
         {"min_award_age": 17},
         {"assumed_birth_month": 13},
@@ -261,6 +264,11 @@ def test_opening_state_requires_an_explicit_entitlement_column():
             lambda f: f.assign(di_conversion_year=pd.array([2009, pd.NA])),
             "both entitled and converted",
         ),
+        # Person 2 (born 1970) cannot have converted at FRA by 2010.
+        (
+            lambda f: f.assign(di_conversion_year=pd.array([pd.NA, 2008])),
+            "precede the earliest possible FRA",
+        ),
     ],
 )
 def test_opening_state_refuses_inconsistent_inputs(mutate, message):
@@ -268,6 +276,45 @@ def test_opening_state_refuses_inconsistent_inputs(mutate, message):
     with pytest.raises(ValueError, match=message):
         prepare_opening_di_state(
             mutate(frame), rates=invented_rates(), fra_schedule=invented_fra
+        )
+
+
+def test_opening_conversion_year_is_checked_against_fra():
+    """INVENTED FRA 66y0m (born 1944): FRA attained in 2010.
+
+    Regression: an opening conversion year before FRA was accepted, leaving a
+    person who could not have converted outside incidence for good.  With no
+    birth month the earliest possible year is the one a birth on January 1
+    gives (a person attains an age the day before the birthday): 2009.
+    """
+
+    def schedule(birth_year):
+        return 792
+
+    def frame(conversion_year, **columns):
+        out = opening([(1, "male", 1944, False)], year=2011)
+        out["di_conversion_year"] = pd.array([conversion_year], dtype="Int64")
+        for name, value in columns.items():
+            out[name] = value
+        return out
+
+    rates = invented_rates()
+    for accepted in (2009, 2010, 2011):
+        prepare_opening_di_state(
+            frame(accepted), rates=rates, fra_schedule=schedule
+        )
+    with pytest.raises(ValueError, match="earliest possible FRA"):
+        prepare_opening_di_state(
+            frame(2008), rates=rates, fra_schedule=schedule
+        )
+    # A known birth month moves the earliest year: born in March 1944, FRA
+    # is attained in February or March 2010.
+    prepare_opening_di_state(
+        frame(2010, birth_month=3), rates=rates, fra_schedule=schedule
+    )
+    with pytest.raises(ValueError, match="earliest possible FRA"):
+        prepare_opening_di_state(
+            frame(2009, birth_month=3), rates=rates, fra_schedule=schedule
         )
 
 
@@ -557,8 +604,12 @@ def _mortality_frame(rates):
 
 
 def test_non_di_people_die_exactly_as_under_apply_mortality():
+    """Under ``population_total`` non-DI people keep the population rates."""
     rates = invented_rates(
-        death=1.0, spec=DIEntitlementSpec(death_mode="explicit")
+        death=1.0,
+        spec=DIEntitlementSpec(
+            death_mode="explicit", non_di_mortality="population_total"
+        ),
     )
     frame = _mortality_frame(rates)
     ids = frame["person_id"].tolist()
@@ -599,6 +650,7 @@ def test_multiplier_probability_is_clipped_to_one():
         rates=rates,
         death_log=log,
         population_age_bands=SINGLE_YEAR_AGE_BANDS,
+        weight_column=None,
     )
     assert 1 not in set(survivors["person_id"])
     applied = log[2011].set_index("person_id")["q_applied"]
@@ -619,6 +671,7 @@ def test_multiplier_probability_is_recorded_for_each_decedent():
         rates=rates,
         death_log=log,
         population_age_bands=SINGLE_YEAR_AGE_BANDS,
+        weight_column=None,
     )
     logged = log[2011]
     assert len(logged) > 0
@@ -645,6 +698,7 @@ def test_converted_workers_keep_di_origin_mortality_only_when_chosen():
             np.random.default_rng(0),
             population_model=flat_mortality(0.0),
             rates=rates,
+            weight_column=None,
         )
         assert survivors.empty is dies
 
@@ -664,6 +718,7 @@ def test_population_mortality_output_is_validated():
                 population_model=lambda f, context, bad=bad: bad,
                 rates=rates,
                 population_age_bands=SINGLE_YEAR_AGE_BANDS,
+                weight_column=None,
             )
     with pytest.raises(ValueError, match="before aging"):
         apply_di_aware_mortality(
@@ -672,6 +727,7 @@ def test_population_mortality_output_is_validated():
             np.random.default_rng(0),
             population_model=flat_mortality(0.0),
             rates=rates,
+            weight_column=None,
         )
 
 
@@ -781,6 +837,7 @@ def test_multiplier_keeps_the_di_age_profile_under_banded_mortality(level):
         population_model=model,
         rates=rates,
         death_log=log,
+        weight_column=None,
     )
     assert survivors.empty
     logged = log[2011]
@@ -816,9 +873,13 @@ def test_multiplier_mode_needs_the_population_age_resolution():
                 population_age_bands=bad,
             )
     assert validate_age_bands(((0, 60), (61, 150))) == ((0, 60), (61, 120))
-    # Explicit death rates never divide by the reference.
+    # Explicit death rates never divide by the reference, so without the
+    # net-of-DI cells an unbanded model is accepted ...
     explicit = invented_rates(
-        death=0.02, spec=DIEntitlementSpec(death_mode="explicit")
+        death=0.02,
+        spec=DIEntitlementSpec(
+            death_mode="explicit", non_di_mortality="population_total"
+        ),
     )
     apply_di_aware_mortality(
         _prepared([(1, "male", 1960, True)], explicit),
@@ -827,6 +888,201 @@ def test_multiplier_mode_needs_the_population_age_resolution():
         population_model=unbanded,
         rates=explicit,
     )
+    # ... but net_of_di_origin needs the bands for its cells.
+    explicit_net = invented_rates(
+        death=0.02, spec=DIEntitlementSpec(death_mode="explicit")
+    )
+    with pytest.raises(ValueError, match="age resolution"):
+        apply_di_aware_mortality(
+            _prepared([(1, "male", 1960, True)], explicit_net),
+            PeriodContext(1, 2011, 0, {}),
+            np.random.default_rng(0),
+            population_model=unbanded,
+            rates=explicit_net,
+            weight_column=None,
+        )
+
+
+# --- non-DI mortality net of DI-origin deaths ----------------------------
+
+#: INVENTED two-band population model: 0.01 below 50, 0.04 from 50.
+TWO_BANDS = ((0, 49), (50, 120))
+
+
+def _two_band_model() -> AgeSexMortalityModel:
+    return AgeSexMortalityModel(
+        TWO_BANDS,
+        {
+            (AgeSexMortalityModel.band_label(lower, upper), sex): value
+            for (lower, upper), value in zip(
+                TWO_BANDS, (0.01, 0.04), strict=True
+            )
+            for sex in ("female", "male")
+        },
+    )
+
+
+def _net_frame(rates):
+    """INVENTED weighted frame: three band-sex cells with DI-origin rows."""
+    rows = [
+        (1, "male", 1950, True),  # start age 60, band 50+
+        (2, "male", 1952, False),
+        (3, "male", 1955, False),
+        (4, "male", 1980, True),  # start age 30, band 0-49
+        (5, "male", 1981, False),
+        (6, "female", 1954, True),
+        (7, "female", 1953, False),
+        (8, "female", 1985, False),  # female 0-49: no DI-origin row
+    ]
+    frame = _prepared(rows, rates)
+    frame["weight"] = [2.0, 10.0, 6.0, 1.0, 19.0, 3.0, 5.0, 4.0]
+    return frame
+
+
+def _all_deaths(rates, frame, **kwargs):
+    log, cells = {}, {}
+    apply_di_aware_mortality(
+        frame,
+        PeriodContext(1, 2011, 0, {}),
+        ZeroDraw(),
+        population_model=_two_band_model(),
+        rates=rates,
+        death_log=log,
+        cell_log=cells,
+        **kwargs,
+    )
+    return log[2011].set_index("person_id")["q_applied"], cells.get(2011)
+
+
+def test_net_of_di_origin_keeps_each_cells_expected_deaths():
+    """Regression: DI-origin deaths used to be added to all-person mortality.
+
+    INVENTED explicit DI death probability 0.10.  Male 50+ cell: the
+    population model expects 0.04 * (2 + 10 + 6) = 0.72 deaths; the DI row
+    takes 0.10 * 2 = 0.20, so the other rows are scaled by
+    (0.72 - 0.20) / (0.04 * 16) = 0.8125.
+    """
+    rates = invented_rates(
+        death=0.10, spec=DIEntitlementSpec(death_mode="explicit")
+    )
+    frame = _net_frame(rates)
+    q, cells = _all_deaths(rates, frame, weight_column="weight")
+    assert q[1] == pytest.approx(0.10)
+    assert q[2] == pytest.approx(0.04 * 0.8125)
+    assert q[3] == pytest.approx(0.04 * 0.8125)
+    # Male 0-49: (0.01 * 20 - 0.10 * 1) / (0.01 * 19).
+    assert q[5] == pytest.approx(0.01 * (0.20 - 0.10) / 0.19)
+    # Female 50+: (0.04 * 8 - 0.10 * 3) / (0.04 * 5).
+    assert q[7] == pytest.approx(0.04 * (0.32 - 0.30) / 0.20)
+    # A cell with no DI-origin person is untouched.
+    assert q[8] == pytest.approx(0.01)
+    cells = cells.set_index(["sex", "band_lower"])
+    assert len(cells) == 4
+    assert not cells["infeasible"].any()
+    assert cells["expected_deaths_applied"].to_numpy() == pytest.approx(
+        cells["expected_deaths_population_model"].to_numpy()
+    )
+    assert cells.loc[("male", 50), "non_di_factor"] == pytest.approx(0.8125)
+    assert cells.loc[("male", 50), "di_origin_weight"] == pytest.approx(2.0)
+    assert cells.loc[("female", 0), "non_di_factor"] == 1.0
+
+    # population_total: non-DI rows keep 0.04, so the cell's expected deaths
+    # exceed the population model's by the DI excess, 2 * (0.10 - 0.04).
+    total = invented_rates(
+        death=0.10,
+        spec=DIEntitlementSpec(
+            death_mode="explicit", non_di_mortality="population_total"
+        ),
+    )
+    q_total, no_cells = _all_deaths(total, _net_frame(total))
+    assert no_cells is None
+    assert q_total[2] == pytest.approx(0.04)
+    weight = frame.set_index("person_id")["weight"]
+    male_50 = [1, 2, 3]
+    excess = float((weight[male_50] * q_total[male_50]).sum()) - 0.72
+    assert excess == pytest.approx(2 * (0.10 - 0.04))
+
+
+def test_net_of_di_origin_uses_the_declared_weights():
+    rates = invented_rates(
+        death=0.10, spec=DIEntitlementSpec(death_mode="explicit")
+    )
+    frame = _net_frame(rates)
+    with pytest.raises(ValueError, match="needs weight_column"):
+        _all_deaths(rates, frame)
+    q, _ = _all_deaths(rates, frame, weight_column=None)
+    # Unweighted male 50+: (0.04 * 3 - 0.10) / (0.04 * 2).
+    assert q[2] == pytest.approx(0.04 * (0.12 - 0.10) / 0.08)
+    with pytest.raises(ValueError, match="finite"):
+        _all_deaths(rates, frame.assign(weight=np.nan), weight_column="weight")
+    with pytest.raises(ValueError, match="missing columns"):
+        _all_deaths(rates, frame, weight_column="no_such_column")
+
+
+def test_net_of_di_origin_flags_an_infeasible_cell():
+    """INVENTED: DI-origin expected deaths alone exceed the cell's total."""
+    rates = invented_rates(
+        death=0.50, spec=DIEntitlementSpec(death_mode="explicit")
+    )
+    frame = _net_frame(rates)
+    q, cells = _all_deaths(rates, frame, weight_column="weight")
+    # Male 0-49: 0.50 * 1 > 0.01 * 20, so the non-DI row gets zero.
+    assert q.get(5, 0.0) == 0.0
+    cells = cells.set_index(["sex", "band_lower"])
+    assert bool(cells.loc[("male", 0), "infeasible"])
+    assert cells.loc[("male", 0), "non_di_factor"] == 0.0
+    assert cells.loc[("male", 0), "expected_deaths_applied"] == (
+        pytest.approx(0.50)
+    )
+
+
+def test_net_of_di_origin_multiplier_keeps_a_banded_models_total():
+    """INVENTED rising reference and 10-year bands, default multiplier mode.
+
+    Every band-sex cell's expected deaths equal the banded population
+    model's, whatever the DI-origin share of the cell.
+    """
+    rates = _banded_rates()
+    reference = rates.population_reference_death
+    probability = {}
+    for lower, upper in PSID_LIKE_BANDS:
+        label = AgeSexMortalityModel.band_label(lower, upper)
+        for index, sex in enumerate(("female", "male")):
+            probability[(label, sex)] = 1.3 * _stationary_band_mean(
+                reference[index], lower, upper
+            )
+    model = AgeSexMortalityModel(PSID_LIKE_BANDS, probability)
+    rng = np.random.default_rng(8)
+    n = 600
+    # Start ages 40-63 (three bands); one in twelve of each sex is DI-origin.
+    rows = [
+        (
+            pid,
+            "male" if pid % 2 else "female",
+            int(2010 - rng.integers(41, 65)),
+            pid % 24 in (0, 13),
+        )
+        for pid in range(1, n + 1)
+    ]
+    frame = _prepared(rows, rates)
+    frame["weight"] = rng.uniform(0.2, 3.0, n)
+    cells = {}
+    apply_di_aware_mortality(
+        frame,
+        PeriodContext(1, 2011, 0, {}),
+        np.random.default_rng(0),
+        population_model=model,
+        rates=rates,
+        weight_column="weight",
+        cell_log=cells,
+    )
+    logged = cells[2011]
+    assert (logged["di_origin_persons"] > 0).all()
+    assert not logged["infeasible"].any()
+    assert logged["expected_deaths_applied"].to_numpy() == pytest.approx(
+        logged["expected_deaths_population_model"].to_numpy(), rel=1e-12
+    )
+    assert (logged["non_di_factor"] < 1).all()
 
 
 # --- select-and-ultimate --------------------------------------------------
@@ -891,13 +1147,14 @@ def _reader(frame, context, marital, rng):
     return frame
 
 
-def _modules(rates, log, mortality=0.02):
+def _modules(rates, log, mortality=0.02, weight_column=None):
     return PeriodModules(
         mortality=partial(
             apply_di_aware_mortality,
             population_model=flat_mortality(mortality),
             rates=rates,
             death_log=log,
+            weight_column=weight_column,
         ),
         aging=advance_age,
         marital_core=_marital,
@@ -930,21 +1187,22 @@ def _cohort(n=400, seed=11):
     return frame
 
 
-def _loop_rates():
+def _loop_rates(spec=None):
     return invented_rates(
         incidence=0.02,
         recovery=0.05,
         death=0.06,
         population_reference=0.02,
+        spec=spec,
     )
 
 
 def test_stock_flow_identity_holds_through_the_projection_loop():
     rates = _loop_rates()
     log = {}
-    result = ProjectionEngine(_modules(rates, log)).project(
-        _cohort(), end_year=2030, draw_index=0
-    )
+    result = ProjectionEngine(
+        _modules(rates, log, weight_column="weight")
+    ).project(_cohort(), end_year=2030, draw_index=0)
     flows = di_stock_flow(result.slices, weight_column="weight", death_log=log)
     assert flows["year"].tolist() == list(range(2011, 2031))
     for suffix in ("", "_weighted"):
@@ -1026,8 +1284,62 @@ def test_stock_flow_accepts_an_entitled_entrant_who_dies_on_entry():
         di_stock_flow([result.slices[1], current], death_log={2012: log[2012]})
 
 
+def test_stock_flow_accepts_entrants_who_recover_or_convert_on_entry():
+    """INVENTED: a scheduled entitled entrant leaves the stock on entry.
+
+    Regression: an entrant who recovered or converted in its entry year was
+    refused as "a termination has no prior entitlement".  It counts as an
+    entrant and as the termination, so the stock is unchanged.
+    """
+    for event, rates, birth_year in (
+        (
+            "recovery",
+            invented_rates(
+                recovery=1.0, spec=DIEntitlementSpec(death_mode="explicit")
+            ),
+            1975,
+        ),
+        (
+            # INVENTED FRA 66 for 1946: attained in 2012, the entry year.
+            "conversion",
+            invented_rates(spec=DIEntitlementSpec(death_mode="explicit")),
+            1946,
+        ),
+    ):
+        entrant = prepare_opening_di_state(
+            opening([(50, "male", birth_year, True)], year=2011),
+            rates=rates,
+            fra_schedule=invented_fra,
+        )
+        entrant["weight"] = 3.0
+        log = {}
+        cohort = opening([(1, "male", 1970, False), (2, "female", 1972, True)])
+        cohort["weight"] = 1.0
+        result = ProjectionEngine(
+            _modules(rates, log, mortality=0.0, weight_column="weight")
+        ).project(
+            cohort,
+            end_year=2013,
+            draw_index=0,
+            metadata={SCHEDULED_ENTRIES_KEY: {2012: entrant}},
+        )
+        entered = result.slices[2].set_index("person_id").loc[50]
+        assert entered["di_event"] == event
+        flows = di_stock_flow(
+            result.slices, weight_column="weight", death_log=log
+        ).set_index("year")
+        row = flows.loc[2012]
+        assert row["entrants_entitled"] == 1
+        assert row["entrants_entitled_weighted"] == 3.0
+        terminated = "recoveries" if event == "recovery" else "conversions"
+        assert row[terminated] == 1
+        assert row["stock_end"] == row["stock_start"] + row["awards"]
+
+
 def test_projection_is_deterministic_by_draw_and_person_keyed():
-    rates = _loop_rates()
+    # population_total: a non-DI person's probability does not depend on the
+    # cell's DI share, so adding one person changes nobody else's path.
+    rates = _loop_rates(DIEntitlementSpec(non_di_mortality="population_total"))
     cohort = _cohort()
     first = ProjectionEngine(_modules(rates, {})).project(
         cohort, end_year=2020, draw_index=2
