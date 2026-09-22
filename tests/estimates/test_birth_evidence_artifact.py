@@ -221,44 +221,6 @@ def test_source_reachability_includes_implicit_package_initializers(
     assert "sample.untracked_extension" not in reachable
 
 
-@pytest.mark.parametrize(
-    "statement",
-    [
-        "import sample.leaf",
-        "from sample.leaf import function",
-        "from sample import leaf",
-        "import sample.untracked_extension",
-    ],
-)
-def test_source_reachability_includes_implicit_package_initializers(
-    tmp_path, statement
-):
-    package = tmp_path / "__init__.py"
-    leaf = tmp_path / "leaf.py"
-    hidden = tmp_path / "hidden.py"
-    consumer = tmp_path / "consumer.py"
-    package.write_text("from . import hidden\n")
-    leaf.write_text("def function(): pass\n")
-    hidden.write_text("")
-    consumer.write_text(statement + "\n")
-    modules = {
-        "consumer": consumer,
-        "sample": package,
-        "sample.leaf": leaf,
-        "sample.hidden": hidden,
-    }
-    reachable = set()
-    pending = ["consumer"]
-    while pending:
-        name = pending.pop()
-        if name in reachable:
-            continue
-        reachable.add(name)
-        pending.extend(
-            _internal_imports(name, modules[name], modules) - reachable
-        )
-    assert {"sample", "sample.hidden"}.issubset(reachable)
-    assert "sample.untracked_extension" not in reachable
 
 
 def test_post_review_exclusions_are_unreachable_from_birth_evidence():
