@@ -159,6 +159,8 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # The opt-in identity transport is not imported by the historical reducer.
     # Its exclusion remains guarded by the transitive reachability test.
     Path("src/populace_dynamics/person_identity.py"),
+    # The standalone mortality observer is not part of the historical loop.
+    Path("src/populace_dynamics/mortality_observer.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
