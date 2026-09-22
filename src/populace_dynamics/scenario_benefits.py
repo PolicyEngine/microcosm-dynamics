@@ -38,6 +38,14 @@ Scope (plan ``critical-path-cola-20260922.md`` section 4, item A6):
 4. **Horizon.**  Every path takes an explicit ``horizon_year``.  The
    generalized core defaults to the sealed ledger's 2022; the scenario
    helpers default to :data:`SCENARIO_HORIZON_YEAR` (2030).
+5. **Opening stock weighted by an observed amount.**
+   :func:`opening_stock_scenario_paths` carries a beneficiary who is
+   already receiving benefits when the projection starts from an observed
+   monthly amount (the plan's observed 2010 Social Security amount)
+   rather than from an AIME/PIA computation.  The amount is a weight: the
+   reform ratio still comes only from the reformed increases on the clock
+   of the worker whose PIA the benefit rests on, including any reformed
+   increase already embedded in the observed amount.
 
 Not in scope, and deliberately so:
 
@@ -72,7 +80,19 @@ specification entries for A1"; section 6 decisions 2(a) and 2(b)):
   alternative ``FLOOR_AT_ZERO``.
 * :class:`BenefitPeriod` -- default ``CALENDAR_YEAR``; registered
   alternative ``DECEMBER``.
-* DI benefit level -- :func:`di_benefit_level` raises until ruled on.
+* ``observed_payment_year`` of :func:`opening_stock_scenario_paths` --
+  default :data:`PLAN_PROPOSED_OPENING_STOCK_PAYMENT_YEAR` (2010, the PSID
+  2011 wave's income year); registered alternative 2008 (the 2009 wave).
+* DI benefit level -- :func:`di_benefit_level` raises until ruled on.  The
+  plan names no specific approximation, so there is no proposed primary
+  to default to; a caller may still pass any PIA to the path functions.
+
+One convention inside the ``ENTITLEMENT`` alternative is fixed here and
+not named in the plan, so the specification freeze (plan item A1) must
+confirm it: for a spouse or widow(er), "entitlement" is the insured
+*worker's* entitlement year, not the auxiliary's own.  Under that reading
+the alternative is undefined for the survivor of a worker who was never
+entitled, and the functions raise rather than choose.
 """
 
 from __future__ import annotations
@@ -97,6 +117,7 @@ __all__ = [
     "LEDGER_HORIZON_YEAR",
     "PLAN_PROPOSED_ANNUAL_REDUCTION",
     "PLAN_PROPOSED_FIRST_REDUCED_DETERMINATION_YEAR",
+    "PLAN_PROPOSED_OPENING_STOCK_PAYMENT_YEAR",
     "PLAN_PROPOSED_REFORM",
     "PREELIGIBILITY_DEATH_LEVEL_RULING",
     "SCENARIO_EVIDENCE_LABELS",
@@ -117,6 +138,7 @@ __all__ = [
     "increased_pia_path",
     "minimum_reformed_rate",
     "monthly_benefit_path",
+    "opening_stock_scenario_paths",
     "payment_year_for_reference",
     "reduced_increase_count",
     "scenario_rates",
@@ -142,6 +164,11 @@ PLAN_PROPOSED_ANNUAL_REDUCTION = 0.01
 #: determined in 2009 (effective December 2009, first paid January 2010).
 #: The registered alternative is 2010.
 PLAN_PROPOSED_FIRST_REDUCED_DETERMINATION_YEAR = 2009
+#: Plan section 3 recommendation (not adopted): the PSID 2011 wave, whose
+#: income year the plan gives as 2010, so the opening stock's observed
+#: amount is a 2010 payment-year amount.  The registered alternative (the
+#: 2009 wave, income year 2008) observes 2008.
+PLAN_PROPOSED_OPENING_STOCK_PAYMENT_YEAR = 2010
 #: Message of the disabled-worker benefit-level hook (plan section 6, 2(b)).
 DI_BENEFIT_LEVEL_RULING = "awaiting ruling: DI benefit level"
 #: Message of the hook for a worker who died before becoming eligible.
@@ -1036,6 +1063,16 @@ def spouse_scenario_paths(
             "A spouse's benefit rests on an entitled worker; the worker "
             "clock has no entitlement year."
         )
+    # The spouse's benefit rests on an entitled worker (checked above), so
+    # it cannot be payable before that entitlement.  Divorced spouses, who
+    # can be entitled independently, are on the plan's omitted list.
+    if _year(entitlement_year, "entitlement_year") < (
+        worker_clock.entitlement_year
+    ):
+        raise ValueError(
+            "A spouse's entitlement year precedes the worker's entitlement "
+            "year."
+        )
     worker_rates = _scenario_pair(
         baseline, reform, worker_clock, exposure_clock
     )
@@ -1112,6 +1149,17 @@ def widow_scenario_paths(
     """
 
     exposure_clock = ExposureClock(exposure_clock)
+    # A worker entitled in some year was alive then, so a survivor's
+    # entitlement, which follows the death, cannot precede it.
+    if (
+        deceased_clock.entitlement_year is not None
+        and _year(entitlement_year, "entitlement_year")
+        < deceased_clock.entitlement_year
+    ):
+        raise ValueError(
+            "A widow(er)'s entitlement year precedes the deceased worker's "
+            "entitlement year."
+        )
     deceased_rates = _scenario_pair(
         baseline, reform, deceased_clock, exposure_clock
     )
@@ -1163,6 +1211,123 @@ def widow_scenario_paths(
         reform_monthly_by_payment_year=paths[1],
         reduced_increases_by_payment_year=_reduced_counts(
             deceased_clock, deceased_rates[1], paths[1]
+        ),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Opening stock weighted by an observed amount (scope item 5)
+# ---------------------------------------------------------------------------
+def opening_stock_scenario_paths(
+    *,
+    observed_monthly_amount: float,
+    clock: WorkerClock,
+    baseline: COLARateSource,
+    observed_payment_year: int = PLAN_PROPOSED_OPENING_STOCK_PAYMENT_YEAR,
+    reform: COLAReform = PLAN_PROPOSED_REFORM,
+    exposure_clock: ExposureClock = ExposureClock.ELIGIBILITY,
+    horizon_year: int = SCENARIO_HORIZON_YEAR,
+    round_to_dime: bool = True,
+) -> ScenarioPaths:
+    """An already-receiving beneficiary's amounts from an observed amount.
+
+    Plan item A6 asks for the opening stock to be "weighted by observed
+    2010 SS amount".  For someone already receiving benefits when the
+    projection starts, the reform ratio depends only on the reformed
+    increases in the PIA the benefit rests on (plan section 1), so the
+    level serves as a weight and is taken from an observation instead of
+    from an AIME/PIA computation:
+
+    * ``observed_monthly_amount`` is the baseline scenario's amount for
+      ``observed_payment_year``.  Converting a survey amount (for example
+      a PSID annual Social Security income amount) to a monthly amount is
+      the caller's job.
+    * ``clock`` is the COLA clock of the worker whose PIA the benefit
+      rests on: the beneficiary's own for a worker, the insured worker's
+      for a spouse or widow(er).  Deciding which applies is the caller's
+      job (plan section 3 found no benefit-type item in the PSID 2011
+      family file; plan item A3 owns the opening-status rule).  The clock
+      must have started, and any entitlement it records must have begun,
+      by ``observed_payment_year``.
+    * The baseline path increases the observed amount by each baseline
+      increase determined in ``observed_payment_year`` or later.
+    * The reform path starts from the observed amount scaled by
+      ``(1 + reformed rate) / (1 + baseline rate)`` for each reformed
+      increase determined before ``observed_payment_year`` -- with the
+      plan-proposed 2009 first reduced increase and a 2010 observation,
+      the increase effective December 2009 -- and then increases by the
+      reformed rates.  So the unrounded reform/baseline ratio for payment
+      year ``t`` is the product over every reformed increase from the
+      clock's start through ``t - 1``, the same as for a computed PIA.
+
+    Disclosed approximations, not statutory computation: the observed
+    amount is increased as if it were a PIA with claim-age factor 1,
+    floored to the dime after each increase; it is treated as the
+    baseline scenario's amount even where the baseline rate path (for
+    example a Trustees projection) differs from the increases actually
+    paid before the observation; and a dual-entitled beneficiary's whole
+    amount is carried on one clock.
+    """
+
+    exposure_clock = ExposureClock(exposure_clock)
+    observed_year = _year(observed_payment_year, "observed_payment_year")
+    horizon = _year(horizon_year, "horizon_year")
+    observed = _unrounded(observed_monthly_amount)
+    if not isinstance(clock, WorkerClock):
+        raise TypeError("clock must be a WorkerClock.")
+    if clock.eligibility_year > observed_year:
+        raise ValueError(
+            "An opening-stock benefit observed in "
+            f"{observed_year} cannot rest on a PIA whose clock starts in "
+            f"{clock.eligibility_year}."
+        )
+    if (
+        clock.entitlement_year is not None
+        and clock.entitlement_year > observed_year
+    ):
+        raise ValueError(
+            "An opening-stock benefit observed in "
+            f"{observed_year} cannot rest on a worker first entitled in "
+            f"{clock.entitlement_year}."
+        )
+    if horizon < observed_year:
+        raise ValueError("horizon_year precedes observed_payment_year.")
+    base_rates, reform_rates = _scenario_pair(
+        baseline, reform, clock, exposure_clock
+    )
+    reform_start = observed
+    for determination_year in range(clock.eligibility_year, observed_year):
+        if reform_rates.is_reduced(determination_year):
+            reform_start *= (
+                1.0
+                + reform_rates.rate_for_determination_year(determination_year)
+            ) / (
+                1.0
+                + base_rates.rate_for_determination_year(determination_year)
+            )
+    base_path, reform_path = (
+        increased_pia_path(
+            eligibility_pia=start,
+            eligibility_year=observed_year,
+            cola=rates,
+            horizon_year=horizon,
+            round_to_dime=round_to_dime,
+        )
+        for start, rates in (
+            (observed, base_rates),
+            (reform_start, reform_rates),
+        )
+    )
+    return ScenarioPaths(
+        beneficiary_type="opening_stock",
+        exposure_clock=exposure_clock,
+        worker_clock=clock,
+        reform=reform,
+        exposure_start_year=reform_rates.exposure_start_year,
+        baseline_monthly_by_payment_year=base_path,
+        reform_monthly_by_payment_year=reform_path,
+        reduced_increases_by_payment_year=_reduced_counts(
+            clock, reform_rates, reform_path
         ),
     )
 

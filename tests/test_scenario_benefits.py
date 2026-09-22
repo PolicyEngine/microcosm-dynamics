@@ -787,3 +787,227 @@ def test_benefit_period_maps_to_a_payment_year_and_horizon():
     assert counts[2031] == counts[2030] + 1
     assert sb.SCENARIO_HORIZON_YEAR == 2030
     assert sb.LEDGER_HORIZON_YEAR == ledgers.REPORT_YEARS[-1] == 2022
+
+
+def test_auxiliary_entitlement_cannot_precede_the_workers_entitlement():
+    baseline = _baseline()
+    ssa = _ssa()
+    worker = sb.WorkerClock.at_age_62(1950, entitlement_year=2016)
+    with pytest.raises(ValueError, match="precedes the worker's entitlement"):
+        sb.spouse_scenario_paths(
+            worker_eligibility_pia=2_000.0,
+            worker_clock=worker,
+            own=None,
+            months_early=0,
+            entitlement_year=2013,
+            params=ssa,
+            baseline=baseline,
+        )
+    same_year = sb.spouse_scenario_paths(
+        worker_eligibility_pia=2_000.0,
+        worker_clock=worker,
+        own=None,
+        months_early=0,
+        entitlement_year=2016,
+        params=ssa,
+        baseline=baseline,
+    )
+    assert list(same_year.baseline_monthly_by_payment_year)[0] == 2016
+    deceased = sb.WorkerClock.at_age_62(1950, entitlement_year=2018)
+    widow = {
+        "deceased_eligibility_pia": 2_000.0,
+        "deceased_clock": deceased,
+        "deceased_claim_age_factor": 1.0,
+        "own": None,
+        "survivor_months_early": 0,
+        "params": ssa,
+        "baseline": baseline,
+    }
+    with pytest.raises(ValueError, match="precedes the deceased worker's"):
+        sb.widow_scenario_paths(**widow, entitlement_year=2014)
+    paths = sb.widow_scenario_paths(**widow, entitlement_year=2018)
+    assert list(paths.baseline_monthly_by_payment_year)[0] == 2018
+
+
+# ---------------------------------------------------------------------------
+# Opening stock weighted by an observed amount (INVENTED amounts)
+# ---------------------------------------------------------------------------
+def test_opening_stock_default_observation_year_is_the_plan_proposal():
+    assert sb.PLAN_PROPOSED_OPENING_STOCK_PAYMENT_YEAR == 2010
+    paths = sb.opening_stock_scenario_paths(
+        observed_monthly_amount=1_000.0,
+        clock=sb.WorkerClock.at_age_62(1940, entitlement_year=2005),
+        baseline=_baseline(),
+    )
+    assert list(paths.baseline_monthly_by_payment_year) == list(
+        range(2010, 2031)
+    )
+    assert paths.beneficiary_type == "opening_stock"
+    assert paths.evidence_labels == sb.SCENARIO_EVIDENCE_LABELS
+    assert paths.reform == sb.PLAN_PROPOSED_REFORM
+    assert paths.exposure_clock is sb.ExposureClock.ELIGIBILITY
+
+
+@pytest.mark.parametrize(
+    ("first_reduced", "exposure_clock", "first_counted"),
+    [
+        (2009, sb.ExposureClock.ELIGIBILITY, 2009),
+        (2010, sb.ExposureClock.ELIGIBILITY, 2010),
+        (2009, sb.ExposureClock.ENTITLEMENT, 2009),
+        (2010, sb.ExposureClock.ENTITLEMENT, 2010),
+    ],
+)
+def test_opening_stock_ratio_includes_the_increase_in_the_observation(
+    first_reduced, exposure_clock, first_counted
+):
+    baseline = _baseline()
+    # INVENTED: born 1940, eligible 2002, entitled 2005, observed at an
+    # invented $1,111.11 a month in 2010.
+    clock = sb.WorkerClock.at_age_62(1940, entitlement_year=2005)
+    paths = sb.opening_stock_scenario_paths(
+        observed_monthly_amount=1_111.11,
+        clock=clock,
+        baseline=baseline,
+        reform=sb.COLAReform(first_reduced_determination_year=first_reduced),
+        exposure_clock=exposure_clock,
+        round_to_dime=False,
+    )
+    assert paths.baseline_monthly_by_payment_year[2010] == 1_111.11
+    for year, base in paths.baseline_monthly_by_payment_year.items():
+        reduced_years = range(first_counted, year)
+        assert paths.reduced_increases_by_payment_year[year] == len(
+            reduced_years
+        )
+        assert paths.reform_monthly_by_payment_year[
+            year
+        ] / base == pytest.approx(
+            _product(baseline, reduced_years, 0.01), rel=1e-12, abs=0.0
+        )
+    assert paths.reduced_increases_by_payment_year[2030] == (
+        2030 - first_counted
+    )
+
+
+def test_opening_stock_baseline_grows_the_observation_by_baseline_rates():
+    baseline = _baseline()
+    clock = sb.WorkerClock.at_di_onset(2004, entitlement_year=2005)
+    paths = sb.opening_stock_scenario_paths(
+        observed_monthly_amount=987.65,
+        clock=clock,
+        baseline=baseline,
+    )
+    expected = sb.increased_pia_path(
+        eligibility_pia=987.65,
+        eligibility_year=2010,
+        cola=baseline,
+        horizon_year=2030,
+    )
+    assert _bits(paths.baseline_monthly_by_payment_year) == _bits(expected)
+    assert paths.baseline_monthly_by_payment_year[2010] == (
+        ledgers.floor_to_dime(987.65)
+    )
+    assert paths.reduced_increases_by_payment_year[2030] == 21
+    for year, value in paths.reform_monthly_by_payment_year.items():
+        assert value == ledgers.floor_to_dime(value)
+        assert value < paths.baseline_monthly_by_payment_year[year]
+
+
+def test_opening_stock_matches_a_computed_pia_path_from_the_observation():
+    # If the observed amount is exactly a computed worker's 2010 baseline
+    # amount, the opening-stock paths continue that worker's paths.
+    baseline = _baseline()
+    clock = sb.WorkerClock.at_age_62(1944, entitlement_year=2006)
+    for exposure in sb.ExposureClock:
+        computed = sb.worker_scenario_paths(
+            eligibility_pia=1_750.25,
+            claim_age_factor=1.0,
+            clock=clock,
+            baseline=baseline,
+            exposure_clock=exposure,
+            round_to_dime=False,
+        )
+        opening = sb.opening_stock_scenario_paths(
+            observed_monthly_amount=(
+                computed.baseline_monthly_by_payment_year[2010]
+            ),
+            clock=clock,
+            baseline=baseline,
+            exposure_clock=exposure,
+            round_to_dime=False,
+        )
+        for scenario in ("baseline", "reform"):
+            got = getattr(opening, f"{scenario}_monthly_by_payment_year")
+            want = getattr(computed, f"{scenario}_monthly_by_payment_year")
+            for year in range(2010, 2031):
+                assert got[year] == pytest.approx(want[year], rel=1e-12)
+        assert opening.reduced_increases_by_payment_year == {
+            year: computed.reduced_increases_by_payment_year[year]
+            for year in range(2010, 2031)
+        }
+
+
+def test_opening_stock_newly_eligible_in_the_observation_year():
+    # INVENTED: born 1948, so eligible and entitled in 2010; the increase
+    # determined in 2009 is not on this PIA's clock in either scenario.
+    paths = sb.opening_stock_scenario_paths(
+        observed_monthly_amount=1_200.0,
+        clock=sb.WorkerClock.at_age_62(1948, entitlement_year=2010),
+        baseline=_baseline(),
+    )
+    assert (
+        paths.reform_monthly_by_payment_year[2010]
+        == paths.baseline_monthly_by_payment_year[2010]
+    )
+    assert paths.reduced_increases_by_payment_year[2030] == 20
+
+
+def test_opening_stock_registered_alternative_observation_year():
+    # The 2009-wave alternative observes 2008, before the first reduced
+    # increase (determined 2009), so nothing is embedded in the amount.
+    paths = sb.opening_stock_scenario_paths(
+        observed_monthly_amount=1_000.0,
+        clock=sb.WorkerClock.at_age_62(1940, entitlement_year=2005),
+        baseline=_baseline(),
+        observed_payment_year=2008,
+    )
+    for year in (2008, 2009):
+        assert (
+            paths.reform_monthly_by_payment_year[year]
+            == paths.baseline_monthly_by_payment_year[year]
+        )
+    assert (
+        paths.reform_monthly_by_payment_year[2010]
+        < paths.baseline_monthly_by_payment_year[2010]
+    )
+    assert paths.reduced_increases_by_payment_year[2030] == 21
+
+
+def test_opening_stock_rejects_inconsistent_inputs():
+    baseline = _baseline()
+    common = {"observed_monthly_amount": 1_000.0, "baseline": baseline}
+    with pytest.raises(ValueError, match="clock starts in 2012"):
+        sb.opening_stock_scenario_paths(
+            **common, clock=sb.WorkerClock.at_age_62(1950)
+        )
+    with pytest.raises(ValueError, match="first entitled in 2012"):
+        sb.opening_stock_scenario_paths(
+            **common,
+            clock=sb.WorkerClock.at_age_62(1945, entitlement_year=2012),
+        )
+    clock = sb.WorkerClock.at_age_62(1940, entitlement_year=2005)
+    with pytest.raises(ValueError, match="horizon_year precedes"):
+        sb.opening_stock_scenario_paths(
+            **common, clock=clock, horizon_year=2009
+        )
+    with pytest.raises(ValueError, match="negative"):
+        sb.opening_stock_scenario_paths(
+            observed_monthly_amount=-1.0, clock=clock, baseline=baseline
+        )
+    with pytest.raises(TypeError):
+        sb.opening_stock_scenario_paths(**common, clock=None)
+    with pytest.raises(ValueError, match="never entitled"):
+        sb.opening_stock_scenario_paths(
+            **common,
+            clock=sb.WorkerClock.at_age_62(1940),
+            exposure_clock=sb.ExposureClock.ENTITLEMENT,
+        )
