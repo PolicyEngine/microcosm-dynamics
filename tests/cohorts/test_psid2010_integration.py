@@ -60,6 +60,17 @@ def test_real_cohort_structural_invariants():
     # Weights: the 2011 cross-sectional weight is positive for every member.
     assert (persons["weight"] > 0).all()
     assert persons["weight"].notna().all()
+    # Every positive ER34155 weight is either a disposition or counted in
+    # the outside-presence diagnostic; no weight leaves silently.
+    outside = built.diagnostics["positive_weight_outside_presence"]
+    assert "in_family" not in outside
+    accounted = dispositions["weight"].sum() + sum(
+        group["weighted"] for group in outside.values()
+    )
+    assert accounted == pytest.approx(
+        anchor.loc[anchor["weight"] > 0, "weight"].sum()
+    )
+    assert persons["m4_status_unknown"].dtype == bool
 
     # Birth years: resolved, within the section 3.1 support, born <= 1980.
     assert persons["birth_year"].notna().all()

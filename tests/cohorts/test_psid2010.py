@@ -588,6 +588,96 @@ def test_marital_state_flags_multiple_marriages_in_force():
     assert widowed["dissolution_year"] == 2004
 
 
+def _with_separation(frame: pd.DataFrame, *years) -> pd.DataFrame:
+    out = frame.copy()
+    out["separation_year"] = pd.array(list(years), dtype="Int64")
+    return out
+
+
+@pytest.mark.parametrize(
+    "separation, separated_is_married, status, separated, spouse, dissolved",
+    [
+        # Separated in 2008, divorced only in 2012: legally married at the
+        # end of 2010 but living apart (MH16).
+        (2008, True, "married", True, 7, None),
+        (2008, False, "separated", False, None, 2008),
+        # Separated only after 2010: an ordinary marriage in force.
+        (2011, True, "married", False, 7, None),
+        (2011, False, "married", False, 7, None),
+        # No separation year recorded: unchanged behavior.
+        (None, False, "married", False, 7, None),
+    ],
+)
+def test_separation_before_a_later_divorce(
+    separation, separated_is_married, status, separated, spouse, dissolved
+):
+    # Regression: the separation year of a marriage that ended in divorce
+    # after 2010 was ignored, so the spouses counted as living together.
+    episodes = _with_separation(
+        _episodes((1, 1990, 2012, "divorce", 7)), separation
+    )
+    state = cohort.marital_state_at(
+        episodes, 2010, separated_is_married=separated_is_married
+    )
+    assert state["status"] == status
+    assert state["separated"] is separated
+    if spouse is None:
+        assert pd.isna(state["spouse_person_id"])
+        assert state["former_spouse_person_id"] == 7
+    else:
+        assert state["spouse_person_id"] == spouse
+    if dissolved is None:
+        assert pd.isna(state["dissolution_year"])
+    else:
+        assert state["dissolution_year"] == dissolved
+
+
+def test_divorce_by_2010_after_separation_stays_divorced():
+    episodes = _with_separation(_episodes((1, 1990, 2009, "divorce", 7)), 2006)
+    for separated_is_married in (True, False):
+        state = cohort.marital_state_at(
+            episodes, 2010, separated_is_married=separated_is_married
+        )
+        assert state["status"] == "divorced"
+        assert state["dissolution_year"] == 2009
+
+
+def _history_with_late_divorce() -> pd.DataFrame:
+    """5001 separated in 2009 and divorced only in 2013 (INVENTED)."""
+
+    history = _marriage_history()
+    row = history["person_id"] == 5001
+    history.loc[row, "end_year"] = 2013
+    history.loc[row, "separation_year"] = 2009
+    return history
+
+
+def test_builder_uses_the_separation_year_of_a_later_divorce():
+    inputs = _inputs(marriage_history=_history_with_late_divorce())
+    default = cohort.build_psid2010_cohort(inputs).persons.set_index(
+        "person_id"
+    )
+    assert default.loc[5001, "marital_status_2010"] == "married"
+    assert bool(default.loc[5001, "separated_2010"])
+    assert default.loc[5001, "spouse_person_id"] == 5002
+    alt = cohort.build_psid2010_cohort(
+        inputs, cohort.Psid2010CohortSpec(separated_is_married=False)
+    ).persons.set_index("person_id")
+    assert alt.loc[5001, "marital_status_2010"] == "separated"
+    assert pd.isna(alt.loc[5001, "spouse_person_id"])
+
+
+def test_episode_alignment_is_checked(monkeypatch):
+    original = cohort.marriage.marriage_episodes
+
+    def shuffled(history):
+        return original(history).iloc[::-1].reset_index(drop=True)
+
+    monkeypatch.setattr(cohort.marriage, "marriage_episodes", shuffled)
+    with pytest.raises(AssertionError, match="do not align"):
+        cohort.build_psid2010_cohort(_inputs())
+
+
 # --------------------------------------------------------------------------
 # Social Security sources and the opening stock
 # --------------------------------------------------------------------------
@@ -646,6 +736,145 @@ def test_plan_rule_alternatives():
         "aged_m4_disabled_below_age"
     )
     assert bool(row.loc[9101, "m4_disabled_2009"])
+
+
+def test_m4_wave_absent_from_inputs_fails_closed():
+    # Regression: a consulted wave with no status rows read as "nobody
+    # M4-disabled" and silently moved every recipient down the rule.
+    only_2011 = _disability_status()
+    only_2011 = only_2011[only_2011["period"] == 2011]
+    with pytest.raises(ValueError, match="no rows for M4 wave 2009"):
+        cohort.build_psid2010_cohort(
+            _inputs(disability_status=only_2011),
+            cohort.Psid2010CohortSpec(m4_waves=(2009, 2011)),
+        )
+
+
+def test_m4_status_unknown_is_flagged(built):
+    # 3001 and 4001 have no ascertained 2011 status: not M4-disabled, and
+    # the default is visible.
+    assert bool(_person(built, 3001)["m4_status_unknown"])
+    assert not bool(_person(built, 3001)["m4_disabled"])
+    assert not bool(_person(built, 2001)["m4_status_unknown"])
+    assert not bool(_person(built, 1001)["m4_status_unknown"])
+
+
+def _extra_people(rows: dict) -> dict:
+    """INVENTED persons appended to the fixture: pid -> (anchor, sex, ss)."""
+
+    anchor = _anchor()
+    deaths = _deaths()
+    family = _head_spouse_ss()
+    extra_anchor = []
+    extra_deaths = []
+    extra_family = []
+    for pid, (age, sex, ss_2010) in rows.items():
+        interview = 900 + len(extra_anchor)
+        extra_anchor.append(
+            {
+                "person_id": pid,
+                "interview": interview,
+                "sequence": 1,
+                "relationship": 10,
+                "age": age,
+                "reported_birth_year": pd.NA,
+                "weight": 100.0,
+            }
+        )
+        extra_deaths.append(
+            {
+                "person_id": pid,
+                "sex": sex,
+                "death_status": "not_deceased",
+                "death_year": pd.NA,
+                "death_year_lo": pd.NA,
+                "death_year_hi": pd.NA,
+            }
+        )
+        extra_family.append(
+            {
+                "person_id": pid,
+                "wave": 2011,
+                "income_year": 2010,
+                "role": "head",
+                "ss_amount": ss_2010,
+                "ss_acc": 0,
+                "fu_ss_prior_year": 5,
+                "age": age,
+                "weight": 1.0,
+                "interview": interview,
+            }
+        )
+    anchor = pd.concat([anchor, pd.DataFrame(extra_anchor)], ignore_index=True)
+    anchor["reported_birth_year"] = anchor["reported_birth_year"].astype(
+        "Int64"
+    )
+    deaths = pd.concat([deaths, pd.DataFrame(extra_deaths)], ignore_index=True)
+    for column in ("death_year", "death_year_lo", "death_year_hi"):
+        deaths[column] = deaths[column].astype("Int64")
+    family = pd.concat([family, pd.DataFrame(extra_family)], ignore_index=True)
+    return {
+        "anchor": anchor,
+        "death_records": deaths,
+        "head_spouse_ss": family,
+    }
+
+
+def test_born_1980_boundary_and_age_62_boundary():
+    # Seed-coordinate births (clause 3: 2010 - 2011 age code) on either
+    # side of both boundaries; every value here is INVENTED.
+    inputs = _inputs(
+        **_extra_people(
+            {
+                9501: (30, "male", 0),  # born 1980: member
+                9502: (29, "female", 0),  # born 1981: outside
+                9503: (62, "male", 9000),  # age 62 in 2010 with SS
+                9504: (61, "female", 9000),  # age 61 in 2010 with SS
+            }
+        )
+    )
+    built = cohort.build_psid2010_cohort(inputs)
+    dispositions = built.dispositions.set_index("person_id")["disposition"]
+    persons = built.persons.set_index("person_id")
+    assert dispositions[9501] == "member"
+    assert persons.loc[9501, "birth_year"] == 1980
+    assert dispositions[9502] == "outside_birth_cohort"
+    assert 9502 not in persons.index
+    assert persons.loc[9503, "age_2010"] == 62
+    assert persons.loc[9503, "opening_status"] == "retired_worker"
+    assert persons.loc[9503, "opening_status_basis"] == "aged_not_widowed"
+    assert persons.loc[9504, "age_2010"] == 61
+    assert persons.loc[9504, "opening_status"] == "disabled_worker"
+    assert persons.loc[9504, "opening_status_basis"] == "under62_residual"
+    assert persons["birth_year"].max() == 1980
+
+
+def test_positive_weight_outside_presence_is_accounted(built):
+    # 8001 is institutionalized with a positive weight: outside the default
+    # universe, so it has no disposition but is counted with its weight.
+    outside = built.diagnostics["positive_weight_outside_presence"]
+    assert outside == {"institution": {"unweighted": 1, "weighted": 400.0}}
+    assert 8001 not in set(built.dispositions["person_id"])
+    alt = cohort.build_psid2010_cohort(
+        _inputs(),
+        cohort.Psid2010CohortSpec(
+            presence=cohort.Presence.IN_FAMILY_OR_INSTITUTION
+        ),
+    )
+    assert alt.diagnostics["positive_weight_outside_presence"] == {}
+
+
+def test_married_with_dead_linked_spouse_is_counted(built):
+    assert built.diagnostics["married_with_linked_spouse_dead_by_2010"] == 0
+    assert built.diagnostics["separated_2010"] == 1
+    deaths = _deaths()
+    row = deaths["person_id"] == 5102
+    deaths.loc[row, ["death_status"]] = "exact"
+    deaths.loc[row, ["death_year", "death_year_lo", "death_year_hi"]] = 2009
+    for column in ("death_year", "death_year_lo", "death_year_hi"):
+        deaths[column] = deaths[column].astype("Int64")
+    rebuilt = cohort.build_psid2010_cohort(_inputs(death_records=deaths))
+    assert rebuilt.diagnostics["married_with_linked_spouse_dead_by_2010"] == 1
 
 
 def test_under_62_precedence_alternative():
@@ -823,6 +1052,7 @@ def test_pending_decisions_cover_every_spec_field():
     [
         {"reported_type_precedence": ("disability",)},
         {"m4_waves": (2013,)},
+        {"m4_waves": (2007,)},
         {"m4_waves": ()},
         {"max_birth_year": 2011},
         {"claim_table_max_year": 2011},

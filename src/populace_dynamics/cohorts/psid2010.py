@@ -73,6 +73,7 @@ __all__ = [
     "START_YEAR",
     "DEFAULT_MAX_BIRTH_YEAR",
     "SS_YEARS",
+    "M4_VERIFIED_WAVES",
     "COHORT_LABELS",
     "CLAIMING_REFERENCE_SHA256",
     "Presence",
@@ -101,6 +102,9 @@ START_YEAR = ANCHOR_WAVE - 1
 DEFAULT_MAX_BIRTH_YEAR = 1980
 #: Social Security income years observed around the start (biennial).
 SS_YEARS: tuple[int, ...] = ssi.SS_INCOME_YEARS
+#: Waves whose M4 employment-status value codes the loader verifies
+#: (code 5 = disabled); ``Psid2010CohortSpec.m4_waves`` must lie in them.
+M4_VERIFIED_WAVES: tuple[int, ...] = (2009, ANCHOR_WAVE)
 
 #: The claim label every output of this module carries (plan section 4).
 COHORT_LABELS: tuple[str, ...] = ("PSID-seeded closed cohort",)
@@ -148,6 +152,14 @@ _PARTNER = 22
 
 _SEQUENCE_IN_FAMILY = (1, 20)
 _SEQUENCE_INSTITUTION = (51, 59)
+#: 2011 sequence groups (IND2023ER codebook, ER34102) for the accounting
+#: of positive-weight persons outside the presence universe.
+_SEQUENCE_GROUPS: tuple[tuple[str, int, int], ...] = (
+    ("in_family", 1, 20),
+    ("institution", 51, 59),
+    ("moved_out_since_2009", 71, 80),
+    ("died_since_2009", 81, 89),
+)
 
 _RNG_NAMESPACE = "psid2010_cohort.opening_stock.person.v1"
 
@@ -307,8 +319,11 @@ class Psid2010CohortSpec:
             )
         if not self.m4_waves:
             raise ValueError("m4_waves must name at least one wave")
-        if any(wave > ANCHOR_WAVE for wave in self.m4_waves):
-            raise ValueError("m4_waves may not follow the 2011 anchor wave")
+        if not set(self.m4_waves) <= set(M4_VERIFIED_WAVES):
+            raise ValueError(
+                f"m4_waves must lie in the code-verified waves "
+                f"{M4_VERIFIED_WAVES}"
+            )
         if self.max_birth_year > START_YEAR:
             raise ValueError("max_birth_year may not follow the start year")
         if self.claim_table_max_year > START_YEAR:
@@ -375,7 +390,11 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             (Presence.IN_FAMILY_OR_INSTITUTION.value,),
             f"{_BUILDER}: the plan says 'observed in the 2011 wave'; the "
             "default is the repository's presence notion (sequence 1-20), "
-            "the only persons whose 2010 Social Security is asked",
+            "the only persons whose 2010 Social Security is asked. ER34155 "
+            "is also positive for 2011 movers-out (sequence 71-80) and for "
+            "persons who died before the 2011 interview (81-89); neither "
+            "option admits them, and the diagnostic "
+            "positive_weight_outside_presence counts their weight",
             _MAX,
         ),
         PendingDecision(
@@ -430,7 +449,9 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             "m4_waves",
             list(spec.m4_waves),
             ([2009, 2011], [2009]),
-            f"{_BUILDER}: the M4 self-report nearest the start",
+            f"{_BUILDER}: the M4 self-report nearest the start; a member "
+            "with no ascertained status in any consulted wave counts as "
+            "not M4-disabled (flagged m4_status_unknown)",
             _MAX,
         ),
         PendingDecision(
@@ -653,7 +674,7 @@ def load_psid2010_inputs(
     )
     claiming_pmf, digest = _load_claiming_pmf(reference_path)
     status_codes = disability.verify_employment_status_codes(
-        data_dir=data_dir, waves=[2009, ANCHOR_WAVE]
+        data_dir=data_dir, waves=list(M4_VERIFIED_WAVES)
     )
     return Psid2010Inputs(
         anchor=read_anchor_wave(data_dir=data_dir),
@@ -695,16 +716,20 @@ def marital_state_at(
     """Marital state at the end of ``year`` from one person's episodes.
 
     ``episodes`` is one person's
-    :func:`populace_dynamics.data.marriage.marriage_episodes` rows. A
-    marriage is dated when its start year is known and, if it has ended,
-    its end (or separation) year is known. The precedence is:
+    :func:`populace_dynamics.data.marriage.marriage_episodes` rows,
+    optionally with the marriage-history ``separation_year`` (MH16, the
+    year the spouses stopped living together) alongside. A marriage is
+    dated when its start year is known and, if it has ended, its end (or
+    separation) year is known. The precedence is:
 
     1. any dated marriage in force at the end of ``year`` -> ``married``
        (the latest start wins; ``multiple_in_force`` flags more than one
-       marriage in force); a
-       marriage separated by ``year`` counts as in force (flagged
-       ``separated``) when ``separated_is_married``, else it is a
-       ``separated`` dissolution;
+       marriage in force); a marriage whose spouses had separated by
+       ``year`` -- one still recorded as separated, or one that ended in
+       divorce or widowhood only after ``year`` but whose
+       ``separation_year`` is at or before it -- counts as in force
+       (flagged ``separated``) when ``separated_is_married``, else it is
+       a ``separated`` dissolution dated at the separation year;
     2. otherwise any undated episode (unknown start, unknown end, or the
        file's ``other``/``unknown`` statuses) -> ``unknown``;
     3. otherwise the latest dated dissolution -> ``widowed``,
@@ -718,6 +743,7 @@ def marital_state_at(
     """
 
     year = int(year)
+    has_separation = "separation_year" in episodes.columns
     in_force: list[tuple[int, int, Any, bool]] = []
     dissolved: list[tuple[int, int, str, Any]] = []
     undated = False
@@ -732,13 +758,24 @@ def marital_state_at(
         how = str(row.how_ended)
         end = row.episode_end_year
         spouse = row.spouse_person_id
+        separation = row.separation_year if has_separation else pd.NA
+        separated_by_year = not pd.isna(separation) and int(separation) <= year
         if how == "intact":
             in_force.append((start, order, spouse, False))
         elif how in ("widowhood", "divorce", "separated"):
             if pd.isna(end):
                 undated = True
             elif int(end) > year:
-                in_force.append((start, order, spouse, False))
+                # Legally in force at the end of ``year``; the spouses may
+                # already have separated (MH16) before a later divorce.
+                if not separated_by_year:
+                    in_force.append((start, order, spouse, False))
+                elif separated_is_married:
+                    in_force.append((start, order, spouse, True))
+                else:
+                    dissolved.append(
+                        (int(separation), order, "separated", spouse)
+                    )
             elif how == "separated" and separated_is_married:
                 in_force.append((start, order, spouse, True))
             else:
@@ -1030,6 +1067,39 @@ def _linked_birth_records(
     return {record.person_id: record for record in records}, conflicted
 
 
+def _episodes_with_separation(history: pd.DataFrame) -> pd.DataFrame:
+    """``marriage_episodes`` rows plus each marriage's MH16 separation year.
+
+    :func:`populace_dynamics.data.marriage.marriage_episodes` keeps the
+    separation year only as the end of a marriage still recorded as
+    separated. A marriage that later ended in divorce also carries the
+    year the spouses stopped living together, which decides whether the
+    spouses were separated at the end of 2010. The episode rows are the
+    marriage rows in the same (person, marriage order) sort; the
+    alignment is checked, not assumed.
+    """
+
+    episodes = marriage.marriage_episodes(history)
+    marriages = (
+        history[history["is_marriage"]]
+        .sort_values(["person_id", "marriage_order"])
+        .reset_index(drop=True)
+    )
+    aligned = len(marriages) == len(episodes)
+    if aligned:
+        for column in ("person_id", "marriage_order", "start_year"):
+            left = pd.Series(marriages[column]).astype("Int64")
+            right = pd.Series(episodes[column]).astype("Int64")
+            same = (left == right).fillna(left.isna() & right.isna())
+            aligned = aligned and bool(same.all())
+    if not aligned:
+        raise AssertionError(
+            "marriage episodes do not align with the marriage-history rows"
+        )
+    episodes["separation_year"] = marriages["separation_year"].astype("Int64")
+    return episodes
+
+
 def _attach_marital(
     persons: pd.DataFrame,
     inputs: Psid2010Inputs,
@@ -1041,7 +1111,7 @@ def _attach_marital(
     history = inputs.marriage_history[
         inputs.marriage_history["person_id"].isin(member_ids)
     ]
-    episodes = marriage.marriage_episodes(history)
+    episodes = _episodes_with_separation(history)
     by_person = {
         int(pid): rows
         for pid, rows in episodes.groupby("person_id", sort=False)
@@ -1147,9 +1217,17 @@ def _attach_m4(
     for wave in spec.m4_waves:
         column = f"m4_disabled_{wave}"
         rows = disability_status[disability_status["period"] == wave]
+        if rows.empty:
+            # An absent wave would otherwise read as "nobody disabled".
+            raise ValueError(
+                f"disability_status has no rows for M4 wave {wave}"
+            )
         disabled = rows.set_index("person_id")["disabled"]
         persons[column] = persons["person_id"].map(disabled).astype("boolean")
         columns.append(column)
+    # A member with no ascertained status in any consulted wave is not
+    # M4-disabled under the rule; the flag keeps that default visible.
+    persons["m4_status_unknown"] = persons[columns].isna().all(axis=1)
     persons["m4_disabled"] = (
         persons[columns].fillna(False).any(axis=1).astype(bool)
     )
@@ -1555,7 +1633,8 @@ def build_psid2010_cohort(
     ``linked_spouse_birth_year``, ``linked_spouse_birth_source``,
     ``coresident_partner_person_id_2011``,
     ``coresident_partner_relationship_2011``), M4 status
-    (``m4_disabled_<wave>`` for each consulted wave and ``m4_disabled``),
+    (``m4_disabled_<wave>`` for each consulted wave, ``m4_status_unknown``
+    and ``m4_disabled``),
     Social Security (``ss_<year>``, ``ss_<year>_source`` for 2008, 2010,
     2012; ``ss_receipt_2010``; the 2010 reported ``type_*`` flags), the
     opening stock (``opening_status``, ``opening_status_basis``,
@@ -1617,13 +1696,22 @@ def build_psid2010_cohort(
     _attach_opening_status(persons, spec)
     _attach_opening_claim(persons, inputs, spec)
     careers = _careers(persons, earnings)
+    outside_presence = anchor[
+        (anchor["weight"] > 0) & ~anchor["person_id"].isin(universe_ids)
+    ]
     return Psid2010Cohort(
         persons=persons,
         careers=careers,
         social_security=social_security,
         dispositions=dispositions,
         spec=spec,
-        diagnostics=_diagnostics(persons, social_security, dispositions),
+        diagnostics=_diagnostics(
+            persons,
+            social_security,
+            dispositions,
+            outside_presence,
+            inputs.death_records,
+        ),
     )
 
 
@@ -1638,12 +1726,27 @@ def _reported_primary_type(persons: pd.DataFrame) -> pd.Series:
     return primary.astype("string")
 
 
+def _sequence_group(sequence: pd.Series) -> pd.Series:
+    group = pd.Series("other", index=sequence.index, dtype=object)
+    for name, low, high in _SEQUENCE_GROUPS:
+        group[sequence.between(low, high)] = name
+    return group
+
+
 def _diagnostics(
     persons: pd.DataFrame,
     social_security: pd.DataFrame,
     dispositions: pd.DataFrame,
+    outside_presence: pd.DataFrame,
+    death_records: pd.DataFrame,
 ) -> dict[str, Any]:
-    """Structural cross-checks of the build (counts only)."""
+    """Structural cross-checks of the build (counts only).
+
+    ``outside_presence`` holds the anchor rows with a positive ER34155
+    weight that the presence universe leaves out; they carry no
+    disposition, so their count and weight are reported here by 2011
+    sequence group.
+    """
 
     family_rows = social_security[
         social_security["source"] == "family_head_spouse"
@@ -1665,6 +1768,13 @@ def _diagnostics(
     comparable = reported.notna()
     gap = (persons["birth_year"][comparable] - reported[comparable]).abs()
     recipients = persons[persons["ss_receipt_2010"].fillna(False).astype(bool)]
+    groups = _sequence_group(outside_presence["sequence"])
+    death_year = (
+        death_records.set_index("person_id")["death_year"]
+        if "death_year" in death_records
+        else pd.Series(dtype="Int64")
+    )
+    spouse_death = persons["spouse_person_id"].map(death_year).astype("Int64")
     crosstab = pd.crosstab(
         recipients["opening_status"].astype(str),
         _reported_primary_type(recipients).astype(str),
@@ -1701,6 +1811,17 @@ def _diagnostics(
         "death_before_2011_presence": int(
             persons["death_before_2011_presence"].sum()
         ),
+        "positive_weight_outside_presence": {
+            str(group): _weighted(outside_presence, groups == group)
+            for group in sorted(groups.unique())
+        },
+        "married_with_linked_spouse_dead_by_2010": int(
+            (
+                (persons["marital_status_2010"] == "married")
+                & (spouse_death <= START_YEAR).fillna(False)
+            ).sum()
+        ),
+        "separated_2010": int(persons["separated_2010"].sum()),
         "disposition_person_ids_unique": bool(
             dispositions["person_id"].is_unique
         ),

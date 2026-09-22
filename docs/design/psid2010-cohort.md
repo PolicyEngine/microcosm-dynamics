@@ -16,6 +16,13 @@ scenario and no comparison statistic.
   both `IND2023ER.sas` and `IND2023ER.sps` (checked 2026-09-22). The reader
   verifies the label and that it is the only "CROSS-SECTION WT 11" label.
   The codebook gives a range of 55-88,308 and 0 for "not response in 2011".
+- **Positive weights outside the universe.** On the staged file ER34155 is
+  also positive for every 2011 mover-out (sequence 71-80) and every person
+  who died between the 2009 and 2011 interviews (81-89), not only for
+  persons in a family or an institution. Neither presence option admits
+  movers-out or decedents, and these persons get no disposition. The
+  diagnostic `positive_weight_outside_presence` reports their count and
+  weight by sequence group so the exclusion is accounted, not silent.
 - **Membership.** A universe person is a member when the section 3.1 birth
   year is at most 1980 and sex is coded. Every universe person gets exactly
   one disposition: `member`, `excluded_birth_year_unresolved`,
@@ -73,13 +80,13 @@ None of these choices is ratified.
 | `under_62_precedence` | `m4_then_widowhood` | `widowhood_then_m4` | Builder choice (the plan gives no order) |
 | `under_62_residual` | `disabled_worker` | `unclassified` | Plan A3 (under 62 → DI or survivor) |
 | `aged_m4_disabled_di_below_age` | none | 66 | Plan A3 (every 62+ recipient is retired or survivor) |
-| `m4_waves` | (2011,) | (2009, 2011), (2009,) | Builder choice |
+| `m4_waves` | (2011,) | (2009, 2011), (2009,) | Builder choice; restricted to the waves whose M4 value codes the loader verifies (2009, 2011). A member with no ascertained status in any consulted wave counts as not M4-disabled and is flagged `m4_status_unknown` |
 | `reported_type_precedence` | disability, survivor, retirement, dependents, other | — | Builder choice (used only under `reported_type`) |
 | `ofum_ss_source` | `individual_file` | `unobserved` | Builder choice (the plan's reader covers only head and wife) |
 | `bracket_resolution` | `first_observed` | `fu_prior_year_indicator` | Plan A3 ("from observed first SS receipt") |
 | `claim_table_max_year` | 2008 | — | Plan A3 (§6 law restricted to rows ≤2008; the rows come from the later 2014 Supplement) |
 | `stock_imputation_root_seed` | 2010 | — | Builder choice; unregistered and must be fixed at registration |
-| `separated_is_married` | true | false | Builder choice |
+| `separated_is_married` | true | false | Builder choice. "Separated" uses the MH16 separation year of every marriage, including one that ended in divorce only after 2010 |
 | `birth_inference_max_wave` (loader) | none (all waves) | 2011 | Builder choice (first-estimates precedent) |
 
 ## Opening stock
@@ -142,6 +149,23 @@ These are counts only.
   - Unknown 262; no marriage history 183.
   - For 6,926 of the 7,395 married members with a joinable spouse, the
     spouse in MH85_23 is also the 2011 co-resident head or wife.
+  - 317 married members were living apart from the spouse at the end of
+    2010 (`separated_2010`). Of these, 191 separated by 2010 but divorced
+    only later; the first version of the builder missed them because
+    `marriage_episodes` drops the separation year of a divorce. Under
+    `separated_is_married=false` the counts become married 7,158,
+    separated 313 and unknown 266.
+  - For 5 married members, the MH85_23 spouse carries a death year of
+    2010 or earlier in the death file
+    (`married_with_linked_spouse_dead_by_2010`). They are flagged, not
+    reclassified.
+- **Positive ER34155 weights outside the default universe** (all ages,
+  not only members): institution 464 persons (weighted 5,914,684);
+  moved out since 2009, 946 (7,503,972); died since 2009, 117
+  (1,847,636). The in-family universe carries 290,843,397 of the
+  306,109,689 total.
+- **M4 status.** 114 members have no ascertained M4 status in 2011
+  (`m4_status_unknown`), 11 of them 2010 recipients.
 - **Other flags.** Two members carry a death year before 2011 despite their
   2011 presence; they are flagged, not dropped.
 
@@ -152,8 +176,19 @@ To regenerate these counts, run
 
 - **Immigration.** Immigrants who arrived after the 1997 refresher are
   under-covered (plan §3); the 2017 refresher postdates the 2011 wave.
-- **Closed cohort.** The cohort is conditioned on being alive at the 2011
-  interview, so persons who died during 2010 are absent.
+- **Closed cohort.** The cohort is conditioned on being present at the
+  2011 interview. Persons who died after the 2009 interview (during 2010,
+  or in 2011 before their interview) and persons who moved out of a PSID
+  family between the 2009 and 2011 interviews without being re-interviewed
+  are absent, although ER34155 weights them (see the positive-weight counts
+  above).
+- **Realized information after the start.** `death_status` and the
+  death-year columns come from the 2023 individual file's year of death
+  (`ER32050`) and include deaths after 2010; `ss_2012`, the 2011 M4 status, the 2010 type flags read in
+  2011 and (by default) birth-year clause 2 also use information collected
+  after the end of 2010. The opening-stock rules read only 2008 and 2010
+  amounts, M4 and marital state. A projection must draw mortality rather
+  than read the realized death columns, which are for validation only.
 - **Earnings.** Labor income is a proxy for covered earnings (first-estimates
   §3.4). A year in which the person was not an interviewed head or spouse is
   `unknown`; the mean career coverage ratio is 0.69.
