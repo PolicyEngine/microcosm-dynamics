@@ -324,7 +324,9 @@ WAYBACK_SOURCES: dict[str, tuple[str, str, str, str, int, str]] = {
 }
 
 # Located 2008-vintage sources that are recorded but not committed or
-# transcribed (PDFs; see provenance.md for what each would supply).
+# transcribed (PDFs; see provenance.md for what each would supply).  An
+# entry with ``sha256`` None was located through the Wayback CDX API but
+# never downloaded; only its CDX digest is known.
 LOCATED_EXTERNAL_SOURCES = {
     "tr08_release_pdf": {
         "original_url": "http://www.ssa.gov/OACT/TR/TR08/tr08.pdf",
@@ -356,6 +358,31 @@ LOCATED_EXTERNAL_SOURCES = {
             "Social Security Area 1900-2100'. Projected age-specific death "
             "probabilities, but on 2005 Trustees Report assumptions, not "
             "TR2008. Located; not transcribed here."
+        ),
+    },
+    "tr08_long_range_methods_documentation": {
+        "original_url": (
+            "http://www.ssa.gov/OACT/TR/TR08/documentation_2008.pdf"
+        ),
+        "wayback_timestamp": "20080921133142",
+        "wayback_sha1_b32": "EUNJVAMTFCUTPS4MB2LXXSYPVFU5XEVG",
+        "sha256": None,
+        "bytes": None,
+        "examined": False,
+        "role": (
+            "SSA's TR08 index page (Wayback 20080914130458, CDX SHA-1 "
+            "27K37ORAHG5SLVHSRFH4NC6MCMFPEDDQ) links this file as "
+            "'Description of the methods used in the long range "
+            "projections that determine the actuarial status of the trust "
+            "funds'; in the release-period index (Wayback 20080509192827) "
+            "the same link pointed to documentation_2007.pdf. Located "
+            "through the Wayback CDX API and those index pages only. The "
+            "PDF was not downloaded, so its payload SHA-256 and size are "
+            "not recorded and its contents are unknown, including whether "
+            "it tabulates death, DI incidence or DI termination rates by "
+            "age and sex. A 2008-08-29 capture of http://ssa.gov/... has "
+            "a different CDX digest (7Y5NCXRZVCT6VCHJ4M7WCLAAIWW6NKEC) "
+            "and was not examined either."
         ),
     },
 }

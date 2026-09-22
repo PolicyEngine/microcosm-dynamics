@@ -30,10 +30,10 @@ SHA-256 of the committed JSON (also pinned in the reader and tests):
 78c5e55b29615e21f60dc6345572ab06206245246394e2a2791d82358c45d7d7  ssa_2008_vintage.json
 0cff75e67257f75630f1fb2cbdf7e6b266f47109b5c95e56a976a195f161aa9b  actuarial_study_118.json
 18066387c4879135978608c53a2f5309e083a2fc89acc7469399712f2ec9b45d  transcription_check.json
-b4daaa9479bb1a29c00467343ae1c957207d34b1d601a0b8da4401ed062e0b1e  sources.json
+ac09e00eadb5935f36a6a52a808b0a49bd5c76dac0d594e0fb820bbb3373fbc5  sources.json
 ```
 
-On 2026-09-22 each of the 25 committed captures and the 4 PDFs listed in `sources.json` was re-checked against the live Wayback CDX API: the TR2008 report, Actuarial Studies 118 and 120, and the release-day PDF. The recorded CDX SHA-1 was returned with HTTP status 200 at the recorded timestamp in every case.
+On 2026-09-22 each of the 25 committed captures and the 4 PDFs listed in `sources.json` was re-checked against the live Wayback CDX API: the TR2008 report, Actuarial Studies 118 and 120, and the release-day PDF. The recorded CDX SHA-1 was returned with HTTP status 200 at the recorded timestamp in every case. A second resume repeated all 29 queries later the same day with the same result. `sources.json` also records a fifth located PDF, the TR2008 long-range methods documentation, by CDX digest only; it was never downloaded (sections 3 and 4 below).
 
 ## Page locators
 
@@ -114,10 +114,11 @@ Row coverage (the set of years in each section) is compared too, so a row the PD
 | Study 118 Table 6: total = sum of age groups; Total = Male + Female | 375 | 0 |
 | Study 118 Table 4: Total rate between the Male and Female rates (±0.01); adjusted = gross in 2000 | 328 | 0 |
 
-Outside the JSON check, `tests/test_tr2008_parameters.py` does three more things:
+Outside the JSON check, `tests/test_tr2008_parameters.py` does four more things:
 - It compares the V.C1 COLAs for 1975–2007 with the repository's independent SSA series `../ssa_cola_history.json`. All are equal.
 - It records that the realized 2008–2010 COLAs in that series (5.8, 0.0, 0.0) differ from TR2008's projections (2.7, 2.5, 2.8).
 - It corrupts one committed Study 118 cell or one text value at a time and asserts that exactly the expected checks fail (mutation tests).
+- It re-parses the pinned PDFs with a second, minimal parser that shares no parsing code with the extractor, and compares every cell it reads with the reader's accessors. The cells are V.C1 COLA, AWI and AWI increase (65 rows); VI.F6 adjusted CPI and AWI (75 rows); II.C1 (27 cells); Study 118 Table 4 (975 cells); and Tables 7A, 7B, 14A and 14B (2,156 cells). That is 3,503 printed cells, with 0 mismatches. It also asserts the set of years or select ages in every section, so a skipped row fails. These two tests skip when `pdftotext` or the PDFs are absent. They guard against parser defects, not against errors in the PDFs' text layer.
 
 **Defects the check or its review caught.**
 - Dot leaders consumed the decimal point of V.B1's high-cost 2011 productivity ".1", producing 1. The row regex was fixed and a regression test added (`test__year_row__keeps_a_leading_decimal_value_after_dot_leaders`).
@@ -170,6 +171,7 @@ The reader's `awi_path` returns TR2008 levels by default. With `realized=` and `
 **2008-vintage substitutes:**
 - **(a)** SSA's *Period Life Table, 2004*, captured and parsed here. The OACT page was last modified March 27, 2008. It is identical to Supplement 2008 Table 4.C6, and its e0 (74.83 / 79.96) and e65 (16.67 / 19.5) round to V.A3's 2004 values.
 - **(b)** Actuarial Study 120, *Life Tables for the United States Social Security Area 1900–2100* (Wayback `20080326052709`, SHA-256 `f9aadc8cad678b2febd8658b6f5aedfe6cc5496fa5894b7cbaf9250560225003`). Located but not transcribed. It projects age-specific rates on 2005 Trustees Report assumptions, so it is a different vintage.
+- **(c) Located, not examined.** SSA's TR08 index page (Wayback `20080914130458`) links `documentation_2008.pdf` as the "Description of the methods used in the long range projections that determine the actuarial status of the trust funds". The file is recorded in `sources.json` (`located_not_committed`) with Wayback `20080921133142` and CDX SHA-1 `EUNJVAMTFCUTPS4MB2LXXSYPVFU5XEVG`. It was not downloaded, so whether it tabulates death probabilities or reductions by age and sex is unknown. It is the most direct unexamined lead for this gap.
 
 The reader's `mortality_improvement_ratio` scales by the published broad-age-group ASADR path. It is a proposed substitute awaiting ratification.
 
@@ -197,9 +199,11 @@ The reader's `mortality_improvement_ratio` scales by the published broad-age-gro
   - Table 2: all disabled beneficiaries by basis of entitlement, age and sex.
   - Tables 35 and 39: awards, and awards by sex and age. Table 36: awards by basis, age and sex.
   - Tables 49–50: terminations by beneficiary type and by reason. Neither has an age or sex breakdown.
-  - Table 57: terminations *because of successful return to work*, by sex and age. This is the only ASR 2008 table with terminations by age or sex.
+  - Table 57: terminations *because of successful return to work*, by sex and age.
+  - Table 53 counts the same 37,711 return-to-work terminations by diagnostic group and age. It is in the committed `di_asr2008_sect03g` capture but is not extracted. Tables 53 and 57 are the only ASR 2008 tables that count terminations by age or sex, and both cover return to work only. (An earlier version of this file called Table 57 the only one.)
   - Tables 2, 20 and 57 agree on 7,426,691 disabled workers in December 2008 (tested).
 - **Supplement 2008 (verbatim).** Table 4.C2: fully and disability insured persons by sex and age, selected years to 2008.
+- **Located, not examined.** The TR2008 long-range methods documentation (section 3, item (c)) may describe the DI incidence and termination methods by age and sex. Its contents are unknown.
 
 No rates are computed from the verbatim tables here; that is A4's job.
 
@@ -246,14 +250,15 @@ SSA revised these historical series between the two publications.
 - That OACT's 2004 period life table is the exact base table inside the TR2008 projection. Verified only that TR2008's historical rates end in 2004 and that the table's e0 and e65 round to V.A3's 2004 values.
 - The figure plot points are SSA's accessibility descriptions of the charts, not values printed in the PDF. They were checked only against each other and against V.C5 (above).
 - The ASR and Supplement tables are kept as verbatim text; their column semantics were not re-derived.
-- **Study 118 Table 4's age-specific cells** have no second rendering or arithmetic identity. They are checked only against the pooled-ratio bound (Total between Male and Female) and the 2000 adjusted = gross identity. That bound would miss a transcription error that stays inside the bound.
-- **Study 118 is a base, not a projection.** It holds 1996–2000 experience and 1980–2004 history. TR2008's projected rates by age, sex and duration, and the age profile of its projected incidence, are not published in any source located.
+- **Study 118 Table 4's age-specific cells** have no second rendering or arithmetic identity. They are checked only against the pooled-ratio bound (Total between Male and Female) and the 2000 adjusted = gross identity. That bound would miss a transcription error that stays inside the bound. The independent re-parse in the tests (above) now reads all 975 cells a second time and matches the reader. That rules out a defect in the extractor's parser, but it reads the same PDF text layer.
+- **Study 118 is a base, not a projection.** It holds 1996–2000 experience and 1980–2004 history. TR2008's projected rates by age, sex and duration, and the age profile of its projected incidence, were not found in any source examined. The TR2008 long-range methods documentation was located but not examined.
 - **Terminations by age and sex for 2005–2008** from death or medical recovery were not found in:
   - the DI ASR 2008 (all 68 tables in its expanded table of contents, read from Wayback capture `20090827055830`);
   - Supplement 2008 section 6.F (Tables 6.F1–6.F3).
 - Actuarial Study 120 is located and hashed only.
+- The TR2008 long-range methods documentation is located by CDX digest only. It was not downloaded: downloading another file needed explicit permission from Max, which this lane could not obtain (compare plan section 6, item 7).
 - AWI before 1975 is not in TR2008.
-- This branch is based on `land-dynamics-stack-20260922` (#449, `bed07225`), not `origin/master` as the plan recommends for Track A. The reader and extractor import nothing from #449.
+- This branch is based on `land-dynamics-stack-20260922` (#449, `bed07225`, plus the formatting-only commit `46ec08b1`), not `origin/master` as the plan recommends for Track A. The reader and extractor import nothing from #449.
 
 ## History
 
@@ -266,3 +271,10 @@ SSA revised these historical series between the two publications.
   - the text-value HTML check.
 - It also fixed the single-digit caption defect and corrected the DI gaps. The staged gaps had listed ASR Tables 49–50 as a substitute for terminations by age and sex, which they are not.
 - `tr2008_report.json` and `tr2008_single_year.json` are byte-identical to the staged versions.
+- A second resume on 2026-09-22 found that work committed as `03cd7e43` and checked it independently:
+  - it recomputed the payload SHA-256, SHA-1 and size of all 25 captures and of both PDFs, confirmed gzip mtime 0, and compared each capture's page title with its recorded role;
+  - it re-ran the 29 live CDX queries (all returned status 200 with the recorded digest) and the extractor's `--check` (outputs current);
+  - it re-parsed 3,503 printed cells with the separate parser, now committed as two tests;
+  - it re-read the DI ASR 2008 expanded table of contents (Wayback `20090827055830`; the payload SHA-1 equals the CDX digest `SF6EC464S3H2LV5XTJFBB6BVJLX6WLQW`). The only termination tables are 49–51 (no age or sex; 51 is by state), 53 and 55 (return to work, by diagnostic group and age; 55 is average benefits) and 57 (return to work, by sex and age). This corrected the "only table" statement about Table 57.
+- The second resume also recorded the TR2008 long-range methods documentation, which it located through SSA's TR08 index pages and the CDX API. It did not download the file.
+- The only data file it changed is `sources.json` (one added `located_not_committed` entry). The other five JSON files are byte-identical to `03cd7e43`.

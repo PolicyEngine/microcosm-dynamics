@@ -134,7 +134,7 @@ FILE_SHA256: Mapping[str, str] = {
         "18066387c4879135978608c53a2f5309e083a2fc89acc7469399712f2ec9b45d"
     ),
     "sources.json": (
-        "b4daaa9479bb1a29c00467343ae1c957207d34b1d601a0b8da4401ed062e0b1e"
+        "ac09e00eadb5935f36a6a52a808b0a49bd5c76dac0d594e0fb820bbb3373fbc5"
     ),
 }
 
@@ -248,7 +248,10 @@ GAPS: tuple[Gap, ...] = (
             "Table 4.C6) scaled by the published broad-age-group ASADR path "
             "(mortality_improvement_ratio); or Actuarial Study 120 (located, "
             "not transcribed; 2005 Trustees assumptions, a different "
-            "vintage)."
+            "vintage). SSA's TR2008 long-range methods documentation "
+            "(documentation_2008.pdf) is located by CDX digest but was not "
+            "downloaded; whether it tabulates age-sex rates is unknown "
+            "(sources.json located_not_committed)."
         ),
         status="substitute proposed, not adopted",
     ),
@@ -276,11 +279,13 @@ GAPS: tuple[Gap, ...] = (
             "sex and age (Tables 36, 39) over Supplement 2008 Table 4.C2 "
             "disability-insured counts (verbatim; rates not computed "
             "here). The age profile behind TR2008's projected incidence "
-            "is not published."
+            "is not published in any source examined; the TR2008 "
+            "long-range methods documentation is located but not "
+            "examined (sources.json located_not_committed)."
         ),
         status=(
             "historical age profile captured; projected age profile not "
-            "published; A4 chooses"
+            "found in any source examined; A4 chooses"
         ),
     ),
     Gap(
@@ -299,11 +304,13 @@ GAPS: tuple[Gap, ...] = (
             "select age, sex and duration, the base TR2008 names (parsed; "
             "di_termination_probability). How TR2008 moves from that base "
             "to its projected rates is stated only in aggregate "
-            "(text_assumption)."
+            "(text_assumption) in the sources examined; the TR2008 "
+            "long-range methods documentation is located but not "
+            "examined."
         ),
         status=(
             "published base captured; TR2008's projected rates by age, sex "
-            "and duration not published"
+            "and duration not found in any source examined"
         ),
     ),
     Gap(
@@ -312,9 +319,11 @@ GAPS: tuple[Gap, ...] = (
         in_tr2008="None.",
         substitute=(
             "DI ASR 2008 Table 57 (captured verbatim) gives terminations "
-            "by sex and age only for successful return to work; Tables "
-            "49-50 give terminations by beneficiary type and by reason, "
-            "with no age or sex. Actuarial Study 118 Table 5 gives "
+            "by sex and age only for successful return to work; Table 53 "
+            "(same capture, not extracted) gives those terminations by "
+            "diagnostic group and age; Tables 49-50 give terminations by "
+            "beneficiary type and by reason, with no age or sex. "
+            "Actuarial Study 118 Table 5 gives "
             "terminations by reason and sex, without age, for 1980-2004 "
             "(di_terminations_by_reason)."
         ),

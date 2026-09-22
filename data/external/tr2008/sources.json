@@ -20,6 +20,15 @@
       "wayback_sha1_b32": "CFR6TTHSRZ4JX577UND4RXHQOCMO5NAL",
       "wayback_timestamp": "20080326052709"
     },
+    "tr08_long_range_methods_documentation": {
+      "bytes": null,
+      "examined": false,
+      "original_url": "http://www.ssa.gov/OACT/TR/TR08/documentation_2008.pdf",
+      "role": "SSA's TR08 index page (Wayback 20080914130458, CDX SHA-1 27K37ORAHG5SLVHSRFH4NC6MCMFPEDDQ) links this file as 'Description of the methods used in the long range projections that determine the actuarial status of the trust funds'; in the release-period index (Wayback 20080509192827) the same link pointed to documentation_2007.pdf. Located through the Wayback CDX API and those index pages only. The PDF was not downloaded, so its payload SHA-256 and size are not recorded and its contents are unknown, including whether it tabulates death, DI incidence or DI termination rates by age and sex. A 2008-08-29 capture of http://ssa.gov/... has a different CDX digest (7Y5NCXRZVCT6VCHJ4M7WCLAAIWW6NKEC) and was not examined either.",
+      "sha256": null,
+      "wayback_sha1_b32": "EUNJVAMTFCUTPS4MB2LXXSYPVFU5XEVG",
+      "wayback_timestamp": "20080921133142"
+    },
     "tr08_release_pdf": {"bytes": 1111230, "original_url": "http://www.ssa.gov/OACT/TR/TR08/tr08.pdf", "role": "Release-day (2008-03-25) PDF. Not the transcription source; used once to confirm that the numeric tokens on every page transcribed here are identical to the printed House Document version (see provenance.md).", "sha256": "c3344158551835b7abbdf4e047f741ecb2f634c0f204f586cf74c27f7b90e2ca", "wayback_sha1_b32": "ESPELEJP2GMGTFGUIOBDRMBY7YCMAVLN", "wayback_timestamp": "20080325214024"}
   },
   "report_pdf": {"bytes": 1295810, "local_path_at_build": "~/microcosm-launch-evidence/dynasim-parity-20260909/tr2008-inputs-20260922/tr08-2008-oasdi-trustees-report.pdf (not committed)", "original_url": "http://www.ssa.gov/OACT/TR/TR08/tr08.pdf", "sha256": "517de81a7eb57dc5bc6e14c4dd9f635bce954701b28fa05dafd9bef1ae16172f", "wayback_sha1_b32": "3763FHME6PHT7EBSHGDRUWB4FYNIC7OR", "wayback_timestamp": "20100331224612"},

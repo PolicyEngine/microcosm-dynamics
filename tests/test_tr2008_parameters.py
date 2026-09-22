@@ -15,7 +15,9 @@ import gzip
 import hashlib
 import json
 import os
+import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -49,7 +51,7 @@ REVIEWED_SHA256 = {
         "18066387c4879135978608c53a2f5309e083a2fc89acc7469399712f2ec9b45d"
     ),
     "sources.json": (
-        "b4daaa9479bb1a29c00467343ae1c957207d34b1d601a0b8da4401ed062e0b1e"
+        "ac09e00eadb5935f36a6a52a808b0a49bd5c76dac0d594e0fb820bbb3373fbc5"
     ),
 }
 TRANSCRIPTION_CELLS = 10441
@@ -125,7 +127,18 @@ def test__study_118_pdf__identity_is_recorded_consistently():
     assert document["published"] == "June 2005"
     located = _json("sources.json")["located_not_committed"]
     assert "actuarial_study_118" not in located
-    assert set(located) == {"actuarial_study_120", "tr08_release_pdf"}
+    assert set(located) == {
+        "actuarial_study_120",
+        "tr08_long_range_methods_documentation",
+        "tr08_release_pdf",
+    }
+    # Located by CDX digest only: never downloaded, so no payload digest.
+    documentation = located["tr08_long_range_methods_documentation"]
+    assert documentation["examined"] is False
+    assert documentation["sha256"] is None and documentation["bytes"] is None
+    assert documentation["wayback_sha1_b32"] == (
+        "EUNJVAMTFCUTPS4MB2LXXSYPVFU5XEVG"
+    )
 
 
 def test__transcription_check__passed_on_every_compared_cell():
@@ -179,6 +192,185 @@ def test__extractor__reproduces_committed_outputs_from_the_pdfs():
         pytest.skip("TR2008 or Actuarial Study 118 PDF unavailable")
     arguments = ["--check", "--pdf", str(pdf), "--as118-pdf", str(study)]
     assert extractor.main(arguments) == 0
+
+
+# ---------------------------------------------------- independent re-parse
+#
+# A second, deliberately small parser of the same PDF text layer.  It
+# shares no parsing code with scripts/extract_tr2008_parameters.py (it
+# takes only the default PDF locations from the extractor and the pinned
+# PDF digests from sources.json), so a defect in the extractor's row,
+# section or footnote rules would surface here.  It is
+# most useful for Study 118 Table 4, whose age-specific cells have no
+# second rendering and no arithmetic identity.  It cannot catch an error
+# in pdftotext's own text layer.
+
+_REPARSE_SECTIONS = {
+    "Historical data:": "historical",
+    "Intermediate:": "intermediate",
+    "Low Cost:": "low_cost",
+    "High Cost:": "high_cost",
+}
+_REPARSE_ROW = re.compile(r"^(\d{4})\s*(?:\.\s*)+(\S.*)$")
+
+
+def _reparse_pdf(source_key: str, env: str, default: Path) -> Path:
+    if shutil.which("pdftotext") is None:
+        pytest.skip("pdftotext unavailable")
+    path = Path(os.environ.get(env, default))
+    if not path.exists():
+        pytest.skip(f"{path.name} unavailable")
+    recorded = _json("sources.json")[source_key]["sha256"]
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == recorded
+    return path
+
+
+def _reparse_page(path: Path, page: int) -> list[str]:
+    text = subprocess.run(
+        ["pdftotext", "-layout", "-f", str(page), "-l", str(page), path, "-"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    return [line.strip() for line in text.splitlines()]
+
+
+def _reparse_cell(token: str) -> float:
+    return float(token.replace("$", "").replace(",", ""))
+
+
+def _reparse_year_rows(lines: list[str]):
+    section = None
+    for line in lines:
+        if line in _REPARSE_SECTIONS:
+            section = _REPARSE_SECTIONS[line]
+            continue
+        match = _REPARSE_ROW.match(line)
+        if match and section is not None:
+            yield section, int(match.group(1)), match.group(2).split()
+
+
+def test__independent_reparse__v_c1_vi_f6_and_ii_c1_equal_the_reader():
+    pdf = _reparse_pdf("report_pdf", extractor.PDF_ENV, extractor.DEFAULT_PDF)
+    projected = set(range(2007, 2018))
+    # V.C1, PDF pp.110-111: COLA, AWI and AWI increase.  A leading "6" or
+    # "7" token is a footnote marker (1999 and 2007 COLAs).
+    v_c1 = {
+        section: {row["year"]: row for row in rows}
+        for section, rows in _json("tr2008_report.json")["tables"]["V.C1"][
+            "sections"
+        ].items()
+    }
+    seen: dict[str, set[int]] = {}
+    lines = _reparse_page(pdf, 110) + _reparse_page(pdf, 111)
+    for section, year, tokens in _reparse_year_rows(lines):
+        if tokens[0] in ("6", "7"):
+            tokens = tokens[1:]
+        cola, amount, increase = map(_reparse_cell, tokens[:3])
+        seen.setdefault(section, set()).add(year)
+        alternatives = (
+            tr2008.ALTERNATIVES if section == "historical" else (section,)
+        )
+        for alternative in alternatives:
+            assert tr2008.cola_percent(year, alternative=alternative) == cola
+            assert tr2008.awi(year, alternative=alternative) == amount
+        assert v_c1[section][year]["awi_increase_percent"] == increase
+    assert seen == {
+        "historical": set(range(1975, 2007)),
+        **{alternative: projected for alternative in tr2008.ALTERNATIVES},
+    }
+    # VI.F6, PDF pp.192-193: adjusted CPI and AWI.
+    seen = {}
+    lines = _reparse_page(pdf, 192) + _reparse_page(pdf, 193)
+    for section, year, tokens in _reparse_year_rows(lines):
+        cpi, amount = map(_reparse_cell, tokens[:2])
+        seen.setdefault(section, set()).add(year)
+        assert tr2008.adjusted_cpi(year, alternative=section) == cpi
+        assert tr2008.awi(year, alternative=section) == amount
+    five_yearly = set(range(2020, 2086, 5))
+    assert seen == {
+        alternative: projected | five_yearly
+        for alternative in tr2008.ALTERNATIVES
+    }
+    # II.C1, PDF p.14: the last three tokens of each labeled row.
+    labels = {
+        "Total fertility rate": "total_fertility_rate",
+        "adjusted death rates from 2032": "death_rate_reduction_2032_2082",
+        "the period 2008-82": "net_immigration_thousands_2008_82",
+        "Productivity": "productivity",
+        "Average wage in covered": "average_covered_wage",
+        "Consumer Price Index": "cpi",
+        "Real-wage differential": "real_wage_differential",
+        "Unemployment rate": "unemployment_rate",
+        "real interest rate": "real_interest_rate",
+    }
+    found = set()
+    for line in _reparse_page(pdf, 14):
+        for label, field in labels.items():
+            if label in line and ". ." in line:
+                values = map(_reparse_cell, line.split()[-3:])
+                for alternative, value in zip(
+                    tr2008.ALTERNATIVES, values, strict=True
+                ):
+                    ultimate = tr2008.ultimate_assumptions(alternative)
+                    assert getattr(ultimate, field) == value, field
+                found.add(field)
+    assert found == set(labels.values())
+
+
+def test__independent_reparse__study_118_tables_equal_the_reader():
+    pdf = _reparse_pdf(
+        "actuarial_study_118_pdf",
+        extractor.AS118_ENV,
+        extractor.AS118_DEFAULT_PDF,
+    )
+    # Table 4, PDF p.29: eleven age groups, gross and adjusted, by sex.
+    seen: dict[str, set[int]] = {}
+    sex = None
+    for line in _reparse_page(pdf, 29):
+        if line in ("Male", "Female", "Total"):
+            sex = line.lower()
+            continue
+        tokens = line.split()
+        if sex is None or not tokens or not re.fullmatch(r"\d{4}", tokens[0]):
+            continue
+        values = [float(token) for token in tokens[1:]]
+        row = tr2008.di_incidence_by_age(int(tokens[0]), sex=sex)
+        assert values == [*row.by_age.values(), row.gross, row.adjusted]
+        seen.setdefault(sex, set()).add(int(tokens[0]))
+    assert seen == {
+        sex: set(range(1980, 2005)) for sex in ("male", "female", "total")
+    }
+    # Tables 7A/7B (death) and 14A/14B (recovery): select ages 16-64,
+    # durations 0-9 and "10 or more", then the attained age.  An em dash
+    # marks an untabulated cell.
+    grids = {
+        35: ("death", "male"),
+        36: ("death", "female"),
+        53: ("recovery", "male"),
+        54: ("recovery", "female"),
+    }
+    for page, (cause, sex) in grids.items():
+        select_ages = []
+        for line in _reparse_page(pdf, page):
+            tokens = line.split()
+            if len(tokens) != 13 or not tokens[0].isdigit():
+                continue
+            select_age = int(tokens[0])
+            assert int(tokens[12]) == select_age + 10
+            for duration, token in enumerate(tokens[1:12]):
+                expected = None if token == "\u2014" else float(token)
+                assert (
+                    tr2008.di_termination_probability(
+                        cause,
+                        sex=sex,
+                        select_age=select_age,
+                        duration=duration,
+                    )
+                    == expected
+                ), (page, select_age, duration)
+            select_ages.append(select_age)
+        assert select_ages == list(range(16, 65)), page
 
 
 # ---------------------------------------------------------------- locators
