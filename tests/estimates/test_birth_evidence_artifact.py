@@ -108,6 +108,9 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/closed_cohort_history.py"),
         Path("src/populace_dynamics/assembled_history_observer.py"),
         Path("src/populace_dynamics/compact_cohort_history.py"),
+        Path("src/populace_dynamics/data/social_security_income.py"),
+        Path("src/populace_dynamics/cohorts/__init__.py"),
+        Path("src/populace_dynamics/cohorts/psid2010.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -310,6 +313,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert history_modules.isdisjoint(reachable), (
         "opt-in identity and history modules became reachable from the "
         f"birth-evidence reducer: {sorted(history_modules & reachable)}"
+    )
+    cohort_modules = {
+        "populace_dynamics.data.social_security_income",
+        "populace_dynamics.cohorts",
+        "populace_dynamics.cohorts.psid2010",
+    }
+    assert cohort_modules.issubset(module_paths)
+    assert cohort_modules.isdisjoint(reachable), (
+        "opt-in starting-cohort modules became reachable from the "
+        f"birth-evidence reducer: {sorted(cohort_modules & reachable)}"
     )
     assert "populace_dynamics.engine.steps" in reachable
 
