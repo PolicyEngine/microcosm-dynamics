@@ -108,6 +108,8 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/closed_cohort_history.py"),
         Path("src/populace_dynamics/assembled_history_observer.py"),
         Path("src/populace_dynamics/compact_cohort_history.py"),
+        Path("src/populace_dynamics/engine/di_entitlement.py"),
+        Path("src/populace_dynamics/engine/di_entitlement_rates.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -310,6 +312,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert history_modules.isdisjoint(reachable), (
         "opt-in identity and history modules became reachable from the "
         f"birth-evidence reducer: {sorted(history_modules & reachable)}"
+    )
+    di_entitlement_modules = {
+        "populace_dynamics.engine.di_entitlement",
+        "populace_dynamics.engine.di_entitlement_rates",
+    }
+    assert di_entitlement_modules.issubset(module_paths)
+    leaked = sorted(di_entitlement_modules & reachable)
+    assert not leaked, (
+        "the opt-in SSDI entitlement modules became reachable from the "
+        f"birth-evidence reducer: {leaked}"
     )
     assert "populace_dynamics.engine.steps" in reachable
 

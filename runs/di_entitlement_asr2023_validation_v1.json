@@ -1,0 +1,5396 @@
+{
+ "schema_version": "di_entitlement_asr2023_validation.v1",
+ "label": "VALIDATION-ONLY DIAGNOSTIC on a SYNTHETIC opening population (Census V2008 July 2008 population x ASR 2008 Table 20 disabled-worker stock; not PSID, not Track A). Not a fitting target: no rate was tuned to these comparisons. No COLA statistic or DYNASIM comparator value is computed or read.",
+ "validation_only": true,
+ "fitting_target": false,
+ "computes_cola_statistic": false,
+ "reads_comparator_values": false,
+ "opening_population": {
+  "kind": "SYNTHETIC",
+  "year": 2008,
+  "construction": "Census V2008 July 1, 2008 resident population by single age 0-100 and sex; ASR 2008 Table 20 December 2008 disabled-worker stock spread evenly over each group's single ages (Under 25 -> 18-24; 65-FRA -> 65); 2000 non-entitled and 400 entitled weighted records per age-sex cell; closed (no births or immigration after 2008)",
+  "records": 442400,
+  "asr2008_table20_stock": {
+   "total": 7426691,
+   "male": 3924524,
+   "female": 3502167
+  }
+ },
+ "population_mortality": "NCHS United States Life Tables, 2000 (single years 0-99, age 100+ as one band), constant over 2009-2023",
+ "fra_schedule": {
+  "source": "SSAParameters.fra_months (policyengine-us tree)",
+  "policyengine_us_revision": "a03e82e503"
+ },
+ "rng": {
+  "path": "no-registry batch generators",
+  "mortality_seed": [
+   5200,
+   "year",
+   1
+  ],
+  "disability_seed": [
+   5200,
+   "year",
+   5
+  ]
+ },
+ "comparison_source": {
+  "path": "data/external/di_asr_2023/tables.json",
+  "sha256": "1af9ad874cfc7b464a9279ae62e08ba51206a843f84622c92332b63beec9aa36",
+  "tables": [
+   "Table 19",
+   "Table 35",
+   "Table 49"
+  ],
+  "role": "validation only"
+ },
+ "inputs": {
+  "di_asr_2008_tables_sha256": "85a29db85b4bfea22b29ba4ed802ce53c0bb929660b87e97f1eedcbe94e0a110",
+  "nchs_2000_sha256": "067ac331d26a56f5f6c120e361771be1c890e74c412b5561ca45c87302059142"
+ },
+ "age_groups": [
+  "Under 30",
+  "30–34",
+  "35–39",
+  "40–44",
+  "45–49",
+  "50–54",
+  "55–59",
+  "60–FRA"
+ ],
+ "age_definition": "year - birth_year at the end of the year",
+ "concept_deltas": [
+  "model stock is entitled disabled workers; ASR counts workers in current-payment status (suspensions excluded)",
+  "the synthetic population is closed, so it omits post-2008 immigrants",
+  "rates are held at their fit-year level; no business-cycle or administrative variation after 2008 is modeled",
+  "model deaths start the year after award; entitlement often precedes the award",
+  "ASR 'other' terminations and elected reduced retirement are not modeled",
+  "with one assumed birth month (July) every member of a birth cohort converts in the same calendar year; the 1956 cohort (FRA 66y4m) then converts in 2022 and the 1957 cohort (66y6m) in 2024, so 2023 has no model conversions, while in fact parts of both cohorts convert in 2023 (the FRA-67 cohorts that matter in 2030 are unaffected)"
+ ],
+ "pending_decisions": [
+  {
+   "field": "incidence_basis",
+   "value": "per_population_non_entitled",
+   "basis": "plan section 4 A4 proposes per-population incidence (avoids encoding insured status); unratified until the A1 freeze",
+   "alternatives": "per_insured (refused: no per-insured rates captured)"
+  },
+  {
+   "field": "death_mode",
+   "value": "multiplier",
+   "basis": "plan section 4 A4 leaves 'DI mortality multiplier or life table, frozen'; builder default multiplier",
+   "alternatives": "explicit"
+  },
+  {
+   "field": "fit_year",
+   "value": "2008",
+   "basis": "task: 2008 (or 2007) DI ASR; 2008 data were released July 2009",
+   "alternatives": "2007 (released September 2008); 2007-2008 pooled"
+  },
+  {
+   "field": "recovery_level",
+   "value": "asr_fitted",
+   "basis": "builder default: Actuarial Study No. 118 profile rescaled to the fit year's ASR recoveries",
+   "alternatives": "as118_published (1996-2000 level)"
+  },
+  {
+   "field": "termination_basis",
+   "value": "attained_age",
+   "basis": "builder default: attained-age aggregates, because the PSID opening stock has no observed award year",
+   "alternatives": "select_and_ultimate (needs award years)"
+  },
+  {
+   "field": "post_conversion_mortality",
+   "value": "di_origin",
+   "basis": "builder default: converted disabled workers keep DI-origin mortality",
+   "alternatives": "population"
+  },
+  {
+   "field": "death_level",
+   "value": "as118_published",
+   "basis": "explicit mode only; builder default keeps the 1996-2000 level",
+   "alternatives": "asr_fitted"
+  }
+ ],
+ "variants": {
+  "default": {
+   "spec": {
+    "fit_year": "2008",
+    "incidence_basis": "per_population_non_entitled",
+    "death_mode": "multiplier",
+    "death_level": "as118_published",
+    "recovery_level": "asr_fitted",
+    "termination_basis": "attained_age",
+    "post_conversion_mortality": "di_origin",
+    "min_award_age": 18,
+    "assumed_birth_month": 7,
+    "validate_age_column": true
+   },
+   "rates": {
+    "spec": {
+     "fit_year": "2008",
+     "incidence_basis": "per_population_non_entitled",
+     "death_mode": "multiplier",
+     "death_level": "as118_published",
+     "recovery_level": "asr_fitted",
+     "termination_basis": "attained_age",
+     "post_conversion_mortality": "di_origin",
+     "min_award_age": 18,
+     "assumed_birth_month": 7,
+     "validate_age_column": true
+    },
+    "incidence_by_band": [
+     {
+      "band": "Under 25",
+      "start_ages": [
+       18,
+       24
+      ],
+      "female": 0.0010737967938159064,
+      "male": 0.0014357666710626943
+     },
+     {
+      "band": "25–29",
+      "start_ages": [
+       25,
+       29
+      ],
+      "female": 0.0015336702582784427,
+      "male": 0.0016076399948095456
+     },
+     {
+      "band": "30–34",
+      "start_ages": [
+       30,
+       34
+      ],
+      "female": 0.0021185470587765797,
+      "male": 0.0019943519124047122
+     },
+     {
+      "band": "35–39",
+      "start_ages": [
+       35,
+       39
+      ],
+      "female": 0.002909468361313974,
+      "male": 0.002754368849334299
+     },
+     {
+      "band": "40–44",
+      "start_ages": [
+       40,
+       44
+      ],
+      "female": 0.0041967520788259525,
+      "male": 0.00414351340617498
+     },
+     {
+      "band": "45–49",
+      "start_ages": [
+       45,
+       49
+      ],
+      "female": 0.005237161733648984,
+      "male": 0.0054660022309609944
+     },
+     {
+      "band": "50–54",
+      "start_ages": [
+       50,
+       54
+      ],
+      "female": 0.007899554842245436,
+      "male": 0.008800542719389794
+     },
+     {
+      "band": "55–59",
+      "start_ages": [
+       55,
+       59
+      ],
+      "female": 0.010097860813994058,
+      "male": 0.01340701203732707
+     },
+     {
+      "band": "60–64",
+      "start_ages": [
+       60,
+       64
+      ],
+      "female": 0.0077142803917946605,
+      "male": 0.012344115303219813
+     },
+     {
+      "band": "65–FRA",
+      "start_ages": [
+       65,
+       69
+      ],
+      "female": 0.0015524721405684363,
+      "male": 0.00320561816163016
+     }
+    ],
+    "recovery_attained": {
+     "female": [
+      0.006272361441129148,
+      0.011936828821884547,
+      0.01548429450986982,
+      0.019659846543451053,
+      0.02631479865194829,
+      0.03059981412647095,
+      0.034116460010696015,
+      0.0344395365742513,
+      0.03449054866323371,
+      0.0336382216764859,
+      0.03233103689631158,
+      0.03019065466275785,
+      0.028503004718923034,
+      0.026975830305012057,
+      0.02654860405978435,
+      0.024862016867803337,
+      0.023683425061938844,
+      0.022590916156232176,
+      0.021616372706297335,
+      0.020120018096146566,
+      0.019733176421363272,
+      0.01851313729320057,
+      0.01747057772462251,
+      0.016744718208476932,
+      0.01596678385149514,
+      0.01520053976490515,
+      0.014142038918520089,
+      0.013297151194748882,
+      0.012518154085913289,
+      0.011647760317650874,
+      0.01041177991168117,
+      0.009676355628851389,
+      0.007598675754671875,
+      0.006778231323538073,
+      0.006123576181597111,
+      0.005173476024299677,
+      0.004208497341049038,
+      0.0033986804284532384,
+      0.002804602142178892,
+      0.0026643188974772576,
+      0.002159511766922133,
+      0.0020075382518286956,
+      0.0016717086660278126,
+      0.0013146240431509244,
+      0.0008246954385490035,
+      0.0005962037899819471,
+      0.00039428093775989735,
+      0.00039428093775989735,
+      0.00039428093775989735
+     ],
+     "male": [
+      0.00818637752982342,
+      0.011682831128826282,
+      0.015911520755097525,
+      0.025586813632095116,
+      0.03320674442384299,
+      0.0417491438246895,
+      0.04464301712258762,
+      0.04535931187204899,
+      0.04858476374833279,
+      0.04486300675632427,
+      0.043175356812489456,
+      0.04048659462237479,
+      0.03936645416846931,
+      0.038524754700259504,
+      0.0356723287246596,
+      0.032464943629890414,
+      0.03263923493391366,
+      0.030570057074564543,
+      0.028747437645297094,
+      0.02738605252057896,
+      0.025332815939036853,
+      0.024681349052657293,
+      0.02293099674944826,
+      0.021194460220338628,
+      0.019908530477240314,
+      0.018789452775188637,
+      0.01734304750216648,
+      0.01604011372940736,
+      0.014816886345683256,
+      0.013427869672766313,
+      0.01190919727368574,
+      0.00984745867731323,
+      0.008167247996455015,
+      0.007408443172841628,
+      0.006710215204894857,
+      0.00595566138869667,
+      0.004597464519539934,
+      0.0034507552692894516,
+      0.003051160572260553,
+      0.0026409383566936514,
+      0.0023348658227991762,
+      0.0021775785484367373,
+      0.0018173056699984484,
+      0.001446405273022157,
+      0.0008682682645548143,
+      0.0007216085087303781,
+      0.00048355209347911935,
+      0.00048355209347911935,
+      0.00048355209347911935
+     ]
+    },
+    "death_attained": {
+     "female": [
+      0.009549,
+      0.01406,
+      0.015015,
+      0.014874,
+      0.013097,
+      0.012363,
+      0.013608,
+      0.013708,
+      0.011689,
+      0.013596,
+      0.013553,
+      0.013677,
+      0.013692,
+      0.014507,
+      0.01468,
+      0.014427,
+      0.015078,
+      0.015053,
+      0.015768,
+      0.016525,
+      0.016884,
+      0.016901,
+      0.018246,
+      0.018724,
+      0.019181,
+      0.020111,
+      0.02093,
+      0.02167,
+      0.022321,
+      0.0237,
+      0.024309,
+      0.025924,
+      0.025781,
+      0.026872,
+      0.027515,
+      0.029079,
+      0.029495,
+      0.030052,
+      0.031025,
+      0.031763,
+      0.033523,
+      0.034183,
+      0.036252,
+      0.037765,
+      0.037799,
+      0.03942,
+      0.0401,
+      0.040148,
+      0.040897
+     ],
+     "male": [
+      0.01496,
+      0.017716,
+      0.01751,
+      0.015887,
+      0.014424,
+      0.015068,
+      0.015186,
+      0.015077,
+      0.015863,
+      0.016309,
+      0.017476,
+      0.018355,
+      0.019743,
+      0.020761,
+      0.021353,
+      0.021999,
+      0.021637,
+      0.022333,
+      0.022048,
+      0.02185,
+      0.022403,
+      0.023661,
+      0.02369,
+      0.024635,
+      0.025706,
+      0.026331,
+      0.027794,
+      0.028841,
+      0.029582,
+      0.030325,
+      0.031908,
+      0.03257,
+      0.033308,
+      0.034814,
+      0.036497,
+      0.038044,
+      0.040629,
+      0.040662,
+      0.042733,
+      0.044261,
+      0.046138,
+      0.047601,
+      0.049595,
+      0.052176,
+      0.053279,
+      0.054716,
+      0.05641,
+      0.055048,
+      0.057671
+     ]
+    },
+    "attained_ages": [
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46,
+     47,
+     48,
+     49,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56,
+     57,
+     58,
+     59,
+     60,
+     61,
+     62,
+     63,
+     64,
+     65,
+     66
+    ],
+    "recovery_level_factor": 1.0627518538002623,
+    "death_level_factor": 1.0,
+    "diagnostics": {
+     "fit_years": [
+      "2008"
+     ],
+     "incidence": [
+      {
+       "sex": "female",
+       "band": "Under 25",
+       "awards": 15493.0,
+       "population_july1": 14448603.0,
+       "stock_december": 20361.0,
+       "non_entitled_population": 14428242.0,
+       "annual_probability": 0.0010737967938159064
+      },
+      {
+       "sex": "female",
+       "band": "25–29",
+       "awards": 15829.0,
+       "population_july1": 10392787.0,
+       "stock_december": 71794.0,
+       "non_entitled_population": 10320993.0,
+       "annual_probability": 0.0015336702582784427
+      },
+      {
+       "sex": "female",
+       "band": "30–34",
+       "awards": 20173.0,
+       "population_july1": 9638739.0,
+       "stock_december": 116647.0,
+       "non_entitled_population": 9522092.0,
+       "annual_probability": 0.0021185470587765797
+      },
+      {
+       "sex": "female",
+       "band": "35–39",
+       "awards": 29790.0,
+       "population_july1": 10424980.0,
+       "stock_december": 185996.0,
+       "non_entitled_population": 10238984.0,
+       "annual_probability": 0.002909468361313974
+      },
+      {
+       "sex": "female",
+       "band": "40–44",
+       "awards": 43953.0,
+       "population_july1": 10761793.0,
+       "stock_december": 288694.0,
+       "non_entitled_population": 10473099.0,
+       "annual_probability": 0.0041967520788259525
+      },
+      {
+       "sex": "female",
+       "band": "45–49",
+       "awards": 58210.0,
+       "population_july1": 11565799.0,
+       "stock_december": 451000.0,
+       "non_entitled_population": 11114799.0,
+       "annual_probability": 0.005237161733648984
+      },
+      {
+       "sex": "female",
+       "band": "50–54",
+       "awards": 81656.0,
+       "population_july1": 10953633.0,
+       "stock_december": 616848.0,
+       "non_entitled_population": 10336785.0,
+       "annual_probability": 0.007899554842245436
+      },
+      {
+       "sex": "female",
+       "band": "55–59",
+       "awards": 88937.0,
+       "population_july1": 9568730.0,
+       "stock_december": 761221.0,
+       "non_entitled_population": 8807509.0,
+       "annual_probability": 0.010097860813994058
+      },
+      {
+       "sex": "female",
+       "band": "60–64",
+       "awards": 54248.0,
+       "population_july1": 7866812.0,
+       "stock_december": 834659.0,
+       "non_entitled_population": 7032153.0,
+       "annual_probability": 0.0077142803917946605
+      },
+      {
+       "sex": "female",
+       "band": "65–FRA",
+       "awards": 1971.0,
+       "population_july1": 1424535.0,
+       "stock_december": 154947.0,
+       "non_entitled_population": 1269588.0,
+       "annual_probability": 0.0015524721405684363
+      },
+      {
+       "sex": "male",
+       "band": "Under 25",
+       "awards": 21937.0,
+       "population_july1": 15308616.0,
+       "stock_december": 29671.0,
+       "non_entitled_population": 15278945.0,
+       "annual_probability": 0.0014357666710626943
+      },
+      {
+       "sex": "male",
+       "band": "25–29",
+       "awards": 17444.0,
+       "population_july1": 10940956.0,
+       "stock_december": 90268.0,
+       "non_entitled_population": 10850688.0,
+       "annual_probability": 0.0016076399948095456
+      },
+      {
+       "sex": "male",
+       "band": "30–34",
+       "awards": 19612.0,
+       "population_july1": 9959083.0,
+       "stock_december": 125312.0,
+       "non_entitled_population": 9833771.0,
+       "annual_probability": 0.0019943519124047122
+      },
+      {
+       "sex": "male",
+       "band": "35–39",
+       "awards": 28583.0,
+       "population_july1": 10568801.0,
+       "stock_december": 191469.0,
+       "non_entitled_population": 10377332.0,
+       "annual_probability": 0.002754368849334299
+      },
+      {
+       "sex": "male",
+       "band": "40–44",
+       "awards": 43245.0,
+       "population_july1": 10745556.0,
+       "stock_december": 308761.0,
+       "non_entitled_population": 10436795.0,
+       "annual_probability": 0.00414351340617498
+      },
+      {
+       "sex": "male",
+       "band": "45–49",
+       "awards": 59174.0,
+       "population_july1": 11314075.0,
+       "stock_december": 488247.0,
+       "non_entitled_population": 10825828.0,
+       "annual_probability": 0.0054660022309609944
+      },
+      {
+       "sex": "male",
+       "band": "50–54",
+       "awards": 86838.0,
+       "population_july1": 10538558.0,
+       "stock_december": 671212.0,
+       "non_entitled_population": 9867346.0,
+       "annual_probability": 0.008800542719389794
+      },
+      {
+       "sex": "male",
+       "band": "55–59",
+       "awards": 109444.0,
+       "population_july1": 9014715.0,
+       "stock_december": 851524.0,
+       "non_entitled_population": 8163191.0,
+       "annual_probability": 0.01340701203732707
+      },
+      {
+       "sex": "male",
+       "band": "60–64",
+       "awards": 77187.0,
+       "population_july1": 7235924.0,
+       "stock_december": 982985.0,
+       "non_entitled_population": 6252939.0,
+       "annual_probability": 0.012344115303219813
+      },
+      {
+       "sex": "male",
+       "band": "65–FRA",
+       "awards": 3502.0,
+       "population_july1": 1277532.0,
+       "stock_december": 185075.0,
+       "non_entitled_population": 1092457.0,
+       "annual_probability": 0.00320561816163016
+      }
+     ],
+     "recovery_level": {
+      "observed_asr_table50_does_not_meet_medical_standards": 59643.0,
+      "expected_under_as118_table19": 56121.28530919461,
+      "fitted_factor": 1.0627518538002623,
+      "applied_factor": 1.0627518538002623
+     },
+     "death_level": {
+      "observed_asr_table50_deaths": 215445.0,
+      "expected_under_as118_table12_7c": 252924.65908612678,
+      "fitted_factor": 0.8518149269369418,
+      "applied_factor": 1.0
+     },
+     "average_exposure_workers": 7262695.935875661,
+     "exposure_rule": "December ASR Table 20 stock by age group and sex, scaled by the ASR Table 19 average of the prior and current December totals; group rates are simple means of single-age rates over the ages in _GROUP_AGES"
+    },
+    "provenance": {
+     "information_boundary_year": 2008,
+     "inputs_schema": "di_entitlement_inputs.v1",
+     "sources_used": [
+      "as118_death_tables",
+      "as118_recovery_tables",
+      "asr2008_table19",
+      "asr2008_table20",
+      "asr2008_table35",
+      "asr2008_table36",
+      "asr2008_table49",
+      "asr2008_table50",
+      "asr2008_table57",
+      "census_v2008_r_file18"
+     ],
+     "population_reference": "NCHS United States Life Tables, 2000",
+     "inputs_sha256": "85a29db85b4bfea22b29ba4ed802ce53c0bb929660b87e97f1eedcbe94e0a110",
+     "nchs_2000_sha256": "067ac331d26a56f5f6c120e361771be1c890e74c412b5561ca45c87302059142"
+    }
+   },
+   "years": [
+    {
+     "year": 2008,
+     "stock_thousands": {
+      "female": 3502.1669999999995,
+      "male": 3924.5239999999994,
+      "all": 7426.690999999999
+     },
+     "percent": {
+      "female": [
+       2.631370805561243,
+       3.330709243733951,
+       5.310883233152505,
+       8.243296222024822,
+       12.877741124281053,
+       17.613323408049933,
+       21.73571391655509,
+       28.256962046641405
+      ],
+      "male": [
+       3.0561413307703056,
+       3.1930496539198128,
+       4.878782751742634,
+       7.867476412426069,
+       12.440922771780736,
+       17.10301682446075,
+       21.697510322270926,
+       29.763099932628776
+      ]
+     }
+    },
+    {
+     "year": 2009,
+     "stock_thousands": {
+      "female": 3644.905754914286,
+      "male": 4031.9211725999994,
+      "all": 7676.826927514285
+     },
+     "percent": {
+      "female": [
+       2.9915925992673555,
+       3.528979472969249,
+       5.352621620928248,
+       8.472946939262153,
+       12.432419836618145,
+       17.879295082495904,
+       21.518220816615987,
+       27.823923631842955
+      ],
+      "male": [
+       3.3171010933667486,
+       3.304828975961215,
+       4.740266151501993,
+       7.669332171010609,
+       12.458863209274245,
+       17.12642537489672,
+       21.882064339344858,
+       29.501118684643608
+      ]
+     },
+     "flows_thousands": {
+      "awards": 900.0623547999965,
+      "deaths": 269.4745972857128,
+      "recoveries": 54.407309999999775,
+      "conversions": 326.0445199999973,
+      "stock_start": 7426.690999998587,
+      "stock_end": 7676.826927512931
+     }
+    },
+    {
+     "year": 2010,
+     "stock_thousands": {
+      "female": 3753.5937983142853,
+      "male": 4104.986802042857,
+      "all": 7858.5806003571415
+     },
+     "percent": {
+      "female": [
+       2.9573279709737847,
+       3.5037023334560713,
+       5.197613177739608,
+       8.427288401373106,
+       12.224795101858788,
+       18.221011221490034,
+       21.78343023870101,
+       27.684831554407594
+      ],
+      "male": [
+       3.5682710032091323,
+       3.2016091022411013,
+       4.815384558645318,
+       7.42574200356266,
+       12.106292287046715,
+       17.38789521673468,
+       22.32670917830715,
+       29.168096650253233
+      ]
+     },
+     "flows_thousands": {
+      "awards": 864.2239242714268,
+      "deaths": 263.53259919999834,
+      "recoveries": 61.38365812857116,
+      "conversions": 357.5539940999963,
+      "stock_start": 7676.826927512931,
+      "stock_end": 7858.5806003559255
+     }
+    },
+    {
+     "year": 2011,
+     "stock_thousands": {
+      "female": 3922.9103889,
+      "male": 4179.403894842856,
+      "all": 8102.314283742856
+     },
+     "percent": {
+      "female": [
+       2.915540592607595,
+       3.4221790658247473,
+       5.225084176788344,
+       8.401296844112064,
+       12.06021992851747,
+       17.522327452214515,
+       22.696818110333254,
+       27.756533829602
+      ],
+      "male": [
+       3.5372536912567454,
+       3.435265858778607,
+       4.797613132040666,
+       7.224935411784446,
+       11.442040432849344,
+       17.584177057087995,
+       22.917636572093333,
+       29.061077844108844
+      ]
+     },
+     "flows_thousands": {
+      "awards": 933.7395428285687,
+      "deaths": 282.3143126571422,
+      "recoveries": 56.24151618571401,
+      "conversions": 351.4500305999976,
+      "stock_start": 7858.5806003559255,
+      "stock_end": 8102.314283741855
+     }
+    },
+    {
+     "year": 2012,
+     "stock_thousands": {
+      "female": 4014.8442853428573,
+      "male": 4289.18148732857,
+      "all": 8304.025772671428
+     },
+     "percent": {
+      "female": [
+       3.017712659122736,
+       3.187963876139964,
+       5.061648845059649,
+       7.9878608186821145,
+       12.528060018074816,
+       16.877932055144026,
+       23.298081472669647,
+       28.04074025510706
+      ],
+      "male": [
+       3.5701436808155504,
+       3.6235919850712985,
+       4.650124052554949,
+       6.945748704738319,
+       11.02163330455003,
+       17.37166208753903,
+       23.33083543460098,
+       29.48626075012984
+      ]
+     },
+     "flows_thousands": {
+      "awards": 885.5839391285701,
+      "deaths": 282.90870281428494,
+      "recoveries": 54.393906685714114,
+      "conversions": 346.5698406999986,
+      "stock_start": 8102.314283741855,
+      "stock_end": 8304.025772670504
+     }
+    },
+    {
+     "year": 2013,
+     "stock_thousands": {
+      "female": 4101.134653314285,
+      "male": 4343.218066614285,
+      "all": 8444.35271992857
+     },
+     "percent": {
+      "female": [
+       2.8446049831601457,
+       3.191213558282805,
+       4.980108773920529,
+       7.663448656727509,
+       11.74242167617741,
+       17.51247568571265,
+       23.7597588099804,
+       28.305967856038556
+      ],
+      "male": [
+       3.5878080336813176,
+       3.4283073729261933,
+       4.4438856520611525,
+       6.955878301904056,
+       10.797133043000997,
+       17.354607280577497,
+       23.325174282343223,
+       30.107206033505562
+      ]
+     },
+     "flows_thousands": {
+      "awards": 882.3047501428559,
+      "deaths": 284.0717128142852,
+      "recoveries": 71.25164297142831,
+      "conversions": 386.65444709999724,
+      "stock_start": 8304.025772670504,
+      "stock_end": 8444.352719927823
+     }
+    },
+    {
+     "year": 2014,
+     "stock_thousands": {
+      "female": 4182.8511143,
+      "male": 4426.924010014285,
+      "all": 8609.775124314285
+     },
+     "percent": {
+      "female": [
+       3.09077841463593,
+       3.0001632550064663,
+       4.950147003610264,
+       7.372713134486236,
+       11.641319733692916,
+       17.045922542220858,
+       23.997497395218247,
+       28.901458521129076
+      ],
+      "male": [
+       3.689416243209309,
+       3.1508730960537896,
+       4.621847961183769,
+       7.140255721240176,
+       9.961739458423116,
+       17.6171493939306,
+       23.27295678600716,
+       30.545761339952072
+      ]
+     },
+     "flows_thousands": {
+      "awards": 914.7692819857122,
+      "deaths": 293.3245574428568,
+      "recoveries": 70.57709715714269,
+      "conversions": 385.4452229999966,
+      "stock_start": 8444.352719927823,
+      "stock_end": 8609.775124313583
+     }
+    },
+    {
+     "year": 2015,
+     "stock_thousands": {
+      "female": 4260.589316414285,
+      "male": 4484.799942528571,
+      "all": 8745.389258942856
+     },
+     "percent": {
+      "female": [
+       3.2827715849008947,
+       3.010059030839574,
+       4.870559581993327,
+       7.070817887548461,
+       10.98977005589597,
+       17.229200307383536,
+       23.970189392943002,
+       29.576632158495237
+      ],
+      "male": [
+       3.976132843942658,
+       3.5424735387192645,
+       4.519625740222384,
+       6.723327273546027,
+       9.876676950505425,
+       16.448784803187472,
+       23.513462192595487,
+       31.39951665728128
+      ]
+     },
+     "flows_thousands": {
+      "awards": 880.9792416714265,
+      "deaths": 310.4104253142864,
+      "recoveries": 63.734988228571105,
+      "conversions": 371.2196935000013,
+      "stock_start": 8609.775124313583,
+      "stock_end": 8745.389258942178
+     }
+    },
+    {
+     "year": 2016,
+     "stock_thousands": {
+      "female": 4333.752982842857,
+      "male": 4538.846646171428,
+      "all": 8872.599629014285
+     },
+     "percent": {
+      "female": [
+       3.1699807610076625,
+       3.0785066081367956,
+       4.987258098365804,
+       7.220625481859559,
+       10.835765313784789,
+       16.59283634639207,
+       23.26450459201353,
+       30.85052279843979
+      ],
+      "male": [
+       3.6826498548825017,
+       3.509089732679229,
+       4.990861032748897,
+       6.7024619471690805,
+       9.133413228439414,
+       16.192467807211337,
+       23.242577170785417,
+       32.546479226084124
+      ]
+     },
+     "flows_thousands": {
+      "awards": 903.393788199999,
+      "deaths": 316.43218655714355,
+      "recoveries": 69.62754137142838,
+      "conversions": 390.12369020000176,
+      "stock_start": 8745.389258942178,
+      "stock_end": 8872.599629013575
+     }
+    },
+    {
+     "year": 2017,
+     "stock_thousands": {
+      "female": 4429.241338085714,
+      "male": 4573.817966371428,
+      "all": 9003.059304457143
+     },
+     "percent": {
+      "female": [
+       3.4207189772477458,
+       2.830618201082274,
+       4.848715382775197,
+       7.255127336070695,
+       10.595083556743381,
+       16.67183280013246,
+       22.753389408570023,
+       31.62451433737823
+      ],
+      "male": [
+       4.063339513743851,
+       3.5167563234868067,
+       4.918939287793458,
+       6.3259679512243965,
+       9.275474732908254,
+       15.710478667564157,
+       22.995974261179995,
+       33.19306926209908
+      ]
+     },
+     "flows_thousands": {
+      "awards": 922.1288706714272,
+      "deaths": 317.64601428571484,
+      "recoveries": 70.4704017428569,
+      "conversions": 403.5527792000006,
+      "stock_start": 8872.599629013575,
+      "stock_end": 9003.059304456789
+     }
+    },
+    {
+     "year": 2018,
+     "stock_thousands": {
+      "female": 4487.413366114286,
+      "male": 4597.127125985714,
+      "all": 9084.5404921
+     },
+     "percent": {
+      "female": [
+       3.116173894588821,
+       3.2257282435846877,
+       4.846928414092989,
+       6.883179341854587,
+       10.270094495419006,
+       16.28282945399131,
+       23.3154633335233,
+       32.059602822945294
+      ],
+      "male": [
+       4.14994063808509,
+       3.5342010248446827,
+       4.752074078289888,
+       6.174152968178807,
+       9.59556305298856,
+       14.64988003035905,
+       23.69940887084761,
+       33.44477933640632
+      ]
+     },
+     "flows_thousands": {
+      "awards": 930.4422775428551,
+      "deaths": 336.1889759428583,
+      "recoveries": 68.15097445714258,
+      "conversions": 444.6211394999996,
+      "stock_start": 9003.059304456789,
+      "stock_end": 9084.54049209985
+     }
+    },
+    {
+     "year": 2019,
+     "stock_thousands": {
+      "female": 4493.494730357143,
+      "male": 4603.530541857142,
+      "all": 9097.025272214287
+     },
+     "percent": {
+      "female": [
+       3.224826907304284,
+       3.4574616282921626,
+       5.111771801824298,
+       7.2729975021919095,
+       9.761278457427686,
+       16.086140796309547,
+       23.321473138051488,
+       31.76404976859864
+      ],
+      "male": [
+       3.907462365960632,
+       3.6395785515239254,
+       4.890172748228759,
+       6.009323528641091,
+       9.678970071962368,
+       14.430692225450109,
+       23.92847776688398,
+       33.51532274134913
+      ]
+     },
+     "flows_thousands": {
+      "awards": 881.4197304857121,
+      "deaths": 309.8360479142864,
+      "recoveries": 69.73176665714271,
+      "conversions": 489.3671357999968,
+      "stock_start": 9084.54049209985,
+      "stock_end": 9097.025272214169
+     }
+    },
+    {
+     "year": 2020,
+     "stock_thousands": {
+      "female": 4504.3099970428575,
+      "male": 4650.6497445714285,
+      "all": 9154.959741614286
+     },
+     "percent": {
+      "female": [
+       3.0219374019408742,
+       3.629576056048294,
+       4.610810271414452,
+       7.316051311218502,
+       9.909230023977702,
+       15.554657449420073,
+       23.288463182788778,
+       32.66927430319132
+      ],
+      "male": [
+       3.7920627371660243,
+       3.3263138331646154,
+       5.16765371260745,
+       6.573367367792854,
+       9.218729871034586,
+       14.173953314145905,
+       23.685614739871358,
+       34.0623044242172
+      ]
+     },
+     "flows_thousands": {
+      "awards": 876.3044528714253,
+      "deaths": 296.8052159000003,
+      "recoveries": 82.25044707142857,
+      "conversions": 439.3143205000028,
+      "stock_start": 9097.025272214169,
+      "stock_end": 9154.959741614088
+     }
+    },
+    {
+     "year": 2021,
+     "stock_thousands": {
+      "female": 4526.764511085714,
+      "male": 4676.506859942857,
+      "all": 9203.271371028572
+     },
+     "percent": {
+      "female": [
+       3.1367584099475008,
+       3.5917791069183544,
+       4.85626547656259,
+       7.368183520109876,
+       9.572979602512275,
+       15.42026405594003,
+       22.235039148493083,
+       33.81873067951629
+      ],
+      "male": [
+       3.8195891046374433,
+       3.3394634949916373,
+       4.997028925926587,
+       7.502864475735792,
+       9.186907843117108,
+       13.742236125103272,
+       22.892332847194442,
+       34.51957718329372
+      ]
+     },
+     "flows_thousands": {
+      "awards": 875.9814336571395,
+      "deaths": 291.82656495714235,
+      "recoveries": 59.214526385714144,
+      "conversions": 476.62871290000436,
+      "stock_start": 9154.959741614088,
+      "stock_end": 9203.271371028393
+     }
+    },
+    {
+     "year": 2022,
+     "stock_thousands": {
+      "female": 4516.062596142858,
+      "male": 4633.801599314285,
+      "all": 9149.864195457143
+     },
+     "percent": {
+      "female": [
+       3.2188894508273025,
+       3.399889034557196,
+       4.893721108551839,
+       7.391978859750953,
+       9.986732854084057,
+       14.399941089289293,
+       22.674345290842115,
+       34.03450231209726
+      ],
+      "male": [
+       3.770594084689675,
+       3.692781871668682,
+       4.881831827223455,
+       7.903939047675205,
+       8.921866487792194,
+       13.67240253431985,
+       22.130662839594887,
+       35.025921307036064
+      ]
+     },
+     "flows_thousands": {
+      "awards": 872.6693288857114,
+      "deaths": 342.714975728572,
+      "recoveries": 69.97295692857132,
+      "conversions": 513.3885718000033,
+      "stock_start": 9203.271371028393,
+      "stock_end": 9149.864195456941
+     }
+    },
+    {
+     "year": 2023,
+     "stock_thousands": {
+      "female": 4740.309259057143,
+      "male": 4841.753468285714,
+      "all": 9582.062727342858
+     },
+     "percent": {
+      "female": [
+       2.903257382143323,
+       3.2484676649689397,
+       4.736662094949536,
+       7.057641974746252,
+       9.461609901148297,
+       13.243027819346596,
+       21.120010231128493,
+       38.22932293156856
+      ],
+      "male": [
+       3.414707214709506,
+       3.3578238086510503,
+       4.679928874025385,
+       7.557468912797756,
+       8.60011134659094,
+       12.992711477784766,
+       20.0749010614979,
+       39.3223473039427
+      ]
+     },
+     "flows_thousands": {
+      "awards": 839.1865251142829,
+      "deaths": 320.9709380571431,
+      "recoveries": 86.01705517142848,
+      "conversions": 0.0,
+      "stock_start": 9149.864195456941,
+      "stock_end": 9582.06272734275
+     }
+    }
+   ],
+   "comparison": [
+    {
+     "year": 2008,
+     "male_stock_model_thousands": 3924.5239999999994,
+     "male_stock_asr_thousands": 3925.0,
+     "male_stock_ratio": 0.9998787261146496,
+     "male_distribution_gap_pp": [
+      -0.0438586692296945,
+      -0.006950346080187408,
+      -0.021217248257366705,
+      -0.032523587573931145,
+      0.040922771780735445,
+      0.003016824460747358,
+      -0.0024896777290734917,
+      -0.03690006737122431
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.023484899060370046,
+     "female_stock_model_thousands": 3502.1669999999995,
+     "female_stock_asr_thousands": 3502.0,
+     "female_stock_ratio": 1.0000476870359793,
+     "female_distribution_gap_pp": [
+      0.03137080556124294,
+      0.03070924373395112,
+      0.010883233152505056,
+      0.043296222024823194,
+      -0.022258875718947024,
+      0.013323408049931373,
+      0.03571391655508904,
+      -0.043037953358595615
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.02882420726938567
+    },
+    {
+     "year": 2009,
+     "male_stock_model_thousands": 4031.9211725999994,
+     "male_stock_asr_thousands": 4100.0,
+     "male_stock_ratio": 0.9833954079512194,
+     "male_distribution_gap_pp": [
+      0.21710109336674854,
+      0.004828975961215232,
+      0.040266151501993086,
+      0.16933217101060904,
+      0.2588632092742458,
+      -0.07357462510328006,
+      0.08206433934485702,
+      -0.5988813153563939
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.18061398511491783,
+     "female_stock_model_thousands": 3644.905754914286,
+     "female_stock_asr_thousands": 3688.0,
+     "female_stock_ratio": 0.9883150094669972,
+     "female_distribution_gap_pp": [
+      0.39159259926735546,
+      0.12897947296924928,
+      0.15262162092824738,
+      0.5729469392621525,
+      -0.2675801633818544,
+      0.17929508249590498,
+      -0.48177918338401327,
+      -0.5760763681570431
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.34385892873072754,
+     "awards_model_thousands": 900.0623547999965,
+     "awards_asr_thousands": 970.696,
+     "terminations_model_thousands": 649.9264272857099,
+     "terminations_asr_thousands": 630.074
+    },
+    {
+     "year": 2010,
+     "male_stock_model_thousands": 4104.986802042857,
+     "male_stock_asr_thousands": 4310.0,
+     "male_stock_ratio": 0.9524331327245608,
+     "male_distribution_gap_pp": [
+      0.4682710032091322,
+      -0.19839089775889862,
+      0.2153845586453187,
+      0.1257420035626602,
+      0.3062922870467144,
+      0.0878952167346796,
+      0.22670917830714998,
+      -1.2319033497467657
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.3575735618764149,
+     "female_stock_model_thousands": 3753.5937983142853,
+     "female_stock_asr_thousands": 3894.0,
+     "female_stock_ratio": 0.9639429374202068,
+     "female_distribution_gap_pp": [
+      0.35732797097378466,
+      0.003702333456071294,
+      0.1976131777396084,
+      0.727288401373106,
+      -0.07520489814121234,
+      0.42101122149003345,
+      -0.5165697612989923,
+      -1.0151684455924048
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.41423577625815167,
+     "awards_model_thousands": 864.2239242714268,
+     "awards_asr_thousands": 1026.988,
+     "terminations_model_thousands": 682.4702514285658,
+     "terminations_asr_thousands": 640.678
+    },
+    {
+     "year": 2011,
+     "male_stock_model_thousands": 4179.403894842856,
+     "male_stock_asr_thousands": 4494.0,
+     "male_stock_ratio": 0.9299964162979208,
+     "male_distribution_gap_pp": [
+      0.5372536912567454,
+      -0.06473414122139287,
+      0.3976131320406653,
+      0.12493541178444634,
+      0.24204043284934507,
+      0.3841770570879959,
+      0.4176365720933326,
+      -2.138922155891155
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.5384140742781348,
+     "female_stock_model_thousands": 3922.9103889,
+     "female_stock_asr_thousands": 4082.0,
+     "female_stock_ratio": 0.9610265528907398,
+     "female_distribution_gap_pp": [
+      0.5155405926075951,
+      -0.07782093417525271,
+      0.32508417678834345,
+      0.8012968441120645,
+      0.36021992851746987,
+      -0.17767254778548391,
+      -0.10318188966674668,
+      -1.7434661703980012
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.5130353855063696,
+     "awards_model_thousands": 933.7395428285687,
+     "awards_asr_thousands": 998.979,
+     "terminations_model_thousands": 690.0058594428538,
+     "terminations_asr_thousands": 653.877
+    },
+    {
+     "year": 2012,
+     "male_stock_model_thousands": 4289.18148732857,
+     "male_stock_asr_thousands": 4606.0,
+     "male_stock_ratio": 0.9312161283822341,
+     "male_distribution_gap_pp": [
+      0.7701436808155506,
+      0.12359198507129854,
+      0.2501240525549484,
+      0.045748704738318935,
+      0.3216333045500299,
+      0.3716620875390291,
+      0.23083543460098,
+      -2.2137392498701587
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.5409348124675393,
+     "female_stock_model_thousands": 4014.8442853428573,
+     "female_stock_asr_thousands": 4221.0,
+     "female_stock_ratio": 0.9511595084915558,
+     "female_distribution_gap_pp": [
+      0.8177126591227357,
+      -0.2120361238600359,
+      0.261648845059649,
+      0.5878608186821142,
+      1.328060018074817,
+      -0.6220679448559743,
+      -0.00191852733035347,
+      -2.059259744892941
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.7363205852348276,
+     "awards_model_thousands": 885.5839391285701,
+     "awards_asr_thousands": 960.206,
+     "terminations_model_thousands": 683.8724501999977,
+     "terminations_asr_thousands": 728.32
+    },
+    {
+     "year": 2013,
+     "male_stock_model_thousands": 4343.218066614285,
+     "male_stock_asr_thousands": 4642.0,
+     "male_stock_ratio": 0.9356350854403889,
+     "male_distribution_gap_pp": [
+      0.9878080336813175,
+      -0.07169262707380675,
+      0.043885652061152136,
+      0.2558783019040556,
+      0.5971330430009978,
+      0.5546072805774962,
+      -0.2748257176567783,
+      -2.0927939664944404
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.6098280778062556,
+     "female_stock_model_thousands": 4101.134653314285,
+     "female_stock_asr_thousands": 4299.0,
+     "female_stock_ratio": 0.9539740993985311,
+     "female_distribution_gap_pp": [
+      0.8446049831601457,
+      -0.10878644171719465,
+      0.18010877392052915,
+      0.46344865672750846,
+      1.04242167617741,
+      0.11247568571265276,
+      -0.040241190019600026,
+      -2.394032143961443
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.6482649439245605,
+     "awards_model_thousands": 882.3047501428559,
+     "awards_asr_thousands": 868.965,
+     "terminations_model_thousands": 741.9778028857107,
+     "terminations_asr_thousands": 769.171
+    },
+    {
+     "year": 2014,
+     "male_stock_model_thousands": 4426.924010014285,
+     "male_stock_asr_thousands": 4628.0,
+     "male_stock_ratio": 0.9565522925700702,
+     "male_distribution_gap_pp": [
+      1.2894162432093093,
+      -0.2491269039462103,
+      0.12184796118376884,
+      0.7402557212401755,
+      0.16173945842311532,
+      1.217149393930601,
+      -0.827043213992841,
+      -2.554238660047929
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.8951021944967438,
+     "female_stock_model_thousands": 4182.8511143,
+     "female_stock_asr_thousands": 4327.0,
+     "female_stock_ratio": 0.966686183106078,
+     "female_distribution_gap_pp": [
+      1.19077841463593,
+      -0.09983674499353379,
+      0.2501470036102642,
+      0.37271313448623644,
+      1.4413197336929162,
+      -0.054077457779143856,
+      -0.20250260478175264,
+      -2.898541478870925
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.8137395716063378,
+     "awards_model_thousands": 914.7692819857122,
+     "awards_asr_thousands": 778.796,
+     "terminations_model_thousands": 749.3468775999961,
+     "terminations_asr_thousands": 779.229
+    },
+    {
+     "year": 2015,
+     "male_stock_model_thousands": 4484.799942528571,
+     "male_stock_asr_thousands": 4581.0,
+     "male_stock_ratio": 0.9790002057473414,
+     "male_distribution_gap_pp": [
+      1.8761328439426581,
+      0.2424735387192647,
+      0.01962574022238428,
+      0.6233272735460273,
+      0.37667695050542527,
+      0.5487848031874716,
+      -0.8865378074045118,
+      -2.8004833427187243
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.9217552875308084,
+     "female_stock_model_thousands": 4260.589316414285,
+     "female_stock_asr_thousands": 4328.0,
+     "female_stock_ratio": 0.9844245185800105,
+     "female_distribution_gap_pp": [
+      1.5827715849008948,
+      0.11005903083957413,
+      0.17055958199332721,
+      0.47081788754846166,
+      1.0897700558959702,
+      0.6292003073835346,
+      -0.6298106070569993,
+      -3.4233678415047635
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.0132946121404407,
+     "awards_model_thousands": 880.9792416714265,
+     "awards_asr_thousands": 741.478,
+     "terminations_model_thousands": 745.3651070428589,
+     "terminations_asr_thousands": 802.501
+    },
+    {
+     "year": 2016,
+     "male_stock_model_thousands": 4538.846646171428,
+     "male_stock_asr_thousands": 4511.0,
+     "male_stock_ratio": 1.006173053906324,
+     "male_distribution_gap_pp": [
+      1.7826498548825018,
+      0.4090897326792291,
+      0.4908610327488967,
+      0.9024619471690807,
+      -0.06658677156058523,
+      0.9924678072113373,
+      -1.2574228292145833,
+      -3.1535207739158793
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.1318825936727617,
+     "female_stock_model_thousands": 4333.752982842857,
+     "female_stock_asr_thousands": 4298.0,
+     "female_stock_ratio": 1.008318516250083,
+     "female_distribution_gap_pp": [
+      1.6699807610076625,
+      0.3785066081367954,
+      0.3872580983658045,
+      0.9206254818595596,
+      1.1357653137847894,
+      0.6928363463920686,
+      -1.435495407986469,
+      -3.749477201560211
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.29624315238667,
+     "awards_model_thousands": 903.393788199999,
+     "awards_asr_thousands": 706.448,
+     "terminations_model_thousands": 776.1834181285737,
+     "terminations_asr_thousands": 820.372
+    },
+    {
+     "year": 2017,
+     "male_stock_model_thousands": 4573.817966371428,
+     "male_stock_asr_thousands": 4432.0,
+     "male_stock_ratio": 1.0319986386217121,
+     "male_distribution_gap_pp": [
+      2.163339513743851,
+      0.5167563234868067,
+      0.41893928779345835,
+      0.6259679512243963,
+      0.3754747329082537,
+      1.1104786675641574,
+      -1.4040257388200033,
+      -3.8069307379009203
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.3027391191802309,
+     "female_stock_model_thousands": 4429.241338085714,
+     "female_stock_asr_thousands": 4263.0,
+     "female_stock_ratio": 1.0389963260815656,
+     "female_distribution_gap_pp": [
+      2.020718977247746,
+      0.3306182010822738,
+      0.4487153827751964,
+      1.155127336070695,
+      1.095083556743381,
+      1.3718328001324593,
+      -1.9466105914299767,
+      -4.37548566262177
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.5930240635129373,
+     "awards_model_thousands": 922.1288706714272,
+     "awards_asr_thousands": 715.921,
+     "terminations_model_thousands": 791.6691952285723,
+     "terminations_asr_thousands": 859.02
+    },
+    {
+     "year": 2018,
+     "male_stock_model_thousands": 4597.127125985714,
+     "male_stock_asr_thousands": 4330.0,
+     "male_stock_ratio": 1.0616921769020125,
+     "male_distribution_gap_pp": [
+      2.34994063808509,
+      0.7342010248446829,
+      0.2520740782898878,
+      0.4741529681788066,
+      0.99556305298856,
+      0.5498800303590503,
+      -0.6005911291523915,
+      -4.855220663593677
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.3514529481865183,
+     "female_stock_model_thousands": 4487.413366114286,
+     "female_stock_asr_thousands": 4207.0,
+     "female_stock_ratio": 1.0666539971747768,
+     "female_distribution_gap_pp": [
+      1.816173894588821,
+      0.8257282435846878,
+      0.5469284140929895,
+      0.7831793418545869,
+      0.9700944954190049,
+      1.5828294539913124,
+      -1.4845366664767,
+      -5.240397177054703
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.6562334608828508,
+     "awards_model_thousands": 930.4422775428551,
+     "awards_asr_thousands": 686.723,
+     "terminations_model_thousands": 848.9610899000004,
+     "terminations_asr_thousands": 876.857
+    },
+    {
+     "year": 2019,
+     "male_stock_model_thousands": 4603.530541857142,
+     "male_stock_asr_thousands": 4231.0,
+     "male_stock_ratio": 1.0880478709187291,
+     "male_distribution_gap_pp": [
+      2.1074623659606315,
+      1.0395785515239253,
+      0.49017274822875834,
+      0.20932352864109127,
+      1.3789700719623674,
+      0.8306922254501092,
+      -0.07152223311602057,
+      -5.984677258650869
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.5140498729417216,
+     "female_stock_model_thousands": 4493.494730357143,
+     "female_stock_asr_thousands": 4147.0,
+     "female_stock_ratio": 1.0835531059457786,
+     "female_distribution_gap_pp": [
+      1.9248269073042839,
+      1.2574616282921625,
+      1.011771801824298,
+      1.2729975021919095,
+      0.7612784574276859,
+      1.8861407963095473,
+      -1.3785268619485116,
+      -6.63595023140136
+     ],
+     "female_distribution_mean_abs_gap_pp": 2.0161192733374698,
+     "awards_model_thousands": 881.4197304857121,
+     "awards_asr_thousands": 679.449,
+     "terminations_model_thousands": 868.9349503714259,
+     "terminations_asr_thousands": 870.827
+    },
+    {
+     "year": 2020,
+     "male_stock_model_thousands": 4650.6497445714285,
+     "male_stock_asr_thousands": 4101.0,
+     "male_stock_ratio": 1.134028223499495,
+     "male_distribution_gap_pp": [
+      1.9920627371660242,
+      0.7263138331646153,
+      0.8676537126074502,
+      0.6733673677928538,
+      1.2187298710345864,
+      0.8739533141459042,
+      0.18561473987135813,
+      -6.437695575782797
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.6219238939456986,
+     "female_stock_model_thousands": 4504.3099970428575,
+     "female_stock_asr_thousands": 4050.0,
+     "female_stock_ratio": 1.1121753079118166,
+     "female_distribution_gap_pp": [
+      1.7219374019408742,
+      1.529576056048294,
+      0.7108102714144517,
+      1.2160513112185027,
+      1.2092300239777032,
+      1.5546574494200733,
+      -1.0115368172112227,
+      -6.830725696808678
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.973065628504975,
+     "awards_model_thousands": 876.3044528714253,
+     "awards_asr_thousands": 619.636,
+     "terminations_model_thousands": 818.3699834714316,
+     "terminations_asr_thousands": 892.811
+    },
+    {
+     "year": 2021,
+     "male_stock_model_thousands": 4676.506859942857,
+     "male_stock_asr_thousands": 3951.0,
+     "male_stock_ratio": 1.1836261351411939,
+     "male_distribution_gap_pp": [
+      2.119589104637443,
+      0.9394634949916374,
+      0.8970289259265876,
+      1.5028644757357918,
+      1.486907843117108,
+      0.7422361251032719,
+      0.192332847194443,
+      -7.7804228167062774
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.9576057041765702,
+     "female_stock_model_thousands": 4526.764511085714,
+     "female_stock_asr_thousands": 3926.0,
+     "female_stock_ratio": 1.1530220354268248,
+     "female_distribution_gap_pp": [
+      1.9367584099475008,
+      1.5917791069183544,
+      1.1562654765625897,
+      1.3681835201098762,
+      1.2729796025122742,
+      1.62026405594003,
+      -1.2649608515069168,
+      -7.581269320483706
+     ],
+     "female_distribution_mean_abs_gap_pp": 2.224057542997656,
+     "awards_model_thousands": 875.9814336571395,
+     "awards_asr_thousands": 540.353,
+     "terminations_model_thousands": 827.6698042428609,
+     "terminations_asr_thousands": 831.22
+    },
+    {
+     "year": 2022,
+     "male_stock_model_thousands": 4633.801599314285,
+     "male_stock_asr_thousands": 3808.0,
+     "male_stock_ratio": 1.216859663685474,
+     "male_distribution_gap_pp": [
+      2.1705940846896747,
+      1.3927818716686824,
+      0.9818318272234552,
+      2.003939047675205,
+      1.4218664877921938,
+      1.0724025343198509,
+      0.23066283959488842,
+      -9.074078692963937
+     ],
+     "male_distribution_mean_abs_gap_pp": 2.293519673240986,
+     "female_stock_model_thousands": 4516.062596142858,
+     "female_stock_asr_thousands": 3796.0,
+     "female_stock_ratio": 1.1896898303853682,
+     "female_distribution_gap_pp": [
+      2.1188894508273024,
+      1.4998890345571962,
+      1.3937211085518388,
+      1.4919788597509527,
+      1.886732854084057,
+      0.8999410892892925,
+      -0.025654709157883815,
+      -9.265497687902737
+     ],
+     "female_distribution_mean_abs_gap_pp": 2.3227880992651575,
+     "awards_model_thousands": 872.6693288857114,
+     "awards_asr_thousands": 509.272,
+     "terminations_model_thousands": 926.0765044571467,
+     "terminations_asr_thousands": 806.894
+    },
+    {
+     "year": 2023,
+     "male_stock_model_thousands": 4841.753468285714,
+     "male_stock_asr_thousands": 3686.0,
+     "male_stock_ratio": 1.313552216029765,
+     "male_distribution_gap_pp": [
+      1.814707214709506,
+      1.0578238086510505,
+      0.879928874025385,
+      1.7574689127977559,
+      1.1001113465909391,
+      0.792711477784767,
+      -1.0250989385021008,
+      -6.377652696057304
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.850687908639851,
+     "female_stock_model_thousands": 4740.309259057143,
+     "female_stock_asr_thousands": 3680.0,
+     "female_stock_ratio": 1.2881275160481367,
+     "female_distribution_gap_pp": [
+      1.803257382143323,
+      1.4484676649689396,
+      1.4366620949495363,
+      1.3576419747462518,
+      1.4616099011482966,
+      0.043027819346596274,
+      -0.6799897688715077,
+      -6.870677068431441
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.8876667093257367,
+     "awards_model_thousands": 839.1865251142829,
+     "awards_asr_thousands": 523.834,
+     "terminations_model_thousands": 406.98799322857155,
+     "terminations_asr_thousands": 788.327
+    }
+   ]
+  },
+  "explicit_death_asr2008_level": {
+   "spec": {
+    "fit_year": "2008",
+    "incidence_basis": "per_population_non_entitled",
+    "death_mode": "explicit",
+    "death_level": "asr_fitted",
+    "recovery_level": "asr_fitted",
+    "termination_basis": "attained_age",
+    "post_conversion_mortality": "di_origin",
+    "min_award_age": 18,
+    "assumed_birth_month": 7,
+    "validate_age_column": true
+   },
+   "rates": {
+    "spec": {
+     "fit_year": "2008",
+     "incidence_basis": "per_population_non_entitled",
+     "death_mode": "explicit",
+     "death_level": "asr_fitted",
+     "recovery_level": "asr_fitted",
+     "termination_basis": "attained_age",
+     "post_conversion_mortality": "di_origin",
+     "min_award_age": 18,
+     "assumed_birth_month": 7,
+     "validate_age_column": true
+    },
+    "incidence_by_band": [
+     {
+      "band": "Under 25",
+      "start_ages": [
+       18,
+       24
+      ],
+      "female": 0.0010737967938159064,
+      "male": 0.0014357666710626943
+     },
+     {
+      "band": "25–29",
+      "start_ages": [
+       25,
+       29
+      ],
+      "female": 0.0015336702582784427,
+      "male": 0.0016076399948095456
+     },
+     {
+      "band": "30–34",
+      "start_ages": [
+       30,
+       34
+      ],
+      "female": 0.0021185470587765797,
+      "male": 0.0019943519124047122
+     },
+     {
+      "band": "35–39",
+      "start_ages": [
+       35,
+       39
+      ],
+      "female": 0.002909468361313974,
+      "male": 0.002754368849334299
+     },
+     {
+      "band": "40–44",
+      "start_ages": [
+       40,
+       44
+      ],
+      "female": 0.0041967520788259525,
+      "male": 0.00414351340617498
+     },
+     {
+      "band": "45–49",
+      "start_ages": [
+       45,
+       49
+      ],
+      "female": 0.005237161733648984,
+      "male": 0.0054660022309609944
+     },
+     {
+      "band": "50–54",
+      "start_ages": [
+       50,
+       54
+      ],
+      "female": 0.007899554842245436,
+      "male": 0.008800542719389794
+     },
+     {
+      "band": "55–59",
+      "start_ages": [
+       55,
+       59
+      ],
+      "female": 0.010097860813994058,
+      "male": 0.01340701203732707
+     },
+     {
+      "band": "60–64",
+      "start_ages": [
+       60,
+       64
+      ],
+      "female": 0.0077142803917946605,
+      "male": 0.012344115303219813
+     },
+     {
+      "band": "65–FRA",
+      "start_ages": [
+       65,
+       69
+      ],
+      "female": 0.0015524721405684363,
+      "male": 0.00320561816163016
+     }
+    ],
+    "recovery_attained": {
+     "female": [
+      0.006272361441129148,
+      0.011936828821884547,
+      0.01548429450986982,
+      0.019659846543451053,
+      0.02631479865194829,
+      0.03059981412647095,
+      0.034116460010696015,
+      0.0344395365742513,
+      0.03449054866323371,
+      0.0336382216764859,
+      0.03233103689631158,
+      0.03019065466275785,
+      0.028503004718923034,
+      0.026975830305012057,
+      0.02654860405978435,
+      0.024862016867803337,
+      0.023683425061938844,
+      0.022590916156232176,
+      0.021616372706297335,
+      0.020120018096146566,
+      0.019733176421363272,
+      0.01851313729320057,
+      0.01747057772462251,
+      0.016744718208476932,
+      0.01596678385149514,
+      0.01520053976490515,
+      0.014142038918520089,
+      0.013297151194748882,
+      0.012518154085913289,
+      0.011647760317650874,
+      0.01041177991168117,
+      0.009676355628851389,
+      0.007598675754671875,
+      0.006778231323538073,
+      0.006123576181597111,
+      0.005173476024299677,
+      0.004208497341049038,
+      0.0033986804284532384,
+      0.002804602142178892,
+      0.0026643188974772576,
+      0.002159511766922133,
+      0.0020075382518286956,
+      0.0016717086660278126,
+      0.0013146240431509244,
+      0.0008246954385490035,
+      0.0005962037899819471,
+      0.00039428093775989735,
+      0.00039428093775989735,
+      0.00039428093775989735
+     ],
+     "male": [
+      0.00818637752982342,
+      0.011682831128826282,
+      0.015911520755097525,
+      0.025586813632095116,
+      0.03320674442384299,
+      0.0417491438246895,
+      0.04464301712258762,
+      0.04535931187204899,
+      0.04858476374833279,
+      0.04486300675632427,
+      0.043175356812489456,
+      0.04048659462237479,
+      0.03936645416846931,
+      0.038524754700259504,
+      0.0356723287246596,
+      0.032464943629890414,
+      0.03263923493391366,
+      0.030570057074564543,
+      0.028747437645297094,
+      0.02738605252057896,
+      0.025332815939036853,
+      0.024681349052657293,
+      0.02293099674944826,
+      0.021194460220338628,
+      0.019908530477240314,
+      0.018789452775188637,
+      0.01734304750216648,
+      0.01604011372940736,
+      0.014816886345683256,
+      0.013427869672766313,
+      0.01190919727368574,
+      0.00984745867731323,
+      0.008167247996455015,
+      0.007408443172841628,
+      0.006710215204894857,
+      0.00595566138869667,
+      0.004597464519539934,
+      0.0034507552692894516,
+      0.003051160572260553,
+      0.0026409383566936514,
+      0.0023348658227991762,
+      0.0021775785484367373,
+      0.0018173056699984484,
+      0.001446405273022157,
+      0.0008682682645548143,
+      0.0007216085087303781,
+      0.00048355209347911935,
+      0.00048355209347911935,
+      0.00048355209347911935
+     ]
+    },
+    "death_attained": {
+     "female": [
+      0.008133980737320858,
+      0.011976517872733402,
+      0.012790001127958183,
+      0.012669895223260072,
+      0.011156220098093127,
+      0.010530987941721413,
+      0.011591497525757905,
+      0.011676679018451598,
+      0.009956864680965913,
+      0.011581275746634662,
+      0.011544647704776373,
+      0.011650272755716553,
+      0.011663049979620607,
+      0.012357279145074215,
+      0.012504643127434307,
+      0.01228913395091926,
+      0.012843665468355208,
+      0.012822370095181786,
+      0.013431417767941699,
+      0.014076241667632964,
+      0.014382043226403326,
+      0.014396524080161253,
+      0.015542215156891439,
+      0.0159493826919673,
+      0.01633866211357748,
+      0.017130849995628836,
+      0.017828486420790192,
+      0.018458829466723527,
+      0.01901336098415948,
+      0.02018801376840552,
+      0.02070676905891012,
+      0.02208245016591328,
+      0.021960640631361297,
+      0.0228899707166495,
+      0.023437687714669954,
+      0.02476992626039933,
+      0.0251242812700051,
+      0.025598742184308975,
+      0.026427558108218622,
+      0.027056197524298085,
+      0.0285553917957071,
+      0.02911758964748548,
+      0.030879994731318014,
+      0.03216879071577361,
+      0.03219775242328946,
+      0.033578544419854243,
+      0.03415777857017136,
+      0.034198665686664347,
+      0.03483667506694011
+     ],
+     "male": [
+      0.012743151306976648,
+      0.01509075324561486,
+      0.014915279370665852,
+      0.013532783744247193,
+      0.012286578506138448,
+      0.01283514731908584,
+      0.012935661480464399,
+      0.012842813653428271,
+      0.013512340186000707,
+      0.013892249643414584,
+      0.014886317663149995,
+      0.015635062983927566,
+      0.016817382102516043,
+      0.01768452969813785,
+      0.01818880413488452,
+      0.018739076577685785,
+      0.01843071957413461,
+      0.019023582763282722,
+      0.018780815509105694,
+      0.01861215615357218,
+      0.019083209808168307,
+      0.02015479298625498,
+      0.02017949561913615,
+      0.020984460725091563,
+      0.021896754511841025,
+      0.022429138841176616,
+      0.02367534407928536,
+      0.024567194307788337,
+      0.025198389168648614,
+      0.025831287659362764,
+      0.02717971068870394,
+      0.027743612170336197,
+      0.028372251586415657,
+      0.02965508486638269,
+      0.031088689388417568,
+      0.03240644708038901,
+      0.03460838866652101,
+      0.03463649855910993,
+      0.036400607272796336,
+      0.037702180481155985,
+      0.03930103709901662,
+      0.040547242337125367,
+      0.04224576130143763,
+      0.044444295627861875,
+      0.045383847492273324,
+      0.04660790554228171,
+      0.04805088002851289,
+      0.04689070809802477,
+      0.04912501865138037
+     ]
+    },
+    "attained_ages": [
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46,
+     47,
+     48,
+     49,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56,
+     57,
+     58,
+     59,
+     60,
+     61,
+     62,
+     63,
+     64,
+     65,
+     66
+    ],
+    "recovery_level_factor": 1.0627518538002623,
+    "death_level_factor": 0.8518149269369418,
+    "diagnostics": {
+     "fit_years": [
+      "2008"
+     ],
+     "incidence": [
+      {
+       "sex": "female",
+       "band": "Under 25",
+       "awards": 15493.0,
+       "population_july1": 14448603.0,
+       "stock_december": 20361.0,
+       "non_entitled_population": 14428242.0,
+       "annual_probability": 0.0010737967938159064
+      },
+      {
+       "sex": "female",
+       "band": "25–29",
+       "awards": 15829.0,
+       "population_july1": 10392787.0,
+       "stock_december": 71794.0,
+       "non_entitled_population": 10320993.0,
+       "annual_probability": 0.0015336702582784427
+      },
+      {
+       "sex": "female",
+       "band": "30–34",
+       "awards": 20173.0,
+       "population_july1": 9638739.0,
+       "stock_december": 116647.0,
+       "non_entitled_population": 9522092.0,
+       "annual_probability": 0.0021185470587765797
+      },
+      {
+       "sex": "female",
+       "band": "35–39",
+       "awards": 29790.0,
+       "population_july1": 10424980.0,
+       "stock_december": 185996.0,
+       "non_entitled_population": 10238984.0,
+       "annual_probability": 0.002909468361313974
+      },
+      {
+       "sex": "female",
+       "band": "40–44",
+       "awards": 43953.0,
+       "population_july1": 10761793.0,
+       "stock_december": 288694.0,
+       "non_entitled_population": 10473099.0,
+       "annual_probability": 0.0041967520788259525
+      },
+      {
+       "sex": "female",
+       "band": "45–49",
+       "awards": 58210.0,
+       "population_july1": 11565799.0,
+       "stock_december": 451000.0,
+       "non_entitled_population": 11114799.0,
+       "annual_probability": 0.005237161733648984
+      },
+      {
+       "sex": "female",
+       "band": "50–54",
+       "awards": 81656.0,
+       "population_july1": 10953633.0,
+       "stock_december": 616848.0,
+       "non_entitled_population": 10336785.0,
+       "annual_probability": 0.007899554842245436
+      },
+      {
+       "sex": "female",
+       "band": "55–59",
+       "awards": 88937.0,
+       "population_july1": 9568730.0,
+       "stock_december": 761221.0,
+       "non_entitled_population": 8807509.0,
+       "annual_probability": 0.010097860813994058
+      },
+      {
+       "sex": "female",
+       "band": "60–64",
+       "awards": 54248.0,
+       "population_july1": 7866812.0,
+       "stock_december": 834659.0,
+       "non_entitled_population": 7032153.0,
+       "annual_probability": 0.0077142803917946605
+      },
+      {
+       "sex": "female",
+       "band": "65–FRA",
+       "awards": 1971.0,
+       "population_july1": 1424535.0,
+       "stock_december": 154947.0,
+       "non_entitled_population": 1269588.0,
+       "annual_probability": 0.0015524721405684363
+      },
+      {
+       "sex": "male",
+       "band": "Under 25",
+       "awards": 21937.0,
+       "population_july1": 15308616.0,
+       "stock_december": 29671.0,
+       "non_entitled_population": 15278945.0,
+       "annual_probability": 0.0014357666710626943
+      },
+      {
+       "sex": "male",
+       "band": "25–29",
+       "awards": 17444.0,
+       "population_july1": 10940956.0,
+       "stock_december": 90268.0,
+       "non_entitled_population": 10850688.0,
+       "annual_probability": 0.0016076399948095456
+      },
+      {
+       "sex": "male",
+       "band": "30–34",
+       "awards": 19612.0,
+       "population_july1": 9959083.0,
+       "stock_december": 125312.0,
+       "non_entitled_population": 9833771.0,
+       "annual_probability": 0.0019943519124047122
+      },
+      {
+       "sex": "male",
+       "band": "35–39",
+       "awards": 28583.0,
+       "population_july1": 10568801.0,
+       "stock_december": 191469.0,
+       "non_entitled_population": 10377332.0,
+       "annual_probability": 0.002754368849334299
+      },
+      {
+       "sex": "male",
+       "band": "40–44",
+       "awards": 43245.0,
+       "population_july1": 10745556.0,
+       "stock_december": 308761.0,
+       "non_entitled_population": 10436795.0,
+       "annual_probability": 0.00414351340617498
+      },
+      {
+       "sex": "male",
+       "band": "45–49",
+       "awards": 59174.0,
+       "population_july1": 11314075.0,
+       "stock_december": 488247.0,
+       "non_entitled_population": 10825828.0,
+       "annual_probability": 0.0054660022309609944
+      },
+      {
+       "sex": "male",
+       "band": "50–54",
+       "awards": 86838.0,
+       "population_july1": 10538558.0,
+       "stock_december": 671212.0,
+       "non_entitled_population": 9867346.0,
+       "annual_probability": 0.008800542719389794
+      },
+      {
+       "sex": "male",
+       "band": "55–59",
+       "awards": 109444.0,
+       "population_july1": 9014715.0,
+       "stock_december": 851524.0,
+       "non_entitled_population": 8163191.0,
+       "annual_probability": 0.01340701203732707
+      },
+      {
+       "sex": "male",
+       "band": "60–64",
+       "awards": 77187.0,
+       "population_july1": 7235924.0,
+       "stock_december": 982985.0,
+       "non_entitled_population": 6252939.0,
+       "annual_probability": 0.012344115303219813
+      },
+      {
+       "sex": "male",
+       "band": "65–FRA",
+       "awards": 3502.0,
+       "population_july1": 1277532.0,
+       "stock_december": 185075.0,
+       "non_entitled_population": 1092457.0,
+       "annual_probability": 0.00320561816163016
+      }
+     ],
+     "recovery_level": {
+      "observed_asr_table50_does_not_meet_medical_standards": 59643.0,
+      "expected_under_as118_table19": 56121.28530919461,
+      "fitted_factor": 1.0627518538002623,
+      "applied_factor": 1.0627518538002623
+     },
+     "death_level": {
+      "observed_asr_table50_deaths": 215445.0,
+      "expected_under_as118_table12_7c": 252924.65908612678,
+      "fitted_factor": 0.8518149269369418,
+      "applied_factor": 0.8518149269369418
+     },
+     "average_exposure_workers": 7262695.935875661,
+     "exposure_rule": "December ASR Table 20 stock by age group and sex, scaled by the ASR Table 19 average of the prior and current December totals; group rates are simple means of single-age rates over the ages in _GROUP_AGES"
+    },
+    "provenance": {
+     "information_boundary_year": 2008,
+     "inputs_schema": "di_entitlement_inputs.v1",
+     "sources_used": [
+      "as118_death_tables",
+      "as118_recovery_tables",
+      "asr2008_table19",
+      "asr2008_table20",
+      "asr2008_table35",
+      "asr2008_table36",
+      "asr2008_table49",
+      "asr2008_table50",
+      "asr2008_table57",
+      "census_v2008_r_file18"
+     ],
+     "population_reference": "NCHS United States Life Tables, 2000",
+     "inputs_sha256": "85a29db85b4bfea22b29ba4ed802ce53c0bb929660b87e97f1eedcbe94e0a110",
+     "nchs_2000_sha256": "067ac331d26a56f5f6c120e361771be1c890e74c412b5561ca45c87302059142"
+    }
+   },
+   "years": [
+    {
+     "year": 2008,
+     "stock_thousands": {
+      "female": 3502.1669999999995,
+      "male": 3924.5239999999994,
+      "all": 7426.690999999999
+     },
+     "percent": {
+      "female": [
+       2.631370805561243,
+       3.330709243733951,
+       5.310883233152505,
+       8.243296222024822,
+       12.877741124281053,
+       17.613323408049933,
+       21.73571391655509,
+       28.256962046641405
+      ],
+      "male": [
+       3.0561413307703056,
+       3.1930496539198128,
+       4.878782751742634,
+       7.867476412426069,
+       12.440922771780736,
+       17.10301682446075,
+       21.697510322270926,
+       29.763099932628776
+      ]
+     }
+    },
+    {
+     "year": 2009,
+     "stock_thousands": {
+      "female": 3670.061083542857,
+      "male": 4041.519930599999,
+      "all": 7711.581014142856
+     },
+     "percent": {
+      "female": [
+       2.9750126294207804,
+       3.508947588841845,
+       5.323795464226594,
+       8.426670961603048,
+       12.429231059545478,
+       17.83504469544496,
+       21.605104706719537,
+       27.896192894197764
+      ],
+      "male": [
+       3.341494349130948,
+       3.2816053187274603,
+       4.7439327256153465,
+       7.719593859671563,
+       12.239533591179468,
+       17.13849936890374,
+       21.95176769716657,
+       29.583573089604894
+      ]
+     },
+     "flows_thousands": {
+      "awards": 900.6529372857111,
+      "deaths": 230.87426657142728,
+      "recoveries": 55.90660407142834,
+      "conversions": 328.9820524999973,
+      "stock_start": 7426.690999998587,
+      "stock_end": 7711.58101414154
+     }
+    },
+    {
+     "year": 2010,
+     "stock_thousands": {
+      "female": 3799.211683442857,
+      "male": 4129.475022171428,
+      "all": 7928.686705614285
+     },
+     "percent": {
+      "female": [
+       2.9547335525439813,
+       3.5206334983364127,
+       5.14486077603525,
+       8.384452374376131,
+       12.097310102592306,
+       18.102023569709946,
+       21.8882846782156,
+       27.90770144819037
+      ],
+      "male": [
+       3.586857529738552,
+       3.1141494478002314,
+       4.756483488710301,
+       7.426190090834976,
+       12.012198132613085,
+       17.267582023659923,
+       22.517947012815178,
+       29.318592273827772
+      ]
+     },
+     "flows_thousands": {
+      "awards": 870.3606918428553,
+      "deaths": 226.04082495714158,
+      "recoveries": 65.5589861142854,
+      "conversions": 361.6551892999962,
+      "stock_start": 7711.58101414154,
+      "stock_end": 7928.686705613011
+     }
+    },
+    {
+     "year": 2011,
+     "stock_thousands": {
+      "female": 3960.757834214285,
+      "male": 4233.674796042856,
+      "all": 8194.43263025714
+     },
+     "percent": {
+      "female": [
+       2.86931105286396,
+       3.5266572597137698,
+       5.259506014240446,
+       8.240357208426648,
+       11.863234392698265,
+       17.313714561800175,
+       22.77458036206708,
+       28.152639148189657
+      ],
+      "male": [
+       3.5139065424181237,
+       3.3843080586615186,
+       4.7305454799502895,
+       7.1652250471278105,
+       11.358958124263353,
+       17.27822140906344,
+       22.964321773338163,
+       29.604513565177292
+      ]
+     },
+     "flows_thousands": {
+      "awards": 918.4993876428545,
+      "deaths": 229.98101985714217,
+      "recoveries": 61.46921994285683,
+      "conversions": 361.3032231999975,
+      "stock_start": 7928.686705613011,
+      "stock_end": 8194.432630256113
+     }
+    },
+    {
+     "year": 2012,
+     "stock_thousands": {
+      "female": 4053.025584828571,
+      "male": 4351.283120285714,
+      "all": 8404.308705114285
+     },
+     "percent": {
+      "female": [
+       3.046650025866892,
+       3.2339279251192745,
+       5.17292538652622,
+       7.735874749314259,
+       12.368819355015338,
+       16.575590031179516,
+       23.16306982650612,
+       28.703142700472373
+      ],
+      "male": [
+       3.4577659997411283,
+       3.5415717373472413,
+       4.628089506774656,
+       6.8178701247212885,
+       11.06210742656511,
+       17.046261939197752,
+       23.104395600302546,
+       30.341937665350272
+      ]
+     },
+     "flows_thousands": {
+      "awards": 879.8582895428556,
+      "deaths": 252.9546843857128,
+      "recoveries": 57.52140149999974,
+      "conversions": 359.5061287999988,
+      "stock_start": 8194.432630256113,
+      "stock_end": 8404.308705113372
+     }
+    },
+    {
+     "year": 2013,
+     "stock_thousands": {
+      "female": 4154.182796514286,
+      "male": 4410.1126603428565,
+      "all": 8564.295456857142
+     },
+     "percent": {
+      "female": [
+       3.0353001514542797,
+       3.1163365995503756,
+       5.103573956300044,
+       7.615824338916088,
+       11.820084898816065,
+       17.105315601331807,
+       23.560574963654812,
+       28.64298948997653
+      ],
+      "male": [
+       3.4905900143351305,
+       3.2041899104004803,
+       4.63297994714075,
+       7.1458183695357125,
+       10.8620230432562,
+       16.56950852686812,
+       23.090036684478584,
+       31.004853503985036
+      ]
+     },
+     "flows_thousands": {
+      "awards": 889.6356331714281,
+      "deaths": 257.3146303857134,
+      "recoveries": 64.74032814285667,
+      "conversions": 407.59392289999687,
+      "stock_start": 8404.308705113372,
+      "stock_end": 8564.295456856229
+     }
+    },
+    {
+     "year": 2014,
+     "stock_thousands": {
+      "female": 4261.288588771428,
+      "male": 4497.099099342857,
+      "all": 8758.387688114286
+     },
+     "percent": {
+      "female": [
+       3.2079929800090543,
+       2.895204746536163,
+       5.055476704104431,
+       7.385920062521306,
+       11.624269999108707,
+       17.017881269784567,
+       23.626121160929493,
+       29.187133077006287
+      ],
+      "male": [
+       3.6381141938091774,
+       2.9922413010570152,
+       4.636622086679594,
+       7.154018072383865,
+       10.172767310528016,
+       16.770327614310414,
+       23.44131740290186,
+       31.19459201833006
+      ]
+     },
+     "flows_thousands": {
+      "awards": 927.4305419857127,
+      "deaths": 261.3610267999989,
+      "recoveries": 63.696028728571136,
+      "conversions": 408.28125519999645,
+      "stock_start": 8564.295456856229,
+      "stock_end": 8758.387688113693
+     }
+    },
+    {
+     "year": 2015,
+     "stock_thousands": {
+      "female": 4354.091564114286,
+      "male": 4583.026745457142,
+      "all": 8937.118309571428
+     },
+     "percent": {
+      "female": [
+       3.216457481312327,
+       3.065563015652726,
+       4.750972756405045,
+       7.029993255602693,
+       11.19092473653846,
+       17.016417091603287,
+       23.587997796480018,
+       30.141673866405444
+      ],
+      "male": [
+       3.9199652211953246,
+       3.238451063028621,
+       4.388553023378397,
+       6.811175186996715,
+       9.815330930501256,
+       16.14521223629022,
+       23.606920628871052,
+       32.07439170973841
+      ]
+     },
+     "flows_thousands": {
+      "awards": 900.4553896428556,
+      "deaths": 257.99992685714193,
+      "recoveries": 69.80885842857114,
+      "conversions": 393.9159829000021,
+      "stock_start": 8758.387688113693,
+      "stock_end": 8937.118309570722
+     }
+    },
+    {
+     "year": 2016,
+     "stock_thousands": {
+      "female": 4395.549829285715,
+      "male": 4635.180987957142,
+      "all": 9030.730817242857
+     },
+     "percent": {
+      "female": [
+       3.0844993779740464,
+       3.207425032553147,
+       4.871983399510223,
+       7.159896332039583,
+       10.844222345614009,
+       16.370339205480715,
+       23.309379654251252,
+       31.152254652577017
+      ],
+      "male": [
+       3.91202510229555,
+       3.2896749807094796,
+       4.818235432019876,
+       6.627313722983373,
+       9.57211590125081,
+       15.359849901217768,
+       23.183633424282068,
+       33.237151535241075
+      ]
+     },
+     "flows_thousands": {
+      "awards": 879.4949871857117,
+      "deaths": 289.10298967142836,
+      "recoveries": 71.4239456428569,
+      "conversions": 425.3555442000024,
+      "stock_start": 8937.118309570722,
+      "stock_end": 9030.730817242247
+     }
+    },
+    {
+     "year": 2017,
+     "stock_thousands": {
+      "female": 4476.016117828572,
+      "male": 4644.592850914286,
+      "all": 9120.608968742858
+     },
+     "percent": {
+      "female": [
+       3.4362769453830224,
+       3.0116462977661427,
+       4.8654178328930815,
+       7.202971254187694,
+       10.50208446809716,
+       16.42830896142369,
+       22.759319025736712,
+       31.793975214512482
+      ],
+      "male": [
+       4.17053741391558,
+       3.293793732915524,
+       4.563969764503089,
+       6.302704454328549,
+       9.48206593853123,
+       15.170623282109588,
+       23.28784548008515,
+       33.72845993361131
+      ]
+     },
+     "flows_thousands": {
+      "awards": 897.6024953999987,
+      "deaths": 315.9995310428576,
+      "recoveries": 65.61914835714262,
+      "conversions": 426.105664500001,
+      "stock_start": 9030.730817242247,
+      "stock_end": 9120.60896874241
+     }
+    },
+    {
+     "year": 2018,
+     "stock_thousands": {
+      "female": 4539.254504871429,
+      "male": 4691.173633785715,
+      "all": 9230.428138657144
+     },
+     "percent": {
+      "female": [
+       3.108135778809764,
+       3.2389456695257524,
+       5.0076459263532405,
+       6.955986412772057,
+       10.09394647751697,
+       15.990390990878339,
+       23.352745838824145,
+       32.25220290531974
+      ],
+      "male": [
+       3.974815677861692,
+       3.2790626445039472,
+       4.595352588261226,
+       5.986607538407488,
+       9.730372088820681,
+       15.005319089669712,
+       22.738623375984083,
+       34.68984699649119
+      ]
+     },
+     "flows_thousands": {
+      "awards": 925.3347026714271,
+      "deaths": 280.4112386714288,
+      "recoveries": 72.48790708571401,
+      "conversions": 462.61638699999935,
+      "stock_start": 9120.60896874241,
+      "stock_end": 9230.42813865699
+     }
+    },
+    {
+     "year": 2019,
+     "stock_thousands": {
+      "female": 4601.439734500001,
+      "male": 4690.963321414285,
+      "all": 9292.403055914285
+     },
+     "percent": {
+      "female": [
+       3.1741415745984525,
+       3.4966520930257836,
+       5.157541514497663,
+       7.287360383878565,
+       9.817843565631078,
+       15.571906619306391,
+       23.194774044258434,
+       32.29978020480363
+      ],
+      "male": [
+       3.8042921476501914,
+       3.6661995964038434,
+       4.477201689313319,
+       6.09824732574872,
+       9.951084447176264,
+       14.15595607342746,
+       23.18741192314554,
+       34.65960679713467
+      ]
+     },
+     "flows_thousands": {
+      "awards": 911.7582312428549,
+      "deaths": 267.18363687142806,
+      "recoveries": 69.90552251428548,
+      "conversions": 512.6941545999966,
+      "stock_start": 9230.42813865699,
+      "stock_end": 9292.403055914061
+     }
+    },
+    {
+     "year": 2020,
+     "stock_thousands": {
+      "female": 4624.227675685714,
+      "male": 4763.474973,
+      "all": 9387.702648685714
+     },
+     "percent": {
+      "female": [
+       2.943571079246557,
+       3.6134957863965353,
+       4.946280579437759,
+       7.3366639554504935,
+       9.915859550146513,
+       15.100610877608936,
+       23.442001580063955,
+       32.70151659164924
+      ],
+      "male": [
+       3.8978728985126545,
+       3.408328162113763,
+       4.925070105957709,
+       6.37469026333016,
+       9.606376443535899,
+       13.788231860623231,
+       22.394994606808023,
+       35.60443565911856
+      ]
+     },
+     "flows_thousands": {
+      "awards": 895.6466504285688,
+      "deaths": 267.86748452857097,
+      "recoveries": 63.32847932857121,
+      "conversions": 469.1510938000031,
+      "stock_start": 9292.403055914061,
+      "stock_end": 9387.702648685607
+     }
+    },
+    {
+     "year": 2021,
+     "stock_thousands": {
+      "female": 4635.416875785714,
+      "male": 4798.386892685714,
+      "all": 9433.803768471429
+     },
+     "percent": {
+      "female": [
+       3.0632340155152016,
+       3.6498195099512567,
+       5.007691972609652,
+       7.076645343670364,
+       9.902921394145189,
+       15.006484306378418,
+       22.594837108851603,
+       33.698366348878324
+      ],
+      "male": [
+       3.958606834924959,
+       3.25393509153198,
+       5.015927175943694,
+       7.059020595365433,
+       9.293987416475083,
+       13.598276612388569,
+       21.59295411504584,
+       36.227292158324445
+      ]
+     },
+     "flows_thousands": {
+      "awards": 885.3337260714271,
+      "deaths": 276.60142467142805,
+      "recoveries": 69.62948821428564,
+      "conversions": 493.0016934000045,
+      "stock_start": 9387.702648685607,
+      "stock_end": 9433.803768471378
+     }
+    },
+    {
+     "year": 2022,
+     "stock_thousands": {
+      "female": 4603.941673685715,
+      "male": 4728.979093228571,
+      "all": 9332.920766914285
+     },
+     "percent": {
+      "female": [
+       3.1574479609691815,
+       3.5870319017143597,
+       5.012607328049301,
+       7.210438485730072,
+       10.18267337050549,
+       14.529847837200577,
+       22.68055985739844,
+       33.63939325843257
+      ],
+      "male": [
+       4.001767638833016,
+       3.290514350911395,
+       4.745398727510068,
+       7.625173687410318,
+       9.479686350102716,
+       13.472017271386294,
+       21.40343973500155,
+       35.98200223884465
+      ]
+     },
+     "flows_thousands": {
+      "awards": 837.2447547999984,
+      "deaths": 305.7606876285714,
+      "recoveries": 74.89420572857132,
+      "conversions": 557.4728630000044,
+      "stock_start": 9433.803768471378,
+      "stock_end": 9332.920766914174
+     }
+    },
+    {
+     "year": 2023,
+     "stock_thousands": {
+      "female": 4854.445368257144,
+      "male": 4997.007799885714,
+      "all": 9851.453168142858
+     },
+     "percent": {
+      "female": [
+       2.83499695763205,
+       3.263812658488214,
+       4.739540688479823,
+       7.179514017790432,
+       9.45625668179698,
+       13.258928360977398,
+       21.19276113038964,
+       38.074189504445464
+      ],
+      "male": [
+       3.492186364087546,
+       3.164405614110895,
+       4.346159744508275,
+       7.285156036945266,
+       8.706732261053316,
+       13.234309674584157,
+       19.88960464946104,
+       39.8814456552495
+      ]
+     },
+     "flows_thousands": {
+      "awards": 868.4551259857122,
+      "deaths": 277.2998689428568,
+      "recoveries": 72.62285581428559,
+      "conversions": 0.0,
+      "stock_start": 9332.920766914174,
+      "stock_end": 9851.453168142902
+     }
+    }
+   ],
+   "comparison": [
+    {
+     "year": 2008,
+     "male_stock_model_thousands": 3924.5239999999994,
+     "male_stock_asr_thousands": 3925.0,
+     "male_stock_ratio": 0.9998787261146496,
+     "male_distribution_gap_pp": [
+      -0.0438586692296945,
+      -0.006950346080187408,
+      -0.021217248257366705,
+      -0.032523587573931145,
+      0.040922771780735445,
+      0.003016824460747358,
+      -0.0024896777290734917,
+      -0.03690006737122431
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.023484899060370046,
+     "female_stock_model_thousands": 3502.1669999999995,
+     "female_stock_asr_thousands": 3502.0,
+     "female_stock_ratio": 1.0000476870359793,
+     "female_distribution_gap_pp": [
+      0.03137080556124294,
+      0.03070924373395112,
+      0.010883233152505056,
+      0.043296222024823194,
+      -0.022258875718947024,
+      0.013323408049931373,
+      0.03571391655508904,
+      -0.043037953358595615
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.02882420726938567
+    },
+    {
+     "year": 2009,
+     "male_stock_model_thousands": 4041.519930599999,
+     "male_stock_asr_thousands": 4100.0,
+     "male_stock_ratio": 0.9857365684390241,
+     "male_distribution_gap_pp": [
+      0.24149434913094803,
+      -0.018394681272539515,
+      0.043932725615346335,
+      0.21959385967156297,
+      0.03953359117946853,
+      -0.06150063109625847,
+      0.15176769716656935,
+      -0.5164269103951078
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.16158055569097513,
+     "female_stock_model_thousands": 3670.061083542857,
+     "female_stock_asr_thousands": 3688.0,
+     "female_stock_ratio": 0.9951358686396033,
+     "female_distribution_gap_pp": [
+      0.3750126294207803,
+      0.10894758884184519,
+      0.12379546422659349,
+      0.5266709616030472,
+      -0.2707689404545217,
+      0.1350446954449609,
+      -0.394895293280463,
+      -0.5038071058022346
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.3048678348843058,
+     "awards_model_thousands": 900.6529372857111,
+     "awards_asr_thousands": 970.696,
+     "terminations_model_thousands": 615.762923142853,
+     "terminations_asr_thousands": 630.074
+    },
+    {
+     "year": 2010,
+     "male_stock_model_thousands": 4129.475022171428,
+     "male_stock_asr_thousands": 4310.0,
+     "male_stock_ratio": 0.9581148543321177,
+     "male_distribution_gap_pp": [
+      0.4868575297385518,
+      -0.2858505521997685,
+      0.15648348871030127,
+      0.12619009083497623,
+      0.21219813261308396,
+      -0.032417976340077814,
+      0.4179470128151763,
+      -1.0814077261722268
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.34991906367802034,
+     "female_stock_model_thousands": 3799.211683442857,
+     "female_stock_asr_thousands": 3894.0,
+     "female_stock_ratio": 0.9756578539914887,
+     "female_distribution_gap_pp": [
+      0.3547335525439812,
+      0.020633498336412703,
+      0.14486077603524983,
+      0.6844523743761313,
+      -0.20268989740769427,
+      0.30202356970994515,
+      -0.4117153217843992,
+      -0.7922985518096297
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.3641759427504304,
+     "awards_model_thousands": 870.3606918428553,
+     "awards_asr_thousands": 1026.988,
+     "terminations_model_thousands": 653.2550003714232,
+     "terminations_asr_thousands": 640.678
+    },
+    {
+     "year": 2011,
+     "male_stock_model_thousands": 4233.674796042856,
+     "male_stock_asr_thousands": 4494.0,
+     "male_stock_ratio": 0.9420727183005909,
+     "male_distribution_gap_pp": [
+      0.5139065424181237,
+      -0.11569194133848137,
+      0.33054547995028916,
+      0.06522504712781085,
+      0.15895812426335354,
+      0.07822140906344188,
+      0.46432177333816327,
+      -1.595486434822707
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.41529459404029634,
+     "female_stock_model_thousands": 3960.757834214285,
+     "female_stock_asr_thousands": 4082.0,
+     "female_stock_ratio": 0.970298342531672,
+     "female_distribution_gap_pp": [
+      0.46931105286396013,
+      0.026657259713769754,
+      0.3595060142404458,
+      0.6403572084266482,
+      0.163234392698266,
+      -0.38628543819982397,
+      -0.025419637932920125,
+      -1.3473608518103433
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.42726648198577216,
+     "awards_model_thousands": 918.4993876428545,
+     "awards_asr_thousands": 998.979,
+     "terminations_model_thousands": 652.7534629999965,
+     "terminations_asr_thousands": 653.877
+    },
+    {
+     "year": 2012,
+     "male_stock_model_thousands": 4351.283120285714,
+     "male_stock_asr_thousands": 4606.0,
+     "male_stock_ratio": 0.9446988971527821,
+     "male_distribution_gap_pp": [
+      0.6577659997411285,
+      0.04157173734724129,
+      0.22808950677465578,
+      -0.08212987527871185,
+      0.3621074265651103,
+      0.0462619391977519,
+      0.004395600302544267,
+      -1.358062334649727
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.34754805248210885,
+     "female_stock_model_thousands": 4053.025584828571,
+     "female_stock_asr_thousands": 4221.0,
+     "female_stock_ratio": 0.9602050662943784,
+     "female_distribution_gap_pp": [
+      0.8466500258668916,
+      -0.1660720748807254,
+      0.3729253865262203,
+      0.3358747493142582,
+      1.168819355015339,
+      -0.9244099688204841,
+      -0.13693017349388015,
+      -1.3968572995276283
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.6685673791806783,
+     "awards_model_thousands": 879.8582895428556,
+     "awards_asr_thousands": 960.206,
+     "terminations_model_thousands": 669.9822146857114,
+     "terminations_asr_thousands": 728.32
+    },
+    {
+     "year": 2013,
+     "male_stock_model_thousands": 4410.1126603428565,
+     "male_stock_asr_thousands": 4642.0,
+     "male_stock_ratio": 0.950045812223795,
+     "male_distribution_gap_pp": [
+      0.8905900143351304,
+      -0.2958100895995197,
+      0.2329799471407492,
+      0.4458183695357123,
+      0.6620230432562,
+      -0.230491473131881,
+      -0.5099633155214178,
+      -1.1951464960149671
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.5578528435669472,
+     "female_stock_model_thousands": 4154.182796514286,
+     "female_stock_asr_thousands": 4299.0,
+     "female_stock_ratio": 0.9663137465722925,
+     "female_distribution_gap_pp": [
+      1.0353001514542797,
+      -0.18366340044962426,
+      0.3035739563000446,
+      0.41582433891608783,
+      1.1200848988160654,
+      -0.29468439866819196,
+      -0.23942503634518886,
+      -2.0570105100234706
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.7061958363716192,
+     "awards_model_thousands": 889.6356331714281,
+     "awards_asr_thousands": 868.965,
+     "terminations_model_thousands": 729.6488814285669,
+     "terminations_asr_thousands": 769.171
+    },
+    {
+     "year": 2014,
+     "male_stock_model_thousands": 4497.099099342857,
+     "male_stock_asr_thousands": 4628.0,
+     "male_stock_ratio": 0.9717154492962093,
+     "male_distribution_gap_pp": [
+      1.2381141938091775,
+      -0.40775869894298467,
+      0.1366220866795942,
+      0.7540180723838645,
+      0.37276731052801537,
+      0.3703276143104155,
+      -0.6586825970981423,
+      -1.905407981669942
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.7304623194277671,
+     "female_stock_model_thousands": 4261.288588771428,
+     "female_stock_asr_thousands": 4327.0,
+     "female_stock_ratio": 0.9848136327181485,
+     "female_distribution_gap_pp": [
+      1.3079929800090544,
+      -0.20479525346383687,
+      0.3554767041044311,
+      0.38592006252130595,
+      1.4242699991087076,
+      -0.08211873021543425,
+      -0.5738788390705061,
+      -2.612866922993714
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.8684149364358738,
+     "awards_model_thousands": 927.4305419857127,
+     "awards_asr_thousands": 778.796,
+     "terminations_model_thousands": 733.3383107285665,
+     "terminations_asr_thousands": 779.229
+    },
+    {
+     "year": 2015,
+     "male_stock_model_thousands": 4583.026745457142,
+     "male_stock_asr_thousands": 4581.0,
+     "male_stock_ratio": 1.000442424242991,
+     "male_distribution_gap_pp": [
+      1.8199652211953246,
+      -0.061548936971378865,
+      -0.11144697662160308,
+      0.7111751869967158,
+      0.31533093050125593,
+      0.24521223629021982,
+      -0.7930793711289468,
+      -2.125608290261596
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.77292089374588,
+     "female_stock_model_thousands": 4354.091564114286,
+     "female_stock_asr_thousands": 4328.0,
+     "female_stock_ratio": 1.0060285499339847,
+     "female_distribution_gap_pp": [
+      1.516457481312327,
+      0.1655630156527259,
+      0.05097275640504506,
+      0.4299932556026933,
+      1.290924736538459,
+      0.4164170916032859,
+      -1.0120022035199838,
+      -2.858326133594556
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.9675820842786345,
+     "awards_model_thousands": 900.4553896428556,
+     "awards_asr_thousands": 741.478,
+     "terminations_model_thousands": 721.7247681857152,
+     "terminations_asr_thousands": 802.501
+    },
+    {
+     "year": 2016,
+     "male_stock_model_thousands": 4635.180987957142,
+     "male_stock_asr_thousands": 4511.0,
+     "male_stock_ratio": 1.0275284832536338,
+     "male_distribution_gap_pp": [
+      2.01202510229555,
+      0.18967498070947952,
+      0.31823543201987636,
+      0.8273137229833729,
+      0.37211590125080996,
+      0.15984990121776832,
+      -1.3163665757179324,
+      -2.4628484647589275
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.9573037601192147,
+     "female_stock_model_thousands": 4395.549829285715,
+     "female_stock_asr_thousands": 4298.0,
+     "female_stock_ratio": 1.022696563351725,
+     "female_distribution_gap_pp": [
+      1.5844993779740464,
+      0.5074250325531469,
+      0.27198339951022366,
+      0.8598963320395834,
+      1.1442223456140095,
+      0.4703392054807143,
+      -1.3906203457487472,
+      -3.447745347422984
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.209591423292932,
+     "awards_model_thousands": 879.4949871857117,
+     "awards_asr_thousands": 706.448,
+     "terminations_model_thousands": 785.8824795142876,
+     "terminations_asr_thousands": 820.372
+    },
+    {
+     "year": 2017,
+     "male_stock_model_thousands": 4644.592850914286,
+     "male_stock_asr_thousands": 4432.0,
+     "male_stock_ratio": 1.0479677010185664,
+     "male_distribution_gap_pp": [
+      2.2705374139155805,
+      0.2937937329155238,
+      0.06396976450308944,
+      0.6027044543285491,
+      0.5820659385312297,
+      0.5706232821095885,
+      -1.1121545199148493,
+      -3.271540066388688
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.0959236465758873,
+     "female_stock_model_thousands": 4476.016117828572,
+     "female_stock_asr_thousands": 4263.0,
+     "female_stock_ratio": 1.0499685943768642,
+     "female_distribution_gap_pp": [
+      2.0362769453830225,
+      0.5116462977661427,
+      0.46541783289308114,
+      1.1029712541876942,
+      1.0020844680971592,
+      1.1283089614236879,
+      -1.9406809742632873,
+      -4.206024785487518
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.549176439937699,
+     "awards_model_thousands": 897.6024953999987,
+     "awards_asr_thousands": 715.921,
+     "terminations_model_thousands": 807.7243439000013,
+     "terminations_asr_thousands": 859.02
+    },
+    {
+     "year": 2018,
+     "male_stock_model_thousands": 4691.173633785715,
+     "male_stock_asr_thousands": 4330.0,
+     "male_stock_ratio": 1.083411924661828,
+     "male_distribution_gap_pp": [
+      2.174815677861692,
+      0.4790626445039474,
+      0.09535258826122561,
+      0.28660753840748754,
+      1.1303720888206819,
+      0.9053190896697121,
+      -1.5613766240159173,
+      -3.610153003508806
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.2803824068811838,
+     "female_stock_model_thousands": 4539.254504871429,
+     "female_stock_asr_thousands": 4207.0,
+     "female_stock_ratio": 1.0789765877992463,
+     "female_distribution_gap_pp": [
+      1.808135778809764,
+      0.8389456695257524,
+      0.7076459263532406,
+      0.8559864127720571,
+      0.79394647751697,
+      1.2903909908783397,
+      -1.4472541611758558,
+      -5.047797094680256
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.5987628139640293,
+     "awards_model_thousands": 925.3347026714271,
+     "awards_asr_thousands": 686.723,
+     "terminations_model_thousands": 815.5155327571422,
+     "terminations_asr_thousands": 876.857
+    },
+    {
+     "year": 2019,
+     "male_stock_model_thousands": 4690.963321414285,
+     "male_stock_asr_thousands": 4231.0,
+     "male_stock_ratio": 1.1087126734611876,
+     "male_distribution_gap_pp": [
+      2.004292147650191,
+      1.0661995964038433,
+      0.07720168931331894,
+      0.29824732574872037,
+      1.6510844471762631,
+      0.5559560734274598,
+      -0.8125880768544604,
+      -4.840393202865329
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.4132453199299482,
+     "female_stock_model_thousands": 4601.439734500001,
+     "female_stock_asr_thousands": 4147.0,
+     "female_stock_ratio": 1.1095827669399567,
+     "female_distribution_gap_pp": [
+      1.8741415745984524,
+      1.2966520930257834,
+      1.0575415144976636,
+      1.287360383878565,
+      0.8178435656310779,
+      1.371906619306392,
+      -1.5052259557415653,
+      -6.100219795196367
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.9138614377344831,
+     "awards_model_thousands": 911.7582312428549,
+     "awards_asr_thousands": 679.449,
+     "terminations_model_thousands": 849.7833139857102,
+     "terminations_asr_thousands": 870.827
+    },
+    {
+     "year": 2020,
+     "male_stock_model_thousands": 4763.474973,
+     "male_stock_asr_thousands": 4101.0,
+     "male_stock_ratio": 1.1615398617410388,
+     "male_distribution_gap_pp": [
+      2.0978728985126542,
+      0.8083281621137628,
+      0.6250701059577093,
+      0.4746902633301593,
+      1.6063764435358987,
+      0.4882318606232303,
+      -1.105005393191977,
+      -4.895564340881442
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.5126424335183541,
+     "female_stock_model_thousands": 4624.227675685714,
+     "female_stock_asr_thousands": 4050.0,
+     "female_stock_ratio": 1.141784611280423,
+     "female_distribution_gap_pp": [
+      1.6435710792465568,
+      1.5134957863965353,
+      1.046280579437759,
+      1.236663955450494,
+      1.2158595501465133,
+      1.1006108776089363,
+      -0.8579984199360453,
+      -6.798483408350762
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.9266204570717003,
+     "awards_model_thousands": 895.6466504285688,
+     "awards_asr_thousands": 619.636,
+     "terminations_model_thousands": 800.3470576571453,
+     "terminations_asr_thousands": 892.811
+    },
+    {
+     "year": 2021,
+     "male_stock_model_thousands": 4798.386892685714,
+     "male_stock_asr_thousands": 3951.0,
+     "male_stock_ratio": 1.2144740300394112,
+     "male_distribution_gap_pp": [
+      2.258606834924959,
+      0.8539350915319801,
+      0.9159271759436942,
+      1.0590205953654328,
+      1.5939874164750831,
+      0.5982766123885686,
+      -1.107045884954161,
+      -6.072707841675552
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.8074384316574288,
+     "female_stock_model_thousands": 4635.416875785714,
+     "female_stock_asr_thousands": 3926.0,
+     "female_stock_ratio": 1.1806971155847463,
+     "female_distribution_gap_pp": [
+      1.8632340155152016,
+      1.6498195099512567,
+      1.3076919726096516,
+      1.0766453436703642,
+      1.6029213941451879,
+      1.2064843063784174,
+      -0.9051628911483967,
+      -7.701633651121675
+     ],
+     "female_distribution_mean_abs_gap_pp": 2.164199135567519,
+     "awards_model_thousands": 885.3337260714271,
+     "awards_asr_thousands": 540.353,
+     "terminations_model_thousands": 839.2326062857182,
+     "terminations_asr_thousands": 831.22
+    },
+    {
+     "year": 2022,
+     "male_stock_model_thousands": 4728.979093228571,
+     "male_stock_asr_thousands": 3808.0,
+     "male_stock_ratio": 1.2418537534738896,
+     "male_distribution_gap_pp": [
+      2.401767638833016,
+      0.9905143509113952,
+      0.8453987275100681,
+      1.7251736874103178,
+      1.9796863501027158,
+      0.8720172713862944,
+      -0.49656026499844685,
+      -8.117997761155351
+     ],
+     "male_distribution_mean_abs_gap_pp": 2.1786395065384507,
+     "female_stock_model_thousands": 4603.941673685715,
+     "female_stock_asr_thousands": 3796.0,
+     "female_stock_ratio": 1.2128402723091978,
+     "female_distribution_gap_pp": [
+      2.0574479609691814,
+      1.6870319017143598,
+      1.5126073280493006,
+      1.3104384857300717,
+      2.082673370505491,
+      1.0298478372005775,
+      -0.01944014260156024,
+      -9.660606741567427
+     ],
+     "female_distribution_mean_abs_gap_pp": 2.420011721042246,
+     "awards_model_thousands": 837.2447547999984,
+     "awards_asr_thousands": 509.272,
+     "terminations_model_thousands": 938.1277563571471,
+     "terminations_asr_thousands": 806.894
+    },
+    {
+     "year": 2023,
+     "male_stock_model_thousands": 4997.007799885714,
+     "male_stock_asr_thousands": 3686.0,
+     "male_stock_ratio": 1.355672219176808,
+     "male_distribution_gap_pp": [
+      1.892186364087546,
+      0.8644056141108951,
+      0.5461597445082749,
+      1.4851560369452663,
+      1.2067322610533164,
+      1.0343096745841578,
+      -1.2103953505389597,
+      -5.818554344750503
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.757237423822365,
+     "female_stock_model_thousands": 4854.445368257144,
+     "female_stock_asr_thousands": 3680.0,
+     "female_stock_ratio": 1.3191427631133543,
+     "female_distribution_gap_pp": [
+      1.7349969576320499,
+      1.4638126584882138,
+      1.4395406884798234,
+      1.4795140177904322,
+      1.4562566817969795,
+      0.05892836097739895,
+      -0.6072388696103594,
+      -7.025810495554538
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.9082623412912243,
+     "awards_model_thousands": 868.4551259857122,
+     "awards_asr_thousands": 523.834,
+     "terminations_model_thousands": 349.92272475714236,
+     "terminations_asr_thousands": 788.327
+    }
+   ]
+  },
+  "fit_year_2007": {
+   "spec": {
+    "fit_year": "2007",
+    "incidence_basis": "per_population_non_entitled",
+    "death_mode": "multiplier",
+    "death_level": "as118_published",
+    "recovery_level": "asr_fitted",
+    "termination_basis": "attained_age",
+    "post_conversion_mortality": "di_origin",
+    "min_award_age": 18,
+    "assumed_birth_month": 7,
+    "validate_age_column": true
+   },
+   "rates": {
+    "spec": {
+     "fit_year": "2007",
+     "incidence_basis": "per_population_non_entitled",
+     "death_mode": "multiplier",
+     "death_level": "as118_published",
+     "recovery_level": "asr_fitted",
+     "termination_basis": "attained_age",
+     "post_conversion_mortality": "di_origin",
+     "min_award_age": 18,
+     "assumed_birth_month": 7,
+     "validate_age_column": true
+    },
+    "incidence_by_band": [
+     {
+      "band": "Under 25",
+      "start_ages": [
+       18,
+       24
+      ],
+      "female": 0.0009908330435116333,
+      "male": 0.0013064697685981695
+     },
+     {
+      "band": "25–29",
+      "start_ages": [
+       25,
+       29
+      ],
+      "female": 0.0013736365968831463,
+      "male": 0.001433254325512161
+     },
+     {
+      "band": "30–34",
+      "start_ages": [
+       30,
+       34
+      ],
+      "female": 0.001963358763223746,
+      "male": 0.0018639450861589306
+     },
+     {
+      "band": "35–39",
+      "start_ages": [
+       35,
+       39
+      ],
+      "female": 0.0026815436066360155,
+      "male": 0.0026301505921064515
+     },
+     {
+      "band": "40–44",
+      "start_ages": [
+       40,
+       44
+      ],
+      "female": 0.003882502221807274,
+      "male": 0.0038864390163281712
+     },
+     {
+      "band": "45–49",
+      "start_ages": [
+       45,
+       49
+      ],
+      "female": 0.004853467979340547,
+      "male": 0.005089150014248215
+     },
+     {
+      "band": "50–54",
+      "start_ages": [
+       50,
+       54
+      ],
+      "female": 0.007204966762661201,
+      "male": 0.008139124061401453
+     },
+     {
+      "band": "55–59",
+      "start_ages": [
+       55,
+       59
+      ],
+      "female": 0.009558303597337878,
+      "male": 0.012666493387012628
+     },
+     {
+      "band": "60–64",
+      "start_ages": [
+       60,
+       64
+      ],
+      "female": 0.007188768831300936,
+      "male": 0.011536195564202698
+     },
+     {
+      "band": "65–FRA",
+      "start_ages": [
+       65,
+       69
+      ],
+      "female": 0.0010983105527524394,
+      "male": 0.00223331982890775
+     }
+    ],
+    "recovery_attained": {
+     "female": [
+      0.005812062155991236,
+      0.01106084075501416,
+      0.014347974519280295,
+      0.018217102308316146,
+      0.024383678591070653,
+      0.028354236810819326,
+      0.03161281249265176,
+      0.03191217997747407,
+      0.031959448527709176,
+      0.031169669834197663,
+      0.029958413234423144,
+      0.02797510364747527,
+      0.026411302443863936,
+      0.024996200221200533,
+      0.024600326112981543,
+      0.023037509670833442,
+      0.02194540920810991,
+      0.02093307442390812,
+      0.020030048162125,
+      0.018643504021895303,
+      0.018285050849279106,
+      0.017154544689489553,
+      0.016188493694059627,
+      0.015515901614672638,
+      0.014795056223587314,
+      0.014085043208597534,
+      0.013104220791219142,
+      0.012321335427950246,
+      0.011599505275401689,
+      0.010792985637015239,
+      0.009647708055277218,
+      0.008966253122721146,
+      0.00704104446210392,
+      0.006280808612489343,
+      0.0056741955511388515,
+      0.0047938188030100535,
+      0.0038996553943960173,
+      0.0031492671594137533,
+      0.0025987855014674467,
+      0.002468796988320913,
+      0.0020010352932860373,
+      0.0018602144040439589,
+      0.0015490297816628624,
+      0.0012181499300171399,
+      0.0007641748954675024,
+      0.0005524511808727692,
+      0.00036534650285881883,
+      0.00036534650285881883,
+      0.00036534650285881883
+     ],
+     "male": [
+      0.007585617551270839,
+      0.010825482765301873,
+      0.014743848627499286,
+      0.0237091169887572,
+      0.030769856680125746,
+      0.03868536932157908,
+      0.041366874785957956,
+      0.04203060401217586,
+      0.04501935505308291,
+      0.04157072040884684,
+      0.04000691920523551,
+      0.03751547270326027,
+      0.03647753412101446,
+      0.035697603042135255,
+      0.0330545032748224,
+      0.030082493178790286,
+      0.030243994058760222,
+      0.028326663489848847,
+      0.02663779758040714,
+      0.025376318146007822,
+      0.023473758999044917,
+      0.02287010022208412,
+      0.021248198092142137,
+      0.019639097861222164,
+      0.01844753649071227,
+      0.017410582669929696,
+      0.016070322318471872,
+      0.014863004764550276,
+      0.013729544320371028,
+      0.012442461087927697,
+      0.011035236956970144,
+      0.009124799718301388,
+      0.007567891844932675,
+      0.006864772160185514,
+      0.006217783878842539,
+      0.005518603239948303,
+      0.004260078089938679,
+      0.003197520471112088,
+      0.0028272501609371125,
+      0.002447132236129824,
+      0.0021635209347192048,
+      0.0020177762381609694,
+      0.001683942102125553,
+      0.0013402603514578232,
+      0.0008045501154599864,
+      0.0006686530335340646,
+      0.00044806646577024947,
+      0.00044806646577024947,
+      0.00044806646577024947
+     ]
+    },
+    "death_attained": {
+     "female": [
+      0.009549,
+      0.01406,
+      0.015015,
+      0.014874,
+      0.013097,
+      0.012363,
+      0.013608,
+      0.013708,
+      0.011689,
+      0.013596,
+      0.013553,
+      0.013677,
+      0.013692,
+      0.014507,
+      0.01468,
+      0.014427,
+      0.015078,
+      0.015053,
+      0.015768,
+      0.016525,
+      0.016884,
+      0.016901,
+      0.018246,
+      0.018724,
+      0.019181,
+      0.020111,
+      0.02093,
+      0.02167,
+      0.022321,
+      0.0237,
+      0.024309,
+      0.025924,
+      0.025781,
+      0.026872,
+      0.027515,
+      0.029079,
+      0.029495,
+      0.030052,
+      0.031025,
+      0.031763,
+      0.033523,
+      0.034183,
+      0.036252,
+      0.037765,
+      0.037799,
+      0.03942,
+      0.0401,
+      0.040148,
+      0.040897
+     ],
+     "male": [
+      0.01496,
+      0.017716,
+      0.01751,
+      0.015887,
+      0.014424,
+      0.015068,
+      0.015186,
+      0.015077,
+      0.015863,
+      0.016309,
+      0.017476,
+      0.018355,
+      0.019743,
+      0.020761,
+      0.021353,
+      0.021999,
+      0.021637,
+      0.022333,
+      0.022048,
+      0.02185,
+      0.022403,
+      0.023661,
+      0.02369,
+      0.024635,
+      0.025706,
+      0.026331,
+      0.027794,
+      0.028841,
+      0.029582,
+      0.030325,
+      0.031908,
+      0.03257,
+      0.033308,
+      0.034814,
+      0.036497,
+      0.038044,
+      0.040629,
+      0.040662,
+      0.042733,
+      0.044261,
+      0.046138,
+      0.047601,
+      0.049595,
+      0.052176,
+      0.053279,
+      0.054716,
+      0.05641,
+      0.055048,
+      0.057671
+     ]
+    },
+    "attained_ages": [
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46,
+     47,
+     48,
+     49,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56,
+     57,
+     58,
+     59,
+     60,
+     61,
+     62,
+     63,
+     64,
+     65,
+     66
+    ],
+    "recovery_level_factor": 0.9847614632313175,
+    "death_level_factor": 1.0,
+    "diagnostics": {
+     "fit_years": [
+      "2007"
+     ],
+     "incidence": [
+      {
+       "sex": "female",
+       "band": "Under 25",
+       "awards": 14148.0,
+       "population_july1": 14298882.0,
+       "stock_december": 19988.0,
+       "non_entitled_population": 14278894.0,
+       "annual_probability": 0.0009908330435116333
+      },
+      {
+       "sex": "female",
+       "band": "25–29",
+       "awards": 14027.0,
+       "population_july1": 10281517.0,
+       "stock_december": 69937.0,
+       "non_entitled_population": 10211580.0,
+       "annual_probability": 0.0013736365968831463
+      },
+      {
+       "sex": "female",
+       "band": "30–34",
+       "awards": 18683.0,
+       "population_july1": 9626859.0,
+       "stock_december": 111023.0,
+       "non_entitled_population": 9515836.0,
+       "annual_probability": 0.001963358763223746
+      },
+      {
+       "sex": "female",
+       "band": "35–39",
+       "awards": 27727.0,
+       "population_july1": 10521549.0,
+       "stock_december": 181609.0,
+       "non_entitled_population": 10339940.0,
+       "annual_probability": 0.0026815436066360155
+      },
+      {
+       "sex": "female",
+       "band": "40–44",
+       "awards": 41668.0,
+       "population_july1": 11021006.0,
+       "stock_december": 288752.0,
+       "non_entitled_population": 10732254.0,
+       "annual_probability": 0.003882502221807274
+      },
+      {
+       "sex": "female",
+       "band": "45–49",
+       "awards": 53975.0,
+       "population_july1": 11558531.0,
+       "stock_december": 437617.0,
+       "non_entitled_population": 11120914.0,
+       "annual_probability": 0.004853467979340547
+      },
+      {
+       "sex": "female",
+       "band": "50–54",
+       "awards": 73032.0,
+       "population_july1": 10721316.0,
+       "stock_december": 584975.0,
+       "non_entitled_population": 10136341.0,
+       "annual_probability": 0.007204966762661201
+      },
+      {
+       "sex": "female",
+       "band": "55–59",
+       "awards": 82808.0,
+       "population_july1": 9389037.0,
+       "stock_december": 725575.0,
+       "non_entitled_population": 8663462.0,
+       "annual_probability": 0.009558303597337878
+      },
+      {
+       "sex": "female",
+       "band": "60–64",
+       "awards": 48622.0,
+       "population_july1": 7547951.0,
+       "stock_december": 784345.0,
+       "non_entitled_population": 6763606.0,
+       "annual_probability": 0.007188768831300936
+      },
+      {
+       "sex": "female",
+       "band": "65–FRA",
+       "awards": 1261.0,
+       "population_july1": 1269117.0,
+       "stock_december": 120990.0,
+       "non_entitled_population": 1148127.0,
+       "annual_probability": 0.0010983105527524394
+      },
+      {
+       "sex": "male",
+       "band": "Under 25",
+       "awards": 19812.0,
+       "population_july1": 15193533.0,
+       "stock_december": 29003.0,
+       "non_entitled_population": 15164530.0,
+       "annual_probability": 0.0013064697685981695
+      },
+      {
+       "sex": "male",
+       "band": "25–29",
+       "awards": 15321.0,
+       "population_july1": 10776189.0,
+       "stock_december": 86530.0,
+       "non_entitled_population": 10689659.0,
+       "annual_probability": 0.001433254325512161
+      },
+      {
+       "sex": "male",
+       "band": "30–34",
+       "awards": 18244.0,
+       "population_july1": 9906361.0,
+       "stock_december": 118519.0,
+       "non_entitled_population": 9787842.0,
+       "annual_probability": 0.0018639450861589306
+      },
+      {
+       "sex": "male",
+       "band": "35–39",
+       "awards": 27519.0,
+       "population_july1": 10654911.0,
+       "stock_december": 192012.0,
+       "non_entitled_population": 10462899.0,
+       "annual_probability": 0.0026301505921064515
+      },
+      {
+       "sex": "male",
+       "band": "40–44",
+       "awards": 41387.0,
+       "population_july1": 10963823.0,
+       "stock_december": 314743.0,
+       "non_entitled_population": 10649080.0,
+       "annual_probability": 0.0038864390163281712
+      },
+      {
+       "sex": "male",
+       "band": "45–49",
+       "awards": 55059.0,
+       "population_july1": 11302842.0,
+       "stock_december": 483943.0,
+       "non_entitled_population": 10818899.0,
+       "annual_probability": 0.005089150014248215
+      },
+      {
+       "sex": "male",
+       "band": "50–54",
+       "awards": 78533.0,
+       "population_july1": 10292071.0,
+       "stock_december": 643244.0,
+       "non_entitled_population": 9648827.0,
+       "annual_probability": 0.008139124061401453
+      },
+      {
+       "sex": "male",
+       "band": "55–59",
+       "awards": 101607.0,
+       "population_july1": 8847222.0,
+       "stock_december": 825507.0,
+       "non_entitled_population": 8021715.0,
+       "annual_probability": 0.012666493387012628
+      },
+      {
+       "sex": "male",
+       "band": "60–64",
+       "awards": 69160.0,
+       "population_july1": 6927866.0,
+       "stock_december": 932822.0,
+       "non_entitled_population": 5995044.0,
+       "annual_probability": 0.011536195564202698
+      },
+      {
+       "sex": "male",
+       "band": "65–FRA",
+       "awards": 2194.0,
+       "population_july1": 1129983.0,
+       "stock_december": 147589.0,
+       "non_entitled_population": 982394.0,
+       "annual_probability": 0.00223331982890775
+      }
+     ],
+     "recovery_level": {
+      "observed_asr_table50_does_not_meet_medical_standards": 54011.0,
+      "expected_under_as118_table19": 54846.78474599587,
+      "fitted_factor": 0.9847614632313175,
+      "applied_factor": 0.9847614632313175
+     },
+     "death_level": {
+      "observed_asr_table50_deaths": 206032.0,
+      "expected_under_as118_table12_7c": 240683.15613103475,
+      "fitted_factor": 0.8560299910968026,
+      "applied_factor": 1.0
+     },
+     "average_exposure_workers": 6952729.103081471,
+     "exposure_rule": "December ASR Table 20 stock by age group and sex, scaled by the ASR Table 19 average of the prior and current December totals; group rates are simple means of single-age rates over the ages in _GROUP_AGES"
+    },
+    "provenance": {
+     "information_boundary_year": 2008,
+     "inputs_schema": "di_entitlement_inputs.v1",
+     "sources_used": [
+      "as118_death_tables",
+      "as118_recovery_tables",
+      "asr2007_table19",
+      "asr2007_table20",
+      "asr2007_table36",
+      "asr2007_table50",
+      "census_v2007_r_file16"
+     ],
+     "population_reference": "NCHS United States Life Tables, 2000",
+     "inputs_sha256": "85a29db85b4bfea22b29ba4ed802ce53c0bb929660b87e97f1eedcbe94e0a110",
+     "nchs_2000_sha256": "067ac331d26a56f5f6c120e361771be1c890e74c412b5561ca45c87302059142"
+    }
+   },
+   "years": [
+    {
+     "year": 2008,
+     "stock_thousands": {
+      "female": 3502.1669999999995,
+      "male": 3924.5239999999994,
+      "all": 7426.690999999999
+     },
+     "percent": {
+      "female": [
+       2.631370805561243,
+       3.330709243733951,
+       5.310883233152505,
+       8.243296222024822,
+       12.877741124281053,
+       17.613323408049933,
+       21.73571391655509,
+       28.256962046641405
+      ],
+      "male": [
+       3.0561413307703056,
+       3.1930496539198128,
+       4.878782751742634,
+       7.867476412426069,
+       12.440922771780736,
+       17.10301682446075,
+       21.697510322270926,
+       29.763099932628776
+      ]
+     }
+    },
+    {
+     "year": 2009,
+     "stock_thousands": {
+      "female": 3614.3871080857143,
+      "male": 4002.801572314285,
+      "all": 7617.188680399999
+     },
+     "percent": {
+      "female": [
+       2.9328427867776807,
+       3.4612842083276147,
+       5.377692244562715,
+       8.462232770135996,
+       12.418805113482474,
+       17.77848189427421,
+       21.572444228669188,
+       27.996216753770113
+      ],
+      "male": [
+       3.242748871492005,
+       3.2564101678574424,
+       4.78027295740695,
+       7.581696070048705,
+       12.519568880609322,
+       17.18281023863845,
+       21.832527791147353,
+       29.603965022799756
+      ]
+     },
+     "flows_thousands": {
+      "awards": 836.6185154714256,
+      "deaths": 269.4745972857128,
+      "recoveries": 50.60171778571412,
+      "conversions": 326.0445199999973,
+      "stock_start": 7426.690999998587,
+      "stock_end": 7617.18868039864
+     }
+    },
+    {
+     "year": 2010,
+     "stock_thousands": {
+      "female": 3695.5485109571423,
+      "male": 4047.812508885713,
+      "all": 7743.361019842856
+     },
+     "percent": {
+      "female": [
+       2.869636232421593,
+       3.4950799703221067,
+       5.158896078206858,
+       8.39889043479531,
+       12.225659077682707,
+       18.09759444956603,
+       21.781740104705527,
+       27.972503652299864
+      ],
+      "male": [
+       3.4981229954421336,
+       3.209194900080972,
+       4.826130920618576,
+       7.401179161395256,
+       12.110740668543176,
+       17.32060411298548,
+       22.313730587008795,
+       29.320296653925602
+      ]
+     },
+     "flows_thousands": {
+      "awards": 803.403574185713,
+      "deaths": 263.02109899999834,
+      "recoveries": 58.2259396428569,
+      "conversions": 355.9841960999963,
+      "stock_start": 7617.18868039864,
+      "stock_end": 7743.361019841662
+     }
+    },
+    {
+     "year": 2011,
+     "stock_thousands": {
+      "female": 3839.3002948571425,
+      "male": 4094.146159957142,
+      "all": 7933.446454814284
+     },
+     "percent": {
+      "female": [
+       2.821985230024167,
+       3.460407540352178,
+       5.159199971029365,
+       8.356627483132005,
+       11.86065803995527,
+       17.53553263863802,
+       22.878896768680196,
+       27.926692328188807
+      ],
+      "male": [
+       3.3573516964665893,
+       3.41075725790556,
+       4.837213591370004,
+       7.307529008762399,
+       11.439959256483968,
+       17.47606871972274,
+       22.793649040359824,
+       29.377471428928914
+      ]
+     },
+     "flows_thousands": {
+      "awards": 865.9887847571405,
+      "deaths": 275.35686465714207,
+      "recoveries": 53.56950472857118,
+      "conversions": 346.9769803999977,
+      "stock_start": 7743.361019841662,
+      "stock_end": 7933.446454813283
+     }
+    },
+    {
+     "year": 2012,
+     "stock_thousands": {
+      "female": 3912.8245056428573,
+      "male": 4151.150516757143,
+      "all": 8063.9750224
+     },
+     "percent": {
+      "female": [
+       3.0495253408573983,
+       3.125840835018623,
+       4.9480569527406155,
+       7.984745729061762,
+       12.309804012558583,
+       16.87006013553755,
+       23.442198355106147,
+       28.26976863911932
+      ],
+      "male": [
+       3.3573668912881875,
+       3.607503473928143,
+       4.631087076316845,
+       6.968915097927885,
+       11.016869972647038,
+       17.113037116634146,
+       23.226636117092823,
+       30.078584254164927
+      ]
+     },
+     "flows_thousands": {
+      "awards": 822.8743221999985,
+      "deaths": 292.12946652857084,
+      "recoveries": 55.41143248571404,
+      "conversions": 344.8048555999986,
+      "stock_start": 7933.446454813283,
+      "stock_end": 8063.97502239909
+     }
+    },
+    {
+     "year": 2013,
+     "stock_thousands": {
+      "female": 3981.0975184428576,
+      "male": 4201.237862528571,
+      "all": 8182.335380971428
+     },
+     "percent": {
+      "female": [
+       2.7812246906768765,
+       3.1980127618124174,
+       4.9101627200646485,
+       7.542775481105318,
+       11.727671121771884,
+       17.458967075789218,
+       23.83508386830842,
+       28.54610228047123
+      ],
+      "male": [
+       3.351379986941025,
+       3.4189126919262405,
+       4.556835441466225,
+       7.0945569937477675,
+       10.721321385238202,
+       17.15265975362516,
+       23.25277802319045,
+       30.45155572386493
+      ]
+     },
+     "flows_thousands": {
+      "awards": 833.8258962142849,
+      "deaths": 268.0236608999994,
+      "recoveries": 61.2121136428568,
+      "conversions": 386.2297630999972,
+      "stock_start": 8063.97502239909,
+      "stock_end": 8182.335380970557
+     }
+    },
+    {
+     "year": 2014,
+     "stock_thousands": {
+      "female": 4048.1694173285714,
+      "male": 4260.721243757142,
+      "all": 8308.890661085712
+     },
+     "percent": {
+      "female": [
+       2.970285409911961,
+       3.0108779399251597,
+       4.9297125447801475,
+       7.189283475987934,
+       11.579764315035636,
+       17.240770477945432,
+       23.739713602060398,
+       29.33959223435333
+      ],
+      "male": [
+       3.376780279280023,
+       3.0999464594493804,
+       4.578512736214085,
+       7.235390748730514,
+       10.20308667545346,
+       17.546339150804403,
+       23.128361944444745,
+       30.831582005623375
+      ]
+     },
+     "flows_thousands": {
+      "awards": 859.9152090571412,
+      "deaths": 302.56735809999975,
+      "recoveries": 63.433624142856985,
+      "conversions": 367.35894669999664,
+      "stock_start": 8182.335380970557,
+      "stock_end": 8308.89066108492
+     }
+    },
+    {
+     "year": 2015,
+     "stock_thousands": {
+      "female": 4100.510068042857,
+      "male": 4290.6824730571425,
+      "all": 8391.1925411
+     },
+     "percent": {
+      "female": [
+       3.0902684205520488,
+       3.0084757184232833,
+       4.940675675421426,
+       6.990263573156144,
+       10.882124835581216,
+       17.381941292005887,
+       23.770782688633375,
+       29.93546779622663
+      ],
+      "male": [
+       3.5767000163249287,
+       3.3970707214557367,
+       4.559477128136455,
+       6.988945350373084,
+       10.01505450702404,
+       16.535305361211968,
+       23.767276404245322,
+       31.160170511228458
+      ]
+     },
+     "flows_thousands": {
+      "awards": 817.0968164714272,
+      "deaths": 303.1054655571433,
+      "recoveries": 59.26327979999969,
+      "conversions": 372.4261911000012,
+      "stock_start": 8308.89066108492,
+      "stock_end": 8391.19254109905
+     }
+    },
+    {
+     "year": 2016,
+     "stock_thousands": {
+      "female": 4137.3017923285715,
+      "male": 4334.672062828571,
+      "all": 8471.973855157143
+     },
+     "percent": {
+      "female": [
+       3.030031389840757,
+       3.0518396763487523,
+       4.896394601322615,
+       7.0353248979736005,
+       10.908048287335554,
+       16.759389587815047,
+       23.240259039910015,
+       31.07871251945365
+      ],
+      "male": [
+       3.41642755528496,
+       3.2970365155974015,
+       4.945170741708252,
+       7.17514763036182,
+       9.358540826622235,
+       16.39824882014636,
+       23.227524168068044,
+       32.181903742210935
+      ]
+     },
+     "flows_thousands": {
+      "awards": 845.824370485713,
+      "deaths": 318.11234588571494,
+      "recoveries": 60.10515294285691,
+      "conversions": 386.8255576000017,
+      "stock_start": 8391.19254109905,
+      "stock_end": 8471.973855156575
+     }
+    },
+    {
+     "year": 2017,
+     "stock_thousands": {
+      "female": 4196.278198157142,
+      "male": 4393.386342542857,
+      "all": 8589.6645407
+     },
+     "percent": {
+      "female": [
+       3.299197240087643,
+       2.941303887129001,
+       4.731678342660839,
+       7.089085826832019,
+       10.63843509937094,
+       16.732888632320975,
+       22.763453410202832,
+       31.80395756139575
+      ],
+      "male": [
+       3.721617408086538,
+       3.304597608646785,
+       4.960643135105162,
+       6.49950327006131,
+       9.689742178549308,
+       16.107939953908037,
+       22.746178450620782,
+       32.96977799502207
+      ]
+     },
+     "flows_thousands": {
+      "awards": 858.285133857142,
+      "deaths": 288.8091910571427,
+      "recoveries": 66.24051235714255,
+      "conversions": 385.5447449000003,
+      "stock_start": 8471.973855156575,
+      "stock_end": 8589.664540699408
+     }
+    },
+    {
+     "year": 2018,
+     "stock_thousands": {
+      "female": 4230.961163671428,
+      "male": 4431.508752571428,
+      "all": 8662.469916242855
+     },
+     "percent": {
+      "female": [
+       3.11656489690274,
+       3.1111040978838758,
+       4.8052885298426435,
+       6.967720156149701,
+       9.926143848968083,
+       16.09591685802783,
+       23.294176603709854,
+       32.68308500851527
+      ],
+      "male": [
+       3.7992264673036478,
+       3.2062913688348167,
+       4.7606710598863815,
+       6.327054160443761,
+       9.875690220538404,
+       15.109364552455718,
+       23.619393435534665,
+       33.302308735002605
+      ]
+     },
+     "flows_thousands": {
+      "awards": 865.7829973714264,
+      "deaths": 317.5565261714293,
+      "recoveries": 51.510550457142735,
+      "conversions": 423.91054519999926,
+      "stock_start": 8589.664540699408,
+      "stock_end": 8662.469916242128
+     }
+    },
+    {
+     "year": 2019,
+     "stock_thousands": {
+      "female": 4256.825311557143,
+      "male": 4412.962036542857,
+      "all": 8669.7873481
+     },
+     "percent": {
+      "female": [
+       3.097615479491688,
+       3.2717500388750613,
+       5.055611645641882,
+       7.137425432401878,
+       9.569550610734092,
+       15.53960771902162,
+       23.60009821808997,
+       32.7283408557438
+      ],
+      "male": [
+       3.6615035325281493,
+       3.2636405051158954,
+       4.721060916919378,
+       6.090959724425211,
+       10.009539892757475,
+       14.69822750408564,
+       24.259346376310102,
+       33.29572154785815
+      ]
+     },
+     "flows_thousands": {
+      "awards": 836.0217709999979,
+      "deaths": 320.1191449857149,
+      "recoveries": 59.29586185714269,
+      "conversions": 449.2893322999976,
+      "stock_start": 8662.469916242128,
+      "stock_end": 8669.787348099273
+     }
+    },
+    {
+     "year": 2020,
+     "stock_thousands": {
+      "female": 4227.886986428572,
+      "male": 4483.022098657142,
+      "all": 8710.909085085714
+     },
+     "percent": {
+      "female": [
+       2.8633440153106435,
+       3.6818306908991216,
+       4.56286437894296,
+       7.508984112372834,
+       9.840653847548841,
+       14.612723868522393,
+       23.704416248992178,
+       33.22518283741102
+      ],
+      "male": [
+       3.5725881999996116,
+       3.122078670016165,
+       4.926997350939219,
+       6.564459139921512,
+       9.448574978626159,
+       14.317772299009354,
+       23.640255264801276,
+       34.407274096686706
+      ]
+     },
+     "flows_thousands": {
+      "awards": 829.9255218142837,
+      "deaths": 295.96295854285694,
+      "recoveries": 67.74468858571413,
+      "conversions": 425.0961377000026,
+      "stock_start": 8669.787348099273,
+      "stock_end": 8710.909085085177
+     }
+    },
+    {
+     "year": 2021,
+     "stock_thousands": {
+      "female": 4259.224112428572,
+      "male": 4508.630630128572,
+      "all": 8767.854742557145
+     },
+     "percent": {
+      "female": [
+       3.007190561451068,
+       3.5821004879522973,
+       4.814648351466027,
+       7.340335116147122,
+       9.637753815352541,
+       14.72523244245035,
+       22.672906104707707,
+       34.2198331204729
+      ],
+      "male": [
+       3.6502224733212816,
+       3.257939340127564,
+       4.703708285868693,
+       7.073678998425854,
+       9.465090767212185,
+       13.729987361647037,
+       23.122000201872197,
+       34.99737257152519
+      ]
+     },
+     "flows_thousands": {
+      "awards": 831.0375853285693,
+      "deaths": 270.3724358428568,
+      "recoveries": 53.65635781428563,
+      "conversions": 450.0631342000038,
+      "stock_start": 8710.909085085177,
+      "stock_end": 8767.854742556634
+     }
+    },
+    {
+     "year": 2022,
+     "stock_thousands": {
+      "female": 4254.688699985714,
+      "male": 4467.780081114286,
+      "all": 8722.4687811
+     },
+     "percent": {
+      "female": [
+       3.045368231063181,
+       3.418046250291281,
+       5.158726536562421,
+       7.1442050978023515,
+       10.0638028018698,
+       14.381611002517158,
+       22.671596784583528,
+       34.116643295310276
+      ],
+      "male": [
+       3.7410122021564325,
+       3.2809094733242263,
+       4.81359861231301,
+       7.371096372717273,
+       8.949867250410252,
+       13.793017301923829,
+       22.22422332507375,
+       35.82627546208122
+      ]
+     },
+     "flows_thousands": {
+      "awards": 816.7533014857119,
+      "deaths": 315.2105926428572,
+      "recoveries": 54.78503109999988,
+      "conversions": 492.1436392000033,
+      "stock_start": 8767.854742556634,
+      "stock_end": 8722.468781099658
+     }
+    },
+    {
+     "year": 2023,
+     "stock_thousands": {
+      "female": 4461.815831414285,
+      "male": 4670.235863785714,
+      "all": 9132.0516952
+     },
+     "percent": {
+      "female": [
+       2.7771695915275565,
+       3.2711295919566648,
+       4.878781788384256,
+       7.25491380708546,
+       9.204084642145078,
+       13.284617839372304,
+       20.993037897377718,
+       38.336264842150946
+      ],
+      "male": [
+       3.3326434582649886,
+       3.302218937992664,
+       4.373261471151866,
+       7.043721604102128,
+       8.625700353246305,
+       13.19505374404095,
+       20.011775224183463,
+       40.115625207017644
+      ]
+     },
+     "flows_thousands": {
+      "awards": 790.484998299998,
+      "deaths": 321.96899572857177,
+      "recoveries": 58.93308847142844,
+      "conversions": 0.0,
+      "stock_start": 8722.468781099658,
+      "stock_end": 9132.051695199812
+     }
+    }
+   ],
+   "comparison": [
+    {
+     "year": 2008,
+     "male_stock_model_thousands": 3924.5239999999994,
+     "male_stock_asr_thousands": 3925.0,
+     "male_stock_ratio": 0.9998787261146496,
+     "male_distribution_gap_pp": [
+      -0.0438586692296945,
+      -0.006950346080187408,
+      -0.021217248257366705,
+      -0.032523587573931145,
+      0.040922771780735445,
+      0.003016824460747358,
+      -0.0024896777290734917,
+      -0.03690006737122431
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.023484899060370046,
+     "female_stock_model_thousands": 3502.1669999999995,
+     "female_stock_asr_thousands": 3502.0,
+     "female_stock_ratio": 1.0000476870359793,
+     "female_distribution_gap_pp": [
+      0.03137080556124294,
+      0.03070924373395112,
+      0.010883233152505056,
+      0.043296222024823194,
+      -0.022258875718947024,
+      0.013323408049931373,
+      0.03571391655508904,
+      -0.043037953358595615
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.02882420726938567
+    },
+    {
+     "year": 2009,
+     "male_stock_model_thousands": 4002.801572314285,
+     "male_stock_asr_thousands": 4100.0,
+     "male_stock_ratio": 0.9762930664181183,
+     "male_distribution_gap_pp": [
+      0.14274887149200488,
+      -0.043589832142557405,
+      0.08027295740695006,
+      0.0816960700487046,
+      0.31956888060932265,
+      -0.017189761361549927,
+      0.03252779114735205,
+      -0.4960349772002459
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.15170364267608594,
+     "female_stock_model_thousands": 3614.3871080857143,
+     "female_stock_asr_thousands": 3688.0,
+     "female_stock_ratio": 0.9800398883095754,
+     "female_distribution_gap_pp": [
+      0.33284278677768064,
+      0.06128420832761483,
+      0.17769224456271449,
+      0.5622327701359957,
+      -0.28119488651752533,
+      0.07848189427421204,
+      -0.42755577133081246,
+      -0.40378324622988515
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.2906334760195551,
+     "awards_model_thousands": 836.6185154714256,
+     "awards_asr_thousands": 970.696,
+     "terminations_model_thousands": 646.1208350714242,
+     "terminations_asr_thousands": 630.074
+    },
+    {
+     "year": 2010,
+     "male_stock_model_thousands": 4047.812508885713,
+     "male_stock_asr_thousands": 4310.0,
+     "male_stock_ratio": 0.9391676354723233,
+     "male_distribution_gap_pp": [
+      0.3981229954421335,
+      -0.19080509991902783,
+      0.22613092061857643,
+      0.1011791613952564,
+      0.3107406685431755,
+      0.020604112985481038,
+      0.21373058700879355,
+      -1.079703346074396
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.31762711149835504,
+     "female_stock_model_thousands": 3695.5485109571423,
+     "female_stock_asr_thousands": 3894.0,
+     "female_stock_ratio": 0.9490365975750237,
+     "female_distribution_gap_pp": [
+      0.26963623242159285,
+      -0.0049200296778932895,
+      0.15889607820685825,
+      0.6988904347953104,
+      -0.07434092231729394,
+      0.29759444956603076,
+      -0.5182598952944737,
+      -0.7274963477001357
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.3437542987474486,
+     "awards_model_thousands": 803.403574185713,
+     "awards_asr_thousands": 1026.988,
+     "terminations_model_thousands": 677.2312347428516,
+     "terminations_asr_thousands": 640.678
+    },
+    {
+     "year": 2011,
+     "male_stock_model_thousands": 4094.146159957142,
+     "male_stock_asr_thousands": 4494.0,
+     "male_stock_ratio": 0.9110249577118696,
+     "male_distribution_gap_pp": [
+      0.35735169646658926,
+      -0.08924274209444016,
+      0.4372135913700035,
+      0.20752900876239977,
+      0.23995925648396899,
+      0.2760687197227405,
+      0.2936490403598242,
+      -1.8225285710710857
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.4654428282913815,
+     "female_stock_model_thousands": 3839.3002948571425,
+     "female_stock_asr_thousands": 4082.0,
+     "female_stock_ratio": 0.9405439232869041,
+     "female_distribution_gap_pp": [
+      0.4219852300241671,
+      -0.039592459647821876,
+      0.2591999710293642,
+      0.7566274831320055,
+      0.16065803995527084,
+      -0.1644673613619787,
+      0.07889676868019535,
+      -1.5733076718111931
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.4318418732052496,
+     "awards_model_thousands": 865.9887847571405,
+     "awards_asr_thousands": 998.979,
+     "terminations_model_thousands": 675.9033497857109,
+     "terminations_asr_thousands": 653.877
+    },
+    {
+     "year": 2012,
+     "male_stock_model_thousands": 4151.150516757143,
+     "male_stock_asr_thousands": 4606.0,
+     "male_stock_ratio": 0.9012484838812729,
+     "male_distribution_gap_pp": [
+      0.5573668912881877,
+      0.10750347392814286,
+      0.23108707631684489,
+      0.06891509792788497,
+      0.316869972647039,
+      0.11303711663414617,
+      0.12663611709282208,
+      -1.6214157458350726
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.39285393645876754,
+     "female_stock_model_thousands": 3912.8245056428573,
+     "female_stock_asr_thousands": 4221.0,
+     "female_stock_ratio": 0.9269899326327546,
+     "female_distribution_gap_pp": [
+      0.8495253408573982,
+      -0.27415916498137705,
+      0.1480569527406157,
+      0.5847457290617619,
+      1.109804012558584,
+      -0.6299398644624503,
+      0.14219835510614587,
+      -1.8302313608806813
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.6960825975811268,
+     "awards_model_thousands": 822.8743221999985,
+     "awards_asr_thousands": 960.206,
+     "terminations_model_thousands": 692.3457546142835,
+     "terminations_asr_thousands": 728.32
+    },
+    {
+     "year": 2013,
+     "male_stock_model_thousands": 4201.237862528571,
+     "male_stock_asr_thousands": 4642.0,
+     "male_stock_ratio": 0.9050490871453191,
+     "male_distribution_gap_pp": [
+      0.7513799869410249,
+      -0.08108730807375952,
+      0.15683544146622452,
+      0.3945569937477673,
+      0.5213213852382026,
+      0.3526597536251579,
+      -0.3472219768095499,
+      -1.7484442761350714
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.5441883902545948,
+     "female_stock_model_thousands": 3981.0975184428576,
+     "female_stock_asr_thousands": 4299.0,
+     "female_stock_ratio": 0.926051993124647,
+     "female_distribution_gap_pp": [
+      0.7812246906768765,
+      -0.10198723818758237,
+      0.11016272006464867,
+      0.34277548110531786,
+      1.0276711217718848,
+      0.058967075789219336,
+      0.03508386830841914,
+      -2.153897719528768
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.5764712394290896,
+     "awards_model_thousands": 833.8258962142849,
+     "awards_asr_thousands": 868.965,
+     "terminations_model_thousands": 715.4655376428534,
+     "terminations_asr_thousands": 769.171
+    },
+    {
+     "year": 2014,
+     "male_stock_model_thousands": 4260.721243757142,
+     "male_stock_asr_thousands": 4628.0,
+     "male_stock_ratio": 0.9206398538801084,
+     "male_distribution_gap_pp": [
+      0.9767802792800229,
+      -0.3000535405506195,
+      0.07851273621408517,
+      0.8353907487305134,
+      0.40308667545345855,
+      1.1463391508044047,
+      -0.9716380555552568,
+      -2.2684179943766267
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.8725273976206235,
+     "female_stock_model_thousands": 4048.1694173285714,
+     "female_stock_asr_thousands": 4327.0,
+     "female_stock_ratio": 0.9355602998217174,
+     "female_distribution_gap_pp": [
+      1.070285409911961,
+      -0.08912206007484036,
+      0.22971254478014735,
+      0.18928347598793405,
+      1.3797643150356365,
+      0.14077047794543063,
+      -0.46028639793960124,
+      -2.4604077656466714
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.7524540559152778,
+     "awards_model_thousands": 859.9152090571412,
+     "awards_asr_thousands": 778.796,
+     "terminations_model_thousands": 733.3599289428533,
+     "terminations_asr_thousands": 779.229
+    },
+    {
+     "year": 2015,
+     "male_stock_model_thousands": 4290.6824730571425,
+     "male_stock_asr_thousands": 4581.0,
+     "male_stock_ratio": 0.9366257308572675,
+     "male_distribution_gap_pp": [
+      1.4767000163249286,
+      0.09707072145573692,
+      0.05947712813645456,
+      0.888945350373084,
+      0.5150545070240398,
+      0.6353053612119677,
+      -0.6327235957546762,
+      -3.039829488771545
+     ],
+     "male_distribution_mean_abs_gap_pp": 0.9181382711315541,
+     "female_stock_model_thousands": 4100.510068042857,
+     "female_stock_asr_thousands": 4328.0,
+     "female_stock_ratio": 0.9474376312483496,
+     "female_distribution_gap_pp": [
+      1.3902684205520488,
+      0.10847571842328341,
+      0.24067567542142587,
+      0.3902635731561448,
+      0.9821248355812155,
+      0.7819412920058859,
+      -0.8292173113666266,
+      -3.0645322037733713
+     ],
+     "female_distribution_mean_abs_gap_pp": 0.9734373787850003,
+     "awards_model_thousands": 817.0968164714272,
+     "awards_asr_thousands": 741.478,
+     "terminations_model_thousands": 734.7949364571441,
+     "terminations_asr_thousands": 802.501
+    },
+    {
+     "year": 2016,
+     "male_stock_model_thousands": 4334.672062828571,
+     "male_stock_asr_thousands": 4511.0,
+     "male_stock_ratio": 0.9609115634734141,
+     "male_distribution_gap_pp": [
+      1.51642755528496,
+      0.19703651559740143,
+      0.4451707417082522,
+      1.3751476303618198,
+      0.1585408266222359,
+      1.198248820146361,
+      -1.2724758319319562,
+      -3.518096257789068
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.2101430224302567,
+     "female_stock_model_thousands": 4137.3017923285715,
+     "female_stock_asr_thousands": 4298.0,
+     "female_stock_ratio": 0.9626109335338696,
+     "female_distribution_gap_pp": [
+      1.5300313898407572,
+      0.35183967634875213,
+      0.2963946013226151,
+      0.7353248979736007,
+      1.2080482873355542,
+      0.8593895878150466,
+      -1.4597409600899844,
+      -3.521287480546352
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.2452571101590828,
+     "awards_model_thousands": 845.824370485713,
+     "awards_asr_thousands": 706.448,
+     "terminations_model_thousands": 765.0430564285735,
+     "terminations_asr_thousands": 820.372
+    },
+    {
+     "year": 2017,
+     "male_stock_model_thousands": 4393.386342542857,
+     "male_stock_asr_thousands": 4432.0,
+     "male_stock_ratio": 0.991287532162197,
+     "male_distribution_gap_pp": [
+      1.8216174080865382,
+      0.3045976086467852,
+      0.46064313510516186,
+      0.7995032700613098,
+      0.7897421785493073,
+      1.5079399539080374,
+      -1.6538215493792165,
+      -4.030222004977929
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.4210108885892856,
+     "female_stock_model_thousands": 4196.278198157142,
+     "female_stock_asr_thousands": 4263.0,
+     "female_stock_ratio": 0.9843486272946614,
+     "female_distribution_gap_pp": [
+      1.8991972400876431,
+      0.4413038871290009,
+      0.3316783426608385,
+      0.9890858268320191,
+      1.1384350993709393,
+      1.4328886323209744,
+      -1.9365465897971674,
+      -4.196042438604248
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.5456472571003539,
+     "awards_model_thousands": 858.285133857142,
+     "awards_asr_thousands": 715.921,
+     "terminations_model_thousands": 740.5944483142855,
+     "terminations_asr_thousands": 859.02
+    },
+    {
+     "year": 2018,
+     "male_stock_model_thousands": 4431.508752571428,
+     "male_stock_asr_thousands": 4330.0,
+     "male_stock_ratio": 1.0234431299241173,
+     "male_distribution_gap_pp": [
+      1.9992264673036477,
+      0.40629136883481687,
+      0.2606710598863815,
+      0.6270541604437607,
+      1.2756902205384044,
+      1.0093645524557182,
+      -0.6806065644653359,
+      -4.997691264997393
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.4070744573656824,
+     "female_stock_model_thousands": 4230.961163671428,
+     "female_stock_asr_thousands": 4207.0,
+     "female_stock_ratio": 1.0056955463920676,
+     "female_distribution_gap_pp": [
+      1.81656489690274,
+      0.7111040978838759,
+      0.5052885298426437,
+      0.8677201561497014,
+      0.6261438489680824,
+      1.3959168580278316,
+      -1.5058233962901468,
+      -4.616914991484727
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.5056845969437185,
+     "awards_model_thousands": 865.7829973714264,
+     "awards_asr_thousands": 686.723,
+     "terminations_model_thousands": 792.9776218285713,
+     "terminations_asr_thousands": 876.857
+    },
+    {
+     "year": 2019,
+     "male_stock_model_thousands": 4412.962036542857,
+     "male_stock_asr_thousands": 4231.0,
+     "male_stock_ratio": 1.043006862808522,
+     "male_distribution_gap_pp": [
+      1.8615035325281493,
+      0.6636405051158953,
+      0.3210609169193779,
+      0.29095972442521134,
+      1.7095398927574745,
+      1.0982275040856404,
+      0.25934637631010204,
+      -6.20427845214185
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.5510696130354624,
+     "female_stock_model_thousands": 4256.825311557143,
+     "female_stock_asr_thousands": 4147.0,
+     "female_stock_ratio": 1.0264830748871818,
+     "female_distribution_gap_pp": [
+      1.7976154794916879,
+      1.0717500388750612,
+      0.9556116456418824,
+      1.1374254324018782,
+      0.5695506107340922,
+      1.33960771902162,
+      -1.099901781910031,
+      -5.671659144256196
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.7053902315415561,
+     "awards_model_thousands": 836.0217709999979,
+     "awards_asr_thousands": 679.449,
+     "terminations_model_thousands": 828.7043391428552,
+     "terminations_asr_thousands": 870.827
+    },
+    {
+     "year": 2020,
+     "male_stock_model_thousands": 4483.022098657142,
+     "male_stock_asr_thousands": 4101.0,
+     "male_stock_ratio": 1.093153401281917,
+     "male_distribution_gap_pp": [
+      1.7725881999996116,
+      0.5220786700161648,
+      0.6269973509392193,
+      0.6644591399215116,
+      1.4485749786261586,
+      1.0177722990093532,
+      0.14025526480127581,
+      -6.092725903313294
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.5356814758283237,
+     "female_stock_model_thousands": 4227.886986428572,
+     "female_stock_asr_thousands": 4050.0,
+     "female_stock_ratio": 1.0439227126984127,
+     "female_distribution_gap_pp": [
+      1.5633440153106435,
+      1.5818306908991215,
+      0.66286437894296,
+      1.408984112372834,
+      1.1406538475488421,
+      0.6127238685223926,
+      -0.5955837510078226,
+      -6.274817162588981
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.7301002283991997,
+     "awards_model_thousands": 829.9255218142837,
+     "awards_asr_thousands": 619.636,
+     "terminations_model_thousands": 788.8037848285737,
+     "terminations_asr_thousands": 892.811
+    },
+    {
+     "year": 2021,
+     "male_stock_model_thousands": 4508.630630128572,
+     "male_stock_asr_thousands": 3951.0,
+     "male_stock_ratio": 1.1411365806450449,
+     "male_distribution_gap_pp": [
+      1.9502224733212816,
+      0.8579393401275639,
+      0.6037082858686933,
+      1.0736789984258541,
+      1.7650907672121852,
+      0.7299873616470371,
+      0.4220002018721978,
+      -7.302627428474807
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.8381568571187026,
+     "female_stock_model_thousands": 4259.224112428572,
+     "female_stock_asr_thousands": 3926.0,
+     "female_stock_ratio": 1.0848762385197586,
+     "female_distribution_gap_pp": [
+      1.807190561451068,
+      1.5821004879522973,
+      1.1146483514660268,
+      1.3403351161471218,
+      1.3377538153525403,
+      0.9252324424503495,
+      -0.8270938952922933,
+      -7.1801668795271
+     ],
+     "female_distribution_mean_abs_gap_pp": 2.0143151937048493,
+     "awards_model_thousands": 831.0375853285693,
+     "awards_asr_thousands": 540.353,
+     "terminations_model_thousands": 774.0919278571462,
+     "terminations_asr_thousands": 831.22
+    },
+    {
+     "year": 2022,
+     "male_stock_model_thousands": 4467.780081114286,
+     "male_stock_asr_thousands": 3808.0,
+     "male_stock_ratio": 1.1732615759228693,
+     "male_distribution_gap_pp": [
+      2.1410122021564324,
+      0.9809094733242265,
+      0.91359861231301,
+      1.4710963727172723,
+      1.4498672504102519,
+      1.1930173019238293,
+      0.32422332507375273,
+      -8.273724537918781
+     ],
+     "male_distribution_mean_abs_gap_pp": 2.0934311344796948,
+     "female_stock_model_thousands": 4254.688699985714,
+     "female_stock_asr_thousands": 3796.0,
+     "female_stock_ratio": 1.1208347470984494,
+     "female_distribution_gap_pp": [
+      1.9453682310631808,
+      1.518046250291281,
+      1.6587265365624209,
+      1.2442050978023511,
+      1.9638028018698002,
+      0.8816110025171575,
+      -0.028403215416471284,
+      -9.183356704689722
+     ],
+     "female_distribution_mean_abs_gap_pp": 2.302939980026548,
+     "awards_model_thousands": 816.7533014857119,
+     "awards_asr_thousands": 509.272,
+     "terminations_model_thousands": 862.1392629428603,
+     "terminations_asr_thousands": 806.894
+    },
+    {
+     "year": 2023,
+     "male_stock_model_thousands": 4670.235863785714,
+     "male_stock_asr_thousands": 3686.0,
+     "male_stock_ratio": 1.267020039008604,
+     "male_distribution_gap_pp": [
+      1.7326434582649886,
+      1.002218937992664,
+      0.5732614711518664,
+      1.2437216041021282,
+      1.1257003532463052,
+      0.9950537440409501,
+      -1.0882247758165384,
+      -5.584374792982359
+     ],
+     "male_distribution_mean_abs_gap_pp": 1.668149892199725,
+     "female_stock_model_thousands": 4461.815831414285,
+     "female_stock_asr_thousands": 3680.0,
+     "female_stock_ratio": 1.2124499541886644,
+     "female_distribution_gap_pp": [
+      1.6771695915275564,
+      1.4711295919566647,
+      1.5787817883842559,
+      1.5549138070854598,
+      1.2040846421450784,
+      0.08461783937230472,
+      -0.8069621026222826,
+      -6.763735157849055
+     ],
+     "female_distribution_mean_abs_gap_pp": 1.8926743151178322,
+     "awards_model_thousands": 790.484998299998,
+     "awards_asr_thousands": 523.834,
+     "terminations_model_thousands": 380.9020842000002,
+     "terminations_asr_thousands": 788.327
+    }
+   ]
+  }
+ }
+}
