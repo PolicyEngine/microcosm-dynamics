@@ -173,6 +173,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # This explicit opt-in successor is outside the reviewed projection
     # call graph. Keep the historical steps.py implementation in the seal.
     Path("src/populace_dynamics/engine/claiming.py"),
+    # Experimental entrants are outside the registered projection call graph.
+    Path("src/populace_dynamics/engine/entrant_schedule.py"),
+    Path("src/populace_dynamics/engine/entrant_domains.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
