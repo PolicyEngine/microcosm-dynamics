@@ -43,6 +43,11 @@ PIA_CANDIDATE_ELIGIBILITY_YEAR = 2026
 # The 415(b) candidate counts computation base years after its 1950
 # ``elapsed_years_baseline_year`` parameter.
 FIRST_COMPUTATION_BASE_YEAR = 1951
+# 42 USC 415(a)(3)(A): the AIME-based paragraph (1) formula applies only to
+# an individual not eligible for old-age benefits before January 1979, and
+# 415(a)(3)(B)(i) makes old-age eligibility begin in the month of attaining
+# 62.  The candidates' rule versions are likewise effective from 1979.
+FIRST_AIME_ELIGIBILITY_YEAR = 1979
 REQUEST_SCHEMA = "axiom-rules-engine/lifetime-request/v2"
 RESPONSE_SCHEMA = "axiom-rules-engine/lifetime-response/v2"
 ARTIFACT_AIME_PIA = "aime_pia"
@@ -424,14 +429,38 @@ class OrdinaryRetirementDeterminations:
         reasons = []
         if self.year_attained_age_62 != self.year_attained_age_21 + 41:
             reasons.append("ages 21 and 62 must be attained 41 years apart")
+        if self.year_attained_age_21 - self.birth_year not in (20, 21):
+            reasons.append(
+                f"age 21 attained in {self.year_attained_age_21} does not "
+                f"fit birth year {self.birth_year}: an age is attained on "
+                "the day before the birthday, so it must be the birth year "
+                "plus 21 (plus 20 only for a January 1 birth)"
+            )
+        if self.year_attained_age_62 < FIRST_AIME_ELIGIBILITY_YEAR:
+            reasons.append(
+                f"attaining 62 in {self.year_attained_age_62} makes this "
+                "person eligible for old-age benefits before January 1979; "
+                "42 USC 415(a)(3)(A) limits the AIME-based formula to later "
+                "eligibility"
+            )
         if self.first_old_age_entitlement_year < self.year_attained_age_62:
             reasons.append(
                 "ordinary old-age entitlement year "
                 f"{self.first_old_age_entitlement_year} precedes the year "
                 f"of attaining 62 ({self.year_attained_age_62})"
             )
-        if self.indexing_year >= self.first_old_age_entitlement_year:
-            reasons.append("indexing year must precede entitlement")
+        if self.indexing_year != self.year_attained_age_62 - 2:
+            # 415(b)(3)(A)(ii)(I): the second year before the earliest of
+            # death, old-age eligibility or disability eligibility.  The
+            # scoped assumptions exclude disability and death before
+            # entitlement, so old-age eligibility (attaining 62) governs.
+            reasons.append(
+                f"indexing year {self.indexing_year} is not the second "
+                "year before old-age eligibility in "
+                f"{self.year_attained_age_62}; with no disability and no "
+                "death before entitlement, 42 USC 415(b)(3)(A)(ii)(I) fixes "
+                f"it at {self.year_attained_age_62 - 2}"
+            )
         if (
             self.death_or_later_sentinel_year
             < self.first_old_age_entitlement_year
@@ -574,6 +603,14 @@ def prepare_request(
             f"years {year_ranges(outside)} are not computation base years "
             f"before the {entitlement} entitlement year"
         )
+    # The engine would rank such rows in its top-N selection.
+    before_birth = [y for y in years if y < determinations.birth_year]
+    if before_birth:
+        reasons.append(
+            f"years {year_ranges(before_birth)} precede the "
+            f"{determinations.birth_year} birth year"
+        )
+        gaps["years_before_birth"] = tuple(before_birth)
     window = range(_window_start(determinations), entitlement)
     supplied = set(years)
     missing = [y for y in window if y not in supplied]
@@ -680,6 +717,38 @@ def prepare_request(
                 "top-N selection",
             }
         )
+    request, outputs, artifact_role = _build_request(
+        person_id, rows, determinations, wage_index
+    )
+    return PreparedRequest(
+        person_id,
+        request,
+        _wire(request),
+        artifact_role,
+        outputs,
+        rows,
+        determinations,
+        tuple(recorded),
+        wage_index,
+        tuple(notes),
+    )
+
+
+def _wire(request: Mapping[str, object]) -> bytes:
+    return (
+        json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode()
+
+
+def _build_request(
+    person_id: str,
+    rows: tuple[EarningsRow, ...],
+    determinations: OrdinaryRetirementDeterminations,
+    wage_index: AnnualSeries,
+) -> tuple[dict[str, object], tuple[str, ...], str]:
+    """The Case A wire request for already validated rows (no refusals)."""
+    entitlement = determinations.first_old_age_entitlement_year
+    index_year = determinations.indexing_year
     pia = determinations.year_attained_age_62 == PIA_CANDIDATE_ELIGIBILITY_YEAR
     outputs = (AIME_OUTPUT, PIA_OUTPUT) if pia else (AIME_OUTPUT,)
     batches = []
@@ -740,21 +809,49 @@ def prepare_request(
         "outputs": list(outputs),
         "output_period": calculation,
     }
-    wire = (
-        json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n"
-    ).encode()
-    return PreparedRequest(
-        person_id,
+    return (
         request,
-        wire,
-        ARTIFACT_AIME_PIA if pia else ARTIFACT_AIME_ONLY,
         outputs,
-        rows,
-        determinations,
-        tuple(recorded),
-        wage_index,
-        tuple(notes),
+        ARTIFACT_AIME_PIA if pia else ARTIFACT_AIME_ONLY,
     )
+
+
+def _require_consistent(prepared: PreparedRequest) -> dict[str, object]:
+    """Rebuild the wire from the recorded inputs; refuse any divergence.
+
+    A result documents ``prepared.rows``, determinations and wage index next
+    to ``request_sha256``.  Rebuilding the request from those records makes
+    the digest bind them, so a hand-built or ``dataclasses.replace``-d
+    PreparedRequest cannot report rows other than the ones sent.
+    """
+    if (
+        type(prepared.determinations) is not OrdinaryRetirementDeterminations
+        or type(prepared.wage_index) is not AnnualSeries
+        or any(type(row) is not EarningsRow for row in prepared.rows)
+        or [row.year for row in prepared.rows]
+        != sorted({row.year for row in prepared.rows})
+    ):
+        raise ValueError(
+            f"{prepared.person_id}: prepared request records are malformed"
+        )
+    request, outputs, artifact_role = _build_request(
+        prepared.person_id,
+        prepared.rows,
+        prepared.determinations,
+        prepared.wage_index,
+    )
+    wire = _wire(request)
+    if (
+        prepared.wire != wire
+        or _wire(prepared.request) != wire
+        or tuple(prepared.outputs) != outputs
+        or prepared.artifact_role != artifact_role
+    ):
+        raise ValueError(
+            f"{prepared.person_id}: prepared request does not match its "
+            "recorded rows, determinations and wage index"
+        )
+    return request
 
 
 @dataclass(frozen=True)
@@ -791,6 +888,10 @@ class AxiomEngineBinding:
     candidates_accepted: bool = False
     engine_manifest_role: str | None = None
     timeout_seconds: float = 60.0
+    # Supporting roles each compiled artifact was built from, per artifact
+    # role.  Empty means unrecorded: results then list every bound
+    # candidate file rather than attributing modules to one artifact.
+    artifact_sources: tuple[tuple[str, tuple[str, ...]], ...] = ()
 
     def __post_init__(self) -> None:
         roles = [
@@ -806,6 +907,24 @@ class AxiomEngineBinding:
         if type(self.candidates_accepted) is not bool:
             raise TypeError("candidates_accepted must be an explicit bool")
         _text(self.engine_source_commit, "engine source commit")
+        sources = tuple(
+            (role, tuple(names)) for role, names in self.artifact_sources
+        )
+        if sources:
+            supporting = {f.role for f in self.supporting}
+            named = [role for role, _ in sources]
+            if sorted(named) != sorted(a.role for a in self.artifacts):
+                raise ValueError("artifact sources must name each artifact")
+            if any(
+                not names
+                or len(set(names)) != len(names)
+                or not set(names) <= supporting
+                for _, names in sources
+            ):
+                raise ValueError(
+                    "artifact sources must be distinct bound supporting roles"
+                )
+        object.__setattr__(self, "artifact_sources", sources)
 
     @property
     def files(self) -> tuple[BoundFile, ...]:
@@ -816,6 +935,19 @@ class AxiomEngineBinding:
             if artifact.role == role:
                 return artifact
         raise KeyError(role)
+
+    def sources_for(self, role: str) -> tuple[BoundFile, ...]:
+        """Candidate files an artifact was compiled from, when recorded."""
+        by_role = {f.role: f for f in self.supporting}
+        for artifact_role, names in self.artifact_sources:
+            if artifact_role == role:
+                return tuple(by_role[name] for name in names)
+        self.artifact(role)
+        return tuple(
+            f
+            for f in self.supporting
+            if "module:" in f.role or "source:" in f.role
+        )
 
     def missing_files(self) -> tuple[Path, ...]:
         return tuple(f.path for f in self.files if not f.path.is_file())
@@ -860,6 +992,9 @@ class AxiomEngineBinding:
             "engine_source_commit": self.engine_source_commit,
             "artifacts": [a.document() for a in self.artifacts],
             "supporting": [f.document() for f in self.supporting],
+            "artifact_sources": {
+                role: list(names) for role, names in self.artifact_sources
+            },
             "candidates_accepted": self.candidates_accepted,
             "candidate_status": self.candidate_status,
         }
@@ -929,6 +1064,23 @@ def reviewed_case_a_binding(
         ),
         engine_source_commit=REVIEWED_ENGINE_SOURCE_COMMIT,
         engine_manifest_role="engine_binding_manifest",
+        # The AIME/PIA program holds the 415(a), 415(b) and 2026 bend-point
+        # modules (its compile receipt overlays 415(a) and 415(b) onto the
+        # rule-spec root); the AIME-only program holds 415(b) alone.
+        artifact_sources=(
+            (
+                ARTIFACT_AIME_PIA,
+                (
+                    "module:us/statutes/42/415/b.yaml",
+                    "module:us/statutes/42/415/a.yaml",
+                    "module:us/policies/ssa/pia-bend-points/2026.yaml",
+                ),
+            ),
+            (
+                ARTIFACT_AIME_ONLY,
+                ("aime_only_source:us/statutes/42/415/b.yaml",),
+            ),
+        ),
     )
 
 
@@ -1117,8 +1269,7 @@ class AxiomBenefitResult:
                 "artifact_sha256": artifact.sha256,
                 "module_sha256": {
                     f.role: f.sha256
-                    for f in self.binding.supporting
-                    if "module:" in f.role or "source:" in f.role
+                    for f in self.binding.sources_for(prepared.artifact_role)
                 },
                 "candidates_accepted": self.binding.candidates_accepted,
                 "candidate_status": self.binding.candidate_status,
@@ -1161,6 +1312,7 @@ def execute_request(
         raise TypeError("PreparedRequest required")
     if type(binding) is not AxiomEngineBinding:
         raise TypeError("AxiomEngineBinding required")
+    request = _require_consistent(prepared)
     binding.verify()
     artifact = binding.artifact(prepared.artifact_role)
     argv = (
@@ -1188,7 +1340,7 @@ def execute_request(
         raise AxiomExecutionError(
             f"{prepared.person_id}: engine exited {code}: {message}"
         )
-    parsed = parse_lifetime_response(prepared.request, stdout)
+    parsed = parse_lifetime_response(request, stdout)
     pia = parsed.values.get(PIA_OUTPUT)
     status = (
         "computed_by_2026_cohort_candidate"

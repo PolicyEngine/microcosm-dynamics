@@ -8,6 +8,7 @@ and skip when that engine or its retained evidence is absent.
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import json
 import os
@@ -260,6 +261,71 @@ def test_ordinary_determinations_follow_the_case_a_b_conventions():
         bridge.OrdinaryRetirementDeterminations.from_birth_year(1964, 2025)
     with pytest.raises(TypeError):
         bridge.OrdinaryRetirementDeterminations.from_birth_year(1964.0, 2026)
+
+
+def test_determinations_refuse_inconsistent_calendar_facts():
+    """Regression: the public constructor once accepted any earlier
+    indexing year.  Indexing to 2021 instead of 2013 for a 1953 birth year
+    entitled at 70 raised the real engine's AIME on INVENTED flat earnings
+    from 5,806 to 7,835 without a refusal."""
+    birth, entitlement = 1953, 2023
+    statutory = bridge.OrdinaryRetirementDeterminations.from_birth_year(
+        birth, entitlement
+    )
+    assert statutory.indexing_year == 2013
+    with pytest.raises(bridge.BenefitBridgeRefusal) as caught:
+        bridge.OrdinaryRetirementDeterminations(
+            birth, entitlement, 1974, 2015, 2021, entitlement
+        )
+    (reason,) = caught.value.reasons
+    assert "415(b)(3)(A)(ii)(I)" in reason and "2013" in reason
+    with pytest.raises(bridge.BenefitBridgeRefusal, match="2013"):
+        bridge.OrdinaryRetirementDeterminations(
+            birth, entitlement, 1974, 2015, 2012, entitlement
+        )
+    # Only birth year + 21, or + 20 for a January 1 birth, fits age 21.
+    january_first = bridge.OrdinaryRetirementDeterminations(
+        birth, entitlement, 1973, 2014, 2012, entitlement
+    )
+    assert january_first.year_attained_age_21 == birth + 20
+    with pytest.raises(bridge.BenefitBridgeRefusal, match="does not fit"):
+        bridge.OrdinaryRetirementDeterminations(
+            birth, entitlement, 1976, 2017, 2015, entitlement
+        )
+    # 415(a)(3)(A): no AIME-based formula for eligibility before 1979.
+    with pytest.raises(bridge.BenefitBridgeRefusal, match="January 1979"):
+        bridge.OrdinaryRetirementDeterminations.from_birth_year(1916, 1986)
+    assert (
+        bridge.OrdinaryRetirementDeterminations.from_birth_year(
+            1917, 1987
+        ).year_attained_age_62
+        == bridge.FIRST_AIME_ELIGIBILITY_YEAR
+    )
+
+
+def test_rows_before_the_birth_year_refuse():
+    """Regression: INVENTED rows dated before birth once reached the
+    engine's top-N selection."""
+    determinations = bridge.OrdinaryRetirementDeterminations.from_birth_year(
+        1960, 2022
+    )
+    rows = _history(1955, 2022).rows()
+    with pytest.raises(bridge.BenefitBridgeRefusal) as caught:
+        bridge.prepare_request(
+            "invented-prebirth", rows, determinations, INVENTED_AWI
+        )
+    assert caught.value.gaps == {
+        "years_before_birth": tuple(range(1955, 1960))
+    }
+    assert "1955-1959 precede the 1960 birth year" in str(caught.value)
+    # Rows from the birth year on remain acceptable computation base years.
+    prepared = bridge.prepare_request(
+        "invented-from-birth",
+        [row for row in rows if row.year >= 1960],
+        determinations,
+        INVENTED_AWI,
+    )
+    assert prepared.rows[0].year == 1960
 
 
 def test_too_few_years_refuse_and_list_the_gap():
@@ -528,6 +594,116 @@ def test_malformed_responses_are_rejected(fake_binding, mutate):
         )
 
 
+def test_prepared_records_must_match_the_wire_they_document(fake_binding):
+    """Regression: a PreparedRequest whose rows, wire or outputs were
+    swapped still executed, and its result documented rows other than the
+    ones sent next to the sent request's digest."""
+    rows, determinations = _case_a_like()
+    prepared = bridge.prepare_request(
+        "invented-a", rows, determinations, INVENTED_AWI
+    )
+    other = bridge.prepare_request(
+        "invented-a",
+        _history(1986, 2026, amount="2000").rows(),
+        determinations,
+        INVENTED_AWI,
+    )
+    tampered = [
+        dataclasses.replace(prepared, rows=other.rows),
+        dataclasses.replace(prepared, wire=other.wire),
+        dataclasses.replace(prepared, request=other.request),
+        dataclasses.replace(prepared, outputs=(bridge.AIME_OUTPUT,)),
+        dataclasses.replace(prepared, artifact_role=bridge.ARTIFACT_AIME_ONLY),
+        dataclasses.replace(prepared, wage_index=INVENTED_BASE),
+        dataclasses.replace(
+            prepared,
+            determinations=(
+                bridge.OrdinaryRetirementDeterminations.from_birth_year(
+                    1964, 2027
+                )
+            ),
+        ),
+        dataclasses.replace(prepared, rows=prepared.rows[::-1]),
+        dataclasses.replace(prepared, rows=(*prepared.rows, None)),
+    ]
+    runner = RecordingRunner()
+    for candidate in tampered:
+        with pytest.raises(ValueError, match="invented-a: prepared request"):
+            bridge.execute_request(candidate, fake_binding, runner=runner)
+    assert runner.calls == []
+    result = bridge.execute_request(prepared, fake_binding, runner=runner)
+    assert runner.calls[0][1] == prepared.wire
+    assert result.document()["earnings_rows"][0]["amount"] == "1000"
+
+
+def test_results_attribute_modules_to_the_executed_artifact(fake_binding):
+    """Regression: AIME-only results listed the 415(a) and bend-point
+    modules, which the AIME-only program does not contain."""
+    extra = fake_binding.supporting[0].path.with_name("aime_only_source")
+    extra.write_text("format: invented aime-only source\n")
+    supporting = (
+        *fake_binding.supporting,
+        bridge.BoundFile("aime_only_source:invented.yaml", extra, _sha(extra)),
+    )
+    binding = dataclasses.replace(
+        fake_binding,
+        supporting=supporting,
+        artifact_sources=(
+            (bridge.ARTIFACT_AIME_PIA, ("module:invented.yaml",)),
+            (bridge.ARTIFACT_AIME_ONLY, ("aime_only_source:invented.yaml",)),
+        ),
+    )
+    only = bridge.prepare_request(
+        "invented-b",
+        _history(1981, 2026).rows(),
+        bridge.OrdinaryRetirementDeterminations.from_birth_year(1959, 2026),
+        INVENTED_AWI,
+    )
+    rows, determinations = _case_a_like()
+    both = bridge.prepare_request(
+        "invented-a", rows, determinations, INVENTED_AWI
+    )
+    runner = RecordingRunner()
+    modules = {
+        prepared.artifact_role: bridge.execute_request(
+            prepared, binding, runner=runner
+        ).document()["provenance"]["module_sha256"]
+        for prepared in (only, both)
+    }
+    assert modules == {
+        bridge.ARTIFACT_AIME_ONLY: {
+            "aime_only_source:invented.yaml": _sha(extra)
+        },
+        bridge.ARTIFACT_AIME_PIA: {
+            "module:invented.yaml": fake_binding.supporting[0].sha256
+        },
+    }
+    assert binding.document()["artifact_sources"] == {
+        bridge.ARTIFACT_AIME_PIA: ["module:invented.yaml"],
+        bridge.ARTIFACT_AIME_ONLY: ["aime_only_source:invented.yaml"],
+    }
+    # Unrecorded sources keep listing every bound candidate file.
+    unrecorded = dataclasses.replace(binding, artifact_sources=())
+    assert set(
+        bridge.execute_request(only, unrecorded, runner=runner).document()[
+            "provenance"
+        ]["module_sha256"]
+    ) == {"module:invented.yaml", "aime_only_source:invented.yaml"}
+    for bad in (
+        ((bridge.ARTIFACT_AIME_PIA, ("module:invented.yaml",)),),
+        (
+            (bridge.ARTIFACT_AIME_PIA, ("module:invented.yaml",)),
+            (bridge.ARTIFACT_AIME_ONLY, ("module:absent.yaml",)),
+        ),
+        (
+            (bridge.ARTIFACT_AIME_PIA, ()),
+            (bridge.ARTIFACT_AIME_ONLY, ("module:invented.yaml",)),
+        ),
+    ):
+        with pytest.raises(ValueError, match="artifact sources"):
+            dataclasses.replace(binding, artifact_sources=bad)
+
+
 def test_engine_failures_carry_the_engine_message(fake_binding):
     rows, determinations = _case_a_like()
     prepared = bridge.prepare_request(
@@ -623,6 +799,16 @@ def test_reviewed_binding_pins_cannot_be_overridden(tmp_path, monkeypatch):
         bridge.REVIEWED_ENGINE_SOURCE_COMMIT
     )
     assert binding.candidates_accepted is False
+    assert dict(binding.artifact_sources) == {
+        bridge.ARTIFACT_AIME_PIA: (
+            "module:us/statutes/42/415/b.yaml",
+            "module:us/statutes/42/415/a.yaml",
+            "module:us/policies/ssa/pia-bend-points/2026.yaml",
+        ),
+        bridge.ARTIFACT_AIME_ONLY: (
+            "aime_only_source:us/statutes/42/415/b.yaml",
+        ),
+    }
     assert len(binding.missing_files()) == len(binding.files)
     with pytest.raises(bridge.BindingMismatch, match="absent"):
         binding.verify()
@@ -920,6 +1106,14 @@ def test_actual_engine_reproduces_published_case_a_through_the_bridge():
     )
     assert provenance["candidates_accepted"] is False
     assert provenance["engine_version"] == "0.2.2"
+    assert provenance["module_sha256"] == {
+        role: bridge.REVIEWED_PINS[role]
+        for role in (
+            "module:us/statutes/42/415/b.yaml",
+            "module:us/statutes/42/415/a.yaml",
+            "module:us/policies/ssa/pia-bend-points/2026.yaml",
+        )
+    }
 
 
 def test_actual_engine_reproduces_published_case_b_aime_only_path():
@@ -950,3 +1144,9 @@ def test_actual_engine_reproduces_published_case_b_aime_only_path():
     assert result.aime == Decimal("11463")
     assert result.ordinary_pia_before_cola is None
     assert result.stdout_sha256 == RETAINED_CASE_B_STDOUT_SHA256
+    provenance = result.document()["provenance"]
+    assert provenance["artifact_sha256"] == (
+        bridge.REVIEWED_PINS[bridge.ARTIFACT_AIME_ONLY]
+    )
+    role = "aime_only_source:us/statutes/42/415/b.yaml"
+    assert provenance["module_sha256"] == {role: bridge.REVIEWED_PINS[role]}
