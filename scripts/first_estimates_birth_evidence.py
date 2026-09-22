@@ -176,6 +176,8 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # Experimental entrants are outside the registered projection call graph.
     Path("src/populace_dynamics/engine/entrant_schedule.py"),
     Path("src/populace_dynamics/engine/entrant_domains.py"),
+    # This opt-in accountant is unreachable from the historical projection.
+    # The existing engine loop, steps, and package initializer remain sealed.
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
