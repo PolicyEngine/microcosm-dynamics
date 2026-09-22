@@ -73,8 +73,10 @@ summary fields are null, not zero.
 
 `data_provenance="invented"` results carry an invented-data label.
 `"registered_real"` requires a registration pointer (the issue #42 comment
-that must precede any real-data run) and output labels. The pointer is
-recorded, not verified. The module's tests use invented rows only.
+that must precede any real-data run) and output labels, and refuses the
+invented-data label (for example, labels copied from an invented dry run).
+The pointer is recorded, not verified. The module's tests use invented rows
+only.
 
 ## Pending rulings (plan section 6)
 

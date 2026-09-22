@@ -1104,6 +1104,13 @@ def _validate_provenance(
             raise ColaTabulationError(
                 "real-data tabulation requires the output labels"
             )
+        # Labels copied from an invented dry run would mark a real result
+        # as invented data; the two provenances cannot share that label.
+        if INVENTED_DATA_LABEL in labels:
+            raise ColaTabulationError(
+                "a registered_real result cannot carry the invented-data "
+                "label"
+            )
 
 
 def _json_scalar_mapping(
@@ -1173,9 +1180,15 @@ def _conventions(config: ColaAgeProfileConfig) -> dict[str, Any]:
             "allow_membership_difference": (
                 config.allow_membership_difference
             ),
+            # Record the identity check only when it was applied, so a
+            # result never lists a check that did not run.
             "identity_check_scope": (
-                "every input row, including rows outside the age groups: "
-                "recipient_base must equal recipient_reform"
+                "not applied: allow_membership_difference is true, so rows "
+                "that are recipients in only one scenario are tabulated "
+                "under membership_basis"
+                if config.allow_membership_difference
+                else "every input row, including rows outside the age "
+                "groups: recipient_base must equal recipient_reform"
             ),
             "membership_basis": config.membership_basis,
             "membership_basis_definition": MEMBERSHIP_BASIS_DEFINITIONS[
@@ -1337,10 +1350,10 @@ def tabulate_cola_age_profile(
 
     ``data_provenance`` is ``"invented"`` for development and tests.
     ``"registered_real"`` requires a ``registration_pointer`` (the issue #42
-    comment that must precede any real-data run) and non-empty ``labels``;
-    the pointer is recorded, not verified.  ``upstream_conventions``
-    (JSON scalars, e.g. the first-application or exposure-clock row that
-    produced the benefits) is recorded verbatim.
+    comment that must precede any real-data run) and non-empty ``labels``
+    without the invented-data label; the pointer is recorded, not verified.
+    ``upstream_conventions`` (JSON scalars, e.g. the first-application or
+    exposure-clock row that produced the benefits) is recorded verbatim.
 
     Returns a JSON-serializable mapping.  Raises
     :class:`MembershipDifferenceError` when scenario memberships differ and
@@ -1399,7 +1412,7 @@ def tabulate_cola_age_profile(
         ]
         groups.append(entry)
 
-    output_labels = list(labels)
+    output_labels = [label for label in labels if label != INVENTED_DATA_LABEL]
     if data_provenance == INVENTED:
         output_labels.insert(0, INVENTED_DATA_LABEL)
     return {

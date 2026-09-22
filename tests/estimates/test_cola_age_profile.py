@@ -509,6 +509,25 @@ def test_membership_bases_when_differences_are_allowed(
     assert summary["n_recipient_rows"] == {"base": 2, "reform": 2}
 
 
+def test_membership_identity_check_is_recorded_only_when_applied():
+    # The recorded conventions must not list an identity check that did
+    # not run: with differences allowed the mixed invented rows tabulate,
+    # so the check was not applied.
+    required = _tabulate(
+        [_row(0, 1, birth_year=1975, base=1000.0, reform=900.0)],
+        age_groups=_single_group(),
+    )["conventions"]["membership"]
+    assert required["identical_membership_required"] is True
+    assert required["identity_check_scope"].startswith("every input row")
+    allowed = _tabulate(
+        _mixed_membership_rows(),
+        age_groups=_single_group(),
+        allow_membership_difference=True,
+    )["conventions"]["membership"]
+    assert allowed["identical_membership_required"] is False
+    assert allowed["identity_check_scope"].startswith("not applied")
+
+
 def test_flagged_recipient_rule_keeps_zero_benefits():
     # Z is a flagged beneficiary whose retired-worker benefit is zero in
     # both scenarios (e.g. withheld upstream).
@@ -979,6 +998,42 @@ def test_invented_results_carry_the_invented_label():
             config=_config(age_groups=_single_group()),
             labels="one string",
         )
+
+
+def test_real_result_refuses_the_invented_label():
+    # Labels copied from an invented dry run (which carry the invented-data
+    # label) must not mark a registered_real result as invented, and an
+    # invented result carries that label exactly once.
+    rows = [_row(0, 1, birth_year=1975, base=1000.0, reform=900.0)]
+    config = _config(age_groups=_single_group())
+    dry_run = tabulate_cola_age_profile(
+        rows,
+        data_provenance="invented",
+        config=config,
+        labels=("fixed-path mechanical incidence",),
+    )
+    with pytest.raises(ColaTabulationError, match="invented-data label"):
+        tabulate_cola_age_profile(
+            rows,
+            data_provenance="registered_real",
+            config=config,
+            registration_pointer="#42 comment (invented pointer)",
+            labels=dry_run["labels"],
+        )
+    rerun = tabulate_cola_age_profile(
+        rows,
+        data_provenance="invented",
+        config=config,
+        labels=dry_run["labels"],
+    )
+    assert (
+        rerun["labels"]
+        == dry_run["labels"]
+        == [
+            cap.INVENTED_DATA_LABEL,
+            "fixed-path mechanical incidence",
+        ]
+    )
 
 
 def test_upstream_conventions_are_recorded_verbatim():
