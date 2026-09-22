@@ -486,15 +486,16 @@ def validate_projection_allocator(
     known = {int(person_id) for person_id in initial_person_ids}
     scheduled = metadata.get(SCHEDULED_ENTRIES_KEY, {}) or {}
     if not isinstance(scheduled, Mapping):
-        raise TypeError(f"metadata {SCHEDULED_ENTRIES_KEY!r} must be a mapping")
+        raise TypeError(
+            f"metadata {SCHEDULED_ENTRIES_KEY!r} must be a mapping"
+        )
     for frame in scheduled.values():
         known.update(int(person_id) for person_id in frame["person_id"])
     cursor = int(allocator.next_id)
     reachable = sorted(
         person_id
         for person_id in known
-        if person_id >= cursor
-        and person_id not in allocator.reserved_real_ids
+        if person_id >= cursor and person_id not in allocator.reserved_real_ids
     )
     if reachable:
         raise ValueError(

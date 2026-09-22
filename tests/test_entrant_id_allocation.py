@@ -137,9 +137,7 @@ def test_a_second_allocator_at_the_same_start_is_refused():
         ValueError,
         match=r"next_id 4 can reach initial or scheduled person_id \[4\]",
     ):
-        esm.validate_projection_allocator(
-            _initial()["person_id"], metadata
-        )
+        esm.validate_projection_allocator(_initial()["person_id"], metadata)
     assert projection_allocator.next_id == SYNTHETIC_ID_START
 
 
