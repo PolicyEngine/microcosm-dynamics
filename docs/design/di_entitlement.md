@@ -23,9 +23,9 @@ accounting) and `src/populace_dynamics/engine/di_entitlement_rates.py`
 | Piece | Loop slot | Behavior |
 |---|---|---|
 | `prepare_opening_di_state` | `PeriodModules.initialize` | Requires an explicit boolean `di_entitled` opening stock (from A3); refuses entitled workers already past FRA, award years after the start year, and other inconsistent inputs; adds the DI state columns. |
-| `apply_di_aware_mortality` | `PeriodModules.mortality` | Uses the same person-keyed MORTALITY uniform as `steps.apply_mortality`, so non-DI people die exactly as before. Entitled workers (and, by default, converted former disabled workers) die at disabled-worker rates. Optionally logs every decedent. |
+| `apply_di_aware_mortality` | `PeriodModules.mortality` | Uses the same person-keyed MORTALITY uniform as `steps.apply_mortality`, so non-DI people die exactly as before. Entitled workers (and, by default, converted former disabled workers) die at disabled-worker rates. In the multiplier mode it needs the population model's age bands (see Death below). Optionally logs every decedent. |
 | `apply_di_entitlement` | `PeriodModules.disability` | At most one transition per person-year. Entitled workers convert in the calendar year they attain FRA (no draw) or face a recovery draw. Everyone else below FRA and aged 18 or older at the start of the year faces award incidence. One uniform per exposed or entitled person from a tagged, person-keyed DISABILITY stream. |
-| `di_stock_flow` | after a run | Checks `stock_end = stock_start + awards + entrants − deaths − recoveries − conversions` for every year, counted and weighted, and cross-checks deaths against the mortality log. |
+| `di_stock_flow` | after a run | Checks `stock_end = stock_start + awards + entrants − deaths − recoveries − conversions` for every year, counted and weighted, and cross-checks deaths against the mortality log (a scheduled entitled entrant who dies in its entry year is logged but never enters the stock). |
 
 FRA comes from the statutory birth-year schedule (42 USC 416(l)), injected as
 `SSAParameters.fra_months`; it is not re-typed in this component.
@@ -47,10 +47,22 @@ table ids in its `provenance.md`), extracted by
   recoveries on the ASR 2008 exposure equal ASR Table 50 (59,643).
 - **Death.** Actuarial Study No. 118 Table 12 (ages 16–74) and Table 7C (ages
   75–110). By default this is used as a multiplier on the engine's population
-  mortality, with the NCHS 2000 life table as the base. On the 2008 exposure
-  the published 1996–2000 rates imply 252,925 deaths against ASR's 215,445, a
-  factor of 0.852. That factor is applied only in the explicit `asr_fitted`
-  alternative.
+  mortality, with the NCHS 2000 life table as the base: the disabled-worker
+  probability is `q_AS118 × q_population / q_NCHS2000`. The base is taken at
+  the population model's own age resolution: the survivorship-weighted
+  (`l_x`) mean of the NCHS 2000 probabilities over the population model's age
+  band (its `bands`, or an explicit `population_age_bands`; a model with
+  neither is refused). The multiplier is therefore constant within a band and
+  carries only the engine's level relative to NCHS 2000. For a
+  single-year-of-age model the base is the single-age probability. (Review
+  fix: the base was single-age NCHS 2000 regardless of resolution. With a
+  population model at NCHS 2000 levels averaged over the engine's 10-year
+  PSID mortality bands, male DI mortality then came out about 52 percent
+  above the Actuarial Study value at 55 and about 31 percent below it at 64,
+  within the 55–64 band.)
+  On the 2008 exposure the published 1996–2000 rates imply 252,925 deaths
+  against ASR's 215,445, a factor of 0.852. That factor is applied only in
+  the explicit `asr_fitted` alternative.
 
 ## Choices awaiting the A1 freeze
 
@@ -70,7 +82,8 @@ where it names one, otherwise the builder's proposal.
 Builder conventions, explicit in the code:
 
 - Rates are looked up at the start-of-year age `year − 1 − birth_year`.
-- Minimum award age is 18.
+- Minimum award age is 18, the first fitted incidence age; a lower value is
+  refused because it would have no effect.
 - There are no awards in the calendar year of FRA attainment.
 - When `birth_month` is absent, July is assumed for FRA attainment.
 - Mortality precedes the DI step, so disabled-worker mortality starts the

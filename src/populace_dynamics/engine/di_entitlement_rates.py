@@ -27,10 +27,16 @@ probabilities used by :mod:`populace_dynamics.engine.di_entitlement`:
   Tables 7A-7C by select age and duration.  In the default ``multiplier``
   mode the engine applies ``q_DI_ref * q_population_engine /
   q_population_ref``, where ``q_population_ref`` is the NCHS United States
-  2000 life table; DI mortality therefore inherits whatever population
-  mortality the projection uses, as the 2008 Trustees Report does for its
-  long-range DI death rates.  ``explicit`` mode applies the Actuarial Study
-  probabilities themselves.
+  2000 life table *at the population model's own age resolution*: the
+  stationary-population (``l_x``-weighted) mean of the NCHS 2000
+  probabilities over the population model's age band containing the person
+  (the single-age probability for a single-year-of-age model).  The
+  multiplier is therefore constant within each population age band, so it
+  carries the engine's mortality level (and any improvement) relative to
+  NCHS 2000 without reshaping the Actuarial Study age profile.  The 2008
+  Trustees Report likewise moves long-range DI death rates at the same rate
+  as general-population death rates by age and sex.  ``explicit`` mode
+  applies the Actuarial Study probabilities themselves.
 
 Rates are fit or taken from data years no later than 2008 (the DYNASIM
 information date).  The 2023 DI Annual Statistical Report in
@@ -68,11 +74,13 @@ __all__ = [
     "POST_CONVERSION_MORTALITY",
     "RECOVERY_LEVELS",
     "SEXES",
+    "SINGLE_YEAR_AGE_BANDS",
     "SelectUltimateTable",
     "TERMINATION_BASES",
     "fit_di_entitlement_rates",
     "load_di_entitlement_rates",
     "pending_decisions",
+    "validate_age_bands",
 ]
 
 _ROOT = Path(__file__).resolve().parents[3]
@@ -85,6 +93,11 @@ INPUTS_SCHEMA_VERSION = "di_entitlement_inputs.v1"
 INFORMATION_BOUNDARY_YEAR = 2008
 SEXES = ("female", "male")
 MAX_AGE = 120
+#: Age resolution of a single-year-of-age population mortality model, for
+#: callers of the multiplier death mode whose model has no ``bands``.
+SINGLE_YEAR_AGE_BANDS: tuple[tuple[int, int], ...] = tuple(
+    (age, age) for age in range(MAX_AGE + 1)
+)
 
 #: Award-incidence age bands (inclusive start-of-year ages) and the ASR
 #: Table 36 / Table 20 age group each band is fit on.  The last band covers
@@ -151,7 +164,8 @@ class DIEntitlementSpec:
     #: insured-status column; no such rates are captured, so fitting refuses.
     incidence_basis: str = "per_population_non_entitled"
     #: ``multiplier``: q_DI_ref * q_population_engine / q_population_ref
-    #: (NCHS 2000).  ``explicit``: the Actuarial Study probabilities.
+    #: (NCHS 2000 averaged over the population model's age band).
+    #: ``explicit``: the Actuarial Study probabilities.
     death_mode: str = "multiplier"
     #: Explicit mode only: ``as118_published`` keeps the 1996-2000 level;
     #: ``asr_fitted`` rescales it to the fit year's ASR Table 50 deaths.
@@ -199,8 +213,14 @@ class DIEntitlementSpec:
                 "multiplier takes its level from the engine's population "
                 "mortality"
             )
-        if not 16 <= int(self.min_award_age) <= 64:
-            raise ValueError("min_award_age must lie in [16, 64]")
+        lowest_band_age = INCIDENCE_BANDS[0][0]
+        if not lowest_band_age <= int(self.min_award_age) <= 64:
+            # Below the lowest fitted band the incidence is zero, so a lower
+            # minimum would be accepted but have no effect.
+            raise ValueError(
+                f"min_award_age must lie in [{lowest_band_age}, 64]; the "
+                f"fitted incidence bands start at age {lowest_band_age}"
+            )
         if not 1 <= int(self.assumed_birth_month) <= 12:
             raise ValueError("assumed_birth_month must lie in [1, 12]")
 
@@ -278,6 +298,34 @@ def pending_decisions(
         }
         for name, basis, alternatives in _PENDING
     ]
+
+
+def validate_age_bands(
+    age_bands: Sequence[tuple[int, int]],
+) -> tuple[tuple[int, int], ...]:
+    """Check a population model's inclusive age bands; clip them to MAX_AGE.
+
+    The bands must start at age 0, be contiguous and non-overlapping, and
+    reach ``MAX_AGE`` (the same contract as
+    :class:`populace_dynamics.engine.steps.AgeSexMortalityModel`).
+    """
+    bands = [(int(lower), int(upper)) for lower, upper in age_bands]
+    if not bands or bands[0][0] != 0:
+        raise ValueError("population age bands must start at age 0")
+    previous_upper = -1
+    for lower, upper in bands:
+        if lower != previous_upper + 1 or upper < lower:
+            raise ValueError(
+                "population age bands must be contiguous and non-overlapping"
+            )
+        previous_upper = upper
+    if previous_upper < MAX_AGE:
+        raise ValueError(f"population age bands must reach age {MAX_AGE}")
+    return tuple(
+        (lower, min(upper, MAX_AGE))
+        for lower, upper in bands
+        if lower <= MAX_AGE
+    )
 
 
 @dataclass(frozen=True)
@@ -433,12 +481,45 @@ class DIEntitlementRates:
         return values
 
     def population_reference_probability(
-        self, start_age: np.ndarray, sex_index: np.ndarray
+        self,
+        start_age: np.ndarray,
+        sex_index: np.ndarray,
+        *,
+        age_bands: Sequence[tuple[int, int]],
     ) -> np.ndarray:
-        """NCHS 2000 population death probability (the multiplier base)."""
-        return self.population_reference_death[
+        """NCHS 2000 death probability at a population model's resolution.
+
+        The multiplier base must have the same age resolution as the
+        population mortality it divides; otherwise, for example, a 10-year
+        band probability divided by single-age NCHS probabilities would
+        inflate disabled-worker mortality at the bottom of each band and
+        deflate it at the top.  Each person's base is the mean of the NCHS
+        2000 probabilities over the ages of the band containing the person,
+        weighted by the reference table's own survivorship from the band's
+        first age (the stationary population ``l_x``).  For a single-age
+        band the base is exactly that age's probability.
+        """
+        by_age = self._banded_population_reference(age_bands)
+        return by_age[
             np.asarray(sex_index, dtype=np.int64), self._age_index(start_age)
         ]
+
+    def _banded_population_reference(
+        self, age_bands: Sequence[tuple[int, int]]
+    ) -> np.ndarray:
+        bands = validate_age_bands(age_bands)
+        reference = np.asarray(self.population_reference_death, np.float64)
+        out = np.empty_like(reference)
+        for lower, upper in bands:
+            if lower == upper:
+                out[:, lower] = reference[:, lower]
+                continue
+            q = reference[:, lower : upper + 1]
+            survivorship = np.ones_like(q)
+            survivorship[:, 1:] = np.cumprod(1.0 - q[:, :-1], axis=1)
+            weight = survivorship / survivorship.sum(axis=1, keepdims=True)
+            out[:, lower : upper + 1] = (weight * q).sum(axis=1)[:, None]
+        return out
 
     def summary(self) -> dict[str, Any]:
         """JSON-ready rate tables for reports and pinning tests."""

@@ -34,6 +34,7 @@ from populace_dynamics.engine.di_entitlement_rates import (
 )
 from populace_dynamics.engine.loop import (
     MaritalStepResult,
+    PeriodContext,
     PeriodModules,
     ProjectionEngine,
 )
@@ -304,6 +305,85 @@ def test_committed_rates_run_through_the_loop_and_reconcile():
     flows = di_stock_flow(result.slices, death_log=log)
     assert flows["awards"].sum() > 0
     assert flows["conversions"].sum() > 0
+
+
+class _ZeroDraw:
+    """Batch generator whose uniforms are all zero: every q > 0 dies."""
+
+    def random(self, size):
+        return np.zeros(size)
+
+
+def test_multiplier_reproduces_as118_under_banded_nchs_2000_mortality():
+    """Committed rates; INVENTED 10-year banding shaped like the engine's.
+
+    A population model equal to NCHS 2000 averaged (l_x-weighted, from the
+    committed life table's own l_x column) over 10-year bands must leave
+    disabled-worker death probabilities at the Actuarial Study No. 118
+    Table 12 values at every single age.  Regression for the multiplier
+    base, which used to be single-age NCHS 2000 whatever the population
+    model's resolution: at age 55 that inflated male DI mortality by about
+    half and at age 64 deflated it by about 30 percent.
+    """
+    rates = load_di_entitlement_rates()
+    life = json.loads(NCHS_2000_PATH.read_text(encoding="utf-8"))
+    bands = (
+        (0, 24),
+        (25, 34),
+        (35, 44),
+        (45, 54),
+        (55, 64),
+        (65, 74),
+        (75, 84),
+        (85, 120),
+    )
+    probability = {}
+    for sex in ("female", "male"):
+        rows = {int(row["age"]): row for row in life["tables"][sex]}
+        for lower, upper in bands:
+            ages = range(lower, min(upper, 99) + 1)
+            weight = np.array([float(rows[a]["lx"]) for a in ages])
+            q = np.array([float(rows[a]["qx"]) for a in ages])
+            label = AgeSexMortalityModel.band_label(lower, upper)
+            probability[(label, sex)] = float(
+                (weight * q).sum() / weight.sum()
+            )
+    model = AgeSexMortalityModel(bands, probability)
+    frame = pd.DataFrame(
+        {
+            "person_id": np.arange(1, 41),
+            "year": 2010,
+            "sex": ["male", "female"] * 20,
+            "birth_year": np.repeat(2010 - np.arange(45, 65), 2),
+            "di_entitled": True,
+        }
+    )
+    frame["age"] = 2010 - frame["birth_year"]
+
+    def fra(birth_year):  # INVENTED: 66 years for these cohorts
+        return 792
+
+    start = prepare_opening_di_state(frame, rates=rates, fra_schedule=fra)
+    log = {}
+    apply_di_aware_mortality(
+        start,
+        PeriodContext(1, 2011, 0, {}),
+        _ZeroDraw(),
+        population_model=model,
+        rates=rates,
+        death_log=log,
+    )
+    logged = log[2011]
+    assert len(logged) == 40
+    sex_index = np.where(logged["sex"] == "male", 1, 0)
+    published = rates.death_attained[sex_index, logged["start_age"]]
+    # l_x in the committed table is rounded, so allow 1e-4 relative.
+    assert logged["q_applied"].to_numpy() == pytest.approx(published, rel=1e-4)
+    # Actuarial Study No. 118 Table 12, attained ages 55 and 64 (capture).
+    applied = logged.set_index(["sex", "start_age"])["q_applied"]
+    assert applied[("male", 55)] == pytest.approx(0.040662, rel=1e-4)
+    assert applied[("male", 64)] == pytest.approx(0.056410, rel=1e-4)
+    assert applied[("female", 55)] == pytest.approx(0.030052, rel=1e-4)
 
 
 @pytest.fixture(scope="module")

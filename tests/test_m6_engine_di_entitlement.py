@@ -27,14 +27,17 @@ from populace_dynamics.engine.di_entitlement import (
 from populace_dynamics.engine.di_entitlement_rates import (
     INCIDENCE_BANDS,
     MAX_AGE,
+    SINGLE_YEAR_AGE_BANDS,
     DIEntitlementRates,
     DIEntitlementSpec,
     SelectUltimateTable,
     fit_di_entitlement_rates,
     load_di_entitlement_rates,
     pending_decisions,
+    validate_age_bands,
 )
 from populace_dynamics.engine.loop import (
+    SCHEDULED_ENTRIES_KEY,
     MaritalStepResult,
     PeriodContext,
     PeriodModules,
@@ -161,6 +164,7 @@ def test_spec_defaults_are_the_proposed_primaries():
         {"termination_basis": "duration"},
         {"post_conversion_mortality": "none"},
         {"min_award_age": 70},
+        {"min_award_age": 17},
         {"assumed_birth_month": 13},
     ],
 )
@@ -594,6 +598,7 @@ def test_multiplier_probability_is_clipped_to_one():
         population_model=lambda f, context: np.full(len(f), 0.5),
         rates=rates,
         death_log=log,
+        population_age_bands=SINGLE_YEAR_AGE_BANDS,
     )
     assert 1 not in set(survivors["person_id"])
     applied = log[2011].set_index("person_id")["q_applied"]
@@ -613,6 +618,7 @@ def test_multiplier_probability_is_recorded_for_each_decedent():
         population_model=lambda f, context: np.full(len(f), 0.1),
         rates=rates,
         death_log=log,
+        population_age_bands=SINGLE_YEAR_AGE_BANDS,
     )
     logged = log[2011]
     assert len(logged) > 0
@@ -646,14 +652,18 @@ def test_converted_workers_keep_di_origin_mortality_only_when_chosen():
 def test_population_mortality_output_is_validated():
     rates = invented_rates()
     frame = _prepared([(1, "male", 1960, False)], rates)
-    for bad in (np.array([1.2]), np.array([0.1, 0.2])):
-        with pytest.raises(ValueError):
+    for bad, message in (
+        (np.array([1.2]), r"\[0, 1\]"),
+        (np.array([0.1, 0.2]), "wrong shape"),
+    ):
+        with pytest.raises(ValueError, match=message):
             apply_di_aware_mortality(
                 frame,
                 PeriodContext(1, 2011, 0, {}),
                 np.random.default_rng(0),
                 population_model=lambda f, context, bad=bad: bad,
                 rates=rates,
+                population_age_bands=SINGLE_YEAR_AGE_BANDS,
             )
     with pytest.raises(ValueError, match="before aging"):
         apply_di_aware_mortality(
@@ -663,6 +673,160 @@ def test_population_mortality_output_is_validated():
             population_model=flat_mortality(0.0),
             rates=rates,
         )
+
+
+class ZeroDraw:
+    """Batch generator whose uniforms are all zero: every q > 0 dies."""
+
+    def random(self, size):
+        return np.zeros(size)
+
+
+#: INVENTED banding shaped like the PSID-fitted engine mortality bands.
+PSID_LIKE_BANDS = (
+    (0, 24),
+    (25, 34),
+    (35, 44),
+    (45, 54),
+    (55, 64),
+    (65, 74),
+    (75, 84),
+    (85, 120),
+)
+
+
+def _rising_reference() -> np.ndarray:
+    """INVENTED population reference rising 8 percent per year of age."""
+    q = np.minimum(0.0005 * 1.08 ** np.arange(MAX_AGE + 1), 0.6)
+    return np.vstack([q, np.minimum(q * 1.2, 0.7)])
+
+
+def _stationary_band_mean(q: np.ndarray, lower: int, upper: int) -> float:
+    """Independent l_x-weighted mean of ``q`` over one inclusive band."""
+    survivors = 1.0
+    numerator = denominator = 0.0
+    for age in range(lower, upper + 1):
+        numerator += survivors * float(q[age])
+        denominator += survivors
+        survivors *= 1.0 - float(q[age])
+    return numerator / denominator
+
+
+def _banded_rates(spec=None) -> DIEntitlementRates:
+    """INVENTED DI death profile over an INVENTED rising population table."""
+    death = np.tile(0.02 + 0.001 * np.arange(MAX_AGE + 1), (2, 1))
+    return DIEntitlementRates(
+        spec=spec or DIEntitlementSpec(),
+        incidence=np.zeros(SHAPE),
+        recovery_attained=np.zeros(SHAPE),
+        death_attained=death,
+        population_reference_death=_rising_reference(),
+        recovery_select=None,
+        death_select=None,
+        recovery_level_factor=1.0,
+        death_level_factor=1.0,
+    )
+
+
+def test_population_reference_base_follows_the_population_bands():
+    rates = _banded_rates()
+    reference = rates.population_reference_death
+    ages = np.arange(MAX_AGE + 1)
+    for sex in (0, 1):
+        sexes = np.full(len(ages), sex)
+        single = rates.population_reference_probability(
+            ages, sexes, age_bands=SINGLE_YEAR_AGE_BANDS
+        )
+        assert np.array_equal(single, reference[sex])
+        banded = rates.population_reference_probability(
+            ages, sexes, age_bands=PSID_LIKE_BANDS
+        )
+        for lower, upper in PSID_LIKE_BANDS:
+            expected = _stationary_band_mean(reference[sex], lower, upper)
+            assert banded[lower : upper + 1] == pytest.approx(
+                np.full(upper - lower + 1, expected), rel=1e-12
+            )
+
+
+@pytest.mark.parametrize("level", [1.0, 1.5])
+def test_multiplier_keeps_the_di_age_profile_under_banded_mortality(level):
+    """Regression: a banded population model must not reshape DI deaths.
+
+    The population model is the INVENTED reference averaged over 10-year
+    bands, times ``level``.  Dividing by the single-age reference (the
+    earlier behavior) inflated DI mortality at the bottom of each band and
+    deflated it at the top; the band-consistent base leaves the DI profile
+    intact and carries only the level.
+    """
+    rates = _banded_rates()
+    reference = rates.population_reference_death
+    probability = {}
+    for lower, upper in PSID_LIKE_BANDS:
+        label = AgeSexMortalityModel.band_label(lower, upper)
+        for index, sex in enumerate(("female", "male")):
+            probability[(label, sex)] = level * _stationary_band_mean(
+                reference[index], lower, upper
+            )
+    model = AgeSexMortalityModel(PSID_LIKE_BANDS, probability)
+    rows = [
+        (pid, "male" if pid % 2 else "female", 2010 - (45 + pid // 2), True)
+        for pid in range(40)
+    ]
+    frame = _prepared(rows, rates)
+    log = {}
+    survivors = apply_di_aware_mortality(
+        frame,
+        PeriodContext(1, 2011, 0, {}),
+        ZeroDraw(),
+        population_model=model,
+        rates=rates,
+        death_log=log,
+    )
+    assert survivors.empty
+    logged = log[2011]
+    assert sorted(logged["start_age"].unique()) == list(range(45, 65))
+    sex_index = np.where(logged["sex"] == "male", 1, 0)
+    expected = level * rates.death_attained[sex_index, logged["start_age"]]
+    assert logged["q_applied"].to_numpy() == pytest.approx(expected, rel=1e-12)
+
+
+def test_multiplier_mode_needs_the_population_age_resolution():
+    rates = invented_rates(death=0.02)
+    frame = _prepared([(1, "male", 1960, True)], rates)
+
+    def unbanded(f, context):
+        return np.full(len(f), 0.01)
+
+    with pytest.raises(ValueError, match="age resolution"):
+        apply_di_aware_mortality(
+            frame,
+            PeriodContext(1, 2011, 0, {}),
+            np.random.default_rng(0),
+            population_model=unbanded,
+            rates=rates,
+        )
+    for bad in (((1, 120),), ((0, 10), (12, 120)), ((0, 100),)):
+        with pytest.raises(ValueError, match="age bands"):
+            apply_di_aware_mortality(
+                frame,
+                PeriodContext(1, 2011, 0, {}),
+                np.random.default_rng(0),
+                population_model=unbanded,
+                rates=rates,
+                population_age_bands=bad,
+            )
+    assert validate_age_bands(((0, 60), (61, 150))) == ((0, 60), (61, 120))
+    # Explicit death rates never divide by the reference.
+    explicit = invented_rates(
+        death=0.02, spec=DIEntitlementSpec(death_mode="explicit")
+    )
+    apply_di_aware_mortality(
+        _prepared([(1, "male", 1960, True)], explicit),
+        PeriodContext(1, 2011, 0, {}),
+        np.random.default_rng(0),
+        population_model=unbanded,
+        rates=explicit,
+    )
 
 
 # --- select-and-ultimate --------------------------------------------------
@@ -819,6 +983,47 @@ def test_stock_flow_refuses_an_unreconciled_history():
         di_stock_flow(slices)
     with pytest.raises(ValueError, match="logged"):
         di_stock_flow(result.slices, death_log={2011: log[2012]})
+
+
+def test_stock_flow_accepts_an_entitled_entrant_who_dies_on_entry():
+    """INVENTED: a scheduled entitled entrant dies in its entry year.
+
+    The loop adds scheduled entrants before mortality, so such a person is
+    logged as an entitled decedent without ever being in a slice.
+    Regression: the death-log cross-check used to refuse this history.
+    """
+    rates = invented_rates(
+        death=1.0, spec=DIEntitlementSpec(death_mode="explicit")
+    )
+    entrant = prepare_opening_di_state(
+        opening([(50, "male", 1975, True)], year=2011),
+        rates=rates,
+        fra_schedule=invented_fra,
+    )
+    log = {}
+    result = ProjectionEngine(_modules(rates, log, mortality=0.0)).project(
+        opening([(1, "male", 1970, False), (2, "female", 1972, True)]),
+        end_year=2013,
+        draw_index=0,
+        metadata={SCHEDULED_ENTRIES_KEY: {2012: entrant}},
+    )
+    assert set(log[2011].loc[log[2011]["di_entitled"], "person_id"]) == {2}
+    assert set(log[2012].loc[log[2012]["di_entitled"], "person_id"]) == {50}
+    flows = di_stock_flow(result.slices, death_log=log).set_index("year")
+    assert flows.loc[2011, "deaths"] == 1
+    assert flows.loc[
+        2012, ["stock_start", "deaths", "stock_end"]
+    ].tolist() == [
+        0,
+        0,
+        0,
+    ]
+    # A logged decedent entrant who is still in the frame is refused.
+    revived = entrant.assign(year=2012, age=37, di_entitled=False)
+    revived["di_event"] = "none"
+    current = pd.concat([result.slices[2], revived], ignore_index=True)
+    with pytest.raises(ValueError, match="decedent entrant"):
+        di_stock_flow([result.slices[1], current], death_log={2012: log[2012]})
 
 
 def test_projection_is_deterministic_by_draw_and_person_keyed():

@@ -16,9 +16,10 @@ Governance (critical-path plan section 4):
   ages of each age group.  It is not the PSID cohort and not a Track A run.
   It is closed: no immigration and no births after 2008.
 * Population mortality is the NCHS 2000 life table held constant (no
-  improvement), the <=2008 table in the repository.  With the default
-  multiplier this makes disabled-worker mortality equal to the Actuarial
-  Study No. 118 (1996-2000) level.
+  improvement), the <=2008 table in the repository, as a single-year-of-age
+  ``AgeSexMortalityModel``.  The default multiplier takes its NCHS 2000 base
+  at that model's single-age bands, so below age 100 disabled-worker
+  mortality equals the Actuarial Study No. 118 (1996-2000) level.
 * No COLA statistic, benefit, or DYNASIM comparator value is computed.
 
 The adapters run through their no-registry (batch-generator) path with fixed

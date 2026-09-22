@@ -22,7 +22,10 @@ Insurance awards.  This module adds an entitlement component with the engine's
   are not of disabled-worker origin die exactly as they would without it,
   while disabled workers (and, by default, converted former disabled workers)
   die at disabled-worker rates.  Deaths are the "death" termination; they
-  happen in step 1 because the loop removes decedents there.
+  happen in step 1 because the loop removes decedents there.  In the
+  default multiplier death mode the NCHS 2000 base is averaged over the
+  population model's own age bands, so a banded population model does not
+  reshape the disabled-worker age profile within a band.
 * :func:`prepare_opening_di_state` validates the opening disabled-worker
   stock (supplied by the A3 cohort builder) and can be the loop's
   ``initialize`` hook.
@@ -65,7 +68,13 @@ injected generator is consumed once per row in ``person_id`` order.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Mapping, MutableMapping
+from collections.abc import (
+    Callable,
+    Iterable,
+    Mapping,
+    MutableMapping,
+    Sequence,
+)
 from typing import Any, Protocol
 
 import numpy as np
@@ -74,6 +83,7 @@ import pandas as pd
 from populace_dynamics.engine.di_entitlement_rates import (
     SEXES,
     DIEntitlementRates,
+    validate_age_bands,
 )
 from populace_dynamics.engine.loop import PeriodContext
 from populace_dynamics.engine.rng import ProjectionModule
@@ -543,6 +553,24 @@ def _population_probabilities(
     return values
 
 
+def _population_age_bands(
+    population_model: object,
+    declared: Sequence[tuple[int, int]] | None,
+) -> tuple[tuple[int, int], ...]:
+    """The population model's age resolution for the multiplier base."""
+    if declared is not None:
+        return validate_age_bands(declared)
+    bands = getattr(population_model, "bands", None)
+    if bands is None:
+        raise ValueError(
+            "the multiplier death mode divides by NCHS 2000 mortality at the "
+            "population model's age resolution; this population model has "
+            "no 'bands', so pass population_age_bands (SINGLE_YEAR_AGE_BANDS "
+            "for a single-year-of-age model)"
+        )
+    return validate_age_bands(bands)
+
+
 def apply_di_aware_mortality(
     frame: pd.DataFrame,
     context: PeriodContext,
@@ -554,13 +582,25 @@ def apply_di_aware_mortality(
     ),
     rates: DIEntitlementRates,
     death_log: MutableMapping[int, pd.DataFrame] | None = None,
+    population_age_bands: Sequence[tuple[int, int]] | None = None,
 ) -> pd.DataFrame:
     """Step-1 adapter: population mortality with DI-origin death rates.
 
     Returns the period's survivors sorted by ``person_id``, like
     :func:`populace_dynamics.engine.steps.apply_mortality`.  When
     ``death_log`` is given, ``death_log[year]`` records every decedent.
+
+    In the ``multiplier`` death mode the NCHS 2000 base is taken at the
+    population model's age resolution: ``population_age_bands`` when given,
+    otherwise the model's ``bands`` attribute (as on
+    :class:`populace_dynamics.engine.steps.AgeSexMortalityModel`).  A model
+    with neither is refused rather than assumed to be single-age.
     """
+    multiplier_bands = (
+        _population_age_bands(population_model, population_age_bands)
+        if rates.spec.death_mode == "multiplier"
+        else None
+    )
     _require(
         frame,
         (
@@ -625,9 +665,9 @@ def apply_di_aware_mortality(
             select_age=None if select_age is None else select_age[rows],
             duration=None if duration is None else duration[rows],
         )
-        if rates.spec.death_mode == "multiplier":
+        if multiplier_bands is not None:
             base = rates.population_reference_probability(
-                start_age[rows], sex[rows]
+                start_age[rows], sex[rows], age_bands=multiplier_bands
             )
             reference = reference * q_population[rows] / base
         q[rows] = np.clip(reference, 0.0, 1.0)
@@ -667,10 +707,14 @@ def di_stock_flow(
 
     One row per projected year with the stock at the start and end and each
     flow.  Deaths are entitled persons of the prior slice who are absent from
-    the current one; with ``death_log`` they must match the logged entitled
-    decedents exactly.  Weighted flows use each person's prior-slice weight
-    (current-slice weight for entrants), so the identity also holds
-    weighted.  Raises ``ValueError`` if any identity fails.
+    the current one; with ``death_log`` they must match exactly the logged
+    entitled decedents who were in the prior slice.  A logged decedent who
+    was not in the prior slice is a scheduled entrant who died in its entry
+    year (the loop adds scheduled entrants before mortality); it never
+    enters the stock, and it must be absent from the current slice.
+    Weighted flows use each person's prior-slice weight (current-slice
+    weight for entrants), so the identity also holds weighted.  Raises
+    ``ValueError`` if any identity fails.
     """
     frames = list(slices)
     rows: list[dict[str, Any]] = []
@@ -694,10 +738,14 @@ def di_stock_flow(
                 if logged is None or logged.empty
                 else set(logged.loc[logged["di_entitled"], "person_id"])
             )
-            if logged_ids != deaths:
+            if logged_ids & previous_ids != deaths:
                 raise ValueError(
                     f"{year}: entitled persons leaving the frame differ "
                     "from the logged entitled decedents"
+                )
+            if (logged_ids - previous_ids) & current_ids:
+                raise ValueError(
+                    f"{year}: a logged decedent entrant is still in the frame"
                 )
         events = current.set_index("person_id")["di_event"]
         entitled_now = current.set_index("person_id")["di_entitled"].astype(
