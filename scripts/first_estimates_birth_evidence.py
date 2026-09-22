@@ -190,6 +190,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/mortality_observer.py"),
     Path("src/populace_dynamics/closed_cohort_history.py"),
     Path("src/populace_dynamics/assembled_history_observer.py"),
+    Path("src/populace_dynamics/compact_cohort_history.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
