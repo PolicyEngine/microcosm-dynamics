@@ -108,6 +108,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/closed_cohort_history.py"),
         Path("src/populace_dynamics/assembled_history_observer.py"),
         Path("src/populace_dynamics/compact_cohort_history.py"),
+        Path("src/populace_dynamics/data/tr2008.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -308,6 +309,12 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert history_modules.isdisjoint(reachable), (
         "opt-in identity and history modules became reachable from the "
         f"birth-evidence reducer: {sorted(history_modules & reachable)}"
+    )
+    tr2008_reader = "populace_dynamics.data.tr2008"
+    assert tr2008_reader in module_paths
+    assert tr2008_reader not in reachable, (
+        "the opt-in TR2008 parameter reader became reachable from the "
+        "birth-evidence reducer"
     )
     assert "populace_dynamics.engine.steps" in reachable
 

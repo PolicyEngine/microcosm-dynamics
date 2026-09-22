@@ -188,6 +188,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/closed_cohort_history.py"),
     Path("src/populace_dynamics/assembled_history_observer.py"),
     Path("src/populace_dynamics/compact_cohort_history.py"),
+    # The TR2008 parameter reader (DynaSim exercise 1, Track A2) is an
+    # opt-in data accessor that the historical projection never imports;
+    # it is not re-exported from populace_dynamics.data.
+    Path("src/populace_dynamics/data/tr2008.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
