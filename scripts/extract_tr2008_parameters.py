@@ -1334,7 +1334,9 @@ def parse_text_values(pdf: ReportPdf) -> list[dict[str, Any]]:
                 "values": values,
                 "unit": unit,
                 "meaning": meaning,
-                "quote": quote if len(quote) <= 400 else quote[:397] + "...",
+                # The whole matched text, never shortened, so every value
+                # the entry carries is visible in its locator quote.
+                "quote": quote,
             }
         )
     return out

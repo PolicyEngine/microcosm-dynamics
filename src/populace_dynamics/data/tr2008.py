@@ -119,7 +119,7 @@ DATA_DIR = _PROJECT_ROOT / "data" / "external" / "tr2008"
 
 FILE_SHA256: Mapping[str, str] = {
     "tr2008_report.json": (
-        "1db20ab1b685eb83c86fe70270ad42a1d93428e51532d877baf3a6f10f9e8e3a"
+        "c16161f1ee99d94d97648da078d686325fb05a0d44653b76bc609158e63f6d62"
     ),
     "tr2008_single_year.json": (
         "6ada61d3f8a3b693939763cbe142d191d81468f73022fb3450ab69f817ab596e"
@@ -140,6 +140,8 @@ FILE_SHA256: Mapping[str, str] = {
 
 # Last determination year with a COLA printed in Table V.C1.
 LAST_PRINTED_COLA_YEAR = 2017
+# Accepted ``post_2017`` values for cola_path / cola_percent.
+POST_2017_CHOICES: tuple[str, ...] = ("ultimate_cpi", "none")
 # Last year of AWI printed in Table V.C1; later years come from VI.F6.
 LAST_V_C1_AWI_YEAR = 2017
 # Last row of V.C1's historical section (COLA and AWI); 2007 onward are
@@ -216,7 +218,13 @@ PENDING_RULINGS: tuple[PendingRuling, ...] = (
         alternatives=("2007 (last TR2008 estimated historical year)",),
         default_basis=(
             "2004 is the last year of TR2008's historical death rates "
-            "(V.A.2) and the year of the 2008-vintage SSA period life table."
+            "(V.A.2) and the year of the 2008-vintage SSA period life table. "
+            "Consequence to weigh: V.A1's 2004 rate at 65 and over "
+            "(4,940.6) is below TR2008's 2003 value and its 2005-2007 "
+            "estimates, so with base 2004 the 65-and-over ratio exceeds 1 "
+            "in 2005-2012 under the intermediate path (1.0127 in 2010), in "
+            "2005-2024 under low cost and in 2005-2009 under high cost; the "
+            "under-65 ratio is below 1 in every year after 2004."
         ),
     ),
 )
@@ -633,6 +641,10 @@ def cola_path(
     choice awaiting a ruling; see ``PENDING_RULINGS``).
     """
     _check_alternative(alternative)
+    if post_2017 not in POST_2017_CHOICES:
+        raise ValueError(
+            f"post_2017 must be one of {POST_2017_CHOICES}, got {post_2017!r}"
+        )
     if first_year > last_year:
         raise ValueError("first_year must not exceed last_year")
     if (realized is None) != (last_realized_year is None):
@@ -842,7 +854,10 @@ def mortality_improvement_ratio(
     group containing ``age`` (under 65, or 65 and over).  Multiplying the
     2004 period ``qx`` by this ratio is one way to make a year-aware table;
     it is a derivation from published aggregates, not a TR2008 assumption,
-    and it awaits ratification (``PENDING_RULINGS``).
+    and it awaits ratification (``PENDING_RULINGS``).  With the default
+    ``base_year=2004`` the 65-and-over ratio is above 1 in 2005-2012
+    (intermediate), because V.A1's 2004 rate is below its 2005-2007
+    estimates; the ``base_year`` ruling records this.
     """
     if basis != "asadr_broad_age_group":
         raise ValueError(f"unknown mortality substitute basis {basis!r}")
@@ -964,7 +979,9 @@ def di_conversion_ratios(
 
     Intermediate assumptions only; 1970-2007 historical, 2008+ projected.
     """
-    key = f"conversion_{'gross' if basis == 'gross' else 'age_sex_adjusted'}"
+    if basis not in ("gross", "age_sex_adjusted"):
+        raise ValueError(f"unknown basis {basis!r}")
+    key = f"conversion_{basis}"
     return tuple(
         DiRate(row["year"], float(row[key]), row["year"] >= 2008)
         for row in _single()["figures"]["V.C5"]["rows"]
@@ -974,7 +991,11 @@ def di_conversion_ratios(
 def di_beneficiaries(
     year: int, *, alternative: Alternative = "intermediate"
 ) -> DiBeneficiaries:
-    """Single-year V.C5 DI beneficiaries (thousands) and prevalence."""
+    """Single-year V.C5 DI beneficiaries (thousands) and prevalence.
+
+    Covers 1975-2085.  The printed table's 1960, 1965 and 1970 rows are in
+    ``tr2008_report.json`` only; the single-year table starts in 1975.
+    """
     _check_alternative(alternative)
     sections = _single()["tables"]["V.C5"]["sections"]
     section = "historical" if year <= 2007 else alternative

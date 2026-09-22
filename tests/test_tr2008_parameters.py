@@ -36,7 +36,7 @@ import extract_tr2008_parameters as extractor  # noqa: E402
 
 REVIEWED_SHA256 = {
     "tr2008_report.json": (
-        "1db20ab1b685eb83c86fe70270ad42a1d93428e51532d877baf3a6f10f9e8e3a"
+        "c16161f1ee99d94d97648da078d686325fb05a0d44653b76bc609158e63f6d62"
     ),
     "tr2008_single_year.json": (
         "6ada61d3f8a3b693939763cbe142d191d81468f73022fb3450ab69f817ab596e"
@@ -462,6 +462,13 @@ def test__cola_path__strict_mode_and_bounds():
         tr2008.cola_path(2008, 2009, alternative="II")
     with pytest.raises(ValueError, match="together"):
         tr2008.cola_path(2008, 2009, realized={2008: 1.0})
+    # Regression: an unknown post_2017 value was accepted silently for
+    # printed years and misreported as a missing V.C1 row after 2017.
+    for first, last in ((2008, 2009), (2017, 2018)):
+        with pytest.raises(ValueError, match="post_2017 must be one of"):
+            tr2008.cola_path(first, last, post_2017="ultimate")
+    with pytest.raises(ValueError, match="post_2017 must be one of"):
+        tr2008.cola_percent(2009, post_2017="cpi")
 
 
 def test__cola_path__realized_splice_uses_caller_values_only_through_cutoff():
@@ -574,6 +581,34 @@ def test__mortality_improvement_ratio__is_a_broad_group_asadr_ratio():
         tr2008.mortality_improvement_ratio(2030, -1)
 
 
+@pytest.mark.parametrize(
+    ("alternative", "last_year_above_one"),
+    [("intermediate", 2012), ("low_cost", 2024), ("high_cost", 2009)],
+)
+def test__mortality_improvement_ratio__base_2004_raises_65_plus_at_first(
+    alternative, last_year_above_one
+):
+    # Recorded in the base_year ruling: V.A1's 2004 rate at 65+ (4,940.6,
+    # p.80) is below its 2003 value and 2005-2007 estimates, so the
+    # default base makes 65+ mortality rise above the 2004 table first.
+    ratio = tr2008.mortality_improvement_ratio
+    above = [
+        year
+        for year in range(2005, 2086)
+        if ratio(year, 70, alternative=alternative) > 1
+    ]
+    assert above == list(range(2005, last_year_above_one + 1))
+    assert all(
+        ratio(year, 40, alternative=alternative) < 1
+        for year in range(2005, 2086)
+    )
+    assert round(ratio(2010, 70), 4) == 1.0127
+    (ruling,) = (
+        r for r in tr2008.PENDING_RULINGS if r.parameter == "base_year"
+    )
+    assert "2005-2012" in ruling.default_basis
+
+
 # ---------------------------------------------------------------- DI
 
 
@@ -608,6 +643,18 @@ def test__di_series__cover_1970_2085_with_projected_flags():
         ]
     conversions = tr2008.di_conversion_ratios()
     assert [rate.year for rate in conversions] == list(range(1970, 2086))
+
+
+def test__di_conversion_ratios__both_bases_and_refuses_an_unknown_basis():
+    # Figure V.C5 plot points, 2030 (tr08_LD_figVC5 capture).
+    adjusted = {r.year: r.value for r in tr2008.di_conversion_ratios()}
+    gross = {r.year: r.value for r in tr2008.di_conversion_ratios("gross")}
+    assert (adjusted[2030], gross[2030]) == (40.58, 64.79)
+    # Regression: any basis other than "gross" silently returned the
+    # age-sex-adjusted ratios.
+    for basis in ("adjusted", "Gross", "age-sex-adjusted"):
+        with pytest.raises(ValueError, match="unknown basis"):
+            tr2008.di_conversion_ratios(basis)
 
 
 def test__di_beneficiaries__v_c5_spot_values():
@@ -880,6 +927,21 @@ def test__study_118_checks__pass_on_the_committed_tables():
 def test__study_118_checks__catch_a_corrupted_cell(mutate, caught_by):
     # INVENTED corruption of one committed cell per case.
     assert _failed_as118_checks(mutate) == caught_by
+
+
+def test__text_values__quote_is_the_full_sentence_showing_every_value():
+    # Regression: quotes were cut to 400 characters, so twelve values in
+    # six entries (among them the low- and high-cost DI ultimate incidence,
+    # 4.2 and 6.2, and the 2027 ultimate years) were absent from the quote
+    # that is their locator.
+    for entry in _json("tr2008_report.json")["text_values"]:
+        quote = entry["quote"]
+        assert not quote.endswith("..."), entry["id"]
+        printed = {
+            float(token) for token in re.findall(r"\d+(?:\.\d+)?|\.\d+", quote)
+        }
+        for key, value in entry["values"].items():
+            assert float(value) in printed, (entry["id"], key, value)
 
 
 def test__text_value_check__catches_a_value_the_html_does_not_state():
