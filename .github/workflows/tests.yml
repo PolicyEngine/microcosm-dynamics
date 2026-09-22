@@ -37,11 +37,30 @@ jobs:
       - name: Run tests (shard ${{ matrix.shard }}/4)
         run: pytest -q --splits 4 --group ${{ matrix.shard }} --splitting-algorithm duration_based_chunks --durations-path .test_durations
 
+  graph-integration:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: Install the pinned optional graph integration
+        run: pip install -e ".[graph]" pytest
+      - name: Require typed graph capabilities
+        run: python -c "from populace_dynamics.graph._compat import require_graph; require_graph()"
+      - name: Run graph and existing mortality regressions
+        run: pytest -q tests/test_graph_mortality.py tests/test_m6_engine_refit.py tests/test_m6_engine_steps.py
+
   # Fan-in jobs keeping the branch-protection context names
   # ("pytest (3.11)" / "pytest (3.13)") stable across the shard split.
   pytest:
     name: pytest (${{ matrix.python-version }})
-    needs: pytest-shard
+    needs: [pytest-shard, graph-integration]
     if: always()
     runs-on: ubuntu-latest
     strategy:
@@ -49,4 +68,6 @@ jobs:
         python-version: ['3.14']
     steps:
       - name: Verify all shards passed
-        run: test "${{ needs.pytest-shard.result }}" = "success"
+        run: |
+          test "${{ needs.pytest-shard.result }}" = "success"
+          test "${{ needs.graph-integration.result }}" = "success"
