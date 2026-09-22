@@ -88,6 +88,26 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
         Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
         Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+        Path("src/populace_dynamics/graph/__init__.py"),
+        Path("src/populace_dynamics/graph/__main__.py"),
+        Path("src/populace_dynamics/graph/_compat.py"),
+        Path("src/populace_dynamics/graph/model.py"),
+        Path("src/populace_dynamics/graph/runtime.py"),
+        Path("src/populace_dynamics/graph/synthetic.py"),
+        Path("src/populace_dynamics/graph/trajectory.py"),
+        Path("src/populace_dynamics/graph/trajectory_accounting.py"),
+        Path("src/populace_dynamics/engine/accounting.py"),
+        Path("src/populace_dynamics/engine/claiming.py"),
+        Path("src/populace_dynamics/engine/entrant_schedule.py"),
+        Path("src/populace_dynamics/engine/entrant_domains.py"),
+        Path("src/populace_dynamics/engine/accounting_history.py"),
+        Path("src/populace_dynamics/person_identity.py"),
+        Path("src/populace_dynamics/forward_earnings_history.py"),
+        Path("src/populace_dynamics/covered_wage_history.py"),
+        Path("src/populace_dynamics/mortality_observer.py"),
+        Path("src/populace_dynamics/closed_cohort_history.py"),
+        Path("src/populace_dynamics/assembled_history_observer.py"),
+        Path("src/populace_dynamics/compact_cohort_history.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -130,11 +150,7 @@ def _internal_imports(
     package_parts = module_parts if is_package else module_parts[:-1]
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
-            imports.update(
-                alias.name
-                for alias in node.names
-                if alias.name in module_paths
-            )
+            imports.update(alias.name for alias in node.names)
             continue
         if not isinstance(node, ast.ImportFrom):
             continue
@@ -148,16 +164,64 @@ def _internal_imports(
             base = ".".join(base_parts)
         else:
             base = node.module or ""
-        if base in module_paths:
-            imports.add(base)
+        imports.add(base)
         for alias in node.names:
             candidate = f"{base}.{alias.name}" if base else alias.name
-            if candidate in module_paths:
-                imports.add(candidate)
-    return imports
+            imports.add(candidate)
+    # Importing a leaf executes its parent package initializers too. Include
+    # those even when an imported leaf is external or not a tracked module.
+    internal = set()
+    for imported in imports:
+        parts = imported.split(".")
+        internal.update(
+            parent
+            for length in range(1, len(parts) + 1)
+            if (parent := ".".join(parts[:length])) in module_paths
+        )
+    return internal
 
 
-def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
+@pytest.mark.parametrize(
+    "statement",
+    [
+        "import sample.leaf",
+        "from sample.leaf import function",
+        "from sample import leaf",
+        "import sample.untracked_extension",
+    ],
+)
+def test_source_reachability_includes_implicit_package_initializers(
+    tmp_path, statement
+):
+    package = tmp_path / "__init__.py"
+    leaf = tmp_path / "leaf.py"
+    hidden = tmp_path / "hidden.py"
+    consumer = tmp_path / "consumer.py"
+    package.write_text("from . import hidden\n")
+    leaf.write_text("def function(): pass\n")
+    hidden.write_text("")
+    consumer.write_text(statement + "\n")
+    modules = {
+        "consumer": consumer,
+        "sample": package,
+        "sample.leaf": leaf,
+        "sample.hidden": hidden,
+    }
+    reachable = set()
+    pending = ["consumer"]
+    while pending:
+        name = pending.pop()
+        if name in reachable:
+            continue
+        reachable.add(name)
+        pending.extend(
+            _internal_imports(name, modules[name], modules) - reachable
+        )
+    assert {"sample", "sample.hidden"}.issubset(reachable)
+    assert "sample.untracked_extension" not in reachable
+
+
+def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     module_paths = _repository_module_paths()
     root_module = "scripts.first_estimates_birth_evidence"
     psid_exclusions = {
@@ -170,6 +234,14 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
     }
     assert root_module in module_paths
     assert psid_exclusions.issubset(module_paths)
+    graph_exclusions = {
+        name
+        for name in module_paths
+        if name == "populace_dynamics.graph"
+        or name.startswith("populace_dynamics.graph.")
+    }
+    assert graph_exclusions
+    assert "populace_dynamics.graph.trajectory_accounting" in graph_exclusions
     module_by_path = {
         path.resolve(): module_name
         for module_name, path in module_paths.items()
@@ -205,6 +277,39 @@ def test_psid_identity_exclusions_are_unreachable_from_birth_evidence():
         "historically excluded PSID modules became reachable from the "
         f"birth-evidence reducer: {sorted(psid_exclusions & reachable)}"
     )
+    assert graph_exclusions.isdisjoint(reachable), (
+        "opt-in graph modules became reachable from the birth-evidence "
+        f"reducer: {sorted(graph_exclusions & reachable)}"
+    )
+    assert "populace_dynamics.engine.accounting" in module_paths
+    assert "populace_dynamics.engine.accounting" not in reachable
+    assert "populace_dynamics.engine.accounting_history" in module_paths
+    assert "populace_dynamics.engine.accounting_history" not in reachable
+    assert "populace_dynamics.engine" in reachable
+    successor = "populace_dynamics.engine.claiming"
+    assert successor in module_paths
+    assert successor not in reachable
+    entrant_modules = {
+        "populace_dynamics.engine.entrant_schedule",
+        "populace_dynamics.engine.entrant_domains",
+    }
+    assert entrant_modules.issubset(module_paths)
+    assert entrant_modules.isdisjoint(reachable)
+    history_modules = {
+        "populace_dynamics.person_identity",
+        "populace_dynamics.forward_earnings_history",
+        "populace_dynamics.covered_wage_history",
+        "populace_dynamics.mortality_observer",
+        "populace_dynamics.closed_cohort_history",
+        "populace_dynamics.assembled_history_observer",
+        "populace_dynamics.compact_cohort_history",
+    }
+    assert history_modules.issubset(module_paths)
+    assert history_modules.isdisjoint(reachable), (
+        "opt-in identity and history modules became reachable from the "
+        f"birth-evidence reducer: {sorted(history_modules & reachable)}"
+    )
+    assert "populace_dynamics.engine.steps" in reachable
 
 
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():

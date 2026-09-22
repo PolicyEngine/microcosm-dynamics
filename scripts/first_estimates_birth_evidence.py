@@ -156,6 +156,38 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/estimates/anchor_context_registry.py"),
     Path("src/populace_dynamics/estimates/anchor_context_rehearsal.py"),
     Path("src/populace_dynamics/estimates/anchor_context_report.py"),
+    # The opt-in graph integration is outside the historical reducer and
+    # registered production call paths.  Keep exact file exclusions, with
+    # import-reachability coverage, rather than changing any evidence pin.
+    Path("src/populace_dynamics/graph/__init__.py"),
+    Path("src/populace_dynamics/graph/__main__.py"),
+    Path("src/populace_dynamics/graph/_compat.py"),
+    Path("src/populace_dynamics/graph/model.py"),
+    Path("src/populace_dynamics/graph/runtime.py"),
+    Path("src/populace_dynamics/graph/synthetic.py"),
+    Path("src/populace_dynamics/graph/trajectory.py"),
+    Path("src/populace_dynamics/graph/trajectory_accounting.py"),
+    # This opt-in accountant is unreachable from the historical projection.
+    # The existing engine loop, steps, and package initializer remain sealed.
+    Path("src/populace_dynamics/engine/accounting.py"),
+    # This explicit opt-in successor is outside the reviewed projection
+    # call graph. Keep the historical steps.py implementation in the seal.
+    Path("src/populace_dynamics/engine/claiming.py"),
+    # Experimental entrants are outside the registered projection call graph.
+    Path("src/populace_dynamics/engine/entrant_schedule.py"),
+    Path("src/populace_dynamics/engine/entrant_domains.py"),
+    # The opt-in accounting-history validator is likewise unreachable.
+    Path("src/populace_dynamics/engine/accounting_history.py"),
+    # The opt-in identity transport is not imported by the historical reducer.
+    # Its exclusion remains guarded by the transitive reachability test.
+    Path("src/populace_dynamics/person_identity.py"),
+    # Opt-in history recorders and observers sit outside the historical loop.
+    Path("src/populace_dynamics/forward_earnings_history.py"),
+    Path("src/populace_dynamics/covered_wage_history.py"),
+    Path("src/populace_dynamics/mortality_observer.py"),
+    Path("src/populace_dynamics/closed_cohort_history.py"),
+    Path("src/populace_dynamics/assembled_history_observer.py"),
+    Path("src/populace_dynamics/compact_cohort_history.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
