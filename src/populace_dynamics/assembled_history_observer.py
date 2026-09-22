@@ -114,6 +114,16 @@ def _keys(value, expected):
         raise ValueError("unexpected document fields")
 
 
+def _arrays(value, width: int) -> list:
+    # A digit string or an object also unpacks, so "100" would read as
+    # ["1", "0", "0"]: a second valid encoding of the same audit row.
+    if type(value) is not list or any(
+        type(row) is not list or len(row) != width for row in value
+    ):
+        raise ValueError("audit rows must be fixed-width arrays")
+    return value
+
+
 def _scalar(value):
     if value is None:
         return ["null", None]
@@ -246,18 +256,25 @@ class FertilityCapture:
                 )
             if context.rng_registry is None:
                 raise ValueError("assembled capture requires registry")
+            # The engine passes draw_index through, and derives n_periods from
+            # end_year, unconverted, so NumPy integers arrive here. Keep only
+            # exact Python ints so the archive and digest can serialize them.
+            draw = _int(context.draw_index)
+            period = _int(context.period_index)
+            year = _int(context.year)
+            periods = _int(context.rng_registry.n_periods)
             if self._draw is None:
-                self._draw = context.draw_index
-                self._periods = context.rng_registry.n_periods
+                self._draw, self._periods = draw, periods
             if (
-                context.draw_index != self._draw
-                or context.rng_registry.n_periods != self._periods
-                or context.period_index > self._periods
+                draw != self._draw
+                or periods != self._periods
+                or period > self._periods
             ):
                 raise ValueError("fertility capture mixes invocations")
-            if _int(context.rng_registry.draw_index) != _int(
-                context.draw_index
-            ) or _int(context.year) != 2014 + _int(context.period_index):
+            if (
+                _int(context.rng_registry.draw_index) != draw
+                or year != 2014 + period
+            ):
                 raise ValueError(
                     "fertility capture registry/calendar mismatch"
                 )
@@ -265,9 +282,9 @@ class FertilityCapture:
             output = original(frame, context, marital, rng)
             self._records.append(
                 FertilityBoundary(
-                    context.draw_index,
-                    context.period_index,
-                    context.year,
+                    draw,
+                    period,
+                    year,
                     before,
                     _frame_json(output),
                 )
@@ -331,7 +348,7 @@ def _validate_audit(history, audit):
     ):
         raise ValueError("audit/history binding mismatch")
     initial = set(_parse_ids(audit["initial_ids"]))
-    bindings = audit["identity_bindings"]
+    bindings = _arrays(audit["identity_bindings"], 3)
     if bindings != sorted(bindings, key=lambda row: int(row[0])):
         raise ValueError("native bindings must be sorted")
     native_to_key, ordinals = {}, {}
@@ -353,7 +370,7 @@ def _validate_audit(history, audit):
         or len(set(ordinals.values())) != len(ordinals)
     ):
         raise ValueError("cohort identity coverage mismatch")
-    if audit["scheduled"] != sorted(
+    if _arrays(audit["scheduled"], 2) != sorted(
         audit["scheduled"], key=lambda row: row[0]
     ):
         raise ValueError("scheduled years must be sorted")
@@ -383,7 +400,9 @@ def _validate_audit(history, audit):
     ):
         _keys(row, {"year", "pre_ids", "death_ids", "post_ids", "births"})
         year = transition.mortality.target_year
-        if row["year"] != year:
+        # Python equality accepts 2016.0 == 2016; a float year would be a
+        # second valid encoding (and digest) of the same observation.
+        if type(row["year"]) is not int or row["year"] != year:
             raise ValueError("audit year mismatch")
         entrants = scheduled.get(year, set())
         pre, dead, post = (
@@ -402,7 +421,7 @@ def _validate_audit(history, audit):
             }
         survivors = pre - dead
         added = set()
-        for native, parent in row["births"]:
+        for native, parent in _arrays(row["births"], 2):
             native, parent = _parse_ids([native])[0], _parse_ids([parent])[0]
             if native in seen or native in added or parent not in survivors:
                 raise ValueError("birth identity or parent mismatch")
@@ -437,7 +456,11 @@ def _validate_audit(history, audit):
         if audit["mode"] == "strict_full_roster" and (entrants or added):
             raise ValueError("strict full roster prohibits additions")
         active, seen = post, seen | added
-    if audit["excluded"] != [excluded[x] for x in sorted(excluded)]:
+    # Compare canonical bytes, not dict equality, so float entry/death years
+    # (2016.0 == 2016) cannot pass as a second encoding of the same ledger.
+    if _json(audit["excluded"]) != _json(
+        [excluded[x] for x in sorted(excluded)]
+    ):
         raise ValueError("excluded-person audit mismatch")
     expected = {
         "projection",
@@ -608,8 +631,10 @@ def observe_assembled_history(
         if type(fertility_capture) is not FertilityCapture:
             raise ValueError("native fertility boundary capture required")
         fertility_capture._require_complete(draw, periods)
-    scheduled, all_ids = {}, set(initial)
+    scheduled, scheduled_frames, all_ids = {}, {}, set(initial)
     for year, frame in scheduled_entries_by_year.items():
+        # The engine accepts NumPy year keys via int(); normalize them here so
+        # the entry-metadata digest never sees a non-JSON integer key.
         year = _int(year)
         if not 2015 <= year <= 2014 + periods or year in scheduled:
             raise ValueError("invalid scheduled entry year")
@@ -618,7 +643,7 @@ def observe_assembled_history(
             raise ValueError("registered scheduled entries cannot be empty")
         if all_ids & set(rows):
             raise ValueError("scheduled identity collision")
-        scheduled[year] = rows
+        scheduled[year], scheduled_frames[year] = rows, frame
         all_ids.update(rows)
     if mode == "strict_full_roster" and any(scheduled.values()):
         raise ValueError("strict full roster prohibits scheduled entrants")
@@ -847,7 +872,7 @@ def observe_assembled_history(
                 _json(
                     [
                         [
-                            x.year,
+                            _int(x.year),
                             list(x.steps),
                             _frame_json(x.authoritative_marital_state.births),
                         ]
@@ -863,9 +888,7 @@ def observe_assembled_history(
                         "synthetic_start": str(synthetic_id_start),
                         "scheduled": [
                             [y, _frame_json(f)]
-                            for y, f in sorted(
-                                scheduled_entries_by_year.items()
-                            )
+                            for y, f in sorted(scheduled_frames.items())
                         ],
                     }
                 )
