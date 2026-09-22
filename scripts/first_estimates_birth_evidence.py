@@ -160,6 +160,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # Its exclusion remains guarded by the transitive reachability test.
     Path("src/populace_dynamics/person_identity.py"),
     Path("src/populace_dynamics/forward_earnings_history.py"),
+    Path("src/populace_dynamics/covered_wage_history.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

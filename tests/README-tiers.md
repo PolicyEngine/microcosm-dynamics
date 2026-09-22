@@ -38,9 +38,9 @@ pytest --collect-only -q -m oracle_policyengine | tail -1
 
 | Tier | Tests at HEAD |
 |---|---:|
-| `unit` | 1,656 |
+| `unit` | 1,694 |
 | `artifact` | 2,668 |
 | `integration_psid` | 848 |
 | `reproduction_legacy` | 520 |
 | `oracle_policyengine` | 159 |
-| **Total** | **5,758** |
+| **Total** | **5,889** |

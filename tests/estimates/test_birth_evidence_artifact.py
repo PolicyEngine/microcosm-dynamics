@@ -90,6 +90,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/estimates/anchor_context_report.py"),
         Path("src/populace_dynamics/person_identity.py"),
         Path("src/populace_dynamics/forward_earnings_history.py"),
+        Path("src/populace_dynamics/covered_wage_history.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -171,6 +172,7 @@ def test_post_review_identity_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.data.psid_questionnaire_inventory",
         "populace_dynamics.person_identity",
         "populace_dynamics.forward_earnings_history",
+        "populace_dynamics.covered_wage_history",
     }
     assert root_module in module_paths
     assert guarded_exclusions.issubset(module_paths)
