@@ -101,6 +101,13 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/engine/entrant_schedule.py"),
         Path("src/populace_dynamics/engine/entrant_domains.py"),
         Path("src/populace_dynamics/engine/accounting_history.py"),
+        Path("src/populace_dynamics/person_identity.py"),
+        Path("src/populace_dynamics/forward_earnings_history.py"),
+        Path("src/populace_dynamics/covered_wage_history.py"),
+        Path("src/populace_dynamics/mortality_observer.py"),
+        Path("src/populace_dynamics/closed_cohort_history.py"),
+        Path("src/populace_dynamics/assembled_history_observer.py"),
+        Path("src/populace_dynamics/compact_cohort_history.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -254,7 +261,7 @@ def test_source_reachability_includes_implicit_package_initializers(
     assert "sample.untracked_extension" not in reachable
 
 
-def test_psid_and_graph_exclusions_are_unreachable_from_birth_evidence():
+def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     module_paths = _repository_module_paths()
     root_module = "scripts.first_estimates_birth_evidence"
     psid_exclusions = {
@@ -328,6 +335,20 @@ def test_psid_and_graph_exclusions_are_unreachable_from_birth_evidence():
     }
     assert entrant_modules.issubset(module_paths)
     assert entrant_modules.isdisjoint(reachable)
+    history_modules = {
+        "populace_dynamics.person_identity",
+        "populace_dynamics.forward_earnings_history",
+        "populace_dynamics.covered_wage_history",
+        "populace_dynamics.mortality_observer",
+        "populace_dynamics.closed_cohort_history",
+        "populace_dynamics.assembled_history_observer",
+        "populace_dynamics.compact_cohort_history",
+    }
+    assert history_modules.issubset(module_paths)
+    assert history_modules.isdisjoint(reachable), (
+        "opt-in identity and history modules became reachable from the "
+        f"birth-evidence reducer: {sorted(history_modules & reachable)}"
+    )
     assert "populace_dynamics.engine.steps" in reachable
 
 

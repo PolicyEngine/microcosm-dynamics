@@ -176,17 +176,14 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # Experimental entrants are outside the registered projection call graph.
     Path("src/populace_dynamics/engine/entrant_schedule.py"),
     Path("src/populace_dynamics/engine/entrant_domains.py"),
-    # This opt-in accountant is unreachable from the historical projection.
-    # The existing engine loop, steps, and package initializer remain sealed.
+    # The opt-in accounting-history validator is likewise unreachable.
     Path("src/populace_dynamics/engine/accounting_history.py"),
     # The opt-in identity transport is not imported by the historical reducer.
     # Its exclusion remains guarded by the transitive reachability test.
     Path("src/populace_dynamics/person_identity.py"),
-    # The opt-in identity transport is not imported by the historical reducer.
-    # Its exclusion remains guarded by the transitive reachability test.
+    # Opt-in history recorders and observers sit outside the historical loop.
     Path("src/populace_dynamics/forward_earnings_history.py"),
     Path("src/populace_dynamics/covered_wage_history.py"),
-    # The standalone mortality observer is not part of the historical loop.
     Path("src/populace_dynamics/mortality_observer.py"),
     Path("src/populace_dynamics/closed_cohort_history.py"),
     Path("src/populace_dynamics/assembled_history_observer.py"),
