@@ -179,6 +179,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # This opt-in accountant is unreachable from the historical projection.
     # The existing engine loop, steps, and package initializer remain sealed.
     Path("src/populace_dynamics/engine/accounting_history.py"),
+    # The opt-in identity transport is not imported by the historical reducer.
+    # Its exclusion remains guarded by the transitive reachability test.
+    Path("src/populace_dynamics/person_identity.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
