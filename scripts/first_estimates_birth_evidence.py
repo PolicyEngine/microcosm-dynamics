@@ -170,6 +170,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # This opt-in accountant is unreachable from the historical projection.
     # The existing engine loop, steps, and package initializer remain sealed.
     Path("src/populace_dynamics/engine/accounting.py"),
+    # This explicit opt-in successor is outside the reviewed projection
+    # call graph. Keep the historical steps.py implementation in the seal.
+    Path("src/populace_dynamics/engine/claiming.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
