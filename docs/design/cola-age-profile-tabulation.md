@@ -25,8 +25,10 @@ scenarios: `draw`, `person_id`, `weight`, `birth_year`, `beneficiary_base`,
 to the totals, and unknown names are refused. The statistic uses the benefit
 summed over the selected components. The tabulation refuses duplicate
 `(draw, person_id)` keys, a draw set different from the configured one,
-non-finite or negative amounts or weights, and a false beneficiary flag with a
-positive benefit.
+non-finite or negative amounts or weights, a false beneficiary flag with a
+positive benefit, a `person_id` whose birth year differs between draws, and a
+DataFrame with repeated column names. Persons whose weight differs between
+draws are counted in the input summary, not refused.
 
 ## Statistics
 

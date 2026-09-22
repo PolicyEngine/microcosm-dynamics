@@ -799,6 +799,58 @@ def test_mixed_person_id_types_are_refused():
         _tabulate(rows, age_groups=_single_group())
 
 
+def test_birth_year_that_differs_between_draws_is_refused():
+    # Invented rows: person 1 is born 1975 (age 55) in draw 0 but 1990
+    # (age 40, outside every group) in draw 1.  Accepting that would put one
+    # person in different age groups in different draws, so it is refused.
+    rows = [
+        _row(0, 1, birth_year=1975, base=1000.0, reform=900.0),
+        _row(1, 1, birth_year=1990, base=1000.0, reform=900.0),
+        _row(0, 2, birth_year=1975, base=1000.0, reform=950.0),
+        _row(1, 2, birth_year=1975, base=1000.0, reform=950.0),
+    ]
+    with pytest.raises(ColaTabulationError, match="birth_year 1990 but 1975"):
+        _tabulate(rows, age_groups=_single_group(), draw_indices=(0, 1))
+    with pytest.raises(ColaTabulationError, match="same in every draw"):
+        _tabulate(
+            pd.DataFrame(rows),
+            age_groups=_single_group(),
+            draw_indices=(0, 1),
+        )
+
+
+def test_draw_varying_weight_is_counted_not_refused():
+    # Invented rows: person 1 has weight 1 in draw 0 and 3 in draw 1; each
+    # draw's statistic uses that draw's weights.
+    # draw 0: (1*900 + 1*950) / (1*1000 + 1*1000) = 0.925 -> -7.5%
+    # draw 1: (3*900 + 1*950) / (3*1000 + 1*1000) = 0.9125 -> -8.75%
+    rows = [
+        _row(0, 1, birth_year=1975, base=1000.0, reform=900.0, weight=1.0),
+        _row(1, 1, birth_year=1975, base=1000.0, reform=900.0, weight=3.0),
+        _row(0, 2, birth_year=1975, base=1000.0, reform=950.0),
+        _row(1, 2, birth_year=1975, base=1000.0, reform=950.0),
+    ]
+    result = _tabulate(rows, age_groups=_single_group(), draw_indices=(0, 1))
+    summary = result["input_summary"]
+    assert summary["n_persons_weight_varies_across_draws"] == 1
+    assert _group(result, "only")[PRIMARY]["per_draw"] == pytest.approx(
+        [-7.5, -8.75]
+    )
+    fixed = _tabulate(_five_group_rows(), draw_indices=(0, 1))
+    assert fixed["input_summary"]["n_persons_weight_varies_across_draws"] == 0
+
+
+def test_dataframe_with_repeated_column_names_is_refused():
+    # pandas' to_dict("records") keeps only the last of repeated columns,
+    # so a second benefit_base column would silently replace the first.
+    rows = [_row(0, 1, birth_year=1975, base=1000.0, reform=900.0)]
+    frame = pd.DataFrame(rows)
+    frame = pd.concat([frame, frame[["benefit_base"]] * 2], axis=1)
+    assert list(frame.columns).count("benefit_base") == 2
+    with pytest.raises(ColaTabulationError, match="repeated column names"):
+        _tabulate(frame, age_groups=_single_group())
+
+
 def test_numpy_string_person_ids_are_strings():
     # numpy.str_ keys (e.g. from an array) mix with builtin str keys: both
     # are string ids, and equal values are the same person.

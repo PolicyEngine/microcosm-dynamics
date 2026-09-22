@@ -20,7 +20,8 @@ and whether each equals the proposed primary.
 Input rows
 ----------
 One row per ``(draw, person_id)`` with the columns in
-:data:`REQUIRED_COLUMNS` (extra columns are ignored and listed):
+:data:`REQUIRED_COLUMNS` (extra columns are ignored and listed; a DataFrame
+with repeated column names is refused):
 
 ``draw``
     Non-negative integer draw index ``k`` (the engine's ``5200 + k`` seed
@@ -29,9 +30,12 @@ One row per ``(draw, person_id)`` with the columns in
     Integer or string person key, one type for all rows.  The half-split
     floor partitions on it, so all draws of a person fall on one side.
 ``weight``
-    Finite, non-negative person weight, shared by both scenarios.
+    Finite, non-negative person weight, shared by both scenarios.  Each
+    draw uses its own rows' weights; persons whose weight differs between
+    draws are counted in the input summary, not refused.
 ``birth_year``
-    Integer birth year; the age rule turns it into the reporting age.
+    Integer birth year; the age rule turns it into the reporting age.  A
+    person_id whose birth year differs between draws is refused.
 ``beneficiary_base`` / ``beneficiary_reform``
     Booleans: the person is a beneficiary in the reference period in that
     scenario.  A row with a false flag and a positive benefit is refused.
@@ -592,6 +596,7 @@ class _Rows:
     recipient_reform: np.ndarray
     flagged_zero_base: int
     flagged_zero_reform: int
+    n_persons_weight_varies: int
     extra_columns: tuple[str, ...]
 
     @property
@@ -603,6 +608,15 @@ def _records(
     rows: pd.DataFrame | Iterable[Mapping[str, Any]],
 ) -> tuple[list[Mapping[str, Any]], tuple[str, ...]]:
     if isinstance(rows, pd.DataFrame):
+        if not rows.columns.is_unique:
+            # DataFrame.to_dict("records") keeps only the last of repeated
+            # column names (with a warning), which would silently drop data.
+            repeated = sorted(
+                {str(c) for c in rows.columns[rows.columns.duplicated()]}
+            )
+            raise ColaTabulationError(
+                f"rows have repeated column names {repeated}"
+            )
         missing = [c for c in REQUIRED_COLUMNS if c not in rows.columns]
         if missing:
             raise ColaTabulationError(f"rows lack columns {missing}")
@@ -710,6 +724,8 @@ def _normalize(
     recipient = np.empty((n, 2), dtype=bool)
     person_ids: list[int | str] = []
     seen: set[tuple[int, int | str]] = set()
+    person_birth_year: dict[int | str, int] = {}
+    person_weights: dict[int | str, set[float]] = {}
     flagged_zero = [0, 0]
     chosen = config.components
 
@@ -724,9 +740,20 @@ def _normalize(
         seen.add(key)
         person_ids.append(person)
         weight[index] = _nonnegative(record["weight"], f"row {index} weight")
+        person_weights.setdefault(person, set()).add(float(weight[index]))
         birth_year[index] = _int_value(
             record["birth_year"], f"row {index} birth_year"
         )
+        # A person's birth year fixes their age group in every draw, and the
+        # half-split floor treats a person_id as one person across draws, so
+        # a person_id whose birth year differs between draws is refused.
+        known = person_birth_year.setdefault(person, int(birth_year[index]))
+        if known != int(birth_year[index]):
+            raise ColaTabulationError(
+                f"row {index}: person_id {person!r} has birth_year "
+                f"{int(birth_year[index])} but {known} in another draw; a "
+                "person's birth year must be the same in every draw"
+            )
         parsed = _parse_components(record["benefit_components"], index)
         has_selected = any(name in parsed for name in chosen)
         for position, scenario in enumerate(("base", "reform")):
@@ -788,6 +815,9 @@ def _normalize(
         recipient_reform=recipient[:, 1].copy(),
         flagged_zero_base=flagged_zero[0],
         flagged_zero_reform=flagged_zero[1],
+        n_persons_weight_varies=sum(
+            1 for values in person_weights.values() if len(values) > 1
+        ),
         extra_columns=extras,
     )
 
@@ -1268,6 +1298,10 @@ def _input_summary(
         "person_sets_identical_across_draws": all(
             s == person_sets[0] for s in person_sets
         ),
+        # Reported, not refused: each draw's statistic uses that draw's
+        # weights, so a draw-varying weight is well defined, but a fixed
+        # person weight is the expected input.
+        "n_persons_weight_varies_across_draws": rows.n_persons_weight_varies,
         "extra_columns_ignored": list(rows.extra_columns),
         "n_rows_by_age_group": {
             g.label: int(np.count_nonzero(rows.group == i))
