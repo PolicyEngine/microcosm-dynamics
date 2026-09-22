@@ -165,6 +165,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/graph/model.py"),
     Path("src/populace_dynamics/graph/runtime.py"),
     Path("src/populace_dynamics/graph/synthetic.py"),
+    Path("src/populace_dynamics/graph/trajectory.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
