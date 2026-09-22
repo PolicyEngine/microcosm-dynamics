@@ -100,6 +100,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/engine/claiming.py"),
         Path("src/populace_dynamics/engine/entrant_schedule.py"),
         Path("src/populace_dynamics/engine/entrant_domains.py"),
+        Path("src/populace_dynamics/engine/accounting_history.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -315,6 +316,8 @@ def test_psid_and_graph_exclusions_are_unreachable_from_birth_evidence():
     )
     assert "populace_dynamics.engine.accounting" in module_paths
     assert "populace_dynamics.engine.accounting" not in reachable
+    assert "populace_dynamics.engine.accounting_history" in module_paths
+    assert "populace_dynamics.engine.accounting_history" not in reachable
     assert "populace_dynamics.engine" in reachable
     successor = "populace_dynamics.engine.claiming"
     assert successor in module_paths
