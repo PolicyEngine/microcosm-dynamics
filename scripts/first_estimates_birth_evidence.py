@@ -188,6 +188,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/closed_cohort_history.py"),
     Path("src/populace_dynamics/assembled_history_observer.py"),
     Path("src/populace_dynamics/compact_cohort_history.py"),
+    # The opt-in scenario COLA benefit paths (plan A6) generalize the sealed
+    # ledger path without editing it; nothing historical imports them.
+    Path("src/populace_dynamics/scenario_benefits.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
