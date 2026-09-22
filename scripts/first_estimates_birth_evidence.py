@@ -161,6 +161,8 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/person_identity.py"),
     Path("src/populace_dynamics/forward_earnings_history.py"),
     Path("src/populace_dynamics/covered_wage_history.py"),
+    # The standalone mortality observer is not part of the historical loop.
+    Path("src/populace_dynamics/mortality_observer.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
