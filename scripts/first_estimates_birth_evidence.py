@@ -188,6 +188,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/closed_cohort_history.py"),
     Path("src/populace_dynamics/assembled_history_observer.py"),
     Path("src/populace_dynamics/compact_cohort_history.py"),
+    # The opt-in Axiom benefit bridge runs an external engine on retained
+    # histories and is outside the historical projection call graph.
+    Path("src/populace_dynamics/axiom_benefit_bridge.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

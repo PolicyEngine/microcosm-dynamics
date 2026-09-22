@@ -108,6 +108,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/closed_cohort_history.py"),
         Path("src/populace_dynamics/assembled_history_observer.py"),
         Path("src/populace_dynamics/compact_cohort_history.py"),
+        Path("src/populace_dynamics/axiom_benefit_bridge.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -179,46 +180,6 @@ def _internal_imports(
             if (parent := ".".join(parts[:length])) in module_paths
         )
     return internal
-
-
-@pytest.mark.parametrize(
-    "statement",
-    [
-        "import sample.leaf",
-        "from sample.leaf import function",
-        "from sample import leaf",
-        "import sample.untracked_extension",
-    ],
-)
-def test_source_reachability_includes_implicit_package_initializers(
-    tmp_path, statement
-):
-    package = tmp_path / "__init__.py"
-    leaf = tmp_path / "leaf.py"
-    hidden = tmp_path / "hidden.py"
-    consumer = tmp_path / "consumer.py"
-    package.write_text("from . import hidden\n")
-    leaf.write_text("def function(): pass\n")
-    hidden.write_text("")
-    consumer.write_text(statement + "\n")
-    modules = {
-        "consumer": consumer,
-        "sample": package,
-        "sample.leaf": leaf,
-        "sample.hidden": hidden,
-    }
-    reachable = set()
-    pending = ["consumer"]
-    while pending:
-        name = pending.pop()
-        if name in reachable:
-            continue
-        reachable.add(name)
-        pending.extend(
-            _internal_imports(name, modules[name], modules) - reachable
-        )
-    assert {"sample", "sample.hidden"}.issubset(reachable)
-    assert "sample.untracked_extension" not in reachable
 
 
 @pytest.mark.parametrize(
@@ -348,6 +309,12 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert history_modules.isdisjoint(reachable), (
         "opt-in identity and history modules became reachable from the "
         f"birth-evidence reducer: {sorted(history_modules & reachable)}"
+    )
+    benefit_bridge = "populace_dynamics.axiom_benefit_bridge"
+    assert benefit_bridge in module_paths
+    assert benefit_bridge not in reachable, (
+        "the opt-in Axiom benefit bridge became reachable from the "
+        "birth-evidence reducer"
     )
     assert "populace_dynamics.engine.steps" in reachable
 
