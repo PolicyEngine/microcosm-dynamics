@@ -1159,3 +1159,370 @@ def test_anchor_reader_requires_a_unique_2011_weight(tmp_path):
     )
     with pytest.raises(ValueError, match="expected only ER34155"):
         cohort.read_anchor_wave(data_dir=tmp_path)
+
+
+# --------------------------------------------------------------------------
+# The 2009 anchor wave (A1 section 14, row R6), on the same invented people
+# --------------------------------------------------------------------------
+def _anchor_2009() -> pd.DataFrame:
+    """INVENTED 2009 anchor rows: the 2011 people two years younger.
+
+    The 2009 interview number is the person id, as ``_head_spouse_ss``
+    already codes the 2009 family rows, except that 1002 lives in 1001's
+    family and 9201 is the cohabiting "wife" (code 22) in 9101's.
+    """
+
+    frame = _anchor()
+    shared = {1002: 1001, 9201: 9101}
+    frame["interview"] = [
+        shared.get(pid, pid) for pid in frame["person_id"].tolist()
+    ]
+    frame.loc[frame["person_id"] == 9201, "relationship"] = 22
+    frame["age"] = frame["age"].where(frame["age"] <= 2, frame["age"] - 2)
+    frame["weight"] = frame["weight"] + 1.0
+    frame.loc[frame["person_id"] == 9001, "weight"] = 0.0
+    return frame
+
+
+def _inputs_2009(**overrides) -> cohort.Psid2010Inputs:
+    return _inputs(anchor=_anchor_2009(), anchor_wave=2009, **overrides)
+
+
+@pytest.fixture(scope="module")
+def built_2009() -> cohort.Psid2010Cohort:
+    return cohort.build_psid2010_cohort(
+        _inputs_2009(), cohort.Psid2010CohortSpec(anchor_wave=2009)
+    )
+
+
+def test_2009_wave_spec_opens_in_2008():
+    spec = cohort.Psid2010CohortSpec(anchor_wave=2009)
+    assert spec.start_year == 2008
+    assert spec.m4_waves == (2009,)
+    assert spec.layout.weight_variable == "ER34046"
+    assert spec.layout.family_unit_variable == "ER34001"
+    assert cohort.Psid2010CohortSpec().m4_waves == (2011,)
+    assert cohort.ANCHOR_LAYOUTS[2011].weight_variable == "ER34155"
+    assert cohort.ANCHOR_LAYOUTS[2011].family_unit_variable == "ER34101"
+    with pytest.raises(ValueError, match="anchor wave"):
+        cohort.Psid2010CohortSpec(anchor_wave=2009, m4_waves=(2011,))
+    with pytest.raises(ValueError, match="anchor_wave"):
+        cohort.Psid2010CohortSpec(anchor_wave=2013)
+    with pytest.raises(ValueError, match="may not follow 2008"):
+        cohort.Psid2010CohortSpec(anchor_wave=2009, claim_table_max_year=2009)
+
+
+def test_2009_wave_columns_carry_their_own_years(built_2009):
+    persons = built_2009.persons
+    assert built_2009.anchor_wave == 2009 and built_2009.start_year == 2008
+    for column in (
+        "family_unit_id",
+        "interview_2009",
+        "sequence_2009",
+        "relationship_2009",
+        "age_2009_reported",
+        "reported_birth_year_2009",
+        "age_2008",
+        "death_before_2009_presence",
+        "marital_status_2008",
+        "separated_2008",
+        "coresident_partner_person_id_2009",
+        "ss_receipt_2008",
+        "m4_disabled_2009",
+    ):
+        assert column in persons, column
+    for column in ("interview_2011", "age_2010", "ss_receipt_2010"):
+        assert column not in persons, column
+    assert (persons["family_unit_id"] == persons["interview_2009"]).all()
+    assert (persons["age_2008"] == 2008 - persons["birth_year"]).all()
+    # Weights are the 2009 anchor's (invented: the 2011 weight + 1).
+    assert _person(built_2009, 1001)["weight"] == 1001.0
+    assert set(built_2009.diagnostics) >= {
+        "death_before_2009_presence",
+        "married_with_linked_spouse_dead_by_2008",
+        "separated_2008",
+    }
+
+
+def test_2009_wave_opening_state_is_as_of_2008(built_2009):
+    # 1001 received in 2008 (12,000): a retired worker whose first
+    # receipt is censored at 2008 (no earlier observation is resolved).
+    head = _person(built_2009, 1001)
+    assert head["opening_status"] == "retired_worker"
+    assert head["opening_claim_year_upper_bound"] == 2008
+    assert head["opening_claim_year_basis"] == "imputed_censored_at_2008"
+    assert head["opening_claim_year"] <= 2008
+    # 1002 received nothing in 2008 (first receipt in 2010): no opening
+    # benefit under the 2009 wave, though the 2011 wave has one.
+    wife = _person(built_2009, 1002)
+    assert wife["opening_status"] == "none"
+    assert wife["opening_status_basis"] == "no_receipt_2008"
+    # 2001 (under 62, M4-disabled in 2011 only) is not M4-disabled in
+    # 2009 in the invented frames, so the under-62 residual rule applies.
+    assert _person(built_2009, 2001)["opening_status_basis"] == (
+        "under62_residual"
+    )
+    # 5101 separated in 2008: still married at the end of 2008.
+    assert _person(built_2009, 5101)["marital_status_2008"] == "married"
+    # Careers stop at the 2008 information date.
+    careers = built_2009.careers
+    assert careers["year"].max() == 2008
+    assert not (
+        (careers["person_id"] == 1001) & (careers["year"] == 2010)
+    ).any()
+
+
+def test_2009_wave_family_units_group_their_members(built_2009):
+    persons = built_2009.persons.set_index("person_id")
+    assert persons.loc[9101, "family_unit_id"] == 9101
+    assert persons.loc[9201, "family_unit_id"] == 9101
+    assert persons.loc[1001, "family_unit_id"] == 1001
+    assert persons.loc[1002, "family_unit_id"] == 1001
+    assert persons.loc[1002, "coresident_partner_person_id_2009"] == 1001
+
+
+def test_anchor_wave_of_inputs_must_match_the_spec():
+    with pytest.raises(ValueError, match="2011 anchor wave"):
+        cohort.build_psid2010_cohort(
+            _inputs(), cohort.Psid2010CohortSpec(anchor_wave=2009)
+        )
+    with pytest.raises(ValueError, match="2009 anchor wave"):
+        cohort.build_psid2010_cohort(_inputs_2009())
+
+
+def test_2011_wave_carries_its_family_unit(built):
+    persons = built.persons
+    assert (persons["family_unit_id"] == persons["interview_2011"]).all()
+    assert built.anchor_wave == 2011 and built.start_year == 2010
+
+
+# --------------------------------------------------------------------------
+# Builder-set provenance
+# --------------------------------------------------------------------------
+def test_hand_assembled_frames_are_caller_frames(built):
+    provenance = built.provenance
+    assert provenance["kind"] == cohort.CALLER_FRAMES
+    assert provenance["set_by"].endswith("build_psid2010_cohort")
+    assert provenance["content_sha256"] == cohort.cohort_content_sha256(built)
+    assert provenance["input_frames_sha256"] == (
+        cohort.input_frames_sha256(_inputs())
+    )
+    assert provenance["anchor_wave"] == 2011
+
+
+def test_provenance_is_not_a_constructor_argument(built):
+    with pytest.raises(TypeError):
+        cohort.Psid2010Cohort(
+            persons=built.persons,
+            careers=built.careers,
+            social_security=built.social_security,
+            dispositions=built.dispositions,
+            spec=built.spec,
+            diagnostics=built.diagnostics,
+            provenance={"kind": "invented"},
+        )
+    # A replaced cohort loses the builder's seal.
+    replaced = dataclasses.replace(built, persons=built.persons.copy())
+    assert replaced.provenance["kind"] == "unsealed"
+
+
+def test_invented_provenance_requires_the_generator_digest():
+    inputs = _inputs()
+    digest = cohort.input_frames_sha256(inputs)
+    stamped = dataclasses.replace(
+        inputs,
+        provenance={
+            "kind": cohort.INVENTED,
+            "input_frames_sha256": digest,
+            "seed": 1,
+        },
+    )
+    built = cohort.build_psid2010_cohort(stamped)
+    assert built.provenance["kind"] == cohort.INVENTED
+    assert built.provenance["input_frames_sha256"] == digest
+    # Any frame swapped after the digest was taken is refused.
+    swapped = dataclasses.replace(stamped, anchor=_anchor().iloc[:-1])
+    with pytest.raises(ValueError, match="frames differ"):
+        cohort.build_psid2010_cohort(swapped)
+
+
+def test_psid_files_provenance_carries_the_file_hashes():
+    stamped = dataclasses.replace(
+        _inputs(),
+        provenance={
+            "kind": cohort.PSID_FILES,
+            "psid_data_dir": "/invented/psid",
+            "psid_files_sha256": {"ind2023er/IND2023ER.txt": "ab" * 32},
+            "psid_files_bundle_sha256": "cd" * 32,
+        },
+    )
+    built = cohort.build_psid2010_cohort(stamped)
+    assert built.provenance["kind"] == cohort.PSID_FILES
+    assert built.provenance["psid_files_sha256"] == {
+        "ind2023er/IND2023ER.txt": "ab" * 32
+    }
+    empty = dataclasses.replace(
+        stamped, provenance={"kind": cohort.PSID_FILES}
+    )
+    with pytest.raises(ValueError, match="no PSID file"):
+        cohort.build_psid2010_cohort(empty)
+
+
+def _write_anchor_2009(root: Path, *, weight_label: str) -> None:
+    fields = [
+        ("ER30001", 4, "1968 INTERVIEW NUMBER", [1, 1, 2]),
+        ("ER30002", 3, "PERSON NUMBER 68", [1, 2, 1]),
+        ("ER34001", 5, "2009 INTERVIEW NUMBER", [7, 7, 0]),
+        ("ER34002", 2, "SEQUENCE NUMBER 09", [1, 2, 0]),
+        ("ER34003", 2, "RELATION TO HEAD 09", [10, 20, 0]),
+        ("ER34004", 3, "AGE OF INDIVIDUAL 09", [68, 64, 0]),
+        ("ER34006", 4, "YEAR INDIVIDUAL BORN 09", [1940, 9999, 0]),
+        ("ER34046", 5, weight_label, [1100, 950, 0]),
+    ]
+    write_product(root / "ind2023er", "IND2023ER.sps", "IND2023ER.txt", fields)
+
+
+def test_2009_anchor_reader_verifies_labels_and_records_files(tmp_path):
+    _write_anchor_2009(
+        tmp_path, weight_label="CORE/IMM INDIVIDUAL CROSS-SECTION WT 09"
+    )
+    outside = tmp_path.parent / f"{tmp_path.name}-outside.txt"
+    outside.write_text("not under the PSID root\n")
+    with cohort.record_files_read(tmp_path) as files:
+        frame = cohort.read_anchor_wave(data_dir=tmp_path, anchor_wave=2009)
+        outside.read_text()
+    assert frame["interview"].tolist() == [7, 7, 0]
+    assert frame["weight"].tolist() == [1100.0, 950.0, 0.0]
+    assert frame["age"].tolist() == [68, 64, 0]
+    assert pd.isna(frame["reported_birth_year"].iloc[1])
+    import hashlib
+
+    expected = {
+        name: hashlib.sha256(
+            (tmp_path / "ind2023er" / name.split("/")[1]).read_bytes()
+        ).hexdigest()
+        for name in ("ind2023er/IND2023ER.sps", "ind2023er/IND2023ER.txt")
+    }
+    assert files == expected
+    _write_anchor_2009(
+        tmp_path, weight_label="CORE/IMM INDIVIDUAL CROSS-SECTION WT 11"
+    )
+    with pytest.raises(ValueError, match="ER34046"):
+        cohort.read_anchor_wave(data_dir=tmp_path, anchor_wave=2009)
+
+
+def test_file_recorder_records_nothing_after_its_block(tmp_path):
+    target = tmp_path / "a.txt"
+    target.write_text("invented\n")
+    with cohort.record_files_read(tmp_path) as files:
+        pass
+    target.read_text()
+    assert files == {}
+
+
+def _stub_readers(monkeypatch, root: Path, frames: cohort.Psid2010Inputs):
+    """Replace each PSID reader by one that opens an INVENTED file under
+    ``root`` and returns the invented frame, so the loader's recording of
+    the files it read can be checked without PSID."""
+
+    opened = []
+
+    def reader(name, frame):
+        def read(*_args, **_kwargs):
+            path = root / "invented" / f"{name}.txt"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            if not path.exists():
+                path.write_text(f"INVENTED {name}\n")
+            path.read_text()
+            opened.append(name)
+            return frame
+
+        return read
+
+    monkeypatch.setattr(
+        cohort, "_load_claiming_pmf", lambda _path: (_claiming_pmf(), "0")
+    )
+    monkeypatch.setattr(
+        cohort.disability,
+        "verify_employment_status_codes",
+        reader("status_codes", {}),
+    )
+    monkeypatch.setattr(
+        cohort, "read_anchor_wave", reader("anchor", frames.anchor)
+    )
+    monkeypatch.setattr(
+        cohort.deaths,
+        "read_death_records",
+        reader("deaths", frames.death_records),
+    )
+    monkeypatch.setattr(
+        cohort.marriage,
+        "marriage_history",
+        reader("marriages", frames.marriage_history),
+    )
+    monkeypatch.setattr(
+        cohort.family,
+        "family_earnings_panel",
+        reader("earnings", frames.observed_earnings),
+    )
+    monkeypatch.setattr(
+        cohort.ssi,
+        "head_spouse_social_security_panel",
+        reader("head_spouse_ss", frames.head_spouse_ss),
+    )
+    monkeypatch.setattr(
+        cohort.ssi,
+        "read_individual_social_security",
+        reader("individual_ss", frames.individual_ss),
+    )
+    monkeypatch.setattr(
+        cohort.disability,
+        "read_disability_status",
+        reader("disability", frames.disability_status),
+    )
+    return opened
+
+
+def test_loader_records_every_psid_file_it_read(tmp_path, monkeypatch):
+    import hashlib
+
+    root = tmp_path / "psid"
+    opened = _stub_readers(monkeypatch, root, _inputs())
+    inputs = cohort.load_psid2010_inputs(data_dir=root)
+    assert len(opened) == 8
+    provenance = inputs.provenance
+    assert provenance["kind"] == cohort.PSID_FILES
+    assert provenance["psid_data_dir"] == str(root)
+    files = provenance["psid_files_sha256"]
+    assert set(files) == {
+        f"invented/{name}.txt"
+        for name in (
+            "status_codes",
+            "anchor",
+            "deaths",
+            "marriages",
+            "earnings",
+            "head_spouse_ss",
+            "individual_ss",
+            "disability",
+        )
+    }
+    for name, digest in files.items():
+        assert digest == hashlib.sha256((root / name).read_bytes()).hexdigest()
+    # The cohort carries the files it came from; it is not "invented".
+    built = cohort.build_psid2010_cohort(inputs)
+    assert built.provenance["kind"] == cohort.PSID_FILES
+    assert built.provenance["psid_files_sha256"] == files
+    assert built.provenance["psid_files_bundle_sha256"] == (
+        provenance["psid_files_bundle_sha256"]
+    )
+
+
+def test_loader_refuses_when_no_psid_file_was_read(tmp_path, monkeypatch):
+    # Readers that open nothing under the root (INVENTED stand-ins) leave
+    # the provenance unestablished, which the loader refuses.
+    root = tmp_path / "psid"
+    root.mkdir()
+    _stub_readers(monkeypatch, tmp_path / "elsewhere", _inputs())
+    with pytest.raises(RuntimeError, match="no PSID file"):
+        cohort.load_psid2010_inputs(data_dir=root)

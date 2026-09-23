@@ -6,6 +6,11 @@ proposed for DynaSim scorecard exercise 1 in the critical-path plan
 is a *PSID-seeded closed cohort*. The builder computes no benefit, no COLA
 scenario and no comparison statistic.
 
+The same builder also materializes the registered alternative population
+of the A1 specification (section 14, row R6): the 2009 wave, opening at the
+end of 2008 (see "The 2009 wave" below). Everything else in this document
+describes the default 2011 wave unless it says otherwise.
+
 ## Population
 
 - **Universe.** Persons in the 2011 individual file with sequence 1-20
@@ -27,6 +32,32 @@ scenario and no comparison statistic.
   year is at most 1980 and sex is coded. Every universe person gets exactly
   one disposition: `member`, `excluded_birth_year_unresolved`,
   `outside_birth_cohort` or `excluded_sex_unknown`, in that precedence.
+
+## Family unit and provenance
+
+- **Family unit.** `persons.family_unit_id` is the anchor wave's interview
+  number (`ER34101` for 2011, `ER34001` for 2009), label-verified with the
+  other anchor variables. A1 section 16 splits the half-sample noise floor
+  on it, so the members of a family unit always fall in the same half.
+- **Provenance, set by the builder.** `Psid2010Cohort.provenance` is not a
+  constructor argument; `build_psid2010_cohort` sets it from the inputs,
+  and `dataclasses.replace` resets it to `unsealed`.
+  - `psid_files`: `load_psid2010_inputs` records the SHA-256 of every file
+    under the PSID data directory that its readers opened (a Python audit
+    hook on `open`, `record_files_read`) and a bundle hash of that mapping.
+    The loader refuses to return inputs when it recorded no PSID file.
+  - `invented`: the invented generator records the SHA-256 of its frames;
+    the builder recomputes it and refuses inputs whose frames differ.
+  - `caller_frames`: anything else.
+  - Every provenance also carries `content_sha256`, a hash of the built
+    persons and careers, so a later edit is detectable.
+- The A5 assembly (`cola_track_a.opening.prepare_track_a_cohort`) refuses a
+  `data_provenance` label that contradicts this provenance: a cohort built
+  from PSID files cannot be labelled `invented` and so cannot skip the
+  issue #42 registration check, and a `registered_real` label needs a
+  `psid_files` cohort. It also re-generates an `invented` cohort's frames
+  from the recorded seed and refuses an unsealed, caller-assembled or
+  edited cohort under either label.
 
 ## Laws reused, not re-implemented
 
@@ -171,6 +202,75 @@ These are counts only.
 
 To regenerate these counts, run
 `python scripts/psid2010_cohort_structure.py --output <path>`.
+
+## The 2009 wave (A1 row R6)
+
+`Psid2010CohortSpec(anchor_wave=2009)` with
+`load_psid2010_inputs(anchor_wave=2009)` builds the 2009-wave population.
+`ANCHOR_LAYOUTS` holds each wave's variables with their exact labels,
+verified at read time. The 2009 labels were checked against
+`IND2023ER.sps` on 2026-09-23:
+
+| Role | 2011 wave | 2009 wave |
+|---|---|---|
+| Interview number (family unit) | `ER34101` "2011 INTERVIEW NUMBER" | `ER34001` "2009 INTERVIEW NUMBER" |
+| Sequence number | `ER34102` | `ER34002` |
+| Relation to head | `ER34103` | `ER34003` |
+| Age | `ER34104` | `ER34004` |
+| Reported birth year | `ER34106` | `ER34006` |
+| Cross-section weight | `ER34155` "CORE/IMM INDIVIDUAL CROSS-SECTION WT 11" | `ER34046` "CORE/IMM INDIVIDUAL CROSS-SECTION WT 09" |
+
+The weight must be the only "CROSS-SECTION WT 09" label, as for 2011. The
+relationship codes 10, 20 and 22 and the sequence groups (1-20 in a family,
+51-59 in an institution, 71-80 moved out and 81-89 died since the previous
+interview) have the same meaning in `ER34003F`/`ER34002F` as in the 2011
+formats (`IND2023ER_formats.sas`).
+
+Under the 2009 wave:
+
+- The opening year is 2008: ages, marital status, Social Security receipt
+  and opening status are as of 2008, and every wave-specific column carries
+  its own year (`interview_2009`, `age_2008`, `ss_receipt_2008`,
+  `marital_status_2008`, ...).
+- Careers run through 2008 (`build_career` with `claim_year=2008`).
+- M4 status defaults to the 2009 wave (`m4_waves=(2009,)`); no wave after
+  the anchor wave may be consulted.
+- Opening Social Security amounts are the 2008 amounts of the 2009 family
+  and individual files (`ER46929`/`ER46931` head and wife, `ER34031`
+  person-level), which `data.social_security_income` already reads and
+  label-verifies.
+- **Receipt start.** The reader resolves income years 2008, 2010 and 2012,
+  so the income year before 2008 that would bracket a first receipt (2006)
+  is not observed. Every 2008 recipient's first receipt is censored at
+  2008: a retired worker's claim year is imputed at or before 2008, and
+  other statuses keep 2008 as the upper bound. The R20 item of the 2009
+  family file (receipt in 2007) is not used. A1 section 6 allows this
+  because the start is never placed earlier than the observations allow.
+- The claim-table cap (2008) may not follow the opening year.
+
+`scripts/psid2010_cohort_structure.py --anchor-wave 2009` writes the
+2009-wave structural counts. On the staged data (2026-09-23, default spec;
+counts only, no benefit or statistic):
+
+- **Members.** 12,034 persons, weighted total 175,961,799, born 1905-1980;
+  10,402 outside the birth cohort and 492 with an unresolved birth year.
+- **2008 receipt.** 2,067 recipients (weighted 40,128,093). Opening status:
+  retired worker 1,236, disabled worker 448, survivor 383. Every recipient's
+  claim year is censored at 2008 (1,236 imputed, 831 with the upper bound
+  only); no imputation had an empty mass.
+- **Structural cross-checks of the 2009 anchor read.** The reported 2009
+  birth year (`ER34006`) equals the section 3.1 birth year for 11,915 of
+  12,021 comparable members and is within one year for 12,013. For 7,315 of
+  the 7,822 married members with a joinable spouse, the MH85_23 spouse is
+  also the 2009 co-resident head or wife (from `ER34001` and `ER34003`).
+  The family-file and individual-file amounts (income years 2008, 2010 and
+  2012) agree in receipt on all 31,390 member head and wife rows (largest
+  difference $12).
+- **Positive `ER34046` weights outside the universe.** Institution 499
+  persons, moved out since 2007 847, died since 2007 110.
+
+Rebuilding the 2011 wave with the same code reproduced every count of the
+2026-09-22 structure file above.
 
 ## Limits
 

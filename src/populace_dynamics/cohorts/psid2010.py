@@ -1,4 +1,4 @@
-"""The PSID 2010 starting cohort (Track A, work item A3).
+"""The PSID starting cohorts of Track A (work item A3).
 
 This module builds the closed starting population proposed for DynaSim
 scorecard exercise 1 in the critical-path plan
@@ -10,6 +10,29 @@ marital state and spouse links at the end of 2010, self-reported
 work-limitation (M4) status, observed Social Security receipt for income
 years 2008, 2010 and 2012, an opening-stock status with an opening claim
 year, and the 1968-2010 annual earnings career.
+
+The same builder materializes the registered alternative population of
+the A1 specification (section 14, row R6): the 2009 wave (income year
+2008), weighted with the 2009 cross-sectional weight ER34046, opening at
+the end of 2008 with the 1968-2008 career
+(``Psid2010CohortSpec(anchor_wave=2009)``).  :data:`ANCHOR_LAYOUTS` holds
+each wave's label-verified anchor variables; every wave-specific column
+name carries its own year (``interview_2009``, ``age_2008``,
+``ss_receipt_2008``, ...), and ``family_unit_id`` is the anchor wave's
+interview number under either wave (the A1 section 16 half-split unit).
+The Social Security reader resolves income years 2008, 2010 and 2012
+only, so no 2009-wave recipient's first receipt can be bracketed: every
+2008 recipient's receipt start is censored at 2008 (no earlier
+observation), which A1 section 6 allows because the start is never
+earlier than the observations allow.
+
+Provenance: :func:`build_psid2010_cohort` records on the cohort where its
+inputs came from (``Psid2010Cohort.provenance``), set by the builder and
+not by the caller: ``psid_files`` with the SHA-256 of every staged PSID
+file :func:`load_psid2010_inputs` read, ``invented`` only for inputs
+whose frames still hash to the digest the invented generator recorded,
+and ``caller_frames`` otherwise.  The provenance also seals the built
+persons and careers (``content_sha256``), so a later edit is detectable.
 
 Every output of this module is a *PSID-seeded closed cohort*. It computes
 no benefit, no reform and no comparison statistic.
@@ -45,9 +68,14 @@ where the plan is silent the default is a builder choice.
 
 from __future__ import annotations
 
+import contextlib
+import contextvars
 import hashlib
+import json
+import os
 import re
-from collections.abc import Mapping
+import sys
+from collections.abc import Iterator, Mapping
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -69,7 +97,12 @@ from populace_dynamics.engine.steps import ClaimingSchedule
 from populace_dynamics.estimates import career
 
 __all__ = [
+    "ANCHOR_LAYOUTS",
     "ANCHOR_WAVE",
+    "ANCHOR_WAVES",
+    "CALLER_FRAMES",
+    "INVENTED",
+    "PSID_FILES",
     "START_YEAR",
     "DEFAULT_MAX_BIRTH_YEAR",
     "SS_YEARS",
@@ -83,6 +116,7 @@ __all__ = [
     "Under62Residual",
     "OfumSsSource",
     "BracketResolution",
+    "AnchorWaveLayout",
     "Psid2010CohortSpec",
     "PendingDecision",
     "pending_decisions",
@@ -92,10 +126,14 @@ __all__ = [
     "load_psid2010_inputs",
     "marital_state_at",
     "build_psid2010_cohort",
+    "cohort_content_sha256",
+    "input_frames_sha256",
+    "record_files_read",
     "structural_summary",
 ]
 
-#: The collection wave that defines presence, and its income year.
+#: The collection wave that defines presence by default (A1 section 14,
+#: R0), and its income year.
 ANCHOR_WAVE = 2011
 START_YEAR = ANCHOR_WAVE - 1
 #: Plan section 3: persons aged 50+ in 2030 were born 1980 or earlier.
@@ -119,47 +157,132 @@ CLAIMING_REFERENCE_SHA256 = (
     "b88e45a08909f0f88a0ff37074c757891759ec988fd7e9fe14362eebd0abe462"
 )
 
-#: The 2011-wave anchor variables, each with its exact label, verified
-#: against IND2023ER.sps before the read (2026-09-22: ER34155 is
-#: "CORE/IMM INDIVIDUAL CROSS-SECTION WT 11" in both IND2023ER.sas and
-#: IND2023ER.sps; codebook range 55-88,308, 0 = "not response in 2011").
-_ANCHOR_VARS: dict[str, str] = {
+_PERSON_VARS: dict[str, str] = {
     "ER30001": "1968 INTERVIEW NUMBER",
     "ER30002": "PERSON NUMBER 68",
-    "ER34101": "2011 INTERVIEW NUMBER",
-    "ER34102": "SEQUENCE NUMBER 11",
-    "ER34103": "RELATION TO HEAD 11",
-    "ER34104": "AGE OF INDIVIDUAL 11",
-    "ER34106": "YEAR INDIVIDUAL BORN 11",
-    "ER34155": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 11",
 }
-_ANCHOR_COLUMNS: dict[str, str] = {
-    "ER34101": "interview",
-    "ER34102": "sequence",
-    "ER34103": "relationship",
-    "ER34104": "age",
-    "ER34106": "reported_birth_year",
-    "ER34155": "weight",
+_ANCHOR_ROLES = (
+    "interview",
+    "sequence",
+    "relationship",
+    "age",
+    "reported_birth_year",
+    "weight",
+)
+
+
+@dataclass(frozen=True)
+class AnchorWaveLayout:
+    """One anchor wave's label-verified individual-file variables.
+
+    ``variables`` maps each role in ``("interview", "sequence",
+    "relationship", "age", "reported_birth_year", "weight")`` to
+    ``(variable, exact label)``.  The read verifies every label under
+    whitespace normalization and requires the weight to be the only
+    "CROSS-SECTION WT <yy>" label of the wave.
+    """
+
+    wave: int
+    variables: Mapping[str, tuple[str, str]]
+
+    @property
+    def start_year(self) -> int:
+        """The income year the wave observes (the opening year)."""
+        return self.wave - 1
+
+    @property
+    def weight_variable(self) -> str:
+        return self.variables["weight"][0]
+
+    @property
+    def family_unit_variable(self) -> str:
+        return self.variables["interview"][0]
+
+    @property
+    def weight_concept(self) -> str:
+        return rf"CROSS-SECTION WT\s+{self.wave % 100:02d}$"
+
+    def labels(self) -> dict[str, str]:
+        return {
+            **_PERSON_VARS,
+            **{var: label for var, label in self.variables.values()},
+        }
+
+    def columns(self) -> dict[str, str]:
+        return {var: role for role, (var, _) in self.variables.items()}
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "wave": self.wave,
+            "start_year": self.start_year,
+            "variables": {
+                role: {"variable": var, "label": label}
+                for role, (var, label) in self.variables.items()
+            },
+        }
+
+
+#: The anchor waves the builder materializes, each with its exact labels,
+#: verified against IND2023ER.sps before the read.  2011 (A1 R0): verified
+#: 2026-09-22; ER34155 is "CORE/IMM INDIVIDUAL CROSS-SECTION WT 11" in both
+#: IND2023ER.sas and IND2023ER.sps (codebook range 55-88,308, 0 = "not
+#: response in 2011").  2009 (A1 R6): verified 2026-09-23 against
+#: IND2023ER.sps and the IND2023ER codebook; ER34046 is "CORE/IMM
+#: INDIVIDUAL CROSS-SECTION WT 09" (codebook range 55-68,935, 0 = "not
+#: response in 2009"), ER34001 "2009 INTERVIEW NUMBER" (0 = main family
+#: nonresponse), ER34006 codes 9,999 as NA and 0 as Inap., as ER34106 does.
+ANCHOR_LAYOUTS: dict[int, AnchorWaveLayout] = {
+    2011: AnchorWaveLayout(
+        wave=2011,
+        variables={
+            "interview": ("ER34101", "2011 INTERVIEW NUMBER"),
+            "sequence": ("ER34102", "SEQUENCE NUMBER 11"),
+            "relationship": ("ER34103", "RELATION TO HEAD 11"),
+            "age": ("ER34104", "AGE OF INDIVIDUAL 11"),
+            "reported_birth_year": ("ER34106", "YEAR INDIVIDUAL BORN 11"),
+            "weight": ("ER34155", "CORE/IMM INDIVIDUAL CROSS-SECTION WT 11"),
+        },
+    ),
+    2009: AnchorWaveLayout(
+        wave=2009,
+        variables={
+            "interview": ("ER34001", "2009 INTERVIEW NUMBER"),
+            "sequence": ("ER34002", "SEQUENCE NUMBER 09"),
+            "relationship": ("ER34003", "RELATION TO HEAD 09"),
+            "age": ("ER34004", "AGE OF INDIVIDUAL 09"),
+            "reported_birth_year": ("ER34006", "YEAR INDIVIDUAL BORN 09"),
+            "weight": ("ER34046", "CORE/IMM INDIVIDUAL CROSS-SECTION WT 09"),
+        },
+    ),
 }
-_WEIGHT_CONCEPT = r"CROSS-SECTION WT\s+11$"
+#: The waves above, default first.
+ANCHOR_WAVES: tuple[int, ...] = tuple(ANCHOR_LAYOUTS)
 _REPORTED_BIRTH_YEAR_NA = 9999
 
-#: 2011 relationship codes (two-digit era): 10 head, 20 legal wife,
-#: 22 cohabiting partner ("wife").
+#: Relationship codes (two-digit era; the 2009 and 2011 formats of
+#: ER34003/ER34103 agree): 10 head, 20 legal wife, 22 cohabiting partner
+#: ("wife").
 _HEAD = 10
 _LEGAL_SPOUSE = 20
 _PARTNER = 22
 
 _SEQUENCE_IN_FAMILY = (1, 20)
 _SEQUENCE_INSTITUTION = (51, 59)
-#: 2011 sequence groups (IND2023ER codebook, ER34102) for the accounting
-#: of positive-weight persons outside the presence universe.
+#: Sequence groups (IND2023ER formats ER34002F and ER34102F: 71-80 moved
+#: out, 81-89 died, since the previous wave's interview, named by that
+#: wave) for the accounting of positive-weight persons outside the
+#: presence universe.
 _SEQUENCE_GROUPS: tuple[tuple[str, int, int], ...] = (
     ("in_family", 1, 20),
     ("institution", 51, 59),
-    ("moved_out_since_2009", 71, 80),
-    ("died_since_2009", 81, 89),
+    ("moved_out_since_{previous}", 71, 80),
+    ("died_since_{previous}", 81, 89),
 )
+
+#: ``Psid2010Cohort.provenance`` kinds, set by the builder.
+PSID_FILES = "psid_files"
+INVENTED = "invented"
+CALLER_FRAMES = "caller_frames"
 
 _RNG_NAMESPACE = "psid2010_cohort.opening_stock.person.v1"
 
@@ -258,9 +381,11 @@ class Psid2010CohortSpec:
     """Every open choice of the builder, defaulting to the plan's proposal.
 
     See :func:`pending_decisions` for each field's alternatives and whether
-    its default is the plan's proposal or a builder choice.
+    its default is the plan's proposal or a builder choice.  ``m4_waves``
+    defaults to the anchor wave alone.
     """
 
+    anchor_wave: int = ANCHOR_WAVE
     presence: Presence = Presence.IN_FAMILY
     max_birth_year: int = DEFAULT_MAX_BIRTH_YEAR
     retirement_age: int = 62
@@ -270,7 +395,7 @@ class Psid2010CohortSpec:
     )
     under_62_residual: Under62Residual = Under62Residual.DISABLED_WORKER
     aged_m4_disabled_di_below_age: int | None = None
-    m4_waves: tuple[int, ...] = (ANCHOR_WAVE,)
+    m4_waves: tuple[int, ...] | None = None
     reported_type_precedence: tuple[str, ...] = (
         "disability",
         "survivor",
@@ -286,6 +411,12 @@ class Psid2010CohortSpec:
     separated_is_married: bool = True
 
     def __post_init__(self) -> None:
+        if self.anchor_wave not in ANCHOR_LAYOUTS:
+            raise ValueError(
+                f"anchor_wave must be one of {sorted(ANCHOR_LAYOUTS)}"
+            )
+        if self.m4_waves is None:
+            object.__setattr__(self, "m4_waves", (int(self.anchor_wave),))
         object.__setattr__(self, "presence", Presence(self.presence))
         object.__setattr__(self, "status_rule", StatusRule(self.status_rule))
         object.__setattr__(
@@ -324,10 +455,17 @@ class Psid2010CohortSpec:
                 f"m4_waves must lie in the code-verified waves "
                 f"{M4_VERIFIED_WAVES}"
             )
-        if self.max_birth_year > START_YEAR:
+        if max(self.m4_waves) > self.anchor_wave:
+            raise ValueError(
+                "m4_waves may not follow the anchor wave (the opening "
+                "state's information date)"
+            )
+        if self.max_birth_year > self.start_year:
             raise ValueError("max_birth_year may not follow the start year")
-        if self.claim_table_max_year > START_YEAR:
-            raise ValueError("claim_table_max_year may not follow 2010")
+        if self.claim_table_max_year > self.start_year:
+            raise ValueError(
+                f"claim_table_max_year may not follow {self.start_year}"
+            )
         if self.stock_imputation_root_seed < 0:
             raise ValueError("stock_imputation_root_seed must be >= 0")
         if (
@@ -337,6 +475,15 @@ class Psid2010CohortSpec:
             raise ValueError(
                 "aged_m4_disabled_di_below_age must exceed retirement_age"
             )
+
+    @property
+    def start_year(self) -> int:
+        """The opening year: the anchor wave's income year."""
+        return int(self.anchor_wave) - 1
+
+    @property
+    def layout(self) -> AnchorWaveLayout:
+        return ANCHOR_LAYOUTS[self.anchor_wave]
 
     def as_dict(self) -> dict[str, Any]:
         out = asdict(self)
@@ -370,7 +517,10 @@ class PendingDecision:
 
 _PLAN = "plan proposal (critical-path-cola-20260922.md)"
 _BUILDER = "builder choice; the plan is silent"
-_MAX = "Max ruling / A1 specification freeze"
+_MAX = (
+    "A1 specification freeze (Max's ratification; his 2026-09-23 rulings "
+    "did not cover this choice)"
+)
 
 
 def pending_decisions() -> tuple[PendingDecision, ...]:
@@ -384,6 +534,16 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
 
     spec = Psid2010CohortSpec()
     return (
+        PendingDecision(
+            "anchor_wave",
+            spec.anchor_wave,
+            (2009,),
+            "A1 specification section 14: the 2011 wave (ER34155, ER34101) "
+            "is the primary population R0; the 2009 wave (ER34046, "
+            "ER34001; opening year 2008) is the registered alternative R6. "
+            "Every spec field below keeps its meaning under either wave",
+            _MAX,
+        ),
         PendingDecision(
             "presence",
             spec.presence.value,
@@ -449,9 +609,11 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             "m4_waves",
             list(spec.m4_waves),
             ([2009, 2011], [2009]),
-            f"{_BUILDER}: the M4 self-report nearest the start; a member "
-            "with no ascertained status in any consulted wave counts as "
-            "not M4-disabled (flagged m4_status_unknown)",
+            f"{_BUILDER}: the M4 self-report nearest the start (the anchor "
+            "wave, so [2009] under anchor_wave 2009); a member with no "
+            "ascertained status in any consulted wave counts as not "
+            "M4-disabled (flagged m4_status_unknown); no wave after the "
+            "anchor wave",
             _MAX,
         ),
         PendingDecision(
@@ -540,6 +702,18 @@ class Psid2010Inputs:
     disability_status: pd.DataFrame
     claiming_pmf: Mapping[tuple[str, int], Mapping[int, float]]
     provenance: Mapping[str, Any] = field(default_factory=dict)
+    #: The wave ``anchor`` was read from; must equal the spec's.
+    anchor_wave: int = ANCHOR_WAVE
+
+
+def _unsealed_provenance() -> dict[str, Any]:
+    return {
+        "kind": "unsealed",
+        "note": (
+            "not set by build_psid2010_cohort (a directly constructed or "
+            "replaced cohort)"
+        ),
+    }
 
 
 @dataclass(frozen=True)
@@ -556,6 +730,12 @@ class Psid2010Cohort:
             ``weight`` and ``disposition`` (``member`` or the single reason).
         spec: The :class:`Psid2010CohortSpec` used.
         diagnostics: Structural cross-checks computed during the build.
+        provenance: Where the inputs came from, set by
+            :func:`build_psid2010_cohort` only (it is not a constructor
+            argument, and ``dataclasses.replace`` resets it to
+            ``unsealed``): ``kind`` is :data:`PSID_FILES`,
+            :data:`INVENTED` or :data:`CALLER_FRAMES`, and
+            ``content_sha256`` seals the built persons and careers.
     """
 
     persons: pd.DataFrame
@@ -565,40 +745,64 @@ class Psid2010Cohort:
     spec: Psid2010CohortSpec
     diagnostics: Mapping[str, Any]
     labels: tuple[str, ...] = COHORT_LABELS
+    provenance: Mapping[str, Any] = field(
+        default_factory=_unsealed_provenance, init=False
+    )
+
+    @property
+    def anchor_wave(self) -> int:
+        return int(self.spec.anchor_wave)
+
+    @property
+    def start_year(self) -> int:
+        return self.spec.start_year
 
 
 # --------------------------------------------------------------------------
 # Readers
 # --------------------------------------------------------------------------
 def read_anchor_wave(
-    *, data_dir: Path | None = None, nrows: int | None = None
+    *,
+    data_dir: Path | None = None,
+    nrows: int | None = None,
+    anchor_wave: int = ANCHOR_WAVE,
 ) -> pd.DataFrame:
-    """Read the label-verified 2011-wave anchor row for every person.
+    """Read the label-verified anchor-wave row for every person.
 
     Columns: ``person_id`` (``ER30001 * 1000 + ER30002``), ``interview``,
     ``sequence``, ``relationship``, ``age`` (raw PSID code), and
-    ``reported_birth_year`` (``ER34106``; a diagnostic only, never used by
-    the birth-year law; ``<NA>`` for code 9999 or 0) and ``weight``
-    (``ER34155``). ER34155 must be the only "CROSS-SECTION WT 11" label.
+    ``reported_birth_year`` (a diagnostic only, never used by the
+    birth-year law; ``<NA>`` for code 9999 or 0) and ``weight``, from the
+    wave's :data:`ANCHOR_LAYOUTS` variables (2011: ER34101-ER34106 and
+    ER34155; 2009: ER34001-ER34006 and ER34046).  The weight must be the
+    only "CROSS-SECTION WT <yy>" label of the wave.
     """
 
+    if anchor_wave not in ANCHOR_LAYOUTS:
+        raise ValueError(
+            f"anchor_wave must be one of {sorted(ANCHOR_LAYOUTS)}"
+        )
+    layout = ANCHOR_LAYOUTS[anchor_wave]
     labels = psid.parse_sps_labels(
         psid.product_sps_path("ind2023er", data_dir)
     )
-    psid.verify_labels(labels, _ANCHOR_VARS, context="ind2023er 2011 anchor")
+    expected = layout.labels()
+    psid.verify_labels(
+        labels, expected, context=f"ind2023er {anchor_wave} anchor"
+    )
     weight_hits = sorted(
         name
         for name, label in labels.items()
-        if re.search(_WEIGHT_CONCEPT, " ".join(label.split()))
+        if re.search(layout.weight_concept, " ".join(label.split()))
     )
-    if weight_hits != ["ER34155"]:
+    if weight_hits != [layout.weight_variable]:
         raise ValueError(
-            f"2011 cross-section weight concept matched {weight_hits}; "
-            "expected only ER34155"
+            f"{anchor_wave} cross-section weight concept matched "
+            f"{weight_hits}; expected only {layout.weight_variable}"
         )
     raw = psid.read_psid(
         "ind2023er",
-        columns=list(_ANCHOR_VARS),
+        columns=list(expected),
         data_dir=data_dir,
         nrows=nrows,
     )
@@ -608,13 +812,14 @@ def read_anchor_wave(
             + raw["ER30002"].astype("int64")
         }
     )
-    for var, column in _ANCHOR_COLUMNS.items():
+    for var, column in layout.columns().items():
         frame[column] = raw[var]
+    frame = frame[["person_id", *_ANCHOR_ROLES]]
     for column in ("interview", "sequence", "relationship", "age"):
         frame[column] = frame[column].astype("int64")
     frame["weight"] = frame["weight"].astype("float64")
     if (frame["weight"] < 0).any():
-        raise ValueError("negative 2011 cross-sectional weight")
+        raise ValueError(f"negative {anchor_wave} cross-sectional weight")
     reported = frame["reported_birth_year"].astype("Int64")
     frame["reported_birth_year"] = reported.mask(
         reported.isin([_REPORTED_BIRTH_YEAR_NA, 0])
@@ -644,25 +849,116 @@ def _load_claiming_pmf(
     return pmf, digest
 
 
+_FILES_READ: contextvars.ContextVar[set[str] | None] = contextvars.ContextVar(
+    "psid2010_files_read", default=None
+)
+_AUDIT_HOOK_INSTALLED = False
+_HASH_CHUNK = 1 << 20
+
+
+def _audit_open(event: str, args: tuple) -> None:
+    """Record the paths opened while :func:`record_files_read` is active.
+
+    An audit hook must never raise (it would break the ``open`` it
+    observes), so every failure is ignored.
+    """
+
+    if event != "open":
+        return
+    try:
+        sink = _FILES_READ.get()
+        if sink is None or not args or isinstance(args[0], int):
+            return
+        sink.add(os.fsdecode(os.fspath(args[0])))
+    except Exception:  # noqa: BLE001 - see the docstring
+        return
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(_HASH_CHUNK), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+@contextlib.contextmanager
+def record_files_read(root: Path) -> Iterator[dict[str, str]]:
+    """Record the SHA-256 of every file under ``root`` opened in the block.
+
+    Uses a Python audit hook (``sys.addaudithook``, installed once per
+    process) on the ``open`` event, which ``open``, ``Path.read_text`` and
+    pandas' readers raise.  On a normal exit the yielded mapping is filled
+    with ``{path relative to root: sha256}`` for each regular file under
+    ``root`` that was opened; files outside ``root`` are ignored.
+    """
+
+    global _AUDIT_HOOK_INSTALLED
+    if not _AUDIT_HOOK_INSTALLED:
+        sys.addaudithook(_audit_open)
+        _AUDIT_HOOK_INSTALLED = True
+    literal_root = Path(os.path.abspath(Path(root).expanduser()))
+    resolved_root = literal_root.resolve()
+    sink: set[str] = set()
+    token = _FILES_READ.set(sink)
+    record: dict[str, str] = {}
+    try:
+        yield record
+    finally:
+        _FILES_READ.reset(token)
+    for name in sorted(sink):
+        literal = Path(os.path.abspath(Path(name).expanduser()))
+        if not literal.is_file():
+            continue
+        # A file is under the root by its path as opened or, when the root
+        # or the file sits behind a symbolic link, by its resolved path.
+        if literal.is_relative_to(literal_root):
+            relative = literal.relative_to(literal_root)
+        elif literal.resolve().is_relative_to(resolved_root):
+            relative = literal.resolve().relative_to(resolved_root)
+        else:
+            continue
+        record[str(relative)] = _sha256_file(literal)
+
+
+def _mapping_sha256(values: Mapping[str, str]) -> str:
+    encoded = (
+        json.dumps(dict(values), sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def load_psid2010_inputs(
     *,
     data_dir: Path | None = None,
     birth_inference_max_wave: int | None = None,
     claiming_reference_path: Path | None = None,
+    anchor_wave: int = ANCHOR_WAVE,
 ) -> Psid2010Inputs:
     """Read every input from the staged PSID and the committed claim table.
 
-    ``birth_inference_max_wave`` caps the family earnings waves read (and so
-    the waves birth-year clause 2 may use); ``None`` reads every staged
-    wave. Careers use income years through 2010 whatever the cap, so the
-    cap may not precede the 2011 wave.
+    ``anchor_wave`` is the wave that defines presence (2011, or 2009 for
+    the A1 R6 population).  ``birth_inference_max_wave`` caps the family
+    earnings waves read (and so the waves birth-year clause 2 may use);
+    ``None`` reads every staged wave. Careers use income years through the
+    opening year whatever the cap, so the cap may not precede the anchor
+    wave.  M4 status is read through the anchor wave only.
+
+    The provenance is ``kind="psid_files"`` with the SHA-256 of every file
+    under the PSID data directory that the readers opened
+    (:func:`record_files_read`) and the bundle hash of that mapping.
     """
 
+    if anchor_wave not in ANCHOR_LAYOUTS:
+        raise ValueError(
+            f"anchor_wave must be one of {sorted(ANCHOR_LAYOUTS)}"
+        )
     waves = family.FAMILY_WAVES
     if birth_inference_max_wave is not None:
-        if int(birth_inference_max_wave) < ANCHOR_WAVE:
+        if int(birth_inference_max_wave) < anchor_wave:
             raise ValueError(
-                "birth_inference_max_wave may not precede the 2011 wave"
+                f"birth_inference_max_wave may not precede the "
+                f"{anchor_wave} wave"
             )
         waves = tuple(
             wave for wave in waves if wave <= int(birth_inference_max_wave)
@@ -673,26 +969,50 @@ def load_psid2010_inputs(
         else Path(claiming_reference_path)
     )
     claiming_pmf, digest = _load_claiming_pmf(reference_path)
-    status_codes = disability.verify_employment_status_codes(
-        data_dir=data_dir, waves=list(M4_VERIFIED_WAVES)
-    )
+    data_root = psid._resolve_data_dir(data_dir)
+    with record_files_read(data_root) as files:
+        status_codes = disability.verify_employment_status_codes(
+            data_dir=data_dir, waves=list(M4_VERIFIED_WAVES)
+        )
+        frames = {
+            "anchor": read_anchor_wave(
+                data_dir=data_dir, anchor_wave=anchor_wave
+            ),
+            "death_records": deaths.read_death_records(data_dir=data_dir),
+            "marriage_history": marriage.marriage_history(data_dir=data_dir),
+            "observed_earnings": family.family_earnings_panel(
+                waves=waves, data_dir=data_dir
+            ),
+            "head_spouse_ss": ssi.head_spouse_social_security_panel(
+                data_dir=data_dir
+            ),
+            "individual_ss": ssi.read_individual_social_security(
+                data_dir=data_dir
+            ),
+            "disability_status": disability.read_disability_status(
+                data_dir=data_dir, max_period=anchor_wave
+            ),
+        }
+    if not files:
+        raise RuntimeError(
+            f"no PSID file under {data_root} was recorded as read; the "
+            "provenance of these inputs cannot be established"
+        )
     return Psid2010Inputs(
-        anchor=read_anchor_wave(data_dir=data_dir),
-        death_records=deaths.read_death_records(data_dir=data_dir),
-        marriage_history=marriage.marriage_history(data_dir=data_dir),
-        observed_earnings=family.family_earnings_panel(
-            waves=waves, data_dir=data_dir
-        ),
-        head_spouse_ss=ssi.head_spouse_social_security_panel(
-            data_dir=data_dir
-        ),
-        individual_ss=ssi.read_individual_social_security(data_dir=data_dir),
-        disability_status=disability.read_disability_status(
-            data_dir=data_dir, max_period=ANCHOR_WAVE
-        ),
+        **frames,
         claiming_pmf=claiming_pmf,
+        anchor_wave=anchor_wave,
         provenance={
-            "psid_data_dir": str(psid._resolve_data_dir(data_dir)),
+            "kind": PSID_FILES,
+            "anchor_wave": anchor_wave,
+            "psid_data_dir": str(data_root),
+            "psid_files_sha256": dict(files),
+            "psid_files_bundle_sha256": _mapping_sha256(files),
+            "psid_files_bundle_basis": (
+                "sha256 of canonical JSON {path relative to the PSID data "
+                "directory: raw sha256} (sorted keys, compact separators, "
+                "trailing newline)"
+            ),
             "earnings_waves": [int(waves[0]), int(waves[-1])],
             "claiming_reference": str(reference_path),
             "claiming_reference_sha256": digest,
@@ -991,34 +1311,42 @@ def _dispositions(
     return out
 
 
-def _base_persons(members: pd.DataFrame) -> pd.DataFrame:
+def _base_persons(
+    members: pd.DataFrame, spec: Psid2010CohortSpec
+) -> pd.DataFrame:
+    wave, start = spec.anchor_wave, spec.start_year
     persons = pd.DataFrame(
         {
             "person_id": members["person_id"].astype("int64"),
-            "interview_2011": members["interview"].astype("int64"),
-            "sequence_2011": members["sequence"].astype("int64"),
-            "relationship_2011": members["relationship"].astype("int64"),
-            "age_2011_reported": members["age"].astype("int64"),
+            f"interview_{wave}": members["interview"].astype("int64"),
+            f"sequence_{wave}": members["sequence"].astype("int64"),
+            f"relationship_{wave}": members["relationship"].astype("int64"),
+            f"age_{wave}_reported": members["age"].astype("int64"),
             "weight": members["weight"].astype("float64"),
             "sex": members["sex"].astype("string"),
             "birth_year": members["birth_year"].astype("int64"),
             "birth_source": members["birth_source"].astype("string"),
-            "reported_birth_year_2011": members["reported_birth_year"].astype(
-                "Int64"
-            ),
+            f"reported_birth_year_{wave}": members[
+                "reported_birth_year"
+            ].astype("Int64"),
         }
     ).reset_index(drop=True)
+    # A1 section 16: the half-split floor's unit is the anchor wave's
+    # family unit (ER34101 for 2011, ER34001 for 2009).
+    persons.insert(1, "family_unit_id", persons[f"interview_{wave}"])
     persons["birth_year_age_derived"] = persons["birth_source"].isin(
         [
             career.BirthSource.INFERRED_PERIOD_AGE.value,
             career.BirthSource.DERIVED_PROJECTION_AGE.value,
         ]
     )
-    persons["age_2010"] = START_YEAR - persons["birth_year"]
+    persons[f"age_{start}"] = start - persons["birth_year"]
     return persons
 
 
-def _attach_death(persons: pd.DataFrame, death_records: pd.DataFrame) -> None:
+def _attach_death(
+    persons: pd.DataFrame, death_records: pd.DataFrame, anchor_wave: int
+) -> None:
     death = death_records.set_index("person_id")
     for column in (
         "death_status",
@@ -1034,8 +1362,8 @@ def _attach_death(persons: pd.DataFrame, death_records: pd.DataFrame) -> None:
         persons[column] = values.astype(
             "string" if column == "death_status" else "Int64"
         )
-    persons["death_before_2011_presence"] = (
-        persons["death_year_hi"].fillna(ANCHOR_WAVE) < ANCHOR_WAVE
+    persons[f"death_before_{anchor_wave}_presence"] = (
+        persons["death_year_hi"].fillna(anchor_wave) < anchor_wave
     ).astype(bool)
 
 
@@ -1118,30 +1446,31 @@ def _attach_marital(
     }
     with_history = set(int(pid) for pid in history["person_id"])
     no_episodes = episodes.iloc[0:0]
+    start = spec.start_year
     states = []
     for pid in persons["person_id"]:
         pid = int(pid)
         if pid in with_history:
             state = marital_state_at(
                 by_person.get(pid, no_episodes),
-                START_YEAR,
+                start,
                 separated_is_married=spec.separated_is_married,
             )
         else:
-            state = marital_state_at(no_episodes, START_YEAR)
+            state = marital_state_at(no_episodes, start)
             state["status"] = "no_marriage_history"
         states.append(state)
     state = pd.DataFrame(states, index=persons.index)
-    persons["marital_status_2010"] = state["status"].astype("string")
+    persons[f"marital_status_{start}"] = state["status"].astype("string")
     persons["spouse_person_id"] = state["spouse_person_id"].astype("Int64")
     persons["spouse_in_cohort"] = (
         persons["spouse_person_id"].isin(member_ids).fillna(False).astype(bool)
     )
-    persons["separated_2010"] = state["separated"].astype(bool)
+    persons[f"separated_{start}"] = state["separated"].astype(bool)
     persons["multiple_marriages_in_force"] = state["multiple_in_force"].astype(
         bool
     )
-    widowed = persons["marital_status_2010"] == "widowed"
+    widowed = persons[f"marital_status_{start}"] == "widowed"
     persons["widowhood_year"] = (
         state["dissolution_year"].astype("Int64").where(widowed)
     )
@@ -1185,7 +1514,7 @@ def _attach_marital(
 
 
 def _attach_coresident_partner(
-    persons: pd.DataFrame, anchor: pd.DataFrame
+    persons: pd.DataFrame, anchor: pd.DataFrame, anchor_wave: int
 ) -> None:
     present = anchor[_presence_mask(anchor, Presence.IN_FAMILY)]
     heads = present[present["relationship"] == _HEAD].set_index("interview")
@@ -1193,19 +1522,22 @@ def _attach_coresident_partner(
         present["relationship"].isin([_LEGAL_SPOUSE, _PARTNER])
     ].set_index("interview")
     if heads.index.duplicated().any() or partners.index.duplicated().any():
-        raise ValueError("a 2011 family has two heads or two wives/partners")
-    is_head = persons["relationship_2011"] == _HEAD
-    is_partner = persons["relationship_2011"].isin([_LEGAL_SPOUSE, _PARTNER])
-    interview = persons["interview_2011"]
+        raise ValueError(
+            f"a {anchor_wave} family has two heads or two wives/partners"
+        )
+    relationship_column = f"relationship_{anchor_wave}"
+    is_head = persons[relationship_column] == _HEAD
+    is_partner = persons[relationship_column].isin([_LEGAL_SPOUSE, _PARTNER])
+    interview = persons[f"interview_{anchor_wave}"]
     partner_id = pd.Series(pd.NA, index=persons.index, dtype="Int64")
     relationship = pd.Series(pd.NA, index=persons.index, dtype="Int64")
     partner_id[is_head] = interview[is_head].map(partners["person_id"])
     relationship[is_head] = interview[is_head].map(partners["relationship"])
     partner_id[is_partner] = interview[is_partner].map(heads["person_id"])
-    relationship[is_partner] = persons.loc[is_partner, "relationship_2011"]
+    relationship[is_partner] = persons.loc[is_partner, relationship_column]
     relationship[partner_id.isna()] = pd.NA
-    persons["coresident_partner_person_id_2011"] = partner_id
-    persons["coresident_partner_relationship_2011"] = relationship
+    persons[f"coresident_partner_person_id_{anchor_wave}"] = partner_id
+    persons[f"coresident_partner_relationship_{anchor_wave}"] = relationship
 
 
 def _attach_m4(
@@ -1322,7 +1654,7 @@ def _social_security_rows(
 
 
 def _attach_social_security(
-    persons: pd.DataFrame, social_security: pd.DataFrame
+    persons: pd.DataFrame, social_security: pd.DataFrame, start_year: int
 ) -> None:
     indexed = social_security.set_index(["person_id", "income_year"])
     for year in SS_YEARS:
@@ -1333,12 +1665,14 @@ def _attach_social_security(
         persons[f"ss_{year}_source"] = (
             persons["person_id"].map(rows["source"]).astype("string")
         )
-    start = indexed.xs(START_YEAR, level="income_year")
+    start = indexed.xs(start_year, level="income_year")
     for column in [*_TYPE_COLUMNS, "type_combination"]:
         persons[column] = (
             persons["person_id"].map(start[column]).astype("boolean")
         )
-    persons["ss_receipt_2010"] = (persons["ss_2010"] > 0).astype("boolean")
+    persons[f"ss_receipt_{start_year}"] = (
+        persons[f"ss_{start_year}"] > 0
+    ).astype("boolean")
 
 
 def _plan_status(
@@ -1393,16 +1727,24 @@ def _attach_opening_status(
     statuses = []
     bases = []
     multiple = []
-    for row in persons.itertuples(index=False):
-        receipt = row.ss_receipt_2010
+    start = spec.start_year
+    frame = persons.rename(
+        columns={
+            f"ss_receipt_{start}": "opening_receipt_flag",
+            f"age_{start}": "opening_age_value",
+            f"marital_status_{start}": "opening_marital_value",
+        }
+    )
+    for row in frame.itertuples(index=False):
+        receipt = row.opening_receipt_flag
         if pd.isna(receipt):
             statuses.append(OpeningStatus.UNOBSERVED.value)
-            bases.append("ss_2010_unobserved")
+            bases.append(f"ss_{start}_unobserved")
             multiple.append(False)
             continue
         if not receipt:
             statuses.append(OpeningStatus.NONE.value)
-            bases.append("no_receipt_2010")
+            bases.append(f"no_receipt_{start}")
             multiple.append(False)
             continue
         chosen = None
@@ -1418,8 +1760,8 @@ def _attach_opening_status(
             chosen = _reported_status(types, spec)
         if chosen is None:
             status, basis = _plan_status(
-                age=int(row.age_2010),
-                widowed=row.marital_status_2010 == "widowed",
+                age=int(row.opening_age_value),
+                widowed=row.opening_marital_value == "widowed",
                 m4_disabled=bool(row.m4_disabled),
                 spec=spec,
             )
@@ -1441,13 +1783,17 @@ def _attach_opening_claim(
 ) -> None:
     """Opening claim year from observed first receipt, else section 6.
 
-    Receipt is *bracketed* when 2008 is observed as zero and 2010 positive;
-    the claim year then follows ``spec.bracket_resolution``. Otherwise the
-    first receipt is censored at the latest year it is known to precede
-    (2008 when 2008 is positive, 2010 when 2008 is unobserved): a retired
-    worker's claim age is imputed under the section 6 law restricted to
-    table rows at or before ``spec.claim_table_max_year``; other statuses
-    have no table law and keep only the upper bound.
+    With opening year ``s`` and the previous observed income year ``s - 2``
+    (biennial PSID), receipt is *bracketed* when ``s - 2`` is observed as
+    zero and ``s`` positive; the claim year then follows
+    ``spec.bracket_resolution``. Otherwise the first receipt is censored at
+    the latest year it is known to precede (``s - 2`` when that year is
+    positive, ``s`` when it is unobserved): a retired worker's claim age is
+    imputed under the section 6 law restricted to table rows at or before
+    ``spec.claim_table_max_year``; other statuses have no table law and
+    keep only the upper bound.  Under the 2011 wave ``s - 2`` is 2008;
+    under the 2009 wave it is 2006, which the Social Security reader does
+    not resolve, so every 2008 recipient is censored at 2008.
     """
 
     table = {
@@ -1458,13 +1804,23 @@ def _attach_opening_claim(
     if not table:
         raise ValueError("no claiming table rows at or before the table cap")
     schedule = ClaimingSchedule(table)
+    wave, start = spec.anchor_wave, spec.start_year
+    previous = start - 2
     anchor_families = inputs.head_spouse_ss[
-        inputs.head_spouse_ss["wave"] == ANCHOR_WAVE
+        inputs.head_spouse_ss["wave"] == wave
     ].drop_duplicates("interview")
     prior_year = anchor_families.set_index("interview")["fu_ss_prior_year"]
     no_claim = (OpeningStatus.NONE.value, OpeningStatus.UNOBSERVED.value)
+    frame = persons.assign(
+        opening_previous_ss=(
+            persons[f"ss_{previous}"]
+            if f"ss_{previous}" in persons
+            else pd.Series(pd.NA, index=persons.index, dtype="Int64")
+        ),
+        opening_interview=persons[f"interview_{wave}"],
+    )
     rows = []
-    for row in persons.itertuples(index=False):
+    for row in frame.itertuples(index=False):
         entry: dict[str, Any] = {
             "opening_claim_year": pd.NA,
             "opening_claim_year_basis": "not_applicable",
@@ -1476,28 +1832,30 @@ def _attach_opening_claim(
         rows.append(entry)
         if row.opening_status in no_claim:
             continue
-        ss_2008 = row.ss_2008
-        if not pd.isna(ss_2008) and int(ss_2008) == 0:
-            year, basis = START_YEAR, "bracketed_first_observed"
+        previous_ss = row.opening_previous_ss
+        if not pd.isna(previous_ss) and int(previous_ss) == 0:
+            year, basis = start, "bracketed_first_observed"
             if (
                 spec.bracket_resolution
                 is BracketResolution.FU_PRIOR_YEAR_INDICATOR
             ):
-                code = prior_year.get(row.interview_2011, pd.NA)
+                # R20 asks about the year before last (start - 1).
+                middle = start - 1
+                code = prior_year.get(row.opening_interview, pd.NA)
                 if not pd.isna(code) and int(code) == 1:
-                    year, basis = 2009, "bracketed_fu_yes_2009"
+                    year, basis = middle, f"bracketed_fu_yes_{middle}"
                 elif not pd.isna(code) and int(code) == 5:
-                    basis = "bracketed_fu_no_2009"
+                    basis = f"bracketed_fu_no_{middle}"
                 else:
-                    basis = "bracketed_fu_2009_unknown"
+                    basis = f"bracketed_fu_{middle}_unknown"
             entry.update(
                 opening_claim_year=year,
                 opening_claim_year_basis=basis,
-                opening_claim_year_upper_bound=START_YEAR,
+                opening_claim_year_upper_bound=start,
                 opening_claim_age=year - int(row.birth_year),
             )
             continue
-        latest = 2008 if not pd.isna(ss_2008) else START_YEAR
+        latest = previous if not pd.isna(previous_ss) else start
         entry["opening_claim_year_upper_bound"] = latest
         if row.opening_status != OpeningStatus.RETIRED_WORKER.value:
             entry["opening_claim_year_basis"] = (
@@ -1540,9 +1898,13 @@ def _attach_opening_claim(
 
 
 def _careers(
-    persons: pd.DataFrame, observed_earnings: pd.DataFrame
+    persons: pd.DataFrame, observed_earnings: pd.DataFrame, start_year: int
 ) -> pd.DataFrame:
-    """1968-2010 careers under ``career.build_career`` (as-of 2010)."""
+    """1968-``start_year`` careers under ``career.build_career``.
+
+    The information-as-of cutoff is the opening year (2010, or 2008 for
+    the 2009 wave).
+    """
 
     ids = set(int(pid) for pid in persons["person_id"])
     earnings = observed_earnings[observed_earnings["person_id"].isin(ids)]
@@ -1564,7 +1926,7 @@ def _careers(
         record = career.build_career(
             person_id=int(row.person_id),
             birth_year=int(row.birth_year),
-            claim_year=START_YEAR,
+            claim_year=start_year,
             observed_earnings=grouped.get(int(row.person_id), no_earnings),
             trajectory=no_trajectory,
         )
@@ -1610,18 +1972,28 @@ def build_psid2010_cohort(
     inputs: Psid2010Inputs,
     spec: Psid2010CohortSpec | None = None,
 ) -> Psid2010Cohort:
-    """Build the PSID 2010 starting cohort from materialized inputs.
+    """Build the PSID starting cohort from materialized inputs.
 
-    Membership: a person in the 2011 presence universe (``spec.presence``,
-    positive ER34155 weight) whose section 3.1 birth year is at most
+    The anchor wave is ``spec.anchor_wave`` (2011 by default; 2009 for
+    the A1 R6 population), and ``inputs.anchor_wave`` must equal it.  The
+    column names below are those of the 2011 wave; under another wave each
+    ``_2011`` suffix is that wave and each ``_2010`` suffix its opening
+    year (``interview_2009``, ``age_2008``, ``ss_receipt_2008``, ...), and
+    the career runs through the opening year.
+
+    Membership: a person in the anchor-wave presence universe
+    (``spec.presence``, positive cross-sectional weight: ER34155 for 2011,
+    ER34046 for 2009) whose section 3.1 birth year is at most
     ``spec.max_birth_year`` and whose sex is coded. Every universe person
     receives exactly one disposition: ``member``,
     ``excluded_birth_year_unresolved``, ``outside_birth_cohort`` or
     ``excluded_sex_unknown`` (in that precedence).
 
     ``persons`` columns: identity and anchor (``person_id``,
-    ``interview_2011``, ``sequence_2011``, ``relationship_2011``,
-    ``age_2011_reported``, ``weight``), ``sex``, birth (``birth_year``,
+    ``family_unit_id`` (the anchor wave's interview number, the A1 section
+    16 split unit), ``interview_2011``, ``sequence_2011``,
+    ``relationship_2011``, ``age_2011_reported``, ``weight``), ``sex``,
+    birth (``birth_year``,
     ``birth_source``, ``birth_year_age_derived``,
     ``reported_birth_year_2011``, ``age_2010``), death
     (``death_status``, ``death_year``, ``death_year_lo``,
@@ -1643,10 +2015,23 @@ def build_psid2010_cohort(
     ``opening_claim_age``, ``claim_schedule_year``, ``claim_schedule_snap``)
     and the career summary (``career_coverage_start``,
     ``career_coverage_ratio``, ``career_imputed_share``).
+
+    The builder sets ``provenance`` (see :class:`Psid2010Cohort`) from the
+    inputs: ``psid_files`` when :func:`load_psid2010_inputs` recorded the
+    PSID files it read, ``invented`` when the inputs carry the invented
+    generator's frame digest and their frames still match it (refused if
+    they do not), and ``caller_frames`` otherwise.
     """
 
     spec = spec or Psid2010CohortSpec()
     _validate_inputs(inputs)
+    if int(inputs.anchor_wave) != spec.anchor_wave:
+        raise ValueError(
+            f"inputs hold the {inputs.anchor_wave} anchor wave but the "
+            f"spec asks for {spec.anchor_wave}"
+        )
+    input_provenance = _input_provenance(inputs)
+    wave, start = spec.anchor_wave, spec.start_year
     anchor = inputs.anchor
     universe = anchor[_presence_mask(anchor, spec.presence)].copy()
     universe_ids = set(int(pid) for pid in universe["person_id"])
@@ -1655,8 +2040,8 @@ def build_psid2010_cohort(
     seed = pd.DataFrame(
         {
             "person_id": universe["person_id"].astype("int64"),
-            "year": START_YEAR,
-            "anchor_wave": ANCHOR_WAVE,
+            "year": start,
+            "anchor_wave": wave,
             "age": universe["age"].astype("int64"),
         }
     )
@@ -1684,22 +2069,22 @@ def build_psid2010_cohort(
     members = classified[classified["disposition"] == "member"].sort_values(
         "person_id"
     )
-    persons = _base_persons(members)
-    _attach_death(persons, inputs.death_records)
+    persons = _base_persons(members, spec)
+    _attach_death(persons, inputs.death_records, wave)
     _attach_marital(persons, inputs, births, universe_ids, spec)
-    _attach_coresident_partner(persons, anchor)
+    _attach_coresident_partner(persons, anchor, wave)
     _attach_m4(persons, inputs.disability_status, spec)
     social_security = _social_security_rows(
         persons, inputs.head_spouse_ss, inputs.individual_ss, spec
     )
-    _attach_social_security(persons, social_security)
+    _attach_social_security(persons, social_security, start)
     _attach_opening_status(persons, spec)
     _attach_opening_claim(persons, inputs, spec)
-    careers = _careers(persons, earnings)
+    careers = _careers(persons, earnings, start)
     outside_presence = anchor[
         (anchor["weight"] > 0) & ~anchor["person_id"].isin(universe_ids)
     ]
-    return Psid2010Cohort(
+    built = Psid2010Cohort(
         persons=persons,
         careers=careers,
         social_security=social_security,
@@ -1711,8 +2096,118 @@ def build_psid2010_cohort(
             dispositions,
             outside_presence,
             inputs.death_records,
+            spec,
         ),
     )
+    object.__setattr__(
+        built,
+        "provenance",
+        {
+            **input_provenance,
+            "anchor_wave": wave,
+            "start_year": start,
+            "set_by": "populace_dynamics.cohorts.psid2010."
+            "build_psid2010_cohort",
+            "content_sha256": cohort_content_sha256(built),
+            "content_basis": _CONTENT_BASIS,
+        },
+    )
+    return built
+
+
+# --------------------------------------------------------------------------
+# Provenance
+# --------------------------------------------------------------------------
+_INPUT_FRAMES = (
+    "anchor",
+    "death_records",
+    "marriage_history",
+    "observed_earnings",
+    "head_spouse_ss",
+    "individual_ss",
+    "disability_status",
+)
+_CONTENT_BASIS = (
+    "sha256 over the persons and careers frames, each as its column names, "
+    "dtypes and CSV text (pandas to_csv, no index, '\\n' line ends)"
+)
+
+
+def _frame_digest(digest: Any, name: str, frame: pd.DataFrame) -> None:
+    digest.update(f"{name}\n".encode())
+    digest.update(json.dumps([str(c) for c in frame.columns]).encode())
+    digest.update(json.dumps([str(t) for t in frame.dtypes]).encode())
+    digest.update(
+        frame.to_csv(index=False, lineterminator="\n").encode("utf-8")
+    )
+
+
+def input_frames_sha256(inputs: Psid2010Inputs) -> str:
+    """SHA-256 of the seven reader frames and the anchor wave.
+
+    The claim-age PMF, a parameter rather than data, is not included.
+    """
+
+    digest = hashlib.sha256(f"anchor_wave={inputs.anchor_wave}\n".encode())
+    for name in _INPUT_FRAMES:
+        _frame_digest(digest, name, getattr(inputs, name))
+    return digest.hexdigest()
+
+
+def cohort_content_sha256(cohort: Psid2010Cohort) -> str:
+    """SHA-256 of a built cohort's persons and careers (the A5 inputs)."""
+
+    digest = hashlib.sha256()
+    _frame_digest(digest, "persons", cohort.persons)
+    _frame_digest(digest, "careers", cohort.careers)
+    return digest.hexdigest()
+
+
+def _input_provenance(inputs: Psid2010Inputs) -> dict[str, Any]:
+    """The cohort provenance the inputs establish (see the builder)."""
+
+    recorded = dict(inputs.provenance or {})
+    kind = recorded.get("kind")
+    frames_sha256 = input_frames_sha256(inputs)
+    if kind == PSID_FILES:
+        files = recorded.get("psid_files_sha256")
+        if not isinstance(files, Mapping) or not files:
+            raise ValueError(
+                "inputs claim psid_files provenance but record no PSID file"
+            )
+        return {
+            "kind": PSID_FILES,
+            "psid_data_dir": recorded.get("psid_data_dir"),
+            "psid_files_sha256": dict(files),
+            "psid_files_bundle_sha256": recorded.get(
+                "psid_files_bundle_sha256"
+            ),
+            "input_frames_sha256": frames_sha256,
+        }
+    if kind == INVENTED:
+        if recorded.get("input_frames_sha256") != frames_sha256:
+            raise ValueError(
+                "inputs claim invented provenance but their frames differ "
+                "from the digest the invented generator recorded "
+                f"({recorded.get('input_frames_sha256')!r} != "
+                f"{frames_sha256!r}); invented data cannot be mixed with "
+                "other frames"
+            )
+        return {
+            "kind": INVENTED,
+            "generator": recorded.get("generator"),
+            "seed": recorded.get("seed"),
+            "label": recorded.get("data"),
+            "input_frames_sha256": frames_sha256,
+        }
+    return {
+        "kind": CALLER_FRAMES,
+        "note": (
+            "the inputs record neither the PSID files read nor the invented "
+            "generator's digest"
+        ),
+        "input_frames_sha256": frames_sha256,
+    }
 
 
 def _reported_primary_type(persons: pd.DataFrame) -> pd.Series:
@@ -1726,10 +2221,10 @@ def _reported_primary_type(persons: pd.DataFrame) -> pd.Series:
     return primary.astype("string")
 
 
-def _sequence_group(sequence: pd.Series) -> pd.Series:
+def _sequence_group(sequence: pd.Series, wave: int) -> pd.Series:
     group = pd.Series("other", index=sequence.index, dtype=object)
     for name, low, high in _SEQUENCE_GROUPS:
-        group[sequence.between(low, high)] = name
+        group[sequence.between(low, high)] = name.format(previous=wave - 2)
     return group
 
 
@@ -1739,14 +2234,17 @@ def _diagnostics(
     dispositions: pd.DataFrame,
     outside_presence: pd.DataFrame,
     death_records: pd.DataFrame,
+    spec: Psid2010CohortSpec,
 ) -> dict[str, Any]:
     """Structural cross-checks of the build (counts only).
 
-    ``outside_presence`` holds the anchor rows with a positive ER34155
-    weight that the presence universe leaves out; they carry no
-    disposition, so their count and weight are reported here by 2011
-    sequence group.
+    ``outside_presence`` holds the anchor rows with a positive
+    cross-sectional weight that the presence universe leaves out; they
+    carry no disposition, so their count and weight are reported here by
+    anchor-wave sequence group.
     """
+
+    wave, start = spec.anchor_wave, spec.start_year
 
     family_rows = social_security[
         social_security["source"] == "family_head_spouse"
@@ -1756,19 +2254,20 @@ def _diagnostics(
     receipt_disagreements = (both["ss_amount"] > 0) != (
         both["individual_amount"] > 0
     )
-    linked = (persons["marital_status_2010"] == "married") & persons[
-        "spouse_person_id"
-    ].notna()
-    legal = persons["coresident_partner_relationship_2011"] == _LEGAL_SPOUSE
+    married = persons[f"marital_status_{start}"] == "married"
+    linked = married & persons["spouse_person_id"].notna()
+    legal = persons[f"coresident_partner_relationship_{wave}"] == _LEGAL_SPOUSE
     same = linked & (
         persons["spouse_person_id"]
-        == persons["coresident_partner_person_id_2011"]
+        == persons[f"coresident_partner_person_id_{wave}"]
     )
-    reported = persons["reported_birth_year_2011"]
+    reported = persons[f"reported_birth_year_{wave}"]
     comparable = reported.notna()
     gap = (persons["birth_year"][comparable] - reported[comparable]).abs()
-    recipients = persons[persons["ss_receipt_2010"].fillna(False).astype(bool)]
-    groups = _sequence_group(outside_presence["sequence"])
+    recipients = persons[
+        persons[f"ss_receipt_{start}"].fillna(False).astype(bool)
+    ]
+    groups = _sequence_group(outside_presence["sequence"], wave)
     death_year = (
         death_records.set_index("person_id")["death_year"]
         if "death_year" in death_records
@@ -1788,19 +2287,19 @@ def _diagnostics(
                 int(difference.max()) if len(difference) else 0
             ),
         },
-        "mh_spouse_vs_2011_coresident_legal_spouse": {
+        f"mh_spouse_vs_{wave}_coresident_legal_spouse": {
             "married_with_joinable_mh_spouse": int(linked.sum()),
             "coresident_legal_spouse_rows": int(legal.fillna(False).sum()),
             "mh_spouse_equals_coresident_partner": int(
                 same.fillna(False).sum()
             ),
         },
-        "birth_year_vs_reported_2011": {
+        f"birth_year_vs_reported_{wave}": {
             "comparable": int(comparable.sum()),
             "exact": int((gap == 0).sum()),
             "within_one": int((gap <= 1).sum()),
         },
-        "opening_status_by_reported_primary_type_2010": {
+        f"opening_status_by_reported_primary_type_{start}": {
             str(status): {
                 str(kind): int(count)
                 for kind, count in row.items()
@@ -1808,20 +2307,17 @@ def _diagnostics(
             }
             for status, row in crosstab.iterrows()
         },
-        "death_before_2011_presence": int(
-            persons["death_before_2011_presence"].sum()
+        f"death_before_{wave}_presence": int(
+            persons[f"death_before_{wave}_presence"].sum()
         ),
         "positive_weight_outside_presence": {
             str(group): _weighted(outside_presence, groups == group)
             for group in sorted(groups.unique())
         },
-        "married_with_linked_spouse_dead_by_2010": int(
-            (
-                (persons["marital_status_2010"] == "married")
-                & (spouse_death <= START_YEAR).fillna(False)
-            ).sum()
+        f"married_with_linked_spouse_dead_by_{start}": int(
+            (married & (spouse_death <= start).fillna(False)).sum()
         ),
-        "separated_2010": int(persons["separated_2010"].sum()),
+        f"separated_{start}": int(persons[f"separated_{start}"].sum()),
         "disposition_person_ids_unique": bool(
             dispositions["person_id"].is_unique
         ),
@@ -1841,6 +2337,7 @@ def structural_summary(cohort: Psid2010Cohort) -> dict[str, Any]:
 
     persons = cohort.persons
     dispositions = cohort.dispositions
+    start = cohort.start_year
 
     def counts(column: str) -> dict[str, dict]:
         values = persons[column].astype("string").fillna("<NA>")
@@ -1849,18 +2346,22 @@ def structural_summary(cohort: Psid2010Cohort) -> dict[str, Any]:
             for key in sorted(values.unique())
         }
 
-    receipt = persons["ss_receipt_2010"].fillna(False).astype(bool)
+    receipt = persons[f"ss_receipt_{start}"].fillna(False).astype(bool)
+    age = persons[f"age_{start}"]
     bands = {}
     for low, high in _SUMMARY_AGE_BANDS:
-        in_band = persons["age_2010"] >= low
+        in_band = age >= low
         if high is not None:
-            in_band &= persons["age_2010"] <= high
+            in_band &= age <= high
         bands[_band_label(low, high)] = {
             "persons": _weighted(persons, in_band),
-            "ss_receipt_2010": _weighted(persons, in_band & receipt),
+            f"ss_receipt_{start}": _weighted(persons, in_band & receipt),
         }
     return {
         "labels": list(cohort.labels),
+        "anchor_wave": cohort.anchor_wave,
+        "start_year": start,
+        "provenance_kind": cohort.provenance.get("kind"),
         "not_computed": [
             "benefit levels",
             "any COLA scenario",
@@ -1892,11 +2393,11 @@ def structural_summary(cohort: Psid2010Cohort) -> dict[str, Any]:
         "sex": counts("sex"),
         "birth_source": counts("birth_source"),
         "death_status": counts("death_status"),
-        "marital_status_2010": counts("marital_status_2010"),
+        f"marital_status_{start}": counts(f"marital_status_{start}"),
         "spouse_in_cohort": _weighted(persons, persons["spouse_in_cohort"]),
-        "ss_2010_source": counts("ss_2010_source"),
-        "ss_receipt_2010": _weighted(persons, receipt),
-        "ss_receipt_2010_by_age_2010": bands,
+        f"ss_{start}_source": counts(f"ss_{start}_source"),
+        f"ss_receipt_{start}": _weighted(persons, receipt),
+        f"ss_receipt_{start}_by_age_{start}": bands,
         "opening_status": counts("opening_status"),
         "opening_status_basis": counts("opening_status_basis"),
         "opening_claim_year_basis": counts("opening_claim_year_basis"),
