@@ -31,12 +31,14 @@ Each accessor that assembles a path returns entries tagged with one of:
     the report (the printed VI.F6 shows only 2020, 2025, ...; those printed
     values equal the single-year table, see ``transcription_check.json``).
 ``derived_ultimate_cpi``
-    COLA for determination years after 2017.  TR2008 prints COLAs only
+    COLA for determination years 2018-2085.  TR2008 prints COLAs only
     through 2017; this is the alternative's ultimate CPI assumption (Table
     II.C1).  The single-year V.B1 CPI change is constant at that ultimate
-    value in every year 2018-2082 of each alternative (tested), but that
-    column is an annual-average rate, not the statutory third-quarter
-    COLA basis, so the value is derived rather than published.
+    value in every year 2018-2082 of each alternative, and the single-year
+    VI.F6 adjusted CPI grows at it in every year 2018-2085 (both tested),
+    but these are annual-average rates, not the statutory third-quarter
+    COLA basis, so the value is derived rather than published.  TR2008
+    projects nothing after 2085, so later years are refused.
 ``realized_splice``
     Supplied by the caller through the ``realized`` argument.
 
@@ -140,6 +142,8 @@ FILE_SHA256: Mapping[str, str] = {
 
 # Last determination year with a COLA printed in Table V.C1.
 LAST_PRINTED_COLA_YEAR = 2017
+# Last year of any TR2008 projection (VI.F6, V.A1, V.C5 end in 2085).
+LAST_PROJECTION_YEAR = 2085
 # Accepted ``post_2017`` values for cola_path / cola_percent.
 POST_2017_CHOICES: tuple[str, ...] = ("ultimate_cpi", "none")
 # Last year of AWI printed in Table V.C1; later years come from VI.F6.
@@ -635,10 +639,11 @@ def cola_path(
     """TR2008 COLA path for determination years ``first_year..last_year``.
 
     Defaults give the plan's proposed primary rate path: V.C1 through 2017,
-    then the ultimate CPI assumption.  ``post_2017="none"`` refuses years
-    TR2008 does not print.  ``realized`` with ``last_realized_year`` replaces
-    years up to and including that year with caller-supplied values (a
-    choice awaiting a ruling; see ``PENDING_RULINGS``).
+    then the ultimate CPI assumption through 2085, the last year TR2008
+    projects (later years raise ``KeyError``).  ``post_2017="none"`` refuses
+    years TR2008 does not print.  ``realized`` with ``last_realized_year``
+    replaces years up to and including that year with caller-supplied values
+    (a choice awaiting a ruling; see ``PENDING_RULINGS``).
     """
     _check_alternative(alternative)
     if post_2017 not in POST_2017_CHOICES:
@@ -667,6 +672,11 @@ def cola_path(
         entry = _printed_cola(year, alternative)
         if entry is not None:
             out.append(entry)
+        elif year > LAST_PROJECTION_YEAR:
+            raise KeyError(
+                f"TR2008 projects nothing after {LAST_PROJECTION_YEAR}; no "
+                f"COLA for {year}"
+            )
         elif year > LAST_PRINTED_COLA_YEAR and post_2017 == "ultimate_cpi":
             out.append(
                 ColaEntry(
@@ -777,12 +787,22 @@ def ultimate_assumptions(
 def economic_assumptions(
     year: int, *, alternative: Alternative = "intermediate"
 ) -> EconomicAssumptions:
-    """Single-year V.B1 row: historical 1960-2007, projected 2008-2082."""
+    """Single-year V.B1 row: historical 1960-2007, projected 2008-2082.
+
+    The 2007 row is an estimate: the table's footnote says full-year data
+    were not available and that the estimates "vary slightly by
+    alternative and are shown for the intermediate alternative".  It is
+    returned for every alternative with the source tag
+    ``tr2008_single_year_v_b1/historical_estimate_intermediate_only``.
+    """
     _check_alternative(alternative)
     sections = _single()["tables"]["V.B1"]["sections"]
     section = "historical" if year <= 2007 else alternative
     for row in sections[section]:
         if row["year"] == year:
+            source = f"tr2008_single_year_v_b1/{section}"
+            if section == "historical" and row.get("footnote"):
+                source += "_estimate_intermediate_only"
             values = {
                 key: float(row[key])
                 for key in (
@@ -795,11 +815,7 @@ def economic_assumptions(
                     "real_wage_differential",
                 )
             }
-            return EconomicAssumptions(
-                year=year,
-                source=f"tr2008_single_year_v_b1/{section}",
-                **values,
-            )
+            return EconomicAssumptions(year=year, source=source, **values)
     raise KeyError(f"TR2008 single-year V.B1 has no {section} row for {year}")
 
 

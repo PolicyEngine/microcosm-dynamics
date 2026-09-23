@@ -146,8 +146,9 @@ The projected COLAs are:
 
 - **Timing** (V.C1 footnote 1): increases are effective for June in 1975–82 and for December after 1982.
 - **Ultimate CPI** (II.C1; V.B.2 text): 2.8 / 1.8 / 3.8.
-- **After 2017.** TR2008 prints no COLA after 2017. The reader returns the ultimate CPI for 2018 and later and tags it `derived_ultimate_cpi`.
-- **Caveat on V.B1.** The single-year V.B1 CPI change equals the ultimate value in every year 2018–2082 of each alternative (tested). But V.B1 is an annual-average rate, not the statutory third-quarter basis. In 2008, for example, the V.B1 CPI is 2.8 while the V.C1 COLA is 2.7.
+- **After 2017.** TR2008 prints no COLA after 2017. The reader returns the ultimate CPI for 2018–2085 and tags it `derived_ultimate_cpi`. TR2008 projects nothing after 2085, so the reader refuses later years.
+- **Caveat on V.B1.** The single-year V.B1 CPI change equals the ultimate value in every year 2018–2082 of each alternative, and the single-year VI.F6 adjusted CPI grows at it (rounded to 0.1) in every year 2018–2085 (both tested). But these are annual-average rates, not the statutory third-quarter basis. In 2008, for example, the V.B1 CPI is 2.8 while the V.C1 COLA is 2.7.
+- **V.B1 in 2007.** The single-year V.B1 footnote says full-year 2007 data were not available and that the estimates "vary slightly by alternative and are shown for the intermediate alternative". `economic_assumptions(2007, ...)` returns that row for every alternative, tagged `tr2008_single_year_v_b1/historical_estimate_intermediate_only`.
 
 ### 2. Average wage index to 2030
 
@@ -284,3 +285,7 @@ SSA revised these historical series between the two publications.
   - `tr2008_report.json`: full text-value quotes (above);
   - the reader: `cola_path` and `cola_percent` now refuse an unknown `post_2017`, and `di_conversion_ratios` refuses an unknown `basis`. Both used to accept one silently;
   - the `base_year` ruling and this file: they now record the base-2004 behavior of the 65+ mortality ratio (section 3).
+- A second independent review on 2026-09-22 re-read, with its own standard-library HTML parser, every value row of the committed single-year captures (VI.F6, V.B1, V.A1, V.A3, V.A4, V.C5) and of the Figure V.C3–V.C6 plot points, and compared all 12,217 cells with the reader, including the non-printed years (AWI and adjusted CPI for 2018–2019, 2021–2024 and 2026–2029, for example). All matched. It also matched the 2004 life table (720 cells) and V.C1's COLA and AWI (258 reader values) with its own parsers. It re-queried the CDX index for all 18 `tr08_*` captures, the TR2008 PDF and Study 118: each recorded digest was returned with status 200 at its recorded timestamp. Every one of those 18 pages was captured again later with a different digest. For the ten value sources (the six single-year tables, the four figure pages) it compared the value rows of a later capture (August or October 2008, or May 2009) with the committed capture, and found no difference. It did not compare the HTML chapters' later captures, which serve only the transcription check.
+- That review changed only the reader, its tests and this file:
+  - `cola_path` and `cola_percent` returned the derived ultimate CPI for any year after 2017, including 2086 and later, which TR2008 does not project. They now stop at 2085;
+  - `economic_assumptions` tagged every alternative's 2007 V.B1 row as plain history. The row is an intermediate-only estimate (section 1), and it is now tagged as one.

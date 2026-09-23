@@ -451,6 +451,51 @@ def test__derived_post_2017_cola__matches_every_single_year_cpi_change(
     for year in range(2018, 2083):
         cpi = tr2008.economic_assumptions(year, alternative=alternative).cpi
         assert cpi == ultimate
+    # VI.F6's adjusted CPI (single-year table) grows at the ultimate rate
+    # in every year 2018-2085, the last year TR2008 projects.
+    for year in range(2018, tr2008.LAST_PROJECTION_YEAR + 1):
+        index = tr2008.adjusted_cpi(year, alternative=alternative)
+        prior = tr2008.adjusted_cpi(year - 1, alternative=alternative)
+        assert round(100 * (index / prior - 1), 1) == ultimate, year
+        assert tr2008.cola_percent(year, alternative=alternative) == ultimate
+
+
+def test__cola_path__refuses_years_after_the_tr2008_projection():
+    # Regression: the derived ultimate CPI was returned for any year after
+    # 2017 (2086, 2200, ...), although TR2008 projects nothing after 2085.
+    assert tr2008.LAST_PROJECTION_YEAR == 2085
+    with pytest.raises(KeyError, match="VI.F6 has no adjusted CPI for 2086"):
+        tr2008.adjusted_cpi(2086)
+    for alternative in tr2008.ALTERNATIVES:
+        with pytest.raises(KeyError, match="nothing after 2085"):
+            tr2008.cola_percent(2086, alternative=alternative)
+    with pytest.raises(KeyError, match="nothing after 2085"):
+        tr2008.cola_path(2080, 2200)
+    path = tr2008.cola_path(2080, 2085)
+    assert [entry.source for entry in path] == ["derived_ultimate_cpi"] * 6
+
+
+def test__economic_assumptions__labels_the_2007_intermediate_estimate():
+    # Regression: single-year V.B1 footnote 2 says the 2007 values are
+    # estimates that vary by alternative and are shown for the intermediate
+    # alternative only, but every alternative's 2007 row was tagged as
+    # plain history.
+    historical = _json("tr2008_single_year.json")["tables"]["V.B1"][
+        "sections"
+    ]["historical"]
+    assert [row["year"] for row in historical if row.get("footnote")] == [2007]
+    for alternative in tr2008.ALTERNATIVES:
+        row = tr2008.economic_assumptions(2007, alternative=alternative)
+        assert row.source == (
+            "tr2008_single_year_v_b1/historical_estimate_intermediate_only"
+        )
+        assert row.cpi == 2.8
+    assert tr2008.economic_assumptions(2006).source == (
+        "tr2008_single_year_v_b1/historical"
+    )
+    assert tr2008.economic_assumptions(2008).source == (
+        "tr2008_single_year_v_b1/intermediate"
+    )
 
 
 def test__cola_path__strict_mode_and_bounds():
