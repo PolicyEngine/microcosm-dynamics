@@ -211,6 +211,16 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # The standalone exercise-1 COLA age-profile tabulation is post-compute
     # and unreachable from the historical projection.
     Path("src/populace_dynamics/estimates/cola_age_profile.py"),
+    # The opt-in Track A assembly (plan item A5) composes the Track A
+    # components on the unmodified loop; nothing historical imports it.
+    Path("src/populace_dynamics/cola_track_a/__init__.py"),
+    Path("src/populace_dynamics/cola_track_a/adapters.py"),
+    Path("src/populace_dynamics/cola_track_a/benefits.py"),
+    Path("src/populace_dynamics/cola_track_a/config.py"),
+    Path("src/populace_dynamics/cola_track_a/invented.py"),
+    Path("src/populace_dynamics/cola_track_a/mortality.py"),
+    Path("src/populace_dynamics/cola_track_a/opening.py"),
+    Path("src/populace_dynamics/cola_track_a/runner.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

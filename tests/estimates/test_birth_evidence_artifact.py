@@ -117,6 +117,14 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/engine/di_entitlement_rates.py"),
         Path("src/populace_dynamics/scenario_benefits.py"),
         Path("src/populace_dynamics/estimates/cola_age_profile.py"),
+        Path("src/populace_dynamics/cola_track_a/__init__.py"),
+        Path("src/populace_dynamics/cola_track_a/adapters.py"),
+        Path("src/populace_dynamics/cola_track_a/benefits.py"),
+        Path("src/populace_dynamics/cola_track_a/config.py"),
+        Path("src/populace_dynamics/cola_track_a/invented.py"),
+        Path("src/populace_dynamics/cola_track_a/mortality.py"),
+        Path("src/populace_dynamics/cola_track_a/opening.py"),
+        Path("src/populace_dynamics/cola_track_a/runner.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -364,6 +372,23 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "birth-evidence reducer"
     )
     assert "populace_dynamics.estimates.ledgers" in reachable
+    track_a_modules = {"populace_dynamics.cola_track_a"} | {
+        f"populace_dynamics.cola_track_a.{name}"
+        for name in (
+            "adapters",
+            "benefits",
+            "config",
+            "invented",
+            "mortality",
+            "opening",
+            "runner",
+        )
+    }
+    assert track_a_modules.issubset(module_paths)
+    assert track_a_modules.isdisjoint(reachable), (
+        "the opt-in Track A assembly became reachable from the "
+        f"birth-evidence reducer: {sorted(track_a_modules & reachable)}"
+    )
 
 
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():
