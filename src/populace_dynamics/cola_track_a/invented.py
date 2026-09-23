@@ -7,7 +7,8 @@ shapes of the A3 readers (:class:`populace_dynamics.cohorts.psid2010.
 Psid2010Inputs`) so the invented population runs through the real A3
 builder, and so through the whole Track A pipeline, without touching PSID.
 
-The family mix is chosen to exercise every Track A path: retired-worker,
+Every invented person is aged 30 to 80 at the end of 2010.  The family
+mix is chosen to exercise every Track A path: retired-worker,
 disabled-worker and survivor openers (censored and bracketed first
 receipt), a spouse under 62 beside a retired head, widow(er)s whose late
 spouse is outside the cohort, disabled workers aged 30-41 in 2010 (the
@@ -58,6 +59,8 @@ INVENTED_FAMILY_COUNTS: dict[str, int] = {
 
 _START = cohort.START_YEAR
 _ANCHOR = cohort.ANCHOR_WAVE
+#: Every invented person is aged 30 to 80 at the end of 2010.
+_MIN_AGE, _MAX_AGE = 30, 80
 
 
 @dataclass(frozen=True)
@@ -153,8 +156,8 @@ def _families(rng: np.random.Generator) -> list[InventedFamily]:
     counts = INVENTED_FAMILY_COUNTS
     for _ in range(counts["retired_couple"]):
         head_id, spouse_id, interview = new_ids()
-        head_age = int(rng.integers(64, 88))
-        spouse_age = int(np.clip(head_age + rng.integers(-6, 3), 56, 90))
+        head_age = int(rng.integers(64, _MAX_AGE + 1))
+        spouse_age = int(np.clip(head_age + rng.integers(-6, 3), 56, _MAX_AGE))
         bracketed_head = False
         members = [
             _person(
@@ -197,7 +200,7 @@ def _families(rng: np.random.Generator) -> list[InventedFamily]:
         )
     for _ in range(counts["retired_single"]):
         head_id, _, interview = new_ids()
-        age = int(rng.integers(62, 92))
+        age = int(rng.integers(62, _MAX_AGE + 1))
         members = (
             _person(
                 rng,
@@ -214,7 +217,7 @@ def _families(rng: np.random.Generator) -> list[InventedFamily]:
         )
         families.append(InventedFamily("retired_single", interview, members))
     for survivor_type, count, low, high in (
-        ("aged_survivor", counts["aged_survivor"], 64, 92),
+        ("aged_survivor", counts["aged_survivor"], 64, _MAX_AGE + 1),
         ("young_survivor", counts["young_survivor"], 45, 60),
         ("widowed_nonrecipient", counts["widowed_nonrecipient"], 45, 58),
     ):
@@ -583,6 +586,9 @@ def invented_psid2010_inputs(
         family_ss.extend(rows)
         individual_ss.extend(individual)
     anchor_frame = pd.DataFrame(anchor)
+    ages_2010 = _START - (_ANCHOR - anchor_frame["age"])
+    if not ages_2010.between(_MIN_AGE, _MAX_AGE).all():
+        raise AssertionError("an invented person falls outside ages 30-80")
     anchor_frame["reported_birth_year"] = anchor_frame[
         "reported_birth_year"
     ].astype("Int64")

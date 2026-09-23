@@ -266,8 +266,10 @@ def _results_markdown(result: dict[str, Any]) -> str:
         "",
         "## What ran",
         "",
-        f"- Invented cohort: {result['cohort']['members']} persons through "
-        "the real A3 builder (`cohorts.psid2010.build_psid2010_cohort`).",
+        f"- Invented cohort: {result['cohort']['members']} persons aged "
+        "30 to 80 at the end of 2010, with retired-worker, disabled-worker "
+        "and survivor openers and non-beneficiaries, through the real A3 "
+        "builder (`cohorts.psid2010.build_psid2010_cohort`).",
         "- Projection: unmodified `engine.loop.ProjectionEngine`, "
         f"{result['config']['start_year']} to "
         f"{result['config']['reference_year']}, draws "

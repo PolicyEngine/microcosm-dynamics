@@ -101,8 +101,8 @@ components only.
 
 `python scripts/track_a_dry_run.py --output-dir <dir> --draws 3` runs the
 whole pipeline on the invented cohort
-(`cola_track_a.invented.invented_psid2010_inputs`, 250 persons through the
-real A3 builder). It uses the committed parameters and the oracle's
+(`cola_track_a.invented.invented_psid2010_inputs`, 250 persons aged 30 to
+80 in 2010, through the real A3 builder). It uses the committed parameters and the oracle's
 statutory parameters from the local policyengine-us checkout, with TR2008's
 AWI. It writes `result.json` and `RESULTS.md`, each headed
 `INVENTED DATA - NOT A COMPARISON`. The runner refuses a
