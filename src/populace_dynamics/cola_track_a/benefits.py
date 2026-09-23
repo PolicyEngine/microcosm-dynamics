@@ -42,8 +42,11 @@ Who receives what (A5 conventions; A1 section 11 where it speaks):
   Under the entitlement clock (R2) the award year is kept, as the A1
   section 6 table gives it for a disabled worker.
 * **Spouse's excess**: a claimant married, in the reference state, to a
-  living worker with an own benefit, from the later of the two
-  entitlement years, at 62 or older.
+  living worker with an own benefit, from the later of the person's own
+  simulated claim year and the worker's entitlement year, at 62 or
+  older.  A disabled worker still entitled to DI draws none; one
+  converted at FRA claims at the conversion (the claiming step's
+  ``claim_year``), not at the DI award.
 * **Aged widow(er)'s benefit**: a widow(er) of a worker in the opening
   roster, from the later of widowhood and age 60, paid as the excess over
   the survivor's own benefit (dual entitlement through
@@ -545,6 +548,24 @@ class _Calculator:
                     primary_count = count
         return components, primary_count
 
+    @staticmethod
+    def _own_claim_year(own: PiaRecord, state: Any) -> int | None:
+        """The year of the person's own simulated claim.
+
+        A retirement claimant's is the entitlement year.  A disabled
+        worker converted at FRA claims at the conversion, which the
+        claiming step records in ``claim_year`` (or earlier, when a
+        retirement claim preceded the DI award); the DI award year is the
+        entitlement to the disability benefit, not a claim.
+        """
+
+        if own.kind == "retired":
+            return own.entitlement_year
+        claim = _nullable_int(state["claim_year"])
+        if claim is None:
+            claim = _nullable_int(state["di_conversion_year"])
+        return claim
+
     def _spouse_excess(
         self, person_id: int, state: Any, own: PiaRecord
     ) -> tuple[float, float] | None:
@@ -560,10 +581,17 @@ class _Calculator:
             self.counters["spouse_worker_level_unavailable"] += 1
             return None
         birth = int(self.statics.at[person_id, "birth_year"])
-        entitlement = max(own.entitlement_year, worker.entitlement_year)
+        own_claim = self._own_claim_year(own, state)
+        if own_claim is None:
+            self.counters["spouse_own_claim_year_missing"] += 1
+            return None
+        # SpouseEntitlementRule.OWN_CLAIM_NOT_BEFORE_WORKER: the later of
+        # the person's own simulated claim and the worker's entitlement.
+        entitlement = max(own_claim, worker.entitlement_year)
         if entitlement > self.ctx.config.reference_year:
             return None
         if entitlement - birth < _RETIREMENT_AGE:
+            self.counters["spouse_entitlement_before_62"] += 1
             return None
         worker_start = self._exposure_start(worker, entitlement)
         own_start = self._exposure_start(own)

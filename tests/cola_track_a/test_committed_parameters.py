@@ -27,7 +27,10 @@ from populace_dynamics.cola_track_a import (
     prepare_track_a_cohort,
     run_track_a,
 )
-from populace_dynamics.cola_track_a.mortality import load_tr2008_mortality
+from populace_dynamics.cola_track_a.mortality import (
+    Tr2008YearAwareMortality,
+    load_tr2008_mortality,
+)
 from populace_dynamics.cola_track_a.runner import (
     a1_parameter_block,
     load_claiming_pmf,
@@ -38,6 +41,7 @@ from populace_dynamics.data import tr2008
 from populace_dynamics.engine.di_entitlement_rates import (
     load_di_entitlement_rates,
 )
+from populace_dynamics.engine.steps import AgeSexMortalityModel
 from populace_dynamics.estimates.parameters import load_cola_history
 from populace_dynamics.ss.params import SSAParameters
 
@@ -138,11 +142,21 @@ def test_end_to_end_with_committed_rates_on_an_invented_cohort():
             claiming_pmf=claiming_pmf,
         ),
         config=config,
-        check_tr2008_parameters=True,
+        check_committed_parameters=True,
     )
     consistency = result["parameter_consistency"]
-    assert consistency["tr2008_values_compared"] is True
+    assert consistency["committed_values_compared"] is True
     assert consistency["consistent"] is True, consistency
+    assert set(consistency["checks"]) == {
+        "cola_path",
+        "awi",
+        "mortality_values",
+        "di_rates",
+        "claiming_pmf",
+        "di_spec",
+        "mortality",
+        "claim_table_max_year",
+    }
     for row in result["rows"].values():
         assert row["status"] == "tabulated", row["status"]
     flows = result["draws"]["0"]["di_stock_flow"]
@@ -174,3 +188,119 @@ def test_registered_run_refuses_inputs_the_config_does_not_name():
         run_track_a(
             inputs, config=config, registration_pointer="INVENTED-POINTER"
         )
+
+
+def _registered_inputs(config: TrackAConfig, **changes) -> TrackAInputs:
+    """Committed parameters on the INVENTED cohort, labelled
+    registered_real only to reach the interlock (the refusals below come
+    before any projection)."""
+
+    claiming_pmf = load_claiming_pmf()
+    a3 = psid2010.build_psid2010_cohort(
+        invented.invented_psid2010_inputs(claiming_pmf=claiming_pmf)
+    )
+    cohort = prepare_track_a_cohort(
+        a3, data_provenance="invented", config=config
+    )
+    values = {
+        "cohort": replace(cohort, data_provenance="registered_real"),
+        "params": tr2008_ssa_parameters(_invented_params()),
+        "baseline": tr2008_baseline_cola(load_cola_history()),
+        "di_rates": load_di_entitlement_rates(config.di_spec),
+        "population_mortality": load_tr2008_mortality(range(2011, 2031)),
+        "claiming_pmf": claiming_pmf,
+    }
+    values.update(changes)
+    return TrackAInputs(**values)
+
+
+def _scaled_di_rates(config: TrackAConfig):
+    # INVENTED perturbation of the committed rates; the spec is unchanged.
+    rates = load_di_entitlement_rates(config.di_spec)
+    return replace(rates, incidence=rates.incidence * 0.5)
+
+
+def _relabelled_mortality():
+    # INVENTED qx under the labels the config names (intermediate, 2004).
+    committed = load_tr2008_mortality(range(2011, 2031))
+    return Tr2008YearAwareMortality(
+        qx_by_sex={
+            sex: values * 0.5 for sex, values in committed.qx_by_sex.items()
+        },
+        ratio_by_year=committed.ratio_by_year,
+        alternative=committed.alternative,
+        base_year=committed.base_year,
+    )
+
+
+def _flat_mortality():
+    # INVENTED flat mortality with no year axis.
+    return AgeSexMortalityModel(
+        bands=((0, 64), (65, 120)),
+        probability={
+            ("0-64", "female"): 0.002,
+            ("0-64", "male"): 0.003,
+            ("65+", "female"): 0.03,
+            ("65+", "male"): 0.04,
+        },
+    )
+
+
+@pytest.mark.parametrize(
+    ("field", "build", "check"),
+    [
+        ("di_rates", _scaled_di_rates, "di_rates"),
+        (
+            "population_mortality",
+            lambda config: _relabelled_mortality(),
+            "mortality_values",
+        ),
+        (
+            "population_mortality",
+            lambda config: _flat_mortality(),
+            "mortality_values",
+        ),
+        (
+            "claiming_pmf",
+            lambda config: invented.invented_claiming_pmf(),
+            "claiming_pmf",
+        ),
+    ],
+)
+def test_registered_run_refuses_values_that_are_not_the_committed_ones(
+    field, build, check
+):
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    inputs = _registered_inputs(config, **{field: build(config)})
+    with pytest.raises(ValueError, match=rf"differ.*{check}"):
+        run_track_a(
+            inputs, config=config, registration_pointer="INVENTED-POINTER"
+        )
+
+
+def test_committed_value_checks_name_each_mismatch():
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    inputs = _registered_inputs(
+        config,
+        cohort=_registered_inputs(config).cohort,
+        di_rates=_scaled_di_rates(config),
+        population_mortality=_flat_mortality(),
+        claiming_pmf=invented.invented_claiming_pmf(),
+    )
+    inputs = replace(
+        inputs, cohort=replace(inputs.cohort, data_provenance="invented")
+    )
+    result = run_track_a(
+        inputs, config=config, check_committed_parameters=True
+    )
+    checks = result["parameter_consistency"]["checks"]
+    assert checks["di_rates"]["mismatched"] == ["incidence"]
+    assert checks["mortality_values"]["mismatched"] == [
+        "not_the_a2_substitute"
+    ]
+    assert checks["mortality_values"]["runtime_class"] == (
+        "AgeSexMortalityModel"
+    )
+    assert checks["claiming_pmf"]["consistent"] is False
+    assert checks["cola_path"]["consistent"] is True
+    assert result["parameter_consistency"]["consistent"] is False

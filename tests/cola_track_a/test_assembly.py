@@ -1024,7 +1024,7 @@ def test_opening_disabled_worker_receiving_after_62_keeps_the_age_62_clock():
 def test_parameter_consistency_is_recorded(result):
     record = result["parameter_consistency"]
     # Unit tests use invented parameters and never read the TR2008 capture.
-    assert record["tr2008_values_compared"] is False
+    assert record["committed_values_compared"] is False
     checks = record["checks"]
     assert set(checks) == {"di_spec", "mortality", "claim_table_max_year"}
     assert checks["di_spec"]["consistent"] is True
@@ -1132,3 +1132,102 @@ def test_opening_disabled_widow_is_an_aged_widow_from_60():
     assert set(by_id[2]["benefit_components"]) == {"disabled_widow"}
     assert by_id[1]["benefit_base"] == pytest.approx(by_id[2]["benefit_base"])
     assert by_id[1]["reduced_increases"] == 21
+
+
+def test_converted_disabled_worker_spouse_excess_starts_at_own_claim():
+    # INVENTED couple.  1 (born 1960, low earner) was awarded DI in 2014
+    # at 54 and converted at FRA (67) in 2027, which the claiming step
+    # records as 1's claim.  Worker 2 (born 1956) claimed in 2019, when 1
+    # was 59.  The spouse's excess starts at the later of 1's own claim
+    # (2027) and 2's entitlement (2019); the DI award is not a claim.
+    persons = [_static(1, 1960), _static(2, 1956)]
+    careers = {1: _career(8_000.0, 1960), 2: _career(60_000.0, 1956)}
+    final = [
+        _state(
+            1,
+            1960,
+            2030,
+            claimed=True,
+            claim_year=2027,
+            di_award_year=2014,
+            di_conversion_year=2027,
+            spouse_person_id=2,
+        ),
+        _state(
+            2, 1956, 2030, claimed=True, claim_year=2019, spouse_person_id=1
+        ),
+    ]
+    initial = [
+        _state(1, 1960, 2010, spouse_person_id=2),
+        _state(2, 1956, 2010, spouse_person_id=1),
+    ]
+    cohort, projection = _handmade_cohort(persons, careers, final, initial)
+    params = invented_params()
+    context = track_benefits.BenefitContext(
+        cohort=cohort, params=params, baseline=invented_cola(), config=CONFIG
+    )
+    rows, counters = track_benefits.reference_benefit_rows(
+        projection, draw=0, row=REGISTERED_ROWS["R0"], context=context
+    )
+    by_id = {row["person_id"]: row for row in rows}
+    components = by_id[1]["benefit_components"]
+    assert set(components) == {"retired_worker", "spouse"}
+    assert counters["spouse_excess_paid"] == 1
+    own_level = track_benefits.approximate_pia(
+        careers[1],
+        birth_year=1960,
+        computation_end_year=2014,
+        eligibility_year=2014,
+        params=params,
+    )
+    worker_level = sb.eligibility_pia_for_clock(
+        sb.WorkerClock.at_age_62(1956),
+        history=careers[2],
+        birth_year=1956,
+        params=params,
+    )
+    spouse = sb.spouse_scenario_paths(
+        worker_eligibility_pia=worker_level,
+        worker_clock=sb.WorkerClock.at_age_62(1956, entitlement_year=2019),
+        own=sb.OwnBenefit(
+            eligibility_pia=own_level,
+            claim_age_factor=1.0,
+            clock=sb.WorkerClock.at_di_onset(2014, entitlement_year=2014),
+        ),
+        months_early=max(0, params.fra_months(1960) - 12 * (2027 - 1960)),
+        entitlement_year=2027,
+        params=params,
+        baseline=invented_cola(),
+    )
+    assert spouse.baseline_monthly_by_payment_year[2030] > 0
+    assert components["spouse"]["base"] == pytest.approx(
+        12 * spouse.baseline_monthly_by_payment_year[2030]
+    )
+    assert components["spouse"]["reform"] == pytest.approx(
+        12 * spouse.reform_monthly_by_payment_year[2030]
+    )
+
+
+def test_excluded_di_level_leaves_r3_as_documented(cohort):
+    # The LevelPolicy docstring: an excluded own level drops the person
+    # from every row, R3 included (A1 section 22 differs; recorded).
+    config = TrackAConfig(
+        draw_indices=(0,),
+        rows=("R0", "R3"),
+        di_benefit_level=LevelPolicy.EXCLUDE,
+    )
+    run = run_track_a(_inputs(cohort), config=config)
+    dropped = {
+        row_id: run["rows"][row_id]["benefit_counters"].get(
+            "person_excluded_own_level_unavailable", 0
+        )
+        for row_id in ("R0", "R3")
+    }
+    assert dropped["R0"] > 0
+    assert dropped["R3"] == dropped["R0"]
+    (entry,) = [
+        item
+        for item in run["pending_decisions"]
+        if item["field"] == "di_benefit_level"
+    ]
+    assert "R3" in entry["note"]

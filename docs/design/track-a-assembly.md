@@ -42,10 +42,16 @@ nothing to test.
 The configuration names the TR2008 alternative, the first TR2008 rate
 year, the mortality base year, the DI specification and the claim-table
 cap, while the inputs are built separately. Every result records whether
-they agree (`parameter_consistency`). The COLA and AWI values are
-compared with the committed TR2008 capture when the caller asks
-(`check_tr2008_parameters`, which the dry run sets) and always for a
-`registered_real` cohort, which refuses any disagreement.
+they agree (`parameter_consistency`). Without further request only the
+labels are compared: the DI specification, the A2 model's alternative and
+base year, and the A3 claim-table cap. When the caller asks
+(`check_committed_parameters`, which the dry run sets), and always for a
+`registered_real` cohort, the values are compared too: the COLA path and
+AWI with the TR2008 capture, the population mortality with the A2
+substitute for every projection year (any other model is a mismatch), the
+DI rates with A4's fit from the committed inputs, and the claim-age rows
+the projection reads with the A3-pinned table. A `registered_real` run
+refuses any disagreement.
 
 ## Registered rows
 
@@ -89,8 +95,11 @@ components only.
   (retired-worker component, disability clock kept) or retirement
   claimant (claim-age factor from the oracle).
 - **Spouse's excess.** A claimant aged 62 or older, married in 2030 to a
-  living worker who has an own benefit. Paid from the later of the two
-  entitlement years.
+  living worker who has an own benefit. Paid from the later of the
+  claimant's own simulated claim year and the worker's entitlement year.
+  A disabled worker still entitled to DI draws none. One converted at
+  FRA claims at the conversion (the claiming step's `claim_year`), not
+  at the DI award.
 - **Aged widow(er)'s benefit.** A widow(er) of a worker in the opening
   roster, from the later of widowhood and age 60. It is paid as the excess
   over the survivor's own benefit (dual entitlement through the oracle's

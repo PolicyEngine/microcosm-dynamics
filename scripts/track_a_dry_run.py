@@ -152,7 +152,9 @@ GAPS: tuple[dict[str, str], ...] = (
         "gap": (
             "A5 builder choices: aged widow(er)s entitled at the later of "
             "widowhood and 60; spouses at the later of their own claim and "
-            "the worker's entitlement, at 62 or older"
+            "the worker's entitlement, at 62 or older. A disabled worker "
+            "still entitled to DI draws no spouse's excess; one converted "
+            "at FRA claims at the conversion"
         ),
     },
     {
@@ -358,9 +360,11 @@ def _results_markdown(result: dict[str, Any]) -> str:
         "- Scheduled entrants: 0, and no step creates a person. The "
         "projection metadata carries no allocator, so the entrant "
         "allocator check had nothing to test.",
-        "- Configuration against inputs (TR2008 COLA path and AWI, "
-        "mortality alternative and base year, DI specification, claim "
-        "table cap): consistent = "
+        "- Configuration against inputs (the labels: mortality "
+        "alternative and base year, DI specification, claim table cap; "
+        "and the values, compared with the committed captures: TR2008 "
+        "COLA path and AWI, population mortality, DI rates, claim-age "
+        "table): consistent = "
         f"{result['parameter_consistency']['consistent']}.",
         "",
         "## Diagnostics per draw",
@@ -388,6 +392,7 @@ def _results_markdown(result: dict[str, Any]) -> str:
     lines += [
         f"- `{item['field']}` = `{item['value']}` ({item['default_source']}; "
         f"awaiting {item['awaiting']})."
+        + (f" Note: {item['note']}." if item.get("note") else "")
         for item in result["pending_decisions"]
     ]
     lines += [
@@ -467,7 +472,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
         config=config,
         progress=lambda message: print(message, file=sys.stderr),
-        check_tr2008_parameters=True,
+        check_committed_parameters=True,
     )
     if not result["parameter_consistency"]["consistent"]:
         raise ValueError(

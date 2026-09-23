@@ -15,7 +15,10 @@ step creates a person, so no allocated identifier is ever used.
 The configuration names the TR2008 alternative, the first TR2008 rate
 year, the mortality base year, the DI specification and the claim-table
 cap; the inputs are built separately.  Every result records whether the
-two agree (``parameter_consistency``), and a ``registered_real`` run
+two agree (``parameter_consistency``).  On request, and always for a
+``registered_real`` cohort, the input values themselves (COLA path, AWI,
+population mortality, DI rates and claim-age table) are compared with the
+committed captures those settings name, and a ``registered_real`` run
 refuses any disagreement.
 
 Governance interlock: a cohort whose ``data_provenance`` is
@@ -61,6 +64,7 @@ from populace_dynamics.cola_track_a.config import (
 )
 from populace_dynamics.cola_track_a.mortality import (
     Tr2008YearAwareMortality,
+    load_tr2008_mortality,
 )
 from populace_dynamics.cola_track_a.opening import TrackACohort
 from populace_dynamics.data import tr2008
@@ -69,7 +73,11 @@ from populace_dynamics.engine.di_entitlement import (
     di_stock_flow,
     fra_schedule_from_parameters,
 )
-from populace_dynamics.engine.di_entitlement_rates import DIEntitlementRates
+from populace_dynamics.engine.di_entitlement_rates import (
+    DIEntitlementRates,
+    SelectUltimateTable,
+    load_di_entitlement_rates,
+)
 from populace_dynamics.engine.entrant_schedule import (
     validate_projection_allocator,
 )
@@ -310,11 +318,142 @@ def _tr2008_value_checks(
     }
 
 
+#: The fitted arrays and factors of an A4 ``DIEntitlementRates``.
+_DI_RATE_FIELDS = (
+    "incidence",
+    "recovery_attained",
+    "death_attained",
+    "population_reference_death",
+    "recovery_select",
+    "death_select",
+    "recovery_level_factor",
+    "death_level_factor",
+)
+
+
+def _same_values(left: Any, right: Any) -> bool:
+    """Exact equality of rate arrays, factors or select tables (NaN = NaN)."""
+
+    if left is None or right is None:
+        return left is None and right is None
+    if isinstance(left, SelectUltimateTable) or isinstance(
+        right, SelectUltimateTable
+    ):
+        return (
+            isinstance(left, SelectUltimateTable)
+            and isinstance(right, SelectUltimateTable)
+            and _same_values(left.select, right.select)
+            and _same_values(left.ultimate, right.ultimate)
+            and left.first_select_age == right.first_select_age
+            and left.last_select_age == right.last_select_age
+        )
+    left_array = np.asarray(left, dtype=np.float64)
+    right_array = np.asarray(right, dtype=np.float64)
+    return left_array.shape == right_array.shape and bool(
+        np.array_equal(left_array, right_array, equal_nan=True)
+    )
+
+
+def _capped_pmf(
+    pmf: Mapping[tuple[str, int], Mapping[int, float]], cap: int
+) -> dict[tuple[str, int], dict[int, float]]:
+    return {
+        (str(sex), int(year)): {
+            int(age): float(value) for age, value in values.items()
+        }
+        for (sex, year), values in pmf.items()
+        if int(year) <= int(cap)
+    }
+
+
+def _committed_value_checks(
+    inputs: TrackAInputs, config: TrackAConfig
+) -> dict[str, dict[str, Any]]:
+    """Compare mortality, DI rates and the claim table with the captures.
+
+    The configuration's mortality settings name the A2 substitute
+    (:func:`~populace_dynamics.cola_track_a.mortality.
+    load_tr2008_mortality` for every projection year), its DI
+    specification names the rates A4 fits from the committed inputs
+    (:func:`~populace_dynamics.engine.di_entitlement_rates.
+    load_di_entitlement_rates`), and its claim-table cap names the rows of
+    the A3-pinned claim-age table (:func:`load_claiming_pmf`) that the
+    projection reads.  Each input must equal them exactly; a population
+    mortality that is not the A2 substitute fails.  Reads committed
+    files, so :func:`run_track_a` calls it only when asked or for a
+    ``registered_real`` run.
+    """
+
+    years = range(config.start_year + 1, config.reference_year + 1)
+    expected_mortality = load_tr2008_mortality(
+        years,
+        alternative=config.tr2008_alternative,
+        base_year=config.mortality_base_year,
+    )
+    model = inputs.population_mortality
+    mortality_mismatch: list[str] = []
+    if isinstance(model, Tr2008YearAwareMortality):
+        for sex, values in expected_mortality.qx_by_sex.items():
+            if not _same_values(model.qx_by_sex.get(sex), values):
+                mortality_mismatch.append(f"qx_{sex}")
+        for year in years:
+            runtime = model.ratio_by_year.get(year)
+            if runtime is None or not _same_values(
+                runtime, expected_mortality.ratio_by_year[year]
+            ):
+                mortality_mismatch.append(f"ratio_{year}")
+        if tuple(model.bands) != tuple(expected_mortality.bands):
+            mortality_mismatch.append("bands")
+    else:
+        mortality_mismatch.append("not_the_a2_substitute")
+    expected_di = load_di_entitlement_rates(config.di_spec)
+    di_mismatch = [
+        name
+        for name in _DI_RATE_FIELDS
+        if not _same_values(
+            getattr(inputs.di_rates, name), getattr(expected_di, name)
+        )
+    ]
+    cap = config.claim_table_max_year
+    runtime_pmf = _capped_pmf(inputs.claiming_pmf, cap)
+    expected_pmf = _capped_pmf(load_claiming_pmf(), cap)
+    pmf_mismatch = sorted(
+        f"{sex}|{year}"
+        for sex, year in set(runtime_pmf) | set(expected_pmf)
+        if runtime_pmf.get((sex, year)) != expected_pmf.get((sex, year))
+    )
+    return {
+        "mortality_values": {
+            "expected": (
+                f"A2 substitute, TR2008 {config.tr2008_alternative}, base "
+                f"year {config.mortality_base_year}, projection years "
+                f"{years.start}-{years.stop - 1}"
+            ),
+            "consistent": not mortality_mismatch,
+            "mismatched": mortality_mismatch,
+            "runtime_class": type(model).__name__,
+        },
+        "di_rates": {
+            "expected": "load_di_entitlement_rates(config.di_spec)",
+            "consistent": not di_mismatch,
+            "mismatched": di_mismatch,
+        },
+        "claiming_pmf": {
+            "expected": (
+                "the A3-pinned claim-age table (load_claiming_pmf), rows "
+                f"at or before {cap}"
+            ),
+            "consistent": not pmf_mismatch,
+            "mismatched_rows": pmf_mismatch,
+        },
+    }
+
+
 def _parameter_consistency(
     inputs: TrackAInputs,
     config: TrackAConfig,
     *,
-    compare_tr2008_values: bool,
+    compare_committed_values: bool,
 ) -> dict[str, Any]:
     """Whether the inputs are the parameters the config labels the run with.
 
@@ -324,15 +463,21 @@ def _parameter_consistency(
     inputs are built separately.  Each check compares the two.  A
     ``registered_real`` run refuses any mismatch (:func:`run_track_a`);
     an invented run, whose tests use invented parameters, records it.
-    A population mortality that is not the A2 substitute is recorded as
-    a gap by ``_mortality_record`` and is not checked here.  The COLA and
-    AWI values are compared only when ``compare_tr2008_values`` is set.
+    Without ``compare_committed_values`` only the labels are compared
+    (the DI specification, the A2 model's alternative and base year, the
+    A3 claim-table cap), and a population mortality that is not the A2
+    substitute is recorded as a gap by ``_mortality_record`` only.  With
+    it, the COLA path, the AWI, the mortality probabilities, the DI rates
+    and the claim-age table are compared value by value with the
+    committed captures, and a population mortality that is not the A2
+    substitute is a mismatch.
     """
 
     alternative = config.tr2008_alternative
-    checks: dict[str, dict[str, Any]] = (
-        _tr2008_value_checks(inputs, config) if compare_tr2008_values else {}
-    )
+    checks: dict[str, dict[str, Any]] = {}
+    if compare_committed_values:
+        checks.update(_tr2008_value_checks(inputs, config))
+        checks.update(_committed_value_checks(inputs, config))
     checks.update(
         {
             "di_spec": {
@@ -367,7 +512,7 @@ def _parameter_consistency(
         "runtime_a3_opening_imputation": a3_cap,
     }
     return {
-        "tr2008_values_compared": compare_tr2008_values,
+        "committed_values_compared": compare_committed_values,
         "consistent": all(check["consistent"] for check in checks.values()),
         "checks": checks,
     }
@@ -535,13 +680,14 @@ def run_track_a(
     config: TrackAConfig | None = None,
     registration_pointer: str | None = None,
     progress: Callable[[str], None] | None = None,
-    check_tr2008_parameters: bool = False,
+    check_committed_parameters: bool = False,
 ) -> dict[str, Any]:
     """Project, compute benefits and tabulate every configured row.
 
-    ``check_tr2008_parameters`` compares the baseline COLA and the AWI
-    with the committed TR2008 capture that ``config`` names (always done
-    for a ``registered_real`` cohort, which refuses any mismatch).
+    ``check_committed_parameters`` compares the baseline COLA, the AWI,
+    the population mortality, the DI rates and the claim-age table with
+    the committed captures that ``config`` names (always done for a
+    ``registered_real`` cohort, which refuses any mismatch).
     """
 
     config = config or TrackAConfig()
@@ -557,7 +703,7 @@ def run_track_a(
     consistency = _parameter_consistency(
         inputs,
         config,
-        compare_tr2008_values=real or check_tr2008_parameters,
+        compare_committed_values=real or check_committed_parameters,
     )
     if real and not consistency["consistent"]:
         failed = sorted(

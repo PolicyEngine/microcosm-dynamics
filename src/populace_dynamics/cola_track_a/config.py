@@ -64,8 +64,14 @@ class LevelPolicy(str, Enum):
     ``DISCLOSED_ORACLE_APPROXIMATION`` reuses the oracle's retirement
     AIME and PIA functions (see
     :func:`populace_dynamics.cola_track_a.benefits.approximate_pia`);
-    ``EXCLUDE`` leaves the person without a level, so the benefit that
-    rests on it drops out of every ratio-of-means row and is counted.
+    ``EXCLUDE`` leaves the PIA without a level.  A spouse's or
+    widow(er)'s benefit resting on an excluded worker level is dropped
+    and counted; a person whose own worker level is excluded is dropped
+    whole (``person_excluded_own_level_unavailable``), because the own
+    level decides dual entitlement.  The drop applies to every row, R3
+    included, since A7 membership needs a positive baseline amount.  The
+    A1 draft (section 22) says R3 could still include new DI awards
+    under this alternative; the assembly does not implement that.
     """
 
     DISCLOSED_ORACLE_APPROXIMATION = "disclosed_oracle_approximation"
@@ -337,6 +343,11 @@ def pending_decisions(config: TrackAConfig | None = None) -> list[dict]:
             "default_source": "A1 section 21 decisions_awaiting_max",
             "alternatives": [LevelPolicy.EXCLUDE.value],
             "awaiting": _PLAN_SECTION_6 + ", decision 2(b)",
+            "note": (
+                "under exclude, projected DI awards leave every row, R3 "
+                "included; A1 section 22 says R3 could keep them, which "
+                "this assembly does not implement"
+            ),
         },
         {
             "field": "acceptance_rule",
