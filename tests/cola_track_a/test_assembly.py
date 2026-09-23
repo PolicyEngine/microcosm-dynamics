@@ -40,6 +40,7 @@ from populace_dynamics.cola_track_a.adapters import (
 )
 from populace_dynamics.cola_track_a.config import (
     MAX_RULINGS,
+    TRACK_A_LABELS,
     LevelPolicy,
     builder_defaults,
     max_rulings,
@@ -51,8 +52,11 @@ from populace_dynamics.cola_track_a.mortality import (
 from populace_dynamics.cola_track_a.opening import (
     OpeningStockRecord,
     TrackACohort,
+    track_a_cohort_sha256,
 )
 from populace_dynamics.cola_track_a.runner import (
+    _check_output_labels,
+    _check_source_provenance,
     _component_shares,
     a1_parameter_block,
 )
@@ -261,7 +265,9 @@ def test_prepare_refuses_unknown_provenance(a3_cohort):
 # --------------------------------------------------------------------------
 def _psid_files_a3() -> psid2010.Psid2010Cohort:
     """The INVENTED frames under an INVENTED psid_files provenance: what
-    the A3 builder records for a cohort read from PSID files."""
+    the A3 builder records for a cohort read from PSID files.  The loader's
+    seal is applied the way ``load_psid2010_inputs`` applies it, standing
+    in for a PSID read."""
     inputs = invented.invented_psid2010_inputs(seed=7)
     stamped = replace(
         inputs,
@@ -272,7 +278,9 @@ def _psid_files_a3() -> psid2010.Psid2010Cohort:
             "psid_files_bundle_sha256": "cd" * 32,
         },
     )
-    return psid2010.build_psid2010_cohort(stamped)
+    return psid2010.build_psid2010_cohort(
+        psid2010._seal_loaded_inputs(stamped)
+    )
 
 
 def test_a_psid_files_cohort_cannot_be_labeled_invented():
@@ -300,6 +308,13 @@ def test_an_invented_cohort_cannot_be_labeled_registered_real(a3_cohort):
         )
 
 
+def _reseal(cohort: TrackACohort) -> TrackACohort:
+    """Forge the preparation seal on a replaced cohort (a deliberate
+    bypass of the frozen dataclass), to reach the checks behind it."""
+    object.__setattr__(cohort, "seal", track_a_cohort_sha256(cohort))
+    return cohort
+
+
 def test_a_relabelled_prepared_cohort_is_refused_by_the_runner():
     # The prepared real cohort relabelled invented after preparation:
     # without the runner's check it would skip the registration pointer.
@@ -309,6 +324,92 @@ def test_a_relabelled_prepared_cohort_is_refused_by_the_runner():
     relabelled = replace(real, data_provenance="invented")
     config = TrackAConfig(draw_indices=(0,), rows=("R0",))
     with pytest.raises(ValueError, match="source provenance is 'psid_files'"):
+        run_track_a(_inputs(relabelled, additional_cohorts=()), config=config)
+    # Relabelled on every field the runner reads (the label, the output
+    # labels and the source provenance's kind): the preparation seal no
+    # longer matches, since dataclasses.replace resets it.
+    everywhere = replace(
+        real,
+        data_provenance="invented",
+        labels=(INVENTED_COHORT_LABEL, *TRACK_A_LABELS[1:]),
+        source_provenance={
+            **dict(real.source_provenance),
+            "kind": psid2010.INVENTED,
+        },
+    )
+    assert everywhere.seal is None
+    with pytest.raises(ValueError, match="does not match the seal"):
+        run_track_a(_inputs(everywhere, additional_cohorts=()), config=config)
+
+
+def test_a_prepared_cohort_edited_in_place_is_refused_by_the_runner():
+    # INVENTED cohort, edited in place after preparation (no field is
+    # replaced, so the frozen dataclass does not stop it): every kind of
+    # edit breaks the preparation seal.
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+
+    def prepared() -> TrackACohort:
+        return prepare_track_a_cohort(
+            psid2010.build_psid2010_cohort(
+                invented.invented_psid2010_inputs(seed=7)
+            ),
+            data_provenance="invented",
+            config=config,
+        )
+
+    untouched = prepared()
+    assert untouched.seal == track_a_cohort_sha256(untouched)
+
+    def weight(cohort):
+        cohort.initial_slice.loc[cohort.initial_slice.index[0], "weight"] *= 2
+
+    def opening_amount(cohort):
+        person_id = next(iter(cohort.opening))
+        cohort.opening[person_id] = replace(
+            cohort.opening[person_id], observed_annual_amount=1.0e6
+        )
+
+    def career(cohort):
+        person_id = next(p for p, c in cohort.careers.items() if c)
+        year = next(iter(cohort.careers[person_id]))
+        cohort.careers[person_id][year] += 1.0
+
+    def persons(cohort):
+        cohort.persons.loc[cohort.persons.index[0], "ss_opening"] = 1.0e6
+
+    for edit in (weight, opening_amount, career, persons):
+        cohort = prepared()
+        edit(cohort)
+        with pytest.raises(ValueError, match="does not match the seal"):
+            run_track_a(_inputs(cohort, additional_cohorts=()), config=config)
+
+
+def test_a_run_refuses_output_labels_its_label_does_not_call_for():
+    check = _check_output_labels
+    invented_labels = (INVENTED_COHORT_LABEL, *TRACK_A_LABELS[1:])
+    check(TRACK_A_LABELS, "registered_real")
+    check(invented_labels, "invented")
+    for labels, provenance in (
+        (invented_labels, "registered_real"),
+        # Dropping "Python oracle (not Axiom)" departs from Max's ruling on
+        # decision 1 (d074).
+        (TRACK_A_LABELS[:1] + TRACK_A_LABELS[2:], "registered_real"),
+        (TRACK_A_LABELS, "invented"),
+    ):
+        with pytest.raises(ValueError, match="must carry the labels"):
+            check(labels, provenance)
+    # End to end: an INVENTED cohort whose labels were replaced and whose
+    # seal was forged reaches the label check.
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    cohort = prepare_track_a_cohort(
+        psid2010.build_psid2010_cohort(
+            invented.invented_psid2010_inputs(seed=7)
+        ),
+        data_provenance="invented",
+        config=config,
+    )
+    relabelled = _reseal(replace(cohort, labels=TRACK_A_LABELS))
+    with pytest.raises(ValueError, match="must carry the labels"):
         run_track_a(_inputs(relabelled, additional_cohorts=()), config=config)
 
 
@@ -329,6 +430,85 @@ def test_cohorts_without_a_verifiable_provenance_are_refused():
     built.persons.loc[built.persons.index[0], "weight"] += 1.0
     with pytest.raises(ValueError, match="changed after the build"):
         prepare_track_a_cohort(built, data_provenance="invented")
+
+
+def test_a_forged_invented_provenance_on_a_psid_cohort_is_refused():
+    # A cohort built from (stand-in) PSID files whose provenance record is
+    # overwritten with a genuine invented seed and frame digest: every
+    # recorded field checks out, but the invented generator does not
+    # reproduce the cohort's data, so prepare refuses the invented label.
+    a3 = _psid_files_a3()
+    # The record itself cannot be edited in place.
+    with pytest.raises(TypeError):
+        a3.provenance["kind"] = psid2010.INVENTED
+    assert not hasattr(a3.provenance, "update")
+    nested = a3.provenance["psid_files_sha256"]
+    nested["ind2023er/IND2023ER.txt"] = "00" * 32
+    assert a3.provenance["psid_files_sha256"] == {
+        "ind2023er/IND2023ER.txt": "ab" * 32
+    }
+    seed = 20260922
+    forged = {
+        **dict(a3.provenance),
+        "kind": psid2010.INVENTED,
+        "seed": seed,
+        "input_frames_sha256": invented.invented_frames_sha256(
+            seed=seed, anchor_wave=2011
+        ),
+    }
+    object.__setattr__(a3, "provenance", psid2010.ReadOnlyProvenance(forged))
+    with pytest.raises(ValueError, match="persons or careers are not what"):
+        prepare_track_a_cohort(a3, data_provenance="invented", config=CONFIG)
+    # A record with no seed (and so no digest to re-generate) is refused.
+    object.__setattr__(
+        a3,
+        "provenance",
+        psid2010.ReadOnlyProvenance(
+            {**forged, "seed": None, "input_frames_sha256": None}
+        ),
+    )
+    with pytest.raises(ValueError, match="does not produce its input"):
+        prepare_track_a_cohort(a3, data_provenance="invented", config=CONFIG)
+
+
+def test_a_relabelled_psid_cohort_with_forged_source_is_refused_by_runner():
+    # A prepared PSID-provenance cohort whose label, labels and source
+    # provenance are all replaced to read as invented, with the
+    # preparation seal forged as well: the runner re-generates the
+    # invented population and refuses it.
+    real = prepare_track_a_cohort(
+        _psid_files_a3(), data_provenance="registered_real", config=CONFIG
+    )
+    forged = _reseal(
+        replace(
+            real,
+            data_provenance="invented",
+            labels=(INVENTED_COHORT_LABEL, *real.labels[1:]),
+            source_provenance=psid2010.ReadOnlyProvenance(
+                {
+                    **dict(real.source_provenance),
+                    "kind": psid2010.INVENTED,
+                    "seed": 20260922,
+                }
+            ),
+        )
+    )
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    with pytest.raises(ValueError, match="not the invented generator's"):
+        run_track_a(_inputs(forged, additional_cohorts=()), config=config)
+    # The genuine invented cohort of that seed passes the same check ...
+    genuine = prepare_track_a_cohort(
+        psid2010.build_psid2010_cohort(
+            invented.invented_psid2010_inputs(seed=20260922)
+        ),
+        data_provenance="invented",
+        config=config,
+    )
+    _check_source_provenance({2011: genuine}, "invented")
+    # ... but not with the stand-in PSID persons swapped in.
+    swapped = _reseal(replace(genuine, persons=real.persons))
+    with pytest.raises(ValueError, match="not the invented generator's"):
+        run_track_a(_inputs(swapped, additional_cohorts=()), config=config)
 
 
 def test_invented_provenance_must_regenerate_from_its_seed():

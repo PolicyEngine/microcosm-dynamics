@@ -41,13 +41,21 @@ describes the default 2011 wave unless it says otherwise.
   on it, so the members of a family unit always fall in the same half.
 - **Provenance, set by the builder.** `Psid2010Cohort.provenance` is not a
   constructor argument; `build_psid2010_cohort` sets it from the inputs,
-  and `dataclasses.replace` resets it to `unsealed`.
+  and `dataclasses.replace` resets it to `unsealed`. It is a read-only
+  mapping (`ReadOnlyProvenance`): it cannot be edited in place.
   - `psid_files`: `load_psid2010_inputs` records the SHA-256 of every file
     under the PSID data directory that its readers opened (a Python audit
-    hook on `open`, `record_files_read`) and a bundle hash of that mapping.
-    The loader refuses to return inputs when it recorded no PSID file.
+    hook on `open`, `record_files_read`) and a bundle hash of that mapping,
+    and seals the inputs it returns (`Psid2010Inputs.loader_seal`: the
+    digest of its frames and of those file hashes; not a constructor
+    argument, cleared by `dataclasses.replace`). The builder refuses a
+    `psid_files` claim on inputs without the seal, or whose frames or file
+    hashes changed after it. The loader refuses to return inputs when it
+    recorded no PSID file.
   - `invented`: the invented generator records the SHA-256 of its frames;
-    the builder recomputes it and refuses inputs whose frames differ.
+    the builder recomputes it and refuses inputs whose frames differ. The
+    builder cannot tell who computed the digest; the A5 opening step
+    re-generates the cohort from the generator (below).
   - `caller_frames`: anything else.
   - Every provenance also carries `content_sha256`, a hash of the built
     persons and careers, so a later edit is detectable.
@@ -55,9 +63,12 @@ describes the default 2011 wave unless it says otherwise.
   `data_provenance` label that contradicts this provenance: a cohort built
   from PSID files cannot be labelled `invented` and so cannot skip the
   issue #42 registration check, and a `registered_real` label needs a
-  `psid_files` cohort. It also re-generates an `invented` cohort's frames
-  from the recorded seed and refuses an unsealed, caller-assembled or
-  edited cohort under either label.
+  `psid_files` cohort. For an `invented` label it re-generates the frames
+  from the recorded seed and rebuilds the cohort from them with the
+  cohort's spec, and refuses a cohort whose data differ
+  (`cohort_data_sha256`, which leaves out the five claim-table imputation
+  columns in `CLAIM_IMPUTATION_COLUMNS`). It refuses an unsealed,
+  caller-assembled or edited cohort under either label.
 
 ## Laws reused, not re-implemented
 

@@ -27,12 +27,16 @@ observation), which A1 section 6 allows because the start is never
 earlier than the observations allow.
 
 Provenance: :func:`build_psid2010_cohort` records on the cohort where its
-inputs came from (``Psid2010Cohort.provenance``), set by the builder and
-not by the caller: ``psid_files`` with the SHA-256 of every staged PSID
-file :func:`load_psid2010_inputs` read, ``invented`` only for inputs
-whose frames still hash to the digest the invented generator recorded,
-and ``caller_frames`` otherwise.  The provenance also seals the built
-persons and careers (``content_sha256``), so a later edit is detectable.
+inputs came from (``Psid2010Cohort.provenance``, a read-only mapping), set
+by the builder and not by the caller: ``psid_files`` only for inputs that
+:func:`load_psid2010_inputs` returned and sealed (the SHA-256 of every
+staged PSID file it read, and of its frames; a replaced or edited
+``Psid2010Inputs`` loses the seal), ``invented`` for inputs whose frames
+hash to the digest their provenance records (the A5 opening step then
+re-generates the cohort from the invented generator's seed, which this
+module cannot import), and ``caller_frames`` otherwise.  The provenance
+also seals the built persons and careers (``content_sha256``), so a later
+edit is detectable.
 
 Every output of this module is a *PSID-seeded closed cohort*. It computes
 no benefit, no reform and no comparison statistic.
@@ -70,6 +74,7 @@ from __future__ import annotations
 
 import contextlib
 import contextvars
+import copy
 import hashlib
 import json
 import os
@@ -126,7 +131,10 @@ __all__ = [
     "load_psid2010_inputs",
     "marital_state_at",
     "build_psid2010_cohort",
+    "CLAIM_IMPUTATION_COLUMNS",
+    "ReadOnlyProvenance",
     "cohort_content_sha256",
+    "cohort_data_sha256",
     "input_frames_sha256",
     "record_files_read",
     "structural_summary",
@@ -704,16 +712,51 @@ class Psid2010Inputs:
     provenance: Mapping[str, Any] = field(default_factory=dict)
     #: The wave ``anchor`` was read from; must equal the spec's.
     anchor_wave: int = ANCHOR_WAVE
+    #: Set by :func:`load_psid2010_inputs` only (not a constructor
+    #: argument; ``dataclasses.replace`` clears it): the digest of the
+    #: frames and of the PSID file hashes it read.  The builder records a
+    #: ``psid_files`` provenance only for inputs that still match it.
+    loader_seal: Mapping[str, str] | None = field(
+        default=None, init=False, repr=False, compare=False
+    )
 
 
-def _unsealed_provenance() -> dict[str, Any]:
-    return {
-        "kind": "unsealed",
-        "note": (
-            "not set by build_psid2010_cohort (a directly constructed or "
-            "replaced cohort)"
-        ),
-    }
+class ReadOnlyProvenance(Mapping[str, Any]):
+    """A read-only provenance record.
+
+    It has no mutating methods, and every value is returned as a deep
+    copy, so neither the record nor a nested mapping can be edited in
+    place; ``dict(record)`` is a plain, JSON-serializable copy.
+    """
+
+    def __init__(self, values: Mapping[str, Any]) -> None:
+        self._values = copy.deepcopy(
+            {str(key): value for key, value in dict(values).items()}
+        )
+
+    def __getitem__(self, key: str) -> Any:
+        return copy.deepcopy(self._values[key])
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._values)
+
+    def __len__(self) -> int:
+        return len(self._values)
+
+    def __repr__(self) -> str:
+        return f"ReadOnlyProvenance({self._values!r})"
+
+
+def _unsealed_provenance() -> ReadOnlyProvenance:
+    return ReadOnlyProvenance(
+        {
+            "kind": "unsealed",
+            "note": (
+                "not set by build_psid2010_cohort (a directly constructed "
+                "or replaced cohort)"
+            ),
+        }
+    )
 
 
 @dataclass(frozen=True)
@@ -735,7 +778,8 @@ class Psid2010Cohort:
             argument, and ``dataclasses.replace`` resets it to
             ``unsealed``): ``kind`` is :data:`PSID_FILES`,
             :data:`INVENTED` or :data:`CALLER_FRAMES`, and
-            ``content_sha256`` seals the built persons and careers.
+            ``content_sha256`` seals the built persons and careers.  A
+            :class:`ReadOnlyProvenance`: it cannot be edited in place.
     """
 
     persons: pd.DataFrame
@@ -946,7 +990,10 @@ def load_psid2010_inputs(
 
     The provenance is ``kind="psid_files"`` with the SHA-256 of every file
     under the PSID data directory that the readers opened
-    (:func:`record_files_read`) and the bundle hash of that mapping.
+    (:func:`record_files_read`) and the bundle hash of that mapping.  The
+    returned inputs carry the loader's seal (``loader_seal``: the digest of
+    the frames and of those file hashes), without which the builder
+    refuses a ``psid_files`` claim.
     """
 
     if anchor_wave not in ANCHOR_LAYOUTS:
@@ -998,7 +1045,7 @@ def load_psid2010_inputs(
             f"no PSID file under {data_root} was recorded as read; the "
             "provenance of these inputs cannot be established"
         )
-    return Psid2010Inputs(
+    inputs = Psid2010Inputs(
         **frames,
         claiming_pmf=claiming_pmf,
         anchor_wave=anchor_wave,
@@ -1022,6 +1069,29 @@ def load_psid2010_inputs(
             },
         },
     )
+    return _seal_loaded_inputs(inputs)
+
+
+def _loader_seal(inputs: Psid2010Inputs) -> dict[str, str]:
+    files = dict(inputs.provenance or {}).get("psid_files_sha256")
+    if not isinstance(files, Mapping) or not files:
+        raise ValueError("inputs record no PSID file")
+    return {
+        "input_frames_sha256": input_frames_sha256(inputs),
+        "psid_files_bundle_sha256": _mapping_sha256(dict(files)),
+    }
+
+
+def _seal_loaded_inputs(inputs: Psid2010Inputs) -> Psid2010Inputs:
+    """Mark ``inputs`` as returned by :func:`load_psid2010_inputs`.
+
+    Only the loader calls this (tests call it to stand in for the loader
+    on invented frames).  The seal is the digest of the frames and of the
+    recorded PSID file hashes at load time.
+    """
+
+    object.__setattr__(inputs, "loader_seal", _loader_seal(inputs))
+    return inputs
 
 
 # --------------------------------------------------------------------------
@@ -2017,10 +2087,13 @@ def build_psid2010_cohort(
     ``career_coverage_ratio``, ``career_imputed_share``).
 
     The builder sets ``provenance`` (see :class:`Psid2010Cohort`) from the
-    inputs: ``psid_files`` when :func:`load_psid2010_inputs` recorded the
-    PSID files it read, ``invented`` when the inputs carry the invented
-    generator's frame digest and their frames still match it (refused if
-    they do not), and ``caller_frames`` otherwise.
+    inputs: ``psid_files`` when the inputs are the ones
+    :func:`load_psid2010_inputs` returned and sealed (a ``psid_files``
+    claim without that seal, or with frames or file hashes changed since,
+    is refused), ``invented`` when the inputs carry a frame digest that
+    their frames still match (refused if they do not; the A5 opening step
+    re-generates it from the invented generator), and ``caller_frames``
+    otherwise.
     """
 
     spec = spec or Psid2010CohortSpec()
@@ -2102,15 +2175,17 @@ def build_psid2010_cohort(
     object.__setattr__(
         built,
         "provenance",
-        {
-            **input_provenance,
-            "anchor_wave": wave,
-            "start_year": start,
-            "set_by": "populace_dynamics.cohorts.psid2010."
-            "build_psid2010_cohort",
-            "content_sha256": cohort_content_sha256(built),
-            "content_basis": _CONTENT_BASIS,
-        },
+        ReadOnlyProvenance(
+            {
+                **input_provenance,
+                "anchor_wave": wave,
+                "start_year": start,
+                "set_by": "populace_dynamics.cohorts.psid2010."
+                "build_psid2010_cohort",
+                "content_sha256": cohort_content_sha256(built),
+                "content_basis": _CONTENT_BASIS,
+            }
+        ),
     )
     return built
 
@@ -2130,6 +2205,16 @@ _INPUT_FRAMES = (
 _CONTENT_BASIS = (
     "sha256 over the persons and careers frames, each as its column names, "
     "dtypes and CSV text (pandas to_csv, no index, '\\n' line ends)"
+)
+#: The persons columns that depend on the claim-age table
+#: (``Psid2010Inputs.claiming_pmf``, a parameter rather than data): the
+#: opening claim-year imputation of :func:`_attach_opening_claim`.
+CLAIM_IMPUTATION_COLUMNS: tuple[str, ...] = (
+    "opening_claim_year",
+    "opening_claim_year_basis",
+    "opening_claim_age",
+    "claim_schedule_year",
+    "claim_schedule_snap",
 )
 
 
@@ -2163,6 +2248,30 @@ def cohort_content_sha256(cohort: Psid2010Cohort) -> str:
     return digest.hexdigest()
 
 
+def cohort_data_sha256(cohort: Psid2010Cohort) -> str:
+    """SHA-256 of what a cohort's data determine, without the claim table.
+
+    The persons (less :data:`CLAIM_IMPUTATION_COLUMNS`, which depend on
+    the claim-age table) and the careers, so two builds from the same
+    frames and spec agree whatever claim-age table each used.  The A5
+    opening step compares a cohort labelled invented with a re-generated
+    invented build on this digest.
+    """
+
+    digest = hashlib.sha256()
+    _frame_digest(
+        digest,
+        "persons",
+        cohort.persons.drop(
+            columns=[
+                c for c in CLAIM_IMPUTATION_COLUMNS if c in cohort.persons
+            ]
+        ),
+    )
+    _frame_digest(digest, "careers", cohort.careers)
+    return digest.hexdigest()
+
+
 def _input_provenance(inputs: Psid2010Inputs) -> dict[str, Any]:
     """The cohort provenance the inputs establish (see the builder)."""
 
@@ -2174,6 +2283,22 @@ def _input_provenance(inputs: Psid2010Inputs) -> dict[str, Any]:
         if not isinstance(files, Mapping) or not files:
             raise ValueError(
                 "inputs claim psid_files provenance but record no PSID file"
+            )
+        seal = inputs.loader_seal
+        if seal is None:
+            raise ValueError(
+                "inputs claim psid_files provenance but were not returned "
+                "by load_psid2010_inputs (a hand-built or replaced "
+                "Psid2010Inputs); only the loader establishes that frames "
+                "came from PSID files"
+            )
+        if seal != {
+            "input_frames_sha256": frames_sha256,
+            "psid_files_bundle_sha256": _mapping_sha256(dict(files)),
+        }:
+            raise ValueError(
+                "the frames or the recorded PSID file hashes changed after "
+                "load_psid2010_inputs sealed them"
             )
         return {
             "kind": PSID_FILES,

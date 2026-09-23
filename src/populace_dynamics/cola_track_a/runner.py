@@ -36,7 +36,20 @@ provenance the A3 builder recorded (``TrackACohort.source_provenance``):
 source read from PSID files, so a relabelled cohort is refused here as
 well as in
 :func:`~populace_dynamics.cola_track_a.opening.prepare_track_a_cohort`.
-Invented cohorts carry the invented-data label on every output.
+Every cohort must also carry the seal ``prepare_track_a_cohort`` set
+(:func:`~populace_dynamics.cola_track_a.opening.track_a_cohort_sha256`),
+so a prepared cohort that was relabelled, given another source
+provenance or edited in place is refused.  Because a recorded provenance
+is only a claim, an ``invented`` run also re-generates the invented
+population from the recorded seed and refuses a cohort whose persons,
+weights or family units are not the generator's
+(:func:`~populace_dynamics.cola_track_a.invented.
+check_invented_population`), so a cohort built from PSID data cannot run
+under the invented label however its fields were replaced.  The output
+labels must be the ones the label calls for: :data:`~populace_dynamics.
+cola_track_a.config.TRACK_A_LABELS` for a ``registered_real`` run (Max's
+ruling on decision 1 labels the benefits "not Axiom", d074), and the
+invented-data label in place of the PSID label for an ``invented`` run.
 """
 
 from __future__ import annotations
@@ -58,6 +71,7 @@ import pandas as pd
 from populace_dynamics import claiming
 from populace_dynamics import scenario_benefits as sb
 from populace_dynamics.cohorts import psid2010
+from populace_dynamics.cola_track_a import invented
 from populace_dynamics.cola_track_a.adapters import (
     build_period_modules,
     claiming_schedule,
@@ -68,8 +82,10 @@ from populace_dynamics.cola_track_a.benefits import (
     reference_benefit_rows,
 )
 from populace_dynamics.cola_track_a.config import (
+    INVENTED_COHORT_LABEL,
     REGISTERED_ROWS,
     ROWS_NOT_BUILT,
+    TRACK_A_LABELS,
     TrackAConfig,
     builder_defaults,
     max_rulings,
@@ -79,7 +95,10 @@ from populace_dynamics.cola_track_a.mortality import (
     Tr2008YearAwareMortality,
     load_tr2008_mortality,
 )
-from populace_dynamics.cola_track_a.opening import TrackACohort
+from populace_dynamics.cola_track_a.opening import (
+    TrackACohort,
+    track_a_cohort_sha256,
+)
 from populace_dynamics.cola_track_a.statutory import statutory_value_checks
 from populace_dynamics.data import tr2008
 from populace_dynamics.engine.di_entitlement import (
@@ -764,6 +783,25 @@ _SOURCE_KIND_BY_LABEL = {
     INVENTED: psid2010.INVENTED,
     REGISTERED_REAL: psid2010.PSID_FILES,
 }
+#: The output labels each ``data_provenance`` label needs (A1 header;
+#: Max's ruling on decision 1, d074, labels the benefits "not Axiom").
+_OUTPUT_LABELS_BY_LABEL = {
+    INVENTED: (INVENTED_COHORT_LABEL, *TRACK_A_LABELS[1:]),
+    REGISTERED_REAL: TRACK_A_LABELS,
+}
+
+
+def _check_output_labels(
+    labels: tuple[str, ...], data_provenance: str
+) -> None:
+    """Refuse output labels other than the ones the label calls for."""
+
+    expected = _OUTPUT_LABELS_BY_LABEL[data_provenance]
+    if tuple(labels) != expected:
+        raise ValueError(
+            f"a {data_provenance!r} run must carry the labels "
+            f"{list(expected)}, not {list(labels)}"
+        )
 
 
 def _check_source_provenance(
@@ -775,18 +813,45 @@ def _check_source_provenance(
     already refuses the contradiction; this repeats it for a
     ``TrackACohort`` whose label was replaced after preparation, so a
     cohort built from PSID files cannot run as invented data (and skip
-    the issue #42 registration check).
+    the issue #42 registration check).  The cohort must carry the seal
+    ``prepare_track_a_cohort`` set and still match it, so no field of a
+    prepared cohort can be replaced or edited in place.  For an invented
+    label the recorded kind is not enough (a forged ``source_provenance``
+    could claim it), so the invented population is re-generated from the
+    recorded seed and every person, weight and family unit of the cohort
+    must be the generator's.
     """
 
     expected = _SOURCE_KIND_BY_LABEL[data_provenance]
     for wave, cohort in cohorts.items():
-        kind = dict(cohort.source_provenance).get("kind")
+        recorded = dict(cohort.source_provenance)
+        kind = recorded.get("kind")
         if kind != expected:
             raise ValueError(
                 f"the anchor-wave {wave} cohort is labelled "
                 f"{data_provenance!r} but its A3 source provenance is "
                 f"{kind!r} (expected {expected!r}); a cohort's label must "
                 "agree with the data it was built from"
+            )
+        if cohort.seal is None or cohort.seal != track_a_cohort_sha256(cohort):
+            raise ValueError(
+                f"the anchor-wave {wave} cohort does not match the seal "
+                "prepare_track_a_cohort set: it was not prepared by it, or "
+                "it was replaced (dataclasses.replace) or edited in place "
+                "after preparation"
+            )
+        if recorded.get("anchor_wave") != int(cohort.anchor_wave):
+            raise ValueError(
+                f"the anchor-wave {wave} cohort's A3 source provenance "
+                f"records anchor wave {recorded.get('anchor_wave')!r}"
+            )
+        if data_provenance == INVENTED:
+            invented.check_invented_population(
+                persons=cohort.persons,
+                initial_slice=cohort.initial_slice,
+                career_ids=cohort.careers.keys(),
+                seed=recorded.get("seed"),
+                anchor_wave=int(cohort.anchor_wave),
             )
 
 
@@ -939,6 +1004,7 @@ def run_track_a(
             "a mismatch"
         )
     _check_source_provenance(cohorts, data_provenance)
+    _check_output_labels(labels, data_provenance)
     schedule = claiming_schedule(
         inputs.claiming_pmf, max_table_year=config.claim_table_max_year
     )

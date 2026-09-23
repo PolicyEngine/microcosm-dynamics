@@ -24,9 +24,15 @@ any real population.
 Provenance: the inputs record ``kind="invented"``, the seed, the anchor
 wave and the SHA-256 of their frames
 (:func:`populace_dynamics.cohorts.psid2010.input_frames_sha256`), which
-the A3 builder checks and records; :func:`invented_frames_sha256`
-re-generates the frames for a seed so the A5 opening step can confirm
-that a cohort labeled invented really came from this generator.
+the A3 builder checks and records.  A recorded digest proves nothing on
+its own (anyone can compute one), so the checks that let a cohort run
+under the invented label re-generate it from this generator:
+:func:`invented_frames_sha256` re-generates the frames for a seed,
+:func:`regenerate_invented_cohort` rebuilds the A3 cohort with a given
+spec (the A5 opening step compares its data with the cohort's), and
+:func:`check_invented_population` confirms that every person of a cohort
+is an invented person with the generator's weight and family unit (the
+A5 runner's check on a prepared cohort).
 """
 
 from __future__ import annotations
@@ -46,9 +52,11 @@ __all__ = [
     "INVENTED_FAMILY_COUNTS",
     "INVENTED_INPUTS_LABEL",
     "InventedFamily",
+    "check_invented_population",
     "invented_claiming_pmf",
     "invented_frames_sha256",
     "invented_psid2010_inputs",
+    "regenerate_invented_cohort",
 ]
 
 INVENTED_INPUTS_LABEL = (
@@ -679,14 +687,122 @@ def invented_psid2010_inputs(
     )
 
 
+def _is_seed(seed: Any) -> bool:
+    return isinstance(seed, int) and not isinstance(seed, bool)
+
+
 def invented_frames_sha256(*, seed: Any, anchor_wave: int) -> str | None:
     """The frame digest this generator produces for ``seed``.
 
     ``None`` when ``seed`` is not an integer (no invented cohort has one).
     """
 
-    if isinstance(seed, bool) or not isinstance(seed, int):
+    if not _is_seed(seed):
         return None
     return cohort.input_frames_sha256(
         invented_psid2010_inputs(seed=seed, anchor_wave=anchor_wave)
     )
+
+
+def _any_year_claiming_pmf(
+    last_year: int,
+) -> dict[tuple[str, int], dict[int, float]]:
+    """The invented claim-age shape for every table year through
+    ``last_year``, so a rebuild works under any spec's table cap."""
+
+    shape = invented_claiming_pmf()[("female", 2008)]
+    return {
+        (sex, year): dict(shape)
+        for sex in ("female", "male")
+        for year in range(1937, int(last_year) + 1)
+    }
+
+
+def regenerate_invented_cohort(
+    *, seed: Any, spec: cohort.Psid2010CohortSpec
+) -> cohort.Psid2010Cohort | None:
+    """The A3 cohort this generator and ``spec`` produce for ``seed``.
+
+    ``None`` when ``seed`` is not an integer.  The claim-age table is an
+    invented one covering every year through ``spec.claim_table_max_year``
+    (a parameter, not data), so compare the result on
+    :func:`populace_dynamics.cohorts.psid2010.cohort_data_sha256`, which
+    leaves out the columns that depend on it.
+    """
+
+    if not _is_seed(seed):
+        return None
+    inputs = invented_psid2010_inputs(
+        seed=seed,
+        anchor_wave=spec.anchor_wave,
+        claiming_pmf=_any_year_claiming_pmf(spec.claim_table_max_year),
+    )
+    return cohort.build_psid2010_cohort(inputs, spec)
+
+
+def check_invented_population(
+    *,
+    persons: pd.DataFrame,
+    initial_slice: pd.DataFrame | None,
+    career_ids: Any,
+    seed: Any,
+    anchor_wave: int,
+) -> None:
+    """Refuse a population that is not this generator's invented people.
+
+    Every person must be an invented person of the generator's
+    ``anchor_wave`` anchor frame for ``seed``, with the generator's weight
+    and family unit (``family_unit_id``, the anchor interview number); the
+    projection's initial slice (when given) must hold the same persons
+    with the same weights, and ``career_ids`` must be those persons.  A
+    cohort read from PSID files fails: its person identifiers, weights and
+    interview numbers are not the generator's.
+    """
+
+    if not _is_seed(seed):
+        raise ValueError(
+            f"a cohort labeled invented must record the integer seed of "
+            f"the invented generator; it records {seed!r}"
+        )
+    anchor = invented_psid2010_inputs(seed=seed, anchor_wave=anchor_wave)
+    expected = anchor.anchor.set_index("person_id")
+    ids = pd.Index(persons["person_id"].astype("int64"))
+    problems = []
+    if ids.has_duplicates:
+        problems.append("duplicate person_id")
+    unknown = ids.difference(expected.index)
+    if len(unknown):
+        problems.append(
+            f"{len(unknown)} persons are not invented persons of seed "
+            f"{seed} (for example {sorted(unknown.tolist())[:3]})"
+        )
+    known = persons[persons["person_id"].isin(expected.index)]
+    reference = expected.loc[known["person_id"].astype("int64")]
+    if not np.array_equal(
+        known["weight"].to_numpy(dtype=np.float64),
+        reference["weight"].to_numpy(dtype=np.float64),
+    ):
+        problems.append("weights differ from the generator's")
+    if "family_unit_id" in known and not np.array_equal(
+        known["family_unit_id"].to_numpy(dtype=np.int64),
+        reference["interview"].to_numpy(dtype=np.int64),
+    ):
+        problems.append("family units differ from the generator's")
+    if initial_slice is not None:
+        opening = initial_slice.set_index("person_id")
+        if set(opening.index) != set(ids) or not np.array_equal(
+            opening.loc[ids, "weight"].to_numpy(dtype=np.float64),
+            persons["weight"].to_numpy(dtype=np.float64),
+        ):
+            problems.append(
+                "the initial slice's persons or weights differ from the "
+                "cohort's"
+            )
+    if set(int(pid) for pid in career_ids) != set(ids):
+        problems.append("the careers belong to other persons")
+    if problems:
+        raise ValueError(
+            "the cohort is labeled invented, but it is not the invented "
+            f"generator's population (seed {seed}, anchor wave "
+            f"{anchor_wave}): " + "; ".join(problems)
+        )

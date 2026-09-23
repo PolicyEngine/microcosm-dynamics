@@ -9,6 +9,7 @@ observations. The claiming PMFs are invented too (not SSA Table 6.B5.1).
 from __future__ import annotations
 
 import dataclasses
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -1356,7 +1357,14 @@ def test_psid_files_provenance_carries_the_file_hashes():
             "psid_files_bundle_sha256": "cd" * 32,
         },
     )
-    built = cohort.build_psid2010_cohort(stamped)
+    # A caller's psid_files claim is not the loader's: refused.
+    assert stamped.loader_seal is None
+    with pytest.raises(ValueError, match="not returned by load_psid2010"):
+        cohort.build_psid2010_cohort(stamped)
+    # Sealed the way load_psid2010_inputs seals its result (INVENTED
+    # frames standing in for a PSID read).
+    sealed = cohort._seal_loaded_inputs(stamped)
+    built = cohort.build_psid2010_cohort(sealed)
     assert built.provenance["kind"] == cohort.PSID_FILES
     assert built.provenance["psid_files_sha256"] == {
         "ind2023er/IND2023ER.txt": "ab" * 32
@@ -1366,6 +1374,68 @@ def test_psid_files_provenance_carries_the_file_hashes():
     )
     with pytest.raises(ValueError, match="no PSID file"):
         cohort.build_psid2010_cohort(empty)
+
+
+def test_sealed_loader_inputs_refuse_later_changes():
+    sealed = cohort._seal_loaded_inputs(
+        dataclasses.replace(
+            _inputs(),
+            provenance={
+                "kind": cohort.PSID_FILES,
+                "psid_files_sha256": {"ind2023er/IND2023ER.txt": "ab" * 32},
+            },
+        )
+    )
+    # dataclasses.replace clears the seal.
+    replaced = dataclasses.replace(sealed, anchor=sealed.anchor.copy())
+    assert replaced.loader_seal is None
+    with pytest.raises(ValueError, match="not returned by load_psid2010"):
+        cohort.build_psid2010_cohort(replaced)
+    # A frame edited in place no longer matches the seal.
+    sealed.anchor.loc[sealed.anchor.index[0], "weight"] += 1.0
+    with pytest.raises(ValueError, match="changed after load_psid2010"):
+        cohort.build_psid2010_cohort(sealed)
+    # So does a file hash edited in place in the recorded provenance.
+    resealed = cohort._seal_loaded_inputs(
+        dataclasses.replace(
+            _inputs(),
+            provenance={
+                "kind": cohort.PSID_FILES,
+                "psid_files_sha256": {"ind2023er/IND2023ER.txt": "ab" * 32},
+            },
+        )
+    )
+    resealed.provenance["psid_files_sha256"]["x.txt"] = "cd" * 32
+    with pytest.raises(ValueError, match="changed after load_psid2010"):
+        cohort.build_psid2010_cohort(resealed)
+
+
+def test_cohort_provenance_is_read_only(built):
+    with pytest.raises(TypeError):
+        built.provenance["kind"] = cohort.INVENTED
+    assert not hasattr(built.provenance, "update")
+    record = dict(built.provenance)
+    record["kind"] = cohort.INVENTED
+    assert built.provenance["kind"] == cohort.CALLER_FRAMES
+    assert json.loads(json.dumps(dict(built.provenance))) == dict(
+        built.provenance
+    )
+
+
+def test_cohort_data_sha256_ignores_only_the_claim_table_columns(built):
+    persons = built.persons.copy()
+    for column in cohort.CLAIM_IMPUTATION_COLUMNS:
+        persons[column] = pd.NA
+    edited = dataclasses.replace(built, persons=persons)
+    assert cohort.cohort_data_sha256(edited) == cohort.cohort_data_sha256(
+        built
+    )
+    persons = built.persons.copy()
+    persons.loc[persons.index[0], "weight"] += 1.0
+    edited = dataclasses.replace(built, persons=persons)
+    assert cohort.cohort_data_sha256(edited) != cohort.cohort_data_sha256(
+        built
+    )
 
 
 def _write_anchor_2009(root: Path, *, weight_label: str) -> None:

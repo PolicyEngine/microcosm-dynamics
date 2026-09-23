@@ -209,18 +209,24 @@ def test_registered_run_refuses_inputs_the_config_does_not_name():
         )
 
 
+def _invented_cohort(config: TrackAConfig):
+    """The INVENTED cohort as prepare_track_a_cohort returns it (sealed)."""
+
+    a3 = psid2010.build_psid2010_cohort(
+        invented.invented_psid2010_inputs(claiming_pmf=load_claiming_pmf())
+    )
+    return prepare_track_a_cohort(
+        a3, data_provenance="invented", config=config
+    )
+
+
 def _registered_inputs(config: TrackAConfig, **changes) -> TrackAInputs:
     """Committed parameters on the INVENTED cohort, labelled
     registered_real only to reach the interlock (the refusals below come
     before any projection)."""
 
     claiming_pmf = load_claiming_pmf()
-    a3 = psid2010.build_psid2010_cohort(
-        invented.invented_psid2010_inputs(claiming_pmf=claiming_pmf)
-    )
-    cohort = prepare_track_a_cohort(
-        a3, data_provenance="invented", config=config
-    )
+    cohort = _invented_cohort(config)
     values = {
         "cohort": replace(cohort, data_provenance="registered_real"),
         "params": captured_ssa_parameters(),
@@ -299,15 +305,14 @@ def test_registered_run_refuses_values_that_are_not_the_committed_ones(
 
 def test_committed_value_checks_name_each_mismatch():
     config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    # The sealed invented cohort as prepared (a cohort relabelled with
+    # dataclasses.replace loses the preparation seal and is refused).
     inputs = _registered_inputs(
         config,
-        cohort=_registered_inputs(config).cohort,
+        cohort=_invented_cohort(config),
         di_rates=_scaled_di_rates(config),
         population_mortality=_flat_mortality(),
         claiming_pmf=invented.invented_claiming_pmf(),
-    )
-    inputs = replace(
-        inputs, cohort=replace(inputs.cohort, data_provenance="invented")
     )
     result = run_track_a(
         inputs, config=config, check_committed_parameters=True

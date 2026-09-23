@@ -95,13 +95,36 @@ A `registered_real` run refuses any disagreement.
 ## Provenance guard
 
 `prepare_track_a_cohort` refuses a `data_provenance` label that contradicts
-the provenance the A3 builder recorded on the cohort: `invented` needs a
-cohort built from the invented generator (its frames are re-generated from
-the recorded seed and compared), and `registered_real` needs one built from
-recorded PSID files. A cohort that was replaced, edited after the build or
-assembled from caller frames is refused under either label. The runner
-repeats the label check on every `TrackACohort` it projects, so relabelling
-a prepared cohort cannot skip the issue #42 registration check either.
+the provenance the A3 builder recorded on the cohort (a read-only record,
+`psid2010.ReadOnlyProvenance`). A recorded digest is only a claim, since
+anyone can compute one, so `invented` needs a cohort that the invented
+generator reproduces: its frames are re-generated from the recorded seed
+and compared with the recorded digest, and the cohort is rebuilt from them
+with its own spec and compared on everything its data determine
+(`psid2010.cohort_data_sha256`: the persons, less the five claim-table
+imputation columns, and the careers). `registered_real` needs a cohort
+built from inputs that `load_psid2010_inputs` read from PSID files and
+sealed (`Psid2010Inputs.loader_seal`); a caller's `psid_files` claim
+without that seal, or with frames or file hashes changed since, is refused
+when the cohort is built. A cohort that was replaced, edited after the
+build or assembled from caller frames is refused under either label.
+
+`prepare_track_a_cohort` seals the `TrackACohort` it returns
+(`TrackACohort.seal`, `opening.track_a_cohort_sha256` over the label, the
+output labels, the source provenance, the persons, the initial slice, the
+careers and the opening-stock records; `dataclasses.replace` clears it).
+The runner refuses a cohort whose seal is missing or no longer matches, so
+a prepared cohort that was relabelled, given another source provenance or
+edited in place cannot run. It repeats the label check against the source
+provenance, and for an `invented` run it re-generates the invented
+population from the recorded seed and refuses any person, weight or family
+unit that is not the generator's (`invented.check_invented_population`).
+It also refuses output labels other than the ones the label calls for: the
+three A1 labels for `registered_real` (Max's ruling on decision 1, d074,
+labels the benefits "not Axiom") and the invented-data label in place of
+the PSID label for `invented`. Neither relabelling a prepared cohort nor
+replacing its recorded provenance can therefore run PSID data without the
+issue #42 registration check.
 
 ## Registered rows
 

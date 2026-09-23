@@ -17,12 +17,16 @@
 
 Provenance guard: the ``data_provenance`` label must agree with the
 provenance the A3 builder recorded on the cohort
-(``Psid2010Cohort.provenance``): ``"invented"`` needs a cohort built from
-the invented generator's frames (re-generated here and compared), and
-``"registered_real"`` needs a cohort built from recorded PSID files.  A
-cohort edited after the build, or assembled by hand, is refused under
-either label, so a real PSID cohort cannot be labeled invented and skip
-the issue #42 registration check.
+(``Psid2010Cohort.provenance``, read-only): ``"invented"`` needs a cohort
+that the invented generator reproduces (its frames are re-generated from
+the recorded seed and compared, and the cohort is rebuilt from them with
+its own spec and compared on everything its data determine,
+:func:`~populace_dynamics.cohorts.psid2010.cohort_data_sha256`), and
+``"registered_real"`` needs a cohort built from inputs that
+``load_psid2010_inputs`` read from PSID files and sealed.  A cohort edited
+after the build, or assembled by hand, is refused under either label, so a
+real PSID cohort cannot be labeled invented and skip the issue #42
+registration check.
 
 It never copies the A3 realized death columns (``death_year`` and its
 bounds, which include deaths after 2010) into anything the projection
@@ -53,6 +57,8 @@ clock and flagged.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -80,6 +86,7 @@ __all__ = [
     "OpeningStockRecord",
     "TrackACohort",
     "prepare_track_a_cohort",
+    "track_a_cohort_sha256",
 ]
 
 #: Marital columns the A5 marital step owns.
@@ -173,6 +180,13 @@ class TrackACohort:
     ``anchor_wave`` and ``start_year`` name the population (A1 section
     14): 2011 and 2010 for R0 and its one-field variants, 2009 and 2008
     for R6.
+
+    ``seal`` is set by :func:`prepare_track_a_cohort` only (it is not a
+    constructor argument, and ``dataclasses.replace`` resets it to
+    ``None``): the :func:`track_a_cohort_sha256` of the prepared cohort.
+    The runner refuses a cohort whose seal is missing or no longer
+    matches, so a prepared cohort cannot be relabelled, have its source
+    provenance replaced, or be edited in place and still run.
     """
 
     persons: pd.DataFrame
@@ -183,7 +197,12 @@ class TrackACohort:
     labels: tuple[str, ...]
     diagnostics: Mapping[str, Any]
     anchor_wave: int = 2011
+    #: The A3 provenance, read-only
+    #: (:class:`~populace_dynamics.cohorts.psid2010.ReadOnlyProvenance`).
     source_provenance: Mapping[str, Any] = field(default_factory=dict)
+    seal: str | None = field(
+        default=None, init=False, repr=False, compare=False
+    )
 
     @property
     def start_year(self) -> int:
@@ -196,6 +215,53 @@ class TrackACohort:
     @cached_property
     def persons_by_id(self) -> pd.DataFrame:
         return self.persons.set_index("person_id", drop=False)
+
+
+def _frame_digest(digest: Any, name: str, frame: pd.DataFrame) -> None:
+    digest.update(f"{name}\n".encode())
+    digest.update(json.dumps([str(c) for c in frame.columns]).encode())
+    digest.update(json.dumps([str(t) for t in frame.dtypes]).encode())
+    digest.update(
+        frame.to_csv(index=False, lineterminator="\n").encode("utf-8")
+    )
+
+
+def track_a_cohort_sha256(cohort: TrackACohort) -> str:
+    """SHA-256 of everything a prepared cohort gives the projection.
+
+    Covers the label (``data_provenance``), the output labels, the anchor
+    wave, the A3 source provenance, the diagnostics, the persons, the
+    initial slice, the careers and the opening-stock records, so a
+    relabelled, replaced or edited cohort no longer matches the seal
+    :func:`prepare_track_a_cohort` set.
+    """
+
+    header = {
+        "data_provenance": cohort.data_provenance,
+        "labels": list(cohort.labels),
+        "anchor_wave": int(cohort.anchor_wave),
+        "source_provenance": dict(cohort.source_provenance),
+        "diagnostics": dict(cohort.diagnostics),
+        "opening": {
+            str(pid): record.as_dict()
+            for pid, record in sorted(cohort.opening.items())
+        },
+        "careers": {
+            str(pid): {
+                str(year): float(value)
+                for year, value in sorted(career.items())
+            }
+            for pid, career in sorted(cohort.careers.items())
+        },
+    }
+    digest = hashlib.sha256(
+        json.dumps(
+            header, sort_keys=True, separators=(",", ":"), default=str
+        ).encode("utf-8")
+    )
+    _frame_digest(digest, "persons", cohort.persons)
+    _frame_digest(digest, "initial_slice", cohort.initial_slice)
+    return digest.hexdigest()
 
 
 def _int_or_none(value: Any) -> int | None:
@@ -359,8 +425,16 @@ def _initial_slice(persons: pd.DataFrame, start_year: int) -> pd.DataFrame:
 
 def _check_source_provenance(
     cohort: Psid2010Cohort, data_provenance: str
-) -> dict[str, Any]:
-    """Refuse a label that contradicts the cohort's builder-set provenance."""
+) -> psid2010.ReadOnlyProvenance:
+    """Refuse a label that contradicts the cohort's builder-set provenance.
+
+    The provenance record is only a claim (anyone can compute a digest),
+    so an ``invented`` label is accepted only when the invented generator
+    reproduces the cohort: its frames for the recorded seed must hash to
+    the recorded digest, and the cohort rebuilt from them with the
+    cohort's own spec must equal the cohort on
+    :func:`~populace_dynamics.cohorts.psid2010.cohort_data_sha256`.
+    """
 
     recorded = dict(cohort.provenance)
     kind = recorded.get("kind")
@@ -390,15 +464,28 @@ def _check_source_provenance(
         # check, and only for invented cohorts.
         from populace_dynamics.cola_track_a import invented
 
+        seed = recorded.get("seed")
         regenerated = invented.invented_frames_sha256(
-            seed=recorded.get("seed"), anchor_wave=cohort.anchor_wave
+            seed=seed, anchor_wave=cohort.anchor_wave
         )
-        if regenerated != recorded.get("input_frames_sha256"):
+        if regenerated is None or regenerated != recorded.get(
+            "input_frames_sha256"
+        ):
             raise ValueError(
                 "the cohort claims invented provenance, but the invented "
-                f"generator with seed {recorded.get('seed')!r} and anchor "
-                f"wave {cohort.anchor_wave} does not produce its input "
-                "frames"
+                f"generator with seed {seed!r} and anchor wave "
+                f"{cohort.anchor_wave} does not produce its input frames"
+            )
+        rebuilt = invented.regenerate_invented_cohort(
+            seed=seed, spec=cohort.spec
+        )
+        if psid2010.cohort_data_sha256(rebuilt) != psid2010.cohort_data_sha256(
+            cohort
+        ):
+            raise ValueError(
+                "the cohort claims invented provenance, but its persons or "
+                "careers are not what the invented generator with seed "
+                f"{seed!r} and the cohort's spec produce"
             )
     elif kind != psid2010.PSID_FILES:
         raise ValueError(
@@ -406,7 +493,7 @@ def _check_source_provenance(
             f"provenance {kind!r}: a registered run needs a cohort built "
             "from recorded PSID files"
         )
-    return recorded
+    return psid2010.ReadOnlyProvenance(recorded)
 
 
 def _opening_columns(cohort: Psid2010Cohort) -> pd.DataFrame:
@@ -521,7 +608,7 @@ def prepare_track_a_cohort(
         ),
         "a3_spec": cohort.spec.as_dict(),
     }
-    return TrackACohort(
+    prepared = TrackACohort(
         persons=persons,
         careers=_careers(cohort),
         initial_slice=initial,
@@ -532,6 +619,8 @@ def prepare_track_a_cohort(
         anchor_wave=cohort.anchor_wave,
         source_provenance=source_provenance,
     )
+    object.__setattr__(prepared, "seal", track_a_cohort_sha256(prepared))
+    return prepared
 
 
 def _count(values) -> dict[str, int]:
