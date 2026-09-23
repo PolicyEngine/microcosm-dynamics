@@ -191,6 +191,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # The opt-in Axiom benefit bridge runs an external engine on retained
     # histories and is outside the historical projection call graph.
     Path("src/populace_dynamics/axiom_benefit_bridge.py"),
+    # The TR2008 parameter reader (DynaSim exercise 1, Track A2) is an
+    # opt-in data accessor that the historical projection never imports;
+    # it is not re-exported from populace_dynamics.data.
+    Path("src/populace_dynamics/data/tr2008.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
