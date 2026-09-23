@@ -7,18 +7,31 @@ shapes of the A3 readers (:class:`populace_dynamics.cohorts.psid2010.
 Psid2010Inputs`) so the invented population runs through the real A3
 builder, and so through the whole Track A pipeline, without touching PSID.
 
-Every invented person is aged 30 to 80 at the end of 2010.  The family
-mix is chosen to exercise every Track A path: retired-worker,
+Every invented person is aged 30 to 80 at the end of 2010.  The same
+invented people can be read as the 2011 wave (the default) or as the 2009
+wave (``anchor_wave=2009``, the A1 R6 population, opening at the end of
+2008): the families, earnings and Social Security amounts are identical;
+only the anchor rows (2009 interview numbers and ages) differ, so a 2010
+recipient whose first receipt is bracketed is a non-recipient in 2008.
+The family mix is chosen to exercise every Track A path: retired-worker,
 disabled-worker and survivor openers (censored and bracketed first
 receipt), a spouse under 62 beside a retired head, widow(er)s whose late
 spouse is outside the cohort, disabled workers aged 30-41 in 2010 (the
 50-61 group in 2030), late claimers aged 62-69 who have not claimed, and
 working couples and singles.  Its composition is not meant to resemble
 any real population.
+
+Provenance: the inputs record ``kind="invented"``, the seed, the anchor
+wave and the SHA-256 of their frames
+(:func:`populace_dynamics.cohorts.psid2010.input_frames_sha256`), which
+the A3 builder checks and records; :func:`invented_frames_sha256`
+re-generates the frames for a seed so the A5 opening step can confirm
+that a cohort labeled invented really came from this generator.
 """
 
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -34,6 +47,7 @@ __all__ = [
     "INVENTED_INPUTS_LABEL",
     "InventedFamily",
     "invented_claiming_pmf",
+    "invented_frames_sha256",
     "invented_psid2010_inputs",
 ]
 
@@ -59,8 +73,11 @@ INVENTED_FAMILY_COUNTS: dict[str, int] = {
 
 _START = cohort.START_YEAR
 _ANCHOR = cohort.ANCHOR_WAVE
+#: The 2009-wave interview number of a family is its 2011 number plus this.
+_INTERVIEW_2009_OFFSET = 20_000
 #: Every invented person is aged 30 to 80 at the end of 2010.
 _MIN_AGE, _MAX_AGE = 30, 80
+_GENERATOR = "populace_dynamics.cola_track_a.invented.invented_psid2010_inputs"
 
 
 @dataclass(frozen=True)
@@ -474,6 +491,14 @@ def _earnings_rows(
     return rows
 
 
+def _interview(family: InventedFamily, wave: int) -> int:
+    """The family's INVENTED interview number in ``wave``."""
+
+    if wave == _ANCHOR:
+        return family.interview
+    return family.interview + _INTERVIEW_2009_OFFSET
+
+
 def _ss_rows(
     family: InventedFamily,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -495,11 +520,7 @@ def _ss_rows(
                     "fu_ss_prior_year": 1 if any_receipt else 5,
                     "age": wave - member["birth_year"],
                     "weight": member["weight"],
-                    "interview": (
-                        family.interview
-                        if wave == _ANCHOR
-                        else family.interview + 20_000
-                    ),
+                    "interview": _interview(family, wave),
                 }
             )
             row: dict[str, Any] = {
@@ -507,7 +528,7 @@ def _ss_rows(
                 "wave": wave,
                 "income_year": wave - 1,
                 "relationship": member["relationship"],
-                "interview": family.interview,
+                "interview": _interview(family, wave),
                 "age": wave - member["birth_year"],
                 "weight": member["weight"],
                 "ss_amount": amount,
@@ -526,13 +547,20 @@ def invented_psid2010_inputs(
     *,
     seed: int = 20260922,
     claiming_pmf: Mapping[tuple[str, int], Mapping[int, float]] | None = None,
+    anchor_wave: int = cohort.ANCHOR_WAVE,
 ) -> cohort.Psid2010Inputs:
     """INVENTED ``Psid2010Inputs`` for the A3 builder (250 persons).
 
     ``claiming_pmf`` defaults to :func:`invented_claiming_pmf`; the dry run
     passes the committed claim-age table instead (a parameter, not data).
+    ``anchor_wave`` 2009 reads the same invented people as the 2009 wave
+    (build them with ``Psid2010CohortSpec(anchor_wave=2009)``).
     """
 
+    if anchor_wave not in cohort.ANCHOR_LAYOUTS:
+        raise ValueError(
+            f"anchor_wave must be one of {sorted(cohort.ANCHOR_LAYOUTS)}"
+        )
     rng = np.random.default_rng(seed)
     families = _families(rng)
     anchor, deaths, marriages, earnings = [], [], [], []
@@ -542,10 +570,10 @@ def invented_psid2010_inputs(
             anchor.append(
                 {
                     "person_id": member["person_id"],
-                    "interview": family.interview,
+                    "interview": _interview(family, anchor_wave),
                     "sequence": member["sequence"],
                     "relationship": member["relationship"],
-                    "age": _ANCHOR - member["birth_year"],
+                    "age": anchor_wave - member["birth_year"],
                     "reported_birth_year": pd.NA,
                     "weight": member["weight"],
                 }
@@ -562,12 +590,13 @@ def invented_psid2010_inputs(
             )
             role = "head" if member["relationship"] == 10 else "spouse"
             earnings.extend(_earnings_rows(rng, member, role))
-            disability.append(
+            disability.extend(
                 {
                     "person_id": member["person_id"],
-                    "period": _ANCHOR,
+                    "period": period,
                     "disabled": bool(member["m4_disabled"]),
                 }
+                for period in (2009, _ANCHOR)
             )
         if family.late_spouse is not None:
             late = family.late_spouse
@@ -586,7 +615,7 @@ def invented_psid2010_inputs(
         family_ss.extend(rows)
         individual_ss.extend(individual)
     anchor_frame = pd.DataFrame(anchor)
-    ages_2010 = _START - (_ANCHOR - anchor_frame["age"])
+    ages_2010 = _START - (anchor_wave - anchor_frame["age"])
     if not ages_2010.between(_MIN_AGE, _MAX_AGE).all():
         raise AssertionError("an invented person falls outside ages 30-80")
     anchor_frame["reported_birth_year"] = anchor_frame[
@@ -623,7 +652,7 @@ def invented_psid2010_inputs(
     individual_frame["type_combination"] = individual_frame[
         "type_combination"
     ].astype("boolean")
-    return cohort.Psid2010Inputs(
+    inputs = cohort.Psid2010Inputs(
         anchor=anchor_frame,
         death_records=death_frame,
         marriage_history=marriage_frame,
@@ -634,9 +663,30 @@ def invented_psid2010_inputs(
         claiming_pmf=(
             invented_claiming_pmf() if claiming_pmf is None else claiming_pmf
         ),
+        anchor_wave=anchor_wave,
+    )
+    return dataclasses.replace(
+        inputs,
         provenance={
+            "kind": cohort.INVENTED,
             "data": INVENTED_INPUTS_LABEL,
+            "generator": _GENERATOR,
             "seed": int(seed),
+            "anchor_wave": int(anchor_wave),
             "family_counts": dict(INVENTED_FAMILY_COUNTS),
+            "input_frames_sha256": cohort.input_frames_sha256(inputs),
         },
+    )
+
+
+def invented_frames_sha256(*, seed: Any, anchor_wave: int) -> str | None:
+    """The frame digest this generator produces for ``seed``.
+
+    ``None`` when ``seed`` is not an integer (no invented cohort has one).
+    """
+
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        return None
+    return cohort.input_frames_sha256(
+        invented_psid2010_inputs(seed=seed, anchor_wave=anchor_wave)
     )

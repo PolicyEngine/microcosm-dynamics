@@ -53,7 +53,10 @@ Not in scope, and deliberately so:
   this module's rule coverage").  Disabled-worker benefit levels (the DI
   AIME/PIA with elapsed and dropout years) are not computed:
   :func:`di_benefit_level` raises ``NotImplementedError("awaiting ruling:
-  DI benefit level")`` pending Max's plan section 6 decision 2(b).  The
+  DI benefit level")``.  Max ruled plan section 6 decision 2(b) on
+  2026-09-23 (a disclosed oracle approximation, which the Track A
+  assembly supplies in ``cola_track_a.benefits.approximate_pia``); this
+  module still computes no DI level.  The
   benefit level of a worker who died before eligibility is likewise a
   raising hook (:func:`survivor_of_preeligibility_death_benefit_level`).
   Callers may supply any PIA to the path functions; this module does not
@@ -745,8 +748,11 @@ def di_benefit_level(*_args: Any, **_kwargs: Any) -> NoReturn:
 
     Computing a DI AIME and PIA (elapsed and dropout computation years,
     onset-year bend points) would extend the oracle's statutory coverage.
-    The plan asks Max (section 6, decision 2(b)) whether a disclosed
-    approximation may be used instead, or DI levels excluded.
+    The plan asked Max (section 6, decision 2(b)) whether a disclosed
+    approximation may be used instead, or DI levels excluded; he ruled
+    for the disclosed approximation on 2026-09-23, which the Track A
+    assembly supplies (``cola_track_a.benefits.approximate_pia``).  This
+    function stays unimplemented: this module adds no statutory coverage.
     """
 
     raise NotImplementedError(DI_BENEFIT_LEVEL_RULING)

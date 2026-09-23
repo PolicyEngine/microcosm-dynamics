@@ -1,12 +1,15 @@
 """Run the Track A assembly: K draws, benefits per row, A7 tabulation.
 
-:func:`run_track_a` projects the opening state once per draw with the
-unmodified ``engine.loop.ProjectionEngine`` (draw ``k`` has root entropy
-``5200 + k`` and person-keyed streams), computes every registered row's
-baseline and reform benefits from that one projection (so both scenarios
-share every simulated path), and tabulates each row with the A7
-five-group statistic.  Nothing is scheduled as an entrant.  The runner
-still passes the projection metadata to
+:func:`run_track_a` projects each population's opening state once per
+draw with the unmodified ``engine.loop.ProjectionEngine`` (draw ``k`` has
+root entropy ``5200 + k`` and person-keyed streams), computes every
+registered row's baseline and reform benefits from its population's one
+projection (so both scenarios share every simulated path), and tabulates
+each row with the A7 five-group statistic.  Rows R0-R5 read the 2011-wave
+cohort (opening 2010, 20 periods); R6 reads the 2009-wave cohort (opening
+2008, 22 periods), passed in ``TrackAInputs.additional_cohorts``.  Nothing
+is scheduled as an entrant.  The runner still passes the projection
+metadata to
 ``engine.entrant_schedule.validate_projection_allocator``; that metadata
 carries no allocator, so the check accepts it without testing anything,
 and the loop builds its own allocator from ``max(person_id) + 1``.  No
@@ -16,16 +19,24 @@ The configuration names the TR2008 alternative, the first TR2008 rate
 year, the mortality base year, the DI specification and the claim-table
 cap; the inputs are built separately.  Every result records whether the
 two agree (``parameter_consistency``).  On request, and always for a
-``registered_real`` cohort, the input values themselves (COLA path, AWI,
-population mortality, DI rates and claim-age table) are compared with the
-committed captures those settings name, and a ``registered_real`` run
-refuses any disagreement.
+``registered_real`` cohort, the input values themselves are compared with
+the committed sources those settings name: the COLA path, the AWI, the
+population mortality, the DI rates and the claim-age table, and (through
+:mod:`~populace_dynamics.cola_track_a.statutory`) the realized COLA
+history before the first TR2008 rate year and every statutory parameter
+the oracle reads beyond the AWI.  A ``registered_real`` run refuses any
+disagreement.
 
 Governance interlock: a cohort whose ``data_provenance`` is
 ``"registered_real"`` is refused unless a registration pointer (the issue
 #42 comment that must precede the one-shot run) is supplied; A7 refuses
-the same case independently.  Invented cohorts carry the invented-data
-label on every output.
+the same case independently.  The label must also agree with the source
+provenance the A3 builder recorded (``TrackACohort.source_provenance``):
+``"invented"`` needs an invented source and ``"registered_real"`` a
+source read from PSID files, so a relabelled cohort is refused here as
+well as in
+:func:`~populace_dynamics.cola_track_a.opening.prepare_track_a_cohort`.
+Invented cohorts carry the invented-data label on every output.
 """
 
 from __future__ import annotations
@@ -60,13 +71,16 @@ from populace_dynamics.cola_track_a.config import (
     REGISTERED_ROWS,
     ROWS_NOT_BUILT,
     TrackAConfig,
-    pending_decisions,
+    builder_defaults,
+    max_rulings,
+    rulings_departures,
 )
 from populace_dynamics.cola_track_a.mortality import (
     Tr2008YearAwareMortality,
     load_tr2008_mortality,
 )
 from populace_dynamics.cola_track_a.opening import TrackACohort
+from populace_dynamics.cola_track_a.statutory import statutory_value_checks
 from populace_dynamics.data import tr2008
 from populace_dynamics.engine.di_entitlement import (
     di_prevalence,
@@ -88,6 +102,7 @@ from populace_dynamics.engine.loop import (
 )
 from populace_dynamics.estimates.cola_age_profile import (
     DEFAULT_AGE_GROUPS,
+    INVENTED,
     REGISTERED_REAL,
     ColaAgeProfileConfig,
     ColaTabulationError,
@@ -116,7 +131,7 @@ _TR2008_AWI_FIRST_YEAR = 1975
 
 
 def a1_parameter_block(path: Path = A1_SPECIFICATION_PATH) -> dict:
-    """The machine-readable block of the A1 draft (its section 21)."""
+    """The machine-readable block of the A1 specification (section 21)."""
 
     text = Path(path).read_text(encoding="utf-8")
     match = re.search(
@@ -225,7 +240,12 @@ def tr2008_baseline_cola(
 
 @dataclass(frozen=True)
 class TrackAInputs:
-    """Everything a Track A run reads besides its configuration."""
+    """Everything a Track A run reads besides its configuration.
+
+    ``cohort`` is the 2011-wave population of R0-R5; the 2009-wave
+    population of R6 goes in ``additional_cohorts``.  The population
+    mortality must cover every projection year of every population.
+    """
 
     cohort: TrackACohort
     params: SSAParameters
@@ -234,6 +254,17 @@ class TrackAInputs:
     population_mortality: Any
     claiming_pmf: Mapping[tuple[str, int], Mapping[int, float]]
     provenance: Mapping[str, Any] = dataclasses.field(default_factory=dict)
+    additional_cohorts: tuple[TrackACohort, ...] = ()
+
+    def cohorts_by_wave(self) -> dict[int, TrackACohort]:
+        """Every supplied cohort by anchor wave (one per wave)."""
+        cohorts: dict[int, TrackACohort] = {}
+        for cohort in (self.cohort, *self.additional_cohorts):
+            wave = int(cohort.anchor_wave)
+            if wave in cohorts:
+                raise ValueError(f"two cohorts for anchor wave {wave}")
+            cohorts[wave] = cohort
+        return cohorts
 
 
 def _check_floor(inputs: TrackAInputs, config: TrackAConfig) -> dict:
@@ -384,7 +415,9 @@ def _committed_value_checks(
     ``registered_real`` run.
     """
 
-    years = range(config.start_year + 1, config.reference_year + 1)
+    years = range(
+        min(config.start_years.values()) + 1, config.reference_year + 1
+    )
     expected_mortality = load_tr2008_mortality(
         years,
         alternative=config.tr2008_alternative,
@@ -452,6 +485,7 @@ def _committed_value_checks(
 def _parameter_consistency(
     inputs: TrackAInputs,
     config: TrackAConfig,
+    cohorts: Mapping[int, TrackACohort],
     *,
     compare_committed_values: bool,
 ) -> dict[str, Any]:
@@ -465,12 +499,17 @@ def _parameter_consistency(
     an invented run, whose tests use invented parameters, records it.
     Without ``compare_committed_values`` only the labels are compared
     (the DI specification, the A2 model's alternative and base year, the
-    A3 claim-table cap), and a population mortality that is not the A2
-    substitute is recorded as a gap by ``_mortality_record`` only.  With
-    it, the COLA path, the AWI, the mortality probabilities, the DI rates
-    and the claim-age table are compared value by value with the
-    committed captures, and a population mortality that is not the A2
-    substitute is a mismatch.
+    A3 claim-table cap of every population), and a population mortality
+    that is not the A2 substitute is recorded as a gap by
+    ``_mortality_record`` only.  With it, the COLA path, the AWI, the
+    mortality probabilities, the DI rates and the claim-age table are
+    compared value by value with the committed captures, a population
+    mortality that is not the A2 substitute is a mismatch, and
+    :func:`~populace_dynamics.cola_track_a.statutory.statutory_value_checks`
+    binds the realized COLA history before the first TR2008 rate year and
+    the statutory parameters (bend points, contribution and benefit base,
+    PIA factors, FRA, early reduction, delayed credits and the auxiliary
+    constants) to their committed sources.
     """
 
     alternative = config.tr2008_alternative
@@ -478,6 +517,16 @@ def _parameter_consistency(
     if compare_committed_values:
         checks.update(_tr2008_value_checks(inputs, config))
         checks.update(_committed_value_checks(inputs, config))
+        checks.update(
+            statutory_value_checks(
+                inputs.params,
+                inputs.baseline,
+                first_tr2008_rate_year=config.tr2008_first_rate_year,
+                reference_year=config.reference_year,
+                last_earnings_year=max(config.start_years.values()),
+                tr2008_alternative=alternative,
+            )
+        )
     checks.update(
         {
             "di_spec": {
@@ -503,13 +552,18 @@ def _parameter_consistency(
                 "base_year": model.base_year,
             },
         }
-    a3_cap = inputs.cohort.diagnostics.get("a3_spec", {}).get(
-        "claim_table_max_year"
-    )
+    a3_caps = {
+        str(wave): cohort.diagnostics.get("a3_spec", {}).get(
+            "claim_table_max_year"
+        )
+        for wave, cohort in cohorts.items()
+    }
     checks["claim_table_max_year"] = {
         "expected": config.claim_table_max_year,
-        "consistent": a3_cap == config.claim_table_max_year,
-        "runtime_a3_opening_imputation": a3_cap,
+        "consistent": all(
+            cap == config.claim_table_max_year for cap in a3_caps.values()
+        ),
+        "runtime_a3_opening_imputation_by_anchor_wave": a3_caps,
     }
     return {
         "committed_values_compared": compare_committed_values,
@@ -705,72 +759,94 @@ def _component_shares(
     return {"definition": _COMPONENT_SHARE_DEFINITION, "by_group": by_group}
 
 
-def run_track_a(
-    inputs: TrackAInputs,
-    *,
-    config: TrackAConfig | None = None,
-    registration_pointer: str | None = None,
-    progress: Callable[[str], None] | None = None,
-    check_committed_parameters: bool = False,
-) -> dict[str, Any]:
-    """Project, compute benefits and tabulate every configured row.
+#: The A3 source provenance kind each ``data_provenance`` label needs.
+_SOURCE_KIND_BY_LABEL = {
+    INVENTED: psid2010.INVENTED,
+    REGISTERED_REAL: psid2010.PSID_FILES,
+}
 
-    ``check_committed_parameters`` compares the baseline COLA, the AWI,
-    the population mortality, the DI rates and the claim-age table with
-    the committed captures that ``config`` names (always done for a
-    ``registered_real`` cohort, which refuses any mismatch).
+
+def _check_source_provenance(
+    cohorts: Mapping[int, TrackACohort], data_provenance: str
+) -> None:
+    """Refuse a cohort whose label contradicts its A3 source provenance.
+
+    :func:`~populace_dynamics.cola_track_a.opening.prepare_track_a_cohort`
+    already refuses the contradiction; this repeats it for a
+    ``TrackACohort`` whose label was replaced after preparation, so a
+    cohort built from PSID files cannot run as invented data (and skip
+    the issue #42 registration check).
     """
 
-    config = config or TrackAConfig()
-    config.check_runnable()
-    cohort = inputs.cohort
-    if cohort.data_provenance == REGISTERED_REAL and not registration_pointer:
+    expected = _SOURCE_KIND_BY_LABEL[data_provenance]
+    for wave, cohort in cohorts.items():
+        kind = dict(cohort.source_provenance).get("kind")
+        if kind != expected:
+            raise ValueError(
+                f"the anchor-wave {wave} cohort is labelled "
+                f"{data_provenance!r} but its A3 source provenance is "
+                f"{kind!r} (expected {expected!r}); a cohort's label must "
+                "agree with the data it was built from"
+            )
+
+
+def _population_cohorts(
+    inputs: TrackAInputs, config: TrackAConfig
+) -> dict[int, TrackACohort]:
+    """The cohort of every population the configured rows project."""
+
+    supplied = inputs.cohorts_by_wave()
+    missing = {
+        wave: config.rows_for_wave(wave)
+        for wave in config.anchor_waves
+        if wave not in supplied
+    }
+    if missing:
         raise ValueError(
-            "no real-data statistic before the issue #42 registration "
-            "comment exists; pass its pointer to run a registered_real cohort"
+            "no cohort for the populations of rows "
+            + "; ".join(
+                f"{list(rows)} (anchor wave {wave})"
+                for wave, rows in missing.items()
+            )
+            + ": pass it in TrackAInputs (the 2009-wave cohort of R6 in "
+            "additional_cohorts) or leave those rows out of config.rows"
         )
-    floor_minima = _check_floor(inputs, config)
-    real = cohort.data_provenance == REGISTERED_REAL
-    consistency = _parameter_consistency(
-        inputs,
-        config,
-        compare_committed_values=real or check_committed_parameters,
-    )
-    if real and not consistency["consistent"]:
-        failed = sorted(
-            name
-            for name, check in consistency["checks"].items()
-            if not check["consistent"]
-        )
-        raise ValueError(
-            "the inputs differ from the parameters the configuration "
-            f"reports for this run: {failed}; a registered run refuses "
-            "a mismatch"
-        )
-    schedule = claiming_schedule(
-        inputs.claiming_pmf, max_table_year=config.claim_table_max_year
-    )
-    fra_schedule = fra_schedule_from_parameters(inputs.params)
+    cohorts = {wave: supplied[wave] for wave in config.anchor_waves}
+    first = next(iter(cohorts.values()))
+    for wave, cohort in cohorts.items():
+        if cohort.data_provenance != first.data_provenance or tuple(
+            cohort.labels
+        ) != tuple(first.labels):
+            raise ValueError(
+                f"the anchor-wave {wave} cohort's provenance or labels "
+                "differ from the others; one run tabulates one kind of data"
+            )
+    return cohorts
+
+
+def _project_population(
+    cohort: TrackACohort,
+    inputs: TrackAInputs,
+    config: TrackAConfig,
+    *,
+    schedule: Any,
+    fra_schedule: Any,
+    progress: Callable[[str], None] | None,
+) -> tuple[dict[int, ProjectionResult], dict[str, Any]]:
+    """Project one population once per draw; return results and diagnostics."""
+
     initial = cohort.initial_slice
     metadata: dict[str, Any] = {}
     if SCHEDULED_ENTRIES_KEY in metadata:
         raise ValueError("Track A schedules no entrants")
     validate_projection_allocator(initial["person_id"], metadata)
-    context = BenefitContext(
-        cohort=cohort,
-        params=inputs.params,
-        baseline=inputs.baseline,
-        config=config,
-    )
-    rows_by_row: dict[str, list[dict]] = {row: [] for row in config.rows}
-    counters_by_row: dict[str, Counter] = {
-        row: Counter() for row in config.rows
-    }
-    draws: dict[str, Any] = {}
-    pia_cache: dict = {}
+    results: dict[int, ProjectionResult] = {}
+    diagnostics: dict[str, Any] = {}
     for draw in config.draw_indices:
         if progress is not None:
-            progress(f"draw {draw}: projecting")
+            progress(
+                f"anchor wave {cohort.anchor_wave}, draw {draw}: projecting"
+            )
         death_log: dict[int, pd.DataFrame] = {}
         cell_log: dict[int, pd.DataFrame] = {}
         modules = build_period_modules(
@@ -801,25 +877,110 @@ def run_track_a(
         ]
         if other:
             raise RuntimeError(f"unexpected projection warnings: {other[:3]}")
-        draws[str(draw)] = _draw_diagnostics(
+        diagnostics[str(draw)] = _draw_diagnostics(
             result, death_log, cell_log, infeasible_warnings
         )
-        lookups = StateLookups(result, config.reference_year)
-        for row_id in config.rows:
-            rows, counters = reference_benefit_rows(
-                result,
-                draw=draw,
-                row=REGISTERED_ROWS[row_id],
-                context=context,
-                pia_cache=pia_cache,
-                lookups=lookups,
-            )
-            for row in rows:
-                row["age_reference"] = config.reference_year - int(
-                    row["birth_year"]
+        results[draw] = result
+    return results, diagnostics
+
+
+def run_track_a(
+    inputs: TrackAInputs,
+    *,
+    config: TrackAConfig | None = None,
+    registration_pointer: str | None = None,
+    progress: Callable[[str], None] | None = None,
+    check_committed_parameters: bool = False,
+) -> dict[str, Any]:
+    """Project, compute benefits and tabulate every configured row.
+
+    ``check_committed_parameters`` compares the baseline COLA, the AWI,
+    the population mortality, the DI rates, the claim-age table, the
+    realized COLA history and the statutory parameters with the committed
+    sources that ``config`` names (always done for a ``registered_real``
+    cohort, which refuses any mismatch).  Each population (anchor wave)
+    is projected once per draw and every row of that population reads the
+    same projection.
+    """
+
+    config = config or TrackAConfig()
+    config.check_runnable()
+    cohorts = _population_cohorts(inputs, config)
+    data_provenance = next(iter(cohorts.values())).data_provenance
+    labels = tuple(next(iter(cohorts.values())).labels)
+    if data_provenance == REGISTERED_REAL and not registration_pointer:
+        raise ValueError(
+            "no real-data statistic before the issue #42 registration "
+            "comment exists; pass its pointer to run a registered_real cohort"
+        )
+    real = data_provenance == REGISTERED_REAL
+    departures = rulings_departures(config)
+    if real and departures:
+        raise ValueError(
+            f"the configuration departs from Max's rulings on {departures} "
+            "(2026-09-23, d074/d075); a registered run follows every ruling"
+        )
+    floor_minima = _check_floor(inputs, config)
+    consistency = _parameter_consistency(
+        inputs,
+        config,
+        cohorts,
+        compare_committed_values=real or check_committed_parameters,
+    )
+    if real and not consistency["consistent"]:
+        failed = sorted(
+            name
+            for name, check in consistency["checks"].items()
+            if not check["consistent"]
+        )
+        raise ValueError(
+            "the inputs differ from the parameters the configuration "
+            f"reports for this run: {failed}; a registered run refuses "
+            "a mismatch"
+        )
+    _check_source_provenance(cohorts, data_provenance)
+    schedule = claiming_schedule(
+        inputs.claiming_pmf, max_table_year=config.claim_table_max_year
+    )
+    fra_schedule = fra_schedule_from_parameters(inputs.params)
+    rows_by_row: dict[str, list[dict]] = {row: [] for row in config.rows}
+    counters_by_row: dict[str, Counter] = {
+        row: Counter() for row in config.rows
+    }
+    draws: dict[str, Any] = {}
+    for wave, cohort in cohorts.items():
+        results, draws[str(wave)] = _project_population(
+            cohort,
+            inputs,
+            config,
+            schedule=schedule,
+            fra_schedule=fra_schedule,
+            progress=progress,
+        )
+        context = BenefitContext(
+            cohort=cohort,
+            params=inputs.params,
+            baseline=inputs.baseline,
+            config=config,
+        )
+        pia_cache: dict = {}
+        for draw, result in results.items():
+            lookups = StateLookups(result, config.reference_year)
+            for row_id in config.rows_for_wave(wave):
+                rows, counters = reference_benefit_rows(
+                    result,
+                    draw=draw,
+                    row=REGISTERED_ROWS[row_id],
+                    context=context,
+                    pia_cache=pia_cache,
+                    lookups=lookups,
                 )
-            rows_by_row[row_id].extend(rows)
-            counters_by_row[row_id].update(counters)
+                for row in rows:
+                    row["age_reference"] = config.reference_year - int(
+                        row["birth_year"]
+                    )
+                rows_by_row[row_id].extend(rows)
+                counters_by_row[row_id].update(counters)
     tabulations: dict[str, Any] = {}
     for row_id in config.rows:
         row = REGISTERED_ROWS[row_id]
@@ -833,6 +994,7 @@ def run_track_a(
             draw_indices=config.draw_indices,
             floor_seeds=config.floor_seeds,
         )
+        population = row.population
         upstream = {
             "row": row_id,
             "field_changed": row.field_changed,
@@ -844,20 +1006,37 @@ def run_track_a(
             "benefit_scale": "annual_12_times_monthly",
             "rate_path": f"TR2008 {config.tr2008_alternative}",
             "behavior": "fixed_paths_shared_draws",
+            "population_wave": population.anchor_wave,
+            "population_weight": population.weight_variable,
+            "population_start_year": population.start_year,
+            "population_periods": population.periods(config.reference_year),
+            "family_unit_id": population.family_unit_variable,
         }
         try:
             tabulation = tabulate_cola_age_profile(
                 pd.DataFrame(rows_by_row[row_id]),
-                data_provenance=cohort.data_provenance,
+                data_provenance=data_provenance,
                 config=tabulation_config,
                 registration_pointer=registration_pointer,
-                labels=cohort.labels,
+                labels=labels,
                 upstream_conventions=upstream,
             )
-            status = "tabulated"
         except ColaTabulationError as error:
             tabulation = None
             status = f"refused: {type(error).__name__}: {error}"
+        else:
+            undefined = tabulation["undefined_cells"]
+            status = (
+                "tabulated"
+                if not undefined
+                else "tabulated with undefined cells: "
+                + ", ".join(
+                    f"{cell['group']} {cell['statistic']} "
+                    f"({cell['n_defined_draws']} of "
+                    f"{len(config.draw_indices)} draws defined)"
+                    for cell in undefined
+                )
+            )
         tabulations[row_id] = {
             "status": status,
             "row": row.as_dict(),
@@ -873,20 +1052,26 @@ def run_track_a(
         }
     return {
         "schema_version": SCHEMA_VERSION,
-        "data_provenance": cohort.data_provenance,
+        "data_provenance": data_provenance,
         "registration_pointer": registration_pointer,
-        "labels": list(cohort.labels),
+        "labels": list(labels),
         "config": config.as_dict(),
-        "pending_decisions": pending_decisions(config),
+        "max_rulings": max_rulings(config),
+        "builder_defaults": builder_defaults(config),
         "rows_not_built": dict(ROWS_NOT_BUILT),
         "reduced_rate_minimum_by_row": floor_minima,
         "parameter_consistency": consistency,
-        "cohort": dict(cohort.diagnostics),
+        "cohorts": {
+            str(wave): {
+                **dict(cohort.diagnostics),
+                "source_provenance": dict(cohort.source_provenance),
+            }
+            for wave, cohort in cohorts.items()
+        },
         "scheduled_entrants": 0,
         "population_mortality": _mortality_record(inputs.population_mortality),
-        # The statutory parameters (bend points, FRA, reduction and credit
-        # rates, wage base) the benefits and the DI conversion read; the
-        # value checks above do not compare them with any capture.
+        # The oracle's statutory parameter revision; the committed-value
+        # checks (parameter_consistency, when run) bind the values.
         "ssa_parameters_revision": inputs.params.pe_us_revision,
         "draws": draws,
         "rows": tabulations,

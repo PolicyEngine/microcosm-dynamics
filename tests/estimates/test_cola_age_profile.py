@@ -28,7 +28,6 @@ from populace_dynamics.estimates.cola_age_profile import (
     ColaAgeProfileConfig,
     ColaTabulationError,
     MembershipDifferenceError,
-    UndefinedCellError,
     tabulate_cola_age_profile,
 )
 
@@ -56,9 +55,13 @@ def _row(
     components=None,
     beneficiary_base=None,
     beneficiary_reform=None,
+    family_unit_id=None,
     **extra,
 ):
-    """One invented row; a single component carries the whole benefit."""
+    """One invented row; a single component carries the whole benefit.
+
+    The family unit defaults to the person (a one-person family unit).
+    """
     if components is None:
         components = (
             {component: {"base": base, "reform": reform}}
@@ -68,6 +71,9 @@ def _row(
     return {
         "draw": draw,
         "person_id": person_id,
+        "family_unit_id": (
+            person_id if family_unit_id is None else family_unit_id
+        ),
         "weight": weight,
         "birth_year": birth_year,
         "beneficiary_base": (
@@ -199,6 +205,7 @@ def test_pending_rulings_record_choice_and_primary_flag():
         "components",
         "draw_indices",
         "floor_seeds",
+        "floor_split_unit",
     ]
     by_name = {r["parameter"]: r for r in default["pending_rulings"]}
     # draw_indices (0, 1) is not the proposed K = 20.
@@ -412,9 +419,15 @@ def test_age_rule_minus_one_shifts_every_age_down():
 
 def test_reference_year_is_a_parameter():
     rows = [_row(0, 1, birth_year=1975, base=1000.0, reform=950.0)]
-    # Age 55 in 2030 but 45 in 2020: out of every group -> empty cell.
-    with pytest.raises(UndefinedCellError):
-        _tabulate(rows, age_groups=_single_group(), reference_year=2020)
+    # Age 55 in 2030 but 45 in 2020: out of every group -> empty cell,
+    # reported undefined (A1 section 7), never imputed.
+    result = _tabulate(rows, age_groups=_single_group(), reference_year=2020)
+    only = _group(result, "only")
+    assert only[PRIMARY]["defined"] is False
+    assert only[PRIMARY]["mean"] is None
+    assert only[PRIMARY]["undefined_draws"] == [
+        {"draw": 0, "reason": "empty_baseline_membership"}
+    ]
 
 
 # =========================================================================
@@ -668,24 +681,95 @@ def test_component_sum_must_match_totals():
 
 
 # =========================================================================
-# Refusals
+# Undefined cells (A1 section 7): reported per cell, never imputed
 # =========================================================================
-def test_empty_cell_is_refused():
-    # 80+ has no rows at all.
+def test_empty_cell_is_undefined_and_the_other_four_are_reported():
+    # Invented: 80+ has no rows at all.  A1 section 7 reports that cell as
+    # undefined and keeps the rest of the row.
+    full = _tabulate(_five_group_rows(), draw_indices=(0, 1))
     rows = [
         r for r in _five_group_rows() if r["birth_year"] != BIRTH_YEAR["80+"]
     ]
-    with pytest.raises(UndefinedCellError, match="80\\+"):
-        _tabulate(rows, draw_indices=(0, 1))
+    result = _tabulate(rows, draw_indices=(0, 1))
+    for label in ("50-61", "62-64", "65-69", "70-79"):
+        for stat in (PRIMARY, ALT):
+            kept = _group(result, label)[stat]
+            assert kept["defined"] is True
+            assert kept["n_defined_draws"] == 2
+            assert kept["undefined_draws"] == []
+            assert kept["mean"] == pytest.approx(
+                _group(full, label)[stat]["mean"], rel=1e-12
+            )
+            assert kept["sample_sd"] == pytest.approx(
+                _group(full, label)[stat]["sample_sd"], rel=1e-12
+            )
+    old = _group(result, "80+")
+    assert old[PRIMARY] == {
+        "defined": False,
+        "per_draw": [None, None],
+        "mean": None,
+        "sample_sd": None,
+        "n_draws": 2,
+        "n_defined_draws": 0,
+        "undefined_draws": [
+            {"draw": 0, "reason": "empty_baseline_membership"},
+            {"draw": 1, "reason": "empty_baseline_membership"},
+        ],
+        "floor": old[PRIMARY]["floor"],
+    }
+    assert old[ALT]["undefined_draws"][0]["reason"] == (
+        "empty_alternative_membership"
+    )
+    assert old[PRIMARY]["floor"]["defined"] is False
+    assert [cell["undefined_reasons"] for cell in old["cells"]] == [
+        {
+            PRIMARY: "empty_baseline_membership",
+            ALT: "empty_alternative_membership",
+        }
+    ] * 2
+    assert result["undefined_cells"] == [
+        {
+            "group": "80+",
+            "statistic": stat,
+            "n_defined_draws": 0,
+            "undefined_draws": old[stat]["undefined_draws"],
+        }
+        for stat in (PRIMARY, ALT)
+    ]
+    assert full["undefined_cells"] == []
+    json.dumps(result, allow_nan=False)
 
 
-def test_zero_weight_cell_is_refused():
+def test_one_undefined_draw_leaves_the_cell_summary_undefined():
+    # Invented: the 80+ persons are recipients in draw 0 only.  The draw
+    # summary requires all K draws (A1 section 7), so 80+ reports one
+    # defined draw and no mean or SD; the per-draw value is kept.
+    rows = [
+        r
+        for r in _five_group_rows()
+        if not (r["birth_year"] == BIRTH_YEAR["80+"] and r["draw"] == 1)
+    ]
+    result = _tabulate(rows, draw_indices=(0, 1))
+    old = _group(result, "80+")[PRIMARY]
+    assert old["defined"] is False
+    assert old["n_defined_draws"] == 1
+    assert old["per_draw"] == [pytest.approx(-20.0), None]
+    assert old["mean"] is None and old["sample_sd"] is None
+    assert old["undefined_draws"] == [
+        {"draw": 1, "reason": "empty_baseline_membership"}
+    ]
+    assert _group(result, "70-79")[PRIMARY]["defined"] is True
+
+
+def test_zero_weight_cell_is_undefined():
     rows = [_row(0, 1, birth_year=1975, base=1000.0, reform=900.0, weight=0.0)]
-    with pytest.raises(UndefinedCellError, match="empty_baseline"):
-        _tabulate(rows, age_groups=_single_group())
+    result = _tabulate(rows, age_groups=_single_group())
+    assert _group(result, "only")[PRIMARY]["undefined_draws"] == [
+        {"draw": 0, "reason": "empty_baseline_membership"}
+    ]
 
 
-def test_zero_baseline_mean_is_refused():
+def test_zero_baseline_mean_is_undefined():
     rows = [
         _row(
             0,
@@ -698,12 +782,23 @@ def test_zero_baseline_mean_is_refused():
             beneficiary_reform=True,
         )
     ]
-    with pytest.raises(UndefinedCellError, match="nonpositive_baseline"):
-        _tabulate(
-            rows,
-            age_groups=_single_group(),
-            recipient_rule=cap.FLAGGED_RECIPIENT_INCLUDING_ZERO,
-        )
+    result = _tabulate(
+        rows,
+        age_groups=_single_group(),
+        recipient_rule=cap.FLAGGED_RECIPIENT_INCLUDING_ZERO,
+    )
+    only = _group(result, "only")
+    assert only[PRIMARY]["undefined_draws"] == [
+        {"draw": 0, "reason": "nonpositive_baseline_mean"}
+    ]
+    assert only[ALT]["undefined_draws"] == [
+        {"draw": 0, "reason": "empty_alternative_membership"}
+    ]
+
+
+# =========================================================================
+# Refusals
+# =========================================================================
 
 
 def test_float_overflow_is_refused_not_reported():
@@ -772,6 +867,9 @@ def test_benefit_without_beneficiary_flag_is_refused():
         ("draw", -1, "draws present"),
         ("person_id", 1.5, "person_id"),
         ("person_id", "", "person_id"),
+        ("family_unit_id", 1.5, "family_unit_id"),
+        ("family_unit_id", "", "family_unit_id"),
+        ("family_unit_id", True, "family_unit_id"),
         ("beneficiary_base", 1, "bool"),
     ],
 )
@@ -816,6 +914,37 @@ def test_mixed_person_id_types_are_refused():
     ]
     with pytest.raises(ColaTabulationError, match="all be integers"):
         _tabulate(rows, age_groups=_single_group())
+
+
+def test_mixed_family_unit_id_types_are_refused():
+    rows = [
+        _row(0, 1, birth_year=1975, base=1000.0, reform=900.0),
+        _row(
+            0,
+            2,
+            birth_year=1975,
+            base=1000.0,
+            reform=900.0,
+            **{"family_unit_id": "f2"},
+        ),
+    ]
+    with pytest.raises(ColaTabulationError, match="family_unit_id values"):
+        _tabulate(rows, age_groups=_single_group())
+
+
+def test_family_unit_that_differs_between_draws_is_refused():
+    # Invented: person 1 is in family unit 10 in draw 0 and 11 in draw 1.
+    # The family-unit split could then put the person on both sides.
+    rows = [
+        _row(
+            0, 1, birth_year=1975, base=1000.0, reform=900.0, family_unit_id=10
+        ),
+        _row(
+            1, 1, birth_year=1975, base=1000.0, reform=900.0, family_unit_id=11
+        ),
+    ]
+    with pytest.raises(ColaTabulationError, match="family_unit_id 11 but 10"):
+        _tabulate(rows, age_groups=_single_group(), draw_indices=(0, 1))
 
 
 def test_birth_year_that_differs_between_draws_is_refused():
@@ -925,6 +1054,7 @@ def test_empty_rows_are_refused():
         ({"headline_statistic": "median"}, "headline_statistic"),
         ({"allow_membership_difference": 1}, "bool"),
         ({"reference_year": 2030.0}, "integer"),
+        ({"floor_split_unit": "household"}, "floor_split_unit"),
     ],
 )
 def test_invalid_configuration_is_refused(overrides, message):
@@ -1265,6 +1395,8 @@ def test_floor_drops_seeds_with_an_undefined_half():
     result = _tabulate(rows, age_groups=_single_group())
     floor = _group(result, "only")[PRIMARY]["floor"]
     assert floor == {
+        "defined": False,
+        "undefined_reason": "no usable seed",
         "mean": None,
         "sd": None,
         "min": None,
@@ -1296,3 +1428,125 @@ def test_string_person_ids_are_supported():
         )
     )
     assert total == 40
+
+
+def test_floor_with_one_usable_seed_is_undefined_not_zero():
+    # Invented: two one-person family units.  With the default seeds only
+    # seed 0 puts them on different sides (default_rng(s).random(2) < 0.5
+    # is [False, True] for seed 0 and equal pairs for seeds 1-4), so one
+    # seed is usable.  A1 section 16: the floor is then undefined, not an
+    # SD of 0.0; the one gap is still listed.
+    rows = [
+        _row(0, 1, birth_year=1975, base=1000.0, reform=900.0),
+        _row(0, 2, birth_year=1975, base=1000.0, reform=800.0),
+    ]
+    result = _tabulate(rows, age_groups=_single_group())
+    floor = _group(result, "only")[PRIMARY]["floor"]
+    assert floor == {
+        "defined": False,
+        "undefined_reason": "fewer than 2 usable seeds",
+        "mean": None,
+        "sd": None,
+        "min": None,
+        "max": None,
+        "n_seeds": 1,
+        "values": [pytest.approx(10.0)],
+        "dropped_seeds": [1, 2, 3, 4],
+    }
+    # Two usable seeds (0 and 6) define it, with the ddof=1 SD.
+    two = _tabulate(rows, age_groups=_single_group(), floor_seeds=(0, 1, 6))
+    floor = _group(two, "only")[PRIMARY]["floor"]
+    assert floor["defined"] is True
+    assert floor["n_seeds"] == 2
+    assert floor["mean"] == pytest.approx(10.0)
+    assert floor["sd"] == pytest.approx(0.0)
+
+
+def _family_invented_rows(draws=(0, 1, 2)):
+    """Invented rows: 60 persons in 21 family units of one to five."""
+    rng = np.random.default_rng(29)
+    rows = []
+    person = 0
+    for family in range(21):
+        size = 1 + family % 5
+        for _ in range(size):
+            birth_year = 2030 - int(rng.integers(50, 95))
+            weight = float(rng.uniform(0.5, 5.0))
+            base = float(rng.uniform(500.0, 3000.0))
+            for draw in draws:
+                rows.append(
+                    _row(
+                        draw,
+                        500 + person,
+                        birth_year=birth_year,
+                        base=base,
+                        reform=base * float(rng.uniform(0.8, 1.0)),
+                        weight=weight,
+                        family_unit_id=9000 + 3 * family,
+                    )
+                )
+            person += 1
+    return rows
+
+
+def test_family_unit_members_always_land_in_the_same_half():
+    draws = (0, 1, 2)
+    rows = _family_invented_rows(draws)
+    persons_by_family = {}
+    for r in rows:
+        persons_by_family.setdefault(r["family_unit_id"], set()).add(
+            r["person_id"]
+        )
+    result = _tabulate(rows, draw_indices=draws)
+    assert result["conventions"]["floor"]["split_unit"] == "family_unit_id"
+    summary = result["input_summary"]
+    assert summary["n_family_units"] == len(persons_by_family) == 21
+    families = np.sort(np.array(sorted(persons_by_family)))
+    for recorded in result["floor_per_seed"]:
+        assert recorded["split_unit"] == "family_unit_id"
+        a, b = recorded["side_a"], recorded["side_b"]
+        # No family unit is on both sides ...
+        assert a["n_family_units"] + b["n_family_units"] == 21
+        # ... and side A holds exactly the persons of the family units the
+        # splitter picks (sorted unique ids, default_rng(seed) < 0.5).
+        picked = (
+            np.random.default_rng(recorded["seed"]).random(len(families)) < 0.5
+        )
+        expected = set().union(
+            *(persons_by_family[f] for f in families[picked].tolist())
+        )
+        assert a["n_persons"] == len(expected)
+        assert a["n_rows"] == len(draws) * len(expected)
+        side_a = _reference_values(rows, draws, expected)
+        all_ids = {r["person_id"] for r in rows}
+        side_b = _reference_values(rows, draws, all_ids - expected)
+        for label in GROUP_LABELS:
+            for stat in (PRIMARY, ALT):
+                if side_a[label][stat] is None:
+                    assert a["groups"][label][stat] is None
+                else:
+                    assert a["groups"][label][stat] == pytest.approx(
+                        side_a[label][stat], rel=1e-12
+                    )
+                if side_b[label][stat] is None:
+                    assert b["groups"][label][stat] is None
+                else:
+                    assert b["groups"][label][stat] == pytest.approx(
+                        side_b[label][stat], rel=1e-12
+                    )
+
+
+def test_person_split_alternative_can_separate_a_family_unit():
+    # The Mermin-row precedent splits persons; on the same invented rows
+    # some seed separates a family unit, which the family-unit default
+    # never does.
+    draws = (0, 1, 2)
+    rows = _family_invented_rows(draws)
+    result = _tabulate(rows, draw_indices=draws, floor_split_unit="person_id")
+    assert result["conventions"]["floor"]["split_unit"] == "person_id"
+    straddling = [
+        recorded["side_a"]["n_family_units"]
+        + recorded["side_b"]["n_family_units"]
+        for recorded in result["floor_per_seed"]
+    ]
+    assert max(straddling) > 21

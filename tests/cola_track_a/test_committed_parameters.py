@@ -2,11 +2,14 @@
 
 These tests read committed evidence under "data/external" (the TR2008
 capture in data/external/tr2008, the 2008-vintage DI inputs in
-data/external/di_asr_2008, the realized COLA history and the claim-age
-table) and the A1 draft block.  The cohort is INVENTED
-(:mod:`populace_dynamics.cola_track_a.invented`); the oracle parameters
-are INVENTED too, so no policyengine-us checkout is needed.  Nothing here
-reads PSID or a comparator value.
+data/external/di_asr_2008, the realized COLA history, the claim-age table
+and the statutory capture data/external/track_a_statutory_parameters.json)
+and the A1 block.  The cohort is INVENTED
+(:mod:`populace_dynamics.cola_track_a.invented`).  The oracle parameters
+are built from the committed statutory capture
+(:func:`populace_dynamics.cola_track_a.statutory.captured_ssa_parameters`),
+or are INVENTED where a test says so, so no policyengine-us checkout is
+needed.  Nothing here reads PSID or a comparator value.
 """
 
 from __future__ import annotations
@@ -36,6 +39,9 @@ from populace_dynamics.cola_track_a.runner import (
     load_claiming_pmf,
     tr2008_baseline_cola,
     tr2008_ssa_parameters,
+)
+from populace_dynamics.cola_track_a.statutory import (
+    captured_ssa_parameters,
 )
 from populace_dynamics.data import tr2008
 from populace_dynamics.engine.di_entitlement_rates import (
@@ -135,7 +141,7 @@ def test_end_to_end_with_committed_rates_on_an_invented_cohort():
     result = run_track_a(
         TrackAInputs(
             cohort=cohort,
-            params=tr2008_ssa_parameters(_invented_params()),
+            params=captured_ssa_parameters(),
             baseline=tr2008_baseline_cola(load_cola_history()),
             di_rates=load_di_entitlement_rates(config.di_spec),
             population_mortality=load_tr2008_mortality(range(2011, 2031)),
@@ -156,10 +162,23 @@ def test_end_to_end_with_committed_rates_on_an_invented_cohort():
         "di_spec",
         "mortality",
         "claim_table_max_year",
+        # statutory.statutory_value_checks
+        "realized_cola_history",
+        "contribution_and_benefit_base",
+        "contribution_and_benefit_base_tr2008",
+        "awi_before_1975",
+        "bend_points",
+        "pia_factors",
+        "full_retirement_age",
+        "early_reduction",
+        "delayed_retirement_credit",
+        "auxiliary_constants",
     }
     for row in result["rows"].values():
         assert row["status"] == "tabulated", row["status"]
-    flows = result["draws"]["0"]["di_stock_flow"]
+    # Draw diagnostics are keyed by the population's anchor wave.
+    assert set(result["draws"]) == {"2011"}
+    flows = result["draws"]["2011"]["0"]["di_stock_flow"]
     assert [row["year"] for row in flows] == list(range(2011, 2031))
     assert result["reduced_rate_minimum_by_row"]["R0"] == pytest.approx(0.015)
 
@@ -178,13 +197,13 @@ def test_registered_run_refuses_inputs_the_config_does_not_name():
     )
     inputs = TrackAInputs(
         cohort=replace(cohort, data_provenance="registered_real"),
-        params=tr2008_ssa_parameters(_invented_params()),
+        params=captured_ssa_parameters(),
         baseline=tr2008_baseline_cola(load_cola_history(), first_year=2009),
         di_rates=load_di_entitlement_rates(config.di_spec),
         population_mortality=load_tr2008_mortality(range(2011, 2031)),
         claiming_pmf=claiming_pmf,
     )
-    with pytest.raises(ValueError, match=r"differ.*cola_path"):
+    with pytest.raises(ValueError, match=r"differ.*\['cola_path'\]"):
         run_track_a(
             inputs, config=config, registration_pointer="INVENTED-POINTER"
         )
@@ -204,7 +223,7 @@ def _registered_inputs(config: TrackAConfig, **changes) -> TrackAInputs:
     )
     values = {
         "cohort": replace(cohort, data_provenance="registered_real"),
-        "params": tr2008_ssa_parameters(_invented_params()),
+        "params": captured_ssa_parameters(),
         "baseline": tr2008_baseline_cola(load_cola_history()),
         "di_rates": load_di_entitlement_rates(config.di_spec),
         "population_mortality": load_tr2008_mortality(range(2011, 2031)),
@@ -272,7 +291,7 @@ def test_registered_run_refuses_values_that_are_not_the_committed_ones(
 ):
     config = TrackAConfig(draw_indices=(0,), rows=("R0",))
     inputs = _registered_inputs(config, **{field: build(config)})
-    with pytest.raises(ValueError, match=rf"differ.*{check}"):
+    with pytest.raises(ValueError, match=rf"differ.*\['{check}'\]"):
         run_track_a(
             inputs, config=config, registration_pointer="INVENTED-POINTER"
         )
@@ -304,3 +323,77 @@ def test_committed_value_checks_name_each_mismatch():
     assert checks["claiming_pmf"]["consistent"] is False
     assert checks["cola_path"]["consistent"] is True
     assert result["parameter_consistency"]["consistent"] is False
+
+
+class _ReplacedRates:
+    """INVENTED rate source: the committed baseline with one year replaced."""
+
+    def __init__(self, baseline, year, rate):
+        self._baseline, self._year, self._rate = baseline, year, rate
+
+    def rate_for_determination_year(self, year):
+        if year == self._year:
+            return self._rate
+        return self._baseline.rate_for_determination_year(year)
+
+    def __getattr__(self, name):
+        return getattr(self._baseline, name)
+
+
+@pytest.mark.parametrize(
+    ("changes", "check"),
+    [
+        # INVENTED: the third PIA factor read as 16 percent.
+        (
+            lambda: {
+                "params": replace(
+                    captured_ssa_parameters(), pia_factors=(0.9, 0.32, 0.16)
+                )
+            },
+            "pia_factors",
+        ),
+        # INVENTED: 42,300 for the 1986 contribution and benefit base.
+        (
+            lambda: {
+                "params": replace(
+                    captured_ssa_parameters(),
+                    wage_base={
+                        **captured_ssa_parameters().wage_base,
+                        1986: 42_300.0,
+                    },
+                )
+            },
+            "contribution_and_benefit_base",
+        ),
+        # INVENTED: the realized 1990 increase (5.4 percent) read as 5.0.
+        (
+            lambda: {
+                "baseline": _ReplacedRates(
+                    tr2008_baseline_cola(load_cola_history()), 1990, 0.05
+                )
+            },
+            "realized_cola_history",
+        ),
+    ],
+)
+def test_registered_run_refuses_statutory_values_not_the_committed_ones(
+    changes, check
+):
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    inputs = _registered_inputs(config, **changes())
+    with pytest.raises(ValueError, match=rf"differ.*{check}"):
+        run_track_a(
+            inputs, config=config, registration_pointer="INVENTED-POINTER"
+        )
+
+
+def test_registered_run_refuses_an_invented_cohort_relabelled_real():
+    # Every committed value agrees, so the run reaches the source check:
+    # the INVENTED cohort's A3 provenance is "invented", which a
+    # registered_real label contradicts.
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    inputs = _registered_inputs(config)
+    with pytest.raises(ValueError, match="source provenance is 'invented'"):
+        run_track_a(
+            inputs, config=config, registration_pointer="INVENTED-POINTER"
+        )

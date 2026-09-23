@@ -15,16 +15,18 @@ the annual scale, 12 times the monthly amount (A1 section 10).
 
 Who receives what (A5 conventions; A1 section 11 where it speaks):
 
-* **Opening stock** (A1 section 11, rule 4): a 2010 recipient with an
+* **Opening stock** (A1 section 11, rule 4; Max's ruling on referee
+  question 11, d075): an opening-year recipient with an
   :class:`~populace_dynamics.cola_track_a.opening.OpeningStockRecord`
-  keeps the observed 2010 amount carried forward on the baseline path,
-  with the reform ratio from the reformed increases on the record's
-  clock.  Later simulated widowhood, a spouse's entitlement or conversion
-  at FRA change neither the amount nor the reduced increases.  The
-  component label follows A1 section 11 in the reference year: a
-  disabled worker converted at FRA is a retired worker, and a survivor
-  labelled a disabled widow(er) in 2010 is an aged widow(er) once aged
-  60 or older (``TrackAConfig.opening_aged_widow_min_age``).
+  keeps the observed opening-year amount (2010, or 2008 for R6) carried
+  forward on the baseline path, with the reform ratio from the reformed
+  increases on the record's clock.  Later simulated widowhood, a
+  spouse's entitlement or conversion at FRA change neither the amount
+  nor the reduced increases.  The component label follows A1 section 11
+  in the reference year: a disabled worker converted at FRA is a retired
+  worker, and a survivor labelled a disabled widow(er) at the opening is
+  an aged widow(er) once aged 60 or older
+  (``TrackAConfig.opening_aged_widow_min_age``).
   A simulated DI recovery ends a disabled worker's opening basis (rule 4
   does not list recovery); the person is then treated like anyone else.
 * **Own worker benefit**: an entitled disabled worker (A4), a converted
@@ -276,13 +278,12 @@ class _Calculator:
         recovered = _nullable_int(state["di_recovery_year"]) is not None
         entitled = bool(state["di_entitled"])
         converted = _nullable_int(state["di_conversion_year"]) is not None
-        config = self.ctx.config
         if (
             status == "disabled_worker"
             and not recovered
             and (entitled or converted)
         ):
-            onset = opener.clock_year if opener else config.start_year
+            onset = opener.clock_year if opener else self.ctx.cohort.start_year
             entitlement = opener.entitlement_year if opener else onset
             return self._di_record(person_id, onset, entitlement, converted)
         if entitled or converted:
@@ -500,7 +501,7 @@ class _Calculator:
             baseline=self.ctx.baseline,
             reform=self.reform,
             exposure_start_year=exposure,
-            observed_payment_year=self.ctx.config.start_year,
+            observed_payment_year=self.ctx.cohort.start_year,
             payment_year=self.payment_year,
             round_to_dime=self.ctx.config.opening_stock_dime_floor,
         )
@@ -771,8 +772,10 @@ def reference_benefit_rows(
 
     One row per person alive in the reference-year state with a positive
     baseline benefit; ``benefit_*`` and the components are annual (12
-    times the monthly amount).  Extra columns (``basis``,
-    ``reduced_increases``) are diagnostics; A7 ignores and lists them.
+    times the monthly amount).  ``family_unit_id`` is the person's
+    opening-wave family unit (A1 section 16), the A7 half-split unit.
+    Extra columns (``basis``, ``reduced_increases``) are diagnostics; A7
+    ignores and lists them.
     """
 
     counters: Counter = Counter()
@@ -791,7 +794,8 @@ def reference_benefit_rows(
         )
         if opener is not None and not opening_intact:
             counters["opening_di_basis_ended_by_recovery"] += 1
-        receipt = context.cohort.persons_by_id.at[person_id, "ss_receipt_2010"]
+        statics = context.cohort.persons_by_id.loc[person_id]
+        receipt = statics["ss_receipt_opening"]
         if opener is None and not pd.isna(receipt) and bool(receipt):
             counters["opening_recipient_without_record"] += 1
         if opening_intact:
@@ -811,14 +815,15 @@ def reference_benefit_rows(
             )
         counters[f"beneficiaries_{basis}"] += 1
         if pd.isna(receipt):
-            # Named gap: A3 could not observe this person's 2010 Social
-            # Security, so the opening state treats them as a
+            # Named gap: A3 could not observe this person's opening-year
+            # Social Security, so the opening state treats them as a
             # non-recipient and any benefit is projected.
-            counters["beneficiaries_ss_2010_unobserved"] += 1
+            counters["beneficiaries_ss_opening_year_unobserved"] += 1
         rows.append(
             {
                 "draw": int(draw),
                 "person_id": person_id,
+                "family_unit_id": int(statics["family_unit_id"]),
                 "weight": float(state["weight"]),
                 "birth_year": int(state["birth_year"]),
                 "beneficiary_base": True,

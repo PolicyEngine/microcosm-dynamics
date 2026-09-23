@@ -11,11 +11,12 @@ person-disjoint half-split noise floor.  It does not project a population,
 compute or index a benefit, read a comparator value, apply an acceptance
 rule, or write an artifact.
 
-The specification is NOT frozen.  Every choice that awaits Max's ruling on
-the plan's specification (A1, plan section 6) is an explicit field of
+The specification is NOT frozen until A1 is ratified (plan section 6 item
+4).  Every convention that awaits that ratification is an explicit field of
 :class:`ColaAgeProfileConfig` whose default is the plan's proposed primary;
 :data:`PENDING_RULINGS` lists them and every result records the values used
-and whether each equals the proposed primary.
+and whether each equals the proposed primary.  (Max ruled the plan's
+section 6 items 1-3 on 2026-09-23; none of them is a tabulation field.)
 
 Input rows
 ----------
@@ -27,8 +28,15 @@ with repeated column names is refused):
     Non-negative integer draw index ``k`` (the engine's ``5200 + k`` seed
     convention); the set of draws must equal ``config.draw_indices``.
 ``person_id``
-    Integer or string person key, one type for all rows.  The half-split
-    floor partitions on it, so all draws of a person fall on one side.
+    Integer or string person key, one type for all rows.
+``family_unit_id``
+    Integer or string key of the person's family unit in the opening wave
+    (A1 section 16: the 2011 interview number ER34101 for the 2011-wave
+    population, the 2009 interview number ER34001 for the 2009-wave
+    population), one type for all rows.  The default half-split floor
+    partitions on it (``floor_split_unit``), so every draw of every member
+    of a family unit falls on one side.  A person_id whose family unit
+    differs between draws is refused.
 ``weight``
     Finite, non-negative person weight, shared by both scenarios.  Each
     draw uses its own rows' weights; persons whose weight differs between
@@ -62,9 +70,15 @@ weight ``w_i``::
 Both are percent changes of the reform relative to the baseline (negative is
 a reduction; percent-of-scheduled is ``100 + value``).  Under identical
 membership, which the default configuration requires, ``mu_reform / mu_base``
-equals the ratio of weighted totals.  An empty membership (no rows or zero
-total weight) or a non-positive baseline mean is refused in the full sample:
-no value is imputed.
+equals the ratio of weighted totals.
+
+Undefined cells (A1 section 7): a cell with no members, zero total weight
+or a non-positive baseline mean has no statistic in that draw.  It is
+reported as undefined with its reason and never imputed.  A group's draw
+summary requires every draw to be defined; otherwise its mean and SD are
+null and the result lists the number of defined draws and each undefined
+draw's reason.  The other groups and statistics are reported as usual, so
+one undefined cell never withholds the rest of the profile.
 
 Uncertainty
 -----------
@@ -77,15 +91,20 @@ half-sample means and floor summaries, is refused with
 :class:`ColaTabulationError`, so every number in a result is
 JSON-finite.  The noise floor follows
 ``runs/replication_mermin_rows_v1.json`` ``conventions.floor`` as computed
-by ``scripts/replication_mermin_rows.py``: for each of five seeds (0-4),
+by ``scripts/replication_mermin_rows.py``, with the split unit of A1
+section 16: for each of five seeds (0-4),
 :func:`populace_dynamics.harness.panel.split_panel_by_person` with
-``fraction=0.5`` splits the persons into two disjoint halves; the reported
-estimator is recomputed on each half; the floor is the summary (mean, sd
-with ``ddof=1``, min, max, n_seeds, values) of ``|side_a - side_b|`` over
-the seeds where both halves are defined.  Floors are at half sample and are
-not rescaled.  One documented deviation from the ``_summary`` helper those
-scripts import: when no seed is usable the floor fields are null instead of
-zero, so an undefined floor cannot read as a zero floor.
+``fraction=0.5`` splits the opening-wave family units (``family_unit_id``)
+into two disjoint halves, so each family unit's persons fall on one side;
+the reported estimator is recomputed on each half; the floor is the
+summary (mean, sd with ``ddof=1``, min, max, n_seeds, values) of
+``|side_a - side_b|`` over the seeds where both halves are defined.
+Floors are at half sample and are not rescaled.  Two documented
+deviations from the ``_summary`` helper those scripts import (A1 section
+16): with fewer than two usable seeds the floor's summary fields are null
+instead of a zero summary (no seed) or a zero SD (one seed), so an
+undefined floor cannot read as a zero floor; and the Mermin-row split was
+by person, not family unit.
 """
 
 from __future__ import annotations
@@ -111,12 +130,16 @@ __all__ = [
     "DEFAULT_AGE_GROUPS",
     "DEFAULT_DRAW_INDICES",
     "DEFAULT_FLOOR_SEEDS",
+    "FAMILY_UNIT",
     "FLAGGED_RECIPIENT_INCLUDING_ZERO",
     "FLOOR_FRACTION",
+    "FLOOR_SPLIT_UNITS",
     "INVENTED",
     "MEAN_OF_INDIVIDUAL_RATIOS",
     "MEMBERSHIP_BASIS_DEFINITIONS",
+    "MIN_FLOOR_SEEDS",
     "PENDING_RULINGS",
+    "PERSON",
     "POSITIVE_BENEFIT",
     "PRIMARY_COMPONENTS",
     "RATIO_OF_SCENARIO_MEANS",
@@ -131,7 +154,6 @@ __all__ = [
     "ColaAgeProfileConfig",
     "ColaTabulationError",
     "MembershipDifferenceError",
-    "UndefinedCellError",
     "tabulate_cola_age_profile",
 ]
 
@@ -141,6 +163,7 @@ STATISTIC_ID = "dynasim_exercise1_cola_minus_1pp_reference_year_age_profile"
 REQUIRED_COLUMNS = (
     "draw",
     "person_id",
+    "family_unit_id",
     "weight",
     "birth_year",
     "beneficiary_base",
@@ -250,6 +273,23 @@ DEFAULT_DRAW_INDICES = tuple(range(20))
 #: The five floor seeds of ``scripts/replication_r7_sharing.SEEDS``.
 DEFAULT_FLOOR_SEEDS = (0, 1, 2, 3, 4)
 FLOOR_FRACTION = 0.5
+#: A1 section 16: with fewer usable seeds the floor is undefined.
+MIN_FLOOR_SEEDS = 2
+#: Half-split units: A1 section 16's opening-wave family unit, or the
+#: person (the Mermin-row precedent; not registered).
+FAMILY_UNIT = "family_unit_id"
+PERSON = "person_id"
+FLOOR_SPLIT_UNITS = (FAMILY_UNIT, PERSON)
+FLOOR_SPLIT_UNIT_DEFINITIONS = {
+    FAMILY_UNIT: (
+        "the opening-wave family unit (family_unit_id): every member of a "
+        "family unit falls on one side (A1 section 16)"
+    ),
+    PERSON: (
+        "the person (person_id): the Mermin-row precedent, not registered "
+        "for exercise 1"
+    ),
+}
 
 _UNDEFINED_REASONS = {
     "empty_baseline_membership": (
@@ -271,10 +311,6 @@ class ColaTabulationError(ValueError):
 
 class MembershipDifferenceError(ColaTabulationError):
     """Scenario memberships differ and the configuration forbids it."""
-
-
-class UndefinedCellError(ColaTabulationError):
-    """A full-sample cell has no defined value for a reported statistic."""
 
 
 # =========================================================================
@@ -389,6 +425,7 @@ class ColaAgeProfileConfig:
     headline_statistic: str = RATIO_OF_SCENARIO_MEANS
     draw_indices: tuple[int, ...] = DEFAULT_DRAW_INDICES
     floor_seeds: tuple[int, ...] = DEFAULT_FLOOR_SEEDS
+    floor_split_unit: str = FAMILY_UNIT
 
     def __post_init__(self) -> None:
         _int_value(self.reference_year, "reference_year")
@@ -405,6 +442,7 @@ class ColaAgeProfileConfig:
             self.benefit_period, BENEFIT_PERIOD_DEFINITIONS, "benefit_period"
         )
         _choice(self.headline_statistic, STATISTICS, "headline_statistic")
+        _choice(self.floor_split_unit, FLOOR_SPLIT_UNITS, "floor_split_unit")
         if not isinstance(self.allow_membership_difference, bool):
             raise ColaTabulationError(
                 "allow_membership_difference must be a bool"
@@ -473,6 +511,7 @@ class ColaAgeProfileConfig:
             "headline_statistic": self.headline_statistic,
             "draw_indices": list(self.draw_indices),
             "floor_seeds": list(self.floor_seeds),
+            "floor_split_unit": self.floor_split_unit,
         }
 
 
@@ -481,8 +520,9 @@ _SPEC_RATIFICATION = (
     "section 6 item 4)"
 )
 
-#: The conventions awaiting Max's ruling, with the plan's proposed primary
-#: (the configuration default) and its registered alternatives.
+#: The conventions awaiting A1 ratification (Max's rulings of 2026-09-23
+#: covered none of them), with the plan's proposed primary (the
+#: configuration default) and its registered alternatives.
 PENDING_RULINGS: tuple[dict[str, Any], ...] = (
     {
         "parameter": "headline_statistic",
@@ -555,8 +595,9 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
         "proposed_primary": list(PRIMARY_COMPONENTS),
         "registered_alternatives": [list(WORKERS_ONLY_COMPONENTS)],
         "awaiting": (
-            f"{_SPEC_RATIFICATION}; section 6 item 2(b) (whether DI "
-            "benefit levels may enter as a disclosed oracle approximation)"
+            f"{_SPEC_RATIFICATION}; section 6 item 2(b) was ruled by Max "
+            "on 2026-09-23 (DI benefit levels enter as a disclosed oracle "
+            "approximation)"
         ),
         "note": "component vocabulary is closed; unknown names are refused",
     },
@@ -574,7 +615,19 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
         "proposed_primary": list(DEFAULT_FLOOR_SEEDS),
         "registered_alternatives": [],
         "awaiting": _SPEC_RATIFICATION,
-        "note": "five-seed person-disjoint half-split floor",
+        "note": "five-seed family-unit-disjoint half-split floor",
+    },
+    {
+        "parameter": "floor_split_unit",
+        "plan_field": "Uncertainty",
+        "proposed_primary": FAMILY_UNIT,
+        "registered_alternatives": [],
+        "awaiting": _SPEC_RATIFICATION,
+        "note": (
+            "A1 section 16 keeps each opening-wave family unit on one side "
+            "(A1 referee question 2); person_id, the Mermin-row "
+            "precedent, is available and not registered"
+        ),
     },
 )
 
@@ -586,6 +639,7 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
 class _Rows:
     draw: np.ndarray
     person_id: np.ndarray
+    family_unit_id: np.ndarray
     weight: np.ndarray
     birth_year: np.ndarray
     age: np.ndarray
@@ -640,7 +694,7 @@ def _records(
     return records, tuple(sorted(extras))
 
 
-def _person_key(value: Any, index: int) -> int | str:
+def _key(value: Any, index: int, column: str) -> int | str:
     # Normalize to the builtin type (numpy.str_ -> str, numpy integer ->
     # int) so the one-type check compares key types, not container types.
     if isinstance(value, str) and value:
@@ -648,8 +702,12 @@ def _person_key(value: Any, index: int) -> int | str:
     if not _is_bool(value) and isinstance(value, Integral):
         return int(value)
     raise ColaTabulationError(
-        f"row {index}: person_id must be an integer or a non-empty string"
+        f"row {index}: {column} must be an integer or a non-empty string"
     )
+
+
+def _person_key(value: Any, index: int) -> int | str:
+    return _key(value, index, "person_id")
 
 
 def _parse_components(
@@ -723,8 +781,10 @@ def _normalize(
     selected = np.empty((n, 2), dtype=np.float64)
     recipient = np.empty((n, 2), dtype=bool)
     person_ids: list[int | str] = []
+    family_ids: list[int | str] = []
     seen: set[tuple[int, int | str]] = set()
     person_birth_year: dict[int | str, int] = {}
+    person_family: dict[int | str, int | str] = {}
     person_weights: dict[int | str, set[float]] = {}
     flagged_zero = [0, 0]
     chosen = config.components
@@ -739,6 +799,18 @@ def _normalize(
             )
         seen.add(key)
         person_ids.append(person)
+        family = _key(record["family_unit_id"], index, "family_unit_id")
+        family_ids.append(family)
+        # The family-unit split keeps a person on one side only if the
+        # person's family unit is the same in every draw.
+        known_family = person_family.setdefault(person, family)
+        if known_family != family:
+            raise ColaTabulationError(
+                f"row {index}: person_id {person!r} has family_unit_id "
+                f"{family!r} but {known_family!r} in another draw; a "
+                "person's opening-wave family unit must be the same in "
+                "every draw"
+            )
         weight[index] = _nonnegative(record["weight"], f"row {index} weight")
         person_weights.setdefault(person, set()).add(float(weight[index]))
         birth_year[index] = _int_value(
@@ -783,11 +855,14 @@ def _normalize(
             if flag and amount == 0.0:
                 flagged_zero[position] += 1
 
-    kinds = {type(p) for p in person_ids}
-    if len(kinds) > 1:
-        raise ColaTabulationError(
-            "person_id values must all be integers or all be strings"
-        )
+    for column, keys in (
+        ("person_id", person_ids),
+        ("family_unit_id", family_ids),
+    ):
+        if len({type(value) for value in keys}) > 1:
+            raise ColaTabulationError(
+                f"{column} values must all be integers or all be strings"
+            )
     present = set(int(d) for d in np.unique(draw))
     expected = set(config.draw_indices)
     if present != expected:
@@ -802,9 +877,12 @@ def _normalize(
     )
     person_array = np.empty(n, dtype=object)
     person_array[:] = person_ids
+    family_array = np.empty(n, dtype=object)
+    family_array[:] = family_ids
     return _Rows(
         draw=draw,
         person_id=person_array,
+        family_unit_id=family_array,
         weight=weight,
         birth_year=birth_year,
         age=age,
@@ -952,7 +1030,41 @@ def _profile(
     return profile
 
 
-def _draw_summary(values: list[float]) -> dict[str, Any]:
+def _draw_summary(
+    cells: list[dict[str, Any]], statistic: str
+) -> dict[str, Any]:
+    """Mean and sample SD over draws; undefined unless every draw is.
+
+    A1 section 7: if any draw's cell is undefined, the mean and SD are
+    reported as undefined together with the number of defined draws and
+    each undefined draw's reason.
+    """
+
+    values = [cell[statistic] for cell in cells]
+    undefined = [
+        {"draw": cell["draw"], "reason": cell["undefined_reasons"][statistic]}
+        for cell in cells
+        if cell[statistic] is None
+    ]
+    if undefined:
+        return {
+            "defined": False,
+            "per_draw": [None if v is None else float(v) for v in values],
+            "mean": None,
+            "sample_sd": None,
+            "n_draws": len(values),
+            "n_defined_draws": len(values) - len(undefined),
+            "undefined_draws": undefined,
+        }
+    return {
+        "defined": True,
+        **_defined_draw_summary(values),
+        "n_defined_draws": len(values),
+        "undefined_draws": [],
+    }
+
+
+def _defined_draw_summary(values: list[float]) -> dict[str, Any]:
     k = len(values)
     try:
         mean = _finite(math.fsum(values) / k, "the mean over draws")
@@ -979,28 +1091,43 @@ def _draw_summary(values: list[float]) -> dict[str, Any]:
 
 
 def _floor_summary(values: list[float]) -> dict[str, Any]:
-    if not values:
+    """The floor over usable seeds; undefined with fewer than two.
+
+    A1 section 16: "With fewer than two usable seeds the floor is
+    undefined, never zero."  The per-seed gaps are still listed.
+    """
+
+    gaps = [_finite(float(v), "a floor gap") for v in values]
+    if len(gaps) < MIN_FLOOR_SEEDS:
         return {
+            "defined": False,
+            "undefined_reason": (
+                "no usable seed"
+                if not gaps
+                else f"fewer than {MIN_FLOOR_SEEDS} usable seeds"
+            ),
             "mean": None,
             "sd": None,
             "min": None,
             "max": None,
-            "n_seeds": 0,
-            "values": [],
+            "n_seeds": len(gaps),
+            "values": gaps,
         }
-    arr = np.array(values, dtype=np.float64)
+    arr = np.array(gaps, dtype=np.float64)
     # The numpy mean/std of the committed-floor convention; an overflow
     # (inf or nan) is refused, never reported.
     with np.errstate(over="ignore", invalid="ignore"):
         mean = float(arr.mean())
-        sd = float(arr.std(ddof=1)) if arr.size > 1 else 0.0
+        sd = float(arr.std(ddof=1))
     return {
+        "defined": True,
+        "undefined_reason": None,
         "mean": _finite(mean, "the floor mean"),
         "sd": _finite(sd, "the floor sd"),
         "min": _finite(float(arr.min()), "the floor min"),
         "max": _finite(float(arr.max()), "the floor max"),
         "n_seeds": int(arr.size),
-        "values": [_finite(float(v), "a floor gap") for v in arr],
+        "values": gaps,
     }
 
 
@@ -1034,6 +1161,7 @@ def _side_values(
         groups[group.label] = entry
     return {
         "n_persons": int(len(set(rows.person_id[subset].tolist()))),
+        "n_family_units": int(len(set(rows.family_unit_id[subset].tolist()))),
         "n_rows": int(np.count_nonzero(subset)),
         "groups": groups,
     }
@@ -1042,17 +1170,22 @@ def _side_values(
 def _floors(
     rows: _Rows, config: ColaAgeProfileConfig
 ) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
-    person_frame = pd.DataFrame({"person_id": rows.person_id.tolist()})
+    unit = config.floor_split_unit
+    unit_values = (
+        rows.family_unit_id if unit == FAMILY_UNIT else rows.person_id
+    )
+    unit_frame = pd.DataFrame({unit: unit_values.tolist()})
     per_seed = []
     for seed in config.floor_seeds:
         side_a_frame, _side_b_frame = split_panel_by_person(
-            person_frame, "person_id", fraction=FLOOR_FRACTION, seed=seed
+            unit_frame, unit, fraction=FLOOR_FRACTION, seed=seed
         )
         in_a = np.zeros(rows.n, dtype=bool)
         in_a[side_a_frame.index.to_numpy()] = True
         per_seed.append(
             {
                 "seed": int(seed),
+                "split_unit": unit,
                 "side_a": _side_values(rows, config, in_a),
                 "side_b": _side_values(rows, config, ~in_a),
             }
@@ -1215,9 +1348,13 @@ def _conventions(config: ColaAgeProfileConfig) -> dict[str, Any]:
         ),
         "undefined_cells": {
             "full_sample": (
-                "refused: if any draw's cell in any group lacks a defined "
-                "value for either statistic, UndefinedCellError is raised "
-                "and nothing is imputed"
+                "reported, never imputed (A1 section 7): a draw's cell with "
+                "no members, zero total weight or a non-positive baseline "
+                "mean has a null value and a reason; a group's draw summary "
+                "for a statistic is defined only when every draw is, and "
+                "otherwise has a null mean and SD with n_defined_draws and "
+                "each undefined draw's reason; every other group and "
+                "statistic is reported as usual"
             ),
             "reasons": dict(_UNDEFINED_REASONS),
         },
@@ -1237,12 +1374,16 @@ def _conventions(config: ColaAgeProfileConfig) -> dict[str, Any]:
             ),
         },
         "floor": {
-            "method": "person-disjoint half-split",
+            "method": f"{config.floor_split_unit}-disjoint half-split",
+            "split_unit": config.floor_split_unit,
+            "split_unit_definition": FLOOR_SPLIT_UNIT_DEFINITIONS[
+                config.floor_split_unit
+            ],
             "splitter": (
                 "populace_dynamics.harness.panel.split_panel_by_person("
-                "rows, 'person_id', fraction=0.5, seed=seed) on the "
-                "per-person-per-draw rows, so every draw of a person falls "
-                "on one side"
+                f"rows, {config.floor_split_unit!r}, fraction=0.5, "
+                "seed=seed) on the per-person-per-draw rows, so every draw "
+                "of every person in a split unit falls on one side"
             ),
             "seeds": list(config.floor_seeds),
             "fraction": FLOOR_FRACTION,
@@ -1253,9 +1394,11 @@ def _conventions(config: ColaAgeProfileConfig) -> dict[str, Any]:
             ),
             "floor": (
                 "summary of |side_a - side_b| across the seeds where both "
-                "sides are defined: mean, sd (numpy ddof=1; 0.0 for one "
-                "seed), min, max, n_seeds, values; undefined seeds are "
-                "listed in dropped_seeds"
+                "sides are defined: mean, sd (numpy ddof=1), min, max, "
+                "n_seeds, values; undefined seeds are listed in "
+                f"dropped_seeds; with fewer than {MIN_FLOOR_SEEDS} usable "
+                "seeds the floor is undefined (null summary fields, "
+                "defined false, undefined_reason), never zero"
             ),
             "source_convention": (
                 "runs/replication_mermin_rows_v1.json conventions.floor, "
@@ -1265,14 +1408,18 @@ def _conventions(config: ColaAgeProfileConfig) -> dict[str, Any]:
             ),
             "scale": "half sample; not rescaled to the full sample",
             "deviation": (
-                "no usable seed yields null summary fields, not the zero "
-                "summary of reform_delta_diagnostic._summary"
+                "A1 section 16: fewer than two usable seeds yield null "
+                "summary fields, not the zero summary (no seed) or zero SD "
+                "(one seed) of reform_delta_diagnostic._summary; and the "
+                "split unit is the opening-wave family unit, not the "
+                "Mermin-row person"
             ),
         },
         "acceptance_rule": None,
         "acceptance_rule_note": (
-            "none applied: the tabulation reports values only (plan "
-            "section 6 item 3 is pending)"
+            "none applied: the tabulation reports values only; Max ruled "
+            "on 2026-09-23 that there is no numerical acceptance threshold "
+            "(plan section 6 item 3)"
         ),
     }
 
@@ -1304,6 +1451,7 @@ def _input_summary(
     return {
         "n_rows": rows.n,
         "n_persons": int(len(set(rows.person_id.tolist()))),
+        "n_family_units": int(len(set(rows.family_unit_id.tolist()))),
         "n_rows_per_draw": {
             str(d): int(np.count_nonzero(rows.draw == d))
             for d in config.draw_indices
@@ -1357,8 +1505,10 @@ def tabulate_cola_age_profile(
 
     Returns a JSON-serializable mapping.  Raises
     :class:`MembershipDifferenceError` when scenario memberships differ and
-    ``config.allow_membership_difference`` is false, and
-    :class:`UndefinedCellError` when a full-sample cell is undefined.
+    ``config.allow_membership_difference`` is false.  An undefined cell is
+    reported (A1 section 7), never raised: its statistic is null with a
+    reason, and ``undefined_cells`` lists every group and statistic whose
+    draw summary is undefined.
     """
     config = ColaAgeProfileConfig() if config is None else config
     if not isinstance(config, ColaAgeProfileConfig):
@@ -1385,31 +1535,27 @@ def tabulate_cola_age_profile(
         )
 
     profile = _profile(rows_, config, np.ones(rows_.n, dtype=bool))
-    undefined = [
-        (group.label, cell["draw"], statistic, reason)
-        for group, cells in zip(config.age_groups, profile, strict=True)
-        for cell in cells
-        for statistic, reason in cell["undefined_reasons"].items()
-    ]
-    if undefined:
-        raise UndefinedCellError(
-            f"{len(undefined)} undefined full-sample cells (group, draw, "
-            f"statistic, reason); first: {undefined[:5]}"
-        )
-
     per_seed, floors = _floors(rows_, config)
     groups = []
+    undefined_cells = []
     for group, cells in zip(config.age_groups, profile, strict=True):
         entry: dict[str, Any] = dict(group.as_dict())
         for statistic in STATISTICS:
+            summary = _draw_summary(cells, statistic)
             entry[statistic] = {
-                **_draw_summary([cell[statistic] for cell in cells]),
+                **summary,
                 "floor": floors[group.label][statistic],
             }
-        entry["cells"] = [
-            {k: v for k, v in cell.items() if k != "undefined_reasons"}
-            for cell in cells
-        ]
+            if not summary["defined"]:
+                undefined_cells.append(
+                    {
+                        "group": group.label,
+                        "statistic": statistic,
+                        "n_defined_draws": summary["n_defined_draws"],
+                        "undefined_draws": summary["undefined_draws"],
+                    }
+                )
+        entry["cells"] = cells
         groups.append(entry)
 
     output_labels = [label for label in labels if label != INVENTED_DATA_LABEL]
@@ -1427,5 +1573,6 @@ def tabulate_cola_age_profile(
         "upstream_conventions": recorded_upstream,
         "input_summary": _input_summary(rows_, config),
         "groups": groups,
+        "undefined_cells": undefined_cells,
         "floor_per_seed": per_seed,
     }

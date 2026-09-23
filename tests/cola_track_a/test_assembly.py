@@ -3,14 +3,15 @@
 Every person, earnings amount, Social Security amount, weight, rate, life
 table, DI probability, claim-age PMF, wage index and COLA below is
 INVENTED for testing.  No test reads PSID, a committed parameter file or
-a comparator value; the one exception is the A1 draft specification
-document, whose registered-row block the assembly must agree with.
+a comparator value; the one exception is the A1 specification document,
+whose registered-row and rulings block the assembly must agree with.
 """
 
 from __future__ import annotations
 
 import math
 from dataclasses import replace
+from functools import lru_cache
 from types import SimpleNamespace
 
 import numpy as np
@@ -37,7 +38,13 @@ from populace_dynamics.cola_track_a.adapters import (
     di_aware_claiming,
     widowhood_marital_step,
 )
-from populace_dynamics.cola_track_a.config import LevelPolicy
+from populace_dynamics.cola_track_a.config import (
+    MAX_RULINGS,
+    LevelPolicy,
+    builder_defaults,
+    max_rulings,
+    rulings_departures,
+)
 from populace_dynamics.cola_track_a.mortality import (
     Tr2008YearAwareMortality,
 )
@@ -120,9 +127,25 @@ def invented_mortality(ratio: float = 1.0) -> Tr2008YearAwareMortality:
     qx = np.minimum(0.0001 * np.exp(0.085 * ages), 1.0)
     return Tr2008YearAwareMortality(
         qx_by_sex={"female": qx * 0.8, "male": qx},
-        ratio_by_year={year: (ratio, ratio) for year in range(2011, 2032)},
+        ratio_by_year={year: (ratio, ratio) for year in range(2009, 2032)},
         alternative="INVENTED",
         base_year=2004,
+    )
+
+
+CONFIG = TrackAConfig(draw_indices=(0, 1))
+
+
+@lru_cache(maxsize=1)
+def _cohort_2009() -> TrackACohort:
+    """The INVENTED people read as the 2009 wave (row R6's population)."""
+    return prepare_track_a_cohort(
+        psid2010.build_psid2010_cohort(
+            invented.invented_psid2010_inputs(seed=7, anchor_wave=2009),
+            psid2010.Psid2010CohortSpec(anchor_wave=2009),
+        ),
+        data_provenance="invented",
+        config=CONFIG,
     )
 
 
@@ -134,12 +157,10 @@ def _inputs(cohort: TrackACohort, **changes) -> TrackAInputs:
         "di_rates": invented_di_rates(),
         "population_mortality": invented_mortality(),
         "claiming_pmf": invented.invented_claiming_pmf(),
+        "additional_cohorts": (_cohort_2009(),),
     }
     values.update(changes)
     return TrackAInputs(**values)
-
-
-CONFIG = TrackAConfig(draw_indices=(0, 1))
 
 
 @pytest.fixture(scope="module")
@@ -182,7 +203,7 @@ def test_opening_clocks_follow_the_a1_rules(cohort):
         rules.add(record.clock_rule)
         if record.status == "retired_worker":
             assert record.clock_year == row["birth_year"] + 62
-        if record.status == "disabled_worker" or row["age_2010"] < 62:
+        if record.status == "disabled_worker" or row["age_opening"] < 62:
             receipt = row["opening_claim_year"]
             if pd.isna(receipt):
                 receipt = row["opening_claim_year_upper_bound"]
@@ -191,7 +212,7 @@ def test_opening_clocks_follow_the_a1_rules(cohort):
             assert record.clock_year == row["linked_spouse_birth_year"] + 62
         assert record.clock_year <= 2010
         assert record.entitlement_year >= record.clock_year
-        assert record.observed_annual_amount == row["ss_2010"]
+        assert record.observed_annual_amount == row["ss_opening"]
     assert {"own_birth_plus_62", "a3_receipt_start"} <= rules
     assert rules & {
         "linked_worker_birth_plus_62",
@@ -211,9 +232,115 @@ def test_opening_di_stock_is_the_a3_disabled_workers(cohort):
     assert not frame.loc[frame["di_entitled"], "claimed"].any()
 
 
+def test_2009_wave_opening_state_is_as_of_2008():
+    r6 = _cohort_2009()
+    a3 = psid2010.build_psid2010_cohort(
+        invented.invented_psid2010_inputs(seed=7, anchor_wave=2009),
+        psid2010.Psid2010CohortSpec(anchor_wave=2009),
+    ).persons.set_index("person_id")
+    assert (r6.anchor_wave, r6.start_year) == (2009, 2008)
+    assert set(r6.initial_slice["year"]) == {2008}
+    persons = r6.persons.set_index("person_id")
+    assert (persons["age_opening"] == 2008 - persons["birth_year"]).all()
+    assert (
+        persons["family_unit_id"] == a3.loc[persons.index, "interview_2009"]
+    ).all()
+    assert r6.opening
+    for person_id, record in r6.opening.items():
+        assert record.clock_year <= 2008
+        assert record.observed_annual_amount == a3.loc[person_id, "ss_2008"]
+
+
 def test_prepare_refuses_unknown_provenance(a3_cohort):
     with pytest.raises(ValueError, match="data_provenance"):
         prepare_track_a_cohort(a3_cohort, data_provenance="psid")
+
+
+# --------------------------------------------------------------------------
+# Provenance: the label must agree with what the A3 builder recorded
+# --------------------------------------------------------------------------
+def _psid_files_a3() -> psid2010.Psid2010Cohort:
+    """The INVENTED frames under an INVENTED psid_files provenance: what
+    the A3 builder records for a cohort read from PSID files."""
+    inputs = invented.invented_psid2010_inputs(seed=7)
+    stamped = replace(
+        inputs,
+        provenance={
+            "kind": psid2010.PSID_FILES,
+            "psid_data_dir": "/invented/psid",
+            "psid_files_sha256": {"ind2023er/IND2023ER.txt": "ab" * 32},
+            "psid_files_bundle_sha256": "cd" * 32,
+        },
+    )
+    return psid2010.build_psid2010_cohort(stamped)
+
+
+def test_a_psid_files_cohort_cannot_be_labeled_invented():
+    a3 = _psid_files_a3()
+    assert a3.provenance["kind"] == psid2010.PSID_FILES
+    with pytest.raises(ValueError, match="cannot be labeled invented"):
+        prepare_track_a_cohort(a3, data_provenance="invented", config=CONFIG)
+    # The label the provenance supports is accepted and recorded.
+    real = prepare_track_a_cohort(
+        a3, data_provenance="registered_real", config=CONFIG
+    )
+    assert real.data_provenance == "registered_real"
+    assert real.source_provenance["kind"] == psid2010.PSID_FILES
+    assert real.source_provenance["psid_files_sha256"] == {
+        "ind2023er/IND2023ER.txt": "ab" * 32
+    }
+    assert real.diagnostics["source_provenance_kind"] == psid2010.PSID_FILES
+
+
+def test_an_invented_cohort_cannot_be_labeled_registered_real(a3_cohort):
+    assert a3_cohort.provenance["kind"] == psid2010.INVENTED
+    with pytest.raises(ValueError, match="recorded PSID files"):
+        prepare_track_a_cohort(
+            a3_cohort, data_provenance="registered_real", config=CONFIG
+        )
+
+
+def test_a_relabelled_prepared_cohort_is_refused_by_the_runner():
+    # The prepared real cohort relabelled invented after preparation:
+    # without the runner's check it would skip the registration pointer.
+    real = prepare_track_a_cohort(
+        _psid_files_a3(), data_provenance="registered_real", config=CONFIG
+    )
+    relabelled = replace(real, data_provenance="invented")
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    with pytest.raises(ValueError, match="source provenance is 'psid_files'"):
+        run_track_a(_inputs(relabelled, additional_cohorts=()), config=config)
+
+
+def test_cohorts_without_a_verifiable_provenance_are_refused():
+    inputs = invented.invented_psid2010_inputs(seed=7)
+    # Frames with no recorded provenance (assembled by the caller).
+    bare = psid2010.build_psid2010_cohort(replace(inputs, provenance={}))
+    assert bare.provenance["kind"] == psid2010.CALLER_FRAMES
+    for label in ("invented", "registered_real"):
+        with pytest.raises(ValueError, match="'caller_frames'"):
+            prepare_track_a_cohort(bare, data_provenance=label)
+    # A cohort replaced after the build loses the builder's seal.
+    built = psid2010.build_psid2010_cohort(inputs)
+    unsealed = replace(built, persons=built.persons.copy())
+    with pytest.raises(ValueError, match="'unsealed'"):
+        prepare_track_a_cohort(unsealed, data_provenance="invented")
+    # A cohort edited in place no longer matches its sealed content.
+    built.persons.loc[built.persons.index[0], "weight"] += 1.0
+    with pytest.raises(ValueError, match="changed after the build"):
+        prepare_track_a_cohort(built, data_provenance="invented")
+
+
+def test_invented_provenance_must_regenerate_from_its_seed():
+    # INVENTED: the seed-7 frames stamped as if seed 8 had produced them.
+    inputs = invented.invented_psid2010_inputs(seed=7)
+    misstamped = replace(
+        inputs, provenance={**dict(inputs.provenance), "seed": 8}
+    )
+    a3 = psid2010.build_psid2010_cohort(misstamped)
+    assert a3.provenance["kind"] == psid2010.INVENTED
+    with pytest.raises(ValueError, match="does not produce its input"):
+        prepare_track_a_cohort(a3, data_provenance="invented")
 
 
 # --------------------------------------------------------------------------
@@ -349,7 +476,8 @@ def test_run_labels_every_output_invented(result):
         assert "Python oracle (not Axiom)" in labels
         assert "fixed-path mechanical incidence" in labels
     assert result["scheduled_entrants"] == 0
-    assert result["rows_not_built"].keys() == {"R6"}
+    assert result["rows_not_built"] == {}
+    assert set(result["rows"]) == {f"R{i}" for i in range(7)}
 
 
 def test_every_group_is_populated_in_every_draw(result):
@@ -359,9 +487,11 @@ def test_every_group_is_populated_in_every_draw(result):
 
 
 def test_di_stock_flow_reconciles_every_draw(result):
-    for diagnostics in result["draws"].values():
-        flows = diagnostics["di_stock_flow"]
-        assert [row["year"] for row in flows] == list(range(2011, 2031))
+    assert set(result["draws"]) == {"2011", "2009"}
+    for wave, first in (("2011", 2011), ("2009", 2009)):
+        for diagnostics in result["draws"][wave].values():
+            flows = diagnostics["di_stock_flow"]
+            assert [row["year"] for row in flows] == list(range(first, 2031))
 
 
 def test_reduced_counts_match_the_clock_arithmetic(result):
@@ -407,8 +537,30 @@ def test_projection_is_reproducible_by_draw(cohort):
 
 def test_registered_real_cohort_needs_the_registration_pointer(cohort):
     real = replace(cohort, data_provenance="registered_real")
+    real_2009 = replace(_cohort_2009(), data_provenance="registered_real")
     with pytest.raises(ValueError, match="registration"):
-        run_track_a(_inputs(real), config=CONFIG)
+        run_track_a(
+            _inputs(real, additional_cohorts=(real_2009,)), config=CONFIG
+        )
+
+
+def test_populations_must_share_one_kind_of_data(cohort):
+    real_2009 = replace(_cohort_2009(), data_provenance="registered_real")
+    with pytest.raises(ValueError, match="one kind of data"):
+        run_track_a(_inputs(cohort, additional_cohorts=(real_2009,)))
+
+
+def test_r6_needs_the_2009_wave_cohort(cohort):
+    with pytest.raises(ValueError, match=r"\['R6'\] \(anchor wave 2009\)"):
+        run_track_a(_inputs(cohort, additional_cohorts=()), config=CONFIG)
+    # Without R6 the 2011 cohort alone runs.
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    alone = run_track_a(_inputs(cohort, additional_cohorts=()), config=config)
+    assert set(alone["draws"]) == {"2011"}
+    with pytest.raises(ValueError, match="two cohorts"):
+        run_track_a(
+            _inputs(cohort, additional_cohorts=(cohort,)), config=config
+        )
 
 
 @pytest.mark.parametrize(
@@ -447,7 +599,7 @@ def test_excluded_di_level_drops_projected_awards(cohort):
 def test_registered_rows_match_the_a1_block():
     block = a1_parameter_block()
     rows = block["rows"]
-    assert set(rows) - set(REGISTERED_ROWS) == {"R6"}
+    assert set(rows) == set(REGISTERED_ROWS)
     for row_id, row in REGISTERED_ROWS.items():
         expected = {**rows["R0"], **rows[row_id]}
         assert expected["first_reduced_determination_year"] == (
@@ -458,9 +610,164 @@ def test_registered_rows_match_the_a1_block():
         assert expected.get("last_determination_year", 2029) == (
             sb.payment_year_for_reference(2030, row.benefit_period) - 1
         )
+        assert expected["population"] == row.population.as_dict(2030)
     assert block["decisions"]["di_benefit_level"]["ruling"] == (
         TrackAConfig().di_benefit_level.value
     )
+
+
+def test_max_rulings_are_the_a1_block_rulings():
+    block = dict(a1_parameter_block()["decisions"])
+    assert (block.pop("ruled_by"), block.pop("ruled_on")) == (
+        "Max",
+        "2026-09-23",
+    )
+    rulings = {item["field"]: item for item in max_rulings()}
+    assert set(rulings) == set(MAX_RULINGS)
+    # Referee question 10 (the page-3 contact) has no assembly field.
+    assert set(block) - set(rulings) == {"page_3_run_metadata_contact"}
+    for name, item in rulings.items():
+        assert item["follows_ruling"] is True, name
+        assert item["value"] == item["ruling"] == block[name]["ruling"]
+        assert item["decision_record"] == block[name]["decision_record"]
+        assert [str(v) for v in item["declined"]] == [
+            str(v) for v in block[name]["declined"]
+        ]
+        assert item["ruled_by"].startswith("Max, 2026-09-23")
+    assert rulings_departures(TrackAConfig()) == []
+
+
+def test_builder_defaults_are_kept_apart_from_max_rulings():
+    defaults = builder_defaults()
+    fields = {item["field"] for item in defaults}
+    assert not fields & set(MAX_RULINGS)
+    assert fields == {
+        "preeligibility_death_level",
+        "auxiliary_entitlement_clock",
+        "survivor_entitlement_rule",
+        "spouse_entitlement_rule",
+        "opening_aged_widow_min_age",
+        "mortality_base_year",
+        "claim_table_max_year",
+    }
+    for item in defaults:
+        assert "awaiting" not in item
+        assert "A1 ratification" in item["fixed_by"]
+        assert "issue #42 registration" in item["fixed_by"]
+
+
+def test_a_registered_run_refuses_a_departure_from_a_ruling(cohort):
+    config = TrackAConfig(
+        draw_indices=(0,),
+        rows=("R0",),
+        di_benefit_level=LevelPolicy.EXCLUDE,
+    )
+    assert rulings_departures(config) == ["di_benefit_level"]
+    real = replace(cohort, data_provenance="registered_real")
+    with pytest.raises(ValueError, match="departs from Max's rulings"):
+        run_track_a(
+            _inputs(real, additional_cohorts=()),
+            config=config,
+            registration_pointer="INVENTED-POINTER",
+        )
+    with pytest.raises(ValueError, match="fixed_at_opening_year"):
+        TrackAConfig(opening_stock_basis="rebased_on_later_simulated_events")
+
+
+def test_rows_split_the_floor_by_the_opening_wave_family_unit(
+    result, cohort, a3_cohort
+):
+    a3 = a3_cohort.persons.set_index("person_id")
+    persons = cohort.persons.set_index("person_id")
+    assert (
+        persons["family_unit_id"] == a3.loc[persons.index, "interview_2011"]
+    ).all()
+    # The invented cohort has family units of several members.
+    assert persons.groupby("family_unit_id").size().max() > 1
+    for row_id, row in result["rows"].items():
+        tabulation = row["tabulation"]
+        population = row["row"]["population"]
+        assert population["family_unit_id"] == (
+            "ER34001" if row_id == "R6" else "ER34101"
+        )
+        assert tabulation["upstream_conventions"]["family_unit_id"] == (
+            population["family_unit_id"]
+        )
+        assert tabulation["config"]["floor_split_unit"] == "family_unit_id"
+        total = tabulation["input_summary"]["n_family_units"]
+        for seed in tabulation["floor_per_seed"]:
+            assert seed["split_unit"] == "family_unit_id"
+            # No family unit lies on both sides.
+            assert (
+                seed["side_a"]["n_family_units"]
+                + seed["side_b"]["n_family_units"]
+                == total
+            )
+
+
+def test_r6_projects_the_2009_wave_from_2008(result):
+    r6 = result["rows"]["R6"]
+    assert r6["status"] == "tabulated"
+    assert r6["row"]["population"] == {
+        "wave": 2009,
+        "weight": "ER34046",
+        "born_max": 1980,
+        "start_year": 2008,
+        "periods": 22,
+        "family_unit_id": "ER34001",
+    }
+    upstream = r6["tabulation"]["upstream_conventions"]
+    assert upstream["population_start_year"] == 2008
+    assert upstream["population_periods"] == 22
+    assert result["cohorts"]["2009"]["start_year"] == 2008
+    assert result["cohorts"]["2009"]["source_provenance"]["kind"] == (
+        psid2010.INVENTED
+    )
+    # Every other row reads the 2011 wave.
+    for row_id in ("R0", "R1", "R2", "R3", "R4", "R5"):
+        assert result["rows"][row_id]["row"]["population"]["wave"] == 2011
+
+
+def test_an_undefined_cell_is_reported_and_the_row_kept(cohort, monkeypatch):
+    # INVENTED age bands: the open 80+ band is split at 110, and nobody in
+    # the invented cohort is 110 or older in 2030, so that cell is
+    # undefined in every draw (A1 section 7); the row still tabulates and
+    # every other cell keeps its value.
+    from populace_dynamics.cola_track_a import runner as runner_module
+    from populace_dynamics.estimates import cola_age_profile as cap
+
+    groups = (
+        *cap.DEFAULT_AGE_GROUPS[:-1],
+        cap.AgeGroup("80-109", 80, 109),
+        cap.AgeGroup("110+", 110),
+    )
+
+    def with_groups(**kwargs):
+        return cap.ColaAgeProfileConfig(age_groups=groups, **kwargs)
+
+    monkeypatch.setattr(runner_module, "ColaAgeProfileConfig", with_groups)
+    config = TrackAConfig(draw_indices=(0, 1), rows=("R0",))
+    run = run_track_a(_inputs(cohort, additional_cohorts=()), config=config)
+    row = run["rows"]["R0"]
+    assert row["status"].startswith("tabulated with undefined cells: ")
+    assert "110+ ratio_of_scenario_means (0 of 2 draws defined)" in (
+        row["status"]
+    )
+    tabulation = row["tabulation"]
+    by_label = {group["label"]: group for group in tabulation["groups"]}
+    old = by_label["110+"]["ratio_of_scenario_means"]
+    assert old["defined"] is False and old["mean"] is None
+    assert old["undefined_draws"] == [
+        {"draw": 0, "reason": "empty_baseline_membership"},
+        {"draw": 1, "reason": "empty_baseline_membership"},
+    ]
+    for label in ("50-61", "62-64", "65-69", "70-79", "80-109"):
+        kept = by_label[label]["ratio_of_scenario_means"]
+        assert kept["defined"] is True
+        assert kept["mean"] is not None
+    assert {cell["group"] for cell in tabulation["undefined_cells"]} == {
+        "110+"
+    }
 
 
 # --------------------------------------------------------------------------
@@ -519,6 +826,41 @@ def test_opening_stock_amounts_equal_the_a6_function(
     )
 
 
+def test_r6_opening_amount_carries_forward_from_2008():
+    # A1 section 11 rule 4 with opening year 2008 (R6): the 2008 amount
+    # already carries the determination-year-2007 increase, so the level
+    # product starts at 2008; the reduced increases are 2009-2029.
+    baseline = invented_cola()
+    record = OpeningStockRecord(
+        person_id=1,
+        status="retired_worker",
+        component="retired_worker",
+        observed_annual_amount=9_600.0,
+        clock_year=2004,
+        clock_rule="INVENTED",
+        entitlement_year=2006,
+        entitlement_clamped=False,
+    )
+    base, reform = track_benefits.opening_stock_amounts(
+        record,
+        baseline=baseline,
+        reform=sb.COLAReform(),
+        exposure_start_year=2004,
+        observed_payment_year=2008,
+        payment_year=2030,
+        round_to_dime=False,
+    )
+    assert base == pytest.approx(
+        800.0 * math.prod(1 + baseline[y] for y in range(2008, 2030)),
+        rel=1e-12,
+    )
+    product = math.prod(
+        (1 + baseline[year] - 0.01) / (1 + baseline[year])
+        for year in range(2009, 2030)
+    )
+    assert reform / base == pytest.approx(product, rel=1e-12)
+
+
 def test_unrounded_opening_ratio_is_the_reduced_increase_product():
     baseline = invented_cola()
     record = OpeningStockRecord(
@@ -565,7 +907,7 @@ def _handmade_cohort(persons, careers, final_rows, last_rows):
         "linked_spouse_birth_year",
     ):
         static[column] = pd.array([pd.NA] * len(static), dtype="Int64")
-    static["ss_receipt_2010"] = pd.array([False] * len(static), "boolean")
+    static["ss_receipt_opening"] = pd.array([False] * len(static), "boolean")
     initial = pd.DataFrame(last_rows)
     cohort = TrackACohort(
         persons=static,
@@ -616,15 +958,14 @@ def _career(level: float, birth: int) -> dict[int, float]:
 def _static(person_id, birth):
     return {
         "person_id": person_id,
-        "interview_2011": 1,
+        "family_unit_id": 1,
         "weight": 1_000.0,
         "sex": "female",
         "birth_year": birth,
-        "age_2010": 2010 - birth,
+        "age_opening": 2010 - birth,
         "opening_status": "none",
-        "ss_2008": 0,
-        "ss_2010": 0,
-        "marital_status_2010": "married",
+        "ss_opening": 0,
+        "marital_status_opening": "married",
     }
 
 
@@ -952,7 +1293,7 @@ def test_converted_opening_disabled_worker_is_reported_as_retired_worker():
     ]
     cohort, projection = _handmade_cohort(persons, careers, final, initial)
     cohort.persons["opening_status"] = "disabled_worker"
-    cohort.persons["ss_receipt_2010"] = pd.array([True, True], "boolean")
+    cohort.persons["ss_receipt_opening"] = pd.array([True, True], "boolean")
     opening = {
         pid: OpeningStockRecord(
             person_id=pid,
@@ -1003,21 +1344,21 @@ def test_opening_disabled_worker_receiving_after_62_keeps_the_age_62_clock():
         return SimpleNamespace(
             person_id=1,
             opening_status="disabled_worker",
-            age_2010=age,
+            age_opening=age,
             birth_year=2010 - age,
             opening_claim_year=receipt,
             opening_claim_year_upper_bound=2010,
-            ss_2010=9_000,
+            ss_opening=9_000,
             linked_spouse_birth_year=pd.NA,
         )
 
-    aged, _ = opening_module._opening_record(row(64, 2010), config)
+    aged, _ = opening_module._opening_record(row(64, 2010), config, 2010)
     assert (aged.clock_year, aged.clock_rule) == (
         1946 + 62,
         "own_birth_plus_62_di",
     )
     assert aged.entitlement_year == 2010
-    young, _ = opening_module._opening_record(row(50, 2010), config)
+    young, _ = opening_module._opening_record(row(50, 2010), config, 2010)
     assert (young.clock_year, young.clock_rule) == (2010, "a3_receipt_start")
 
 
@@ -1103,7 +1444,7 @@ def test_opening_disabled_widow_is_an_aged_widow_from_60():
     ]
     cohort, projection = _handmade_cohort(persons, careers, final, initial)
     cohort.persons["opening_status"] = "survivor"
-    cohort.persons["ss_receipt_2010"] = pd.array([True, True], "boolean")
+    cohort.persons["ss_receipt_opening"] = pd.array([True, True], "boolean")
     opening = {
         pid: OpeningStockRecord(
             person_id=pid,
@@ -1227,10 +1568,12 @@ def test_excluded_di_level_leaves_r3_as_documented(cohort):
     assert dropped["R3"] == dropped["R0"]
     (entry,) = [
         item
-        for item in run["pending_decisions"]
+        for item in run["max_rulings"]
         if item["field"] == "di_benefit_level"
     ]
     assert "R3" in entry["note"]
+    assert entry["ruling"] == "disclosed_oracle_approximation"
+    assert entry["follows_ruling"] is False
 
 
 def test_reduced_increase_summary_counts_the_rows_members(result):
@@ -1354,12 +1697,12 @@ def test_beneficiaries_with_unobserved_2010_social_security_are_counted():
     cohort, projection, context = _claimant_rows(
         persons, careers, final, initial
     )
-    cohort.persons["ss_receipt_2010"] = pd.array([pd.NA, False], "boolean")
+    cohort.persons["ss_receipt_opening"] = pd.array([pd.NA, False], "boolean")
     rows, counters = track_benefits.reference_benefit_rows(
         projection, draw=0, row=REGISTERED_ROWS["R0"], context=context
     )
     assert {row["person_id"] for row in rows} == {1, 2}
-    assert counters["beneficiaries_ss_2010_unobserved"] == 1
+    assert counters["beneficiaries_ss_opening_year_unobserved"] == 1
     assert counters["opening_recipient_without_record"] == 0
 
 
@@ -1387,7 +1730,17 @@ def test_dry_run_names_unassessed_spouses_unobserved_ss_and_refusals():
     assert "spouse_outside_roster" in (
         gaps["Linked spouses outside the opening roster"]
     )
-    assert "beneficiaries_ss_2010_unobserved" in (
-        gaps["2010 Social Security unobserved"]
-    )
-    assert "A1 section 7" in gaps["Undefined cells"]
+    unobserved = gaps["Opening-year Social Security unobserved"]
+    assert "beneficiaries_ss_opening_year_unobserved" in unobserved
+    assert "ss_opening_year_unobserved" in unobserved
+    # Fixed, so no longer named as gaps: A7's per-cell undefined cells
+    # (A1 section 7), the family-unit floor split and the two-seed floor
+    # (A1 section 16), and R6.
+    assert not {
+        "Undefined cells",
+        "Half-split floor unit",
+        "Floor with one usable seed",
+        "R6 (PSID 2009 wave)",
+    } & set(gaps)
+    assert not any("not built" in gap for gap in gaps.values())
+    assert "censored at 2008" in gaps["R6 opening receipt start"]
