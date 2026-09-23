@@ -378,6 +378,9 @@ def _results_markdown(result: dict[str, Any]) -> str:
         "",
         f"- Code: `{result['run']['git_head']}` "
         f"(worktree clean: {result['run']['git_clean']}).",
+        "- Population mortality: "
+        f"`{result['population_mortality']['class']}` (year-aware: "
+        f"{result['population_mortality']['year_aware']}).",
         f"- Python {result['run']['python']}; oracle parameters "
         f"`{result['inputs_provenance']['ssa_parameters']}`.",
         "- Input hashes are listed under `inputs_provenance` in "

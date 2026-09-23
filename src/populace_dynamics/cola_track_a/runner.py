@@ -50,6 +50,9 @@ from populace_dynamics.cola_track_a.config import (
     TrackAConfig,
     pending_decisions,
 )
+from populace_dynamics.cola_track_a.mortality import (
+    Tr2008YearAwareMortality,
+)
 from populace_dynamics.cola_track_a.opening import TrackACohort
 from populace_dynamics.data import tr2008
 from populace_dynamics.engine.di_entitlement import (
@@ -239,6 +242,25 @@ def _check_floor(inputs: TrackAInputs, config: TrackAConfig) -> dict:
             )
         minima[row_id] = minimum
     return minima
+
+
+def _mortality_record(model: Any) -> dict[str, Any]:
+    """What population mortality the run used, and the gap if it is flat."""
+
+    year_aware = isinstance(model, Tr2008YearAwareMortality)
+    record: dict[str, Any] = {
+        "class": type(model).__name__,
+        "year_aware": year_aware,
+    }
+    if year_aware:
+        record["provenance"] = dict(model.provenance)
+    else:
+        record["gap"] = (
+            "population mortality has no year axis (for example the "
+            "engine's AgeSexMortalityModel); TR2008 mortality improvement "
+            "over 2011-2030 is not applied"
+        )
+    return record
 
 
 def _draw_diagnostics(
@@ -467,6 +489,7 @@ def run_track_a(
         "reduced_rate_minimum_by_row": floor_minima,
         "cohort": dict(cohort.diagnostics),
         "scheduled_entrants": 0,
+        "population_mortality": _mortality_record(inputs.population_mortality),
         "draws": draws,
         "rows": tabulations,
         "inputs_provenance": dict(inputs.provenance),

@@ -54,6 +54,7 @@ from populace_dynamics.engine.loop import (
     ProjectionResult,
 )
 from populace_dynamics.engine.rng import ProjectionRNGRegistry
+from populace_dynamics.engine.steps import AgeSexMortalityModel
 from populace_dynamics.estimates.cola_age_profile import (
     INVENTED_DATA_LABEL,
 )
@@ -784,3 +785,24 @@ def test_widowhood_dated_before_the_roster_death_is_not_paid():
     )
     assert rows == []
     assert counters["widow_death_year_disagrees_with_roster"] == 1
+
+
+def test_a_flat_population_mortality_is_recorded_as_a_gap(cohort):
+    band_model = AgeSexMortalityModel(
+        bands=((0, 64), (65, 120)),
+        probability={
+            ("0-64", "female"): 0.002,
+            ("0-64", "male"): 0.003,
+            ("65+", "female"): 0.03,
+            ("65+", "male"): 0.04,
+        },
+    )
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    flat = run_track_a(
+        _inputs(cohort, population_mortality=band_model), config=config
+    )
+    assert flat["population_mortality"]["class"] == "AgeSexMortalityModel"
+    assert flat["population_mortality"]["year_aware"] is False
+    assert "no year axis" in flat["population_mortality"]["gap"]
+    aware = run_track_a(_inputs(cohort), config=config)
+    assert aware["population_mortality"]["year_aware"] is True
