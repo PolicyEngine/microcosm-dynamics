@@ -1,12 +1,17 @@
 # Urban 2010 COLA comparison: specification for DynaSim scorecard exercise 1
 
-- **Status:** draft for referee; not ratified. This draft authorizes no
-  run, no registration comment and no computation of the five-group 2030
-  statistic on real data. It becomes the frozen specification only if Max
-  ratifies it by merging the PR that carries it (plan §6, item 4).
-- **Specification:** `urban2010_cola_exercise1`, version `a1-draft-2`,
-  drafted 2026-09-22; `a1-draft-2` carries the corrections of referee
-  pass 1 (§25).
+- **Status:** ratification candidate; not yet ratified. Max ruled the
+  plan's §6 decisions 1–3 and referee questions 10 and 11 on 2026-09-23
+  (decision records d074 and d075, §22). This document still authorizes
+  no run, no registration comment and no computation of the five-group
+  2030 statistic on real data. It becomes the frozen specification only
+  when Max ratifies it by merging the PR that carries it (plan §6,
+  item 4).
+- **Specification:** `urban2010_cola_exercise1`,
+  version `a1-ratified-candidate-1`, drafted 2026-09-22; `a1-draft-2`
+  carried the corrections of referee pass 1 (§25), and
+  `a1-ratified-candidate-1` records Max's rulings (§22). §26 is the
+  changelog.
 - **Plan item:** A1 of the Track A plan,
   `EVID/critical-path-cola-20260922.md` §4 (SHA-256 `e303ba57…`), where
   `EVID` = `~/microcosm-launch-evidence/dynasim-parity-20260909`.
@@ -18,10 +23,10 @@
 - **Starting point:** the plan's §4 table "Proposed specification entries
   for A1". §20 lists the places this draft adds to or departs from that
   table.
-- **Claim class (pending decision 1, §22):** a registered, one-shot,
-  reported-not-gated comparison, the evidence class of the six DYNASIM
-  anchor replications (`paper/paper.qmd`, "The replication anchors";
-  `runs/replication_*_v1.json`).
+- **Claim class (decision 1, ruled by Max 2026-09-23, §22):** a
+  registered, one-shot, reported-not-gated comparison, the evidence class
+  of the six DYNASIM anchor replications (`paper/paper.qmd`, "The
+  replication anchors"; `runs/replication_*_v1.json`).
 - **Labels every output carries:** *PSID-seeded closed cohort*; *Python
   oracle (not Axiom)*; *fixed-path mechanical incidence*.
 - **Builder boundary:** a model-builder lane wrote this draft. It did not
@@ -30,8 +35,9 @@
   results for this exercise. It did read three passages of page-3 *text*
   in the Urban text extraction: the outcome sentence (lines 125–126), the
   source line (line 160) and the opening clause of line 164. §2
-  discloses them and states what rests on them; they are a question for
-  Max (§23, question 10). §2 lists what it read.
+  discloses them and states what rests on them. They were question 10
+  of §23; Max accepted the contact as disclosed on 2026-09-23 (§22,
+  ruling 5). §2 lists what it read.
 
 ## 1. Target
 
@@ -111,7 +117,10 @@ identity, the 2030 outcome year and the scheduled-benefit baseline are
 also in the `target` block of `proposed-1` (§1); the 2050 outcome year
 is not. Referee pass 1 did not read any line from 121 to 207, so it did
 not re-verify these quotations (§24, §25). Whether this contact is
-acceptable under the builder rule is question 10 of §23.
+acceptable under the builder rule was question 10 of §23. Max ruled on
+2026-09-23 that it is accepted as disclosed (decision record d075; §22,
+ruling 5), so §1 keeps these bases and the registration package records
+the contact as disclosed.
 
 ## 3. Policy
 
@@ -515,7 +524,9 @@ run 614.
    later (widowhood, a spouse's entitlement, conversion at full
    retirement age) change neither the level path nor `T_i`, which comes
    from the opening-stock clocks of §6. The projection still decides
-   whether the person is alive in 2030 (§8). Named delta (§12).
+   whether the person is alive in 2030 (§8). Named delta (§12). Max ruled
+   on 2026-09-23 that the basis stays frozen at the opening year (§22,
+   ruling 6).
 5. **Gross benefits:** amounts are before Medicare premium deductions,
    income tax, earnings-test withholding, WEP/GPO and the disability
    offset that `proposed-1` lists, all omitted (§12). Whole-dollar
@@ -550,7 +561,7 @@ individual reform ratio, or only through membership and weights.
 | DI onset timing | DI take-up is a discrete-time hazard that uses disability status in the prior period (primer Table 3, p. 6) | Counts for disabled workers when A4 uses award years (§6) |
 | Survivor-reduction default | — | The oracle's 84-month default is exact only for cohorts born 1962 or later (plan §2, citing `ss/params.py`). The reduction is common to both scenarios, so it enters through dual-entitlement mixes and weights |
 | Parameter substitutes | Trustees-aligned mortality and DI incidence (overview p. 2) | Per §15 |
-| DI benefit level | Computed by the DYNASIM3 calculator | Weights; subject to decision 2(b) |
+| DI benefit level | Computed by the DYNASIM3 calculator | Weights; a disclosed oracle approximation (decision 2(b), ruled 2026-09-23, §22) |
 
 ## 13. Behavior
 
@@ -631,7 +642,7 @@ real-data statistic exists.
 | DI incidence and termination by age and sex | Membership, and counts for DI and survivor records | Aggregate only: projected disabled-worker beneficiaries and gross and age-sex-adjusted prevalence rates (V.C5, pp. 124–125), and assumptions with sensitivity tests (VI.D7–VI.D8, pp. 163–165); no rates by age | A2/A4 substitute, fit on data through 2008 (plan A4) |
 | Claim-age distribution | Membership under both clocks; counts under R2 | Not in TR2008 | Repo `claiming.py` Supplement table, restricted to rows through 2008 (plan A5) |
 | Earnings, 2011–2030 | Weights | Not applicable | Plan A5 |
-| DI benefit level | Weights | Not applicable | Decision 2(b), §22 |
+| DI benefit level | Weights | Not applicable | Disclosed oracle approximation (decision 2(b), ruled 2026-09-23, §22) |
 
 ## 16. Uncertainty
 
@@ -676,8 +687,10 @@ our mean and standard deviation, the floor, the comparator with its
 interval, and the gap. It declares no pass or fail. There is no tuning
 and no re-run; any change becomes a new registered version.
 
-**Alternative:** Max sets a numerical rule before registration
-(decision 3, §22). No rule may be set afterwards.
+**Ruling:** Max confirmed on 2026-09-23 that there is no numerical
+acceptance threshold (decision 3, §22). The alternative, a numerical rule
+set by Max before registration, was declined. No rule may be set
+afterwards.
 
 ## 18. Registered rows
 
@@ -787,15 +800,16 @@ to 16 were added or tightened by referee pass 1 (§25).
 
 ## 21. Machine-readable parameter block
 
-Downstream lanes (A6, A7, A9) read this block. Values marked
-`awaiting_max` are defaults pending §22. The registration package hashes
-this file.
+Downstream lanes (A6, A7, A9) read this block. The `decisions` entry
+records Max's rulings of 2026-09-23 (§22) with the decision record each
+comes from; no value in this block awaits a ruling. The registration
+package hashes this file.
 
 ```json
 {
   "specification": "urban2010_cola_exercise1",
-  "version": "a1-draft-2",
-  "status": "draft_for_referee_not_ratified",
+  "version": "a1-ratified-candidate-1",
+  "status": "ratification_candidate_rulings_recorded_not_merged",
   "target": {
     "model": "DYNASIM3",
     "run": "614",
@@ -892,26 +906,45 @@ this file.
     },
     "comparator_interval": "comparison_memo_only"
   },
-  "decisions_awaiting_max": {
+  "decisions": {
+    "ruled_by": "Max",
+    "ruled_on": "2026-09-23",
     "claim_class": {
-      "default": "track_a_reported_not_gated_psid_oracle",
-      "alternatives": ["hold_for_track_b_m6_forward", "hold_for_track_c_axiom"],
-      "awaiting_max": true
+      "ruling": "track_a_reported_not_gated_psid_oracle",
+      "declined": ["hold_for_track_b_m6_forward", "hold_for_track_c_axiom"],
+      "plan_section_6": "decision 1",
+      "decision_record": "d074"
     },
     "oracle_cola_horizon_extension_to_2030": {
-      "default": true,
-      "alternatives": [false],
-      "awaiting_max": true
+      "ruling": true,
+      "declined": [false],
+      "plan_section_6": "decision 2(a)",
+      "decision_record": "d074"
     },
     "di_benefit_level": {
-      "default": "disclosed_oracle_approximation",
-      "alternatives": ["exclude_until_axiom_di_rule"],
-      "awaiting_max": true
+      "ruling": "disclosed_oracle_approximation",
+      "declined": ["exclude_until_axiom_di_rule"],
+      "plan_section_6": "decision 2(b)",
+      "decision_record": "d074"
     },
     "acceptance_rule": {
-      "default": null,
-      "alternatives": ["numerical_rule_set_by_max_before_registration"],
-      "awaiting_max": true
+      "ruling": null,
+      "declined": ["numerical_rule_set_by_max_before_registration"],
+      "plan_section_6": "decision 3",
+      "decision_record": "d074"
+    },
+    "page_3_run_metadata_contact": {
+      "ruling": "accepted_as_disclosed",
+      "declined": ["section_1_on_the_proposed_1_target_block_alone"],
+      "referee_question": 10,
+      "decision_record": "d075"
+    },
+    "opening_stock_basis": {
+      "ruling": "fixed_at_opening_year",
+      "declined": ["rebased_on_later_simulated_events"],
+      "named_delta": true,
+      "referee_question": 11,
+      "decision_record": "d075"
     }
   },
   "labels": [
@@ -922,53 +955,70 @@ this file.
 }
 ```
 
-## 22. Decisions awaiting Max
+## 22. Decisions (ruled by Max, 2026-09-23)
 
-These are plan §6 items 1–3, restated in substance. This draft builds on
-the proposed default of each and records it in §21 as a parameter. None
-is decided.
+Max ruled the plan's §6 items 1–3 and referee questions 10 and 11 of §23
+on 2026-09-23. Each ruling adopts the proposed default recorded with its
+decision.
+The rulings are recorded as decisions d074 and d075 in Max's decision
+ledger (`~/chief-of-staff/state/decisions/decisions.jsonl`, ruled
+2026-09-23 08:38), and §21 records them under `decisions`.
 
-1. **Claim class for the first score** (`claim_class`). Is Track A
-   acceptable as exercise 1's first scored comparison: a
-   reported-not-gated, PSID-seeded cohort whose benefits the Python
-   oracle computes, labeled "not Axiom"? The alternative is to hold the
-   first score for Track B (M6 FORWARD, months away) or Track C (Axiom,
-   blocked).
-   - **Proposed default:** accept Track A.
-   - **Consequence:** the `proposed-1` implementation requirement
-     `policy_executor: Axiom` does not hold for Track A; Track C would
-     re-run this same specification with Axiom as the benefit executor.
-     Tracks B and C reuse this specification under their own
-     registrations.
-2. **Scope of the transitional oracle.** `ss/__init__.py` says "Do not
-   extend this module's rule coverage; extend the Axiom encodings." Two
-   rulings are needed:
-   - **(a)** (`oracle_cola_horizon_extension_to_2030`) May A6 extend the
-     `estimates/ledgers.py` COLA path horizon (now capped at
-     `REPORT_YEARS[-1] = 2022`) to 2030 with a scenario COLA series?
-     **Proposed default:** yes, as a parameter override that adds no
-     statutory coverage.
-   - **(b)** (`di_benefit_level`) May the DI benefit level be a disclosed
-     approximation that reuses existing oracle functions, since it serves
-     only as a weight? The alternative excludes DI levels until an Axiom
-     DI rule exists. **Proposed default:** the disclosed approximation.
-     **Consequence of the alternative:** new DI awards after the opening
-     year (2011–2030 under R0, 2009–2030 under R6) would have no level,
-     so they could not enter any ratio-of-means row (R0, R1, R2, R4, R5,
-     R6). Disabled workers already on the rolls in the opening year keep
-     their observed levels (§11, rule 4), and R3, whose
-     individual ratios need no level, could still include new awards.
-     People aged 50–61 in 2030 were 30–41 in 2010, so most of that
-     cell's disabled workers would be post-2010 awards (an inference
-     from ages, not measured). The plan (§1) expects that cell to be
-     almost all disabled workers, so it would lose most of its members
-     on the headline row, and the disability-inclusive target could not
-     be scored there.
-3. **Acceptance rule** (`acceptance_rule`). Confirm "no numerical
-   acceptance threshold; report gaps", or set a rule now, before any
-   output exists. **Proposed default:** no threshold (§17).
+Rulings 1–4 answer plan §6 items 1, 2(a), 2(b) and 3; rulings 5 and 6
+answer referee questions 10 and 11 (§23).
 
-Process steps that follow, not decisions on this draft's content:
+1. **Claim class for the first score** (`claim_class`; plan §6 item 1;
+   d074). **Ruling:** Track A is exercise 1's first scored comparison: a
+   reported-not-gated, PSID-seeded 2010 cohort whose benefits the Python
+   oracle computes, labeled "not Axiom". Holding the first score for
+   Track B (M6 FORWARD) or Track C (Axiom) was declined.
+   **Consequence:** the `proposed-1` implementation requirement
+   `policy_executor: Axiom` does not hold for Track A; Track C would
+   re-run this same specification with Axiom as the benefit executor.
+   Tracks B and C reuse this specification under their own
+   registrations.
+2. **Oracle COLA horizon** (`oracle_cola_horizon_extension_to_2030`;
+   plan §6 item 2(a); d074). `ss/__init__.py` says "Do not extend this
+   module's rule coverage; extend the Axiom encodings." **Ruling:** the
+   oracle COLA path may run to 2030 with a scenario COLA series, as a
+   parameter override that adds no statutory coverage.
+   (`estimates/ledgers.py` itself stays capped at
+   `REPORT_YEARS[-1] = 2022`; A6 generalizes it without editing it.)
+3. **DI benefit level** (`di_benefit_level`; plan §6 item 2(b); d074).
+   **Ruling:** the DI benefit level is a disclosed approximation that
+   reuses existing oracle functions; it serves only as a weight.
+   Excluding DI levels until an Axiom DI rule exists was declined. Had it
+   been chosen, new DI awards after the opening year (2011–2030 under
+   R0, 2009–2030 under R6) would have had no level and could not have
+   entered any ratio-of-means row, so the 50–61 cell would have lost most
+   of its disabled workers on the headline row (an inference from ages,
+   not measured).
+4. **Acceptance rule** (`acceptance_rule`; plan §6 item 3; d074).
+   **Ruling:** no numerical acceptance threshold; report gaps (§17). A
+   numerical rule set before registration was declined, and none may be
+   set afterwards.
+5. **Page-3 run-metadata contact** (`page_3_run_metadata_contact`;
+   referee question 10; d075). **Ruling:** the drafting lane's reading
+   of lines 125–126 and 160 of the Urban text extraction and the opening
+   clause of line 164 is accepted as disclosed (§2). §1 keeps these
+   bases; redrafting §1 on the `proposed-1` target block alone was
+   declined.
+6. **Opening-stock basis** (`opening_stock_basis`; referee question 11;
+   d075). **Ruling:** an opening-stock person's benefit level is frozen
+   at the opening year, as §11 rule 4 states, and the difference is a
+   named delta (§12). Letting later simulated events re-base the benefit
+   through the oracle was declined.
+
+**Builder defaults Max did not rule on.** The Track A assembly and its
+components also carry conventions that no ruling above covers: for
+example the A5 auxiliary-entitlement and level rules
+(`cola_track_a.config.builder_defaults`), the A3 cohort rules
+(`cohorts.psid2010.pending_decisions`) and the A2 substitutes
+(`data.tr2008.PENDING_RULINGS`). They remain builder defaults, listed
+with their source in every run artifact, and are fixed only by the
+ratification and registration steps below.
+
+Process steps that follow, not decisions on this document's content:
 ratifying A1 by merging (plan §6, item 4), and posting or authorizing the
 issue #42 registration before the one-shot run (item 5).
 
@@ -1009,12 +1059,14 @@ issue #42 registration before the one-shot run (item 5).
     source-line locator, and `proposed-1` records the same run identity.
     Is that contact acceptable under the builder rule, or should §1 rest
     on the `proposed-1` target block alone, with the contact recorded as
-    a named deviation in the registration package?
+    a named deviation in the registration package? *Ruled by Max
+    2026-09-23: accepted as disclosed (§22, ruling 5).*
 11. **Opening-stock basis.** §11, rule 4 fixes an opening-stock person's
     benefit basis at the opening year. Should A3/A6 instead let later
     simulated events (widowhood, a spouse's entitlement) re-base the
     person's benefit through the oracle, at the cost of needing a PIA
-    that PSID does not observe?
+    that PSID does not observe? *Ruled by Max 2026-09-23: frozen at the
+    opening year, a named delta (§22, ruling 6).*
 
 ## 24. What this draft did not verify
 
@@ -1157,6 +1209,16 @@ no line content.
 `tests/test_urban2010_cola_spec.py` holds the §21 block to the TR2008
 V.C1 transcription, the §4 rate table, the declared floor minima, the
 one-field row rule, the annual scale, the population horizons and split
-units, the opening-stock amount fields, the plan's §6 defaults, the
+units, the opening-stock amount fields, the §22 rulings, the
 fail-closed uncertainty fields and the §20 field list, and recomputes
 every §19 worked case from the block's rate path.
+
+## 26. Changelog
+
+- `a1-draft-2` (2026-09-22): the corrections of referee pass 1 (§25).
+- `a1-ratified-candidate-1` (2026-09-23): records Max's rulings d074 and
+  d075 (§22): the header status, §2, §11 rule 4, §12, §15, §17, §22 and
+  §23 questions 10 and 11 now state the rulings, and the §21 block's
+  `decisions_awaiting_max` entry is replaced by `decisions`, which adds
+  the two referee-question rulings. No rate, row, statistic, membership,
+  benefit rule or uncertainty convention changed.

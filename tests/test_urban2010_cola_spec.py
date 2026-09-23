@@ -152,7 +152,18 @@ def test_header_version_matches_block(text: str, block: dict) -> None:
     header = re.search(r"version `([^`]+)`", text)
     assert header is not None
     assert header.group(1) == block["version"]
-    assert block["status"] == "draft_for_referee_not_ratified"
+    assert block["version"] == "a1-ratified-candidate-1"
+    # Max's rulings are recorded; ratification (merging) is still pending.
+    assert block["status"] == (
+        "ratification_candidate_rulings_recorded_not_merged"
+    )
+    assert "not yet ratified" in " ".join(text.split("## 1.")[0].split())
+
+
+def test_changelog_records_the_current_version(text: str, block: dict) -> None:
+    changelog = _section(text, "## 26. Changelog")
+    assert f"`{block['version']}` (2026-09-23)" in changelog
+    assert "`a1-draft-2` (2026-09-22)" in changelog
 
 
 def test_rate_path_matches_tr2008_transcription(
@@ -302,25 +313,38 @@ def test_invented_clock_cases_reproduce(
             ), cells[0]
 
 
-def test_decisions_awaiting_max_carry_plan_defaults(block: dict) -> None:
-    decisions = block["decisions_awaiting_max"]
-    assert set(decisions) == {
-        "claim_class",
-        "oracle_cola_horizon_extension_to_2030",
-        "di_benefit_level",
-        "acceptance_rule",
-    }
-    for name, decision in decisions.items():
-        assert decision["awaiting_max"] is True, name
-        assert decision["default"] not in decision["alternatives"], name
-    assert decisions["claim_class"]["default"] == (
-        "track_a_reported_not_gated_psid_oracle"
+#: Max's rulings of 2026-09-23 (decision records d074 and d075): each
+#: adopts the default the plan (section 6) or the referee question proposed.
+MAX_RULINGS_2026_09_23 = {
+    "claim_class": ("track_a_reported_not_gated_psid_oracle", "d074"),
+    "oracle_cola_horizon_extension_to_2030": (True, "d074"),
+    "di_benefit_level": ("disclosed_oracle_approximation", "d074"),
+    "acceptance_rule": (None, "d074"),
+    "page_3_run_metadata_contact": ("accepted_as_disclosed", "d075"),
+    "opening_stock_basis": ("fixed_at_opening_year", "d075"),
+}
+
+
+def test_decisions_record_max_rulings(block: dict, text: str) -> None:
+    assert "decisions_awaiting_max" not in block
+    assert "awaiting_max" not in json.dumps(block)
+    decisions = dict(block["decisions"])
+    assert decisions.pop("ruled_by") == "Max"
+    assert decisions.pop("ruled_on") == "2026-09-23"
+    assert set(decisions) == set(MAX_RULINGS_2026_09_23)
+    for name, (ruling, record) in MAX_RULINGS_2026_09_23.items():
+        decision = decisions[name]
+        assert decision["ruling"] == ruling, name
+        assert decision["decision_record"] == record, name
+        assert decision["ruling"] not in decision["declined"], name
+    # The opening-stock ruling is the amounts rule the block applies.
+    assert block["amounts"]["opening_stock_basis"] == (
+        decisions["opening_stock_basis"]["ruling"]
     )
-    assert decisions["oracle_cola_horizon_extension_to_2030"]["default"]
-    assert decisions["di_benefit_level"]["default"] == (
-        "disclosed_oracle_approximation"
-    )
-    assert decisions["acceptance_rule"]["default"] is None
+    section = _section(text, "## 22. Decisions (ruled by Max, 2026-09-23)")
+    for record in ("d074", "d075"):
+        assert record in section
+    assert "## 22. Decisions awaiting Max" not in text
 
 
 def test_uncertainty_fails_closed(block: dict) -> None:

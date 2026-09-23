@@ -458,7 +458,7 @@ def test_registered_rows_match_the_a1_block():
         assert expected.get("last_determination_year", 2029) == (
             sb.payment_year_for_reference(2030, row.benefit_period) - 1
         )
-    assert block["decisions_awaiting_max"]["di_benefit_level"]["default"] == (
+    assert block["decisions"]["di_benefit_level"]["ruling"] == (
         TrackAConfig().di_benefit_level.value
     )
 
