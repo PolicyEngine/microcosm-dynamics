@@ -748,3 +748,173 @@ def test_safe_exact_range_float_parent_is_supported(monkeypatch):
         if x["kind"] == "native_synthetic_birth"
     )
     assert birth["parent_id"] == str(native)
+
+
+@pytest.mark.parametrize(
+    ("field", "message"),
+    [
+        ("period_year", "audit year"),
+        ("entry_year", "excluded"),
+        ("death_year", "excluded"),
+    ],
+)
+def test_rehashed_audit_refuses_float_year_encoding(
+    monkeypatch, field, message
+):
+    import hashlib
+
+    run, kwargs, _, _ = assembled(monkeypatch, entries=True)
+    result, outputs, capture = run()
+    observed = observe_assembled_history(
+        result, outputs, fertility_capture=capture, **kwargs
+    )
+    data = json.loads(observed.to_json())
+    if field == "period_year":
+        period = data["audit"]["periods"][1]
+        period["year"] = float(period["year"])
+    else:
+        (entrant,) = data["audit"]["excluded"]
+        entrant[field] = float(entrant[field])
+    text = json.dumps(data, sort_keys=True, separators=(",", ":"))
+    # 2016.0 is itself canonical JSON and equals 2016 in Python, so only an
+    # exact type check keeps one observation from having a second encoding.
+    assert (
+        json.dumps(json.loads(text), sort_keys=True, separators=(",", ":"))
+        == text
+    )
+    with pytest.raises(ValueError, match=message):
+        AssembledHistoryObservation.from_json(
+            text,
+            baseline=observed.history.baseline,
+            expected_digest=hashlib.sha256(text.encode()).hexdigest(),
+        )
+
+
+@pytest.mark.parametrize("row", ["binding", "birth", "scheduled"])
+def test_rehashed_audit_refuses_non_array_row_encoding(monkeypatch, row):
+    import hashlib
+
+    # parent_id=2 makes the birth row ["100", "2"], already in the key order
+    # a canonical JSON object would sort into. Native 2 is otherwise the
+    # scheduled entrant, so the scheduled case keeps the default parent.
+    scheduled = row == "scheduled"
+    run, kwargs, _, _ = assembled(
+        monkeypatch,
+        birth=True,
+        entries=scheduled,
+        parent_id=1 if scheduled else 2,
+    )
+    result, outputs, capture = run()
+    observed = observe_assembled_history(
+        result, outputs, fertility_capture=capture, **kwargs
+    )
+    data = json.loads(observed.to_json())
+    audit = data["audit"]
+    if row == "binding":
+        # With one-digit fields, ["2", "1", "0"] and "210" both unpack to
+        # the same three strings.
+        binding = audit["identity_bindings"][0]
+        assert [len(x) for x in binding] == [1, 1, 1]
+        audit["identity_bindings"][0] = "".join(binding)
+    elif row == "birth":
+        (birth,) = audit["periods"][0]["births"]
+        assert birth == ["100", "2"]
+        audit["periods"][0]["births"] = [dict.fromkeys(birth)]
+    else:
+        audit["scheduled"] = [audit["scheduled"][0][0]]
+    text = json.dumps(data, sort_keys=True, separators=(",", ":"))
+    with pytest.raises(ValueError, match="fixed-width arrays"):
+        AssembledHistoryObservation.from_json(
+            text,
+            baseline=observed.history.baseline,
+            expected_digest=hashlib.sha256(text.encode()).hexdigest(),
+        )
+
+
+@pytest.mark.parametrize(
+    "field", ["draw_index", "scheduled_year", "trace_year"]
+)
+def test_numpy_integer_inputs_observe_exactly_like_python_ints(
+    monkeypatch, field
+):
+    run, kwargs, _, _ = assembled(monkeypatch, birth=True, entries=True)
+    result, outputs, capture = run()
+    expected = observe_assembled_history(
+        result, outputs, fertility_capture=capture, **kwargs
+    )
+    archive = capture.to_json()
+    if field == "draw_index":
+        # The engine hands a NumPy draw index through to every callback.
+        result, outputs, capture = run(draw=np.int64(3))
+    elif field == "scheduled_year":
+        kwargs["scheduled_entries_by_year"] = {
+            np.int64(year): frame
+            for year, frame in kwargs["scheduled_entries_by_year"].items()
+        }
+    elif field == "trace_year":
+        result = replace(
+            result,
+            traces=tuple(
+                replace(trace, year=np.int64(trace.year))
+                for trace in result.traces
+            ),
+        )
+    assert capture.to_json() == archive
+    observed = observe_assembled_history(
+        result, outputs, fertility_capture=capture, **kwargs
+    )
+    assert observed.to_json() == expected.to_json()
+    assert observed.digest == expected.digest
+
+
+def test_capture_archives_callback_coordinates_as_exact_ints(monkeypatch):
+    from populace_dynamics.engine.loop import PeriodContext
+    from populace_dynamics.engine.rng import ProjectionRNGRegistry
+
+    run, _, _, _ = assembled(monkeypatch)
+
+    def identity(frame, context, marital, rng):
+        return frame
+
+    archives = []
+    # A NumPy end_year reaches the registry as a NumPy n_periods.
+    for integer in (int, np.int64):
+        wrapped, capture = capture_fertility(
+            replace(run.modules, fertility=identity)
+        )
+        context = PeriodContext(
+            integer(1),
+            integer(2015),
+            integer(3),
+            {},
+            ProjectionRNGRegistry(integer(3), integer(1)),
+        )
+        wrapped.fertility(
+            pd.DataFrame({"x": [1]}),
+            context,
+            object(),
+            np.random.default_rng(4),
+        )
+        (record,) = capture.records
+        assert [
+            type(x)
+            for x in (record.draw_index, record.period_index, record.year)
+        ] == [int, int, int]
+        capture._require_complete(3, 1)
+        archives.append(capture.to_json())
+    assert archives[0] == archives[1]
+    assert json.loads(archives[0])["n_periods"] == 1
+    # A non-integer horizon is refused, not archived as 1.0.
+    wrapped, capture = capture_fertility(
+        replace(run.modules, fertility=identity)
+    )
+    context = PeriodContext(1, 2015, 3, {}, ProjectionRNGRegistry(3, 1.0))
+    with pytest.raises(ValueError, match="exact integer"):
+        wrapped.fertility(
+            pd.DataFrame({"x": [1]}),
+            context,
+            object(),
+            np.random.default_rng(4),
+        )
+    with pytest.raises(ValueError, match="failed"):
+        capture._require_complete(3, 1)

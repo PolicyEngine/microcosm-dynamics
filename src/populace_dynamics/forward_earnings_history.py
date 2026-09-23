@@ -283,7 +283,14 @@ class ForwardEarningsHistory:
         price_basis: str,
         lineage_digest: str,
     ) -> ForwardEarningsHistory:
-        """Snapshot an already materialized 2014 frame without changing it."""
+        """Snapshot an already materialized 2014 frame without changing it.
+
+        ``frame["person_id"]`` must already hold ``identity_map``'s private
+        keys (for example from ``identity_map.map_rows``), not native source
+        IDs. Only admission of each key is checked: nonnegative native int64
+        IDs below the map size are indistinguishable from private keys and
+        would be attributed to whichever identity owns that key.
+        """
         rows = _snapshot(identity_map, frame, lineage_digest)
         return cls(
             identity_map,
@@ -300,7 +307,10 @@ class ForwardEarningsHistory:
     def append(
         self, frame: pd.DataFrame, *, lineage_digest: str
     ) -> ForwardEarningsHistory:
-        """Return a new history containing exactly the following year's rows."""
+        """Return a new history containing exactly the following year's rows.
+
+        As in ``start``, ``frame["person_id"]`` holds private keys.
+        """
         if self.last_year == _LAST_YEAR:
             raise ValueError("2014–2022 contract cannot extend beyond 2022")
         rows = _snapshot(self.identity_map, frame, lineage_digest)

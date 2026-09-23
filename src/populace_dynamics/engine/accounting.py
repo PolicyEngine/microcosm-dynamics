@@ -133,8 +133,48 @@ _DISCREPANCY_ORDER = {
 }
 
 
+def _restore_refusal(
+    cls: type[PopulationAccountingError],
+    args: tuple[object, ...],
+    attributes: dict[str, object],
+    cause: BaseException | None,
+    suppress_context: bool,
+) -> PopulationAccountingError:
+    """Rebuild a pickled or copied refusal from its recorded state.
+
+    ``__init__`` is not replayed: subclasses take typed or keyword-only
+    fields and may prefix their message, so replaying it from ``args``
+    would fail or alter the message. The recorded ``args`` and instance
+    attributes are restored exactly instead.
+    """
+    error = cls.__new__(cls, *args)
+    error.__dict__.update(attributes)
+    error.__cause__ = cause
+    error.__suppress_context__ = suppress_context
+    return error
+
+
 class PopulationAccountingError(ValueError):
-    """Base class for every refusal raised by this module."""
+    """Base class for every refusal raised by this module.
+
+    Pickling and copying rebuild a refusal with its message arguments, its
+    typed attributes (``discrepancies``, a history ``kind`` and period
+    coordinates, notes) and its explicit ``raise ... from`` cause, so the
+    refusal can cross a process boundary. As for built-in exceptions, the
+    implicit ``__context__`` and the traceback are not carried.
+    """
+
+    def __reduce__(self) -> tuple[object, ...]:
+        return (
+            _restore_refusal,
+            (
+                type(self),
+                self.args,
+                dict(self.__dict__),
+                self.__cause__,
+                self.__suppress_context__,
+            ),
+        )
 
 
 class PopulationAccountingInputError(PopulationAccountingError):

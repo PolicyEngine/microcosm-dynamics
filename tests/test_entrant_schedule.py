@@ -7,6 +7,9 @@ schedule builder is only correct if the loop accepts what it produces.
 
 from __future__ import annotations
 
+import json
+from collections.abc import Mapping
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -405,6 +408,70 @@ def test_activation_years_are_not_silently_coerced(year):
     allocator = SyntheticPersonIdAllocator(1000)
     with pytest.raises(ValueError, match="activation years must be integers"):
         esm.build_entrant_schedule(_donor(), {year: 1.0}, allocator=allocator)
+    assert allocator.next_id == 1000
+
+
+@pytest.mark.parametrize("dtype", [np.int64, np.int32, np.uint16])
+def test_numpy_activation_years_become_python_ints_in_the_audit_record(dtype):
+    """Controls keyed by a numpy/pandas year column stay JSON-serializable."""
+    keys = np.array([2027, 2026], dtype=dtype)
+    controls = dict(zip(keys, [0.0, 1.0], strict=True))
+    schedule = esm.build_entrant_schedule(
+        _donor(n=2), controls, allocator=SyntheticPersonIdAllocator(1000)
+    )
+    records = {
+        "frames": list(schedule.frames),
+        "alignment": list(schedule.alignment),
+        "activation_years": schedule.provenance["activation_years"],
+        "scheduled_activation_years": schedule.provenance[
+            "scheduled_activation_years"
+        ],
+        "zero_inflow_years": schedule.provenance["zero_inflow_years"],
+    }
+    for name, years in records.items():
+        assert all(type(year) is int for year in years), name
+    assert records["activation_years"] == [2026, 2027]
+    assert records["scheduled_activation_years"] == [2026]
+    assert records["zero_inflow_years"] == [2027]
+    assert json.loads(json.dumps(schedule.alignment)).keys() == {
+        "2026",
+        "2027",
+    }
+    assert json.loads(json.dumps(schedule.provenance))["activation_years"] == [
+        2026,
+        2027,
+    ]
+    assert set(schedule.frames[2026]["year"]) == {2025}
+    assert set(schedule.frames[2026]["entry_year"]) == {2026}
+
+
+def test_a_year_supplied_twice_after_normalization_is_refused():
+    """A pairs-backed mapping can hold 2026 and np.int64(2026) separately;
+    normalizing must not silently keep only one of the two controls."""
+
+    class _Pairs(Mapping):
+        def __init__(self, pairs):
+            self._pairs = list(pairs)
+
+        def __getitem__(self, key):
+            for candidate, value in self._pairs:
+                if candidate is key:
+                    return value
+            raise KeyError(key)
+
+        def __iter__(self):
+            return (key for key, _ in self._pairs)
+
+        def __len__(self):
+            return len(self._pairs)
+
+    allocator = SyntheticPersonIdAllocator(1000)
+    with pytest.raises(ValueError, match="activation year 2026 is supplied"):
+        esm.build_entrant_schedule(
+            _donor(),
+            _Pairs([(2026, 1.0), (np.int64(2026), 2.0)]),
+            allocator=allocator,
+        )
     assert allocator.next_id == 1000
 
 

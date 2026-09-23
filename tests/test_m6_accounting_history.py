@@ -1,6 +1,10 @@
 """Synthetic supplied-history accounting; no data or fitted models."""
 
+import copy
 import json
+import multiprocessing
+import pickle
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import FrozenInstanceError
 
 import numpy as np
@@ -194,6 +198,117 @@ def test_annual_discrepancies_remain_available_on_original_cause():
     payload["cause"]["details"]["discrepancies"].clear()
     assert error.to_dict()["person_ids"] == []
     assert len(error.to_dict()["cause"]["details"]["discrepancies"]) == 1
+
+
+HISTORY_ROUND_TRIPS = [
+    pytest.param(
+        lambda value: pickle.loads(pickle.dumps(value, protocol=0)),
+        id="pickle-protocol-0",
+    ),
+    pytest.param(
+        lambda value: pickle.loads(
+            pickle.dumps(value, protocol=pickle.HIGHEST_PROTOCOL)
+        ),
+        id="pickle-highest-protocol",
+    ),
+    pytest.param(copy.copy, id="copy"),
+    pytest.param(copy.deepcopy, id="deepcopy"),
+]
+
+
+def _broken_second_period():
+    return [
+        _steady(2020),
+        AnnualTransition(2021, 2022, _frame(2021, [(1, 1)]), _frame(2022)),
+    ]
+
+
+@pytest.mark.parametrize("round_trip", HISTORY_ROUND_TRIPS)
+@pytest.mark.parametrize(
+    ("refuse", "kind", "period_index", "years", "person_ids", "cause_type"),
+    [
+        pytest.param(
+            lambda: _reconcile(_broken_second_period()),
+            HistoryErrorKind.PERIOD,
+            1,
+            (2021, 2022),
+            (),
+            accounting.PopulationReconciliationError,
+            id="annual-period",
+        ),
+        pytest.param(
+            lambda: _reconcile([_steady(2020), _steady(2021, [(2, 1)])]),
+            HistoryErrorKind.BOUNDARY_PERSON_IDS,
+            1,
+            (2021, 2022),
+            (1, 2),
+            None,
+            id="boundary-person-ids",
+        ),
+        pytest.param(
+            lambda: reconcile_history(
+                [_steady(2020)], identity_contract="general_reentry"
+            ),
+            HistoryErrorKind.INPUT,
+            None,
+            (None, None),
+            (),
+            None,
+            id="history-input",
+        ),
+    ],
+)
+def test_history_refusal_survives_pickle_and_copy(
+    round_trip, refuse, kind, period_index, years, person_ids, cause_type
+):
+    with pytest.raises(HistoryAccountingError) as caught:
+        refuse()
+    error = caught.value
+
+    restored = round_trip(error)
+
+    assert type(restored) is HistoryAccountingError
+    assert restored is not error
+    # The rebuilt refusal must not prefix its message a second time.
+    assert restored.args == error.args
+    assert str(restored) == str(error)
+    assert restored.kind is kind
+    assert restored.period_index == period_index
+    assert (restored.opening_year, restored.closing_year) == years
+    assert restored.person_ids == person_ids
+    assert restored.to_dict() == error.to_dict()
+    if cause_type is None:
+        assert restored.__cause__ is None
+    else:
+        assert type(restored.__cause__) is cause_type
+        assert restored.__suppress_context__ is True
+        assert restored.__cause__.discrepancies == (
+            error.__cause__.discrepancies
+        )
+        assert (
+            restored.__cause__.discrepancies[0].kind
+            is accounting.DiscrepancyKind.UNDECLARED_EXIT
+        )
+
+
+def test_history_refusal_crosses_a_process_pool():
+    context = multiprocessing.get_context("spawn")
+    with ProcessPoolExecutor(max_workers=1, mp_context=context) as pool:
+        future = pool.submit(
+            reconcile_history,
+            _broken_second_period(),
+            identity_contract=SINGLE_PRESENCE_EPISODE,
+        )
+        with pytest.raises(HistoryAccountingError) as caught:
+            future.result(timeout=120)
+    error = caught.value
+    assert error.kind is HistoryErrorKind.PERIOD
+    assert error.period_index == 1
+    assert (error.opening_year, error.closing_year) == (2021, 2022)
+    assert str(error).startswith("period[1]: ")
+    # concurrent.futures replaces __cause__ with its remote-traceback text
+    # after unpickling, so the typed annual cause is asserted by the direct
+    # pickle and copy test above rather than here.
 
 
 def test_boundary_person_sets_must_match_even_at_equal_counts_and_mass():

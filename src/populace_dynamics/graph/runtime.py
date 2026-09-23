@@ -99,14 +99,39 @@ def _records(path, expected):
     return pd.DataFrame(raw)
 
 
+_INT64 = np.iinfo(np.int64)
+
+
 def _integer_column(frame, column):
-    if any(type(v) is not int for v in frame[column].tolist()):
+    values = frame[column].tolist()
+    if any(type(v) is not int for v in values):
         raise ValueError(f"{column} must contain integer identifiers/years")
+    # JSON integers at or above 2**63 make pandas store uint64, which an
+    # int64 cast would silently wrap (a future event year becoming -1).
+    if any(not _INT64.min <= v <= _INT64.max for v in values):
+        raise ValueError(f"{column} must fit in a signed 64-bit integer")
     frame[column] = frame[column].astype("int64")
 
 
+def _real_numbers(values, label):
+    """Return float64 values, refusing JSON strings, booleans, and nulls."""
+    values = values.tolist() if hasattr(values, "tolist") else list(values)
+    if any(
+        isinstance(v, (bool, np.bool_))
+        or not isinstance(v, (int, float, np.integer, np.floating))
+        for v in values
+    ):
+        raise ValueError(
+            f"{label} must be JSON numbers, not strings or booleans"
+        )
+    try:
+        return np.asarray(values, dtype=np.float64)
+    except OverflowError as error:
+        raise ValueError(f"{label} must be finite") from error
+
+
 def _weights(values):
-    result = np.asarray(values, dtype=np.float64)
+    result = _real_numbers(values, "source weights")
     if not np.isfinite(result).all() or (result <= 0).any():
         raise ValueError("source weights must be positive and finite")
     return Weights(result, WeightKind.DESIGN)
@@ -149,11 +174,12 @@ def _create_training(context):
     if not data.sex.isin(["female", "male"]).all():
         raise ValueError("training sex must be female or male")
     for column in ("exposure", "death"):
-        numeric = data[column].to_numpy(dtype=np.float64)
+        numeric = _real_numbers(data[column], f"training {column}")
         if not np.isfinite(numeric).all() or (numeric < 0).any():
             raise ValueError(
                 f"training {column} must be finite and nonnegative"
             )
+        data[column] = numeric
     if (data.death > 1).any():
         raise ValueError("training death must lie in [0, 1]")
     data = data.sort_values(["person_id", "event_year"]).reset_index(drop=True)
@@ -311,10 +337,12 @@ def _apply(context):
             (OBS, "death_probability"): _series(
                 model.probabilities(initial), ids, dtype="float64"
             ),
+            # Nullable: a next-period row admitted by ``advance`` has had no
+            # mortality draw, so its outcome cells are missing, not copied.
             (OBS, "survives"): _series(
                 initial.person_id.isin(survived.person_id).to_numpy(),
                 ids,
-                dtype="bool",
+                dtype="boolean",
             ),
         }
     )
@@ -391,6 +419,26 @@ def _advance(context):
             (OBS, "age"): _series(
                 observations.age.tolist() + aged.age.tolist(), target_ids
             ),
+            # Lineage would otherwise copy the parent's period-B outcome
+            # (survives=True, the old age band's probability) onto rows no
+            # mortality draw has reached. Leave those cells missing.
+            (OBS, "death_probability"): _series(
+                np.concatenate(
+                    [
+                        observations.death_probability.to_numpy(
+                            dtype=np.float64
+                        ),
+                        np.full(len(new_ids), np.nan),
+                    ]
+                ),
+                target_ids,
+                dtype="float64",
+            ),
+            (OBS, "survives"): _series(
+                observations.survives.tolist() + [pd.NA] * len(new_ids),
+                target_ids,
+                dtype="boolean",
+            ),
             ("period", "period"): _series(
                 period_values + next_period, period_ids + next_period, "period"
             ),
@@ -418,6 +466,24 @@ def _age_claim(context):
             (OBS, "age"): _series(
                 observations.age.tolist(), observations[OID].tolist()
             )
+        }
+    )
+
+
+def _outcome_claim(context):
+    """Claim advance's missing next-period outcome cells, unchanged."""
+    observations = context.tables[OBS]
+    ids = observations[OID].tolist()
+    return KernelResult(
+        columns={
+            (OBS, "death_probability"): _series(
+                observations.death_probability.to_numpy(dtype=np.float64),
+                ids,
+                dtype="float64",
+            ),
+            (OBS, "survives"): _series(
+                observations.survives.tolist(), ids, dtype="boolean"
+            ),
         }
     )
 
@@ -504,9 +570,14 @@ def _evaluate(context):
         int(row.age) == int(expected_ages.loc[getattr(row, PID)])
         for row in future.itertuples(index=False)
     )
+    # No mortality draw has reached the admitted next-period rows.
+    undrawn_future = bool(
+        future.survives.isna().all() and future.death_probability.isna().all()
+    )
     engineering_pass = (
         expected_ids == actual_ids
         and age_parity
+        and undrawn_future
         and not observations[OID].duplicated().any()
     )
     heldout_age_error = float(
@@ -651,7 +722,7 @@ def build_graph(
             params=params,
             outputs=(
                 Owned(OBS, "death_probability", "float64"),
-                Owned(OBS, "survives", "bool"),
+                Owned(OBS, "survives", "boolean"),
             ),
         ),
         Node(
@@ -662,7 +733,7 @@ def build_graph(
             entrants=True,
             mass="declared",
             inputs=(
-                Slice(OBS, ("age", "sex", "survives")),
+                Slice(OBS, ("age", "sex", "survives", "death_probability")),
                 Slice("period", ("period",)),
             ),
             params={
@@ -670,6 +741,8 @@ def build_graph(
                 "expand_cells": (
                     (OBS, PERIOD_ID, "int64"),
                     (OBS, "age", "int64"),
+                    (OBS, "death_probability", "float64"),
+                    (OBS, "survives", "boolean"),
                     ("period", "period", "int64"),
                 ),
                 "expand_weight_entity": OBS,
@@ -682,6 +755,16 @@ def build_graph(
             population="advance",
             inputs=(Slice(OBS, ("age",)),),
             outputs=(Owned(OBS, "age", "int64", rewrite=True),),
+        ),
+        Node(
+            "outcomes",
+            "dynamics.mortality.outcome-claim@1",
+            population="advance",
+            inputs=(Slice(OBS, ("survives", "death_probability")),),
+            outputs=(
+                Owned(OBS, "death_probability", "float64", rewrite=True),
+                Owned(OBS, "survives", "boolean", rewrite=True),
+            ),
         ),
         Node(
             "evaluate",
@@ -716,6 +799,7 @@ def build_graph(
             "dynamics.advance@1", _advance, structural=StructuralDelta.EXPAND
         ),
         _Kernel("dynamics.age-claim@1", _age_claim),
+        _Kernel("dynamics.mortality.outcome-claim@1", _outcome_claim),
         _Kernel(
             "dynamics.mortality.evaluate@1", _evaluate, seeded=True, gate=True
         ),

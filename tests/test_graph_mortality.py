@@ -172,7 +172,15 @@ def test_holdout_changes_only_evaluation_and_can_fail_fixture(
     assert changed.report["fixture_verdict"] == "fail"
     assert changed.report["engineering_verdict"] == "pass"
     assert changed.model_payload == baseline.model_payload
-    for node_id in ("training", "fit", "initial", "apply", "advance", "age"):
+    for node_id in (
+        "training",
+        "fit",
+        "initial",
+        "apply",
+        "advance",
+        "age",
+        "outcomes",
+    ):
         assert changed.manifest.nodes[node_id].hit
     assert not changed.manifest.nodes["evaluate"].hit
     pd.testing.assert_frame_equal(baseline.next_slice, changed.next_slice)
@@ -330,6 +338,8 @@ def test_keyed_kernel_hashes_random_coordinate_encoding(runtime, monkeypatch):
         ("missing_person", "held-out identities must match"),
         ("wrong_period", "held-out outcomes must be binary deaths"),
         ("invalid_json", "invalid mortality JSON"),
+        # 2**64 - 1 once wrapped to year -1 and failed only by accident.
+        ("uint64_year", "signed 64-bit"),
     ],
 )
 def test_failed_holdout_exports_named_gate_evidence_cold_and_warm(
@@ -342,6 +352,8 @@ def test_failed_holdout_exports_named_gate_evidence_cold_and_warm(
         holdout["outcomes"].pop()
     elif mutation == "wrong_period":
         holdout["outcomes"][0]["year"] = 2014
+    elif mutation == "uint64_year":
+        holdout["outcomes"][0]["year"] = 2**64 - 1
     _write(inputs["holdout"], holdout)
     if mutation == "invalid_json":
         inputs["holdout"].write_text("{invalid JSON")
@@ -476,3 +488,162 @@ def test_nondefault_stream_matches_direct_steps_and_reuses_fit(
         changed.next_slice.person_id.tolist()
         != baseline.next_slice.person_id.tolist()
     )
+
+
+def test_next_period_rows_carry_no_undrawn_mortality_outcome(
+    runtime, inputs, tmp_path
+):
+    """Admitted survivor rows are not drawn; their outcome cells stay null.
+
+    Copying the parent's ``survives=True`` and period-B probability onto the
+    period-B+1 rows once overstated pooled survival (30/35 instead of 15/20)
+    and attached a stale age band's probability to anyone who aged across it.
+    """
+    result = _run(runtime, inputs, tmp_path)
+    assert result.report["engineering_verdict"] == "pass"
+    model = MortalityArtifact.from_bytes(result.model_payload).model
+    exported = pd.read_csv(
+        tmp_path / "output" / "person_period.csv",
+        float_precision="round_trip",
+    )
+    in_memory = result.manifest.population("advance").table(runtime.OBS)
+    for table in (exported, in_memory):
+        start = table.loc[table[runtime.PERIOD_ID] == 2014]
+        future = table.loc[table[runtime.PERIOD_ID] == 2015]
+        assert len(start) == result.report["initial_records"] == 20
+        assert len(future) == result.report["survivor_records"] == 15
+        assert start.survives.notna().all()
+        np.testing.assert_array_equal(
+            start.death_probability.to_numpy(dtype=np.float64),
+            model.probabilities(start),
+        )
+        assert future.survives.isna().all()
+        assert future.death_probability.isna().all()
+        drawn = table.survives.dropna().astype(bool)
+        assert len(drawn) == 20
+        assert int(drawn.sum()) == result.report["survivor_records"]
+
+
+def test_integer_column_refuses_rather_than_wraps_uint64(runtime):
+    frame = pd.DataFrame({"person_id": [1, 2**64 - 1]})
+    assert frame.person_id.dtype == np.uint64
+    with pytest.raises(ValueError, match="signed 64-bit"):
+        runtime._integer_column(frame, "person_id")
+    with pytest.raises(ValueError, match="signed 64-bit"):
+        runtime._integer_column(
+            pd.DataFrame({"year": [-(2**63) - 1, 2014]}), "year"
+        )
+    bounds = pd.DataFrame({"person_id": [-(2**63), 1, 2**63 - 1]})
+    runtime._integer_column(bounds, "person_id")
+    assert bounds.person_id.dtype == np.int64
+    assert bounds.person_id.tolist() == [-(2**63), 1, 2**63 - 1]
+
+
+@pytest.mark.parametrize(
+    ("source", "row", "column", "value"),
+    [
+        # Row 8 is the 2015-dated event the fit cutoff must exclude; wrapped
+        # to -1 it passed the <= boundary check and entered the fit.
+        ("training", 8, "event_year", 2**64 - 1),
+        ("training", 0, "person_id", 2**63),
+        ("training", 0, "required_interview_year", -(2**63) - 1),
+        ("initial", 0, "person_id", 2**64 - 1),
+        ("initial", 0, "age", 2**64 - 1),
+    ],
+)
+def test_source_integers_outside_int64_are_refused(
+    runtime, inputs, tmp_path, source, row, column, value
+):
+    from microcosm.graph.errors import NodeRejectedError
+
+    rows = _read(inputs[source])
+    if column == "event_year":
+        assert rows[row]["event_year"] == 2015
+    rows[row][column] = value
+    _write(inputs[source], rows)
+    with pytest.raises(NodeRejectedError, match="signed 64-bit"):
+        _run(runtime, inputs, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "value", ["7.5", True, np.True_, None, [1.0], {"weight": 1.0}]
+)
+def test_weights_refuse_json_strings_booleans_and_nonnumbers(runtime, value):
+    with pytest.raises(ValueError, match="JSON numbers"):
+        runtime._weights([1.0, value])
+    with pytest.raises(ValueError, match="JSON numbers"):
+        runtime._weights(pd.Series([value, value], dtype=object))
+
+
+def test_weights_accept_real_numbers_and_refuse_overflow(runtime):
+    weights = runtime._weights(
+        [1, 2.5, np.float64(3.0), np.int64(4), np.float32(0.5)]
+    )
+    np.testing.assert_array_equal(weights.values, [1.0, 2.5, 3.0, 4.0, 0.5])
+    assert weights.values.dtype == np.float64
+    with pytest.raises(ValueError, match="finite"):
+        runtime._weights([1.0, 10**400])
+
+
+@pytest.mark.parametrize(
+    ("source", "column", "value", "every_row"),
+    [
+        ("initial", "weight", "7.5", False),
+        ("initial", "weight", True, False),
+        ("training", "start_weight", "3", True),
+        ("training", "start_weight", True, False),
+        ("training", "exposure", "1.0", False),
+        ("training", "exposure", True, False),
+        ("training", "death", True, False),
+        ("training", "death", "1", False),
+    ],
+)
+def test_source_numbers_refuse_json_strings_and_booleans(
+    runtime, inputs, tmp_path, source, column, value, every_row
+):
+    from microcosm.graph.errors import NodeRejectedError
+
+    rows = _read(inputs[source])
+    for row in rows if every_row else rows[:1]:
+        row[column] = value
+    _write(inputs[source], rows)
+    with pytest.raises(NodeRejectedError, match="JSON numbers"):
+        _run(runtime, inputs, tmp_path)
+
+
+def test_integer_json_weights_remain_valid_numbers(runtime, inputs, tmp_path):
+    initial = _read(inputs["initial"])
+    initial[0]["weight"] = 2
+    _write(inputs["initial"], initial)
+    training = _read(inputs["training"])
+    training[0]["exposure"] = 1
+    training[1]["death"] = 0
+    _write(inputs["training"], training)
+    result = _run(runtime, inputs, tmp_path)
+    assert result.report["engineering_verdict"] == "pass"
+    population = result.manifest.population("initial")
+    weights = population.weights_for(runtime.OBS).values
+    assert weights.dtype == np.float64
+    assert weights[0] == 2.0
+
+
+def test_evaluation_fails_if_admitted_rows_claim_a_mortality_outcome(
+    runtime, inputs, tmp_path, monkeypatch
+):
+    """The engineering verdict guards the undrawn next-period outcome."""
+    claim = runtime._outcome_claim
+
+    def inherited_claim(context):
+        result = claim(context)
+        survives = result.columns[(runtime.OBS, "survives")]
+        probability = result.columns[(runtime.OBS, "death_probability")]
+        return runtime.KernelResult(
+            columns={
+                (runtime.OBS, "survives"): survives.fillna(True),
+                (runtime.OBS, "death_probability"): probability.fillna(0.25),
+            }
+        )
+
+    monkeypatch.setattr(runtime, "_outcome_claim", inherited_claim)
+    result = _run(runtime, inputs, tmp_path)
+    assert result.report["engineering_verdict"] == "fail"

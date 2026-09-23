@@ -22,7 +22,15 @@ are inherited rather than designed:
    exposure convention is fixed by the seam, not chosen here.
 2. **IDs come from the projection-wide allocator.**  ``loop.py:41-63`` raises
    on any overlap with ``reserved_real_ids``, which is what stops an entrant
-   from silently inheriting a fitted person's ``u_w``.
+   from silently inheriting a fitted person's ``u_w``.  The caller must pass
+   the *same* allocator object it places in
+   ``metadata["synthetic_id_allocator"]``.  A second allocator with the same
+   start would hand in-loop births the entrants' IDs.  The loop itself is
+   inside the reviewed-implementation seal of the birth-evidence reducer
+   and does not check this, so callers run
+   :func:`validate_projection_allocator` on the exact metadata they project
+   with; it refuses an allocator whose ``next_id`` can reach an initial or
+   scheduled ``person_id`` that its ``reserved_real_ids`` do not cover.
 3. **RNG streams are stable per person** (``loop.py:285-292, 351-353``), so
    reproducibility is free.
 
@@ -57,7 +65,10 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from populace_dynamics.engine.loop import SyntheticPersonIdAllocator
+from populace_dynamics.engine.loop import (
+    SCHEDULED_ENTRIES_KEY,
+    SyntheticPersonIdAllocator,
+)
 
 __all__ = [
     "ENTRY_KIND_COLUMN",
@@ -68,6 +79,7 @@ __all__ = [
     "EntrantSchedule",
     "build_entrant_schedule",
     "entrant_provenance_counters",
+    "validate_projection_allocator",
 ]
 
 #: The provenance column every open-addition row should carry.
@@ -189,7 +201,12 @@ def build_entrant_schedule(
     projection-wide
     :class:`~populace_dynamics.engine.loop.SyntheticPersonIdAllocator`; passing
     the projection's own allocator is what guarantees entrant IDs never
-    collide with a fitted person-keyed support.
+    collide with a fitted person-keyed support or with a later in-loop birth.
+    :func:`validate_projection_allocator` refuses projection metadata whose
+    allocator ``next_id`` can reach an unreserved scheduled ID, so a schedule
+    built from a separate allocator with the same start fails before the
+    first period when callers validate.  Integer
+    activation-year keys (including numpy integers) are returned as ``int``.
     """
     _validate_donor(donor)
     if entry_kind != ENTRY_KIND_IMMIGRANT:
@@ -199,12 +216,22 @@ def build_entrant_schedule(
         for year in inflow_thousands_by_year
     ):
         raise ValueError("activation years must be integers")
-    years = sorted(inflow_thousands_by_year)
+    # Normalize numpy/pandas integer keys to ``int`` here, at the boundary:
+    # they reach the frame keys, the alignment keys and the provenance year
+    # lists, and a numpy integer there makes the audit record unwritable as
+    # JSON.
+    inflow_by_year: dict[int, Any] = {}
+    for raw_year, raw_inflow in inflow_thousands_by_year.items():
+        year = int(raw_year)
+        if year in inflow_by_year:
+            raise ValueError(f"activation year {year} is supplied twice")
+        inflow_by_year[year] = raw_inflow
+    years = sorted(inflow_by_year)
     if not years:
         raise ValueError("no activation years requested")
     controls = {}
     for year in years:
-        inflow = float(inflow_thousands_by_year[year])
+        inflow = float(inflow_by_year[year])
         if (
             not np.isfinite(inflow)
             or inflow < 0
@@ -425,3 +452,56 @@ def entrant_provenance_counters(
             f"explicit {ENTRY_KIND_COLUMN!r} column, not ID arithmetic"
         ),
     }
+
+
+def validate_projection_allocator(
+    initial_person_ids: Sequence[Any] | pd.Series,
+    metadata: Mapping[str, Any],
+) -> None:
+    """Refuse projection metadata whose allocator could reuse a known ID.
+
+    ``SyntheticPersonIdAllocator`` hands out IDs upward from ``next_id`` and
+    raises only on ``reserved_real_ids``.  If an initial or scheduled
+    ``person_id`` sits at or above that cursor and is not reserved, a later
+    in-loop birth can receive it; when that person has already died the reuse
+    is silent, so one ``person_id`` names two people and shares one RNG
+    ordinal.  The usual cause is a schedule built with a *different*
+    allocator than ``metadata["synthetic_id_allocator"]`` that starts at the
+    same ``synthetic_id_start``.
+
+    Call this on the exact metadata passed to ``ProjectionEngine.project``.
+    The loop does not perform this check itself: ``engine/loop.py`` is part
+    of the birth-evidence reducer's reviewed-implementation identity, and
+    changing it needs a deliberate re-pin.  Metadata without an allocator is
+    accepted, because the loop then builds its own from ``max(ids) + 1``.
+    """
+    allocator = metadata.get("synthetic_id_allocator")
+    if allocator is None:
+        return
+    if not isinstance(allocator, SyntheticPersonIdAllocator):
+        raise TypeError(
+            "metadata synthetic_id_allocator must be a "
+            "SyntheticPersonIdAllocator"
+        )
+    known = {int(person_id) for person_id in initial_person_ids}
+    scheduled = metadata.get(SCHEDULED_ENTRIES_KEY, {}) or {}
+    if not isinstance(scheduled, Mapping):
+        raise TypeError(
+            f"metadata {SCHEDULED_ENTRIES_KEY!r} must be a mapping"
+        )
+    for frame in scheduled.values():
+        known.update(int(person_id) for person_id in frame["person_id"])
+    cursor = int(allocator.next_id)
+    reachable = sorted(
+        person_id
+        for person_id in known
+        if person_id >= cursor and person_id not in allocator.reserved_real_ids
+    )
+    if reachable:
+        raise ValueError(
+            f"metadata synthetic_id_allocator next_id {cursor} can reach "
+            f"initial or scheduled person_id {reachable[:10]}, which "
+            "reserved_real_ids does not cover; a later allocation could "
+            "reuse an existing person's ID. Build scheduled entrants with "
+            "the projection's own allocator."
+        )

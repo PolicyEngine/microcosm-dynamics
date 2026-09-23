@@ -662,3 +662,30 @@ def test_blocked_years_do_not_apply_laws_or_parse_holdouts(
     assert result.report["periods"]["2017"]["application_status"] == (
         "blocked"
     )
+
+
+@pytest.mark.parametrize(
+    ("source", "column", "value", "every_row", "message"),
+    [
+        # Once wrapped to -1 and exported under that identity.
+        ("initial", "person_id", 2**64 - 1, False, "signed 64-bit"),
+        # Once parsed as 7.5 and 1.0 population weights.
+        ("initial", "weight", "7.5", False, "JSON numbers"),
+        ("initial", "weight", True, False, "JSON numbers"),
+        # Once parsed into the fitted law's exposure weights.
+        ("training", "start_weight", "3", True, "JSON numbers"),
+        ("training", "exposure", "1.0", False, "JSON numbers"),
+    ],
+)
+def test_malformed_source_numbers_are_refused_not_coerced(
+    runtime, inputs, tmp_path, source, column, value, every_row, message
+):
+    from microcosm.graph.errors import NodeRejectedError
+
+    rows = _read(inputs[source])
+    for row in rows if every_row else rows[:1]:
+        row[column] = value
+    _write(inputs[source], rows)
+    with pytest.raises(NodeRejectedError, match=message):
+        _run(runtime, inputs, tmp_path, end_year=2015)
+    assert not (tmp_path / "output" / "trajectory.csv").exists()
