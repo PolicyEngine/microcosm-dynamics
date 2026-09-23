@@ -1,17 +1,16 @@
 # Urban 2010 COLA comparison: specification for DynaSim scorecard exercise 1
 
-- **Status:** ratification candidate; not yet ratified. Max ruled the
-  plan's §6 decisions 1–3 and referee questions 10 and 11 on 2026-09-23
-  (decision records d074 and d075, §22). This document still authorizes
-  no run, no registration comment and no computation of the five-group
-  2030 statistic on real data. It becomes the frozen specification only
-  when Max ratifies it by merging the PR that carries it (plan §6,
-  item 4).
+- **Status:** ratified and frozen. Max ruled the plan's §6 decisions
+  1–3 and referee questions 10 and 11 on 2026-09-23 (decision records
+  d074 and d075, §22), and on the same day authorized the issue #42
+  registration and the one-shot run. Merging the PR that carries this
+  version (#452) under that authorization ratifies it (plan §6, item 4).
+  Any later change becomes a new registered version (§17).
 - **Specification:** `urban2010_cola_exercise1`,
-  version `a1-ratified-candidate-1`, drafted 2026-09-22; `a1-draft-2`
-  carried the corrections of referee pass 1 (§25), and
-  `a1-ratified-candidate-1` records Max's rulings (§22). §26 is the
-  changelog.
+  version `a1-ratified-1`, drafted 2026-09-22; `a1-draft-2` carried the
+  corrections of referee pass 1 (§25), `a1-ratified-candidate-1` recorded
+  Max's rulings (§22), and `a1-ratified-1` is the ratified text. §26 is
+  the changelog.
 - **Plan item:** A1 of the Track A plan,
   `EVID/critical-path-cola-20260922.md` §4 (SHA-256 `e303ba57…`), where
   `EVID` = `~/microcosm-launch-evidence/dynasim-parity-20260909`.
@@ -808,8 +807,8 @@ package hashes this file.
 ```json
 {
   "specification": "urban2010_cola_exercise1",
-  "version": "a1-ratified-candidate-1",
-  "status": "ratification_candidate_rulings_recorded_not_merged",
+  "version": "a1-ratified-1",
+  "status": "ratified_frozen",
   "target": {
     "model": "DYNASIM3",
     "run": "614",
@@ -1222,3 +1221,6 @@ every §19 worked case from the block's rate path.
   `decisions_awaiting_max` entry is replaced by `decisions`, which adds
   the two referee-question rulings. No rate, row, statistic, membership,
   benefit rule or uncertainty convention changed.
+- `a1-ratified-1` (2026-09-23): ratified text. Status and version only; no
+  rule, row or parameter changes. Ratified by merging #452 under Max's
+  2026-09-23 authorization of the issue #42 registration and one-shot run.

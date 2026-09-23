@@ -829,6 +829,7 @@ def test_builder_defaults_are_kept_apart_from_max_rulings():
         "opening_aged_widow_min_age",
         "mortality_base_year",
         "claim_table_max_year",
+        "wage_base_2009_2010",
     }
     for item in defaults:
         assert "awaiting" not in item

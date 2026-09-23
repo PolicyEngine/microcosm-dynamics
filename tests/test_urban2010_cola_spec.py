@@ -152,12 +152,10 @@ def test_header_version_matches_block(text: str, block: dict) -> None:
     header = re.search(r"version `([^`]+)`", text)
     assert header is not None
     assert header.group(1) == block["version"]
-    assert block["version"] == "a1-ratified-candidate-1"
-    # Max's rulings are recorded; ratification (merging) is still pending.
-    assert block["status"] == (
-        "ratification_candidate_rulings_recorded_not_merged"
-    )
-    assert "not yet ratified" in " ".join(text.split("## 1.")[0].split())
+    assert block["version"] == "a1-ratified-1"
+    # Ratified by merging #452 under Max's 2026-09-23 authorization.
+    assert block["status"] == "ratified_frozen"
+    assert "ratified and frozen" in " ".join(text.split("## 1.")[0].split())
 
 
 def test_changelog_records_the_current_version(text: str, block: dict) -> None:

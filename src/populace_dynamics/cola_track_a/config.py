@@ -600,4 +600,17 @@ def builder_defaults(config: TrackAConfig | None = None) -> list[dict]:
             "alternatives": [],
             "fixed_by": _FIXED_BY,
         },
+        {
+            "field": "wage_base_2009_2010",
+            "value": "realized",
+            "source": (
+                _A5_BUILDER + "; the oracle's contribution and benefit base "
+                "for 2009-2010 is the realized base (policyengine-us), which "
+                "differs from TR2008 V.C1's projected 2009-2010 bases; the "
+                "registered-run statutory check records the difference as "
+                "documented. Weights only"
+            ),
+            "alternatives": ["tr2008_projected"],
+            "fixed_by": _FIXED_BY,
+        },
     ]
