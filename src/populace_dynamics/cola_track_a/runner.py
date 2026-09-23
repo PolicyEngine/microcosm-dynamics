@@ -5,9 +5,18 @@ unmodified ``engine.loop.ProjectionEngine`` (draw ``k`` has root entropy
 ``5200 + k`` and person-keyed streams), computes every registered row's
 baseline and reform benefits from that one projection (so both scenarios
 share every simulated path), and tabulates each row with the A7
-five-group statistic.  Nothing is scheduled as an entrant; the allocator
-check of ``engine.entrant_schedule`` runs on the projection metadata all
-the same.
+five-group statistic.  Nothing is scheduled as an entrant.  The runner
+still passes the projection metadata to
+``engine.entrant_schedule.validate_projection_allocator``; that metadata
+carries no allocator, so the check accepts it without testing anything,
+and the loop builds its own allocator from ``max(person_id) + 1``.  No
+step creates a person, so no allocated identifier is ever used.
+
+The configuration names the TR2008 alternative, the first TR2008 rate
+year, the mortality base year, the DI specification and the claim-table
+cap; the inputs are built separately.  Every result records whether the
+two agree (``parameter_consistency``), and a ``registered_real`` run
+refuses any disagreement.
 
 Governance interlock: a cohort whose ``data_provenance`` is
 ``"registered_real"`` is refused unless a registration pointer (the issue
@@ -244,6 +253,126 @@ def _check_floor(inputs: TrackAInputs, config: TrackAConfig) -> dict:
     return minima
 
 
+def _tr2008_value_checks(
+    inputs: TrackAInputs, config: TrackAConfig
+) -> dict[str, dict[str, Any]]:
+    """Compare the baseline COLA and the AWI with the A2 TR2008 capture.
+
+    Reads the committed TR2008 capture through :mod:`~populace_dynamics.
+    data.tr2008`, so :func:`run_track_a` calls it only when asked or for a
+    ``registered_real`` run.
+    """
+
+    alternative = config.tr2008_alternative
+    first, last = config.tr2008_first_rate_year, config.reference_year
+    cola_mismatch: dict[str, Any] = {}
+    for entry in tr2008.cola_path(first, last, alternative=alternative):
+        year = entry.determination_year
+        try:
+            runtime = 100.0 * inputs.baseline.rate_for_determination_year(year)
+        except (KeyError, ValueError):
+            runtime = None
+        if runtime is None or not np.isclose(
+            runtime, entry.percent, rtol=0.0, atol=1e-9
+        ):
+            cola_mismatch[str(year)] = {
+                "tr2008_percent": entry.percent,
+                "runtime_percent": runtime,
+            }
+    awi_mismatch: dict[str, Any] = {}
+    for entry in tr2008.awi_path(
+        _TR2008_AWI_FIRST_YEAR, last, alternative=alternative
+    ):
+        runtime = inputs.params.nawi.get(entry.year)
+        if runtime is None or not np.isclose(
+            runtime, entry.amount, rtol=1e-12, atol=0.0
+        ):
+            awi_mismatch[str(entry.year)] = {
+                "tr2008": entry.amount,
+                "runtime": runtime,
+            }
+    return {
+        "cola_path": {
+            "expected": (
+                f"TR2008 {alternative} rates, determination years "
+                f"{first}-{last}"
+            ),
+            "consistent": not cola_mismatch,
+            "mismatched_years": cola_mismatch,
+        },
+        "awi": {
+            "expected": (
+                f"TR2008 {alternative} AWI, {_TR2008_AWI_FIRST_YEAR}-{last}"
+            ),
+            "consistent": not awi_mismatch,
+            "mismatched_years": awi_mismatch,
+        },
+    }
+
+
+def _parameter_consistency(
+    inputs: TrackAInputs,
+    config: TrackAConfig,
+    *,
+    compare_tr2008_values: bool,
+) -> dict[str, Any]:
+    """Whether the inputs are the parameters the config labels the run with.
+
+    ``config`` names the TR2008 alternative, the first TR2008 rate year,
+    the mortality base year, the DI specification and the claim-table
+    cap, and the result reports them as the run's conventions; the
+    inputs are built separately.  Each check compares the two.  A
+    ``registered_real`` run refuses any mismatch (:func:`run_track_a`);
+    an invented run, whose tests use invented parameters, records it.
+    A population mortality that is not the A2 substitute is recorded as
+    a gap by ``_mortality_record`` and is not checked here.  The COLA and
+    AWI values are compared only when ``compare_tr2008_values`` is set.
+    """
+
+    alternative = config.tr2008_alternative
+    checks: dict[str, dict[str, Any]] = (
+        _tr2008_value_checks(inputs, config) if compare_tr2008_values else {}
+    )
+    checks.update(
+        {
+            "di_spec": {
+                "expected": config.di_spec.as_dict(),
+                "consistent": inputs.di_rates.spec == config.di_spec,
+                "runtime": inputs.di_rates.spec.as_dict(),
+            },
+        }
+    )
+    model = inputs.population_mortality
+    if isinstance(model, Tr2008YearAwareMortality):
+        checks["mortality"] = {
+            "expected": {
+                "alternative": alternative,
+                "base_year": config.mortality_base_year,
+            },
+            "consistent": (
+                model.alternative == alternative
+                and model.base_year == config.mortality_base_year
+            ),
+            "runtime": {
+                "alternative": model.alternative,
+                "base_year": model.base_year,
+            },
+        }
+    a3_cap = inputs.cohort.diagnostics.get("a3_spec", {}).get(
+        "claim_table_max_year"
+    )
+    checks["claim_table_max_year"] = {
+        "expected": config.claim_table_max_year,
+        "consistent": a3_cap == config.claim_table_max_year,
+        "runtime_a3_opening_imputation": a3_cap,
+    }
+    return {
+        "tr2008_values_compared": compare_tr2008_values,
+        "consistent": all(check["consistent"] for check in checks.values()),
+        "checks": checks,
+    }
+
+
 def _mortality_record(model: Any) -> dict[str, Any]:
     """What population mortality the run used, and the gap if it is flat."""
 
@@ -340,14 +469,80 @@ def _reduced_increase_summary(rows: list[dict]) -> dict[str, Any]:
     return out
 
 
+_COMPONENT_SHARE_DEFINITION = (
+    "per draw and age group: each selected component's share of the "
+    "weighted baseline benefit total, sum_i w_i B_base[i, c] / sum_i w_i "
+    "B_base[i], over the rows the tabulation receives; reported as the "
+    "mean over draws in which the total is positive.  A1 section 16 asks "
+    "for 'weighted component shares' without saying whether persons or "
+    "amounts are weighted; this reports amounts, so a dually entitled "
+    "person's components each count at their own amount"
+)
+
+
+def _component_shares(
+    rows: list[dict],
+    components: tuple[str, ...],
+    draw_indices: tuple[int, ...],
+) -> dict[str, Any]:
+    """A1 section 16 cell diagnostic: weighted component shares."""
+
+    frame = pd.DataFrame(
+        [
+            {
+                "draw": row["draw"],
+                "age": row["age_reference"],
+                **{
+                    name: row["weight"]
+                    * row["benefit_components"].get(name, {}).get("base", 0.0)
+                    for name in components
+                },
+            }
+            for row in rows
+        ],
+        columns=["draw", "age", *components],
+    )
+    by_group: dict[str, Any] = {}
+    for group in DEFAULT_AGE_GROUPS:
+        mask = frame["age"] >= group.lower
+        if group.upper is not None:
+            mask &= frame["age"] <= group.upper
+        per_draw = []
+        for draw in draw_indices:
+            totals = frame.loc[
+                mask & (frame["draw"] == draw), components
+            ].sum()
+            total = float(totals.sum())
+            if total > 0.0:
+                per_draw.append(totals / total)
+        by_group[group.label] = {
+            "draws_defined": len(per_draw),
+            "mean_share": (
+                None
+                if not per_draw
+                else {
+                    name: float(np.mean([shares[name] for shares in per_draw]))
+                    for name in components
+                }
+            ),
+        }
+    return {"definition": _COMPONENT_SHARE_DEFINITION, "by_group": by_group}
+
+
 def run_track_a(
     inputs: TrackAInputs,
     *,
     config: TrackAConfig | None = None,
     registration_pointer: str | None = None,
     progress: Callable[[str], None] | None = None,
+    check_tr2008_parameters: bool = False,
 ) -> dict[str, Any]:
-    """Project, compute benefits and tabulate every configured row."""
+    """Project, compute benefits and tabulate every configured row.
+
+    ``check_tr2008_parameters`` compares the baseline COLA and the AWI
+    with the committed TR2008 capture that ``config`` names (always done
+    for a ``registered_real`` cohort, which refuses any mismatch).
+    """
 
     config = config or TrackAConfig()
     config.check_runnable()
@@ -358,6 +553,23 @@ def run_track_a(
             "comment exists; pass its pointer to run a registered_real cohort"
         )
     floor_minima = _check_floor(inputs, config)
+    real = cohort.data_provenance == REGISTERED_REAL
+    consistency = _parameter_consistency(
+        inputs,
+        config,
+        compare_tr2008_values=real or check_tr2008_parameters,
+    )
+    if real and not consistency["consistent"]:
+        failed = sorted(
+            name
+            for name, check in consistency["checks"].items()
+            if not check["consistent"]
+        )
+        raise ValueError(
+            "the inputs differ from the parameters the configuration "
+            f"reports for this run: {failed}; a registered run refuses "
+            "a mismatch"
+        )
     schedule = claiming_schedule(
         inputs.claiming_pmf, max_table_year=config.claim_table_max_year
     )
@@ -476,6 +688,9 @@ def run_track_a(
             "reduced_increases_by_age_group": _reduced_increase_summary(
                 rows_by_row[row_id]
             ),
+            "component_shares_by_age_group": _component_shares(
+                rows_by_row[row_id], row.components, config.draw_indices
+            ),
             "tabulation": tabulation,
         }
     return {
@@ -487,6 +702,7 @@ def run_track_a(
         "pending_decisions": pending_decisions(config),
         "rows_not_built": dict(ROWS_NOT_BUILT),
         "reduced_rate_minimum_by_row": floor_minima,
+        "parameter_consistency": consistency,
         "cohort": dict(cohort.diagnostics),
         "scheduled_entrants": 0,
         "population_mortality": _mortality_record(inputs.population_mortality),

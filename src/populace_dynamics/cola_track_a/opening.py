@@ -22,7 +22,11 @@ beneficiaries"):
 * retired workers: birth year + 62;
 * disabled workers, and survivors or spouses under 62 in 2010: the A3
   receipt start (``opening_claim_year``, else its upper bound), which is
-  never earlier than the observations allow;
+  never earlier than the observations allow; a disabled worker whose
+  receipt starts after the year of attaining 62 (possible only under a
+  non-default A3 ``aged_m4_disabled_di_below_age`` or ``status_rule``)
+  keeps the age-62 clock (A5 reading; see
+  :mod:`~populace_dynamics.cola_track_a.benefits`);
 * survivors and spouses aged 62 or older in 2010: the linked worker's
   clock (birth year + 62, or the year of death when the worker died
   before 62) when A3 links the worker, otherwise the person's own birth
@@ -220,6 +224,15 @@ def _opening_record(
     birth = int(row.birth_year)
     if status == OpeningStatus.RETIRED_WORKER.value:
         clock_year, rule = birth + _RETIREMENT_AGE, "own_birth_plus_62"
+    elif (
+        status == OpeningStatus.DISABLED_WORKER.value
+        and receipt_start > birth + _RETIREMENT_AGE
+    ):
+        # Only a non-default A3 spec (aged_m4_disabled_di_below_age, or
+        # status_rule=reported_type) yields a disabled worker whose
+        # receipt starts after 62; the PIA already runs on the age-62
+        # clock (benefits module docstring).
+        clock_year, rule = birth + _RETIREMENT_AGE, "own_birth_plus_62_di"
     elif status == OpeningStatus.DISABLED_WORKER.value or (
         int(row.age_2010) < _RETIREMENT_AGE
     ):

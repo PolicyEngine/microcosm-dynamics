@@ -11,6 +11,7 @@ reads PSID or a comparator value.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -137,9 +138,39 @@ def test_end_to_end_with_committed_rates_on_an_invented_cohort():
             claiming_pmf=claiming_pmf,
         ),
         config=config,
+        check_tr2008_parameters=True,
     )
+    consistency = result["parameter_consistency"]
+    assert consistency["tr2008_values_compared"] is True
+    assert consistency["consistent"] is True, consistency
     for row in result["rows"].values():
         assert row["status"] == "tabulated", row["status"]
     flows = result["draws"]["0"]["di_stock_flow"]
     assert [row["year"] for row in flows] == list(range(2011, 2031))
     assert result["reduced_rate_minimum_by_row"]["R0"] == pytest.approx(0.015)
+
+
+def test_registered_run_refuses_inputs_the_config_does_not_name():
+    # INVENTED cohort labelled registered_real only to reach the interlock;
+    # the refusal comes before any projection.  The baseline keeps the
+    # realized 2008 rate although the config names TR2008 from 2008.
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    claiming_pmf = load_claiming_pmf()
+    a3 = psid2010.build_psid2010_cohort(
+        invented.invented_psid2010_inputs(claiming_pmf=claiming_pmf)
+    )
+    cohort = prepare_track_a_cohort(
+        a3, data_provenance="invented", config=config
+    )
+    inputs = TrackAInputs(
+        cohort=replace(cohort, data_provenance="registered_real"),
+        params=tr2008_ssa_parameters(_invented_params()),
+        baseline=tr2008_baseline_cola(load_cola_history(), first_year=2009),
+        di_rates=load_di_entitlement_rates(config.di_spec),
+        population_mortality=load_tr2008_mortality(range(2011, 2031)),
+        claiming_pmf=claiming_pmf,
+    )
+    with pytest.raises(ValueError, match=r"differ.*cola_path"):
+        run_track_a(
+            inputs, config=config, registration_pointer="INVENTED-POINTER"
+        )

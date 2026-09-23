@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import replace
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -29,6 +30,7 @@ from populace_dynamics.cola_track_a import (
     run_track_a,
 )
 from populace_dynamics.cola_track_a import benefits as track_benefits
+from populace_dynamics.cola_track_a import opening as opening_module
 from populace_dynamics.cola_track_a.adapters import (
     adopt_marital_state,
     claiming_schedule,
@@ -43,7 +45,10 @@ from populace_dynamics.cola_track_a.opening import (
     OpeningStockRecord,
     TrackACohort,
 )
-from populace_dynamics.cola_track_a.runner import a1_parameter_block
+from populace_dynamics.cola_track_a.runner import (
+    _component_shares,
+    a1_parameter_block,
+)
 from populace_dynamics.engine.di_entitlement_rates import (
     MAX_AGE,
     DIEntitlementRates,
@@ -59,6 +64,7 @@ from populace_dynamics.estimates.cola_age_profile import (
     INVENTED_DATA_LABEL,
 )
 from populace_dynamics.estimates.parameters import COLASeries
+from populace_dynamics.ss import benefits
 from populace_dynamics.ss.params import SSAParameters
 
 SHAPE = (2, MAX_AGE + 1)
@@ -806,3 +812,277 @@ def test_a_flat_population_mortality_is_recorded_as_a_gap(cohort):
     assert "no year axis" in flat["population_mortality"]["gap"]
     aware = run_track_a(_inputs(cohort), config=config)
     assert aware["population_mortality"]["year_aware"] is True
+
+
+# --------------------------------------------------------------------------
+# Review fixes (all INVENTED data)
+# --------------------------------------------------------------------------
+def test_approximate_pia_indexes_to_the_second_year_before_eligibility():
+    params = invented_params()
+    career = _career(40_000.0, 1970)
+    # At the age-62 year the approximation is the oracle's retirement PIA.
+    retirement = sb.eligibility_pia_for_clock(
+        sb.WorkerClock.at_age_62(1970),
+        history=career,
+        birth_year=1970,
+        params=params,
+    )
+    assert track_benefits.approximate_pia(
+        career,
+        birth_year=1970,
+        computation_end_year=2032,
+        eligibility_year=2032,
+        params=params,
+    ) == pytest.approx(retirement, abs=0.0)
+    # An onset in 2015 (age 45) indexes to 2013, the second year before
+    # the onset year whose bend points the PIA uses.
+    kept = {year: value for year, value in career.items() if year <= 2015}
+    assert benefits.indexed_history(kept, 2015 - 62, params)[2000] == (
+        pytest.approx(40_000.0 * params.nawi[2013] / params.nawi[2000])
+    )
+    expected = benefits.pia(
+        benefits.aime(kept, 2015 - 62, params), 2015, params
+    )
+    approximation = track_benefits.approximate_pia(
+        career,
+        birth_year=1970,
+        computation_end_year=2015,
+        eligibility_year=2015,
+        params=params,
+    )
+    assert approximation == pytest.approx(expected, abs=0.0)
+    # Indexing to age 60 (2030) against 2015 bend points overstated it.
+    age_60_indexed = benefits.pia(
+        benefits.aime(kept, 1970, params), 2015, params
+    )
+    assert age_60_indexed > approximation
+
+
+def _di_state(person_id, birth, **values):
+    return _state(
+        person_id, birth, 2030, marital_status="never_married", **values
+    )
+
+
+def test_di_award_after_62_keeps_the_age_62_clock():
+    # INVENTED: 1 (born 1954) claimed at 62 in 2016, was awarded DI in
+    # 2019 and converted at FRA (66) in 2020.  2 (born 1960) was awarded
+    # DI in 2015 at 55 and converted in 2026.
+    persons = [_static(1, 1954), _static(2, 1960)]
+    careers = {1: _career(45_000.0, 1954), 2: _career(30_000.0, 1960)}
+    final = [
+        _di_state(
+            1,
+            1954,
+            claimed=True,
+            claim_year=2016,
+            di_award_year=2019,
+            di_conversion_year=2020,
+        ),
+        _di_state(
+            2,
+            1960,
+            claimed=True,
+            claim_year=2026,
+            di_award_year=2015,
+            di_conversion_year=2026,
+        ),
+    ]
+    initial = [
+        _state(1, 1954, 2010, marital_status="never_married"),
+        _state(2, 1960, 2010, marital_status="never_married"),
+    ]
+    cohort, projection = _handmade_cohort(persons, careers, final, initial)
+    params = invented_params()
+    context = track_benefits.BenefitContext(
+        cohort=cohort, params=params, baseline=invented_cola(), config=CONFIG
+    )
+    by_row = {}
+    for row_id in ("R0", "R2"):
+        rows, _ = track_benefits.reference_benefit_rows(
+            projection, draw=0, row=REGISTERED_ROWS[row_id], context=context
+        )
+        by_row[row_id] = {row["person_id"]: row for row in rows}
+    # R0: the PIA runs from 2016 (age 62), not from the 2019 award.
+    assert by_row["R0"][1]["reduced_increases"] == 2029 - 2016 + 1
+    assert set(by_row["R0"][1]["benefit_components"]) == {"retired_worker"}
+    level = track_benefits.approximate_pia(
+        careers[1],
+        birth_year=1954,
+        computation_end_year=2016,
+        eligibility_year=2016,
+        params=params,
+    )
+    path = sb.monthly_benefit_path(
+        eligibility_pia=level,
+        claim_age_factor=1.0,
+        eligibility_year=2016,
+        cola=sb.ScenarioCOLARates(
+            baseline=invented_cola(), reform=None, exposure_start_year=2016
+        ),
+        horizon_year=2030,
+    )
+    assert by_row["R0"][1]["benefit_base"] == pytest.approx(12 * path[2030])
+    # R2 keeps the award year as the entitlement year.
+    assert by_row["R2"][1]["reduced_increases"] == 2029 - 2019 + 1
+    # An award before 62 keeps the award clock under both rows.
+    assert by_row["R0"][2]["reduced_increases"] == 2029 - 2015 + 1
+    assert by_row["R2"][2]["reduced_increases"] == 2029 - 2015 + 1
+
+
+def test_converted_opening_disabled_worker_is_reported_as_retired_worker():
+    # INVENTED opening disabled workers: 1 (born 1950) converted at FRA in
+    # 2016; 2 (born 1975) is still entitled in 2030.
+    persons = [_static(1, 1950), _static(2, 1975)]
+    careers = {1: _career(0.0, 1950), 2: _career(0.0, 1975)}
+    final = [
+        _di_state(
+            1,
+            1950,
+            claimed=True,
+            claim_year=2016,
+            di_award_year=2004,
+            di_conversion_year=2016,
+        ),
+        _di_state(2, 1975, di_entitled=True, di_award_year=2006),
+    ]
+    initial = [
+        _state(1, 1950, 2010, marital_status="never_married"),
+        _state(2, 1975, 2010, marital_status="never_married"),
+    ]
+    cohort, projection = _handmade_cohort(persons, careers, final, initial)
+    cohort.persons["opening_status"] = "disabled_worker"
+    cohort.persons["ss_receipt_2010"] = pd.array([True, True], "boolean")
+    opening = {
+        pid: OpeningStockRecord(
+            person_id=pid,
+            status="disabled_worker",
+            component="disabled_worker",
+            observed_annual_amount=12_000.0,
+            clock_year=clock,
+            clock_rule="a3_receipt_start",
+            entitlement_year=clock,
+            entitlement_clamped=False,
+        )
+        for pid, clock in ((1, 2004), (2, 2006))
+    }
+    cohort = replace(cohort, opening=opening)
+    context = track_benefits.BenefitContext(
+        cohort=cohort,
+        params=invented_params(),
+        baseline=invented_cola(),
+        config=CONFIG,
+    )
+    rows, counters = track_benefits.reference_benefit_rows(
+        projection, draw=0, row=REGISTERED_ROWS["R0"], context=context
+    )
+    by_id = {row["person_id"]: row for row in rows}
+    assert counters["beneficiaries_opening_stock"] == 2
+    assert set(by_id[1]["benefit_components"]) == {"retired_worker"}
+    assert set(by_id[2]["benefit_components"]) == {"disabled_worker"}
+    expected = track_benefits.opening_stock_amounts(
+        opening[1],
+        baseline=invented_cola(),
+        reform=sb.COLAReform(),
+        exposure_start_year=2004,
+        observed_payment_year=2010,
+        payment_year=2030,
+        round_to_dime=False,
+    )
+    assert by_id[1]["benefit_base"] == pytest.approx(12 * expected[0])
+    assert by_id[1]["benefit_reform"] == pytest.approx(12 * expected[1])
+    assert by_id[1]["reduced_increases"] == 21
+
+
+def test_opening_disabled_worker_receiving_after_62_keeps_the_age_62_clock():
+    # INVENTED row shapes: a non-default A3 spec can classify a 64-year-old
+    # first observed receiving in 2010 as a disabled worker.
+    config = TrackAConfig(draw_indices=(0,))
+
+    def row(age, receipt):
+        return SimpleNamespace(
+            person_id=1,
+            opening_status="disabled_worker",
+            age_2010=age,
+            birth_year=2010 - age,
+            opening_claim_year=receipt,
+            opening_claim_year_upper_bound=2010,
+            ss_2010=9_000,
+            linked_spouse_birth_year=pd.NA,
+        )
+
+    aged, _ = opening_module._opening_record(row(64, 2010), config)
+    assert (aged.clock_year, aged.clock_rule) == (
+        1946 + 62,
+        "own_birth_plus_62_di",
+    )
+    assert aged.entitlement_year == 2010
+    young, _ = opening_module._opening_record(row(50, 2010), config)
+    assert (young.clock_year, young.clock_rule) == (2010, "a3_receipt_start")
+
+
+def test_parameter_consistency_is_recorded(result):
+    record = result["parameter_consistency"]
+    # Unit tests use invented parameters and never read the TR2008 capture.
+    assert record["tr2008_values_compared"] is False
+    checks = record["checks"]
+    assert set(checks) == {"di_spec", "mortality", "claim_table_max_year"}
+    assert checks["di_spec"]["consistent"] is True
+    assert checks["claim_table_max_year"]["consistent"] is True
+    # The invented mortality model is labelled INVENTED, not intermediate.
+    assert checks["mortality"]["consistent"] is False
+    assert record["consistent"] is False
+
+
+def test_mismatched_di_spec_is_recorded(cohort):
+    config = TrackAConfig(
+        draw_indices=(0,),
+        rows=("R0",),
+        di_spec=DIEntitlementSpec(post_conversion_mortality="population"),
+    )
+    run = run_track_a(_inputs(cohort), config=config)
+    check = run["parameter_consistency"]["checks"]["di_spec"]
+    assert check["consistent"] is False
+    assert check["runtime"]["post_conversion_mortality"] == "di_origin"
+
+
+def test_component_shares_are_weighted_baseline_amount_shares(result):
+    # INVENTED rows: draw 0 has a retired worker (weight 2, $10,000) and a
+    # widow with $6,000 own and $4,000 widow's excess (weight 1), both 70.
+    rows = [
+        {
+            "draw": 0,
+            "age_reference": 70,
+            "weight": 2.0,
+            "benefit_components": {
+                "retired_worker": {"base": 10_000.0, "reform": 1.0}
+            },
+        },
+        {
+            "draw": 0,
+            "age_reference": 70,
+            "weight": 1.0,
+            "benefit_components": {
+                "retired_worker": {"base": 6_000.0, "reform": 1.0},
+                "aged_widow": {"base": 4_000.0, "reform": 1.0},
+            },
+        },
+    ]
+    shares = _component_shares(rows, ("retired_worker", "aged_widow"), (0,))
+    cell = shares["by_group"]["70-79"]
+    assert cell["draws_defined"] == 1
+    assert cell["mean_share"] == pytest.approx(
+        {"retired_worker": 26_000 / 30_000, "aged_widow": 4_000 / 30_000}
+    )
+    assert shares["by_group"]["50-61"] == {
+        "draws_defined": 0,
+        "mean_share": None,
+    }
+    for row_id, row in result["rows"].items():
+        for cell in row["component_shares_by_age_group"]["by_group"].values():
+            if cell["mean_share"] is None:
+                continue
+            assert set(cell["mean_share"]) == set(
+                REGISTERED_ROWS[row_id].components
+            )
+            assert sum(cell["mean_share"].values()) == pytest.approx(1.0)

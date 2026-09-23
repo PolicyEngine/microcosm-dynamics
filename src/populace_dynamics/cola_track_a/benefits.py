@@ -20,13 +20,25 @@ Who receives what (A5 conventions; A1 section 11 where it speaks):
   keeps the observed 2010 amount carried forward on the baseline path,
   with the reform ratio from the reformed increases on the record's
   clock.  Later simulated widowhood, a spouse's entitlement or conversion
-  at FRA change nothing.  A simulated DI recovery ends a disabled
-  worker's opening basis (rule 4 does not list recovery); the person is
-  then treated like anyone else.
+  at FRA change neither the amount nor the reduced increases; a disabled
+  worker converted at FRA is reported under the retired-worker component
+  (A1 section 11 counts converted disabled workers as retired workers).
+  A simulated DI recovery ends a disabled worker's opening basis (rule 4
+  does not list recovery); the person is then treated like anyone else.
 * **Own worker benefit**: an entitled disabled worker (A4), a converted
   disabled worker (retired-worker component, disability clock kept), or
   a simulated retirement claimant (age-62 clock, claim-age factor from
-  the oracle's ``claiming.benefit_factor``).
+  the oracle's ``claiming.benefit_factor``).  A disability clock never
+  starts after the year the worker attains 62.  This is an A5 reading of
+  the A1 statute excerpts, not an A1 ruling: 415(a)(3)(B)(i) deems a
+  worker eligible for old-age benefits from the month of attaining 62,
+  and 415(i)(2)(A)(iii) increases the primary insurance amount of an
+  individual who becomes eligible for an old-age or disability benefit
+  by that year's and later increases "without regard to the time of
+  entitlement".  So an A4 award at 62 or later (A4 exposes retirement
+  claimants below FRA) keeps the age-62 clock the PIA already runs on.
+  Under the entitlement clock (R2) the award year is kept, as the A1
+  section 6 table gives it for a disabled worker.
 * **Spouse's excess**: a claimant married, in the reference state, to a
   living worker with an own benefit, from the later of the two
   entitlement years, at 62 or older.
@@ -122,12 +134,21 @@ def approximate_pia(
 ) -> float:
     """Disclosed approximation for a level the oracle does not compute.
 
-    The oracle's retirement AIME (highest 35 indexed years, indexing to
-    the year of attaining 60, missing years as zero) over the career
-    through ``computation_end_year``, then the oracle's PIA formula at
-    ``eligibility_year``'s bend points.  It is not the statutory DI or
-    pre-eligibility-death computation (no elapsed or dropout years, no
-    indexing to the second year before onset or death), so it
+    The oracle's AIME (``benefits.aime``: highest 35 indexed years,
+    missing years as zero) over the career through
+    ``computation_end_year``, then the oracle's PIA formula at
+    ``eligibility_year``'s bend points.  The oracle indexes earnings to
+    the year its ``birth_year`` argument attains 60; this function passes
+    ``min(birth_year, eligibility_year - 62)``, so earnings are indexed
+    to the second year before ``eligibility_year`` (the oracle's own
+    age-60 year when ``eligibility_year`` is the year of attaining 62).
+    The AIME and the bend points are then on the same year's wage level.
+    Indexing to age 60 with an earlier year's bend points would put the
+    AIME on a later wage level than the bend points and overstate the
+    level of an early onset or death.
+
+    It is not the statutory DI or pre-eligibility-death computation: the
+    divisor is always 35 years (no elapsed or dropout years), so it
     understates short careers.  It sets a weight, never a reform ratio.
     """
 
@@ -136,7 +157,10 @@ def approximate_pia(
         for year, earnings in history.items()
         if int(year) <= int(computation_end_year)
     }
-    aime = benefits.aime(kept, int(birth_year), params)
+    indexing_birth_year = min(
+        int(birth_year), int(eligibility_year) - _RETIREMENT_AGE
+    )
+    aime = benefits.aime(kept, indexing_birth_year, params)
     return benefits.pia(aime, int(eligibility_year), params)
 
 
@@ -262,7 +286,11 @@ class _Calculator:
                 raise ValueError(
                     f"person {person_id} is DI-origin without an award year"
                 )
-            return self._di_record(person_id, award, award, converted)
+            # The PIA already runs on the age-62 clock when A4 awards at
+            # 62 or later (module docstring); the award year stays the
+            # entitlement year that R2 reads.
+            eligibility = min(award, birth + _RETIREMENT_AGE)
+            return self._di_record(person_id, eligibility, award, converted)
         if status in _OPENING_AUX:
             return None
         if not bool(state["claimed"]):
@@ -429,8 +457,18 @@ class _Calculator:
 
     # ---- people -------------------------------------------------------
     def opening_person(
-        self, record: OpeningStockRecord
+        self, record: OpeningStockRecord, state: Any
     ) -> tuple[dict[str, tuple[float, float]], int]:
+        component = record.component
+        if (
+            component == "disabled_worker"
+            and _nullable_int(state["di_conversion_year"]) is not None
+        ):
+            # A1 section 11: retired workers include disabled workers
+            # converted at FRA.  The amount and T_i stay on the opening
+            # basis (rule 4); only the component label follows the
+            # conversion.
+            component = "retired_worker"
         exposure = record.clock_year
         if self.row.exposure_clock is sb.ExposureClock.ENTITLEMENT:
             exposure = record.entitlement_year
@@ -453,7 +491,7 @@ class _Calculator:
             round_to_dime=self.ctx.config.opening_stock_dime_floor,
         )
         return (
-            {record.component: (base, reform)},
+            {component: (base, reform)},
             self.reduced_count(record.clock_year, exposure),
         )
 
@@ -706,7 +744,7 @@ def reference_benefit_rows(
         if opener is None and not pd.isna(receipt) and bool(receipt):
             counters["opening_recipient_without_record"] += 1
         if opening_intact:
-            components, count = calculator.opening_person(opener)
+            components, count = calculator.opening_person(opener, state)
             basis = "opening_stock"
         else:
             components, count = calculator.projected_person(person_id, state)

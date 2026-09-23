@@ -28,14 +28,24 @@ source.
 | Claiming | `adapters.di_aware_claiming` | `engine.claiming.apply_claiming` on non-DI rows; `ClaimingSchedule` restricted to table rows at or before 2008 |
 | Household composition | `adapters.no_household_composition` | none |
 | Benefits | `benefits.reference_benefit_rows` | A6 `ScenarioCOLARates`, `increased_pia_path`, `monthly_benefit_path`, `spouse_excess_path`, `widow_benefit_path`, `eligibility_pia_for_clock`; oracle `claiming.benefit_factor` |
-| Tabulation | `runner.run_track_a` | A7 `tabulate_cola_age_profile`, one call per registered row |
+| Tabulation | `runner.run_track_a` | A7 `tabulate_cola_age_profile`, one call per registered row; the runner adds the A1 section 16 weighted component shares per cell (shares of the weighted baseline amount, which A7 does not compute) |
 
 Draw `k` has root entropy `5200 + k`. Mortality and claiming use the loop's
 person-ordinal streams, and DI uses A4's tagged person streams. Each draw
 is projected once. Every registered row reads that same projection, so
 both scenarios share every simulated path. Nothing is scheduled as an
-entrant. The runner still calls `entrant_schedule.validate_projection_allocator`
-on the projection metadata.
+entrant and no step creates a person. The runner still calls
+`entrant_schedule.validate_projection_allocator` on the projection
+metadata, but that metadata carries no allocator, so the check has
+nothing to test.
+
+The configuration names the TR2008 alternative, the first TR2008 rate
+year, the mortality base year, the DI specification and the claim-table
+cap, while the inputs are built separately. Every result records whether
+they agree (`parameter_consistency`). The COLA and AWI values are
+compared with the committed TR2008 capture when the caller asks
+(`check_tr2008_parameters`, which the dry run sets) and always for a
+`registered_real` cohort, which refuses any disagreement.
 
 ## Registered rows
 
@@ -61,8 +71,17 @@ components only.
   and survivors or spouses under 62: the A3 receipt start. Aged survivors
   or spouses: the linked worker's clock (birth year + 62, or the year of
   death when the worker died before 62), falling back to the person's own
-  birth year + 62. Projected disabled workers: the A4 award year. Projected
-  retirement claimants: birth year + 62.
+  birth year + 62. Projected disabled workers: the A4 award year, or
+  birth year + 62 when the award comes later (A4 exposes retirement
+  claimants below FRA). That exception is an A5 reading of the A1
+  statute excerpts, which A1 has not ruled on: 415(a)(3)(B)(i) deems a
+  worker eligible for old-age benefits from age 62, and 415(i)(2)(A)(iii)
+  increases the PIA from the year of eligibility "without regard to the
+  time of entitlement". Under R2 the award year stays the entitlement
+  year. Projected retirement claimants: birth year + 62.
+- **Components.** An opening-stock disabled worker converted at FRA is
+  reported under the retired-worker component (A1 section 11); the
+  amount and the reduced increases stay on the opening basis.
 - **Own benefit.** Entitled disabled worker, converted disabled worker
   (retired-worker component, disability clock kept) or retirement
   claimant (claim-age factor from the oracle).
@@ -81,9 +100,12 @@ components only.
   (`auxiliary_entitlement_clock`).
 - **Levels the oracle does not compute.** DI levels (decision 2(b)) and
   levels for workers who died before 62 follow `LevelPolicy`. The default
-  `approximate_pia` is the oracle's retirement AIME through the onset or
-  death year, with the PIA at that year's bend points. It is a weight,
-  never a ratio.
+  `approximate_pia` is the oracle's AIME over the career through the onset
+  or death year, indexed to the second year before that year (the oracle
+  indexes to its birth-year argument's age-60 year, and the function
+  passes onset or death year minus 62), with the PIA at that year's bend
+  points. The divisor stays 35 years (no elapsed or dropout years), so
+  it understates short careers. It is a weight, never a ratio.
 
 ## Parameters
 
@@ -114,7 +136,8 @@ The dry run's `result.json` carries the full list: mortality substitute,
 DI netting at single-year cells, no post-2010 earnings, no pre-1968
 earnings, approximated DI and pre-eligibility-death levels, spouses
 outside the roster, widow(er)s of workers who died before 2011, no
-projected disabled widow(er)s, no marriage dynamics, auxiliary
+projected disabled widow(er)s, the disability clock for awards at 62 or
+later, no marriage dynamics, auxiliary
 entitlement timing, the realized wage base, A7's person-level floor split
 (A1 section 16 asks for the family unit), A7's one-seed floor (A1 section
 16 asks for undefined), R6, opening-stock DI recovery, and claiming.

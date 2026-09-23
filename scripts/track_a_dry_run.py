@@ -102,10 +102,23 @@ GAPS: tuple[dict[str, str], ...] = (
     {
         "item": "DI and pre-eligibility-death levels",
         "gap": (
-            "disclosed oracle approximation (retirement AIME through the "
-            "onset or death year, PIA at that year's bend points); decision "
-            "2(b) default, and an A5 builder choice for deaths before 62. "
-            "Weights only"
+            "disclosed oracle approximation (the oracle's AIME over the "
+            "career through the onset or death year, indexed to the second "
+            "year before it, divided by 35 years with no elapsed or dropout "
+            "years; PIA at that year's bend points); decision 2(b) default, "
+            "and an A5 builder choice for deaths before 62. Weights only"
+        ),
+    },
+    {
+        "item": "Disability clock for awards at 62 or later",
+        "gap": (
+            "A4 exposes retirement claimants below FRA to DI awards; A5 "
+            "keeps such a worker's eligibility clock at the year of "
+            "attaining 62 (its reading of 415(a)(3)(B)(i) and "
+            "415(i)(2)(A)(iii)), not the award year the A1 section 6 table "
+            "gives for a disabled worker; R2 keeps the award year. The DI "
+            "benefit replaces the retirement benefit and carries no "
+            "claim-age reduction. A1 has not ruled on this case"
         ),
     },
     {
@@ -326,8 +339,8 @@ def _results_markdown(result: dict[str, Any]) -> str:
     lines += [
         "",
         "R3 reports the mean of individual ratios; every other row the "
-        "ratio of scenario means. Floors, per-draw cells and counts are in "
-        "`result.json`.",
+        "ratio of scenario means. Floors, per-draw cells, counts and the "
+        "weighted component shares of each cell are in `result.json`.",
         "",
         "## Checks",
         "",
@@ -342,8 +355,13 @@ def _results_markdown(result: dict[str, Any]) -> str:
         + " (the A1 floor assertion requires every one to be positive).",
         "- A4 DI stock-flow identity held in every year of every draw "
         "(`di_stock_flow` raises otherwise).",
-        "- Scheduled entrants: 0; the entrant allocator check ran on the "
-        "projection metadata.",
+        "- Scheduled entrants: 0, and no step creates a person. The "
+        "projection metadata carries no allocator, so the entrant "
+        "allocator check had nothing to test.",
+        "- Configuration against inputs (TR2008 COLA path and AWI, "
+        "mortality alternative and base year, DI specification, claim "
+        "table cap): consistent = "
+        f"{result['parameter_consistency']['consistent']}.",
         "",
         "## Diagnostics per draw",
         "",
@@ -407,12 +425,20 @@ def main(argv: list[str] | None = None) -> int:
         a3_cohort, data_provenance="invented", config=config
     )
     base_params = load_ssa_parameters()
-    params = tr2008_ssa_parameters(base_params)
+    params = tr2008_ssa_parameters(
+        base_params, alternative=config.tr2008_alternative
+    )
     realized = load_cola_history()
-    baseline = tr2008_baseline_cola(realized)
+    baseline = tr2008_baseline_cola(
+        realized,
+        first_year=config.tr2008_first_rate_year,
+        last_year=config.reference_year,
+        alternative=config.tr2008_alternative,
+    )
     di_rates = load_di_entitlement_rates(config.di_spec)
     mortality = load_tr2008_mortality(
         range(config.start_year + 1, config.reference_year + 1),
+        alternative=config.tr2008_alternative,
         base_year=config.mortality_base_year,
     )
     provenance = {
@@ -441,7 +467,13 @@ def main(argv: list[str] | None = None) -> int:
         ),
         config=config,
         progress=lambda message: print(message, file=sys.stderr),
+        check_tr2008_parameters=True,
     )
+    if not result["parameter_consistency"]["consistent"]:
+        raise ValueError(
+            "the dry-run inputs differ from the configuration: "
+            f"{result['parameter_consistency']}"
+        )
     result = {
         "header": DRY_RUN_HEADER,
         **result,
