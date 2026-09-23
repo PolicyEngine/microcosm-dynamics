@@ -1744,3 +1744,77 @@ def test_dry_run_names_unassessed_spouses_unobserved_ss_and_refusals():
     } & set(gaps)
     assert not any("not built" in gap for gap in gaps.values())
     assert "censored at 2008" in gaps["R6 opening receipt start"]
+
+
+def test_dry_run_lists_undefined_cells_and_floors_with_reasons():
+    import importlib.util
+    from pathlib import Path
+
+    path = (
+        Path(__file__).resolve().parents[2] / "scripts" / "track_a_dry_run.py"
+    )
+    spec = importlib.util.spec_from_file_location("track_a_dry_run", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    def floor(defined, n_seeds, dropped, reason=None):
+        return {
+            "defined": defined,
+            "undefined_reason": reason,
+            "mean": 1.0 if defined else None,
+            "n_seeds": n_seeds,
+            "dropped_seeds": dropped,
+        }
+
+    # INVENTED tabulation fragments: one undefined cell, one undefined
+    # floor and one floor that dropped a seed.
+    groups = [
+        {
+            "label": "80+",
+            "ratio_of_scenario_means": {
+                "floor": floor(False, 1, [1, 2, 3, 4], "fewer than 2")
+            },
+            "mean_of_individual_ratios": {"floor": floor(True, 4, [3])},
+        }
+    ]
+    result = {
+        "rows": {
+            "R0": {
+                "tabulation": {
+                    "groups": groups,
+                    "undefined_cells": [
+                        {
+                            "group": "80+",
+                            "statistic": "ratio_of_scenario_means",
+                            "n_defined_draws": 1,
+                            "undefined_draws": [
+                                {
+                                    "draw": 2,
+                                    "reason": "empty_baseline_membership",
+                                }
+                            ],
+                        }
+                    ],
+                }
+            },
+            "R1": {"tabulation": None},
+        }
+    }
+    lines = module._undefined_lines(result)
+    assert lines == [
+        "- R0, 80+, ratio_of_scenario_means: 1 draws defined (draw 2: "
+        "empty_baseline_membership).",
+        "- R0, 80+, ratio_of_scenario_means floor: undefined (fewer than "
+        "2; 1 usable seeds).",
+        "- R0, 80+, mean_of_individual_ratios floor: defined on 4 usable "
+        "seeds; seeds [3] dropped because a half's cell is undefined (A1 "
+        "section 16).",
+    ]
+    stat = {
+        "defined": False,
+        "n_defined_draws": 1,
+        "floor": floor(False, 1, [1, 2, 3, 4], "fewer than 2"),
+    }
+    assert module._cell_text(stat, 3) == (
+        "undefined (1 of 3 draws defined) [undefined]"
+    )

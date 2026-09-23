@@ -353,11 +353,19 @@ def _undefined_lines(result: dict[str, Any]) -> list[str]:
                 "mean_of_individual_ratios",
             ):
                 floor = group[statistic]["floor"]
+                dropped = floor.get("dropped_seeds") or []
                 if not floor["defined"]:
                     lines.append(
                         f"- {row_id}, {group['label']}, {statistic} floor: "
                         f"undefined ({floor['undefined_reason']}; "
                         f"{floor['n_seeds']} usable seeds)."
+                    )
+                elif dropped:
+                    lines.append(
+                        f"- {row_id}, {group['label']}, {statistic} floor: "
+                        f"defined on {floor['n_seeds']} usable seeds; seeds "
+                        f"{dropped} dropped because a half's cell is "
+                        "undefined (A1 section 16)."
                     )
     return lines
 
@@ -472,14 +480,15 @@ def _results_markdown(result: dict[str, Any]) -> str:
     lines += [""]
     if undefined:
         lines += [
-            "Undefined draw summaries and floors, each with its reason "
-            "(A1 sections 7 and 16):",
+            "Undefined draw summaries and floors, and floors that dropped "
+            "a seed, each with its reason (A1 sections 7 and 16):",
             "",
             *undefined,
         ]
     else:
         lines.append(
-            "No draw summary or floor of any row is undefined in this run."
+            "No draw summary or floor of any row is undefined, and no floor "
+            "dropped a seed, in this run."
         )
     consistency = result["parameter_consistency"]
     lines += [
