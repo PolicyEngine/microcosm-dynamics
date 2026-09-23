@@ -17,6 +17,9 @@ POINTER = (
     "#issuecomment-1"
 )
 COMMIT = "a" * 40
+#: An INVENTED ratified A1 block header: A1 has not been ratified, so only
+#: a stand-in can pass the specification check.
+RATIFIED = {"status": "ratified_frozen", "version": "a1-ratified-1"}
 
 
 def _script():
@@ -44,6 +47,7 @@ def test_the_registered_state_passes(tmp_path):
         registered_commit=COMMIT,
         output=tmp_path / "run.json",
         git=_git(),
+        specification=RATIFIED,
     )
     assert state == {"head": COMMIT}
 
@@ -52,11 +56,48 @@ def test_the_registered_state_passes(tmp_path):
     ("kwargs", "match"),
     [
         ({"registration_pointer": "https://example.org/x"}, "issue #42"),
+        # Another issue whose number starts with 42.
+        (
+            {
+                "registration_pointer": (
+                    "https://github.com/PolicyEngine/microcosm-dynamics/"
+                    "issues/420#issuecomment-1"
+                )
+            },
+            "issue #42",
+        ),
+        # The issue itself, not a registration comment on it.
+        (
+            {
+                "registration_pointer": (
+                    "https://github.com/PolicyEngine/microcosm-dynamics/"
+                    "issues/42"
+                )
+            },
+            "issue #42",
+        ),
         ({"registered_commit": "abc123"}, "full 40-hex"),
+        ({"registered_commit": "g" * 40}, "full 40-hex"),
         ({"git": _git(head="b" * 40)}, "is not the registered commit"),
         ({"git": _git(porcelain=" M src/x.py")}, "clean"),
+        # The A1 block as committed today: a ratification candidate.
+        ({"specification": None}, "authorizes no run"),
+        (
+            {"specification": {**RATIFIED, "version": "a1-draft-3"}},
+            "authorizes no run",
+        ),
     ],
-    ids=["pointer", "short-sha", "wrong-head", "dirty-tree"],
+    ids=[
+        "pointer",
+        "other-issue",
+        "issue-not-comment",
+        "short-sha",
+        "non-hex-sha",
+        "wrong-head",
+        "dirty-tree",
+        "a1-candidate",
+        "a1-draft",
+    ],
 )
 def test_non_registered_states_are_refused(tmp_path, kwargs, match):
     arguments = {
@@ -64,6 +105,7 @@ def test_non_registered_states_are_refused(tmp_path, kwargs, match):
         "registered_commit": COMMIT,
         "output": tmp_path / "run.json",
         "git": _git(),
+        "specification": RATIFIED,
         **kwargs,
     }
     with pytest.raises(ValueError, match=match):
@@ -79,7 +121,17 @@ def test_an_existing_artifact_refuses_a_second_shot(tmp_path, existing):
             registered_commit=COMMIT,
             output=tmp_path / "run.json",
             git=_git(),
+            specification=RATIFIED,
         )
+
+
+def test_the_artifact_is_created_exclusively(tmp_path):
+    # A file that appears after the preflight is never overwritten.
+    target = tmp_path / "run.json"
+    _script()._write_new(target, "first\n")
+    with pytest.raises(FileExistsError):
+        _script()._write_new(target, "second\n")
+    assert target.read_text() == "first\n"
 
 
 def test_the_registration_pointer_and_commit_are_required():

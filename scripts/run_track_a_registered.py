@@ -4,14 +4,26 @@ This is the only entry point that computes the five-group 2030 COLA
 statistic on real data.  It runs once, after the issue #42 registration
 comment exists, at exactly the commit that comment registers:
 
+* the registration pointer must be a comment on issue #42
+  (``.../issues/42#issuecomment-<id>``);
 * the working tree must be clean and ``HEAD`` must equal
   ``--registered-commit``;
-* the output artifact must not exist yet (one shot, no overwrite);
+* the A1 specification must be ratified: its section 21 block may not
+  carry a candidate, draft or not-merged status or version (A1 says it
+  authorizes no run until Max ratifies it by merging, plan section 6
+  item 4);
+* the output artifact must not exist yet (one shot, no overwrite; it is
+  created exclusively, so a file that appears during the run is not
+  overwritten either);
 * the configuration is :class:`TrackAConfig`'s default, which the A1
   specification freezes (K=20 draws, rows R0-R6); no flag changes it;
 * every committed input is value-checked (``run_track_a`` refuses any
   mismatch for a ``registered_real`` cohort) and the cohorts carry the
-  provenance the A3 builder recorded from the PSID files it read.
+  provenance the A3 builder recorded from the PSID files it read;
+* as in the dry run, the A1 rate path must equal A2's ``cola_path`` and
+  the runtime baseline, and every registered row must equal the A1
+  block (``scripts/track_a_dry_run.py`` ``_spec_rate_check``), before
+  any projection.
 
 The artifact publishes regardless of outcome.  It never reads the sealed
 comparator; the seal is opened only after this artifact is committed.
@@ -35,6 +47,7 @@ import importlib.metadata
 import importlib.util
 import json
 import platform
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -56,6 +69,7 @@ from populace_dynamics.cola_track_a.mortality import (  # noqa: E402
 )
 from populace_dynamics.cola_track_a.runner import (  # noqa: E402
     A1_SPECIFICATION_PATH,
+    a1_parameter_block,
     load_claiming_pmf,
     tr2008_baseline_cola,
     tr2008_ssa_parameters,
@@ -79,6 +93,14 @@ REGISTERED_HEADER = (
     "Publishes regardless of outcome."
 )
 DEFAULT_OUTPUT = ROOT / "runs" / "replication_urban2010_cola_v1.json"
+#: A comment on issue #42, the registration issue (CLAUDE.md, plan item
+#: A9); nothing else is a registration pointer.
+REGISTRATION_POINTER = re.compile(
+    r"https://github\.com/PolicyEngine/microcosm-dynamics/issues/42"
+    r"#issuecomment-[0-9]+"
+)
+#: Markers of an A1 status or version that is not ratified.
+UNRATIFIED_MARKERS = ("candidate", "draft", "not_merged", "not_ratified")
 ENV_PACKAGES = (
     "numpy",
     "pandas",
@@ -101,15 +123,29 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def _dry_run_gaps() -> list[dict[str, str]]:
-    """The named gaps, read from the dry-run script so both stay identical."""
+def _dry_run_module() -> Any:
+    """The dry-run script, so its gaps and spec checks are the same here."""
 
     path = ROOT / "scripts" / "track_a_dry_run.py"
     spec = importlib.util.spec_from_file_location("_track_a_dry_run", path)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     spec.loader.exec_module(module)
-    return list(module.GAPS)
+    return module
+
+
+def check_specification_ratified(block: dict[str, Any]) -> None:
+    """Refuse an A1 block whose status or version is not ratified."""
+
+    for field in ("status", "version"):
+        value = str(block.get(field, ""))
+        if not value or any(mark in value for mark in UNRATIFIED_MARKERS):
+            raise ValueError(
+                f"the A1 specification {field} is {value!r}: A1 authorizes "
+                "no run until Max ratifies it by merging (plan section 6 "
+                "item 4), and the ratified text must say so in its section "
+                "21 block"
+            )
 
 
 def preflight(
@@ -118,16 +154,17 @@ def preflight(
     registered_commit: str,
     output: Path,
     git: Any = _git,
+    specification: dict[str, Any] | None = None,
 ) -> dict[str, str]:
     """Refuse to run unless this is the registered one-shot state."""
 
-    if not registration_pointer.startswith(
-        "https://github.com/PolicyEngine/microcosm-dynamics/issues/42"
-    ):
+    if not REGISTRATION_POINTER.fullmatch(registration_pointer):
         raise ValueError(
-            "the registration pointer must be the issue #42 comment URL"
+            "the registration pointer must be an issue #42 comment URL "
+            "(https://github.com/PolicyEngine/microcosm-dynamics/issues/42"
+            "#issuecomment-<id>)"
         )
-    if len(registered_commit) != 40:
+    if not re.fullmatch(r"[0-9a-f]{40}", registered_commit):
         raise ValueError("--registered-commit must be a full 40-hex SHA")
     head = git("rev-parse", "HEAD")
     if head != registered_commit:
@@ -136,11 +173,21 @@ def preflight(
         )
     if git("status", "--porcelain") != "":
         raise ValueError("the working tree must be clean for a registered run")
+    check_specification_ratified(
+        a1_parameter_block() if specification is None else specification
+    )
     if output.exists() or output.with_suffix(".env.json").exists():
         raise ValueError(
             f"{output} already exists: the registered run is one-shot"
         )
     return {"head": head}
+
+
+def _write_new(path: Path, text: str) -> None:
+    """Create ``path`` exclusively: never overwrite (one shot)."""
+
+    with path.open("x", encoding="utf-8") as handle:
+        handle.write(text)
 
 
 def _environment() -> dict[str, Any]:
@@ -194,6 +241,10 @@ def main(argv: list[str] | None = None) -> int:
         last_year=config.reference_year,
         alternative=config.tr2008_alternative,
     )
+    dry_run = _dry_run_module()
+    # The dry run's checks, before any projection: the A1 rate path equals
+    # A2's and the runtime baseline, and every row equals the A1 block.
+    spec_rate_check = dry_run._spec_rate_check(baseline)
     di_rates = load_di_entitlement_rates(config.di_spec)
     first_projection_year = min(config.start_years.values()) + 1
     mortality = load_tr2008_mortality(
@@ -243,7 +294,8 @@ def main(argv: list[str] | None = None) -> int:
         "publishes_regardless": True,
         "comparator_seal_opened_before_commit": False,
         **result,
-        "gaps": _dry_run_gaps(),
+        "checks": {"spec_rate_path": spec_rate_check},
+        "gaps": list(dry_run.GAPS),
         "run": {
             "started": started,
             "finished": datetime.datetime.now(
@@ -263,13 +315,13 @@ def main(argv: list[str] | None = None) -> int:
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(
+    _write_new(
+        args.output,
         json.dumps(artifact, indent=2, sort_keys=False, allow_nan=False)
         + "\n",
-        encoding="utf-8",
     )
-    sidecar = args.output.with_suffix(".env.json")
-    sidecar.write_text(
+    _write_new(
+        args.output.with_suffix(".env.json"),
         json.dumps(
             {
                 "artifact": args.output.name,
@@ -279,7 +331,6 @@ def main(argv: list[str] | None = None) -> int:
             indent=2,
         )
         + "\n",
-        encoding="utf-8",
     )
     print(args.output)
     return 0
