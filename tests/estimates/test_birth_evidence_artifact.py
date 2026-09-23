@@ -115,6 +115,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/cohorts/psid2010.py"),
         Path("src/populace_dynamics/engine/di_entitlement.py"),
         Path("src/populace_dynamics/engine/di_entitlement_rates.py"),
+        Path("src/populace_dynamics/scenario_benefits.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -349,6 +350,13 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         f"birth-evidence reducer: {leaked}"
     )
     assert "populace_dynamics.engine.steps" in reachable
+    scenario_module = "populace_dynamics.scenario_benefits"
+    assert scenario_module in module_paths
+    assert scenario_module not in reachable, (
+        "the opt-in scenario COLA benefit module became reachable from the "
+        "birth-evidence reducer"
+    )
+    assert "populace_dynamics.estimates.ledgers" in reachable
 
 
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():

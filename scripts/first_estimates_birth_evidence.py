@@ -205,6 +205,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # by the historical reducer or the engine package initializer.
     Path("src/populace_dynamics/engine/di_entitlement.py"),
     Path("src/populace_dynamics/engine/di_entitlement_rates.py"),
+    # The opt-in scenario COLA benefit paths (plan A6) generalize the sealed
+    # ledger path without editing it; nothing historical imports them.
+    Path("src/populace_dynamics/scenario_benefits.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
