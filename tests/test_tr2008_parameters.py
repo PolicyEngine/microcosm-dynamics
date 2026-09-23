@@ -553,6 +553,43 @@ def test__awi_path__default_sources_and_coverage_to_2030():
     assert [entry.year for entry in path] == list(range(2005, 2031))
 
 
+def test__contribution_benefit_base_path__v_c1_spot_values_and_sources():
+    # V.C1, PDF p.110 (printed p.102): $14,100 (1975), 94,200 (2006),
+    # 97,500 and 102,000 (2007-2008, footnote 7), then projections.
+    path = {
+        entry.year: entry
+        for entry in tr2008.contribution_benefit_base_path(1975, 2017)
+    }
+    assert list(path) == list(range(1975, 2018))
+    assert path[1975].amount == 14_100.0
+    assert path[2006].amount == 94_200.0
+    assert path[2007].amount == 97_500.0
+    assert path[2008].amount == 102_000.0
+    assert path[2009].amount == 106_500.0
+    assert path[2010].amount == 110_700.0
+    assert path[2017].amount == 145_500.0
+    assert {path[year].source for year in range(1975, 2007)} == {
+        "tr2008_v_c1_historical"
+    }
+    assert path[2007].source == path[2008].source == "tr2008_v_c1_actual"
+    assert {path[year].source for year in range(2009, 2018)} == {
+        "tr2008_v_c1_projected"
+    }
+    (low,) = tr2008.contribution_benefit_base_path(
+        2010, 2010, alternative="low_cost"
+    )
+    (high,) = tr2008.contribution_benefit_base_path(
+        2010, 2010, alternative="high_cost"
+    )
+    assert (low.amount, high.amount) == (111_300.0, 108_900.0)
+    with pytest.raises(KeyError, match="1974"):
+        tr2008.contribution_benefit_base_path(1974, 1975)
+    with pytest.raises(KeyError, match="2018"):
+        tr2008.contribution_benefit_base_path(2017, 2018)
+    with pytest.raises(ValueError, match="first_year"):
+        tr2008.contribution_benefit_base_path(2010, 2009)
+
+
 def test__awi_path__splice_chains_tr2008_growth_onto_realized_level():
     invented_realized = {2008: 50000.0}  # INVENTED
     path = tr2008.awi_path(

@@ -125,6 +125,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/cola_track_a/mortality.py"),
         Path("src/populace_dynamics/cola_track_a/opening.py"),
         Path("src/populace_dynamics/cola_track_a/runner.py"),
+        Path("src/populace_dynamics/cola_track_a/statutory.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -382,6 +383,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
             "mortality",
             "opening",
             "runner",
+            "statutory",
         )
     }
     assert track_a_modules.issubset(module_paths)

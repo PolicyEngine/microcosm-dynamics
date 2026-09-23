@@ -221,6 +221,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/cola_track_a/mortality.py"),
     Path("src/populace_dynamics/cola_track_a/opening.py"),
     Path("src/populace_dynamics/cola_track_a/runner.py"),
+    Path("src/populace_dynamics/cola_track_a/statutory.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

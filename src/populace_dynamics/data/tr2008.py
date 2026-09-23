@@ -44,8 +44,9 @@ Each accessor that assembles a path returns entries tagged with one of:
 
 Choices awaiting a ruling
 -------------------------
-Max has not ruled on the plan's section 6 decisions or ratified the A1
-specification.  Choices that depend on those rulings are keyword arguments;
+Max ruled the plan's section 6 decisions on 2026-09-23 but has not
+ratified the A1 specification.  Choices that depend on the ratification
+are keyword arguments;
 ``PENDING_RULINGS`` lists each one with its default and whether the default
 is the plan's named proposal or this module's proposal.
 """
@@ -85,8 +86,10 @@ __all__ = [
     "awi",
     "awi_path",
     "cohort_life_expectancy",
+    "WageBaseEntry",
     "cola_path",
     "cola_percent",
+    "contribution_benefit_base_path",
     "di_beneficiaries",
     "di_conversion_ratios",
     "di_incidence_by_age",
@@ -384,6 +387,15 @@ class ColaEntry:
 @dataclass(frozen=True)
 class AwiEntry:
     """One national average wage index value."""
+
+    year: int
+    amount: float
+    source: str
+
+
+@dataclass(frozen=True)
+class WageBaseEntry:
+    """One OASDI contribution and benefit base (V.C1), in dollars."""
 
     year: int
     amount: float
@@ -764,6 +776,46 @@ def awi_path(
                 year, amount, f"{entry.source}_growth_on_realized"
             )
         out.append(entry)
+    return tuple(out)
+
+
+def contribution_benefit_base_path(
+    first_year: int,
+    last_year: int,
+    *,
+    alternative: Alternative = "intermediate",
+) -> tuple[WageBaseEntry, ...]:
+    """TR2008 V.C1 OASDI contribution and benefit base, 1975-2017.
+
+    ``source`` is ``tr2008_v_c1_historical`` through 2006,
+    ``tr2008_v_c1_actual`` where footnote 7 marks the printed amount as
+    determined under the automatic-adjustment provisions, and
+    ``tr2008_v_c1_projected`` otherwise.  V.C1 prints nothing before 1975
+    or after 2017 (``KeyError``).
+    """
+    _check_alternative(alternative)
+    if first_year > last_year:
+        raise ValueError("first_year must not exceed last_year")
+    rows = _v_c1_rows(alternative)
+    out = []
+    for year in range(first_year, last_year + 1):
+        row = rows.get(year)
+        if row is None or row.get("contribution_benefit_base") is None:
+            raise KeyError(
+                f"TR2008 V.C1 prints no contribution and benefit base for "
+                f"{year}"
+            )
+        if year <= LAST_HISTORICAL_V_C1_YEAR:
+            source = "tr2008_v_c1_historical"
+        elif row.get("footnotes", {}).get("contribution_benefit_base") == "7":
+            source = "tr2008_v_c1_actual"
+        else:
+            source = "tr2008_v_c1_projected"
+        out.append(
+            WageBaseEntry(
+                year, float(row["contribution_benefit_base"]), source
+            )
+        )
     return tuple(out)
 
 
