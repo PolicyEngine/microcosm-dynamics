@@ -1,0 +1,140 @@
+{
+  "all_passed": true,
+  "cells_compared": 10441,
+  "checks": [
+    {"cells_compared": 394, "description": "Every V.C1 cell: PDF (pp. 102-103) vs report HTML chapter V_programatic.html", "id": "V.C1_pdf_vs_html", "left": "pdf", "mismatches": [], "passed": true, "right": "html"},
+    {"cells_compared": 64, "description": "V.C1 AWI increase column equals round-half-up of AWI growth from the prior row", "id": "V.C1_awi_increase_arithmetic", "left": "printed", "mismatches": [], "passed": true, "right": "recomputed"},
+    {"cells_compared": 33, "description": "V.C1 AWI equals VI.F6 AWI for 2007-2017 in each alternative (both PDF)", "id": "V.C1_vs_VI.F6_awi", "left": "V.C1", "mismatches": [], "passed": true, "right": "VI.F6"},
+    {"cells_compared": 378, "description": "Every VI.F6 cell: PDF (pp. 184-185) vs report HTML chapter", "id": "VI.F6_pdf_vs_html", "left": "pdf", "mismatches": [], "passed": true, "right": "html"},
+    {"cells_compared": 375, "description": "Every VI.F6 PDF cell vs the same year in single-year table lr6f6", "id": "VI.F6_pdf_vs_single_year", "left": "pdf", "mismatches": [], "passed": true, "right": "single_year"},
+    {"cells_compared": 400, "description": "Every V.B1 single-year cell: PDF (pp. 92-93) vs report HTML chapter", "id": "V.B1_pdf_vs_html", "left": "pdf", "mismatches": [], "passed": true, "right": "html"},
+    {"cells_compared": 210, "description": "V.B1 PDF single-year rows (2008-2017) vs single-year table lr5b1", "id": "V.B1_pdf_vs_single_year", "left": "pdf", "mismatches": [], "passed": true, "right": "single_year"},
+    {"cells_compared": 27, "description": "Every II.C1 cell: PDF (p. 6) vs report HTML chapter II_assump.html", "id": "II.C1_pdf_vs_html", "left": "pdf", "mismatches": [], "passed": true, "right": "html"},
+    {"cells_compared": 436, "description": "Every V.A1 cell: PDF (pp. 80-81) vs report HTML chapter", "id": "V.A1_pdf_vs_html", "left": "pdf", "mismatches": [], "passed": true, "right": "html"},
+    {"cells_compared": 432, "description": "Every V.A1 PDF cell (historical and projected rows) vs the same year in single-year table lr5a1", "id": "V.A1_pdf_vs_single_year", "left": "pdf", "mismatches": [], "passed": true, "right": "single_year"},
+    {"cells_compared": 329, "description": "Every V.A3 cell: PDF vs report HTML chapter", "id": "V.A3_pdf_vs_html", "left": "pdf", "mismatches": [], "passed": true, "right": "html"},
+    {"cells_compared": 288, "description": "Every V.A3 PDF cell vs the same year in the single-year table", "id": "V.A3_pdf_vs_single_year", "left": "pdf", "mismatches": [], "passed": true, "right": "single_year"},
+    {"cells_compared": 521, "description": "Every V.A4 cell: PDF vs report HTML chapter", "id": "V.A4_pdf_vs_html", "left": "pdf", "mismatches": [], "passed": true, "right": "html"},
+    {"cells_compared": 480, "description": "Every V.A4 PDF cell vs the same year in the single-year table", "id": "V.A4_pdf_vs_single_year", "left": "pdf", "mismatches": [], "passed": true, "right": "single_year"},
+    {"cells_compared": 460, "description": "Every V.C5 cell: PDF (pp. 124-125) vs report HTML chapter", "id": "V.C5_pdf_vs_html", "left": "pdf", "mismatches": [], "passed": true, "right": "html"},
+    {"cells_compared": 438, "description": "V.C5 PDF rows (1975+) vs single-year table lr5c5", "id": "V.C5_pdf_vs_single_year", "left": "pdf", "mismatches": [], "passed": true, "right": "single_year"},
+    {"cells_compared": 464, "description": "Figure V.C5 incidence and termination plot points equal the intermediate series of Figures V.C3 and V.C4 (separate pages)", "id": "figures_V.C5_vs_V.C3_V.C4", "left": "V.C5", "mismatches": [], "passed": true, "right": "V.C3/V.C4"},
+    {"cells_compared": 534, "description": "Figure V.C6 prevalence plot points, rounded half-up to integers, equal the single-year V.C5 table prevalence columns", "id": "figure_V.C6_vs_table_V.C5_prevalence", "left": "figure_rounded", "mismatches": [], "passed": true, "right": "table"},
+    {"cells_compared": 13, "description": "Text-stated ultimate values equal the tabulated values", "id": "text_vs_tables", "left": "text", "mismatches": [], "passed": true, "right": "table"},
+    {"cells_compared": 72, "description": "Every text-stated value: PDF prose vs the same sentence in the report's HTML chapter (TEXT_HTML_SOURCES)", "id": "text_values_pdf_vs_html", "left": "pdf", "mismatches": [], "passed": true, "right": "html"},
+    {"cells_compared": 5, "description": "OACT 2004 period life table equals Supplement 2008 Table 4.C6; its e0 and e65 rounded to 0.1 equal V.A3 2004", "id": "life_table_2004_consistency", "left": "life_table", "mismatches": [], "passed": true, "right": "comparison"},
+    {
+      "cells_compared": 980,
+      "description": "Tables 8A, 8B: each select-period survivor count (durations 1-9) equals the prior duration decremented by Tables 7A, 7B, and each ultimate ('10 or more') survivor count equals the one above it decremented by the ultimate probability above it (note 3: the ultimate column is read down); the column starts from select age 16 at duration 10. Round half up; |difference| <= 1 allowed for rounding of the printed prior cell. An omitted survivor cell must sit where the probability is omitted too.",
+      "exact_matches": 980,
+      "id": "AS118_death_probability_vs_survival",
+      "largest_difference": 0,
+      "left": "printed",
+      "mismatches": [],
+      "passed": true,
+      "right": "within_one_of_recomputed"
+    },
+    {
+      "cells_compared": 980,
+      "description": "Tables 15A, 15B: each select-period survivor count (durations 1-9) equals the prior duration decremented by Tables 14A, 14B, and each ultimate ('10 or more') survivor count equals the one above it decremented by the ultimate probability above it (note 3: the ultimate column is read down); the column starts from select age 16 at duration 10. Round half up; |difference| <= 1 allowed for rounding of the printed prior cell. An omitted survivor cell must sit where the probability is omitted too.",
+      "exact_matches": 866,
+      "id": "AS118_recovery_probability_vs_survival",
+      "largest_difference": 1,
+      "left": "printed",
+      "mismatches": [],
+      "passed": true,
+      "right": "within_one_of_recomputed"
+    },
+    {"cells_compared": 72, "description": "Table 8C survivors at 75-110 equal the prior age decremented by Table 7C; age 75 continues from the ultimate (select 64, attained 74) cells of Tables 8A/8B and 7A/7B", "exact_matches": 71, "id": "AS118_old_age_death_vs_survival", "largest_difference": 0, "left": "printed", "mismatches": [], "passed": true, "right": "within_one_of_recomputed"},
+    {"cells_compared": 1078, "description": "Tables 21A/21B equal Tables 7A/7B plus 14A/14B cell by cell, an omitted recovery cell counting as 0 (|difference| <= 0.000001 for six-decimal rounding)", "id": "AS118_combined_equals_death_plus_recovery", "left": "printed", "mismatches": [], "passed": true, "right": "within_rounding_of_sum"},
+    {"cells_compared": 275, "description": "Table 5: total terminations equal the sum of the four reasons; the total rate equals the sum of the four rates within 0.02 (four rounded terms); Total-section numbers equal Male + Female", "id": "AS118_table5_arithmetic", "left": "printed", "mismatches": [], "passed": true, "right": "recomputed"},
+    {"cells_compared": 375, "description": "Table 6: the Total column equals the sum of the age groups, and Total-section counts equal Male + Female", "id": "AS118_table6_arithmetic", "left": "printed", "mismatches": [], "passed": true, "right": "recomputed"},
+    {"cells_compared": 328, "description": "Table 4: every Total-section rate lies between the Male and Female rates (a pooled ratio; 0.01 rounding slack), and the adjusted rate equals the gross rate in 2000, the adjustment base year (notes 2-3)", "id": "AS118_table4_consistency", "left": "printed", "mismatches": [], "passed": true, "right": "consistent"}
+  ],
+  "observations": [
+    {
+      "figure_v_c3_age_sex_adjusted_2030": {"high_cost": 6.26, "intermediate": 5.22, "low_cost": 4.17},
+      "id": "di_ultimate_incidence_text_vs_figure_v_c3_2030",
+      "note": "The text states ultimate rates for ages through 64 on an award basis adjusted to the 2000 exposed population. The figure plot points are not labeled with an age range; they are recorded side by side, not reconciled.",
+      "text_per_1000": {"high_cost": 6.2, "intermediate": 5.2, "intermediate_percent_above_1970_2007_average": 1, "low_cost": 4.2}
+    },
+    {"figure_v_c6_age_sex_adjusted_2007": 40.04, "figure_v_c6_age_sex_adjusted_2085": {"high_cost": 59.56, "intermediate": 47.41, "low_cost": 35.56}, "id": "di_prevalence_text_vs_figure_v_c6", "text_per_1000": {"2007": 40.0, "high_cost_2085": 59.6, "intermediate_2085": 47.4, "low_cost_2085": 35.6}},
+    {
+      "cells": 172,
+      "differing_by_more_than_one": [
+        {"cell": "8A/35/10", "duration_9_decremented": 76541, "printed": 76543},
+        {"cell": "8B/18/10", "duration_9_decremented": 93901, "printed": 93903},
+        {"cell": "8B/27/10", "duration_9_decremented": 87177, "printed": 87175},
+        {"cell": "8B/37/10", "duration_9_decremented": 77920, "printed": 77918},
+        {"cell": "8B/55/10", "duration_9_decremented": 51229, "printed": 51227},
+        {"cell": "15A/28/10", "duration_9_decremented": 33275, "printed": 33273},
+        {"cell": "15A/36/10", "duration_9_decremented": 30755, "printed": 30753},
+        {"cell": "15A/45/10", "duration_9_decremented": 29489, "printed": 29487},
+        {"cell": "15A/48/10", "duration_9_decremented": 29327, "printed": 29325},
+        {"cell": "15B/27/10", "duration_9_decremented": 40278, "printed": 40276},
+        {"cell": "15B/28/10", "duration_9_decremented": 39750, "printed": 39752},
+        {"cell": "15B/31/10", "duration_9_decremented": 38413, "printed": 38411}
+      ],
+      "id": "study_118_select_to_ultimate_join",
+      "largest_difference": 2,
+      "note": "Survivor tables 8A/8B/15A/15B: the ultimate ('10 or more') cell of select ages 17-64 follows the ultimate column down (checked), but decrementing the same row's duration-9 cell by its duration-9 probability reproduces it only within 2. The select rows and the ultimate column are not an exact identity in the printed tables; recorded, not reconciled.",
+      "within_one": 160
+    },
+    {
+      "age_sex_adjusted": {
+        "differing": [
+          {"study_118": 3.69, "tr2008": 3.68, "year": 1982},
+          {"study_118": 4.67, "tr2008": 4.68, "year": 1983},
+          {"study_118": 4.18, "tr2008": 4.19, "year": 1987},
+          {"study_118": 4.08, "tr2008": 4.09, "year": 1988},
+          {"study_118": 4.17, "tr2008": 4.18, "year": 1989},
+          {"study_118": 4.48, "tr2008": 4.49, "year": 1990},
+          {"study_118": 5.03, "tr2008": 5.04, "year": 1991},
+          {"study_118": 5.82, "tr2008": 5.85, "year": 1992},
+          {"study_118": 5.67, "tr2008": 5.69, "year": 1993},
+          {"study_118": 5.52, "tr2008": 5.54, "year": 1994},
+          {"study_118": 5.54, "tr2008": 5.55, "year": 1995},
+          {"study_118": 5.24, "tr2008": 5.25, "year": 1996},
+          {"study_118": 4.8, "tr2008": 4.82, "year": 1997},
+          {"study_118": 4.83, "tr2008": 4.84, "year": 1998},
+          {"study_118": 4.78, "tr2008": 4.8, "year": 1999},
+          {"study_118": 5.3, "tr2008": 5.29, "year": 2002},
+          {"study_118": 5.37, "tr2008": 5.33, "year": 2003},
+          {"study_118": 5.35, "tr2008": 5.31, "year": 2004}
+        ],
+        "equal": 7,
+        "years_compared": 25
+      },
+      "gross": {
+        "differing": [{"study_118": 4.18, "tr2008": 4.19, "year": 1983}, {"study_118": 3.93, "tr2008": 3.94, "year": 1985}, {"study_118": 3.93, "tr2008": 3.94, "year": 1986}, {"study_118": 3.82, "tr2008": 3.83, "year": 1987}, {"study_118": 5.39, "tr2008": 5.4, "year": 1992}, {"study_118": 5.1, "tr2008": 5.09, "year": 2001}, {"study_118": 5.49, "tr2008": 5.46, "year": 2002}, {"study_118": 5.64, "tr2008": 5.61, "year": 2003}, {"study_118": 5.71, "tr2008": 5.7, "year": 2004}],
+        "equal": 16,
+        "years_compared": 25
+      },
+      "id": "study_118_incidence_vs_tr2008_figure_v_c3",
+      "note": "Study 118 Table 4 total gross and age-sex-adjusted incidence vs TR2008 Figure V.C3 historical plot points."
+    },
+    {
+      "gross": {
+        "differing": [
+          {"study_118": 87.95, "tr2008": 87.94, "year": 1981},
+          {"study_118": 105.6, "tr2008": 105.58, "year": 1982},
+          {"study_118": 72.13, "tr2008": 72.12, "year": 1984},
+          {"study_118": 59.96, "tr2008": 59.94, "year": 1985},
+          {"study_118": 63.09, "tr2008": 63.08, "year": 1987},
+          {"study_118": 64.37, "tr2008": 64.36, "year": 1988},
+          {"study_118": 55.78, "tr2008": 55.77, "year": 1991},
+          {"study_118": 54.58, "tr2008": 54.57, "year": 1992},
+          {"study_118": 52.79, "tr2008": 52.78, "year": 1994},
+          {"study_118": 42.71, "tr2008": 42.43, "year": 2003},
+          {"study_118": 42.1, "tr2008": 41.61, "year": 2004}
+        ],
+        "equal": 14,
+        "years_compared": 25
+      },
+      "id": "study_118_terminations_vs_tr2008_figure_v_c4",
+      "note": "Study 118 Table 5 total death + recovery + other rates (conversions excluded) vs TR2008 Figure V.C4 historical gross termination plot points."
+    },
+    {"disabled_workers_thousands": {"differing": [], "equal": 25, "years_compared": 25}, "id": "study_118_current_pay_vs_tr2008_v_c5", "note": "Study 118 Table 6 total disabled workers, rounded half up to thousands, vs TR2008 single-year V.C5 historical disabled workers (thousands)."}
+  ],
+  "schema_version": "tr2008_transcription_check.v1"
+}

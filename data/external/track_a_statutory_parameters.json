@@ -1,0 +1,246 @@
+{
+  "schema_version": "populace_dynamics.track_a_statutory_parameters.v1",
+  "description": "Statutory parameters the Track A Python oracle (not Axiom) reads beyond the AWI: the contribution and benefit base, the PIA formula factors, the bend-point base amounts, the full retirement age schedule, the early-retirement reduction, the delayed retirement credits, the AWI before 1975 and the auxiliary (spouse and survivor) constants",
+  "source": {
+    "loader": "populace_dynamics.ss.params.load_ssa_parameters",
+    "policyengine_us_revision": "a03e82e503",
+    "policyengine_us_files_sha256": {
+      "policyengine_us/parameters/gov/ssa/nawi.yaml": "9db55fe9ea25447a139767c7719b32920982dd2a65887c8fc0ddb12a2dcf7c53",
+      "policyengine_us/parameters/gov/ssa/social_security/wage_base.yaml": "c0d8b9b3cf76ece610f27aede27224f32c668bcde0da7e424c5cd3ea8c83e610",
+      "policyengine_us/parameters/gov/ssa/social_security/pia/formula_factors.yaml": "0df7562dfeace3f662b2c3867a5ac506b57868f8fe41db48f20027ad6e9b6b7e",
+      "policyengine_us/parameters/gov/ssa/social_security/full_retirement_age_by_birth_year.yaml": "9974a3e24766c37b3bda0beb6507843bf170479c1422d391452b10cc52b16dcb",
+      "policyengine_us/parameters/gov/ssa/social_security/retirement_age_adjustment/early_retirement/reduction_rates.yaml": "ddcdfcfc0ebcf558b9c8f9bd4dc6ac09cb25f77c299e9c9895011b50d14f2147",
+      "policyengine_us/parameters/gov/ssa/social_security/retirement_age_adjustment/delayed_retirement/credit_rates.yaml": "317da013a15716c377850759f9748b4903b5e24f72e85a62e4b4fdbf2bb2dfa4",
+      "policyengine_us/parameters/gov/ssa/social_security/retirement_age_adjustment/max_delayed_years.yaml": "8b181708b5f0a993e5a0fd0705ed8cf916fddbc616b476c25d1f95be78cc93a4"
+    },
+    "policyengine_us_files_bundle_sha256": "f2c4069caf30807f99183e2a4f852ad54930fdb7058d2ea303f295eeeda49387",
+    "files_pinned_by": "populace_dynamics.estimates.parameters.SSA_PARAMETER_SHA256 (policyengine-us 1.752.2 parameter vintage)",
+    "auxiliary_constants": "statute-cited defaults of populace_dynamics.ss.params.SSAParameters",
+    "bend_point_base": "42 USC 415(a)(1)(B) constants hard-coded in populace_dynamics.ss.params",
+    "generated_by": "scripts/capture_track_a_statutory_parameters.py"
+  },
+  "cross_checks": {
+    "wage_base_equals_tr2008_v_c1_1975_2008": true,
+    "tr2008_v_c1_rows": "historical 1975-2006; footnote 7 actual 2007-2008"
+  },
+  "nawi_before_1975": {
+    "1951": 2799.16,
+    "1952": 2973.32,
+    "1953": 3139.44,
+    "1954": 3155.64,
+    "1955": 3301.44,
+    "1956": 3532.36,
+    "1957": 3641.72,
+    "1958": 3673.8,
+    "1959": 3855.8,
+    "1960": 4007.12,
+    "1961": 4086.76,
+    "1962": 4291.4,
+    "1963": 4396.64,
+    "1964": 4576.32,
+    "1965": 4658.72,
+    "1966": 4938.36,
+    "1967": 5213.44,
+    "1968": 5571.76,
+    "1969": 5893.76,
+    "1970": 6186.24,
+    "1971": 6497.08,
+    "1972": 7133.8,
+    "1973": 7580.16,
+    "1974": 8030.76
+  },
+  "wage_base_change_points": {
+    "1937": 3000.0,
+    "1951": 3600.0,
+    "1955": 4200.0,
+    "1959": 4800.0,
+    "1966": 6600.0,
+    "1968": 7800.0,
+    "1972": 9000.0,
+    "1973": 10800.0,
+    "1974": 13200.0,
+    "1975": 14100.0,
+    "1976": 15300.0,
+    "1977": 16500.0,
+    "1978": 17700.0,
+    "1979": 22900.0,
+    "1980": 25900.0,
+    "1981": 29700.0,
+    "1982": 32400.0,
+    "1983": 35700.0,
+    "1984": 37800.0,
+    "1985": 39600.0,
+    "1986": 42000.0,
+    "1987": 43800.0,
+    "1988": 45000.0,
+    "1989": 48000.0,
+    "1990": 51300.0,
+    "1991": 53400.0,
+    "1992": 55500.0,
+    "1993": 57600.0,
+    "1994": 60600.0,
+    "1995": 61200.0,
+    "1996": 62700.0,
+    "1997": 65400.0,
+    "1998": 68400.0,
+    "1999": 72600.0,
+    "2000": 76200.0,
+    "2001": 80400.0,
+    "2002": 84900.0,
+    "2003": 87000.0,
+    "2004": 87900.0,
+    "2005": 90000.0,
+    "2006": 94200.0,
+    "2007": 97500.0,
+    "2008": 102000.0,
+    "2009": 106800.0,
+    "2010": 106800.0,
+    "2011": 106800.0,
+    "2012": 110100.0,
+    "2013": 113700.0,
+    "2014": 117000.0,
+    "2015": 118500.0,
+    "2016": 118500.0,
+    "2017": 127200.0,
+    "2018": 128400.0,
+    "2019": 132900.0,
+    "2020": 137700.0,
+    "2021": 142800.0,
+    "2022": 147000.0,
+    "2023": 160200.0,
+    "2024": 168600.0,
+    "2025": 176100.0,
+    "2026": 184500.0
+  },
+  "pia_factors": [
+    0.9,
+    0.32,
+    0.15
+  ],
+  "bend_point_base": {
+    "first": 180.0,
+    "second": 1085.0,
+    "nawi_year": 1977
+  },
+  "fra_months_by_birth_year": [
+    [
+      1900,
+      780
+    ],
+    [
+      1938,
+      782
+    ],
+    [
+      1939,
+      784
+    ],
+    [
+      1940,
+      786
+    ],
+    [
+      1941,
+      788
+    ],
+    [
+      1942,
+      790
+    ],
+    [
+      1943,
+      792
+    ],
+    [
+      1955,
+      794
+    ],
+    [
+      1956,
+      796
+    ],
+    [
+      1957,
+      798
+    ],
+    [
+      1958,
+      800
+    ],
+    [
+      1959,
+      802
+    ],
+    [
+      1960,
+      804
+    ]
+  ],
+  "early_monthly_rates": [
+    0.00555556,
+    0.00416667
+  ],
+  "early_first_bracket_months": 36,
+  "delayed_credit_by_birth_year": [
+    [
+      1900,
+      0.03
+    ],
+    [
+      1925,
+      0.035
+    ],
+    [
+      1927,
+      0.04
+    ],
+    [
+      1929,
+      0.045
+    ],
+    [
+      1931,
+      0.05
+    ],
+    [
+      1933,
+      0.055
+    ],
+    [
+      1935,
+      0.06
+    ],
+    [
+      1937,
+      0.065
+    ],
+    [
+      1939,
+      0.07
+    ],
+    [
+      1941,
+      0.075
+    ],
+    [
+      1943,
+      0.08
+    ]
+  ],
+  "max_delayed_months": 48,
+  "auxiliary_constants": {
+    "remarriage_protected_age": 60,
+    "remarriage_protected_age_disabled": 50,
+    "rib_lim_pia_share": 0.825,
+    "spousal_early_first_bracket_months": 36,
+    "spousal_early_monthly_rates": [
+      0.006944444444444444,
+      0.004166666666666667
+    ],
+    "spousal_pia_share": 0.5,
+    "survivor_earliest_claim_age": 60,
+    "survivor_pia_share": 1.0,
+    "survivor_reduction_floor": 0.715,
+    "survivor_reduction_period_months": 84
+  }
+}

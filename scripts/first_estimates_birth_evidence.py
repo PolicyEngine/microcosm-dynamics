@@ -191,6 +191,37 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # The opt-in Axiom benefit bridge runs an external engine on retained
     # histories and is outside the historical projection call graph.
     Path("src/populace_dynamics/axiom_benefit_bridge.py"),
+    # The TR2008 parameter reader (DynaSim exercise 1, Track A2) is an
+    # opt-in data accessor that the historical projection never imports;
+    # it is not re-exported from populace_dynamics.data.
+    Path("src/populace_dynamics/data/tr2008.py"),
+    # The opt-in PSID 2010 starting-cohort builder (Track A, A3) and its
+    # Social Security income reader are unreachable from the historical
+    # reducer; the transitive reachability test guards the exclusion.
+    Path("src/populace_dynamics/data/social_security_income.py"),
+    Path("src/populace_dynamics/cohorts/__init__.py"),
+    Path("src/populace_dynamics/cohorts/psid2010.py"),
+    # The opt-in SSDI entitlement component (Track A item A4) is not imported
+    # by the historical reducer or the engine package initializer.
+    Path("src/populace_dynamics/engine/di_entitlement.py"),
+    Path("src/populace_dynamics/engine/di_entitlement_rates.py"),
+    # The opt-in scenario COLA benefit paths (plan A6) generalize the sealed
+    # ledger path without editing it; nothing historical imports them.
+    Path("src/populace_dynamics/scenario_benefits.py"),
+    # The standalone exercise-1 COLA age-profile tabulation is post-compute
+    # and unreachable from the historical projection.
+    Path("src/populace_dynamics/estimates/cola_age_profile.py"),
+    # The opt-in Track A assembly (plan item A5) composes the Track A
+    # components on the unmodified loop; nothing historical imports it.
+    Path("src/populace_dynamics/cola_track_a/__init__.py"),
+    Path("src/populace_dynamics/cola_track_a/adapters.py"),
+    Path("src/populace_dynamics/cola_track_a/benefits.py"),
+    Path("src/populace_dynamics/cola_track_a/config.py"),
+    Path("src/populace_dynamics/cola_track_a/invented.py"),
+    Path("src/populace_dynamics/cola_track_a/mortality.py"),
+    Path("src/populace_dynamics/cola_track_a/opening.py"),
+    Path("src/populace_dynamics/cola_track_a/runner.py"),
+    Path("src/populace_dynamics/cola_track_a/statutory.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

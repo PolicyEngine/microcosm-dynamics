@@ -109,6 +109,23 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/assembled_history_observer.py"),
         Path("src/populace_dynamics/compact_cohort_history.py"),
         Path("src/populace_dynamics/axiom_benefit_bridge.py"),
+        Path("src/populace_dynamics/data/tr2008.py"),
+        Path("src/populace_dynamics/data/social_security_income.py"),
+        Path("src/populace_dynamics/cohorts/__init__.py"),
+        Path("src/populace_dynamics/cohorts/psid2010.py"),
+        Path("src/populace_dynamics/engine/di_entitlement.py"),
+        Path("src/populace_dynamics/engine/di_entitlement_rates.py"),
+        Path("src/populace_dynamics/scenario_benefits.py"),
+        Path("src/populace_dynamics/estimates/cola_age_profile.py"),
+        Path("src/populace_dynamics/cola_track_a/__init__.py"),
+        Path("src/populace_dynamics/cola_track_a/adapters.py"),
+        Path("src/populace_dynamics/cola_track_a/benefits.py"),
+        Path("src/populace_dynamics/cola_track_a/config.py"),
+        Path("src/populace_dynamics/cola_track_a/invented.py"),
+        Path("src/populace_dynamics/cola_track_a/mortality.py"),
+        Path("src/populace_dynamics/cola_track_a/opening.py"),
+        Path("src/populace_dynamics/cola_track_a/runner.py"),
+        Path("src/populace_dynamics/cola_track_a/statutory.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -316,7 +333,64 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in Axiom benefit bridge became reachable from the "
         "birth-evidence reducer"
     )
+    tr2008_reader = "populace_dynamics.data.tr2008"
+    assert tr2008_reader in module_paths
+    assert tr2008_reader not in reachable, (
+        "the opt-in TR2008 parameter reader became reachable from the "
+        "birth-evidence reducer"
+    )
+    cohort_modules = {
+        "populace_dynamics.data.social_security_income",
+        "populace_dynamics.cohorts",
+        "populace_dynamics.cohorts.psid2010",
+    }
+    assert cohort_modules.issubset(module_paths)
+    assert cohort_modules.isdisjoint(reachable), (
+        "opt-in starting-cohort modules became reachable from the "
+        f"birth-evidence reducer: {sorted(cohort_modules & reachable)}"
+    )
+    di_entitlement_modules = {
+        "populace_dynamics.engine.di_entitlement",
+        "populace_dynamics.engine.di_entitlement_rates",
+    }
+    assert di_entitlement_modules.issubset(module_paths)
+    leaked = sorted(di_entitlement_modules & reachable)
+    assert not leaked, (
+        "the opt-in SSDI entitlement modules became reachable from the "
+        f"birth-evidence reducer: {leaked}"
+    )
+    tabulation = "populace_dynamics.estimates.cola_age_profile"
+    assert tabulation in module_paths
+    assert tabulation not in reachable, (
+        "the exercise-1 COLA tabulation became reachable from the "
+        "birth-evidence reducer"
+    )
     assert "populace_dynamics.engine.steps" in reachable
+    scenario_module = "populace_dynamics.scenario_benefits"
+    assert scenario_module in module_paths
+    assert scenario_module not in reachable, (
+        "the opt-in scenario COLA benefit module became reachable from the "
+        "birth-evidence reducer"
+    )
+    assert "populace_dynamics.estimates.ledgers" in reachable
+    track_a_modules = {"populace_dynamics.cola_track_a"} | {
+        f"populace_dynamics.cola_track_a.{name}"
+        for name in (
+            "adapters",
+            "benefits",
+            "config",
+            "invented",
+            "mortality",
+            "opening",
+            "runner",
+            "statutory",
+        )
+    }
+    assert track_a_modules.issubset(module_paths)
+    assert track_a_modules.isdisjoint(reachable), (
+        "the opt-in Track A assembly became reachable from the "
+        f"birth-evidence reducer: {sorted(track_a_modules & reachable)}"
+    )
 
 
 def test_reducer_accepts_explicit_unresolved_upstream_boundary():
