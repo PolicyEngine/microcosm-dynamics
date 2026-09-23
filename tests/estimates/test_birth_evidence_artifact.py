@@ -116,6 +116,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/engine/di_entitlement.py"),
         Path("src/populace_dynamics/engine/di_entitlement_rates.py"),
         Path("src/populace_dynamics/scenario_benefits.py"),
+        Path("src/populace_dynamics/estimates/cola_age_profile.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -348,6 +349,12 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert not leaked, (
         "the opt-in SSDI entitlement modules became reachable from the "
         f"birth-evidence reducer: {leaked}"
+    )
+    tabulation = "populace_dynamics.estimates.cola_age_profile"
+    assert tabulation in module_paths
+    assert tabulation not in reachable, (
+        "the exercise-1 COLA tabulation became reachable from the "
+        "birth-evidence reducer"
     )
     assert "populace_dynamics.engine.steps" in reachable
     scenario_module = "populace_dynamics.scenario_benefits"

@@ -1526,12 +1526,22 @@ def test__estimator_surface__pins_complete_module_tuple():
     context_surface = tuple(
         path for path in observed if path.name.startswith("anchor_context_")
     )
+    # The standalone exercise-1 COLA tabulation (Track A item A7) is
+    # post-compute and outside the registered first-estimates surface.
+    tabulation_surface = tuple(
+        path for path in observed if path.name == "cola_age_profile.py"
+    )
     first_estimates_surface = tuple(
-        path for path in observed if path not in context_surface
+        path
+        for path in observed
+        if path not in context_surface and path not in tabulation_surface
     )
 
     assert coordinator._ESTIMATOR_SURFACE_SOURCES == expected
     assert first_estimates_surface == expected
+    assert tabulation_surface == (
+        Path("src/populace_dynamics/estimates/cola_age_profile.py"),
+    )
     assert context_surface == (
         Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
         Path("src/populace_dynamics/estimates/anchor_context_publication.py"),

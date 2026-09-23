@@ -208,6 +208,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # The opt-in scenario COLA benefit paths (plan A6) generalize the sealed
     # ledger path without editing it; nothing historical imports them.
     Path("src/populace_dynamics/scenario_benefits.py"),
+    # The standalone exercise-1 COLA age-profile tabulation is post-compute
+    # and unreachable from the historical projection.
+    Path("src/populace_dynamics/estimates/cola_age_profile.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
