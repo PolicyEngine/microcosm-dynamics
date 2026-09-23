@@ -489,9 +489,10 @@ class DIEntitlementRates:
         values = self.recovery_select.lookup(
             sex_index, select_age, duration, ages
         )
-        # Tables 14A-14B leave the cells past attained age 64 blank ("Recovery
-        # is not considered beyond normal retirement age", then 65), so a
-        # worker with a higher FRA gets zero recovery there on this basis.
+        # Tables 14A-14B leave every cell past attained age 64 blank, select
+        # and ultimate alike ("Recovery is not considered beyond normal
+        # retirement age", then 65), so a worker with a higher FRA gets zero
+        # recovery there on this basis at any duration.
         return np.nan_to_num(values, nan=0.0)
 
     def reference_death_probability(
@@ -667,7 +668,16 @@ def _series(
 def _select_table(
     tables: Mapping[str, Any],
     old_age: Mapping[str, Any] | None,
+    *,
+    blank_after_last: bool = False,
 ) -> SelectUltimateTable:
+    """Select cells and the ultimate column on ``0..MAX_AGE``.
+
+    Blank published cells stay NaN.  The ultimate column holds its edge
+    values, except that with ``blank_after_last`` the attained ages after
+    the last published ultimate value stay NaN, like the blank select cells
+    at the same attained ages (the recovery tables, which stop at 64).
+    """
     select = np.full((len(SEXES), 49, 10), np.nan)
     ultimate = np.full((len(SEXES), MAX_AGE + 1), np.nan)
     for sex_index, sex in enumerate(SEXES):
@@ -684,6 +694,13 @@ def _select_table(
             ages += list(old_age["ages"])
             values += list(old_age[sex])
         ultimate[sex_index] = _series(ages, values, fill="hold")
+        if blank_after_last:
+            last = max(
+                int(age)
+                for age, value in zip(ages, values, strict=True)
+                if value is not None
+            )
+            ultimate[sex_index, last + 1 :] = np.nan
     return SelectUltimateTable(select=select, ultimate=ultimate)
 
 
@@ -781,7 +798,12 @@ def fit_di_entitlement_rates(
     death_select = _select_table(
         death_tables["select_ultimate"], death_tables["ultimate_75_plus"]
     )
-    recovery_select = _select_table(recovery_tables["select_ultimate"], None)
+    # Tables 14A-14B show no recovery past attained age 64 in either the
+    # select cells or the ultimate column ("Recovery is not considered
+    # beyond normal retirement age"), so neither is extended past 64.
+    recovery_select = _select_table(
+        recovery_tables["select_ultimate"], None, blank_after_last=True
+    )
 
     # --- level diagnostics and fits on the fit year's exposure ----------
     observed_recoveries = 0.0
@@ -860,21 +882,35 @@ def fit_di_entitlement_rates(
             "the ages in _GROUP_AGES"
         ),
     }
+    # Exactly the extracted sections read above, by their source ids (ASR
+    # Tables 35, 49, and 57 are extracted for diagnostics and never read).
+    read_sections = [
+        section
+        for year in years
+        for section in (
+            asr[year]["awards_workers"],
+            asr[year]["stock_workers_december"],
+            asr[year]["stock_distribution"],
+            asr[year]["terminations_workers_by_reason"],
+            census[year],
+        )
+    ] + [death_tables, recovery_tables]
+    sources_used = sorted(
+        {
+            str(section["source"])
+            for section in read_sections
+            if section.get("source") is not None
+        }
+    )
+    undeclared = sorted(set(sources_used) - set(inputs.get("sources", {})))
+    if undeclared:
+        raise ValueError(
+            f"DI entitlement inputs read undeclared sources {undeclared}"
+        )
     provenance = {
         "information_boundary_year": INFORMATION_BOUNDARY_YEAR,
         "inputs_schema": INPUTS_SCHEMA_VERSION,
-        "sources_used": sorted(
-            source_id
-            for source_id in inputs.get("sources", {})
-            if any(
-                source_id.startswith(prefix)
-                for prefix in (
-                    *(f"asr{year}_" for year in years),
-                    "as118_",
-                    *(f"census_v{year}_r" for year in years),
-                )
-            )
-        ),
+        "sources_used": sources_used,
         "population_reference": "NCHS United States Life Tables, 2000",
     }
     return DIEntitlementRates(

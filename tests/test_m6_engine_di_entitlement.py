@@ -7,6 +7,7 @@ behavior.  None is an SSA, Census, or DYNASIM value.
 
 from __future__ import annotations
 
+import warnings
 from functools import partial
 
 import numpy as np
@@ -54,6 +55,14 @@ from populace_dynamics.engine.steps import (
 )
 
 SHAPE = (2, MAX_AGE + 1)
+
+#: The net-of-DI-origin default warns when a band-sex cell's DI-origin
+#: expected deaths exceed the population model's.  Frames made only (or
+#: mostly) of DI-origin persons trigger it by construction; tests of other
+#: behavior on such frames ignore that expected warning.
+IGNORE_INFEASIBLE_CELLS = pytest.mark.filterwarnings(
+    "ignore:.*DI-origin expected deaths exceed:RuntimeWarning"
+)
 
 
 def invented_fra(birth_year: int) -> int:
@@ -657,6 +666,7 @@ def test_multiplier_probability_is_clipped_to_one():
     assert applied[1] == pytest.approx(1.0)
 
 
+@IGNORE_INFEASIBLE_CELLS
 def test_multiplier_probability_is_recorded_for_each_decedent():
     rates = invented_rates(death=0.02, population_reference=0.01)
     frame = _prepared(
@@ -679,6 +689,7 @@ def test_multiplier_probability_is_recorded_for_each_decedent():
     assert np.allclose(logged["q_population"], 0.1)
 
 
+@IGNORE_INFEASIBLE_CELLS
 def test_converted_workers_keep_di_origin_mortality_only_when_chosen():
     frame_rates = invented_rates(
         death=1.0, spec=DIEntitlementSpec(death_mode="explicit")
@@ -804,6 +815,7 @@ def test_population_reference_base_follows_the_population_bands():
             )
 
 
+@IGNORE_INFEASIBLE_CELLS
 @pytest.mark.parametrize("level", [1.0, 1.5])
 def test_multiplier_keeps_the_di_age_profile_under_banded_mortality(level):
     """Regression: a banded population model must not reshape DI deaths.
@@ -966,7 +978,9 @@ def test_net_of_di_origin_keeps_each_cells_expected_deaths():
         death=0.10, spec=DIEntitlementSpec(death_mode="explicit")
     )
     frame = _net_frame(rates)
-    q, cells = _all_deaths(rates, frame, weight_column="weight")
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")  # feasible cells: no warning
+        q, cells = _all_deaths(rates, frame, weight_column="weight")
     assert q[1] == pytest.approx(0.10)
     assert q[2] == pytest.approx(0.04 * 0.8125)
     assert q[3] == pytest.approx(0.04 * 0.8125)
@@ -1010,7 +1024,9 @@ def test_net_of_di_origin_uses_the_declared_weights():
     frame = _net_frame(rates)
     with pytest.raises(ValueError, match="needs weight_column"):
         _all_deaths(rates, frame)
-    q, _ = _all_deaths(rates, frame, weight_column=None)
+    # Unweighted, the female 50+ and male 0-49 cells are infeasible.
+    with pytest.warns(RuntimeWarning, match="female 50-120, male 0-49\\)"):
+        q, _ = _all_deaths(rates, frame, weight_column=None)
     # Unweighted male 50+: (0.04 * 3 - 0.10) / (0.04 * 2).
     assert q[2] == pytest.approx(0.04 * (0.12 - 0.10) / 0.08)
     with pytest.raises(ValueError, match="finite"):
@@ -1020,12 +1036,27 @@ def test_net_of_di_origin_uses_the_declared_weights():
 
 
 def test_net_of_di_origin_flags_an_infeasible_cell():
-    """INVENTED: DI-origin expected deaths alone exceed the cell's total."""
+    """INVENTED: DI-origin expected deaths alone exceed the cell's total.
+
+    Regression: the zeroed non-DI probabilities were visible only in the
+    optional cell log; the adapter now also warns, naming the cell.
+    """
     rates = invented_rates(
         death=0.50, spec=DIEntitlementSpec(death_mode="explicit")
     )
     frame = _net_frame(rates)
-    q, cells = _all_deaths(rates, frame, weight_column="weight")
+    listed = r"3 band-sex cell\(s\) \(female 50-120, male 0-49, male 50-120\)"
+    with pytest.warns(RuntimeWarning, match=listed):
+        q, cells = _all_deaths(rates, frame, weight_column="weight")
+    with pytest.warns(RuntimeWarning, match=listed):
+        apply_di_aware_mortality(
+            frame,
+            PeriodContext(1, 2011, 0, {}),
+            ZeroDraw(),
+            population_model=_two_band_model(),
+            rates=rates,
+            weight_column="weight",
+        )
     # Male 0-49: 0.50 * 1 > 0.01 * 20, so the non-DI row gets zero.
     assert q.get(5, 0.0) == 0.0
     cells = cells.set_index(["sex", "band_lower"])
@@ -1243,6 +1274,7 @@ def test_stock_flow_refuses_an_unreconciled_history():
         di_stock_flow(result.slices, death_log={2011: log[2012]})
 
 
+@IGNORE_INFEASIBLE_CELLS
 def test_stock_flow_accepts_an_entitled_entrant_who_dies_on_entry():
     """INVENTED: a scheduled entitled entrant dies in its entry year.
 
@@ -1539,6 +1571,55 @@ def test_fit_arithmetic_on_invented_inputs():
     )
 
 
+def test_select_recovery_is_not_extended_past_its_last_published_age():
+    """INVENTED select tables; recovery ultimate published through age 64.
+
+    Regression: the recovery ultimate column held its last published value
+    at later attained ages, while blank select cells at the same ages gave
+    zero recovery.  Death tables keep their published extension.
+    """
+    recovery_select = {
+        "select_ages": list(range(16, 65)),
+        "durations": list(range(10)),
+        "select": [[0.01] * 10 for _ in range(49)],
+        "ultimate": [0.02] * 39 + [None] * 10,
+        "ultimate_attained_ages": list(range(26, 75)),
+    }
+    inputs = invented_inputs()
+    inputs["as118"]["recovery"]["select_ultimate"] = {
+        "male": recovery_select,
+        "female": recovery_select,
+    }
+    rates = fit_di_entitlement_rates(
+        inputs,
+        invented_life_table(),
+        DIEntitlementSpec(termination_basis="select_and_ultimate"),
+    )
+
+    def at(attained, duration):
+        return float(
+            rates.recovery_probability(
+                np.array([attained]),
+                np.array([1]),
+                select_age=np.array([attained - duration]),
+                duration=np.array([duration]),
+            )[0]
+        )
+
+    factor = rates.recovery_level_factor
+    assert at(64, 10) == pytest.approx(0.02 * factor)
+    assert at(64, 9) == pytest.approx(0.01 * factor)
+    assert at(65, 10) == 0.0
+    assert at(70, 12) == 0.0
+    death = rates.reference_death_probability(
+        np.array([70]),
+        np.array([1]),
+        select_age=np.array([55]),
+        duration=np.array([15]),
+    )
+    assert death[0] == pytest.approx(0.02)
+
+
 @pytest.mark.parametrize(
     ("inputs", "spec", "message"),
     [
@@ -1572,6 +1653,23 @@ def test_fit_arithmetic_on_invented_inputs():
 def test_fit_refuses_bad_or_missing_inputs(inputs, spec, message):
     with pytest.raises(ValueError, match=message):
         fit_di_entitlement_rates(inputs, invented_life_table(), spec)
+
+
+def test_fit_lists_read_sources_and_refuses_undeclared_ones():
+    """INVENTED inputs: provenance names exactly the sections the fit reads."""
+    inputs = invented_inputs()
+    unsourced = fit_di_entitlement_rates(inputs, invented_life_table())
+    assert unsourced.provenance["sources_used"] == []
+    inputs["asr"]["2008"]["awards_workers"]["source"] = "invented_awards"
+    inputs["asr"]["2008"]["awards_workers_series"] = {
+        "source": "invented_unread"
+    }
+    with pytest.raises(ValueError, match="undeclared sources"):
+        fit_di_entitlement_rates(inputs, invented_life_table())
+    inputs["sources"]["invented_awards"] = {"data_year": "2008"}
+    inputs["sources"]["invented_unread"] = {"data_year": "2008"}
+    rates = fit_di_entitlement_rates(inputs, invented_life_table())
+    assert rates.provenance["sources_used"] == ["invented_awards"]
 
 
 def test_fit_refuses_a_non_2000_multiplier_base():

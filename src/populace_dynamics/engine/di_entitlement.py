@@ -75,6 +75,7 @@ person's band-sex cell.
 
 from __future__ import annotations
 
+import warnings
 from collections.abc import (
     Callable,
     Iterable,
@@ -755,7 +756,10 @@ def apply_di_aware_mortality(
     population model's.  ``weight_column`` must then be given explicitly:
     the column of person weights, or ``None`` to count persons equally.
     ``cell_log[year]``, when given, records every cell's expected deaths
-    (columns :data:`MORTALITY_CELL_LOG_COLUMNS`).
+    (columns :data:`MORTALITY_CELL_LOG_COLUMNS`).  A cell whose DI-origin
+    expected deaths alone exceed the population model's is ``infeasible``:
+    its other persons get probability zero, and a ``RuntimeWarning`` names
+    the cells whether or not ``cell_log`` is given.
     """
     net = rates.spec.non_di_mortality == "net_of_di_origin"
     population_bands = (
@@ -858,6 +862,21 @@ def apply_di_aware_mortality(
         )
         if cell_log is not None:
             cell_log[year] = cells
+        infeasible = cells.loc[cells["infeasible"].to_numpy(dtype=bool)]
+        if len(infeasible):
+            listed = ", ".join(
+                f"{row.sex} {row.band_lower}-{row.band_upper}"
+                for row in infeasible.itertuples(index=False)
+            )
+            warnings.warn(
+                f"{year}: DI-origin expected deaths exceed the population "
+                f"model's in {len(infeasible)} band-sex cell(s) ({listed}); "
+                "their non-DI-origin persons, if any, get death probability "
+                "zero and the cells' expected deaths exceed the population "
+                "model's",
+                RuntimeWarning,
+                stacklevel=2,
+            )
     death = uniform < q
     if death_log is not None:
         death_log[year] = pd.DataFrame(

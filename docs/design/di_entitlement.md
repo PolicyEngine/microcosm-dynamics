@@ -5,7 +5,13 @@ two independent agent reviews (the two mortality fixes are marked "Review
 fix" below). A third review found no further code defect. It added the
 termination-timing and select-gap notes under Named deltas, the
 synthetic-age note on the diagnostic, and release-date and capture checks
-to `data/external/di_asr_2008/provenance.md`. Not merged, not registered.
+to `data/external/di_asr_2008/provenance.md`. A fourth review fixed the
+select-and-ultimate recovery past age 64 and made infeasible mortality
+cells warn (both marked "Review fix" below), limited the fitted rates'
+`sources_used` provenance to the tables the fit reads (it had also listed
+ASR 2008 Tables 35, 49, and 57; the diagnostic artifact was regenerated
+and that is its only change), and named the incidence age basis and the
+select-age cap. Not merged, not registered.
 Every modeling choice below is a proposal awaiting the A1 specification
 freeze. Nothing here computes the exercise 1 COLA statistic, reads DYNASIM
 or Urban Institute values, or uses PSID data.
@@ -85,9 +91,12 @@ table ids in its `provenance.md`), extracted by
   population model. At the December 2008 DI prevalence and the Actuarial
   Study No. 118 rates over NCHS 2000, that raised expected deaths in each
   ASR age group from 45 to 64 by 25 to 35 percent. That behavior remains
-  available as `population_total`.) Under the net default a person's
-  uniform is still person-keyed, but a non-DI person's probability depends
-  on the DI share of that person's cell.
+  available as `population_total`.) The adapter also issues a
+  `RuntimeWarning` naming every infeasible cell, whether or not a cell log
+  is kept. (Review fix: before, only the optional cell log showed them.)
+  Under the net default a person's uniform is still person-keyed, but a
+  non-DI person's probability depends on the DI share of that person's
+  cell.
 
 ## Choices awaiting the A1 freeze
 
@@ -195,6 +204,15 @@ Readings:
 - No duration dependence in the default basis.
 - ASR "other" and elected-reduced-retirement terminations are not modeled.
 - Award year is used rather than entitlement date.
+- Incidence age basis. Table 36 counts awards by age at entitlement, and
+  the fit divides them by July 1 population by age, so a band's rate is
+  per person of that age in mid-year. The adapter looks the rate up at the
+  start-of-year age, which is on average half a year younger. The offset
+  is not corrected. On the fit's own exposure (the Census July 1, 2008
+  population aged 18–65 less the Table 20 stock), where the start-of-year
+  lookup reproduces the 877,226 awards of 2008, looking up the mean of
+  that age's rate and the next age's rate instead gives about 1 percent
+  more awards.
 - Disabled widow(er)s and disabled adult children are not modeled; only
   disabled workers are.
 - Non-DI mortality is netted of DI-origin deaths within population band-sex
@@ -217,9 +235,17 @@ Readings:
 - Under `termination_basis="select_and_ultimate"`, recovery is zero where
   Actuarial Study No. 118 Tables 14A–14B show no value. Those cells are the
   select-age and duration pairs that reach attained age 65 or more (select
-  age 56 at duration 9 through select age 64 at durations 1–9); the tables'
-  note says "Recovery is not considered beyond normal retirement age",
-  which was 65 in the 1996–2000 experience. Workers with an FRA above 65
-  therefore have no recovery after 65 on that basis. The attained-age
-  default holds the age-64 value instead (0.000455 for men, 0.000371 for
-  women, before the level factor).
+  age 56 at duration 9 through select age 64 at durations 1–9) and the
+  "10 or more" ultimate column at attained ages 65–74; the tables' note
+  says "Recovery is not considered beyond normal retirement age", which
+  was 65 in the 1996–2000 experience. Workers with an FRA above 65
+  therefore have no recovery after 65 on that basis, at any duration.
+  (Review fix: the ultimate column held its age-64 value, 0.000335 for men
+  and 0.000333 for women before the level factor, so on this basis a
+  worker aged 65 or 66 recovered only after ten or more years on the
+  rolls.) The attained-age default holds the age-64 value instead
+  (0.000455 for men, 0.000371 for women, before the level factor).
+- Under `termination_basis="select_and_ultimate"`, select ages outside the
+  published 16–64 are capped: an award at a start-of-year age of 64 or 65
+  (possible when FRA is above 65) has a `di_award_age` of 65 or 66 and uses
+  the select-age-64 row.

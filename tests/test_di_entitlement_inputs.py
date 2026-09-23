@@ -220,6 +220,32 @@ def test_default_fit_is_pinned(inputs):
     )
 
 
+@pytest.mark.parametrize(
+    ("fit_year", "years"),
+    [
+        ("2008", ("2008",)),
+        ("2007", ("2007",)),
+        ("2007-2008", ("2007", "2008")),
+    ],
+)
+def test_provenance_lists_only_the_sources_the_fit_reads(fit_year, years):
+    """Regression: every ``asr<year>_`` capture was listed as used.
+
+    That included ASR 2008 Tables 35, 49, and 57, which are extracted for
+    diagnostics and never read by the fit.
+    """
+    rates = load_di_entitlement_rates(DIEntitlementSpec(fit_year=fit_year))
+    census_file = {
+        "2008": "census_v2008_r_file18",
+        "2007": "census_v2007_r_file16",
+    }
+    expected = {"as118_death_tables", "as118_recovery_tables"}
+    for year in years:
+        expected |= {f"asr{year}_table{n}" for n in (19, 20, 36, 50)}
+        expected.add(census_file[year])
+    assert rates.provenance["sources_used"] == sorted(expected)
+
+
 def test_sequential_timing_realizes_fewer_recoveries_than_targeted(inputs):
     """Committed 2008 inputs and default rates (a documented named delta).
 
@@ -296,6 +322,50 @@ def test_select_basis_loads_from_the_committed_tables():
     assert first_year[0] == pytest.approx(0.077080)
 
 
+def test_select_basis_gives_no_recovery_past_64_at_any_duration():
+    """Committed Actuarial Study No. 118 Tables 14A-14B.
+
+    The tables publish no recovery probability past attained age 64, in the
+    select cells or in the "10 or more" ultimate column.  Regression: the
+    blank select cells gave zero, but the ultimate column held its age-64
+    value, so a worker aged 65 or 66 recovered only after ten years on the
+    rolls.  Published cells are unchanged.
+    """
+    rates = load_di_entitlement_rates(
+        DIEntitlementSpec(termination_basis="select_and_ultimate")
+    )
+
+    def recovery(sex_index, attained, select_age, duration):
+        return float(
+            rates.recovery_probability(
+                np.array([attained]),
+                np.array([sex_index]),
+                select_age=np.array([select_age]),
+                duration=np.array([duration]),
+            )[0]
+        )
+
+    factor = rates.recovery_level_factor
+    for sex_index, ultimate_64, select_55_at_64 in (
+        (1, 0.000335, 0.000439),  # Table 14A (male)
+        (0, 0.000333, 0.000536),  # Table 14B (female)
+    ):
+        assert recovery(sex_index, 64, 54, 10) == pytest.approx(
+            ultimate_64 * factor
+        )
+        assert recovery(sex_index, 64, 55, 9) == pytest.approx(
+            select_55_at_64 * factor
+        )
+        assert recovery(sex_index, 65, 56, 9) == 0.0
+        assert recovery(sex_index, 65, 55, 10) == 0.0
+        assert recovery(sex_index, 66, 55, 11) == 0.0
+        assert recovery(sex_index, 66, 40, 26) == 0.0
+    # The attained-age default still holds the age-64 value (named delta).
+    default = load_di_entitlement_rates()
+    assert default.recovery_attained[1, 66] == default.recovery_attained[1, 64]
+    assert default.recovery_attained[1, 66] > 0
+
+
 def _passthrough(frame, context, rng):
     return frame
 
@@ -361,6 +431,9 @@ class _ZeroDraw:
         return np.zeros(size)
 
 
+@pytest.mark.filterwarnings(
+    "ignore:.*DI-origin expected deaths exceed:RuntimeWarning"
+)
 def test_multiplier_reproduces_as118_under_banded_nchs_2000_mortality():
     """Committed rates; INVENTED 10-year banding shaped like the engine's.
 
