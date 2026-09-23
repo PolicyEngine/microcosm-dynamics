@@ -195,6 +195,12 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # opt-in data accessor that the historical projection never imports;
     # it is not re-exported from populace_dynamics.data.
     Path("src/populace_dynamics/data/tr2008.py"),
+    # The opt-in PSID 2010 starting-cohort builder (Track A, A3) and its
+    # Social Security income reader are unreachable from the historical
+    # reducer; the transitive reachability test guards the exclusion.
+    Path("src/populace_dynamics/data/social_security_income.py"),
+    Path("src/populace_dynamics/cohorts/__init__.py"),
+    Path("src/populace_dynamics/cohorts/psid2010.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

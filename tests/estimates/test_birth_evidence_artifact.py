@@ -110,6 +110,9 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/compact_cohort_history.py"),
         Path("src/populace_dynamics/axiom_benefit_bridge.py"),
         Path("src/populace_dynamics/data/tr2008.py"),
+        Path("src/populace_dynamics/data/social_security_income.py"),
+        Path("src/populace_dynamics/cohorts/__init__.py"),
+        Path("src/populace_dynamics/cohorts/psid2010.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -322,6 +325,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert tr2008_reader not in reachable, (
         "the opt-in TR2008 parameter reader became reachable from the "
         "birth-evidence reducer"
+    )
+    cohort_modules = {
+        "populace_dynamics.data.social_security_income",
+        "populace_dynamics.cohorts",
+        "populace_dynamics.cohorts.psid2010",
+    }
+    assert cohort_modules.issubset(module_paths)
+    assert cohort_modules.isdisjoint(reachable), (
+        "opt-in starting-cohort modules became reachable from the "
+        f"birth-evidence reducer: {sorted(cohort_modules & reachable)}"
     )
     assert "populace_dynamics.engine.steps" in reachable
 
