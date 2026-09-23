@@ -642,9 +642,9 @@ gates:
       UNLOCKED tranche 2c; benefit formulas earn per-rule "computes exactly"
       status.
     thresholds:
-      # DRAFT gate-2 pre-lock evidence, v2 -- ROUND-1 REFEREE AMENDMENTS
-      # APPLIED (PR #79 comment 4910467957). PRE-LOCK, NOT RATIFIED:
-      # locked stays false and status is draft_pending_referee_round.
+      # Gate-2 evidence, v2 -- round-1 referee amendments applied (PR #79
+      # comment 4910467957). LOCKED: ratified 2026-07-08 by merge of PR 79;
+      # see the ratified record below.
       # The evidence lives in runs/gate2_floors_v2.json (built by
       # scripts/build_gate2_floors.py from the retrospective PSID history
       # files). v1 is retained as the round-1 record. No model reads
