@@ -201,6 +201,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/data/social_security_income.py"),
     Path("src/populace_dynamics/cohorts/__init__.py"),
     Path("src/populace_dynamics/cohorts/psid2010.py"),
+    # The opt-in SSDI entitlement component (Track A item A4) is not imported
+    # by the historical reducer or the engine package initializer.
+    Path("src/populace_dynamics/engine/di_entitlement.py"),
+    Path("src/populace_dynamics/engine/di_entitlement_rates.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
