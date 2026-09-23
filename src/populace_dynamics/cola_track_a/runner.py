@@ -581,8 +581,28 @@ def _draw_diagnostics(
     }
 
 
-def _reduced_increase_summary(rows: list[dict]) -> dict[str, Any]:
-    if not rows:
+def _selected_baseline(row: dict, components: tuple[str, ...]) -> float:
+    """The row's baseline amount summed over the selected components."""
+
+    return sum(
+        row["benefit_components"].get(name, {}).get("base", 0.0)
+        for name in components
+    )
+
+
+def _reduced_increase_summary(
+    rows: list[dict], components: tuple[str, ...]
+) -> dict[str, Any]:
+    """Reduced-increase counts of the row's members, by age group.
+
+    A7 keeps a person in a row only when the benefit summed over the row's
+    components is positive, so a component-restricted row (R5) drops a
+    person whose benefit rests only on another worker's record; the
+    summary counts the same members (``rows`` sums over draws).
+    """
+
+    members = [row for row in rows if _selected_baseline(row, components) > 0]
+    if not members:
         return {}
     frame = pd.DataFrame(
         [
@@ -591,7 +611,7 @@ def _reduced_increase_summary(rows: list[dict]) -> dict[str, Any]:
                 "basis": row["basis"],
                 "count": row["reduced_increases"],
             }
-            for row in rows
+            for row in members
         ]
     )
     out = {}
@@ -832,7 +852,7 @@ def run_track_a(
             "row": row.as_dict(),
             "benefit_counters": dict(sorted(counters_by_row[row_id].items())),
             "reduced_increases_by_age_group": _reduced_increase_summary(
-                rows_by_row[row_id]
+                rows_by_row[row_id], row.components
             ),
             "component_shares_by_age_group": _component_shares(
                 rows_by_row[row_id], row.components, config.draw_indices
@@ -852,6 +872,10 @@ def run_track_a(
         "cohort": dict(cohort.diagnostics),
         "scheduled_entrants": 0,
         "population_mortality": _mortality_record(inputs.population_mortality),
+        # The statutory parameters (bend points, FRA, reduction and credit
+        # rates, wage base) the benefits and the DI conversion read; the
+        # value checks above do not compare them with any capture.
+        "ssa_parameters_revision": inputs.params.pe_us_revision,
         "draws": draws,
         "rows": tabulations,
         "inputs_provenance": dict(inputs.provenance),

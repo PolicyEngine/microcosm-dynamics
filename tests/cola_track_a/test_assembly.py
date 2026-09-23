@@ -1231,3 +1231,54 @@ def test_excluded_di_level_leaves_r3_as_documented(cohort):
         if item["field"] == "di_benefit_level"
     ]
     assert "R3" in entry["note"]
+
+
+def test_reduced_increase_summary_counts_the_rows_members(result):
+    # A7 keeps a person in R5 only with a positive worker benefit; the
+    # summary must count the same persons (it counted widow(er)s and
+    # other auxiliary-only persons under R5 before the fix).
+    fewer = False
+    for row_id, row in result["rows"].items():
+        members = {
+            group["label"]: sum(cell["n_base"] for cell in group["cells"])
+            for group in row["tabulation"]["groups"]
+        }
+        summary = row["reduced_increases_by_age_group"]
+        assert {
+            label: summary[label]["rows"] for label in members
+        } == members, row_id
+        if row_id == "R5":
+            r0 = result["rows"]["R0"]["reduced_increases_by_age_group"]
+            fewer = any(
+                summary[label]["rows"] < r0[label]["rows"] for label in members
+            )
+    assert (
+        fewer
+    ), "the invented cohort should put auxiliary-only persons outside R5"
+
+
+def test_repeated_rows_are_refused():
+    with pytest.raises(ValueError, match="unique"):
+        TrackAConfig(rows=("R0", "R0"))
+    with pytest.raises(ValueError, match="unique"):
+        TrackAConfig(rows=())
+
+
+def test_result_records_the_statutory_parameter_revision(result):
+    assert result["ssa_parameters_revision"] == "INVENTED"
+
+
+def test_dry_run_records_the_date_it_ran():
+    import datetime
+    import importlib.util
+    from pathlib import Path
+
+    path = (
+        Path(__file__).resolve().parents[2] / "scripts" / "track_a_dry_run.py"
+    )
+    spec = importlib.util.spec_from_file_location("track_a_dry_run", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.run_date() == datetime.date.today().isoformat()
+    items = [gap["item"] for gap in module.GAPS]
+    assert "Insured status" in items

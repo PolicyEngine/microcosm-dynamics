@@ -223,8 +223,10 @@ class TrackAConfig:
     spouse_entitlement_rule: SpouseEntitlementRule = (
         SpouseEntitlementRule.OWN_CLAIM_NOT_BEFORE_WORKER
     )
-    #: Opening-stock survivors at or above this 2010 age are labelled
-    #: aged widow(er)s, younger ones disabled widow(er)s (A7 vocabulary).
+    #: Opening-stock survivors at or above this age are labelled aged
+    #: widow(er)s, younger ones disabled widow(er)s (A7 vocabulary): at
+    #: the 2010 age for the opening record, and again at the
+    #: reference-year age for the tabulated component.
     opening_aged_widow_min_age: int = 60
     #: A1 section 21 ``amounts.opening_stock_dime_floor``.
     opening_stock_dime_floor: bool = False
@@ -242,6 +244,11 @@ class TrackAConfig:
         if not draws or len(set(draws)) != len(draws) or min(draws) < 0:
             raise ValueError("draw_indices must be unique and non-negative")
         object.__setattr__(self, "draw_indices", tuple(sorted(draws)))
+        object.__setattr__(self, "rows", tuple(self.rows))
+        if not self.rows or len(set(self.rows)) != len(self.rows):
+            # A repeated row would add each draw's benefit rows to the
+            # same tabulation input twice.
+            raise ValueError("rows must be non-empty and unique")
         unknown = [row for row in self.rows if row not in REGISTERED_ROWS]
         if unknown:
             raise ValueError(
@@ -372,6 +379,15 @@ def pending_decisions(config: TrackAConfig | None = None) -> list[dict]:
             "default_source": "A1 draft section 6, R2 text",
             "alternatives": [AuxiliaryEntitlementClock.WORKER.value],
             "awaiting": "A1 referee question 8",
+            "note": (
+                "under worker, R2 has no exposure start for the widow(er) "
+                "of a worker who was never entitled (A6 leaves it "
+                "undefined), so that widow(er)'s benefit is dropped from R2 "
+                "only (counted as entitlement_clock_undefined) and R2's "
+                "membership can differ from R0's; opening-stock "
+                "auxiliaries use their own entitlement year instead "
+                "(counted as opening_worker_entitlement_unobserved_used_own)"
+            ),
         },
         {
             "field": "survivor_entitlement_rule",

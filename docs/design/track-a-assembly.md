@@ -130,6 +130,10 @@ components only.
   specification.
 - **Claiming.** The claim-age table pinned by A3
   (`runner.load_claiming_pmf`).
+- **Statutory parameters.** Bend points, FRA, reduction and credit rates
+  and the wage base come from the oracle's `SSAParameters`; the result
+  records its revision (`ssa_parameters_revision`), and no value check
+  compares them with a capture.
 
 ## Dry run
 
@@ -146,10 +150,24 @@ AWI. It writes `result.json` and `RESULTS.md`, each headed
 
 The dry run's `result.json` carries the full list: mortality substitute,
 DI netting at single-year cells, no post-2010 earnings, no pre-1968
-earnings, approximated DI and pre-eligibility-death levels, spouses
-outside the roster, widow(er)s of workers who died before 2011, no
-projected disabled widow(er)s, the disability clock for awards at 62 or
-later, no marriage dynamics, auxiliary
-entitlement timing, the realized wage base, A7's person-level floor split
-(A1 section 16 asks for the family unit), A7's one-seed floor (A1 section
-16 asks for undefined), R6, opening-stock DI recovery, and claiming.
+earnings, approximated DI and pre-eligibility-death levels, the
+disability clock for awards at 62 or later, insured status (not modeled
+for retirement or survivor benefits), spouses outside the roster,
+widow(er)s of workers who died before 2011, no projected disabled
+widow(er)s, no marriage dynamics, auxiliary entitlement timing, the
+realized wage base, A7's person-level floor split (A1 section 16 asks for
+the family unit), A7's one-seed floor (A1 section 16 asks for undefined),
+R6, opening-stock DI recovery, and claiming.
+
+Two A4 and A6 alternatives do not run as a registered choice would need:
+
+- A4's `termination_basis="select_and_ultimate"` needs the award year of
+  every opening disabled worker. A3 observes it only when first receipt is
+  bracketed (none in 2008, some in 2010); otherwise only an upper bound is
+  known, which the opening clock uses but which is not an award year. The
+  initial slice therefore leaves `di_award_year` empty for those persons
+  and A4 refuses the projection (`prepare_opening_di_state`).
+- Under `auxiliary_entitlement_clock="worker"`, R2 has no exposure start
+  for the widow(er) of a worker who was never entitled (A6 leaves it
+  undefined). That widow(er)'s benefit is dropped from R2 only (counted as
+  `entitlement_clock_undefined`), so R2's membership can differ from R0's.

@@ -19,6 +19,7 @@ Writes ``result.json`` and ``RESULTS.md`` into ``--output-dir``.
 from __future__ import annotations
 
 import argparse
+import datetime
 import hashlib
 import json
 import math
@@ -122,6 +123,19 @@ GAPS: tuple[dict[str, str], ...] = (
         ),
     },
     {
+        "item": "Insured status",
+        "gap": (
+            "not modeled for retirement or survivor benefits: a projected "
+            "claimant whose 1968-2010 career gives a positive AIME has a "
+            "positive oracle PIA and becomes a retired-worker beneficiary "
+            "however few years it covers, and a widow(er)'s benefit does "
+            "not check the "
+            "deceased's insured status (A4 sets DI incidence per "
+            "population, so DI awards never consult it). Membership and "
+            "weights"
+        ),
+    },
+    {
         "item": "Linked spouses outside the opening roster",
         "gap": (
             "their deaths are not simulated, so their partners are never "
@@ -140,7 +154,8 @@ GAPS: tuple[dict[str, str], ...] = (
         "item": "Disabled widow(er)s and child-in-care beneficiaries",
         "gap": (
             "not projected (A4 models disabled workers only); only opening "
-            "stock survivors under 60 carry the disabled_widow component"
+            "stock survivors still under 60 in 2030 carry the "
+            "disabled_widow component"
         ),
     },
     {
@@ -205,6 +220,12 @@ GAPS: tuple[dict[str, str], ...] = (
         "gap": "closed cohort: no entrants after 2010",
     },
 )
+
+
+def run_date() -> str:
+    """The calendar date of this run (ISO 8601), recorded in its outputs."""
+
+    return datetime.date.today().isoformat()
 
 
 def _git(*args: str) -> str:
@@ -485,7 +506,7 @@ def main(argv: list[str] | None = None) -> int:
         "checks": {"spec_rate_path": _spec_rate_check(baseline)},
         "gaps": list(GAPS),
         "run": {
-            "date": "2026-09-22",
+            "date": run_date(),
             "invented_seed": args.seed,
             "git_head": _git("rev-parse", "HEAD"),
             "git_clean": _git("status", "--porcelain") == "",
