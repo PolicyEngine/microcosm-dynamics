@@ -42,11 +42,11 @@ Who receives what (A5 conventions; A1 section 11 where it speaks):
   Under the entitlement clock (R2) the award year is kept, as the A1
   section 6 table gives it for a disabled worker.
 * **Spouse's excess**: a claimant married, in the reference state, to a
-  living worker with an own benefit, from the later of the person's own
-  simulated claim year and the worker's entitlement year, at 62 or
-  older.  A disabled worker still entitled to DI draws none; one
-  converted at FRA claims at the conversion (the claiming step's
-  ``claim_year``), not at the DI award.
+  living worker in the opening roster with an own benefit, from the later
+  of the person's own simulated claim year and the worker's entitlement
+  year, at 62 or older.  A disabled worker still entitled to DI draws
+  none; one converted at FRA claims at the conversion (the claiming
+  step's ``claim_year``), not at the DI award.
 * **Aged widow(er)'s benefit**: a widow(er) of a worker in the opening
   roster, from the later of widowhood and age 60, paid as the excess over
   the survivor's own benefit (dual entitlement through
@@ -570,7 +570,19 @@ class _Calculator:
         self, person_id: int, state: Any, own: PiaRecord
     ) -> tuple[float, float] | None:
         spouse_id = _nullable_int(state["spouse_person_id"])
-        if spouse_id is None or not self.lookups.alive(spouse_id):
+        # Named gap: a spouse's excess needs the worker's simulated state
+        # and career, which exist only for a linked spouse in the opening
+        # roster.  Each claimant this leaves unassessed is counted.
+        if spouse_id is None:
+            self.counters["spouse_unlinked"] += 1
+            return None
+        if spouse_id not in self.ctx.cohort.roster_ids:
+            self.counters["spouse_outside_roster"] += 1
+            return None
+        if not self.lookups.alive(spouse_id):
+            # The marital step widows the partner of a rostered spouse who
+            # dies, so this state should not occur; count it if it does.
+            self.counters["spouse_rostered_but_absent"] += 1
             return None
         worker = self.worker_record(
             spouse_id, self.lookups.final.loc[spouse_id]
@@ -798,6 +810,11 @@ def reference_benefit_rows(
                 "benefit; fixed-path membership would differ"
             )
         counters[f"beneficiaries_{basis}"] += 1
+        if pd.isna(receipt):
+            # Named gap: A3 could not observe this person's 2010 Social
+            # Security, so the opening state treats them as a
+            # non-recipient and any benefit is projected.
+            counters["beneficiaries_ss_2010_unobserved"] += 1
         rows.append(
             {
                 "draw": int(draw),

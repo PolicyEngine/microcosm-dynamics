@@ -139,7 +139,33 @@ GAPS: tuple[dict[str, str], ...] = (
         "item": "Linked spouses outside the opening roster",
         "gap": (
             "their deaths are not simulated, so their partners are never "
-            "widowed in the projection (counted in the cohort diagnostics)"
+            "widowed in the projection, and with no career or simulated "
+            "state in the cohort no spouse's benefit rests on their record "
+            "(counted in the cohort diagnostics, and per row as "
+            "spouse_outside_roster, or spouse_unlinked for a married "
+            "claimant with no linked spouse)"
+        ),
+    },
+    {
+        "item": "2010 Social Security unobserved",
+        "gap": (
+            "a person whose 2010 Social Security A3 could not observe "
+            "(status unobserved) opens as a non-recipient, so any benefit "
+            "is projected as a non-recipient's would be (a claim plan or "
+            "an A4 award, on the career PIA) rather than carried from an "
+            "observed amount (counted as "
+            "ss_2010_unobserved in the cohort diagnostics and "
+            "beneficiaries_ss_2010_unobserved per row)"
+        ),
+    },
+    {
+        "item": "Undefined cells",
+        "gap": (
+            "A7 refuses a row's whole tabulation when any full-sample cell "
+            "is undefined in any draw, and the run records that row as "
+            "refused; A1 section 7 instead reports that cell's mean and "
+            "SD as undefined with the number of defined draws and keeps "
+            "the other cells"
         ),
     },
     {

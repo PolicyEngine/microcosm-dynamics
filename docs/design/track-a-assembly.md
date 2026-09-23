@@ -95,11 +95,11 @@ components only.
   (retired-worker component, disability clock kept) or retirement
   claimant (claim-age factor from the oracle).
 - **Spouse's excess.** A claimant aged 62 or older, married in 2030 to a
-  living worker who has an own benefit. Paid from the later of the
-  claimant's own simulated claim year and the worker's entitlement year.
-  A disabled worker still entitled to DI draws none. One converted at
-  FRA claims at the conversion (the claiming step's `claim_year`), not
-  at the DI award.
+  living worker in the opening roster who has an own benefit. Paid from
+  the later of the claimant's own simulated claim year and the worker's
+  entitlement year. A disabled worker still entitled to DI draws none.
+  One converted at FRA claims at the conversion (the claiming step's
+  `claim_year`), not at the DI award.
 - **Aged widow(er)'s benefit.** A widow(er) of a worker in the opening
   roster, from the later of widowhood and age 60. It is paid as the excess
   over the survivor's own benefit (dual entitlement through the oracle's
@@ -152,12 +152,25 @@ The dry run's `result.json` carries the full list: mortality substitute,
 DI netting at single-year cells, no post-2010 earnings, no pre-1968
 earnings, approximated DI and pre-eligibility-death levels, the
 disability clock for awards at 62 or later, insured status (not modeled
-for retirement or survivor benefits), spouses outside the roster,
-widow(er)s of workers who died before 2011, no projected disabled
-widow(er)s, no marriage dynamics, auxiliary entitlement timing, the
-realized wage base, A7's person-level floor split (A1 section 16 asks for
-the family unit), A7's one-seed floor (A1 section 16 asks for undefined),
-R6, opening-stock DI recovery, and claiming.
+for retirement or survivor benefits), spouses outside the roster (never
+widowed, and no spouse's benefit rests on their record; counted per row
+as `spouse_outside_roster`, or `spouse_unlinked` for a married claimant
+with no linked spouse), persons whose 2010 Social Security A3 could not
+observe (they open as non-recipients, so any benefit is projected;
+counted as `beneficiaries_ss_2010_unobserved`), widow(er)s of workers
+who died before 2011, no projected disabled widow(er)s, no marriage
+dynamics, auxiliary entitlement timing, the realized wage base, A7's
+person-level floor split (A1 section 16 asks for the family unit), A7's
+one-seed floor (A1 section 16 asks for undefined), A7's refusal of a
+whole row when any full-sample cell is undefined in any draw (A1
+section 7 reports that cell as undefined and keeps the others; the run
+records the row as refused), R6, opening-stock DI recovery, and
+claiming.
+
+Each row also carries `reduced_increases_by_age_group`, a diagnostic
+whose `reduced_increases_definition` says which PIA's count it shows: a
+dually entitled person's spouse's or widow(er)'s amount can rest on a
+PIA with a different count.
 
 Two A4 and A6 alternatives do not run as a registered choice would need:
 

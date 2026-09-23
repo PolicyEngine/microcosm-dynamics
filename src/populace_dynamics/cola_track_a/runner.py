@@ -634,6 +634,17 @@ def _reduced_increase_summary(
     return out
 
 
+_REDUCED_INCREASE_DEFINITION = (
+    "per member row (all draws pooled): the reduced increases in one PIA "
+    "for the row's payment year.  An opening-stock person's count is on "
+    "the opening record's clock.  A projected person's count is that of "
+    "the own worker benefit when there is one, otherwise that of the "
+    "deceased worker's PIA behind the widow(er)'s benefit.  A dually "
+    "entitled person's spouse's or widow(er)'s amount rests on another "
+    "PIA whose count can differ and is not shown here"
+)
+
+
 _COMPONENT_SHARE_DEFINITION = (
     "per draw and age group: each selected component's share of the "
     "weighted baseline benefit total, sum_i w_i B_base[i, c] / sum_i w_i "
@@ -851,6 +862,7 @@ def run_track_a(
             "status": status,
             "row": row.as_dict(),
             "benefit_counters": dict(sorted(counters_by_row[row_id].items())),
+            "reduced_increases_definition": _REDUCED_INCREASE_DEFINITION,
             "reduced_increases_by_age_group": _reduced_increase_summary(
                 rows_by_row[row_id], row.components
             ),

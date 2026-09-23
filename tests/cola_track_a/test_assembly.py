@@ -1282,3 +1282,112 @@ def test_dry_run_records_the_date_it_ran():
     assert module.run_date() == datetime.date.today().isoformat()
     items = [gap["item"] for gap in module.GAPS]
     assert "Insured status" in items
+
+
+def _claimant_rows(persons, careers, final, initial):
+    cohort, projection = _handmade_cohort(persons, careers, final, initial)
+    context = track_benefits.BenefitContext(
+        cohort=cohort,
+        params=invented_params(),
+        baseline=invented_cola(),
+        config=CONFIG,
+    )
+    return cohort, projection, context
+
+
+def test_spouses_the_run_cannot_assess_are_counted():
+    # INVENTED: claimant 1's linked spouse (999) is outside the opening
+    # roster and claimant 3 has no linked spouse, so neither can draw a
+    # spouse's excess.  Both were dropped without a count before the fix.
+    persons = [_static(1, 1955), _static(3, 1956)]
+    careers = {1: _career(9_000.0, 1955), 3: _career(9_000.0, 1956)}
+    final = [
+        _state(
+            1, 1955, 2030, claimed=True, claim_year=2020, spouse_person_id=999
+        ),
+        _state(3, 1956, 2030, claimed=True, claim_year=2021),
+    ]
+    initial = [
+        _state(1, 1955, 2010, spouse_person_id=999),
+        _state(3, 1956, 2010),
+    ]
+    _, projection, context = _claimant_rows(persons, careers, final, initial)
+    rows, counters = track_benefits.reference_benefit_rows(
+        projection, draw=0, row=REGISTERED_ROWS["R0"], context=context
+    )
+    assert counters["spouse_outside_roster"] == 1
+    assert counters["spouse_unlinked"] == 1
+    assert counters["spouse_rostered_but_absent"] == 0
+    assert all(
+        set(row["benefit_components"]) == {"retired_worker"} for row in rows
+    )
+
+
+def test_beneficiaries_with_unobserved_2010_social_security_are_counted():
+    # INVENTED: person 1's 2010 Social Security is unobserved (A3 status
+    # "unobserved"), so the opening state has no record and the benefit
+    # is projected; the count names how many such beneficiaries enter.
+    persons = [_static(1, 1950), _static(2, 1952)]
+    careers = {1: _career(30_000.0, 1950), 2: _career(30_000.0, 1952)}
+    final = [
+        _state(
+            1,
+            1950,
+            2030,
+            claimed=True,
+            claim_year=2012,
+            marital_status="never_married",
+        ),
+        _state(
+            2,
+            1952,
+            2030,
+            claimed=True,
+            claim_year=2014,
+            marital_status="never_married",
+        ),
+    ]
+    initial = [
+        _state(1, 1950, 2010, marital_status="never_married"),
+        _state(2, 1952, 2010, marital_status="never_married"),
+    ]
+    cohort, projection, context = _claimant_rows(
+        persons, careers, final, initial
+    )
+    cohort.persons["ss_receipt_2010"] = pd.array([pd.NA, False], "boolean")
+    rows, counters = track_benefits.reference_benefit_rows(
+        projection, draw=0, row=REGISTERED_ROWS["R0"], context=context
+    )
+    assert {row["person_id"] for row in rows} == {1, 2}
+    assert counters["beneficiaries_ss_2010_unobserved"] == 1
+    assert counters["opening_recipient_without_record"] == 0
+
+
+def test_rows_define_the_reduced_increase_diagnostic(result):
+    for row in result["rows"].values():
+        definition = row["reduced_increases_definition"]
+        assert "dually entitled" in definition
+        assert "own worker benefit" in definition
+
+
+def test_dry_run_names_unassessed_spouses_unobserved_ss_and_refusals():
+    import importlib.util
+    from pathlib import Path
+
+    path = (
+        Path(__file__).resolve().parents[2] / "scripts" / "track_a_dry_run.py"
+    )
+    spec = importlib.util.spec_from_file_location("track_a_dry_run", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    gaps = {gap["item"]: gap["gap"] for gap in module.GAPS}
+    assert "no spouse's benefit" in (
+        gaps["Linked spouses outside the opening roster"]
+    )
+    assert "spouse_outside_roster" in (
+        gaps["Linked spouses outside the opening roster"]
+    )
+    assert "beneficiaries_ss_2010_unobserved" in (
+        gaps["2010 Social Security unobserved"]
+    )
+    assert "A1 section 7" in gaps["Undefined cells"]
