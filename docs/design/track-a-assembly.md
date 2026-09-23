@@ -79,9 +79,12 @@ components only.
   increases the PIA from the year of eligibility "without regard to the
   time of entitlement". Under R2 the award year stays the entitlement
   year. Projected retirement claimants: birth year + 62.
-- **Components.** An opening-stock disabled worker converted at FRA is
-  reported under the retired-worker component (A1 section 11); the
-  amount and the reduced increases stay on the opening basis.
+- **Components.** Opening-stock labels follow A1 section 11 in the
+  reference year: a disabled worker converted at FRA is a retired worker,
+  and a survivor labelled a disabled widow(er) in 2010 is an aged
+  widow(er) once aged 60 or older. The amount and the reduced increases
+  stay on the opening basis. R5 keeps or drops the same persons either
+  way.
 - **Own benefit.** Entitled disabled worker, converted disabled worker
   (retired-worker component, disability clock kept) or retirement
   claimant (claim-age factor from the oracle).

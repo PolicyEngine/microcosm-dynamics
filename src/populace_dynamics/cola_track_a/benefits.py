@@ -20,9 +20,11 @@ Who receives what (A5 conventions; A1 section 11 where it speaks):
   keeps the observed 2010 amount carried forward on the baseline path,
   with the reform ratio from the reformed increases on the record's
   clock.  Later simulated widowhood, a spouse's entitlement or conversion
-  at FRA change neither the amount nor the reduced increases; a disabled
-  worker converted at FRA is reported under the retired-worker component
-  (A1 section 11 counts converted disabled workers as retired workers).
+  at FRA change neither the amount nor the reduced increases.  The
+  component label follows A1 section 11 in the reference year: a
+  disabled worker converted at FRA is a retired worker, and a survivor
+  labelled a disabled widow(er) in 2010 is an aged widow(er) once aged
+  60 or older (``TrackAConfig.opening_aged_widow_min_age``).
   A simulated DI recovery ends a disabled worker's opening basis (rule 4
   does not list recovery); the person is then treated like anyone else.
 * **Own worker benefit**: an entitled disabled worker (A4), a converted
@@ -469,6 +471,15 @@ class _Calculator:
             # basis (rule 4); only the component label follows the
             # conversion.
             component = "retired_worker"
+        age = self.ctx.config.reference_year - int(state["birth_year"])
+        if (
+            component == "disabled_widow"
+            and age >= self.ctx.config.opening_aged_widow_min_age
+        ):
+            # A1 section 11 lists disabled widow(er)s under 60 and aged
+            # widow(er)s from 60, so the label follows the reference-year
+            # age; the amount and T_i stay on the opening basis.
+            component = "aged_widow"
         exposure = record.clock_year
         if self.row.exposure_clock is sb.ExposureClock.ENTITLEMENT:
             exposure = record.entitlement_year

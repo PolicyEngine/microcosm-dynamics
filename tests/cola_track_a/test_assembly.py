@@ -1086,3 +1086,49 @@ def test_component_shares_are_weighted_baseline_amount_shares(result):
                 REGISTERED_ROWS[row_id].components
             )
             assert sum(cell["mean_share"].values()) == pytest.approx(1.0)
+
+
+def test_opening_disabled_widow_is_an_aged_widow_from_60():
+    # INVENTED opening survivors labelled disabled widow(er)s in 2010:
+    # 1 (born 1955) is 75 in 2030; 2 (born 1975) is 55.
+    persons = [_static(1, 1955), _static(2, 1975)]
+    careers = {1: _career(0.0, 1955), 2: _career(0.0, 1975)}
+    final = [
+        _state(1, 1955, 2030, marital_status="widowed", claimed=True),
+        _state(2, 1975, 2030, marital_status="widowed", claimed=True),
+    ]
+    initial = [
+        _state(1, 1955, 2010, marital_status="widowed", claimed=True),
+        _state(2, 1975, 2010, marital_status="widowed", claimed=True),
+    ]
+    cohort, projection = _handmade_cohort(persons, careers, final, initial)
+    cohort.persons["opening_status"] = "survivor"
+    cohort.persons["ss_receipt_2010"] = pd.array([True, True], "boolean")
+    opening = {
+        pid: OpeningStockRecord(
+            person_id=pid,
+            status="survivor",
+            component="disabled_widow",
+            observed_annual_amount=8_000.0,
+            clock_year=2007,
+            clock_rule="a3_receipt_start",
+            entitlement_year=2007,
+            entitlement_clamped=False,
+        )
+        for pid in (1, 2)
+    }
+    cohort = replace(cohort, opening=opening)
+    context = track_benefits.BenefitContext(
+        cohort=cohort,
+        params=invented_params(),
+        baseline=invented_cola(),
+        config=CONFIG,
+    )
+    rows, _ = track_benefits.reference_benefit_rows(
+        projection, draw=0, row=REGISTERED_ROWS["R0"], context=context
+    )
+    by_id = {row["person_id"]: row for row in rows}
+    assert set(by_id[1]["benefit_components"]) == {"aged_widow"}
+    assert set(by_id[2]["benefit_components"]) == {"disabled_widow"}
+    assert by_id[1]["benefit_base"] == pytest.approx(by_id[2]["benefit_base"])
+    assert by_id[1]["reduced_increases"] == 21
