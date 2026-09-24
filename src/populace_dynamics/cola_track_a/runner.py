@@ -125,6 +125,7 @@ from populace_dynamics.estimates.cola_age_profile import (
     REGISTERED_REAL,
     ColaAgeProfileConfig,
     ColaTabulationError,
+    specification_record,
     tabulate_cola_age_profile,
 )
 from populace_dynamics.estimates.parameters import COLASeries
@@ -956,6 +957,7 @@ def run_track_a(
     registration_pointer: str | None = None,
     progress: Callable[[str], None] | None = None,
     check_committed_parameters: bool = False,
+    specification: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Project, compute benefits and tabulate every configured row.
 
@@ -966,10 +968,19 @@ def run_track_a(
     cohort, which refuses any mismatch).  Each population (anchor wave)
     is projected once per draw and every row of that population reads the
     same projection.
+
+    ``specification`` is the A1 section 21 block (default: the committed
+    one, :func:`a1_parameter_block`).  The result records its header, and
+    each row's A7 tabulation derives from it whether the tabulation
+    conventions are fixed by a ratified specification or still await
+    ratification, so no ratification state is hard-coded.
     """
 
     config = config or TrackAConfig()
     config.check_runnable()
+    if specification is None:
+        specification = a1_parameter_block()
+    recorded_specification = specification_record(specification)
     cohorts = _population_cohorts(inputs, config)
     data_provenance = next(iter(cohorts.values())).data_provenance
     labels = tuple(next(iter(cohorts.values())).labels)
@@ -1086,6 +1097,7 @@ def run_track_a(
                 registration_pointer=registration_pointer,
                 labels=labels,
                 upstream_conventions=upstream,
+                specification=specification,
             )
         except ColaTabulationError as error:
             tabulation = None
@@ -1122,6 +1134,7 @@ def run_track_a(
         "registration_pointer": registration_pointer,
         "labels": list(labels),
         "config": config.as_dict(),
+        "specification": recorded_specification,
         "max_rulings": max_rulings(config),
         "builder_defaults": builder_defaults(config),
         "rows_not_built": dict(ROWS_NOT_BUILT),

@@ -29,6 +29,12 @@ Who receives what (A5 conventions; A1 section 11 where it speaks):
   (``TrackAConfig.opening_aged_widow_min_age``).
   A simulated DI recovery ends a disabled worker's opening basis (rule 4
   does not list recovery); the person is then treated like anyone else.
+  Under the entitlement clock (R2) the reform reaches increases from the
+  record's own entitlement year, which is never before its clock: a
+  record whose A3 receipt start precedes the clock was set to the clock
+  (:mod:`~populace_dynamics.cola_track_a.opening`), so its R2 reduced
+  increases equal its R0 ones (counted per R2 beneficiary as
+  ``beneficiaries_opening_entitlement_clamped``).
 * **Own worker benefit**: an entitled disabled worker (A4), a converted
   disabled worker (retired-worker component, disability clock kept), or
   a simulated retirement claimant (age-62 clock, claim-age factor from
@@ -814,6 +820,14 @@ def reference_benefit_rows(
                 "benefit; fixed-path membership would differ"
             )
         counters[f"beneficiaries_{basis}"] += 1
+        if (
+            opening_intact
+            and opener.entitlement_clamped
+            and row.exposure_clock is sb.ExposureClock.ENTITLEMENT
+        ):
+            # Named gap: A3's receipt start precedes the clock, so the
+            # entitlement row reads the clock (opening module docstring).
+            counters["beneficiaries_opening_entitlement_clamped"] += 1
         if pd.isna(receipt):
             # Named gap: A3 could not observe this person's opening-year
             # Social Security, so the opening state treats them as a
