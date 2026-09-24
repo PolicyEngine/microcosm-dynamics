@@ -157,6 +157,23 @@ ROUTES: Mapping[str, str] = {
     ),
 }
 PRIMARY_ROUTES = (ROUTE_OPENING_RETIRED, ROUTE_PROJECTED)
+ROW_LABELS: tuple[tuple[str, str], ...] = (
+    ("career_observed", "career year, observed in PSID"),
+    (
+        "career_gap_imputed",
+        "career year, imputed by the biennial gap law (synthetic)",
+    ),
+    (
+        "career_unknown",
+        "career year, zero-filled by the career law (synthetic)",
+    ),
+    ("synthetic_zero_pre_panel", "zero row before 1968 (synthetic)"),
+    (
+        "synthetic_zero_post_cutoff",
+        "zero row after the opening year (synthetic)",
+    ),
+    ("sent", "all rows sent"),
+)
 _AUX_STATUSES = ("survivor", "spouse", "other", "unclassified")
 
 ATTR_EXACT = "exact_match"
@@ -790,6 +807,14 @@ def summarize_records(records: Sequence[Mapping[str, Any]]) -> dict:
         },
         "refusal_classes": dict(sorted(refusal_reasons.items())),
         "failure_reasons": dict(sorted(failure_reasons.items())),
+        "rows": dict(
+            sorted(
+                sum(
+                    (Counter(r.get("rows", {})) for r in records),
+                    Counter(),
+                ).items()
+            )
+        ),
     }
 
 
@@ -816,7 +841,65 @@ def summarize_pass(records: Sequence[Mapping[str, Any]]) -> dict:
         ),
         "by_route": by_route,
         "by_candidate_computation_years": by_count,
+        "by_computation_year_count": computation_count_detail(records),
     }
+
+
+def computation_count_detail(
+    records: Sequence[Mapping[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    """Per candidate computation-year count: who, and how they agree."""
+
+    out = {}
+    for count in sorted({r["candidate_computation_years"] for r in records}):
+        group = [
+            r for r in records if r["candidate_computation_years"] == count
+        ]
+        executed = [r for r in group if r["status"] == "executed"]
+        births = [r["birth_year"] for r in group]
+        out[str(count)] = {
+            "persons": len(group),
+            "birth_years": f"{min(births)}-{max(births)}",
+            "executed": len(executed),
+            "exact_matches": sum(bool(r["exact_match"]) for r in executed),
+            "attribution": dict(
+                sorted(Counter(r["attribution"] for r in executed).items())
+            ),
+            "max_difference": (
+                _decimal_str(max(Decimal(r["difference"]) for r in executed))
+                if executed
+                else None
+            ),
+        }
+    return out
+
+
+#: Reporting bins for the difference (dollars, engine minus oracle).
+DIFFERENCE_BINS: tuple[tuple[str, Decimal | None, Decimal | None], ...] = (
+    ("below 0", None, Decimal(0)),
+    ("0", Decimal(0), Decimal(1)),
+    ("1 to 9", Decimal(1), Decimal(10)),
+    ("10 to 49", Decimal(10), Decimal(50)),
+    ("50 to 99", Decimal(50), Decimal(100)),
+    ("100 to 199", Decimal(100), Decimal(200)),
+    ("200 to 499", Decimal(200), Decimal(500)),
+    ("500 and above", Decimal(500), None),
+)
+
+
+def difference_bins(difference_counts: Mapping[str, int]) -> dict[str, int]:
+    """Bin the exact per-value counts (bins are [low, high))."""
+
+    out = {label: 0 for label, _, _ in DIFFERENCE_BINS}
+    for text, count in difference_counts.items():
+        value = Decimal(text)
+        for label, low, high in DIFFERENCE_BINS:
+            if (low is None or value >= low) and (
+                high is None or value < high
+            ):
+                out[label] += count
+                break
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -855,6 +938,36 @@ def render_results(result: Mapping[str, Any]) -> str:
         "The people are the real Track A PSID-seeded closed cohort. This "
         "is **not** the COLA statistic: nothing here computes a benefit "
         "path, a reform or any age-profile value."
+    )
+    add("")
+    add("## Result")
+    add("")
+    st = overall["status"]
+    count35 = primary["by_candidate_computation_years"]["35_computation_years"]
+    attribution = overall["attribution"]
+    add(
+        f"Primary pass: {overall['executed']} of {overall['persons']} "
+        f"selected persons were executed on the engine "
+        f"({st.get('refused', 0)} refused, {st.get('failed', 0)} failed). "
+        f"The engine's AIME equals the oracle's for "
+        f"{overall['exact_matches']} "
+        f"({_pct(overall['exact_match_share_of_executed'])}); among the "
+        f"{count35['executed']} executed people with 35 candidate "
+        f"computation years (born 1929 or later) it equals the oracle's "
+        f"for {count35['exact_matches']}. Of the "
+        f"{overall['nonzero_differences']['count']} disagreements, "
+        f"{attribution.get(ATTR_COUNT, 0)} are reproduced exactly by the "
+        "oracle's own arithmetic with the candidate's computation-year "
+        "count (elapsed years minus 5, fewer than 35 for people born "
+        "before 1929; the oracle always uses 35) and "
+        f"{attribution.get(ATTR_UNEXPLAINED, 0)} are unexplained."
+    )
+    add("")
+    add(
+        "The inputs are the cohort's PSID careers under declarations both "
+        "sides share (below); agreement shows the engine and the oracle "
+        "compute the same AIME from the same rows, not that either AIME "
+        "is a person's true AIME."
     )
     add("")
     add("## What was compared")
@@ -966,9 +1079,11 @@ def render_results(result: Mapping[str, Any]) -> str:
     add("### Distribution of differences (Axiom AIME minus oracle AIME)")
     add("")
     add(_row("Difference ($)", "Persons"))
-    add(_row("---:", "---:"))
-    for value, count in overall["difference_counts"].items():
-        add(_row(value, count))
+    add(_row("---", "---:"))
+    for label, count in difference_bins(overall["difference_counts"]).items():
+        add(_row(label, count))
+    add("")
+    add("Per-dollar counts are under `difference_counts` in `result.json`.")
     add("")
     nz = overall["nonzero_differences"]
     add(
@@ -994,16 +1109,58 @@ def render_results(result: Mapping[str, Any]) -> str:
         "recorded under `executions` in `result.json`; each written "
         "record names its files)."
     )
-    by_count = primary["by_candidate_computation_years"]
-    fewer = by_count["fewer_than_35_computation_years"]
-    if fewer["persons"]:
-        add("")
-        add(
-            f"People with fewer than 35 candidate computation years (born "
-            f"before 1929): {fewer['persons']}; executed "
-            f"{fewer['executed']}, exact matches {fewer['exact_matches']}, "
-            f"attribution {json.dumps(fewer['attribution'])}."
+    detail = primary["by_computation_year_count"]
+    add("")
+    add("By the candidate's computation-year count:")
+    add("")
+    add(
+        _row(
+            "Count",
+            "Born",
+            "Persons",
+            "Executed",
+            "Exact",
+            f"`{ATTR_COUNT}`",
+            f"`{ATTR_UNEXPLAINED}`",
+            "Max difference ($)",
         )
+    )
+    add(_row("---:", "---", "---:", "---:", "---:", "---:", "---:", "---:"))
+    for count, row in detail.items():
+        add(
+            _row(
+                count,
+                row["birth_years"],
+                row["persons"],
+                row["executed"],
+                row["exact_matches"],
+                row["attribution"].get(ATTR_COUNT, 0),
+                row["attribution"].get(ATTR_UNEXPLAINED, 0),
+                row["max_difference"],
+            )
+        )
+    add("")
+    add(
+        "An exact match with fewer than 35 years means both divisions "
+        "floor to the same dollar (for example, a zero total)."
+    )
+    add("")
+    add("### Rows sent to the engine (primary pass, all persons)")
+    add("")
+    rows = overall["rows"]
+    add(_row("Row kind", "Rows"))
+    add(_row("---", "---:"))
+    for key, label in ROW_LABELS:
+        add(_row(label, rows.get(key, 0)))
+    add("")
+    add(
+        f"{rows.get('synthetic', 0)} of {rows.get('sent', 0)} rows are "
+        "labeled synthetic. Career amounts above the contribution and "
+        f"benefit base were limited to it in {rows.get('limited_to_base', 0)}"
+        " rows (the oracle's own `creditable_history`); in "
+        f"{rows.get('shortest_decimal_differs_from_binary', 0)} rows the "
+        "shortest round-trip decimal differs from the exact binary64 value."
+    )
     add("")
     add("### Refusals and failures")
     add("")
@@ -1161,6 +1318,15 @@ def render_results(result: Mapping[str, Any]) -> str:
         f"`{cohort['a3_content_sha256']}`; Track A cohort seal "
         f"`{cohort['track_a_seal']}`."
     )
+    artifact = cohort.get("track_a_artifact")
+    if artifact is not None:
+        add(
+            f"- The cohort's diagnostics and source provenance and the "
+            f"parameter revision equal those recorded in `{artifact['path']}`"
+            f" (SHA-256 `{artifact['sha256']}`; checks "
+            f"{json.dumps(artifact['checks'])}); only those fields of the "
+            "artifact were used."
+        )
     add(
         f"- Wage index series digest `{result['parameters']['wage_index']['source_sha256']}`"
         f" ({result['parameters']['wage_index']['years']}); contribution "
@@ -1272,6 +1438,44 @@ def _load_cohort(anchor_wave: int, reference_year: int):
         ),
     }
     return cohort, provenance, info
+
+
+#: The committed Track A artifact whose cohort and parameters are matched.
+TRACK_A_ARTIFACT = Path("runs/replication_urban2010_cola_v1.json")
+
+
+def _json_normal(value: Any) -> Any:
+    return json.loads(json.dumps(value, sort_keys=True, default=str))
+
+
+def track_a_artifact_binding(
+    artifact: Mapping[str, Any],
+    *,
+    anchor_wave: int,
+    diagnostics: Mapping[str, Any],
+    source_provenance: Mapping[str, Any],
+    parameters_revision: str,
+) -> dict[str, bool]:
+    """Checks that the cohort and parameters are the committed Track A run's.
+
+    Reads only the artifact's parameter revision and its cohort
+    diagnostics; nothing about benefits or age groups.
+    """
+
+    recorded = dict(artifact["cohorts"][str(anchor_wave)])
+    recorded_source = recorded.pop("source_provenance")
+    return {
+        "ssa_parameters_revision_equal": (
+            artifact["ssa_parameters_revision"] == parameters_revision
+        ),
+        "cohort_diagnostics_equal": (
+            _json_normal(recorded) == _json_normal(dict(diagnostics))
+        ),
+        "cohort_source_provenance_equal": (
+            _json_normal(recorded_source)
+            == _json_normal(dict(source_provenance))
+        ),
+    }
 
 
 def _parameters():
@@ -1404,6 +1608,24 @@ def main(argv: list[str] | None = None) -> int:
     cohort, provenance, cohort_info = _load_cohort(
         args.anchor_wave, reference_year
     )
+    artifact_bytes = (ROOT / TRACK_A_ARTIFACT).read_bytes()
+    artifact_checks = track_a_artifact_binding(
+        json.loads(artifact_bytes),
+        anchor_wave=args.anchor_wave,
+        diagnostics=cohort.diagnostics,
+        source_provenance=cohort.source_provenance,
+        parameters_revision=params.pe_us_revision,
+    )
+    if not all(artifact_checks.values()):
+        raise SystemExit(
+            f"the cohort or parameters differ from {TRACK_A_ARTIFACT}: "
+            f"{artifact_checks}"
+        )
+    cohort_info["track_a_artifact"] = {
+        "path": str(TRACK_A_ARTIFACT),
+        "sha256": hashlib.sha256(artifact_bytes).hexdigest(),
+        "checks": artifact_checks,
+    }
     cutoff = cohort.start_year
     persons = cohort.persons
     selections = select_persons(

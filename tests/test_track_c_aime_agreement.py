@@ -451,6 +451,69 @@ def test_run_pass_and_summaries(fake_binding):
         tc.ATTR_UNEXPLAINED: 1,
     }
     assert set(summary["by_route"]) == {tc.ROUTE_PROJECTED}
+    assert overall["rows"]["sent"] == sum(r["rows"]["sent"] for r in records)
+    assert overall["rows"]["synthetic_zero_pre_panel"] == sum(
+        r["rows"]["synthetic_zero_pre_panel"] for r in records
+    )
+    assert summary["by_computation_year_count"] == {
+        "35": {
+            "persons": 6,
+            "birth_years": "1931-1936",
+            "executed": 6,
+            "exact_matches": 5,
+            "attribution": {tc.ATTR_EXACT: 5, tc.ATTR_UNEXPLAINED: 1},
+            "max_difference": "2",
+        }
+    }
+
+
+def test_difference_bins_are_half_open_and_exhaustive():
+    counts = {"-3": 1, "0": 4, "1": 2, "9": 1, "10": 1, "499": 1, "500": 3}
+    bins = tc.difference_bins(counts)
+    assert list(bins) == [label for label, _, _ in tc.DIFFERENCE_BINS]
+    assert bins["below 0"] == 1
+    assert bins["0"] == 4
+    assert bins["1 to 9"] == 3
+    assert bins["10 to 49"] == 1
+    assert bins["200 to 499"] == 1
+    assert bins["500 and above"] == 3
+    assert sum(bins.values()) == sum(counts.values())
+
+
+def test_track_a_artifact_binding_compares_cohort_and_parameters():
+    # INVENTED artifact fragment and cohort diagnostics.
+    diagnostics = {"members": 3, "a3_spec": {"m4_waves": (2011,)}}
+    source = {"kind": "psid_files", "content_sha256": "INVENTED"}
+    artifact = {
+        "ssa_parameters_revision": "INVENTED+tr2008",
+        "cohorts": {
+            "2011": {
+                "members": 3,
+                "a3_spec": {"m4_waves": [2011]},
+                "source_provenance": dict(source),
+            }
+        },
+    }
+    checks = tc.track_a_artifact_binding(
+        artifact,
+        anchor_wave=2011,
+        diagnostics=diagnostics,
+        source_provenance=source,
+        parameters_revision="INVENTED+tr2008",
+    )
+    assert all(checks.values())
+    changed = tc.track_a_artifact_binding(
+        artifact,
+        anchor_wave=2011,
+        diagnostics={**diagnostics, "members": 4},
+        source_provenance=source,
+        parameters_revision="INVENTED+other",
+    )
+    assert changed == {
+        "ssa_parameters_revision_equal": False,
+        "cohort_diagnostics_equal": False,
+        "cohort_source_provenance_equal": True,
+    }
 
 
 def test_decimal_and_float_text_are_plain():
@@ -537,6 +600,11 @@ def test_render_labels_candidates_and_computes_no_age_profile(
     for group in ("50-61", "62-64", "65-69", "70-79", "80+"):
         assert group not in text
     assert "at most 500 per pass" in text
+    assert "## Result" in text
+    assert "| 1 to 9 |" in text
+    assert "Rows sent to the engine" in text
+    # Person 2 (born 1920) has 26 candidate computation years.
+    assert "| 26 | 1920-1920 | 1 |" in text
     assert "derives them from SSA's published 2024 AWI" in text
     (tmp_path / "result.json").write_text(json.dumps(result))
     assert tc.main(["--render-only", str(tmp_path)]) == 0
