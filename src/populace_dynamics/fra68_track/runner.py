@@ -153,14 +153,32 @@ def e1_parameter_block(path: Path = E1_SPECIFICATION_PATH) -> dict:
     return json.loads(match.group(1))
 
 
+#: The row entries the specification check binds to ``FRA68Row.as_dict``
+#: (E1 section 21 ``rows``; F0's entries are inherited by every row).
+_BOUND_ROW_KEYS = (
+    "schedule",
+    "survivor_retirement_age",
+    "claiming_response",
+    "statistic",
+    "components",
+    "population",
+    "benefit_period",
+    "benefit_scale",
+    "behavior",
+)
+
+
 def specification_code_check(
     block: Mapping[str, Any], config: FRA68Config
 ) -> dict[str, Any]:
     """Whether the E1 block and the code agree (recorded in every run).
 
     Compares the specification identifier, the three frozen schedules,
-    the primary schedule, the rows (each alternative's one changed field
-    and value), the C1 anchor age (``claiming.C1.anchor_age`` against
+    the primary schedule, the rows (each row's schedule, survivor rule,
+    claiming response, statistic, components, population, benefit period,
+    benefit scale and behavior, with F0's entries inherited, and the
+    membership basis the runner passes to A7 for every row), the C1
+    anchor age (``claiming.C1.anchor_age`` against
     ``FRA68Config.c1_anchor_age``) and the statistic identifier.
     """
 
@@ -182,16 +200,13 @@ def specification_code_check(
     for row_id, row in registered.items():
         declared = {**rows.get("F0", {}), **rows.get(row_id, {})}
         expected = row.as_dict()
-        for key in (
-            "schedule",
-            "survivor_retirement_age",
-            "claiming_response",
-            "statistic",
-            "components",
-            "population",
-        ):
+        for key in _BOUND_ROW_KEYS:
             if declared.get(key) != expected[key]:
                 mismatches.append(f"{row_id}.{key}")
+        # Every row is tabulated with scenario-specific membership
+        # (run_fra68 passes SCENARIO_SPECIFIC to A7 for each row).
+        if declared.get("membership_basis") != SCENARIO_SPECIFIC:
+            mismatches.append(f"{row_id}.membership_basis")
     # Row F3's claiming response is defined by its anchor age, which the
     # block freezes under claiming.C1 and the configuration carries.
     anchor = block.get("claiming", {}).get("C1", {}).get("anchor_age")

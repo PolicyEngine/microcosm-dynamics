@@ -1352,6 +1352,31 @@ def test_the_specification_check_names_each_mismatch():
     assert check["mismatches"] == ["schedule_P3", "F6.components"]
 
 
+@pytest.mark.parametrize(
+    ("row_id", "key", "value"),
+    [
+        ("F0", "benefit_period", "december_2030_monthly_amount"),
+        ("F0", "benefit_scale", "monthly"),
+        ("F4", "behavior", "fixed_paths_shared_draws"),
+        ("F0", "membership_basis", "identical"),
+    ],
+)
+def test_the_specification_check_binds_every_row_entry(row_id, key, value):
+    # E1 referee optional suggestion 7: section 21 says a registered run
+    # refuses a mismatch in "the rows"; the check compared six keys per
+    # row, so the benefit period, scale, behavior and membership basis the
+    # block declares were not bound to the code.
+    edited = copy.deepcopy(e1_parameter_block())
+    edited["rows"][row_id][key] = value
+    mismatches = specification_code_check(edited, FRA68Config())["mismatches"]
+    if row_id == "F0":
+        # F0's entries are inherited by every row that does not set them.
+        assert f"F0.{key}" in mismatches
+        assert all(item.endswith(f".{key}") for item in mismatches)
+    else:
+        assert mismatches == [f"{row_id}.{key}"]
+
+
 def test_the_c1_anchor_age_is_bound_to_the_block():
     # Regression: the check compared F3's claiming-response label but not
     # the anchor age that defines it, so a ratified block and a
