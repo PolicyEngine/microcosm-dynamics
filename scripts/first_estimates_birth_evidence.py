@@ -222,6 +222,14 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/cola_track_a/opening.py"),
     Path("src/populace_dynamics/cola_track_a/runner.py"),
     Path("src/populace_dynamics/cola_track_a/statutory.py"),
+    # The opt-in Track U layer (DynaSim exercise 2: the family income and
+    # wealth reader, the age-67 cohort builder, the adjusted income concept
+    # and its tabulation) is post-compute and unreachable from the
+    # historical projection; the transitive reachability test guards it.
+    Path("src/populace_dynamics/data/family_income.py"),
+    Path("src/populace_dynamics/cohorts/age67.py"),
+    Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
+    Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
     # The opt-in statutory AIME (42 USC 415(b)(2) computation years) sits
     # beside the sealed ss.benefits, which it calls but does not edit; the
     # historical ledger never imports it.

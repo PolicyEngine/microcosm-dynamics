@@ -126,6 +126,10 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/cola_track_a/opening.py"),
         Path("src/populace_dynamics/cola_track_a/runner.py"),
         Path("src/populace_dynamics/cola_track_a/statutory.py"),
+        Path("src/populace_dynamics/data/family_income.py"),
+        Path("src/populace_dynamics/cohorts/age67.py"),
+        Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
+        Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
         Path("src/populace_dynamics/ss/statutory_aime.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
@@ -391,6 +395,17 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert track_a_modules.isdisjoint(reachable), (
         "the opt-in Track A assembly became reachable from the "
         f"birth-evidence reducer: {sorted(track_a_modules & reachable)}"
+    )
+    track_u_modules = {
+        "populace_dynamics.data.family_income",
+        "populace_dynamics.cohorts.age67",
+        "populace_dynamics.estimates.adjusted_poverty",
+        "populace_dynamics.estimates.uniform_cut_tabulation",
+    }
+    assert track_u_modules.issubset(module_paths)
+    assert track_u_modules.isdisjoint(reachable), (
+        "the opt-in Track U layer became reachable from the "
+        f"birth-evidence reducer: {sorted(track_u_modules & reachable)}"
     )
     statutory_aime = "populace_dynamics.ss.statutory_aime"
     assert statutory_aime in module_paths
