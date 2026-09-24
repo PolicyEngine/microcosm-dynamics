@@ -130,6 +130,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/cohorts/age67.py"),
         Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
         Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
+        Path("src/populace_dynamics/ss/statutory_aime.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -405,6 +406,13 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert track_u_modules.isdisjoint(reachable), (
         "the opt-in Track U layer became reachable from the "
         f"birth-evidence reducer: {sorted(track_u_modules & reachable)}"
+    )
+    statutory_aime = "populace_dynamics.ss.statutory_aime"
+    assert statutory_aime in module_paths
+    assert "populace_dynamics.ss.benefits" in reachable
+    assert statutory_aime not in reachable, (
+        "the opt-in statutory AIME became reachable from the "
+        "birth-evidence reducer"
     )
 
 

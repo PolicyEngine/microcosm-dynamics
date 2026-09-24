@@ -230,6 +230,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/cohorts/age67.py"),
     Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
     Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
+    # The opt-in statutory AIME (42 USC 415(b)(2) computation years) sits
+    # beside the sealed ss.benefits, which it calls but does not edit; the
+    # historical ledger never imports it.
+    Path("src/populace_dynamics/ss/statutory_aime.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

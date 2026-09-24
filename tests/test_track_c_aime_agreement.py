@@ -19,8 +19,11 @@ from pathlib import Path
 import pytest
 
 import populace_dynamics.axiom_benefit_bridge as bridge
+from populace_dynamics import scenario_benefits as sb
+from populace_dynamics.cola_track_a.benefits import TRACK_A_COMPUTATION_YEARS
 from populace_dynamics.ss import benefits
 from populace_dynamics.ss.params import SSAParameters
+from populace_dynamics.ss.statutory_aime import ComputationYears
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -37,6 +40,8 @@ def _load_script():
 
 
 tc = _load_script()
+STATUTORY = ComputationYears.STATUTORY
+LEGACY = ComputationYears.LEGACY_FIXED_35
 
 # INVENTED parameters: a smooth wage index with cent values and a flat
 # contribution base.  Not SSA's series.
@@ -149,7 +154,14 @@ def fake_binding(tmp_path):
     )
 
 
-def _context(name=tc.PASS_PRIMARY, *, binding=None, runner=None, **kw):
+def _context(
+    name=tc.PASS_PRIMARY,
+    *,
+    binding=None,
+    runner=None,
+    oracle=STATUTORY,
+    **kw,
+):
     params = kw.pop("params", INVENTED_PARAMS)
     return tc.PassContext(
         name=name,
@@ -159,6 +171,7 @@ def _context(name=tc.PASS_PRIMARY, *, binding=None, runner=None, **kw):
         binding=binding,
         cutoff_year=CUTOFF,
         anchor_wave=2011,
+        oracle_convention=oracle,
         runner=runner,
         **kw,
     )
@@ -205,17 +218,167 @@ def test_conventions_entitlement_year_and_candidate_count():
     assert tc.candidate_computation_years(1960) == 35
 
 
-def test_oracle_arithmetic_at_35_years_is_the_oracle():
+def test_the_candidate_count_is_the_statutory_oracle_s_count():
+    # The report says no disagreement can be attributed to the count under
+    # the statutory oracle: the two counts agree for every birth year the
+    # statutory oracle accepts (attaining 62 in 1975 or later).
+    for birth in range(1913, 2001):
+        assert tc.candidate_computation_years(
+            birth
+        ) == tc.oracle_computation_year_count(birth, STATUTORY), birth
+    assert tc.oracle_computation_year_count(1913, LEGACY) == 35
+
+
+def test_oracle_arithmetic_at_the_oracle_s_count_is_the_oracle():
     career = _career(1930)
     career[1990] = 45191.8  # INVENTED non-dyadic amount
-    assert tc.oracle_arithmetic_with_count(
-        career, 1930, INVENTED_PARAMS, 35
-    ) == tc.oracle_aime(career, 1930, INVENTED_PARAMS)
-    assert tc.oracle_aime(career, 1930, INVENTED_PARAMS) == benefits.aime(
-        career, 1930, INVENTED_PARAMS
+    legacy = tc.oracle_aime(career, 1930, INVENTED_PARAMS, convention=LEGACY)
+    assert (
+        tc.oracle_arithmetic_with_count(career, 1930, INVENTED_PARAMS, 35)
+        == legacy
+    )
+    assert legacy == benefits.aime(career, 1930, INVENTED_PARAMS)
+    # Born 1930: 35 statutory years, so the two oracles agree.
+    assert tc.oracle_computation_year_count(1930, STATUTORY) == 35
+    assert (
+        tc.oracle_aime(career, 1930, INVENTED_PARAMS, convention=STATUTORY)
+        == legacy
     )
     fewer = tc.oracle_arithmetic_with_count(career, 1930, INVENTED_PARAMS, 20)
-    assert fewer > tc.oracle_aime(career, 1930, INVENTED_PARAMS)
+    assert fewer > legacy
+    # INVENTED career of a person born 1920: 26 statutory years.  The
+    # statutory oracle is the arithmetic at that count; the legacy one at 35.
+    early = _career(1920)
+    assert tc.oracle_computation_year_count(1920, STATUTORY) == 26
+    assert tc.oracle_computation_year_count(1920, LEGACY) == 35
+    statutory = tc.oracle_aime(
+        early, 1920, INVENTED_PARAMS, convention=STATUTORY
+    )
+    assert statutory == tc.oracle_arithmetic_with_count(
+        early, 1920, INVENTED_PARAMS, 26
+    )
+    assert tc.oracle_aime(
+        early, 1920, INVENTED_PARAMS, convention=LEGACY
+    ) == benefits.aime(early, 1920, INVENTED_PARAMS)
+    assert statutory > benefits.aime(early, 1920, INVENTED_PARAMS)
+
+
+def test_the_oracle_choice_defaults_to_statutory_and_is_named():
+    parser = tc.build_parser()
+    assert parser.parse_args([]).oracle_computation_years == "statutory"
+    assert tc.DEFAULT_ORACLE == "statutory"
+    legacy_args = ["--oracle-computation-years", "legacy_fixed_35"]
+    assert (
+        parser.parse_args(legacy_args).oracle_computation_years
+        == "legacy_fixed_35"
+    )
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--oracle-computation-years", "fixed_35"])
+    assert tc.oracle_convention("statutory") is STATUTORY
+    assert tc.oracle_convention("legacy_fixed_35") is LEGACY
+    assert tc.oracle_convention(LEGACY) is LEGACY
+    with pytest.raises(ValueError, match="unknown oracle computation years"):
+        tc.oracle_convention("statutory_415_b_2")
+    assert tc.oracle_choice(STATUTORY) == "statutory"
+    assert tc.oracle_choice(LEGACY) == "legacy_fixed_35"
+    for convention, phrase in (
+        (STATUTORY, "statutory computation years (42 USC 415(b)(2)"),
+        (LEGACY, "Track A's legacy fixed 35 computation years"),
+    ):
+        assert phrase in tc.header_for(convention)
+        assert "oracle: " + tc.ORACLE_NAMES[convention] in tc.labels_for(
+            convention
+        )
+        document = tc.oracle_document(convention)
+        assert document["computation_years"] == convention.value
+        assert document["choice"] == tc.oracle_choice(convention)
+        assert document["is_track_a_convention"] is (convention is LEGACY)
+        assert document["track_a_computation_years"] == LEGACY.value
+        assert f"ComputationYears.{convention.name}" in document["call"]
+    # Only the non-Track-A oracle adds a not-compared item about Track A.
+    assert len(tc.not_compared(STATUTORY)) == len(tc.not_compared(LEGACY)) + 1
+    assert "track_a_oracle_aime" in tc.not_compared(STATUTORY)[-1]
+
+
+def test_track_a_s_convention_is_still_the_legacy_fixed_35():
+    # The report names Track A's AIME as the fixed-35 one under either
+    # choice, so a change of Track A's convention stops the script.
+    assert TRACK_A_COMPUTATION_YEARS is LEGACY
+    assert tc.LEGACY_COMPUTATION_YEARS == 35
+    tc.require_track_a_convention()
+    tc.require_track_a_convention(LEGACY)
+    with pytest.raises(SystemExit, match="statutory_415_b_2"):
+        tc.require_track_a_convention(STATUTORY)
+
+
+@pytest.mark.parametrize(
+    ("oracle", "checked"),
+    [
+        (STATUTORY, [STATUTORY.value, LEGACY.value]),
+        (LEGACY, [LEGACY.value]),
+    ],
+)
+def test_oracle_pia_check_follows_the_chosen_oracle(
+    monkeypatch, oracle, checked
+):
+    # INVENTED people born 1925 and 1960.  The check calls
+    # eligibility_pia_for_clock with the chosen convention and with Track
+    # A's, as Track A's assembly does.
+    people = [_person(1, 1925), _person(2, 1960)]
+    document = tc.check_oracle_pia(people, INVENTED_PARAMS, oracle)
+    assert document["persons"] == 2
+    assert document["conventions_checked"] == checked
+    # The two conventions give the 1925 person different PIAs, so each
+    # check is a real constraint.
+    early = people[0]
+    pias = {
+        convention: sb.eligibility_pia_for_clock(
+            sb.WorkerClock.at_age_62(1925),
+            history=early.career,
+            birth_year=1925,
+            params=INVENTED_PARAMS,
+            computation_years=convention,
+        )
+        for convention in (STATUTORY, LEGACY)
+    }
+    assert pias[STATUTORY] != pias[LEGACY]
+    assert pias[LEGACY] == benefits.pia(
+        tc.oracle_aime(early.career, 1925, INVENTED_PARAMS, convention=LEGACY),
+        1987,
+        INVENTED_PARAMS,
+    )
+    # A PIA that does not rest on the recorded oracle AIME is refused.
+    original = tc.oracle_aime
+    monkeypatch.setattr(
+        tc,
+        "oracle_aime",
+        lambda career, birth, params, *, convention: original(
+            career, birth, params, convention=convention
+        )
+        + 100,
+    )
+    with pytest.raises(ValueError, match="1: PIA mismatch"):
+        tc.check_oracle_pia(people, INVENTED_PARAMS, oracle)
+
+
+def test_oracle_pia_check_needs_the_computation_years_pin(monkeypatch):
+    # A PIA function that ignores computation_years (always its statutory
+    # default) must fail the Track A (legacy) check for someone born 1925.
+    original = sb.eligibility_pia_for_clock
+
+    def unpinned(clock, *, history, birth_year, params, computation_years):
+        return original(
+            clock, history=history, birth_year=birth_year, params=params
+        )
+
+    monkeypatch.setattr(tc.sb, "eligibility_pia_for_clock", unpinned)
+    people = [_person(1, 1925)]
+    with pytest.raises(ValueError, match="1: PIA mismatch \\(legacy"):
+        tc.check_oracle_pia(people, INVENTED_PARAMS, STATUTORY)
+    with pytest.raises(ValueError, match="1: PIA mismatch \\(legacy"):
+        tc.check_oracle_pia(people, INVENTED_PARAMS, LEGACY)
+    # Born 1960: 35 years either way, so the unpinned call passes.
+    tc.check_oracle_pia([_person(2, 1960)], INVENTED_PARAMS, LEGACY)
 
 
 def test_transport_zero_fills_outside_the_panel_and_labels_rows():
@@ -300,12 +463,15 @@ def test_strict_transport_is_refused_with_classified_reasons():
     assert "axiom_aime" not in accepted
 
 
-def test_executed_records_classify_agreement(fake_binding):
+@pytest.mark.parametrize("oracle", [STATUTORY, LEGACY])
+def test_executed_records_classify_agreement(fake_binding, oracle):
     person = _person(1, 1935)
-    oracle = tc.oracle_aime(person.career, 1935, INVENTED_PARAMS)
-    engine = FakeEngine(aime=str(oracle))
+    aime = tc.oracle_aime(
+        person.career, 1935, INVENTED_PARAMS, convention=oracle
+    )
+    engine = FakeEngine(aime=str(aime))
     record, result = tc.compare_person(
-        person, _context(binding=fake_binding, runner=engine)
+        person, _context(binding=fake_binding, runner=engine, oracle=oracle)
     )
     assert record["status"] == "executed"
     assert record["exact_match"] is True
@@ -313,31 +479,73 @@ def test_executed_records_classify_agreement(fake_binding):
     assert record["attribution"] == tc.ATTR_EXACT
     assert record["entitlement_year_sent"] == 2011
     assert record["request_sha256"] == result.prepared.request_sha256
+    # Born 1935: 35 years under either oracle, and Track A's AIME is the
+    # oracle's.
+    assert record["oracle_computation_years"] == 35
+    assert record["oracle_aime"] == record["track_a_oracle_aime"] == aime
     request = engine.requests[0]
     assert request["outputs"] == [bridge.AIME_OUTPUT]
     # Window 1957-2010: eleven zero years before 1968, then the career.
     assert len(request["batches"]) == 2011 - 1957
 
+    record, _ = tc.compare_person(
+        person,
+        _context(
+            binding=fake_binding,
+            runner=FakeEngine(str(aime + 1)),
+            oracle=oracle,
+        ),
+    )
+    assert record["attribution"] == tc.ATTR_UNEXPLAINED
+    assert record["difference"] == "1"
+
+
+def test_the_legacy_oracle_attributes_the_count_the_statutory_one_uses(
+    fake_binding,
+):
+    # INVENTED career of a person born 1920 (26 candidate computation
+    # years); the engine answers with the oracle arithmetic at 26 years.
     early = _person(2, 1920)
     count = tc.candidate_computation_years(1920)
     at_count = tc.oracle_arithmetic_with_count(
         early.career, 1920, INVENTED_PARAMS, count
     )
-    record, _ = tc.compare_person(
+    legacy, _ = tc.compare_person(
         early,
-        _context(binding=fake_binding, runner=FakeEngine(str(at_count))),
+        _context(
+            binding=fake_binding,
+            runner=FakeEngine(str(at_count)),
+            oracle=LEGACY,
+        ),
     )
-    assert record["attribution"] == tc.ATTR_COUNT
-    assert Decimal(record["difference"]) == at_count - (
-        record["track_a_oracle_aime"]
+    assert legacy["oracle_computation_years"] == 35
+    assert legacy["oracle_aime"] == legacy["track_a_oracle_aime"]
+    assert legacy["attribution"] == tc.ATTR_COUNT
+    assert Decimal(legacy["difference"]) == at_count - legacy["oracle_aime"]
+    assert Decimal(legacy["difference"]) > 0
+    statutory, _ = tc.compare_person(
+        early,
+        _context(
+            binding=fake_binding,
+            runner=FakeEngine(str(at_count)),
+            oracle=STATUTORY,
+        ),
     )
-
-    record, _ = tc.compare_person(
-        person,
-        _context(binding=fake_binding, runner=FakeEngine(str(oracle + 1))),
+    assert statutory["oracle_computation_years"] == count == 26
+    assert statutory["oracle_aime"] == at_count
+    assert statutory["track_a_oracle_aime"] == legacy["oracle_aime"]
+    assert statutory["attribution"] == tc.ATTR_EXACT
+    # Under the statutory oracle the count explains nothing: a different
+    # engine answer is unexplained even if it were the legacy arithmetic.
+    other, _ = tc.compare_person(
+        early,
+        _context(
+            binding=fake_binding,
+            runner=FakeEngine(str(legacy["oracle_aime"])),
+            oracle=STATUTORY,
+        ),
     )
-    assert record["attribution"] == tc.ATTR_UNEXPLAINED
-    assert record["difference"] == "1"
+    assert other["attribution"] == tc.ATTR_UNEXPLAINED
 
 
 def test_refusals_and_engine_failures_are_recorded(fake_binding):
@@ -378,7 +586,9 @@ def test_diagnostic_pass_compares_the_same_truncated_years(fake_binding):
         opening_entitlement_year=2006,
     )
     truncated = {y: v for y, v in career.items() if y < 2006}
-    oracle_truncated = tc.oracle_aime(truncated, 1944, INVENTED_PARAMS)
+    oracle_truncated = tc.oracle_aime(
+        truncated, 1944, INVENTED_PARAMS, convention=STATUTORY
+    )
     record, _ = tc.compare_person(
         person,
         _context(
@@ -390,7 +600,7 @@ def test_diagnostic_pass_compares_the_same_truncated_years(fake_binding):
     assert record["entitlement_year_sent"] == 2006
     assert record["oracle_aime_on_sent_years"] == oracle_truncated
     assert record["truncation_effect_on_oracle"] == oracle_truncated - (
-        tc.oracle_aime(career, 1944, INVENTED_PARAMS)
+        tc.oracle_aime(career, 1944, INVENTED_PARAMS, convention=STATUTORY)
     )
     assert record["truncation_effect_on_oracle"] < 0
     assert record["career_years_not_sent"] == "2006-2010"
@@ -399,7 +609,9 @@ def test_diagnostic_pass_compares_the_same_truncated_years(fake_binding):
 
 def test_pia_formula_check_records_the_1964_cohort(fake_binding):
     person = _person(1, 1964)
-    oracle = tc.oracle_aime(person.career, 1964, INVENTED_PARAMS)
+    oracle = tc.oracle_aime(
+        person.career, 1964, INVENTED_PARAMS, convention=STATUTORY
+    )
     pia = benefits.pia(float(oracle), 2026, INVENTED_PARAMS)
     engine = FakeEngine(aime=str(oracle), pia=tc._float_text(pia))
     record, result = tc.compare_person(
@@ -423,7 +635,10 @@ def test_run_pass_and_summaries(fake_binding):
     people = [_person(i, 1930 + i) for i in range(1, 7)]
     answers = {
         p.selection.person_id: tc.oracle_aime(
-            p.career, p.selection.birth_year, INVENTED_PARAMS
+            p.career,
+            p.selection.birth_year,
+            INVENTED_PARAMS,
+            convention=STATUTORY,
         )
         for p in people
     }
@@ -443,6 +658,8 @@ def test_run_pass_and_summaries(fake_binding):
     overall = summary["overall"]
     assert overall["executed"] == 6
     assert overall["exact_matches"] == 5
+    # Born 1931-1936: 35 years, so the statutory oracle is Track A's.
+    assert overall["oracle_aime_differs_from_track_a"] == 0
     assert overall["exact_match_share_of_executed"] == pytest.approx(5 / 6)
     assert overall["difference_counts"] == {"0": 5, "2": 1}
     assert overall["nonzero_differences"]["count"] == 1
@@ -480,40 +697,234 @@ def test_difference_bins_are_half_open_and_exhaustive():
     assert sum(bins.values()) == sum(counts.values())
 
 
-def test_track_a_artifact_binding_compares_cohort_and_parameters():
-    # INVENTED artifact fragment and cohort diagnostics.
-    diagnostics = {"members": 3, "a3_spec": {"m4_waves": (2011,)}}
-    source = {"kind": "psid_files", "content_sha256": "INVENTED"}
-    artifact = {
+# INVENTED artifact fragment and cohort diagnostics, in the shape of
+# runs/replication_urban2010_cola_v1.json's cohorts and of
+# cola_track_a.opening's diagnostics.
+_SOURCE = {"kind": "psid_files", "content_sha256": "INVENTED"}
+_RECORDED = {
+    "members": 3,
+    "a3_spec": {"m4_waves": [2011]},
+    "opening_stock_clock_rules": {
+        "a3_receipt_start": 7,
+        "linked_worker_birth_plus_62": 4,
+        "own_birth_plus_62": 10,
+    },
+    "opening_stock_entitlement_clamped": 5,
+}
+_ADDITIVE_KEY = "opening_stock_entitlement_clamped_by_clock_rule"
+#: INVENTED breakdown that sums to the recorded total (5) and fits within
+#: the recorded clock-rule counts (4 and 10).
+_ADDITIVE_VALUE = {"linked_worker_birth_plus_62": 2, "own_birth_plus_62": 3}
+_ALL_CHECKS_TRUE = {
+    "ssa_parameters_revision_equal": True,
+    "cohort_diagnostics_equal_on_recorded_keys": True,
+    "additive_diagnostic_keys_known": True,
+    "additive_breakdowns_sum_to_recorded_totals": True,
+    "additive_breakdowns_within_recorded_categories": True,
+    "cohort_source_provenance_equal": True,
+}
+
+
+def _artifact(recorded=None):
+    return {
         "ssa_parameters_revision": "INVENTED+tr2008",
         "cohorts": {
             "2011": {
-                "members": 3,
-                "a3_spec": {"m4_waves": [2011]},
-                "source_provenance": dict(source),
+                **(_RECORDED if recorded is None else recorded),
+                "source_provenance": dict(_SOURCE),
             }
         },
     }
-    checks = tc.track_a_artifact_binding(
-        artifact,
+
+
+def _binding(diagnostics, *, artifact=None, revision="INVENTED+tr2008"):
+    return tc.track_a_artifact_binding(
+        _artifact() if artifact is None else artifact,
         anchor_wave=2011,
         diagnostics=diagnostics,
-        source_provenance=source,
+        source_provenance=_SOURCE,
+        parameters_revision=revision,
+    )
+
+
+def _failed(binding):
+    return sorted(k for k, ok in binding["checks"].items() if not ok)
+
+
+def test_track_a_artifact_binding_compares_cohort_and_parameters():
+    diagnostics = {**_RECORDED, "a3_spec": {"m4_waves": (2011,)}}
+    binding = _binding(diagnostics)
+    assert binding["checks"] == _ALL_CHECKS_TRUE
+    assert binding["recorded_diagnostic_keys"] == sorted(_RECORDED)
+    assert binding["additive_diagnostic_keys"] == {}
+    assert binding["unknown_additive_diagnostic_keys"] == []
+    changed = _binding(
+        {**diagnostics, "members": 4}, revision="INVENTED+other"
+    )
+    assert changed["checks"] == {
+        **_ALL_CHECKS_TRUE,
+        "ssa_parameters_revision_equal": False,
+        "cohort_diagnostics_equal_on_recorded_keys": False,
+    }
+    assert changed["recorded_keys_changed"] == {
+        "members": {"recorded": 3, "fresh": 4}
+    }
+    missing = _binding(
+        {k: v for k, v in diagnostics.items() if k != "members"}
+    )
+    assert _failed(missing) == ["cohort_diagnostics_equal_on_recorded_keys"]
+    assert missing["recorded_keys_missing"] == ["members"]
+
+
+def test_the_reviewed_additive_diagnostic_is_recorded_not_refused():
+    # Regression: #454 (bfe9fa3e) added
+    # opening_stock_entitlement_clamped_by_clock_rule to the cohort
+    # diagnostics after the Track A artifact was written, and the
+    # whole-dict comparison stopped every real run before any engine call
+    # (cohort_diagnostics_equal: False).
+    assert tc.KNOWN_ADDITIVE_DIAGNOSTICS == {
+        _ADDITIVE_KEY: {
+            "added_by": "bfe9fa3e",
+            "total": "opening_stock_entitlement_clamped",
+            "categories": "opening_stock_clock_rules",
+        }
+    }
+    fresh = {**_RECORDED, _ADDITIVE_KEY: dict(_ADDITIVE_VALUE)}
+    recorded = dict(_artifact()["cohorts"]["2011"])
+    recorded.pop("source_provenance")
+    assert tc._json_normal(recorded) != tc._json_normal(fresh)
+    binding = _binding(fresh)
+    assert binding["checks"] == _ALL_CHECKS_TRUE
+    assert binding["additive_diagnostic_keys"] == {
+        _ADDITIVE_KEY: _ADDITIVE_VALUE
+    }
+    assert binding["additive_breakdowns"] == {
+        _ADDITIVE_KEY: {
+            "added_by": "bfe9fa3e",
+            "total_key": "opening_stock_entitlement_clamped",
+            "recorded_total": 5,
+            "sum": 5,
+            "sums_to_recorded_total": True,
+            "categories_key": "opening_stock_clock_rules",
+            "within_recorded_categories": True,
+        }
+    }
+    # A breakdown that does not sum to the recorded total is refused.
+    off = _binding({**fresh, _ADDITIVE_KEY: {"own_birth_plus_62": 4}})
+    assert _failed(off) == ["additive_breakdowns_sum_to_recorded_totals"]
+    not_counts = _binding({**fresh, _ADDITIVE_KEY: ["own_birth_plus_62"]})
+    assert "additive_breakdowns_sum_to_recorded_totals" in _failed(not_counts)
+    # Changing a recorded key is still refused alongside an additive one.
+    changed = _binding({**fresh, "opening_stock_entitlement_clamped": 6})
+    assert "cohort_diagnostics_equal_on_recorded_keys" in _failed(changed)
+
+
+@pytest.mark.parametrize(
+    "breakdown",
+    [
+        # Sums to 5 but counts 5 under a rule the artifact counts 4 times.
+        {"linked_worker_birth_plus_62": 5},
+        # Sums to 5 but names a rule the artifact never counts.
+        {"invented_rule": 2, "own_birth_plus_62": 3},
+        # Sums to 5 only through a negative count.
+        {"own_birth_plus_62": 6, "linked_worker_birth_plus_62": -1},
+    ],
+)
+def test_an_additive_breakdown_must_fit_the_recorded_categories(breakdown):
+    # Regression: the 71c94743 check accepted each of these (it tested the
+    # sum only).
+    binding = _binding({**_RECORDED, _ADDITIVE_KEY: breakdown})
+    assert "additive_breakdowns_within_recorded_categories" in (
+        _failed(binding)
+    )
+    assert not all(binding["checks"].values())
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        # Not a breakdown of anything recorded.
+        {"invented_new_counter": 7},
+        # Named like a breakdown of a recorded total and summing to it, but
+        # never reviewed.
+        {"opening_stock_entitlement_clamped_by_invented_rule": {"a": 5}},
+    ],
+)
+def test_an_unreviewed_diagnostic_the_artifact_lacks_is_refused(extra):
+    # Regression: the whole-dict comparison refused any new diagnostic; the
+    # 71c94743 check accepted both of these (the first as "recorded only",
+    # the second through its <total>_by_<rule> name).  Only the reviewed
+    # KNOWN_ADDITIVE_DIAGNOSTICS may be absent from the artifact.
+    fresh = {**_RECORDED, _ADDITIVE_KEY: dict(_ADDITIVE_VALUE), **extra}
+    binding = _binding(fresh)
+    assert _failed(binding) == ["additive_diagnostic_keys_known"]
+    assert binding["unknown_additive_diagnostic_keys"] == sorted(extra)
+    assert binding["additive_breakdowns"][next(iter(extra))] is None
+
+
+def test_require_track_a_artifact_refuses_and_records(tmp_path):
+    fresh = {**_RECORDED, _ADDITIVE_KEY: dict(_ADDITIVE_VALUE)}
+    artifact_bytes = json.dumps(_artifact()).encode()
+    kwargs = dict(
+        path="INVENTED/artifact.json",
+        anchor_wave=2011,
+        source_provenance=_SOURCE,
         parameters_revision="INVENTED+tr2008",
     )
-    assert all(checks.values())
-    changed = tc.track_a_artifact_binding(
-        artifact,
-        anchor_wave=2011,
-        diagnostics={**diagnostics, "members": 4},
-        source_provenance=source,
-        parameters_revision="INVENTED+other",
+    document = tc.require_track_a_artifact(
+        artifact_bytes, diagnostics=fresh, **kwargs
     )
-    assert changed == {
-        "ssa_parameters_revision_equal": False,
-        "cohort_diagnostics_equal": False,
-        "cohort_source_provenance_equal": True,
+    assert document["path"] == "INVENTED/artifact.json"
+    assert document["sha256"] == hashlib.sha256(artifact_bytes).hexdigest()
+    assert document["additive_diagnostic_keys"] == {
+        _ADDITIVE_KEY: _ADDITIVE_VALUE
     }
+    text = tc._artifact_binding_text(document)
+    assert "4 keys" in text
+    assert f"`{_ADDITIVE_KEY}`" in text
+    assert (
+        "(added in `bfe9fa3e`; sum 5, recorded "
+        "`opening_stock_entitlement_clamped` 5; within recorded "
+        "`opening_stock_clock_rules`: yes)"
+    ) in text
+    assert "an unlisted diagnostic refuses the run" in text
+    plain = tc._artifact_binding_text(
+        tc.require_track_a_artifact(
+            artifact_bytes, diagnostics=dict(_RECORDED), **kwargs
+        )
+    )
+    assert "records no other diagnostic" in plain
+    with pytest.raises(SystemExit) as refused:
+        tc.require_track_a_artifact(
+            artifact_bytes, diagnostics={**fresh, "members": 4}, **kwargs
+        )
+    message = str(refused.value)
+    assert "INVENTED/artifact.json" in message
+    assert "cohort_diagnostics_equal_on_recorded_keys" in message
+    assert "'members': {'recorded': 3, 'fresh': 4}" in message
+    with pytest.raises(SystemExit) as unknown:
+        tc.require_track_a_artifact(
+            artifact_bytes,
+            diagnostics={**fresh, "invented_new_counter": 7},
+            **kwargs,
+        )
+    message = str(unknown.value)
+    assert "additive_diagnostic_keys_known" in message
+    assert "KNOWN_ADDITIVE_DIAGNOSTICS ['invented_new_counter']" in message
+
+
+def test_a_run_requires_an_output_dir(monkeypatch):
+    # Regression: the default --output-dir named the 2026-09-23 evidence
+    # directory, so a run without the flag was aimed at an earlier run's
+    # directory.  The check precedes every git, engine and data step.
+    assert tc.build_parser().parse_args([]).output_dir is None
+
+    def no_git(*args):
+        raise AssertionError("reached git before refusing")
+
+    monkeypatch.setattr(tc, "_git", no_git)
+    with pytest.raises(SystemExit, match="--output-dir is required"):
+        tc.main([])
 
 
 def test_decimal_and_float_text_are_plain():
@@ -528,14 +939,20 @@ def test_decimal_and_float_text_are_plain():
     assert series.source_sha256 is not None
 
 
-def _invented_result(fake_binding):
+def _invented_result(fake_binding, oracle=STATUTORY):
     people = [_person(1, 1935), _person(2, 1920, "retired_worker")]
     records = tc.run_pass(
         people,
-        _context(binding=fake_binding, runner=FakeEngine("100")),
+        _context(
+            binding=fake_binding, runner=FakeEngine("100"), oracle=oracle
+        ),
     )
-    strict = tc.run_pass(people, _context(tc.PASS_STRICT))
+    strict = tc.run_pass(people, _context(tc.PASS_STRICT, oracle=oracle))
     return {
+        "schema_version": tc.SCHEMA_VERSION,
+        "header": tc.header_for(oracle),
+        "labels": list(tc.labels_for(oracle)),
+        "oracle": tc.oracle_document(oracle),
         "partial": True,
         "cohort": {
             "anchor_wave": 2011,
@@ -544,6 +961,11 @@ def _invented_result(fake_binding):
             "psid_files_bundle_sha256": "INVENTED",
             "a3_content_sha256": "INVENTED",
             "track_a_seal": "INVENTED",
+            "track_a_artifact": {
+                "path": "INVENTED/artifact.json",
+                "sha256": "INVENTED",
+                **_binding({**_RECORDED, _ADDITIVE_KEY: _ADDITIVE_VALUE}),
+            },
         },
         "selection": {
             "selected": 2,
@@ -561,6 +983,12 @@ def _invented_result(fake_binding):
         "passes": {
             tc.PASS_PRIMARY: {"summary": tc.summarize_pass(records)},
             tc.PASS_STRICT: {"summary": tc.summarize_pass(strict)},
+        },
+        "oracle_pia_consistency": {
+            "persons": 2,
+            "conventions_checked": list(
+                dict.fromkeys((oracle.value, LEGACY.value))
+            ),
         },
         "pia_check": {
             "persons": 0,
@@ -589,10 +1017,11 @@ def _invented_result(fake_binding):
     }
 
 
+@pytest.mark.parametrize("oracle", [STATUTORY, LEGACY])
 def test_render_labels_candidates_and_computes_no_age_profile(
-    fake_binding, tmp_path
+    fake_binding, tmp_path, oracle
 ):
-    result = _invented_result(fake_binding)
+    result = _invented_result(fake_binding, oracle)
     text = tc.render_results(result)
     assert "PARTIAL SMOKE RUN" in text
     assert "candidates are unaccepted" in text
@@ -606,9 +1035,63 @@ def test_render_labels_candidates_and_computes_no_age_profile(
     # Person 2 (born 1920) has 26 candidate computation years.
     assert "| 26 | 1920-1920 | 1 |" in text
     assert "derives them from SSA's published 2024 AWI" in text
+    # The artifact binding names the additive diagnostic.
+    assert f"`{_ADDITIVE_KEY}`" in text
     (tmp_path / "result.json").write_text(json.dumps(result))
     assert tc.main(["--render-only", str(tmp_path)]) == 0
     assert (tmp_path / "RESULTS.md").read_text() == text
+
+
+def test_render_names_the_oracle_compared_against(fake_binding):
+    statutory = tc.render_results(_invented_result(fake_binding, STATUTORY))
+    legacy = tc.render_results(_invented_result(fake_binding, LEGACY))
+    title = "# Track C step 1: AIME agreement, Axiom engine vs Python oracle"
+    assert statutory.splitlines()[0] == title + (
+        " (statutory computation years)"
+    )
+    assert legacy.splitlines()[0] == title + (
+        " (legacy fixed-35 computation years)"
+    )
+    for text, convention in ((statutory, STATUTORY), (legacy, LEGACY)):
+        name = tc.ORACLE_NAMES[convention]
+        assert f"**Oracle: {name}**" in text
+        assert f"Primary pass, oracle with {name}:" in text
+        assert (
+            f"`--oracle-computation-years {tc.oracle_choice(convention)}`"
+            in text
+        )
+    assert "computation_years=ComputationYears.STATUTORY" in statutory
+    assert "the statutory oracle uses that count too" in statutory
+    assert "no record can have this attribution" in statutory
+    assert "`ss.benefits.aime(career, birth_year, params)`" in legacy
+    assert "the legacy oracle always uses 35" in legacy
+    assert "(35, the legacy oracle's)" in legacy
+    # Person 2 (born 1920): the statutory oracle's AIME is not Track A's.
+    assert "differs from Track A's" in statutory
+    assert "for 1 of the 2 selected people: 1 of the 1 with fewer" in (
+        " ".join(statutory.split())
+    )
+    assert "for 0 of the 2 selected people" in " ".join(legacy.split())
+    assert "`statutory_415_b_2` and `legacy_fixed_35`" in statutory
+    assert "`legacy_fixed_35` (its PIA" in legacy
+
+
+def test_render_refuses_a_result_of_another_schema(fake_binding):
+    result = _invented_result(fake_binding)
+    result.pop("oracle")
+    result["schema_version"] = "populace_dynamics.track_c.aime_agreement.v1"
+    with pytest.raises(ValueError, match="aime_agreement.v1"):
+        tc.render_results(result)
+    # A 71c94743 (v2) result has an oracle record but the earlier artifact
+    # binding; its prose belongs to the script at that commit.
+    v2 = _invented_result(fake_binding)
+    v2["schema_version"] = "populace_dynamics.track_c.aime_agreement.v2"
+    with pytest.raises(ValueError, match="aime_agreement.v2"):
+        tc.render_results(v2)
+    no_oracle = _invented_result(fake_binding)
+    no_oracle.pop("oracle")
+    with pytest.raises(ValueError, match="render it with the script"):
+        tc.render_results(no_oracle)
 
 
 def test_actual_engine_agrees_with_the_oracle_on_invented_careers():
@@ -626,12 +1109,25 @@ def test_actual_engine_agrees_with_the_oracle_on_invented_careers():
         career,
         _provenance(career),
     )
-    record, result = tc.compare_person(modern, _context(binding=binding))
-    assert record["status"] == "executed"
-    assert result.engine_version == "0.2.2"
-    assert record["exact_match"] is True
-    assert record["attribution"] == tc.ATTR_EXACT
-    early, _ = tc.compare_person(_person(2, 1920), _context(binding=binding))
-    assert early["candidate_computation_years"] == 26
-    assert early["attribution"] == tc.ATTR_COUNT
-    assert Decimal(early["axiom_aime"]) > early["track_a_oracle_aime"]
+    for oracle in (STATUTORY, LEGACY):
+        record, result = tc.compare_person(
+            modern, _context(binding=binding, oracle=oracle)
+        )
+        assert record["status"] == "executed"
+        assert result.engine_version == "0.2.2"
+        assert record["exact_match"] is True
+        assert record["attribution"] == tc.ATTR_EXACT
+    early = _person(2, 1920)
+    legacy, _ = tc.compare_person(
+        early, _context(binding=binding, oracle=LEGACY)
+    )
+    assert legacy["candidate_computation_years"] == 26
+    assert legacy["attribution"] == tc.ATTR_COUNT
+    assert Decimal(legacy["axiom_aime"]) > legacy["track_a_oracle_aime"]
+    statutory, _ = tc.compare_person(
+        early, _context(binding=binding, oracle=STATUTORY)
+    )
+    assert statutory["oracle_computation_years"] == 26
+    assert statutory["attribution"] == tc.ATTR_EXACT
+    assert Decimal(statutory["axiom_aime"]) == statutory["oracle_aime"]
+    assert statutory["request_sha256"] == legacy["request_sha256"]
