@@ -10,10 +10,10 @@
   (`scripts/run_fra68_registered.py`) refuses a block whose status or
   version is not ratified, that lists a decision awaiting Max, or that
   records no ruling of his on a decision field (§21).
-- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-6`,
+- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-7`,
   drafted 2026-09-24 and revised the same day after the independent
-  referee pass and after the independent reviews of `e1-draft-4` and
-  `e1-draft-5` (§25). §26 is the changelog.
+  referee pass and after the independent reviews of `e1-draft-4`,
+  `e1-draft-5` and `e1-draft-6` (§25). §26 is the changelog.
 - **Plan item:** E1 of the blind plan
   `EVID/critical-path-fra68-20260923.md` (SHA-256 `d5e7a32f…`), where
   `EVID` = `~/microcosm-launch-evidence/dynasim-parity-20260909`. The
@@ -431,6 +431,19 @@ scenario's bundle; `fra68_track.benefits`):
 1. PIA paths, dime flooring after each increase and after the factor,
    dual entitlement through the oracle's `spousal_benefit` and
    `widow_benefit`, gross amounts: A1 §11 rules 1-3 and 5, unchanged.
+   The levels are Track A's (`_Calculator._level`, which
+   `ScenarioCalculator` inherits unchanged): the oracle retirement PIA,
+   whose AIME divides by a fixed 35 computation years
+   (`cola_track_a.benefits.TRACK_A_COMPUTATION_YEARS` =
+   `legacy_fixed_35`, the arithmetic of exercise 1's Registration 13), and
+   the disclosed approximation for DI and pre-eligibility-death levels,
+   which also divides by 35. So the levels are exercise 1's, path for
+   path (§14). The statutory count of 415(b)(2) (`statutory_415_b_2`,
+   the default of `scenario_benefits.eligibility_pia_for_clock` since
+   #457) is not used; it differs for workers born before 1929 (§12). The
+   specification check binds §21 `amounts.benefit_computation_years` to
+   Track A's constant, so a registered run refuses if Track A's count
+   changes.
 2. **Per-scenario factors.** Retired worker: `benefit_factor` under the
    scenario bundle. Spouse's excess: months early against the scenario
    FRA of the spouse's birth year, from the later of the spouse's own
@@ -496,6 +509,7 @@ A1 §12 is carried over, with these exercise-3 items:
 | Whole-year conversion claim (Track A) | Track A counts a converted worker's claim for the spouse's excess from the whole conversion year (the year of attaining FRA under A4's July birth month), as month 12 (y_c - b). That is FRA mod 12 months before the FRA when the remainder is below 6: 2 months for spouses born 1955 and 4 for 1956 under the statutory schedule (and for 1938 and 1939, who converted before either opening year). 402(q)(1) and (q)(6)(B) (`usc42_402.txt` lines 371 and 406) reduce an excess that starts at FRA not at all. Counting the conversion claim from its exact month (0 months early) in both scenarios would change exercise 1's baseline for these spouses, a choice for Max that this draft does not make (option (a) of the review of `e1-draft-4`, §25) | Baseline and reform levels only: the excess of a converted spouse born 1955 or 1956 whose conversion starts it is reduced by 1.39 or 2.78 percent (2 or 4 months at 25/36 of 1 percent) in both scenarios, and the reform ratio is 1 wherever the reform pays it (§11, rule 3; a worker the reform has not converted by 2030 draws none, the next row). Diagnostic in every run (benefit counters, by scenario): `fra68_spouse_excess_on_conversion_claim`, the paid spouse's excesses on a conversion claim, and `fra68_spouse_excess_on_conversion_claim_months_early`, those whose months early are positive |
 | Spouse's excess of a DI beneficiary | Track A convention: none while DI-entitled. 402(q)(3)(C) (`usc42_402.txt` lines 383-385) would pay a DI beneficiary a reduced excess | Under the reform it starts at 68 instead of 67 for a converted worker, so the convention overstates the reform's cut for converted workers aged 67 in 2030 (born 1963) |
 | Survivor reduction span | Exact by cohort here (pending, `survivor_reduction_span`, §22); fixed 84 months in exercise 1 | Baseline amounts of survivors born before 1962 entitled after 60 differ from exercise 1's |
+| Benefit computation years (Track A) | Levels divide the AIME by a fixed 35 years, Track A's `TRACK_A_COMPUTATION_YEARS` (§11, rule 1). 415(b)(2) counts elapsed years less 5, fewer than 35 for workers born before 1929 (31 for a worker born in 1925) | Levels only, in both scenarios, as in exercise 1: workers born before 1929 (aged 102 or more in 2030) and the spouse's and survivor's benefits resting on them. The reform changes no one's count |
 | Credit timing | 402(w)(3) credits increment months from January of the following year; Track A applies the full factor at the claim | Small; both scenarios |
 | Credits of a worker who died unclaimed | 402(e)(2)(C) and 402(f)(2)(C) (`EVID/fra68-statute-20260924/usc42_402.txt` lines 208 and 258): if the deceased "was (or upon application would have been) entitled to" a benefit increased by delayed retirement credits, the survivor's benefit rests on that increased benefit, counting increment months through the month before death. Track A's `deceased_unentitled` record uses factor 1.0 in both scenarios. The records carry an annual death year only, so the credits cannot be counted by month without a new convention | Survivors of workers who died unclaimed after the baseline retirement age inherit no credits in either scenario, so the reform's cut of up to D credit months (8 percentage points for D = 12) is missed. Under C1 and C2 a claimant who dies before the moved claim loses all credits in the reform scenario, where the statute would keep those accrued from the reform retirement age. Aged widow(er)s. Diagnostic in every run (benefit counters, by scenario): `fra68_widow_credits_not_inherited`, the paid aged widow(er)'s excesses resting on a never-entitled decedent who died in or after the calendar year of attaining the scenario's retirement age, and `fra68_widow_credits_not_inherited_claim_moved_past_death`, the subset whose claim C1 or C2 moved past death. The count is not a bound on the survivors the statute would pass credits to: the death month is unknown, so it can include a decedent who died in the attainment year before the retirement-age month, and it omits a survivor paid no excess without the credits whom the credits would have given one |
 | Month resolution and birth month | Integer claim ages; the July birth month of A4 for conversion and for the C1/C2 dates | Odd-month increases enter exactly; the C1/C2 delay is 0 below 6 months |
@@ -775,7 +789,9 @@ Downstream code reads this block: `fra68_track.runner.e1_parameter_block`
 registered run refuses a mismatch in the schedules, the primary schedule,
 each row's schedule, survivor rule, claiming response, statistic,
 components, population, benefit period, benefit scale, behavior and
-membership basis, the C1 anchor age or the statistic identifier) and
+membership basis, the C1 anchor age, the benefit computation years
+(`amounts.benefit_computation_years` against Track A's
+`TRACK_A_COMPUTATION_YEARS`) or the statistic identifier) and
 `tests/test_urban2010_fra68_spec.py`. The check does not read
 `claiming.spouse_excess_months_early` or
 `amounts.conversion_claim_spouse_excess_months_early`; the spec test
@@ -791,7 +807,7 @@ form) and the configuration follows every ruling.
 ```json
 {
   "specification": "urban2010_fra68_exercise3",
-  "version": "e1-draft-6",
+  "version": "e1-draft-7",
   "status": "draft_refereed_not_ratified",
   "template": {
     "specification": "urban2010_cola_exercise1",
@@ -937,7 +953,8 @@ form) and the configuration follows every ruling.
     "conversion_claim_spouse_excess_months_early": "max(0, reform_fra(b_s) - (max(12*(y_conv_base - b_s), 12*(worker_baseline_entitlement_year - b_s)) + D(b_s))), which equals Track A's baseline count in every scenario and under every claiming response; y_conv_base = Track A's own claim year of the converted worker (its baseline conversion year), worker_baseline_entitlement_year = the worker's entitlement year before any C1/C2 move, D(b_s) = reform_fra(b_s) - baseline_fra(b_s)",
     "opening_stock_under_worker_only_components": "whole_observed_amount_kept_if_a3_classifies_a_worker_benefit",
     "gross_of_premiums_taxes_and_withholding": true,
-    "gross_of_wep_gpo_and_disability_offset": true
+    "gross_of_wep_gpo_and_disability_offset": true,
+    "benefit_computation_years": "legacy_fixed_35"
   },
   "uncertainty": {
     "draws": 20,
@@ -1304,3 +1321,14 @@ and one overbroad statement in the dry-run text:
   lane; §12 and the dry-run text say that the reform ratio of a
   conversion-claim excess is 1 where the reform pays it. No schedule,
   row, primary, decision field or §19 dollar amount changed.
+- `e1-draft-7` (2026-09-24, after the independent review of `e1-draft-6`
+  at `fc893ea4`, §25). No rule, schedule, row, primary, decision field
+  or §19 amount changed. §11 rule 1 states the benefit computation years
+  of the levels, which exercise 3 inherits from Track A: the legacy fixed
+  35 of exercise 1's Registration 13 (`TRACK_A_COMPUTATION_YEARS`), not
+  the 415(b)(2) count that #457 added and made the default of
+  `scenario_benefits.eligibility_pia_for_clock`; §12 names the delta for
+  workers born before 1929. §21 `amounts` gains
+  `benefit_computation_years`, which the specification check binds to
+  Track A's constant, and every run records it
+  (`track_a_conventions.benefit_computation_years`).

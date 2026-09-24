@@ -59,6 +59,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from populace_dynamics.cola_track_a import benefits as track_benefits
 from populace_dynamics.cola_track_a import runner as track_runner
 from populace_dynamics.cola_track_a.adapters import claiming_schedule
 from populace_dynamics.cola_track_a.benefits import (
@@ -179,7 +180,10 @@ def specification_code_check(
     benefit scale and behavior, with F0's entries inherited, and the
     membership basis the runner passes to A7 for every row), the C1
     anchor age (``claiming.C1.anchor_age`` against
-    ``FRA68Config.c1_anchor_age``) and the statistic identifier.
+    ``FRA68Config.c1_anchor_age``), the benefit computation years of the
+    levels (``amounts.benefit_computation_years`` against Track A's
+    ``TRACK_A_COMPUTATION_YEARS``, which ``_Calculator._level`` passes to
+    the oracle AIME and exercise 3 inherits) and the statistic identifier.
     """
 
     mismatches: list[str] = []
@@ -212,6 +216,12 @@ def specification_code_check(
     anchor = block.get("claiming", {}).get("C1", {}).get("anchor_age")
     if anchor != config.c1_anchor_age:
         mismatches.append("claiming.C1.anchor_age")
+    # Exercise 3's levels are Track A's (the inherited _Calculator._level),
+    # so they stay exercise 1's path for path only while Track A keeps
+    # the computation years E1 names (Registration 13's legacy fixed 35).
+    years = block.get("amounts", {}).get("benefit_computation_years")
+    if years != track_benefits.TRACK_A_COMPUTATION_YEARS.value:
+        mismatches.append("amounts.benefit_computation_years")
     if block.get("statistic_id") != STATISTIC_ID:
         mismatches.append("statistic_id")
     return {
@@ -944,6 +954,9 @@ def run_fra68(
                 "d188 item (a)"
             ),
             "config": track_config.as_dict(),
+            "benefit_computation_years": (
+                track_benefits.TRACK_A_COMPUTATION_YEARS.value
+            ),
             "max_rulings_exercise_1": track_a_max_rulings(track_config),
             "builder_defaults": track_a_builder_defaults(track_config),
         },

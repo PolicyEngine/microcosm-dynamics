@@ -91,6 +91,8 @@ from populace_dynamics.fra68_track.runner import (
     projection_identity_record,
     specification_code_check,
 )
+from populace_dynamics.ss import benefits as ss_benefits
+from populace_dynamics.ss.statutory_aime import ComputationYears
 from tests.cola_track_a.test_assembly import (
     invented_cola,
     invented_di_rates,
@@ -519,6 +521,91 @@ def test_null_reform_counts_each_person_once_as_track_a_does(projection):
         }
 
     assert calculator_counts(ours) == calculator_counts(track)
+
+
+def _level_calculator(params, birth, history):
+    """A bare ScenarioCalculator holding only what ``_level`` reads.
+
+    INVENTED person 1 with the given birth year and covered earnings.
+    """
+
+    calculator = object.__new__(ScenarioCalculator)
+    calculator.ctx = SimpleNamespace(
+        params=params, cohort=SimpleNamespace(careers={1: history})
+    )
+    calculator.statics = pd.DataFrame({"birth_year": [birth]}, index=[1])
+    calculator.counters = Counter()
+    calculator.cache = {}
+    return calculator
+
+
+def test_exercise_3_levels_keep_exercise_1s_legacy_35_years(projection):
+    # Exercise 3 must match exercise 1 path for path (E1 sections 11 and
+    # 14).  Exercise 1's Registration 13 divided every oracle AIME by 35
+    # years; since #457 the oracle also offers the 415(b)(2) count, which
+    # differs for workers born before 1929 and is the default of
+    # scenario_benefits.eligibility_pia_for_clock.  Exercise 3 computes
+    # every level through Track A's inherited _Calculator._level, so its
+    # levels are the legacy fixed 35 in every scenario.  INVENTED: born
+    # 1925, covered earnings 1968-1986 (31 statutory computation years).
+    assert ScenarioCalculator._level is track_benefits._Calculator._level
+    assert (
+        track_benefits.TRACK_A_COMPUTATION_YEARS
+        is ComputationYears.LEGACY_FIXED_35
+    )
+    birth, history = 1925, {year: 30_000.0 for year in range(1968, 1987)}
+    legacy = ss_benefits.pia(
+        ss_benefits.aime(history, birth, projection.base),
+        1987,
+        projection.base,
+    )
+    statutory = track_benefits.sb.eligibility_pia_for_clock(
+        track_benefits.sb.WorkerClock.at_age_62(birth),
+        history=history,
+        birth_year=birth,
+        params=projection.base,
+    )
+    assert statutory > legacy
+    di_legacy = ss_benefits.pia(
+        ss_benefits.aime(
+            {y: e for y, e in history.items() if y <= 1980},
+            min(birth, 1980 - 62),
+            projection.base,
+        ),
+        1980,
+        projection.base,
+    )
+    for params in (projection.base, *projection.reforms.values()):
+        calculator = _level_calculator(params, birth, history)
+        level, basis = calculator._level(1, "retirement", 1987, None)
+        assert (level, basis) == (legacy, "oracle_retirement_pia")
+        di, _ = calculator._level(
+            1, "di", 1980, LevelPolicy.DISCLOSED_ORACLE_APPROXIMATION
+        )
+        assert di == di_legacy
+
+
+def test_the_specification_check_binds_the_computation_years(monkeypatch):
+    # A registered run refuses a block whose computation years are not
+    # Track A's, and the committed block once Track A's count changes.
+    block = e1_parameter_block()
+    assert block["amounts"]["benefit_computation_years"] == (
+        ComputationYears.LEGACY_FIXED_35.value
+    )
+    assert specification_code_check(block, FRA68Config())["consistent"]
+    edited = copy.deepcopy(block)
+    edited["amounts"][
+        "benefit_computation_years"
+    ] = ComputationYears.STATUTORY.value
+    check = specification_code_check(edited, FRA68Config())
+    assert check["mismatches"] == ["amounts.benefit_computation_years"]
+    monkeypatch.setattr(
+        track_benefits,
+        "TRACK_A_COMPUTATION_YEARS",
+        ComputationYears.STATUTORY,
+    )
+    check = specification_code_check(block, FRA68Config())
+    assert check["mismatches"] == ["amounts.benefit_computation_years"]
 
 
 def test_the_exact_survivor_span_changes_only_early_survivors(
@@ -1803,6 +1890,9 @@ def test_run_records_parameters_and_checks(result):
     assert set(window["by_wave_schedule_draw_year"]) == {"2009", "2011"}
     assert set(window["incidence_at_start_ages"]) == {"female", "male"}
     assert result["track_a_conventions"]["config"]["rows"] == ["R0", "R6"]
+    assert result["track_a_conventions"]["benefit_computation_years"] == (
+        ComputationYears.LEGACY_FIXED_35.value
+    )
 
 
 def test_run_diagnostics_are_reported_per_row(result):
