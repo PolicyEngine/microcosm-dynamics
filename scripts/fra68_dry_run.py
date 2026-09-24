@@ -75,6 +75,8 @@ from populace_dynamics.fra68_track import (  # noqa: E402
     run_fra68,
 )
 from populace_dynamics.fra68_track.benefits import (  # noqa: E402
+    CONVERSION_CLAIM_EXCESS,
+    CONVERSION_CLAIM_MONTHS_EARLY,
     CREDITS_NOT_INHERITED,
     CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH,
 )
@@ -125,6 +127,21 @@ FRA68_GAPS: tuple[dict[str, str], ...] = (
             "reform a converted worker's excess starts a year later (a "
             "convention, not the statute: 402(q)(3)(C) would pay a DI "
             "beneficiary a reduced excess)"
+        ),
+    },
+    {
+        "item": "Whole-year conversion claim (Track A)",
+        "gap": (
+            "a converted disabled worker's claim for the spouse's excess is "
+            "counted from its whole conversion year (A4's July birth "
+            "month), 2 months before the FRA for spouses born 1955 and 4 "
+            "for 1956, where 402(q)(1) reduces an excess that starts at "
+            "the FRA not at all. Exercise 3 keeps Track A's count in both "
+            "scenarios (the baseline start moved by the FRA increase), so "
+            "the reform leaves these excesses unchanged, as the statute "
+            "does, at Track A's reduced level. Counted, not fixed (benefit "
+            "counters fra68_spouse_excess_on_conversion_claim and "
+            "fra68_spouse_excess_on_conversion_claim_months_early)"
         ),
     },
     {
@@ -393,10 +410,13 @@ def _results_markdown(result: dict[str, Any]) -> str:
         "",
         "Paid aged widow(er)'s excesses resting on a never-entitled "
         "decedent who died in or after the calendar year of attaining the "
-        "scenario's retirement age (an upper bound on the survivors to "
-        "whom 402(e)(2)(C) and 402(f)(2)(C) would pass credits the model "
-        "does not), summed over draws; in parentheses, those whose claim "
-        "C1 or C2 moved past death.",
+        "scenario's retirement age, summed over draws; in parentheses, "
+        "those whose claim C1 or C2 moved past death. The count is not a "
+        "bound on the survivors to whom 402(e)(2)(C) and 402(f)(2)(C) "
+        "would pass credits the model does not: the death year is annual, "
+        "so it can include a decedent who died in the attainment year "
+        "before the retirement-age month, and it omits a survivor paid no "
+        "excess without the credits whom the credits would have given one.",
         "",
         "| Row | Baseline | Reform |",
         "|---|---|---|",
@@ -411,6 +431,27 @@ def _results_markdown(result: dict[str, Any]) -> str:
                 0,
             )
             cells.append(f"{total} ({moved})")
+        lines.append(f"| {row_id} | " + " | ".join(cells) + " |")
+    lines += [
+        "",
+        "## Spouse's excesses on a conversion claim (counted, not fixed)",
+        "",
+        "Paid spouse's excesses resting on a converted disabled worker's "
+        "conversion claim, summed over draws; in parentheses, those whose "
+        "months early are positive (Track A's whole-year conversion count; "
+        "402(q)(1) reduces none of them). Each reform keeps the baseline "
+        "count, so these excesses are the same in both scenarios.",
+        "",
+        "| Row | Baseline | Reform |",
+        "|---|---|---|",
+    ]
+    for row_id, row in result["rows"].items():
+        counters = row["benefit_counters"]
+        cells = [
+            f"{counters.get(f'{scenario}_{CONVERSION_CLAIM_EXCESS}', 0)} "
+            f"({counters.get(f'{scenario}_{CONVERSION_CLAIM_MONTHS_EARLY}', 0)})"
+            for scenario in ("baseline", "reform")
+        ]
         lines.append(f"| {row_id} | " + " | ".join(cells) + " |")
     lines += [
         "",

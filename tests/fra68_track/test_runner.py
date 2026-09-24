@@ -60,6 +60,8 @@ from populace_dynamics.fra68_track import (
 )
 from populace_dynamics.fra68_track import runner as fra68_runner
 from populace_dynamics.fra68_track.benefits import (
+    CONVERSION_CLAIM_EXCESS,
+    CONVERSION_CLAIM_MONTHS_EARLY,
     CREDITS_NOT_INHERITED,
     CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH,
     MovedClaimRecord,
@@ -80,6 +82,7 @@ from populace_dynamics.fra68_track.reform import (
     SCHEDULES,
     fra_increase_months,
     reform_parameters,
+    spouse_excess_months_early,
     worker_factor_ratio,
 )
 from populace_dynamics.fra68_track.runner import (
@@ -437,8 +440,9 @@ def test_null_reform_reproduces_track_a_baseline_bit_for_bit(projection):
             for name, value in row["benefit_components"].items()
         }
     # This invented draw pays no spouse's excess; the calculator-level
-    # identity for the spouse's excess is
-    # test_a_moved_spouse_claim_keeps_the_excess_reduction.
+    # identities for the spouse's excess are
+    # test_a_moved_spouse_claim_keeps_the_excess_reduction and
+    # test_a_converted_spouse_keeps_its_excess_in_every_scenario.
     assert {
         name for row in track_rows for name in row["benefit_components"]
     } >= {"retired_worker", "disabled_worker", "aged_widow"}
@@ -751,6 +755,7 @@ def test_c1_c2_move_a_projected_claim_and_keep_its_factor(projection):
     ).worker_record(person, state)
     assert base_record.entitlement_year == birth + 64
     assert c2.entitlement_year == birth + 65
+    assert c2.baseline_entitlement_year == birth + 64
     assert c2.claim_age_factor == pytest.approx(base_record.claim_age_factor)
     # C1 (anchor 65): a claim at 64 keeps its age and takes the reduction.
     assert c1.entitlement_year == birth + 64
@@ -883,6 +888,351 @@ def test_a_moved_spouse_claim_keeps_the_excess_reduction(
     )
 
 
+def _married_to_invented_worker(
+    projection, calculator, monkeypatch, spouse, worker_year, **fields
+):
+    """An INVENTED married person whose worker was entitled in a given year.
+
+    As :func:`_spouse_case`, with the worker's entitlement year and the
+    person's state fields chosen by the test.  Returns the state, the
+    person's own record and the worker's record.
+    """
+
+    worker_id = int(
+        next(
+            pid for pid in projection.lookups.final.index if int(pid) != spouse
+        )
+    )
+    invented_worker = PiaRecord(
+        person_id=worker_id,
+        kind="retired",
+        component="retired_worker",
+        basis=track_benefits.sb.EligibilityBasis.AGE_62,
+        eligibility_year=2008,
+        entitlement_year=worker_year,
+        eligibility_pia=10000.0,
+        claim_age_factor=1.0,
+        level_basis="invented",
+    )
+    original = calculator.worker_record
+
+    def worker_record(person_id, state):
+        if person_id == worker_id:
+            return invented_worker
+        return original(person_id, state)
+
+    monkeypatch.setattr(calculator, "worker_record", worker_record)
+    monkeypatch.setattr(
+        calculator,
+        "lookups",
+        SimpleNamespace(
+            alive=lambda person_id: True,
+            final=projection.lookups.final,
+            death_year=projection.lookups.death_year,
+        ),
+    )
+    state = _state(
+        projection,
+        spouse,
+        marital_status="married",
+        spouse_person_id=worker_id,
+        **fields,
+    )
+    own = calculator.worker_record(spouse, state)
+    return state, own, invented_worker
+
+
+def _converted_fields(birth, conversion):
+    """INVENTED DI history: awarded at 60, converted at the baseline FRA.
+
+    The claiming step records the conversion as the claim
+    (``claim_year`` = the conversion year).
+    """
+
+    return {
+        "di_award_year": birth + 60,
+        "di_conversion_year": conversion,
+        "claimed": True,
+        "claim_year": conversion,
+    }
+
+
+def _track_a_calculator(projection):
+    context = BenefitContext(
+        cohort=projection.cohort,
+        params=projection.base,
+        baseline=projection.inputs.baseline,
+        config=projection.track_config,
+    )
+    return track_benefits._Calculator(
+        context, TRACK_A_ROWS["R0"], projection.lookups, Counter(), {}
+    )
+
+
+#: The review of ``e1-draft-4`` (E1 section 25): the change 070c59c7's
+#: rule made to a converted spouse's months early, by (birth, schedule),
+#: when the conversion starts the excess (tests/fra68_track/test_reform.py
+#: holds the full grid).  Track A's baseline count: 2 (1955), 4 (1956).
+_CONVERTED_CLASSES = {
+    1948: {"P1": 0, "P2": 2, "P3": 2},
+    1949: {"P1": 2, "P2": 4, "P3": 4},
+    1950: {"P1": 4, "P2": 0, "P3": 0},
+    1954: {"P1": 0, "P2": 2, "P3": 1},
+    1955: {"P1": 0, "P2": 2, "P3": 1},
+    1956: {"P1": 0, "P2": -4, "P3": 1},
+}
+_TRACK_A_CONVERSION_COUNT = {1955: 2, 1956: 4}
+
+
+@pytest.mark.parametrize("birth", sorted(_CONVERTED_CLASSES))
+def test_a_converted_spouse_keeps_its_excess_in_every_scenario(
+    projection, monkeypatch, birth
+):
+    # The review of e1-draft-4: a converted disabled worker's own claim
+    # for the spouse's excess was counted from the scenario's whole
+    # conversion year, so the FRA increase changed its months early (the
+    # leftover month).  42 USC 402(q)(1) (usc42_402.txt line 371) reduces
+    # neither scenario's excess: it starts at FRA.  Now each reform keeps
+    # the baseline count (the baseline start moved by D; E1 section 11),
+    # so the amount is the baseline's under P1, P2 and P3 alike, and the
+    # baseline is Track A's bit for bit.
+    spouse, _ = _person_born(projection, [birth])
+    base_calc = _calculator(projection, _scenario(projection, "baseline"))
+    conversion = base_calc.conversion_year(birth)
+    fields = _converted_fields(birth, conversion)
+    expected_count = _TRACK_A_CONVERSION_COUNT.get(birth, 0)
+    amounts, counts = {}, {}
+    for sid in ("baseline", "P1", "P2", "P3"):
+        scenario = (
+            _scenario(projection, "baseline")
+            if sid == "baseline"
+            else _scenario(projection, "reform", sid)
+        )
+        calculator = (
+            base_calc
+            if sid == "baseline"
+            else _calculator(projection, scenario)
+        )
+        state, own, worker = _married_to_invented_worker(
+            projection, calculator, monkeypatch, spouse, 2010, **fields
+        )
+        assert own.kind == "converted", sid
+        assert calculator.conversion_claim_year(own, state) == conversion
+        own_claim = calculator._own_claim_year(own, state)
+        assert own_claim == calculator.conversion_year(birth)
+        counts[sid] = calculator.excess_months_early(
+            own, state, own_claim, worker, birth
+        )
+        paid = calculator._spouse_excess(spouse, state, own)
+        assert paid is not None and paid[0] > 0 and paid[0] == paid[1]
+        amounts[sid] = paid
+        # The counters of the named delta (E1 section 12), in every
+        # scenario alike.
+        assert calculator.counters[CONVERSION_CLAIM_EXCESS] == 1, sid
+        assert calculator.counters[CONVERSION_CLAIM_MONTHS_EARLY] == (
+            1 if expected_count else 0
+        ), sid
+        if sid == "baseline":
+            continue
+        # 070c59c7's rule: Track A's whole-year count on the scenario's own
+        # conversion year (Track A's method reads this calculator's
+        # _own_claim_year), which the review found.
+        old = track_benefits._Calculator._spouse_excess(
+            calculator, spouse, state, own
+        )
+        shift = _CONVERTED_CLASSES[birth][sid]
+        if shift > 0:
+            assert old[0] < amounts["baseline"][0], sid
+        elif shift < 0:
+            assert old[0] > amounts["baseline"][0], sid
+        else:
+            assert old == amounts["baseline"], sid
+        # The moved conversion claim, 12 (y_conv_base - b) + D: the C1/C2
+        # device gives the same count when the conversion starts the
+        # excess.
+        increase = fra_increase_months(
+            projection.base, projection.reforms[sid], birth
+        )
+        assert counts[sid] == spouse_excess_months_early(
+            own_claim_month=12 * (conversion - birth) + increase,
+            worker_entitlement_year=2010,
+            birth_year=birth,
+            params=projection.reforms[sid],
+        )
+    assert set(counts.values()) == {expected_count}
+    assert set(amounts.values()) == {amounts["baseline"]}
+    # The per-person ordering of test_schedules_order_every_benefit holds
+    # (with equality) for these people, the 1956 spouse under P2 included.
+    assert (
+        amounts["P2"][0]
+        <= amounts["P3"][0]
+        <= amounts["P1"][0]
+        <= amounts["baseline"][0]
+    )
+    # The null-reform identity: Track A's own calculator gives the
+    # baseline amount bit for bit (its first path is the baseline path).
+    track = _track_a_calculator(projection)
+    state, own, _ = _married_to_invented_worker(
+        projection, track, monkeypatch, spouse, 2010, **fields
+    )
+    assert track._spouse_excess(spouse, state, own)[0] == (
+        amounts["baseline"][0]
+    )
+    same = _calculator(
+        projection,
+        Scenario(
+            name="reform",
+            params=projection.base,
+            baseline_params=projection.base,
+        ),
+    )
+    state, own, _ = _married_to_invented_worker(
+        projection, same, monkeypatch, spouse, 2010, **fields
+    )
+    assert same._spouse_excess(spouse, state, own) == amounts["baseline"]
+
+
+@pytest.mark.parametrize("birth", [1955, 1956])
+def test_a_later_worker_entitlement_keeps_a_converted_excess_unreduced(
+    projection, monkeypatch, birth
+):
+    # The worker is first entitled the year after the spouse's baseline
+    # conversion, so the worker starts the baseline excess (0 months
+    # early).  Moving only the conversion claim by D would count FRA mod
+    # 12 months (2 or 4) in every reform, a cut 402(q)(1) does not make;
+    # moving the whole baseline start by D keeps 0.
+    spouse, _ = _person_born(projection, [birth])
+    base_calc = _calculator(projection, _scenario(projection, "baseline"))
+    conversion = base_calc.conversion_year(birth)
+    fields = _converted_fields(birth, conversion)
+    amounts = {}
+    for sid in ("baseline", "P1", "P2", "P3"):
+        calculator = (
+            base_calc
+            if sid == "baseline"
+            else _calculator(projection, _scenario(projection, "reform", sid))
+        )
+        state, own, worker = _married_to_invented_worker(
+            projection,
+            calculator,
+            monkeypatch,
+            spouse,
+            conversion + 1,
+            **fields,
+        )
+        own_claim = calculator._own_claim_year(own, state)
+        assert (
+            calculator.excess_months_early(
+                own, state, own_claim, worker, birth
+            )
+            == 0
+        )
+        amounts[sid] = calculator._spouse_excess(spouse, state, own)
+        assert calculator.counters[CONVERSION_CLAIM_EXCESS] == 1
+        assert CONVERSION_CLAIM_MONTHS_EARLY not in calculator.counters
+        if sid != "baseline":
+            increase = fra_increase_months(
+                projection.base, projection.reforms[sid], birth
+            )
+            literal = spouse_excess_months_early(
+                own_claim_month=12 * (conversion - birth) + increase,
+                worker_entitlement_year=conversion + 1,
+                birth_year=birth,
+                params=projection.reforms[sid],
+            )
+            assert literal == _TRACK_A_CONVERSION_COUNT[birth]
+    assert set(amounts.values()) == {amounts["baseline"]}
+
+
+def test_a_moved_worker_claim_leaves_a_converted_count_unchanged(
+    projection, monkeypatch
+):
+    # Under C2 the worker's own claim can move past the spouse's baseline
+    # conversion year.  The conversion claim's count reads the worker's
+    # baseline entitlement year, so it stays Track A's (4 months for a
+    # spouse born 1956); the moved year still gates the excess.
+    birth = 1956
+    spouse, _ = _person_born(projection, [birth])
+    calculator = _calculator(
+        projection,
+        _scenario(
+            projection,
+            "reform",
+            "P3",
+            claiming_response=ClaimingResponse.ALL_DELAY,
+        ),
+    )
+    conversion = 2022
+    state, own, worker = _married_to_invented_worker(
+        projection,
+        calculator,
+        monkeypatch,
+        spouse,
+        conversion - 1,
+        **_converted_fields(birth, conversion),
+    )
+    moved = MovedClaimRecord(
+        **{
+            item.name: getattr(worker, item.name)
+            for item in dataclasses.fields(PiaRecord)
+        },
+        reform_claim_month=12 * 65 + 13,
+        baseline_entitlement_year=conversion - 1,
+    )
+    moved = replace(moved, entitlement_year=conversion + 1)
+    own_claim = calculator._own_claim_year(own, state)
+    assert (
+        calculator.excess_months_early(own, state, own_claim, moved, birth)
+        == 4
+    )
+    # Without the baseline year (Track A's count on the moved year alone)
+    # the worker would start the excess: 0 months early, a rise.
+    unmoved_year = replace(moved, baseline_entitlement_year=None)
+    assert (
+        calculator.excess_months_early(
+            own, state, own_claim, unmoved_year, birth
+        )
+        == 0
+    )
+
+
+def test_a_claim_before_the_conversion_is_not_a_conversion_claim(
+    projection, monkeypatch
+):
+    # A retirement claim that preceded the conversion (Track A's rule)
+    # stays the own claim: its excess follows the general count and the
+    # conversion-claim counters stay at zero.
+    birth = 1956
+    spouse, _ = _person_born(projection, [birth])
+    reform_calc = _calculator(
+        projection, _scenario(projection, "reform", "P2")
+    )
+    conversion = reform_calc.conversion_year(birth)
+    fields = {
+        **_converted_fields(birth, 2022),
+        "claim_year": birth + 62,
+    }
+    state, own, worker = _married_to_invented_worker(
+        projection, reform_calc, monkeypatch, spouse, 2010, **fields
+    )
+    assert conversion == 2024
+    assert own.kind == "converted"
+    assert reform_calc.conversion_claim_year(own, state) is None
+    own_claim = reform_calc._own_claim_year(own, state)
+    assert own_claim == birth + 62
+    assert reform_calc.excess_months_early(
+        own, state, own_claim, worker, birth
+    ) == spouse_excess_months_early(
+        own_claim_month=12 * 62,
+        worker_entitlement_year=2010,
+        birth_year=birth,
+        params=projection.reforms["P2"],
+    )
+    assert reform_calc._spouse_excess(spouse, state, own) is not None
+    assert CONVERSION_CLAIM_EXCESS not in reform_calc.counters
+    assert CONVERSION_CLAIM_MONTHS_EARLY not in reform_calc.counters
+
+
 def test_claims_made_by_the_opening_year_keep_their_age(projection):
     person, birth = _person_born(projection, range(1941, 1949))
     state = _state(projection, person, claimed=True, claim_year=2010)
@@ -927,8 +1277,10 @@ def test_a_conversion_after_the_state_year_is_still_a_disabled_worker(
     )
     assert reform_record.claim_age_factor == base_record.claim_age_factor == 1
     assert reform_record.eligibility_pia == base_record.eligibility_pia
-    # A converted worker's own claim for a spouse's excess moves with the
-    # scenario's conversion year.
+    # A converted worker's own claim for a spouse's excess enters the
+    # scenario in its conversion year (the year that gates the excess);
+    # its months early are Track A's baseline count in every scenario
+    # (test_a_converted_spouse_keeps_its_excess_in_every_scenario).
     born_1960, birth_1960 = _person_born(projection, [1960])
     converted = _state(
         projection,

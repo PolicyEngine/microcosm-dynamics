@@ -72,6 +72,7 @@ __all__ = [
     "AGE_62_MONTHS",
     "AGE_70_MONTHS",
     "BASE_FRA_MONTHS",
+    "CONVERSION_CLAIM_EXCESS_MONTHS_EARLY_RULE",
     "FINAL_YEAR_TURNING_62",
     "FIRST_OPTION_YEAR",
     "LAST_UNCHANGED_YEAR",
@@ -84,6 +85,7 @@ __all__ = [
     "TARGET_FRA_MONTHS",
     "WORKER_EARLY_RETIREMENT_AGE",
     "FRASchedule",
+    "conversion_claim_excess_months_early",
     "fra_increase_months",
     "opening_stock_factor_ratio",
     "parameters_fra_sha256",
@@ -128,7 +130,21 @@ _GUARD_BIRTH_YEARS = range(1900, 2031)
 SPOUSE_EXCESS_MONTHS_EARLY_RULE = (
     "max(0, reform_fra(b_s) - max(m_s, 12*(worker_reform_entitlement_year "
     "- b_s))); m_s = the spouse's own reform claim month, 12*a_s if not "
-    "transformed"
+    "transformed; a converted worker's conversion claim follows "
+    "amounts.conversion_claim_spouse_excess_months_early"
+)
+#: The months-early rule of a spouse's excess resting on a converted
+#: disabled worker's conversion claim, as the E1 section 21 block states
+#: it (``amounts.conversion_claim_spouse_excess_months_early``; E1
+#: sections 11-13; the review of ``e1-draft-4``).
+CONVERSION_CLAIM_EXCESS_MONTHS_EARLY_RULE = (
+    "max(0, reform_fra(b_s) - (max(12*(y_conv_base - b_s), "
+    "12*(worker_baseline_entitlement_year - b_s)) + D(b_s))), which equals "
+    "Track A's baseline count in every scenario and under every claiming "
+    "response; y_conv_base = Track A's own claim year of the converted "
+    "worker (its baseline conversion year), "
+    "worker_baseline_entitlement_year = the worker's entitlement year "
+    "before any C1/C2 move, D(b_s) = reform_fra(b_s) - baseline_fra(b_s)"
 )
 
 
@@ -540,6 +556,66 @@ def spouse_excess_months_early(
     start = max(
         int(own_claim_month),
         _MONTHS * (int(worker_entitlement_year) - birth_year),
+    )
+    return max(0, int(params.fra_months(birth_year)) - start)
+
+
+def conversion_claim_excess_months_early(
+    *,
+    conversion_claim_year: int,
+    worker_entitlement_year: int,
+    birth_year: int,
+    baseline: SSAParameters,
+    params: SSAParameters,
+) -> int:
+    """Months early of a spouse's excess on a conversion claim (E1 s. 11).
+
+    A disabled worker converted at FRA claims the spouse's excess at the
+    conversion (Track A's rule), and by Track A's convention draws none
+    while still entitled to DI, so the excess never starts before the
+    month of attaining retirement age.  42 USC 402(q)(1) reduces a wife's
+    or husband's benefit only "if the first month for which an individual
+    is entitled to" it "is a month before the month in which such
+    individual attains retirement age" (``usc42_402.txt`` line 371), and
+    the reduction period ends "with the last day of the month before the
+    month in which such individual attains retirement age" (402(q)(6)(B),
+    line 406): the statute's count is 0 in every scenario.
+
+    Track A counts from the whole conversion year instead (A4's July birth
+    month): ``conversion_claim_year`` (``y_c``, Track A's own claim year of
+    the converted worker) stands for the month ``12 (y_c - b)``, which is
+    ``FRA(b) mod 12`` months before the FRA when that remainder is below
+    6.  Exercise 3 keeps Track A's baseline count bit for bit and moves
+    the whole baseline start by ``D = FRA'(b) - FRA(b)`` months in a
+    reform scenario (``params``):
+
+        ``max(0, FRA'(b) - (max(12 (y_c - b), 12 (y_w - b)) + D))``
+
+    which equals the baseline count ``max(0, FRA(b) - max(12 (y_c - b),
+    12 (y_w - b)))`` for every ``D``, so the reform-to-baseline factor
+    ratio is 1, the statute's answer.  ``worker_entitlement_year``
+    (``y_w``) is the worker's baseline entitlement year: a worker's claim
+    that C1 or C2 moved enters at its year before the move, so the count
+    is the baseline's under every claiming response.  Where the
+    conversion starts the baseline excess this is the conversion claim
+    moved by exactly ``D``
+    months, ``12 (y_c - b) + D``, the device of the moved claims of C1 and
+    C2 (:func:`spouse_excess_months_early`).  Where the worker's later
+    entitlement starts it, the baseline count is 0 and so is this one;
+    moving the conversion claim alone would count up to ``FRA(b) mod 12``
+    months there (2 for spouses born 1955, 4 for 1956), a reduction the
+    statute does not make.  With ``params`` the baseline bundle the result
+    is Track A's count exactly.
+    """
+
+    birth_year = int(birth_year)
+    increase = fra_increase_months(baseline, params, birth_year)
+    start = (
+        max(
+            _MONTHS * (int(conversion_claim_year) - birth_year),
+            _MONTHS * (int(worker_entitlement_year) - birth_year),
+        )
+        + increase
     )
     return max(0, int(params.fra_months(birth_year)) - start)
 

@@ -1,17 +1,19 @@
 # Urban 2010 FRA-68 comparison: specification draft for DynaSim scorecard exercise 3
 
 - **Status:** draft, refereed (§25); **not ratified**. Max has not ruled
-  on exercise 3 (decision record d188, open, deadline 2026-09-30), and
-  ratification by merge awaits him (d188 item (c)). Every choice that
-  awaits him is a field of §21 whose value is the plan's recommended
-  default, and §22 lists them, including three that d188 as filed does
-  not name. This draft authorizes no real-data run: the one-shot entry
-  point (`scripts/run_fra68_registered.py`) refuses a block whose status
-  or version is not ratified, that lists a decision awaiting Max, or that
+  on exercise 3 (decision record d188 and its supplement d196, both open,
+  deadline 2026-09-30), and ratification by merge awaits him (d188 item
+  (c)). Every choice that awaits him is a field of §21 whose value is the
+  plan's recommended default, and §22 lists them, including three that
+  d188 as filed does not name (d196 names them). This draft authorizes
+  no real-data run: the one-shot entry point
+  (`scripts/run_fra68_registered.py`) refuses a block whose status or
+  version is not ratified, that lists a decision awaiting Max, or that
   records no ruling of his on a decision field (§21).
-- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-4`,
+- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-5`,
   drafted 2026-09-24 and revised the same day after the independent
-  referee pass (§25). §26 is the changelog.
+  referee pass and after the independent review of `e1-draft-4` (§25).
+  §26 is the changelog.
 - **Plan item:** E1 of the blind plan
   `EVID/critical-path-fra68-20260923.md` (SHA-256 `d5e7a32f…`), where
   `EVID` = `~/microcosm-launch-evidence/dynasim-parity-20260909`. The
@@ -31,16 +33,20 @@
   (registered sensitivity)* on rows F3 and F4.
 - **Builder boundary:** model-builder lanes wrote this draft. The files
   model builders may not open are listed in `EVID/RESTRICTED-FILES.md`
-  (created 2026-09-24): every copy of the Urban report beyond PDF pages
-  1-2 (text lines 1-120; pages 3-4, which carry Figure 2, the page-4
-  prose describing the FRA results and Figures 4-5, are restricted),
-  `EVID/urban-2010-page3.png`, `EVID/cola-source-review.*`, the
-  comparator lanes and seals of exercises 1-4 (among them
-  `EVID/exercise3-comparator-20260924/`, first created at 02:14 on
-  2026-09-24, after `e1-draft-3` was committed at 01:10), the exercise-1
-  result, the results of the 2004 Boomers report and of the
-  minimum-benefit reports (as the list defines them), and
-  `EVID/exercise4-definitions-redacted-20260924.md`.
+  (created 2026-09-24). The list is a living file that the orchestrating
+  session updates; this summary is of the version the `e1-draft-5` lane
+  read, whose last changelog entry is dated 2026-09-24 13:55: every copy
+  of the Urban report beyond PDF pages 1-2 (text lines 1-120; pages 3-4,
+  which carry Figure 2, the page-4 prose describing the FRA results and
+  Figures 4-5, are restricted), `EVID/urban-2010-page3.png`,
+  `EVID/cola-source-review.*`, the comparator lanes and seals of
+  exercises 1-4 (among them `EVID/exercise3-comparator-20260924/`, first
+  created at 02:14 on 2026-09-24, after `e1-draft-3` was committed at
+  01:10), the exercise-1 result, the results of the 2004 Boomers report
+  and of the minimum-benefit reports (as the list defines them), the
+  uncleared exercise-4 definitions extract and target-availability
+  statement, and the exercise-2 definitions working files and pending
+  validation checks.
   - The lane that wrote `e1-draft-1` to `e1-draft-3` did not open
     `EVID/cola-comparator-20260922/`, `EVID/cola-comparator-b-20260922/`,
     `EVID/exercise2-comparator-20260923/`, any `*comparator-seal*` or
@@ -54,6 +60,10 @@
     before any other file and opened nothing it lists, nor the exercise-1
     artifact. Of the Urban text extraction it read lines 58-90 (Table 1)
     only.
+  - The lane that wrote `e1-draft-5` read `EVID/RESTRICTED-FILES.md`
+    (the version above) before any other file and opened nothing it
+    lists, nor the exercise-1 artifact or the exercise-3 forecasts. It
+    did not open the Urban report or its text extraction.
   - No lane computed a statistic on real data. §2 lists what the drafts
     read.
 
@@ -120,15 +130,17 @@ This draft cites only the sources below.
 | A1 (template) | `docs/design/urban2010_cola_comparison.md` | `f674e8c6…` | Whole file |
 | Track A design note | `docs/design/track-a-assembly.md` | `317927ad…` | Whole file |
 | Urban (2010), text extraction | `EVID/urban-2010-reform-details.txt` | `0826fc19…` | Lines 1-120 only (pages 1-2): date (6), outcome sentence (25-27), Table 1 (58-86), Figure 1 source and note (114-115) |
-| 42 U.S.C. 416(l), 402(q), 402(w), 423(a)(1), 403(f), 403(j); and 402(q)(9)(B)(ii), 402(e)(2)(C) and 402(f)(2)(C) from the full page text | `EVID/fra68-statute-20260924/usc-42-fra-excerpts.txt`; `EVID/fra68-statute-20260924/usc42_402.txt` lines 208, 258 and 419 | `2c7605ee…`; `84a2336f…` | Official text, uscode.house.gov, current ("prelim") edition, fetched 2026-09-24; the folder holds the pages, their text conversion and `SHA256SUMS`. Amendment notes checked (§20). `e1-draft-4` also cites 402(q)(3)(C) (`usc42_402.txt` lines 383-385) and 403(f)(9) (`usc42_403.txt` line 170) |
+| 42 U.S.C. 416(l), 402(q), 402(w), 423(a)(1), 403(f), 403(j); and 402(q)(9)(B)(ii), 402(e)(2)(C) and 402(f)(2)(C) from the full page text | `EVID/fra68-statute-20260924/usc-42-fra-excerpts.txt`; `EVID/fra68-statute-20260924/usc42_402.txt` lines 208, 258 and 419 | `2c7605ee…`; `84a2336f…` | Official text, uscode.house.gov, current ("prelim") edition, fetched 2026-09-24; the folder holds the pages, their text conversion and `SHA256SUMS`. Amendment notes checked (§20). `e1-draft-4` also cites 402(q)(3)(C) (`usc42_402.txt` lines 383-385) and 403(f)(9) (`usc42_403.txt` line 170); `e1-draft-5` cites 402(q)(1) and 402(q)(6)(B) at lines 371 and 406 of `usc42_402.txt` (`SHA256SUMS` verified 2026-09-24) |
 | DYNASIM3 primer (Favreault and Smith 2004) | `~/PolicyEngine/dynasim-refs/410961-dynasim3-primer.txt` | `0ad06f68…` | p. 3 (fn. 5), Table 3 (p. 6, OASI row), p. 14 (OASI take-up), pp. 16-17 (benefit calculator, fns. 15-16) |
 | 2008 Trustees Report (TR2008) | `EVID/tr2008-inputs-20260922/tr08-2008-oasdi-trustees-report.pdf` | `517de81a…` | `e1-draft-4`: pp. 111-112 (claiming at 63-69) and pp. 118-119 (ultimate DI incidence), read through `pdftotext -layout`, printed pages from the page footers |
 | Referee report on `e1-draft-3` | `EVID/fra68-referee-20260924.md` | `943af2a3…` | Whole file (§25) |
-| Builder restriction list | `EVID/RESTRICTED-FILES.md` | `a7356057…` | Whole file (header) |
-| Decision record d188 | `~/chief-of-staff/state/decisions/decisions.jsonl`, entry `d188` | — | Its filed wording, default and status (`open`), read 2026-09-24 (§22) |
+| Independent review of `e1-draft-4` | `EVID/fra68-conversion-claim-20260924/review-e1-draft-4-20260924.json` (the review lane's record, copied verbatim from the workflow's results file) | `c6da180f…` | Whole record (§25) |
+| Conversion-claim arithmetic | `EVID/fra68-conversion-claim-20260924/conversion_claim_arithmetic.py` and its output `conversion_claim_arithmetic.out` | `af508eb1…`; `e82b5e3f…` | Exact-integer months early of a converted spouse's excess by cohort, schedule and worker-entitlement year under each rule; imports nothing from the repository (§11, §25) |
+| Builder restriction list | `EVID/RESTRICTED-FILES.md` | — (a living list; no hash is pinned) | Whole file, read first by each lane since `e1-draft-4`. The `e1-draft-5` lane read the version whose last changelog entry is dated 2026-09-24 13:55. `e1-draft-4` recorded SHA-256 `a7356057…`, which the list no longer matches and which the review of `e1-draft-4` could not verify for any version; this draft withdraws it (§25) |
+| Decision records d188 and d196 | `~/chief-of-staff/state/decisions/decisions.jsonl`, entries `d188` and `d196` | — | Their filed wording, defaults and status (`open`); d188 read 2026-09-24 by the `e1-draft-4` lane, both read 2026-09-24 by the `e1-draft-5` lane (§22) |
 | Claim-age reference | `data/external/ssa_claim_ages_2023supplement.json` | `f731c9a6…` | The 2008 rows through `claiming.claim_age_distribution`: `fra_at.at_age` = 65 for both sexes; age-62 shares 42.6 (male) and 48.0 (female); age-65 shares 25.8 and 19.3 |
 | Statutory capture | `data/external/track_a_statutory_parameters.json` | `fd56a8aa…` | FRA schedule, early rates, credit schedule and cap, auxiliary constants (the baseline bundle) |
-| Repo code, read this session | `ss/params.py` and `ss/benefits.py` (whole), `claiming.py` (`benefit_factor`, `months_early`, `months_late`, `claim_age_distribution`, `claim_age_pmf`), `scenario_benefits.py` (rates and path functions), `cola_track_a/` (`config`, `benefits`, `runner`, `opening`, `adapters` whole; `statutory` in part), `engine/di_entitlement.py` (FRA attainment, conversion and exposure), `engine/claiming.py`, `estimates/cola_age_profile.py` (configuration and tabulation). The `e1-draft-4` lane read `cola_track_a/benefits.py` (`_Calculator`: worker, decedent, spouse's and widow(er)'s records), `cola_track_a/config.py` (Max's exercise-1 rulings), `ss/benefits.py` (`spousal_benefit`, `widow_benefit`), `estimates/cola_age_profile.py` (`_membership_masks`, `_cell_values`, the ratification test) and `fra68_track/` whole | — | Mechanisms cited in §§3-16 |
+| Repo code, read this session | `ss/params.py` and `ss/benefits.py` (whole), `claiming.py` (`benefit_factor`, `months_early`, `months_late`, `claim_age_distribution`, `claim_age_pmf`), `scenario_benefits.py` (rates and path functions), `cola_track_a/` (`config`, `benefits`, `runner`, `opening`, `adapters` whole; `statutory` in part), `engine/di_entitlement.py` (FRA attainment, conversion and exposure), `engine/claiming.py`, `estimates/cola_age_profile.py` (configuration and tabulation). The `e1-draft-4` lane read `cola_track_a/benefits.py` (`_Calculator`: worker, decedent, spouse's and widow(er)'s records), `cola_track_a/config.py` (Max's exercise-1 rulings), `ss/benefits.py` (`spousal_benefit`, `widow_benefit`), `estimates/cola_age_profile.py` (`_membership_masks`, `_cell_values`, the ratification test) and `fra68_track/` whole. The `e1-draft-5` lane read `fra68_track/benefits.py` and `reform.py` whole, `cola_track_a/benefits.py` (`_Calculator`: worker record, own claim year, spouse's excess, exposure start and PIA paths), `engine/di_entitlement.py` (`fra_attainment_year` and the conversion step), `engine/steps.py` (`apply_claiming`), `scenario_benefits.spouse_excess_path` and `ss/benefits.py` (`spousal_benefit`, `spousal_early_reduction`) | — | Mechanisms cited in §§3-16 |
 
 **Not opened:** see the header. The DYNASIM scorecard
 (`EVID/dynasim-scorecard.md`) is cited through the plan only (plan §1:
@@ -236,13 +248,16 @@ this fails.
 6. **DI.** 402(q)(1) reduces old-age, wife's, husband's, widow's and
    widower's benefits only, and only when the first month of entitlement
    "is a month before the month in which such individual attains
-   retirement age". 423(a)(1) ends DI entitlement with the month before
+   retirement age" (`usc42_402.txt` line 371). 423(a)(1) ends DI entitlement with the month before
    the month of attaining retirement age, so an old-age benefit first
    payable in that month is not reduced. (This draft did not read
    402(a); in the model the conversion is A4's, in the FRA attainment
    year.) A disabled worker's benefit ratio is exactly 1; the reform
    moves conversion from 67 to 68 (a component label) and extends DI
-   eligibility to 68 (a named delta, §12).
+   eligibility to 68 (a named delta, §12). The same holds for a
+   converted worker's spouse's excess, which Track A starts at the
+   conversion: unreduced in both scenarios under the statute, ratio 1 in
+   the model (§11, rule 3).
 
 ## 4. Rate path
 
@@ -304,7 +319,8 @@ apart from dime flooring.
 - **Spouse's excess**: months early against the scenario FRA for the
   spouse's birth year at the spouse's entitlement year; spouses born 1960
   or later: -7.69 at 62, -7.14 at 63, -6.67 at 64, -10.00 at 65, -9.09 at
-  66, -8.33 at 67, 0 from 68 (no credits).
+  66, -8.33 at 67, 0 from 68 (no credits). A converted disabled worker's
+  excess on its conversion claim: ratio 1 in every cohort (§11, rule 3).
 - **Aged widow(er)** (survivors born 1962 or later, survivor retirement
   age 67 to 68): 0 at 60 (the 71.5 percent floor holds in both), -0.67,
   -1.28, -1.82, -2.32, -2.77, -3.18 and -3.56 at 61-67, 0 at 68. The
@@ -407,7 +423,8 @@ scenario's bundle; `fra68_track.benefits`):
    scenario bundle. Spouse's excess: months early against the scenario
    FRA of the spouse's birth year, from the later of the spouse's own
    claim and the worker's entitlement (under C1 and C2 a moved own claim
-   enters at its exact claim month, §13). Aged widow(er): the oracle's
+   enters at its exact claim month, §13; a conversion claim follows rule
+   3). Aged widow(er): the oracle's
    `widow_benefit` with the reduction span of the survivor's cohort
    (§3, item 2), in both scenarios; the deceased's scenario factor feeds
    the RIB-LIM and the inherited credits (a deceased who never claimed
@@ -417,9 +434,36 @@ scenario's bundle; `fra68_track.benefits`):
    a scenario whose FRA attainment year is after the state's year: only
    the component label changes. By Track A's convention a disabled worker
    still entitled to DI draws no spouse's excess, so under the reform a
-   converted worker's excess starts a year later (§12). A converted
-   worker's own claim for the excess moves to the scenario's conversion
-   year.
+   converted worker's excess can start later (§12). A converted worker's
+   own claim for the excess is the conversion (Track A's rule, unless a
+   retirement claim preceded it; `ScenarioCalculator.conversion_claim_year`),
+   and the excess enters each scenario in that scenario's conversion
+   year. Its months early are counted from the **baseline start moved by
+   D(b)**:
+   max(0, F'(b) - (max(12 (y_c - b), 12 (y_w - b)) + D(b))), where y_c is
+   the baseline conversion (Track A's own claim year) and y_w the
+   worker's baseline entitlement year, before any C1/C2 move
+   (`reform.conversion_claim_excess_months_early`). This equals Track A's
+   baseline count in every scenario and under every claiming response,
+   so the reform-to-baseline ratio of these excesses is 1, the statute's
+   answer: 402(q)(1) reduces a wife's
+   or husband's benefit only "if the first month for which an individual
+   is entitled to" it "is a month before the month in which such
+   individual attains retirement age" (`usc42_402.txt` line 371), and the
+   reduction period ends "with the last day of the month before the month
+   in which such individual attains retirement age" (402(q)(6)(B), line
+   406). An excess that starts at the conversion, at FRA, is therefore
+   unreduced in both scenarios. Where the conversion starts the baseline
+   excess (y_w <= y_c), the rule is the conversion claim moved by exactly
+   D months, 12 (y_c - b) + D, the device §13 uses for moved claims. Where
+   the worker's later entitlement starts it (y_w > y_c), the baseline
+   count is 0 and moving the whole start keeps it 0; moving the
+   conversion claim alone would count 2 months for spouses born 1955 and
+   4 for 1956 under every schedule when y_w = y_c + 1, a reduction the
+   statute does not make. The baseline count itself is Track A's
+   whole-year artifact, a named delta (§12). (`e1-draft-4` counted from
+   the scenario's whole conversion year, which changed the months early
+   by the change in FRA mod 12; §25.)
 4. **Opening stock:** §6. The basis stays frozen at the opening year; no
    dime flooring.
 5. **Survivor reduction span.** Exact by cohort in both scenarios:
@@ -439,10 +483,11 @@ A1 §12 is carried over, with these exercise-3 items:
 | Adjusted reduction period | 402(q)(7)(A) excludes months with 403(b), (c)(1) or (d)(1) deductions from the adjusted reduction period; not modeled | Tied to the earnings test |
 | DI window extension | 423(a)(1)(B) makes DI entitlement depend on not having attained retirement age, so the reform extends DI eligibility to 68. New reform-only awards would get 100 percent of PIA instead of a reduced retirement benefit. TR2008's ultimate DI incidence rates reflect "the impact of scheduled increases in the normal retirement age" (pp. 118-119) | Needs a second projection. Diagnostic in every run: persons alive, not DI-entitled and not converted in the years from the baseline to the reform FRA attainment year, with their expected awards at A4's rates (`di_window_diagnostic`) |
 | DI recovery in the extended window | A4 draws no recovery after the baseline conversion | Membership only |
+| Whole-year conversion claim (Track A) | Track A counts a converted worker's claim for the spouse's excess from the whole conversion year (the year of attaining FRA under A4's July birth month), as month 12 (y_c - b). That is FRA mod 12 months before the FRA when the remainder is below 6: 2 months for spouses born 1955 and 4 for 1956 under the statutory schedule (and for 1938 and 1939, who converted before either opening year). 402(q)(1) and (q)(6)(B) (`usc42_402.txt` lines 371 and 406) reduce an excess that starts at FRA not at all. Counting the conversion claim from its exact month (0 months early) in both scenarios would change exercise 1's baseline for these spouses, a choice for Max that this draft does not make (option (a) of the review of `e1-draft-4`, §25) | Baseline and reform levels only: the excess of a converted spouse born 1955 or 1956 whose conversion starts it is reduced by 1.39 or 2.78 percent (2 or 4 months at 25/36 of 1 percent) in both scenarios, and the reform ratio is 1 (§11, rule 3). Diagnostic in every run (benefit counters, by scenario): `fra68_spouse_excess_on_conversion_claim`, the paid spouse's excesses on a conversion claim, and `fra68_spouse_excess_on_conversion_claim_months_early`, those whose months early are positive |
 | Spouse's excess of a DI beneficiary | Track A convention: none while DI-entitled. 402(q)(3)(C) (`usc42_402.txt` lines 383-385) would pay a DI beneficiary a reduced excess | Under the reform it starts at 68 instead of 67 for a converted worker, so the convention overstates the reform's cut for converted workers aged 67 in 2030 (born 1963) |
 | Survivor reduction span | Exact by cohort here (pending, `survivor_reduction_span`, §22); fixed 84 months in exercise 1 | Baseline amounts of survivors born before 1962 entitled after 60 differ from exercise 1's |
 | Credit timing | 402(w)(3) credits increment months from January of the following year; Track A applies the full factor at the claim | Small; both scenarios |
-| Credits of a worker who died unclaimed | 402(e)(2)(C) and 402(f)(2)(C) (`EVID/fra68-statute-20260924/usc42_402.txt` lines 208 and 258): if the deceased "was (or upon application would have been) entitled to" a benefit increased by delayed retirement credits, the survivor's benefit rests on that increased benefit, counting increment months through the month before death. Track A's `deceased_unentitled` record uses factor 1.0 in both scenarios. The records carry an annual death year only, so the credits cannot be counted by month without a new convention | Survivors of workers who died unclaimed after the baseline retirement age inherit no credits in either scenario, so the reform's cut of up to D credit months (8 percentage points for D = 12) is missed. Under C1 and C2 a claimant who dies before the moved claim loses all credits in the reform scenario, where the statute would keep those accrued from the reform retirement age. Aged widow(er)s. Diagnostic in every run (benefit counters, by scenario): `fra68_widow_credits_not_inherited`, the paid aged widow(er)'s excesses resting on a never-entitled decedent who died in or after the calendar year of attaining the scenario's retirement age (an upper bound: the death month is unknown), and `fra68_widow_credits_not_inherited_claim_moved_past_death`, the subset whose claim C1 or C2 moved past death |
+| Credits of a worker who died unclaimed | 402(e)(2)(C) and 402(f)(2)(C) (`EVID/fra68-statute-20260924/usc42_402.txt` lines 208 and 258): if the deceased "was (or upon application would have been) entitled to" a benefit increased by delayed retirement credits, the survivor's benefit rests on that increased benefit, counting increment months through the month before death. Track A's `deceased_unentitled` record uses factor 1.0 in both scenarios. The records carry an annual death year only, so the credits cannot be counted by month without a new convention | Survivors of workers who died unclaimed after the baseline retirement age inherit no credits in either scenario, so the reform's cut of up to D credit months (8 percentage points for D = 12) is missed. Under C1 and C2 a claimant who dies before the moved claim loses all credits in the reform scenario, where the statute would keep those accrued from the reform retirement age. Aged widow(er)s. Diagnostic in every run (benefit counters, by scenario): `fra68_widow_credits_not_inherited`, the paid aged widow(er)'s excesses resting on a never-entitled decedent who died in or after the calendar year of attaining the scenario's retirement age, and `fra68_widow_credits_not_inherited_claim_moved_past_death`, the subset whose claim C1 or C2 moved past death. The count is not a bound on the survivors the statute would pass credits to: the death month is unknown, so it can include a decedent who died in the attainment year before the retirement-age month, and it omits a survivor paid no excess without the credits whom the credits would have given one |
 | Month resolution and birth month | Integer claim ages; the July birth month of A4 for conversion and for the C1/C2 dates | Odd-month increases enter exactly; the C1/C2 delay is 0 below 6 months |
 | Claiming response | DYNASIM3's OASI take-up hazard uses "age, benefit amount, spousal characteristics, and Social Security policy parameters" (primer Table 3, p. 6; p. 14), with separate equations "for groups with different ratios of recent earnings to the Social Security exempt amount" (p. 14); its benefit calculator applies "statutory adjustment factors for retirement at ages other than the normal retirement age and the Retirement Earnings Test" (p. 16) | Registered as C1 and C2 (§13); 62-69 membership and weights |
 | Claim-age mix | Track A snaps every projection year to the 2008 row of the claim table, whose at-FRA age is 65 for every cohort. TR2008 projects claiming at 63-69 "with an adjustment for changes in the portion of the primary insurance amount that is payable at each age of entitlement" (pp. 111-112) | 62-69 membership; the C1 anchor (referee question 3); the mix itself is referee question 5 |
@@ -495,6 +540,10 @@ F'(b_s) is the reform FRA of the spouse's birth year,
 s = max(m'_s, 12 (y'_w - b_s)), m'_s is the spouse's own reform claim
 month (12 a_s when the spouse's claim is not transformed) and y'_w is the
 worker's reform entitlement year. Under C0 this is §11's rule. A
+converted worker's excess on its conversion claim follows §11 rule 3
+under every claiming response: its count reads the worker's baseline
+entitlement year, so a C1/C2 move of the worker's claim changes when the
+excess is paid (from y'_w) but not its months early. A
 transformed spouse's excess therefore keeps its baseline distance from
 the retirement age, as the worker's own factor does, unless the worker's
 later entitlement starts it. (Counting months early from the whole start
@@ -543,8 +592,10 @@ shares, the weighted mean FRA increase over baseline recipients, the
 retired-worker rows by claim age in each scenario, the shares of benefit
 dollars held by DI-entitled and by converted disabled workers, per
 draw the ratio of weighted totals over the union of recipients, and, by
-row and scenario, the counts of survivors whose inherited credits the
-model omits (§12, credits of a worker who died unclaimed).
+row and scenario, the counts of paid widow(er)'s excesses whose inherited
+credits the model omits (§12, credits of a worker who died unclaimed) and
+of paid spouse's excesses on a conversion claim, with those whose months
+early are positive (§12, whole-year conversion claim).
 
 ## 17. Acceptance rule
 
@@ -601,7 +652,7 @@ and `tests/test_urban2010_fra68_spec.py` holds this table to them.
 | Widow(er), born 1965, widowed and entitled at 63; worker born 1963 with PIA $1,500.00 who never claimed (P3) | $1,441.40 | $1,415.10 | -1.8246 | -1.8238 |
 | The same widow(er), entitled at 60 (P3) | $1,231.10 | $1,231.10 | 0 | 0 |
 
-Four further invented cases have no dollar amount:
+Five further invented cases have no dollar amount:
 
 - **Opening-stock retired worker**, born 1948, claimed at 62 in 2010
   (P3): factor 0.75 (baseline, 48 months early) to 0.741667 (50 months
@@ -616,6 +667,13 @@ Four further invented cases have no dollar amount:
   claim at 62 in 2016 starts the excess: reform claim month 757
   (entitled 2017), 805 - 757 = 48 months early, as in the baseline
   (792 - 744 = 48): factor 0.70 in both, ratio 1.
+- **Converted spouse's excess**, spouse born 1956 (P2, D = 14), converted
+  at FRA in 2022 with the worker entitled earlier, so the conversion
+  starts the excess: baseline 796 - 792 = 4 months early (Track A's
+  whole-year count), reform 810 - (792 + 14) = 4 months early: factor
+  0.972222 in both, ratio 1. `e1-draft-4` counted from the reform's whole
+  conversion year, 2024 (month 816): 0 months early, factor 1, +2.8571
+  percent, above both the baseline and P3.
 
 ## 20. Resolution map
 
@@ -672,6 +730,10 @@ it), and where this draft resolves each for exercise 3:
    draft relies on (the oracle COLA horizon, d074 decision 2(a), and the
    opening-stock basis, d075) are decision fields of their own, which
    d188 as filed does not name (§21, §22; referee required change 7).
+10. A converted worker's spouse's excess on its conversion claim keeps
+    Track A's baseline count in every scenario, the baseline start moved
+    by D (§11, rule 3; the review of `e1-draft-4`). The plan does not
+    address it.
 
 ## 21. Machine-readable parameter block
 
@@ -682,9 +744,12 @@ each row's schedule, survivor rule, claiming response, statistic,
 components, population, benefit period, benefit scale, behavior and
 membership basis, the C1 anchor age or the statistic identifier) and
 `tests/test_urban2010_fra68_spec.py`. The check does not read
-`claiming.spouse_excess_months_early`; the spec test holds it to the
-code's statement of the rule (`reform.SPOUSE_EXCESS_MONTHS_EARLY_RULE`)
-and `tests/fra68_track` to its arithmetic.
+`claiming.spouse_excess_months_early` or
+`amounts.conversion_claim_spouse_excess_months_early`; the spec test
+holds them to the code's statements of the rules
+(`reform.SPOUSE_EXCESS_MONTHS_EARLY_RULE` and
+`reform.CONVERSION_CLAIM_EXCESS_MONTHS_EARLY_RULE`) and
+`tests/fra68_track` to their arithmetic.
 `decisions_awaiting_max` lists the d188 items. A registered run refuses
 while it is non-empty, and until a `decisions` entry records Max's ruling
 on each decision field (`{field: {"ruling": value, ...}}`, the A1 §21
@@ -693,7 +758,7 @@ form) and the configuration follows every ruling.
 ```json
 {
   "specification": "urban2010_fra68_exercise3",
-  "version": "e1-draft-4",
+  "version": "e1-draft-5",
   "status": "draft_refereed_not_ratified",
   "template": {
     "specification": "urban2010_cola_exercise1",
@@ -781,7 +846,7 @@ form) and the configuration follows every ruling.
       "applies_to": "every_projected_claimant"
     },
     "claim_age": "claim_year_minus_birth_year_at_most_70",
-    "spouse_excess_months_early": "max(0, reform_fra(b_s) - max(m_s, 12*(worker_reform_entitlement_year - b_s))); m_s = the spouse's own reform claim month, 12*a_s if not transformed",
+    "spouse_excess_months_early": "max(0, reform_fra(b_s) - max(m_s, 12*(worker_reform_entitlement_year - b_s))); m_s = the spouse's own reform claim month, 12*a_s if not transformed; a converted worker's conversion claim follows amounts.conversion_claim_spouse_excess_months_early",
     "unchanged_under_c1_c2": [
       "claims_at_or_before_the_opening_year",
       "di_records",
@@ -836,6 +901,7 @@ form) and the configuration follows every ruling.
     "opening_stock_dime_floor": false,
     "opening_stock_basis": "fixed_at_opening_year",
     "di_conversion": "scenario_fra_attainment_year_label_only",
+    "conversion_claim_spouse_excess_months_early": "max(0, reform_fra(b_s) - (max(12*(y_conv_base - b_s), 12*(worker_baseline_entitlement_year - b_s)) + D(b_s))), which equals Track A's baseline count in every scenario and under every claiming response; y_conv_base = Track A's own claim year of the converted worker (its baseline conversion year), worker_baseline_entitlement_year = the worker's entitlement year before any C1/C2 move, D(b_s) = reform_fra(b_s) - baseline_fra(b_s)",
     "opening_stock_under_worker_only_components": "whole_observed_amount_kept_if_a3_classifies_a_worker_benefit",
     "gross_of_premiums_taxes_and_withholding": true,
     "gross_of_wep_gpo_and_disability_offset": true
@@ -960,13 +1026,14 @@ ruled (`pending_decisions`).
 4. **Primary schedule and row set** (item (b); plan §11 item 4): P3
    primary with P1 and P2 registered; rows F0-F8. d188 as filed names P3
    and the registered P1 and P2; rows F3-F8 are part of the `rows`
-   field's proposed default.
+   field's proposed default, and d196 item (4) names rows F0-F8.
 5. **Ratification and registration** (item (c); plan §11 items 6-7):
    ratify this specification by merging, post or authorize the #42
    registration, run the one-shot.
 6. **Screening or request** (plan §11 item 5; not in d188): whether a
    screening lane may extract definitional text from Urban pages 3-5, or
-   the Urban clarification request is sent.
+   the Urban clarification request is sent. d196 item (5) proposes
+   neither before the one-shot.
 
 When Max rules, the ratified text moves each item from
 `decisions_awaiting_max` to a `decisions` entry with his ruling; the
@@ -980,9 +1047,16 @@ exercise 1 only; whether they carry over is part of item (a), and each
 carry-over this draft relies on is a field of §21 (item 2). The Track A
 builder defaults stay builder defaults, listed in every run.
 
-The d188 record should be amended, or a follow-up decision added, so that
-Max's ruling names the survivor span and the two carry-overs; this draft
-does not change the decision record.
+A follow-up decision, d196 (created 2026-09-24, open, deadline
+2026-09-30), is filed as a supplement to d188 "to rule on together with
+d188". Its default, "accept all five", covers the per-cohort survivor
+span (item 2(b) above), the two exercise-1 carry-overs (item 2(d)), rows
+F0-F8 as §18 lists them (item 4) and no screening lane or clarification
+request before the one-shot (item 6). The block still names d188 as each
+field's decision record. A registered run needs a recorded ruling on
+every field under `decisions`, whichever record carries it
+(`check_specification_for_registered_run` keys rulings by field name).
+This draft changes neither decision record.
 
 ## 23. Questions for the referee
 
@@ -1020,7 +1094,11 @@ The referee's answers are in §25.
 - The month of each projected death (the records carry the year only),
   which a count of the credits of §12's unclaimed decedents would need.
 - Whether Max's ruling on d188 will cover the survivor span and the two
-  exercise-1 carry-overs, which the record as filed does not name (§22).
+  exercise-1 carry-overs, which the record as filed does not name (§22;
+  d196 names them).
+- How DYNASIM dates a converted disabled worker's spouse's benefit (not
+  read). The model keeps Track A's whole-year conversion count in both
+  scenarios (§11, rule 3; §12).
 
 ## 25. Referee pass
 
@@ -1091,7 +1169,9 @@ against its cited source before applying it.
 **Left open by the referee and not done here.** The d188 card's
 amendment or a follow-up decision naming the survivor span and the two
 carry-overs (§22), and a decision record for §22 item 6 (screening or
-request). Both are for whoever keeps Max's decision queue.
+request). Both are for whoever keeps Max's decision queue. The
+orchestrating session has since filed d196 (§22), which covers both; it
+is open.
 
 **What the referee could not verify** (its report, "What I could not
 verify") stands: run 614's phase-in, survivor, DI and claiming treatment
@@ -1099,6 +1179,25 @@ and whether its benefits are net of the earnings test; the age groups
 against the figure; the drafting lane's process beyond content and
 timing; the statute pages' fetch URL and date; and the code after
 `454a89c1`, which this revision changed (§26).
+
+**Independent review of `e1-draft-4`.**
+`EVID/fra68-conversion-claim-20260924/review-e1-draft-4-20260924.json`
+(SHA-256 `c6da180f…`): an independent Claude lane (Opus 5.5) reviewed
+the branch at `070c59c7` on 2026-09-24 and did not approve it, for one
+confirmed defect of the same kind as required change 1. It found
+required changes 1-8 applied or soundly declined, the §3 and §5
+arithmetic and the source citations correct, and the dry run
+reproducible. Its probes used the invented cohort only.
+
+| Finding | Checked against | Applied |
+|---|---|---|
+| 1. A converted worker's claim for the spouse's excess was counted from the scenario's whole conversion year (`_own_claim_year`, `own_claim_month`), so its months early were the leftover month, FRA mod 12, which the FRA increase changes. On invented data the reform moved converted spouses' excesses by -0.69 to -2.78 percent, and by +2.86 percent for a spouse born 1956 under P2, against the per-person ordering P2 <= P3 <= P1 <= baseline that the tests assert. 402(q)(1) reduces neither scenario's excess | The code at `070c59c7` (`ScenarioCalculator._own_claim_year` and `own_claim_month`), Track A's `_own_claim_year`, A4's `fra_attainment_year` and `apply_claiming`; `usc42_402.txt` lines 371 and 406; the exact-integer grid of `conversion_claim_arithmetic.py`, which also finds classes the review did not list (1948 and 1949 under P2, 1950 under P1) | The review's option (b): each reform keeps Track A's baseline count, the baseline start moved by D (§11 rule 3; §3 item 6, §6, §13, §19, §20 item 10, §21 `amounts.conversion_claim_spouse_excess_months_early`). **Applied with one extension.** Moving the conversion claim alone (12 (y_c - b) + D, the review's formula) would still cut the excess by 2 or 4 months where the worker's entitlement in the year after the baseline conversion starts the baseline excess (spouses born 1955-1956), so the whole baseline start moves by D; and the start reads the worker's baseline entitlement year, so a C1/C2 move of the worker's claim does not change the count either. Where the conversion starts the excess under C0 the two rules are identical. Track A's baseline whole-year count is a named delta with counters in both scenarios (§12). Option (a) (count from the exact conversion month, which changes exercise 1's baseline) and option (c) (name the defect only) were not taken. Code: `reform.conversion_claim_excess_months_early`, `ScenarioCalculator.conversion_claim_year` and `excess_months_early`, and the two counters; Track A is unchanged. Tests: every cohort 1938-1971 under P1-P3 against 16 worker-entitlement years; the 1956-under-P2 case; each affected cohort class (1948, 1949, 1950, 1954-1956) through the calculator, with the ordering; the later-worker case; a worker's claim moved by C2; a claim before the conversion; the null-reform identity against Track A's own calculator; the counters |
+| 2. The dry-run text called the credits counter an upper bound on the survivors the statute would pass credits to, but it counts paid excesses only | `ScenarioCalculator._count_credits_not_inherited` | The dry-run script, the counter's docstring and §12 now say what it counts, and that it is not a bound either way |
+| 3. §2 recorded `RESTRICTED-FILES.md` with a SHA-256 that the list no longer matches and that the review could not verify for any version (the list is a living file) | The file's header and changelog | §2 pins no hash and names the version read by its last changelog entry; the header summary follows that version |
+
+The review also noted that d188 as filed does not name rows F3-F8
+(d196 item (4) now does, §22) and that the branch's upstream is set to
+`origin/master` (not a matter for this draft; the branch is not pushed).
 
 ## 26. Changelog
 
@@ -1127,3 +1226,18 @@ timing; the statute pages' fetch URL and date; and the code after
   is `draft_refereed_not_ratified`; the specification check binds every
   row entry. No schedule, row, primary or worked-case dollar amount
   changed.
+- `e1-draft-5` (2026-09-24, after the independent review of `e1-draft-4`,
+  §25). One rule changed: a converted worker's spouse's excess on its
+  conversion claim keeps Track A's baseline count in every scenario, the
+  baseline start moved by D (§11 rule 3; §3 item 6, §6, §13, §19, §20
+  item 10; §21 gains `amounts.conversion_claim_spouse_excess_months_early`
+  and `claiming.spouse_excess_months_early` points to it). Reform amounts
+  of converted spouses in the cohorts the old count moved (born 1948-1950
+  and 1954-1956, by schedule; §25) change in every row except F6 (workers
+  only); no baseline amount changes. Track A's whole-year conversion count is a
+  named delta with two counters (§12, §16). The credits counter is
+  described by what it counts, not as a bound (§12). §2 pins no hash for
+  the living restriction list and adds the review record, the arithmetic
+  check and d196; the header, §22, §24 and §25 note d196. No schedule,
+  row, primary, decision field or §19 dollar amount changed; §19 gains
+  one invented case.

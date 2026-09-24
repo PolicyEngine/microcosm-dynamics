@@ -26,7 +26,15 @@ and with these scenario rules layered on:
   entitlement.  When C1 or C2 moved the spouse's own claim, that claim
   enters at its exact moved claim month, the month the spouse's own
   factor reads (E1 section 13; referee required change 1), not at the
-  whole year it falls in (``reform.spouse_excess_months_early``).
+  whole year it falls in (``reform.spouse_excess_months_early``).  When
+  the spouse is a converted disabled worker whose own claim is the
+  conversion, the baseline start of the excess moves by the FRA increase
+  ``D`` (``reform.conversion_claim_excess_months_early``; E1 section 11,
+  the review of ``e1-draft-4``): the count is Track A's baseline count in
+  every scenario, so the reform leaves it unchanged, as 42 USC 402(q)(1)
+  does a benefit that starts at FRA.  :data:`CONVERSION_CLAIM_EXCESS`
+  and :data:`CONVERSION_CLAIM_MONTHS_EARLY` count these excesses and the
+  ones Track A's whole-year count reduces (a named delta, E1 section 12).
 * **Aged widow(er)**: the oracle's ``widow_benefit`` with the reduction
   span of the survivor's cohort (``reform.survivor_parameters``): the
   416(l)(2) mapping on the scenario schedule (row F0 and every baseline),
@@ -36,15 +44,16 @@ and with these scenario rules layered on:
   deceased who never claimed carries factor 1.0 in both scenarios, so the
   credits 402(e)(2)(C) and 402(f)(2)(C) pass to the survivor of a worker
   who died unclaimed after retirement age are not modeled (a named delta,
-  E1 section 12); :data:`CREDITS_NOT_INHERITED` counts the survivors it
-  touches.
+  E1 section 12); :data:`CREDITS_NOT_INHERITED` counts the paid
+  widow(er)'s excesses it touches (not a bound; see
+  :meth:`ScenarioCalculator._count_credits_not_inherited`).
 * **Disabled worker**: factor 1 in both scenarios.  A worker the
   projection converted at the baseline FRA is still a disabled worker in a
   scenario whose FRA is attained later than the state's year: only the
   component label changes (and, by Track A's convention, a disabled
   worker still entitled to DI draws no spouse's excess).  A converted
-  worker's own claim for the spouse's excess moves to the scenario's
-  conversion year.
+  worker's own claim for the spouse's excess enters the scenario in its
+  conversion year and is counted as above.
 * **Opening stock** (the basis frozen at the opening year, Max's ruling
   d075 for exercise 1, whose carry-over awaits him as the
   ``opening_stock_basis`` field of d188): the observed amount carried on
@@ -89,6 +98,7 @@ from populace_dynamics.fra68_track.config import (
 )
 from populace_dynamics.fra68_track.reform import (
     AGE_70_MONTHS,
+    conversion_claim_excess_months_early,
     fra_increase_months,
     opening_stock_factor_ratio,
     spouse_excess_months_early,
@@ -97,6 +107,8 @@ from populace_dynamics.fra68_track.reform import (
 from populace_dynamics.ss.params import SSAParameters
 
 __all__ = [
+    "CONVERSION_CLAIM_EXCESS",
+    "CONVERSION_CLAIM_MONTHS_EARLY",
     "CREDITS_NOT_INHERITED",
     "CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH",
     "MovedClaimRecord",
@@ -119,6 +131,17 @@ _MAX_CLAIM_AGE = 70
 CREDITS_NOT_INHERITED = "fra68_widow_credits_not_inherited"
 CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH = (
     "fra68_widow_credits_not_inherited_claim_moved_past_death"
+)
+#: Scenario counters of the named delta "whole-year conversion claim"
+#: (E1 section 12): paid spouse's excesses resting on a converted disabled
+#: worker's conversion claim, and the subset whose months early are
+#: positive.  402(q)(1) reduces none of them (they start at FRA); Track
+#: A's whole-year count reduces the second, by 2 months for spouses born
+#: in 1955 and 4 for 1956 under the statutory schedule and A4's July birth
+#: month, in every scenario alike.  Diagnostics only.
+CONVERSION_CLAIM_EXCESS = "fra68_spouse_excess_on_conversion_claim"
+CONVERSION_CLAIM_MONTHS_EARLY = (
+    "fra68_spouse_excess_on_conversion_claim_months_early"
 )
 
 
@@ -179,9 +202,13 @@ class MovedClaimRecord(PiaRecord):
     ``entitlement_year`` is the calendar year it falls in under A4's July
     birth month.  The spouse's excess counts its months early from
     ``reform_claim_month`` (:meth:`ScenarioCalculator._spouse_excess`).
+    ``baseline_entitlement_year`` is the projected claim's own year before
+    the move (the worker's entitlement a conversion claim's count reads,
+    :meth:`ScenarioCalculator.excess_months_early`).
     """
 
     reform_claim_month: int
+    baseline_entitlement_year: int | None = None
 
 
 @dataclass(frozen=True)
@@ -209,9 +236,11 @@ class ScenarioCalculator(track_benefits._Calculator):
     of Track A's rate paths are the baseline one, and the methods below
     add the scenario rules of the module docstring.  ``_spouse_excess``
     and ``_widow_excess`` are documented copies of Track A's: the first
-    changed only to count a moved claim's months early from its exact
-    claim month, the second to read the survivor's cohort span and to
-    count the survivors whose inherited credits the model omits.  With
+    changed only in the months-early count (a moved claim's from its
+    exact claim month, a conversion claim's from its baseline start moved
+    by the FRA increase) and to count the excesses on a conversion claim,
+    the second to read the survivor's cohort span and to count the
+    survivors whose inherited credits the model omits.  With
     the baseline bundle and Track A's fixed 84-month survivor span, every
     amount equals Track A's baseline amount bit for bit (the null-reform
     identity test).
@@ -306,7 +335,11 @@ class ScenarioCalculator(track_benefits._Calculator):
                 months, birth, self.ctx.params
             ),
         )
-        return MovedClaimRecord(**fields, reform_claim_month=months)
+        return MovedClaimRecord(
+            **fields,
+            reform_claim_month=months,
+            baseline_entitlement_year=record.entitlement_year,
+        )
 
     # ---- PIA records ---------------------------------------------------
     def own_record_uncounted(
@@ -379,19 +412,39 @@ class ScenarioCalculator(track_benefits._Calculator):
             return undone, True
         return record, False
 
-    def _own_claim_year(self, own: PiaRecord, state: Any) -> int | None:
-        """Track A's rule; a conversion claim moves to the scenario's year."""
+    @staticmethod
+    def conversion_claim_year(own: PiaRecord, state: Any) -> int | None:
+        """Track A's own claim year of a conversion claim, else ``None``.
 
-        if own.kind == "converted":
-            birth = int(state["birth_year"])
-            scenario_year = self.conversion_year(birth)
-            baseline_year = _nullable_int(state["di_conversion_year"])
-            claim = _nullable_int(state["claim_year"])
-            if (
-                baseline_year is not None
-                and scenario_year != baseline_year
-                and (claim is None or claim >= baseline_year)
-            ):
+        A converted disabled worker's own claim is the conversion unless a
+        retirement claim preceded it (a claim year before the projection's
+        conversion year).  The year returned is Track A's
+        (``_Calculator._own_claim_year``: the claiming step's claim year,
+        else the conversion year), so it is the baseline conversion claim
+        in every scenario.
+        """
+
+        if own.kind != "converted":
+            return None
+        baseline_year = _nullable_int(state["di_conversion_year"])
+        claim = _nullable_int(state["claim_year"])
+        if baseline_year is None or (
+            claim is not None and claim < baseline_year
+        ):
+            return None
+        return track_benefits._Calculator._own_claim_year(own, state)
+
+    def _own_claim_year(self, own: PiaRecord, state: Any) -> int | None:
+        """Track A's rule; a conversion claim enters the scenario's year.
+
+        The year gates the spouse's excess (entitled by the reference
+        year, at 62 or older); a conversion claim's months early are
+        counted by :func:`reform.conversion_claim_excess_months_early`.
+        """
+
+        if self.conversion_claim_year(own, state) is not None:
+            scenario_year = self.conversion_year(int(state["birth_year"]))
+            if scenario_year != _nullable_int(state["di_conversion_year"]):
                 return scenario_year
         return track_benefits._Calculator._own_claim_year(own, state)
 
@@ -402,24 +455,77 @@ class ScenarioCalculator(track_benefits._Calculator):
 
         A claim C1 or C2 moved starts at its exact reform claim month (the
         month its factor reads); any other claim at 12 times its year
-        minus the birth year, Track A's whole-year count.
+        minus the birth year, Track A's whole-year count.  (A conversion
+        claim's excess is counted by
+        :func:`reform.conversion_claim_excess_months_early` instead.)
         """
 
         if isinstance(own, MovedClaimRecord):
             return int(own.reform_claim_month)
         return _MONTHS * (int(own_claim) - int(birth))
 
+    def excess_months_early(
+        self,
+        own: PiaRecord,
+        state: Any,
+        own_claim: int,
+        worker: PiaRecord,
+        birth: int,
+    ) -> int:
+        """Months early of the person's spouse's excess in this scenario.
+
+        A conversion claim (:meth:`conversion_claim_year`): Track A's
+        baseline count in every scenario and under every claiming
+        response, the baseline start moved by the FRA increase
+        (:func:`reform.conversion_claim_excess_months_early`; E1 section
+        11).  The start reads the worker's baseline entitlement year: a
+        worker's claim C1 or C2 moved enters at its year before the move
+        (``MovedClaimRecord.baseline_entitlement_year``), so the move does
+        not change the count (it still gates the excess through the
+        worker's reform entitlement year).  Any other claim: from the
+        later of the own claim month (:meth:`own_claim_month`) and the
+        worker's entitlement in this scenario
+        (:func:`reform.spouse_excess_months_early`).
+        """
+
+        conversion = self.conversion_claim_year(own, state)
+        if conversion is not None:
+            worker_year = worker.entitlement_year
+            if isinstance(worker, MovedClaimRecord) and (
+                worker.baseline_entitlement_year is not None
+            ):
+                worker_year = worker.baseline_entitlement_year
+            return conversion_claim_excess_months_early(
+                conversion_claim_year=conversion,
+                worker_entitlement_year=worker_year,
+                birth_year=birth,
+                baseline=self.scenario.baseline_params,
+                params=self.ctx.params,
+            )
+        return spouse_excess_months_early(
+            own_claim_month=self.own_claim_month(own, own_claim, birth),
+            worker_entitlement_year=worker.entitlement_year,
+            birth_year=birth,
+            params=self.ctx.params,
+        )
+
     def _spouse_excess(
         self, person_id: int, state: Any, own: PiaRecord
     ) -> tuple[float, float] | None:
         # A documented copy of Track A's ``_Calculator._spouse_excess``;
-        # the one change is the months-early count, which reads the exact
-        # moved claim month of a claim C1 or C2 moved
-        # (``reform.spouse_excess_months_early``; E1 section 13, referee
-        # required change 1).  Counting from the whole year the moved claim
-        # falls in changed a moved spouse's reduction by D - 12 x (the
-        # year shift) months with no response behind it.  Without a moved
-        # claim the count is Track A's, bit for bit.
+        # the changes are the months-early count
+        # (:meth:`excess_months_early`) and the two diagnostic
+        # counters of excesses on a conversion claim, which change no
+        # amount.  The count reads the exact moved claim month of a claim
+        # C1 or C2 moved (E1 section 13, referee required change 1):
+        # counting from the whole year the moved claim falls in changed a
+        # moved spouse's reduction by D - 12 x (the year shift) months with
+        # no response behind it.  A conversion claim keeps Track A's
+        # baseline count in every scenario (E1 section 11, the review of
+        # ``e1-draft-4``): counting from the whole scenario conversion year
+        # changed its reduction by the change in FRA mod 12 with nothing in
+        # the statute behind it.  In the baseline scenario the count is
+        # Track A's, bit for bit.
         spouse_id = _nullable_int(state["spouse_person_id"])
         # Named gap (Track A): a spouse's excess needs the worker's
         # simulated state and career, which exist only for a linked spouse
@@ -463,11 +569,8 @@ class ScenarioCalculator(track_benefits._Calculator):
             return None
         worker_pia = self._pia_paths(worker, worker_start)
         own_pia = self._pia_paths(own, own_start)
-        months_early = spouse_excess_months_early(
-            own_claim_month=self.own_claim_month(own, own_claim, birth),
-            worker_entitlement_year=worker.entitlement_year,
-            birth_year=birth,
-            params=self.ctx.params,
+        months_early = self.excess_months_early(
+            own, state, own_claim, worker, birth
         )
         amounts = [
             sb.spouse_excess_path(
@@ -483,6 +586,10 @@ class ScenarioCalculator(track_benefits._Calculator):
         if amounts[0] <= 0:
             return None
         self.counters["spouse_excess_paid"] += 1
+        if self.conversion_claim_year(own, state) is not None:
+            self.counters[CONVERSION_CLAIM_EXCESS] += 1
+            if months_early > 0:
+                self.counters[CONVERSION_CLAIM_MONTHS_EARLY] += 1
         return amounts[0], amounts[1]
 
     # ---- widow(er)s ------------------------------------------------------
@@ -589,12 +696,16 @@ class ScenarioCalculator(track_benefits._Calculator):
         record) carries factor 1.0, so a paid widow(er)'s excess that rests
         on one who died in or after the calendar year of attaining the
         scenario's retirement age (A4's July birth month) inherits no
-        credits where the statute would pass some.  An upper bound: the
-        death year is annual, so a death in the attainment year may precede
-        the retirement-age month.  :data:`CREDITS_NOT_INHERITED` counts
-        these; :data:`CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH` counts
-        the subset whose decedent claimed in the projection and whose claim
-        C1 or C2 moved past death (reform scenario only).
+        credits where the statute would pass some.
+        :data:`CREDITS_NOT_INHERITED` counts these paid excesses;
+        :data:`CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH` counts the
+        subset whose decedent claimed in the projection and whose claim C1
+        or C2 moved past death (reform scenario only).  The count is not a
+        bound on the survivors the statute would pass credits to: the death
+        year is annual, so it can include a decedent who died in the
+        attainment year before the retirement-age month (no credits due),
+        and it omits a survivor paid no excess without the credits whom the
+        credits would have given one.
         """
 
         if deceased.kind != "deceased_unentitled":

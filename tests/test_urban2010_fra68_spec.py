@@ -22,6 +22,7 @@ from populace_dynamics import claiming
 from populace_dynamics import scenario_benefits as sb
 from populace_dynamics.cola_track_a.runner import a1_parameter_block
 from populace_dynamics.cola_track_a.statutory import captured_ssa_parameters
+from populace_dynamics.engine.di_entitlement import fra_attainment_year
 from populace_dynamics.estimates.cola_age_profile import (
     UNRATIFIED_MARKERS,
 )
@@ -34,8 +35,10 @@ from populace_dynamics.fra68_track.config import (
     FRA68Config,
 )
 from populace_dynamics.fra68_track.reform import (
+    CONVERSION_CLAIM_EXCESS_MONTHS_EARLY_RULE,
     SCHEDULES,
     SPOUSE_EXCESS_MONTHS_EARLY_RULE,
+    conversion_claim_excess_months_early,
     reform_parameters,
     spouse_excess_months_early,
     survivor_parameters,
@@ -180,9 +183,12 @@ def test_the_block_equals_the_code(block):
         )
     assert block["primary_schedule"] == "P3"
     assert block["claiming"]["C1"]["anchor_age"] == FRA68Config().c1_anchor_age
-    # Not read by the specification check: held to the code's statement.
+    # Not read by the specification check: held to the code's statements.
     assert block["claiming"]["spouse_excess_months_early"] == (
         SPOUSE_EXCESS_MONTHS_EARLY_RULE
+    )
+    assert block["amounts"]["conversion_claim_spouse_excess_months_early"] == (
+        CONVERSION_CLAIM_EXCESS_MONTHS_EARLY_RULE
     )
 
 
@@ -445,7 +451,7 @@ def test_section_19_spouse_cases_under_c2_equal_the_code(text):
     # E1 referee required change 1: under C2 a moved spouse's excess keeps
     # its months early (the exact moved claim month, not its whole year).
     section = _section(text, "## 19. Invented worked cases")
-    assert "Four further invented cases have no dollar amount" in section
+    assert "Five further invented cases have no dollar amount" in section
     cases = _SPOUSE_CASE.findall(section)
     assert len(cases) == 2
     base = captured_ssa_parameters()
@@ -490,3 +496,74 @@ def test_section_19_spouse_cases_under_c2_equal_the_code(text):
         for months, params in ((early, p3), (base_early, base)):
             computed = 1 - benefits.spousal_early_reduction(months, params)
             assert Decimal(f"{computed:.2f}") == factor
+
+
+_CONVERSION_CASE = re.compile(
+    r"\*\*Converted spouse's excess\*\*, spouse born (\d{4}) \((P\d), D = "
+    r"(\d+)\), converted\s+at FRA in (\d{4}) with the worker entitled "
+    r"earlier, so the conversion\s+starts the excess: baseline (\d+) - "
+    r"(\d+) = (\d+) months early \(Track A's\s+whole-year count\), reform "
+    r"(\d+) - \((\d+) \+ (\d+)\) = (\d+) months early: factor\s+"
+    r"([0-9.]+) in both, ratio 1\. `e1-draft-4` counted from the reform's "
+    r"whole\s+conversion year, (\d{4}) \(month (\d+)\): (\d+) months "
+    r"early, factor (\d+), \+([0-9.]+)\s+percent"
+)
+
+
+def test_section_19_converted_spouse_case_equals_the_code(text):
+    # The review of e1-draft-4: a converted spouse's excess on its
+    # conversion claim keeps Track A's baseline count in every scenario.
+    section = _section(text, "## 19. Invented worked cases")
+    (case,) = _CONVERSION_CASE.findall(section)
+    birth, sid = int(case[0]), case[1]
+    (
+        increase,
+        conversion,
+        base_fra,
+        base_month,
+        base_early,
+        fra,
+        month,
+        increase_again,
+        early,
+    ) = (int(value) for value in case[2:11])
+    factor = Decimal(case[11])
+    old_year, old_month, old_early, old_factor = (
+        int(value) for value in case[12:16]
+    )
+    change = Decimal(case[16])
+    base = captured_ssa_parameters()
+    reform = reform_parameters(base, SCHEDULES[sid])
+    assert (
+        increase
+        == increase_again
+        == (reform.fra_months(birth) - base.fra_months(birth))
+    )
+    assert conversion == int(fra_attainment_year([birth], base)[0])
+    assert base_fra == base.fra_months(birth) and fra == reform.fra_months(
+        birth
+    )
+    assert base_month == month == 12 * (conversion - birth)
+    for params, months in ((base, base_early), (reform, early)):
+        assert months == conversion_claim_excess_months_early(
+            conversion_claim_year=conversion,
+            worker_entitlement_year=conversion - 5,
+            birth_year=birth,
+            baseline=base,
+            params=params,
+        )
+    assert base_early == base_fra - base_month
+    assert early == fra - (month + increase)
+    computed = [
+        1 - benefits.spousal_early_reduction(months, params)
+        for months, params in ((base_early, base), (early, reform))
+    ]
+    assert computed[0] == computed[1]
+    assert Decimal(f"{computed[0]:.6f}") == factor
+    # e1-draft-4's rule: the reform's own whole conversion year.
+    assert old_year == int(fra_attainment_year([birth], reform)[0])
+    assert old_month == 12 * (old_year - birth)
+    assert old_early == max(0, fra - old_month)
+    old = 1 - benefits.spousal_early_reduction(old_early, reform)
+    assert Decimal(str(old)) == old_factor
+    assert Decimal(str(round(100 * (old / computed[0] - 1), 4))) == change

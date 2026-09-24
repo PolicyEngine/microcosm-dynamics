@@ -385,6 +385,159 @@ def test_the_spouse_excess_rule_is_track_as_without_a_moved_claim(base):
     )
 
 
+#: The cohort classes whose conversion-claim count 070c59c7's rule (the
+#: scenario's own whole conversion year) changed, by (birth year,
+#: schedule): its months early minus the baseline's, when the conversion
+#: starts the excess (the review of ``e1-draft-4``; E1 section 25).  The
+#: review listed 1948 (P3), 1949 (P1, P3), 1954-1956 (P2, P3); the full
+#: grid below adds 1948 and 1949 under P2 and 1950 under P1.
+OLD_CONVERSION_RULE_SHIFT = {
+    (1948, "P2"): 2,
+    (1948, "P3"): 2,
+    (1949, "P1"): 2,
+    (1949, "P2"): 4,
+    (1949, "P3"): 4,
+    (1950, "P1"): 4,
+    (1954, "P2"): 2,
+    (1954, "P3"): 1,
+    (1955, "P2"): 2,
+    (1955, "P3"): 1,
+    (1956, "P2"): -4,
+    (1956, "P3"): 1,
+}
+
+
+def _conversion_year(birth, params):
+    return int(fra_attainment_year(np.array([birth]), params)[0])
+
+
+def test_a_conversion_claim_keeps_track_as_baseline_count(base, reforms):
+    # 42 USC 402(q)(1) (usc42_402.txt line 371): a spouse's benefit is
+    # reduced only when its first month of entitlement precedes the month
+    # of attaining retirement age.  A converted worker's excess starts at
+    # the conversion (at FRA) or later, so the statute's count is 0 in
+    # both scenarios and the reform ratio is 1.  The rule keeps Track A's
+    # baseline count (a whole-year artifact) in every scenario.
+    shifts = {}
+    for birth in range(1938, 1972):
+        conversion = _conversion_year(birth, base)
+        for worker_year in range(conversion - 12, conversion + 4):
+            track_a = max(
+                0,
+                base.fra_months(birth)
+                - 12 * (max(conversion, worker_year) - birth),
+            )
+            # Null reform: the baseline bundle gives Track A's count.
+            assert (
+                reform.conversion_claim_excess_months_early(
+                    conversion_claim_year=conversion,
+                    worker_entitlement_year=worker_year,
+                    birth_year=birth,
+                    baseline=base,
+                    params=base,
+                )
+                == track_a
+            )
+            for sid, params in reforms.items():
+                count = reform.conversion_claim_excess_months_early(
+                    conversion_claim_year=conversion,
+                    worker_entitlement_year=worker_year,
+                    birth_year=birth,
+                    baseline=base,
+                    params=params,
+                )
+                assert count == track_a, (birth, sid, worker_year)
+                increase = params.fra_months(birth) - base.fra_months(birth)
+                device = reform.spouse_excess_months_early(
+                    own_claim_month=12 * (conversion - birth) + increase,
+                    worker_entitlement_year=worker_year,
+                    birth_year=birth,
+                    params=params,
+                )
+                if worker_year <= conversion:
+                    # The conversion starts the excess: the conversion
+                    # claim moved by exactly D months (the C1/C2 device).
+                    assert count == device, (birth, sid, worker_year)
+                    old = max(
+                        0,
+                        params.fra_months(birth)
+                        - 12 * (_conversion_year(birth, params) - birth),
+                    )
+                    if old != track_a:
+                        shifts[(birth, sid)] = old - track_a
+                elif device != count:
+                    # The worker's later entitlement starts the baseline
+                    # excess (count 0); moving the conversion claim alone
+                    # would count FRA mod 12 months, 2 or 4.
+                    assert worker_year == conversion + 1
+                    assert (birth, count, device) in {
+                        (1955, 0, 2),
+                        (1956, 0, 4),
+                    }, (birth, sid)
+    assert shifts == OLD_CONVERSION_RULE_SHIFT
+
+
+def test_track_as_whole_year_conversion_count(base):
+    # The named delta of E1 section 12: with A4's July birth month the
+    # conversion year stands for month 12 (b + (6 + FRA) // 12 - b), which
+    # is FRA mod 12 months before the FRA when that is below 6.  Under the
+    # statute's schedule that is 2 months for 1938 and 1955 and 4 for 1939
+    # and 1956; of these, only 1955 and 1956 convert after 2008, the
+    # earlier opening year (row F8), so only they can convert in a
+    # projection.
+    positive = {}
+    for birth in range(1900, 2000):
+        conversion = _conversion_year(birth, base)
+        count = reform.conversion_claim_excess_months_early(
+            conversion_claim_year=conversion,
+            worker_entitlement_year=conversion - 5,
+            birth_year=birth,
+            baseline=base,
+            params=base,
+        )
+        assert count == max(
+            0, base.fra_months(birth) - 12 * (conversion - birth)
+        )
+        if count:
+            positive[birth] = (count, conversion)
+    assert positive == {
+        1938: (2, 2003),
+        1939: (4, 2004),
+        1955: (2, 2021),
+        1956: (4, 2022),
+    }
+
+
+def test_the_1956_spouse_under_p2_keeps_its_factor(base, reforms):
+    # The review's probe case: a converted spouse born 1956 whose
+    # conversion starts the excess.  The baseline counts 796 - 792 = 4
+    # months early (factor 1 - 4 x 25/36 percent); 070c59c7's rule counted
+    # none under P2 (conversion in 2024 at month 816, FRA 810), raising the
+    # excess above the baseline and above P3.  Now every scenario counts 4.
+    birth, conversion = 1956, 2022
+    assert _conversion_year(birth, base) == conversion
+    assert _conversion_year(birth, reforms["P2"]) == 2024
+    assert _conversion_year(birth, reforms["P3"]) == 2023
+    factors = {}
+    for sid, params in {"baseline": base, **reforms}.items():
+        months = reform.conversion_claim_excess_months_early(
+            conversion_claim_year=conversion,
+            worker_entitlement_year=2010,
+            birth_year=birth,
+            baseline=base,
+            params=params,
+        )
+        assert months == 4, sid
+        factors[sid] = _spouse_factor(months, params)
+    assert factors["baseline"] == pytest.approx(1 - 4 * 25 / 3600)
+    assert factors["P2"] == factors["P3"] == factors["P1"]
+    assert factors["P1"] == factors["baseline"]
+    old_p2 = _spouse_factor(0, reforms["P2"])
+    assert 100 * (old_p2 / factors["baseline"] - 1) == pytest.approx(
+        2.857143, abs=1e-6
+    )
+
+
 def test_conversion_moves_from_67_to_68(base, reforms):
     births = np.array([1958, 1960, 1966])
     # A4's July birth month: birth year + (6 + FRA months) // 12.
