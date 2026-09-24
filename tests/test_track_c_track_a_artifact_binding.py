@@ -31,6 +31,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT = ROOT / "runs" / "replication_urban2010_cola_v1.json"
 ADDITIVE_KEY = "opening_stock_entitlement_clamped_by_clock_rule"
 TOTAL_KEY = "opening_stock_entitlement_clamped"
+CATEGORIES_KEY = "opening_stock_clock_rules"
 
 
 def _load_script():
@@ -80,6 +81,30 @@ def test_the_artifact_records_a_subset_of_the_code_s_diagnostics():
         assert TOTAL_KEY in recorded
 
 
+def test_the_reviewed_additive_diagnostics_are_exactly_what_the_code_adds():
+    # A diagnostic the code starts producing after this test was written
+    # fails here, and Track C refuses to bind until it is reviewed and
+    # listed in KNOWN_ADDITIVE_DIAGNOSTICS.
+    produced = _code_diagnostics()
+    for wave in ("2011", "2009"):
+        _, recorded, _ = _recorded(wave)
+        assert set(produced) - set(recorded) == set(
+            tc.KNOWN_ADDITIVE_DIAGNOSTICS
+        )
+        for known in tc.KNOWN_ADDITIVE_DIAGNOSTICS.values():
+            assert known["total"] in recorded
+            assert known["categories"] in recorded
+    # What each listing claims holds for the code's own (INVENTED)
+    # diagnostics: the breakdown sums to its total and fits its categories.
+    for key, known in tc.KNOWN_ADDITIVE_DIAGNOSTICS.items():
+        breakdown = produced[key]
+        categories = produced[known["categories"]]
+        assert sum(breakdown.values()) == produced[known["total"]]
+        assert all(
+            0 <= count <= categories[name] for name, count in breakdown.items()
+        )
+
+
 def test_the_recorded_2011_cohort_binds_with_the_added_breakdown():
     artifact, recorded, source = _recorded()
     total = recorded[TOTAL_KEY]
@@ -101,18 +126,45 @@ def test_the_recorded_2011_cohort_binds_with_the_added_breakdown():
     assert binding["recorded_diagnostic_keys"] == sorted(recorded)
     assert binding["additive_diagnostic_keys"] == {ADDITIVE_KEY: split}
     assert binding["additive_breakdowns"][ADDITIVE_KEY] == {
+        "added_by": "bfe9fa3e",
         "total_key": TOTAL_KEY,
         "recorded_total": total,
         "sum": total,
         "sums_to_recorded_total": True,
+        "categories_key": CATEGORIES_KEY,
+        "within_recorded_categories": True,
     }
     # An INVENTED split one short of the recorded total is refused.
+    one_short = {
+        "linked_worker_birth_plus_62": 1,
+        "own_birth_plus_62": total - 2,
+    }
     short = tc.track_a_artifact_binding(
-        artifact,
-        diagnostics={**recorded, ADDITIVE_KEY: {"own_birth_plus_62": 1}},
-        **kwargs,
+        artifact, diagnostics={**recorded, ADDITIVE_KEY: one_short}, **kwargs
     )
     assert not short["checks"]["additive_breakdowns_sum_to_recorded_totals"]
+    # An INVENTED split that sums to the total but puts it all under the
+    # least-counted recorded clock rule, which the artifact counts fewer
+    # times than that, is refused.
+    rules = recorded[CATEGORIES_KEY]
+    fewest = min(rules, key=rules.get)
+    assert rules[fewest] < total
+    crowded = tc.track_a_artifact_binding(
+        artifact,
+        diagnostics={**recorded, ADDITIVE_KEY: {fewest: total}},
+        **kwargs,
+    )
+    assert crowded["checks"]["additive_breakdowns_sum_to_recorded_totals"]
+    assert not crowded["checks"][
+        "additive_breakdowns_within_recorded_categories"
+    ]
+    # A diagnostic the code does not list is refused.
+    unknown = tc.track_a_artifact_binding(
+        artifact,
+        diagnostics={**fresh, "invented_new_counter": 7},
+        **kwargs,
+    )
+    assert not unknown["checks"]["additive_diagnostic_keys_known"]
     # Dropping a recorded key is refused.
     dropped = {k: v for k, v in fresh.items() if k != TOTAL_KEY}
     missing = tc.track_a_artifact_binding(

@@ -704,11 +704,25 @@ _SOURCE = {"kind": "psid_files", "content_sha256": "INVENTED"}
 _RECORDED = {
     "members": 3,
     "a3_spec": {"m4_waves": [2011]},
+    "opening_stock_clock_rules": {
+        "a3_receipt_start": 7,
+        "linked_worker_birth_plus_62": 4,
+        "own_birth_plus_62": 10,
+    },
     "opening_stock_entitlement_clamped": 5,
 }
 _ADDITIVE_KEY = "opening_stock_entitlement_clamped_by_clock_rule"
-#: INVENTED breakdown that sums to the recorded total (5).
+#: INVENTED breakdown that sums to the recorded total (5) and fits within
+#: the recorded clock-rule counts (4 and 10).
 _ADDITIVE_VALUE = {"linked_worker_birth_plus_62": 2, "own_birth_plus_62": 3}
+_ALL_CHECKS_TRUE = {
+    "ssa_parameters_revision_equal": True,
+    "cohort_diagnostics_equal_on_recorded_keys": True,
+    "additive_diagnostic_keys_known": True,
+    "additive_breakdowns_sum_to_recorded_totals": True,
+    "additive_breakdowns_within_recorded_categories": True,
+    "cohort_source_provenance_equal": True,
+}
 
 
 def _artifact(recorded=None):
@@ -733,20 +747,24 @@ def _binding(diagnostics, *, artifact=None, revision="INVENTED+tr2008"):
     )
 
 
+def _failed(binding):
+    return sorted(k for k, ok in binding["checks"].items() if not ok)
+
+
 def test_track_a_artifact_binding_compares_cohort_and_parameters():
     diagnostics = {**_RECORDED, "a3_spec": {"m4_waves": (2011,)}}
     binding = _binding(diagnostics)
-    assert all(binding["checks"].values())
+    assert binding["checks"] == _ALL_CHECKS_TRUE
     assert binding["recorded_diagnostic_keys"] == sorted(_RECORDED)
     assert binding["additive_diagnostic_keys"] == {}
+    assert binding["unknown_additive_diagnostic_keys"] == []
     changed = _binding(
         {**diagnostics, "members": 4}, revision="INVENTED+other"
     )
     assert changed["checks"] == {
+        **_ALL_CHECKS_TRUE,
         "ssa_parameters_revision_equal": False,
         "cohort_diagnostics_equal_on_recorded_keys": False,
-        "additive_breakdowns_sum_to_recorded_totals": True,
-        "cohort_source_provenance_equal": True,
     }
     assert changed["recorded_keys_changed"] == {
         "members": {"recorded": 3, "fresh": 4}
@@ -754,50 +772,94 @@ def test_track_a_artifact_binding_compares_cohort_and_parameters():
     missing = _binding(
         {k: v for k, v in diagnostics.items() if k != "members"}
     )
-    assert not missing["checks"]["cohort_diagnostics_equal_on_recorded_keys"]
+    assert _failed(missing) == ["cohort_diagnostics_equal_on_recorded_keys"]
     assert missing["recorded_keys_missing"] == ["members"]
 
 
-def test_an_additive_diagnostic_key_is_recorded_not_refused():
-    # Regression: #454 added opening_stock_entitlement_clamped_by_clock_rule
-    # to the cohort diagnostics after the Track A artifact was written, and
-    # the whole-dict comparison stopped every real run before any engine
-    # call (cohort_diagnostics_equal: False).
+def test_the_reviewed_additive_diagnostic_is_recorded_not_refused():
+    # Regression: #454 (bfe9fa3e) added
+    # opening_stock_entitlement_clamped_by_clock_rule to the cohort
+    # diagnostics after the Track A artifact was written, and the
+    # whole-dict comparison stopped every real run before any engine call
+    # (cohort_diagnostics_equal: False).
+    assert tc.KNOWN_ADDITIVE_DIAGNOSTICS == {
+        _ADDITIVE_KEY: {
+            "added_by": "bfe9fa3e",
+            "total": "opening_stock_entitlement_clamped",
+            "categories": "opening_stock_clock_rules",
+        }
+    }
     fresh = {**_RECORDED, _ADDITIVE_KEY: dict(_ADDITIVE_VALUE)}
     recorded = dict(_artifact()["cohorts"]["2011"])
     recorded.pop("source_provenance")
     assert tc._json_normal(recorded) != tc._json_normal(fresh)
     binding = _binding(fresh)
-    assert all(binding["checks"].values())
+    assert binding["checks"] == _ALL_CHECKS_TRUE
     assert binding["additive_diagnostic_keys"] == {
         _ADDITIVE_KEY: _ADDITIVE_VALUE
     }
     assert binding["additive_breakdowns"] == {
         _ADDITIVE_KEY: {
+            "added_by": "bfe9fa3e",
             "total_key": "opening_stock_entitlement_clamped",
             "recorded_total": 5,
             "sum": 5,
             "sums_to_recorded_total": True,
+            "categories_key": "opening_stock_clock_rules",
+            "within_recorded_categories": True,
         }
     }
     # A breakdown that does not sum to the recorded total is refused.
     off = _binding({**fresh, _ADDITIVE_KEY: {"own_birth_plus_62": 4}})
-    assert off["checks"] == {
-        "ssa_parameters_revision_equal": True,
-        "cohort_diagnostics_equal_on_recorded_keys": True,
-        "additive_breakdowns_sum_to_recorded_totals": False,
-        "cohort_source_provenance_equal": True,
-    }
+    assert _failed(off) == ["additive_breakdowns_sum_to_recorded_totals"]
     not_counts = _binding({**fresh, _ADDITIVE_KEY: ["own_birth_plus_62"]})
-    assert not all(not_counts["checks"].values())
-    # An additive key that breaks down no recorded total is recorded only.
-    other = _binding({**fresh, "invented_new_counter": 7})
-    assert all(other["checks"].values())
-    assert other["additive_diagnostic_keys"]["invented_new_counter"] == 7
-    assert other["additive_breakdowns"]["invented_new_counter"] is None
+    assert "additive_breakdowns_sum_to_recorded_totals" in _failed(not_counts)
     # Changing a recorded key is still refused alongside an additive one.
     changed = _binding({**fresh, "opening_stock_entitlement_clamped": 6})
-    assert not changed["checks"]["cohort_diagnostics_equal_on_recorded_keys"]
+    assert "cohort_diagnostics_equal_on_recorded_keys" in _failed(changed)
+
+
+@pytest.mark.parametrize(
+    "breakdown",
+    [
+        # Sums to 5 but counts 5 under a rule the artifact counts 4 times.
+        {"linked_worker_birth_plus_62": 5},
+        # Sums to 5 but names a rule the artifact never counts.
+        {"invented_rule": 2, "own_birth_plus_62": 3},
+        # Sums to 5 only through a negative count.
+        {"own_birth_plus_62": 6, "linked_worker_birth_plus_62": -1},
+    ],
+)
+def test_an_additive_breakdown_must_fit_the_recorded_categories(breakdown):
+    # Regression: the 71c94743 check accepted each of these (it tested the
+    # sum only).
+    binding = _binding({**_RECORDED, _ADDITIVE_KEY: breakdown})
+    assert "additive_breakdowns_within_recorded_categories" in (
+        _failed(binding)
+    )
+    assert not all(binding["checks"].values())
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        # Not a breakdown of anything recorded.
+        {"invented_new_counter": 7},
+        # Named like a breakdown of a recorded total and summing to it, but
+        # never reviewed.
+        {"opening_stock_entitlement_clamped_by_invented_rule": {"a": 5}},
+    ],
+)
+def test_an_unreviewed_diagnostic_the_artifact_lacks_is_refused(extra):
+    # Regression: the whole-dict comparison refused any new diagnostic; the
+    # 71c94743 check accepted both of these (the first as "recorded only",
+    # the second through its <total>_by_<rule> name).  Only the reviewed
+    # KNOWN_ADDITIVE_DIAGNOSTICS may be absent from the artifact.
+    fresh = {**_RECORDED, _ADDITIVE_KEY: dict(_ADDITIVE_VALUE), **extra}
+    binding = _binding(fresh)
+    assert _failed(binding) == ["additive_diagnostic_keys_known"]
+    assert binding["unknown_additive_diagnostic_keys"] == sorted(extra)
+    assert binding["additive_breakdowns"][next(iter(extra))] is None
 
 
 def test_require_track_a_artifact_refuses_and_records(tmp_path):
@@ -818,9 +880,14 @@ def test_require_track_a_artifact_refuses_and_records(tmp_path):
         _ADDITIVE_KEY: _ADDITIVE_VALUE
     }
     text = tc._artifact_binding_text(document)
-    assert "3 keys" in text
+    assert "4 keys" in text
     assert f"`{_ADDITIVE_KEY}`" in text
-    assert "(sum 5; recorded `opening_stock_entitlement_clamped` 5)" in text
+    assert (
+        "(added in `bfe9fa3e`; sum 5, recorded "
+        "`opening_stock_entitlement_clamped` 5; within recorded "
+        "`opening_stock_clock_rules`: yes)"
+    ) in text
+    assert "an unlisted diagnostic refuses the run" in text
     plain = tc._artifact_binding_text(
         tc.require_track_a_artifact(
             artifact_bytes, diagnostics=dict(_RECORDED), **kwargs
@@ -835,6 +902,29 @@ def test_require_track_a_artifact_refuses_and_records(tmp_path):
     assert "INVENTED/artifact.json" in message
     assert "cohort_diagnostics_equal_on_recorded_keys" in message
     assert "'members': {'recorded': 3, 'fresh': 4}" in message
+    with pytest.raises(SystemExit) as unknown:
+        tc.require_track_a_artifact(
+            artifact_bytes,
+            diagnostics={**fresh, "invented_new_counter": 7},
+            **kwargs,
+        )
+    message = str(unknown.value)
+    assert "additive_diagnostic_keys_known" in message
+    assert "KNOWN_ADDITIVE_DIAGNOSTICS ['invented_new_counter']" in message
+
+
+def test_a_run_requires_an_output_dir(monkeypatch):
+    # Regression: the default --output-dir named the 2026-09-23 evidence
+    # directory, so a run without the flag was aimed at an earlier run's
+    # directory.  The check precedes every git, engine and data step.
+    assert tc.build_parser().parse_args([]).output_dir is None
+
+    def no_git(*args):
+        raise AssertionError("reached git before refusing")
+
+    monkeypatch.setattr(tc, "_git", no_git)
+    with pytest.raises(SystemExit, match="--output-dir is required"):
+        tc.main([])
 
 
 def test_decimal_and_float_text_are_plain():
@@ -986,12 +1076,22 @@ def test_render_names_the_oracle_compared_against(fake_binding):
     assert "`legacy_fixed_35` (its PIA" in legacy
 
 
-def test_render_refuses_a_result_without_an_oracle_record(fake_binding):
+def test_render_refuses_a_result_of_another_schema(fake_binding):
     result = _invented_result(fake_binding)
     result.pop("oracle")
     result["schema_version"] = "populace_dynamics.track_c.aime_agreement.v1"
     with pytest.raises(ValueError, match="aime_agreement.v1"):
         tc.render_results(result)
+    # A 71c94743 (v2) result has an oracle record but the earlier artifact
+    # binding; its prose belongs to the script at that commit.
+    v2 = _invented_result(fake_binding)
+    v2["schema_version"] = "populace_dynamics.track_c.aime_agreement.v2"
+    with pytest.raises(ValueError, match="aime_agreement.v2"):
+        tc.render_results(v2)
+    no_oracle = _invented_result(fake_binding)
+    no_oracle.pop("oracle")
+    with pytest.raises(ValueError, match="render it with the script"):
+        tc.render_results(no_oracle)
 
 
 def test_actual_engine_agrees_with_the_oracle_on_invented_careers():

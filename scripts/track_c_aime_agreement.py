@@ -76,10 +76,12 @@ it no disagreement is attributed to the count.
 Binding to the registered Track A run.  The cohort and parameters must be
 those of ``runs/replication_urban2010_cola_v1.json``: every cohort
 diagnostic the artifact records must be present with an equal value, and
-its source provenance and parameter revision must be equal.  Diagnostics
-the current code adds that the artifact does not record are allowed,
-recorded in the output, and, where one is a breakdown of a recorded total
-(``<total>_by_<rule>``), must sum to it.
+its source provenance and parameter revision must be equal.  A
+diagnostic the artifact does not record must be a reviewed one listed in
+``KNOWN_ADDITIVE_DIAGNOSTICS`` (with the commit that added it); it is
+recorded in the output and must reconcile with the recorded diagnostics it
+breaks down (sum to the recorded total, fit within the recorded
+per-category counts).  Any other new diagnostic refuses the run.
 
 Usage::
 
@@ -127,15 +129,14 @@ from populace_dynamics.ss.statutory_aime import (  # noqa: E402
     ComputationYears,
 )
 
-#: v2 (2026-09-24): the oracle's computation years are a recorded choice
-#: (``oracle``), ``oracle_aime`` is the chosen oracle's AIME and
-#: ``track_a_oracle_aime`` always Track A's, and the Track A artifact
+#: v2 (2026-09-24, commit 71c94743): the oracle's computation years are a
+#: recorded choice (``oracle``), ``oracle_aime`` is the chosen oracle's AIME
+#: and ``track_a_oracle_aime`` always Track A's, and the Track A artifact
 #: binding records the diagnostics compared and the additive ones.
-SCHEMA_VERSION = "populace_dynamics.track_c.aime_agreement.v2"
-DEFAULT_OUTPUT_DIR = Path(
-    "~/microcosm-launch-evidence/dynasim-parity-20260909/"
-    "track-c-aime-agreement-20260923"
-)
+#: v3 (2026-09-24): the binding admits only the additive diagnostics in
+#: ``KNOWN_ADDITIVE_DIAGNOSTICS`` and records ``added_by``, the category
+#: check and ``unknown_additive_diagnostic_keys``.
+SCHEMA_VERSION = "populace_dynamics.track_c.aime_agreement.v3"
 #: The first year of the PSID family earnings panel (career law).
 PANEL_FIRST_YEAR = 1968
 #: Track A's fixed benefit computation years (``ss.benefits.aime``).
@@ -1138,16 +1139,18 @@ def _row(*cells: Any) -> str:
 def render_results(result: Mapping[str, Any]) -> str:
     """RESULTS.md from ``result.json`` (deterministic; no new numbers).
 
-    Refuses a result without an ``oracle`` record (schema v1, written
-    before the oracle choice): its report text belongs to the script at
+    Refuses a result of any other schema (v1 has no oracle choice, v2 an
+    earlier artifact binding): its report text belongs to the script at
     the commit its provenance records.
     """
 
-    if "oracle" not in result:
+    if result.get("schema_version") != SCHEMA_VERSION or "oracle" not in (
+        result
+    ):
         raise ValueError(
-            "result.json records no oracle choice (schema "
-            f"{result.get('schema_version', 'unknown')}); render it with the "
-            "script at the commit its provenance records"
+            "result.json has schema "
+            f"{result.get('schema_version', 'unknown')}, not {SCHEMA_VERSION};"
+            " render it with the script at the commit its provenance records"
         )
     lines: list[str] = []
     add = lines.append
@@ -1761,9 +1764,21 @@ def _json_normal(value: Any) -> Any:
     return json.loads(json.dumps(value, sort_keys=True, default=str))
 
 
-#: An additive diagnostic ``<total>_by_<rule>`` breaks a recorded total
-#: down (the naming ``cola_track_a/opening.py`` uses).
-_BREAKDOWN_SEPARATOR = "_by_"
+#: Cohort diagnostics the current code produces that the Track A artifact
+#: does not record.  Each was added after the artifact was written (the
+#: commit is named), and each is a count breakdown of recorded
+#: diagnostics: its counts must sum to the recorded ``total`` and name only
+#: categories the recorded ``categories`` mapping counts, none above its
+#: recorded count.  Any other diagnostic the artifact lacks refuses the
+#: run, as the whole-dict comparison did: a new key is reviewed and listed
+#: here before Track C binds to a cohort that carries it.
+KNOWN_ADDITIVE_DIAGNOSTICS: Mapping[str, Mapping[str, str]] = {
+    "opening_stock_entitlement_clamped_by_clock_rule": {
+        "added_by": "bfe9fa3e",
+        "total": "opening_stock_entitlement_clamped",
+        "categories": "opening_stock_clock_rules",
+    },
+}
 
 
 def _is_count(value: Any) -> bool:
@@ -1773,23 +1788,40 @@ def _is_count(value: Any) -> bool:
 def _breakdown_check(
     key: str, value: Any, recorded: Mapping[str, Any]
 ) -> dict[str, Any] | None:
-    """How an additive ``<total>_by_<rule>`` key reconciles, if it is one."""
+    """How a known additive diagnostic reconciles; ``None`` if unknown."""
 
-    if _BREAKDOWN_SEPARATOR not in key:
+    known = KNOWN_ADDITIVE_DIAGNOSTICS.get(key)
+    if known is None:
         return None
-    total_key = key.split(_BREAKDOWN_SEPARATOR, 1)[0]
-    if total_key not in recorded:
-        return None
-    total = recorded[total_key]
-    parts = list(value.values()) if isinstance(value, Mapping) else None
+    total_key, categories_key = known["total"], known["categories"]
+    total = recorded.get(total_key)
+    categories = recorded.get(categories_key)
+    parts = dict(value) if isinstance(value, Mapping) else None
     countable = (
-        parts is not None and all(map(_is_count, parts)) and _is_count(total)
+        parts is not None
+        and all(_is_count(count) and count >= 0 for count in parts.values())
+        and _is_count(total)
+    )
+    within = (
+        countable
+        and isinstance(categories, Mapping)
+        and all(
+            name in categories
+            and _is_count(categories[name])
+            and count <= categories[name]
+            for name, count in parts.items()
+        )
     )
     return {
+        "added_by": known["added_by"],
         "total_key": total_key,
         "recorded_total": total,
-        "sum": sum(parts) if countable else None,
-        "sums_to_recorded_total": bool(countable and sum(parts) == total),
+        "sum": sum(parts.values()) if countable else None,
+        "sums_to_recorded_total": bool(
+            countable and sum(parts.values()) == total
+        ),
+        "categories_key": categories_key,
+        "within_recorded_categories": bool(within),
     }
 
 
@@ -1808,11 +1840,12 @@ def track_a_artifact_binding(
     groups.  Every diagnostic the artifact records must be present in
     ``diagnostics`` with an equal value (compared as JSON); a missing or
     changed one fails ``cohort_diagnostics_equal_on_recorded_keys``.
-    Diagnostics the artifact does not record (keys the code added after
-    it was written) are allowed and returned under
-    ``additive_diagnostic_keys``; one named ``<total>_by_<rule>`` for a
-    recorded integer ``<total>`` must be a mapping of integers summing to
-    it (``additive_breakdowns_sum_to_recorded_totals``).  The source
+    A diagnostic the artifact does not record must be one of
+    :data:`KNOWN_ADDITIVE_DIAGNOSTICS` (``additive_diagnostic_keys_known``)
+    and reconcile with the recorded diagnostics it breaks down: its counts
+    sum to the recorded total (``additive_breakdowns_sum_to_recorded_
+    totals``) and fit within the recorded per-category counts
+    (``additive_breakdowns_within_recorded_categories``).  The source
     provenance and the parameter revision must be equal as a whole.
 
     Returns ``checks`` (all must be true) and what was compared.
@@ -1830,16 +1863,19 @@ def track_a_artifact_binding(
         key: _breakdown_check(key, value, recorded)
         for key, value in additive.items()
     }
+    known = [check for check in breakdowns.values() if check is not None]
     checks = {
         "ssa_parameters_revision_equal": (
             artifact["ssa_parameters_revision"] == parameters_revision
         ),
         "cohort_diagnostics_equal_on_recorded_keys": not missing
         and not changed,
+        "additive_diagnostic_keys_known": len(known) == len(breakdowns),
         "additive_breakdowns_sum_to_recorded_totals": all(
-            check["sums_to_recorded_total"]
-            for check in breakdowns.values()
-            if check is not None
+            check["sums_to_recorded_total"] for check in known
+        ),
+        "additive_breakdowns_within_recorded_categories": all(
+            check["within_recorded_categories"] for check in known
         ),
         "cohort_source_provenance_equal": (
             recorded_source == _json_normal(dict(source_provenance))
@@ -1854,6 +1890,9 @@ def track_a_artifact_binding(
             for key in changed
         },
         "additive_diagnostic_keys": additive,
+        "unknown_additive_diagnostic_keys": sorted(
+            key for key, check in breakdowns.items() if check is None
+        ),
         "additive_breakdowns": breakdowns,
     }
 
@@ -1882,6 +1921,9 @@ def require_track_a_artifact(
             f"the cohort or parameters differ from {path}: failed {failed}; "
             f"recorded keys missing {binding['recorded_keys_missing']}; "
             f"recorded keys changed {binding['recorded_keys_changed']}; "
+            "diagnostics neither recorded nor in "
+            "KNOWN_ADDITIVE_DIAGNOSTICS "
+            f"{binding['unknown_additive_diagnostic_keys']}; "
             f"additive breakdowns {binding['additive_breakdowns']}"
         )
     return {
@@ -1911,16 +1953,19 @@ def _artifact_binding_text(artifact: Mapping[str, Any]) -> str:
         check = (artifact.get("additive_breakdowns") or {}).get(key)
         if check is not None:
             part += (
-                f" (sum {check['sum']}; recorded `{check['total_key']}` "
-                f"{check['recorded_total']})"
+                f" (added in `{check['added_by']}`; sum {check['sum']}, "
+                f"recorded `{check['total_key']}` {check['recorded_total']};"
+                f" within recorded `{check['categories_key']}`: "
+                f"{'yes' if check['within_recorded_categories'] else 'no'})"
             )
         parts.append(part)
     return (
         text + " The fresh cohort also records diagnostics the artifact "
-        "does not; they have no recorded value to compare with, and a "
-        "breakdown of a recorded total must sum to it: "
-        + "; ".join(parts)
-        + "."
+        "does not. Each is a reviewed breakdown listed in "
+        "`KNOWN_ADDITIVE_DIAGNOSTICS` with the commit that added it; its "
+        "counts must sum to the recorded total and name only recorded "
+        "categories, none above its recorded count (an unlisted diagnostic "
+        "refuses the run): " + "; ".join(parts) + "."
     )
 
 
@@ -2052,7 +2097,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
-        "--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR.expanduser()
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="evidence directory for a run (required unless --render-only)",
     )
     parser.add_argument("--anchor-wave", type=int, default=2011)
     parser.add_argument("--workers", type=int, default=4)
@@ -2084,6 +2132,11 @@ def main(argv: list[str] | None = None) -> int:
         print(args.render_only / "RESULTS.md")
         return 0
 
+    if args.output_dir is None:
+        raise SystemExit(
+            "--output-dir is required for a run: name a new evidence "
+            "directory (the script never overwrites a result.json)"
+        )
     started = datetime.datetime.now(datetime.timezone.utc).isoformat()
     head = _git("rev-parse", "HEAD")
     dirty = _git("status", "--porcelain")
