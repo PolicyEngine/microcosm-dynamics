@@ -314,8 +314,48 @@ def test_every_d188_decision_is_pending_at_its_proposed_default():
     assert flags["primary_schedule_id"] is False
     assert {item["field"] for item in builder_defaults(CONFIG)} >= {
         "c1_anchor_age",
-        "survivor_reduction_span",
+        "survivor_retirement_age_f0",
     }
+    # A field is either awaiting Max or a builder default, never both.
+    assert not {item["field"] for item in builder_defaults(CONFIG)} & set(
+        PENDING_DECISIONS
+    )
+
+
+#: The choices E1 relies on that d188 as filed does not name (E1 referee
+#: report, required change 7).
+_NOT_IN_D188_AS_FILED = {
+    "survivor_reduction_span": "exact_by_cohort_both_scenarios",
+    "oracle_cola_horizon_extension_to_2030": True,
+    "opening_stock_basis": "fixed_at_opening_year",
+}
+
+
+def test_choices_d188_as_filed_does_not_name_are_their_own_fields():
+    flagged = {
+        name
+        for name, decision in PENDING_DECISIONS.items()
+        if decision.get("named_in_d188_as_filed") is False
+    }
+    assert flagged == set(_NOT_IN_D188_AS_FILED)
+    for name, default in _NOT_IN_D188_AS_FILED.items():
+        assert PENDING_DECISIONS[name]["proposed_default"] == default
+        assert getattr(CONFIG, name) == default
+        assert "not named in d188 as filed" in (
+            PENDING_DECISIONS[name]["awaiting"]
+        )
+    assert PENDING_DECISIONS["oracle_cola_horizon_extension_to_2030"][
+        "carries_over"
+    ] == ("d074 decision 2(a)")
+    assert "d075" in PENDING_DECISIONS["opening_stock_basis"]["carries_over"]
+    # The two exercise-1 carry-overs reach the Track A configuration the
+    # shared projection runs under.
+    track = CONFIG.track_a_config()
+    assert track.oracle_cola_horizon_extension_to_2030 is True
+    assert track.opening_stock_basis == "fixed_at_opening_year"
+    recorded = CONFIG.as_dict()
+    for name, default in _NOT_IN_D188_AS_FILED.items():
+        assert recorded[name] == default
 
 
 @pytest.mark.parametrize(
@@ -324,9 +364,14 @@ def test_every_d188_decision_is_pending_at_its_proposed_default():
         {"claim_class": "hold_for_track_b"},
         {"oracle_fra_schedule_override": False},
         {"acceptance_rule": "within 1 point"},
+        {"survivor_reduction_span": "track_a_fixed_84_months"},
+        {"oracle_cola_horizon_extension_to_2030": False},
+        {"opening_stock_basis": "rebased_on_later_simulated_events"},
     ],
 )
 def test_declined_alternatives_refuse_to_run(change):
+    with pytest.raises(ValueError):
+        replace(CONFIG, **change).check_runnable()
     with pytest.raises(ValueError):
         run_fra68(_inputs(), config=replace(CONFIG, **change))
 
@@ -1087,7 +1132,7 @@ def test_run_records_parameters_and_checks(result):
         "specification_check"
     ]
     assert result["specification_check"]["specification_status"] == (
-        "draft_for_referee_not_ratified"
+        "draft_refereed_not_ratified"
     )
     assert all(item["ruled"] is False for item in result["pending_decisions"])
     record = result["age_factor_parameters"]
@@ -1167,6 +1212,25 @@ def test_registered_real_needs_a_pointer_and_a_ratified_ruled_spec():
             registration_pointer=pointer,
             specification=unruled,
         )
+    # A ruling that covers only what d188 as filed names leaves the
+    # survivor span and the two exercise-1 carry-overs unruled.
+    as_filed = {
+        **unruled,
+        "decisions": {
+            name: {"ruling": value["proposed_default"]}
+            for name, value in PENDING_DECISIONS.items()
+            if name not in _NOT_IN_D188_AS_FILED
+        },
+    }
+    with pytest.raises(ValueError, match="records no ruling") as refused:
+        run_fra68(
+            inputs,
+            config=CONFIG,
+            registration_pointer=pointer,
+            specification=as_filed,
+        )
+    for name in _NOT_IN_D188_AS_FILED:
+        assert name in str(refused.value)
     ruled = {
         **unruled,
         "decisions": {

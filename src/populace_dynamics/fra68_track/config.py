@@ -5,11 +5,16 @@ Nothing here is ratified.  Two kinds are kept apart:
 
 * **Decisions awaiting Max** (decision record d188, open; plan
   ``critical-path-fra68-20260923.md`` section 11): the claim class, the
-  oracle's scope (the FRA-schedule override and the carried-over DI-level
-  approximation), the acceptance rule, the primary phase-in schedule and
-  the registered row set.  Each is a field whose default is the plan's
-  recommendation; :func:`pending_decisions` lists them with the configured
-  value.  A ``registered_real`` run refuses to start while any is open
+  oracle's scope (the FRA-schedule override, the per-cohort survivor
+  reduction span and the carried-over DI-level approximation), the two
+  other exercise-1 rulings E1 relies on (the oracle COLA horizon, d074
+  decision 2(a), and the opening-stock basis, d075), the acceptance rule,
+  the primary phase-in schedule and the registered row set.  Each is a
+  field whose default is the plan's recommendation;
+  :func:`pending_decisions` lists them with the configured value.  The
+  survivor span and the two carry-overs are not named in d188 as filed
+  (``named_in_d188_as_filed``; E1 referee report, required change 7).  A
+  ``registered_real`` run refuses to start while any is open
   (:mod:`~populace_dynamics.fra68_track.runner`).
 * **Builder conventions** that no ruling covers yet (the C1 anchor age,
   the survivor mapping of row F0, the claim age the claiming transforms
@@ -39,6 +44,7 @@ from typing import Any
 
 from populace_dynamics.cola_track_a.config import (
     INVENTED_COHORT_LABEL,
+    OPENING_STOCK_BASIS,
     POPULATIONS,
     TRACK_A_LABELS,
     LevelPolicy,
@@ -274,6 +280,11 @@ def row_labels(row: FRA68Row, cohort_labels: tuple[str, ...]) -> tuple:
 
 
 _D188 = "Max, decision record d188 (open; plan section 11)"
+#: The survivor reduction span of E1 section 11 rule 5: exact by the
+#: survivor's cohort (416(l)(2) mapping) in both scenarios, and exercise
+#: 1's alternative, the oracle's fixed 84 months.
+SURVIVOR_REDUCTION_SPAN = "exact_by_cohort_both_scenarios"
+TRACK_A_SURVIVOR_REDUCTION_SPAN = SurvivorRetirementAge.TRACK_A_FIXED_84.value
 
 
 #: Decisions awaiting Max for exercise 3 (d188; plan section 11).  Each
@@ -291,8 +302,56 @@ PENDING_DECISIONS: dict[str, dict[str, Any]] = {
         "awaiting": _D188 + ", item (a); plan item 2(a)",
         "note": (
             "the reform runs as an override of SSAParameters."
-            "fra_months_by_birth_year plus the per-cohort survivor "
-            "reduction span; it adds no statutory rule coverage"
+            "fra_months_by_birth_year; it adds no statutory rule coverage. "
+            "The per-cohort survivor reduction span the 416(l)(2) mapping "
+            "needs is its own field (survivor_reduction_span)"
+        ),
+    },
+    "survivor_reduction_span": {
+        "proposed_default": SURVIVOR_REDUCTION_SPAN,
+        "alternatives": [TRACK_A_SURVIVOR_REDUCTION_SPAN],
+        "awaiting": (
+            _D188 + ", item (a); plan item 2(a); not named in d188 as filed"
+        ),
+        "named_in_d188_as_filed": False,
+        "note": (
+            "an override of SSAParameters.survivor_reduction_period_months "
+            "by the survivor's cohort (the 416(l)(2) mapping) in both "
+            "scenarios; it adds no statutory rule coverage. It also changes "
+            "baseline amounts relative to exercise 1 for survivors born "
+            "before 1962 entitled after 60; exercise 1's fixed 84 months in "
+            "both scenarios would keep the reform from reaching survivors' "
+            "reduction at all (E1 referee question 7)"
+        ),
+    },
+    "oracle_cola_horizon_extension_to_2030": {
+        "proposed_default": True,
+        "alternatives": [False],
+        "awaiting": (
+            _D188 + ", item (a); carries over d074 decision 2(a); not named "
+            "in d188 as filed"
+        ),
+        "carries_over": "d074 decision 2(a)",
+        "named_in_d188_as_filed": False,
+        "note": (
+            "the oracle COLA path runs to 2030 as a parameter override that "
+            "adds no statutory coverage, as Max ruled for exercise 1; "
+            "without it no 2030 benefit exists"
+        ),
+    },
+    "opening_stock_basis": {
+        "proposed_default": OPENING_STOCK_BASIS,
+        "alternatives": ["rebased_on_later_simulated_events"],
+        "awaiting": (
+            _D188 + ", item (a); carries over d075 (A1 referee question "
+            "11); not named in d188 as filed"
+        ),
+        "carries_over": "d075 referee question 11",
+        "named_in_d188_as_filed": False,
+        "note": (
+            "an opening-stock person's benefit basis is frozen at the "
+            "opening year (A1 section 11 rule 4), as Max ruled for exercise "
+            "1; the only basis Track A implements"
         ),
     },
     "di_benefit_level": {
@@ -340,9 +399,11 @@ E1_RATIFICATION = (
 #: the E1 block header, not A1's: E1 follows A1's section numbering, but
 #: its membership is scenario-specific, it registers no December-amount
 #: row and the DI-level approximation awaits d188.  The E1 ratification
-#: test also refuses a ``referee`` marker (the draft's status is
-#: ``draft_for_referee_not_ratified``), on top of A7's markers.  Nothing
-#: here is ratified: the tabulation derives each status from the header.
+#: test also refuses a ``referee`` marker, on top of A7's markers (the
+#: drafts' statuses were ``draft_for_referee_not_ratified`` and, after the
+#: referee pass, ``draft_refereed_not_ratified``; the marker matches
+#: both).  Nothing here is ratified: the tabulation derives each status
+#: from the header.
 E1_RULINGS = SpecificationRulings(
     specification=SPECIFICATION_ID,
     statistic_id=STATISTIC_ID,
@@ -483,6 +544,11 @@ class FRA68Config:
     di_benefit_level: LevelPolicy = LevelPolicy.DISCLOSED_ORACLE_APPROXIMATION
     acceptance_rule: str | None = None
     primary_schedule_id: str = PLAN_RECOMMENDED_PRIMARY_SCHEDULE
+    #: Not named in d188 as filed (E1 referee report, required change 7);
+    #: each is runnable only at its proposed default.
+    survivor_reduction_span: str = SURVIVOR_REDUCTION_SPAN
+    oracle_cola_horizon_extension_to_2030: bool = True
+    opening_stock_basis: str = OPENING_STOCK_BASIS
     # --- builder conventions (E1 referee questions) ----------------------
     #: C1 anchor: the claim table's at-FRA age for its 2008 row (plan
     #: section 6; E1 referee question 3).
@@ -559,6 +625,10 @@ class FRA68Config:
             claim_table_max_year=self.claim_table_max_year,
             di_spec=self.di_spec,
             di_benefit_level=self.di_benefit_level,
+            oracle_cola_horizon_extension_to_2030=(
+                self.oracle_cola_horizon_extension_to_2030
+            ),
+            opening_stock_basis=self.opening_stock_basis,
         )
 
     def check_runnable(self) -> None:
@@ -582,6 +652,27 @@ class FRA68Config:
                 "an acceptance rule was supplied; the plan proposes none "
                 "(d188 item (a)), and none may be set after registration"
             )
+        if self.survivor_reduction_span != SURVIVOR_REDUCTION_SPAN:
+            raise ValueError(
+                f"survivor_reduction_span {self.survivor_reduction_span!r} "
+                "is not implemented for exercise 3; this assembly spreads "
+                "the widow(er) reduction over the survivor cohort's exact "
+                f"span in both scenarios ({SURVIVOR_REDUCTION_SPAN!r}, E1 "
+                "section 11 rule 5, awaiting Max)"
+            )
+        if not self.oracle_cola_horizon_extension_to_2030:
+            raise ValueError(
+                "without the oracle COLA horizon extension (d074 decision "
+                "2(a), carried over pending d188) the oracle COLA path stops "
+                "at 2022 and no 2030 benefit exists"
+            )
+        if self.opening_stock_basis != OPENING_STOCK_BASIS:
+            raise ValueError(
+                f"opening_stock_basis {self.opening_stock_basis!r} is not "
+                "implemented; the assembly freezes the basis at the opening "
+                f"year ({OPENING_STOCK_BASIS!r}, d075, carried over pending "
+                "d188)"
+            )
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -599,6 +690,11 @@ class FRA68Config:
             "di_benefit_level": self.di_benefit_level.value,
             "acceptance_rule": self.acceptance_rule,
             "primary_schedule_id": self.primary_schedule_id,
+            "survivor_reduction_span": self.survivor_reduction_span,
+            "oracle_cola_horizon_extension_to_2030": (
+                self.oracle_cola_horizon_extension_to_2030
+            ),
+            "opening_stock_basis": self.opening_stock_basis,
             "c1_anchor_age": self.c1_anchor_age,
             "tr2008_alternative": self.tr2008_alternative,
             "tr2008_first_rate_year": self.tr2008_first_rate_year,
@@ -681,19 +777,6 @@ def builder_defaults(config: FRA68Config | None = None) -> list[dict]:
                 SurvivorRetirementAge.UNCHANGED_FROM_BASELINE.value
             ],
             "referee_question": 2,
-            "fixed_by": _FIXED_BY,
-        },
-        {
-            "field": "survivor_reduction_span",
-            "value": "exact_by_cohort_both_scenarios",
-            "source": (
-                "plan section 7: the widow(er)'s reduction span follows the "
-                "416(l)(2) mapping in both scenarios; exercise 1 used the "
-                "oracle's fixed 84 months, which differs for survivors born "
-                "before 1962"
-            ),
-            "alternatives": [SurvivorRetirementAge.TRACK_A_FIXED_84.value],
-            "referee_question": 7,
             "fixed_by": _FIXED_BY,
         },
         {

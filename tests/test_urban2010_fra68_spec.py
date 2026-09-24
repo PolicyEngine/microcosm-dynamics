@@ -35,13 +35,16 @@ from populace_dynamics.fra68_track.config import (
 )
 from populace_dynamics.fra68_track.reform import (
     SCHEDULES,
+    SPOUSE_EXCESS_MONTHS_EARLY_RULE,
     reform_parameters,
+    spouse_excess_months_early,
     survivor_parameters,
 )
 from populace_dynamics.fra68_track.runner import (
     e1_parameter_block,
     specification_code_check,
 )
+from populace_dynamics.ss import benefits
 
 SPEC_PATH = (
     Path(__file__).resolve().parents[1]
@@ -98,6 +101,11 @@ def test_the_draft_is_not_ratified_and_says_so(block, text):
         assert any(mark in block[name] for mark in UNRATIFIED_MARKERS)
     assert "not ratified" in text.split("\n## 1.")[0]
     assert e1_parameter_block(SPEC_PATH) == block
+    # The builder boundary points to the builder-side restriction list,
+    # which restricts Urban pages 3-4 (E1 referee required change 8).
+    header = text.split("\n## 1.")[0]
+    assert "RESTRICTED-FILES.md" in header
+    assert "pages 3-4" in header
 
 
 def test_every_pending_decision_is_listed_with_the_code_default(block, text):
@@ -111,6 +119,30 @@ def test_every_pending_decision_is_listed_with_the_code_default(block, text):
         *PENDING_DECISIONS,
         "ratification_and_registration",
     }
+    # E1 referee required change 7: the choices d188 as filed does not
+    # name are fields of their own, flagged in the block and the code.
+    for name, decision in PENDING_DECISIONS.items():
+        assert awaiting[name].get("named_in_d188_as_filed", True) == (
+            decision.get("named_in_d188_as_filed", True)
+        ), name
+        assert awaiting[name].get("carries_over") == decision.get(
+            "carries_over"
+        ), name
+    assert {
+        name
+        for name, entry in awaiting.items()
+        if entry.get("named_in_d188_as_filed") is False
+    } == {
+        "survivor_reduction_span",
+        "oracle_cola_horizon_extension_to_2030",
+        "opening_stock_basis",
+    }
+    assert awaiting["survivor_reduction_span"]["proposed_default"] == (
+        block["policy"]["survivor_reduction_span"]
+    )
+    assert awaiting["opening_stock_basis"]["proposed_default"] == (
+        block["amounts"]["opening_stock_basis"]
+    )
     decisions = _section(text, "## 22. Decisions awaiting Max")
     assert "d188" in decisions and "open" in decisions
 
@@ -148,6 +180,10 @@ def test_the_block_equals_the_code(block):
         )
     assert block["primary_schedule"] == "P3"
     assert block["claiming"]["C1"]["anchor_age"] == FRA68Config().c1_anchor_age
+    # Not read by the specification check: held to the code's statement.
+    assert block["claiming"]["spouse_excess_months_early"] == (
+        SPOUSE_EXCESS_MONTHS_EARLY_RULE
+    )
 
 
 #: The E1 section each tabulation convention cites, by its heading.
@@ -229,6 +265,7 @@ def test_carried_over_blocks_equal_a1(block):
     for key in (
         "model",
         "run",
+        "run_date",
         "trustees_vintage",
         "baseline",
         "outcome_year",
@@ -237,6 +274,18 @@ def test_carried_over_blocks_equal_a1(block):
     ):
         assert block["target"][key] == a1["target"][key], key
     assert block["uncertainty"] == a1["uncertainty"]
+    # A1's amount rules that E1 carries over (section 11), including the
+    # two E1 referee required change 6 added.
+    for key in (
+        "pia_dime_floor_after_each_increase",
+        "claim_age_factor_dime_floor_each_payment_year",
+        "opening_stock_dime_floor",
+        "opening_stock_basis",
+        "opening_stock_under_worker_only_components",
+        "gross_of_premiums_taxes_and_withholding",
+        "gross_of_wep_gpo_and_disability_offset",
+    ):
+        assert block["amounts"][key] == a1["amounts"][key], key
     assert block["rows"]["F0"]["population"] == a1["rows"]["R0"]["population"]
     assert block["rows"]["F8"]["population"] == a1["rows"]["R6"]["population"]
 
@@ -381,3 +430,63 @@ def test_section_19_worked_cases_equal_the_code(text):
         assert _number(row[3]) == change, row[0]
         unrounded = Decimal(str(round(100 * (factors[1] / factors[0] - 1), 4)))
         assert _number(row[4]) == unrounded, row[0]
+
+
+_SPOUSE_CASE = re.compile(
+    r"\*\*Spouse's excess under C2\*\*, spouse born (\d{4}) \(P3, D = "
+    r"(\d+)\), whose own\s+claim at 62 in (\d{4}) starts the excess: "
+    r"reform claim month (\d+)\s+\(entitled (\d{4})\), (\d+) - (\d+) = "
+    r"(\d+) months early, as in the baseline\s+\((\d+) - (\d+) = (\d+)\): "
+    r"factor ([0-9.]+) in both, ratio 1\."
+)
+
+
+def test_section_19_spouse_cases_under_c2_equal_the_code(text):
+    # E1 referee required change 1: under C2 a moved spouse's excess keeps
+    # its months early (the exact moved claim month, not its whole year).
+    section = _section(text, "## 19. Invented worked cases")
+    assert "Four further invented cases have no dollar amount" in section
+    cases = _SPOUSE_CASE.findall(section)
+    assert len(cases) == 2
+    base = captured_ssa_parameters()
+    p3 = reform_parameters(base, SCHEDULES["P3"])
+    for case in cases:
+        birth, increase, claim_year, month, entitled, fra, month_again = (
+            int(value) for value in case[:7]
+        )
+        early, base_fra, base_month, base_early = (
+            int(value) for value in case[7:11]
+        )
+        factor = Decimal(case[11])
+        assert claim_year == birth + 62
+        assert increase == p3.fra_months(birth) - base.fra_months(birth)
+        assert month == month_again == 12 * 62 + increase
+        assert entitled == birth + (6 + month) // 12
+        assert fra == p3.fra_months(birth)
+        assert base_fra == base.fra_months(birth) and base_month == 744
+        worker_year = birth + 60
+        assert (
+            early
+            == fra - month
+            == spouse_excess_months_early(
+                own_claim_month=month,
+                worker_entitlement_year=worker_year,
+                birth_year=birth,
+                params=p3,
+            )
+        )
+        assert (
+            base_early
+            == base_fra - base_month
+            == (
+                spouse_excess_months_early(
+                    own_claim_month=base_month,
+                    worker_entitlement_year=worker_year,
+                    birth_year=birth,
+                    params=base,
+                )
+            )
+        )
+        for months, params in ((early, p3), (base_early, base)):
+            computed = 1 - benefits.spousal_early_reduction(months, params)
+            assert Decimal(f"{computed:.2f}") == factor
