@@ -60,7 +60,9 @@ Not in scope, and deliberately so:
   benefit level of a worker who died before eligibility is likewise a
   raising hook (:func:`survivor_of_preeligibility_death_benefit_level`).
   Callers may supply any PIA to the path functions; this module does not
-  say where a DI or survivor PIA comes from.
+  say where a DI or survivor PIA comes from.  (The statutory computation
+  years for those cases exist in :mod:`populace_dynamics.ss.statutory_aime`;
+  neither hook uses them without a ruling.)
 * No family maximum, earnings test, recomputation, payment-month timing,
   whole-dollar payment rounding, or pre-1983 June-effective COLA timing.
   The annual convention is the sealed ledger's: the amount for payment
@@ -90,6 +92,14 @@ specification entries for A1"; section 6 decisions 2(a) and 2(b)):
   plan names no specific approximation, so there is no proposed primary
   to default to; a caller may still pass any PIA to the path functions.
 
+The age-62 AIME's benefit computation years are an explicit parameter of
+:func:`eligibility_pia_for_clock` (``computation_years``).  The default is
+the statute, :attr:`~populace_dynamics.ss.statutory_aime.ComputationYears.
+STATUTORY` (42 USC 415(b)(2): elapsed years less 5, fewer than 35 for
+workers born before 1929).  ``LEGACY_FIXED_35`` is the sealed ledger's
+``benefits.aime`` (always 35), which Track A's Registration 13 used and
+which the Track A assembly still passes explicitly.
+
 One convention inside the ``ENTITLEMENT`` alternative is fixed here and
 not named in the plan, so the specification freeze (plan item A1) must
 confirm it: for a spouse or widow(er), "entitlement" is the insured
@@ -112,8 +122,9 @@ from typing import Any, NoReturn, Protocol
 
 from populace_dynamics.estimates.ledgers import REPORT_YEARS, floor_to_dime
 from populace_dynamics.estimates.parameters import COLASeries
-from populace_dynamics.ss import benefits
+from populace_dynamics.ss import benefits, statutory_aime
 from populace_dynamics.ss.params import SSAParameters
+from populace_dynamics.ss.statutory_aime import ComputationYears
 
 __all__ = [
     "DI_BENEFIT_LEVEL_RULING",
@@ -777,14 +788,21 @@ def eligibility_pia_for_clock(
     history: Mapping[int, float],
     birth_year: int,
     params: SSAParameters,
+    computation_years: ComputationYears = ComputationYears.STATUTORY,
 ) -> float:
     """The PIA at eligibility for the worker on ``clock``.
 
-    Only the old-age case is computed, with the existing oracle exactly as
-    the sealed ledger calls it (``benefits.aime`` then ``benefits.pia`` in
-    the year the worker attains 62).  ``history`` is used as supplied; the
-    caller applies any cutoff law.  The other bases route to hooks that
-    raise ``NotImplementedError``.
+    Only the old-age case is computed: the oracle AIME, then
+    ``benefits.pia`` in the year the worker attains 62.  The AIME counts
+    its benefit computation years by ``computation_years``
+    (:func:`populace_dynamics.ss.statutory_aime.oracle_aime`):
+    ``STATUTORY`` (the default) follows 42 USC 415(b)(2) and equals the
+    sealed ledger's ``benefits.aime`` for workers born 1929 or later; it
+    refuses workers attaining 62 before 1975 and history years before
+    1951.  ``LEGACY_FIXED_35`` is ``benefits.aime`` exactly as the sealed
+    ledger calls it, for every birth year.  ``history`` is used as
+    supplied; the caller applies any cutoff law.  The other bases route to
+    hooks that raise ``NotImplementedError``.
     """
 
     birth = _year(birth_year, "birth_year")
@@ -798,7 +816,9 @@ def eligibility_pia_for_clock(
         raise ValueError(
             "An age-62 clock must start in the year the worker attains 62."
         )
-    aime_value = benefits.aime(dict(history), birth, params)
+    aime_value = statutory_aime.oracle_aime(
+        history, birth, params, computation_years=computation_years
+    )
     return benefits.pia(aime_value, clock.eligibility_year, params)
 
 
