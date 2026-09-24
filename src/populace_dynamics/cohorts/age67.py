@@ -43,7 +43,9 @@ are verified against ``IND2023ER_formats.sas`` for each wave), sex, the
 PSID sampling-error stratum and cluster (ER31996, ER31997), marital
 status at the end of the income year from the marriage history
 (:func:`populace_dynamics.cohorts.psid2010.marital_state_at`, separated
-counts as married by default, F12), whether a legal spouse lives in the
+counts as married by default, F12; a state the history cannot resolve,
+``unknown`` or ``no_marriage_history``, counts as non-married under
+``unresolved_marital_status``), whether a legal spouse lives in the
 same family unit, the spouse's age and sex (for the joint annuity), and
 the family's income (:func:`populace_dynamics.data.family_income.
 read_family_income`) and wealth (:func:`populace_dynamics.data.
@@ -198,6 +200,7 @@ class Age67Spec:
     separated_is_married: bool = True
     u1_single_observation_weight: float = 1.0
     seed_wave_rule: str = "earliest_presence_wave"
+    unresolved_marital_status: str = "non_married"
 
     def __post_init__(self) -> None:
         if self.row not in ROWS:
@@ -206,6 +209,11 @@ class Age67Spec:
             raise ValueError("presence must be in_family[_or_institution]")
         if self.seed_wave_rule != "earliest_presence_wave":
             raise ValueError("seed_wave_rule must be earliest_presence_wave")
+        if self.unresolved_marital_status != "non_married":
+            raise ValueError(
+                "unresolved_marital_status must be non_married (no other "
+                "rule is built)"
+            )
         weight = float(self.u1_single_observation_weight)
         if not 0.0 < weight <= 1.0:
             raise ValueError("u1_single_observation_weight in (0, 1]")
@@ -258,6 +266,17 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
             "builder choice: the birth-year law's seed coordinate comes "
             "from the earliest of the five waves in which the person is "
             "present",
+            freeze,
+        ),
+        psid2010.PendingDecision(
+            "unresolved_marital_status",
+            spec.unresolved_marital_status,
+            (),
+            "builder choice: plan F12 ('legally married per MH85_23') "
+            "does not say how to classify a member whose marriage history "
+            "cannot date the state ('unknown') or who has no record "
+            "('no_marriage_history'); they count as non-married (the "
+            "non_married cell, a single-life annuity)",
             freeze,
         ),
     )
@@ -744,6 +763,9 @@ def build_age67_cohort(
                     "spouse_person_id": pd.NA,
                 }
             spouse = state.get("spouse_person_id")
+            # An unresolved state ("unknown", "no_marriage_history") is
+            # classified by spec.unresolved_marital_status; its only built
+            # value, "non_married", leaves it out of "married".
             married = state["status"] == "married"
             coresident = (
                 married

@@ -140,6 +140,72 @@ def test_half_split_floor_uses_family_units():
         assert floor["sd"] == pytest.approx(float(np.std(gaps, ddof=1)))
 
 
+def _u1_rows() -> pd.DataFrame:
+    """INVENTED U1-style rows: person 4 observed again in a second wave.
+
+    Row U1 observes the even birth years at 66 and at 68, in two waves,
+    and a wave's family unit id differs from the other wave's, so one
+    person carries two family units (o4 in unit 30, o6 in unit 99).
+    """
+
+    rows = _rows()
+    extra = rows.iloc[[3]].copy()
+    extra["observation_id"] = "o6"
+    extra["family_unit_id"] = 99
+    extra["poor_reform"] = False
+    return pd.concat([rows, extra], ignore_index=True)
+
+
+def test_floor_split_units_link_family_units_through_persons():
+    # U0-style rows: every person once, so the split unit is the family
+    # unit itself and the split is the family-unit split unchanged.
+    rows = _rows()
+    assert ut.floor_split_units(rows).tolist() == (
+        rows["family_unit_id"].tolist()
+    )
+    # U1-style rows: person 4's units 30 and 99 merge (smallest id).
+    assert ut.floor_split_units(_u1_rows()).tolist() == [
+        10,
+        10,
+        20,
+        30,
+        40,
+        30,
+    ]
+    # Transitive: person 7 links units 1 and 2, person 8 links 2 and 3.
+    chain = pd.DataFrame(
+        {"person_id": [7, 7, 8, 8, 9], "family_unit_id": [1, 2, 2, 3, 4]}
+    )
+    assert ut.floor_split_units(chain).tolist() == [1, 1, 1, 1, 4]
+
+
+def test_half_split_floor_is_person_disjoint_under_u1():
+    """Plan F15: the half-split is person-disjoint as well as unit-wise.
+
+    On the unit-only split, seeds 0 and 3 put person 4's two observations
+    (units 30 and 99) on opposite sides.
+    """
+
+    rows = _u1_rows()
+    result = ut.tabulate_uniform_cut(rows, data_provenance="invented")
+    units = pd.DataFrame({"split_unit": ut.floor_split_units(rows)})
+    gaps = []
+    for seed in ut.DEFAULT_FLOOR_SEEDS:
+        side_a, _ = split_panel_by_person(
+            units, "split_unit", fraction=0.5, seed=seed
+        )
+        in_a = np.zeros(len(rows), dtype=bool)
+        in_a[side_a.index.to_numpy()] = True
+        assert in_a[3] == in_a[5]
+        a = _reference_delta(rows, in_a)
+        b = _reference_delta(rows, ~in_a)
+        if a is not None and b is not None:
+            gaps.append(abs(a - b))
+    floor = _cells(result)["all"]["floor"]["delta"]
+    assert floor["values"] == pytest.approx(gaps)
+    assert result["config"]["floor_split_unit"] == ut.FLOOR_SPLIT_UNIT
+
+
 def test_floor_is_undefined_with_one_family_unit():
     rows = _rows()
     rows["family_unit_id"] = 1
@@ -190,6 +256,26 @@ def test_provenance_guards():
     rows.attrs["provenance_kind"] = "psid_files"
     with pytest.raises(ut.UniformCutTabulationError, match="PSID"):
         ut.tabulate_uniform_cut(rows, data_provenance="invented")
+
+
+@pytest.mark.parametrize("kind", [None, "caller_frames", "invented"])
+def test_registered_real_needs_rows_built_from_psid_files(kind):
+    """A registered_real result must come from sealed PSID-built rows.
+
+    Without this, invented or caller-built rows could be tabulated under
+    the registered_real label (Track A's opening refuses the same
+    contradiction).
+    """
+
+    rows = _rows()
+    if kind is not None:
+        rows.attrs["provenance_kind"] = kind
+    with pytest.raises(ut.UniformCutTabulationError, match="contradicts"):
+        ut.tabulate_uniform_cut(
+            rows,
+            data_provenance="registered_real",
+            registration_pointer="#42 (invented pointer)",
+        )
 
 
 @pytest.mark.parametrize(

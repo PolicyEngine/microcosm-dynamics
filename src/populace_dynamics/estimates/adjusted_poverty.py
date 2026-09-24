@@ -77,7 +77,8 @@ with a wife present as a couple.  OFUMs are never newly enrolled.
 Provenance guard: :func:`adjusted_incomes` refuses rows built from staged
 PSID files (``rows.attrs["provenance_kind"] == "psid_files"``) unless the
 caller passes ``data_provenance="registered_real"`` with the issue #42
-registration pointer, and it refuses ``registered_real`` without one.  No
+registration pointer; it refuses ``registered_real`` without one, and
+``registered_real`` on rows not built from recorded PSID files.  No
 registration exists for exercise 2, so the real-data path is closed.
 """
 
@@ -1005,6 +1006,16 @@ def _validate_provenance(
                 "registered_real requires the issue #42 registration "
                 "pointer, which must exist before any real-data run"
             )
+        # As Track A's opening: a registered run needs rows built from
+        # recorded PSID files, so invented or caller-built rows cannot
+        # leave with a real-data label.
+        if kind != "psid_files":
+            raise AdjustedPovertyError(
+                f"data_provenance 'registered_real' contradicts the rows' "
+                f"provenance {kind!r}: a registered run needs rows built "
+                "from recorded PSID files (age67.income_rows on inputs "
+                "sealed by load_age67_inputs)"
+            )
     elif kind == "psid_files":
         raise AdjustedPovertyError(
             "rows built from staged PSID files cannot be processed as "
@@ -1193,8 +1204,8 @@ def adjusted_incomes(
     ``poor_reform``.
 
     ``data_provenance`` is ``"invented"`` for tests and dry runs;
-    ``"registered_real"`` needs ``registration_pointer``; rows marked as
-    built from staged PSID files are refused as invented.
+    ``"registered_real"`` needs ``registration_pointer`` and rows marked
+    as built from staged PSID files, which are refused as invented.
     """
 
     spec = AdjustedPovertySpec() if spec is None else spec

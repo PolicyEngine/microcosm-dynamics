@@ -6,7 +6,7 @@
   that awaits him or the specification freeze is an explicit parameter in
   the code with the plan's recommended default, and §16 lists them.
 - **Specification:** `boomers2004_uniform_cut_exercise2`, version
-  `u1-draft-1`, drafted 2026-09-24. §19 is the changelog.
+  `u1-draft-2`, drafted 2026-09-24. §19 is the changelog.
 - **Plan item:** U1 of the Track U plan,
   `EVID/critical-path-uniform-cut-20260923.md` (§7 fields F1–F17, §8
   work items), where `EVID` =
@@ -115,14 +115,17 @@ year, times the U1 multiplier. No reweighting or alignment.
 
 **Family unit.** The wave's interview number
 (`family_unit_id = wave × 100000 + interview`). The half-split floor
-splits on it (§10).
+splits on family units linked through shared persons (§10).
 
 **Attached per observation** (`cohorts/age67.build_age67_cohort`): sex
 (ER32000 through the death-record reader), relationship to head (10
 head, 20 legal wife, 22 cohabiting "wife", otherwise OFUM; the codes are
 verified in `IND2023ER_formats.sas` for each wave), marital status at the
 end of the income year from the marriage history (F12; separated counts
-as married), whether a legal spouse lives in the same family unit, the
+as married; a member whose history cannot date the state, `unknown`, or
+who has no marriage-history record, `no_marriage_history`, counts as
+non-married, `unresolved_marital_status`, a pending builder choice),
+whether a legal spouse lives in the same family unit, the
 spouse's age and sex, whether the family has a legal wife, and the
 sampling-error stratum and cluster (ER31996, ER31997).
 
@@ -267,7 +270,10 @@ exclusion (G = $240 a year), the fall is
 `max(0, S − G) − max(0, (1 − c)·S − G)` and the rise is
 `min(fall, max(0, 12·FBR − SSI))`. The exclusion is applied against
 Social Security alone; other unearned income would absorb it first, which
-changes the fall only when (1 − c)·S is below $240 a year.
+changes the fall only when (1 − c)·S is below $240 a year. The cap uses
+the federal benefit rate, but the PSID's reported SSI may include a state
+supplementary payment; where it does, the cap binds early and the offset
+is understated (named delta, §12).
 
 - **SSI units (builder approximation):** head and wife form one unit, a
   couple unit when both receive SSI (couple FBR) and an individual unit
@@ -324,13 +330,17 @@ statistic; it is reported with its reason and never imputed.
 
 - **Draws:** K = 1 (deterministic).
 - **Half-split floor:** seeds 0–4, fraction 0.5,
-  `harness/panel.split_panel_by_person` on `family_unit_id`, so members of
-  one family unit fall on one side; each statistic recomputed in each
-  half; the floor is the mean and sample SD (ddof = 1) of |A − B| over
-  seeds where both halves are defined; with fewer than two usable seeds
-  it is undefined, never zero. Floors are at half sample and not
-  rescaled. Under U1 a person's two observations can fall in different
-  halves because each wave is a different family unit.
+  `harness/panel.split_panel_by_person` on the split unit
+  (`uniform_cut_tabulation.floor_split_units`): family units merged with
+  every family unit that shares a person with them, labelled by the
+  smallest `family_unit_id`. The halves are therefore disjoint in family
+  units and in persons (plan F15). Under U0 each person is observed once,
+  so the split units are the family units; under U1 an even birth year's
+  observations at 66 and 68 sit in two waves' family units, which the
+  merge keeps on one side. Each statistic is recomputed in each half; the
+  floor is the mean and sample SD (ddof = 1) of |A − B| over seeds where
+  both halves are defined; with fewer than two usable seeds it is
+  undefined, never zero. Floors are at half sample and not rescaled.
 - **Design-based SE:** Taylor linearization of each weighted ratio with
   the PSID stratum and cluster; the subpopulation estimator relative to
   the tabulated rows (clusters with no tabulated row do not enter);
@@ -378,7 +388,10 @@ Carried on every output (plan §7), plus those found while building:
   income; business income is split 50/50 between labor and asset parts by
   PSID convention for working owners;
 - **found:** SSI units are approximated from head, wife and OFUM totals
-  (deeming by full attribution; OFUMs as one unit).
+  (deeming by full attribution; OFUMs as one unit);
+- **found (review):** reported SSI may include state supplementary
+  payments, so capping the offset at the federal benefit rate less
+  reported SSI can understate the offset.
 
 ## 13. Invented worked cases
 
@@ -448,7 +461,7 @@ holds it to the code's defaults.
 ```json
 {
   "specification": "boomers2004_uniform_cut_exercise2",
-  "version": "u1-draft-1",
+  "version": "u1-draft-2",
   "status": "draft_for_referee",
   "claim_class": {
     "proposed": "track_u_psid_realized_measurement_not_a_projection",
@@ -479,6 +492,7 @@ holds it to the code's defaults.
     "birth_year_law": "estimates.career.derive_birth_years",
     "seed_wave_rule": "earliest_presence_wave",
     "separated_is_married": true,
+    "unresolved_marital_status": "non_married",
     "design": {"stratum": "ER31996", "cluster": "ER31997"}
   },
   "income_concept": {
@@ -536,7 +550,7 @@ holds it to the code's defaults.
     "floor": {
       "seeds": [0, 1, 2, 3, 4],
       "fraction": 0.5,
-      "split_unit": "family_unit_id",
+      "split_unit": "family_unit_id_linked_by_person_id",
       "summary": ["mean", "sample_sd"],
       "min_usable_seeds": 2
     },
@@ -601,8 +615,9 @@ reduced on either death), mortality (NCHS 2000), terminal closure (table
 end), annuity lives (member rule), negative wealth (floor at zero),
 threshold rule (weighted average, 65-and-over), SSI deeming (spouse's
 Social Security counted), OFUM SSI unit (one individual unit), row (U0),
-presence (in family), separated is married (true), U1 1936 weight (1),
-seed wave (earliest presence wave).
+presence (in family), separated is married (true), unresolved marital
+status (non-married), U1 1936 weight (1), seed wave (earliest presence
+wave).
 
 ## 17. Questions for the referee
 
@@ -620,6 +635,14 @@ seed wave (earliest presence wave).
    rows?
 6. Is a fallback row on 1941–45 worth registering now, in case the
    wealth supplements are late?
+7. Should a member whose marriage history cannot resolve the state
+   (`unknown`) or who has no record count as non-married (the default),
+   or should the relationship code (a legal wife, code 20, in the family)
+   decide?
+8. The joint annuity prices the spouse at the individual-file age of the
+   wave, which the repository's birth-year law equates with the
+   income-year age; should it use the spouse's derived birth year
+   (income year minus birth year) instead, as the member's age does?
 
 ## 18. What this draft read and did not verify
 
@@ -654,6 +677,13 @@ plan's reading of its methods.
 
 ## 19. Changelog
 
+- `u1-draft-2` (2026-09-24, independent review): the half-split floor
+  splits on family units linked through shared persons, so it is
+  person-disjoint under U1 as plan F15 requires (U0 is unchanged); the
+  income concept and the tabulation refuse `registered_real` on rows not
+  built from recorded PSID files; the unresolved-marital-status rule is a
+  named, pending parameter; the state-supplement delta and referee
+  questions 7 and 8 are added.
 - `u1-draft-1` (2026-09-24): first draft, with the Track U readers,
   builder, income concept and tabulation on branch
   `dynamics-ex2-track-u-20260924` (commit `487c1aac`); structural counts

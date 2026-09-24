@@ -342,6 +342,33 @@ def test_structural_summary_counts_only():
         assert forbidden not in text
 
 
+def test_unresolved_marital_status_is_an_explicit_pending_default():
+    """Members whose marriage history cannot date a state are non-married.
+
+    Plan F12 names MH85_23 but not what to do when it cannot resolve the
+    state ("unknown") or the person has no record
+    ("no_marriage_history"); the builder's reading (non-married, so the
+    non_married cell and a single-life annuity) is a named parameter with
+    a pending decision, not a silent fallthrough.
+    """
+
+    spec = age67.Age67Spec()
+    assert spec.unresolved_marital_status == "non_married"
+    with pytest.raises(ValueError, match="unresolved_marital_status"):
+        age67.Age67Spec(unresolved_marital_status="married")
+    decisions = {item.field: item for item in age67.pending_decisions()}
+    item = decisions["unresolved_marital_status"]
+    assert item.default == "non_married"
+    assert "F12" in item.default_basis
+    cohort = age67.build_age67_cohort(_inputs())
+    ofum = cohort.observations.set_index("observation_id").loc["6001:2011"]
+    assert ofum["marital_status"] == "no_marriage_history"
+    assert not ofum["married"]
+    assert cohort.provenance["spec"]["unresolved_marital_status"] == (
+        "non_married"
+    )
+
+
 def test_spec_validation_and_pending_decisions():
     with pytest.raises(ValueError):
         age67.Age67Spec(row="U9")

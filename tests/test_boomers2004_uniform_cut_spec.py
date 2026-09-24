@@ -67,6 +67,9 @@ def test_population_matches_the_builder(block):
     assert population["presence"] == spec.presence
     assert population["seed_wave_rule"] == spec.seed_wave_rule
     assert population["separated_is_married"] == spec.separated_is_married
+    assert population["unresolved_marital_status"] == (
+        spec.unresolved_marital_status
+    )
     assert population["u1_single_observation_weight"] == (
         spec.u1_single_observation_weight
     )
@@ -160,7 +163,8 @@ def test_cells_and_uncertainty_match_the_tabulation(block):
     assert uncertainty["floor"]["seeds"] == list(config.floor_seeds)
     assert uncertainty["floor"]["fraction"] == ut.FLOOR_FRACTION
     assert uncertainty["floor"]["min_usable_seeds"] == ut.MIN_FLOOR_SEEDS
-    assert uncertainty["floor"]["split_unit"] == "family_unit_id"
+    assert uncertainty["floor"]["split_unit"] == ut.FLOOR_SPLIT_UNIT
+    assert config.as_dict()["floor_split_unit"] == ut.FLOOR_SPLIT_UNIT
 
 
 def test_pending_decisions_are_listed_in_the_text(text):

@@ -505,6 +505,29 @@ def test_provenance_guards():
         )
 
 
+@pytest.mark.parametrize("kind", [None, "caller_frames", "invented"])
+def test_registered_real_needs_rows_built_from_psid_files(kind):
+    """registered_real must agree with the rows' recorded provenance.
+
+    Track A's opening refuses a registered_real run on a cohort that was
+    not built from recorded PSID files; the income concept must too, or
+    invented or caller-built rows could leave with a real-data label.
+    """
+
+    frame = _frame(_row("a", total_family_income=100))
+    if kind is not None:
+        frame.attrs["provenance_kind"] = kind
+    with pytest.raises(ap.AdjustedPovertyError, match="contradicts"):
+        ap.adjusted_incomes(
+            frame,
+            data_provenance=ap.REGISTERED_REAL,
+            registration_pointer="#42 comment (invented pointer)",
+            life_table=MOCK_LIFE_TABLE,
+            thresholds=MOCK_THRESHOLDS,
+            ssi=MOCK_SSI,
+        )
+
+
 def test_spec_validation_and_pending_decisions():
     with pytest.raises(ap.AdjustedPovertyError):
         ap.AdjustedPovertySpec(ssi_rule="something")

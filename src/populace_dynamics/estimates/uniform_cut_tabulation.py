@@ -29,8 +29,15 @@ Uncertainty (plan field F15; the run is deterministic, K = 1):
 
 * **Half-split floor.**  For each of five seeds (0-4),
   :func:`populace_dynamics.harness.panel.split_panel_by_person` with
-  ``fraction=0.5`` splits the family units (``family_unit_id``) into two
-  disjoint halves, so members of one family unit fall on one side; each
+  ``fraction=0.5`` splits the split units (:func:`floor_split_units`) into
+  two disjoint halves.  A split unit is a family unit
+  (``family_unit_id``) merged with every other family unit that shares a
+  person with it, so the halves are disjoint in family units *and* in
+  persons (plan F15, "person-disjoint half-split floor on the family
+  unit").  Under row U0 each person is observed once and the split units
+  are the family units themselves; under row U1 an even birth year's
+  observations at 66 and 68 sit in two waves' family units, which the
+  merge keeps on one side.  Each
   statistic is recomputed in each half; the floor is the mean, sample SD
   (``ddof=1``), min and max of ``|side_a - side_b|`` over the seeds where
   both halves are defined.  With fewer than two usable seeds the floor is
@@ -47,10 +54,11 @@ Uncertainty (plan field F15; the run is deterministic, K = 1):
   PSID sample; clusters with no tabulated row do not enter.
 
 Provenance: ``data_provenance="invented"`` prefixes the invented-data
-label; ``"registered_real"`` requires the issue #42 registration pointer
-and refuses the invented label.  Rows marked as built from staged PSID
-files (``rows.attrs["provenance_kind"] == "psid_files"``) cannot be
-tabulated as invented.
+label; ``"registered_real"`` requires the issue #42 registration pointer,
+refuses the invented label and requires rows marked as built from staged
+PSID files (``rows.attrs["provenance_kind"] == "psid_files"``, which
+:func:`tabulation_rows` carries); such rows cannot be tabulated as
+invented.
 """
 
 from __future__ import annotations
@@ -77,6 +85,7 @@ __all__ = [
     "DEFAULT_FLOOR_SEEDS",
     "DIAGNOSTIC_BIRTH_YEAR_CELLS",
     "FLOOR_FRACTION",
+    "FLOOR_SPLIT_UNIT",
     "INVENTED_DATA_LABEL",
     "MIN_FLOOR_SEEDS",
     "OPTIONAL_CELLS",
@@ -86,6 +95,7 @@ __all__ = [
     "STATISTIC_ID",
     "TabulationConfig",
     "UniformCutTabulationError",
+    "floor_split_units",
     "tabulate_uniform_cut",
     "tabulation_rows",
 ]
@@ -147,6 +157,9 @@ DIAGNOSTIC_BIRTH_YEAR_CELLS = "birth_year_<yyyy>"
 DEFAULT_FLOOR_SEEDS: tuple[int, ...] = (0, 1, 2, 3, 4)
 FLOOR_FRACTION = 0.5
 MIN_FLOOR_SEEDS = 2
+#: The half-split unit: family units merged through shared persons
+#: (:func:`floor_split_units`).
+FLOOR_SPLIT_UNIT = "family_unit_id_linked_by_person_id"
 
 
 class UniformCutTabulationError(ValueError):
@@ -183,7 +196,7 @@ class TabulationConfig:
             "birth_year_diagnostics": self.birth_year_diagnostics,
             "floor_seeds": list(self.floor_seeds),
             "floor_fraction": FLOOR_FRACTION,
-            "floor_split_unit": "family_unit_id",
+            "floor_split_unit": FLOOR_SPLIT_UNIT,
             "min_floor_seeds": MIN_FLOOR_SEEDS,
             "design_standard_errors": self.design_standard_errors,
             "draws": 1,
@@ -226,9 +239,10 @@ def _normalize(rows: pd.DataFrame) -> pd.DataFrame:
         ):
             raise UniformCutTabulationError(f"{column} must be boolean")
         out[column] = values.astype(bool)
-    if out[["stratum", "cluster", "family_unit_id"]].isna().any().any():
+    identifiers = ["person_id", "stratum", "cluster", "family_unit_id"]
+    if out[identifiers].isna().any().any():
         raise UniformCutTabulationError(
-            "stratum, cluster and family_unit_id must be present"
+            "person_id, stratum, cluster and family_unit_id must be present"
         )
     out["birth_year"] = out["birth_year"].astype("int64")
     return out
@@ -371,14 +385,46 @@ def _floor_summary(values: list[float]) -> dict[str, Any]:
     }
 
 
+def floor_split_units(rows: pd.DataFrame) -> np.ndarray:
+    """The half-split unit of each row: family units linked by persons.
+
+    Family units that share a person (directly or through a chain of
+    persons) form one split unit, labelled by its smallest
+    ``family_unit_id``.  When every person sits in one family unit (row
+    U0) the split units are the family units, so the split is the plain
+    family-unit split.
+    """
+
+    families = rows["family_unit_id"].tolist()
+    persons = rows["person_id"].tolist()
+    parent: dict[Any, Any] = {unit: unit for unit in families}
+
+    def root(unit: Any) -> Any:
+        while parent[unit] != unit:
+            parent[unit] = parent[parent[unit]]
+            unit = parent[unit]
+        return unit
+
+    first_unit: dict[Any, Any] = {}
+    for person, unit in zip(persons, families, strict=True):
+        if person not in first_unit:
+            first_unit[person] = unit
+            continue
+        a, b = root(first_unit[person]), root(unit)
+        if a != b:
+            low, high = sorted((a, b))
+            parent[high] = low
+    return np.asarray([root(unit) for unit in families])
+
+
 def _floors(
     rows: pd.DataFrame, masks: dict[str, np.ndarray], config: TabulationConfig
 ) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
-    units = pd.DataFrame({"family_unit_id": rows["family_unit_id"].tolist()})
+    units = pd.DataFrame({"split_unit": floor_split_units(rows)})
     per_seed = []
     for seed in config.floor_seeds:
         side_a, _ = split_panel_by_person(
-            units, "family_unit_id", fraction=FLOOR_FRACTION, seed=int(seed)
+            units, "split_unit", fraction=FLOOR_FRACTION, seed=int(seed)
         )
         in_a = np.zeros(len(rows), dtype=bool)
         in_a[side_a.index.to_numpy()] = True
@@ -501,6 +547,18 @@ def tabulate_uniform_cut(
         if INVENTED_DATA_LABEL in labels:
             raise UniformCutTabulationError(
                 "a registered_real result cannot carry the invented label"
+            )
+        kind = (
+            rows.attrs.get("provenance_kind")
+            if isinstance(rows, pd.DataFrame)
+            else None
+        )
+        if kind != "psid_files":
+            raise UniformCutTabulationError(
+                f"data_provenance 'registered_real' contradicts the rows' "
+                f"provenance {kind!r}: a registered run tabulates rows built "
+                "from recorded PSID files (age67.income_rows through "
+                "tabulation_rows)"
             )
     elif isinstance(rows, pd.DataFrame) and (
         rows.attrs.get("provenance_kind") == "psid_files"
