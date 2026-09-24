@@ -393,9 +393,11 @@ LEGACY_AIME_REEXPORTS = {"src/populace_dynamics/ss/__init__.py"}
 LEGACY_CONVENTION_USERS = {
     "src/populace_dynamics/cola_track_a/benefits.py",
     "src/populace_dynamics/ss/statutory_aime.py",
-    # Track C step 1 compares the Axiom engine with Track A's oracle AIME
-    # (track-c-aime-agreement-20260923) and refuses to run if Track A's
-    # convention changes.
+    # Track C step 1 compares the Axiom engine with the oracle AIME under
+    # --oracle-computation-years (statutory by default; legacy_fixed_35 is
+    # the oracle of track-c-aime-agreement-20260923), records Track A's
+    # legacy AIME beside it, and refuses to run if Track A's convention
+    # changes.
     "scripts/track_c_aime_agreement.py",
 }
 
