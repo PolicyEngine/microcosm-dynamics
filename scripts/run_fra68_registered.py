@@ -10,11 +10,14 @@ the commit that comment registers:
 * the working tree must be clean and ``HEAD`` must equal
   ``--registered-commit``;
 * the E1 specification (``docs/design/urban2010_fra68_comparison.md``)
-  must be ratified: its section 21 block may carry no candidate, draft,
-  referee or not-merged marker in its status or version, may list no
-  decision awaiting Max (decision record d188), must record his ruling on
-  every decision field with the configuration following each, and must
-  equal the code
+  must be ratified: its section 21 status and version must each say
+  "ratified" as a word, with no negating word and no candidate, draft,
+  not-merged, not-ratified or referee marker (A7's fail-closed test,
+  ``cola_age_profile.specification_unratified_fields``, with E1's
+  ``referee`` marker; each row's tabulation records its ratification
+  status by the same test).  The block may list no decision awaiting Max
+  (decision record d188), must record his ruling on every decision field
+  with the configuration following each, and must equal the code
   (``fra68_track.runner.check_specification_for_registered_run``); the
   committed draft (``e1-draft-3``) is refused;
 * the output artifact must not exist yet (one shot, no overwrite; it is

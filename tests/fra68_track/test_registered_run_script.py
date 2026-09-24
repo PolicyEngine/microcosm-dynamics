@@ -13,7 +13,13 @@ from pathlib import Path
 
 import pytest
 
-from populace_dynamics.fra68_track import PENDING_DECISIONS, FRA68Config
+from populace_dynamics.estimates import cola_age_profile
+from populace_dynamics.fra68_track import (
+    E1_RULINGS,
+    PENDING_DECISIONS,
+    FRA68Config,
+)
+from populace_dynamics.fra68_track import runner as fra68_runner
 from populace_dynamics.fra68_track.runner import e1_parameter_block
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -171,6 +177,68 @@ def test_non_registered_states_are_refused(tmp_path, kwargs, match):
     }
     with pytest.raises(ValueError, match=match):
         _script().preflight(**arguments)
+
+
+#: Header values that never state ratification.  The preflight's former
+#: marker-only test (candidate, draft, not_merged, not_ratified, referee
+#: as substrings) passed every one of these except the last.
+_NOT_RATIFIED = [
+    ("status", "pending_ratification"),
+    ("status", "unratified"),
+    ("status", "not yet ratified"),
+    ("status", "proposed"),
+    ("status", "Not Ratified"),
+    ("status", None),
+    ("version", "e1-3"),
+    ("status", "ratified_after_referee"),
+]
+
+
+@pytest.mark.parametrize(("field", "value"), _NOT_RATIFIED)
+def test_a_header_that_does_not_state_ratification_is_refused(
+    tmp_path, field, value
+):
+    # Regression: the E1 preflight kept its own marker list, weaker than
+    # A7's fail-closed test (#454), and let these through.
+    block = _ruled()
+    block[field] = value
+    with pytest.raises(ValueError, match="authorizes no real-data run"):
+        _script().preflight(
+            registration_pointer=POINTER,
+            registered_commit=COMMIT,
+            output=tmp_path / "run.json",
+            git=_git(),
+            specification=block,
+        )
+
+
+def test_the_preflight_and_a7_share_one_ratification_test(tmp_path):
+    # No marker list of the exercise-3 code's own: the preflight refuses
+    # exactly the headers whose tabulation records them as not ratified.
+    assert not hasattr(fra68_runner, "UNRATIFIED_MARKERS")
+    assert set(E1_RULINGS.extra_unratified_markers) == {"referee"}
+    cases = [*_NOT_RATIFIED, ("status", "ratified_frozen")]
+    for field, value in cases:
+        block = {**_ruled(), field: value}
+        record = cola_age_profile.specification_record(
+            block, extra_markers=E1_RULINGS.extra_unratified_markers
+        )
+        try:
+            _script().preflight(
+                registration_pointer=POINTER,
+                registered_commit=COMMIT,
+                output=tmp_path / "run.json",
+                git=_git(),
+                specification=block,
+            )
+        except ValueError as error:
+            assert "authorizes no real-data run" in str(error)
+            refused = True
+        else:
+            refused = False
+        assert refused is (not record["ratified"]), (field, value)
+        assert refused is bool(E1_RULINGS.unratified_fields(block))
+    assert not refused  # the last case, a ratified header, passes
 
 
 @pytest.mark.parametrize("existing", ["run.json", "run.env.json"])

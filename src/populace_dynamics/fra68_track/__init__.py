@@ -14,9 +14,11 @@ paths and A7 statistic.  What this package adds:
 * :mod:`~populace_dynamics.fra68_track.benefits`: baseline and reform
   amounts per person from one projected state (fixed claim ages under the
   primary convention C0; the C1/C2 claiming transforms);
-* :mod:`~populace_dynamics.fra68_track.config`: rows F0-F8 and the
+* :mod:`~populace_dynamics.fra68_track.config`: rows F0-F8, the
   decisions awaiting Max (decision record d188), each an explicit field
-  whose default is the plan's recommendation;
+  whose default is the plan's recommendation, and ``E1_RULINGS``, the A7
+  tabulation conventions E1 fixes, which every exercise-3 tabulation
+  records against the E1 block header;
 * :mod:`~populace_dynamics.fra68_track.runner`: the run, with Track A's
   provenance, value checks and registration-pointer guard.
 
@@ -30,7 +32,9 @@ reducers imports it.
 
 from populace_dynamics.fra68_track.config import (
     DRY_RUN_HEADER,
+    E1_RULINGS,
     PENDING_DECISIONS,
+    SPECIFICATION_ID,
     STATISTIC_ID,
     ClaimingResponse,
     FRA68Config,
@@ -50,8 +54,10 @@ from populace_dynamics.fra68_track.runner import run_fra68
 
 __all__ = [
     "DRY_RUN_HEADER",
+    "E1_RULINGS",
     "PENDING_DECISIONS",
     "SCHEDULES",
+    "SPECIFICATION_ID",
     "STATISTIC_ID",
     "ClaimingResponse",
     "FRA68Config",

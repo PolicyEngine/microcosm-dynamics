@@ -22,7 +22,11 @@ from populace_dynamics import claiming
 from populace_dynamics import scenario_benefits as sb
 from populace_dynamics.cola_track_a.runner import a1_parameter_block
 from populace_dynamics.cola_track_a.statutory import captured_ssa_parameters
+from populace_dynamics.estimates.cola_age_profile import (
+    UNRATIFIED_MARKERS,
+)
 from populace_dynamics.fra68_track.config import (
+    E1_RULINGS,
     FRA68_LABELS,
     PENDING_DECISIONS,
     STATISTIC_ID,
@@ -35,7 +39,6 @@ from populace_dynamics.fra68_track.reform import (
     survivor_parameters,
 )
 from populace_dynamics.fra68_track.runner import (
-    UNRATIFIED_MARKERS,
     e1_parameter_block,
     specification_code_check,
 )
@@ -88,6 +91,9 @@ def _number(cell: str) -> Decimal:
 # --------------------------------------------------------------------------
 def test_the_draft_is_not_ratified_and_says_so(block, text):
     assert block["specification"] == "urban2010_fra68_exercise3"
+    # A7's fail-closed ratification test (with E1's extra marker) refuses
+    # both header fields, and each also carries an A7 unratified marker.
+    assert E1_RULINGS.unratified_fields(block) == ["status", "version"]
     for name in ("status", "version"):
         assert any(mark in block[name] for mark in UNRATIFIED_MARKERS)
     assert "not ratified" in text.split("\n## 1.")[0]
@@ -142,6 +148,67 @@ def test_the_block_equals_the_code(block):
         )
     assert block["primary_schedule"] == "P3"
     assert block["claiming"]["C1"]["anchor_age"] == FRA68Config().c1_anchor_age
+
+
+#: The E1 section each tabulation convention cites, by its heading.
+_E1_HEADINGS = {
+    "7": "Statistic",
+    "8": "Membership",
+    "9": "Age",
+    "10": "Benefit period",
+    "11": "Benefit components, amount rules and rounding",
+    "16": "Uncertainty",
+    "18": "Registered rows",
+}
+
+
+def test_the_e1_tabulation_rulings_follow_the_block_and_cite_e1(block, text):
+    # Regression: exercise-3 tabulations recorded A1's conventions, A1's
+    # sections and A1's ratification.  E1's own table must name E1's
+    # identifier, cite sections of E1 (whose headings are checked here)
+    # and carry E1's proposed primaries and registered rows.
+    assert E1_RULINGS.specification == block["specification"]
+    assert E1_RULINGS.name == "E1"
+    assert E1_RULINGS.section_field == "e1_section"
+    assert "d188 item (c)" in E1_RULINGS.ratification
+    assert "A1" not in E1_RULINGS.ratification
+    headings = dict(re.findall(r"^## (\d+)\. (.+)$", text, flags=re.M))
+    by_name = {}
+    for ruling in E1_RULINGS.rulings:
+        assert "a1_section" not in ruling
+        cited = re.findall(r"section (\d+)", ruling["e1_section"])
+        assert cited, ruling["parameter"]
+        for number in cited:
+            assert headings[number] == _E1_HEADINGS[number], number
+        by_name[ruling["parameter"]] = ruling
+    f0, rows = block["rows"]["F0"], block["rows"]
+    assert by_name["headline_statistic"]["proposed_primary"] == f0["statistic"]
+    assert by_name["headline_statistic"]["registered_alternatives"] == [
+        rows["F5"]["statistic"]
+    ]
+    assert by_name["membership_basis"]["proposed_primary"] == (
+        f0["membership_basis"]
+    )
+    # Section 7: scenario-specific membership, allowed to differ (C1, C2).
+    assert by_name["allow_membership_difference"]["proposed_primary"] is True
+    assert by_name["components"]["proposed_primary"] == f0["components"]
+    assert by_name["components"]["registered_alternatives"] == [
+        rows["F6"]["components"]
+    ]
+    # Section 10: no December-amount row (A1's R4) is registered.
+    assert by_name["benefit_period"]["registered_alternatives"] == []
+    assert not any("benefit_period" in row for row in list(rows.values())[1:])
+    uncertainty = block["uncertainty"]
+    assert by_name["draw_indices"]["proposed_primary"] == list(
+        range(uncertainty["draws"])
+    )
+    assert by_name["draw_indices"]["proposed_primary"] == list(
+        FRA68Config().draw_indices
+    )
+    assert by_name["floor_seeds"]["proposed_primary"] == (
+        uncertainty["floor"]["seeds"]
+    )
+    assert "referee" in E1_RULINGS.extra_unratified_markers
 
 
 def test_each_alternative_row_changes_one_field(block):

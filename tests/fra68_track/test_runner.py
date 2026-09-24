@@ -65,6 +65,8 @@ from populace_dynamics.fra68_track.benefits import (
     union_benefit_rows,
 )
 from populace_dynamics.fra68_track.config import (
+    E1_RATIFICATION,
+    E1_RULINGS,
     PENDING_DECISIONS,
     STYLIZED_RESPONSE_LABEL,
     builder_defaults,
@@ -987,6 +989,101 @@ def test_registered_real_needs_a_pointer_and_a_ratified_ruled_spec():
             registration_pointer=pointer,
             specification=ruled,
         )
+
+
+def test_every_row_records_the_e1_specification_not_a1(result):
+    # Regression: the runner called A7 without a specification, so every
+    # exercise-3 row recorded pending_rulings as specification_not_supplied
+    # awaiting "A1 specification ratification" with A1 sections.  Each row
+    # now records the E1 block header against E1's own table.
+    block = e1_parameter_block()
+    header = {
+        "specification": "urban2010_fra68_exercise3",
+        "version": block["version"],
+        "status": block["status"],
+        "ratified": False,
+    }
+    awaiting = (
+        f"{E1_RATIFICATION}; the E1 specification supplied is version "
+        f"{block['version']!r}, status {block['status']!r}"
+    )
+    parameters = [ruling["parameter"] for ruling in E1_RULINGS.rulings]
+    by_row = {}
+    for row_id, row in result["rows"].items():
+        tabulation = row["tabulation"]
+        assert tabulation["specification"] == header, row_id
+        entries = tabulation["pending_rulings"]
+        assert [entry["parameter"] for entry in entries] == parameters
+        for entry in entries:
+            assert entry["status"] == "awaiting_ratification"
+            assert entry["awaiting"] == awaiting
+            assert entry["fixed_by"] is None
+            assert "a1_section" not in entry
+            assert entry["e1_section"].startswith("section ")
+            assert "A1 specification" not in json.dumps(entry)
+        by_row[row_id] = {entry["parameter"]: entry for entry in entries}
+    # CONFIG runs two draws, not E1's K = 20; every other F0 convention is
+    # E1's proposed primary, including scenario-specific membership.
+    for name, entry in by_row["F0"].items():
+        assert entry["is_proposed_primary"] is (name != "draw_indices"), name
+    assert by_row["F0"]["allow_membership_difference"]["chosen"] is True
+    assert by_row["F5"]["headline_statistic"]["is_registered_alternative"]
+    assert by_row["F6"]["components"]["is_registered_alternative"]
+    assert not by_row["F0"]["benefit_period"]["registered_alternatives"]
+
+
+_ONE_ROW = FRA68Config(draw_indices=(0,), rows=("F0",))
+
+
+def test_a_ratified_e1_header_fixes_the_conventions_by_e1_sections():
+    # INVENTED ratification: the committed E1 is a draft.
+    ratified = _ratified(e1_parameter_block())
+    run = run_fra68(_inputs(), config=_ONE_ROW, specification=ratified)
+    tabulation = run["rows"]["F0"]["tabulation"]
+    assert tabulation["specification"]["ratified"] is True
+    for entry in tabulation["pending_rulings"]:
+        assert entry["status"] == "fixed_by_ratified_specification"
+        assert entry["awaiting"] is None
+        assert entry["fixed_by"] == (
+            "E1 specification urban2010_fra68_exercise3 e1-ratified-1 "
+            f"(ratified_frozen), {entry['e1_section']}"
+        )
+
+
+def test_e1s_referee_marker_binds_the_recorded_status_and_the_preflight():
+    # The preflight and each row's recorded status apply one test: A7's,
+    # with E1's extra "referee" marker.  A status that says "ratified"
+    # but names the referee is refused by both.
+    referee = {
+        **_ratified(e1_parameter_block()),
+        "status": "ratified_after_referee",
+    }
+    assert E1_RULINGS.unratified_fields(referee) == ["status"]
+    run = run_fra68(_inputs(), config=_ONE_ROW, specification=referee)
+    tabulation = run["rows"]["F0"]["tabulation"]
+    assert tabulation["specification"]["ratified"] is False
+    assert {entry["status"] for entry in tabulation["pending_rulings"]} == {
+        "awaiting_ratification"
+    }
+    with pytest.raises(ValueError, match="authorizes no real-data run"):
+        check_specification_for_registered_run(referee, FRA68Config())
+
+
+def test_a_block_of_another_specification_leaves_each_row_refused():
+    # An invented run records the mismatch; A7 refuses to record an A1
+    # identifier against E1's sections, so the row carries no tabulation.
+    block = {
+        **e1_parameter_block(),
+        "specification": "urban2010_cola_exercise1",
+    }
+    run = run_fra68(_inputs(), config=_ONE_ROW, specification=block)
+    assert run["specification_check"]["mismatches"] == ["specification"]
+    row = run["rows"]["F0"]
+    assert row["tabulation"] is None
+    assert row["status"].startswith(
+        "refused: ColaTabulationError: the specification header names "
+        "'urban2010_cola_exercise1'"
+    )
 
 
 def test_the_specification_check_names_each_mismatch():

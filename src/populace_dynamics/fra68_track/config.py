@@ -17,6 +17,13 @@ Nothing here is ratified.  Two kinds are kept apart:
   each with its source and the referee question of the E1 specification
   (``docs/design/urban2010_fra68_comparison.md``) that asks about it.
 
+The A7 tabulation conventions E1 fixes (statistic, membership, age,
+benefit period, components, draws and floor) are :data:`E1_RULINGS`,
+exercise 3's :class:`~populace_dynamics.estimates.cola_age_profile.
+SpecificationRulings` table: every exercise-3 tabulation records them
+against the E1 block header, which also decides whether each is fixed by
+a ratified E1 or still awaits ratification.
+
 The projection conventions (TR2008 inputs, mortality, DI, the claim table,
 the benefit-level and auxiliary rules) are Track A's, ruled or ratified
 for exercise 1 (``cola_track_a.config``); :meth:`FRA68Config.
@@ -40,10 +47,17 @@ from populace_dynamics.cola_track_a.config import (
 )
 from populace_dynamics.engine.di_entitlement_rates import DIEntitlementSpec
 from populace_dynamics.estimates.cola_age_profile import (
+    DEFAULT_DRAW_INDICES,
+    DEFAULT_FLOOR_SEEDS,
+    FAMILY_UNIT,
+    FLAGGED_RECIPIENT_INCLUDING_ZERO,
     MEAN_OF_INDIVIDUAL_RATIOS,
+    POSITIVE_BENEFIT,
     PRIMARY_COMPONENTS,
     RATIO_OF_SCENARIO_MEANS,
+    SCENARIO_SPECIFIC,
     WORKERS_ONLY_COMPONENTS,
+    SpecificationRulings,
 )
 from populace_dynamics.fra68_track.reform import (
     PLAN_RECOMMENDED_PRIMARY_SCHEDULE,
@@ -53,10 +67,13 @@ from populace_dynamics.fra68_track.reform import (
 
 __all__ = [
     "DRY_RUN_HEADER",
+    "E1_RATIFICATION",
+    "E1_RULINGS",
     "FRA68_LABELS",
     "INVENTED_COHORT_LABEL",
     "MECHANICAL_INCIDENCE_LABEL",
     "PENDING_DECISIONS",
+    "SPECIFICATION_ID",
     "STATISTIC_ID",
     "STYLIZED_RESPONSE_LABEL",
     "TRACK_A_ROW_BY_WAVE",
@@ -73,6 +90,9 @@ __all__ = [
 
 #: The A7 statistic identifier of exercise 3 (plan section 8, item 4).
 STATISTIC_ID = "dynasim_exercise3_fra68_reference_year_age_profile"
+#: The identifier of the E1 specification's section 21 block
+#: (``docs/design/urban2010_fra68_comparison.md``).
+SPECIFICATION_ID = "urban2010_fra68_exercise3"
 #: Heading of every dry-run output (task instruction).
 DRY_RUN_HEADER = "INVENTED DATA - NOT A COMPARISON"
 #: Plan section 12: every output carries the Track A labels.
@@ -305,6 +325,147 @@ PENDING_DECISIONS: dict[str, dict[str, Any]] = {
         "awaiting": _D188 + ", item (b); plan item 4 (confirm F0-F8)",
     },
 }
+
+
+#: What ratifies E1 (E1 section 22 item 5): Max's ruling on d188 item
+#: (c), ratifying the specification by merging.
+E1_RATIFICATION = (
+    "E1 specification ratification (decision record d188 item (c); E1 "
+    "section 22 item 5)"
+)
+#: The A7 tabulation conventions the E1 specification fixes, each with
+#: E1's proposed primary (what the runner passes to A7 for row F0), its
+#: registered alternatives and the E1 section that fixes it.  Every
+#: exercise-3 tabulation records its conventions against this table and
+#: the E1 block header, not A1's: E1 follows A1's section numbering, but
+#: its membership is scenario-specific, it registers no December-amount
+#: row and the DI-level approximation awaits d188.  The E1 ratification
+#: test also refuses a ``referee`` marker (the draft's status is
+#: ``draft_for_referee_not_ratified``), on top of A7's markers.  Nothing
+#: here is ratified: the tabulation derives each status from the header.
+E1_RULINGS = SpecificationRulings(
+    specification=SPECIFICATION_ID,
+    name="E1",
+    ratification=E1_RATIFICATION,
+    section_field="e1_section",
+    extra_unratified_markers=("referee",),
+    rulings=(
+        {
+            "parameter": "headline_statistic",
+            "proposed_primary": RATIO_OF_SCENARIO_MEANS,
+            "registered_alternatives": [MEAN_OF_INDIVIDUAL_RATIOS],
+            "e1_section": "section 7 (F0) and section 18 (F5)",
+            "note": (
+                "both statistics are always computed; this sets which one "
+                "is labelled primary (row F5 labels the mean of individual "
+                "ratios primary)"
+            ),
+        },
+        {
+            "parameter": "recipient_rule",
+            "proposed_primary": POSITIVE_BENEFIT,
+            "registered_alternatives": [],
+            "e1_section": "section 8",
+            "note": (
+                "E1 section 8 carries over A1 section 8: alive in the 2030 "
+                "state of the draw with a positive benefit in the scenario; "
+                f"{FLAGGED_RECIPIENT_INCLUDING_ZERO} is available, not "
+                "registered"
+            ),
+        },
+        {
+            "parameter": "allow_membership_difference",
+            "proposed_primary": True,
+            "registered_alternatives": [],
+            "e1_section": "section 7",
+            "note": (
+                "E1 section 7 makes membership scenario-specific: under "
+                "the claiming responses C1 and C2 (rows F3, F4) the "
+                "memberships can differ; under C0 they coincide, and the "
+                "exercise-3 runner (not A7) refuses a C0 row whose "
+                "memberships differ"
+            ),
+        },
+        {
+            "parameter": "membership_basis",
+            "proposed_primary": SCENARIO_SPECIFIC,
+            "registered_alternatives": [],
+            "e1_section": "section 7",
+            "note": (
+                "E1 section 7: S_base is the set of baseline recipients "
+                "and S_reform the set of reform recipients; under "
+                "identical membership (C0) every basis gives the same sets"
+            ),
+        },
+        {
+            "parameter": "age_rule",
+            "proposed_primary": "reference_year_minus_birth_year",
+            "registered_alternatives": [],
+            "e1_section": "section 9",
+            "note": (
+                "E1 section 9 carries over A1 section 9: age in the "
+                "reference year is the reference year minus the birth "
+                "year; no alternative is registered"
+            ),
+        },
+        {
+            "parameter": "benefit_period",
+            "proposed_primary": "calendar_year_payments",
+            "registered_alternatives": [],
+            "e1_section": "section 10",
+            "note": (
+                "declared label only: the input amounts must already "
+                "measure the declared period; the tabulation cannot check "
+                "it. E1 section 10 registers no December-amount row (A1's "
+                "R4), which in the annual model equals F0 up to dime "
+                "flooring; december_monthly_amount is available, not "
+                "registered"
+            ),
+        },
+        {
+            "parameter": "components",
+            "proposed_primary": list(PRIMARY_COMPONENTS),
+            "registered_alternatives": [list(WORKERS_ONLY_COMPONENTS)],
+            "e1_section": "section 11 (F0) and section 18 (F6)",
+            "note": (
+                "component vocabulary is closed; unknown names are "
+                "refused. DI benefit levels enter as the disclosed oracle "
+                "approximation of exercise 1's ruling (d074 decision "
+                "2(b)); whether it carries over to exercise 3 awaits Max "
+                "(decision record d188 item (a); E1 section 22 item 2)"
+            ),
+        },
+        {
+            "parameter": "draw_indices",
+            "proposed_primary": list(DEFAULT_DRAW_INDICES),
+            "registered_alternatives": [],
+            "e1_section": "section 16",
+            "note": (
+                "E1 section 16 carries over A1 section 16: K = 20 draws, "
+                "mean and sample SD over draws"
+            ),
+        },
+        {
+            "parameter": "floor_seeds",
+            "proposed_primary": list(DEFAULT_FLOOR_SEEDS),
+            "registered_alternatives": [],
+            "e1_section": "section 16",
+            "note": "five-seed family-unit-disjoint half-split floor",
+        },
+        {
+            "parameter": "floor_split_unit",
+            "proposed_primary": FAMILY_UNIT,
+            "registered_alternatives": [],
+            "e1_section": "section 16",
+            "note": (
+                "E1 section 16 keeps each opening-wave family unit of the "
+                "row's population on one side (ER34101 for the 2011 wave, "
+                "ER34001 for row F8's 2009 wave; E1 section 14); person_id "
+                "is available and not registered"
+            ),
+        },
+    ),
+)
 
 
 @dataclass(frozen=True)

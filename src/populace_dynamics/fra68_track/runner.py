@@ -37,8 +37,13 @@ specification block (``docs/design/urban2010_fra68_comparison.md``
 section 21) is ratified, lists no decision awaiting Max, records his
 ruling on every d188 decision field under ``decisions`` with the
 configuration following each, and equals the code and the configuration
-(schedules, primary schedule, rows, C1 anchor age).  A7 refuses the missing pointer
-independently.
+(schedules, primary schedule, rows, C1 anchor age).  A7 refuses the
+missing pointer independently.  "Ratified" is A7's fail-closed test
+(``cola_age_profile.specification_unratified_fields``, with E1's extra
+``referee`` marker from :data:`~populace_dynamics.fra68_track.config.
+E1_RULINGS`), the same test by which every row's tabulation records,
+against the E1 block header and E1's sections, whether its conventions
+are fixed by a ratified E1 or still await ratification.
 """
 
 from __future__ import annotations
@@ -91,7 +96,9 @@ from populace_dynamics.fra68_track.benefits import (
     union_benefit_rows,
 )
 from populace_dynamics.fra68_track.config import (
+    E1_RULINGS,
     PENDING_DECISIONS,
+    SPECIFICATION_ID,
     STATISTIC_ID,
     TRACK_A_ROW_BY_WAVE,
     ClaimingResponse,
@@ -114,7 +121,6 @@ __all__ = [
     "E1_SPECIFICATION_PATH",
     "EXERCISE_1_ARTIFACT_PATH",
     "SCHEMA_VERSION",
-    "UNRATIFIED_MARKERS",
     "check_specification_for_registered_run",
     "e1_parameter_block",
     "projection_identity_record",
@@ -123,21 +129,12 @@ __all__ = [
 ]
 
 SCHEMA_VERSION = "populace_dynamics.fra68_track.run.v1"
-SPECIFICATION_ID = "urban2010_fra68_exercise3"
 _ROOT = Path(__file__).resolve().parents[3]
 E1_SPECIFICATION_PATH = (
     _ROOT / "docs" / "design" / "urban2010_fra68_comparison.md"
 )
 EXERCISE_1_ARTIFACT_PATH = (
     _ROOT / "runs" / "replication_urban2010_cola_v1.json"
-)
-#: Markers of a specification status or version that is not ratified.
-UNRATIFIED_MARKERS = (
-    "candidate",
-    "draft",
-    "not_merged",
-    "not_ratified",
-    "referee",
 )
 _COLA_RECORD_YEARS = range(1975, 2031)
 
@@ -215,21 +212,24 @@ def check_specification_for_registered_run(
 ) -> None:
     """Refuse a real-data run the E1 specification does not authorize.
 
-    The block must be ratified (no candidate, draft, referee or
-    not-merged marker in its status or version), must list no decision
-    awaiting Max, must record Max's ruling on every d188 decision field
-    under ``decisions`` (``{field: {"ruling": value, ...}}``) with the
-    configuration following each ruling, and must agree with the code.
+    The block must be ratified: its status and version must each name
+    ``ratified`` as a word, with no negating word and no unratified
+    marker (A7's fail-closed test,
+    ``cola_age_profile.specification_unratified_fields``, with E1's extra
+    ``referee`` marker; ``E1_RULINGS.unratified_fields``), the test by
+    which each row's tabulation records its ratification status.  It must
+    also list no decision awaiting Max, record Max's ruling on every d188
+    decision field under ``decisions`` (``{field: {"ruling": value,
+    ...}}``) with the configuration following each ruling, and agree with
+    the code.
     """
 
-    for name in ("status", "version"):
-        value = str(block.get(name, ""))
-        if not value or any(mark in value for mark in UNRATIFIED_MARKERS):
-            raise ValueError(
-                f"the E1 specification {name} is {value!r}: it authorizes no "
-                "real-data run until Max ratifies it by merging, and the "
-                "ratified text must say so in its section 21 block"
-            )
+    for name in E1_RULINGS.unratified_fields(block):
+        raise ValueError(
+            f"the E1 specification {name} is {block.get(name)!r}: it "
+            "authorizes no real-data run until Max ratifies it by merging, "
+            "and the ratified text must say so in its section 21 block"
+        )
     awaiting = block.get("decisions_awaiting_max")
     if awaiting:
         raise ValueError(
@@ -681,7 +681,11 @@ def run_fra68(
     bundle; each reform bundle is derived from it).  ``specification`` is
     the E1 section 21 block (read from the committed document when
     omitted); a ``registered_real`` run refuses one that is not ratified,
-    lists a decision awaiting Max, or differs from the code.
+    lists a decision awaiting Max, or differs from the code.  Every row's
+    tabulation records the block header with :data:`~populace_dynamics.
+    fra68_track.config.E1_RULINGS`, so its ``pending_rulings`` cite E1's
+    sections and E1's ratification; a block whose identifier is not E1's
+    leaves each row refused by A7 (recorded in the row status).
     """
 
     config = config or FRA68Config()
@@ -863,6 +867,8 @@ def run_fra68(
                 labels=output_labels,
                 upstream_conventions=upstream,
                 statistic_id=STATISTIC_ID,
+                specification=block,
+                pending_rulings=E1_RULINGS,
             )
         except ColaTabulationError as error:
             tabulation = None
