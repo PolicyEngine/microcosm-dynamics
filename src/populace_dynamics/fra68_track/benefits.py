@@ -32,7 +32,12 @@ and with these scenario rules layered on:
   416(l)(2) mapping on the scenario schedule (row F0 and every baseline),
   on the baseline schedule (row F7's reform), or Track A's fixed 84 months
   (the null-reform identity test only).  The deceased's claim-age factor,
-  which sets the RIB-LIM and the inherited credits, is the scenario's.
+  which sets the RIB-LIM and the inherited credits, is the scenario's.  A
+  deceased who never claimed carries factor 1.0 in both scenarios, so the
+  credits 402(e)(2)(C) and 402(f)(2)(C) pass to the survivor of a worker
+  who died unclaimed after retirement age are not modeled (a named delta,
+  E1 section 12); :data:`CREDITS_NOT_INHERITED` counts the survivors it
+  touches.
 * **Disabled worker**: factor 1 in both scenarios.  A worker the
   projection converted at the baseline FRA is still a disabled worker in a
   scenario whose FRA is attained later than the state's year: only the
@@ -91,6 +96,8 @@ from populace_dynamics.fra68_track.reform import (
 from populace_dynamics.ss.params import SSAParameters
 
 __all__ = [
+    "CREDITS_NOT_INHERITED",
+    "CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH",
     "MovedClaimRecord",
     "PersonScenario",
     "Scenario",
@@ -102,6 +109,16 @@ __all__ = [
 _MONTHS = 12
 _RETIREMENT_AGE = 62
 _MAX_CLAIM_AGE = 70
+#: Scenario counters of the named delta "credits of a worker who died
+#: unclaimed" (E1 section 12; 402(e)(2)(C), 402(f)(2)(C)): paid aged
+#: widow(er)'s excesses resting on a never-entitled decedent who died in or
+#: after the calendar year of attaining the scenario's retirement age, and
+#: the subset whose claim C1 or C2 moved past death.  Diagnostics only
+#: (the ``fra68_`` prefix marks counters Track A does not keep).
+CREDITS_NOT_INHERITED = "fra68_widow_credits_not_inherited"
+CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH = (
+    "fra68_widow_credits_not_inherited_claim_moved_past_death"
+)
 
 
 def _nullable_int(value: Any) -> int | None:
@@ -329,8 +346,14 @@ class ScenarioCalculator(track_benefits._Calculator):
 
         Under C1/C2 a worker who dies before the scenario's claim year is
         a never-entitled decedent in that scenario (Track A's
-        ``deceased_unentitled`` record, factor 1.0, so no RIB-LIM).
+        ``deceased_unentitled`` record, factor 1.0: no RIB-LIM and no
+        inherited credits; E1 section 12).
         """
+
+        return self._decedent(person_id)[0]
+
+    def _decedent(self, person_id: int) -> tuple[PiaRecord | None, bool]:
+        """:meth:`deceased_record`, and whether it undid a moved claim."""
 
         record = super().deceased_record(person_id)
         death = self.lookups.death_year(person_id)
@@ -341,7 +364,7 @@ class ScenarioCalculator(track_benefits._Calculator):
             and record.entitlement_year >= death
         ):
             birth = self._birth(person_id)
-            return PiaRecord(
+            undone = PiaRecord(
                 person_id=person_id,
                 kind="deceased_unentitled",
                 component="retired_worker",
@@ -352,7 +375,8 @@ class ScenarioCalculator(track_benefits._Calculator):
                 claim_age_factor=1.0,
                 level_basis=record.level_basis,
             )
-        return record
+            return undone, True
+        return record, False
 
     def _own_claim_year(self, own: PiaRecord, state: Any) -> int | None:
         """Track A's rule; a conversion claim moves to the scenario's year."""
@@ -479,9 +503,11 @@ class ScenarioCalculator(track_benefits._Calculator):
         own_paths: tuple[dict[int, float], dict[int, float]] | None,
     ) -> tuple[tuple[float, float], int] | None:
         # A documented copy of Track A's ``_Calculator._widow_excess``;
-        # the one change is ``params = self.survivor_bundle(birth)`` in
+        # the changes are ``params = self.survivor_bundle(birth)`` in
         # place of ``self.ctx.params``, so the widow(er)'s months early and
-        # reduction span follow the survivor's cohort.
+        # reduction span follow the survivor's cohort, and the diagnostic
+        # count of survivors whose inherited credits the model omits
+        # (:meth:`_count_credits_not_inherited`), which changes no amount.
         deceased_id = _nullable_int(state["late_spouse_person_id"])
         widowhood = _nullable_int(state["widowhood_year"])
         if deceased_id is None or widowhood is None:
@@ -500,7 +526,7 @@ class ScenarioCalculator(track_benefits._Calculator):
         )
         if entitlement > self.ctx.config.reference_year:
             return None
-        deceased = self.deceased_record(deceased_id)
+        deceased, undone = self._decedent(deceased_id)
         if deceased is None or deceased.eligibility_pia is None:
             self.counters["widow_deceased_level_unavailable"] += 1
             return None
@@ -540,7 +566,43 @@ class ScenarioCalculator(track_benefits._Calculator):
         if excess[0] <= 0:
             return None
         self.counters["aged_widow_excess_paid"] += 1
+        self._count_credits_not_inherited(
+            deceased, deceased_id, widowhood, undone
+        )
         return excess, self.reduced_count(deceased.eligibility_year, start)
+
+    def _count_credits_not_inherited(
+        self,
+        deceased: PiaRecord,
+        deceased_id: int,
+        death_year: int,
+        undone: bool,
+    ) -> None:
+        """Diagnostic for a named delta (E1 section 12; changes no amount).
+
+        402(e)(2)(C) and 402(f)(2)(C) base a widow(er)'s benefit on the
+        old-age benefit, with delayed retirement credits, that a deceased
+        worker "was (or upon application would have been) entitled to",
+        counting increment months through the month before death.  The
+        model's never-entitled decedent (Track A's ``deceased_unentitled``
+        record) carries factor 1.0, so a paid widow(er)'s excess that rests
+        on one who died in or after the calendar year of attaining the
+        scenario's retirement age (A4's July birth month) inherits no
+        credits where the statute would pass some.  An upper bound: the
+        death year is annual, so a death in the attainment year may precede
+        the retirement-age month.  :data:`CREDITS_NOT_INHERITED` counts
+        these; :data:`CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH` counts
+        the subset whose decedent claimed in the projection and whose claim
+        C1 or C2 moved past death (reform scenario only).
+        """
+
+        if deceased.kind != "deceased_unentitled":
+            return
+        if death_year < self.conversion_year(self._birth(deceased_id)):
+            return
+        self.counters[CREDITS_NOT_INHERITED] += 1
+        if undone:
+            self.counters[CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH] += 1
 
     # ---- opening stock ---------------------------------------------------
     def opening_claim_age_months(

@@ -74,6 +74,10 @@ from populace_dynamics.fra68_track import (  # noqa: E402
     FRA68Config,
     run_fra68,
 )
+from populace_dynamics.fra68_track.benefits import (  # noqa: E402
+    CREDITS_NOT_INHERITED,
+    CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH,
+)
 from populace_dynamics.fra68_track.runner import (  # noqa: E402
     E1_SPECIFICATION_PATH,
 )
@@ -119,7 +123,21 @@ FRA68_GAPS: tuple[dict[str, str], ...] = (
         "gap": (
             "Track A pays none while a worker is DI-entitled, so under the "
             "reform a converted worker's excess starts a year later (a "
-            "convention, not the statute)"
+            "convention, not the statute: 402(q)(3)(C) would pay a DI "
+            "beneficiary a reduced excess)"
+        ),
+    },
+    {
+        "item": "Credits of a worker who died unclaimed",
+        "gap": (
+            "402(e)(2)(C) and 402(f)(2)(C) pass delayed retirement credits "
+            "to the survivor of a worker who died after retirement age "
+            "without claiming; the model's never-entitled decedent carries "
+            "factor 1.0 in both scenarios, so the reform's cut of those "
+            "credits is missed, and under C1/C2 a claim moved past death "
+            "loses credits the statute would keep. Counted, not modeled "
+            "(benefit counters fra68_widow_credits_not_inherited and "
+            "fra68_widow_credits_not_inherited_claim_moved_past_death)"
         ),
     },
     {
@@ -369,6 +387,31 @@ def _results_markdown(result: dict[str, Any]) -> str:
                     f"| {wave} wave | {sid} | {draw} | {exposed} | "
                     f"{expected:.3f} |"
                 )
+    lines += [
+        "",
+        "## Credits of workers who died unclaimed (counted, not modeled)",
+        "",
+        "Paid aged widow(er)'s excesses resting on a never-entitled "
+        "decedent who died in or after the calendar year of attaining the "
+        "scenario's retirement age (an upper bound on the survivors to "
+        "whom 402(e)(2)(C) and 402(f)(2)(C) would pass credits the model "
+        "does not), summed over draws; in parentheses, those whose claim "
+        "C1 or C2 moved past death.",
+        "",
+        "| Row | Baseline | Reform |",
+        "|---|---|---|",
+    ]
+    for row_id, row in result["rows"].items():
+        counters = row["benefit_counters"]
+        cells = []
+        for scenario in ("baseline", "reform"):
+            total = counters.get(f"{scenario}_{CREDITS_NOT_INHERITED}", 0)
+            moved = counters.get(
+                f"{scenario}_{CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH}",
+                0,
+            )
+            cells.append(f"{total} ({moved})")
+        lines.append(f"| {row_id} | " + " | ".join(cells) + " |")
     lines += [
         "",
         "## Decisions awaiting Max (d188; none ruled)",

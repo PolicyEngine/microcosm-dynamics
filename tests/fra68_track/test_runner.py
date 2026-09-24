@@ -60,6 +60,8 @@ from populace_dynamics.fra68_track import (
 )
 from populace_dynamics.fra68_track import runner as fra68_runner
 from populace_dynamics.fra68_track.benefits import (
+    CREDITS_NOT_INHERITED,
+    CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH,
     MovedClaimRecord,
     Scenario,
     ScenarioCalculator,
@@ -418,6 +420,9 @@ _ROW_COUNTERS = (
     "opening_di_basis_ended_by_recovery",
     "opening_recipient_without_record",
 )
+#: Exercise-3 diagnostic counters Track A does not keep (they change no
+#: amount): the named delta of credits not inherited (E1 section 12).
+_EXERCISE_3_COUNTERS = ("fra68_",)
 
 
 def test_null_reform_counts_each_person_once_as_track_a_does(projection):
@@ -461,7 +466,7 @@ def test_null_reform_counts_each_person_once_as_track_a_does(projection):
         return {
             key: value
             for key, value in counters.items()
-            if not key.startswith(_ROW_COUNTERS)
+            if not key.startswith(_ROW_COUNTERS + _EXERCISE_3_COUNTERS)
         }
 
     assert calculator_counts(ours) == calculator_counts(track)
@@ -936,6 +941,101 @@ def test_a_worker_who_dies_before_the_moved_claim_is_never_entitled(
     assert undone.eligibility_pia == 1000.0
     calculator.lookups = SimpleNamespace(death_year=lambda person_id: 2030)
     assert calculator.deceased_record(person) is record
+
+
+def _unentitled(person_id, birth):
+    """An INVENTED never-entitled decedent record (factor 1.0)."""
+
+    return PiaRecord(
+        person_id=person_id,
+        kind="deceased_unentitled",
+        component="retired_worker",
+        basis=track_benefits.sb.EligibilityBasis.AGE_62,
+        eligibility_year=birth + 62,
+        entitlement_year=None,
+        eligibility_pia=1500.0,
+        claim_age_factor=1.0,
+        level_basis="invented",
+    )
+
+
+def test_survivors_of_workers_who_died_unclaimed_are_counted(projection):
+    # E1 section 12 (referee required change 2): 402(e)(2)(C) and
+    # 402(f)(2)(C) pass delayed credits to the survivor of a worker who
+    # died unclaimed after retirement age; the model's never-entitled
+    # decedent carries factor 1.0, so the run counts the survivors this
+    # touches (a diagnostic; no amount changes).
+    person, birth = _person_born(projection, [1954])
+    base = _calculator(projection, _scenario(projection, "baseline"))
+    reform = _calculator(projection, _scenario(projection, "reform", "P3"))
+    # FRA 66 (baseline) and 67y1m (P3), July birth month.
+    assert base.conversion_year(birth) == birth + 66
+    assert reform.conversion_year(birth) == birth + 67
+    record = _unentitled(person, birth)
+    for calculator in (base, reform):
+        # Died before the year of attaining retirement age: no credits
+        # were due, nothing is counted.
+        calculator._count_credits_not_inherited(
+            record, person, birth + 65, False
+        )
+        # A claimed decedent's factor carries its credits: not counted.
+        calculator._count_credits_not_inherited(
+            replace(record, kind="retired", entitlement_year=birth + 66),
+            person,
+            birth + 69,
+            False,
+        )
+        assert CREDITS_NOT_INHERITED not in calculator.counters
+    # Died unclaimed in the baseline attainment year: counted there, not
+    # under the reform, whose retirement age is attained a year later.
+    base._count_credits_not_inherited(record, person, birth + 66, False)
+    reform._count_credits_not_inherited(record, person, birth + 66, False)
+    assert base.counters[CREDITS_NOT_INHERITED] == 1
+    assert CREDITS_NOT_INHERITED not in reform.counters
+    # A claim C1 or C2 moved past a death after the reform retirement age:
+    # counted in both counters.
+    reform._count_credits_not_inherited(record, person, birth + 68, True)
+    assert reform.counters[CREDITS_NOT_INHERITED] == 1
+    assert reform.counters[CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH] == 1
+    assert CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH not in base.counters
+
+
+def test_the_widow_excess_reports_whether_a_moved_claim_was_undone(
+    projection, monkeypatch
+):
+    person, birth = _person_born(projection, range(1960, 1966))
+    calculator = _calculator(
+        projection,
+        _scenario(
+            projection,
+            "reform",
+            "P3",
+            claiming_response=ClaimingResponse.ALL_DELAY,
+        ),
+    )
+    moved = MovedClaimRecord(
+        person_id=person,
+        kind="retired",
+        component="retired_worker",
+        basis=track_benefits.sb.EligibilityBasis.AGE_62,
+        eligibility_year=birth + 62,
+        entitlement_year=2029,
+        eligibility_pia=1000.0,
+        claim_age_factor=0.8,
+        level_basis="invented",
+        reform_claim_month=12 * 64 + 12,
+    )
+    monkeypatch.setattr(
+        track_benefits._Calculator,
+        "deceased_record",
+        lambda self, person_id: moved,
+    )
+    calculator.lookups = SimpleNamespace(death_year=lambda person_id: 2029)
+    record, undone = calculator._decedent(person)
+    assert (record.kind, undone) == ("deceased_unentitled", True)
+    assert calculator.deceased_record(person) == record
+    calculator.lookups = SimpleNamespace(death_year=lambda person_id: 2030)
+    assert calculator._decedent(person) == (moved, False)
 
 
 def test_a_scenario_calculator_needs_its_own_bundle(projection):
