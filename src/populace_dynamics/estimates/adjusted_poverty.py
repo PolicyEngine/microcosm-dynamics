@@ -82,10 +82,11 @@ primary, and :func:`pending_decisions` lists them):
   with baseline SSI, SSI rises by the fall in countable Social Security
   income (after the $20 monthly general income exclusion), capped so SSI
   does not exceed the federal benefit rate (FBR); nobody newly enrols.
-  ``none`` (row U2).  ``full_static_recomputation`` (row U3, an upper
-  bound): the offset, plus every head/wife unit that the cut makes newly
-  income-eligible and whose resource proxy passes the resource limit
-  takes up SSI.
+  ``none`` (row U2).  ``full_static_recomputation`` (row U3, the largest
+  SSI response of the three registered rules, not a bound on DYNASIM's
+  simulation): the offset, plus every head/wife unit that the cut makes
+  newly income-eligible and whose resource proxy passes the resource
+  limit takes up SSI.
 * **Poverty**: poor when income is below the threshold (Census
   convention); baseline and reform status per row.
 

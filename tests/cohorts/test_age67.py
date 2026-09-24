@@ -719,3 +719,44 @@ def test_spec_validation_and_pending_decisions():
         age67.Age67Spec(u1_single_observation_weight=0)
     fields = {item.field for item in age67.pending_decisions()}
     assert fields == set(age67.Age67Spec().as_dict())
+
+
+def test_extension_seed_is_the_first_wave_with_an_annuitant_code():
+    """The birth-year law's extension seeds a person from the earliest wave
+    in which they are in a family with a head, spouse or partner code (a
+    marriage-history spouse: in a family at all), the analogue of the
+    universe's earliest presence wave.
+
+    Regression (independent review, 2026-09-24): the docstring and
+    specification section 5 said "the earliest wave in which they are in
+    a family", which the code does not do.  INVENTED: 9102 (zero weight,
+    no marriage history, the legal wife of 9101 in 2013 aged 70) is also
+    put in family 11 in 2009 as an OFUM (code 30) aged 62.  That wave
+    would seed 2008 - 62 = 1946; her first spouse-coded wave, 2013, seeds
+    2012 - 70 = 1942, so her income-year age in 2012 stays 70.
+    """
+
+    import dataclasses
+
+    inputs = _with_unresolved_couples()
+    anchors = dict(inputs.anchors)
+    frame = anchors[2009].copy()
+    mask = frame["person_id"].eq(9102)
+    frame.loc[mask, ["interview", "sequence", "relationship", "age"]] = [
+        11,
+        3,
+        30,
+        62,
+    ]
+    frame.loc[mask, "weight"] = 0.0
+    anchors[2009] = frame
+    inputs = dataclasses.replace(inputs, anchors=anchors)
+    obs = age67.build_age67_cohort(inputs).observations.set_index(
+        "observation_id"
+    )
+    head = obs.loc["9101:2013"]
+    assert head["fu_head_spouse_person_id"] == 9102
+    assert head["fu_head_spouse_age"] == 70
+    assert head["fu_head_spouse_age_source"] == "derived_birth_year"
+    # the OFUM record in 2009 changes nothing about family 11's annuitants
+    assert obs.loc["1001:2009", "fu_head_spouse_person_id"] == 1002

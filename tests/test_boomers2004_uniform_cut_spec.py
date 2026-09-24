@@ -385,3 +385,42 @@ def test_annuity_price_table_matches_the_committed_tables(text):
             table, "male", 67, "female", 67, rate=rate
         )
         assert f"{joint:.4f}" in section
+
+
+def test_u3_is_never_called_a_bound(text):
+    """Referee O4: U3 is the largest SSI response of the three rules, not a
+    bound on DYNASIM's simulation.
+
+    Regression (independent review, 2026-09-24): after the labels were
+    dropped from ``SSI_RULES`` and the rows, the income concept's module
+    text still called U3 "an upper bound" across a line break, which a
+    line-by-line search misses; the check collapses whitespace first.
+    """
+
+    sources = {
+        "adjusted_poverty module text": ap.__doc__,
+        "adjusted_poverty.SSI_RULES": " ".join(ap.SSI_RULES.values()),
+        "registered rows": " ".join(
+            row.description for row in track_u_rows.REGISTERED_ROWS.values()
+        ),
+        "specification": text,
+    }
+    for name, source in sources.items():
+        flat = " ".join(source.split()).lower()
+        assert "upper bound" not in flat, name
+    assert "the largest SSI response" in " ".join(ap.__doc__.split())
+
+
+def test_section_9_names_where_members_of_a_family_differ(text):
+    """Section 9's family-level claim holds under ``fu_head_rule`` except in
+    U4 (B and T by role) and U6 (the cut follows each member's age-67
+    year, :func:`adjusted_poverty.cut_applies`); regression (independent
+    review, 2026-09-24): the U6 exception was missing."""
+
+    section = " ".join(_section(text, "9", "10").split())
+    assert "except in rows U4 and U6" in section
+    assert "Under row U4" in section
+    assert "Under row U6 the cut follows each member's own age-67" in section
+    assert ap.CUT_START_YEAR_RULE == (
+        "cut_when_birth_year_plus_67_at_or_after_start"
+    )

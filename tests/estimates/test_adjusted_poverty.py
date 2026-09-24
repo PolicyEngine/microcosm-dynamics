@@ -803,3 +803,48 @@ def test_rows_are_validated():
         _run(_row("a"), _row("a"))
     with pytest.raises(ap.AdjustedPovertyError, match="member_role"):
         _run(_row("a", member_role="lodger"))
+
+
+def test_u6_cut_follows_each_members_age67_year_within_a_family():
+    """Specification section 9: B, R and T are family-level under
+    ``fu_head_rule`` except in U4 and U6.  Regression (independent review,
+    2026-09-24): the U6 exception was not stated.
+
+    INVENTED: one family unit "f" with family Social Security 1,000 and
+    money income 1,000 holds two cohort members, born 1936 (the head) and
+    1938 (the wife).  Primary: both are cut, 0.13 * 1,000 = 130, R = 870.
+    U6 (start 2004): 1936 + 67 = 2003 < 2004, so the head's observation is
+    uncut (R = 1,000); 1938 + 67 = 2005 >= 2004, so the wife's is cut
+    (R = 870).  B and T stay equal across the two members.
+    """
+
+    rows = [
+        _row(
+            "head",
+            family_unit_id="f",
+            birth_year=1936,
+            head_ss=1000,
+            total_family_income=1000,
+            fu_size=2,
+            wife_present=True,
+        ),
+        _row(
+            "wife",
+            family_unit_id="f",
+            member_role="wife",
+            member_sex="female",
+            birth_year=1938,
+            head_ss=1000,
+            total_family_income=1000,
+            fu_size=2,
+            wife_present=True,
+        ),
+    ]
+    primary = _run(*rows)
+    assert primary["reform_income"].tolist() == pytest.approx([870.0, 870.0])
+    u6 = _run(*rows, cut_start_year=2004)
+    assert u6["cut_applies"].to_dict() == {"head": False, "wife": True}
+    assert u6.loc["head", "reform_income"] == pytest.approx(1000.0)
+    assert u6.loc["wife", "reform_income"] == pytest.approx(870.0)
+    for column in ("baseline_income", "threshold", "annuity"):
+        assert u6.loc["head", column] == u6.loc["wife", column], column

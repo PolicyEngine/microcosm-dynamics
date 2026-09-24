@@ -837,12 +837,17 @@ def _annuitant_birth_years(
     birth-year law is extended to every in-family person (sequence 1-20)
     of the five waves coded head, legal wife, cohabiting "wife", first-year
     cohabitor or legal husband, and to every marriage-history spouse of a
-    target member, who is not in the universe (typically a zero-weight
-    nonsample spouse).  The seed coordinate is the earliest of the five
-    waves in which the person is in a family, whatever the weight.  The
-    law runs without a required population, so a person with conflicting
-    marriage-history birth years is left out (unresolved) instead of
-    failing the build; the caller then uses the wave age and counts it.
+    target member, who is not in the universe (a person with no positive
+    cross-section weight, such as a zero-weight nonsample spouse).  The
+    seed coordinate is the earliest of the five waves in which the person
+    is in a family with one of those codes (a marriage-history spouse: in
+    a family at all), whatever the weight: the analogue of the universe's
+    earliest presence wave.  On the staged PSID every in-family person
+    with one of those codes has a positive weight in each wave, so this
+    extension adds no one there.  The law runs without a required
+    population, so a person with conflicting marriage-history birth years
+    is left out (unresolved) instead of failing the build; the caller
+    then uses the wave age and counts it.
     """
 
     history = inputs.marriage_history

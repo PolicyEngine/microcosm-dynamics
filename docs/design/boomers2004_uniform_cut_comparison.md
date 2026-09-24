@@ -192,10 +192,17 @@ splits on family units linked through shared persons (§10).
 
 **Attached per observation** (`cohorts/age67.build_age67_cohort`): sex
 (ER32000 through the death-record reader); relationship to head (10
-head, 20 legal wife, 22 cohabiting "wife", 90 legal husband of head,
-otherwise OFUM; the codes are verified in `IND2023ER_formats.sas` for
-each wave); marital status at the end of the income year from the
-marriage history (F12; separated counts as married); whether a legal
+head, 20 legal wife, 22 cohabiting "wife", 90 legal husband of head;
+the codes are verified in `IND2023ER_formats.sas` for each wave) and the
+member's role: head (10), wife (20 or 22), otherwise OFUM. A code-90
+legal husband's role is therefore OFUM (row U4 gives him the family-unit
+basis, and the F17 summaries do not identify his own Social Security),
+although the annuity (§5) and the marital resolution below treat him as
+the head's legal spouse; 2 of the 483 U0 observations and 4 of the 1,349
+U1 observations are code-90 husbands (a structural count made in the
+independent review of this draft; question 11); marital status at the
+end of the income year from the marriage history (F12; separated counts
+as married); whether a legal
 spouse lives in the same family unit, and the spouse's age and sex; the
 family head and the head's co-resident legal spouse (code 20 or 90),
 with their ages and sexes (the annuitants of §5); and the sampling-error
@@ -353,9 +360,17 @@ and WEALTH1 alone the alternative.
   minus derived birth year, from `estimates.career.derive_birth_years`
   extended beyond the universe to in-family heads, legal wives,
   cohabitors (22, 88), legal husbands and marriage-history spouses of
-  cohort members (typically zero-weight nonsample spouses; their seed
-  coordinate is the earliest of the five waves in which they are in a
-  family). Where the law leaves a person unresolved (including
+  cohort members who have no positive cross-section weight (such as
+  zero-weight nonsample spouses). The extension's seed coordinate is the
+  earliest of the five waves in which the person is in a family with one
+  of those codes, or, for a marriage-history spouse, in a family at all:
+  the analogue of the universe's earliest presence wave. On the staged
+  files every in-family person with one of those codes has a positive
+  cross-section weight in each of the five waves, so all of them are in
+  the universe and the extension adds no one to U0 or U1 (a structural
+  count made in the independent review of this draft); it matters only
+  for inputs where such a person has zero weight. Where the law leaves a
+  person unresolved (including
   conflicting marriage-history birth years, which the extension leaves
   out rather than failing the build), the individual-file age at the
   wave is used and counted (`wave_age`). The law gives the
@@ -514,7 +529,8 @@ Deeming from an ineligible spouse: 416.1163.
 
 For cell c, with observation weights w, baseline adjusted income B,
 reform income R and threshold T (family-level under `fu_head_rule`:
-every member of a family unit gets the same B, R and T):
+every member of a family unit gets the same B, R and T, except in rows
+U4 and U6 below):
 
 ```text
 P_B[c] = 100 × Σ_{i∈c} w_i·1{B_i < T_i} / Σ_{i∈c} w_i
@@ -525,7 +541,12 @@ P_R[c] = 100 × Σ_{i∈c} w_i·1{R_i < T_i} / Σ_{i∈c} w_i
 Δ is the headline; P_B and P_R are the secondary rows (the Table 19 and
 Table 21 analogues). Under row U4, head and wife members use the
 head-and-wife basis and OFUM members the family basis, so B and T differ
-by role there.
+by role there. Under row U6 the cut follows each member's own age-67
+year (§7), so two cohort members of one family unit can get different
+R. For example, under U1 a 1936 member observed at 68 and a 1938 member
+of the same family unit observed at 66 both have income year 2004 (wave
+2005), and with `cut_start_year = 2004` only the 1938 member's
+observation is cut.
 
 **Cells.** `all` (headline); `men`, `women`, `married`, `non_married`
 (the Report's list of appendix tables includes Appendix Table 17,
@@ -1130,7 +1151,12 @@ birth years (R8).
 11. Is extending the head's legal spouse to code 90 (legal husband), in
     the annuity and in the relationship-code resolution, right, given
     that the family file's "wife" items' treatment of a code-90 husband
-    was not checked?
+    was not checked? The builder gives him role OFUM, so row U4 keeps him
+    on the family-unit basis; 2 of 483 U0 and 4 of 1,349 U1 observations
+    are code-90 husbands (§3). The 2011 family codebook groups "husband of
+    Head" with Wife/"Wife" in its composition and birth variables, but
+    describes the income items as the Wife's/"Wife's" only (independent
+    review; not settled).
 12. Under the fallback rule, should the one-field alternatives follow the
     headline to U0-F's population (so that U2–U5 and U8–U10 are computed
     when the supplements are not staged), or stay on U0 and be reported
@@ -1207,6 +1233,17 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
 
 ## 19. Changelog
 
+- `u1-draft-4`, independent review corrections (2026-09-24; no rule,
+  default or row changed): §3 states that a code-90 legal husband's role
+  is OFUM (U4 keeps him on the family-unit basis) and counts those
+  observations (2 in U0, 4 in U1), also added to question 11; §5 states
+  the seed wave the birth-year extension actually uses (the earliest wave
+  in which the person holds a head, spouse or partner code) and that the
+  extension adds no one on the staged files; §9 notes that under U6 two
+  members of one family unit can get different R; the income concept's
+  module text now describes U3 as the largest SSI response of the three
+  rules, as §8 does (O4). Counts only; no income, threshold or poverty
+  status was computed on PSID data.
 - `u1-draft-4` (2026-09-24, first referee pass applied, §17): §1 states
   the Report's unit and financial-asset definition from pp. 19–24 and
   re-sources the cells to Appendix Table 17's title; F4a removes the

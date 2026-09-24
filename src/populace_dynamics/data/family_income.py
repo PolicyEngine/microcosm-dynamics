@@ -43,7 +43,8 @@ retirement income into pensions, annuities, IRAs and other retirement and
 splits the head's ``HEAD ANNUITIES`` into annuities and ``HEAD
 IRAS-2012``; earlier files carry one ``WIFE RETIREMENT/ANNUITIES`` item
 ("Income from Pensions and Annuities"), and their ``HEAD ANNUITIES`` is
-"Head's Income from Annuities and IRAs" (2005-2011 codebooks). Head and wife here are the PSID's; "wife"
+"Head's Income from Annuities and IRAs" (2005-2011 codebooks). Head and
+wife here are the PSID's; "wife"
 includes a cohabiting female partner ("Wife"). The accuracy flag of each
 Social Security, SSI and asset item is read raw (:data:`ACCURACY_CONCEPTS`;
 0 is "Actual value").
