@@ -73,6 +73,12 @@
     version) before any other file and opened nothing it lists, nor the
     exercise-1 artifact or the exercise-3 forecasts. It did not open the
     Urban report or its text extraction.
+  - The lane that wrote `e1-draft-7` (the independent review of
+    `e1-draft-6`, §25) read `EVID/RESTRICTED-FILES.md` (the version
+    whose last changelog entry is dated 2026-09-24 19:20) before any
+    other file and opened nothing it lists, nor the exercise-1 artifact
+    or the exercise-3 forecasts. It did not open the Urban report or its
+    text extraction.
   - No lane computed a statistic on real data. §2 lists what the drafts
     read.
 
@@ -146,6 +152,7 @@ This draft cites only the sources below.
 | Independent review of `e1-draft-4` | `EVID/fra68-conversion-claim-20260924/review-e1-draft-4-20260924.json` (the review lane's record, copied verbatim from the workflow's results file) | `c6da180f…` | Whole record (§25) |
 | Conversion-claim arithmetic | `EVID/fra68-conversion-claim-20260924/conversion_claim_arithmetic.py` and its output `conversion_claim_arithmetic.out` | `af508eb1…`; `e82b5e3f…` | Exact-integer months early of a converted spouse's excess by cohort, schedule and worker-entitlement year under each rule; imports nothing from the repository (§11, §25) |
 | Independent review of `e1-draft-5`: arithmetic and calculator probe | `EVID/fra68-review2-b4d8732e-20260924/independent_arithmetic.py` and its output `independent_arithmetic.out.json`; `probe_moved_worker_calculator.py` and its output at `b4d8732e`, `probe_moved_worker_calculator.b4d8732e.json` | `481b76c9…`; `27fe381b…`; `f7f52618…`; `465c7eff…` | Exact-integer schedules, conversion-claim counts and moved-worker counts, importing nothing from the repository; the calculator's counts and 2030 amounts for three invented spouses whose worker's claim C1 or C2 moved (§13, §19, §25) |
+| Independent review of `e1-draft-6`: arithmetic, comparison and probes | `EVID/fra68-review4-fc893ea4-20260924/`: `independent_arithmetic.py` (standard library only) and its output `independent_arithmetic.out.json`; `compare_with_code.py` and `compare_with_code.out.json`; `check_e1_tables.py` and `check_e1_tables.out.json`; `probe_order_and_identity.py` and `probe_order_and_identity.out.json` | `e6d7c93e…`; `ca098796…`; `d2918eec…`; `5b4cea48…`; `fc5645e3…`; `3931ed1d…`; `18e1be8a…`; `09830f8e…` | Every claim-month rule by cohort 1938-1971, schedule and claiming response from the statute text, compared with the code point by point; §3, §5, §6 and §19 recomputed with exact fractions; the per-person schedule order and the null-reform identity on the invented dry-run cohort and on constructed invented persons (§25) |
 | Builder restriction list | `EVID/RESTRICTED-FILES.md` | — (a living list; no hash is pinned) | Whole file, read first by each lane since `e1-draft-4`. The `e1-draft-5` lane read the version whose last changelog entry is dated 2026-09-24 13:55. `e1-draft-4` recorded SHA-256 `a7356057…`, which the list no longer matches and which the review of `e1-draft-4` could not verify for any version; this draft withdraws it (§25) |
 | Decision records d188 and d196 | `~/chief-of-staff/state/decisions/decisions.jsonl`, entries `d188` and `d196` | — | Their filed wording, defaults and status (`open`); d188 read 2026-09-24 by the `e1-draft-4` lane, both read 2026-09-24 by the `e1-draft-5` lane (§22) |
 | Claim-age reference | `data/external/ssa_claim_ages_2023supplement.json` | `f731c9a6…` | The 2008 rows through `claiming.claim_age_distribution`: `fra_at.at_age` = 65 for both sexes; age-62 shares 42.6 (male) and 48.0 (female); age-65 shares 25.8 and 19.3 |
@@ -511,7 +518,8 @@ A1 §12 is carried over, with these exercise-3 items:
 | Survivor reduction span | Exact by cohort here (pending, `survivor_reduction_span`, §22); fixed 84 months in exercise 1 | Baseline amounts of survivors born before 1962 entitled after 60 differ from exercise 1's |
 | Benefit computation years (Track A) | Levels divide the AIME by a fixed 35 years, Track A's `TRACK_A_COMPUTATION_YEARS` (§11, rule 1). 415(b)(2) counts elapsed years less 5, fewer than 35 for workers born before 1929 (31 for a worker born in 1925) | Levels only, in both scenarios, as in exercise 1: workers born before 1929 (aged 102 or more in 2030) and the spouse's and survivor's benefits resting on them. The reform changes no one's count |
 | Credit timing | 402(w)(3) credits increment months from January of the following year; Track A applies the full factor at the claim | Small; both scenarios |
-| Credits of a worker who died unclaimed | 402(e)(2)(C) and 402(f)(2)(C) (`EVID/fra68-statute-20260924/usc42_402.txt` lines 208 and 258): if the deceased "was (or upon application would have been) entitled to" a benefit increased by delayed retirement credits, the survivor's benefit rests on that increased benefit, counting increment months through the month before death. Track A's `deceased_unentitled` record uses factor 1.0 in both scenarios. The records carry an annual death year only, so the credits cannot be counted by month without a new convention | Survivors of workers who died unclaimed after the baseline retirement age inherit no credits in either scenario, so the reform's cut of up to D credit months (8 percentage points for D = 12) is missed. Under C1 and C2 a claimant who dies before the moved claim loses all credits in the reform scenario, where the statute would keep those accrued from the reform retirement age. Aged widow(er)s. Diagnostic in every run (benefit counters, by scenario): `fra68_widow_credits_not_inherited`, the paid aged widow(er)'s excesses resting on a never-entitled decedent who died in or after the calendar year of attaining the scenario's retirement age, and `fra68_widow_credits_not_inherited_claim_moved_past_death`, the subset whose claim C1 or C2 moved past death. The count is not a bound on the survivors the statute would pass credits to: the death month is unknown, so it can include a decedent who died in the attainment year before the retirement-age month, and it omits a survivor paid no excess without the credits whom the credits would have given one |
+| Credit window of cohorts born 1938-1942 (oracle) | The oracle's `delayed_credit` accrues at most `max_delayed_months` = 48 months (the committed capture), while 402(w)(2)(A) (`usc42_402.txt` line 488) counts every month from the retirement age to the month before 70: 58, 56, 54, 52 and 50 months for workers born 1938-1942 (retirement age 65 and 2 to 10 months) | Levels only, in both scenarios, as in exercise 1: a claim at 70 by a worker born 1938-1942 (aged 88-92 in 2030) and the credits a survivor inherits from one. The reform does not reach these cohorts |
+| Credits of a worker who died unclaimed | 402(e)(2)(C) and 402(f)(2)(C) (`EVID/fra68-statute-20260924/usc42_402.txt` lines 208 and 258): if the deceased "was (or upon application would have been) entitled to" a benefit increased by delayed retirement credits, the survivor's benefit rests on that increased benefit, counting increment months through the month before death. Track A's `deceased_unentitled` record uses factor 1.0 in both scenarios. The records carry an annual death year only, so the credits cannot be counted by month without a new convention | Survivors of workers who died unclaimed after the baseline retirement age inherit no credits in either scenario, so the reform's cut of up to D credit months (8 percentage points for D = 12) is missed. Under C1 and C2 a claimant who dies in or before the year of the moved claim loses all credits in the reform scenario, where the statute would keep those accrued from the reform retirement age. Aged widow(er)s. Diagnostic in every run (benefit counters, by scenario): `fra68_widow_credits_not_inherited`, the paid aged widow(er)'s excesses resting on a never-entitled decedent who died in or after the calendar year of attaining the scenario's retirement age, and `fra68_widow_credits_not_inherited_claim_moved_past_death`, the subset whose claim C1 or C2 moved past death. The count is not a bound on the survivors the statute would pass credits to: the death month is unknown, so it can include a decedent who died in the attainment year before the retirement-age month, and it omits a survivor paid no excess without the credits whom the credits would have given one |
 | Month resolution and birth month | Integer claim ages; the July birth month of A4 for conversion and for the C1/C2 dates | Odd-month increases enter exactly; the C1/C2 delay is 0 below 6 months |
 | Claiming response | DYNASIM3's OASI take-up hazard uses "age, benefit amount, spousal characteristics, and Social Security policy parameters" (primer Table 3, p. 6; p. 14), with separate equations "for groups with different ratios of recent earnings to the Social Security exempt amount" (p. 14); its benefit calculator applies "statutory adjustment factors for retirement at ages other than the normal retirement age and the Retirement Earnings Test" (p. 16) | Registered as C1 and C2 (§13); 62-69 membership and weights |
 | Claim-age mix | Track A snaps every projection year to the 2008 row of the claim table, whose at-FRA age is 65 for every cohort. TR2008 projects claiming at 63-69 "with an adjustment for changes in the portion of the primary insurance amount that is payable at each age of entitlement" (pp. 111-112) | 62-69 membership; the C1 anchor (referee question 3); the mix itself is referee question 5 |
@@ -587,9 +595,13 @@ worker's excess on its conversion claim follows §11 rule 3 under every
 claiming response: its count reads the worker's baseline entitlement
 year, so a C1/C2 move of the worker's claim changes when the excess is
 paid (from y'_w) but not its months early. A worker who
-dies before the reform claim year is a never-entitled decedent in the
-reform scenario (Track A's `deceased_unentitled` record, factor 1.0: no
-RIB-LIM and no inherited credits; §12).
+dies in or before the reform claim year is a never-entitled decedent in
+the reform scenario (Track A's `deceased_unentitled` record, factor 1.0:
+no RIB-LIM and no inherited credits; §12). The death year is the year
+after the decedent's last projected state, and each projected year runs
+its mortality step before its claiming step (`engine/loop.py`), so no
+projected claim falls in a death year; a moved claim that does is
+undone in the same way (`ScenarioCalculator._decedent`).
 
 Under C1 and C2 membership differs between scenarios: a baseline
 claimant whose reform entitlement year falls after 2030 is not a reform
@@ -1250,22 +1262,59 @@ The review also noted that d188 as filed does not name rows F3-F8
 `origin/master` (not a matter for this draft; the branch is not pushed).
 
 **Independent review of `e1-draft-5`.** An independent Claude lane
-(Opus 5.5) reviewed the branch at `b4d8732e` on 2026-09-24; its report is
-`EVID/subfleet-briefs-20260924/ex3-review-report.md` and its scripts and
-outputs are in `EVID/fra68-review2-b4d8732e-20260924/` (§2). With exact
+(Opus 5.5) reviewed the branch at `b4d8732e` on 2026-09-24. Its session
+ended before it wrote a report or a verdict: `e1-draft-6` named
+`EVID/subfleet-briefs-20260924/ex3-review-report.md` as its report, but
+no such file existed when the review of `e1-draft-6` began, and that
+path now holds the report of the review of `e1-draft-6` (below). Its
+record is the two commits that wrote `e1-draft-6` (`ad97f0a5` and
+`7f9dfaa1`) and its scripts and outputs in
+`EVID/fra68-review2-b4d8732e-20260924/` (§2). With exact
 integers and importing nothing from the repository, it confirmed the §3
 table, the §5 spread, the §19 conversion and C2 cases, and that the
 `e1-draft-5` conversion-claim rule equals Track A's baseline count for
 every cohort 1938-1971 under P1, P2 and P3, including the later-worker
 case (moving the conversion claim alone would count 2 months for spouses
 born 1955 and 4 for 1956 under every schedule). It reproduced the dry run
-byte for byte. It found one defect of the kind of required change 1
+(`RESULTS.md` byte for byte, `result.json` apart from `run.command`). It
+found one defect of the kind of required change 1
 and one overbroad statement in the dry-run text:
 
 | Finding | Checked against | Applied |
 |---|---|---|
 | 1. Under C1 and C2 a worker's moved claim entered the spouse's count as the whole reform year it falls in (`excess_months_early` passed the moved record's `entitlement_year`), so when the worker's entitlement starts the excess the reform changed the spouse's months early by D(b_s) - 12 x (the worker's year shift) instead of D(b_s) - v_w, the months the worker's claim moved. On invented data under P3 and C1, a spouse born 1953 whose worker born 1951 moved 7 months was counted 35 months early against the baseline's 36 (a 0.93 percent rise in the excess where the worker's delay gives a 2.22 percent cut at 40 months); the exact-integer grid (spouses born 1946-1966 claiming at 62-64, workers born 1944-1966 claiming at 65-69 in a later year up to 2030, under P1, P2 and P3, C1) finds 969 cases where the two counts differ, 95 of them rises above the baseline where the exact count cuts or holds | `ScenarioCalculator.excess_months_early` and `_claim_response` at `b4d8732e`; `reform.spouse_excess_months_early`; 402(b)(1), 402(q)(5)(C) and (6)(A)(ii) (`usc42_402.txt` lines 58, 399 and 404); the calculator probe on invented data (§2) | The worker's moved entitlement enters at its exact month, its baseline year plus the months moved (§13, §19 new case, §20 item 8, §21 `claiming.spouse_excess_months_early`). Code: `MovedClaimRecord.claim_move_months`, `ScenarioCalculator.worker_entitlement_start`, and `reform.spouse_excess_months_early(worker_claim_move_months=...)`; the whole reform year still gates the excess, and a conversion claim's count is unchanged (§11 rule 3). Rows F3 and F4 only: nothing moves under C0, so no baseline and no C0 row changes. Tests: a grid over schedules, cohorts and claim ages against calendar-month arithmetic; the three probe cases through the calculator, with the whole-year count they replace; a moved record without its move is refused; the new §19 case; the per-person schedule order for constructed converted spouses under C0 and C2 |
 | 2. The dry-run text said the reform leaves the excesses on a conversion claim unchanged ("the same in both scenarios"), but a worker the projection converted in 2030 is still a disabled worker under a reform FRA attained after 2030 and draws none, and under C1 and C2 a moved worker claim can start the excess after 2030 | `ScenarioCalculator.converted_in_scenario`, `worker_record` and `_spouse_excess` (the gate on the entitlement year); A4's `fra_attainment_year` (a spouse born 1963 converts in 2030 under the statute and in 2031 under every schedule) | The dry-run script and §12 say that an excess paid in both scenarios is unchanged; no amount changes |
+
+**Independent review of `e1-draft-6`.** An independent Claude lane
+(Opus 5.5) reviewed the branch at `fc893ea4`, the merge of
+`origin/master` (`088772f1`, #457) into `7f9dfaa1`, on 2026-09-24; its
+report is `EVID/subfleet-briefs-20260924/ex3-review-report.md` and its
+scripts and outputs are in `EVID/fra68-review4-fc893ea4-20260924/`
+(§2). With exact integers and fractions, importing nothing from the
+repository and verifying the statute folder's `SHA256SUMS`, it derived
+every claim-month rule from the statute text: the worker's claim-age
+factor, the C1/C2 moves, the DI conversion year, the spouse's months
+early under C0, C1 and C2 for every pair of cohorts 1938-1971 with claim
+ages 62-70, the conversion-claim count, the survivor span and the
+opening-stock ratio, under P1, P2 and P3. The code agreed at every point
+(590,490 spouse cases, 82,620 converted-spouse cases), apart from the
+committed rounded early rates (at most 2.8e-7 of a factor). It
+recomputed the §3, §5, §6 and §19 values, found no remaining whole-year
+count of a moved or converted claim in `fra68_track`, and found the
+order P2 <= P3 <= P1 <= baseline and the null-reform identity with
+Track A's calculator on every person of the 20 draws of both invented
+dry-run waves and on 8,362 constructed invented cases (spouses, converted
+spouses, spouses of DI workers, widow(er)s). Track A's dry-run outputs
+at `origin/master` and at `fc893ea4` differed only in `run.command` and
+`run.git_head`, and so did the exercise-3 dry run at `fc893ea4` from the
+committed one. Its findings:
+
+| Finding | Checked against | Applied |
+|---|---|---|
+| 1. Exercise 3's levels use Track A's benefit computation years, the legacy fixed 35 of Registration 13 (`TRACK_A_COMPUTATION_YEARS`), which #457 made an explicit choice beside the new statutory default of `scenario_benefits.eligibility_pia_for_clock`. The code used it everywhere exercise 3 computes a PIA, but neither this draft nor an exercise-3 test or run record said so, and a change of Track A's constant would have moved exercise 3's levels off exercise 1's with nothing refusing | `cola_track_a.benefits._Calculator._level` and `approximate_pia`; `ScenarioCalculator`, which overrides neither; `scenario_benefits.eligibility_pia_for_clock` at `fc893ea4` | `e1-draft-7`: §11 rule 1, §12, and §21 `amounts.benefit_computation_years`, which the specification check binds to Track A's constant; every run records it. Tests: the legacy levels of an invented worker born 1925 under every bundle, the check's refusal, the run record |
+| 2. §25 named `EVID/subfleet-briefs-20260924/ex3-review-report.md` as the report of the review of `e1-draft-5`; no such file existed | The evidence folder | The paragraph above says what that review left |
+| 3. §13 said that a worker who dies *before* the reform claim year is a never-entitled decedent in the reform scenario; the code (`ScenarioCalculator._decedent`: the moved entitlement year at or after the death year) and its test also treat a death in that year so, which matches the projection's order of steps | `_decedent`; `test_a_worker_who_dies_before_the_moved_claim_is_never_entitled`; `engine/loop.py` (mortality before claiming) | §12, §13 and the `deceased_record` docstring say "in or before" |
+| 4. The oracle's 48-month cap on credit accrual departs from 402(w)(2)(A) for workers born 1938-1942, whose window from the retirement age to 70 is 50-58 months; no section named it | `ss.benefits.delayed_credit`; the capture's `max_delayed_months`; `usc42_402.txt` line 488 | §12 names it: levels only, in both scenarios, as in exercise 1; the reform does not reach these cohorts |
 
 ## 26. Changelog
 
@@ -1331,4 +1380,11 @@ and one overbroad statement in the dry-run text:
   workers born before 1929. §21 `amounts` gains
   `benefit_computation_years`, which the specification check binds to
   Track A's constant, and every run records it
-  (`track_a_conventions.benefit_computation_years`).
+  (`track_a_conventions.benefit_computation_years`). §12 also names the
+  oracle's 48-month credit window for workers born 1938-1942. §12, §13
+  and the `deceased_record` docstring say that a worker who dies in or
+  before the reform claim year (not only before it) is a never-entitled
+  decedent, as the code does; §25 corrects what it said of the review of
+  `e1-draft-5` (it wrote no report, and its dry-run reproduction was byte
+  for byte for `RESULTS.md` only) and adds the review of `e1-draft-6`;
+  §2 and the header record that review.

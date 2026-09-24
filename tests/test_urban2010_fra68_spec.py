@@ -15,17 +15,22 @@ import json
 import re
 from decimal import Decimal
 from pathlib import Path
+from types import SimpleNamespace
 
+import pandas as pd
 import pytest
 
 from populace_dynamics import claiming
 from populace_dynamics import scenario_benefits as sb
+from populace_dynamics.cola_track_a import benefits as track_benefits
+from populace_dynamics.cola_track_a.benefits import PiaRecord
 from populace_dynamics.cola_track_a.runner import a1_parameter_block
 from populace_dynamics.cola_track_a.statutory import captured_ssa_parameters
 from populace_dynamics.engine.di_entitlement import fra_attainment_year
 from populace_dynamics.estimates.cola_age_profile import (
     UNRATIFIED_MARKERS,
 )
+from populace_dynamics.fra68_track.benefits import ScenarioCalculator
 from populace_dynamics.fra68_track.config import (
     E1_RULINGS,
     FRA68_LABELS,
@@ -676,3 +681,77 @@ def test_section_19_moved_worker_case_equals_the_code(text):
     assert Decimal(f"{old:.6f}") == old_factor
     assert Decimal(str(round(100 * (old / base_computed - 1), 4))) == rise
     assert old_early < base_early < early
+
+
+# --------------------------------------------------------------------------
+# Sections 12 and 13: the review of e1-draft-6
+# --------------------------------------------------------------------------
+def test_section_12_credit_window_row_equals_the_oracle(text):
+    # The oracle accrues credits for at most max_delayed_months (48);
+    # 402(w)(2)(A) counts every month from the retirement age to the month
+    # before 70, which is longer only for workers born 1938-1942.
+    section = _section(text, "## 12. Named omitted deltas")
+    assert "Credit window of cohorts born 1938-1942 (oracle)" in section
+    assert "58, 56, 54, 52 and 50 months for workers born 1938-1942" in (
+        section
+    )
+    base = captured_ssa_parameters()
+    assert base.max_delayed_months == 48
+    windows = []
+    for birth in range(1938, 1972):
+        window = 12 * 70 - base.fra_months(birth)
+        rate = base.delayed_credit_annual_rate(birth)
+        credit = benefits.delayed_credit(window, birth, base)
+        if window > 48:
+            windows.append(window)
+            assert credit == pytest.approx(48 / 12 * rate), birth
+            assert birth <= 1942
+        else:
+            assert credit == pytest.approx(window / 12 * rate), birth
+    assert windows == [58, 56, 54, 52, 50]
+    # The reform does not reach these cohorts (they turned 62 before 2010).
+    for schedule in SCHEDULES.values():
+        reform = reform_parameters(base, schedule)
+        for birth in range(1938, 1943):
+            assert reform.fra_months(birth) == base.fra_months(birth)
+
+
+def test_section_13_death_boundary_equals_the_code(text, monkeypatch):
+    # E1 section 13: a worker who dies in or before the reform claim year
+    # is a never-entitled decedent in the reform scenario, as
+    # ScenarioCalculator._decedent does (the moved entitlement year at or
+    # after the death year).  e1-draft-6 said "before" only.  INVENTED.
+    section = _section(text, "## 13. Behavior (claiming)")
+    flat = " ".join(section.split())
+    assert "A worker who dies in or before the reform claim year" in flat
+    assert "dies before the reform claim year" not in flat
+    record = PiaRecord(
+        person_id=1,
+        kind="retired",
+        component="retired_worker",
+        basis=sb.EligibilityBasis.AGE_62,
+        eligibility_year=2022,
+        entitlement_year=2027,
+        eligibility_pia=1000.0,
+        claim_age_factor=0.8,
+        level_basis="invented",
+    )
+    monkeypatch.setattr(
+        track_benefits._Calculator,
+        "deceased_record",
+        lambda self, person_id: record,
+    )
+    calculator = object.__new__(ScenarioCalculator)
+    calculator.statics = pd.DataFrame({"birth_year": [1960]}, index=[1])
+    outcomes = {}
+    for death in (2026, 2027, 2028):
+        calculator.lookups = SimpleNamespace(
+            death_year=lambda person_id, _d=death: _d
+        )
+        decedent, undone = calculator._decedent(1)
+        outcomes[death] = (decedent.kind, undone)
+    assert outcomes == {
+        2026: ("deceased_unentitled", True),
+        2027: ("deceased_unentitled", True),
+        2028: ("retired", False),
+    }

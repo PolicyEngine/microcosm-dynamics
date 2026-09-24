@@ -389,10 +389,13 @@ class ScenarioCalculator(track_benefits._Calculator):
     def deceased_record(self, person_id: int) -> PiaRecord | None:
         """Track A's decedent record; a claim moved past death is undone.
 
-        Under C1/C2 a worker who dies before the scenario's claim year is
-        a never-entitled decedent in that scenario (Track A's
+        Under C1/C2 a worker who dies in or before the scenario's claim
+        year is a never-entitled decedent in that scenario (Track A's
         ``deceased_unentitled`` record, factor 1.0: no RIB-LIM and no
-        inherited credits; E1 section 12).
+        inherited credits; E1 sections 12 and 13).  The death year is the
+        year after the last projected state, and each projected year runs
+        its mortality step before its claiming step, so no projected claim
+        falls in a death year; a moved claim that does is undone too.
         """
 
         return self._decedent(person_id)[0]
