@@ -136,7 +136,9 @@ REGISTERED_ROWS: dict[str, TrackURow] = {
         TrackURow(
             "U3",
             "SSI",
-            "full static SSI recomputation (upper bound)",
+            "full static SSI recomputation (the largest SSI response of "
+            "the three registered rules, not a bound on DYNASIM's "
+            "simulation)",
             income={"ssi_rule": "full_static_recomputation"},
         ),
         TrackURow(

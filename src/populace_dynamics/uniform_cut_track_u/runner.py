@@ -214,12 +214,19 @@ def _check_parameters(params: TrackUParameters, data_provenance: str) -> None:
     thresholds = (
         {} if params.thresholds is None else dict(params.thresholds.provenance)
     )
-    if thresholds.get("kind") != "census_capture" or (
-        thresholds.get("sha256") != ap.THRESHOLDS_SHA256
+    # Until the capture is committed the pin is None, and a table whose
+    # provenance simply omits its SHA-256 would otherwise compare equal to
+    # it: no threshold table passes while nothing is pinned.
+    if (
+        ap.THRESHOLDS_SHA256 is None
+        or thresholds.get("kind") != "census_capture"
+        or thresholds.get("sha256") != ap.THRESHOLDS_SHA256
     ):
         raise TrackURunError(
             "a registered run needs the committed, pinned Census threshold "
-            f"capture; the thresholds record {thresholds!r}"
+            "capture (adjusted_poverty.THRESHOLDS_SHA256 is "
+            f"{ap.THRESHOLDS_SHA256!r}); the thresholds record "
+            f"{thresholds!r}"
         )
     if params.ssi.provenance.get("kind") != "policyengine_us_capture" or (
         params.ssi.provenance.get("sha256") != ap.SSI_PARAMETERS_SHA256

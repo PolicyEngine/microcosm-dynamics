@@ -287,7 +287,9 @@ SSI_RULES: dict[str, str] = {
     "none": "no SSI response (row U2)",
     "full_static_recomputation": (
         "the offset plus take-up by every newly income- and "
-        "resource-eligible head/wife unit (row U3, an upper bound)"
+        "resource-eligible head/wife unit (row U3: the largest SSI "
+        "response of the three registered rules, not a bound on "
+        "DYNASIM's simulation)"
     ),
 }
 SSI_DEEMING: dict[str, str] = {

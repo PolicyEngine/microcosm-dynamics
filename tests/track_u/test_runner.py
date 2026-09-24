@@ -328,6 +328,51 @@ def test_a_registered_run_needs_the_committed_pinned_parameters(params):
     assert ap.THRESHOLDS_SHA256 is None
     with pytest.raises(runner.TrackURunError, match="pinned"):
         runner._check_parameters(fake_capture, ap.REGISTERED_REAL)
+    # regression (independent review, 2026-09-24): a table labelled as the
+    # capture whose provenance omits its SHA-256, or records None, matched
+    # the unset pin (None == None) and passed
+    for provenance in (
+        {"kind": "census_capture"},
+        {"kind": "census_capture", "sha256": None},
+    ):
+        unpinned = dataclasses.replace(
+            params,
+            thresholds=dataclasses.replace(
+                params.thresholds, provenance=provenance
+            ),
+        )
+        with pytest.raises(runner.TrackURunError, match="pinned"):
+            runner._check_parameters(unpinned, ap.REGISTERED_REAL)
+
+
+def test_a_pinned_capture_passes_the_parameter_check(params, monkeypatch):
+    """Once a capture is pinned, a table recording that SHA-256 passes and
+    any other is refused (the pin here is INVENTED; nothing is captured)."""
+
+    pin = "a" * 64
+    monkeypatch.setattr(ap, "THRESHOLDS_SHA256", pin)
+
+    def with_provenance(provenance):
+        return dataclasses.replace(
+            params,
+            thresholds=dataclasses.replace(
+                params.thresholds, provenance=provenance
+            ),
+        )
+
+    runner._check_parameters(
+        with_provenance({"kind": "census_capture", "sha256": pin}),
+        ap.REGISTERED_REAL,
+    )
+    for provenance in (
+        {"kind": "census_capture"},
+        {"kind": "census_capture", "sha256": "b" * 64},
+        {"kind": "invented", "sha256": pin},
+    ):
+        with pytest.raises(runner.TrackURunError, match="pinned"):
+            runner._check_parameters(
+                with_provenance(provenance), ap.REGISTERED_REAL
+            )
     invented_table = ap.LifeTable(
         name=ap.INVENTED_LIFE_TABLE,
         qx={sex: (0.1,) * 110 + (1.0,) for sex in ("male", "female")},
