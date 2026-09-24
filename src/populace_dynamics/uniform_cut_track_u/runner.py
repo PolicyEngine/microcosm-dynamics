@@ -96,8 +96,8 @@ NAMED_DELTAS: tuple[str, ...] = (
     "including the 2008-09 asset shock for the 1941-45 cohorts at 67",
     "realized COLAs versus 2002 Trustees assumptions",
     "immigrant under-coverage; institutionalized persons are outside the "
-    "universe (none of U0's target persons was in an institution at the "
-    "observation wave on the staged files); attrition",
+    "universe (on the staged files admitting them would add 1 observation "
+    "to U0's 483, born 1937, and none to U0-F's 320); attrition",
     "OFUM-owned assets inside family wealth",
     "the family's wealth stands in for an OFUM cohort member's own wealth "
     "(the Report's unit is the individual plus spouse, p. 24)",

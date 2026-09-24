@@ -16,8 +16,9 @@ AdjustedPovertySpec`; the defaults of those two classes are U0.
 Rows U6 (the cut's start year, on U1) and U-inst (institutions admitted)
 of u1-draft-3 and -4 are withdrawn in u1-draft-5 (second referee, S5 and
 S7): the primary now starts the cut in 2004 (``cut_start_year``), so U6
-would equal U1, and no U0 target person was in an institution at the
-observation wave on the staged PSID.
+would equal U1; the Census cannot determine poverty status for people in
+institutional group quarters, and on the staged PSID U-inst would add one
+U0 observation (born 1937) and none to U0-F.
 
 :data:`HEADLINE_RULE` is the specification's fallback rule (pending Max,
 with plan section 10 decision 3): U0 is the headline when the 2005 and

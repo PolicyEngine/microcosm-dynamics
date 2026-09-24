@@ -31,8 +31,10 @@ Universe per wave (F2): sequence 1-20 (in a responding family) with a
 positive cross-section weight.  Institutionalized persons (sequence
 51-59) are outside it and counted in the dispositions.  Row U-inst, which
 added them, was withdrawn in the specification's u1-draft-5 (second
-referee, S7: none of U0's target persons was in an institution at the
-observation wave on the staged PSID).  The unregistered code option
+referee, S7 and Q9: the Census cannot determine poverty status for people
+in institutional group quarters; on the staged PSID admitting them adds
+one U0 observation, born 1937, and none to U0-F).  The unregistered code
+option
 ``presence="in_family_or_institution"`` still admits them, and
 ``institution_income_rule`` (pending the freeze; no registered row reads
 it) then decides their income.  The PSID collects no income for an
@@ -405,11 +407,13 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
             ("in_family_or_institution",),
             "plan F2; row U-inst (institutions admitted) was withdrawn in "
             "u1-draft-5 (second referee, boomers2004-referee-2-20260924.md, "
-            "S7 and Q9): on the staged PSID none of U0's or U0-F's target "
-            "persons was in an institution at the observation wave, and the "
-            "Census cannot determine poverty status for people in "
-            "institutional group quarters; the alternative is an "
-            "unregistered code option",
+            "S7 and Q9): the Census cannot determine poverty status for "
+            "people in institutional group quarters, and on the staged PSID "
+            "admitting institutions adds one U0 observation (a 1937-born "
+            "person in no wave's in-family universe, in an institution in "
+            "the 2005 wave) and none to U0-F (structural counts, "
+            "u1-draft-5); "
+            "the alternative is an unregistered code option",
             freeze,
         ),
         psid2010.PendingDecision(

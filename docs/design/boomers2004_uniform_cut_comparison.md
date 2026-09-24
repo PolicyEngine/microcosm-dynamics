@@ -297,9 +297,40 @@ Four-way marital status (§9), summed from the same evidence's
 marital-status and resolution counts: U0 has 331 married (330 by the
 marriage history, 1 by relationship code), 44 widowed, 60 divorced, 14
 never married and 34 unclassified; U0-F has 227, 17, 43, 9 and 24; U1
-has 917, 124, 164, 49 and 95. No U0 or U0-F target person was in an
-institution at the observation wave (no `not_present:institution`
-disposition); U1 has 3 (1942: 2, 1944: 1).
+has 917, 124, 164, 49 and 95. No U0 or U0-F target person of the
+primary universe was in an institution at the observation wave (no
+`not_present:institution` disposition); U1 has 3 (1942: 2, 1944: 1).
+
+Recollected under `u1-draft-5`'s code (the same script at `b862d2d7`,
+evidence `EVID/track-u-structure-u1d5-20260924/`, counts only): the
+observation counts and every disposition equal the u1d4 evidence, and
+the four-way counts above are confirmed. By sex, U0-F's secondary cells
+hold: women married 97, widowed 14, divorced 30, never married 8,
+unclassified 16; men married 130, widowed 3, divorced 13, never married
+1, unclassified 8 (unweighted observations; the smallest secondary
+cells hold one to three people, second referee O1). Every annuitant age
+(the member's co-resident spouse, the head and the head's legal spouse)
+came from a derived birth year in U0, U0-F and U1; none fell back to the
+wave age (question 13). Question 11: in the computable observations
+every code-90 legal husband is himself the cohort member (2 in U0, all in
+U0-F's waves; 4 in U1), no cohort-member head has one, and in each of
+those families the family file records no `AGE OF WIFE` and no
+nonzero wife labor income or wife Social Security; so the family file
+does not carry these legal husbands in its "wife" fields, and U4 gives
+the husband himself the family-unit basis as an OFUM (§4). Question 14:
+in 2013 (U0's 1945 birth year, 111 observations) 2 heads' families
+report nonzero `HEAD ANNUITIES` and 5 nonzero `HEAD IRAS`, 7 in all (none
+both); the pooled 2009 and 2011 item (`HEAD ANNUITIES`, annuities and
+IRAs) is nonzero for 5 and 6. The withdrawn row U-inst's settings
+(`presence = in_family_or_institution`, `family_of_record`), built for
+each row in the same evidence (`institution-option-check.json`): U0 has
+484 observations, one more than the primary: a 1937-born person in an
+institution in the 2005 wave who is in no wave's in-family universe, so
+not in the primary universe at all (admitting institutions grows the
+universe the birth-year law runs over from 30,674 to 30,753 persons);
+U0-F is unchanged at 320;
+U1 has 1,353 (the 3 above plus that person). Under `excluded` every row
+equals the primary. No income, threshold or poverty status was computed.
 
 ## 4. Income concept
 
@@ -315,7 +346,9 @@ member keeps the family-unit basis. In code the co-resident wife or
 partner is the family file's `AGE OF WIFE` not 0 (`wife_present`), so
 for a female head whose legal spouse is a code-90 legal husband U4's
 size is 2 only where the family file records an age in the "wife" field
-for him (question 11).
+for him (question 11). On the staged files no computable cohort member
+is such a head, and none of the families of the code-90 husbands who are
+cohort members records an `AGE OF WIFE` (§3).
 
 **Tax treatment and co-resident basis.** The primary is pre-tax (`TOTAL
 FAMILY INCOME`). The Report states tax treatment only for
@@ -794,12 +827,18 @@ different one (`scripts/run_track_u_registered.py --headline-row`).
 
 Institutionalized persons (sequence 51–59) are outside the universe and
 counted in the dispositions. Row U-inst of `u1-draft-3` and `-4` is
-withdrawn: on the staged PSID none of U0's or U0-F's target persons was
-in an institution at the observation wave (u1d4 structural counts,
-dispositions; U1 has 3), so U-inst would add no institutionalized
-observation, and the Census cannot determine poverty status for people
-in institutional group quarters. The `family_of_record` rule stays in the
-code as an unregistered option.
+withdrawn: the Census cannot determine poverty status for people in
+institutional group quarters, and `family_of_record` would measure a
+family's poverty and assign it to someone the family's size and income
+leave out (the second referee's Q9 answer). On the staged PSID the row
+is nearly vacuous: none of the primary universe's U0 or U0-F target
+persons was in an institution at the observation wave (u1d4 structural
+counts, dispositions; U1 has 3), but admitting institutions also admits
+persons who appear only through institution records, and that adds one
+U0 observation (born 1937, in the 2005 wave, which the fallback blocks)
+and none to U0-F (§3; the second referee's reason, that U-inst adds no
+observation, holds for U0-F only). The `family_of_record` rule stays in
+the code as an unregistered option.
 
 Row U6 of `u1-draft-3` and `-4` (the cut's start year on U1) is
 withdrawn: the primary now starts the cut in 2004 (§7), so U6 would
@@ -815,7 +854,7 @@ found while building). Each bullet is the text of
 - PSID versus SIPP wealth measurement;
 - realized 2004-2012 history versus DYNASIM's 1992-based projection, including the 2008-09 asset shock for the 1941-45 cohorts at 67;
 - realized COLAs versus 2002 Trustees assumptions;
-- immigrant under-coverage; institutionalized persons are outside the universe (none of U0's target persons was in an institution at the observation wave on the staged files); attrition;
+- immigrant under-coverage; institutionalized persons are outside the universe (on the staged files admitting them would add 1 observation to U0's 483, born 1937, and none to U0-F's 320); attrition;
 - OFUM-owned assets inside family wealth;
 - the family's wealth stands in for an OFUM cohort member's own wealth (the Report's unit is the individual plus spouse, p. 24);
 - the Report's total income lists income from financial assets, imputed rent, Social Security, DB pensions, retirement-account income, earnings, SSI and non-spouse co-resident income (p. 31, cleared extract), and its poverty income is described only as differing from Census money income by the annuity (p. 24); the primary keeps every other PSID money-income source (veterans' pensions, unemployment and workers' compensation, TANF and other welfare, child support, alimony, help from relatives and others, miscellaneous transfers);
@@ -1324,7 +1363,13 @@ answers replace the questions.
    institutionalized observation, and `family_of_record` would measure a
    family's poverty and assign it to someone the family's size and income
    leave out. Adopted: U-inst is withdrawn (S7) and `excluded` is the
-   code default of the unregistered option.
+   code default of the unregistered option. The count is corrected: the
+   referee's unverified caveat was about seed waves, but admitting
+   institutions also enlarges the universe the birth-year law runs over,
+   and that brings in one 1937-born U0 target person who is in no wave's
+   in-family universe, so U-inst would add 1 observation to U0's 483
+   (none to U0-F's 320; U1 gains 4, not 3). The conceptual reasons
+   stand, so the withdrawal stands (§3, §11).
 10. **The cut keyed on the age-67 year.** Answer: yes; the Report
     analyses each person "when they reach age 67" (p. 24) and cuts
     benefits "beginning in 2004" (pp. 37, 44, cleared extract). Adopted
@@ -1384,7 +1429,7 @@ page.
 | S4 (comparator interval) | Applied as written. The difference bound follows from \|(a′ − b′) − (a − b)\| ≤ \|a′ − a\| + \|b′ − b\| ≤ 1 |
 | S5 (start year 2004) | Applied. Verified in the extract (PDF pp. 38 and 45, printed 37 and 44; the exposure arithmetic puts 1936 at 67 in 2003) and p. 24. `cut_start_year` defaults to 2004 with alternative `None`; U6 is withdrawn; §7, §9, §11, §13, §16 and the tests follow |
 | S6 (named deltas) | Applied as written. Verified: the p. 31 list and p. 24's contrast in the extract; the transfer items are `data/family_income.py` labels (for 2004: ER27954 TANF, ER27958 other welfare, ER27960 VA pension, ER27968 unemployment compensation, ER27970 workers compensation, ER27972 child support, ER27974 alimony, ER27976 and ER27978 help from relatives and others, ER27980 miscellaneous transfers). `runner.NAMED_DELTAS` changed with it |
-| S7 (withdraw U-inst) | Applied. Verified: the u1d4 dispositions list no `not_present:institution` for any U0 or U0-F birth year and 3 for U1 (1942: 2; 1944: 1); the Census sentence on institutional group quarters (census.gov, fetched 2026-09-24). Beyond S7, the code default of `institution_income_rule` is now `excluded` (the Q9 answer), and §3 records a check of the referee's unverified caveat (the seed wave) |
+| S7 (withdraw U-inst) | Applied, with its count corrected. Verified: the u1d4 dispositions list no `not_present:institution` for any U0 or U0-F birth year and 3 for U1 (1942: 2; 1944: 1); the Census sentence on institutional group quarters (census.gov, fetched 2026-09-24). Not verified as written: "U-inst would add no institutionalized observation". Building the rows with institutions admitted (§3) adds one U0 observation, a 1937-born person in no wave's in-family universe, because admitting institutions enlarges the birth-year law's universe; U0-F is unchanged. The §3, §11 and §12 texts say so instead of S7's "none of U0's target persons". The withdrawal stands on the Census and Q9 reasons. Beyond S7, the code default of `institution_income_rule` is now `excluded` (the Q9 answer) |
 | S8 (alternatives on U0-F) | Applied. `rows.FALLBACK_ALTERNATIVES` builds U2-F … U10-F from the U0 rows; each awaits the fallback rule. Under the fallback the runner computes them and blocks the U0 versions (test). Wording: §11 says U1 and U0-F "change the population itself" where S8 had "except U1 and U0-F" |
 | S9 (record the extract and this pass) | Applied. The builder-boundary sentence on the values scan also records what `RESTRICTED-FILES.md` said when re-read during this pass |
 
