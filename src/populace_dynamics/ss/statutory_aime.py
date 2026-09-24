@@ -81,7 +81,9 @@ Section 104(j)(2) of the Social Security Amendments of 1972 (Pub. L.
 Amendment" under 42 USC 414 (law.cornell.edu/uscode/text/42/414, read
 2026-09-24, page SHA-256
 ``731e1dbc8648c689d2d97546980739a1a53477da0669d566d3d32ec9f3966a2d``;
-bracketed text is the note's)::
+the bracketed citation is the note's and ``[...]`` marks the rest of the
+paragraph, omitted here; unlike the 415(b) text, no copy of this page is
+saved with the evidence)::
 
     In the case of a man who attains age 62 prior to 1975, the number of
     his elapsed years for purposes of section 215(b)(3) of the Social
@@ -124,6 +126,9 @@ approximation this module applies silently):
   12-month rule of 415(a)(3)(B); a death after a disability entitlement is
   refused;
 * 104(j)(2) of the 1972 amendments and the 1960 condition (see above);
+* dates within a year: the year in which the worker attains 21 or 62 is
+  taken to be the birth year plus that age (the oracle has birth years
+  only, as in ``ss.benefits``);
 * the choice of computation base years (415(b)(2)(B)(ii)): like
   ``benefits.aime``, the AIME ranks every year the caller supplies, and
   the caller applies the entitlement or death cutoff.  Years before 1951

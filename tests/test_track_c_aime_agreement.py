@@ -19,8 +19,11 @@ from pathlib import Path
 import pytest
 
 import populace_dynamics.axiom_benefit_bridge as bridge
+from populace_dynamics import scenario_benefits as sb
+from populace_dynamics.cola_track_a.benefits import TRACK_A_COMPUTATION_YEARS
 from populace_dynamics.ss import benefits
 from populace_dynamics.ss.params import SSAParameters
+from populace_dynamics.ss.statutory_aime import ComputationYears
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -216,6 +219,56 @@ def test_oracle_arithmetic_at_35_years_is_the_oracle():
     )
     fewer = tc.oracle_arithmetic_with_count(career, 1930, INVENTED_PARAMS, 20)
     assert fewer > tc.oracle_aime(career, 1930, INVENTED_PARAMS)
+
+
+def test_the_oracle_side_is_track_a_s_legacy_convention():
+    # The attribution counts disagreements "instead of the oracle's fixed
+    # 35", so the oracle side must be Track A's legacy convention.
+    assert tc.ORACLE_CONVENTION is ComputationYears.LEGACY_FIXED_35
+    assert TRACK_A_COMPUTATION_YEARS is tc.ORACLE_CONVENTION
+    assert tc.ORACLE_COMPUTATION_YEARS == 35
+    tc.require_track_a_convention()
+    tc.require_track_a_convention(ComputationYears.LEGACY_FIXED_35)
+    with pytest.raises(SystemExit, match="statutory_415_b_2"):
+        tc.require_track_a_convention(ComputationYears.STATUTORY)
+    # INVENTED career of a person born 1925 (31 statutory computation
+    # years): the oracle side is still the fixed-35 benefits.aime.
+    career = _career(1925)
+    assert tc.oracle_aime(career, 1925, INVENTED_PARAMS) == benefits.aime(
+        career, 1925, INVENTED_PARAMS
+    )
+
+
+def test_track_a_pia_check_passes_track_a_s_computation_years(monkeypatch):
+    # INVENTED people born 1925 and 1960.  The check calls
+    # eligibility_pia_for_clock as Track A's assembly does; its default
+    # (the statutory count) gives the 1925 person another PIA, so a call
+    # without computation_years would stop the real run with a PIA
+    # mismatch for everyone born before 1929.
+    people = [_person(1, 1925), _person(2, 1960)]
+    tc.check_track_a_pia(people, INVENTED_PARAMS)
+    early = people[0]
+    statutory = sb.eligibility_pia_for_clock(
+        sb.WorkerClock.at_age_62(1925),
+        history=early.career,
+        birth_year=1925,
+        params=INVENTED_PARAMS,
+    )
+    oracle = benefits.pia(
+        tc.oracle_aime(early.career, 1925, INVENTED_PARAMS),
+        1987,
+        INVENTED_PARAMS,
+    )
+    assert statutory != oracle
+    # A PIA that does not rest on the oracle AIME is refused.
+    original = tc.oracle_aime
+    monkeypatch.setattr(
+        tc,
+        "oracle_aime",
+        lambda career, birth, params: original(career, birth, params) + 100,
+    )
+    with pytest.raises(ValueError, match="1: PIA mismatch"):
+        tc.check_track_a_pia(people, INVENTED_PARAMS)
 
 
 def test_transport_zero_fills_outside_the_panel_and_labels_rows():

@@ -5,8 +5,12 @@ transitional Python oracle computes in Track A, this script records
 
 * the oracle's AIME, computed exactly as Track A computes it
   (``ss.benefits.aime`` over the person's Track A career, indexed to the
-  year of attaining 60, the call ``scenario_benefits.
-  eligibility_pia_for_clock`` makes for the age-62 clock), with Track A's
+  year of attaining 60: the call ``scenario_benefits.
+  eligibility_pia_for_clock`` makes for the age-62 clock under Track A's
+  computation-year convention, ``cola_track_a.benefits.
+  TRACK_A_COMPUTATION_YEARS`` = ``ComputationYears.LEGACY_FIXED_35``; the
+  function's default, the statutory 42 USC 415(b)(2) count, differs for
+  people born before 1929), with Track A's
   statutory parameters (the committed capture before 1975, the TR2008
   intermediate AWI from 1975: ``cola_track_a.runner.tr2008_ssa_parameters``);
 * the AIME the actual Axiom rules engine returns for the same person,
@@ -92,9 +96,13 @@ from populace_dynamics import axiom_benefit_bridge as bridge  # noqa: E402
 from populace_dynamics import scenario_benefits as sb  # noqa: E402
 from populace_dynamics.cola_track_a.benefits import (  # noqa: E402
     FIRST_ORACLE_ELIGIBILITY_YEAR,
+    TRACK_A_COMPUTATION_YEARS,
 )
-from populace_dynamics.ss import benefits  # noqa: E402
+from populace_dynamics.ss import benefits, statutory_aime  # noqa: E402
 from populace_dynamics.ss.params import SSAParameters  # noqa: E402
+from populace_dynamics.ss.statutory_aime import (  # noqa: E402
+    ComputationYears,
+)
 
 SCHEMA_VERSION = "populace_dynamics.track_c.aime_agreement.v1"
 HEADER = (
@@ -118,6 +126,10 @@ DEFAULT_OUTPUT_DIR = Path(
 PANEL_FIRST_YEAR = 1968
 #: The oracle's fixed benefit computation years (ss.benefits).
 ORACLE_COMPUTATION_YEARS = 35
+#: The computation-year convention of the oracle side: Track A's.  The
+#: attribution and the report text assume it is the legacy fixed 35
+#: (:data:`ORACLE_COMPUTATION_YEARS`); :func:`main` refuses to run otherwise.
+ORACLE_CONVENTION = ComputationYears.LEGACY_FIXED_35
 _RETIREMENT_AGE = 62
 _INDEXING_AGE = 60
 _MONTHS = 12
@@ -322,9 +334,60 @@ def candidate_computation_years(birth_year: int) -> int:
 def oracle_aime(
     career: Mapping[int, float], birth_year: int, params: SSAParameters
 ) -> int:
-    """Track A's oracle AIME (``eligibility_pia_for_clock``'s call)."""
+    """Track A's oracle AIME (``eligibility_pia_for_clock``'s call).
 
-    return benefits.aime(dict(career), int(birth_year), params)
+    ``ss.statutory_aime.oracle_aime`` under :data:`ORACLE_CONVENTION`,
+    which is ``ss.benefits.aime`` (always 35 years).
+    """
+
+    return statutory_aime.oracle_aime(
+        dict(career),
+        int(birth_year),
+        params,
+        computation_years=ORACLE_CONVENTION,
+    )
+
+
+def require_track_a_convention(
+    track_a_convention: ComputationYears = TRACK_A_COMPUTATION_YEARS,
+) -> None:
+    """Refuse to run unless Track A still uses :data:`ORACLE_CONVENTION`."""
+
+    if ComputationYears(track_a_convention) is not ORACLE_CONVENTION:
+        raise SystemExit(
+            "Track A's oracle computation years are "
+            f"{ComputationYears(track_a_convention).value}; this script "
+            f"compares against {ORACLE_CONVENTION.value} "
+            f"({ORACLE_COMPUTATION_YEARS} years) and must be updated first"
+        )
+
+
+def check_track_a_pia(
+    inputs: Iterable[PersonInput], params: SSAParameters
+) -> None:
+    """Fail unless Track A's retirement PIA rests on :func:`oracle_aime`.
+
+    Calls ``eligibility_pia_for_clock`` as Track A's assembly does, with
+    ``computation_years=TRACK_A_COMPUTATION_YEARS``.  The function's
+    default is the statutory count, which gives a different PIA to people
+    born before 1929.
+    """
+
+    for person in inputs:
+        birth = person.selection.birth_year
+        track_a_pia = sb.eligibility_pia_for_clock(
+            sb.WorkerClock.at_age_62(birth),
+            history=person.career,
+            birth_year=birth,
+            params=params,
+            computation_years=TRACK_A_COMPUTATION_YEARS,
+        )
+        if track_a_pia != benefits.pia(
+            oracle_aime(person.career, birth, params),
+            birth + _RETIREMENT_AGE,
+            params,
+        ):
+            raise ValueError(f"{person.selection.person_id}: PIA mismatch")
 
 
 def oracle_arithmetic_with_count(
@@ -1003,7 +1066,8 @@ def render_results(result: Mapping[str, Any]) -> str:
     add(
         "- Oracle side: `ss.benefits.aime(career, birth_year, params)`, "
         "the call `scenario_benefits.eligibility_pia_for_clock` makes for "
-        "Track A's age-62 clock, with Track A's parameters "
+        "Track A's age-62 clock under Track A's computation-year "
+        "convention (`LEGACY_FIXED_35`), with Track A's parameters "
         f"(`{result['parameters']['track_a_revision']}`). It limits each "
         "year to the contribution and benefit base, indexes to the year of "
         "attaining 60, takes the highest 35 years (absent years count as "
@@ -1382,6 +1446,7 @@ _SOURCES = (
     "scripts/track_c_aime_agreement.py",
     "src/populace_dynamics/axiom_benefit_bridge.py",
     "src/populace_dynamics/ss/benefits.py",
+    "src/populace_dynamics/ss/statutory_aime.py",
     "src/populace_dynamics/ss/params.py",
     "src/populace_dynamics/scenario_benefits.py",
     "src/populace_dynamics/cola_track_a/benefits.py",
@@ -1601,6 +1666,7 @@ def main(argv: list[str] | None = None) -> int:
     output = args.output_dir.expanduser()
     if (output / "result.json").exists():
         raise SystemExit(f"{output / 'result.json'} exists; not overwriting")
+    require_track_a_convention()
     binding = bridge.reviewed_case_a_binding()
     binding.verify()
     params, base, parameter_info = _parameters()
@@ -1655,20 +1721,7 @@ def main(argv: list[str] | None = None) -> int:
         for s in selected
     ]
     # Track A's PIA rests on exactly this AIME (eligibility_pia_for_clock).
-    for person in inputs:
-        birth = person.selection.birth_year
-        track_a_pia = sb.eligibility_pia_for_clock(
-            sb.WorkerClock.at_age_62(birth),
-            history=person.career,
-            birth_year=birth,
-            params=params,
-        )
-        if track_a_pia != benefits.pia(
-            oracle_aime(person.career, birth, params),
-            birth + _RETIREMENT_AGE,
-            params,
-        ):
-            raise ValueError(f"{person.selection.person_id}: PIA mismatch")
+    check_track_a_pia(inputs, params)
     wage_index = track_a_wage_index(params)
     base_series = track_a_contribution_base(
         params, bridge.FIRST_COMPUTATION_BASE_YEAR, cutoff
