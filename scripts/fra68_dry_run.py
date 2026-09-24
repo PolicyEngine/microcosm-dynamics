@@ -138,8 +138,10 @@ FRA68_GAPS: tuple[dict[str, str], ...] = (
             "for 1956, where 402(q)(1) reduces an excess that starts at "
             "the FRA not at all. Exercise 3 keeps Track A's count in both "
             "scenarios (the baseline start moved by the FRA increase), so "
-            "the reform leaves these excesses unchanged, as the statute "
-            "does, at Track A's reduced level. Counted, not fixed (benefit "
+            "the reform leaves an excess paid in both scenarios unchanged, "
+            "as the statute does, at Track A's reduced level (a worker the "
+            "reform has not converted by 2030 is still a disabled worker "
+            "there and draws none). Counted, not fixed (benefit "
             "counters fra68_spouse_excess_on_conversion_claim and "
             "fra68_spouse_excess_on_conversion_claim_months_early)"
         ),
@@ -440,7 +442,10 @@ def _results_markdown(result: dict[str, Any]) -> str:
         "conversion claim, summed over draws; in parentheses, those whose "
         "months early are positive (Track A's whole-year conversion count; "
         "402(q)(1) reduces none of them). Each reform keeps the baseline "
-        "count, so these excesses are the same in both scenarios.",
+        "count, so an excess paid in both scenarios has the same amount in "
+        "each; a worker the reform has not converted by 2030 is still a "
+        "disabled worker there and draws none, and under C1 and C2 a moved "
+        "worker claim can start the excess later.",
         "",
         "| Row | Baseline | Reform |",
         "|---|---|---|",
