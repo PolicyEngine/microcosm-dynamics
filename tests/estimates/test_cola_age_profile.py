@@ -152,6 +152,41 @@ def _five_group_rows():
 
 
 # =========================================================================
+# The statistic identifier
+# =========================================================================
+def test_statistic_id_defaults_to_exercise_1():
+    result = _tabulate(_five_group_rows(), draw_indices=(0, 1))
+    assert result["statistic_id"] == cap.STATISTIC_ID
+    assert cap.STATISTIC_ID == (
+        "dynasim_exercise1_cola_minus_1pp_reference_year_age_profile"
+    )
+
+
+def test_statistic_id_is_recorded_and_nothing_else_changes():
+    rows = _five_group_rows()
+    default = _tabulate(rows, draw_indices=(0, 1))
+    other = tabulate_cola_age_profile(
+        rows,
+        data_provenance="invented",
+        config=_config(draw_indices=(0, 1)),
+        statistic_id="invented_exercise_id",
+    )
+    assert other["statistic_id"] == "invented_exercise_id"
+    assert {**other, "statistic_id": cap.STATISTIC_ID} == default
+
+
+@pytest.mark.parametrize("value", ["", "  ", None, 3])
+def test_statistic_id_must_be_a_non_empty_string(value):
+    with pytest.raises(ColaTabulationError, match="statistic_id"):
+        tabulate_cola_age_profile(
+            _five_group_rows(),
+            data_provenance="invented",
+            config=_config(draw_indices=(0, 1)),
+            statistic_id=value,
+        )
+
+
+# =========================================================================
 # Defaults are the plan's proposed primaries
 # =========================================================================
 def test_default_config_is_the_plans_proposed_primary():

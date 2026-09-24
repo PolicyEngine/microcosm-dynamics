@@ -149,6 +149,7 @@ __all__ = [
     "SCENARIO_SPECIFIC",
     "SCHEMA_VERSION",
     "STATISTICS",
+    "STATISTIC_ID",
     "WORKERS_ONLY_COMPONENTS",
     "AgeGroup",
     "ColaAgeProfileConfig",
@@ -1493,6 +1494,7 @@ def tabulate_cola_age_profile(
     registration_pointer: str | None = None,
     labels: Sequence[str] = (),
     upstream_conventions: Mapping[str, Any] | None = None,
+    statistic_id: str = STATISTIC_ID,
 ) -> dict[str, Any]:
     """Tabulate the exercise-1 age profile from per-person-per-draw rows.
 
@@ -1502,6 +1504,11 @@ def tabulate_cola_age_profile(
     without the invented-data label; the pointer is recorded, not verified.
     ``upstream_conventions`` (JSON scalars, e.g. the first-application or
     exposure-clock row that produced the benefits) is recorded verbatim.
+    ``statistic_id`` names the exercise the result belongs to and is
+    recorded verbatim; the default is exercise 1's identifier
+    (:data:`STATISTIC_ID`), so exercise-1 callers are unchanged.  Another
+    exercise that reuses this five-group statistic (for example DynaSim
+    exercise 3, the full retirement age raised to 68) passes its own.
 
     Returns a JSON-serializable mapping.  Raises
     :class:`MembershipDifferenceError` when scenario memberships differ and
@@ -1513,6 +1520,8 @@ def tabulate_cola_age_profile(
     config = ColaAgeProfileConfig() if config is None else config
     if not isinstance(config, ColaAgeProfileConfig):
         raise ColaTabulationError("config must be a ColaAgeProfileConfig")
+    if not isinstance(statistic_id, str) or not statistic_id.strip():
+        raise ColaTabulationError("statistic_id must be a non-empty string")
     if isinstance(labels, str):
         raise ColaTabulationError("labels must be a sequence of strings")
     labels = tuple(labels)
@@ -1563,7 +1572,7 @@ def tabulate_cola_age_profile(
         output_labels.insert(0, INVENTED_DATA_LABEL)
     return {
         "schema_version": SCHEMA_VERSION,
-        "statistic_id": STATISTIC_ID,
+        "statistic_id": statistic_id,
         "data_provenance": data_provenance,
         "registration_pointer": registration_pointer,
         "labels": output_labels,
