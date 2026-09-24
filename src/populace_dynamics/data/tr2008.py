@@ -42,13 +42,17 @@ Each accessor that assembles a path returns entries tagged with one of:
 ``realized_splice``
     Supplied by the caller through the ``realized`` argument.
 
-Choices awaiting a ruling
--------------------------
-Max ruled the plan's section 6 decisions on 2026-09-23 but has not
-ratified the A1 specification.  Choices that depend on the ratification
-are keyword arguments;
-``PENDING_RULINGS`` lists each one with its default and whether the default
-is the plan's named proposal or this module's proposal.
+Builder-default choices
+-----------------------
+The choices this module exposes are keyword arguments;
+``PENDING_RULINGS`` lists each one with its default and whether the
+default is the plan's named proposal or this module's proposal.  No
+ruling of Max's covers them (his 2026-09-23 rulings are plan section 6
+decisions 1-3 and A1 referee questions 10 and 11): A1 section 22 lists
+the A2 substitutes as builder defaults that the A1 ratification and the
+issue #42 registration fix.  A1 section 4 takes the intermediate rate
+path, and A1 section 15 freezes mortality to the substitute A2/A4 name
+(:data:`MORTALITY_SUBSTITUTE_STANDING`).
 """
 
 from __future__ import annotations
@@ -75,6 +79,8 @@ __all__ = [
     "GAPS",
     "Gap",
     "LifeTableRow",
+    "MORTALITY_SUBSTITUTE",
+    "MORTALITY_SUBSTITUTE_STANDING",
     "PENDING_RULINGS",
     "PendingRuling",
     "STUDY_118_AGE_GROUPS",
@@ -156,9 +162,35 @@ LAST_V_C1_AWI_YEAR = 2017
 LAST_HISTORICAL_V_C1_YEAR = 2006
 
 
+#: The A2 mortality substitute (:func:`mortality_improvement_ratio` applied
+#: to :func:`period_life_table_2004`), described once so that every record
+#: of it (this module, the Track A mortality provenance and the Track A
+#: gaps) reads the same.
+MORTALITY_SUBSTITUTE = (
+    "SSA 2004 period life table x TR2008 V.A1 age-sex-adjusted death-rate "
+    "ratio (projection year / base year) for the under-65 or 65-and-over "
+    "group"
+)
+#: Its standing under the A1 specification.  A1 section 15 freezes
+#: mortality by age and sex to the "substitute named by A2/A4"; A1 section
+#: 22 lists the A2 substitutes (``PENDING_RULINGS``) as builder defaults,
+#: which no ruling of Max's covers, fixed only by the A1 ratification and
+#: the issue #42 registration.
+MORTALITY_SUBSTITUTE_STANDING = (
+    "a builder default, not a ruling: A1 section 15 freezes mortality to "
+    "the substitute A2/A4 name, and A1 section 22 lists it among the "
+    "builder defaults that the A1 ratification and the issue #42 "
+    "registration fix"
+)
+
+
 @dataclass(frozen=True)
 class PendingRuling:
-    """A choice exposed as a parameter until Max rules on it."""
+    """A builder-default choice exposed as a parameter (no ruling covers it).
+
+    The name is historical: these were listed while the A1 specification
+    awaited ratification, and A1 section 22 cites them by this name.
+    """
 
     parameter: str
     accessor: str
@@ -175,7 +207,8 @@ PENDING_RULINGS: tuple[PendingRuling, ...] = (
         alternatives=("low_cost", "high_cost"),
         default_basis=(
             "Plan section 4 A1 table, 'Rate path': proposed primary is the "
-            "TR2008 intermediate path (not adopted)."
+            "TR2008 intermediate path, which A1 section 4 takes (no "
+            "alternative row)."
         ),
     ),
     PendingRuling(
@@ -215,7 +248,8 @@ PENDING_RULINGS: tuple[PendingRuling, ...] = (
             "TR2008 does not publish age-specific projected death rates. "
             "Plan A1 row 'Parameters where TR2008 is unavailable: named "
             "substitute, each listed'. This scaling is this module's "
-            "proposed substitute, not adopted."
+            f"substitute ({MORTALITY_SUBSTITUTE}): "
+            f"{MORTALITY_SUBSTITUTE_STANDING}."
         ),
     ),
     PendingRuling(
@@ -268,7 +302,7 @@ GAPS: tuple[Gap, ...] = (
             "downloaded; whether it tabulates age-sex rates is unknown "
             "(sources.json located_not_committed)."
         ),
-        status="substitute proposed, not adopted",
+        status=f"substitute named: {MORTALITY_SUBSTITUTE_STANDING}",
     ),
     Gap(
         series="COLA for determination years 2018-2030",
@@ -277,7 +311,10 @@ GAPS: tuple[Gap, ...] = (
         substitute=(
             "Ultimate CPI (II.C1), matching the plan's proposed rate path."
         ),
-        status="derived; plan-named proposal, not adopted",
+        status=(
+            "derived; A1 section 4 sets 2018-2030 at 2.8 percent, the "
+            "intermediate ultimate CPI rate"
+        ),
     ),
     Gap(
         series="DI incidence rates by age and sex",
@@ -655,7 +692,8 @@ def cola_path(
     projects (later years raise ``KeyError``).  ``post_2017="none"`` refuses
     years TR2008 does not print.  ``realized`` with ``last_realized_year``
     replaces years up to and including that year with caller-supplied values
-    (a choice awaiting a ruling; see ``PENDING_RULINGS``).
+    (a builder-default choice, ``PENDING_RULINGS``; A1's section 21 block
+    forbids a realized-series substitution in the rate path).
     """
     _check_alternative(alternative)
     if post_2017 not in POST_2017_CHOICES:
@@ -749,8 +787,8 @@ def awi_path(
     estimates from 2007).  With ``realized`` and ``last_realized_year`` = Y,
     years up to Y use the realized values and each later year ``t`` is
     ``realized[Y] * AWI_TR2008(t) / AWI_TR2008(Y)``, i.e. TR2008 growth
-    chained onto the last realized level.  Which (if any) splice to use
-    awaits a ruling (``PENDING_RULINGS``).
+    chained onto the last realized level.  No splice is the builder
+    default (``PENDING_RULINGS``).
     """
     _check_alternative(alternative)
     if first_year > last_year:
@@ -916,16 +954,17 @@ def mortality_improvement_ratio(
     base_year: int = 2004,
     basis: Literal["asadr_broad_age_group"] = "asadr_broad_age_group",
 ) -> float:
-    """Proposed substitute for TR2008's unpublished age-specific mortality.
+    """The A2 substitute for TR2008's unpublished age-specific mortality.
 
     Returns ``ASADR(year, g) / ASADR(base_year, g)`` where ``g`` is the V.A1
     group containing ``age`` (under 65, or 65 and over).  Multiplying the
     2004 period ``qx`` by this ratio is one way to make a year-aware table;
     it is a derivation from published aggregates, not a TR2008 assumption,
-    and it awaits ratification (``PENDING_RULINGS``).  With the default
+    and :data:`MORTALITY_SUBSTITUTE_STANDING` states its standing under A1
+    (``PENDING_RULINGS``).  With the default
     ``base_year=2004`` the 65-and-over ratio is above 1 in 2005-2012
     (intermediate), because V.A1's 2004 rate is below its 2005-2007
-    estimates; the ``base_year`` ruling records this.
+    estimates; the ``base_year`` entry of ``PENDING_RULINGS`` records this.
     """
     if basis != "asadr_broad_age_group":
         raise ValueError(f"unknown mortality substitute basis {basis!r}")
