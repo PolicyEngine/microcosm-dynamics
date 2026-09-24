@@ -287,12 +287,111 @@ def test_u1_adds_even_birth_years_at_half_weight():
     assert obs.loc["5001:2005", "weight_multiplier"] == 1.0
 
 
-def test_institution_option_marks_the_missing_income_rule():
-    cohort = age67.build_age67_cohort(
-        _inputs(), age67.Age67Spec(presence="in_family_or_institution")
+def _with_institution_member() -> age67.Age67Inputs:
+    """Invented: person 9001 (no marriage history, female) is in an
+    institution in 2009 (sequence 52), attached to family 11."""
+
+    anchors = _anchors()
+    for wave, frame in anchors.items():
+        row = (
+            (9001, 11, 52, 30, 67, 70.0)
+            if wave == 2009
+            else (9001, 0, 0, 0, 0, 0.0)
+        )
+        extra = pd.DataFrame(
+            [row],
+            columns=[
+                "person_id",
+                "interview",
+                "sequence",
+                "relationship",
+                "age",
+                "weight",
+            ],
+        )
+        extra["reported_birth_year"] = pd.array([pd.NA], dtype="Int64")
+        anchors[wave] = pd.concat([frame, extra], ignore_index=True)
+    base = _inputs()
+    return _inputs(
+        anchors=anchors,
+        design=pd.concat(
+            [
+                base.design,
+                pd.DataFrame(
+                    {"person_id": [9001], "stratum": [1], "cluster": [2]}
+                ),
+            ],
+            ignore_index=True,
+        ),
+        death_records=pd.concat(
+            [
+                base.death_records,
+                pd.DataFrame({"person_id": [9001], "sex": ["female"]}),
+            ],
+            ignore_index=True,
+        ),
     )
+
+
+def test_institution_rule_family_of_record_is_the_default():
+    """U-inst: the institutionalized member takes its family of record.
+
+    Invented 9001 is in an institution in 2009 attached to family 11
+    (person 1001's family): the observation is an OFUM of that family,
+    with no co-resident spouse, and merges family 11's income and wealth.
+    """
+
+    assert age67.Age67Spec().institution_income_rule == "family_of_record"
+    inputs = _with_institution_member()
+    spec = age67.Age67Spec(presence="in_family_or_institution")
+    cohort = age67.build_age67_cohort(inputs, spec)
     obs = cohort.observations.set_index("observation_id")
-    assert obs.loc["7001:2007", "income_status"] == "income_rule_missing"
+    member = obs.loc["9001:2009"]
+    assert member["in_institution"]
+    assert member["income_status"] == "family_of_record"
+    assert member["member_role"] == "ofum"
+    assert member["relationship"] == 30
+    assert not member["member_married_coresident"]
+    assert member["family_unit_id"] == 2009 * 100_000 + 11
+    assert member["birth_year"] == 1941
+    assert not obs.loc["1001:2009", "in_institution"]
+    rows = age67.income_rows(cohort, inputs, allow_blocked=True)
+    merged = rows.set_index("observation_id")
+    # family 11 is the first 2009 family record: income 1,000, wealth 500
+    assert merged.loc["9001:2009", "total_family_income"] == 1000
+    assert merged.loc["9001:2009", "wealth1"] == 500
+    assert merged.loc["9001:2009", "fu_size"] == 1
+    # the default population (in family only) never sees the member: it
+    # is in no wave's in-family universe
+    default = age67.build_age67_cohort(inputs)
+    assert "9001:2009" not in set(default.observations["observation_id"])
+    assert (9001, 2009) not in _dispositions(default)
+
+
+def test_institution_rule_excluded_and_missing_family_of_record():
+    inputs = _with_institution_member()
+    excluded = age67.build_age67_cohort(
+        inputs,
+        age67.Age67Spec(
+            presence="in_family_or_institution",
+            institution_income_rule="excluded",
+        ),
+    )
+    assert "9001:2009" not in set(excluded.observations["observation_id"])
+    assert _dispositions(excluded)[(9001, 2009)] == (
+        "institution_excluded_by_rule"
+    )
+    # 7001 is in an institution in 2007 attached to interview 7, which has
+    # no 2007 family-file record in the invented frames
+    cohort = age67.build_age67_cohort(
+        inputs, age67.Age67Spec(presence="in_family_or_institution")
+    )
+    assert "7001:2007" not in set(cohort.observations["observation_id"])
+    assert _dispositions(cohort)[(7001, 2007)] == (
+        "institution_family_of_record_missing"
+    )
+    with pytest.raises(ValueError, match="institution_income_rule"):
+        age67.Age67Spec(institution_income_rule="own_income")
 
 
 def test_income_rows_refuse_blocked_observations_unless_allowed():

@@ -50,6 +50,13 @@ primary, and :func:`pending_decisions` lists them):
   :func:`load_poverty_thresholds`).
 * **Cut** (F11).  Reform income subtracts ``cut_rate`` (0.13) times all
   Social Security of the unit; there is no behavioural response.
+  ``cut_start_year`` (default ``None``: every observation is cut, the F11
+  primary) is row U6's parameter: with a start year, an observation is
+  cut only when the year its member turns 67 (birth year + 67) is at or
+  after it, so with 2004 the 1936 birth year (67 in 2003, observed at 68
+  under U1) is uncut.  The plan defines U6 on U1 with the scorecard's
+  "from 2004", which has no source the builder could read (plan section
+  10, decision 8); the start year is pending that ruling.
 * **SSI response** (F13, pending Max, decision record d189).
   ``offset_existing_recipients`` (proposed primary): for each SSI unit
   with baseline SSI, SSI rises by the fall in countable Social Security
@@ -126,6 +133,7 @@ __all__ = [
     "annuity_factor_joint",
     "annuity_factor_single",
     "countable_income",
+    "cut_applies",
     "load_life_table",
     "load_nchs_2000_life_table",
     "load_poverty_thresholds",
@@ -309,6 +317,7 @@ class AdjustedPovertySpec:
     """Every income-concept choice; defaults are the plan's primary."""
 
     cut_rate: float = 0.13
+    cut_start_year: int | None = None
     annuitized_share: float = 0.8
     real_interest_rate: float = 0.03
     annuity_timing: str = "immediate"
@@ -340,6 +349,16 @@ class AdjustedPovertySpec:
         rate = self.real_interest_rate
         if isinstance(rate, bool) or not (-0.5 < float(rate) < 1.0):
             raise AdjustedPovertyError("real_interest_rate out of range")
+        start = self.cut_start_year
+        if start is not None and (
+            isinstance(start, bool)
+            or not isinstance(start, int)
+            or not 1990 <= start <= 2030
+        ):
+            raise AdjustedPovertyError(
+                "cut_start_year must be None or an integer year in "
+                "1990-2030"
+            )
         _choice(self.annuity_timing, ANNUITY_TIMINGS, "annuity_timing")
         _choice(self.mortality_basis, MORTALITY_BASES, "mortality_basis")
         _choice(self.terminal_closure, TERMINAL_CLOSURES, "terminal_closure")
@@ -412,6 +431,19 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             "percent); the scenario's start year and coverage are unread "
             "(plan section 10 decisions 2 and 8)",
             _FREEZE,
+        ),
+        PendingDecision(
+            "cut_start_year",
+            spec.cut_start_year,
+            (2004,),
+            "plan F11: the primary cuts every observation (None); row U6 "
+            "(on U1) leaves an observation uncut when its member turned 67 "
+            "before the start year, 2004 being the scorecard's 'from 2004', "
+            "which has no source the builder could read; under U0 every "
+            "age-67 year is 2004 or later, so only U1's 1936 birth year "
+            "moves",
+            "Max (plan section 10 decision 8: the scenario's start year; "
+            "not yet on a decision card)",
         ),
         PendingDecision(
             "income_unit",
@@ -958,6 +990,7 @@ REQUIRED_COLUMNS: tuple[str, ...] = (
     "observation_id",
     "family_unit_id",
     "income_year",
+    "birth_year",
     "member_role",
     "member_age",
     "member_sex",
@@ -1115,11 +1148,26 @@ def _int_or_none(value: Any) -> int | None:
     return int(value)
 
 
+def cut_applies(rows: pd.DataFrame, spec: AdjustedPovertySpec) -> np.ndarray:
+    """Whether the cut reaches each observation (``cut_start_year``).
+
+    Every observation when ``cut_start_year`` is ``None``; otherwise
+    those whose member turns 67 (``birth_year + 67``) in or after the
+    start year.
+    """
+
+    if spec.cut_start_year is None:
+        return np.ones(len(rows), dtype=bool)
+    age67_year = rows["birth_year"].to_numpy(dtype=np.int64) + 67
+    return age67_year >= int(spec.cut_start_year)
+
+
 def _ssi_response(
     rows: pd.DataFrame,
     spec: AdjustedPovertySpec,
     units: dict,
     ssi: SsiParameters | None,
+    cut_rates: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray]:
     n = len(rows)
     offset = np.zeros(n, dtype=np.float64)
@@ -1129,8 +1177,8 @@ def _ssi_response(
     if ssi is None:
         raise AdjustedPovertyError(f"ssi_rule {spec.ssi_rule} needs SSI data")
     general = _MONTHS * ssi.general_income_exclusion_monthly
-    cut = spec.cut_rate
     for i, row in enumerate(rows.itertuples(index=False)):
+        cut = float(cut_rates[i])
         year = int(row.income_year)
         head_ssi, wife_ssi = float(row.head_ssi), float(row.wife_ssi)
         hw_ssi = head_ssi + wife_ssi
@@ -1198,7 +1246,8 @@ def adjusted_incomes(
     (``family_unit`` or ``head_wife``), ``money_income``,
     ``asset_income_reported``, ``asset_income_removed``,
     ``financial_assets``, ``annuity_basis``, ``annuity_factor``,
-    ``annuity``, ``baseline_income``, ``social_security``, ``cut``,
+    ``annuity``, ``baseline_income``, ``social_security``,
+    ``cut_applies``, ``cut``,
     ``ssi_offset``, ``ssi_new``, ``reform_income``, ``unit_size``,
     ``threshold``, ``threshold_cell``, ``poor_baseline`` and
     ``poor_reform``.
@@ -1254,8 +1303,10 @@ def adjusted_incomes(
         else np.zeros(len(rows))
     )
     baseline = units["money"] - removed + annuity
-    cut = spec.cut_rate * units["social_security"]
-    offset, new = _ssi_response(rows, spec, units, ssi)
+    applies = cut_applies(rows, spec)
+    cut_rates = np.where(applies, spec.cut_rate, 0.0)
+    cut = cut_rates * units["social_security"]
+    offset, new = _ssi_response(rows, spec, units, ssi, cut_rates)
     reform = baseline - cut + offset + new
     thresholds_out = np.zeros(len(rows), dtype=np.float64)
     cells: list[str] = []
@@ -1292,6 +1343,7 @@ def adjusted_incomes(
             "annuity": annuity,
             "baseline_income": baseline,
             "social_security": units["social_security"],
+            "cut_applies": applies,
             "cut": cut,
             "ssi_offset": offset,
             "ssi_new": new,

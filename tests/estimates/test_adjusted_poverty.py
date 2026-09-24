@@ -412,6 +412,63 @@ def test_ssi_offset_for_existing_recipients():
     assert (none["ssi_new"] == 0).all()
 
 
+def test_cut_start_year_leaves_earlier_age67_years_uncut():
+    """Row U6: with a 2004 start, the 1936 birth year (67 in 2003) is uncut.
+
+    INVENTED rows, threshold T = 1,000 (one person, 65+ row):
+
+    * "1936": B = 1,050 (not poor). Primary: cut 0.13 * 1,050 = 136.5,
+      R = 913.5 (poor). U6: 1936 + 67 = 2003 < 2004, no cut, R = 1,050.
+    * "1937": 1937 + 67 = 2004 >= 2004, cut under both: R = 913.5.
+    * "ssi": birth year 1936, SSI recipient with SS 1,000, SSI 100:
+      primary offset (1,000 - 240) - (870 - 240) = 130 (cap 500); U6 has
+      no cut, so no fall in countable income and no offset.
+    """
+
+    rows = [
+        _row("1936", birth_year=1936, head_ss=1050, total_family_income=1050),
+        _row("1937", birth_year=1937, head_ss=1050, total_family_income=1050),
+        _row(
+            "ssi",
+            birth_year=1936,
+            head_ss=1000,
+            head_ssi=100,
+            hw_transfer=100,
+            total_family_income=1100,
+        ),
+    ]
+    primary = _run(*rows)
+    assert primary["cut_applies"].all()
+    assert primary.loc["1936", "cut"] == pytest.approx(136.5)
+    assert primary.loc["1936", "reform_income"] == pytest.approx(913.5)
+    assert primary.loc["1936", "poor_reform"]
+    assert primary.loc["ssi", "ssi_offset"] == pytest.approx(130.0)
+    u6 = _run(*rows, cut_start_year=2004)
+    assert u6["cut_applies"].to_dict() == {
+        "1936": False,
+        "1937": True,
+        "ssi": False,
+    }
+    assert u6.loc["1936", "cut"] == 0.0
+    assert u6.loc["1936", "reform_income"] == pytest.approx(1050.0)
+    assert not u6.loc["1936", "poor_reform"]
+    assert u6.loc["1937", "reform_income"] == pytest.approx(913.5)
+    assert u6.loc["1937", "poor_reform"]
+    assert u6.loc["ssi", "ssi_offset"] == 0.0
+    assert u6.loc["ssi", "reform_income"] == pytest.approx(
+        u6.loc["ssi", "baseline_income"]
+    )
+    # full static recomputation: an uncut unit cannot become newly eligible
+    u3 = _run(*rows, cut_start_year=2004, ssi_rule="full_static_recomputation")
+    assert (u3.loc[["1936", "ssi"], "ssi_new"] == 0).all()
+
+
+@pytest.mark.parametrize("value", [True, "2004", 1989, 2031, 2004.0])
+def test_cut_start_year_must_be_a_year_or_none(value):
+    with pytest.raises(ap.AdjustedPovertyError, match="cut_start_year"):
+        ap.AdjustedPovertySpec(cut_start_year=value)
+
+
 def test_full_static_recomputation_enrols_newly_eligible_units():
     rows = [
         # before 900-240 = 660 >= 600; after 783-240 = 543 < 600: SSI 57

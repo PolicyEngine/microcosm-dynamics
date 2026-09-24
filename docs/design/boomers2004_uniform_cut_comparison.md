@@ -6,7 +6,7 @@
   that awaits him or the specification freeze is an explicit parameter in
   the code with the plan's recommended default, and §16 lists them.
 - **Specification:** `boomers2004_uniform_cut_exercise2`, version
-  `u1-draft-2`, drafted 2026-09-24. §19 is the changelog.
+  `u1-draft-3`, drafted 2026-09-24. §19 is the changelog.
 - **Plan item:** U1 of the Track U plan,
   `EVID/critical-path-uniform-cut-20260923.md` (§7 fields F1–F17, §8
   work items), where `EVID` =
@@ -70,8 +70,11 @@ has not seen them and does not know which cells they cover.
 | PSID marriage history (`mh85_23`) and earnings panel | Birth-year law and marital status | Existing readers |
 | NCHS United States Life Tables, 2000 | Annuity mortality (F8) | Committed, `data/external/nchs_life_tables_2000.json`, SHA-256 pinned |
 | SSA period life table for 2004 (2008 vintage) | Row U9 | Committed, `data/external/tr2008/ssa_2008_vintage.json` |
-| SSI federal benefit rates 2004–2012, exclusions, resource limits | SSI response (F13) | Captured from policyengine-us revision `a03e82e503`: `data/external/track_u_ssi_parameters.json`, SHA-256 `79e641a1…3c523` |
-| Census poverty thresholds 2004–2012 | Threshold (F10) | **Not captured** (§6) |
+| SSI federal benefit rates 2004–2012, exclusions, resource limits | SSI response (F13); F17 SSI diagnostic | Captured from policyengine-us revision `a03e82e503`: `data/external/track_u_ssi_parameters.json`, SHA-256 `79e641a1…3c523` |
+| Census poverty thresholds 2004–2012 | Threshold (F10) | **Not captured** (§6; cos decision d194) |
+| SSA, *Annual Statistical Supplement, 2025*, Table 5.A4 (December beneficiaries and total monthly benefits by type, 1940–2024) | F17 Social Security diagnostic | Committed snapshot `data/external/snapshots/ssa_level_anchors_vintage1/supplement2025_5a.html`, SHA-256 `d61e9484…aa8e` (the capture manifest's) |
+| Survey of Consumer Finances wealth tables | F17 WEALTH1 comparator (plan §11) | **Not committed or saved**: WEALTH1 is summarized without a published comparison |
+| PSID 2011 User Guide §2.4; individual-file codebook (ER34102, ER34103, ER34137–ER34143); family-file codebook (`# IN FU`, the individual-record count) | The institution income rule (§3) | Staged documentation, read for the rule |
 
 ## 3. Population
 
@@ -99,10 +102,33 @@ choice: the plan says only "1936 from 2004 only".
 positive core/immigrant cross-section weight. The cross-section weight
 is also positive for movers-out (71–80) and decedents (81–89); neither
 option admits them and the dispositions count them. Registered option
-U-inst adds sequence 51–59 (institutions); institutionalized persons have
-no family-file income and the plan gives them no income rule, so the
-builder marks those observations `income_rule_missing` and no income
-concept can be computed for them.
+U-inst adds sequence 51–59 (institutions).
+
+**Institution income rule (U-inst; builder default, pending the
+referee).** The plan gives institutionalized persons no income rule, and
+the PSID collects no income for them: the individual-file Social
+Security items are "Inap.: … in an institution" (codebook, ER34137–
+ER34143 for 2011). The PSID does associate them with a family: when a
+sample member moves to an institution it "attaches an institutional
+status data record to the family they left" (2011 User Guide, §2.4), and
+the family file's record-count variable counts "any institutionalized
+individuals associated with the family" among the records "having the
+same family-level data". The default `institution_income_rule =
+family_of_record` therefore gives an institutionalized observation the
+family unit whose interview number its record carries: that family's
+income concept, wealth, size, children and threshold, with the member's
+own age and sex for a single-life annuity (it has no co-resident
+spouse). Its role is OFUM: the relationship code of a person in an
+institution is to the previous wave's head (codebook note on ER34103),
+so it is neither the current head nor the wife. The member's own income
+is missing from the family's, and `# IN FU` ("the actual number of
+persons currently in the FU") is read as not counting them; the F17
+counts in §14 check that reading on the staged files. Both are named
+deltas (§12). An institutionalized person whose interview number has no
+family-file record that wave is a disposition
+(`institution_family_of_record_missing`). The alternative `excluded`
+keeps institutionalized persons out of the universe (disposition
+`institution_excluded_by_rule`), which makes U-inst's population U0's.
 
 **Birth year.** `estimates.career.derive_birth_years` (the first-estimates
 §3.1 law, as Track A uses), total over the union of the five waves'
@@ -260,6 +286,16 @@ row: row U6 (on U1) leaves 1936 uncut if the cut starts in 2004. The
 scorecard's "from 2004" has no source this builder could read (plan §10,
 decision 8).
 
+**Row U6 (built; the start year awaits decision 8).**
+`AdjustedPovertySpec.cut_start_year` (default `None`: every observation
+is cut) is the row's parameter. With a start year, an observation is cut
+only when its member turns 67 (birth year + 67) in or after it: the
+observation stands for the member's status at 67, so the rule keys on
+the age-67 year, not on the income year (U1 observes 1936 at 68, in
+2004). With 2004, only the 1936 birth year (67 in 2003) is uncut; its
+reform income equals its baseline, and with no fall in countable income
+the SSI rules give it no offset and no new take-up.
+
 ## 8. SSI response
 
 **Primary (F13, pending Max, d189): offset for existing recipients.** For
@@ -326,6 +362,30 @@ present in the sealed comparator are scored; the others are reported as
 **Undefined cells.** An empty cell or one with zero total weight has no
 statistic; it is reported with its reason and never imputed.
 
+**F17 diagnostics (not scored).** Two kinds, both reported for U0:
+
+- *Official-concept poverty rate* for the same sample: money income
+  (TOTAL FAMILY INCOME, reported asset income kept, no annuity, no cut)
+  against the row's threshold, weighted per cell
+  (`uniform_cut_track_u.runner.official_concept_rates`). It involves the
+  threshold, so it runs only inside the registered run (and on invented
+  data in the dry run), never on real data before registration.
+- *Component summaries* (`uniform_cut_track_u.diagnostics`): per income
+  year, the weighted share of head and wife members with their own
+  Social Security, their weighted mean monthly amount set against SSA's
+  December average retired-worker benefit (Annual Statistical Supplement
+  2025, Table 5.A4, committed snapshot; total monthly benefits over
+  number, a division made here; every age, retired workers only, December
+  against a calendar-year total over twelve, unadjusted); SSI receipt,
+  the mean among recipients and the recipients above twelve times the
+  federal benefit rate for their unit; WEALTH1 weighted quantiles (the
+  smallest value whose cumulative weight share reaches the level) and the
+  shares at or below zero and imputed, with no published comparison (no
+  SCF table is committed or saved); and counts of `# IN FU` against the
+  individual records. These are component aggregates with no threshold,
+  which plan §8 allows before registration; the module imports neither
+  the income concept nor the tabulation.
+
 ## 10. Uncertainty
 
 - **Draws:** K = 1 (deterministic).
@@ -360,12 +420,12 @@ results exist.
 | U3 | SSI | Full static recomputation (upper bound) | Yes |
 | U4 | Income unit | Head and wife only | Yes |
 | U5 | Asset income | Keep reported asset income and add the annuity | Yes |
-| U6 | Cut (on U1) | 1936 uncut if the cut starts in 2004 | Not built (needs decision 8) |
+| U6 | Cut (on U1) | 1936 uncut if the cut starts in 2004 (`cut_start_year = 2004`) | Yes; the start year awaits decision 8 |
 | U7 | Financial assets | Plus employer DC balances | Not built (label investigation) |
 | U8 | Threshold | PSID `CENSUS NEEDS STANDARD` | Yes |
 | U9 | Mortality | SSA period life table 2004 | Yes |
 | U10 | Threshold | Census size-by-children matrix | Yes (needs the capture) |
-| U-inst | Universe | Add institutions (sequence 51–59) | Counted only; no income rule |
+| U-inst | Universe | Add institutions (sequence 51–59), family-of-record income rule (§3) | Yes; the rule awaits the referee |
 
 ## 12. Named deltas
 
@@ -375,7 +435,9 @@ Carried on every output (plan §7), plus those found while building:
 - realized 2004–2012 history versus DYNASIM's 1992-based projection,
   including the 2008–09 asset shock for the 1941–45 cohorts at 67;
 - realized COLAs versus 2002 Trustees assumptions;
-- immigrant under-coverage; institutionalized persons; attrition;
+- immigrant under-coverage; institutionalized persons (under U-inst the
+  family-of-record rule assigns the family's income and threshold without
+  the member's own income, which the PSID does not collect); attrition;
 - OFUM-owned assets inside family wealth;
 - imputed rent excluded;
 - self-reported Social Security, possibly net of Medicare premiums;
@@ -415,14 +477,23 @@ Invented life table (ages 0–4): male qx 0, 0, 0.2, 0.5, 1; female qx 0,
 | SSI, SS under the exclusion (SS 200) | 0 − 0 | 0 |
 | U3 new take-up (SS 900, no other income) | before 660 ≥ 600; after 543 < 600 | +57 |
 
+| U6, birth year 1936 (T = 1,000, SS 1,050) | primary: R = 1,050 − 136.5 = 913.5 (poor); `cut_start_year = 2004`: 1936 + 67 = 2003 < 2004, no cut, R = 1,050 | uncut |
+| U6, SSI recipient born 1936 (SS 1,000, SSI 100) | primary offset 130; uncut: no fall | 0 |
+| U-inst, member in an institution attached to family 11 | family 11's income 1,000 and WEALTH1 500; role OFUM; single life | assigned |
+
 Invented tabulation (five observations, weights 1, 1, 2, 4, 2): P_B = 20,
 P_R = 70, Δ = 50 for `all`; design SE = 100·√0.1 with two strata of two
 clusters each.
 
+F17 weighted quantile (invented values 10, 20, 30, 40 with weights 1, 1,
+1, 1): the median is the smallest value whose cumulative weight share
+reaches 0.5, 20; p90 is 40.
+
 ## 14. What is built and what is blocked
 
-Built on branch `dynamics-ex2-track-u-20260924` (all opt-in; registered
-in `POST_REVIEW_SOURCE_EXCLUSIONS` and the reachability guard):
+Built on branch `dynamics-ex2-track-u-20260924` (#456) and continued on
+`dynamics-ex2-track-u-2-20260924` (all opt-in; registered in
+`POST_REVIEW_SOURCE_EXCLUSIONS` and the reachability guard):
 
 - `src/populace_dynamics/data/family_income.py`: label-verified family
   income for waves 2005–2013 (81 items a wave, 85 in 2013, including the
@@ -439,6 +510,39 @@ in `POST_REVIEW_SOURCE_EXCLUSIONS` and the reachability guard):
   registration pointer.
 - `scripts/capture_track_u_parameters.py` (SSI capture written; Census
   parser ready), `scripts/track_u_structure.py` (counts only).
+- Continued (`u1-draft-3`): the institution income rule and row U6's
+  `cut_start_year` (above); the package
+  `src/populace_dynamics/uniform_cut_track_u/`:
+  - `rows.py`: the registered rows as `Age67Spec` and
+    `AdjustedPovertySpec` overrides, held equal to §15's rows;
+  - `invented.py` (U5): a seeded INVENTED age-67 population in the
+    reader shapes (retired, SSI, near-threshold, OFUM-parent,
+    adult-child, working, negative-wealth, cohabiting, separated,
+    institutionalized, moved-out, deceased and zero-weight families;
+    income and WEALTH1 identities exact), the INVENTED threshold table,
+    and the re-generation checks that keep invented data from passing as
+    PSID (the builder records the `invented` kind only for frames that
+    hash to the generator's digest);
+  - `runner.py`: the row pipeline with its provenance guards and the
+    official-concept diagnostic;
+  - `diagnostics.py`: the F17 component summaries.
+- `scripts/track_u_dry_run.py` (U9): every row on the invented cohort
+  with invented thresholds and the committed life tables and SSI
+  capture; evidence `EVID/track-u-dry-run-20260924/`, headed "INVENTED
+  DATA - NOT A COMPARISON".
+- `scripts/run_track_u_registered.py` (U10 entry point): refuses unless
+  the pointer is an issue #42 comment, `HEAD` is the registered commit
+  on a clean tree, §15 is ratified with nothing awaiting and nothing
+  blocking, the Census capture is pinned and every wave has WEALTH1;
+  writes `runs/replication_boomers2004_uniform_cut_v1.json` and its
+  `.env.json` exclusively.
+- `scripts/track_u_component_diagnostics.py`: the F17 component
+  summaries on the staged PSID (evidence
+  `EVID/track-u-diagnostics-20260924/`). On the staged files every
+  family's `# IN FU` equals its number of in-family records (sequence
+  1–20) in all five waves, and none of the 389–426 families per wave
+  with an attached institution record counts it in `# IN FU`: the
+  reading the institution rule relies on.
 
 Blocked:
 
@@ -446,8 +550,8 @@ Blocked:
    and 1939 until staged, adjudicated and read. A fallback row on 1941–45
    only would need registering in advance (plan §13); `income_rows(...,
    allow_blocked=True)` supports it.
-2. **Census thresholds** (download approval or Max): no primary threshold
-   until captured.
+2. **Census thresholds** (download approval, cos decision d194): no
+   primary threshold until captured; the dry run uses an INVENTED table.
 3. **Registration** on issue #42 after ratification; no real-data poverty
    statistic may be computed before it.
 4. **Comparator coverage** of the frozen cells (comparator side, values
@@ -461,7 +565,7 @@ holds it to the code's defaults.
 ```json
 {
   "specification": "boomers2004_uniform_cut_exercise2",
-  "version": "u1-draft-2",
+  "version": "u1-draft-3",
   "status": "draft_for_referee",
   "claim_class": {
     "proposed": "track_u_psid_realized_measurement_not_a_projection",
@@ -493,6 +597,7 @@ holds it to the code's defaults.
     "seed_wave_rule": "earliest_presence_wave",
     "separated_is_married": true,
     "unresolved_marital_status": "non_married",
+    "institution_income_rule": "family_of_record",
     "design": {"stratum": "ER31996", "cluster": "ER31997"}
   },
   "income_concept": {
@@ -523,7 +628,13 @@ holds it to the code's defaults.
     "capture_status": "not_captured",
     "poor_if": "income_below_threshold"
   },
-  "cut": {"rate": 0.13, "base": "all_social_security_of_the_unit", "behavior": "none"},
+  "cut": {
+    "rate": 0.13,
+    "base": "all_social_security_of_the_unit",
+    "behavior": "none",
+    "start_year": null,
+    "start_year_rule": "cut_when_birth_year_plus_67_at_or_after_start"
+  },
   "ssi": {
     "rule": "offset_existing_recipients",
     "awaiting": "d189",
@@ -563,12 +674,25 @@ holds it to the code's defaults.
     "U3": {"ssi_rule": "full_static_recomputation"},
     "U4": {"income_unit": "head_wife"},
     "U5": {"asset_income_rule": "keep"},
-    "U6": {"on": "U1", "cut_start_year": 2004, "status": "not_built"},
+    "U6": {"on": "U1", "cut_start_year": 2004, "awaiting": "plan section 10 decision 8"},
     "U7": {"financial_assets": "wealth1_plus_employer_dc", "status": "not_built"},
     "U8": {"threshold_rule": "psid_census_needs_standard"},
     "U9": {"mortality_basis": "ssa_period_2004"},
     "U10": {"threshold_rule": "census_matrix_65plus"},
-    "U-inst": {"presence": "in_family_or_institution", "status": "counted_only_no_income_rule"}
+    "U-inst": {"presence": "in_family_or_institution", "institution_income_rule": "family_of_record", "awaiting": "referee"}
+  },
+  "diagnostics_f17": {
+    "official_concept_poverty_rate": "registered_run_only",
+    "components": ["social_security", "ssi", "wealth1", "fu_size_record_counts"],
+    "social_security_published": "ssa_supplement_2025_table_5a4_december_retired_workers",
+    "ssi_published": "federal_benefit_rate_capture_only",
+    "wealth1_published": null
+  },
+  "entry_points": {
+    "dry_run": "scripts/track_u_dry_run.py",
+    "registered_run": "scripts/run_track_u_registered.py",
+    "registered_artifact": "runs/replication_boomers2004_uniform_cut_v1.json",
+    "component_diagnostics": "scripts/track_u_component_diagnostics.py"
   },
   "acceptance_rule": null,
   "labels": [
@@ -606,7 +730,13 @@ values-redacted definitions extract by the comparator side), decision 4
 (Python SSI arithmetic labelled "not Axiom"), decision 6 (acceptance rule;
 default none, report gaps), decision 7 (ratify this specification by
 merge; post the #42 registration), decision 8 (the scorecard's "from
-2004"), and approval to download the Census threshold files.
+2004": row U6 is built with `cut_start_year = 2004`, and the primary's
+`cut_start_year = None` cuts every observation), and approval to
+download the Census threshold files (cos decision d194).
+
+**Awaiting the referee:** the institution income rule
+(`institution_income_rule = family_of_record`; alternative `excluded`),
+which only row U-inst reads.
 
 **Awaiting the specification freeze (defaults shown):** income unit
 (family unit), asset-income rule (replace), annuitized share (0.8), real
@@ -617,7 +747,11 @@ threshold rule (weighted average, 65-and-over), SSI deeming (spouse's
 Social Security counted), OFUM SSI unit (one individual unit), row (U0),
 presence (in family), separated is married (true), unresolved marital
 status (non-married), U1 1936 weight (1), seed wave (earliest presence
-wave).
+wave), cut start year (none).
+
+A registered run refuses a §15 block that still names anything as
+`awaiting`, so ratification must resolve each of these (and the code's
+rows must be updated to match, `uniform_cut_track_u.rows`).
 
 ## 17. Questions for the referee
 
@@ -643,6 +777,14 @@ wave).
    wave, which the repository's birth-year law equates with the
    income-year age; should it use the spouse's derived birth year
    (income year minus birth year) instead, as the member's age does?
+9. Is `family_of_record` the right income rule for institutionalized
+   members under U-inst (their family's income and threshold, without
+   their own income, which the PSID does not collect), or should they be
+   `excluded` from the universe, or get a rule not built here (for
+   example a one-person unit)?
+10. Row U6 keys the cut on the year the member turns 67, not on the
+    income year observed (U1 observes 1936 at 68, in 2004). Is that the
+    reading the plan's "the 1936 cohort unaffected" intends?
 
 ## 18. What this draft read and did not verify
 
@@ -659,8 +801,19 @@ unweighted frequency counts and ranges, which were not used); the
 family-file documentation on wealth; the policyengine-us SSI parameter
 files; the Census historical thresholds page's link list.
 
+`u1-draft-3` also read: the PSID 2011 User Guide §2.4 (sample
+following rules), the individual-file codebook entries for ER34102,
+ER34103 and ER34137–ER34143, the 2011 family codebook entry for `# IN
+FU`, the family-file record-count text quoted in
+`data/psid_unit_predicate_authority.py`, the cos record of d194 (its
+text only), and Table 5.A4 of the committed SSA supplement snapshot.
+The codebook entries print whole-file unweighted counts, which were not
+used.
+
 **Ran on staged PSID:** label verification, the component-identity
-reconciliation counts and the structural counts of §3. No income concept,
+reconciliation counts and the structural counts of §3, and (`u1-draft-3`)
+the F17 component summaries of §9 for row U0 (Social Security, SSI and
+WEALTH1 weighted summaries; `# IN FU` record counts). No income concept,
 annuity, threshold assignment, poverty status or poverty rate was
 computed on PSID data.
 
@@ -673,9 +826,21 @@ and contents of the 2005 and 2007 wealth supplements; whether PSID Social
 Security amounts are net of Medicare premiums; whether SSI and Social
 Security are kept apart by respondents; the P-section DC items for U7; the
 coverage of the sealed comparator; anything in the Report beyond the
-plan's reading of its methods.
+plan's reading of its methods; whether an institutionalized member's
+income enters any family-file item (the builder found no documentation
+that it does); any SCF wealth aggregate (none is committed or saved).
 
 ## 19. Changelog
+
+- `u1-draft-3` (2026-09-24, continuation on
+  `dynamics-ex2-track-u-2-20260924`): row U-inst gets an income rule
+  (`family_of_record`, pending the referee) and row U6 is built
+  (`cut_start_year`, the start year pending decision 8); the invented
+  generator (U5), the dry run (U9), the registered entry point (U10) and
+  the F17 component diagnostics are added; §15 gains
+  `institution_income_rule`, the cut's `start_year`, the F17 block and
+  the entry points, and U6 and U-inst record what they await; referee
+  questions 9 and 10 are added.
 
 - `u1-draft-2` (2026-09-24, independent review): the half-split floor
   splits on family units linked through shared persons, so it is

@@ -230,6 +230,14 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/cohorts/age67.py"),
     Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
     Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
+    # The opt-in Track U assembly (rows, invented generator, row runner and
+    # F17 component diagnostics) composes the Track U layer; nothing
+    # historical imports it.
+    Path("src/populace_dynamics/uniform_cut_track_u/__init__.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u/diagnostics.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u/invented.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u/rows.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u/runner.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

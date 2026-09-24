@@ -70,6 +70,12 @@ def test_population_matches_the_builder(block):
     assert population["unresolved_marital_status"] == (
         spec.unresolved_marital_status
     )
+    assert population["institution_income_rule"] == (
+        spec.institution_income_rule
+    )
+    assert population["institution_income_rule"] in (
+        age67.INSTITUTION_INCOME_RULES
+    )
     assert population["u1_single_observation_weight"] == (
         spec.u1_single_observation_weight
     )
@@ -115,6 +121,7 @@ def test_income_concept_matches_the_spec_defaults(block):
     assert block["threshold"]["capture_status"] == "not_captured"
     assert ap.THRESHOLDS_SHA256 is None
     assert block["cut"]["rate"] == spec.cut_rate == block["target"]["cut_rate"]
+    assert block["cut"]["start_year"] == spec.cut_start_year is None
     ssi = block["ssi"]
     assert ssi["rule"] == spec.ssi_rule
     assert ssi["deeming"] == spec.ssi_deeming
@@ -139,7 +146,7 @@ def test_rows_name_real_alternatives(block):
         "U-inst",
     }
     for name, row in rows.items():
-        if row.get("status") in ("not_built", "counted_only_no_income_rule"):
+        if row.get("status") == "not_built":
             continue
         overrides = {
             key: value
@@ -150,7 +157,17 @@ def test_rows_name_real_alternatives(block):
         if "population" in row:
             assert row["population"] == "all_ten_birth_years", name
     assert rows["U-inst"]["presence"] == "in_family_or_institution"
-    age67.Age67Spec(presence=rows["U-inst"]["presence"])
+    age67.Age67Spec(
+        presence=rows["U-inst"]["presence"],
+        institution_income_rule=rows["U-inst"]["institution_income_rule"],
+    )
+    assert rows["U6"]["on"] == "U1"
+    ap.AdjustedPovertySpec(cut_start_year=rows["U6"]["cut_start_year"])
+    # every row but U7 is built, and the code's rows equal the block's
+    assert [name for name, row in rows.items() if "status" in row] == ["U7"]
+    from populace_dynamics.uniform_cut_track_u import rows as track_u_rows
+
+    assert track_u_rows.check_rows_against_block(block)["rows_equal_the_block"]
 
 
 def test_cells_and_uncertainty_match_the_tabulation(block):
@@ -170,6 +187,9 @@ def test_cells_and_uncertainty_match_the_tabulation(block):
 def test_pending_decisions_are_listed_in_the_text(text):
     section = text.split("## 16. Pending decisions")[1].split("## 17.")[0]
     assert "d189" in section
+    assert "decision 8" in section and "cut_start_year" in section
+    assert "institution_income_rule = family_of_record" in section
+    assert "d194" in section
     ssi = next(
         item for item in ap.pending_decisions() if item.field == "ssi_rule"
     )

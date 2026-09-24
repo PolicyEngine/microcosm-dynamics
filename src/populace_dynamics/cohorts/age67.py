@@ -23,12 +23,33 @@ Rows (plan section 3 and fields F1-F2):
 
 Universe per wave (F2): sequence 1-20 (in a responding family) with a
 positive cross-section weight; the registered option U-inst adds
-sequence 51-59 (institution), which this builder counts but for which no
-income rule exists (institutionalized persons have no family-file
-income; the plan does not say what income they get), so their
-observations are marked ``income_rule_missing``.  The cross-section
-weight is also positive for movers-out (71-80) and decedents (81-89),
-whom neither option admits; the dispositions count them.
+sequence 51-59 (institution).  The PSID collects no income for an
+institutionalized person (the individual-file Social Security items are
+"Inap.: ... in an institution", codebook ER34137-ER34143 for 2011) and
+the plan gives them no income rule, so ``institution_income_rule`` (a
+builder default pending the referee) supplies one:
+
+* ``family_of_record`` (default): the PSID attaches an institutionalized
+  sample member's record to the family they left (2011 User Guide,
+  section 2.4) and counts it among the individual records "having the
+  same family-level data" as that family (family-file codebook text for
+  the record-count variable).  The observation takes that family unit's
+  income, wealth, size and children through its interview number, with
+  the member's own age and sex; its role is ``ofum`` (neither the
+  current head nor the wife: the relationship code of a person in an
+  institution is to the previous wave's head, codebook note on ER34103)
+  and it has no co-resident spouse.  The member's own income is not in
+  the family's income and ``# IN FU`` ("the actual number of persons
+  currently in the FU") is read as not counting them: a named delta.
+  An institutionalized person whose interview number has no family-file
+  record in that wave is a disposition, not an observation.
+* ``excluded``: institutionalized persons stay out of the poverty
+  universe (a disposition, as under the primary's universe), so U-inst
+  equals U0 in population and only its counts differ.
+
+The cross-section weight is also positive for movers-out (71-80) and
+decedents (81-89), whom neither option admits; the dispositions count
+them.
 
 Birth year: :func:`populace_dynamics.estimates.career.derive_birth_years`
 (first-estimates section 3.1), total over the union of the five waves'
@@ -55,7 +76,12 @@ wealth, so their observations are marked
 
 Provenance: :func:`load_age67_inputs` records the SHA-256 of every PSID
 file it read and seals the returned inputs; the builder marks a cohort
-``psid_files`` only for sealed inputs and ``caller_frames`` otherwise.
+``psid_files`` only for sealed inputs, ``invented`` for inputs whose
+frames hash to the digest their recorded ``invented`` provenance carries
+(the invented generator,
+:mod:`populace_dynamics.uniform_cut_track_u.invented`, which this module
+cannot import, re-generates and checks them), and ``caller_frames``
+otherwise.
 :func:`income_rows` carries the kind to the income concept, whose guard
 refuses PSID-built rows without a registration.  This module computes no
 poverty status, threshold, annuity or statistic.
@@ -89,6 +115,8 @@ __all__ = [
     "ALL_BIRTH_YEARS",
     "ANCHOR_LAYOUTS",
     "CALLER_FRAMES",
+    "INSTITUTION_INCOME_RULES",
+    "INVENTED",
     "PRIMARY_BIRTH_YEARS",
     "PSID_FILES",
     "ROWS",
@@ -114,7 +142,22 @@ PRIMARY_BIRTH_YEARS: tuple[int, ...] = (1937, 1939, 1941, 1943, 1945)
 ALL_BIRTH_YEARS: tuple[int, ...] = tuple(range(1936, 1946))
 ROWS: tuple[str, ...] = ("U0", "U1")
 PSID_FILES = "psid_files"
+INVENTED = "invented"
 CALLER_FRAMES = "caller_frames"
+#: The income rules for an institutionalized observation (row U-inst).
+INSTITUTION_INCOME_RULES: dict[str, str] = {
+    "family_of_record": (
+        "the family unit whose interview number the institutionalized "
+        "member's record carries (the family they left): its income, "
+        "wealth, size and children, with the member's own age and sex, "
+        "role ofum and no co-resident spouse (builder default, pending the "
+        "referee)"
+    ),
+    "excluded": (
+        "institutionalized persons stay out of the poverty universe (a "
+        "disposition); U-inst then equals U0 in population"
+    ),
+}
 
 #: Each wave's label-verified individual-file anchor variables (labels
 #: checked 2026-09-24 against IND2023ER.sps; 2009 and 2011 are the
@@ -201,12 +244,18 @@ class Age67Spec:
     u1_single_observation_weight: float = 1.0
     seed_wave_rule: str = "earliest_presence_wave"
     unresolved_marital_status: str = "non_married"
+    institution_income_rule: str = "family_of_record"
 
     def __post_init__(self) -> None:
         if self.row not in ROWS:
             raise ValueError(f"row must be one of {ROWS}")
         if self.presence not in ("in_family", "in_family_or_institution"):
             raise ValueError("presence must be in_family[_or_institution]")
+        if self.institution_income_rule not in INSTITUTION_INCOME_RULES:
+            raise ValueError(
+                "institution_income_rule must be one of "
+                f"{sorted(INSTITUTION_INCOME_RULES)}"
+            )
         if self.seed_wave_rule != "earliest_presence_wave":
             raise ValueError("seed_wave_rule must be earliest_presence_wave")
         if self.unresolved_marital_status != "non_married":
@@ -277,6 +326,21 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
             "cannot date the state ('unknown') or who has no record "
             "('no_marriage_history'); they count as non-married (the "
             "non_married cell, a single-life annuity)",
+            freeze,
+        ),
+        psid2010.PendingDecision(
+            "institution_income_rule",
+            spec.institution_income_rule,
+            ("excluded",),
+            "builder default, pending the referee: plan F2 adds "
+            "institutions under U-inst but gives them no income rule and "
+            "the PSID collects none for them; the PSID attaches an "
+            "institutionalized member's record to the family they left "
+            "(2011 User Guide section 2.4), so the observation takes that "
+            "family's income concept and threshold (the member's own "
+            "income is missing and the family's size does not count them: "
+            "a named delta). Applies only under presence "
+            "in_family_or_institution",
             freeze,
         ),
     )
@@ -537,6 +601,22 @@ def _input_provenance(inputs: Age67Inputs) -> dict[str, Any]:
     recorded = dict(inputs.provenance or {})
     frames = input_frames_sha256(inputs)
     files = recorded.get("psid_files_sha256")
+    if recorded.get("kind") == INVENTED:
+        if recorded.get("input_frames_sha256") != frames:
+            raise ValueError(
+                "inputs claim invented provenance but their frames differ "
+                "from the digest the invented generator recorded "
+                f"({recorded.get('input_frames_sha256')!r} != {frames!r}); "
+                "invented data cannot be mixed with other frames"
+            )
+        return {
+            "kind": INVENTED,
+            "generator": recorded.get("generator"),
+            "seed": recorded.get("seed"),
+            "supplement_waves_staged": recorded.get("supplement_waves_staged"),
+            "label": recorded.get("data"),
+            "input_frames_sha256": frames,
+        }
     if recorded.get("kind") == PSID_FILES:
         if inputs.loader_seal is None or not isinstance(files, Mapping):
             raise ValueError(
@@ -664,8 +744,10 @@ def build_age67_cohort(
     ``sequence``, ``relationship``, ``member_role``, ``stratum``,
     ``cluster``, ``marital_status``, ``married``, ``spouse_person_id``,
     ``member_married_coresident``, ``spouse_age``, ``spouse_sex``,
-    ``fu_legal_wife_present``, ``wife_sex``, ``wealth_status`` and
-    ``income_status``.
+    ``fu_legal_wife_present``, ``wife_sex``, ``wealth_status``,
+    ``in_institution`` and ``income_status`` (``family_file`` for a member
+    of the family unit, ``family_of_record`` for an institutionalized
+    member under that rule).
     """
 
     spec = Age67Spec() if spec is None else spec
@@ -701,6 +783,11 @@ def build_age67_cohort(
         by_family = {
             int(k): v for k, v in in_family.groupby("interview", sort=False)
         }
+        family_records = (
+            set(inputs.family_income[wave]["interview"].astype(int))
+            if wave in inputs.family_income
+            else set()
+        )
         cohort_ids = sorted(
             pid for pid in targets if births[pid].birth_year == birth_year
         )
@@ -742,10 +829,31 @@ def build_age67_cohort(
                     {**base, "disposition": "excluded_sex_unknown"}
                 )
                 continue
-            disposition_rows.append({**base, "disposition": "observation"})
             interview = int(record["interview"])
             sequence = int(record["sequence"])
             relationship = int(record["relationship"])
+            in_institution = (
+                _SEQUENCE_INSTITUTION[0]
+                <= sequence
+                <= _SEQUENCE_INSTITUTION[1]
+            )
+            if in_institution:
+                if spec.institution_income_rule == "excluded":
+                    disposition_rows.append(
+                        {**base, "disposition": "institution_excluded_by_rule"}
+                    )
+                    continue
+                if interview not in family_records:
+                    disposition_rows.append(
+                        {
+                            **base,
+                            "disposition": (
+                                "institution_family_of_record_missing"
+                            ),
+                        }
+                    )
+                    continue
+            disposition_rows.append({**base, "disposition": "observation"})
             family_rows = by_family.get(interview)
             if pid in episodes:
                 state = psid2010.marital_state_at(
@@ -799,16 +907,22 @@ def build_age67_cohort(
                     wife_sex = str(
                         sex.get(int(wives["person_id"].iloc[0]), "na")
                     )
+            # An institutionalized member is neither the current head nor
+            # the wife of its family of record: its relationship code is to
+            # the previous wave's head (codebook note on ER34103).
             role = (
-                "head"
-                if relationship == _HEAD
+                "ofum"
+                if in_institution
                 else (
-                    "wife"
-                    if relationship in (_LEGAL_WIFE, _PARTNER)
-                    else "ofum"
+                    "head"
+                    if relationship == _HEAD
+                    else (
+                        "wife"
+                        if relationship in (_LEGAL_WIFE, _PARTNER)
+                        else "ofum"
+                    )
                 )
             )
-            in_institution = sequence >= _SEQUENCE_INSTITUTION[0]
             observation_rows.append(
                 {
                     "observation_id": f"{pid}:{wave}",
@@ -852,10 +966,9 @@ def build_age67_cohort(
                         if wave in inputs.family_wealth
                         else "blocked_wealth_supplement_not_staged"
                     ),
+                    "in_institution": bool(in_institution),
                     "income_status": (
-                        "income_rule_missing"
-                        if in_institution
-                        else "family_file"
+                        "family_of_record" if in_institution else "family_file"
                     ),
                 }
             )
@@ -903,8 +1016,10 @@ def _check_family_records(
         if income is None:
             raise ValueError(f"inputs lack family income for {wave}")
         known = set(income["interview"].astype(int))
-        in_family = rows["income_status"].eq("family_file")
-        absent = rows.loc[in_family & ~rows["interview"].isin(known)]
+        from_family = rows["income_status"].isin(
+            ["family_file", "family_of_record"]
+        )
+        absent = rows.loc[from_family & ~rows["interview"].isin(known)]
         missing.extend(absent["observation_id"].tolist())
     if missing:
         raise ValueError(
@@ -922,24 +1037,24 @@ def income_rows(
     """Observations merged with their family's income and wealth.
 
     The rows :func:`populace_dynamics.estimates.adjusted_poverty.
-    adjusted_incomes` consumes.  Observations whose wave has no staged
-    wealth, or whose income rule is missing, are refused unless
-    ``allow_blocked`` (then they are left out and counted in
-    ``attrs["left_out"]``).  ``attrs["provenance_kind"]`` carries the
+    adjusted_incomes` consumes.  An institutionalized observation under
+    ``family_of_record`` merges its family of record's income and wealth
+    like any member.  Observations whose wave has no staged wealth are
+    refused unless ``allow_blocked`` (then they are left out and counted
+    in ``attrs["left_out"]``).  ``attrs["provenance_kind"]`` carries the
     cohort's provenance kind to the income concept's guard.
     """
 
     obs = cohort.observations
-    blocked = obs["wealth_status"].ne("family_file") | obs["income_status"].ne(
-        "family_file"
-    )
+    blocked = obs["wealth_status"].ne("family_file") | ~obs[
+        "income_status"
+    ].isin(["family_file", "family_of_record"])
     if blocked.any() and not allow_blocked:
         waves = sorted(set(obs.loc[blocked, "wave"].astype(int)))
         raise ValueError(
             f"{int(blocked.sum())} observations (waves {waves}) cannot get "
-            "the income concept: wealth supplement not staged or no income "
-            "rule; pass allow_blocked=True only for a registered fallback "
-            "row"
+            "the income concept: wealth supplement not staged; pass "
+            "allow_blocked=True only for a registered fallback row"
         )
     kept = obs.loc[~blocked].copy()
     frames = []
@@ -968,9 +1083,6 @@ def income_rows(
     out.attrs["left_out"] = {
         "wealth_supplement_not_staged": int(
             obs["wealth_status"].ne("family_file").sum()
-        ),
-        "income_rule_missing": int(
-            obs["income_status"].ne("family_file").sum()
         ),
     }
     return out
@@ -1068,7 +1180,7 @@ def structural_summary(
     summary["family_units_with_two_or_more_members"] = int((shared > 1).sum())
     computable = obs["wealth_status"].eq("family_file") & obs[
         "income_status"
-    ].eq("family_file")
+    ].isin(["family_file", "family_of_record"])
     summary["n_observations_computable_now"] = int(computable.sum())
     summary["n_observations_blocked"] = int((~computable).sum())
     receipt = {}
