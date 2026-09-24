@@ -579,7 +579,8 @@ def conversion_claim_excess_months_early(
     individual attains retirement age" (``usc42_402.txt`` line 371), and
     the reduction period ends "with the last day of the month before the
     month in which such individual attains retirement age" (402(q)(6)(B),
-    line 406): the statute's count is 0 in every scenario.
+    line 406).  On that convention the statute's count is 0 in every
+    scenario.
 
     Track A counts from the whole conversion year instead (A4's July birth
     month): ``conversion_claim_year`` (``y_c``, Track A's own claim year of
@@ -598,14 +599,13 @@ def conversion_claim_excess_months_early(
     that C1 or C2 moved enters at its year before the move, so the count
     is the baseline's under every claiming response.  Where the
     conversion starts the baseline excess this is the conversion claim
-    moved by exactly ``D``
-    months, ``12 (y_c - b) + D``, the device of the moved claims of C1 and
-    C2 (:func:`spouse_excess_months_early`).  Where the worker's later
-    entitlement starts it, the baseline count is 0 and so is this one;
-    moving the conversion claim alone would count up to ``FRA(b) mod 12``
-    months there (2 for spouses born 1955, 4 for 1956), a reduction the
-    statute does not make.  With ``params`` the baseline bundle the result
-    is Track A's count exactly.
+    moved by exactly ``D`` months, ``12 (y_c - b) + D``, the device of the
+    moved claims of C1 and C2 (:func:`spouse_excess_months_early`).  Where
+    the worker's later entitlement starts it, the baseline count is 0 and
+    so is this one; moving the conversion claim alone would count up to
+    ``FRA(b) mod 12`` months there (2 for spouses born 1955, 4 for 1956),
+    a reduction the statute does not make.  With ``params`` the baseline
+    bundle the result is Track A's count exactly.
     """
 
     birth_year = int(birth_year)

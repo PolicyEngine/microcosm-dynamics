@@ -248,16 +248,16 @@ this fails.
 6. **DI.** 402(q)(1) reduces old-age, wife's, husband's, widow's and
    widower's benefits only, and only when the first month of entitlement
    "is a month before the month in which such individual attains
-   retirement age" (`usc42_402.txt` line 371). 423(a)(1) ends DI entitlement with the month before
-   the month of attaining retirement age, so an old-age benefit first
-   payable in that month is not reduced. (This draft did not read
-   402(a); in the model the conversion is A4's, in the FRA attainment
-   year.) A disabled worker's benefit ratio is exactly 1; the reform
-   moves conversion from 67 to 68 (a component label) and extends DI
-   eligibility to 68 (a named delta, §12). The same holds for a
-   converted worker's spouse's excess, which Track A starts at the
-   conversion: unreduced in both scenarios under the statute, ratio 1 in
-   the model (§11, rule 3).
+   retirement age" (`usc42_402.txt` line 371). 423(a)(1) ends DI
+   entitlement with the month before the month of attaining retirement
+   age, so an old-age benefit first payable in that month is not
+   reduced. (This draft did not read 402(a); in the model the conversion
+   is A4's, in the FRA attainment year.) A disabled worker's benefit
+   ratio is exactly 1; the reform moves conversion from 67 to 68 (a
+   component label) and extends DI eligibility to 68 (a named delta,
+   §12). The same holds for a converted worker's spouse's excess, which
+   Track A starts at the conversion: unreduced in both scenarios under
+   the statute, ratio 1 in the model (§11, rule 3).
 
 ## 4. Rate path
 
@@ -320,7 +320,9 @@ apart from dime flooring.
   spouse's birth year at the spouse's entitlement year; spouses born 1960
   or later: -7.69 at 62, -7.14 at 63, -6.67 at 64, -10.00 at 65, -9.09 at
   66, -8.33 at 67, 0 from 68 (no credits). A converted disabled worker's
-  excess on its conversion claim: ratio 1 in every cohort (§11, rule 3).
+  excess on its conversion claim: ratio 1 in every cohort whenever the
+  scenario has converted the worker by 2030 (§11, rule 3; a worker still
+  DI-entitled under the reform draws none, §12).
 - **Aged widow(er)** (survivors born 1962 or later, survivor retirement
   age 67 to 68): 0 at 60 (the 71.5 percent floor holds in both), -0.67,
   -1.28, -1.82, -2.32, -2.77, -3.18 and -3.56 at 61-67, 0 at 68. The
@@ -424,11 +426,10 @@ scenario's bundle; `fra68_track.benefits`):
    FRA of the spouse's birth year, from the later of the spouse's own
    claim and the worker's entitlement (under C1 and C2 a moved own claim
    enters at its exact claim month, §13; a conversion claim follows rule
-   3). Aged widow(er): the oracle's
-   `widow_benefit` with the reduction span of the survivor's cohort
-   (§3, item 2), in both scenarios; the deceased's scenario factor feeds
-   the RIB-LIM and the inherited credits (a deceased who never claimed
-   carries factor 1.0, §12). DI: factor 1.
+   3). Aged widow(er): the oracle's `widow_benefit` with the reduction
+   span of the survivor's cohort (§3, item 2), in both scenarios; the
+   deceased's scenario factor feeds the RIB-LIM and the inherited credits
+   (a deceased who never claimed carries factor 1.0, §12). DI: factor 1.
 3. **Conversion.** A worker the projection converted at the baseline FRA
    (A4's `fra_attainment_year`, July birth month) is a disabled worker in
    a scenario whose FRA attainment year is after the state's year: only
@@ -446,13 +447,12 @@ scenario's bundle; `fra68_track.benefits`):
    (`reform.conversion_claim_excess_months_early`). This equals Track A's
    baseline count in every scenario and under every claiming response,
    so the reform-to-baseline ratio of these excesses is 1, the statute's
-   answer: 402(q)(1) reduces a wife's
-   or husband's benefit only "if the first month for which an individual
-   is entitled to" it "is a month before the month in which such
-   individual attains retirement age" (`usc42_402.txt` line 371), and the
-   reduction period ends "with the last day of the month before the month
-   in which such individual attains retirement age" (402(q)(6)(B), line
-   406). An excess that starts at the conversion, at FRA, is therefore
+   answer: 402(q)(1) reduces a wife's or husband's benefit only "if the
+   first month for which an individual is entitled to" it "is a month
+   before the month in which such individual attains retirement age"
+   (`usc42_402.txt` line 371), and the reduction period ends "with the
+   last day of the month before the month in which such individual
+   attains retirement age" (402(q)(6)(B), line 406). An excess that starts at the conversion, at FRA, is therefore
    unreduced in both scenarios. Where the conversion starts the baseline
    excess (y_w <= y_c), the rule is the conversion claim moved by exactly
    D months, 12 (y_c - b) + D, the device §13 uses for moved claims. Where
@@ -540,16 +540,16 @@ F'(b_s) is the reform FRA of the spouse's birth year,
 s = max(m'_s, 12 (y'_w - b_s)), m'_s is the spouse's own reform claim
 month (12 a_s when the spouse's claim is not transformed) and y'_w is the
 worker's reform entitlement year. Under C0 this is §11's rule. A
-converted worker's excess on its conversion claim follows §11 rule 3
-under every claiming response: its count reads the worker's baseline
-entitlement year, so a C1/C2 move of the worker's claim changes when the
-excess is paid (from y'_w) but not its months early. A
 transformed spouse's excess therefore keeps its baseline distance from
 the retirement age, as the worker's own factor does, unless the worker's
 later entitlement starts it. (Counting months early from the whole start
 year instead would change a transformed excess's reduction by D(b_s) -
 12 x (its start-year shift) months: a cut when D < 6 or D >= 13 and a
-rise when 6 <= D <= 11, with no response behind either.) A worker who
+rise when 6 <= D <= 11, with no response behind either.) A converted
+worker's excess on its conversion claim follows §11 rule 3 under every
+claiming response: its count reads the worker's baseline entitlement
+year, so a C1/C2 move of the worker's claim changes when the excess is
+paid (from y'_w) but not its months early. A worker who
 dies before the reform claim year is a never-entitled decedent in the
 reform scenario (Track A's `deceased_unentitled` record, factor 1.0: no
 RIB-LIM and no inherited credits; §12).
