@@ -225,7 +225,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # The opt-in exercise-3 (FRA to 68) assembly reuses Track A after the
     # projection; nothing historical imports it.
     Path("src/populace_dynamics/fra68_track/__init__.py"),
+    Path("src/populace_dynamics/fra68_track/benefits.py"),
+    Path("src/populace_dynamics/fra68_track/config.py"),
     Path("src/populace_dynamics/fra68_track/reform.py"),
+    Path("src/populace_dynamics/fra68_track/runner.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
