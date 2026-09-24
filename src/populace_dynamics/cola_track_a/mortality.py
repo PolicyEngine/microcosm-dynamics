@@ -1,11 +1,15 @@
 """Year-aware population mortality for Track A from the A2 capture.
 
 TR2008 publishes no projected death probabilities by single age and sex
-(A2 ``tr2008.GAPS``, first entry).  The A2 module proposes a substitute,
-not adopted: the SSA 2004 period life table (a 2008-vintage SSA source,
-equal to Supplement 2008 Table 4.C6) scaled by the ratio of TR2008's
-age-sex-adjusted death rate in the projection year to its rate in a base
-year, for the V.A1 age group containing the age (under 65, 65 and over).
+(A2 ``tr2008.GAPS``, first entry).  The A2 module names a substitute
+(``tr2008.MORTALITY_SUBSTITUTE``): the SSA 2004 period life table (a
+2008-vintage SSA source, equal to Supplement 2008 Table 4.C6) scaled by
+the ratio of TR2008's age-sex-adjusted death rate in the projection year
+to its rate in a base year, for the V.A1 age group containing the age
+(under 65, 65 and over).  Its standing is
+``tr2008.MORTALITY_SUBSTITUTE_STANDING``: a builder default, not a ruling,
+which A1 section 15 takes and the A1 ratification and the issue #42
+registration fix; the provenance of every loaded model quotes both.
 :class:`Tr2008YearAwareMortality` applies exactly that substitute through
 :func:`populace_dynamics.data.tr2008.period_life_table_2004` and
 :func:`populace_dynamics.data.tr2008.mortality_improvement_ratio`; it
@@ -18,7 +22,7 @@ callable ``(frame, context) -> probabilities`` and deliberately has no
 ``probabilities`` attribute, so the A4 adapter passes the period context
 and the model reads the projection year from it.
 
-Conventions (A5, not ratified):
+Conventions (A5 builder choices; no ruling covers them):
 
 * The probability applied in projection year ``t`` (deaths between the
   ``t - 1`` and ``t`` states) is ``qx_2004(age, sex) * ratio(t, age)``,
@@ -162,10 +166,8 @@ def load_tr2008_mortality(
         base_year=base_year,
         provenance={
             "basis": (
-                "A2 proposed substitute (not adopted): SSA 2004 period life "
-                "table x TR2008 V.A1 age-sex-adjusted death-rate ratio "
-                "(projection year / base year) for the under-65 or "
-                "65-and-over group"
+                f"A2 substitute ({tr2008.MORTALITY_SUBSTITUTE_STANDING}): "
+                f"{tr2008.MORTALITY_SUBSTITUTE}"
             ),
             "life_table": "tr2008.period_life_table_2004",
             "ratio": "tr2008.mortality_improvement_ratio",
