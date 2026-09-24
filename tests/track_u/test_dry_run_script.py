@@ -72,6 +72,15 @@ def test_the_dry_run_checks_hold(output):
         blocked["left_out_with_allow_blocked"]["wealth_supplement_not_staged"]
         > 0
     )
+    fallback = blocked["fallback_rule"]
+    assert fallback["headline"]["row"] == "U0-F"
+    assert fallback["row_status"]["U0-F"] == "computed"
+    assert fallback["row_status"]["U0"] == "blocked"
+    assert set(fallback["blocked_counts"]) == {
+        row
+        for row, status in fallback["row_status"].items()
+        if status == "blocked"
+    }
     assert checks["registered_guard_refuses_invented_inputs"]["refused"]
     assert checks["census_thresholds_not_captured"]["error"] == (
         "ThresholdsNotCapturedError"
@@ -86,3 +95,6 @@ def test_every_built_row_is_tabulated(output):
     statuses = {row: entry["status"] for row, entry in result["rows"].items()}
     assert statuses.pop("U7") == "not_built"
     assert set(statuses.values()) == {"computed"}
+    assert result["headline"]["row"] == "U0"
+    text = (output / "RESULTS.md").read_text()
+    assert "Headline row U0" in text and "full sample design" in text

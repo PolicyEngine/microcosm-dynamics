@@ -15,8 +15,10 @@ The invented generator gives waves 2005 and 2007 invented wealth, as if
 the PSID wealth supplements were staged, so U0's five birth years run
 end to end; the real supplements are not staged (cos decision d189).  The
 checks record what the real staging does today (the income rows refuse
-the blocked waves) and that the registered-run guards refuse invented
-inputs and an uncaptured threshold table.
+the blocked waves, and under the fallback rule U0-F becomes the headline
+while the rows that need 2005 or 2007 are reported as blocked with their
+counts) and that the registered-run guards refuse invented inputs and an
+uncaptured threshold table.
 
 Usage::
 
@@ -96,6 +98,7 @@ def checks(seed: int, params: runner.TrackUParameters) -> dict[str, Any]:
     blocked = invented.invented_age67_inputs(seed=seed)
     cohort = age67.build_age67_cohort(blocked)
     left = age67.income_rows(cohort, blocked, allow_blocked=True)
+    fallback = runner.run_track_u(blocked, params, data_provenance=ap.INVENTED)
     return {
         "specification_rows": rows.check_rows_against_block(
             rows.specification_block()
@@ -115,6 +118,33 @@ def checks(seed: int, params: runner.TrackUParameters) -> dict[str, Any]:
             ),
             "left_out_with_allow_blocked": dict(left.attrs["left_out"]),
             "observations_kept_with_allow_blocked": int(len(left)),
+            "fallback_rule": {
+                "headline": fallback["headline"],
+                "row_status": {
+                    row_id: entry["status"]
+                    for row_id, entry in fallback["rows"].items()
+                },
+                "blocked_counts": {
+                    row_id: entry["population"]
+                    for row_id, entry in fallback["rows"].items()
+                    if entry["status"] == "blocked"
+                },
+                "headline_all_cell": next(
+                    {
+                        key: cell[key]
+                        for key in (
+                            "n_observations",
+                            "baseline_rate",
+                            "reform_rate",
+                            "delta",
+                        )
+                    }
+                    for cell in fallback["rows"][fallback["headline"]["row"]][
+                        "tabulation"
+                    ]["cells"]
+                    if cell["cell"] == "all"
+                ),
+            },
         },
         "registered_guard_refuses_invented_inputs": _refusal(
             lambda: runner.run_track_u(
@@ -210,15 +240,25 @@ def results_markdown(result: dict[str, Any]) -> str:
     ]
     for row_id, entry in result["rows"].items():
         if entry["status"] != "computed":
+            status = entry["status"].replace("_", " ")
             lines.append(
-                f"| {row_id} | not built: {entry['reason']} | | | | | |"
+                f"| {row_id} | {status}: {entry['reason']} | | | | | |"
             )
             continue
         lines.append(_cell_line(row_id, _cell(entry["tabulation"], "all")))
-    primary = result["rows"]["U0"]["tabulation"]
+    headline = result["headline"]["row"]
+    primary = result["rows"][headline]["tabulation"]
+    design = primary["design"]
     lines += [
         "",
-        "### Row U0 by cell (invented)",
+        f"Headline row {headline} (fallback rule "
+        f"`{result['headline']['rule']}`). Design-based standard errors "
+        f"use the {design['domain'].replace('_', ' ')}: "
+        f"{design.get('n_strata')} invented strata, "
+        f"{design.get('n_clusters')} clusters, singleton strata "
+        f"{design.get('singleton_strata')}.",
+        "",
+        f"### Row {headline} by cell (invented)",
         "",
         "| Cell | Observations | P_B | P_R | Δ | Δ floor | Δ design SE |",
         "|---|---|---|---|---|---|---|",
@@ -240,7 +280,7 @@ def results_markdown(result: dict[str, Any]) -> str:
         "",
         "Official-concept poverty rate (money income, reported asset "
         "income kept, no annuity, no cut, against the same invented "
-        "thresholds), row U0: "
+        f"thresholds), row {f17['row']}: "
         + "; ".join(
             f"{name} {_fmt(cell.get('rate'))}"
             for name, cell in f17["official_concept_poverty_rate"][
@@ -307,6 +347,20 @@ def results_markdown(result: dict[str, Any]) -> str:
         f"{blocked['left_out_with_allow_blocked']['wealth_supplement_not_staged']}"
         " observations (waves 2005 and 2007) are left out and "
         f"{blocked['observations_kept_with_allow_blocked']} kept.",
+        "- Under the fallback rule with that staging, the headline is "
+        f"{blocked['fallback_rule']['headline']['row']}; rows reported "
+        "blocked with their counts: "
+        + ", ".join(
+            row_id
+            for row_id, status in blocked["fallback_rule"][
+                "row_status"
+            ].items()
+            if status == "blocked"
+        )
+        + f"; {blocked['fallback_rule']['headline']['row']} cell `all` "
+        f"(invented): {blocked['fallback_rule']['headline_all_cell']['n_observations']} "
+        "observations, Δ "
+        f"{_fmt(blocked['fallback_rule']['headline_all_cell']['delta'])}.",
         "- The registered path refuses these invented inputs: "
         f"{check['registered_guard_refuses_invented_inputs']['refused']} "
         f"(`{check['registered_guard_refuses_invented_inputs'].get('error')}`).",

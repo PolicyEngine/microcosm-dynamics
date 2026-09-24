@@ -24,24 +24,31 @@ comment exists, at exactly the commit that comment registers:
   them;
 * the Census thresholds must be the committed, hash-pinned capture
   (:func:`populace_dynamics.estimates.adjusted_poverty.
-  load_poverty_thresholds` refuses until it exists), and every PSID wave
-  must have WEALTH1 (the 2005 and 2007 wealth supplements staged and
-  adjudicated); both are checked before any PSID file is read for the
-  statistic.
+  load_poverty_thresholds` refuses until it exists), checked before any
+  PSID file is read;
+* ``--headline-row`` must name the headline row the #42 registration
+  comment states, and it must equal the row the specification's fallback
+  rule gives for the staged PSID (:func:`populace_dynamics.
+  uniform_cut_track_u.runner.headline_row`: U0 when the 2005 and 2007
+  wealth supplements are staged, adjudicated and read, U0-F otherwise);
+  a mismatch means the staging changed after registration and the run
+  refuses (a new registration is needed).  Rows that need a wave without
+  WEALTH1 are reported as blocked with their counts.
 
 The artifact publishes regardless of outcome.  It never reads the sealed
 comparator; the seal is opened only after this artifact is committed.
 
 As of this script's writing none of these preconditions holds: the
-specification is a draft (``u1-draft-3``), Max has not ruled on exercise
-2 (cos decision d189), the Census thresholds are not captured (d194) and
-the 2005/2007 wealth supplements are not staged.
+specification is a draft (``u1-draft-4``), Max has not ruled on exercise
+2 (cos decision d189) or on the fallback rule, the Census thresholds are
+not captured (d194) and the 2005/2007 wealth supplements are not staged.
 
 Usage::
 
     python scripts/run_track_u_registered.py \\
         --registration-pointer <issue #42 comment URL> \\
         --registered-commit <full SHA> \\
+        --headline-row {U0,U0-F} \\
         [--output runs/replication_boomers2004_uniform_cut_v1.json]
 
 Writes the artifact and a ``.env.json`` sidecar next to it.
@@ -180,6 +187,21 @@ def preflight(
     return {"head": head}
 
 
+def check_headline(registered: str, inputs: Any) -> str:
+    """Refuse unless the registered headline is the fallback rule's row."""
+
+    staged = runner.headline_row(inputs)
+    if registered != staged:
+        raise ValueError(
+            f"the registration names headline row {registered}, but the "
+            f"staged PSID gives {staged} under the fallback rule (WEALTH1 "
+            f"refused for waves {sorted(inputs.wealth_refusals)}): the "
+            "staging changed after registration, so this is not the "
+            "registered run"
+        )
+    return staged
+
+
 def _write_new(path: Path, text: str) -> None:
     """Create ``path`` exclusively: never overwrite (one shot)."""
 
@@ -233,6 +255,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--registration-pointer", required=True)
     parser.add_argument("--registered-commit", required=True)
+    parser.add_argument(
+        "--headline-row",
+        required=True,
+        choices=(rows.PRIMARY_ROW, rows.FALLBACK_ROW),
+        help="the headline row the #42 registration comment states",
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args(argv)
 
@@ -250,12 +278,7 @@ def main(argv: list[str] | None = None) -> int:
     params = runner.committed_parameters(thresholds)
     environment = _environment()
     inputs = age67.load_age67_inputs()
-    if inputs.wealth_refusals:
-        raise ValueError(
-            "WEALTH1 is refused for waves "
-            f"{sorted(inputs.wealth_refusals)}; the registered run needs "
-            "every wave (stage and adjudicate the wealth supplements)"
-        )
+    check_headline(args.headline_row, inputs)
     result = runner.run_track_u(
         inputs,
         params,

@@ -30,7 +30,7 @@ _SEX = {
 def _mh_row(pid, birth, **marriage):
     base = {
         "person_id": pid,
-        "sex": _SEX[pid],
+        "sex": _SEX.get(pid, "na"),
         "birth_year": birth,
         "birth_month": pd.NA,
         "marriage_order": pd.NA,
@@ -173,6 +173,8 @@ def _family(wave: int) -> pd.DataFrame:
         *family_income.SOCIAL_SECURITY_CONCEPTS,
         *family_income.SSI_CONCEPTS,
         *family_income.ASSET_INCOME_CONCEPTS,
+        *family_income.HW_EARNED_CONCEPTS,
+        "head_annuities",
     ):
         frame[concept] = 0
     return frame
@@ -228,6 +230,8 @@ def test_observation_plans():
         (1943, 2011, 2010, 1.0),
         (1945, 2013, 2012, 1.0),
     )
+    fallback = age67.observation_plan(age67.Age67Spec(row="U0-F"))
+    assert fallback == u0[2:]
     u1 = age67.observation_plan(age67.Age67Spec(row="U1"))
     assert len(u1) == 5 + 8 + 1
     assert (1936, 2005, 2004, 1.0) in u1
@@ -251,10 +255,19 @@ def test_u0_observations_and_dispositions():
     head = obs.loc["1001:2009"]
     assert head["member_role"] == "head"
     assert head["married"] and head["member_married_coresident"]
+    assert head["marital_resolution"] == "marriage_history"
     assert head["spouse_person_id"] == 1002
     assert head["spouse_age"] == 65 and head["spouse_sex"] == "female"
+    assert head["spouse_age_source"] == "derived_birth_year"
     assert head["fu_legal_wife_present"]
     assert head["wife_sex"] == "female"
+    # the annuitants of fu_head_rule: the head himself and his legal wife
+    assert head["fu_head_person_id"] == 1001
+    assert head["fu_head_age"] == 67 and head["fu_head_sex"] == "male"
+    assert head["fu_head_spouse_present"]
+    assert head["fu_head_spouse_person_id"] == 1002
+    assert head["fu_head_spouse_age"] == 65
+    assert head["fu_head_spouse_sex"] == "female"
     assert head["member_age"] == 67
     assert head["family_unit_id"] == 2009 * 100_000 + 11
     assert head["wealth_status"] == "family_file"
@@ -266,7 +279,13 @@ def test_u0_observations_and_dispositions():
     assert ofum["birth_source"] == "derived_projection_age"
     assert ofum["member_role"] == "ofum"
     assert ofum["marital_status"] == "no_marriage_history"
+    # an OFUM (code 30) is not resolved by the relationship code
+    assert ofum["marital_resolution"] == "unresolved_non_married"
     assert not ofum["married"]
+    # its family's annuitants are the head 1001 and legal wife 1002
+    assert ofum["fu_head_person_id"] == 1001
+    assert ofum["fu_head_age"] == 69
+    assert ofum["fu_head_spouse_age"] == 67
     assert obs.loc["3001:2005", "wealth_status"] == (
         "blocked_wealth_supplement_not_staged"
     )
@@ -433,39 +452,264 @@ def test_structural_summary_counts_only():
     assert summary["n_observations_blocked"] == 1
     assert summary["n_observations_computable_now"] == 3
     assert summary["family_units_with_two_or_more_members"] == 1
-    assert summary["observations_by_birth_year_and_wave"]["1943@2011"][
-        "member_role"
-    ] == {"ofum": 1, "wife": 1}
+    cell = summary["observations_by_birth_year_and_wave"]["1943@2011"]
+    assert cell["member_role"] == {"ofum": 1, "wife": 1}
+    assert cell["marital_resolution"] == {
+        "marriage_history": 1,
+        "unresolved_non_married": 1,
+    }
+    assert cell["fu_head_age_source"] == {"derived_birth_year": 2}
+    receipt = summary["component_receipt_counts"]["2011"]
+    assert receipt["family_farm_income_nonzero"] == 0
+    assert receipt["family_head_retirement_account_income_nonzero"] == 0
     text = repr(summary)
     for forbidden in ("poor", "threshold", "annuity"):
         assert forbidden not in text
 
 
 def test_unresolved_marital_status_is_an_explicit_pending_default():
-    """Members whose marriage history cannot date a state are non-married.
+    """Unresolved marital states are classified by relationship code.
 
     Plan F12 names MH85_23 but not what to do when it cannot resolve the
-    state ("unknown") or the person has no record
-    ("no_marriage_history"); the builder's reading (non-married, so the
-    non_married cell and a single-life annuity) is a named parameter with
-    a pending decision, not a silent fallthrough.
+    state ("unknown") or the person has no record ("no_marriage_
+    history"); the referee's answer (Q7) is the relationship code, with
+    non-married as the named alternative.  Both are parameters with a
+    pending decision, not a silent fallthrough.
     """
 
     spec = age67.Age67Spec()
-    assert spec.unresolved_marital_status == "non_married"
+    assert spec.unresolved_marital_status == "relationship_code"
     with pytest.raises(ValueError, match="unresolved_marital_status"):
         age67.Age67Spec(unresolved_marital_status="married")
     decisions = {item.field: item for item in age67.pending_decisions()}
     item = decisions["unresolved_marital_status"]
-    assert item.default == "non_married"
-    assert "F12" in item.default_basis
+    assert item.default == "relationship_code"
+    assert item.alternatives == ("non_married",)
+    assert "F12" in item.default_basis and "Q7" in item.default_basis
     cohort = age67.build_age67_cohort(_inputs())
     ofum = cohort.observations.set_index("observation_id").loc["6001:2011"]
     assert ofum["marital_status"] == "no_marriage_history"
     assert not ofum["married"]
     assert cohort.provenance["spec"]["unresolved_marital_status"] == (
-        "non_married"
+        "relationship_code"
     )
+
+
+def _with_unresolved_couples() -> age67.Age67Inputs:
+    """Invented, all in 2013 (income year 2012):
+
+    * family 91: head 9101 (male, born 1945, marriage history "unknown":
+      one undated marriage) with legal wife 9102 (female, no history,
+      individual-file age 70, zero weight: a nonsample spouse);
+    * family 92: female head 9201 (born 1945 by marriage history, age 67)
+      with legal husband 9202 (code 90, male, no marriage history,
+      individual-file age 67 in 2013, the earliest wave he is in a
+      family, so the law's seed gives 2012 - 67 = 1945).
+    """
+
+    anchors = _anchors()
+    rows = {
+        9101: (9101, 91, 1, 10, 67, 60.0),
+        9102: (9102, 91, 2, 20, 70, 0.0),
+        9201: (9201, 92, 1, 10, 67, 50.0),
+        9202: (9202, 92, 2, 90, 67, 50.0),
+    }
+    for wave, frame in anchors.items():
+        extra = pd.DataFrame(
+            [
+                row if wave == 2013 else (pid, 0, 0, 0, 0, 0.0)
+                for pid, row in rows.items()
+            ],
+            columns=[
+                "person_id",
+                "interview",
+                "sequence",
+                "relationship",
+                "age",
+                "weight",
+            ],
+        )
+        extra["reported_birth_year"] = pd.array(
+            [pd.NA] * len(extra), dtype="Int64"
+        )
+        anchors[wave] = pd.concat([frame, extra], ignore_index=True)
+    history = _marriage_history()
+    unknown = _mh_row(9101, 1945, how_ended="other")
+    unknown["last_known_status"] = "married"
+    unknown["sex"] = "male"
+    head = _mh_row(
+        9201,
+        1945,
+        spouse_person_id=9202,
+        start_year=1970,
+        how_ended="intact",
+        last_known_status="married",
+    )
+    head["sex"] = "female"
+    extra_history = pd.DataFrame([unknown, head]).astype(history.dtypes)
+    history = pd.concat([history, extra_history], ignore_index=True)
+    base = _inputs()
+    incomes = {wave: _family(wave) for wave in age67.WAVES}
+    wealth = dict(base.family_wealth)
+    template = _family(2011).iloc[[0]]
+    for interview in (91, 92):
+        incomes[2013] = pd.concat(
+            [
+                incomes[2013],
+                template.assign(
+                    wave=2013, income_year=2012, interview=interview
+                ),
+            ],
+            ignore_index=True,
+        )
+        wealth[2013] = pd.concat(
+            [
+                wealth[2013],
+                pd.DataFrame(
+                    {
+                        "wave": [2013],
+                        "interview": [interview],
+                        "wealth1": [500],
+                        "wealth1_acc": [0],
+                    }
+                ),
+            ],
+            ignore_index=True,
+        )
+    sexes = {9101: "male", 9102: "female", 9201: "female", 9202: "male"}
+    return _inputs(
+        anchors=anchors,
+        marriage_history=history,
+        family_income=incomes,
+        family_wealth=wealth,
+        design=pd.concat(
+            [
+                base.design,
+                pd.DataFrame(
+                    {
+                        "person_id": list(sexes),
+                        "stratum": [1] * 4,
+                        "cluster": [1, 1, 2, 2],
+                    }
+                ),
+            ],
+            ignore_index=True,
+        ),
+        death_records=pd.concat(
+            [
+                base.death_records,
+                pd.DataFrame(
+                    {"person_id": list(sexes), "sex": list(sexes.values())}
+                ),
+            ],
+            ignore_index=True,
+        ),
+    )
+
+
+def test_relationship_code_resolves_unresolved_marital_states():
+    """Referee Q7: the relationship code decides an unresolved state.
+
+    9101 (head, history "unknown") with a legal wife in the family is
+    married and co-resident with her; 9202 (legal husband, code 90, no
+    history) is married to the female head.  Under "non_married" both are
+    non-married with no spouse.
+    """
+
+    inputs = _with_unresolved_couples()
+    obs = age67.build_age67_cohort(inputs).observations.set_index(
+        "observation_id"
+    )
+    head = obs.loc["9101:2013"]
+    assert head["marital_status"] == "unknown"
+    assert head["marital_resolution"] == (
+        "relationship_code_head_with_legal_spouse"
+    )
+    assert head["married"] and head["member_married_coresident"]
+    assert head["spouse_person_id"] == 9102
+    husband = obs.loc["9202:2013"]
+    assert husband["relationship"] == 90
+    assert husband["marital_status"] == "no_marriage_history"
+    assert husband["marital_resolution"] == "relationship_code_legal_husband"
+    assert husband["married"] and husband["member_married_coresident"]
+    assert husband["spouse_person_id"] == 9201
+    assert husband["member_role"] == "ofum"
+    # the female head and her legal husband are the family's annuitants
+    assert husband["fu_head_person_id"] == 9201
+    assert husband["fu_head_sex"] == "female"
+    assert husband["fu_head_spouse_present"]
+    assert husband["fu_head_spouse_person_id"] == 9202
+    assert husband["fu_head_spouse_sex"] == "male"
+    assert obs.loc["9201:2013", "marital_resolution"] == "marriage_history"
+    plain = age67.build_age67_cohort(
+        inputs, age67.Age67Spec(unresolved_marital_status="non_married")
+    ).observations.set_index("observation_id")
+    for oid in ("9101:2013", "9202:2013"):
+        assert plain.loc[oid, "marital_resolution"] == (
+            "unresolved_non_married"
+        )
+        assert not plain.loc[oid, "married"]
+        assert pd.isna(plain.loc[oid, "spouse_person_id"])
+
+
+def test_annuitant_ages_use_derived_birth_years():
+    """Referee Q8: income-year ages from derived birth years.
+
+    Invented: 1001's legal wife 1002 is born 1943 by marriage history; at
+    the 2009 interview her individual-file age is set to 66 (her birthday
+    fell before the interview).  Income year 2008: the derived age is 65,
+    the wave age 66.  9102, a zero-weight nonsample wife outside the
+    universe with no history, gets her birth year from the law's seed
+    (2012 - 70 = 1942), so her income-year age equals the wave age, 70.
+    """
+
+    inputs = _with_unresolved_couples()
+    anchors = dict(inputs.anchors)
+    frame = anchors[2009].copy()
+    frame.loc[frame["person_id"].eq(1002), "age"] = 66
+    anchors[2009] = frame
+    import dataclasses
+
+    inputs = dataclasses.replace(inputs, anchors=anchors)
+    derived = age67.build_age67_cohort(inputs).observations.set_index(
+        "observation_id"
+    )
+    assert derived.loc["1001:2009", "spouse_age"] == 65
+    assert derived.loc["1001:2009", "spouse_age_source"] == (
+        "derived_birth_year"
+    )
+    assert derived.loc["1001:2009", "fu_head_spouse_age"] == 65
+    head = derived.loc["9101:2013"]
+    assert head["spouse_age"] == 70
+    assert head["spouse_age_source"] == "derived_birth_year"
+    assert head["fu_head_spouse_age"] == 70
+    wave = age67.build_age67_cohort(
+        inputs, age67.Age67Spec(annuitant_age_source="wave_age")
+    ).observations.set_index("observation_id")
+    assert wave.loc["1001:2009", "spouse_age"] == 66
+    assert wave.loc["1001:2009", "spouse_age_source"] == "wave_age"
+    assert wave.loc["1001:2009", "fu_head_spouse_age"] == 66
+    with pytest.raises(ValueError, match="annuitant_age_source"):
+        age67.Age67Spec(annuitant_age_source="reported_birth_year")
+    decisions = {item.field: item for item in age67.pending_decisions()}
+    assert decisions["annuitant_age_source"].default == "derived_birth_year"
+    assert "Q8" in decisions["annuitant_age_source"].default_basis
+
+
+def test_u0f_keeps_only_the_fallback_birth_years():
+    inputs = _inputs()
+    fallback = age67.build_age67_cohort(inputs, age67.Age67Spec(row="U0-F"))
+    obs = fallback.observations
+    assert set(obs["birth_year"]) <= set(age67.FALLBACK_BIRTH_YEARS)
+    assert "3001:2005" not in set(obs["observation_id"])
+    # nothing is blocked, so the income rows need no allow_blocked
+    rows = age67.income_rows(fallback, inputs)
+    assert rows.attrs["left_out"]["wealth_supplement_not_staged"] == 0
+    assert set(rows["observation_id"]) == {
+        "1001:2009",
+        "1002:2011",
+        "6001:2011",
+    }
 
 
 def test_spec_validation_and_pending_decisions():

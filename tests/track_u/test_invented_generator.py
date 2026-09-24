@@ -188,6 +188,34 @@ def test_every_track_u_path_is_exercised(staged):
         ["head_business_asset", "head_rent", "head_farm"]
     ]
     assert (losses < 0).any().any()
+    # specification u1-draft-4: every relationship-code resolution path,
+    # a legal husband (code 90), the head's annuity and IRA income (and
+    # HEAD IRAS in 2013), positive farm income, and interview ages that
+    # exceed the income-year age
+    assert {
+        "marriage_history",
+        "relationship_code_head_with_legal_spouse",
+        "relationship_code_legal_wife",
+        "relationship_code_legal_husband",
+        "unresolved_non_married",
+    } <= set(u1.observations["marital_resolution"])
+    assert (u1.observations["relationship"] == 90).any()
+    u1_rows = age67.income_rows(u1, staged)
+    assert (u1_rows["head_annuities"] > 0).any()
+    assert (u1_rows["head_farm"] > 0).any()
+    assert (staged.family_income[2013]["head_iras"] > 0).any()
+    anchor = staged.anchors[2009]
+    present = anchor[anchor["sequence"].between(1, 20)]
+    births = {
+        row.person_id: row.birth_year
+        for row in staged.marriage_history.itertuples()
+    }
+    older = [
+        age - (2008 - births[pid])
+        for pid, age in zip(present["person_id"], present["age"], strict=True)
+        if pid in births
+    ]
+    assert set(older) == {0, 1}
 
 
 def test_invented_thresholds_by_hand():

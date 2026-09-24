@@ -68,6 +68,13 @@ def test_every_row_runs_and_u7_is_reported_not_built(result):
         assert cell["delta"] >= 0
     assert result["labels"][0] == ut.INVENTED_DATA_LABEL
     assert result["labels"][1:] == list(ap.OUTPUT_LABELS)
+    assert result["headline"]["row"] == rows.PRIMARY_ROW
+    for entry in result["rows"].values():
+        if entry["status"] == "computed":
+            assert entry["tabulation"]["design"]["domain"] == (
+                "full_sample_design"
+            )
+            assert entry["tabulation"]["design"]["singleton_strata"] == []
     assert result["cohort_provenance"]["kind"] == age67.INVENTED
     assert result["psid_files_sha256"] == {}
     assert result["input_checks"]["invented_inputs"]["regenerated"]
@@ -108,6 +115,22 @@ def test_rows_change_only_what_they_register(result):
     # U9 prices on the SSA 2004 table
     assert rows_["U9"]["life_table"] == "ssa_period_2004"
     assert u0["life_table"] == "nchs_2000"
+    # U5 keeps the F4a and F4b items too; U0 removes them
+    counts = u0["income_concept_counts"]
+    assert counts["n_retirement_account_income_removed_nonzero"] > 0
+    assert counts["n_farm_asset_income_removed_nonzero"] > 0
+    for key in (
+        "n_retirement_account_income_removed_nonzero",
+        "n_farm_asset_income_removed_nonzero",
+    ):
+        assert rows_["U5"]["income_concept_counts"][key] == 0
+    # U0-F is U0 on 1941, 1943 and 1945
+    fallback = rows_["U0-F"]["population"]["observations_by_birth_year"]
+    assert fallback == {
+        year: n
+        for year, n in u0["population"]["observations_by_birth_year"].items()
+        if year in ("1941", "1943", "1945")
+    }
 
 
 def test_f17_diagnostics_are_reported_for_u0(result):
@@ -220,17 +243,68 @@ def test_a_registered_run_refuses_invented_or_blocked_inputs(params, staged):
             registration_pointer=POINTER,
             allow_blocked=True,
         )
+    # refused waves no longer stop a registered run at the input check
+    # (the fallback rule applies); these inputs still fail the parameter
+    # check, since no Census capture is pinned
     blocked = dataclasses.replace(
         invented.invented_age67_inputs(),
         provenance={**staged.provenance, "kind": age67.PSID_FILES},
     )
-    with pytest.raises(runner.TrackURunError, match="WEALTH1"):
+    with pytest.raises(runner.TrackURunError, match="Census threshold"):
         runner.run_track_u(
             blocked,
             params,
             data_provenance=ap.REGISTERED_REAL,
             registration_pointer=POINTER,
         )
+
+
+def test_the_fallback_rule_as_staged_today(params):
+    """Specification section 11: without the 2005/2007 wealth, U0-F is the
+    headline and every row that needs those waves is reported blocked with
+    its counts (INVENTED data)."""
+
+    blocked = invented.invented_age67_inputs()
+    assert runner.headline_row(blocked) == rows.FALLBACK_ROW
+    result = runner.run_track_u(blocked, params, data_provenance=ap.INVENTED)
+    assert result["headline"]["row"] == "U0-F"
+    assert result["headline"]["rule"] == rows.HEADLINE_RULE
+    assert result["headline"]["wealth_refused_waves"] == [2005, 2007]
+    statuses = {row: entry["status"] for row, entry in result["rows"].items()}
+    assert statuses.pop("U0-F") == "computed"
+    assert statuses.pop("U7") == "not_built"
+    assert set(statuses.values()) == {"blocked"}
+    u0 = result["rows"]["U0"]
+    assert u0["tabulation"] is None
+    assert u0["blocked_waves"] == [2005, 2007]
+    assert set(u0["population"]["blocked_by_birth_year"]) == {"1937", "1939"}
+    u6 = result["rows"]["U6"]
+    assert u6["blocked_waves"] == [2005, 2007]
+    assert result["f17_diagnostics"]["row"] == "U0-F"
+    tabulated = result["rows"]["U0-F"]["population"]
+    assert set(tabulated["observations_by_birth_year"]) == {
+        "1941",
+        "1943",
+        "1945",
+    }
+    assert tabulated["left_out"] == {"wealth_supplement_not_staged": 0}
+
+
+def test_blocked_waves_and_design_frame():
+    staged = invented.invented_age67_inputs(supplement_waves_staged=True)
+    blocked = invented.invented_age67_inputs()
+    registered = rows.REGISTERED_ROWS
+    assert runner.headline_row(staged) == rows.PRIMARY_ROW
+    assert runner.blocked_waves(registered["U0"], staged) == []
+    assert runner.blocked_waves(registered["U0"], blocked) == [2005, 2007]
+    assert runner.blocked_waves(registered["U0-F"], blocked) == []
+    design = runner.design_frame(staged, registered["U0"].age67_spec())
+    assert list(design.columns) == ["stratum", "cluster"]
+    assert not design.duplicated().any()
+    # the invented design: eight strata of two clusters
+    assert design.groupby("stratum")["cluster"].nunique().to_dict() == (
+        dict.fromkeys(range(1, 9), 2)
+    )
 
 
 def test_a_registered_run_needs_the_committed_pinned_parameters(params):

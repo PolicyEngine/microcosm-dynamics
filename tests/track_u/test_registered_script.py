@@ -195,6 +195,43 @@ def test_the_artifact_is_created_exclusively(tmp_path):
 def test_the_registration_pointer_and_commit_are_required():
     with pytest.raises(SystemExit):
         _script().main([])
+    # the headline row is required too, and only U0 or U0-F
+    with pytest.raises(SystemExit):
+        _script().main(
+            ["--registration-pointer", POINTER, "--registered-commit", COMMIT]
+        )
+    with pytest.raises(SystemExit):
+        _script().main(
+            [
+                "--registration-pointer",
+                POINTER,
+                "--registered-commit",
+                COMMIT,
+                "--headline-row",
+                "U1",
+            ]
+        )
+
+
+class _Staging:
+    """INVENTED stand-in for loaded inputs: only the refused waves."""
+
+    def __init__(self, refused):
+        self.wealth_refusals = {wave: "not staged" for wave in refused}
+
+
+def test_the_headline_row_must_match_the_staging():
+    """The fallback rule (specification section 11): the registration
+    names the headline row, and the run refuses a staging that gives
+    another."""
+
+    script = _script()
+    assert script.check_headline("U0", _Staging(())) == "U0"
+    assert script.check_headline("U0-F", _Staging((2005, 2007))) == "U0-F"
+    with pytest.raises(ValueError, match="staging changed"):
+        script.check_headline("U0", _Staging((2005, 2007)))
+    with pytest.raises(ValueError, match="staging changed"):
+        script.check_headline("U0-F", _Staging(()))
 
 
 def test_uncaptured_thresholds_stop_the_run_before_any_psid_read(
@@ -215,6 +252,8 @@ def test_uncaptured_thresholds_stop_the_run_before_any_psid_read(
                 POINTER,
                 "--registered-commit",
                 COMMIT,
+                "--headline-row",
+                "U0-F",
                 "--output",
                 str(output),
             ]

@@ -8,12 +8,21 @@ income_rows`), form baseline and reform adjusted income and poverty
 status (:func:`populace_dynamics.estimates.adjusted_poverty.
 adjusted_incomes`) and tabulate the frozen statistic
 (:func:`populace_dynamics.estimates.uniform_cut_tabulation.
-tabulate_uniform_cut`).  For the primary row it also computes the two F17
-diagnostics: the component summaries
+tabulate_uniform_cut`) with the design-based standard error on the full
+sample design (:func:`design_frame`).  For the headline row it also
+computes the two F17 diagnostics: the component summaries
 (:mod:`populace_dynamics.uniform_cut_track_u.diagnostics`) and the
 official-concept poverty rate (:func:`official_concept_rates`: money
 income against the same thresholds, reported asset income kept, no
 annuity, no cut).
+
+The headline row follows the specification's fallback rule
+(:data:`populace_dynamics.uniform_cut_track_u.rows.HEADLINE_RULE`, pending
+Max): U0 when every wave has WEALTH1, otherwise U0-F; a row whose
+observation waves include a wave without WEALTH1 is reported as blocked,
+with its structural counts, and not computed (unless ``allow_blocked``,
+which leaves the blocked observations out and is refused for a
+registered run).  The rule depends on staging status only.
 
 Provenance guards, before anything is computed:
 
@@ -27,7 +36,8 @@ Provenance guards, before anything is computed:
   returned and sealed by :func:`~populace_dynamics.cohorts.age67.
   load_age67_inputs`); the thresholds must be the committed Census
   capture, the SSI parameters and life tables the committed ones; no
-  wealth wave may be refused and no observation left out.
+  observation may be left out (a wave without WEALTH1 blocks the rows
+  that need it, and U0-F becomes the headline).
 
 The income concept and the tabulation apply their own guards as well.
 """
@@ -47,6 +57,8 @@ from populace_dynamics.estimates import adjusted_poverty as ap
 from populace_dynamics.estimates import uniform_cut_tabulation as ut
 from populace_dynamics.uniform_cut_track_u import diagnostics, invented
 from populace_dynamics.uniform_cut_track_u.rows import (
+    FALLBACK_ROW,
+    HEADLINE_RULE,
     PRIMARY_ROW,
     REGISTERED_ROWS,
     TrackURow,
@@ -59,7 +71,10 @@ __all__ = [
     "RUN_SCHEMA_VERSION",
     "TrackUParameters",
     "TrackURunError",
+    "blocked_waves",
     "committed_parameters",
+    "design_frame",
+    "headline_row",
     "official_concept_rates",
     "run_track_u",
 ]
@@ -72,7 +87,9 @@ REGISTRATION_POINTER = re.compile(
     r"#issuecomment-[0-9]+"
 )
 OFFICIAL_CONCEPT_CELLS: tuple[str, ...] = ut.DEFAULT_CELLS
-#: The named deltas every output carries (specification section 12).
+#: The named deltas every output carries (specification section 12, whose
+#: bullets hold the same text; ``tests/test_boomers2004_uniform_cut_spec.py``
+#: checks that they agree).
 NAMED_DELTAS: tuple[str, ...] = (
     "PSID versus SIPP wealth measurement",
     "realized 2004-2012 history versus DYNASIM's 1992-based projection, "
@@ -83,19 +100,52 @@ NAMED_DELTAS: tuple[str, ...] = (
     "without the member's own income, which the PSID does not collect); "
     "attrition",
     "OFUM-owned assets inside family wealth",
+    "the family's wealth stands in for an OFUM cohort member's own wealth "
+    "(the Report's unit is the individual plus spouse, p. 24)",
     "imputed rent excluded",
-    "self-reported Social Security, possibly net of Medicare premiums",
-    "pension income that may include account withdrawals",
+    "self-reported Social Security, possibly net of Medicare Part B "
+    "premiums, so the 13 percent cut applies to a smaller base than the "
+    "gross benefit (baseline income is lower too; the net direction on "
+    "the change is not established)",
+    "retirement-account income beside annuitized balances: the head's "
+    "income from annuities and IRAs is removed (F4a), but the wife's "
+    "(before 2013) and the OFUMs' items combine pensions with annuity "
+    "income and stay, so any IRA or annuity income in them is counted "
+    "twice; an annuity already in payment may have no balance in WEALTH1, "
+    "so removing its income understates income",
+    "employer DC (401(k)) balances outside IRAs are not in WEALTH1 though "
+    "the Report counts them (p. 24): the primary annuity is understated "
+    "for their holders (row U7)",
+    "PSID other assets (W34) include cash value of life insurance, "
+    "collections and rights in a trust or estate, which the Report's list "
+    "(p. 22) does not name",
+    "the annuity is priced on population period life tables by age and "
+    "sex (NCHS 2000; U9 SSA 2004), while DYNASIM's mortality follows the "
+    "2002 Trustees projections (p. 20, fn. 4) and the Report ties the "
+    "annuity to family life expectancy (p. 24): with falling mortality, "
+    "period tables overstate the annuity",
     "exact-age sampling of alternate birth years (mean birth year 1941 "
     "against 1940.5)",
-    "farm income's asset portion is not separable and stays in income; "
-    "business income is split 50/50 between labor and asset parts by PSID "
-    "convention for working owners",
+    "U1 averages ages 66 and 68, and claiming between those ages is not "
+    "linear in age",
+    "the universe is alive at the interview after the income year",
+    "farm income's asset portion is imputed by the PSID business "
+    "convention (farm_asset_share); business income is split 50/50 "
+    "between labor and asset parts by PSID convention for working owners",
     "SSI units approximated from head, wife and OFUM totals (deeming by "
     "full attribution; OFUMs as one unit)",
+    "SSI deeming by full attribution can only overstate the offset (so "
+    "understate the change): under 20 CFR 416.1163 nothing is deemed when "
+    "the ineligible spouse's income is at most the couple-minus-individual "
+    "FBR",
+    "the SSI test uses annual amounts against 12 times the January FBR "
+    "(SSI accounting is monthly), and U3 omits rent and royalties from "
+    "countable income although 20 CFR 416.1121 counts them",
     "reported SSI may include state supplementary payments, so capping "
     "the offset at the federal benefit rate less reported SSI can "
     "understate the offset",
+    "U0-F, if it is the headline: mean birth year 1943 against 1940.5, "
+    "and every observation year at or after the 2008-09 asset shock",
 )
 
 
@@ -192,6 +242,50 @@ def _check_parameters(params: TrackUParameters, data_provenance: str) -> None:
         )
 
 
+def headline_row(inputs: age67.Age67Inputs) -> str:
+    """The headline row under the fallback rule (staging status only).
+
+    U0 when every wave's WEALTH1 is available (the 2005 and 2007 wealth
+    supplements staged, adjudicated and read); U0-F otherwise.
+    """
+
+    return FALLBACK_ROW if inputs.wealth_refusals else PRIMARY_ROW
+
+
+def blocked_waves(row: TrackURow, inputs: age67.Age67Inputs) -> list[int]:
+    """The row's observation waves whose WEALTH1 the inputs refuse."""
+
+    waves = {w for _, w, _, _ in age67.observation_plan(row.age67_spec())}
+    return sorted(waves & {int(w) for w in inputs.wealth_refusals})
+
+
+def design_frame(
+    inputs: age67.Age67Inputs, spec: age67.Age67Spec
+) -> pd.DataFrame:
+    """The sample design the full-design standard error sums over.
+
+    The distinct (stratum, cluster) pairs (ER31996, ER31997) of every
+    person with a positive cross-section weight in any of the row's
+    observation waves (specification section 10).
+    """
+
+    waves = sorted({w for _, w, _, _ in age67.observation_plan(spec)})
+    positive: set[int] = set()
+    for wave in waves:
+        anchor = inputs.anchors[wave]
+        positive |= set(
+            anchor.loc[anchor["weight"] > 0, "person_id"].astype(int)
+        )
+    design = inputs.design[inputs.design["person_id"].isin(positive)]
+    return (
+        design[["stratum", "cluster"]]
+        .astype("int64")
+        .drop_duplicates()
+        .sort_values(["stratum", "cluster"])
+        .reset_index(drop=True)
+    )
+
+
 def _check_inputs(
     inputs: age67.Age67Inputs,
     data_provenance: str,
@@ -221,11 +315,6 @@ def _check_inputs(
             "a registered run reads the staged PSID through "
             "age67.load_age67_inputs; these inputs record "
             f"{(inputs.provenance or {}).get('kind')!r}"
-        )
-    if inputs.wealth_refusals:
-        raise TrackURunError(
-            "a registered run needs WEALTH1 for every wave; refused: "
-            f"{sorted(inputs.wealth_refusals)}"
         )
     if allow_blocked:
         raise TrackURunError(
@@ -324,6 +413,12 @@ def _income_counts(adjusted: pd.DataFrame) -> dict[str, Any]:
         "n_asset_income_removed_nonzero": int(
             (adjusted["asset_income_removed"] != 0).sum()
         ),
+        "n_retirement_account_income_removed_nonzero": int(
+            (adjusted["retirement_account_income_removed"] != 0).sum()
+        ),
+        "n_farm_asset_income_removed_nonzero": int(
+            (adjusted["farm_asset_income_removed"] != 0).sum()
+        ),
         "n_ssi_offset_positive": int((adjusted["ssi_offset"] > 0).sum()),
         "n_ssi_new_positive": int((adjusted["ssi_new"] > 0).sum()),
         "n_poor_baseline": int(adjusted["poor_baseline"].sum()),
@@ -398,6 +493,7 @@ def _compute_row(
         registration_pointer=registration_pointer,
         upstream_spec=adjusted.attrs["spec"],
         pending_decisions=pending,
+        design=design_frame(inputs, age67_spec),
     )
     obs = cohort.observations
     result = {
@@ -414,6 +510,11 @@ def _compute_row(
             "n_in_institution": int(members["in_institution"].sum()),
             "left_out": dict(members.attrs.get("left_out", {})),
             "observations_by_birth_year": _counts(members["birth_year"]),
+            "marital_resolution": _counts(members["marital_resolution"]),
+            "fu_head_age_source": _counts(members["fu_head_age_source"]),
+            "fu_head_spouse_age_source": _counts(
+                members["fu_head_spouse_age_source"]
+            ),
             "dispositions": (
                 _counts(cohort.dispositions["disposition"])
                 if not cohort.dispositions.empty
@@ -424,6 +525,41 @@ def _compute_row(
         "tabulation": tabulation,
     }
     return result, members, adjusted, cohort
+
+
+def _blocked_result(
+    row: TrackURow, inputs: age67.Age67Inputs, waves: list[int]
+) -> dict[str, Any]:
+    """A row that needs a wave without WEALTH1: counts only, no income."""
+
+    cohort = age67.build_age67_cohort(inputs, row.age67_spec())
+    obs = cohort.observations
+    blocked = (
+        obs["wave"].isin(waves) if not obs.empty else pd.Series(dtype=bool)
+    )
+    return {
+        "row": row.as_dict(),
+        "status": "blocked",
+        "reason": (
+            f"WEALTH1 is refused for waves {waves} (the 2005 and 2007 "
+            "wealth supplements are not staged); reported with its "
+            "counts under the fallback rule"
+        ),
+        "blocked_waves": waves,
+        "population": {
+            "n_observations_built": int(len(obs)),
+            "n_observations_blocked": int(blocked.sum()),
+            "observations_by_birth_year": (
+                _counts(obs["birth_year"]) if not obs.empty else {}
+            ),
+            "blocked_by_birth_year": (
+                _counts(obs.loc[blocked, "birth_year"])
+                if not obs.empty
+                else {}
+            ),
+        },
+        "tabulation": None,
+    }
 
 
 def run_track_u(
@@ -439,14 +575,22 @@ def run_track_u(
 ) -> dict[str, Any]:
     """Every registered row, the F17 diagnostics and the provenance.
 
-    Rows not built (U7) are reported with their reason.  An undefined
-    cell stays undefined with its reason (the tabulation's rule); nothing
-    is imputed or dropped silently.
+    Rows not built (U7) are reported with their reason.  The headline row
+    is :func:`headline_row`'s (the fallback rule); a row whose waves lack
+    WEALTH1 is reported as blocked with its counts unless
+    ``allow_blocked`` (then its blocked observations are left out and
+    counted; refused for a registered run).  An undefined cell stays
+    undefined with its reason (the tabulation's rule); nothing is imputed
+    or dropped silently.
     """
 
     rows = REGISTERED_ROWS if rows is None else rows
-    if PRIMARY_ROW not in rows:
-        raise TrackURunError("the primary row U0 must run")
+    headline = headline_row(inputs)
+    if headline not in rows:
+        raise TrackURunError(
+            f"the headline row {headline} (fallback rule, staging status) "
+            "must run"
+        )
     checks = _check_inputs(
         inputs, data_provenance, registration_pointer, allow_blocked
     )
@@ -463,6 +607,11 @@ def run_track_u(
                 "tabulation": None,
             }
             continue
+        waves = blocked_waves(row, inputs)
+        if waves and not allow_blocked:
+            say(f"Track U row {row_id}: blocked (waves {waves})")
+            results[row_id] = _blocked_result(row, inputs, waves)
+            continue
         say(f"Track U row {row_id}")
         result, members, adjusted, cohort = _compute_row(
             row,
@@ -474,9 +623,10 @@ def run_track_u(
             tabulation_config=tabulation_config,
         )
         results[row_id] = result
-        if row_id == PRIMARY_ROW:
+        if row_id == headline:
             primary = (members, adjusted, cohort)
-    assert primary is not None
+    if primary is None:
+        raise TrackURunError(f"the headline row {headline} was not computed")
     members, adjusted, cohort = primary
     if data_provenance == ap.INVENTED:
         checks["invented_cohort"] = invented.check_invented_cohort(cohort)
@@ -489,6 +639,13 @@ def run_track_u(
         "data_provenance": data_provenance,
         "registration_pointer": registration_pointer,
         "labels": labels,
+        "headline": {
+            "row": headline,
+            "rule": HEADLINE_RULE,
+            "wealth_refused_waves": sorted(
+                int(w) for w in inputs.wealth_refusals
+            ),
+        },
         "cohort_provenance": {
             key: value
             for key, value in cohort.provenance.items()
@@ -501,7 +658,7 @@ def run_track_u(
         "input_checks": checks,
         "rows": results,
         "f17_diagnostics": {
-            "row": PRIMARY_ROW,
+            "row": headline,
             "official_concept_poverty_rate": official_concept_rates(
                 members, adjusted
             ),

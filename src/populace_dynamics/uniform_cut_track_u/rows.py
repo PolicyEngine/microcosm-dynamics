@@ -3,15 +3,22 @@
 Each row of the exercise-2 specification
 (``docs/design/boomers2004_uniform_cut_comparison.md``, sections 11 and
 15) differs from the primary U0 in one field, except U6, which is defined
-on U1 (plan ``critical-path-uniform-cut-20260923.md`` section 7).  A row
-here is a set of overrides of :class:`populace_dynamics.cohorts.age67.
+on U1 (plan ``critical-path-uniform-cut-20260923.md`` section 7), and
+U0-F, U0 restricted to the birth years 1941, 1943 and 1945.  A row here
+is a set of overrides of :class:`populace_dynamics.cohorts.age67.
 Age67Spec` and :class:`populace_dynamics.estimates.adjusted_poverty.
 AdjustedPovertySpec`; the defaults of those two classes are U0.
+
+:data:`HEADLINE_RULE` is the specification's fallback rule (pending Max,
+with plan section 10 decision 3): U0 is the headline when the 2005 and
+2007 wealth supplements are staged, adjudicated and read before the #42
+registration, U0-F otherwise, by staging status only.
 
 :func:`check_rows_against_block` holds :data:`REGISTERED_ROWS` to the
 specification's machine-readable block, so a row a run computes is the
 row the specification registers.  U7 (employer DC balances) is not
-built: it needs a label investigation of the PSID P-section items.
+built: it needs a label investigation of the PSID P-section items, and
+it must be built or removed before registration.
 """
 
 from __future__ import annotations
@@ -27,6 +34,8 @@ from populace_dynamics.cohorts import age67
 from populace_dynamics.estimates import adjusted_poverty as ap
 
 __all__ = [
+    "FALLBACK_ROW",
+    "HEADLINE_RULE",
     "PRIMARY_ROW",
     "REGISTERED_ROWS",
     "SPECIFICATION_PATH",
@@ -41,6 +50,15 @@ SPECIFICATION_PATH = (
     _ROOT / "docs" / "design" / "boomers2004_uniform_cut_comparison.md"
 )
 PRIMARY_ROW = "U0"
+#: The registered fallback row (U0 on 1941, 1943 and 1945).
+FALLBACK_ROW = "U0-F"
+#: The specification's headline rule (section 11; pending Max).
+HEADLINE_RULE = "u0_if_2005_2007_wealth_staged_before_registration_else_u0f"
+#: Block ``population`` values and the builder row they select.
+_POPULATION_ROWS = {
+    "all_ten_birth_years": "U1",
+    "birth_years_1941_1943_1945": FALLBACK_ROW,
+}
 _AGE67_FIELDS = frozenset(f.name for f in fields(age67.Age67Spec))
 _INCOME_FIELDS = frozenset(f.name for f in fields(ap.AdjustedPovertySpec))
 #: Block keys that describe a row without being a parameter.
@@ -147,6 +165,18 @@ REGISTERED_ROWS: dict[str, TrackURow] = {
             ),
         ),
         TrackURow(
+            "U0-F",
+            "population",
+            "U0 restricted to the birth years 1941, 1943 and 1945 (the "
+            "blocked 1937 and 1939 left out and counted); the headline when "
+            "the 2005 and 2007 wealth supplements are not staged before "
+            "the #42 registration",
+            age67={"row": FALLBACK_ROW},
+            awaiting=(
+                "Max (the fallback rule, with plan section 10 decision 3)"
+            ),
+        ),
+        TrackURow(
             "U7",
             "financial assets",
             "WEALTH1 plus employer DC balances",
@@ -185,8 +215,8 @@ REGISTERED_ROWS: dict[str, TrackURow] = {
                 "institution_income_rule": "family_of_record",
             },
             awaiting=(
-                "the referee (the institution income rule is a builder "
-                "default)"
+                "the specification freeze (the institution income rule is "
+                "a builder default of u1-draft-3, not yet refereed)"
             ),
         ),
     )
@@ -209,8 +239,10 @@ def row_from_block(row_id: str, entry: Mapping[str, Any]) -> dict[str, Any]:
     """A block row's overrides: ``age67``, ``income``, ``built``, ``awaiting``.
 
     ``population: all_ten_birth_years`` and ``on: U1`` select the U1
-    population; keys naming an :class:`~populace_dynamics.cohorts.age67.
-    Age67Spec` or :class:`~populace_dynamics.estimates.adjusted_poverty.
+    population; ``population: birth_years_1941_1943_1945`` selects U0-F
+    (with ``on: U0``, which names its base and changes nothing); keys
+    naming an :class:`~populace_dynamics.cohorts.age67.Age67Spec` or
+    :class:`~populace_dynamics.estimates.adjusted_poverty.
     AdjustedPovertySpec` field are overrides; ``status: not_built`` marks
     a row not built.  Any other key is refused.
     """
@@ -218,11 +250,15 @@ def row_from_block(row_id: str, entry: Mapping[str, Any]) -> dict[str, Any]:
     age67_overrides: dict[str, Any] = {}
     income: dict[str, Any] = {}
     for key, value in entry.items():
-        if key in ("population", "on"):
-            expected = "all_ten_birth_years" if key == "population" else "U1"
-            if value != expected:
+        if key == "population":
+            if value not in _POPULATION_ROWS:
                 raise ValueError(f"{row_id}: {key}={value!r} is not known")
-            age67_overrides["row"] = "U1"
+            age67_overrides["row"] = _POPULATION_ROWS[value]
+        elif key == "on":
+            if value not in ("U0", "U1"):
+                raise ValueError(f"{row_id}: {key}={value!r} is not known")
+            if value == "U1":
+                age67_overrides.setdefault("row", "U1")
         elif key in _AGE67_FIELDS:
             age67_overrides[key] = value
         elif key in _INCOME_FIELDS:

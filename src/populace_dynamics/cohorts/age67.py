@@ -18,8 +18,14 @@ Rows (plan section 3 and fields F1-F2):
   as U0; each even birth year 1938-1944 (odd age-67 year) observed at 66
   and at 68 with half weight each; 1936 observed at 68 only (income year
   2004; its age-66 year 2002 is in the 2003 wave, which has aggregates
-  only) with weight ``u1_single_observation_weight`` (1, a builder
-  choice: the plan says only "1936 from 2004 only").
+  only) with weight ``u1_single_observation_weight`` (1: each birth year
+  then carries one cross-section's weight; the plan says only "1936 from
+  2004 only").
+* **U0-F (registered fallback): U0 on birth years 1941, 1943 and 1945
+  only**, the U0 birth years whose waves (2009-2013) carry WEALTH1 in the
+  family file.  The specification's fallback rule makes it the headline
+  row when the 2005 and 2007 wealth supplements are not staged before the
+  #42 registration (a rule on staging status, never on results).
 
 Universe per wave (F2): sequence 1-20 (in a responding family) with a
 positive cross-section weight; the registered option U-inst adds
@@ -27,7 +33,8 @@ sequence 51-59 (institution).  The PSID collects no income for an
 institutionalized person (the individual-file Social Security items are
 "Inap.: ... in an institution", codebook ER34137-ER34143 for 2011) and
 the plan gives them no income rule, so ``institution_income_rule`` (a
-builder default pending the referee) supplies one:
+builder default of u1-draft-3, pending the freeze and not yet refereed)
+supplies one:
 
 * ``family_of_record`` (default): the PSID attaches an institutionalized
   sample member's record to the family they left (2011 User Guide,
@@ -60,19 +67,40 @@ plan names the law but not the seed wave (builder choice).
 Attached to each observation: the family unit of that wave
 (``family_unit_id = wave * 100000 + interview``), the member's role
 (head 10, legal wife 20, cohabiting "wife" 22, otherwise OFUM; the codes
-are verified against ``IND2023ER_formats.sas`` for each wave), sex, the
-PSID sampling-error stratum and cluster (ER31996, ER31997), marital
-status at the end of the income year from the marriage history
+are verified against ``IND2023ER_formats.sas`` for each wave, with 90,
+"Legal husband of Head"), sex, the PSID sampling-error stratum and
+cluster (ER31996, ER31997), marital status at the end of the income year
+from the marriage history
 (:func:`populace_dynamics.cohorts.psid2010.marital_state_at`, separated
-counts as married by default, F12; a state the history cannot resolve,
-``unknown`` or ``no_marriage_history``, counts as non-married under
-``unresolved_marital_status``), whether a legal spouse lives in the
-same family unit, the spouse's age and sex (for the joint annuity), and
-the family's income (:func:`populace_dynamics.data.family_income.
-read_family_income`) and wealth (:func:`populace_dynamics.data.
-family_income.read_family_wealth`).  Waves 2005 and 2007 have no staged
-wealth, so their observations are marked
-``blocked_wealth_supplement_not_staged``.
+counts as married by default, F12), whether a legal spouse lives in the
+same family unit, the spouse's age and sex, the family head's and the
+head's co-resident legal spouse's ages and sexes (the annuitants under
+the income concept's ``fu_head_rule``), and the family's income
+(:func:`populace_dynamics.data.family_income.read_family_income`) and
+wealth (:func:`populace_dynamics.data.family_income.read_family_wealth`).
+Waves 2005 and 2007 have no staged wealth, so their observations are
+marked ``blocked_wealth_supplement_not_staged``.
+
+Unresolved marital states (``unresolved_marital_status``, pending the
+specification freeze): a member whose marriage history cannot date the
+state (``unknown``) or who has no record (``no_marriage_history``) is,
+under ``relationship_code`` (default, the referee's Q7 answer), married
+and co-resident with that spouse when the member is the head with a
+co-resident legal spouse (code 20 or 90) or is the head's legal wife (20)
+or legal husband (90); otherwise non-married.  ``non_married`` classifies
+them all as non-married.  ``marital_resolution`` records the path taken
+for every observation.
+
+Annuitant ages (``annuitant_age_source``, pending the freeze): under
+``derived_birth_year`` (default, the referee's Q8 answer) every
+annuitant's age is the income year minus the birth year the birth-year
+law derives, the law extended beyond the universe to in-family heads,
+legal and cohabiting spouses and marriage-history spouses; where the law
+leaves a person unresolved the individual-file age at the wave is used
+and the source says so (``wave_age``).  The law gives the
+marriage-history birth year precedence, so for those people the wave age
+(age at the interview) can exceed the income-year age by one year.
+``wave_age`` uses the individual-file age at the wave throughout.
 
 Provenance: :func:`load_age67_inputs` records the SHA-256 of every PSID
 file it read and seals the returned inputs; the builder marks a cohort
@@ -114,13 +142,16 @@ from populace_dynamics.estimates import career
 __all__ = [
     "ALL_BIRTH_YEARS",
     "ANCHOR_LAYOUTS",
+    "ANNUITANT_AGE_SOURCES",
     "CALLER_FRAMES",
+    "FALLBACK_BIRTH_YEARS",
     "INSTITUTION_INCOME_RULES",
     "INVENTED",
     "PRIMARY_BIRTH_YEARS",
     "PSID_FILES",
     "ROWS",
     "TARGET_AGE",
+    "UNRESOLVED_MARITAL_RULES",
     "WAVES",
     "Age67Cohort",
     "Age67Inputs",
@@ -140,7 +171,10 @@ TARGET_AGE = 67
 WAVES: tuple[int, ...] = family_income.INCOME_WAVES
 PRIMARY_BIRTH_YEARS: tuple[int, ...] = (1937, 1939, 1941, 1943, 1945)
 ALL_BIRTH_YEARS: tuple[int, ...] = tuple(range(1936, 1946))
-ROWS: tuple[str, ...] = ("U0", "U1")
+#: The U0 birth years whose observation waves carry WEALTH1 in the family
+#: file (row U0-F, the registered fallback).
+FALLBACK_BIRTH_YEARS: tuple[int, ...] = (1941, 1943, 1945)
+ROWS: tuple[str, ...] = ("U0", "U1", "U0-F")
 PSID_FILES = "psid_files"
 INVENTED = "invented"
 CALLER_FRAMES = "caller_frames"
@@ -150,13 +184,34 @@ INSTITUTION_INCOME_RULES: dict[str, str] = {
         "the family unit whose interview number the institutionalized "
         "member's record carries (the family they left): its income, "
         "wealth, size and children, with the member's own age and sex, "
-        "role ofum and no co-resident spouse (builder default, pending the "
-        "referee)"
+        "role ofum and no co-resident spouse (builder default, pending "
+        "the freeze; not yet refereed)"
     ),
     "excluded": (
         "institutionalized persons stay out of the poverty universe (a "
         "disposition); U-inst then equals U0 in population"
     ),
+}
+#: How a member whose marriage history cannot resolve the state is
+#: classified.
+UNRESOLVED_MARITAL_RULES: dict[str, str] = {
+    "relationship_code": (
+        "married and co-resident when the member is the head with a "
+        "co-resident legal spouse (code 20 or 90) or is the head's legal "
+        "wife (20) or legal husband (90); otherwise non-married (the "
+        "referee's Q7 answer)"
+    ),
+    "non_married": "every unresolved member is non-married",
+}
+#: Where an annuitant's age comes from.
+ANNUITANT_AGE_SOURCES: dict[str, str] = {
+    "derived_birth_year": (
+        "income year minus the birth year the birth-year law derives "
+        "(extended to in-family heads and spouses); the individual-file "
+        "age at the wave where the law leaves the person unresolved (the "
+        "referee's Q8 answer)"
+    ),
+    "wave_age": "the individual-file age at the wave (age at interview)",
 }
 
 #: Each wave's label-verified individual-file anchor variables (labels
@@ -208,6 +263,18 @@ _PERSON_VARS: dict[str, str] = {
     "ER30002": "PERSON NUMBER 68",
 }
 _HEAD, _LEGAL_WIFE, _PARTNER = 10, 20, 22
+_FIRST_YEAR_COHABITOR, _LEGAL_HUSBAND = 88, 90
+#: Relationship codes of the head's co-resident legal spouse.
+_LEGAL_SPOUSE_CODES = (_LEGAL_WIFE, _LEGAL_HUSBAND)
+#: Relationship codes whose in-family persons get a birth year for the
+#: annuity even outside the universe (heads and spouses or partners).
+_ANNUITANT_CODES = (
+    _HEAD,
+    _LEGAL_WIFE,
+    _PARTNER,
+    _FIRST_YEAR_COHABITOR,
+    _LEGAL_HUSBAND,
+)
 _SEQUENCE_IN_FAMILY = (1, 20)
 _SEQUENCE_INSTITUTION = (51, 59)
 _SEQUENCE_GROUPS: tuple[tuple[str, int, int], ...] = (
@@ -231,6 +298,7 @@ _RELATIONSHIP_PREFIXES = {
     _HEAD: "head in {wave}",
     _LEGAL_WIFE: "legal wife in {wave}",
     _PARTNER: '"wife"',
+    _LEGAL_HUSBAND: "legal husband of head",
 }
 
 
@@ -243,7 +311,8 @@ class Age67Spec:
     separated_is_married: bool = True
     u1_single_observation_weight: float = 1.0
     seed_wave_rule: str = "earliest_presence_wave"
-    unresolved_marital_status: str = "non_married"
+    unresolved_marital_status: str = "relationship_code"
+    annuitant_age_source: str = "derived_birth_year"
     institution_income_rule: str = "family_of_record"
 
     def __post_init__(self) -> None:
@@ -258,10 +327,15 @@ class Age67Spec:
             )
         if self.seed_wave_rule != "earliest_presence_wave":
             raise ValueError("seed_wave_rule must be earliest_presence_wave")
-        if self.unresolved_marital_status != "non_married":
+        if self.unresolved_marital_status not in UNRESOLVED_MARITAL_RULES:
             raise ValueError(
-                "unresolved_marital_status must be non_married (no other "
-                "rule is built)"
+                "unresolved_marital_status must be one of "
+                f"{sorted(UNRESOLVED_MARITAL_RULES)}"
+            )
+        if self.annuitant_age_source not in ANNUITANT_AGE_SOURCES:
+            raise ValueError(
+                "annuitant_age_source must be one of "
+                f"{sorted(ANNUITANT_AGE_SOURCES)}"
             )
         weight = float(self.u1_single_observation_weight)
         if not 0.0 < weight <= 1.0:
@@ -280,9 +354,13 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
         psid2010.PendingDecision(
             "row",
             spec.row,
-            ("U1",),
+            ("U1", "U0-F"),
             "plan F1: exact age (U0) is the primary; U1 pools all ten "
-            "birth years",
+            "birth years; U0-F (1941, 1943, 1945) is the registered "
+            "fallback, the headline when the 2005 and 2007 wealth "
+            "supplements are not staged before the #42 registration "
+            "(specification section 11 fallback rule, with plan section 10 "
+            "decision 3)",
             freeze,
         ),
         psid2010.PendingDecision(
@@ -305,7 +383,10 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
             "u1_single_observation_weight",
             spec.u1_single_observation_weight,
             (0.5,),
-            "builder choice: the plan says only '1936 from 2004 only'",
+            "builder choice (the plan says only '1936 from 2004 only'), "
+            "endorsed by the referee (Q4): with weight 1 every birth year "
+            "enters U1 with one cross-section's worth of weight; 0.5 would "
+            "halve 1936's share of the cohort",
             freeze,
         ),
         psid2010.PendingDecision(
@@ -320,21 +401,39 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
         psid2010.PendingDecision(
             "unresolved_marital_status",
             spec.unresolved_marital_status,
-            (),
-            "builder choice: plan F12 ('legally married per MH85_23') "
-            "does not say how to classify a member whose marriage history "
-            "cannot date the state ('unknown') or who has no record "
-            "('no_marriage_history'); they count as non-married (the "
-            "non_married cell, a single-life annuity)",
+            ("non_married",),
+            "referee answer to Q7 (boomers2004-referee-20260924.md, R9): "
+            "plan F12 ('legally married per MH85_23') does not say how to "
+            "classify a member whose marriage history cannot date the "
+            "state ('unknown') or who has no record ('no_marriage_"
+            "history'); the relationship code decides (married and "
+            "co-resident as head with a co-resident legal spouse, 20 or "
+            "90, or as the head's legal wife, 20, or legal husband, 90), "
+            "otherwise non-married; the draft-2 rule classified them all "
+            "as non-married",
+            freeze,
+        ),
+        psid2010.PendingDecision(
+            "annuitant_age_source",
+            spec.annuitant_age_source,
+            ("wave_age",),
+            "referee answer to Q8 (R8): every annuitant's age is the "
+            "income year minus the derived birth year (the birth-year law "
+            "extended to in-family heads and spouses), the wave age only "
+            "where the law leaves the person unresolved (counted); the "
+            "draft-2 rule priced the spouse at the individual-file age of "
+            "the wave, which exceeds the income-year age by one year when "
+            "the birthday falls before the interview",
             freeze,
         ),
         psid2010.PendingDecision(
             "institution_income_rule",
             spec.institution_income_rule,
             ("excluded",),
-            "builder default, pending the referee: plan F2 adds "
-            "institutions under U-inst but gives them no income rule and "
-            "the PSID collects none for them; the PSID attaches an "
+            "builder default (u1-draft-3), not yet refereed (the first "
+            "referee pass reviewed u1-draft-2, which had no rule): plan F2 "
+            "adds institutions under U-inst but gives them no income rule "
+            "and the PSID collects none for them; the PSID attaches an "
             "institutionalized member's record to the family they left "
             "(2011 User Guide section 2.4), so the observation takes that "
             "family's income concept and threshold (the member's own "
@@ -351,7 +450,10 @@ def observation_plan(
 ) -> tuple[tuple[int, int, int, float], ...]:
     """``(birth_year, wave, income_year, weight_multiplier)`` per row."""
 
-    plan = [(b, b + 68, b + 67, 1.0) for b in PRIMARY_BIRTH_YEARS]
+    primary = (
+        FALLBACK_BIRTH_YEARS if spec.row == "U0-F" else PRIMARY_BIRTH_YEARS
+    )
+    plan = [(b, b + 68, b + 67, 1.0) for b in primary]
     if spec.row == "U1":
         for b in range(1938, 1945, 2):
             plan.append((b, b + 67, b + 66, 0.5))
@@ -723,12 +825,178 @@ def _birth_years(
     return births, universe
 
 
+def _annuitant_birth_years(
+    inputs: Age67Inputs,
+    universe: set[int],
+    targets: set[int],
+) -> dict[int, career.BirthYearRecord]:
+    """Birth years of in-family heads and spouses outside the universe.
+
+    The annuity prices the family head and the head's legal spouse (or the
+    member's co-resident spouse) at their income-year ages, so the
+    birth-year law is extended to every in-family person (sequence 1-20)
+    of the five waves coded head, legal wife, cohabiting "wife", first-year
+    cohabitor or legal husband, and to every marriage-history spouse of a
+    target member, who is not in the universe (typically a zero-weight
+    nonsample spouse).  The seed coordinate is the earliest of the five
+    waves in which the person is in a family, whatever the weight.  The
+    law runs without a required population, so a person with conflicting
+    marriage-history birth years is left out (unresolved) instead of
+    failing the build; the caller then uses the wave age and counts it.
+    """
+
+    history = inputs.marriage_history
+    spouses = set()
+    if "spouse_person_id" in history.columns:
+        mine = history[history["person_id"].isin(targets)]
+        spouses = {
+            int(value) for value in mine["spouse_person_id"].dropna().tolist()
+        }
+    seeds = []
+    for wave in WAVES:
+        anchor = inputs.anchors[wave]
+        in_family = anchor[
+            anchor["sequence"].between(*_SEQUENCE_IN_FAMILY)
+            & (
+                anchor["relationship"].isin(_ANNUITANT_CODES)
+                | anchor["person_id"].isin(spouses)
+            )
+            & ~anchor["person_id"].isin(universe)
+        ]
+        # Seed ages the law accepts (1-125 or the 999 sentinel) and whose
+        # seed birth year stays inside the law's derived range.
+        ages = in_family["age"].astype("int64")
+        seed_birth = (wave - 1) - ages
+        in_family = in_family[
+            (
+                ages.between(1, _MAX_AGE_CODE)
+                & seed_birth.between(
+                    career.DERIVED_BIRTH_MIN, career.DERIVED_BIRTH_MAX
+                )
+            )
+            | ages.eq(999)
+        ]
+        seeds.append(
+            pd.DataFrame(
+                {
+                    "person_id": in_family["person_id"].astype("int64"),
+                    "year": wave - 1,
+                    "anchor_wave": wave,
+                    "age": in_family["age"].astype("int64"),
+                }
+            )
+        )
+    seed = (
+        pd.concat(seeds, ignore_index=True)
+        .sort_values(["person_id", "anchor_wave"])
+        .drop_duplicates("person_id", keep="first")
+        .reset_index(drop=True)
+    )
+    if seed.empty:
+        return {}
+    extra = set(int(pid) for pid in seed["person_id"])
+    earnings = inputs.observed_earnings
+    records = career.derive_birth_years(
+        history[history["person_id"].isin(extra)],
+        earnings[earnings["person_id"].isin(extra)],
+        seed_coordinates=seed,
+    )
+    return {
+        record.person_id: record
+        for record in records
+        if record.person_id in extra
+    }
+
+
 def _episodes(history: pd.DataFrame, person_ids: set[int]) -> dict:
     subset = history[history["person_id"].isin(person_ids)]
     if subset.empty:
         return {}
     episodes = psid2010._episodes_with_separation(subset)
     return {int(pid): rows for pid, rows in episodes.groupby("person_id")}
+
+
+#: Marriage-history states the history cannot resolve.
+_UNRESOLVED_STATES = ("unknown", "no_marriage_history")
+
+
+def _head_and_legal_spouse(
+    family_rows: pd.DataFrame | None,
+) -> tuple[int | None, int | None, int | None]:
+    """The family's head, the head's legal spouse and that spouse's code.
+
+    From the family unit's in-family records: the one person coded head
+    (10) and the one coded legal wife (20) or legal husband (90); ``None``
+    where there is not exactly one.
+    """
+
+    if family_rows is None:
+        return None, None, None
+    heads = family_rows.loc[family_rows["relationship"].eq(_HEAD)]
+    head = int(heads["person_id"].iloc[0]) if len(heads) == 1 else None
+    spouses = family_rows.loc[
+        family_rows["relationship"].isin(_LEGAL_SPOUSE_CODES)
+    ]
+    if len(spouses) != 1:
+        return head, None, None
+    return (
+        head,
+        int(spouses["person_id"].iloc[0]),
+        int(spouses["relationship"].iloc[0]),
+    )
+
+
+def _resolve_by_relationship(
+    spec: Age67Spec,
+    in_institution: bool,
+    pid: int,
+    relationship: int,
+    head: int | None,
+    head_spouse: int | None,
+) -> tuple[str, Any]:
+    """``(marital_resolution, spouse)`` for an unresolved marital state."""
+
+    if spec.unresolved_marital_status == "relationship_code" and not (
+        in_institution
+    ):
+        if relationship == _HEAD and head == pid and head_spouse is not None:
+            return "relationship_code_head_with_legal_spouse", head_spouse
+        if head is not None and head != pid and head_spouse == pid:
+            if relationship == _LEGAL_WIFE:
+                return "relationship_code_legal_wife", head
+            if relationship == _LEGAL_HUSBAND:
+                return "relationship_code_legal_husband", head
+    return "unresolved_non_married", pd.NA
+
+
+def _annuitant_age(
+    pid: int | None,
+    income_year: int,
+    family_rows: pd.DataFrame | None,
+    births: Mapping[int, career.BirthYearRecord],
+    spec: Age67Spec,
+) -> tuple[Any, str]:
+    """``(age, source)`` of one annuitant in the income year.
+
+    ``derived_birth_year``: income year minus the law's birth year where
+    the law resolves the person; otherwise, and always under ``wave_age``,
+    the individual-file age at the wave (codes 1-125).  ``absent`` when
+    there is no such person, ``missing`` when neither source has an age.
+    """
+
+    if pid is None:
+        return pd.NA, "absent"
+    if spec.annuitant_age_source == "derived_birth_year":
+        record = births.get(int(pid))
+        if record is not None and record.birth_year is not None:
+            return int(income_year) - int(record.birth_year), (
+                "derived_birth_year"
+            )
+    if family_rows is not None:
+        ages = family_rows.loc[family_rows["person_id"].eq(int(pid)), "age"]
+        if len(ages) == 1 and 1 <= int(ages.iloc[0]) <= _MAX_AGE_CODE:
+            return int(ages.iloc[0]), "wave_age"
+    return pd.NA, "missing"
 
 
 def build_age67_cohort(
@@ -742,9 +1010,16 @@ def build_age67_cohort(
     year), ``reported_birth_year``, ``weight_raw``,
     ``weight_multiplier``, ``weight``, ``interview``, ``family_unit_id``,
     ``sequence``, ``relationship``, ``member_role``, ``stratum``,
-    ``cluster``, ``marital_status``, ``married``, ``spouse_person_id``,
-    ``member_married_coresident``, ``spouse_age``, ``spouse_sex``,
-    ``fu_legal_wife_present``, ``wife_sex``, ``wealth_status``,
+    ``cluster``, ``marital_status``, ``marital_resolution``
+    (``marriage_history`` or the path an unresolved state took),
+    ``married``, ``spouse_person_id``, ``member_married_coresident``,
+    ``spouse_age``, ``spouse_age_source``, ``spouse_sex``,
+    ``fu_legal_wife_present``, ``wife_sex``, the head and the head's legal
+    spouse (``fu_head_person_id``, ``fu_head_age``,
+    ``fu_head_age_source``, ``fu_head_sex``, ``fu_head_spouse_present``,
+    ``fu_head_spouse_person_id``, ``fu_head_spouse_age``,
+    ``fu_head_spouse_age_source``, ``fu_head_spouse_sex``; ages are
+    income-year ages under ``annuitant_age_source``), ``wealth_status``,
     ``in_institution`` and ``income_status`` (``family_file`` for a member
     of the family unit, ``family_of_record`` for an institutionalized
     member under that rule).
@@ -766,6 +1041,10 @@ def build_age67_cohort(
         if record.birth_year in target_years
     }
     episodes = _episodes(inputs.marriage_history, targets)
+    all_births = {
+        **_annuitant_birth_years(inputs, universe, targets),
+        **births,
+    }
     with_history = set(
         int(pid) for pid in inputs.marriage_history["person_id"]
     )
@@ -855,6 +1134,7 @@ def build_age67_cohort(
                     continue
             disposition_rows.append({**base, "disposition": "observation"})
             family_rows = by_family.get(interview)
+            head, head_spouse, _ = _head_and_legal_spouse(family_rows)
             if pid in episodes:
                 state = psid2010.marital_state_at(
                     episodes[pid],
@@ -871,10 +1151,14 @@ def build_age67_cohort(
                     "spouse_person_id": pd.NA,
                 }
             spouse = state.get("spouse_person_id")
-            # An unresolved state ("unknown", "no_marriage_history") is
-            # classified by spec.unresolved_marital_status; its only built
-            # value, "non_married", leaves it out of "married".
             married = state["status"] == "married"
+            resolution = "marriage_history"
+            if state["status"] in _UNRESOLVED_STATES:
+                # spec.unresolved_marital_status decides (referee Q7).
+                resolution, spouse = _resolve_by_relationship(
+                    spec, in_institution, pid, relationship, head, head_spouse
+                )
+                married = resolution != "unresolved_non_married"
             coresident = (
                 married
                 and not pd.isna(spouse)
@@ -882,16 +1166,11 @@ def build_age67_cohort(
                 and int(spouse) in set(family_rows["person_id"].astype(int))
                 and sequence <= _SEQUENCE_IN_FAMILY[1]
             )
-            spouse_age = pd.NA
+            spouse_age, spouse_age_source = pd.NA, "absent"
             spouse_sex = pd.NA
             if coresident:
-                spouse_row = family_rows.set_index("person_id").loc[
-                    int(spouse)
-                ]
-                raw_age = int(spouse_row["age"])
-                # Individual-file age codes 999 (NA) and 0 carry no age.
-                spouse_age = (
-                    raw_age if 1 <= raw_age <= _MAX_AGE_CODE else pd.NA
+                spouse_age, spouse_age_source = _annuitant_age(
+                    int(spouse), income_year, family_rows, all_births, spec
                 )
                 spouse_sex = str(sex.get(int(spouse), "na"))
             wife_sex = pd.NA
@@ -907,6 +1186,14 @@ def build_age67_cohort(
                     wife_sex = str(
                         sex.get(int(wives["person_id"].iloc[0]), "na")
                     )
+            # The annuitants under fu_head_rule: the family head and the
+            # head's co-resident legal spouse (code 20 or 90).
+            head_age, head_age_source = _annuitant_age(
+                head, income_year, family_rows, all_births, spec
+            )
+            head_spouse_age, head_spouse_age_source = _annuitant_age(
+                head_spouse, income_year, family_rows, all_births, spec
+            )
             # An institutionalized member is neither the current head nor
             # the wife of its family of record: its relationship code is to
             # the previous wave's head (codebook note on ER34103).
@@ -954,13 +1241,32 @@ def build_age67_cohort(
                         else pd.NA
                     ),
                     "marital_status": state["status"],
+                    "marital_resolution": resolution,
                     "married": bool(married),
                     "spouse_person_id": spouse,
                     "member_married_coresident": bool(coresident),
                     "spouse_age": spouse_age,
+                    "spouse_age_source": spouse_age_source,
                     "spouse_sex": spouse_sex,
                     "fu_legal_wife_present": legal_wife,
                     "wife_sex": wife_sex,
+                    "fu_head_person_id": pd.NA if head is None else head,
+                    "fu_head_age": head_age,
+                    "fu_head_age_source": head_age_source,
+                    "fu_head_sex": (
+                        pd.NA if head is None else str(sex.get(head, "na"))
+                    ),
+                    "fu_head_spouse_present": head_spouse is not None,
+                    "fu_head_spouse_person_id": (
+                        pd.NA if head_spouse is None else head_spouse
+                    ),
+                    "fu_head_spouse_age": head_spouse_age,
+                    "fu_head_spouse_age_source": head_spouse_age_source,
+                    "fu_head_spouse_sex": (
+                        pd.NA
+                        if head_spouse is None
+                        else str(sex.get(head_spouse, "na"))
+                    ),
                     "wealth_status": (
                         "family_file"
                         if wave in inputs.family_wealth
@@ -972,16 +1278,31 @@ def build_age67_cohort(
                     ),
                 }
             )
+
     observations = pd.DataFrame(observation_rows)
     dispositions = pd.DataFrame(disposition_rows)
     if not observations.empty:
         _check_family_records(observations, inputs)
-        for column in ("spouse_person_id", "spouse_age", "stratum", "cluster"):
+        for column in (
+            "spouse_person_id",
+            "spouse_age",
+            "stratum",
+            "cluster",
+            "fu_head_person_id",
+            "fu_head_age",
+            "fu_head_spouse_person_id",
+            "fu_head_spouse_age",
+        ):
             observations[column] = observations[column].astype("Int64")
         observations["reported_birth_year"] = observations[
             "reported_birth_year"
         ].astype("Int64")
-        for column in ("spouse_sex", "wife_sex"):
+        for column in (
+            "spouse_sex",
+            "wife_sex",
+            "fu_head_sex",
+            "fu_head_spouse_sex",
+        ):
             observations[column] = observations[column].astype("string")
     cohort = Age67Cohort(
         observations=observations,
@@ -1074,7 +1395,7 @@ def income_rows(
         )
         frames.append(merged)
     out = (
-        pd.concat(frames, ignore_index=True)
+        pd.concat(frames, ignore_index=True).copy()
         if frames
         else pd.DataFrame(columns=obs.columns)
     )
@@ -1155,6 +1476,13 @@ def structural_summary(
                 ).sum()
             ),
             "marital_status": _counts(rows["marital_status"]),
+            "marital_resolution": _counts(rows["marital_resolution"]),
+            "spouse_age_source": _counts(rows["spouse_age_source"]),
+            "fu_head_age_source": _counts(rows["fu_head_age_source"]),
+            "fu_head_spouse_present": _counts(rows["fu_head_spouse_present"]),
+            "fu_head_spouse_age_source": _counts(
+                rows["fu_head_spouse_age_source"]
+            ),
             "wealth_status": _counts(rows["wealth_status"]),
             "income_status": _counts(rows["income_status"]),
             "birth_source": _counts(rows["birth_source"]),
@@ -1208,6 +1536,22 @@ def structural_summary(
                     != 0
                 ).sum()
             ),
+            # Specification section 4 (F4a, F4b): the families whose head
+            # has annuity or IRA income and whose farm income is nonzero.
+            "family_head_retirement_account_income_nonzero": int(
+                (
+                    fam[
+                        [
+                            c
+                            for c in ("head_annuities", "head_iras")
+                            if c in fam
+                        ]
+                    ].sum(axis=1)
+                    != 0
+                ).sum()
+            ),
+            "family_farm_income_nonzero": int((fam["head_farm"] != 0).sum()),
+            "family_farm_income_negative": int((fam["head_farm"] < 0).sum()),
             "social_security_accuracy_nonzero": (
                 int(
                     (fam[["head_ss_acc", "wife_ss_acc", "ofum_ss_acc"]] != 0)

@@ -23,7 +23,7 @@ def block() -> dict:
 def test_the_code_rows_equal_the_committed_block(block):
     check = rows.check_rows_against_block(block)
     assert check["rows_equal_the_block"]
-    assert check["specification_version"] == block["version"] == "u1-draft-3"
+    assert check["specification_version"] == block["version"] == "u1-draft-4"
     assert check["rows_checked"] == sorted(rows.REGISTERED_ROWS)
 
 
@@ -58,7 +58,13 @@ def test_each_row_changes_the_field_the_plan_names():
     inst = registered["U-inst"].age67_spec()
     assert inst.presence == "in_family_or_institution"
     assert inst.institution_income_rule == "family_of_record"
-    assert "referee" in registered["U-inst"].awaiting
+    assert "not yet refereed" in registered["U-inst"].awaiting
+    # U0-F is U0 on the fallback birth years; its headline status awaits
+    # Max's ruling on the fallback rule
+    fallback = registered[rows.FALLBACK_ROW]
+    assert fallback.age67_spec() == age67.Age67Spec(row="U0-F")
+    assert fallback.income_spec() == ap.AdjustedPovertySpec()
+    assert "fallback rule" in fallback.awaiting
 
 
 def test_row_from_block_reads_populations_and_overrides():
@@ -79,10 +85,26 @@ def test_row_from_block_reads_populations_and_overrides():
     assert not rows.row_from_block(
         "U7", {"financial_assets": "y", "status": "not_built"}
     )["built"]
+    assert rows.row_from_block(
+        "U0-F",
+        {
+            "population": "birth_years_1941_1943_1945",
+            "on": "U0",
+            "awaiting": "y",
+        },
+    ) == {
+        "age67": {"row": "U0-F"},
+        "income": {},
+        "built": True,
+        "awaiting": "y",
+    }
+    assert rows.row_from_block("U0", {"on": "U0"})["age67"] == {}
     with pytest.raises(ValueError, match="unknown block key"):
         rows.row_from_block("U9", {"mortality": "nchs_2000"})
     with pytest.raises(ValueError, match="not known"):
-        rows.row_from_block("U1", {"on": "U0"})
+        rows.row_from_block("U1", {"on": "U2"})
+    with pytest.raises(ValueError, match="not known"):
+        rows.row_from_block("U1", {"population": "birth_years_1937"})
     with pytest.raises(ValueError, match="unknown status"):
         rows.row_from_block("U-inst", {"status": "counted_only"})
 
@@ -93,6 +115,7 @@ def test_row_from_block_reads_populations_and_overrides():
         ("U2", {"ssi_rule": "full_static_recomputation"}),
         ("U6", {"cut_start_year": 2005}),
         ("U-inst", {"institution_income_rule": "excluded"}),
+        ("U0-F", {"population": "all_ten_birth_years"}),
         ("U7", {"status": None}),
     ],
 )

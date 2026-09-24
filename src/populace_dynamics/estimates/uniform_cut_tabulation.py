@@ -48,10 +48,16 @@ Uncertainty (plan field F15; the run is deterministic, K = 1):
   ratio with the PSID sampling-error stratum and cluster (ER31996,
   ER31997): ``z_i = w_i (y_i - r) / sum w`` inside the cell and 0 outside
   it, summed by cluster; ``var = sum_h n_h/(n_h - 1) sum_c (z_hc -
-  mean_h)^2`` over the strata and clusters present in the input rows.
-  Strata with a single cluster are left out and counted.  This is the
-  subpopulation estimator relative to the tabulated rows, not to the whole
-  PSID sample; clusters with no tabulated row do not enter.
+  mean_h)^2``.  ``design_se_domain="full_sample_design"`` (default, the
+  specification's section 10 after the referee's Q5): a domain estimator
+  on the full sample design, where every (stratum, cluster) pair of the
+  ``design`` frame (the pairs of persons with a positive cross-section
+  weight in the observation waves) enters, with ``z = 0`` for a cluster
+  that holds no observation of the cell; a row whose pair is not in the
+  frame is refused.  ``tabulated_rows`` (the u1-draft-3 estimator) uses
+  only the pairs present in the input rows.  Strata with a single
+  cluster cannot contribute a variance term: they are left out, counted
+  and listed.
 
 Provenance: ``data_provenance="invented"`` prefixes the invented-data
 label; ``"registered_real"`` requires the issue #42 registration pointer,
@@ -82,6 +88,7 @@ from populace_dynamics.harness.panel import split_panel_by_person
 __all__ = [
     "CELL_DEFINITIONS",
     "DEFAULT_CELLS",
+    "DESIGN_SE_DOMAINS",
     "DEFAULT_FLOOR_SEEDS",
     "DIAGNOSTIC_BIRTH_YEAR_CELLS",
     "FLOOR_FRACTION",
@@ -160,6 +167,18 @@ MIN_FLOOR_SEEDS = 2
 #: The half-split unit: family units merged through shared persons
 #: (:func:`floor_split_units`).
 FLOOR_SPLIT_UNIT = "family_unit_id_linked_by_person_id"
+#: The population of clusters the design-based standard error sums over.
+DESIGN_SE_DOMAINS: dict[str, str] = {
+    "full_sample_design": (
+        "domain estimation on the full sample design: every (stratum, "
+        "cluster) pair of the design frame enters, z = 0 for clusters "
+        "without an observation of the cell (referee Q5)"
+    ),
+    "tabulated_rows": (
+        "the (stratum, cluster) pairs present in the tabulated rows only "
+        "(u1-draft-3)"
+    ),
+}
 
 
 class UniformCutTabulationError(ValueError):
@@ -174,6 +193,7 @@ class TabulationConfig:
     birth_year_diagnostics: bool = True
     floor_seeds: tuple[int, ...] = DEFAULT_FLOOR_SEEDS
     design_standard_errors: bool = True
+    design_se_domain: str = "full_sample_design"
     notes: tuple[str, ...] = field(default=())
 
     def __post_init__(self) -> None:
@@ -189,6 +209,10 @@ class TabulationConfig:
             raise UniformCutTabulationError(
                 "floor seeds must be distinct >= 0"
             )
+        if self.design_se_domain not in DESIGN_SE_DOMAINS:
+            raise UniformCutTabulationError(
+                f"design_se_domain must be one of {sorted(DESIGN_SE_DOMAINS)}"
+            )
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -199,6 +223,7 @@ class TabulationConfig:
             "floor_split_unit": FLOOR_SPLIT_UNIT,
             "min_floor_seeds": MIN_FLOOR_SEEDS,
             "design_standard_errors": self.design_standard_errors,
+            "design_se_domain": self.design_se_domain,
             "draws": 1,
             "notes": list(self.notes),
         }
@@ -245,6 +270,8 @@ def _normalize(rows: pd.DataFrame) -> pd.DataFrame:
             "person_id, stratum, cluster and family_unit_id must be present"
         )
     out["birth_year"] = out["birth_year"].astype("int64")
+    for column in ("stratum", "cluster"):
+        out[column] = out[column].astype("int64")
     return out
 
 
@@ -293,8 +320,30 @@ def _rates(rows: pd.DataFrame, mask: np.ndarray) -> dict[str, Any]:
     }
 
 
+def _design_clusters(design: pd.DataFrame | None) -> pd.MultiIndex | None:
+    """The distinct (stratum, cluster) pairs of a design frame."""
+
+    if design is None:
+        return None
+    if not isinstance(design, pd.DataFrame):
+        raise UniformCutTabulationError("design must be a DataFrame")
+    missing = [c for c in ("stratum", "cluster") if c not in design.columns]
+    if missing:
+        raise UniformCutTabulationError(f"design lacks columns {missing}")
+    pairs = design[["stratum", "cluster"]]
+    if pairs.isna().any().any():
+        raise UniformCutTabulationError("design stratum/cluster missing")
+    pairs = pairs.astype("int64").drop_duplicates()
+    if pairs.empty:
+        raise UniformCutTabulationError("the design frame has no clusters")
+    return pd.MultiIndex.from_frame(pairs.sort_values(["stratum", "cluster"]))
+
+
 def _design_se(
-    rows: pd.DataFrame, mask: np.ndarray, indicator: np.ndarray
+    rows: pd.DataFrame,
+    mask: np.ndarray,
+    indicator: np.ndarray,
+    clusters_all: pd.MultiIndex | None = None,
 ) -> dict[str, Any]:
     weight = rows["weight"].to_numpy()
     in_cell = weight * mask
@@ -307,6 +356,8 @@ def _design_se(
         {"stratum": rows["stratum"], "cluster": rows["cluster"], "z": z}
     )
     clusters = frame.groupby(["stratum", "cluster"], sort=True)["z"].sum()
+    if clusters_all is not None:
+        clusters = clusters.reindex(clusters_all, fill_value=0.0)
     variance = 0.0
     used = 0
     singleton = 0
@@ -326,7 +377,11 @@ def _design_se(
 
 
 def _cell_entry(
-    rows: pd.DataFrame, name: str, mask: np.ndarray, config: TabulationConfig
+    rows: pd.DataFrame,
+    name: str,
+    mask: np.ndarray,
+    config: TabulationConfig,
+    clusters_all: pd.MultiIndex | None = None,
 ) -> dict[str, Any]:
     entry: dict[str, Any] = {
         "cell": name,
@@ -348,9 +403,9 @@ def _cell_entry(
         base = rows["poor_baseline"].to_numpy().astype(np.float64)
         reform = rows["poor_reform"].to_numpy().astype(np.float64)
         entry["design_se"] = {
-            "delta": _design_se(rows, mask, reform - base),
-            "baseline_rate": _design_se(rows, mask, base),
-            "reform_rate": _design_se(rows, mask, reform),
+            "delta": _design_se(rows, mask, reform - base, clusters_all),
+            "baseline_rate": _design_se(rows, mask, base, clusters_all),
+            "reform_rate": _design_se(rows, mask, reform, clusters_all),
         }
     return entry
 
@@ -508,14 +563,18 @@ def tabulate_uniform_cut(
     labels: Sequence[str] = OUTPUT_LABELS,
     upstream_spec: dict[str, Any] | None = None,
     pending_decisions: Sequence[dict[str, Any]] = (),
+    design: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     """Tabulate the exercise-2 statistic from per-observation rows.
 
     ``rows`` has the columns of :data:`REQUIRED_COLUMNS` (extra columns are
     ignored).  ``upstream_spec`` (the income-concept specification that
     produced the poverty flags) and ``pending_decisions`` are recorded
-    verbatim.  Returns a JSON-serializable mapping; an undefined cell is
-    reported with its reason, never raised.
+    verbatim.  ``design`` (columns ``stratum`` and ``cluster``) is the
+    sample design the ``full_sample_design`` standard error sums over; it
+    is required when design standard errors use that domain.  Returns a
+    JSON-serializable mapping; an undefined cell is reported with its
+    reason, never raised.
     """
 
     config = TabulationConfig() if config is None else config
@@ -569,8 +628,43 @@ def tabulate_uniform_cut(
         )
     normalized = _normalize(rows)
     masks = _cell_masks(normalized, config)
+    clusters_all = None
+    design_summary: dict[str, Any] = {"domain": config.design_se_domain}
+    if config.design_standard_errors:
+        if config.design_se_domain == "full_sample_design":
+            clusters_all = _design_clusters(design)
+            if clusters_all is None:
+                raise UniformCutTabulationError(
+                    "the full_sample_design standard error needs the "
+                    "design frame (every stratum and cluster of the "
+                    "observation waves' positive-weight persons)"
+                )
+            present = pd.MultiIndex.from_frame(
+                normalized[["stratum", "cluster"]].astype("int64")
+            )
+            outside = present[~present.isin(clusters_all)].unique()
+            if len(outside):
+                raise UniformCutTabulationError(
+                    f"{len(outside)} (stratum, cluster) pairs of the rows "
+                    f"are not in the design frame (first: {list(outside)[:3]})"
+                )
+            sizes = pd.Series(1, index=clusters_all).groupby(level=0).sum()
+        else:
+            sizes = (
+                normalized[["stratum", "cluster"]]
+                .drop_duplicates()
+                .groupby("stratum")["cluster"]
+                .count()
+            )
+        design_summary.update(
+            n_strata=int(len(sizes)),
+            n_clusters=int(sizes.sum()),
+            singleton_strata=[int(s) for s in sizes[sizes < 2].index],
+        )
+    elif design is not None:
+        _design_clusters(design)
     cells = [
-        _cell_entry(normalized, name, mask, config)
+        _cell_entry(normalized, name, mask, config, clusters_all)
         for name, mask in masks.items()
     ]
     per_seed, floors = _floors(normalized, masks, config)
@@ -594,6 +688,7 @@ def tabulate_uniform_cut(
         "statistic_definitions": dict(STATISTIC_DEFINITIONS),
         "upstream_spec": dict(upstream_spec or {}),
         "pending_decisions": [dict(item) for item in pending_decisions],
+        "design": design_summary,
         "input_summary": {
             "n_observations": int(len(normalized)),
             "n_persons": int(normalized["person_id"].nunique()),

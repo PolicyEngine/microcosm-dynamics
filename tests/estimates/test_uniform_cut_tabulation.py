@@ -40,12 +40,27 @@ def _rows() -> pd.DataFrame:
     )
 
 
+def _design(rows: pd.DataFrame, *extra: tuple[int, int]) -> pd.DataFrame:
+    """INVENTED design frame: the rows' (stratum, cluster) pairs plus
+    ``extra`` pairs that hold no row."""
+
+    pairs = rows[["stratum", "cluster"]].drop_duplicates()
+    if extra:
+        pairs = pd.concat(
+            [pairs, pd.DataFrame(extra, columns=["stratum", "cluster"])],
+            ignore_index=True,
+        )
+    return pairs.reset_index(drop=True)
+
+
 def _cells(result: dict) -> dict:
     return {entry["cell"]: entry for entry in result["cells"]}
 
 
 def test_rates_and_changes_by_hand():
-    result = ut.tabulate_uniform_cut(_rows(), data_provenance="invented")
+    result = ut.tabulate_uniform_cut(
+        _rows(), data_provenance="invented", design=_design(_rows())
+    )
     cells = _cells(result)
     expected = {
         # all: W = 10; poor B: o3 (2) -> 20; poor R: o2+o3+o4 (7) -> 70
@@ -80,7 +95,9 @@ def test_rates_and_changes_by_hand():
 
 
 def test_design_standard_error_by_hand():
-    result = ut.tabulate_uniform_cut(_rows(), data_provenance="invented")
+    result = ut.tabulate_uniform_cut(
+        _rows(), data_provenance="invented", design=_design(_rows())
+    )
     se = _cells(result)["all"]["design_se"]["delta"]
     # d = R - B: 0, 1, 0, 1, 0; r = .5; z = w (d - r) / 10:
     # -.05, .05, -.1, .2, -.1.  Stratum 1 clusters: 0, -.1 (mean -.05,
@@ -91,6 +108,42 @@ def test_design_standard_error_by_hand():
     assert se["n_singleton_strata"] == 0
 
 
+def test_full_design_adds_clusters_without_observations():
+    """Section 13: the full sample design (referee Q5, INVENTED).
+
+    The design adds a third cluster to stratum 2 and a third stratum of
+    two clusters, none holding an observation.  Stratum 2's cluster totals
+    become .2, -.1 and 0 (mean 1/30; squared deviations .027778, .017778,
+    .001111, sum .046667; times 3/2 = .07); stratum 1 still gives .01 and
+    stratum 3 gives 0, so SE = 100 * sqrt(.08).  Relative to the rows
+    only (the u1-draft-3 estimator) it is 100 * sqrt(.1).
+    """
+
+    rows = _rows()
+    design = _design(rows, (2, 3), (3, 1), (3, 2))
+    result = ut.tabulate_uniform_cut(
+        rows, data_provenance="invented", design=design
+    )
+    se = _cells(result)["all"]["design_se"]["delta"]
+    assert se["se"] == pytest.approx(100 * math.sqrt(0.08))
+    assert se["n_strata"] == 3
+    assert result["design"] == {
+        "domain": "full_sample_design",
+        "n_strata": 3,
+        "n_clusters": 7,
+        "singleton_strata": [],
+    }
+    rows_only = ut.tabulate_uniform_cut(
+        rows,
+        data_provenance="invented",
+        config=ut.TabulationConfig(design_se_domain="tabulated_rows"),
+    )
+    assert _cells(rows_only)["all"]["design_se"]["delta"]["se"] == (
+        pytest.approx(100 * math.sqrt(0.1))
+    )
+    assert rows_only["design"]["domain"] == "tabulated_rows"
+
+
 def test_singleton_strata_are_left_out_and_counted():
     rows = _rows()
     extra = rows.iloc[[0]].copy()
@@ -99,10 +152,53 @@ def test_singleton_strata_are_left_out_and_counted():
     extra["family_unit_id"] = 60
     extra["stratum"] = 3
     rows = pd.concat([rows, extra], ignore_index=True)
-    result = ut.tabulate_uniform_cut(rows, data_provenance="invented")
-    se = _cells(result)["all"]["design_se"]["delta"]
+    # relative to the rows, stratum 3 holds one cluster and drops out
+    rows_only = ut.tabulate_uniform_cut(
+        rows,
+        data_provenance="invented",
+        config=ut.TabulationConfig(design_se_domain="tabulated_rows"),
+    )
+    se = _cells(rows_only)["all"]["design_se"]["delta"]
     assert se["n_singleton_strata"] == 1
     assert se["n_strata"] == 2
+    assert rows_only["design"]["singleton_strata"] == [3]
+    # on a full design where stratum 3 has two clusters, it enters
+    full = ut.tabulate_uniform_cut(
+        rows, data_provenance="invented", design=_design(rows, (3, 2))
+    )
+    se = _cells(full)["all"]["design_se"]["delta"]
+    assert se["n_singleton_strata"] == 0
+    assert se["n_strata"] == 3
+    # a singleton in the full design itself is still listed
+    lone = ut.tabulate_uniform_cut(
+        rows, data_provenance="invented", design=_design(rows)
+    )
+    assert lone["design"]["singleton_strata"] == [3]
+
+
+def test_full_design_needs_a_design_frame_covering_the_rows():
+    rows = _rows()
+    with pytest.raises(ut.UniformCutTabulationError, match="design frame"):
+        ut.tabulate_uniform_cut(rows, data_provenance="invented")
+    partial = _design(rows).iloc[:3]
+    with pytest.raises(ut.UniformCutTabulationError, match="not in the"):
+        ut.tabulate_uniform_cut(
+            rows, data_provenance="invented", design=partial
+        )
+    with pytest.raises(ut.UniformCutTabulationError, match="lacks"):
+        ut.tabulate_uniform_cut(
+            rows,
+            data_provenance="invented",
+            design=pd.DataFrame({"stratum": [1]}),
+        )
+    # without design standard errors no frame is needed
+    ut.tabulate_uniform_cut(
+        rows,
+        data_provenance="invented",
+        config=ut.TabulationConfig(design_standard_errors=False),
+    )
+    with pytest.raises(ut.UniformCutTabulationError, match="domain"):
+        ut.TabulationConfig(design_se_domain="whole_psid")
 
 
 def _reference_delta(rows: pd.DataFrame, mask: np.ndarray) -> float | None:
@@ -117,7 +213,9 @@ def _reference_delta(rows: pd.DataFrame, mask: np.ndarray) -> float | None:
 
 def test_half_split_floor_uses_family_units():
     rows = _rows()
-    result = ut.tabulate_uniform_cut(rows, data_provenance="invented")
+    result = ut.tabulate_uniform_cut(
+        rows, data_provenance="invented", design=_design(rows)
+    )
     units = pd.DataFrame({"family_unit_id": rows["family_unit_id"].tolist()})
     gaps = []
     for seed in ut.DEFAULT_FLOOR_SEEDS:
@@ -187,7 +285,9 @@ def test_half_split_floor_is_person_disjoint_under_u1():
     """
 
     rows = _u1_rows()
-    result = ut.tabulate_uniform_cut(rows, data_provenance="invented")
+    result = ut.tabulate_uniform_cut(
+        rows, data_provenance="invented", design=_design(rows)
+    )
     units = pd.DataFrame({"split_unit": ut.floor_split_units(rows)})
     gaps = []
     for seed in ut.DEFAULT_FLOOR_SEEDS:
@@ -209,7 +309,9 @@ def test_half_split_floor_is_person_disjoint_under_u1():
 def test_floor_is_undefined_with_one_family_unit():
     rows = _rows()
     rows["family_unit_id"] = 1
-    result = ut.tabulate_uniform_cut(rows, data_provenance="invented")
+    result = ut.tabulate_uniform_cut(
+        rows, data_provenance="invented", design=_design(rows)
+    )
     floor = _cells(result)["all"]["floor"]["delta"]
     assert floor["defined"] is False
     assert floor["mean"] is None
@@ -221,7 +323,9 @@ def test_undefined_cells_are_reported_not_raised():
     rows = _rows()
     rows["sex"] = "male"
     rows.loc[rows["married"], "weight"] = 0.0
-    result = ut.tabulate_uniform_cut(rows, data_provenance="invented")
+    result = ut.tabulate_uniform_cut(
+        rows, data_provenance="invented", design=_design(rows)
+    )
     undefined = {
         item["cell"]: item["reason"] for item in result["undefined_cells"]
     }
@@ -231,7 +335,9 @@ def test_undefined_cells_are_reported_not_raised():
 
 
 def test_invented_results_are_labelled():
-    result = ut.tabulate_uniform_cut(_rows(), data_provenance="invented")
+    result = ut.tabulate_uniform_cut(
+        _rows(), data_provenance="invented", design=_design(_rows())
+    )
     assert result["labels"][0] == ut.INVENTED_DATA_LABEL
     assert set(OUTPUT_LABELS) <= set(result["labels"])
     assert result["config"]["draws"] == 1
@@ -255,7 +361,9 @@ def test_provenance_guards():
     rows = _rows()
     rows.attrs["provenance_kind"] = "psid_files"
     with pytest.raises(ut.UniformCutTabulationError, match="PSID"):
-        ut.tabulate_uniform_cut(rows, data_provenance="invented")
+        ut.tabulate_uniform_cut(
+            rows, data_provenance="invented", design=_design(rows)
+        )
 
 
 @pytest.mark.parametrize("kind", [None, "caller_frames", "invented"])
@@ -292,7 +400,9 @@ def test_rows_are_validated(column, value):
     rows[column] = rows[column].astype(object)
     rows.loc[0, column] = value
     with pytest.raises(ut.UniformCutTabulationError):
-        ut.tabulate_uniform_cut(rows, data_provenance="invented")
+        ut.tabulate_uniform_cut(
+            rows, data_provenance="invented", design=_design(rows)
+        )
 
 
 def test_config_validation():

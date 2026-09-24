@@ -26,15 +26,30 @@ any real population:
   couples in the target cohort with an earning adult child as an OFUM
   (U4 drops the child's income for them);
 * couples still working at 67 with business, farm and rental losses
-  (negative items the codebooks allow) and large wealth; singles with
-  negative WEALTH1; cohabiting couples (relationship 22, not married;
-  the partner's birth year inferred from invented earnings); separated
-  members whose spouse lives elsewhere;
+  (negative items the codebooks allow) and large wealth; retired couples
+  with farm income and head IRA income, and retired singles with annuity
+  income (the head's annuity and IRA income is ``HEAD ANNUITIES`` before
+  2013 and ``HEAD ANNUITIES`` plus ``HEAD IRAS`` in 2013, as in the
+  codebooks); singles with negative WEALTH1; cohabiting couples
+  (relationship 22, not married; the partner's birth year inferred from
+  invented earnings); separated members whose spouse lives elsewhere;
+* couples with a legal wife (code 20) in which the head's marriage
+  history cannot date the marriage (``unknown``) or the wife has no
+  marriage-history record, and female
+  heads with a legal husband (code 90) who has no marriage-history
+  record (the relationship-code resolution of unresolved marital states;
+  the husband's income is put in the family file's "wife" items, an
+  invented assumption not checked against the codebooks);
 * members who enter an institution (sequence 51) in the first wave whose
   income year is at or after their 66th birthday year and stay, attached
   to the family they left, where the spouse becomes head (row U-inst);
   members who move out (71) or die (81) by that wave's interview; and
   members whose weight is zero from that wave.
+
+Individual-file ages are ages at the interview: a person whose invented
+birthday falls before the interview is one year older than the income
+year minus the birth year, as in the PSID, so the birth-year law's seed
+coordinate and the wave age can differ from the income-year age.
 
 Every family unit's income adds up exactly under the codebook identities
 (:func:`populace_dynamics.data.family_income.reconcile_family_income`),
@@ -109,6 +124,8 @@ INVENTED_FAMILY_COUNTS: dict[str, int] = {
     "negative_wealth_single": 8,
     "cohabiting_couple": 8,
     "separated": 4,
+    "unresolved_couple": 4,
+    "legal_husband_couple": 3,
     "institution_spouse": 6,
     "mover_out": 3,
     "decedent": 3,
@@ -158,6 +175,9 @@ _PERSON_BASE = 500_000
 _N_STRATA = 8
 _SEQ_INSTITUTION, _SEQ_MOVED, _SEQ_DIED = 51, 71, 81
 _HEAD, _WIFE, _PARTNER, _PARENT, _GRANDCHILD = 10, 20, 22, 50, 60
+_LEGAL_HUSBAND = 90
+#: Relationship codes whose person fills the family file's "wife" items.
+_SPOUSE_CODES = (_WIFE, _PARTNER, _LEGAL_HUSBAND)
 #: Individual-income items of an invented person, in 2004 dollars.
 _ITEMS = (
     "labor",
@@ -328,6 +348,8 @@ class _Builder:
             "spouse_slot": spouse_slot,
             "reported_birth_year": reported,
             "ss_start_age": int(self.rng.integers(62, 67)),
+            # 1 when the invented birthday falls before the interview.
+            "birthday_before_interview": int(self.rng.random() < 0.6),
             "income": {item: float(income.get(item, 0.0)) for item in _ITEMS},
             "noise": {
                 wave: float(np.exp(self.rng.normal(0.0, 0.04)))
@@ -398,6 +420,7 @@ class _Builder:
             dividends=self.uniform(0, 5_000) if self.chance(0.3) else 0.0,
             rent=self.uniform(-3_000, 8_000) if self.chance(0.1) else 0.0,
             ira=self.uniform(1_000, 8_000) if self.chance(0.2) else 0.0,
+            farm=self.uniform(-2_000, 9_000) if self.chance(0.1) else 0.0,
         )
         self.person(
             family,
@@ -470,6 +493,7 @@ class _Builder:
             ss=self.uniform(7_000, 17_000),
             pension=self.uniform(2_000, 12_000) if self.chance(0.3) else 0.0,
             interest=self.uniform(0, 1_200) if self.chance(0.5) else 0.0,
+            annuity=self.uniform(500, 6_000) if self.chance(0.2) else 0.0,
         )
         self.steady_roster(family, [(1, 1, _HEAD)])
         self.wealth(
@@ -766,6 +790,77 @@ class _Builder:
             vehicles=self.uniform(0, 8_000),
         )
 
+    def unresolved_couple(self) -> None:
+        """A head and legal wife (code 20), one of whom has an unresolved
+        marital state: the head's history cannot date the marriage, or the
+        wife has no marriage-history record."""
+
+        family = self.family("unresolved_couple")
+        head_birth = self.target_year()
+        # Either the head's history cannot date the marriage, or the wife
+        # has no marriage-history record.
+        head_unknown = self.chance(0.5)
+        self.person(
+            family,
+            1,
+            sex="male",
+            birth_year=head_birth,
+            marital="unknown" if head_unknown else "married",
+            spouse_slot=None if head_unknown else 2,
+            ss=self.uniform(9_000, 16_000),
+            interest=self.uniform(0, 1_000) if self.chance(0.5) else 0.0,
+        )
+        self.person(
+            family,
+            2,
+            sex="female",
+            birth_year=int(head_birth + self.rng.integers(-2, 4)),
+            marital="married" if head_unknown else "none",
+            spouse_slot=1 if head_unknown else None,
+            ss=self.uniform(4_000, 9_000),
+        )
+        self.steady_roster(family, [(1, 1, _HEAD), (2, 2, _WIFE)])
+        self.wealth(
+            family,
+            checking_saving=self.uniform(1_000, 15_000),
+            vehicles=self.uniform(1_000, 12_000),
+            ira_annuity=(
+                self.uniform(5_000, 60_000) if self.chance(0.5) else 0.0
+            ),
+            home_equity=self.uniform(0, 90_000),
+        )
+
+    def legal_husband_couple(self) -> None:
+        """A female head whose legal husband (code 90) has no
+        marriage-history record."""
+
+        family = self.family("legal_husband_couple")
+        husband_birth = self.target_year()
+        self.person(
+            family,
+            1,
+            sex="female",
+            birth_year=int(husband_birth + self.rng.integers(-1, 4)),
+            marital="married",
+            spouse_slot=2,
+            ss=self.uniform(5_000, 11_000),
+        )
+        self.person(
+            family,
+            2,
+            sex="male",
+            birth_year=husband_birth,
+            marital="none",
+            ss=self.uniform(9_000, 17_000),
+        )
+        self.steady_roster(family, [(1, 1, _HEAD), (2, 2, _LEGAL_HUSBAND)])
+        self.wealth(
+            family,
+            checking_saving=self.uniform(1_000, 12_000),
+            vehicles=self.uniform(1_000, 10_000),
+            home_equity=self.uniform(0, 80_000),
+        )
+
     def institution_spouse(self) -> None:
         family = self.family("institution_spouse")
         birth = self.target_year()
@@ -1034,7 +1129,7 @@ def _anchor_frames(
                         "interview": _interview(family, wave),
                         "sequence": sequence,
                         "relationship": relationship,
-                        "age": (wave - 1) - int(person["birth_year"]),
+                        "age": _wave_age(person, wave),
                         "reported_birth_year": (
                             pd.NA if reported is None else int(reported)
                         ),
@@ -1050,6 +1145,16 @@ def _anchor_frames(
         )
         out[wave] = frame
     return out
+
+
+def _wave_age(person: Mapping[str, Any], wave: int) -> int:
+    """The invented age at the ``wave`` interview (spring of ``wave``)."""
+
+    return (
+        (wave - 1)
+        - int(person["birth_year"])
+        + int(person["birthday_before_interview"])
+    )
 
 
 def _in_family(
@@ -1070,7 +1175,7 @@ def _income_row(family: Mapping[str, Any], wave: int) -> dict[str, Any]:
     row: dict[str, Any] = {concept: 0 for concept in table}
     members = _in_family(family, wave)
     head = next(person for person, rel in members if rel == _HEAD)
-    wives = [person for person, rel in members if rel in (_WIFE, _PARTNER)]
+    wives = [person for person, rel in members if rel in _SPOUSE_CODES]
     wife = wives[0] if wives else None
     ofums = [
         person
@@ -1093,15 +1198,14 @@ def _income_row(family: Mapping[str, Any], wave: int) -> dict[str, Any]:
         row["head_farm"] += a["farm"]
         if role == "head":
             row["head_retirement_pensions"] += a["pension"]
-            row["head_annuities"] += a["annuity"]
             row["head_va_pension"] += a["va"]
+            row["head_other_retirement"] += a["other_retirement"]
             if wave == 2013:
-                row["head_other_retirement"] += a["other_retirement"]
+                row["head_annuities"] += a["annuity"]
                 row["head_iras"] += a["ira"]
             else:
-                row["head_other_retirement"] += (
-                    a["other_retirement"] + a["ira"]
-                )
+                # "Head's Income from Annuities and IRAs" (2005-2011).
+                row["head_annuities"] += a["annuity"] + a["ira"]
         elif wave == 2013:
             row["wife_retirement_pensions"] += a["pension"] + a["va"]
             row["wife_annuities"] += a["annuity"]
@@ -1151,13 +1255,13 @@ def _income_row(family: Mapping[str, Any], wave: int) -> dict[str, Any]:
     children = sum(
         1 for person in ofums if year - int(person["birth_year"]) < 18
     )
-    head_age = year - int(head["birth_year"])
+    head_age = _wave_age(head, wave)
     row["interview"] = _interview(family, wave)
     row["fu_size"] = size
     row["n_children"] = children
     row["head_age"] = head_age
     row["head_sex"] = head["sex"]
-    row["wife_age"] = None if wife is None else year - int(wife["birth_year"])
+    row["wife_age"] = None if wife is None else _wave_age(wife, wave)
     row["census_needs_standard"] = invented_needs_standard(
         year, size, children, head_age
     )
