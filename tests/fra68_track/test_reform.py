@@ -301,6 +301,90 @@ def test_spouse_and_widow_factor_changes(base, reforms):
     assert widow == [0.0, -0.67, -1.28, -1.82, -2.32, -2.77, -3.18, -3.56, 0.0]
 
 
+def _spouse_factor(months_early, params):
+    return 1 - benefits.spousal_early_reduction(months_early, params)
+
+
+@pytest.mark.parametrize(
+    ("birth", "increase", "moved_month", "entitled", "whole_year_factor"),
+    [
+        # E1 section 19 (referee required change 1): the spouse's own
+        # claim at 62 starts the excess; C2 moves it by D months.
+        (1951, 7, 751, 2014, 0.720833),
+        (1954, 13, 757, 2017, 0.695833),
+    ],
+)
+def test_a_moved_spouse_excess_keeps_its_months_early(
+    base, reforms, birth, increase, moved_month, entitled, whole_year_factor
+):
+    p3 = reforms["P3"]
+    assert p3.fra_months(birth) - base.fra_months(birth) == increase
+    claim_month = 12 * 62 + increase
+    assert claim_month == moved_month
+    # A4's July birth month: the moved claim falls in the next year.
+    assert birth + (6 + claim_month) // 12 == entitled
+    # The worker was entitled earlier, so the spouse's own claim starts
+    # the excess in both scenarios.
+    worker_year = birth + 60
+    baseline = reform.spouse_excess_months_early(
+        own_claim_month=12 * 62,
+        worker_entitlement_year=worker_year,
+        birth_year=birth,
+        params=base,
+    )
+    moved = reform.spouse_excess_months_early(
+        own_claim_month=claim_month,
+        worker_entitlement_year=worker_year,
+        birth_year=birth,
+        params=p3,
+    )
+    assert baseline == moved == 48
+    assert _spouse_factor(baseline, base) == pytest.approx(0.70)
+    assert _spouse_factor(moved, p3) == pytest.approx(0.70)
+    # The rule it replaces counted from the whole moved year (Track A's
+    # count on the reform bundle), which changed the reduction by
+    # D - 12 months with no response behind it.
+    whole_year = max(0, p3.fra_months(birth) - 12 * (entitled - birth))
+    assert whole_year == 48 - (12 - increase)
+    assert _spouse_factor(whole_year, p3) == pytest.approx(
+        whole_year_factor, abs=1e-6
+    )
+
+
+def test_the_spouse_excess_rule_is_track_as_without_a_moved_claim(base):
+    # Null-reform identity: with an unmoved claim (12 times the claim
+    # year minus the birth year) the rule is Track A's whole-year count,
+    # FRA - 12 (max(own claim year, worker entitlement year) - birth).
+    for birth in range(1938, 1972):
+        for claim_year in range(birth + 62, birth + 72):
+            for worker_year in range(birth + 55, birth + 75):
+                track_a = max(
+                    0,
+                    base.fra_months(birth)
+                    - 12 * (max(claim_year, worker_year) - birth),
+                )
+                assert (
+                    reform.spouse_excess_months_early(
+                        own_claim_month=12 * (claim_year - birth),
+                        worker_entitlement_year=worker_year,
+                        birth_year=birth,
+                        params=base,
+                    )
+                    == track_a
+                )
+    # A worker entitled after the moved claim starts the excess at the
+    # whole year, as in Track A.
+    assert (
+        reform.spouse_excess_months_early(
+            own_claim_month=751,
+            worker_entitlement_year=2016,
+            birth_year=1951,
+            params=base,
+        )
+        == 792 - 12 * 65
+    )
+
+
 def test_conversion_moves_from_67_to_68(base, reforms):
     births = np.array([1958, 1960, 1966])
     # A4's July birth month: birth year + (6 + FRA months) // 12.

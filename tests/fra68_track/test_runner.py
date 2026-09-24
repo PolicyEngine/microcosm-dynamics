@@ -60,6 +60,7 @@ from populace_dynamics.fra68_track import (
 )
 from populace_dynamics.fra68_track import runner as fra68_runner
 from populace_dynamics.fra68_track.benefits import (
+    MovedClaimRecord,
     Scenario,
     ScenarioCalculator,
     scenario_benefits,
@@ -388,16 +389,26 @@ def test_null_reform_reproduces_track_a_baseline_bit_for_bit(projection):
             name: value["base"]
             for name, value in row["benefit_components"].items()
         }
-    # A reform equal to the baseline changes nothing.
-    same = Scenario(
-        name="reform",
-        params=projection.base,
-        baseline_params=projection.base,
-        survivor_retirement_age=fixed,
-    )
-    reform = _people(projection, same)
-    for pid, person in base.items():
-        assert reform[pid].components == person.components
+    # This invented draw pays no spouse's excess; the calculator-level
+    # identity for the spouse's excess is
+    # test_a_moved_spouse_claim_keeps_the_excess_reduction.
+    assert {
+        name for row in track_rows for name in row["benefit_components"]
+    } >= {"retired_worker", "disabled_worker", "aged_widow"}
+    # A reform equal to the baseline changes nothing, under every claiming
+    # response (no FRA increase, so no claim moves and the spouse's excess
+    # is counted exactly as Track A counts it).
+    for response in ClaimingResponse:
+        same = Scenario(
+            name="reform",
+            params=projection.base,
+            baseline_params=projection.base,
+            survivor_retirement_age=fixed,
+            claiming_response=response,
+        )
+        reform = _people(projection, same)
+        for pid, person in base.items():
+            assert reform[pid].components == person.components, response
 
 
 #: Counters Track A's ``reference_benefit_rows`` keeps per row and
@@ -709,6 +720,117 @@ def test_c1_c2_move_a_projected_claim_and_keep_its_factor(projection):
     ).worker_record(person, late)
     assert moved.entitlement_year == birth + 70
     assert moved.claim_age_factor == pytest.approx(1.16)
+
+
+def _spouse_case(projection, calculator, monkeypatch, spouse, claim_year):
+    """An INVENTED married claimant whose worker was entitled in 2010.
+
+    The worker is any rostered person in the draw's final state; its
+    record is replaced by an INVENTED retired-worker record (PIA
+    $10,000.00, entitled 2010), so the claimant's own claim starts the
+    excess.
+    """
+
+    worker_id = int(
+        next(
+            pid for pid in projection.lookups.final.index if int(pid) != spouse
+        )
+    )
+    invented_worker = PiaRecord(
+        person_id=worker_id,
+        kind="retired",
+        component="retired_worker",
+        basis=track_benefits.sb.EligibilityBasis.AGE_62,
+        eligibility_year=2008,
+        entitlement_year=2010,
+        eligibility_pia=10000.0,
+        claim_age_factor=1.0,
+        level_basis="invented",
+    )
+    original = calculator.worker_record
+
+    def worker_record(person_id, state):
+        if person_id == worker_id:
+            return invented_worker
+        return original(person_id, state)
+
+    monkeypatch.setattr(calculator, "worker_record", worker_record)
+    monkeypatch.setattr(
+        calculator,
+        "lookups",
+        SimpleNamespace(
+            alive=lambda person_id: True,
+            final=projection.lookups.final,
+            death_year=projection.lookups.death_year,
+        ),
+    )
+    state = _state(
+        projection,
+        spouse,
+        claimed=True,
+        claim_year=claim_year,
+        marital_status="married",
+        spouse_person_id=worker_id,
+    )
+    own = calculator.worker_record(spouse, state)
+    return state, own
+
+
+@pytest.mark.parametrize(("birth", "increase"), [(1951, 7), (1954, 13)])
+def test_a_moved_spouse_claim_keeps_the_excess_reduction(
+    projection, monkeypatch, birth, increase
+):
+    # Referee required change 1 (E1 sections 13 and 19): under C2 the
+    # spouse's own claim at 62 moves by D months into the next year; the
+    # excess is reduced for FRA' - m' = 48 months, as in the baseline, so
+    # its 2030 amount is unchanged.  Track A's whole-year count on the
+    # same record gives 48 - (12 - D) months instead.
+    spouse, _ = _person_born(projection, [birth])
+    base = _calculator(projection, _scenario(projection, "baseline"))
+    c2 = _calculator(
+        projection,
+        _scenario(
+            projection,
+            "reform",
+            "P3",
+            claiming_response=ClaimingResponse.ALL_DELAY,
+        ),
+    )
+    base_state, base_own = _spouse_case(
+        projection, base, monkeypatch, spouse, birth + 62
+    )
+    c2_state, c2_own = _spouse_case(
+        projection, c2, monkeypatch, spouse, birth + 62
+    )
+    assert not isinstance(base_own, MovedClaimRecord)
+    assert isinstance(c2_own, MovedClaimRecord)
+    assert c2_own.reform_claim_month == 12 * 62 + increase
+    assert c2_own.entitlement_year == birth + 63
+    assert base.own_claim_month(base_own, birth + 62, birth) == 744
+    assert c2.own_claim_month(c2_own, birth + 63, birth) == 744 + increase
+    baseline = base._spouse_excess(spouse, base_state, base_own)
+    moved = c2._spouse_excess(spouse, c2_state, c2_own)
+    assert baseline is not None and moved is not None
+    assert moved == baseline
+    whole_year = track_benefits._Calculator._spouse_excess(
+        c2, spouse, c2_state, c2_own
+    )
+    if increase < 12:
+        assert whole_year[0] > moved[0]
+    else:
+        assert whole_year[0] < moved[0]
+    # Without a moved claim (C0 on the reform bundle) the exercise-3 count
+    # is Track A's, bit for bit.
+    c0 = _calculator(projection, _scenario(projection, "reform", "P3"))
+    c0_state, c0_own = _spouse_case(
+        projection, c0, monkeypatch, spouse, birth + 62
+    )
+    assert not isinstance(c0_own, MovedClaimRecord)
+    assert c0._spouse_excess(
+        spouse, c0_state, c0_own
+    ) == track_benefits._Calculator._spouse_excess(
+        c0, spouse, c0_state, c0_own
+    )
 
 
 def test_claims_made_by_the_opening_year_keep_their_age(projection):

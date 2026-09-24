@@ -22,7 +22,11 @@ and with these scenario rules layered on:
   the opening year keep their age.
 * **Spouse's excess**: months early are counted against the scenario's
   FRA for the spouse's birth year (Track A's rule, on the scenario
-  bundle).
+  bundle), from the later of the spouse's own claim and the worker's
+  entitlement.  When C1 or C2 moved the spouse's own claim, that claim
+  enters at its exact moved claim month, the month the spouse's own
+  factor reads (E1 section 13; referee required change 1), not at the
+  whole year it falls in (``reform.spouse_excess_months_early``).
 * **Aged widow(er)**: the oracle's ``widow_benefit`` with the reduction
   span of the survivor's cohort (``reform.survivor_parameters``): the
   416(l)(2) mapping on the scenario schedule (row F0 and every baseline),
@@ -81,11 +85,13 @@ from populace_dynamics.fra68_track.reform import (
     AGE_70_MONTHS,
     fra_increase_months,
     opening_stock_factor_ratio,
+    spouse_excess_months_early,
     survivor_parameters,
 )
 from populace_dynamics.ss.params import SSAParameters
 
 __all__ = [
+    "MovedClaimRecord",
     "PersonScenario",
     "Scenario",
     "ScenarioCalculator",
@@ -147,6 +153,20 @@ class Scenario:
 
 
 @dataclass(frozen=True)
+class MovedClaimRecord(PiaRecord):
+    """A projected retirement claim that C1 or C2 moved (E1 section 13).
+
+    ``reform_claim_month`` is the exact reform claim month
+    ``m' = min(12 a + D, 840)`` that ``claim_age_factor`` reads;
+    ``entitlement_year`` is the calendar year it falls in under A4's July
+    birth month.  The spouse's excess counts its months early from
+    ``reform_claim_month`` (:meth:`ScenarioCalculator._spouse_excess`).
+    """
+
+    reform_claim_month: int
+
+
+@dataclass(frozen=True)
 class PersonScenario:
     """One person's reference-year benefit in one scenario (monthly)."""
 
@@ -169,11 +189,14 @@ class ScenarioCalculator(track_benefits._Calculator):
     inheritance (plan section 8: "reused by import or by a documented
     copy"): the COLA reform is removed (``self.reform = None``), so both
     of Track A's rate paths are the baseline one, and the methods below
-    add the scenario rules of the module docstring.  ``_widow_excess`` is
-    a documented copy of Track A's, changed only to read the survivor's
-    cohort span.  With the baseline bundle and Track A's fixed 84-month
-    survivor span, every amount equals Track A's baseline amount bit for
-    bit (the null-reform identity test).
+    add the scenario rules of the module docstring.  ``_spouse_excess``
+    and ``_widow_excess`` are documented copies of Track A's: the first
+    changed only to count a moved claim's months early from its exact
+    claim month, the second to read the survivor's cohort span and to
+    count the survivors whose inherited credits the model omits.  With
+    the baseline bundle and Track A's fixed 84-month survivor span, every
+    amount equals Track A's baseline amount bit for bit (the null-reform
+    identity test).
     """
 
     def __init__(
@@ -230,7 +253,11 @@ class ScenarioCalculator(track_benefits._Calculator):
     def _claim_response(
         self, record: PiaRecord, birth: int, state: Any
     ) -> PiaRecord:
-        """C1/C2: move a projected claim by the FRA increase (plan s. 6)."""
+        """C1/C2: move a projected claim by the FRA increase (plan s. 6).
+
+        A moved claim is a :class:`MovedClaimRecord` carrying its exact
+        reform claim month; an unmoved one is returned as it is.
+        """
 
         response = self.scenario.claiming_response
         if response is ClaimingResponse.FIXED:
@@ -251,13 +278,17 @@ class ScenarioCalculator(track_benefits._Calculator):
             return record
         months = min(_MONTHS * age + increase, AGE_70_MONTHS)
         shift = (self.assumed_birth_month - 1 + months) // _MONTHS - age
-        return dataclasses.replace(
-            record,
+        fields = {
+            item.name: getattr(record, item.name)
+            for item in dataclasses.fields(PiaRecord)
+        }
+        fields.update(
             entitlement_year=record.entitlement_year + shift,
             claim_age_factor=claiming.benefit_factor(
                 months, birth, self.ctx.params
             ),
         )
+        return MovedClaimRecord(**fields, reform_claim_month=months)
 
     # ---- PIA records ---------------------------------------------------
     def own_record_uncounted(
@@ -338,6 +369,96 @@ class ScenarioCalculator(track_benefits._Calculator):
             ):
                 return scenario_year
         return track_benefits._Calculator._own_claim_year(own, state)
+
+    # ---- spouses ---------------------------------------------------------
+    @staticmethod
+    def own_claim_month(own: PiaRecord, own_claim: int, birth: int) -> int:
+        """The month of age at which the person's own claim starts.
+
+        A claim C1 or C2 moved starts at its exact reform claim month (the
+        month its factor reads); any other claim at 12 times its year
+        minus the birth year, Track A's whole-year count.
+        """
+
+        if isinstance(own, MovedClaimRecord):
+            return int(own.reform_claim_month)
+        return _MONTHS * (int(own_claim) - int(birth))
+
+    def _spouse_excess(
+        self, person_id: int, state: Any, own: PiaRecord
+    ) -> tuple[float, float] | None:
+        # A documented copy of Track A's ``_Calculator._spouse_excess``;
+        # the one change is the months-early count, which reads the exact
+        # moved claim month of a claim C1 or C2 moved
+        # (``reform.spouse_excess_months_early``; E1 section 13, referee
+        # required change 1).  Counting from the whole year the moved claim
+        # falls in changed a moved spouse's reduction by D - 12 x (the
+        # year shift) months with no response behind it.  Without a moved
+        # claim the count is Track A's, bit for bit.
+        spouse_id = _nullable_int(state["spouse_person_id"])
+        # Named gap (Track A): a spouse's excess needs the worker's
+        # simulated state and career, which exist only for a linked spouse
+        # in the opening roster.  Each claimant this leaves unassessed is
+        # counted.
+        if spouse_id is None:
+            self.counters["spouse_unlinked"] += 1
+            return None
+        if spouse_id not in self.ctx.cohort.roster_ids:
+            self.counters["spouse_outside_roster"] += 1
+            return None
+        if not self.lookups.alive(spouse_id):
+            # The marital step widows the partner of a rostered spouse who
+            # dies, so this state should not occur; count it if it does.
+            self.counters["spouse_rostered_but_absent"] += 1
+            return None
+        worker = self.worker_record(
+            spouse_id, self.lookups.final.loc[spouse_id]
+        )
+        if worker is None:
+            return None
+        if worker.eligibility_pia is None:
+            self.counters["spouse_worker_level_unavailable"] += 1
+            return None
+        birth = int(self.statics.at[person_id, "birth_year"])
+        own_claim = self._own_claim_year(own, state)
+        if own_claim is None:
+            self.counters["spouse_own_claim_year_missing"] += 1
+            return None
+        # SpouseEntitlementRule.OWN_CLAIM_NOT_BEFORE_WORKER: the later of
+        # the person's own simulated claim and the worker's entitlement.
+        entitlement = max(own_claim, worker.entitlement_year)
+        if entitlement > self.ctx.config.reference_year:
+            return None
+        if entitlement - birth < _RETIREMENT_AGE:
+            self.counters["spouse_entitlement_before_62"] += 1
+            return None
+        worker_start = self._exposure_start(worker, entitlement)
+        own_start = self._exposure_start(own)
+        if worker_start is None or own_start is None:
+            return None
+        worker_pia = self._pia_paths(worker, worker_start)
+        own_pia = self._pia_paths(own, own_start)
+        months_early = spouse_excess_months_early(
+            own_claim_month=self.own_claim_month(own, own_claim, birth),
+            worker_entitlement_year=worker.entitlement_year,
+            birth_year=birth,
+            params=self.ctx.params,
+        )
+        amounts = [
+            sb.spouse_excess_path(
+                worker_pia_by_year=worker_pia[index],
+                own_pia_by_year=own_pia[index],
+                months_early=months_early,
+                entitlement_year=entitlement,
+                params=self.ctx.params,
+                horizon_year=self.payment_year,
+            )[self.payment_year]
+            for index in (0, 1)
+        ]
+        if amounts[0] <= 0:
+            return None
+        self.counters["spouse_excess_paid"] += 1
+        return amounts[0], amounts[1]
 
     # ---- widow(er)s ------------------------------------------------------
     def survivor_bundle(self, birth_year: int) -> SSAParameters:

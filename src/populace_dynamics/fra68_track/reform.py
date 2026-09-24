@@ -78,6 +78,7 @@ __all__ = [
     "PLAN_RECOMMENDED_PRIMARY_SCHEDULE",
     "SCHEDULES",
     "SCHEDULE_ORDER",
+    "SPOUSE_EXCESS_MONTHS_EARLY_RULE",
     "SURVIVOR_COHORT_OFFSET",
     "SURVIVOR_EARLY_RETIREMENT_AGE",
     "TARGET_FRA_MONTHS",
@@ -88,6 +89,7 @@ __all__ = [
     "parameters_fra_sha256",
     "reform_parameters",
     "spouse_age_factor",
+    "spouse_excess_months_early",
     "survivor_parameters",
     "survivor_retirement_age_months",
     "worker_factor_ratio",
@@ -121,6 +123,13 @@ PLAN_RECOMMENDED_PRIMARY_SCHEDULE = "P3"
 SCHEDULE_ORDER = ("P1", "P2", "P3")
 #: Birth years the guards scan (well past every cohort in the cohort).
 _GUARD_BIRTH_YEARS = range(1900, 2031)
+#: The spouse's-excess months-early rule, as the E1 section 21 block
+#: states it (``claiming.spouse_excess_months_early``; E1 section 13).
+SPOUSE_EXCESS_MONTHS_EARLY_RULE = (
+    "max(0, reform_fra(b_s) - max(m_s, 12*(worker_reform_entitlement_year "
+    "- b_s))); m_s = the spouse's own reform claim month, 12*a_s if not "
+    "transformed"
+)
 
 
 @dataclass(frozen=True)
@@ -504,6 +513,35 @@ def spouse_age_factor(
         0, int(params.fra_months(birth_year)) - int(entitlement_age_months)
     )
     return 1.0 - benefits.spousal_early_reduction(months_early, params)
+
+
+def spouse_excess_months_early(
+    *,
+    own_claim_month: int,
+    worker_entitlement_year: int,
+    birth_year: int,
+    params: SSAParameters,
+) -> int:
+    """Months early of a spouse's excess (402(q)(1); E1 section 13).
+
+    The excess starts at the later of the spouse's own claim and the
+    worker's entitlement, so its reduction runs from
+    ``s = max(m_s, 12 (y_w - b_s))`` months of age to the spouse's FRA:
+    ``max(0, FRA(b_s) - s)``.  ``own_claim_month`` (``m_s``) is the
+    spouse's own claim month: the exact moved claim month when C1 or C2
+    moved the claim (the month the spouse's own factor reads), else 12
+    times the claim year minus the birth year.  The worker's entitlement
+    is annual, so it enters as a whole year (``y_w``) at the spouse's
+    birthday month.  Without a moved claim this equals Track A's count,
+    ``FRA(b_s) - 12 (max(own claim year, y_w) - b_s)``, exactly.
+    """
+
+    birth_year = int(birth_year)
+    start = max(
+        int(own_claim_month),
+        _MONTHS * (int(worker_entitlement_year) - birth_year),
+    )
+    return max(0, int(params.fra_months(birth_year)) - start)
 
 
 def opening_stock_factor_ratio(
