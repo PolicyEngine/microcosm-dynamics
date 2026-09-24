@@ -168,6 +168,7 @@ def test_the_e1_tabulation_rulings_follow_the_block_and_cite_e1(block, text):
     # identifier, cite sections of E1 (whose headings are checked here)
     # and carry E1's proposed primaries and registered rows.
     assert E1_RULINGS.specification == block["specification"]
+    assert E1_RULINGS.statistic_id == block["statistic_id"] == STATISTIC_ID
     assert E1_RULINGS.name == "E1"
     assert E1_RULINGS.section_field == "e1_section"
     assert "d188 item (c)" in E1_RULINGS.ratification

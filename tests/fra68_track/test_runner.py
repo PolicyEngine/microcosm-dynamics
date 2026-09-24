@@ -58,6 +58,7 @@ from populace_dynamics.fra68_track import (
     registered_rows,
     run_fra68,
 )
+from populace_dynamics.fra68_track import runner as fra68_runner
 from populace_dynamics.fra68_track.benefits import (
     Scenario,
     ScenarioCalculator,
@@ -1083,6 +1084,39 @@ def test_a_block_of_another_specification_leaves_each_row_refused():
     assert row["status"].startswith(
         "refused: ColaTabulationError: the specification header names "
         "'urban2010_cola_exercise1'"
+    )
+
+
+@pytest.mark.parametrize(
+    "dropped",
+    [("specification", "pending_rulings"), ("pending_rulings",)],
+    ids=["post-merge-call", "table-dropped"],
+)
+def test_a_tabulation_without_e1s_rulings_table_is_refused(
+    monkeypatch, dropped
+):
+    # Regression: after the #454 merge (c81a2ae7) the runner passed
+    # exercise 3's statistic_id but no specification and no rulings table,
+    # and A7 recorded A1's conventions, sections and ratification under
+    # the exercise-3 statistic without complaint.  A7 now binds the
+    # statistic to the rulings table, so that call shape is refused (the
+    # row records why) instead of silently recorded against A1.
+    tabulate = fra68_runner.tabulate_cola_age_profile
+
+    def without_e1_table(*args, **kwargs):
+        for name in dropped:
+            kwargs.pop(name)
+        return tabulate(*args, **kwargs)
+
+    monkeypatch.setattr(
+        fra68_runner, "tabulate_cola_age_profile", without_e1_table
+    )
+    run = run_fra68(_inputs(), config=_ONE_ROW)
+    row = run["rows"]["F0"]
+    assert row["tabulation"] is None
+    assert row["status"].startswith(
+        f"refused: ColaTabulationError: statistic_id {STATISTIC_ID!r} is "
+        "not the A1 specification's statistic"
     )
 
 

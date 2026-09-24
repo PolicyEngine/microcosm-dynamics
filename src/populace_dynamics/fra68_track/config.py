@@ -345,6 +345,7 @@ E1_RATIFICATION = (
 #: here is ratified: the tabulation derives each status from the header.
 E1_RULINGS = SpecificationRulings(
     specification=SPECIFICATION_ID,
+    statistic_id=STATISTIC_ID,
     name="E1",
     ratification=E1_RATIFICATION,
     section_field="e1_section",

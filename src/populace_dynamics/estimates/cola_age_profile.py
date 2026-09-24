@@ -24,10 +24,12 @@ block, :func:`specification_unratified_fields` empty) or that it awaits
 ratification (an unratified block, or none supplied).  (Max ruled the
 plan's section 6 items 1-3 on 2026-09-23; none of them is a tabulation
 field.)  Another exercise that reuses the statistic records its own
-specification instead: it passes its block header together with its own
-:class:`SpecificationRulings` table (the conventions, the sections of its
-specification that fix them and its ratification wording); A1's table,
-:data:`A1_RULINGS`, is the default.
+specification instead: it passes its block header and its statistic
+identifier together with its own :class:`SpecificationRulings` table (the
+statistic identifier, the conventions, the sections of its specification
+that fix them and its ratification wording); A1's table,
+:data:`A1_RULINGS`, is the default, and a statistic identifier that is not
+the table's is refused.
 
 Input rows
 ----------
@@ -798,11 +800,15 @@ class SpecificationRulings:
     identifier that specification's section 21 block carries (its
     ``specification`` field); a header passed to
     :func:`tabulate_cola_age_profile` with this table must carry the same
-    one.  ``name`` is the short name the recorded wording uses (``A1``,
-    ``E1``); ``ratification`` says what ratifies the specification;
-    ``section_field`` is the key under which each ruling names the section
-    that fixes it; ``rulings`` lists, per :class:`ColaAgeProfileConfig`
-    field, the proposed primary and the registered alternatives.
+    one.  ``statistic_id`` is the statistic identifier of that exercise;
+    the tabulation refuses a ``statistic_id`` argument that differs from
+    it, so a result never records one exercise's statistic against
+    another's rulings.  ``name`` is the short name the recorded wording
+    uses (``A1``, ``E1``); ``ratification`` says what ratifies the
+    specification; ``section_field`` is the key under which each ruling
+    names the section that fixes it; ``rulings`` lists, per
+    :class:`ColaAgeProfileConfig` field, the proposed primary and the
+    registered alternatives.
     ``extra_unratified_markers`` are markers this specification's
     ratification test refuses on top of :data:`UNRATIFIED_MARKERS`
     (:func:`specification_unratified_fields`); they can only add
@@ -811,6 +817,7 @@ class SpecificationRulings:
     """
 
     specification: str
+    statistic_id: str
     name: str
     ratification: str
     section_field: str
@@ -818,7 +825,7 @@ class SpecificationRulings:
     extra_unratified_markers: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        for label in ("specification", "name", "ratification"):
+        for label in ("specification", "statistic_id", "name", "ratification"):
             value = getattr(self, label)
             if not isinstance(value, str) or not value.strip():
                 raise ColaTabulationError(
@@ -892,6 +899,7 @@ A1_SPECIFICATION_ID = "urban2010_cola_exercise1"
 #: Exercise 1's table: the default of :func:`tabulate_cola_age_profile`.
 A1_RULINGS = SpecificationRulings(
     specification=A1_SPECIFICATION_ID,
+    statistic_id=STATISTIC_ID,
     name="A1",
     ratification=_SPEC_RATIFICATION,
     section_field="a1_section",
@@ -1834,7 +1842,10 @@ def tabulate_cola_age_profile(
     unchanged; another exercise passes its own, and a supplied header
     whose ``specification`` identifier is not the table's is refused,
     so a result never records one exercise's header against another's
-    sections.
+    sections.  ``statistic_id`` must be the table's
+    (:attr:`SpecificationRulings.statistic_id`): an exercise that passes
+    its own statistic but not its own table (or the reverse) is refused
+    rather than recorded against A1's conventions.
 
     Returns a JSON-serializable mapping.  Raises
     :class:`MembershipDifferenceError` when scenario memberships differ and
@@ -1860,6 +1871,13 @@ def tabulate_cola_age_profile(
     if not isinstance(pending_rulings, SpecificationRulings):
         raise ColaTabulationError(
             "pending_rulings must be a SpecificationRulings table"
+        )
+    if statistic_id != pending_rulings.statistic_id:
+        raise ColaTabulationError(
+            f"statistic_id {statistic_id!r} is not the "
+            f"{pending_rulings.name} specification's statistic "
+            f"({pending_rulings.statistic_id!r}); pass the rulings table "
+            "of the exercise the statistic belongs to"
         )
     recorded_specification = specification_record(
         specification,
