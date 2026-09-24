@@ -128,9 +128,11 @@ _GUARD_BIRTH_YEARS = range(1900, 2031)
 #: The spouse's-excess months-early rule, as the E1 section 21 block
 #: states it (``claiming.spouse_excess_months_early``; E1 section 13).
 SPOUSE_EXCESS_MONTHS_EARLY_RULE = (
-    "max(0, reform_fra(b_s) - max(m_s, 12*(worker_reform_entitlement_year "
-    "- b_s))); m_s = the spouse's own reform claim month, 12*a_s if not "
-    "transformed; a converted worker's conversion claim follows "
+    "max(0, reform_fra(b_s) - max(m_s, 12*(worker_baseline_entitlement_year "
+    "- b_s) + v_w)); m_s = the spouse's own reform claim month, 12*a_s if "
+    "not transformed; v_w = the months C1/C2 moved the worker's claim, "
+    "min(12*a_w + D(b_w), 840) - 12*a_w, 0 if not transformed; a converted "
+    "worker's conversion claim follows "
     "amounts.conversion_claim_spouse_excess_months_early"
 )
 #: The months-early rule of a spouse's excess resting on a converted
@@ -537,25 +539,42 @@ def spouse_excess_months_early(
     worker_entitlement_year: int,
     birth_year: int,
     params: SSAParameters,
+    worker_claim_move_months: int = 0,
 ) -> int:
     """Months early of a spouse's excess (402(q)(1); E1 section 13).
 
     The excess starts at the later of the spouse's own claim and the
     worker's entitlement, so its reduction runs from
-    ``s = max(m_s, 12 (y_w - b_s))`` months of age to the spouse's FRA:
-    ``max(0, FRA(b_s) - s)``.  ``own_claim_month`` (``m_s``) is the
+    ``s = max(m_s, 12 (y_w - b_s) + v_w)`` months of age to the spouse's
+    FRA: ``max(0, FRA(b_s) - s)``.  ``own_claim_month`` (``m_s``) is the
     spouse's own claim month: the exact moved claim month when C1 or C2
     moved the claim (the month the spouse's own factor reads), else 12
-    times the claim year minus the birth year.  The worker's entitlement
-    is annual, so it enters as a whole year (``y_w``) at the spouse's
-    birthday month.  Without a moved claim this equals Track A's count,
-    ``FRA(b_s) - 12 (max(own claim year, y_w) - b_s)``, exactly.
+    times the claim year minus the birth year.  ``worker_entitlement_year``
+    (``y_w``) is the worker's entitlement year before any C1/C2 move: the
+    projection's entitlement is annual, so it enters as a whole year at
+    the spouse's birthday month (A4's July birth month for both spouses).
+    ``worker_claim_move_months`` (``v_w``) is the number of months C1 or C2
+    moved the worker's claim, ``min(12 a_w + D(b_w), 840) - 12 a_w`` (0
+    when the claim was not moved), so a moved worker entitlement enters at
+    its exact month, as the spouse's own moved claim does (the review of
+    ``e1-draft-5``).  402(b)(1) entitles a wife to her benefit only as the
+    wife of "an individual entitled to old-age or disability insurance
+    benefits" (``usc42_402.txt`` line 58), and the reduction period of a
+    wife's benefit begins with the first month of that entitlement
+    (402(q)(5)(C) and (6)(A)(ii), lines 399 and 404), so a worker's claim
+    moved by ``v_w`` months moves the start of the spouse's reduction by
+    ``v_w`` months, not by 12 times the whole years it crosses.  Without a
+    moved claim this equals Track A's count, ``FRA(b_s) - 12 (max(own
+    claim year, y_w) - b_s)``, exactly.
     """
 
     birth_year = int(birth_year)
+    move = int(worker_claim_move_months)
+    if move < 0:
+        raise ValueError("a claim move cannot be negative")
     start = max(
         int(own_claim_month),
-        _MONTHS * (int(worker_entitlement_year) - birth_year),
+        _MONTHS * (int(worker_entitlement_year) - birth_year) + move,
     )
     return max(0, int(params.fra_months(birth_year)) - start)
 

@@ -27,7 +27,11 @@ and with these scenario rules layered on:
   enters at its exact moved claim month, the month the spouse's own
   factor reads (E1 section 13; referee required change 1), not at the
   whole year it falls in (``reform.spouse_excess_months_early``).  When
-  the spouse is a converted disabled worker whose own claim is the
+  C1 or C2 moved the worker's claim, the worker's entitlement likewise
+  enters at its baseline year moved by exactly the months the claim moved
+  (``ScenarioCalculator.worker_entitlement_start``; E1 section 13, the
+  review of ``e1-draft-5``); the whole year it falls in gates the excess.
+  When the spouse is a converted disabled worker whose own claim is the
   conversion, the baseline start of the excess moves by the FRA increase
   ``D`` (``reform.conversion_claim_excess_months_early``; E1 section 11,
   the review of ``e1-draft-4``): the count is Track A's baseline count in
@@ -203,12 +207,17 @@ class MovedClaimRecord(PiaRecord):
     birth month.  The spouse's excess counts its months early from
     ``reform_claim_month`` (:meth:`ScenarioCalculator._spouse_excess`).
     ``baseline_entitlement_year`` is the projected claim's own year before
-    the move (the worker's entitlement a conversion claim's count reads,
-    :meth:`ScenarioCalculator.excess_months_early`).
+    the move and ``claim_move_months`` the months the move added,
+    ``m' - 12 a`` (``a`` the claim age, at most 70).  As a worker's record
+    they place the start of the spouse's excess: the baseline year moved by
+    exactly ``claim_move_months`` for the general count, the baseline year
+    alone for a conversion claim's count
+    (:meth:`ScenarioCalculator.worker_entitlement_start`).
     """
 
     reform_claim_month: int
     baseline_entitlement_year: int | None = None
+    claim_move_months: int | None = None
 
 
 @dataclass(frozen=True)
@@ -236,9 +245,10 @@ class ScenarioCalculator(track_benefits._Calculator):
     of Track A's rate paths are the baseline one, and the methods below
     add the scenario rules of the module docstring.  ``_spouse_excess``
     and ``_widow_excess`` are documented copies of Track A's: the first
-    changed only in the months-early count (a moved claim's from its
-    exact claim month, a conversion claim's from its baseline start moved
-    by the FRA increase) and to count the excesses on a conversion claim,
+    changed only in the months-early count (a moved claim's, the spouse's
+    own or the worker's, from its exact claim month, a conversion claim's
+    from its baseline start moved by the FRA increase) and to count the
+    excesses on a conversion claim,
     the second to read the survivor's cohort span and to count the
     survivors whose inherited credits the model omits.  With
     the baseline bundle and Track A's fixed 84-month survivor span, every
@@ -339,6 +349,7 @@ class ScenarioCalculator(track_benefits._Calculator):
             **fields,
             reform_claim_month=months,
             baseline_entitlement_year=record.entitlement_year,
+            claim_move_months=months - _MONTHS * age,
         )
 
     # ---- PIA records ---------------------------------------------------
@@ -464,6 +475,34 @@ class ScenarioCalculator(track_benefits._Calculator):
             return int(own.reform_claim_month)
         return _MONTHS * (int(own_claim) - int(birth))
 
+    @staticmethod
+    def worker_entitlement_start(worker: PiaRecord) -> tuple[int, int]:
+        """The worker's entitlement as a spouse's count reads it.
+
+        Returns ``(year, months moved)``.  A worker's claim that C1 or C2
+        moved (:class:`MovedClaimRecord`) starts at its year before the
+        move plus exactly the months the move added (the review of
+        ``e1-draft-5``): the spouse's reduction then starts the month the
+        moved entitlement does, as it does for the spouse's own moved
+        claim.  The whole reform year (``entitlement_year``) still gates
+        the excess.  Any other record: its entitlement year, moved by 0.
+        """
+
+        if isinstance(worker, MovedClaimRecord):
+            if (
+                worker.baseline_entitlement_year is None
+                or worker.claim_move_months is None
+            ):
+                raise ValueError(
+                    f"moved claim of person {worker.person_id} lacks its "
+                    "baseline entitlement year or its move"
+                )
+            return (
+                int(worker.baseline_entitlement_year),
+                int(worker.claim_move_months),
+            )
+        return int(worker.entitlement_year), 0
+
     def excess_months_early(
         self,
         own: PiaRecord,
@@ -484,8 +523,10 @@ class ScenarioCalculator(track_benefits._Calculator):
         not change the count (it still gates the excess through the
         worker's reform entitlement year).  Any other claim: from the
         later of the own claim month (:meth:`own_claim_month`) and the
-        worker's entitlement in this scenario
-        (:func:`reform.spouse_excess_months_early`).
+        month the worker's entitlement starts in this scenario, a moved
+        worker claim at its exact moved month
+        (:meth:`worker_entitlement_start`;
+        :func:`reform.spouse_excess_months_early`; E1 section 13).
         """
 
         conversion = self.conversion_claim_year(own, state)
@@ -502,11 +543,13 @@ class ScenarioCalculator(track_benefits._Calculator):
                 baseline=self.scenario.baseline_params,
                 params=self.ctx.params,
             )
+        worker_year, worker_move = self.worker_entitlement_start(worker)
         return spouse_excess_months_early(
             own_claim_month=self.own_claim_month(own, own_claim, birth),
-            worker_entitlement_year=worker.entitlement_year,
+            worker_entitlement_year=worker_year,
             birth_year=birth,
             params=self.ctx.params,
+            worker_claim_move_months=worker_move,
         )
 
     def _spouse_excess(
@@ -520,7 +563,11 @@ class ScenarioCalculator(track_benefits._Calculator):
         # C1 or C2 moved (E1 section 13, referee required change 1):
         # counting from the whole year the moved claim falls in changed a
         # moved spouse's reduction by D - 12 x (the year shift) months with
-        # no response behind it.  A conversion claim keeps Track A's
+        # no response behind it.  A worker's claim C1 or C2 moved enters the
+        # same way, at its baseline year plus the months it moved (the
+        # review of ``e1-draft-5``): its whole reform year changed the
+        # spouse's reduction by D(b_s) - 12 x (the worker's year shift)
+        # months instead of D(b_s) - v_w.  A conversion claim keeps Track A's
         # baseline count in every scenario (E1 section 11, the review of
         # ``e1-draft-4``): counting from the whole scenario conversion year
         # changed its reduction by the change in FRA mod 12 with nothing in

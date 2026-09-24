@@ -385,6 +385,160 @@ def test_the_spouse_excess_rule_is_track_as_without_a_moved_claim(base):
     )
 
 
+def _moved_claim(age, increase):
+    """INVENTED C1/C2 move of a claim at integer age ``age`` (E1 s. 13).
+
+    Returns the reform claim month ``min(12 a + D, 840)``, the year shift
+    under A4's July birth month and the months moved.
+    """
+
+    age = min(age, 70)
+    if increase <= 0:
+        return 12 * age, 0, 0
+    month = min(12 * age + increase, 840)
+    return month, (6 + month) // 12 - age, month - 12 * age
+
+
+def test_a_moved_worker_claim_starts_the_excess_at_its_exact_month(
+    base, reforms
+):
+    # The review of e1-draft-5: when C1 or C2 moved the worker's claim and
+    # the worker's entitlement starts the spouse's excess, the spouse's
+    # reduction starts the month the moved entitlement does.  402(b)(1)
+    # (usc42_402.txt line 58) entitles a wife only as the wife of an
+    # individual entitled to old-age benefits, and the reduction period
+    # starts with her first month of entitlement (402(q)(5)(C), (6)(A)(ii);
+    # lines 399 and 404).  Independent check: calendar months, both
+    # spouses born in July (A4), the worker claiming at month m'_w of age.
+    for sid, params in reforms.items():
+        for spouse_birth in range(1946, 1967):
+            spouse_increase = params.fra_months(
+                spouse_birth
+            ) - base.fra_months(spouse_birth)
+            for spouse_age in (62, 63, 64):
+                for worker_birth in range(1944, 1967):
+                    worker_increase = params.fra_months(
+                        worker_birth
+                    ) - base.fra_months(worker_birth)
+                    for worker_age in range(62, 71):
+                        worker_year = worker_birth + worker_age
+                        month, shift, moved = _moved_claim(
+                            worker_age, worker_increase
+                        )
+                        # Calendar month index of the worker's moved
+                        # claim, minus the spouse's birth month index.
+                        spouse_age_at_worker = (
+                            12 * worker_birth + 6 + month
+                        ) - (12 * spouse_birth + 6)
+                        for own_month in (
+                            12 * spouse_age,
+                            _moved_claim(spouse_age, spouse_increase)[0],
+                        ):
+                            exact = max(
+                                0,
+                                params.fra_months(spouse_birth)
+                                - max(own_month, spouse_age_at_worker),
+                            )
+                            assert (
+                                reform.spouse_excess_months_early(
+                                    own_claim_month=own_month,
+                                    worker_entitlement_year=worker_year,
+                                    birth_year=spouse_birth,
+                                    params=params,
+                                    worker_claim_move_months=moved,
+                                )
+                                == exact
+                            ), (sid, spouse_birth, worker_birth, worker_age)
+                        assert (
+                            worker_year + shift
+                            == worker_birth + (6 + month) // 12
+                        )
+    # A negative move is refused.
+    with pytest.raises(ValueError, match="negative"):
+        reform.spouse_excess_months_early(
+            own_claim_month=744,
+            worker_entitlement_year=2016,
+            birth_year=1953,
+            params=base,
+            worker_claim_move_months=-1,
+        )
+
+
+@pytest.mark.parametrize(
+    (
+        "spouse_birth",
+        "worker_birth",
+        "worker_age",
+        "baseline",
+        "exact",
+        "whole_year",
+    ),
+    [
+        # E1 section 19: P3, D(1953) = 11, D(1951) = 7.  The worker's
+        # claim at 65 in 2016 moves 7 months (month 787, entitled 2017);
+        # the spouse, who claimed at 62 in 2015, is 756 + 7 = 763 months
+        # old when the worker's moved entitlement starts: 803 - 763 = 40
+        # months early.  The whole moved year counted 803 - 768 = 35,
+        # fewer than the baseline's 36: a rise the worker's 7-month delay
+        # does not give.
+        (1953, 1951, 65, 36, 40, 35),
+        # P3, D(1954) = 13, D(1953) = 11: the worker claims at 65 in 2018
+        # and moves 11 months.  Exact 805 - (768 + 11) = 26; whole year
+        # 805 - 780 = 25; baseline 792 - 768 = 24.
+        (1954, 1953, 65, 24, 26, 25),
+        # P3, D(1950) = 6, D(1948) = 2: the worker's claim at 65 in 2013
+        # moves 2 months within the year.  Exact 798 - (756 + 2) = 40; the
+        # whole year (unchanged) counted 798 - 756 = 42.
+        (1950, 1948, 65, 36, 40, 42),
+    ],
+)
+def test_a_moved_worker_claim_cases(
+    base,
+    reforms,
+    spouse_birth,
+    worker_birth,
+    worker_age,
+    baseline,
+    exact,
+    whole_year,
+):
+    p3 = reforms["P3"]
+    worker_year = worker_birth + worker_age
+    increase = p3.fra_months(worker_birth) - base.fra_months(worker_birth)
+    month, shift, moved = _moved_claim(worker_age, increase)
+    assert moved == increase
+    own_month = 12 * 62
+    assert (
+        reform.spouse_excess_months_early(
+            own_claim_month=own_month,
+            worker_entitlement_year=worker_year,
+            birth_year=spouse_birth,
+            params=base,
+        )
+        == baseline
+    )
+    assert (
+        reform.spouse_excess_months_early(
+            own_claim_month=own_month,
+            worker_entitlement_year=worker_year,
+            birth_year=spouse_birth,
+            params=p3,
+            worker_claim_move_months=moved,
+        )
+        == exact
+    )
+    # The rule it replaces: the whole year the moved claim falls in.
+    assert (
+        reform.spouse_excess_months_early(
+            own_claim_month=own_month,
+            worker_entitlement_year=worker_year + shift,
+            birth_year=spouse_birth,
+            params=p3,
+        )
+        == whole_year
+    )
+
+
 #: The cohort classes whose conversion-claim count 070c59c7's rule (the
 #: scenario's own whole conversion year) changed, by (birth year,
 #: schedule): its months early minus the baseline's, when the conversion

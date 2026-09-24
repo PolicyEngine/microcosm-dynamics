@@ -451,7 +451,7 @@ def test_section_19_spouse_cases_under_c2_equal_the_code(text):
     # E1 referee required change 1: under C2 a moved spouse's excess keeps
     # its months early (the exact moved claim month, not its whole year).
     section = _section(text, "## 19. Invented worked cases")
-    assert "Five further invented cases have no dollar amount" in section
+    assert "Six further invented cases have no dollar amount" in section
     cases = _SPOUSE_CASE.findall(section)
     assert len(cases) == 2
     base = captured_ssa_parameters()
@@ -567,3 +567,112 @@ def test_section_19_converted_spouse_case_equals_the_code(text):
     old = 1 - benefits.spousal_early_reduction(old_early, reform)
     assert Decimal(str(old)) == old_factor
     assert Decimal(str(round(100 * (old / computed[0] - 1), 4))) == change
+
+
+_MOVED_WORKER_CASE = re.compile(
+    r"\*\*Spouse's excess under C1, started by the worker's moved "
+    r"claim\*\*,\s+spouse born (\d{4}) \((P\d), D = (\d+)\) who claimed "
+    r"at 62 in (\d{4}), worker born\s+(\d{4}) \(D = (\d+)\) who claimed "
+    r"at (\d+) in (\d{4}), a claim C1 moves to month (\d+)\s+\(entitled "
+    r"(\d{4})\): the spouse is (\d+) \+ (\d+) = (\d+) months old when "
+    r"the\s+worker's moved entitlement starts, so (\d+) - (\d+) = (\d+) "
+    r"months early,\s+against the baseline's (\d+) - (\d+) = (\d+): "
+    r"factor ([0-9.]+) against ([0-9.]+),\s+-([0-9.]+) percent\. "
+    r"`e1-draft-5` counted from the whole year (\d{4})\s+\(month (\d+)\): "
+    r"(\d+) months early, factor ([0-9.]+), \+([0-9.]+) percent, above\s+"
+    r"the baseline\."
+)
+
+
+def test_section_19_moved_worker_case_equals_the_code(text):
+    # The review of e1-draft-5: a worker's claim C1 moved enters the
+    # spouse's count at its exact month (baseline year plus the months
+    # moved), not the whole reform year it falls in.
+    section = _section(text, "## 19. Invented worked cases")
+    (case,) = _MOVED_WORKER_CASE.findall(section)
+    spouse_birth, sid = int(case[0]), case[1]
+    (
+        spouse_increase,
+        spouse_claim,
+        worker_birth,
+        worker_increase,
+        worker_age,
+        worker_claim,
+        month,
+        entitled,
+        spouse_age,
+        moved,
+        spouse_age_at_start,
+        fra,
+        start,
+        early,
+        base_fra,
+        base_start,
+        base_early,
+    ) = (int(value) for value in case[2:19])
+    factor, base_factor, cut = (Decimal(value) for value in case[19:22])
+    old_year, old_month, old_early = (int(value) for value in case[22:25])
+    old_factor, rise = Decimal(case[25]), Decimal(case[26])
+    base = captured_ssa_parameters()
+    reform = reform_parameters(base, SCHEDULES[sid])
+    assert spouse_increase == reform.fra_months(
+        spouse_birth
+    ) - base.fra_months(spouse_birth)
+    assert (
+        worker_increase
+        == moved
+        == reform.fra_months(worker_birth) - base.fra_months(worker_birth)
+    )
+    assert spouse_claim == spouse_birth + 62
+    assert worker_claim == worker_birth + worker_age > spouse_claim
+    # C1 moves the worker's claim (age at least the anchor, 65).
+    assert worker_age >= 65
+    assert month == 12 * worker_age + worker_increase
+    assert entitled == worker_birth + (6 + month) // 12
+    assert spouse_age == 12 * (worker_claim - spouse_birth)
+    assert start == spouse_age_at_start == spouse_age + moved
+    assert fra == reform.fra_months(spouse_birth)
+    assert base_fra == base.fra_months(spouse_birth)
+    assert base_start == spouse_age
+    assert (
+        early
+        == fra - start
+        == spouse_excess_months_early(
+            own_claim_month=12 * 62,
+            worker_entitlement_year=worker_claim,
+            birth_year=spouse_birth,
+            params=reform,
+            worker_claim_move_months=moved,
+        )
+    )
+    assert (
+        base_early
+        == base_fra - base_start
+        == spouse_excess_months_early(
+            own_claim_month=12 * 62,
+            worker_entitlement_year=worker_claim,
+            birth_year=spouse_birth,
+            params=base,
+        )
+    )
+    computed = 1 - benefits.spousal_early_reduction(early, reform)
+    base_computed = 1 - benefits.spousal_early_reduction(base_early, base)
+    assert Decimal(f"{computed:.6f}") == factor
+    assert Decimal(str(base_computed)) == base_factor
+    assert Decimal(str(round(100 * (1 - computed / base_computed), 4))) == cut
+    # e1-draft-5's rule: the whole reform year the moved claim falls in.
+    assert old_year == entitled and old_month == 12 * (old_year - spouse_birth)
+    assert (
+        old_early
+        == fra - old_month
+        == spouse_excess_months_early(
+            own_claim_month=12 * 62,
+            worker_entitlement_year=entitled,
+            birth_year=spouse_birth,
+            params=reform,
+        )
+    )
+    old = 1 - benefits.spousal_early_reduction(old_early, reform)
+    assert Decimal(f"{old:.6f}") == old_factor
+    assert Decimal(str(round(100 * (old / base_computed - 1), 4))) == rise
+    assert old_early < base_early < early

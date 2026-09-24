@@ -10,10 +10,10 @@
   (`scripts/run_fra68_registered.py`) refuses a block whose status or
   version is not ratified, that lists a decision awaiting Max, or that
   records no ruling of his on a decision field (§21).
-- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-5`,
+- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-6`,
   drafted 2026-09-24 and revised the same day after the independent
-  referee pass and after the independent review of `e1-draft-4` (§25).
-  §26 is the changelog.
+  referee pass and after the independent reviews of `e1-draft-4` and
+  `e1-draft-5` (§25). §26 is the changelog.
 - **Plan item:** E1 of the blind plan
   `EVID/critical-path-fra68-20260923.md` (SHA-256 `d5e7a32f…`), where
   `EVID` = `~/microcosm-launch-evidence/dynasim-parity-20260909`. The
@@ -35,7 +35,11 @@
   model builders may not open are listed in `EVID/RESTRICTED-FILES.md`
   (created 2026-09-24). The list is a living file that the orchestrating
   session updates; this summary is of the version the `e1-draft-5` lane
-  read, whose last changelog entry is dated 2026-09-24 13:55: every copy
+  read, whose last changelog entry is dated 2026-09-24 13:55 (the
+  `e1-draft-6` lane read the version whose last entry is dated 14:35;
+  against the 13:55 copy, `EVID/revisions/RESTRICTED-FILES-20260924-pre-clearance-followup.md`
+  (SHA-256 `812bde2b…`), it changes only exercise-2 and exercise-4
+  entries): every copy
   of the Urban report beyond PDF pages 1-2 (text lines 1-120; pages 3-4,
   which carry Figure 2, the page-4 prose describing the FRA results and
   Figures 4-5, are restricted), `EVID/urban-2010-page3.png`,
@@ -64,6 +68,11 @@
     (the version above) before any other file and opened nothing it
     lists, nor the exercise-1 artifact or the exercise-3 forecasts. It
     did not open the Urban report or its text extraction.
+  - The lane that wrote `e1-draft-6` (the independent review of
+    `e1-draft-5`, §25) read `EVID/RESTRICTED-FILES.md` (the 14:35
+    version) before any other file and opened nothing it lists, nor the
+    exercise-1 artifact or the exercise-3 forecasts. It did not open the
+    Urban report or its text extraction.
   - No lane computed a statistic on real data. §2 lists what the drafts
     read.
 
@@ -130,17 +139,18 @@ This draft cites only the sources below.
 | A1 (template) | `docs/design/urban2010_cola_comparison.md` | `f674e8c6…` | Whole file |
 | Track A design note | `docs/design/track-a-assembly.md` | `317927ad…` | Whole file |
 | Urban (2010), text extraction | `EVID/urban-2010-reform-details.txt` | `0826fc19…` | Lines 1-120 only (pages 1-2): date (6), outcome sentence (25-27), Table 1 (58-86), Figure 1 source and note (114-115) |
-| 42 U.S.C. 416(l), 402(q), 402(w), 423(a)(1), 403(f), 403(j); and 402(q)(9)(B)(ii), 402(e)(2)(C) and 402(f)(2)(C) from the full page text | `EVID/fra68-statute-20260924/usc-42-fra-excerpts.txt`; `EVID/fra68-statute-20260924/usc42_402.txt` lines 208, 258 and 419 | `2c7605ee…`; `84a2336f…` | Official text, uscode.house.gov, current ("prelim") edition, fetched 2026-09-24; the folder holds the pages, their text conversion and `SHA256SUMS`. Amendment notes checked (§20). `e1-draft-4` also cites 402(q)(3)(C) (`usc42_402.txt` lines 383-385) and 403(f)(9) (`usc42_403.txt` line 170); `e1-draft-5` cites 402(q)(1) and 402(q)(6)(B) at lines 371 and 406 of `usc42_402.txt` (`SHA256SUMS` verified 2026-09-24) |
+| 42 U.S.C. 416(l), 402(q), 402(w), 423(a)(1), 403(f), 403(j); and 402(q)(9)(B)(ii), 402(e)(2)(C), 402(f)(2)(C) and 402(b)(1) from the full page text | `EVID/fra68-statute-20260924/usc-42-fra-excerpts.txt`; `EVID/fra68-statute-20260924/usc42_402.txt` lines 208, 258 and 419 | `2c7605ee…`; `84a2336f…` | Official text, uscode.house.gov, current ("prelim") edition, fetched 2026-09-24; the folder holds the pages, their text conversion and `SHA256SUMS`. Amendment notes checked (§20). `e1-draft-4` also cites 402(q)(3)(C) (`usc42_402.txt` lines 383-385) and 403(f)(9) (`usc42_403.txt` line 170); `e1-draft-5` cites 402(q)(1) and 402(q)(6)(B) at lines 371 and 406 of `usc42_402.txt` (`SHA256SUMS` verified 2026-09-24); `e1-draft-6` cites 402(b)(1), 402(q)(5)(C) and 402(q)(6)(A)(ii) at lines 58, 399 and 404 (`SHA256SUMS` verified again) |
 | DYNASIM3 primer (Favreault and Smith 2004) | `~/PolicyEngine/dynasim-refs/410961-dynasim3-primer.txt` | `0ad06f68…` | p. 3 (fn. 5), Table 3 (p. 6, OASI row), p. 14 (OASI take-up), pp. 16-17 (benefit calculator, fns. 15-16) |
 | 2008 Trustees Report (TR2008) | `EVID/tr2008-inputs-20260922/tr08-2008-oasdi-trustees-report.pdf` | `517de81a…` | `e1-draft-4`: pp. 111-112 (claiming at 63-69) and pp. 118-119 (ultimate DI incidence), read through `pdftotext -layout`, printed pages from the page footers |
 | Referee report on `e1-draft-3` | `EVID/fra68-referee-20260924.md` | `943af2a3…` | Whole file (§25) |
 | Independent review of `e1-draft-4` | `EVID/fra68-conversion-claim-20260924/review-e1-draft-4-20260924.json` (the review lane's record, copied verbatim from the workflow's results file) | `c6da180f…` | Whole record (§25) |
 | Conversion-claim arithmetic | `EVID/fra68-conversion-claim-20260924/conversion_claim_arithmetic.py` and its output `conversion_claim_arithmetic.out` | `af508eb1…`; `e82b5e3f…` | Exact-integer months early of a converted spouse's excess by cohort, schedule and worker-entitlement year under each rule; imports nothing from the repository (§11, §25) |
+| Independent review of `e1-draft-5`: arithmetic and calculator probe | `EVID/fra68-review2-b4d8732e-20260924/independent_arithmetic.py` and its output `independent_arithmetic.out.json`; `probe_moved_worker_calculator.py` and its output at `b4d8732e`, `probe_moved_worker_calculator.b4d8732e.json` | `481b76c9…`; `27fe381b…`; `f7f52618…`; `465c7eff…` | Exact-integer schedules, conversion-claim counts and moved-worker counts, importing nothing from the repository; the calculator's counts and 2030 amounts for three invented spouses whose worker's claim C1 or C2 moved (§13, §19, §25) |
 | Builder restriction list | `EVID/RESTRICTED-FILES.md` | — (a living list; no hash is pinned) | Whole file, read first by each lane since `e1-draft-4`. The `e1-draft-5` lane read the version whose last changelog entry is dated 2026-09-24 13:55. `e1-draft-4` recorded SHA-256 `a7356057…`, which the list no longer matches and which the review of `e1-draft-4` could not verify for any version; this draft withdraws it (§25) |
 | Decision records d188 and d196 | `~/chief-of-staff/state/decisions/decisions.jsonl`, entries `d188` and `d196` | — | Their filed wording, defaults and status (`open`); d188 read 2026-09-24 by the `e1-draft-4` lane, both read 2026-09-24 by the `e1-draft-5` lane (§22) |
 | Claim-age reference | `data/external/ssa_claim_ages_2023supplement.json` | `f731c9a6…` | The 2008 rows through `claiming.claim_age_distribution`: `fra_at.at_age` = 65 for both sexes; age-62 shares 42.6 (male) and 48.0 (female); age-65 shares 25.8 and 19.3 |
 | Statutory capture | `data/external/track_a_statutory_parameters.json` | `fd56a8aa…` | FRA schedule, early rates, credit schedule and cap, auxiliary constants (the baseline bundle) |
-| Repo code, read this session | `ss/params.py` and `ss/benefits.py` (whole), `claiming.py` (`benefit_factor`, `months_early`, `months_late`, `claim_age_distribution`, `claim_age_pmf`), `scenario_benefits.py` (rates and path functions), `cola_track_a/` (`config`, `benefits`, `runner`, `opening`, `adapters` whole; `statutory` in part), `engine/di_entitlement.py` (FRA attainment, conversion and exposure), `engine/claiming.py`, `estimates/cola_age_profile.py` (configuration and tabulation). The `e1-draft-4` lane read `cola_track_a/benefits.py` (`_Calculator`: worker, decedent, spouse's and widow(er)'s records), `cola_track_a/config.py` (Max's exercise-1 rulings), `ss/benefits.py` (`spousal_benefit`, `widow_benefit`), `estimates/cola_age_profile.py` (`_membership_masks`, `_cell_values`, the ratification test) and `fra68_track/` whole. The `e1-draft-5` lane read `fra68_track/benefits.py` and `reform.py` whole, `cola_track_a/benefits.py` (`_Calculator`: worker record, own claim year, spouse's excess, exposure start and PIA paths), `engine/di_entitlement.py` (`fra_attainment_year` and the conversion step), `engine/steps.py` (`apply_claiming`), `scenario_benefits.spouse_excess_path` and `ss/benefits.py` (`spousal_benefit`, `spousal_early_reduction`) | — | Mechanisms cited in §§3-16 |
+| Repo code, read this session | `ss/params.py` and `ss/benefits.py` (whole), `claiming.py` (`benefit_factor`, `months_early`, `months_late`, `claim_age_distribution`, `claim_age_pmf`), `scenario_benefits.py` (rates and path functions), `cola_track_a/` (`config`, `benefits`, `runner`, `opening`, `adapters` whole; `statutory` in part), `engine/di_entitlement.py` (FRA attainment, conversion and exposure), `engine/claiming.py`, `estimates/cola_age_profile.py` (configuration and tabulation). The `e1-draft-4` lane read `cola_track_a/benefits.py` (`_Calculator`: worker, decedent, spouse's and widow(er)'s records), `cola_track_a/config.py` (Max's exercise-1 rulings), `ss/benefits.py` (`spousal_benefit`, `widow_benefit`), `estimates/cola_age_profile.py` (`_membership_masks`, `_cell_values`, the ratification test) and `fra68_track/` whole. The `e1-draft-5` lane read `fra68_track/benefits.py` and `reform.py` whole, `cola_track_a/benefits.py` (`_Calculator`: worker record, own claim year, spouse's excess, exposure start and PIA paths), `engine/di_entitlement.py` (`fra_attainment_year` and the conversion step), `engine/steps.py` (`apply_claiming`), `scenario_benefits.spouse_excess_path` and `ss/benefits.py` (`spousal_benefit`, `spousal_early_reduction`). The `e1-draft-6` lane read `fra68_track/benefits.py` and `reform.py` whole, `cola_track_a/benefits.py` whole, `engine/di_entitlement.py` (`fra_attainment_year` and the conversion step), `engine/steps.py` (`apply_claiming`), `scenario_benefits.spouse_excess_path` and `ss/benefits.py` (`spousal_benefit`, `spousal_early_reduction`) | — | Mechanisms cited in §§3-16 |
 
 **Not opened:** see the header. The DYNASIM scorecard
 (`EVID/dynasim-scorecard.md`) is cited through the plan only (plan §1:
@@ -425,8 +435,8 @@ scenario's bundle; `fra68_track.benefits`):
    scenario bundle. Spouse's excess: months early against the scenario
    FRA of the spouse's birth year, from the later of the spouse's own
    claim and the worker's entitlement (under C1 and C2 a moved own claim
-   enters at its exact claim month, §13; a conversion claim follows rule
-   3). Aged widow(er): the oracle's `widow_benefit` with the reduction
+   and a moved worker entitlement each enter at their exact month, §13; a
+   conversion claim follows rule 3). Aged widow(er): the oracle's `widow_benefit` with the reduction
    span of the survivor's cohort (§3, item 2), in both scenarios; the
    deceased's scenario factor feeds the RIB-LIM and the inherited credits
    (a deceased who never claimed carries factor 1.0, §12). DI: factor 1.
@@ -537,15 +547,28 @@ survivors' entitlement rule are unchanged; a spouse's excess starts at
 the later of the spouse's own reform claim year and the worker's reform
 entitlement year, and is reduced for max(0, F'(b_s) - s) months, where
 F'(b_s) is the reform FRA of the spouse's birth year,
-s = max(m'_s, 12 (y'_w - b_s)), m'_s is the spouse's own reform claim
-month (12 a_s when the spouse's claim is not transformed) and y'_w is the
-worker's reform entitlement year. Under C0 this is §11's rule. A
-transformed spouse's excess therefore keeps its baseline distance from
-the retirement age, as the worker's own factor does, unless the worker's
-later entitlement starts it. (Counting months early from the whole start
-year instead would change a transformed excess's reduction by D(b_s) -
+s = max(m'_s, 12 (y_w - b_s) + v_w), m'_s is the spouse's own reform
+claim month (12 a_s when the spouse's claim is not transformed), y_w is
+the worker's entitlement year before any transform and
+v_w = min(12 a_w + D(b_w), 840) - 12 a_w is the number of months the
+transform moved the worker's claim (0 when it is not transformed). Both
+moved claims enter at their exact months, A4's July birth month for both
+spouses: 402(b)(1) entitles a wife only as the wife "of an individual
+entitled to old-age or disability insurance benefits"
+(`usc42_402.txt` line 58), and her reduction period begins with her first
+month of entitlement (402(q)(5)(C) and (6)(A)(ii), lines 399 and 404), so
+a worker's claim moved by v_w months moves the start of the spouse's
+reduction by v_w months. Under C0 this is §11's rule. A transformed
+spouse's excess therefore keeps its baseline distance from the retirement
+age, as the worker's own factor does, when the spouse's own claim starts
+it; when the worker's moved entitlement starts it, the reduction changes
+by D(b_s) - v_w months, which is not 0 when the two spouses' FRA
+increases differ. (Counting months early from the whole start year
+instead would change a transformed excess's reduction by D(b_s) -
 12 x (its start-year shift) months: a cut when D < 6 or D >= 13 and a
-rise when 6 <= D <= 11, with no response behind either.) A converted
+rise when 6 <= D <= 11, with no response behind either. `e1-draft-5`
+still counted a moved worker entitlement that way, from y'_w, the
+worker's reform entitlement year; §19 and §25.) A converted
 worker's excess on its conversion claim follows §11 rule 3 under every
 claiming response: its count reads the worker's baseline entitlement
 year, so a C1/C2 move of the worker's claim changes when the excess is
@@ -652,7 +675,7 @@ and `tests/test_urban2010_fra68_spec.py` holds this table to them.
 | Widow(er), born 1965, widowed and entitled at 63; worker born 1963 with PIA $1,500.00 who never claimed (P3) | $1,441.40 | $1,415.10 | -1.8246 | -1.8238 |
 | The same widow(er), entitled at 60 (P3) | $1,231.10 | $1,231.10 | 0 | 0 |
 
-Five further invented cases have no dollar amount:
+Six further invented cases have no dollar amount:
 
 - **Opening-stock retired worker**, born 1948, claimed at 62 in 2010
   (P3): factor 0.75 (baseline, 48 months early) to 0.741667 (50 months
@@ -674,6 +697,15 @@ Five further invented cases have no dollar amount:
   0.972222 in both, ratio 1. `e1-draft-4` counted from the reform's whole
   conversion year, 2024 (month 816): 0 months early, factor 1, +2.8571
   percent, above both the baseline and P3.
+- **Spouse's excess under C1, started by the worker's moved claim**,
+  spouse born 1953 (P3, D = 11) who claimed at 62 in 2015, worker born
+  1951 (D = 7) who claimed at 65 in 2016, a claim C1 moves to month 787
+  (entitled 2017): the spouse is 756 + 7 = 763 months old when the
+  worker's moved entitlement starts, so 803 - 763 = 40 months early,
+  against the baseline's 792 - 756 = 36: factor 0.733333 against 0.75,
+  -2.2222 percent. `e1-draft-5` counted from the whole year 2017
+  (month 768): 35 months early, factor 0.756944, +0.9259 percent, above
+  the baseline.
 
 ## 20. Resolution map
 
@@ -725,7 +757,8 @@ it), and where this draft resolves each for exercise 3:
    d075.
 8. Under C1 and C2 the spouse's excess counts its months early from the
    exact moved claim month, as the spouse's own factor does (§13; referee
-   required change 1).
+   required change 1), and from the exact month of a moved worker
+   entitlement (§13; the review of `e1-draft-5`).
 9. The per-cohort survivor span and the two exercise-1 carry-overs this
    draft relies on (the oracle COLA horizon, d074 decision 2(a), and the
    opening-stock basis, d075) are decision fields of their own, which
@@ -758,7 +791,7 @@ form) and the configuration follows every ruling.
 ```json
 {
   "specification": "urban2010_fra68_exercise3",
-  "version": "e1-draft-5",
+  "version": "e1-draft-6",
   "status": "draft_refereed_not_ratified",
   "template": {
     "specification": "urban2010_cola_exercise1",
@@ -846,7 +879,7 @@ form) and the configuration follows every ruling.
       "applies_to": "every_projected_claimant"
     },
     "claim_age": "claim_year_minus_birth_year_at_most_70",
-    "spouse_excess_months_early": "max(0, reform_fra(b_s) - max(m_s, 12*(worker_reform_entitlement_year - b_s))); m_s = the spouse's own reform claim month, 12*a_s if not transformed; a converted worker's conversion claim follows amounts.conversion_claim_spouse_excess_months_early",
+    "spouse_excess_months_early": "max(0, reform_fra(b_s) - max(m_s, 12*(worker_baseline_entitlement_year - b_s) + v_w)); m_s = the spouse's own reform claim month, 12*a_s if not transformed; v_w = the months C1/C2 moved the worker's claim, min(12*a_w + D(b_w), 840) - 12*a_w, 0 if not transformed; a converted worker's conversion claim follows amounts.conversion_claim_spouse_excess_months_early",
     "unchanged_under_c1_c2": [
       "claims_at_or_before_the_opening_year",
       "di_records",
@@ -1199,6 +1232,22 @@ The review also noted that d188 as filed does not name rows F3-F8
 (d196 item (4) now does, §22) and that the branch's upstream is set to
 `origin/master` (not a matter for this draft; the branch is not pushed).
 
+**Independent review of `e1-draft-5`.** An independent Claude lane
+(Opus 5.5) reviewed the branch at `b4d8732e` on 2026-09-24; its report is
+`EVID/subfleet-briefs-20260924/ex3-review-report.md` and its scripts and
+outputs are in `EVID/fra68-review2-b4d8732e-20260924/` (§2). With exact
+integers and importing nothing from the repository, it confirmed the §3
+table, the §5 spread, the §19 conversion and C2 cases, and that the
+`e1-draft-5` conversion-claim rule equals Track A's baseline count for
+every cohort 1938-1971 under P1, P2 and P3, including the later-worker
+case (moving the conversion claim alone would count 2 months for spouses
+born 1955 and 4 for 1956 under every schedule). It reproduced the dry run
+byte for byte. It found one defect of the kind of required change 1:
+
+| Finding | Checked against | Applied |
+|---|---|---|
+| 1. Under C1 and C2 a worker's moved claim entered the spouse's count as the whole reform year it falls in (`excess_months_early` passed the moved record's `entitlement_year`), so when the worker's entitlement starts the excess the reform changed the spouse's months early by D(b_s) - 12 x (the worker's year shift) instead of D(b_s) - v_w, the months the worker's claim moved. On invented data under P3 and C1, a spouse born 1953 whose worker born 1951 moved 7 months was counted 35 months early against the baseline's 36 (a 0.93 percent rise in the excess where the worker's delay gives a 2.22 percent cut at 40 months); the exact-integer grid (spouses born 1946-1966 claiming at 62-64, workers born 1944-1966 claiming at 65-69 in a later year up to 2030, under P1, P2 and P3, C1) finds 969 cases where the two counts differ, 95 of them rises above the baseline where the exact count cuts or holds | `ScenarioCalculator.excess_months_early` and `_claim_response` at `b4d8732e`; `reform.spouse_excess_months_early`; 402(b)(1), 402(q)(5)(C) and (6)(A)(ii) (`usc42_402.txt` lines 58, 399 and 404); the calculator probe on invented data (§2) | The worker's moved entitlement enters at its exact month, its baseline year plus the months moved (§13, §19 new case, §20 item 8, §21 `claiming.spouse_excess_months_early`). Code: `MovedClaimRecord.claim_move_months`, `ScenarioCalculator.worker_entitlement_start`, and `reform.spouse_excess_months_early(worker_claim_move_months=...)`; the whole reform year still gates the excess, and a conversion claim's count is unchanged (§11 rule 3). Rows F3 and F4 only: nothing moves under C0, so no baseline and no C0 row changes. Tests: a grid over schedules, cohorts and claim ages against calendar-month arithmetic; the three probe cases through the calculator, with the whole-year count they replace; a moved record without its move is refused; the new §19 case |
+
 ## 26. Changelog
 
 - `e1-draft-1` (2026-09-24): first draft, from the plan's §7 and the A1
@@ -1241,3 +1290,14 @@ The review also noted that d188 as filed does not name rows F3-F8
   check and d196; the header, §22, §24 and §25 note d196. No schedule,
   row, primary, decision field or §19 dollar amount changed; §19 gains
   one invented case.
+- `e1-draft-6` (2026-09-24, after the independent review of `e1-draft-5`,
+  §25). One rule changed: under C1 and C2 a worker's moved claim enters
+  the spouse's months-early count at its exact month (the baseline
+  entitlement year plus the months moved), as the spouse's own moved
+  claim already did (§11 rule 2, §13, §20 item 8, §21
+  `claiming.spouse_excess_months_early`). Reform amounts of spouses whose
+  excess a moved worker entitlement starts change in rows F3 and F4 only;
+  no baseline and no C0 row changes. §19 gains one invented case; §2 adds
+  the statute lines and the review's scripts; the header records the
+  lane. No schedule, row, primary, decision field or §19 dollar amount
+  changed.
