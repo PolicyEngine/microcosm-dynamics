@@ -64,6 +64,18 @@ Who receives what (A5 conventions; A1 section 11 where it speaks):
 Levels the oracle does not compute (decision 2(b) and the A6
 pre-eligibility-death hook) follow :class:`LevelPolicy`;
 :func:`approximate_pia` is the disclosed approximation.
+
+Benefit computation years (:data:`TRACK_A_COMPUTATION_YEARS`).  Every
+oracle AIME in this module divides by 35 years
+(:attr:`~populace_dynamics.ss.statutory_aime.ComputationYears.
+LEGACY_FIXED_35`, the unchanged ``ss.benefits.aime``), the arithmetic of
+Track A's Registration 13 (``runs/replication_urban2010_cola_v1.json``,
+registered commit ``002264d9``).  42 USC 415(b)(2) gives fewer years to
+workers born before 1929 (elapsed years less 5); the Track C step 1
+comparison (2026-09-23) traced all 251 of its AIME disagreements, among
+7486 people, to that count.  The assembly keeps the count Registration 13
+used; moving a future Track A run to the statutory count is a
+registration-level choice that has not been made.
 """
 
 from __future__ import annotations
@@ -90,8 +102,10 @@ from populace_dynamics.cola_track_a.opening import (
 from populace_dynamics.engine.loop import ProjectionResult
 from populace_dynamics.ss import benefits
 from populace_dynamics.ss.params import SSAParameters
+from populace_dynamics.ss.statutory_aime import ComputationYears
 
 __all__ = [
+    "TRACK_A_COMPUTATION_YEARS",
     "BenefitContext",
     "StateLookups",
     "PiaRecord",
@@ -102,6 +116,11 @@ __all__ = [
 
 #: The oracle's PIA formula covers eligibility from 1979 (plan section 10).
 FIRST_ORACLE_ELIGIBILITY_YEAR = 1979
+#: The AIME computation-year convention of Track A's oracle retirement
+#: level: the legacy fixed 35 that Registration 13 was computed with (module
+#: docstring), not the statutory 415(b)(2) count.  :func:`approximate_pia`
+#: is always legacy.
+TRACK_A_COMPUTATION_YEARS = ComputationYears.LEGACY_FIXED_35
 _RETIREMENT_AGE = 62
 _MONTHS = 12
 _OPENING_AUX = ("survivor", "spouse", "other", "unclassified")
@@ -163,6 +182,11 @@ def approximate_pia(
     It is not the statutory DI or pre-eligibility-death computation: the
     divisor is always 35 years (no elapsed or dropout years), so it
     understates short careers.  It sets a weight, never a reform ratio.
+    It always calls the unchanged ``benefits.aime``
+    (``ComputationYears.LEGACY_FIXED_35``), the approximation Track A
+    registered.  The statutory counts for a disability onset or a death
+    before 62 exist as ``ss.statutory_aime.aime(..., disability_year=...)``
+    or ``death_year=...``; using them here would change that approximation.
     """
 
     kept = {
@@ -257,6 +281,7 @@ class _Calculator:
                     history=self._history(person_id),
                     birth_year=birth,
                     params=self.ctx.params,
+                    computation_years=TRACK_A_COMPUTATION_YEARS,
                 )
             else:
                 self.cache[key] = approximate_pia(
