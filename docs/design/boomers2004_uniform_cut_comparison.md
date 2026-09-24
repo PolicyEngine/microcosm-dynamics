@@ -974,8 +974,11 @@ reachability guard:
   with invented thresholds and the committed life tables and SSI
   capture, and the fallback rule on the invented cohort as staged today;
   evidence headed "INVENTED DATA - NOT A COMPARISON",
-  `EVID/track-u-dry-run-20260924/` (`u1-draft-3`) and
-  `EVID/track-u-dry-run-u1d4-20260924/` (`u1-draft-4`).
+  `EVID/track-u-dry-run-20260924/` (`u1-draft-3`),
+  `EVID/track-u-dry-run-u1d4-20260924/` (`u1-draft-4`) and
+  `EVID/track-u-dry-run-u1d5-20260924/` (this draft, at `46668576`: the
+  fallback staging makes U0-F the headline, blocks the rows defined on U0
+  or U1 and computes the -F rows).
 - `scripts/run_track_u_registered.py` (U10 entry point): refuses unless
   the pointer is an issue #42 comment, `HEAD` is the registered commit
   on a clean tree, §15 is ratified with nothing awaiting and nothing
