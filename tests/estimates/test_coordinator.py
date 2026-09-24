@@ -1531,16 +1531,29 @@ def test__estimator_surface__pins_complete_module_tuple():
     tabulation_surface = tuple(
         path for path in observed if path.name == "cola_age_profile.py"
     )
+    # The exercise-2 (Track U) income concept and tabulation are likewise
+    # post-compute and outside the registered first-estimates surface.
+    track_u_surface = tuple(
+        path
+        for path in observed
+        if path.name in ("adjusted_poverty.py", "uniform_cut_tabulation.py")
+    )
     first_estimates_surface = tuple(
         path
         for path in observed
-        if path not in context_surface and path not in tabulation_surface
+        if path not in context_surface
+        and path not in tabulation_surface
+        and path not in track_u_surface
     )
 
     assert coordinator._ESTIMATOR_SURFACE_SOURCES == expected
     assert first_estimates_surface == expected
     assert tabulation_surface == (
         Path("src/populace_dynamics/estimates/cola_age_profile.py"),
+    )
+    assert track_u_surface == (
+        Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
+        Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
     )
     assert context_surface == (
         Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),

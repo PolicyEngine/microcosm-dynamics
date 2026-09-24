@@ -1,0 +1,97 @@
+{
+  "schema_version": "populace_dynamics.track_u_ssi_parameters.v1",
+  "description": "Federal SSI parameters for the Track U SSI response rules (exercise 2; Python income concept, not Axiom): the federal benefit rate in force on January 1 of each income year, the general and earned income exclusions and the resource limits",
+  "years": [
+    2004,
+    2012
+  ],
+  "source": {
+    "policyengine_us_revision": "a03e82e503f8e0285125ee0c5380410a964c8e8a",
+    "policyengine_us_files_sha256": {
+      "policyengine_us/parameters/gov/ssa/ssi/amount/individual.yaml": "9dc3d2ed15f1f86e073e7ef06e06bd79c43d8d8b48419dcee87de25a5cdd0eaf",
+      "policyengine_us/parameters/gov/ssa/ssi/amount/couple.yaml": "fa8d7cee418f6b4c02df757f2cc591936eb835efcdde17534dffd9d9d90e459e",
+      "policyengine_us/parameters/gov/ssa/ssi/income/exclusions/general.yaml": "dc77f88b148bd06771a267ab0775e80898043ec7581adea5b9431eff8267f9b1",
+      "policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned.yaml": "50bc791fec4bf24b444a394e23f5ad19b86f758e71739bfd17665b3c11a96f4b",
+      "policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned_share.yaml": "f9efb4c19445cbc5fc38dcbeabcde0920396365fb3ba5de4e29a93e469257ec6",
+      "policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/individual.yaml": "155d6728a2ae00ea5da441ada685ad638f21d1faaa8cadd0e991ef6a40b94cc7",
+      "policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/couple.yaml": "341b821e70c50a269741152f2e616cc4dc0663bfeab5fcfe0ded1b32a316dfc9"
+    },
+    "references": {
+      "fbr_individual": [
+        {
+          "title": "SSI Federal Payment Amounts",
+          "href": "https://www.ssa.gov/oact/cola/SSIamts.html"
+        }
+      ],
+      "fbr_couple": [
+        {
+          "title": "SSI Federal Payment Amounts",
+          "href": "https://www.ssa.gov/oact/cola/SSIamts.html"
+        }
+      ],
+      "general_income_exclusion": [
+        {
+          "title": "20 CFR \u00a7 416.1112 - Earned income we do not count.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1112#c_4"
+        }
+      ],
+      "earned_income_exclusion": [
+        {
+          "title": "20 CFR \u00a7 416.1112 - Earned income we do not count.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1112#c_5"
+        }
+      ],
+      "earned_income_share_excluded": [
+        {
+          "title": "20 CFR \u00a7 416.1112 - Earned income we do not count.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1112#c_7"
+        }
+      ],
+      "resource_limit_individual": [
+        {
+          "title": "20 CFR \u00a7 416.1205 - Limitation on resources.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1205#c"
+        }
+      ],
+      "resource_limit_couple": [
+        {
+          "title": "20 CFR \u00a7 416.1205 - Limitation on resources.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1205#c"
+        }
+      ]
+    },
+    "rule": "value in force on January 1 of the income year",
+    "generated_by": "scripts/capture_track_u_parameters.py --ssi"
+  },
+  "federal_benefit_rate_monthly": {
+    "individual": {
+      "2004": 564.0,
+      "2005": 579.0,
+      "2006": 603.0,
+      "2007": 623.0,
+      "2008": 637.0,
+      "2009": 674.0,
+      "2010": 674.0,
+      "2011": 674.0,
+      "2012": 698.0
+    },
+    "couple": {
+      "2004": 846.0,
+      "2005": 869.0,
+      "2006": 904.0,
+      "2007": 934.0,
+      "2008": 956.0,
+      "2009": 1011.0,
+      "2010": 1011.0,
+      "2011": 1011.0,
+      "2012": 1048.0
+    }
+  },
+  "general_income_exclusion_monthly": 20.0,
+  "earned_income_exclusion_monthly": 65.0,
+  "earned_income_share_excluded": 0.5,
+  "resource_limit": {
+    "individual": 2000.0,
+    "couple": 3000.0
+  }
+}
