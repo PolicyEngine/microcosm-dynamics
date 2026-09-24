@@ -1819,7 +1819,9 @@ def main(argv: list[str] | None = None) -> int:
             "and survivor benefits, and every Track A benefit path",
             "members born before 1917 or after 1968 (see selection "
             "exclusions) and the 2009-wave R6 population",
-            "the five-group COLA age profile: not computed, not read",
+            "the five-group COLA age profile: not computed; of the Track "
+            "A artifact the script uses only the parameter revision and the "
+            "2011-wave cohort diagnostics and source provenance",
         ],
         "provenance": {
             "engine_binding": binding.document(),
