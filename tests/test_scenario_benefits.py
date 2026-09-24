@@ -22,8 +22,9 @@ from populace_dynamics.estimates.parameters import (
     PayrollRateLegs,
     ReportParameters,
 )
-from populace_dynamics.ss import benefits
+from populace_dynamics.ss import benefits, statutory_aime
 from populace_dynamics.ss.params import SSAParameters
+from populace_dynamics.ss.statutory_aime import ComputationYears
 
 # Invented realized history: a deterministic closed-form path over the
 # committed loader's 1979-2022 span (0.012 to 0.090), with a few zero years.
@@ -734,6 +735,10 @@ def test_di_benefit_level_hook_awaits_a_ruling():
 
 
 def test_age_62_pia_matches_the_sealed_ledger_computation():
+    # INVENTED claimants.  The legacy convention is the sealed ledger's
+    # computation for every birth year; the statutory default agrees with
+    # it from the 1929 birth cohort on and divides the 1925 claimant's
+    # total by 31 computation years (1951-1986 elapsed, less 5), not 35.
     parameters = _report_parameters(_realized())
     ledger = ledgers.build_benefit_ledger(
         _invented_claimants(), parameters, draw_index=0
@@ -746,15 +751,37 @@ def test_age_62_pia_matches_the_sealed_ledger_computation():
             for year, amount in claimant.earnings_by_year.items()
             if year <= claimant.claim_year
         }
-        value = sb.eligibility_pia_for_clock(
-            sb.WorkerClock.at_age_62(claimant.birth_year),
+        clock = sb.WorkerClock.at_age_62(claimant.birth_year)
+        legacy = sb.eligibility_pia_for_clock(
+            clock,
+            history=history,
+            birth_year=claimant.birth_year,
+            params=parameters.ssa,
+            computation_years=ComputationYears.LEGACY_FIXED_35,
+        )
+        assert struct.pack("<d", legacy) == struct.pack(
+            "<d", person.eligibility_pia
+        )
+        statutory = sb.eligibility_pia_for_clock(
+            clock,
             history=history,
             birth_year=claimant.birth_year,
             params=parameters.ssa,
         )
-        assert struct.pack("<d", value) == struct.pack(
-            "<d", person.eligibility_pia
+        assert statutory == benefits.pia(
+            statutory_aime.aime(history, claimant.birth_year, parameters.ssa),
+            claimant.birth_year + 62,
+            parameters.ssa,
         )
+        if claimant.birth_year >= 1929:
+            assert struct.pack("<d", statutory) == struct.pack("<d", legacy)
+        else:
+            assert claimant.birth_year == 1925
+            assert (
+                statutory_aime.benefit_computation_years(claimant.birth_year)
+                == 31
+            )
+            assert statutory > legacy
     with pytest.raises(ValueError, match="attains 62"):
         sb.eligibility_pia_for_clock(
             sb.WorkerClock(

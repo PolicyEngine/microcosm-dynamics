@@ -3,12 +3,27 @@
 For every person of the real Track A 2011-wave PSID cohort whose AIME the
 transitional Python oracle computes in Track A, this script records
 
-* the oracle's AIME, computed exactly as Track A computes it
-  (``ss.benefits.aime`` over the person's Track A career, indexed to the
-  year of attaining 60, the call ``scenario_benefits.
-  eligibility_pia_for_clock`` makes for the age-62 clock), with Track A's
-  statutory parameters (the committed capture before 1975, the TR2008
-  intermediate AWI from 1975: ``cola_track_a.runner.tr2008_ssa_parameters``);
+* the oracle's AIME over the person's Track A career, indexed to the year
+  of attaining 60, under the computation-year convention chosen with
+  ``--oracle-computation-years`` (every output names it):
+
+  - ``statutory`` (the default): ``ss.statutory_aime.oracle_aime`` with
+    ``ComputationYears.STATUTORY``, the 42 USC 415(b)(2) count (elapsed
+    years less 5, at least 2), which is also the default of
+    ``scenario_benefits.eligibility_pia_for_clock``;
+  - ``legacy_fixed_35``: ``ComputationYears.LEGACY_FIXED_35``, the
+    unchanged ``ss.benefits.aime`` (always 35 years).  This is the call
+    ``eligibility_pia_for_clock`` makes for the age-62 clock under Track
+    A's own convention (``cola_track_a.benefits.
+    TRACK_A_COMPUTATION_YEARS``); it was the oracle of the 2026-09-23
+    report (``track-c-aime-agreement-20260923``).
+
+  The two can differ only for people born before 1929, who have fewer
+  than 35 statutory computation years.  Track A's own AIME (the legacy
+  convention) is recorded beside the chosen oracle's for every person.
+  Both use Track A's statutory parameters (the committed capture before
+  1975, the TR2008 intermediate AWI from 1975:
+  ``cola_track_a.runner.tr2008_ssa_parameters``);
 * the AIME the actual Axiom rules engine returns for the same person,
   through :mod:`populace_dynamics.axiom_benefit_bridge` (the pinned engine
   binary and compiled 415(b) candidate that reproduced SSA's published
@@ -53,12 +68,26 @@ Transport conventions (every one recorded in the output):
 
 The attribution check (verification only, not a third model) reruns the
 oracle's own creditable and indexed history with the candidate's number
-of benefit computation years instead of the oracle's fixed 35.
+of benefit computation years instead of the oracle's.  Under the legacy
+oracle (35 years) it can explain disagreements for people born before
+1929; the statutory oracle already uses the candidate's count, so under
+it no disagreement is attributed to the count.
+
+Binding to the registered Track A run.  The cohort and parameters must be
+those of ``runs/replication_urban2010_cola_v1.json``: every cohort
+diagnostic the artifact records must be present with an equal value, and
+its source provenance and parameter revision must be equal.  A
+diagnostic the artifact does not record must be a reviewed one listed in
+``KNOWN_ADDITIVE_DIAGNOSTICS`` (with the commit that added it); it is
+recorded in the output and must reconcile with the recorded diagnostics it
+breaks down (sum to the recorded total, fit within the recorded
+per-category counts).  Any other new diagnostic refuses the run.
 
 Usage::
 
     python scripts/track_c_aime_agreement.py \\
-        --output-dir <evidence dir> [--workers 4] [--allow-dirty]
+        --output-dir <evidence dir> [--workers 4] [--allow-dirty] \\
+        [--oracle-computation-years statutory|legacy_fixed_35]
     python scripts/track_c_aime_agreement.py --render-only <evidence dir>
 
 Writes ``result.json`` and ``RESULTS.md`` (and ``executions/``) there.
@@ -92,32 +121,43 @@ from populace_dynamics import axiom_benefit_bridge as bridge  # noqa: E402
 from populace_dynamics import scenario_benefits as sb  # noqa: E402
 from populace_dynamics.cola_track_a.benefits import (  # noqa: E402
     FIRST_ORACLE_ELIGIBILITY_YEAR,
+    TRACK_A_COMPUTATION_YEARS,
 )
-from populace_dynamics.ss import benefits  # noqa: E402
+from populace_dynamics.ss import benefits, statutory_aime  # noqa: E402
 from populace_dynamics.ss.params import SSAParameters  # noqa: E402
+from populace_dynamics.ss.statutory_aime import (  # noqa: E402
+    ComputationYears,
+)
 
-SCHEMA_VERSION = "populace_dynamics.track_c.aime_agreement.v1"
-HEADER = (
-    "Track C step 1: per-person AIME agreement between the actual Axiom "
-    "rules engine and the transitional Python oracle on the real Track A "
-    "PSID cohort. The Axiom RuleSpec candidates are UNACCEPTED. This is "
-    "not the COLA statistic: no benefit path, reform or age-profile value "
-    "is computed."
-)
-LABELS = (
-    "PSID-seeded closed cohort",
-    "Axiom RuleSpec candidates unaccepted (diagnostic only)",
-    "Python oracle: transitional, not Axiom",
-    "not the COLA statistic",
-)
-DEFAULT_OUTPUT_DIR = Path(
-    "~/microcosm-launch-evidence/dynasim-parity-20260909/"
-    "track-c-aime-agreement-20260923"
-)
+#: v2 (2026-09-24, commit 71c94743): the oracle's computation years are a
+#: recorded choice (``oracle``), ``oracle_aime`` is the chosen oracle's AIME
+#: and ``track_a_oracle_aime`` always Track A's, and the Track A artifact
+#: binding records the diagnostics compared and the additive ones.
+#: v3 (2026-09-24): the binding admits only the additive diagnostics in
+#: ``KNOWN_ADDITIVE_DIAGNOSTICS`` and records ``added_by``, the category
+#: check and ``unknown_additive_diagnostic_keys``.
+SCHEMA_VERSION = "populace_dynamics.track_c.aime_agreement.v3"
 #: The first year of the PSID family earnings panel (career law).
 PANEL_FIRST_YEAR = 1968
-#: The oracle's fixed benefit computation years (ss.benefits).
-ORACLE_COMPUTATION_YEARS = 35
+#: Track A's fixed benefit computation years (``ss.benefits.aime``).
+LEGACY_COMPUTATION_YEARS = statutory_aime.LEGACY_FIXED_COMPUTATION_YEARS
+#: ``--oracle-computation-years`` choices.
+ORACLE_CHOICES: Mapping[str, ComputationYears] = {
+    "statutory": ComputationYears.STATUTORY,
+    "legacy_fixed_35": ComputationYears.LEGACY_FIXED_35,
+}
+#: The default oracle: the statutory 42 USC 415(b)(2) count.
+DEFAULT_ORACLE = "statutory"
+#: What each oracle is, in the words every output uses.
+ORACLE_NAMES: Mapping[ComputationYears, str] = {
+    ComputationYears.STATUTORY: (
+        "statutory computation years (42 USC 415(b)(2), "
+        "ss.statutory_aime), not Track A's fixed 35"
+    ),
+    ComputationYears.LEGACY_FIXED_35: (
+        "Track A's legacy fixed 35 computation years (ss.benefits.aime)"
+    ),
+}
 _RETIREMENT_AGE = 62
 _INDEXING_AGE = 60
 _MONTHS = 12
@@ -319,12 +359,179 @@ def candidate_computation_years(birth_year: int) -> int:
     return max(2, elapsed - 5)
 
 
-def oracle_aime(
-    career: Mapping[int, float], birth_year: int, params: SSAParameters
-) -> int:
-    """Track A's oracle AIME (``eligibility_pia_for_clock``'s call)."""
+def oracle_convention(choice: str | ComputationYears) -> ComputationYears:
+    """The convention of an ``--oracle-computation-years`` choice."""
 
-    return benefits.aime(dict(career), int(birth_year), params)
+    if isinstance(choice, ComputationYears):
+        return choice
+    try:
+        return ORACLE_CHOICES[str(choice)]
+    except KeyError:
+        raise ValueError(
+            f"unknown oracle computation years {choice!r}; choose one of "
+            f"{', '.join(ORACLE_CHOICES)}"
+        ) from None
+
+
+def oracle_choice(convention: ComputationYears) -> str:
+    """The ``--oracle-computation-years`` value of a convention."""
+
+    for choice, value in ORACLE_CHOICES.items():
+        if value is ComputationYears(convention):
+            return choice
+    raise ValueError(f"no oracle choice for {convention!r}")
+
+
+def header_for(convention: ComputationYears) -> str:
+    """The result header, naming the oracle compared against."""
+
+    return (
+        "Track C step 1: per-person AIME agreement between the actual Axiom "
+        "rules engine and the transitional Python oracle on the real Track "
+        "A PSID cohort. Oracle: "
+        + ORACLE_NAMES[ComputationYears(convention)]
+        + ". The Axiom RuleSpec candidates are UNACCEPTED. This is not the "
+        "COLA statistic: no benefit path, reform or age-profile value is "
+        "computed."
+    )
+
+
+def labels_for(convention: ComputationYears) -> tuple[str, ...]:
+    """The result labels, the oracle's among them."""
+
+    return (
+        "PSID-seeded closed cohort",
+        "Axiom RuleSpec candidates unaccepted (diagnostic only)",
+        "Python oracle: transitional, not Axiom",
+        "oracle: " + ORACLE_NAMES[ComputationYears(convention)],
+        "not the COLA statistic",
+    )
+
+
+def oracle_document(convention: ComputationYears) -> dict[str, Any]:
+    """What ``result.json`` records about the oracle compared against."""
+
+    convention = ComputationYears(convention)
+    return {
+        "choice": oracle_choice(convention),
+        "computation_years": convention.value,
+        "name": ORACLE_NAMES[convention],
+        "call": (
+            "ss.statutory_aime.oracle_aime(career, birth_year, params, "
+            f"computation_years=ComputationYears.{convention.name})"
+        ),
+        "track_a_computation_years": TRACK_A_COMPUTATION_YEARS.value,
+        "is_track_a_convention": convention is TRACK_A_COMPUTATION_YEARS,
+        "choices": {
+            choice: value.value for choice, value in ORACLE_CHOICES.items()
+        },
+        "default_choice": DEFAULT_ORACLE,
+    }
+
+
+def oracle_aime(
+    career: Mapping[int, float],
+    birth_year: int,
+    params: SSAParameters,
+    *,
+    convention: ComputationYears,
+) -> int:
+    """The oracle's age-62 AIME under a named convention.
+
+    ``ss.statutory_aime.oracle_aime``: ``STATUTORY`` is the 42 USC
+    415(b)(2) count, ``LEGACY_FIXED_35`` is ``ss.benefits.aime`` (always
+    35 years), Track A's.
+    """
+
+    return statutory_aime.oracle_aime(
+        dict(career),
+        int(birth_year),
+        params,
+        computation_years=ComputationYears(convention),
+    )
+
+
+def oracle_computation_year_count(
+    birth_year: int, convention: ComputationYears
+) -> int:
+    """How many computation years the oracle divides by for a person."""
+
+    if ComputationYears(convention) is ComputationYears.LEGACY_FIXED_35:
+        return LEGACY_COMPUTATION_YEARS
+    return statutory_aime.benefit_computation_years(int(birth_year))
+
+
+def require_track_a_convention(
+    track_a_convention: ComputationYears = TRACK_A_COMPUTATION_YEARS,
+) -> None:
+    """Refuse to run unless Track A still uses the legacy fixed 35.
+
+    The report text names Track A's AIME as the fixed-35 one under either
+    oracle choice, and the ``legacy_fixed_35`` choice is described as
+    Track A's own.
+    """
+
+    convention = ComputationYears(track_a_convention)
+    if convention is not ComputationYears.LEGACY_FIXED_35:
+        raise SystemExit(
+            f"Track A's oracle computation years are {convention.value}; "
+            "this script describes Track A's AIME as "
+            f"{ComputationYears.LEGACY_FIXED_35.value} "
+            f"({LEGACY_COMPUTATION_YEARS} years) and must be updated first"
+        )
+
+
+def check_oracle_pia(
+    inputs: Iterable[PersonInput],
+    params: SSAParameters,
+    convention: ComputationYears,
+) -> dict[str, Any]:
+    """Fail unless the oracle PIAs rest on the AIMEs this script records.
+
+    For every person and for both the chosen convention and Track A's
+    (``TRACK_A_COMPUTATION_YEARS``, as Track A's assembly passes it),
+    ``eligibility_pia_for_clock`` with that ``computation_years`` must
+    equal ``benefits.pia`` of :func:`oracle_aime` under it.  Under the
+    legacy choice the two conventions are one.  The function's default is
+    the statutory count, so a call that dropped ``computation_years``
+    would fail the legacy check for people born before 1929.
+    """
+
+    conventions = tuple(
+        dict.fromkeys(
+            (ComputationYears(convention), TRACK_A_COMPUTATION_YEARS)
+        )
+    )
+    persons = 0
+    for person in inputs:
+        persons += 1
+        birth = person.selection.birth_year
+        for checked in conventions:
+            pia = sb.eligibility_pia_for_clock(
+                sb.WorkerClock.at_age_62(birth),
+                history=person.career,
+                birth_year=birth,
+                params=params,
+                computation_years=checked,
+            )
+            if pia != benefits.pia(
+                oracle_aime(person.career, birth, params, convention=checked),
+                birth + _RETIREMENT_AGE,
+                params,
+            ):
+                raise ValueError(
+                    f"{person.selection.person_id}: PIA mismatch "
+                    f"({checked.value})"
+                )
+    return {
+        "persons": persons,
+        "conventions_checked": [checked.value for checked in conventions],
+        "check": (
+            "scenario_benefits.eligibility_pia_for_clock(age-62 clock, "
+            "computation_years=c) == ss.benefits.pia(oracle AIME under c, "
+            "year of attaining 62) for every person and convention c"
+        ),
+    }
 
 
 def oracle_arithmetic_with_count(
@@ -337,7 +544,8 @@ def oracle_arithmetic_with_count(
 
     Verification only: ``ss.benefits`` creditable and indexed histories,
     the highest ``computation_years`` values (zero-padded), divided by
-    ``12 * computation_years`` and floored.  With 35 it is the oracle.
+    ``12 * computation_years`` and floored.  With 35 it is the legacy
+    oracle, with the statutory count the statutory one.
     """
 
     creditable = benefits.creditable_history(dict(career), params)
@@ -517,6 +725,7 @@ class PassContext:
     binding: bridge.AxiomEngineBinding | None
     cutoff_year: int
     anchor_wave: int
+    oracle_convention: ComputationYears
     runner: bridge.Runner | None = None
     pia_check_params: SSAParameters | None = None
 
@@ -555,7 +764,11 @@ def compare_person(
     entitlement = _entitlement_for_pass(context, person)
     if entitlement is None:
         raise ValueError(f"{selection.person_id}: no entitlement year")
-    track_a_aime = oracle_aime(person.career, birth, context.params)
+    convention = ComputationYears(context.oracle_convention)
+    full_oracle = oracle_aime(
+        person.career, birth, context.params, convention=convention
+    )
+    oracle_count = oracle_computation_year_count(birth, convention)
     record: dict[str, Any] = {
         "person_id": selection.person_id,
         "birth_year": birth,
@@ -564,19 +777,28 @@ def compare_person(
         "eligibility_year": birth + _RETIREMENT_AGE,
         "indexing_year": birth + _INDEXING_AGE,
         "entitlement_year_sent": entitlement,
-        "track_a_oracle_aime": track_a_aime,
+        "oracle_computation_years": oracle_count,
+        "oracle_aime": full_oracle,
+        "track_a_oracle_aime": oracle_aime(
+            person.career,
+            birth,
+            context.params,
+            convention=TRACK_A_COMPUTATION_YEARS,
+        ),
     }
     compared_career = {
         year: value
         for year, value in person.career.items()
         if int(year) < entitlement
     }
-    comparison_oracle = track_a_aime
+    comparison_oracle = full_oracle
     if len(compared_career) != len(person.career):
-        comparison_oracle = oracle_aime(compared_career, birth, context.params)
+        comparison_oracle = oracle_aime(
+            compared_career, birth, context.params, convention=convention
+        )
         record["oracle_aime_on_sent_years"] = comparison_oracle
         record["truncation_effect_on_oracle"] = comparison_oracle - (
-            track_a_aime
+            full_oracle
         )
     count = candidate_computation_years(birth)
     record["candidate_computation_years"] = count
@@ -648,9 +870,7 @@ def compare_person(
     )
     if difference == 0:
         attribution = ATTR_EXACT
-    elif count != ORACLE_COMPUTATION_YEARS and result.aime == Decimal(
-        at_count
-    ):
+    elif count != oracle_count and result.aime == Decimal(at_count):
         attribution = ATTR_COUNT
     else:
         attribution = ATTR_UNEXPLAINED
@@ -772,6 +992,9 @@ def summarize_records(records: Sequence[Mapping[str, Any]]) -> dict:
     )
     return {
         "persons": len(records),
+        "oracle_aime_differs_from_track_a": sum(
+            r["oracle_aime"] != r["track_a_oracle_aime"] for r in records
+        ),
         "status": dict(sorted(status.items())),
         "executed": len(executed),
         "exact_matches": exact,
@@ -914,8 +1137,21 @@ def _row(*cells: Any) -> str:
 
 
 def render_results(result: Mapping[str, Any]) -> str:
-    """RESULTS.md from ``result.json`` (deterministic; no new numbers)."""
+    """RESULTS.md from ``result.json`` (deterministic; no new numbers).
 
+    Refuses a result of any other schema (v1 has no oracle choice, v2 an
+    earlier artifact binding): its report text belongs to the script at
+    the commit its provenance records.
+    """
+
+    if result.get("schema_version") != SCHEMA_VERSION or "oracle" not in (
+        result
+    ):
+        raise ValueError(
+            "result.json has schema "
+            f"{result.get('schema_version', 'unknown')}, not {SCHEMA_VERSION};"
+            " render it with the script at the commit its provenance records"
+        )
     lines: list[str] = []
     add = lines.append
     passes = result["passes"]
@@ -923,7 +1159,14 @@ def render_results(result: Mapping[str, Any]) -> str:
     overall = primary["overall"]
     selection = result["selection"]
     cohort = result["cohort"]
-    title = "# Track C step 1: AIME agreement, Axiom engine vs Python oracle"
+    oracle = result["oracle"]
+    convention = ComputationYears(oracle["computation_years"])
+    statutory = convention is ComputationYears.STATUTORY
+    title = (
+        "# Track C step 1: AIME agreement, Axiom engine vs Python oracle "
+        f"({'statutory' if statutory else 'legacy fixed-35'} computation "
+        "years)"
+    )
     add(title)
     add("")
     if result.get("partial"):
@@ -932,6 +1175,11 @@ def render_results(result: Mapping[str, Any]) -> str:
             "was compared. Do not cite these numbers."
         )
         add("")
+    add(
+        f"**Oracle: {oracle['name']}** "
+        f"(`--oracle-computation-years {oracle['choice']}`)."
+    )
+    add("")
     add(
         "**The Axiom RuleSpec candidates are unaccepted.** Agreement is "
         "diagnostic only. The Python oracle is transitional (not Axiom). "
@@ -943,10 +1191,26 @@ def render_results(result: Mapping[str, Any]) -> str:
     add("## Result")
     add("")
     st = overall["status"]
-    count35 = primary["by_candidate_computation_years"]["35_computation_years"]
+    by_count = primary["by_candidate_computation_years"]
+    count35 = by_count["35_computation_years"]
+    fewer = by_count["fewer_than_35_computation_years"]
     attribution = overall["attribution"]
+    if statutory:
+        attribution_text = (
+            "oracle's own arithmetic with the candidate's computation-year "
+            "count (elapsed years minus 5, fewer than 35 for people born "
+            "before 1929; the statutory oracle uses that count too, so no "
+            "disagreement can be attributed to it) and "
+        )
+    else:
+        attribution_text = (
+            "oracle's own arithmetic with the candidate's computation-year "
+            "count (elapsed years minus 5, fewer than 35 for people born "
+            "before 1929; the legacy oracle always uses 35) and "
+        )
     add(
-        f"Primary pass: {overall['executed']} of {overall['persons']} "
+        f"Primary pass, oracle with {oracle['name']}: "
+        f"{overall['executed']} of {overall['persons']} "
         f"selected persons were executed on the engine "
         f"({st.get('refused', 0)} refused, {st.get('failed', 0)} failed). "
         f"The engine's AIME equals the oracle's for "
@@ -954,15 +1218,28 @@ def render_results(result: Mapping[str, Any]) -> str:
         f"({_pct(overall['exact_match_share_of_executed'])}); among the "
         f"{count35['executed']} executed people with 35 candidate "
         f"computation years (born 1929 or later) it equals the oracle's "
-        f"for {count35['exact_matches']}. Of the "
+        f"for {count35['exact_matches']}, and among the "
+        f"{fewer['executed']} with fewer (born before 1929) for "
+        f"{fewer['exact_matches']}. Of the "
         f"{overall['nonzero_differences']['count']} disagreements, "
         f"{attribution.get(ATTR_COUNT, 0)} are reproduced exactly by the "
-        "oracle's own arithmetic with the candidate's computation-year "
-        "count (elapsed years minus 5, fewer than 35 for people born "
-        "before 1929; the oracle always uses 35) and "
-        f"{attribution.get(ATTR_UNEXPLAINED, 0)} are unexplained."
+        + attribution_text
+        + f"{attribution.get(ATTR_UNEXPLAINED, 0)} are unexplained."
     )
     add("")
+    if "oracle_aime_differs_from_track_a" in overall:
+        add(
+            "This oracle's AIME differs from Track A's (the fixed-35 "
+            "`LEGACY_FIXED_35` AIME, recorded per person as "
+            f"`track_a_oracle_aime`) for "
+            f"{overall['oracle_aime_differs_from_track_a']} of the "
+            f"{overall['persons']} selected people: "
+            f"{fewer.get('oracle_aime_differs_from_track_a', 0)} of the "
+            f"{fewer['persons']} with fewer than 35 candidate computation "
+            f"years and {count35.get('oracle_aime_differs_from_track_a', 0)}"
+            f" of the {count35['persons']} with 35."
+        )
+        add("")
     add(
         "The inputs are the cohort's PSID careers under declarations both "
         "sides share (below); agreement shows the engine and the oracle "
@@ -1000,15 +1277,37 @@ def render_results(result: Mapping[str, Any]) -> str:
         )
         + "."
     )
-    add(
-        "- Oracle side: `ss.benefits.aime(career, birth_year, params)`, "
-        "the call `scenario_benefits.eligibility_pia_for_clock` makes for "
-        "Track A's age-62 clock, with Track A's parameters "
-        f"(`{result['parameters']['track_a_revision']}`). It limits each "
-        "year to the contribution and benefit base, indexes to the year of "
-        "attaining 60, takes the highest 35 years (absent years count as "
-        "zero) and floors the total over 420 months."
-    )
+    if statutory:
+        add(
+            "- Oracle side: `ss.statutory_aime.oracle_aime(career, "
+            "birth_year, params, computation_years=ComputationYears."
+            "STATUTORY)`, the default of "
+            "`scenario_benefits.eligibility_pia_for_clock` for the age-62 "
+            "clock (Track A itself passes the legacy fixed 35), with Track "
+            f"A's parameters (`{result['parameters']['track_a_revision']}`)."
+            " It limits each year to the contribution and benefit base, "
+            "indexes to the year of attaining 60, takes the highest n years "
+            "(absent years count as zero), n being the elapsed years minus "
+            "5 (42 USC 415(b)(2); 35 for people born 1929 or later), and "
+            "floors the total over 12n months. Track A's fixed-35 AIME is "
+            "recorded beside it for every person but is not what the engine "
+            "is compared with."
+        )
+    else:
+        add(
+            "- Oracle side: `ss.benefits.aime(career, birth_year, params)` "
+            "(`ss.statutory_aime.oracle_aime` with `computation_years="
+            "ComputationYears.LEGACY_FIXED_35`), the call "
+            "`scenario_benefits.eligibility_pia_for_clock` makes for Track "
+            "A's age-62 clock under Track A's computation-year convention, "
+            "with Track A's parameters "
+            f"(`{result['parameters']['track_a_revision']}`). It limits "
+            "each year to the contribution and benefit base, indexes to the "
+            "year of attaining 60, takes the highest 35 years (absent years "
+            "count as zero) and floors the total over 420 months. For "
+            "people born before 1929, 42 USC 415(b)(2) gives fewer than 35 "
+            "computation years (the `statutory` choice)."
+        )
     add(
         "- Axiom side: `axiom_benefit_bridge` requests on the pinned "
         "engine (hashes below). The 415(b) candidate counts benefit "
@@ -1103,8 +1402,14 @@ def render_results(result: Mapping[str, Any]) -> str:
     add(
         f"`{ATTR_COUNT}` means the engine's AIME equals the oracle's own "
         "arithmetic (its creditable and indexed history) rerun with the "
-        "candidate's number of computation years instead of 35. "
-        f"`{ATTR_UNEXPLAINED}` lists every other disagreement; their "
+        "candidate's number of computation years instead of the oracle's "
+        + (
+            "(the statutory oracle already uses the candidate's count, so "
+            "no record can have this attribution). "
+            if statutory
+            else "(35, the legacy oracle's). "
+        )
+        + f"`{ATTR_UNEXPLAINED}` lists every other disagreement; their "
         "requests and engine outputs are in `executions/` (up to the cap "
         "recorded under `executions` in `result.json`; each written "
         "record names its files)."
@@ -1239,9 +1544,9 @@ def render_results(result: Mapping[str, Any]) -> str:
         add(f"Attribution: {json.dumps(d['attribution'])}.")
         add("")
         add(
-            "Effect of the truncation on the oracle itself (oracle AIME on "
-            "the years before the recorded entitlement minus Track A's "
-            "full-career oracle AIME): "
+            "Effect of the truncation on the oracle itself (the oracle's "
+            "AIME on the years before the recorded entitlement minus its "
+            "full-career AIME, both with the oracle's computation years): "
             f"{conv['persons_with_career_years_dropped']} persons have "
             f"career years at or after entitlement, "
             f"{conv['persons_with_nonzero_years_dropped']} of them nonzero; "
@@ -1263,6 +1568,21 @@ def render_results(result: Mapping[str, Any]) -> str:
         "(69,846.57), which gives "
         f"{pia['published_bend_points_2026']}."
     )
+    consistency = result.get("oracle_pia_consistency")
+    if consistency is not None:
+        add("")
+        add(
+            "Before any engine call the script checked, for all "
+            f"{consistency['persons']} selected people, that "
+            "`scenario_benefits.eligibility_pia_for_clock` rests on the "
+            "AIMEs recorded here under "
+            + " and ".join(
+                f"`{value}`" for value in consistency["conventions_checked"]
+            )
+            + " (its PIA equals `ss.benefits.pia` of that AIME at the year "
+            "of attaining 62). The legacy convention is the one Track A's "
+            "assembly passes."
+        )
     add("")
     add(
         f"Formula check only, not a Track A quantity: for the "
@@ -1320,13 +1640,7 @@ def render_results(result: Mapping[str, Any]) -> str:
     )
     artifact = cohort.get("track_a_artifact")
     if artifact is not None:
-        add(
-            f"- The cohort's diagnostics and source provenance and the "
-            f"parameter revision equal those recorded in `{artifact['path']}`"
-            f" (SHA-256 `{artifact['sha256']}`; checks "
-            f"{json.dumps(artifact['checks'])}); only those fields of the "
-            "artifact were used."
-        )
+        add(_artifact_binding_text(artifact))
     add(
         f"- Wage index series digest `{result['parameters']['wage_index']['source_sha256']}`"
         f" ({result['parameters']['wage_index']['years']}); contribution "
@@ -1338,7 +1652,8 @@ def render_results(result: Mapping[str, Any]) -> str:
     add("")
     add(
         "- `result.json`: every selected person in every pass (status, "
-        "both AIMEs, the difference, attribution, row counts by kind, "
+        "the oracle's, Track A's and the engine's AIMEs, the difference, "
+        "attribution, row counts by kind, "
         "request and stdout digests, refusal reasons), the summaries, the "
         "declarations and the provenance."
     )
@@ -1382,6 +1697,7 @@ _SOURCES = (
     "scripts/track_c_aime_agreement.py",
     "src/populace_dynamics/axiom_benefit_bridge.py",
     "src/populace_dynamics/ss/benefits.py",
+    "src/populace_dynamics/ss/statutory_aime.py",
     "src/populace_dynamics/ss/params.py",
     "src/populace_dynamics/scenario_benefits.py",
     "src/populace_dynamics/cola_track_a/benefits.py",
@@ -1448,6 +1764,67 @@ def _json_normal(value: Any) -> Any:
     return json.loads(json.dumps(value, sort_keys=True, default=str))
 
 
+#: Cohort diagnostics the current code produces that the Track A artifact
+#: does not record.  Each was added after the artifact was written (the
+#: commit is named), and each is a count breakdown of recorded
+#: diagnostics: its counts must sum to the recorded ``total`` and name only
+#: categories the recorded ``categories`` mapping counts, none above its
+#: recorded count.  Any other diagnostic the artifact lacks refuses the
+#: run, as the whole-dict comparison did: a new key is reviewed and listed
+#: here before Track C binds to a cohort that carries it.
+KNOWN_ADDITIVE_DIAGNOSTICS: Mapping[str, Mapping[str, str]] = {
+    "opening_stock_entitlement_clamped_by_clock_rule": {
+        "added_by": "bfe9fa3e",
+        "total": "opening_stock_entitlement_clamped",
+        "categories": "opening_stock_clock_rules",
+    },
+}
+
+
+def _is_count(value: Any) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def _breakdown_check(
+    key: str, value: Any, recorded: Mapping[str, Any]
+) -> dict[str, Any] | None:
+    """How a known additive diagnostic reconciles; ``None`` if unknown."""
+
+    known = KNOWN_ADDITIVE_DIAGNOSTICS.get(key)
+    if known is None:
+        return None
+    total_key, categories_key = known["total"], known["categories"]
+    total = recorded.get(total_key)
+    categories = recorded.get(categories_key)
+    parts = dict(value) if isinstance(value, Mapping) else None
+    countable = (
+        parts is not None
+        and all(_is_count(count) and count >= 0 for count in parts.values())
+        and _is_count(total)
+    )
+    within = (
+        countable
+        and isinstance(categories, Mapping)
+        and all(
+            name in categories
+            and _is_count(categories[name])
+            and count <= categories[name]
+            for name, count in parts.items()
+        )
+    )
+    return {
+        "added_by": known["added_by"],
+        "total_key": total_key,
+        "recorded_total": total,
+        "sum": sum(parts.values()) if countable else None,
+        "sums_to_recorded_total": bool(
+            countable and sum(parts.values()) == total
+        ),
+        "categories_key": categories_key,
+        "within_recorded_categories": bool(within),
+    }
+
+
 def track_a_artifact_binding(
     artifact: Mapping[str, Any],
     *,
@@ -1455,27 +1832,141 @@ def track_a_artifact_binding(
     diagnostics: Mapping[str, Any],
     source_provenance: Mapping[str, Any],
     parameters_revision: str,
-) -> dict[str, bool]:
-    """Checks that the cohort and parameters are the committed Track A run's.
+) -> dict[str, Any]:
+    """Compare the cohort and parameters with the committed Track A run.
 
     Reads only the artifact's parameter revision and its cohort
-    diagnostics; nothing about benefits or age groups.
+    diagnostics and source provenance; nothing about benefits or age
+    groups.  Every diagnostic the artifact records must be present in
+    ``diagnostics`` with an equal value (compared as JSON); a missing or
+    changed one fails ``cohort_diagnostics_equal_on_recorded_keys``.
+    A diagnostic the artifact does not record must be one of
+    :data:`KNOWN_ADDITIVE_DIAGNOSTICS` (``additive_diagnostic_keys_known``)
+    and reconcile with the recorded diagnostics it breaks down: its counts
+    sum to the recorded total (``additive_breakdowns_sum_to_recorded_
+    totals``) and fit within the recorded per-category counts
+    (``additive_breakdowns_within_recorded_categories``).  The source
+    provenance and the parameter revision must be equal as a whole.
+
+    Returns ``checks`` (all must be true) and what was compared.
     """
 
-    recorded = dict(artifact["cohorts"][str(anchor_wave)])
+    recorded = _json_normal(dict(artifact["cohorts"][str(anchor_wave)]))
     recorded_source = recorded.pop("source_provenance")
-    return {
+    fresh = _json_normal(dict(diagnostics))
+    missing = sorted(set(recorded) - set(fresh))
+    changed = sorted(
+        key for key in recorded if key in fresh and fresh[key] != recorded[key]
+    )
+    additive = {key: fresh[key] for key in sorted(set(fresh) - set(recorded))}
+    breakdowns = {
+        key: _breakdown_check(key, value, recorded)
+        for key, value in additive.items()
+    }
+    known = [check for check in breakdowns.values() if check is not None]
+    checks = {
         "ssa_parameters_revision_equal": (
             artifact["ssa_parameters_revision"] == parameters_revision
         ),
-        "cohort_diagnostics_equal": (
-            _json_normal(recorded) == _json_normal(dict(diagnostics))
+        "cohort_diagnostics_equal_on_recorded_keys": not missing
+        and not changed,
+        "additive_diagnostic_keys_known": len(known) == len(breakdowns),
+        "additive_breakdowns_sum_to_recorded_totals": all(
+            check["sums_to_recorded_total"] for check in known
+        ),
+        "additive_breakdowns_within_recorded_categories": all(
+            check["within_recorded_categories"] for check in known
         ),
         "cohort_source_provenance_equal": (
-            _json_normal(recorded_source)
-            == _json_normal(dict(source_provenance))
+            recorded_source == _json_normal(dict(source_provenance))
         ),
     }
+    return {
+        "checks": checks,
+        "recorded_diagnostic_keys": sorted(recorded),
+        "recorded_keys_missing": missing,
+        "recorded_keys_changed": {
+            key: {"recorded": recorded[key], "fresh": fresh[key]}
+            for key in changed
+        },
+        "additive_diagnostic_keys": additive,
+        "unknown_additive_diagnostic_keys": sorted(
+            key for key, check in breakdowns.items() if check is None
+        ),
+        "additive_breakdowns": breakdowns,
+    }
+
+
+def require_track_a_artifact(
+    artifact_bytes: bytes,
+    *,
+    path: Path | str = TRACK_A_ARTIFACT,
+    anchor_wave: int,
+    diagnostics: Mapping[str, Any],
+    source_provenance: Mapping[str, Any],
+    parameters_revision: str,
+) -> dict[str, Any]:
+    """The recorded binding, or ``SystemExit`` naming every failed check."""
+
+    binding = track_a_artifact_binding(
+        json.loads(artifact_bytes),
+        anchor_wave=anchor_wave,
+        diagnostics=diagnostics,
+        source_provenance=source_provenance,
+        parameters_revision=parameters_revision,
+    )
+    if not all(binding["checks"].values()):
+        failed = sorted(k for k, ok in binding["checks"].items() if not ok)
+        raise SystemExit(
+            f"the cohort or parameters differ from {path}: failed {failed}; "
+            f"recorded keys missing {binding['recorded_keys_missing']}; "
+            f"recorded keys changed {binding['recorded_keys_changed']}; "
+            "diagnostics neither recorded nor in "
+            "KNOWN_ADDITIVE_DIAGNOSTICS "
+            f"{binding['unknown_additive_diagnostic_keys']}; "
+            f"additive breakdowns {binding['additive_breakdowns']}"
+        )
+    return {
+        "path": str(path),
+        "sha256": hashlib.sha256(artifact_bytes).hexdigest(),
+        **binding,
+    }
+
+
+def _artifact_binding_text(artifact: Mapping[str, Any]) -> str:
+    """The RESULTS.md line for the Track A artifact binding."""
+
+    recorded = artifact.get("recorded_diagnostic_keys", ())
+    text = (
+        f"- Every cohort diagnostic recorded in `{artifact['path']}` "
+        f"(SHA-256 `{artifact['sha256']}`; {len(recorded)} keys), its "
+        "source provenance and its parameter revision equal the fresh "
+        f"cohort's (checks {json.dumps(artifact['checks'])}); only those "
+        "fields of the artifact were used."
+    )
+    additive = artifact.get("additive_diagnostic_keys") or {}
+    if not additive:
+        return text + " The fresh cohort records no other diagnostic."
+    parts = []
+    for key, value in additive.items():
+        part = f"`{key}` = `{json.dumps(value, sort_keys=True)}`"
+        check = (artifact.get("additive_breakdowns") or {}).get(key)
+        if check is not None:
+            part += (
+                f" (added in `{check['added_by']}`; sum {check['sum']}, "
+                f"recorded `{check['total_key']}` {check['recorded_total']};"
+                f" within recorded `{check['categories_key']}`: "
+                f"{'yes' if check['within_recorded_categories'] else 'no'})"
+            )
+        parts.append(part)
+    return (
+        text + " The fresh cohort also records diagnostics the artifact "
+        "does not. Each is a reviewed breakdown listed in "
+        "`KNOWN_ADDITIVE_DIAGNOSTICS` with the commit that added it; its "
+        "counts must sum to the recorded total and name only recorded "
+        "categories, none above its recorded count (an unlisted diagnostic "
+        "refuses the run): " + "; ".join(parts) + "."
+    )
 
 
 def _parameters():
@@ -1520,6 +2011,37 @@ def _parameters():
             "reference_year": config.reference_year,
         },
     )
+
+
+def not_compared(convention: ComputationYears) -> list[str]:
+    """What the run does not compare, for the chosen oracle."""
+
+    items = [
+        "PIA for anyone but the 1964 birth cohort, and Track A's own PIA "
+        "for anyone: the 415(a) candidate covers only 2026 first "
+        "eligibility, with 2026 bend points derived from SSA's "
+        "published 2024 AWI rather than Track A's TR2008 AWI",
+        "Track A's DI levels and pre-eligibility-death levels (the "
+        "disclosed oracle approximation, approximate_pia): the bridge "
+        "supports ordinary old-age entitlement without disability only",
+        "COLA increases, early or delayed claiming adjustments, spouse "
+        "and survivor benefits, and every Track A benefit path",
+        "members born before 1917 or after 1968 (see selection "
+        "exclusions) and the 2009-wave R6 population",
+        "the five-group COLA age profile: not computed; of the Track "
+        "A artifact the script uses only the parameter revision and the "
+        "2011-wave cohort diagnostics and source provenance",
+    ]
+    if ComputationYears(convention) is not TRACK_A_COMPUTATION_YEARS:
+        items.append(
+            "Track A's own AIME against the engine: the oracle compared "
+            f"is {ComputationYears(convention).value}, while Track A "
+            "(cola_track_a.benefits.TRACK_A_COMPUTATION_YEARS) uses "
+            f"{TRACK_A_COMPUTATION_YEARS.value}; Track A's AIME is "
+            "recorded per person as track_a_oracle_aime, and "
+            "--oracle-computation-years legacy_fixed_35 compares it"
+        )
+    return items
 
 
 def _write_execution(directory: Path, stem: str, result) -> None:
@@ -1570,10 +2092,15 @@ def _pia_summary(
     }
 
 
-def main(argv: list[str] | None = None) -> int:
+def build_parser() -> argparse.ArgumentParser:
+    """The command line."""
+
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
-        "--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR.expanduser()
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="evidence directory for a run (required unless --render-only)",
     )
     parser.add_argument("--anchor-wave", type=int, default=2011)
     parser.add_argument("--workers", type=int, default=4)
@@ -1582,7 +2109,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--render-only", type=Path, default=None)
     parser.add_argument("--examples-per-class", type=int, default=3)
     parser.add_argument("--max-unexplained-executions", type=int, default=500)
-    args = parser.parse_args(argv)
+    parser.add_argument(
+        "--oracle-computation-years",
+        choices=tuple(ORACLE_CHOICES),
+        default=DEFAULT_ORACLE,
+        help=(
+            "the oracle's benefit computation years: 'statutory' (42 USC "
+            "415(b)(2), ss.statutory_aime; the default) or "
+            "'legacy_fixed_35' (Track A's ss.benefits.aime, the oracle of "
+            "the 2026-09-23 report)"
+        ),
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
 
     if args.render_only is not None:
         result = json.loads((args.render_only / "result.json").read_text())
@@ -1590,6 +2132,11 @@ def main(argv: list[str] | None = None) -> int:
         print(args.render_only / "RESULTS.md")
         return 0
 
+    if args.output_dir is None:
+        raise SystemExit(
+            "--output-dir is required for a run: name a new evidence "
+            "directory (the script never overwrites a result.json)"
+        )
     started = datetime.datetime.now(datetime.timezone.utc).isoformat()
     head = _git("rev-parse", "HEAD")
     dirty = _git("status", "--porcelain")
@@ -1601,6 +2148,9 @@ def main(argv: list[str] | None = None) -> int:
     output = args.output_dir.expanduser()
     if (output / "result.json").exists():
         raise SystemExit(f"{output / 'result.json'} exists; not overwriting")
+    require_track_a_convention()
+    convention = oracle_convention(args.oracle_computation_years)
+    print(f"oracle: {ORACLE_NAMES[convention]}", file=sys.stderr)
     binding = bridge.reviewed_case_a_binding()
     binding.verify()
     params, base, parameter_info = _parameters()
@@ -1608,24 +2158,14 @@ def main(argv: list[str] | None = None) -> int:
     cohort, provenance, cohort_info = _load_cohort(
         args.anchor_wave, reference_year
     )
-    artifact_bytes = (ROOT / TRACK_A_ARTIFACT).read_bytes()
-    artifact_checks = track_a_artifact_binding(
-        json.loads(artifact_bytes),
+    cohort_info["track_a_artifact"] = require_track_a_artifact(
+        (ROOT / TRACK_A_ARTIFACT).read_bytes(),
+        path=TRACK_A_ARTIFACT,
         anchor_wave=args.anchor_wave,
         diagnostics=cohort.diagnostics,
         source_provenance=cohort.source_provenance,
         parameters_revision=params.pe_us_revision,
     )
-    if not all(artifact_checks.values()):
-        raise SystemExit(
-            f"the cohort or parameters differ from {TRACK_A_ARTIFACT}: "
-            f"{artifact_checks}"
-        )
-    cohort_info["track_a_artifact"] = {
-        "path": str(TRACK_A_ARTIFACT),
-        "sha256": hashlib.sha256(artifact_bytes).hexdigest(),
-        "checks": artifact_checks,
-    }
     cutoff = cohort.start_year
     persons = cohort.persons
     selections = select_persons(
@@ -1654,21 +2194,9 @@ def main(argv: list[str] | None = None) -> int:
         )
         for s in selected
     ]
-    # Track A's PIA rests on exactly this AIME (eligibility_pia_for_clock).
-    for person in inputs:
-        birth = person.selection.birth_year
-        track_a_pia = sb.eligibility_pia_for_clock(
-            sb.WorkerClock.at_age_62(birth),
-            history=person.career,
-            birth_year=birth,
-            params=params,
-        )
-        if track_a_pia != benefits.pia(
-            oracle_aime(person.career, birth, params),
-            birth + _RETIREMENT_AGE,
-            params,
-        ):
-            raise ValueError(f"{person.selection.person_id}: PIA mismatch")
+    # The oracle PIAs rest on exactly these AIMEs (eligibility_pia_for_clock
+    # under the chosen convention and under Track A's).
+    pia_consistency = check_oracle_pia(inputs, params, convention)
     wage_index = track_a_wage_index(params)
     base_series = track_a_contribution_base(
         params, bridge.FIRST_COMPUTATION_BASE_YEAR, cutoff
@@ -1716,6 +2244,7 @@ def main(argv: list[str] | None = None) -> int:
             binding=binding,
             cutoff_year=cutoff,
             anchor_wave=args.anchor_wave,
+            oracle_convention=convention,
             pia_check_params=base,
         )
         for name in (PASS_PRIMARY, PASS_DIAGNOSTIC, PASS_STRICT)
@@ -1745,8 +2274,9 @@ def main(argv: list[str] | None = None) -> int:
     exclusions = Counter(s.exclusion for s in selections if not s.selected)
     result = {
         "schema_version": SCHEMA_VERSION,
-        "header": HEADER,
-        "labels": list(LABELS),
+        "header": header_for(convention),
+        "labels": list(labels_for(convention)),
+        "oracle": oracle_document(convention),
         "partial": args.limit is not None,
         "cohort": cohort_info,
         "selection": {
@@ -1804,25 +2334,11 @@ def main(argv: list[str] | None = None) -> int:
                 for (name, attribution), count in sorted(examples.items())
             },
         },
+        "oracle_pia_consistency": pia_consistency,
         "pia_check": _pia_summary(
             passes[PASS_PRIMARY]["records"], params, base
         ),
-        "not_compared": [
-            "PIA for anyone but the 1964 birth cohort, and Track A's own PIA "
-            "for anyone: the 415(a) candidate covers only 2026 first "
-            "eligibility, with 2026 bend points derived from SSA's "
-            "published 2024 AWI rather than Track A's TR2008 AWI",
-            "Track A's DI levels and pre-eligibility-death levels (the "
-            "disclosed oracle approximation, approximate_pia): the bridge "
-            "supports ordinary old-age entitlement without disability only",
-            "COLA increases, early or delayed claiming adjustments, spouse "
-            "and survivor benefits, and every Track A benefit path",
-            "members born before 1917 or after 1968 (see selection "
-            "exclusions) and the 2009-wave R6 population",
-            "the five-group COLA age profile: not computed; of the Track "
-            "A artifact the script uses only the parameter revision and the "
-            "2011-wave cohort diagnostics and source provenance",
-        ],
+        "not_compared": not_compared(convention),
         "provenance": {
             "engine_binding": binding.document(),
             "engine_versions": sorted(engine_versions),

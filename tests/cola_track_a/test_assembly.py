@@ -75,8 +75,9 @@ from populace_dynamics.estimates.cola_age_profile import (
     INVENTED_DATA_LABEL,
 )
 from populace_dynamics.estimates.parameters import COLASeries
-from populace_dynamics.ss import benefits
+from populace_dynamics.ss import benefits, statutory_aime
 from populace_dynamics.ss.params import SSAParameters
+from populace_dynamics.ss.statutory_aime import ComputationYears
 
 SHAPE = (2, MAX_AGE + 1)
 
@@ -1214,6 +1215,72 @@ def test_spouse_excess_equals_the_a6_composition():
     )
     assert components["retired_worker"]["reform"] == pytest.approx(
         12 * worker.reform_monthly_by_payment_year[2030]
+    )
+
+
+def test_track_a_retirement_level_keeps_the_legacy_35_years():
+    # INVENTED: 1 (born 1925, never married) claimed at 62 in 1987 and is
+    # alive in 2030; covered earnings 1968-1986 only.  Track A's oracle
+    # retirement level divides by 35 years (Registration 13's arithmetic),
+    # not by the 31 statutory computation years for the 1925 cohort.
+    assert (
+        track_benefits.TRACK_A_COMPUTATION_YEARS
+        is ComputationYears.LEGACY_FIXED_35
+    )
+    persons = [_static(1, 1925)]
+    persons[0]["marital_status_opening"] = "never_married"
+    careers = {1: {year: 30_000.0 for year in range(1968, 1987)}}
+    final = [
+        _state(
+            1,
+            1925,
+            2030,
+            marital_status="never_married",
+            claimed=True,
+            claim_year=1987,
+        )
+    ]
+    initial = [_state(1, 1925, 2010, marital_status="never_married")]
+    cohort, projection = _handmade_cohort(persons, careers, final, initial)
+    params = invented_params()
+    context = track_benefits.BenefitContext(
+        cohort=cohort, params=params, baseline=invented_cola(), config=CONFIG
+    )
+    rows, _ = track_benefits.reference_benefit_rows(
+        projection, draw=0, row=REGISTERED_ROWS["R0"], context=context
+    )
+    (row,) = rows
+    clock = sb.WorkerClock.at_age_62(1925, entitlement_year=1987)
+    factor = claiming.benefit_factor(62 * 12, 1925, params)
+
+    def worker_path(computation_years):
+        pia = sb.eligibility_pia_for_clock(
+            sb.WorkerClock.at_age_62(1925),
+            history=careers[1],
+            birth_year=1925,
+            params=params,
+            computation_years=computation_years,
+        )
+        return pia, sb.worker_scenario_paths(
+            eligibility_pia=pia,
+            claim_age_factor=factor,
+            clock=clock,
+            baseline=invented_cola(),
+        )
+
+    legacy_pia, legacy = worker_path(ComputationYears.LEGACY_FIXED_35)
+    statutory_pia, _ = worker_path(ComputationYears.STATUTORY)
+    assert legacy_pia == benefits.pia(
+        benefits.aime(careers[1], 1925, params), 1987, params
+    )
+    assert statutory_aime.benefit_computation_years(1925) == 31
+    assert statutory_pia > legacy_pia
+    component = row["benefit_components"]["retired_worker"]
+    assert component["base"] == pytest.approx(
+        12 * legacy.baseline_monthly_by_payment_year[2030]
+    )
+    assert component["reform"] == pytest.approx(
+        12 * legacy.reform_monthly_by_payment_year[2030]
     )
 
 
