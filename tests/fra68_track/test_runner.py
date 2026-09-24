@@ -44,6 +44,7 @@ from populace_dynamics.cola_track_a.benefits import (
 from populace_dynamics.cola_track_a.config import (
     REGISTERED_ROWS as TRACK_A_ROWS,
 )
+from populace_dynamics.cola_track_a.config import LevelPolicy
 from populace_dynamics.engine.di_entitlement import (
     fra_schedule_from_parameters,
 )
@@ -393,6 +394,62 @@ def test_null_reform_reproduces_track_a_baseline_bit_for_bit(projection):
     reform = _people(projection, same)
     for pid, person in base.items():
         assert reform[pid].components == person.components
+
+
+#: Counters Track A's ``reference_benefit_rows`` keeps per row and
+#: exercise 3 keeps in ``union_benefit_rows`` instead.
+_ROW_COUNTERS = (
+    "beneficiaries_",
+    "opening_di_basis_ended_by_recovery",
+    "opening_recipient_without_record",
+)
+
+
+def test_null_reform_counts_each_person_once_as_track_a_does(projection):
+    # Regression: scenario_benefits looked each projected person's own
+    # record up a second time to label the row, and the calculator counts
+    # an excluded or unavailable level on every lookup, so those counters
+    # were inflated.  DI levels excluded (the d188 alternative) makes the
+    # case occur on the invented cohort.
+    config = replace(
+        projection.track_config, di_benefit_level=LevelPolicy.EXCLUDE
+    )
+    context = BenefitContext(
+        cohort=projection.cohort,
+        params=projection.base,
+        baseline=projection.inputs.baseline,
+        config=config,
+    )
+    _, track = reference_benefit_rows(
+        projection.result,
+        draw=0,
+        row=TRACK_A_ROWS["R0"],
+        context=context,
+        lookups=projection.lookups,
+    )
+    _, ours = scenario_benefits(
+        projection.result,
+        context=context,
+        track_row=TRACK_A_ROWS["R0"],
+        scenario=_scenario(
+            projection,
+            "baseline",
+            survivor_retirement_age=SurvivorRetirementAge.TRACK_A_FIXED_84,
+        ),
+        lookups=projection.lookups,
+        pia_cache={},
+        assumed_birth_month=7,
+    )
+    assert track["level_excluded_di"] > 0
+
+    def calculator_counts(counters):
+        return {
+            key: value
+            for key, value in counters.items()
+            if not key.startswith(_ROW_COUNTERS)
+        }
+
+    assert calculator_counts(ours) == calculator_counts(track)
 
 
 def test_the_exact_survivor_span_changes_only_early_survivors(

@@ -260,6 +260,24 @@ class ScenarioCalculator(track_benefits._Calculator):
         )
 
     # ---- PIA records ---------------------------------------------------
+    def own_record_uncounted(
+        self, person_id: int, state: Any
+    ) -> PiaRecord | None:
+        """:meth:`worker_record` without adding to the counters.
+
+        ``projected_person`` has already looked the person's own record up
+        and counted any level it could not compute (``_level`` counts on
+        every call); the second lookup that labels the person's row must
+        not count it again, so the counters mean what Track A's do.
+        """
+
+        counters = self.counters
+        self.counters = Counter()
+        try:
+            return self.worker_record(person_id, state)
+        finally:
+            self.counters = counters
+
     def worker_record(self, person_id: int, state: Any) -> PiaRecord | None:
         record = super().worker_record(person_id, state)
         if record is None:
@@ -505,7 +523,7 @@ def scenario_benefits(
             )
             continue
         pairs, _count = calculator.projected_person(person_id, state)
-        own = calculator.worker_record(person_id, state)
+        own = calculator.own_record_uncounted(person_id, state)
         own_paid = own is not None and own.entitlement_year <= reference
         birth = int(state["birth_year"])
         out[person_id] = PersonScenario(
