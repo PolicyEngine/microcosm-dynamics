@@ -156,8 +156,9 @@ member keeps the family-unit basis.
 unit and add the annuity. Removed items (family file, every wave): head
 and wife rent, dividends, interest, trusts/royalties and the asset part
 of unincorporated-business income, and, under the family-unit basis, the
-OFUM total asset income. Row U5: keep reported asset income and add the
-annuity.
+OFUM total asset income. Rent, business asset income and the OFUM total
+can be negative (losses, per the codebooks); removing a loss raises
+income. Row U5: keep reported asset income and add the annuity.
 
 Finding while building the reader: `LABOR INCOME OF HEAD` and `OF WIFE`
 exclude farm income and the labor part of business income. Head and wife
@@ -167,8 +168,9 @@ for every family in 2007, 2011 and 2013, within $10 in 2009, and for all
 but two 2005 families. The codebook says farm income "includes both labor
 and asset portions"; its asset portion is not separated, so the primary
 does not replace it (named delta, §12). The PSID splits a working owner's
-business income equally between labor and asset parts (codebook text);
-the asset part is what F4 removes.
+business income equally between labor and asset parts and codes a whole
+business loss in the asset part (codebook text for ER52216); the asset
+part is what F4 removes.
 
 **Financial assets (F5).** The family unit's WEALTH1, "IMP WEALTH W/O
 EQUITY": the codebooks define it as seven asset values (farm or business,
@@ -639,8 +641,11 @@ reconciliation counts and the structural counts of §3. No income concept,
 annuity, threshold assignment, poverty status or poverty rate was
 computed on PSID data.
 
-**Did not verify:** the Census threshold values and the real layout of the
-Census spreadsheets; the SSI parameters against ssa.gov; the names, IDs
+**Did not verify:** why OFUM taxable income differs from OFUM labor
+plus asset income by more than $10 in 21 families (2005), 34 (2007) and
+4 (2013) (the OFUM items enter the primary only through TOTAL FAMILY
+INCOME and the OFUM asset total); the Census threshold values and the
+real layout of the Census spreadsheets; the SSI parameters against ssa.gov; the names, IDs
 and contents of the 2005 and 2007 wealth supplements; whether PSID Social
 Security amounts are net of Medicare premiums; whether SSI and Social
 Security are kept apart by respondents; the P-section DC items for U7; the
@@ -651,4 +656,5 @@ plan's reading of its methods.
 
 - `u1-draft-1` (2026-09-24): first draft, with the Track U readers,
   builder, income concept and tabulation on branch
-  `dynamics-ex2-track-u-20260924`.
+  `dynamics-ex2-track-u-20260924` (commit `487c1aac`); structural counts
+  in `EVID/track-u-structure-20260924/`.
