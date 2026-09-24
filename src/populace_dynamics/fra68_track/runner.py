@@ -417,7 +417,7 @@ _DI_KINDS = {
     "opening_converted_di": "converted_di",
 }
 _DI_WINDOW_DEFINITION = (
-    "people the reform alone would expose to DI awards (plan section 8): "
+    "People the reform alone would expose to DI awards (plan section 8): "
     "in each projected year, the persons in the year's state who are not "
     "DI-entitled and not converted and whose year lies from the baseline "
     "FRA attainment year up to (not including) the reform's. 423(a)(1) "
