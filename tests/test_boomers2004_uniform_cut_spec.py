@@ -67,6 +67,32 @@ def test_status_line_does_not_claim_ratification(text):
     assert "Two" in status and "referee passes are recorded" in status
 
 
+def test_builder_boundary_records_the_extract_values_scan(text):
+    """The builder boundary states the cleared extract's values-scan
+    verdict as ``RESTRICTED-FILES.md`` records it.
+
+    Regression (independent review of u1-draft-5, 2026-09-24): the
+    boundary said the governance file did not yet hold the 16:10 changelog
+    entry recording the scan; it does, so the sentence was stale.
+    """
+
+    boundary = " ".join(
+        text.split("- **Builder boundary:**")[1]
+        .split("## 1. Target")[0]
+        .split()
+    )
+    assert "did not yet hold" not in boundary
+    assert "values scan of the extract at this hash is clean" in boundary
+    assert "0 genuine leaks" in boundary
+    assert "2026-09-24 16:10" in boundary
+    restricted = EVIDENCE / "RESTRICTED-FILES.md"
+    if not restricted.is_file():
+        pytest.skip("RESTRICTED-FILES.md is outside this checkout")
+    governance = " ".join(restricted.read_text(encoding="utf-8").split())
+    assert "2026-09-24 16:10: exercise-2 values scan" in governance
+    assert "Exercise 2 values scan: values scan clean." in governance
+
+
 def test_population_matches_the_builder(block):
     population = block["population"]
     assert population["primary_birth_years"] == list(age67.PRIMARY_BIRTH_YEARS)
@@ -244,13 +270,54 @@ def test_statistic_and_comparison_match_the_tabulation(block):
     assert comparison["acceptance"]["rule"] is None
     # the pending acceptance rule is an "awaiting" key the registered run's
     # ratification scan finds
+    module = _registered_script()
+    assert "comparison.acceptance.awaiting" in module._awaiting(block)
+    assert "population.headline.awaiting" in module._awaiting(block)
+
+
+def _registered_script():
     spec = importlib.util.spec_from_file_location(
         "_registered", ROOT / "scripts" / "run_track_u_registered.py"
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    assert "comparison.acceptance.awaiting" in module._awaiting(block)
-    assert "population.headline.awaiting" in module._awaiting(block)
+    return module
+
+
+def test_every_choice_awaiting_max_is_awaited_in_the_block(block):
+    """Every code parameter whose pending decision awaits Max (other than
+    the freeze, Max's ratification by merge) carries an ``awaiting`` key in
+    the section 15 block, so the registered run's ratification scan refuses
+    the block until Max rules.
+
+    Regression (independent review of u1-draft-5, 2026-09-24): withdrawing
+    row U6 removed the block's only ``awaiting`` for plan decision 8 (the
+    cut's start year, now the primary's ``cut_start_year = 2004``), which
+    ``adjusted_poverty.pending_decisions`` and section 16 still list as
+    awaiting Max's confirmation of the scorecard's "from 2004" wording.
+    """
+
+    where = {"ssi_rule": "ssi.awaiting", "cut_start_year": "cut.awaiting"}
+    awaiting_max = {
+        item.field
+        for decisions in (
+            age67.pending_decisions(),
+            ap.pending_decisions(),
+            ut.pending_decisions(),
+        )
+        for item in decisions
+        if item.awaiting.startswith("Max")
+    }
+    assert awaiting_max == set(where)
+    found = _registered_script()._awaiting(block)
+    for field, path in where.items():
+        assert path in found, field
+    decision = {item.field: item for item in ap.pending_decisions()}[
+        "cut_start_year"
+    ]
+    assert "decision 8" in decision.awaiting
+    assert "decision 8" in block["cut"]["awaiting"]
+    assert "d189" in block["ssi"]["awaiting"]
 
 
 def test_rows_name_real_alternatives(block):

@@ -3,13 +3,15 @@
 - **Status:** draft for the referee. Nothing here is ratified. Two
   referee passes are recorded (§17). The first was applied in
   `u1-draft-4`; this draft applies the second, whose verdict was that the
-  draft is ratifiable after nine required changes (S1–S9, §17.3). No
-  independent check of this draft's application of them has been made
-  yet. Max has not ruled on exercise 2 (cos decision d189, open, default
-  "yes to Track U with the proposed SSI rule; downloads needed from
-  Max") or on the fallback rule (§11). Every choice that awaits him or
-  the specification freeze is an explicit parameter in the code with the
-  recommended default, and §16 lists them.
+  draft is ratifiable after nine required changes (S1–S9, §17.3). An
+  independent review (2026-09-24) checked this draft's application of
+  them against their sources, the code and the tests; its corrections
+  are listed in §19. Max has not ruled on exercise 2 (cos decision
+  d189, open, default "yes to Track U with the proposed SSI rule;
+  downloads needed from Max") or on the fallback rule (§11). Every
+  choice that awaits him or the specification freeze is an explicit
+  parameter in the code with the recommended default, and §16 lists
+  them.
 - **Specification:** `boomers2004_uniform_cut_exercise2`, version
   `u1-draft-5`, drafted 2026-09-24. §19 is the changelog.
 - **Plan item:** U1 of the Track U plan,
@@ -54,11 +56,14 @@
   and the builder opened none of those pages (nor any page of the Report
   PDF for this draft). When the second referee wrote, no values scan of
   the extract was recorded (`RESTRICTED-FILES.md`, 2026-09-24 14:35).
-  As re-read during this pass, `RESTRICTED-FILES.md` lists the extract
-  as having passed the validation lane's values scan with 0 genuine leaks
-  at this hash, citing a changelog entry for 2026-09-24 16:10 that the
-  file did not yet hold. §18 lists what this draft read and what it did
-  not verify.
+  `RESTRICTED-FILES.md` now records one (its changelog entry for
+  2026-09-24 16:10, read in the independent review of this draft): the
+  validation lane's values scan of the extract at this hash is clean,
+  with 0 genuine leaks and 0 unclassified tokens among the 1,103 numeric
+  tokens it scanned. (The builder of this draft reported that, when it
+  re-read the file, the verdict was already listed under "Cleared for
+  builders" but the changelog entry it cites was not yet there.) §18
+  lists what this draft read and what it did not verify.
 
 ## 1. Target
 
@@ -786,9 +791,11 @@ headline row (§11):
 Each alternative differs from U0 (or, for the -F rows, from U0-F) in one
 field; U1 and U0-F change the population itself. U0 is the headline row
 unless the fallback rule below makes U0-F the headline; no row may be
-promoted after results exist. Every registered row is computed in the
-same one-shot run and published with the others. A row that is not built when the registration is posted is
-removed from this table and listed as a named omission.
+promoted after results exist. Every registered row is run in the same
+one-shot run (computed, or reported as blocked with its counts under the
+fallback rule below) and published with the others. A row that is not
+built when the registration is posted is removed from this table and
+listed as a named omission.
 
 **Fallback rule (pending Max, with plan §10 decision 3).** If the 2005
 and 2007 wealth supplements are staged, adjudicated and read before the
@@ -978,7 +985,9 @@ reachability guard:
   `EVID/track-u-dry-run-u1d4-20260924/` (`u1-draft-4`) and
   `EVID/track-u-dry-run-u1d5-20260924/` (this draft, at `46668576`: the
   fallback staging makes U0-F the headline, blocks the rows defined on U0
-  or U1 and computes the -F rows).
+  or U1 and computes the -F rows; the independent review re-ran it at
+  `1fa6e606`, and its output equals this evidence except for the
+  recorded commit and output path).
 - `scripts/run_track_u_registered.py` (U10 entry point): refuses unless
   the pointer is an issue #42 comment, `HEAD` is the registered commit
   on a clean tree, §15 is ratified with nothing awaiting and nothing
@@ -1107,7 +1116,8 @@ holds it to the code's defaults.
     "base": "all_social_security_of_the_unit",
     "behavior": "none",
     "start_year": 2004,
-    "start_year_rule": "cut_when_birth_year_plus_67_at_or_after_start"
+    "start_year_rule": "cut_when_birth_year_plus_67_at_or_after_start",
+    "awaiting": "Max (plan section 10 decision 8: confirming the scorecard's 'from 2004' wording)"
   },
   "ssi": {
     "rule": "offset_existing_recipients",
@@ -1248,22 +1258,27 @@ d189's text describes Track U as a "Python income concept, not Axiom",
 so a yes on d189 may be read as covering plan decision 4; confirm when
 ruling.
 
-**Awaiting Max, not yet on a decision card (plan §10):** decision 2
-(the definitions extract: it exists and was cleared for builders on
-2026-09-24; no card or ruling by Max on it was found), decision 4
-(Python SSI arithmetic labelled "not Axiom"), decision 6 (acceptance rule;
-default none, report gaps, §10a), decision 7 (ratify this specification
-by merge; post the #42 registration), decision 8 (the scorecard's "from
-2004"): the cleared extract supplies the source, the Report's "beginning
-in 2004" (pp. 37 and 44); the primary now uses `cut_start_year = 2004`,
-which moves only U1's 1936 birth year; Max's confirmation of the
-scorecard wording remains open, and the fallback rule of §11 (with
-decision 3), including the recommended default that each one-field
-alternative is also registered on U0-F's population (U2-F … U10-F), so
-the registration carries its alternatives whether or not the supplements
-are staged; Max may instead keep the alternatives on U0 only (blocked
-under the fallback). Approval to download the Census threshold files is
-on its own card (cos decision d194, open).
+**Awaiting Max, not yet on a decision card (plan §10):**
+
+- decision 2 (the definitions extract: it exists and was cleared for
+  builders on 2026-09-24; no card or ruling by Max on it was found);
+- decision 4 (Python SSI arithmetic labelled "not Axiom");
+- decision 6 (acceptance rule; default none, report gaps, §10a);
+- decision 7 (ratify this specification by merge; post the #42
+  registration);
+- decision 8 (the scorecard's "from 2004"): the cleared extract supplies
+  the source, the Report's "beginning in 2004" (pp. 37 and 44); the
+  primary now uses `cut_start_year = 2004`, which moves only U1's 1936
+  birth year; Max's confirmation of the scorecard wording remains open
+  (§15 `cut.awaiting`);
+- the fallback rule of §11 (with decision 3), including the recommended
+  default that each one-field alternative is also registered on U0-F's
+  population (U2-F … U10-F), so the registration carries its
+  alternatives whether or not the supplements are staged; Max may
+  instead keep the alternatives on U0 only (blocked under the fallback).
+
+Approval to download the Census threshold files is on its own card (cos
+decision d194, open).
 
 **Awaiting the specification freeze (defaults shown):** cut rate (0.13;
 the code lists it), cut base (all Social Security of the unit; not a code
@@ -1527,6 +1542,23 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
 
 ## 19. Changelog
 
+- `u1-draft-5`, independent review corrections (2026-09-24; no rule,
+  default or row changed): §15's `cut` block gains an `awaiting` for
+  plan decision 8 (Max's confirmation of the scorecard's "from 2004"
+  wording), which the withdrawal of row U6 had left with no
+  machine-readable `awaiting` although the code's
+  `cut_start_year` decision and §16 still list it as awaiting Max; a
+  test now holds every code decision awaiting Max to an `awaiting`
+  key the registered run's ratification scan finds. The builder
+  boundary records the extract's values-scan verdict as
+  `RESTRICTED-FILES.md` now holds it (changelog entry 2026-09-24
+  16:10), in place of a sentence saying that entry was missing. §16's
+  list of decisions awaiting Max without a card is set out one item
+  per line, so decision 8 and the fallback rule no longer read as one
+  item; §11 no longer says every registered row is computed (under the
+  fallback rule the rows defined on U0 or U1 are reported as blocked).
+  Counts only; no income, threshold or poverty status was
+  computed on PSID data.
 - `u1-draft-5` (2026-09-24, second referee pass applied, §17.3):
   `origin/master` (`088772f1`) merged in; §1 states the target as the
   cleared exercise-2 definitions extract defines it (the "1936-45"
