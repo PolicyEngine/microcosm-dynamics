@@ -227,10 +227,20 @@ moved out or died); the evidence file lists every disposition. Of the
 483 U0 observations, 35 are OFUMs (95 of 1,349 under U1), 457 have
 marriage-history birth years, and 35 have an unresolved marital state
 (26 `no_marriage_history`, 9 `unknown`), which `u1-draft-1` counted as
-non-married. The counts under this draft's rules (resolution paths,
-annuitant age sources, farm and head retirement-account income) are
-recollected by the same script; §14 records them. No income, threshold
-or poverty status was computed.
+non-married.
+
+Recollected under this draft's rules (the same script, evidence
+`EVID/track-u-structure-u1d4-20260924/`, counts only): the observation
+counts are unchanged, and U0-F has 320 observations. Of the 35
+unresolved U0 states, 1 resolves by relationship code (a head with a
+co-resident legal spouse) and 34 stay non-married (U1: 3 of 98 resolve).
+Every annuitant age (the head, the head's legal spouse and the member's
+co-resident spouse) came from a derived birth year; no wave-age fallback
+was needed. Among the 320 computable U0 observations (U0-F's), 5 belong
+to families with nonzero farm income (none negative) and 18 to families
+whose head has annuity or IRA income; among U1's 857 computable
+observations, 9 and 66 (one farm loss). No income, threshold or poverty
+status was computed.
 
 ## 4. Income concept
 
@@ -760,7 +770,9 @@ the reachability guard:
 - `scripts/track_u_dry_run.py` (U9): every row on the invented cohort
   with invented thresholds and the committed life tables and SSI
   capture, and the fallback rule on the invented cohort as staged today;
-  evidence headed "INVENTED DATA - NOT A COMPARISON".
+  evidence headed "INVENTED DATA - NOT A COMPARISON",
+  `EVID/track-u-dry-run-20260924/` (`u1-draft-3`) and
+  `EVID/track-u-dry-run-u1d4-20260924/` (this draft).
 - `scripts/run_track_u_registered.py` (U10 entry point): refuses unless
   the pointer is an issue #42 comment, `HEAD` is the registered commit
   on a clean tree, §15 is ratified with nothing awaiting and nothing
@@ -988,8 +1000,9 @@ holds it to the code's defaults.
 
 None of these is ratified. Each is a code parameter whose default is the
 plan's proposal, the referee's recommendation or a builder choice where
-both are silent; `adjusted_poverty.pending_decisions()` and
-`age67.pending_decisions()` return them with their basis.
+both are silent; `adjusted_poverty.pending_decisions()`,
+`age67.pending_decisions()` and `uniform_cut_tabulation.pending_decisions()`
+(the design SE domain and the cells) return them with their basis.
 
 **Awaiting Max (d189, open):**
 
@@ -1210,7 +1223,10 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
   the invented generator adds couples resolved by relationship code,
   legal husbands, farm, annuity and IRA income, and interview ages; §15
   gains `referee_passes`, `comparison`, the headline rule and the new
-  fields; §17 records the pass and the open questions.
+  fields; §17 records the pass and the open questions; the structural
+  counts are recollected under the new rules
+  (`EVID/track-u-structure-u1d4-20260924/`) and the dry run re-run
+  (`EVID/track-u-dry-run-u1d4-20260924/`).
 - `u1-draft-3` (2026-09-24, continuation on
   `dynamics-ex2-track-u-2-20260924`): row U-inst gets an income rule
   (`family_of_record`) and row U6 is built (`cut_start_year`, the start

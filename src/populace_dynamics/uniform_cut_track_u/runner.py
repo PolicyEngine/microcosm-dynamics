@@ -436,6 +436,7 @@ def _income_counts(adjusted: pd.DataFrame) -> dict[str, Any]:
 def _pending(row: TrackURow) -> list[dict[str, Any]]:
     items = [item.as_dict() for item in age67.pending_decisions()]
     items += [item.as_dict() for item in ap.pending_decisions()]
+    items += [item.as_dict() for item in ut.pending_decisions()]
     if row.awaiting:
         items.append(
             {
@@ -670,6 +671,7 @@ def run_track_u(
             "income_concept": [
                 item.as_dict() for item in ap.pending_decisions()
             ],
+            "tabulation": [item.as_dict() for item in ut.pending_decisions()],
             "rows": {
                 row_id: row.awaiting
                 for row_id, row in rows.items()

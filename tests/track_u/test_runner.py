@@ -69,6 +69,12 @@ def test_every_row_runs_and_u7_is_reported_not_built(result):
     assert result["labels"][0] == ut.INVENTED_DATA_LABEL
     assert result["labels"][1:] == list(ap.OUTPUT_LABELS)
     assert result["headline"]["row"] == rows.PRIMARY_ROW
+    assert {
+        item["field"] for item in result["pending_decisions"]["tabulation"]
+    } == {
+        "design_se_domain",
+        "cells",
+    }
     for entry in result["rows"].values():
         if entry["status"] == "computed":
             assert entry["tabulation"]["design"]["domain"] == (

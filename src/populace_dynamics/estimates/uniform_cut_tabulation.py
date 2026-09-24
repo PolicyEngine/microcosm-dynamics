@@ -82,6 +82,7 @@ from populace_dynamics.estimates.adjusted_poverty import (
     INVENTED,
     OUTPUT_LABELS,
     REGISTERED_REAL,
+    PendingDecision,
 )
 from populace_dynamics.harness.panel import split_panel_by_person
 
@@ -103,6 +104,7 @@ __all__ = [
     "TabulationConfig",
     "UniformCutTabulationError",
     "floor_split_units",
+    "pending_decisions",
     "tabulate_uniform_cut",
     "tabulation_rows",
 ]
@@ -513,6 +515,43 @@ def _floors(
             }
         floors[name] = entry
     return per_seed, floors
+
+
+def pending_decisions() -> tuple[PendingDecision, ...]:
+    """The open choices of :class:`TabulationConfig`, with their defaults.
+
+    None is ratified; each awaits the specification freeze (or, for the
+    cells, plan section 10 decision 2(b)).
+    """
+
+    config = TabulationConfig()
+    freeze = "U1 specification freeze (Max's ratification by merge)"
+    return (
+        PendingDecision(
+            "design_se_domain",
+            config.design_se_domain,
+            ("tabulated_rows",),
+            "referee (boomers2004-referee-20260924.md) Q5/R10: domain "
+            "estimation on the full sample design, every (stratum, "
+            "cluster) pair of the observation waves' positive-weight "
+            "persons with z = 0 outside the cell; relative to the "
+            "tabulated rows only, every stratum with one cluster present "
+            "drops out and the variance is understated",
+            freeze,
+        ),
+        PendingDecision(
+            "cells",
+            list(config.cells),
+            (),
+            "plan section 7: all (headline), men, women, married, "
+            "non_married (the Report's list of appendix tables names "
+            "Appendix Table 17 'by Gender and Marital Status') and the "
+            "four optional sex-by-marital cells; which splits Tables 19 "
+            "and 21 carry is unknown",
+            "Max (plan section 10 decision 2(b)) and the specification "
+            "freeze",
+        ),
+    )
 
 
 def tabulation_rows(

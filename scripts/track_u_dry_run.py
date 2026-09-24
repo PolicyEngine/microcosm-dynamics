@@ -377,6 +377,7 @@ def results_markdown(result: dict[str, Any]) -> str:
     for item in (
         result["pending_decisions"]["age67"]
         + result["pending_decisions"]["income_concept"]
+        + result["pending_decisions"]["tabulation"]
     ):
         lines.append(
             f"- `{item['field']}` = `{item['default']}` (awaiting "

@@ -98,3 +98,4 @@ def test_every_built_row_is_tabulated(output):
     assert result["headline"]["row"] == "U0"
     text = (output / "RESULTS.md").read_text()
     assert "Headline row U0" in text and "full sample design" in text
+    assert "`design_se_domain` = `full_sample_design`" in text

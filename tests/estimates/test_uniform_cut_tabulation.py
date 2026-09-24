@@ -405,6 +405,16 @@ def test_rows_are_validated(column, value):
         )
 
 
+def test_pending_decisions_name_the_config_defaults():
+    decisions = {item.field: item for item in ut.pending_decisions()}
+    config = ut.TabulationConfig()
+    assert decisions["design_se_domain"].default == config.design_se_domain
+    assert decisions["design_se_domain"].alternatives == ("tabulated_rows",)
+    assert "Q5" in decisions["design_se_domain"].default_basis
+    assert decisions["cells"].default == list(config.cells)
+    assert "2(b)" in decisions["cells"].awaiting
+
+
 def test_config_validation():
     with pytest.raises(ut.UniformCutTabulationError):
         ut.TabulationConfig(cells=("men",))
