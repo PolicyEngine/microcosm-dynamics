@@ -163,9 +163,15 @@ def test_the_committed_specification_is_ratified():
 def test_a_null_status_is_refused(tmp_path):
     # str(None) is "None", which carries no unratified marker; a missing or
     # null status or version must still refuse.
+    # Nor may a status that never says "ratified" or negates it: each of
+    # these carries no unratified marker, so a marker-only test passed it.
     for specification in (
         {**RATIFIED, "status": None},
         {"version": RATIFIED["version"]},
+        {**RATIFIED, "status": "pending_ratification"},
+        {**RATIFIED, "status": "unratified"},
+        {**RATIFIED, "status": "not yet ratified"},
+        {**RATIFIED, "version": "a1-3"},
     ):
         with pytest.raises(ValueError, match="authorizes no run"):
             _script().preflight(

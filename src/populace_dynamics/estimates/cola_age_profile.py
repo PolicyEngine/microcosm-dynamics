@@ -118,6 +118,7 @@ from __future__ import annotations
 
 import copy
 import math
+import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from numbers import Integral, Real
@@ -535,6 +536,32 @@ SPECIFICATION_FIELDS = ("specification", "version", "status")
 #: registered-run preflight (``scripts/run_track_a_registered.py``)
 #: refuses a block carrying any of them.
 UNRATIFIED_MARKERS = ("candidate", "draft", "not_merged", "not_ratified")
+#: Words that negate or defer "ratified" in a status or version
+#: ("not yet ratified", "pre-ratified", "pending").
+_NEGATING_WORDS = frozenset(
+    {"not", "no", "non", "pre", "yet", "pending", "awaiting"}
+)
+
+
+def _ratified_value(value: Any) -> bool:
+    """Whether one header value states ratification (fail closed).
+
+    The value must name ``ratified`` as a word, contain no negating word
+    and, once lower-cased with every run of other characters read as
+    ``_``, carry no :data:`UNRATIFIED_MARKERS` entry.  A value that never
+    says ``ratified`` (``proposed``, ``pending_ratification``,
+    ``unratified``) therefore does not count as ratified.
+    """
+
+    if not isinstance(value, str):
+        return False
+    words = [word for word in re.split(r"[^0-9a-z]+", value.lower()) if word]
+    normalized = "_".join(words)
+    return (
+        "ratified" in words
+        and not _NEGATING_WORDS.intersection(words)
+        and not any(mark in normalized for mark in UNRATIFIED_MARKERS)
+    )
 
 
 def specification_unratified_fields(
@@ -542,10 +569,13 @@ def specification_unratified_fields(
 ) -> list[str]:
     """The header fields that keep an A1 block from counting as ratified.
 
-    ``status`` and ``version`` must each be a non-empty string free of
-    every :data:`UNRATIFIED_MARKERS` entry (``a1-ratified-1`` /
+    ``status`` and ``version`` must each be a string that names
+    ``ratified`` as a word, with no negating word and no
+    :data:`UNRATIFIED_MARKERS` entry (``a1-ratified-1`` /
     ``ratified_frozen`` pass; ``a1-ratified-candidate-1``, a draft
-    version or a missing field does not).  An empty list means ratified.
+    version, ``unratified``, ``pending_ratification``, ``not yet
+    ratified`` or a missing field does not).  An empty list means
+    ratified.
     """
 
     if not isinstance(specification, Mapping):
@@ -553,16 +583,11 @@ def specification_unratified_fields(
             "specification must be a mapping (the A1 section 21 block or "
             "its header)"
         )
-    failing = []
-    for field in ("status", "version"):
-        value = specification.get(field)
-        if (
-            not isinstance(value, str)
-            or not value
-            or any(mark in value for mark in UNRATIFIED_MARKERS)
-        ):
-            failing.append(field)
-    return failing
+    return [
+        field
+        for field in ("status", "version")
+        if not _ratified_value(specification.get(field))
+    ]
 
 
 def specification_record(

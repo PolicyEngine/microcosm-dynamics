@@ -2113,6 +2113,44 @@ def test_an_opening_receipt_start_before_the_clock_is_clamped():
     assert len(set(amounts.values())) == 1
 
 
+def test_only_retired_workers_and_aged_auxiliaries_can_be_clamped():
+    # INVENTED rows, opening year 2010.  The gap text says only a retired
+    # worker's or an aged auxiliary's record can be clamped, and that an
+    # aged auxiliary's clock is a proxy: an aged widow with no linked
+    # worker, aged 62 in 2010 and first receiving at 60 (2008, when a
+    # widow can be entitled), is clamped to her own-62 fallback clock.
+    config = TrackAConfig(draw_indices=(0,))
+
+    def record(status, age, receipt, **extra):
+        row = SimpleNamespace(
+            **{
+                **vars(_clamped_row(receipt)),
+                "opening_status": status,
+                "age_opening": age,
+                "birth_year": 2010 - age,
+                **extra,
+            }
+        )
+        return opening_module._opening_record(row, config, 2010)[0]
+
+    widow = record("survivor", 62, 2008)
+    assert (widow.clock_rule, widow.clock_year) == (
+        "fallback_own_birth_plus_62",
+        2010,
+    )
+    assert widow.entitlement_clamped is True
+    # Every other clock is the receipt start or precedes it.
+    for status, age, receipt in (
+        ("disabled_worker", 55, 2001),
+        ("disabled_worker", 64, 2009),
+        ("survivor", 58, 2005),
+        ("spouse", 60, 2009),
+    ):
+        other = record(status, age, receipt)
+        assert other.entitlement_clamped is False, (status, age)
+        assert other.clock_year <= other.entitlement_year == receipt
+
+
 def test_clamped_opening_entitlements_are_counted_in_r2_only():
     # INVENTED: opener 1's A3 receipt start (2008) preceded the year it
     # attained 62 (2010), so its entitlement year was clamped to 2010.
@@ -2199,6 +2237,17 @@ def test_the_clamped_entitlement_gap_is_named_and_counted(result):
     gaps = {gap["item"]: gap for gap in module.gaps_for(result)}
     gap = gaps["Opening-stock entitlement before the clock"]
     assert "R2 only" in gap["gap"]
+    # Only a retired worker's clock is exact.  An aged auxiliary's clock is
+    # a proxy (linked worker's 62 or death, or own 62), so a receipt start
+    # before it can be a real entitlement under a clock that is late; the
+    # gap must not say the receipt start can never be the entitlement.
+    assert "A retired worker's receipt start" in gap["gap"]
+    assert "An aged auxiliary's can be only if its clock, a proxy" in (
+        " ".join(gap["gap"].split())
+    )
+    assert "receipt start cannot be that benefit's entitlement, so" not in (
+        gap["gap"]
+    )
     assert "opening_stock_entitlement_clamped" in gap["gap"]
     assert "beneficiaries_opening_entitlement_clamped" in gap["gap"]
     counts = gap["counts"]

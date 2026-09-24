@@ -8,8 +8,10 @@ comment exists, at exactly the commit that comment registers:
   (``.../issues/42#issuecomment-<id>``);
 * the working tree must be clean and ``HEAD`` must equal
   ``--registered-commit``;
-* the A1 specification must be ratified: its section 21 block may not
-  carry a candidate, draft or not-merged status or version (A1 says it
+* the A1 specification must be ratified: its section 21 status and
+  version must each say "ratified" and may not carry a candidate, draft,
+  not-merged or other negating marker
+  (``cola_age_profile.specification_unratified_fields``; A1 says it
   authorizes no run until Max ratifies it by merging, plan section 6
   item 4);
 * the output artifact must not exist yet (one shot, no overwrite; it is
@@ -107,8 +109,9 @@ REGISTRATION_POINTER = re.compile(
     r"#issuecomment-[0-9]+"
 )
 #: Markers of an A1 status or version that is not ratified.  A7 owns the
-#: test (``specification_unratified_fields``), so this preflight and each
-#: row's pending-rulings status apply the same one.
+#: test (``specification_unratified_fields``, which also requires the word
+#: "ratified" and no negating word), so this preflight and each row's
+#: pending-rulings status apply the same one.
 UNRATIFIED_MARKERS = cola_age_profile.UNRATIFIED_MARKERS
 #: Import names whose installed distributions the sidecar records.  An
 #: import name is not a distribution name: the repository's package
