@@ -229,6 +229,14 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/fra68_track/config.py"),
     Path("src/populace_dynamics/fra68_track/reform.py"),
     Path("src/populace_dynamics/fra68_track/runner.py"),
+    # The opt-in Track U layer (DynaSim exercise 2: the family income and
+    # wealth reader, the age-67 cohort builder, the adjusted income concept
+    # and its tabulation) is post-compute and unreachable from the
+    # historical projection; the transitive reachability test guards it.
+    Path("src/populace_dynamics/data/family_income.py"),
+    Path("src/populace_dynamics/cohorts/age67.py"),
+    Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
+    Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
