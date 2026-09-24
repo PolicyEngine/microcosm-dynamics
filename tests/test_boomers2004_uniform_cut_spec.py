@@ -51,7 +51,7 @@ def _section(text: str, number: str, following: str) -> str:
 
 def test_block_identity_and_status(block):
     assert block["specification"] == "boomers2004_uniform_cut_exercise2"
-    assert block["version"] == "u1-draft-4"
+    assert block["version"] == "u1-draft-5"
     assert block["status"] == "draft_for_referee"
     assert block["claim_class"]["awaiting"] == "d189"
     assert block["acceptance_rule"] is None
@@ -63,7 +63,8 @@ def test_status_line_does_not_claim_ratification(text):
     status = text.split("- **Specification:**")[0]
     assert "draft for the referee" in status
     assert "Nothing here is ratified" in status
-    assert "`u1-draft-4`" in text.split("- **Plan item:**")[0]
+    assert "`u1-draft-5`" in text.split("- **Plan item:**")[0]
+    assert "Two" in status and "referee passes are recorded" in status
 
 
 def test_population_matches_the_builder(block):
@@ -181,11 +182,43 @@ def test_income_concept_matches_the_spec_defaults(block):
     )
 
 
+def test_target_records_the_cleared_extract(block):
+    """Second referee S1 and S9: the comparator column, the Report's 36
+    rows, whole-number cells and the cleared extract's path and hash."""
+
+    target = block["target"]
+    assert target["column"] == ut.COMPARATOR_COLUMN == "1936-45"
+    assert target["report_rows"] == 36
+    assert target["report_rows"] == len(ut.DEFAULT_CELLS) + len(
+        ut.OPTIONAL_CELLS
+    ) + sum(len(e["rows"]) for e in ut.NOT_COMPUTED_REPORT_ROWS.values())
+    assert target["printed_precision"] == "whole_numbers"
+    extract = target["definitions_extract"]
+    assert extract["file"] == (
+        "EVID/exercise2-definitions-cleared-20260924.md"
+    )
+    assert extract["sha256"] == (
+        "a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384"
+    )
+    local = EVIDENCE / Path(extract["file"]).name
+    if not local.is_file():
+        pytest.skip("the cleared extract is outside this checkout")
+    assert hashlib.sha256(local.read_bytes()).hexdigest() == (
+        extract["sha256"]
+    )
+
+
 def test_cut_and_threshold_years_match_the_code(block):
     spec = ap.AdjustedPovertySpec()
     cut = block["cut"]
     assert cut["rate"] == spec.cut_rate == block["target"]["cut_rate"]
-    assert cut["start_year"] == spec.cut_start_year is None
+    # second referee S5: the Report's "beginning in 2004"
+    assert cut["start_year"] == spec.cut_start_year == 2004
+    decision = {item.field: item for item in ap.pending_decisions()}[
+        "cut_start_year"
+    ]
+    assert decision.alternatives == (None,)
+    assert "S5" in decision.default_basis
     assert cut["start_year_rule"] == ap.CUT_START_YEAR_RULE
     # not code parameters: the cut base and behaviour are fixed in
     # adjusted_incomes (specification section 16 lists them as pending)
@@ -222,21 +255,34 @@ def test_statistic_and_comparison_match_the_tabulation(block):
 
 def test_rows_name_real_alternatives(block):
     rows = block["rows"]
-    assert set(rows) == {
-        "U0",
-        "U1",
-        "U2",
-        "U3",
-        "U4",
-        "U5",
-        "U6",
-        "U0-F",
-        "U7",
-        "U8",
-        "U9",
-        "U10",
-        "U-inst",
+    fallback = {f"{row}-F" for row in ("U2", "U3", "U4", "U5")} | {
+        f"{row}-F" for row in ("U8", "U9", "U10")
     }
+    # second referee S5 and S7 withdrew U6 and U-inst; S8 added the -F
+    # alternatives on U0-F's population
+    assert (
+        set(rows)
+        == {
+            "U0",
+            "U1",
+            "U2",
+            "U3",
+            "U4",
+            "U5",
+            "U0-F",
+            "U7",
+            "U8",
+            "U9",
+            "U10",
+        }
+        | fallback
+    )
+    assert set(track_u_rows.FALLBACK_ALTERNATIVES.values()) == fallback
+    for base, alternative in track_u_rows.FALLBACK_ALTERNATIVES.items():
+        entry = dict(rows[alternative])
+        assert entry.pop("population") == "birth_years_1941_1943_1945"
+        assert entry.pop("awaiting") == rows["U0-F"]["awaiting"]
+        assert entry == rows[base], alternative
     for row in rows.values():
         if row.get("status") == "not_built":
             continue
@@ -249,13 +295,6 @@ def test_rows_name_real_alternatives(block):
     assert rows["U1"]["population"] == "all_ten_birth_years"
     assert rows["U0-F"]["population"] == "birth_years_1941_1943_1945"
     assert rows["U0-F"]["on"] == "U0"
-    assert rows["U-inst"]["presence"] == "in_family_or_institution"
-    age67.Age67Spec(
-        presence=rows["U-inst"]["presence"],
-        institution_income_rule=rows["U-inst"]["institution_income_rule"],
-    )
-    assert rows["U6"]["on"] == "U1"
-    ap.AdjustedPovertySpec(cut_start_year=rows["U6"]["cut_start_year"])
     # every row but U7 is built, and the code's rows equal the block's
     assert [name for name, row in rows.items() if "status" in row] == ["U7"]
     assert track_u_rows.check_rows_against_block(block)["rows_equal_the_block"]
@@ -263,8 +302,16 @@ def test_rows_name_real_alternatives(block):
 
 def test_cells_and_uncertainty_match_the_tabulation(block):
     cells = block["cells"]
-    assert cells["scored_candidates"] == list(ut.DEFAULT_CELLS)
-    assert cells["optional"] == list(ut.OPTIONAL_CELLS)
+    assert cells["column"] == ut.COMPARATOR_COLUMN
+    assert cells["scored"] == list(ut.DEFAULT_CELLS)
+    assert cells["secondary"] == list(ut.OPTIONAL_CELLS)
+    assert cells["unclassified_marital_cells"] == (
+        ut.TabulationConfig().unclassified_marital_cells
+    )
+    assert cells["not_computed"] == list(ut.NOT_COMPUTED_REPORT_ROWS)
+    assert block["comparison"]["comparator_interval"] == (
+        "whole_number_rounding_level_0_5_difference_1"
+    )
     uncertainty = block["uncertainty"]
     config = ut.TabulationConfig()
     assert uncertainty["draws"] == config.as_dict()["draws"] == 1
@@ -294,8 +341,10 @@ def test_named_deltas_equal_the_runner(text):
 def test_pending_decisions_are_listed_in_the_text(text):
     section = _section(text, "16", "17")
     assert "d189" in section
-    assert "decision 8" in section and "cut_start_year" in section
-    assert "institution_income_rule = family_of_record" in section
+    assert "decision 8" in section and "cut_start_year = 2004" in section
+    assert "the institution income rule (used by no registered row" in (
+        " ".join(section.split())
+    )
     assert "d194" in section
     assert "fallback rule" in section
     ssi = next(
@@ -312,6 +361,9 @@ def test_pending_decisions_are_listed_in_the_text(text):
         "unresolved marital status (relationship code)",
         "design SE (full-design domain)",
         "real rate (3 percent; 2 percent sensitivity)",
+        "cut start year (2004)",
+        "U2-F … U10-F",
+        "no card or ruling by Max on it was found",
     ):
         assert phrase in flat, phrase
     # every pending field of the code is listed by the code
@@ -328,24 +380,42 @@ def test_pending_decisions_are_listed_in_the_text(text):
         assert name in fields
 
 
-def test_referee_pass_is_recorded(block, text):
-    (entry,) = block["referee_passes"]
-    assert entry["object_version"] == "u1-draft-2"
-    assert entry["object_commit"] == "8d7e7431"
-    assert entry["required_changes"] == 17
-    assert entry["applied_in"] == block["version"]
-    assert re.fullmatch(r"[0-9a-f]{64}", entry["sha256"])
+def test_referee_passes_are_recorded(block, text):
+    first, second = block["referee_passes"]
+    assert first["object_version"] == "u1-draft-2"
+    assert first["object_commit"] == "8d7e7431"
+    assert first["required_changes"] == 17
+    assert first["applied_in"] == "u1-draft-4"
+    assert second["object_version"] == "u1-draft-4"
+    assert second["object_commit"] == "37a94ea2"
+    assert second["required_changes"] == 9
+    assert second["applied_in"] == block["version"]
     section = _section(text, "17", "18")
-    assert entry["sha256"] in section
+    for entry in (first, second):
+        assert re.fullmatch(r"[0-9a-f]{64}", entry["sha256"])
+        assert entry["sha256"] in section
+    assert second["object_blob_sha256"] in section
+    first_pass = section.split("### 17.2")[0]
     for change in [f"R{n}" for n in range(1, 18)] + [
         f"O{n}" for n in range(1, 9)
     ]:
-        assert f"| {change} " in section, change
-    assert "**Declined:**" in section
-    report = EVIDENCE / Path(entry["report"]).name
-    if not report.is_file():
-        pytest.skip("the referee report is outside this checkout")
-    assert hashlib.sha256(report.read_bytes()).hexdigest() == entry["sha256"]
+        assert f"| {change} " in first_pass, change
+    assert "**Declined:**" in first_pass
+    second_pass = section.split("### 17.3")[1]
+    for change in [f"S{n}" for n in range(1, 10)] + [
+        f"O{n}" for n in range(1, 11)
+    ]:
+        assert f"| {change} " in second_pass, change
+    answers = section.split("### 17.2")[1].split("### 17.3")[0]
+    for number in range(9, 15):
+        assert f"{number}. **" in answers, number
+    for entry in (first, second):
+        report = EVIDENCE / Path(entry["report"]).name
+        if not report.is_file():
+            pytest.skip("the referee reports are outside this checkout")
+        assert hashlib.sha256(report.read_bytes()).hexdigest() == (
+            entry["sha256"]
+        )
 
 
 def test_invented_cases_match_the_code():
@@ -413,14 +483,15 @@ def test_u3_is_never_called_a_bound(text):
 
 def test_section_9_names_where_members_of_a_family_differ(text):
     """Section 9's family-level claim holds under ``fu_head_rule`` except in
-    U4 (B and T by role) and U6 (the cut follows each member's age-67
-    year, :func:`adjusted_poverty.cut_applies`); regression (independent
-    review, 2026-09-24): the U6 exception was missing."""
+    U4 (B and T by role) and under U1, where the primary's 2004 start
+    follows each member's age-67 year (:func:`adjusted_poverty.
+    cut_applies`); regression (independent review, 2026-09-24): the
+    exception was missing (it was row U6's until u1-draft-5)."""
 
     section = " ".join(_section(text, "9", "10").split())
-    assert "except in rows U4 and U6" in section
+    assert "except in row U4 and under U1" in section
     assert "Under row U4" in section
-    assert "Under row U6 the cut follows each member's own age-67" in section
+    assert "Under U1 the cut follows each member's own age-67" in section
     assert ap.CUT_START_YEAR_RULE == (
         "cut_when_birth_year_plus_67_at_or_after_start"
     )

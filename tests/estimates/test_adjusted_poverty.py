@@ -90,6 +90,9 @@ def _row(observation_id: str, **overrides) -> dict:
     row.update(
         observation_id=observation_id,
         family_unit_id=observation_id,
+        # an invented member who turns 67 in income year 2010, so the
+        # primary's 2004 cut start reaches it
+        birth_year=1943,
         income_year=2010,
         member_role="head",
         member_age=2,
@@ -591,16 +594,18 @@ def test_ssi_offset_for_existing_recipients():
 
 
 def test_cut_start_year_leaves_earlier_age67_years_uncut():
-    """Row U6: with a 2004 start, the 1936 birth year (67 in 2003) is uncut.
+    """Primary (2004, second referee S5): the 1936 birth year (67 in 2003)
+    is uncut; the unregistered ``cut_start_year=None`` cuts everyone.
 
     INVENTED rows, threshold T = 1,000 (one person, 65+ row):
 
-    * "1936": B = 1,050 (not poor). Primary: cut 0.13 * 1,050 = 136.5,
-      R = 913.5 (poor). U6: 1936 + 67 = 2003 < 2004, no cut, R = 1,050.
+    * "1936": B = 1,050 (not poor). ``None``: cut 0.13 * 1,050 = 136.5,
+      R = 913.5 (poor). Primary: 1936 + 67 = 2003 < 2004, no cut,
+      R = 1,050.
     * "1937": 1937 + 67 = 2004 >= 2004, cut under both: R = 913.5.
     * "ssi": birth year 1936, SSI recipient with SS 1,000, SSI 100:
-      primary offset (1,000 - 240) - (870 - 240) = 130 (cap 500); U6 has
-      no cut, so no fall in countable income and no offset.
+      ``None`` offset (1,000 - 240) - (870 - 240) = 130 (cap 500); the
+      primary has no cut, so no fall in countable income and no offset.
     """
 
     rows = [
@@ -615,29 +620,30 @@ def test_cut_start_year_leaves_earlier_age67_years_uncut():
             total_family_income=1100,
         ),
     ]
+    assert ap.AdjustedPovertySpec().cut_start_year == 2004
+    everyone = _run(*rows, cut_start_year=None)
+    assert everyone["cut_applies"].all()
+    assert everyone.loc["1936", "cut"] == pytest.approx(136.5)
+    assert everyone.loc["1936", "reform_income"] == pytest.approx(913.5)
+    assert everyone.loc["1936", "poor_reform"]
+    assert everyone.loc["ssi", "ssi_offset"] == pytest.approx(130.0)
     primary = _run(*rows)
-    assert primary["cut_applies"].all()
-    assert primary.loc["1936", "cut"] == pytest.approx(136.5)
-    assert primary.loc["1936", "reform_income"] == pytest.approx(913.5)
-    assert primary.loc["1936", "poor_reform"]
-    assert primary.loc["ssi", "ssi_offset"] == pytest.approx(130.0)
-    u6 = _run(*rows, cut_start_year=2004)
-    assert u6["cut_applies"].to_dict() == {
+    assert primary["cut_applies"].to_dict() == {
         "1936": False,
         "1937": True,
         "ssi": False,
     }
-    assert u6.loc["1936", "cut"] == 0.0
-    assert u6.loc["1936", "reform_income"] == pytest.approx(1050.0)
-    assert not u6.loc["1936", "poor_reform"]
-    assert u6.loc["1937", "reform_income"] == pytest.approx(913.5)
-    assert u6.loc["1937", "poor_reform"]
-    assert u6.loc["ssi", "ssi_offset"] == 0.0
-    assert u6.loc["ssi", "reform_income"] == pytest.approx(
-        u6.loc["ssi", "baseline_income"]
+    assert primary.loc["1936", "cut"] == 0.0
+    assert primary.loc["1936", "reform_income"] == pytest.approx(1050.0)
+    assert not primary.loc["1936", "poor_reform"]
+    assert primary.loc["1937", "reform_income"] == pytest.approx(913.5)
+    assert primary.loc["1937", "poor_reform"]
+    assert primary.loc["ssi", "ssi_offset"] == 0.0
+    assert primary.loc["ssi", "reform_income"] == pytest.approx(
+        primary.loc["ssi", "baseline_income"]
     )
     # full static recomputation: an uncut unit cannot become newly eligible
-    u3 = _run(*rows, cut_start_year=2004, ssi_rule="full_static_recomputation")
+    u3 = _run(*rows, ssi_rule="full_static_recomputation")
     assert (u3.loc[["1936", "ssi"], "ssi_new"] == 0).all()
 
 
@@ -805,17 +811,19 @@ def test_rows_are_validated():
         _run(_row("a", member_role="lodger"))
 
 
-def test_u6_cut_follows_each_members_age67_year_within_a_family():
+def test_u1_cut_follows_each_members_age67_year_within_a_family():
     """Specification section 9: B, R and T are family-level under
-    ``fu_head_rule`` except in U4 and U6.  Regression (independent review,
-    2026-09-24): the U6 exception was not stated.
+    ``fu_head_rule`` except in U4 and under U1, where the primary's 2004
+    cut start follows each member's age-67 year.  Regression (independent
+    review, 2026-09-24): the exception was not stated.
 
     INVENTED: one family unit "f" with family Social Security 1,000 and
     money income 1,000 holds two cohort members, born 1936 (the head) and
-    1938 (the wife).  Primary: both are cut, 0.13 * 1,000 = 130, R = 870.
-    U6 (start 2004): 1936 + 67 = 2003 < 2004, so the head's observation is
+    1938 (the wife), as U1 observes them in income year 2004.  Primary
+    (start 2004): 1936 + 67 = 2003 < 2004, so the head's observation is
     uncut (R = 1,000); 1938 + 67 = 2005 >= 2004, so the wife's is cut
-    (R = 870).  B and T stay equal across the two members.
+    (0.13 * 1,000 = 130, R = 870).  ``cut_start_year=None``: both are cut,
+    R = 870.  B and T stay equal across the two members.
     """
 
     rows = [
@@ -840,11 +848,13 @@ def test_u6_cut_follows_each_members_age67_year_within_a_family():
             wife_present=True,
         ),
     ]
+    everyone = _run(*rows, cut_start_year=None)
+    assert everyone["reform_income"].tolist() == pytest.approx([870.0, 870.0])
     primary = _run(*rows)
-    assert primary["reform_income"].tolist() == pytest.approx([870.0, 870.0])
-    u6 = _run(*rows, cut_start_year=2004)
-    assert u6["cut_applies"].to_dict() == {"head": False, "wife": True}
-    assert u6.loc["head", "reform_income"] == pytest.approx(1000.0)
-    assert u6.loc["wife", "reform_income"] == pytest.approx(870.0)
+    assert primary["cut_applies"].to_dict() == {"head": False, "wife": True}
+    assert primary.loc["head", "reform_income"] == pytest.approx(1000.0)
+    assert primary.loc["wife", "reform_income"] == pytest.approx(870.0)
     for column in ("baseline_income", "threshold", "annuity"):
-        assert u6.loc["head", column] == u6.loc["wife", column], column
+        assert (
+            primary.loc["head", column] == primary.loc["wife", column]
+        ), column

@@ -111,7 +111,7 @@ def test_the_registered_state_passes(tmp_path):
             {
                 "specification": {
                     **RATIFIED,
-                    "rows": {"U6": {"on": "U1", "awaiting": "decision 8"}},
+                    "rows": {"U2-F": {"awaiting": "the fallback rule"}},
                 }
             },
             "awaited",

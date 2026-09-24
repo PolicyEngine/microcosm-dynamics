@@ -74,7 +74,20 @@ def test_every_row_runs_and_u7_is_reported_not_built(result):
     } == {
         "design_se_domain",
         "cells",
+        "unclassified_marital_cells",
     }
+    # second referee S3: the Report rows not computed are listed
+    assert result["comparator_column"] == "1936-45"
+    assert list(result["report_rows_not_computed"]) == list(
+        ut.NOT_COMPUTED_REPORT_ROWS
+    )
+    assert (
+        sum(
+            len(entry["rows"])
+            for entry in result["report_rows_not_computed"].values()
+        )
+        == 21
+    )
     for entry in result["rows"].values():
         if entry["status"] == "computed":
             assert entry["tabulation"]["design"]["domain"] == (
@@ -89,7 +102,7 @@ def test_every_row_runs_and_u7_is_reported_not_built(result):
 
 def test_rows_change_only_what_they_register(result):
     rows_ = result["rows"]
-    u0, u1, u6 = rows_["U0"], rows_["U1"], rows_["U6"]
+    u0, u1 = rows_["U0"], rows_["U1"]
     # U2: no SSI response at all
     assert rows_["U2"]["income_concept_counts"]["n_ssi_offset_positive"] == 0
     assert rows_["U2"]["income_concept_counts"]["n_ssi_new_positive"] == 0
@@ -100,24 +113,43 @@ def test_rows_change_only_what_they_register(result):
     # U5 removes no reported asset income
     counts = rows_["U5"]["income_concept_counts"]
     assert counts["n_asset_income_removed_nonzero"] == 0
-    # U6 is U1 with the 1936 birth year uncut
+    # the primary's 2004 start (second referee S5): U1's 1936 birth year
+    # (67 in 2003) is uncut, every other observation is cut
     n_1936 = u1["population"]["observations_by_birth_year"]["1936"]
-    assert u6["population"] == u1["population"]
-    assert u6["income_concept_counts"]["n_cut_applies"] == (
-        u1["income_concept_counts"]["n_cut_applies"] - n_1936
+    assert u1["income_concept_counts"]["n_cut_applies"] == (
+        u1["population"]["n_observations_tabulated"] - n_1936
     )
-    assert _all(u6)["baseline_rate"] == pytest.approx(
-        _all(u1)["baseline_rate"]
+    assert u0["income_concept_counts"]["n_cut_applies"] == (
+        u0["population"]["n_observations_tabulated"]
     )
-    assert _all(u6)["reform_rate"] <= _all(u1)["reform_rate"]
-    cells = {cell["cell"]: cell for cell in u6["tabulation"]["cells"]}
+    cells = {cell["cell"]: cell for cell in u1["tabulation"]["cells"]}
     assert cells["birth_year_1936"]["delta"] == 0.0
-    # U-inst adds the institutionalized members to U0's population
-    inst = rows_["U-inst"]["population"]
-    assert inst["n_in_institution"] > 0
-    assert inst["n_observations_tabulated"] == (
-        u0["population"]["n_observations_tabulated"] + inst["n_in_institution"]
+    # no registered row admits institutions (U-inst withdrawn, S7)
+    for entry in rows_.values():
+        if entry["status"] == "computed":
+            assert entry["population"]["n_in_institution"] == 0
+            assert entry["age67_spec"]["presence"] == "in_family"
+    # the -F rows are their U0 rows on U0-F's population (S8)
+    for base, alternative in rows.FALLBACK_ALTERNATIVES.items():
+        assert rows_[alternative]["income_spec"] == rows_[base]["income_spec"]
+        assert rows_[alternative]["population"] == (
+            rows_["U0-F"]["population"]
+        )
+    # the four-way marital status reaches the rows and the tabulation
+    status = u0["population"]["marital_status_4"]
+    assert set(status) == {
+        "married",
+        "widowed",
+        "divorced",
+        "never_married",
+        "unclassified",
+    }
+    cells = {cell["cell"]: cell for cell in u0["tabulation"]["cells"]}
+    assert cells["married"]["n_marital_unclassified_left_out"] == (
+        status["unclassified"]
     )
+    assert cells["married"]["report_row"] == "Marital Status: Married"
+    assert u0["population"]["spouse_age_source"]
     # U9 prices on the SSA 2004 table
     assert rows_["U9"]["life_table"] == "ssa_period_2004"
     assert u0["life_table"] == "nchs_2000"
@@ -163,7 +195,12 @@ def test_official_concept_rates_by_hand():
             "observation_id": ["a", "b", "c", "d"],
             "weight": [1.0, 1.0, 2.0, 4.0],
             "sex": ["male", "female", "female", "male"],
-            "married": [True, False, True, False],
+            "marital_status_4": [
+                "married",
+                "unclassified",
+                "married",
+                "widowed",
+            ],
         }
     )
     adjusted = pd.DataFrame(
@@ -179,7 +216,12 @@ def test_official_concept_rates_by_hand():
     assert cells["men"]["rate"] == pytest.approx(100.0)
     assert cells["women"]["rate"] == pytest.approx(0.0)
     assert cells["married"]["rate"] == pytest.approx(100 / 3)
-    assert cells["non_married"]["rate"] == pytest.approx(80.0)
+    # widowed: d only (weight 4, poor)
+    assert cells["widowed"]["rate"] == pytest.approx(100.0)
+    # b (unclassified) is in all and women but no marital cell
+    assert not cells["divorced"]["defined"]
+    assert cells["never_married"]["undefined_reason"] == "empty cell"
+    assert set(cells) == set(ut.DEFAULT_CELLS)
     with pytest.raises(runner.TrackURunError, match="do not match"):
         runner.official_concept_rates(members, adjusted.iloc[:3])
 
@@ -279,13 +321,29 @@ def test_the_fallback_rule_as_staged_today(params):
     statuses = {row: entry["status"] for row, entry in result["rows"].items()}
     assert statuses.pop("U0-F") == "computed"
     assert statuses.pop("U7") == "not_built"
+    # second referee S8: the -F alternatives are computed under the
+    # fallback; the U0 and U1 versions are blocked
+    for alternative in rows.FALLBACK_ALTERNATIVES.values():
+        assert statuses.pop(alternative) == "computed", alternative
+    assert set(statuses) == {
+        "U0",
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U8",
+        "U9",
+        "U10",
+    }
     assert set(statuses.values()) == {"blocked"}
     u0 = result["rows"]["U0"]
     assert u0["tabulation"] is None
     assert u0["blocked_waves"] == [2005, 2007]
     assert set(u0["population"]["blocked_by_birth_year"]) == {"1937", "1939"}
-    u6 = result["rows"]["U6"]
-    assert u6["blocked_waves"] == [2005, 2007]
+    assert result["rows"]["U1"]["blocked_waves"] == [2005, 2007]
+    assert result["rows"]["U2"]["blocked_waves"] == [2005, 2007]
+    assert result["rows"]["U2-F"]["tabulation"]["cells"]
     assert result["f17_diagnostics"]["row"] == "U0-F"
     tabulated = result["rows"]["U0-F"]["population"]
     assert set(tabulated["observations_by_birth_year"]) == {

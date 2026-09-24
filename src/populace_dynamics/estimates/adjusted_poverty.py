@@ -69,14 +69,18 @@ primary, and :func:`pending_decisions` lists them):
   Census thresholds are **not captured** in this repository yet (see
   :func:`load_poverty_thresholds`).
 * **Cut** (F11).  Reform income subtracts ``cut_rate`` (0.13) times all
-  Social Security of the unit; there is no behavioural response.
-  ``cut_start_year`` (default ``None``: every observation is cut, the F11
-  primary) is row U6's parameter: with a start year, an observation is
-  cut only when the year its member turns 67 (birth year + 67) is at or
-  after it, so with 2004 the 1936 birth year (67 in 2003, observed at 68
-  under U1) is uncut.  The plan defines U6 on U1 with the scorecard's
-  "from 2004", which has no source the builder could read (plan section
-  10, decision 8); the start year is pending that ruling.
+  Social Security of the unit; there is no behavioural response (Report
+  p. 37, fn. 19, as quoted in the cleared exercise-2 definitions
+  extract).  ``cut_start_year`` (default 2004, the Report's "cut
+  immediately (beginning in 2004)", p. 37, cleared extract): an
+  observation is cut only when the year its member turns 67 (birth year
+  + 67) is at or after it, so every U0 and U0-F observation is cut and,
+  under U1, the 1936 birth year (67 in 2003, observed at 68) is not.
+  ``None`` (every observation cut, the u1-draft-4 primary) is an
+  unregistered alternative; row U6, which carried 2004 on U1, was
+  withdrawn in u1-draft-5 (second referee S5).  Max's confirmation of
+  the scorecard's "from 2004" wording is pending (plan section 10,
+  decision 8).
 * **SSI response** (F13, pending Max, decision record d189).
   ``offset_existing_recipients`` (proposed primary): for each SSI unit
   with baseline SSI, SSI rises by the fall in countable Social Security
@@ -250,7 +254,7 @@ RETIREMENT_ACCOUNT_INCOME_CONCEPTS: tuple[str, ...] = (
 )
 #: How a farm loss is treated under ``farm_asset_share`` (F4b).
 FARM_LOSS_RULE = "removed_whole_when_share_positive"
-#: The rule ``cut_start_year`` applies (row U6).
+#: The rule ``cut_start_year`` applies (F11 primary).
 CUT_START_YEAR_RULE = "cut_when_birth_year_plus_67_at_or_after_start"
 #: Income years whose family file carries ``head_iras``.
 _HEAD_IRA_INCOME_YEARS: frozenset[int] = frozenset(
@@ -371,7 +375,7 @@ class AdjustedPovertySpec:
     """Every income-concept choice; defaults are the plan's primary."""
 
     cut_rate: float = 0.13
-    cut_start_year: int | None = None
+    cut_start_year: int | None = 2004
     annuitized_share: float = 0.8
     real_interest_rate: float = 0.03
     annuity_timing: str = "immediate"
@@ -490,23 +494,30 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             spec.cut_rate,
             (),
             "Report p. 22 (OCACT estimates 'that benefits would need to be "
-            "reduced immediately by 13 percent'); the scenario's start "
-            "year and coverage are not in the methods (plan section 10 "
-            "decisions 2 and 8)",
+            "reduced immediately by 13 percent') and p. 37 ('cut "
+            "immediately (beginning in 2004) by 13 percent', cleared "
+            "exercise-2 definitions extract); the Report does not say "
+            "which benefit types the cut covers or whether SSI is "
+            "recomputed",
             _FREEZE,
         ),
         PendingDecision(
             "cut_start_year",
             spec.cut_start_year,
-            (2004,),
-            "plan F11: the primary cuts every observation (None); row U6 "
-            "(on U1) leaves an observation uncut when its member turned 67 "
-            "before the start year, 2004 being the scorecard's 'from 2004', "
-            "which has no source the builder could read; under U0 every "
-            "age-67 year is 2004 or later, so only U1's 1936 birth year "
-            "moves",
-            "Max (plan section 10 decision 8: the scenario's start year; "
-            "not yet on a decision card)",
+            (None,),
+            "second referee S5 (boomers2004-referee-2-20260924.md): the "
+            "Report cuts 'current and future benefits ... immediately "
+            "(beginning in 2004)' (p. 37; also p. 44) and analyses each "
+            "person 'when they reach age 67' (p. 24), both as quoted in the "
+            "cleared exercise-2 definitions extract; the cut applies when "
+            "the member's age-67 year (birth year + 67) is 2004 or later, "
+            "so every U0 and U0-F observation is cut and only U1's 1936 "
+            "birth year (67 in 2003) is not; None (every observation cut, "
+            "the u1-draft-4 primary) has no source and is not registered; "
+            "the Report gives no month within 2004",
+            "Max (plan section 10 decision 8: confirming the scorecard's "
+            "'from 2004' wording; not yet on a decision card) and the "
+            "specification freeze",
         ),
         PendingDecision(
             "income_unit",

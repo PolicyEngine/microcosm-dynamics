@@ -2,12 +2,22 @@
 
 Each row of the exercise-2 specification
 (``docs/design/boomers2004_uniform_cut_comparison.md``, sections 11 and
-15) differs from the primary U0 in one field, except U6, which is defined
-on U1 (plan ``critical-path-uniform-cut-20260923.md`` section 7), and
-U0-F, U0 restricted to the birth years 1941, 1943 and 1945.  A row here
-is a set of overrides of :class:`populace_dynamics.cohorts.age67.
-Age67Spec` and :class:`populace_dynamics.estimates.adjusted_poverty.
+15) differs from the primary U0 in one field; U1 (all ten birth years)
+and U0-F (U0 restricted to the birth years 1941, 1943 and 1945) change
+the population itself.  Each one-field alternative defined on U0 (U2,
+U3, U4, U5, U8, U9, U10) is also registered on U0-F's population as its
+``-F`` row (U2-F ... U10-F; :data:`FALLBACK_ALTERNATIVES`), so that the
+registration carries its alternatives whether or not the 2005 and 2007
+wealth supplements are staged (second referee, S8).  A row here is a set
+of overrides of :class:`populace_dynamics.cohorts.age67.Age67Spec` and
+:class:`populace_dynamics.estimates.adjusted_poverty.
 AdjustedPovertySpec`; the defaults of those two classes are U0.
+
+Rows U6 (the cut's start year, on U1) and U-inst (institutions admitted)
+of u1-draft-3 and -4 are withdrawn in u1-draft-5 (second referee, S5 and
+S7): the primary now starts the cut in 2004 (``cut_start_year``), so U6
+would equal U1, and no U0 target person was in an institution at the
+observation wave on the staged PSID.
 
 :data:`HEADLINE_RULE` is the specification's fallback rule (pending Max,
 with plan section 10 decision 3): U0 is the headline when the 2005 and
@@ -34,6 +44,7 @@ from populace_dynamics.cohorts import age67
 from populace_dynamics.estimates import adjusted_poverty as ap
 
 __all__ = [
+    "FALLBACK_ALTERNATIVES",
     "FALLBACK_ROW",
     "HEADLINE_RULE",
     "PRIMARY_ROW",
@@ -109,117 +120,120 @@ class TrackURow:
         }
 
 
+_FALLBACK_AWAITING = "Max (the fallback rule, with plan section 10 decision 3)"
+#: The one-field alternatives defined on U0 that are also registered on
+#: U0-F's population, and the name of each ``-F`` row (second referee S8).
+FALLBACK_ALTERNATIVES: dict[str, str] = {
+    row_id: f"{row_id}-F"
+    for row_id in ("U2", "U3", "U4", "U5", "U8", "U9", "U10")
+}
+
+_BASE_ROWS: tuple[TrackURow, ...] = (
+    TrackURow(
+        "U0",
+        "-",
+        "primary: exact age (odd birth years 1937-1945 at 67), family "
+        "unit, reported asset income replaced by the annuity, Census "
+        "weighted-average 65+ thresholds, SSI offset for existing "
+        "recipients",
+    ),
+    TrackURow(
+        "U1",
+        "population",
+        "all ten birth years: even birth years at 66 and 68 with half "
+        "weight each, 1936 at 68 only",
+        age67={"row": "U1"},
+    ),
+    TrackURow(
+        "U2",
+        "SSI",
+        "no SSI response",
+        income={"ssi_rule": "none"},
+    ),
+    TrackURow(
+        "U3",
+        "SSI",
+        "full static SSI recomputation (the largest SSI response of "
+        "the three registered rules, not a bound on DYNASIM's "
+        "simulation)",
+        income={"ssi_rule": "full_static_recomputation"},
+    ),
+    TrackURow(
+        "U4",
+        "income unit",
+        "head and wife income only",
+        income={"income_unit": "head_wife"},
+    ),
+    TrackURow(
+        "U5",
+        "asset income",
+        "keep reported asset income and add the annuity",
+        income={"asset_income_rule": "keep"},
+    ),
+    TrackURow(
+        "U0-F",
+        "population",
+        "U0 restricted to the birth years 1941, 1943 and 1945 (the "
+        "blocked 1937 and 1939 left out and counted); the headline when "
+        "the 2005 and 2007 wealth supplements are not staged before "
+        "the #42 registration",
+        age67={"row": FALLBACK_ROW},
+        awaiting=_FALLBACK_AWAITING,
+    ),
+    TrackURow(
+        "U7",
+        "financial assets",
+        "WEALTH1 plus employer DC balances",
+        built=False,
+        not_built_reason=(
+            "needs a label investigation of the PSID P-section pension "
+            "account items (plan section 4); not built"
+        ),
+    ),
+    TrackURow(
+        "U8",
+        "threshold",
+        "PSID CENSUS NEEDS STANDARD",
+        income={"threshold_rule": "psid_census_needs_standard"},
+    ),
+    TrackURow(
+        "U9",
+        "mortality",
+        "SSA period life table for 2004",
+        income={"mortality_basis": "ssa_period_2004"},
+    ),
+    TrackURow(
+        "U10",
+        "threshold",
+        "Census size-by-related-children matrix (65+ rows for sizes 1 "
+        "and 2)",
+        income={"threshold_rule": "census_matrix_65plus"},
+    ),
+)
+
+
+def _on_fallback(row: TrackURow) -> TrackURow:
+    """``row``'s field and value on U0-F's population (its -F row)."""
+
+    return TrackURow(
+        FALLBACK_ALTERNATIVES[row.row_id],
+        row.field_changed,
+        f"{row.description}, on U0-F's population (birth years 1941, "
+        "1943 and 1945)",
+        age67={**dict(row.age67), "row": FALLBACK_ROW},
+        income=dict(row.income),
+        awaiting=_FALLBACK_AWAITING,
+    )
+
+
 REGISTERED_ROWS: dict[str, TrackURow] = {
     row.row_id: row
     for row in (
-        TrackURow(
-            "U0",
-            "-",
-            "primary: exact age (odd birth years 1937-1945 at 67), family "
-            "unit, reported asset income replaced by the annuity, Census "
-            "weighted-average 65+ thresholds, SSI offset for existing "
-            "recipients",
-        ),
-        TrackURow(
-            "U1",
-            "population",
-            "all ten birth years: even birth years at 66 and 68 with half "
-            "weight each, 1936 at 68 only",
-            age67={"row": "U1"},
-        ),
-        TrackURow(
-            "U2",
-            "SSI",
-            "no SSI response",
-            income={"ssi_rule": "none"},
-        ),
-        TrackURow(
-            "U3",
-            "SSI",
-            "full static SSI recomputation (the largest SSI response of "
-            "the three registered rules, not a bound on DYNASIM's "
-            "simulation)",
-            income={"ssi_rule": "full_static_recomputation"},
-        ),
-        TrackURow(
-            "U4",
-            "income unit",
-            "head and wife income only",
-            income={"income_unit": "head_wife"},
-        ),
-        TrackURow(
-            "U5",
-            "asset income",
-            "keep reported asset income and add the annuity",
-            income={"asset_income_rule": "keep"},
-        ),
-        TrackURow(
-            "U6",
-            "cut (on U1)",
-            "U1 with the 1936 birth year uncut if the cut starts in 2004 "
-            "(the cut reaches an observation only when its member turns 67 "
-            "in or after 2004)",
-            age67={"row": "U1"},
-            income={"cut_start_year": 2004},
-            awaiting=(
-                "Max, plan section 10 decision 8 (the scenario's start "
-                "year; the scorecard's 'from 2004' has no readable source)"
-            ),
-        ),
-        TrackURow(
-            "U0-F",
-            "population",
-            "U0 restricted to the birth years 1941, 1943 and 1945 (the "
-            "blocked 1937 and 1939 left out and counted); the headline when "
-            "the 2005 and 2007 wealth supplements are not staged before "
-            "the #42 registration",
-            age67={"row": FALLBACK_ROW},
-            awaiting=(
-                "Max (the fallback rule, with plan section 10 decision 3)"
-            ),
-        ),
-        TrackURow(
-            "U7",
-            "financial assets",
-            "WEALTH1 plus employer DC balances",
-            built=False,
-            not_built_reason=(
-                "needs a label investigation of the PSID P-section pension "
-                "account items (plan section 4); not built"
-            ),
-        ),
-        TrackURow(
-            "U8",
-            "threshold",
-            "PSID CENSUS NEEDS STANDARD",
-            income={"threshold_rule": "psid_census_needs_standard"},
-        ),
-        TrackURow(
-            "U9",
-            "mortality",
-            "SSA period life table for 2004",
-            income={"mortality_basis": "ssa_period_2004"},
-        ),
-        TrackURow(
-            "U10",
-            "threshold",
-            "Census size-by-related-children matrix (65+ rows for sizes 1 "
-            "and 2)",
-            income={"threshold_rule": "census_matrix_65plus"},
-        ),
-        TrackURow(
-            "U-inst",
-            "universe",
-            "add persons in institutions (sequence 51-59) with the "
-            "family-of-record income rule",
-            age67={
-                "presence": "in_family_or_institution",
-                "institution_income_rule": "family_of_record",
-            },
-            awaiting=(
-                "the specification freeze (the institution income rule is "
-                "a builder default of u1-draft-3, not yet refereed)"
-            ),
+        *_BASE_ROWS,
+        *(
+            _on_fallback(row)
+            for row in _BASE_ROWS
+            if row.row_id in FALLBACK_ALTERNATIVES
         ),
     )
 }

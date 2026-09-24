@@ -572,8 +572,10 @@ def institution_record_counts(inputs: age67.Age67Inputs) -> dict[str, Any]:
     (51-59) attached to a responding family, and among the families with
     at least one such record, how many have ``# IN FU`` equal to the
     in-family count alone and how many equal to the in-family count plus
-    the institution records.  This checks the U-inst rule's reading that
-    ``# IN FU`` does not count institutionalized members.
+    the institution records.  This checks the reading of the unregistered
+    ``family_of_record`` institution rule (row U-inst, withdrawn in
+    u1-draft-5) that ``# IN FU`` does not count institutionalized
+    members.
     """
 
     out: dict[str, Any] = {}

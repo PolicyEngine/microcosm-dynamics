@@ -33,13 +33,14 @@ comment exists, at exactly the commit that comment registers:
   wealth supplements are staged, adjudicated and read, U0-F otherwise);
   a mismatch means the staging changed after registration and the run
   refuses (a new registration is needed).  Rows that need a wave without
-  WEALTH1 are reported as blocked with their counts.
+  WEALTH1 are reported as blocked with their counts; the -F alternatives
+  on U0-F's population are computed in either staging state.
 
 The artifact publishes regardless of outcome.  It never reads the sealed
 comparator; the seal is opened only after this artifact is committed.
 
 As of this script's writing none of these preconditions holds: the
-specification is a draft (``u1-draft-4``), Max has not ruled on exercise
+specification is a draft (``u1-draft-5``), Max has not ruled on exercise
 2 (cos decision d189) or on the fallback rule, the Census thresholds are
 not captured (d194) and the 2005/2007 wealth supplements are not staged.
 

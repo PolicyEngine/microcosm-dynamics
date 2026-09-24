@@ -8,7 +8,8 @@ and field F17).  The Track U layer itself lives in
 :mod:`populace_dynamics.estimates.uniform_cut_tabulation`; this package
 composes it:
 
-* :mod:`.rows` -- the registered rows (U0-U10, U-inst) as builder and
+* :mod:`.rows` -- the registered rows (U0-U5, U0-F, U7-U10 and the -F
+  alternatives U2-F ... U10-F on U0-F's population) as builder and
   income-concept parameters, checked against the specification block;
 * :mod:`.invented` -- the INVENTED age-67 cohort generator and the
   INVENTED threshold table (dry runs and tests only);

@@ -30,7 +30,13 @@ def _rows() -> pd.DataFrame:
             "family_unit_id": [10, 10, 20, 30, 40],
             "weight": [1.0, 1.0, 2.0, 4.0, 2.0],
             "sex": ["male", "female", "female", "male", "female"],
-            "married": [True, True, False, False, False],
+            "marital_status_4": [
+                "married",
+                "married",
+                "widowed",
+                "divorced",
+                "unclassified",
+            ],
             "birth_year": [1941, 1943, 1941, 1945, 1945],
             "stratum": [1, 1, 1, 2, 2],
             "cluster": [1, 1, 2, 1, 2],
@@ -69,29 +75,125 @@ def test_rates_and_changes_by_hand():
         "men": (0.0, 80.0, 80.0),
         # women o2, o3, o5: W = 5; B: 2 -> 40; R: 1 + 2 -> 60
         "women": (40.0, 60.0, 20.0),
+        # married o1, o2: W = 2; R: o2 (1) -> 50
         "married": (0.0, 50.0, 50.0),
-        # non-married o3, o4, o5: W = 8; B 2 -> 25; R 6 -> 75
-        "non_married": (25.0, 75.0, 50.0),
+        # widowed o3: W = 2, poor in both
+        "widowed": (100.0, 100.0, 0.0),
+        # divorced o4: W = 4, poor after the cut only
+        "divorced": (0.0, 100.0, 100.0),
         "men_married": (0.0, 0.0, 0.0),
-        "men_non_married": (0.0, 100.0, 100.0),
+        "men_divorced": (0.0, 100.0, 100.0),
         "women_married": (0.0, 100.0, 100.0),
-        "women_non_married": (50.0, 50.0, 0.0),
+        "women_widowed": (100.0, 100.0, 0.0),
         "birth_year_1941": (200 / 3, 200 / 3, 0.0),
         "birth_year_1943": (0.0, 100.0, 100.0),
         "birth_year_1945": (0.0, 400 / 6, 400 / 6),
     }
-    assert set(cells) == set(expected)
+    # o5 (female, unclassified) is in all and women but no marital cell;
+    # these cells hold nobody
+    empty = {
+        "never_married",
+        "men_widowed",
+        "men_never_married",
+        "women_divorced",
+        "women_never_married",
+    }
+    assert set(cells) == set(expected) | empty
     for name, (base, reform, delta) in expected.items():
         assert cells[name]["baseline_rate"] == pytest.approx(base), name
         assert cells[name]["reform_rate"] == pytest.approx(reform), name
         assert cells[name]["delta"] == pytest.approx(delta), name
+    for name in empty:
+        assert not cells[name]["defined"], name
+        assert cells[name]["undefined_reason"] == "empty cell"
     assert cells["all"]["n_persons"] == 5
     assert cells["all"]["n_family_units"] == 4
     assert cells["all"]["weight_total"] == 10.0
     assert cells["birth_year_1941"]["diagnostic"]
-    assert cells["men"]["scored_candidate"]
-    assert cells["men_married"]["optional"]
+    assert cells["birth_year_1941"]["role"] == "diagnostic"
+    assert cells["all"]["role"] == "headline"
+    assert cells["men"]["scored"] and cells["men"]["role"] == "scored"
+    assert cells["men_married"]["secondary"]
+    assert cells["men_married"]["role"] == "secondary"
+    assert cells["all"]["report_row"] == "Total"
+    assert cells["women_never_married"]["report_row"] == (
+        "Gender and Marital Status: Female: Never married"
+    )
+    assert cells["birth_year_1941"]["report_row"] is None
+    # unclassified members left out of each marital cell (o5, a woman)
+    assert cells["all"]["n_marital_unclassified_left_out"] is None
+    assert cells["women"]["n_marital_unclassified_left_out"] is None
+    assert cells["married"]["n_marital_unclassified_left_out"] == 1
+    assert cells["women_widowed"]["n_marital_unclassified_left_out"] == 1
+    assert cells["men_divorced"]["n_marital_unclassified_left_out"] == 0
+    assert result["input_summary"]["n_marital_unclassified"] == 1
+    assert result["input_summary"]["marital_status_4"] == {
+        "divorced": 1,
+        "married": 2,
+        "unclassified": 1,
+        "widowed": 1,
+    }
+    assert result["config"]["comparator_column"] == "1936-45"
+    assert result["config"]["unclassified_marital_cells"] == (
+        "excluded_counted"
+    )
     json.dumps(result)
+
+
+def test_cells_are_the_reports_rows():
+    """Specification section 9 (second referee S2, S3): Tables 19 and 21
+    carry 36 rows (cleared extract); fifteen are computed and the other 21
+    are named omissions."""
+
+    assert ut.DEFAULT_CELLS == (
+        "all",
+        "women",
+        "men",
+        "married",
+        "widowed",
+        "divorced",
+        "never_married",
+    )
+    assert ut.OPTIONAL_CELLS == (
+        "women_married",
+        "women_widowed",
+        "women_divorced",
+        "women_never_married",
+        "men_married",
+        "men_widowed",
+        "men_divorced",
+        "men_never_married",
+    )
+    computed = ut.DEFAULT_CELLS + ut.OPTIONAL_CELLS
+    assert set(ut.REPORT_ROWS) == set(computed) == set(ut.CELL_DEFINITIONS)
+    assert len(set(ut.REPORT_ROWS.values())) == 15
+    assert ut.REPORT_ROWS["never_married"] == "Marital Status: Never married"
+    assert ut.REPORT_ROWS["men_widowed"] == (
+        "Gender and Marital Status: Male: Widowed"
+    )
+    omitted = ut.NOT_COMPUTED_REPORT_ROWS
+    assert [len(entry["rows"]) for entry in omitted.values()] == [
+        4,
+        3,
+        4,
+        5,
+        5,
+    ]
+    assert len(computed) + sum(len(e["rows"]) for e in omitted.values()) == 36
+    assert [entry["section"] for entry in omitted.values()] == [
+        "Race/Ethnicity",
+        "Education",
+        "Labor Force Experience",
+        "Lifetime Earnings (Own)",
+        "Lifetime Earnings (Shared)",
+    ]
+    assert all(entry["reason"] for entry in omitted.values())
+    assert "not computed" not in " ".join(ut.CELL_DEFINITIONS.values())
+    # the tabulation's marital values are the cohort builder's
+    from populace_dynamics.cohorts import age67
+
+    assert ut.MARITAL_STATUSES == age67.MARITAL_STATUS_4
+    assert ut.UNCLASSIFIED == age67.UNCLASSIFIED_MARITAL_STATUS
 
 
 def test_design_standard_error_by_hand():
@@ -322,7 +424,7 @@ def test_floor_is_undefined_with_one_family_unit():
 def test_undefined_cells_are_reported_not_raised():
     rows = _rows()
     rows["sex"] = "male"
-    rows.loc[rows["married"], "weight"] = 0.0
+    rows.loc[rows["marital_status_4"].eq("married"), "weight"] = 0.0
     result = ut.tabulate_uniform_cut(
         rows, data_provenance="invented", design=_design(rows)
     )
@@ -391,6 +493,8 @@ def test_registered_real_needs_rows_built_from_psid_files(kind):
     [
         ("weight", -1.0),
         ("sex", "unknown"),
+        ("marital_status_4", "separated"),
+        ("marital_status_4", None),
         ("poor_reform", None),
         ("stratum", None),
     ],
@@ -412,7 +516,12 @@ def test_pending_decisions_name_the_config_defaults():
     assert decisions["design_se_domain"].alternatives == ("tabulated_rows",)
     assert "Q5" in decisions["design_se_domain"].default_basis
     assert decisions["cells"].default == list(config.cells)
-    assert "2(b)" in decisions["cells"].awaiting
+    assert "S2" in decisions["cells"].default_basis
+    assert "freeze" in decisions["cells"].awaiting
+    item = decisions["unclassified_marital_cells"]
+    assert item.default == config.unclassified_marital_cells
+    assert item.default == "excluded_counted"
+    assert set(ut.UNCLASSIFIED_MARITAL_CELL_RULES) == {"excluded_counted"}
 
 
 def test_config_validation():
@@ -422,3 +531,7 @@ def test_config_validation():
         ut.TabulationConfig(cells=("all", "retirees"))
     with pytest.raises(ut.UniformCutTabulationError):
         ut.TabulationConfig(floor_seeds=(0, 0))
+    with pytest.raises(ut.UniformCutTabulationError):
+        ut.TabulationConfig(cells=("all", "non_married"))
+    with pytest.raises(ut.UniformCutTabulationError):
+        ut.TabulationConfig(unclassified_marital_cells="non_married")

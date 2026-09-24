@@ -28,15 +28,22 @@ Rows (plan section 3 and fields F1-F2):
   #42 registration (a rule on staging status, never on results).
 
 Universe per wave (F2): sequence 1-20 (in a responding family) with a
-positive cross-section weight; the registered option U-inst adds
-sequence 51-59 (institution).  The PSID collects no income for an
+positive cross-section weight.  Institutionalized persons (sequence
+51-59) are outside it and counted in the dispositions.  Row U-inst, which
+added them, was withdrawn in the specification's u1-draft-5 (second
+referee, S7: none of U0's target persons was in an institution at the
+observation wave on the staged PSID).  The unregistered code option
+``presence="in_family_or_institution"`` still admits them, and
+``institution_income_rule`` (pending the freeze; no registered row reads
+it) then decides their income.  The PSID collects no income for an
 institutionalized person (the individual-file Social Security items are
-"Inap.: ... in an institution", codebook ER34137-ER34143 for 2011) and
-the plan gives them no income rule, so ``institution_income_rule`` (a
-builder default of u1-draft-3, pending the freeze and not yet refereed)
-supplies one:
+"Inap.: ... in an institution", codebook ER34137-ER34143 for 2011):
 
-* ``family_of_record`` (default): the PSID attaches an institutionalized
+* ``excluded`` (default, the second referee's Q9 answer):
+  institutionalized persons stay out of the poverty universe (a
+  disposition, ``institution_excluded_by_rule``), so the option's
+  population is U0's and only its counts differ.
+* ``family_of_record``: the PSID attaches an institutionalized
   sample member's record to the family they left (2011 User Guide,
   section 2.4) and counts it among the individual records "having the
   same family-level data" as that family (family-file codebook text for
@@ -50,9 +57,6 @@ supplies one:
   currently in the FU") is read as not counting them: a named delta.
   An institutionalized person whose interview number has no family-file
   record in that wave is a disposition, not an observation.
-* ``excluded``: institutionalized persons stay out of the poverty
-  universe (a disposition, as under the primary's universe), so U-inst
-  equals U0 in population and only its counts differ.
 
 The cross-section weight is also positive for movers-out (71-80) and
 decedents (81-89), whom neither option admits; the dispositions count
@@ -87,9 +91,20 @@ state (``unknown``) or who has no record (``no_marriage_history``) is,
 under ``relationship_code`` (default, the referee's Q7 answer), married
 and co-resident with that spouse when the member is the head with a
 co-resident legal spouse (code 20 or 90) or is the head's legal wife (20)
-or legal husband (90); otherwise non-married.  ``non_married`` classifies
-them all as non-married.  ``marital_resolution`` records the path taken
-for every observation.
+or legal husband (90); otherwise not married (``married`` false).
+``non_married`` leaves them all not married.  ``marital_resolution``
+records the path taken for every observation.
+
+Four-way marital status (``marital_status_4``, specification section 9
+after the second referee's S2): the Report's Tables 19 and 21 carry the
+marital rows Married, Widowed, Divorced and Never married (cleared
+exercise-2 definitions extract).  A member is ``married`` when
+``married`` is true (by the marriage history or by the relationship
+code), otherwise the marriage history's ``widowed``, ``divorced`` or
+``never_married``; every other state is ``unclassified`` (an unresolved
+state the relationship code does not resolve, and ``separated``, which
+arises only under ``separated_is_married=False``).  A cohabiting member
+counts under his or her legal status.
 
 Annuitant ages (``annuitant_age_source``, pending the freeze): under
 ``derived_birth_year`` (default, the referee's Q8 answer) every
@@ -151,6 +166,8 @@ __all__ = [
     "PSID_FILES",
     "ROWS",
     "TARGET_AGE",
+    "MARITAL_STATUS_4",
+    "UNCLASSIFIED_MARITAL_STATUS",
     "UNRESOLVED_MARITAL_RULES",
     "WAVES",
     "Age67Cohort",
@@ -159,6 +176,7 @@ __all__ = [
     "build_age67_cohort",
     "income_rows",
     "load_age67_inputs",
+    "marital_status_4",
     "observation_plan",
     "pending_decisions",
     "read_design_variables",
@@ -178,30 +196,48 @@ ROWS: tuple[str, ...] = ("U0", "U1", "U0-F")
 PSID_FILES = "psid_files"
 INVENTED = "invented"
 CALLER_FRAMES = "caller_frames"
-#: The income rules for an institutionalized observation (row U-inst).
+#: The income rules for an institutionalized observation under the
+#: unregistered option ``presence="in_family_or_institution"`` (row U-inst
+#: was withdrawn in u1-draft-5).
 INSTITUTION_INCOME_RULES: dict[str, str] = {
+    "excluded": (
+        "institutionalized persons stay out of the poverty universe (a "
+        "disposition); the option's population is then U0's (the second "
+        "referee's Q9 answer)"
+    ),
     "family_of_record": (
         "the family unit whose interview number the institutionalized "
         "member's record carries (the family they left): its income, "
         "wealth, size and children, with the member's own age and sex, "
-        "role ofum and no co-resident spouse (builder default, pending "
-        "the freeze; not yet refereed)"
-    ),
-    "excluded": (
-        "institutionalized persons stay out of the poverty universe (a "
-        "disposition); U-inst then equals U0 in population"
+        "role ofum and no co-resident spouse (the u1-draft-3 builder "
+        "rule; unregistered)"
     ),
 }
+#: The Report's marital rows (Tables 19 and 21, "Marital Status": Married,
+#: Widowed, Divorced, Never married; cleared exercise-2 definitions
+#: extract), as the values of ``marital_status_4``.
+MARITAL_STATUS_4: tuple[str, ...] = (
+    "married",
+    "widowed",
+    "divorced",
+    "never_married",
+)
+#: ``marital_status_4`` of a member none of the Report's marital rows
+#: holds (specification section 9).
+UNCLASSIFIED_MARITAL_STATUS = "unclassified"
 #: How a member whose marriage history cannot resolve the state is
 #: classified.
 UNRESOLVED_MARITAL_RULES: dict[str, str] = {
     "relationship_code": (
         "married and co-resident when the member is the head with a "
         "co-resident legal spouse (code 20 or 90) or is the head's legal "
-        "wife (20) or legal husband (90); otherwise non-married (the "
-        "referee's Q7 answer)"
+        "wife (20) or legal husband (90); otherwise not married, with "
+        "marital_status_4 'unclassified' (the referee's Q7 answer)"
     ),
-    "non_married": "every unresolved member is non-married",
+    "non_married": (
+        "every unresolved member is not married (marital_status_4 "
+        "'unclassified')"
+    ),
 }
 #: Where an annuitant's age comes from.
 ANNUITANT_AGE_SOURCES: dict[str, str] = {
@@ -313,7 +349,7 @@ class Age67Spec:
     seed_wave_rule: str = "earliest_presence_wave"
     unresolved_marital_status: str = "relationship_code"
     annuitant_age_source: str = "derived_birth_year"
-    institution_income_rule: str = "family_of_record"
+    institution_income_rule: str = "excluded"
 
     def __post_init__(self) -> None:
         if self.row not in ROWS:
@@ -367,8 +403,13 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
             "presence",
             spec.presence,
             ("in_family_or_institution",),
-            "plan F2 (U-inst adds institutions; no income rule exists "
-            "for them)",
+            "plan F2; row U-inst (institutions admitted) was withdrawn in "
+            "u1-draft-5 (second referee, boomers2004-referee-2-20260924.md, "
+            "S7 and Q9): on the staged PSID none of U0's or U0-F's target "
+            "persons was in an institution at the observation wave, and the "
+            "Census cannot determine poverty status for people in "
+            "institutional group quarters; the alternative is an "
+            "unregistered code option",
             freeze,
         ),
         psid2010.PendingDecision(
@@ -409,8 +450,9 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
             "history'); the relationship code decides (married and "
             "co-resident as head with a co-resident legal spouse, 20 or "
             "90, or as the head's legal wife, 20, or legal husband, 90), "
-            "otherwise non-married; the draft-2 rule classified them all "
-            "as non-married",
+            "otherwise not married (marital_status_4 'unclassified', left "
+            "out of the marital cells, specification section 9); the "
+            "draft-2 rule left them all not married",
             freeze,
         ),
         psid2010.PendingDecision(
@@ -429,17 +471,15 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
         psid2010.PendingDecision(
             "institution_income_rule",
             spec.institution_income_rule,
-            ("excluded",),
-            "builder default (u1-draft-3), not yet refereed (the first "
-            "referee pass reviewed u1-draft-2, which had no rule): plan F2 "
-            "adds institutions under U-inst but gives them no income rule "
-            "and the PSID collects none for them; the PSID attaches an "
-            "institutionalized member's record to the family they left "
-            "(2011 User Guide section 2.4), so the observation takes that "
-            "family's income concept and threshold (the member's own "
-            "income is missing and the family's size does not count them: "
-            "a named delta). Applies only under presence "
-            "in_family_or_institution",
+            ("family_of_record",),
+            "second referee's Q9 answer (boomers2004-referee-2-20260924.md): "
+            "institutionalized persons stay out of the universe; "
+            "family_of_record (the u1-draft-3 builder rule: the family the "
+            "member left, 2011 User Guide section 2.4, without the member's "
+            "own income, which the PSID does not collect) would measure a "
+            "family's poverty and assign it to someone its size and income "
+            "leave out.  Used by no registered row (U-inst withdrawn, S7); "
+            "applies only under presence in_family_or_institution",
             freeze,
         ),
     )
@@ -974,6 +1014,24 @@ def _resolve_by_relationship(
     return "unresolved_non_married", pd.NA
 
 
+def marital_status_4(marital_status: str, married: bool) -> str:
+    """The member's row among the Report's four marital rows, if any.
+
+    ``married`` when ``married`` is true (by the marriage history, or by
+    the relationship code under ``unresolved_marital_status``); the
+    marriage history's ``widowed``, ``divorced`` or ``never_married``
+    otherwise; :data:`UNCLASSIFIED_MARITAL_STATUS` for every other state
+    (an unresolved ``unknown`` or ``no_marriage_history`` state, and
+    ``separated``, which arises only under ``separated_is_married=False``).
+    """
+
+    if married:
+        return "married"
+    if marital_status in MARITAL_STATUS_4[1:]:
+        return str(marital_status)
+    return UNCLASSIFIED_MARITAL_STATUS
+
+
 def _annuitant_age(
     pid: int | None,
     income_year: int,
@@ -1017,13 +1075,14 @@ def build_age67_cohort(
     ``sequence``, ``relationship``, ``member_role``, ``stratum``,
     ``cluster``, ``marital_status``, ``marital_resolution``
     (``marriage_history`` or the path an unresolved state took),
-    ``married``, ``spouse_person_id``, ``member_married_coresident``,
+    ``married``, ``marital_status_4`` (:func:`marital_status_4`),
+    ``spouse_person_id``, ``member_married_coresident``,
     ``spouse_age``, ``spouse_age_source``, ``spouse_sex``,
     ``fu_legal_wife_present``, ``wife_sex``, the head and the head's legal
     spouse (``fu_head_person_id``, ``fu_head_age``,
     ``fu_head_age_source``, ``fu_head_sex``, ``fu_head_spouse_present``,
-    ``fu_head_spouse_person_id``, ``fu_head_spouse_age``,
-    ``fu_head_spouse_age_source``, ``fu_head_spouse_sex``; ages are
+    ``fu_head_spouse_person_id``, ``fu_head_spouse_relationship`` (20 or
+    90), ``fu_head_spouse_age``, ``fu_head_spouse_age_source``, ``fu_head_spouse_sex``; ages are
     income-year ages under ``annuitant_age_source``), ``wealth_status``,
     ``in_institution`` and ``income_status`` (``family_file`` for a member
     of the family unit, ``family_of_record`` for an institutionalized
@@ -1139,7 +1198,9 @@ def build_age67_cohort(
                     continue
             disposition_rows.append({**base, "disposition": "observation"})
             family_rows = by_family.get(interview)
-            head, head_spouse, _ = _head_and_legal_spouse(family_rows)
+            head, head_spouse, head_spouse_code = _head_and_legal_spouse(
+                family_rows
+            )
             if pid in episodes:
                 state = psid2010.marital_state_at(
                     episodes[pid],
@@ -1248,6 +1309,9 @@ def build_age67_cohort(
                     "marital_status": state["status"],
                     "marital_resolution": resolution,
                     "married": bool(married),
+                    "marital_status_4": marital_status_4(
+                        state["status"], bool(married)
+                    ),
                     "spouse_person_id": spouse,
                     "member_married_coresident": bool(coresident),
                     "spouse_age": spouse_age,
@@ -1264,6 +1328,9 @@ def build_age67_cohort(
                     "fu_head_spouse_present": head_spouse is not None,
                     "fu_head_spouse_person_id": (
                         pd.NA if head_spouse is None else head_spouse
+                    ),
+                    "fu_head_spouse_relationship": (
+                        pd.NA if head_spouse_code is None else head_spouse_code
                     ),
                     "fu_head_spouse_age": head_spouse_age,
                     "fu_head_spouse_age_source": head_spouse_age_source,
@@ -1296,6 +1363,7 @@ def build_age67_cohort(
             "fu_head_person_id",
             "fu_head_age",
             "fu_head_spouse_person_id",
+            "fu_head_spouse_relationship",
             "fu_head_spouse_age",
         ):
             observations[column] = observations[column].astype("Int64")
@@ -1426,6 +1494,44 @@ def _counts(series: pd.Series) -> dict[str, int]:
     }
 
 
+def _legal_husband_counts(
+    rows: pd.DataFrame, fam: pd.DataFrame
+) -> dict[str, int | None]:
+    """Counts for observations whose head has a legal husband (code 90).
+
+    ``wife_age_present`` counts those whose family records an ``AGE OF
+    WIFE`` (not 0, "no Wife/'Wife' in FU"): the U4 unit size is the member
+    plus a co-resident wife (``wife_present``), so it shows whether the
+    family file carries the legal husband in its "wife" fields.
+    """
+
+    husband = (
+        rows["fu_head_spouse_relationship"]
+        .eq(_LEGAL_HUSBAND)
+        .fillna(False)
+        .to_numpy(dtype=bool)
+    )
+    fam_h = fam.loc[husband]
+
+    def count(column: str, test: Any) -> int | None:
+        return int(test(fam_h[column]).sum()) if column in fam_h else None
+
+    return {
+        "n_observations": int(husband.sum()),
+        "n_member_is_head": int(
+            (husband & rows["member_role"].eq("head").to_numpy()).sum()
+        ),
+        "n_member_is_the_husband": int(
+            (
+                husband & rows["relationship"].eq(_LEGAL_HUSBAND).to_numpy()
+            ).sum()
+        ),
+        "wife_age_present": count("wife_present", lambda s: s.astype(bool)),
+        "wife_labor_income_nonzero": count("wife_labor", lambda s: s != 0),
+        "wife_social_security_nonzero": count("wife_ss", lambda s: s != 0),
+    }
+
+
 def structural_summary(
     cohort: Age67Cohort, inputs: Age67Inputs
 ) -> dict[str, Any]:
@@ -1482,6 +1588,12 @@ def structural_summary(
             ),
             "marital_status": _counts(rows["marital_status"]),
             "marital_resolution": _counts(rows["marital_resolution"]),
+            # Specification section 9 (u1-draft-5): the Report's four
+            # marital rows, and by sex.
+            "marital_status_4": _counts(rows["marital_status_4"]),
+            "sex_by_marital_status_4": _counts(
+                rows["sex"].astype(str) + ":" + rows["marital_status_4"]
+            ),
             "spouse_age_source": _counts(rows["spouse_age_source"]),
             "fu_head_age_source": _counts(rows["fu_head_age_source"]),
             "fu_head_spouse_present": _counts(rows["fu_head_spouse_present"]),
@@ -1555,6 +1667,17 @@ def structural_summary(
                     != 0
                 ).sum()
             ),
+            "family_head_annuities_nonzero": int(
+                (fam["head_annuities"] != 0).sum()
+            ),
+            "family_head_iras_nonzero": (
+                int((fam["head_iras"] != 0).sum())
+                if "head_iras" in fam
+                else None
+            ),
+            # Question 11 (u1-draft-5): the family file's "wife" fields
+            # where the head's legal spouse is a legal husband (code 90).
+            "head_legal_husband": _legal_husband_counts(rows, fam),
             "family_farm_income_nonzero": int((fam["head_farm"] != 0).sum()),
             "family_farm_income_negative": int((fam["head_farm"] < 0).sum()),
             "social_security_accuracy_nonzero": (

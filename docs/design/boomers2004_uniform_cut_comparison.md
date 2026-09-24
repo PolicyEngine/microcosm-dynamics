@@ -1,15 +1,17 @@
 # Boomers 2004 uniform cut comparison: specification for DynaSim scorecard exercise 2
 
-- **Status:** draft for the referee. Nothing here is ratified. One
-  referee pass is recorded (§17); this draft applies it and awaits a
-  second pass on what the first did not see. Max has not ruled on
-  exercise 2 (cos decision d189, open, default "yes to Track U with the
-  proposed SSI rule; downloads needed from Max") or on the fallback rule
-  (§11). Every choice that awaits him or the specification freeze is an
-  explicit parameter in the code with the recommended default, and §16
-  lists them.
+- **Status:** draft for the referee. Nothing here is ratified. Two
+  referee passes are recorded (§17). The first was applied in
+  `u1-draft-4`; this draft applies the second, whose verdict was that the
+  draft is ratifiable after nine required changes (S1–S9, §17.3). No
+  independent check of this draft's application of them has been made
+  yet. Max has not ruled on exercise 2 (cos decision d189, open, default
+  "yes to Track U with the proposed SSI rule; downloads needed from
+  Max") or on the fallback rule (§11). Every choice that awaits him or
+  the specification freeze is an explicit parameter in the code with the
+  recommended default, and §16 lists them.
 - **Specification:** `boomers2004_uniform_cut_exercise2`, version
-  `u1-draft-4`, drafted 2026-09-24. §19 is the changelog.
+  `u1-draft-5`, drafted 2026-09-24. §19 is the changelog.
 - **Plan item:** U1 of the Track U plan,
   `EVID/critical-path-uniform-cut-20260923.md` (§7 fields F1–F17, §8
   work items), where `EVID` =
@@ -32,7 +34,7 @@
   the range `EVID/RESTRICTED-FILES.md` clears; the page mapping (printed
   *n* = PDF *n* + 1) was checked from the footer digits of PDF pages 20
   and 25 alone. Statements checked there now cite the Report page. No
-  lane opened printed page 25 or later for this draft, any results table
+  lane opened printed page 25 or later for `u1-draft-4`, any results table
   of the Report, the exercise-2 or COLA comparator directories, any
   comparator seal or reconciliation file, the Track A comparison memo,
   the issue #42 result comments, or page 3 or later of the Urban 2010
@@ -40,11 +42,23 @@
   disclosed or used: a qualitative fragment of printed page 41 (late
   boomers; no number; no exercise-2 cell), shown when the plan mapped
   page numbers (plan §14), and the plan's reading of printed page 25
-  (reporting splits, 2003 dollars). `RESTRICTED-FILES.md` names printed
-  pp. 19–24 as the readable methods range, so page-25 readings are cited
-  here only where another readable source confirms them (the cells now
-  cite the list of appendix tables). §18 lists what this draft read and
-  what it did not verify.
+  (reporting splits, 2003 dollars). `RESTRICTED-FILES.md` now clears
+  printed p. 25 layout lines 1–6 (the end of the Sample Criteria
+  subsection), and the cleared extract quotes them; both page-25 facts
+  come from those lines, and this draft cites them there. For
+  `u1-draft-5` the builder also read the cleared exercise-2 definitions
+  extract (SHA-256
+  `a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384`),
+  which `RESTRICTED-FILES.md` lists as cleared for builders; statements
+  taken from it cite the Report page it quotes and say "cleared extract",
+  and the builder opened none of those pages (nor any page of the Report
+  PDF for this draft). When the second referee wrote, no values scan of
+  the extract was recorded (`RESTRICTED-FILES.md`, 2026-09-24 14:35).
+  As re-read during this pass, `RESTRICTED-FILES.md` lists the extract
+  as having passed the validation lane's values scan with 0 genuine leaks
+  at this hash, citing a changelog entry for 2026-09-24 16:10 that the
+  file did not yet hold. §18 lists what this draft read and what it did
+  not verify.
 
 ## 1. Target
 
@@ -55,8 +69,12 @@ Institute #2004-05, May 2004):
 - **Tables:** 19, "Adjusted Poverty Rates at Age 67", and 21, "Adjusted
   Poverty Rates at Age 67, Assuming 13 Percent Reduction in Social
   Security Benefits" (list of tables, printed p. 5). The comparator is
-  the change from Table 19 to Table 21. Which rows those tables carry is
-  unknown to this builder (plan §10, decision 2(b)).
+  the change from Table 19 to Table 21 in the column headed "1936-45"
+  under "Birth Cohort". Both tables carry the same 36 data rows (a Total
+  row and 35 subgroup rows under eight section headers) and print every
+  cell as a whole number (cleared exercise-2 definitions extract,
+  `EVID/exercise2-definitions-cleared-20260924.md`, SHA-256
+  `a3978b68…0384`, "cleared extract" below). §9 maps the rows to cells.
 - **Cohort:** persons born 1936–1945 ("near-retirees"), each analysed
   when they reach 67 (p. 24).
 - **Model:** DYNASIM, from a sample of about 100,000 individuals from the
@@ -67,10 +85,18 @@ Institute #2004-05, May 2004):
   each individual's income and wealth are the household's, including the
   spouse's if married (p. 24). The income resources projected at 67
   include earnings, SSI and co-resident income, meaning income of
-  non-spouse co-resident family members (p. 19). Whether co-residents
-  count in family size is not stated in pp. 19–24. The Report's income
-  differs from Census money income by imputing income from financial
-  assets as the real (price-indexed) annuity that 80 percent of those
+  non-spouse co-resident family members (p. 19). Results are reported
+  separately for married and non-married individuals and for men and
+  women, in 2003 dollars (p. 25, lines 1–6, cleared extract). Whether
+  co-residents count in family size is not stated anywhere in the
+  Report, nor whether their income enters the adjusted-poverty income: it
+  is part of total income (p. 31) and excluded from replacement-rate
+  income (p. 36; Table 13, note a), both as quoted in the cleared
+  extract. Imputed rent is excluded from the income used for poverty
+  rates (fn. 17, p. 31, cleared extract), as it is here. The Report's
+  income differs from Census money income by imputing income from
+  financial assets as the real (price-indexed) annuity that 80 percent of
+  those
   assets would buy (p. 24), recalculated each year, with a 50 percent
   survivor annuity for married couples (fn. 10). The Census measure, by
   contrast, counts interest and dividends, and counts retirement-account
@@ -87,20 +113,30 @@ Institute #2004-05, May 2004):
   65-and-over poverty threshold" (p. 24).
 - **Cut:** a 13 percent reduction in Social Security benefits: OCACT
   "estimates that benefits would need to be reduced immediately by 13
-  percent" (p. 22, citing the 2003 Trustees Report). Its start year,
-  coverage, SSI treatment and any behavioural response are not in
-  pp. 19–24 (plan §10, decisions 2 and 8).
+  percent" (p. 22, citing the 2003 Trustees Report). The scenario assumes
+  "that current and future benefits would be cut immediately (beginning
+  in 2004) by 13 percent" and "no behavioral response to cuts in Social
+  Security benefits" (p. 37 and its fn. 19, as quoted in the cleared
+  extract; this builder did not open that page). The Report gives no
+  month within 2004 and does not say which benefit types the cut covers
+  or whether SSI is recomputed (cleared extract, "Things this extract
+  does not settle").
 
 The comparator values are sealed on the comparator side. This builder
-has not seen them and does not know which cells they cover.
+has not seen them; it knows the tables' labels, notes and printed
+precision only from the cleared extract.
 
 ## 2. Sources
 
 | Source | Use | Status |
 |---|---|---|
 | Plan, `critical-path-uniform-cut-20260923.md` | Every field proposal (§7) | Read in full |
-| The Report: table of contents, lists of tables and appendix tables (PDF pp. 5–7); Section III, printed pp. 19–24 (PDF pp. 20–25) | §1, §4, §5 citations (u1-draft-4) | Read; nothing later |
+| The Report: table of contents, lists of tables and appendix tables (PDF pp. 5–7); Section III, printed pp. 19–24 (PDF pp. 20–25) | §1, §4, §5 citations (u1-draft-4) | Read for `u1-draft-4`, nothing later; no page of the PDF was opened for `u1-draft-5` |
+| Cleared exercise-2 definitions extract (`EVID/exercise2-definitions-cleared-20260924.md`, SHA-256 `a3978b68…0384`) | Row and column labels and printed precision of Tables 19 and 21; the cut's start year and behaviour; the income-measure statements (§1, §7, §9, §10a, §12) | Read in full; the only source for Report pages beyond PDF pp. 5–7 and 20–25 and printed p. 25 lines 1–6 |
 | Referee report `EVID/boomers2004-referee-20260924.md` | §17 | Read in full; every required change checked against its source |
+| Second referee report `EVID/boomers2004-referee-2-20260924.md` (SHA-256 `2113ba9b…d5af2`) | §17.3 | Read in full; S1–S9 checked against their sources before they were applied |
+| PSID 1968 family-file codebook (`psid-data/family/1968/fam1968_codebook.pdf`) | The PSID's first income year, 1967 (V74, "1967 Income from Labor - HEAD"), for the lifetime-earnings omission (§9) | Read for that entry (its whole-sample frequency counts were seen and not used) |
+| Census Bureau, "Poverty measures" guidance page (census.gov, fetched 2026-09-24) | "Poverty status cannot be determined for people in: Institutional group quarters (such as prisons or nursing homes)" (§11, U-inst withdrawn) | Read for that sentence |
 | PSID family files 2005–2013 (`psid-data/family/<wave>/FAM<wave>ER.*`) | Family income components, Social Security, SSI, asset income, the head's annuity and IRA income, farm income, FU composition, PSID's needs standard; WEALTH1 in 2009–2013 | Staged; labels verified by `data/family_income.py`; codebook entries for `HEAD ANNUITIES`, `HEAD IRAS`, `WIFE RETIREMENT/ANNUITIES`, `OTHER FU MEMBR RETIREMENT/ANNUITIES`, ER52214, ER52216, ER52368 and W21, W33 read |
 | PSID wealth supplements 2005 and 2007 | WEALTH1 for the 1937 and 1939 birth years (U0) and six U1 observation cells | **Not staged.** The reader refuses with the missing files named (§3) |
 | PSID cross-year individual file (`ind2023er`) | Anchors per wave, cross-section weights, relationship to head, age, sampling-error stratum and cluster | Staged; labels verified by `cohorts/age67.py`, including relationship code 90 ("Legal husband of Head") |
@@ -148,11 +184,11 @@ U0-F is the headline, by staging status only.
 **Universe per wave (F2).** Sequence 1–20 (in a responding family) and a
 positive core/immigrant cross-section weight. The cross-section weight
 is also positive for movers-out (71–80) and decedents (81–89); no row
-admits them and the dispositions count them. Registered row U-inst adds
-sequence 51–59 (institutions).
+admits them and the dispositions count them. Institutionalized persons
+(sequence 51–59) are outside the universe too and counted in the
+dispositions; row U-inst, which admitted them, is withdrawn (§11).
 
-**Institution income rule (U-inst; builder default of `u1-draft-3`,
-pending the freeze, not yet refereed).** The plan gives
+**Institution income rule (code option, not registered).** The plan gives
 institutionalized persons no income rule, and the PSID collects no
 income for them: the individual-file Social Security items are "Inap.:
 … in an institution" (codebook, ER34137–ER34143 for 2011). The PSID does
@@ -161,21 +197,25 @@ institution it "attaches an institutional status data record to the
 family they left" (2011 User Guide, §2.4), and the family file's
 record-count variable counts "any institutionalized individuals
 associated with the family" among the records "having the same
-family-level data". The default `institution_income_rule =
-family_of_record` therefore gives an institutionalized observation the
-family unit whose interview number its record carries: that family's
+family-level data". The option `institution_income_rule =
+family_of_record` (the `u1-draft-3` builder rule) gives an
+institutionalized observation the family unit whose interview number its
+record carries: that family's
 income concept, wealth, size, children and threshold, and (under
 `fu_head_rule`, §5) that family's annuity. Its role is OFUM: the
 relationship code of a person in an institution is to the previous
 wave's head (codebook note on ER34103), so it is neither the current
 head nor the wife, and it has no co-resident spouse. The member's own
 income is missing from the family's, and `# IN FU` ("the actual number
-of persons currently in the FU") does not count them (§14). Both are
-named deltas (§12). An institutionalized person whose interview number
-has no family-file record that wave is a disposition
-(`institution_family_of_record_missing`). The alternative `excluded`
-keeps institutionalized persons out of the universe (disposition
-`institution_excluded_by_rule`), which makes U-inst's population U0's.
+of persons currently in the FU") does not count them (§14); both would
+be named deltas of the option. An institutionalized person whose
+interview number has no family-file record that wave is a disposition
+(`institution_family_of_record_missing`). The code's default is now
+`excluded` (the second referee's Q9 answer, §17.3): institutionalized
+persons stay out of the universe (disposition
+`institution_excluded_by_rule`), so the presence option
+`in_family_or_institution` then has U0's population. No registered row
+reads the rule.
 
 **Birth year.** `estimates.career.derive_birth_years` (the first-estimates
 §3.1 law, as Track A uses), total over the union of the five waves'
@@ -200,9 +240,10 @@ basis, and the F17 summaries do not identify his own Social Security),
 although the annuity (§5) and the marital resolution below treat him as
 the head's legal spouse; 2 of the 483 U0 observations and 4 of the 1,349
 U1 observations are code-90 husbands (a structural count made in the
-independent review of this draft; question 11); marital status at the
+independent review of `u1-draft-4`; question 11); marital status at the
 end of the income year from the marriage history (F12; separated counts
-as married); whether a legal
+as married) and the four-way status of §9 (`marital_status_4`: married,
+widowed, divorced, never married or unclassified); whether a legal
 spouse lives in the same family unit, and the spouse's age and sex; the
 family head and the head's co-resident legal spouse (code 20 or 90),
 with their ages and sexes (the annuitants of §5); and the sampling-error
@@ -212,9 +253,12 @@ date the state (`unknown`), or who has no marriage-history record
 `unresolved_marital_status="relationship_code"` (pending the freeze;
 referee Q7): married and co-resident when the member is head (10) with a
 co-resident legal spouse (20 or 90), or is the head's legal wife (20) or
-legal husband (90); otherwise non-married. The alternative `non_married`
-classifies them all as non-married (the `u1-draft-3` rule). Each
-resolution path is counted (`marital_resolution`). The marital pairs
+legal husband (90); otherwise the state stays unresolved: not married,
+with four-way status `unclassified`, in no marital cell (§9). The
+alternative `non_married` leaves them all unresolved (the `u1-draft-3`
+rule, under which they counted as non-married). Each resolution path is
+counted (`marital_resolution`; its label `unresolved_non_married` means
+not married and unclassified). The marital pairs
 indicator of the individual file is not used. An institutionalized
 member is never resolved by code: its relationship code is to the
 previous wave's head.
@@ -236,11 +280,11 @@ marriage-history birth years, and 35 have an unresolved marital state
 (26 `no_marriage_history`, 9 `unknown`), which `u1-draft-1` counted as
 non-married.
 
-Recollected under this draft's rules (the same script, evidence
+Recollected under `u1-draft-4`'s rules (the same script, evidence
 `EVID/track-u-structure-u1d4-20260924/`, counts only): the observation
 counts are unchanged, and U0-F has 320 observations. Of the 35
 unresolved U0 states, 1 resolves by relationship code (a head with a
-co-resident legal spouse) and 34 stay non-married (U1: 3 of 98 resolve).
+co-resident legal spouse) and 34 stay unresolved (U1: 3 of 98 resolve).
 Every annuitant age (the head, the head's legal spouse and the member's
 co-resident spouse) came from a derived birth year; no wave-age fallback
 was needed. Among the 320 computable U0 observations (U0-F's), 5 belong
@@ -248,6 +292,14 @@ to families with nonzero farm income (none negative) and 18 to families
 whose head has annuity or IRA income; among U1's 857 computable
 observations, 9 and 66 (one farm loss). No income, threshold or poverty
 status was computed.
+
+Four-way marital status (§9), summed from the same evidence's
+marital-status and resolution counts: U0 has 331 married (330 by the
+marriage history, 1 by relationship code), 44 widowed, 60 divorced, 14
+never married and 34 unclassified; U0-F has 227, 17, 43, 9 and 24; U1
+has 917, 124, 164, 49 and 95. No U0 or U0-F target person was in an
+institution at the observation wave (no `not_present:institution`
+disposition); U1 has 3 (1942: 2, 1944: 1).
 
 ## 4. Income concept
 
@@ -259,7 +311,22 @@ staged files this identity holds exactly for every family in all five
 waves (`reconcile_family_income`, counts only). Row U4: head and wife
 income only (head and wife taxable and transfer income and Social
 Security), size = the member plus a co-resident wife or partner; an OFUM
-member keeps the family-unit basis.
+member keeps the family-unit basis. In code the co-resident wife or
+partner is the family file's `AGE OF WIFE` not 0 (`wife_present`), so
+for a female head whose legal spouse is a code-90 legal husband U4's
+size is 2 only where the family file records an age in the "wife" field
+for him (question 11).
+
+**Tax treatment and co-resident basis.** The primary is pre-tax (`TOTAL
+FAMILY INCOME`). The Report states tax treatment only for
+replacement-rate income ("pre-tax and post-transfer", p. 36), not for
+the adjusted-poverty income (cleared extract). The family-unit basis
+follows the Report's co-resident income (p. 19) and its Appendix Table 1
+row "Living Arrangements of the Aged", under which "resources of
+co-residing family members are imputed using donor families sampled from
+current co-residing aged individuals in SIPP" (PDF p. 75, cleared
+extract); whether that income enters the poverty measure is not stated
+(§1).
 
 **Asset income (F4).** Primary: remove the reported asset income of the
 unit and add the annuity. Removed items (family file, every wave): head
@@ -427,8 +494,11 @@ the 65-and-over rule).
 lists one spreadsheet per year, `thresh04.xlsx` … `thresh12.xlsx`, under
 `https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/`.
 The files have not been downloaded (downloads need Max's approval in
-this environment, cos decision d194). Once the nine files are staged in
-a directory, `scripts/capture_track_u_parameters.py --census-dir DIR`
+this environment, cos decision d194). d194's text names ten files,
+`thresh03.xlsx`–`thresh12.xlsx`; the income years need only the nine
+from `thresh04`, and the capture reads each year's file by name
+(`thresh04.xlsx` … `thresh12.xlsx`), so a staged `thresh03.xlsx` is not
+read. Once the nine files are staged in a directory, `scripts/capture_track_u_parameters.py --census-dir DIR`
 parses them by their printed labels, checks that the 65-and-over rows
 sit below the under-65 rows and that thresholds rise with size, records
 each file's URL, bytes and SHA-256, and writes
@@ -444,22 +514,23 @@ be assigned.
 
 **Primary (F11):** reform income subtracts 13 percent of all Social
 Security income of the unit (head, wife and OFUM amounts under the family
-basis) in the income year. No behavioural response. Every U0 income year
-is 2004 or later, so the unread start year matters only for U1's 1936
-row: row U6 (on U1) leaves 1936 uncut if the cut starts in 2004. The
-Report's methods say "reduced immediately" (p. 22); the scorecard's
-"from 2004" has no source this builder could read (plan §10, decision
-8).
-
-**Row U6 (built; the start year awaits decision 8).**
-`AdjustedPovertySpec.cut_start_year` (default `None`: every observation
-is cut) is the row's parameter. With a start year, an observation is cut
-only when its member turns 67 (birth year + 67) in or after it: the
-observation stands for the member's status at 67, so the rule keys on
-the age-67 year, not on the income year (U1 observes 1936 at 68, in
-2004). With 2004, only the 1936 birth year (67 in 2003) is uncut; its
-reform income equals its baseline, and with no fall in countable income
-the SSI rules give it no offset and no new take-up.
+basis) in the income year, for observations whose member turns 67 in
+2004 or later (`cut_start_year = 2004`, pending the freeze). No
+behavioural response (fn. 19, cleared extract). The Report cuts "current
+and future benefits … immediately (beginning in 2004)" (p. 37; also
+p. 44) and analyses each person "when they reach age 67" (p. 24), so its
+1936 birth year, 67 in 2003, is uncut at its age-67 year. The rule keys
+on the age-67 year (birth year + 67), not the income year, because each
+observation stands for the member's status at 67. Every U0 and U0-F
+observation turns 67 in 2004 or later and is cut; under U1 the 1936
+birth year, observed at 68 in income year 2004, is uncut: its reform
+income equals its baseline, and with no fall in countable income the SSI
+rules give it no offset and no new take-up. The Report gives no month
+within 2004 and does not say how DYNASIM dates a person's age-67 year
+within a calendar year. The alternative `cut_start_year = None` (every
+observation cut, the `u1-draft-4` primary) has no source and is not
+registered. Row U6 of `u1-draft-3` and `-4` is withdrawn: with 2004 as
+the primary it would equal U1.
 
 ## 8. SSI response
 
@@ -475,6 +546,13 @@ changes the fall only when (1 − c)·S is below $240 a year. The cap uses
 the federal benefit rate, but the PSID's reported SSI may include a state
 supplementary payment; where it does, the cap binds early and the offset
 is understated (named delta, §12).
+
+The Report's Appendix Table 1 row "SSI Benefits" describes DYNASIM's SSI
+module: "Eligibility is deterministic; 2 equations predict take-up of the
+aged; key predictors include demographics, state supplement, resources"
+(PDF p. 75, cleared extract). That is context for F13 and U3 only: the
+Report does not say whether the 13 percent scenario re-runs SSI (cleared
+extract, "Things this extract does not settle").
 
 - **SSI units (builder approximation):** head and wife form one unit, a
   couple unit when both receive SSI (couple FBR) and an individual unit
@@ -529,8 +607,8 @@ Deeming from an ineligible spouse: 416.1163.
 
 For cell c, with observation weights w, baseline adjusted income B,
 reform income R and threshold T (family-level under `fu_head_rule`:
-every member of a family unit gets the same B, R and T, except in rows
-U4 and U6 below):
+every member of a family unit gets the same B, R and T, except in row
+U4 and under U1 below):
 
 ```text
 P_B[c] = 100 × Σ_{i∈c} w_i·1{B_i < T_i} / Σ_{i∈c} w_i
@@ -541,21 +619,55 @@ P_R[c] = 100 × Σ_{i∈c} w_i·1{R_i < T_i} / Σ_{i∈c} w_i
 Δ is the headline; P_B and P_R are the secondary rows (the Table 19 and
 Table 21 analogues). Under row U4, head and wife members use the
 head-and-wife basis and OFUM members the family basis, so B and T differ
-by role there. Under row U6 the cut follows each member's own age-67
-year (§7), so two cohort members of one family unit can get different
-R. For example, under U1 a 1936 member observed at 68 and a 1938 member
-of the same family unit observed at 66 both have income year 2004 (wave
-2005), and with `cut_start_year = 2004` only the 1938 member's
+by role there. Under U1 the cut follows each member's own age-67 year
+(§7), so two cohort members of one family unit can get different R. For
+example, under U1 a 1936 member observed at 68 and a 1938 member of the
+same family unit observed at 66 both have income year 2004 (wave 2005),
+and with the primary's `cut_start_year = 2004` only the 1938 member's
 observation is cut.
 
-**Cells.** `all` (headline); `men`, `women`, `married`, `non_married`
-(the Report's list of appendix tables includes Appendix Table 17,
-"Adjusted Poverty Rates at Age 67, by Gender and Marital Status"; which
-of these splits Tables 19 and 21 carry is unknown, plan §10 decision
-2(b)); the four sex-by-marital cells (optional); one diagnostic cell per
-birth year (not scored). Only cells present in the sealed comparator are
-scored; the others are reported as "not in comparator". The cell list
-freezes at registration.
+**Cells.** Tables 19 and 21 carry the same 36 rows (cleared extract).
+Track U v1 computes the fifteen below in the 1936-45 column; the other
+21 are named omissions (below). Marital status is the member's state at
+the end of the income year (F12; separated counts as married).
+
+| Cell | Report row (label as printed) | Role |
+|---|---|---|
+| `all` | Total | headline |
+| `women`, `men` | Gender: Female; Male | scored |
+| `married`, `widowed`, `divorced`, `never_married` | Marital Status: Married; Widowed; Divorced; Never married | scored |
+| `women_married`, `women_widowed`, `women_divorced`, `women_never_married`, `men_married`, `men_widowed`, `men_divorced`, `men_never_married` | Gender and Marital Status: Female: Married … Male: Never married | secondary (compared and reported with n) |
+| `birth_year_<yyyy>` | none | diagnostic, not compared |
+
+A cohabiting member counts under his or her legal status. A member whose
+marital state neither the marriage history nor `unresolved_marital_status`
+(§3) resolves has no four-way status: under
+`unclassified_marital_cells = "excluded_counted"` (pending the freeze)
+the member enters `all`, `women` and `men` and no marital cell, and each
+marital cell reports how many were left out. A member resolved as
+married by relationship code is `married`. Under the unregistered
+alternative `separated_is_married = false`, a separated member is also
+unclassified. The cell list is frozen at registration. In code:
+`age67.marital_status_4` and the tabulation's `REPORT_ROWS`,
+`DEFAULT_CELLS` (headline and scored) and `OPTIONAL_CELLS` (secondary).
+
+**Report rows not computed in v1 (named omissions).** Race/Ethnicity
+(four rows), Education (three), Labor Force Experience (four), and
+Lifetime Earnings (Own) and (Shared) (five quintiles each): 21 rows.
+Track U has no reader for them, and the Report leaves parts of them
+undefined: whether "High school graduate" includes some college, the
+labor-force-experience measure, and the population over which the
+earnings quintiles are cut (cleared extract). Both lifetime-earnings
+measures average wage-indexed earnings at ages 22–62, and the own
+measure includes uncovered earnings and earnings above the taxable
+maximum (p. 26, cleared extract). The PSID does not observe earnings at
+every one of those ages for these cohorts: its first income year is
+1967 (the 1968 family file, codebook V74, "1967 Income from Labor -
+HEAD"), when the 1936–1944 birth years were already past 22, and from
+the 1999 wave it is biennial, so odd income years from 1997 on are not
+observed. The run artifact lists each omitted row with this reason as
+"not computed" (`uniform_cut_tabulation.NOT_COMPUTED_REPORT_ROWS`, the
+runner's `report_rows_not_computed`); none is imputed.
 
 **Undefined cells.** An empty cell or one with zero total weight has no
 statistic; it is reported with its reason and never imputed.
@@ -565,7 +677,7 @@ headline row (§11):
 
 - *Official-concept poverty rate* for the same sample: money income
   (TOTAL FAMILY INCOME, reported asset income kept, no annuity, no cut)
-  against the row's threshold, weighted per cell
+  against the row's threshold, weighted per headline and scored cell
   (`uniform_cut_track_u.runner.official_concept_rates`). It involves the
   threshold, so it runs only inside the registered run (and on invented
   data in the dry run), never on real data before registration.
@@ -619,15 +731,17 @@ headline row (§11):
 
 ## 10a. Comparison and acceptance
 
-- **Comparator:** for each scored cell, the Report's change from Table 19
-  to Table 21 (and, as secondary rows, the two levels), sealed on the
-  comparator side and opened only after the run artifact is committed.
+- **Comparator:** for each headline, scored and secondary cell (§9), the
+  Report's change from Table 19 to Table 21 in the "1936-45" column (and,
+  as secondary rows, the two levels), sealed on the comparator side and
+  opened only after the run artifact is committed.
 - **Gap:** our Δ minus the Report's Δ, in percentage points, per cell
   and registered row; likewise for P_B and P_R.
-- **Comparator interval:** the Report prints rates; if each is printed to
-  d decimals, each level carries ±0.5·10^−d and the printed difference
-  ±10^−d. The interval appears only in the comparison memo, never in the
-  run artifact.
+- **Comparator interval:** the Report prints every cell as a whole number
+  (cleared extract), so each printed level carries ±0.5 percentage points
+  of rounding, and the printed difference (Table 21 minus Table 19) lies
+  within 1 point of the difference of the unrounded levels. The interval
+  appears only in the comparison memo, never in the run artifact.
 - **Acceptance:** none by default (plan §10 decision 6, pending Max): the
   memo reports our value, floor, design SE, the comparator with its
   interval, and the gap, and declares no pass or fail. A rule, if any,
@@ -636,24 +750,30 @@ headline row (§11):
 
 ## 11. Registered rows
 
-Each alternative differs from U0 in one field, except U6 (defined on U1)
-and U0-F. U0 is the headline row unless the fallback rule below makes
-U0-F the headline; no row may be promoted after results exist. Every
-registered row is computed in the same one-shot run and published with
-the others. A row that is not built when the registration is posted is
+Each alternative differs from U0 (or, for the -F rows, from U0-F) in one
+field; U1 and U0-F change the population itself. U0 is the headline row
+unless the fallback rule below makes U0-F the headline; no row may be
+promoted after results exist. Every registered row is computed in the
+same one-shot run and published with the others. A row that is not built when the registration is posted is
 removed from this table and listed as a named omission.
 
 **Fallback rule (pending Max, with plan §10 decision 3).** If the 2005
 and 2007 wealth supplements are staged, adjudicated and read before the
 #42 registration is posted, U0 is the headline and U0-F an alternative;
-otherwise U0-F is the headline, and U0 and U1 are reported as blocked
-with their counts. The rule depends on staging status only. In code
+otherwise U0-F is the headline, and the rows defined on U0 or U1 are
+reported as blocked with their counts. The rule depends on staging status only. In code
 (`uniform_cut_track_u.runner.headline_row`), every row whose observation
 waves include a wave without WEALTH1 is reported as blocked with its
-counts, which under the fallback is every row except U0-F and U7: the
-one-field alternatives are defined on U0 and need 1937 and 1939 too.
-Whether they should instead follow the headline to U0-F's population is
-not decided (§16, §17). The registration comment states the headline
+counts, which under the fallback is every row defined on U0 or U1 (U0,
+U1, U2–U5 and U8–U10): they need 1937 and 1939 too. So that the
+registration carries its alternatives in either staging state, each
+one-field alternative defined on U0 is also registered on U0-F's
+population: U2-F, U3-F, U4-F, U5-F, U8-F, U9-F and U10-F (the field and
+value of U2 … U10, population `birth_years_1941_1943_1945`). Under the
+fallback the U0 versions are blocked and the -F versions computed; with
+the supplements staged both are computed. This is the recommended
+default of the pending fallback decision (§16); Max may instead keep the
+alternatives on U0 only. The registration comment states the headline
 row, and the registered run refuses when the staged PSID gives a
 different one (`scripts/run_track_u_registered.py --headline-row`).
 
@@ -665,13 +785,25 @@ different one (`scripts/run_track_u_registered.py --headline-row`).
 | U3 | SSI | Full static recomputation (the largest SSI response of the three) | Yes |
 | U4 | Income unit | Head and wife only | Yes |
 | U5 | Asset income | Keep reported asset income and add the annuity | Yes |
-| U6 | Cut (on U1) | 1936 uncut if the cut starts in 2004 (`cut_start_year = 2004`) | Yes; the start year awaits decision 8 |
 | U0-F | Population | Birth years 1941, 1943, 1945 only (the blocked 1937 and 1939 left out and counted) | Yes; the fallback rule awaits Max |
 | U7 | Financial assets | Plus employer DC balances | **No** (label investigation); must be built before registration or removed |
 | U8 | Threshold | PSID `CENSUS NEEDS STANDARD` | Yes |
 | U9 | Mortality | SSA period life table 2004 | Yes |
 | U10 | Threshold | Census size-by-children matrix | Yes (needs the capture) |
-| U-inst | Universe | Add institutions (sequence 51–59), family-of-record income rule (§3) | Yes; the rule awaits the freeze and a referee |
+| U2-F … U10-F | as U2 … U10 | on U0-F's population | Yes; with U0-F, they await the fallback rule |
+
+Institutionalized persons (sequence 51–59) are outside the universe and
+counted in the dispositions. Row U-inst of `u1-draft-3` and `-4` is
+withdrawn: on the staged PSID none of U0's or U0-F's target persons was
+in an institution at the observation wave (u1d4 structural counts,
+dispositions; U1 has 3), so U-inst would add no institutionalized
+observation, and the Census cannot determine poverty status for people
+in institutional group quarters. The `family_of_record` rule stays in the
+code as an unregistered option.
+
+Row U6 of `u1-draft-3` and `-4` (the cut's start year on U1) is
+withdrawn: the primary now starts the cut in 2004 (§7), so U6 would
+equal U1.
 
 ## 12. Named deltas
 
@@ -683,10 +815,11 @@ found while building). Each bullet is the text of
 - PSID versus SIPP wealth measurement;
 - realized 2004-2012 history versus DYNASIM's 1992-based projection, including the 2008-09 asset shock for the 1941-45 cohorts at 67;
 - realized COLAs versus 2002 Trustees assumptions;
-- immigrant under-coverage; institutionalized persons (row U-inst: the family-of-record rule assigns the family's income and threshold without the member's own income, which the PSID does not collect); attrition;
+- immigrant under-coverage; institutionalized persons are outside the universe (none of U0's target persons was in an institution at the observation wave on the staged files); attrition;
 - OFUM-owned assets inside family wealth;
 - the family's wealth stands in for an OFUM cohort member's own wealth (the Report's unit is the individual plus spouse, p. 24);
-- imputed rent excluded;
+- the Report's total income lists income from financial assets, imputed rent, Social Security, DB pensions, retirement-account income, earnings, SSI and non-spouse co-resident income (p. 31, cleared extract), and its poverty income is described only as differing from Census money income by the annuity (p. 24); the primary keeps every other PSID money-income source (veterans' pensions, unemployment and workers' compensation, TANF and other welfare, child support, alimony, help from relatives and others, miscellaneous transfers);
+- members whose marital state is unresolved (34 of U0's 483 observations, 24 of U0-F's 320, structural counts) are left out of the marital cells (§9);
 - self-reported Social Security, possibly net of Medicare Part B premiums, so the 13 percent cut applies to a smaller base than the gross benefit (baseline income is lower too; the net direction on the change is not established);
 - retirement-account income beside annuitized balances: the head's income from annuities and IRAs is removed (F4a), but the wife's (before 2013) and the OFUMs' items combine pensions with annuity income and stay, so any IRA or annuity income in them is counted twice; an annuity already in payment may have no balance in WEALTH1, so removing its income understates income;
 - employer DC (401(k)) balances outside IRAs are not in WEALTH1 though the Report counts them (p. 24): the primary annuity is understated for their holders (row U7);
@@ -700,7 +833,7 @@ found while building). Each bullet is the text of
 - SSI deeming by full attribution can only overstate the offset (so understate the change): under 20 CFR 416.1163 nothing is deemed when the ineligible spouse's income is at most the couple-minus-individual FBR;
 - the SSI test uses annual amounts against 12 times the January FBR (SSI accounting is monthly), and U3 omits rent and royalties from countable income although 20 CFR 416.1121 counts them;
 - reported SSI may include state supplementary payments, so capping the offset at the federal benefit rate less reported SSI can understate the offset;
-- U0-F, if it is the headline: mean birth year 1943 against 1940.5, and every observation year at or after the 2008-09 asset shock.
+- rows on U0-F's population (U0-F and U2-F ... U10-F): mean birth year 1943 against 1940.5, and every observation year at or after the 2008-09 asset shock.
 
 ## 13. Invented worked cases
 
@@ -727,16 +860,17 @@ Invented life table (ages 0–4): male qx 0, 0, 0.2, 0.5, 1; female qx 0,
 | SSI offset, capped (SSI 550) | min(130, 600 − 550) | +50 |
 | SSI, SS under the exclusion (SS 200) | 0 − 0 | 0 |
 | U3 new take-up (SS 900, no other income) | before 660 ≥ 600; after 543 < 600 | +57 |
-| U6, birth year 1936 (T = 1,000, SS 1,050) | primary: R = 1,050 − 136.5 = 913.5 (poor); `cut_start_year = 2004`: 1936 + 67 = 2003 < 2004, no cut, R = 1,050 | uncut |
-| U6, SSI recipient born 1936 (SS 1,000, SSI 100) | primary offset 130; uncut: no fall | 0 |
-| U-inst, member in an institution attached to family 11 | family 11's income 1,000 and WEALTH1 500; role OFUM; no co-resident spouse | assigned |
+| Cut start, birth year 1936 (T = 1,000, SS 1,050) | `cut_start_year = None`: R = 1,050 − 136.5 = 913.5 (poor); primary (2004): 1936 + 67 = 2003 < 2004, no cut, R = 1,050 | uncut |
+| Cut start, SSI recipient born 1936 (SS 1,000, SSI 100) | `cut_start_year = None`: offset 130; primary (2004): uncut, no fall | 0 |
+| Institution option (`family_of_record`, not registered), member in an institution attached to family 11 | family 11's income 1,000 and WEALTH1 500; role OFUM; no co-resident spouse | assigned |
+| Four-way status (§9): unresolved, not resolved by code; separated under `separated_is_married = false` | no marital row | unclassified |
 | F4a, head annuity and IRA income 200 (money income 1,200) | `remove_head`: B = 1,200 − 200 = 1,000; `keep`: B = 1,200 | 1,000 / 1,200 |
 | F4a, 2013 file: `HEAD ANNUITIES` 150 and `HEAD IRAS` 50 | both removed | 200 removed |
 | F4b, farm income 400 | share 0.5: remove 200; share 0: remove 0 | 200 / 0 |
 | F4b, farm loss −300 | share 0.5: remove −300 (income rises by 300); share 0: 0 | −300 / 0 |
 | Lives, OFUM woman aged 3 in a family headed by a man aged 2 and his legal wife aged 2 (WEALTH1 1,024) | `fu_head_rule`: joint 1.024, annuity 800; `member_rule`: single female 3, 0.75·0.8 = 0.6, annuity 1,365.3 | 800 / 1,365.3 |
 | Lives, female head aged 2 with a legal husband (code 90) aged 2 | joint on the head and her legal husband | 1.024 |
-| Unresolved marital state, head with a legal wife in the family | `relationship_code`: married, co-resident with the wife; `non_married`: non-married, no spouse | married / non-married |
+| Unresolved marital state, head with a legal wife in the family | `relationship_code`: married, co-resident with the wife; `non_married`: not married (four-way status unclassified), no spouse | married / unclassified |
 | Spouse age, birth year 1943 by marriage history, individual-file age 66 at the 2009 interview | income year 2008: `derived_birth_year` 65; `wave_age` 66 | 65 / 66 |
 
 Invented tabulation (five observations, weights 1, 1, 2, 4, 2): P_B = 20,
@@ -746,7 +880,12 @@ the rows occupy (two strata of two clusters each; stratum contributions
 stratum 2 and a third stratum of two clusters, none holding an
 observation: stratum 2's cluster totals become 0.2, −0.1 and 0 (mean
 1/30, contribution 1.5 × 0.04667 = 0.07), stratum 3 contributes 0, and
-the SE is 100·√0.08.
+the SE is 100·√0.08. With four-way statuses married, married, widowed,
+divorced and unclassified (the last a woman): `married` has P_B = 0 and
+P_R = 50, `widowed` 100 and 100, `divorced` 0 and 100; `never_married`
+is empty and undefined; the unclassified woman is in `all` and `women`
+and reported as left out of each marital cell (1, and 0 for the men's
+cells).
 
 F17 weighted quantile (invented values 10, 20, 30, 40 with weights 1, 1,
 1, 1): the median is the smallest value whose cumulative weight share
@@ -756,9 +895,10 @@ reaches 0.5, 20; p90 is 40.
 
 On master since #456 (merge `8d7e7431`; built on branch
 `dynamics-ex2-track-u-20260924`), continued on
-`dynamics-ex2-track-u-2-20260924` (`u1-draft-3` and this draft; not
-merged); all opt-in; registered in `POST_REVIEW_SOURCE_EXCLUSIONS` and
-the reachability guard:
+`dynamics-ex2-track-u-2-20260924` (`u1-draft-3` to this draft; not
+merged; `origin/master` at `088772f1` merged in for this draft); all
+opt-in; registered in `POST_REVIEW_SOURCE_EXCLUSIONS` and the
+reachability guard:
 
 - `src/populace_dynamics/data/family_income.py`: label-verified family
   income for waves 2005–2013 (81 items a wave, 85 in 2013, including the
@@ -767,20 +907,23 @@ the reachability guard:
   2005 and 2007 wealth supplements; reconciliation counts.
 - `src/populace_dynamics/cohorts/age67.py`: the age-67 observations for
   U0, U1 and U0-F, dispositions, the relationship-code resolution of
-  unresolved marital states, the head and head's legal spouse with their
+  unresolved marital states, the four-way marital status of §9
+  (`marital_status_4`), the head and head's legal spouse with their
   income-year ages (the birth-year law extended to in-family heads and
   spouses), provenance seal, structural summary.
 - `src/populace_dynamics/estimates/adjusted_poverty.py`: annuity prices,
   threshold lookup, SSI rules, baseline and reform income (with F4a and
   F4b), poverty status; refuses PSID-built rows without a registration.
-- `src/populace_dynamics/estimates/uniform_cut_tabulation.py`: cells,
+- `src/populace_dynamics/estimates/uniform_cut_tabulation.py`: the
+  Report's rows as cells (`REPORT_ROWS`, `NOT_COMPUTED_REPORT_ROWS`),
   Δ/P_B/P_R, half-split floors, design SE on the full sample design;
   refuses real data without a registration pointer.
 - `scripts/capture_track_u_parameters.py` (SSI capture written; Census
   parser ready), `scripts/track_u_structure.py` (counts only).
 - `src/populace_dynamics/uniform_cut_track_u/` (`u1-draft-3`, extended
-  here): `rows.py` (the registered rows, held equal to §15's rows, and
-  the headline rule); `invented.py` (U5: a seeded INVENTED age-67
+  here): `rows.py` (the registered rows, held equal to §15's rows,
+  including the -F alternatives on U0-F's population, and the headline
+  rule); `invented.py` (U5: a seeded INVENTED age-67
   population in the reader shapes, the INVENTED threshold table and the
   re-generation checks; this draft adds couples resolved by relationship
   code, legal husbands, farm, annuity and IRA income, and interview ages
@@ -793,7 +936,7 @@ the reachability guard:
   capture, and the fallback rule on the invented cohort as staged today;
   evidence headed "INVENTED DATA - NOT A COMPARISON",
   `EVID/track-u-dry-run-20260924/` (`u1-draft-3`) and
-  `EVID/track-u-dry-run-u1d4-20260924/` (this draft).
+  `EVID/track-u-dry-run-u1d4-20260924/` (`u1-draft-4`).
 - `scripts/run_track_u_registered.py` (U10 entry point): refuses unless
   the pointer is an issue #42 comment, `HEAD` is the registered commit
   on a clean tree, §15 is ratified with nothing awaiting and nothing
@@ -807,21 +950,20 @@ the reachability guard:
   family's `# IN FU` equals its number of in-family records (sequence
   1–20) in all five waves, and none of the 389–426 families per wave
   with an attached institution record counts it in `# IN FU`: the
-  reading the institution rule relies on.
+  reading the unregistered `family_of_record` institution rule relies
+  on.
 
 Blocked:
 
 1. **2005 and 2007 wealth supplements** (Max, simba login): U0 loses 1937
    and 1939 until staged, adjudicated and read; under the fallback rule
-   U0-F is then the headline and the rows defined on U0 or U1 are
-   reported as blocked.
+   U0-F is then the headline, the rows defined on U0 or U1 are
+   reported as blocked, and the -F alternatives are computed.
 2. **Census thresholds** (download approval, cos decision d194): no
    primary threshold until captured; the dry run uses an INVENTED table.
 3. **Registration** on issue #42 after ratification; no real-data poverty
    statistic may be computed before it.
-4. **Comparator coverage** of the frozen cells (comparator side, values
-   redacted).
-5. **Row U7** is not built (label investigation of the P-section
+4. **Row U7** is not built (label investigation of the P-section
    employer DC items); it must be built or removed before registration.
 
 ## 15. Machine-readable parameter block
@@ -832,7 +974,7 @@ holds it to the code's defaults.
 ```json
 {
   "specification": "boomers2004_uniform_cut_exercise2",
-  "version": "u1-draft-4",
+  "version": "u1-draft-5",
   "status": "draft_for_referee",
   "claim_class": {
     "proposed": "track_u_psid_realized_measurement_not_a_projection",
@@ -846,7 +988,15 @@ holds it to the code's defaults.
     "cut_rate": 0.13,
     "unit": "individual_with_household_income_and_wealth_including_spouse",
     "financial_assets": "non_pension_wealth_plus_ira_keogh_401k_balances",
-    "comparator_values": "sealed_comparator_side_not_opened_by_builder"
+    "comparator_values": "sealed_comparator_side_not_opened_by_builder",
+    "column": "1936-45",
+    "report_rows": 36,
+    "printed_precision": "whole_numbers",
+    "definitions_extract": {
+      "file": "EVID/exercise2-definitions-cleared-20260924.md",
+      "sha256": "a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384",
+      "cleared_for_builders": "2026-09-24"
+    }
   },
   "population": {
     "primary_row": "U0",
@@ -873,7 +1023,7 @@ holds it to the code's defaults.
     "separated_is_married": true,
     "unresolved_marital_status": "relationship_code",
     "annuitant_age_source": "derived_birth_year",
-    "institution_income_rule": "family_of_record",
+    "institution_income_rule": "excluded",
     "design": {"stratum": "ER31996", "cluster": "ER31997"}
   },
   "income_concept": {
@@ -914,7 +1064,7 @@ holds it to the code's defaults.
     "rate": 0.13,
     "base": "all_social_security_of_the_unit",
     "behavior": "none",
-    "start_year": null,
+    "start_year": 2004,
     "start_year_rule": "cut_when_birth_year_plus_67_at_or_after_start"
   },
   "ssi": {
@@ -934,11 +1084,13 @@ holds it to the code's defaults.
     "unit": "percentage_points"
   },
   "cells": {
-    "scored_candidates": ["all", "men", "women", "married", "non_married"],
-    "optional": ["men_married", "men_non_married", "women_married", "women_non_married"],
+    "column": "1936-45",
+    "scored": ["all", "women", "men", "married", "widowed", "divorced", "never_married"],
+    "secondary": ["women_married", "women_widowed", "women_divorced", "women_never_married", "men_married", "men_widowed", "men_divorced", "men_never_married"],
     "diagnostic": "birth_year",
-    "source": "appendix_table_17_title_by_gender_and_marital_status",
-    "scored_only_if_in_comparator": true
+    "report_labels": "tables_19_21_stub_labels_cleared_extract",
+    "unclassified_marital_cells": "excluded_counted",
+    "not_computed": ["race_ethnicity", "education", "labor_force_experience", "lifetime_earnings_own", "lifetime_earnings_shared"]
   },
   "uncertainty": {
     "draws": 1,
@@ -958,7 +1110,7 @@ holds it to the code's defaults.
   },
   "comparison": {
     "gap": "model_minus_report",
-    "comparator_interval": "display_rounding",
+    "comparator_interval": "whole_number_rounding_level_0_5_difference_1",
     "acceptance": {"rule": null, "awaiting": "Max (plan section 10 decision 6)"}
   },
   "rows": {
@@ -968,13 +1120,18 @@ holds it to the code's defaults.
     "U3": {"ssi_rule": "full_static_recomputation"},
     "U4": {"income_unit": "head_wife"},
     "U5": {"asset_income_rule": "keep"},
-    "U6": {"on": "U1", "cut_start_year": 2004, "awaiting": "plan section 10 decision 8"},
     "U0-F": {"population": "birth_years_1941_1943_1945", "on": "U0", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
     "U7": {"financial_assets": "wealth1_plus_employer_dc", "status": "not_built"},
     "U8": {"threshold_rule": "psid_census_needs_standard"},
     "U9": {"mortality_basis": "ssa_period_2004"},
     "U10": {"threshold_rule": "census_matrix_65plus"},
-    "U-inst": {"presence": "in_family_or_institution", "institution_income_rule": "family_of_record", "awaiting": "specification freeze (rule not yet refereed)"}
+    "U2-F": {"population": "birth_years_1941_1943_1945", "ssi_rule": "none", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
+    "U3-F": {"population": "birth_years_1941_1943_1945", "ssi_rule": "full_static_recomputation", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
+    "U4-F": {"population": "birth_years_1941_1943_1945", "income_unit": "head_wife", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
+    "U5-F": {"population": "birth_years_1941_1943_1945", "asset_income_rule": "keep", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
+    "U8-F": {"population": "birth_years_1941_1943_1945", "threshold_rule": "psid_census_needs_standard", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
+    "U9-F": {"population": "birth_years_1941_1943_1945", "mortality_basis": "ssa_period_2004", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
+    "U10-F": {"population": "birth_years_1941_1943_1945", "threshold_rule": "census_matrix_65plus", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"}
   },
   "diagnostics_f17": {
     "row": "headline",
@@ -1005,6 +1162,16 @@ holds it to the code's defaults.
       "verdict": "revise_before_ratification",
       "required_changes": 17,
       "applied_in": "u1-draft-4"
+    },
+    {
+      "report": "EVID/boomers2004-referee-2-20260924.md",
+      "sha256": "2113ba9bd25764252e19fa5de28d5c12f7745154a31be0220953d831518d5af2",
+      "object_version": "u1-draft-4",
+      "object_commit": "37a94ea2",
+      "object_blob_sha256": "1b461e0ad29a65b03706d445ab220264e4dba3ef99b3cf970cb40179b9e9c8a7",
+      "verdict": "ratifiable_after_required_changes",
+      "required_changes": 9,
+      "applied_in": "u1-draft-5"
     }
   ],
   "blocked_by": [
@@ -1023,7 +1190,8 @@ None of these is ratified. Each is a code parameter whose default is the
 plan's proposal, the referee's recommendation or a builder choice where
 both are silent; `adjusted_poverty.pending_decisions()`,
 `age67.pending_decisions()` and `uniform_cut_tabulation.pending_decisions()`
-(the design SE domain and the cells) return them with their basis.
+(the design SE domain, the cells and the unclassified-marital rule)
+return them with their basis.
 
 **Awaiting Max (d189, open):**
 
@@ -1038,21 +1206,26 @@ d189's text describes Track U as a "Python income concept, not Axiom",
 so a yes on d189 may be read as covering plan decision 4; confirm when
 ruling.
 
-**Awaiting Max, not yet on a decision card (plan §10):** decision 2 (a
-values-redacted definitions extract by the comparator side), decision 4
+**Awaiting Max, not yet on a decision card (plan §10):** decision 2
+(the definitions extract: it exists and was cleared for builders on
+2026-09-24; no card or ruling by Max on it was found), decision 4
 (Python SSI arithmetic labelled "not Axiom"), decision 6 (acceptance rule;
 default none, report gaps, §10a), decision 7 (ratify this specification
 by merge; post the #42 registration), decision 8 (the scorecard's "from
-2004": row U6 is built with `cut_start_year = 2004`, and the primary's
-`cut_start_year = None` cuts every observation), approval to download the
-Census threshold files (cos decision d194), and the fallback rule of §11
-(with decision 3), including whether the one-field alternatives follow
-the headline to U0-F's population when the supplements are not staged
-(default: they stay on U0 and are reported as blocked).
+2004"): the cleared extract supplies the source, the Report's "beginning
+in 2004" (pp. 37 and 44); the primary now uses `cut_start_year = 2004`,
+which moves only U1's 1936 birth year; Max's confirmation of the
+scorecard wording remains open, and the fallback rule of §11 (with
+decision 3), including the recommended default that each one-field
+alternative is also registered on U0-F's population (U2-F … U10-F), so
+the registration carries its alternatives whether or not the supplements
+are staged; Max may instead keep the alternatives on U0 only (blocked
+under the fallback). Approval to download the Census threshold files is
+on its own card (cos decision d194, open).
 
 **Awaiting the specification freeze (defaults shown):** cut rate (0.13;
 the code lists it), cut base (all Social Security of the unit; not a code
-parameter, decision 2(a)), cut start year (none), income unit (family
+parameter, decision 2(a)), cut start year (2004), income unit (family
 unit), asset-income rule (replace), retirement-account income (remove
 the head's), farm asset share (0.5 of positive income, whole loss),
 annuitized share (0.8), real rate (3 percent; 2 percent sensitivity),
@@ -1066,10 +1239,12 @@ SSI unit (one individual unit), row (U0, with the U0-F fallback rule),
 presence (in family), separated is married (true), unresolved marital
 status (relationship code), U1 1936 weight (1: each birth year then
 carries one cross-section's weight), seed wave (earliest presence wave),
-design SE (full-design domain), cells (after decision 2(b)), and the
-institution income rule (`institution_income_rule = family_of_record`;
-alternative `excluded`; only row U-inst reads it, and no referee has
-reviewed it yet).
+design SE (full-design domain), cells (§9, including
+`unclassified_marital_cells`, default `excluded_counted`), a small-cell
+flag for the comparison memo (none by default; the second referee
+suggests flagging cells under an unweighted *n* of 30, O1), and the
+institution income rule (used by no registered row; default `excluded`,
+the second referee's Q9 answer; alternative `family_of_record`).
 
 A registered run refuses a §15 block that still names anything as
 `awaiting`, so ratification must resolve each of these (and the code's
@@ -1138,37 +1313,93 @@ direction stated (§8, §12); Q4 weight 1 (§3); Q5 the full design (R10);
 Q6 register U0-F (R11); Q7 the relationship code (R9); Q8 derived
 birth years (R8).
 
-### 17.2 Questions for the next pass
+### 17.2 Questions 9–14 and the second referee's answers
 
-9. Is `family_of_record` the right income rule for institutionalized
-   members under U-inst (their family's income, annuity and threshold,
-   without their own income, which the PSID does not collect), or should
-   they be `excluded` from the universe, or get a rule not built here
-   (for example a one-person unit)?
-10. Row U6 keys the cut on the year the member turns 67, not on the
-    income year observed (U1 observes 1936 at 68, in 2004). Is that the
-    reading the plan's "the 1936 cohort unaffected" intends?
-11. Is extending the head's legal spouse to code 90 (legal husband), in
-    the annuity and in the relationship-code resolution, right, given
-    that the family file's "wife" items' treatment of a code-90 husband
-    was not checked? The builder gives him role OFUM, so row U4 keeps him
-    on the family-unit basis; 2 of 483 U0 and 4 of 1,349 U1 observations
-    are code-90 husbands (§3). The 2011 family codebook groups "husband of
-    Head" with Wife/"Wife" in its composition and birth variables, but
-    describes the income items as the Wife's/"Wife's" only (independent
-    review; not settled).
-12. Under the fallback rule, should the one-field alternatives follow the
-    headline to U0-F's population (so that U2–U5 and U8–U10 are computed
-    when the supplements are not staged), or stay on U0 and be reported
-    as blocked (the default)?
-13. The birth-year law extension leaves a person with conflicting
-    marriage-history birth years unresolved and falls back to the wave
-    age. Is that acceptable, or should the build fail closed as the law
-    does for its required population?
-14. F4a removes the head's annuity income, including annuities already
-    in payment that may carry no WEALTH1 balance. Should the rule remove
-    only `HEAD IRAS` in 2013 and keep `HEAD ANNUITIES` (not possible
-    before 2013, where the item combines both)?
+The second referee (§17.3) answered the questions `u1-draft-4` put; the
+answers replace the questions.
+
+9. **Institution income rule.** Answer: use `excluded`, and do not
+   register U-inst: no U0 or U0-F target person was in an institution at
+   the observation wave on the staged PSID, so the row adds no
+   institutionalized observation, and `family_of_record` would measure a
+   family's poverty and assign it to someone the family's size and income
+   leave out. Adopted: U-inst is withdrawn (S7) and `excluded` is the
+   code default of the unregistered option.
+10. **The cut keyed on the age-67 year.** Answer: yes; the Report
+    analyses each person "when they reach age 67" (p. 24) and cuts
+    benefits "beginning in 2004" (pp. 37, 44, cleared extract). Adopted
+    in the primary (S5); U6 is withdrawn.
+11. **Code 90 as the head's legal spouse.** Answer: right for the annuity
+    and the marital resolution (fn. 10 gives married couples a 50 percent
+    survivor annuity); U4 and the SSI unit stay open, with small exposure
+    (2 of 483 U0 observations are code-90 husbands). Adopted; §4 states
+    U4's size rule for a female head with a legal husband, and §3 records
+    the structural counts.
+12. **Alternatives under the fallback.** Answer: they should follow the
+    headline to U0-F. Adopted as the recommended default of the pending
+    fallback decision (S8): U2-F … U10-F are registered.
+13. **Conflicting marriage-history birth years falling back to the wave
+    age.** Answer: acceptable; on the staged files no wave-age fallback
+    occurs. Adopted; the registered run now records every annuitant age
+    source, including the member's co-resident spouse (O6).
+14. **Removing only `HEAD IRAS` in 2013.** Answer: no; the pooled U0 and
+    U0-F would then give 1945 a different income definition from 1941 and
+    1943. Kept: `remove_head` in every wave, with its named delta; §3
+    records the 2013 counts (O8).
+
+Question 11's family-file part (how the file records a code-90
+husband's income) is not settled by reading; §3's structural counts
+show what the staged files carry in the "wife" fields.
+
+### 17.3 Second pass (applied in `u1-draft-5`)
+
+- **Report:** `EVID/boomers2004-referee-2-20260924.md`, SHA-256
+  `2113ba9bd25764252e19fa5de28d5c12f7745154a31be0220953d831518d5af2`
+  (rehashed for this draft; second referee, Claude Code subagent, Opus
+  5.5, 2026-09-24).
+- **Object:** `u1-draft-4` at `37a94ea2`, blob SHA-256
+  `1b461e0ad29a65b03706d445ab220264e4dba3ef99b3cf970cb40179b9e9c8a7`
+  (rehashed for this draft with `git show`).
+- **Verdict:** the draft is ratifiable after nine required changes
+  (S1–S9), not before; ten optional suggestions (O1–O10); answers to
+  questions 9–14 (§17.2).
+- **Cleared extract:** `EVID/exercise2-definitions-cleared-20260924.md`,
+  SHA-256
+  `a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384`
+  (rehashed for this draft).
+
+Each required change was checked against its cited source before it was
+applied: the cleared extract; the Report's pages this builder read for
+`u1-draft-4` (none opened for this draft); the structural-count evidence
+`EVID/track-u-structure-u1d4-20260924/` (the marital and disposition
+counts re-summed); the PSID 1968 family codebook; the transfer-item
+labels in `data/family_income.py`; and the Census "Poverty measures"
+page.
+
+| Change | Disposition |
+|---|---|
+| S1 (§1 from the extract) | Applied as written. Verified in the extract: Tables 19 and 21 have 36 data rows under eight section headers, the column group "Birth Cohort" with "1936-45", whole-number cells; the p. 37 scenario sentence and fn. 19; total income (p. 31), replacement-rate income (p. 36, Table 13 note a) and fn. 17. O9 added: the reporting splits and 2003 dollars are cited to printed p. 25 lines 1–6 through the extract |
+| S2 (cells, four-way marital status) | Applied. Verified: the extract's row labels; the referee's counts re-summed from the u1d4 evidence (U0: married 330 + 1 by relationship code, widowed 44, divorced 60, never married 14, unclassified 34; U0-F: 226 + 1, 17, 43, 9, 24). Code: `age67.marital_status_4`, the tabulation's `REPORT_ROWS`, `DEFAULT_CELLS` and `OPTIONAL_CELLS`, `unclassified_marital_cells`, the runner's official-concept cells; the invented cohort covers all five statuses (test). The JSON is S2's |
+| S3 (named omissions) | Applied, with one correction: the extract attributes the inclusion of uncovered earnings and earnings above the taxable maximum to the own measure only (p. 26), where S3 said both measures. The PSID's first income year, 1967, which S3 flagged as general knowledge, was confirmed in the 1968 family codebook (V74); the biennial gap from the 1999 wave is added. Code: `NOT_COMPUTED_REPORT_ROWS`, listed in the run artifact |
+| S4 (comparator interval) | Applied as written. The difference bound follows from \|(a′ − b′) − (a − b)\| ≤ \|a′ − a\| + \|b′ − b\| ≤ 1 |
+| S5 (start year 2004) | Applied. Verified in the extract (PDF pp. 38 and 45, printed 37 and 44; the exposure arithmetic puts 1936 at 67 in 2003) and p. 24. `cut_start_year` defaults to 2004 with alternative `None`; U6 is withdrawn; §7, §9, §11, §13, §16 and the tests follow |
+| S6 (named deltas) | Applied as written. Verified: the p. 31 list and p. 24's contrast in the extract; the transfer items are `data/family_income.py` labels (for 2004: ER27954 TANF, ER27958 other welfare, ER27960 VA pension, ER27968 unemployment compensation, ER27970 workers compensation, ER27972 child support, ER27974 alimony, ER27976 and ER27978 help from relatives and others, ER27980 miscellaneous transfers). `runner.NAMED_DELTAS` changed with it |
+| S7 (withdraw U-inst) | Applied. Verified: the u1d4 dispositions list no `not_present:institution` for any U0 or U0-F birth year and 3 for U1 (1942: 2; 1944: 1); the Census sentence on institutional group quarters (census.gov, fetched 2026-09-24). Beyond S7, the code default of `institution_income_rule` is now `excluded` (the Q9 answer), and §3 records a check of the referee's unverified caveat (the seed wave) |
+| S8 (alternatives on U0-F) | Applied. `rows.FALLBACK_ALTERNATIVES` builds U2-F … U10-F from the U0 rows; each awaits the fallback rule. Under the fallback the runner computes them and blocks the U0 versions (test). Wording: §11 says U1 and U0-F "change the population itself" where S8 had "except U1 and U0-F" |
+| S9 (record the extract and this pass) | Applied. The builder-boundary sentence on the values scan also records what `RESTRICTED-FILES.md` said when re-read during this pass |
+
+| Suggestion | Disposition |
+|---|---|
+| O1 (small cells) | Not adopted: a small-cell flag is a reporting rule for the memo, which the freeze should set with decision 6; listed in §16 (none by default). The artifact carries `n_observations` per cell |
+| O2 (tax treatment) | Applied (§4) |
+| O3 (co-resident basis) | Applied (§4) |
+| O4 (SSI context) | Applied (§8) |
+| O5 (Census file count) | Applied (§6): d194 names ten files; the capture reads nine by name |
+| O6 (wave-age fallbacks) | Applied: the runner's population summary records `spouse_age_source` beside the head's and the head's spouse's sources |
+| O7 (code-90 heads, U4 size) | Applied: §4 states the size rule; §3 records the counts |
+| O8 (2013 annuity and IRA counts) | Applied: §3 records the counts |
+| O9 (printed p. 25 lines 1–6) | Applied (§1, builder boundary) |
+| O10 (for the orchestrator) | The master merge is done (`088772f1`, §14); the values-scan record is noted in the builder boundary |
 
 ## 18. What this draft read and did not verify
 
@@ -1205,11 +1436,22 @@ eCFR current text of 20 CFR 416.1112, 416.1121, 416.1124, 416.1163 and
 416.1205; and the nine Federal Register notices of §8, fetched from
 govinfo.gov into the session scratch directory to be read (not committed).
 
+`u1-draft-5` also read: the second referee report in full; the cleared
+exercise-2 definitions extract in full (both rehashed);
+`EVID/RESTRICTED-FILES.md` (twice; it changed during this pass); the
+u1d4 structural-count evidence (README and JSON, counts only); the
+Track U code and tests it changes; the 1968 family codebook entry V74;
+the transfer-item labels in `data/family_income.py`; the cos records of
+d189 and d194 (their text only); and the Census "Poverty measures"
+guidance page (fetched 2026-09-24). It opened no page of the Report PDF.
+
 **Ran on staged PSID:** label verification, the component-identity
 reconciliation counts and the structural counts of §3, the F17 component
 summaries of §9 for row U0 (`u1-draft-3`), and (`u1-draft-4`) a design
 count (strata and clusters among positive-weight persons per wave) and a
-count of in-family code-90 records per wave. No income concept,
+count of in-family code-90 records per wave; (`u1-draft-5`) the
+structural counts of §3 recollected under this draft's code, with the
+institution-option and code-90 counts. No income concept,
 annuity, threshold assignment, poverty status or poverty rate was
 computed on PSID data.
 
@@ -1224,8 +1466,12 @@ whether PSID Social Security amounts are net of Medicare premiums;
 whether SSI and Social Security are kept apart by respondents; where a
 wife's IRA income is recorded before 2013; how the family file records a
 code-90 legal husband's income; the P-section DC items for U7; the
-coverage of the sealed comparator; anything in the Report on printed
-page 25 or later; whether an institutionalized member's income enters
+sealed comparator's values (its labels are in the cleared extract);
+anything in the Report beyond printed p. 25 lines 1–6, except as quoted
+in the cleared extract, whose quotes from restricted pages the
+clearance review did not recheck; the Report's definition of "Married"
+and when it measures marital status (the extract says neither is
+defined); whether an institutionalized member's income enters
 any family-file item (no documentation found that it does); DYNASIM's
 actual annuity rate, mortality and survivor conventions beyond pp. 19–24;
 the domain-estimation citation the referee gives (West, Berglund and
@@ -1233,6 +1479,26 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
 
 ## 19. Changelog
 
+- `u1-draft-5` (2026-09-24, second referee pass applied, §17.3):
+  `origin/master` (`088772f1`) merged in; §1 states the target as the
+  cleared exercise-2 definitions extract defines it (the "1936-45"
+  column, 36 rows, whole-number cells, the 2004 start and no behavioural
+  response); §9 maps fifteen cells to the Report's Total, Gender, Marital
+  Status and Gender and Marital Status rows with a four-way marital
+  status (`marital_status_4`; unresolved members are unclassified, left
+  out of the marital cells and counted) and names the other 21 rows as
+  omissions; §10a fixes the comparator interval at ±0.5 per level and 1
+  for the difference; §7 makes `cut_start_year = 2004` the primary and
+  withdraws U6; §11 withdraws U-inst and registers U2-F … U10-F on
+  U0-F's population as the fallback decision's recommended default; §12
+  drops "imputed rent excluded" and adds the income-source and
+  unresolved-marital deltas; `institution_income_rule` defaults to
+  `excluded`; the runner records the spouse's age source and the Report
+  rows not computed; §4, §6 and §8 take the optional O2–O5; §15 gains the
+  target's column, rows, precision and extract, the new cells, the -F
+  rows and the second `referee_passes` entry; §17 records the pass and
+  the answers to questions 9–14. No income, threshold or poverty status
+  was computed on PSID data.
 - `u1-draft-4`, independent review corrections (2026-09-24; no rule,
   default or row changed): §3 states that a code-90 legal husband's role
   is OFUM (U4 keeps him on the family-unit basis) and counts those

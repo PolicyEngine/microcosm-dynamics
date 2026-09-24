@@ -7,8 +7,9 @@ Social Security, SSI and WEALTH1 summaries per income year, the Social
 Security summaries set against the committed SSA Annual Statistical
 Supplement 2025 Table 5.A4 cells, the SSI amounts against the committed
 federal benefit rates, and counts of ``# IN FU`` against the individual
-records (the U-inst rule's reading).  WEALTH1 has no committed or saved
-published comparator, so it is reported without one.
+records (the reading of the unregistered institution rule).  WEALTH1 has
+no committed or saved published comparator, so it is reported without
+one.
 
 It computes **no** income concept, annuity, threshold, poverty status or
 poverty rate, and no official-concept poverty rate (plan
@@ -200,7 +201,7 @@ def summary_markdown(result: dict[str, Any]) -> str:
         _sentence(diag["published_sources"]["wealth1"]["not_compared"])
         + " Waves 2005 and 2007 have no WEALTH1 (supplements not staged).",
         "",
-        "## `# IN FU` against the individual records (U-inst rule)",
+        "## `# IN FU` against the individual records (institution rule)",
         "",
         "| Wave | Families | # IN FU = in-family records | Institution "
         "records | Families with them | … # IN FU = in-family only | … "

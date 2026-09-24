@@ -42,7 +42,9 @@ any real population:
   invented assumption not checked against the codebooks);
 * members who enter an institution (sequence 51) in the first wave whose
   income year is at or after their 66th birthday year and stay, attached
-  to the family they left, where the spouse becomes head (row U-inst);
+  to the family they left, where the spouse becomes head (the
+  unregistered institution option; row U-inst was withdrawn in
+  u1-draft-5);
   members who move out (71) or die (81) by that wave's interview; and
   members whose weight is zero from that wave.
 

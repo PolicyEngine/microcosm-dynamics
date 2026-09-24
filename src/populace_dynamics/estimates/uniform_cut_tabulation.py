@@ -17,13 +17,24 @@ Statistic (plan section 7), per cell ``c`` with observation weights
     delta = P_R - P_B   (percentage points)
 
 ``delta`` is the headline; ``P_B`` and ``P_R`` are the secondary rows
-(the Table 19 and Table 21 analogues).  Cells: ``all`` (headline),
-``men``, ``women``, ``married`` and ``non_married`` (the reporting
-splits the plan reads in the Report's methods, plan section 7), the four
-sex-by-marital cells (optional) and one diagnostic cell per birth year
-(not scored).  An empty cell, or one with
-zero total weight, is undefined and reported with its reason, never
-imputed.
+(the Table 19 and Table 21 analogues).  Cells (specification section 9,
+u1-draft-5, after the second referee's S2): the Report's Tables 19 and 21
+carry 36 rows (cleared exercise-2 definitions extract), of which Track U
+v1 computes fifteen in the 1936-45 column: ``all`` (Total, headline);
+the scored ``women``, ``men``, ``married``, ``widowed``, ``divorced`` and
+``never_married`` (Gender; Marital Status); and the eight secondary
+sex-by-marital cells (Gender and Marital Status), compared and reported
+with their counts.  :data:`REPORT_ROWS` names each cell's Report row;
+:data:`NOT_COMPUTED_REPORT_ROWS` lists the other 21 rows (race and
+ethnicity, education, labor-force experience, lifetime earnings) as named
+omissions.  One diagnostic cell per birth year is not compared.  The
+marital cells read ``marital_status_4``
+(:func:`populace_dynamics.cohorts.age67.marital_status_4`); a member with
+no four-way status (``unclassified``) enters ``all``, ``women`` and
+``men`` and no marital cell, and each marital cell reports how many were
+left out (``unclassified_marital_cells="excluded_counted"``, pending the
+freeze).  An empty cell, or one with zero total weight, is undefined and
+reported with its reason, never imputed.
 
 Uncertainty (plan field F15; the run is deterministic, K = 1):
 
@@ -88,6 +99,7 @@ from populace_dynamics.harness.panel import split_panel_by_person
 
 __all__ = [
     "CELL_DEFINITIONS",
+    "COMPARATOR_COLUMN",
     "DEFAULT_CELLS",
     "DESIGN_SE_DOMAINS",
     "DEFAULT_FLOOR_SEEDS",
@@ -95,14 +107,20 @@ __all__ = [
     "FLOOR_FRACTION",
     "FLOOR_SPLIT_UNIT",
     "INVENTED_DATA_LABEL",
+    "MARITAL_STATUSES",
     "MIN_FLOOR_SEEDS",
+    "NOT_COMPUTED_REPORT_ROWS",
     "OPTIONAL_CELLS",
+    "REPORT_ROWS",
     "REQUIRED_COLUMNS",
     "SCHEMA_VERSION",
     "STATISTICS",
     "STATISTIC_ID",
     "TabulationConfig",
+    "UNCLASSIFIED",
+    "UNCLASSIFIED_MARITAL_CELL_RULES",
     "UniformCutTabulationError",
+    "cell_mask",
     "floor_split_units",
     "pending_decisions",
     "tabulate_uniform_cut",
@@ -121,7 +139,7 @@ REQUIRED_COLUMNS: tuple[str, ...] = (
     "family_unit_id",
     "weight",
     "sex",
-    "married",
+    "marital_status_4",
     "birth_year",
     "stratum",
     "cluster",
@@ -136,30 +154,136 @@ STATISTIC_DEFINITIONS = {
     "reform_rate": "100 * sum w 1{R < T} / sum w (the Table 21 analogue)",
 }
 
+#: The Report's column the comparator reads (Tables 19 and 21, "Birth
+#: Cohort"; cleared exercise-2 definitions extract).
+COMPARATOR_COLUMN = "1936-45"
+#: The values of ``marital_status_4`` that the marital cells read, in the
+#: order of the Report's "Marital Status" rows, and the value of a member
+#: none of them holds (equal to
+#: :data:`populace_dynamics.cohorts.age67.MARITAL_STATUS_4` and
+#: ``UNCLASSIFIED_MARITAL_STATUS``, which a test holds).
+MARITAL_STATUSES: tuple[str, ...] = (
+    "married",
+    "widowed",
+    "divorced",
+    "never_married",
+)
+UNCLASSIFIED = "unclassified"
+_SEXES = (("women", "female"), ("men", "male"))
+#: The Report's row labels, as printed (cleared extract).
+_MARITAL_LABELS = {
+    "married": "Married",
+    "widowed": "Widowed",
+    "divorced": "Divorced",
+    "never_married": "Never married",
+}
+#: Each computed cell's row in Tables 19 and 21 ("section: label" as
+#: printed; the Total row has no section header).
+REPORT_ROWS: dict[str, str] = {
+    "all": "Total",
+    "women": "Gender: Female",
+    "men": "Gender: Male",
+    **{
+        status: f"Marital Status: {label}"
+        for status, label in _MARITAL_LABELS.items()
+    },
+    **{
+        f"{cell}_{status}": (
+            f"Gender and Marital Status: "
+            f"{'Female' if sex == 'female' else 'Male'}: {label}"
+        )
+        for cell, sex in _SEXES
+        for status, label in _MARITAL_LABELS.items()
+    },
+}
+#: Headline and scored cells (the Total, Gender and Marital Status rows).
+DEFAULT_CELLS: tuple[str, ...] = ("all", "women", "men", *MARITAL_STATUSES)
+#: Secondary cells, compared and reported with their counts (the Gender
+#: and Marital Status rows).
+OPTIONAL_CELLS: tuple[str, ...] = tuple(
+    f"{cell}_{status}" for cell, _ in _SEXES for status in MARITAL_STATUSES
+)
 CELL_DEFINITIONS: dict[str, str] = {
     "all": "every observation (headline)",
-    "men": "sex == male",
     "women": "sex == female",
-    "married": "legally married at the end of the income year (F12)",
-    "non_married": "not legally married (cohabitors included, F12)",
-    "men_married": "optional: male and married",
-    "men_non_married": "optional: male and not married",
-    "women_married": "optional: female and married",
-    "women_non_married": "optional: female and not married",
+    "men": "sex == male",
+    "married": (
+        "married at the end of the income year (F12; separated counts as "
+        "married; by the marriage history or the relationship code)"
+    ),
+    "widowed": "widowed at the end of the income year (marriage history)",
+    "divorced": "divorced at the end of the income year (marriage history)",
+    "never_married": "never married (marriage history)",
+    **{
+        f"{cell}_{status}": f"secondary: {sex} and {status}"
+        for cell, sex in _SEXES
+        for status in MARITAL_STATUSES
+    },
 }
-DEFAULT_CELLS: tuple[str, ...] = (
-    "all",
-    "men",
-    "women",
-    "married",
-    "non_married",
-)
-OPTIONAL_CELLS: tuple[str, ...] = (
-    "men_married",
-    "men_non_married",
-    "women_married",
-    "women_non_married",
-)
+#: The Report rows of Tables 19 and 21 that Track U v1 does not compute
+#: (specification section 9, named omissions; cleared extract).
+NOT_COMPUTED_REPORT_ROWS: dict[str, dict[str, Any]] = {
+    "race_ethnicity": {
+        "section": "Race/Ethnicity",
+        "rows": (
+            "White, non-hispanic",
+            "Black, non-hispanic",
+            "Hispanic",
+            "Other",
+        ),
+        "reason": "Track U v1 has no reader for race and ethnicity",
+    },
+    "education": {
+        "section": "Education",
+        "rows": (
+            "High school dropout",
+            "High school graduate",
+            "College graduate",
+        ),
+        "reason": (
+            "Track U v1 has no reader for education, and the Report does "
+            "not say whether 'High school graduate' includes some college"
+        ),
+    },
+    "labor_force_experience": {
+        "section": "Labor Force Experience",
+        "rows": (
+            "Less than 20 years",
+            "20 to 29 years",
+            "30 to 34 years",
+            "35 or more years",
+        ),
+        "reason": (
+            "Track U v1 has no reader for it, and the Report does not "
+            "define the measure"
+        ),
+    },
+    **{
+        f"lifetime_earnings_{kind}": {
+            "section": f"Lifetime Earnings ({kind.title()})",
+            "rows": tuple(
+                f"{n} Quintile" for n in ("1st", "2nd", "3rd", "4th", "5th")
+            ),
+            "reason": (
+                "Track U v1 has no reader for it; the measure averages "
+                "wage-indexed earnings at ages 22-62, which the PSID does "
+                "not observe at every one of those ages for these cohorts "
+                "(its first income year is 1967, and odd income years from "
+                "1997 on are not observed), and the Report does not say "
+                "over which population the quintiles are cut"
+            ),
+        }
+        for kind in ("own", "shared")
+    },
+}
+#: How members with no four-way marital status enter the marital cells.
+UNCLASSIFIED_MARITAL_CELL_RULES: dict[str, str] = {
+    "excluded_counted": (
+        "a member whose marital_status_4 is 'unclassified' enters all, "
+        "women and men and no marital cell; each marital cell reports how "
+        "many were left out (second referee S2)"
+    ),
+}
 #: Diagnostic cells, one per birth year present (not scored).
 DIAGNOSTIC_BIRTH_YEAR_CELLS = "birth_year_<yyyy>"
 
@@ -192,6 +316,7 @@ class TabulationConfig:
     """Cells and uncertainty settings; defaults are the plan's proposal."""
 
     cells: tuple[str, ...] = DEFAULT_CELLS + OPTIONAL_CELLS
+    unclassified_marital_cells: str = "excluded_counted"
     birth_year_diagnostics: bool = True
     floor_seeds: tuple[int, ...] = DEFAULT_FLOOR_SEEDS
     design_standard_errors: bool = True
@@ -215,10 +340,19 @@ class TabulationConfig:
             raise UniformCutTabulationError(
                 f"design_se_domain must be one of {sorted(DESIGN_SE_DOMAINS)}"
             )
+        if self.unclassified_marital_cells not in (
+            UNCLASSIFIED_MARITAL_CELL_RULES
+        ):
+            raise UniformCutTabulationError(
+                "unclassified_marital_cells must be one of "
+                f"{sorted(UNCLASSIFIED_MARITAL_CELL_RULES)}"
+            )
 
     def as_dict(self) -> dict[str, Any]:
         return {
             "cells": list(self.cells),
+            "comparator_column": COMPARATOR_COLUMN,
+            "unclassified_marital_cells": self.unclassified_marital_cells,
             "birth_year_diagnostics": self.birth_year_diagnostics,
             "floor_seeds": list(self.floor_seeds),
             "floor_fraction": FLOOR_FRACTION,
@@ -258,7 +392,14 @@ def _normalize(rows: pd.DataFrame) -> pd.DataFrame:
     sexes = set(out["sex"].astype(str))
     if not sexes <= {"male", "female"}:
         raise UniformCutTabulationError(f"sex outside male/female: {sexes}")
-    for column in ("married", "poor_baseline", "poor_reform"):
+    statuses = out["marital_status_4"]
+    allowed = {*MARITAL_STATUSES, UNCLASSIFIED}
+    if statuses.isna().any() or not set(statuses.astype(str)) <= allowed:
+        raise UniformCutTabulationError(
+            f"marital_status_4 outside {sorted(allowed)}"
+        )
+    out["marital_status_4"] = statuses.astype(str)
+    for column in ("poor_baseline", "poor_reform"):
         values = out[column]
         if (
             values.isna().any()
@@ -277,21 +418,55 @@ def _normalize(rows: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def _cell_parts(name: str) -> tuple[str | None, str | None]:
+    """``(sex, marital status)`` a cell restricts to (``None``: any)."""
+
+    if name == "all":
+        return None, None
+    for cell, sex in _SEXES:
+        if name == cell:
+            return sex, None
+        if name.startswith(f"{cell}_") and name[len(cell) + 1 :] in (
+            MARITAL_STATUSES
+        ):
+            return sex, name[len(cell) + 1 :]
+    if name in MARITAL_STATUSES:
+        return None, name
+    raise UniformCutTabulationError(f"unknown cell {name!r}")
+
+
+def cell_mask(rows: pd.DataFrame, name: str) -> np.ndarray:
+    """The observations of cell ``name`` (columns ``sex`` and
+    ``marital_status_4``).
+
+    A marital cell holds the members whose ``marital_status_4`` is its
+    status; an ``unclassified`` member is in no marital cell
+    (``unclassified_marital_cells="excluded_counted"``).
+    """
+
+    sex, status = _cell_parts(name)
+    mask = np.ones(len(rows), dtype=bool)
+    if sex is not None:
+        mask &= rows["sex"].astype(str).eq(sex).to_numpy()
+    if status is not None:
+        mask &= rows["marital_status_4"].astype(str).eq(status).to_numpy()
+    return mask
+
+
+def _unclassified_left_out(rows: pd.DataFrame, name: str) -> int | None:
+    """How many members of a marital cell's sex domain are unclassified."""
+
+    sex, status = _cell_parts(name)
+    if status is None:
+        return None
+    domain = rows["marital_status_4"].eq(UNCLASSIFIED).to_numpy()
+    if sex is not None:
+        domain = domain & rows["sex"].eq(sex).to_numpy()
+    return int(domain.sum())
+
+
 def _cell_masks(rows: pd.DataFrame, config: TabulationConfig) -> dict:
-    male = rows["sex"].eq("male").to_numpy()
-    married = rows["married"].to_numpy()
-    masks = {
-        "all": np.ones(len(rows), dtype=bool),
-        "men": male,
-        "women": ~male,
-        "married": married,
-        "non_married": ~married,
-        "men_married": male & married,
-        "men_non_married": male & ~married,
-        "women_married": ~male & married,
-        "women_non_married": ~male & ~married,
-    }
-    out = {name: masks[name] for name in config.cells}
+    out = {name: cell_mask(rows, name) for name in config.cells}
     if config.birth_year_diagnostics:
         for year in sorted(set(rows["birth_year"].tolist())):
             out[f"birth_year_{year}"] = rows["birth_year"].eq(year).to_numpy()
@@ -388,11 +563,26 @@ def _cell_entry(
     entry: dict[str, Any] = {
         "cell": name,
         "definition": CELL_DEFINITIONS.get(
-            name, "diagnostic: birth year (not scored)"
+            name, "diagnostic: birth year (not compared)"
         ),
-        "scored_candidate": name in DEFAULT_CELLS,
-        "optional": name in OPTIONAL_CELLS,
+        "report_row": REPORT_ROWS.get(name),
+        "role": (
+            "headline"
+            if name == "all"
+            else (
+                "scored"
+                if name in DEFAULT_CELLS
+                else ("secondary" if name in OPTIONAL_CELLS else "diagnostic")
+            )
+        ),
+        "scored": name in DEFAULT_CELLS,
+        "secondary": name in OPTIONAL_CELLS,
         "diagnostic": name.startswith("birth_year_"),
+        "n_marital_unclassified_left_out": (
+            None
+            if name.startswith("birth_year_")
+            else _unclassified_left_out(rows, name)
+        ),
         "n_observations": int(mask.sum()),
         "n_persons": int(rows.loc[mask, "person_id"].nunique()),
         "n_family_units": int(rows.loc[mask, "family_unit_id"].nunique()),
@@ -520,8 +710,7 @@ def _floors(
 def pending_decisions() -> tuple[PendingDecision, ...]:
     """The open choices of :class:`TabulationConfig`, with their defaults.
 
-    None is ratified; each awaits the specification freeze (or, for the
-    cells, plan section 10 decision 2(b)).
+    None is ratified; each awaits the specification freeze.
     """
 
     config = TabulationConfig()
@@ -543,13 +732,26 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             "cells",
             list(config.cells),
             (),
-            "plan section 7: all (headline), men, women, married, "
-            "non_married (the Report's list of appendix tables names "
-            "Appendix Table 17 'by Gender and Marital Status') and the "
-            "four optional sex-by-marital cells; which splits Tables 19 "
-            "and 21 carry is unknown",
-            "Max (plan section 10 decision 2(b)) and the specification "
-            "freeze",
+            "second referee S2 (boomers2004-referee-2-20260924.md) and the "
+            "cleared exercise-2 definitions extract: Tables 19 and 21 carry "
+            "36 rows; Track U v1 computes the Total, Gender and Marital "
+            "Status rows (all headline; women, men, married, widowed, "
+            "divorced, never_married scored) and the eight Gender and "
+            "Marital Status rows (secondary) in the 1936-45 column; the "
+            "other 21 rows are named omissions (NOT_COMPUTED_REPORT_ROWS)",
+            freeze,
+        ),
+        PendingDecision(
+            "unclassified_marital_cells",
+            config.unclassified_marital_cells,
+            (),
+            "second referee S2: a member with no four-way marital status "
+            "(an unresolved state the relationship code does not resolve; "
+            "34 of U0's 483 observations and 24 of U0-F's 320 on the staged "
+            "PSID, structural counts) enters all, women and men and no "
+            "marital cell, and each marital cell reports how many were "
+            "left out",
+            freeze,
         ),
     )
 
@@ -733,6 +935,16 @@ def tabulate_uniform_cut(
             "n_persons": int(normalized["person_id"].nunique()),
             "n_family_units": int(normalized["family_unit_id"].nunique()),
             "n_zero_weight": int((normalized["weight"] == 0).sum()),
+            "marital_status_4": {
+                str(key): int(value)
+                for key, value in normalized["marital_status_4"]
+                .value_counts()
+                .sort_index()
+                .items()
+            },
+            "n_marital_unclassified": int(
+                normalized["marital_status_4"].eq(UNCLASSIFIED).sum()
+            ),
         },
         "cells": cells,
         "undefined_cells": undefined,

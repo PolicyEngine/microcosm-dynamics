@@ -95,14 +95,24 @@ NAMED_DELTAS: tuple[str, ...] = (
     "realized 2004-2012 history versus DYNASIM's 1992-based projection, "
     "including the 2008-09 asset shock for the 1941-45 cohorts at 67",
     "realized COLAs versus 2002 Trustees assumptions",
-    "immigrant under-coverage; institutionalized persons (row U-inst: "
-    "the family-of-record rule assigns the family's income and threshold "
-    "without the member's own income, which the PSID does not collect); "
-    "attrition",
+    "immigrant under-coverage; institutionalized persons are outside the "
+    "universe (none of U0's target persons was in an institution at the "
+    "observation wave on the staged files); attrition",
     "OFUM-owned assets inside family wealth",
     "the family's wealth stands in for an OFUM cohort member's own wealth "
     "(the Report's unit is the individual plus spouse, p. 24)",
-    "imputed rent excluded",
+    "the Report's total income lists income from financial assets, "
+    "imputed rent, Social Security, DB pensions, retirement-account "
+    "income, earnings, SSI and non-spouse co-resident income (p. 31, "
+    "cleared extract), and its poverty income is described only as "
+    "differing from Census money income by the annuity (p. 24); the "
+    "primary keeps every other PSID money-income source (veterans' "
+    "pensions, unemployment and workers' compensation, TANF and other "
+    "welfare, child support, alimony, help from relatives and others, "
+    "miscellaneous transfers)",
+    "members whose marital state is unresolved (34 of U0's 483 "
+    "observations, 24 of U0-F's 320, structural counts) are left out of "
+    "the marital cells (§9)",
     "self-reported Social Security, possibly net of Medicare Part B "
     "premiums, so the 13 percent cut applies to a smaller base than the "
     "gross benefit (baseline income is lower too; the net direction on "
@@ -144,8 +154,9 @@ NAMED_DELTAS: tuple[str, ...] = (
     "reported SSI may include state supplementary payments, so capping "
     "the offset at the federal benefit rate less reported SSI can "
     "understate the offset",
-    "U0-F, if it is the headline: mean birth year 1943 against 1940.5, "
-    "and every observation year at or after the 2008-09 asset shock",
+    "rows on U0-F's population (U0-F and U2-F ... U10-F): mean birth "
+    "year 1943 against 1940.5, and every observation year at or after the "
+    "2008-09 asset shock",
 )
 
 
@@ -339,18 +350,6 @@ def _counts(series: pd.Series) -> dict[str, int]:
     }
 
 
-def _cell_masks(members: pd.DataFrame) -> dict[str, np.ndarray]:
-    male = members["sex"].astype(str).eq("male").to_numpy()
-    married = members["married"].astype(bool).to_numpy()
-    return {
-        "all": np.ones(len(members), dtype=bool),
-        "men": male,
-        "women": ~male,
-        "married": married,
-        "non_married": ~married,
-    }
-
-
 def official_concept_rates(
     members: pd.DataFrame, adjusted: pd.DataFrame
 ) -> dict[str, Any]:
@@ -361,11 +360,15 @@ def official_concept_rates(
     annuity, no cut) is below the row's threshold (the same threshold as
     the adjusted concept, so the 65-and-over rule, not the Census
     householder-age convention).  Weighted rate per cell of
-    :data:`OFFICIAL_CONCEPT_CELLS`, in percent; an empty or zero-weight
-    cell is undefined.  Not scored.
+    :data:`OFFICIAL_CONCEPT_CELLS` (the tabulation's headline and scored
+    cells, :func:`populace_dynamics.estimates.uniform_cut_tabulation.
+    cell_mask`), in percent; an empty or zero-weight cell is undefined.
+    Not scored.
     """
 
-    joined = members[["observation_id", "weight", "sex", "married"]].merge(
+    joined = members[
+        ["observation_id", "weight", "sex", "marital_status_4"]
+    ].merge(
         adjusted[["observation_id", "money_income", "threshold"]],
         on="observation_id",
         how="inner",
@@ -376,7 +379,8 @@ def official_concept_rates(
     poor = (joined["money_income"] < joined["threshold"]).to_numpy()
     weight = joined["weight"].to_numpy(dtype=np.float64)
     cells = {}
-    for name, mask in _cell_masks(joined).items():
+    for name in OFFICIAL_CONCEPT_CELLS:
+        mask = ut.cell_mask(joined, name)
         total = float(weight[mask].sum())
         if not mask.any() or total <= 0:
             cells[name] = {
@@ -519,6 +523,11 @@ def _compute_row(
             "left_out": dict(members.attrs.get("left_out", {})),
             "observations_by_birth_year": _counts(members["birth_year"]),
             "marital_resolution": _counts(members["marital_resolution"]),
+            "marital_status_4": _counts(members["marital_status_4"]),
+            # Referee 2, O6: every annuitant age source, including the
+            # member's co-resident spouse, so a wave-age fallback is
+            # recorded.
+            "spouse_age_source": _counts(members["spouse_age_source"]),
             "fu_head_age_source": _counts(members["fu_head_age_source"]),
             "fu_head_spouse_age_source": _counts(
                 members["fu_head_spouse_age_source"]
@@ -671,6 +680,11 @@ def run_track_u(
                 members, adjusted
             ),
             "components": diagnostics.component_diagnostics(cohort, inputs),
+        },
+        "comparator_column": ut.COMPARATOR_COLUMN,
+        "report_rows_not_computed": {
+            key: {**entry, "rows": list(entry["rows"])}
+            for key, entry in ut.NOT_COMPUTED_REPORT_ROWS.items()
         },
         "named_deltas": list(NAMED_DELTAS),
         "pending_decisions": {

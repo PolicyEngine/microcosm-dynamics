@@ -174,8 +174,18 @@ def test_every_track_u_path_is_exercised(staged):
     assert (rows["wealth1"] < 0).any()
     assert (rows[list(family_income.SSI_CONCEPTS)].sum(axis=1) > 0).any()
     assert (rows["n_children"] > 0).any()
+    # every four-way marital status of specification section 9
+    assert set(obs["marital_status_4"]) == {
+        *age67.MARITAL_STATUS_4,
+        age67.UNCLASSIFIED_MARITAL_STATUS,
+    }
+    # the unregistered institution option (U-inst withdrawn, u1-draft-5)
     u_inst = age67.build_age67_cohort(
-        staged, age67.Age67Spec(presence="in_family_or_institution")
+        staged,
+        age67.Age67Spec(
+            presence="in_family_or_institution",
+            institution_income_rule="family_of_record",
+        ),
     )
     institution = u_inst.observations[u_inst.observations["in_institution"]]
     assert len(institution) > 0
