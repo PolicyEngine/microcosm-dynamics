@@ -16,7 +16,7 @@ the commit that comment registers:
   every decision field with the configuration following each, and must
   equal the code
   (``fra68_track.runner.check_specification_for_registered_run``); the
-  committed draft (``e1-draft-1``) is refused;
+  committed draft (``e1-draft-2``) is refused;
 * the output artifact must not exist yet (one shot, no overwrite; it is
   created exclusively);
 * the configuration is :class:`FRA68Config`'s default, which the E1

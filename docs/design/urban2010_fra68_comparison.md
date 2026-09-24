@@ -8,7 +8,7 @@
   (`scripts/run_fra68_registered.py`) refuses a block whose status or
   version is not ratified, that lists a decision awaiting Max, or that
   records no ruling of his on a decision field (§21).
-- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-1`,
+- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-2`,
   drafted 2026-09-24. §26 is the changelog.
 - **Plan item:** E1 of the blind plan
   `EVID/critical-path-fra68-20260923.md` (SHA-256 `d5e7a32f…`), where
@@ -128,10 +128,10 @@ sheet is dated May 2010, `:6`), which the statute also gives every
 cohort turning 62 in 2005-2016; the increase is gradual and begins "in
 2010"; FRA is 68 "for those turning 62 in 2022 and later". "Age 62
 today" does not say whether the cohort turning 62 in 2010 is reached,
-which is the difference between P1 and P2/P3. From 66 in 2009 to 68 in 2022 is 24 months over 13 cohorts,
-and 13k = 24 has no integer solution, so no constant whole-month step
-meets both dates; the two-month step of 416(l)(3) meets one or the
-other.
+which is the difference between P1 and P2/P3. From 66 in 2009 to 68 in
+2022 is 24 months over 13 cohorts, and 13k = 24 has no integer solution,
+so no constant whole-month step meets both dates; the two-month step of
+416(l)(3) meets one or the other.
 
 **The three frozen schedules** (by year Y of turning 62; birth year
 Y - 62; months):
@@ -411,7 +411,9 @@ birth year, at most 70) gets:
   floor((6 + m') / 12) - a (A4's July birth month), which adds a year
   exactly when D >= 6 and a < 70;
 - the reform factor `benefit_factor(m', b, reform bundle)`. Months from
-  the retirement age are preserved, so the factor is unchanged below 70.
+  the retirement age are preserved, so the factor is unchanged whenever
+  12a + D <= 840; a claim at 70 keeps its age and its credit falls (24 to
+  16 percent for a 12-month increase).
 
 C1 applies the transform to claimants whose claim age is at least the
 anchor age: the at-FRA age of the claim-table row the projection reads,
@@ -567,6 +569,10 @@ it), and where this draft resolves each for exercise 3:
    on its whole observed amount (it cannot be split into own benefit and
    excess), and only when entitled at 62 or later (§6).
 6. `proposed-1` was searched and carries no exercise-3 entries (§1).
+7. A registered run also needs a `decisions` entry recording Max's
+   ruling on every d188 decision field, which the configuration must
+   follow (§21, §22), as exercise 1's registered run does for d074 and
+   d075.
 
 ## 21. Machine-readable parameter block
 
@@ -581,7 +587,7 @@ form) and the configuration follows every ruling.
 ```json
 {
   "specification": "urban2010_fra68_exercise3",
-  "version": "e1-draft-1",
+  "version": "e1-draft-2",
   "status": "draft_for_referee_not_ratified",
   "template": {
     "specification": "urban2010_cola_exercise1",
@@ -864,3 +870,8 @@ Not yet run. The plan routes the referee pass to an independent lane
 
 - `e1-draft-1` (2026-09-24): first draft, from the plan's §7 and the A1
   template, with the invented worked cases recomputed through the code.
+- `e1-draft-2` (2026-09-24, before any referee pass): a registered run
+  also requires Max's recorded ruling on every d188 decision field
+  (header, §20 item 7, §21, §22); §13 states when the C1/C2 factor is
+  unchanged (12a + D <= 840) and that a claim at 70 keeps its age. No
+  schedule, row, rule or parameter changed.
