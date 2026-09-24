@@ -306,7 +306,7 @@ def reform_parameters(
     Guards (a violation raises ``ValueError``):
 
     * the reform equals the baseline for every cohort that turns 62 before
-      the schedule's first increase over the baseline;
+      2010, the option's first year (:data:`FIRST_OPTION_YEAR`);
     * the reform is at or above the baseline for every birth year;
     * the reform is 68 (816 months) for every birth year from 1960
       (turning 62 in 2022);

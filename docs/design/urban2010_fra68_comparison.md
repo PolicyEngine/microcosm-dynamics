@@ -8,7 +8,7 @@
   (`scripts/run_fra68_registered.py`) refuses a block whose status or
   version is not ratified, that lists a decision awaiting Max, or that
   records no ruling of his on a decision field (§21).
-- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-2`,
+- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-3`,
   drafted 2026-09-24. §26 is the changelog.
 - **Plan item:** E1 of the blind plan
   `EVID/critical-path-fra68-20260923.md` (SHA-256 `d5e7a32f…`), where
@@ -82,10 +82,13 @@ phase-in.
 **`proposed-1`.** A case-insensitive search of the `proposed-1`
 specification (`EVID/parallel-oasdi-20260920/deliverables/
 dynasim-specification.md`, SHA-256 `c220b213…`) for "FRA", "full
-retirement" and "exercise 3", printing only line numbers and the first
-60 characters, found the words "fraction" and "\frac" only: it carries no
-exercise-3 entries. §20 maps its field list, which A1 §20 records, to
-this draft.
+retirement" and "exercise 3" found "fraction" (lines 15 and 82) and
+"\frac" (lines 34 and 36) for "FRA", nothing for "exercise 3", and one
+"full retirement", on line 45: a general payment convention of the COLA
+target ("disability converts to retirement at full retirement age"). It
+carries no exercise-3 entries. (`e1-draft-2` reported the "FRA" matches
+only; the independent review of 2026-09-24 found line 45.) §20 maps its
+field list, which A1 §20 records, to this draft.
 
 ## 2. Sources
 
@@ -578,7 +581,9 @@ it), and where this draft resolves each for exercise 3:
 
 Downstream code reads this block: `fra68_track.runner.e1_parameter_block`
 (the runner records `specification_check` against it in every run, and a
-registered run refuses a mismatch) and `tests/test_urban2010_fra68_spec.py`.
+registered run refuses a mismatch in the schedules, the primary schedule,
+the rows, the C1 anchor age or the statistic identifier) and
+`tests/test_urban2010_fra68_spec.py`.
 `decisions_awaiting_max` lists the d188 items. A registered run refuses
 while it is non-empty, and until a `decisions` entry records Max's ruling
 on each decision field (`{field: {"ruling": value, ...}}`, the A1 §21
@@ -587,7 +592,7 @@ form) and the configuration follows every ruling.
 ```json
 {
   "specification": "urban2010_fra68_exercise3",
-  "version": "e1-draft-2",
+  "version": "e1-draft-3",
   "status": "draft_for_referee_not_ratified",
   "template": {
     "specification": "urban2010_cola_exercise1",
@@ -874,4 +879,10 @@ Not yet run. The plan routes the referee pass to an independent lane
   also requires Max's recorded ruling on every d188 decision field
   (header, §20 item 7, §21, §22); §13 states when the C1/C2 factor is
   unchanged (12a + D <= 840) and that a claim at 70 keeps its age. No
+  schedule, row, rule or parameter changed.
+- `e1-draft-3` (2026-09-24, independent build review, before any referee
+  pass): §1 corrects the `proposed-1` search result (one "full
+  retirement" match on line 45, a general convention, not an exercise-3
+  entry); §21 notes that the specification check now also binds the C1
+  anchor age (`claiming.C1.anchor_age`) to the configuration. No
   schedule, row, rule or parameter changed.
