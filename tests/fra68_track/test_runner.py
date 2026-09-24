@@ -77,6 +77,7 @@ from populace_dynamics.fra68_track.reform import (
     worker_factor_ratio,
 )
 from populace_dynamics.fra68_track.runner import (
+    check_specification_for_registered_run,
     e1_parameter_block,
     projection_identity_record,
     specification_code_check,
@@ -996,6 +997,36 @@ def test_the_specification_check_names_each_mismatch():
     edited["rows"]["F6"]["components"] = ["retired_worker"]
     check = specification_code_check(edited, FRA68Config())
     assert check["mismatches"] == ["schedule_P3", "F6.components"]
+
+
+def test_the_c1_anchor_age_is_bound_to_the_block():
+    # Regression: the check compared F3's claiming-response label but not
+    # the anchor age that defines it, so a ratified block and a
+    # configuration with different anchors ran without a mismatch.
+    block = e1_parameter_block()
+    assert specification_code_check(block, FRA68Config())["consistent"]
+    moved = copy.deepcopy(block)
+    moved["claiming"]["C1"]["anchor_age"] = 66
+    assert specification_code_check(moved, FRA68Config())["mismatches"] == [
+        "claiming.C1.anchor_age"
+    ]
+    assert specification_code_check(moved, FRA68Config(c1_anchor_age=66))[
+        "consistent"
+    ]
+    assert specification_code_check(block, FRA68Config(c1_anchor_age=66))[
+        "mismatches"
+    ] == ["claiming.C1.anchor_age"]
+    ruled = {
+        **_ratified(block),
+        "decisions_awaiting_max": {},
+        "decisions": {
+            name: {"ruling": value["proposed_default"]}
+            for name, value in PENDING_DECISIONS.items()
+        },
+    }
+    ruled["claiming"] = moved["claiming"]
+    with pytest.raises(ValueError, match="claiming.C1.anchor_age"):
+        check_specification_for_registered_run(ruled, FRA68Config())
 
 
 def test_projection_identity_record(tmp_path):

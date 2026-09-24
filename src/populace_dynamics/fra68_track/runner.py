@@ -37,7 +37,7 @@ specification block (``docs/design/urban2010_fra68_comparison.md``
 section 21) is ratified, lists no decision awaiting Max, records his
 ruling on every d188 decision field under ``decisions`` with the
 configuration following each, and equals the code and the configuration
-(schedules, primary schedule, rows).  A7 refuses the missing pointer
+(schedules, primary schedule, rows, C1 anchor age).  A7 refuses the missing pointer
 independently.
 """
 
@@ -163,7 +163,8 @@ def specification_code_check(
 
     Compares the specification identifier, the three frozen schedules,
     the primary schedule, the rows (each alternative's one changed field
-    and value) and the statistic identifier.
+    and value), the C1 anchor age (``claiming.C1.anchor_age`` against
+    ``FRA68Config.c1_anchor_age``) and the statistic identifier.
     """
 
     mismatches: list[str] = []
@@ -194,6 +195,11 @@ def specification_code_check(
         ):
             if declared.get(key) != expected[key]:
                 mismatches.append(f"{row_id}.{key}")
+    # Row F3's claiming response is defined by its anchor age, which the
+    # block freezes under claiming.C1 and the configuration carries.
+    anchor = block.get("claiming", {}).get("C1", {}).get("anchor_age")
+    if anchor != config.c1_anchor_age:
+        mismatches.append("claiming.C1.anchor_age")
     if block.get("statistic_id") != STATISTIC_ID:
         mismatches.append("statistic_id")
     return {
