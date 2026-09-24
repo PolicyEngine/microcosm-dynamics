@@ -876,13 +876,49 @@ def test_registered_real_needs_a_pointer_and_a_ratified_ruled_spec():
             registration_pointer=pointer,
             specification=ratified,
         )
-    ruled = {**ratified, "decisions_awaiting_max": {}}
-    with pytest.raises(ValueError, match="differ"):
+    unruled = {**ratified, "decisions_awaiting_max": {}}
+    with pytest.raises(ValueError, match="records no ruling"):
+        run_fra68(
+            inputs,
+            config=CONFIG,
+            registration_pointer=pointer,
+            specification=unruled,
+        )
+    ruled = {
+        **unruled,
+        "decisions": {
+            name: {"ruling": value["proposed_default"]}
+            for name, value in PENDING_DECISIONS.items()
+        },
+    }
+    with pytest.raises(ValueError, match="departs from Max's rulings"):
         run_fra68(
             inputs,
             config=replace(CONFIG, primary_schedule_id="P1"),
             registration_pointer=pointer,
             specification=ruled,
+        )
+    with pytest.raises(ValueError, match="departs from Max's rulings"):
+        run_fra68(
+            inputs,
+            config=CONFIG,
+            registration_pointer=pointer,
+            specification={
+                **ruled,
+                "decisions": {
+                    **ruled["decisions"],
+                    "di_benefit_level": {"ruling": "exclude"},
+                },
+            },
+        )
+    reruled = copy.deepcopy(ruled)
+    reruled["decisions"]["primary_schedule_id"]["ruling"] = "P1"
+    with pytest.raises(ValueError, match="differ"):
+        run_fra68(
+            inputs,
+            config=replace(CONFIG, primary_schedule_id="P1"),
+            registration_pointer=pointer,
+            specification=reruled,
         )
     # A ratified, ruled, consistent block reaches the committed-value
     # checks, which the invented parameters fail.

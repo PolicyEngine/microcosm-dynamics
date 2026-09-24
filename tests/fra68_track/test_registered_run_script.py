@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from populace_dynamics.fra68_track import FRA68Config
+from populace_dynamics.fra68_track import PENDING_DECISIONS, FRA68Config
 from populace_dynamics.fra68_track.runner import e1_parameter_block
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -49,6 +49,13 @@ def _ruled() -> dict:
     block["status"] = "ratified_frozen"
     block["version"] = "e1-ratified-1"
     block["decisions_awaiting_max"] = {}
+    block["decisions"] = {
+        name: {
+            "ruling": decision["proposed_default"],
+            "decision_record": "d188",
+        }
+        for name, decision in PENDING_DECISIONS.items()
+    }
     return block
 
 
@@ -91,6 +98,18 @@ def _mismatch() -> dict:
     return block
 
 
+def _unruled() -> dict:
+    block = _ruled()
+    del block["decisions"]["claim_class"]
+    return block
+
+
+def _ruled_otherwise() -> dict:
+    block = _ruled()
+    block["decisions"]["acceptance_rule"]["ruling"] = "within 1 point"
+    return block
+
+
 @pytest.mark.parametrize(
     ("kwargs", "match"),
     [
@@ -119,9 +138,11 @@ def _mismatch() -> dict:
         ({"specification": _pending()}, "awaiting Max"),
         ({"specification": _referee()}, "authorizes no real-data run"),
         ({"specification": _mismatch()}, "differ"),
+        ({"specification": _unruled()}, "records no ruling"),
+        ({"specification": _ruled_otherwise()}, "departs from Max's"),
         (
             {"config": FRA68Config(primary_schedule_id="P1")},
-            "differ",
+            "departs from Max's",
         ),
     ],
     ids=[
@@ -134,7 +155,9 @@ def _mismatch() -> dict:
         "pending-decision",
         "referee-status",
         "block-differs",
-        "config-differs",
+        "no-ruling",
+        "ruled-otherwise",
+        "config-departs",
     ],
 )
 def test_non_registered_states_are_refused(tmp_path, kwargs, match):

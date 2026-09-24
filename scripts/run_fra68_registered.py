@@ -12,7 +12,9 @@ the commit that comment registers:
 * the E1 specification (``docs/design/urban2010_fra68_comparison.md``)
   must be ratified: its section 21 block may carry no candidate, draft,
   referee or not-merged marker in its status or version, may list no
-  decision awaiting Max (decision record d188) and must equal the code
+  decision awaiting Max (decision record d188), must record his ruling on
+  every decision field with the configuration following each, and must
+  equal the code
   (``fra68_track.runner.check_specification_for_registered_run``); the
   committed draft (``e1-draft-1``) is refused;
 * the output artifact must not exist yet (one shot, no overwrite; it is

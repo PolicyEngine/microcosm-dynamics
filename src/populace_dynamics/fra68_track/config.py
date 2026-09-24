@@ -65,6 +65,7 @@ __all__ = [
     "FRA68Row",
     "SurvivorRetirementAge",
     "builder_defaults",
+    "decision_value",
     "pending_decisions",
     "registered_rows",
     "row_labels",
@@ -453,6 +454,14 @@ def _config_value(config: FRA68Config, name: str) -> Any:
     if isinstance(value, tuple):
         return list(value)
     return value
+
+
+def decision_value(config: FRA68Config, name: str) -> Any:
+    """A d188 decision field's configured value, in the block's vocabulary."""
+
+    if name not in PENDING_DECISIONS:
+        raise KeyError(f"{name!r} is not a d188 decision field")
+    return _config_value(config, name)
 
 
 def pending_decisions(config: FRA68Config | None = None) -> list[dict]:

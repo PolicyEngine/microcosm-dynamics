@@ -6,7 +6,8 @@
   recommended default, and §22 lists them. This draft authorizes no
   real-data run: the one-shot entry point
   (`scripts/run_fra68_registered.py`) refuses a block whose status or
-  version is not ratified or that lists a decision awaiting Max.
+  version is not ratified, that lists a decision awaiting Max, or that
+  records no ruling of his on a decision field (§21).
 - **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-1`,
   drafted 2026-09-24. §26 is the changelog.
 - **Plan item:** E1 of the blind plan
@@ -572,8 +573,10 @@ it), and where this draft resolves each for exercise 3:
 Downstream code reads this block: `fra68_track.runner.e1_parameter_block`
 (the runner records `specification_check` against it in every run, and a
 registered run refuses a mismatch) and `tests/test_urban2010_fra68_spec.py`.
-`decisions_awaiting_max` lists the d188 items; a registered run refuses
-while it is non-empty.
+`decisions_awaiting_max` lists the d188 items. A registered run refuses
+while it is non-empty, and until a `decisions` entry records Max's ruling
+on each decision field (`{field: {"ruling": value, ...}}`, the A1 §21
+form) and the configuration follows every ruling.
 
 ```json
 {
@@ -808,6 +811,12 @@ ruled (`pending_decisions`).
 6. **Screening or request** (plan §11 item 5; not in d188): whether a
    screening lane may extract definitional text from Urban pages 3-5, or
    the Urban clarification request is sent.
+
+When Max rules, the ratified text moves each item from
+`decisions_awaiting_max` to a `decisions` entry with his ruling; the
+one-shot entry point refuses a block without a ruling on every decision
+field or a configuration that departs from one
+(`fra68_track.runner.check_specification_for_registered_run`).
 
 Exercise 1's rulings (d074 and d075) cover the projection, the
 benefit-level and auxiliary conventions and the opening-stock basis for

@@ -34,9 +34,11 @@ COLA path object.
 Governance interlock: a ``registered_real`` cohort is refused unless a
 registration pointer (the issue #42 comment) is supplied, the E1
 specification block (``docs/design/urban2010_fra68_comparison.md``
-section 21) is ratified and lists no decision awaiting Max, and the
-configuration equals the block's rows and primary schedule.  A7 refuses
-the missing pointer independently.
+section 21) is ratified, lists no decision awaiting Max, records his
+ruling on every d188 decision field under ``decisions`` with the
+configuration following each, and equals the code and the configuration
+(schedules, primary schedule, rows).  A7 refuses the missing pointer
+independently.
 """
 
 from __future__ import annotations
@@ -89,6 +91,7 @@ from populace_dynamics.fra68_track.benefits import (
     union_benefit_rows,
 )
 from populace_dynamics.fra68_track.config import (
+    PENDING_DECISIONS,
     STATISTIC_ID,
     TRACK_A_ROW_BY_WAVE,
     ClaimingResponse,
@@ -96,6 +99,7 @@ from populace_dynamics.fra68_track.config import (
     FRA68Row,
     SurvivorRetirementAge,
     builder_defaults,
+    decision_value,
     pending_decisions,
     row_labels,
 )
@@ -207,7 +211,9 @@ def check_specification_for_registered_run(
 
     The block must be ratified (no candidate, draft, referee or
     not-merged marker in its status or version), must list no decision
-    awaiting Max, and must agree with the code and the configuration.
+    awaiting Max, must record Max's ruling on every d188 decision field
+    under ``decisions`` (``{field: {"ruling": value, ...}}``) with the
+    configuration following each ruling, and must agree with the code.
     """
 
     for name in ("status", "version"):
@@ -224,6 +230,29 @@ def check_specification_for_registered_run(
             "the E1 specification still lists decisions awaiting Max "
             f"({sorted(awaiting)}; decision record d188): no real-data "
             "statistic before he rules"
+        )
+    rulings = block.get("decisions") or {}
+    unruled = [
+        name
+        for name in PENDING_DECISIONS
+        if not isinstance(rulings.get(name), Mapping)
+        or "ruling" not in rulings[name]
+    ]
+    if unruled:
+        raise ValueError(
+            "the E1 specification records no ruling by Max for "
+            f"{unruled} (decision record d188): no real-data statistic "
+            "before he rules"
+        )
+    departures = [
+        name
+        for name in PENDING_DECISIONS
+        if decision_value(config, name) != rulings[name]["ruling"]
+    ]
+    if departures:
+        raise ValueError(
+            f"the configuration departs from Max's rulings on {departures}; "
+            "a registered run follows every ruling"
         )
     check = specification_code_check(block, config)
     if not check["consistent"]:
