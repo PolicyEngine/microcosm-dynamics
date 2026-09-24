@@ -1999,3 +1999,275 @@ def test_dry_run_lists_undefined_cells_and_floors_with_reasons():
     assert module._cell_text(stat, 3) == (
         "undefined (1 of 3 draws defined) [undefined]"
     )
+
+
+# --------------------------------------------------------------------------
+# Track A cleanup after the registered run (artifact check, 2026-09-23)
+# --------------------------------------------------------------------------
+def _dry_run_module():
+    import importlib.util
+    from pathlib import Path
+
+    path = (
+        Path(__file__).resolve().parents[2] / "scripts" / "track_a_dry_run.py"
+    )
+    spec = importlib.util.spec_from_file_location("track_a_dry_run", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_rows_derive_their_pending_rulings_from_the_a1_block(result):
+    # The committed A1 block is ratified (a1-ratified-1), so no row's
+    # tabulation may still say its conventions await ratification.
+    block = a1_parameter_block()
+    header = {
+        "specification": block["specification"],
+        "version": block["version"],
+        "status": block["status"],
+        "ratified": True,
+    }
+    assert result["specification"] == header
+    for row_id, row in result["rows"].items():
+        tabulation = row["tabulation"]
+        assert tabulation["specification"] == header, row_id
+        for entry in tabulation["pending_rulings"]:
+            assert entry["awaiting"] is None, (row_id, entry["parameter"])
+            assert entry["status"] == "fixed_by_ratified_specification"
+            assert entry["fixed_by"].startswith(
+                f"A1 specification {block['specification']} "
+                f"{block['version']} ({block['status']}), section "
+            )
+    by_row = {
+        row_id: {
+            entry["parameter"]: entry
+            for entry in row["tabulation"]["pending_rulings"]
+        }
+        for row_id, row in result["rows"].items()
+    }
+    # R3 and R5 use registered alternatives, which A1 section 18 fixes.
+    assert by_row["R3"]["headline_statistic"]["is_registered_alternative"]
+    assert by_row["R5"]["components"]["is_registered_alternative"]
+    assert by_row["R0"]["components"]["is_proposed_primary"]
+
+
+def test_an_unratified_a1_block_leaves_the_rulings_awaiting(cohort):
+    # INVENTED pre-ratification header: the same run code reports the
+    # conventions as awaiting ratification, so the status is derived.
+    block = {
+        **a1_parameter_block(),
+        "version": "a1-ratified-candidate-1",
+        "status": "ratification_candidate_rulings_recorded_not_merged",
+    }
+    config = TrackAConfig(draw_indices=(0,), rows=("R0",))
+    run = run_track_a(_inputs(cohort), config=config, specification=block)
+    assert run["specification"]["ratified"] is False
+    for entry in run["rows"]["R0"]["tabulation"]["pending_rulings"]:
+        assert entry["status"] == "awaiting_ratification"
+        assert entry["fixed_by"] is None
+        assert "a1-ratified-candidate-1" in entry["awaiting"]
+
+
+def _clamped_row(receipt: int):
+    """INVENTED A3 row: a retired worker aged 62 in 2010 (clock 2010)."""
+    return SimpleNamespace(
+        person_id=1,
+        opening_status="retired_worker",
+        age_opening=62,
+        birth_year=1948,
+        opening_claim_year=receipt,
+        opening_claim_year_upper_bound=2010,
+        ss_opening=15_000,
+        linked_spouse_birth_year=pd.NA,
+    )
+
+
+def test_an_opening_receipt_start_before_the_clock_is_clamped():
+    config = TrackAConfig(draw_indices=(0,))
+    clamped, _ = opening_module._opening_record(
+        _clamped_row(2008), config, 2010
+    )
+    assert (clamped.clock_year, clamped.clock_rule) == (
+        2010,
+        "own_birth_plus_62",
+    )
+    assert clamped.entitlement_clamped is True
+    assert clamped.entitlement_year == clamped.clock_year == 2010
+    kept, _ = opening_module._opening_record(_clamped_row(2010), config, 2010)
+    assert kept.entitlement_clamped is False
+    # The clamp changes no amount: R2 read from the clamped year, from the
+    # unclamped receipt start or from R0's clock gives the same amounts,
+    # because no count or path starts before the clock.
+    amounts = {
+        exposure: track_benefits.opening_stock_amounts(
+            clamped,
+            baseline=invented_cola(),
+            reform=sb.COLAReform(),
+            exposure_start_year=exposure,
+            observed_payment_year=2010,
+            payment_year=2030,
+            round_to_dime=False,
+        )
+        for exposure in (2008, 2009, clamped.entitlement_year)
+    }
+    assert len(set(amounts.values())) == 1
+
+
+def test_clamped_opening_entitlements_are_counted_in_r2_only():
+    # INVENTED: opener 1's A3 receipt start (2008) preceded the year it
+    # attained 62 (2010), so its entitlement year was clamped to 2010.
+    # Opener 2 (clock 2008) was first observed receiving in 2010, after
+    # its clock, so it is not clamped.
+    persons = [_static(1, 1948), _static(2, 1946)]
+    careers = {1: _career(30_000.0, 1948), 2: _career(30_000.0, 1946)}
+    final = [
+        _state(1, 1948, 2030, marital_status="never_married", claimed=True),
+        _state(2, 1946, 2030, marital_status="never_married", claimed=True),
+    ]
+    initial = [
+        _state(1, 1948, 2010, marital_status="never_married", claimed=True),
+        _state(2, 1946, 2010, marital_status="never_married", claimed=True),
+    ]
+    cohort, projection = _handmade_cohort(persons, careers, final, initial)
+    cohort.persons["opening_status"] = "retired_worker"
+    cohort.persons["ss_receipt_opening"] = pd.array([True, True], "boolean")
+    opening = {
+        1: OpeningStockRecord(
+            person_id=1,
+            status="retired_worker",
+            component="retired_worker",
+            observed_annual_amount=15_000.0,
+            clock_year=2010,
+            clock_rule="own_birth_plus_62",
+            entitlement_year=2010,
+            entitlement_clamped=True,
+        ),
+        2: OpeningStockRecord(
+            person_id=2,
+            status="retired_worker",
+            component="retired_worker",
+            observed_annual_amount=15_000.0,
+            clock_year=2008,
+            clock_rule="own_birth_plus_62",
+            entitlement_year=2010,
+            entitlement_clamped=False,
+        ),
+    }
+    cohort = replace(cohort, opening=opening)
+    context = track_benefits.BenefitContext(
+        cohort=cohort,
+        params=invented_params(),
+        baseline=invented_cola(),
+        config=CONFIG,
+    )
+    by_row = {}
+    for row_id in ("R0", "R2"):
+        rows, counters = track_benefits.reference_benefit_rows(
+            projection, draw=0, row=REGISTERED_ROWS[row_id], context=context
+        )
+        by_row[row_id] = ({row["person_id"]: row for row in rows}, counters)
+    r0, r0_counters = by_row["R0"]
+    r2, r2_counters = by_row["R2"]
+    assert r0_counters["beneficiaries_opening_entitlement_clamped"] == 0
+    assert r2_counters["beneficiaries_opening_entitlement_clamped"] == 1
+    # The clamped opener's R2 reduction is R0's; the unclamped one, whose
+    # entitlement (2010) follows its clock (2008), loses the 2009 increase.
+    assert r2[1]["benefit_reform"] == r0[1]["benefit_reform"]
+    assert r2[1]["reduced_increases"] == r0[1]["reduced_increases"] == 20
+    assert r0[2]["reduced_increases"] == 21
+    assert r2[2]["reduced_increases"] == 20
+
+
+def test_cohort_diagnostics_break_down_the_clamped_entitlements(cohort):
+    for prepared in (cohort, _cohort_2009()):
+        diagnostics = prepared.diagnostics
+        by_rule = diagnostics[
+            "opening_stock_entitlement_clamped_by_clock_rule"
+        ]
+        assert sum(by_rule.values()) == (
+            diagnostics["opening_stock_entitlement_clamped"]
+        )
+        assert by_rule == opening_module._count(
+            record.clock_rule
+            for record in prepared.opening.values()
+            if record.entitlement_clamped
+        )
+
+
+def test_the_clamped_entitlement_gap_is_named_and_counted(result):
+    module = _dry_run_module()
+    gaps = {gap["item"]: gap for gap in module.gaps_for(result)}
+    gap = gaps["Opening-stock entitlement before the clock"]
+    assert "R2 only" in gap["gap"]
+    assert "opening_stock_entitlement_clamped" in gap["gap"]
+    assert "beneficiaries_opening_entitlement_clamped" in gap["gap"]
+    counts = gap["counts"]
+    assert counts["opening_stock_entitlement_clamped"] == {
+        wave: cohort["opening_stock_entitlement_clamped"]
+        for wave, cohort in result["cohorts"].items()
+    }
+    assert set(counts["beneficiaries_opening_entitlement_clamped"]) == set(
+        result["rows"]
+    )
+    for row_id, value in counts[
+        "beneficiaries_opening_entitlement_clamped"
+    ].items():
+        assert value == result["rows"][row_id]["benefit_counters"].get(
+            "beneficiaries_opening_entitlement_clamped", 0
+        )
+        if row_id != "R2":
+            assert value == 0
+
+
+def test_every_counter_a_gap_names_exists(result):
+    import inspect
+
+    module = _dry_run_module()
+    source = inspect.getsource(track_benefits)
+    for gap in module.GAPS:
+        for name in gap.get("row_counters", ()):
+            assert f'"{name}"' in source, name
+            assert name in gap["gap"], name
+        for name in gap.get("cohort_counters", ()):
+            for cohort in result["cohorts"].values():
+                assert name in cohort, name
+            assert name.split("_by_")[0] in gap["gap"], name
+    recorded = module.gaps_for(result)
+    assert [gap["item"] for gap in recorded] == [
+        gap["item"] for gap in module.GAPS
+    ]
+    for gap in recorded:
+        assert set(gap) <= {"item", "gap", "counts"}
+    broken = {
+        **result,
+        "cohorts": {
+            wave: {
+                key: value
+                for key, value in cohort.items()
+                if key != "opening_stock_entitlement_clamped"
+            }
+            for wave, cohort in result["cohorts"].items()
+        },
+    }
+    with pytest.raises(KeyError):
+        module.gaps_for(broken)
+
+
+def test_results_markdown_renders_gap_counts():
+    module = _dry_run_module()
+    # INVENTED counts in the shape gaps_for records.
+    counts = {
+        "opening_stock_entitlement_clamped": {"2011": 49, "2009": 0},
+        "opening_stock_entitlement_clamped_by_clock_rule": {
+            "2011": {
+                "own_birth_plus_62": 46,
+                "linked_worker_birth_plus_62": 3,
+            },
+            "2009": {},
+        },
+    }
+    assert module._counts_text(counts) == (
+        "`opening_stock_entitlement_clamped` 2011 49, 2009 0; "
+        "`opening_stock_entitlement_clamped_by_clock_rule` 2011 "
+        "(own_birth_plus_62 46, linked_worker_birth_plus_62 3), 2009 (none)"
+    )

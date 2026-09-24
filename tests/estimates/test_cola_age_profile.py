@@ -243,6 +243,125 @@ def test_pending_rulings_record_choice_and_primary_flag():
     ]
 
 
+#: INVENTED A1 block headers: the ratified one has the committed shape
+#: (a1-ratified-1), the other the pre-ratification candidate's.
+RATIFIED_HEADER = {
+    "specification": "urban2010_cola_exercise1",
+    "version": "a1-ratified-1",
+    "status": "ratified_frozen",
+}
+CANDIDATE_HEADER = {
+    "specification": "urban2010_cola_exercise1",
+    "version": "a1-ratified-candidate-1",
+    "status": "ratification_candidate_rulings_recorded_not_merged",
+}
+
+
+def test_pending_rulings_derive_their_status_from_the_specification():
+    # The constant stores no ratification state; each result derives it.
+    for ruling in cap.PENDING_RULINGS:
+        assert not {"awaiting", "fixed_by", "status"} & set(ruling)
+        assert ruling["a1_section"].startswith("section ")
+    rows = _five_group_rows()
+    config = _config(draw_indices=(0, 1))
+
+    def tabulate(**kwargs):
+        return tabulate_cola_age_profile(
+            rows, data_provenance="invented", config=config, **kwargs
+        )
+
+    ratified = tabulate(specification={**RATIFIED_HEADER, "rows": {}})
+    assert ratified["specification"] == {**RATIFIED_HEADER, "ratified": True}
+    for entry in ratified["pending_rulings"]:
+        assert entry["status"] == "fixed_by_ratified_specification"
+        assert entry["awaiting"] is None
+        assert entry["fixed_by"] == (
+            "A1 specification urban2010_cola_exercise1 a1-ratified-1 "
+            f"(ratified_frozen), {entry['a1_section']}"
+        )
+    candidate = tabulate(specification=CANDIDATE_HEADER)
+    assert candidate["specification"]["ratified"] is False
+    for entry in candidate["pending_rulings"]:
+        assert entry["status"] == "awaiting_ratification"
+        assert entry["fixed_by"] is None
+        assert "A1 specification ratification" in entry["awaiting"]
+        assert "'a1-ratified-candidate-1'" in entry["awaiting"]
+    absent = tabulate()
+    assert absent["specification"] is None
+    for entry in absent["pending_rulings"]:
+        assert entry["status"] == "specification_not_supplied"
+        assert entry["fixed_by"] is None
+        assert "no A1 specification status" in entry["awaiting"]
+    # Only the status fields differ: the values and flags are the same.
+    status_fields = {"status", "awaiting", "fixed_by"}
+    for left, right in zip(
+        ratified["pending_rulings"], absent["pending_rulings"], strict=True
+    ):
+        assert {k: v for k, v in left.items() if k not in status_fields} == {
+            k: v for k, v in right.items() if k not in status_fields
+        }
+
+
+def test_registered_alternatives_are_flagged_in_the_pending_rulings():
+    result = tabulate_cola_age_profile(
+        _five_group_rows(),
+        data_provenance="invented",
+        config=_config(
+            draw_indices=(0, 1),
+            components=cap.WORKERS_ONLY_COMPONENTS,
+            headline_statistic=ALT,
+        ),
+        specification=RATIFIED_HEADER,
+    )
+    by_name = {r["parameter"]: r for r in result["pending_rulings"]}
+    assert by_name["components"]["is_registered_alternative"] is True
+    assert by_name["headline_statistic"]["is_registered_alternative"] is True
+    # (0, 1) is neither K = 20 nor a registered alternative.
+    assert by_name["draw_indices"]["is_proposed_primary"] is False
+    assert by_name["draw_indices"]["is_registered_alternative"] is False
+    assert by_name["age_rule"]["is_registered_alternative"] is False
+
+
+@pytest.mark.parametrize(
+    ("header", "unratified"),
+    [
+        (RATIFIED_HEADER, []),
+        (CANDIDATE_HEADER, ["status", "version"]),
+        ({**RATIFIED_HEADER, "version": "a1-draft-3"}, ["version"]),
+        ({**RATIFIED_HEADER, "status": None}, ["status"]),
+        ({"version": "a1-ratified-1"}, ["status"]),
+        ({**RATIFIED_HEADER, "status": ""}, ["status"]),
+        ({**RATIFIED_HEADER, "status": "not_ratified"}, ["status"]),
+    ],
+    ids=[
+        "ratified",
+        "candidate",
+        "draft-version",
+        "null-status",
+        "missing-status",
+        "empty-status",
+        "not-ratified",
+    ],
+)
+def test_specification_ratification_test(header, unratified):
+    assert cap.specification_unratified_fields(header) == unratified
+    assert cap.specification_record(header)["ratified"] is (not unratified)
+
+
+def test_a_malformed_specification_is_refused():
+    with pytest.raises(ColaTabulationError, match="mapping"):
+        cap.specification_unratified_fields("a1-ratified-1")
+    with pytest.raises(ColaTabulationError, match="string"):
+        cap.specification_record({**RATIFIED_HEADER, "specification": 1})
+    with pytest.raises(ColaTabulationError, match="mapping"):
+        tabulate_cola_age_profile(
+            _five_group_rows(),
+            data_provenance="invented",
+            config=_config(draw_indices=(0, 1)),
+            specification=["a1-ratified-1"],
+        )
+
+
 # =========================================================================
 # Hand-computed statistics
 # =========================================================================

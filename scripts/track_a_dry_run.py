@@ -72,16 +72,17 @@ from populace_dynamics.estimates.parameters import (  # noqa: E402
 )
 from populace_dynamics.ss.params import load_ssa_parameters  # noqa: E402
 
-GAPS: tuple[dict[str, str], ...] = (
+GAPS: tuple[dict[str, Any], ...] = (
     {
         "item": "Mortality after the opening year",
         "gap": (
             "TR2008 publishes no projected death probabilities by single "
             "age and sex; the A2 substitute (SSA 2004 period table x TR2008 "
             "V.A1 ASADR ratio, under-65 and 65+ groups, base year 2004) is "
-            "used for 2011-2030 (2009-2030 for R6). It is proposed, not "
-            "adopted; with base 2004 the 65+ ratio exceeds 1 in 2011-2012, "
-            "and in 2009-2010, which only R6 projects"
+            "used for 2011-2030 (2009-2030 for R6). It is "
+            f"{tr2008.MORTALITY_SUBSTITUTE_STANDING}. With base 2004 the "
+            "65+ ratio exceeds 1 in 2011-2012, and in 2009-2010, which only "
+            "R6 projects"
         ),
     },
     {
@@ -148,10 +149,17 @@ GAPS: tuple[dict[str, str], ...] = (
             "their deaths are not simulated, so their partners are never "
             "widowed in the projection, and with no career or simulated "
             "state in the cohort no spouse's benefit rests on their record "
-            "(counted in the cohort diagnostics, and per row as "
+            "(counted in the cohort diagnostics as "
+            "married_with_spouse_outside_roster and "
+            "married_without_linked_spouse, and per row as "
             "spouse_outside_roster, or spouse_unlinked for a married "
             "claimant with no linked spouse)"
         ),
+        "cohort_counters": (
+            "married_with_spouse_outside_roster",
+            "married_without_linked_spouse",
+        ),
+        "row_counters": ("spouse_outside_roster", "spouse_unlinked"),
     },
     {
         "item": "Opening-year Social Security unobserved",
@@ -165,15 +173,18 @@ GAPS: tuple[dict[str, str], ...] = (
             "diagnostics and beneficiaries_ss_opening_year_unobserved per "
             "row)"
         ),
+        "cohort_counters": ("ss_opening_year_unobserved",),
+        "row_counters": ("beneficiaries_ss_opening_year_unobserved",),
     },
     {
         "item": "Widow(er)s of workers who died before the opening wave",
         "gap": (
             "the late spouse is outside the cohort and has no career, so a "
             "widow(er) not receiving in the opening year gets no "
-            "aged-widow(er) benefit (counted as "
+            "aged-widow(er) benefit (counted per row as "
             "widow_deceased_outside_roster)"
         ),
+        "row_counters": ("widow_deceased_outside_roster",),
     },
     {
         "item": "Disabled widow(er)s and child-in-care beneficiaries",
@@ -239,8 +250,33 @@ GAPS: tuple[dict[str, str], ...] = (
         "gap": (
             "A1 rule 4 fixes the opening basis but does not mention "
             "recovery; A5 ends a disabled worker's opening basis at a "
-            "simulated recovery"
+            "simulated recovery (counted per row as "
+            "opening_di_basis_ended_by_recovery)"
         ),
+        "row_counters": ("opening_di_basis_ended_by_recovery",),
+    },
+    {
+        "item": "Opening-stock entitlement before the clock",
+        "gap": (
+            "an opening-stock recipient whose A3 receipt start precedes the "
+            "A1 section 6 clock of the benefit A3 classifies (for example a "
+            "retired worker whose receipt starts before the year of "
+            "attaining 62) has no observed entitlement year for R2: the "
+            "receipt start cannot be that benefit's entitlement, so A5 sets "
+            "the entitlement year to the clock. The setting itself changes "
+            "no amount (no count or path starts before the clock), but R2 "
+            "then reduces such a record's increases exactly as R0 does, and "
+            "overstates its reduction if its entitlement came after the "
+            "clock. R2 only (counted in the cohort diagnostics as "
+            "opening_stock_entitlement_clamped, with its clock rules, and "
+            "per row as beneficiaries_opening_entitlement_clamped, which "
+            "only the entitlement clock of R2 counts)"
+        ),
+        "cohort_counters": (
+            "opening_stock_entitlement_clamped",
+            "opening_stock_entitlement_clamped_by_clock_rule",
+        ),
+        "row_counters": ("beneficiaries_opening_entitlement_clamped",),
     },
     {
         "item": "Claiming",
@@ -255,6 +291,55 @@ GAPS: tuple[dict[str, str], ...] = (
         "gap": "closed cohort: no entrants after the opening year",
     },
 )
+
+
+def gaps_for(result: dict[str, Any]) -> list[dict[str, Any]]:
+    """The gaps as a run records them, each counted gap with its counts.
+
+    A gap naming ``cohort_counters`` gets each counter's value per anchor
+    wave from the result's cohort diagnostics; one naming
+    ``row_counters`` gets each counter's value per row from the row's
+    ``benefit_counters`` (summed over draws; a counter a row never
+    incremented is 0 there).  A cohort counter missing from a cohort's
+    diagnostics raises, so a renamed diagnostic cannot silently read as
+    zero.
+    """
+
+    out = []
+    for gap in GAPS:
+        entry: dict[str, Any] = {"item": gap["item"], "gap": gap["gap"]}
+        counts: dict[str, Any] = {}
+        for name in gap.get("cohort_counters", ()):
+            counts[name] = {
+                wave: cohort[name]
+                for wave, cohort in result["cohorts"].items()
+            }
+        for name in gap.get("row_counters", ()):
+            counts[name] = {
+                row_id: int(row["benefit_counters"].get(name, 0))
+                for row_id, row in result["rows"].items()
+            }
+        if counts:
+            entry["counts"] = counts
+        out.append(entry)
+    return out
+
+
+def _count_value(value: Any) -> str:
+    if isinstance(value, dict):
+        inner = ", ".join(f"{key} {count}" for key, count in value.items())
+        return f"({inner or 'none'})"
+    return str(value)
+
+
+def _counts_text(counts: dict[str, Any]) -> str:
+    return "; ".join(
+        f"`{name}` "
+        + ", ".join(
+            f"{key} {_count_value(value)}" for key, value in by_key.items()
+        )
+        for name, by_key in counts.items()
+    )
 
 
 def run_date() -> str:
@@ -545,7 +630,15 @@ def _results_markdown(result: dict[str, Any]) -> str:
                 f"| {diag['infeasible_mortality_cells']} |"
             )
     lines += ["", "## Gaps (named, not fixed)", ""]
-    lines += [f"- **{gap['item']}.** {gap['gap']}." for gap in result["gaps"]]
+    lines += [
+        f"- **{gap['item']}.** {gap['gap']}."
+        + (
+            f" Counts: {_counts_text(gap['counts'])}."
+            if gap.get("counts")
+            else ""
+        )
+        for gap in result["gaps"]
+    ]
     lines += [
         "",
         "## Max's rulings (2026-09-23, decision records d074 and d075)",
@@ -557,9 +650,16 @@ def _results_markdown(result: dict[str, Any]) -> str:
         f"the ruling: {item['follows_ruling']})."
         for item in result["max_rulings"]
     ]
+    specification = result.get("specification") or {}
     lines += [
         "",
-        "## Builder defaults (no ruling covers them; not ratified)",
+        "## Builder defaults (no ruling covers them; "
+        + (
+            "fixed by the A1 ratification and the issue #42 registration; "
+            f"A1 {specification['version']} is ratified)"
+            if specification.get("ratified")
+            else "the A1 specification is not ratified)"
+        ),
         "",
     ]
     lines += [
@@ -679,7 +779,7 @@ def main(argv: list[str] | None = None) -> int:
         "header": DRY_RUN_HEADER,
         **result,
         "checks": {"spec_rate_path": _spec_rate_check(baseline)},
-        "gaps": list(GAPS),
+        "gaps": gaps_for(result),
         "run": {
             "date": run_date(),
             "invented_seed": args.seed,

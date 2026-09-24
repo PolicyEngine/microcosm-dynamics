@@ -11,12 +11,19 @@ person-disjoint half-split noise floor.  It does not project a population,
 compute or index a benefit, read a comparator value, apply an acceptance
 rule, or write an artifact.
 
-The specification is NOT frozen until A1 is ratified (plan section 6 item
-4).  Every convention that awaits that ratification is an explicit field of
-:class:`ColaAgeProfileConfig` whose default is the plan's proposed primary;
-:data:`PENDING_RULINGS` lists them and every result records the values used
-and whether each equals the proposed primary.  (Max ruled the plan's
-section 6 items 1-3 on 2026-09-23; none of them is a tabulation field.)
+Every tabulation convention the A1 specification fixes is an explicit
+field of :class:`ColaAgeProfileConfig` whose default is the plan's
+proposed primary; :data:`PENDING_RULINGS` lists them with the A1 section
+that fixes each.  The A1 specification is frozen only once it is ratified
+(plan section 6 item 4), so this module stores no ratification state:
+the caller passes the A1 block header (``specification``, the section 21
+block's ``specification``, ``version`` and ``status``), and every result
+records, per convention, the value used, whether it is the proposed
+primary or a registered alternative, and either what fixes it (a ratified
+block, :func:`specification_unratified_fields` empty) or that it awaits
+ratification (an unratified block, or none supplied).  (Max ruled the
+plan's section 6 items 1-3 on 2026-09-23; none of them is a tabulation
+field.)
 
 Input rows
 ----------
@@ -149,11 +156,14 @@ __all__ = [
     "SCENARIO_SPECIFIC",
     "SCHEMA_VERSION",
     "STATISTICS",
+    "UNRATIFIED_MARKERS",
     "WORKERS_ONLY_COMPONENTS",
     "AgeGroup",
     "ColaAgeProfileConfig",
     "ColaTabulationError",
     "MembershipDifferenceError",
+    "specification_record",
+    "specification_unratified_fields",
     "tabulate_cola_age_profile",
 ]
 
@@ -519,17 +529,80 @@ _SPEC_RATIFICATION = (
     "A1 specification ratification (critical-path-cola-20260922.md "
     "section 6 item 4)"
 )
+#: The A1 block header fields a result records (section 21).
+SPECIFICATION_FIELDS = ("specification", "version", "status")
+#: Markers of an A1 status or version that is not ratified; the
+#: registered-run preflight (``scripts/run_track_a_registered.py``)
+#: refuses a block carrying any of them.
+UNRATIFIED_MARKERS = ("candidate", "draft", "not_merged", "not_ratified")
 
-#: The conventions awaiting A1 ratification (Max's rulings of 2026-09-23
-#: covered none of them), with the plan's proposed primary (the
-#: configuration default) and its registered alternatives.
+
+def specification_unratified_fields(
+    specification: Mapping[str, Any],
+) -> list[str]:
+    """The header fields that keep an A1 block from counting as ratified.
+
+    ``status`` and ``version`` must each be a non-empty string free of
+    every :data:`UNRATIFIED_MARKERS` entry (``a1-ratified-1`` /
+    ``ratified_frozen`` pass; ``a1-ratified-candidate-1``, a draft
+    version or a missing field does not).  An empty list means ratified.
+    """
+
+    if not isinstance(specification, Mapping):
+        raise ColaTabulationError(
+            "specification must be a mapping (the A1 section 21 block or "
+            "its header)"
+        )
+    failing = []
+    for field in ("status", "version"):
+        value = specification.get(field)
+        if (
+            not isinstance(value, str)
+            or not value
+            or any(mark in value for mark in UNRATIFIED_MARKERS)
+        ):
+            failing.append(field)
+    return failing
+
+
+def specification_record(
+    specification: Mapping[str, Any] | None,
+) -> dict[str, Any] | None:
+    """The A1 block header a result records, and whether it is ratified.
+
+    ``None`` (no specification supplied) records ``None``: the tabulation
+    then cannot say what fixes its conventions, so they are reported as
+    awaiting ratification.
+    """
+
+    if specification is None:
+        return None
+    unratified = specification_unratified_fields(specification)
+    record: dict[str, Any] = {}
+    for field in SPECIFICATION_FIELDS:
+        value = specification.get(field)
+        if value is not None and not isinstance(value, str):
+            raise ColaTabulationError(
+                f"specification {field} must be a string or absent"
+            )
+        record[field] = value
+    record["ratified"] = not unratified
+    return record
+
+
+#: The tabulation conventions the A1 specification fixes (Max's rulings
+#: of 2026-09-23 covered none of them), each with the plan's proposed
+#: primary (the configuration default), its registered alternatives and
+#: the A1 section that fixes it.  Whether each is fixed or still awaits
+#: ratification is not stored here: :func:`tabulate_cola_age_profile`
+#: derives it from the specification header its caller supplies.
 PENDING_RULINGS: tuple[dict[str, Any], ...] = (
     {
         "parameter": "headline_statistic",
         "plan_field": "Statistic",
         "proposed_primary": RATIO_OF_SCENARIO_MEANS,
         "registered_alternatives": [MEAN_OF_INDIVIDUAL_RATIOS],
-        "awaiting": _SPEC_RATIFICATION,
+        "a1_section": "section 7 (R0) and section 18 (R3)",
         "note": (
             "both statistics are always computed; this sets which one is "
             "labelled primary"
@@ -540,11 +613,12 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
         "plan_field": "Membership",
         "proposed_primary": POSITIVE_BENEFIT,
         "registered_alternatives": [],
-        "awaiting": _SPEC_RATIFICATION,
+        "a1_section": "section 8",
         "note": (
-            "zero-benefit treatment is an unresolved specification field; "
-            f"{FLAGGED_RECIPIENT_INCLUDING_ZERO} is available, not "
-            "registered"
+            "A1 section 8 keeps persons with a positive baseline benefit, "
+            "excludes persons with zero benefits and registers no "
+            f"alternative; {FLAGGED_RECIPIENT_INCLUDING_ZERO} is available, "
+            "not registered"
         ),
     },
     {
@@ -552,10 +626,10 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
         "plan_field": "Membership",
         "proposed_primary": False,
         "registered_alternatives": [],
-        "awaiting": _SPEC_RATIFICATION,
+        "a1_section": "section 8",
         "note": (
-            "the proposal requires identical membership in both scenarios "
-            "under fixed paths; differing memberships are refused"
+            "A1 section 8 gives the reform the baseline membership, which "
+            "fixed paths make identical; differing memberships are refused"
         ),
     },
     {
@@ -563,7 +637,7 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
         "plan_field": "Membership",
         "proposed_primary": SCENARIO_SPECIFIC,
         "registered_alternatives": [],
-        "awaiting": _SPEC_RATIFICATION,
+        "a1_section": "section 8",
         "note": (
             "operative only when allow_membership_difference is true and "
             "memberships differ; under identical membership every basis "
@@ -575,15 +649,18 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
         "plan_field": "Age",
         "proposed_primary": "reference_year_minus_birth_year",
         "registered_alternatives": [],
-        "awaiting": _SPEC_RATIFICATION,
-        "note": "within-year age assignment is unresolved in the spec",
+        "a1_section": "section 9",
+        "note": (
+            "A1 section 9: age in the reference year is the reference year "
+            "minus the birth year; no alternative is registered"
+        ),
     },
     {
         "parameter": "benefit_period",
         "plan_field": "Benefit period",
         "proposed_primary": "calendar_year_payments",
         "registered_alternatives": ["december_monthly_amount"],
-        "awaiting": _SPEC_RATIFICATION,
+        "a1_section": "section 10 (R0) and section 18 (R4)",
         "note": (
             "declared label only: the input amounts must already measure "
             "the declared period; the tabulation cannot check it"
@@ -594,19 +671,19 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
         "plan_field": "Components",
         "proposed_primary": list(PRIMARY_COMPONENTS),
         "registered_alternatives": [list(WORKERS_ONLY_COMPONENTS)],
-        "awaiting": (
-            f"{_SPEC_RATIFICATION}; section 6 item 2(b) was ruled by Max "
-            "on 2026-09-23 (DI benefit levels enter as a disclosed oracle "
-            "approximation)"
+        "a1_section": "section 11 (R0) and section 18 (R5)",
+        "note": (
+            "component vocabulary is closed; unknown names are refused. "
+            "Max ruled plan section 6 item 2(b) on 2026-09-23 (d074): DI "
+            "benefit levels enter as a disclosed oracle approximation"
         ),
-        "note": "component vocabulary is closed; unknown names are refused",
     },
     {
         "parameter": "draw_indices",
         "plan_field": "Uncertainty",
         "proposed_primary": list(DEFAULT_DRAW_INDICES),
         "registered_alternatives": [],
-        "awaiting": _SPEC_RATIFICATION,
+        "a1_section": "section 16",
         "note": "K = 20 draws, mean and sample SD over draws",
     },
     {
@@ -614,7 +691,7 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
         "plan_field": "Uncertainty",
         "proposed_primary": list(DEFAULT_FLOOR_SEEDS),
         "registered_alternatives": [],
-        "awaiting": _SPEC_RATIFICATION,
+        "a1_section": "section 16",
         "note": "five-seed family-unit-disjoint half-split floor",
     },
     {
@@ -622,7 +699,7 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
         "plan_field": "Uncertainty",
         "proposed_primary": FAMILY_UNIT,
         "registered_alternatives": [],
-        "awaiting": _SPEC_RATIFICATION,
+        "a1_section": "section 16",
         "note": (
             "A1 section 16 keeps each opening-wave family unit on one side "
             "(A1 referee question 2); person_id, the Mermin-row "
@@ -1424,18 +1501,56 @@ def _conventions(config: ColaAgeProfileConfig) -> dict[str, Any]:
     }
 
 
-def _pending_rulings(config: ColaAgeProfileConfig) -> list[dict[str, Any]]:
+def _pending_rulings(
+    config: ColaAgeProfileConfig, specification: dict[str, Any] | None
+) -> list[dict[str, Any]]:
+    """Each convention with its value and what fixes it, if anything.
+
+    ``specification`` is :func:`specification_record` of the caller's A1
+    block header.  A ratified header fixes every convention (``status``
+    ``fixed_by_ratified_specification``, ``fixed_by`` naming the A1
+    version and section, ``awaiting`` null); an unratified one leaves
+    each awaiting ratification, and so does no header at all
+    (``specification_not_supplied``), since the tabulation then cannot
+    tell.
+    """
+
     chosen = config.as_dict()
+    ratified = specification is not None and specification["ratified"]
+    if ratified:
+        status, awaiting = "fixed_by_ratified_specification", None
+    elif specification is None:
+        status = "specification_not_supplied"
+        awaiting = (
+            f"{_SPEC_RATIFICATION}; no A1 specification status was "
+            "supplied to the tabulation"
+        )
+    else:
+        status = "awaiting_ratification"
+        awaiting = (
+            f"{_SPEC_RATIFICATION}; the A1 specification supplied is "
+            f"version {specification['version']!r}, status "
+            f"{specification['status']!r}"
+        )
     out = []
     for ruling in PENDING_RULINGS:
         value = chosen[ruling["parameter"]]
-        out.append(
-            {
-                **copy.deepcopy(ruling),
-                "chosen": value,
-                "is_proposed_primary": value == ruling["proposed_primary"],
-            }
+        entry = copy.deepcopy(ruling)
+        entry["status"] = status
+        entry["awaiting"] = awaiting
+        entry["fixed_by"] = (
+            f"A1 specification {specification['specification']} "
+            f"{specification['version']} ({specification['status']}), "
+            f"{ruling['a1_section']}"
+            if ratified
+            else None
         )
+        entry["chosen"] = value
+        entry["is_proposed_primary"] = value == ruling["proposed_primary"]
+        entry["is_registered_alternative"] = (
+            value in ruling["registered_alternatives"]
+        )
+        out.append(entry)
     return out
 
 
@@ -1493,6 +1608,7 @@ def tabulate_cola_age_profile(
     registration_pointer: str | None = None,
     labels: Sequence[str] = (),
     upstream_conventions: Mapping[str, Any] | None = None,
+    specification: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Tabulate the exercise-1 age profile from per-person-per-draw rows.
 
@@ -1502,6 +1618,11 @@ def tabulate_cola_age_profile(
     without the invented-data label; the pointer is recorded, not verified.
     ``upstream_conventions`` (JSON scalars, e.g. the first-application or
     exposure-clock row that produced the benefits) is recorded verbatim.
+    ``specification`` is the A1 section 21 block (or its header:
+    ``specification``, ``version``, ``status``); the result records it
+    (:func:`specification_record`) and derives from it whether each
+    convention in ``pending_rulings`` is fixed by a ratified
+    specification or still awaits ratification.
 
     Returns a JSON-serializable mapping.  Raises
     :class:`MembershipDifferenceError` when scenario memberships differ and
@@ -1522,6 +1643,7 @@ def tabulate_cola_age_profile(
     recorded_upstream = _json_scalar_mapping(
         upstream_conventions, "upstream_conventions"
     )
+    recorded_specification = specification_record(specification)
 
     rows_ = _normalize(rows, config)
     differs = rows_.recipient_base != rows_.recipient_reform
@@ -1569,7 +1691,8 @@ def tabulate_cola_age_profile(
         "labels": output_labels,
         "config": config.as_dict(),
         "conventions": _conventions(config),
-        "pending_rulings": _pending_rulings(config),
+        "specification": recorded_specification,
+        "pending_rulings": _pending_rulings(config, recorded_specification),
         "upstream_conventions": recorded_upstream,
         "input_summary": _input_summary(rows_, config),
         "groups": groups,
