@@ -158,3 +158,94 @@ def test_the_committed_specification_is_ratified():
         RATIFIED["status"],
         RATIFIED["version"],
     }
+
+
+def test_a_null_status_is_refused(tmp_path):
+    # str(None) is "None", which carries no unratified marker; a missing or
+    # null status or version must still refuse.
+    # Nor may a status that never says "ratified" or negates it: each of
+    # these carries no unratified marker, so a marker-only test passed it.
+    for specification in (
+        {**RATIFIED, "status": None},
+        {"version": RATIFIED["version"]},
+        {**RATIFIED, "status": "pending_ratification"},
+        {**RATIFIED, "status": "unratified"},
+        {**RATIFIED, "status": "not yet ratified"},
+        {**RATIFIED, "version": "a1-3"},
+    ):
+        with pytest.raises(ValueError, match="authorizes no run"):
+            _script().preflight(
+                registration_pointer=POINTER,
+                registered_commit=COMMIT,
+                output=tmp_path / "run.json",
+                git=_git(),
+                specification=specification,
+            )
+
+
+def test_the_preflight_and_a7_share_one_ratification_test():
+    from populace_dynamics.estimates import cola_age_profile
+
+    script = _script()
+    assert script.UNRATIFIED_MARKERS is cola_age_profile.UNRATIFIED_MARKERS
+
+
+def _project() -> dict:
+    import tomllib
+
+    with (ROOT / "pyproject.toml").open("rb") as handle:
+        project = tomllib.load(handle)["project"]
+    return {"name": project["name"], "version": project["version"]}
+
+
+def test_the_sidecar_resolves_each_import_to_its_distribution():
+    # The registered run's sidecar recorded null for "policyengine-us" and
+    # "populace-dynamics": neither is an installed distribution name.  The
+    # sidecar now resolves each import name to the distributions that
+    # provide it and records no unresolved name.
+    import importlib.metadata
+
+    environment = _script()._environment(ssa_parameters_revision="INVENTED")
+    packages = environment["packages"]
+    assert None not in packages.values()
+    assert all(
+        isinstance(version, str) and version for version in packages.values()
+    )
+    assert not {"populace-dynamics", "policyengine-us"} & set(packages)
+    by_import = environment["distributions_by_import"]
+    assert set(by_import) == set(_script().ENV_IMPORTS)
+    for name in ("numpy", "pandas", "scipy"):
+        assert by_import[name] == [name]
+        assert packages[name] == importlib.metadata.version(name)
+    project = _project()
+    assert environment["project"] == project
+    installed = importlib.metadata.packages_distributions()
+    assert by_import["populace_dynamics"] == sorted(
+        set(installed.get("populace_dynamics", ()))
+    )
+    for distribution in by_import["populace_dynamics"]:
+        assert distribution == project["name"]
+        assert packages[distribution] == importlib.metadata.version(
+            distribution
+        )
+    assert environment["populace_dynamics_source"] == "src/populace_dynamics"
+    oracle = environment["policyengine_us_parameters"]
+    assert oracle["revision"] == "INVENTED"
+    assert "git checkout" in oracle["source"]
+
+
+def test_distributions_for_import_dedupes_and_maps_absent_names_to_empty():
+    import importlib.metadata
+
+    script = _script()
+    version = importlib.metadata.version("numpy")
+    packages = {"numpy": ["numpy", "numpy"], "np_alias": ["numpy"]}
+    assert script.distributions_for_import("numpy", packages) == {
+        "numpy": version
+    }
+    assert script.distributions_for_import("absent_module", packages) == {}
+    environment = script._environment(
+        ssa_parameters_revision="INVENTED", packages=packages
+    )
+    assert environment["packages"] == {"numpy": version}
+    assert environment["distributions_by_import"]["populace_dynamics"] == []

@@ -8,8 +8,10 @@ comment exists, at exactly the commit that comment registers:
   (``.../issues/42#issuecomment-<id>``);
 * the working tree must be clean and ``HEAD`` must equal
   ``--registered-commit``;
-* the A1 specification must be ratified: its section 21 block may not
-  carry a candidate, draft or not-merged status or version (A1 says it
+* the A1 specification must be ratified: its section 21 status and
+  version must each say "ratified" and may not carry a candidate, draft,
+  not-merged or other negating marker
+  (``cola_age_profile.specification_unratified_fields``; A1 says it
   authorizes no run until Max ratifies it by merging, plan section 6
   item 4);
 * the output artifact must not exist yet (one shot, no overwrite; it is
@@ -35,7 +37,11 @@ Usage::
         --registered-commit <full SHA> \\
         [--output runs/replication_urban2010_cola_v1.json]
 
-Writes the artifact and a ``.env.json`` sidecar next to it.
+Writes the artifact and a ``.env.json`` sidecar next to it.  The sidecar
+records each package by the installed distribution that provides it (the
+repository's ``populace_dynamics`` installs as the distribution
+``pyproject.toml`` names), the project name and version at the commit,
+and the revision of the policyengine-us checkout the oracle reads.
 """
 
 from __future__ import annotations
@@ -50,6 +56,7 @@ import platform
 import re
 import subprocess
 import sys
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -57,6 +64,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
+import populace_dynamics  # noqa: E402
 from populace_dynamics.cohorts import psid2010  # noqa: E402
 from populace_dynamics.cola_track_a import (  # noqa: E402
     TrackAConfig,
@@ -82,6 +90,7 @@ from populace_dynamics.data import tr2008  # noqa: E402
 from populace_dynamics.engine.di_entitlement_rates import (  # noqa: E402
     load_di_entitlement_rates,
 )
+from populace_dynamics.estimates import cola_age_profile  # noqa: E402
 from populace_dynamics.estimates.parameters import (  # noqa: E402
     load_cola_history,
 )
@@ -99,14 +108,24 @@ REGISTRATION_POINTER = re.compile(
     r"https://github\.com/PolicyEngine/microcosm-dynamics/issues/42"
     r"#issuecomment-[0-9]+"
 )
-#: Markers of an A1 status or version that is not ratified.
-UNRATIFIED_MARKERS = ("candidate", "draft", "not_merged", "not_ratified")
-ENV_PACKAGES = (
+#: Markers of an A1 status or version that is not ratified.  A7 owns the
+#: test (``specification_unratified_fields``, which also requires the word
+#: "ratified" and no negating word), so this preflight and each row's
+#: pending-rulings status apply the same one.
+UNRATIFIED_MARKERS = cola_age_profile.UNRATIFIED_MARKERS
+#: Import names whose installed distributions the sidecar records.  An
+#: import name is not a distribution name: the repository's package
+#: imports as ``populace_dynamics`` but installs as the distribution that
+#: ``pyproject.toml`` names, and the oracle reads policyengine-us as a git
+#: checkout rather than an installed distribution.  So each import name is
+#: resolved to the distributions that provide it
+#: (``importlib.metadata.packages_distributions``), never guessed.
+ENV_IMPORTS = (
     "numpy",
     "pandas",
     "scipy",
-    "policyengine-us",
-    "populace-dynamics",
+    "populace_dynamics",
+    "policyengine_us",
 )
 
 
@@ -137,15 +156,13 @@ def _dry_run_module() -> Any:
 def check_specification_ratified(block: dict[str, Any]) -> None:
     """Refuse an A1 block whose status or version is not ratified."""
 
-    for field in ("status", "version"):
-        value = str(block.get(field, ""))
-        if not value or any(mark in value for mark in UNRATIFIED_MARKERS):
-            raise ValueError(
-                f"the A1 specification {field} is {value!r}: A1 authorizes "
-                "no run until Max ratifies it by merging (plan section 6 "
-                "item 4), and the ratified text must say so in its section "
-                "21 block"
-            )
+    for field in cola_age_profile.specification_unratified_fields(block):
+        raise ValueError(
+            f"the A1 specification {field} is {block.get(field)!r}: A1 "
+            "authorizes no run until Max ratifies it by merging (plan "
+            "section 6 item 4), and the ratified text must say so in its "
+            "section 21 block"
+        )
 
 
 def preflight(
@@ -190,17 +207,81 @@ def _write_new(path: Path, text: str) -> None:
         handle.write(text)
 
 
-def _environment() -> dict[str, Any]:
-    versions = {}
-    for name in ENV_PACKAGES:
-        try:
-            versions[name] = importlib.metadata.version(name)
-        except importlib.metadata.PackageNotFoundError:
-            versions[name] = None
+def distributions_for_import(
+    import_name: str,
+    packages: Mapping[str, Sequence[str]] | None = None,
+) -> dict[str, str]:
+    """The installed distributions that provide ``import_name``, by version.
+
+    ``packages`` is ``importlib.metadata.packages_distributions()`` (passed
+    in by tests).  A name the mapping lists more than once (an editable
+    install whose metadata is also on the path) is recorded once.  An
+    import name no installed distribution provides maps to ``{}``.
+    """
+
+    if packages is None:
+        packages = importlib.metadata.packages_distributions()
+    names = dict.fromkeys(packages.get(import_name, ()))
+    return {name: importlib.metadata.version(name) for name in names}
+
+
+def _project() -> dict[str, str]:
+    """The project name and version in ``pyproject.toml`` at this commit."""
+
+    import tomllib
+
+    with (ROOT / "pyproject.toml").open("rb") as handle:
+        project = tomllib.load(handle)["project"]
+    return {"name": project["name"], "version": project["version"]}
+
+
+def _environment(
+    *,
+    ssa_parameters_revision: str,
+    packages: Mapping[str, Sequence[str]] | None = None,
+) -> dict[str, Any]:
+    """The run environment the sidecar records, with no unresolved name.
+
+    ``packages`` maps each installed distribution name to its version;
+    ``distributions_by_import`` records which distributions provide each
+    of :data:`ENV_IMPORTS`.  The code the run imports is this commit's
+    ``src/populace_dynamics`` (the script puts ``src`` first on the path),
+    recorded as ``populace_dynamics_source`` with the project name and
+    version from ``pyproject.toml``.  policyengine-us is not an installed
+    distribution here: the oracle reads its parameters from a git
+    checkout, whose revision is recorded.
+    """
+
+    if packages is None:
+        packages = importlib.metadata.packages_distributions()
+    by_import = {
+        name: distributions_for_import(name, packages) for name in ENV_IMPORTS
+    }
+    versions: dict[str, str] = {}
+    for distributions in by_import.values():
+        versions.update(distributions)
+    source = Path(populace_dynamics.__file__).resolve().parent
     return {
         "python": platform.python_version(),
         "platform": platform.platform(),
-        "packages": versions,
+        "packages": dict(sorted(versions.items())),
+        "distributions_by_import": {
+            name: sorted(distributions)
+            for name, distributions in by_import.items()
+        },
+        "project": _project(),
+        "populace_dynamics_source": (
+            str(source.relative_to(ROOT))
+            if source.is_relative_to(ROOT)
+            else str(source)
+        ),
+        "policyengine_us_parameters": {
+            "source": (
+                "git checkout read by populace_dynamics.ss.params."
+                "load_ssa_parameters (not an installed distribution)"
+            ),
+            "revision": ssa_parameters_revision,
+        },
     }
 
 
@@ -233,6 +314,11 @@ def main(argv: list[str] | None = None) -> int:
     base_params = load_ssa_parameters()
     params = tr2008_ssa_parameters(
         base_params, alternative=config.tr2008_alternative
+    )
+    # Resolved before the run, so an environment the sidecar cannot
+    # record fails before any projection and before any file is written.
+    environment = _environment(
+        ssa_parameters_revision=base_params.pe_us_revision
     )
     realized = load_cola_history()
     baseline = tr2008_baseline_cola(
@@ -295,7 +381,7 @@ def main(argv: list[str] | None = None) -> int:
         "comparator_seal_opened_before_commit": False,
         **result,
         "checks": {"spec_rate_path": spec_rate_check},
-        "gaps": list(dry_run.GAPS),
+        "gaps": dry_run.gaps_for(result),
         "run": {
             "started": started,
             "finished": datetime.datetime.now(
@@ -326,7 +412,7 @@ def main(argv: list[str] | None = None) -> int:
             {
                 "artifact": args.output.name,
                 "artifact_sha256": _sha256(args.output),
-                "environment": _environment(),
+                "environment": environment,
             },
             indent=2,
         )

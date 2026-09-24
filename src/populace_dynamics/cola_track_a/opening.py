@@ -52,7 +52,19 @@ beneficiaries"):
 
 The own first entitlement year (for the entitlement-clock row R2) is the
 A3 receipt start.  Where it would precede the clock it is set to the
-clock and flagged.
+clock and flagged (``entitlement_clamped``).  Only a retired worker's or
+an aged auxiliary's record can be clamped (every other clock is the
+receipt start, or precedes it).  A retired worker's receipt start before
+the year of attaining 62 cannot be that benefit's entitlement year.  An
+aged auxiliary's can be only if its clock, a proxy (the linked worker's
+year of attaining 62 or of death, or the own-62 fallback), is later than
+the worker's true clock (for example a disability onset A3 does not
+observe); R0 uses the same clock.  No count or amount starts before the
+clock, so the clamp changes
+no amount; it is a named Track A gap ("Opening-stock entitlement before
+the clock"), counted in the cohort diagnostics
+(``opening_stock_entitlement_clamped``, and by clock rule) and per R2
+beneficiary (``beneficiaries_opening_entitlement_clamped``).
 """
 
 from __future__ import annotations
@@ -596,6 +608,11 @@ def prepare_track_a_cohort(
         "opening_stock_clock_rules": dict(sorted(clock_rules.items())),
         "opening_stock_entitlement_clamped": sum(
             record.entitlement_clamped for record in opening.values()
+        ),
+        "opening_stock_entitlement_clamped_by_clock_rule": _count(
+            record.clock_rule
+            for record in opening.values()
+            if record.entitlement_clamped
         ),
         "opening_recipients_without_record": dict(sorted(excluded.items())),
         "opening_di_entitled": int(initial["di_entitled"].sum()),

@@ -97,6 +97,82 @@ def test_mortality_is_the_a2_substitute():
         assert np.allclose(values, expected, rtol=0, atol=1e-15)
 
 
+def _section(text: str, number: int) -> str:
+    """One section of the A1 document, whitespace-normalized."""
+    body = text.split(f"\n## {number}. ", 1)[1].split("\n## ", 1)[0]
+    return " ".join(body.split())
+
+
+def test_every_description_of_the_mortality_substitute_agrees():
+    # The artifact check of the registered run found the substitute called
+    # "proposed, not adopted" in the provenance and the gap while the
+    # builder defaults said ratification and registration fix it.  Every
+    # description now quotes one standing, which paraphrases the A1 text.
+    import importlib.util
+    import inspect
+
+    from populace_dynamics.cola_track_a import mortality as mortality_module
+    from populace_dynamics.cola_track_a.config import (
+        MAX_RULINGS,
+        builder_defaults,
+    )
+    from populace_dynamics.cola_track_a.runner import A1_SPECIFICATION_PATH
+
+    text = A1_SPECIFICATION_PATH.read_text(encoding="utf-8")
+    assert "Substitute named by A2/A4" in _section(text, 15)
+    decisions = _section(text, 22)
+    assert "the A2 substitutes (`data.tr2008.PENDING_RULINGS`)" in decisions
+    assert "fixed only by the ratification and registration steps" in (
+        decisions
+    )
+    standing = tr2008.MORTALITY_SUBSTITUTE_STANDING
+    assert "builder default, not a ruling" in standing
+    assert "A1 section 15" in standing and "A1 section 22" in standing
+    assert "A1 ratification" in standing
+    assert "issue #42 registration" in standing
+
+    path = ROOT / "scripts" / "track_a_dry_run.py"
+    spec = importlib.util.spec_from_file_location("track_a_dry_run", path)
+    dry_run = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(dry_run)
+    gaps = {gap["item"]: gap["gap"] for gap in dry_run.GAPS}
+    (basis,) = [
+        ruling.default_basis
+        for ruling in tr2008.PENDING_RULINGS
+        if ruling.parameter.startswith("basis")
+    ]
+    model = load_tr2008_mortality(range(2009, 2031))
+    descriptions = {
+        "A2 PENDING_RULINGS": basis,
+        "A2 GAPS": tr2008.GAPS[0].status,
+        "Track A mortality provenance": model.provenance["basis"],
+        "Track A gap": gaps["Mortality after the opening year"],
+    }
+    for where, description in descriptions.items():
+        assert standing in description, where
+        assert "not adopted" not in description, where
+    assert tr2008.MORTALITY_SUBSTITUTE in model.provenance["basis"]
+    assert tr2008.MORTALITY_SUBSTITUTE in basis
+    # The base year is listed as a builder default the same steps fix,
+    # never as one of Max's rulings.
+    (base_year,) = [
+        item
+        for item in builder_defaults()
+        if item["field"] == "mortality_base_year"
+    ]
+    assert "A1 ratification" in base_year["fixed_by"]
+    assert "issue #42 registration" in base_year["fixed_by"]
+    assert "A1 section 15" in base_year["fixed_by"]
+    assert "mortality_base_year" not in MAX_RULINGS
+    # Nothing left calls any A2 substitute unadopted or pending.
+    for module in (mortality_module, tr2008):
+        source = inspect.getsource(module)
+        assert "not adopted" not in source, module.__name__
+        assert "awaits ratification" not in source, module.__name__
+    assert "not adopted" not in inspect.getsource(dry_run)
+    assert "not ratified)" not in inspect.getsource(mortality_module)
+
+
 def test_baseline_cola_is_the_a1_rate_path():
     realized = load_cola_history()
     baseline = tr2008_baseline_cola(realized)
