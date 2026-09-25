@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "counts": {
-    "unit": 3437,
-    "artifact": 2972,
-    "integration_psid": 867,
+    "unit": 3508,
+    "artifact": 2982,
+    "integration_psid": 909,
     "reproduction_legacy": 520,
-    "oracle_policyengine": 175
+    "oracle_policyengine": 177
   }
 }
