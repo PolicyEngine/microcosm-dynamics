@@ -23,7 +23,13 @@ primary or a registered alternative, and either what fixes it (a ratified
 block, :func:`specification_unratified_fields` empty) or that it awaits
 ratification (an unratified block, or none supplied).  (Max ruled the
 plan's section 6 items 1-3 on 2026-09-23; none of them is a tabulation
-field.)
+field.)  Another exercise that reuses the statistic records its own
+specification instead: it passes its block header and its statistic
+identifier together with its own :class:`SpecificationRulings` table (the
+statistic identifier, the conventions, the sections of its specification
+that fix them and its ratification wording); A1's table,
+:data:`A1_RULINGS`, is the default, and a statistic identifier that is not
+the table's is refused.
 
 Input rows
 ----------
@@ -117,6 +123,7 @@ by person, not family unit.
 from __future__ import annotations
 
 import copy
+import dataclasses
 import math
 import re
 from collections.abc import Iterable, Mapping, Sequence
@@ -130,6 +137,8 @@ import pandas as pd
 from populace_dynamics.harness.panel import split_panel_by_person
 
 __all__ = [
+    "A1_RULINGS",
+    "A1_SPECIFICATION_ID",
     "AGE_RULE_DEFINITIONS",
     "BASELINE_RECIPIENTS",
     "BENEFIT_PERIOD_DEFINITIONS",
@@ -157,12 +166,14 @@ __all__ = [
     "SCENARIO_SPECIFIC",
     "SCHEMA_VERSION",
     "STATISTICS",
+    "STATISTIC_ID",
     "UNRATIFIED_MARKERS",
     "WORKERS_ONLY_COMPONENTS",
     "AgeGroup",
     "ColaAgeProfileConfig",
     "ColaTabulationError",
     "MembershipDifferenceError",
+    "SpecificationRulings",
     "specification_record",
     "specification_unratified_fields",
     "tabulate_cola_age_profile",
@@ -543,16 +554,39 @@ _NEGATING_WORDS = frozenset(
 )
 
 
-def _ratified_value(value: Any) -> bool:
+#: The form of an unratified marker: lower-case words joined by ``_``,
+#: the normalized form :func:`_ratified_value` searches.
+_MARKER_FORM = re.compile(r"[0-9a-z]+(?:_[0-9a-z]+)*")
+
+
+def _extra_markers(extra_markers: Iterable[str]) -> tuple[str, ...]:
+    if isinstance(extra_markers, str):
+        raise ColaTabulationError(
+            "extra_markers must be a sequence of strings"
+        )
+    markers = tuple(extra_markers)
+    for mark in markers:
+        if not isinstance(mark, str) or not _MARKER_FORM.fullmatch(mark):
+            raise ColaTabulationError(
+                f"unratified marker {mark!r} must be lower-case words "
+                "joined by '_'"
+            )
+    return markers
+
+
+def _ratified_value(value: Any, extra_markers: Iterable[str] = ()) -> bool:
     """Whether one header value states ratification (fail closed).
 
     The value must name ``ratified`` as a word, contain no negating word
     and, once lower-cased with every run of other characters read as
-    ``_``, carry no :data:`UNRATIFIED_MARKERS` entry.  A value that never
-    says ``ratified`` (``proposed``, ``pending_ratification``,
-    ``unratified``) therefore does not count as ratified.
+    ``_``, carry no :data:`UNRATIFIED_MARKERS` entry and no entry of
+    ``extra_markers`` (a specification's own markers, which can only add
+    refusals).  A value that never says ``ratified`` (``proposed``,
+    ``pending_ratification``, ``unratified``) therefore does not count as
+    ratified.
     """
 
+    markers = (*UNRATIFIED_MARKERS, *_extra_markers(extra_markers))
     if not isinstance(value, str):
         return False
     words = [word for word in re.split(r"[^0-9a-z]+", value.lower()) if word]
@@ -560,22 +594,26 @@ def _ratified_value(value: Any) -> bool:
     return (
         "ratified" in words
         and not _NEGATING_WORDS.intersection(words)
-        and not any(mark in normalized for mark in UNRATIFIED_MARKERS)
+        and not any(mark in normalized for mark in markers)
     )
 
 
 def specification_unratified_fields(
     specification: Mapping[str, Any],
+    *,
+    extra_markers: Iterable[str] = (),
 ) -> list[str]:
-    """The header fields that keep an A1 block from counting as ratified.
+    """The header fields that keep a specification from counting as ratified.
 
     ``status`` and ``version`` must each be a string that names
     ``ratified`` as a word, with no negating word and no
     :data:`UNRATIFIED_MARKERS` entry (``a1-ratified-1`` /
     ``ratified_frozen`` pass; ``a1-ratified-candidate-1``, a draft
     version, ``unratified``, ``pending_ratification``, ``not yet
-    ratified`` or a missing field does not).  An empty list means
-    ratified.
+    ratified`` or a missing field does not).  ``extra_markers`` are
+    further markers one specification refuses (for example E1's
+    ``referee``, :class:`SpecificationRulings`); they add refusals and
+    never remove one.  An empty list means ratified.
     """
 
     if not isinstance(specification, Mapping):
@@ -583,26 +621,32 @@ def specification_unratified_fields(
             "specification must be a mapping (the A1 section 21 block or "
             "its header)"
         )
+    markers = _extra_markers(extra_markers)
     return [
         field
         for field in ("status", "version")
-        if not _ratified_value(specification.get(field))
+        if not _ratified_value(specification.get(field), markers)
     ]
 
 
 def specification_record(
     specification: Mapping[str, Any] | None,
+    *,
+    extra_markers: Iterable[str] = (),
 ) -> dict[str, Any] | None:
-    """The A1 block header a result records, and whether it is ratified.
+    """The block header a result records, and whether it is ratified.
 
     ``None`` (no specification supplied) records ``None``: the tabulation
     then cannot say what fixes its conventions, so they are reported as
-    awaiting ratification.
+    awaiting ratification.  ``extra_markers`` are passed to
+    :func:`specification_unratified_fields`.
     """
 
     if specification is None:
         return None
-    unratified = specification_unratified_fields(specification)
+    unratified = specification_unratified_fields(
+        specification, extra_markers=extra_markers
+    )
     record: dict[str, Any] = {}
     for field in SPECIFICATION_FIELDS:
         value = specification.get(field)
@@ -731,6 +775,135 @@ PENDING_RULINGS: tuple[dict[str, Any], ...] = (
             "precedent, is available and not registered"
         ),
     },
+)
+
+#: Keys :func:`_pending_rulings` adds to each recorded ruling; a table's
+#: rulings may not carry them (they store no ratification state).
+_DERIVED_RULING_KEYS = frozenset(
+    {
+        "status",
+        "awaiting",
+        "fixed_by",
+        "chosen",
+        "is_proposed_primary",
+        "is_registered_alternative",
+    }
+)
+
+
+@dataclass(frozen=True, eq=False)
+class SpecificationRulings:
+    """The tabulation conventions one exercise's specification fixes.
+
+    A result records its conventions against the specification of the
+    exercise it belongs to, not always A1.  ``specification`` is the
+    identifier that specification's section 21 block carries (its
+    ``specification`` field); a header passed to
+    :func:`tabulate_cola_age_profile` with this table must carry the same
+    one.  ``statistic_id`` is the statistic identifier of that exercise;
+    the tabulation refuses a ``statistic_id`` argument that differs from
+    it, so a result never records one exercise's statistic against
+    another's rulings.  ``name`` is the short name the recorded wording
+    uses (``A1``, ``E1``); ``ratification`` says what ratifies the
+    specification; ``section_field`` is the key under which each ruling
+    names the section that fixes it; ``rulings`` lists, per
+    :class:`ColaAgeProfileConfig` field, the proposed primary and the
+    registered alternatives.
+    ``extra_unratified_markers`` are markers this specification's
+    ratification test refuses on top of :data:`UNRATIFIED_MARKERS`
+    (:func:`specification_unratified_fields`); they can only add
+    refusals.  A table stores no ratification state: the tabulation
+    derives it from the header its caller supplies.
+    """
+
+    specification: str
+    statistic_id: str
+    name: str
+    ratification: str
+    section_field: str
+    rulings: tuple[Mapping[str, Any], ...]
+    extra_unratified_markers: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        for label in ("specification", "statistic_id", "name", "ratification"):
+            value = getattr(self, label)
+            if not isinstance(value, str) or not value.strip():
+                raise ColaTabulationError(
+                    f"SpecificationRulings.{label} must be a non-empty string"
+                )
+        if not isinstance(self.section_field, str) or not (
+            _MARKER_FORM.fullmatch(self.section_field)
+        ):
+            raise ColaTabulationError(
+                "SpecificationRulings.section_field must be lower-case "
+                "words joined by '_'"
+            )
+        object.__setattr__(
+            self,
+            "extra_unratified_markers",
+            _extra_markers(self.extra_unratified_markers),
+        )
+        rulings = tuple(self.rulings)
+        fields = {f.name for f in dataclasses.fields(ColaAgeProfileConfig)}
+        seen: set[str] = set()
+        for ruling in rulings:
+            if not isinstance(ruling, Mapping):
+                raise ColaTabulationError("each ruling must be a mapping")
+            parameter = ruling.get("parameter")
+            if parameter not in fields:
+                raise ColaTabulationError(
+                    f"ruling parameter {parameter!r} is not a "
+                    "ColaAgeProfileConfig field"
+                )
+            if parameter in seen:
+                raise ColaTabulationError(
+                    f"ruling parameter {parameter!r} is listed twice"
+                )
+            seen.add(parameter)
+            if "proposed_primary" not in ruling or not isinstance(
+                ruling.get("registered_alternatives"), list
+            ):
+                raise ColaTabulationError(
+                    f"ruling {parameter!r} needs a proposed_primary and a "
+                    "registered_alternatives list"
+                )
+            section = ruling.get(self.section_field)
+            if not isinstance(section, str) or not section.startswith(
+                "section "
+            ):
+                raise ColaTabulationError(
+                    f"ruling {parameter!r} must name its section under "
+                    f"{self.section_field!r} ('section ...')"
+                )
+            reserved = sorted(_DERIVED_RULING_KEYS & set(ruling))
+            if reserved:
+                raise ColaTabulationError(
+                    f"ruling {parameter!r} may not carry {reserved}: the "
+                    "tabulation derives them"
+                )
+        if not rulings:
+            raise ColaTabulationError("a rulings table may not be empty")
+        object.__setattr__(self, "rulings", rulings)
+
+    def unratified_fields(self, specification: Mapping[str, Any]) -> list[str]:
+        """This specification's ratification test on a block or header."""
+
+        return specification_unratified_fields(
+            specification, extra_markers=self.extra_unratified_markers
+        )
+
+
+#: The identifier of the A1 specification's section 21 block
+#: (``docs/design/urban2010_cola_comparison.md``).
+A1_SPECIFICATION_ID = "urban2010_cola_exercise1"
+#: Exercise 1's table: the default of :func:`tabulate_cola_age_profile`.
+A1_RULINGS = SpecificationRulings(
+    specification=A1_SPECIFICATION_ID,
+    statistic_id=STATISTIC_ID,
+    name="A1",
+    ratification=_SPEC_RATIFICATION,
+    section_field="a1_section",
+    rulings=PENDING_RULINGS,
 )
 
 
@@ -1527,46 +1700,53 @@ def _conventions(config: ColaAgeProfileConfig) -> dict[str, Any]:
 
 
 def _pending_rulings(
-    config: ColaAgeProfileConfig, specification: dict[str, Any] | None
+    config: ColaAgeProfileConfig,
+    specification: dict[str, Any] | None,
+    table: SpecificationRulings,
 ) -> list[dict[str, Any]]:
     """Each convention with its value and what fixes it, if anything.
 
-    ``specification`` is :func:`specification_record` of the caller's A1
-    block header.  A ratified header fixes every convention (``status``
-    ``fixed_by_ratified_specification``, ``fixed_by`` naming the A1
-    version and section, ``awaiting`` null); an unratified one leaves
-    each awaiting ratification, and so does no header at all
+    ``table`` is the rulings table of the exercise the result belongs to
+    and ``specification`` is :func:`specification_record` of the
+    caller's block header for that exercise (its identifier already
+    checked against the table's).  A ratified header fixes every
+    convention (``status`` ``fixed_by_ratified_specification``,
+    ``fixed_by`` naming the specification, its version and the section,
+    ``awaiting`` null); an unratified one leaves each awaiting
+    ratification, and so does no header at all
     (``specification_not_supplied``), since the tabulation then cannot
-    tell.
+    tell.  The wording names the table's specification (``A1 ...`` for
+    exercise 1's default table).
     """
 
     chosen = config.as_dict()
+    name = table.name
     ratified = specification is not None and specification["ratified"]
     if ratified:
         status, awaiting = "fixed_by_ratified_specification", None
     elif specification is None:
         status = "specification_not_supplied"
         awaiting = (
-            f"{_SPEC_RATIFICATION}; no A1 specification status was "
+            f"{table.ratification}; no {name} specification status was "
             "supplied to the tabulation"
         )
     else:
         status = "awaiting_ratification"
         awaiting = (
-            f"{_SPEC_RATIFICATION}; the A1 specification supplied is "
+            f"{table.ratification}; the {name} specification supplied is "
             f"version {specification['version']!r}, status "
             f"{specification['status']!r}"
         )
     out = []
-    for ruling in PENDING_RULINGS:
+    for ruling in table.rulings:
         value = chosen[ruling["parameter"]]
-        entry = copy.deepcopy(ruling)
+        entry = copy.deepcopy(dict(ruling))
         entry["status"] = status
         entry["awaiting"] = awaiting
         entry["fixed_by"] = (
-            f"A1 specification {specification['specification']} "
+            f"{name} specification {specification['specification']} "
             f"{specification['version']} ({specification['status']}), "
-            f"{ruling['a1_section']}"
+            f"{ruling[table.section_field]}"
             if ratified
             else None
         )
@@ -1633,7 +1813,9 @@ def tabulate_cola_age_profile(
     registration_pointer: str | None = None,
     labels: Sequence[str] = (),
     upstream_conventions: Mapping[str, Any] | None = None,
+    statistic_id: str = STATISTIC_ID,
     specification: Mapping[str, Any] | None = None,
+    pending_rulings: SpecificationRulings = A1_RULINGS,
 ) -> dict[str, Any]:
     """Tabulate the exercise-1 age profile from per-person-per-draw rows.
 
@@ -1643,11 +1825,27 @@ def tabulate_cola_age_profile(
     without the invented-data label; the pointer is recorded, not verified.
     ``upstream_conventions`` (JSON scalars, e.g. the first-application or
     exposure-clock row that produced the benefits) is recorded verbatim.
-    ``specification`` is the A1 section 21 block (or its header:
-    ``specification``, ``version``, ``status``); the result records it
-    (:func:`specification_record`) and derives from it whether each
-    convention in ``pending_rulings`` is fixed by a ratified
-    specification or still awaits ratification.
+    ``statistic_id`` names the exercise the result belongs to and is
+    recorded verbatim; the default is exercise 1's identifier
+    (:data:`STATISTIC_ID`), so exercise-1 callers are unchanged.  Another
+    exercise that reuses this five-group statistic (for example DynaSim
+    exercise 3, the full retirement age raised to 68) passes its own.
+    ``specification`` is the section 21 block (or its header:
+    ``specification``, ``version``, ``status``) of the exercise's
+    specification; the result records it (:func:`specification_record`)
+    and derives from it whether each convention in ``pending_rulings`` is
+    fixed by a ratified specification or still awaits ratification.
+    ``pending_rulings`` is that exercise's :class:`SpecificationRulings`
+    table: the conventions recorded, the section fixing each, the
+    ratification wording and any extra unratified markers.  The default
+    is exercise 1's (:data:`A1_RULINGS`), so exercise-1 callers are
+    unchanged; another exercise passes its own, and a supplied header
+    whose ``specification`` identifier is not the table's is refused,
+    so a result never records one exercise's header against another's
+    sections.  ``statistic_id`` must be the table's
+    (:attr:`SpecificationRulings.statistic_id`): an exercise that passes
+    its own statistic but not its own table (or the reverse) is refused
+    rather than recorded against A1's conventions.
 
     Returns a JSON-serializable mapping.  Raises
     :class:`MembershipDifferenceError` when scenario memberships differ and
@@ -1659,6 +1857,8 @@ def tabulate_cola_age_profile(
     config = ColaAgeProfileConfig() if config is None else config
     if not isinstance(config, ColaAgeProfileConfig):
         raise ColaTabulationError("config must be a ColaAgeProfileConfig")
+    if not isinstance(statistic_id, str) or not statistic_id.strip():
+        raise ColaTabulationError("statistic_id must be a non-empty string")
     if isinstance(labels, str):
         raise ColaTabulationError("labels must be a sequence of strings")
     labels = tuple(labels)
@@ -1668,7 +1868,33 @@ def tabulate_cola_age_profile(
     recorded_upstream = _json_scalar_mapping(
         upstream_conventions, "upstream_conventions"
     )
-    recorded_specification = specification_record(specification)
+    if not isinstance(pending_rulings, SpecificationRulings):
+        raise ColaTabulationError(
+            "pending_rulings must be a SpecificationRulings table"
+        )
+    if statistic_id != pending_rulings.statistic_id:
+        raise ColaTabulationError(
+            f"statistic_id {statistic_id!r} is not the "
+            f"{pending_rulings.name} specification's statistic "
+            f"({pending_rulings.statistic_id!r}); pass the rulings table "
+            "of the exercise the statistic belongs to"
+        )
+    recorded_specification = specification_record(
+        specification,
+        extra_markers=pending_rulings.extra_unratified_markers,
+    )
+    if (
+        recorded_specification is not None
+        and recorded_specification["specification"]
+        != pending_rulings.specification
+    ):
+        raise ColaTabulationError(
+            "the specification header names "
+            f"{recorded_specification['specification']!r}, but the "
+            f"pending rulings are the {pending_rulings.name} "
+            f"specification's ({pending_rulings.specification!r}); pass "
+            "the rulings table of the exercise the header belongs to"
+        )
 
     rows_ = _normalize(rows, config)
     differs = rows_.recipient_base != rows_.recipient_reform
@@ -1710,14 +1936,16 @@ def tabulate_cola_age_profile(
         output_labels.insert(0, INVENTED_DATA_LABEL)
     return {
         "schema_version": SCHEMA_VERSION,
-        "statistic_id": STATISTIC_ID,
+        "statistic_id": statistic_id,
         "data_provenance": data_provenance,
         "registration_pointer": registration_pointer,
         "labels": output_labels,
         "config": config.as_dict(),
         "conventions": _conventions(config),
         "specification": recorded_specification,
-        "pending_rulings": _pending_rulings(config, recorded_specification),
+        "pending_rulings": _pending_rulings(
+            config, recorded_specification, pending_rulings
+        ),
         "upstream_conventions": recorded_upstream,
         "input_summary": _input_summary(rows_, config),
         "groups": groups,
