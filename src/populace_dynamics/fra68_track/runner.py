@@ -19,8 +19,18 @@ refuses).
 Membership is scenario-specific in every row (A7
 ``membership_basis="scenario_specific"`` with
 ``allow_membership_difference=True``).  Under the fixed claiming
-convention C0 the two memberships must coincide, and the runner refuses a
-C0 row whose A7 input summary says they do not.
+convention C0 the two memberships coincide except through the named
+mechanisms of E1 section 12
+(:data:`~populace_dynamics.fra68_track.benefits.C0_MEMBERSHIP_MECHANISMS`:
+a spouse's excess withheld until the reform's later DI conversion, from a
+worker whose own DI level is zero).  Before any row is tabulated, the
+runner reads A7's own recipient flags for every row, sorts each
+difference (:func:`~populace_dynamics.fra68_track.benefits.
+classify_membership_differences`) and refuses the run if a C0 row has a
+difference no named mechanism explains; each row records the counts
+(``membership_differences``).  Registration 14 (``e1-ratified-1``,
+2026-09-25) was refused by the earlier guard, which admitted no
+difference and ran after A7 had tabulated the row (E1 section 27).
 
 Checks carried over from Track A (``cola_track_a.runner``): the
 parameter-consistency checks and, for a ``registered_real`` cohort or on
@@ -86,15 +96,21 @@ from populace_dynamics.engine.di_entitlement_rates import SEXES
 from populace_dynamics.engine.loop import ProjectionResult
 from populace_dynamics.estimates.cola_age_profile import (
     DEFAULT_AGE_GROUPS,
+    POSITIVE_BENEFIT,
     REGISTERED_REAL,
     SCENARIO_SPECIFIC,
     ColaAgeProfileConfig,
     ColaTabulationError,
     tabulate_cola_age_profile,
 )
+from populace_dynamics.estimates.cola_age_profile import (
+    _normalize as _a7_normalize,
+)
 from populace_dynamics.fra68_track.benefits import (
+    C0_MEMBERSHIP_MECHANISMS,
     PersonScenario,
     Scenario,
+    classify_membership_differences,
     scenario_benefits,
     union_benefit_rows,
 )
@@ -104,7 +120,6 @@ from populace_dynamics.fra68_track.config import (
     SPECIFICATION_ID,
     STATISTIC_ID,
     TRACK_A_ROW_BY_WAVE,
-    ClaimingResponse,
     FRA68Config,
     FRA68Row,
     SurvivorRetirementAge,
@@ -185,7 +200,11 @@ def specification_code_check(
     ``FRA68Config.c1_anchor_age``), the benefit computation years of the
     levels (``amounts.benefit_computation_years`` against Track A's
     ``TRACK_A_COMPUTATION_YEARS``, which ``_Calculator._level`` passes to
-    the oracle AIME and exercise 3 inherits) and the statistic identifier.
+    the oracle AIME and exercise 3 inherits), the named mechanisms that
+    may make C0 memberships differ (``membership.c0_named_mechanisms``
+    against :data:`~populace_dynamics.fra68_track.benefits.
+    C0_MEMBERSHIP_MECHANISMS`, the only differences the runner admits
+    under C0) and the statistic identifier.
     """
 
     mismatches: list[str] = []
@@ -224,6 +243,12 @@ def specification_code_check(
     years = block.get("amounts", {}).get("benefit_computation_years")
     if years != track_benefits.TRACK_A_COMPUTATION_YEARS.value:
         mismatches.append("amounts.benefit_computation_years")
+    # The C0 guard admits exactly the membership differences the block
+    # names (E1 sections 7 and 12; e1-ratified-2): a block naming others,
+    # or none, describes a different guard.
+    membership = block.get("membership", {})
+    if membership.get("c0_named_mechanisms") != list(C0_MEMBERSHIP_MECHANISMS):
+        mismatches.append("membership.c0_named_mechanisms")
     if block.get("statistic_id") != STATISTIC_ID:
         mismatches.append("statistic_id")
     return {
@@ -705,6 +730,114 @@ def _incidence_at(di_rates: Any, ages: tuple[int, ...]) -> dict[str, Any]:
     }
 
 
+def _tabulation_config(
+    row: FRA68Row, config: FRA68Config
+) -> ColaAgeProfileConfig:
+    """The A7 configuration of one registered row (E1 sections 7-11)."""
+
+    return ColaAgeProfileConfig(
+        reference_year=config.reference_year,
+        components=row.components,
+        benefit_period="calendar_year_payments",
+        headline_statistic=row.headline_statistic,
+        draw_indices=config.draw_indices,
+        floor_seeds=config.floor_seeds,
+        allow_membership_difference=True,
+        membership_basis=SCENARIO_SPECIFIC,
+    )
+
+
+def _membership_differences(
+    rows: list[dict],
+    row: FRA68Row,
+    config: FRA68Config,
+    *,
+    baseline: SSAParameters,
+    reform: SSAParameters,
+    assumed_birth_month: int,
+) -> dict[str, Any]:
+    """Sort one row's membership differences before any tabulation.
+
+    Reads A7's own recipient flags (its normalization of the rows, which
+    computes no statistic), so the classification sees exactly the
+    S_base and S_reform the statistic would use, and sorts each difference
+    with :func:`~populace_dynamics.fra68_track.benefits.
+    classify_membership_differences`.  Rows A7 would refuse to normalize
+    are not classified; A7 then refuses the row's tabulation and the row
+    records that status.
+    """
+
+    tabulation_config = _tabulation_config(row, config)
+    if tabulation_config.recipient_rule != POSITIVE_BENEFIT:
+        raise ValueError(
+            "the membership classification reads A7's positive_benefit "
+            "recipient rule (E1 section 8)"
+        )
+    try:
+        normalized = _a7_normalize(pd.DataFrame(rows), tabulation_config)
+    except ColaTabulationError as error:
+        return {
+            "record": {
+                "classified": False,
+                "reason": (
+                    "A7 refused to normalize the rows "
+                    f"({type(error).__name__}: {error}); its tabulation "
+                    "refuses them too"
+                ),
+            },
+            "first_not_explained": None,
+        }
+    sorted_ = classify_membership_differences(
+        rows,
+        normalized.recipient_base.tolist(),
+        normalized.recipient_reform.tolist(),
+        components=row.components,
+        baseline_params=baseline,
+        reform_params=reform,
+        reference_year=config.reference_year,
+        assumed_birth_month=assumed_birth_month,
+        claiming_response=row.claiming_response,
+    )
+    return {
+        "record": {"classified": True, **sorted_["record"]},
+        "first_not_explained": sorted_["first_not_explained"],
+    }
+
+
+def _refuse_unexplained_c0_differences(
+    membership: Mapping[str, Mapping[str, Any]],
+) -> None:
+    """Refuse the run if any C0 row has an unexplained difference.
+
+    Runs after every row is classified and before any row is tabulated,
+    so a refusal leaves no tabulation computed for any row.
+    """
+
+    refused = {
+        row_id: entry
+        for row_id, entry in membership.items()
+        if entry["record"].get("classified")
+        and not entry["record"]["not_explained_allowed"]
+        and entry["record"]["n_rows_not_explained"]
+    }
+    if not refused:
+        return
+    details = "; ".join(
+        f"{row_id}: {entry['record']['n_rows_not_explained']} of "
+        f"{entry['record']['n_rows_differ']} rows (first: draw "
+        f"{entry['first_not_explained']['draw']}, person "
+        f"{entry['first_not_explained']['person_id']!r})"
+        for row_id, entry in refused.items()
+    )
+    raise ValueError(
+        "under fixed claim ages (C0) the baseline and reform memberships "
+        "may differ only through the named mechanisms "
+        f"{list(C0_MEMBERSHIP_MECHANISMS)} (E1 sections 7 and 12), but "
+        "rows are recipients in one scenario only for another reason: "
+        f"{details}; no row was tabulated"
+    )
+
+
 def run_fra68(
     inputs: TrackAInputs,
     *,
@@ -861,22 +994,28 @@ def run_fra68(
                     reform=reform_by_schedule[sid],
                     assumed_birth_month=birth_month,
                 )
+    # Membership first (E1 sections 7 and 12): every row's differences are
+    # sorted from A7's own recipient flags, and a C0 difference no named
+    # mechanism explains refuses the run before any row is tabulated.
+    membership = {
+        row_id: _membership_differences(
+            rows_by_row[row_id],
+            config.row(row_id),
+            config,
+            baseline=baseline_params,
+            reform=reform_by_schedule[config.row(row_id).schedule_id],
+            assumed_birth_month=birth_month,
+        )
+        for row_id in config.rows
+    }
+    _refuse_unexplained_c0_differences(membership)
     tabulations: dict[str, Any] = {}
     for row_id in config.rows:
         row = config.row(row_id)
         if progress is not None:
             progress(f"{row_id}: tabulating")
         output_labels = row_labels(row, labels)
-        tabulation_config = ColaAgeProfileConfig(
-            reference_year=config.reference_year,
-            components=row.components,
-            benefit_period="calendar_year_payments",
-            headline_statistic=row.headline_statistic,
-            draw_indices=config.draw_indices,
-            floor_seeds=config.floor_seeds,
-            allow_membership_difference=True,
-            membership_basis=SCENARIO_SPECIFIC,
-        )
+        tabulation_config = _tabulation_config(row, config)
         population = row.population
         upstream = {
             "specification": SPECIFICATION_ID,
@@ -914,15 +1053,18 @@ def run_fra68(
             tabulation = None
             status = f"refused: {type(error).__name__}: {error}"
         else:
-            identical = tabulation["input_summary"]["memberships_identical"]
-            if row.claiming_response is ClaimingResponse.FIXED and not (
-                identical
+            # A7's own count must equal the classification's, which read
+            # A7's flags: a difference would mean the two disagree.
+            summary = tabulation["input_summary"]
+            record = membership[row_id]["record"]
+            if not record.get("classified") or (
+                summary["n_rows_membership_differs"] != record["n_rows_differ"]
             ):
                 raise ValueError(
-                    f"{row_id}: under fixed claim ages (C0) the baseline and "
-                    "reform memberships must coincide, but "
-                    f"{tabulation['input_summary']['n_rows_membership_differs']}"
-                    " rows are recipients in one scenario only"
+                    f"{row_id}: A7 counts "
+                    f"{summary['n_rows_membership_differs']} rows whose "
+                    "membership differs, but the membership classification "
+                    f"recorded {record.get('n_rows_differ')}"
                 )
             undefined = tabulation["undefined_cells"]
             status = (
@@ -940,9 +1082,7 @@ def run_fra68(
             "status": status,
             "row": row.as_dict(),
             "labels": list(output_labels),
-            "membership_identity_required": (
-                row.claiming_response is ClaimingResponse.FIXED
-            ),
+            "membership_differences": membership[row_id]["record"],
             "benefit_counters": dict(sorted(counters_by_row[row_id].items())),
             "diagnostics": _row_diagnostics(
                 rows_by_row[row_id], row, config.draw_indices
