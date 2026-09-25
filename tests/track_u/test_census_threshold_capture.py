@@ -337,6 +337,40 @@ _REFUSALS = [
         ),
         "not below under-65",
     ),
+    # regression (independent review, 2026-09-24): any text above the
+    # header passed, including a formula, an extra line, a changed or
+    # missing caption, and the title or units in another column or order
+    (
+        "text line added above the header",
+        lambda r: _set(r, 3, 0, "Preliminary estimates"),
+        "not exactly the caption",
+    ),
+    (
+        "caption replaced",
+        lambda r: _set(r, 0, 0, "Table with row headings in column A."),
+        "not exactly the caption",
+    ),
+    ("caption removed", lambda r: _set(r, 0, 0, None), "not exactly"),
+    (
+        "units line above the title",
+        lambda r: _set(_set(r, 1, 0, "(In dollars)"), 2, 0, r[1][0]),
+        "not exactly the caption",
+    ),
+    (
+        "formula above the header",
+        lambda r: _set(r, 2, 2, "=SUM(B8:B22)"),
+        "outside column A",
+    ),
+    (
+        "title moved to column D",
+        lambda r: _set(_set(r, 1, 0, None), 1, 3, r[1][0]),
+        "outside column A",
+    ),
+    (
+        "note with another sentence",
+        lambda r: _set(r, 23, 0, r[23][0] + " Thresholds were revised."),
+        "note says more",
+    ),
 ]
 
 
@@ -350,6 +384,31 @@ def test_parser_refuses_edits_of_a_real_layout(script, edit, message):
     script.parse_threshold_rows(rows, 2008)  # the unedited layout parses
     with pytest.raises(ValueError, match=message):
         script.parse_threshold_rows(edit(rows), 2008)
+
+
+def test_the_2009_cpi_sentences_pass_only_in_the_2009_note(script):
+    """The 2009 note adds two CPI-U sentences naming 2009 and 2008; the
+    note may carry them for its own year only."""
+
+    rows_2009 = _real_rows(script, 2009)
+    note_2009 = rows_2009[23][0]
+    assert "CPI-U for 2009 was lower" in note_2009
+    script.parse_threshold_rows(rows_2009, 2009)
+    first_sentence = note_2009[: note_2009.index("(CPS ASEC).") + 11]
+    tail = note_2009[len(first_sentence) :]
+    rows_2008 = _real_rows(script, 2008)
+    note_2008 = rows_2008[23][0]
+    with pytest.raises(ValueError, match="note says more"):
+        script.parse_threshold_rows(
+            _set(rows_2008, 23, 0, note_2008 + tail), 2008
+        )
+    with pytest.raises(ValueError, match="note says more"):
+        script.parse_threshold_rows(
+            _set(
+                rows_2009, 23, 0, first_sentence + tail.replace("2008", "2007")
+            ),
+            2009,
+        )
 
 
 def test_one_misread_cell_breaks_the_cross_year_check(script):

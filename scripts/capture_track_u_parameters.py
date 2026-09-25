@@ -230,6 +230,11 @@ CENSUS_WORKBOOK_SHA256: dict[str, str] = {
     ),
 }
 
+#: The caption every real workbook prints in A1, above the title (lower
+#: case, whitespace collapsed).
+_CAPTION = (
+    "table with row headings in column a and column headings in rows 5 to 6."
+)
 #: The table title, matched in full (lower case, whitespace collapsed).
 _TITLE = re.compile(
     r"poverty thresholds for (\d{4}) by size of family and number of "
@@ -242,6 +247,16 @@ _NOTE = re.compile(
     r"note: the source of the weighted average thresholds is the (\d{4}) "
     r"current population survey annual social and economic supplement "
     r"\(cps asec\)\."
+)
+#: The only text the note may carry after its first sentence: the two
+#: sentences of the 2009 note (a year whose average annual CPI-U fell),
+#: with ``{year}`` the table's year and ``{previous}`` the year before.
+_NOTE_CPI_FALL = (
+    "the poverty thresholds are updated each year using the change in the "
+    "average annual consumer price index for all urban consumers (cpi-u). "
+    "since the average annual cpi-u for {year} was lower than the average "
+    "annual cpi-u for {previous}, poverty thresholds for {year} are "
+    "slightly lower than the corresponding thresholds for {previous}."
 )
 #: The table's labelled rows in printed order: (label, key, number of
 #: related-children columns the row fills).  ``one_all`` and ``two_all``
@@ -312,20 +327,23 @@ def parse_threshold_rows(rows: list[list[Any]], year: int) -> dict[str, Any]:
     """Parse one year's Census threshold table from its cell rows.
 
     The layout is the one every ``thresh03.xlsx`` ... ``thresh12.xlsx``
-    shares (checked on the real workbooks, 2026-09-24): text above the
-    header (a caption, the title, "(In dollars)"); a header row "Size of
-    family unit" | "Weighted average thresholds" | "Related children
-    under 18 years" over a row of the nine children headers "None" ...
-    "Eight or more"; the thirteen labelled rows of :data:`_TABLE_ROWS`
-    in order; then "Source: U.S. Census Bureau, <year + 1>." and a note
-    naming the <year + 1> CPS ASEC.  Everything else must be blank
-    (whitespace-only cells count as blank).
+    shares (checked on the real workbooks, 2026-09-24): above the header
+    exactly three lines in column A, the caption :data:`_CAPTION`, the
+    title and "(In dollars)"; a header row "Size of family unit" |
+    "Weighted average thresholds" | "Related children under 18 years"
+    over a row of the nine children headers "None" ... "Eight or more";
+    the thirteen labelled rows of :data:`_TABLE_ROWS` in order; then
+    "Source: U.S. Census Bureau, <year + 1>." and a note naming the
+    <year + 1> CPS ASEC, which may add only the two CPI-U sentences of
+    :data:`_NOTE_CPI_FALL` (the 2009 note).  Everything else must be
+    blank (whitespace-only cells count as blank).
 
     Refuses a table whose title does not name ``year``, whose source or
-    note does not name ``year + 1``, whose header or row labels differ,
-    whose threshold cells are not positive whole numbers or fill other
-    children columns than their row allows, with a value anywhere else,
-    or whose values fail :func:`_validate_year`.
+    note does not name ``year + 1``, with other text above the header or
+    in the note, whose header or row labels differ, whose threshold cells
+    are not positive whole numbers or fill other children columns than
+    their row allows, with a value anywhere else, or whose values fail
+    :func:`_validate_year`.
 
     Returns ``{"weighted_average": {row_key: dollars}, "all_ages":
     {"one": dollars, "two": dollars}, "matrix": {row_key: {children:
@@ -363,11 +381,30 @@ def parse_threshold_rows(rows: list[list[Any]], year: int) -> dict[str, Any]:
     h = header[0]
     if title_row >= h:
         raise refuse("the title is not above the header")
-    above = [cell for row in grid[:h] for cell in row if not _blank(cell)]
-    if any(not isinstance(cell, str) for cell in above):
+    above = [
+        (column, cell)
+        for row in grid[:h]
+        for column, cell in enumerate(row)
+        if not _blank(cell)
+    ]
+    if any(not isinstance(cell, str) for _, cell in above):
         raise refuse("a value above the header row")
-    if _UNITS not in {_text(cell) for cell in above}:
-        raise refuse("no '(In dollars)' line above the header")
+    if any(column != _LABEL_COL for column, _ in above):
+        raise refuse("text above the header outside column A")
+    # Exactly the caption, the title and the units line, in that order
+    # (each is a cell of its own in column A): no other text, formula or
+    # line above the header.
+    lines = [_text(cell) for _, cell in above]
+    if (
+        len(lines) != 3
+        or lines[0] != _CAPTION
+        or _TITLE.fullmatch(lines[1]) is None
+        or lines[2] != _UNITS
+    ):
+        raise refuse(
+            "the text above the header is not exactly the caption, the "
+            "title and '(In dollars)', in that order"
+        )
     top = grid[h]
     if _label(top[_WEIGHTED_COL]) != "weighted average thresholds":
         raise refuse("column B of the header is not 'Weighted average'")
@@ -407,6 +444,12 @@ def parse_threshold_rows(rows: list[list[Any]], year: int) -> dict[str, Any]:
     note_match = None if _blank(note) else _NOTE.match(_text(note))
     if note_match is None or int(note_match.group(1)) != year + 1:
         raise refuse(f"the note does not name the {year + 1} CPS ASEC")
+    tail = _text(note)[note_match.end() :].strip()
+    if tail not in ("", _NOTE_CPI_FALL.format(year=year, previous=year - 1)):
+        raise refuse(
+            "the note says more than the CPS ASEC sentence (and, for a "
+            f"year whose CPI-U fell, the two CPI-U sentences): {tail!r}"
+        )
     trailer = [grid[s][_LABEL_COL + 1 :], grid[s + 1][_LABEL_COL + 1 :]]
     trailer.extend(grid[s + 2 :])
     if any(not _blank(cell) for row in trailer for cell in row):

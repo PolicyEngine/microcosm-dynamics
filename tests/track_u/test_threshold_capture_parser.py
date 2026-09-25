@@ -2,10 +2,11 @@
 
 These workbooks are INVENTED in the layout of the real Census files
 (``thresh04.xlsx`` ... ``thresh12.xlsx``; checked on the real files in
-``test_census_threshold_capture.py``): a caption, the title naming the
-year, "(In dollars)", the two header rows, the thirteen labelled rows,
-and the source and note naming the next year.  Every threshold below is
-made up; none is a Census value.
+``test_census_threshold_capture.py``): the real files' caption, the
+title naming the year, "(In dollars)", the two header rows, the thirteen
+labelled rows, and the source and note naming the next year.  Their
+worksheet is named INVENTED.  Every threshold below is made up; none is
+a Census value.
 """
 
 from __future__ import annotations
@@ -92,7 +93,12 @@ def _invented_rows(year: int) -> list[list]:
         return [label, between]
 
     rows = [
-        ["INVENTED table in the layout of the Census threshold workbooks."],
+        # the parser requires the real workbooks' caption above the title;
+        # the sheet is named INVENTED (``_write``) and every value is made up
+        [
+            "Table with row headings in column A and column headings in "
+            "rows 5 to 6."
+        ],
         [
             f"Poverty Thresholds for {year} by Size of Family and Number "
             "of Related Children Under 18 Years"

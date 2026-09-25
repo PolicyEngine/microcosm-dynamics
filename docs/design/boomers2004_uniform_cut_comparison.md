@@ -552,9 +552,10 @@ hash, so `load_poverty_thresholds` and the registered run accept exactly
 this capture. Re-running the capture on the committed copies reproduces
 the file byte for byte.
 
-The ten real workbooks share one layout, inspected cell by cell (only
-the sheet name differs: `threshYY` to 2006, `Sheet1` from 2007): the
-title in A2, "(In dollars)", a header row "Size of family unit" |
+The ten real workbooks share one layout, inspected cell by cell (they
+differ only in the sheet name, `threshYY` to 2006 and `Sheet1` from
+2007, in whitespace-only cells, and in the 2009 note's two extra
+sentences): the caption in A1, the title in A2, "(In dollars)", a header row "Size of family unit" |
 "Weighted average thresholds" | "Related children under 18 years" over
 the children headers "None" … "Eight or more" (columns C–K), thirteen
 labelled rows in rows 8–22 (the size-1 and size-2 rows over both ages;
@@ -566,9 +567,15 @@ over", "Householder 65 years and over") are the printed ones. The parser
 now requires that layout and refuses any other: a title, source or note
 naming another year; other row or column labels or another order; a
 value that is not a positive whole number of dollars or that sits
-outside its row's children columns; any other value in the sheet. It
-treats whitespace-only cells (`thresh07`, `thresh11`, `thresh12`) as
-blank. Within each year it checks that the 65-and-over rows lie below the
+outside its row's children columns; any other value in the sheet; any
+text above the header other than the caption ("Table with row headings
+in column A and column headings in rows 5 to 6."), the title and "(In
+dollars)", each alone in column A and in that order; and any note text
+beyond the CPS ASEC sentence, except the two CPI-U sentences the 2009
+note adds for its own year (the last two refusals were added by the
+independent review, 2026-09-24, which found that any text above the
+header passed). It treats whitespace-only cells (`thresh07`, `thresh11`,
+`thresh12`) as blank. Within each year it checks that the 65-and-over rows lie below the
 under-65 rows, that the size-1 and size-2 averages over both ages lie
 between their two age rows, that the weighted averages rise with size
 from two persons, and that each weighted average lies within its row's
@@ -1606,6 +1613,16 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
 
 ## 19. Changelog
 
+- `u1-draft-5`, independent review of the Census threshold capture
+  (2026-09-24; no rule, default, row or captured value changed): the
+  parser accepted any text above the header (an extra line, a formula,
+  a changed or missing caption, the title or units in another column or
+  order) and any text after the note's CPS ASEC sentence. It now requires
+  exactly the caption, the title and "(In dollars)" in column A, in that
+  order, and allows the note only the two CPI-U sentences of the 2009
+  note for its own year (§6). The capture reproduces byte for byte (its
+  SHA-256 is unchanged), and the INVENTED parser tests now use the real
+  caption on a worksheet named INVENTED.
 - `u1-draft-5`, Census threshold capture (2026-09-24, cos decision d194;
   no rule, default or row changed): the nine Census workbooks
   `thresh04.xlsx` … `thresh12.xlsx` are committed with their SHA-256
