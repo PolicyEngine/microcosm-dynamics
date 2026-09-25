@@ -25,8 +25,14 @@ What this package holds (plan work items M5 and M6, in part):
   computes the PIA and the auxiliary benefits by calling the existing
   oracle (:mod:`populace_dynamics.ss`) unchanged; it adds nothing to
   ``ss/``.
+* :mod:`.structure`: structural counts of the plan's population (the 2023
+  wave's beneficiaries aged 62 and older): persons, dispositions and the
+  availability of the earnings years that years of coverage would count.
+  It computes no years of coverage, no PIA, no threshold, no minimum and no
+  share receiving a minimum.
 
-Submodules are imported explicitly; this initializer imports none of them.
+Submodules are imported explicitly; this initializer imports none of them,
+so the structural-count script can prove it never loaded the rules.
 
 Labels every output carries (:data:`OUTPUT_LABELS`, plan bottom line 2):
 PSID-realized outcomes, not a projection; income year 2022, not 2025;
