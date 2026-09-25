@@ -1,19 +1,20 @@
-# Urban 2010 FRA-68 comparison: specification draft for DynaSim scorecard exercise 3
+# Urban 2010 FRA-68 comparison: specification for DynaSim scorecard exercise 3
 
-- **Status:** draft, refereed (§25); **not ratified**. Max has not ruled
-  on exercise 3 (decision record d188 and its supplement d196, both open,
-  deadline 2026-09-30), and ratification by merge awaits him (d188 item
-  (c)). Every choice that awaits him is a field of §21 whose value is the
-  plan's recommended default, and §22 lists them, including three that
-  d188 as filed does not name (d196 names them). This draft authorizes
-  no real-data run: the one-shot entry point
-  (`scripts/run_fra68_registered.py`) refuses a block whose status or
-  version is not ratified, that lists a decision awaiting Max, or that
-  records no ruling of his on a decision field (§21).
-- **Specification:** `urban2010_fra68_exercise3`, version `e1-draft-7`,
+- **Status:** ratified and frozen. Max ruled decision record d188 and
+  its supplement d196 on 2026-09-24 (§22), adopting every recommended
+  default, and in d188 item (c) authorized ratifying this specification
+  by merge, posting the issue #42 registration and running the one-shot.
+  Merging the PR that carries this version under that authorization
+  ratifies it. Any later change becomes a new registered version (§17).
+  §21 records his ruling on every decision field, each equal to the
+  code's record of it (`fra68_track.config.MAX_RULINGS`), so the one-shot
+  entry point (`scripts/run_fra68_registered.py`) accepts this block.
+- **Specification:** `urban2010_fra68_exercise3`, version `e1-ratified-1`,
   drafted 2026-09-24 and revised the same day after the independent
   referee pass and after the independent reviews of `e1-draft-4`,
-  `e1-draft-5` and `e1-draft-6` (§25). §26 is the changelog.
+  `e1-draft-5` and `e1-draft-6` (§25); `e1-draft-7` was the last draft,
+  and `e1-ratified-1` records Max's rulings (§22) and is the ratified
+  text. §26 is the changelog.
 - **Plan item:** E1 of the blind plan
   `EVID/critical-path-fra68-20260923.md` (SHA-256 `d5e7a32f…`), where
   `EVID` = `~/microcosm-launch-evidence/dynasim-parity-20260909`. The
@@ -24,15 +25,15 @@
   (SHA-256 `f674e8c6…`). This draft follows A1 section by section.
   Where a section says "carried over", A1's text applies unchanged and
   is not repeated.
-- **Claim class (pending, d188 item (a)):** proposed as A1's: a
-  registered, one-shot, reported-not-gated comparison on the Track A
+- **Claim class (ruled by Max 2026-09-24, d188 item (a), §22):** A1's:
+  a registered, one-shot, reported-not-gated comparison on the Track A
   pipeline.
 - **Labels every output carries:** *PSID-seeded closed cohort*; *Python
   oracle (not Axiom)*; and *fixed-path mechanical incidence* on rows
   F0-F2 and F5-F8, replaced by *fixed paths; stylized claiming response
   (registered sensitivity)* on rows F3 and F4.
-- **Builder boundary:** model-builder lanes wrote this draft. The files
-  model builders may not open are listed in `EVID/RESTRICTED-FILES.md`
+- **Builder boundary:** model-builder lanes wrote this specification. The
+  files model builders may not open are listed in `EVID/RESTRICTED-FILES.md`
   (created 2026-09-24). The list is a living file that the orchestrating
   session updates; this summary is of the version the `e1-draft-5` lane
   read, whose last changelog entry is dated 2026-09-24 13:55 (the
@@ -79,6 +80,28 @@
     other file and opened nothing it lists, nor the exercise-1 artifact
     or the exercise-3 forecasts. It did not open the Urban report or its
     text extraction.
+  - The lane that wrote `e1-ratified-1` (a Claude Code subagent, Opus
+    5.5) read `EVID/RESTRICTED-FILES.md` (the version whose last
+    changelog entry is dated 2026-09-24 19:20) before any other file and
+    opened nothing it lists, nor the exercise-1 artifact. It did not open
+    the Urban report or its text extraction. It wrote this version before
+    opening the exercise-3 forecasts, which it read afterwards to draft
+    the registration. Besides this document, the repository code and
+    tests, A1 and Track A's registered-run script, it read decision
+    records d074, d075, d188 and d196 in Max's decision ledger, the
+    exercise-1 registration comment on issue #42 (Registration 13, not
+    the result comment) and the Track A one-shot launch files
+    (`EVID/track-a-oneshot-20260923/`: the launchd plist, `run-once.sh`
+    and the commit, pointer, start, finish and exit-code markers; not
+    `COMPARISON.md`, the logs or `artifact-check.md`), and two other
+    launchd launchers in `EVID` (`merge-watchers/start-watcher.sh`, and
+    the `run-once.sh` and plist of a Track C run). One recursive
+    search for launcher scripts (`grep -rl` over the `*.sh` files under
+    `EVID`) also searched `*.sh` files in restricted folders; it printed
+    only the names of matching files, with the scratchpad archive's
+    filtered out before display, and none of the names printed lies in a
+    restricted folder. It changed no rule, schedule, row, parameter or
+    worked case.
   - No lane computed a statistic on real data. §2 lists what the drafts
     read.
 
@@ -154,7 +177,7 @@ This draft cites only the sources below.
 | Independent review of `e1-draft-5`: arithmetic and calculator probe | `EVID/fra68-review2-b4d8732e-20260924/independent_arithmetic.py` and its output `independent_arithmetic.out.json`; `probe_moved_worker_calculator.py` and its output at `b4d8732e`, `probe_moved_worker_calculator.b4d8732e.json` | `481b76c9…`; `27fe381b…`; `f7f52618…`; `465c7eff…` | Exact-integer schedules, conversion-claim counts and moved-worker counts, importing nothing from the repository; the calculator's counts and 2030 amounts for three invented spouses whose worker's claim C1 or C2 moved (§13, §19, §25) |
 | Independent review of `e1-draft-6`: arithmetic, comparison and probes | `EVID/fra68-review4-fc893ea4-20260924/`: `independent_arithmetic.py` (standard library only) and its output `independent_arithmetic.out.json`; `compare_with_code.py` and `compare_with_code.out.json`; `check_e1_tables.py` and `check_e1_tables.out.json`; `probe_order_and_identity.py` and `probe_order_and_identity.out.json` | `e6d7c93e…`; `ca098796…`; `d2918eec…`; `5b4cea48…`; `fc5645e3…`; `3931ed1d…`; `18e1be8a…`; `09830f8e…` | Every claim-month rule by cohort 1938-1971, schedule and claiming response from the statute text, compared with the code point by point; §3, §5, §6 and §19 recomputed with exact fractions; the per-person schedule order and the null-reform identity on the invented dry-run cohort and on constructed invented persons (§25) |
 | Builder restriction list | `EVID/RESTRICTED-FILES.md` | — (a living list; no hash is pinned) | Whole file, read first by each lane since `e1-draft-4`. The `e1-draft-5` lane read the version whose last changelog entry is dated 2026-09-24 13:55. `e1-draft-4` recorded SHA-256 `a7356057…`, which the list no longer matches and which the review of `e1-draft-4` could not verify for any version; this draft withdraws it (§25) |
-| Decision records d188 and d196 | `~/chief-of-staff/state/decisions/decisions.jsonl`, entries `d188` and `d196` | — | Their filed wording, defaults and status (`open`); d188 read 2026-09-24 by the `e1-draft-4` lane, both read 2026-09-24 by the `e1-draft-5` lane (§22) |
+| Decision records d188 and d196 | `~/chief-of-staff/state/decisions/decisions.jsonl`, entries `d188` and `d196` | — | Their filed wording, defaults and status (`open` when the drafts read them); d188 read 2026-09-24 by the `e1-draft-4` lane, both read 2026-09-24 by the `e1-draft-5` lane; the `e1-ratified-1` lane read both rulings (status `decided`, `ruled_at` 2026-09-24T21:44) and entries `d074` and `d075` for the carry-overs (§22) |
 | Claim-age reference | `data/external/ssa_claim_ages_2023supplement.json` | `f731c9a6…` | The 2008 rows through `claiming.claim_age_distribution`: `fra_at.at_age` = 65 for both sexes; age-62 shares 42.6 (male) and 48.0 (female); age-65 shares 25.8 and 19.3 |
 | Statutory capture | `data/external/track_a_statutory_parameters.json` | `fd56a8aa…` | FRA schedule, early rates, credit schedule and cap, auxiliary constants (the baseline bundle) |
 | Repo code, read this session | `ss/params.py` and `ss/benefits.py` (whole), `claiming.py` (`benefit_factor`, `months_early`, `months_late`, `claim_age_distribution`, `claim_age_pmf`), `scenario_benefits.py` (rates and path functions), `cola_track_a/` (`config`, `benefits`, `runner`, `opening`, `adapters` whole; `statutory` in part), `engine/di_entitlement.py` (FRA attainment, conversion and exposure), `engine/claiming.py`, `estimates/cola_age_profile.py` (configuration and tabulation). The `e1-draft-4` lane read `cola_track_a/benefits.py` (`_Calculator`: worker, decedent, spouse's and widow(er)'s records), `cola_track_a/config.py` (Max's exercise-1 rulings), `ss/benefits.py` (`spousal_benefit`, `widow_benefit`), `estimates/cola_age_profile.py` (`_membership_masks`, `_cell_values`, the ratification test) and `fra68_track/` whole. The `e1-draft-5` lane read `fra68_track/benefits.py` and `reform.py` whole, `cola_track_a/benefits.py` (`_Calculator`: worker record, own claim year, spouse's excess, exposure start and PIA paths), `engine/di_entitlement.py` (`fra_attainment_year` and the conversion step), `engine/steps.py` (`apply_claiming`), `scenario_benefits.spouse_excess_path` and `ss/benefits.py` (`spousal_benefit`, `spousal_early_reduction`). The `e1-draft-6` lane read `fra68_track/benefits.py` and `reform.py` whole, `cola_track_a/benefits.py` whole, `engine/di_entitlement.py` (`fra_attainment_year` and the conversion step), `engine/steps.py` (`apply_claiming`), `scenario_benefits.spouse_excess_path` and `ss/benefits.py` (`spousal_benefit`, `spousal_early_reduction`). The `e1-draft-7` lane read `fra68_track/` whole, `cola_track_a/benefits.py` whole, `scenario_benefits.py` (`spouse_excess_path`, `eligibility_pia_for_clock` and the module docstring), `ss/benefits.py` (`early_reduction`, `delayed_credit`, `spousal_early_reduction`, `spousal_benefit`, `survivor_reduction`, `widow_benefit`), `claiming.py` (`benefit_factor`, `months_early`), `engine/di_entitlement.py` (`fra_attainment_year`, the opening frame and the step-5 conversion), `engine/loop.py` (the order of each year's steps), `engine/steps.py` (`apply_claiming`) and `cola_track_a/statutory.py` (`captured_ssa_parameters`) | — | Mechanisms cited in §§3-16 |
@@ -199,7 +222,7 @@ Y - 62; months):
 
 | Reading | Rule | "Beginning in 2010" | "68 for those turning 62 in 2022" |
 |---|---|---|---|
-| **P3 (proposed primary; pending, d188 item (b))** | 66 years + round(24 (Y - 2009) / 13) months for 2010-2021, rounded to the nearest whole month (no tie arises: a tie needs 48k congruent to 13 modulo 26); 68 from 2022 | Yes | Yes |
+| **P3 (primary; ruled by Max, d188 item (b))** | 66 years + round(24 (Y - 2009) / 13) months for 2010-2021, rounded to the nearest whole month (no tie arises: a tie needs 48k congruent to 13 modulo 26); 68 from 2022 | Yes | Yes |
 | P1 | 66 + 2 (Y - 2010) months for 2011-2021; 68 from 2022 | Only as an enactment date (the 2011 cohort is the first affected) | Yes |
 | P2 | 66 + 2 (Y - 2009) months from 2010, capped at 68 | Yes | No (the 2021 cohort reaches 68) |
 
@@ -231,8 +254,8 @@ this fails.
 
 1. The reform replaces the worker schedule of 416(l)(1) by the chosen
    schedule. It is implemented as a parameter override of the oracle's
-   `SSAParameters.fra_months_by_birth_year` (pending, d188 item (a)); it
-   adds no statutory rule coverage.
+   `SSAParameters.fra_months_by_birth_year` (ruled by Max, d188 item (a),
+   §22); it adds no statutory rule coverage.
 2. **Survivors (416(l)(2) mapping).** The schedule is keyed to the year a
    person attains early retirement age, which for a widow(er) is 60, so a
    widow(er) born in b has the worker schedule's value for b - 2. Under
@@ -289,10 +312,10 @@ rate source object.
 
 ## 5. Phase-in schedule rows
 
-The primary schedule (P3, pending) and the two registered alternatives
-(P1 as F1, P2 as F2) are §3's. What the choice changes in 2030
-(statute arithmetic, plan §3, recomputed by this draft through the code
-for the worker factors):
+The primary schedule (P3, which Max ruled the primary, d188 item (b)) and
+the two registered alternatives (P1 as F1, P2 as F2) are §3's. What the
+choice changes in 2030 (statute arithmetic, plan §3, recomputed by this
+draft through the code for the worker factors):
 
 - **62-69** (born 1961-1968): a 12-month increase under every schedule.
 - **70-79** (born 1951-1960): increases of 6-12 months (P1), 8-14 (P2)
@@ -303,8 +326,9 @@ for the worker factors):
 - **80+** (born 1950 or earlier): only the 1948-1950 cohorts (aged 80-82)
   are affected, by 0/2/4 months (P1) or 2/4/6 months (P2, P3).
 
-If Max chooses another primary (d188 item (b)), F0 takes it and F1, F2
-take the other two in the order P1, P2, P3 (`config.registered_rows`).
+Max ruled P3 the primary (d188 item (b), §22). The code's row map for
+any primary puts it in F0 and the other two schedules in F1 and F2, in
+the order P1, P2, P3 (`config.registered_rows`).
 
 ## 6. Who the reform reaches
 
@@ -354,8 +378,9 @@ apart from dime flooring.
 - **Disabled worker**: ratio 1.
 - **Opening stock**: recipients observed in the opening year claimed by
   then. The reform amount is the observed amount carried on the baseline
-  path (A1 §11, rule 4; Max's ruling d075 for exercise 1; its carry-over
-  is pending as `opening_stock_basis`, d188 item (a)) times the
+  path (A1 §11, rule 4; Max's ruling d075 for exercise 1, which he
+  carried over to exercise 3 as `opening_stock_basis`, d196 item (3),
+  §22) times the
   component's reform-to-baseline age-factor ratio for a retired-worker or
   spouse record claimed at 62 or later
   (`reform.opening_stock_factor_ratio`), and 1 for every other record.
@@ -500,8 +525,9 @@ scenario's bundle; `fra68_track.benefits`):
    survivor retirement age (416(l)(2) mapping on the scenario schedule,
    or on the baseline schedule for F7's reform) minus 60 years. Exercise
    1 used the oracle's fixed 84 months; the two differ for survivors born
-   before 1962 who were entitled after 60 (referee question 7). Pending
-   as its own decision field, `survivor_reduction_span` (§22 item 2).
+   before 1962 who were entitled after 60 (referee question 7). Max ruled
+   it by name as its own decision field, `survivor_reduction_span` (d196
+   item (1); §22 ruling 8).
 
 ## 12. Named omitted deltas
 
@@ -515,7 +541,7 @@ A1 §12 is carried over, with these exercise-3 items:
 | DI recovery in the extended window | A4 draws no recovery after the baseline conversion | Membership only |
 | Whole-year conversion claim (Track A) | Track A counts a converted worker's claim for the spouse's excess from the whole conversion year (the year of attaining FRA under A4's July birth month), as month 12 (y_c - b). That is FRA mod 12 months before the FRA when the remainder is below 6: 2 months for spouses born 1955 and 4 for 1956 under the statutory schedule (and for 1938 and 1939, who converted before either opening year). 402(q)(1) and (q)(6)(B) (`usc42_402.txt` lines 371 and 406) reduce an excess that starts at FRA not at all. Counting the conversion claim from its exact month (0 months early) in both scenarios would change exercise 1's baseline for these spouses, a choice for Max that this draft does not make (option (a) of the review of `e1-draft-4`, §25) | Baseline and reform levels only: the excess of a converted spouse born 1955 or 1956 whose conversion starts it is reduced by 1.39 or 2.78 percent (2 or 4 months at 25/36 of 1 percent) in both scenarios, and the reform ratio is 1 wherever the reform pays it (§11, rule 3; a worker the reform has not converted by 2030 draws none, the next row). Diagnostic in every run (benefit counters, by scenario): `fra68_spouse_excess_on_conversion_claim`, the paid spouse's excesses on a conversion claim, and `fra68_spouse_excess_on_conversion_claim_months_early`, those whose months early are positive |
 | Spouse's excess of a DI beneficiary | Track A convention: none while DI-entitled. 402(q)(3)(C) (`usc42_402.txt` lines 383-385) would pay a DI beneficiary a reduced excess | Under the reform it starts at 68 instead of 67 for a converted worker, so the convention overstates the reform's cut for converted workers aged 67 in 2030 (born 1963) |
-| Survivor reduction span | Exact by cohort here (pending, `survivor_reduction_span`, §22); fixed 84 months in exercise 1 | Baseline amounts of survivors born before 1962 entitled after 60 differ from exercise 1's |
+| Survivor reduction span | Exact by cohort here (ruled by Max, `survivor_reduction_span`, d196 item (1), §22); fixed 84 months in exercise 1 | Baseline amounts of survivors born before 1962 entitled after 60 differ from exercise 1's |
 | Benefit computation years (Track A) | Levels divide the AIME by a fixed 35 years, Track A's `TRACK_A_COMPUTATION_YEARS` (§11, rule 1). 415(b)(2) counts elapsed years less 5, fewer than 35 for workers born before 1929 (31 for a worker born in 1925) | Levels only, in both scenarios, as in exercise 1: workers born before 1929 (aged 102 or more in 2030) and the spouse's and survivor's benefits resting on them. The reform changes no one's count |
 | Credit timing | 402(w)(3) credits increment months from January of the following year; Track A applies the full factor at the claim | Small; both scenarios |
 | Credit window of cohorts born 1938-1942 (oracle) | The oracle's `delayed_credit` accrues at most `max_delayed_months` = 48 months (the committed capture), while 402(w)(2)(A) (`usc42_402.txt` line 488) counts every month from the retirement age to the month before 70: 58, 56, 54, 52 and 50 months for workers born 1938-1942 (retirement age 65 and 2 to 10 months) | Levels only, in both scenarios, as in exercise 1: a claim at 70 by a worker born 1938-1942 (aged 88-92 in 2030) and the credits a survivor inherits from one. The reform does not reach these cohorts |
@@ -648,7 +674,7 @@ early are positive (§12, whole-year conversion claim).
 
 ## 17. Acceptance rule
 
-**Proposed: none** (pending, d188 item (a)). The comparison would be
+**None** (ruled by Max, d188 item (a); §22 ruling 4). The comparison is
 reported, not gated; it runs once and is published regardless. No rule
 may be set after registration.
 
@@ -656,8 +682,9 @@ may be set after registration.
 
 Each alternative differs from F0 in one field. All rows are computed in
 the same one-shot and published together. F0 is the headline row,
-designated before any result; no row may be promoted afterwards. The row
-set awaits Max's confirmation (d188 item (b)).
+designated before any result; no row may be promoted afterwards. Max
+ruled the row set F0-F8 as this section lists it (d196 item (4); d188
+item (b); §22 ruling 11).
 
 | Row | Field changed | Value | New projection? |
 |---|---|---|---|
@@ -778,9 +805,9 @@ it), and where this draft resolves each for exercise 3:
    excess), and only when entitled at 62 or later (§6).
 6. `proposed-1` was searched and carries no exercise-3 entries (§1).
 7. A registered run also needs a `decisions` entry recording Max's
-   ruling on every d188 decision field, which the configuration must
-   follow (§21, §22), as exercise 1's registered run does for d074 and
-   d075.
+   ruling on every decision field (d188 and d196), each equal to the
+   code's record of it, which the configuration must follow (§21, §22),
+   as exercise 1's registered run does for d074 and d075.
 8. Under C1 and C2 the spouse's excess counts its months early from the
    exact moved claim month, as the spouse's own factor does (§13; referee
    required change 1), and from the exact month of a moved worker
@@ -788,7 +815,8 @@ it), and where this draft resolves each for exercise 3:
 9. The per-cohort survivor span and the two exercise-1 carry-overs this
    draft relies on (the oracle COLA horizon, d074 decision 2(a), and the
    opening-stock basis, d075) are decision fields of their own, which
-   d188 as filed does not name (§21, §22; referee required change 7).
+   d188 as filed does not name (§21, §22; referee required change 7);
+   Max ruled on each by name in d196.
 10. A converted worker's spouse's excess on its conversion claim keeps
     Track A's baseline count in every scenario, the baseline start moved
     by D (§11, rule 3; the review of `e1-draft-4`). The plan does not
@@ -811,16 +839,20 @@ holds them to the code's statements of the rules
 (`reform.SPOUSE_EXCESS_MONTHS_EARLY_RULE` and
 `reform.CONVERSION_CLAIM_EXCESS_MONTHS_EARLY_RULE`) and
 `tests/fra68_track` to their arithmetic.
-`decisions_awaiting_max` lists the d188 items. A registered run refuses
-while it is non-empty, and until a `decisions` entry records Max's ruling
-on each decision field (`{field: {"ruling": value, ...}}`, the A1 §21
-form) and the configuration follows every ruling.
+The `decisions` entry records Max's rulings of 2026-09-24 (§22) in the
+A1 §21 form, `{field: {"ruling": value, ...}}`, with the decision record
+and item each comes from; every decision field has a recorded ruling.
+A registered run refuses a block without a ruling on every field of
+`fra68_track.config.MAX_RULINGS`, a ruling that differs from the code's,
+or a configuration that departs from one
+(`fra68_track.runner.check_specification_for_registered_run`). The
+registration package hashes this file.
 
 ```json
 {
   "specification": "urban2010_fra68_exercise3",
-  "version": "e1-draft-7",
-  "status": "draft_refereed_not_ratified",
+  "version": "e1-ratified-1",
+  "status": "ratified_frozen",
   "template": {
     "specification": "urban2010_cola_exercise1",
     "version": "a1-ratified-1"
@@ -983,63 +1015,104 @@ form) and the configuration follows every ruling.
     },
     "comparator_interval": "comparison_memo_only"
   },
-  "decisions_awaiting_max": {
+  "decisions": {
+    "ruled_by": "Max",
+    "ruled_on": "2026-09-24",
     "claim_class": {
-      "proposed_default": "track_a_reported_not_gated_psid_oracle",
+      "ruling": "track_a_reported_not_gated_psid_oracle",
+      "declined": ["hold_for_track_b", "hold_for_track_c_axiom"],
+      "plan_section_11": "item 1",
       "decision_record": "d188",
       "item": "(a)"
     },
     "oracle_fra_schedule_override": {
-      "proposed_default": true,
+      "ruling": true,
+      "declined": [false],
       "scope": "fra_months_by_birth_year_override",
-      "decision_record": "d188",
-      "item": "(a)"
-    },
-    "survivor_reduction_span": {
-      "proposed_default": "exact_by_cohort_both_scenarios",
-      "scope": "survivor_reduction_period_months_override_by_survivor_cohort_in_both_scenarios",
-      "named_in_d188_as_filed": false,
-      "decision_record": "d188",
-      "item": "(a)"
-    },
-    "oracle_cola_horizon_extension_to_2030": {
-      "proposed_default": true,
-      "carries_over": "d074 decision 2(a)",
-      "named_in_d188_as_filed": false,
-      "decision_record": "d188",
-      "item": "(a)"
-    },
-    "opening_stock_basis": {
-      "proposed_default": "fixed_at_opening_year",
-      "carries_over": "d075 referee question 11",
-      "named_in_d188_as_filed": false,
+      "plan_section_11": "item 2(a)",
       "decision_record": "d188",
       "item": "(a)"
     },
     "di_benefit_level": {
-      "proposed_default": "disclosed_oracle_approximation",
+      "ruling": "disclosed_oracle_approximation",
+      "declined": ["exclude_until_axiom_di_rule"],
+      "carries_over": "d074 decision 2(b)",
+      "plan_section_11": "item 2(b)",
       "decision_record": "d188",
       "item": "(a)"
     },
     "acceptance_rule": {
-      "proposed_default": null,
+      "ruling": null,
+      "declined": ["numerical_rule_set_by_max_before_registration"],
+      "plan_section_11": "item 3",
+      "decision_record": "d188",
+      "item": "(a)"
+    },
+    "benefit_computation_years": {
+      "ruling": "legacy_fixed_35",
+      "declined": ["statutory_415_b_2"],
+      "covered_by": "d188_run_exercise_3_exactly_like_track_a",
+      "named_in_d188_as_filed": false,
       "decision_record": "d188",
       "item": "(a)"
     },
     "primary_schedule_id": {
-      "proposed_default": "P3",
-      "decision_record": "d188",
-      "item": "(b)"
-    },
-    "rows": {
-      "proposed_default": ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"],
+      "ruling": "P3",
+      "declined": ["P1", "P2"],
+      "declined_as": "primary_only_both_registered_as_f1_and_f2",
+      "plan_section_11": "item 4",
       "decision_record": "d188",
       "item": "(b)"
     },
     "ratification_and_registration": {
-      "proposed_default": "ratify_by_merge_post_42_registration_run_one_shot",
+      "ruling": "ratify_by_merge_post_42_registration_run_one_shot",
+      "publishes_regardless": true,
+      "plan_section_11": "items 6-7",
       "decision_record": "d188",
       "item": "(c)"
+    },
+    "survivor_reduction_span": {
+      "ruling": "exact_by_cohort_both_scenarios",
+      "declined": ["track_a_fixed_84_months"],
+      "scope": "survivor_reduction_period_months_override_by_survivor_cohort_in_both_scenarios",
+      "plan_section_11": "item 2(a)",
+      "named_in_d188_as_filed": false,
+      "decision_record": "d196",
+      "item": "(1)"
+    },
+    "oracle_cola_horizon_extension_to_2030": {
+      "ruling": true,
+      "declined": [false],
+      "carries_over": "d074 decision 2(a)",
+      "named_in_d188_as_filed": false,
+      "decision_record": "d196",
+      "item": "(2)"
+    },
+    "opening_stock_basis": {
+      "ruling": "fixed_at_opening_year",
+      "declined": ["rebased_on_later_simulated_events"],
+      "carries_over": "d075 referee question 11",
+      "named_in_d188_as_filed": false,
+      "decision_record": "d196",
+      "item": "(3)"
+    },
+    "rows": {
+      "ruling": ["F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"],
+      "declined": [],
+      "also_ruled_in": "d188 item (b)",
+      "plan_section_11": "item 4",
+      "decision_record": "d196",
+      "item": "(4)"
+    },
+    "screening_lane_or_clarification_request": {
+      "ruling": "neither_before_the_one_shot_gaps_reported_as_results",
+      "declined": [
+        "screening_lane_extracts_definitional_text_from_urban_pages_3_to_5",
+        "urban_clarification_request"
+      ],
+      "plan_section_11": "item 5",
+      "decision_record": "d196",
+      "item": "(5)"
     }
   },
   "labels": [
@@ -1052,73 +1125,107 @@ form) and the configuration follows every ruling.
 }
 ```
 
-## 22. Decisions awaiting Max (d188, open)
+## 22. Decisions (ruled by Max, 2026-09-24)
 
-Max's decision record d188 (created 2026-09-23, deadline 2026-09-30)
-asks whether to run exercise 3 exactly like Track A. Its default is "yes
-to (a)-(c) with P3". Until he rules, each item below is a configuration
-field whose default is the plan's recommendation
-(`fra68_track.config.PENDING_DECISIONS`), and every run records it as not
-ruled (`pending_decisions`).
+Max ruled decision record d188 and its supplement d196 on 2026-09-24,
+in chat with the orchestrating session. Each ruling adopts the default
+filed with its record: d188's "yes to (a)-(c) with P3" and d196's
+"accept all five". The rulings are recorded as decisions d188 and d196
+in Max's decision ledger (`~/chief-of-staff/state/decisions/decisions.jsonl`,
+status `decided`, `ruled_at` 2026-09-24T21:44; d188's ruling reads "Yes
+to (a)-(c) with P3 primary", d196's "Accept all five"). §21 records them
+under `decisions`, keyed by the field each fixes, and
+`fra68_track.config.MAX_RULINGS` holds the same rulings in code; a
+registered run refuses a block whose rulings differ from the code's or a
+configuration that departs from one (§21).
 
-1. **Claim class** (item (a); plan §11 item 1): Track A class, as A1's
-   ruling d074 decision 1; alternatives: hold for Track B or Track C.
-2. **Oracle scope** (item (a); plan §11 item 2):
-   (a) the reform as an override of the oracle's FRA schedule
-   (`oracle_fra_schedule_override`), which adds no statutory rule
-   coverage.
-   (b) the per-cohort survivor span (`survivor_reduction_span`): the
-   widow(er)'s reduction spread over the survivor cohort's exact span in
-   both scenarios, also an override that adds no statutory rule coverage.
-   The d188 record as filed names only "the oracle FRA-schedule override
-   (no new statutory coverage)". The span also changes baseline survivor
-   amounts relative to exercise 1 (§11, rule 5), so it is a field of its
-   own: a ruling that covers only the filed wording leaves it unruled,
-   and a registered run refuses until Max rules on it by name.
-   (c) the DI-level approximation carried over from d074 decision 2(b)
-   (DI levels are weights only; every DI ratio is 1).
-   (d) the other exercise-1 rulings this draft relies on, each its own
-   field and neither named in d188 as filed: the oracle COLA path to 2030
-   (d074 decision 2(a); `oracle_cola_horizon_extension_to_2030`) and the
-   opening-stock basis frozen at the opening year (d075, referee question
-   11; `opening_stock_basis`).
-   Each of (b) and (d) is runnable only at its proposed default
-   (`FRA68Config.check_runnable`).
-3. **Acceptance rule** (item (a); plan §11 item 3): none.
-4. **Primary schedule and row set** (item (b); plan §11 item 4): P3
-   primary with P1 and P2 registered; rows F0-F8. d188 as filed names P3
-   and the registered P1 and P2; rows F3-F8 are part of the `rows`
-   field's proposed default, and d196 item (4) names rows F0-F8.
-5. **Ratification and registration** (item (c); plan §11 items 6-7):
-   ratify this specification by merging, post or authorize the #42
-   registration, run the one-shot.
-6. **Screening or request** (plan §11 item 5; not in d188): whether a
-   screening lane may extract definitional text from Urban pages 3-5, or
-   the Urban clarification request is sent. d196 item (5) proposes
-   neither before the one-shot.
+Rulings 1-7 answer d188 items (a)-(c) (plan §11 items 1-4, 6 and 7);
+rulings 8-12 answer d196 items (1)-(5), which name the fields d188 as
+filed does not (E1 referee report, required change 7) and plan §11
+item 5.
 
-When Max rules, the ratified text moves each item from
-`decisions_awaiting_max` to a `decisions` entry with his ruling; the
-one-shot entry point refuses a block without a ruling on every decision
-field or a configuration that departs from one
-(`fra68_track.runner.check_specification_for_registered_run`).
+1. **Claim class** (`claim_class`; d188 item (a); plan §11 item 1).
+   **Ruling:** A1's class, as Max ruled it for exercise 1 (d074 decision
+   1): a registered, one-shot, reported-not-gated comparison on the
+   PSID-seeded Track A pipeline, with benefits computed by the Python
+   oracle and labeled "not Axiom". Holding exercise 3's first score for
+   Track B or Track C was declined.
+2. **Oracle FRA-schedule override** (`oracle_fra_schedule_override`;
+   d188 item (a); plan §11 item 2(a)). **Ruling:** the reform runs as an
+   override of the oracle's `SSAParameters.fra_months_by_birth_year`,
+   which adds no statutory rule coverage (§3, frozen policy 1).
+3. **DI benefit level** (`di_benefit_level`; d188 item (a); plan §11
+   item 2(b)). **Ruling:** exercise 1's disclosed oracle approximation
+   carries over (d074 decision 2(b)): DI levels are weights only, and
+   every DI ratio is 1 (§3 item 6, §11). Excluding DI levels was
+   declined.
+4. **Acceptance rule** (`acceptance_rule`; d188 item (a); plan §11 item
+   3). **Ruling:** no numerical acceptance threshold; gaps are reported
+   (§17). A numerical rule set before registration was declined, and
+   none may be set afterwards.
+5. **Benefit computation years** (`benefit_computation_years`; d188 item
+   (a)). d188 asks whether to run exercise 3 exactly like Track A, and
+   Max ruled that it runs exactly like Track A. Track A's levels divide
+   the AIME by a fixed 35 computation years
+   (`cola_track_a.benefits.TRACK_A_COMPUTATION_YEARS` = `legacy_fixed_35`,
+   the arithmetic of exercise 1's Registration 13; §11 rule 1).
+   **Ruling, as recorded here:** exercise 3's levels keep Track A's
+   legacy fixed 35. d188 item (a) as filed does not list this field by
+   name (`named_in_d188_as_filed` false), so this version records it as
+   covered by the ruling to run exercise 3 exactly like Track A
+   (`covered_by`), not as a separate ruling. The statutory count of
+   415(b)(2) (`statutory_415_b_2`) is not used; §12 names the delta for
+   workers born before 1929.
+6. **Primary schedule** (`primary_schedule_id`; d188 item (b); plan §11
+   item 4). **Ruling:** P3 is the primary (row F0); P1 and P2 are
+   registered as F1 and F2 (§3, §5, §18). They were declined as the
+   primary only.
+7. **Ratification and registration** (`ratification_and_registration`;
+   d188 item (c); plan §11 items 6-7). **Ruling:** ratify this
+   specification by merging, post the issue #42 registration and run the
+   one-shot, which publishes regardless of outcome. A process step, not a
+   content decision: merging the PR that carries `e1-ratified-1` under
+   this authorization ratifies it.
+8. **Survivor reduction span** (`survivor_reduction_span`; d196 item
+   (1); plan §11 item 2(a); not named in d188 as filed). **Ruling:** the
+   widow(er)'s reduction is spread over the survivor cohort's exact span
+   in both scenarios, with the survivor's retirement age following the
+   worker schedule two birth cohorts earlier (416(l)(2); §3 item 2, §11
+   rule 5). Exercise 1's fixed 84 months was declined. The span changes
+   baseline amounts relative to exercise 1 for survivors born before 1962
+   who were entitled after 60 (§12).
+9. **Oracle COLA horizon** (`oracle_cola_horizon_extension_to_2030`;
+   d196 item (2); carries over d074 decision 2(a); not named in d188 as
+   filed). **Ruling:** carried over: the oracle COLA path runs to 2030 as
+   a parameter override that adds no statutory coverage (§4).
+10. **Opening-stock basis** (`opening_stock_basis`; d196 item (3);
+    carries over d075, A1 referee question 11; not named in d188 as
+    filed). **Ruling:** carried over: an opening-stock person's benefit
+    basis stays frozen at the opening year (§6; §11 rule 4). Re-basing it
+    on later simulated events was declined.
+11. **Registered rows** (`rows`; d196 item (4); d188 item (b); plan §11
+    item 4). **Ruling:** rows F0-F8 as §18 lists them: F0 the headline
+    row, F3 and F4 the stylized claiming responses, the others
+    alternatives, all computed in the one shot and published together.
+12. **Screening lane or clarification request**
+    (`screening_lane_or_clarification_request`; d196 item (5); plan §11
+    item 5; not in d188). **Ruling:** neither before the one-shot. No
+    screening lane extracts definitional text from Urban pages 3-5, and
+    the Urban clarification request is not sent; gaps are reported as
+    results.
 
-Exercise 1's rulings (d074 and d075) cover the projection, the
-benefit-level and auxiliary conventions and the opening-stock basis for
-exercise 1 only; whether they carry over is part of item (a), and each
-carry-over this draft relies on is a field of §21 (item 2). The Track A
-builder defaults stay builder defaults, listed in every run.
-
-A follow-up decision, d196 (created 2026-09-24, open, deadline
-2026-09-30), is filed as a supplement to d188 "to rule on together with
-d188". Its default, "accept all five", covers the per-cohort survivor
-span (item 2(b) above), the two exercise-1 carry-overs (item 2(d)), rows
-F0-F8 as §18 lists them (item 4) and no screening lane or clarification
-request before the one-shot (item 6). The block still names d188 as each
-field's decision record. A registered run needs a recorded ruling on
-every field under `decisions`, whichever record carries it
-(`check_specification_for_registered_run` keys rulings by field name).
-This draft changes neither decision record.
+**Builder defaults no ruling names.** The exercise-3 assembly also
+carries conventions that no ruling above names: the C1 anchor age
+(referee question 3), F0's survivor mapping (question 2), the claim age
+the claiming transforms read, the statistic of the stylized rows
+(question 6) and the opening-stock factor ratio
+(`fra68_track.config.builder_defaults`). §18's row table states F0's
+survivor mapping and F3's anchor at 65 as ruling 11 accepts them; the
+code still lists both among the builder defaults. Track A's own builder
+defaults (`cola_track_a.config.builder_defaults`) come with the pipeline
+that d188 carries over. All of them remain builder defaults, listed with
+their source in every run artifact, and are fixed by this ratification
+and the issue #42 registration.
 
 ## 23. Questions for the referee
 
@@ -1155,14 +1262,17 @@ The referee's answers are in §25.
   the oracle's.
 - The month of each projected death (the records carry the year only),
   which a count of the credits of §12's unclaimed decedents would need.
-- Whether Max's ruling on d188 will cover the survivor span and the two
-  exercise-1 carry-overs, which the record as filed does not name (§22;
-  d196 names them).
 - How DYNASIM dates a converted disabled worker's spouse's benefit (not
   read). The model keeps Track A's whole-year conversion count in both
   scenarios (§11, rule 3; §12).
 
 ## 25. Referee pass
+
+This section records the referee pass and the independent reviews as they
+happened. Its field and code names are those of the drafts then reviewed
+(for example `PENDING_DECISIONS`, which `e1-ratified-1` renames
+`MAX_RULINGS`), and its "open" and "awaiting" describe the state before
+Max's rulings of 2026-09-24 (§22).
 
 **The report.** `EVID/fra68-referee-20260924.md`, SHA-256
 `943af2a3b8f2ebc3a3ae7b8fcf10c43641211bbfa5f9317cf580d2eff27edec3`: an
@@ -1230,10 +1340,11 @@ against its cited source before applying it.
 
 **Left open by the referee and not done here.** The d188 card's
 amendment or a follow-up decision naming the survivor span and the two
-carry-overs (§22), and a decision record for §22 item 6 (screening or
-request). Both are for whoever keeps Max's decision queue. The
-orchestrating session has since filed d196 (§22), which covers both; it
-is open.
+carry-overs, and a decision record for screening or the clarification
+request (plan §11 item 5). Both were for whoever keeps Max's decision
+queue. The orchestrating session has since filed d196, which covers
+both, and Max ruled it together with d188 on 2026-09-24 (§22, rulings
+8-12).
 
 **What the referee could not verify** (its report, "What I could not
 verify") stands: run 614's phase-in, survivor, DI and claiming treatment
@@ -1389,3 +1500,22 @@ committed one. Its findings:
   for byte for `RESULTS.md` only) and adds the review of `e1-draft-6`;
   §2 (its scripts, the statute line and the code it read) and the header
   record that review.
+- `e1-ratified-1` (2026-09-24): records Max's rulings of 2026-09-24 on
+  decision records d188 and d196 (§22), each adopting the recommended
+  default, and is the ratified text. The header, §2 (the decision
+  records), §3 (the P3 label and frozen policy 1), §5, §6, §11 rule 5,
+  §12 (the survivor-span row), §17, §18, §20 items 7 and 9, §21, §22 and
+  §25 (the referee's open items) now state the rulings, and §24 drops
+  the question whether d188's ruling would cover the survivor span and
+  the two carry-overs (d196 names them). §21's `decisions_awaiting_max`
+  is replaced by `decisions` in the A1 §21 form, which adds
+  `benefit_computation_years` (covered by d188 item (a), not named in it;
+  §22 ruling 5) and `screening_lane_or_clarification_request` (d196 item
+  (5)); the header records the lane. Code, alongside:
+  `fra68_track.config.PENDING_DECISIONS` becomes `MAX_RULINGS`, with
+  `max_rulings` and `rulings_departures` as in Track A's
+  `cola_track_a.config`; every run records `max_rulings` in place of
+  `pending_decisions`; and a registered run also refuses a block whose
+  rulings differ from the code's. No rule, schedule, row, primary,
+  parameter or §19 amount changed. Ratified by merging under Max's
+  2026-09-24 authorization (d188 item (c)).

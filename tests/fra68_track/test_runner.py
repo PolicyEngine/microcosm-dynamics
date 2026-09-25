@@ -54,8 +54,9 @@ from populace_dynamics.fra68_track import (
     ClaimingResponse,
     FRA68Config,
     SurvivorRetirementAge,
-    pending_decisions,
+    max_rulings,
     registered_rows,
+    rulings_departures,
     run_fra68,
 )
 from populace_dynamics.fra68_track import runner as fra68_runner
@@ -73,7 +74,7 @@ from populace_dynamics.fra68_track.benefits import (
 from populace_dynamics.fra68_track.config import (
     E1_RATIFICATION,
     E1_RULINGS,
-    PENDING_DECISIONS,
+    MAX_RULINGS,
     STYLIZED_RESPONSE_LABEL,
     builder_defaults,
     row_labels,
@@ -308,59 +309,79 @@ def test_the_plan_row_map_under_the_proposed_primary():
         registered_rows("P4")
 
 
-def test_every_d188_decision_is_pending_at_its_proposed_default():
-    decisions = pending_decisions(CONFIG)
-    assert [item["field"] for item in decisions] == list(PENDING_DECISIONS)
-    assert all(item["ruled"] is False for item in decisions)
-    assert all(item["is_proposed_default"] for item in decisions)
-    assert all("d188" in item["awaiting"] for item in decisions)
-    changed = pending_decisions(replace(CONFIG, primary_schedule_id="P1"))
-    flags = {item["field"]: item["is_proposed_default"] for item in changed}
+def test_every_ruled_field_follows_maxs_ruling_by_default():
+    rulings = max_rulings(CONFIG)
+    assert [item["field"] for item in rulings] == list(MAX_RULINGS)
+    assert all(item["follows_ruling"] for item in rulings)
+    assert all(
+        item["ruled_by"] == "Max, 2026-09-24 (E1 section 22)"
+        for item in rulings
+    )
+    assert {item["decision_record"] for item in rulings} == {"d188", "d196"}
+    assert rulings_departures(CONFIG) == []
+    changed = replace(CONFIG, primary_schedule_id="P1")
+    flags = {
+        item["field"]: item["follows_ruling"] for item in max_rulings(changed)
+    }
     assert flags["primary_schedule_id"] is False
+    assert rulings_departures(changed) == ["primary_schedule_id"]
+    assert rulings_departures(
+        replace(CONFIG, di_benefit_level=LevelPolicy.EXCLUDE)
+    ) == ["di_benefit_level"]
     assert {item["field"] for item in builder_defaults(CONFIG)} >= {
         "c1_anchor_age",
         "survivor_retirement_age_f0",
     }
-    # A field is either awaiting Max or a builder default, never both.
+    # A field is either ruled by Max or a builder default, never both.
     assert not {item["field"] for item in builder_defaults(CONFIG)} & set(
-        PENDING_DECISIONS
+        MAX_RULINGS
     )
 
 
 #: The choices E1 relies on that d188 as filed does not name (E1 referee
-#: report, required change 7).
+#: report, required change 7), with the record that rules on each: d196
+#: by name, and d188 item (a) (run exactly like Track A) for the benefit
+#: computation years.
 _NOT_IN_D188_AS_FILED = {
-    "survivor_reduction_span": "exact_by_cohort_both_scenarios",
-    "oracle_cola_horizon_extension_to_2030": True,
-    "opening_stock_basis": "fixed_at_opening_year",
+    "survivor_reduction_span": ("exact_by_cohort_both_scenarios", "d196"),
+    "oracle_cola_horizon_extension_to_2030": (True, "d196"),
+    "opening_stock_basis": ("fixed_at_opening_year", "d196"),
+    "benefit_computation_years": ("legacy_fixed_35", "d188"),
 }
 
 
 def test_choices_d188_as_filed_does_not_name_are_their_own_fields():
     flagged = {
         name
-        for name, decision in PENDING_DECISIONS.items()
-        if decision.get("named_in_d188_as_filed") is False
+        for name, ruling in MAX_RULINGS.items()
+        if ruling.get("named_in_d188_as_filed") is False
     }
     assert flagged == set(_NOT_IN_D188_AS_FILED)
-    for name, default in _NOT_IN_D188_AS_FILED.items():
-        assert PENDING_DECISIONS[name]["proposed_default"] == default
-        assert getattr(CONFIG, name) == default
-        assert "not named in d188 as filed" in (
-            PENDING_DECISIONS[name]["awaiting"]
-        )
-    assert PENDING_DECISIONS["oracle_cola_horizon_extension_to_2030"][
+    for name, (value, record) in _NOT_IN_D188_AS_FILED.items():
+        assert MAX_RULINGS[name]["ruling"] == value
+        assert MAX_RULINGS[name]["decision_record"] == record
+        assert getattr(CONFIG, name) == value
+    assert MAX_RULINGS["oracle_cola_horizon_extension_to_2030"][
         "carries_over"
     ] == ("d074 decision 2(a)")
-    assert "d075" in PENDING_DECISIONS["opening_stock_basis"]["carries_over"]
+    assert "d075" in MAX_RULINGS["opening_stock_basis"]["carries_over"]
+    # The computation years are Track A's constant, not a setting.
+    assert CONFIG.benefit_computation_years == (
+        track_benefits.TRACK_A_COMPUTATION_YEARS.value
+    )
     # The two exercise-1 carry-overs reach the Track A configuration the
     # shared projection runs under.
     track = CONFIG.track_a_config()
     assert track.oracle_cola_horizon_extension_to_2030 is True
     assert track.opening_stock_basis == "fixed_at_opening_year"
+    # The configuration record carries the three settings; the computation
+    # years, not a setting, are recorded under track_a_conventions and
+    # max_rulings (test_run_records_parameters_and_checks).
     recorded = CONFIG.as_dict()
-    for name, default in _NOT_IN_D188_AS_FILED.items():
-        assert recorded[name] == default
+    for name, (value, _record) in _NOT_IN_D188_AS_FILED.items():
+        if name != "benefit_computation_years":
+            assert recorded[name] == value
+    assert "benefit_computation_years" not in recorded
 
 
 @pytest.mark.parametrize(
@@ -375,7 +396,8 @@ def test_choices_d188_as_filed_does_not_name_are_their_own_fields():
     ],
 )
 def test_declined_alternatives_refuse_to_run(change):
-    with pytest.raises(ValueError):
+    # Each refusal names Max's ruling it departs from (2026-09-24).
+    with pytest.raises(ValueError, match=r"Max.*\(?d1(88|96) item"):
         replace(CONFIG, **change).check_runnable()
     with pytest.raises(ValueError):
         run_fra68(_inputs(), config=replace(CONFIG, **change))
@@ -606,6 +628,11 @@ def test_the_specification_check_binds_the_computation_years(monkeypatch):
     )
     check = specification_code_check(block, FRA68Config())
     assert check["mismatches"] == ["amounts.benefit_computation_years"]
+    # Max's ruling (covered by d188 item (a)) fixes the legacy fixed 35 as
+    # a value, so the changed constant also departs from it.
+    assert rulings_departures(FRA68Config()) == ["benefit_computation_years"]
+    with pytest.raises(ValueError, match="departs from Max's rulings"):
+        check_specification_for_registered_run(block, FRA68Config())
 
 
 def test_the_exact_survivor_span_changes_only_early_survivors(
@@ -1875,9 +1902,16 @@ def test_run_records_parameters_and_checks(result):
         "specification_check"
     ]
     assert result["specification_check"]["specification_status"] == (
-        "draft_refereed_not_ratified"
+        "ratified_frozen"
     )
-    assert all(item["ruled"] is False for item in result["pending_decisions"])
+    assert result["specification_check"]["specification_version"] == (
+        "e1-ratified-1"
+    )
+    assert "pending_decisions" not in result
+    assert [item["field"] for item in result["max_rulings"]] == list(
+        MAX_RULINGS
+    )
+    assert all(item["follows_ruling"] for item in result["max_rulings"])
     record = result["age_factor_parameters"]
     assert set(record["schedules"]) == {"P1", "P2", "P3"}
     for sid, schedule in record["schedules"].items():
@@ -1932,6 +1966,23 @@ def _ratified(block):
     return ratified
 
 
+def _unratified(block):
+    # INVENTED: the committed block under the last draft's header.
+    draft = copy.deepcopy(block)
+    draft["status"] = "draft_refereed_not_ratified"
+    draft["version"] = "e1-draft-7"
+    return draft
+
+
+def test_the_committed_e1_is_ratified_with_every_ruling():
+    block = e1_parameter_block()
+    assert _ratified(block) == block
+    assert "decisions_awaiting_max" not in block
+    for name, ruling in MAX_RULINGS.items():
+        assert block["decisions"][name]["ruling"] == ruling["ruling"], name
+    check_specification_for_registered_run(block, FRA68Config())
+
+
 def test_registered_real_needs_a_pointer_and_a_ratified_ruled_spec():
     real = replace(_cohort(2011), data_provenance="registered_real")
     real_2009 = replace(_cohort(2009), data_provenance="registered_real")
@@ -1939,18 +1990,27 @@ def test_registered_real_needs_a_pointer_and_a_ratified_ruled_spec():
     with pytest.raises(ValueError, match="registration"):
         run_fra68(inputs, config=CONFIG)
     pointer = "INVENTED-POINTER"
-    block = e1_parameter_block()
+    ruled = e1_parameter_block()
     with pytest.raises(ValueError, match="authorizes no real-data run"):
-        run_fra68(inputs, config=CONFIG, registration_pointer=pointer)
-    ratified = _ratified(block)
+        run_fra68(
+            inputs,
+            config=CONFIG,
+            registration_pointer=pointer,
+            specification=_unratified(ruled),
+        )
     with pytest.raises(ValueError, match="awaiting Max"):
         run_fra68(
             inputs,
             config=CONFIG,
             registration_pointer=pointer,
-            specification=ratified,
+            specification={
+                **ruled,
+                "decisions_awaiting_max": {"primary_schedule_id": {}},
+            },
         )
-    unruled = {**ratified, "decisions_awaiting_max": {}}
+    unruled = {
+        key: value for key, value in ruled.items() if key != "decisions"
+    }
     with pytest.raises(ValueError, match="records no ruling"):
         run_fra68(
             inputs,
@@ -1959,12 +2019,13 @@ def test_registered_real_needs_a_pointer_and_a_ratified_ruled_spec():
             specification=unruled,
         )
     # A ruling that covers only what d188 as filed names leaves the
-    # survivor span and the two exercise-1 carry-overs unruled.
+    # survivor span, the two exercise-1 carry-overs (d196) and the
+    # computation years (covered by d188 item (a), not named) unruled.
     as_filed = {
-        **unruled,
+        **ruled,
         "decisions": {
-            name: {"ruling": value["proposed_default"]}
-            for name, value in PENDING_DECISIONS.items()
+            name: value
+            for name, value in ruled["decisions"].items()
             if name not in _NOT_IN_D188_AS_FILED
         },
     }
@@ -1977,13 +2038,6 @@ def test_registered_real_needs_a_pointer_and_a_ratified_ruled_spec():
         )
     for name in _NOT_IN_D188_AS_FILED:
         assert name in str(refused.value)
-    ruled = {
-        **unruled,
-        "decisions": {
-            name: {"ruling": value["proposed_default"]}
-            for name, value in PENDING_DECISIONS.items()
-        },
-    }
     with pytest.raises(ValueError, match="departs from Max's rulings"):
         run_fra68(
             inputs,
@@ -2004,17 +2058,19 @@ def test_registered_real_needs_a_pointer_and_a_ratified_ruled_spec():
                 },
             },
         )
+    # A block edited to another ruling, with a configuration that follows
+    # it, differs from the code's record of Max's rulings.
     reruled = copy.deepcopy(ruled)
     reruled["decisions"]["primary_schedule_id"]["ruling"] = "P1"
-    with pytest.raises(ValueError, match="differ"):
+    with pytest.raises(ValueError, match="differ from the code's record"):
         run_fra68(
             inputs,
             config=replace(CONFIG, primary_schedule_id="P1"),
             registration_pointer=pointer,
             specification=reruled,
         )
-    # A ratified, ruled, consistent block reaches the committed-value
-    # checks, which the invented parameters fail.
+    # The committed block (ratified, ruled, consistent) reaches the
+    # committed-value checks, which the invented parameters fail.
     with pytest.raises(ValueError, match="differ from the parameters"):
         run_fra68(
             inputs,
@@ -2028,18 +2084,18 @@ def test_every_row_records_the_e1_specification_not_a1(result):
     # Regression: the runner called A7 without a specification, so every
     # exercise-3 row recorded pending_rulings as specification_not_supplied
     # awaiting "A1 specification ratification" with A1 sections.  Each row
-    # now records the E1 block header against E1's own table.
+    # now records the E1 block header against E1's own table; the
+    # committed E1 is ratified, so each convention is fixed by an E1
+    # section.
     block = e1_parameter_block()
     header = {
         "specification": "urban2010_fra68_exercise3",
-        "version": block["version"],
-        "status": block["status"],
-        "ratified": False,
+        "version": "e1-ratified-1",
+        "status": "ratified_frozen",
+        "ratified": True,
     }
-    awaiting = (
-        f"{E1_RATIFICATION}; the E1 specification supplied is version "
-        f"{block['version']!r}, status {block['status']!r}"
-    )
+    assert block["version"] == header["version"]
+    assert block["status"] == header["status"]
     parameters = [ruling["parameter"] for ruling in E1_RULINGS.rulings]
     by_row = {}
     for row_id, row in result["rows"].items():
@@ -2048,9 +2104,12 @@ def test_every_row_records_the_e1_specification_not_a1(result):
         entries = tabulation["pending_rulings"]
         assert [entry["parameter"] for entry in entries] == parameters
         for entry in entries:
-            assert entry["status"] == "awaiting_ratification"
-            assert entry["awaiting"] == awaiting
-            assert entry["fixed_by"] is None
+            assert entry["status"] == "fixed_by_ratified_specification"
+            assert entry["awaiting"] is None
+            assert entry["fixed_by"] == (
+                "E1 specification urban2010_fra68_exercise3 e1-ratified-1 "
+                f"(ratified_frozen), {entry['e1_section']}"
+            )
             assert "a1_section" not in entry
             assert entry["e1_section"].startswith("section ")
             assert "A1 specification" not in json.dumps(entry)
@@ -2068,19 +2127,23 @@ def test_every_row_records_the_e1_specification_not_a1(result):
 _ONE_ROW = FRA68Config(draw_indices=(0,), rows=("F0",))
 
 
-def test_a_ratified_e1_header_fixes_the_conventions_by_e1_sections():
-    # INVENTED ratification: the committed E1 is a draft.
-    ratified = _ratified(e1_parameter_block())
-    run = run_fra68(_inputs(), config=_ONE_ROW, specification=ratified)
+def test_an_unratified_e1_header_leaves_each_convention_awaiting():
+    # INVENTED un-ratification: the committed block under the last
+    # draft's header.  Each convention then awaits E1's ratification,
+    # which cites E1's own ruling (d188 item (c)), not A1's.
+    draft = _unratified(e1_parameter_block())
+    run = run_fra68(_inputs(), config=_ONE_ROW, specification=draft)
     tabulation = run["rows"]["F0"]["tabulation"]
-    assert tabulation["specification"]["ratified"] is True
+    assert tabulation["specification"]["ratified"] is False
+    awaiting = (
+        f"{E1_RATIFICATION}; the E1 specification supplied is version "
+        "'e1-draft-7', status 'draft_refereed_not_ratified'"
+    )
+    assert "d188 item (c)" in E1_RATIFICATION
     for entry in tabulation["pending_rulings"]:
-        assert entry["status"] == "fixed_by_ratified_specification"
-        assert entry["awaiting"] is None
-        assert entry["fixed_by"] == (
-            "E1 specification urban2010_fra68_exercise3 e1-ratified-1 "
-            f"(ratified_frozen), {entry['e1_section']}"
-        )
+        assert entry["status"] == "awaiting_ratification"
+        assert entry["awaiting"] == awaiting
+        assert entry["fixed_by"] is None
 
 
 def test_e1s_referee_marker_binds_the_recorded_status_and_the_preflight():
@@ -2204,14 +2267,7 @@ def test_the_c1_anchor_age_is_bound_to_the_block():
     assert specification_code_check(block, FRA68Config(c1_anchor_age=66))[
         "mismatches"
     ] == ["claiming.C1.anchor_age"]
-    ruled = {
-        **_ratified(block),
-        "decisions_awaiting_max": {},
-        "decisions": {
-            name: {"ruling": value["proposed_default"]}
-            for name, value in PENDING_DECISIONS.items()
-        },
-    }
+    ruled = copy.deepcopy(block)
     ruled["claiming"] = moved["claiming"]
     with pytest.raises(ValueError, match="claiming.C1.anchor_age"):
         check_specification_for_registered_run(ruled, FRA68Config())

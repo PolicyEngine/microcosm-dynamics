@@ -15,16 +15,19 @@ the commit that comment registers:
   not-merged, not-ratified or referee marker (A7's fail-closed test,
   ``cola_age_profile.specification_unratified_fields``, with E1's
   ``referee`` marker; each row's tabulation records its ratification
-  status by the same test).  The block may list no decision awaiting Max
-  (decision record d188), must record his ruling on every decision field
-  with the configuration following each, and must equal the code
-  (``fra68_track.runner.check_specification_for_registered_run``); the
-  committed draft (``e1-draft-7``) is refused;
+  status by the same test).  The block may list no decision awaiting Max,
+  must record his ruling on every field he ruled on (decision records
+  d188 and d196, 2026-09-24; ``fra68_track.config.MAX_RULINGS``) with the
+  configuration following each and each ruling equal to the code's, and
+  must equal the code
+  (``fra68_track.runner.check_specification_for_registered_run``).  The
+  committed E1 (``e1-ratified-1``, status ``ratified_frozen``) passes;
+  every earlier draft is refused;
 * the output artifact must not exist yet (one shot, no overwrite; it is
   created exclusively);
 * the configuration is :class:`FRA68Config`'s default, which the E1
-  specification freezes (K=20 draws, rows F0-F8, primary schedule P3); no
-  flag changes it;
+  specification freezes and Max's rulings fix (K=20 draws, rows F0-F8,
+  primary schedule P3); no flag changes it;
 * every committed input is value-checked (``run_fra68`` refuses any
   mismatch for a ``registered_real`` cohort) and the cohorts carry the
   provenance the A3 builder recorded from the PSID files it read;
@@ -34,7 +37,7 @@ the commit that comment registers:
 The artifact publishes regardless of outcome.  It never reads a sealed
 comparator; the comparator is opened only after this artifact is
 committed.  Nothing here has been run on real data: the preflight refuses
-while E1 is a draft.
+without the issue #42 registration comment and the registered commit.
 
 Usage::
 
@@ -43,7 +46,13 @@ Usage::
         --registered-commit <full SHA> \\
         [--output runs/replication_urban2010_fra68_v1.json]
 
-Writes the artifact and a ``.env.json`` sidecar next to it.
+Writes the artifact and a ``.env.json`` sidecar next to it.  The sidecar
+records the environment with Track A's resolver
+(``scripts/run_track_a_registered.py`` ``_environment``): each package by
+the installed distribution that provides it, the project name and
+version at the commit, and the revision of the policyengine-us checkout
+the oracle reads.  It is resolved before any projection, so an
+environment the sidecar cannot record fails before any file is written.
 """
 
 from __future__ import annotations
@@ -51,10 +60,8 @@ from __future__ import annotations
 import argparse
 import datetime
 import hashlib
-import importlib.metadata
 import importlib.util
 import json
-import platform
 import re
 import subprocess
 import sys
@@ -109,13 +116,6 @@ DEFAULT_OUTPUT = ROOT / "runs" / "replication_urban2010_fra68_v1.json"
 REGISTRATION_POINTER = re.compile(
     r"https://github\.com/PolicyEngine/microcosm-dynamics/issues/42"
     r"#issuecomment-[0-9]+"
-)
-ENV_PACKAGES = (
-    "numpy",
-    "pandas",
-    "scipy",
-    "policyengine-us",
-    "populace-dynamics",
 )
 
 
@@ -185,18 +185,20 @@ def _write_new(path: Path, text: str) -> None:
         handle.write(text)
 
 
-def _environment() -> dict[str, Any]:
-    versions = {}
-    for name in ENV_PACKAGES:
-        try:
-            versions[name] = importlib.metadata.version(name)
-        except importlib.metadata.PackageNotFoundError:
-            versions[name] = None
-    return {
-        "python": platform.python_version(),
-        "platform": platform.platform(),
-        "packages": versions,
-    }
+def _environment(*, ssa_parameters_revision: str) -> dict[str, Any]:
+    """The run environment the sidecar records (Track A's resolver).
+
+    Exercise 1's registered run resolves each import name to the installed
+    distributions that provide it (the repository's ``populace_dynamics``
+    installs under the name ``pyproject.toml`` gives it, and the oracle
+    reads policyengine-us as a git checkout, not an installed
+    distribution), so no package is recorded as ``None``.  This reuses
+    that function unchanged.
+    """
+
+    return _script_module("run_track_a_registered")._environment(
+        ssa_parameters_revision=ssa_parameters_revision
+    )
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -230,6 +232,11 @@ def main(argv: list[str] | None = None) -> int:
     base_params = load_ssa_parameters()
     params = tr2008_ssa_parameters(
         base_params, alternative=config.tr2008_alternative
+    )
+    # Resolved before the run, so an environment the sidecar cannot
+    # record fails before any projection and before any file is written.
+    environment = _environment(
+        ssa_parameters_revision=base_params.pe_us_revision
     )
     realized = load_cola_history()
     baseline = tr2008_baseline_cola(
@@ -323,7 +330,7 @@ def main(argv: list[str] | None = None) -> int:
             {
                 "artifact": args.output.name,
                 "artifact_sha256": _sha256(args.output),
-                "environment": _environment(),
+                "environment": environment,
             },
             indent=2,
         )

@@ -14,16 +14,18 @@ paths and A7 statistic.  What this package adds:
 * :mod:`~populace_dynamics.fra68_track.benefits`: baseline and reform
   amounts per person from one projected state (fixed claim ages under the
   primary convention C0; the C1/C2 claiming transforms);
-* :mod:`~populace_dynamics.fra68_track.config`: rows F0-F8, the
-  decisions awaiting Max (decision record d188), each an explicit field
-  whose default is the plan's recommendation, and ``E1_RULINGS``, the A7
-  tabulation conventions E1 fixes, which every exercise-3 tabulation
-  records against the E1 block header;
+* :mod:`~populace_dynamics.fra68_track.config`: rows F0-F8, Max's
+  rulings of 2026-09-24 (decision records d188 and d196;
+  ``MAX_RULINGS``), each an explicit field that defaults to the ruling,
+  and ``E1_RULINGS``, the A7 tabulation conventions E1 fixes, which every
+  exercise-3 tabulation records against the E1 block header;
 * :mod:`~populace_dynamics.fra68_track.runner`: the run, with Track A's
   provenance, value checks and registration-pointer guard.
 
-The specification is the E1 draft
-``docs/design/urban2010_fra68_comparison.md``, which is not ratified.
+The specification is E1, ``docs/design/urban2010_fra68_comparison.md``
+(version ``e1-ratified-1``, status ``ratified_frozen``), which records
+Max's rulings; merging it under his authorization (d188 item (c))
+ratifies it.
 Every output is labelled *Python oracle (not Axiom)*; outputs on the
 invented cohort carry the invented-data labels.  The package is opt-in:
 nothing in the historical projection, the estimates or the evidence
@@ -33,7 +35,7 @@ reducers imports it.
 from populace_dynamics.fra68_track.config import (
     DRY_RUN_HEADER,
     E1_RULINGS,
-    PENDING_DECISIONS,
+    MAX_RULINGS,
     SPECIFICATION_ID,
     STATISTIC_ID,
     ClaimingResponse,
@@ -41,8 +43,9 @@ from populace_dynamics.fra68_track.config import (
     FRA68Row,
     SurvivorRetirementAge,
     builder_defaults,
-    pending_decisions,
+    max_rulings,
     registered_rows,
+    rulings_departures,
 )
 from populace_dynamics.fra68_track.reform import (
     SCHEDULES,
@@ -55,7 +58,7 @@ from populace_dynamics.fra68_track.runner import run_fra68
 __all__ = [
     "DRY_RUN_HEADER",
     "E1_RULINGS",
-    "PENDING_DECISIONS",
+    "MAX_RULINGS",
     "SCHEDULES",
     "SPECIFICATION_ID",
     "STATISTIC_ID",
@@ -65,9 +68,10 @@ __all__ = [
     "FRASchedule",
     "SurvivorRetirementAge",
     "builder_defaults",
-    "pending_decisions",
+    "max_rulings",
     "reform_parameters",
     "registered_rows",
+    "rulings_departures",
     "run_fra68",
     "survivor_parameters",
 ]
