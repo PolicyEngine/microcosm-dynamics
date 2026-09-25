@@ -203,6 +203,11 @@ def test_every_decision_field_records_maxs_ruling(block, text):
     assert decisions["benefit_computation_years"]["covered_by"] == (
         "d188_run_exercise_3_exactly_like_track_a"
     )
+    # Regression: the block recorded the statutory 415(b)(2) count as an
+    # alternative Max declined, but no decision record put it to him.
+    assert decisions["benefit_computation_years"]["declined"] == []
+    section22 = _section(text, "## 22. Decisions (ruled by Max, 2026-09-24)")
+    assert "records no declined alternative" in " ".join(section22.split())
     # Each ruled value is the one the block itself uses.
     assert decisions["survivor_reduction_span"]["ruling"] == (
         block["policy"]["survivor_reduction_span"]

@@ -369,6 +369,9 @@ def test_choices_d188_as_filed_does_not_name_are_their_own_fields():
     assert CONFIG.benefit_computation_years == (
         track_benefits.TRACK_A_COMPUTATION_YEARS.value
     )
+    # No decision record put the statutory count to Max, so the ruling
+    # records no declined alternative (regression: it listed one).
+    assert MAX_RULINGS["benefit_computation_years"]["declined"] == []
     # The two exercise-1 carry-overs reach the Track A configuration the
     # shared projection runs under.
     track = CONFIG.track_a_config()

@@ -302,12 +302,15 @@ _RULED_BY = f"Max, {RULED_ON} (E1 section 22)"
 #: Max's rulings of 2026-09-24 on exercise 3: decision record d188 (the
 #: plan's section 11 items 1-4 and 6-7) and its supplement d196, which
 #: names the fields d188 as filed does not.  Each adopts the plan's
-#: proposed default, which is also the configuration default.
-#: ``declined`` lists the alternatives Max did not choose, in the E1
-#: block's vocabulary (``declined_config_value`` gives the configuration
-#: value where the two differ).  The E1 section 21 block records the same
-#: rulings under ``decisions``; a registered run refuses a block or a
-#: configuration that departs from one (``runner.
+#: proposed default, which is also the configuration default; the
+#: benefit computation years, which no plan item or decision record puts
+#: to Max, are Track A's value, covered by d188's ruling to run exercise
+#: 3 exactly like Track A.  ``declined`` lists the alternatives put to
+#: Max that he did not choose, in the E1 block's vocabulary
+#: (``declined_config_value`` gives the configuration value where the two
+#: differ); it is empty where none was put to him.  The E1 section 21
+#: block records the same rulings under ``decisions``; a registered run
+#: refuses a block or a configuration that departs from one (``runner.
 #: check_specification_for_registered_run``).
 MAX_RULINGS: dict[str, dict[str, Any]] = {
     "claim_class": {
@@ -390,7 +393,10 @@ MAX_RULINGS: dict[str, dict[str, Any]] = {
     },
     "benefit_computation_years": {
         "ruling": ComputationYears.LEGACY_FIXED_35.value,
-        "declined": [ComputationYears.STATUTORY.value],
+        # No record put the statutory 415(b)(2) count to Max, so none is
+        # recorded as declined; Track A has not chosen it either
+        # (cola_track_a.benefits module docstring).
+        "declined": [],
         "decided": (
             "d188 item (a): run exercise 3 exactly like Track A; d188 as "
             "filed does not list this field by name"

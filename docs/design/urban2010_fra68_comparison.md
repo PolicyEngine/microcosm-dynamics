@@ -102,6 +102,23 @@
     filtered out before display, and none of the names printed lies in a
     restricted folder. It changed no rule, schedule, row, parameter or
     worked case.
+  - The independent review of `e1-ratified-1` (a Claude Code subagent,
+    Opus 5.5) read `EVID/RESTRICTED-FILES.md` (the version whose last
+    changelog entry is dated 2026-09-24 19:20) before any other file and
+    opened nothing it lists. It did not open the Urban report or its text
+    extraction, the exercise-1 artifact (only the environment record of
+    its `.env.json` sidecar) or `COMPARISON.md`. As its brief required,
+    it read the exercise-3 forecast and its addendum before its one edit
+    to this document, and through them the exercise-1 figures they
+    quote. It also read decision records d188 and d196, the plan's §11,
+    the verdict and summary of the report of the review of `e1-draft-6`,
+    Track A's one-shot plist and `run-once.sh`, and Registration 13 on
+    issue #42 (not the result comment, which it told apart by comment
+    identifier and time without opening it). Its edit corrects the rulings
+    record only: §21 no longer records the statutory computation-year
+    count as an alternative Max declined, since no record put it to him
+    (§22 ruling 5). It changed no rule, schedule, row, parameter or
+    worked case.
   - No lane computed a statistic on real data. §2 lists what the drafts
     read.
 
@@ -1050,7 +1067,7 @@ registration package hashes this file.
     },
     "benefit_computation_years": {
       "ruling": "legacy_fixed_35",
-      "declined": ["statutory_415_b_2"],
+      "declined": [],
       "covered_by": "d188_run_exercise_3_exactly_like_track_a",
       "named_in_d188_as_filed": false,
       "decision_record": "d188",
@@ -1132,14 +1149,17 @@ in chat with the orchestrating session. Each ruling adopts the default
 filed with its record: d188's "yes to (a)-(c) with P3" and d196's
 "accept all five". The rulings are recorded as decisions d188 and d196
 in Max's decision ledger (`~/chief-of-staff/state/decisions/decisions.jsonl`,
-status `decided`, `ruled_at` 2026-09-24T21:44; d188's ruling reads "Yes
-to (a)-(c) with P3 primary", d196's "Accept all five"). §21 records them
-under `decisions`, keyed by the field each fixes, and
+status `decided`, `ruled_at` 2026-09-24T21:44). d188's ruling opens
+"Yes to (a)-(c) with P3 primary" and goes on "run exercise 3 exactly
+like Track A; ratify E1 by merge, post the #42 registration, run the
+one-shot, publish regardless"; d196's opens "Accept all five". §21
+records them under `decisions`, keyed by the field each fixes, and
 `fra68_track.config.MAX_RULINGS` holds the same rulings in code; a
 registered run refuses a block whose rulings differ from the code's or a
 configuration that departs from one (§21).
 
-Rulings 1-7 answer d188 items (a)-(c) (plan §11 items 1-4, 6 and 7);
+Rulings 1-7 answer d188 items (a)-(c) (plan §11 items 1-4, 6 and 7;
+ruling 5 is what d188's "exactly like Track A" carries, not a plan item);
 rulings 8-12 answer d196 items (1)-(5), which name the fields d188 as
 filed does not (E1 referee report, required change 7) and plan §11
 item 5.
@@ -1173,9 +1193,11 @@ item 5.
    legacy fixed 35. d188 item (a) as filed does not list this field by
    name (`named_in_d188_as_filed` false), so this version records it as
    covered by the ruling to run exercise 3 exactly like Track A
-   (`covered_by`), not as a separate ruling. The statutory count of
-   415(b)(2) (`statutory_415_b_2`) is not used; §12 names the delta for
-   workers born before 1929.
+   (`covered_by`), not as a separate ruling. No decision record put the
+   statutory count of 415(b)(2) (`statutory_415_b_2`) to Max, so §21
+   records no declined alternative (`declined` is empty); the count is
+   not used, as in exercise 1, and §12 names the delta for workers born
+   before 1929.
 6. **Primary schedule** (`primary_schedule_id`; d188 item (b); plan §11
    item 4). **Ruling:** P3 is the primary (row F0); P1 and P2 are
    registered as F1 and F2 (§3, §5, §18). They were declined as the
@@ -1518,4 +1540,9 @@ committed one. Its findings:
   `pending_decisions`; and a registered run also refuses a block whose
   rulings differ from the code's. No rule, schedule, row, primary,
   parameter or §19 amount changed. Ratified by merging under Max's
-  2026-09-24 authorization (d188 item (c)).
+  2026-09-24 authorization (d188 item (c)). Before the merge, the
+  independent review of this version (header) emptied §21's `declined`
+  for `benefit_computation_years`, which had named the statutory 415(b)(2)
+  count although no decision record put it to Max, and said so in §22
+  ruling 5; the code's `MAX_RULINGS` entry changed with it. No value
+  changed.
