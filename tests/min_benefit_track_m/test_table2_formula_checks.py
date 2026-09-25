@@ -28,6 +28,12 @@ repeats them):
    not related by the 25% reduction alone for rows 1c, 1d and 2d, even
    allowing for the printed rounding.  The page does not say on which
    year's benefit and threshold the NRA columns are evaluated.
+3. (Independent review, 2026-09-24.)  Rows 3b-3d ("exactly 4 CQ
+   threshold in all years", work from 1963) agree with the statute's
+   pre-1978 quarter of coverage ($50 of wages a quarter, 42 USC
+   413(a)(2)(A)(i)) and not with the plan's G6 convention (the 1978 amount
+   scaled back by AWI).  The check uses ratios of rows within a column,
+   so neither the poverty threshold nor the claim-age factor enters it.
 """
 
 from __future__ import annotations
@@ -39,7 +45,7 @@ import pytest
 
 from populace_dynamics.min_benefit_track_m import coverage
 from populace_dynamics.min_benefit_track_m import policy as pol
-from populace_dynamics.ss import benefits
+from populace_dynamics.ss import benefits, statutory_aime
 from populace_dynamics.ss.params import load_ssa_parameters
 
 _PE_US = Path(
@@ -161,3 +167,52 @@ def test_four_quarters_of_coverage_in_2006():
     assert coverage.annual_coverage_amount(2006, qc, {}) == 3_880.0
     assert qc.source["kind"] == "policyengine_us_checkout"
     assert len(qc.source["sha256"]) == 64
+
+
+def _four_cq_history(years: int, qc, params, rule: str) -> dict[int, float]:
+    """Earnings of exactly four quarters of coverage a year from age 20.
+
+    From 1978 four times the year's quarter-of-coverage amount; before
+    1978 :func:`coverage.annual_coverage_amount` under ``rule``.
+    """
+
+    policy = pol.TrackMPolicy(pre_1978_coverage_rule=rule)
+    start = BIRTH_YEAR + 20
+    return {
+        year: coverage.annual_coverage_amount(year, qc, params.nawi, policy)
+        for year in range(start, start + years)
+    }
+
+
+def _row3_pias(params, rule: str) -> dict[str, float]:
+    qc = coverage.load_qc_amounts()
+    out = {}
+    for row, (years, *_rest) in TABLE2.items():
+        if row.startswith("3") and years:
+            history = _four_cq_history(years, qc, params, rule)
+            aime = statutory_aime.aime(history, BIRTH_YEAR, params)
+            out[row] = benefits.pia(aime, BIRTH_YEAR + 62, params)
+    return out
+
+
+def _within_printed_ratio(ratio: float, row: str, column: int) -> bool:
+    """Whether ``ratio`` lies within the rounding of row / row 3d."""
+
+    top, bottom = TABLE2[row][column], TABLE2["3d"][column]
+    return (
+        (top - 0.5) / (bottom + 0.5) <= ratio <= (top + 0.5) / (bottom - 0.5)
+    )
+
+
+def test_row_3_ratios_follow_the_statutes_pre_1978_quarter(params):
+    statute = _row3_pias(params, pol.PRE_1978_STATUTE_50_PER_QUARTER)
+    convention = _row3_pias(params, pol.PRE_1978_SCALED_BY_AWI)
+    for row in ("3b", "3c"):
+        for column in (1, 2):  # current law at 62 and at the NRA
+            assert _within_printed_ratio(
+                statute[row] / statute["3d"], row, column
+            ), (row, column)
+            # Finding 3: the plan's convention does not reproduce them.
+            assert not _within_printed_ratio(
+                convention[row] / convention["3d"], row, column
+            ), (row, column)

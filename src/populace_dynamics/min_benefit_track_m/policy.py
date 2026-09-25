@@ -52,6 +52,7 @@ __all__ = [
     "PIA_BENEFIT_IMPLIED",
     "PIA_HISTORY",
     "PRE_1978_SCALED_BY_AWI",
+    "PRE_1978_STATUTE_50_PER_QUARTER",
     "PRORATED_YEARS_EXACT",
     "PRORATED_YEARS_FLOOR",
     "REGISTERED_ROWS",
@@ -249,6 +250,12 @@ COVERED_LABOR_INCOME = "psid_labor_income_treated_as_covered"
 #: G6 builder default: before 1978, the 1978 annual amount scaled back by
 #: the average wage index.
 PRE_1978_SCALED_BY_AWI = "qc_1978_scaled_back_by_awi"
+#: Alternative (independent review, 2026-09-24): the statute.  Before 1978
+#: 42 USC 413(a)(2)(A)(i) and 20 CFR 404.141(b) credit a quarter of
+#: coverage for $50 of wages paid in it; with annual amounts and no
+#: quarterly timing, a year counts at 4 x $50 = $200 (wages spread over the
+#: year's four quarters).
+PRE_1978_STATUTE_50_PER_QUARTER = "statute_413_a_50_per_quarter"
 #: Builder reading of the plan's named delta "odd-year gap imputation from
 #: 1997 on" (and M5's "odd-year gap law"): a biennial gap year takes the
 #: immediate-neighbor law of ``estimates.career`` before the count.
@@ -277,7 +284,10 @@ _CHOICES: dict[str, tuple[Any, ...]] = {
     "threshold_rule": (THRESHOLD_CENSUS_ONE_PERSON_65_PLUS,),
     "threshold_year_rule": (THRESHOLD_YEAR_ELIGIBILITY,),
     "covered_earnings_rule": (COVERED_LABOR_INCOME,),
-    "pre_1978_coverage_rule": (PRE_1978_SCALED_BY_AWI,),
+    "pre_1978_coverage_rule": (
+        PRE_1978_SCALED_BY_AWI,
+        PRE_1978_STATUTE_50_PER_QUARTER,
+    ),
     "gap_year_rule": (GAP_YEARS_NEIGHBOR, GAP_YEARS_ZERO),
     "minimum_rounding": (MINIMUM_ROUNDING_NONE, MINIMUM_ROUNDING_DIME),
     "couples_cap": ("none",),
@@ -349,6 +359,7 @@ class TrackMPolicy:
                     f"{name} must be one of {allowed}, not {value!r}"
                 )
         for name in (
+            "policy_year",
             "di_proration_start_age",
             "di_proration_cap_years",
             "wage_index_lag_years",
@@ -653,9 +664,14 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
         PendingDecision(
             "pre_1978_coverage_rule",
             policy.pre_1978_coverage_rule,
-            (),
-            "plan G6 builder default; the statute (42 USC 413) is to be "
-            "captured and read in M2 before the rules use it",
+            (PRE_1978_STATUTE_50_PER_QUARTER,),
+            "plan G6 proposes the 1978 amount scaled back by AWI; the "
+            "statute differs: before 1978, 42 USC 413(a)(2)(A)(i) and 20 "
+            "CFR 404.141(b) credit a quarter for $50 of wages paid in it "
+            "(read by the independent review, 2026-09-24), and Table 2's "
+            "row-3 ratios agree with the statute, not the plan's "
+            "convention (tests/min_benefit_track_m/"
+            "test_table2_formula_checks.py)",
             freeze,
             None,
         ),
@@ -665,10 +681,13 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             (GAP_YEARS_ZERO,),
             "builder reading: G6 counts unobserved years as zero, but the "
             "plan's named deltas list 'odd-year gap imputation from 1997 "
-            "on' and M5 names 'the odd-year gap law'; the biennial gap "
-            "years (1997-2021, odd) take the immediate-neighbor law of "
+            "on' and M5 names 'the odd-year gap law'; an odd year "
+            "1997-2021 left unobserved takes the immediate-neighbor law of "
             "estimates.career before the count, and G6's zero applies to "
-            "years still unobserved",
+            "years still unobserved.  Review note: only 1997 and 1999 were "
+            "never asked; each odd year 2001-2021 was asked one wave later "
+            "(year-before-last labor income of the reference person and "
+            "spouse), which M3/M5 can read before any imputation",
             freeze,
             None,
         ),

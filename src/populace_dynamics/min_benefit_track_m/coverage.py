@@ -15,20 +15,37 @@ employment counts), not a statute reading.
 
 What this module does not do:
 
-* It does not read the statute.  42 USC 413(a)-(d) is to be captured and
-  read in plan item M2 before the rules rely on it; until then the pre-1978
-  rule is the plan's builder convention, a parameter
-  (``TrackMPolicy.pre_1978_coverage_rule``).
+* It does not capture the statute; plan item M2 captures 42 USC
+  413(a)-(d).  The pre-1978 rule is a parameter
+  (``TrackMPolicy.pre_1978_coverage_rule``) whose default is the plan's
+  convention, the 1978 amount scaled back by the average wage index.  The
+  statute differs (read by the independent review of 2026-09-24 from
+  law.cornell.edu, copies in ``EV/track-m-review-20260924/``): before
+  1978, 413(a)(2)(A)(i) and 20 CFR 404.141(b) credit a quarter of coverage
+  for $50 of wages paid in it or $100 of self-employment income credited
+  to it, and a year's wages at the annual limitation credit all four.  The
+  alternative ``statute_413_a_50_per_quarter`` reads that as $200 a year
+  (wages spread over the four quarters); it does not separate
+  self-employment income ($400 a year) or agricultural wages.  From 1978
+  on, 413(a)(2)(A)(ii) and 20 CFR 404.143(a) credit one quarter for each
+  quarter-of-coverage amount of the year's wages and self-employment
+  income, at most four, so four quarters' amount is the annual test.
 * It does not compute quarters within a year: a year counts when its
   covered earnings reach four quarters' amount (the annual test the plan
   proposes), never three or fewer.
 * It does not decide the entitlement year; the caller passes
   ``through_year`` (the year before entitlement, G6) from the cohort.
 
-**Biennial gap years.**  The PSID collected income for every year through
-1996 and only for even years from 1998; the odd income years 1997-2021
-were never asked.  The plan lists "odd-year gap imputation from 1997 on"
-among its named deltas and M5's "odd-year gap law", while G6 counts
+**Biennial gap years.**  The earnings panel (``data/family.py``) carries
+labor income for every year through 1996 and for even years from 1998; it
+has no odd income year from 1997.  By the family files' labels, the labor
+income of 1997 and 1999 was never asked, while that of each odd year
+2001-2021 was asked one wave later as the reference person's and the
+spouse's labor income of the year before last (for example ER85328 and
+ER85376 in 2023, each with a time unit and an accuracy code), items no
+reader here reads yet (``structure.verify_prior_year_labor_income_labels``;
+plan items M3 and M5).  The plan lists "odd-year gap imputation from 1997
+on" among its named deltas and M5's "odd-year gap law", while G6 counts
 unobserved years as zero.  The builder reading (``gap_year_rule``,
 pending the specification freeze) fills a gap year with the
 immediate-neighbor law of ``estimates.career`` (``_impute_gap``: the mean
@@ -60,11 +77,13 @@ import yaml
 from populace_dynamics.min_benefit_track_m.policy import (
     GAP_YEARS_NEIGHBOR,
     PRE_1978_SCALED_BY_AWI,
+    PRE_1978_STATUTE_50_PER_QUARTER,
     TrackMPolicy,
 )
 
 __all__ = [
     "FIRST_QC_YEAR",
+    "PRE_1978_WAGES_PER_QUARTER",
     "PSID_BIENNIAL_GAP_YEARS",
     "QC_PARAMETER_PATH",
     "CoverageCount",
@@ -77,9 +96,15 @@ __all__ = [
 #: The first year of the annual quarter-of-coverage amount (the
 #: policyengine-us series starts in 1978, when annual reporting began).
 FIRST_QC_YEAR = 1978
-#: Odd income years the biennial PSID never collected (waves 1999-2023
-#: report the prior even year; the 1997 wave was the last annual one).
+#: Odd income years the earnings panel does not carry (waves 1999-2023
+#: report the prior even year as last year's income; the 1997 wave was the
+#: last annual one).  1997 and 1999 were never asked; 2001-2021 were asked
+#: one wave later (module docstring).  The neighbor law fills only those of
+#: them a caller leaves unobserved.
 PSID_BIENNIAL_GAP_YEARS: tuple[int, ...] = tuple(range(1997, 2022, 2))
+#: Before 1978, 42 USC 413(a)(2)(A)(i): a quarter of coverage for $50 of
+#: wages paid in the quarter.
+PRE_1978_WAGES_PER_QUARTER = 50.0
 #: The policyengine-us parameter file (relative to the checkout root).
 QC_PARAMETER_PATH = Path(
     "policyengine_us/parameters/gov/ssa/social_security/"
@@ -178,15 +203,19 @@ def annual_coverage_amount(
     """Covered earnings a year needs to count as a work year.
 
     ``policy.quarters_per_work_year`` (4) times the year's
-    quarter-of-coverage amount from 1978 on.  Before 1978 (the plan's G6
-    convention, ``pre_1978_coverage_rule``): the 1978 amount scaled back by
-    the average wage index, ``QC(1978) * AWI(year) / AWI(1978)``.
+    quarter-of-coverage amount from 1978 on.  Before 1978,
+    ``pre_1978_coverage_rule``: the plan's G6 convention (the default), the
+    1978 amount scaled back by the average wage index,
+    ``QC(1978) * AWI(year) / AWI(1978)``; or the statute's $50 a quarter,
+    $200 a year (``statute_413_a_50_per_quarter``).
     """
 
     policy = policy or TrackMPolicy()
     quarters = policy.quarters_per_work_year
     if year >= FIRST_QC_YEAR:
         return quarters * qc.amount(year)
+    if policy.pre_1978_coverage_rule == PRE_1978_STATUTE_50_PER_QUARTER:
+        return quarters * PRE_1978_WAGES_PER_QUARTER
     if policy.pre_1978_coverage_rule != PRE_1978_SCALED_BY_AWI:
         raise ValueError(policy.pre_1978_coverage_rule)
     for needed in (year, FIRST_QC_YEAR):

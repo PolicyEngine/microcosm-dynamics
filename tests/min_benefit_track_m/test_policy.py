@@ -69,6 +69,9 @@ def test_unknown_values_are_refused():
         pol.TrackMPolicy(quarters_per_work_year=3)
     with pytest.raises(TypeError):
         pol.TrackMPolicy(di_proration_start_age=22.0)
+    # A float policy year equals 2004 but is not a year (review fix).
+    with pytest.raises(TypeError):
+        pol.TrackMPolicy(policy_year=2004.0)
 
 
 def test_every_d219_item_is_pending_with_its_default():

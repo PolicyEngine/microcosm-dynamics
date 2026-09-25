@@ -38,6 +38,43 @@ def test_before_1978_the_1978_amount_is_scaled_back_by_awi():
         coverage.annual_coverage_amount(1950, QC, NAWI)
 
 
+def test_before_1978_the_statute_credits_fifty_dollars_a_quarter():
+    # 42 USC 413(a)(2)(A)(i): $50 of wages in a quarter; 4 x 50 = 200 a
+    # year whatever the wage index.  From 1978 the rule is unchanged.
+    statute = pol.TrackMPolicy(
+        pre_1978_coverage_rule=pol.PRE_1978_STATUTE_50_PER_QUARTER
+    )
+    for year in (1951, 1968, 1977):
+        assert coverage.annual_coverage_amount(year, QC, NAWI, statute) == 200
+    assert coverage.annual_coverage_amount(1990, QC, NAWI, statute) == 880.0
+    # The default stays the plan's convention: 1976 needs 362.81 there.
+    history = {1976: 300.0, 1977: 199.0}
+    default = coverage.count_coverage_years(
+        history,
+        birth_year=1950,
+        through_year=1980,
+        qc=QC,
+        nawi=NAWI,
+        policy=ZERO_GAPS,
+    )
+    assert default.years == 0
+    literal = coverage.count_coverage_years(
+        history,
+        birth_year=1950,
+        through_year=1980,
+        qc=QC,
+        nawi=NAWI,
+        policy=pol.TrackMPolicy(
+            gap_year_rule=pol.GAP_YEARS_ZERO,
+            pre_1978_coverage_rule=pol.PRE_1978_STATUTE_50_PER_QUARTER,
+        ),
+    )
+    assert literal.counted_years == (1976,)
+    assert pol.TrackMPolicy().pre_1978_coverage_rule == (
+        pol.PRE_1978_SCALED_BY_AWI
+    )
+
+
 def test_a_year_counts_at_four_quarters_amount():
     history = {1990: 880.0, 1991: 889.99, 1977: 381.0, 1976: 362.0}
     # 1991 needs 4 x 230 = 920; 1976 needs 400 / 1.05^2 = 362.81.

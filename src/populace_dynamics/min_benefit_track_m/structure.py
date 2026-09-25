@@ -22,9 +22,15 @@ codes and presence only.  It computes:
 * the **availability** of the earnings years that years of coverage
   (plan field G6) would count: for each beneficiary, how many years of the
   window from the year of attaining 22 through the year of attaining 61
-  fall before 1968 (before the PSID), in the biennial gap years
-  (1997-2021, odd), in collected years with an observation in the
-  earnings panel, or in collected years without one.
+  fall before 1968 (before the PSID), in the odd income years the
+  earnings panel does not carry (1997-2021), in collected years with an
+  observation in the earnings panel, or in collected years without one.
+  The odd years are split by what the family files ask
+  (:func:`verify_prior_year_labor_income_labels`, labels only): the
+  labor income of 1997 and 1999 was never asked, while that of each odd
+  year 2001-2021 was asked one wave later for the reference person and
+  the spouse ("R2 LABOR INCOME <year> (RP)" and the like), items no
+  reader in this repository reads yet (plan items M3 and M5).
 
 It never compares an earnings amount with any threshold, never counts
 years of coverage, computes no PIA, threshold, minimum or share receiving
@@ -53,14 +59,18 @@ __all__ = [
     "BIRTH_YEAR_BANDS",
     "FAMILY_2023",
     "LAST_BIRTH_YEAR",
+    "NEVER_ASKED_LABOR_INCOME_YEARS",
+    "NEXT_WAVE_LABOR_INCOME_YEARS",
     "SOCIAL_SECURITY_2023",
     "TrackMStructureInputs",
     "availability_window",
     "load_structure_inputs",
+    "prior_year_labor_income_variables",
     "read_2023_anchor",
     "read_2023_family_social_security",
     "structural_counts",
     "verify_2023_codes",
+    "verify_prior_year_labor_income_labels",
 ]
 
 WAVE = 2023
@@ -92,9 +102,29 @@ WINDOW_END_AGE = 61
 #: The earnings panel's first income year (``data/family.py``: the 1968
 #: wave's 1967 income is not attachable to persons).
 FIRST_PANEL_YEAR = 1968
-#: Annual interviews through 1997; income years 1997, 1999, ..., 2021 were
-#: never collected (biennial waves from 1999 report the prior even year).
+#: Annual interviews through 1997; the earnings panel carries no odd
+#: income year from 1997 (biennial waves from 1999 report the prior even
+#: year as last year's income).
 _ANNUAL_LAST_INCOME_YEAR = 1996
+#: Odd income years whose labor income no family file asks (the 1999 and
+#: 2001 files carry no labor-income item for 1997 or 1999; labels checked
+#: by :func:`verify_prior_year_labor_income_labels`).
+NEVER_ASKED_LABOR_INCOME_YEARS: tuple[int, ...] = (1997, 1999)
+#: Odd income years 2001-2021: the next wave asks the reference person's
+#: and the spouse's labor income of the year before last.
+NEXT_WAVE_LABOR_INCOME_YEARS: tuple[int, ...] = tuple(range(2001, 2022, 2))
+#: The label of a year-before-last labor-income amount, e.g. "R2 LABOR
+#: INCOME 2021 (RP)" or "R26 LABOR INCOME 2001 (HD)"; the "PER FOR" time
+#: unit and the "ACCURACY OF" code are separate variables.
+_PRIOR_YEAR_LABOR_LABEL = re.compile(
+    r"^R\d+ LABOR INCOME (\d{4}) \((HD|RP|WF|SP)\)$"
+)
+_PRIOR_YEAR_ROLES = {
+    "HD": "reference_person",
+    "RP": "reference_person",
+    "WF": "spouse",
+    "SP": "spouse",
+}
 
 #: Label-verified 2023 anchor variables (labels read 2026-09-24 from
 #: IND2023ER.sps).
@@ -311,6 +341,73 @@ def verify_2023_codes(*, data_dir: Path | None = None) -> dict[str, str]:
     return checked
 
 
+def prior_year_labor_income_variables(
+    labels: Mapping[str, str], income_year: int
+) -> dict[str, str]:
+    """``{role: variable}`` of one family file's year-before-last labor
+    income amounts for ``income_year`` (labels only).
+
+    A role (``reference_person`` for HD or RP, ``spouse`` for WF or SP)
+    with more than one matching amount label is refused.
+    """
+
+    found: dict[str, str] = {}
+    for var, label in labels.items():
+        match = _PRIOR_YEAR_LABOR_LABEL.match(" ".join(label.split()))
+        if match is None or int(match.group(1)) != income_year:
+            continue
+        role = _PRIOR_YEAR_ROLES[match.group(2)]
+        if role in found:
+            raise ValueError(
+                f"two {role} labor-income labels for {income_year}: "
+                f"{found[role]} and {var}"
+            )
+        found[role] = var
+    return found
+
+
+def verify_prior_year_labor_income_labels(
+    *, data_dir: Path | None = None
+) -> dict[str, dict[str, Any]]:
+    """Which odd income years the family files ask labor income for.
+
+    Labels only; no value is read.  For each odd income year 1997-2021
+    the wave two years later is searched for a year-before-last labor
+    income amount of the reference person and of the spouse.  The years
+    in :data:`NEVER_ASKED_LABOR_INCOME_YEARS` must have none and the years
+    in :data:`NEXT_WAVE_LABOR_INCOME_YEARS` both roles; anything else is
+    refused.  Returns ``{income year: {"wave", "reference_person",
+    "spouse"}}`` (the two variable names, or ``None`` when not asked).
+    """
+
+    out: dict[str, dict[str, Any]] = {}
+    for year in (
+        *NEVER_ASKED_LABOR_INCOME_YEARS,
+        *NEXT_WAVE_LABOR_INCOME_YEARS,
+    ):
+        wave = year + 2
+        sps_path, _ = family._family_paths(wave, data_dir)
+        found = prior_year_labor_income_variables(
+            psid.parse_sps_labels(sps_path), year
+        )
+        expected = (
+            set()
+            if year in NEVER_ASKED_LABOR_INCOME_YEARS
+            else {"reference_person", "spouse"}
+        )
+        if set(found) != expected:
+            raise ValueError(
+                f"the {wave} family file's labor-income labels for {year} "
+                f"are {found}; expected roles {sorted(expected)}"
+            )
+        out[str(year)] = {
+            "wave": wave,
+            "reference_person": found.get("reference_person"),
+            "spouse": found.get("spouse"),
+        }
+    return out
+
+
 @dataclass(frozen=True)
 class TrackMStructureInputs:
     """The frames the structural counts read, with file provenance."""
@@ -323,6 +420,8 @@ class TrackMStructureInputs:
     design: pd.DataFrame
     codes: Mapping[str, str]
     provenance: Mapping[str, Any] = field(default_factory=dict)
+    #: :func:`verify_prior_year_labor_income_labels` (labels only).
+    prior_year_labor_income: Mapping[str, Any] = field(default_factory=dict)
 
 
 def load_structure_inputs(
@@ -333,6 +432,7 @@ def load_structure_inputs(
     root = psid._resolve_data_dir(data_dir)
     with psid2010.record_files_read(root) as files:
         codes = verify_2023_codes(data_dir=data_dir)
+        prior_year = verify_prior_year_labor_income_labels(data_dir=data_dir)
         anchor = read_2023_anchor(data_dir=data_dir)
         family_ss = read_2023_family_social_security(data_dir=data_dir)
         death_records = deaths.read_death_records(data_dir=data_dir)
@@ -357,6 +457,7 @@ def load_structure_inputs(
             "psid_data_dir": str(root),
             "psid_files_sha256": dict(sorted(files.items())),
         },
+        prior_year_labor_income=prior_year,
     )
 
 
@@ -365,7 +466,12 @@ def availability_window(birth_year: int) -> dict[str, Any]:
 
     From the year of attaining 22 through the year of attaining 61 (and
     never past 2022): ``pre_panel`` years before 1968, ``gap`` years (odd
-    income years 1997-2021, never collected) and ``collected`` years.
+    income years 1997-2021, which the earnings panel does not carry) and
+    ``collected`` years.  ``gap`` splits into ``gap_never_asked`` (1997
+    and 1999: no family file asks their labor income) and
+    ``gap_asked_next_wave`` (2001-2021: asked one wave later as the
+    year-before-last labor income of the reference person and spouse, and
+    not read by the earnings panel).
     """
 
     start = birth_year + WINDOW_START_AGE
@@ -385,6 +491,12 @@ def availability_window(birth_year: int) -> dict[str, Any]:
         "end": end,
         "pre_panel": pre,
         "gap": gap,
+        "gap_never_asked": [
+            y for y in gap if y in NEVER_ASKED_LABOR_INCOME_YEARS
+        ],
+        "gap_asked_next_wave": [
+            y for y in gap if y in NEXT_WAVE_LABOR_INCOME_YEARS
+        ],
         "collected": collected,
     }
 
@@ -563,6 +675,8 @@ def structural_counts(inputs: TrackMStructureInputs) -> dict[str, Any]:
                 "window_years": window["end"] - window["start"] + 1,
                 "pre_panel": len(window["pre_panel"]),
                 "gap": len(window["gap"]),
+                "gap_never_asked": len(window["gap_never_asked"]),
+                "gap_asked_next_wave": len(window["gap_asked_next_wave"]),
                 "collected_observed": sum(1 for y in collected if y in seen),
                 "collected_not_observed": sum(
                     1 for y in collected if y not in seen
@@ -583,6 +697,8 @@ def structural_counts(inputs: TrackMStructureInputs) -> dict[str, Any]:
                 "window_years",
                 "pre_panel",
                 "gap",
+                "gap_never_asked",
+                "gap_asked_next_wave",
                 "collected_observed",
                 "collected_not_observed",
             )
@@ -614,6 +730,8 @@ def structural_counts(inputs: TrackMStructureInputs) -> dict[str, Any]:
                     "window_years",
                     "pre_panel",
                     "gap",
+                    "gap_never_asked",
+                    "gap_asked_next_wave",
                     "collected_observed",
                     "collected_not_observed",
                 )
@@ -624,6 +742,9 @@ def structural_counts(inputs: TrackMStructureInputs) -> dict[str, Any]:
                 )
             ),
         }
+    availability["prior_year_labor_income_labels"] = dict(
+        inputs.prior_year_labor_income
+    )
     return {
         "funnel": funnel,
         "beneficiaries_62_plus": summary,

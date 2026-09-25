@@ -170,13 +170,18 @@ def test_the_availability_counts(counts):
     # gap years 1997-2013 odd = 9, collected 31, all observed.  Person 2
     # (1954): 1976-2015, 10 gap years, 30 collected, none observed.
     # Person 7 (1958): 1980-2019, 12 gap years, 28 collected, none.
+    # Each window holds 1997 and 1999 (never asked: 3 x 2 = 6); the other
+    # gap years (2001 on: 7 + 8 + 10 = 25) were asked one wave later.
     assert availability["person_years"] == {
         "window_years": 120,
         "pre_panel": 0,
         "gap": 31,
+        "gap_never_asked": 6,
+        "gap_asked_next_wave": 25,
         "collected_observed": 31,
         "collected_not_observed": 58,
     }
+    assert availability["prior_year_labor_income_labels"] == {}
     assert availability["persons_by_observed_window_years"] == {
         "0": 2,
         "30_39": 1,
@@ -190,6 +195,8 @@ def test_availability_window():
     assert (window["start"], window["end"]) == (1962, 2001)
     assert window["pre_panel"] == list(range(1962, 1968))
     assert window["gap"] == [1997, 1999, 2001]
+    assert window["gap_never_asked"] == [1997, 1999]
+    assert window["gap_asked_next_wave"] == [2001]
     assert len(window["collected"]) == 40 - 6 - 3
     # A window past 2022 is cut there.
     assert structure.availability_window(1965)["end"] == 2022
@@ -202,3 +209,75 @@ def test_the_structure_module_imports_no_rules():
     for name in ("rules", "coverage", "specification"):
         assert f"min_benefit_track_m.{name}" not in source
         assert f"min_benefit_track_m import {name}" not in source
+
+
+def test_prior_year_labor_income_labels_are_matched_by_role():
+    # INVENTED labels in the PSID's forms: the amount is matched, its
+    # "PER FOR" time unit and "ACCURACY OF" code are not.
+    labels = {
+        "V1": "R2 LABOR INCOME 2021 (RP)",
+        "V2": "R2 PER FOR LABOR INCOME 2021 (RP)",
+        "V3": "ACCURACY OF LABOR INCOME 2021 (RP)",
+        "V4": "R2  LABOR INCOME 2021 (SP)",
+        "V5": "R26 LABOR INCOME 2019 (HD)",
+        "V6": "LABOR INCOME OF REF PERSON-2022",
+    }
+    assert structure.prior_year_labor_income_variables(labels, 2021) == {
+        "reference_person": "V1",
+        "spouse": "V4",
+    }
+    assert structure.prior_year_labor_income_variables(labels, 2019) == {
+        "reference_person": "V5"
+    }
+    assert structure.prior_year_labor_income_variables(labels, 1997) == {}
+    with pytest.raises(ValueError, match="two reference_person"):
+        structure.prior_year_labor_income_variables(
+            {**labels, "V7": "R11 LABOR INCOME 2021 (HD)"}, 2021
+        )
+
+
+def _write_family_sps(root: Path, wave: int, labels: dict) -> None:
+    base = root / "family" / str(wave)
+    base.mkdir(parents=True)
+    body = "\n".join(
+        f'      {var}    "{label}"' for var, label in labels.items()
+    )
+    (base / f"FAM{wave}ER.sps").write_text(
+        f"VARIABLE LABELS\n{body}\n.\n", encoding="utf-8"
+    )
+    (base / f"FAM{wave}ER.txt").write_text("", encoding="utf-8")
+
+
+def test_prior_year_labels_are_verified_wave_by_wave(tmp_path):
+    # INVENTED setup files: none for 1997 or 1999, both roles 2001-2021.
+    for year in structure.NEVER_ASKED_LABOR_INCOME_YEARS:
+        _write_family_sps(tmp_path, year + 2, {"X1": f"TOTAL INCOME {year}"})
+    for year in structure.NEXT_WAVE_LABOR_INCOME_YEARS:
+        _write_family_sps(
+            tmp_path,
+            year + 2,
+            {
+                f"H{year}": f"R2 LABOR INCOME {year} (RP)",
+                f"S{year}": f"R11 LABOR INCOME {year} (SP)",
+            },
+        )
+    found = structure.verify_prior_year_labor_income_labels(data_dir=tmp_path)
+    assert found["1997"] == {
+        "wave": 1999,
+        "reference_person": None,
+        "spouse": None,
+    }
+    assert found["2021"] == {
+        "wave": 2023,
+        "reference_person": "H2021",
+        "spouse": "S2021",
+    }
+    assert len(found) == 2 + 11
+    # A wave that drops the spouse item is refused.
+    sps = tmp_path / "family" / "2013" / "FAM2013ER.sps"
+    sps.write_text(
+        'VARIABLE LABELS\n      H2011    "R2 LABOR INCOME 2011 (RP)"\n.\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="2013 family file"):
+        structure.verify_prior_year_labor_income_labels(data_dir=tmp_path)
