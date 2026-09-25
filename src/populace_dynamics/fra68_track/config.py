@@ -505,9 +505,12 @@ E1_RULINGS = SpecificationRulings(
             "note": (
                 "E1 section 7 makes membership scenario-specific: under "
                 "the claiming responses C1 and C2 (rows F3, F4) the "
-                "memberships can differ; under C0 they coincide, and the "
-                "exercise-3 runner (not A7) refuses a C0 row whose "
-                "memberships differ"
+                "memberships can differ; under C0 they coincide except "
+                "rows a named mechanism of E1 section 12 explains (a "
+                "spouse's excess withheld until the reform's later DI "
+                "conversion, from a worker whose own DI level is zero), "
+                "and the exercise-3 runner (not A7) refuses a C0 row with "
+                "any other difference before any row is tabulated"
             ),
         },
         {
@@ -517,8 +520,10 @@ E1_RULINGS = SpecificationRulings(
             "e1_section": "section 7",
             "note": (
                 "E1 section 7: S_base is the set of baseline recipients "
-                "and S_reform the set of reform recipients; under "
-                "identical membership (C0) every basis gives the same sets"
+                "and S_reform the set of reform recipients; where the "
+                "memberships are identical every basis gives the same "
+                "sets, and a row the named C0 mechanism of E1 section 12 "
+                "explains is in S_base only"
             ),
         },
         {

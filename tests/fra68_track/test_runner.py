@@ -1896,6 +1896,18 @@ def test_run_tabulates_every_row_under_exercise_3(result):
         assert (STYLIZED_RESPONSE_LABEL in row["labels"]) is stylized
         if not stylized:
             assert tabulation["input_summary"]["memberships_identical"]
+        # Every row records its membership classification (E1 sections 7
+        # and 12), whose count is A7's; this invented cohort has no C0
+        # difference, named or not.
+        record = row["membership_differences"]
+        assert record["classified"] is True
+        assert record["n_rows_differ"] == (
+            tabulation["input_summary"]["n_rows_membership_differs"]
+        )
+        assert record["not_explained_allowed"] is stylized
+        if not stylized:
+            assert record["n_rows_differ"] == 0
+            assert record["n_rows_not_explained"] == 0
     assert set(result["draws"]) == {"2009", "2011"}
     json.dumps(result, allow_nan=False)
 
@@ -1908,7 +1920,7 @@ def test_run_records_parameters_and_checks(result):
         "ratified_frozen"
     )
     assert result["specification_check"]["specification_version"] == (
-        "e1-ratified-1"
+        "e1-ratified-2"
     )
     assert "pending_decisions" not in result
     assert [item["field"] for item in result["max_rulings"]] == list(
@@ -1965,7 +1977,7 @@ def test_c0_rows_share_the_baseline_across_rows(result):
 def _ratified(block):
     ratified = copy.deepcopy(block)
     ratified["status"] = "ratified_frozen"
-    ratified["version"] = "e1-ratified-1"
+    ratified["version"] = "e1-ratified-2"
     return ratified
 
 
@@ -2093,7 +2105,7 @@ def test_every_row_records_the_e1_specification_not_a1(result):
     block = e1_parameter_block()
     header = {
         "specification": "urban2010_fra68_exercise3",
-        "version": "e1-ratified-1",
+        "version": "e1-ratified-2",
         "status": "ratified_frozen",
         "ratified": True,
     }
@@ -2110,7 +2122,7 @@ def test_every_row_records_the_e1_specification_not_a1(result):
             assert entry["status"] == "fixed_by_ratified_specification"
             assert entry["awaiting"] is None
             assert entry["fixed_by"] == (
-                "E1 specification urban2010_fra68_exercise3 e1-ratified-1 "
+                "E1 specification urban2010_fra68_exercise3 e1-ratified-2 "
                 f"(ratified_frozen), {entry['e1_section']}"
             )
             assert "a1_section" not in entry

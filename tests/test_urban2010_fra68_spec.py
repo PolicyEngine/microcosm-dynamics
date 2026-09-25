@@ -2,7 +2,7 @@
 
 ``docs/design/urban2010_fra68_comparison.md`` (E1) is read by the
 exercise-3 runner through its machine-readable JSON block (section 21).
-These tests hold that block (ratified, ``e1-ratified-1``, with Max's
+These tests hold that block (ratified, ``e1-ratified-2``, with Max's
 rulings of 2026-09-24), the section 3 schedule table and the section 19
 invented worked cases to the code (``populace_dynamics.fra68_track``) and
 to the A1 template.  They use the document, statute arithmetic on
@@ -105,7 +105,7 @@ def _number(cell: str) -> Decimal:
 # --------------------------------------------------------------------------
 def test_the_committed_e1_is_ratified_and_says_so(block, text):
     assert block["specification"] == "urban2010_fra68_exercise3"
-    assert block["version"] == "e1-ratified-1"
+    assert block["version"] == "e1-ratified-2"
     assert block["status"] == "ratified_frozen"
     # A7's fail-closed ratification test (with E1's extra marker) accepts
     # both header fields, and neither carries an A7 unratified marker.
@@ -583,7 +583,7 @@ def test_section_19_spouse_cases_under_c2_equal_the_code(text):
     # E1 referee required change 1: under C2 a moved spouse's excess keeps
     # its months early (the exact moved claim month, not its whole year).
     section = _section(text, "## 19. Invented worked cases")
-    assert "Six further invented cases have no dollar amount" in section
+    assert "Seven further invented cases have no dollar amount" in section
     cases = _SPOUSE_CASE.findall(section)
     assert len(cases) == 2
     base = captured_ssa_parameters()

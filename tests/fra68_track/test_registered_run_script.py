@@ -2,7 +2,7 @@
 
 No PSID file is read and no statistic is computed here: only the preflight
 guards of ``scripts/run_fra68_registered.py`` run, with a fake ``git``, the
-committed E1 section 21 block (ratified, ``e1-ratified-1``) and edited
+committed E1 section 21 block (ratified, ``e1-ratified-2``) and edited
 copies of it.
 """
 
@@ -57,7 +57,7 @@ def _ruled() -> dict:
 
 def test_the_committed_block_is_ratified_and_ruled():
     block = _ruled()
-    assert block["version"] == "e1-ratified-1"
+    assert block["version"] == "e1-ratified-2"
     assert block["status"] == "ratified_frozen"
     assert "decisions_awaiting_max" not in block
     for name, ruling in MAX_RULINGS.items():
@@ -327,4 +327,29 @@ def test_the_sidecar_records_every_import_by_its_distribution():
     assert environment["project"]["name"]
     assert environment["policyengine_us_parameters"]["revision"] == (
         "INVENTED-REVISION"
+    )
+
+
+def test_the_e1_ratified_1_block_is_refused_after_the_amendment(tmp_path):
+    # Registration 14 ran under e1-ratified-1, whose block names no C0
+    # membership mechanism; the amended code (e1-ratified-2, E1 section
+    # 27) refuses that block at the preflight, so a rerun needs the
+    # amended specification and a new registration.
+    block = _ruled()
+    block["version"] = "e1-ratified-1"
+    del block["membership"]
+    with pytest.raises(ValueError, match="membership.c0_named_mechanisms"):
+        _script().preflight(
+            registration_pointer=POINTER,
+            registered_commit=COMMIT,
+            output=tmp_path / "artifact.json",
+            git=_git(),
+            specification=block,
+        )
+    _script().preflight(
+        registration_pointer=POINTER,
+        registered_commit=COMMIT,
+        output=tmp_path / "artifact.json",
+        git=_git(),
+        specification=_ruled(),
     )
