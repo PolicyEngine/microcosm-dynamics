@@ -15,7 +15,10 @@ module applies those rules to records the cohort supplies:
   deceased spouse's record, and whether they are an unlinked auxiliary).
   :class:`TrackMInputs` refuses a link to a missing record and the links
   section 4b cannot produce: an own death-basis record, a spouse's link
-  to a death-basis record, a link to the person's own record.
+  to a death-basis record, a link to the person's own record.  It also
+  refuses MS5 inputs outside section 6's scope: a record in MS5's scope
+  that a survivor's link names (a deceased worker) or that is not the own
+  record of a person paid their own worker benefit.
 * :func:`evaluate`: every record under one registered row's policy, to one
   row per person with ``receives_<k>`` for options 2-5, plus the
   diagnostics of G21 (the referee's O2 included).
@@ -251,6 +254,7 @@ class TrackMInputs:
                     "auxiliary"
                 )
             _check_links(person, self.workers)
+        _check_ms5_scope(self.persons, self.workers)
         object.__setattr__(self, "persons", tuple(self.persons))
 
 
@@ -282,6 +286,50 @@ def _check_links(
             raise ValueError(
                 f"{person.person_id}: a spouse's benefit needs a living "
                 "worker, not a death-basis record (section 4b rule 5)"
+            )
+
+
+def _check_ms5_scope(
+    persons: Iterable[PersonRecord], workers: Mapping[str, WorkerRecord]
+) -> None:
+    """Refuse MS5 inputs outside the M1 specification's section 6 scope.
+
+    MS5's benefit-implied PIA is for "a worker record whose 2022
+    person-level amount (ER35219) is its own worker benefit alone"; "a
+    linked worker who is deceased or outside the universe keeps the MS0
+    PIA".  So a record marked ``ms5_in_scope`` must be the own record of a
+    person of the universe who is paid their own worker benefit in 2022,
+    and no survivor's link (a deceased worker) may name it.  (Added by the
+    independent review of 2026-09-25: the inputs accepted both.)
+    """
+
+    persons = tuple(persons)
+    paid_owners = {
+        person.own_record_id
+        for person in persons
+        if person.own_record_id is not None and person.paid_own_worker_benefit
+    }
+    deceased = {
+        link.worker_record_id
+        for person in persons
+        for link in person.links
+        if link.kind == "survivor"
+    }
+    for key, record in workers.items():
+        if not record.ms5_in_scope:
+            continue
+        if key in deceased:
+            raise ValueError(
+                f"{key}: a survivor's link names this record, so its worker "
+                "is deceased and has no 2022 benefit; it keeps the MS0 PIA "
+                "and cannot be in MS5's scope (section 6)"
+            )
+        if key not in paid_owners:
+            raise ValueError(
+                f"{key}: an MS5 record must be the own record of a person "
+                "of the universe paid their own worker benefit in 2022; a "
+                "linked worker outside the universe keeps the MS0 PIA "
+                "(section 6)"
             )
 
 

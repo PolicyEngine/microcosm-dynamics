@@ -29,9 +29,11 @@
   lane's brief named it `minimum_benefits_comparison.md`.
 - **Template:** the structure of A1
   (`docs/design/urban2010_cola_comparison.md`, ratified), E1
-  (`docs/design/urban2010_fra68_comparison.md`, `e1-ratified-1`, on the
-  branch of PR #461, `dynamics-ex3-ratify-20260924`, not on master; its
-  §22 "Decisions (ruled by Max)" is the form of §20 here) and U1
+  (`docs/design/urban2010_fra68_comparison.md`, `e1-ratified-1`, read on
+  the branch of PR #461, `dynamics-ex3-ratify-20260924`; PR #461 merged to
+  master at `a9b0d09f` after this branch forked, so this branch does not
+  carry it yet; its §22 "Decisions (ruled by Max)" is the form of §20
+  here) and U1
   (`docs/design/boomers2004_uniform_cut_comparison.md`).
 - **Claim class (d219 item 2, accepted 2026-09-24):** a static
   measurement on a PSID snapshot for income year 2022, not a projection.
@@ -466,7 +468,9 @@ of §4a, cut at its last year. What the oracle does, as read:
   history file records that from 1983 each COLA is effective in December
   of its determination year and first reflected in January payments of
   the next, so benefits paid for 2022 reflect the COLAs determined
-  through 2021.
+  through 2021. `evaluation.TrackMInputs` refuses a record marked in
+  MS5's scope that a survivor's link names (a deceased worker) or that is
+  not the own record of a person paid their own worker benefit.
 
 *P* is monthly, in the threshold year's dollars, at the first
 calculation. So is the minimum (§7), so the dollar level cancels (plan
@@ -1312,7 +1316,7 @@ SHA-256 differs from `sources` (§18).
       "ruled_on": "2026-09-25",
       "as_filed": "download Census historical poverty-threshold workbooks thresh13-thresh22 (plus any earlier year the build proves it needs) from www2.census.gov",
       "ruling_text": "Yes (Max in chat 2026-09-25): download thresh13-thresh22 and any earlier year the build proves it needs; capture, hash and pin like the 2003-2012 capture",
-      "note": "Max downloaded thresh13-thresh22; with thresh03-thresh12 (d194) they are captured as 2003-2022. No earlier year is captured: whether one is needed is M4's earliest-threshold-year count (M1 specification, section 7)"
+      "note": "Max approved the download; the orchestrating Claude Code session fetched thresh13-thresh22 on 2026-09-25. With thresh03-thresh12 (d194) they are captured as 2003-2022. No earlier year is captured: whether one is needed is M4's earliest-threshold-year count (M1 specification, section 7)"
     }
   },
   "sources": {
@@ -1436,11 +1440,15 @@ card proposed.
     it needs) from www2.census.gov". **Ruling:** "Yes (Max in chat
     2026-09-25): download thresh13-thresh22 and any earlier year the
     build proves it needs; capture, hash and pin like the 2003-2012
-    capture". Max downloaded `thresh13.xlsx`-`thresh22.xlsx` (his
-    `SHA256SUMS` lists all twenty files, 2003-2022); with
-    `thresh03.xlsx`-`thresh12.xlsx` (d194) they are captured, hashed and
-    pinned as 2003-2022 (§7). No earlier year is captured, because the
-    build has not yet shown one is needed: that is M4's count (§7).
+    capture". Max approved the download; he did not make it. The
+    orchestrating Claude Code session fetched `thresh13.xlsx`-`thresh22.xlsx`
+    with `curl` on 2026-09-25, as it had fetched
+    `thresh03.xlsx`-`thresh12.xlsx` under d194 on 2026-09-24, and wrote the
+    `SHA256SUMS` that lists all twenty files (independent review of
+    2026-09-25, from that session's record; earlier text credited the
+    download to Max). They are captured, hashed and pinned as 2003-2022
+    (§7). No earlier year is captured, because the build has not yet shown
+    one is needed: that is M4's count (§7).
 
 **Frozen by this version on the referee's answers (§21), and ratified
 with the specification by the merge** (`policy.frozen_choices()`; no
@@ -1608,6 +1616,17 @@ structural counts (§10) and computed no years of coverage, PIA,
 threshold, minimum or share receiving a minimum on real data. Its report
 is `EVID/track-m-review-20260924.md`.
 
+**Independent review of `m1-draft-2` and the M8/M10 build (2026-09-25,
+Claude Code subagent, Opus 5.5):** read `EVID/RESTRICTED-FILES.md` first
+and nothing it restricts; the referee report; the cos records of d189,
+d194, d219, d279 and d280; the branch diff from `430507ae`; the twenty
+Census workbooks, read again with its own XML parser and with LibreOffice;
+the orchestrating session's record of the workbook downloads. It
+recomputed every INVENTED worked case, and the whole invented dry-run
+cohort (all 84 cells of rows MS0-MS6), in scripts that import no
+repository code. It read no PSID file and computed no statistic on real
+data. Its report is `EVID/track-m-2-review-20260925.md`.
+
 ## 23. Changelog
 
 - `m1-draft-1` (2026-09-24): first draft, with the Track M rules module,
@@ -1648,3 +1667,13 @@ is `EVID/track-m-review-20260924.md`.
   drops `tabulation_m8_and_dry_run_m10` and adds
   `registration_package_m10_needs_m3_to_m5`. The independent check of
   R1-R10 should cover these changes too.
+- `m1-draft-2`, independent review corrections (2026-09-25; no ruling,
+  default, row, cell or frozen choice changed, so the version stands):
+  §20 ruling 11 and the block's d279 note no longer credit the download of
+  the 2013-2022 workbooks to Max (he approved it; the orchestrating Claude
+  Code session fetched them and wrote `SHA256SUMS`); the header no longer
+  says E1 is not on master (PR #461 merged at `a9b0d09f`);
+  `evaluation.TrackMInputs` now refuses MS5 inputs outside §6's scope (a
+  record in MS5's scope that a survivor's link names, or that is not the
+  own record of a person paid their own worker benefit); §22 records the
+  review.

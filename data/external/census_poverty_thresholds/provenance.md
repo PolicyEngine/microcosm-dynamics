@@ -4,12 +4,14 @@ The twenty U.S. Census Bureau workbooks `thresh03.xlsx` ... `thresh22.xlsx`,
 from
 `https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/`
 (the file names the Census historical poverty thresholds page lists),
-committed unchanged. `thresh03.xlsx` ... `thresh12.xlsx` were staged on
-2026-09-24 under cos decision d194 (exercise 2, Track U);
-`thresh13.xlsx` ... `thresh22.xlsx` were downloaded by Max on 2026-09-25
-under cos decision d279 (exercise 4, Track M) into
-`~/PolicyEngine/census-poverty-thresholds`, whose `SHA256SUMS` lists the
-same twenty digests. Each file's SHA-256 is pinned in
+committed unchanged. The orchestrating Claude Code session fetched them
+with `curl` from that address into `~/PolicyEngine/census-poverty-thresholds`
+after Max approved each download in cos: `thresh03.xlsx` ...
+`thresh12.xlsx` on 2026-09-24 under decision d194 (exercise 2, Track U),
+and `thresh13.xlsx` ... `thresh22.xlsx` on 2026-09-25 under decision d279
+(exercise 4, Track M). Max ruled on the downloads; he did not make them.
+That session also wrote the directory's `SHA256SUMS`, which lists the same
+twenty digests. Each file's SHA-256 is pinned in
 `scripts/capture_track_u_parameters.py` (`CENSUS_WORKBOOK_SHA256`), which
 refuses any other bytes before parsing.
 

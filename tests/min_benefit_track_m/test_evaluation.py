@@ -199,57 +199,123 @@ def test_spouse_and_survivor_receipt_follow_g23_and_ms3():
     assert ms3.loc["H", "receives_2"] and not ms3.loc["S", "receives_2"]
 
 
-def _ms5_record(record_id, birth, window, pia, history_amount):
-    return ev.WorkerRecord(
-        record_id,
-        birth,
-        rules.BASIS_OLD_AGE,
-        window,
-        flat(birth, window - 1, history_amount),
-        ms5_in_scope=True,
-        observed_benefit_2022=pia,
-        claim_factor=1.0,
-        cola_factor=1.0,
-    )
-
-
 def test_a_survivors_own_amount_is_the_reduced_own_benefit():
     """Section 4b rule 5 (42 USC 402(k)(3)(A)): the survivor's own amount
-    is the own benefit after 402(q), not the own PIA.  Under MS5 the
-    invented observed benefits fix the PIAs: the deceased's is $1,000 (in
-    the window, 40 work years, on option 4's minimum of 1.2 x T(2020) / 12
-    = $1,213.60 against 0.8636 x 1,000 = $863.60), the survivor's own is
-    $1,300 (before the window) with a claim factor of 0.7.  The widow(er)'s
-    benefit, $1,213.60 at the survivor's FRA, exceeds the reduced own
-    amount (0.7 x 1,300 = $910) but not the own PIA ($1,300): it is paid,
-    so the survivor receives the minimum through the deceased's record."""
+    is the own benefit after 402(q), not the own PIA.  INVENTED, under MS0
+    (a deceased worker keeps the MS0 PIA; section 6):
 
-    deceased = _ms5_record("D1", 1958, 2020, 1_000.0, 20_000.0)
-    own = _ms5_record("O1", 1938, 2000, 1_300.0, 20_000.0)
+    * the deceased, born 1946 and first entitled at 62 in 2008 (in the
+      window; claim factor 0.75), has 40 work years at $6,000 and a PIA of
+      $655.60, so option 4's minimum, 1.2 x T(2008) / 12 = 1.2 x 9,051 / 12
+      = $905.10, exceeds the cut PIA (0.8636 x 655.60 = $566.18);
+    * the survivor, born 1941 and first entitled at 62 in 2003 (before the
+      window), has 35 years at $30,000, an own PIA of $1,029.90 and a claim
+      factor of 0.7: an own amount of 0.7 x 1,029.90 = $720.93;
+    * the widow(er)'s benefit at the survivor's FRA is capped by the
+      RIB-LIM at max(0.75, 0.825) x 905.10 = $746.71.  It exceeds the
+      reduced own amount but not the own PIA, so it is paid and the
+      survivor receives the minimum through the deceased's record.
+
+    (Independent review, 2026-09-25: this case used MS5 to fix both PIAs,
+    which section 6 rules out for a deceased worker and for a survivor.)
+    """
+
+    deceased = ev.WorkerRecord(
+        "D1", 1946, rules.BASIS_OLD_AGE, 2008, flat(1946, 2007, 6_000.0)
+    )
+    own = ev.WorkerRecord(
+        "O1", 1941, rules.BASIS_OLD_AGE, 2003, flat(1941, 2002, 30_000.0)
+    )
     widow = person(
         "W",
         own_record_id="O1",
         paid_own_worker_benefit=True,
         own_claim_factor=0.7,
-        links=(ev.Link("survivor", "D1", months_early=0),),
+        links=(
+            ev.Link(
+                "survivor", "D1", months_early=0, worker_claim_factor=0.75
+            ),
+        ),
     )
     out = ev.evaluate(
-        inputs([deceased, own], [widow]),
-        pol.policy_for_row("MS5"),
-        PARAMETERS,
+        inputs([deceased, own], [widow]), pol.TrackMPolicy(), PARAMETERS
     )
-    dead = out.workers["D1"].outcomes[4]
-    assert out.workers["D1"].count.years == 40
-    assert dead.on_minimum
-    t2020 = PARAMETERS.thresholds.for_year(2020)
-    assert dead.option_pia == pytest.approx(1.2 * t2020 / 12)
-    assert 910.0 < dead.option_pia < 1_300.0
-    assert not out.workers["O1"].outcomes[4].on_minimum
+    dead = out.workers["D1"]
+    assert dead.count.years == 40 and dead.pia == pytest.approx(655.6)
+    assert PARAMETERS.thresholds.for_year(2008) == 9_051.0
+    assert dead.outcomes[4].on_minimum
+    assert dead.outcomes[4].option_pia == pytest.approx(905.1)
+    survivor = out.workers["O1"]
+    assert survivor.pia == pytest.approx(1_029.9)
+    assert not survivor.outcomes[4].in_window
+    assert survivor.outcomes[4].option_pia == pytest.approx(1_029.9)
     row = out.rows.iloc[0]
-    assert row["receives_4"] and row["basis"] == "linked_worker_pia"
-    # with the unreduced own PIA the widow(er)'s benefit would not be paid
+    assert row["receives_4"] and row["receives_5"]
+    # Under option 2 the deceased is also on the minimum (1.0 x 9,051 / 12
+    # = $754.25 > 0.8719 x 655.60 = $571.62), but the RIB-LIM caps the
+    # widow(er)'s benefit at 0.825 x 754.25 = $622.26, below the reduced
+    # own amount of $720.93: not paid, so not receiving (``basis`` is
+    # option 2's).
+    assert dead.outcomes[2].on_minimum
+    assert dead.outcomes[2].option_pia == pytest.approx(754.25)
+    assert not row["receives_2"] and row["basis"] == "none"
+    # the reduced own amount against the RIB-LIM ceiling ...
+    assert rules.survivor_excess_paid(
+        0.7 * 1_029.9, 905.1, 0, 0.75, PARAMETERS.params
+    )
+    # ... and with the unreduced own PIA it would not be paid
     assert not rules.survivor_excess_paid(
-        1_300.0, dead.option_pia, 0, 1.0, PARAMETERS.params
+        1_029.9, 905.1, 0, 0.75, PARAMETERS.params
+    )
+
+
+def test_ms5_records_outside_section_6s_scope_are_refused():
+    """Section 6: MS5's benefit-implied PIA is for a worker record whose
+    2022 amount is its own worker benefit alone; a linked worker who is
+    deceased or outside the universe keeps the MS0 PIA.  Independent
+    review (2026-09-25): the inputs accepted both."""
+
+    def ms5_record():
+        return ev.WorkerRecord(
+            "M1",
+            1946,
+            rules.BASIS_OLD_AGE,
+            2008,
+            flat(1946, 2007, 6_000.0),
+            ms5_in_scope=True,
+            observed_benefit_2022=700.0,
+            claim_factor=0.75,
+            cola_factor=1.4,
+        )
+
+    # a deceased worker (a survivor's link names the record)
+    with pytest.raises(ValueError, match="deceased"):
+        inputs(
+            [ms5_record()],
+            [person("W", links=(ev.Link("survivor", "M1"),))],
+        )
+    # a linked worker outside the universe (no person owns the record)
+    with pytest.raises(ValueError, match="own record of a person"):
+        inputs(
+            [ms5_record()],
+            [person("S", links=(ev.Link("spouse", "M1"),))],
+        )
+    # an own record whose owner is not paid an own worker benefit
+    with pytest.raises(ValueError, match="own record of a person"):
+        inputs([ms5_record()], [person("A", own_record_id="M1")])
+    # in scope: the own record of a person paid their own worker benefit,
+    # which a living spouse's link may also name
+    inputs(
+        [ms5_record()],
+        [
+            person(
+                "A",
+                own_record_id="M1",
+                paid_own_worker_benefit=True,
+                own_claim_factor=0.75,
+            ),
+            person("S", links=(ev.Link("spouse", "M1"),)),
+        ],
     )
 
 
@@ -466,7 +532,13 @@ def test_the_pia_source_diagnostic_counts_ms5_records():
     cohort = inputs(
         [record, other],
         [
-            person("A", own_record_id="W1"),
+            # MS5's record is its owner's own paid worker benefit (section 6)
+            person(
+                "A",
+                own_record_id="W1",
+                paid_own_worker_benefit=True,
+                own_claim_factor=0.75,
+            ),
             person("B", own_record_id="W2"),
         ],
     )

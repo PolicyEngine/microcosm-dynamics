@@ -106,6 +106,37 @@ def test_every_workbook_is_committed_and_pinned(script):
         assert f"| `{name}` |" in provenance and f"`{pin}`" in provenance
 
 
+def test_the_download_record_says_who_fetched_the_workbooks(script):
+    """Independent review (2026-09-25): Max approved the downloads (cos
+    d194, d279); the orchestrating Claude Code session fetched the files
+    with curl and wrote their SHA256SUMS, as its session record shows.
+    Earlier text said Max downloaded them.  No record may say so."""
+
+    from populace_dynamics.min_benefit_track_m import policy as pol
+
+    note = pol.MAX_RULINGS["census_threshold_download"]["note"]
+    spec_text = (
+        ROOT / "docs" / "design" / "minimum_benefits_comparison.md"
+    ).read_text()
+    texts = {
+        "provenance.md": (WORKBOOKS / "provenance.md").read_text(),
+        "capture script": Path(script.__file__).read_text(),
+        "MAX_RULINGS note": note,
+        "M1 specification": spec_text,
+    }
+    wrong = re.compile(
+        r"downloaded\s+by\s+Max|Max\s+downloaded|his\s+`?SHA256SUMS",
+        re.IGNORECASE,
+    )
+    for where, text in texts.items():
+        flat = " ".join(text.split())
+        assert not wrong.search(flat), where
+    assert "orchestrating Claude Code session fetched" in note
+    for where in ("provenance.md", "capture script"):
+        flat = " ".join(texts[where].split())
+        assert "orchestrating Claude Code session" in flat, where
+
+
 def test_the_capture_is_pinned_and_loads():
     assert thresholds.TRACK_M_THRESHOLDS_PATH == CAPTURE
     assert thresholds.TRACK_M_THRESHOLD_YEARS == YEARS

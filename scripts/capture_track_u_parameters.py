@@ -33,8 +33,9 @@ Two captures, each written to ``data/external`` and pinned by SHA-256 in
   for Track M (DynaSim exercise 4, the minimum benefit) from the twenty
   workbooks ``thresh03.xlsx`` ... ``thresh22.xlsx``: the nine above,
   ``thresh03.xlsx`` (staged under d194 with them) and ``thresh13.xlsx`` ...
-  ``thresh22.xlsx`` (downloaded by Max on 2026-09-25 under cos decision
-  d279).  All twenty are committed in ``data/external/
+  ``thresh22.xlsx`` (fetched on 2026-09-25 by the orchestrating Claude
+  Code session after Max approved the download in cos decision d279).
+  All twenty are committed in ``data/external/
   census_poverty_thresholds/`` and pinned in :data:`CENSUS_WORKBOOK_SHA256`.
   The same parser reads them.  Inspected cell by cell (2026-09-25), the
   2013-2022 workbooks print the 2003-2012 table in the same cells with the
@@ -221,11 +222,12 @@ def build_ssi_capture(pe_us_dir: Path | None = None) -> dict[str, Any]:
 CENSUS_WORKBOOK_DIR = ROOT / "data" / "external" / "census_poverty_thresholds"
 #: SHA-256 of each Census workbook the captures read, from
 #: :data:`CENSUS_URL_BASE` and committed in :data:`CENSUS_WORKBOOK_DIR`:
-#: ``thresh03.xlsx`` ... ``thresh12.xlsx`` staged on 2026-09-24 under cos
-#: decision d194, ``thresh13.xlsx`` ... ``thresh22.xlsx`` downloaded by Max
-#: on 2026-09-25 under cos decision d279 (its ``SHA256SUMS`` lists the same
-#: twenty digests).  A workbook with other bytes is refused before it is
-#: parsed.
+#: ``thresh03.xlsx`` ... ``thresh12.xlsx`` fetched on 2026-09-24 under cos
+#: decision d194 and ``thresh13.xlsx`` ... ``thresh22.xlsx`` on 2026-09-25
+#: under cos decision d279, each by the orchestrating Claude Code session
+#: after Max approved the download (the ``SHA256SUMS`` that session wrote
+#: lists the same twenty digests).  A workbook with other bytes is refused
+#: before it is parsed.
 CENSUS_WORKBOOK_SHA256: dict[str, str] = {
     "thresh03.xlsx": (
         "f91f2a70062c52b21391e74dc0486bf9adc898c8c923212ecaa7db7a0db24895"
