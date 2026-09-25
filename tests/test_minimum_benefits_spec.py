@@ -50,21 +50,42 @@ def block(text: str) -> dict:
 def test_block_identity_and_status(block):
     assert spec.M1_SPECIFICATION_PATH == SPEC_PATH
     assert block["specification"] == pol.SPECIFICATION_ID
-    assert block["version"] == "m1-draft-1"
-    assert block["status"] == "draft_for_referee"
-    assert block["claim_class"]["awaiting"] == pol.DECISION_RECORD
+    assert block["version"] == "m1-draft-2"
+    assert block["status"] == "draft_referee_changes_applied"
+    assert block["claim_class"] == {
+        "ruled": pol.CLAIM_CLASS,
+        "decision_record": pol.DECISION_RECORD,
+        "item": 2,
+    }
     assert block["acceptance_rule"] is None
     assert block["labels"] == list(OUTPUT_LABELS)
     assert block["target"]["comparator_values"] == (
         "sealed_comparator_side_not_opened_by_builder"
     )
+    assert "max_ruling_d219_open" not in block["blocked_by"]
+    assert (
+        "independent_check_of_m1_draft_2_then_ratification_by_merge"
+        in block["blocked_by"]
+    )
 
 
-def test_status_line_does_not_claim_ratification(text):
+def test_status_line_records_the_rulings_and_claims_no_ratification(text):
     status = text.split("- **Specification:**")[0]
-    assert "draft for the referee" in status
+    assert "draft with the referee's required changes applied" in status
     assert "Nothing here is ratified" in status
-    assert "d219" in status
+    for record in ("d219", "d279", "d280"):
+        assert record in status
+    assert "ruled 2026-09-24 21:44" in status
+    assert "independent check" in status
+    assert "pending" not in status
+
+
+def test_no_d219_item_is_left_pending_in_the_text(text):
+    flat = " ".join(text.split())
+    assert "pending)" not in flat
+    assert "d219, open" not in flat
+    for item in (1, 2, 3, 5, 6, 7, 8):
+        assert f"d219 item {item}, accepted 2026-09-24" in flat, item
 
 
 def test_block_matches_the_code(block):
@@ -93,15 +114,25 @@ def test_population_matches_the_structure_module(block):
     assert population["design"] == {"stratum": "ER31996", "cluster": "ER31997"}
 
 
-def test_every_d219_item_awaits_max_at_its_default(block):
-    awaiting = block["decisions_awaiting_max"]
-    assert list(awaiting) == list(spec.d219_decision_fields())
+def test_every_ruling_is_recorded_as_the_code_records_it(block):
+    assert block["decisions_awaiting_max"] == {}
+    decisions = block["decisions"]
+    assert decisions == spec.expected_decisions()
+    assert decisions["ruled_by"] == "Max"
+    assert list(decisions)[1:] == list(pol.MAX_RULINGS)
     policy = pol.TrackMPolicy()
-    for number, (name, entry) in enumerate(awaiting.items(), start=1):
-        assert entry["item"] == number
-        assert entry["decision_record"] == "d219"
-        assert entry["proposed_default"] == spec.decision_value(policy, name)
-    assert block["decisions"] == {}
+    for name in spec.ruled_fields():
+        assert decisions[name]["ruling"] == spec.decision_value(policy, name)
+    assert spec.d219_decision_fields() == tuple(
+        field for _, (field, _) in sorted(pol.d219_items().items())
+    )
+    for name in spec.d219_decision_fields():
+        assert decisions[name]["decision_record"] == "d219"
+        assert decisions[name]["ruled_on"] == "2026-09-24"
+    assert decisions["covered_earnings_rule"]["decision_record"] == "d280"
+    assert decisions["census_threshold_download"]["decision_record"] == (
+        "d279"
+    )
 
 
 def test_the_draft_cannot_authorize_a_registered_run(block):
@@ -110,14 +141,11 @@ def test_the_draft_cannot_authorize_a_registered_run(block):
 
 
 def _ratified(block: dict) -> dict:
+    """The ratified text changes the status and version only (R1)."""
+
     ratified = json.loads(json.dumps(block))
     ratified["status"] = "ratified_frozen"
     ratified["version"] = "m1-ratified-1"
-    ratified["decisions_awaiting_max"] = {}
-    ratified["decisions"] = {
-        name: {"ruling": entry["proposed_default"]}
-        for name, entry in block["decisions_awaiting_max"].items()
-    }
     return ratified
 
 
@@ -133,27 +161,52 @@ def test_the_gate_checks_every_step(block):
     unruled = {**ratified, "decisions": {}}
     with pytest.raises(ValueError, match="no ruling"):
         spec.check_specification_for_registered_run(unruled)
+    missing = json.loads(json.dumps(ratified))
+    del missing["decisions"]["covered_earnings_rule"]
+    with pytest.raises(ValueError, match="covered_earnings_rule"):
+        spec.check_specification_for_registered_run(missing)
+    # A block recording another ruling than the code's is refused ...
     ruled_other = json.loads(json.dumps(ratified))
-    ruled_other["decisions"]["order"] = {"ruling": pol.ORDER_CUT_AFTER_FLOOR}
-    with pytest.raises(ValueError, match="departs"):
+    ruled_other["decisions"]["order"]["ruling"] = pol.ORDER_CUT_AFTER_FLOOR
+    with pytest.raises(ValueError, match="differ from the code's record"):
         spec.check_specification_for_registered_run(ruled_other)
-    # A ruling the configuration follows passes the ruling step, and the
-    # block must then carry that configuration.
-    reversed_policy = pol.TrackMPolicy(order=pol.ORDER_CUT_AFTER_FLOOR)
+    # ... and so is a configuration that departs from a ruling.
+    with pytest.raises(ValueError, match="departs"):
+        spec.check_specification_for_registered_run(
+            ratified, pol.policy_for_row("MS2")
+        )
+    # A frozen choice the configuration changes makes the block differ.
     with pytest.raises(ValueError, match="differ"):
         spec.check_specification_for_registered_run(
-            ruled_other, reversed_policy
+            ratified, pol.policy_for_row("MS6")
         )
-    ruled_other["policy"] = reversed_policy.as_dict()
-    spec.check_specification_for_registered_run(ruled_other, reversed_policy)
 
 
-def test_pending_decisions_are_listed_in_the_text(text):
-    section = text.split("## 20. Pending decisions")[1].split("## 21.")[0]
-    assert "d219" in section
-    for item in pol.pending_decisions():
-        if item.card_item is not None:
-            assert f"`{item.field}`" in section
+def test_the_decisions_section_lists_every_ruling(text):
+    section = text.split("## 20. Decisions (ruled by Max")[1].split("## 21.")[
+        0
+    ]
+    for record in ("d219", "d279", "d280"):
+        assert record in section
+    for name in pol.MAX_RULINGS:
+        assert f"`{name}`" in section, name
+    frozen = section.split("**Frozen by this version")[1]
+    for phrase in (
+        "statutory computation years",
+        "statutory death computation",
+        "$50 a quarter",
+        "next-wave labor income",
+    ):
+        assert phrase in frozen
+
+
+def test_the_referee_section_records_every_required_change(text):
+    section = text.split("## 21. Referee pass")[1].split("## 22.")[0]
+    for number in range(1, 11):
+        assert f"| R{number}. " in section, number
+    assert "Declined in part" in section
+    for question in range(1, 11):
+        assert f"| Q{question} |" in section, question
 
 
 def test_invented_cases_in_the_text_match_the_code(text):

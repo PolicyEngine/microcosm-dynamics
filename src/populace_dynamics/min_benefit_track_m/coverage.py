@@ -1,64 +1,67 @@
 """Years of coverage from an earnings history (plan field G6).
 
-Python rules (not Axiom).  The plan's field G6 (revision 2, section 7,
-restating v1's): *Y* counts the years before the entitlement year with
-covered earnings of at least four times the quarter-of-coverage amount
-(1978 on; before 1978 the 1978 amount scaled back by the average wage
-index); all ages; unobserved years count as zero and are flagged.  Table 5
-of the Report defines a work year as a year with four covered quarters
-("work year = 4 CQ", cleared extract).
+Python rules (not Axiom).  *Y* counts the years through the last year of
+the record's basis (the M1 specification's section 4a) whose covered
+earnings reach four quarters of coverage; all ages; unobserved years count
+as zero and are flagged.  Table 5 of the Report defines a work year as a
+year with four covered quarters ("work year = 4 CQ", cleared extract).
 
-The **covered-earnings convention** (d219 item 4, pending): the PSID has
-no covered/noncovered split, so the caller passes PSID labor income and it
-is treated as covered earnings.  That is a named delta (noncovered public
-employment counts), not a statute reading.
+The **covered-earnings convention** (cos decision d280, ruled 2026-09-25:
+"same shared assumption, disclosed in the spec and every result"): the
+PSID has no covered/noncovered split, so the caller passes PSID labor
+income and it is treated as covered earnings, as exercises 1 and 3 and
+Track C do.  That is a named delta (noncovered public employment counts),
+not a statute reading.
+
+**Quarters of coverage** (frozen in ``m1-draft-2``; referee R6).  From 1978
+on, 42 USC 413(a)(2)(A)(ii) and 20 CFR 404.143(a) credit one quarter for
+each quarter-of-coverage amount of the year's wages and self-employment
+income, at most four, so four quarters' amount is the annual test.  Before
+1978, 413(a)(2)(A)(i) and 20 CFR 404.141(b) credit a quarter of coverage
+for $50 of wages paid in it or $100 of self-employment income credited to
+it; with annual amounts and wages taken as spread over the year, a year
+counts at $200 (``statute_413_a_50_per_quarter``, the default).  This
+reading does not separate self-employment income ($400 a year) or
+agricultural wages (413(a)(2)(B)(iv); 20 CFR 404.141(c)), and it credits
+four quarters to a year whose $200 was paid in fewer quarters (a named
+delta).  413(a)(2)(B)(ii) and 20 CFR 404.141(d)(1) credit all four quarters
+when a year's wages reach the annual limitation.  The statute and
+regulation were read from law.cornell.edu copies saved in
+``EV/track-m-review-20260924/`` (413: SHA-256 ``7d226c0a…``; 404.141:
+``7b1b195c…``).  The plan's G6 convention (the 1978 amount scaled back by
+the average wage index) has no statutory basis and is not registered; it
+stays selectable (``qc_1978_scaled_back_by_awi``) only for the Table 2
+formula check that shows the difference.
 
 What this module does not do:
 
-* It does not capture the statute; plan item M2 captures 42 USC
-  413(a)-(d).  The pre-1978 rule is a parameter
-  (``TrackMPolicy.pre_1978_coverage_rule``) whose default is the plan's
-  convention, the 1978 amount scaled back by the average wage index.  The
-  statute differs (read by the independent review of 2026-09-24 from
-  law.cornell.edu, copies in ``EV/track-m-review-20260924/``): before
-  1978, 413(a)(2)(A)(i) and 20 CFR 404.141(b) credit a quarter of coverage
-  for $50 of wages paid in it or $100 of self-employment income credited
-  to it, and a year's wages at the annual limitation credit all four.  The
-  alternative ``statute_413_a_50_per_quarter`` reads that as $200 a year
-  (wages spread over the four quarters); it does not separate
-  self-employment income ($400 a year) or agricultural wages.  From 1978
-  on, 413(a)(2)(A)(ii) and 20 CFR 404.143(a) credit one quarter for each
-  quarter-of-coverage amount of the year's wages and self-employment
-  income, at most four, so four quarters' amount is the annual test.
 * It does not compute quarters within a year: a year counts when its
-  covered earnings reach four quarters' amount (the annual test the plan
-  proposes), never three or fewer.
-* It does not decide the entitlement year; the caller passes
-  ``through_year`` (the year before entitlement, G6) from the cohort.
+  covered earnings reach four quarters' amount, never three or fewer.
+* It does not decide the section 4a years; the caller passes
+  ``through_year`` (the last year of *Y*) from the cohort.
 
-**Biennial gap years.**  The earnings panel (``data/family.py``) carries
-labor income for every year through 1996 and for even years from 1998; it
-has no odd income year from 1997.  By the family files' labels, the labor
-income of 1997 and 1999 was never asked, while that of each odd year
-2001-2021 was asked one wave later as the reference person's and the
-spouse's labor income of the year before last (for example ER85328 and
-ER85376 in 2023, each with a time unit and an accuracy code), items no
-reader here reads yet (``structure.verify_prior_year_labor_income_labels``;
-plan items M3 and M5).  The plan lists "odd-year gap imputation from 1997
-on" among its named deltas and M5's "odd-year gap law", while G6 counts
-unobserved years as zero.  The builder reading (``gap_year_rule``,
-pending the specification freeze) fills a gap year with the
+**One history per worker** (frozen in ``m1-draft-2``; referee R7).  The
+earnings panel (``data/family.py``) carries labor income for every year
+through 1996 and for even years from 1998; it has no odd income year from
+1997.  By the family files' labels, the labor income of 1997 and 1999 was
+never asked, while that of each odd year 2001-2021 was asked one wave
+later as the reference person's and the spouse's labor income of the year
+before last (for example ER85328 and ER85376 in 2023, each with a time
+unit and an accuracy code; ``structure.verify_prior_year_labor_income_
+labels``).  :func:`one_history` builds the one history that both *Y* and
+the PIA read: the observed years, then those next-wave items
+(``odd_year_source = "next_wave_reference_person_and_spouse"``; plan item
+M3 reads them), then, for an odd year 1997-2021 still unobserved, the
 immediate-neighbor law of ``estimates.career`` (``_impute_gap``: the mean
-of the two neighboring years, or the one neighbor that exists) before the
-count, and G6's zero then applies to years still unobserved; the
-alternative ``zero`` reads G6 literally.  A neighbor after ``through_year``
-is never used, as ``estimates.career`` never uses one after the claim.
+of the two neighboring years, or the one neighbor that exists; never a
+neighbor after the count's end year).  A year still unobserved after that
+counts as zero in both and is flagged.
 
 The quarter-of-coverage amounts load from the policyengine-us checkout the
 oracle already reads (``quarters_of_coverage_threshold.yaml``, which cites
 42 USC 413(d)(2), 20 CFR 404.143 and SSA's QC table), with the checkout's
 revision and the file's SHA-256 recorded.  That is a read of the local
-parameter tree, not the committed capture plan item M2 calls for.
+parameter tree, not a committed capture.
 """
 
 from __future__ import annotations
@@ -83,14 +86,17 @@ from populace_dynamics.min_benefit_track_m.policy import (
 
 __all__ = [
     "FIRST_QC_YEAR",
+    "NEXT_WAVE_ODD_YEARS",
     "PRE_1978_WAGES_PER_QUARTER",
     "PSID_BIENNIAL_GAP_YEARS",
     "QC_PARAMETER_PATH",
     "CoverageCount",
+    "OneHistory",
     "QuarterOfCoverageAmounts",
     "annual_coverage_amount",
     "count_coverage_years",
     "load_qc_amounts",
+    "one_history",
 ]
 
 #: The first year of the annual quarter-of-coverage amount (the
@@ -102,6 +108,9 @@ FIRST_QC_YEAR = 1978
 #: one wave later (module docstring).  The neighbor law fills only those of
 #: them a caller leaves unobserved.
 PSID_BIENNIAL_GAP_YEARS: tuple[int, ...] = tuple(range(1997, 2022, 2))
+#: The odd income years the next wave asks as labor income of the year
+#: before last (reference person and spouse): 2001-2021.
+NEXT_WAVE_ODD_YEARS: tuple[int, ...] = tuple(range(2001, 2022, 2))
 #: Before 1978, 42 USC 413(a)(2)(A)(i): a quarter of coverage for $50 of
 #: wages paid in the quarter.
 PRE_1978_WAGES_PER_QUARTER = 50.0
@@ -204,10 +213,11 @@ def annual_coverage_amount(
 
     ``policy.quarters_per_work_year`` (4) times the year's
     quarter-of-coverage amount from 1978 on.  Before 1978,
-    ``pre_1978_coverage_rule``: the plan's G6 convention (the default), the
-    1978 amount scaled back by the average wage index,
-    ``QC(1978) * AWI(year) / AWI(1978)``; or the statute's $50 a quarter,
-    $200 a year (``statute_413_a_50_per_quarter``).
+    ``pre_1978_coverage_rule``: the statute's $50 a quarter, $200 a year
+    (``statute_413_a_50_per_quarter``, the default); or, unregistered and
+    kept for the Table 2 check only, the plan's G6 convention, the 1978
+    amount scaled back by the average wage index,
+    ``QC(1978) * AWI(year) / AWI(1978)``.
     """
 
     policy = policy or TrackMPolicy()
@@ -284,16 +294,20 @@ def count_coverage_years(
     nawi: Mapping[int, float],
     policy: TrackMPolicy | None = None,
     gap_years: tuple[int, ...] = PSID_BIENNIAL_GAP_YEARS,
+    imputed_years: tuple[int, ...] = (),
 ) -> CoverageCount:
     """Count the work years in ``history`` through ``through_year`` (G6).
 
     ``history`` maps a calendar year to that year's covered earnings (PSID
-    labor income under the default convention).  A year absent from the
+    labor income treated as covered, d280).  A year absent from the
     mapping, or whose value is missing (NaN), is unobserved.  Under
     ``gap_year_rule`` ``immediate_neighbor_mean`` an unobserved year in
     ``gap_years`` takes its neighbors' mean (or the one neighbor); every
     other unobserved year counts as zero.  Every year through
-    ``through_year`` is eligible, whatever the age (G6: all ages).
+    ``through_year`` (section 4a's last year of *Y*) is eligible, whatever
+    the age (G6: all ages).  A caller that has built the one history
+    (:func:`one_history`) passes its ``values`` with ``gap_years=()`` and
+    its ``imputed_years``, so *Y* and the PIA read the same years.
     """
 
     policy = policy or TrackMPolicy()
@@ -315,7 +329,9 @@ def count_coverage_years(
             raise ValueError(f"negative covered earnings in {year}")
         observed[year] = earnings
     values = dict(observed)
-    imputed: list[int] = []
+    imputed: list[int] = sorted(
+        year for year in imputed_years if year in observed
+    )
     if policy.gap_year_rule == GAP_YEARS_NEIGHBOR:
         for year in sorted(gap_years):
             if year > through_year or year in observed:
@@ -338,8 +354,106 @@ def count_coverage_years(
     return CoverageCount(
         years=len(counted),
         counted_years=tuple(counted),
-        observed_years=tuple(sorted(observed)),
-        imputed_years=tuple(imputed),
+        observed_years=tuple(
+            sorted(year for year in observed if year not in imputed)
+        ),
+        imputed_years=tuple(sorted(imputed)),
         unobserved_years=unobserved,
         through_year=through_year,
+    )
+
+
+@dataclass(frozen=True)
+class OneHistory:
+    """The one history *Y* and the PIA read (section 4a; referee R7).
+
+    ``values`` maps each year through ``last_year`` that is observed,
+    reported one wave later, or imputed to its covered earnings;
+    ``observed_years``, ``next_wave_years`` and ``imputed_years`` say which.
+    A year in none of them is unobserved and counts as zero in both.
+    """
+
+    values: Mapping[int, float]
+    observed_years: tuple[int, ...]
+    next_wave_years: tuple[int, ...]
+    imputed_years: tuple[int, ...]
+    last_year: int
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "values": {
+                str(year): v for year, v in sorted(self.values.items())
+            },
+            "observed_years": list(self.observed_years),
+            "next_wave_years": list(self.next_wave_years),
+            "imputed_years": list(self.imputed_years),
+            "last_year": self.last_year,
+        }
+
+
+def _clean(history: Mapping[int, float], last_year: int) -> dict[int, float]:
+    out: dict[int, float] = {}
+    for raw_year, raw_value in history.items():
+        year = int(raw_year)
+        if year > last_year:
+            continue
+        value = float(raw_value)
+        if math.isnan(value):
+            continue
+        if value < 0:
+            raise ValueError(f"negative covered earnings in {year}")
+        out[year] = value
+    return out
+
+
+def one_history(
+    observed: Mapping[int, float],
+    next_wave: Mapping[int, float] | None = None,
+    *,
+    last_year: int,
+    policy: TrackMPolicy | None = None,
+    gap_years: tuple[int, ...] = PSID_BIENNIAL_GAP_YEARS,
+) -> OneHistory:
+    """Observed years, then next-wave odd years, then the gap rule (R7).
+
+    ``observed`` is the earnings panel's labor income by year; ``next_wave``
+    the next wave's year-before-last labor income for odd years 2001-2021
+    (:data:`NEXT_WAVE_ODD_YEARS`), annualized by the reader (plan item M3).
+    A next-wave year the panel also observes is refused, as is a next-wave
+    year outside 2001-2021.  Under ``gap_year_rule``
+    ``immediate_neighbor_mean`` an odd year in ``gap_years`` still
+    unobserved takes the mean of its two neighbors, or the one that exists,
+    never a neighbor after ``last_year``.  Missing values (NaN) are
+    unobserved; negative ones are refused.
+    """
+
+    policy = policy or TrackMPolicy()
+    if isinstance(last_year, bool) or not isinstance(last_year, int):
+        raise TypeError(f"last_year must be an integer year, not {last_year}")
+    panel = _clean(observed, last_year)
+    reported = _clean(next_wave or {}, last_year)
+    outside = sorted(set(reported) - set(NEXT_WAVE_ODD_YEARS))
+    if outside:
+        raise ValueError(
+            f"next-wave labor income exists for 2001-2021 only, not {outside}"
+        )
+    both = sorted(set(reported) & set(panel))
+    if both:
+        raise ValueError(f"years {both} are both observed and next-wave")
+    values = {**panel, **reported}
+    imputed: list[int] = []
+    if policy.gap_year_rule == GAP_YEARS_NEIGHBOR:
+        for year in sorted(gap_years):
+            if year > last_year or year in values:
+                continue
+            value = _neighbor_value(year, values, last_year)
+            if value is not None:
+                values[year] = value
+                imputed.append(year)
+    return OneHistory(
+        values=values,
+        observed_years=tuple(sorted(panel)),
+        next_wave_years=tuple(sorted(reported)),
+        imputed_years=tuple(imputed),
+        last_year=last_year,
     )

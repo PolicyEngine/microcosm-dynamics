@@ -43,15 +43,11 @@ def _git(head: str = COMMIT, porcelain: str = ""):
 
 
 def _ratified() -> dict:
-    block = spec.m1_parameter_block()
-    ratified = json.loads(json.dumps(block))
+    """The committed block with only its status and version ratified."""
+
+    ratified = json.loads(json.dumps(spec.m1_parameter_block()))
     ratified["status"] = "ratified_frozen"
     ratified["version"] = "m1-ratified-1"
-    ratified["decisions_awaiting_max"] = {}
-    ratified["decisions"] = {
-        name: {"ruling": entry["proposed_default"]}
-        for name, entry in block["decisions_awaiting_max"].items()
-    }
     return ratified
 
 
@@ -91,10 +87,10 @@ def test_the_registered_state_passes_preflight(tmp_path):
         ({"registered_commit": "abc123"}, "full 40-hex"),
         ({"git": _git(head="b" * 40)}, "is not the registered commit"),
         ({"git": _git(porcelain=" M src/x.py")}, "clean"),
-        # The committed draft (m1-draft-1), read from the document.
+        # The committed draft (m1-draft-2), read from the document.
         ({"specification": None}, "authorizes no real-data run"),
         (
-            {"specification": {**_ratified(), "version": "m1-draft-2"}},
+            {"specification": {**_ratified(), "version": "m1-draft-3"}},
             "authorizes no real-data run",
         ),
         (

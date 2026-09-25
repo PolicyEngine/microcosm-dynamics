@@ -38,12 +38,13 @@ from populace_dynamics.min_benefit_track_m import (  # noqa: E402
     structure,
 )
 from populace_dynamics.min_benefit_track_m.policy import (  # noqa: E402
-    pending_decisions,
+    decision_register,
 )
 
 FORBIDDEN_MODULES = (
     "populace_dynamics.min_benefit_track_m.rules",
     "populace_dynamics.min_benefit_track_m.coverage",
+    "populace_dynamics.min_benefit_track_m.thresholds",
 )
 
 
@@ -82,7 +83,7 @@ def build(data_dir: Path | None = None) -> dict:
         "codes_verified": dict(inputs.codes),
         "provenance": dict(inputs.provenance),
         "counts": counts,
-        "pending_decisions": [item.as_dict() for item in pending_decisions()],
+        "decisions": [item.as_dict() for item in decision_register()],
     }
 
 

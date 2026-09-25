@@ -439,7 +439,10 @@ def _flat_history(birth_year, last_year, amount=20_000.0):
 def test_old_age_pia_calls_the_oracle_unchanged():
     params = invented_params()
     history = _flat_history(1948, 2012)
-    record = rules.history_pia(history, birth_year=1948, params=params)
+    # Entitled at 62 in 2010: the history runs through 2009 (section 4a).
+    record = rules.history_pia(
+        history, birth_year=1948, params=params, window_year=2010
+    )
     kept = {year: value for year, value in history.items() if year <= 2009}
     expected_aime = statutory_aime.aime(kept, 1948, params)
     assert expected_aime == benefits.aime(kept, 1948, params)
@@ -447,50 +450,207 @@ def test_old_age_pia_calls_the_oracle_unchanged():
     assert record.pia == benefits.pia(expected_aime, 2010, params)
     assert record.eligibility_year == 2010
     assert record.computation_end_year == 2009
+    with pytest.raises(ValueError, match="window_year"):
+        rules.history_pia(history, birth_year=1948, params=params)
 
 
-def test_di_pia_approximation_and_ms6():
+def test_a_late_claimers_earnings_at_62_and_later_raise_p():
+    """Referee R3: an old-age history ends before the year of first
+    entitlement (415(b)(2)(B)(ii)(I)), not before the year of attaining
+    62.  INVENTED: 20 years at $20,000 (1980-1999), then $60,000 in
+    2010-2012, entitled at 65 in 2013."""
+
     params = invented_params()
-    history = _flat_history(1960, 2003)
-    approx = rules.history_pia(
-        history,
-        birth_year=1960,
-        params=params,
-        basis="disability",
-        onset_year=2004,
+    history = {year: 20_000.0 for year in range(1980, 2000)}
+    history.update({2010: 60_000.0, 2011: 60_000.0, 2012: 60_000.0})
+    at_62 = rules.history_pia(
+        history, birth_year=1948, params=params, window_year=2010
     )
-    statutory = rules.history_pia(
-        history,
-        birth_year=1960,
-        params=params,
-        basis="disability",
-        onset_year=2004,
-        policy=pol.policy_for_row("MS6"),
+    at_65 = rules.history_pia(
+        history, birth_year=1948, params=params, window_year=2013
     )
-    assert approx.method == "cola_track_a.benefits.approximate_pia"
-    assert statutory.eligibility_year == approx.eligibility_year == 2004
+    # The same bend-point year (attaining 62) and indexing year ...
+    assert at_62.eligibility_year == at_65.eligibility_year == 2010
+    assert at_65.computation_end_year == 2012
+    # ... but three more years, which replace zeros among the 35.
+    kept = {y: v for y, v in history.items() if y <= 2012}
+    assert at_65.aime == statutory_aime.aime(kept, 1948, params)
+    assert at_65.pia > at_62.pia
+    # The unindexed 2010-2012 years, each capped at the invented
+    # contribution and benefit base of $51,300, add 3 x 51,300 / 420 =
+    # 366.4 to the AIME (each AIME is floored).
+    assert at_65.aime - at_62.aime == pytest.approx(366.4, abs=1)
+
+
+def test_record_years_follow_section_4a():
+    old = rules.record_years(
+        basis="old_age", birth_year=1948, window_year=2013
+    )
+    assert (old.window_year, old.threshold_year, old.last_year) == (
+        2013,
+        2010,
+        2012,
+    )
+    di = rules.record_years(
+        basis="disability", birth_year=1960, window_year=2005, onset_year=2004
+    )
+    assert (di.window_year, di.threshold_year, di.last_year) == (
+        2005,
+        2004,
+        2003,
+    )
+    # Died at 48 in 2008; a survivor first entitled on the record in 2012.
+    died = rules.record_years(
+        basis="death", birth_year=1960, window_year=2012, death_year=2008
+    )
+    assert (died.window_year, died.threshold_year, died.last_year) == (
+        2012,
+        2008,
+        2007,
+    )
+    # Died at 65 without claiming: the threshold year is attaining 62.
+    late = rules.record_years(
+        basis="death", birth_year=1941, window_year=2006, death_year=2006
+    )
+    assert (late.threshold_year, late.last_year) == (2003, 2005)
+    for bad in (
+        {"basis": "old_age", "birth_year": 1948, "window_year": 2009},
+        {
+            "basis": "disability",
+            "birth_year": 1960,
+            "window_year": 2003,
+            "onset_year": 2004,
+        },
+        {
+            "basis": "death",
+            "birth_year": 1960,
+            "window_year": 2007,
+            "death_year": 2008,
+        },
+        {"basis": "disability", "birth_year": 1960, "window_year": 2005},
+        {"basis": "survivor", "birth_year": 1960, "window_year": 2005},
+    ):
+        with pytest.raises(ValueError):
+            rules.record_years(**bad)
+
+
+def test_di_pia_is_statutory_and_ms6_the_approximation():
+    """Referee R5: on the invented parameters and a flat $20,000 history,
+    Track A's approximation gives 51, 71 and 86 percent of the statutory
+    DI PIA for onset at 34, 44 and 52 (the referee's
+    di_pia_gap_check.out.txt: 0.509, 0.712, 0.861)."""
+
+    params = invented_params()
+    ratios = []
+    for onset in (1994, 2004, 2012):
+        history = _flat_history(1960, onset - 1)
+        statutory = rules.history_pia(
+            history,
+            birth_year=1960,
+            params=params,
+            basis="disability",
+            onset_year=onset,
+        )
+        approx = rules.history_pia(
+            history,
+            birth_year=1960,
+            params=params,
+            basis="disability",
+            onset_year=onset,
+            policy=pol.policy_for_row("MS6"),
+        )
+        assert statutory.method.startswith("ss.statutory_aime.aime(disab")
+        assert approx.method == "cola_track_a.benefits.approximate_pia"
+        assert statutory.eligibility_year == approx.eligibility_year == onset
+        ratios.append(round(approx.pia / statutory.pia, 3))
+    assert ratios == [0.509, 0.712, 0.861]
     # Elapsed years 1982-2003 = 22; less 22 // 5 = 4 -> 18 computation
-    # years against the approximation's 35: the statutory PIA is higher.
+    # years for onset at 44.
     assert (
         statutory_aime.benefit_computation_years(1960, disability_year=2004)
         == 18
     )
-    assert statutory.pia > approx.pia
 
 
-def test_death_basis_and_bad_bases():
+def test_a_di_workers_post_onset_years_are_not_counted():
+    """Referee R3 and Q4: Y and P end at onset less one (413(a)(2)(B)(i))."""
+
+    params = invented_params()
+    history = _flat_history(1960, 2003)
+    base = rules.history_pia(
+        history,
+        birth_year=1960,
+        params=params,
+        basis="disability",
+        onset_year=2004,
+        window_year=2005,
+    )
+    later = dict(history)
+    later.update({2004: 90_000.0, 2005: 90_000.0})
+    with_later = rules.history_pia(
+        later,
+        birth_year=1960,
+        params=params,
+        basis="disability",
+        onset_year=2004,
+        window_year=2005,
+    )
+    assert with_later == base
+    assert base.computation_end_year == 2003
+
+
+def test_death_basis_is_the_statutory_death_computation():
     params = invented_params()
     history = _flat_history(1960, 2007)
     record = rules.history_pia(
-        history, birth_year=1960, params=params, basis="death", death_year=2008
+        history,
+        birth_year=1960,
+        params=params,
+        basis="death",
+        death_year=2008,
+        window_year=2012,
     )
+    kept = {y: v for y, v in history.items() if y <= 2007}
+    # 415(b)(2)(A)(i): elapsed years 1982-2007 = 26, less 5 = 21.
+    assert (
+        statutory_aime.benefit_computation_years(1960, death_year=2008) == 21
+    )
+    expected = statutory_aime.aime(kept, 1960, params, death_year=2008)
+    assert record.aime == expected
+    assert record.pia == benefits.pia(expected, 2008, params)
     assert record.eligibility_year == 2008
+    assert record.method.startswith("ss.statutory_aime.aime(death")
     with pytest.raises(ValueError):
         rules.history_pia(history, birth_year=1960, params=params, basis="x")
     with pytest.raises(ValueError):
         rules.history_pia(
             history, birth_year=1960, params=params, basis="disability"
         )
+
+
+def test_claim_cola_and_survivor_own_amount_helpers():
+    params = invented_params()  # FRA 66 (792 months) for 1900-1954
+    # 48 months early: 36 x 5/9% + 12 x 5/12% = 25%.
+    assert rules.claim_factor(1948, 2010, params) == pytest.approx(0.75)
+    assert rules.claim_factor(1948, 2014, params) == pytest.approx(1.0)
+    # 48 months late at 8% a year: +32%.
+    assert rules.claim_factor(1948, 2018, params) == pytest.approx(1.32)
+    rates = {2019: 0.016, 2020: 0.013, 2021: 0.059}
+    assert rules.cola_factor(2019, rates) == pytest.approx(
+        1.016 * 1.013 * 1.059
+    )
+    assert rules.cola_factor(2022, rates) == 1.0
+    with pytest.raises(ValueError, match="2018"):
+        rules.cola_factor(2018, rates)
+    # 402(k)(3)(A): the own benefit after 402(q), or 0 with none paid.
+    assert rules.survivor_own_amount(
+        800.0, 0.75, receives_own_benefit=True
+    ) == pytest.approx(600.0)
+    assert (
+        rules.survivor_own_amount(None, None, receives_own_benefit=False) == 0
+    )
+    with pytest.raises(ValueError):
+        rules.survivor_own_amount(None, 0.75, receives_own_benefit=True)
 
 
 def test_benefit_implied_pia():

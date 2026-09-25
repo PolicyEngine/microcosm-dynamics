@@ -22,6 +22,11 @@ QC = coverage.QuarterOfCoverageAmounts(
 #: INVENTED wage index growing 5 percent a year from 1951.
 NAWI = {year: 1_000.0 * 1.05 ** (year - 1951) for year in range(1951, 2031)}
 ZERO_GAPS = pol.TrackMPolicy(gap_year_rule=pol.GAP_YEARS_ZERO)
+#: The plan's unregistered G6 convention, kept only for the Table 2 check.
+CONVENTION = pol.TrackMPolicy(
+    gap_year_rule=pol.GAP_YEARS_ZERO,
+    pre_1978_coverage_rule=pol.PRE_1978_SCALED_BY_AWI,
+)
 
 
 def test_annual_amount_is_four_quarters_from_1978():
@@ -29,13 +34,13 @@ def test_annual_amount_is_four_quarters_from_1978():
     assert coverage.annual_coverage_amount(1990, QC, NAWI) == 880.0
 
 
-def test_before_1978_the_1978_amount_is_scaled_back_by_awi():
+def test_the_unregistered_convention_scales_the_1978_amount_back():
     # 1977: 4 x 100 x AWI(1977) / AWI(1978) = 400 / 1.05 = 380.95.
-    assert coverage.annual_coverage_amount(1977, QC, NAWI) == pytest.approx(
-        400 / 1.05
-    )
+    assert coverage.annual_coverage_amount(
+        1977, QC, NAWI, CONVENTION
+    ) == pytest.approx(400 / 1.05)
     with pytest.raises(KeyError):
-        coverage.annual_coverage_amount(1950, QC, NAWI)
+        coverage.annual_coverage_amount(1950, QC, NAWI, CONVENTION)
 
 
 def test_before_1978_the_statute_credits_fifty_dollars_a_quarter():
@@ -47,8 +52,18 @@ def test_before_1978_the_statute_credits_fifty_dollars_a_quarter():
     for year in (1951, 1968, 1977):
         assert coverage.annual_coverage_amount(year, QC, NAWI, statute) == 200
     assert coverage.annual_coverage_amount(1990, QC, NAWI, statute) == 880.0
-    # The default stays the plan's convention: 1976 needs 362.81 there.
+    # The statute is the default now (referee R6); the convention needs
+    # 362.81 in 1976 and counts no year here.
     history = {1976: 300.0, 1977: 199.0}
+    convention = coverage.count_coverage_years(
+        history,
+        birth_year=1950,
+        through_year=1980,
+        qc=QC,
+        nawi=NAWI,
+        policy=CONVENTION,
+    )
+    assert convention.years == 0
     default = coverage.count_coverage_years(
         history,
         birth_year=1950,
@@ -57,27 +72,15 @@ def test_before_1978_the_statute_credits_fifty_dollars_a_quarter():
         nawi=NAWI,
         policy=ZERO_GAPS,
     )
-    assert default.years == 0
-    literal = coverage.count_coverage_years(
-        history,
-        birth_year=1950,
-        through_year=1980,
-        qc=QC,
-        nawi=NAWI,
-        policy=pol.TrackMPolicy(
-            gap_year_rule=pol.GAP_YEARS_ZERO,
-            pre_1978_coverage_rule=pol.PRE_1978_STATUTE_50_PER_QUARTER,
-        ),
-    )
-    assert literal.counted_years == (1976,)
+    assert default.counted_years == (1976,)
     assert pol.TrackMPolicy().pre_1978_coverage_rule == (
-        pol.PRE_1978_SCALED_BY_AWI
+        pol.PRE_1978_STATUTE_50_PER_QUARTER
     )
 
 
 def test_a_year_counts_at_four_quarters_amount():
-    history = {1990: 880.0, 1991: 889.99, 1977: 381.0, 1976: 362.0}
-    # 1991 needs 4 x 230 = 920; 1976 needs 400 / 1.05^2 = 362.81.
+    history = {1990: 880.0, 1991: 889.99, 1977: 381.0, 1976: 199.99}
+    # 1991 needs 4 x 230 = 920; before 1978 the statute's 4 x $50 = $200.
     count = coverage.count_coverage_years(
         history,
         birth_year=1950,
@@ -185,3 +188,57 @@ def test_invented_amounts_are_validated():
         coverage.QuarterOfCoverageAmounts({"1978": 1.0}, {})
     with pytest.raises(KeyError):
         QC.amount(1977)
+
+
+# ---------------------------------------------------------------------------
+# One history per worker (referee R7)
+# ---------------------------------------------------------------------------
+def test_one_history_reads_next_wave_odd_years_before_the_gap_rule():
+    # Panel: even years 1996-2010 at 5,000.  Next wave: 2003 at 800 and
+    # 2007 at 9,000.  1997, 1999, 2001, 2005 and 2009 take the neighbor
+    # mean (5,000); 2003 and 2007 keep their next-wave amounts.
+    observed = {year: 5_000.0 for year in range(1996, 2011, 2)}
+    history = coverage.one_history(
+        observed, {2003: 800.0, 2007: 9_000.0}, last_year=2010
+    )
+    assert history.next_wave_years == (2003, 2007)
+    assert history.imputed_years == (1997, 1999, 2001, 2005, 2009)
+    assert history.values[2003] == 800.0
+    assert history.values[2005] == 5_000.0
+    # Y reads the same history: of the 15 years 1996-2010, 2003 at 800 <
+    # 4 x 350 = 1,400 does not count; the other 14 do.
+    count = coverage.count_coverage_years(
+        history.values,
+        birth_year=1970,
+        through_year=2010,
+        qc=QC,
+        nawi=NAWI,
+        gap_years=(),
+        imputed_years=history.imputed_years,
+    )
+    assert count.years == 14
+    assert count.imputed_years == history.imputed_years
+    assert 2003 in count.observed_years
+    assert count.flagged
+
+
+def test_one_history_never_uses_a_neighbor_after_its_last_year():
+    history = coverage.one_history({2010: 0.0, 2012: 50_000.0}, last_year=2011)
+    assert history.imputed_years == (2009, 2011)
+    assert history.values[2011] == 0.0
+    assert 2012 not in history.values
+
+
+def test_one_history_refuses_ambiguous_or_misplaced_next_wave_years():
+    with pytest.raises(ValueError, match="both observed and next-wave"):
+        coverage.one_history({2003: 1.0}, {2003: 2.0}, last_year=2010)
+    with pytest.raises(ValueError, match="2001-2021 only"):
+        coverage.one_history({}, {1999: 2.0}, last_year=2010)
+    with pytest.raises(ValueError, match="negative"):
+        coverage.one_history({2004: -1.0}, last_year=2010)
+    zero = coverage.one_history(
+        {2004: 1.0, 2006: 1.0},
+        last_year=2010,
+        policy=pol.TrackMPolicy(gap_year_rule=pol.GAP_YEARS_ZERO),
+    )
+    assert zero.imputed_years == ()

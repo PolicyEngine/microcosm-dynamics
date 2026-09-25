@@ -10,14 +10,16 @@ run the block does not authorize.  A run is authorized only when:
   or referee marker (A7's fail-closed test,
   ``estimates.cola_age_profile.specification_unratified_fields``, plus the
   ``referee`` marker exercise 3 added);
-* it lists no decision awaiting Max (cos decision d219);
-* it records his ruling on every d219 field under ``decisions``
-  (``{field: {"ruling": value, ...}}``) and the configuration follows each
-  ruling;
+* it lists no decision awaiting Max;
+* it records a ruling under ``decisions`` for every field Max ruled on
+  (cos d219's nine items, d279 and d280), each entry equal to the code's
+  record of it (:data:`~.policy.MAX_RULINGS`), and the configuration
+  follows each ruling;
 * it agrees with the code (options, schedules, cuts, rows, cells, labels
   and the policy).
 
-The committed draft (``m1-draft-1``) fails the first test.
+``m1-draft-2`` records Max's rulings and fails the first test: it awaits an
+independent check of the referee's changes, then ratification by merge.
 """
 
 from __future__ import annotations
@@ -32,13 +34,14 @@ from populace_dynamics.min_benefit_track_m import OUTPUT_LABELS
 from populace_dynamics.min_benefit_track_m.policy import (
     DECISION_RECORD,
     HEADLINE_CELL,
+    MAX_RULINGS,
     OPTIONS,
     REGISTERED_ROWS,
     SPECIFICATION_ID,
     TABLE6_OPTIONS,
     TABLE6_ROWS,
     TrackMPolicy,
-    pending_decisions,
+    fixed_decision_value,
 )
 
 __all__ = [
@@ -47,7 +50,9 @@ __all__ = [
     "check_specification_for_registered_run",
     "d219_decision_fields",
     "decision_value",
+    "expected_decisions",
     "m1_parameter_block",
+    "ruled_fields",
     "specification_code_check",
     "unratified_fields",
 ]
@@ -94,33 +99,47 @@ def unratified_fields(block: Mapping[str, Any]) -> list[str]:
     return fields
 
 
+def ruled_fields() -> tuple[str, ...]:
+    """Every field Max ruled on (d219, d279, d280), in the code's order."""
+
+    return tuple(MAX_RULINGS)
+
+
 def d219_decision_fields() -> tuple[str, ...]:
     """The fields the nine d219 items govern, in item order."""
 
     return tuple(
-        item.field
-        for item in pending_decisions()
-        if item.card_item is not None
+        name
+        for name, entry in sorted(
+            MAX_RULINGS.items(), key=lambda item: item[1]["item"] or 0
+        )
+        if entry["decision_record"] == DECISION_RECORD
     )
 
 
 def decision_value(policy: TrackMPolicy, name: str) -> Any:
-    """The configuration's value of d219 field ``name``.
+    """The configuration's value of ruled field ``name``.
 
-    A field of :class:`TrackMPolicy` reads the policy; a process item
-    (target cells, claim class, acceptance rule, ratification) reads the
-    code's fixed value, which only a code change can alter.
+    A field of :class:`TrackMPolicy` reads the policy; a process decision
+    (target cells, claim class, module placement, acceptance rule,
+    ratification, the threshold download) reads the code's fixed value,
+    which only a code change can alter.
     """
 
-    if name not in d219_decision_fields():
-        raise KeyError(f"{name} is not a d219 decision field")
+    if name not in MAX_RULINGS:
+        raise KeyError(f"{name} is not a field Max ruled on")
     if hasattr(policy, name):
         return getattr(policy, name)
+    return fixed_decision_value(name)
+
+
+def expected_decisions() -> dict[str, Any]:
+    """The block's ``decisions`` object as the code records the rulings."""
+
     return {
-        item.field: item.default
-        for item in pending_decisions()
-        if item.card_item is not None
-    }[name]
+        "ruled_by": "Max",
+        **json.loads(json.dumps(MAX_RULINGS)),
+    }
 
 
 def _expected_options() -> dict[str, Any]:
@@ -155,12 +174,13 @@ def specification_code_check(
             name: dict(change) for name, change in REGISTERED_ROWS.items()
         },
         "labels": list(OUTPUT_LABELS),
+        "decisions": expected_decisions(),
     }
     mismatches = [
         key for key, value in expected.items() if block.get(key) != value
     ]
     awaiting = block.get("decisions_awaiting_max") or {}
-    unknown = sorted(set(awaiting) - set(d219_decision_fields()))
+    unknown = sorted(set(awaiting) - set(ruled_fields()))
     if unknown:
         mismatches.append(f"decisions_awaiting_max:{unknown}")
     return {"consistent": not mismatches, "mismatches": mismatches}
@@ -183,25 +203,38 @@ def check_specification_for_registered_run(
     if awaiting:
         raise ValueError(
             "the M1 specification still lists decisions awaiting Max "
-            f"({sorted(awaiting)}; decision record {DECISION_RECORD}): no "
-            "real-data statistic before he rules"
+            f"({sorted(awaiting)}): no real-data statistic before he rules"
         )
     rulings = block.get("decisions") or {}
     unruled = [
         name
-        for name in d219_decision_fields()
+        for name in ruled_fields()
         if not isinstance(rulings.get(name), Mapping)
         or "ruling" not in rulings[name]
     ]
     if unruled:
         raise ValueError(
             f"the M1 specification records no ruling by Max for {unruled} "
-            f"(decision record {DECISION_RECORD}): no real-data statistic "
-            "before he rules"
+            f"(decision records {DECISION_RECORD}, d279, d280): no "
+            "real-data statistic before he rules"
+        )
+    recorded = json.loads(json.dumps(dict(rulings)))
+    recorded.pop("ruled_by", None)
+    expected = expected_decisions()
+    expected.pop("ruled_by")
+    if recorded != expected:
+        differing = sorted(
+            name
+            for name in set(recorded) | set(expected)
+            if recorded.get(name) != expected.get(name)
+        )
+        raise ValueError(
+            f"the M1 specification's rulings on {differing} differ from the "
+            "code's record of Max's rulings (policy.MAX_RULINGS)"
         )
     departures = [
         name
-        for name in d219_decision_fields()
+        for name in ruled_fields()
         if decision_value(policy, name) != rulings[name]["ruling"]
     ]
     if departures:

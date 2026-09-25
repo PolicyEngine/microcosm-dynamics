@@ -28,15 +28,27 @@ each open choice read from :class:`~.policy.TrackMPolicy`:
   benefit is paid is decided by the oracle's ``spousal_benefit`` and
   ``widow_benefit`` (dual entitlement included); no couples' cap.
 
-The PIA (G5) comes from the oracle, called unchanged: for a retired worker
-``ss.statutory_aime.aime`` (42 USC 415(b)(2); for anyone born 1929 or later
-it equals ``ss.benefits.aime``, its docstring says) and ``ss.benefits.pia``
-at the eligibility year's bend points; for a DI worker Track A's disclosed
-``cola_track_a.benefits.approximate_pia`` (MS6: the statutory DI
-computation years).  Nothing is added to ``ss/``.
+The years that define each record (the M1 specification's section 4a,
+referee R3) come from :func:`record_years`: the window year, the threshold
+and bend-point year, and the last year of *Y* and of *P*'s history, by the
+record's basis (old age, disability origin, or a worker who died before
+any own entitlement).
+
+The PIA (G5) comes from the oracle, called unchanged, over that history:
+``ss.statutory_aime.aime`` (42 USC 415(b)(2)) and ``ss.benefits.pia`` at
+the bend points of the section 4a threshold year.  An old-age history runs
+through the year before the first year of entitlement (415(b)(2)(B)(ii)(I));
+a disability-origin record uses the statutory DI computation years
+(``disability_year=onset``; MS6: Track A's disclosed ``cola_track_a.
+benefits.approximate_pia``); a worker who died before any own entitlement
+uses the statutory death computation (``death_year=death``).  Nothing is
+added to ``ss/``.
 
 The threshold (G8) is the Census weighted average for one person aged 65
-and over, from the pinned 2003-2022 capture (:mod:`.thresholds`).
+and over, read from the pinned capture of the 2003-2022 Census workbooks
+(:func:`load_aged_thresholds`); a threshold year the capture lacks raises
+:class:`ThresholdYearMissingError`, and :func:`check_threshold_years`
+refuses a cohort that needs one before anything is computed.
 
 What this module does not do: read PSID, classify entitlement, link
 spouses or tabulate a share.  Those are plan items M3, M4 and M8.  It
@@ -62,6 +74,10 @@ from populace_dynamics.min_benefit_track_m.policy import (
     TrackMPolicy,
 )
 from populace_dynamics.min_benefit_track_m.thresholds import (
+    THRESHOLD_ROW,
+    TRACK_M_THRESHOLD_YEARS,
+    TRACK_M_THRESHOLDS_PATH,
+    TRACK_M_THRESHOLDS_SHA256,
     AgedThresholds,
     ThresholdsNotCapturedError,
     ThresholdYearMissingError,
@@ -72,16 +88,28 @@ from populace_dynamics.ss import benefits, statutory_aime
 from populace_dynamics.ss.params import SSAParameters
 
 __all__ = [
+    "BASES",
+    "BASIS_DEATH",
+    "BASIS_DISABILITY",
+    "BASIS_OLD_AGE",
     "AgedThresholds",
+    "LAST_COLA_DETERMINATION_YEAR",
     "LinkedBenefit",
     "OptionOutcome",
     "PiaRecord",
     "Receipt",
+    "RecordYears",
+    "THRESHOLD_ROW",
+    "TRACK_M_THRESHOLDS_PATH",
+    "TRACK_M_THRESHOLDS_SHA256",
+    "TRACK_M_THRESHOLD_YEARS",
     "ThresholdYearMissingError",
     "ThresholdsNotCapturedError",
     "WorkerInputs",
     "benefit_implied_pia",
     "check_threshold_years",
+    "claim_factor",
+    "cola_factor",
     "evaluate_worker",
     "history_pia",
     "in_window",
@@ -90,13 +118,21 @@ __all__ = [
     "monthly_minimum",
     "prorated_work_years",
     "receives_minimum",
+    "record_years",
     "relative_to_option_1",
     "spouse_excess_paid",
     "survivor_excess_paid",
+    "survivor_own_amount",
 ]
 
 _RETIREMENT_ELIGIBILITY_AGE = 62
 _MONTHS = 12
+#: MS5's COLA factor runs through the COLA determined in 2021: from 1983
+#: each COLA is "effective in December of the determination year and first
+#: reflected in January payments of the following year"
+#: (``data/external/ssa_cola_history.json``, ``historical_timing``), so the
+#: 2022 determination first reaches January 2023 payments.
+LAST_COLA_DETERMINATION_YEAR = 2021
 
 
 # ---------------------------------------------------------------------------
@@ -211,12 +247,13 @@ class WorkerInputs:
     """What the worker flag needs about one worker (the cohort supplies it).
 
     ``pia`` is *P* (G5), monthly, at the first calculation, in the
-    eligibility year's dollars.  ``work_years`` is *Y* (G6).
-    ``first_pia_year`` is the year the PIA was first calculated (the
-    entitlement year; G4, G11).  ``threshold_year`` is the year whose
-    threshold the minimum uses (G8: the eligibility year; a DI worker's
-    onset year).  ``di_onset_year`` marks a DI-origin worker, whose work
-    years are prorated (G12) and whose flag carries over at conversion.
+    threshold year's dollars.  ``work_years`` is *Y* (G6).
+    ``first_pia_year`` is section 4a's window year (G4, G11).
+    ``threshold_year`` is section 4a's threshold year (G8: the year of
+    attaining 62, a disability-origin record's onset year, or the earlier
+    of death and attaining 62).  ``di_onset_year`` marks a DI-origin
+    worker, whose work years are prorated (G12) and whose flag carries
+    over at conversion.
     """
 
     pia: float
@@ -381,9 +418,125 @@ def relative_to_option_1(
 # ---------------------------------------------------------------------------
 # The PIA through the oracle (G5, MS5, MS6)
 # ---------------------------------------------------------------------------
+BASIS_OLD_AGE = "old_age"
+BASIS_DISABILITY = "disability"
+BASIS_DEATH = "death"
+#: The three bases of section 4a.
+BASES: tuple[str, ...] = (BASIS_OLD_AGE, BASIS_DISABILITY, BASIS_DEATH)
+
+
+@dataclass(frozen=True)
+class RecordYears:
+    """The years that define a worker record (M1 specification, section 4a).
+
+    ``window_year`` is G4's "first calculated" year: the first year of the
+    worker's own entitlement (old age, or DI for a disability-origin
+    record), or, for a worker who died before any own entitlement, the
+    first year a person in the universe is entitled to a benefit on the
+    record.  ``threshold_year`` is G8's threshold year and the PIA's
+    bend-point year.  ``last_year`` is the last year of *Y* (G6) and of
+    *P*'s history (G5).
+    """
+
+    basis: str
+    birth_year: int
+    window_year: int
+    threshold_year: int
+    last_year: int
+    onset_year: int | None = None
+    death_year: int | None = None
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "basis": self.basis,
+            "birth_year": self.birth_year,
+            "window_year": self.window_year,
+            "threshold_year": self.threshold_year,
+            "last_year": self.last_year,
+            "onset_year": self.onset_year,
+            "death_year": self.death_year,
+        }
+
+
+def record_years(
+    *,
+    basis: str,
+    birth_year: int,
+    window_year: int,
+    onset_year: int | None = None,
+    death_year: int | None = None,
+) -> RecordYears:
+    """Section 4a: the window, threshold and last years of a worker record.
+
+    * **Old age.**  Threshold and bend-point year: the year of attaining
+      62.  *Y* and *P*'s history end with the window year less one (42 USC
+      415(b)(2)(B)(ii)(I): an old-age PIA's computation base years end
+      before the year of first entitlement).  The window year may not
+      precede the year of attaining 62.
+    * **Disability origin.**  Threshold and bend-point year: the onset
+      year.  *Y* and *P*'s history end with onset less one (G12;
+      413(a)(2)(B)(i)).  Onset may not follow the window year.
+    * **Died before any own entitlement.**  Threshold and bend-point year:
+      the earlier of the death year and the year of attaining 62.  *Y* and
+      *P*'s history end with the death year less one (a named
+      approximation: 415(b)(2)(B)(ii)(II) would include the death year).
+      Death may not follow the window year.
+    """
+
+    birth = _int_year(birth_year, "birth_year")
+    window = _int_year(window_year, "window_year")
+    attains_62 = birth + _RETIREMENT_ELIGIBILITY_AGE
+    if basis == BASIS_OLD_AGE:
+        if onset_year is not None or death_year is not None:
+            raise ValueError("an old-age record takes no onset or death year")
+        if window < attains_62:
+            raise ValueError(
+                f"old-age entitlement in {window} precedes the year of "
+                f"attaining 62 ({attains_62})"
+            )
+        return RecordYears(basis, birth, window, attains_62, window - 1)
+    if basis == BASIS_DISABILITY:
+        if onset_year is None or death_year is not None:
+            raise ValueError(
+                "a disability-origin record needs onset_year only"
+            )
+        onset = _int_year(onset_year, "onset_year")
+        if not birth < onset <= window:
+            raise ValueError(
+                f"onset {onset} must follow birth {birth} and not follow "
+                f"the window year {window}"
+            )
+        return RecordYears(
+            basis, birth, window, onset, onset - 1, onset_year=onset
+        )
+    if basis == BASIS_DEATH:
+        if death_year is None or onset_year is not None:
+            raise ValueError("a death-basis record needs death_year only")
+        death = _int_year(death_year, "death_year")
+        if not birth < death <= window:
+            raise ValueError(
+                f"death {death} must follow birth {birth} and not follow "
+                f"the window year {window}"
+            )
+        return RecordYears(
+            basis,
+            birth,
+            window,
+            min(death, attains_62),
+            death - 1,
+            death_year=death,
+        )
+    raise ValueError(f"basis must be one of {BASES}, not {basis!r}")
+
+
 @dataclass(frozen=True)
 class PiaRecord:
-    """A worker's PIA at first calculation and how it was computed."""
+    """A worker's PIA at first calculation and how it was computed.
+
+    ``eligibility_year`` is the bend-point year (section 4a's threshold
+    year); ``computation_end_year`` the last year of the history passed to
+    the oracle.
+    """
 
     pia: float
     aime: float | None
@@ -416,52 +569,72 @@ def history_pia(
     *,
     birth_year: int,
     params: SSAParameters,
-    basis: str = "old_age",
+    basis: str = BASIS_OLD_AGE,
+    window_year: int | None = None,
     onset_year: int | None = None,
     death_year: int | None = None,
     policy: TrackMPolicy | None = None,
 ) -> PiaRecord:
     """*P* from a realized history through the oracle, unchanged (G5).
 
-    ``basis``:
+    The history is cut at :func:`record_years`' last year and the PIA is
+    computed at its threshold year's bend points (section 4a).  ``basis``:
 
-    * ``"old_age"``: the history through the year before the eligibility
-      year (the year of attaining 62), ``ss.statutory_aime.aime`` (the
-      statutory computation years; for birth years 1929 and later its
-      docstring says it equals ``ss.benefits.aime`` exactly) and
-      ``ss.benefits.pia`` at the eligibility year's bend points.  No
-      recomputation for later earnings (G5).
-    * ``"disability"``: eligibility is the onset year.  ``di_pia_rule``
-      ``approximate_pia`` (G5) calls Track A's
-      ``cola_track_a.benefits.approximate_pia`` through the year before
-      onset; ``statutory_computation_years`` (MS6) calls
-      ``ss.statutory_aime.aime(..., disability_year=onset)`` and
-      ``ss.benefits.pia`` at the onset year's bend points.
-    * ``"death"``: a worker who died before eligibility, whose PIA is first
-      calculated for a survivor; ``approximate_pia`` through the year
-      before death at the death year's bend points (``death_pia_rule``,
-      a builder default: the plan is silent on it).
+    * ``"old_age"``: ``window_year`` (the first year of entitlement) is
+      required; ``ss.statutory_aime.aime`` over the history through the
+      window year less one (for birth years 1929 and later its docstring
+      says it equals ``ss.benefits.aime`` exactly; earnings from the year
+      of attaining 60 enter unindexed) and ``ss.benefits.pia`` at the year
+      of attaining 62.  No recomputation for later earnings.
+    * ``"disability"``: ``onset_year`` is required (``window_year``
+      defaults to it).  ``di_pia_rule`` ``statutory_computation_years``
+      (frozen, referee R5) calls ``ss.statutory_aime.aime(...,
+      disability_year=onset)`` (415(b)(2)(A)(ii): elapsed years less
+      one-fifth, at most 5, at least 2) and ``ss.benefits.pia`` at the
+      onset year's bend points; ``approximate_pia`` (MS6) calls Track A's
+      ``cola_track_a.benefits.approximate_pia`` (the oracle's 35-year AIME
+      indexed to the second year before onset).  Either reads the history
+      through onset less one.
+    * ``"death"``: a worker who died before any own entitlement;
+      ``death_year`` is required (``window_year`` defaults to it).  The
+      statutory death computation, ``ss.statutory_aime.aime(...,
+      death_year=death)`` (415(b)(2)(A)(i): elapsed years less 5), over the
+      history through the death year less one, and ``ss.benefits.pia`` at
+      the earlier of the death year and the year of attaining 62.
     """
 
     policy = policy or TrackMPolicy()
     birth = _int_year(birth_year, "birth_year")
-    if basis == "old_age":
-        eligibility = birth + _RETIREMENT_ELIGIBILITY_AGE
-        kept = _through(history, eligibility - 1)
+    if basis == BASIS_OLD_AGE:
+        if window_year is None:
+            raise ValueError(
+                "an old-age PIA needs window_year, the first year of "
+                "entitlement (section 4a)"
+            )
+        years = record_years(
+            basis=basis, birth_year=birth, window_year=window_year
+        )
+        kept = _through(history, years.last_year)
         aime = statutory_aime.aime(kept, birth, params)
         return PiaRecord(
-            benefits.pia(aime, eligibility, params),
+            benefits.pia(aime, years.threshold_year, params),
             float(aime),
             basis,
             "ss.statutory_aime.aime + ss.benefits.pia",
-            eligibility,
-            eligibility - 1,
+            years.threshold_year,
+            years.last_year,
         )
-    if basis == "disability":
+    if basis == BASIS_DISABILITY:
         if onset_year is None:
             raise ValueError("a disability basis needs onset_year")
         onset = _int_year(onset_year, "onset_year")
-        kept = _through(history, onset - 1)
+        years = record_years(
+            basis=basis,
+            birth_year=birth,
+            window_year=onset if window_year is None else window_year,
+            onset_year=onset,
+        )
+        kept = _through(history, years.last_year)
         if policy.di_pia_rule == DI_PIA_APPROXIMATE:
             from populace_dynamics.cola_track_a.benefits import (
                 approximate_pia,
@@ -471,47 +644,44 @@ def history_pia(
                 approximate_pia(
                     kept,
                     birth_year=birth,
-                    computation_end_year=onset - 1,
-                    eligibility_year=onset,
+                    computation_end_year=years.last_year,
+                    eligibility_year=years.threshold_year,
                     params=params,
                 ),
                 None,
                 basis,
                 "cola_track_a.benefits.approximate_pia",
-                onset,
-                onset - 1,
+                years.threshold_year,
+                years.last_year,
             )
         aime = statutory_aime.aime(kept, birth, params, disability_year=onset)
         return PiaRecord(
-            benefits.pia(aime, onset, params),
+            benefits.pia(aime, years.threshold_year, params),
             float(aime),
             basis,
             "ss.statutory_aime.aime(disability_year) + ss.benefits.pia",
-            onset,
-            onset - 1,
+            years.threshold_year,
+            years.last_year,
         )
-    if basis == "death":
+    if basis == BASIS_DEATH:
         if death_year is None:
             raise ValueError("a death basis needs death_year")
         death = _int_year(death_year, "death_year")
-        if policy.death_pia_rule != DI_PIA_APPROXIMATE:
-            raise ValueError(policy.death_pia_rule)
-        from populace_dynamics.cola_track_a.benefits import approximate_pia
-
-        kept = _through(history, death - 1)
+        years = record_years(
+            basis=basis,
+            birth_year=birth,
+            window_year=death if window_year is None else window_year,
+            death_year=death,
+        )
+        kept = _through(history, years.last_year)
+        aime = statutory_aime.aime(kept, birth, params, death_year=death)
         return PiaRecord(
-            approximate_pia(
-                kept,
-                birth_year=birth,
-                computation_end_year=death - 1,
-                eligibility_year=death,
-                params=params,
-            ),
-            None,
+            benefits.pia(aime, years.threshold_year, params),
+            float(aime),
             basis,
-            "cola_track_a.benefits.approximate_pia",
-            death,
-            death - 1,
+            "ss.statutory_aime.aime(death_year) + ss.benefits.pia",
+            years.threshold_year,
+            years.last_year,
         )
     raise ValueError("basis must be old_age, disability or death")
 
@@ -525,10 +695,12 @@ def benefit_implied_pia(
     """MS5: the PIA implied by an observed benefit.
 
     ``observed / (claim_factor * cola_factor)``: ``claim_factor`` is the
-    benefit-to-PIA factor of the claim age (402(q) or 402(w); the cohort
-    brackets the claim age from first receipt) and ``cola_factor`` the
-    cumulative COLA from the eligibility year to the observed year.  No
-    rounding.
+    benefit-to-PIA factor of the claim age (402(q) or 402(w),
+    :func:`claim_factor`; 1 for a disability-origin record) and
+    ``cola_factor`` the product of the COLAs from the December of the
+    section 4a threshold year through December 2021 (:func:`cola_factor`).
+    No rounding.  Section 6 of the M1 specification defines which records
+    use it (MS5) and where *B* comes from.
     """
 
     for label, value in (
@@ -543,6 +715,54 @@ def benefit_implied_pia(
     if observed_monthly_benefit < 0:
         raise ValueError("observed_monthly_benefit must be nonnegative")
     return float(observed_monthly_benefit) / (claim_factor * cola_factor)
+
+
+def claim_factor(
+    birth_year: int, entitlement_year: int, params: SSAParameters
+) -> float:
+    """A worker's benefit-to-PIA factor at a whole-year claim age.
+
+    Section 4b rule 5: the claim age is ``entitlement_year - birth_year``
+    in whole years, against the cohort's full retirement age
+    (``params.fra_months``).  Before it, one less the oracle's 402(q)
+    reduction (``ss.benefits.early_reduction``); after it, one plus the
+    oracle's 402(w) credit (``ss.benefits.delayed_credit``, which stops at
+    70).  A disability-origin record's factor is 1 and is not computed
+    here.
+    """
+
+    birth = _int_year(birth_year, "birth_year")
+    entitlement = _int_year(entitlement_year, "entitlement_year")
+    months = _MONTHS * (entitlement - birth) - params.fra_months(birth)
+    if months < 0:
+        return 1.0 - benefits.early_reduction(-months, params)
+    return 1.0 + benefits.delayed_credit(months, birth, params)
+
+
+def cola_factor(
+    first_year: int,
+    rates: Mapping[int, float],
+    *,
+    last_determination_year: int = LAST_COLA_DETERMINATION_YEAR,
+) -> float:
+    """The product of the COLAs determined ``first_year`` through 2021.
+
+    MS5's COLA factor (section 6): 42 USC 415(i)(2)(A)(iii) raises the PIA
+    of an individual who becomes eligible, or dies before becoming
+    eligible, in a year with an increase by that increase and every later
+    one; benefits paid for 2022 reflect those determined through 2021
+    (:data:`LAST_COLA_DETERMINATION_YEAR`).  ``rates`` maps a determination
+    year to a fraction (``estimates.parameters.load_cola_history``).  A
+    first year after 2021 gives 1.
+    """
+
+    first = _int_year(first_year, "first_year")
+    factor = 1.0
+    for year in range(first, last_determination_year + 1):
+        if year not in rates:
+            raise ValueError(f"no COLA determined in {year}")
+        factor *= 1.0 + float(rates[year])
+    return factor
 
 
 # ---------------------------------------------------------------------------
@@ -580,7 +800,9 @@ def survivor_excess_paid(
 
     ``ss.benefits.widow_benefit`` (unchanged) returns the larger of the
     survivor's own amount and the widow(er)'s benefit; it is paid on the
-    deceased's record when it exceeds the own amount.
+    deceased's record when it exceeds the own amount.  ``own_amount`` is
+    :func:`survivor_own_amount` (the own benefit after 402(q); section 4b
+    rule 5).
     """
 
     paid = benefits.widow_benefit(
@@ -591,6 +813,33 @@ def survivor_excess_paid(
         params,
     )
     return paid > own_amount
+
+
+def survivor_own_amount(
+    own_option_pia: float | None,
+    own_claim_factor: float | None,
+    *,
+    receives_own_benefit: bool,
+) -> float:
+    """A survivor's own amount for the widow(er)'s test (section 4b rule 5).
+
+    The own old-age or disability benefit after the 402(q) reduction under
+    the option: the own option PIA times the own claim factor, or 0 when
+    the survivor receives no own benefit in 2022 (42 USC 402(k)(3)(A)
+    reduces the other benefit by the own benefit "after reduction under
+    such subsection (q)").
+    """
+
+    if not receives_own_benefit:
+        return 0.0
+    if own_option_pia is None or own_claim_factor is None:
+        raise ValueError(
+            "a survivor who receives an own benefit needs the own option "
+            "PIA and claim factor"
+        )
+    if own_claim_factor <= 0 or own_option_pia < 0:
+        raise ValueError("own PIA and claim factor must be positive")
+    return float(own_option_pia) * float(own_claim_factor)
 
 
 @dataclass(frozen=True)
