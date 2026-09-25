@@ -957,7 +957,10 @@ the supplements staged both are computed. This is the recommended
 default of the pending fallback decision (§16); Max may instead keep the
 alternatives on U0 only. The registration comment states the headline
 row, and the registered run refuses when the staged PSID gives a
-different one (`scripts/run_track_u_registered.py --headline-row`).
+different one (`scripts/run_track_u_registered.py --headline-row`), or
+when it is not the row §15 records for the staged PSID
+(`population.headline.staged_psid_headline`, U0 since `u1-draft-6`;
+checked before any PSID file is read).
 
 | Row | Field | Value | Built |
 |---|---|---|---|
@@ -1145,8 +1148,10 @@ branch; not merged); all opt-in; registered in
 - `scripts/run_track_u_registered.py` (U10 entry point): refuses unless
   the pointer is an issue #42 comment, `HEAD` is the registered commit
   on a clean tree, §15 is ratified with nothing awaiting and nothing
-  blocking, the Census capture is pinned, and `--headline-row` equals the
-  fallback rule's row for the staged PSID; writes
+  blocking, the Census capture is pinned, and `--headline-row` equals
+  both the row §15 records for the staged PSID
+  (`population.headline.staged_psid_headline`) and the fallback rule's
+  row for the PSID staged at run time; writes
   `runs/replication_boomers2004_uniform_cut_v1.json` and its `.env.json`
   exclusively.
 - `scripts/track_u_component_diagnostics.py`: the F17 component
@@ -1746,6 +1751,23 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
 
 ## 19. Changelog
 
+- `u1-draft-6`, independent review of the wealth supplements
+  (2026-09-25; no rule, default, row, label or pin changed): a parser
+  that shares no code with the reader
+  (`EVID/track-u-wealth-review-b-20260925/`) re-verified every
+  adjudicated label against the `.sps`, `.sas`, `.do` and codebook
+  files, the 14 hashes of `SHA256SUMS` and the zip members, the
+  one-to-one family-ID join, the WEALTH1 identity for every family, each
+  codebook frequency category against the data (match flags only), and
+  the family ID and merged WEALTH1 of each of U0's 81 (1937) and 82
+  (1939) observations; the reader's output equals that parse value for
+  value. It found no defect in the adjudication. It added one guard: the
+  registered run also refuses a `--headline-row` other than the row §15
+  records for the staged PSID (`population.headline.staged_psid_headline`),
+  checked before any PSID file is read (§11, §14;
+  `check_registered_headline`, two tests), and renamed the stale runner
+  test of the fallback path. Counts only: no income, threshold
+  assignment or poverty status was computed on PSID data.
 - `u1-draft-6` (2026-09-25, branch `dynamics-track-u-wealth-20260925`
   from the Census-capture branch; cos decision d189): Max's ruling on
   exercise 2 is recorded. The claim class is decided (Track U is

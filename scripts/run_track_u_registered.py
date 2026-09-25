@@ -34,7 +34,15 @@ comment exists, at exactly the commit that comment registers:
   a mismatch means the staging changed after registration and the run
   refuses (a new registration is needed).  Rows that need a wave without
   WEALTH1 are reported as blocked with their counts; the -F alternatives
-  on U0-F's population are computed in either staging state.
+  on U0-F's population are computed in either staging state;
+* ``--headline-row`` must also equal the row the section 15 block records
+  for the staged PSID (``population.headline.staged_psid_headline``, U0
+  since ``u1-draft-6``: the supplements were staged, adjudicated and read
+  before the #42 registration, so the fallback rule fixed the headline
+  before any run), checked before any PSID file is read.  A registration
+  naming another row contradicts the specification it registers, and a
+  run on a staging that refuses the supplements then fails the check
+  above.
 
 The artifact publishes regardless of outcome.  It never reads the sealed
 comparator; the seal is opened only after this artifact is committed.
@@ -216,6 +224,33 @@ def check_headline(registered: str, inputs: Any) -> str:
     return staged
 
 
+def check_registered_headline(
+    registered: str, block: Mapping[str, Any]
+) -> str:
+    """Refuse a registered headline other than the one the block records.
+
+    Since ``u1-draft-6`` the section 15 block records the row the fallback
+    rule gives on the staged PSID (``population.headline.
+    staged_psid_headline``): the 2005 and 2007 wealth supplements were
+    staged, adjudicated and read before the #42 registration, so the rule
+    fixed the headline before any run.  A block without the record (an
+    earlier draft) constrains nothing here; :func:`check_headline` still
+    holds the registration to the staging.
+    """
+
+    headline = (block.get("population") or {}).get("headline") or {}
+    recorded = headline.get("staged_psid_headline")
+    if recorded is not None and registered != recorded:
+        raise ValueError(
+            f"the registration names headline row {registered}, but the "
+            "specification's section 15 block records "
+            f"{recorded} as the headline the fallback rule gives on the "
+            "staged PSID (population.headline.staged_psid_headline): the "
+            "registration contradicts the specification it registers"
+        )
+    return registered
+
+
 def _write_new(path: Path, text: str) -> None:
     """Create ``path`` exclusively: never overwrite (one shot)."""
 
@@ -291,6 +326,9 @@ def main(argv: list[str] | None = None) -> int:
     thresholds = ap.load_poverty_thresholds()
     params = runner.committed_parameters(thresholds)
     environment = _environment()
+    # Refused before any PSID file is read: a registered headline the
+    # specification's block does not record for the staged PSID.
+    check_registered_headline(args.headline_row, block)
     inputs = age67.load_age67_inputs()
     check_headline(args.headline_row, inputs)
     result = runner.run_track_u(

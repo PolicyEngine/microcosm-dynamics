@@ -235,6 +235,59 @@ def test_the_headline_row_must_match_the_staging():
         script.check_headline("U0-F", _Staging(()))
 
 
+def test_the_registered_headline_must_be_the_one_the_block_records():
+    """``u1-draft-6`` records the staged PSID's headline (U0) in the
+    section 15 block: the supplements were staged, adjudicated and read
+    before the #42 registration, so the fallback rule fixed the headline.
+    A registration naming another row is refused whatever the run-time
+    staging gives (review of ``dynamics-track-u-wealth-20260925``)."""
+
+    script = _script()
+    block = rows.specification_block()
+    assert block["population"]["headline"]["staged_psid_headline"] == "U0"
+    assert script.check_registered_headline("U0", block) == "U0"
+    with pytest.raises(ValueError, match="staged_psid_headline"):
+        script.check_registered_headline("U0-F", block)
+    # a block without the record (an earlier draft) constrains nothing
+    # here; check_headline still holds the registration to the staging
+    earlier = copy.deepcopy(block)
+    del earlier["population"]["headline"]["staged_psid_headline"]
+    assert script.check_registered_headline("U0-F", earlier) == "U0-F"
+    assert script.check_registered_headline("U0-F", RATIFIED) == "U0-F"
+
+
+def test_the_block_headline_is_checked_before_any_psid_read(
+    tmp_path, monkeypatch
+):
+    """With the committed capture and parameters, a registered headline
+    the block does not record stops the run before any PSID file is read
+    and before anything is written."""
+
+    script = _script()
+    monkeypatch.setattr(script, "preflight", lambda **_: {"head": COMMIT})
+
+    def no_psid(**_):
+        raise AssertionError("PSID read before the headline check")
+
+    monkeypatch.setattr(script.age67, "load_age67_inputs", no_psid)
+    output = tmp_path / "run.json"
+    with pytest.raises(ValueError, match="contradicts the specification"):
+        script.main(
+            [
+                "--registration-pointer",
+                POINTER,
+                "--registered-commit",
+                COMMIT,
+                "--headline-row",
+                "U0-F",
+                "--output",
+                str(output),
+            ]
+        )
+    assert not output.exists()
+    assert not output.with_suffix(".env.json").exists()
+
+
 @pytest.mark.parametrize(
     "capture, error",
     [
