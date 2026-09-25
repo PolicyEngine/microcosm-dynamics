@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pytest
 
+from populace_dynamics.min_benefit_track_m import rules
 from populace_dynamics.min_benefit_track_m import specification as spec
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -189,21 +190,75 @@ def test_the_artifact_is_created_exclusively(tmp_path):
     assert path.read_text(encoding="utf-8") == "first\n"
 
 
-def test_the_pipeline_refuses_before_any_psid_read():
+def test_every_component_exists_and_the_gate_is_what_refuses():
+    """M3-M5 are built, so no component is missing; the preflight's
+    specification gate refuses the committed draft (above)."""
+
     script = _script()
-    missing = script.missing_components()
-    assert missing == [
-        "M3/M4 beneficiary cohort",
-        "M5 realized careers",
-    ]
-    with pytest.raises(RuntimeError, match="not built"):
-        script.check_runnable()
-    with pytest.raises(NotImplementedError, match="M3-M5"):
-        script.run_pipeline(None, registration_pointer=POINTER)
+    assert script.missing_components() == []
+    script.check_runnable()
     # one registration-pointer pattern, shared with the tabulation guard
     from populace_dynamics.min_benefit_track_m import tabulation
 
     assert script.REGISTRATION_POINTER is tabulation.REGISTRATION_POINTER
+
+
+def test_a_missing_component_is_named(monkeypatch):
+    script = _script()
+    monkeypatch.setattr(
+        script,
+        "PIPELINE_MODULES",
+        {
+            **script.PIPELINE_MODULES,
+            "M99 absent": "populace_dynamics.min_benefit_track_m.absent",
+        },
+    )
+    assert script.missing_components() == ["M99 absent"]
+    with pytest.raises(RuntimeError, match="not built: missing M99 absent"):
+        script.check_runnable()
+
+
+def test_the_computation_refuses_psid_records_under_the_draft(monkeypatch):
+    """``run_pipeline`` reads the PSID through M4 and M5 and hands records
+    carrying the files' hashes to the pipeline, which refuses them under
+    the committed draft before evaluating any record.  The PSID read is
+    replaced by INVENTED frames marked as read from files; the refusal is
+    the pipeline's."""
+
+    from populace_dynamics.min_benefit_track_m import (
+        cohort,
+        invented,
+        invented_psid,
+        pipeline,
+    )
+
+    script = _script()
+    frames = invented_psid.invented_cohort_inputs(seed=4, n_family_units=40)
+    marked = type(frames)(
+        structure_inputs=frames.structure_inputs,
+        individual_receipt=frames.individual_receipt,
+        family_1993_receipt=frames.family_1993_receipt,
+        family_level_receipt=frames.family_level_receipt,
+        prior_year_labor=frames.prior_year_labor,
+        provenance={"psid_files_sha256": {"INVENTED.txt": "0" * 64}},
+    )
+    monkeypatch.setattr(cohort, "load_cohort_inputs", lambda **_: marked)
+    parameters, cola = invented.invented_parameters()
+    monkeypatch.setattr(
+        "populace_dynamics.estimates.parameters.load_cola_history",
+        lambda: _Cola(cola),
+    )
+    evaluated = []
+    monkeypatch.setattr(
+        pipeline, "evaluate", lambda *a, **k: evaluated.append(1)
+    )
+    with pytest.raises(Exception, match="does not authorize a real-data"):
+        script.run_pipeline(parameters, registration_pointer=POINTER)
+    assert evaluated == []
+
+
+class _Cola(dict):
+    provenance = {"kind": "INVENTED"}
 
 
 def test_the_parameters_must_be_the_files_the_block_records():
@@ -233,12 +288,32 @@ def test_the_parameters_must_be_the_files_the_block_records():
         )
 
 
+def test_the_committed_files_pass_the_parameter_pins():
+    """The loaders' records of the committed quarter-of-coverage capture
+    and Census capture pass the pins against the committed block (the
+    test above holds the pins to the block's own values)."""
+
+    from populace_dynamics.min_benefit_track_m import coverage
+
+    script = _script()
+    thresholds = rules.load_aged_thresholds().source
+    assert script.check_parameter_pins(
+        spec.m1_parameter_block(),
+        quarter_of_coverage=coverage.load_qc_amounts().source,
+        thresholds=thresholds,
+    ) == {
+        "quarter_of_coverage": coverage.QC_CAPTURE_SHA256,
+        "census_thresholds": thresholds["sha256"],
+    }
+
+
 def test_main_refuses_before_any_parameter_or_psid_read(tmp_path, monkeypatch):
     """Past the preflight, a missing component stops the run before the
     parameters load, and nothing is written."""
 
     script = _script()
     monkeypatch.setattr(script, "preflight", lambda **_: {"head": COMMIT})
+    monkeypatch.setattr(script, "missing_components", lambda: ["M99"])
 
     def never(*args, **kwargs):
         raise AssertionError("loaded parameters before check_runnable")
@@ -262,9 +337,8 @@ def test_main_refuses_before_any_parameter_or_psid_read(tmp_path, monkeypatch):
 
 
 def test_main_pins_parameters_before_the_computation(tmp_path, monkeypatch):
-    """With every component present (as if M3-M5 existed), the parameter
-    pins and the environment come before the computation, which refuses
-    today; nothing is written."""
+    """The parameter pins and the environment come before the
+    computation; a refused computation writes nothing."""
 
     script = _script()
     calls = []
@@ -279,10 +353,15 @@ def test_main_pins_parameters_before_the_computation(tmp_path, monkeypatch):
         calls.append(("environment", kwargs["ssa_parameters_revision"]))
         return {}
 
+    def computation(parameters, **kwargs):
+        calls.append(("computation", kwargs["registration_pointer"]))
+        raise RuntimeError("the computation refuses (stand-in)")
+
     monkeypatch.setattr(script, "committed_parameters", parameters)
     monkeypatch.setattr(script, "_environment", environment)
+    monkeypatch.setattr(script, "run_pipeline", computation)
     output = tmp_path / "run.json"
-    with pytest.raises(NotImplementedError, match="M3-M5"):
+    with pytest.raises(RuntimeError, match="stand-in"):
         script.main(
             [
                 "--registration-pointer",
@@ -296,6 +375,7 @@ def test_main_pins_parameters_before_the_computation(tmp_path, monkeypatch):
     assert calls == [
         ("parameters", spec.m1_parameter_block()["version"]),
         ("environment", "INVENTED"),
+        ("computation", POINTER),
     ]
     assert not output.exists()
 

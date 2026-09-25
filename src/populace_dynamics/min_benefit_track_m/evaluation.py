@@ -9,7 +9,8 @@ module applies those rules to records the cohort supplies:
 * :class:`WorkerRecord`: one worker record (section 4a's basis, window
   year, onset or death year; the observed labor income and the next-wave
   odd-year items; MS5's inputs).  The M4 cohort and M5 careers build them
-  from the PSID (not built); :mod:`.invented` builds INVENTED ones.
+  from the PSID (:mod:`.cohort`, :mod:`.careers`); :mod:`.invented` and
+  :mod:`.invented_psid` build INVENTED ones.
 * :class:`PersonRecord`: one person of the universe (weight, sex, design
   variables, their own worker record, their links to a spouse's or a
   deceased spouse's record, and whether they are an unlinked auxiliary).
