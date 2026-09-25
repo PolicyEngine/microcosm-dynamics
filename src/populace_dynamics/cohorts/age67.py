@@ -87,6 +87,10 @@ head's co-resident legal spouse's ages and sexes (the annuitants under
 the income concept's ``fu_head_rule``), and the family's income
 (:func:`populace_dynamics.data.family_income.read_family_income`) and
 wealth (:func:`populace_dynamics.data.family_income.read_family_wealth`).
+Each observation also carries its family's employer DC account balances
+(``employer_dc`` and its counts,
+:func:`populace_dynamics.data.employer_dc.read_employer_dc`; row U7) when
+the inputs hold them for the wave.
 ``wealth_status`` records where an observation's WEALTH1 comes from:
 ``family_file`` (waves 2009-2013), ``wealth_supplement`` (waves 2005 and
 2007, the PSID supplemental wealth files joined by their family ID, the
@@ -154,6 +158,7 @@ from populace_dynamics.cohorts import psid2010
 from populace_dynamics.data import (
     deaths,
     disability,
+    employer_dc,
     family,
     family_income,
     marriage,
@@ -412,7 +417,10 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
             "supplements are not staged, adjudicated and read before the "
             "#42 registration (specification section 11 fallback rule); "
             "since u1-draft-6 they are (cos decision d189: Max downloaded "
-            "them, plan section 10 decision 3), so the rule gives U0",
+            "them, plan section 10 decision 3), so the rule gives U0; "
+            "since u1-draft-7 the rule is resolved on that source (U0 the "
+            "headline, U0-F and the -F rows registered alternatives, the "
+            "second referee's S8 default)",
             freeze,
         ),
         psid2010.PendingDecision(
@@ -649,6 +657,11 @@ class Age67Inputs:
     family_income: Mapping[int, pd.DataFrame]
     family_wealth: Mapping[int, pd.DataFrame]
     wealth_refusals: Mapping[int, str]
+    #: The PSID pension section's employer DC balances per wave (row U7;
+    #: :func:`populace_dynamics.data.employer_dc.read_employer_dc`).
+    #: Empty for inputs that predate row U7; :func:`income_rows` then
+    #: attaches no ``employer_dc`` and row U7 refuses.
+    employer_dc: Mapping[int, pd.DataFrame] = field(default_factory=dict)
     provenance: Mapping[str, Any] = field(default_factory=dict)
     loader_seal: Mapping[str, str] | None = field(
         default=None, init=False, repr=False, compare=False
@@ -684,6 +697,10 @@ def input_frames_sha256(inputs: Age67Inputs) -> str:
             {str(k): v for k, v in sorted(inputs.wealth_refusals.items())}
         ).encode()
     )
+    # Row U7's frames enter the digest only when present, so inputs built
+    # without them keep the digest they had before U7 was built.
+    for wave in sorted(inputs.employer_dc):
+        _frame_digest(digest, f"employer_dc_{wave}", inputs.employer_dc[wave])
     return digest.hexdigest()
 
 
@@ -714,6 +731,10 @@ def load_age67_inputs(*, data_dir: Path | None = None) -> Age67Inputs:
             wave: family_income.read_family_income(wave, data_dir=data_dir)
             for wave in WAVES
         }
+        pensions = {
+            wave: employer_dc.read_employer_dc(wave, data_dir=data_dir)
+            for wave in WAVES
+        }
         wealth = {}
         for wave in WAVES:
             try:
@@ -736,6 +757,7 @@ def load_age67_inputs(*, data_dir: Path | None = None) -> Age67Inputs:
         family_income=incomes,
         family_wealth=wealth,
         wealth_refusals=refusals,
+        employer_dc=pensions,
         provenance={
             "kind": PSID_FILES,
             "psid_data_dir": str(data_root),
@@ -1446,6 +1468,32 @@ def _check_family_records(
         )
 
 
+def _merge_employer_dc(
+    merged: pd.DataFrame, inputs: Age67Inputs, wave: int
+) -> pd.DataFrame:
+    """Attach the family's employer DC balances (row U7) by interview."""
+
+    pensions = inputs.employer_dc.get(wave)
+    if pensions is None:
+        raise ValueError(
+            f"wave {wave}: the inputs hold employer DC frames but none for "
+            "this wave"
+        )
+    columns = ["interview", *employer_dc.BALANCE_COLUMNS]
+    out = merged.merge(
+        pensions[columns],
+        on="interview",
+        how="left",
+        validate="many_to_one",
+    )
+    if out["employer_dc"].isna().any():
+        raise ValueError(
+            f"wave {wave}: {int(out['employer_dc'].isna().sum())} "
+            "observations' families have no employer DC record"
+        )
+    return out
+
+
 def income_rows(
     cohort: Age67Cohort,
     inputs: Age67Inputs,
@@ -1460,9 +1508,12 @@ def income_rows(
     like any member.  Observations whose wave's wealth was refused are
     refused unless ``allow_blocked`` (then they are left out and counted
     in ``attrs["left_out"]``).  A kept observation whose family has no
-    wealth record is refused (the join must be complete).
-    ``attrs["provenance_kind"]`` carries the cohort's provenance kind to
-    the income concept's guard.
+    wealth record is refused (the join must be complete).  When the inputs
+    hold employer DC frames (row U7), every kept observation also gets its
+    family's :data:`populace_dynamics.data.employer_dc.BALANCE_COLUMNS`,
+    and a kept wave without a frame or a family without a record is
+    refused.  ``attrs["provenance_kind"]`` carries the cohort's provenance
+    kind to the income concept's guard.
     """
 
     obs = cohort.observations
@@ -1499,6 +1550,8 @@ def income_rows(
                 f"{int(merged['wealth1'].isna().sum())} observations' "
                 "families have no wealth record"
             )
+        if inputs.employer_dc:
+            merged = _merge_employer_dc(merged, inputs, int(wave))
         frames.append(merged)
     out = (
         pd.concat(frames, ignore_index=True).copy()
@@ -1560,6 +1613,33 @@ def _legal_husband_counts(
         "wife_age_present": count("wife_present", lambda s: s.astype(bool)),
         "wife_labor_income_nonzero": count("wife_labor", lambda s: s != 0),
         "wife_social_security_nonzero": count("wife_ss", lambda s: s != 0),
+    }
+
+
+def _employer_dc_counts(
+    inputs: Age67Inputs, wave: int, rows: pd.DataFrame
+) -> dict[str, int] | None:
+    """Row U7 counts for the observations of a wave (no amount)."""
+
+    pensions = inputs.employer_dc.get(wave)
+    if pensions is None:
+        return None
+    frame = pensions.set_index("interview").loc[rows["interview"].astype(int)]
+
+    def positive(column: str) -> int:
+        return int((frame[column] > 0).sum())
+
+    return {
+        "n_observations": int(len(frame)),
+        "employer_dc_positive": positive("employer_dc"),
+        "current_job_positive": positive("employer_dc_current"),
+        "previous_employer_positive": positive("employer_dc_previous"),
+        "with_unreported_amount": positive("employer_dc_unreported"),
+        "with_top_coded_amount": positive("employer_dc_top_coded"),
+        "with_ira_rollover_excluded": positive(
+            "employer_dc_ira_rollover_items"
+        ),
+        "with_off_route_amount": positive("employer_dc_off_route_items"),
     }
 
 
@@ -1729,6 +1809,9 @@ def structural_summary(
             "wealth1_zero": int((wel["wealth1"] == 0).sum()),
             "wealth1_imputed": int((wel["wealth1_acc"] == 1).sum()),
             "fu_size": _counts(fam["fu_size"].clip(upper=9)),
+            # Row U7 (u1-draft-7): the observations' families by what the
+            # PSID pension section gives (counts only; no amount).
+            "employer_dc": _employer_dc_counts(inputs, int(wave), rows),
         }
     summary["component_receipt_counts"] = receipt
     return summary

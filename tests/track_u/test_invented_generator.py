@@ -325,3 +325,100 @@ def test_the_invented_cohort_is_checked_by_rebuilding(staged):
     object.__setattr__(forged, "provenance", cohort.provenance)
     with pytest.raises(ValueError, match="observations differ"):
         invented.check_invented_cohort(forged)
+
+
+def test_employer_dc_frames_exercise_every_u7_path(staged, blocked):
+    """Row U7 (u1-draft-7): every wave carries invented pension-section
+    records in the reader's shape, their balances come from the reader's
+    rule, and the invented families exercise every U7 path (INVENTED)."""
+
+    from populace_dynamics.data import employer_dc
+
+    for inputs in (staged, blocked):
+        assert sorted(inputs.employer_dc) == list(age67.WAVES)
+    counts = dict.fromkeys(employer_dc.BALANCE_COLUMNS, 0)
+    for wave, frame in staged.employer_dc.items():
+        income = staged.family_income[wave]
+        assert sorted(frame["interview"]) == sorted(income["interview"])
+        concepts = list(employer_dc.employer_dc_variables(wave))
+        assert list(frame.columns) == [
+            "wave",
+            *concepts,
+            *employer_dc.BALANCE_COLUMNS,
+        ]
+        rebuilt = employer_dc.employer_dc_balances(frame[concepts], wave)
+        for column in employer_dc.BALANCE_COLUMNS:
+            assert (rebuilt[column] == frame[column]).all(), column
+            counts[column] += int((frame[column] > 0).sum())
+    for column in (
+        "employer_dc_current",
+        "employer_dc_previous",
+        "employer_dc_unreported",
+        "employer_dc_ira_rollover_items",
+        "employer_dc_off_route_items",
+    ):
+        assert counts[column] > 0, column
+    # the codebooks' routes: an account under a plan of DK type counts, and
+    # a "both" plan's account also recorded in the account items does not
+    routes = {"dk_counted": 0, "both_duplicate_excluded": 0}
+    for wave, frame in staged.employer_dc.items():
+        codes = employer_dc.plan_type_codes(wave)
+        dk = (frame["head_prev1_type"] == codes["previous_dk"]) & (
+            frame["head_prev1_dc_amount"] > 0
+        )
+        routes["dk_counted"] += int((dk & (frame["employer_dc"] > 0)).sum())
+        duplicate = (frame["head_prev1_type"] == codes["previous_both"]) & (
+            frame["head_prev1_dc_amount"] > 0
+        )
+        assert (
+            frame.loc[duplicate, "employer_dc"]
+            == frame.loc[duplicate, "head_prev1_combo_amount"]
+            + frame.loc[duplicate, "wife_prev2_dc_amount"]
+        ).all()
+        routes["both_duplicate_excluded"] += int(duplicate.sum())
+    assert routes["dk_counted"] > 0
+    assert routes["both_duplicate_excluded"] > 0
+    # the frames enter the input digest: without them it changes
+    bare = dataclasses.replace(staged, employer_dc={})
+    assert age67.input_frames_sha256(bare) != age67.input_frames_sha256(staged)
+
+
+def test_income_rows_attach_the_family_balance(staged):
+    from populace_dynamics.data import employer_dc
+
+    cohort = age67.build_age67_cohort(staged)
+    rows = age67.income_rows(cohort, staged)
+    assert set(employer_dc.BALANCE_COLUMNS) <= set(rows.columns)
+    for wave, group in rows.groupby("wave"):
+        frame = staged.employer_dc[int(wave)].set_index("interview")
+        expected = frame.loc[group["interview"].astype(int), "employer_dc"]
+        assert (group["employer_dc"].to_numpy() == expected.to_numpy()).all()
+    assert (rows["employer_dc"] > 0).any()
+    # inputs without employer DC frames attach nothing (U7 then refuses)
+    # (caller frames: the invented label refuses frames it did not make)
+    bare = dataclasses.replace(staged, employer_dc={}, provenance={})
+    bare_rows = age67.income_rows(age67.build_age67_cohort(bare), bare)
+    assert "employer_dc" not in bare_rows.columns
+    # a wave or a family missing from the frames is refused
+    missing_wave = dataclasses.replace(
+        staged,
+        provenance={},
+        employer_dc={w: f for w, f in staged.employer_dc.items() if w != 2013},
+    )
+    with pytest.raises(ValueError, match="none for this wave"):
+        age67.income_rows(age67.build_age67_cohort(missing_wave), missing_wave)
+    first = int(rows.loc[rows["wave"] == 2009, "interview"].iloc[0])
+    missing_family = dataclasses.replace(
+        staged,
+        provenance={},
+        employer_dc={
+            **staged.employer_dc,
+            2009: staged.employer_dc[2009][
+                staged.employer_dc[2009]["interview"] != first
+            ],
+        },
+    )
+    with pytest.raises(ValueError, match="no employer DC record"):
+        age67.income_rows(
+            age67.build_age67_cohort(missing_family), missing_family
+        )

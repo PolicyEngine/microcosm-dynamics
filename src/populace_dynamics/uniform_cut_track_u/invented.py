@@ -63,6 +63,22 @@ for item), as the staged PSID does since the specification's u1-draft-6
 and adjudicated 2026-09-25); without it those waves carry the reader's
 refusal, which exercises the fallback rule's blocked path.
 
+Row U7 (u1-draft-7): every wave carries the PSID pension section's
+employer DC items in the reader's shape
+(:func:`populace_dynamics.data.employer_dc.read_employer_dc`), set by
+family type and index without further random draws, so every other frame
+is unchanged: working couples with a current-job account (one with a
+spouse's account reported as DK); retired couples with a previous
+employer's account left to accumulate, one rolled over into an IRA
+(excluded: WEALTH1 holds IRAs), a "both" plan's account (whose same
+amount also appears in the account items, off the codebooks' route and
+excluded), an amount under a plan of formula type (off the route,
+excluded), an amount refused (counted as zero) and an account under a
+plan of DK type (on the route, counted); and singles with a small
+account, some with negative WEALTH1.  The U7 balances come from the
+reader's own rule
+(:func:`~populace_dynamics.data.employer_dc.employer_dc_balances`).
+
 The threshold table (:func:`invented_poverty_thresholds`) is INVENTED
 too: round numbers in the shape of the Census tables, not Census values.
 The dry run keeps it, because the invented near-threshold singles are
@@ -87,7 +103,7 @@ import numpy as np
 import pandas as pd
 
 from populace_dynamics.cohorts import age67
-from populace_dynamics.data import family_income
+from populace_dynamics.data import employer_dc, family_income
 from populace_dynamics.estimates import adjusted_poverty as ap
 
 __all__ = [
@@ -1356,6 +1372,144 @@ def _wealth_frame(families: list[dict[str, Any]], wave: int) -> pd.DataFrame:
     return frame.reset_index(drop=True)
 
 
+#: INVENTED employer DC amounts in 2004 dollars (grown like wealth).
+_DC_CURRENT = 30_000.0
+_DC_PREVIOUS = 20_000.0
+_DC_ROLLED = 35_000.0
+_DC_BOTH = 9_000.0
+_DC_SPOUSE = 6_000.0
+_DC_FORMULA = 15_000.0
+_DC_SMALL = 3_000.0
+_DC_DK = 12_000.0
+
+
+def _employer_dc_items(
+    family: Mapping[str, Any], wave: int
+) -> dict[str, tuple[str, int]]:
+    """The invented P-section entries of one family: ``{stem: (kind, $)}``.
+
+    ``stem`` names the person and item (``head_current``,
+    ``head_prev1_dc``, ``wife_prev2_dc``, ``head_prev1_combo`` ...);
+    ``kind`` is the plan type key of :func:`populace_dynamics.data.
+    employer_dc.plan_type_codes` and the disposition, and the amount is
+    in the wave's dollars (or a DK/NA code).
+    """
+
+    kind, index = str(family["type"]), int(family["index"])
+    growth = (1.0 + _WEALTH_GROWTH) ** (wave - 2005)
+
+    def dollars(amount: float) -> int:
+        return int(round(amount * growth))
+
+    na8 = employer_dc.amount_codes(employer_dc.AMOUNT_WIDTHS["dc_amount"])
+    dk9 = employer_dc.amount_codes(employer_dc.AMOUNT_WIDTHS["current_amount"])
+    items: dict[str, tuple[str, int]] = {}
+    if kind == "working_couple":
+        items["head_current"] = (
+            "current_account",
+            dollars(_DC_CURRENT + 4_000.0 * (index % 5)),
+        )
+        if index % 4 == 0:
+            items["wife_current"] = ("current_both", dk9["dk"])
+    elif kind == "retired_couple":
+        pattern = index % 6
+        if pattern == 0:
+            items["head_prev1_dc"] = (
+                "previous_account:left",
+                dollars(_DC_PREVIOUS + 1_000.0 * (index % 7)),
+            )
+        elif pattern == 1:
+            items["head_prev1_dc"] = (
+                "previous_account:ira",
+                dollars(_DC_ROLLED),
+            )
+        elif pattern == 2:
+            items["head_prev1_combo"] = (
+                "previous_both:left",
+                dollars(_DC_BOTH),
+            )
+            # the same account again in the account items, which the
+            # codebooks do not route to a "both" plan (excluded)
+            items["head_prev1_dc"] = (
+                "previous_both:left",
+                dollars(_DC_BOTH),
+            )
+            items["wife_prev2_dc"] = (
+                "previous_account:left",
+                dollars(_DC_SPOUSE),
+            )
+        elif pattern == 3:
+            items["head_prev1_dc"] = (
+                "previous_formula:left",
+                dollars(_DC_FORMULA),
+            )
+        elif pattern == 4:
+            items["head_prev1_dc"] = ("previous_account:left", na8["na"])
+        else:
+            # a plan whose type the respondent did not know: the codebooks
+            # route it to the account items (counted)
+            items["head_prev1_dc"] = (
+                "previous_dk:left",
+                dollars(_DC_DK),
+            )
+    elif kind in ("negative_wealth_single", "near_threshold_single"):
+        if index % (2 if kind == "negative_wealth_single" else 5) == 0:
+            items["head_prev1_dc"] = (
+                "previous_account:left",
+                dollars(_DC_SMALL),
+            )
+    return items
+
+
+def _employer_dc_raw_row(
+    family: Mapping[str, Any], wave: int
+) -> dict[str, int]:
+    """One family's invented P-section record (codes and amounts)."""
+
+    row: dict[str, int] = dict.fromkeys(
+        employer_dc.employer_dc_variables(wave), 0
+    )
+    row["interview"] = _interview(family, wave)
+    members = _in_family(family, wave)
+    has_wife = any(rel in _SPOUSE_CODES for _, rel in members)
+    codes = employer_dc.plan_type_codes(wave)
+    dispositions = {
+        "left": employer_dc.COUNTED_DISPOSITION,
+        "ira": employer_dc.EXCLUDED_IRA_DISPOSITION,
+    }
+    for stem, (kind, amount) in _employer_dc_items(family, wave).items():
+        if stem.startswith("wife") and not has_wife:
+            continue
+        if stem.endswith("_current"):
+            row[f"{stem}_type"] = codes[kind]
+            row[f"{stem}_amount"] = amount
+            continue
+        plan_kind, disposition = kind.split(":")
+        person_plan = stem.rsplit("_", 1)[0]
+        row[f"{person_plan}_type"] = codes[plan_kind]
+        row[f"{stem}_disposition"] = dispositions[disposition]
+        row[f"{stem}_amount"] = amount
+    return row
+
+
+def _employer_dc_frame(
+    families: list[dict[str, Any]], wave: int
+) -> pd.DataFrame:
+    """The invented employer DC frame of a wave, in the reader's shape."""
+
+    raw = pd.DataFrame(
+        [
+            _employer_dc_raw_row(family, wave)
+            for family in families
+            if _in_family(family, wave)
+        ]
+    )
+    raw = raw[list(employer_dc.employer_dc_variables(wave))].astype("int64")
+    frame = employer_dc.employer_dc_balances(raw, wave)
+    frame.insert(0, "wave", wave)
+    return frame.reset_index(drop=True)
+
+
 def _earnings_frame(families: list[dict[str, Any]]) -> pd.DataFrame:
     rows = []
     for family in families:
@@ -1478,6 +1632,9 @@ def invented_age67_inputs(
             wave: _wealth_frame(families, wave) for wave in wealth_waves
         },
         wealth_refusals=refusals,
+        employer_dc={
+            wave: _employer_dc_frame(families, wave) for wave in age67.WAVES
+        },
     )
     return dataclasses.replace(
         inputs,
