@@ -107,6 +107,7 @@ def test_invented_chain_runs_end_to_end():
         data_provenance="invented",
         upstream_spec=adjusted.attrs["spec"],
         pending_decisions=[d.as_dict() for d in ap.pending_decisions()],
+        design=inputs.design,
     )
     assert result["labels"][0] == ut.INVENTED_DATA_LABEL
     cells = {entry["cell"]: entry for entry in result["cells"]}
