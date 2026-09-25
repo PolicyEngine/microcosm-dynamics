@@ -6,10 +6,11 @@ families, income, Social Security, SSI, wealth, weights and design
 variables all invented), run through the real age-67 builder, income
 rows, income concept and tabulation for every registered row, with the
 F17 diagnostics.  The poverty thresholds are INVENTED as well (round
-numbers in the Census table shape): the Census thresholds are not
-captured (cos decision d194).  The other parameters are the committed
-ones: the NCHS 2000 and SSA 2004 life tables and the SSI capture.  No
-PSID file is opened and no comparator value is read.
+numbers in the Census table shape), because the invented near-threshold
+singles are placed against them; the committed Census capture (cos
+decision d194) is loaded only to record its pin, not used.  The other parameters are
+the committed ones: the NCHS 2000 and SSA 2004 life tables and the SSI
+capture.  No PSID file is opened and no comparator value is read.
 
 The invented generator gives waves 2005 and 2007 invented wealth, as if
 the PSID wealth supplements were staged, so U0's five birth years run
@@ -17,8 +18,9 @@ end to end; the real supplements are not staged (cos decision d189).  The
 checks record what the real staging does today (the income rows refuse
 the blocked waves, and under the fallback rule U0-F becomes the headline
 while the rows that need 2005 or 2007 are reported as blocked with their
-counts) and that the registered-run guards refuse invented inputs and an
-uncaptured threshold table.
+counts), that the registered-run guards refuse invented inputs, and that
+the committed Census threshold capture loads under its pin while a
+threshold table without that pin is refused.
 
 Usage::
 
@@ -154,7 +156,27 @@ def checks(seed: int, params: runner.TrackUParameters) -> dict[str, Any]:
                 registration_pointer=_GUARD_POINTER,
             )
         ),
-        "census_thresholds_not_captured": _refusal(ap.load_poverty_thresholds),
+        "census_threshold_capture": _census_capture(params),
+    }
+
+
+def _census_capture(params: runner.TrackUParameters) -> dict[str, Any]:
+    """The committed Census capture loads under its pin (not used here),
+    and a registered run refuses this dry run's invented thresholds."""
+
+    thresholds = ap.load_poverty_thresholds()
+    return {
+        "loads_under_pin": thresholds.provenance["sha256"]
+        == ap.THRESHOLDS_SHA256,
+        "sha256": thresholds.provenance["sha256"],
+        "years": [
+            min(thresholds.weighted_average),
+            max(thresholds.weighted_average),
+        ],
+        "used_by_this_dry_run": False,
+        "registered_check_refuses_invented_thresholds": _refusal(
+            lambda: runner._check_parameters(params, ap.REGISTERED_REAL)
+        ),
     }
 
 
@@ -218,8 +240,9 @@ def results_markdown(result: dict[str, Any]) -> str:
         "if the PSID wealth supplements were staged; the real ones are "
         "not (see Checks).",
         "- Parameters: the committed NCHS 2000 and SSA 2004 life tables "
-        "and the committed SSI capture; **invented** thresholds (the Census "
-        "capture does not exist, cos decision d194).",
+        "and the committed SSI capture; **invented** thresholds (the "
+        "invented near-threshold singles are placed against them; the "
+        "committed Census capture is loaded only to record its pin).",
         "- Rows: "
         + ", ".join(
             f"{row_id} ({entry['status'].replace('_', ' ')})"
@@ -364,10 +387,19 @@ def results_markdown(result: dict[str, Any]) -> str:
         "- The registered path refuses these invented inputs: "
         f"{check['registered_guard_refuses_invented_inputs']['refused']} "
         f"(`{check['registered_guard_refuses_invented_inputs'].get('error')}`).",
-        "- The committed Census threshold capture does not exist, so the "
-        "registered run cannot start: "
-        f"{check['census_thresholds_not_captured']['refused']} "
-        f"(`{check['census_thresholds_not_captured'].get('error')}`).",
+        "- The committed Census threshold capture loads under its pin "
+        f"(`{check['census_threshold_capture']['sha256'][:12]}…`, income "
+        f"years {check['census_threshold_capture']['years'][0]}–"
+        f"{check['census_threshold_capture']['years'][1]}): "
+        f"{check['census_threshold_capture']['loads_under_pin']}; the "
+        "registered parameter check refuses this dry run's invented "
+        "thresholds: "
+        + str(
+            check["census_threshold_capture"][
+                "registered_check_refuses_invented_thresholds"
+            ]["refused"]
+        )
+        + ".",
         "",
         "## Pending decisions",
         "",
