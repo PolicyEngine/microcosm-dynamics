@@ -51,19 +51,31 @@ def _section(text: str, number: str, following: str) -> str:
 
 def test_block_identity_and_status(block):
     assert block["specification"] == "boomers2004_uniform_cut_exercise2"
-    assert block["version"] == "u1-draft-5"
+    assert block["version"] == "u1-draft-6"
     assert block["status"] == "draft_for_referee"
-    assert block["claim_class"]["awaiting"] == "d189"
+    # Max ruled on exercise 2 (cos decision d189, 2026-09-24): the claim
+    # class is decided and no longer awaited
+    assert block["claim_class"]["decided"] == "d189"
+    assert "awaiting" not in block["claim_class"]
+    assert block["claim_class"]["class"] == (
+        "track_u_psid_realized_measurement_not_a_projection"
+    )
     assert block["acceptance_rule"] is None
     assert block["labels"] == list(ap.OUTPUT_LABELS)
-    assert "row_u7_not_built" in block["blocked_by"]
+    # u1-draft-6: the supplements are read and d189 is decided, so only
+    # the registration and row U7 still block
+    assert block["blocked_by"] == [
+        "issue_42_registration_absent",
+        "row_u7_not_built",
+    ]
 
 
 def test_status_line_does_not_claim_ratification(text):
     status = text.split("- **Specification:**")[0]
     assert "draft for the referee" in status
     assert "Nothing here is ratified" in status
-    assert "`u1-draft-5`" in text.split("- **Plan item:**")[0]
+    assert "`u1-draft-6`" in text.split("- **Plan item:**")[0]
+    assert "cos decision d189, decided" in " ".join(status.split())
     assert "Two" in status and "referee passes are recorded" in status
 
 
@@ -132,13 +144,24 @@ def test_population_matches_the_builder(block):
         assert entry["income_year"] == int(wave) - 1
         assert entry["weight"] == layout.weight_variable
         assert entry["family_unit_id"] == layout.family_unit_variable
+        # u1-draft-6: every wave has WEALTH1, the supplement waves from
+        # the PSID wealth supplements joined by their family ID
+        assert entry["wealth1"] == (
+            family_income.wealth_variables(int(wave))["wealth1"][0]
+        )
         if int(wave) in family_income.WEALTH_WAVES:
-            assert entry["wealth1"] == (
-                family_income.wealth_variables(int(wave))["wealth1"][0]
-            )
+            assert entry["wealth_source"] == "family_file"
         else:
-            assert entry["wealth1"] is None
             assert int(wave) in family_income.WEALTH_SUPPLEMENT_WAVES
+            assert entry["wealth_source"] == f"WLTH{wave}"
+            assert f"WLTH{wave}.txt" in (
+                family_income.WEALTH_SUPPLEMENT_SHA256[int(wave)]
+            )
+            assert entry["wealth_join"] == (
+                family_income.wealth_supplement_variables(int(wave))[
+                    "interview"
+                ][0]
+            )
     assert population["design"] == {"stratum": "ER31996", "cluster": "ER31997"}
 
 
@@ -147,6 +170,11 @@ def test_headline_rule_matches_the_code(block):
     assert headline["rule"] == track_u_rows.HEADLINE_RULE
     assert headline["fallback_row"] == track_u_rows.FALLBACK_ROW
     assert headline["awaiting"]
+    # with the supplements staged and adjudicated the rule gives U0
+    assert headline["staged_psid_headline"] == track_u_rows.PRIMARY_ROW
+    assert "decision 3, the downloads, is decided: d189" in (
+        headline["awaiting"]
+    )
     assert block["population"]["primary_row"] == track_u_rows.PRIMARY_ROW
     fallback = age67.observation_plan(age67.Age67Spec(row="U0-F"))
     assert sorted({b for b, _, _, _ in fallback}) == list(
@@ -305,7 +333,7 @@ def test_every_choice_awaiting_max_is_awaited_in_the_block(block):
     awaiting Max's confirmation of the scorecard's "from 2004" wording.
     """
 
-    where = {"ssi_rule": "ssi.awaiting", "cut_start_year": "cut.awaiting"}
+    where = {"cut_start_year": "cut.awaiting"}
     awaiting_max = {
         item.field
         for decisions in (
@@ -325,7 +353,12 @@ def test_every_choice_awaiting_max_is_awaited_in_the_block(block):
     ]
     assert "decision 8" in decision.awaiting
     assert "decision 8" in block["cut"]["awaiting"]
-    assert "d189" in block["ssi"]["awaiting"]
+    # d189 decided the SSI rule and the claim class (2026-09-24): neither
+    # is awaited any more
+    assert "ssi.awaiting" not in found
+    assert "claim_class.awaiting" not in found
+    assert block["ssi"]["decided"] == "d189"
+    assert block["ssi"]["rule"] == ap.AdjustedPovertySpec().ssi_rule
 
 
 def test_rows_name_real_alternatives(block):
@@ -425,9 +458,24 @@ def test_pending_decisions_are_listed_in_the_text(text):
     ssi = next(
         item for item in ap.pending_decisions() if item.field == "ssi_rule"
     )
-    assert "d189" in ssi.awaiting
-    assert "offset for existing recipients (default)" in section
+    assert ap.D189_RULING in ssi.default_basis
     flat = " ".join(section.split())
+    assert "Decided by Max (cos decision d189, 2026-09-24)" in flat
+    assert "offset for existing recipients (Max's ruling" in flat
+    # the items still open after d189, stated exactly
+    still_open = flat.split("Still awaiting Max")[1].split(
+        "The Census threshold files"
+    )[0]
+    assert "these six remain open after d189" in still_open
+    for item in (
+        "decision 2 (",
+        "decision 4 (",
+        "decision 6 (",
+        "decision 7 (",
+        "decision 8 (",
+        "the fallback rule of §11",
+    ):
+        assert item in still_open, item
     for phrase in (
         "retirement-account income (remove the head's)",
         "farm asset share (0.5",
@@ -464,7 +512,7 @@ def test_referee_passes_are_recorded(block, text):
     assert second["object_version"] == "u1-draft-4"
     assert second["object_commit"] == "37a94ea2"
     assert second["required_changes"] == 9
-    assert second["applied_in"] == block["version"]
+    assert second["applied_in"] == "u1-draft-5"
     section = _section(text, "17", "18")
     for entry in (first, second):
         assert re.fullmatch(r"[0-9a-f]{64}", entry["sha256"])

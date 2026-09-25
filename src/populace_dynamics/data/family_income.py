@@ -9,17 +9,18 @@ replaces by an annuity) and its wealth excluding home equity (WEALTH1).
 This module reads those items from the staged PSID family files.
 
 Scope, verified 2026-09-24 against the staged setup files (``.sps``
-labels) and the family codebooks:
+labels) and the family codebooks, and 2026-09-25 for the 2005 and 2007
+wealth supplements:
 
-========  ============  ===============================  ================
+========  ============  ===============================  =================
 Wave      Income year   Income components (this reader)  WEALTH1
-========  ============  ===============================  ================
-2005      2004          ER25002-ER28039 (81 items)       not in the file
-2007      2006          ER36002-ER41029 (81 items)       not in the file
+========  ============  ===============================  =================
+2005      2004          ER25002-ER28039 (81 items)       S716 (WLTH2005)
+2007      2006          ER36002-ER41029 (81 items)       S816 (WLTH2007)
 2009      2008          ER42002-ER46935 (81 items)       ER46968
 2011      2010          ER47302-ER52396 (81 items)       ER52392
 2013      2012          ER53002-ER58152 (85 items)       ER58209
-========  ============  ===============================  ================
+========  ============  ===============================  =================
 
 **Income.** Every wave carries the PSID-generated family income detail:
 head and wife labor income; head (and wife) farm income and the head's
@@ -54,13 +55,28 @@ composites (the 2009 documentation: the wealth file "which has been
 released in prior waves as a supplement is now part of the 2009 Family
 File (ER46936- ER46971)"). The 2005 documentation says "Wealth composite
 variables remain in a separate data file within the Data Center"; the
-staged 2005 and 2007 setup files carry no label containing ``WEALTH``.
-Those supplement files are **not staged** under the PSID data directory,
-so :func:`read_family_wealth` refuses waves 2005 and 2007 with
-:class:`WealthSupplementNotStagedError`, naming the missing files. The
-codebooks define WEALTH1 as the sum of seven asset values net of debts
-(2009: one "other debt" item; 2011: five debt types; 2013: farm/business
-and real-estate debt split out plus six debt types). The reader keeps the
+staged 2005 and 2007 family setup files carry no label containing
+``WEALTH``. Those waves' composites come from the PSID supplemental
+wealth files, Release 2 (March 2011): ``WLTH2005`` (8,002 families) and
+``WLTH2007`` (8,289), downloaded by Max from the PSID Data Center (cos
+decision d189) and staged under ``<PSID data dir>/wealth/<wave>/``
+(``psid-data/wealth/SHA256SUMS`` lists the files). Their labels were
+adjudicated 2026-09-25 against the ``.sps``, ``.sas`` and ``.do`` setup
+files and the supplement codebooks (``wlth2005_codebook.pdf``,
+``wlth2007_codebook.pdf``): the family ID (S701, S801) is "the 2005 [2007]
+interview number", which joins the wave's family-file interview number
+one to one; WEALTH1 (S716, S816) is "constructed as sum of values of
+seven asset types (S703, S705, S709, S711, S713, S715, S719) net of debt
+value (S707)" (2007: the S8 items), the 2009 family-file definition item
+for item; every accuracy flag is "Accuracy code for imputation" with 0
+"Not Imputed" and 1 "Imputed". :data:`WEALTH_SUPPLEMENT_SHA256` pins the
+adjudicated setup and data files; :func:`read_family_wealth` refuses a
+supplement that is not staged (:class:`WealthSupplementNotStagedError`)
+or whose files are not the adjudicated ones
+(:class:`WealthSupplementNotAdjudicatedError`). The codebooks define
+WEALTH1 as the sum of seven asset values net of debts (2005-2009: one
+"other debt" item; 2011: five debt types; 2013: farm/business and
+real-estate debt split out plus six debt types). The reader keeps the
 components so :func:`reconcile_wealth1` can check the identity.
 
 Discipline (as :mod:`populace_dynamics.data.social_security_income` and
@@ -83,6 +99,7 @@ threshold.
 
 from __future__ import annotations
 
+import hashlib
 import re
 from collections.abc import Mapping
 from pathlib import Path
@@ -106,6 +123,7 @@ __all__ = [
     "WEALTH1_ASSETS",
     "WEALTH_SUPPLEMENT_WAVES",
     "WEALTH_WAVES",
+    "WEALTH_SUPPLEMENT_SHA256",
     "WealthSupplementNotAdjudicatedError",
     "WealthSupplementNotStagedError",
     "income_variables",
@@ -113,7 +131,9 @@ __all__ = [
     "read_family_wealth",
     "reconcile_family_income",
     "reconcile_wealth1",
+    "wealth_supplement_join",
     "wealth_supplement_status",
+    "wealth_supplement_variables",
     "wealth_variables",
 ]
 
@@ -122,8 +142,9 @@ __all__ = [
 INCOME_WAVES: tuple[int, ...] = (2005, 2007, 2009, 2011, 2013)
 #: Waves whose family file carries the imputed wealth composites.
 WEALTH_WAVES: tuple[int, ...] = (2009, 2011, 2013)
-#: Waves whose wealth composites sit in a separate PSID supplement file
-#: that is not staged (plan section 3, "Wealth staging").
+#: Waves whose wealth composites sit in a separate PSID supplemental
+#: wealth file (WLTH2005, WLTH2007; plan section 3, "Wealth staging"),
+#: staged under ``<PSID data dir>/wealth/<wave>/`` and adjudicated here.
 WEALTH_SUPPLEMENT_WAVES: tuple[int, ...] = (2005, 2007)
 
 #: Adjudicated family-file income variables per wave, each with its exact
@@ -826,6 +847,131 @@ _WEALTH_VARS: dict[int, dict[str, tuple[str, str]]] = {
     },
 }
 
+#: Adjudicated wealth-supplement variables (WLTH2005 and WLTH2007, Release
+#: 2), each with its exact label: verified 2026-09-25 against the staged
+#: ``.sps``, ``.sas`` and ``.do`` setup files (which agree on every name,
+#: label and column) and the supplement codebooks.  The wealth concepts
+#: are the 2009 family file's, item for item (the 2005 documentation's
+#: nine categories: W11 S703, W28 S705, W39 S707, W2 S709, W16 S711, W6
+#: S713, W34 S715, W22 S719 and home equity S720; 2007: the S8 items).
+_SUPPLEMENT_WEALTH_VARS: dict[int, dict[str, tuple[str, str]]] = {
+    2005: {
+        "wealth1": ("S716", "IMP WEALTH W/O EQUITY (WEALTH1) 05"),
+        "wealth1_acc": ("S716A", "ACC WEALTH W/O EQUITY (WEALTH1) 05"),
+        "wealth2": ("S717", "IMP WEALTH W/ EQUITY (WEALTH2) 05"),
+        "home_equity": ("S720", "IMP VALUE HOME EQUITY 05"),
+        "vehicles": ("S713", "IMP VALUE VEHICLES (W6) 05"),
+        "checking_saving": ("S705", "IMP VAL CHECKING/SAVING (W28) 05"),
+        "stocks": ("S711", "IMP VALUE STOCKS (W16) 05"),
+        "other_assets": ("S715", "IMP VALUE OTH ASSETS (W34) 05"),
+        "ira_annuity": ("S719", "IMP VALUE ANNUITY/IRA (W22) 05"),
+        "farm_business": ("S703", "IMP VALUE FARM/BUS (W11) 05"),
+        "other_real_estate": ("S709", "IMP VAL OTH REAL ESTATE (W2) 05"),
+        "other_debt": ("S707", "IMP VALUE OTH DEBT (W39) 05"),
+    },
+    2007: {
+        "wealth1": ("S816", "IMP WEALTH W/O EQUITY (WEALTH1) 07"),
+        "wealth1_acc": ("S816A", "ACC WEALTH W/O EQUITY (WEALTH1) 07"),
+        "wealth2": ("S817", "IMP WEALTH W/ EQUITY (WEALTH2) 07"),
+        "home_equity": ("S820", "IMP VALUE HOME EQUITY 07"),
+        "vehicles": ("S813", "IMP VALUE VEHICLES (W6) 07"),
+        "checking_saving": ("S805", "IMP VAL CHECKING/SAVING (W28) 07"),
+        "stocks": ("S811", "IMP VALUE STOCKS (W16) 07"),
+        "other_assets": ("S815", "IMP VALUE OTH ASSETS (W34) 07"),
+        "ira_annuity": ("S819", "IMP VALUE ANNUITY/IRA (W22) 07"),
+        "farm_business": ("S803", "IMP VALUE FARM/BUS (W11) 07"),
+        "other_real_estate": ("S809", "IMP VAL OTH REAL ESTATE (W2) 07"),
+        "other_debt": ("S807", "IMP VALUE OTH DEBT (W39) 07"),
+    },
+}
+#: The supplement's keys: the release number (code 2, "Release 2: March,
+#: 2011", the release whose labels are adjudicated here) and the family
+#: ID, which the codebook defines as the wave's interview number ("2005
+#: Interview Number"; "The values for this variable represent the 2005
+#: interview number") and which joins the family file's interview number.
+_SUPPLEMENT_KEYS: dict[int, dict[str, tuple[str, str]]] = {
+    2005: {
+        "release": ("S700", "2005 WEALTH FILE RELEASE NUMBER"),
+        "interview": ("S701", "2005 FAMILY ID"),
+    },
+    2007: {
+        "release": ("S800", "2007 WEALTH FILE RELEASE NUMBER"),
+        "interview": ("S801", "2007 FAMILY ID"),
+    },
+}
+#: The accuracy flags of WEALTH2, home equity and every WEALTH1 component
+#: (each the variable after its amount, "Accuracy code for imputation":
+#: 0 "Not Imputed", 1 "Imputed").  They are label-verified and their
+#: codes checked at read time; the one-column flags interleave the
+#: nine-column amounts, so their codes also check the fixed-width
+#: alignment.  They are not returned: the family-file waves carry WEALTH1's
+#: flag only (``wealth1_acc``), and the frames keep one shape.
+_SUPPLEMENT_ACCURACY_VARS: dict[int, dict[str, tuple[str, str]]] = {
+    2005: {
+        "wealth2_acc": ("S717A", "ACC WEALTH W/ EQUITY (WEALTH2) 05"),
+        "home_equity_acc": ("S720A", "ACC VALUE HOME EQUITY 05"),
+        "vehicles_acc": ("S713A", "ACC VALUE VEHICLES (W6) 05"),
+        "checking_saving_acc": (
+            "S705A",
+            "ACC VAL CHECKING/SAVING (W28) 05",
+        ),
+        "stocks_acc": ("S711A", "ACC VALUE STOCKS (W16) 05"),
+        "other_assets_acc": ("S715A", "ACC VALUE OTH ASSETS (W34) 05"),
+        "ira_annuity_acc": ("S719A", "ACC VALUE ANNUITY/IRA (W22) 05"),
+        "farm_business_acc": ("S703A", "ACC VALUE FARM/BUS (W11) 05"),
+        "other_real_estate_acc": (
+            "S709A",
+            "ACC VAL OTH REAL ESTATE (W2) 05",
+        ),
+        "other_debt_acc": ("S707A", "ACC VALUE OTH DEBT (W39) 05"),
+    },
+    2007: {
+        "wealth2_acc": ("S817A", "ACC WEALTH W/ EQUITY (WEALTH2) 07"),
+        "home_equity_acc": ("S820A", "ACC VALUE HOME EQUITY 07"),
+        "vehicles_acc": ("S813A", "ACC VALUE VEHICLES (W6) 07"),
+        "checking_saving_acc": (
+            "S805A",
+            "ACC VAL CHECKING/SAVING (W28) 07",
+        ),
+        "stocks_acc": ("S811A", "ACC VALUE STOCKS (W16) 07"),
+        "other_assets_acc": ("S815A", "ACC VALUE OTH ASSETS (W34) 07"),
+        "ira_annuity_acc": ("S819A", "ACC VALUE ANNUITY/IRA (W22) 07"),
+        "farm_business_acc": ("S803A", "ACC VALUE FARM/BUS (W11) 07"),
+        "other_real_estate_acc": (
+            "S809A",
+            "ACC VAL OTH REAL ESTATE (W2) 07",
+        ),
+        "other_debt_acc": ("S807A", "ACC VALUE OTH DEBT (W39) 07"),
+    },
+}
+#: The adjudicated supplement files and their SHA-256 (the ``.sps`` setup
+#: and ``.txt`` data of Release 2, ASCII file date March 2, 2011, as
+#: staged 2026-09-24 and listed in ``psid-data/wealth/SHA256SUMS``; each
+#: is byte-identical to its member of the downloaded ``wlth<wave>.zip``).
+#: The labels above were adjudicated on these bytes, so a staged file with
+#: another name or hash is refused.
+WEALTH_SUPPLEMENT_SHA256: dict[int, dict[str, str]] = {
+    2005: {
+        "WLTH2005.sps": (
+            "88c7b1c4ad8cbdc4b3973b3130959a439c5c20b3a23d7bca343ee7c572a0f448"
+        ),
+        "WLTH2005.txt": (
+            "bc463db1725f881894dc3873e90532200b38e92fe023b08a4110d8eeb7818f1b"
+        ),
+    },
+    2007: {
+        "WLTH2007.sps": (
+            "a6278ac1206c805fd7cdc2bb578ae30e787bea38a8c492a4d30546475ca29663"
+        ),
+        "WLTH2007.txt": (
+            "93b2ffbd47f2e40061d23a30dc9bd974c51e5a4c43710cf9f9c4309246d00cec"
+        ),
+    },
+}
+#: The release code of the adjudicated supplements ("Release 2: March,
+#: 2011"; Release 1 had no accuracy flags or home-equity item).
+_SUPPLEMENT_RELEASE = 2
+
 #: Adjudicated accuracy flags of the Social Security, SSI and asset items
 #: (the variable after each amount in the layout; labels verified
 #: 2026-09-24).  Codes are carried raw: 0 is "Actual value" in the
@@ -1097,7 +1243,10 @@ OFUM_TRANSFER_COMPONENTS: tuple[str, ...] = (
 )
 #: Items whose codebook documents a loss or a negative balance
 #: ("Actual loss", "Actual amount of negative net worth", ...), checked
-#: 2026-09-24 against the 2005-2013 family codebooks. Every other amount
+#: 2026-09-24 against the 2005-2013 family codebooks and 2026-09-25
+#: against the 2005 and 2007 wealth-supplement codebooks (which document
+#: no negative value for other debt, W39, or annuities and IRAs, W22).
+#: Every other amount
 #: must be non-negative.
 MAY_BE_NEGATIVE: frozenset[str] = frozenset(
     {
@@ -1122,27 +1271,23 @@ MAY_BE_NEGATIVE: frozenset[str] = frozenset(
         "other_real_estate",
     }
 )
-#: The asset values WEALTH1 sums, per wave (codebook definitions of
-#: ER46968, ER52392 and ER58209).
+#: The seven asset values of WEALTH1 in the 2005-2011 files.
+_WEALTH1_SEVEN_ASSETS: tuple[str, ...] = (
+    "farm_business",
+    "checking_saving",
+    "other_real_estate",
+    "stocks",
+    "vehicles",
+    "other_assets",
+    "ira_annuity",
+)
+#: The asset values WEALTH1 sums, per wave (codebook definitions of S716,
+#: S816, ER46968, ER52392 and ER58209).
 WEALTH1_ASSETS: dict[int, tuple[str, ...]] = {
-    2009: (
-        "farm_business",
-        "checking_saving",
-        "other_real_estate",
-        "stocks",
-        "vehicles",
-        "other_assets",
-        "ira_annuity",
-    ),
-    2011: (
-        "farm_business",
-        "checking_saving",
-        "other_real_estate",
-        "stocks",
-        "vehicles",
-        "other_assets",
-        "ira_annuity",
-    ),
+    2005: _WEALTH1_SEVEN_ASSETS,
+    2007: _WEALTH1_SEVEN_ASSETS,
+    2009: _WEALTH1_SEVEN_ASSETS,
+    2011: _WEALTH1_SEVEN_ASSETS,
     2013: (
         "farm_business_asset",
         "checking_saving",
@@ -1155,6 +1300,8 @@ WEALTH1_ASSETS: dict[int, tuple[str, ...]] = {
 }
 #: The debts WEALTH1 nets out, per wave.
 WEALTH1_DEBTS: dict[int, tuple[str, ...]] = {
+    2005: ("other_debt",),
+    2007: ("other_debt",),
     2009: ("other_debt",),
     2011: (
         "credit_card_debt",
@@ -1176,7 +1323,13 @@ WEALTH1_DEBTS: dict[int, tuple[str, ...]] = {
 }
 
 #: Wave suffix carried by each wave's wealth labels.
-_WEALTH_LABEL_SUFFIX: dict[int, str] = {2009: "09", 2011: "11", 2013: "2013"}
+_WEALTH_LABEL_SUFFIX: dict[int, str] = {
+    2005: "05",
+    2007: "07",
+    2009: "09",
+    2011: "11",
+    2013: "2013",
+}
 #: Sentinel and code domains from the codebooks (2011: ER47316-ER47319).
 _AGE_NA = 999
 _NO_WIFE = 0
@@ -1195,7 +1348,13 @@ _NON_AMOUNT = frozenset(
         "n_children",
         "census_needs_standard",
         "wealth1_acc",
+        "release",
         *ACCURACY_CONCEPTS,
+        *(
+            concept
+            for table in _SUPPLEMENT_ACCURACY_VARS.values()
+            for concept in table
+        ),
     }
 )
 #: Reconciliation tolerance in dollars (reported alongside exact matches).
@@ -1227,21 +1386,41 @@ def income_variables(wave: int) -> dict[str, tuple[str, str]]:
 
 
 def wealth_variables(wave: int) -> dict[str, tuple[str, str]]:
-    """The adjudicated ``{concept: (variable, label)}`` wealth table."""
+    """The adjudicated ``{concept: (variable, label)}`` wealth table.
+
+    Waves 2009-2013 name family-file variables; waves 2005 and 2007 name
+    the wealth supplement's (the same concepts as 2009, item for item).
+    """
 
     wave = int(wave)
     if wave in WEALTH_SUPPLEMENT_WAVES:
-        raise WealthSupplementNotAdjudicatedError(
-            f"Wave {wave}: WEALTH1 is in a PSID wealth supplement file; no "
-            "label table has been adjudicated for it (see "
-            "read_family_wealth)."
-        )
+        return dict(_SUPPLEMENT_WEALTH_VARS[wave])
     if wave not in _WEALTH_VARS:
         raise ValueError(
             f"Wave {wave} is outside the resolved wealth waves "
-            f"{WEALTH_WAVES}."
+            f"{(*WEALTH_SUPPLEMENT_WAVES, *WEALTH_WAVES)}."
         )
     return dict(_WEALTH_VARS[wave])
+
+
+def wealth_supplement_variables(wave: int) -> dict[str, tuple[str, str]]:
+    """Every adjudicated variable of a wealth supplement, with its label.
+
+    The release number and family ID (``release``, ``interview``), the
+    wealth concepts of :func:`wealth_variables` and the accuracy flags of
+    WEALTH2, home equity and every WEALTH1 component (``<concept>_acc``).
+    """
+
+    wave = int(wave)
+    if wave not in WEALTH_SUPPLEMENT_WAVES:
+        raise ValueError(
+            f"Wave {wave} is not a supplement wave {WEALTH_SUPPLEMENT_WAVES}"
+        )
+    return {
+        **_SUPPLEMENT_KEYS[wave],
+        **_SUPPLEMENT_WEALTH_VARS[wave],
+        **_SUPPLEMENT_ACCURACY_VARS[wave],
+    }
 
 
 def _verify_table(
@@ -1264,7 +1443,13 @@ def _verify_table(
                 "have changed."
             )
         normalized = _normalized(labels[var])
-        if suffix_check == "income":
+        if suffix_check == "wave_prefix":
+            if not normalized.startswith(f"{wave} "):
+                raise ValueError(
+                    f"{wave} wealth supplement: label {normalized!r} does "
+                    f"not start with the wave {wave}."
+                )
+        elif suffix_check == "income":
             match = re.search(r"-((19|20)\d{2})$", normalized)
             if match and int(match.group(1)) != wave - 1:
                 raise ValueError(
@@ -1275,8 +1460,8 @@ def _verify_table(
             token = _WEALTH_LABEL_SUFFIX[wave]
             if not normalized.endswith(f" {token}"):
                 raise ValueError(
-                    f"family {wave}: wealth label {normalized!r} does not "
-                    f"end with the wave token {token!r}."
+                    f"{wave}: wealth label {normalized!r} does not end "
+                    f"with the wave token {token!r}."
                 )
 
 
@@ -1391,14 +1576,24 @@ def read_family_income(
     return frame.reset_index(drop=True)
 
 
+def _file_sha256(path: Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
 def wealth_supplement_status(
     wave: int, *, data_dir: Path | None = None
 ) -> dict[str, object]:
-    """Where a supplement wave's wealth file would be staged, and whether.
+    """Where a supplement wave's wealth file is staged, and whether it is
+    the adjudicated one.
 
-    The expected location is ``<PSID data dir>/wealth/<wave>/`` holding one
-    ``.sps`` setup and one ``.txt`` data file, the family-file staging
-    convention. Nothing is read.
+    The location is ``<PSID data dir>/wealth/<wave>/`` holding one ``.sps``
+    setup and one ``.txt`` data file (the family-file staging convention;
+    the other files Max staged beside them, the ``.sas`` and ``.do``
+    setups, the codebook and documentation PDFs and the zip, are not
+    read).  ``staged`` says whether exactly one of each is there;
+    ``sha256`` holds their hashes and ``adjudicated`` whether they are the
+    files :data:`WEALTH_SUPPLEMENT_SHA256` pins (same names, same bytes).
+    Only those two files are read, to hash them.
     """
 
     wave = int(wave)
@@ -1414,15 +1609,27 @@ def wealth_supplement_status(
     )
     sps = [name for name in files if name.lower().endswith(".sps")]
     txt = [name for name in files if name.lower().endswith(".txt")]
+    staged = len(sps) == 1 and len(txt) == 1
+    hashes = (
+        {name: _file_sha256(directory / name) for name in (*sps, *txt)}
+        if staged
+        else {}
+    )
+    pins = dict(WEALTH_SUPPLEMENT_SHA256[wave])
     return {
         "wave": wave,
         "expected_directory": str(directory),
         "files": files,
-        "staged": len(sps) == 1 and len(txt) == 1,
+        "staged": staged,
+        "sha256": hashes,
+        "adjudicated_sha256": pins,
+        "adjudicated": staged and hashes == pins,
     }
 
 
-def _refuse_supplement_wave(wave: int, data_dir: Path | None) -> None:
+def _check_supplement_premise(wave: int, data_dir: Path | None) -> None:
+    """The wave's family file must still carry no WEALTH composite."""
+
     sps_path, _ = family._family_paths(wave, data_dir)
     labels = psid.parse_sps_labels(sps_path)
     carriers = sorted(
@@ -1434,28 +1641,145 @@ def _refuse_supplement_wave(wave: int, data_dir: Path | None) -> None:
             f"{carriers[:4]}; the supplement premise of this reader no "
             "longer holds and the wave needs a label adjudication."
         )
+
+
+def _supplement_paths(wave: int, data_dir: Path | None) -> tuple[Path, Path]:
+    """The adjudicated supplement's ``.sps`` and ``.txt``, or a refusal."""
+
+    _check_supplement_premise(wave, data_dir)
     status = wealth_supplement_status(wave, data_dir=data_dir)
     if not status["staged"]:
         raise WealthSupplementNotStagedError(
             f"PSID {wave} wealth supplement not staged. The {wave} family "
             "file carries no WEALTH composite (no label contains 'WEALTH'); "
             f"PSID released the {wave} imputed wealth composites, including "
-            "WEALTH1, as a separate wealth supplement data file. Missing: "
-            f"one .sps setup file and one .txt data file of the {wave} "
-            f"wealth supplement under {status['expected_directory']} "
-            f"(found {status['files'] or 'no directory'}). The file is "
-            "login-gated at the PSID Data Center (simba.isr.umich.edu; "
-            "see psid-data/README.md) and must be downloaded by Max; its "
-            "exact PSID file name and ID were not verified. Nothing was "
-            "read."
+            "WEALTH1, as a separate supplemental wealth file. Missing: one "
+            f".sps setup file and one .txt data file of the {wave} wealth "
+            f"supplement under {status['expected_directory']} (found "
+            f"{status['files'] or 'no directory'}). The adjudicated files "
+            f"are {sorted(status['adjudicated_sha256'])} (Release 2, March "
+            f"2011, from wlth{wave}.zip), login-gated at the PSID Data "
+            "Center (simba.isr.umich.edu; see psid-data/README.md). "
+            "Nothing was read."
         )
-    raise WealthSupplementNotAdjudicatedError(
-        f"PSID {wave} wealth supplement files are staged at "
-        f"{status['expected_directory']} ({status['files']}), but no label "
-        "table has been adjudicated for them: verify the WEALTH1 label, "
-        "its components and the interview-number link, then add the wave "
-        "to this module's wealth tables. Nothing was read."
+    if not status["adjudicated"]:
+        raise WealthSupplementNotAdjudicatedError(
+            f"PSID {wave} wealth supplement files are staged at "
+            f"{status['expected_directory']} with SHA-256 "
+            f"{status['sha256']}, but the labels were adjudicated on "
+            f"{status['adjudicated_sha256']} (WEALTH_SUPPLEMENT_SHA256): "
+            "verify the WEALTH1 label, its components and the "
+            "interview-number link on these files, then update this "
+            "module's supplement tables and pins. Nothing else was read."
+        )
+    directory = Path(str(status["expected_directory"]))
+    names = sorted(status["adjudicated_sha256"])
+    sps = next(name for name in names if name.lower().endswith(".sps"))
+    txt = next(name for name in names if name.lower().endswith(".txt"))
+    return directory / sps, directory / txt
+
+
+def _family_interviews(wave: int, data_dir: Path | None) -> pd.Series:
+    """The wave's family-file interview numbers (label-verified)."""
+
+    sps_path, txt_path = family._family_paths(wave, data_dir)
+    labels = psid.parse_sps_labels(sps_path)
+    var, label = _INCOME_VARS[wave]["interview"]
+    _verify_table(
+        labels, {"interview": (var, label)}, wave, suffix_check="income"
     )
+    return _read_columns(sps_path, txt_path, [var], None)[var]
+
+
+def _join_counts(
+    supplement_ids: pd.Series, family_ids: pd.Series
+) -> dict[str, int]:
+    supplement = set(int(i) for i in supplement_ids)
+    families = set(int(i) for i in family_ids)
+    return {
+        "n_supplement_records": int(len(supplement_ids)),
+        "n_family_file_records": int(len(family_ids)),
+        "n_matched": len(supplement & families),
+        "n_supplement_only": len(supplement - families),
+        "n_family_file_only": len(families - supplement),
+    }
+
+
+def _read_supplement_wealth(
+    wave: int, data_dir: Path | None, nrows: int | None
+) -> pd.DataFrame:
+    sps_path, txt_path = _supplement_paths(wave, data_dir)
+    labels = psid.parse_sps_labels(sps_path)
+    keys = _SUPPLEMENT_KEYS[wave]
+    table = _SUPPLEMENT_WEALTH_VARS[wave]
+    accuracy = _SUPPLEMENT_ACCURACY_VARS[wave]
+    _verify_table(labels, keys, wave, suffix_check="wave_prefix")
+    _verify_table(labels, {**table, **accuracy}, wave, suffix_check="wealth")
+    every = {**keys, **table, **accuracy}
+    raw = _read_columns(
+        sps_path, txt_path, [var for var, _ in every.values()], nrows
+    )
+    frame = pd.DataFrame(
+        {concept: raw[var] for concept, (var, _) in every.items()}
+    )
+    context = f"{wave} wealth supplement"
+    releases = set(int(code) for code in pd.unique(frame["release"]))
+    if releases != {_SUPPLEMENT_RELEASE}:
+        raise ValueError(
+            f"{context}: release code(s) {sorted(releases)}; the labels were "
+            f"adjudicated on Release {_SUPPLEMENT_RELEASE} (March 2011)"
+        )
+    _check_amounts(frame, table, context)
+    for concept in ("wealth1_acc", *accuracy):
+        codes = set(int(code) for code in pd.unique(frame[concept]))
+        if not codes <= set(_WEALTH_ACC_CODES):
+            raise ValueError(
+                f"{context}: undocumented accuracy code(s) "
+                f"{sorted(codes - set(_WEALTH_ACC_CODES))} in {concept}"
+            )
+    if (frame["interview"] <= 0).any():
+        raise ValueError(f"{context}: non-positive family ID")
+    if frame["interview"].duplicated().any():
+        raise ValueError(f"{context}: duplicate family IDs")
+    counts = _join_counts(
+        frame["interview"], _family_interviews(wave, data_dir)
+    )
+    # The family ID is the wave's interview number (codebook); every
+    # supplement record must join a family-file record, and a complete
+    # read must cover every family.
+    if counts["n_supplement_only"] or (
+        nrows is None and counts["n_family_file_only"]
+    ):
+        raise ValueError(
+            f"{context}: the family ID does not join the {wave} family "
+            f"file's interview number one to one ({counts})"
+        )
+    return frame[["interview", *table]]
+
+
+def wealth_supplement_join(
+    wave: int, *, data_dir: Path | None = None
+) -> dict[str, int]:
+    """Counts of the supplement's join to its wave's family file.
+
+    The supplement's family ID (S701, S801) against the family file's
+    interview number (ER25002, ER36002): records on each side, matched,
+    and each side's unmatched.  Counts only; the supplement must be the
+    adjudicated one (as :func:`read_family_wealth` requires).
+    """
+
+    wave = int(wave)
+    if wave not in WEALTH_SUPPLEMENT_WAVES:
+        raise ValueError(
+            f"Wave {wave} is not a supplement wave {WEALTH_SUPPLEMENT_WAVES}"
+        )
+    sps_path, txt_path = _supplement_paths(wave, data_dir)
+    labels = psid.parse_sps_labels(sps_path)
+    keys = _SUPPLEMENT_KEYS[wave]
+    _verify_table(labels, keys, wave, suffix_check="wave_prefix")
+    var = keys["interview"][0]
+    ids = _read_columns(sps_path, txt_path, [var], None)[var]
+    return _join_counts(ids, _family_interviews(wave, data_dir))
 
 
 def read_family_wealth(
@@ -1466,39 +1790,45 @@ def read_family_wealth(
 ) -> pd.DataFrame:
     """Read one wave's label-verified imputed wealth composites.
 
-    Waves 2009, 2011 and 2013 come from the family file: one row per
-    family with ``wave``, ``interview``, ``wealth1`` (imputed wealth
-    excluding home equity), ``wealth1_acc`` (0 not imputed, 1 imputed),
-    ``wealth2``, ``home_equity`` and the WEALTH1 asset and debt components
-    of :data:`WEALTH1_ASSETS` and :data:`WEALTH1_DEBTS`.
+    One row per family with ``wave``, ``interview``, ``wealth1`` (imputed
+    wealth excluding home equity), ``wealth1_acc`` (0 not imputed, 1
+    imputed), ``wealth2``, ``home_equity`` and the WEALTH1 asset and debt
+    components of :data:`WEALTH1_ASSETS` and :data:`WEALTH1_DEBTS`.
 
-    Waves 2005 and 2007 are refused: :class:`WealthSupplementNotStagedError`
-    names the missing supplement files when they are not staged, and
-    :class:`WealthSupplementNotAdjudicatedError` refuses staged files that
-    have no adjudicated label table.
+    Waves 2009, 2011 and 2013 come from the family file.  Waves 2005 and
+    2007 come from the PSID wealth supplement staged under
+    ``<PSID data dir>/wealth/<wave>/``, keyed by its family ID (the wave's
+    interview number): :class:`WealthSupplementNotStagedError` when it is
+    not staged, :class:`WealthSupplementNotAdjudicatedError` when its
+    files are not the pinned ones (:data:`WEALTH_SUPPLEMENT_SHA256`).  The
+    supplement read also verifies the release number (Release 2), the
+    labels and codes of the accuracy flags of every component, and that
+    the family ID joins the family file's interview number one to one
+    (every supplement record, and on a complete read every family).
     """
 
     wave = int(wave)
     if wave in WEALTH_SUPPLEMENT_WAVES:
-        _refuse_supplement_wave(wave, data_dir)
-    table = wealth_variables(wave)
-    sps_path, txt_path = family._family_paths(wave, data_dir)
-    labels = psid.parse_sps_labels(sps_path)
-    interview_var, interview_label = _INCOME_VARS[wave]["interview"]
-    _verify_table(
-        labels,
-        {"interview": (interview_var, interview_label)},
-        wave,
-        suffix_check="income",
-    )
-    _verify_table(labels, table, wave, suffix_check="wealth")
-    names = [interview_var, *(var for var, _ in table.values())]
-    raw = _read_columns(sps_path, txt_path, names, nrows)
-    frame = pd.DataFrame({"interview": raw[interview_var]})
-    for concept, (var, _) in table.items():
-        frame[concept] = raw[var]
-    context = f"family {wave} wealth"
-    _check_amounts(frame, table, context)
+        frame = _read_supplement_wealth(wave, data_dir, nrows)
+    else:
+        table = wealth_variables(wave)
+        sps_path, txt_path = family._family_paths(wave, data_dir)
+        labels = psid.parse_sps_labels(sps_path)
+        interview_var, interview_label = _INCOME_VARS[wave]["interview"]
+        _verify_table(
+            labels,
+            {"interview": (interview_var, interview_label)},
+            wave,
+            suffix_check="income",
+        )
+        _verify_table(labels, table, wave, suffix_check="wealth")
+        names = [interview_var, *(var for var, _ in table.values())]
+        raw = _read_columns(sps_path, txt_path, names, nrows)
+        frame = pd.DataFrame({"interview": raw[interview_var]})
+        for concept, (var, _) in table.items():
+            frame[concept] = raw[var]
+        _check_amounts(frame, table, f"family {wave} wealth")
+    context = f"{wave} wealth"
     acc = set(int(code) for code in pd.unique(frame["wealth1_acc"]))
     if not acc <= set(_WEALTH_ACC_CODES):
         raise ValueError(
@@ -1507,6 +1837,7 @@ def read_family_wealth(
         )
     if frame["interview"].duplicated().any():
         raise ValueError(f"{context}: duplicate interview numbers")
+    frame = frame.copy()
     frame.insert(0, "wave", wave)
     return frame.reset_index(drop=True)
 

@@ -55,10 +55,13 @@ coordinate and the wave age can differ from the income-year age.
 
 Every family unit's income adds up exactly under the codebook identities
 (:func:`populace_dynamics.data.family_income.reconcile_family_income`),
-and WEALTH1 equals its assets less its debts in every wave.  Waves 2005
-and 2007 have no invented wealth unless ``supplement_waves_staged`` (the
-real supplements are not staged, cos decision d189); with it they carry
-invented wealth in the 2009 component layout.
+and WEALTH1 equals its assets less its debts in every wave.  With
+``supplement_waves_staged`` waves 2005 and 2007 carry invented wealth in
+the wealth supplements' component layout (the 2009 family file's, item
+for item), as the staged PSID does since the specification's u1-draft-6
+(the real supplements were downloaded under cos decision d189, staged
+and adjudicated 2026-09-25); without it those waves carry the reader's
+refusal, which exercises the fallback rule's blocked path.
 
 The threshold table (:func:`invented_poverty_thresholds`) is INVENTED
 too: round numbers in the shape of the Census tables, not Census values.
@@ -1303,8 +1306,7 @@ def _income_frame(families: list[dict[str, Any]], wave: int) -> pd.DataFrame:
 
 
 def _wealth_concepts(wave: int) -> list[str]:
-    layout = 2009 if wave in family_income.WEALTH_SUPPLEMENT_WAVES else wave
-    return list(family_income.wealth_variables(layout))
+    return list(family_income.wealth_variables(wave))
 
 
 def _wealth_row(family: Mapping[str, Any], wave: int) -> dict[str, Any]:
@@ -1313,19 +1315,18 @@ def _wealth_row(family: Mapping[str, Any], wave: int) -> dict[str, Any]:
         key: int(round(value * growth))
         for key, value in family["wealth"].items()
     }
-    layout = 2009 if wave in family_income.WEALTH_SUPPLEMENT_WAVES else wave
     row: dict[str, Any] = dict.fromkeys(_wealth_concepts(wave), 0)
     for concept in ("checking_saving", "stocks", "vehicles", "other_assets"):
         row[concept] = values[concept]
     row["ira_annuity"] = values["ira_annuity"]
-    if layout == 2013:
+    if wave == 2013:
         row["farm_business_asset"] = values["farm_business"]
         row["other_real_estate_asset"] = values["other_real_estate"]
     else:
         row["farm_business"] = values["farm_business"]
         row["other_real_estate"] = values["other_real_estate"]
     debt = values["unsecured_debt"]
-    if layout == 2011 or layout == 2013:
+    if wave in (2011, 2013):
         card = int(round(0.6 * debt))
         medical = int(round(0.2 * debt))
         row["credit_card_debt"] = card
@@ -1333,8 +1334,8 @@ def _wealth_row(family: Mapping[str, Any], wave: int) -> dict[str, Any]:
         row["family_loan_debt"] = debt - card - medical
     else:
         row["other_debt"] = debt
-    assets = sum(row[c] for c in family_income.WEALTH1_ASSETS[layout])
-    debts = sum(row[c] for c in family_income.WEALTH1_DEBTS[layout])
+    assets = sum(row[c] for c in family_income.WEALTH1_ASSETS[wave])
+    debts = sum(row[c] for c in family_income.WEALTH1_DEBTS[wave])
     row["wealth1"] = assets - debts
     row["home_equity"] = values["home_equity"]
     row["wealth2"] = row["wealth1"] + row["home_equity"]
@@ -1406,9 +1407,9 @@ def invented_age67_inputs(
     """INVENTED :class:`~populace_dynamics.cohorts.age67.Age67Inputs`.
 
     ``supplement_waves_staged`` adds invented wealth for waves 2005 and
-    2007 (as if the PSID wealth supplements were staged, in the 2009
-    component layout); without it those waves carry the reader's
-    refusal, as the real staging does today.
+    2007 in the wealth supplements' component layout (as the staged PSID
+    has since u1-draft-6); without it those waves carry the reader's
+    refusal, which exercises the fallback rule's blocked path.
     """
 
     if not isinstance(seed, int) or isinstance(seed, bool):
@@ -1457,9 +1458,9 @@ def invented_age67_inputs(
         if supplement_waves_staged
         else {
             wave: (
-                "WealthSupplementNotStagedError: INVENTED inputs mirror the "
-                f"real staging: the PSID {wave} wealth supplement is not "
-                "staged"
+                "WealthSupplementNotStagedError: INVENTED inputs exercise "
+                f"the fallback path: as if the PSID {wave} wealth "
+                "supplement were not staged"
             )
             for wave in family_income.WEALTH_SUPPLEMENT_WAVES
         }

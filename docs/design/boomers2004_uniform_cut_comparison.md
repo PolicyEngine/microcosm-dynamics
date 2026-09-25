@@ -2,27 +2,32 @@
 
 - **Status:** draft for the referee. Nothing here is ratified. Two
   referee passes are recorded (§17). The first was applied in
-  `u1-draft-4`; this draft applies the second, whose verdict was that the
-  draft is ratifiable after nine required changes (S1–S9, §17.3). An
-  independent review (2026-09-24) checked this draft's application of
-  them against their sources, the code and the tests; its corrections
-  are listed in §19. Max has not ruled on exercise 2 (cos decision
-  d189, open, default "yes to Track U with the proposed SSI rule;
-  downloads needed from Max") or on the fallback rule (§11). Every
-  choice that awaits him or the specification freeze is an explicit
-  parameter in the code with the recommended default, and §16 lists
-  them.
+  `u1-draft-4` and the second, whose verdict was that the draft is
+  ratifiable after nine required changes (S1–S9, §17.3), in
+  `u1-draft-5`; an independent review (2026-09-24) checked that
+  application against its sources, the code and the tests (§19). Max
+  ruled on exercise 2 on 2026-09-24 (cos decision d189, decided): "Yes to
+  Track U with the SSI offset rule for existing recipients", and he
+  downloaded the 2005 and 2007 PSID wealth supplements. This draft,
+  `u1-draft-6`, records that ruling (the claim class below; the SSI rule,
+  §8) and adjudicates and reads the supplements, which unblocks the 1937
+  and 1939 birth years (§3), so on the staged PSID U0 is the headline and
+  U0-F an alternative (§11). Max has not ruled on the fallback rule
+  itself (§11) or on plan decisions 2, 4, 6, 7 and 8 (§16). Every choice
+  that awaits him or the specification freeze is an explicit parameter
+  in the code with the recommended default, and §16 lists them.
 - **Specification:** `boomers2004_uniform_cut_exercise2`, version
-  `u1-draft-5`, drafted 2026-09-24. §19 is the changelog.
+  `u1-draft-6`, drafted 2026-09-25. §19 is the changelog.
 - **Plan item:** U1 of the Track U plan,
   `EVID/critical-path-uniform-cut-20260923.md` (§7 fields F1–F17, §8
   work items), where `EVID` =
   `~/microcosm-launch-evidence/dynasim-parity-20260909`. This document
   mirrors the structure of the exercise-1 specification,
   `docs/design/urban2010_cola_comparison.md`.
-- **Claim class (proposed, pending d189):** a realized-outcome
-  measurement on PSID persons at age 67, not a projection. It does not
-  test the Dynamics projection engine (plan, bottom line item 3).
+- **Claim class (decided, cos decision d189, 2026-09-24):** a
+  realized-outcome measurement on PSID persons at age 67, not a
+  projection; Max accepted Track U as exercise 2's first score. It does
+  not test the Dynamics projection engine (plan, bottom line item 3).
 - **Labels every output carries:** *PSID-realized outcomes (not a
   projection)*; *Python income concept (not Axiom)*; *mechanical
   incidence* (`adjusted_poverty.OUTPUT_LABELS`; the tabulation refuses
@@ -62,8 +67,14 @@
   with 0 genuine leaks and 0 unclassified tokens among the 1,103 numeric
   tokens it scanned. (The builder of this draft reported that, when it
   re-read the file, the verdict was already listed under "Cleared for
-  builders" but the changelog entry it cites was not yet there.) §18
-  lists what this draft read and what it did not verify.
+  builders" but the changelog entry it cites was not yet there.) For
+  `u1-draft-6` the builder read `RESTRICTED-FILES.md` first, then only
+  PSID material (the 2005 and 2007 wealth-supplement setup files,
+  codebooks and documentation) and the cos records of d189, d194, d279
+  and d280; it opened no page of the Report PDF, no comparator file and
+  nothing `RESTRICTED-FILES.md` restricts, and computed no income,
+  threshold assignment or poverty status on PSID data. §18 lists what
+  this draft read and what it did not verify.
 
 ## 1. Target
 
@@ -142,8 +153,8 @@ precision only from the cleared extract.
 | Second referee report `EVID/boomers2004-referee-2-20260924.md` (SHA-256 `2113ba9b…d5af2`) | §17.3 | Read in full; S1–S9 checked against their sources before they were applied |
 | PSID 1968 family-file codebook (`psid-data/family/1968/fam1968_codebook.pdf`) | The PSID's first income year, 1967 (V74, "1967 Income from Labor - HEAD"), for the lifetime-earnings omission (§9) | Read for that entry (its whole-sample frequency counts were seen and not used) |
 | Census Bureau, "Poverty measures" guidance page (census.gov, fetched 2026-09-24) | "Poverty status cannot be determined for people in: Institutional group quarters (such as prisons or nursing homes)" (§11, U-inst withdrawn) | Read for that sentence |
-| PSID family files 2005–2013 (`psid-data/family/<wave>/FAM<wave>ER.*`) | Family income components, Social Security, SSI, asset income, the head's annuity and IRA income, farm income, FU composition, PSID's needs standard; WEALTH1 in 2009–2013 | Staged; labels verified by `data/family_income.py`; codebook entries for `HEAD ANNUITIES`, `HEAD IRAS`, `WIFE RETIREMENT/ANNUITIES`, `OTHER FU MEMBR RETIREMENT/ANNUITIES`, ER52214, ER52216, ER52368 and W21, W33 read |
-| PSID wealth supplements 2005 and 2007 | WEALTH1 for the 1937 and 1939 birth years (U0) and six U1 observation cells | **Not staged.** The reader refuses with the missing files named (§3) |
+| PSID family files 2005–2013 (`psid-data/family/<wave>/FAM<wave>ER.*`) | Family income components, Social Security, SSI, asset income, the head's annuity and IRA income, farm income, FU composition, PSID's needs standard; WEALTH1 in 2009–2013; the 2005 and 2007 interview numbers the supplements join | Staged; labels verified by `data/family_income.py`; codebook entries for `HEAD ANNUITIES`, `HEAD IRAS`, `WIFE RETIREMENT/ANNUITIES`, `OTHER FU MEMBR RETIREMENT/ANNUITIES`, ER52214, ER52216, ER52368 and W21, W33 read |
+| PSID supplemental wealth files 2005 and 2007, Release 2 (March 2011): `WLTH2005` and `WLTH2007` (`psid-data/wealth/<wave>/`: `.sps`, `.sas`, `.do`, `.txt`, codebook, documentation, zip) | WEALTH1 and its components for the 1937 and 1939 birth years (U0) and the six U1 observation cells in waves 2005 and 2007 | Downloaded by Max (cos decision d189) and staged 2026-09-24; every file matches `psid-data/wealth/SHA256SUMS` and its zip member. Labels adjudicated 2026-09-25 against all three setup files and the codebooks, by the reader and by an independent parser (§3, "Wealth supplements"); the `.sps` and `.txt` of each wave are SHA-256 pinned in the reader |
 | PSID cross-year individual file (`ind2023er`) | Anchors per wave, cross-section weights, relationship to head, age, sampling-error stratum and cluster | Staged; labels verified by `cohorts/age67.py`, including relationship code 90 ("Legal husband of Head") |
 | PSID marriage history (`mh85_23`) and earnings panel | Birth-year law and marital status | Existing readers |
 | NCHS United States Life Tables, 2000 | Annuity mortality (F8) | Committed, `data/external/nchs_life_tables_2000.json`, SHA-256 pinned |
@@ -163,8 +174,8 @@ even income years exist; an odd birth year turns 67 in an even year.
 
 | Birth year | Income year | Wave | Weight | Family unit | WEALTH1 |
 |---|---|---|---|---|---|
-| 1937 | 2004 | 2005 | ER33849 | ER33801 | 2005 supplement, not staged |
-| 1939 | 2006 | 2007 | ER33951 | ER33901 | 2007 supplement, not staged |
+| 1937 | 2004 | 2005 | ER33849 | ER33801 | S716 (2005 supplement `WLTH2005`) |
+| 1939 | 2006 | 2007 | ER33951 | ER33901 | S816 (2007 supplement `WLTH2007`) |
 | 1941 | 2008 | 2009 | ER34046 | ER34001 | ER46968 |
 | 1943 | 2010 | 2011 | ER34155 | ER34101 | ER52392 |
 | 1945 | 2012 | 2013 | ER34269 | ER34201 | ER58209 |
@@ -182,9 +193,61 @@ persons who died between 67 and 68, a survivor effect inside the
 exact-age named delta.
 
 **Fallback (U0-F): 1941, 1943 and 1945.** U0 restricted to the birth
-years whose waves carry WEALTH1 in the family file; the blocked 1937 and
-1939 are left out and counted. §11's fallback rule decides whether U0 or
-U0-F is the headline, by staging status only.
+years whose waves carry WEALTH1 in the family file; 1937 and 1939 are
+left out and counted. §11's fallback rule decides whether U0 or U0-F is
+the headline, by staging status only. With the supplements staged,
+adjudicated and read (`u1-draft-6`, below), the rule gives U0 as the
+headline, and U0-F is a registered alternative.
+
+**Wealth supplements (`u1-draft-6`).** The 2005 and 2007 family files
+carry no WEALTH composite; the PSID released those waves' imputed wealth
+as supplemental wealth files. Max downloaded Release 2 of both (March
+2011; cos decision d189), staged under `psid-data/wealth/2005/` and
+`2007/`. For each wave the reader (`data/family_income.py`):
+
+- requires exactly the `.sps` and `.txt` whose SHA-256 it pins
+  (`WEALTH_SUPPLEMENT_SHA256`: `WLTH2005.sps` `88c7b1c4…f448`,
+  `WLTH2005.txt` `bc463db1…8f1b`; `WLTH2007.sps` `a6278ac1…9663`,
+  `WLTH2007.txt` `93b2ffbd…0cec`), and refuses other bytes
+  (`WealthSupplementNotAdjudicatedError`) or missing files
+  (`WealthSupplementNotStagedError`);
+- verifies each variable it reads against its adjudicated label, as for
+  the 2009–2013 family-file items: the release number (S700, S800; every
+  record must carry code 2, "Release 2: March, 2011"); the family ID
+  (S701 "2005 FAMILY ID", S801), which the codebook defines as "the 2005
+  [2007] interview number"; WEALTH1 (S716 "IMP WEALTH W/O EQUITY
+  (WEALTH1) 05", S816) and its accuracy flag; WEALTH2, home equity and
+  the eight WEALTH1 components (farm or business W11, checking and
+  savings W28, other debt W39, other real estate W2, stocks W16, vehicles
+  W6, other assets W34, annuities and IRAs W22); and the accuracy flag of
+  each ("Accuracy code for imputation", 0 "Not Imputed", 1 "Imputed"),
+  whose codes it checks and does not return (the family-file waves carry
+  WEALTH1's flag only);
+- returns the 2009 family file's wealth concepts item for item. The
+  codebook defines WEALTH1 as "sum of values of seven asset types (S703,
+  S705, S709, S711, S713, S715, S719) net of debt value (S707)" (2007:
+  the S8 items), the 2009 definition, and WEALTH2 as the same plus home
+  equity. The codebooks document negative values for every item except
+  other debt and annuities and IRAs, as for 2009;
+- joins the supplement to its wave's family file by the family ID and
+  refuses any supplement record without a family-file interview number,
+  or, on a complete read, any family without a supplement record.
+
+Structural counts (staged files, 2026-09-25; counts only): the join is
+one to one in both waves, 8,002 of 8,002 families in 2005 and 8,289 of
+8,289 in 2007, with no unmatched record on either side. WEALTH1 equals
+its components exactly for every family of both waves; WEALTH2 equals
+WEALTH1 plus home equity exactly for every family but one 2005 family,
+which is within $10 (`reconcile_wealth1`). Every accuracy flag holds 0
+or 1, every record carries release code 2, and no other-debt or IRA
+amount is negative. An independent parser that shares no code with the
+reader (`EVID/track-u-wealth-supplements-20260925/`) finds the same:
+the 38 names, labels and column positions agree across the `.sps`,
+`.sas` and `.do` files and with the codebook's labels and widths, each
+record is 130 characters (the setup files' record length), and every
+label the reader adjudicates equals the setup files'. In the repository,
+`tests/data/test_wealth_supplement_setup_files.py` parses the `.sas`,
+`.do` and codebook text on its own.
 
 **Universe per wave (F2).** Sequence 1–20 (in a responding family) and a
 positive core/immigrant cross-section weight. The cross-section weight
@@ -271,10 +334,10 @@ previous wave's head.
 **Structural counts** (staged PSID, counts only; `scripts/track_u_structure.py`,
 evidence `EVID/track-u-structure-20260924/`, code of `u1-draft-1`):
 
-| Row | Observations | Persons | Computable now | Blocked by the 2005/2007 wealth supplements |
-|---|---|---|---|---|
-| U0 | 483 | 483 | 320 (1941, 1943, 1945) | 163 (1937: 81; 1939: 82) |
-| U1 | 1,349 | 970 | 857 | 492 |
+| Row | Observations | Persons | Computable before `u1-draft-6` | Blocked until the 2005/2007 wealth supplements were read | Computable from `u1-draft-6` |
+|---|---|---|---|---|---|
+| U0 | 483 | 483 | 320 (1941, 1943, 1945) | 163 (1937: 81; 1939: 82) | 483 |
+| U1 | 1,349 | 970 | 857 | 492 | 1,349 |
 
 U0 by birth year: 1937 81, 1939 82, 1941 93, 1943 116, 1945 111
 observations; U0-F is the last three, 320. The rest of each birth year's
@@ -336,6 +399,20 @@ universe the birth-year law runs over from 30,674 to 30,753 persons);
 U0-F is unchanged at 320;
 U1 has 1,353 (the 3 above plus that person). Under `excluded` every row
 equals the primary. No income, threshold or poverty status was computed.
+
+Recollected under `u1-draft-6`'s code, with the 2005 and 2007 wealth
+supplements staged and adjudicated (the same script at `c1d9532f`,
+evidence `EVID/track-u-structure-u1d6-20260925/`, counts only): the
+population is
+unchanged (U0 483 observations, U0-F 320, U1 1,349 of 970 persons, and
+every disposition, marital and annuitant-age count equals the u1d5
+evidence), and nothing is blocked. All 81 observations of the 1937 birth
+year (wave 2005) and all 82 of 1939 (wave 2007) now have their family's
+WEALTH1 from the supplement (`wealth_status` `wealth_supplement`), so all
+483 U0 observations are computable; under U1 all 492 observations in
+waves 2005 and 2007 (1936: 77; 1937: 81; 1938: 84 at 66 and 82 at 68;
+1939: 82; 1940: 86) are, and all 1,349. The reader refuses no wave. No
+income, threshold or poverty status was computed.
 
 ## 4. Income concept
 
@@ -418,10 +495,12 @@ with the structural counts (§14).
 **Financial assets (F5).** The family unit's WEALTH1, "IMP WEALTH W/O
 EQUITY": the codebooks define it as seven asset values (farm or business,
 checking and savings, other real estate, stocks, vehicles, other assets,
-IRAs and annuities) net of debts (2009: one "other debt" item; 2011: five
-debt types; 2013: farm/business and real-estate debt split out plus six
-debt types). On the staged files the component identity holds exactly
-for every family in 2009, 2011 and 2013. The Report's financial assets
+IRAs and annuities) net of debts (2005–2009: one "other debt" item;
+2011: five debt types; 2013: farm/business and real-estate debt split out
+plus six debt types). In 2005 and 2007 it comes from the PSID wealth
+supplements, joined by family ID (§3, "Wealth supplements"). On the
+staged files the component identity holds exactly for every family in
+all five waves. The Report's financial assets
 include 401(k) balances (p. 24); WEALTH1's seven asset types do not
 include employer DC balances held outside IRAs, so the primary
 understates financial assets for families that hold them (named delta,
@@ -628,7 +707,9 @@ the primary it would equal U1.
 
 ## 8. SSI response
 
-**Primary (F13, pending Max, d189): offset for existing recipients.** For
+**Primary (F13; Max's ruling, cos decision d189, 2026-09-24: "Yes to
+Track U with the SSI offset rule for existing recipients"): offset for
+existing recipients.** For
 each SSI unit with baseline SSI, SSI rises by the fall in countable Social
 Security income, capped so SSI does not exceed the federal benefit rate
 (FBR); nobody newly enrols. With a cut rate c and the $20 monthly general
@@ -853,11 +934,16 @@ fallback rule below) and published with the others. A row that is not
 built when the registration is posted is removed from this table and
 listed as a named omission.
 
-**Fallback rule (pending Max, with plan §10 decision 3).** If the 2005
+**Fallback rule (pending Max; plan §10 decision 3, the downloads, is
+decided: d189).** If the 2005
 and 2007 wealth supplements are staged, adjudicated and read before the
 #42 registration is posted, U0 is the headline and U0-F an alternative;
 otherwise U0-F is the headline, and the rows defined on U0 or U1 are
-reported as blocked with their counts. The rule depends on staging status only. In code
+reported as blocked with their counts. The rule depends on staging status
+only. Since `u1-draft-6` the supplements are staged, adjudicated and read
+(§3), so on the staged PSID the rule gives U0 as the headline and blocks
+no row; what Max has still to rule is the rule itself, in particular
+whether U0-F and the -F alternatives stay registered. In code
 (`uniform_cut_track_u.runner.headline_row`), every row whose observation
 waves include a wave without WEALTH1 is reported as blocked with its
 counts, which under the fallback is every row defined on U0 or U1 (U0,
@@ -871,17 +957,20 @@ the supplements staged both are computed. This is the recommended
 default of the pending fallback decision (§16); Max may instead keep the
 alternatives on U0 only. The registration comment states the headline
 row, and the registered run refuses when the staged PSID gives a
-different one (`scripts/run_track_u_registered.py --headline-row`).
+different one (`scripts/run_track_u_registered.py --headline-row`), or
+when it is not the row §15 records for the staged PSID
+(`population.headline.staged_psid_headline`, U0 since `u1-draft-6`;
+checked before any PSID file is read).
 
 | Row | Field | Value | Built |
 |---|---|---|---|
-| **U0** | — | §§3–10 | Yes; 1937 and 1939 blocked by the wealth supplements |
-| U1 | Population | All ten birth years (§3) | Yes; six observation cells (waves 2005 and 2007) blocked |
+| **U0** | — | §§3–10 | Yes; 1937 and 1939 read WEALTH1 from the 2005 and 2007 wealth supplements (`u1-draft-6`) |
+| U1 | Population | All ten birth years (§3) | Yes; the six observation cells in waves 2005 and 2007 read the supplements |
 | U2 | SSI | No response | Yes |
 | U3 | SSI | Full static recomputation (the largest SSI response of the three) | Yes |
 | U4 | Income unit | Head and wife only | Yes |
 | U5 | Asset income | Keep reported asset income and add the annuity | Yes |
-| U0-F | Population | Birth years 1941, 1943, 1945 only (the blocked 1937 and 1939 left out and counted) | Yes; the fallback rule awaits Max |
+| U0-F | Population | Birth years 1941, 1943, 1945 only (1937 and 1939 left out and counted) | Yes; an alternative with the supplements staged; the fallback rule awaits Max |
 | U7 | Financial assets | Plus employer DC balances | **No** (label investigation); must be built before registration or removed |
 | U8 | Threshold | PSID `CENSUS NEEDS STANDARD` | Yes |
 | U9 | Mortality | SSA period life table 2004 | Yes |
@@ -997,22 +1086,28 @@ reaches 0.5, 20; p90 is 40.
 
 On master since #456 (merge `8d7e7431`; built on branch
 `dynamics-ex2-track-u-20260924`), continued on
-`dynamics-ex2-track-u-2-20260924` (`u1-draft-3` to this draft; not
-merged; `origin/master` at `088772f1` merged in for this draft); all
-opt-in; registered in `POST_REVIEW_SOURCE_EXCLUSIONS` and the
-reachability guard:
+`dynamics-ex2-track-u-2-20260924` (`u1-draft-3` to `u1-draft-5`; merged
+as #458), `dynamics-track-u-census-20260924` (the Census capture, #462)
+and `dynamics-track-u-wealth-20260925` (this draft, from the Census
+branch; not merged); all opt-in; registered in
+`POST_REVIEW_SOURCE_EXCLUSIONS` and the reachability guard:
 
 - `src/populace_dynamics/data/family_income.py`: label-verified family
   income for waves 2005–2013 (81 items a wave, 85 in 2013, including the
   raw accuracy flags of the Social Security, SSI and asset items) and
-  WEALTH1 with its components for 2009–2013; refusal naming the missing
-  2005 and 2007 wealth supplements; reconciliation counts.
+  WEALTH1 with its components for 2005–2013 (2009–2013 from the family
+  file; 2005 and 2007 from the PSID wealth supplements, `u1-draft-6`:
+  pinned files, adjudicated labels, the family-ID join and its counts,
+  `wealth_supplement_join`); refusals naming a supplement that is not
+  staged or not the adjudicated file; reconciliation counts.
 - `src/populace_dynamics/cohorts/age67.py`: the age-67 observations for
   U0, U1 and U0-F, dispositions, the relationship-code resolution of
   unresolved marital states, the four-way marital status of §9
   (`marital_status_4`), the head and head's legal spouse with their
   income-year ages (the birth-year law extended to in-family heads and
-  spouses), provenance seal, structural summary.
+  spouses), where each observation's WEALTH1 comes from
+  (`wealth_status`: `family_file`, `wealth_supplement` or blocked),
+  provenance seal, structural summary.
 - `src/populace_dynamics/estimates/adjusted_poverty.py`: annuity prices,
   threshold lookup, SSI rules, baseline and reform income (with F4a and
   F4b), poverty status; refuses PSID-built rows without a registration.
@@ -1036,20 +1131,27 @@ reachability guard:
   summaries).
 - `scripts/track_u_dry_run.py` (U9): every row on the invented cohort
   with invented thresholds and the committed life tables and SSI
-  capture, and the fallback rule on the invented cohort as staged today;
-  evidence headed "INVENTED DATA - NOT A COMPARISON",
-  `EVID/track-u-dry-run-20260924/` (`u1-draft-3`),
-  `EVID/track-u-dry-run-u1d4-20260924/` (`u1-draft-4`) and
-  `EVID/track-u-dry-run-u1d5-20260924/` (this draft, at `46668576`: the
+  capture, and the fallback rule on the invented cohort with the
+  supplements refused; evidence headed "INVENTED DATA - NOT A
+  COMPARISON", `EVID/track-u-dry-run-20260924/` (`u1-draft-3`),
+  `EVID/track-u-dry-run-u1d4-20260924/` (`u1-draft-4`),
+  `EVID/track-u-dry-run-u1d5-20260924/` (`u1-draft-5`, at `46668576`: the
   fallback staging makes U0-F the headline, blocks the rows defined on U0
   or U1 and computes the -F rows; the independent review re-ran it at
   `1fa6e606`, and its output equals this evidence except for the
-  recorded commit and output path).
+  recorded commit and output path) and
+  `EVID/track-u-dry-run-u1d6-20260925/` (this draft, at `c1d9532f`: the
+  main run has the supplements' wealth, as the staged PSID does, so U0
+  is the headline and no row is blocked; the fallback check runs with
+  them refused; the invented frames and every computed row's cells equal
+  the u1d5 evidence, and the pending decisions record d189).
 - `scripts/run_track_u_registered.py` (U10 entry point): refuses unless
   the pointer is an issue #42 comment, `HEAD` is the registered commit
   on a clean tree, §15 is ratified with nothing awaiting and nothing
-  blocking, the Census capture is pinned, and `--headline-row` equals the
-  fallback rule's row for the staged PSID; writes
+  blocking, the Census capture is pinned, and `--headline-row` equals
+  both the row §15 records for the staged PSID
+  (`population.headline.staged_psid_headline`) and the fallback rule's
+  row for the PSID staged at run time; writes
   `runs/replication_boomers2004_uniform_cut_v1.json` and its `.env.json`
   exclusively.
 - `scripts/track_u_component_diagnostics.py`: the F17 component
@@ -1063,14 +1165,15 @@ reachability guard:
 
 Blocked:
 
-1. **2005 and 2007 wealth supplements** (Max, simba login): U0 loses 1937
-   and 1939 until staged, adjudicated and read; under the fallback rule
-   U0-F is then the headline, the rows defined on U0 or U1 are
-   reported as blocked, and the -F alternatives are computed.
-2. **Registration** on issue #42 after ratification; no real-data poverty
+1. **Registration** on issue #42 after ratification; no real-data poverty
    statistic may be computed before it.
-3. **Row U7** is not built (label investigation of the P-section
+2. **Row U7** is not built (label investigation of the P-section
    employer DC items); it must be built or removed before registration.
+
+No longer blocking (`u1-draft-6`): the 2005 and 2007 wealth supplements.
+Max downloaded them (cos decision d189); they are staged, adjudicated and
+read (§3), so U0 keeps 1937 and 1939 and, under the fallback rule, is the
+headline.
 
 ## 15. Machine-readable parameter block
 
@@ -1080,11 +1183,12 @@ holds it to the code's defaults.
 ```json
 {
   "specification": "boomers2004_uniform_cut_exercise2",
-  "version": "u1-draft-5",
+  "version": "u1-draft-6",
   "status": "draft_for_referee",
   "claim_class": {
-    "proposed": "track_u_psid_realized_measurement_not_a_projection",
-    "awaiting": "d189"
+    "class": "track_u_psid_realized_measurement_not_a_projection",
+    "decided": "d189",
+    "ruling": "Max, 2026-09-24: yes to Track U as exercise 2's first score"
   },
   "target": {
     "report": "Butrica and Uccello (2004), How Will Boomers Fare at Retirement?, AARP PPI #2004-05",
@@ -1109,7 +1213,8 @@ holds it to the code's defaults.
     "headline": {
       "rule": "u0_if_2005_2007_wealth_staged_before_registration_else_u0f",
       "fallback_row": "U0-F",
-      "awaiting": "Max (fallback rule, with plan section 10 decision 3)"
+      "staged_psid_headline": "U0",
+      "awaiting": "Max (the fallback rule of specification section 11; plan section 10 decision 3, the downloads, is decided: d189)"
     },
     "primary_birth_years": [1937, 1939, 1941, 1943, 1945],
     "fallback_birth_years": [1941, 1943, 1945],
@@ -1117,11 +1222,11 @@ holds it to the code's defaults.
     "u1_even_birth_year_weight": 0.5,
     "u1_single_observation_weight": 1.0,
     "waves": {
-      "2005": {"income_year": 2004, "weight": "ER33849", "family_unit_id": "ER33801", "wealth1": null},
-      "2007": {"income_year": 2006, "weight": "ER33951", "family_unit_id": "ER33901", "wealth1": null},
-      "2009": {"income_year": 2008, "weight": "ER34046", "family_unit_id": "ER34001", "wealth1": "ER46968"},
-      "2011": {"income_year": 2010, "weight": "ER34155", "family_unit_id": "ER34101", "wealth1": "ER52392"},
-      "2013": {"income_year": 2012, "weight": "ER34269", "family_unit_id": "ER34201", "wealth1": "ER58209"}
+      "2005": {"income_year": 2004, "weight": "ER33849", "family_unit_id": "ER33801", "wealth1": "S716", "wealth_source": "WLTH2005", "wealth_join": "S701"},
+      "2007": {"income_year": 2006, "weight": "ER33951", "family_unit_id": "ER33901", "wealth1": "S816", "wealth_source": "WLTH2007", "wealth_join": "S801"},
+      "2009": {"income_year": 2008, "weight": "ER34046", "family_unit_id": "ER34001", "wealth1": "ER46968", "wealth_source": "family_file"},
+      "2011": {"income_year": 2010, "weight": "ER34155", "family_unit_id": "ER34101", "wealth1": "ER52392", "wealth_source": "family_file"},
+      "2013": {"income_year": 2012, "weight": "ER34269", "family_unit_id": "ER34201", "wealth1": "ER58209", "wealth_source": "family_file"}
     },
     "presence": "in_family",
     "birth_year_law": "estimates.career.derive_birth_years",
@@ -1180,7 +1285,8 @@ holds it to the code's defaults.
   },
   "ssi": {
     "rule": "offset_existing_recipients",
-    "awaiting": "d189",
+    "decided": "d189",
+    "ruling": "Max, 2026-09-24: offset only for existing SSI recipients",
     "deeming": "spouse_social_security_counted",
     "ofum_unit": "single_individual",
     "parameters": {
@@ -1231,18 +1337,18 @@ holds it to the code's defaults.
     "U3": {"ssi_rule": "full_static_recomputation"},
     "U4": {"income_unit": "head_wife"},
     "U5": {"asset_income_rule": "keep"},
-    "U0-F": {"population": "birth_years_1941_1943_1945", "on": "U0", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
+    "U0-F": {"population": "birth_years_1941_1943_1945", "on": "U0", "awaiting": "Max (the fallback rule of specification section 11; plan section 10 decision 3, the downloads, is decided: d189)"},
     "U7": {"financial_assets": "wealth1_plus_employer_dc", "status": "not_built"},
     "U8": {"threshold_rule": "psid_census_needs_standard"},
     "U9": {"mortality_basis": "ssa_period_2004"},
     "U10": {"threshold_rule": "census_matrix_65plus"},
-    "U2-F": {"population": "birth_years_1941_1943_1945", "ssi_rule": "none", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
-    "U3-F": {"population": "birth_years_1941_1943_1945", "ssi_rule": "full_static_recomputation", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
-    "U4-F": {"population": "birth_years_1941_1943_1945", "income_unit": "head_wife", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
-    "U5-F": {"population": "birth_years_1941_1943_1945", "asset_income_rule": "keep", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
-    "U8-F": {"population": "birth_years_1941_1943_1945", "threshold_rule": "psid_census_needs_standard", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
-    "U9-F": {"population": "birth_years_1941_1943_1945", "mortality_basis": "ssa_period_2004", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"},
-    "U10-F": {"population": "birth_years_1941_1943_1945", "threshold_rule": "census_matrix_65plus", "awaiting": "Max (fallback rule, with plan section 10 decision 3)"}
+    "U2-F": {"population": "birth_years_1941_1943_1945", "ssi_rule": "none", "awaiting": "Max (the fallback rule of specification section 11; plan section 10 decision 3, the downloads, is decided: d189)"},
+    "U3-F": {"population": "birth_years_1941_1943_1945", "ssi_rule": "full_static_recomputation", "awaiting": "Max (the fallback rule of specification section 11; plan section 10 decision 3, the downloads, is decided: d189)"},
+    "U4-F": {"population": "birth_years_1941_1943_1945", "income_unit": "head_wife", "awaiting": "Max (the fallback rule of specification section 11; plan section 10 decision 3, the downloads, is decided: d189)"},
+    "U5-F": {"population": "birth_years_1941_1943_1945", "asset_income_rule": "keep", "awaiting": "Max (the fallback rule of specification section 11; plan section 10 decision 3, the downloads, is decided: d189)"},
+    "U8-F": {"population": "birth_years_1941_1943_1945", "threshold_rule": "psid_census_needs_standard", "awaiting": "Max (the fallback rule of specification section 11; plan section 10 decision 3, the downloads, is decided: d189)"},
+    "U9-F": {"population": "birth_years_1941_1943_1945", "mortality_basis": "ssa_period_2004", "awaiting": "Max (the fallback rule of specification section 11; plan section 10 decision 3, the downloads, is decided: d189)"},
+    "U10-F": {"population": "birth_years_1941_1943_1945", "threshold_rule": "census_matrix_65plus", "awaiting": "Max (the fallback rule of specification section 11; plan section 10 decision 3, the downloads, is decided: d189)"}
   },
   "diagnostics_f17": {
     "row": "headline",
@@ -1286,9 +1392,7 @@ holds it to the code's defaults.
     }
   ],
   "blocked_by": [
-    "psid_2005_2007_wealth_supplements_not_staged",
     "issue_42_registration_absent",
-    "max_ruling_d189_open",
     "row_u7_not_built"
   ]
 }
@@ -1303,25 +1407,32 @@ both are silent; `adjusted_poverty.pending_decisions()`,
 (the design SE domain, the cells and the unclassified-marital rule)
 return them with their basis.
 
-**Awaiting Max (d189, open):**
+**Decided by Max (cos decision d189, 2026-09-24):** "Yes to Track U with
+the SSI offset rule for existing recipients (Max in chat 2026-09-24); Max
+will download the PSID 2005/2007 wealth supplements with his simba
+login" (the ruling as the cos record holds it).
 
-1. Claim class: accept Track U as exercise 2's first score (plan §10,
-   decision 1).
-2. SSI rule F13: offset for existing recipients (default), no response
-   (U2) or full recomputation (U3) (plan §10, decision 5).
-3. Download the 2005 and 2007 PSID wealth supplements (plan §10,
-   decision 3).
+1. Claim class: Track U is exercise 2's first score (plan §10,
+   decision 1); the header records the class.
+2. SSI rule F13: offset for existing recipients (Max's ruling; plan §10,
+   decision 5). No response (U2) and full recomputation (U3) stay
+   registered as alternatives (§8, §11).
+3. The 2005 and 2007 PSID wealth supplements (plan §10, decision 3): Max
+   downloaded them; this draft adjudicates and reads them (§3).
 
-d189's text describes Track U as a "Python income concept, not Axiom",
-so a yes on d189 may be read as covering plan decision 4; confirm when
-ruling.
+d189's card describes Track U as a "Python income concept, not Axiom",
+and the `u1-draft-5` text suggested that a yes on d189 might cover plan
+decision 4. The ruling's text does not mention decision 4, so it stays
+open below.
 
-**Awaiting Max, not yet on a decision card (plan §10):**
+**Still awaiting Max, not yet on a decision card (plan §10):** these six
+remain open after d189.
 
 - decision 2 (the definitions extract: it exists and was cleared for
   builders on 2026-09-24; no card or ruling by Max on it was found);
 - decision 4 (Python SSI arithmetic labelled "not Axiom");
-- decision 6 (acceptance rule; default none, report gaps, §10a);
+- decision 6 (acceptance rule; default none, report gaps, §10a; §15
+  `comparison.acceptance.awaiting`);
 - decision 7 (ratify this specification by merge; post the #42
   registration);
 - decision 8 (the scorecard's "from 2004"): the cleared extract supplies
@@ -1329,11 +1440,14 @@ ruling.
   primary now uses `cut_start_year = 2004`, which moves only U1's 1936
   birth year; Max's confirmation of the scorecard wording remains open
   (§15 `cut.awaiting`);
-- the fallback rule of §11 (with decision 3), including the recommended
-  default that each one-field alternative is also registered on U0-F's
-  population (U2-F … U10-F), so the registration carries its
-  alternatives whether or not the supplements are staged; Max may
-  instead keep the alternatives on U0 only (blocked under the fallback).
+- the fallback rule of §11, including the recommended default that each
+  one-field alternative is also registered on U0-F's population (U2-F …
+  U10-F), so the registration carries its alternatives whether or not the
+  supplements are staged; Max may instead keep the alternatives on U0
+  only. Its decision 3 part is decided (d189), and with the supplements
+  staged and adjudicated the rule gives U0 as the headline (§11); the
+  rule itself and the -F rows still await Max (§15
+  `population.headline.awaiting` and the U0-F and -F rows).
 
 The Census threshold files had their own card (cos decision d194); it is
 decided, and the capture is committed and pinned (§6).
@@ -1359,11 +1473,15 @@ design SE (full-design domain), cells (§9, including
 flag for the comparison memo (none by default; the second referee
 suggests flagging cells under an unweighted *n* of 30, O1), and the
 institution income rule (used by no registered row; default `excluded`,
-the second referee's Q9 answer; alternative `family_of_record`).
+the second referee's Q9 answer; alternative `family_of_record`). The SSI
+rule is Max's ruling (d189); `adjusted_poverty.pending_decisions()` lists
+it with the freeze, at which the specification as a whole is ratified.
 
 A registered run refuses a §15 block that still names anything as
 `awaiting`, so ratification must resolve each of these (and the code's
-rows must be updated to match, `uniform_cut_track_u.rows`).
+rows must be updated to match, `uniform_cut_track_u.rows`); it also
+refuses a non-empty `blocked_by`, which now names the #42 registration
+and row U7.
 
 ## 17. Referee record and open questions
 
@@ -1576,13 +1694,30 @@ observation_plan` for the income years the rows read. It opened no page
 of the Report PDF and no comparator file, and computed no income,
 threshold assignment or poverty status on PSID data.
 
+`u1-draft-6` (2026-09-25; cos decision d189) read:
+`EVID/RESTRICTED-FILES.md` (first, and again when it changed during the
+pass); the cos records of d189, d194, d279 and d280 (their text only);
+`psid-data/wealth/SHA256SUMS`; the 2005 and 2007 supplement setup files
+(`WLTH2005.sps`, `.sas`, `.do` and the 2007 equivalents) in full; the
+supplement codebooks (`wlth2005_codebook.pdf`, `wlth2007_codebook.pdf`,
+whose whole-sample frequency counts were seen and not used) and the
+"Documentation for the 2005 [2007] PSID Supplemental Wealth File" in
+full, through `pdftotext`; the 2005 and 2007 family-file setup labels of
+the interview number; and the Track U code and tests it changes. It
+opened no page of the Report PDF, no comparator file and nothing
+`RESTRICTED-FILES.md` restricts.
+
 **Ran on staged PSID:** label verification, the component-identity
 reconciliation counts and the structural counts of §3, the F17 component
 summaries of §9 for row U0 (`u1-draft-3`), and (`u1-draft-4`) a design
 count (strata and clusters among positive-weight persons per wave) and a
 count of in-family code-90 records per wave; (`u1-draft-5`) the
 structural counts of §3 recollected under this draft's code, with the
-institution-option and code-90 counts. No income concept,
+institution-option and code-90 counts; (`u1-draft-6`) the supplements'
+file hashes, label verification (by the reader and by the independent
+parser), the family-ID join counts, the code sets of the release number
+and accuracy flags, the WEALTH1 and WEALTH2 identity counts, and the
+structural counts of §3 recollected. No income concept,
 annuity, threshold assignment, poverty status or poverty rate was
 computed on PSID data.
 
@@ -1595,7 +1730,10 @@ Historical Poverty Table 1, which may differ by the referee's reading of
 the Census page, §6); the
 effective date of 20 CFR
 416.1124(c)(22) for 2004–2012; 20 CFR 416.1161, 416.1218 and 416.1806;
-the names, IDs and contents of the 2005 and 2007 wealth supplements;
+the supplements' imputation beyond what their documentation states
+(hot-deck imputation of the eight components; home equity by Table 1's
+rules), and Release 1 of either supplement (not staged; the reader
+requires Release 2);
 whether PSID Social Security amounts are net of Medicare premiums;
 whether SSI and Social Security are kept apart by respondents; where a
 wife's IRA income is recorded before 2013; how the family file records a
@@ -1613,6 +1751,54 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
 
 ## 19. Changelog
 
+- `u1-draft-6`, independent review of the wealth supplements
+  (2026-09-25; no rule, default, row, label or pin changed): a parser
+  that shares no code with the reader
+  (`EVID/track-u-wealth-review-b-20260925/`) re-verified every
+  adjudicated label against the `.sps`, `.sas`, `.do` and codebook
+  files, the 14 hashes of `SHA256SUMS` and the zip members, the
+  one-to-one family-ID join, the WEALTH1 identity for every family, each
+  codebook frequency category against the data (match flags only), and
+  the family ID and merged WEALTH1 of each of U0's 81 (1937) and 82
+  (1939) observations; the reader's output equals that parse value for
+  value. It found no defect in the adjudication. It added one guard: the
+  registered run also refuses a `--headline-row` other than the row §15
+  records for the staged PSID (`population.headline.staged_psid_headline`),
+  checked before any PSID file is read (§11, §14;
+  `check_registered_headline`, two tests), and renamed the stale runner
+  test of the fallback path. Counts only: no income, threshold
+  assignment or poverty status was computed on PSID data.
+- `u1-draft-6` (2026-09-25, branch `dynamics-track-u-wealth-20260925`
+  from the Census-capture branch; cos decision d189): Max's ruling on
+  exercise 2 is recorded. The claim class is decided (Track U is
+  exercise 2's first score) and the SSI rule F13 is his ("offset only for
+  existing SSI recipients"): the header, §8, §15 (`claim_class` and
+  `ssi` carry `decided: d189` and the ruling in place of `awaiting`;
+  `max_ruling_d189_open` leaves `blocked_by`), §16 (which lists the six
+  items still awaiting Max: plan decisions 2, 4, 6, 7 and 8 and the
+  fallback rule), `adjusted_poverty.D189_RULING` and the `ssi_rule`
+  pending decision (now awaiting only the freeze) and
+  `scripts/run_track_u_registered.py`'s docstring. The 2005 and 2007
+  PSID wealth supplements Max downloaded are adjudicated into
+  `data/family_income.py` (pinned `.sps` and `.txt`, labels verified as
+  for the 2009–2013 family-file items, Release 2, accuracy-flag codes,
+  the family-ID join refused unless one to one) and read: WEALTH1 for the
+  1937 and 1939 birth years, so U0 loses no birth year, the fallback rule
+  gives U0 as the headline on the staged PSID, and
+  `psid_2005_2007_wealth_supplements_not_staged` leaves `blocked_by`
+  (§2, §3, §4 F5, §11, §14, §15 `population.waves` and
+  `population.headline.staged_psid_headline`). The age-67 builder marks
+  each observation's wealth source (`wealth_status`: `family_file`,
+  `wealth_supplement` or blocked), and the income rows refuse an
+  observation whose family has no wealth record. An independent parser
+  (`EVID/track-u-wealth-supplements-20260925/`) and a repository test
+  (`tests/data/test_wealth_supplement_setup_files.py`) check the tables
+  against the `.sas`, `.do` and codebook text. The structural counts are
+  recollected (`EVID/track-u-structure-u1d6-20260925/`) and the invented
+  dry run re-run (`EVID/track-u-dry-run-u1d6-20260925/`). No rule,
+  default or registered row changed; U1 is not ratified. Counts only: no
+  income, threshold assignment or poverty status was computed on PSID
+  data.
 - `u1-draft-5`, independent review of the Census threshold capture
   (2026-09-24; no rule, default, row or captured value changed): the
   parser accepted any text above the header (an extra line, a formula,

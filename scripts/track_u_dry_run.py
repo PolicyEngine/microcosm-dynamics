@@ -12,15 +12,18 @@ decision d194) is loaded only to record its pin, not used.  The other parameters
 the committed ones: the NCHS 2000 and SSA 2004 life tables and the SSI
 capture.  No PSID file is opened and no comparator value is read.
 
-The invented generator gives waves 2005 and 2007 invented wealth, as if
-the PSID wealth supplements were staged, so U0's five birth years run
-end to end; the real supplements are not staged (cos decision d189).  The
-checks record what the real staging does today (the income rows refuse
-the blocked waves, and under the fallback rule U0-F becomes the headline
-while the rows that need 2005 or 2007 are reported as blocked with their
-counts), that the registered-run guards refuse invented inputs, and that
-the committed Census threshold capture loads under its pin while a
-threshold table without that pin is refused.
+The invented generator gives waves 2005 and 2007 invented wealth in the
+wealth supplements' layout, as the staged PSID has since the
+specification's u1-draft-6 (the real supplements were downloaded under
+cos decision d189, staged and adjudicated 2026-09-25), so U0's five birth
+years run end to end and U0 is the headline.  The checks record the
+fallback path on the same invented cohort with the supplements refused
+(the income rows refuse the blocked waves, and under the fallback rule
+U0-F becomes the headline while the rows that need 2005 or 2007 are
+reported as blocked with their counts), that the registered-run guards
+refuse invented inputs, and that the committed Census threshold capture
+loads under its pin while a threshold table without that pin is
+refused.
 
 Usage::
 
@@ -94,7 +97,7 @@ def checks(seed: int, params: runner.TrackUParameters) -> dict[str, Any]:
         ignore_index=True,
     )
     wealth = pd.concat(
-        [staged.family_wealth[wave] for wave in family_income.WEALTH_WAVES],
+        [staged.family_wealth[wave] for wave in sorted(staged.family_wealth)],
         ignore_index=True,
     )
     blocked = invented.invented_age67_inputs(seed=seed)
@@ -111,7 +114,7 @@ def checks(seed: int, params: runner.TrackUParameters) -> dict[str, Any]:
         "invented_wealth1_reconciliation": family_income.reconcile_wealth1(
             wealth
         ),
-        "blocked_waves_as_staged_today": {
+        "fallback_rule_with_supplements_refused": {
             "wealth_refusals": {
                 str(k): v for k, v in sorted(blocked.wealth_refusals.items())
             },
@@ -236,9 +239,10 @@ def results_markdown(result: dict[str, Any]) -> str:
         "(`cohorts.age67.build_age67_cohort`), income rows, income concept "
         "(`estimates.adjusted_poverty.adjusted_incomes`) and tabulation "
         "(`estimates.uniform_cut_tabulation.tabulate_uniform_cut`), once "
-        "per registered row. Waves 2005 and 2007 carry invented wealth as "
-        "if the PSID wealth supplements were staged; the real ones are "
-        "not (see Checks).",
+        "per registered row. Waves 2005 and 2007 carry invented wealth in "
+        "the wealth supplements' layout, as the staged PSID has since "
+        "u1-draft-6 (the real supplements are staged and adjudicated); "
+        "the Checks run the fallback path with them refused.",
         "- Parameters: the committed NCHS 2000 and SSA 2004 life tables "
         "and the committed SSI capture; **invented** thresholds (the "
         "invented near-threshold singles are placed against them; the "
@@ -341,7 +345,7 @@ def results_markdown(result: dict[str, Any]) -> str:
         "",
     ]
     check = result["checks"]
-    blocked = check["blocked_waves_as_staged_today"]
+    blocked = check["fallback_rule_with_supplements_refused"]
     reconciliation = check["invented_family_income_reconciliation"]
     exact = all(
         counts["n_exact"] == counts["n_families"]
@@ -363,14 +367,16 @@ def results_markdown(result: dict[str, Any]) -> str:
         "- The inputs and the U0 cohort re-generate from the invented "
         "generator's seed (`check_invented_inputs`, "
         "`check_invented_cohort`).",
-        "- As the real staging is today (no 2005/2007 wealth), the income "
-        "rows refuse without `allow_blocked`: "
+        "- With the 2005 and 2007 wealth refused (the fallback path; the "
+        "staged PSID no longer refuses them), the income rows refuse "
+        "without `allow_blocked`: "
         f"{blocked['income_rows_without_allow_blocked']['refused']}; with "
         "it, "
         f"{blocked['left_out_with_allow_blocked']['wealth_supplement_not_staged']}"
         " observations (waves 2005 and 2007) are left out and "
         f"{blocked['observations_kept_with_allow_blocked']} kept.",
-        "- Under the fallback rule with that staging, the headline is "
+        "- Under the fallback rule with the supplements refused, the "
+        "headline is "
         f"{blocked['fallback_rule']['headline']['row']}; rows reported "
         "blocked with their counts: "
         + ", ".join(

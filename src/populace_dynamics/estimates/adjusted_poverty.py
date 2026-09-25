@@ -82,8 +82,9 @@ primary, and :func:`pending_decisions` lists them):
   withdrawn in u1-draft-5 (second referee S5).  Max's confirmation of
   the scorecard's "from 2004" wording is pending (plan section 10,
   decision 8).
-* **SSI response** (F13, pending Max, decision record d189).
-  ``offset_existing_recipients`` (proposed primary): for each SSI unit
+* **SSI response** (F13; Max's ruling, cos decision d189, 2026-09-24:
+  "Yes to Track U with the SSI offset rule for existing recipients").
+  ``offset_existing_recipients`` (the primary): for each SSI unit
   with baseline SSI, SSI rises by the fall in countable Social Security
   income (after the $20 monthly general income exclusion), capped so SSI
   does not exceed the federal benefit rate (FBR); nobody newly enrols.
@@ -133,6 +134,7 @@ __all__ = [
     "ANNUITY_LIVES",
     "ASSET_INCOME_RULES",
     "CUT_START_YEAR_RULE",
+    "D189_RULING",
     "FARM_LOSS_RULE",
     "RETIREMENT_ACCOUNT_INCOME_CONCEPTS",
     "RETIREMENT_ACCOUNT_INCOME_RULES",
@@ -292,7 +294,7 @@ SSI_RULES: dict[str, str] = {
     "offset_existing_recipients": (
         "baseline SSI recipients: SSI rises by the fall in countable "
         "Social Security income, capped at the FBR; no new enrolment "
-        "(F13 proposed primary; pending Max, d189)"
+        "(F13 primary; Max's ruling, cos decision d189)"
     ),
     "none": "no SSI response (row U2)",
     "full_static_recomputation": (
@@ -475,7 +477,11 @@ class PendingDecision:
 _PLAN = "plan proposal (critical-path-uniform-cut-20260923.md section 7)"
 _BUILDER = "builder choice; the plan is silent"
 _REFEREE = "referee (boomers2004-referee-20260924.md)"
-_MAX_D189 = "Max (cos decision d189, open)"
+#: Max's ruling on exercise 2 (cos decision d189, 2026-09-24).
+D189_RULING = (
+    "Max's ruling, cos decision d189 (2026-09-24): 'Yes to Track U with "
+    "the SSI offset rule for existing recipients'"
+)
 _FREEZE = "U1 specification freeze (Max's ratification by merge)"
 
 
@@ -491,8 +497,9 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             "ssi_rule",
             spec.ssi_rule,
             ("none", "full_static_recomputation"),
-            f"{_PLAN} F13; plan section 10 decision 5",
-            _MAX_D189,
+            f"{D189_RULING}; {_PLAN} F13; plan section 10 decision 5; the "
+            "alternatives stay registered as rows U2 and U3",
+            _FREEZE,
         ),
         PendingDecision(
             "cut_rate",

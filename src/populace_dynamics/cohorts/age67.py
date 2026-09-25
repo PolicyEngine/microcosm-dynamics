@@ -24,8 +24,11 @@ Rows (plan section 3 and fields F1-F2):
 * **U0-F (registered fallback): U0 on birth years 1941, 1943 and 1945
   only**, the U0 birth years whose waves (2009-2013) carry WEALTH1 in the
   family file.  The specification's fallback rule makes it the headline
-  row when the 2005 and 2007 wealth supplements are not staged before the
-  #42 registration (a rule on staging status, never on results).
+  row when the 2005 and 2007 wealth supplements are not staged,
+  adjudicated and read before the #42 registration (a rule on staging
+  status, never on results).  They are staged and adjudicated since the
+  specification's u1-draft-6 (2026-09-25; cos decision d189), so on the
+  staged PSID the rule gives U0 and U0-F stays a registered alternative.
 
 Universe per wave (F2): sequence 1-20 (in a responding family) with a
 positive cross-section weight.  Institutionalized persons (sequence
@@ -84,8 +87,11 @@ head's co-resident legal spouse's ages and sexes (the annuitants under
 the income concept's ``fu_head_rule``), and the family's income
 (:func:`populace_dynamics.data.family_income.read_family_income`) and
 wealth (:func:`populace_dynamics.data.family_income.read_family_wealth`).
-Waves 2005 and 2007 have no staged wealth, so their observations are
-marked ``blocked_wealth_supplement_not_staged``.
+``wealth_status`` records where an observation's WEALTH1 comes from:
+``family_file`` (waves 2009-2013), ``wealth_supplement`` (waves 2005 and
+2007, the PSID supplemental wealth files joined by their family ID, the
+wave's interview number) or, when the inputs carry the reader's refusal
+for the wave, ``blocked_wealth_supplement_not_staged``.
 
 Unresolved marital states (``unresolved_marital_status``, pending the
 specification freeze): a member whose marriage history cannot date the
@@ -172,6 +178,8 @@ __all__ = [
     "UNCLASSIFIED_MARITAL_STATUS",
     "UNRESOLVED_MARITAL_RULES",
     "WAVES",
+    "WEALTH_BLOCKED_STATUS",
+    "WEALTH_READ_STATUSES",
     "Age67Cohort",
     "Age67Inputs",
     "Age67Spec",
@@ -195,6 +203,11 @@ ALL_BIRTH_YEARS: tuple[int, ...] = tuple(range(1936, 1946))
 #: file (row U0-F, the registered fallback).
 FALLBACK_BIRTH_YEARS: tuple[int, ...] = (1941, 1943, 1945)
 ROWS: tuple[str, ...] = ("U0", "U1", "U0-F")
+#: ``wealth_status`` values of an observation whose family WEALTH1 is
+#: read: the family file (2009-2013) or the wealth supplement (2005, 2007).
+WEALTH_READ_STATUSES: tuple[str, ...] = ("family_file", "wealth_supplement")
+#: ``wealth_status`` of an observation whose wave's wealth was refused.
+WEALTH_BLOCKED_STATUS = "blocked_wealth_supplement_not_staged"
 PSID_FILES = "psid_files"
 INVENTED = "invented"
 CALLER_FRAMES = "caller_frames"
@@ -396,9 +409,10 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
             "plan F1: exact age (U0) is the primary; U1 pools all ten "
             "birth years; U0-F (1941, 1943, 1945) is the registered "
             "fallback, the headline when the 2005 and 2007 wealth "
-            "supplements are not staged before the #42 registration "
-            "(specification section 11 fallback rule, with plan section 10 "
-            "decision 3)",
+            "supplements are not staged, adjudicated and read before the "
+            "#42 registration (specification section 11 fallback rule); "
+            "since u1-draft-6 they are (cos decision d189: Max downloaded "
+            "them, plan section 10 decision 3), so the rule gives U0",
             freeze,
         ),
         psid2010.PendingDecision(
@@ -1343,11 +1357,7 @@ def build_age67_cohort(
                         if head_spouse is None
                         else str(sex.get(head_spouse, "na"))
                     ),
-                    "wealth_status": (
-                        "family_file"
-                        if wave in inputs.family_wealth
-                        else "blocked_wealth_supplement_not_staged"
-                    ),
+                    "wealth_status": _wealth_status(wave, inputs),
                     "in_institution": bool(in_institution),
                     "income_status": (
                         "family_of_record" if in_institution else "family_file"
@@ -1405,6 +1415,16 @@ def build_age67_cohort(
     return cohort
 
 
+def _wealth_status(wave: int, inputs: Age67Inputs) -> str:
+    """Where the wave's family WEALTH1 comes from (or that it is blocked)."""
+
+    if wave not in inputs.family_wealth:
+        return WEALTH_BLOCKED_STATUS
+    if wave in family_income.WEALTH_SUPPLEMENT_WAVES:
+        return "wealth_supplement"
+    return "family_file"
+
+
 def _check_family_records(
     observations: pd.DataFrame, inputs: Age67Inputs
 ) -> None:
@@ -1437,16 +1457,19 @@ def income_rows(
     The rows :func:`populace_dynamics.estimates.adjusted_poverty.
     adjusted_incomes` consumes.  An institutionalized observation under
     ``family_of_record`` merges its family of record's income and wealth
-    like any member.  Observations whose wave has no staged wealth are
+    like any member.  Observations whose wave's wealth was refused are
     refused unless ``allow_blocked`` (then they are left out and counted
-    in ``attrs["left_out"]``).  ``attrs["provenance_kind"]`` carries the
-    cohort's provenance kind to the income concept's guard.
+    in ``attrs["left_out"]``).  A kept observation whose family has no
+    wealth record is refused (the join must be complete).
+    ``attrs["provenance_kind"]`` carries the cohort's provenance kind to
+    the income concept's guard.
     """
 
     obs = cohort.observations
-    blocked = obs["wealth_status"].ne("family_file") | ~obs[
-        "income_status"
-    ].isin(["family_file", "family_of_record"])
+    wealth_read = obs["wealth_status"].isin(WEALTH_READ_STATUSES)
+    blocked = ~wealth_read | ~obs["income_status"].isin(
+        ["family_file", "family_of_record"]
+    )
     if blocked.any() and not allow_blocked:
         waves = sorted(set(obs.loc[blocked, "wave"].astype(int)))
         raise ValueError(
@@ -1470,6 +1493,12 @@ def income_rows(
             how="left",
             validate="many_to_one",
         )
+        if merged["wealth1"].isna().any():
+            raise ValueError(
+                f"wave {int(wave)}: "
+                f"{int(merged['wealth1'].isna().sum())} observations' "
+                "families have no wealth record"
+            )
         frames.append(merged)
     out = (
         pd.concat(frames, ignore_index=True).copy()
@@ -1479,9 +1508,7 @@ def income_rows(
     out["member_sex"] = out["sex"]
     out.attrs["provenance_kind"] = cohort.provenance.get("kind")
     out.attrs["left_out"] = {
-        "wealth_supplement_not_staged": int(
-            obs["wealth_status"].ne("family_file").sum()
-        ),
+        "wealth_supplement_not_staged": int((~wealth_read).sum()),
     }
     return out
 
@@ -1627,7 +1654,7 @@ def structural_summary(
     }
     shared = obs.groupby("family_unit_id")["person_id"].nunique()
     summary["family_units_with_two_or_more_members"] = int((shared > 1).sum())
-    computable = obs["wealth_status"].eq("family_file") & obs[
+    computable = obs["wealth_status"].isin(WEALTH_READ_STATUSES) & obs[
         "income_status"
     ].isin(["family_file", "family_of_record"])
     summary["n_observations_computable_now"] = int(computable.sum())
