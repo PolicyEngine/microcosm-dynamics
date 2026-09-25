@@ -90,9 +90,10 @@ Person-level items take precedence.  An observation is:
 worker's own entitlement year; a survivor's first entitlement on the
 deceased's record (the earliest year consistent with their receipt of a
 survivor type, or of any receipt when they report none, no earlier than
-the death year and the year of attaining 60); a spouse's claim year (the
-later of their own or auxiliary entitlement year, the worker's
-entitlement year and the year of attaining 62).
+the death year and the year of attaining 60; a receipt year whose
+survivor item is unknown does not bound it, :func:`survivor_claim_year`);
+a spouse's claim year (the later of their own or auxiliary entitlement
+year, the worker's entitlement year and the year of attaining 62).
 
 **Unlinked auxiliaries.**  A person whose 2022 receipt mentions a
 survivor's benefit without a survivor's link, or a dependent's benefit
@@ -191,22 +192,48 @@ _FAMILY_LEVEL = ("year_before_last", "total")
 # ---------------------------------------------------------------------------
 @dataclass(frozen=True)
 class ReceiptObservation:
-    """One observed person-year: ``status`` own, auxiliary or none."""
+    """One observed person-year: ``status`` own, auxiliary or none.
+
+    ``types`` are the mentioned types; ``unknown_types`` the types whose
+    item the observation leaves unknown (every type for a combination
+    code, an unknown code or a whether-only "yes"; the flags coded DK or
+    NA).  The default, none unknown, is an observation whose every type
+    item is known.
+    """
 
     year: int
     status: str
     types: frozenset[str] = frozenset()
     source: str = "individual"
+    unknown_types: frozenset[str] = frozenset()
 
     def __post_init__(self) -> None:
         if self.status not in (OWN, AUXILIARY, NONE):
             raise ValueError(f"status {self.status!r}")
-        if self.status == NONE and self.types:
+        if self.status == NONE and (self.types or self.unknown_types):
             raise ValueError("an observation of no receipt has no types")
+        if self.status == AUXILIARY and self.unknown_types:
+            raise ValueError("auxiliary receipt needs every type known")
+        if not set(self.unknown_types) <= set(ssr.SS_TYPES):
+            raise ValueError(f"unknown types {sorted(self.unknown_types)}")
+        if self.types & self.unknown_types:
+            raise ValueError("a mentioned type cannot be unknown")
 
     @property
     def mentions_survivor(self) -> bool:
         return "survivor" in self.types
+
+    @property
+    def shows_no_survivor_receipt(self) -> bool:
+        """No receipt, or receipt whose survivor item is known and not
+        mentioned: an observation a survivor's benefit contradicts.  A
+        receipt year whose survivor item is unknown shows nothing."""
+
+        if self.status == NONE:
+            return True
+        return not self.mentions_survivor and (
+            "survivor" not in self.unknown_types
+        )
 
     @property
     def receipt(self) -> bool:
@@ -247,8 +274,16 @@ def observation(
         and bool(mentioned)
         and mentioned <= frozenset(ssr.AUXILIARY_TYPES)
     )
+    # A combination code names no type, so it leaves every type unknown.
+    unknown = frozenset(ssr.SS_TYPES) - (
+        mentioned if combination else frozenset(known)
+    )
     return ReceiptObservation(
-        int(year), AUXILIARY if auxiliary else OWN, mentioned, source
+        int(year),
+        AUXILIARY if auxiliary else OWN,
+        mentioned,
+        source,
+        unknown,
     )
 
 
@@ -401,22 +436,31 @@ def _first_consistent(
     *,
     earliest: int,
     counts: Any,
+    contradicts: Any = None,
 ) -> tuple[int, bool]:
     """Rule 2's earliest consistent year for a receipt event.
 
-    ``counts(obs)`` says whether an observation shows the event.  Returns
-    ``(year, observed)``: the later of ``earliest`` and the year after
-    the last observed year without the event before its first observed
-    year at or after ``earliest``; without an observed event, ``earliest``
-    and False.
+    ``counts(obs)`` says whether an observation shows the event and
+    ``contradicts(obs)`` whether it shows its absence (by default, every
+    observation that does not show it).  Returns ``(year, observed)``: the
+    later of ``earliest`` and the year after the last observed year that
+    shows the event absent before its first observed year at or after
+    ``earliest``; without an observed event, ``earliest`` and False.  An
+    observation that shows neither (a receipt year whose type is unknown,
+    for a survivor's benefit) does not bound the year.
     """
+
+    if contradicts is None:
+
+        def contradicts(obs: ReceiptObservation) -> bool:
+            return not counts(obs)
 
     years = sorted(y for y in observations if y >= earliest)
     hits = [y for y in years if counts(observations[y])]
     if not hits:
         return earliest, False
     first = hits[0]
-    without = [y for y in years if y < first]
+    without = [y for y in years if y < first and contradicts(observations[y])]
     if without:
         return max(earliest, max(without) + 1), True
     return earliest, True
@@ -433,9 +477,14 @@ def survivor_claim_year(
     The earliest year consistent with the survivor's receipt of a
     survivor type, no earlier than the death year and the year of
     attaining 60; when no survivor type is ever mentioned from the death
-    year on, the same over any receipt.  Returns the year and which
-    receipt decided it (``survivor_mention``, ``any_receipt`` or
-    ``earliest_allowed``).
+    year on, the same over any receipt.  Only an observation that shows no
+    survivor's benefit (no receipt, or a survivor item known and not
+    mentioned) bounds the year: a receipt year whose survivor item is
+    unknown (a combination code, an unknown code, a DK or NA flag, a
+    whether-only "yes") is consistent with a survivor's benefit.  (The
+    independent review of 2026-09-25: the build had let such a year push
+    the claim year later.)  Returns the year and which receipt decided it
+    (``survivor_mention``, ``any_receipt`` or ``earliest_allowed``).
     """
 
     earliest = max(int(death_year), int(birth_year) + _SURVIVOR_EARLIEST_AGE)
@@ -443,6 +492,7 @@ def survivor_claim_year(
         observations,
         earliest=earliest,
         counts=lambda obs: obs.mentions_survivor,
+        contradicts=lambda obs: obs.shows_no_survivor_receipt,
     )
     if seen:
         return min(year, INCOME_YEAR), "survivor_mention"
@@ -1202,6 +1252,23 @@ def boundary_year_unobserved(
     records with receipt in their first observed year to rule 3).
     """
 
+    gap, by_rule_2, age_rule = _boundary_readings(records, policy_year)
+    return {
+        "records": int(len(gap)),
+        "in_universe": int(gap["in_universe"].astype(bool).sum()),
+        "by_basis": _counter(gap["basis"]),
+        "in_window_by_rule_2": int(by_rule_2.sum()),
+        "in_window_by_rule_3_age_rule": int(age_rule.sum()),
+        "readings_disagree": int((by_rule_2 != age_rule).sum()),
+    }
+
+
+def _boundary_readings(
+    records: pd.DataFrame, policy_year: int
+) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
+    """The records :func:`boundary_year_unobserved` counts, with each
+    record's membership under rule 2 and under rule 3's age rule."""
+
     policy_year = int(policy_year)
     own = records[records["resolution"] == "rule2_observed_boundary"]
     if own.empty:
@@ -1214,44 +1281,35 @@ def boundary_year_unobserved(
     age_rule = (gap["birth_year"] >= RULE3_BIRTH_YEAR[policy_year]) & gap[
         "retirement_type"
     ].astype(bool)
-    return {
-        "records": int(len(gap)),
-        "in_universe": int(gap["in_universe"].astype(bool).sum()),
-        "by_basis": _counter(gap["basis"]),
-        "in_window_by_rule_2": int(by_rule_2.sum()),
-        "in_window_by_rule_3_age_rule": int(age_rule.sum()),
-        "readings_disagree": int((by_rule_2 != age_rule).sum()),
-    }
+    return gap, by_rule_2, age_rule
 
 
-def cohort_structure(cohort: TrackMCohort) -> dict[str, Any]:
-    """Counts of the cohort's classes, links and needed threshold years.
-
-    Persons, records and links by class; unresolved records by rule 3's
-    case at each policy year; in-window records by basis at 2004 and
-    2007 (in or after, and after); the threshold *years* in-window
-    records need (section 4a; years, never thresholds) with the earliest;
-    and the claim-year sources.  No benefit, years of coverage, PIA,
-    threshold or minimum enters.
-    """
+def _counts_outside_the_windows(cohort: TrackMCohort) -> dict[str, Any]:
+    """The counts of :func:`cohort_structure` that involve no policy
+    window, no exposed person, no unlinked auxiliary and no MS5 scope:
+    persons, records and links by class, the records outside the oracle,
+    the old-age entitlement ages of all records and the first-receipt
+    bands.  :func:`structural_counts_before_registration` computes these
+    and nothing the M1 specification's section 11 reserves."""
 
     persons, records, links = cohort.persons, cohort.records, cohort.links
-    out: dict[str, Any] = {
+    claim_ages = [
+        int(row.window_year) - int(row.birth_year)
+        for row in records.itertuples(index=False)
+        if row.basis == BASIS_OLD_AGE
+    ]
+    return {
         "persons": int(len(persons)),
         "persons_by_status_2022": _counter(persons["status_2022"]),
         "persons_with_own_record": int(persons["own_record_id"].notna().sum()),
         "persons_paid_own_worker_benefit": int(
             persons["paid_own_worker_benefit"].sum()
         ),
-        "persons_ms5_in_scope": int(persons["ms5_in_scope"].sum()),
         "persons_by_marital_status_2022": _counter(
             persons["marital_status_2022"]
         ),
         "persons_by_role": _counter(persons["role"]),
         "persons_by_sex": _counter(persons["sex"]),
-        "unlinked_auxiliaries": _counter(
-            persons.loc[persons["unlinked_auxiliary"], "unlinked_kind"]
-        ),
         "amount_2022_top_coded": int(
             (persons["amount_2022"] >= ssr.AMOUNT_TOP_CODE).sum()
         ),
@@ -1270,8 +1328,63 @@ def cohort_structure(cohort: TrackMCohort) -> dict[str, Any]:
         "death_basis_records_died_at_or_after_62": int(
             records["death_after_62"].sum()
         ),
+        "records_outside_the_oracle": int(
+            (
+                records["birth_year"] + _ELIGIBILITY_AGE
+                < FIRST_AGE_62_YEAR_ENCODED
+            ).sum()
+        ),
+        "old_age_entitlement_age": _counter(claim_ages),
+        "first_own_year_band": _counter(
+            (
+                "1983_1992_person_level"
+                if y <= 1992
+                else (
+                    "1993_2003_family_level_only" if y <= 2003 else "2004_2022"
+                )
+            )
+            for y in records["first_own_year"].dropna().astype(int)
+        ),
         "build_diagnostics": dict(cohort.diagnostics),
     }
+
+
+def _unresolved_counts(records: pd.DataFrame) -> dict[str, Any]:
+    """Rule-3 records in total, by first receipt and by basis (no window)."""
+
+    unresolved = records[records["unresolved"]]
+    return {
+        "records": int(len(unresolved)),
+        "first_own_year_2004": int(
+            (unresolved["first_own_year"] == 2004).sum()
+        ),
+        "first_own_year_after_2004": int(
+            (unresolved["first_own_year"] > 2004).sum()
+        ),
+        "by_basis": _counter(unresolved["basis"]),
+    }
+
+
+def cohort_structure(cohort: TrackMCohort) -> dict[str, Any]:
+    """Counts of the cohort's classes, links and needed threshold years.
+
+    Persons, records and links by class; unresolved records by rule 3's
+    case at each policy year; in-window records by basis at 2004 and
+    2007 (in or after, and after); the threshold *years* in-window
+    records need (section 4a; years, never thresholds) with the earliest;
+    and the claim-year sources.  No benefit, years of coverage, PIA,
+    threshold or minimum enters.  Its window, exposure, unlinked-auxiliary
+    and MS5 counts are section 11's registered-run diagnostics: on real
+    data only the registered run computes them
+    (:func:`structural_counts_before_registration` does not call this).
+    """
+
+    persons, records = cohort.persons, cohort.records
+    out: dict[str, Any] = _counts_outside_the_windows(cohort)
+    out["persons_ms5_in_scope"] = int(persons["ms5_in_scope"].sum())
+    out["unlinked_auxiliaries"] = _counter(
+        persons.loc[persons["unlinked_auxiliary"], "unlinked_kind"]
+    )
     ms5 = persons[persons["ms5_in_scope"]]
     own_windows = records.set_index("record_id")["window_year"]
     ms5_ids = ms5["own_record_id"].astype(str)
@@ -1340,38 +1453,12 @@ def cohort_structure(cohort: TrackMCohort) -> dict[str, Any]:
         str(year): boundary_year_unobserved(records, year)
         for year in POLICY_YEARS
     }
-    out["records_outside_the_oracle"] = int(
-        (
-            records["birth_year"] + _ELIGIBILITY_AGE
-            < FIRST_AGE_62_YEAR_ENCODED
-        ).sum()
-    )
     unresolved = records[records["unresolved"]]
     out["unresolved_rule3"] = {
-        "records": int(len(unresolved)),
-        "first_own_year_2004": int(
-            (unresolved["first_own_year"] == 2004).sum()
-        ),
-        "first_own_year_after_2004": int(
-            (unresolved["first_own_year"] > 2004).sum()
-        ),
+        **_unresolved_counts(records),
         "in_2004": int(unresolved["rule3_in_2004"].fillna(False).sum()),
         "in_2007": int(unresolved["rule3_in_2007"].fillna(False).sum()),
-        "by_basis": _counter(unresolved["basis"]),
     }
-    claim_ages = []
-    for row in records.itertuples(index=False):
-        if row.basis == BASIS_OLD_AGE:
-            claim_ages.append(int(row.window_year) - int(row.birth_year))
-    out["old_age_entitlement_age"] = _counter(claim_ages)
-    out["first_own_year_band"] = _counter(
-        (
-            "1983_1992_person_level"
-            if y <= 1992
-            else "1993_2003_family_level_only" if y <= 2003 else "2004_2022"
-        )
-        for y in records["first_own_year"].dropna().astype(int)
-    )
     return out
 
 
@@ -1396,56 +1483,22 @@ def structural_counts_before_registration(
     them the worker records by basis in the window, the unresolved
     in-window records, the exposed persons, the unlinked auxiliaries and
     the PIA source of each record ("None may be computed on real data
-    before the registration").  So this returns :func:`cohort_structure`
-    less every count of in-window records or exposed persons, the
-    unlinked auxiliaries and the MS5 scope: persons, records and links by
-    class; unresolved records in total and by basis; for each registered
-    window, the earliest threshold year its records need, the years before
-    the capture (2003) they need and the section 4a bases that need them,
-    as years and names without counts; and the counts that size the
-    section 4b readings.  No benefit, years of
-    coverage, PIA, threshold, minimum or flag enters.
+    before the registration").  So this computes, and returns, only:
+    persons, records and links by class; unresolved records in total and
+    by basis; for each registered window, the earliest threshold year its
+    records need, the years before the capture (2003) they need and the
+    section 4a bases that need them, as years and names without counts;
+    and, for the rule-2 records whose year before a policy year is
+    unobserved, how many there are and on how many rule 2 and rule 3's
+    age rule disagree.  It never calls :func:`cohort_structure` (the
+    independent review of 2026-09-25: it had computed the reserved counts
+    in memory and dropped them).  No benefit, years of coverage, PIA,
+    threshold, minimum or flag enters.
     """
 
-    full = cohort_structure(cohort)
     records = cohort.records
-    out: dict[str, Any] = {
-        key: full[key]
-        for key in (
-            "persons",
-            "persons_by_status_2022",
-            "persons_with_own_record",
-            "persons_paid_own_worker_benefit",
-            "persons_by_marital_status_2022",
-            "persons_by_role",
-            "persons_by_sex",
-            "amount_2022_top_coded",
-            "links_by_kind",
-            "links_by_claim_source",
-            "persons_with_links",
-            "records",
-            "records_by_basis",
-            "records_by_resolution",
-            "records_outside_universe",
-            "records_of_deceased_workers_by_basis",
-            "death_basis_records_died_at_or_after_62",
-            "records_outside_the_oracle",
-            "old_age_entitlement_age",
-            "first_own_year_band",
-            "build_diagnostics",
-        )
-    }
-    unresolved = records[records["unresolved"]]
-    out["unresolved_rule3"] = {
-        "records": int(len(unresolved)),
-        "first_own_year_2004": int(
-            (unresolved["first_own_year"] == 2004).sum()
-        ),
-        "first_own_year_after_2004": int(
-            (unresolved["first_own_year"] > 2004).sum()
-        ),
-        "by_basis": _counter(unresolved["basis"]),
-    }
+    out: dict[str, Any] = _counts_outside_the_windows(cohort)
+    out["unresolved_rule3"] = _unresolved_counts(records)
     years: dict[str, Any] = {}
     union: set[int] = set()
     bases: set[str] = set()
@@ -1455,30 +1508,34 @@ def structural_counts_before_registration(
             if strictly
             else records["window_year"] >= year
         )
-        inside = records[window]
-        needed = sorted({int(y) for y in inside["threshold_year"]})
+        # the years and bases of the window's records, never their number
+        needed = sorted(
+            {int(y) for y in records.loc[window, "threshold_year"]}
+        )
+        early = window & (records["threshold_year"] < 2003)
+        early_bases = sorted(set(records.loc[early, "basis"]))
         union |= set(needed)
-        early = inside[inside["threshold_year"] < 2003]
         years[key] = {
             "earliest_threshold_year": needed[0] if needed else None,
             "threshold_years_before_2003": [y for y in needed if y < 2003],
             # which section 4a rows need them: names, never counts
-            "bases_needing_years_before_2003": sorted(set(early["basis"])),
+            "bases_needing_years_before_2003": early_bases,
         }
-        bases |= set(early["basis"])
+        bases |= set(early_bases)
     years["any_registered_row"] = {
         "earliest_threshold_year": min(union) if union else None,
         "threshold_years_before_2003": sorted(y for y in union if y < 2003),
         "bases_needing_years_before_2003": sorted(bases),
     }
     out["threshold_years_needed"] = years
-    out["boundary_year_unobserved"] = {
-        year: {
-            "records": value["records"],
-            "readings_disagree": value["readings_disagree"],
+    boundary: dict[str, Any] = {}
+    for year in POLICY_YEARS:
+        gap, by_rule_2, age_rule = _boundary_readings(records, year)
+        boundary[str(year)] = {
+            "records": int(len(gap)),
+            "readings_disagree": int((by_rule_2 != age_rule).sum()),
         }
-        for year, value in full["boundary_year_unobserved"].items()
-    }
+    out["boundary_year_unobserved"] = boundary
     out["withheld_until_registration"] = [
         "in-window records by basis, resolution and entitlement age",
         "threshold years needed, with counts",

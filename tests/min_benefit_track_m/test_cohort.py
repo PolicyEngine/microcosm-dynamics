@@ -674,3 +674,227 @@ def test_the_counts_before_registration_leave_out_the_diagnostics(invented):
     )
     assert before["persons"] == full["persons"]
     assert math.isfinite(before["records"])
+
+
+# ---------------------------------------------------------------------------
+# Survivor claim years and unknown types (independent review, 2026-09-25)
+# ---------------------------------------------------------------------------
+# Invariants (property tests below):
+#
+# * a survivor's claim year from a survivor mention is consistent: no
+#   observation from the claim year up to the first mention shows no
+#   survivor's benefit;
+# * it is the earliest such year: the claim year is the earliest allowed
+#   year, or the year before it is observed showing no survivor's benefit;
+# * a receipt year whose survivor item is unknown never moves the claim
+#   year later (adding one, or making a known year unknown);
+# * differential: the claim year equals a brute-force search over the
+#   years from the earliest allowed to the first mention.
+_TYPE_VALUES = (True, False, None)
+
+
+@st.composite
+def _survivor_histories(draw):
+    """Observations drawn through :func:`cohort.observation`, so that type
+    items may be unknown (``None``) and single codes may be combinations,
+    as M3's frames give them."""
+
+    birth = draw(st.integers(min_value=1925, max_value=1960))
+    death = draw(st.integers(min_value=1975, max_value=2022))
+    years = draw(
+        st.lists(
+            st.sampled_from(_OBSERVABLE_YEARS),
+            min_size=1,
+            max_size=14,
+            unique=True,
+        )
+    )
+    out = {}
+    for year in sorted(years):
+        receipt = draw(st.booleans())
+        combination = receipt and draw(st.booleans()) and draw(st.booleans())
+        types = (
+            {}
+            if combination or not receipt
+            else {
+                name: draw(st.sampled_from(_TYPE_VALUES))
+                for name in ssr.SS_TYPES
+            }
+        )
+        out[year] = cohort.observation(
+            year,
+            receipt=receipt,
+            types=types,
+            combination=combination,
+            source=draw(st.sampled_from(("individual", "year_before_last"))),
+        )
+    return birth, death, out
+
+
+def _brute_force_claim(history, birth, death):
+    earliest = max(death, birth + 60)
+    mentions = sorted(
+        y for y, o in history.items() if y >= earliest and o.mentions_survivor
+    )
+    if not mentions:
+        return None
+    first = mentions[0]
+    for year in range(earliest, first + 1):
+        blocking = [
+            y
+            for y, o in history.items()
+            if year <= y < first and o.shows_no_survivor_receipt
+        ]
+        if not blocking:
+            return min(year, cohort.INCOME_YEAR)
+    raise AssertionError("unreachable: the first mention is consistent")
+
+
+def test_an_observations_unknown_types_are_recorded():
+    both = cohort.observation(
+        2006, receipt=True, types={}, combination=True, source="individual"
+    )
+    assert both.status == OWN
+    assert both.unknown_types == frozenset(ssr.SS_TYPES)
+    assert not both.shows_no_survivor_receipt
+    retired = cohort.observation(
+        2006,
+        receipt=True,
+        types={name: name == "retirement" for name in ssr.SS_TYPES},
+    )
+    assert retired.unknown_types == frozenset()
+    assert retired.shows_no_survivor_receipt
+    flags = {name: False for name in ssr.SS_TYPES}
+    flags.update(retirement=True, survivor=None)  # survivor flag DK
+    partial = cohort.observation(2012, receipt=True, types=flags)
+    assert partial.unknown_types == frozenset({"survivor"})
+    assert not partial.shows_no_survivor_receipt
+    whether_only = cohort.observation(
+        2009, receipt=True, types={}, source="year_before_last"
+    )
+    assert whether_only.unknown_types == frozenset(ssr.SS_TYPES)
+    assert cohort.observation(2009, receipt=False).shows_no_survivor_receipt
+    with pytest.raises(ValueError, match="no types"):
+        ReceiptObservation(2009, NONE, unknown_types=frozenset({"survivor"}))
+    with pytest.raises(ValueError, match="cannot be unknown"):
+        ReceiptObservation(
+            2009,
+            OWN,
+            frozenset({"survivor"}),
+            unknown_types=frozenset({"survivor"}),
+        )
+
+
+def test_a_receipt_year_of_unknown_type_does_not_delay_a_survivors_claim():
+    """Regression: the build let a receipt year whose survivor item is
+    unknown (here a one-member family's whether-only "yes", the kind the
+    staged PSID holds) push the claim year past it, although that year is
+    consistent with a survivor's benefit (section 4c item 6)."""
+
+    unknown = cohort.observation(
+        2009, receipt=True, types={}, source="year_before_last"
+    )
+    history = {
+        2006: _obs(2006, NONE),
+        2009: unknown,
+        2012: _obs(2012, OWN, "survivor"),
+    }
+    # died 2007, born 1945 (60 in 2005): the last year showing no
+    # survivor's benefit is 2006, so the earliest consistent year is 2007
+    assert cohort.survivor_claim_year(
+        history, birth_year=1945, death_year=2007
+    ) == (2007, "survivor_mention")
+    # a known retirement-only year in 2009 does bound it
+    history[2009] = cohort.observation(
+        2009,
+        receipt=True,
+        types={name: name == "retirement" for name in ssr.SS_TYPES},
+    )
+    assert cohort.survivor_claim_year(
+        history, birth_year=1945, death_year=2007
+    ) == (2010, "survivor_mention")
+    # so does a combination code in a single-code wave: it does not
+    history[2009] = cohort.observation(
+        2009, receipt=True, types={}, combination=True
+    )
+    assert cohort.survivor_claim_year(
+        history, birth_year=1945, death_year=2007
+    ) == (2007, "survivor_mention")
+
+
+@settings(max_examples=600, deadline=None)
+@given(_survivor_histories())
+def test_a_survivors_claim_year_is_the_earliest_consistent_year(case):
+    birth, death, history = case
+    year, source = cohort.survivor_claim_year(
+        history, birth_year=birth, death_year=death
+    )
+    expected = _brute_force_claim(history, birth, death)
+    if source != "survivor_mention":
+        assert expected is None
+        return
+    assert year == expected
+    earliest = max(death, birth + 60)
+    first = min(
+        y for y, o in history.items() if y >= earliest and o.mentions_survivor
+    )
+    assert not any(
+        year <= y < first and o.shows_no_survivor_receipt
+        for y, o in history.items()
+    )
+    if year > earliest and year < cohort.INCOME_YEAR:
+        assert history[year - 1].shows_no_survivor_receipt
+
+
+@settings(max_examples=400, deadline=None)
+@given(_survivor_histories(), st.data())
+def test_an_unknown_type_year_never_delays_a_survivors_claim(case, data):
+    birth, death, history = case
+    before, source = cohort.survivor_claim_year(
+        history, birth_year=birth, death_year=death
+    )
+    assume(source == "survivor_mention")
+    candidates = [
+        y
+        for y in _OBSERVABLE_YEARS
+        if not (y in history and history[y].mentions_survivor)
+    ]
+    year = data.draw(st.sampled_from(candidates))
+    unknown = cohort.observation(
+        year, receipt=True, types={}, combination=True
+    )
+    after, source_after = cohort.survivor_claim_year(
+        {**history, year: unknown}, birth_year=birth, death_year=death
+    )
+    assert source_after == "survivor_mention"
+    assert after <= before
+
+
+def test_the_counts_before_registration_compute_no_reserved_count(
+    invented, monkeypatch
+):
+    """Regression: the counts real files may give before the registration
+    had called :func:`cohort.cohort_structure`, computing section 11's
+    reserved diagnostics (in-window records, unlinked auxiliaries, the MS5
+    scope) in memory and dropping them.  They must compute only what they
+    return, and agree with the full counts on it (differential)."""
+
+    _, built = invented
+    full = cohort.cohort_structure(built)
+
+    def refuse(*args, **kwargs):
+        raise AssertionError("a reserved diagnostic was computed")
+
+    monkeypatch.setattr(cohort, "cohort_structure", refuse)
+    monkeypatch.setattr(cohort, "boundary_year_unobserved", refuse)
+    before = cohort.structural_counts_before_registration(built)
+    for key, value in before.items():
+        if key in ("unresolved_rule3", "boundary_year_unobserved"):
+            continue
+        if key in full:
+            assert value == full[key], key
+    for key in ("records", "first_own_year_2004", "by_basis"):
+        assert before["unresolved_rule3"][key] == full["unresolved_rule3"][key]
+    for year, value in before["boundary_year_unobserved"].items():
+        for key in ("records", "readings_disagree"):
+            assert value[key] == full["boundary_year_unobserved"][year][key]
