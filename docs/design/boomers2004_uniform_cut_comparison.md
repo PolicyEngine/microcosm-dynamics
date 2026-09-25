@@ -456,14 +456,18 @@ income, threshold or poverty status was computed.
 
 Recollected under `u1-draft-7`'s code (the same script, which now also
 reads the pension section; evidence
-`EVID/track-u-structure-u1d7-20260925/`, counts only): compared field by
-field with the u1d6 evidence, every observation, person, disposition,
-marital, annuitant-age, receipt, reconciliation and join count is
-equal. The file adds, for each observation cell, the employer DC counts
-of §4 (no amount), and for each wave the pension section's routing
-counts over every family (`employer_dc_reconciliation`). No income,
-threshold or poverty status was computed, and no employer DC amount was
-summed.
+`EVID/track-u-structure-u1d7-20260925/`, counts only, written by the
+independent review at `a675aab3`, after its correction of U7's route;
+the builder's run had left only an empty log): compared field by field
+with the u1d6 evidence, every observation, person, disposition,
+marital, annuitant-age, design, receipt, reconciliation, join and
+file-hash entry is equal. The file adds, for each observation cell, the
+employer DC counts of §4 (no amount), and for each wave the pension
+section's routing counts over every family (`employer_dc_reconciliation`).
+Of U0's observations, 4, 9, 12, 12 and 14 in waves 2005–2013 (of 81, 82,
+93, 116 and 111) belong to families with a positive U7 balance. No
+income, threshold or poverty status was computed, and no employer DC
+amount was aggregated across families or printed.
 
 ## 4. Income concept
 
@@ -1350,9 +1354,12 @@ as #458), `dynamics-track-u-census-20260924` (the Census capture, #462),
   U0 is the headline and no row is blocked; the fallback check runs with
   them refused; the invented frames and every computed row's cells equal
   the u1d5 evidence, and the pending decisions record d189) and
-  `EVID/track-u-dry-run-u1d7-20260925/` (this draft: U7 and U7-F are
-  computed with the rest on invented pension-section records, and a
-  check records that U7 differs from U0 only through the annuity).
+  `EVID/track-u-dry-run-u1d7-20260925/` (this draft, written by the
+  independent review at `a675aab3`: U7 and U7-F are computed with the
+  rest on invented pension-section records, and a check records that U7
+  differs from U0 only through the annuity; every other computed row's
+  cells, the income-concept counts and the F17 diagnostics equal the
+  u1d6 evidence).
 - `scripts/run_track_u_registered.py` (U10 entry point): refuses unless
   the pointer is an issue #42 comment, `HEAD` is the registered commit
   on a clean tree, §15 is ratified with nothing awaiting and nothing
