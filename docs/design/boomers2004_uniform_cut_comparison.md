@@ -401,8 +401,9 @@ U1 has 1,353 (the 3 above plus that person). Under `excluded` every row
 equals the primary. No income, threshold or poverty status was computed.
 
 Recollected under `u1-draft-6`'s code, with the 2005 and 2007 wealth
-supplements staged and adjudicated (the same script, evidence
-`EVID/track-u-structure-u1d6-20260925/`, counts only): the population is
+supplements staged and adjudicated (the same script at `c1d9532f`,
+evidence `EVID/track-u-structure-u1d6-20260925/`, counts only): the
+population is
 unchanged (U0 483 observations, U0-F 320, U1 1,349 of 970 persons, and
 every disposition, marital and annuitant-age count equals the u1d5
 evidence), and nothing is blocked. All 81 observations of the 1937 birth
@@ -1136,9 +1137,11 @@ branch; not merged); all opt-in; registered in
   or U1 and computes the -F rows; the independent review re-ran it at
   `1fa6e606`, and its output equals this evidence except for the
   recorded commit and output path) and
-  `EVID/track-u-dry-run-u1d6-20260925/` (this draft: the main run has the
-  supplements' wealth, as the staged PSID does, so U0 is the headline
-  and no row is blocked; the fallback check runs with them refused).
+  `EVID/track-u-dry-run-u1d6-20260925/` (this draft, at `c1d9532f`: the
+  main run has the supplements' wealth, as the staged PSID does, so U0
+  is the headline and no row is blocked; the fallback check runs with
+  them refused; the invented frames and every computed row's cells equal
+  the u1d5 evidence, and the pending decisions record d189).
 - `scripts/run_track_u_registered.py` (U10 entry point): refuses unless
   the pointer is an issue #42 comment, `HEAD` is the registered commit
   on a clean tree, §15 is ratified with nothing awaiting and nothing
