@@ -199,7 +199,16 @@ def summary_markdown(result: dict[str, Any]) -> str:
     lines += [
         "",
         _sentence(diag["published_sources"]["wealth1"]["not_compared"])
-        + " Waves 2005 and 2007 have no WEALTH1 (supplements not staged).",
+        + (
+            " Waves "
+            + ", ".join(sorted(result["wealth_refusals"]))
+            + " have no WEALTH1 (the reader refused their wealth "
+            "supplement)."
+            if result["wealth_refusals"]
+            else " Waves 2005 and 2007 read WEALTH1 from the PSID wealth "
+            "supplements (WLTH2005, WLTH2007), waves 2009-2013 from the "
+            "family file."
+        ),
         "",
         "## `# IN FU` against the individual records (institution rule)",
         "",

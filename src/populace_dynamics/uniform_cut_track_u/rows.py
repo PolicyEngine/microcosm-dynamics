@@ -20,10 +20,14 @@ would equal U1; the Census cannot determine poverty status for people in
 institutional group quarters, and on the staged PSID U-inst would add one
 U0 observation (born 1937) and none to U0-F.
 
-:data:`HEADLINE_RULE` is the specification's fallback rule (pending Max,
-with plan section 10 decision 3): U0 is the headline when the 2005 and
-2007 wealth supplements are staged, adjudicated and read before the #42
-registration, U0-F otherwise, by staging status only.
+:data:`HEADLINE_RULE` is the specification's fallback rule (pending Max):
+U0 is the headline when the 2005 and 2007 wealth supplements are staged,
+adjudicated and read before the #42 registration, U0-F otherwise, by
+staging status only.  Plan section 10 decision 3 (Max downloads the
+supplements) is decided (cos decision d189), and since u1-draft-6 the
+supplements are staged and adjudicated, so on the staged PSID the rule
+gives U0; whether U0-F and the -F alternatives stay registered is the
+part of the rule still awaiting Max.
 
 :func:`check_rows_against_block` holds :data:`REGISTERED_ROWS` to the
 specification's machine-readable block, so a row a run computes is the
@@ -121,7 +125,10 @@ class TrackURow:
         }
 
 
-_FALLBACK_AWAITING = "Max (the fallback rule, with plan section 10 decision 3)"
+_FALLBACK_AWAITING = (
+    "Max (the fallback rule of specification section 11; plan section 10 "
+    "decision 3, the downloads, is decided: d189)"
+)
 #: The one-field alternatives defined on U0 that are also registered on
 #: U0-F's population, and the name of each ``-F`` row (second referee S8).
 FALLBACK_ALTERNATIVES: dict[str, str] = {

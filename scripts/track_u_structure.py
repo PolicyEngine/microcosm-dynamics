@@ -4,10 +4,12 @@ Builds the exercise-2 age-67 observations (every builder row of
 :data:`populace_dynamics.cohorts.age67.ROWS`: U0, U1 and U0-F) from the
 staged PSID with :mod:`populace_dynamics.cohorts.age67` and writes
 ``track-u-structure.json``: persons, observations, dispositions, family
-units, design strata, the wealth blockers, the marital-resolution paths
-and annuitant age sources, threshold-free receipt counts (including farm
-and the head's annuity and IRA income) and the family-income and WEALTH1
-reconciliation counts.
+units, design strata, each observation's wealth source (the family file,
+the 2005 and 2007 wealth supplements, or blocked), the marital-resolution
+paths and annuitant age sources, threshold-free receipt counts (including
+farm and the head's annuity and IRA income), the family-income and
+WEALTH1 reconciliation counts and the wealth supplements' family-ID join
+counts.
 
 It computes **no** income concept, annuity, threshold, poverty status or
 poverty rate: plan ``critical-path-uniform-cut-20260923.md`` section 8
@@ -95,6 +97,13 @@ def build(data_dir: Path | None = None) -> dict:
             family_income.reconcile_family_income(incomes)
         ),
         "wealth1_reconciliation": family_income.reconcile_wealth1(wealth),
+        "wealth_supplement_join": {
+            str(wave): family_income.wealth_supplement_join(
+                wave, data_dir=data_dir
+            )
+            for wave in family_income.WEALTH_SUPPLEMENT_WAVES
+            if wave not in inputs.wealth_refusals
+        },
         "wealth_refusals": {
             str(k): v for k, v in sorted(inputs.wealth_refusals.items())
         },

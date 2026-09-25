@@ -39,12 +39,22 @@ comment exists, at exactly the commit that comment registers:
 The artifact publishes regardless of outcome.  It never reads the sealed
 comparator; the seal is opened only after this artifact is committed.
 
-As of this script's writing the specification is a draft
-(``u1-draft-5``), Max has not ruled on exercise 2 (cos decision d189) or
-on the fallback rule, and the 2005/2007 wealth supplements are not
-staged.  The Census thresholds are captured and pinned (cos decision
-d194; ``data/external/census_poverty_thresholds_2004_2012.json``), and
-the specification's threshold block records ``capture_status:
+As of this script's writing (``u1-draft-6``, 2026-09-25) the
+specification is a draft and refuses a run.  Max ruled on exercise 2 on
+2026-09-24 (cos decision d189): yes to Track U as exercise 2's first
+score (the claim class: PSID-realized outcomes at 67, not a projection),
+with the SSI rule "offset only for existing SSI recipients"; and he
+downloaded the 2005 and 2007 PSID wealth supplements, which are staged
+and adjudicated (``populace_dynamics.data.family_income``), so on the
+staged PSID the fallback rule gives U0 as the headline.  Still open, and
+named as ``awaiting`` or ``blocked_by`` in the section 15 block: the
+fallback rule itself (whether U0-F and the -F alternatives stay
+registered), plan decision 8 (the scorecard's "from 2004"), plan
+decision 6 (the acceptance rule), the #42 registration and row U7; the
+specification's section 16 also lists plan decisions 2, 4 and 7 and the
+freeze defaults.  The Census thresholds are captured and pinned (cos
+decision d194; ``data/external/census_poverty_thresholds_2004_2012.json``),
+and the specification's threshold block records ``capture_status:
 captured``.
 
 Usage::

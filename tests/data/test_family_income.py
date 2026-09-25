@@ -9,6 +9,7 @@ without any PSID data. No value below is a PSID observation.
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 import pandas as pd
@@ -234,8 +235,8 @@ def test_readers_refuse_unresolved_waves():
         fi.income_variables(2003)
     with pytest.raises(ValueError, match="outside"):
         fi.wealth_variables(2015)
-    with pytest.raises(fi.WealthSupplementNotAdjudicatedError):
-        fi.wealth_variables(2005)
+    with pytest.raises(ValueError, match="outside"):
+        fi.wealth_variables(2003)
 
 
 def test_wealth_reader_reads_components(tmp_path):
@@ -265,14 +266,23 @@ def test_wealth_reader_rejects_negative_debt(tmp_path):
         fi.read_family_wealth(2011, data_dir=tmp_path)
 
 
-def _write_2005(root: Path, *, wealth_label: bool = False) -> None:
-    values = {concept: [0, 0] for concept in fi.income_variables(2005)}
+def _write_2005(
+    root: Path,
+    *,
+    wealth_label: bool = False,
+    interviews: tuple[int, ...] = (1, 2),
+) -> None:
+    n = len(interviews)
+    values = {concept: [0] * n for concept in fi.income_variables(2005)}
     values.update(
-        interview=[1, 2], fu_size=[1, 1], head_age=[67, 67], head_sex=[1, 2]
+        interview=list(interviews),
+        fu_size=[1] * n,
+        head_age=[67] * n,
+        head_sex=[1, 2] * (n // 2) + [1] * (n % 2),
     )
-    values["census_needs_standard"] = [9000, 9000]
+    values["census_needs_standard"] = [9000] * n
     extra = (
-        [("ER99998", 9, "IMP WEALTH W/O EQUITY (WEALTH1) 05", [0, 0])]
+        [("ER99998", 9, "IMP WEALTH W/O EQUITY (WEALTH1) 05", [0] * n)]
         if wealth_label
         else []
     )
@@ -288,6 +298,117 @@ def _write_2005(root: Path, *, wealth_label: bool = False) -> None:
     )
 
 
+def _supplement_values(
+    interviews: tuple[int, ...] = (1, 2, 3),
+) -> dict[str, list[int]]:
+    """Invented 2005 supplement values whose WEALTH1 adds up."""
+
+    n = len(interviews)
+    values = {
+        concept: [0] * n for concept in fi.wealth_supplement_variables(2005)
+    }
+    values.update(
+        release=[2] * n,
+        interview=list(interviews),
+        checking_saving=[5000, 20000, -40][:n],
+        vehicles=[3000, 8000, 1000][:n],
+        ira_annuity=[0, 50000, 0][:n],
+        farm_business=[0, 0, -700][:n],
+        other_debt=[0, 2000, 4000][:n],
+        home_equity=[0, 90000, -500][:n],
+        vehicles_acc=[0, 1, 0][:n],
+        wealth1_acc=[0, 1, 0][:n],
+    )
+    assets = [
+        sum(values[c][i] for c in fi.WEALTH1_ASSETS[2005]) for i in range(n)
+    ]
+    debts = [
+        sum(values[c][i] for c in fi.WEALTH1_DEBTS[2005]) for i in range(n)
+    ]
+    values["wealth1"] = [a - d for a, d in zip(assets, debts, strict=True)]
+    values["wealth2"] = [
+        w + h
+        for w, h in zip(values["wealth1"], values["home_equity"], strict=True)
+    ]
+    return values
+
+
+def _write_supplement(
+    root: Path,
+    monkeypatch,
+    values: dict[str, list[int]],
+    *,
+    relabel: dict[str, str] | None = None,
+    pin: bool = True,
+) -> None:
+    """An INVENTED 2005 supplement under ``root/wealth/2005``; ``pin``
+    makes its bytes the adjudicated ones for this test only."""
+
+    relabel = relabel or {}
+    directory = root / "wealth" / "2005"
+    write_product(
+        directory,
+        "WLTH2005.sps",
+        "WLTH2005.txt",
+        [
+            (var, _WIDTH, relabel.get(concept, label), values[concept])
+            for concept, (var, label) in fi.wealth_supplement_variables(
+                2005
+            ).items()
+        ],
+    )
+    if pin:
+        monkeypatch.setitem(
+            fi.WEALTH_SUPPLEMENT_SHA256,
+            2005,
+            {
+                name: hashlib.sha256(
+                    (directory / name).read_bytes()
+                ).hexdigest()
+                for name in ("WLTH2005.sps", "WLTH2005.txt")
+            },
+        )
+
+
+def test_supplement_tables_mirror_the_2009_family_file():
+    """The 2005 and 2007 supplement tables (adjudicated 2026-09-25) carry
+    the 2009 family file's wealth concepts item for item, with the wave
+    token on every label and each accuracy flag the variable after its
+    amount."""
+
+    for wave, token in ((2005, "05"), (2007, "07")):
+        table = fi.wealth_variables(wave)
+        assert list(table) == list(fi.wealth_variables(2009))
+        assert fi.WEALTH1_ASSETS[wave] == fi.WEALTH1_ASSETS[2009]
+        assert fi.WEALTH1_DEBTS[wave] == fi.WEALTH1_DEBTS[2009]
+        full = fi.wealth_supplement_variables(wave)
+        assert full["interview"] == (
+            {2005: "S701", 2007: "S801"}[wave],
+            f"{wave} FAMILY ID",
+        )
+        assert full["release"][1] == f"{wave} WEALTH FILE RELEASE NUMBER"
+        assert table["wealth1"][1] == (
+            f"IMP WEALTH W/O EQUITY (WEALTH1) {token}"
+        )
+        for concept, (var, label) in full.items():
+            if concept in ("interview", "release"):
+                continue
+            assert label.endswith(f" {token}"), concept
+            if concept.endswith("_acc"):
+                amount_var, amount_label = full[concept[: -len("_acc")]]
+                assert var == f"{amount_var}A"
+                assert label == "ACC" + amount_label[len("IMP") :]
+        accuracy = [c for c in full if c.endswith("_acc")]
+        amounts = [c for c in table if c != "wealth1_acc"]
+        assert sorted(accuracy) == sorted(f"{c}_acc" for c in amounts)
+        assert set(fi.WEALTH_SUPPLEMENT_SHA256[wave]) == {
+            f"WLTH{wave}.sps",
+            f"WLTH{wave}.txt",
+        }
+    with pytest.raises(ValueError, match="not a supplement wave"):
+        fi.wealth_supplement_variables(2009)
+
+
 def test_supplement_wave_refusal_names_the_missing_files(tmp_path):
     _write_2005(tmp_path)
     with pytest.raises(fi.WealthSupplementNotStagedError) as error:
@@ -296,9 +417,10 @@ def test_supplement_wave_refusal_names_the_missing_files(tmp_path):
     assert "2005 wealth supplement not staged" in message
     assert str(tmp_path / "wealth" / "2005") in message
     assert ".sps" in message and ".txt" in message
-    assert "Max" in message
+    assert "WLTH2005.sps" in message and "wlth2005.zip" in message
     status = fi.wealth_supplement_status(2005, data_dir=tmp_path)
     assert status["staged"] is False
+    assert status["adjudicated"] is False
 
 
 def test_staged_but_unadjudicated_supplement_is_refused(tmp_path):
@@ -307,8 +429,11 @@ def test_staged_but_unadjudicated_supplement_is_refused(tmp_path):
     staged.mkdir(parents=True)
     (staged / "WLTH2005.sps").write_text("invented\n")
     (staged / "WLTH2005.txt").write_text("invented\n")
-    assert fi.wealth_supplement_status(2005, data_dir=tmp_path)["staged"]
-    with pytest.raises(fi.WealthSupplementNotAdjudicatedError):
+    status = fi.wealth_supplement_status(2005, data_dir=tmp_path)
+    assert status["staged"] and not status["adjudicated"]
+    with pytest.raises(
+        fi.WealthSupplementNotAdjudicatedError, match="adjudicated on"
+    ):
         fi.read_family_wealth(2005, data_dir=tmp_path)
 
 
@@ -316,6 +441,112 @@ def test_supplement_premise_is_checked(tmp_path):
     _write_2005(tmp_path, wealth_label=True)
     with pytest.raises(ValueError, match="premise"):
         fi.read_family_wealth(2005, data_dir=tmp_path)
+
+
+def test_supplement_reader_reads_an_invented_supplement(tmp_path, monkeypatch):
+    _write_2005(tmp_path, interviews=(1, 2, 3))
+    _write_supplement(tmp_path, monkeypatch, _supplement_values())
+    assert fi.wealth_supplement_status(2005, data_dir=tmp_path)["adjudicated"]
+    frame = fi.read_family_wealth(2005, data_dir=tmp_path)
+    assert list(frame.columns) == [
+        "wave",
+        "interview",
+        *fi.wealth_variables(2005),
+    ]
+    assert list(frame["wave"]) == [2005] * 3
+    assert list(frame["interview"]) == [1, 2, 3]
+    assert list(frame["wealth1"]) == [8000, 76000, -3740]
+    assert list(frame["wealth1_acc"]) == [0, 1, 0]
+    # documented negatives (checking/saving, farm/business, home equity)
+    # are accepted
+    assert frame.loc[2, "farm_business"] == -700
+    counts = fi.reconcile_wealth1(frame)["2005"]
+    assert counts["wealth1"]["n_exact"] == 3
+    assert counts["wealth2"]["n_exact"] == 3
+    assert fi.wealth_supplement_join(2005, data_dir=tmp_path) == {
+        "n_supplement_records": 3,
+        "n_family_file_records": 3,
+        "n_matched": 3,
+        "n_supplement_only": 0,
+        "n_family_file_only": 0,
+    }
+
+
+def test_supplement_bytes_other_than_the_pinned_are_refused(
+    tmp_path, monkeypatch
+):
+    _write_2005(tmp_path, interviews=(1, 2, 3))
+    _write_supplement(tmp_path, monkeypatch, _supplement_values(), pin=False)
+    with pytest.raises(fi.WealthSupplementNotAdjudicatedError):
+        fi.read_family_wealth(2005, data_dir=tmp_path)
+    with pytest.raises(fi.WealthSupplementNotAdjudicatedError):
+        fi.wealth_supplement_join(2005, data_dir=tmp_path)
+
+
+@pytest.mark.parametrize(
+    "concept, label, match",
+    [
+        ("wealth1", "IMP WEALTH W/O EQUITY (WEALTH1) 07", "does not match"),
+        ("other_debt_acc", "ACC VALUE OTH DEBT (W38) 05", "does not match"),
+        ("interview", "2005 INTERVIEW NUMBER", "does not match"),
+    ],
+)
+def test_supplement_reader_rejects_a_relabelled_variable(
+    tmp_path, monkeypatch, concept, label, match
+):
+    _write_2005(tmp_path, interviews=(1, 2, 3))
+    _write_supplement(
+        tmp_path, monkeypatch, _supplement_values(), relabel={concept: label}
+    )
+    with pytest.raises(ValueError, match=match):
+        fi.read_family_wealth(2005, data_dir=tmp_path)
+
+
+@pytest.mark.parametrize(
+    "concept, bad, match",
+    [
+        ("release", [1, 2, 2], "Release 2"),
+        ("vehicles_acc", [0, 3, 0], "accuracy"),
+        ("wealth1_acc", [0, 2, 0], "accuracy"),
+        ("other_debt", [0, -5, 0], "negative other_debt"),
+        ("ira_annuity", [0, -1, 0], "negative ira_annuity"),
+        ("interview", [1, 1, 3], "duplicate"),
+        ("interview", [0, 2, 3], "non-positive"),
+    ],
+)
+def test_supplement_reader_rejects_undocumented_codes(
+    tmp_path, monkeypatch, concept, bad, match
+):
+    _write_2005(tmp_path, interviews=(1, 2, 3))
+    values = _supplement_values()
+    values[concept] = bad
+    _write_supplement(tmp_path, monkeypatch, values)
+    with pytest.raises(ValueError, match=match):
+        fi.read_family_wealth(2005, data_dir=tmp_path)
+
+
+def test_supplement_family_id_must_join_the_family_file(tmp_path, monkeypatch):
+    # a supplement record whose family ID is no 2005 interview number
+    _write_2005(tmp_path, interviews=(1, 2, 3))
+    _write_supplement(tmp_path, monkeypatch, _supplement_values((1, 2, 9)))
+    with pytest.raises(ValueError, match="one to one"):
+        fi.read_family_wealth(2005, data_dir=tmp_path)
+    assert fi.wealth_supplement_join(2005, data_dir=tmp_path) == {
+        "n_supplement_records": 3,
+        "n_family_file_records": 3,
+        "n_matched": 2,
+        "n_supplement_only": 1,
+        "n_family_file_only": 1,
+    }
+
+
+def test_a_complete_supplement_read_covers_every_family(tmp_path, monkeypatch):
+    _write_2005(tmp_path, interviews=(1, 2, 3, 4))
+    _write_supplement(tmp_path, monkeypatch, _supplement_values())
+    with pytest.raises(ValueError, match="one to one"):
+        fi.read_family_wealth(2005, data_dir=tmp_path)
+    # a partial read checks only that its records join
+    assert len(fi.read_family_wealth(2005, data_dir=tmp_path, nrows=2)) == 2
 
 
 def test_income_reconciliation_counts_misses(tmp_path):

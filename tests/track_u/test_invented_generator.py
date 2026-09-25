@@ -84,13 +84,16 @@ def test_frames_have_the_reader_shapes(staged):
             ):
                 continue
             assert (income[concept] >= 0).all(), (wave, concept)
-        layout = 2009 if wave in (2005, 2007) else wave
         wealth = staged.family_wealth[wave]
         assert list(wealth.columns) == [
             "wave",
             "interview",
-            *family_income.wealth_variables(layout),
+            *family_income.wealth_variables(wave),
         ]
+        # the supplement waves carry the 2009 family file's concepts
+        assert list(family_income.wealth_variables(wave)) == list(
+            family_income.wealth_variables(2009 if wave < 2009 else wave)
+        )
         assert set(wealth["interview"]) == set(income["interview"])
     anchor = staged.anchors[2009]
     assert list(anchor.columns) == [
@@ -114,10 +117,12 @@ def test_income_and_wealth_identities_hold_exactly(staged):
         for counts in identities.values():
             assert counts["n_exact"] == counts["n_families"]
     wealth = pd.concat(
-        [staged.family_wealth[wave] for wave in family_income.WEALTH_WAVES],
+        [staged.family_wealth[wave] for wave in age67.WAVES],
         ignore_index=True,
     )
-    for identities in family_income.reconcile_wealth1(wealth).values():
+    reconciled = family_income.reconcile_wealth1(wealth)
+    assert sorted(reconciled) == [str(wave) for wave in age67.WAVES]
+    for identities in reconciled.values():
         for counts in identities.values():
             assert counts["n_exact"] == counts["n_families"]
 
@@ -140,6 +145,36 @@ def test_supplement_waves_follow_the_flag(blocked, staged):
     assert "INVENTED" in blocked.wealth_refusals[2005]
     assert set(staged.family_wealth) == set(age67.WAVES)
     assert staged.wealth_refusals == {}
+    # u1-draft-6: the supplement waves' wealth is marked as the
+    # supplement's, the family-file waves' as the family file's
+    for inputs, expected in (
+        (
+            staged,
+            {
+                2005: "wealth_supplement",
+                2007: "wealth_supplement",
+                2009: "family_file",
+                2011: "family_file",
+                2013: "family_file",
+            },
+        ),
+        (
+            blocked,
+            {
+                2005: age67.WEALTH_BLOCKED_STATUS,
+                2007: age67.WEALTH_BLOCKED_STATUS,
+                2009: "family_file",
+                2011: "family_file",
+                2013: "family_file",
+            },
+        ),
+    ):
+        obs = age67.build_age67_cohort(inputs).observations
+        found = {
+            int(wave): set(rows["wealth_status"])
+            for wave, rows in obs.groupby("wave")
+        }
+        assert found == {wave: {s} for wave, s in expected.items()}
 
 
 def test_every_track_u_path_is_exercised(staged):

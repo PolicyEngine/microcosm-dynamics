@@ -23,7 +23,7 @@ def block() -> dict:
 def test_the_code_rows_equal_the_committed_block(block):
     check = rows.check_rows_against_block(block)
     assert check["rows_equal_the_block"]
-    assert check["specification_version"] == block["version"] == "u1-draft-5"
+    assert check["specification_version"] == block["version"] == "u1-draft-6"
     assert check["rows_checked"] == sorted(rows.REGISTERED_ROWS)
 
 

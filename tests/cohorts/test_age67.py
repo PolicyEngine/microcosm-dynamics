@@ -444,6 +444,51 @@ def test_income_rows_refuse_blocked_observations_unless_allowed():
     assert rows.attrs["left_out"]["wealth_supplement_not_staged"] == 1
 
 
+def _supplement_wealth() -> dict[int, pd.DataFrame]:
+    """Every wave's invented wealth, 2005 and 2007 as if from the staged
+    wealth supplements (u1-draft-6)."""
+
+    return {
+        wave: _family(wave)[["wave", "interview"]].assign(
+            wealth1=500, wealth1_acc=0
+        )
+        for wave in age67.WAVES
+    }
+
+
+def test_supplement_wealth_unblocks_the_1937_and_1939_waves():
+    inputs = _inputs(family_wealth=_supplement_wealth(), wealth_refusals={})
+    cohort = age67.build_age67_cohort(inputs)
+    obs = cohort.observations.set_index("observation_id")
+    assert obs.loc["3001:2005", "wealth_status"] == "wealth_supplement"
+    assert obs.loc["1001:2009", "wealth_status"] == "family_file"
+    assert set(obs["wealth_status"]) <= set(age67.WEALTH_READ_STATUSES)
+    rows = age67.income_rows(cohort, inputs)
+    assert sorted(rows["observation_id"]) == [
+        "1001:2009",
+        "1002:2011",
+        "3001:2005",
+        "6001:2011",
+    ]
+    assert rows.attrs["left_out"]["wealth_supplement_not_staged"] == 0
+    summary = age67.structural_summary(cohort, inputs)
+    assert summary["n_observations_blocked"] == 0
+    assert summary["n_observations_computable_now"] == 4
+    assert summary["observations_by_birth_year_and_wave"]["1937@2005"][
+        "wealth_status"
+    ] == {"wealth_supplement": 1}
+    assert "2005" in summary["component_receipt_counts"]
+
+
+def test_a_family_without_a_wealth_record_is_refused():
+    wealth = _supplement_wealth()
+    wealth[2005] = wealth[2005].iloc[0:0]
+    inputs = _inputs(family_wealth=wealth, wealth_refusals={})
+    cohort = age67.build_age67_cohort(inputs)
+    with pytest.raises(ValueError, match="no wealth record"):
+        age67.income_rows(cohort, inputs)
+
+
 def test_unsealed_psid_claim_is_refused():
     inputs = _inputs(
         provenance={"kind": "psid_files", "psid_files_sha256": {"a": "b"}}
