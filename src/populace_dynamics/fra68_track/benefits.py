@@ -71,13 +71,30 @@ positive benefit in either scenario, with honest ``beneficiary_base`` and
 ``beneficiary_reform`` flags (Track A refused a zero reform amount;
 exercise 3's claiming rows need it).  Amounts are annual, 12 times the
 monthly amount (A1 section 10).
+
+**Membership under C0** (E1 sections 7 and 12, ``e1-ratified-2``).  Fixed
+claim ages change no claim, and every age factor is positive, but one
+mechanism still makes a person a recipient in the baseline only:
+:data:`SPOUSE_EXCESS_WITHHELD`.  A disabled worker whom the projection
+converted at the baseline FRA by the reference year, and whom the reform
+has not converted by then, is still a disabled worker in the reform
+scenario; by Track A's convention a disabled worker still entitled to DI
+draws no spouse's excess (``cola_track_a.benefits._Calculator.
+projected_person``), so the reform withholds the excess the baseline
+pays.  When the worker's own DI level is zero (the disclosed
+approximation, Max's ruling d188 item (a) carrying over d074 decision
+2(b)), nothing is left in the reform.  :func:`classify_membership_
+differences` sorts every membership difference into this mechanism or
+"not explained"; the runner refuses a C0 row with any row not explained.
+:data:`WITHHELD_EXCESS` and :data:`WITHHELD_EXCESS_NO_REFORM_BENEFIT` count
+the withheld excesses on the union rows.
 """
 
 from __future__ import annotations
 
 import dataclasses
 from collections import Counter
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -111,15 +128,22 @@ from populace_dynamics.fra68_track.reform import (
 from populace_dynamics.ss.params import SSAParameters
 
 __all__ = [
+    "C0_MEMBERSHIP_MECHANISMS",
     "CONVERSION_CLAIM_EXCESS",
     "CONVERSION_CLAIM_MONTHS_EARLY",
     "CREDITS_NOT_INHERITED",
     "CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH",
+    "SPOUSE_EXCESS_WITHHELD",
+    "SPOUSE_EXCESS_WITHHELD_DEFINITION",
+    "WITHHELD_EXCESS",
+    "WITHHELD_EXCESS_NO_REFORM_BENEFIT",
     "MovedClaimRecord",
     "PersonScenario",
     "Scenario",
     "ScenarioCalculator",
+    "classify_membership_differences",
     "scenario_benefits",
+    "spouse_excess_withheld_until_reform_conversion",
     "union_benefit_rows",
 ]
 
@@ -147,6 +171,40 @@ CONVERSION_CLAIM_EXCESS = "fra68_spouse_excess_on_conversion_claim"
 CONVERSION_CLAIM_MONTHS_EARLY = (
     "fra68_spouse_excess_on_conversion_claim_months_early"
 )
+#: The named mechanism by which C0 memberships differ (E1 sections 7, 11
+#: rule 3 and 12; ``e1-ratified-2``, after Registration 14's refusal).
+SPOUSE_EXCESS_WITHHELD = "spouse_excess_withheld_until_reform_conversion"
+SPOUSE_EXCESS_WITHHELD_DEFINITION = (
+    "a projected person-draw row that is a recipient in the baseline and "
+    "not in the reform because the reform withholds a spouse's excess "
+    "until its later DI conversion: the projection converted the person's "
+    "own disabled-worker record at the baseline FRA (A4's FRA attainment "
+    "year, July birth month) by the reference year, the reform's FRA "
+    "attainment year is after the reference year, so the reform scenario "
+    "still has a disabled worker entitled to DI, who by Track A's "
+    "convention draws no spouse's excess; and the person's own DI level "
+    "is zero (the disclosed approximation), so the baseline's only "
+    "positive component is the spouse's excess and the reform pays "
+    "nothing"
+)
+#: The mechanisms that may make C0 memberships differ; the runner refuses
+#: a C0 row with any difference none of them explains.  E1 section 21
+#: ``membership.c0_named_mechanisms`` lists the same identifiers.
+C0_MEMBERSHIP_MECHANISMS: tuple[str, ...] = (SPOUSE_EXCESS_WITHHELD,)
+#: Union-row counters of the named delta "spouse's excess of a DI
+#: beneficiary" (E1 section 12): rows whose baseline pays a spouse's
+#: excess to a converted disabled worker whom the reform has not
+#: converted by the reference year, so the reform withholds it (Track A's
+#: convention), and the subset left with no reform benefit (the own DI
+#: level is zero), which :data:`SPOUSE_EXCESS_WITHHELD` makes baseline-only
+#: recipients.  Counted over every component of the union row; the
+#: runner's per-row membership record reads the row's components.
+#: Diagnostics only.
+WITHHELD_EXCESS = "fra68_spouse_excess_withheld_until_reform_conversion"
+WITHHELD_EXCESS_NO_REFORM_BENEFIT = (
+    "fra68_spouse_excess_withheld_until_reform_conversion_no_reform_benefit"
+)
+_SPOUSE_COMPONENT = "spouse"
 
 
 def _nullable_int(value: Any) -> int | None:
@@ -928,6 +986,19 @@ def union_benefit_rows(
             counters["reform_only_beneficiaries"] += 1
         if base.own_kind != new.own_kind:
             counters[f"own_kind_{base.own_kind}_to_{new.own_kind}"] += 1
+        if (
+            base.own_kind == "converted"
+            and new.own_kind == "disabled"
+            and base.components.get(_SPOUSE_COMPONENT, 0.0) > 0
+            and new.components.get(_SPOUSE_COMPONENT, 0.0) <= 0
+        ):
+            # The named delta "spouse's excess of a DI beneficiary" (E1
+            # section 12): the reform has not converted this worker by
+            # the reference year, so Track A's convention withholds the
+            # excess the baseline pays.
+            counters[WITHHELD_EXCESS] += 1
+            if reform_total <= 0:
+                counters[WITHHELD_EXCESS_NO_REFORM_BENEFIT] += 1
         names = list(dict.fromkeys([*base.components, *new.components]))
         birth = int(state["birth_year"])
         rows.append(
@@ -960,3 +1031,174 @@ def union_benefit_rows(
             }
         )
     return rows, counters
+
+
+def spouse_excess_withheld_until_reform_conversion(
+    item: Mapping[str, Any],
+    *,
+    components: Sequence[str],
+    recipient_base: bool,
+    recipient_reform: bool,
+    baseline_conversion_year: int,
+    reform_conversion_year: int,
+    reference_year: int,
+) -> bool:
+    """Whether a membership difference is :data:`SPOUSE_EXCESS_WITHHELD`.
+
+    ``item`` is one A7 input row of :func:`union_benefit_rows`;
+    ``recipient_base`` and ``recipient_reform`` are A7's recipient flags
+    for the registered row's ``components``; the conversion years are the
+    FRA attainment years of the person's birth year under the baseline and
+    the reform bundle (A4's July birth month).  Every condition of
+    :data:`SPOUSE_EXCESS_WITHHELD_DEFINITION` must hold: a baseline-only
+    recipient on a projected basis; the own record converted in the
+    baseline and a disabled worker in the reform; conversion years that
+    straddle the reference year; the spouse's excess among the selected
+    components, positive in the baseline and absent in the reform; and
+    every other component zero in both scenarios (the own DI level is
+    zero, and nothing else is paid).
+    """
+
+    if not recipient_base or recipient_reform:
+        return False
+    if item["basis"] != "projected":
+        return False
+    if (item["own_kind_base"], item["own_kind_reform"]) != (
+        "converted",
+        "disabled",
+    ):
+        return False
+    if not (
+        int(baseline_conversion_year)
+        <= int(reference_year)
+        < int(reform_conversion_year)
+    ):
+        return False
+    if _SPOUSE_COMPONENT not in components:
+        return False
+    amounts = item["benefit_components"]
+    spouse = amounts.get(_SPOUSE_COMPONENT)
+    if spouse is None or not spouse["base"] > 0 or spouse["reform"] != 0:
+        return False
+    return all(
+        value["base"] == 0 and value["reform"] == 0
+        for name, value in amounts.items()
+        if name != _SPOUSE_COMPONENT
+    )
+
+
+def classify_membership_differences(
+    rows: Sequence[Mapping[str, Any]],
+    recipient_base: Sequence[bool],
+    recipient_reform: Sequence[bool],
+    *,
+    components: Sequence[str],
+    baseline_params: SSAParameters,
+    reform_params: SSAParameters,
+    reference_year: int,
+    assumed_birth_month: int,
+    claiming_response: ClaimingResponse,
+) -> dict[str, Any]:
+    """Sort a registered row's membership differences (E1 sections 7, 12).
+
+    ``rows`` are the row's A7 input rows (:func:`union_benefit_rows`, all
+    draws), and ``recipient_base`` / ``recipient_reform`` A7's recipient
+    flags for them, in the same order (the runner reads them from A7's own
+    normalization, the flags the statistic uses).  Every row whose flags
+    differ is either explained by a named C0 mechanism
+    (:data:`C0_MEMBERSHIP_MECHANISMS`) or counted as not explained.  Under
+    C0 (``ClaimingResponse.FIXED``) a row not explained refuses the run
+    (the runner); under C1 and C2 memberships may differ for any reason
+    (E1 section 13), and the record only counts.  The record holds counts
+    only: no weight, no amount and no person identifier.
+    """
+
+    rows = list(rows)
+    flags_base = [bool(flag) for flag in recipient_base]
+    flags_reform = [bool(flag) for flag in recipient_reform]
+    if not len(rows) == len(flags_base) == len(flags_reform):
+        raise ValueError(
+            "the recipient flags must have one entry per A7 input row"
+        )
+    response = ClaimingResponse(claiming_response)
+    conversion: dict[tuple[str, int], int] = {}
+
+    def conversion_year(scenario: str, birth: int) -> int:
+        key = (scenario, birth)
+        if key not in conversion:
+            params = baseline_params if scenario == "base" else reform_params
+            conversion[key] = int(
+                fra_attainment_year(
+                    np.array([birth]),
+                    params,
+                    assumed_birth_month=assumed_birth_month,
+                )[0]
+            )
+        return conversion[key]
+
+    named_draws: Counter = Counter()
+    named_births: Counter = Counter()
+    directions: Counter = Counter()
+    not_explained = 0
+    first_not_explained: dict[str, Any] | None = None
+    for index, item in enumerate(rows):
+        base, reform = flags_base[index], flags_reform[index]
+        if base == reform:
+            continue
+        directions["baseline_only" if base else "reform_only"] += 1
+        birth = int(item["birth_year"])
+        if spouse_excess_withheld_until_reform_conversion(
+            item,
+            components=components,
+            recipient_base=base,
+            recipient_reform=reform,
+            baseline_conversion_year=conversion_year("base", birth),
+            reform_conversion_year=conversion_year("reform", birth),
+            reference_year=reference_year,
+        ):
+            named_draws[str(int(item["draw"]))] += 1
+            named_births[str(birth)] += 1
+            continue
+        not_explained += 1
+        if first_not_explained is None:
+            first_not_explained = {
+                "draw": int(item["draw"]),
+                "person_id": item["person_id"],
+                "baseline_only": base,
+            }
+    fixed = response is ClaimingResponse.FIXED
+    record = {
+        "claiming_response": response.value,
+        "rule": (
+            "C0: the baseline and reform memberships coincide except rows "
+            "a named mechanism explains; any other difference refuses the "
+            "run before any row is tabulated (E1 sections 7 and 12)"
+            if fixed
+            else "C1/C2: memberships may differ (E1 section 13); the named "
+            "C0 mechanisms are counted, other differences are counted and "
+            "allowed"
+        ),
+        "recipient_flags": (
+            "A7's own recipient flags for the row's components "
+            "(cola_age_profile normalization, recipient rule "
+            "positive_benefit), the flags the statistic's S_base and "
+            "S_reform use"
+        ),
+        "components": list(components),
+        "n_rows": len(rows),
+        "n_rows_differ": sum(directions.values()),
+        "n_rows_baseline_only": directions["baseline_only"],
+        "n_rows_reform_only": directions["reform_only"],
+        "named_mechanisms": {
+            SPOUSE_EXCESS_WITHHELD: {
+                "definition": SPOUSE_EXCESS_WITHHELD_DEFINITION,
+                "e1_section": "section 12 (and sections 7 and 11 rule 3)",
+                "n_rows": sum(named_draws.values()),
+                "n_rows_by_draw": dict(sorted(named_draws.items())),
+                "n_rows_by_birth_year": dict(sorted(named_births.items())),
+            }
+        },
+        "n_rows_not_explained": not_explained,
+        "not_explained_allowed": not fixed,
+    }
+    return {"record": record, "first_not_explained": first_not_explained}

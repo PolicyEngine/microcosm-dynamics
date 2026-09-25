@@ -21,8 +21,10 @@ the commit that comment registers:
   configuration following each and each ruling equal to the code's, and
   must equal the code
   (``fra68_track.runner.check_specification_for_registered_run``).  The
-  committed E1 (``e1-ratified-1``, status ``ratified_frozen``) passes;
-  every earlier draft is refused;
+  committed E1 (``e1-ratified-2``, status ``ratified_frozen``) passes;
+  every earlier draft is refused, and so is ``e1-ratified-1``, whose block
+  names no C0 membership mechanism (``membership.c0_named_mechanisms``;
+  E1 section 27);
 * the output artifact must not exist yet (one shot, no overwrite; it is
   created exclusively);
 * the configuration is :class:`FRA68Config`'s default, which the E1

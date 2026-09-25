@@ -4,17 +4,35 @@
   its supplement d196 on 2026-09-24 (§22), adopting every recommended
   default, and in d188 item (c) authorized ratifying this specification
   by merge, posting the issue #42 registration and running the one-shot.
-  Merging the PR that carries this version under that authorization
-  ratifies it. Any later change becomes a new registered version (§17).
-  §21 records his ruling on every decision field, each equal to the
-  code's record of it (`fra68_track.config.MAX_RULINGS`), so the one-shot
-  entry point (`scripts/run_fra68_registered.py`) accepts this block.
-- **Specification:** `urban2010_fra68_exercise3`, version `e1-ratified-1`,
+  Merging the PR that carried `e1-ratified-1` under that authorization
+  ratified it (merge commit `a9b0d09f`). Any later change becomes a new
+  registered version (§17). §21 records his ruling on every decision
+  field, each equal to the code's record of it
+  (`fra68_track.config.MAX_RULINGS`), so the one-shot entry point
+  (`scripts/run_fra68_registered.py`) accepts this block.
+- **Amendment `e1-ratified-2` (2026-09-25; §27):** Registration 14 ran
+  the one-shot at `a9b0d09f`, and the runner's guard on memberships under
+  fixed claim ages (C0) refused it at row F0. A membership-only diagnostic
+  traced every differing row to one mechanism: a Track A convention (no
+  spouse's excess while DI-entitled) meeting the reform's later DI
+  conversion, for workers whose own DI level is zero. This version names
+  the mechanism (§12), admits it under C0 (§7) and still refuses any
+  other difference, now before any row is tabulated. The change was made
+  after a registered run was refused, but before any statistic was
+  recorded, printed or seen, and with the exercise-3 comparator seal
+  closed (§27 says exactly what the refused run computed). It changes no
+  ruling, schedule, row, parameter, amount rule, statistic formula or §19
+  amount. It is a new registered version: a new issue #42 registration
+  precedes any rerun. This lane does not decide whether d188 item (c)'s
+  authorization to ratify by merge covers an amendment; §27 records that
+  question for Max.
+- **Specification:** `urban2010_fra68_exercise3`, version `e1-ratified-2`,
   drafted 2026-09-24 and revised the same day after the independent
   referee pass and after the independent reviews of `e1-draft-4`,
   `e1-draft-5` and `e1-draft-6` (§25); `e1-draft-7` was the last draft,
-  and `e1-ratified-1` records Max's rulings (§22) and is the ratified
-  text. §26 is the changelog.
+  `e1-ratified-1` recorded Max's rulings (§22) and was the ratified text
+  of Registration 14, and `e1-ratified-2` amends its C0 membership guard
+  (§27). §26 is the changelog.
 - **Plan item:** E1 of the blind plan
   `EVID/critical-path-fra68-20260923.md` (SHA-256 `d5e7a32f…`), where
   `EVID` = `~/microcosm-launch-evidence/dynasim-parity-20260909`. The
@@ -119,8 +137,72 @@
     count as an alternative Max declined, since no record put it to him
     (§22 ruling 5). It changed no rule, schedule, row, parameter or
     worked case.
+  - The lane that wrote `e1-ratified-2` (a Claude Code subagent, Opus
+    5.5, 2026-09-25) read `EVID/RESTRICTED-FILES.md` (the version whose
+    last changelog entry is dated 2026-09-25) before any other file and
+    opened nothing it lists. It did not open the Urban report or its text
+    extraction, the exercise-1 artifact, `COMPARISON.md` or the exercise-3
+    forecasts. It read the membership diagnostic's outputs (`EVID/
+    fra68-membership-diagnostic-20260925/`: `diagnose.py` in part,
+    `summarize.py`, `run.sh`, `run.log`, `membership-diagnostic.json` and
+    `differing-rows.txt`, which hold per-person traces of the nine
+    differing person-draw rows and counts, no statistic), the Registration
+    14 outcome note and the one-shot's `stderr.log` and launch files
+    (`EVID/fra68-oneshot-20260924/`), decision record d281 in Max's
+    decision ledger, the statute folder (§2), the repository code and
+    tests, and the invented dry runs. It computed nothing on real data and
+    reran nothing on real data. It changed no ruling, schedule, row,
+    parameter or worked-case amount.
+  - An earlier independent review of `e1-ratified-2` (a Claude Code
+    subagent, Opus 5.5, 2026-09-25) was interrupted before it finished.
+    Its uncommitted edits are saved as `EVID/fra68-membership-fix-20260925/
+    review-interrupted-uncommitted-20260925.patch` (SHA-256 `c3de12a9…`).
+    By its own account, which the next review could not check, it read
+    `EVID/RESTRICTED-FILES.md` first and opened nothing it lists, and it
+    read `EVID/registration-14.md`, which quotes the F0 forecast table.
+    It wrote that it read the forecast and its addendum only after
+    committing its edits; it committed nothing, so whether it read them
+    before its edits is not known. Its edits are listed in the next entry,
+    which verified each one.
+  - The independent review that finished the work (a Claude Code
+    subagent, Opus 5.5, 2026-09-25) read `EVID/RESTRICTED-FILES.md`
+    (SHA-256 `2fc9bdbf…`, last changelog entry dated 2026-09-25) before any
+    other file and opened nothing it lists. It did not open the Urban
+    report or its text extraction, the exercise-1 artifact or
+    `COMPARISON.md`. It read `diagnose.py` whole, `summarize.py`, `run.sh`,
+    `run.log` and `FINDINGS.md`, parts of `differing-rows.txt`, and
+    `membership-diagnostic.json` through a script that prints counts only;
+    the Registration 14 outcome note, `run-once.sh` and `stderr.log`;
+    `EVID/registration-14.md`, which quotes the F0 forecast table, before
+    its edits; decision records d188, d196, d281 and d315; the statute
+    folder (§2); the repository code and tests; and the dry-run evidence.
+    It applied the classifier (`spouse_excess_withheld_until_reform_
+    conversion`, from the code) to the diagnostic's recorded traces,
+    reading no PSID file and tabulating nothing: all 41 differing
+    row-trace pairs meet it. It reran the regression test against the
+    `a9b0d09f` tree, where it fails with Registration 14's refusal on
+    invented data, and searched a wider generator of INVENTED households
+    for counterexamples to the invariants (none found). It kept the
+    interrupted review's edits after checking each against the traces
+    and the statute: the §19 case and two property-test examples had used
+    values equal to values in the diagnostic's real-data traces (a
+    worker's PIA, and claim and award years) while labelled invented, and
+    now use round invented values; §12 and §27 state that two of the nine
+    traces were deemed to have filed for the spouse's benefit in 2025
+    (402(r)(1)); §12 and §27 mark the named rows of F3 and F4 as deduced,
+    not observed; and a test pins the smallest positive oracle level. It
+    added: one more invented value derived from a trace (the classifier
+    tests' spouse's excess, 12 times a trace's monthly amount) is now
+    round, and the positive-level variant of §19's case is the same
+    worker; §2 cites 402(b)(1)(J) and 402(c)(1)(J); §27 says what the
+    diagnostic computed for F3 and F4; and the dry run's membership text
+    names a row whose rows A7 refused instead of failing on it. It read
+    the exercise-3 forecast and its addendum only after committing these
+    edits. It changed no ruling, schedule, row, parameter, amount rule or
+    §19 table amount.
   - No lane computed a statistic on real data. §2 lists what the drafts
-    read.
+    read. (Registration 14's refused run is not a lane: §27 records what
+    it computed.)
 
 ## 1. Target
 
@@ -195,6 +277,10 @@ This draft cites only the sources below.
 | Independent review of `e1-draft-6`: arithmetic, comparison and probes | `EVID/fra68-review4-fc893ea4-20260924/`: `independent_arithmetic.py` (standard library only) and its output `independent_arithmetic.out.json`; `compare_with_code.py` and `compare_with_code.out.json`; `check_e1_tables.py` and `check_e1_tables.out.json`; `probe_order_and_identity.py` and `probe_order_and_identity.out.json` | `e6d7c93e…`; `ca098796…`; `d2918eec…`; `5b4cea48…`; `fc5645e3…`; `3931ed1d…`; `18e1be8a…`; `09830f8e…` | Every claim-month rule by cohort 1938-1971, schedule and claiming response from the statute text, compared with the code point by point; §3, §5, §6 and §19 recomputed with exact fractions; the per-person schedule order and the null-reform identity on the invented dry-run cohort and on constructed invented persons (§25) |
 | Builder restriction list | `EVID/RESTRICTED-FILES.md` | — (a living list; no hash is pinned) | Whole file, read first by each lane since `e1-draft-4`. The `e1-draft-5` lane read the version whose last changelog entry is dated 2026-09-24 13:55. `e1-draft-4` recorded SHA-256 `a7356057…`, which the list no longer matches and which the review of `e1-draft-4` could not verify for any version; this draft withdraws it (§25) |
 | Decision records d188 and d196 | `~/chief-of-staff/state/decisions/decisions.jsonl`, entries `d188` and `d196` | — | Their filed wording, defaults and status (`open` when the drafts read them); d188 read 2026-09-24 by the `e1-draft-4` lane, both read 2026-09-24 by the `e1-draft-5` lane; the `e1-ratified-1` lane read both rulings (status `decided`, `ruled_at` 2026-09-24T21:44) and entries `d074` and `d075` for the carry-overs (§22) |
+| Registration 14's outcome and log (`e1-ratified-2`) | `EVID/fra68-oneshot-20260924/registration-14-outcome.md`; `stderr.log`; `run-once.sh` | `4abb5d2e…`; `a0749619…`; `cce0d08e…` | The refusal message, the registered commit and pointer, and the traceback, which places the refusal at `run_fra68`'s guard (`runner.py` line 921 at `a9b0d09f`) after A7 returned row F0's tabulation (§27) |
+| Membership diagnostic (`e1-ratified-2`) | `EVID/fra68-membership-diagnostic-20260925/`: `diagnose.py`, `run.log`, `membership-diagnostic.json`, `differing-rows.txt` (printed from it by `summarize.py`) | `deb29401…` (script, recorded in its output as `script_sha256`); `587006e2…`; `0686f085…` | Counts of differing rows per C0 row and the per-person traces of the nine differing person-draw rows; no statistic (§27) |
+| Decision record d281 | `~/chief-of-staff/state/decisions/decisions.jsonl`, entry `d281` | — | Max's ruling of 2026-09-25, by name, that exercise 3 keeps Track A's legacy fixed 35 computation years (§22 ruling 5) |
+| 42 U.S.C. 402(a)(3), 402(b)(1) (with (J)), 402(c)(1) (with (J)), 402(k)(3)(A), 402(q)(3)(A)(ii) and (C), 402(r)(1); 423(a)(1) (`e1-ratified-2`) | `EVID/fra68-statute-20260924/usc42_402.txt` lines 52, 58-63, 76, 89-94, 107, 340, 376-385 and 427; `usc42_423.txt` line 60 | `84a2336f…`; `d5cb9c99…` | Dual entitlement of a DI beneficiary to a spouse's benefit, its filing (and deemed filing) and its reduction, the one way a DI award ends it, and the conversion at retirement age (§12, §27); `SHA256SUMS` verified 2026-09-25 (and again by the independent review) |
 | Claim-age reference | `data/external/ssa_claim_ages_2023supplement.json` | `f731c9a6…` | The 2008 rows through `claiming.claim_age_distribution`: `fra_at.at_age` = 65 for both sexes; age-62 shares 42.6 (male) and 48.0 (female); age-65 shares 25.8 and 19.3 |
 | Statutory capture | `data/external/track_a_statutory_parameters.json` | `fd56a8aa…` | FRA schedule, early rates, credit schedule and cap, auxiliary constants (the baseline bundle) |
 | Repo code, read this session | `ss/params.py` and `ss/benefits.py` (whole), `claiming.py` (`benefit_factor`, `months_early`, `months_late`, `claim_age_distribution`, `claim_age_pmf`), `scenario_benefits.py` (rates and path functions), `cola_track_a/` (`config`, `benefits`, `runner`, `opening`, `adapters` whole; `statutory` in part), `engine/di_entitlement.py` (FRA attainment, conversion and exposure), `engine/claiming.py`, `estimates/cola_age_profile.py` (configuration and tabulation). The `e1-draft-4` lane read `cola_track_a/benefits.py` (`_Calculator`: worker, decedent, spouse's and widow(er)'s records), `cola_track_a/config.py` (Max's exercise-1 rulings), `ss/benefits.py` (`spousal_benefit`, `widow_benefit`), `estimates/cola_age_profile.py` (`_membership_masks`, `_cell_values`, the ratification test) and `fra68_track/` whole. The `e1-draft-5` lane read `fra68_track/benefits.py` and `reform.py` whole, `cola_track_a/benefits.py` (`_Calculator`: worker record, own claim year, spouse's excess, exposure start and PIA paths), `engine/di_entitlement.py` (`fra_attainment_year` and the conversion step), `engine/steps.py` (`apply_claiming`), `scenario_benefits.spouse_excess_path` and `ss/benefits.py` (`spousal_benefit`, `spousal_early_reduction`). The `e1-draft-6` lane read `fra68_track/benefits.py` and `reform.py` whole, `cola_track_a/benefits.py` whole, `engine/di_entitlement.py` (`fra_attainment_year` and the conversion step), `engine/steps.py` (`apply_claiming`), `scenario_benefits.spouse_excess_path` and `ss/benefits.py` (`spousal_benefit`, `spousal_early_reduction`). The `e1-draft-7` lane read `fra68_track/` whole, `cola_track_a/benefits.py` whole, `scenario_benefits.py` (`spouse_excess_path`, `eligibility_pia_for_clock` and the module docstring), `ss/benefits.py` (`early_reduction`, `delayed_credit`, `spousal_early_reduction`, `spousal_benefit`, `survivor_reduction`, `widow_benefit`), `claiming.py` (`benefit_factor`, `months_early`), `engine/di_entitlement.py` (`fra_attainment_year`, the opening frame and the step-5 conversion), `engine/loop.py` (the order of each year's steps), `engine/steps.py` (`apply_claiming`) and `cola_track_a/statutory.py` (`captured_ssa_parameters`) | — | Mechanisms cited in §§3-16 |
@@ -380,7 +466,9 @@ apart from dime flooring.
   66, -8.33 at 67, 0 from 68 (no credits). A converted disabled worker's
   excess on its conversion claim: ratio 1 in every cohort whenever the
   scenario has converted the worker by 2030 (§11, rule 3; a worker still
-  DI-entitled under the reform draws none, §12).
+  DI-entitled under the reform draws none, §12). Where that worker's own
+  DI level is zero, the reform pays nothing and the person leaves the
+  reform's recipient set: §12's named membership mechanism (§7).
 - **Aged widow(er)** (survivors born 1962 or later, survivor retirement
   age 67 to 68): 0 at 60 (the 71.5 percent floor holds in both), -0.67,
   -1.28, -1.82, -2.32, -2.77, -3.18 and -3.56 at 61-67, 0 at 68. The
@@ -437,11 +525,27 @@ and F5's is
 
 where S_alt holds the persons in both S_base and S_reform with
 B_base > 0, and B is the row's selected components (A7 `_cell_values`).
-Under C0 the two sets coincide (every factor is positive, and a
-relabelled DI conversion keeps its amount), so Δ equals A1's
-common-membership statistic. The runner refuses a C0 row whose A7 input
-summary reports a membership difference. Under C1 and C2 (§13) the sets
-differ, and the ratio of weighted totals over the union is reported as a
+
+**Membership under C0** (`e1-ratified-2`, §27). Every factor is positive
+and a relabelled DI conversion keeps its own amount, but the two sets
+still differ through one named mechanism (§12, "Membership: a spouse's
+excess withheld until the reform's conversion"): a disabled worker whom
+the projection converted at the baseline FRA by 2030 and whom the
+reform has not converted by then draws no spouse's excess in the reform
+(Track A's convention, §11 rule 3), and when the worker's own DI level
+is zero (the disclosed approximation, §22 ruling 3) the reform pays
+nothing. Such a person is in S_base and not in S_reform; F5's S_alt
+omits them. `e1-ratified-1` said the sets coincide under C0, and its
+guard refused any difference; Registration 14 found the mechanism on
+real data (§27). The statistic is the formula above in every case, so
+this changes no statistic: where no row is explained by the mechanism,
+Δ equals A1's common-membership statistic. The runner reads A7's own
+recipient flags for every row before any row is tabulated, sorts every
+person-draw row whose flags differ into the named mechanism or "not
+explained", and refuses the run if a C0 row has any row not explained;
+every row records the counts (`membership_differences`, §16). Under C1
+and C2 (§13) the sets differ, the same record counts the differences,
+and the ratio of weighted totals over the union is reported as a
 diagnostic, not registered.
 
 **Statistic identifier:** `dynasim_exercise3_fra68_reference_year_age_profile`
@@ -452,7 +556,9 @@ diagnostic, not registered.
 Carried over (A1 §8): alive in the 2030 state of the draw with a positive
 benefit in the scenario; person weights; decedents as A1. The A7 input
 has one row per person positive in either scenario, with honest
-`beneficiary_base` and `beneficiary_reform` flags.
+`beneficiary_base` and `beneficiary_reform` flags. Under C0 the two
+scenarios' recipients differ only through §12's named membership
+mechanism (§7).
 
 ## 9. Age
 
@@ -507,7 +613,9 @@ scenario's bundle; `fra68_track.benefits`):
    a scenario whose FRA attainment year is after the state's year: only
    the component label changes. By Track A's convention a disabled worker
    still entitled to DI draws no spouse's excess, so under the reform a
-   converted worker's excess can start later (§12). A converted worker's
+   converted worker's excess can start later (§12). Where the worker's
+   own DI level is zero, nothing is left in the reform, and the person is
+   a baseline recipient only: §12's named membership mechanism (§7). A converted worker's
    own claim for the excess is the conversion (Track A's rule, unless a
    retirement claim preceded it; `ScenarioCalculator.conversion_claim_year`),
    and the excess enters each scenario in that scenario's conversion
@@ -557,7 +665,8 @@ A1 §12 is carried over, with these exercise-3 items:
 | DI window extension | 423(a)(1)(B) makes DI entitlement depend on not having attained retirement age, so the reform extends DI eligibility to 68. New reform-only awards would get 100 percent of PIA instead of a reduced retirement benefit. TR2008's ultimate DI incidence rates reflect "the impact of scheduled increases in the normal retirement age" (pp. 118-119) | Needs a second projection. Diagnostic in every run: persons alive, not DI-entitled and not converted in the years from the baseline to the reform FRA attainment year, with their expected awards at A4's rates (`di_window_diagnostic`) |
 | DI recovery in the extended window | A4 draws no recovery after the baseline conversion | Membership only |
 | Whole-year conversion claim (Track A) | Track A counts a converted worker's claim for the spouse's excess from the whole conversion year (the year of attaining FRA under A4's July birth month), as month 12 (y_c - b). That is FRA mod 12 months before the FRA when the remainder is below 6: 2 months for spouses born 1955 and 4 for 1956 under the statutory schedule (and for 1938 and 1939, who converted before either opening year). 402(q)(1) and (q)(6)(B) (`usc42_402.txt` lines 371 and 406) reduce an excess that starts at FRA not at all. Counting the conversion claim from its exact month (0 months early) in both scenarios would change exercise 1's baseline for these spouses, a choice for Max that this draft does not make (option (a) of the review of `e1-draft-4`, §25) | Baseline and reform levels only: the excess of a converted spouse born 1955 or 1956 whose conversion starts it is reduced by 1.39 or 2.78 percent (2 or 4 months at 25/36 of 1 percent) in both scenarios, and the reform ratio is 1 wherever the reform pays it (§11, rule 3; a worker the reform has not converted by 2030 draws none, the next row). Diagnostic in every run (benefit counters, by scenario): `fra68_spouse_excess_on_conversion_claim`, the paid spouse's excesses on a conversion claim, and `fra68_spouse_excess_on_conversion_claim_months_early`, those whose months early are positive |
-| Spouse's excess of a DI beneficiary | Track A convention: none while DI-entitled. 402(q)(3)(C) (`usc42_402.txt` lines 383-385) would pay a DI beneficiary a reduced excess | Under the reform it starts at 68 instead of 67 for a converted worker, so the convention overstates the reform's cut for converted workers aged 67 in 2030 (born 1963) |
+| Spouse's excess of a DI beneficiary | Track A convention: none while DI-entitled (`cola_track_a.benefits._Calculator.projected_person` assesses a spouse's excess only when the own record is not a disabled worker). Under the statute a DI beneficiary who has attained 62, is married to a worker entitled to old-age or disability benefits and has a PIA less than one-half of that worker's is entitled to a wife's or husband's benefit once an application is filed (402(b)(1)(A), (B) and (D), `usc42_402.txt` lines 58-63; 402(c)(1), lines 89-94), paid as the excess over the DI benefit (402(k)(3)(A), line 340) and reduced under 402(q)(3)(A)(ii) and (C) (lines 376-385: 402(q)(3)(C) would pay a DI beneficiary a reduced excess). 402(r)(1) (line 427) deems that application filed only for a person entitled to an old-age benefit, so while on DI it must be filed, unless the person was entitled to an old-age benefit earlier (a retirement claim before the DI award) while eligible for the spouse's benefit: 402(r)(1) deemed it filed then, and the entitlement continues through a later DI award, which ends it only if the DI benefit rests on a PIA of at least one-half of the worker's (402(b)(1)(J) and 402(c)(1)(J), lines 76 and 107). The convention is the statute's outcome only for a DI beneficiary who neither files nor was deemed to have filed before the conversion | Under the reform it starts at 68 instead of 67 for a converted worker, so the convention overstates the reform's cut for converted workers aged 67 in 2030 (born 1963); where the own DI level is zero the cut is a membership change (next row). Counted per row over the union rows (every component; `e1-ratified-2`): `fra68_spouse_excess_withheld_until_reform_conversion`, the excesses the baseline pays and the reform withholds, and `fra68_spouse_excess_withheld_until_reform_conversion_no_reform_benefit`, those left with no reform benefit |
+| Membership: a spouse's excess withheld until the reform's conversion (`spouse_excess_withheld_until_reform_conversion`; `e1-ratified-2`, §27) | The previous row's convention meets the reform's later DI conversion (423(a)(1), `usc42_423.txt` line 60: DI ends with the month before the month of attaining retirement age; 402(a)(3), `usc42_402.txt` line 52: the old-age benefit follows) and a zero own DI level (the disclosed approximation, §22 ruling 3; the oracle's AIME, the top 35 indexed years over 420 months floored to a whole dollar, is 0 when the career the approximation reads through the onset holds less than $420 of indexed earnings). The projection converts a worker born 1963 at 67 in 2030 (A4's July birth month); every schedule's FRA of 68 is attained in 2031, so in 2030 the reform has a disabled worker with a zero DI amount and no spouse's excess. The membership diagnostic of Registration 14's refused run found it in 8 person-draw rows of F0, F1, F2, F5 and F7 and 1 of F8, all born 1963, and no difference in F6; it did not examine F3 and F4 (§27). Under the statute the person would not be left without a benefit: on filing, the spouse's benefit is paid while on DI (previous row) | S_base only, in the 65-69 group of rows F0-F2, F5, F7 and F8, and (deduced from the code, not observed on real data: the diagnostic did not examine them) of F3 and F4, whose conversions are unchanged; F5's S_alt omits them; F6 (workers only) never selects them. The runner counts them per row before any tabulation (`membership_differences`, named mechanism `spouse_excess_withheld_until_reform_conversion`: rows, rows by draw, rows by birth year) and refuses any other C0 difference (§7). Removing the delta would change a ruled item: paying the spouse's excess while DI-entitled departs from running exercise 3 exactly like Track A (d188 item (a)), and replacing the zero DI level departs from the DI-level ruling (d188 item (a), carrying over d074 decision 2(b)); §27 lists the options for Max |
 | Survivor reduction span | Exact by cohort here (ruled by Max, `survivor_reduction_span`, d196 item (1), §22); fixed 84 months in exercise 1 | Baseline amounts of survivors born before 1962 entitled after 60 differ from exercise 1's |
 | Benefit computation years (Track A) | Levels divide the AIME by a fixed 35 years, Track A's `TRACK_A_COMPUTATION_YEARS` (§11, rule 1). 415(b)(2) counts elapsed years less 5, fewer than 35 for workers born before 1929 (31 for a worker born in 1925) | Levels only, in both scenarios, as in exercise 1: workers born before 1929 (aged 102 or more in 2030) and the spouse's and survivor's benefits resting on them. The reform changes no one's count |
 | Credit timing | 402(w)(3) credits increment months from January of the following year; Track A applies the full factor at the claim | Small; both scenarios |
@@ -687,7 +796,14 @@ draw the ratio of weighted totals over the union of recipients, and, by
 row and scenario, the counts of paid widow(er)'s excesses whose inherited
 credits the model omits (§12, credits of a worker who died unclaimed) and
 of paid spouse's excesses on a conversion claim, with those whose months
-early are positive (§12, whole-year conversion claim).
+early are positive (§12, whole-year conversion claim). By row
+(`e1-ratified-2`): the membership classification
+(`membership_differences`: the person-draw rows whose A7 recipient flags
+differ, by direction; those §12's named membership mechanism explains,
+by draw and by birth year; and those not explained, which refuse a C0
+row; §7) and the union counters of spouse's excesses the reform
+withholds until its conversion (§12). Counts only: no weight and no
+person identifier.
 
 ## 17. Acceptance rule
 
@@ -745,7 +861,7 @@ and `tests/test_urban2010_fra68_spec.py` holds this table to them.
 | Widow(er), born 1965, widowed and entitled at 63; worker born 1963 with PIA $1,500.00 who never claimed (P3) | $1,441.40 | $1,415.10 | -1.8246 | -1.8238 |
 | The same widow(er), entitled at 60 (P3) | $1,231.10 | $1,231.10 | 0 | 0 |
 
-Six further invented cases have no dollar amount:
+Seven further invented cases have no dollar amount:
 
 - **Opening-stock retired worker**, born 1948, claimed at 62 in 2010
   (P3): factor 0.75 (baseline, 48 months early) to 0.741667 (50 months
@@ -777,6 +893,21 @@ Six further invented cases have no dollar amount:
   (month 768): 35 months early, factor 0.756944, +0.9259 percent, above
   the baseline.
 
+- **Converted DI worker with a zero own level** (`e1-ratified-2`, §12),
+  born 1963, awarded DI in 2018 with a zero disclosed level, married to a
+  worker born 1960 who claimed at 67 in 2027 with PIA $1,800.00 (C0, any
+  schedule; every value invented): the projection converts her at 67 in
+  2030, so the baseline pays her zero own amount and a spouse's excess;
+  every schedule's FRA of 68 is attained in 2031, so the reform has a
+  disabled worker with a zero amount and no excess. She is a baseline
+  recipient only, explained by §12's named membership mechanism, and the
+  workers-only row (F6) selects her in neither scenario. With an own
+  level of $500.00, or of $0.90 (the smallest positive oracle level),
+  she is a recipient in both scenarios and only the withheld excess is
+  counted.
+  `tests/fra68_track/test_membership_properties.py` computes this case
+  through the code.
+
 ## 20. Resolution map
 
 The field list of `proposed-1` `required_unresolved` (as A1 §20 records
@@ -792,7 +923,7 @@ it), and where this draft resolves each for exercise 3:
 | `exposure_and_existing_beneficiary_rules` | Who the reform reaches: age-factor rules and the opening-stock ratio | §6 |
 | `floor_or_verified_nonbinding_condition` | No COLA floor applies; the schedule guards (never below the baseline, 816 months from 1960) | §3, §4 |
 | `aggregation_formula` | F0: ratio of scenario means; F5: mean of individual ratios | §7 |
-| `beneficiary_membership_and_zero_treatment` | Scenario-specific; identical under C0 (refused otherwise) | §7, §8 |
+| `beneficiary_membership_and_zero_treatment` | Scenario-specific; under C0 identical except §12's named membership mechanism (any other difference refused before any row is tabulated; `e1-ratified-2`) | §7, §8, §12 |
 | `age_reference_and_decedent_selection` | A1's | §8, §9 |
 | `benefit_period_and_partial_year_rules` | Calendar-2030 payments; R4 not registered | §10 |
 | `benefit_components_offsets_and_rounding` | A1's five components (F6: workers only); per-scenario factor rules; exact survivor span | §11 |
@@ -838,6 +969,9 @@ it), and where this draft resolves each for exercise 3:
     Track A's baseline count in every scenario, the baseline start moved
     by D (§11, rule 3; the review of `e1-draft-4`). The plan does not
     address it.
+11. Under C0 the memberships may differ through one named mechanism,
+    and through no other (§7, §12; `e1-ratified-2`, after Registration
+    14's refusal, §27). The plan does not address it.
 
 ## 21. Machine-readable parameter block
 
@@ -848,7 +982,10 @@ each row's schedule, survivor rule, claiming response, statistic,
 components, population, benefit period, benefit scale, behavior and
 membership basis, the C1 anchor age, the benefit computation years
 (`amounts.benefit_computation_years` against Track A's
-`TRACK_A_COMPUTATION_YEARS`) or the statistic identifier) and
+`TRACK_A_COMPUTATION_YEARS`), the named C0 membership mechanisms
+(`membership.c0_named_mechanisms` against
+`fra68_track.benefits.C0_MEMBERSHIP_MECHANISMS`, the only differences the
+runner admits under C0; `e1-ratified-2`) or the statistic identifier) and
 `tests/test_urban2010_fra68_spec.py`. The check does not read
 `claiming.spouse_excess_months_early` or
 `amounts.conversion_claim_spouse_excess_months_early`; the spec test
@@ -868,7 +1005,7 @@ registration package hashes this file.
 ```json
 {
   "specification": "urban2010_fra68_exercise3",
-  "version": "e1-ratified-1",
+  "version": "e1-ratified-2",
   "status": "ratified_frozen",
   "template": {
     "specification": "urban2010_cola_exercise1",
@@ -1002,6 +1139,14 @@ registration package hashes this file.
         "start_year": 2008, "periods": 22, "family_unit_id": "ER34001"
       }
     }
+  },
+  "membership": {
+    "basis": "scenario_specific",
+    "recipient_flags": "a7_positive_selected_benefit_by_row_components",
+    "c0": "identical_except_named_mechanisms_any_other_difference_refused_before_any_row_is_tabulated",
+    "c0_named_mechanisms": ["spouse_excess_withheld_until_reform_conversion"],
+    "c1_c2": "may_differ_counted",
+    "record": "rows.*.membership_differences"
   },
   "amounts": {
     "pia_dime_floor_after_each_increase": true,
@@ -1156,7 +1301,8 @@ one-shot, publish regardless"; d196's opens "Accept all five". §21
 records them under `decisions`, keyed by the field each fixes, and
 `fra68_track.config.MAX_RULINGS` holds the same rulings in code; a
 registered run refuses a block whose rulings differ from the code's or a
-configuration that departs from one (§21).
+configuration that departs from one (§21). `e1-ratified-2` changes none
+of the rulings below (§27).
 
 Rulings 1-7 answer d188 items (a)-(c) (plan §11 items 1-4, 6 and 7;
 ruling 5 is what d188's "exactly like Track A" carries, not a plan item);
@@ -1197,7 +1343,11 @@ item 5.
    statutory count of 415(b)(2) (`statutory_415_b_2`) to Max, so §21
    records no declined alternative (`declined` is empty); the count is
    not used, as in exercise 1, and §12 names the delta for workers born
-   before 1929.
+   before 1929. On 2026-09-25 Max confirmed the fixed 35 by name
+   (decision record d281, ruled 2026-09-25T06:24, "keeping exercise 3's
+   projection identical to exercise 1's"); `e1-ratified-2` records the
+   confirmation here and leaves §21's entry and the ruled value as they
+   were.
 6. **Primary schedule** (`primary_schedule_id`; d188 item (b); plan §11
    item 4). **Ruling:** P3 is the primary (row F0); P1 and P2 are
    registered as F1 and F2 (§3, §5, §18). They were declined as the
@@ -1279,9 +1429,15 @@ The referee's answers are in §25.
   current environment (a registered run records it).
 - A4's last fitted DI incidence age (the runner records A4's incidence at
   start ages 65-67 with the DI-window diagnostic).
-- 402(a) (conversion of a disabled worker's benefit) and 402(k): not
-  read; the conversion rule is A4's and the dual-entitlement rules are
-  the oracle's.
+- 402(a) and 402(k) beyond 402(a)(3) and 402(k)(3)(A), which
+  `e1-ratified-2` reads (§12, §27): the conversion rule is A4's and the
+  dual-entitlement rules are the oracle's.
+- Why the disclosed approximation gives the nine workers of §27 a zero
+  own DI level: the diagnostic recorded the level, not the careers it
+  read (`e1-ratified-2`).
+- How DYNASIM pays the spouse's benefit of a DI beneficiary aged 62 or
+  older, and whether run 614's baseline or reform does (not read;
+  `e1-ratified-2`).
 - The month of each projected death (the records carry the year only),
   which a count of the credits of §12's unclaimed decedents would need.
 - How DYNASIM dates a converted disabled worker's spouse's benefit (not
@@ -1546,3 +1702,261 @@ committed one. Its findings:
   count although no decision record put it to Max, and said so in §22
   ruling 5; the code's `MAX_RULINGS` entry changed with it. No value
   changed.
+- `e1-ratified-2` (2026-09-25, after Registration 14's refusal, §27):
+  one guard changed, and no ruling, schedule, row, primary, parameter,
+  amount rule, statistic formula or §19 amount. `e1-ratified-1`'s §7 said
+  the C0 memberships coincide, and its runner refused any C0 difference
+  after A7 had tabulated the row; Registration 14's one-shot was refused
+  at F0 by that guard. A membership-only diagnostic traced all nine
+  differing person-draw rows to one mechanism: Track A's convention of
+  no spouse's excess while DI-entitled (§12) meeting the reform's later
+  DI conversion, for workers born 1963 whose own DI level is zero (the
+  disclosed approximation). This version names it (§12, new row; the DI
+  beneficiary row gains the statute on filing and dual entitlement and
+  two counters), corrects §7 and §8, adds a sentence to §6 and §11 rule
+  3, and makes the runner read A7's recipient flags for every row before
+  any row is tabulated, record each row's counts
+  (`membership_differences`, §16) and refuse a C0 row with any
+  difference the mechanism does not explain. §21 gains `membership`,
+  whose `c0_named_mechanisms` the specification check binds to the code;
+  §19 gains one invented case (no dollar amount); §20 and §24 follow;
+  §22 ruling 5 records Max's confirmation of the fixed 35 by name (d281)
+  without changing §21; the header and §2 record the lane and its
+  sources; §27 records the refusal, the diagnostic and the change. The
+  change was made after a registered run was refused, but before any
+  statistic was recorded, printed or seen, and with the comparator seal
+  closed. It is a new registered version: a new issue #42 registration
+  precedes any rerun. The independent review (header; an interrupted
+  first pass and the pass that finished it) replaced the §19 case's
+  values, two property-test examples and the classifier tests' spouse's
+  excess, which matched or were derived from values in the diagnostic's
+  real-data traces, with round invented values; added the deemed filing
+  of two traces to §12 and §27, with 402(b)(1)(J) and 402(c)(1)(J) in §2;
+  marked F3 and F4's named rows as deduced; said what the diagnostic
+  computed for F3 and F4 (§27); pinned the smallest positive oracle
+  level (§19); and made the dry run's membership text name a row A7
+  refused. No rule, schedule, row, parameter or amount rule changed.
+
+## 27. Registration 14's refusal and the C0 membership amendment
+
+This section was written by the lane that wrote `e1-ratified-2` (header).
+It read nothing `EVID/RESTRICTED-FILES.md` restricts, computed nothing on
+real data and reran nothing on real data. Its sources are in §2.
+
+**The refused run.** Registration 14 (issue #42 comment 5831579606)
+registered the exercise-3 one-shot at `a9b0d09f` under `e1-ratified-1`.
+The run (`EVID/fra68-oneshot-20260924/`: `run-once.sh`, `commit`,
+`pointer`, `started`, `finished`, `exit_code`, `stderr.log`) started under
+launchd at 2026-09-25 11:24:27Z (with a clean tree, per the outcome
+note), projected both anchor
+waves for all 20 draws and computed both scenarios' benefits, and at
+12:02:16Z, tabulating F0, exited with code 1: "F0: under fixed claim ages
+(C0) the baseline and reform memberships must coincide, but 8 rows are
+recipients in one scenario only". What it computed: the traceback places
+the raise at `fra68_track/runner.py` line 921, in the branch that runs
+after A7's `tabulate_cola_age_profile` has returned row F0's tabulation
+(the guard read that tabulation's input summary). So F0's tabulation,
+its statistic included, existed in the process's memory; the exception
+ended the process before any artifact or sidecar was written and before
+any value was printed (`stdout.log` is empty; `stderr.log` holds progress
+lines and the traceback). No other row was tabulated. No statistic was
+recorded, printed or seen, and the exercise-3 comparator seal stays
+closed. The outcome note is `EVID/fra68-oneshot-20260924/
+registration-14-outcome.md`; the outcome was posted on issue #42 as
+comment 5832056930 (the identifier is from this lane's brief; the lane
+read the note in the evidence folder, not the comment). Registration 14 is over: its
+re-execution allowance covered infrastructure failures only.
+
+**The diagnostic.** `EVID/fra68-membership-diagnostic-20260925/
+diagnose.py`, SHA-256
+`deb294013f98295b2a43f742d8c0e3cd61fa8b39bd5453f3d1745a790b983067` (the
+output records the same value as `script_sha256`), ran once, 12:14:59Z to
+13:01:10Z on 2026-09-25 (`run.sh`, exit code 0), in a clean worktree at
+`a9b0d09f`, one thread and under `nice`. Its outputs:
+`membership-diagnostic.json` (`587006e2…`), `run.log` (`ce63f375…`) and
+`differing-rows.txt` (`0686f085…`, printed by `summarize.py`,
+`044ab245…`).
+
+- *What it looked at.* It built the inputs as
+  `scripts/run_fra68_registered.py` does (without the preflight and the
+  sidecar), passed the registered specification check, repeated
+  `run_fra68` up to the union rows of the C0 rows (F0, F1, F2, F5, F6, F7
+  and F8), and marked every person-draw row whose A7 recipient status
+  differs between the scenarios, both by a direct rule and through A7's
+  own normalization; the two agreed in every row. It traced each
+  differing row through a fresh `ScenarioCalculator` per scenario, and
+  every trace reproduced the pipeline's amounts. It found its
+  projection's draw diagnostics identical to the exercise-1 artifact's.
+- *What it did not look at.* A7's tabulation and cell arithmetic, the
+  runner's cell diagnostics and Track A's component shares were replaced
+  by functions that raise, so it computed no statistic, age-group mean,
+  weight or sum across rows; its only cross-row numbers are counts of
+  differing rows. For F3 and F4 (C1, C2) it computed the reform
+  scenarios' benefits in memory, as the runner does before its union
+  rows, but built no union rows, recipient flags or traces and recorded
+  nothing (review, 2026-09-25: `diagnose.py` lines 915-944). It did not
+  record the careers behind the levels, and did not rerun the one-shot.
+
+**What it found.** F0, F1, F2, F5 and F7 each have the same 8 differing
+person-draw rows (2011 wave), F6 has none and F8 has 1 (2009 wave): nine
+traces of four person identifiers, one of them in both waves. In every
+trace the person:
+
+- was born in 1963 and awarded DI (between 2014 and 2028), with an own DI
+  level of 0.0 on the disclosed approximation;
+- is married in 2030 to a living worker with an own record (a retirement
+  claimant in eight traces, a worker the projection converted from DI in
+  one);
+- in the baseline is converted in 2030 (FRA 67, attained in July 2030
+  under A4's birth month) and is paid a zero own amount and a spouse's
+  excess for the model's 12 months of 2030: on the conversion claim, 0
+  months early, in seven traces; on a retirement claim at 62 in 2025 that
+  preceded the DI award in two;
+- in the reform, under every schedule, attains FRA 68 in July 2031, is
+  still a disabled worker in 2030, and draws nothing: the trace records
+  that Track A draws no spouse's excess for a disabled worker still
+  entitled to DI.
+
+Each is a baseline-only recipient; there is no reform-only recipient.
+
+**Classification.** A Track A simplification meeting the later
+conversion date, turned into a membership change by a zero DI level: not
+a real reform effect and not a code defect.
+
+- *The code.* `cola_track_a.benefits._Calculator.projected_person`
+  assesses a spouse's excess only for a married person whose own record
+  is not a disabled worker (its module docstring: "A disabled worker still
+  entitled to DI draws none"). `fra68_track.benefits.ScenarioCalculator.
+  worker_record` relabels a record the projection converted as a disabled
+  worker when `converted_in_scenario` is false, that is when the
+  scenario's FRA attainment year (`conversion_year`,
+  `engine.di_entitlement.fra_attainment_year` under the scenario bundle,
+  birth year plus (July's 6 + FRA months) // 12) is after the state's
+  year: 2030 under the statute and 2031 under P1, P2 and P3 for birth
+  year 1963. `projected_person` is inherited unchanged. The code does what
+  §11 rule 3 and §12 say; the error was `e1-ratified-1`'s §7 premise that
+  C0 memberships coincide, and the guard built on it.
+- *The statute.* The later conversion is the reform's (423(a)(1): DI ends
+  with the month before the month of attaining retirement age; 402(a)(3):
+  the old-age benefit follows from that month). But the statute does not
+  leave such a person without a benefit in 2030: a DI beneficiary aged 62
+  or older, married to a worker entitled to old-age or disability
+  benefits, with a PIA below one-half of that worker's, is entitled to a
+  wife's or husband's benefit once an application is filed (402(b)(1)(A),
+  (B) and (D); 402(c)(1)), paid as the excess over the DI benefit
+  (402(k)(3)(A)) and reduced under 402(q)(3)(A)(ii) and (C). 402(r)(1)
+  deems the application filed only for a person entitled to an old-age
+  benefit, so while on DI it must be filed; at the conversion the deemed
+  filing applies. Two of the nine traces differ: the person claimed a
+  retirement benefit at 62 in 2025, before the DI award, while (in the
+  model's years) the worker she is married to was entitled, so
+  402(r)(1) deemed her wife's application filed then, and a later DI
+  award at an own PIA below one-half of the worker's does not end that
+  entitlement (402(b)(1)(J), `usc42_402.txt` line 76). For those two the
+  statute would pay the excess in 2030 in both scenarios without a
+  further filing, so Track A's convention departs from the statute for
+  them whatever they file (a review finding, 2026-09-25; the
+  classification below is unchanged). The saved excerpts do not include
+  413-415, so this lane does not cite the statute on whether an insured
+  DI worker's PIA can be zero; §22 ruling 3 makes DI levels weights only.
+- *Not a real reform effect:* the membership change needs the convention
+  and the zero level, both model conventions (§12). *Not a code defect:*
+  both are implemented as ruled (d188 item (a): run exactly like Track A,
+  with its DI-level approximation).
+
+**The change** (code and specification; no ruled item). Track A's rule
+stays, as d188 requires. The runner (`fra68_track.runner.run_fra68`) now,
+after every scenario is computed and before any row is tabulated, reads
+A7's own recipient flags for each registered row (A7's normalization,
+which computes no statistic) and sorts every person-draw row whose flags
+differ (`fra68_track.benefits.classify_membership_differences`) into the
+named mechanism (`spouse_excess_withheld_until_reform_conversion`; every
+condition of §12's definition must hold: a projected baseline-only
+recipient; converted in the baseline and a disabled worker in the
+reform; conversion years that straddle 2030; the spouse's excess among
+the row's components, positive in the baseline and absent in the reform;
+every other component zero in both) or "not explained". Any C0 row with
+a row not explained refuses the run, naming the first such row, before
+any tabulation, where the old guard ran after A7 had tabulated the row.
+Each row records the counts (`membership_differences`: rows that differ,
+by direction; the named rows, by draw and by birth year; the rows not
+explained), and after tabulation A7's own count must equal the record's.
+Union counters count the withheld excesses (§12). The statistic is
+unchanged: it already uses the scenario-specific S_base and S_reform of
+§7, and the named rows are in S_base only.
+
+**What the named rows do to the statistic.** In the 65-69 group of rows
+F0-F2, F7 and F8 (and, deduced from the code but not observed on real
+data, of F3 and F4), each named row contributes a
+positive baseline amount to the baseline mean and nothing to the reform
+mean. Whether that raises or lowers a cell, and by how much, depends on
+how those baseline amounts compare with the group's mean; this lane did
+not compute it. F5's mean of individual ratios omits them (S_alt).
+
+**Options for Max, not taken** (each changes a ruled item or the
+ratified statistic, so no builder lane may take it):
+
+1. Pay a DI-entitled worker aged 62 or older the spouse's excess under
+   402(q)(3)(C), assuming the application is filed. This departs from
+   running exercise 3 exactly like Track A (d188 item (a)) and changes
+   baseline amounts relative to exercise 1.
+2. Replace the zero DI levels by a statutory DI computation. This departs
+   from the DI-level ruling (d188 item (a), carrying over d074 decision
+   2(b)); with a positive level the person stays a recipient in both
+   scenarios and only the withheld excess remains (§12).
+3. Treat the named rows by common membership (drop them from S_base as
+   well, or keep them in S_reform with a zero benefit). This changes the
+   ratified statistic of §7 and §8.
+
+The amendment takes none of these: the registered run keeps every ruling
+and reports the named rows' count with every row.
+
+**Governance.** The change was made after a registered run was refused,
+but before any statistic was recorded, printed or seen, and with the
+exercise-3 comparator seal closed. It is a new registered version, so a
+new issue #42 registration, naming `e1-ratified-2` and its commit,
+precedes any rerun. Max's d188 item (c) authorized ratifying E1 by merge;
+whether that authorization covers this amendment, or it needs his
+ruling, is a question for him, and this lane has not merged or posted
+anything.
+
+**Tests** (INVENTED data only). `tests/fra68_track/test_c0_membership.py`
+reproduces the mechanism end to end through `run_fra68` on the invented
+cohort, with one invented couple's 2030 state set (a wife born 1963
+awarded DI in 1984, before her first covered earnings, so her level is
+zero; a husband born 1960 who claimed at 67 in 2027): it fails at
+`a9b0d09f` with the Registration-14 refusal on invented data
+(`EVID/fra68-membership-fix-20260925/regression-test-at-a9b0d09f.log`) and
+passes here; the same module shows that a difference the mechanism does
+not explain, either way round, still refuses, before any tabulation, and
+that a named row does not mask one. `tests/fra68_track/
+test_membership_properties.py` holds the §19 case (round invented values;
+the review replaced values that matched the diagnostic's real-data
+traces) with its positive-level variants, each condition of the
+classifier, the binding of §21's `membership` to the code, and
+property-based tests (Hypothesis) over generated invented households:
+under C0 no individual benefit rises; P2 <= P3 <= P1 <= baseline per
+person; the null reform changes nothing under every claiming response,
+and the baseline with Track A's fixed survivor span is Track A's own
+calculator bit for bit; memberships differ only through the named
+mechanism, and every generated person meeting its definition is one of
+those rows. `tests/fra68_track/test_dry_run_membership_text.py` holds the
+dry run's membership text to each row's record, a row A7 refused
+included.
+
+**Invented dry run.** `EVID/fra68-dry-run-20260925-membership-fix/`
+(`--draws 20`, seed 20260922) holds the regenerated dry run, the dry run
+of the unchanged code at `origin/master` (`1f6cf4bb`,
+`reference-origin-master-1f6cf4bb/`) and the output of
+`compare_dry_runs.py`, which lists every changed field against that
+reference and against the `e1-ratified-1` dry run
+(`EVID/fra68-ratify-20260924/dry-run-cd7c790b/`). The invented cohort
+has no C0 membership difference: every C0 row records 0 differing rows,
+and F3 and F4 record their C1 and C2 differences, none of them the named
+mechanism, as allowed. No tabulated value, cell diagnostic, projection
+draw or parameter record changes; the changed fields are the new
+membership record and the removed `membership_identity_required` of
+each row, the E1 header, hash and tabulation-convention notes, the gap
+list and the run block (and, against the `e1-ratified-1` dry run, the
+`benefit_computation_years` entry of the rulings record that the review
+of `e1-ratified-1` edited before its merge).
