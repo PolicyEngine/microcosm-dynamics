@@ -259,6 +259,13 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/min_benefit_track_m/specification.py"),
     Path("src/populace_dynamics/min_benefit_track_m/structure.py"),
     Path("src/populace_dynamics/min_benefit_track_m/thresholds.py"),
+    # The Track M share computation (M8), its end-to-end pipeline and the
+    # invented dry-run cohort (M10) compose the layer above; nothing
+    # historical imports them.
+    Path("src/populace_dynamics/min_benefit_track_m/evaluation.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/invented.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/pipeline.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/tabulation.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

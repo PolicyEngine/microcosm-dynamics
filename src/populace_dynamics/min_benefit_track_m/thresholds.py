@@ -189,8 +189,3 @@ def check_threshold_years(
             "download (cos d279: any earlier year the build proves it "
             "needs), captured, hashed and pinned before the run"
         )
-
-
-# ---------------------------------------------------------------------------
-# Work years, threshold and minimum
-# ---------------------------------------------------------------------------

@@ -206,7 +206,16 @@ def test_the_structure_module_imports_no_rules():
     # The counts must never reach the years-of-coverage or minimum rules;
     # the script also refuses at run time if either was imported.
     source = Path(structure.__file__).read_text(encoding="utf-8")
-    for name in ("rules", "coverage", "specification"):
+    for name in (
+        "rules",
+        "coverage",
+        "specification",
+        "thresholds",
+        "evaluation",
+        "tabulation",
+        "pipeline",
+        "invented",
+    ):
         assert f"min_benefit_track_m.{name}" not in source
         assert f"min_benefit_track_m import {name}" not in source
 

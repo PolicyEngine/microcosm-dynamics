@@ -13,8 +13,9 @@ It computes **no** years of coverage, PIA, threshold, minimum, worker flag
 or share receiving a minimum: plan ``critical-path-minimum-benefit-
 20260924.md`` section 8 limits real-file work before the issue #42
 registration to label verification, structural counts and aggregates that
-involve no threshold and no minimum.  It refuses to write if the rules or
-coverage modules were imported.
+involve no threshold and no minimum.  It refuses to write if the rules,
+coverage, thresholds or share-computation modules (evaluation,
+tabulation, pipeline, invented) were imported.
 
 Usage::
 
@@ -45,6 +46,10 @@ FORBIDDEN_MODULES = (
     "populace_dynamics.min_benefit_track_m.rules",
     "populace_dynamics.min_benefit_track_m.coverage",
     "populace_dynamics.min_benefit_track_m.thresholds",
+    "populace_dynamics.min_benefit_track_m.evaluation",
+    "populace_dynamics.min_benefit_track_m.tabulation",
+    "populace_dynamics.min_benefit_track_m.pipeline",
+    "populace_dynamics.min_benefit_track_m.invented",
 )
 
 

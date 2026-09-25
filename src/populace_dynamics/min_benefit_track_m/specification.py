@@ -11,15 +11,19 @@ run the block does not authorize.  A run is authorized only when:
   ``estimates.cola_age_profile.specification_unratified_fields``, plus the
   ``referee`` marker exercise 3 added);
 * it lists no decision awaiting Max;
+* its ``blocked_by`` is empty: a block that still names a blocker (a
+  missing capture, reader or registration) authorizes nothing, as Track
+  U's entry point refuses one;
 * it records a ruling under ``decisions`` for every field Max ruled on
   (cos d219's nine items, d279 and d280), each entry equal to the code's
   record of it (:data:`~.policy.MAX_RULINGS`), and the configuration
   follows each ruling;
-* it agrees with the code (options, schedules, cuts, rows, cells, labels
-  and the policy).
+* it agrees with the code (options, schedules, cuts, rows, cells, labels,
+  the policy, the statistic and the uncertainty the tabulation computes).
 
 ``m1-draft-2`` records Max's rulings and fails the first test: it awaits an
 independent check of the referee's changes, then ratification by merge.
+Its ``blocked_by`` also still lists the unbuilt PSID readers (M3-M5).
 """
 
 from __future__ import annotations
@@ -158,7 +162,15 @@ def _expected_options() -> dict[str, Any]:
 def specification_code_check(
     block: Mapping[str, Any], policy: TrackMPolicy | None = None
 ) -> dict[str, Any]:
-    """Compare the block with the code; ``consistent`` when all agree."""
+    """Compare the block with the code; ``consistent`` when all agree.
+
+    ``statistic`` and ``uncertainty`` are held to the tabulation's
+    :data:`~.tabulation.STATISTIC` and :data:`~.tabulation.UNCERTAINTY`
+    (imported here, not at module level, so reading the block loads no
+    tabulation code).
+    """
+
+    from populace_dynamics.min_benefit_track_m import tabulation
 
     policy = policy or TrackMPolicy()
     expected = {
@@ -175,6 +187,8 @@ def specification_code_check(
         },
         "labels": list(OUTPUT_LABELS),
         "decisions": expected_decisions(),
+        "statistic": tabulation.statistic_block(),
+        "uncertainty": tabulation.uncertainty_block(),
     }
     mismatches = [
         key for key, value in expected.items() if block.get(key) != value
@@ -204,6 +218,17 @@ def check_specification_for_registered_run(
         raise ValueError(
             "the M1 specification still lists decisions awaiting Max "
             f"({sorted(awaiting)}): no real-data statistic before he rules"
+        )
+    if "blocked_by" not in block:
+        raise ValueError(
+            "the M1 specification block has no blocked_by list: a "
+            "registered run needs it present and empty"
+        )
+    blocked = block["blocked_by"]
+    if not isinstance(blocked, list) or blocked:
+        raise ValueError(
+            f"the M1 specification is still blocked by {blocked!r}: no "
+            "real-data run while its block names a blocker"
         )
     rulings = block.get("decisions") or {}
     unruled = [

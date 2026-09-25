@@ -33,9 +33,10 @@ What this package holds:
 * :mod:`.tabulation`: the Table 6 statistic, the share of the universe
   receiving a minimum, with the five-seed floor and the design-based
   standard error (plan item M8).  It refuses PSID-built rows without the
-  issue #42 registration pointer and a ratified M1 specification.
+  issue #42 registration pointer and an M1 specification the registered-
+  run gate authorizes (ratified, nothing awaiting Max, nothing blocking).
 * :mod:`.pipeline`: every registered row MS0-MS6 end to end, after the
-  threshold-year check (plan item M10).
+  provenance guard and the threshold-year check (plan item M10).
 * :mod:`.invented`: an INVENTED PSID-shaped cohort for the dry run.
 * :mod:`.specification`: reads the M1 specification's parameter block and
   refuses a registered run the block does not authorize.

@@ -148,6 +148,10 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/min_benefit_track_m/specification.py"),
         Path("src/populace_dynamics/min_benefit_track_m/structure.py"),
         Path("src/populace_dynamics/min_benefit_track_m/thresholds.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/evaluation.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/invented.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/pipeline.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/tabulation.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -449,10 +453,14 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         f"populace_dynamics.min_benefit_track_m.{name}"
         for name in (
             "coverage",
+            "evaluation",
+            "invented",
+            "pipeline",
             "policy",
             "rules",
             "specification",
             "structure",
+            "tabulation",
             "thresholds",
         )
     }

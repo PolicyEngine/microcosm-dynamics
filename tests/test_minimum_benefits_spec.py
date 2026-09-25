@@ -21,6 +21,7 @@ from populace_dynamics.min_benefit_track_m import (
     OUTPUT_LABELS,
     rules,
     structure,
+    tabulation,
 )
 from populace_dynamics.min_benefit_track_m import policy as pol
 from populace_dynamics.min_benefit_track_m import specification as spec
@@ -66,6 +67,30 @@ def test_block_identity_and_status(block):
     assert (
         "independent_check_of_m1_draft_2_then_ratification_by_merge"
         in block["blocked_by"]
+    )
+    # M8 and the M10 dry run are built; the PSID readers are not
+    assert "tabulation_m8_and_dry_run_m10" not in block["blocked_by"]
+    for blocker in (
+        "person_level_social_security_readers_m3",
+        "beneficiary_cohort_m4",
+        "realized_careers_m5",
+        "issue_42_registration_absent",
+    ):
+        assert blocker in block["blocked_by"], blocker
+
+
+def test_statistic_and_uncertainty_are_the_tabulations(block):
+    assert block["statistic"] == tabulation.STATISTIC
+    assert block["uncertainty"] == tabulation.UNCERTAINTY
+    assert block["statistic"]["id"] == tabulation.STATISTIC_ID
+    assert block["uncertainty"]["design_se"]["stratum"] == (
+        block["population"]["design"]["stratum"]
+    )
+    assert block["uncertainty"]["design_se"]["cluster"] == (
+        block["population"]["design"]["cluster"]
+    )
+    assert block["uncertainty"]["design_se"]["frame"].endswith(
+        block["population"]["weight"]
     )
 
 
@@ -149,8 +174,26 @@ def _ratified(block: dict) -> dict:
     return ratified
 
 
-def test_the_gate_checks_every_step(block):
+def test_a_ratified_block_still_listing_blockers_authorizes_nothing(block):
+    """Ratification alone does not authorize the run: the block's
+    ``blocked_by`` still names the unbuilt PSID readers, and the gate
+    refuses a block that names any blocker (or has no list)."""
+
     ratified = _ratified(block)
+    assert ratified["blocked_by"]
+    with pytest.raises(ValueError, match="still blocked by"):
+        spec.check_specification_for_registered_run(ratified)
+    unlisted = {k: v for k, v in ratified.items() if k != "blocked_by"}
+    with pytest.raises(ValueError, match="no blocked_by"):
+        spec.check_specification_for_registered_run(unlisted)
+    with pytest.raises(ValueError, match="still blocked by"):
+        spec.check_specification_for_registered_run(
+            {**ratified, "blocked_by": "none"}
+        )
+
+
+def test_the_gate_checks_every_step(block):
+    ratified = {**_ratified(block), "blocked_by": []}
     spec.check_specification_for_registered_run(ratified)
     referee = {**ratified, "version": "m1-ratified-after-referee-1"}
     with pytest.raises(ValueError, match="authorizes no"):
@@ -180,6 +223,14 @@ def test_the_gate_checks_every_step(block):
         spec.check_specification_for_registered_run(
             ratified, pol.policy_for_row("MS6")
         )
+    # So does a statistic or an uncertainty other than the tabulation's.
+    for key, change in (
+        ("statistic", {"n_scored": True}),
+        ("uncertainty", {"draws": 20}),
+    ):
+        other = {**ratified, key: {**ratified[key], **change}}
+        with pytest.raises(ValueError, match=key):
+            spec.check_specification_for_registered_run(other)
 
 
 def test_the_decisions_section_lists_every_ruling(text):

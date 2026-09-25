@@ -1,0 +1,136 @@
+"""The Track M dry-run script on a small INVENTED cohort (plan item M10).
+
+The cohort is **INVENTED**; the parameters are the oracle's from the
+policyengine-us checkout (``POPULACE_DYNAMICS_PE_US_DIR`` or
+``~/PolicyEngine/policyengine-us``), the committed Census capture and the
+committed COLA history.  No PSID file is read.  The test skips without the
+checkout.
+"""
+
+from __future__ import annotations
+
+import importlib.util
+import json
+import os
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[2]
+_PE_US = Path(
+    os.environ.get(
+        "POPULACE_DYNAMICS_PE_US_DIR", "~/PolicyEngine/policyengine-us"
+    )
+).expanduser()
+pytestmark = pytest.mark.skipif(
+    not (_PE_US / "policyengine_us").is_dir(),
+    reason="needs a policyengine-us checkout (POPULACE_DYNAMICS_PE_US_DIR)",
+)
+
+
+def _script():
+    path = ROOT / "scripts" / "track_m_dry_run.py"
+    spec = importlib.util.spec_from_file_location("_track_m_dry_run", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture(scope="module")
+def document(tmp_path_factory):
+    out = tmp_path_factory.mktemp("dry")
+    _script().main(["--output-dir", str(out), "--family-units", "80"])
+    return (
+        json.loads((out / "result.json").read_text()),
+        (out / "RESULTS.md").read_text(),
+    )
+
+
+def test_the_outputs_are_headed_invented(document):
+    result, markdown = document
+    assert result["header"] == "INVENTED DATA - NOT A COMPARISON"
+    assert markdown.startswith("# INVENTED DATA - NOT A COMPARISON\n")
+    assert result["result"]["labels"][0] == result["header"]
+    assert result["result"]["data_provenance"] == "invented"
+    assert "d280" in result["result"]["disclosure"]
+
+
+def test_every_row_and_cell_is_reported(document):
+    result, markdown = document
+    assert list(result["summary"]) == [f"MS{i}" for i in range(7)]
+    for row, cells in result["summary"].items():
+        assert len([key for key in cells if key != "y3"]) == 12, row
+        assert f"| {row} |" in markdown
+    parameters = result["result"]["parameters"]
+    assert parameters["thresholds"]["kind"] == "census_capture"
+    assert parameters["quarter_of_coverage"]["kind"] == (
+        "policyengine_us_checkout"
+    )
+    assert result["result"]["inputs"]["provenance_kind"] == "invented"
+
+
+def test_the_checks_record_every_guard(document):
+    checks = document[0]["checks"]
+    assert checks["specification_block_equals_code"]["consistent"]
+    assert checks["committed_draft_authorizes_no_real_run"]["refused"]
+    blocked = checks["a_ratified_copy_still_listing_blockers_is_refused"]
+    assert blocked["refused"] and "blocked by" in blocked["message"]
+    unblocked = "a_ratified_unblocked_copy_would_pass_the_specification_gate"
+    assert not checks[unblocked]["refused"]
+    assert not checks["threshold_years_all_captured"]["refused"]
+    years = checks["threshold_years_needed_by_the_invented_cohort"]
+    assert min(int(year) for year in years) >= 2003
+    early = checks["a_record_needing_1998_is_refused_before_any_computation"]
+    assert early["refused"] and early["error"] == "ThresholdYearMissingError"
+    assert checks["ms5_reads_benefit_implied_pias_and_ms0_none"]["passed"]
+    for name in (
+        "registered_path_refuses_invented_records",
+        "psid_kind_records_refused_as_invented",
+        "psid_kind_records_refused_without_the_42_pointer",
+        "psid_kind_records_refused_with_a_pointer_under_the_draft",
+        "a_registered_subset_of_rows_is_refused",
+        "registered_floor_seeds_cannot_be_changed",
+        "entry_point_refuses_before_any_psid_read",
+    ):
+        assert checks[name]["refused"], name
+    assert "every registered row" in (
+        checks["a_registered_subset_of_rows_is_refused"]["message"]
+    )
+    assert checks["entry_point_missing_components"] == [
+        "M3/M4 beneficiary cohort",
+        "M5 realized careers",
+    ]
+
+
+def test_the_plan_cases_match_section_16(document):
+    """The M1 specification's section 16 table, recomputed (INVENTED)."""
+
+    cases = document[0]["checks"]["plan_invented_cases"]
+    expected = {
+        # case: (M option 2, flag 2 G10/MS2, flag 4 G10/MS2, against 1)
+        "A": (708.33, (True, True), (True, True), 34.84),
+        "B": (0.0, (False, False), (False, False), -0.41),
+        "C": (833.33, (True, False), (True, True), 5.76),
+        "D": (674.24, (True, True), (True, True), 54.02),
+        "H": (833.33, (True, False), (True, True), -0.12),
+        "I": (583.33, (False, False), (True, True), -0.41),
+    }
+    for name, (minimum, two, four, relative) in expected.items():
+        case = cases[name]
+        assert case["minimum_option_2"] == minimum, name
+        assert tuple(case["flag_option_2"].values()) == two, name
+        assert tuple(case["flag_option_4"].values()) == four, name
+        assert case["option_2_against_option_1_percent"] == relative, name
+    assert cases["D"]["work_years_star"] == 27.27
+
+
+def test_the_provenance_pins_the_specification_and_parameters(document):
+    result, markdown = document
+    provenance = result["provenance"]
+    spec = provenance["m1_specification"]
+    assert spec["path"] == "docs/design/minimum_benefits_comparison.md"
+    assert len(spec["sha256"]) == 64
+    assert provenance["census_thresholds"]["sha256"].startswith("65bbcd83")
+    assert provenance["quarter_of_coverage"]["sha256"].startswith("12354a05")
+    assert "not opened" in provenance["comparator_seal"]
+    assert spec["sha256"] in markdown

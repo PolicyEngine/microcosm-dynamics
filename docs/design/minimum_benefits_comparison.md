@@ -904,9 +904,17 @@ Downstream code reads this block:
 and the d279 and d280 fields of 2026-09-25, each equal to the code's
 record (`min_benefit_track_m.policy.MAX_RULINGS`); `decisions_awaiting_max`
 is empty. A registered run still refuses unless the status and version
-say ratified, nothing awaits Max, every ruled field carries a ruling
-equal to the code's, the configuration follows each ruling and the
-block equals the code.
+say ratified, nothing awaits Max, `blocked_by` is present and empty,
+every ruled field carries a ruling equal to the code's, the
+configuration follows each ruling and the block equals the code: the
+options, cells, policy, rows and labels, and `statistic` and
+`uncertainty`, which must equal the tabulation's (`tabulation.STATISTIC`
+and `tabulation.UNCERTAINTY`). The tabulation and the pipeline apply the
+same gate to PSID-built rows. As in Track U, each blocker is removed from
+`blocked_by` as it is resolved, and `issue_42_registration_absent` in the
+commit the registration comment then registers; the registered commit's
+block lists none. The entry script also refuses parameter files whose
+SHA-256 differs from `sources` (§18).
 
 ```json
 {
@@ -1123,14 +1131,18 @@ block equals the code.
         4
       ],
       "fraction": 0.5,
-      "split_unit": "family_unit_linked_by_person"
+      "split_unit": "family_unit_linked_by_person",
+      "min_usable_seeds": 2
     },
     "design_se": {
       "method": "taylor_linearization",
+      "domain": "full_sample_design",
+      "frame": "wave_2023_persons_with_positive_ER35265",
       "stratum": "ER31996",
-      "cluster": "ER31997"
-    },
-    "status": "not_built_m8"
+      "cluster": "ER31997",
+      "singleton_strata": "left_out_counted_and_listed",
+      "unit": "percentage_points"
+    }
   },
   "acceptance_rule": null,
   "labels": [
@@ -1278,7 +1290,7 @@ block equals the code.
     "person_level_social_security_readers_m3",
     "beneficiary_cohort_m4",
     "realized_careers_m5",
-    "tabulation_m8_and_dry_run_m10",
+    "registration_package_m10_needs_m3_to_m5",
     "issue_42_registration_absent"
   ]
 }
