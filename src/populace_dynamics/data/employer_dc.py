@@ -16,7 +16,9 @@ This module reads them.
 Label investigation, 2026-09-25, against the staged ``.sps`` setup files
 and the family codebooks of 2005, 2007, 2009, 2011 and 2013 (question
 text, value codes and ``Inap.`` universes; the codebooks' whole-sample
-frequency counts were seen and not used):
+frequency counts were seen and not used), and, in the independent review
+of ``u1-draft-7`` (2026-09-25), the questionnaires' routing of the
+previous-employer items (P45-P69):
 
 * **Who is asked.** The head and the wife (the family file's "wife"
   includes a cohabiting partner).  OFUMs are not asked the section.  The
@@ -42,29 +44,39 @@ frequency counts were seen and not used):
   P69 "WTR 3RD PREV PENSION" before 2013, has no amounts).  The plan type
   (P46/P116: before 2011 1 "Type A" formula, 2 "Type B" account, 3 "Both
   types"; from 2011 1 "Defined benefit", 5 "Defined contribution", 7
-  "Both"; 8 DK, 9 NA) routes the questions, as the codebooks' ``Inap.``
-  texts state:
+  "Both"; 8 DK, 9 NA) routes the questions.  The questionnaires (the
+  PSID "box and arrow" instruments ``q2005``, ``q2009``, ``q2011`` and
+  ``q2013``; no 2007 instrument is staged) route them so:
 
-  - the "both" items, P48/P118 (what was done with the account when the
-    person left: 1 "withdrew", 2 "rolled over into IRA", 3 "left to
-    accumulate", 4 "converted to annuity", 7 "other") and P49/P119 "How
-    much is in your account now?", are asked for a "both" plan only
-    (``Inap.``: "Type A or B plan, DK or refused type" before 2011;
-    types 1, 5, 8 and 9 from 2011);
-  - the account items, P64/P134 (1 "Transferred to new employer", 2
-    "Rolled over into IRA", 3 "Left to accumulate", 4 "Converted to
-    annuity", 7 "Other") and P65/P135 "How much is in your account
-    now?", are asked for an account plan *and for a plan whose type the
-    respondent did not know* (``Inap.``: "Type A or combination plan or
-    refused type" before 2011; types 1, 7 and 9 from 2011, so type 8,
-    DK, is asked);
-  - both amount items are asked after codes 2 and 3 only.
+  - a "both" plan is asked the "both" items: P47/P117 (the account when
+    the person left), P48/P118 (what was done with it: 1 "withdrew", 2
+    "rolled over into IRA", 3 "left to accumulate", 4 "converted to
+    annuity", 7 "other") and, after codes 2 and 3, P49/P119 "How much is
+    in your account now?"; then the formula part.  The codebooks'
+    ``Inap.`` texts agree ("Type A or B plan, DK or refused type" before
+    2011; types 1, 5, 8 and 9 from 2011);
+  - a formula, "both" or DK-type plan is asked the formula part (P52 on:
+    status, benefits, and, when future benefits are expected, P62 "Can
+    you estimate what you expect these benefits to be?"); a DC ("Type
+    B") plan skips it;
+  - the account items, P63/P133 (the account when the person left),
+    P64/P134 (1 "Transferred to new employer", 2 "Rolled over into IRA",
+    3 "Left to accumulate", 4 "Converted to annuity", 7 "Other") and,
+    after codes 2 and 3, P65/P135 "How much is in your account now?",
+    follow checkpoint P62A ("whether pension is DC (P46=5) or DB amount
+    is DK/RF"): they are asked of a DC plan *and of any formula, "both"
+    or DK-type plan whose expected benefit at P62 is DK or refused*.
 
-  The staged files also carry account amounts (P65/P135) for plans of
-  formula or "both" type, which the codebooks route elsewhere:
-  :func:`reconcile_employer_dc` counts them, and U7 does not count them
-  (a "both" plan's account is already asked at P49, so counting its P65
-  too could count one account twice).  The question introducing
+  The codebooks' ``Inap.`` texts of P63-P65 ("Type A or combination plan
+  or refused type" before 2011; types 1, 7 and 9 from 2011) leave out
+  the checkpoint's second branch, but the staged files follow the
+  questionnaires: in every wave a formula- or DK-type plan has a recorded
+  P64/P134 exactly when its P62/P132 amount (or, before 2011, lump sum)
+  is DK or refused, and every "both" plan with a DK or refused P62/P132
+  has one (independent review of ``u1-draft-7``, 2026-09-25, structural
+  counts; ``tests/data/test_employer_dc_integration.py``).  So a formula-type
+  plan's account items are on the instrument's route exactly as a
+  DK-type plan's are.  The question introducing
   previous-employer plans changes from "were you included in a pension or
   retirement plan, or in any tax-deferred savings plan, through a former
   employer?" (2005-2009) to "have any pensions or retirement plans from
@@ -81,22 +93,33 @@ frequency counts were seen and not used):
   which this reader does not use.
 
 **The U7 balance** (:func:`employer_dc_balances`), per family, head and
-wife together, follows the codebooks' route item by item: the
+wife together, follows the questionnaires' route item by item: the
 current-job amount when P16/P86 names an account or combined plan; plus,
 for each previous plan, the amount now when the account was *left to
 accumulate* (code 3) in the old employer's plan, from the "both" items of
-a "both" plan and from the account items of an account plan or a plan of
-unknown (DK) type.  An account *rolled over into an IRA* (code 2) on the
-route is excluded: its "now" amount is an IRA balance, which WEALTH1
-already holds (W22, "private annuities or Individual Retirement
-Accounts"), and it is counted in ``employer_dc_ira_rollover_items``.  A
-nonzero amount off the route (a current-job amount whose P16/P86 names no
-account; a previous plan's amount left to accumulate under a plan type
-the codebooks do not route to that item) is excluded and counted in
-``employer_dc_off_route_items``.  Accounts withdrawn, converted to an
+a "both" plan and from the account items of a DC, formula or DK-type
+plan.  A "both" plan's account items are not counted: its account is
+asked at P47-P49, and checkpoint P62A asks P63-P65 again when its
+expected benefit is DK or refused (69 previous plans over the five waves
+carry both a P49 and a P65 amount, every one a "both" plan and 44 with
+equal codes), so counting both could count one account twice.  An
+account *rolled over into an IRA* (code 2) on the route is excluded: its
+"now" amount is an IRA balance, which WEALTH1 already holds (W22,
+"private annuities or Individual Retirement Accounts"), and it is counted
+in ``employer_dc_ira_rollover_items``.  A nonzero amount U7 does not take
+(a current-job amount whose P16/P86 names no account; a previous plan's
+amount left to accumulate in items U7 does not route to the plan's type:
+the "both" items of a plan that is not "both", the account items of a
+"both" plan, any item under an NA or Inap. type) is excluded and counted
+in ``employer_dc_off_route_items``.  Accounts withdrawn, converted to an
 annuity, transferred to a new employer or "other" have no amount now.  A
 DK or refused amount on the route counts as 0 and is counted in
 ``employer_dc_unreported``; the top code counts as recorded.
+
+Until the independent review of ``u1-draft-7`` (2026-09-25) the rule
+followed the codebooks' ``Inap.`` texts and left out the account items of
+formula-type plans while counting those of DK-type plans; the
+questionnaires route the two identically (above), so both are counted.
 
 What this module does not do: it computes no annuity, income, threshold
 or poverty status, and it attaches nothing to persons (see
@@ -123,6 +146,7 @@ __all__ = [
     "EXCLUDED_IRA_DISPOSITION",
     "PERSONS",
     "PREVIOUS_DK_TYPE",
+    "PREVIOUS_FORMULA_TYPE",
     "PREVIOUS_PLANS",
     "amount_codes",
     "employer_dc_balances",
@@ -157,8 +181,13 @@ _PREVIOUS_TYPE_CODES: dict[bool, tuple[int, ...]] = {
 }
 _PREVIOUS_BOTH_TYPE: dict[bool, int] = {False: 3, True: 7}
 _PREVIOUS_ACCOUNT_TYPE: dict[bool, int] = {False: 2, True: 5}
-#: "DK" plan type: the codebooks route it to the account items (P63-P65)
-#: in every wave, and not to the "both" items (P47-P49).
+#: Formula ("Type A", defined benefit) plan type, 1 in every wave: the
+#: questionnaires ask its account items (P63-P65) when its expected
+#: benefit (P62) is DK or refused, as for a DK-type plan.
+PREVIOUS_FORMULA_TYPE = 1
+#: "DK" plan type: the questionnaires route it through the formula part
+#: to the account items (P63-P65) when its expected benefit is DK or
+#: refused, in every wave, and never to the "both" items (P47-P49).
 PREVIOUS_DK_TYPE = 8
 #: What was done with a previous plan's account (P48/P64 and the wife's).
 DISPOSITION_CODES: tuple[int, ...] = (0, 1, 2, 3, 4, 7, 8, 9)
@@ -572,7 +601,7 @@ def plan_type_codes(wave: int) -> dict[str, int]:
     return {
         "current_account": 5,
         "current_both": 7 if new else 3,
-        "previous_formula": 1,
+        "previous_formula": PREVIOUS_FORMULA_TYPE,
         "previous_account": _PREVIOUS_ACCOUNT_TYPE[new],
         "previous_both": _PREVIOUS_BOTH_TYPE[new],
         "previous_dk": PREVIOUS_DK_TYPE,
@@ -675,19 +704,22 @@ def _decoded(amount: np.ndarray, width: int) -> tuple[np.ndarray, ...]:
 
 
 def _account_route(part: str, plan_type: np.ndarray, wave: int) -> np.ndarray:
-    """Whether the codebooks route a previous plan's ``part`` items to it.
+    """Whether U7 takes a previous plan's ``part`` items for its type.
 
-    The "both" items (``combo``: P48-P49, P118-P119) are asked for a
-    "both" plan only; the account items (``dc``: P64-P65, P134-P135) for
-    an account plan or a plan of DK type (their ``Inap.`` texts, module
-    docstring).
+    The "both" items (``combo``: P48-P49, P118-P119) for a "both" plan
+    only; the account items (``dc``: P64-P65, P134-P135) for a DC plan and
+    for a formula or DK-type plan, which the questionnaires' checkpoint
+    P62A asks them of when its expected benefit is DK or refused.  A
+    "both" plan's account items re-ask the account its "both" items hold,
+    so U7 does not take them (module docstring).
     """
 
     new = _new_codes(wave)
     if part == "combo":
         return plan_type == _PREVIOUS_BOTH_TYPE[new]
-    return (plan_type == _PREVIOUS_ACCOUNT_TYPE[new]) | (
-        plan_type == PREVIOUS_DK_TYPE
+    return np.isin(
+        plan_type,
+        (_PREVIOUS_ACCOUNT_TYPE[new], PREVIOUS_FORMULA_TYPE, PREVIOUS_DK_TYPE),
     )
 
 
@@ -703,9 +735,9 @@ def employer_dc_balances(raw: pd.DataFrame, wave: int) -> pd.DataFrame:
     * ``employer_dc_previous``: for each previous plan 1 and 2 of the head
       and wife, the account amount now when the account was left to
       accumulate (disposition :data:`COUNTED_DISPOSITION`), on the
-      codebooks' route: the "both" items (P48-P49) of a "both" plan, the
-      account items (P64-P65) of an account plan or a plan of DK type
-      (:data:`PREVIOUS_DK_TYPE`);
+      questionnaires' route: the "both" items (P48-P49) of a "both" plan,
+      the account items (P64-P65) of a DC plan or of a formula or DK-type
+      plan (:data:`PREVIOUS_FORMULA_TYPE`, :data:`PREVIOUS_DK_TYPE`);
     * ``employer_dc``: their sum;
     * ``employer_dc_items``: the counted amounts that are positive;
     * ``employer_dc_unreported``: counted items whose amount is DK or
@@ -717,11 +749,11 @@ def employer_dc_balances(raw: pd.DataFrame, wave: int) -> pd.DataFrame:
       :data:`EXCLUDED_IRA_DISPOSITION`), whose amount now is not counted
       because WEALTH1 holds IRAs;
     * ``employer_dc_off_route_items``: nonzero amounts not counted because
-      the codebooks do not route the item to the plan's type (a
-      current-job amount whose P16/P86 names no account; a previous plan's
-      amount left to accumulate under a formula, NA or Inap. type, or an
-      account amount P65/P135 under a "both" plan, whose account the
-      "both" items P48-P49 already ask).
+      U7 does not take the item for the plan's type (a current-job amount
+      whose P16/P86 names no account; a previous plan's amount left to
+      accumulate in the "both" items of a plan that is not "both", under
+      an NA or Inap. type, or in the account items P64-P65 of a "both"
+      plan, which re-ask the account its "both" items P48-P49 hold).
 
     Every other disposition (withdrawn, converted to an annuity,
     transferred to a new employer, other, DK, refused) and a plan whose
@@ -859,17 +891,18 @@ def read_employer_dc(
 
 
 def reconcile_employer_dc(frame: pd.DataFrame, wave: int) -> dict[str, int]:
-    """Counts of P-section records against the codebooks' routing.
+    """Counts of P-section records against the questionnaires' routing.
 
     Nonzero amounts (actual, top-coded, DK or refused) by where the
-    codebooks route them: a current-job amount whose plan type (P16, P86)
-    has no account; a "both" amount (P49, P119) whose plan type is not
-    "both" or whose disposition is neither rolled over nor left to
+    questionnaires route them: a current-job amount whose plan type (P16,
+    P86) has no account; a "both" amount (P49, P119) whose plan type is
+    not "both" or whose disposition is neither rolled over nor left to
     accumulate; an account amount (P65, P135) whose disposition is
-    neither, and the account amounts by plan type: on the route (account,
-    DK) and off it (formula, "both", NA, Inap.).  Also the number of
-    previous plans that carry both a "both" amount and an account amount.
-    Then the families by what U7 finds.  Counts only.
+    neither, and the account amounts by plan type: DC, formula and DK
+    (U7's route) and "both" (a re-ask U7 does not take), NA and Inap.
+    (off every route).  Also the number of previous plans that carry both
+    a "both" amount and an account amount.  Then the families by what U7
+    finds.  Counts only.
     """
 
     wave = int(wave)
@@ -915,7 +948,7 @@ def reconcile_employer_dc(frame: pd.DataFrame, wave: int) -> dict[str, int]:
             for key, codes in (
                 ("account", (_PREVIOUS_ACCOUNT_TYPE[new],)),
                 ("dk", (PREVIOUS_DK_TYPE,)),
-                ("formula", (1,)),
+                ("formula", (PREVIOUS_FORMULA_TYPE,)),
                 ("both", (_PREVIOUS_BOTH_TYPE[new],)),
                 ("na", (9,)),
                 ("inap", (0,)),

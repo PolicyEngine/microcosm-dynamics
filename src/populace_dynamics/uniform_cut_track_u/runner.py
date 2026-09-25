@@ -131,12 +131,13 @@ NAMED_DELTAS: tuple[str, ...] = (
     "employer DC (401(k)) balances outside IRAs are not in WEALTH1 though "
     "the Report counts them (p. 24): the primary annuity is understated "
     "for their holders; row U7 adds the balances the PSID pension section "
-    "records on the codebooks' route (the head's and wife's current-job "
-    "account and up to two previous employers' accounts left to "
-    "accumulate, as reported: not imputed, a DK or refused amount counted "
-    "as zero) and still misses a second tax-deferred plan on the current "
-    "job, a third previous plan, an OFUM's account and the account amounts "
-    "recorded off the codebooks' route (under formula plans)",
+    "records on the questionnaires' route (the head's and wife's "
+    "current-job account and up to two previous employers' accounts left "
+    "to accumulate, as reported: not imputed, a DK or refused amount "
+    "counted as zero) and still misses a second tax-deferred plan on the "
+    'current job, a third previous plan, an OFUM\'s account and a "both" '
+    "plan's account reported only in the account items its checkpoint "
+    "re-asks",
     "PSID other assets (W34) include cash value of life insurance, "
     "collections and rights in a trust or estate, which the Report's list "
     "(p. 22) does not name",

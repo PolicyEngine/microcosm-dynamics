@@ -71,11 +71,12 @@ is unchanged: working couples with a current-job account (one with a
 spouse's account reported as DK); retired couples with a previous
 employer's account left to accumulate, one rolled over into an IRA
 (excluded: WEALTH1 holds IRAs), a "both" plan's account (whose same
-amount also appears in the account items, off the codebooks' route and
-excluded), an amount under a plan of formula type (off the route,
-excluded), an amount refused (counted as zero) and an account under a
-plan of DK type (on the route, counted); and singles with a small
-account, some with negative WEALTH1.  The U7 balances come from the
+amount also appears in the account items, a re-ask U7 does not take),
+an account under a plan of formula type and one under a plan of DK type
+(both on the questionnaires' route after a DK expected benefit, counted;
+the formula case was excluded before the independent review of
+u1-draft-7), an amount refused (counted as zero); and singles with a
+small account, some with negative WEALTH1.  The U7 balances come from the
 reader's own rule
 (:func:`~populace_dynamics.data.employer_dc.employer_dc_balances`).
 
@@ -1428,8 +1429,8 @@ def _employer_dc_items(
                 "previous_both:left",
                 dollars(_DC_BOTH),
             )
-            # the same account again in the account items, which the
-            # codebooks do not route to a "both" plan (excluded)
+            # the same account again in the account items, which
+            # checkpoint P62A re-asks of a "both" plan (not taken)
             items["head_prev1_dc"] = (
                 "previous_both:left",
                 dollars(_DC_BOTH),
@@ -1439,6 +1440,8 @@ def _employer_dc_items(
                 dollars(_DC_SPOUSE),
             )
         elif pattern == 3:
+            # a formula plan whose expected benefit was DK: checkpoint P62A
+            # asks its account items (counted)
             items["head_prev1_dc"] = (
                 "previous_formula:left",
                 dollars(_DC_FORMULA),
@@ -1446,8 +1449,8 @@ def _employer_dc_items(
         elif pattern == 4:
             items["head_prev1_dc"] = ("previous_account:left", na8["na"])
         else:
-            # a plan whose type the respondent did not know: the codebooks
-            # route it to the account items (counted)
+            # a plan whose type the respondent did not know: checkpoint
+            # P62A routes it to the account items (counted)
             items["head_prev1_dc"] = (
                 "previous_dk:left",
                 dollars(_DC_DK),

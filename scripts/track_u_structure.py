@@ -10,7 +10,7 @@ paths and annuitant age sources, threshold-free receipt counts (including
 farm and the head's annuity and IRA income), the family-income and
 WEALTH1 reconciliation counts, the wealth supplements' family-ID join
 counts, and (row U7, u1-draft-7) the PSID pension section's employer DC
-items: per wave, the records against the codebooks' routing and the
+items: per wave, the records against the questionnaires' routing and the
 families by what the U7 rule finds, and per observation cell the same
 counts for the cohort's families (never an amount).
 

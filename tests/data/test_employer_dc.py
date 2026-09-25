@@ -10,13 +10,14 @@ Invariants held for every input (property tests):
   and neither is negative;
 * the rule equals an independent, row-by-row reference implementation
   written here from the specification's text (a differential test);
-* an account rolled over into an IRA, an amount the codebooks do not
-  route to its plan's type, and a DK or refused amount never add to the
-  balance;
+* an account rolled over into an IRA, an amount U7 does not take for
+  its plan's type, and a DK or refused amount never add to the balance;
 * no previous plan contributes through both its "both" items (P48-P49)
-  and its account items (P64-P65): the codebooks' two routes are
-  disjoint for every plan-type code, so one account is never counted
-  twice;
+  and its account items (P64-P65): U7's two routes are disjoint for every
+  plan-type code, so one account is never counted twice;
+* the account items count for a DC, formula or DK-type plan alike: the
+  questionnaires' checkpoint P62A routes all three to them (independent
+  review of u1-draft-7, 2026-09-25);
 * ``employer_dc_unreported`` counts exactly the DK and refused amounts on
   a counted route, and ``employer_dc_ira_rollover_items`` exactly the
   rolled-over accounts on an account route;
@@ -196,24 +197,67 @@ def test_previous_accounts_left_to_accumulate_count_and_iras_do_not():
     assert row["employer_dc_ira_rollover_items"] == 1
 
 
-def test_both_plans_count_and_formula_plans_do_not():
-    row = _one(
-        NEW,
-        head_prev1_type=7,
-        head_prev1_combo_disposition=3,
-        head_prev1_combo_amount=9_000,
-        wife_prev1_type=1,
-        wife_prev1_dc_disposition=3,
-        wife_prev1_dc_amount=15_000,
-    )
-    assert row["employer_dc"] == 9_000
-    assert row["employer_dc_off_route_items"] == 1
+def test_both_plans_count_and_formula_plans_count_through_their_accounts():
+    """Regression (independent review of u1-draft-7, 2026-09-25): the
+    questionnaires' checkpoint P62A asks the account items P63-P65 of a
+    formula-type plan whose expected benefit is DK or refused, exactly as
+    of a DK-type plan, so a formula plan's account left to accumulate is
+    counted; the draft excluded it as off the codebooks' route."""
+
+    for wave, both in ((OLD, 3), (NEW, 7)):
+        row = _one(
+            wave,
+            head_prev1_type=both,
+            head_prev1_combo_disposition=3,
+            head_prev1_combo_amount=9_000,
+            wife_prev1_type=1,
+            wife_prev1_dc_disposition=3,
+            wife_prev1_dc_amount=15_000,
+        )
+        assert row["employer_dc"] == 24_000, wave
+        assert row["employer_dc_previous"] == 24_000
+        assert row["employer_dc_items"] == 2
+        assert row["employer_dc_off_route_items"] == 0
+
+
+def test_formula_and_dk_type_plans_take_the_same_account_route():
+    """Whatever the wave, a formula-type (1) and a DK-type (8) plan with
+    the same account items give the same counts: the instrument routes
+    them identically (checkpoint P62A)."""
+
+    for wave in WAVES:
+        results = {}
+        for plan_type in (ed.PREVIOUS_FORMULA_TYPE, ed.PREVIOUS_DK_TYPE):
+            for disposition, amount in (
+                (3, 11_000),
+                (2, 11_000),
+                (3, ed.amount_codes(8)["dk"]),
+                (1, 0),
+            ):
+                row = _one(
+                    wave,
+                    wife_prev2_type=plan_type,
+                    wife_prev2_dc_disposition=disposition,
+                    wife_prev2_dc_amount=amount,
+                )
+                results.setdefault((disposition, amount), []).append(
+                    {c: int(row[c]) for c in ed.BALANCE_COLUMNS}
+                )
+        for key, (formula, dk) in results.items():
+            assert formula == dk, (wave, key)
+        assert results[(3, 11_000)][0]["employer_dc"] == 11_000
+        assert results[(2, 11_000)][0]["employer_dc_ira_rollover_items"] == 1
+        assert (
+            results[(3, ed.amount_codes(8)["dk"])][0]["employer_dc_unreported"]
+            == 1
+        )
 
 
 def test_a_dk_type_plan_counts_through_its_account_items_only():
-    """The codebooks route a plan of DK type (8) to the account items
-    P63-P65 in every wave (their ``Inap.`` names Type A, combination and
-    refused types only), and not to the "both" items P47-P49."""
+    """The questionnaires route a plan of DK type (8) through the formula
+    part to the account items P63-P65 (checkpoint P62A, after a DK or
+    refused expected benefit) in every wave, and never to the "both"
+    items P47-P49."""
 
     for wave in (OLD, NEW):
         row = _one(
@@ -239,10 +283,11 @@ def test_a_dk_type_plan_counts_through_its_account_items_only():
 
 
 def test_a_both_plans_account_is_counted_once():
-    """A "both" plan's account is asked at P48-P49; an amount in the
-    account items P64-P65 of the same plan is off the codebooks' route
-    (the staged files carry some, often beside a P49 amount) and is not
-    counted, so one account is never counted twice."""
+    """A "both" plan's account is asked at P48-P49; checkpoint P62A asks
+    the account items P64-P65 again when its expected benefit is DK or
+    refused (the staged files carry such amounts, often equal to the P49
+    amount), and U7 does not take them, so one account is never counted
+    twice."""
 
     for wave, both in ((OLD, 3), (NEW, 7)):
         row = _one(
@@ -346,12 +391,14 @@ def test_reconciliation_counts_routes():
     assert counts["combo_amount_off_route"] == 0
     assert counts["dc_amount_disposition_off_route"] == 1
     assert counts["families_with_ira_rollover_excluded"] == 1
-    # the "both" plan's combo amount and the DK-type account count
-    assert counts["families_employer_dc_positive"] == 2
-    assert counts["families_previous_positive"] == 2
-    # the current-job amount under a formula plan, the previous formula
-    # plan's account amount and the "both" plan's account amount
-    assert counts["families_with_off_route_amount"] == 3
+    # the formula plan's account, the "both" plan's combo amount and the
+    # DK-type account count (the formula plan's since the independent
+    # review of u1-draft-7: checkpoint P62A routes it as the DK type's)
+    assert counts["families_employer_dc_positive"] == 3
+    assert counts["families_previous_positive"] == 3
+    # the current-job amount under a formula plan and the "both" plan's
+    # re-asked account amount
+    assert counts["families_with_off_route_amount"] == 2
 
 
 # ---------------------------------------------------------------------------
@@ -399,9 +446,11 @@ def _reference(row: pd.Series, wave: int) -> dict[str, int]:
     new = wave in (2011, 2013)
     current_account = {5, 7} if new else {3, 5}
     both = 7 if new else 3
-    # the codebooks route the account items to an account plan and to a
-    # plan of DK type, and the "both" items to a "both" plan only
-    account_route = {5, 8} if new else {2, 8}
+    # the questionnaires route the account items to a DC plan and (after
+    # a DK or refused expected benefit) to a formula, "both" or DK-type
+    # plan; U7 takes them for DC, formula and DK-type plans (a "both"
+    # plan's re-ask is left out) and the "both" items for a "both" plan
+    account_route = {5, 1, 8} if new else {2, 1, 8}
 
     def value(amount: int, width: int) -> tuple[int, bool, bool, bool]:
         top, dk, na = (10**width - 3, 10**width - 2, 10**width - 1)
@@ -497,7 +546,7 @@ def test_excluded_items_never_move_the_balance(case, replacement):
                 route = (
                     (plan_type == both)
                     if part == "combo"
-                    else plan_type.isin([account, 8])
+                    else plan_type.isin([account, 1, 8])
                 )
                 disposition = changed[f"{stem}_{part}_disposition"]
                 excluded = (disposition == 2) | ~route | (disposition != 3)

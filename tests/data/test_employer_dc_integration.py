@@ -134,9 +134,11 @@ def test_every_family_has_one_record_and_the_routing_holds(wave):
     )
     assert counts["combo_amount_off_route"] == (1 if wave == 2009 else 0)
     assert counts["dc_amount_plan_type_na"] == 0
-    # every wave carries account amounts under a plan of DK type, which the
-    # codebooks route to the account items (U7 counts them), and under
-    # formula and "both" plans, which they do not (U7 excludes them)
+    # every wave carries account amounts under plans of DK and formula
+    # type, which checkpoint P62A routes to the account items after a DK
+    # or refused expected benefit (U7 counts them), and under "both"
+    # plans, whose account items re-ask the "both" items' account (U7
+    # does not take them)
     assert counts["dc_amount_plan_type_dk"] > 0
     assert counts["dc_amount_plan_type_formula"] > 0
     assert counts["dc_amount_plan_type_both"] > 0
@@ -168,3 +170,91 @@ def test_the_both_plan_duplicates_are_both_plans():
                     wave,
                     stem,
                 )
+
+
+def _columns(wave: int, variables: list[str]) -> dict[str, list[int]]:
+    """Read ``variables`` from the staged family file by the SAS spans
+    (independent of the reader: no :mod:`populace_dynamics.data.psid`)."""
+
+    _, spans = _sas(wave)
+    out: dict[str, list[int]] = {var: [] for var in variables}
+    path = REAL_DATA / "family" / str(wave) / f"FAM{wave}ER.txt"
+    with path.open("rb") as handle:
+        for line in handle:
+            for var in variables:
+                start, end = spans[var]
+                text = line[start - 1 : end].strip()
+                out[var].append(int(text) if text else 0)
+    return out
+
+
+@needs_real_psid
+@pytest.mark.parametrize("wave", ed.EMPLOYER_DC_WAVES)
+def test_the_questionnaires_route_formula_and_dk_plans_alike(wave):
+    """Regression (independent review of u1-draft-7, 2026-09-25).
+
+    The questionnaires' checkpoint P62A ("whether pension is DC or DB
+    amount is DK/RF") asks the account items P63-P65 of a DC plan and of
+    any formula, "both" or DK-type plan whose expected benefit P62 is DK
+    or refused; the codebooks' ``Inap.`` texts omit that second branch.
+    On the staged files, for formula- and DK-type plans alike, P64 is
+    recorded exactly when P62 (amount, or before 2011 lump sum) is DK or
+    refused, and every "both" plan with a DK or refused P62 has P64
+    recorded.  So U7 takes the account items of formula-type plans as it
+    does those of DK-type plans.  Codes only: no amount is read beyond
+    its DK/refused code.
+    """
+
+    labels, _ = _sas(wave)
+    by_label = {text: name for name, text in labels.items()}
+    new = wave in (2011, 2013)
+    codes = ed.plan_type_codes(wave)
+    table = ed.employer_dc_variables(wave)
+    plans = []
+    for person in ed.PERSONS:
+        suffix = {"head": " - HD", "wife": " - WF"}[person] if new else ""
+        for plan in ed.PREVIOUS_PLANS:
+            stem = f"{person}_prev{plan}"
+            p64, p64_label = table[f"{stem}_dc_disposition"]
+            number = int(p64_label.split()[0][1:]) - 2  # P62 or P132
+            lump = (
+                None
+                if new
+                else by_label[
+                    f"P{number} LUMP SUM EXPECT PREV PNSN-#{plan}{suffix}"
+                ]
+            )
+            plans.append(
+                (
+                    stem,
+                    table[f"{stem}_type"][0],
+                    p64,
+                    by_label[
+                        f"P{number} AMT EXPECT REC PREV PNSN-#{plan}{suffix}"
+                    ],
+                    lump,
+                )
+            )
+    data = _columns(
+        wave,
+        sorted({v for plan in plans for v in plan[1:] if v is not None}),
+    )
+    tally = {"formula": 0, "dk": 0, "both": 0}
+    kinds = {
+        codes["previous_formula"]: "formula",
+        codes["previous_dk"]: "dk",
+    }
+    for stem, plan_type, p64, amount, lump in plans:
+        for i, kind in enumerate(data[plan_type]):
+            p62_dk = data[amount][i] in (999_998, 999_999) or (
+                lump is not None and data[lump][i] in (99_999_998, 99_999_999)
+            )
+            asked = data[p64][i] != 0
+            if kind in kinds:
+                assert asked == p62_dk, (wave, stem, kind, i)
+                tally[kinds[kind]] += asked
+            elif kind == codes["previous_both"] and p62_dk:
+                assert asked, (wave, stem, i)
+                tally["both"] += 1
+    # every wave routes some plans of each type this way
+    assert all(value > 0 for value in tally.values()), tally

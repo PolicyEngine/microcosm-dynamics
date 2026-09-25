@@ -358,15 +358,29 @@ def test_employer_dc_frames_exercise_every_u7_path(staged, blocked):
         "employer_dc_off_route_items",
     ):
         assert counts[column] > 0, column
-    # the codebooks' routes: an account under a plan of DK type counts, and
-    # a "both" plan's account also recorded in the account items does not
-    routes = {"dk_counted": 0, "both_duplicate_excluded": 0}
+    # the questionnaires' routes: an account under a plan of DK or formula
+    # type counts (checkpoint P62A; the formula case since the independent
+    # review of u1-draft-7), and a "both" plan's account also recorded in
+    # the account items does not
+    routes = {
+        "dk_counted": 0,
+        "formula_counted": 0,
+        "both_duplicate_excluded": 0,
+    }
     for wave, frame in staged.employer_dc.items():
         codes = employer_dc.plan_type_codes(wave)
-        dk = (frame["head_prev1_type"] == codes["previous_dk"]) & (
-            frame["head_prev1_dc_amount"] > 0
-        )
-        routes["dk_counted"] += int((dk & (frame["employer_dc"] > 0)).sum())
+        for key, code in (
+            ("dk_counted", codes["previous_dk"]),
+            ("formula_counted", codes["previous_formula"]),
+        ):
+            held = (frame["head_prev1_type"] == code) & (
+                frame["head_prev1_dc_amount"] > 0
+            )
+            assert (
+                frame.loc[held, "employer_dc"]
+                == frame.loc[held, "head_prev1_dc_amount"]
+            ).all(), key
+            routes[key] += int(held.sum())
         duplicate = (frame["head_prev1_type"] == codes["previous_both"]) & (
             frame["head_prev1_dc_amount"] > 0
         )
@@ -377,6 +391,7 @@ def test_employer_dc_frames_exercise_every_u7_path(staged, blocked):
         ).all()
         routes["both_duplicate_excluded"] += int(duplicate.sum())
     assert routes["dk_counted"] > 0
+    assert routes["formula_counted"] > 0
     assert routes["both_duplicate_excluded"] > 0
     # the frames enter the input digest: without them it changes
     bare = dataclasses.replace(staged, employer_dc={})

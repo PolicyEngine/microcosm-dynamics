@@ -213,11 +213,18 @@ def test_income_concept_matches_the_spec_defaults(block):
     assert employer_dc.COUNTED_DISPOSITION == 3
     assert employer_dc.EXCLUDED_IRA_DISPOSITION == 2
     assert dc["counted_disposition"] == "left_to_accumulate"
-    assert dc["excluded"] == ["rolled_over_into_ira", "off_codebook_route"]
-    # the codebooks' routes the reader applies (their Inap. texts)
+    assert dc["excluded"] == [
+        "rolled_over_into_ira",
+        "both_plan_account_items_reasked",
+        "off_route",
+    ]
+    # the questionnaires' routes the reader applies (checkpoint P62A asks
+    # the account items of a formula or DK-type plan after a DK expected
+    # benefit; independent review of u1-draft-7)
+    assert dc["route_source"] == "questionnaires_checkpoint_p62a"
     assert dc["previous_routes"] == {
         "both_items": ["both"],
-        "account_items": ["account", "dk"],
+        "account_items": ["account", "formula", "dk"],
     }
     for wave in employer_dc.EMPLOYER_DC_WAVES:
         codes = employer_dc.plan_type_codes(wave)
@@ -228,7 +235,7 @@ def test_income_concept_matches_the_spec_defaults(block):
         both = employer_dc._account_route("combo", plan_type, wave)
         account = employer_dc._account_route("dc", plan_type, wave)
         assert both.tolist() == [False, False, True, False, False, False]
-        assert account.tolist() == [False, True, False, True, False, False]
+        assert account.tolist() == [True, True, False, True, False, False]
     assert dc["reader"] == "data/employer_dc.py"
     assert (ROOT / "src" / "populace_dynamics" / dc["reader"]).is_file()
     assert concept["farm_loss"] == ap.FARM_LOSS_RULE

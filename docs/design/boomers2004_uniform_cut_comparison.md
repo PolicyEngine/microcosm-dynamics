@@ -29,7 +29,10 @@
   freeze fixes is an explicit parameter in the code with the recommended
   default, and §16 lists them. The text changes that would ratify this
   specification as `u1-ratified-1` are in
-  `EVID/u1-ratification-changes-20260925.md`; they are not applied.
+  `EVID/u1-ratification-changes-20260925.md`; they are not applied. An
+  independent review of `u1-draft-7` (2026-09-25, §19) corrected row
+  U7's route for previous plans of formula type (§4) and wrote the
+  structural-count and dry-run evidence this draft cites.
 - **Specification:** `boomers2004_uniform_cut_exercise2`, version
   `u1-draft-7`, drafted 2026-09-25. §19 is the changelog.
 - **Plan item:** U1 of the Track U plan,
@@ -189,6 +192,7 @@ precision only from the cleared extract.
 | Census Bureau, "Poverty measures" guidance page (census.gov, fetched 2026-09-24) | "Poverty status cannot be determined for people in: Institutional group quarters (such as prisons or nursing homes)" (§11, U-inst withdrawn) | Read for that sentence |
 | PSID family files 2005–2013 (`psid-data/family/<wave>/FAM<wave>ER.*`) | Family income components, Social Security, SSI, asset income, the head's annuity and IRA income, farm income, FU composition, PSID's needs standard; WEALTH1 in 2009–2013; the 2005 and 2007 interview numbers the supplements join | Staged; labels verified by `data/family_income.py`; codebook entries for `HEAD ANNUITIES`, `HEAD IRAS`, `WIFE RETIREMENT/ANNUITIES`, `OTHER FU MEMBR RETIREMENT/ANNUITIES`, ER52214, ER52216, ER52368 and W21, W33 read |
 | PSID family files 2005–2013, pension section (the P items: head P16, P20, P46, P48, P49, P64, P65 and the wife's P86, P90, P116, P118, P119, P134, P135 before 2011; the same items labelled "- HD" and "- WF" from 2011; the checkpoint P22/P92) | Row U7: employer DC account balances (§4) | Staged; labels, field widths and code domains verified by `data/employer_dc.py` against the `.sps` files and, in `tests/data/test_employer_dc_integration.py`, against the `.sas` and `.do` files; the codebook `Inap.` universes of all 40 amount items read for every wave, and question text and codes of P16, P20, P45–P49 and P62–P66 (2005), P64–P65 (2007, 2009), P16, P20, P45, P46, P48, P49, P64 and P65 (2011) and P49, P64 and P65 (2013) |
+| PSID family questionnaires 2005, 2009, 2011 and 2013 (`psid-data/documentation/capture1/q<wave>.pdf`, the "box and arrow" instruments; no 2007 instrument is staged) | Row U7: the routing of the previous-employer items P45–P69, including checkpoint P62A, which routes the account items P63–P65 (§4) | Read by the independent review of `u1-draft-7` (2026-09-25) for the P section's routing only; its structural counts confirm the routing on the staged files of every wave, 2007 included |
 | PSID supplemental wealth files 2005 and 2007, Release 2 (March 2011): `WLTH2005` and `WLTH2007` (`psid-data/wealth/<wave>/`: `.sps`, `.sas`, `.do`, `.txt`, codebook, documentation, zip) | WEALTH1 and its components for the 1937 and 1939 birth years (U0) and the six U1 observation cells in waves 2005 and 2007 | Downloaded by Max (cos decision d189) and staged 2026-09-24; every file matches `psid-data/wealth/SHA256SUMS` and its zip member. Labels adjudicated 2026-09-25 against all three setup files and the codebooks, by the reader and by an independent parser (§3, "Wealth supplements"); the `.sps` and `.txt` of each wave are SHA-256 pinned in the reader |
 | PSID cross-year individual file (`ind2023er`) | Anchors per wave, cross-section weights, relationship to head, age, sampling-error stratum and cluster | Staged; labels verified by `cohorts/age67.py`, including relationship code 90 ("Legal husband of Head") |
 | PSID marriage history (`mh85_23`) and earnings panel | Birth-year law and marital status | Existing readers |
@@ -574,24 +578,39 @@ cohabiting partner). OFUMs are not asked the section.
   account (P16/P86 "HOW BENEFIT FIGURED": 3 "Both" or 5 "Money
   accumulated in account" before 2011, 5 "Defined contribution plan" or
   7 "Both" from 2011). P20's `Inap.` text names "defined benefit formula
-  only" and the DK and NA answers to P16, so P16/P86 routes the item. A
+  only" and the DK and NA answers to P16, so P16/P86 routes the item (the
+  questionnaires agree: P16 1 and DK go to the checkpoint P22). A
   second tax-deferred plan on the same job (P42, "a 'thrift',
   profit-sharing, or Keogh plan") has no balance item.
 - *Previous employers*, up to two plans each (a third has no amounts).
   The plan type (P46/P116: 1 formula, 2 account and 3 both before 2011;
   1 defined benefit, 5 defined contribution and 7 both from 2011; 8 DK,
-  9 NA) routes two sets of items, as their `Inap.` texts state. The
-  "both" items, P48/P118 (what was done with the account when the person
-  left: 1 withdrew, 2 rolled over into an IRA, 3 left to accumulate, 4
-  converted to an annuity, 7 other) and P49/P119 "How much is in your
-  account now?", are asked for a "both" plan only. The account items,
-  P64/P134 (1 transferred to a new employer, 2 rolled over into an IRA,
-  3 left to accumulate, 4 converted to an annuity, 7 other) and P65/P135
-  "How much is in your account now?", are asked for an account plan and
-  for a plan whose type the respondent did not know (DK, 8): their
-  `Inap.` names "Type A or combination plan or refused type" before 2011
-  and types 1, 7 and 9 from 2011. Both amount items are asked after codes
-  2 and 3 only. The question that opens the previous-employer items
+  9 NA) routes two sets of items. The "both" items, P48/P118 (what was
+  done with the account when the person left: 1 withdrew, 2 rolled over
+  into an IRA, 3 left to accumulate, 4 converted to an annuity, 7 other)
+  and P49/P119 "How much is in your account now?", are asked for a
+  "both" plan only, as the questionnaires and the codebooks' `Inap.`
+  texts agree. The account items, P64/P134 (1 transferred to a new
+  employer, 2 rolled over into an IRA, 3 left to accumulate, 4 converted
+  to an annuity, 7 other) and P65/P135 "How much is in your account
+  now?", follow the questionnaires' checkpoint P62A ("whether pension is
+  DC (P46=5) or DB amount is DK/RF"): they are asked of an account (DC)
+  plan and of any formula, "both" or DK-type plan whose expected benefit
+  at P62 ("Can you estimate what you expect these benefits to be?") is
+  DK or refused. The codebooks' `Inap.` texts for them ("Type A or
+  combination plan or refused type" before 2011; types 1, 7 and 9 from
+  2011) omit that second branch, but the staged files follow the
+  questionnaires: in every wave, a formula- or DK-type plan has a
+  recorded P64/P134 exactly when its P62/P132 (amount, or before 2011
+  lump sum) is DK or refused, and every "both" plan with a DK or refused
+  P62/P132 has one (independent review, structural counts of plans with
+  a recorded P64/P134 in 2005, 2007, 2009, 2011 and 2013: formula type
+  185, 152, 141, 70 and 88; DK type 50, 40, 64, 30 and 31; "both" type
+  15, 36, 21, 7 and 6, of which one, in 2013, without a DK or refused
+  P62; `tests/data/test_employer_dc_integration.py`). A formula-type
+  plan's account items are therefore on the instrument's route exactly
+  as a DK-type plan's are. Both amount items are asked after codes 2 and
+  3 only. The question that opens the previous-employer items
   changes in 2011: "were you included in a pension or retirement plan, or
   in any tax-deferred savings plan, through a former employer?"
   (2005–2009) becomes "have any pensions or retirement plans from
@@ -607,29 +626,35 @@ cohabiting partner). OFUMs are not asked the section.
 - *Timing.* The items describe the account "now", at the interview that
   reports the income year, as WEALTH1 does (F14).
 
-The U7 rule (`employer_dc.employer_dc_balances`) follows the codebooks'
-route item by item, per family: the head's and wife's current-job
-amounts where P16/P86 names an account or combined plan, plus each
-previous plan's amount now where the account was *left to accumulate*
-(code 3), from the "both" items of a "both" plan and from the account
-items of an account plan or a plan of DK type. U7's financial assets are
-WEALTH1 plus that sum (`financial_assets = "wealth1_plus_employer_dc"`),
-floored at zero with the rest (F9). Excluded and counted:
+The U7 rule (`employer_dc.employer_dc_balances`) follows the
+questionnaires' route item by item, per family: the head's and wife's
+current-job amounts where P16/P86 names an account or combined plan,
+plus each previous plan's amount now where the account was *left to
+accumulate* (code 3), from the "both" items of a "both" plan and from
+the account items of an account, formula or DK-type plan. U7's
+financial assets are WEALTH1 plus that sum (`financial_assets =
+"wealth1_plus_employer_dc"`), floored at zero with the rest (F9).
+Excluded and counted:
 
 - an account *rolled over into an IRA* (code 2): its amount now is an
   IRA balance, which WEALTH1 already holds (W22), so adding it would
   count it twice (`employer_dc_ira_rollover_items`);
-- an amount *off the codebooks' route* (`employer_dc_off_route_items`):
-  a current-job amount whose P16/P86 names no account, and a previous
-  plan's amount left to accumulate under a plan type the codebooks do
-  not route to that item. The staged files carry account amounts
-  (P65/P135) under formula plans (whole file, 58–164 a wave) and under
-  "both" plans (4–32 a wave), which the codebooks route elsewhere. Every
-  previous plan that carries both a "both" amount (P49) and an account
-  amount (P65) is a "both" plan (4–30 such plans a wave), and in 44 of
-  the 69 over the five waves the two recorded codes are equal, so
-  counting P65 beside P49 would count one account twice
-  (`EVID/track-u-u7-routing-20260925/`, counts and match flags only);
+- an amount *U7 does not take* (`employer_dc_off_route_items`): a
+  current-job amount whose P16/P86 names no account; a previous plan's
+  amount left to accumulate in the "both" items of a plan that is not
+  "both" or under an NA or Inap. type; and the account items of a
+  "both" plan. Checkpoint P62A re-asks a "both" plan's account at
+  P63–P65 when its expected benefit is DK or refused, so the staged
+  files carry account amounts (P65/P135) under "both" plans (whole file,
+  4–32 a wave). Every previous plan that carries both a "both" amount
+  (P49) and an account amount (P65) is a "both" plan (4–30 such plans a
+  wave), and in 44 of the 69 over the five waves the two recorded codes
+  are equal, so counting P65 beside P49 would count one account twice
+  (`EVID/track-u-u7-routing-20260925/`, counts and match flags only).
+  The staged files also carry account amounts under formula plans
+  (58–164 a wave); they are on the questionnaires' route and U7 counts
+  them (until the independent review of `u1-draft-7` it excluded them as
+  off the codebooks' route);
 - a DK or refused amount counts as zero (`employer_dc_unreported`); the
   top code would count as recorded (no family of any wave carries it).
 
@@ -657,9 +682,9 @@ refused amount on the route counts as zero;
 a second tax-deferred plan on the current job, a third previous plan and
 OFUMs' accounts are never observed; the question that opens the
 previous-employer items changes in 2011 and, from 2013, names plans that
-have "not begun to receive regular benefit payments"; and account
-amounts recorded under formula plans, off the codebooks' route, need a
-rule the codebooks do not state and are left out. So WEALTH1 stays the
+have "not begun to receive regular benefit payments"; and the account of
+a "both" plan whose "both" items record no amount is left out (a few
+plans a wave). So WEALTH1 stays the
 primary and U7 is a registered alternative (with U7-F on U0-F's
 population), and the U7 named delta (§12) says what it still misses. The
 freeze may still choose U7 as the primary; the choice is listed in §16
@@ -1128,7 +1153,7 @@ PSID (`population.headline.staged_psid_headline`, U0 since
 | U4 | Income unit | Head and wife only | Yes |
 | U5 | Asset income | Keep reported asset income and add the annuity | Yes |
 | U0-F | Population | Birth years 1941, 1943, 1945 only (1937 and 1939 left out and counted) | Yes; an alternative with the supplements staged (fallback rule resolved, `u1-draft-7`) |
-| U7 | Financial assets | WEALTH1 plus the head's and wife's employer DC account balances the PSID pension section records on the codebooks' route (§4) | Yes (`u1-draft-7`; `financial_assets = "wealth1_plus_employer_dc"`) |
+| U7 | Financial assets | WEALTH1 plus the head's and wife's employer DC account balances the PSID pension section records on the questionnaires' route (§4) | Yes (`u1-draft-7`; `financial_assets = "wealth1_plus_employer_dc"`) |
 | U8 | Threshold | PSID `CENSUS NEEDS STANDARD` | Yes |
 | U9 | Mortality | SSA period life table 2004 | Yes |
 | U10 | Threshold | Census size-by-children matrix | Yes |
@@ -1170,7 +1195,7 @@ found while building). Each bullet is the text of
 - members whose marital state is unresolved (34 of U0's 483 observations, 24 of U0-F's 320, structural counts) are left out of the marital cells (§9);
 - self-reported Social Security, possibly net of Medicare Part B premiums, so the 13 percent cut applies to a smaller base than the gross benefit (baseline income is lower too; the net direction on the change is not established);
 - retirement-account income beside annuitized balances: the head's income from annuities and IRAs is removed (F4a), but the wife's (before 2013) and the OFUMs' items combine pensions with annuity income and stay, so any IRA or annuity income in them is counted twice; an annuity already in payment may have no balance in WEALTH1, so removing its income understates income;
-- employer DC (401(k)) balances outside IRAs are not in WEALTH1 though the Report counts them (p. 24): the primary annuity is understated for their holders; row U7 adds the balances the PSID pension section records on the codebooks' route (the head's and wife's current-job account and up to two previous employers' accounts left to accumulate, as reported: not imputed, a DK or refused amount counted as zero) and still misses a second tax-deferred plan on the current job, a third previous plan, an OFUM's account and the account amounts recorded off the codebooks' route (under formula plans);
+- employer DC (401(k)) balances outside IRAs are not in WEALTH1 though the Report counts them (p. 24): the primary annuity is understated for their holders; row U7 adds the balances the PSID pension section records on the questionnaires' route (the head's and wife's current-job account and up to two previous employers' accounts left to accumulate, as reported: not imputed, a DK or refused amount counted as zero) and still misses a second tax-deferred plan on the current job, a third previous plan, an OFUM's account and a "both" plan's account reported only in the account items its checkpoint re-asks;
 - PSID other assets (W34) include cash value of life insurance, collections and rights in a trust or estate, which the Report's list (p. 22) does not name;
 - the annuity is priced on population period life tables by age and sex (NCHS 2000; U9 SSA 2004), while DYNASIM's mortality follows the 2002 Trustees projections (p. 20, fn. 4) and the Report ties the annuity to family life expectancy (p. 24): with falling mortality, period tables overstate the annuity;
 - exact-age sampling of alternate birth years (mean birth year 1941 against 1940.5);
@@ -1225,9 +1250,10 @@ Invented life table (ages 0–4): male qx 0, 0, 0.2, 0.5, 1; female qx 0,
 | U7, head's current-job account 30,000 under an account plan (P16 5) | counted | `employer_dc` 30,000 |
 | U7, same amount under a formula plan (P16 1) | not an account plan; off route 1 | 0 |
 | U7, previous account plan left to accumulate (P64 3) 20,000, and a second rolled over into an IRA (P64 2) 35,000 | 20,000 counted; the IRA balance excluded (WEALTH1 holds it), IRA rollover 1 | 20,000 |
-| U7, "both" plan's account left to accumulate (P48 3) 9,000, and a formula plan's P65 amount 15,000 left to accumulate | 9,000 counted; off route 1 | 9,000 |
-| U7, plan of DK type (P46 8), account left to accumulate (P64 3) 12,000 | the codebooks route DK to P64–P65: counted | 12,000 |
-| U7, "both" plan with P49 9,000 and the same 9,000 again at P65, both left to accumulate | P49 counted; P65 is off the route for a "both" plan, off route 1 | 9,000 |
+| U7, "both" plan's account left to accumulate (P48 3) 9,000, and a formula plan's P65 amount 15,000 left to accumulate | both counted: checkpoint P62A routes a formula plan's account items (review of `u1-draft-7`) | 24,000 |
+| U7, plan of DK type (P46 8), account left to accumulate (P64 3) 12,000 | checkpoint P62A routes DK to P64–P65: counted | 12,000 |
+| U7, the same account items under a formula-type and a DK-type plan | identical counts (the instrument routes them alike) | equal |
+| U7, "both" plan with P49 9,000 and the same 9,000 again at P65, both left to accumulate | P49 counted; P65 re-asks the "both" plan's account, not taken, off route 1 | 9,000 |
 | U7, current-job amount DK (999,999,998) | unreported 1, counted as zero | 0 |
 | U7 annuity, WEALTH1 1,024 and employer DC 256; joint price 1.024 (male 2, female 2) | U0: 0.8·1,024/1.024; U7: 0.8·1,280/1.024 | 800 / 1,000 |
 | U7 annuity, WEALTH1 −500 and employer DC 300 or 700 | 0.8·max(−200, 0); 0.8·200/1.024 | 0 / 156.25 |
@@ -1272,7 +1298,7 @@ as #458), `dynamics-track-u-census-20260924` (the Census capture, #462),
 - `src/populace_dynamics/data/employer_dc.py` (`u1-draft-7`, row U7):
   the pension section's employer DC items for waves 2005–2013, label-,
   width- and code-verified against the adjudicated tables; the U7 rule
-  (`employer_dc_balances`, on the codebooks' route) and its counts
+  (`employer_dc_balances`, on the questionnaires' route) and its counts
   (unreported amounts counted as zero; IRA rollovers and off-route
   amounts excluded); the routing reconciliation (`reconcile_employer_dc`).
 - `src/populace_dynamics/cohorts/age67.py`: the age-67 observations for
@@ -1446,9 +1472,10 @@ row U7's rule (§4).
       "persons": ["head", "wife"],
       "current_job": "account_amount_when_plan_type_has_an_account",
       "previous_plans": [1, 2],
-      "previous_routes": {"both_items": ["both"], "account_items": ["account", "dk"]},
+      "previous_routes": {"both_items": ["both"], "account_items": ["account", "formula", "dk"]},
+      "route_source": "questionnaires_checkpoint_p62a",
       "counted_disposition": "left_to_accumulate",
-      "excluded": ["rolled_over_into_ira", "off_codebook_route"],
+      "excluded": ["rolled_over_into_ira", "both_plan_account_items_reasked", "off_route"],
       "unreported_amount": "zero_counted",
       "top_code": "as_recorded",
       "brackets": "not_used"
@@ -1989,6 +2016,17 @@ P45, P46, P48, P49, P64 and P65 in 2011, and P49, P64 and P65 in 2013.
 It opened no page of the Report PDF, no comparator file and nothing
 `RESTRICTED-FILES.md` restricts.
 
+The independent review of `u1-draft-7` (2026-09-25) read
+`RESTRICTED-FILES.md` first; the cos records of d074, d188, d189, d194,
+d196, d219, d279, d280, d281 and d315 (their text only); the cleared
+extract's passages on the cut year and financial assets (rehashed:
+`a3978b68…0384`); the plan's §10; the codebook entries of the 24
+pension-section items of every wave (the whole-sample frequency counts
+masked in its extraction and not used) and the P section of the 2005,
+2009, 2011 and 2013 questionnaires (§2). It opened no page of the
+Report PDF, no comparator file and nothing `RESTRICTED-FILES.md`
+restricts.
+
 **Ran on staged PSID:** label verification, the component-identity
 reconciliation counts and the structural counts of §3, the F17 component
 summaries of §9 for row U0 (`u1-draft-3`), and (`u1-draft-4`) a design
@@ -2005,10 +2043,16 @@ labels, field widths and codes, the routing counts of
 current-job amount whose checkpoint P22/P92 is 0 by their P16/P86 code,
 the previous plans carrying both a "both" amount and an account amount
 with a match flag for equal codes (`EVID/track-u-u7-routing-20260925/`),
-and the U7 structural counts of §4 recollected with the rest of §3. No
-income concept, annuity, threshold assignment, poverty status or poverty
-rate was computed on PSID data, and no employer DC amount was summed,
-averaged or printed.
+and the U7 structural counts of §4 recollected with the rest of §3;
+(independent review of `u1-draft-7`) the reviewer's own label, width and
+code checks of the pension items, the count of previous plans with a
+recorded P64/P134 by plan type and by whether P62/P132 is DK or refused
+(codes only), and the structural counts of §3 recollected with the
+corrected rule. No income concept, annuity, threshold assignment,
+poverty status or poverty rate was computed on PSID data, and no
+employer DC amount was aggregated across families, averaged or printed
+(the reader forms each family's balance in memory to count the families
+with a positive one).
 
 **Did not verify:** why OFUM taxable income differs from OFUM labor
 plus asset income by more than $10 in 21 families (2005), 34 (2007) and
@@ -2026,11 +2070,9 @@ requires Release 2);
 whether PSID Social Security amounts are net of Medicare premiums;
 whether SSI and Social Security are kept apart by respondents; where a
 wife's IRA income is recorded before 2013; how the family file records a
-code-90 legal husband's income; for U7, why the staged files carry
-account amounts (P65/P135) for previous plans of formula or "both" type
-although the codebooks route those items to account and DK-type plans
-only (the questionnaire's own routing was not read), whether respondents
-also report an employer account among their IRAs (W22), whether a
+code-90 legal husband's income; for U7, the 2007 questionnaire (not
+staged; the 2007 file's routing counts match the other waves'), whether
+respondents also report an employer account among their IRAs (W22), whether a
 current-job "both" plan's P20 amount covers only its account part, how
 the P-section amounts compare with any published DC aggregate, and the
 bracket follow-ups of DK and refused amounts (not read); the sealed
@@ -2047,6 +2089,41 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
 
 ## 19. Changelog
 
+- `u1-draft-7`, independent review (2026-09-25; Claude Code subagent,
+  Opus 5.5; report `EVID/track-u-3-review-20260925.md`). It read
+  `RESTRICTED-FILES.md` first and opened nothing it restricts; it
+  re-verified every label, width, code and `Inap.` text of the 24
+  pension-section items of each wave with its own parser of the `.sps`
+  files and the codebooks, and read the questionnaires' routing of the
+  previous-employer items (2005, 2009, 2011 and 2013; §2).
+  - **Row U7's route corrected.** The questionnaires' checkpoint P62A
+    asks the account items P63–P65 of a DC plan and of any formula,
+    "both" or DK-type plan whose expected benefit (P62) is DK or refused;
+    the codebooks' `Inap.` texts omit that branch. The draft followed the
+    codebooks, so it counted DK-type accounts but excluded formula-type
+    accounts reached by the same branch (58–164 nonzero amounts a wave).
+    Structural counts on the staged files of every wave confirm the
+    questionnaires' route (§4). U7 now takes the account items of DC,
+    formula and DK-type plans; a "both" plan's account items stay out
+    (a re-ask of the account its "both" items hold, the double-count
+    guard). `employer_dc._account_route`, the module docstring, the
+    reconciliation, the invented generator's formula family (now
+    counted), §4, §12, §13, §15 (`employer_dc.previous_routes`,
+    `route_source`, `excluded`) and `runner.NAMED_DELTAS` changed with
+    it; new unit, property and staged-file regression tests hold it
+    (`tests/data/test_employer_dc.py`,
+    `tests/data/test_employer_dc_integration.py`). WEALTH1 stays the
+    primary.
+  - **Tier manifest.** The draft's new tests were not in
+    `tests/tier_counts.json`, so `tiers_match_policy_manifest` failed;
+    the manifest is recollected.
+  - **Evidence.** `EVID/track-u-structure-u1d7-20260925/` held only an
+    empty log and `EVID/track-u-dry-run-u1d7-20260925/` nothing, though
+    §3 and §14 cited them; the review wrote both with the corrected code
+    (their READMEs record the commit and the comparisons).
+  - Counts only: no income, threshold assignment, annuity or poverty
+    status was computed on PSID data, and no employer DC amount was
+    aggregated across families, printed or written.
 - `u1-draft-7` (2026-09-25, branch `dynamics-ex2-track-u-3-20260925` from
   `origin/master` at `596c365b`): the remaining pre-ratification items.
   **Row U7 is built.** A label investigation of the PSID pension section
