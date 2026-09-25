@@ -1400,9 +1400,10 @@ def structural_counts_before_registration(
     less every count of in-window records or exposed persons, the
     unlinked auxiliaries and the MS5 scope: persons, records and links by
     class; unresolved records in total and by basis; for each registered
-    window, the earliest threshold year its records need and the years
-    before the capture (2003) they need, as years without counts; and the
-    counts that size the section 4b readings.  No benefit, years of
+    window, the earliest threshold year its records need, the years before
+    the capture (2003) they need and the section 4a bases that need them,
+    as years and names without counts; and the counts that size the
+    section 4b readings.  No benefit, years of
     coverage, PIA, threshold, minimum or flag enters.
     """
 
@@ -1447,23 +1448,28 @@ def structural_counts_before_registration(
     }
     years: dict[str, Any] = {}
     union: set[int] = set()
+    bases: set[str] = set()
     for key, year, strictly in _ROW_WINDOWS:
         window = (
             records["window_year"] > year
             if strictly
             else records["window_year"] >= year
         )
-        needed = sorted(
-            {int(y) for y in records.loc[window, "threshold_year"]}
-        )
+        inside = records[window]
+        needed = sorted({int(y) for y in inside["threshold_year"]})
         union |= set(needed)
+        early = inside[inside["threshold_year"] < 2003]
         years[key] = {
             "earliest_threshold_year": needed[0] if needed else None,
             "threshold_years_before_2003": [y for y in needed if y < 2003],
+            # which section 4a rows need them: names, never counts
+            "bases_needing_years_before_2003": sorted(set(early["basis"])),
         }
+        bases |= set(early["basis"])
     years["any_registered_row"] = {
         "earliest_threshold_year": min(union) if union else None,
         "threshold_years_before_2003": sorted(y for y in union if y < 2003),
+        "bases_needing_years_before_2003": sorted(bases),
     }
     out["threshold_years_needed"] = years
     out["boundary_year_unobserved"] = {

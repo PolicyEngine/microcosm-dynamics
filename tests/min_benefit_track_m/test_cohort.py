@@ -647,7 +647,14 @@ def test_the_counts_before_registration_leave_out_the_diagnostics(invented):
         assert set(value) == {
             "earliest_threshold_year",
             "threshold_years_before_2003",
+            "bases_needing_years_before_2003",
         }
+        assert set(value["bases_needing_years_before_2003"]) <= set(
+            rules.BASES
+        )
+        assert bool(value["bases_needing_years_before_2003"]) is bool(
+            value["threshold_years_before_2003"]
+        )
         assert all(
             isinstance(y, int) for y in value["threshold_years_before_2003"]
         )
