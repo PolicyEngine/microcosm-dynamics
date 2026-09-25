@@ -56,8 +56,10 @@ def test_component_diagnostics_on_the_staged_psid(tmp_path):
     # structure found on the staged files 2026-09-24 (counts only)
     assert diag["population"]["n_observations"] == 483
     assert diag["population"]["income_years"] == [2004, 2006, 2008, 2010, 2012]
-    assert set(diag["wealth1"]) == {"2008", "2010", "2012"}
-    assert set(result["wealth_refusals"]) == {"2005", "2007"}
+    # u1-draft-6: the 2005 and 2007 wealth supplements are staged and
+    # adjudicated, so every income year has WEALTH1 and nothing is refused
+    assert set(diag["wealth1"]) == {"2004", "2006", "2008", "2010", "2012"}
+    assert result["wealth_refusals"] == {}
     for counts in diag["institution_record_counts"].values():
         assert counts["n_fu_size_equals_in_family_records"] == (
             counts["n_families"]

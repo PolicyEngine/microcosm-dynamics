@@ -307,10 +307,11 @@ def test_a_registered_run_refuses_invented_or_blocked_inputs(params, staged):
         )
 
 
-def test_the_fallback_rule_as_staged_today(params):
-    """Specification section 11: without the 2005/2007 wealth, U0-F is the
-    headline and every row that needs those waves is reported blocked with
-    its counts (INVENTED data)."""
+def test_the_fallback_rule_with_the_supplements_refused(params):
+    """Specification section 11: without the 2005/2007 wealth (the
+    fallback path; the staged PSID reads both supplements since
+    u1-draft-6), U0-F is the headline and every row that needs those
+    waves is reported blocked with its counts (INVENTED data)."""
 
     blocked = invented.invented_age67_inputs()
     assert runner.headline_row(blocked) == rows.FALLBACK_ROW

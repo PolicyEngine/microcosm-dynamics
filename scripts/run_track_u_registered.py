@@ -34,17 +34,35 @@ comment exists, at exactly the commit that comment registers:
   a mismatch means the staging changed after registration and the run
   refuses (a new registration is needed).  Rows that need a wave without
   WEALTH1 are reported as blocked with their counts; the -F alternatives
-  on U0-F's population are computed in either staging state.
+  on U0-F's population are computed in either staging state;
+* ``--headline-row`` must also equal the row the section 15 block records
+  for the staged PSID (``population.headline.staged_psid_headline``, U0
+  since ``u1-draft-6``: the supplements were staged, adjudicated and read
+  before the #42 registration, so the fallback rule fixed the headline
+  before any run), checked before any PSID file is read.  A registration
+  naming another row contradicts the specification it registers, and a
+  run on a staging that refuses the supplements then fails the check
+  above.
 
 The artifact publishes regardless of outcome.  It never reads the sealed
 comparator; the seal is opened only after this artifact is committed.
 
-As of this script's writing the specification is a draft
-(``u1-draft-5``), Max has not ruled on exercise 2 (cos decision d189) or
-on the fallback rule, and the 2005/2007 wealth supplements are not
-staged.  The Census thresholds are captured and pinned (cos decision
-d194; ``data/external/census_poverty_thresholds_2004_2012.json``), and
-the specification's threshold block records ``capture_status:
+As of this script's writing (``u1-draft-6``, 2026-09-25) the
+specification is a draft and refuses a run.  Max ruled on exercise 2 on
+2026-09-24 (cos decision d189): yes to Track U as exercise 2's first
+score (the claim class: PSID-realized outcomes at 67, not a projection),
+with the SSI rule "offset only for existing SSI recipients"; and he
+downloaded the 2005 and 2007 PSID wealth supplements, which are staged
+and adjudicated (``populace_dynamics.data.family_income``), so on the
+staged PSID the fallback rule gives U0 as the headline.  Still open, and
+named as ``awaiting`` or ``blocked_by`` in the section 15 block: the
+fallback rule itself (whether U0-F and the -F alternatives stay
+registered), plan decision 8 (the scorecard's "from 2004"), plan
+decision 6 (the acceptance rule), the #42 registration and row U7; the
+specification's section 16 also lists plan decisions 2, 4 and 7 and the
+freeze defaults.  The Census thresholds are captured and pinned (cos
+decision d194; ``data/external/census_poverty_thresholds_2004_2012.json``),
+and the specification's threshold block records ``capture_status:
 captured``.
 
 Usage::
@@ -206,6 +224,33 @@ def check_headline(registered: str, inputs: Any) -> str:
     return staged
 
 
+def check_registered_headline(
+    registered: str, block: Mapping[str, Any]
+) -> str:
+    """Refuse a registered headline other than the one the block records.
+
+    Since ``u1-draft-6`` the section 15 block records the row the fallback
+    rule gives on the staged PSID (``population.headline.
+    staged_psid_headline``): the 2005 and 2007 wealth supplements were
+    staged, adjudicated and read before the #42 registration, so the rule
+    fixed the headline before any run.  A block without the record (an
+    earlier draft) constrains nothing here; :func:`check_headline` still
+    holds the registration to the staging.
+    """
+
+    headline = (block.get("population") or {}).get("headline") or {}
+    recorded = headline.get("staged_psid_headline")
+    if recorded is not None and registered != recorded:
+        raise ValueError(
+            f"the registration names headline row {registered}, but the "
+            "specification's section 15 block records "
+            f"{recorded} as the headline the fallback rule gives on the "
+            "staged PSID (population.headline.staged_psid_headline): the "
+            "registration contradicts the specification it registers"
+        )
+    return registered
+
+
 def _write_new(path: Path, text: str) -> None:
     """Create ``path`` exclusively: never overwrite (one shot)."""
 
@@ -281,6 +326,9 @@ def main(argv: list[str] | None = None) -> int:
     thresholds = ap.load_poverty_thresholds()
     params = runner.committed_parameters(thresholds)
     environment = _environment()
+    # Refused before any PSID file is read: a registered headline the
+    # specification's block does not record for the staged PSID.
+    check_registered_headline(args.headline_row, block)
     inputs = age67.load_age67_inputs()
     check_headline(args.headline_row, inputs)
     result = runner.run_track_u(

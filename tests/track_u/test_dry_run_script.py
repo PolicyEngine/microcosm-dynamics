@@ -66,7 +66,7 @@ def test_the_dry_run_uses_the_committed_parameters(output):
 def test_the_dry_run_checks_hold(output):
     checks = json.loads((output / "result.json").read_text())["checks"]
     assert checks["specification_rows"]["rows_equal_the_block"]
-    blocked = checks["blocked_waves_as_staged_today"]
+    blocked = checks["fallback_rule_with_supplements_refused"]
     assert blocked["income_rows_without_allow_blocked"]["refused"]
     assert (
         blocked["left_out_with_allow_blocked"]["wealth_supplement_not_staged"]
@@ -93,6 +93,12 @@ def test_the_dry_run_checks_hold(output):
     for identities in checks["invented_family_income_reconciliation"].values():
         for counts in identities.values():
             assert counts["n_exact"] == counts["n_families"]
+    # u1-draft-6: the supplement waves' invented wealth is reconciled too
+    wealth = checks["invented_wealth1_reconciliation"]
+    assert sorted(wealth) == ["2005", "2007", "2009", "2011", "2013"]
+    for identities in wealth.values():
+        for counts in identities.values():
+            assert counts["n_exact"] == counts["n_families"]
 
 
 def test_every_built_row_is_tabulated(output):
@@ -101,6 +107,9 @@ def test_every_built_row_is_tabulated(output):
     assert statuses.pop("U7") == "not_built"
     assert set(statuses.values()) == {"computed"}
     assert result["headline"]["row"] == "U0"
+    # the main run has the supplements' wealth, as the staged PSID does
+    # since u1-draft-6: nothing is refused and no row is blocked
+    assert result["headline"]["wealth_refused_waves"] == []
     text = (output / "RESULTS.md").read_text()
     assert "Headline row U0" in text and "full sample design" in text
     assert "`design_se_domain` = `full_sample_design`" in text

@@ -22,7 +22,12 @@ Max): U0 when every wave has WEALTH1, otherwise U0-F; a row whose
 observation waves include a wave without WEALTH1 is reported as blocked,
 with its structural counts, and not computed (unless ``allow_blocked``,
 which leaves the blocked observations out and is refused for a
-registered run).  The rule depends on staging status only.
+registered run).  The rule depends on staging status only.  Since the
+specification's u1-draft-6 (2026-09-25) the 2005 and 2007 wealth
+supplements are staged and adjudicated
+(:func:`populace_dynamics.data.family_income.read_family_wealth`), so on
+the staged PSID every wave has WEALTH1, U0 is the headline and no row is
+blocked; the blocked path remains for inputs that carry a refusal.
 
 Provenance guards, before anything is computed:
 
@@ -558,11 +563,14 @@ def _blocked_result(
         "row": row.as_dict(),
         "status": "blocked",
         "reason": (
-            f"WEALTH1 is refused for waves {waves} (the 2005 and 2007 "
-            "wealth supplements are not staged); reported with its "
-            "counts under the fallback rule"
+            f"WEALTH1 is refused for waves {waves} (the wealth "
+            "supplement of each is not staged or not the adjudicated "
+            "file); reported with its counts under the fallback rule"
         ),
         "blocked_waves": waves,
+        "wealth_refusals": {
+            str(wave): inputs.wealth_refusals[wave] for wave in waves
+        },
         "population": {
             "n_observations_built": int(len(obs)),
             "n_observations_blocked": int(blocked.sum()),

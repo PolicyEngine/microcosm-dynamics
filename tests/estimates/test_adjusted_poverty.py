@@ -794,8 +794,14 @@ def test_spec_validation_and_pending_decisions():
     )
     assert decisions["farm_asset_share"].alternatives == (0.0,)
     assert decisions["annuity_lives"].alternatives == ("member_rule",)
-    assert decisions["ssi_rule"].awaiting.startswith("Max")
-    assert "d189" in decisions["ssi_rule"].awaiting
+    # Max ruled the SSI rule in cos decision d189 (2026-09-24): the
+    # decision records the ruling and awaits only the specification freeze
+    assert not decisions["ssi_rule"].awaiting.startswith("Max")
+    assert "freeze" in decisions["ssi_rule"].awaiting
+    assert ap.D189_RULING in decisions["ssi_rule"].default_basis
+    assert "offset rule for existing recipients" in ap.D189_RULING
+    assert "d189" in ap.SSI_RULES["offset_existing_recipients"]
+    assert "pending" not in ap.SSI_RULES["offset_existing_recipients"]
     for name, item in decisions.items():
         assert getattr(spec, name) == item.default
 
