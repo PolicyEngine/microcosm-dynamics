@@ -35,9 +35,12 @@ at the eligibility year's bend points; for a DI worker Track A's disclosed
 ``cola_track_a.benefits.approximate_pia`` (MS6: the statutory DI
 computation years).  Nothing is added to ``ss/``.
 
+The threshold (G8) is the Census weighted average for one person aged 65
+and over, from the pinned 2003-2022 capture (:mod:`.thresholds`).
+
 What this module does not do: read PSID, classify entitlement, link
-spouses, capture thresholds or tabulate a share.  Those are plan items M2,
-M3, M4 and M8.  It never sees a comparator value.
+spouses or tabulate a share.  Those are plan items M3, M4 and M8.  It
+never sees a comparator value.
 """
 
 from __future__ import annotations
@@ -58,6 +61,13 @@ from populace_dynamics.min_benefit_track_m.policy import (
     Option,
     TrackMPolicy,
 )
+from populace_dynamics.min_benefit_track_m.thresholds import (
+    AgedThresholds,
+    ThresholdsNotCapturedError,
+    ThresholdYearMissingError,
+    check_threshold_years,
+    load_aged_thresholds,
+)
 from populace_dynamics.ss import benefits, statutory_aime
 from populace_dynamics.ss.params import SSAParameters
 
@@ -67,9 +77,11 @@ __all__ = [
     "OptionOutcome",
     "PiaRecord",
     "Receipt",
+    "ThresholdYearMissingError",
     "ThresholdsNotCapturedError",
     "WorkerInputs",
     "benefit_implied_pia",
+    "check_threshold_years",
     "evaluate_worker",
     "history_pia",
     "in_window",
@@ -85,54 +97,6 @@ __all__ = [
 
 _RETIREMENT_ELIGIBILITY_AGE = 62
 _MONTHS = 12
-
-
-class ThresholdsNotCapturedError(RuntimeError):
-    """The Census one-person 65+ thresholds are not captured yet (M2)."""
-
-
-@dataclass(frozen=True)
-class AgedThresholds:
-    """The threshold that defines the minimum (G8), annual dollars by year.
-
-    The plan's primary is the Census weighted-average poverty threshold for
-    one person aged 65 and older.  Tests pass INVENTED values;
-    :func:`load_aged_thresholds` refuses until plan item M2 captures the
-    real series.
-    """
-
-    annual: Mapping[int, float]
-    source: Mapping[str, Any]
-
-    def __post_init__(self) -> None:
-        for year, value in self.annual.items():
-            if isinstance(year, bool) or not isinstance(year, int):
-                raise TypeError(f"threshold year {year!r} must be an int")
-            if not (math.isfinite(float(value)) and value > 0):
-                raise ValueError(f"threshold for {year} must be positive")
-
-    def for_year(self, year: int) -> float:
-        if year not in self.annual:
-            raise KeyError(f"no aged one-person threshold for {year}")
-        return float(self.annual[year])
-
-
-def load_aged_thresholds() -> AgedThresholds:
-    """Refuse: the Census thresholds are not captured (plan item M2).
-
-    ``scripts/capture_track_u_parameters.py`` parses the Census
-    weighted-average rows (its ``one_65_plus`` key) for 2004-2012 and has
-    run only on an invented workbook.  Track M needs its years extended
-    (the eligibility years of every worker whose PIA was first calculated
-    in the window, some before the policy year) and a real capture.
-    """
-
-    raise ThresholdsNotCapturedError(
-        "the Census one-person 65+ weighted-average thresholds are not "
-        "captured: plan item M2 extends the Track U parser's years and "
-        "captures them (a public download that needs the session's "
-        "download permission)"
-    )
 
 
 # ---------------------------------------------------------------------------

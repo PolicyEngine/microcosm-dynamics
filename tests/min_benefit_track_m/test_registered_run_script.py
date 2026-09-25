@@ -158,7 +158,6 @@ def test_the_pipeline_refuses_before_any_psid_read():
     script = _script()
     missing = script.missing_components()
     assert missing == [
-        "M2 Census one-person 65+ threshold capture",
         "M3/M4 beneficiary cohort",
         "M5 realized careers",
         "M8 tabulation",

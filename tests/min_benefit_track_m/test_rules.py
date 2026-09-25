@@ -296,7 +296,7 @@ def test_price_and_wage_indexing():
         ) == pytest.approx(
             rules.minimum_threshold(2004, pol.OPTIONS[price], thresholds, NAWI)
         )
-    with pytest.raises(KeyError):
+    with pytest.raises(rules.ThresholdYearMissingError):
         rules.minimum_threshold(2011, pol.OPTIONS[2], thresholds, NAWI)
     with pytest.raises(ValueError):
         rules.minimum_threshold(2010, pol.OPTIONS[1], thresholds, NAWI)
@@ -314,9 +314,11 @@ def test_monthly_minimum_rounding():
     assert rules.monthly_minimum(pol.OPTIONS[1], 30, INVENTED_T) == 0.0
 
 
-def test_thresholds_are_not_captured():
-    with pytest.raises(rules.ThresholdsNotCapturedError, match="M2"):
-        rules.load_aged_thresholds()
+def test_thresholds_load_from_the_census_capture():
+    # the capture itself is tested in test_threshold_capture.py
+    loaded = rules.load_aged_thresholds()
+    assert sorted(loaded.annual) == list(range(2003, 2023))
+    assert loaded.source["kind"] == "census_capture"
 
 
 # ---------------------------------------------------------------------------

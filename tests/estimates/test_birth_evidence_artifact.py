@@ -147,6 +147,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/min_benefit_track_m/rules.py"),
         Path("src/populace_dynamics/min_benefit_track_m/specification.py"),
         Path("src/populace_dynamics/min_benefit_track_m/structure.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/thresholds.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -452,6 +453,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
             "rules",
             "specification",
             "structure",
+            "thresholds",
         )
     }
     assert track_m_modules.issubset(module_paths)

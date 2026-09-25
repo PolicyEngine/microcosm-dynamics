@@ -258,6 +258,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/min_benefit_track_m/rules.py"),
     Path("src/populace_dynamics/min_benefit_track_m/specification.py"),
     Path("src/populace_dynamics/min_benefit_track_m/structure.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/thresholds.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
