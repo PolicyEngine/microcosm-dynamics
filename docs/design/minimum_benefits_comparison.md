@@ -61,6 +61,15 @@
     the uncleared sources of the cleared files, the scratchpad archive,
     or any exercise-1 result. It read no PSID file and computed no
     statistic on real data. §22 lists what each lane read.
+  - A third builder lane (Claude Code subagent, Opus 5.5) built the share
+    computation (M8) and the invented-data dry run (M10) on 2026-09-25,
+    and completed the registered entry point's refusals. It read
+    `EVID/RESTRICTED-FILES.md` (SHA-256 `2fc9bdbf…`) before any other file
+    and opened nothing it restricts: not the Report in any copy, the
+    plan, the cleared files, any comparator directory, seal,
+    reconciliation or values scan, or the scratchpad archive. It read no
+    PSID file and computed no statistic on real data; its dry run's
+    cohort is invented (§18).
 - **Disclosure that travels with this specification (plan section 11,
   R5):** the clearance follow-up of 2026-09-24 14:15 found that the
   withheld Table 5 note sentence (ruling C2) lies inside the text lines
@@ -518,7 +527,11 @@ section 3).
     2003-2022 capture. `rules.check_threshold_years` refuses a cohort that
     needs a missing year before anything is computed, with a named error
     (`ThresholdYearMissingError`, not a `KeyError`), and
-    `AgedThresholds.for_year` raises the same error.
+    `AgedThresholds.for_year` raises the same error. `pipeline.run_track_m`
+    calls it on `evaluation.needed_threshold_years` (every in-window
+    record's threshold year under any registered row's policy, and both
+    policy years) before it evaluates any record; the M10 dry run checks
+    the invented cohort and a record that needs 1998 (§18).
 - **Price indexing (options 2 and 4):** the threshold of the year
   itself (the thresholds move with prices, D5).
 - **Wage indexing (options 3 and 5; G9):**
@@ -664,21 +677,56 @@ S_k[c] = 100 × Σ_{i∈c} w_i·A_k,i / Σ_{i∈c} w_i
 over the universe (§10), with *w* the 2023 cross-section weight and
 *A* from §9. The headline is *S*₂[All]. The N cells are not scored.
 Y3 is reported as a ratio of rates and as a ratio of weighted counts
-for option 3, and not scored.
+for option 3, and not scored. A person whose sex is unknown (ER32000
+code 9) counts in All only (§4b rule 7); an empty cell is reported as
+undefined, with its reason, never raised.
 
-**Diagnostics (registered run only; not scored; G21):** the exposed
-share of the universe; *Y*\* in bands; *P*/*M* in bands; the DI-origin
-share; the unlinked-auxiliary share; weighted and unweighted N; the
-history PIA against the benefit-implied PIA; a check that the worker
-flags are nested (§8). None may be computed on real data before the
-registration.
+**Built (M8):** `min_benefit_track_m.evaluation` turns the records the
+cohort supplies (one per worker record and one per person of the
+universe, with the §4b links) into *A*ₖ for each person under a row's
+policy: §4a's years, the one history, *Y*, *P*, every option's flag and
+the §4b rule 5 payment tests. `min_benefit_track_m.tabulation.
+tabulate_track_m` reduces them to the 12 cells of one row with the
+weighted and unweighted N, Y3 both ways, and §12's floor and standard
+error; every output carries the labels (header) and the d280
+disclosure. It refuses rows its provenance does not authorize before
+computing anything: invented rows must be marked invented, and rows
+built from PSID files need `registered_real`, the issue #42 comment
+pointer, the registered floor seeds and a block the registered-run gate
+authorizes (§19), so nothing computes the share on real data before the
+registration. §19's `statistic` equals `tabulation.STATISTIC`.
+
+**Diagnostics (registered run only; not scored; G21 and the referee's
+O2; `evaluation`):** worker records by basis, in total and in the window;
+unresolved in-window records (§4b rule 3); the earliest threshold year in
+the window; the exposed persons and their weighted share of the universe;
+*Y*\* in bands; *P*/*M* in bands by option; the DI-origin share of
+in-window records; disability-origin records with *Y* > *D*; records
+whose imputed odd years changed *Y*; unlinked auxiliaries and their
+weighted share; other family-unit members among those receiving, by
+option; the number of worker-flag nesting violations (§8 deduces
+none); the PIA source of each record (MS5's benefit-implied PIA against
+the history PIA); the ratio of the benefit-implied to the history PIA
+where both exist (median, 10th and 90th percentiles); weighted and
+unweighted N. None may be computed on real data before the registration.
 
 ## 12. Uncertainty
 
-The Track U pattern (G19): deterministic (K = 1); a five-seed (0-4)
-person-disjoint half-split floor on family units linked through shared
-persons; a design-based standard error by Taylor linearization with
-ER31996 and ER31997. **Not built** (plan item M8).
+The Track U pattern (G19), with Track U's estimators reused unchanged
+(`estimates.uniform_cut_tabulation`): deterministic (K = 1); a five-seed
+(0-4) person-disjoint half-split floor (fraction 0.5) on family units
+linked through shared persons, which with one row per person are the
+family units; each cell's share recomputed in each half, and the floor
+the mean, SD, minimum and maximum of the halves' absolute gap over the
+seeds where both halves are defined, undefined with fewer than two such
+seeds; the same floor for Y3. A design-based standard error by Taylor
+linearization with ER31996 and ER31997, in percentage points, as a domain
+estimator on the full sample design (Track U's referee Q5 reading): every
+(stratum, cluster) pair of the 2023 wave's persons with a positive
+ER35265 weight enters, with zero outside the cell, and a stratum with one
+cluster, which cannot contribute a variance term, is left out, counted
+and listed. **Built (M8):** `tabulation.UNCERTAINTY`, which §19's
+`uncertainty` equals; a registered run refuses other floor seeds.
 
 ## 13. Acceptance rule
 
@@ -857,13 +905,36 @@ pinned tuple and the reachability guard):
   the oracle; the claim and COLA factors).
 - `.../specification.py`: this block's reader and the registered-run
   gate.
+- `.../evaluation.py` (M8, the rules side of M5): worker and person
+  records to each person's *A*ₖ under a row's policy, and the §11
+  diagnostics.
+- `.../tabulation.py` (M8): the §11 statistic with §12's uncertainty;
+  it refuses PSID-built rows without the issue #42 pointer and an
+  authorizing block.
+- `.../pipeline.py` (M10): every registered row end to end, after the
+  provenance guard and the threshold-year check (§7).
+- `.../invented.py` (M10): an INVENTED PSID-shaped cohort with records of
+  all three §4a bases, couples, widow(er)s, unlinked auxiliaries, other
+  members, unresolved records and MS5 inputs.
 - `.../structure.py` and `scripts/track_m_structure.py`: the structural
   counts of §10.
 - `scripts/capture_track_u_parameters.py --track-m-census-dir` and the
   committed workbooks and capture (§7).
-- `scripts/run_track_m_registered.py`: the one-shot entry point; it
-  refuses this draft, and with a ratified block it refuses until the
-  missing pieces below exist, before reading any PSID file.
+- `scripts/track_m_dry_run.py` (M10): the pipeline on the invented cohort
+  with the real parameters (the oracle's, the quarter-of-coverage file,
+  the Census capture, the SSA COLA history), every row MS0-MS6 including
+  MS5, the plan's worked cases (§16) and every guard. Its output, headed
+  "INVENTED DATA - NOT A COMPARISON", is in
+  `EVID/track-m-dry-run-20260925/`.
+- `scripts/run_track_m_registered.py`: the one-shot entry point. It
+  refuses this draft (§19), and with an authorizing block it refuses,
+  before reading any PSID file, while a component is missing
+  (`missing_components`: today the M4 cohort and M5 careers) or while a
+  parameter file differs from the SHA-256 in `sources`
+  (`check_parameter_pins`: the Census capture and the quarter-of-coverage
+  file); its computation passes M4's and M5's records to
+  `pipeline.run_track_m`, which refuses again (§11) and raises until
+  they exist.
 - Tests: `tests/min_benefit_track_m/` and
   `tests/test_minimum_benefits_spec.py`.
 
@@ -887,11 +958,16 @@ Blocked, with the plan's effort estimates (lane-days):
    earliest threshold year needed (§7).
 4. **M5 careers** (4): realized histories 1968-2022 through
    `coverage.one_history`; *Y* and *P* per §4a; MS5's inputs (§6).
-5. **M8 tabulation** (1.5), **M10 dry run and registration package**
-   (1.5), **M11 registration and one-shot** (3).
+5. **M10's registration package** (part of 1.5): the specification's
+   SHA-256, the code SHA and the parameter hashes are in the dry run's
+   provenance; the PSID file hashes need the M3-M5 readers. The comparator
+   seal's hash is the orchestrator's to add (builder lanes do not open
+   it). Then **M11 registration and one-shot** (3).
 6. **Ratification:** an independent check that `m1-draft-2` applies the
    referee's required changes, then the ratified text (`m1-ratified-1`,
-   status and version only) merged under d219 item 9.
+   status and version only) merged under d219 item 9. Ratification alone
+   authorizes no run: the ratified block still lists the other blockers,
+   and the gate refuses a block that lists any (§19).
 
 ## 19. Machine-readable parameter block
 
@@ -1445,10 +1521,16 @@ rest on the referee's reading of the cleared files.
 | R10. Six citation and wording fixes | Yes | 1: §3's effective date. 2: §5's $3,880 check. 3: the annual-limitation clause now cites 413(a)(2)(B)(ii) and 20 CFR 404.141(d)(1) (R6's text). 4: the disclosure bullet names the exact rows the `grep` printed: G4, G5, G6, G8, G9, G11, G12 and G13. The count, eight, was right and the range G4-G13 loose; the labels come from the `m1-draft-1` lane's session record. 5: §1's "What is not printed". 6: §2's statute row |
 
 **Optional suggestions:** O4 (a named delta for the stock date) is
-applied in §15. O1 (more invented worked cases), O2 (more diagnostics),
-O3 (receipt wording), O5 (the blind forecast) and O6 (an issue for
-`estimates.career`'s odd-year imputation) are left to the builds and the
-orchestrator.
+applied in §15. The M8 build applied O2 (§11's diagnostics) and four of
+O1's five cases as invented tests (`tests/min_benefit_track_m/
+test_evaluation.py`: the dual-entitled widow on her own minimum, a late
+claimer whose threshold year precedes *Y*₀, a disability-origin record
+with *Y* > *D* capped at 40, and a worker who died before entitlement
+under §4a's death row); the fifth, the spouse of a worker not yet
+receiving, is M4's (no link is created, §4b rule 5), and a spouse link to
+a death-basis record is refused. O3 (receipt wording), O5 (the
+blind forecast) and O6 (an issue for `estimates.career`'s odd-year
+imputation) are left to the builds and the orchestrator.
 
 ## 22. What the drafts read and did not verify
 
@@ -1486,6 +1568,21 @@ widow(er)'s functions and `ss/params.py`'s parameter bundle;
 `estimates/parameters.load_cola_history` and the COLA history file's
 timing note; the twenty Census workbooks, cell by cell. It read no PSID
 file, ran no structural count and computed no statistic on real data.
+
+**The M8/M10 build lane (2026-09-25) read:** `EVID/RESTRICTED-FILES.md`
+first (`2fc9bdbf…`); the referee report in full (`49091254…`); this
+specification; the Track M code and tests at `080c0284` and the
+uncommitted work an interrupted earlier lane left (which it reviewed,
+kept in part and corrected); `estimates/uniform_cut_tabulation.py` and
+Track U's registered entry point; exercise 3's registered entry point on
+master and Track A's environment resolver; `ss/benefits.py`'s spouse's
+and widow(er)'s functions, `ss/params.py` and `ss/statutory_aime.aime`;
+`harness/panel.split_panel_by_person`; `estimates/parameters.
+load_cola_history`; the test-tier classifier and the birth-evidence
+guard. It hashed, without printing their contents beyond the SHA-256,
+the policyengine-us quarter-of-coverage file and the Census capture. It
+did not read the plan, the cleared files, the Report, any comparator
+file or any PSID file, and computed no statistic on real data.
 
 **Ran on staged PSID (`m1-draft-1` and the review):** label and code
 verification and the structural counts of §10. No years of coverage,
@@ -1537,3 +1634,17 @@ is `EVID/track-m-review-20260924.md`.
   the §19 block; answers the §21 questions; records how each change was
   applied, updated or in part declined (§21). On branch
   `dynamics-ex4-track-m-2-20260925`.
+- `m1-draft-2`, M8 and M10 build (2026-09-25; no ruling, default, row,
+  cell or frozen choice changed, so the version stands): the share
+  computation (§11: `evaluation`, `tabulation`, with the diagnostics the
+  referee's O2 lists) and its uncertainty (§12: the full-sample-design
+  domain, the design frame and the singleton-strata handling of Track
+  U's estimator, now written out; the block's `uncertainty` records them
+  in place of `"status": "not_built_m8"` and, with `statistic`, is held
+  to the tabulation by the gate); the end-to-end pipeline and the
+  invented dry run (§§7, 18); the registered entry point's refusals
+  (§§18, 19: a block that lists a blocker, parameter files other than
+  the recorded ones, a subset of rows or other floor seeds). `blocked_by`
+  drops `tabulation_m8_and_dry_run_m10` and adds
+  `registration_package_m10_needs_m3_to_m5`. The independent check of
+  R1-R10 should cover these changes too.
