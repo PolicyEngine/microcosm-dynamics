@@ -222,6 +222,13 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/cola_track_a/opening.py"),
     Path("src/populace_dynamics/cola_track_a/runner.py"),
     Path("src/populace_dynamics/cola_track_a/statutory.py"),
+    # The opt-in exercise-3 (FRA to 68) assembly reuses Track A after the
+    # projection; nothing historical imports it.
+    Path("src/populace_dynamics/fra68_track/__init__.py"),
+    Path("src/populace_dynamics/fra68_track/benefits.py"),
+    Path("src/populace_dynamics/fra68_track/config.py"),
+    Path("src/populace_dynamics/fra68_track/reform.py"),
+    Path("src/populace_dynamics/fra68_track/runner.py"),
     # The opt-in Track U layer (DynaSim exercise 2: the family income and
     # wealth reader, the age-67 cohort builder, the adjusted income concept
     # and its tabulation) is post-compute and unreachable from the
