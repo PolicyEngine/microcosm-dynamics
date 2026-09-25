@@ -212,21 +212,54 @@ section 7): options 1–5 with the schedules and cuts above;
   SHA-256 recorded (`load_qc_amounts`). This is not the committed
   capture M2 calls for. Check: four times the 2006 amount is $3,880,
   the figure Table 2's notes print (§17).
-- **Before 1978 (builder default, G6):** the 1978 amount scaled back
-  by the average wage index, QC(1978)·AWI(*y*)/AWI(1978). The statute
-  (42 USC 413(a)–(d)) is to be captured and read in M2 before the rules
-  rely on this; this draft states nothing about what it says.
-- **Biennial gap years (builder reading, pending the freeze):** the
-  PSID never collected income for the odd years 1997–2021. G6 counts
-  unobserved years as zero, while the plan's named deltas list
-  "odd-year gap imputation from 1997 on" and M5 names "the odd-year gap
-  law". The default `gap_year_rule = "immediate_neighbor_mean"` fills a
-  gap year with the immediate-neighbor law of `estimates.career`
-  (`_impute_gap`: the mean of the two neighboring years, or the one
-  that exists; never a neighbor after the count's end year) before the
-  count; the alternative `"zero"` reads G6 literally. The choice is
-  material: the gap years are 22 percent of the potential window
-  person-years of the beneficiaries born 1945–1960 (§10).
+- **Before 1978 (the plan's G6 convention, the default, pending the
+  freeze):** the 1978 amount scaled back by the average wage index,
+  QC(1978)·AWI(*y*)/AWI(1978). **The statute differs** (independent
+  review, 2026-09-24; 42 USC 413 and 20 CFR 404.141 and 404.143 read
+  from law.cornell.edu, copies with SHA-256 in
+  `EVID/track-m-review-20260924/`): before 1978, 413(a)(2)(A)(i) and 20
+  CFR 404.141(b) credit a quarter of coverage for $50 of wages paid in
+  it (or $100 of self-employment income credited to it), and wages at
+  the year's annual limitation credit all four quarters. With annual
+  amounts that is $200 a year for wages spread over the year, against
+  the convention's roughly $528 in 1968 and $926 in 1977 (with the
+  oracle's AWI). The alternative
+  `pre_1978_coverage_rule = "statute_413_a_50_per_quarter"` implements
+  the $200 reading; it does not separate self-employment income ($400 a
+  year) or agricultural wages. Table 2's rows 3b–3d agree with the
+  statute and not with the convention (§17, finding 3). The convention
+  counts fewer pre-1978 years for low earners, so it lowers *Y* near
+  the 10-year floor for the cohorts whose twenties fall before 1978.
+  Referee question 10.
+- **From 1978 (statute, as coded):** 413(a)(2)(A)(ii) and 20 CFR
+  404.143(a) credit one quarter for each quarter-of-coverage amount of
+  the year's wages and self-employment income, at most four, so a year
+  with four quarters' amount is a work year.
+- **Odd income years 1997–2021 (builder reading, pending the
+  freeze):** the earnings panel (`data/family.py`) carries no odd
+  income year from 1997. **Correction (independent review):** the
+  draft said the PSID never collected them. By the family files'
+  labels, the labor income of 1997 and 1999 was never asked, but that
+  of each odd year 2001–2021 was asked one wave later as the reference
+  person's and the spouse's labor income of the year before last (for
+  example ER85328 and ER85376 in the 2023 file, each with a time-unit
+  and an accuracy variable); `structure.verify_prior_year_labor_income_labels`
+  checks the labels wave by wave. No reader here reads those items yet
+  (M3, M5). G6 counts unobserved years as zero, while the plan's named
+  deltas list "odd-year gap imputation from 1997 on" and M5 names "the
+  odd-year gap law". The default `gap_year_rule =
+  "immediate_neighbor_mean"` fills an odd year left unobserved with the
+  immediate-neighbor law of `estimates.career` (`_impute_gap`: the mean
+  of the two neighboring years, or the one that exists; never a
+  neighbor after the count's end year) before the count; the
+  alternative `"zero"` reads G6 literally. Once M5 reads the next-wave
+  items, the rule decides 1997 and 1999 (5 percent of the window
+  person-years of the beneficiaries born 1945–1960) and the odd years of
+  anyone not then a reference person or spouse, rather than all odd
+  years (22 percent; §10). The next-wave items cover only the reference
+  person and spouse of the later wave, report an amount with a time
+  unit to annualize, and are not the constructed annual labor income
+  the panel reads; M3 must check both.
 - **Unobserved years** (neither observed nor imputed) count as zero
   and are flagged, over a flag window from the year of attaining 22
   (builder default, matching G12's start).
@@ -386,13 +419,25 @@ not in the wave 61,000.
   earnings panel and 24,614 in collected years without one. By
   observed years in the window, persons: none 130; 1–9 507; 10–19 372;
   20–29 442; 30–39 684. At any age, 65 beneficiaries have no observed
-  year at all. For the 1,769 born 1945–1960, the gap years are 15,869
-  of 70,760 window person-years (22 percent).
+  year at all. For the 1,769 born 1945–1960, the odd years the panel
+  lacks are 15,869 of 70,760 window person-years (22 percent).
+- **Odd years split by what the family files ask** (independent
+  review; `scripts/track_m_structure.py` rerun at commit `49f76d8f` on
+  a clean tree, `EVID/track-m-structure-20260924-r2/track-m-structure.json`,
+  SHA-256 `829ed395…`; every count above is unchanged and the same 91
+  PSID files were read with the same hashes): of the 16,781 odd-year
+  person-years, 4,064 fall in 1997 or 1999 (never asked) and 12,717 in
+  2001–2021 (asked one wave later). For the 1,769 born 1945–1960: 3,538
+  never asked (5 percent of 70,760) and 12,331 asked next wave (17
+  percent). The rerun also records, from the labels of the 1999–2023
+  family files, the next-wave variables for each odd year.
 - **What the counts imply for M4 and M5 (not a result):** the earnings
   panel (`data/family.py`) carries head and spouse labor income only,
-  so years spent as another family member are unobserved; the gap-year
-  rule (§5) decides a fifth of the potential years of the headline's
-  core cohorts.
+  so years spent as another family member are unobserved. Reading the
+  next-wave items (M3, M5) would observe the odd years 2001–2021 of
+  anyone who was the reference person or spouse in the following wave
+  (how many is not counted here); the gap-year rule (§5) would then
+  decide 1997, 1999 and the odd years of other members.
 
 **Deltas of the population** (named, not fixed): exposed cohorts born
 1942–1960 against DYNASIM's 1945–1963; the whole 62+ age structure;
@@ -461,7 +506,8 @@ building:
 - PSID against SIPP population and weights;
 - labor income treated as covered earnings;
 - pre-1968 and pre-entry years;
-- the biennial gap years 1997–2021 (§5);
+- the odd income years: 1997 and 1999 never asked; 2001–2021 asked a
+  wave later, for the reference person and spouse only (§5);
 - the DI PIA approximation;
 - unlinked auxiliaries;
 - entitlement classification at the 2004 boundary;
@@ -553,6 +599,19 @@ uses the oracle's parameters from the policyengine-us checkout.
    evaluated. The NCRP-style columns, whose minimum is a share of the
    threshold, show the exact 0.75.
 
+3. (Independent review, 2026-09-24.) Rows 3b–3d ("exactly 4 CQ
+   threshold in all years", work from 1963 for the 1943 cohort) follow
+   the statute's pre-1978 quarter of coverage, $50 of wages a quarter,
+   and not the plan's G6 convention. With four quarters' amount from
+   1978 and, before 1978, either reading, the oracle's statutory AIME
+   and PIA at the 2005 bend points give PIA ratios 3b/3d = 0.132 and
+   3c/3d = 0.338 under the statute, inside the printed rounding of
+   columns 1 and 2 (3/20 and 3/27; 7/20 and 9/27), and 0.275 and 0.551
+   under the convention, outside all four. Ratios within a column need
+   neither the HHS threshold nor the claim-age factor. This is a formula
+   check of the statute's reading (ruling C5), not a calibration: the
+   statute decides, and Table 2 agrees with it.
+
 The SSI columns (3 and 4) are outside Track M and were not checked.
 
 ## 18. What is built and what is blocked
@@ -589,8 +648,10 @@ Blocked, with the plan's effort estimates (lane-days):
 4. **M4 cohort** (5): entitlement classification at 2004 and 2007, DI
    origin and onset, spouse links (living and deceased), types,
    provenance.
-5. **M5 careers** (4, part built here): realized histories 1968–2022
-   with the gap rule; *Y* and *P* per worker through this module.
+5. **M5 careers** (4, part built here): realized histories 1968–2022,
+   including the next-wave labor income of the odd years 2001–2021 (§5),
+   with the gap rule for what remains; *Y* and *P* per worker through
+   this module.
 6. **M8 tabulation** (1.5), **M10 dry run** (1.5), **M11 registration
    and one-shot** (3).
 7. **Referee pass** on this draft (1) and ratification by merge.
@@ -948,17 +1009,19 @@ PIA rule (approximation; MS6 statutory), death PIA rule
 (approximation), DI proration start age (22), prorated-years rounding
 (exact; floor), threshold rule (Census one person 65+ weighted
 average), threshold year (eligibility year; DI onset year), wage-index
-lag (2), pre-1978 coverage rule (1978 amount scaled back by AWI),
-gap-year rule (neighbor mean; zero), unobserved-window start age (22),
+lag (2), pre-1978 coverage rule (1978 amount scaled back by AWI; the
+statute's $50 a quarter), gap-year rule (neighbor mean; zero), unobserved-window start age (22),
 couples' cap (none), unlinked auxiliaries (not receiving, counted
 separately), minimum rounding (none; dime floor).
 
 ## 21. Questions for the referee
 
-1. **Gap years.** Should a biennial gap year (1997–2021, odd) take the
-   immediate-neighbor law before *Y* is counted (the default), or count
-   as zero as G6 reads literally? The gap years are 22 percent of the
-   window person-years of the 1945–1960 beneficiaries.
+1. **Odd years.** Should M5 read the next-wave labor income of
+   2001–2021 before any imputation (the review's recommendation), and
+   should an odd year still unobserved take the immediate-neighbor law
+   (the default) or count as zero as G6 reads literally? All odd years
+   are 22 percent of the window person-years of the 1945–1960
+   beneficiaries; 1997 and 1999 alone are 5 percent.
 2. **Threshold year of a late claimer.** G4 keys the window on the
    entitlement year and G8 takes the eligibility year's threshold, so
    workers eligible before *Y*₀ enter the window (§4). Keep the
@@ -968,7 +1031,9 @@ separately), minimum rounding (none; dime floor).
    plan's case D, the default) or to its floor (G7: no partial years)?
 4. **The end of *Y* for a DI worker.** G6 counts years before the
    entitlement year while G12's *D* ends at the year before onset.
-   Should *Y* also end at the year before onset?
+   Should *Y* also end at the year before onset? 413(a)(2)(B)(i) bears
+   on it: no quarter any part of which is in a period of disability,
+   other than its first and last, is a quarter of coverage.
 5. **A worker who died before eligibility.** Track A's approximation
    (the default) or the statutory death computation
    (`ss.statutory_aime.aime(..., death_year=...)`)?
@@ -980,10 +1045,16 @@ separately), minimum rounding (none; dime floor).
    survivor's own amount, PIA or reduced benefit, as the caller decides.
    Which should decide whether a survivor's benefit on a flagged record
    is paid?
-9. **The flag window's start age:** 22 (the default, matching G12) or
-   21 (415(b)'s elapsed years start after the year of attaining 21)?
-10. **Before 1978:** is the scaled-back 1978 amount acceptable until M2
-    reads 413(a)?
+9. **The flag window's start age:** 22 (the default). It matches G12
+   and 415(b)(2)(B)(iii), whose elapsed years are the years *after*
+   the year of attaining 21, so the first is the year of attaining 22
+   (the oracle's `statutory_aime.elapsed_years` counts the same way).
+   (Corrected by the review: the draft offered 21 as 415(b)'s reading.)
+10. **Before 1978:** keep the plan's scaled-back 1978 amount (the
+    default) or adopt the statute's $50 a quarter
+    (`statute_413_a_50_per_quarter`)? The review read 413(a) and 20 CFR
+    404.141 (§5) and recommends the statute; Table 2's rows 3b–3d agree
+    with it (§17, finding 3).
 
 ## 22. What this draft read and did not verify
 
@@ -1016,9 +1087,27 @@ the fn. 27 blind check; the availability statement's findings against
 the Report (they rest on the comparator side and the clearance review);
 anything in the Report beyond PDF page 29 and the cleared files.
 
+**Independent review (2026-09-24, Claude Code subagent, Opus 5.5):**
+read `EVID/RESTRICTED-FILES.md` first and nothing it restricts; the
+plan, both cleared files, PDF page 29 as text, this draft and the code
+diff; 42 USC 413 and 20 CFR 404.141 and 404.143 (law.cornell.edu,
+copies with SHA-256 in `EVID/track-m-review-20260924/`); PSID setup-file
+labels of the 1999–2023 family files (labels only). It reran the
+structural counts (§10) and computed no years of coverage, PIA,
+threshold, minimum or share receiving a minimum on real data. Its report
+is `EVID/track-m-review-20260924.md`.
+
 ## 23. Changelog
 
 - `m1-draft-1` (2026-09-24): first draft, with the Track M rules module,
   the structural counts in `EVID/track-m-structure-20260924/`, the
   registered entry point and the tests, on branch
   `dynamics-ex4-track-m-20260924`.
+- `m1-draft-1`, review corrections (2026-09-24; no default, row, cell or
+  d219 item changed, so the version and the §19 block stand): the odd
+  income years 2001–2021 were asked one wave later, not never (§5, §10,
+  §15, §18, question 1; counts rerun to
+  `EVID/track-m-structure-20260924-r2/`); the statute's pre-1978
+  quarter of coverage and the alternative that implements it (§5, §20,
+  question 10) with Table 2 finding 3 (§17); 413(a)(2)(B)(i) added to
+  question 4; question 9's reading of 415(b) corrected.
