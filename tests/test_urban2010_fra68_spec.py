@@ -1,16 +1,18 @@
-"""Consistency checks for the exercise 3 (FRA to 68) specification draft.
+"""Consistency checks for the exercise 3 (FRA to 68) specification, E1.
 
 ``docs/design/urban2010_fra68_comparison.md`` (E1) is read by the
 exercise-3 runner through its machine-readable JSON block (section 21).
-These tests hold that block, the section 3 schedule table and the section
-19 invented worked cases to the code (``populace_dynamics.fra68_track``)
-and to the A1 template.  They use the document, statute arithmetic on
+These tests hold that block (ratified, ``e1-ratified-1``, with Max's
+rulings of 2026-09-24), the section 3 schedule table and the section 19
+invented worked cases to the code (``populace_dynamics.fra68_track``) and
+to the A1 template.  They use the document, statute arithmetic on
 INVENTED amounts and the committed statutory capture's rates: no PSID
 value, no model output and no comparator value.
 """
 
 from __future__ import annotations
 
+import copy
 import json
 import re
 from decimal import Decimal
@@ -34,7 +36,7 @@ from populace_dynamics.fra68_track.benefits import ScenarioCalculator
 from populace_dynamics.fra68_track.config import (
     E1_RULINGS,
     FRA68_LABELS,
-    PENDING_DECISIONS,
+    MAX_RULINGS,
     STATISTIC_ID,
     STYLIZED_RESPONSE_LABEL,
     FRA68Config,
@@ -49,6 +51,7 @@ from populace_dynamics.fra68_track.reform import (
     survivor_parameters,
 )
 from populace_dynamics.fra68_track.runner import (
+    check_specification_for_registered_run,
     e1_parameter_block,
     specification_code_check,
 )
@@ -100,59 +103,183 @@ def _number(cell: str) -> Decimal:
 # --------------------------------------------------------------------------
 # Status and governance
 # --------------------------------------------------------------------------
-def test_the_draft_is_not_ratified_and_says_so(block, text):
+def test_the_committed_e1_is_ratified_and_says_so(block, text):
     assert block["specification"] == "urban2010_fra68_exercise3"
-    # A7's fail-closed ratification test (with E1's extra marker) refuses
-    # both header fields, and each also carries an A7 unratified marker.
-    assert E1_RULINGS.unratified_fields(block) == ["status", "version"]
+    assert block["version"] == "e1-ratified-1"
+    assert block["status"] == "ratified_frozen"
+    # A7's fail-closed ratification test (with E1's extra marker) accepts
+    # both header fields, and neither carries an A7 unratified marker.
+    assert E1_RULINGS.unratified_fields(block) == []
     for name in ("status", "version"):
-        assert any(mark in block[name] for mark in UNRATIFIED_MARKERS)
-    assert "not ratified" in text.split("\n## 1.")[0]
+        assert not any(mark in block[name] for mark in UNRATIFIED_MARKERS)
+    header = text.split("\n## 1.")[0]
+    assert "ratified and frozen" in header
+    assert "not ratified" not in header
     assert e1_parameter_block(SPEC_PATH) == block
+    # The committed block is the one the one-shot entry point accepts.
+    check_specification_for_registered_run(block, FRA68Config())
     # The builder boundary points to the builder-side restriction list,
     # which restricts Urban pages 3-4 (E1 referee required change 8).
-    header = text.split("\n## 1.")[0]
     assert "RESTRICTED-FILES.md" in header
     assert "pages 3-4" in header
 
 
-def test_every_pending_decision_is_listed_with_the_code_default(block, text):
-    awaiting = block["decisions_awaiting_max"]
-    for name, decision in PENDING_DECISIONS.items():
-        assert awaiting[name]["proposed_default"] == (
-            decision["proposed_default"]
-        ), name
-        assert awaiting[name]["decision_record"] == "d188"
-    assert set(awaiting) == {
-        *PENDING_DECISIONS,
-        "ratification_and_registration",
+#: Section 21 ``decisions`` entries that are process rulings, not
+#: configuration fields (d188 item (c); d196 item (5)).
+_PROCESS_RULINGS = {
+    "ratification_and_registration": (
+        "ratify_by_merge_post_42_registration_run_one_shot",
+        "d188",
+        "(c)",
+    ),
+    "screening_lane_or_clarification_request": (
+        "neither_before_the_one_shot_gaps_reported_as_results",
+        "d196",
+        "(5)",
+    ),
+}
+
+
+def test_every_decision_field_records_maxs_ruling(block, text):
+    assert "decisions_awaiting_max" not in block
+    decisions = block["decisions"]
+    assert decisions["ruled_by"] == "Max"
+    assert decisions["ruled_on"] == "2026-09-24"
+    assert set(decisions) == {
+        "ruled_by",
+        "ruled_on",
+        *MAX_RULINGS,
+        *_PROCESS_RULINGS,
     }
-    # E1 referee required change 7: the choices d188 as filed does not
-    # name are fields of their own, flagged in the block and the code.
-    for name, decision in PENDING_DECISIONS.items():
-        assert awaiting[name].get("named_in_d188_as_filed", True) == (
-            decision.get("named_in_d188_as_filed", True)
+    # The block and the code record the same ruling, from the same record
+    # and item, with the same declined alternatives and flags.
+    for name, ruling in MAX_RULINGS.items():
+        entry = decisions[name]
+        assert entry["ruling"] == ruling["ruling"], name
+        assert entry["decision_record"] == ruling["decision_record"], name
+        assert entry["item"] == ruling["item"], name
+        assert entry["declined"] == ruling["declined"], name
+        assert entry.get("named_in_d188_as_filed", True) == ruling.get(
+            "named_in_d188_as_filed", True
         ), name
-        assert awaiting[name].get("carries_over") == decision.get(
-            "carries_over"
-        ), name
+        assert entry.get("carries_over") == ruling.get("carries_over"), name
+        assert entry["decision_record"] in {"d188", "d196"}
+    for name, (value, record, item) in _PROCESS_RULINGS.items():
+        assert decisions[name]["ruling"] == value
+        assert decisions[name]["decision_record"] == record
+        assert decisions[name]["item"] == item
+    # Every ruling adopts the default the configuration already uses.
+    config = FRA68Config()
+    for name, ruling in MAX_RULINGS.items():
+        value = getattr(config, name)
+        value = getattr(value, "value", value)
+        value = list(value) if isinstance(value, tuple) else value
+        assert value == ruling["ruling"], name
+    # d196 rules by name on the fields d188 as filed does not name (E1
+    # referee required change 7); the benefit computation years are
+    # covered by d188 item (a), which does not name them either.
     assert {
         name
-        for name, entry in awaiting.items()
-        if entry.get("named_in_d188_as_filed") is False
+        for name, entry in decisions.items()
+        if isinstance(entry, dict)
+        and entry.get("named_in_d188_as_filed") is False
     } == {
         "survivor_reduction_span",
         "oracle_cola_horizon_extension_to_2030",
         "opening_stock_basis",
+        "benefit_computation_years",
     }
-    assert awaiting["survivor_reduction_span"]["proposed_default"] == (
+    assert {
+        name
+        for name, entry in decisions.items()
+        if isinstance(entry, dict) and entry.get("decision_record") == "d196"
+    } == {
+        "survivor_reduction_span",
+        "oracle_cola_horizon_extension_to_2030",
+        "opening_stock_basis",
+        "rows",
+        "screening_lane_or_clarification_request",
+    }
+    assert decisions["benefit_computation_years"]["covered_by"] == (
+        "d188_run_exercise_3_exactly_like_track_a"
+    )
+    # Regression: the block recorded the statutory 415(b)(2) count as an
+    # alternative Max declined, but no decision record put it to him.
+    assert decisions["benefit_computation_years"]["declined"] == []
+    section22 = _section(text, "## 22. Decisions (ruled by Max, 2026-09-24)")
+    assert "records no declined alternative" in " ".join(section22.split())
+    # Each ruled value is the one the block itself uses.
+    assert decisions["survivor_reduction_span"]["ruling"] == (
         block["policy"]["survivor_reduction_span"]
     )
-    assert awaiting["opening_stock_basis"]["proposed_default"] == (
+    assert decisions["opening_stock_basis"]["ruling"] == (
         block["amounts"]["opening_stock_basis"]
     )
-    decisions = _section(text, "## 22. Decisions awaiting Max")
-    assert "d188" in decisions and "open" in decisions
+    assert decisions["benefit_computation_years"]["ruling"] == (
+        block["amounts"]["benefit_computation_years"]
+    )
+    assert decisions["primary_schedule_id"]["ruling"] == (
+        block["primary_schedule"]
+    )
+    assert decisions["rows"]["ruling"] == list(block["rows"])
+    # Section 22 names every ruled field with its record.
+    section = _section(text, "## 22. Decisions (ruled by Max, 2026-09-24)")
+    assert "d188" in section and "d196" in section
+    assert "2026-09-24T21:44" in section
+    for name in (*MAX_RULINGS, *_PROCESS_RULINGS):
+        assert f"`{name}`" in section, name
+
+
+def test_no_section_before_the_review_record_says_pending_or_awaiting(text):
+    # Every decision field is ruled: sections 1-24 and the changelog carry
+    # no "pending", "awaiting" or "awaits".  Section 25 records the reviews
+    # as they happened, before the rulings.  The one exception names a
+    # restricted file ("pending validation checks", the builder boundary's
+    # summary of the restriction list).
+    before, rest = text.split("\n## 25. Referee pass")
+    changelog = rest[rest.index("\n## 26. Changelog") :]
+    for part in (before, changelog):
+        flat = " ".join(part.split())
+        flat = flat.replace("pending validation checks", "")
+        found = re.findall(r"\b(pending|awaiting|awaits)\b", flat, re.I)
+        assert found == [], found
+
+
+def _unratified(block: dict) -> dict:
+    """The committed block under the last draft's header (INVENTED)."""
+    edited = copy.deepcopy(block)
+    edited["version"] = "e1-draft-7"
+    edited["status"] = "draft_refereed_not_ratified"
+    return edited
+
+
+def test_an_unratified_or_partly_ruled_copy_is_still_refused(block):
+    config = FRA68Config()
+    with pytest.raises(ValueError, match="authorizes no real-data run"):
+        check_specification_for_registered_run(_unratified(block), config)
+    awaiting = copy.deepcopy(block)
+    awaiting["decisions_awaiting_max"] = {"primary_schedule_id": {}}
+    with pytest.raises(ValueError, match="awaiting Max"):
+        check_specification_for_registered_run(awaiting, config)
+    # A ruling on what d188 as filed names alone leaves d196's fields and
+    # the covered computation years unruled.
+    as_filed = copy.deepcopy(block)
+    unnamed = [
+        name
+        for name, ruling in MAX_RULINGS.items()
+        if ruling.get("named_in_d188_as_filed") is False
+    ]
+    for name in unnamed:
+        del as_filed["decisions"][name]
+    with pytest.raises(ValueError, match="records no ruling") as refused:
+        check_specification_for_registered_run(as_filed, config)
+    for name in unnamed:
+        assert name in str(refused.value)
+    for name in MAX_RULINGS:
+        partial = copy.deepcopy(block)
+        del partial["decisions"][name]
+        with pytest.raises(ValueError, match="records no ruling"):
+            check_specification_for_registered_run(partial, config)
 
 
 def test_no_unread_urban_line_is_cited(text):

@@ -1,8 +1,9 @@
 """The exercise-3 one-shot entry point refuses every non-registered state.
 
 No PSID file is read and no statistic is computed here: only the preflight
-guards of ``scripts/run_fra68_registered.py`` run, with a fake ``git`` and
-edited copies of the E1 section 21 block.
+guards of ``scripts/run_fra68_registered.py`` run, with a fake ``git``, the
+committed E1 section 21 block (ratified, ``e1-ratified-1``) and edited
+copies of it.
 """
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ import pytest
 from populace_dynamics.estimates import cola_age_profile
 from populace_dynamics.fra68_track import (
     E1_RULINGS,
-    PENDING_DECISIONS,
+    MAX_RULINGS,
     FRA68Config,
 )
 from populace_dynamics.fra68_track import runner as fra68_runner
@@ -50,19 +51,17 @@ def _git(head: str = COMMIT, porcelain: str = ""):
 
 
 def _ruled() -> dict:
-    """The committed block as a ratified, fully ruled version would read."""
-    block = copy.deepcopy(e1_parameter_block())
-    block["status"] = "ratified_frozen"
-    block["version"] = "e1-ratified-1"
-    block["decisions_awaiting_max"] = {}
-    block["decisions"] = {
-        name: {
-            "ruling": decision["proposed_default"],
-            "decision_record": "d188",
-        }
-        for name, decision in PENDING_DECISIONS.items()
-    }
-    return block
+    """The committed block: ratified, with Max's ruling on every field."""
+    return copy.deepcopy(e1_parameter_block())
+
+
+def test_the_committed_block_is_ratified_and_ruled():
+    block = _ruled()
+    assert block["version"] == "e1-ratified-1"
+    assert block["status"] == "ratified_frozen"
+    assert "decisions_awaiting_max" not in block
+    for name, ruling in MAX_RULINGS.items():
+        assert block["decisions"][name]["ruling"] == ruling["ruling"], name
 
 
 def test_the_registered_state_passes(tmp_path):
@@ -76,14 +75,23 @@ def test_the_registered_state_passes(tmp_path):
     assert state == {"head": COMMIT}
 
 
-def test_the_committed_draft_authorizes_no_run(tmp_path):
-    with pytest.raises(ValueError, match="authorizes no real-data run"):
-        _script().preflight(
-            registration_pointer=POINTER,
-            registered_commit=COMMIT,
-            output=tmp_path / "run.json",
-            git=_git(),
-        )
+def test_the_committed_e1_passes_the_preflight(tmp_path):
+    # No specification passed: the preflight reads the committed E1.
+    state = _script().preflight(
+        registration_pointer=POINTER,
+        registered_commit=COMMIT,
+        output=tmp_path / "run.json",
+        git=_git(),
+    )
+    assert state == {"head": COMMIT}
+
+
+def _draft() -> dict:
+    # INVENTED: the committed block under the last draft's header.
+    block = _ruled()
+    block["version"] = "e1-draft-7"
+    block["status"] = "draft_refereed_not_ratified"
+    return block
 
 
 def _pending() -> dict:
@@ -107,6 +115,25 @@ def _mismatch() -> dict:
 def _unruled() -> dict:
     block = _ruled()
     del block["decisions"]["claim_class"]
+    return block
+
+
+def _as_filed() -> dict:
+    # A ruling on what d188 as filed names alone: d196's fields and the
+    # benefit computation years (covered by d188 item (a), not named in
+    # it) have no recorded ruling.
+    block = _ruled()
+    for name, ruling in MAX_RULINGS.items():
+        if ruling.get("named_in_d188_as_filed") is False:
+            del block["decisions"][name]
+    return block
+
+
+def _ruled_otherwise_in_block_and_config() -> dict:
+    # The block edited to another primary, with a configuration that
+    # follows it: the code's record of Max's ruling refuses it.
+    block = _ruled()
+    block["decisions"]["primary_schedule_id"]["ruling"] = "P1"
     return block
 
 
@@ -141,14 +168,23 @@ def _ruled_otherwise() -> dict:
         ({"registered_commit": "abc123"}, "full 40-hex"),
         ({"git": _git(head="b" * 40)}, "is not the registered commit"),
         ({"git": _git(porcelain=" M src/x.py")}, "clean"),
+        ({"specification": _draft()}, "authorizes no real-data run"),
         ({"specification": _pending()}, "awaiting Max"),
         ({"specification": _referee()}, "authorizes no real-data run"),
         ({"specification": _mismatch()}, "differ"),
         ({"specification": _unruled()}, "records no ruling"),
+        ({"specification": _as_filed()}, "records no ruling"),
         ({"specification": _ruled_otherwise()}, "departs from Max's"),
         (
             {"config": FRA68Config(primary_schedule_id="P1")},
             "departs from Max's",
+        ),
+        (
+            {
+                "specification": _ruled_otherwise_in_block_and_config(),
+                "config": FRA68Config(primary_schedule_id="P1"),
+            },
+            "differ from the code's record of Max's rulings",
         ),
     ],
     ids=[
@@ -158,12 +194,15 @@ def _ruled_otherwise() -> dict:
         "short-sha",
         "wrong-head",
         "dirty-tree",
+        "draft-header",
         "pending-decision",
         "referee-status",
         "block-differs",
         "no-ruling",
+        "ruled-as-filed-only",
         "ruled-otherwise",
         "config-departs",
+        "block-departs-from-code",
     ],
 )
 def test_non_registered_states_are_refused(tmp_path, kwargs, match):
@@ -270,3 +309,22 @@ def test_the_registration_pointer_and_commit_are_required():
 def test_the_default_output_is_the_exercise_3_runs_artifact():
     output = _script().DEFAULT_OUTPUT
     assert output == ROOT / "runs" / "replication_urban2010_fra68_v1.json"
+
+
+def test_the_sidecar_records_every_import_by_its_distribution():
+    # Regression: the sidecar looked up fixed distribution names, so the
+    # repository ("populace-dynamics") and policyengine-us were recorded as
+    # None.  It now uses exercise 1's resolver, which records the
+    # distribution that provides each import, the project at the commit
+    # and the policyengine-us checkout revision the oracle reads.
+    environment = _script()._environment(
+        ssa_parameters_revision="INVENTED-REVISION"
+    )
+    assert None not in environment["packages"].values()
+    assert environment["distributions_by_import"]["populace_dynamics"]
+    for name in environment["distributions_by_import"]["populace_dynamics"]:
+        assert name in environment["packages"]
+    assert environment["project"]["name"]
+    assert environment["policyengine_us_parameters"]["revision"] == (
+        "INVENTED-REVISION"
+    )
