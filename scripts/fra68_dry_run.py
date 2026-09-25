@@ -80,6 +80,9 @@ from populace_dynamics.fra68_track.benefits import (  # noqa: E402
     CONVERSION_CLAIM_MONTHS_EARLY,
     CREDITS_NOT_INHERITED,
     CREDITS_NOT_INHERITED_CLAIM_MOVED_PAST_DEATH,
+    SPOUSE_EXCESS_WITHHELD,
+    WITHHELD_EXCESS,
+    WITHHELD_EXCESS_NO_REFORM_BENEFIT,
 )
 from populace_dynamics.fra68_track.runner import (  # noqa: E402
     E1_SPECIFICATION_PATH,
@@ -127,7 +130,23 @@ FRA68_GAPS: tuple[dict[str, str], ...] = (
             "Track A pays none while a worker is DI-entitled, so under the "
             "reform a converted worker's excess starts a year later (a "
             "convention, not the statute: 402(q)(3)(C) would pay a DI "
-            "beneficiary a reduced excess)"
+            "beneficiary a reduced excess once an application is filed). "
+            "Counted, not fixed (benefit counters "
+            "fra68_spouse_excess_withheld_until_reform_conversion and "
+            "..._no_reform_benefit)"
+        ),
+    },
+    {
+        "item": "Membership: a spouse's excess withheld until the reform's "
+        "conversion",
+        "gap": (
+            "Where a converted worker's own DI level is zero (the "
+            "disclosed approximation), the reform pays nothing in 2030 and "
+            "the person is a baseline recipient only (workers born 1963 "
+            "under every schedule). E1 section 12 names it "
+            "(e1-ratified-2, after Registration 14's refusal); the runner "
+            "counts these rows in each row's membership_differences and "
+            "refuses any other difference under fixed claim ages"
         ),
     },
     {
@@ -242,6 +261,90 @@ def _cell_text(stat: dict[str, Any], n_draws: int) -> str:
             f"defined) [{floor_text}]"
         )
     return f"{_fmt(stat['mean'])} ({_fmt(stat['sample_sd'])}) [{floor_text}]"
+
+
+def _c0_membership_line(result: dict[str, Any]) -> str:
+    """The C0 membership check, from each C0 row's membership record."""
+
+    records = {
+        row_id: row["membership_differences"]
+        for row_id, row in result["rows"].items()
+    }
+    # A row A7 refused to normalize is not classified (its tabulation is
+    # refused too, and the row status says so); it is named, not counted.
+    unclassified = [
+        row_id
+        for row_id, record in records.items()
+        if not record.get("classified")
+    ]
+    c0 = {
+        row_id: record
+        for row_id, record in records.items()
+        if record.get("classified") and not record["not_explained_allowed"]
+    }
+    rule = (
+        f"the runner admits only the named mechanism `{SPOUSE_EXCESS_WITHHELD}`"
+        " (E1 section 12) and refuses any other C0 difference before any "
+        "row is tabulated"
+    )
+    if unclassified:
+        rule += (
+            "; not classified, because A7 refused their rows: "
+            + ", ".join(unclassified)
+        )
+    if not any(record["n_rows_differ"] for record in c0.values()):
+        return (
+            "- Under fixed claim ages (C0 rows) the baseline and reform "
+            f"memberships coincided in every row ({rule})."
+        )
+    counts = ", ".join(
+        f"{row_id} {record['n_rows_differ']}" for row_id, record in c0.items()
+    )
+    return (
+        "- Under fixed claim ages (C0 rows) the baseline and reform "
+        f"memberships differed in {counts} person-draw rows, every one "
+        f"explained by the named mechanism ({rule})."
+    )
+
+
+def _membership_table(result: dict[str, Any]) -> list[str]:
+    """Each row's membership record and withheld-excess counters."""
+
+    lines = [
+        "",
+        "## Membership differences (counted before any tabulation)",
+        "",
+        "Person-draw rows whose A7 recipient flags differ between the "
+        "scenarios, summed over draws: all, explained by the named "
+        f"mechanism `{SPOUSE_EXCESS_WITHHELD}` (E1 section 12), and not "
+        "explained (refused under C0, allowed under C1 and C2). The last "
+        "two columns are the union counters of spouse's excesses the "
+        "reform withholds until its later DI conversion, and of those left "
+        "with no reform benefit.",
+        "",
+        "| Row | Differ | Named mechanism | Not explained | Withheld "
+        "excesses | Of which no reform benefit |",
+        "|---|---|---|---|---|---|",
+    ]
+    for row_id, row in result["rows"].items():
+        record = row["membership_differences"]
+        counters = row["benefit_counters"]
+        if not record.get("classified"):
+            lines.append(
+                f"| {row_id} | not classified (A7 refused the rows) | - | - "
+                f"| {counters.get(WITHHELD_EXCESS, 0)} | "
+                f"{counters.get(WITHHELD_EXCESS_NO_REFORM_BENEFIT, 0)} |"
+            )
+            continue
+        named = record["named_mechanisms"][SPOUSE_EXCESS_WITHHELD]["n_rows"]
+        allowed = " (allowed)" if record["not_explained_allowed"] else ""
+        lines.append(
+            f"| {row_id} | {record['n_rows_differ']} | {named} | "
+            f"{record['n_rows_not_explained']}{allowed} | "
+            f"{counters.get(WITHHELD_EXCESS, 0)} | "
+            f"{counters.get(WITHHELD_EXCESS_NO_REFORM_BENEFIT, 0)} |"
+        )
+    return lines
 
 
 def _results_markdown(result: dict[str, Any]) -> str:
@@ -382,9 +485,7 @@ def _results_markdown(result: dict[str, Any]) -> str:
             "age_factor_fields_sha256"
         ][:12]
         + "...`.",
-        "- Under fixed claim ages (C0 rows) the baseline and reform "
-        "memberships coincided in every row (the runner refuses "
-        "otherwise).",
+        _c0_membership_line(result),
         "- Projection identity with exercise 1: "
         f"{result['projection_identity_with_exercise_1']['reason']}.",
         "",
@@ -461,6 +562,7 @@ def _results_markdown(result: dict[str, Any]) -> str:
             for scenario in ("baseline", "reform")
         ]
         lines.append(f"| {row_id} | " + " | ".join(cells) + " |")
+    lines += _membership_table(result)
     lines += [
         "",
         "## Max's rulings (2026-09-24, decision records d188 and d196)",

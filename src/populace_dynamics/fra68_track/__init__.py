@@ -23,9 +23,12 @@ paths and A7 statistic.  What this package adds:
   provenance, value checks and registration-pointer guard.
 
 The specification is E1, ``docs/design/urban2010_fra68_comparison.md``
-(version ``e1-ratified-1``, status ``ratified_frozen``), which records
-Max's rulings; merging it under his authorization (d188 item (c))
-ratifies it.
+(version ``e1-ratified-2``, status ``ratified_frozen``), which records
+Max's rulings; merging ``e1-ratified-1`` under his authorization (d188
+item (c)) ratified it.  ``e1-ratified-2`` amends only the C0 membership
+guard (E1 sections 7, 12 and 27), after Registration 14's refusal and
+before any statistic was recorded or the comparator seal opened; no
+ruled field changes.
 Every output is labelled *Python oracle (not Axiom)*; outputs on the
 invented cohort carry the invented-data labels.  The package is opt-in:
 nothing in the historical projection, the estimates or the evidence
