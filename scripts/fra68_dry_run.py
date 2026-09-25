@@ -14,8 +14,9 @@ TR2008's; the run compares every one with its committed source
 (``check_committed_parameters``).  The reform bundles P1-P3 are derived
 from the baseline bundle and recorded with their SHA-256s.
 
-The E1 specification is a draft awaiting Max (decision record d188): the
-run records every pending decision at its proposed default and checks the
+The E1 specification records Max's rulings of 2026-09-24 (decision
+records d188 and d196): the run records each ruled field with its
+configured value and whether it follows the ruling, and checks the
 specification block against the code.
 
 Usage::
@@ -259,9 +260,11 @@ def _results_markdown(result: dict[str, Any]) -> str:
         "or a comparison with DYNASIM.",
         "",
         "The specification (`docs/design/urban2010_fra68_comparison.md`, "
-        f"`{result['specification_check']['specification_version']}`) is a "
-        "draft awaiting Max (decision record d188); every pending "
-        "decision below runs at the plan's proposed default.",
+        f"`{result['specification_check']['specification_version']}`, "
+        f"status `{result['specification_check']['specification_status']}`)"
+        " records Max's rulings of 2026-09-24 (decision records d188 and "
+        "d196); every ruled field below runs at its ruling unless it says "
+        "otherwise.",
         "",
         "Labels on every output: "
         + "; ".join(f"*{label}*" for label in result["labels"])
@@ -460,15 +463,16 @@ def _results_markdown(result: dict[str, Any]) -> str:
         lines.append(f"| {row_id} | " + " | ".join(cells) + " |")
     lines += [
         "",
-        "## Decisions awaiting Max (d188; none ruled)",
+        "## Max's rulings (2026-09-24, decision records d188 and d196)",
         "",
     ]
     lines += [
-        f"- `{item['field']}` = `{item['value']}` ({item['awaiting']}; "
-        f"proposed default: {item['is_proposed_default']})."
-        for item in result["pending_decisions"]
+        f"- `{item['field']}` = `{item['value']}` ({item['decided']}; "
+        f"ruling `{item['ruling']}`; follows the ruling: "
+        f"{item['follows_ruling']})."
+        for item in result["max_rulings"]
     ]
-    lines += ["", "## Builder defaults (no ruling covers them)", ""]
+    lines += ["", "## Builder defaults (no ruling names them)", ""]
     lines += [
         f"- `{item['field']}` = `{item['value']}` ({item['source']})."
         for item in result["builder_defaults"]

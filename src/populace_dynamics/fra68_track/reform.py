@@ -28,19 +28,21 @@ coverage"):
   widow(er)'s benefit, so a widow(er) born in ``b`` attains it in the year
   a worker born in ``b - 2`` does.
 
-Whether this override is within the oracle's scope for exercise 3 awaits
-Max's ruling (decision record d188, item (a); plan section 11, item 2(a)).
-It is the plan's recommended default and a parameter of
+Max ruled on 2026-09-24 that this override is within the oracle's scope
+for exercise 3 (decision record d188, item (a); plan section 11, item
+2(a)), and that the per-cohort survivor span is too (d196, item (1)).
+Both were the plan's recommended defaults and are parameters of
 :class:`~populace_dynamics.fra68_track.config.FRA68Config`.
 
 The three phase-in readings (plan ``critical-path-fra68-20260923.md``
 section 3), each by the year ``Y`` a worker turns 62 (birth year
 ``Y - 62``):
 
-* **P3** (the plan's recommended primary, awaiting Max, d188 item (b)):
-  66 years plus ``round(24 * (Y - 2009) / 13)`` months for 2010-2021 and
-  68 from 2022.  The only whole-month path that meets both of Table 1's
-  dates; no rounding tie arises (``48 k`` is even, ``13`` odd).
+* **P3** (the plan's recommended primary, which Max ruled the primary,
+  d188 item (b)): 66 years plus ``round(24 * (Y - 2009) / 13)`` months
+  for 2010-2021 and 68 from 2022.  The only whole-month path that meets
+  both of Table 1's dates; no rounding tie arises (``48 k`` is even,
+  ``13`` odd).
 * **P1**: 66 plus ``2 * (Y - 2010)`` months for 2011-2021, 68 from 2022
   (the statutory two-month step; the first affected cohort turns 62 in
   2011).
@@ -118,8 +120,8 @@ FIRST_OPTION_YEAR = 2010
 #: ... "until it reaches 68 for those turning 62 in 2022 and later".
 FINAL_YEAR_TURNING_62 = 2022
 TARGET_FRA_MONTHS = 68 * _MONTHS
-#: Plan section 3: the recommended primary.  Awaiting Max (d188 item (b));
-#: a parameter of ``FRA68Config.primary_schedule_id``.
+#: Plan section 3: the recommended primary, which Max ruled the primary
+#: (d188 item (b), 2026-09-24); ``FRA68Config.primary_schedule_id``.
 PLAN_RECOMMENDED_PRIMARY_SCHEDULE = "P3"
 #: The order in which the two non-primary schedules fill rows F1 and F2.
 SCHEDULE_ORDER = ("P1", "P2", "P3")
