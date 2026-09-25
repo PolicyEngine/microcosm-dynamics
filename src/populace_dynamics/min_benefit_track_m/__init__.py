@@ -25,6 +25,8 @@ What this package holds (plan work items M5 and M6, in part):
   computes the PIA and the auxiliary benefits by calling the existing
   oracle (:mod:`populace_dynamics.ss`) unchanged; it adds nothing to
   ``ss/``.
+* :mod:`.specification`: reads the M1 specification's parameter block and
+  refuses a registered run the block does not authorize.
 * :mod:`.structure`: structural counts of the plan's population (the 2023
   wave's beneficiaries aged 62 and older): persons, dispositions and the
   availability of the earnings years that years of coverage would count.
