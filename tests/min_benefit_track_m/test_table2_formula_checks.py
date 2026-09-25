@@ -162,11 +162,15 @@ def test_replacement_rate_columns_and_the_claim_age_factor(factor_at_62):
 def test_four_quarters_of_coverage_in_2006():
     # Rows 3a-3d: "Exactly 4 CQ threshold in all years ($3,880/year in
     # 2006)": four times the 2006 quarter-of-coverage amount.
-    qc = coverage.load_qc_amounts()
-    assert 4 * qc.amount(2006) == 3_880.0
-    assert coverage.annual_coverage_amount(2006, qc, {}) == 3_880.0
-    assert qc.source["kind"] == "policyengine_us_checkout"
-    assert len(qc.source["sha256"]) == 64
+    # The committed capture, and the policyengine-us file it came from.
+    for qc in (
+        coverage.load_qc_amounts(),
+        coverage.load_qc_amounts_from_checkout(),
+    ):
+        assert 4 * qc.amount(2006) == 3_880.0
+        assert coverage.annual_coverage_amount(2006, qc, {}) == 3_880.0
+        assert len(qc.source["sha256"]) == 64
+    assert coverage.load_qc_amounts().source["kind"] == "committed_capture"
 
 
 def _four_cq_history(years: int, qc, params, rule: str) -> dict[int, float]:

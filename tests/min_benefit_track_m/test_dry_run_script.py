@@ -63,9 +63,7 @@ def test_every_row_and_cell_is_reported(document):
         assert f"| {row} |" in markdown
     parameters = result["result"]["parameters"]
     assert parameters["thresholds"]["kind"] == "census_capture"
-    assert parameters["quarter_of_coverage"]["kind"] == (
-        "policyengine_us_checkout"
-    )
+    assert parameters["quarter_of_coverage"]["kind"] == "committed_capture"
     assert result["result"]["inputs"]["provenance_kind"] == "invented"
 
 
@@ -131,6 +129,8 @@ def test_the_provenance_pins_the_specification_and_parameters(document):
     assert spec["path"] == "docs/design/minimum_benefits_comparison.md"
     assert len(spec["sha256"]) == 64
     assert provenance["census_thresholds"]["sha256"].startswith("65bbcd83")
-    assert provenance["quarter_of_coverage"]["sha256"].startswith("12354a05")
+    qc = provenance["quarter_of_coverage"]
+    assert qc["sha256"].startswith("6f964e8f")
+    assert qc["captured_from_sha256"].startswith("12354a05")
     assert "not opened" in provenance["comparator_seal"]
     assert spec["sha256"] in markdown

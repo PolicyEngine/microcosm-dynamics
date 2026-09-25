@@ -136,7 +136,7 @@ builder lane).
 | Referee report, `EVID/minimum-benefits-referee-20260924.md` (`49091254…`) | Required changes R1-R10, answers to §21's questions | Read in full; applied (§21) |
 | Oracle, `src/populace_dynamics/ss/` | AIME, PIA, reductions, credits, spouse's and widow(er)'s benefits | Read; called unchanged |
 | `cola_track_a/benefits.approximate_pia` | The DI PIA under MS6 | Read; called unchanged |
-| policyengine-us `quarters_of_coverage_threshold.yaml` at `a03e82e503` (SHA-256 `12354a05…`) | Quarter-of-coverage amounts, 1978 on | Read from the checkout; not a committed capture (M2) |
+| policyengine-us `quarters_of_coverage_threshold.yaml` at `a03e82e503` (SHA-256 `12354a05…`) | Quarter-of-coverage amounts, 1978 on | **Captured** (M2): `data/external/ssa_quarter_of_coverage_amounts.json` (SHA-256 `6f964e8f…`), every year 1978-2026 checked against 42 USC 413(d) (§5) |
 | PSID 2023 wave, family files 1968-2023, marriage history | Structural counts (§10) | Staged; labels verified |
 | Census historical poverty-threshold workbooks `thresh03.xlsx`-`thresh22.xlsx` | The threshold that defines the minimum (G8, §7) | **Captured** 2003-2022 (d194, d279): `data/external/census_poverty_thresholds_2003_2022.json` (SHA-256 `65bbcd83…`) |
 | 42 USC 413(a)-(d); 20 CFR 404.141 and 404.143 | Quarters of coverage (§5), DI coverage end (§4a) | **Not captured** (M2). Review copies: 413 and 20 CFR 404.141 and 404.143 in `EVID/track-m-review-20260924/`; 402 in `EVID/minimum-benefits-referee-20260924/`; the oracle's `statutory_aime` quotes 415(b) (text `5b41d1cd…`) |
@@ -355,12 +355,23 @@ history at its last year and computes the PIA at its threshold year.
   (named delta). Max's ruling adds that the convention is disclosed here
   and in every result; the tabulation carries
   `COVERED_EARNINGS_DISCLOSURE`.
-- **Quarter-of-coverage amounts, 1978 on:** read from the
-  policyengine-us checkout the oracle reads (the file cites 42 USC
-  413(d)(2), 20 CFR 404.143 and SSA's QC table), with its revision and
-  SHA-256 recorded (`load_qc_amounts`). This is not the committed
-  capture M2 calls for. Check: four times the 2006 amount is $3,880,
-  the figure Table 2 prints in the label of rows 3a-3d (§17).
+- **Quarter-of-coverage amounts, 1978 on (captured, M2):**
+  `data/external/ssa_quarter_of_coverage_amounts.json` (SHA-256
+  `6f964e8f…`, pinned in `coverage.QC_CAPTURE_SHA256` and read by
+  `coverage.load_qc_amounts`), written by
+  `scripts/capture_track_m_quarter_of_coverage.py` from the
+  policyengine-us file the oracle's checkout carries (the file cites 42
+  USC 413(d)(2), 20 CFR 404.143 and SSA's QC table; revision
+  `a03e82e503`, SHA-256 `12354a05…`). Before writing, the script checks
+  every year, 1978-2026, against the amount 42 USC 413(d) sets ($250 in
+  1978; for each later year the larger of the year before's amount and
+  $250 times the wage index of two years before over that of 1976,
+  rounded to $10, a multiple of $5 rounding up; read in the saved copy
+  `usc-42-413-cornell.txt`, `7d226c0a…`, computed exactly by
+  `coverage.statutory_qc_amounts` from the oracle's wage index) and
+  refuses to write on any difference; there is none. Check: four times
+  the 2006 amount is $3,880, the figure Table 2 prints in the label of
+  rows 3a-3d (§17).
 - **Before 1978 (statute, frozen):** 42 USC 413(a)(2)(A)(i) and 20 CFR
   404.141(b) credit a quarter of coverage for $50 of wages paid in it or
   $100 of self-employment income credited to it. With annual amounts,
@@ -1339,10 +1350,17 @@ SHA-256 differs from `sources` (§18).
       "use": "formula_unit_tests_only"
     },
     "quarter_of_coverage_amounts": {
-      "file": "policyengine_us/parameters/gov/ssa/social_security/quarters_of_coverage_threshold.yaml",
-      "pe_us_revision": "a03e82e503",
-      "sha256": "12354a0585756dbffcd9fae6aa6b49b2420619e9ec8e47c5ef953c41693f242b",
-      "status": "read_from_checkout_not_captured"
+      "file": "data/external/ssa_quarter_of_coverage_amounts.json",
+      "sha256": "6f964e8fad41deb0985115b3cb18b4b92ea9b7ea10a11273e5e8ecc6834ae1f8",
+      "years": [
+        1978,
+        2026
+      ],
+      "captured_from": "policyengine_us/parameters/gov/ssa/social_security/quarters_of_coverage_threshold.yaml",
+      "captured_from_pe_us_revision": "a03e82e503",
+      "captured_from_sha256": "12354a0585756dbffcd9fae6aa6b49b2420619e9ec8e47c5ef953c41693f242b",
+      "value_check": "every_year_equals_42_usc_413_d",
+      "status": "committed_capture"
     },
     "census_thresholds": {
       "file": "data/external/census_poverty_thresholds_2003_2022.json",
