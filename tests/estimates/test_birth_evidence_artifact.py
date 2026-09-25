@@ -126,6 +126,11 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/cola_track_a/opening.py"),
         Path("src/populace_dynamics/cola_track_a/runner.py"),
         Path("src/populace_dynamics/cola_track_a/statutory.py"),
+        Path("src/populace_dynamics/fra68_track/__init__.py"),
+        Path("src/populace_dynamics/fra68_track/benefits.py"),
+        Path("src/populace_dynamics/fra68_track/config.py"),
+        Path("src/populace_dynamics/fra68_track/reform.py"),
+        Path("src/populace_dynamics/fra68_track/runner.py"),
         Path("src/populace_dynamics/data/family_income.py"),
         Path("src/populace_dynamics/cohorts/age67.py"),
         Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
@@ -400,6 +405,15 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert track_a_modules.isdisjoint(reachable), (
         "the opt-in Track A assembly became reachable from the "
         f"birth-evidence reducer: {sorted(track_a_modules & reachable)}"
+    )
+    fra68_modules = {"populace_dynamics.fra68_track"} | {
+        f"populace_dynamics.fra68_track.{name}"
+        for name in ("benefits", "config", "reform", "runner")
+    }
+    assert fra68_modules.issubset(module_paths)
+    assert fra68_modules.isdisjoint(reachable), (
+        "the opt-in exercise-3 (FRA to 68) assembly became reachable from "
+        f"the birth-evidence reducer: {sorted(fra68_modules & reachable)}"
     )
     track_u_modules = {
         "populace_dynamics.data.family_income",

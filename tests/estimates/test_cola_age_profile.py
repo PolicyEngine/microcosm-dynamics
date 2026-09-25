@@ -9,6 +9,7 @@ recomputation written in this file.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import math
 
@@ -149,6 +150,47 @@ def _five_group_rows():
                     )
                 )
     return rows
+
+
+# =========================================================================
+# The statistic identifier
+# =========================================================================
+def test_statistic_id_defaults_to_exercise_1():
+    result = _tabulate(_five_group_rows(), draw_indices=(0, 1))
+    assert result["statistic_id"] == cap.STATISTIC_ID
+    assert cap.STATISTIC_ID == (
+        "dynasim_exercise1_cola_minus_1pp_reference_year_age_profile"
+    )
+
+
+def test_statistic_id_is_recorded_and_nothing_else_changes():
+    rows = _five_group_rows()
+    default = _tabulate(rows, draw_indices=(0, 1))
+    # The statistic belongs to a rulings table (A7 refuses a statistic
+    # that is not its table's); an INVENTED copy of A1's table under an
+    # invented statistic changes nothing but the recorded identifier.
+    other = tabulate_cola_age_profile(
+        rows,
+        data_provenance="invented",
+        config=_config(draw_indices=(0, 1)),
+        statistic_id="invented_exercise_id",
+        pending_rulings=dataclasses.replace(
+            cap.A1_RULINGS, statistic_id="invented_exercise_id"
+        ),
+    )
+    assert other["statistic_id"] == "invented_exercise_id"
+    assert {**other, "statistic_id": cap.STATISTIC_ID} == default
+
+
+@pytest.mark.parametrize("value", ["", "  ", None, 3])
+def test_statistic_id_must_be_a_non_empty_string(value):
+    with pytest.raises(ColaTabulationError, match="statistic_id"):
+        tabulate_cola_age_profile(
+            _five_group_rows(),
+            data_provenance="invented",
+            config=_config(draw_indices=(0, 1)),
+            statistic_id=value,
+        )
 
 
 # =========================================================================
@@ -387,6 +429,247 @@ def test_a_malformed_specification_is_refused():
             config=_config(draw_indices=(0, 1)),
             specification=["a1-ratified-1"],
         )
+
+
+# =========================================================================
+# Another exercise's rulings table
+# =========================================================================
+#: INVENTED specification of an invented exercise "X1": it reuses the
+#: statistic, fixes two conventions in its own sections and refuses an
+#: extra "provisional" marker.  Nothing here is a real specification.
+X1_RULINGS = cap.SpecificationRulings(
+    specification="invented_exercise_x",
+    statistic_id="invented_exercise_x_statistic",
+    name="X1",
+    ratification="X1 specification ratification (invented)",
+    section_field="x1_section",
+    extra_unratified_markers=("provisional",),
+    rulings=(
+        {
+            "parameter": "headline_statistic",
+            "proposed_primary": PRIMARY,
+            "registered_alternatives": [ALT],
+            "x1_section": "section 3",
+            "note": "invented",
+        },
+        {
+            "parameter": "allow_membership_difference",
+            "proposed_primary": True,
+            "registered_alternatives": [],
+            "x1_section": "section 4",
+            "note": "invented",
+        },
+    ),
+)
+X1_HEADER = {
+    "specification": "invented_exercise_x",
+    "version": "x1-ratified-1",
+    "status": "ratified_frozen",
+}
+
+
+def _tabulate_with(**kwargs):
+    # The statistic of the table passed (A1's by default): A7 refuses a
+    # statistic that is not its rulings table's.
+    table = kwargs.get("pending_rulings", cap.A1_RULINGS)
+    if isinstance(table, cap.SpecificationRulings):
+        kwargs.setdefault("statistic_id", table.statistic_id)
+    return tabulate_cola_age_profile(
+        _five_group_rows(),
+        data_provenance="invented",
+        config=_config(draw_indices=(0, 1)),
+        **kwargs,
+    )
+
+
+def test_the_default_rulings_table_is_a1s_and_changes_nothing():
+    assert cap.A1_RULINGS.rulings is cap.PENDING_RULINGS
+    assert cap.A1_RULINGS.specification == cap.A1_SPECIFICATION_ID
+    assert cap.A1_RULINGS.statistic_id == cap.STATISTIC_ID
+    assert cap.A1_RULINGS.extra_unratified_markers == ()
+    for header in (None, RATIFIED_HEADER, CANDIDATE_HEADER):
+        assert _tabulate_with(specification=header) == _tabulate_with(
+            specification=header, pending_rulings=cap.A1_RULINGS
+        )
+
+
+def test_another_exercise_records_its_own_specification():
+    # Regression: an exercise reusing the statistic recorded A1's
+    # conventions, A1's sections and A1's ratification whatever header it
+    # passed.  Its own table now decides every word.
+    ratified = _tabulate_with(
+        specification=X1_HEADER, pending_rulings=X1_RULINGS
+    )
+    assert ratified["specification"] == {**X1_HEADER, "ratified": True}
+    assert [r["parameter"] for r in ratified["pending_rulings"]] == [
+        "headline_statistic",
+        "allow_membership_difference",
+    ]
+    for entry in ratified["pending_rulings"]:
+        assert "a1_section" not in entry
+        assert entry["status"] == "fixed_by_ratified_specification"
+        assert entry["fixed_by"] == (
+            "X1 specification invented_exercise_x x1-ratified-1 "
+            f"(ratified_frozen), {entry['x1_section']}"
+        )
+    by_name = {r["parameter"]: r for r in ratified["pending_rulings"]}
+    # The config allows no membership difference; X1 proposes it does.
+    assert by_name["allow_membership_difference"]["chosen"] is False
+    assert (
+        by_name["allow_membership_difference"]["is_proposed_primary"] is False
+    )
+    draft = _tabulate_with(
+        specification={**X1_HEADER, "version": "x1-draft-1"},
+        pending_rulings=X1_RULINGS,
+    )
+    absent = _tabulate_with(pending_rulings=X1_RULINGS)
+    for result, status, wording in (
+        (draft, "awaiting_ratification", "the X1 specification supplied"),
+        (absent, "specification_not_supplied", "no X1 specification"),
+    ):
+        for entry in result["pending_rulings"]:
+            assert entry["status"] == status
+            assert entry["fixed_by"] is None
+            assert entry["awaiting"].startswith(
+                "X1 specification ratification (invented); "
+            )
+            assert wording in entry["awaiting"]
+            assert "A1" not in json.dumps(entry)
+
+
+@pytest.mark.parametrize(
+    ("header", "table"),
+    [
+        (X1_HEADER, cap.A1_RULINGS),
+        (RATIFIED_HEADER, X1_RULINGS),
+        ({"version": "x1-ratified-1", "status": "ratified"}, X1_RULINGS),
+    ],
+    ids=["x1-header-a1-table", "a1-header-x1-table", "no-identifier"],
+)
+def test_a_header_of_another_specification_is_refused(header, table):
+    with pytest.raises(ColaTabulationError, match="pass the rulings table"):
+        _tabulate_with(specification=header, pending_rulings=table)
+
+
+@pytest.mark.parametrize(
+    ("statistic_id", "table", "header"),
+    [
+        ("invented_exercise_id", cap.A1_RULINGS, RATIFIED_HEADER),
+        (cap.STATISTIC_ID, X1_RULINGS, X1_HEADER),
+        ("invented_exercise_x_statistic", cap.A1_RULINGS, RATIFIED_HEADER),
+    ],
+    ids=["other-statistic-a1-table", "a1-statistic-x1-table", "x1-a1"],
+)
+def test_a_statistic_of_another_exercise_is_refused(
+    statistic_id, table, header
+):
+    # Regression: after the #454 merge the exercise-3 runner passed its own
+    # statistic_id with no rulings table, and A7 recorded A1's conventions,
+    # sections and ratification under the exercise-3 statistic.  The
+    # statistic and the rulings table must belong to one exercise, with or
+    # without a header.
+    for specification in (None, header):
+        with pytest.raises(
+            ColaTabulationError,
+            match=f"not the {table.name} specification's statistic",
+        ):
+            tabulate_cola_age_profile(
+                _five_group_rows(),
+                data_provenance="invented",
+                config=_config(draw_indices=(0, 1)),
+                statistic_id=statistic_id,
+                specification=specification,
+                pending_rulings=table,
+            )
+
+
+def test_the_rulings_table_must_be_a_table():
+    with pytest.raises(ColaTabulationError, match="SpecificationRulings"):
+        _tabulate_with(pending_rulings=cap.PENDING_RULINGS)
+
+
+def test_extra_markers_only_add_refusals():
+    header = {**X1_HEADER, "status": "ratified_provisional"}
+    assert cap.specification_unratified_fields(header) == []
+    assert cap.specification_unratified_fields(
+        header, extra_markers=("provisional",)
+    ) == ["status"]
+    assert X1_RULINGS.unratified_fields(header) == ["status"]
+    # The tabulation applies the table's markers to its recorded status.
+    result = _tabulate_with(specification=header, pending_rulings=X1_RULINGS)
+    assert result["specification"]["ratified"] is False
+    assert {e["status"] for e in result["pending_rulings"]} == {
+        "awaiting_ratification"
+    }
+    # A7's own markers still refuse with extra markers supplied.
+    candidate = {**X1_HEADER, "version": "x1-ratified-candidate-1"}
+    assert X1_RULINGS.unratified_fields(candidate) == ["version"]
+    for bad in ("Referee", "not ratified", "", 3):
+        with pytest.raises(ColaTabulationError, match="marker"):
+            cap.specification_unratified_fields(
+                X1_HEADER, extra_markers=(bad,)
+            )
+    with pytest.raises(ColaTabulationError, match="sequence"):
+        cap.specification_unratified_fields(X1_HEADER, extra_markers="draft")
+
+
+def _x1_ruling(**changes):
+    ruling = {
+        "parameter": "headline_statistic",
+        "proposed_primary": PRIMARY,
+        "registered_alternatives": [],
+        "x1_section": "section 3",
+    }
+    ruling.update(changes)
+    return {k: v for k, v in ruling.items() if v is not None}
+
+
+@pytest.mark.parametrize(
+    ("changes", "match"),
+    [
+        ({"rulings": ()}, "empty"),
+        ({"rulings": ("x",)}, "mapping"),
+        ({"rulings": (_x1_ruling(parameter="weights"),)}, "not a"),
+        ({"rulings": (_x1_ruling(), _x1_ruling())}, "twice"),
+        (
+            {"rulings": (_x1_ruling(registered_alternatives=None),)},
+            "registered_alternatives",
+        ),
+        ({"rulings": (_x1_ruling(x1_section="A1 section 3"),)}, "section"),
+        ({"rulings": (_x1_ruling(status="fixed"),)}, "derives"),
+        ({"name": ""}, "name"),
+        ({"specification": None}, "specification"),
+        ({"statistic_id": " "}, "statistic_id"),
+        ({"section_field": "X1 section"}, "section_field"),
+        ({"extra_unratified_markers": ("Draft",)}, "marker"),
+    ],
+    ids=[
+        "empty",
+        "not-mapping",
+        "unknown-parameter",
+        "duplicate",
+        "no-alternatives",
+        "bad-section",
+        "reserved-key",
+        "no-name",
+        "no-identifier",
+        "no-statistic",
+        "bad-section-field",
+        "bad-marker",
+    ],
+)
+def test_a_malformed_rulings_table_is_refused(changes, match):
+    arguments = {
+        "specification": "invented_exercise_x",
+        "statistic_id": "invented_exercise_x_statistic",
+        "name": "X1",
+        "ratification": "invented",
+        "section_field": "x1_section",
+        "rulings": (_x1_ruling(),),
+        **changes,
+    }
+    with pytest.raises(ColaTabulationError, match=match):
+        cap.SpecificationRulings(**arguments)
 
 
 # =========================================================================
